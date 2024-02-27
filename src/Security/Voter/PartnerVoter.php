@@ -4,6 +4,7 @@ namespace App\Security\Voter;
 
 use App\Entity\Partner;
 use App\Entity\User;
+use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Authorization\Voter\Voter;
 use Symfony\Component\Security\Core\User\UserInterface;
@@ -12,14 +13,17 @@ class PartnerVoter extends Voter
 {
     public const LIST = 'PARTNER_LIST';
     public const CREATE = 'PARTNER_CREATE';
-    public const VIEW = 'PARTNER_VIEW';
     public const EDIT = 'PARTNER_EDIT';
     public const DELETE = 'PARTNER_DELETE';
+    public const USER_CREATE = 'USER_CREATE';
+
+    public function __construct(private Security $security) {
+
+    }
 
     protected function supports(string $attribute, $subject): bool
     {
-        return \in_array($attribute, [self::LIST, self::CREATE, self::EDIT, self::VIEW, self::DELETE])
-            && ($subject instanceof Partner || !$subject);
+        return \in_array($attribute, [self::LIST, self::CREATE, self::EDIT, self::DELETE, self::USER_CREATE]) && ($subject instanceof Partner);
     }
 
     protected function voteOnAttribute(string $attribute, $subject, TokenInterface $token): bool
@@ -29,54 +33,50 @@ class PartnerVoter extends Voter
         if (!$user instanceof UserInterface) {
             return false;
         }
-        if ($user->isSuperAdmin()) {
+        if ($this->security->isGranted('ROLE_ADMIN')) {
             return true;
         }
 
         return match ($attribute) {
             self::EDIT => $this->canEdit($subject, $user),
-            self::CREATE => $this->canCreate($subject, $user),
-            self::VIEW => $this->canView($subject, $user),
             self::DELETE => $this->canDelete($subject, $user),
-            self::LIST => $this->canList($user),
+            self::USER_CREATE => $this->canCreateUser($subject, $user),
             default => false,
         };
     }
 
     private function canEdit(Partner $partner, User $user): bool
     {
-        if ($this->canList($user)) {
-            return true;
-        }
-
-        return $user->getPartner()->getId() === $partner->getId() && $user->isPartnerAdmin();
-    }
-
-    private function canList(User $user): bool
-    {
-        return $user->isTerritoryAdmin();
-    }
-
-    private function canView(Partner $partner, User $user): bool
-    {
-        if ($this->canList($user)) {
-            return true;
-        }
-
-        return $user->getPartner()->getId() === $partner->getId();
+        return $this->canManage($partner, $user);
     }
 
     private function canDelete(Partner $partner, User $user): bool
     {
-        if ($this->canList($user)) {
-            return true;
+        if(!$this->security->isGranted('ROLE_ADMIN_TERRITORY')){
+            return false;
         }
-
-        return $user->getPartner()->getId() === $partner->getId() && $user->isPartnerAdmin();
+        return $this->canManage($partner, $user);
     }
 
-    private function canCreate(mixed $subject, User $user)
+    private function canCreateUser(Partner $partner, User $user): bool
     {
-        return $this->canList($user);
+        return $this->canManage($partner, $user);
+    }
+
+    private function canManage(Partner $partner, User $user): bool
+    {
+        if (!$user->getTerritory()) {
+            return false;
+        }
+        if (!$user->getPartner()) {
+            return false;
+        }
+        if($this->security->isGranted('ROLE_ADMIN_PARTNER') && $user->getPartner() === $partner) {
+            return true;
+        }
+        if($this->security->isGranted('ROLE_ADMIN_TERRITORY') && $user->getTerritory() === $partner->getTerritory()) {
+            return true;
+        }
+        return false;
     }
 }

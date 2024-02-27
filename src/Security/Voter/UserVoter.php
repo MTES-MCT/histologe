@@ -12,7 +12,6 @@ use Symfony\Component\Security\Core\User\UserInterface;
 
 class UserVoter extends Voter
 {
-    public const CREATE = 'USER_CREATE';
     public const EDIT = 'USER_EDIT';
     public const REACTIVE = 'USER_REACTIVE';
     public const TRANSFER = 'USER_TRANSFER';
@@ -28,7 +27,7 @@ class UserVoter extends Voter
 
     protected function supports(string $attribute, $subject): bool
     {
-        return \in_array($attribute, [self::CHECKMAIL, self::CREATE, self::REACTIVE, self::EDIT, self::TRANSFER, self::DELETE, self::SEE_NDE])
+        return \in_array($attribute, [self::CHECKMAIL, self::REACTIVE, self::EDIT, self::TRANSFER, self::DELETE, self::SEE_NDE])
             && $subject instanceof User;
     }
 
@@ -48,18 +47,12 @@ class UserVoter extends Voter
 
         return match ($attribute) {
             self::CHECKMAIL => $this->canCheckMail(),
-            self::CREATE => $this->canCreate($subject, $user),
             self::EDIT => $this->canEdit($subject, $user),
             self::TRANSFER => $this->canTransfer($subject, $user),
             self::DELETE => $this->canDelete($subject, $user),
             self::SEE_NDE => $this->canSeeNde($user),
             default => false,
         };
-    }
-
-    private function canCreate(User $subject, User $user): bool
-    {
-        return $this->canManage($subject, $user);
     }
 
     private function canDelete(User $subject, User $user): bool

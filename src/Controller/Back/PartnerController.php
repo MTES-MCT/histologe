@@ -31,6 +31,7 @@ use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Symfony\Component\Workflow\WorkflowInterface;
 
 #[Route('/bo/partenaires')]
@@ -39,13 +40,12 @@ class PartnerController extends AbstractController
     public const DEFAULT_TERRITORY_AIN = 1;
 
     #[Route('/', name: 'back_partner_index', methods: ['GET', 'POST'])]
+    #[IsGranted('ROLE_ADMIN_TERRITORY')]
     public function index(
         Request $request,
         PartnerRepository $partnerRepository,
         TerritoryRepository $territoryRepository,
-        ParameterBagInterface $parameterBag,
     ): Response {
-        $this->denyAccessUnlessGranted('PARTNER_LIST', null);
         $page = $request->get('page') ?? 1;
         /** @var User $user */
         $user = $this->getUser();
@@ -78,27 +78,27 @@ class PartnerController extends AbstractController
         $totalPartners = \count($paginatedPartners);
 
         return $this->render('back/partner/index.html.twig', [
-           'currentTerritory' => $currentTerritory,
-           'territories' => $territoryRepository->findAllList(),
-           'partners' => $paginatedPartners,
-           'currentType' => $currentType,
-           'types' => $types,
-           'userTerms' => $userTerms,
-           'total' => $totalPartners,
-           'page' => $page,
-           'pages' => (int) ceil($totalPartners / Partner::MAX_LIST_PAGINATION),
+            'currentTerritory' => $currentTerritory,
+            'territories' => $territoryRepository->findAllList(),
+            'partners' => $paginatedPartners,
+            'currentType' => $currentType,
+            'types' => $types,
+            'userTerms' => $userTerms,
+            'total' => $totalPartners,
+            'page' => $page,
+            'pages' => (int) ceil($totalPartners / Partner::MAX_LIST_PAGINATION),
         ]);
     }
 
     #[Route('/ajout', name: 'back_partner_new', methods: ['GET', 'POST'])]
+    #[IsGranted('ROLE_ADMIN_TERRITORY')]
     public function new(Request $request, EntityManagerInterface $entityManager): Response
     {
-        $this->denyAccessUnlessGranted('PARTNER_CREATE', null);
         $partner = new Partner();
         /** @var User $user */
         $user = $this->getUser();
         $form = $this->createForm(PartnerType::class, $partner, [
-            'can_edit_territory' => $user->isSuperAdmin(),
+            'can_edit_territory' => $this->isGranted('ROLE_ADMIN'),
             'territory' => $user->getTerritory(),
             'route' => 'back_partner_new',
         ]);
@@ -106,7 +106,7 @@ class PartnerController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
             // Si la personne identifiée n'est pas super admin (donc qu'elle ne peut pas éditer),
             // on redéfinit le territoire avec celui de l'utilisateur en cours
-            if (!$user->isSuperAdmin()) {
+            if (!$this->isGranted('ROLE_ADMIN')) {
                 $partner->setTerritory($user->getTerritory());
             }
             $entityManager->persist($partner);
@@ -197,8 +197,10 @@ class PartnerController extends AbstractController
                 // delete affectations "en attente" et "acceptées"
                 $affectations = $partner->getAffectations();
                 foreach ($affectations as $affectation) {
-                    if (Affectation::STATUS_ACCEPTED === $affectation->getStatut()
-                    || Affectation::STATUS_WAIT === $affectation->getStatut()) {
+                    if (
+                        Affectation::STATUS_ACCEPTED === $affectation->getStatut()
+                        || Affectation::STATUS_WAIT === $affectation->getStatut()
+                    ) {
                         $partner->removeAffectation($affectation);
                     }
                 }
@@ -243,7 +245,8 @@ class PartnerController extends AbstractController
         /** @var Partner $partner */
         $partner = $partnerManager->find($partnerId);
         $this->denyAccessUnlessGranted('PARTNER_DELETE', $partner);
-        if ($partner
+        if (
+            $partner
             && $this->isCsrfTokenValid('partner_delete', $request->request->get('_token'))
         ) {
             $partner->setIsArchive(true);
@@ -262,8 +265,10 @@ class PartnerController extends AbstractController
             // delete affectations "en attente" et "acceptées"
             $affectations = $partner->getAffectations();
             foreach ($affectations as $affectation) {
-                if (Affectation::STATUS_ACCEPTED === $affectation->getStatut()
-                || Affectation::STATUS_WAIT === $affectation->getStatut()) {
+                if (
+                    Affectation::STATUS_ACCEPTED === $affectation->getStatut()
+                    || Affectation::STATUS_WAIT === $affectation->getStatut()
+                ) {
                     $partner->removeAffectation($affectation);
                 }
             }
@@ -322,40 +327,40 @@ class PartnerController extends AbstractController
         UserManager $userManager,
         PartnerRepository $partnerRepository,
     ): Response {
-        $this->denyAccessUnlessGranted('USER_CREATE', $this->getUser());
-        if (
-            $this->isCsrfTokenValid('partner_user_create', $request->request->get('_token'))
-            && $data = $request->get('user_create')
-        ) {
-            /** @var User $user */
-            $user = $userManager->findOneBy(['email' => $data['email']]);
-            $partnerExist = $partnerRepository->findOneBy(['email' => $data['email']]);
+        $this->denyAccessUnlessGranted('USER_CREATE', $partner);
+        $data = $request->get('user_create');
+        if (!$this->isCsrfTokenValid('partner_user_create', $request->request->get('_token'))) {
+            $this->addFlash('error', 'Token invalide.');
 
-            if (null !== $user && \in_array('ROLE_USAGER', $user->getRoles())) {
-                $data['territory'] = $partner->getTerritory();
-                $data['partner'] = $partner;
-                $data['statut'] = User::STATUS_INACTIVE;
-                $userManager->updateUserFromData($user, $data);
-            } elseif (null !== $user) {
-                $this->addFlash('error', 'Un utilisateur existe déjà avec cette adresse e-mail.');
-
-                return $this->redirectToRoute('back_partner_index', [], Response::HTTP_SEE_OTHER);
-            } elseif (null !== $partnerExist) {
-                $this->addFlash('error', 'Un partenaire existe déjà avec cette adresse e-mail.');
-
-                return $this->redirectToRoute('back_partner_index', [], Response::HTTP_SEE_OTHER);
-            } else {
-                $user = $userManager->createUserFromData($partner, $data);
-            }
-
-            $message = 'L\'utilisateur a bien été créé. Un email de confirmation a été envoyé à '.$user->getEmail();
-            $this->addFlash('success', $message);
-
-            return $this->redirectToRoute('back_partner_view', ['id' => $partner->getId()], Response::HTTP_SEE_OTHER);
+            return $this->redirectToRoute('back_partner_index', [], Response::HTTP_SEE_OTHER);
         }
-        $this->addFlash('error', 'Une erreur est survenue lors de l\'ajout d\'utilisateur.');
 
-        return $this->redirectToRoute('back_partner_index', [], Response::HTTP_SEE_OTHER);
+
+        /** @var User $user */
+        $user = $userManager->findOneBy(['email' => $data['email']]);
+        $partnerExist = $partnerRepository->findOneBy(['email' => $data['email']]);
+
+        if (null !== $user && \in_array('ROLE_USAGER', $user->getRoles())) {
+            $data['territory'] = $partner->getTerritory();
+            $data['partner'] = $partner;
+            $data['statut'] = User::STATUS_INACTIVE;
+            $userManager->updateUserFromData($user, $data);
+        } elseif (null !== $user) {
+            $this->addFlash('error', 'Un utilisateur existe déjà avec cette adresse e-mail.');
+
+            return $this->redirectToRoute('back_partner_index', [], Response::HTTP_SEE_OTHER);
+        } elseif (null !== $partnerExist) {
+            $this->addFlash('error', 'Un partenaire existe déjà avec cette adresse e-mail.');
+
+            return $this->redirectToRoute('back_partner_index', [], Response::HTTP_SEE_OTHER);
+        } else {
+            $user = $userManager->createUserFromData($partner, $data);
+        }
+
+        $message = 'L\'utilisateur a bien été créé. Un email de confirmation a été envoyé à '.$user->getEmail();
+        $this->addFlash('success', $message);
+
+        return $this->redirectToRoute('back_partner_view', ['id' => $partner->getId()], Response::HTTP_SEE_OTHER);
     }
 
     #[Route('/editerutilisateur', name: 'back_partner_user_edit', methods: ['POST'])]
@@ -409,12 +414,14 @@ class PartnerController extends AbstractController
                 return $this->redirectToRoute('back_partner_view', ['id' => $user->getPartner()->getId()], Response::HTTP_SEE_OTHER);
             }
         }
-        $user = $userManager->updateUserFromData($user, [
-            'nom' => $data['nom'],
-            'prenom' => $data['prenom'],
-            'roles' => $data['roles'],
-            'email' => $data['email'],
-            'isMailingActive' => $data['isMailingActive'],
+        $user = $userManager->updateUserFromData(
+            $user,
+            [
+                'nom' => $data['nom'],
+                'prenom' => $data['prenom'],
+                'roles' => $data['roles'],
+                'email' => $data['email'],
+                'isMailingActive' => $data['isMailingActive'],
             ]
         );
 
