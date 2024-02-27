@@ -23,8 +23,7 @@ class UserVoter extends Voter
     public function __construct(
         private Security $security,
         private ParameterBagInterface $parameterBag
-        )
-    {
+        ) {
     }
 
     protected function supports(string $attribute, $subject): bool
@@ -43,14 +42,16 @@ class UserVoter extends Voter
         if ($this->security->isGranted('ROLE_ADMIN')) {
             return true;
         }
+        if ($user->isSuperAdmin()) {
+            return false;
+        }
 
         return match ($attribute) {
-            self::CHECKMAIL => $this->canCheckMail($subject, $user),
+            self::CHECKMAIL => $this->canCheckMail(),
             self::CREATE => $this->canCreate($subject, $user),
             self::EDIT => $this->canEdit($subject, $user),
             self::TRANSFER => $this->canTransfer($subject, $user),
             self::DELETE => $this->canDelete($subject, $user),
-            self::REACTIVE => $this->canReactive($user),
             self::SEE_NDE => $this->canSeeNde($user),
             default => false,
         };
@@ -58,37 +59,40 @@ class UserVoter extends Voter
 
     private function canCreate(User $subject, User $user): bool
     {
-        if ($this->canDelete($subject, $user)) {
-            return true;
-        }
-
-        return false;
+        return $this->canManage($subject, $user);
     }
 
     private function canDelete(User $subject, User $user): bool
     {
-        return ($user->isTerritoryAdmin() || $user->isPartnerAdmin()) && $user->getTerritory() === $subject->getPartner()->getTerritory();
+        return $this->canManage($subject, $user);
     }
 
     private function canEdit(User $subject, User $user): bool
     {
-        return $this->security->isGranted('ROLE_ADMIN_PARTNER') && $user->getTerritory() === $subject->getPartner()->getTerritory();
-        //TODO check si tout le monde a un territoir et un partenaire (ce n'est pas le cas mais voir comment gérer les regles)
+        return $this->canManage($subject, $user);
     }
 
+    private function canManage(User $subject, User $user): bool
+    {
+        if (!$user->getTerritory()) {
+            return false;
+        }
+        if (!$user->getPartner()) {
+            return false;
+        }
+
+        return $this->security->isGranted('ROLE_ADMIN_PARTNER') && $user->getTerritory() === $subject->getPartner()->getTerritory();
+    }
+
+    // TODO
     private function canTransfer(User $subject, User $user): bool
     {
         return $user->isTerritoryAdmin() && $user->getTerritory() === $subject->getTerritory();
     }
 
-    private function canCheckMail(mixed $subject, User $user)
+    private function canCheckMail()
     {
-        return $user->isTerritoryAdmin() || $user->isPartnerAdmin();
-    }
-
-    private function canReactive(User $user)
-    {
-        return $user->isSuperAdmin();
+        return $this->security->isGranted('ROLE_ADMIN_PARTNER');
     }
 
     public function canSeeNde(User $user): bool

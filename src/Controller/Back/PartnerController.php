@@ -366,16 +366,17 @@ class PartnerController extends AbstractController
         PartnerRepository $partnerRepository,
     ): Response {
         $userId = $request->request->get('user_id');
+        $user = $userManager->find((int) $userId);
         /** @var User $user */
-        if (!$userId || !$user = $userManager->find((int) $userId || !$user->getPartner())) {
+        if (!$userId || !$user || !$user->getPartner()) {
             $this->addFlash('error', 'Utilisateur introuvable.');
 
-            return $this->redirectToRoute('back_partner_index', [], Response::HTTP_NOT_FOUND);
+            return $this->redirectToRoute('back_partner_index', [], Response::HTTP_SEE_OTHER);
         }
         if (!$this->isCsrfTokenValid('partner_user_edit', $request->request->get('_token'))) {
             $this->addFlash('error', 'Token invalide.');
 
-            return $this->redirectToRoute('back_partner_view', ['id' => $user->getPartner()->getId()], Response::HTTP_UNAUTHORIZED);
+            return $this->redirectToRoute('back_partner_view', ['id' => $user->getPartner()->getId()], Response::HTTP_SEE_OTHER);
         }
         $this->denyAccessUnlessGranted('USER_EDIT', $user);
 
@@ -394,13 +395,33 @@ class PartnerController extends AbstractController
                 return $this->redirectToRoute('back_partner_view', ['id' => $user->getPartner()->getId()], Response::HTTP_SEE_OTHER);
             }
         }
-        $user = $userManager->updateUserFromData($user, $data);
-        $partnerId = $user->getPartner()->getId();
+        if ($data['roles'] != $user->getRoles()[0]) {
+            $authorizedRoles = ['ROLE_USER_PARTNER', 'ROLE_ADMIN_PARTNER'];
+            if ($this->isGranted('ROLE_ADMIN_TERRITORY')) {
+                $authorizedRoles[] = 'ROLE_ADMIN_TERRITORY';
+            }
+            if ($this->isGranted('ROLE_ADMIN')) {
+                $authorizedRoles[] = 'ROLE_ADMIN';
+            }
+            if (!\in_array($data['roles'], $authorizedRoles)) {
+                $this->addFlash('error', 'Vous n\'avez pas les droits pour attribuer ce rôle.');
+
+                return $this->redirectToRoute('back_partner_view', ['id' => $user->getPartner()->getId()], Response::HTTP_SEE_OTHER);
+            }
+        }
+        $user = $userManager->updateUserFromData($user, [
+            'nom' => $data['nom'],
+            'prenom' => $data['prenom'],
+            'roles' => $data['roles'],
+            'email' => $data['email'],
+            'isMailingActive' => $data['isMailingActive'],
+            ]
+        );
 
         $message = 'L\'utilisateur a bien été modifié.';
         $this->addFlash('success', $message);
 
-        return $this->redirectToRoute('back_partner_view', ['id' => $partnerId], Response::HTTP_SEE_OTHER);
+        return $this->redirectToRoute('back_partner_view', ['id' => $user->getPartner()->getId()], Response::HTTP_SEE_OTHER);
     }
 
     #[Route('/transfererutilisateur', name: 'back_partner_user_transfer', methods: ['POST'])]
