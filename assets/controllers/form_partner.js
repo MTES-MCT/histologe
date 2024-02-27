@@ -88,15 +88,12 @@ document.querySelectorAll('.btn-edit-partner-user').forEach(swbtn => {
     }
 
     rolesSelect.innerHTML = "";
-    //on copie les option de rolesSelectHidden dans rolesSelect
     for (let i = 0; i < rolesSelectHidden.length; i++) {
       rolesSelect.options[rolesSelect.options.length] = new Option(rolesSelectHidden[i].text, rolesSelectHidden[i].value);
     }
-    //si userRole n'est pas dans la liste des options de rolesSelect on l'ajoute
     if (!Array.from(rolesSelect.options).map(option => option.value).includes(userRole)) {
       rolesSelect.options[rolesSelect.options.length] = new Option(rolesMapping[userRole], userRole);
     }
-    //on selectionne l'option correspondant à userRole
     rolesSelect.value = userRole;
 
     document.querySelector('#user_edit_form').addEventListener('submit', (e) => {
