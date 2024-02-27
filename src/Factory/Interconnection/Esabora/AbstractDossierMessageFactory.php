@@ -36,4 +36,42 @@ abstract class AbstractDossierMessageFactory implements DossierMessageFactoryInt
 
         return $piecesJointes;
     }
+
+    protected function buildDesordresCreatedFrom(Signalement $signalement): string
+    {
+        if (!$signalement->getDesordreCriteres()->isEmpty()) {
+            $criticitesArranged = [];
+            foreach ($signalement->getDesordrePrecisions() as $desordrePrecision) {
+                $zone = $desordrePrecision->getDesordreCritere()->getZoneCategorie();
+                $labelCategorieBO = $desordrePrecision->getDesordreCritere()->getDesordreCategorie()->getLabel();
+                $labelCritere = $desordrePrecision->getDesordreCritere()->getLabelCritere();
+                $criticitesArranged[$zone->value][$labelCategorieBO][$labelCritere][] = $desordrePrecision;
+            }
+        }
+        if (empty($criticitesArranged)) {
+            return '';
+        }
+
+        $commentaireDesordres = '';
+        foreach ($criticitesArranged as $listZoneCategorie) {
+            foreach ($listZoneCategorie as $labelCategorie => $listCritere) {
+                foreach ($listCritere as $labelCritere => $listPrecision) {
+                    $commentaireDesordres .= \PHP_EOL.$labelCritere;
+                    if (\count($listPrecision) > 0) {
+                        $commentairePrecision = '';
+                        foreach ($listPrecision as $desordrePrecision) {
+                            if ('' != $desordrePrecision->getLabel()) {
+                                $commentairePrecision .= $desordrePrecision->getLabel().' ; ';
+                            }
+                        }
+                        if (!empty($commentairePrecision)) {
+                            $commentaireDesordres .= ' : '.$commentairePrecision;
+                        }
+                    }
+                }
+            }
+        }
+
+        return $commentaireDesordres;
+    }
 }

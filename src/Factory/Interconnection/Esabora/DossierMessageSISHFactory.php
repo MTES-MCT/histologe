@@ -208,6 +208,11 @@ class DossierMessageSISHFactory extends AbstractDossierMessageFactory
     private function buildProblemes(Signalement $signalement): ?string
     {
         $commentaire = null;
+
+        if ($signalement->getCreatedFrom()) {
+            return $this->buildDesordresCreatedFrom($signalement);
+        }
+
         foreach ($signalement->getCriticites() as $criticite) {
             $commentaire .= $criticite->getCritere()->getLabel().' => Etat '.$criticite->getScoreLabel().\PHP_EOL;
         }
