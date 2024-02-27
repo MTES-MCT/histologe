@@ -442,23 +442,37 @@ class PartnerController extends AbstractController
     }
 
     #[Route('/transfererutilisateur', name: 'back_partner_user_transfer', methods: ['POST'])]
-    public function transferUser(Request $request, UserManager $userManager, PartnerManager $partnerManager): Response
+    public function transferUser(Request $request, UserManager $userManager, PartnerManager $partnerManager, PartnerRepository $partnerRepository): Response
     {
-        $this->denyAccessUnlessGranted('USER_TRANSFER', $this->getUser());
-        if (
-            $this->isCsrfTokenValid('partner_user_transfer', $request->request->get('_token'))
-            && $data = $request->get('user_transfer')
-        ) {
-            $partner = $partnerManager->find($data['partner']);
-            $user = $userManager->find($data['user']);
-            $userManager->transferUserToPartner($user, $partner);
-            $this->addFlash('success', 'L\'utilisateur a bien été transféré.');
+        $data = $request->get('user_transfer');
+        if (!$this->isCsrfTokenValid('partner_user_transfer', $request->request->get('_token'))) {
+            $this->addFlash('error', 'Token invalide.');
 
-            return $this->redirectToRoute('back_partner_view', ['id' => $partner->getId()], Response::HTTP_SEE_OTHER);
+            return $this->redirectToRoute('back_partner_index', [], Response::HTTP_SEE_OTHER);
         }
-        $this->addFlash('error', 'Une erreur est survenue lors du transfert...');
+        $partner = $partnerManager->find($data['partner']);
+        $user = $userManager->find($data['user']);
+        if (!$partner || !$user) {
+            $this->addFlash('error', 'Partenaire ou utilisateur introuvable.');
 
-        return $this->redirectToRoute('back_partner_index', [], Response::HTTP_SEE_OTHER);
+            return $this->redirectToRoute('back_partner_index', [], Response::HTTP_SEE_OTHER);
+        }
+        $this->denyAccessUnlessGranted('USER_TRANSFER', $user);
+        if (!$this->isGranted('ROLE_ADMIN')) {
+            /** @var User $currentUser */
+            $currentUser = $this->getUser();
+            $partnersAuthorized = $partnerRepository->findAllList($currentUser->getTerritory());
+            if (!isset($partnersAuthorized[$partner->getId()])) {
+                $this->addFlash('error', 'Vous n\'avez pas les droits pour transférer sur ce partenaire.');
+
+                return $this->redirectToRoute('back_partner_index', [], Response::HTTP_SEE_OTHER);
+            }
+        }
+
+        $userManager->transferUserToPartner($user, $partner);
+        $this->addFlash('success', 'L\'utilisateur a bien été transféré.');
+
+        return $this->redirectToRoute('back_partner_view', ['id' => $partner->getId()], Response::HTTP_SEE_OTHER);
     }
 
     #[Route('/supprimerutilisateur', name: 'back_partner_user_delete', methods: ['POST'])]

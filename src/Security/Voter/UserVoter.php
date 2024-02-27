@@ -13,7 +13,6 @@ use Symfony\Component\Security\Core\User\UserInterface;
 class UserVoter extends Voter
 {
     public const EDIT = 'USER_EDIT';
-    public const REACTIVE = 'USER_REACTIVE';
     public const TRANSFER = 'USER_TRANSFER';
     public const DELETE = 'USER_DELETE';
     public const CHECKMAIL = 'USER_CHECKMAIL';
@@ -27,7 +26,7 @@ class UserVoter extends Voter
 
     protected function supports(string $attribute, $subject): bool
     {
-        return \in_array($attribute, [self::CHECKMAIL, self::REACTIVE, self::EDIT, self::TRANSFER, self::DELETE, self::SEE_NDE])
+        return \in_array($attribute, [self::CHECKMAIL, self::EDIT, self::TRANSFER, self::DELETE, self::SEE_NDE])
             && $subject instanceof User;
     }
 
@@ -77,10 +76,16 @@ class UserVoter extends Voter
         return $this->security->isGranted('ROLE_ADMIN_PARTNER') && $user->getTerritory() === $subject->getPartner()->getTerritory();
     }
 
-    // TODO
     private function canTransfer(User $subject, User $user): bool
     {
-        return $user->isTerritoryAdmin() && $user->getTerritory() === $subject->getTerritory();
+        if (!$user->getTerritory()) {
+            return false;
+        }
+        if (!$user->getPartner()) {
+            return false;
+        }
+
+        return $this->security->isGranted('ROLE_ADMIN_TERRITORY') && $user->getTerritory() === $subject->getPartner()->getTerritory();
     }
 
     private function canCheckMail()
