@@ -25,7 +25,6 @@ use Doctrine\ORM\EntityManagerInterface;
 use Egulias\EmailValidator\EmailValidator;
 use Egulias\EmailValidator\Validation\RFCValidation;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Symfony\Component\Form\FormError;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\Request;
@@ -332,15 +331,21 @@ class PartnerController extends AbstractController
         if (!$this->isCsrfTokenValid('partner_user_create', $request->request->get('_token'))) {
             $this->addFlash('error', 'Token invalide.');
 
-            return $this->redirectToRoute('back_partner_index', [], Response::HTTP_SEE_OTHER);
+            return $this->redirectToRoute('back_partner_view', ['id' => $partner->getId()], Response::HTTP_SEE_OTHER);
         }
-
+        if (!$this->canAttributeRole($data['roles'])) {
+            return $this->redirectToRoute('back_partner_view', ['id' => $partner->getId()], Response::HTTP_SEE_OTHER);
+        }
 
         /** @var User $user */
         $user = $userManager->findOneBy(['email' => $data['email']]);
         $partnerExist = $partnerRepository->findOneBy(['email' => $data['email']]);
 
-        if (null !== $user && \in_array('ROLE_USAGER', $user->getRoles())) {
+        if (null !== $partnerExist) {
+            $this->addFlash('error', 'Un partenaire existe déjà avec cette adresse e-mail.');
+
+            return $this->redirectToRoute('back_partner_view', ['id' => $partner->getId()], Response::HTTP_SEE_OTHER);
+        } elseif (null !== $user && \in_array('ROLE_USAGER', $user->getRoles())) {
             $data['territory'] = $partner->getTerritory();
             $data['partner'] = $partner;
             $data['statut'] = User::STATUS_INACTIVE;
@@ -348,11 +353,7 @@ class PartnerController extends AbstractController
         } elseif (null !== $user) {
             $this->addFlash('error', 'Un utilisateur existe déjà avec cette adresse e-mail.');
 
-            return $this->redirectToRoute('back_partner_index', [], Response::HTTP_SEE_OTHER);
-        } elseif (null !== $partnerExist) {
-            $this->addFlash('error', 'Un partenaire existe déjà avec cette adresse e-mail.');
-
-            return $this->redirectToRoute('back_partner_index', [], Response::HTTP_SEE_OTHER);
+            return $this->redirectToRoute('back_partner_view', ['id' => $partner->getId()], Response::HTTP_SEE_OTHER);
         } else {
             $user = $userManager->createUserFromData($partner, $data);
         }
@@ -401,16 +402,7 @@ class PartnerController extends AbstractController
             }
         }
         if ($data['roles'] != $user->getRoles()[0]) {
-            $authorizedRoles = ['ROLE_USER_PARTNER', 'ROLE_ADMIN_PARTNER'];
-            if ($this->isGranted('ROLE_ADMIN_TERRITORY')) {
-                $authorizedRoles[] = 'ROLE_ADMIN_TERRITORY';
-            }
-            if ($this->isGranted('ROLE_ADMIN')) {
-                $authorizedRoles[] = 'ROLE_ADMIN';
-            }
-            if (!\in_array($data['roles'], $authorizedRoles)) {
-                $this->addFlash('error', 'Vous n\'avez pas les droits pour attribuer ce rôle.');
-
+            if (!$this->canAttributeRole($data['roles'])) {
                 return $this->redirectToRoute('back_partner_view', ['id' => $user->getPartner()->getId()], Response::HTTP_SEE_OTHER);
             }
         }
@@ -429,6 +421,24 @@ class PartnerController extends AbstractController
         $this->addFlash('success', $message);
 
         return $this->redirectToRoute('back_partner_view', ['id' => $user->getPartner()->getId()], Response::HTTP_SEE_OTHER);
+    }
+
+    private function canAttributeRole(string $role): bool
+    {
+        $authorizedRoles = ['ROLE_USER_PARTNER', 'ROLE_ADMIN_PARTNER'];
+        if ($this->isGranted('ROLE_ADMIN_TERRITORY')) {
+            $authorizedRoles[] = 'ROLE_ADMIN_TERRITORY';
+        }
+        if ($this->isGranted('ROLE_ADMIN')) {
+            $authorizedRoles[] = 'ROLE_ADMIN';
+        }
+        if (!\in_array($role, $authorizedRoles)) {
+            $this->addFlash('error', 'Vous n\'avez pas les droits pour attribuer ce rôle.');
+
+            return false;
+        }
+
+        return true;
     }
 
     #[Route('/transfererutilisateur', name: 'back_partner_user_transfer', methods: ['POST'])]

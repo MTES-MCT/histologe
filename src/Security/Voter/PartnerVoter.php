@@ -17,8 +17,8 @@ class PartnerVoter extends Voter
     public const DELETE = 'PARTNER_DELETE';
     public const USER_CREATE = 'USER_CREATE';
 
-    public function __construct(private Security $security) {
-
+    public function __construct(private Security $security)
+    {
     }
 
     protected function supports(string $attribute, $subject): bool
@@ -52,9 +52,10 @@ class PartnerVoter extends Voter
 
     private function canDelete(Partner $partner, User $user): bool
     {
-        if(!$this->security->isGranted('ROLE_ADMIN_TERRITORY')){
+        if (!$this->security->isGranted('ROLE_ADMIN_TERRITORY')) {
             return false;
         }
+
         return $this->canManage($partner, $user);
     }
 
@@ -71,12 +72,13 @@ class PartnerVoter extends Voter
         if (!$user->getPartner()) {
             return false;
         }
-        if($this->security->isGranted('ROLE_ADMIN_PARTNER') && $user->getPartner() === $partner) {
+        if ($this->security->isGranted('ROLE_ADMIN_PARTNER') && $user->getPartner() === $partner) {
             return true;
         }
-        if($this->security->isGranted('ROLE_ADMIN_TERRITORY') && $user->getTerritory() === $partner->getTerritory()) {
+        if ($this->security->isGranted('ROLE_ADMIN_TERRITORY') && $user->getTerritory() === $partner->getTerritory()) {
             return true;
         }
+
         return false;
     }
 }

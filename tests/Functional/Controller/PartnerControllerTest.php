@@ -87,7 +87,7 @@ class PartnerControllerTest extends WebTestCase
     public function testPartnerEditFormSubmit(): void
     {
         /** @var Partner $partner */
-        $partner = $this->partnerRepository->findOneBy(['nom' => 'Partenaire 01-03']);
+        $partner = $this->partnerRepository->findOneBy(['nom' => 'Partenaire 13-02']);
 
         $route = $this->router->generate('back_partner_edit', ['id' => $partner->getId()]);
         $this->client->request('GET', $route);
