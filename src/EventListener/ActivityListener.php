@@ -80,7 +80,7 @@ class ActivityListener
                     }
                 }
 
-                if ($entity->getIsPublic() && Signalement::STATUS_REFUSED !== $entity->getSignalement()->getStatut()) {
+                if ($entity->getSendMail() && $entity->getIsPublic() && Signalement::STATUS_REFUSED !== $entity->getSignalement()->getStatut()) {
                     $toRecipients = new ArrayCollection($entity->getSignalement()->getMailUsagers());
                     if (!$toRecipients->isEmpty() && Signalement::STATUS_CLOSED !== $entity->getSignalement()->getStatut()) {
                         $toRecipients->removeElement($entity->getCreatedBy()?->getEmail());

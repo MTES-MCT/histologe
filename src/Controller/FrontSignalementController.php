@@ -470,7 +470,7 @@ class FrontSignalementController extends AbstractController
 
             return $this->redirectToRoute('front_suivi_signalement');
         }
-        $this->addFlash('error', 'Le lien utilisé est expiré ou invalide, verifier votre saisie.');
+        $this->addFlash('error', 'Le lien utilisé est invalide, verifier votre saisie.');
 
         return $this->redirectToRoute('front_signalement');
     }
@@ -544,9 +544,9 @@ class FrontSignalementController extends AbstractController
                 'type' => $type,
             ]);
         }
-        $this->addFlash('error', 'Le lien utilisé est expiré ou invalide, verifier votre saisie.');
+        $this->addFlash('error', 'Le lien utilisé invalide, verifier votre saisie.');
 
-        return $this->redirectToRoute('front_signalement');
+        return $this->redirectToRoute('home');
     }
 
     #[Route('/suivre-mon-signalement/{code}/response', name: 'front_suivi_signalement_user_response', methods: 'POST')]
@@ -605,9 +605,13 @@ class FrontSignalementController extends AbstractController
                 Votre message a bien été envoyé, vous recevrez un email lorsque votre dossier sera mis à jour.
                 N'hésitez pas à consulter votre page de suivi !
                 SUCCESS);
+            } else {
+                $this->addFlash('error', 'Token CSRF invalide');
             }
         } else {
-            $this->addFlash('error', 'Une erreur est survenue...');
+            $this->addFlash('error', 'Le lien utilisé est expiré ou invalide, verifier votre saisie.');
+
+            return $this->redirectToRoute('home');
         }
 
         if (!empty($email)) {
