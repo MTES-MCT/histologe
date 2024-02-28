@@ -116,10 +116,10 @@
                 "type": "SignalementFormTextfield",
                 "label": "Numéro d'appartement",
                 "slug": "adresse_logement_complement_adresse_numero_appartement",
-                "description": "30 caractères maximum",
+                "description": "5 caractères maximum",
                 "validate": {
                   "required": false,
-                  "maxLength": 30
+                  "maxLength": 5
                 }
               },
               {

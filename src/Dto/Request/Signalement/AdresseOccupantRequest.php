@@ -17,7 +17,7 @@ class AdresseOccupantRequest
         private readonly ?string $etage = null,
         #[Assert\Length(max: 3, maxMessage: 'L\'escalier ne peut pas dépasser {{ limit }} caractères.')]
         private readonly ?string $escalier = null,
-        #[Assert\Length(max: 30, maxMessage: 'Le numéro d\'appartement ne peut pas dépasser {{ limit }} caractères.')]
+        #[Assert\Length(max: 5, maxMessage: 'Le numéro d\'appartement ne peut pas dépasser {{ limit }} caractères.')]
         private readonly ?string $numAppart = null,
         #[Assert\Length(max: 255, maxMessage: 'Le champ Autre ne peut pas dépasser {{ limit }} caractères.')]
         private readonly ?string $autre = null,

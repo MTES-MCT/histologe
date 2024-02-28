@@ -36,7 +36,7 @@ class SignalementDraftRequest
     private ?string $adresseLogementComplementAdresseEscalier = null;
     #[Assert\Length(max: 5)]
     private ?string $adresseLogementComplementAdresseEtage = null;
-    #[Assert\Length(max: 30)]
+    #[Assert\Length(max: 5, maxMessage: 'Le numéro d\'appartement ne doit pas dépasser {{ limit }} caractères.')]
     private ?string $adresseLogementComplementAdresseNumeroAppartement = null;
     #[Assert\Length(max: 255)]
     private ?string $adresseLogementComplementAdresseAutre = null;
