@@ -113,7 +113,6 @@ class SignalementEditController extends AbstractController
         SerializerInterface $serializer,
         ValidatorInterface $validator,
     ): JsonResponse {
-        $payload = $request->getPayload()->all();
         $this->denyAccessUnlessGranted('SIGN_EDIT', $signalement);
         $payload = $request->getPayload()->all();
         if ($this->isCsrfTokenValid(

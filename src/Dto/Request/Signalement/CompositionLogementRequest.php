@@ -29,11 +29,14 @@ class CompositionLogementRequest implements RequestInterface
         private readonly ?string $superficie = null,
         #[Assert\NotBlank(
             message: 'Merci de définir la hauteur du logement.',
-            groups: ['LOCATAIRE', 'BAILLEUR_OCCUPANT', 'BAILLEUR', 'TIERS_PARTICULIER', 'TIERS_PRO', 'SERVICE_SECOURS'])]
+            groups: [
+                'LOCATAIRE', 'BAILLEUR_OCCUPANT', 'BAILLEUR', 'TIERS_PARTICULIER', 'TIERS_PRO', 'SERVICE_SECOURS', ]
+        )]
         private readonly ?string $compositionLogementHauteur = null,
         #[Assert\NotBlank(
             message: 'Merci de définir le nombre de pièces à vivre.',
-            groups: ['LOCATAIRE', 'BAILLEUR_OCCUPANT', 'BAILLEUR', 'TIERS_PARTICULIER', 'TIERS_PRO', 'SERVICE_SECOURS'])]
+            groups: ['LOCATAIRE', 'BAILLEUR_OCCUPANT', 'BAILLEUR', 'TIERS_PARTICULIER', 'TIERS_PRO', 'SERVICE_SECOURS']
+        )]
         #[Assert\Positive(
             message: 'Merci de saisir une information numérique dans le champs nombre de pièces à vivre.')]
         private readonly ?string $compositionLogementNbPieces = null,
@@ -72,7 +75,8 @@ class CompositionLogementRequest implements RequestInterface
         private readonly ?string $typeLogementCommoditesPieceAVivre9m = null,
         #[Assert\NotBlank(
             message: 'Merci de définir si il y a une cuisine.',
-            groups: ['LOCATAIRE', 'BAILLEUR_OCCUPANT', 'BAILLEUR', 'TIERS_PARTICULIER', 'TIERS_PRO', 'SERVICE_SECOURS'])]
+            groups: ['LOCATAIRE', 'BAILLEUR_OCCUPANT', 'BAILLEUR', 'TIERS_PARTICULIER', 'TIERS_PRO', 'SERVICE_SECOURS']
+        )]
         private readonly ?string $typeLogementCommoditesCuisine = null,
         #[Assert\When(
             expression: 'this.getTypeLogementCommoditesCuisine() == "non"',
@@ -83,7 +87,8 @@ class CompositionLogementRequest implements RequestInterface
         private readonly ?string $typeLogementCommoditesCuisineCollective = null,
         #[Assert\NotBlank(
             message: 'Merci de définir si il y a une salle de bain.',
-            groups: ['LOCATAIRE', 'BAILLEUR_OCCUPANT', 'BAILLEUR', 'TIERS_PARTICULIER', 'TIERS_PRO', 'SERVICE_SECOURS'])]
+            groups: ['LOCATAIRE', 'BAILLEUR_OCCUPANT', 'BAILLEUR', 'TIERS_PARTICULIER', 'TIERS_PRO', 'SERVICE_SECOURS']
+        )]
         private readonly ?string $typeLogementCommoditesSalleDeBain = null,
         #[Assert\When(
             expression: 'this.getTypeLogementCommoditesSalleDeBain() == "non"',
@@ -94,7 +99,8 @@ class CompositionLogementRequest implements RequestInterface
         private readonly ?string $typeLogementCommoditesSalleDeBainCollective = null,
         #[Assert\NotBlank(
             message: 'Merci de définir si il y a des WC.',
-            groups: ['LOCATAIRE', 'BAILLEUR_OCCUPANT', 'BAILLEUR', 'TIERS_PARTICULIER', 'TIERS_PRO', 'SERVICE_SECOURS'])]
+            groups: ['LOCATAIRE', 'BAILLEUR_OCCUPANT', 'BAILLEUR', 'TIERS_PARTICULIER', 'TIERS_PRO', 'SERVICE_SECOURS']
+        )]
         private readonly ?string $typeLogementCommoditesWc = null,
         #[Assert\When(
             expression: 'this.getTypeLogementCommoditesWc() == "non"',
@@ -210,7 +216,7 @@ class CompositionLogementRequest implements RequestInterface
     }
 
     #[Assert\Callback]
-    public function validate(ExecutionContextInterface $context, mixed $payload): void
+    public function validate(ExecutionContextInterface $context): void
     {
         if ($this->getTypeLogementDernierEtage() === $this->getTypeLogementRdc()) {
             $context->buildViolation('Merci de bien préciser si le logement est au rez-de-chaussée ou dernier étage.')

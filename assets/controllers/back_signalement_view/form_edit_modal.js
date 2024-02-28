@@ -40,39 +40,36 @@ async function submitPayload(formElement) {
             }
         });
         const responseData = await response.json();
-
         if (response.ok) {
             location.reload();
-        } else {
-            if (responseData.code === 400) {
-                const errors = responseData.errors;
-                let firstErrorElement = true;
-                for (const property in errors) {
-                    const inputElement = document.querySelector(`.fr-modal--opened [name="${property}"]`);
-                    inputElement.setAttribute('aria-describedby', `${property}-desc-error`);
-                    inputElement.parentElement.classList.add('fr-input-group--error');
+        } else if (response.status === 400) {
+            const errors = responseData.errors;
+            let firstErrorElement = true;
+            for (const property in errors) {
+                const inputElement = document.querySelector(`.fr-modal--opened [name="${property}"]`);
+                inputElement.setAttribute('aria-describedby', `${property}-desc-error`);
+                inputElement.parentElement.classList.add('fr-input-group--error');
 
-                    const existingErrorElement = document.getElementById(`${property}-desc-error`);
-                    if (!existingErrorElement) {
-                        let pElement = document.createElement('p');
-                        pElement.classList.add('fr-error-text');
-                        pElement.id = `${property}-desc-error`;
+                const existingErrorElement = document.getElementById(`${property}-desc-error`);
+                if (!existingErrorElement) {
+                    let pElement = document.createElement('p');
+                    pElement.classList.add('fr-error-text');
+                    pElement.id = `${property}-desc-error`;
 
-                        let messageError = '';
-                        errors[property].errors.forEach((error) => {
-                            messageError = messageError + error;
-                        })
-                        pElement.innerHTML = messageError;
-                        inputElement.insertAdjacentElement('afterend', pElement);
-                    }
-                    if (firstErrorElement) {
-                        inputElement.focus();
-                        firstErrorElement = false;
-                    }
+                    let messageError = '';
+                    errors[property].errors.forEach((error) => {
+                        messageError = messageError + error;
+                    })
+                    pElement.innerHTML = messageError;
+                    inputElement.insertAdjacentElement('afterend', pElement);
                 }
-            } else {
-                alert(responseData.message);
+                if (firstErrorElement) {
+                    inputElement.focus();
+                    firstErrorElement = false;
+                }
             }
+        } else {
+            alert(responseData.message);
         }
     } catch (error) {
         alert('Une erreur s\'est produite. Veuillez actualiser la page.');
