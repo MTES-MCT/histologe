@@ -47,6 +47,11 @@ interface FormStore {
     components: ZoneComponents
     customCss: string
   } | null
+  existingDraft: {
+    uuid: string | null
+    createdAt: string | null
+    updatedAt: string | null
+  }
   lastButtonClicked: string
   validationErrors: FormData
   inputComponents: string[]
@@ -73,10 +78,17 @@ const formStore: FormStore = reactive({
     platformName: '',
     urlApiAdress: 'https://api-adresse.data.gouv.fr/search/?q=',
     ajaxurlCheckTerritory: '',
-    ajaxurlCheckSignalementDraftExists: ''
+    ajaxurlCheckSignalementDraftExists: '',
+    ajaxurlSendMailContinueFromDraft: '',
+    ajaxurlArchiveDraft: ''
   },
   screenData: [],
   currentScreen: null,
+  existingDraft: {
+    uuid: null,
+    createdAt: null,
+    updatedAt: null
+  },
   lastButtonClicked: '',
   inputComponents: [
     'SignalementFormTextfield',

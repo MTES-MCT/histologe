@@ -13,6 +13,8 @@
       :data-ajaxurl-platform-name="sharedProps.platformName"
       :data-ajaxurl-check-territory="sharedProps.ajaxurlCheckTerritory"
       :data-ajaxurl-check-signalement-draft-exists="sharedProps.ajaxurlCheckSignalementDraftExists"
+      :data-ajaxurl-send-mail-continue-from-draft="sharedProps.ajaxurlSendMailContinueFromDraft"
+      :data-ajaxurl-archive-draft="sharedProps.ajaxurlArchiveDraft"
       >
       <div v-if="isLoadingInit" class="loading fr-m-10w fr-grid-row fr-grid-row--center">
         Initialisation du formulaire...
@@ -44,7 +46,10 @@
               />
           </div>
         </div>
-        <SignalementFormModalContinueFromDraft/>
+        <SignalementFormModalContinueFromDraft
+          :draftClickEvent="saveAndChangeScreenBySlug"
+          :newClickEvent="changeScreenBySlug"
+        />
       </div>
     </div>
 </template>
@@ -69,7 +74,7 @@ export default defineComponent({
   },
   data () {
     return {
-      slugCommonProfil: ['introduction', 'adresse_logement_intro', 'adresse_logement', 'signalement_concerne'],
+      slugCommonProfil: ['introduction', 'adresse_logement_intro', 'adresse_logement', 'signalement_concerne', 'draft_mail'],
       slugCoordonnees: ['vos_coordonnees_occupant', 'vos_coordonnees_tiers'],
       nextSlug: '',
       isErrorInit: false,
@@ -91,6 +96,8 @@ export default defineComponent({
       this.sharedProps.ajaxurlHandleUpload = initElements.dataset.ajaxurlHandleUpload
       this.sharedProps.ajaxurlCheckTerritory = initElements.dataset.ajaxurlCheckTerritory
       this.sharedProps.ajaxurlCheckSignalementDraftExists = initElements.dataset.ajaxurlCheckSignalementDraftExists
+      this.sharedProps.ajaxurlSendMailContinueFromDraft = initElements.dataset.ajaxurlSendMailContinueFromDraft
+      this.sharedProps.ajaxurlArchiveDraft = initElements.dataset.ajaxurlArchiveDraft
       if (initElements.dataset.ajaxurlGetSignalementDraft !== undefined) {
         this.sharedProps.ajaxurlGetSignalementDraft = initElements.dataset.ajaxurlGetSignalementDraft
         requests.initWithExistingData(this.handleInitData)
@@ -147,30 +154,18 @@ export default defineComponent({
       }
     },
     showDraftModalOrNot (requestResponse: any) {
-      console.log('showDraftModalOrNot')
-      console.log(requestResponse)
       if (requestResponse) {
-        console.log(requestResponse.already_exists)
         if (requestResponse.already_exists === true) {
-          console.log('il y a déjà un draft, je dois afficher la modale')
-          // TODO : simuler le clic sur le bouton
           const link = document.getElementById('fr-modal-continue-draft-button')
-          // Vérifiez si l'élément lien existe
+          formStore.existingDraft.uuid = requestResponse.uuid
+          formStore.existingDraft.createdAt = requestResponse.created_at
+          formStore.existingDraft.updatedAt = requestResponse.updated_at
           if (link) {
-            // Simulez un clic sur le lien
             link.click()
           } else {
             console.error('L\'élément lien n\'a pas été trouvé.')
           }
-          // this.showDraftModal = true
-          // const modalElement = document.getElementById('fr-modal-continue-draftv')
-          // if (modalElement && modalElement.classList.contains('fr-modal') && window.dsfr(modalElement) && ('modal' in window.dsfr(modalElement))) {
-          //   console.log('isEnabled', window.dsfr(modalElement).modal.isEnabled, window.dsfr(modalElement).modal)
-          //   window.dsfr(modalElement).modal.disclose()
-          // }
         } else {
-          console.log('iln y en avait pas, on a récupéré l\'uuid')
-          console.log(requestResponse.uuid)
           this.changeScreenBySlug(requestResponse)
         }
       } else {

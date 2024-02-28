@@ -15,7 +15,7 @@ class ContinueFromDraftMailer extends AbstractNotificationMailer
     protected ?NotificationMailerType $mailerType = NotificationMailerType::TYPE_CONTINUE_FROM_DRAFT;
     protected ?string $mailerSubject = 'Complétez votre signalement sur %param.platform_name%.';
     protected ?string $mailerButtonText = 'Compléter mon signalement';
-    protected ?string $mailerTemplate = 'continue_from_draft';
+    protected ?string $mailerTemplate = 'continue_from_draft_email';
     protected ?string $tagHeader = 'Usager Validation Signalement';
 
     public function __construct(
@@ -36,7 +36,7 @@ class ContinueFromDraftMailer extends AbstractNotificationMailer
             'lien_draft' => $this->urlGenerator->generate(
                 'front_nouveau_formulaire_edit',
                 [
-                    'code' => $signalementDraft->getUuid(),
+                    'uuid' => $signalementDraft->getUuid(),
                 ],
                 UrlGeneratorInterface::ABSOLUTE_URL
             ),

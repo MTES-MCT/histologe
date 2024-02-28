@@ -10,7 +10,7 @@
             <div class="fr-modal__content">
               <h1 id="fr-modal-title-modal-continue-draft" class="fr-modal__title">Reprendre la saisie</h1>
               <p>
-                Il semblerait que vous avez commencé à remplir un signalement pour le logement situé {{adresse}}, le {{date}} à {{updated}}.
+                Il semblerait que vous avez commencé à remplir un signalement pour le logement situé {{ formStore.data.adresse_logement_adresse }}, le {{ formatDate(formStore.existingDraft.createdAt) }}.
                 Vous pouvez récupérer les infos de ce signalement et reprendre ou vous vous êtes arrêté.
                 Souhaitez-vous reprendre le signalement ?
               </p>
@@ -18,12 +18,12 @@
             <div class="fr-modal__footer">
               <ul class="fr-btns-group fr-btns-group--right fr-btns-group--inline-reverse fr-btns-group--inline-lg fr-btns-group--icon-left">
                 <li>
-                  <a class="fr-btn" aria-controls="fr-modal-continue-draft">
+                  <button class="fr-btn" aria-controls="fr-modal-continue-draft" @click="continueFromDraft">
                     Oui, reprendre le signalement
-                  </a>
+                  </button>
                 </li>
                 <li>
-                  <button class="fr-btn fr-btn--secondary" aria-controls="fr-modal-continue-draft">
+                  <button class="fr-btn fr-btn--secondary" aria-controls="fr-modal-continue-draft" @click="makeNewSignalement">
                     Non, faire un nouveau signalement
                   </button>
                 </li>
@@ -34,18 +34,57 @@
       </div>
     </div>
   </dialog>
-  <a class="" href="#" id="fr-modal-continue-draft-button" aria-controls="fr-modal-continue-draft">Bouton de contrôle de la modale</a>
+  <button class="fr-btn fr-hidden" id="fr-modal-continue-draft-button" data-fr-opened="false" aria-controls="fr-modal-continue-draft"></button>
 </template>
 
 <script lang="ts">
 import { defineComponent } from 'vue'
+import formStore from './../store'
+import { requests } from './../requests'
 
 export default defineComponent({
   name: 'SignalementFormModalContinueFromDraft',
   props: {
-    adresse: String,
-    date: String,
-    updated: String
+    draftClickEvent: Function,
+    newClickEvent: Function
+  },
+  data () {
+    return {
+      formStore
+    }
+  },
+  methods: {
+    continueFromDraft () {
+      requests.sendMailContinueFromDraft(this.goToScreenDraft)
+    },
+    goToScreenDraft (requestResponse: any) {
+      if (requestResponse && requestResponse.success === true) {
+        if (this.draftClickEvent !== undefined) {
+          this.draftClickEvent('draft_mail', false)
+        }
+      }
+      // TODO : que faire si l'envoi de mail n'a pas fonctionné ?
+    },
+    makeNewSignalement () {
+      requests.archiveDraft(this.saveAndContinue)
+    },
+    saveAndContinue () {
+      if (this.newClickEvent !== undefined) {
+        requests.saveSignalementDraft(this.newClickEvent)
+      }
+    },
+    formatDate (dateTimeString: string | null) {
+      if (dateTimeString !== null) {
+        const date = new Date(dateTimeString)
+        const day = ('0' + date.getDate()).slice(-2)
+        const month = ('0' + (date.getMonth() + 1)).slice(-2)
+        const year = date.getFullYear()
+        const hours = ('0' + date.getHours()).slice(-2)
+        const minutes = ('0' + date.getMinutes()).slice(-2)
+        return `${day}/${month}/${year} à ${hours}:${minutes}`
+      }
+      return ''
+    }
   }
 })
 </script>

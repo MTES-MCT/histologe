@@ -24,6 +24,8 @@
         data-platform-name="{{ platform.name }}"
         data-ajaxurl-check-territory="{{ path('front_signalement_check_territory') }}"
         data-ajaxurl-check-signalement-draft-exists="{{ path('check_signalement_draft_existe') }}"
+        data-ajaxurl-send-mail-continue-from-draft="{{ path('send_mail_continue_from_draft', {uuid: 'uuid'}) }}"
+        data-ajaxurl-archive-draft="{{ path('archive_draft', {uuid: 'uuid'}) }}"
         ></div>
   </div>
 {% endblock %}

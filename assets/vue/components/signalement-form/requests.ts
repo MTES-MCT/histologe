@@ -121,6 +121,16 @@ export const requests = {
     }
   },
 
+  sendMailContinueFromDraft (functionReturn: Function) {
+    const url = formStore.props.ajaxurlSendMailContinueFromDraft.replace('uuid', formStore.existingDraft.uuid)
+    requests.doRequestPost(url, formStore.data, functionReturn, undefined)
+  },
+
+  archiveDraft (functionReturn: Function) {
+    const url = formStore.props.ajaxurlArchiveDraft.replace('uuid', formStore.existingDraft.uuid)
+    requests.doRequestPost(url, formStore.data, functionReturn, undefined)
+  },
+
   validateAddress (valueAdress: string, functionReturn: Function) {
     const url = (formStore.props.urlApiAdress as string) + valueAdress
     requests.doRequestGet(url, functionReturn)

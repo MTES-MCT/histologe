@@ -95,8 +95,13 @@ class FrontNewSignalementController extends AbstractController
             $dataToHash .= $signalementDraftRequest->getAdresseLogementAdresse();
             $hash = hash('sha256', $dataToHash);
 
-            // TODO : vérifier qu'il ne soit pas au statut ARCHIVE
-            $existingSignalementDraft = $signalementDraftManager->findOneBy(['identificationHash' => $hash]);
+            $existingSignalementDraft = $signalementDraftManager->findOneBy(
+                [
+                    'identificationHash' => $hash,
+                    'status' => SignalementDraftStatus::EN_COURS,
+                ]
+            );
+
             if (null !== $existingSignalementDraft) {
                 return $this->json([
                     'already_exists' => true,
@@ -168,13 +173,30 @@ class FrontNewSignalementController extends AbstractController
         Request $request
     ): Response {
         if ($request->isMethod('POST') && $signalementDraft) {
-            $notificationMailerRegistry->send(
+            $success = $notificationMailerRegistry->send(
                 new NotificationMail(
                     type: NotificationMailerType::TYPE_CONTINUE_FROM_DRAFT,
                     to: $signalementDraft->getEmailDeclarant(),
                     signalementDraft: $signalementDraft,
                 )
             );
+            if ($success) {
+                return $this->json(['success' => true]);
+            }
+        }
+
+        return $this->json(['response' => 'error'], Response::HTTP_BAD_REQUEST);
+    }
+
+    #[Route('/signalement-draft/{uuid}/archive', name: 'archive_draft')]
+    public function archiveDraft(
+        SignalementDraft $signalementDraft,
+        Request $request,
+        SignalementDraftManager $signalementDraftManager
+    ): Response {
+        if ($request->isMethod('POST') && $signalementDraft) {
+            $signalementDraft->setStatus(SignalementDraftStatus::ARCHIVE);
+            $signalementDraftManager->save($signalementDraft);
 
             return $this->json(['success' => true]);
         }
