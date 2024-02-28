@@ -41,7 +41,6 @@ class FrontNewSignalementController extends AbstractController
     }
 
     #[Route('/signalement-draft/envoi', name: 'envoi_nouveau_signalement_draft', methods: 'POST')]
-    // TODO : encore nécessaire ????
     public function sendSignalementDraft(
         Request $request,
         SignalementDraftRequestSerializer $serializer,

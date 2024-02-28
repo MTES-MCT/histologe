@@ -108,7 +108,6 @@ export const requests = {
   },
 
   checkIfExistingDraft (functionReturn: Function) {
-    console.log('checkIfExistingDraft')
     const url = formStore.props.ajaxurlCheckSignalementDraftExists
     if (formStore.data.adresse_logement_adresse !== undefined &&
       (formStore.data.vos_coordonnees_occupant_email !== undefined ||
@@ -116,7 +115,6 @@ export const requests = {
     ) {
       requests.doRequestPost(url, formStore.data, functionReturn, undefined)
     } else {
-      // TODO : que renvoyer ?
       functionReturn(undefined)
     }
   },

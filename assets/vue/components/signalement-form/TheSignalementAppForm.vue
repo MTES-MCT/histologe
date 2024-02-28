@@ -143,7 +143,6 @@ export default defineComponent({
     saveAndChangeScreenBySlug (slug:string, isSaveAndCheck:boolean) {
       this.nextSlug = slug
       if (isSaveAndCheck) {
-        console.log(formStore.data.uuidSignalementDraft)
         if (formStore.data.uuidSignalementDraft === '') {
           requests.checkIfExistingDraft(this.showDraftModalOrNot)
         } else {
