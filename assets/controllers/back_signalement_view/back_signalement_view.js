@@ -14,7 +14,9 @@ if(modalUploadFiles){
     fileSelector.onclick = () => fileSelectorInput.click()
     fileSelectorInput.onchange = () => {
         [...fileSelectorInput.files].forEach((file) => {
-            uploadFile(file)
+            if(typeValidation(file)){
+                uploadFile(file)
+            }
         })
     }
 
@@ -36,14 +38,34 @@ if(modalUploadFiles){
             [...e.dataTransfer.items].forEach((item) => {
                 if(item.kind === 'file'){
                     const file = item.getAsFile()
-                    uploadFile(file)
+                    if(typeValidation(file)){
+                        uploadFile(file)
+                    }
                 }
             })
         }else{
             [...e.dataTransfer.files].forEach((file) => {
-                uploadFile(file)
+                if(typeValidation(file)){
+                    uploadFile(file)
+                }
             })
         }
+    }
+
+    function typeValidation(file){
+        let splitType = file.type.split('/')[0]
+        let acceptedType = fileSelectorInput.getAttribute('accept').split('/')[0];
+        if(acceptedType == '*'){
+            return true
+        }
+        if(acceptedType == splitType){
+            return true
+        }
+        let div = document.createElement('div')
+        div.classList.add('fr-alert', 'fr-alert--error', 'fr-alert--sm')
+        div.innerHTML = `Le type du fichier ${file.name} n'est pas accepté (acceptés : ".jpg", ".png", ".gif")`;
+        listContainer.prepend(div)
+        return false;
     }
 
     function uploadFile(file){
@@ -77,8 +99,12 @@ if(modalUploadFiles){
                         clone.id = 'select-type-'+response.response
                     }
                     clone.dataset.fileId = response.response
-                    div.querySelector('.select-container').appendChild(clone) 
-                    addEventListenerSelectTypeDesordre(clone)
+                    if(clone.querySelectorAll('option').length == 1){
+                        clone.remove()
+                    }else{
+                        div.querySelector('.select-container').appendChild(clone) 
+                        addEventListenerSelectTypeDesordre(clone)
+                    }
                 } else {
                     div.querySelector('.file-error').innerHTML = '<div class="fr-alert fr-alert--error fr-alert--sm">'+response.response+'</div>'
                 }
@@ -173,7 +199,7 @@ if(modalUploadFiles){
         }else{
             modalUploadFiles.dataset.fileType = 'document'
             modalUploadFiles.querySelector('.type-document').classList.remove('fr-hidden')
-            fileSelectorInput.setAttribute('accept', 'application/*')
+            fileSelectorInput.setAttribute('accept', '*/*')
         }
     })
 }

@@ -49,6 +49,7 @@ class SignalementFileProcessor
                 $this->logger->error($message);
                 $this->errors[] = $message;
             } else {
+                $inputTypeDetection = $inputName;
                 try {
                     if ($file instanceof UploadedFile) {
                         $filename = $this->uploadHandlerService->uploadFromFile(
@@ -59,6 +60,8 @@ class SignalementFileProcessor
 
                         if (\in_array($file->getMimeType(), ImageManipulationHandler::IMAGE_MIME_TYPES)) {
                             $this->imageManipulationHandler->setUseTmpDir(false)->resize($filename)->thumbnail($filename);
+                        }else{
+                            $inputTypeDetection = 'documents';
                         }
                     } else {
                         $filename = $this->uploadHandlerService->moveFromBucketTempFolder($file);
@@ -72,7 +75,7 @@ class SignalementFileProcessor
                 }
                 if (!empty($filename)) {
                     $descriptionList[] = $this->generateListItemDescription($filename, $title, $withTokenGenerated);
-                    $fileList[] = $this->createFileItem($filename, $title, $inputName, $documentType);
+                    $fileList[] = $this->createFileItem($filename, $title, $inputTypeDetection, $documentType);
                 }
             }
         }
