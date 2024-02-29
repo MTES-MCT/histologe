@@ -470,7 +470,7 @@ class FrontSignalementController extends AbstractController
 
             return $this->redirectToRoute('front_suivi_signalement');
         }
-        $this->addFlash('error', 'Le lien utilisé est invalide, verifier votre saisie.');
+        $this->addFlash('error', 'Le lien utilisé est invalide, vérifier votre saisie.');
 
         return $this->redirectToRoute('front_signalement');
     }
@@ -544,7 +544,7 @@ class FrontSignalementController extends AbstractController
                 'type' => $type,
             ]);
         }
-        $this->addFlash('error', 'Le lien utilisé est invalide, verifier votre saisie.');
+        $this->addFlash('error', 'Le lien utilisé est invalide, vérifier votre saisie.');
 
         return $this->redirectToRoute('home');
     }
