@@ -329,7 +329,7 @@ class PartnerController extends AbstractController
         $this->denyAccessUnlessGranted('USER_CREATE', $partner);
         $data = $request->get('user_create');
         if (!$this->isCsrfTokenValid('partner_user_create', $request->request->get('_token'))) {
-            $this->addFlash('error', 'Token invalide.');
+            $this->addFlash('error', 'Token CSRF invalide, merci d\'actualiser la page et réessayer.');
 
             return $this->redirectToRoute('back_partner_view', ['id' => $partner->getId()], Response::HTTP_SEE_OTHER);
         }
@@ -380,7 +380,7 @@ class PartnerController extends AbstractController
             return $this->redirectToRoute('back_partner_index', [], Response::HTTP_SEE_OTHER);
         }
         if (!$this->isCsrfTokenValid('partner_user_edit', $request->request->get('_token'))) {
-            $this->addFlash('error', 'Token invalide.');
+            $this->addFlash('error', 'Token CSRF invalide, merci d\'actualiser la page et réessayer.');
 
             return $this->redirectToRoute('back_partner_view', ['id' => $user->getPartner()->getId()], Response::HTTP_SEE_OTHER);
         }
@@ -446,7 +446,7 @@ class PartnerController extends AbstractController
     {
         $data = $request->get('user_transfer');
         if (!$this->isCsrfTokenValid('partner_user_transfer', $request->request->get('_token'))) {
-            $this->addFlash('error', 'Token invalide.');
+            $this->addFlash('error', 'Token CSRF invalide, merci d\'actualiser la page et réessayer.');
 
             return $this->redirectToRoute('back_partner_index', [], Response::HTTP_SEE_OTHER);
         }
@@ -483,7 +483,7 @@ class PartnerController extends AbstractController
     ): Response {
         $userId = $request->request->get('user_id');
         if (!$this->isCsrfTokenValid('partner_user_delete', $request->request->get('_token'))) {
-            $this->addFlash('error', 'Token invalide.');
+            $this->addFlash('error', 'Token CSRF invalide, merci d\'actualiser la page et réessayer.');
 
             return $this->redirectToRoute('back_partner_index', [], Response::HTTP_SEE_OTHER);
         }

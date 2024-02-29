@@ -11,7 +11,6 @@ use Symfony\Component\Security\Core\User\UserInterface;
 
 class PartnerVoter extends Voter
 {
-    public const LIST = 'PARTNER_LIST';
     public const CREATE = 'PARTNER_CREATE';
     public const EDIT = 'PARTNER_EDIT';
     public const DELETE = 'PARTNER_DELETE';
@@ -23,7 +22,7 @@ class PartnerVoter extends Voter
 
     protected function supports(string $attribute, $subject): bool
     {
-        return \in_array($attribute, [self::LIST, self::CREATE, self::EDIT, self::DELETE, self::USER_CREATE]) && ($subject instanceof Partner);
+        return \in_array($attribute, [self::CREATE, self::EDIT, self::DELETE, self::USER_CREATE]) && ($subject instanceof Partner);
     }
 
     protected function voteOnAttribute(string $attribute, $subject, TokenInterface $token): bool
