@@ -60,7 +60,7 @@ class SignalementFileProcessor
 
                         if (\in_array($file->getMimeType(), ImageManipulationHandler::IMAGE_MIME_TYPES)) {
                             $this->imageManipulationHandler->setUseTmpDir(false)->resize($filename)->thumbnail($filename);
-                        }else{
+                        } else {
                             $inputTypeDetection = 'documents';
                         }
                     } else {

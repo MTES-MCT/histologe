@@ -63,7 +63,7 @@ class SignalementFileController extends AbstractController
         $this->denyAccessUnlessGranted('FILE_CREATE', $signalement);
         if (!$this->isCsrfTokenValid('signalement_add_file_'.$signalement->getId(), $request->get('_token')) || !$files = $request->files->get('signalement-add-file')) {
             if ($request->isXmlHttpRequest()) {
-                return $this->json(['response' => 'Token CSRF invalide ou paramètre manquant'], 400);
+                return $this->json(['response' => 'Token CSRF invalide ou paramètre manquant'], Response::HTTP_BAD_REQUEST);
             }
             $this->addFlash('error', 'Une erreur est survenu lors du téléchargement');
 
@@ -82,7 +82,7 @@ class SignalementFileController extends AbstractController
                 $errorMessages .= $errorMessage.'<br>';
             }
             if ($request->isXmlHttpRequest()) {
-                return $this->json(['response' => $errorMessages], 400);
+                return $this->json(['response' => $errorMessages], Response::HTTP_BAD_REQUEST);
             }
             $this->addFlash('error error-raw', $errorMessages);
 
@@ -160,7 +160,7 @@ class SignalementFileController extends AbstractController
             }
         }
 
-        return $this->json(['response' => 'error'], 400);
+        return $this->json(['response' => 'error'], Response::HTTP_BAD_REQUEST);
     }
 
     /**
@@ -175,7 +175,7 @@ class SignalementFileController extends AbstractController
     ): Response {
         if (!$this->isCsrfTokenValid('signalement_edit_file_'.$signalement->getId(), $request->get('_token'))) {
             if ($request->isXmlHttpRequest()) {
-                return $this->json(['response' => 'Token CSRF invalide'], 400);
+                return $this->json(['response' => 'Token CSRF invalide'], Response::HTTP_BAD_REQUEST);
             }
             $this->addFlash('error', 'Une erreur est survenue lors de la modification...');
 
@@ -189,7 +189,7 @@ class SignalementFileController extends AbstractController
         );
         if (null === $file) {
             if ($request->isXmlHttpRequest()) {
-                return $this->json(['response' => 'Document introuvable'], 400);
+                return $this->json(['response' => 'Document introuvable'], Response::HTTP_BAD_REQUEST);
             }
             $this->addFlash('error', 'Ce fichier n\'existe plus');
 
@@ -199,7 +199,7 @@ class SignalementFileController extends AbstractController
         $documentType = DocumentType::tryFrom($request->get('documentType'));
         if (null === $documentType) {
             if ($request->isXmlHttpRequest()) {
-                return $this->json(['response' => 'Type de document invalide'], 400);
+                return $this->json(['response' => 'Type de document invalide'], Response::HTTP_BAD_REQUEST);
             }
             $this->addFlash('error', 'Mauvais type de fichier');
 

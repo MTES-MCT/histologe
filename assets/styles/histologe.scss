@@ -718,7 +718,7 @@ div.photos-album {
 .modal-upload-drop-section {
     border: 1px dashed #929292;
     font-size: 1.4rem;
-    padding: 4rem 0rem;
+    padding: 4rem 0;
     margin: .5rem 0;
     font-weight: bold;
 }
@@ -728,24 +728,24 @@ div.photos-album {
 }
 .modal-upload-list-section{
     font-weight: lighter;
-}
-.modal-upload-list-section .file-name{
-    font-weight: bold;
-} 
-.modal-upload-list-section .file-progress{
-    width: 100%;
-    height: 10px;
-    margin-top: 3px;
-    margin-bottom: 3px;
-    background-color: #e5e5e5;
-}   
-.modal-upload-list-section .file-progress span{
-    display: block;
-    width: 0%;
-    height: 100%;
-    background: #6A6AF4;
-}
-.modal-upload-list-section .file-size{
-    display: flex;
-    justify-content: space-between;
+    .file-name{
+        font-weight: bold;
+    } 
+    .file-progress{
+        width: 100%;
+        height: 10px;
+        margin-top: 3px;
+        margin-bottom: 3px;
+        background-color: #e5e5e5;
+    }   
+    .file-progress span{
+        display: block;
+        width: 0%;
+        height: 100%;
+        background: #6A6AF4;
+    }
+    .file-size{
+        display: flex;
+        justify-content: space-between;
+    }
 }
