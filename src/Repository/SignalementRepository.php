@@ -78,14 +78,23 @@ class SignalementRepository extends ServiceEntityRepository
         return $qb->getQuery()->getArrayResult();
     }
 
-    public function countAll(?Territory $territory, ?Partner $partner, bool $removeImported = false, bool $removeArchived = false): int
-    {
+    public function countAll(
+        ?Territory $territory,
+        ?Partner $partner,
+        bool $removeImported = false,
+        bool $removeArchived = false,
+        bool $removeRefused = false
+    ): int {
         $qb = $this->createQueryBuilder('s');
         $qb->select('COUNT(s.id)');
 
         if ($removeArchived) {
             $qb->andWhere('s.statut != :statutArchived')
                 ->setParameter('statutArchived', Signalement::STATUS_ARCHIVED);
+        }
+        if ($removeRefused) {
+            $qb->andWhere('s.statut != :statutRefused')
+                ->setParameter('statutRefused', Signalement::STATUS_REFUSED);
         }
 
         if ($removeImported) {

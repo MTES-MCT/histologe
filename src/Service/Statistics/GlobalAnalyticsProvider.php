@@ -56,7 +56,8 @@ class GlobalAnalyticsProvider
             territory: null,
             partner: null,
             removeImported: true,
-            removeArchived: true
+            removeArchived: true,
+            removeRefused: true
         );
     }
 
