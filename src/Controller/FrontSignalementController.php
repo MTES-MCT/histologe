@@ -609,7 +609,7 @@ class FrontSignalementController extends AbstractController
                 $this->addFlash('error', 'Token CSRF invalide');
             }
         } else {
-            $this->addFlash('error', 'Le lien utilisé est expiré ou invalide, verifier votre saisie.');
+            $this->addFlash('error', 'Le lien utilisé est expiré ou invalide, vérifier votre saisie.');
 
             return $this->redirectToRoute('home');
         }
