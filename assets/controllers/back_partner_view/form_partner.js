@@ -80,20 +80,7 @@ document.querySelectorAll('.btn-edit-partner-user').forEach(swbtn => {
     }
 
     const userRole = target.getAttribute('data-userrole')
-    const rolesSelect = document.querySelector('#user_edit_roles')
-    const rolesSelectHidden = document.querySelector('#user_edit_roles_hidden')
-    const rolesMapping = {
-      'ROLE_ADMIN': 'Super Admin',
-      'ROLE_ADMIN_TERRITORY': 'Responsable Territoire'
-    }
-
-    rolesSelect.innerHTML = "";
-    for (let i = 0; i < rolesSelectHidden.length; i++) {
-      rolesSelect.options[rolesSelect.options.length] = new Option(rolesSelectHidden[i].text, rolesSelectHidden[i].value);
-    }
-    if (!Array.from(rolesSelect.options).map(option => option.value).includes(userRole)) {
-      rolesSelect.options[rolesSelect.options.length] = new Option(rolesMapping[userRole], userRole);
-    }
+    const rolesSelect = document.querySelector('#user_edit_roles');
     rolesSelect.value = userRole;
 
     document.querySelector('#user_edit_form').addEventListener('submit', (e) => {

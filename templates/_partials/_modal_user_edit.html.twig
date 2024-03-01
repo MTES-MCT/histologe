@@ -36,12 +36,7 @@
                                 <div class="fr-grid-row fr-grid-row--gutters">
                                     <div class="fr-input-group fr-col-12 fr-col-md-6 fr-pl-0 fr-pl-md-0">
                                         <label for="user_edit_roles" class="fr-label">Rôle</label>
-                                        <select id="user_edit_roles" name="user_edit[roles]" required="required" class="fr-select">                                           
-                                        </select>
-                                        <p class="fr-error-text fr-hidden">
-                                            Vous devez sélectionner le rôle de l'utilisateur
-                                        </p>
-                                        <select id="user_edit_roles_hidden" class="fr-hidden">
+                                        <select id="user_edit_roles" name="user_edit[roles]" required="required" class="fr-select"> 
                                             <option value="" selected="selected">--- Selectionnez ---</option>
                                             {% if is_granted('ROLE_ADMIN') %}
                                                 <option value="ROLE_ADMIN">
@@ -54,8 +49,11 @@
                                                 </option>
                                             {% endif %}
                                             <option value="ROLE_ADMIN_PARTNER">Administrateur</option>
-                                            <option value="ROLE_USER_PARTNER">Utilisateur</option>
+                                            <option value="ROLE_USER_PARTNER">Utilisateur</option>                           
                                         </select>
+                                        <p class="fr-error-text fr-hidden">
+                                            Vous devez sélectionner le rôle de l'utilisateur
+                                        </p>
                                     </div>
                                     <div class="fr-input-group fr-col-12 fr-col-md-6 fr-pl-0 fr-pl-md-0">
                                         <label for="user_edit_email" class="fr-label">Courriel</label>

@@ -8,6 +8,7 @@ use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Authorization\Voter\Voter;
+use Symfony\Component\Security\Core\Role\RoleHierarchyInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 
 class UserVoter extends Voter
@@ -19,6 +20,7 @@ class UserVoter extends Voter
 
     public function __construct(
         private Security $security,
+        private RoleHierarchyInterface $roleHierarchy,
         private ParameterBagInterface $parameterBag
         ) {
     }
@@ -59,11 +61,12 @@ class UserVoter extends Voter
 
     private function canEdit(User $subject, User $user): bool
     {
-        return $this->canManage($subject, $user);
-    }
-
-    private function canManage(User $subject, User $user): bool
-    {
+        $subjectRoles = $this->roleHierarchy->getReachableRoleNames($subject->getRoles());
+        $userRoles = $this->roleHierarchy->getReachableRoleNames($user->getRoles());
+        // subject has more roles than me, i can't edit it
+        if (\count($subjectRoles) > \count($userRoles)) {
+            return false;
+        }
         if (!$user->getTerritory()) {
             return false;
         }
