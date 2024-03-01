@@ -40,7 +40,7 @@
 
         {% if createdFromDraft %}
             {% include 'back/signalement/view/photos-documents.html.twig' with {
-                'zonetitle': "Photos et documents fournis par l'usager",
+                'zonetitle': "Photos et documents de la situation",
                 'importedBy': "user"
             } %}
         {% endif %}
@@ -64,7 +64,7 @@
 
         {% if createdFromDraft %}
             {% include 'back/signalement/view/photos-documents.html.twig' with {
-                'zonetitle': "Photos et documents partenaires",
+                'zonetitle': "Photos et documents liés à la procédure",
                 'importedBy': "partner"
             } %}
         {% endif %}
