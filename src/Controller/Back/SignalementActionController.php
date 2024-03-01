@@ -38,9 +38,6 @@ class SignalementActionController extends AbstractController
                 $statut = Signalement::STATUS_ACTIVE;
                 $description = 'validé';
                 $signalement->setValidatedAt(new DateTimeImmutable());
-                if (!$signalement->getCodeSuivi()) {
-                    $signalement->setCodeSuivi(md5(uniqid()));
-                }
                 $toRecipients = $signalement->getMailUsagers();
 
                 foreach ($toRecipients as $toRecipient) {
@@ -142,9 +139,6 @@ class SignalementActionController extends AbstractController
             }
             $signalement->setStatut(Signalement::STATUS_ACTIVE);
             $currentCodeSuivi = $signalement->getCodeSuivi();
-            if (empty($currentCodeSuivi)) {
-                $signalement->setCodeSuivi(md5(uniqid()));
-            }
             $doctrine->getManager()->persist($signalement);
             $suivi = new Suivi();
             $suivi->setSignalement($signalement)

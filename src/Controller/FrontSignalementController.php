@@ -345,7 +345,6 @@ class FrontSignalementController extends AbstractController
 
             $signalement->setScore($criticiteCalculator->calculate($signalement));
             $signalementQualificationUpdater->updateQualificationFromScore($signalement);
-            $signalement->setCodeSuivi(md5(uniqid()));
 
             // Non-décence énergétique
             // Create a SignalementQualification if:
