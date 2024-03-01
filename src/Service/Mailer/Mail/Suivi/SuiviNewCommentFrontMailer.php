@@ -14,7 +14,7 @@ class SuiviNewCommentFrontMailer extends AbstractNotificationMailer
 {
     protected ?NotificationMailerType $mailerType = NotificationMailerType::TYPE_NEW_COMMENT_FRONT;
     protected ?string $mailerSubject = 'Nouvelle mise à jour de votre signalement !';
-    protected ?string $mailerButtonText = 'Accéder à mon signalement';
+    protected ?string $mailerButtonText = 'Accéder à mon signalement et répondre';
     protected ?string $mailerTemplate = 'nouveau_suivi_signalement_email';
     protected ?string $tagHeader = 'Usager Nouveau Suivi Signalement';
 
