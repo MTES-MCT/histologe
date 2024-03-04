@@ -48,7 +48,7 @@ class InterventionEditedSubscriber implements EventSubscriberInterface
 
                 $description .= '<a href="'.$urlDocument.'" title="Afficher le document" rel="noopener" target="_blank">Afficher le document</a>';
             }
-            
+
             $suivi = $this->suiviManager->createSuivi(
                 user: $currentUser,
                 signalement: $intervention->getSignalement(),

@@ -39,7 +39,7 @@ enum DocumentType: String
             self::BAILLEUR_REPONSE_BAILLEUR->name => 'Réponse bailleur',
             self::AUTRE->name => 'Autre',
             self::SITUATION->name => 'Photo de désordre',
-            self::VISITE->name => 'Photo de visite',
+            self::VISITE->name => 'Rapport de visite',
         ];
     }
 

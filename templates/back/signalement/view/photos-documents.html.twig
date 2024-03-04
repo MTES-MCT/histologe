@@ -109,8 +109,7 @@
 </div>
 
 {% for index, doc in signalement.files|filter(
-    doc => doc.fileType == 'document' 
-            and doc.intervention is null
+    doc => doc.fileType == 'document'
             and (
                 (importedBy is same as 'user' and (doc.uploadedBy is null or doc.isUsagerFile ))
                 or (importedBy is same as 'partner' and (doc.uploadedBy is not null and doc.isPartnerFile))
@@ -130,7 +129,11 @@
                     {{ doc.uploadedBy and doc.uploadedBy.partner ? doc.uploadedBy.partner.nom ~ ' - ' : '' }}{{ doc.uploadedBy.nomComplet ?? 'N/R' }}
                 </div>
                 <div class="fr-col-12 fr-col-lg-4">
+                    {% if doc.intervention is null %}
                     <i>{{ doc.title|truncate_filename(45) }}</i>
+                    {% else %}
+                    <i>Rapport de visite du {{ doc.intervention.scheduledAt|date('d/m/Y') }}</i>
+                    {% endif %}
                 </div>
             </div>
         </div>
