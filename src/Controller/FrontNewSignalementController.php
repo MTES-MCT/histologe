@@ -13,7 +13,6 @@ use App\Service\Mailer\NotificationMail;
 use App\Service\Mailer\NotificationMailerRegistry;
 use App\Service\Mailer\NotificationMailerType;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -22,19 +21,15 @@ use Symfony\Component\Validator\Validator\ValidatorInterface;
 class FrontNewSignalementController extends AbstractController
 {
     #[Route('/nouveau-formulaire/signalement', name: 'front_nouveau_formulaire')]
-    public function index(ParameterBagInterface $parameterBag): Response
+    public function index(): Response
     {
         return $this->redirectToRoute('front_signalement');
     }
 
     #[Route('/signalement-draft/{uuid}', name: 'front_nouveau_formulaire_edit', methods: 'GET')]
     public function edit(
-        SignalementDraft $signalementDraft,
-        ParameterBagInterface $parameterBag
+        SignalementDraft $signalementDraft
     ): Response {
-        if (!$parameterBag->get('feature_new_form')) {
-            return $this->redirectToRoute('front_signalement');
-        }
         if (
             $signalementDraft
             && SignalementDraftStatus::EN_COURS === $signalementDraft->getStatus()
