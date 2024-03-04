@@ -23,7 +23,7 @@
                 <div>
                     {% if photo.documentType is not same as null
                         and photo.documentType is not same as enum('App\\Entity\\Enum\\DocumentType').AUTRE %}
-                        {% if photo.documentType is same as enum('App\\Entity\\Enum\\DocumentType').SITUATION
+                        {% if photo.documentType is same as enum('App\\Entity\\Enum\\DocumentType').PHOTO_SITUATION
                                 and photo.desordreSlug is not same as null %}
                             {{ signalement.getDesordreLabel(photo.desordreSlug) }}
                         {% else %}
