@@ -74,9 +74,8 @@ class SignalementFileController extends AbstractController
         $inputName = isset($files[File::INPUT_NAME_DOCUMENTS])
             ? File::INPUT_NAME_DOCUMENTS
             : File::INPUT_NAME_PHOTOS;
-        // $documentType = DocumentType::tryFrom($request->get('document_type')) ?? DocumentType::AUTRE;
         $documentType = DocumentType::AUTRE;
-        list($fileList, $descriptionList) = $signalementFileProcessor->process($files, $inputName, $documentType);
+        list($fileList) = $signalementFileProcessor->process($files, $inputName, $documentType);
 
         if (!$signalementFileProcessor->isValid()) {
             $errorMessages = '';

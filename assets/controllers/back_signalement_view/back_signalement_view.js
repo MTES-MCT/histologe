@@ -6,10 +6,13 @@ if(modalUploadFiles){
     const fileSelectorInput = document.querySelector('.modal-upload-files-selector-input')
     const addFileRoute = modalUploadFiles.dataset.addFileRoute
     const addFileToken = modalUploadFiles.dataset.addFileToken
+    const waitingSuiviRoute = modalUploadFiles.dataset.waitingSuiviRoute
     const selectTypeToClone = document.querySelector('#select-type-to-clone')
     const selectDesordreToClone = document.querySelector('#select-desordre-to-clone')
     const editFileRoute = modalUploadFiles.dataset.editFileRoute
     const editFileToken = modalUploadFiles.dataset.editFileToken
+    var nbFiles = 0;
+    var nbFilesProcessed = 0;
 
     fileSelector.onclick = () => fileSelectorInput.click()
     fileSelectorInput.onchange = () => {
@@ -69,6 +72,7 @@ if(modalUploadFiles){
     }
 
     function uploadFile(file){
+        nbFiles++
         let div = document.createElement('div')
         div.classList.add('fr-grid-row', 'fr-grid-row--gutters', 'fr-grid-row--middle', 'fr-mb-2w')
         div.innerHTML = initInnerHtml(file)
@@ -110,6 +114,12 @@ if(modalUploadFiles){
                 }
             }
         }
+        http.onloadend = function() {
+            nbFilesProcessed++;
+            if(nbFilesProcessed == nbFiles){
+                fetch(waitingSuiviRoute)
+            }
+        };
         http.open('POST', addFileRoute, true)
         http.setRequestHeader("X-Requested-With", "XMLHttpRequest")
         http.send(data)

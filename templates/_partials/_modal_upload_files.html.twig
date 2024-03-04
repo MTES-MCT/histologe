@@ -9,6 +9,7 @@
     data-add-file-token="{{ csrf_token('signalement_add_file_'~signalement.id) }}"
     data-edit-file-route="{{ path('back_signalement_edit_file',{uuid:signalement.uuid}) }}"
     data-edit-file-token="{{ csrf_token('signalement_edit_file_'~signalement.id) }}"
+    data-waiting-suivi-route="{{ path('back_signalement_file_waiting_suivi',{uuid:signalement.uuid}) }}"
     >
     <div class="fr-container fr-container--fluid fr-container-md">
         <div class="fr-grid-row fr-grid-row--center">
