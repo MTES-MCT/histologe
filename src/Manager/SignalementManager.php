@@ -757,7 +757,7 @@ class SignalementManager extends AbstractManager
     public function getPhotosBySlug(Signalement $signalement, string $desordrePrecisionSlug): ?array
     {
         $photos = $signalement->getPhotos()->filter(function (File $file) use ($desordrePrecisionSlug) {
-            return DocumentType::SITUATION === $file->getDocumentType()
+            return DocumentType::PHOTO_SITUATION === $file->getDocumentType()
             && $file->getDesordreSlug() === $desordrePrecisionSlug;
         });
 

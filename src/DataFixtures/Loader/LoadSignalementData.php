@@ -431,7 +431,7 @@ class LoadSignalementData extends Fixture implements OrderedFixtureInterface
                     type: File::FILE_TYPE_PHOTO,
                     signalement: $signalement,
                     // user: $user,
-                    documentType: DocumentType::SITUATION,
+                    documentType: DocumentType::PHOTO_SITUATION,
                     desordreSlug: $document['slug']
                 );
                 $manager->persist($file);

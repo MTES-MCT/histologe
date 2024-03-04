@@ -13,7 +13,7 @@ class SignalementDocumentTypeMapper
         }
 
         if (str_starts_with($value, 'desordres_')) {
-            return DocumentType::SITUATION;
+            return DocumentType::PHOTO_SITUATION;
         }
 
         if (str_contains($value, 'dpe_bail')) {

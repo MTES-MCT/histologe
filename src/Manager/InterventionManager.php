@@ -218,7 +218,7 @@ class InterventionManager extends AbstractManager
                 : File::FILE_TYPE_PHOTO,
             signalement: $intervention->getSignalement(),
             user: $user,
-            documentType: DocumentType::VISITE
+            documentType: DocumentType::PROCEDURE_RAPPORT_DE_VISITE
         );
     }
 }

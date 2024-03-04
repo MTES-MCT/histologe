@@ -73,7 +73,7 @@ class LoadInterventionData extends Fixture implements OrderedFixtureInterface
                     intervention: $intervention,
                     signalement: $intervention->getSignalement(),
                     user: $user,
-                    documentType: DocumentType::VISITE
+                    documentType: DocumentType::PROCEDURE_RAPPORT_DE_VISITE
                 );
                 $manager->persist($file);
             }

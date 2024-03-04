@@ -70,7 +70,7 @@ class FileFactory
         ?Intervention $intervention = null,
     ): ?File {
         $documentType = SignalementDocumentTypeMapper::map($file['slug']);
-        $desordreSlug = DocumentType::SITUATION === $documentType ? $file['slug'] : null;
+        $desordreSlug = DocumentType::PHOTO_SITUATION === $documentType ? $file['slug'] : null;
         $fileDescription = $file['description'] ?? null;
 
         return $this->createInstanceFrom(

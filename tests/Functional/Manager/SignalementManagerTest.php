@@ -280,7 +280,7 @@ class SignalementManagerTest extends KernelTestCase
         $photos = $this->signalementManager->getPhotosBySlug($signalement, $desordrePrecisionSlug);
         $this->assertCount(1, $photos);
         $firstKey = array_keys($photos)[0];
-        $this->assertEquals(DocumentType::SITUATION, $photos[$firstKey]->getDocumentType());
+        $this->assertEquals(DocumentType::PHOTO_SITUATION, $photos[$firstKey]->getDocumentType());
         $this->assertEquals('Capture-d-ecran-du-2023-06-13-12-58-43-648b2a6b9730f.png', $photos[$firstKey]->getTitle());
 
         $desordrePrecisionSlug = 'desordres_batiment_isolation_murs';
