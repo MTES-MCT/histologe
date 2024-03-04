@@ -82,8 +82,7 @@ class SignalementRepository extends ServiceEntityRepository
         ?Territory $territory,
         ?Partner $partner,
         bool $removeImported = false,
-        bool $removeArchived = false,
-        bool $removeRefused = false
+        bool $removeArchived = false
     ): int {
         $qb = $this->createQueryBuilder('s');
         $qb->select('COUNT(s.id)');
@@ -91,10 +90,6 @@ class SignalementRepository extends ServiceEntityRepository
         if ($removeArchived) {
             $qb->andWhere('s.statut != :statutArchived')
                 ->setParameter('statutArchived', Signalement::STATUS_ARCHIVED);
-        }
-        if ($removeRefused) {
-            $qb->andWhere('s.statut != :statutRefused')
-                ->setParameter('statutRefused', Signalement::STATUS_REFUSED);
         }
 
         if ($removeImported) {
@@ -171,7 +166,7 @@ class SignalementRepository extends ServiceEntityRepository
 
     public function countValidated(bool $removeImported = false): int
     {
-        $notStatus = [Signalement::STATUS_NEED_VALIDATION, Signalement::STATUS_REFUSED, Signalement::STATUS_ARCHIVED];
+        $notStatus = [Signalement::STATUS_NEED_VALIDATION, Signalement::STATUS_ARCHIVED];
         $qb = $this->createQueryBuilder('s');
         $qb->select('COUNT(s.id)');
         $qb->andWhere('s.statut NOT IN (:notStatus)')

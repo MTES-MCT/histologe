@@ -13,7 +13,7 @@
             <template #title>territoires déployés</template>
           </TheHistoFrontStatsDetailsItem>
           <TheHistoFrontStatsDetailsItem :data="strPercentValidated">
-            <template #title>taux de prise en charge</template>
+            <template #title>taux de dossiers traités ou en cours de traitement</template>
           </TheHistoFrontStatsDetailsItem>
           <TheHistoFrontStatsDetailsItem :data="strPercentClosed">
             <template #title>taux de clôture des signalements</template>
