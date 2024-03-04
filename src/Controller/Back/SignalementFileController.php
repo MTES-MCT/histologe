@@ -137,6 +137,7 @@ class SignalementFileController extends AbstractController
         $update->execute();
 
         $entityManager->flush();
+        $this->addFlash('success', 'Les documents ont bien été ajoutés.');
 
         return $this->json(['success' => true]);
     }
@@ -182,6 +183,26 @@ class SignalementFileController extends AbstractController
         }
 
         return $this->json(['response' => 'error'], Response::HTTP_BAD_REQUEST);
+    }
+
+    #[Route('/file/delete-tmp/{id}', name: 'back_signalement_delete_tmpfile')]
+    public function deleteTmpFile(
+        File $file,
+        EntityManagerInterface $entityManager,
+        UploadHandlerService $uploadHandlerService,
+        FileRepository $fileRepository
+    ): JsonResponse {
+        $this->denyAccessUnlessGranted('FILE_DELETE', $file);
+        if (!$file->isIsWaitingSuivi()) {
+            return $this->json(['success' => false], Response::HTTP_BAD_REQUEST);
+        }
+        if (!$uploadHandlerService->deleteSignalementFile($file, $fileRepository)) {
+            return $this->json(['success' => false], Response::HTTP_BAD_REQUEST);
+        }
+        $entityManager->remove($file);
+        $entityManager->flush();
+
+        return $this->json(['success' => true]);
     }
 
     /**
