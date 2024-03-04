@@ -13,6 +13,7 @@ use App\Repository\SuiviRepository;
 use App\Repository\UserRepository;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Bundle\SecurityBundle\Security;
 
 class SuiviManagerTest extends KernelTestCase
@@ -20,6 +21,7 @@ class SuiviManagerTest extends KernelTestCase
     private const REF_SIGNALEMENT = '2022-8';
     private ManagerRegistry $managerRegistry;
     private SuiviFactory $suiviFactory;
+    private UrlGeneratorInterface $urlGenerator;
     private SignalementUpdatedListener $signalementUpdatedListener;
     private Security $security;
 
@@ -28,6 +30,7 @@ class SuiviManagerTest extends KernelTestCase
         self::bootKernel();
         $this->managerRegistry = self::getContainer()->get(ManagerRegistry::class);
         $this->suiviFactory = static::getContainer()->get(SuiviFactory::class);
+        $this->urlGenerator = static::getContainer()->get(UrlGeneratorInterface::class);
         $this->signalementUpdatedListener = static::getContainer()->get(SignalementUpdatedListener::class);
         $this->security = static::getContainer()->get(Security::class);
     }
@@ -37,6 +40,7 @@ class SuiviManagerTest extends KernelTestCase
         $suiviManager = new SuiviManager(
             $this->suiviFactory,
             $this->managerRegistry,
+            $this->urlGenerator,
             $this->signalementUpdatedListener,
             $this->security,
             Suivi::class,
@@ -71,6 +75,7 @@ class SuiviManagerTest extends KernelTestCase
         $suiviManager = new SuiviManager(
             $this->suiviFactory,
             $this->managerRegistry,
+            $this->urlGenerator,
             $this->signalementUpdatedListener,
             $this->security,
             Suivi::class,

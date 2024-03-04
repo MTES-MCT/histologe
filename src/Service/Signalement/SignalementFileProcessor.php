@@ -88,7 +88,9 @@ class SignalementFileProcessor
         Signalement $signalement,
         ?UserInterface $user = null,
         ?Intervention $intervention = null,
-    ): void {
+        ?bool $isWaitingSuivi = false
+    ): array {
+        $list = [];
         foreach ($fileList as $fileItem) {
             $file = $this->fileFactory->createInstanceFrom(
                 filename: $fileItem['file'],
@@ -97,12 +99,16 @@ class SignalementFileProcessor
                 user: $user,
                 intervention: $intervention,
                 documentType: $fileItem['documentType'],
+                isWaitingSuivi: $isWaitingSuivi
             );
             $file->setSize($this->uploadHandlerService->getFileSize($file->getFilename()));
             $file->setIsVariantsGenerated($this->uploadHandlerService->hasVariants($file->getFilename()));
             $signalement->addFile($file);
             $this->lastFile = $file;
+            $list[] = $file;
         }
+
+        return $list;
     }
 
     public function isValid(): bool

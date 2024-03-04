@@ -2,6 +2,7 @@
 
 namespace App\Manager;
 
+use App\Entity\File;
 use App\Entity\Signalement;
 use App\Entity\Suivi;
 use App\Entity\User;
@@ -9,12 +10,14 @@ use App\EventListener\SignalementUpdatedListener;
 use App\Factory\SuiviFactory;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Bundle\SecurityBundle\Security;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 class SuiviManager extends Manager
 {
     public function __construct(
         private readonly SuiviFactory $suiviFactory,
         protected ManagerRegistry $managerRegistry,
+        private readonly UrlGeneratorInterface $urlGenerator,
         protected SignalementUpdatedListener $signalementUpdatedListener,
         protected Security $security,
         string $entityName = Suivi::class
@@ -65,5 +68,51 @@ class SuiviManager extends Manager
                 flush: true
             );
         }
+    }
+
+    public function createInstanceForFilesSignalement(User $user, Signalement $signalement, array $files): Suivi
+    {
+        $nbDocs = 0;
+        $nbPhotos = 0;
+        foreach ($files as $file) {
+            if (File::FILE_TYPE_PHOTO === $file->getFileType()) {
+                ++$nbPhotos;
+            } else {
+                ++$nbDocs;
+            }
+        }
+        $description = '';
+        if ($nbDocs > 0) {
+            $description .= $nbDocs;
+            $description .= $nbDocs > 1 ? ' documents partenaires' : ' document partenaire';
+        }
+        if ($nbPhotos > 0) {
+            if ('' !== $description) {
+                $description .= ' et ';
+            }
+            $description .= $nbPhotos;
+            $description .= $nbPhotos > 1 ? ' photos' : ' photo';
+        }
+        if ($nbDocs + $nbPhotos > 1) {
+            $description .= ' ont été ajoutés au signalement : ';
+        } else {
+            $description .= ' a été ajouté au signalement : ';
+        }
+        $descriptionList = [];
+        foreach ($files as $file) {
+            $fileUrl = $this->urlGenerator->generate('show_uploaded_file', ['folder' => '_up', 'filename' => $file->getFilename()]);
+            $descriptionList[] = '<li><a class="fr-link" target="_blank" href="'.$fileUrl.'">'.$file->getTitle().'</a></li>';
+        }
+
+        $suivi = $this->suiviFactory->createInstanceFrom($user, $signalement);
+        $suivi->setDescription(
+            $description
+            .'<ul>'
+            .implode('', $descriptionList)
+            .'</ul>'
+        );
+        $suivi->setType(SUIVI::TYPE_AUTO);
+
+        return $suivi;
     }
 }
