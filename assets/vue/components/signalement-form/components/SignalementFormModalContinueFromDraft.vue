@@ -10,8 +10,8 @@
             <div class="fr-modal__content">
               <h1 id="fr-modal-title-modal-continue-draft" class="fr-modal__title">Reprendre la saisie</h1>
               <p>
-                Il semblerait que vous avez commencé à remplir un signalement pour le logement situé {{ formStore.data.adresse_logement_adresse }}, le {{ formatDate(formStore.existingDraft.createdAt) }}.
-                Vous pouvez récupérer les infos de ce signalement et reprendre ou vous vous êtes arrêté.
+                Il semblerait que vous ayez commencé à remplir un signalement pour le logement situé {{ formStore.data.adresse_logement_adresse }}, le {{ formatDate(formStore.existingDraft.createdAt) }}.
+                Vous pouvez récupérer les infos de ce signalement et reprendre où vous en étiez.
                 Souhaitez-vous reprendre le signalement ?
               </p>
             </div>

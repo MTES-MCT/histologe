@@ -96,7 +96,7 @@ class SignalementDraft
     public function setEmailDeclarant(string $emailDeclarant): self
     {
         $this->emailDeclarant = $emailDeclarant;
-        $this->setIdentificationHash($this->calculateHash());
+        $this->setIdentificationHash();
 
         return $this;
     }
@@ -109,7 +109,7 @@ class SignalementDraft
     public function setAddressComplete(?string $addressComplete): self
     {
         $this->addressComplete = $addressComplete;
-        $this->setIdentificationHash($this->calculateHash());
+        $this->setIdentificationHash();
 
         return $this;
     }
@@ -197,9 +197,9 @@ class SignalementDraft
         return $this->identificationHash;
     }
 
-    public function setIdentificationHash(string $identificationHash): self
+    public function setIdentificationHash(): self
     {
-        $this->identificationHash = $identificationHash;
+        $this->identificationHash = $this->calculateHash();
 
         return $this;
     }

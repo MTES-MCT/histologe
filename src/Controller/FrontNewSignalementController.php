@@ -7,6 +7,7 @@ use App\Entity\Enum\SignalementDraftStatus;
 use App\Entity\SignalementDraft;
 use App\Factory\SignalementDraftFactory;
 use App\Manager\SignalementDraftManager;
+use App\Repository\SignalementDraftRepository;
 use App\Serializer\SignalementDraftRequestSerializer;
 use App\Service\Mailer\NotificationMail;
 use App\Service\Mailer\NotificationMailerRegistry;
@@ -34,10 +35,16 @@ class FrontNewSignalementController extends AbstractController
         if (!$parameterBag->get('feature_new_form')) {
             return $this->redirectToRoute('front_signalement');
         }
+        if (
+            $signalementDraft
+            && SignalementDraftStatus::EN_COURS === $signalementDraft->getStatus()
+        ) {
+            return $this->render('front/nouveau_formulaire.html.twig', [
+                'uuid_signalement' => $signalementDraft->getUuid(),
+            ]);
+        }
 
-        return $this->render('front/nouveau_formulaire.html.twig', [
-            'uuid_signalement' => $signalementDraft->getUuid(),
-        ]);
+        return $this->redirectToRoute('front_signalement');
     }
 
     #[Route('/signalement-draft/envoi', name: 'envoi_nouveau_signalement_draft', methods: 'POST')]
@@ -77,6 +84,7 @@ class FrontNewSignalementController extends AbstractController
         SignalementDraftManager $signalementDraftManager,
         ValidatorInterface $validator,
         SignalementDraftFactory $signalementDraftFactory,
+        SignalementDraftRepository $signalementDraftRepository,
     ): Response {
         /** @var SignalementDraftRequest $signalementDraftRequest */
         $signalementDraftRequest = $serializer->deserialize(
@@ -94,10 +102,13 @@ class FrontNewSignalementController extends AbstractController
             $dataToHash .= $signalementDraftRequest->getAdresseLogementAdresse();
             $hash = hash('sha256', $dataToHash);
 
-            $existingSignalementDraft = $signalementDraftManager->findOneBy(
+            $existingSignalementDraft = $signalementDraftRepository->findOneBy(
                 [
                     'identificationHash' => $hash,
                     'status' => SignalementDraftStatus::EN_COURS,
+                ],
+                [
+                    'id' => 'DESC',
                 ]
             );
 
@@ -171,7 +182,11 @@ class FrontNewSignalementController extends AbstractController
         SignalementDraft $signalementDraft,
         Request $request
     ): Response {
-        if ($request->isMethod('POST') && $signalementDraft) {
+        if (
+            $request->isMethod('POST')
+            && $signalementDraft
+            && SignalementDraftStatus::EN_COURS === $signalementDraft->getStatus()
+        ) {
             $success = $notificationMailerRegistry->send(
                 new NotificationMail(
                     type: NotificationMailerType::TYPE_CONTINUE_FROM_DRAFT,
@@ -193,7 +208,11 @@ class FrontNewSignalementController extends AbstractController
         Request $request,
         SignalementDraftManager $signalementDraftManager
     ): Response {
-        if ($request->isMethod('POST') && $signalementDraft) {
+        if (
+            $request->isMethod('POST')
+            && $signalementDraft
+            && SignalementDraftStatus::EN_COURS === $signalementDraft->getStatus()
+        ) {
             $signalementDraft->setStatus(SignalementDraftStatus::ARCHIVE);
             $signalementDraftManager->save($signalementDraft);
 
