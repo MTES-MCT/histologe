@@ -18,7 +18,7 @@ class CompositionLogementRequest implements RequestInterface
         )]
         private readonly ?string $typeLogementNatureAutrePrecision = null,
         #[Assert\NotBlank(
-            message: 'Merci de selectioner pièce unique ou plusieurs pièces.',
+            message: 'Merci de sélectioner pièce unique ou plusieurs pièces.',
             groups: ['LOCATAIRE', 'BAILLEUR_OCCUPANT', 'BAILLEUR', 'TIERS_PARTICULIER', 'TIERS_PRO', 'SERVICE_SECOURS']
         )]
         #[Assert\Choice(
