@@ -8,13 +8,15 @@ class SituationFoyerRequest implements RequestInterface
 {
     public function __construct(
         private readonly ?string $isLogementSocial = null,
-        #[Assert\NotBlank([
-            'message' => 'Veuillez définir le champ demande relogement.',
-            'groups' => ['LOCATAIRE', 'BAILLEUR_OCCUPANT'], ])]
+        #[Assert\NotBlank(
+            message: 'Veuillez définir le champ demande relogement.',
+            groups: ['LOCATAIRE', 'BAILLEUR_OCCUPANT']
+        )]
         private readonly ?string $isRelogement = null,
-        #[Assert\NotBlank([
-            'message' => 'Veuillez définir le champ allocataire.',
-            'groups' => ['LOCATAIRE', 'BAILLEUR_OCCUPANT', 'BAILLEUR', 'TIERS_PARTICULIER', 'TIERS_PRO'], ])]
+        #[Assert\NotBlank(
+            message: 'Veuillez définir le champ allocataire.',
+            groups: ['LOCATAIRE', 'BAILLEUR_OCCUPANT', 'BAILLEUR', 'TIERS_PARTICULIER', 'TIERS_PRO']
+        )]
         private readonly ?string $isAllocataire = null,
         #[Assert\DateTime('Y-m-d')]
         #[Assert\When(
@@ -26,9 +28,9 @@ class SituationFoyerRequest implements RequestInterface
         private readonly ?string $dateNaissanceOccupant = null,
         private readonly ?string $numAllocataire = null,
         private readonly ?string $logementSocialMontantAllocation = null,
-        #[Assert\NotBlank([
-            'message' => 'Veuillez définir le champ souhaite quitter le logement.',
-            'groups' => ['LOCATAIRE', 'BAILLEUR_OCCUPANT', 'TIERS_PARTICULIER', 'TIERS_PRO'], ])]
+        #[Assert\NotBlank(message: 'Veuillez définir le champ souhaite quitter le logement.',
+            groups: ['LOCATAIRE', 'BAILLEUR_OCCUPANT', 'TIERS_PARTICULIER', 'TIERS_PRO']
+        )]
         private readonly ?string $travailleurSocialQuitteLogement = null,
         #[Assert\When(
             expression: 'this.getTravailleurSocialQuitteLogement() == "oui"',
@@ -37,9 +39,10 @@ class SituationFoyerRequest implements RequestInterface
             ],
         )]
         private readonly ?string $travailleurSocialPreavisDepart = null,
-        #[Assert\NotBlank([
-            'message' => 'Veuillez définir le champ accompagnement par un travailleur social.',
-            'groups' => ['LOCATAIRE', 'BAILLEUR_OCCUPANT', 'TIERS_PARTICULIER', 'TIERS_PRO'], ])]
+        #[Assert\NotBlank(
+            message: 'Veuillez définir le champ accompagnement par un travailleur social.',
+            groups: ['LOCATAIRE', 'BAILLEUR_OCCUPANT', 'TIERS_PARTICULIER', 'TIERS_PRO']
+        )]
         private readonly ?string $travailleurSocialAccompagnementDeclarant = null,
         private readonly ?string $beneficiaireRsa = null,
         private readonly ?string $beneficiaireFsl = null,

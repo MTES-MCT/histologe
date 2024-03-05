@@ -17,10 +17,13 @@ class CompositionLogementRequest implements RequestInterface
             ],
         )]
         private readonly ?string $typeLogementNatureAutrePrecision = null,
-        #[Assert\NotBlank(message: 'Merci de selectioner pièce unique ou plusieurs pièces.')]
+        #[Assert\NotBlank(
+            message: 'Merci de selectioner pièce unique ou plusieurs pièces.',
+            groups: ['LOCATAIRE', 'BAILLEUR_OCCUPANT', 'BAILLEUR', 'TIERS_PARTICULIER', 'TIERS_PRO', 'SERVICE_SECOURS']
+        )]
         #[Assert\Choice(
             options: ['piece_unique', 'plusieurs_pieces'],
-            message: 'Merci de selectioner pièce unique ou plusieurs pièces.')]
+            message: 'Merci de sélectionner pièce unique ou plusieurs pièces.')]
         private readonly ?string $typeCompositionLogement = null,
         #[Assert\NotBlank(
             message: 'Merci de saisir la superficie du logement.',
@@ -43,6 +46,9 @@ class CompositionLogementRequest implements RequestInterface
         private readonly ?string $nombreEtages = null,
         #[Assert\When(
             expression: 'this.getType() == "appartement"',
+            groups: [
+                'LOCATAIRE', 'BAILLEUR_OCCUPANT', 'BAILLEUR', 'TIERS_PARTICULIER', 'TIERS_PRO', 'SERVICE_SECOURS',
+            ],
             constraints: [
                 new Assert\NotBlank(message: 'Merci de préciser si le logement est au rez-de-chaussée.'),
             ],
@@ -50,6 +56,9 @@ class CompositionLogementRequest implements RequestInterface
         private readonly ?string $typeLogementRdc = null,
         #[Assert\When(
             expression: 'this.getType() == "appartement" && this.getTypeLogementRdc() == "non"',
+            groups: [
+                'LOCATAIRE', 'BAILLEUR_OCCUPANT', 'BAILLEUR', 'TIERS_PARTICULIER', 'TIERS_PRO', 'SERVICE_SECOURS',
+            ],
             constraints: [
                 new Assert\NotBlank(message: 'Merci de préciser si le logement est au dernier étage.'),
             ],
@@ -218,7 +227,7 @@ class CompositionLogementRequest implements RequestInterface
     #[Assert\Callback]
     public function validate(ExecutionContextInterface $context): void
     {
-        if ($this->getTypeLogementDernierEtage() === $this->getTypeLogementRdc()) {
+        if ('oui' === $this->getTypeLogementDernierEtage() && 'oui' === $this->getTypeLogementRdc()) {
             $context->buildViolation('Merci de bien préciser si le logement est au rez-de-chaussée ou dernier étage.')
                 ->atPath('typeLogementRdc')
                 ->addViolation();

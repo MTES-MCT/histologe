@@ -56,31 +56,31 @@
                                     <h2 class="fr-h5">Complément d'adresse (facultatif)</h2>
 
                                     <div class="fr-input-group">
-                                        <label class="fr-label" for="etage">Etage
+                                        <label class="fr-label" for="adresseEtage">Etage
                                             <span class="fr-hint-text">5 caractères maximum</span>
                                         </label>
-                                        <input class="fr-input" type="text" name="etage" value="{{ signalement.etageOccupant }}" maxlength="5">
+                                        <input class="fr-input" type="text" id="adresseEtage" name="etage" value="{{ signalement.etageOccupant }}" maxlength="5">
                                     </div>
 
                                     <div class="fr-input-group">
-                                        <label class="fr-label" for="escalier">Escalier
+                                        <label class="fr-label" for="adresseEscalier">Escalier
                                             <span class="fr-hint-text">3 caractères maximum</span>
                                         </label>
-                                        <input class="fr-input" type="text" name="escalier" value="{{ signalement.escalierOccupant }}" maxlength="3">
+                                        <input class="fr-input" type="text" id="adresseEscalier" name="escalier" value="{{ signalement.escalierOccupant }}" maxlength="3">
                                     </div>
 
                                     <div class="fr-input-group">
-                                        <label class="fr-label" for="numAppart">Numéro d'appartement
+                                        <label class="fr-label" for="adresseNumAppart">Numéro d'appartement
                                             <span class="fr-hint-text">5 caractères maximum</span>
                                         </label>
-                                        <input class="fr-input" type="text" name="numAppart" value="{{ signalement.numAppartOccupant }}" maxlength="5">
+                                        <input class="fr-input" type="text" id="adresseNumAppart" name="numAppart" value="{{ signalement.numAppartOccupant }}" maxlength="5">
                                     </div>
 
                                     <div class="fr-input-group">
-                                        <label class="fr-label" for="autre">Autre (résidence, lieu-dit...)
+                                        <label class="fr-label" for="adresseAutre">Autre (résidence, lieu-dit...)
                                             <span class="fr-hint-text">255 caractères maximum</span>
                                         </label>
-                                        <input class="fr-input" type="text" name="autre" value="{{ signalement.adresseAutreOccupant }}" maxlength="255">
+                                        <input class="fr-input" type="text" id="adresseAutre" name="autre" value="{{ signalement.adresseAutreOccupant }}" maxlength="255">
                                     </div>
                                 </div>
                             </div>

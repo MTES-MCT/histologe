@@ -17,8 +17,8 @@
                             <p>Tous les champs sont obligatoires, sauf mention contraire.</p>
                             {% if signalement.profileDeclarant and signalement.profileDeclarant is same as enum('App\\Entity\\Enum\\ProfileDeclarant').BAILLEUR_OCCUPANT %}
                             <div class="fr-select-group">
-                                <label class="fr-label" for="typeProprio">Type</label>
-                                <select class="fr-select" id="typeProprio" name="typeProprio">
+                                <label class="fr-label" for="coordonneesFoyerTypeProprio">Type</label>
+                                <select class="fr-select" id="coordonneesFoyerTypeProprio" name="typeProprio">
                                     <option value="" disabled hidden>Sélectionnez un choix</option>
                                     <option value="" {{ signalement.typeProprio is same as '' ? 'selected' : '' }}>N/C</option>
                                     <option value="{{ enum('App\\Entity\\Enum\\ProprioType').ORGANISME_SOCIETE.name }}" {{ signalement.typeProprio is same as enum('App\\Entity\\Enum\\ProprioType').ORGANISME_SOCIETE ? 'selected' : '' }}>{{ enum('App\\Entity\\Enum\\ProprioType').ORGANISME_SOCIETE.label }}</option>
@@ -26,18 +26,18 @@
                                 </select>
                             </div>
                             <div class="fr-input-group">
-                                <label class="fr-label" for="nomStructure">Nom de la structure </label>
-                                <input class="fr-input" type="text" id="nomStructure" name="nomStructure" value="{{ signalement.structureDeclarant }}">
+                                <label class="fr-label" for="coordonneesFoyerNomStructure">Nom de la structure </label>
+                                <input class="fr-input" type="text" id="coordonneesFoyerNomStructure" name="nomStructure" value="{{ signalement.structureDeclarant }}">
                             </div>
                             {% endif %}
 
                             <div class="fr-select-group">
-                                <label class="fr-label" for="civilite">Civilité {{ show_label_facultatif(
+                                <label class="fr-label" for="coordonneesFoyerCivilite">Civilité {{ show_label_facultatif(
                                         'App\\Dto\\Request\\Signalement\\CoordonneesFoyerRequest',
                                         'civilite',
                                         signalement.profileDeclarant)  }}
                                 </label>
-                                <select class="fr-select" id="civilite" name="civilite">
+                                <select class="fr-select" id="coordonneesFoyerCivilite" name="civilite">
                                     <option value="" {{ signalement.civiliteOccupant not in ['mme', 'mr'] ? 'selected' : '' }}></option>
                                     <option value="mme" {{ signalement.civiliteOccupant is same as 'mme' ? 'selected' : '' }}>Madame</option>
                                     <option value="mr" {{ signalement.civiliteOccupant is same as 'mr' ? 'selected' : '' }}>Monsieur</option>
@@ -45,46 +45,46 @@
                             </div>
 
                             <div class="fr-input-group">
-                                <label class="fr-label" for="nom">Nom {{ show_label_facultatif(
+                                <label class="fr-label" for="coordonneesFoyerNom">Nom {{ show_label_facultatif(
                                         'App\\Dto\\Request\\Signalement\\CoordonneesFoyerRequest',
                                         'nom',
                                         signalement.profileDeclarant)  }}</label>
-                                <input class="fr-input" type="text" id="nom" name="nom" value="{{ signalement.nomOccupant }}" maxlength="50">
+                                <input class="fr-input" type="text" id="coordonneesFoyerNom" name="nom" value="{{ signalement.nomOccupant }}" maxlength="50">
                             </div>
 
                             <div class="fr-input-group">
-                                <label class="fr-label" for="prenom">Prénom
+                                <label class="fr-label" for="coordonneesFoyerPrenom">Prénom
                                     {{ show_label_facultatif(
                                         'App\\Dto\\Request\\Signalement\\CoordonneesFoyerRequest',
                                         'prenom',
                                         signalement.profileDeclarant)  }}
                                 </label>
-                                <input class="fr-input" type="text" id="prenom" name="prenom" value="{{ signalement.prenomOccupant }}" maxlength="50">
+                                <input class="fr-input" type="text" id="coordonneesFoyerPrenom" name="prenom" value="{{ signalement.prenomOccupant }}" maxlength="50">
                             </div>
 
                             <div class="fr-input-group">
-                                <label class="fr-label" for="mail">Courriel
+                                <label class="fr-label" for="coordonneesFoyerMail">Courriel
                                     {{ show_label_facultatif(
                                         'App\\Dto\\Request\\Signalement\\CoordonneesFoyerRequest',
                                         'mail',
                                         signalement.profileDeclarant)  }}
                                 </label>
-                                <input class="fr-input" type="text" id="mail" name="mail" value="{{ signalement.mailOccupant }}">
+                                <input class="fr-input" type="text" id="coordonneesFoyerMail" name="mail" value="{{ signalement.mailOccupant }}">
                             </div>
 
                             <div class="fr-input-group">
-                                <label class="fr-label" for="telephone">Téléphone
+                                <label class="fr-label" for="coordonneesFoyerTelephone">Téléphone
                                     {{ show_label_facultatif(
                                         'App\\Dto\\Request\\Signalement\\CoordonneesFoyerRequest',
                                         'telephone',
                                         signalement.profileDeclarant)  }}
                                 </label>
-                                <input class="fr-input" type="text" id="telephone" name="telephone" value="{{ signalement.telOccupantDecoded }}">
+                                <input class="fr-input" type="text" id="coordonneesFoyerTelephone" name="telephone" value="{{ signalement.telOccupantDecoded }}">
                             </div>
 
                             <div class="fr-input-group">
-                                <label class="fr-label" for="telephoneBis">Téléphone sec. (facultatif)</label>
-                                <input class="fr-input" type="text" id="telephoneBis" name="telephoneBis" value="{{ signalement.telOccupantBisDecoded }}">
+                                <label class="fr-label" for="coordonneesFoyerTelephoneBis">Téléphone sec. (facultatif)</label>
+                                <input class="fr-input" type="text" id="coordonneesFoyerTelephoneBis" name="telephoneBis" value="{{ signalement.telOccupantBisDecoded }}">
                             </div>
                         </div>
                         

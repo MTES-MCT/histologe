@@ -62,7 +62,6 @@ class SignalementManager extends AbstractManager
         private SignalementExportFactory $signalementExportFactory,
         private ParameterBagInterface $parameterBag,
         private CsrfTokenManagerInterface $csrfTokenManager,
-        private SignalementInputValueMapper $signalementInputValueMapper,
         private SuroccupationSpecification $suroccupationSpecification,
         private CriticiteCalculator $criticiteCalculator,
         private SignalementQualificationUpdater $signalementQualificationUpdater,
@@ -505,41 +504,44 @@ class SignalementManager extends AbstractManager
     ) {
         $situationFoyer = $signalement->getSituationFoyer();
         $typeCompositionLogement = $signalement->getTypeCompositionLogement();
-        if (
-            null !== $situationFoyer
-            && null !== $typeCompositionLogement
-            && $this->suroccupationSpecification->isSatisfiedBy(
-                $situationFoyer,
-                $typeCompositionLogement
-            )) {
-            $precisionToLink = $this->desordrePrecisionRepository->findOneBy(
-                ['desordrePrecisionSlug' => $this->suroccupationSpecification->getSlug()]
-            );
-            if (null !== $precisionToLink) {
-                $signalement->addDesordrePrecision($precisionToLink);
-                $critereToLink = $precisionToLink->getDesordreCritere();
-                if (null !== $critereToLink) {
-                    $signalement->addDesordreCritere($critereToLink);
-                    $categorieToLink = $critereToLink->getDesordreCategorie();
-                    if (null !== $categorieToLink) {
-                        $signalement->addDesordreCategory($categorieToLink);
+        if ($signalement->getCreatedFrom()) {
+            if (
+                null !== $situationFoyer
+                && null !== $typeCompositionLogement
+                && $this->suroccupationSpecification->isSatisfiedBy(
+                    $situationFoyer,
+                    $typeCompositionLogement
+                )) {
+                $precisionToLink = $this->desordrePrecisionRepository->findOneBy(
+                    ['desordrePrecisionSlug' => $this->suroccupationSpecification->getSlug()]
+                );
+                if (null !== $precisionToLink) {
+                    $signalement->addDesordrePrecision($precisionToLink);
+                    $critereToLink = $precisionToLink->getDesordreCritere();
+                    if (null !== $critereToLink) {
+                        $signalement->addDesordreCritere($critereToLink);
+                        $categorieToLink = $critereToLink->getDesordreCategorie();
+                        if (null !== $categorieToLink) {
+                            $signalement->addDesordreCategory($categorieToLink);
+                        }
                     }
                 }
+            } else {
+                $precisionToLink = $this->desordrePrecisionRepository->findOneBy(
+                    ['desordrePrecisionSlug' => 'desordres_type_composition_logement_suroccupation_allocataire']
+                );
+                $signalement->removeDesordrePrecision($precisionToLink);
+                $precisionToLink = $this->desordrePrecisionRepository->findOneBy(
+                    ['desordrePrecisionSlug' => 'desordres_type_composition_logement_suroccupation_non_allocataire']
+                );
+                $signalement->removeDesordrePrecision($precisionToLink);
+                $critereToLink = $precisionToLink->getDesordreCritere();
+                $signalement->removeDesordreCritere($critereToLink);
+                $categorieToLink = $critereToLink->getDesordreCategorie();
+                $signalement->removeDesordreCategory($categorieToLink);
             }
-        } else {
-            $precisionToLink = $this->desordrePrecisionRepository->findOneBy(
-                ['desordrePrecisionSlug' => 'desordres_type_composition_logement_suroccupation_allocataire']
-            );
-            $signalement->removeDesordrePrecision($precisionToLink);
-            $precisionToLink = $this->desordrePrecisionRepository->findOneBy(
-                ['desordrePrecisionSlug' => 'desordres_type_composition_logement_suroccupation_non_allocataire']
-            );
-            $signalement->removeDesordrePrecision($precisionToLink);
-            $critereToLink = $precisionToLink->getDesordreCritere();
-            $signalement->removeDesordreCritere($critereToLink);
-            $categorieToLink = $critereToLink->getDesordreCategorie();
-            $signalement->removeDesordreCategory($categorieToLink);
         }
+
         $signalement->setScore($this->criticiteCalculator->calculate($signalement));
     }
 
@@ -616,12 +618,12 @@ class SignalementManager extends AbstractManager
     ) {
         $signalement
             ->setIsLogementSocial(
-                $this->signalementInputValueMapper->map(
+                SignalementInputValueMapper::map(
                     $situationFoyerRequest->getIsLogementSocial()
                 )
             )
             ->setIsRelogement(
-                $this->signalementInputValueMapper->map(
+                SignalementInputValueMapper::map(
                     $situationFoyerRequest->getIsRelogement()
                 )
             )

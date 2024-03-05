@@ -12,8 +12,7 @@ class SignalementInputValueMapperTest extends TestCase
      */
     public function testMap(string $inputValue, bool|string|null $mappedInputValue): void
     {
-        $signalementInputValueMapper = new SignalementInputValueMapper();
-        $this->assertEquals($mappedInputValue, $signalementInputValueMapper->map($inputValue));
+        $this->assertEquals($mappedInputValue, SignalementInputValueMapper::map($inputValue));
     }
 
     public function provideInputValue(): \Generator

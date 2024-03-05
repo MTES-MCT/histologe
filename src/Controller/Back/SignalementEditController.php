@@ -34,7 +34,7 @@ class SignalementEditController extends AbstractController
         SignalementManager $signalementManager,
         SerializerInterface $serializer,
         ValidatorInterface $validator,
-    ): Response {
+    ): JsonResponse {
         $this->denyAccessUnlessGranted('SIGN_EDIT', $signalement);
         $payload = $request->getPayload()->all();
         if ($this->isCsrfTokenValid('signalement_edit_address_'.$signalement->getId(), $payload['_token'])) {
@@ -71,7 +71,7 @@ class SignalementEditController extends AbstractController
         SignalementManager $signalementManager,
         SerializerInterface $serializer,
         ValidatorInterface $validator,
-    ): Response {
+    ): JsonResponse {
         $this->denyAccessUnlessGranted('SIGN_EDIT', $signalement);
         $payload = $request->getPayload()->all();
         if ($this->isCsrfTokenValid(
@@ -157,7 +157,7 @@ class SignalementEditController extends AbstractController
         SignalementManager $signalementManager,
         SerializerInterface $serializer,
         ValidatorInterface $validator,
-    ): Response {
+    ): JsonResponse {
         $this->denyAccessUnlessGranted('SIGN_EDIT', $signalement);
         $payload = $request->getPayload()->all();
         if ($this->isCsrfTokenValid(
@@ -204,7 +204,7 @@ class SignalementEditController extends AbstractController
         SignalementManager $signalementManager,
         SerializerInterface $serializer,
         ValidatorInterface $validator,
-    ): Response {
+    ): JsonResponse {
         $this->denyAccessUnlessGranted('SIGN_EDIT', $signalement);
         $payload = $request->getPayload()->all();
         if ($this->isCsrfTokenValid(
@@ -219,9 +219,10 @@ class SignalementEditController extends AbstractController
             );
 
             $validationGroups = ['Default'];
-            if ($signalement->getProfileDeclarant()) {
-                $validationGroups[] = $signalement->getProfileDeclarant()->value;
-            }
+            $validationGroups[] = null !== $signalement->getCreatedFrom()
+                ? $signalement->getProfileDeclarant()->value :
+                'EDIT_'.$signalement->getProfileDeclarant()->value;
+
             $errorMessage = FormHelper::getErrorsFromRequest(
                 $validator, $informationsLogementRequest, $validationGroups
             );
@@ -251,7 +252,7 @@ class SignalementEditController extends AbstractController
         SignalementManager $signalementManager,
         SignalementDraftRequestSerializer $serializer,
         ValidatorInterface $validator,
-    ): Response {
+    ): JsonResponse {
         $this->denyAccessUnlessGranted('SIGN_EDIT', $signalement);
         $payload = $request->getPayload()->all();
         if ($this->isCsrfTokenValid(
@@ -266,9 +267,9 @@ class SignalementEditController extends AbstractController
             );
 
             $validationGroups = ['Default'];
-            if ($signalement->getProfileDeclarant()) {
-                $validationGroups[] = $signalement->getProfileDeclarant()->value;
-            }
+            $validationGroups[] = null !== $signalement->getCreatedFrom()
+                ? $signalement->getProfileDeclarant()->value :
+                'EDIT_'.$signalement->getProfileDeclarant()->value;
 
             $errorMessage = FormHelper::getErrorsFromRequest(
                 $validator, $compositionLogementRequest, $validationGroups
@@ -298,7 +299,7 @@ class SignalementEditController extends AbstractController
         SignalementManager $signalementManager,
         SerializerInterface $serializer,
         ValidatorInterface $validator,
-    ): Response {
+    ): JsonResponse {
         $this->denyAccessUnlessGranted('SIGN_EDIT', $signalement);
         $payload = $request->getPayload()->all();
         if ($this->isCsrfTokenValid(
@@ -313,9 +314,10 @@ class SignalementEditController extends AbstractController
             );
 
             $validationGroups = ['Default'];
-            if ($signalement->getProfileDeclarant()) {
-                $validationGroups[] = $signalement->getProfileDeclarant()->value;
-            }
+            $validationGroups[] = null !== $signalement->getCreatedFrom()
+                ? $signalement->getProfileDeclarant()->value :
+                'EDIT_'.$signalement->getProfileDeclarant()->value;
+
             $errorMessage = FormHelper::getErrorsFromRequest($validator, $situationFoyerRequest, $validationGroups);
 
             if (empty($errorMessage)) {
@@ -343,7 +345,7 @@ class SignalementEditController extends AbstractController
         SignalementManager $signalementManager,
         SerializerInterface $serializer,
         ValidatorInterface $validator,
-    ): Response {
+    ): JsonResponse {
         $this->denyAccessUnlessGranted('SIGN_EDIT', $signalement);
         $payload = $request->getPayload()->all();
         if ($this->isCsrfTokenValid(
@@ -357,9 +359,10 @@ class SignalementEditController extends AbstractController
                 'json'
             );
             $validationGroups = ['Default'];
-            if ($signalement->getProfileDeclarant()) {
-                $validationGroups[] = $signalement->getProfileDeclarant()->value;
-            }
+            $validationGroups[] = null !== $signalement->getCreatedFrom()
+                ? $signalement->getProfileDeclarant()->value :
+                'EDIT_'.$signalement->getProfileDeclarant()->value;
+
             $errorMessage = FormHelper::getErrorsFromRequest($validator, $procedureDemarchesRequest, $validationGroups);
 
             if (empty($errorMessage)) {

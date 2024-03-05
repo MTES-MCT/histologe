@@ -5,21 +5,26 @@ const modalElements = document.querySelectorAll('[data-ajax-form] dialog');
 modalElements.forEach((modalElement) => {
     modalElement.addEventListener('dsfr.conceal', (event) => {
         event.preventDefault();
-        const divErrorElements = document.querySelectorAll('.fr-input-group--error');
-        divErrorElements.forEach((divErrorElement) => {
-            divErrorElement.classList.remove('fr-input-group--error');
-            let pErrorElement = divErrorElement.querySelector('.fr-error-text');
-            if (pErrorElement) {
-                pErrorElement.remove();
-            }
-        })
+        clearErrors();
     })
 })
+
+function clearErrors() {
+    const divErrorElements = document.querySelectorAll('.fr-input-group--error');
+    divErrorElements.forEach((divErrorElement) => {
+        divErrorElement.classList.remove('fr-input-group--error');
+        let pErrorElement = divErrorElement.querySelector('.fr-error-text');
+        if (pErrorElement) {
+            pErrorElement.remove();
+        }
+    })
+}
 
 function handleEditSignalementModalForm(element) {
     element.addEventListener('submit', (event) => {
         event.preventDefault();
         const formElement = document.getElementById(event.target.id);
+        clearErrors();
         submitPayload(formElement);
     });
 }

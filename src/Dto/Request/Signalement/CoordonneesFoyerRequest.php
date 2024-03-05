@@ -17,7 +17,7 @@ class CoordonneesFoyerRequest implements RequestInterface
             ],
         )]
         private readonly ?string $nomStructure = null,
-        #[Assert\NotBlank(message: 'Merci de selectionner une civilité.', groups: ['LOCATAIRE'])]
+        #[Assert\NotBlank(message: 'Merci de sélectionner une civilité.', groups: ['LOCATAIRE'])]
         private readonly ?string $civilite = null,
         #[Assert\NotBlank(
             message: 'Merci de saisir un nom.',

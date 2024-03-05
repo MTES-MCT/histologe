@@ -20,7 +20,6 @@ use App\Service\Signalement\CriticiteCalculator;
 use App\Service\Signalement\DesordreTraitement\DesordreCompositionLogementLoader;
 use App\Service\Signalement\Qualification\QualificationStatusService;
 use App\Service\Signalement\Qualification\SignalementQualificationUpdater;
-use App\Service\Signalement\SignalementInputValueMapper;
 use App\Specification\Signalement\SuroccupationSpecification;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ManagerRegistry;
@@ -48,7 +47,6 @@ class SignalementManagerTest extends WebTestCase
     private ParameterBagInterface $parameterBag;
     private SignalementManager $signalementManager;
     private CsrfTokenManagerInterface $csrfTokenManager;
-    private SignalementInputValueMapper $signalementInputValueMapper;
     private SuroccupationSpecification $suroccupationSpecification;
     private CriticiteCalculator $criticiteCalculator;
     private SignalementQualificationUpdater $signalementQualificationUpdater;
@@ -73,7 +71,6 @@ class SignalementManagerTest extends WebTestCase
         $this->signalementExportFactory = static::getContainer()->get(SignalementExportFactory::class);
         $this->parameterBag = static::getContainer()->get(ParameterBagInterface::class);
         $this->csrfTokenManager = static::getContainer()->get(CsrfTokenManagerInterface::class);
-        $this->signalementInputValueMapper = static::getContainer()->get(SignalementInputValueMapper::class);
         $this->suroccupationSpecification = static::getContainer()->get(SuroccupationSpecification::class);
         $this->criticiteCalculator = static::getContainer()->get(CriticiteCalculator::class);
         $this->signalementQualificationUpdater = static::getContainer()->get(SignalementQualificationUpdater::class);
@@ -92,7 +89,6 @@ class SignalementManagerTest extends WebTestCase
             $this->signalementExportFactory,
             $this->parameterBag,
             $this->csrfTokenManager,
-            $this->signalementInputValueMapper,
             $this->suroccupationSpecification,
             $this->criticiteCalculator,
             $this->signalementQualificationUpdater,
@@ -273,7 +269,7 @@ class SignalementManagerTest extends WebTestCase
         /** @var ValidatorInterface $validator */
         $validator = static::getContainer()->get(ValidatorInterface::class);
         $errors = $validator->validate($emptyCompositionLogementRequest, null, ['Default', 'LOCATAIRE']);
-        $this->assertCount(10, $errors);
+        $this->assertCount(8, $errors);
         /** @var ConstraintViolationList $errors */
         $errorsAsString = (string) $errors;
         $this->assertStringContainsString('Merci de définir le nombre de pièces à vivre', $errorsAsString);

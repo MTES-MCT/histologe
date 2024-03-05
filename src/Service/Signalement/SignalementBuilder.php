@@ -53,7 +53,6 @@ class SignalementBuilder
         private FileFactory $fileFactory,
         private UploadHandlerService $uploadHandlerService,
         private Security $security,
-        private SignalementInputValueMapper $signalementInputValueMapper,
         private DesordreCategorieRepository $desordreCategorieRepository,
         private DesordreCritereRepository $desordreCritereRepository,
         private DesordrePrecisionRepository $desordrePrecisionRepository,
@@ -446,7 +445,7 @@ class SignalementBuilder
             return null;
         }
 
-        return $this->signalementInputValueMapper->map($value);
+        return SignalementInputValueMapper::map($value);
     }
 
     private function isConstructionAvant1949(?string $dateConstruction): ?bool
@@ -490,7 +489,7 @@ class SignalementBuilder
     private function resolveIsAllocataire(): ?string
     {
         if ($this->evalBoolean($this->signalementDraftRequest->getLogementSocialAllocation())) {
-            return $this->signalementInputValueMapper->map(
+            return SignalementInputValueMapper::map(
                 $this->signalementDraftRequest->getLogementSocialAllocationCaisse()
             );
         }
