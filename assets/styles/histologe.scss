@@ -46,15 +46,6 @@ pre {
     max-width: 100%;
 }
 
-
-.fr-hover-critere:hover {
-    background: rgba(0, 0, 145, 0.15);
-}
-
-[aria-expanded="true"] .fr-hover-critere {
-    background: rgba(0, 0, 145, 0.15);
-}
-
 /*STYLE*/
 .fr-w-100 {
     width: 100%;
@@ -138,7 +129,7 @@ pre {
     background-color: rgba(191, 204, 251, 0.37);
 }
 
-.fr-toggle--parent, .fr-accordion, .toggle-criticite, [role="button"], .fr-list--hover li, .fr-btn, .fr-checkbox-affectation__parent, .fr-checkbox-affectation__parent label {
+.fr-toggle--parent, .fr-accordion, [role="button"], .fr-list--hover li, .fr-btn, .fr-checkbox-affectation__parent, .fr-checkbox-affectation__parent label {
     cursor: pointer !important;
     user-select: none;
 }
@@ -146,11 +137,6 @@ pre {
 
 .fr-toggle--parent:hover, .fr-accordion__title:hover {
     background-color: var(--background-alt-grey);
-}
-
-.toggle-criticite:hover {
-    border-radius: .25rem;
-    background-color: white;
 }
 
 .fr-rounded {
@@ -386,21 +372,6 @@ a.fr-btn.fr-btn--icon-left.fr-fi-file-pdf-fill.ignore-blank-style::before {
 
 .fr-input--no-resize {
     resize: vertical;
-}
-
-.toggle-criticite > input[type="radio"] {
-    width: 60px;
-    height: 50px;
-    position: relative;
-}
-
-.toggle-criticite > input[type="radio"]::before {
-    position: absolute;
-    content: '';
-    top: 0;
-    left: 25%;
-    width: 50px;
-    height: 50px;
 }
 
 .bar-bulle {

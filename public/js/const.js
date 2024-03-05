@@ -112,28 +112,6 @@ const serializeArray = (form) => {
             return response
         }, {})
 };
-const checkFirstStep = (form) => {
-    return !(form.id === "signalement-step-2" && null === form.querySelector('[type="radio"]:checked') || form.id === "signalement-step-2" && form.querySelectorAll('[type="checkbox"]:checked').length !== form.querySelectorAll('[type="radio"]:checked').length);
-}
-const checkFieldset = (form) => {
-    let field = form.querySelector('fieldset[aria-required="true"]')
-    if (field) {
-        if (null === field.querySelector('[type="checkbox"]:checked')) {
-            field.classList.add('fr-fieldset--error');
-            field?.querySelector('.fr-error-text')?.classList.remove('fr-hidden');
-            invalid = field.parentElement;
-            return false;
-        } else {
-            field.classList.remove('fr-fieldset--error');
-            field?.querySelector('.fr-error-text')?.classList.add('fr-hidden');
-            return true;
-        }
-    } else
-        return true;
-}
-const goToStep = (step) => {
-    document.querySelector('#signalement-step-' + step + '-btn').click();
-}
 const sortTableFunction = (table) => {
     return function (ev) {
         if (ev.target.tagName.toLowerCase() === 'A') {
