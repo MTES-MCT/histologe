@@ -411,6 +411,7 @@ class Signalement
         $this->createdAt = new DateTimeImmutable();
         $this->statut = self::STATUS_NEED_VALIDATION;
         $this->uuid = Uuid::v4();
+        $this->codeSuivi = Uuid::v4();
         $this->suivis = new ArrayCollection();
         $this->score = 0;
         $this->scoreLogement = 0;
@@ -1293,7 +1294,7 @@ class Signalement
         return $this->codeSuivi;
     }
 
-    public function setCodeSuivi(?string $codeSuivi): self
+    public function setCodeSuivi(string $codeSuivi): self
     {
         $this->codeSuivi = $codeSuivi;
 

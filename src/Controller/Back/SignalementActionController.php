@@ -38,7 +38,6 @@ class SignalementActionController extends AbstractController
                 $statut = Signalement::STATUS_ACTIVE;
                 $description = 'validé';
                 $signalement->setValidatedAt(new DateTimeImmutable());
-                $signalement->setCodeSuivi(md5(uniqid()));
                 $toRecipients = $signalement->getMailUsagers();
 
                 foreach ($toRecipients as $toRecipient) {
@@ -75,7 +74,8 @@ class SignalementActionController extends AbstractController
                 ->setDescription('Signalement '.$description)
                 ->setCreatedBy($this->getUser())
                 ->setIsPublic(true)
-                ->setType(SUIVI::TYPE_AUTO);
+                ->setType(SUIVI::TYPE_AUTO)
+                ->setSendMail(false);
             $signalement->setStatut($statut);
             $doctrine->getManager()->persist($signalement);
             $doctrine->getManager()->persist($suivi);
@@ -139,9 +139,6 @@ class SignalementActionController extends AbstractController
             }
             $signalement->setStatut(Signalement::STATUS_ACTIVE);
             $currentCodeSuivi = $signalement->getCodeSuivi();
-            if (empty($currentCodeSuivi)) {
-                $signalement->setCodeSuivi(md5(uniqid()));
-            }
             $doctrine->getManager()->persist($signalement);
             $suivi = new Suivi();
             $suivi->setSignalement($signalement)

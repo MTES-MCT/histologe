@@ -54,6 +54,8 @@ class Suivi
     #[ORM\Column(length: 100, nullable: true)]
     private ?string $context = null;
 
+    private bool $sendMail = true;
+
     public function __construct()
     {
         $this->createdAt = new DateTimeImmutable();
@@ -145,6 +147,18 @@ class Suivi
     public function setContext(?string $context): self
     {
         $this->context = $context;
+
+        return $this;
+    }
+
+    public function getSendMail(): bool
+    {
+        return $this->sendMail;
+    }
+
+    public function setSendMail(bool $sendMail): self
+    {
+        $this->sendMail = $sendMail;
 
         return $this;
     }

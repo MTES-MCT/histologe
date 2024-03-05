@@ -82,7 +82,6 @@ class SignalementBuilder
 
         $this->signalement = (new Signalement())
             ->setCreatedFrom($this->signalementDraft)
-            ->setCodeSuivi($this->tokenGenerator->generateToken())
             ->setTerritory($territory)
             ->setIsCguAccepted(true)
             ->setReference($this->referenceGenerator->generate($territory))
