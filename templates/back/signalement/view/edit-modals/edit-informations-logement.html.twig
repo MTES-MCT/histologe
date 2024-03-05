@@ -49,7 +49,7 @@
                                     }}
                                 </label>
                                 <select class="fr-select" id="informationLogementCompositionLogementEnfants" name="compositionLogementEnfants">
-                                    <option value="" {{ compositionLogementEnfants not in ['oui', 'non', 'nsp'] ? 'selected' : '' }}></option>
+                                    <option value="" {{ compositionLogementEnfants not in ['oui', 'non'] ? 'selected' : '' }}></option>
                                     <option value="oui" {{ compositionLogementEnfants is same as 'oui' ? 'selected' : '' }}>Oui</option>
                                     <option value="non" {{ compositionLogementEnfants is same as 'non' ? 'selected' : '' }}>Non</option>
                                 </select>
