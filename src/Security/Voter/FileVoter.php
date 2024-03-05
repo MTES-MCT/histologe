@@ -32,7 +32,11 @@ class FileVoter extends Voter
     {
         /** @var User $user */
         $user = $token->getUser();
-        if (!$user instanceof UserInterface || (!$subject instanceof Signalement && !$subject instanceof File)) {
+        if (!$user instanceof UserInterface && self::VIEW === $attribute) {
+            return $this->canView($subject);
+        }
+
+        if (!$subject instanceof Signalement && !$subject instanceof File) {
             return false;
         }
         if (self::DELETE !== $attribute &&
