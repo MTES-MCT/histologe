@@ -31,47 +31,23 @@ class UpdateSignalementDesordresCommand extends Command
     {
         $io = new SymfonyStyle($input, $output);
 
-        $signalements = $this->addSignalementsByDesordrePrecisionSlug(
-            'desordres_type_composition_logement_piece_unique_superficie'
-        );
-        $signalements = array_merge($signalements, $this->addSignalementsByDesordrePrecisionSlug(
-            'desordres_type_composition_logement_plusieurs_pieces_aucune_piece_9'
-        ));
-        $signalements = array_merge(
-            $signalements,
-            $this->addSignalementsByDesordrePrecisionSlug('desordres_type_composition_logement_piece_unique_hauteur')
-        );
-        $signalements = array_merge($signalements, $this->addSignalementsByDesordrePrecisionSlug(
-            'desordres_type_composition_logement_plusieurs_pieces_hauteur'
-        ));
-        $signalements = array_merge(
-            $signalements,
-            $this->addSignalementsByDesordrePrecisionSlug('desordres_type_composition_logement_cuisine_collective_oui')
-        );
-        $signalements = array_merge(
-            $signalements,
-            $this->addSignalementsByDesordrePrecisionSlug('desordres_type_composition_logement_cuisine_collective_non')
-        );
-        $signalements = array_merge(
-            $signalements,
-            $this->addSignalementsByDesordrePrecisionSlug('desordres_type_composition_logement_douche_collective_oui')
-        );
-        $signalements = array_merge(
-            $signalements,
-            $this->addSignalementsByDesordrePrecisionSlug('desordres_type_composition_logement_douche_collective_non')
-        );
-        $signalements = array_merge(
-            $signalements,
-            $this->addSignalementsByDesordrePrecisionSlug('desordres_type_composition_logement_wc_collectif_oui')
-        );
-        $signalements = array_merge(
-            $signalements,
-            $this->addSignalementsByDesordrePrecisionSlug('desordres_type_composition_logement_wc_collectif_non')
-        );
-        $signalements = array_merge(
-            $signalements,
-            $this->addSignalementsByDesordrePrecisionSlug('desordres_type_composition_logement_wc_cuisine_ensemble')
-        );
+        $slugsPrecisions = [
+            'desordres_type_composition_logement_piece_unique_superficie',
+            'desordres_type_composition_logement_plusieurs_pieces_aucune_piece_9',
+            'desordres_type_composition_logement_piece_unique_hauteur',
+            'desordres_type_composition_logement_plusieurs_pieces_hauteur',
+            'desordres_type_composition_logement_cuisine_collective_oui',
+            'desordres_type_composition_logement_cuisine_collective_non',
+            'desordres_type_composition_logement_douche_collective_oui',
+            'desordres_type_composition_logement_douche_collective_non',
+            'desordres_type_composition_logement_wc_collectif_oui',
+            'desordres_type_composition_logement_wc_collectif_non',
+            'desordres_type_composition_logement_wc_cuisine_ensemble',
+        ];
+        $signalements = [];
+        foreach ($slugsPrecisions as $slugPrecision) {
+            $signalements = array_merge($signalements, $this->addSignalementsByDesordrePrecisionSlug($slugPrecision));
+        }
 
         if (empty($signalements)) {
             $io->warning('No signalement with one of this desordrePrecision ');
