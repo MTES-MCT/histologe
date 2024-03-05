@@ -28,6 +28,7 @@ class DesordreTraitementPieces implements DesordreTraitementInterface
         if ((\array_key_exists($slugSansDetails1, $payload)
             && self::CHECKED_CRITERE_VALUE === $payload[$slugSansDetails1])
         || 'desordres_logement_chauffage_type_aucun' === $slugSansDetails1
+        || 'desordres_logement_proprete' === $slugSansDetails1
         ) {
             if ('piece_unique' === $payload['composition_logement_piece_unique']
                 || (
