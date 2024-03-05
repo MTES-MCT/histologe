@@ -41,7 +41,7 @@ class UserVoter extends Voter
         if ($this->security->isGranted('ROLE_ADMIN')) {
             return true;
         }
-        if ($user->isSuperAdmin()) {
+        if ($subject->isSuperAdmin()) {
             return false;
         }
 
@@ -79,10 +79,7 @@ class UserVoter extends Voter
 
     private function canFullManage(User $subject, User $user): bool
     {
-        if (!$user->getTerritory()) {
-            return false;
-        }
-        if (!$user->getPartner()) {
+        if (!$this->canEdit($subject, $user)) {
             return false;
         }
 
