@@ -78,8 +78,12 @@ class SignalementRepository extends ServiceEntityRepository
         return $qb->getQuery()->getArrayResult();
     }
 
-    public function countAll(?Territory $territory, ?Partner $partner, bool $removeImported = false, bool $removeArchived = false): int
-    {
+    public function countAll(
+        ?Territory $territory,
+        ?Partner $partner,
+        bool $removeImported = false,
+        bool $removeArchived = false
+    ): int {
         $qb = $this->createQueryBuilder('s');
         $qb->select('COUNT(s.id)');
 
@@ -162,7 +166,7 @@ class SignalementRepository extends ServiceEntityRepository
 
     public function countValidated(bool $removeImported = false): int
     {
-        $notStatus = [Signalement::STATUS_NEED_VALIDATION, Signalement::STATUS_REFUSED, Signalement::STATUS_ARCHIVED];
+        $notStatus = [Signalement::STATUS_NEED_VALIDATION, Signalement::STATUS_ARCHIVED];
         $qb = $this->createQueryBuilder('s');
         $qb->select('COUNT(s.id)');
         $qb->andWhere('s.statut NOT IN (:notStatus)')
