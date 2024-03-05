@@ -23,6 +23,9 @@ class DesordreCompositionLogementLoader
         TypeCompositionLogement $typeCompositionLogement,
     ): void {
         $this->signalement = $signalement;
+        if (null === $this->signalement->getCreatedFrom()) {
+            return;
+        }
         if ('oui' === $typeCompositionLogement->getTypeLogementSousCombleSansFenetre()) {
             $this->addDesordreCriterePrecisionBySlugs(
                 'desordres_type_composition_logement_sous_combles',
