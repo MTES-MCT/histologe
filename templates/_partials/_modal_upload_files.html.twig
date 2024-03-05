@@ -22,14 +22,16 @@
                     <div class="fr-modal__content">
                         <div class="type-conditional type-document">
                             <h1 class="fr-modal__title">
-                                Ajouter des documents partnaires
+                                Ajouter des documents partenaires
                             </h1>
                             <div>
                                 Ajouter un ou plusieurs documents. Pour chaque document, veuillez renseigner son type.
                             </div>
+                            {#
                             <div class="fr-alert fr-alert--info fr-alert--sm">
                                 <p>Pour ajouter des documents de type Bail, DPE, Diagnostic et Etat des lieux, rendez-vous dans la partie "Déclaration usager".</p>
                             </div>
+                            #}
                         </div>
                         <div class="type-conditional type-photo">
                             <h1 class="fr-modal__title">
@@ -39,7 +41,7 @@
                                 Ajouter une ou plusieurs photos au signalement. Pour chaque photo, veuillez sélectionner le désordre auquel elle est rattachée. 
                             </div>
                             <div class="fr-alert fr-alert--warning fr-alert--sm">
-                                <p>Ces photos seront partagées à l'usager. Une fois validées, elles ne pourront plus être supprimées.</p>
+                                <p>Ces photos seront partagées à l'usager.</p>
                             </div>
                         </div>
                         <div class="modal-upload-upload-container fr-mb-4w">
@@ -53,7 +55,7 @@
                             <button class="modal-upload-files-selector fr-btn fr-icon-search-line fr-btn--icon-left fr-btn--secondary">Parcourir les fichiers de l'appareil</button>
                             <input type="file" class="modal-upload-files-selector-input" multiple accept="application/*">
                         </div>
-                        <div class="modal-upload-list-section">
+                        <div class="modal-upload-list-section" id="modal-upload-file-dynamic-content">
                             <div class="modal-upload-list"></div>
                         </div>
                         <div style="display:none">

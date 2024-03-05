@@ -13,6 +13,7 @@ if (modalUploadFiles) {
     const editFileRoute = modalUploadFiles.dataset.editFileRoute
     const editFileToken = modalUploadFiles.dataset.editFileToken
     const btnAnnuler = document.querySelector('#close-modal-upload-file')
+    const ancre = document.querySelector('#modal-upload-file-dynamic-content')
 
     fileSelector.onclick = () => fileSelectorInput.click()
     fileSelectorInput.onchange = () => {
@@ -21,6 +22,7 @@ if (modalUploadFiles) {
                 uploadFile(file)
             }
         })
+        ancre.scrollIntoView({block: 'start'});
     }
 
     dropArea.ondragover = (e) => {
@@ -53,6 +55,7 @@ if (modalUploadFiles) {
                 }
             })
         }
+        ancre.scrollIntoView({block: 'start'});
     }
 
     function typeValidation(file) {
@@ -92,6 +95,8 @@ if (modalUploadFiles) {
         http.onreadystatechange = function () {
             if (this.readyState == XMLHttpRequest.DONE) {
                 let response = JSON.parse(this.response)
+                let btnDeleteTmpFile = div.querySelector('a.delete-tmp-file')
+                addEventListenerDeleteTmpFile(btnDeleteTmpFile)
                 if (this.status == 200) {
                     modalUploadFiles.dataset.hasChanges = true
                     if (modalUploadFiles.dataset.fileType == 'photo') {
@@ -108,12 +113,11 @@ if (modalUploadFiles) {
                         div.querySelector('.select-container').appendChild(clone)
                         addEventListenerSelectTypeDesordre(clone)
                     }
-                    let btnDeleteTmpFile = div.querySelector('a.delete-tmp-file')
-                    addEventListenerDeleteTmpFile(btnDeleteTmpFile)
                     btnDeleteTmpFile.href = btnDeleteTmpFile.href.replace('REPLACE', response.response)
-                    btnDeleteTmpFile.classList.remove('fr-hidden')
+                    btnDeleteTmpFile.classList.remove('fr-hidden', 'delete-html')
                 } else {
                     div.querySelector('.file-error').innerHTML = '<div class="fr-alert fr-alert--error fr-alert--sm">' + response.response + '</div>'
+                    btnDeleteTmpFile.classList.remove('fr-hidden')
                 }
             }
         }
@@ -148,7 +152,7 @@ if (modalUploadFiles) {
         <div class="fr-col-3 select-container">           
         </div>
         <div class="fr-col-1">
-            <a href="${deleteTmpFileRoute}" title="Supprimer" class="fr-btn fr-btn--sm fr-btn--secondary fr-background--white fr-fi-delete-line fr-hidden delete-tmp-file"></a>         
+            <a href="${deleteTmpFileRoute}" title="Supprimer" class="fr-btn fr-btn--sm fr-btn--secondary fr-background--white fr-fi-delete-line fr-hidden delete-tmp-file delete-html"></a>         
         </div>
         <div class="fr-col-12 file-error">
         </div>
@@ -188,6 +192,10 @@ if (modalUploadFiles) {
         button.addEventListener('click', (e) => {
             e.preventDefault()
             button.setAttribute('disabled', '')
+            if (button.classList.contains('delete-html')) {
+                button.closest('.fr-grid-row').remove()
+                return true
+            }
             fetch(button.href)
                 .then((response) => response.json())
                 .then((data) => {
