@@ -79,19 +79,9 @@ document.querySelectorAll('.btn-edit-partner-user').forEach(swbtn => {
       document.querySelector('#user_edit_is_mailing_active-2').checked = true
     }
 
-    const userRoles = target.getAttribute('data-userrole').split(',')
-    const rolesSelect = document.querySelector('#user_edit_roles')
-    if (userRoles.includes('ROLE_ADMIN')) {
-      rolesSelect.value  = 'ROLE_ADMIN'
-    } else if (userRoles.includes('ROLE_ADMIN_TERRITORY')) {
-      rolesSelect.value  = 'ROLE_ADMIN_TERRITORY'
-    } else if (userRoles.includes('ROLE_ADMIN_PARTNER')) {
-      rolesSelect.value  = 'ROLE_ADMIN_PARTNER'
-    } else if (userRoles.includes('ROLE_USER_PARTNER')) {
-      rolesSelect.value  = 'ROLE_USER_PARTNER'
-    } else {
-      rolesSelect.value  = 'ROLE_USER_PARTNER'
-    }
+    const userRole = target.getAttribute('data-userrole')
+    const rolesSelect = document.querySelector('#user_edit_roles');
+    rolesSelect.value = userRole;
 
     document.querySelector('#user_edit_form').addEventListener('submit', (e) => {
       histoUpdateSubmitButton('#user_edit_form_submit', 'Edition en cours...')

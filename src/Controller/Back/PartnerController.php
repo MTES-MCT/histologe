@@ -25,12 +25,12 @@ use Doctrine\ORM\EntityManagerInterface;
 use Egulias\EmailValidator\EmailValidator;
 use Egulias\EmailValidator\Validation\RFCValidation;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Symfony\Component\Form\FormError;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Symfony\Component\Workflow\WorkflowInterface;
 
 #[Route('/bo/partenaires')]
@@ -39,13 +39,12 @@ class PartnerController extends AbstractController
     public const DEFAULT_TERRITORY_AIN = 1;
 
     #[Route('/', name: 'back_partner_index', methods: ['GET', 'POST'])]
+    #[IsGranted('ROLE_ADMIN_TERRITORY')]
     public function index(
         Request $request,
         PartnerRepository $partnerRepository,
         TerritoryRepository $territoryRepository,
-        ParameterBagInterface $parameterBag,
     ): Response {
-        $this->denyAccessUnlessGranted('PARTNER_LIST', null);
         $page = $request->get('page') ?? 1;
         /** @var User $user */
         $user = $this->getUser();
@@ -78,27 +77,27 @@ class PartnerController extends AbstractController
         $totalPartners = \count($paginatedPartners);
 
         return $this->render('back/partner/index.html.twig', [
-           'currentTerritory' => $currentTerritory,
-           'territories' => $territoryRepository->findAllList(),
-           'partners' => $paginatedPartners,
-           'currentType' => $currentType,
-           'types' => $types,
-           'userTerms' => $userTerms,
-           'total' => $totalPartners,
-           'page' => $page,
-           'pages' => (int) ceil($totalPartners / Partner::MAX_LIST_PAGINATION),
+            'currentTerritory' => $currentTerritory,
+            'territories' => $territoryRepository->findAllList(),
+            'partners' => $paginatedPartners,
+            'currentType' => $currentType,
+            'types' => $types,
+            'userTerms' => $userTerms,
+            'total' => $totalPartners,
+            'page' => $page,
+            'pages' => (int) ceil($totalPartners / Partner::MAX_LIST_PAGINATION),
         ]);
     }
 
     #[Route('/ajout', name: 'back_partner_new', methods: ['GET', 'POST'])]
+    #[IsGranted('ROLE_ADMIN_TERRITORY')]
     public function new(Request $request, EntityManagerInterface $entityManager): Response
     {
-        $this->denyAccessUnlessGranted('PARTNER_CREATE', null);
         $partner = new Partner();
         /** @var User $user */
         $user = $this->getUser();
         $form = $this->createForm(PartnerType::class, $partner, [
-            'can_edit_territory' => $user->isSuperAdmin(),
+            'can_edit_territory' => $this->isGranted('ROLE_ADMIN'),
             'territory' => $user->getTerritory(),
             'route' => 'back_partner_new',
         ]);
@@ -106,7 +105,7 @@ class PartnerController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
             // Si la personne identifiée n'est pas super admin (donc qu'elle ne peut pas éditer),
             // on redéfinit le territoire avec celui de l'utilisateur en cours
-            if (!$user->isSuperAdmin()) {
+            if (!$this->isGranted('ROLE_ADMIN')) {
                 $partner->setTerritory($user->getTerritory());
             }
             $entityManager->persist($partner);
@@ -197,8 +196,10 @@ class PartnerController extends AbstractController
                 // delete affectations "en attente" et "acceptées"
                 $affectations = $partner->getAffectations();
                 foreach ($affectations as $affectation) {
-                    if (Affectation::STATUS_ACCEPTED === $affectation->getStatut()
-                    || Affectation::STATUS_WAIT === $affectation->getStatut()) {
+                    if (
+                        Affectation::STATUS_ACCEPTED === $affectation->getStatut()
+                        || Affectation::STATUS_WAIT === $affectation->getStatut()
+                    ) {
                         $partner->removeAffectation($affectation);
                     }
                 }
@@ -243,7 +244,8 @@ class PartnerController extends AbstractController
         /** @var Partner $partner */
         $partner = $partnerManager->find($partnerId);
         $this->denyAccessUnlessGranted('PARTNER_DELETE', $partner);
-        if ($partner
+        if (
+            $partner
             && $this->isCsrfTokenValid('partner_delete', $request->request->get('_token'))
         ) {
             $partner->setIsArchive(true);
@@ -262,8 +264,10 @@ class PartnerController extends AbstractController
             // delete affectations "en attente" et "acceptées"
             $affectations = $partner->getAffectations();
             foreach ($affectations as $affectation) {
-                if (Affectation::STATUS_ACCEPTED === $affectation->getStatut()
-                || Affectation::STATUS_WAIT === $affectation->getStatut()) {
+                if (
+                    Affectation::STATUS_ACCEPTED === $affectation->getStatut()
+                    || Affectation::STATUS_WAIT === $affectation->getStatut()
+                ) {
                     $partner->removeAffectation($affectation);
                 }
             }
@@ -322,40 +326,42 @@ class PartnerController extends AbstractController
         UserManager $userManager,
         PartnerRepository $partnerRepository,
     ): Response {
-        $this->denyAccessUnlessGranted('USER_CREATE', $this->getUser());
-        if (
-            $this->isCsrfTokenValid('partner_user_create', $request->request->get('_token'))
-            && $data = $request->get('user_create')
-        ) {
-            /** @var User $user */
-            $user = $userManager->findOneBy(['email' => $data['email']]);
-            $partnerExist = $partnerRepository->findOneBy(['email' => $data['email']]);
-
-            if (null !== $user && \in_array('ROLE_USAGER', $user->getRoles())) {
-                $data['territory'] = $partner->getTerritory();
-                $data['partner'] = $partner;
-                $data['statut'] = User::STATUS_INACTIVE;
-                $userManager->updateUserFromData($user, $data);
-            } elseif (null !== $user) {
-                $this->addFlash('error', 'Un utilisateur existe déjà avec cette adresse e-mail.');
-
-                return $this->redirectToRoute('back_partner_index', [], Response::HTTP_SEE_OTHER);
-            } elseif (null !== $partnerExist) {
-                $this->addFlash('error', 'Un partenaire existe déjà avec cette adresse e-mail.');
-
-                return $this->redirectToRoute('back_partner_index', [], Response::HTTP_SEE_OTHER);
-            } else {
-                $user = $userManager->createUserFromData($partner, $data);
-            }
-
-            $message = 'L\'utilisateur a bien été créé. Un email de confirmation a été envoyé à '.$user->getEmail();
-            $this->addFlash('success', $message);
+        $this->denyAccessUnlessGranted('USER_CREATE', $partner);
+        $data = $request->get('user_create');
+        if (!$this->isCsrfTokenValid('partner_user_create', $request->request->get('_token'))) {
+            $this->addFlash('error', 'Token CSRF invalide, merci d\'actualiser la page et réessayer.');
 
             return $this->redirectToRoute('back_partner_view', ['id' => $partner->getId()], Response::HTTP_SEE_OTHER);
         }
-        $this->addFlash('error', 'Une erreur est survenue lors de l\'ajout d\'utilisateur.');
+        if (!$this->canAttributeRole($data['roles'])) {
+            return $this->redirectToRoute('back_partner_view', ['id' => $partner->getId()], Response::HTTP_SEE_OTHER);
+        }
 
-        return $this->redirectToRoute('back_partner_index', [], Response::HTTP_SEE_OTHER);
+        /** @var User $user */
+        $user = $userManager->findOneBy(['email' => $data['email']]);
+        $partnerExist = $partnerRepository->findOneBy(['email' => $data['email']]);
+
+        if (null !== $partnerExist) {
+            $this->addFlash('error', 'Un partenaire existe déjà avec cette adresse e-mail.');
+
+            return $this->redirectToRoute('back_partner_view', ['id' => $partner->getId()], Response::HTTP_SEE_OTHER);
+        } elseif (null !== $user && \in_array('ROLE_USAGER', $user->getRoles())) {
+            $data['territory'] = $partner->getTerritory();
+            $data['partner'] = $partner;
+            $data['statut'] = User::STATUS_INACTIVE;
+            $userManager->updateUserFromData($user, $data);
+        } elseif (null !== $user) {
+            $this->addFlash('error', 'Un utilisateur existe déjà avec cette adresse e-mail.');
+
+            return $this->redirectToRoute('back_partner_view', ['id' => $partner->getId()], Response::HTTP_SEE_OTHER);
+        } else {
+            $user = $userManager->createUserFromData($partner, $data);
+        }
+
+        $message = 'L\'utilisateur a bien été créé. Un email de confirmation a été envoyé à '.$user->getEmail();
+        $this->addFlash('success', $message);
+
+        return $this->redirectToRoute('back_partner_view', ['id' => $partner->getId()], Response::HTTP_SEE_OTHER);
     }
 
     #[Route('/editerutilisateur', name: 'back_partner_user_edit', methods: ['POST'])]
@@ -365,59 +371,108 @@ class PartnerController extends AbstractController
         UserRepository $userRepository,
         PartnerRepository $partnerRepository,
     ): Response {
-        $this->denyAccessUnlessGranted('USER_EDIT', $this->getUser());
-        if (
-            $this->isCsrfTokenValid('partner_user_edit', $request->request->get('_token'))
-            && $userId = $request->request->get('user_id')
-        ) {
-            /** @var User $user */
-            $user = $userManager->find((int) $userId);
-            $data = $request->get('user_edit');
-            if ($data['email'] != $user->getEmail()) {
-                $userExist = $userRepository->findOneBy(['email' => $data['email']]);
-                if ($userExist && !\in_array('ROLE_USAGER', $userExist->getRoles())) {
-                    $this->addFlash('error', 'Un utilisateur existe déjà avec cette adresse e-mail.');
+        $userId = $request->request->get('user_id');
+        $user = $userManager->find((int) $userId);
+        /** @var User $user */
+        if (!$userId || !$user || !$user->getPartner()) {
+            $this->addFlash('error', 'Utilisateur introuvable.');
 
-                    return $this->redirectToRoute('back_partner_view', ['id' => $user->getPartner()->getId()], Response::HTTP_SEE_OTHER);
-                }
-                $partnerExist = $partnerRepository->findOneBy(['email' => $data['email']]);
-                if ($partnerExist) {
-                    $this->addFlash('error', 'Un partenaire existe déjà avec cette adresse e-mail.');
-
-                    return $this->redirectToRoute('back_partner_view', ['id' => $user->getPartner()->getId()], Response::HTTP_SEE_OTHER);
-                }
-            }
-            $user = $userManager->updateUserFromData($user, $data);
-            $partnerId = $user->getPartner()->getId();
-
-            $message = 'L\'utilisateur a bien été modifié.';
-            $this->addFlash('success', $message);
-
-            return $this->redirectToRoute('back_partner_view', ['id' => $partnerId], Response::HTTP_SEE_OTHER);
+            return $this->redirectToRoute('back_partner_index', [], Response::HTTP_SEE_OTHER);
         }
-        $this->addFlash('error', 'Une erreur est survenue lors de l\'édition de l\'utilisateur.');
+        if (!$this->isCsrfTokenValid('partner_user_edit', $request->request->get('_token'))) {
+            $this->addFlash('error', 'Token CSRF invalide, merci d\'actualiser la page et réessayer.');
 
-        return $this->redirectToRoute('back_partner_index', [], Response::HTTP_SEE_OTHER);
+            return $this->redirectToRoute('back_partner_view', ['id' => $user->getPartner()->getId()], Response::HTTP_SEE_OTHER);
+        }
+        $this->denyAccessUnlessGranted('USER_EDIT', $user);
+
+        $data = $request->get('user_edit');
+        if ($data['email'] != $user->getEmail()) {
+            $userExist = $userRepository->findOneBy(['email' => $data['email']]);
+            if ($userExist && !\in_array('ROLE_USAGER', $userExist->getRoles())) {
+                $this->addFlash('error', 'Un utilisateur existe déjà avec cette adresse e-mail.');
+
+                return $this->redirectToRoute('back_partner_view', ['id' => $user->getPartner()->getId()], Response::HTTP_SEE_OTHER);
+            }
+            $partnerExist = $partnerRepository->findOneBy(['email' => $data['email']]);
+            if ($partnerExist) {
+                $this->addFlash('error', 'Un partenaire existe déjà avec cette adresse e-mail.');
+
+                return $this->redirectToRoute('back_partner_view', ['id' => $user->getPartner()->getId()], Response::HTTP_SEE_OTHER);
+            }
+        }
+        if ($data['roles'] != $user->getRoles()[0]) {
+            if (!$this->canAttributeRole($data['roles'])) {
+                return $this->redirectToRoute('back_partner_view', ['id' => $user->getPartner()->getId()], Response::HTTP_SEE_OTHER);
+            }
+        }
+        $user = $userManager->updateUserFromData(
+            $user,
+            [
+                'nom' => $data['nom'],
+                'prenom' => $data['prenom'],
+                'roles' => $data['roles'],
+                'email' => $data['email'],
+                'isMailingActive' => $data['isMailingActive'],
+            ]
+        );
+
+        $message = 'L\'utilisateur a bien été modifié.';
+        $this->addFlash('success', $message);
+
+        return $this->redirectToRoute('back_partner_view', ['id' => $user->getPartner()->getId()], Response::HTTP_SEE_OTHER);
+    }
+
+    private function canAttributeRole(string $role): bool
+    {
+        $authorizedRoles = ['ROLE_USER_PARTNER', 'ROLE_ADMIN_PARTNER'];
+        if ($this->isGranted('ROLE_ADMIN_TERRITORY')) {
+            $authorizedRoles[] = 'ROLE_ADMIN_TERRITORY';
+        }
+        if ($this->isGranted('ROLE_ADMIN')) {
+            $authorizedRoles[] = 'ROLE_ADMIN';
+        }
+        if (!\in_array($role, $authorizedRoles)) {
+            $this->addFlash('error', 'Vous n\'avez pas les droits pour attribuer ce rôle.');
+
+            return false;
+        }
+
+        return true;
     }
 
     #[Route('/transfererutilisateur', name: 'back_partner_user_transfer', methods: ['POST'])]
-    public function transferUser(Request $request, UserManager $userManager, PartnerManager $partnerManager): Response
+    public function transferUser(Request $request, UserManager $userManager, PartnerManager $partnerManager, PartnerRepository $partnerRepository): Response
     {
-        $this->denyAccessUnlessGranted('USER_TRANSFER', $this->getUser());
-        if (
-            $this->isCsrfTokenValid('partner_user_transfer', $request->request->get('_token'))
-            && $data = $request->get('user_transfer')
-        ) {
-            $partner = $partnerManager->find($data['partner']);
-            $user = $userManager->find($data['user']);
-            $userManager->transferUserToPartner($user, $partner);
-            $this->addFlash('success', 'L\'utilisateur a bien été transféré.');
+        $data = $request->get('user_transfer');
+        if (!$this->isCsrfTokenValid('partner_user_transfer', $request->request->get('_token'))) {
+            $this->addFlash('error', 'Token CSRF invalide, merci d\'actualiser la page et réessayer.');
 
-            return $this->redirectToRoute('back_partner_view', ['id' => $partner->getId()], Response::HTTP_SEE_OTHER);
+            return $this->redirectToRoute('back_partner_index', [], Response::HTTP_SEE_OTHER);
         }
-        $this->addFlash('error', 'Une erreur est survenue lors du transfert...');
+        $partner = $partnerManager->find($data['partner']);
+        $user = $userManager->find($data['user']);
+        if (!$partner || !$user) {
+            $this->addFlash('error', 'Partenaire ou utilisateur introuvable.');
 
-        return $this->redirectToRoute('back_partner_index', [], Response::HTTP_SEE_OTHER);
+            return $this->redirectToRoute('back_partner_index', [], Response::HTTP_SEE_OTHER);
+        }
+        $this->denyAccessUnlessGranted('USER_TRANSFER', $user);
+        if (!$this->isGranted('ROLE_ADMIN')) {
+            /** @var User $currentUser */
+            $currentUser = $this->getUser();
+            $partnersAuthorized = $partnerRepository->findAllList($currentUser->getTerritory());
+            if (!isset($partnersAuthorized[$partner->getId()])) {
+                $this->addFlash('error', 'Vous n\'avez pas les droits pour transférer sur ce partenaire.');
+
+                return $this->redirectToRoute('back_partner_index', [], Response::HTTP_SEE_OTHER);
+            }
+        }
+
+        $userManager->transferUserToPartner($user, $partner);
+        $this->addFlash('success', 'L\'utilisateur a bien été transféré.');
+
+        return $this->redirectToRoute('back_partner_view', ['id' => $partner->getId()], Response::HTTP_SEE_OTHER);
     }
 
     #[Route('/supprimerutilisateur', name: 'back_partner_user_delete', methods: ['POST'])]
@@ -426,41 +481,40 @@ class PartnerController extends AbstractController
         UserManager $userManager,
         NotificationMailerRegistry $notificationMailerRegistry
     ): Response {
-        $this->denyAccessUnlessGranted('USER_DELETE', $this->getUser());
-        if (
-            $this->isCsrfTokenValid('partner_user_delete', $request->request->get('_token'))
-            && $userId = $request->request->get('user_id')
-        ) {
-            /** @var User $user */
-            $user = $userManager->find($userId);
-            $user->setStatut(User::STATUS_ARCHIVE);
-            $userManager->save($user);
-            $notificationMailerRegistry->send(
-                new NotificationMail(
-                    type: NotificationMailerType::TYPE_ACCOUNT_DELETE,
-                    to: $user->getEmail(),
-                    territory: $user->getTerritory()
-                )
-            );
-            $this->addFlash('success', 'L\'utilisateur a bien été supprimé.');
+        $userId = $request->request->get('user_id');
+        if (!$this->isCsrfTokenValid('partner_user_delete', $request->request->get('_token'))) {
+            $this->addFlash('error', 'Token CSRF invalide, merci d\'actualiser la page et réessayer.');
 
-            return $this->redirectToRoute(
-                'back_partner_view',
-                ['id' => $user->getPartner()->getId()],
-                Response::HTTP_SEE_OTHER
-            );
+            return $this->redirectToRoute('back_partner_index', [], Response::HTTP_SEE_OTHER);
         }
-        $this->addFlash('error', 'Une erreur est survenue lors de la suppression...');
+        /** @var User $user */
+        $user = $userManager->find($userId);
+        $this->denyAccessUnlessGranted('USER_DELETE', $user);
 
-        return $this->redirectToRoute('back_partner_index', [], Response::HTTP_SEE_OTHER);
+        $user->setStatut(User::STATUS_ARCHIVE);
+        $userManager->save($user);
+        $notificationMailerRegistry->send(
+            new NotificationMail(
+                type: NotificationMailerType::TYPE_ACCOUNT_DELETE,
+                to: $user->getEmail(),
+                territory: $user->getTerritory()
+            )
+        );
+        $this->addFlash('success', 'L\'utilisateur a bien été supprimé.');
+
+        return $this->redirectToRoute(
+            'back_partner_view',
+            ['id' => $user->getPartner()->getId()],
+            Response::HTTP_SEE_OTHER
+        );
     }
 
     #[Route('/checkmail', name: 'back_partner_check_user_email', methods: ['POST'])]
+    #[IsGranted('ROLE_ADMIN_PARTNER')]
     public function checkMail(
         Request $request,
         UserRepository $userRepository
     ): Response {
-        $this->denyAccessUnlessGranted('USER_CHECKMAIL', $this->getUser());
         if ($this->isCsrfTokenValid('partner_checkmail', $request->request->get('_token'))) {
             $userExist = $userRepository->findOneBy(['email' => $request->get('email')]);
             if ($userExist && !\in_array('ROLE_USAGER', $userExist->getRoles())) {

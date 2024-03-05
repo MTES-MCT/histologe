@@ -151,19 +151,24 @@
                             {% endif %}
                         </td>
                         <td class="fr-text--right">
-                            <a href="#" class="fr-btn fr-fi-edit-line fr-mt-3v btn-edit-partner-user"
-                            id="partner_users_edit_{{ user.id }}" aria-controls="fr-modal-user-edit"
-                            data-fr-opened="false" 
-                            data-usernom="{{ user.nom }}" 
-                            data-userprenom="{{ user.prenom }}" 
-                            data-userrole="{{ user.roles|join(',') }}" 
-                            data-userismailingactive="{{ user.isMailingActive }}" 
-                            data-userid="{{ user.id }}" 
-                            data-useremail="{{ user.email }}"></a>
-                            {% if is_granted('ROLE_ADMIN_TERRITORY') and app.request.get('_route') is not same as('back_partner_new') %}
+                            {% if is_granted('USER_EDIT', user) %}
+                                <a href="#" class="fr-btn fr-fi-edit-line fr-mt-3v btn-edit-partner-user"
+                                    id="partner_users_edit_{{ user.id }}" aria-controls="fr-modal-user-edit"
+                                    data-fr-opened="false" 
+                                    data-usernom="{{ user.nom }}" 
+                                    data-userprenom="{{ user.prenom }}" 
+                                    data-userrole="{{ user.roles[0] }}" 
+                                    data-userismailingactive="{{ user.isMailingActive }}" 
+                                    data-userid="{{ user.id }}" 
+                                    data-useremail="{{ user.email }}">
+                                </a>
+                            {% endif %}
+                            {% if is_granted('USER_TRANSFER', user) and app.request.get('_route') is not same as('back_partner_new') %}
                                 <a href="#" class="fr-btn fr-btn--orange fr-fi-upload-2-fill fr-mt-3v btn-transfer-partner-user"
                                 id="partner_users_transfer_{{ user.id }}" aria-controls="fr-modal-user-transfer"
                                 data-fr-opened="false" data-username="{{ user.nomComplet }}" data-userid="{{ user.id }}"></a>
+                            {% endif %}
+                            {% if is_granted('USER_DELETE', user) and app.request.get('_route') is not same as('back_partner_new') %}
                                 <a href="#" class="fr-btn fr-btn--danger fr-fi-delete-line fr-mt-3v btn-delete-partner-user"
                                 id="partner_users_delete_{{ user.id }}" aria-controls="fr-modal-user-delete"
                                 data-fr-opened="false" data-username="{{ user.nomComplet }}" data-userid="{{ user.id }}" data-useremail="{{ user.email }}"></a>

@@ -17,18 +17,19 @@ use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 #[Route('/bo/comptes-archives')]
 class BackArchivedAccountController extends AbstractController
 {
     #[Route('/', name: 'back_account_index', methods: ['GET', 'POST'])]
+    #[IsGranted('ROLE_ADMIN')]
     public function index(
         Request $request,
         UserRepository $userRepository,
         TerritoryRepository $territoryRepository,
         PartnerRepository $partnerRepository
     ): Response {
-        $this->denyAccessUnlessGranted('USER_REACTIVE', $this->getUser());
         $page = $request->get('page') ?? 1;
 
         $isNoneTerritory = 'none' == $request->get('territory');
@@ -80,6 +81,7 @@ class BackArchivedAccountController extends AbstractController
     }
 
     #[Route('/{id}/reactiver', name: 'back_account_reactiver', methods: ['GET', 'POST'])]
+    #[IsGranted('ROLE_ADMIN')]
     public function reactiver(
         Request $request,
         User $user,
@@ -88,8 +90,6 @@ class BackArchivedAccountController extends AbstractController
         EntityManagerInterface $entityManager,
         NotificationMailerRegistry $notificationMailerRegistry,
     ): Response {
-        $this->denyAccessUnlessGranted('USER_REACTIVE', $this->getUser());
-
         $isUserUnlinked = (!$user->getTerritory() || !$user->getPartner());
 
         if (User::STATUS_ARCHIVE !== $user->getStatut() && !$isUserUnlinked) {
