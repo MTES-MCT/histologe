@@ -469,7 +469,7 @@ class FrontSignalementController extends AbstractController
 
             return $this->redirectToRoute('front_suivi_signalement');
         }
-        $this->addFlash('error', 'Le lien utilisé est invalide, vérifier votre saisie.');
+        $this->addFlash('error', 'Le lien utilisé est invalide, vérifiez votre saisie.');
 
         return $this->redirectToRoute('front_signalement');
     }
@@ -543,7 +543,7 @@ class FrontSignalementController extends AbstractController
                 'type' => $type,
             ]);
         }
-        $this->addFlash('error', 'Le lien utilisé est invalide, vérifier votre saisie.');
+        $this->addFlash('error', 'Le lien utilisé est invalide, vérifiez votre saisie.');
 
         return $this->redirectToRoute('home');
     }
@@ -608,7 +608,7 @@ class FrontSignalementController extends AbstractController
                 $this->addFlash('error', 'Token CSRF invalide');
             }
         } else {
-            $this->addFlash('error', 'Le lien utilisé est expiré ou invalide, vérifier votre saisie.');
+            $this->addFlash('error', 'Le lien utilisé est expiré ou invalide, vérifiez votre saisie.');
 
             return $this->redirectToRoute('home');
         }
