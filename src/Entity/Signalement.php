@@ -2209,7 +2209,7 @@ class Signalement
 
     public function __toString(): string
     {
-        return $this->reference;
+        return $this->reference.' : '.$this->uuid;
     }
 
     public function hasQualificaton(Qualification $qualification): bool
