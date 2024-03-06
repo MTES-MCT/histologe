@@ -14,6 +14,12 @@
                 Vous pouvez récupérer les infos de ce signalement et reprendre où vous en étiez.
                 Souhaitez-vous reprendre le signalement ?
               </p>
+              <SignalementFormWarning
+                v-if="errorMessage !== ''"
+                id="fr-modal-continue-draft-warning"
+                :label="errorMessage"
+              >
+              </SignalementFormWarning>
             </div>
             <div class="fr-modal__footer">
               <ul class="fr-btns-group fr-btns-group--right fr-btns-group--inline-reverse fr-btns-group--inline-lg fr-btns-group--icon-left">
@@ -41,16 +47,21 @@
 import { defineComponent } from 'vue'
 import formStore from './../store'
 import { requests } from './../requests'
+import SignalementFormWarning from './../components/SignalementFormWarning.vue'
 
 export default defineComponent({
   name: 'SignalementFormModalContinueFromDraft',
+  components: {
+    SignalementFormWarning
+  },
   props: {
     draftClickEvent: Function,
     newClickEvent: Function
   },
   data () {
     return {
-      formStore
+      formStore,
+      errorMessage: ''
     }
   },
   methods: {
@@ -59,11 +70,17 @@ export default defineComponent({
     },
     goToScreenDraft (requestResponse: any) {
       if (requestResponse && requestResponse.success === true) {
+        this.errorMessage = ''
         if (this.draftClickEvent !== undefined) {
           this.draftClickEvent('draft_mail', false)
         }
+      } else if (requestResponse && requestResponse.success === false) {
+        this.errorMessage = requestResponse.message
+        const link = document.getElementById('fr-modal-continue-draft-button')
+        if (link) {
+          link.click()
+        }
       }
-      // TODO : que faire si l'envoi de mail n'a pas fonctionné ?
     },
     makeNewSignalement () {
       requests.archiveDraft(this.saveAndContinue)

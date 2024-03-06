@@ -104,7 +104,7 @@ class FrontNewSignalementController extends AbstractController
 
             $existingSignalementDraft = $signalementDraftRepository->findOneBy(
                 [
-                    'identificationHash' => $hash,
+                    'checksum' => $hash,
                     'status' => SignalementDraftStatus::EN_COURS,
                 ],
                 [
@@ -197,6 +197,12 @@ class FrontNewSignalementController extends AbstractController
             if ($success) {
                 return $this->json(['success' => true]);
             }
+
+            return $this->json([
+                'success' => false,
+                'label' => 'Erreur',
+                'message' => 'L\'envoi du mail n\'a pas fonctionné, veuillez réessayer ou faire un nouveau signalement.',
+            ]);
         }
 
         return $this->json(['response' => 'error'], Response::HTTP_BAD_REQUEST);

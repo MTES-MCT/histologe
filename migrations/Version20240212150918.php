@@ -11,12 +11,12 @@ final class Version20240212150918 extends AbstractMigration
 {
     public function getDescription(): string
     {
-        return 'add identification_hash to signalement_draft';
+        return 'add checksum to signalement_draft';
     }
 
     public function up(Schema $schema): void
     {
-        $this->addSql('ALTER TABLE signalement_draft ADD identification_hash VARCHAR(255) DEFAULT NULL');
+        $this->addSql('ALTER TABLE signalement_draft ADD checksum VARCHAR(255) DEFAULT NULL');
 
         $signalements = $this->connection->fetchAllAssociative(
             'SELECT id, email_declarant, address_complete FROM signalement_draft'
@@ -29,7 +29,7 @@ final class Version20240212150918 extends AbstractMigration
             $hash = hash('sha256', $emailDeclarant.$addressComplete);
 
             $this->addSql(
-                'UPDATE signalement_draft SET identification_hash = :hash WHERE id = :id',
+                'UPDATE signalement_draft SET checksum = :hash WHERE id = :id',
                 ['hash' => $hash, 'id' => $id]
             );
         }
@@ -37,6 +37,6 @@ final class Version20240212150918 extends AbstractMigration
 
     public function down(Schema $schema): void
     {
-        $this->addSql('ALTER TABLE signalement_draft DROP identification_hash');
+        $this->addSql('ALTER TABLE signalement_draft DROP checksum');
     }
 }

@@ -59,6 +59,7 @@ import { defineComponent } from 'vue'
 import formStore from './store'
 import dictionaryStore from './dictionary-store'
 import { requests } from './requests'
+import * as Sentry from '@sentry/browser'
 import { profileUpdater } from './services/profileUpdater'
 import SignalementFormScreen from './components/SignalementFormScreen.vue'
 import SignalementFormBreadCrumbs from './components/SignalementFormBreadCrumbs.vue'
@@ -162,6 +163,7 @@ export default defineComponent({
           if (link) {
             link.click()
           } else {
+            Sentry.captureException(new Error('L\'élément lien n\'a pas été trouvé'))
             console.error('L\'élément lien n\'a pas été trouvé.')
           }
         } else {

@@ -1,7 +1,7 @@
 <template>
   <dialog
     :class="{ 'fr-modal--opened': modelValue }"
-    aria-labelledby="fr-modal-title-modal-back-home"
+    aria-labelledby="fr-modal-title"
     role="dialog"
     :id="id"
     class="fr-modal"
@@ -22,7 +22,7 @@
               </button>
             </div>
             <div class="fr-modal__content">
-              <h1>{{ label }}</h1>
+              <h1 id="fr-modal-title">{{ label }}</h1>
               <p v-html="description"></p>
             </div>
           </div>

@@ -48,7 +48,7 @@ class SignalementDraft
     private Collection $signalements;
 
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
-    private $identificationHash;
+    private $checksum;
 
     private ?SignalementDraftRequest $signalementDraftRequest = null;
 
@@ -96,7 +96,7 @@ class SignalementDraft
     public function setEmailDeclarant(string $emailDeclarant): self
     {
         $this->emailDeclarant = $emailDeclarant;
-        $this->setIdentificationHash();
+        $this->setChecksum();
 
         return $this;
     }
@@ -109,7 +109,7 @@ class SignalementDraft
     public function setAddressComplete(?string $addressComplete): self
     {
         $this->addressComplete = $addressComplete;
-        $this->setIdentificationHash();
+        $this->setChecksum();
 
         return $this;
     }
@@ -192,19 +192,19 @@ class SignalementDraft
         return $this;
     }
 
-    public function getIdentificationHash(): string
+    public function getChecksum(): string
     {
-        return $this->identificationHash;
+        return $this->checksum;
     }
 
-    public function setIdentificationHash(): self
+    public function setChecksum(): self
     {
-        $this->identificationHash = $this->calculateHash();
+        $this->checksum = $this->calculateChecksum();
 
         return $this;
     }
 
-    public function calculateHash(): string
+    public function calculateChecksum(): string
     {
         $dataToHash = $this->emailDeclarant.$this->addressComplete;
 

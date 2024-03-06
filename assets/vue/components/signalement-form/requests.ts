@@ -121,12 +121,12 @@ export const requests = {
 
   sendMailContinueFromDraft (functionReturn: Function) {
     const url = formStore.props.ajaxurlSendMailContinueFromDraft.replace('uuid', formStore.existingDraft.uuid)
-    requests.doRequestPost(url, formStore.data, functionReturn, undefined)
+    requests.doRequestPost(url, '', functionReturn, undefined)
   },
 
   archiveDraft (functionReturn: Function) {
     const url = formStore.props.ajaxurlArchiveDraft.replace('uuid', formStore.existingDraft.uuid)
-    requests.doRequestPost(url, formStore.data, functionReturn, undefined)
+    requests.doRequestPost(url, '', functionReturn, undefined)
   },
 
   validateAddress (valueAdress: string, functionReturn: Function) {
