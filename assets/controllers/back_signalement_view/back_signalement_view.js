@@ -12,8 +12,8 @@ if (modalUploadFiles) {
     const selectDesordreToClone = document.querySelector('#select-desordre-to-clone')
     const editFileRoute = modalUploadFiles.dataset.editFileRoute
     const editFileToken = modalUploadFiles.dataset.editFileToken
-    const btnAnnuler = document.querySelector('#close-modal-upload-file')
     const ancre = document.querySelector('#modal-upload-file-dynamic-content')
+    const btnValidate = document.querySelector('#btn-validate-modal-upload-files')
 
     fileSelector.onclick = () => fileSelectorInput.click()
     fileSelectorInput.onchange = () => {
@@ -210,12 +210,16 @@ if (modalUploadFiles) {
 
 
     modalUploadFiles.addEventListener('dsfr.conceal', (e) => {
-        document.querySelector('.modal-upload-list').innerHTML = ''
-        if (modalUploadFiles.dataset.hasChanges == "true") {
+        if (modalUploadFiles.dataset.validated == "true" && modalUploadFiles.dataset.hasChanges == "true") {
             fetch(waitingSuiviRoute).then((response) => {
                 window.location.reload()
             })
+            return true;
         }
+        document.querySelectorAll('a.delete-tmp-file').forEach((button) => {
+            button.click()
+        })
+        modalUploadFiles.dataset.hasChanges = false
     })
 
     let fileType
@@ -227,6 +231,8 @@ if (modalUploadFiles) {
 
     modalUploadFiles.addEventListener('dsfr.disclose', (e) => {
         listContainer.innerHTML = '';
+        modalUploadFiles.dataset.validated = false
+        modalUploadFiles.dataset.hasChanges = false
         modalUploadFiles.querySelectorAll('.type-conditional').forEach((type) => {
             type.classList.add('fr-hidden')
         })
@@ -241,10 +247,9 @@ if (modalUploadFiles) {
         }
     })
 
-    btnAnnuler.addEventListener('click', (e) => {
-        document.querySelectorAll('a.delete-tmp-file').forEach((button) => {
-            button.click()
-        })
-        modalUploadFiles.dataset.hasChanges = false
+    btnValidate.addEventListener('click', (e) => {
+        modalUploadFiles.dataset.validated = true
     })
+
+
 }

@@ -5,6 +5,7 @@
     role="dialog" 
     data-file-type="document"
     data-has-changes="false"
+    data-validated="false"
     data-add-file-route="{{ path('back_signalement_add_file',{uuid:signalement.uuid}) }}"
     data-add-file-token="{{ csrf_token('signalement_add_file_'~signalement.id) }}"
     data-edit-file-route="{{ path('back_signalement_edit_file',{uuid:signalement.uuid}) }}"
@@ -76,10 +77,10 @@
                     </div>
                     <div class="fr-modal__footer">
                         <div class="fr-btns-group fr-btns-group--right fr-btns-group--inline-lg fr-btns-group--icon-left">
-                            <button class="fr-btn fr-btn--secondary fr-icon-close-line" id="close-modal-upload-file" aria-controls="fr-modal-upload-files">
+                            <button class="fr-btn fr-btn--secondary fr-icon-close-line" aria-controls="fr-modal-upload-files">
                                 Annuler
                             </button>
-                            <button class="fr-btn fr-icon-check-line" aria-controls="fr-modal-upload-files">
+                            <button class="fr-btn fr-icon-check-line" aria-controls="fr-modal-upload-files" id="btn-validate-modal-upload-files">
                                 Valider
                             </button>
                         </div>
