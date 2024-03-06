@@ -68,6 +68,26 @@ class DesordreCritereManager extends AbstractManager
             $criteresSlugs['desordres_logement_chauffage_type_aucun'] = 1;
         }
 
+        // cas particulier pour desordres_logement_proprete
+        if (
+            (
+                isset($filteredDataOfDraft['desordres_logement_proprete_pieces_piece_a_vivre'])
+                && 1 === $filteredDataOfDraft['desordres_logement_proprete_pieces_piece_a_vivre']
+            )
+                ||
+            (
+                isset($filteredDataOfDraft['desordres_logement_proprete_pieces_cuisine'])
+                && 1 === $filteredDataOfDraft['desordres_logement_proprete_pieces_cuisine']
+            )
+                ||
+            (
+                isset($filteredDataOfDraft['desordres_logement_proprete_pieces_salle_de_bain'])
+                && 1 === $filteredDataOfDraft['desordres_logement_proprete_pieces_salle_de_bain']
+            )
+        ) {
+            $criteresSlugs['desordres_logement_proprete'] = 1;
+        }
+
         return $criteresSlugs;
     }
 }
