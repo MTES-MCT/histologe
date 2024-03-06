@@ -127,16 +127,16 @@ class UserManager extends AbstractManager
     public function createUsagerFromSignalement(Signalement $signalement, string $type = self::OCCUPANT): ?User
     {
         $mail = (self::OCCUPANT === $type)
-        ? $signalement->getMailOccupant()
-        : $signalement->getMailDeclarant();
+            ? $signalement->getMailOccupant()
+            : $signalement->getMailDeclarant();
 
         $prenom = (self::OCCUPANT === $type)
-        ? $signalement->getPrenomOccupant()
-        : $signalement->getPrenomDeclarant();
+            ? $signalement->getPrenomOccupant()
+            : $signalement->getPrenomDeclarant();
 
         $nom = (self::OCCUPANT === $type)
-        ? $signalement->getNomOccupant()
-        : $signalement->getNomDeclarant();
+            ? $signalement->getNomOccupant()
+            : $signalement->getNomDeclarant();
 
         if (null !== $mail) {
             /** @var User $user */
@@ -166,6 +166,21 @@ class UserManager extends AbstractManager
         }
 
         return null;
+    }
+
+    public function getUserAndTypeForSignalementAndEmail(Signalement $signalement, ?string $email): array
+    {
+        /** @var User $userOccupant */
+        $userOccupant = $this->createUsagerFromSignalement($signalement, self::OCCUPANT);
+        /** @var User $userDeclarant */
+        $userDeclarant = $this->createUsagerFromSignalement($signalement, self::DECLARANT);
+        if ($userOccupant && $email === $userOccupant->getEmail()) {
+            return [$userOccupant, self::OCCUPANT];
+        } elseif ($userDeclarant && $email === $userDeclarant->getEmail()) {
+            return [$userDeclarant, self::DECLARANT];
+        }
+
+        return [null, null];
     }
 
     public function getSystemUser(): ?User
