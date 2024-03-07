@@ -24,6 +24,9 @@ function handleEditSignalementModalForm(element) {
     element.addEventListener('submit', (event) => {
         event.preventDefault();
         const formElement = document.getElementById(event.target.id);
+        const submitElement = document.querySelector(`.fr-modal--opened [type="submit"]`);
+        submitElement.disabled = true;
+        submitElement.classList.add('fr-btn--loading', 'fr-btn--icon-left', 'fr-icon-refresh-line');
         clearErrors();
         submitPayload(formElement);
     });
@@ -49,6 +52,7 @@ async function submitPayload(formElement) {
             location.reload();
         } else if (response.status === 400) {
             const errors = responseData.errors;
+            const submitElement = document.querySelector(`.fr-modal--opened [type="submit"]`);
             let firstErrorElement = true;
             for (const property in errors) {
                 const inputElement = document.querySelector(`.fr-modal--opened [name="${property}"]`);
@@ -73,6 +77,8 @@ async function submitPayload(formElement) {
                     firstErrorElement = false;
                 }
             }
+            submitElement.disabled = false;
+            submitElement.classList.remove('fr-btn--loading', 'fr-btn--icon-left', 'fr-icon-refresh-line');
         } else {
             alert(responseData.message);
         }
