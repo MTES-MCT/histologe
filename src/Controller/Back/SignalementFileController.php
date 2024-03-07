@@ -185,7 +185,7 @@ class SignalementFileController extends AbstractController
         return $this->json(['response' => 'error'], Response::HTTP_BAD_REQUEST);
     }
 
-    #[Route('/file/delete-tmp/{id}', name: 'back_signalement_delete_tmpfile')]
+    #[Route('/file/delete-tmp/{id}', name: 'back_signalement_delete_tmpfile', methods: ['DELETE'])]
     public function deleteTmpFile(
         File $file,
         EntityManagerInterface $entityManager,

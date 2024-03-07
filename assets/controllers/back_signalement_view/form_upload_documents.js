@@ -194,7 +194,7 @@ if (modalUploadFiles) {
                 button.closest('.fr-grid-row').remove()
                 return true
             }
-            fetch(button.href)
+            fetch(button.href, { method: 'DELETE' })
                 .then((response) => response.json())
                 .then((data) => {
                     if (data.success) {
