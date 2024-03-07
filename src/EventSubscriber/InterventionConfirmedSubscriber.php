@@ -55,7 +55,7 @@ class InterventionConfirmedSubscriber implements EventSubscriberInterface
                     'show_uploaded_file',
                     ['filename' => $intervention->getFiles()->first()->getFilename()],
                     UrlGeneratorInterface::ABSOLUTE_URL
-                ).'/'.$intervention->getSignalement()->getUuid();
+                ).'?t=___TOKEN___';
 
                 $description .= '<a href="'.$urlDocument.'" title="Afficher le document" rel="noopener" target="_blank">Afficher le document</a>';
             }
