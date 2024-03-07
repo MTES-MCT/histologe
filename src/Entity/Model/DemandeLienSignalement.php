@@ -11,18 +11,19 @@ class DemandeLienSignalement
     #[Assert\Email()]
     private string $email;
 
+    #[Assert\NotBlank()]
     private string $adresseHelper;
 
-    private string $adresse;
+    private ?string $adresse = null;
 
-    private string $codePostal;
+    private ?string $codePostal = null;
 
-    private string $ville;
+    private ?string $ville = null;
 
     #[Assert\Callback]
     public function validate(ExecutionContextInterface $context, $payload)
     {
-        if (empty(trim($this->adresse)) || empty(trim($this->codePostal)) && empty(trim($this->ville))) {
+        if (empty(trim($this->adresse)) || empty(trim($this->codePostal)) || empty(trim($this->ville))) {
             $context->buildViolation('Vous devez sélectionner un adresse dans la liste des propositions')
                 ->atPath('adresseHelper')
                 ->addViolation();

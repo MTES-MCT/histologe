@@ -749,3 +749,18 @@ div.photos-album {
         justify-content: space-between;
     }
 }
+.fr-address-suggestion:hover {
+    background-color: #417dc4;
+    color: white !important;
+}
+.fr-address-group {
+  margin-top: -1.5rem;
+  cursor: pointer;
+}
+.fr-address-group-container {
+    position: relative;
+    .fr-address-group {
+        position: absolute;
+        width: 100%;
+    }
+}

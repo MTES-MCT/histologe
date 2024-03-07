@@ -27,7 +27,7 @@ class DemandeLienSignalementType extends AbstractType
             ->add('ville', HiddenType::class)
             ->add('save', SubmitType::class, [
                 'label' => 'Recevoir mon lien de suivi par mail',
-                'attr' => ['class' => 'fr-btn--icon-left fr-icon-check-line fr-btn--sm'],
+                'attr' => ['class' => 'fr-btn--icon-left fr-icon-check-line fr-btn--sm fr-p-1w'],
                 ])
         ;
     }
@@ -36,6 +36,7 @@ class DemandeLienSignalementType extends AbstractType
     {
         $resolver->setDefaults([
             'data_class' => DemandeLienSignalement::class,
+            'attr' => ['id' => 'form-demande-lien-signalement'],
         ]);
     }
 }

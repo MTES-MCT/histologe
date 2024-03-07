@@ -8,8 +8,12 @@ use App\Form\DemandeLienSignalementType;
 use App\Form\PostalCodeSearchType;
 use App\FormHandler\ContactFormHandler;
 use App\Repository\SignalementRepository;
+use App\Service\Mailer\NotificationMail;
+use App\Service\Mailer\NotificationMailerRegistry;
+use App\Service\Mailer\NotificationMailerType;
 use App\Service\Signalement\PostalCodeHomeChecker;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -50,7 +54,9 @@ class HomepageController extends AbstractController
         }
 
         $demandeLienSignalement = new DemandeLienSignalement();
-        $formDemandeLienSignalement = $this->createForm(DemandeLienSignalementType::class, $demandeLienSignalement);
+        $formDemandeLienSignalement = $this->createForm(DemandeLienSignalementType::class, $demandeLienSignalement, [
+            'action' => $this->generateUrl('front_demande_lien_signalement'),
+        ]);
 
         return $this->render('front/index.html.twig', [
             'title' => $title,
@@ -59,6 +65,43 @@ class HomepageController extends AbstractController
             'display_modal' => $displayModal,
             'formDemandeLienSignalement' => $formDemandeLienSignalement,
         ]);
+    }
+
+    #[Route('/demande-lien-signalement', name: 'front_demande_lien_signalement', methods: ['POST'])]
+    public function demandeLienSignalement(
+        Request $request,
+        SignalementRepository $signalementRepository,
+        NotificationMailerRegistry $notificationMailerRegistry,
+        ): JsonResponse {
+        $demandeLienSignalement = new DemandeLienSignalement();
+        $form = $this->createForm(DemandeLienSignalementType::class, $demandeLienSignalement, [
+            'action' => $this->generateUrl('front_demande_lien_signalement'),
+        ]);
+        $form->handleRequest($request);
+        if ($form->isSubmitted() && $form->isValid()) {
+            $signalement = $signalementRepository->findOneForEmailAndAddress(
+                $demandeLienSignalement->getEmail(),
+                $demandeLienSignalement->getAdresse(),
+                $demandeLienSignalement->getCodePostal(),
+                $demandeLienSignalement->getVille()
+            );
+            if ($signalement) {
+                $notificationMailerRegistry->send(
+                    new NotificationMail(
+                        type: NotificationMailerType::TYPE_SIGNALEMENT_LIEN_SUIVI,
+                        to: $demandeLienSignalement->getEmail(),
+                        signalement: $signalement,
+                    )
+                );
+            }
+            $view = $this->renderView('_partials/_demande-lien-signalement-ok.html.twig', ['form' => $form]);
+
+            return new JsonResponse(['html' => $view]);
+        }
+
+        $view = $this->renderView('_partials/_form-demande-lien-signalement.html.twig', ['form' => $form]);
+
+        return new JsonResponse(['html' => $view]);
     }
 
     #[Route('/qui-sommes-nous', name: 'front_about')]
