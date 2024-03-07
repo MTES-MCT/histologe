@@ -37,7 +37,7 @@ class InterventionEditedSubscriber implements EventSubscriberInterface
             $description .= 'Commentaire opérateur :<br>';
             $description .= $intervention->getDetails();
 
-            if (!empty($intervention->getFiles())) {
+            if (!$intervention->getFiles()->isEmpty()) {
                 $description .= '<br>Rapport de visite : ';
 
                 $urlDocument = $this->urlGenerator->generate(
