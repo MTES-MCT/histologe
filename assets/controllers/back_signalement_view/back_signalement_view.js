@@ -127,15 +127,15 @@ if (modalUploadFiles) {
     }
 
     function initInnerHtml(file) {
-        var innerHTML;
+        var innerHTML =`<div class="fr-col-12 file-error"></div>`;
         if (modalUploadFiles.dataset.fileType == 'photo') {
-            innerHTML = `
+            innerHTML += `
             <div class="fr-col-2">
                 <img class="fr-content-media__img" src="${URL.createObjectURL(file)}">
             </div>
             <div class="fr-col-6">`
         } else {
-            innerHTML = `<div class="fr-col-8">`
+            innerHTML += `<div class="fr-col-8">`
         }
         innerHTML += `
             <div class="file-name">
@@ -153,8 +153,6 @@ if (modalUploadFiles) {
         </div>
         <div class="fr-col-1">
             <a href="${deleteTmpFileRoute}" title="Supprimer" class="fr-btn fr-btn--sm fr-btn--secondary fr-background--white fr-fi-delete-line fr-hidden delete-tmp-file delete-html"></a>         
-        </div>
-        <div class="fr-col-12 file-error">
         </div>
         `
         return innerHTML
