@@ -1,0 +1,28 @@
+<h2 class="fr-mt-5w">J'ai déposé un signalement et je veux accéder à mon suivi</h2>
+
+<p>
+	Après le dépôt de votre signalement, vous avez reçu un email contenant le lien vers votre page de suivi. 
+	N'hésitez pas à consulter votre boîte mail et vos courriers indésirables (spam) pour retrouver votre lien !
+	<br>
+	Vous pouvez aussi demander un nouveau lien vers votre page de suivi en remplissant les champs ci-dessous. 
+	Un email avec le lien vers votre page de suivi vous sera alors envoyé.
+</p>
+
+{% form_theme formDemandeLienSignalement 'form/dsfr_theme.html.twig' %}
+{{ form_start(formDemandeLienSignalement) }}
+{{ form_errors(formDemandeLienSignalement) }}
+<div class="fr-grid-row fr-grid-row--gutters">
+	<div class="fr-col-12 fr-col-lg-4">
+        {{ form_row(formDemandeLienSignalement.email) }}
+	</div>
+	<div class="fr-col-12 fr-col-lg-5">
+        {{ form_row(formDemandeLienSignalement.adresseHelper) }}
+	</div>
+	<div class="fr-col-12 fr-col-lg-3">
+		<div class="fr-mt-md-7w">
+        	{{ form_row(formDemandeLienSignalement.save) }}
+		</div>
+	</div>
+</div>
+{{ form_end(formDemandeLienSignalement) }}
+

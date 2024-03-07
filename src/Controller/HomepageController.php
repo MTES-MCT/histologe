@@ -2,7 +2,9 @@
 
 namespace App\Controller;
 
+use App\Entity\Model\DemandeLienSignalement;
 use App\Form\ContactType;
+use App\Form\DemandeLienSignalementType;
 use App\Form\PostalCodeSearchType;
 use App\FormHandler\ContactFormHandler;
 use App\Repository\SignalementRepository;
@@ -47,11 +49,15 @@ class HomepageController extends AbstractController
             $displayModal = $inputPostalCode;
         }
 
+        $demandeLienSignalement = new DemandeLienSignalement();
+        $formDemandeLienSignalement = $this->createForm(DemandeLienSignalementType::class, $demandeLienSignalement);
+
         return $this->render('front/index.html.twig', [
             'title' => $title,
             'form_postalcode' => $form->createView(),
             'stats' => $stats,
             'display_modal' => $displayModal,
+            'formDemandeLienSignalement' => $formDemandeLienSignalement,
         ]);
     }
 
