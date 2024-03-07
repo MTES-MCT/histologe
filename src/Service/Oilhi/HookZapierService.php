@@ -33,6 +33,7 @@ class HookZapierService
     public function pushDossier(DossierMessage $dossierMessage): ResponseInterface|JsonResponse
     {
         $payload = $this->normalizer->normalize($dossierMessage);
+        $payload = $this->removeUselessFields($payload);
         $payload['token'] = $this->token;
         $options = [
             'headers' => [
@@ -57,5 +58,16 @@ class HookZapierService
         ];
 
         return (new JsonResponse($response))->setStatusCode(Response::HTTP_SERVICE_UNAVAILABLE);
+    }
+
+    /**
+     * Utile pour le traitement interne mais inutile à l'enregistrement dans Airtable.
+     */
+    private function removeUselessFields(array $payload): array
+    {
+        unset($payload['signalementId']);
+        unset($payload['partnerId']);
+
+        return $payload;
     }
 }
