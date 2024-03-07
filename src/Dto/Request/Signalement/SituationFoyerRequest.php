@@ -9,12 +9,12 @@ class SituationFoyerRequest implements RequestInterface
     public function __construct(
         private readonly ?string $isLogementSocial = null,
         #[Assert\NotBlank(
-            message: 'Veuillez définir le champ demande relogement.',
+            message: 'Veuillez préciser si une demande de relogement a été faite.',
             groups: ['LOCATAIRE', 'BAILLEUR_OCCUPANT']
         )]
         private readonly ?string $isRelogement = null,
         #[Assert\NotBlank(
-            message: 'Veuillez définir le champ allocataire.',
+            message: 'Veuillez préciser si l\'occupant est allocataire.',
             groups: ['LOCATAIRE', 'BAILLEUR_OCCUPANT', 'BAILLEUR', 'TIERS_PARTICULIER', 'TIERS_PRO']
         )]
         private readonly ?string $isAllocataire = null,
@@ -40,7 +40,7 @@ class SituationFoyerRequest implements RequestInterface
         )]
         private readonly ?string $travailleurSocialPreavisDepart = null,
         #[Assert\NotBlank(
-            message: 'Veuillez définir le champ accompagnement par un travailleur social.',
+            message: 'Veuillez préciser si l\'occupant est accompagné par un travailleur social.',
             groups: ['LOCATAIRE', 'BAILLEUR_OCCUPANT', 'TIERS_PARTICULIER', 'TIERS_PRO']
         )]
         private readonly ?string $travailleurSocialAccompagnementDeclarant = null,
