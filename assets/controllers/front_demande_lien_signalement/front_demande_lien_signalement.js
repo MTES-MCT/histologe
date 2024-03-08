@@ -22,8 +22,8 @@ function attachSubmitFormDemandeLienSignalementEvent() {
                 containerFormDemandeLienSignalement.innerHTML = json.html;
                 attachSubmitFormDemandeLienSignalementEvent();
             })
-        return false;
-    });
+        return false
+    })
     const inputAdresse = document?.querySelector('#demande_lien_signalement_adresseHelper')
     const apiAdresse = 'https://api-adresse.data.gouv.fr/search/?q='
     const addressGroup = fomDemandeLienSignalement.querySelector('.fr-address-group')
@@ -42,7 +42,6 @@ function attachSubmitFormDemandeLienSignalementEvent() {
                         data-postcode="${feature.properties.postcode}"
                         >${feature.properties.label}</div>`
                     })
-                    //pour chaque suggestion d'adresse on attache l'evenement click
                     let suggestions = addressGroup.querySelectorAll('.fr-address-suggestion')    
                     suggestions.forEach((suggestion) => {
                         attachAddressSuggestionEvent(suggestion)
