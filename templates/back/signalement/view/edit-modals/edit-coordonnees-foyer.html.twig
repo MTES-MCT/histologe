@@ -2,7 +2,10 @@
     <div class="fr-container fr-container--fluid fr-container-md">
         <div class="fr-grid-row fr-grid-row--center">
             <div class="fr-col-12 fr-col-md-8">
-                <form method="POST" id="form-edit-coordonnees-foyer" enctype="application/json" action="{{ path('back_signalement_edit_coordonnees_foyer',{uuid:signalement.uuid}) }}">
+                <form method="POST"
+                      id="form-edit-coordonnees-foyer"
+                      enctype="application/json"
+                      action="{{ path('back_signalement_edit_coordonnees_foyer',{uuid:signalement.uuid}) }}">
                     <div class="fr-modal__body">
                         <div class="fr-modal__header">
                             <button type="button" class="fr-btn--close fr-btn" aria-controls="fr-modal-edit-coordonnees-foyer">Fermer</button>
@@ -11,11 +14,11 @@
                             <h1 id="fr-modal-title-modal-edit-coordonnees-foyer" class="fr-modal__title">
                                 Modifier les coordonnées du foyer
                             </h1>
-
+                            <p>Tous les champs sont obligatoires, sauf mention contraire.</p>
                             {% if signalement.profileDeclarant and signalement.profileDeclarant is same as enum('App\\Entity\\Enum\\ProfileDeclarant').BAILLEUR_OCCUPANT %}
                             <div class="fr-select-group">
-                                <label class="fr-label" for="typeProprio">Type</label>
-                                <select class="fr-select" name="typeProprio">
+                                <label class="fr-label" for="coordonneesFoyerTypeProprio">Type</label>
+                                <select class="fr-select" id="coordonneesFoyerTypeProprio" name="typeProprio">
                                     <option value="" disabled hidden>Sélectionnez un choix</option>
                                     <option value="" {{ signalement.typeProprio is same as '' ? 'selected' : '' }}>N/C</option>
                                     <option value="{{ enum('App\\Entity\\Enum\\ProprioType').ORGANISME_SOCIETE.name }}" {{ signalement.typeProprio is same as enum('App\\Entity\\Enum\\ProprioType').ORGANISME_SOCIETE ? 'selected' : '' }}>{{ enum('App\\Entity\\Enum\\ProprioType').ORGANISME_SOCIETE.label }}</option>
@@ -23,14 +26,18 @@
                                 </select>
                             </div>
                             <div class="fr-input-group">
-                                <label class="fr-label" for="nomStructure">Nom de la structure</label>
-                                <input class="fr-input" type="text" name="nomStructure" value="{{ signalement.structureDeclarant }}">
+                                <label class="fr-label" for="coordonneesFoyerNomStructure">Nom de la structure </label>
+                                <input class="fr-input" type="text" id="coordonneesFoyerNomStructure" name="nomStructure" value="{{ signalement.structureDeclarant }}">
                             </div>
                             {% endif %}
 
                             <div class="fr-select-group">
-                                <label class="fr-label" for="civilite">Civilité</label>
-                                <select class="fr-select" name="civilite">
+                                <label class="fr-label" for="coordonneesFoyerCivilite">Civilité {{ show_label_facultatif(
+                                        'App\\Dto\\Request\\Signalement\\CoordonneesFoyerRequest',
+                                        'civilite',
+                                        signalement.profileDeclarant)  }}
+                                </label>
+                                <select class="fr-select" id="coordonneesFoyerCivilite" name="civilite">
                                     <option value="" {{ signalement.civiliteOccupant not in ['mme', 'mr'] ? 'selected' : '' }}></option>
                                     <option value="mme" {{ signalement.civiliteOccupant is same as 'mme' ? 'selected' : '' }}>Madame</option>
                                     <option value="mr" {{ signalement.civiliteOccupant is same as 'mr' ? 'selected' : '' }}>Monsieur</option>
@@ -38,28 +45,46 @@
                             </div>
 
                             <div class="fr-input-group">
-                                <label class="fr-label" for="nom">Nom</label>
-                                <input class="fr-input" type="text" name="nom" value="{{ signalement.nomOccupant }}" maxlength="50">
+                                <label class="fr-label" for="coordonneesFoyerNom">Nom {{ show_label_facultatif(
+                                        'App\\Dto\\Request\\Signalement\\CoordonneesFoyerRequest',
+                                        'nom',
+                                        signalement.profileDeclarant)  }}</label>
+                                <input class="fr-input" type="text" id="coordonneesFoyerNom" name="nom" value="{{ signalement.nomOccupant }}" maxlength="50">
                             </div>
 
                             <div class="fr-input-group">
-                                <label class="fr-label" for="prenom">Prénom</label>
-                                <input class="fr-input" type="text" name="prenom" value="{{ signalement.prenomOccupant }}" maxlength="50">
+                                <label class="fr-label" for="coordonneesFoyerPrenom">Prénom
+                                    {{ show_label_facultatif(
+                                        'App\\Dto\\Request\\Signalement\\CoordonneesFoyerRequest',
+                                        'prenom',
+                                        signalement.profileDeclarant)  }}
+                                </label>
+                                <input class="fr-input" type="text" id="coordonneesFoyerPrenom" name="prenom" value="{{ signalement.prenomOccupant }}" maxlength="50">
                             </div>
 
                             <div class="fr-input-group">
-                                <label class="fr-label" for="mail">Courriel</label>
-                                <input class="fr-input" type="text" name="mail" value="{{ signalement.mailOccupant }}">
+                                <label class="fr-label" for="coordonneesFoyerMail">Courriel
+                                    {{ show_label_facultatif(
+                                        'App\\Dto\\Request\\Signalement\\CoordonneesFoyerRequest',
+                                        'mail',
+                                        signalement.profileDeclarant)  }}
+                                </label>
+                                <input class="fr-input" type="text" id="coordonneesFoyerMail" name="mail" value="{{ signalement.mailOccupant }}">
                             </div>
 
                             <div class="fr-input-group">
-                                <label class="fr-label" for="telephone">Téléphone</label>
-                                <input class="fr-input" type="text" name="telephone" value="{{ signalement.telOccupantDecoded }}">
+                                <label class="fr-label" for="coordonneesFoyerTelephone">Téléphone
+                                    {{ show_label_facultatif(
+                                        'App\\Dto\\Request\\Signalement\\CoordonneesFoyerRequest',
+                                        'telephone',
+                                        signalement.profileDeclarant)  }}
+                                </label>
+                                <input class="fr-input" type="text" id="coordonneesFoyerTelephone" name="telephone" value="{{ signalement.telOccupantDecoded }}">
                             </div>
 
                             <div class="fr-input-group">
-                                <label class="fr-label" for="telephoneBis">Téléphone sec.</label>
-                                <input class="fr-input" type="text" name="telephoneBis" value="{{ signalement.telOccupantBisDecoded }}">
+                                <label class="fr-label" for="coordonneesFoyerTelephoneBis">Téléphone sec. (facultatif)</label>
+                                <input class="fr-input" type="text" id="coordonneesFoyerTelephoneBis" name="telephoneBis" value="{{ signalement.telOccupantBisDecoded }}">
                             </div>
                         </div>
                         

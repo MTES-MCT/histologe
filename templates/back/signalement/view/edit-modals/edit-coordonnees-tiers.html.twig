@@ -11,11 +11,11 @@
                             <h1 id="fr-modal-title-modal-edit-coordonnees-tiers" class="fr-modal__title">
                                 Modifier les coordonnées du tiers déclarant
                             </h1>
-
+                            <p>Tous les champs sont obligatoires, sauf mention contraire.</p>
                             {% if signalement.profileDeclarant and signalement.profileDeclarant is same as enum('App\\Entity\\Enum\\ProfileDeclarant').BAILLEUR %}
                             <div class="fr-select-group">
-                                <label class="fr-label" for="typeProprio">Type</label>
-                                <select class="fr-select" name="typeProprio">
+                                <label class="fr-label" for="coordonneesTiersTypeProprio">Type</label>
+                                <select class="fr-select" id="coordonneesTiersTypeProprio" name="typeProprio">
                                     <option value="" disabled hidden>Sélectionnez un choix</option>
                                     <option value="" {{ signalement.typeProprio is same as '' ? 'selected' : '' }}>N/C</option>
                                     <option value="{{ enum('App\\Entity\\Enum\\ProprioType').ORGANISME_SOCIETE.name }}" {{ signalement.typeProprio is same as enum('App\\Entity\\Enum\\ProprioType').ORGANISME_SOCIETE ? 'selected' : '' }}>{{ enum('App\\Entity\\Enum\\ProprioType').ORGANISME_SOCIETE.label }}</option>
@@ -25,29 +25,29 @@
                             {% endif %}
 
                             <div class="fr-input-group">
-                                <label class="fr-label" for="nom">Nom</label>
-                                <input class="fr-input" type="text" name="nom" value="{{ signalement.nomDeclarant }}" maxlength="50">
+                                <label class="fr-label" for="coordonneesTiersNom">Nom</label>
+                                <input class="fr-input" type="text" id="coordonneesTiersNom" name="nom" value="{{ signalement.nomDeclarant }}" maxlength="50">
                             </div>
 
                             <div class="fr-input-group">
-                                <label class="fr-label" for="prenom">Prénom</label>
-                                <input class="fr-input" type="text" name="prenom" value="{{ signalement.prenomDeclarant }}" maxlength="50">
+                                <label class="fr-label" for="coordonneesTiersPrenom">Prénom</label>
+                                <input class="fr-input" type="text" id="coordonneesTiersPrenom" name="prenom" value="{{ signalement.prenomDeclarant }}" maxlength="50">
                             </div>
 
                             <div class="fr-input-group">
-                                <label class="fr-label" for="mail">Courriel</label>
-                                <input class="fr-input" type="text" name="mail" value="{{ signalement.mailDeclarant }}">
+                                <label class="fr-label" for="coordonneesTiersMail">Courriel</label>
+                                <input class="fr-input" type="text" id="coordonneesTiersMail" name="mail" value="{{ signalement.mailDeclarant }}">
                             </div>
 
                             <div class="fr-input-group">
-                                <label class="fr-label" for="telephone">Téléphone</label>
-                                <input class="fr-input" type="text" name="telephone" value="{{ signalement.telDeclarantDecoded }}">
+                                <label class="fr-label" for="coordonneesTiersTelephone">Téléphone</label>
+                                <input class="fr-input" type="text" id="coordonneesTiersTelephone" name="telephone" value="{{ signalement.telDeclarantDecoded }}">
                             </div>
 
                             <div class="fr-select-group">
-                                <label class="fr-label" for="lien">Lien avec l'occupant</label>
+                                <label class="fr-label" for="coordonneesTiersLien">Lien avec l'occupant (facultatif)</label>
                                 {% set OccupantLink = enum('\\App\\Entity\\Enum\\OccupantLink') %}
-                                <select class="fr-select" name="lien">
+                                <select class="fr-select" id="coordonneesTiersLien" name="lien">
                                     <option value="" {{ signalement.lienDeclarantOccupant not in OccupantLink.names() ? 'selected' : '' }}></option>
                                     <option value="PROCHE" {{ signalement.lienDeclarantOccupant is same as 'PROCHE' ? 'selected' : '' }}>Proche</option>
                                     <option value="VOISIN" {{ signalement.lienDeclarantOccupant is same as 'VOISIN' ? 'selected' : '' }}>Voisinage</option>
@@ -59,8 +59,8 @@
                             </div>
 
                             <div class="fr-input-group">
-                                <label class="fr-label" for="structure">Structure (professionnels ou service de secours)</label>
-                                <input class="fr-input" type="text" name="structure" value="{{ signalement.structureDeclarant }}">
+                                <label class="fr-label" for="coordonneesTiersStructure">Structure (si lien avec l'occupant: professionnel(le) ou service de secours)</label>
+                                <input class="fr-input" type="text" id="coordonneesTiersStructure" name="structure" value="{{ signalement.structureDeclarant }}">
                             </div>
                         </div>
                         

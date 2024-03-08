@@ -6,24 +6,30 @@ use App\Entity\Enum\MotifCloture;
 use App\Entity\Signalement;
 use App\Entity\Suivi;
 use App\Entity\User;
+use App\EventListener\SignalementUpdatedListener;
 use App\Factory\SuiviFactory;
 use App\Manager\SuiviManager;
 use App\Repository\SuiviRepository;
 use App\Repository\UserRepository;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
+use Symfony\Bundle\SecurityBundle\Security;
 
 class SuiviManagerTest extends KernelTestCase
 {
     private const REF_SIGNALEMENT = '2022-8';
     private ManagerRegistry $managerRegistry;
     private SuiviFactory $suiviFactory;
+    private SignalementUpdatedListener $signalementUpdatedListener;
+    private Security $security;
 
     protected function setUp(): void
     {
         self::bootKernel();
         $this->managerRegistry = self::getContainer()->get(ManagerRegistry::class);
         $this->suiviFactory = static::getContainer()->get(SuiviFactory::class);
+        $this->signalementUpdatedListener = static::getContainer()->get(SignalementUpdatedListener::class);
+        $this->security = static::getContainer()->get(Security::class);
     }
 
     public function testCreateSuivi(): void
@@ -31,6 +37,8 @@ class SuiviManagerTest extends KernelTestCase
         $suiviManager = new SuiviManager(
             $this->suiviFactory,
             $this->managerRegistry,
+            $this->signalementUpdatedListener,
+            $this->security,
             Suivi::class,
         );
 
@@ -63,6 +71,8 @@ class SuiviManagerTest extends KernelTestCase
         $suiviManager = new SuiviManager(
             $this->suiviFactory,
             $this->managerRegistry,
+            $this->signalementUpdatedListener,
+            $this->security,
             Suivi::class,
         );
 

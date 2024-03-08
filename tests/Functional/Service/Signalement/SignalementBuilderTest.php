@@ -22,7 +22,6 @@ use App\Service\Signalement\DesordreTraitement\DesordreTraitementProcessor;
 use App\Service\Signalement\Qualification\SignalementQualificationUpdater;
 use App\Service\Signalement\ReferenceGenerator;
 use App\Service\Signalement\SignalementBuilder;
-use App\Service\Signalement\SignalementInputValueMapper;
 use App\Service\Signalement\ZipcodeProvider;
 use App\Service\Token\TokenGeneratorInterface;
 use App\Service\UploadHandlerService;
@@ -56,7 +55,6 @@ class SignalementBuilderTest extends KernelTestCase
         $fileFactory = static::getContainer()->get(FileFactory::class);
         $uploadHandlerService = static::getContainer()->get(UploadHandlerService::class);
         $security = static::getContainer()->get(Security::class);
-        $signalementInputValueMapper = static::getContainer()->get(SignalementInputValueMapper::class);
         $desordreCategorieRepository = static::getContainer()->get(DesordreCategorieRepository::class);
         $this->desordreCritereRepository = static::getContainer()->get(DesordreCritereRepository::class);
         $this->desordrePrecisionRepository = static::getContainer()->get(DesordrePrecisionRepository::class);
@@ -79,7 +77,6 @@ class SignalementBuilderTest extends KernelTestCase
             $fileFactory,
             $uploadHandlerService,
             $security,
-            $signalementInputValueMapper,
             $desordreCategorieRepository,
             $this->desordreCritereRepository,
             $this->desordrePrecisionRepository,

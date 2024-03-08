@@ -12,7 +12,7 @@ class SignalementInputValueMapper
         'msa' => 'MSA',
     ];
 
-    public function map(string $value)
+    public static function map(?string $value): mixed
     {
         return self::MAPPING_VALUES[$value] ?? null;
     }

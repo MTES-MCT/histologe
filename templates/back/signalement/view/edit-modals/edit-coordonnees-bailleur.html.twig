@@ -11,34 +11,63 @@
                             <h1 id="fr-modal-title-modal-edit-coordonnees-bailleur" class="fr-modal__title">
                                 Modifier les coordonnées du bailleur
                             </h1>
+                            <p>Tous les champs sont obligatoires, sauf mention contraire.</p>
                             <div class="fr-input-group">
-                                <label class="fr-label" for="nom">Nom</label>
-                                <input class="fr-input" type="text" name="nom" value="{{ signalement.nomProprio }}" maxlength="255">
+                                <label class="fr-label" for="coordonneesBailleurNom">Nom
+                                    {{ show_label_facultatif(
+                                        'App\\Dto\\Request\\Signalement\\CoordonneesBailleurRequest',
+                                        'nom',
+                                        signalement.profileDeclarant)
+                                    }}
+                                </label>
+                                <input class="fr-input" type="text" id="coordonneesBailleurNom" name="nom" value="{{ signalement.nomProprio }}" maxlength="255">
                             </div>
 
                             <div class="fr-input-group">
-                                <label class="fr-label" for="prenom">Prénom</label>
-                                <input class="fr-input" type="text" name="prenom" value="{{ signalement.prenomProprio }}" maxlength="255">
+                                <label class="fr-label" for="coordonneesBailleurPrenom">Prénom
+                                    {{ show_label_facultatif(
+                                        'App\\Dto\\Request\\Signalement\\CoordonneesBailleurRequest',
+                                        'prenom',
+                                        signalement.profileDeclarant)
+                                    }}
+                                </label>
+                                <input class="fr-input" type="text" id="coordonneesBailleurPrenom" name="prenom" value="{{ signalement.prenomProprio }}" maxlength="255">
                             </div>
 
                             <div class="fr-input-group">
-                                <label class="fr-label" for="mail">Courriel</label>
-                                <input class="fr-input" type="text" name="mail" value="{{ signalement.mailProprio }}">
+                                <label class="fr-label" for="coordonneesBailleurMail">Courriel
+                                    {{ show_label_facultatif(
+                                        'App\\Dto\\Request\\Signalement\\CoordonneesBailleurRequest',
+                                        'mail',
+                                        signalement.profileDeclarant)
+                                    }}
+                                </label>
+                                <input class="fr-input" type="text" id="coordonneesBailleurMail" name="mail" value="{{ signalement.mailProprio }}">
                             </div>
 
                             <div class="fr-input-group">
-                                <label class="fr-label" for="telephone">Téléphone</label>
-                                <input class="fr-input" type="text" name="telephone" value="{{ signalement.telProprioDecoded }}">
+                                <label class="fr-label" for="coordonneesBailleurTelephone">Téléphone
+                                    {{ show_label_facultatif(
+                                        'App\\Dto\\Request\\Signalement\\CoordonneesBailleurRequest',
+                                        'telephone',
+                                        signalement.profileDeclarant)
+                                    }}
+                                </label>
+                                <input class="fr-input" type="text" id="coordonneesBailleurTelephone" name="telephone" value="{{ signalement.telProprioDecoded }}">
                             </div>
 
                             <div class="fr-input-group">
-                                <label class="fr-label" for="telephoneBis">Téléphone sec.</label>
-                                <input class="fr-input" type="text" name="telephoneBis" value="{{ signalement.telProprioSecondaireDecoded }}">
+                                <label class="fr-label" for="coordonneesBailleurTelephoneBis">Téléphone sec. (facultatif)</label>
+                                <input class="fr-input" type="text" id="coordonneesBailleurTelephoneBis" name="telephoneBis" value="{{ signalement.telProprioSecondaireDecoded }}">
                             </div>
 
                             <div class="fr-input-group">
                                 <label class="fr-label" for="edit-coordonnees-bailleur-search">
-                                    Adresse
+                                    Adresse {{ show_label_facultatif(
+                                        'App\\Dto\\Request\\Signalement\\CoordonneesBailleurRequest',
+                                        'adresse',
+                                        signalement.profileDeclarant)
+                                    }}
                                     <span class="fr-hint-text">Tapez l'adresse et sélectionnez-la dans la liste</span>
                                 </label>
                                 <input class="fr-input search-address-autocomplete" type="text" id="edit-coordonnees-bailleur-search"
@@ -67,8 +96,8 @@
 
                             <div class="fr-select-group">
                                 {% set bailleurBeneficiaireRsa = signalement.informationComplementaire ? signalement.informationComplementaire.informationsComplementairesSituationBailleurBeneficiaireRsa : null %}
-                                <label class="fr-label" for="beneficiaireRsa">Bénéficiaire RSA</label>
-                                <select class="fr-select" name="beneficiaireRsa">
+                                <label class="fr-label" for="coordonneesBailleurBeneficiaireRsa">Bénéficiaire RSA (facultatif)</label>
+                                <select class="fr-select" id="coordonneesBailleurBeneficiaireRsa" name="beneficiaireRsa">
                                     <option value="" {{ bailleurBeneficiaireRsa not in ['oui', 'non'] ? 'selected' : '' }}></option>
                                     <option value="oui" {{ bailleurBeneficiaireRsa is same as 'oui' ? 'selected' : '' }}>Oui</option>
                                     <option value="non" {{ bailleurBeneficiaireRsa is same as 'non' ? 'selected' : '' }}>Non</option>
@@ -77,8 +106,8 @@
 
                             <div class="fr-select-group">
                                 {% set bailleurBeneficiaireFsl = signalement.informationComplementaire ? signalement.informationComplementaire.informationsComplementairesSituationBailleurBeneficiaireFsl : null %}
-                                <label class="fr-label" for="beneficiaireFsl">Bénéficiaire FSL</label>
-                                <select class="fr-select" name="beneficiaireFsl">
+                                <label class="fr-label" for="coordonneesBailleurBeneficiaireFsl">Bénéficiaire FSL (facultatif)</label>
+                                <select class="fr-select" id="coordonneesBailleurBeneficiaireFsl" name="beneficiaireFsl">
                                     <option value="" {{ bailleurBeneficiaireFsl not in ['oui', 'non'] ? 'selected' : '' }}></option>
                                     <option value="oui" {{ bailleurBeneficiaireFsl is same as 'oui' ? 'selected' : '' }}>Oui</option>
                                     <option value="non" {{ bailleurBeneficiaireFsl is same as 'non' ? 'selected' : '' }}>Non</option>
@@ -86,13 +115,13 @@
                             </div>
 
                             <div class="fr-input-group">
-                                <label class="fr-label" for="revenuFiscal">Revenu fiscal de référence</label>
-                                <input class="fr-input" type="text" name="revenuFiscal" value="{{ signalement.informationComplementaire.informationsComplementairesSituationBailleurRevenuFiscal ?? '0' }}">
+                                <label class="fr-label" for="coordonneesBailleurRevenuFiscal">Revenu fiscal de référence (facultatif)</label>
+                                <input class="fr-input" type="text" id="coordonneesBailleurRevenuFiscal" name="revenuFiscal" value="{{ signalement.informationComplementaire.informationsComplementairesSituationBailleurRevenuFiscal ?? '0' }}">
                             </div>
 
                             <div class="fr-input-group">
-                                <label class="fr-label" for="dateNaissance">Date de naissance</label>
-                                <input class="fr-input" type="date" name="dateNaissance" value="{{ signalement.informationComplementaire.informationsComplementairesSituationBailleurDateNaissance ?? '' }}">
+                                <label class="fr-label" for="coordonneesBailleurDateNaissance">Date de naissance (facultatif)</label>
+                                <input class="fr-input" type="date" id="coordonneesBailleurDateNaissance" name="dateNaissance" value="{{ signalement.informationComplementaire.informationsComplementairesSituationBailleurDateNaissance ?? '' }}">
                             </div>
                         </div>
                         

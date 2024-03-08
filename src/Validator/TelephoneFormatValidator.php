@@ -33,13 +33,11 @@ class TelephoneFormatValidator extends ConstraintValidator
             if (!$isPossible) {
                 $this->context->buildViolation($constraint->message)
                     ->setParameter('{{ value }}', $value)
-                    ->atPath('telephone')
                     ->addViolation();
             }
         } catch (NumberParseException $e) {
             $this->context->buildViolation($constraint->message)
                 ->setParameter('{{ value }}', $value)
-                ->atPath('telephone')
                 ->addViolation();
         }
     }

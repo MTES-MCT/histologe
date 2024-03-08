@@ -2,7 +2,7 @@
 
 namespace App\Serializer;
 
-use App\Dto\Request\Signalement\CompositionLogementRequest;
+use App\Dto\Request\Signalement\RequestInterface;
 use App\Dto\Request\Signalement\SignalementDraftRequest;
 use App\Entity\Model\TypeCompositionLogement;
 use App\Entity\SignalementDraft;
@@ -47,7 +47,11 @@ class SignalementDraftRequestNormalizer implements DenormalizerInterface, Normal
 
                 $transformedData[SignalementDraftRequest::FILE_UPLOAD_KEY][$keyUpdated] = $data[$key];
             } else {
-                $transformedData[$key] = !empty($value) ? $value : null;
+                if ('isProprioAverti' === $key) {
+                    $transformedData[$key] = $value;
+                } else {
+                    $transformedData[$key] = !empty($value) ? $value : null;
+                }
             }
         }
 
@@ -88,7 +92,7 @@ class SignalementDraftRequestNormalizer implements DenormalizerInterface, Normal
         return [
             SignalementDraftRequest::class => true,
             TypeCompositionLogement::class => true,
-            CompositionLogementRequest::class => true,
+            RequestInterface::class => true,
         ];
     }
 }

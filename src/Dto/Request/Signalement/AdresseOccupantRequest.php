@@ -4,7 +4,7 @@ namespace App\Dto\Request\Signalement;
 
 use Symfony\Component\Validator\Constraints as Assert;
 
-class AdresseOccupantRequest
+class AdresseOccupantRequest implements RequestInterface
 {
     public function __construct(
         #[Assert\NotBlank(message: 'Merci de saisir une adresse.')]

@@ -11,11 +11,11 @@
                             <h1 id="fr-modal-title-modal-edit-situation-foyer" class="fr-modal__title">
                                 Modifier la situation du foyer
                             </h1>
-
+                            <p>Tous les champs sont obligatoires, sauf mention contraire.</p>
                             <div class="fr-select-group">
                                 {% set isLogementSocial = signalement.isLogementSocial %}
-                                <label class="fr-label" for="isLogementSocial">Logement social</label>
-                                <select class="fr-select" name="isLogementSocial">
+                                <label class="fr-label" for="situationFoyerIsLogementSocial">Logement social</label>
+                                <select class="fr-select" id="situationFoyerIsLogementSocial" name="isLogementSocial">
                                     <option value="nsp" {{ isLogementSocial is null ? 'selected' : '' }}>Je ne sais pas</option>
                                     <option value="oui" {{ isLogementSocial is same as true ? 'selected' : '' }}>Oui</option>
                                     <option value="non" {{ isLogementSocial is same as false ? 'selected' : '' }}>Non</option>
@@ -23,8 +23,15 @@
                             </div>
 
                             <div class="fr-select-group">
-                                <label class="fr-label" for="isRelogement">Demande logement social / relogement</label>
-                                <select class="fr-select" name="isRelogement">
+                                <label class="fr-label" for="situationFoyerIsRelogement">Demande logement social / relogement
+                                    {{ show_label_facultatif(
+                                        'App\\Dto\\Request\\Signalement\\SituationFoyerRequest',
+                                        'isRelogement',
+                                        signalement.profileDeclarant,
+                                        null != signalement.createdFrom)
+                                    }}
+                                </label>
+                                <select class="fr-select" id="situationFoyerIsRelogement" name="isRelogement">
                                     <option value=""></option>
                                     <option value="oui" {{ signalement.isRelogement is same as true ? 'selected' : '' }}>Oui</option>
                                     <option value="non" {{ signalement.isRelogement is same as false ? 'selected' : '' }}>Non</option>
@@ -33,8 +40,15 @@
 
                             <div class="fr-select-group">
                                 {% set isAllocataire = signalement.isAllocataire %}
-                                <label class="fr-label" for="isAllocataire">Allocataire</label>
-                                <select class="fr-select" name="isAllocataire">
+                                <label class="fr-label" for="situationFoyerIsAllocataire">Allocataire
+                                    {{ show_label_facultatif(
+                                        'App\\Dto\\Request\\Signalement\\SituationFoyerRequest',
+                                        'isAllocataire',
+                                        signalement.profileDeclarant,
+                                        null != signalement.createdFrom)
+                                    }}
+                                </label>
+                                <select class="fr-select" id="situationFoyerIsAllocataire" name="isAllocataire">
                                     <option value="" {{isAllocataire in [null, ''] ? 'selected' : '' }}></option>
                                     <option value="CAF" {{ isAllocataire is same as 'CAF' ? 'selected' : '' }}>CAF</option>
                                     <option value="MSA" {{ isAllocataire is same as 'MSA' ? 'selected' : '' }}>MSA</option>
@@ -44,13 +58,13 @@
                             </div>
 
                             <div class="fr-input-group">
-                                <label class="fr-label" for="dateNaissanceOccupant">Date de naissance</label>
-                                <input class="fr-input" type="date" name="dateNaissanceOccupant" value="{{ signalement.dateNaissanceOccupant.format('Y-m-d') ?? signalement.naissanceOccupants ?? '' }}">
+                                <label class="fr-label" for="situationFoyerDateNaissanceOccupant">Date de naissance (si allocataire)</label>
+                                <input class="fr-input" type="date" id="situationFoyerDateNaissanceOccupant" name="dateNaissanceOccupant" value="{{ signalement.dateNaissanceOccupant.format('Y-m-d') ?? signalement.naissanceOccupants ?? '' }}">
                             </div>
 
                             <div class="fr-input-group">
-                                <label class="fr-label" for="numAllocataire">N° allocataire</label>
-                                <input class="fr-input" type="text" name="numAllocataire" value="{{ signalement.numAllocataire }}">
+                                <label class="fr-label" for="situationFoyerNumAllocataire">N° allocataire (facultatif)</label>
+                                <input class="fr-input" type="text" id="situationFoyerNumAllocataire" name="numAllocataire" value="{{ signalement.numAllocataire }}">
                             </div>
 
                             <div class="fr-input-group">
@@ -58,14 +72,21 @@
                                 {% if signalement.situationFoyer and signalement.situationFoyer.logementSocialMontantAllocation %}
                                     {% set logementSocialMontantAllocation = signalement.situationFoyer.logementSocialMontantAllocation %}
                                 {% endif %}
-                                <label class="fr-label" for="logementSocialMontantAllocation">Montant allocation (€)</label>
-                                <input class="fr-input" type="text" name="logementSocialMontantAllocation" value="{{ logementSocialMontantAllocation }}">
+                                <label class="fr-label" for="situationFoyerLogementSocialMontantAllocation">Montant allocation (€) (facultatif)</label>
+                                <input class="fr-input" type="text" id="situationFoyerLogementSocialMontantAllocation" name="logementSocialMontantAllocation" value="{{ logementSocialMontantAllocation }}">
                             </div>
 
                             <div class="fr-select-group">
                                 {% set travailleurSocialQuitteLogement = signalement.situationFoyer ? signalement.situationFoyer.travailleurSocialQuitteLogement : null %}
-                                <label class="fr-label" for="travailleurSocialQuitteLogement">Souhaite quitter le logement</label>
-                                <select class="fr-select" name="travailleurSocialQuitteLogement">
+                                <label class="fr-label" for="situationFoyerTravailleurSocialQuitteLogement">Souhaite quitter le logement
+                                    {{ show_label_facultatif(
+                                        'App\\Dto\\Request\\Signalement\\SituationFoyerRequest',
+                                        'travailleurSocialQuitteLogement',
+                                        signalement.profileDeclarant,
+                                        null != signalement.createdFrom)
+                                    }}
+                                </label>
+                                <select class="fr-select" id="situationFoyerTravailleurSocialQuitteLogement" name="travailleurSocialQuitteLogement">
                                     <option value="" {{ travailleurSocialQuitteLogement not in ['oui', 'non', 'nsp'] ? 'selected' : '' }}></option>
                                     <option value="oui" {{ travailleurSocialQuitteLogement is same as 'oui' ? 'selected' : '' }}>Oui</option>
                                     <option value="non" {{ travailleurSocialQuitteLogement is same as 'non' ? 'selected' : '' }}>Non</option>
@@ -82,8 +103,8 @@
                                         {% set travailleurSocialPreavisDepart = 'non' %}
                                     {% endif %}
                                 {% endif %}
-                                <label class="fr-label" for="travailleurSocialPreavisDepart">Préavis de départ</label>
-                                <select class="fr-select" name="travailleurSocialPreavisDepart">
+                                <label class="fr-label" for="situationFoyerTravailleurSocialPreavisDepart">Préavis de départ (si souhaite quitter le logement)</label>
+                                <select class="fr-select" id="situationFoyerTravailleurSocialPreavisDepart" name="travailleurSocialPreavisDepart">
                                     <option value="" {{ travailleurSocialPreavisDepart not in ['oui', 'non', 'nsp'] ? 'selected' : '' }}></option>
                                     <option value="oui" {{ travailleurSocialPreavisDepart is same as 'oui' ? 'selected' : '' }}>Oui</option>
                                     <option value="non" {{ travailleurSocialPreavisDepart is same as 'non' ? 'selected' : '' }}>Non</option>
@@ -93,18 +114,27 @@
 
                             <div class="fr-select-group">
                                 {% set travailleurSocialAccompagnementDeclarant = signalement.situationFoyer ? signalement.situationFoyer.travailleurSocialAccompagnementDeclarant : null %}
-                                <label class="fr-label" for="travailleurSocialAccompagnementDeclarant">Accompagnement par un ou une travailleuse sociale</label>
-                                <select class="fr-select" name="travailleurSocialAccompagnementDeclarant">
-                                    <option value="" {{ travailleurSocialAccompagnementDeclarant not in ['1', '0'] ? 'selected' : '' }}></option>
+                                <label class="fr-label" for="situationFoyerTravailleurSocialAccompagnementDeclarant">
+                                    Accompagnement par un ou une travailleuse sociale
+                                    {{ show_label_facultatif(
+                                        'App\\Dto\\Request\\Signalement\\SituationFoyerRequest',
+                                        'travailleurSocialAccompagnementDeclarant',
+                                        signalement.profileDeclarant,
+                                        null != signalement.createdFrom)
+                                    }}
+                                </label>
+                                <select class="fr-select" id="situationFoyerTravailleurSocialAccompagnementDeclarant" name="travailleurSocialAccompagnementDeclarant">
+                                    <option value="" {{ travailleurSocialAccompagnementDeclarant not in ['1', '0', 'nsp'] ? 'selected' : '' }}></option>
                                     <option value="1" {{ travailleurSocialAccompagnementDeclarant is same as '1' ? 'selected' : '' }}>Oui</option>
                                     <option value="0" {{ travailleurSocialAccompagnementDeclarant is same as '0' ? 'selected' : '' }}>Non</option>
+                                    <option value="nsp" {{ travailleurSocialAccompagnementDeclarant is same as 'nsp' ? 'selected' : '' }}>Je ne sais pas</option>
                                 </select>
                             </div>
 
                             <div class="fr-select-group">
                                 {% set beneficiaireRsa = signalement.informationComplementaire ? signalement.informationComplementaire.informationsComplementairesSituationOccupantsBeneficiaireRsa : null %}
-                                <label class="fr-label" for="beneficiaireRsa">Bénéficiaire RSA</label>
-                                <select class="fr-select" name="beneficiaireRsa">
+                                <label class="fr-label" for="situationFoyerBeneficiaireRsa">Bénéficiaire RSA (facultatif)</label>
+                                <select class="fr-select" id="situationFoyerBeneficiaireRsa" name="beneficiaireRsa">
                                     <option value="" {{ beneficiaireRsa not in ['oui', 'non'] ? 'selected' : '' }}></option>
                                     <option value="oui" {{ beneficiaireRsa is same as 'oui' ? 'selected' : '' }}>Oui</option>
                                     <option value="non" {{ beneficiaireRsa is same as 'non' ? 'selected' : '' }}>Non</option>
@@ -113,8 +143,8 @@
 
                             <div class="fr-select-group">
                                 {% set beneficiaireFsl = signalement.informationComplementaire ? signalement.informationComplementaire.informationsComplementairesSituationOccupantsBeneficiaireFsl : null %}
-                                <label class="fr-label" for="beneficiaireFsl">Bénéficiaire FSL</label>
-                                <select class="fr-select" name="beneficiaireFsl">
+                                <label class="fr-label" for="situationFoyerBeneficiaireFsl">Bénéficiaire FSL (facultatif)</label>
+                                <select class="fr-select" id="situationFoyerBeneficiaireFsl" name="beneficiaireFsl">
                                     <option value="" {{ beneficiaireFsl not in ['oui', 'non'] ? 'selected' : '' }}></option>
                                     <option value="oui" {{ beneficiaireFsl is same as 'oui' ? 'selected' : '' }}>Oui</option>
                                     <option value="non" {{ beneficiaireFsl is same as 'non' ? 'selected' : '' }}>Non</option>
@@ -123,8 +153,8 @@
 
                             {% if signalement.profileDeclarant and signalement.profileDeclarant is same as enum('App\\Entity\\Enum\\ProfileDeclarant').BAILLEUR_OCCUPANT  %}
                             <div class="fr-input-group">
-                                <label class="fr-label" for="revenuFiscal">Revenu fiscal de référence</label>
-                                <input class="fr-input" type="text" name="revenuFiscal" value="{{ signalement.informationComplementaire.informationsComplementairesSituationOccupantsRevenuFiscal ?? '0' }}">
+                                <label class="fr-label" for="situationFoyerRevenuFiscal">Revenu fiscal de référence (facultatif)</label>
+                                <input class="fr-input" type="text" id="situationFoyerRevenuFiscal" name="revenuFiscal" value="{{ signalement.informationComplementaire.informationsComplementairesSituationOccupantsRevenuFiscal ?? '0' }}">
                             </div>
                             {% endif %}
                         </div>

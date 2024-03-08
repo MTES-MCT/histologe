@@ -62,13 +62,13 @@ class SignalementManager extends AbstractManager
         private SignalementExportFactory $signalementExportFactory,
         private ParameterBagInterface $parameterBag,
         private CsrfTokenManagerInterface $csrfTokenManager,
-        private SignalementInputValueMapper $signalementInputValueMapper,
         private SuroccupationSpecification $suroccupationSpecification,
         private CriticiteCalculator $criticiteCalculator,
         private SignalementQualificationUpdater $signalementQualificationUpdater,
         private DesordrePrecisionRepository $desordrePrecisionRepository,
         private DesordreCritereRepository $desordreCritereRepository,
         private DesordreCompositionLogementLoader $desordreCompositionLogementLoader,
+        private SuiviManager $suiviManager,
         string $entityName = Signalement::class
     ) {
         parent::__construct($managerRegistry, $entityName);
@@ -339,6 +339,11 @@ class SignalementManager extends AbstractManager
             ->setAdresseAutreOccupant($adresseOccupantRequest->getAutre());
 
         $this->save($signalement);
+
+        $this->suiviManager->addSuiviIfNeeded(
+            signalement: $signalement,
+            description: 'L\'adresse du logement a été modifiée par '
+        );
     }
 
     public function updateFromCoordonneesTiersRequest(
@@ -361,6 +366,10 @@ class SignalementManager extends AbstractManager
             ->setStructureDeclarant($coordonneesTiersRequest->getStructure());
 
         $this->save($signalement);
+        $this->suiviManager->addSuiviIfNeeded(
+            signalement: $signalement,
+            description: 'Les coordonnées du tiers déclarant ont été modifiées par ',
+        );
     }
 
     public function updateFromCoordonneesFoyerRequest(
@@ -385,6 +394,10 @@ class SignalementManager extends AbstractManager
             ->setTelOccupantBis($coordonneesFoyerRequest->getTelephoneBis());
 
         $this->save($signalement);
+        $this->suiviManager->addSuiviIfNeeded(
+            signalement: $signalement,
+            description: 'Les coordonnées du foyer ont été modifiées par ',
+        );
     }
 
     public function updateFromCoordonneesBailleurRequest(
@@ -422,6 +435,10 @@ class SignalementManager extends AbstractManager
         $signalement->setInformationComplementaire($informationComplementaire);
 
         $this->save($signalement);
+        $this->suiviManager->addSuiviIfNeeded(
+            signalement: $signalement,
+            description: 'Les coordonnées du bailleur ont été modifiées par ',
+        );
     }
 
     public function updateFromInformationsLogementRequest(
@@ -476,6 +493,10 @@ class SignalementManager extends AbstractManager
         $this->signalementQualificationUpdater->updateQualificationFromScore($signalement);
 
         $this->save($signalement);
+        $this->suiviManager->addSuiviIfNeeded(
+            signalement: $signalement,
+            description: 'Les informations sur le logement ont été modifiées par ',
+        );
     }
 
     private function updateDesordresAndScoreWithSuroccupationChanges(
@@ -483,41 +504,44 @@ class SignalementManager extends AbstractManager
     ) {
         $situationFoyer = $signalement->getSituationFoyer();
         $typeCompositionLogement = $signalement->getTypeCompositionLogement();
-        if (
-            null !== $situationFoyer
-            && null !== $typeCompositionLogement
-            && $this->suroccupationSpecification->isSatisfiedBy(
-                $situationFoyer,
-                $typeCompositionLogement
-            )) {
-            $precisionToLink = $this->desordrePrecisionRepository->findOneBy(
-                ['desordrePrecisionSlug' => $this->suroccupationSpecification->getSlug()]
-            );
-            if (null !== $precisionToLink) {
-                $signalement->addDesordrePrecision($precisionToLink);
-                $critereToLink = $precisionToLink->getDesordreCritere();
-                if (null !== $critereToLink) {
-                    $signalement->addDesordreCritere($critereToLink);
-                    $categorieToLink = $critereToLink->getDesordreCategorie();
-                    if (null !== $categorieToLink) {
-                        $signalement->addDesordreCategory($categorieToLink);
+        if ($signalement->getCreatedFrom()) {
+            if (
+                null !== $situationFoyer
+                && null !== $typeCompositionLogement
+                && $this->suroccupationSpecification->isSatisfiedBy(
+                    $situationFoyer,
+                    $typeCompositionLogement
+                )) {
+                $precisionToLink = $this->desordrePrecisionRepository->findOneBy(
+                    ['desordrePrecisionSlug' => $this->suroccupationSpecification->getSlug()]
+                );
+                if (null !== $precisionToLink) {
+                    $signalement->addDesordrePrecision($precisionToLink);
+                    $critereToLink = $precisionToLink->getDesordreCritere();
+                    if (null !== $critereToLink) {
+                        $signalement->addDesordreCritere($critereToLink);
+                        $categorieToLink = $critereToLink->getDesordreCategorie();
+                        if (null !== $categorieToLink) {
+                            $signalement->addDesordreCategory($categorieToLink);
+                        }
                     }
                 }
+            } else {
+                $precisionToLink = $this->desordrePrecisionRepository->findOneBy(
+                    ['desordrePrecisionSlug' => 'desordres_type_composition_logement_suroccupation_allocataire']
+                );
+                $signalement->removeDesordrePrecision($precisionToLink);
+                $precisionToLink = $this->desordrePrecisionRepository->findOneBy(
+                    ['desordrePrecisionSlug' => 'desordres_type_composition_logement_suroccupation_non_allocataire']
+                );
+                $signalement->removeDesordrePrecision($precisionToLink);
+                $critereToLink = $precisionToLink->getDesordreCritere();
+                $signalement->removeDesordreCritere($critereToLink);
+                $categorieToLink = $critereToLink->getDesordreCategorie();
+                $signalement->removeDesordreCategory($categorieToLink);
             }
-        } else {
-            $precisionToLink = $this->desordrePrecisionRepository->findOneBy(
-                ['desordrePrecisionSlug' => 'desordres_type_composition_logement_suroccupation_allocataire']
-            );
-            $signalement->removeDesordrePrecision($precisionToLink);
-            $precisionToLink = $this->desordrePrecisionRepository->findOneBy(
-                ['desordrePrecisionSlug' => 'desordres_type_composition_logement_suroccupation_non_allocataire']
-            );
-            $signalement->removeDesordrePrecision($precisionToLink);
-            $critereToLink = $precisionToLink->getDesordreCritere();
-            $signalement->removeDesordreCritere($critereToLink);
-            $categorieToLink = $critereToLink->getDesordreCategorie();
-            $signalement->removeDesordreCategory($categorieToLink);
         }
+
         $signalement->setScore($this->criticiteCalculator->calculate($signalement));
     }
 
@@ -582,6 +606,10 @@ class SignalementManager extends AbstractManager
         $this->signalementQualificationUpdater->updateQualificationFromScore($signalement);
 
         $this->save($signalement);
+        $this->suiviManager->addSuiviIfNeeded(
+            signalement: $signalement,
+            description: 'La composition du logement a été modifée par ',
+        );
     }
 
     public function updateFromSituationFoyerRequest(
@@ -590,12 +618,12 @@ class SignalementManager extends AbstractManager
     ) {
         $signalement
             ->setIsLogementSocial(
-                $this->signalementInputValueMapper->map(
+                SignalementInputValueMapper::map(
                     $situationFoyerRequest->getIsLogementSocial()
                 )
             )
             ->setIsRelogement(
-                $this->signalementInputValueMapper->map(
+                SignalementInputValueMapper::map(
                     $situationFoyerRequest->getIsRelogement()
                 )
             )
@@ -671,6 +699,10 @@ class SignalementManager extends AbstractManager
         $this->updateDesordresAndScoreWithSuroccupationChanges($signalement);
         $this->signalementQualificationUpdater->updateQualificationFromScore($signalement);
         $this->save($signalement);
+        $this->suiviManager->addSuiviIfNeeded(
+            signalement: $signalement,
+            description: 'La situation du foyer a été modifiée par ',
+        );
     }
 
     public function updateFromProcedureDemarchesRequest(
@@ -707,6 +739,10 @@ class SignalementManager extends AbstractManager
         }
 
         $this->save($signalement);
+        $this->suiviManager->addSuiviIfNeeded(
+            signalement: $signalement,
+            description: 'Les procédures et démarches ont été modifiées par ',
+        );
     }
 
     public function findSignalementAffectationList(User|UserInterface|null $user, array $options): array
