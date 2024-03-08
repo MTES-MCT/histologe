@@ -396,7 +396,8 @@ class FrontSignalementController extends AbstractController
             $fromEmail = \is_array($requestEmail) ? array_pop($requestEmail) : $requestEmail;
             $suiviAuto = $request->get('suiviAuto');
 
-            list($user, $type) = $userManager->getUserAndTypeForSignalementAndEmail($signalement, $fromEmail);
+            $user = $userManager->getOrCreateUserForSignalementAndEmail($signalement, $fromEmail);
+            $type = $userManager->getUserTypeForSignalementAndUser($signalement, $user);
             if ($user && $suiviAuto) {
                 $description = '';
                 if (Suivi::ARRET_PROCEDURE === $suiviAuto) {
@@ -457,7 +458,7 @@ class FrontSignalementController extends AbstractController
         if ($signalement = $signalementRepository->findOneByCodeForPublic($code)) {
             if ($this->isCsrfTokenValid('signalement_front_response_'.$signalement->getUuid(), $request->get('_token'))) {
                 $email = $request->get('signalement_front_response')['email'];
-                list($user) = $userManager->getUserAndTypeForSignalementAndEmail($signalement, $email);
+                $user = $userManager->getOrCreateUserForSignalementAndEmail($signalement, $email);
                 $suivi = $suiviFactory->createInstanceFrom(
                     user: $user,
                     signalement: $signalement,
