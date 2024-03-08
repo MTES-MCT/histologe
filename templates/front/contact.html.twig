@@ -1,38 +1,79 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}{{ title }}{% endblock %}
+{% block title %}
+	{{ title }}
+{% endblock %}
 
 {% block body %}
-    <main class="fr-container--fluid">
-        <div class="fr-grid-row fr-grid-row--gutters fr-grid-row--center fr-py-5w fr-py-md-10w">
-            <h1 class="fr-col-11 fr-col-md-8 fr-text-title--blue-france fr-text--center">Contacter {{ platform.name }}</h1>
-
-            <p class="fr-col-11 fr-col-md-8 fr-text--center fr-text--lg">
-                Une question ? Une précision ? N'hésitez pas à nous envoyer un message !
-            </p>
-
-            <p class="fr-col-11 fr-col-md-8 fr-text--center fr-text--lg">
-                <strong>Attention :</strong>
-                le formulaire de contact ne permet pas de déposer un signalement.
-                Si vous souhaitez signaler un problème de logement, remplissez
-                <a href="{{ path('front_signalement') }}">le formulaire de signalement</a>.
-            </p>
-
-            <div class="fr-col-11 fr-col-md-8 fr-py-5w">
-                {{ form_start(form) }}
-                <div class="fr-grid-row fr-grid-row--gutters">
-
-                    {{ form_row(form.nom) }}
-                    {{ form_row(form.email) }}
-                    {{ form_row(form.message) }}
-                </div>
-                {{ form_end(form) }}
-            </div>
-            <div class="fr-col-11 fr-col-md-8 fr-text--center">
-                <button class="fr-btn fr-rounded fr-fi-mail-fill fr-btn--icon-left" form="front_contact"> Envoyer le
-                    message
-                </button>
-            </div>
-        </div>
-    </main>
+	<main>
+		<h1>Contact</h1>
+		<section class="fr-container">
+			<h2>Je souhaite signaler un problème de logement</h2>
+			<p>
+				Vous êtes au bon endroit ! Histologe vous accompagne dans le signalement de vos problèmes de logement. 
+				Cliquez sur le bouton ci-dessous pour déposer votre signalement.
+			</p>
+			<a href="{{ path('front_signalement') }}" class="fr-btn fr-btn--icon-left fr-arrow-up-line">Je dépose un signalement</a>
+		</section>
+		<section class="fr-container">
+			{% include '_partials/_demande-lien-signalement.html.twig' %}
+		</section>
+		<section class="fr-container">
+			<h2 class="fr-mt-5w">J'ai une question sur Histologe</h2>
+			<p>
+				Vous trouverez peut-être une réponse dans les ressources suivantes :
+			</p>
+			<ul>
+				<li><a href="https://faq.histologe.beta.gouv.fr/" target="_blank">La documentation Histologe</a></li>
+				<li><a href="https://faq.histologe.beta.gouv.fr/usager/signalement/jai-depose-un-signalement-et-maintenant" target="_blank">J'ai déposé un signalement, et maintenant ?</a></li>
+				<li><a href="{{path('front_cgu')}}">Conditions générales d'utilisation</a></li>
+				<li><a href="{{path('politique_de_confidentialite')}}">Politique de confidentialité</a></li>
+			</ul>
+		</section>
+		<section class="fr-container">
+			<h2 class="fr-mt-5w">Vous avez une autre question ?</h2>
+			<p>Vous ne trouvez pas la réponse à votre question ? Vous souhaitez signaler un problème technique ? Contactez l'équipe Histologe.</p>
+			<a href="mailto:{{ contactEmail }}" class="fr-btn fr-btn--icon-left fr-mail-line">Envoyer un message</a>
+			<div class="fr-alert fr-alert--warning fr-mt-3w">
+				<h3 class="fr-alert__title">N'envoyez pas votre signalement par email !</h3>
+				<p>
+					Les signalements ne peuvent être pas déposés par mail. 
+					Pour déposer un signalement, cliquez sur le bouton "Je dépose mon signalement" sur cette page ou sur l'élément "Signalement" dans le menu principal.
+				</p>
+			</div>
+		</section>
+		<section class="fr-py-5w fr-mt-5w fr-background-contrast--blue-france">
+			<div class="fr-container">
+				<h2>Vous êtes acteur de la lutte contre l'habitat indigne et souhaitez en savoir plus sur Histologe ?</h2>
+				<p>
+					Administrations, départements, associations, bailleurs… Histologe rassemble les acteurs de la lutte contre l'habitat indigne. 
+					Si vous souhaitez en savoir plus sur notre service, n'hésitez pas à nous contacter.
+				</p>
+				{% form_theme form 'form/dsfr_theme.html.twig' %}
+				{{ form_start(form) }}
+				{{ form_errors(form) }}
+				<div class="fr-grid-row fr-grid-row--gutters">
+					<div class="fr-col-12 fr-col-md-4">
+						{{ form_row(form.nom) }}
+					</div>
+					<div class="fr-col-12 fr-col-md-4">
+						{{ form_row(form.email) }}
+					</div>
+					<div class="fr-col-12 fr-col-md-4">
+						{{ form_row(form.organisme) }}
+					</div>
+					<div class="fr-col-12">
+						{{ form_row(form.objet) }}
+					</div>
+					<div class="fr-col-12">
+						{{ form_row(form.message) }}
+					</div>
+				</div>
+				{{ form_end(form) }}
+				<button class="fr-btn fr-fi-mail-fill fr-btn--icon-left fr-mt-3w" form="front_contact">
+					Envoyer le message
+				</button>
+			</div>
+		</section>
+	</main>
 {% endblock %}

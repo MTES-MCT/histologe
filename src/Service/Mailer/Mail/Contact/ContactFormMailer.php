@@ -33,6 +33,8 @@ class ContactFormMailer extends AbstractNotificationMailer
             'mail' => $notificationMail->getFromEmail(),
             'reply' => $notificationMail->getFromEmail(),
             'message' => $notificationMail->getMessage(),
+            'organisme' => $notificationMail->getParams()['organisme'],
+            'objet' => $notificationMail->getParams()['objet'],
         ];
     }
 }

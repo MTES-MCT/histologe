@@ -34,6 +34,8 @@ class ContactFormHandler
         string $nom,
         string $email,
         string $message,
+        string $organisme,
+        string $objet
     ) {
         $hasNotificationToSend = true;
 
@@ -52,7 +54,7 @@ class ContactFormHandler
                 ? $signalementsByOccupants
                 : $signalementsByDeclarants;
             $params = [
-                'description' => nl2br($message).self::MENTION_SENT_BY_EMAIL,
+                'description' => nl2br(strip_tags($message)).self::MENTION_SENT_BY_EMAIL,
             ];
             $userOccupant = $this->userManager->createUsagerFromSignalement($signalement, $this->userManager::OCCUPANT);
             $userDeclarant = $this->userManager->createUsagerFromSignalement($signalement, $this->userManager::DECLARANT);
@@ -81,7 +83,11 @@ class ContactFormHandler
                     to: $this->parameterBag->get('contact_email'),
                     fromEmail: $email,
                     fromFullname: $nom,
-                    message: nl2br($message)
+                    message: nl2br(strip_tags($message)),
+                    params: [
+                        'organisme' => $organisme,
+                        'objet' => $objet,
+                    ]
                 )
             );
         }

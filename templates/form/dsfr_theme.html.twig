@@ -5,7 +5,11 @@
     {% if help is not empty %}
         {% set widget_attr = {attr: {'aria-describedby': id ~"_help"}} %}
     {% endif %}
-    {% set row_attr = attr|merge({'class': (row_attr.class|default('') ~ ' fr-input-group')|trim}) %}
+    {% if 'choice' in block_prefixes %}
+        {% set row_attr = attr|merge({'class': (row_attr.class|default('') ~ ' fr-select-group')|trim}) %}
+    {% else %} 
+        {% set row_attr = attr|merge({'class': (row_attr.class|default('') ~ ' fr-input-group')|trim}) %}
+    {% endif %}
     {% if errors|length > 0 %}
         {% set row_attr = row_attr|merge({'class': (row_attr.class ~ ' fr-input-group--error')|trim}) %}
     {% endif %}
@@ -33,6 +37,16 @@
     {% set attr = attr|merge({'class': (attr.class|default('') ~ ' fr-input')|trim}) %}
     {{parent()}}
 {% endblock form_widget_simple %}
+
+{% block choice_widget_collapsed %}
+    {% set attr = attr|merge({'class': (attr.class|default('') ~ ' fr-select')|trim}) %}
+    {{parent()}}
+{% endblock choice_widget_collapsed %}
+
+{% block textarea_widget -%}
+    {% set attr = attr|merge({'class': (attr.class|default('') ~ ' fr-input')|trim}) %}
+    {{parent()}}
+{% endblock textarea_widget %}
 
 {% block form_label %}
     {% if label is not same as(false) %}

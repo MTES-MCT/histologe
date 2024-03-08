@@ -57,6 +57,8 @@ class ContactFormHandlerTest extends KernelTestCase
             $faker->firstName(),
             $signalement->getMailOccupant(),
             $fakeMessage,
+            '',
+            'Autre'
         );
 
         $suivis = $signalement->getSuivis();
@@ -77,6 +79,8 @@ class ContactFormHandlerTest extends KernelTestCase
             $faker->firstName(),
             $signalement->getMailDeclarant(),
             $fakeMessage,
+            '',
+            'Autre'
         );
 
         $suivis = $signalement->getSuivis();

@@ -63,6 +63,8 @@ class HomepageControllerTest extends WebTestCase
                 'contact[nom]' => 'John Doe',
                 'contact[email]' => 'john.doe@yopmail.com',
                 'contact[message]' => $faker->text(),
+                'contact[organisme]' => '',
+                'contact[objet]' => 'Autre',
             ]
         );
 
@@ -85,11 +87,13 @@ class HomepageControllerTest extends WebTestCase
                 'contact[nom]' => 'John Doe',
                 'contact[email]' => 'john.doe@y@opmail.com',
                 'contact[message]' => '',
+                'contact[organisme]' => '',
+                'contact[objet]' => 'Autre',
             ]
         );
 
         $this->assertSelectorTextContains(
-            '[for="contact_message"] + ul',
+            '#contact_message + p.fr-error-text',
             'Merci de renseigner votre message',
             $client->getResponse()->getContent()
         );
