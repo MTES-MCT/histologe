@@ -46,7 +46,7 @@ class FileFactoryTest extends TestCase
         $this->assertEquals($fileType, $file->getFileType());
         $this->assertEquals($documentType, $file->getDocumentType());
         $this->assertEquals($filename, $file->getFilename());
-        if (DocumentType::SITUATION === $file->getDocumentType()) {
+        if (DocumentType::PHOTO_SITUATION === $file->getDocumentType()) {
             $this->assertNotEmpty($file->getDesordreSlug());
         }
     }
@@ -122,7 +122,7 @@ class FileFactoryTest extends TestCase
             ],
             'dummy-filename-desordre.pdf',
             File::FILE_TYPE_DOCUMENT,
-            DocumentType::SITUATION,
+            DocumentType::PHOTO_SITUATION,
         ];
 
         yield 'Désordre photos pdf' => [
@@ -134,7 +134,7 @@ class FileFactoryTest extends TestCase
             ],
             'dummy-filename-desordre.pdf',
             File::FILE_TYPE_DOCUMENT,
-            DocumentType::SITUATION,
+            DocumentType::PHOTO_SITUATION,
         ];
     }
 }

@@ -13,8 +13,10 @@ use App\Entity\Signalement;
 use App\Entity\User;
 use App\Factory\FileFactory;
 use App\Repository\InterventionRepository;
+use App\Service\ImageManipulationHandler;
 use App\Service\Signalement\Qualification\SignalementQualificationUpdater;
 use Doctrine\Persistence\ManagerRegistry;
+use League\Flysystem\FilesystemOperator;
 use Psr\Log\LoggerInterface;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\Workflow\WorkflowInterface;
@@ -30,6 +32,7 @@ class InterventionManager extends AbstractManager
         private readonly FileFactory $fileFactory,
         private readonly Security $security,
         private readonly LoggerInterface $logger,
+        private readonly FilesystemOperator $fileStorage,
         string $entityName = Intervention::class
     ) {
         parent::__construct($managerRegistry, $entityName);
@@ -209,16 +212,19 @@ class InterventionManager extends AbstractManager
         /** @var User $user */
         $user = $this->security->getUser();
 
+        $fileType = File::FILE_TYPE_DOCUMENT;
+        if (\in_array($this->fileStorage->mimeType($document), ImageManipulationHandler::IMAGE_MIME_TYPES)) {
+            $fileType = File::FILE_TYPE_PHOTO;
+        }
+
         // TODO : quand la modale sera fait, le documentType pourra être différent
         return $this->fileFactory->createInstanceFrom(
             filename: $document,
             title: $document,
-            type: 'pdf' === pathinfo($document, \PATHINFO_EXTENSION)
-                ? File::FILE_TYPE_DOCUMENT
-                : File::FILE_TYPE_PHOTO,
+            type: $fileType,
             signalement: $intervention->getSignalement(),
             user: $user,
-            documentType: DocumentType::VISITE
+            documentType: DocumentType::PROCEDURE_RAPPORT_DE_VISITE
         );
     }
 }

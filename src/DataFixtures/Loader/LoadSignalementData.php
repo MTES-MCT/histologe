@@ -30,6 +30,7 @@ use App\Repository\SituationRepository;
 use App\Repository\TagRepository;
 use App\Repository\TerritoryRepository;
 use App\Repository\UserRepository;
+use App\Service\ImageManipulationHandler;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Common\DataFixtures\OrderedFixtureInterface;
 use Doctrine\Persistence\ObjectManager;
@@ -246,7 +247,7 @@ class LoadSignalementData extends Fixture implements OrderedFixtureInterface
             $file = $this->fileFactory->createInstanceFrom(
                 filename: $document['file'],
                 title: $document['titre'],
-                type: 'pdf' === pathinfo($document['file'], \PATHINFO_EXTENSION)
+                type: \in_array(pathinfo($document['file'], \PATHINFO_EXTENSION), ImageManipulationHandler::IMAGE_EXTENSION)
                     ? File::FILE_TYPE_DOCUMENT
                     : File::FILE_TYPE_PHOTO,
                 signalement: $signalement,
@@ -431,7 +432,7 @@ class LoadSignalementData extends Fixture implements OrderedFixtureInterface
                     type: File::FILE_TYPE_PHOTO,
                     signalement: $signalement,
                     // user: $user,
-                    documentType: DocumentType::SITUATION,
+                    documentType: DocumentType::PHOTO_SITUATION,
                     desordreSlug: $document['slug']
                 );
                 $manager->persist($file);

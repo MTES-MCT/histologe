@@ -51,7 +51,7 @@ class FileManagerTest extends KernelTestCase
             type: File::FILE_TYPE_PHOTO,
             signalement: $signalement = $signalementRepository->findOneBy(['reference' => '2023-12']),
             description: $desc,
-            documentType: DocumentType::VISITE
+            documentType: DocumentType::PROCEDURE_RAPPORT_DE_VISITE
         );
 
         $this->assertEquals('blank.jpg', $file->getFilename());
@@ -59,6 +59,6 @@ class FileManagerTest extends KernelTestCase
         $this->assertEquals('photo', $file->getFileType());
         $this->assertEquals($signalement->getReference(), $file->getSignalement()->getReference());
         $this->assertEquals($desc, $file->getDescription());
-        $this->assertEquals(DocumentType::VISITE, $file->getDocumentType());
+        $this->assertEquals(DocumentType::PROCEDURE_RAPPORT_DE_VISITE, $file->getDocumentType());
     }
 }

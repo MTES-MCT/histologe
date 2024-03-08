@@ -9,6 +9,7 @@ use App\Service\Mailer\NotificationMailerType;
 use App\Service\Signalement\VisiteNotifier;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Workflow\Event\Event;
 
 class InterventionConfirmedSubscriber implements EventSubscriberInterface
@@ -19,6 +20,7 @@ class InterventionConfirmedSubscriber implements EventSubscriberInterface
         private Security $security,
         private VisiteNotifier $visiteNotifier,
         private SuiviManager $suiviManager,
+        private UrlGeneratorInterface $urlGenerator,
     ) {
     }
 
@@ -45,6 +47,19 @@ class InterventionConfirmedSubscriber implements EventSubscriberInterface
             }
             $description .= '<br>Commentaire opérateur :<br>';
             $description .= $intervention->getDetails();
+
+            if (!$intervention->getFiles()->isEmpty()) {
+                $description .= '<br>Rapport de visite : ';
+
+                $urlDocument = $this->urlGenerator->generate(
+                    'show_uploaded_file',
+                    ['filename' => $intervention->getFiles()->first()->getFilename()],
+                    UrlGeneratorInterface::ABSOLUTE_URL
+                ).'?t=___TOKEN___';
+
+                $description .= '<a href="'.$urlDocument.'" title="Afficher le document" rel="noopener" target="_blank">Afficher le document</a>';
+            }
+
             $isUsagerNotified = $event->getContext()['isUsagerNotified'] ?? true;
             $suivi = $this->suiviManager->createSuivi(
                 user: $currentUser,

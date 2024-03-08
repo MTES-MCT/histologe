@@ -174,7 +174,7 @@ class SignalementFileController extends AbstractController
                 $documentType = DocumentType::tryFrom($request->get('documentType'));
                 if (null !== $documentType) {
                     $file->setDocumentType($documentType);
-                    if (DocumentType::SITUATION === $documentType) {
+                    if (DocumentType::PHOTO_SITUATION === $documentType) {
                         $desordreSlug = $request->get('desordreSlug');
                         $desordreCritereSlugs = $signalement->getDesordreCriteres()->map(
                             fn (DesordreCritere $desordreCritere) => $desordreCritere->getSlugCritere()

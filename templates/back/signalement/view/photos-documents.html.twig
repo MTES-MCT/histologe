@@ -109,8 +109,7 @@
 </div>
 
 {% for index, doc in signalement.files|filter(
-    doc => doc.fileType == 'document' 
-            and doc.intervention is null
+    doc => doc.fileType == 'document'
             and (
                 (importedBy is same as 'user' and (doc.uploadedBy is null or doc.isUsagerFile ))
                 or (importedBy is same as 'partner' and (doc.uploadedBy is not null and doc.isPartnerFile))
@@ -130,7 +129,11 @@
                     {{ doc.uploadedBy and doc.uploadedBy.partner ? doc.uploadedBy.partner.nom ~ ' - ' : '' }}{{ doc.uploadedBy.nomComplet ?? 'N/R' }}
                 </div>
                 <div class="fr-col-12 fr-col-lg-4">
+                    {% if doc.intervention is null %}
                     <i>{{ doc.title|truncate_filename(45) }}</i>
+                    {% else %}
+                    <i>Rapport de visite du {{ doc.intervention.scheduledAt|date('d/m/Y') }}</i>
+                    {% endif %}
                 </div>
             </div>
         </div>
@@ -138,25 +141,25 @@
             <a href="{{ asset('_up/'~doc.filename~'/'~signalement.uuid) }}"
                 class="fr-btn fr-btn--sm fr-icon-eye-fill img-box" title="Afficher le document {{ doc.filename }}"
                 target="_blank" rel="noopener"></a>           
-               {% if is_granted('FILE_EDIT', doc) %}
-                    {% set DocumentType = enum('\\App\\Entity\\Enum\\DocumentType') %}
-                    {% include 'back/signalement/view/edit-modals/edit-file.html.twig' %}
-                    <button class="fr-btn fr-btn--sm fr-btn--secondary fr-background--white fr-fi-edit-line btn-signalement-file-edit"
-                        id="file_edit_{{ doc.id }}" 
-                        title="Editer le document {{ doc.filename }}"
-                        aria-controls="fr-modal-edit-file"
-                        data-fr-opened="false" 
-                        data-filename="{{ doc.filename }}" 
-                        data-type="document" 
-                        data-file-id="{{ doc.id}}" 
-                        data-documentType="{{ doc.documentType.name }}" 
-                        data-documentType-list="{{ DocumentType.getDocumentsList() | json_encode }}"
-                        data-createdAt="{{ doc.createdAt is defined ? doc.createdAt|date('d.m.Y') : 'N/R' }}"
-                        data-partner-name="{{ doc.uploadedBy and doc.uploadedBy.partner ? doc.uploadedBy.partner.nom ~ ' - ' : '' }}"
-                        data-user-name="{{ doc.uploadedBy.nomComplet ?? 'N/R' }}"
-                    ></button>
-                {% endif %}       
-            {% if is_granted('FILE_DELETE', doc) %}
+            {% if is_granted('FILE_EDIT', doc) and doc.intervention is null %}
+                {% set DocumentType = enum('\\App\\Entity\\Enum\\DocumentType') %}
+                {% include 'back/signalement/view/edit-modals/edit-file.html.twig' %}
+                <button class="fr-btn fr-btn--sm fr-btn--secondary fr-background--white fr-fi-edit-line btn-signalement-file-edit"
+                    id="file_edit_{{ doc.id }}" 
+                    title="Editer le document {{ doc.filename }}"
+                    aria-controls="fr-modal-edit-file"
+                    data-fr-opened="false" 
+                    data-filename="{{ doc.filename }}" 
+                    data-type="document" 
+                    data-file-id="{{ doc.id}}" 
+                    data-documentType="{{ doc.documentType.name }}" 
+                    data-documentType-list="{{ DocumentType.getDocumentsList() | json_encode }}"
+                    data-createdAt="{{ doc.createdAt is defined ? doc.createdAt|date('d.m.Y') : 'N/R' }}"
+                    data-partner-name="{{ doc.uploadedBy and doc.uploadedBy.partner ? doc.uploadedBy.partner.nom ~ ' - ' : '' }}"
+                    data-user-name="{{ doc.uploadedBy.nomComplet ?? 'N/R' }}"
+                ></button>
+            {% endif %}       
+            {% if is_granted('FILE_DELETE', doc) and doc.intervention is null %}
                 <button title="Supprimer le document {{ doc.filename }}"
                     data-delete="{{ path('back_signalement_delete_file',{uuid:signalement.uuid,type:'documents',filename:doc.filename}) }}"
                     data-token="{{ csrf_token('signalement_delete_file_'~signalement.id) }}"

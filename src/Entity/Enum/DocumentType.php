@@ -20,8 +20,8 @@ enum DocumentType: String
     case BAILLEUR_DEVIS_POUR_TRAVAUX = 'BAILLEUR_DEVIS_POUR_TRAVAUX';
     case BAILLEUR_REPONSE_BAILLEUR = 'BAILLEUR_REPONSE_BAILLEUR';
     case AUTRE = 'AUTRE';
-    case SITUATION = 'SITUATION';
-    case VISITE = 'VISITE';
+    case PHOTO_SITUATION = 'PHOTO_SITUATION';
+    case PHOTO_VISITE = 'PHOTO_VISITE';
 
     public static function getLabelList(): array
     {
@@ -38,16 +38,16 @@ enum DocumentType: String
             self::BAILLEUR_DEVIS_POUR_TRAVAUX->name => 'Devis pour travaux',
             self::BAILLEUR_REPONSE_BAILLEUR->name => 'Réponse bailleur',
             self::AUTRE->name => 'Autre',
-            self::SITUATION->name => 'Photo de désordre',
-            self::VISITE->name => 'Photo de visite',
+            self::PHOTO_SITUATION->name => 'Photo de désordre',
+            self::PHOTO_VISITE->name => 'Photo de visite',
         ];
     }
 
     public static function getPhotosList(): array
     {
         return [
-            self::SITUATION->name => self::SITUATION->label(),
-            self::VISITE->name => self::VISITE->label(),
+            self::PHOTO_SITUATION->name => self::PHOTO_SITUATION->label(),
+            self::PHOTO_VISITE->name => self::PHOTO_VISITE->label(),
             self::AUTRE->name => self::AUTRE->label(),
         ];
     }
@@ -66,6 +66,8 @@ enum DocumentType: String
             self::PROCEDURE_SAISINE->name => self::PROCEDURE_SAISINE->label(),
             self::BAILLEUR_DEVIS_POUR_TRAVAUX->name => self::BAILLEUR_DEVIS_POUR_TRAVAUX->label(),
             self::BAILLEUR_REPONSE_BAILLEUR->name => self::BAILLEUR_REPONSE_BAILLEUR->label(),
+            self::PHOTO_SITUATION->name => self::PHOTO_SITUATION->label(),
+            self::PHOTO_VISITE->name => self::PHOTO_VISITE->label(),
             self::AUTRE->name => self::AUTRE->label(),
         ];
     }
