@@ -15,6 +15,7 @@ use App\Entity\Signalement;
 use App\Entity\Situation;
 use App\Factory\Interconnection\DossierMessageFactoryInterface;
 use App\Messenger\Message\Oilhi\DossierMessage;
+use App\Service\HtmlCleaner;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Security\Csrf\CsrfTokenManagerInterface;
@@ -146,18 +147,17 @@ class DossierMessageFactory implements DossierMessageFactoryInterface
             }
 
             if (!$signalement->getDesordrePrecisions()->isEmpty()) {
-                $precisions = implode(
-                    ', ',
-                    $signalement
-                        ->getDesordrePrecisions()
-                        ->filter(function (DesordrePrecision $desordrePrecision) {
-                            return ' - ' !== $desordrePrecision->getLabel();
-                        })
-                        ->map(function (DesordrePrecision $desordrePrecision) {
-                            return $desordrePrecision->getLabel();
-                        })->toArray()
-                );
-                $desordres['precisions'] = str_replace('-', '', $precisions);
+                $precisionsList = $signalement
+                    ->getDesordrePrecisions()
+                    ->filter(function (DesordrePrecision $desordrePrecision) {
+                        return ' - ' !== $desordrePrecision->getLabel();
+                    })
+                    ->map(function (DesordrePrecision $desordrePrecision) {
+                        if (!empty($desordrePrecision->getLabel())) {
+                            return HtmlCleaner::clean($desordrePrecision->getLabel());
+                        }
+                    })->toArray();
+                $desordres['precisions'] = implode(',', array_filter($precisionsList));
             }
 
             return $desordres;
