@@ -165,7 +165,7 @@ if (modalUploadFiles) {
             let data = new FormData()
             data.append('file_id', selectField.dataset.fileId)
             if (modalUploadFiles.dataset.fileType == 'photo') {
-                data.append('documentType', 'SITUATION')
+                data.append('documentType', 'PHOTO_SITUATION')
                 data.append('desordreSlug', selectField.value)
             } else {
                 data.append('documentType', selectField.value)
