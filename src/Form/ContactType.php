@@ -54,7 +54,8 @@ class ContactType extends AbstractType
                     'minlength' => 10,
                 ],
                 'label' => 'Votre message',
-                'help' => 'Ne partagez pas d\'informations sensibles (par ex. mot de passe, numéro de carte bleue, etc).',
+                'help' => 'Ne partagez pas d\'informations sensibles (par ex. mot de passe, numéro de carte bleue, etc).<br>Format : 10 caractères minimum.',
+                'help_html' => true,
                 'constraints' => [
                     new Assert\NotBlank(message: 'Merci de renseigner votre message.'),
                     new Assert\Length(min: 10, minMessage: 'Votre message doit comporter au moins 10 caractères.'),
