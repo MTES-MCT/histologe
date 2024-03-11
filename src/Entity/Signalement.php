@@ -2291,4 +2291,14 @@ class Signalement
 
         return $desordreSlug;
     }
+
+    public function getDesordreCritereSlugs()
+    {
+        return $this->getDesordreCriteres()->map(fn (DesordreCritere $desordreCritere) => $desordreCritere->getSlugCritere())->toArray();
+    }
+
+    public function getDesordrePrecisionSlugs()
+    {
+        return $this->getDesordrePrecisions()->map(fn (DesordrePrecision $desordrePrecision) => $desordrePrecision->getDesordrePrecisionSlug())->toArray();
+    }
 }

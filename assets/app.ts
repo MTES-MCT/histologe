@@ -42,4 +42,4 @@ import './controllers/maintenance_banner';
 import './controllers/activate_account/activate_account';
 import './controllers/back_signalement_view/form_edit_modal';
 import './controllers/back_signalement_edit_file/back_signalement_edit_file';
-
+import './controllers/back_signalement_view/form_upload_documents';

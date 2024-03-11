@@ -59,10 +59,14 @@ class File
     #[ORM\Column(type: 'text', nullable: true)]
     private ?string $description;
 
+    #[ORM\Column]
+    private ?bool $isWaitingSuivi = null;
+
     public function __construct()
     {
         $this->createdAt = new \DateTimeImmutable();
         $this->isVariantsGenerated = false;
+        $this->isWaitingSuivi = false;
     }
 
     public function getId(): ?int
@@ -206,7 +210,17 @@ class File
 
     public function setDesordreSlug(?string $desordreSlug): self
     {
-        $this->desordreSlug = $desordreSlug;
+        if (!$this->getSignalement() || !$this->getDocumentType() || DocumentType::PHOTO_SITUATION !== $this->getDocumentType()) {
+            $this->desordreSlug = null;
+
+            return $this;
+        }
+        if (!$desordreSlug) {
+            $this->desordreSlug = null;
+        } elseif (\in_array($desordreSlug, $this->getSignalement()->getDesordreCritereSlugs())
+            || \in_array($desordreSlug, $this->getSignalement()->getDesordrePrecisionSlugs())) {
+            $this->desordreSlug = $desordreSlug;
+        }
 
         return $this;
     }
@@ -231,6 +245,18 @@ class File
     public function setDescription(?string $description): self
     {
         $this->description = $description;
+
+        return $this;
+    }
+
+    public function isIsWaitingSuivi(): ?bool
+    {
+        return $this->isWaitingSuivi;
+    }
+
+    public function setIsWaitingSuivi(bool $isWaitingSuivi): self
+    {
+        $this->isWaitingSuivi = $isWaitingSuivi;
 
         return $this;
     }
