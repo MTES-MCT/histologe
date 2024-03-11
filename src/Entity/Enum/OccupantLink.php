@@ -2,8 +2,12 @@
 
 namespace App\Entity\Enum;
 
+use App\Entity\Behaviour\EnumTrait;
+
 enum OccupantLink: string
 {
+    use EnumTrait;
+    
     case PROCHE = 'PROCHE';
     case VOISIN = 'VOISIN';
     case SECOURS = 'SECOURS';
@@ -11,26 +15,15 @@ enum OccupantLink: string
     case PRO = 'PRO';
     case AUTRE = 'AUTRE';
 
-    public function label(): string
-    {
-        return self::getLabelList()[$this->name];
-    }
-
-    /** @see SignalementType::LINK_CHOICES legacy */
     public static function getLabelList(): array
     {
         return [
-            'PROCHE' => 'Proche',
-            'VOISIN' => 'Voisin',
-            'SECOURS' => 'Services de secours',
-            'BAILLEUR' => 'Bailleur',
-            'PRO' => 'Pro',
-            'AUTRE' => 'Autre',
+            self::PROCHE->name => 'Proche',
+            self::VOISIN->name => 'Voisin',
+            self::SECOURS->name => 'Services de secours',
+            self::BAILLEUR->name => 'Bailleur',
+            self::PRO->name => 'Pro',
+            self::AUTRE->name => 'Autre',
         ];
-    }
-
-    public static function names(): array
-    {
-        return array_column(self::cases(), 'name');
     }
 }

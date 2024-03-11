@@ -218,20 +218,6 @@ class SignalementController extends AbstractController
         return false;
     }
 
-    #[Route('/{uuid}/editer', name: 'back_signalement_edit', methods: ['GET', 'POST'])]
-    public function editSignalement(
-        Signalement $signalement,
-    ): Response {
-        $this->denyAccessUnlessGranted('SIGN_EDIT', $signalement);
-        if (Signalement::STATUS_ACTIVE !== $signalement->getStatut()) {
-            $this->addFlash('error', "Ce signalement n'est pas éditable.");
-
-            return $this->redirectToRoute('back_index');
-        }
-
-        return $this->redirectToRoute('back_signalement_view', ['uuid' => $signalement->getUuid()]);
-    }
-
     #[Route('/{uuid}/supprimer', name: 'back_signalement_delete', methods: 'POST')]
     public function deleteSignalement(Signalement $signalement, Request $request, ManagerRegistry $doctrine): Response
     {
