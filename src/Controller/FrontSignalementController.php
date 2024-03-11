@@ -2,15 +2,20 @@
 
 namespace App\Controller;
 
+use App\Dto\Request\Signalement\SignalementDraftRequest;
 use App\Entity\Enum\DocumentType;
+use App\Entity\Enum\SignalementDraftStatus;
+use App\Entity\SignalementDraft;
 use App\Entity\Suivi;
 use App\Entity\User;
 use App\Factory\SuiviFactory;
+use App\Manager\SignalementDraftManager;
 use App\Manager\SuiviManager;
 use App\Manager\UserManager;
 use App\Repository\CommuneRepository;
 use App\Repository\SignalementRepository;
 use App\Repository\UserRepository;
+use App\Serializer\SignalementDraftRequestSerializer;
 use App\Service\ImageManipulationHandler;
 use App\Service\Signalement\PostalCodeHomeChecker;
 use App\Service\Signalement\SignalementFileProcessor;
@@ -22,6 +27,7 @@ use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 #[Route('/')]
 class FrontSignalementController extends AbstractController
@@ -31,6 +37,88 @@ class FrontSignalementController extends AbstractController
     ): Response {
         return $this->render('front/nouveau_formulaire.html.twig', [
             'uuid_signalement' => null,
+        ]);
+    }
+    
+    #[Route('/signalement-draft/{uuid}', name: 'front_nouveau_formulaire_edit', methods: 'GET')]
+    public function edit(
+        SignalementDraft $signalementDraft
+    ): Response {
+        return $this->render('front/nouveau_formulaire.html.twig', [
+            'uuid_signalement' => $signalementDraft->getUuid(),
+        ]);
+    }
+
+    #[Route('/signalement-draft/envoi', name: 'envoi_nouveau_signalement_draft', methods: 'POST')]
+    public function sendSignalementDraft(
+        Request $request,
+        SignalementDraftRequestSerializer $serializer,
+        SignalementDraftManager $signalementDraftManager,
+        ValidatorInterface $validator,
+    ): Response {
+        /** @var SignalementDraftRequest $signalementDraftRequest */
+        $signalementDraftRequest = $serializer->deserialize(
+            $payload = $request->getContent(),
+            SignalementDraftRequest::class,
+            'json'
+        );
+        $errors = $validator->validate(
+            $signalementDraftRequest,
+            null,
+            ['Default', 'POST_'.strtoupper($signalementDraftRequest->getProfil())]
+        );
+        if (0 === $errors->count()) {
+            return $this->json([
+                'uuid' => $signalementDraftManager->create(
+                    $signalementDraftRequest,
+                    json_decode($payload, true)
+                ),
+            ]);
+        }
+
+        return $this->json($errors);
+    }
+
+    #[Route('/signalement-draft/{uuid}/envoi', name: 'mise_a_jour_nouveau_signalement_draft', methods: 'PUT')]
+    public function updateSignalementDraft(
+        Request $request,
+        SignalementDraftRequestSerializer $serializer,
+        SignalementDraftManager $signalementDraftManager,
+        ValidatorInterface $validator,
+        SignalementDraft $signalementDraft,
+    ): Response {
+        /** @var SignalementDraftRequest $signalementDraftRequest */
+        $signalementDraftRequest = $serializer->deserialize(
+            $payload = $request->getContent(),
+            SignalementDraftRequest::class,
+            'json'
+        );
+        $groupValidation = ['Default', 'POST_'.strtoupper($signalementDraftRequest->getProfil())];
+        if ('validation_signalement' === $signalementDraftRequest->getCurrentStep()) {
+            $groupValidation[] = 'PUT_'.strtoupper($signalementDraftRequest->getProfil());
+        }
+        $errors = $validator->validate($signalementDraftRequest, null, $groupValidation);
+        if (0 === $errors->count()) {
+            $result = $signalementDraftManager->update(
+                $signalementDraft,
+                $signalementDraftRequest,
+                json_decode($payload, true)
+            );
+
+            return $this->json($result);
+        }
+
+        return $this->json($errors);
+    }
+
+    #[Route('/signalement-draft/{uuid}/informations', name: 'informations_signalement_draft', methods: 'GET')]
+    public function getSignalementDraft(
+        SignalementDraft $signalementDraft,
+    ): Response {
+        return $this->json([
+            'signalement' => SignalementDraftStatus::EN_COURS === $signalementDraft->getStatus()
+                ? $signalementDraft :
+                null,
         ]);
     }
 
