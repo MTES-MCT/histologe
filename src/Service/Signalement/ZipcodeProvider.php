@@ -9,7 +9,7 @@ class ZipcodeProvider
     public const MARTINIQUE_CODE_DEPARTMENT_972 = '972';
     public const LA_REUNION_CODE_DEPARTMENT_974 = '974';
 
-    public function getZipCode(string $postalCode): string
+    public static function getZipCode(string $postalCode): string
     {
         $zipChunk = substr(trim($postalCode), 0, 3);
 

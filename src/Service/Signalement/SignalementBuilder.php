@@ -74,9 +74,9 @@ class SignalementBuilder
         );
 
         $territory = $this->territoryRepository->findOneBy([
-            'zip' => $this
-                ->zipcodeProvider
-                ->getZipCode($this->signalementDraftRequest->getAdresseLogementAdresseDetailCodePostal()),
+            'zip' => ZipcodeProvider::getZipCode(
+                $this->signalementDraftRequest->getAdresseLogementAdresseDetailCodePostal()
+            ),
         ]);
 
         $this->signalement = (new Signalement())

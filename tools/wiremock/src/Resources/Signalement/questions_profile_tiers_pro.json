@@ -127,6 +127,25 @@
           "slug": "coordonnees_bailleur_nom",
           "validate": {
             "maxLength": 255
+          },
+          "conditional": {
+            "show": "formStore.data.signalement_concerne_logement_social_autre_tiers === 'non'"
+          }
+        },
+        {
+          "type": "SignalementFormAutocomplete",
+          "label": "Nom de l'organisme",
+          "slug": "coordonnees_bailleur_nom_autocomplete",
+          "placeholder": "Taper le nom de l'organisme ici",
+          "validate": {
+            "maxLength": 255
+          },
+          "conditional": {
+            "show": "formStore.data.signalement_concerne_logement_social_autre_tiers === 'oui'"
+          },
+          "autocomplete": {
+            "isAbsoluteLink": false,
+            "route": "/bailleurs?postcode={{formStore.data.adresse_logement_adresse_detail_code_postal}}&name={{formStore.data.coordonnees_bailleur_nom_autocomplete}}"
           }
         },
         {
