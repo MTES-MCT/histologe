@@ -267,17 +267,19 @@ class SignalementManager extends AbstractManager
         QualificationNDERequest $qualificationNDERequest
     ) {
         $signalement = $signalementQualification->getSignalement();
-        // // mise à jour du signalement
-        if (QualificationNDERequest::RADIO_VALUE_AFTER_2023 === $qualificationNDERequest->getDateEntree()
-            && ($signalement->getDateEntree()->format('Y') < '2023' || null === $signalement->getDateEntree())
-        ) {
-            $signalement->setDateEntree(new \DateTimeImmutable(QualificationNDERequest::RADIO_VALUE_AFTER_2023));
-        }
-
-        if (QualificationNDERequest::RADIO_VALUE_BEFORE_2023 === $qualificationNDERequest->getDateEntree()
-            && ($signalement->getDateEntree()->format('Y') >= '2023' || null === $signalement->getDateEntree())
-        ) {
-            $signalement->setDateEntree(new \DateTimeImmutable(QualificationNDERequest::RADIO_VALUE_BEFORE_2023));
+        // mise à jour du signalement
+        if ($qualificationNDERequest->getDateEntree()) {
+            if (QualificationNDERequest::RADIO_VALUE_AFTER_2023 === $qualificationNDERequest->getDateEntree()
+                && ($signalement->getDateEntree()->format('Y') < '2023' || null === $signalement->getDateEntree())
+            ) {
+                $signalement->setDateEntree(new \DateTimeImmutable(QualificationNDERequest::RADIO_VALUE_AFTER_2023));
+            }
+    
+            if (QualificationNDERequest::RADIO_VALUE_BEFORE_2023 === $qualificationNDERequest->getDateEntree()
+                && ($signalement->getDateEntree()->format('Y') >= '2023' || null === $signalement->getDateEntree())
+            ) {
+                $signalement->setDateEntree(new \DateTimeImmutable(QualificationNDERequest::RADIO_VALUE_BEFORE_2023));
+            }
         }
 
         if (null !== $qualificationNDERequest->getSuperficie()
@@ -287,26 +289,28 @@ class SignalementManager extends AbstractManager
         }
         $this->save($signalement);
 
-        // // mise à jour du signalementqualification
-        if (QualificationNDERequest::RADIO_VALUE_AFTER_2023 === $qualificationNDERequest->getDateDernierBail()
-            && (
-                null === $signalementQualification->getDernierBailAt()
-                || $signalementQualification->getDernierBailAt()?->format('Y') < '2023'
-            )
-        ) {
-            $signalementQualification->setDernierBailAt(new \DateTimeImmutable(
-                QualificationNDERequest::RADIO_VALUE_AFTER_2023
-            ));
-        }
-        if (QualificationNDERequest::RADIO_VALUE_BEFORE_2023 === $qualificationNDERequest->getDateDernierBail()
-            && (
-                null === $signalementQualification->getDernierBailAt()
-                || $signalementQualification->getDernierBailAt()?->format('Y') >= '2023'
-            )
-        ) {
-            $signalementQualification->setDernierBailAt(
-                new \DateTimeImmutable(QualificationNDERequest::RADIO_VALUE_BEFORE_2023)
-            );
+        // mise à jour du signalementqualification
+        if ($qualificationNDERequest->getDateDernierBail()) {
+            if (QualificationNDERequest::RADIO_VALUE_AFTER_2023 === $qualificationNDERequest->getDateDernierBail()
+                && (
+                    null === $signalementQualification->getDernierBailAt()
+                    || $signalementQualification->getDernierBailAt()?->format('Y') < '2023'
+                )
+            ) {
+                $signalementQualification->setDernierBailAt(new \DateTimeImmutable(
+                    QualificationNDERequest::RADIO_VALUE_AFTER_2023
+                ));
+            }
+            if (QualificationNDERequest::RADIO_VALUE_BEFORE_2023 === $qualificationNDERequest->getDateDernierBail()
+                && (
+                    null === $signalementQualification->getDernierBailAt()
+                    || $signalementQualification->getDernierBailAt()?->format('Y') >= '2023'
+                )
+            ) {
+                $signalementQualification->setDernierBailAt(
+                    new \DateTimeImmutable(QualificationNDERequest::RADIO_VALUE_BEFORE_2023)
+                );
+            }
         }
 
         $signalementQualification->setDetails($qualificationNDERequest->getDetails());
