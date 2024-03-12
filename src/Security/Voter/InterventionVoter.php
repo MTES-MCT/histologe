@@ -39,7 +39,10 @@ class InterventionVoter extends Voter
     public function canEditVisite(Intervention $intervention, User $user): bool
     {
         $signalement = $intervention->getSignalement();
-        if (Signalement::STATUS_ACTIVE !== $signalement->getStatut() && Signalement::STATUS_NEED_PARTNER_RESPONSE !== $signalement->getStatut()) {
+        if (
+            Signalement::STATUS_ACTIVE !== $signalement->getStatut() &&
+            Signalement::STATUS_NEED_PARTNER_RESPONSE !== $signalement->getStatut()
+        ) {
             return false;
         }
 
