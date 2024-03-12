@@ -274,7 +274,7 @@ class SignalementManager extends AbstractManager
             ) {
                 $signalement->setDateEntree(new \DateTimeImmutable(QualificationNDERequest::RADIO_VALUE_AFTER_2023));
             }
-    
+
             if (QualificationNDERequest::RADIO_VALUE_BEFORE_2023 === $qualificationNDERequest->getDateEntree()
                 && ($signalement->getDateEntree()->format('Y') >= '2023' || null === $signalement->getDateEntree())
             ) {
