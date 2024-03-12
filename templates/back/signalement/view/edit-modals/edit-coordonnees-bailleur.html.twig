@@ -71,27 +71,28 @@
                                     <span class="fr-hint-text">Tapez l'adresse et sélectionnez-la dans la liste</span>
                                 </label>
                                 <input class="fr-input search-address-autocomplete" type="text" id="edit-coordonnees-bailleur-search"
-                                    data-fr-adresse-bo-autocomplete="true" data-form-id="form-edit-coordonnees-bailleur" data-form-lat="{% if signalement.geoloc.lat is defined %}{{ signalement.geoloc.lat }}{% endif %}" data-form-lng="{% if signalement.geoloc.lng is defined %}{{ signalement.geoloc.lng }}{% endif %}">                                        
-                                <div class="fr-grid-row fr-background-alt--blue-france fr-text-label--blue-france search-address-autocomplete-list">
+                                    data-fr-adresse-autocomplete="true" 
+                                    data-autocomplete-query-selector="#form-edit-coordonnees-bailleur .fr-address-group-bo"
+                                    data-form-id="form-edit-coordonnees-bailleur" 
+                                    data-form-lat="{% if signalement.geoloc.lat is defined %}{{ signalement.geoloc.lat }}{% endif %}" 
+                                    data-form-lng="{% if signalement.geoloc.lng is defined %}{{ signalement.geoloc.lng }}{% endif %}">                                        
+                                <div class="fr-grid-row fr-background-alt--blue-france fr-text-label--blue-france fr-address-group-bo">
                                 </div>
                             </div>
 
                             <div class="fr-input-group fr-input-group--disabled">
-                                <label class="fr-label" for="adresse-visible">Numéro et voie</label>
-                                <input class="fr-input" type="text" disabled name="adresse-visible" value="{{ signalement.adresseProprio }}">
-                                <input type="hidden" name="adresse" value="{{ signalement.adresseProprio }}">
+                                <label class="fr-label" for="form-edit-coordonnees-bailleur-adresse">Numéro et voie</label>
+                                <input class="fr-input" id="form-edit-coordonnees-bailleur-adresse" type="text" readonly name="adresse" value="{{ signalement.adresseProprio }}" data-autocomplete-addresse="true">
                             </div>
 
                             <div class="fr-input-group fr-input-group--disabled">
-                                <label class="fr-label" for="codePostal-visible">Code postal</label>
-                                <input class="fr-input" type="text" disabled name="codePostal-visible" value="{{ signalement.codePostalProprio }}">
-                                <input type="hidden" name="codePostal" value="{{ signalement.codePostalProprio }}">
+                                <label class="fr-label" for="form-edit-coordonnees-bailleur-codepostal">Code postal</label>
+                                <input class="fr-input" id="form-edit-coordonnees-bailleur-codepostal" type="text" readonly name="codePostal" value="{{ signalement.codePostalProprio }}" data-autocomplete-codepostal="true">
                             </div>
 
                             <div class="fr-input-group fr-input-group--disabled">
-                                <label class="fr-label" for="ville-visible">Commune</label>
-                                <input class="fr-input" type="text" disabled name="ville-visible" value="{{ signalement.villeProprio }}">
-                                <input type="hidden" name="ville" value="{{ signalement.villeProprio }}">
+                                <label class="fr-label" for="form-edit-coordonnees-bailleur-ville">Commune</label>
+                                <input class="fr-input" id="form-edit-coordonnees-bailleur-ville" type="text" readonly name="ville" value="{{ signalement.villeProprio }}" data-autocomplete-ville="true">
                             </div>
 
                             <div class="fr-select-group">

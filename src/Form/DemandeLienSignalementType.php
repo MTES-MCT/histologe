@@ -2,7 +2,7 @@
 
 namespace App\Form;
 
-use App\Entity\Model\DemandeLienSignalement;
+use App\Dto\DemandeLienSignalement;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
@@ -21,14 +21,26 @@ class DemandeLienSignalementType extends AbstractType
             ->add('adresseHelper', null, [
                 'label' => 'Adresse du logement',
                 'help' => 'Saisissez l\'adresse du logement concerné et sélectionnez-la dans la liste',
+                'attr' => [
+                    'autocomplete' => 'off',
+                    'data-fr-adresse-autocomplete' => 'true',
+                    'data-autocomplete-query-selector' => '#form-demande-lien-signalement .fr-address-group',
+                ],
             ])
-            ->add('adresse', HiddenType::class)
-            ->add('codePostal', HiddenType::class)
-            ->add('ville', HiddenType::class)
+            ->add('adresse', HiddenType::class, [
+                'attr' => ['data-autocomplete-addresse' => 'true'],
+            ])
+            ->add('codePostal', HiddenType::class, [
+                'attr' => ['data-autocomplete-codepostal' => 'true'],
+            ])
+            ->add(
+                'ville', HiddenType::class, [
+                'attr' => ['data-autocomplete-ville' => 'true'],
+            ])
             ->add('save', SubmitType::class, [
-                'label' => 'Recevoir mon lien de suivi par mail',
+                'label' => 'Recevoir mon lien de suivi par email',
                 'attr' => ['class' => 'fr-btn--icon-left fr-icon-check-line fr-btn--sm fr-p-1w'],
-                ])
+            ])
         ;
     }
 

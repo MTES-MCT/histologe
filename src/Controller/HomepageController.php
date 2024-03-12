@@ -2,7 +2,7 @@
 
 namespace App\Controller;
 
-use App\Entity\Model\DemandeLienSignalement;
+use App\Dto\DemandeLienSignalement;
 use App\Form\ContactType;
 use App\Form\DemandeLienSignalementType;
 use App\Form\PostalCodeSearchType;

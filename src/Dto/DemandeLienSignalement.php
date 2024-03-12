@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Entity\Model;
+namespace App\Dto;
 
 use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\Validator\Context\ExecutionContextInterface;
@@ -24,7 +24,7 @@ class DemandeLienSignalement
     public function validate(ExecutionContextInterface $context, $payload)
     {
         if (empty(trim($this->adresse)) || empty(trim($this->codePostal)) || empty(trim($this->ville))) {
-            $context->buildViolation('Vous devez sélectionner un adresse dans la liste des propositions')
+            $context->buildViolation('Vous devez sélectionner une adresse dans la liste des propositions')
                 ->atPath('adresseHelper')
                 ->addViolation();
         }
