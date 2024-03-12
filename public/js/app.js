@@ -140,6 +140,53 @@ forms.forEach((form) => {
             }
         })
     })
+    form.addEventListener('submit', (event) => {
+        event.preventDefault();
+        if (!form.checkValidity() || !checkFieldset(form)) {
+            event.stopPropagation();
+            form.querySelectorAll('input,textarea,select,fieldset[aria-required="true"]').forEach((field) => {
+                if (field.tagName === "FIELDSET") {
+                    if (!checkFieldset(form)) {
+                        field.addEventListener('change', () => {
+                            checkFieldset(form);
+                        })
+                        invalid = field.parentElement;
+                    }
+                } else if (!field.checkValidity()) {
+                    let parent = field.parentElement;
+                    if (field.type === 'radio')
+                        parent = field.parentElement.parentElement.parentElement;
+                    [field.classList, parent.classList].forEach((f) => {
+                        f.add(f[0] + '--error');
+                    })
+                    parent?.querySelector('.fr-error-text')?.classList.remove('fr-hidden');
+                    field.addEventListener('input', () => {
+                        if (field.checkValidity()) {
+                            [field.classList, parent.classList].forEach((f) => {
+                                f.remove(f[0] + '--error');
+                            })
+                            parent.querySelector('.fr-error-text')?.classList.add('fr-hidden');
+                        }
+                    })
+                    invalid = form?.querySelector('*:invalid:first-of-type')?.parentElement;
+                }
+
+            })
+            if (invalid) {
+                const y = invalid.getBoundingClientRect().top + window.scrollY;
+                window.scroll({
+                    top: y,
+                    behavior: 'smooth'
+                });
+            }
+        } else {
+            Object.keys(uploadedFiles).map((f, index) => {
+                let fi = JSON.parse(uploadedFiles[f]);
+                form.insertAdjacentHTML('beforeend', `<input type="hidden" name="signalement[files][${fi.key}][${fi.titre}]" value="${fi.file}">`);
+            });
+            form.submit();
+        }
+    })
 })
 document?.querySelectorAll(".fr-pagination__link").forEach((e => {
     let t, r, a, n = document.querySelector(".fr-pagination__link--prev"),
