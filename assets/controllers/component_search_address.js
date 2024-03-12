@@ -1,7 +1,9 @@
+if(document.querySelector('[data-fr-adresse-autocomplete]')){
+    attachAutocompleteClickOutsideEvent()
+}
 document.querySelectorAll('[data-fr-adresse-autocomplete]').forEach((inputAdresse) => {
     attacheAutocompleteAddressEvent(inputAdresse)
 })
-attachAutocompleteClickOutsideEvent()
 
 function attachAutocompleteClickOutsideEvent() {
     document.addEventListener('click', function (event) {
