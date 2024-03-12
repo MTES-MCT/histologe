@@ -2,6 +2,7 @@
 
 namespace App\Manager;
 
+use App\Entity\Enum\DocumentType;
 use App\Entity\File;
 use App\Entity\Signalement;
 use App\Entity\Suivi;
@@ -72,6 +73,8 @@ class SuiviManager extends Manager
 
     public function createInstanceForFilesSignalement(User $user, Signalement $signalement, array $files): Suivi
     {
+        $isRapportDeVisite = false;
+        $isPhotoDeVisite = false;
         $nbDocs = 0;
         $nbPhotos = 0;
         foreach ($files as $file) {
@@ -80,11 +83,22 @@ class SuiviManager extends Manager
             } else {
                 ++$nbDocs;
             }
+
+            if (DocumentType::PROCEDURE_RAPPORT_DE_VISITE === $file->getDocumentType()) {
+                $isRapportDeVisite = true;
+            }
+            if (DocumentType::PHOTO_VISITE === $file->getDocumentType()) {
+                $isPhotoDeVisite = true;
+            }
         }
         $description = '';
         if ($nbDocs > 0) {
             $description .= $nbDocs;
-            $description .= $nbDocs > 1 ? ' documents partenaires' : ' document partenaire';
+            if ($isRapportDeVisite) {
+                $description .= $nbDocs > 1 ? ' rapports de visite' : ' rapport de visite';
+            } else {
+                $description .= $nbDocs > 1 ? ' documents partenaires' : ' document partenaire';
+            }
         }
         if ($nbPhotos > 0) {
             if ('' !== $description) {
@@ -92,6 +106,9 @@ class SuiviManager extends Manager
             }
             $description .= $nbPhotos;
             $description .= $nbPhotos > 1 ? ' photos' : ' photo';
+            if ($isPhotoDeVisite) {
+                $description .= ' de visite';
+            }
         }
         if ($nbDocs + $nbPhotos > 1) {
             $description .= ' ont été ajoutés au signalement : ';
@@ -111,6 +128,11 @@ class SuiviManager extends Manager
             .implode('', $descriptionList)
             .'</ul>'
         );
+
+        if ($isRapportDeVisite || $isPhotoDeVisite) {
+            $suivi->setIsPublic(true);
+        }
+
         $suivi->setType(SUIVI::TYPE_AUTO);
 
         return $suivi;

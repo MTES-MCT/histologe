@@ -74,3 +74,54 @@
         </div>
     </div>
 </div>
+
+<div class="fr-grid-row fr-grid-row--middle fr-grid-row--gutters fr-mb-3v">
+    {% for index, photo in signalement.files|filter(
+        photo => photo.fileType == 'photo'
+                and photo.intervention is not null
+                and photo.intervention.id is same as intervention.id
+        ) %}
+        <div class="fr-col-6 fr-col-md-2 fr-rounded signalement-file-item">
+            <div class="fr-px-5w fr-py-8w fr-rounded fr-border fr-text--center part-infos-hover"
+                 data-user="{{ photo.uploadedBy.nomComplet ?? 'N/R' }}"
+                 data-mail="{{ photo.createdAt is defined ? photo.createdAt|date('d.m.Y') : 'N/R' }}"
+                 style="background: url('{{ asset('_up/'~photo.filename~'/'~signalement.uuid~'?variant=thumb') }}')no-repeat center center/cover">
+                <button 
+                    class="fr-btn fr-btn--sm fr-icon-eye-line open-photo-album" 
+                    data-id={{ photo.id }} 
+                    title="Voir la photo {{ photo.filename }}"
+                ></button>
+                {% if is_granted('FILE_EDIT', photo) %}
+                    {% set DocumentType = enum('\\App\\Entity\\Enum\\DocumentType') %}
+                    {% include 'back/signalement/view/edit-modals/edit-file.html.twig' %}
+                    <button 
+                        class="fr-btn fr-btn--sm fr-btn--secondary fr-background--white fr-fi-edit-line btn-signalement-file-edit"
+                        id="file_edit_{{ photo.id }}" 
+                        title="Editer la photo {{ photo.filename }}"
+                        aria-controls="fr-modal-edit-file"
+                        data-fr-opened="false" 
+                        data-filename="{{ photo.filename }}" 
+                        data-type="photo" 
+                        data-file-id="{{ photo.id}}" 
+                        data-signalement-uuid="{{ signalement.uuid}}" 
+                        data-documentType="{{ photo.documentType.name }}" 
+                        data-documentType-list="{{ DocumentType.getPhotosList() | json_encode }}"
+                        data-createdAt="{{ photo.createdAt is defined ? photo.createdAt|date('d.m.Y') : 'N/R' }}"
+                        data-partner-name="{{ photo.uploadedBy and photo.uploadedBy.partner ? photo.uploadedBy.partner.nom ~ ' - ' : '' }}"
+                        data-user-name="{{ photo.uploadedBy.nomComplet ?? 'N/R' }}"
+                        data-desordreSlug="{{ photo.desordreSlug }}"
+                        data-signalement-desordres="{{ criteres | json_encode }}"
+                    ></button>
+                {% endif %}
+                {# {% if is_granted('FILE_DELETE', photo) %}
+                    <button 
+                        title="Supprimer la photo {{ photo.filename }}"
+                        data-delete="{{ path('back_signalement_delete_file',{uuid:signalement.uuid,type:'photos',filename:photo.filename}) }}"
+                        data-token="{{ csrf_token('signalement_delete_file_'~signalement.id) }}"
+                        class="fr-btn fr-btn--sm fr-btn--secondary fr-background--white fr-fi-delete-line signalement-file-delete"
+                    ></button>
+                {% endif %} #}
+            </div>
+        </div>
+    {% endfor %}
+</div>
