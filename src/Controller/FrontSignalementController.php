@@ -8,15 +8,20 @@ use App\Entity\Enum\SignalementDraftStatus;
 use App\Entity\SignalementDraft;
 use App\Entity\Suivi;
 use App\Entity\User;
+use App\Factory\SignalementDraftFactory;
 use App\Factory\SuiviFactory;
 use App\Manager\SignalementDraftManager;
 use App\Manager\SuiviManager;
 use App\Manager\UserManager;
 use App\Repository\CommuneRepository;
+use App\Repository\SignalementDraftRepository;
 use App\Repository\SignalementRepository;
 use App\Repository\UserRepository;
 use App\Serializer\SignalementDraftRequestSerializer;
 use App\Service\ImageManipulationHandler;
+use App\Service\Mailer\NotificationMail;
+use App\Service\Mailer\NotificationMailerRegistry;
+use App\Service\Mailer\NotificationMailerType;
 use App\Service\Signalement\PostalCodeHomeChecker;
 use App\Service\Signalement\SignalementFileProcessor;
 use App\Service\UploadHandlerService;
@@ -79,6 +84,62 @@ class FrontSignalementController extends AbstractController
         return $this->json($errors);
     }
 
+    #[Route('/signalement-draft/check', name: 'check_signalement_draft_existe', methods: 'POST')]
+    public function checkSignalementDraftExists(
+        Request $request,
+        SignalementDraftRequestSerializer $serializer,
+        SignalementDraftManager $signalementDraftManager,
+        ValidatorInterface $validator,
+        SignalementDraftFactory $signalementDraftFactory,
+        SignalementDraftRepository $signalementDraftRepository,
+    ): Response {
+        /** @var SignalementDraftRequest $signalementDraftRequest */
+        $signalementDraftRequest = $serializer->deserialize(
+            $payload = $request->getContent(),
+            SignalementDraftRequest::class,
+            'json'
+        );
+        $errors = $validator->validate(
+            $signalementDraftRequest,
+            null,
+            ['Default', 'POST_'.strtoupper($signalementDraftRequest->getProfil())]
+        );
+        if (0 === $errors->count()) {
+            $dataToHash = $signalementDraftFactory->getEmailDeclarant($signalementDraftRequest);
+            $dataToHash .= $signalementDraftRequest->getAdresseLogementAdresse();
+            $hash = hash('sha256', $dataToHash);
+
+            $existingSignalementDraft = $signalementDraftRepository->findOneBy(
+                [
+                    'checksum' => $hash,
+                    'status' => SignalementDraftStatus::EN_COURS,
+                ],
+                [
+                    'id' => 'DESC',
+                ]
+            );
+
+            if (null !== $existingSignalementDraft) {
+                return $this->json([
+                    'already_exists' => true,
+                    'uuid' => $existingSignalementDraft->getUuid(),
+                    'created_at' => $existingSignalementDraft->getCreatedAt(),
+                    'updated_at' => $existingSignalementDraft->getUpdatedAt(),
+                ]);
+            }
+
+            return $this->json([
+                'already_exists' => false,
+                'uuid' => $signalementDraftManager->create(
+                    $signalementDraftRequest,
+                    json_decode($payload, true)
+                ),
+            ]);
+        }
+
+        return $this->json($errors);
+    }
+
     #[Route('/signalement-draft/{uuid}/envoi', name: 'mise_a_jour_nouveau_signalement_draft', methods: 'PUT')]
     public function updateSignalementDraft(
         Request $request,
@@ -120,6 +181,58 @@ class FrontSignalementController extends AbstractController
                 ? $signalementDraft :
                 null,
         ]);
+    }
+
+    #[Route('/signalement-draft/{uuid}/send_mail', name: 'send_mail_continue_from_draft')]
+    public function sendMailContinueFromDraft(
+        NotificationMailerRegistry $notificationMailerRegistry,
+        SignalementDraft $signalementDraft,
+        Request $request
+    ): Response {
+        if (
+            $request->isMethod('POST')
+            && $signalementDraft
+            && SignalementDraftStatus::EN_COURS === $signalementDraft->getStatus()
+        ) {
+            $success = $notificationMailerRegistry->send(
+                new NotificationMail(
+                    type: NotificationMailerType::TYPE_CONTINUE_FROM_DRAFT,
+                    to: $signalementDraft->getEmailDeclarant(),
+                    signalementDraft: $signalementDraft,
+                )
+            );
+            if ($success) {
+                return $this->json(['success' => true]);
+            }
+
+            return $this->json([
+                'success' => false,
+                'label' => 'Erreur',
+                'message' => 'L\'envoi du mail n\'a pas fonctionné, veuillez réessayer ou faire un nouveau signalement.',
+            ]);
+        }
+
+        return $this->json(['response' => 'error'], Response::HTTP_BAD_REQUEST);
+    }
+
+    #[Route('/signalement-draft/{uuid}/archive', name: 'archive_draft')]
+    public function archiveDraft(
+        SignalementDraft $signalementDraft,
+        Request $request,
+        SignalementDraftManager $signalementDraftManager
+    ): Response {
+        if (
+            $request->isMethod('POST')
+            && $signalementDraft
+            && SignalementDraftStatus::EN_COURS === $signalementDraft->getStatus()
+        ) {
+            $signalementDraft->setStatus(SignalementDraftStatus::ARCHIVE);
+            $signalementDraftManager->save($signalementDraft);
+
+            return $this->json(['success' => true]);
+        }
+
+        return $this->json(['response' => 'error'], Response::HTTP_BAD_REQUEST);
     }
 
     #[Route('/checkterritory', name: 'front_signalement_check_territory', methods: ['GET'])]
