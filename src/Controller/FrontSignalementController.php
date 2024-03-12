@@ -39,7 +39,7 @@ class FrontSignalementController extends AbstractController
             'uuid_signalement' => null,
         ]);
     }
-    
+
     #[Route('/signalement-draft/{uuid}', name: 'front_nouveau_formulaire_edit', methods: 'GET')]
     public function edit(
         SignalementDraft $signalementDraft

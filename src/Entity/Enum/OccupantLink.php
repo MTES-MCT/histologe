@@ -7,7 +7,7 @@ use App\Entity\Behaviour\EnumTrait;
 enum OccupantLink: string
 {
     use EnumTrait;
-    
+
     case PROCHE = 'PROCHE';
     case VOISIN = 'VOISIN';
     case SECOURS = 'SECOURS';
