@@ -139,7 +139,7 @@
                     {% if doc.intervention is null %}
                     <i>{{ doc.title|truncate_filename(45) }}</i>
                     {% else %}
-                    <i>Rapport de visite du {{ doc.intervention.scheduledAt|date('d/m/Y') }}</i>
+                    <i>Rapport de la visite du {{ doc.intervention.scheduledAt|date('d/m/Y') }} par {{ doc.intervention.partner.nom}}</i>
                     {% endif %}
                 </div>
             </div>

@@ -12,6 +12,7 @@ use App\Manager\FileManager;
 use App\Manager\SuiviManager;
 use App\Messenger\Message\PdfExportMessage;
 use App\Repository\FileRepository;
+use App\Repository\InterventionRepository;
 use App\Service\Signalement\SignalementFileProcessor;
 use App\Service\UploadHandlerService;
 use Doctrine\ORM\EntityManagerInterface;
@@ -214,6 +215,7 @@ class SignalementFileController extends AbstractController
         Request $request,
         FileRepository $fileRepository,
         EntityManagerInterface $entityManager,
+        InterventionRepository $interventionRepository,
     ): Response {
         if (!$this->isCsrfTokenValid('signalement_edit_file_'.$signalement->getId(), $request->get('_token'))) {
             if ($request->isXmlHttpRequest()) {
@@ -250,6 +252,13 @@ class SignalementFileController extends AbstractController
         $file->setDocumentType($documentType);
         $desordreSlug = $request->get('desordreSlug');
         $file->setDesordreSlug($desordreSlug);
+        $interventionId = $request->get('interventionId');
+        if (null !== $interventionId) {
+            $intervention = $interventionRepository->findOneBy(['id' => $interventionId]);
+            if ($intervention->getSignalement() === $file->getSignalement()) {
+                $file->setIntervention($intervention);
+            }
+        }
         $entityManager->persist($file);
         $entityManager->flush();
         if ($request->isXmlHttpRequest()) {
