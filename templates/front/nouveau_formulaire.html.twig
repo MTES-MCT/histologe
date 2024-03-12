@@ -11,18 +11,21 @@
 {% block body %}
   <div class="fr-my-5v">
     <div id="app-signalement-form"
-         data-ajaxurl="{{ path('front_signalement') }}"
-         data-ajaxurl-dictionary="{{ path('api_dictionary') }}"
-         data-ajaxurl-questions="{{ path('api_question_profile') }}?profil="
-         data-ajaxurl-desordres="{{ path('api_desordres_profile') }}?profil="
-         data-ajaxurl-post-signalement-draft="{{ path('envoi_nouveau_signalement_draft') }}"
-         data-ajaxurl-put-signalement-draft="{{ path('mise_a_jour_nouveau_signalement_draft', {uuid: 'uuid'}) }}"
+        data-ajaxurl="{{ path('front_signalement') }}"
+        data-ajaxurl-dictionary="{{ path('api_dictionary') }}"
+        data-ajaxurl-questions="{{ path('api_question_profile') }}?profil="
+        data-ajaxurl-desordres="{{ path('api_desordres_profile') }}?profil="
+        data-ajaxurl-post-signalement-draft="{{ path('envoi_nouveau_signalement_draft') }}"
+        data-ajaxurl-put-signalement-draft="{{ path('mise_a_jour_nouveau_signalement_draft', {uuid: 'uuid'}) }}"
         data-ajaxurl-handle-upload="{{ path('handle_upload') }}"
-         {% if uuid_signalement is not null %}
-           data-ajaxurl-get-signalement-draft="{{ path('informations_signalement_draft', {uuid: uuid_signalement}) }}"
-         {% endif %}
-         data-platform-name="{{ platform.name }}"
-         data-ajaxurl-check-territory="{{ path('front_signalement_check_territory') }}"
+        {% if uuid_signalement is not null %}
+          data-ajaxurl-get-signalement-draft="{{ path('informations_signalement_draft', {uuid: uuid_signalement}) }}"
+        {% endif %}
+        data-platform-name="{{ platform.name }}"
+        data-ajaxurl-check-territory="{{ path('front_signalement_check_territory') }}"
+        data-ajaxurl-check-signalement-draft-exists="{{ path('check_signalement_draft_existe') }}"
+        data-ajaxurl-send-mail-continue-from-draft="{{ path('send_mail_continue_from_draft', {uuid: 'uuid'}) }}"
+        data-ajaxurl-archive-draft="{{ path('archive_draft', {uuid: 'uuid'}) }}"
         ></div>
   </div>
 {% endblock %}

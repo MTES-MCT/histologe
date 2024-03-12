@@ -12,6 +12,9 @@
       :data-ajaxurl-get-signalement-draft="sharedProps.ajaxurlGetSignalementDraft"
       :data-ajaxurl-platform-name="sharedProps.platformName"
       :data-ajaxurl-check-territory="sharedProps.ajaxurlCheckTerritory"
+      :data-ajaxurl-check-signalement-draft-exists="sharedProps.ajaxurlCheckSignalementDraftExists"
+      :data-ajaxurl-send-mail-continue-from-draft="sharedProps.ajaxurlSendMailContinueFromDraft"
+      :data-ajaxurl-archive-draft="sharedProps.ajaxurlArchiveDraft"
       >
       <div v-if="isLoadingInit" class="loading fr-m-10w fr-grid-row fr-grid-row--center">
         Initialisation du formulaire...
@@ -43,6 +46,10 @@
               />
           </div>
         </div>
+        <SignalementFormModalContinueFromDraft
+          :draftClickEvent="saveAndChangeScreenBySlug"
+          :newClickEvent="changeScreenBySlug"
+        />
       </div>
     </div>
 </template>
@@ -52,20 +59,23 @@ import { defineComponent } from 'vue'
 import formStore from './store'
 import dictionaryStore from './dictionary-store'
 import { requests } from './requests'
+import * as Sentry from '@sentry/browser'
 import { profileUpdater } from './services/profileUpdater'
 import SignalementFormScreen from './components/SignalementFormScreen.vue'
 import SignalementFormBreadCrumbs from './components/SignalementFormBreadCrumbs.vue'
+import SignalementFormModalContinueFromDraft from './components/SignalementFormModalContinueFromDraft.vue'
 const initElements:any = document.querySelector('#app-signalement-form')
 
 export default defineComponent({
   name: 'TheSignalementAppForm',
   components: {
     SignalementFormScreen,
-    SignalementFormBreadCrumbs
+    SignalementFormBreadCrumbs,
+    SignalementFormModalContinueFromDraft
   },
   data () {
     return {
-      slugCommonProfil: ['introduction', 'adresse_logement_intro', 'adresse_logement', 'signalement_concerne'],
+      slugCommonProfil: ['introduction', 'adresse_logement_intro', 'adresse_logement', 'signalement_concerne', 'draft_mail'],
       slugCoordonnees: ['vos_coordonnees_occupant', 'vos_coordonnees_tiers'],
       nextSlug: '',
       isErrorInit: false,
@@ -86,6 +96,9 @@ export default defineComponent({
       this.sharedProps.ajaxurlPutSignalementDraft = initElements.dataset.ajaxurlPutSignalementDraft
       this.sharedProps.ajaxurlHandleUpload = initElements.dataset.ajaxurlHandleUpload
       this.sharedProps.ajaxurlCheckTerritory = initElements.dataset.ajaxurlCheckTerritory
+      this.sharedProps.ajaxurlCheckSignalementDraftExists = initElements.dataset.ajaxurlCheckSignalementDraftExists
+      this.sharedProps.ajaxurlSendMailContinueFromDraft = initElements.dataset.ajaxurlSendMailContinueFromDraft
+      this.sharedProps.ajaxurlArchiveDraft = initElements.dataset.ajaxurlArchiveDraft
       if (initElements.dataset.ajaxurlGetSignalementDraft !== undefined) {
         this.sharedProps.ajaxurlGetSignalementDraft = initElements.dataset.ajaxurlGetSignalementDraft
         requests.initWithExistingData(this.handleInitData)
@@ -131,7 +144,31 @@ export default defineComponent({
     saveAndChangeScreenBySlug (slug:string, isSaveAndCheck:boolean) {
       this.nextSlug = slug
       if (isSaveAndCheck) {
-        requests.saveSignalementDraft(this.changeScreenBySlug)
+        if (formStore.data.uuidSignalementDraft === '') {
+          requests.checkIfExistingDraft(this.showDraftModalOrNot)
+        } else {
+          requests.saveSignalementDraft(this.changeScreenBySlug)
+        }
+      } else {
+        this.changeScreenBySlug(undefined)
+      }
+    },
+    showDraftModalOrNot (requestResponse: any) {
+      if (requestResponse) {
+        if (requestResponse.already_exists === true) {
+          const link = document.getElementById('fr-modal-continue-draft-button')
+          formStore.existingDraft.uuid = requestResponse.uuid
+          formStore.existingDraft.createdAt = requestResponse.created_at
+          formStore.existingDraft.updatedAt = requestResponse.updated_at
+          if (link) {
+            link.click()
+          } else {
+            Sentry.captureException(new Error('L\'élément lien n\'a pas été trouvé'))
+            console.error('L\'élément lien n\'a pas été trouvé.')
+          }
+        } else {
+          this.changeScreenBySlug(requestResponse)
+        }
       } else {
         this.changeScreenBySlug(undefined)
       }

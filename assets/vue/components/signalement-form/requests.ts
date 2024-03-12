@@ -107,6 +107,28 @@ export const requests = {
     }
   },
 
+  checkIfExistingDraft (functionReturn: Function) {
+    const url = formStore.props.ajaxurlCheckSignalementDraftExists
+    if (formStore.data.adresse_logement_adresse !== undefined &&
+      (formStore.data.vos_coordonnees_occupant_email !== undefined ||
+        formStore.data.vos_coordonnees_tiers_email !== undefined)
+    ) {
+      requests.doRequestPost(url, formStore.data, functionReturn, undefined)
+    } else {
+      functionReturn(undefined)
+    }
+  },
+
+  sendMailContinueFromDraft (functionReturn: Function) {
+    const url = formStore.props.ajaxurlSendMailContinueFromDraft.replace('uuid', formStore.existingDraft.uuid)
+    requests.doRequestPost(url, '', functionReturn, undefined)
+  },
+
+  archiveDraft (functionReturn: Function) {
+    const url = formStore.props.ajaxurlArchiveDraft.replace('uuid', formStore.existingDraft.uuid)
+    requests.doRequestPost(url, '', functionReturn, undefined)
+  },
+
   validateAddress (valueAdress: string, functionReturn: Function) {
     const url = (formStore.props.urlApiAdress as string) + valueAdress
     requests.doRequestGet(url, functionReturn)
