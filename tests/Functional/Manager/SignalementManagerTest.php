@@ -3,10 +3,12 @@
 namespace App\Tests\Functional\Manager;
 
 use App\Dto\Request\Signalement\CompositionLogementRequest;
+use App\Dto\Request\Signalement\QualificationNDERequest;
 use App\Entity\Affectation;
 use App\Entity\Enum\DocumentType;
 use App\Entity\Enum\MotifCloture;
 use App\Entity\Signalement;
+use App\Entity\SignalementQualification;
 use App\Entity\Territory;
 use App\Entity\User;
 use App\Factory\SignalementAffectationListViewFactory;
@@ -289,6 +291,46 @@ class SignalementManagerTest extends WebTestCase
         $desordrePrecisionSlug = 'desordres_batiment_isolation_murs';
         $photos = $this->signalementManager->getPhotosBySlug($signalement, $desordrePrecisionSlug);
         $this->assertCount(0, $photos);
+    }
+
+    public function testUpdateFromSignalementQualificationWithNdeRequest(): void
+    {
+        /** @var Signalement $signalement */
+        $signalement = $this->signalementManager->findOneBy(['reference' => '2023-8']);
+        /** @var SignalementQualification $signalementQualification */
+        $signalementQualification = $signalement->getSignalementQualifications()->first();
+        $qualificationNDERequest = new QualificationNDERequest(
+            dateEntree: '1970-01-01',
+            dateDernierBail: '1970-01-01',
+            dateDernierDPE: '2023-01-02',
+            superficie: 50,
+            consommationEnergie: 10000,
+            dpe: true
+        );
+        $this->signalementManager->updateFromSignalementQualification($signalementQualification, $qualificationNDERequest);
+        $this->assertEquals('1970-01-01', $signalement->getDateEntree()->format('Y-m-d'));
+        $this->assertEquals(50, $signalement->getSuperficie());
+        $this->assertEquals('1970-01-01', $signalementQualification->getDernierBailAt()->format('Y-m-d'));
+    }
+
+    public function testUpdateFromSignalementQualificationWithNullNdeRequest(): void
+    {
+        /** @var Signalement $signalement */
+        $signalement = $this->signalementManager->findOneBy(['reference' => '2023-8']);
+        /** @var SignalementQualification $signalementQualification */
+        $signalementQualification = $signalement->getSignalementQualifications()->first();
+        $qualificationNDERequest = new QualificationNDERequest(
+            dateEntree: null,
+            dateDernierBail: null,
+            dateDernierDPE: null,
+            superficie: null,
+            consommationEnergie: null,
+            dpe: null
+        );
+        $this->signalementManager->updateFromSignalementQualification($signalementQualification, $qualificationNDERequest);
+        $this->assertEquals('2023-01-08', $signalement->getDateEntree()->format('Y-m-d'));
+        $this->assertEquals(100, $signalement->getSuperficie());
+        $this->assertEquals('2023-01-08', $signalementQualification->getDernierBailAt()->format('Y-m-d'));
     }
 
     private function getSignalementData(string $reference = null): array
