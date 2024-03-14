@@ -33,5 +33,13 @@ class AffectationRepositoryTest extends KernelTestCase
         foreach ($affectationsSubscribedToEsabora as $affectationSubscribedToEsabora) {
             $this->assertCount(2, $affectationSubscribedToEsabora->getPartner()->getEsaboraCredential());
         }
+
+        $affectationsSubscribedToEsabora = $affectationRepository->findAffectationSubscribedToEsabora(
+            PartnerType::ARS,
+            true,
+            '00000000-0000-0000-2023-000000000012'
+        );
+
+        $this->assertCount(1, $affectationsSubscribedToEsabora);
     }
 }
