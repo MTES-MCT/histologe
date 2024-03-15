@@ -29,7 +29,7 @@ class SuroccupationSpecification
     private function checkSuroccupation(
         ?string $isAllocataire,
         int $nbOccupants,
-        int $nbPieces,
+        ?int $nbPieces,
         ?float $superficie,
     ): bool {
         $suroccupation = false;
@@ -53,7 +53,7 @@ class SuroccupationSpecification
                 $this->slug = 'desordres_type_composition_logement_suroccupation_allocataire';
             }
         } else {
-            if ($nbPieces < $nbOccupants / $this::NON_ALLOCATAIRE_MIN_PIECES_PER_OCCUPANT) {
+            if (!empty($nbPieces) && $nbPieces < $nbOccupants / $this::NON_ALLOCATAIRE_MIN_PIECES_PER_OCCUPANT) {
                 $suroccupation = true;
                 $this->slug = 'desordres_type_composition_logement_suroccupation_non_allocataire';
             }

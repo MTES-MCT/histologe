@@ -152,6 +152,19 @@ class SuroccupationSpecificationTest extends KernelTestCase
         );
     }
 
+    public function testCheckSuroccupationAllocataireNull5PersonnesNbPiecesNull(): void
+    {
+        $this->situationFoyer->setLogementSocialAllocation(null);
+        $this->typeCompositionLogement->setCompositionLogementNombrePersonnes('5');
+        $this->typeCompositionLogement->setCompositionLogementNbPieces(null);
+        $isSuroccupation = $this->suroccupationSpecification->isSatisfiedBy(
+            $this->situationFoyer,
+            $this->typeCompositionLogement
+        );
+
+        $this->assertFalse($isSuroccupation);
+    }
+
     public function testCheckPasSuroccupationAllocataireNull5Personnes(): void
     {
         $this->situationFoyer->setLogementSocialAllocation(null);
