@@ -119,8 +119,7 @@ class AffectationRepository extends ServiceEntityRepository
         }
 
         if (null !== $uuidSignalement) {
-            $qb->innerJoin('a.signalement', 's')
-                ->andWhere('s.uuid LIKE :uuid_signalement')
+            $qb->andWhere('s.uuid LIKE :uuid_signalement')
                 ->setParameter('uuid_signalement', $uuidSignalement);
         }
 
