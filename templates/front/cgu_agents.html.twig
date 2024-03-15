@@ -2,7 +2,9 @@
 {% block title %}Conditions générales d'utilisation de l'espace pro{% endblock %}
 
 {% block body %}
-    <main class="fr-container fr-py-5w fr-py-md-10w">
+    {% include "breadcrumbs.html.twig" with { 'breadcrumbsLabel': 'Conditions générales d\'utilisation de l\'espace pro' } %}
+
+    <main class="fr-container fr-py-1w">
         <section class="cgu fr-grid-row">
             <div class="fr-col-12 fr-col-lg-8">
                 <h1>Conditions d’utilisation du site {{ platform.name }} - Espace PRO</h1>

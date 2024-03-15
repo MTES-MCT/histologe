@@ -4,7 +4,8 @@
 
 {% block body %}
     <main class="fr-container--fluid">
-        <header class="fr-background-contrast--blue-france fr-py-5w fr-py-md-10w">
+        <header class="fr-background-contrast--blue-france fr-py-1v">
+            {% include "breadcrumbs.html.twig" with { 'breadcrumbsLabel': 'Qui sommes-nous ?' } %}
             <div class="fr-container fr-grid-row fr-grid-row--middle">
                 <div class="fr-col-12 fr-col-md-8">
                     <h1>Qui sommes-nous ?</h1>

@@ -4,6 +4,8 @@
 
 {% block body %}
     <main class="fr-container--fluid">
+        {% include "breadcrumbs.html.twig" with { 'breadcrumbsLabel': 'Contact' } %}
+        
         <div class="fr-grid-row fr-grid-row--gutters fr-grid-row--center fr-py-5w fr-py-md-10w">
             <h1 class="fr-col-11 fr-col-md-8 fr-text-title--blue-france fr-text--center">Contacter {{ platform.name }}</h1>
 
