@@ -15,8 +15,8 @@ class DemandeLienSignalementType extends AbstractType
     {
         $builder
             ->add('email', null, [
-                'label' => 'Adresse email',
-                'help' => 'Renseignez l\'adresse email utilisée pour déposer le signalement',
+                'label' => 'Adresse e-mail',
+                'help' => 'Renseignez l\'adresse e-mail utilisée pour déposer le signalement',
             ])
             ->add('adresseHelper', null, [
                 'label' => 'Adresse du logement',
@@ -38,8 +38,8 @@ class DemandeLienSignalementType extends AbstractType
                 'attr' => ['data-autocomplete-ville' => 'true'],
             ])
             ->add('save', SubmitType::class, [
-                'label' => 'Recevoir mon lien de suivi par email',
-                'attr' => ['class' => 'fr-btn--icon-left fr-icon-check-line fr-btn--sm fr-p-1w'],
+                'label' => 'Recevoir mon lien de suivi',
+                'attr' => ['class' => 'fr-btn--icon-left fr-icon-check-line'],
             ])
         ;
     }

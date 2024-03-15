@@ -18,9 +18,9 @@ class ContactType extends AbstractType
     {
         $builder
             ->add('email', EmailType::class, [
-                'label' => 'Votre adresse email',
+                'label' => 'Votre adresse e-mail',
                 'constraints' => [
-                    new Assert\NotBlank(message: 'Merci de renseigner votre email.'),
+                    new Assert\NotBlank(message: 'Merci de renseigner votre e-mail.'),
                     new Assert\Email(mode: Email::VALIDATION_MODE_STRICT),
                 ],
             ])
