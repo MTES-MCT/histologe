@@ -108,6 +108,14 @@ class HomepageController extends AbstractController
         return $this->render('front/about.html.twig');
     }
 
+    #[Route('/entretien-logement-obligations-proprietaire-locataire', name: 'front_obligations_entretien')]
+    public function obligations_entretien(): Response
+    {
+        return $this->render('front/obligations_entretien.html.twig', [
+            'guide_path' => 'build/files/GUIDE-QUI-REPARE-QUI-ENTRETIENT-Ministere2016-1.pdf',
+        ]);
+    }
+
     #[Route('/aides-travaux-logement', name: 'front_aides_travaux')]
     public function aides_travaux(): Response
     {

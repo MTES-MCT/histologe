@@ -72,7 +72,9 @@
                                         >Qui sommes-nous ?</a>
                                 </li>
                                 <li>
-                                    <a class="fr-nav__link" href="#TODO" target="_self">Entretien du logement : les obligations</a>
+                                    <a class="fr-nav__link" href="{{ path('front_obligations_entretien') }}" target="_self"
+                                        {% if app.request.get('_route') == 'front_obligations_entretien' %}aria-current="page"{% endif %}
+                                        >Entretien du logement : les obligations</a>
                                 </li>
                                 <li>
                                     <a class="fr-nav__link" href="{{ path('front_aides_travaux') }}" target="_self"
