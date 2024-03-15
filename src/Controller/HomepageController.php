@@ -20,8 +20,6 @@ class HomepageController extends AbstractController
         SignalementRepository $signalementRepository,
         PostalCodeHomeChecker $postalCodeHomeChecker
     ): Response {
-        $title = 'Un service public pour les locataires et propriétaires';
-
         $stats = ['pris_en_compte' => 0, 'clotures' => 0];
         $stats['total'] = $signalementRepository->countAll(
             territory: null,
@@ -48,7 +46,6 @@ class HomepageController extends AbstractController
         }
 
         return $this->render('front/index.html.twig', [
-            'title' => $title,
             'form_postalcode' => $form->createView(),
             'stats' => $stats,
             'display_modal' => $displayModal,
@@ -58,11 +55,7 @@ class HomepageController extends AbstractController
     #[Route('/qui-sommes-nous', name: 'front_about')]
     public function about(): Response
     {
-        $title = 'Qui sommes-nous ?';
-
-        return $this->render('front/about.html.twig', [
-            'title' => $title,
-        ]);
+        return $this->render('front/about.html.twig');
     }
 
     #[Route('/contact', name: 'front_contact')]
@@ -70,7 +63,6 @@ class HomepageController extends AbstractController
         Request $request,
         ContactFormHandler $contactFormHandler,
     ): Response {
-        $title = 'Contact';
         $form = $this->createForm(ContactType::class, []);
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
@@ -85,7 +77,6 @@ class HomepageController extends AbstractController
         }
 
         return $this->render('front/contact.html.twig', [
-            'title' => $title,
             'form' => $form->createView(),
         ]);
     }

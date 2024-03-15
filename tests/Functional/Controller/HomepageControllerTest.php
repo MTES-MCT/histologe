@@ -45,8 +45,8 @@ class HomepageControllerTest extends WebTestCase
         $generatorUrl = static::getContainer()->get(UrlGeneratorInterface::class);
         $crawler = $client->request('GET', $generatorUrl->generate('home'));
 
-        $this->assertSelectorTextContains('.fr-header__tools-links ul', 'Aide');
-        $link = $crawler->selectLink('Aide')->link();
+        $this->assertSelectorTextContains('#submenu-help ul', 'Documentation');
+        $link = $crawler->selectLink('Documentation')->link();
         $this->assertEquals('https://faq.histologe.beta.gouv.fr', $link->getUri());
     }
 
