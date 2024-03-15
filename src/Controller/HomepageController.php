@@ -108,6 +108,12 @@ class HomepageController extends AbstractController
         return $this->render('front/about.html.twig');
     }
 
+    #[Route('/aides-travaux-logement', name: 'front_aides_travaux')]
+    public function aides_travaux(): Response
+    {
+        return $this->render('front/aides_travaux.html.twig');
+    }
+
     #[Route('/contact', name: 'front_contact')]
     public function contact(
         Request $request,

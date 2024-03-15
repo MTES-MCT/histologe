@@ -75,7 +75,9 @@
                                     <a class="fr-nav__link" href="#TODO" target="_self">Entretien du logement : les obligations</a>
                                 </li>
                                 <li>
-                                    <a class="fr-nav__link" href="#TODO" target="_self">Les aides aux travaux</a>
+                                    <a class="fr-nav__link" href="{{ path('front_aides_travaux') }}" target="_self"
+                                        {% if app.request.get('_route') == 'front_aides_travaux' %}aria-current="page"{% endif %}
+                                        >Les aides aux travaux</a>
                                 </li>
                                 <li>
                                     <a class="fr-nav__link" href="{{ path('front_statistiques') }}" target="_self"
