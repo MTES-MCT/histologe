@@ -221,7 +221,7 @@ class ActivityListener
         // - if entity is Suivi: we check that the partner of the user is different from the partner of the user who created the suivi
         return User::STATUS_ACTIVE === $user->getStatut()
             && !$user->isSuperAdmin() && !$user->isTerritoryAdmin()
-            && ($entity instanceof Affectation || $user->getPartner() !== $entity->getCreatedBy()->getPartner());
+            && ($entity instanceof Affectation || ($entity->getCreatedBy() && $user->getPartner() !== $entity->getCreatedBy()->getPartner()));
     }
 
     public function preRemove(LifecycleEventArgs $args)

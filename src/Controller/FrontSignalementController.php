@@ -2,48 +2,32 @@
 
 namespace App\Controller;
 
-use App\Entity\Critere;
-use App\Entity\Criticite;
+use App\Dto\Request\Signalement\SignalementDraftRequest;
 use App\Entity\Enum\DocumentType;
-use App\Entity\Enum\Qualification;
-use App\Entity\File;
-use App\Entity\Signalement;
-use App\Entity\Situation;
+use App\Entity\Enum\SignalementDraftStatus;
+use App\Entity\SignalementDraft;
 use App\Entity\Suivi;
 use App\Entity\User;
-use App\Event\SignalementCreatedEvent;
-use App\Factory\FileFactory;
-use App\Factory\SignalementQualificationFactory;
+use App\Factory\SignalementDraftFactory;
 use App\Factory\SuiviFactory;
-use App\Form\SignalementType;
+use App\Manager\SignalementDraftManager;
 use App\Manager\SuiviManager;
 use App\Manager\UserManager;
 use App\Repository\CommuneRepository;
+use App\Repository\SignalementDraftRepository;
 use App\Repository\SignalementRepository;
-use App\Repository\SituationRepository;
-use App\Repository\TerritoryRepository;
 use App\Repository\UserRepository;
-use App\Service\Files\DocumentProvider;
+use App\Serializer\SignalementDraftRequestSerializer;
 use App\Service\ImageManipulationHandler;
 use App\Service\Mailer\NotificationMail;
 use App\Service\Mailer\NotificationMailerRegistry;
 use App\Service\Mailer\NotificationMailerType;
-use App\Service\Signalement\AutoAssigner;
-use App\Service\Signalement\CriticiteCalculator;
 use App\Service\Signalement\PostalCodeHomeChecker;
-use App\Service\Signalement\Qualification\QualificationStatusService;
-use App\Service\Signalement\Qualification\SignalementQualificationUpdater;
-use App\Service\Signalement\ReferenceGenerator;
 use App\Service\Signalement\SignalementFileProcessor;
-use App\Service\Signalement\ZipcodeProvider;
 use App\Service\UploadHandlerService;
-use DateTimeImmutable;
 use Doctrine\ORM\EntityManagerInterface;
-use Exception;
 use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\DependencyInjection\Attribute\Autowire;
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -55,32 +39,200 @@ class FrontSignalementController extends AbstractController
 {
     #[Route('/signalement', name: 'front_signalement')]
     public function index(
-        SituationRepository $situationRepository,
-        Request $request,
-        #[Autowire(env: 'FEATURE_NEW_FORM_ENABLE')]
-        bool $enableNewFormFeature,
     ): Response {
-        if ($enableNewFormFeature) {
-            return $this->render('front/nouveau_formulaire.html.twig', [
-                'uuid_signalement' => null,
+        return $this->render('front/nouveau_formulaire.html.twig', [
+            'uuid_signalement' => null,
+        ]);
+    }
+
+    #[Route('/signalement-draft/{uuid}', name: 'front_nouveau_formulaire_edit', methods: 'GET')]
+    public function edit(
+        SignalementDraft $signalementDraft
+    ): Response {
+        return $this->render('front/nouveau_formulaire.html.twig', [
+            'uuid_signalement' => $signalementDraft->getUuid(),
+        ]);
+    }
+
+    #[Route('/signalement-draft/envoi', name: 'envoi_nouveau_signalement_draft', methods: 'POST')]
+    public function sendSignalementDraft(
+        Request $request,
+        SignalementDraftRequestSerializer $serializer,
+        SignalementDraftManager $signalementDraftManager,
+        ValidatorInterface $validator,
+    ): Response {
+        /** @var SignalementDraftRequest $signalementDraftRequest */
+        $signalementDraftRequest = $serializer->deserialize(
+            $payload = $request->getContent(),
+            SignalementDraftRequest::class,
+            'json'
+        );
+        $errors = $validator->validate(
+            $signalementDraftRequest,
+            null,
+            ['Default', 'POST_'.strtoupper($signalementDraftRequest->getProfil())]
+        );
+        if (0 === $errors->count()) {
+            return $this->json([
+                'uuid' => $signalementDraftManager->create(
+                    $signalementDraftRequest,
+                    json_decode($payload, true)
+                ),
             ]);
         }
 
-        $title = 'Signalez vos problèmes de logement';
-        $etats = ['Etat moyen', 'Mauvais état', 'Très mauvais état'];
-        $etats_classes = ['moyen', 'grave', 'tres-grave'];
-        $signalement = new Signalement();
-        $form = $this->createForm(SignalementType::class);
-        $form->handleRequest($request);
+        return $this->json($errors);
+    }
 
-        return $this->render('front/signalement.html.twig', [
-            'title' => $title,
-            'situations' => $situationRepository->findAllActive(),
-            'signalement' => $signalement,
-            'form' => $form->createView(),
-            'etats' => $etats,
-            'etats_classes' => $etats_classes,
+    #[Route('/signalement-draft/check', name: 'check_signalement_draft_existe', methods: 'POST')]
+    public function checkSignalementDraftExists(
+        Request $request,
+        SignalementDraftRequestSerializer $serializer,
+        SignalementDraftManager $signalementDraftManager,
+        ValidatorInterface $validator,
+        SignalementDraftFactory $signalementDraftFactory,
+        SignalementDraftRepository $signalementDraftRepository,
+    ): Response {
+        /** @var SignalementDraftRequest $signalementDraftRequest */
+        $signalementDraftRequest = $serializer->deserialize(
+            $payload = $request->getContent(),
+            SignalementDraftRequest::class,
+            'json'
+        );
+        $errors = $validator->validate(
+            $signalementDraftRequest,
+            null,
+            ['Default', 'POST_'.strtoupper($signalementDraftRequest->getProfil())]
+        );
+        if (0 === $errors->count()) {
+            $dataToHash = $signalementDraftFactory->getEmailDeclarant($signalementDraftRequest);
+            $dataToHash .= $signalementDraftRequest->getAdresseLogementAdresse();
+            $hash = hash('sha256', $dataToHash);
+
+            $existingSignalementDraft = $signalementDraftRepository->findOneBy(
+                [
+                    'checksum' => $hash,
+                    'status' => SignalementDraftStatus::EN_COURS,
+                ],
+                [
+                    'id' => 'DESC',
+                ]
+            );
+
+            if (null !== $existingSignalementDraft) {
+                return $this->json([
+                    'already_exists' => true,
+                    'uuid' => $existingSignalementDraft->getUuid(),
+                    'created_at' => $existingSignalementDraft->getCreatedAt(),
+                    'updated_at' => $existingSignalementDraft->getUpdatedAt(),
+                ]);
+            }
+
+            return $this->json([
+                'already_exists' => false,
+                'uuid' => $signalementDraftManager->create(
+                    $signalementDraftRequest,
+                    json_decode($payload, true)
+                ),
+            ]);
+        }
+
+        return $this->json($errors);
+    }
+
+    #[Route('/signalement-draft/{uuid}/envoi', name: 'mise_a_jour_nouveau_signalement_draft', methods: 'PUT')]
+    public function updateSignalementDraft(
+        Request $request,
+        SignalementDraftRequestSerializer $serializer,
+        SignalementDraftManager $signalementDraftManager,
+        ValidatorInterface $validator,
+        SignalementDraft $signalementDraft,
+    ): Response {
+        /** @var SignalementDraftRequest $signalementDraftRequest */
+        $signalementDraftRequest = $serializer->deserialize(
+            $payload = $request->getContent(),
+            SignalementDraftRequest::class,
+            'json'
+        );
+        $groupValidation = ['Default', 'POST_'.strtoupper($signalementDraftRequest->getProfil())];
+        if ('validation_signalement' === $signalementDraftRequest->getCurrentStep()) {
+            $groupValidation[] = 'PUT_'.strtoupper($signalementDraftRequest->getProfil());
+        }
+        $errors = $validator->validate($signalementDraftRequest, null, $groupValidation);
+        if (0 === $errors->count()) {
+            $result = $signalementDraftManager->update(
+                $signalementDraft,
+                $signalementDraftRequest,
+                json_decode($payload, true)
+            );
+
+            return $this->json($result);
+        }
+
+        return $this->json($errors);
+    }
+
+    #[Route('/signalement-draft/{uuid}/informations', name: 'informations_signalement_draft', methods: 'GET')]
+    public function getSignalementDraft(
+        SignalementDraft $signalementDraft,
+    ): Response {
+        return $this->json([
+            'signalement' => SignalementDraftStatus::EN_COURS === $signalementDraft->getStatus()
+                ? $signalementDraft :
+                null,
         ]);
+    }
+
+    #[Route('/signalement-draft/{uuid}/send_mail', name: 'send_mail_continue_from_draft')]
+    public function sendMailContinueFromDraft(
+        NotificationMailerRegistry $notificationMailerRegistry,
+        SignalementDraft $signalementDraft,
+        Request $request
+    ): Response {
+        if (
+            $request->isMethod('POST')
+            && $signalementDraft
+            && SignalementDraftStatus::EN_COURS === $signalementDraft->getStatus()
+        ) {
+            $success = $notificationMailerRegistry->send(
+                new NotificationMail(
+                    type: NotificationMailerType::TYPE_CONTINUE_FROM_DRAFT,
+                    to: $signalementDraft->getEmailDeclarant(),
+                    signalementDraft: $signalementDraft,
+                )
+            );
+            if ($success) {
+                return $this->json(['success' => true]);
+            }
+
+            return $this->json([
+                'success' => false,
+                'label' => 'Erreur',
+                'message' => 'L\'envoi du mail n\'a pas fonctionné, veuillez réessayer ou faire un nouveau signalement.',
+            ]);
+        }
+
+        return $this->json(['response' => 'error'], Response::HTTP_BAD_REQUEST);
+    }
+
+    #[Route('/signalement-draft/{uuid}/archive', name: 'archive_draft')]
+    public function archiveDraft(
+        SignalementDraft $signalementDraft,
+        Request $request,
+        SignalementDraftManager $signalementDraftManager
+    ): Response {
+        if (
+            $request->isMethod('POST')
+            && $signalementDraft
+            && SignalementDraftStatus::EN_COURS === $signalementDraft->getStatus()
+        ) {
+            $signalementDraft->setStatus(SignalementDraftStatus::ARCHIVE);
+            $signalementDraftManager->save($signalementDraft);
+
+            return $this->json(['success' => true]);
+        }
+
+        return $this->json(['response' => 'error'], Response::HTTP_BAD_REQUEST);
     }
 
     #[Route('/checkterritory', name: 'front_signalement_check_territory', methods: ['GET'])]
@@ -159,249 +311,6 @@ class FrontSignalementController extends AbstractController
         $logger->error('Un problème lors du téléversement est survenu');
 
         return $this->json(['error' => 'Aucun fichier n\'a été téléversé'], 400);
-    }
-
-    /**
-     * @throws Exception
-     *
-     * @deprecated Cette route est obsolète, elle est remplacée par les routes du
-     * @see \App\Controller\FrontNewSignalementController
-     */
-    #[Route('/signalement/envoi', name: 'envoi_signalement', methods: 'POST')]
-    public function envoi(
-        Request $request,
-        EntityManagerInterface $entityManager,
-        TerritoryRepository $territoryRepository,
-        NotificationMailerRegistry $notificationMailerRegistry,
-        UploadHandlerService $uploadHandlerService,
-        ReferenceGenerator $referenceGenerator,
-        PostalCodeHomeChecker $postalCodeHomeChecker,
-        ZipcodeProvider $zipcodeProvider,
-        EventDispatcherInterface $eventDispatcher,
-        SignalementQualificationFactory $signalementQualificationFactory,
-        QualificationStatusService $qualificationStatusService,
-        ValidatorInterface $validator,
-        SignalementQualificationUpdater $signalementQualificationUpdater,
-        CriticiteCalculator $criticiteCalculator,
-        FileFactory $fileFactory,
-        LoggerInterface $logger,
-        DocumentProvider $documentProvider,
-        AutoAssigner $autoAssigner,
-        #[Autowire(env: 'FEATURE_NEW_FORM_ENABLE')]
-        bool $enableNewFormFeature,
-    ): Response {
-        if ($enableNewFormFeature) {
-            $logger->error(
-                'La soumission de l\'ancien formulaire est inactif.',
-                ['payload' => $request->request->all()]
-            );
-
-            return $this->json(['response' => 'error'], Response::HTTP_BAD_REQUEST);
-        }
-
-        if ($this->isCsrfTokenValid('new_signalement', $request->request->get('_token'))
-            && $data = $request->get('signalement')
-        ) {
-            $signalement = new Signalement();
-            $dataDateBail = $dataHasDPE = $dataDateDPE = $dataConsoSizeYear = $dataConsoSize = $dataConsoYear = null;
-            $listNDECriticites = [];
-            if (isset($data['files'])) {
-                $dataFiles = $data['files'];
-                foreach ($dataFiles as $key => $files) {
-                    foreach ($files as $titre => $file) {
-                        if (\is_array($file)) {
-                            continue;
-                        }
-                        $filename = $uploadHandlerService->moveFromBucketTempFolder($file);
-                        $file = $fileFactory->createInstanceFrom(
-                            filename: $filename,
-                            title: $titre,
-                            type: 'documents' === $key ? File::FILE_TYPE_DOCUMENT : File::FILE_TYPE_PHOTO,
-                            documentType: DocumentType::AUTRE
-                        );
-                        if (null !== $file) {
-                            $file->setSize($uploadHandlerService->getFileSize($file->getFilename()));
-                            $file->setIsVariantsGenerated($uploadHandlerService->hasVariants($file->getFilename()));
-                            $signalement->addFile($file);
-                        }
-                    }
-                }
-                unset($data['files']);
-            }
-
-            foreach ($data as $key => $value) {
-                $method = 'set'.ucfirst($key);
-                switch ($key) {
-                    case 'situation':
-                        foreach ($data[$key] as $idSituation => $criteres) {
-                            $situation = $entityManager->getRepository(Situation::class)->find($idSituation);
-                            $signalement->addSituation($situation);
-                            foreach ($criteres as $critere) {
-                                foreach ($critere as $idCritere => $criticites) {
-                                    $critere = $entityManager->getRepository(Critere::class)->find($idCritere);
-                                    $signalement->addCritere($critere);
-                                    $criticite = $entityManager->getRepository(Criticite::class)->find(
-                                        $data[$key][$idSituation]['critere'][$idCritere]['criticite']
-                                    );
-                                    $signalement->addCriticite($criticite);
-                                    // TODO : replace getQualification with an array of enum
-                                    if (null !== $criticite->getQualification() && \in_array(Qualification::NON_DECENCE_ENERGETIQUE->value, $criticite->getQualification())) {
-                                        $listNDECriticites[] = $criticite->getId();
-                                    }
-                                }
-                            }
-                        }
-                        break;
-
-                    case 'dateEntree':
-                        if (!empty($value)) {
-                            $value = new DateTimeImmutable($value);
-                            $signalement->$method($value);
-                        }
-                        break;
-
-                    case 'dateNaissanceOccupant':
-                        $year = trim($value['year']);
-                        $month = trim($value['month']);
-                        $day = trim($value['day']);
-                        if ('' !== $year && '' !== $month && '' !== $day) {
-                            $value = new DateTimeImmutable($year.'-'.$month.'-'.$day);
-                            $signalement->$method($value);
-                        }
-                        break;
-
-                    case 'geoloc':
-                        $signalement->setGeoloc(['lat' => $data[$key]['lat'], 'lng' => $data[$key]['lng']]);
-                        break;
-
-                    case 'dateBail':
-                        $dataDateBail = $value;
-                        break;
-                    case 'hasDPE':
-                        $dataHasDPE = $value;
-                        break;
-                    case 'dateDPE':
-                        $dataDateDPE = $value;
-                        break;
-                    case 'consoSizeYear':
-                        $dataConsoSizeYear = $value;
-                        break;
-                    case 'consoSize':
-                        $dataConsoSize = $value;
-                        break;
-                    case 'consoYear':
-                        $dataConsoYear = $value;
-                        break;
-                    default:
-                        if (\in_array($method, ['setSignalement', 'setUuid', 'setStatus', 'setReference', 'setCodeSuivi'])) {
-                            break;
-                        }
-                        if ('' === $value || ' ' === $value) {
-                            $value = null;
-                        }
-                        $signalement->$method($value);
-                }
-            }
-            $errors = $validator->validate($signalement);
-
-            if (\count($errors) > 0) {
-                $errsMsgList = [];
-                foreach ($errors as $error) {
-                    $errsMsgList[$error->getPropertyPath().'_'.uniqid()] = $error->getMessage();
-                }
-
-                return $this->json(
-                    [
-                        'response' => 'formErrors',
-                        'errsMsgList' => $errsMsgList,
-                    ],
-                );
-            }
-
-            if (!$signalement->getIsNotOccupant()) {
-                $signalement->setNomDeclarant(null);
-                $signalement->setPrenomDeclarant(null);
-                $signalement->setMailDeclarant(null);
-                $signalement->setStructureDeclarant(null);
-                $signalement->setTelDeclarant(null);
-            }
-
-            if (!empty($signalement->getCpOccupant())) {
-                $signalement->setTerritory(
-                    $territoryRepository->findOneBy([
-                        'zip' => $zipcodeProvider->getZipCode($signalement->getCpOccupant()), 'isActive' => 1, ])
-                );
-            }
-
-            if (null === $signalement->getTerritory()
-                || !$postalCodeHomeChecker->isAuthorizedInseeCode(
-                    $signalement->getTerritory(),
-                    $signalement->getInseeOccupant()
-                )
-            ) {
-                return $this->json(['response' => 'Territory is inactive'], Response::HTTP_BAD_REQUEST);
-            }
-            $signalement->setReference($referenceGenerator->generate($signalement->getTerritory()));
-
-            $signalement->setScore($criticiteCalculator->calculate($signalement));
-            $signalementQualificationUpdater->updateQualificationFromScore($signalement);
-
-            // Non-décence énergétique
-            // Create a SignalementQualification if:
-            // - Territory in experimentation : $isExperimentationTerritory
-            // - Criticité is NDE : $hasNDECriticite
-            // - dateEntree >= 2023 or dataDateBail >= 2023 or dataDateBail "Je ne sais pas"
-            $experimentationTerritories = $this->getParameter('experimentation_territory');
-            $isExperimentationTerritory = \array_key_exists($signalement->getTerritory()->getZip(), $experimentationTerritories);
-            if ($isExperimentationTerritory && \count($listNDECriticites) > 0) {
-                $isDateBail2023 = $signalement->getDateEntree()->format('Y') >= 2023 || '2023-01-02' === $dataDateBail || 'Je ne sais pas' === $dataDateBail;
-                if ($isDateBail2023) {
-                    $signalementQualification = $signalementQualificationFactory->createNDEInstanceFrom(
-                        signalement: $signalement,
-                        listNDECriticites: $listNDECriticites,
-                        dataDateBail: $dataDateBail,
-                        dataConsoSizeYear: $dataConsoSizeYear,
-                        dataConsoYear: $dataConsoYear,
-                        dataConsoSize: $dataConsoSize,
-                        dataHasDPE: $dataHasDPE,
-                        dataDateDPE: $dataDateDPE
-                    );
-
-                    $signalement->addSignalementQualification($signalementQualification);
-                    // redéfinit le statut de la qualification après sa création
-                    $signalementQualification->setStatus($qualificationStatusService->getNDEStatus($signalementQualification));
-                    $entityManager->persist($signalementQualification);
-                }
-            }
-
-            $entityManager->persist($signalement);
-            $entityManager->flush();
-            $autoAssigner->assign($signalement);
-
-            $toRecipients = $signalement->getMailUsagers();
-            foreach ($toRecipients as $toRecipient) {
-                $notificationMailerRegistry->send(
-                    new NotificationMail(
-                        type: NotificationMailerType::TYPE_CONFIRM_RECEPTION,
-                        to: $toRecipient,
-                        territory: $signalement->getTerritory(),
-                        signalement: $signalement,
-                        attachment: $documentProvider->getModeleCourrierPourProprietaire($signalement),
-                    )
-                );
-            }
-
-            $eventDispatcher->dispatch(new SignalementCreatedEvent($signalement), SignalementCreatedEvent::NAME);
-
-            return $this->json(['response' => 'success']);
-        }
-
-        $logger->error(
-            'Erreur lors de l\'enregistrement du signalement : {payload}',
-            ['payload' => $request->request->all()]
-        );
-
-        return $this->json(['response' => 'error'], Response::HTTP_BAD_REQUEST);
     }
 
     #[Route('/suivre-ma-procedure/{code}', name: 'front_suivi_procedure', methods: 'GET')]

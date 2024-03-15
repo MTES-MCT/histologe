@@ -17,48 +17,6 @@ class SignalementControllerTest extends WebTestCase
     }
 
     /**
-     * @dataProvider provideRoutesEdit
-     */
-    public function testSignalementEditionSuccessfullyDisplay(string $route, Signalement $signalement): void
-    {
-        $client = static::createClient();
-        /** @var UserRepository $userRepository */
-        $userRepository = static::getContainer()->get(UserRepository::class);
-
-        $user = $userRepository->findOneBy(['email' => 'admin-01@histologe.fr']);
-
-        $client->loginUser($user);
-        $client->request('GET', $route);
-
-        if (Signalement::STATUS_ACTIVE === $signalement->getStatut()) {
-            $this->assertResponseIsSuccessful($signalement->getId());
-            $this->assertSelectorTextContains(
-                'h1.fr-h2',
-                'Edition signalement #'.$signalement->getReference(),
-                $signalement->getReference()
-            );
-        } else {
-            $this->assertResponseRedirects('/bo/signalements/');
-        }
-    }
-
-    public function provideRoutesEdit(): \Generator
-    {
-        /** @var SignalementRepository $signalementRepository */
-        $signalementRepository = static::getContainer()->get(SignalementRepository::class);
-        /** @var UrlGeneratorInterface $generatorUrl */
-        $generatorUrl = static::getContainer()->get(UrlGeneratorInterface::class);
-
-        $signalements = $signalementRepository->findAll();
-
-        /** @var Signalement $signalement */
-        foreach ($signalements as $signalement) {
-            $route = $generatorUrl->generate('back_signalement_edit', ['uuid' => $signalement->getUuid()]);
-            yield $route => [$route, $signalement];
-        }
-    }
-
-    /**
      * @dataProvider provideRoutes
      */
     public function testSignalementSuccessfullyDisplay(string $route, Signalement $signalement): void

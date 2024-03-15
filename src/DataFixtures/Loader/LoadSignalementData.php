@@ -6,6 +6,7 @@ use App\Entity\Criticite;
 use App\Entity\Enum\DocumentType;
 use App\Entity\Enum\MotifCloture;
 use App\Entity\Enum\MotifRefus;
+use App\Entity\Enum\OccupantLink;
 use App\Entity\Enum\ProfileDeclarant;
 use App\Entity\Enum\Qualification;
 use App\Entity\Enum\QualificationStatus;
@@ -19,7 +20,6 @@ use App\Factory\Signalement\InformationComplementaireFactory;
 use App\Factory\Signalement\InformationProcedureFactory;
 use App\Factory\Signalement\SituationFoyerFactory;
 use App\Factory\Signalement\TypeCompositionLogementFactory;
-use App\Form\SignalementType;
 use App\Repository\CritereRepository;
 use App\Repository\CriticiteRepository;
 use App\Repository\DesordreCategorieRepository;
@@ -126,6 +126,7 @@ class LoadSignalementData extends Fixture implements OrderedFixtureInterface
             )
             ->setIsUsagerAbandonProcedure(0);
         if (isset($row['is_not_occupant'])) {
+            $linkChoices = OccupantLink::getLabelList();
             $signalement
                 ->setIsNotOccupant($row['is_not_occupant'])
                 ->setNomDeclarant($faker->lastName())
@@ -133,7 +134,7 @@ class LoadSignalementData extends Fixture implements OrderedFixtureInterface
                 ->setTelDeclarant($phoneNumber)
                 ->setMailDeclarant($faker->email())
                 ->setStructureDeclarant($faker->company())
-                ->setLienDeclarantOccupant(SignalementType::LINK_CHOICES[array_rand(SignalementType::LINK_CHOICES)]);
+                ->setLienDeclarantOccupant($linkChoices[array_rand($linkChoices)]);
         } else {
             $signalement->setIsNotOccupant(0);
         }
@@ -353,6 +354,7 @@ class LoadSignalementData extends Fixture implements OrderedFixtureInterface
             );
 
         if (isset($row['is_not_occupant'])) {
+            $linkChoices = OccupantLink::getLabelList();
             $signalement
                 ->setIsNotOccupant($row['is_not_occupant'])
                 ->setNomDeclarant($row['nom_declarant'] ?? $faker->lastName())
@@ -360,7 +362,7 @@ class LoadSignalementData extends Fixture implements OrderedFixtureInterface
                 ->setTelDeclarant($row['tel_declarant'] ?? $phoneNumber)
                 ->setMailDeclarant($row['mail_declarant'] ?? $faker->email())
                 ->setStructureDeclarant($faker->company())
-                ->setLienDeclarantOccupant(SignalementType::LINK_CHOICES[array_rand(SignalementType::LINK_CHOICES)]);
+                ->setLienDeclarantOccupant($linkChoices[array_rand($linkChoices)]);
         } else {
             $signalement->setIsNotOccupant(0);
         }
