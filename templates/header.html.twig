@@ -5,35 +5,108 @@
                 <div class="fr-header__brand fr-enlarge-link">
                     <div class="fr-header__brand-top">
                         <div class="fr-header__logo">
-                            <div class="fr-logo">
+                            <p class="fr-logo">
                                 ministère <br> de la transition <br>écologique
-                            </div>
+                            </p>
                         </div>
-                        <div class="fr-header__operator">
-                            <a href="{{ path('home') }}" title="Accueil - {{ platform.name }}">
-                                <img src={{ asset('img/' ~ platform.logo145) }} class="fr-responsive-img" width="100%"
-                                     alt="{{ platform.name }}">
-                            </a>
-                        </div>
-
-
                         <div class="fr-header__navbar">
-                            <button class="fr-btn--menu fr-btn" data-fr-opened="false" aria-controls="modal-833"
-                                    aria-haspopup="menu" title="Menu" id="fr-btn-menu-mobile">
+                            <button class="fr-btn--menu fr-btn" data-fr-opened="false" aria-controls="modal-header-menu" aria-haspopup="menu" id="button-header-menu" title="Menu">
                                 Menu
                             </button>
                         </div>
                     </div>
+                    <div class="fr-header__service">
+                        <a href="{{ path('home') }}" title="Accueil - {{ platform.name }} - Ministère de la transition écologique">
+                            <img class="fr-responsive-img" style="width:3.5rem;" src="{{ asset('img/' ~ platform.logo145) }}" alt="{{ platform.name }}" />
+                        </a>
+                    </div>
                 </div>
-                {% include 'nav.html.twig' %}
+                <div class="fr-header__tools">
+                    <div class="fr-header__tools-links">
+                        <ul class="fr-btns-group">
+                            <li>
+                                {% if app.user %}
+                                <a class="fr-btn fr-icon-account-line" href="{{ path('back_dashboard') }}">
+                                    Tableau de bord
+                                </a>
+                                {% else %}
+                                <a class="fr-btn fr-icon-lock-line" href="{{ path('app_login') }}">
+                                    Espace pro
+                                </a>
+                                {% endif %}
+                            </li>
+                        </ul>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
-    <!-- Navigation principale -->
-    <div class="fr-header__menu fr-modal" id="modal-833" aria-labelledby="fr-btn-menu-mobile">
+    <div class="fr-header__menu fr-modal" id="modal-header-menu" aria-labelledby="button-header-menu">
         <div class="fr-container">
-            <button class="fr-link--close fr-link" aria-controls="modal-833">Fermer</button>
-            <div class="fr-header__menu-links"></div>
+            <button class="fr-btn--close fr-btn" aria-controls="modal-header-menu" title="Fermer">
+                Fermer
+            </button>
+            <div class="fr-header__menu-links">
+            </div>
+            <nav class="fr-nav" id="navigation-main" role="navigation" aria-label="Menu principal">
+                <ul class="fr-nav__list">
+                    <li class="fr-nav__item">
+                        <a class="fr-nav__link" href="{{ path('home') }}" target="_self"
+                            {% if app.request.get('_route') == 'home' %}aria-current="page"{% endif %}
+                            >Accueil</a>
+                    </li>
+                    <li class="fr-nav__item">
+                        <a class="fr-nav__link" href="{{ path('front_signalement') }}" target="_self"
+                            {% if app.request.get('_route') == 'front_signalement' %}aria-current="page"{% endif %}
+                            >Signalement</a>
+                    </li>
+                    <li class="fr-nav__item">
+                        <button class="fr-nav__btn" aria-expanded="false" aria-controls="submenu-about"
+                            {% if app.request.get('_route') in ['front_about', 'front_statistiques'] %}aria-current="true"{% endif %}
+                            >À propos</button>
+                        <div class="fr-collapse fr-menu" id="submenu-about">
+                            <ul class="fr-menu__list">
+                                <li>
+                                    <a class="fr-nav__link" href="{{ path('front_about') }}" target="_self"
+                                        {% if app.request.get('_route') == 'front_about' %}aria-current="page"{% endif %}
+                                        >Qui sommes-nous ?</a>
+                                </li>
+                                <li>
+                                    <a class="fr-nav__link" href="#TODO" target="_self">Entretien du logement : les obligations</a>
+                                </li>
+                                <li>
+                                    <a class="fr-nav__link" href="#TODO" target="_self">Les aides aux travaux</a>
+                                </li>
+                                <li>
+                                    <a class="fr-nav__link" href="{{ path('front_statistiques') }}" target="_self"
+                                        {% if app.request.get('_route') == 'front_statistiques' %}aria-current="page"{% endif %}
+                                        >Statistiques d'usage</a>
+                                </li>
+                            </ul>
+                        </div>
+                    </li>
+                    <li class="fr-nav__item">
+                        <button class="fr-nav__btn" aria-expanded="false" aria-controls="submenu-help"
+                            {% if app.request.get('_route') == 'front_contact' %}aria-current="true"{% endif %}
+                            >Aide</button>
+                        <div class="fr-collapse fr-menu" id="submenu-help">
+                            <ul class="fr-menu__list">
+                                {% if gitbook is defined %}
+                                <li>
+                                    <a class="fr-nav__link" href="{{ gitbook.faq }}" target="_blank" rel="noopener"
+                                        >Documentation</a>
+                                </li>
+                                {% endif %}
+                                <li>
+                                    <a class="fr-nav__link" href="{{ path('front_contact') }}" target="_self"
+                                        {% if app.request.get('_route') == 'front_contact' %}aria-current="page"{% endif %}
+                                        >Contact</a>
+                                </li>
+                            </ul>
+                        </div>
+                    </li>
+                </ul>
+            </nav>
         </div>
     </div>
 </header>
