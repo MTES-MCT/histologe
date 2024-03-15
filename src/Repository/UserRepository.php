@@ -215,4 +215,51 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
 
         return $qb->getQuery()->getOneOrNullResult();
     }
+
+    public function findExpiredUsers(): array
+    {
+        $limitConservation = '3 years'; // <- durée légale de conservation des données (ou rendre anonyme)
+        // $limitConservation = '1 years'; //pour test
+        $dateLimit = new \DateTime('-'.$limitConservation);
+
+        // retourne les utilisateurs :
+        // - non connectés depuis plus de limitConservation
+        // - et n'etant pas occupant ou declarant sur des signalements actif (creation/edition/dernier suivi) depuis limitConservation
+        $qb = $this->createQueryBuilder('u')
+            ->select('u')
+            ->leftJoin('u.signalementUsagerDeclarants', 'sud')
+            ->leftJoin('u.signalementUsagerOccupants', 'suo')
+            ->leftJoin('sud.signalement', 'sd')
+            ->leftJoin('suo.signalement', 'so')
+
+            ->where('(u.lastLoginAt < :dateLimit) OR (u.lastLoginAt IS NULL AND u.createdAt < :dateLimit)')
+            ->andWhere('sd.createdAt < :dateLimit AND so.createdAt < :dateLimit')
+            ->andWhere('(sd.modifiedAt IS NULL OR sd.modifiedAt < :dateLimit) AND (so.modifiedAt IS NULL OR so.modifiedAt < :dateLimit)')
+            ->andWhere('(sd.lastSuiviAt IS NULL OR sd.lastSuiviAt < :dateLimit) AND (so.lastSuiviAt IS NULL OR so.lastSuiviAt < :dateLimit)')
+
+            ->setParameter('dateLimit', $dateLimit);
+
+        return $qb->getQuery()->execute();
+    }
+
+    public function findInactiveUsers(): array
+    {
+        $limitConservation = '1 years';
+        $dateLimit = new \DateTime('-'.$limitConservation);
+
+        $qb = $this->createQueryBuilder('u')
+            ->select('u', 'p', 't')
+            ->leftJoin('u.partner', 'p')
+            ->leftJoin('u.territory', 't')
+
+            ->where('u.lastLoginAt IS NOT NULL AND u.lastLoginAt < :dateLimit')
+            ->andWhere('u.roles != :roles')
+            ->andWhere('u.statut != :statut')
+
+            ->setParameter('dateLimit', $dateLimit)
+            ->setParameter('roles', '["ROLE_USAGER"]')
+            ->setParameter('statut', User::STATUS_ARCHIVE);
+
+        return $qb->getQuery()->execute();
+    }
 }

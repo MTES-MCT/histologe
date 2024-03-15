@@ -119,6 +119,12 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column]
     private bool $isActivateAccountNotificationEnabled = true;
 
+    #[ORM\OneToMany(mappedBy: 'declarant', targetEntity: SignalementUsager::class)]
+    private $signalementUsagerDeclarants;
+
+    #[ORM\OneToMany(mappedBy: 'occupant', targetEntity: SignalementUsager::class)]
+    private $signalementUsagerOccupants;
+
     public function __construct()
     {
         $this->suivis = new ArrayCollection();
@@ -126,6 +132,8 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         $this->notifications = new ArrayCollection();
         $this->uuid = Uuid::v4();
         $this->files = new ArrayCollection();
+        $this->signalementUsagerDeclarants = new ArrayCollection();
+        $this->signalementUsagerOccupants = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -500,5 +508,15 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function getFullname(): string
     {
         return $this->prenom.' '.$this->nom;
+    }
+
+    public function getSignalementUsagerDeclarants(): Collection
+    {
+        return $this->signalementUsagerDeclarants;
+    }
+
+    public function getSignalementUsagerOccupants(): Collection
+    {
+        return $this->signalementUsagerOccupants;
     }
 }
