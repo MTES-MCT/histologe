@@ -8,7 +8,7 @@
         <meta name="robots" content="index, follow">
     {% endif %}
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <title>{{ platform.name }} - {% block title %}{% endblock %}</title>
+    <title>{% block title %}{% endblock %} - {{ platform.name }}</title>
     <meta name="description" content="Signaler vos problèmes de logement.">
     <!-- Facebook Meta Tags -->
     <meta property="og:url" content="{{ platform.url }}">

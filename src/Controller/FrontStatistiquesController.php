@@ -34,11 +34,7 @@ class FrontStatistiquesController extends AbstractController
     #[Route('/statistiques', name: 'front_statistiques')]
     public function statistiques(): Response
     {
-        $title = 'En quelques chiffres';
-
-        return $this->render('front/statistiques.html.twig', [
-            'title' => $title,
-        ]);
+        return $this->render('front/statistiques.html.twig');
     }
 
     #[Route('/statistiques-filter', name: 'front_statistiques_filter')]
