@@ -6,6 +6,7 @@ use App\Dto\CountUser;
 use App\Entity\Partner;
 use App\Entity\Territory;
 use App\Entity\User;
+use DateTime;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\ORM\Tools\Pagination\Paginator;
@@ -242,9 +243,9 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
         return $qb->getQuery()->execute();
     }
 
-    public function findInactiveUsers(): array
+    public function findInactiveUsers(?bool $isArchivingScheduled = null, ?DateTime $archivingScheduledAt = null): array
     {
-        $limitConservation = '1 years';
+        $limitConservation = '11 months';
         $dateLimit = new \DateTime('-'.$limitConservation);
 
         $qb = $this->createQueryBuilder('u')
@@ -259,6 +260,28 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
             ->setParameter('dateLimit', $dateLimit)
             ->setParameter('roles', '["ROLE_USAGER"]')
             ->setParameter('statut', User::STATUS_ARCHIVE);
+
+        if (true === $isArchivingScheduled) {
+            $qb->andWhere('u.archivingScheduledAt IS NOT NULL');
+        }
+        if (false === $isArchivingScheduled) {
+            $qb->andWhere('u.archivingScheduledAt IS NULL');
+        }
+
+        if ($archivingScheduledAt) {
+            $qb->andWhere('u.archivingScheduledAt = :date')
+                ->setParameter('date', $archivingScheduledAt->format('Y-m-d'));
+        }
+
+        return $qb->getQuery()->execute();
+    }
+
+    public function findUsersToArchive(): array
+    {
+        $qb = $this->createQueryBuilder('u')
+            ->where('u.archivingScheduledAt IS NOT NULL')
+            ->andWhere('u.archivingScheduledAt < :date')
+            ->setParameter('date', new \DateTime());
 
         return $qb->getQuery()->execute();
     }

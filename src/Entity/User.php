@@ -125,6 +125,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\OneToMany(mappedBy: 'occupant', targetEntity: SignalementUsager::class)]
     private $signalementUsagerOccupants;
 
+    #[ORM\Column(type: Types::DATE_MUTABLE, nullable: true)]
+    private ?\DateTimeInterface $archivingScheduledAt = null;
+
     public function __construct()
     {
         $this->suivis = new ArrayCollection();
@@ -322,6 +325,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setLastLoginAt(?DateTimeImmutable $lastLoginAt): self
     {
         $this->lastLoginAt = $lastLoginAt;
+        $this->archivingScheduledAt = null;
 
         return $this;
     }
@@ -518,5 +522,17 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function getSignalementUsagerOccupants(): Collection
     {
         return $this->signalementUsagerOccupants;
+    }
+
+    public function getArchivingScheduledAt(): ?\DateTimeInterface
+    {
+        return $this->archivingScheduledAt;
+    }
+
+    public function setArchivingScheduledAt(?\DateTimeInterface $archivingScheduledAt): self
+    {
+        $this->archivingScheduledAt = $archivingScheduledAt;
+
+        return $this;
     }
 }
