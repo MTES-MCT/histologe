@@ -22,4 +22,21 @@ class BailleurControllerTest extends WebTestCase
             $this->assertStringContainsString('habitat', strtolower($item['name']));
         }
     }
+
+    public function testSearchTerms(): void
+    {
+        $client = static::createClient();
+        /** @var RouterInterface $router */
+        $router = self::getContainer()->get(RouterInterface::class);
+        $routeFirst = $router->generate('app_bailleur', ['name' => 'habitat 13', 'postcode' => 13002]);
+
+        $client->request('GET', $routeFirst);
+        $responseFirst = json_decode($client->getResponse()->getContent(), true);
+
+        $routeSecond = $router->generate('app_bailleur', ['name' => '13 habitat', 'postcode' => 13002]);
+        $client->request('GET', $routeSecond);
+        $responseSecond = json_decode($client->getResponse()->getContent(), true);
+
+        $this->assertEquals($responseFirst, $responseSecond);
+    }
 }

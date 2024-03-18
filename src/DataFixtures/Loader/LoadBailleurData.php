@@ -22,19 +22,24 @@ class LoadBailleurData extends Fixture implements OrderedFixtureInterface
         foreach ($bailleursRows['bailleurs'] as $row) {
             $this->loadBailleurs($manager, $row);
         }
-        $manager->flush();
     }
 
     public function loadBailleurs(ObjectManager $manager, array $row): void
     {
         /** @var Territory $territory */
         $territory = $this->territoryRepository->findOneBy(['name' => $row['territory']]);
-        $bailleur = (new Bailleur())
-            ->setName($row['name'])
-            ->setTerritory($territory)
-            ->setIsSocial($row['is_social']);
-
+        /** @var Bailleur $bailleur */
+        $bailleur = $manager->getRepository(Bailleur::class)->findOneBy(['name' => $row['name']]);
+        if (null === $bailleur) {
+            $bailleur = (new Bailleur())
+                ->setName($row['name'])
+                ->addTerritory($territory)
+                ->setIsSocial($row['is_social']);
+        } else {
+            $bailleur->addTerritory($territory);
+        }
         $manager->persist($bailleur);
+        $manager->flush();
     }
 
     public function getOrder(): int

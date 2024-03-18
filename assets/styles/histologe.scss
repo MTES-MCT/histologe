@@ -716,10 +716,15 @@ div.photos-album {
     }
 }
 
+ul.search-bailleur-autocomplete-list {
+  list-style-type: none;
+}
+
 .fr-bailleur-suggestion:hover,
 .fr-adresse-suggestion:hover {
     background-color: var(--artwork-minor-blue-cumulus);
     color: white !important;
+    cursor: pointer;
 }
 .fr-address-group, .fr-address-group-bo{
     cursor: pointer;
@@ -743,3 +748,7 @@ div.photos-album {
     }
 }
 
+.fr-autocomplete-suggestion-highlighted {
+  background-color: #417dc4;
+  color: white !important;
+}

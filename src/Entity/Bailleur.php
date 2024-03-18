@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use App\Repository\BailleurRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Ignore;
 
@@ -26,10 +28,19 @@ class Bailleur
     #[Ignore]
     private ?bool $active = true;
 
-    #[ORM\ManyToOne(inversedBy: 'bailleurs')]
-    #[ORM\JoinColumn(nullable: false)]
+    #[ORM\ManyToMany(targetEntity: Territory::class, inversedBy: 'bailleurs')]
     #[Ignore]
-    private ?Territory $territory = null;
+    private Collection $territories;
+
+    #[ORM\OneToMany(mappedBy: 'bailleur', targetEntity: Signalement::class)]
+    #[Ignore]
+    private Collection $signalements;
+
+    public function __construct()
+    {
+        $this->territories = new ArrayCollection();
+        $this->signalements = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -41,7 +52,7 @@ class Bailleur
         return $this->name;
     }
 
-    public function setName(string $name): static
+    public function setName(string $name): self
     {
         $this->name = $name;
 
@@ -53,7 +64,7 @@ class Bailleur
         return $this->isSocial;
     }
 
-    public function setIsSocial(bool $isSocial): static
+    public function setIsSocial(bool $isSocial): self
     {
         $this->isSocial = $isSocial;
 
@@ -65,21 +76,63 @@ class Bailleur
         return $this->active;
     }
 
-    public function setActive(bool $active): static
+    public function setActive(bool $active): self
     {
         $this->active = $active;
 
         return $this;
     }
 
-    public function getTerritory(): ?Territory
+    /**
+     * @return Collection<int, Territory>
+     */
+    public function getTerritories(): Collection
     {
-        return $this->territory;
+        return $this->territories;
     }
 
-    public function setTerritory(?Territory $territory): static
+    public function addTerritory(Territory $territory): self
     {
-        $this->territory = $territory;
+        if (!$this->territories->contains($territory)) {
+            $this->territories->add($territory);
+        }
+
+        return $this;
+    }
+
+    public function removeTerritory(Territory $territory): self
+    {
+        $this->territories->removeElement($territory);
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Signalement>
+     */
+    public function getSignalements(): Collection
+    {
+        return $this->signalements;
+    }
+
+    public function addSignalement(Signalement $signalement): self
+    {
+        if (!$this->signalements->contains($signalement)) {
+            $this->signalements->add($signalement);
+            $signalement->setBailleur($this);
+        }
+
+        return $this;
+    }
+
+    public function removeSignalement(Signalement $signalement): self
+    {
+        if ($this->signalements->removeElement($signalement)) {
+            // set the owning side to null (unless already changed)
+            if ($signalement->getBailleur() === $this) {
+                $signalement->setBailleur(null);
+            }
+        }
 
         return $this;
     }

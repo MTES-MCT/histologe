@@ -11,6 +11,7 @@ use App\Entity\Model\SituationFoyer;
 use App\Entity\Model\TypeCompositionLogement;
 use App\Entity\Signalement;
 use App\Entity\SignalementDraft;
+use App\Entity\Territory;
 use App\Exception\Signalement\DesordreTraitementProcessorNotFound;
 use App\Exception\Signalement\PrecisionNotFound;
 use App\Factory\FileFactory;
@@ -19,6 +20,7 @@ use App\Factory\Signalement\InformationProcedureFactory;
 use App\Factory\Signalement\SituationFoyerFactory;
 use App\Factory\Signalement\TypeCompositionLogementFactory;
 use App\Manager\DesordreCritereManager;
+use App\Repository\BailleurRepository;
 use App\Repository\DesordreCategorieRepository;
 use App\Repository\DesordreCritereRepository;
 use App\Repository\DesordrePrecisionRepository;
@@ -36,13 +38,14 @@ use Symfony\Bundle\SecurityBundle\Security;
 class SignalementBuilder
 {
     private Signalement $signalement;
+    private Territory $territory;
     private SignalementDraft $signalementDraft;
     private SignalementDraftRequest $signalementDraftRequest;
     private array $payload;
 
     public function __construct(
         private TerritoryRepository $territoryRepository,
-        private ZipcodeProvider $zipcodeProvider,
+        private BailleurRepository $bailleurRepository,
         private ReferenceGenerator $referenceGenerator,
         private TokenGeneratorInterface $tokenGenerator,
         private SignalementDraftRequestSerializer $signalementDraftRequestSerializer,
@@ -73,7 +76,7 @@ class SignalementBuilder
             SignalementDraftRequest::class
         );
 
-        $territory = $this->territoryRepository->findOneBy([
+        $this->territory = $this->territoryRepository->findOneBy([
             'zip' => ZipcodeProvider::getZipCode(
                 $this->signalementDraftRequest->getAdresseLogementAdresseDetailCodePostal()
             ),
@@ -81,9 +84,9 @@ class SignalementBuilder
 
         $this->signalement = (new Signalement())
             ->setCreatedFrom($this->signalementDraft)
-            ->setTerritory($territory)
+            ->setTerritory($this->territory)
             ->setIsCguAccepted(true)
-            ->setReference($this->referenceGenerator->generate($territory))
+            ->setReference($this->referenceGenerator->generate($this->territory))
             ->setDetails($this->signalementDraftRequest->getMessageAdministration())
             ->setProfileDeclarant(ProfileDeclarant::from(strtoupper($this->signalementDraftRequest->getProfil())));
 
@@ -406,10 +409,15 @@ class SignalementBuilder
                 ->setVilleProprio($this->signalementDraftRequest->getCoordonneesBailleurAdresseCommune())
                 ->setCodePostalProprio($this->signalementDraftRequest->getCoordonneesBailleurAdresseDetailCodePostal())
                 ->setMailProprio($this->signalementDraftRequest->getCoordonneesBailleurEmail())
-                ->setNomProprio($this->signalementDraftRequest->getCoordonneesBailleurNom())
+                ->setNomProprio($bailleurNom = $this->signalementDraftRequest->getCoordonneesBailleurNom())
                 ->setPrenomProprio($this->signalementDraftRequest->getCoordonneesBailleurPrenom())
                 ->setTelProprio($this->signalementDraftRequest->getCoordonneesBailleurTel())
                 ->setTelProprioSecondaire($this->signalementDraftRequest->getCoordonneesBailleurTelSecondaire());
+
+            $bailleur = $this->bailleurRepository->findOneActiveBy($bailleurNom, $this->territory->getZip());
+            if (null !== $bailleur) {
+                $this->signalement->setBailleur($bailleur);
+            }
         }
     }
 

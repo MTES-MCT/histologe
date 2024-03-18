@@ -31,6 +31,7 @@ use App\Event\SignalementCreatedEvent;
 use App\Factory\SignalementAffectationListViewFactory;
 use App\Factory\SignalementExportFactory;
 use App\Factory\SignalementFactory;
+use App\Repository\BailleurRepository;
 use App\Repository\DesordreCritereRepository;
 use App\Repository\DesordrePrecisionRepository;
 use App\Repository\PartnerRepository;
@@ -41,6 +42,7 @@ use App\Service\Signalement\DesordreTraitement\DesordreCompositionLogementLoader
 use App\Service\Signalement\Qualification\QualificationStatusService;
 use App\Service\Signalement\Qualification\SignalementQualificationUpdater;
 use App\Service\Signalement\SignalementInputValueMapper;
+use App\Service\Signalement\ZipcodeProvider;
 use App\Specification\Signalement\SuroccupationSpecification;
 use Doctrine\ORM\Tools\Pagination\Paginator;
 use Doctrine\Persistence\ManagerRegistry;
@@ -69,6 +71,7 @@ class SignalementManager extends AbstractManager
         private DesordreCritereRepository $desordreCritereRepository,
         private DesordreCompositionLogementLoader $desordreCompositionLogementLoader,
         private SuiviManager $suiviManager,
+        private BailleurRepository $bailleurRepository,
         string $entityName = Signalement::class
     ) {
         parent::__construct($managerRegistry, $entityName);
@@ -408,6 +411,14 @@ class SignalementManager extends AbstractManager
         Signalement $signalement,
         CoordonneesBailleurRequest $coordonneesBailleurRequest
     ) {
+        $bailleur = $this->bailleurRepository->findOneActiveBy(
+            $coordonneesBailleurRequest->getNom(),
+            ZipcodeProvider::getZipCode($signalement->getCpOccupant())
+        );
+        if (null !== $bailleur) {
+            $signalement->setBailleur($bailleur);
+        }
+
         $signalement->setNomProprio($coordonneesBailleurRequest->getNom())
             ->setPrenomProprio($coordonneesBailleurRequest->getPrenom())
             ->setMailProprio($coordonneesBailleurRequest->getMail())

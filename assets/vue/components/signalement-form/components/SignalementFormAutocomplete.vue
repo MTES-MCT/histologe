@@ -11,16 +11,21 @@
         :autocomplete="autocomplete"
         :hasError="hasError"
         :error="error"
+        @keydown.down.prevent="handleDownSuggestion"
+        @keydown.up.prevent="handleUpSuggestion"
+        @keydown.enter.prevent="handleEnterSuggestion"
     />
 
-    <div class="fr-grid-row fr-background-alt--blue-france fr-text-label--blue-france fr-autocomplete-group">
-      <div class="fr-col-12 fr-p-3v fr-text-label--blue-france fr-autocomplete-suggestion"
+    <ul class="fr-grid-row fr-background-alt--blue-france fr-text-label--blue-france fr-autocomplete-group"
+        @click="closeAutocomplete">
+      <li class="fr-col-12 fr-p-3v fr-text-label--blue-france fr-autocomplete-suggestion"
            v-for="(suggestion, index) in suggestions"
            :key="index"
-           @click="handleClickSuggestion(index)">
+          :class="{ 'fr-autocomplete-suggestion-highlighted': index === selectedSuggestionIndex }"
+          @click="handleClickSuggestion(index)">
         {{ suggestion.name }}
-      </div>
-    </div>
+      </li>
+    </ul>
   </div>
 </template>
 
@@ -54,10 +59,12 @@ export default defineComponent({
       idFetchTimeout: 0 as unknown as ReturnType<typeof setTimeout>,
       suggestions: [] as any[],
       formStore,
-      selectedSuggestion: ''
+      selectedSuggestion: '',
+      selectedSuggestionIndex: -1
     }
   },
   created () {
+    document.addEventListener('click', this.closeAutocomplete)
     watch(
       () => this.formStore.data[this.id],
       (newValue: any) => {
@@ -78,7 +85,8 @@ export default defineComponent({
       this.$emit('update:modelValue', value)
     },
     handleClickSuggestion (index: number) {
-      if (this.suggestions) {
+      if (this.suggestions && this.suggestions[index]) {
+        this.selectedSuggestionIndex = index
         this.formStore.data[this.id] = this.suggestions[index].name
         const idWithoutAutocomplete = this.id.replace('_autocomplete', '')
         this.formStore.data[idWithoutAutocomplete] = this.suggestions[index].name
@@ -92,6 +100,28 @@ export default defineComponent({
       if (this.formStore.data[this.id] !== this.selectedSuggestion) {
         this.suggestions = requestResponse
       }
+    },
+    handleDownSuggestion () {
+      if (this.selectedSuggestionIndex < this.suggestions.length - 1) {
+        this.selectedSuggestionIndex++
+      }
+    },
+    handleUpSuggestion () {
+      if (this.selectedSuggestionIndex > 0) {
+        this.selectedSuggestionIndex--
+      }
+    },
+    handleEnterSuggestion () {
+      if (this.selectedSuggestionIndex !== -1) {
+        this.handleClickSuggestion(this.selectedSuggestionIndex)
+        this.selectedSuggestionIndex = -1
+      }
+    },
+    closeAutocomplete (event) {
+      if (!event.target.closest('.fr-autocomplete-group')) {
+        this.suggestions = []
+        this.selectedSuggestionIndex = -1
+      }
     }
   },
   emits: ['update:modelValue']
@@ -99,15 +129,8 @@ export default defineComponent({
 </script>
 
 <style>
-.fr-autocomplete-suggestion:hover {
-  background-color: #417dc4;
-  color: white !important;
-}
-.fr-autocomplete-group {
+ul.fr-autocomplete-group {
+  list-style-type: none;
   margin-top: -1.5rem;
-}
-.signalement-form-autocomplete .signalement-form-button {
-  width: 100%;
-  text-align: center;
 }
 </style>

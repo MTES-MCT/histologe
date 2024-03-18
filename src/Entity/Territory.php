@@ -61,8 +61,7 @@ class Territory
     #[ORM\Column]
     private ?bool $isAutoAffectationEnabled = false;
 
-    #[ORM\OneToMany(mappedBy: 'territory', targetEntity: Bailleur::class)]
-    #[Ignore]
+    #[ORM\ManyToMany(targetEntity: Bailleur::class, mappedBy: 'territories')]
     private Collection $bailleurs;
 
     public function __construct()
@@ -323,23 +322,20 @@ class Territory
         return $this->bailleurs;
     }
 
-    public function addBailleur(Bailleur $bailleur): self
+    public function addBailleur(Bailleur $bailleur): static
     {
         if (!$this->bailleurs->contains($bailleur)) {
             $this->bailleurs->add($bailleur);
-            $bailleur->setTerritory($this);
+            $bailleur->addTerritory($this);
         }
 
         return $this;
     }
 
-    public function removeBailleur(Bailleur $bailleur): self
+    public function removeBailleur(Bailleur $bailleur): static
     {
         if ($this->bailleurs->removeElement($bailleur)) {
-            // set the owning side to null (unless already changed)
-            if ($bailleur->getTerritory() === $this) {
-                $bailleur->setTerritory(null);
-            }
+            $bailleur->removeTerritory($this);
         }
 
         return $this;

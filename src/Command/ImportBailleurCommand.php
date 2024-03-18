@@ -15,7 +15,7 @@ use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 
 #[AsCommand(
     name: 'app:import-bailleur',
-    description: 'Add a short description for your command',
+    description: 'Import Bailleur from csv',
 )]
 class ImportBailleurCommand extends Command
 {
@@ -52,7 +52,7 @@ class ImportBailleurCommand extends Command
             $io->warning($error);
         }
 
-        $io->success(sprintf('%s bailleur(s) have been imported', $metadata['count_bailleurs']));
+        $io->success(sprintf('%s bailleur(s) have been imported.', $metadata['count_bailleurs']));
 
         return Command::SUCCESS;
     }

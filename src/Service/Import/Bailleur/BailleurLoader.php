@@ -3,6 +3,7 @@
 namespace App\Service\Import\Bailleur;
 
 use App\Entity\Bailleur;
+use App\Entity\Territory;
 use App\Repository\BailleurRepository;
 use App\Repository\TerritoryRepository;
 use Doctrine\ORM\EntityManagerInterface;
@@ -29,44 +30,27 @@ class BailleurLoader
     {
         $progressBar = new ProgressBar($output, \count($data));
         $progressBar->start();
+        $currentTerritory = $data[0][BailleurHeader::DEPARTEMENT];
         foreach ($data as $key => $item) {
             if (\count($item) > 1) {
                 if (null !== $territoryName = $item[BailleurHeader::DEPARTEMENT]) {
-                    $territory = $this->territoryRepository->findOneBy([
-                        'name' => $territoryName,
-                    ]);
-                    if (null !== $territory && !empty($item[BailleurHeader::ORGANISME_NOM])) {
-                        $bailleur = $this->bailleurRepository->findOneBy([
-                            'name' => $item[BailleurHeader::ORGANISME_NOM],
-                            'territory' => $territory->getId(),
-                        ]);
-                        if (null === $bailleur) {
-                            $bailleur = (new Bailleur())
-                                ->setTerritory($territory)
-                                ->setName($item[BailleurHeader::ORGANISME_NOM])
-                                ->setIsSocial(true);
-                            $this->entityManager->persist($bailleur);
-                            ++$this->metadata['count_bailleurs'];
-                        }
-                        if (0 === $this->metadata['count_bailleurs'] % self::FLUSH_COUNT) {
-                            $this->entityManager->flush();
-                        }
-                    } elseif (null === $territory) {
-                        $this->metadata['errors'][] = sprintf(
-                            '[%s] ligne %d - Le territoire n\'existe pas.',
-                            $territoryName,
-                            $key
-                        );
+                    $territory = $this->territoryRepository->findOneBy(['name' => $territoryName]);
+                    if ($this->hasErrors($territoryName, $item, $key, $territory)) {
+                        continue;
+                    }
+
+                    if ($currentTerritory === $territoryName) {
+                        $bailleur = $this->createOrUpdateBailleur($item[BailleurHeader::ORGANISME_NOM], $territory);
+                        $this->entityManager->persist($bailleur);
                     } else {
-                        $this->metadata['errors'][] = sprintf(
-                            '[%s] ligne %d - Le nom de l\'organisme est manquant.',
-                            $territoryName,
-                            $key
-                        );
+                        $currentTerritory = $item[BailleurHeader::DEPARTEMENT];
+                        $bailleur = $this->createOrUpdateBailleur($item[BailleurHeader::ORGANISME_NOM], $territory);
+                        $this->entityManager->persist($bailleur);
+                        $this->entityManager->flush();
                     }
-                    if (null !== $output) {
-                        $progressBar->advance();
-                    }
+                }
+                if (null !== $output) {
+                    $progressBar->advance();
                 }
             }
         }
@@ -80,5 +64,44 @@ class BailleurLoader
     public function getMetadata(): array
     {
         return $this->metadata;
+    }
+
+    private function createOrUpdateBailleur(string $bailleurName, Territory $territory): Bailleur
+    {
+        $bailleur = $this->bailleurRepository->findOneBy(['name' => $bailleurName]);
+        if (null === $bailleur) {
+            $bailleur = (new Bailleur())
+                ->addTerritory($territory)
+                ->setName($bailleurName)
+                ->setIsSocial(true);
+            ++$this->metadata['count_bailleurs'];
+        } else {
+            $bailleur->addTerritory($territory);
+        }
+
+        return $bailleur;
+    }
+
+    private function hasErrors(string $territoryName, array $item, int $key, ?Territory $territory = null): bool
+    {
+        if (null === $territory) {
+            $this->metadata['errors'][] = sprintf(
+                '[%s] ligne %d - Le territoire n\'existe pas.',
+                $territoryName,
+                $key + 2);
+
+            return true;
+        }
+
+        if (empty($item[BailleurHeader::ORGANISME_NOM])) {
+            $this->metadata['errors'][] = sprintf(
+                '[%s] ligne %d - Le nom de l\'organisme est manquant.',
+                $territoryName,
+                $key + 2);
+
+            return true;
+        }
+
+        return false;
     }
 }
