@@ -259,6 +259,10 @@ class SignalementFileController extends AbstractController
                 $file->setIntervention($intervention);
             }
         }
+        $description = $request->get('description');
+        if (null !== $description) {
+            $file->setDescription($description);
+        }
         $entityManager->persist($file);
         $entityManager->flush();
         if ($request->isXmlHttpRequest()) {

@@ -157,25 +157,10 @@ function initializeUploadModal(
                         }
                     } else {
                         if (null !== modal.dataset.documentType){
-                            let httpEdit = new XMLHttpRequest()
-                            let dataEdit = new FormData()
-                            dataEdit.append('file_id', response.response)
-                            dataEdit.append('documentType', modal.dataset.documentType)            
-                            dataEdit.append('interventionId', modal.dataset.interventionId)
-
-                            dataEdit.append('_token', editFileToken)
-                            httpEdit.onreadystatechange = function () {
-                                if (this.readyState == XMLHttpRequest.DONE) {
-                                    let response = JSON.parse(this.response)
-                                    if (this.status != 200) {
-                                        let parent = fileListContainerSelector
-                                        parent.querySelector('.file-error').innerHTML = '<div class="fr-alert fr-alert--error fr-alert--sm">' + response.response + '</div>'
-                                    }
-                                }
-                            }
-                            httpEdit.open('POST', editFileRoute, true)
-                            httpEdit.setRequestHeader("X-Requested-With", "XMLHttpRequest")
-                            httpEdit.send(dataEdit)
+                            let divFileId = div.querySelector('#file-id')
+                            divFileId.value = response.response
+                            callEditFileRoute(div)
+                            addEventListenerDescription(div)
                         }
 
                     }
@@ -215,9 +200,20 @@ function initializeUploadModal(
                 <span>0%</span>
             </div>
         </div>
-        <div class="fr-col-3 select-container">           
-        </div>
-        <div class="fr-col-1">
+        `
+        if (modal.dataset.documentType == 'PHOTO_VISITE') {
+            innerHTML += `
+            <div class="fr-col-3">                
+                <input type="text" id="file-description" name="file[description]"
+                required="required" class="fr-input" placeholder="Description de l'image">
+                <input type="hidden" id="file-id" name="file[id]">
+            </div>           
+            `
+        } else{
+            innerHTML += `<div class="fr-col-3 select-container">           
+            </div>`
+        }
+        innerHTML += `<div class="fr-col-1">
             <a href="${deleteTmpFileRoute}" title="Supprimer" class="fr-btn fr-btn--sm fr-btn--secondary fr-background--white fr-fi-delete-line fr-hidden delete-tmp-file delete-html"></a>         
         </div>
         `
@@ -272,6 +268,38 @@ function initializeUploadModal(
         })
     }
 
+    function callEditFileRoute(divFileItem) {
+        let httpEdit = new XMLHttpRequest()
+        let dataEdit = new FormData()
+        dataEdit.append('file_id', divFileItem.querySelector('#file-id')?.value)
+        dataEdit.append('documentType', modal.dataset.documentType)            
+        dataEdit.append('interventionId', modal.dataset.interventionId) 
+        dataEdit.append('description', divFileItem.querySelector('#file-description')?.value)
+
+        dataEdit.append('_token', editFileToken)
+        httpEdit.onreadystatechange = function () {
+            if (this.readyState == XMLHttpRequest.DONE) {
+                let response = JSON.parse(this.response)
+                if (this.status != 200) {
+                    let parent = divFileItem
+                    parent.querySelector('.file-error').innerHTML = '<div class="fr-alert fr-alert--error fr-alert--sm">' + response.response + '</div>'
+
+                }
+            }
+        }
+        httpEdit.open('POST', editFileRoute, true)
+        httpEdit.setRequestHeader("X-Requested-With", "XMLHttpRequest")
+        httpEdit.send(dataEdit)
+    }
+
+    function addEventListenerDescription(divFileItem) {
+            listContainer?.querySelectorAll('.fr-grid-row')?.forEach(divFileItem => {
+                divFileItem.querySelector('#file-description')?.addEventListener('change', (e) => {
+                    callEditFileRoute(divFileItem)
+                })
+            })
+    }
+
 
     modal.addEventListener('dsfr.conceal', (e) => {
         if (modal.dataset.validated == "true" && modal.dataset.hasChanges == "true") {
@@ -319,5 +347,4 @@ function initializeUploadModal(
     btnValidate.addEventListener('click', (e) => {
         modal.dataset.validated = true
     })
-
 }
