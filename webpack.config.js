@@ -64,6 +64,7 @@ Encore
 
     .configureBabel((config) => {
         config.plugins.push('@babel/plugin-proposal-class-properties');
+        // config.compilerOptions.isCustomElement = tag => tag === 'map-chart';
     })
 
     // enables @babel/preset-env polyfills

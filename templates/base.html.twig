@@ -51,11 +51,6 @@
         <link rel="stylesheet" href="https://unpkg.com/tippy.js@6/themes/light-border.css"/>
     {% endif %}
 
-    {#% if 'front_statistiques' in app.request.get('_route') or 'back_statistiques' in app.request.get('_route') %#}
-        <script src="{{ asset('build/dsfr-chart/Charts/dsfr-chart.umd.js') }}"></script>
-        <link rel="stylesheet" href="{{ asset('build/dsfr-chart/Charts/dsfr-chart.css') }}" />
-    {#% endif %#}
-
     {% block stylesheets %}{% endblock %}
     {% block customscripts %}
         {{ encore_entry_script_tags('app') }}
@@ -132,9 +127,19 @@
 
 <script type="module" src="{{ asset('build/dsfr/dsfr.module.min.js') }}"></script>
 <script type="text/javascript" nomodule src="{{ asset('build/dsfr/dsfr.nomodule.min.js') }}"></script>
+
 <script src="{{ asset('js/tinymce/tinymce.min.js') }}"></script>
 <script src="{{ asset('js/const.min.js?v='~''|date('YmdH')) }}"></script>
 <script src="{{ asset('js/app.js?v='~''|date('YmdH')) }}"></script>
+
+{#% if 'front_statistiques' in app.request.get('_route') or 'back_statistiques' in app.request.get('_route') %#}
+    {#
+    <script src="{{ asset('build/dsfr-chart/Charts/dsfr-chart.umd.min.js') }}"></script>
+    <link rel="stylesheet" href="{{ asset('build/dsfr-chart/Charts/dsfr-chart.css') }}" />
+    #}
+    <script src="{{ asset('build/dsfr-chart/ScatterChart/scatter-chart.umd.js') }}"></script>
+    <link rel="stylesheet" href="{{ asset('build/dsfr-chart/ScatterChart/scatter-chart.css') }}" />
+{#% endif %#}
 
 {% if 'back_cartographie' in app.request.get('_route') or 'back_signalement_view' in app.request.get('_route') %}
     <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>

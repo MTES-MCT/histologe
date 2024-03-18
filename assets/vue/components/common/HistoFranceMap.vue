@@ -7,7 +7,9 @@
         <map-chart
           :data="mapList"
           valuenat=10
-          name="Nombre de signalements par département">
+          name="Nombre de signalements par département"
+          color="blue-ecume"
+          >
         </map-chart>
       </div>
     </div>
