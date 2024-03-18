@@ -48,7 +48,7 @@ class ImportBailleurCommand extends Command
         );
 
         $metadata = $this->bailleurLoader->getMetadata();
-        foreach ($metadata['errors'] as $key => $error) {
+        foreach ($metadata['errors'] as $error) {
             $io->warning($error);
         }
 

@@ -12,8 +12,6 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 class BailleurLoader
 {
-    private const FLUSH_COUNT = 500;
-
     private array $metadata = [
         'count_bailleurs' => 0,
         'errors' => [],
