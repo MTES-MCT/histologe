@@ -60,8 +60,16 @@ document.querySelectorAll('.btn-signalement-file-edit').forEach(swbtn => {
     + ' par '+ target.getAttribute('data-partner-name')+target.getAttribute('data-user-name')
     document.querySelector('#file-edit-fileid').value = target.getAttribute('data-file-id')
 
+    const selectedDocumentType = target.getAttribute('data-documentType'); 
+    if (target.getAttribute('data-description') || selectedDocumentType === 'PHOTO_VISITE') {
+      document.querySelector('#fileDescription').value = target.getAttribute('data-description')
+      document.querySelector('#fr-modal-edit-file-description').classList.remove('fr-hidden')
+    }else {
+      document.querySelector('#fileDescription').value = ''
+      document.querySelector('#fr-modal-edit-file-description').classList.add('fr-hidden')
+    }
+
     const documentTypes = JSON.parse(target.getAttribute('data-documentType-list'));
-    const selectedDocumentType = target.getAttribute('data-documentType');
     let typeSelectBox = document.querySelector('#document-type-select');
     typeSelectBox.innerHTML = '';
     let option = new Option('Sélectionnez un type', '');
