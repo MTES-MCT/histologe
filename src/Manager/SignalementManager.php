@@ -814,6 +814,55 @@ class SignalementManager extends AbstractManager
         return $photos->toArray();
     }
 
+    public function getAllPhotosOrdered(Signalement $signalement): ?array
+    {
+        $photos = $signalement->getPhotos();
+        $photosArray = $photos->toArray();
+        $photoArraysByType = [
+            DocumentType::PHOTO_SITUATION->value => [],
+            DocumentType::PHOTO_VISITE->value => [],
+            DocumentType::AUTRE->value => [],
+        ];
+
+        foreach ($photosArray as $photo) {
+            $type = $photo->getDocumentType();
+            $photoArraysByType[$type->value][] = $photo;
+        }
+
+        foreach ($photoArraysByType as &$photoArray) {
+            usort($photoArray, function (File $a, File $b) {
+                if (DocumentType::PHOTO_SITUATION === $a->getDocumentType()) {
+                    return $a->getId() <=> $b->getId();
+                }
+                if (DocumentType::PHOTO_VISITE === $a->getDocumentType()) {
+                    $interventionA = $a->getIntervention();
+                    $interventionB = $b->getIntervention();
+                    if (null === $interventionA && null === $interventionB) {
+                        return 0;
+                    }
+                    if (null === $interventionA) {
+                        return 1;
+                    }
+                    if (null === $interventionB) {
+                        return -1;
+                    }
+
+                    return $interventionA->getId() <=> $interventionB->getId();
+                }
+
+                return $a->getId() <=> $b->getId();
+            });
+        }
+
+        $sortedPhotos = array_merge(
+            $photoArraysByType[DocumentType::PHOTO_SITUATION->value],
+            $photoArraysByType[DocumentType::AUTRE->value],
+            $photoArraysByType[DocumentType::PHOTO_VISITE->value]
+        );
+
+        return $sortedPhotos;
+    }
+
     /**
      * @todo: Investigate Twig\Error\RuntimeError in ajax request
      * Hack: generate csrf token in side server for ajav request

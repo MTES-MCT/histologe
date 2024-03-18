@@ -178,6 +178,8 @@ class SignalementController extends AbstractController
 
         $partnerVisite = $affectationRepository->findAffectationWithQualification(Qualification::VISITES, $signalement);
 
+        $allPhotosOrdered = $signalementManager->getAllPhotosOrdered($signalement);
+
         return $this->render('back/signalement/view.html.twig', [
             'title' => 'Signalement',
             'createdFromDraft' => $signalement->getCreatedFrom(),
@@ -206,6 +208,7 @@ class SignalementController extends AbstractController
             'partnersCanVisite' => $partnerVisite,
             'pendingVisites' => $interventionRepository->getPendingVisitesForSignalement($signalement),
             'isDocumentsEnabled' => $parameterBag->get('feature_documents_enable'),
+            'allPhotosOrdered' => $allPhotosOrdered,
         ]);
     }
 
