@@ -51,6 +51,11 @@
         <link rel="stylesheet" href="https://unpkg.com/tippy.js@6/themes/light-border.css"/>
     {% endif %}
 
+    {#% if 'front_statistiques' in app.request.get('_route') or 'back_statistiques' in app.request.get('_route') %#}
+        <script src="{{ asset('build/dsfr-chart/Charts/dsfr-chart.umd.js') }}"></script>
+        <link rel="stylesheet" href="{{ asset('build/dsfr-chart/Charts/dsfr-chart.css') }}" />
+    {#% endif %#}
+
     {% block stylesheets %}{% endblock %}
     {% block customscripts %}
         {{ encore_entry_script_tags('app') }}

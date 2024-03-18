@@ -21,6 +21,10 @@ Encore
         from: './node_modules/@gouvfr/dsfr/dist/',
         to: 'dsfr/[path][name].[ext]'
     })
+    .copyFiles({
+        from: './assets/dsfr-chart-1.0.0/',
+        to: 'dsfr-chart/[path][name].[ext]'
+    })
 
     // public path used by the web server to access the output path
     .setPublicPath('/build')
