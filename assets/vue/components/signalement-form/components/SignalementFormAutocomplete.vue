@@ -1,5 +1,5 @@
 <template>
-  <div :class="[customCss, 'fr-mb-3w']" :id="id">
+  <div :class="[customCss, 'fr-mb-3w']" :id="id + '_textfield'">
     <SignalementFormTextfield
         :key="id"
         :id="id"
@@ -117,8 +117,9 @@ export default defineComponent({
         this.selectedSuggestionIndex = -1
       }
     },
-    closeAutocomplete (event) {
-      if (!event.target.closest('.fr-autocomplete-group')) {
+    closeAutocomplete (event: any) {
+      const target = event.target as HTMLElement
+      if (target && !event.target.closest('.fr-autocomplete-group')) {
         this.suggestions = []
         this.selectedSuggestionIndex = -1
       }
