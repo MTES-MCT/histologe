@@ -1,35 +1,41 @@
-{% if importedBy is not same as 'user' %}
-    <hr class="fr-mt-3w">
+<hr class="fr-mt-3w">
 
-    <div class="fr-grid-row">
-        <div class="fr-col-9 fr-col-md-6">
-            <h3 class="fr-h5">{{ zonetitle }}</h3>
-        </div>
-        <div class="fr-col-3 fr-col-md-6 fr-text--right">
-            {% if (is_granted('FILE_CREATE', signalement)) %}
-                {% if isDocumentsEnabled %}
-                    <button 
-                    class="fr-btn fr-btn--sm fr-fi-file-fill fr-btn--icon-left open-modal-upload-files-btn" 
-                    data-fr-opened="false" 
-                    aria-controls="fr-modal-upload-files" 
-                    data-file-type="document">
-                        Ajouter des documents
-                    </button>
+<div class="fr-grid-row">
+    <div class="fr-col-9 fr-col-md-6">
+        <h3 class="fr-h5">{{ zonetitle }}</h3>
+    </div>
+    <div class="fr-col-3 fr-col-md-6 fr-text--right">
+        {% if (is_granted('FILE_CREATE', signalement)) %}
+            {% if isDocumentsEnabled %}
+                <button 
+                class="fr-btn fr-btn--sm fr-fi-file-fill fr-btn--icon-left open-modal-upload-files-btn" 
+                data-fr-opened="false" 
+                aria-controls="fr-modal-upload-files" 
+                data-file-type="document"
+                data-file-filter={{filesFilter}}
+                >
+                    Ajouter des documents
+                </button>
+                {% if filesFilter is same as 'situation' %}
                     <button 
                     class="fr-btn fr-btn--sm fr-btn--secondary fr-btn--icon-left fr-icon-camera-fill open-modal-upload-files-btn" 
                     data-fr-opened="false" 
                     aria-controls="fr-modal-upload-files" 
-                    data-file-type="photo">
+                    data-file-type="photo"
+                    data-file-filter={{filesFilter}}
+                    >
                         Ajouter des photos
                     </button>
-                {% else %}
-                    <form method="POST" enctype="multipart/form-data" class="inline-form" action="{{ path('back_signalement_add_file',{uuid:signalement.uuid}) }}">
-                        <label class="fr-btn fr-btn--sm fr-fi-file-fill fr-btn--icon-left"> Ajouter des documents
-                            <input type="file" accept="application/*" name="signalement-add-file[documents][]" class="fr-hidden fr-input--file-signalement" multiple>
-                        </label>
-                        <input type="hidden" name="_token" value="{{ csrf_token('signalement_add_file_'~signalement.id) }}">
-                        <input type="hidden" name="document_type" value="{{ enum('App\\Entity\\Enum\\DocumentType').AUTRE.name }}">
-                    </form>
+                {% endif %}
+            {% else %}
+                <form method="POST" enctype="multipart/form-data" class="inline-form" action="{{ path('back_signalement_add_file',{uuid:signalement.uuid}) }}">
+                    <label class="fr-btn fr-btn--sm fr-fi-file-fill fr-btn--icon-left"> Ajouter des documents
+                        <input type="file" accept="application/*" name="signalement-add-file[documents][]" class="fr-hidden fr-input--file-signalement" multiple>
+                    </label>
+                    <input type="hidden" name="_token" value="{{ csrf_token('signalement_add_file_'~signalement.id) }}">
+                    <input type="hidden" name="document_type" value="{{ enum('App\\Entity\\Enum\\DocumentType').AUTRE.name }}">
+                </form>
+                {% if filesFilter is same as 'situation' %}
                     <form method="POST" enctype="multipart/form-data" class="inline-form" action="{{ path('back_signalement_add_file',{uuid:signalement.uuid}) }}">
                         <label class="fr-btn fr-btn--sm fr-btn--secondary fr-btn--icon-left fr-icon-camera-fill"> Ajouter des photos
                             <input type="file" accept="image/*" name="signalement-add-file[photos][]" class="fr-hidden fr-input--file-signalement" multiple>
@@ -38,20 +44,19 @@
                         <input type="hidden" name="document_type" value="{{ enum('App\\Entity\\Enum\\DocumentType').AUTRE.name }}">
                     </form>
                 {% endif %}
-                
-
             {% endif %}
-        </div>
-    </div>
+            
 
+        {% endif %}
+    </div>
+</div>
+
+{% if filesFilter is same as 'situation' %}
     <div class="fr-alert fr-alert--info fr-alert--sm fr-mb-3v">
         <p>
             Pour ajouter plusieurs photos ou documents à la fois, sélectionnez vos fichiers en maintenant la touche CTRL enfoncée.
         </p>
     </div>
-
-{% else %}
-    <h3 class="fr-h6">{{ zonetitle }}</h3>
 {% endif %}
 
 {% if signalement.files|length == 0 %}
@@ -60,69 +65,71 @@
     </p>
 {% endif %}
 
-<div class="fr-grid-row fr-grid-row--middle fr-grid-row--gutters fr-mb-3v">
-    {% for index, photo in signalement.files|filter(
-        photo => photo.fileType == 'photo'
-                and photo.intervention is null
-                and (
-                    (importedBy is same as 'user' and (photo.uploadedBy is null or photo.isUsagerFile ))
-                    or (importedBy is same as 'partner' and (photo.uploadedBy is not null and photo.isPartnerFile))
-                    or importedBy is same as 'all'
-                )
-        ) %}
-        <div class="fr-col-6 fr-col-md-2 fr-rounded signalement-file-item">
-            <div class="fr-px-5w fr-py-8w fr-rounded fr-border fr-text--center part-infos-hover"
-                 data-user="{{ photo.uploadedBy.nomComplet ?? 'N/R' }}"
-                 data-mail="{{ photo.createdAt is defined ? photo.createdAt|date('d.m.Y') : 'N/R' }}"
-                 style="background: url('{{ asset('_up/'~photo.filename~'/'~signalement.uuid~'?variant=thumb') }}')no-repeat center center/cover">
-                <button 
-                    class="fr-btn fr-btn--sm fr-icon-eye-line open-photo-album" 
-                    data-id={{ photo.id }} 
-                    title="Voir la photo {{ photo.filename }}"
-                ></button>
-                {% if is_granted('FILE_EDIT', photo) %}
-                    {% set DocumentType = enum('\\App\\Entity\\Enum\\DocumentType') %}
-                    {% include 'back/signalement/view/edit-modals/edit-file.html.twig' %}
+
+{% set DocumentType = enum('\\App\\Entity\\Enum\\DocumentType') %}
+{% if filesFilter is same as 'situation' %}
+    <div class="fr-grid-row fr-grid-row--middle fr-grid-row--gutters fr-mb-3v">
+        {% for index, photo in signalement.files|filter(
+            photo => photo.fileType == 'photo'
+                    and photo.intervention is null
+                    and filesFilter is same as 'situation' 
+                    and photo.documentType.label() in  DocumentType.getSituationList
+            ) %}
+            <div class="fr-col-6 fr-col-md-2 fr-rounded signalement-file-item">
+                <div class="fr-px-5w fr-py-8w fr-rounded fr-border fr-text--center part-infos-hover"
+                    data-user="{{ photo.uploadedBy.nomComplet ?? 'N/R' }}"
+                    data-mail="{{ photo.createdAt is defined ? photo.createdAt|date('d.m.Y') : 'N/R' }}"
+                    style="background: url('{{ asset('_up/'~photo.filename~'/'~signalement.uuid~'?variant=thumb') }}')no-repeat center center/cover">
                     <button 
-                        class="fr-btn fr-btn--sm fr-btn--secondary fr-background--white fr-fi-edit-line btn-signalement-file-edit"
-                        id="file_edit_{{ photo.id }}" 
-                        title="Editer la photo {{ photo.filename }}"
-                        aria-controls="fr-modal-edit-file"
-                        data-fr-opened="false" 
-                        data-filename="{{ photo.filename }}" 
-                        data-type="photo" 
-                        data-file-id="{{ photo.id}}" 
-                        data-signalement-uuid="{{ signalement.uuid}}" 
-                        data-description="{{ photo.description }}" 
-                        data-documentType="{{ photo.documentType.name }}" 
-                        data-documentType-list="{{ DocumentType.getPhotosList() | json_encode }}"
-                        data-createdAt="{{ photo.createdAt is defined ? photo.createdAt|date('d.m.Y') : 'N/R' }}"
-                        data-partner-name="{{ photo.uploadedBy and photo.uploadedBy.partner ? photo.uploadedBy.partner.nom ~ ' - ' : '' }}"
-                        data-user-name="{{ photo.uploadedBy.nomComplet ?? 'N/R' }}"
-                        data-desordreSlug="{{ photo.desordreSlug }}"
-                        data-signalement-desordres="{{ criteres | json_encode }}"
+                        class="fr-btn fr-btn--sm fr-icon-eye-line open-photo-album" 
+                        data-id={{ photo.id }} 
+                        title="Voir la photo {{ photo.filename }}"
                     ></button>
-                {% endif %}
-                {% if is_granted('FILE_DELETE', photo) %}
-                    <button 
-                        title="Supprimer la photo {{ photo.filename }}"
-                        data-delete="{{ path('back_signalement_delete_file',{uuid:signalement.uuid,type:'photos',filename:photo.filename}) }}"
-                        data-token="{{ csrf_token('signalement_delete_file_'~signalement.id) }}"
-                        class="fr-btn fr-btn--sm fr-btn--secondary fr-background--white fr-fi-delete-line signalement-file-delete"
-                    ></button>
-                {% endif %}
+                    {% if is_granted('FILE_EDIT', photo) %}
+                        {% include 'back/signalement/view/edit-modals/edit-file.html.twig' %}
+                        <button 
+                            class="fr-btn fr-btn--sm fr-btn--secondary fr-background--white fr-fi-edit-line btn-signalement-file-edit"
+                            id="file_edit_{{ photo.id }}" 
+                            title="Editer la photo {{ photo.filename }}"
+                            aria-controls="fr-modal-edit-file"
+                            data-fr-opened="false" 
+                            data-filename="{{ photo.filename }}" 
+                            data-type="photo" 
+                            data-file-id="{{ photo.id}}" 
+                            data-signalement-uuid="{{ signalement.uuid}}" 
+                            data-description="{{ photo.description }}" 
+                            data-documentType="{{ photo.documentType.name }}" 
+                            data-documentType-list="{{ DocumentType.getPhotosList() | json_encode }}"
+                            data-createdAt="{{ photo.createdAt is defined ? photo.createdAt|date('d.m.Y') : 'N/R' }}"
+                            data-partner-name="{{ photo.uploadedBy and photo.uploadedBy.partner ? photo.uploadedBy.partner.nom ~ ' - ' : '' }}"
+                            data-user-name="{{ photo.uploadedBy.nomComplet ?? 'N/R' }}"
+                            data-desordreSlug="{{ photo.desordreSlug }}"
+                            data-signalement-desordres="{{ criteres | json_encode }}"
+                        ></button>
+                    {% endif %}
+                    {% if is_granted('FILE_DELETE', photo) %}
+                        <button 
+                            title="Supprimer la photo {{ photo.filename }}"
+                            data-delete="{{ path('back_signalement_delete_file',{uuid:signalement.uuid,type:'photos',filename:photo.filename}) }}"
+                            data-token="{{ csrf_token('signalement_delete_file_'~signalement.id) }}"
+                            class="fr-btn fr-btn--sm fr-btn--secondary fr-background--white fr-fi-delete-line signalement-file-delete"
+                        ></button>
+                    {% endif %}
+                </div>
             </div>
-        </div>
-    {% endfor %}
-</div>
+        {% endfor %}
+    </div>
+{% endif %}
 
 {% for index, doc in signalement.files|filter(
     doc => doc.fileType == 'document'
-            and (
-                (importedBy is same as 'user' and (doc.uploadedBy is null or doc.isUsagerFile ))
-                or (importedBy is same as 'partner' and (doc.uploadedBy is not null and doc.isPartnerFile))
-                or importedBy is same as 'all'
-            )
+        and (
+            (filesFilter is same as 'situation' 
+            and doc.documentType.label() in  DocumentType.getSituationList)
+            or 
+            (filesFilter is same as 'procedure' 
+            and doc.documentType.label() in  DocumentType.getProcedureList)
+        )
     ) %}
     <div class="fr-grid-row fr-grid-row--middle fr-background-alt--grey fr-rounded fr-p-3v signalement-file-item">
         <div class="fr-col-9">
@@ -161,7 +168,7 @@
                     data-type="document" 
                     data-file-id="{{ doc.id}}" 
                     data-documentType="{{ doc.documentType.name }}" 
-                    data-documentType-list="{{ DocumentType.getDocumentsList() | json_encode }}"
+                    data-documentType-list="{{ filesFilter is same as 'situation' ? DocumentType.getSituationList() | json_encode : DocumentType.getProcedureList() | json_encode }}"
                     data-createdAt="{{ doc.createdAt is defined ? doc.createdAt|date('d.m.Y') : 'N/R' }}"
                     data-partner-name="{{ doc.uploadedBy and doc.uploadedBy.partner ? doc.uploadedBy.partner.nom ~ ' - ' : '' }}"
                     data-user-name="{{ doc.uploadedBy.nomComplet ?? 'N/R' }}"
