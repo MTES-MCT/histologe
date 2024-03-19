@@ -95,7 +95,7 @@
             {% for suivi in signalement.suivis|reverse %}
                 <div class="fr-grid-row fr-grid-row--middle fr-stripped fr-rounded fr-p-5v {% if not suivi.createdBy %}fr-background-alt--orange-terre-battue{% endif %}">
                     <div class="fr-col-12 fr-col-md-2">
-                        <small>[{{ suivi.createdBy ? (suivi.createdBy.partner ? suivi.createdBy.partner.nom : (suivi.createdBy.email ? (suivi.createdBy.email is same as signalement.mailOccupant ? 'OCCUPANT' : 'DECLARANT') : 'Aucun')): (suivi.createdAt|date('Y') >= 2024) ? 'Utilisateur inconnu' : 'Vous' }}]</small>
+                        <small>[{{ suivi.createdBy ? (suivi.createdBy.partner ? suivi.createdBy.partner.nom : (suivi.createdBy.email ? (suivi.createdBy.email is same as signalement.mailOccupant ? 'OCCUPANT' : 'DECLARANT') : 'Aucun')): (suivi.createdAt|date('Y') >= 2024) ? 'Occupant ou déclarant' : 'Vous' }}]</small>
                         <br>
                         <small>{{ suivi.createdAt|date('d/m/Y') }}</small>
                     </div>

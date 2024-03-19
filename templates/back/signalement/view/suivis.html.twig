@@ -50,7 +50,7 @@
             {% else %}
                 {# si le suivi est de 2024 ou posterieur on indique annonyme #}
                 {% if suivi.createdAt|date('Y') >= 2024 %}
-                    Utilisateur inconnu
+                    Occupant ou déclarant
                 {% else %}
                     <strong>{{ signalement.isNotOccupant ? signalement.nomDeclarant|upper~' '~signalement.prenomDeclarant|capitalize : signalement.nomOccupant|upper~' '~signalement.prenomOccupant|capitalize }}</strong>
                     <br>
