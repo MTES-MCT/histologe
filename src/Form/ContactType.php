@@ -19,6 +19,7 @@ class ContactType extends AbstractType
         $builder
             ->add('email', EmailType::class, [
                 'label' => 'Votre adresse e-mail',
+                'help' => 'Format attendu : nom@domaine.fr',
                 'constraints' => [
                     new Assert\NotBlank(message: 'Merci de renseigner votre e-mail.'),
                     new Assert\Email(mode: Email::VALIDATION_MODE_STRICT),
@@ -26,12 +27,14 @@ class ContactType extends AbstractType
             ])
             ->add('nom', TextType::class, [
                 'label' => 'Prénom et nom',
+                'help' => 'Exemple : Claude Petit',
                 'constraints' => [
                     new Assert\NotBlank(message: 'Merci de renseigner votre nom complet.'),
                 ],
             ])
             ->add('organisme', TextType::class, [
                 'label' => 'Organisme (facultatif)',
+                'help' => 'Exemple : Mairie de Paris',
                 'required' => false,
             ])
             ->add('objet', ChoiceType::class, [
@@ -68,8 +71,6 @@ class ContactType extends AbstractType
         $resolver->setDefaults([
             'attr' => [
                 'id' => 'front_contact',
-                'class' => 'needs-validation',
-                'novalidate' => 'true',
             ],
         ]);
     }
