@@ -1,58 +1,44 @@
 initializeUploadModal(
     '#fr-modal-upload-files',
-    '.modal-upload-drop-section',
-    '.modal-upload-list',
-    '.modal-upload-files-selector',
-    '.modal-upload-files-selector-input',
-    '#select-type-to-clone',
+    '#select-type-situation-to-clone',
+    '#select-type-procedure-to-clone',
     '#select-desordre-to-clone',
-    '#btn-validate-modal-upload-files',
-    '#modal-upload-file-dynamic-content'
 );
 
 document?.querySelectorAll('.fr-modal-visites-upload-files')?.forEach(modalVisiteUpload => {
     initializeUploadModal(
         '#'+modalVisiteUpload.id,
-        '.modal-upload-drop-section',
-        '.modal-upload-list',
-        '.modal-upload-files-selector',
-        '.modal-upload-files-selector-input',
         null,
         null,
-        '#btn-validate-modal-upload-files',
-        '#modal-upload-file-dynamic-content'
+        null,
     )
 })
 
 
 function initializeUploadModal(
     modalSelector, 
-    fileDropAreaSelector, 
-    fileListContainerSelector, 
-    fileTypeSelector, 
-    fileInputSelector,
-    selectTypeToCloneSelector, 
+    selectTypeSituationToCloneSelector, 
+    selectTypeProcedureToCloneSelector, 
     selectDesordreToCloneSelector, 
-    btnValidateSelector,
-    ancreSelector
 ) {
     const modal = document?.querySelector(modalSelector);
     if (!modal) return;
 
-    const dropArea = modal.querySelector(fileDropAreaSelector);
-    const listContainer = modal.querySelector(fileListContainerSelector);
-    const fileSelector = modal.querySelector(fileTypeSelector)
-    const fileSelectorInput = modal.querySelector(fileInputSelector)
+    const dropArea = modal.querySelector('.modal-upload-drop-section');
+    const listContainer = modal.querySelector('.modal-upload-list');
+    const fileSelector = modal.querySelector('.modal-upload-files-selector')
+    const fileSelectorInput = modal.querySelector('.modal-upload-files-selector-input')
     const addFileRoute = modal.dataset.addFileRoute;
     const addFileToken = modal.dataset.addFileToken;
     const waitingSuiviRoute = modal.dataset.waitingSuiviRoute;
     const deleteTmpFileRoute = modal.dataset.deleteTmpFileRoute;
-    const selectTypeToClone = selectTypeToCloneSelector ? modal.querySelector(selectTypeToCloneSelector) : null;
+    const selectTypeSituationToClone = selectTypeSituationToCloneSelector ? modal.querySelector(selectTypeSituationToCloneSelector) : null;
+    const selectTypeProcedureToClone = selectTypeProcedureToCloneSelector ? modal.querySelector(selectTypeProcedureToCloneSelector) : null;
     const selectDesordreToClone = selectDesordreToCloneSelector ? modal.querySelector(selectDesordreToCloneSelector) : null;    
     const editFileRoute = modal.dataset.editFileRoute;
     const editFileToken = modal.dataset.editFileToken;
-    const btnValidate = modal.querySelector(btnValidateSelector);
-    const ancre = modal.querySelector(ancreSelector);
+    const btnValidate = modal.querySelector('#btn-validate-modal-upload-files');
+    const ancre = modal.querySelector('#modal-upload-file-dynamic-content');
 
 
     fileSelector.onclick = () => fileSelectorInput.click()
@@ -139,13 +125,16 @@ function initializeUploadModal(
                 addEventListenerDeleteTmpFile(btnDeleteTmpFile)
                 if (this.status == 200) {
                     modal.dataset.hasChanges = true
-                    if (null !== selectDesordreToClone || null !== selectTypeToClone){
+                    if (null !== selectDesordreToClone || null !== selectTypeSituationToClone || null !== selectTypeProcedureToClone){
                         let clone
                         if (modal.dataset.fileType == 'photo') {
                             clone = selectDesordreToClone.cloneNode(true)
                             clone.id = 'select-desordre-' + response.response
-                        } else {
-                            clone = selectTypeToClone.cloneNode(true)
+                            if ('situation' === modal.dataset.fileFilter ){
+                                clone = selectTypeSituationToClone.cloneNode(true)
+                            } else {
+                                clone = selectTypeProcedureToClone.cloneNode(true)
+                            }
                             clone.id = 'select-type-' + response.response
                         }
                         clone.dataset.fileId = response.response
@@ -314,10 +303,11 @@ function initializeUploadModal(
         modal.dataset.hasChanges = false
     })
 
-    let fileType, documentType, interventionId
+    let fileType, fileFilter, documentType, interventionId
     document.querySelectorAll('.open-modal-upload-files-btn').forEach((button) => {
         button.addEventListener('click', (e) => {
             fileType = e.target.dataset.fileType
+            fileFilter = e.target.dataset.fileFilter
             documentType = e.target.dataset.documentType ?? null
             interventionId = e.target.dataset.interventionId ?? null
         })
@@ -330,7 +320,11 @@ function initializeUploadModal(
         modal.querySelectorAll('.type-conditional').forEach((type) => {
             type.classList.add('fr-hidden')
         })
+        modal.querySelectorAll('.filter-conditional').forEach((type) => {
+            type.classList.add('fr-hidden')
+        })
         modal.dataset.documentType = documentType
+        modal.dataset.fileFilter = fileFilter
         modal.dataset.interventionId = interventionId        
         if (fileType == 'photo') {
             modal.dataset.fileType = 'photo'
@@ -340,8 +334,12 @@ function initializeUploadModal(
             modal.dataset.fileType = 'document'
             modal.querySelector('.type-document').classList.remove('fr-hidden')
             fileSelectorInput.setAttribute('accept', '*/*')
+        }   
+        if (fileFilter == 'procedure') {
+            modal.querySelector('.filter-procedure').classList.remove('fr-hidden')
+        } else if (fileFilter == 'situation')  {
+            modal.querySelector('.filter-situation').classList.remove('fr-hidden')
         }
-
     })
 
     btnValidate.addEventListener('click', (e) => {

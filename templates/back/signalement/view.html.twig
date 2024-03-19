@@ -41,36 +41,25 @@
         
         {% include 'back/signalement/view/user-declaration.html.twig' %}
 
-        {% if createdFromDraft %}
-            {% include 'back/signalement/view/photos-documents.html.twig' with {
-                'zonetitle': "Photos et documents de la situation",
-                'importedBy': "user"
-            } %}
-        {% endif %}
+        {% include 'back/signalement/view/photos-documents.html.twig' with {
+            'zonetitle': "Photos et documents de la situation",
+            'filesFilter': 'situation' 
+        } %}
     
         {% include 'back/signalement/view/information.html.twig' %}
         
         {% include 'back/signalement/view/nde.html.twig' %}
-
-        {% if not createdFromDraft %}
-            {% include 'back/signalement/view/photos-documents.html.twig' with {
-                'zonetitle': "Photos et documents",
-                'importedBy': "all"
-            } %}
-        {% endif %}
-        
+ 
         {% include 'back/signalement/view/partners.html.twig' %}
         
         {% include 'back/signalement/view/suivis.html.twig' %}
 
         {% include 'back/signalement/view/visites/visites-list.html.twig' %}
 
-        {% if createdFromDraft %}
-            {% include 'back/signalement/view/photos-documents.html.twig' with {
-                'zonetitle': "Photos et documents liés à la procédure",
-                'importedBy': "partner"
-            } %}
-        {% endif %}
+        {% include 'back/signalement/view/photos-documents.html.twig' with {
+            'zonetitle': "Documents liés à la procédure",
+            'filesFilter': 'procedure' 
+        } %}
     </section>
 {% endblock %}
 {% block javascripts %}
