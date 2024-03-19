@@ -17,6 +17,7 @@ class DemandeLienSignalementType extends AbstractType
             ->add('email', null, [
                 'label' => 'Adresse e-mail',
                 'help' => 'Renseignez l\'adresse e-mail utilisée pour déposer le signalement',
+                'attr' => ['autocomplete' => 'email'],
             ])
             ->add('adresseHelper', null, [
                 'label' => 'Adresse du logement',

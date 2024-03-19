@@ -20,6 +20,7 @@ class ContactType extends AbstractType
             ->add('email', EmailType::class, [
                 'label' => 'Votre adresse e-mail',
                 'help' => 'Format attendu : nom@domaine.fr',
+                'attr' => ['autocomplete' => 'email'],
                 'constraints' => [
                     new Assert\NotBlank(message: 'Merci de renseigner votre e-mail.'),
                     new Assert\Email(mode: Email::VALIDATION_MODE_STRICT),
@@ -28,6 +29,7 @@ class ContactType extends AbstractType
             ->add('nom', TextType::class, [
                 'label' => 'Prénom et nom',
                 'help' => 'Exemple : Claude Petit',
+                'attr' => ['autocomplete' => 'name'],
                 'constraints' => [
                     new Assert\NotBlank(message: 'Merci de renseigner votre nom complet.'),
                 ],
@@ -35,6 +37,7 @@ class ContactType extends AbstractType
             ->add('organisme', TextType::class, [
                 'label' => 'Organisme (facultatif)',
                 'help' => 'Exemple : Mairie de Paris',
+                'attr' => ['autocomplete' => 'organization'],
                 'required' => false,
             ])
             ->add('objet', ChoiceType::class, [
