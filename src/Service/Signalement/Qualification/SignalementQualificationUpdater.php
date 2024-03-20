@@ -385,9 +385,12 @@ class SignalementQualificationUpdater
         Signalement $signalement,
         array $linkedDesordrePrecisions,
     ): ?SignalementQualification {
-        $dataDateBail = new \DateTimeImmutable(
-            $signalement->getTypeCompositionLogement()->getBailDpeDateEmmenagement()
-        );
+        $dataDateBail = null;
+        if ($signalement->getTypeCompositionLogement()->getBailDpeDateEmmenagement()) {
+            $dataDateBail = new \DateTimeImmutable(
+                $signalement->getTypeCompositionLogement()->getBailDpeDateEmmenagement()
+            );
+        }
         $dataHasDPE = null;
         if ('oui' === $signalement->getTypeCompositionLogement()->getBailDpeDpe()) {
             $dataHasDPE = true;
