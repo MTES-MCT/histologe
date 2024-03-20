@@ -28,6 +28,7 @@ class MaintenanceListenerTest extends WebTestCase
 
     public function provideRoutes(): \Generator
     {
+        yield 'Contact' => ['front_contact'];
         yield 'Lock dépot signalement' => ['front_signalement'];
         yield 'Lock demande activation' => ['login_activation'];
         yield 'Lock Mot de passe perdu' => ['login_mdp_perdu'];
