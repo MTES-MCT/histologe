@@ -21,6 +21,12 @@ class AbstractCronCommand extends Command
 
     public function run(InputInterface $input, OutputInterface $output): int
     {
+        if ($this->parameterBag->get('maintenance_enable')) {
+            $output->writeln('Le mode maintenance est activé, merci de le désactiver une fois l\'opération terminée.');
+
+            return Command::FAILURE;
+        }
+
         if (!$this->parameterBag->get('cron_enable')) {
             $output->writeln('Merci d\'activer CRON_ENABLE=1 pour executer la commande');
 
