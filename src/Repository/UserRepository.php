@@ -6,7 +6,6 @@ use App\Dto\CountUser;
 use App\Entity\Partner;
 use App\Entity\Territory;
 use App\Entity\User;
-use DateTime;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\ORM\Tools\Pagination\Paginator;
@@ -217,12 +216,9 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
         return $qb->getQuery()->getOneOrNullResult();
     }
 
-    public function findExpiredUsers(): array
+    public function findExpiredUsers(string $limitLegalConservation = '3 years'): array
     {
-        $limitConservation = '3 years'; // <- durée légale de conservation des données (ou rendre anonyme)
-        // $limitConservation = '1 years'; //pour test
-        $dateLimit = new \DateTime('-'.$limitConservation);
-
+        $dateLimit = new \DateTime('-'.$limitLegalConservation);
         // retourne les utilisateurs :
         // - non connectés depuis plus de limitConservation
         // - et n'etant pas occupant ou declarant sur des signalements actif (creation/edition/dernier suivi) depuis limitConservation
@@ -243,11 +239,9 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
         return $qb->getQuery()->execute();
     }
 
-    public function findInactiveUsers(?bool $isArchivingScheduled = null, ?DateTime $archivingScheduledAt = null): array
+    public function findInactiveUsers(?bool $isArchivingScheduled = null, ?\DateTimeImmutable $archivingScheduledAt = null, string $limitConservation = '11 months'): array
     {
-        $limitConservation = '11 months';
-        $dateLimit = new \DateTime('-'.$limitConservation);
-
+        $dateLimit = new \DateTimeImmutable('-'.$limitConservation);
         $qb = $this->createQueryBuilder('u')
             ->select('u', 'p', 't')
             ->leftJoin('u.partner', 'p')
@@ -281,8 +275,9 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
         $qb = $this->createQueryBuilder('u')
             ->where('u.archivingScheduledAt IS NOT NULL')
             ->andWhere('u.archivingScheduledAt < :date')
-            ->setParameter('date', new \DateTime());
+            ->setParameter('date', new \DateTimeImmutable());
 
         return $qb->getQuery()->execute();
+        return $qb->getQuery()->getResult();
     }
 }

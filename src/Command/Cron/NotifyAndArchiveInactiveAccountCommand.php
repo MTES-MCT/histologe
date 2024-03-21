@@ -23,6 +23,9 @@ class NotifyAndArchiveInactiveAccountCommand extends AbstractCronCommand
 {
     private SymfonyStyle $io;
 
+    public const NB_DAYS_FIRST_NOTIFICATION = 30;
+    public const NB_DAYS_SECOND_NOTIFICATION = 7;
+
     public function __construct(
         private readonly EntityManagerInterface $entityManager,
         private readonly UserRepository $userRepository,
@@ -57,14 +60,13 @@ class NotifyAndArchiveInactiveAccountCommand extends AbstractCronCommand
         return Command::SUCCESS;
     }
 
-    private function sendFirstNotifications(): int
+    private function sendFirstNotifications(int $nbDays = self::NB_DAYS_FIRST_NOTIFICATION): int
     {
-        $nbDays = 30;
         $users = $this->userRepository->findInactiveUsers(isArchivingScheduled: false);
 
         foreach ($users as $user) {
             $user->setPassword('');
-            $user->setArchivingScheduledAt(new \DateTime('+'.$nbDays.' days'));
+            $user->setArchivingScheduledAt(new \DateTimeImmutable('+'.$nbDays.' days'));
             $this->sendNotification($user, $nbDays);
         }
 
@@ -73,10 +75,9 @@ class NotifyAndArchiveInactiveAccountCommand extends AbstractCronCommand
         return \count($users);
     }
 
-    private function sendSecondNotifications(): int
+    private function sendSecondNotifications(int $nbDays = self::NB_DAYS_SECOND_NOTIFICATION): int
     {
-        $nbDays = 7;
-        $date = new \DateTime('+'.$nbDays.' days');
+        $date = new \DateTimeImmutable('+'.$nbDays.' days');
         $users = $this->userRepository->findInactiveUsers(archivingScheduledAt: $date);
 
         foreach ($users as $user) {

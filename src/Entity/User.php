@@ -125,7 +125,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\OneToMany(mappedBy: 'occupant', targetEntity: SignalementUsager::class)]
     private $signalementUsagerOccupants;
 
-    #[ORM\Column(type: Types::DATE_MUTABLE, nullable: true)]
+    #[ORM\Column(type: Types::DATE_IMMUTABLE, nullable: true)]
     private ?\DateTimeInterface $archivingScheduledAt = null;
 
     public function __construct()
