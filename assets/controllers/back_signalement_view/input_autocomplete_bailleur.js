@@ -5,8 +5,8 @@ let selectedSuggestionIndex = -1;
 let isAutocompleteOpen = false;
 
 document.addEventListener('click', function(event) {
-    if (!event.target.closest('.search-bailleur-autocomplete-list') && isAutocompleteOpen) {
-        document.querySelector('.search-bailleur-autocomplete-list').innerHTML = '';
+    if (!event.target.closest('.fr-autocomplete-list') && isAutocompleteOpen) {
+        document.querySelector('.fr-autocomplete-list').innerHTML = '';
         isAutocompleteOpen = false;
         selectedSuggestionIndex = -1;
     }
@@ -43,7 +43,7 @@ async function fetchBailleur(url) {
         const response = await fetch(url);
         const resultList = await response.json();
         if (response.ok) {
-            const ulElement = document.querySelector('.search-bailleur-autocomplete-list');
+            const ulElement = document.querySelector('.fr-autocomplete-list');
             ulElement.innerHTML = '';
             resultList.forEach((resultItem, index) => {
                 let suggestion = document.createElement('li');
@@ -102,7 +102,7 @@ function handleEnter() {
     const suggestions = document.querySelectorAll('.fr-autocomplete-suggestion');
     if (selectedSuggestionIndex !== -1) {
         inputElement.value = suggestions[selectedSuggestionIndex].textContent;
-        document.querySelector('.search-bailleur-autocomplete-list').innerHTML = '';
+        document.querySelector('.fr-autocomplete-list').innerHTML = '';
         selectedSuggestionIndex = -1;
         isAutocompleteOpen = false;
     }

@@ -135,5 +135,6 @@ export default defineComponent({
 ul.fr-autocomplete-group {
   list-style-type: none;
   margin-top: -1.5rem;
+  cursor: pointer;
 }
 </style>

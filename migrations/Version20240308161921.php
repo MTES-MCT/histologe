@@ -24,6 +24,8 @@ final class Version20240308161921 extends AbstractMigration
         $this->addSql('ALTER TABLE signalement ADD bailleur_id INT DEFAULT NULL');
         $this->addSql('ALTER TABLE signalement ADD CONSTRAINT FK_F4B5511457B5D0A2 FOREIGN KEY (bailleur_id) REFERENCES bailleur (id)');
         $this->addSql('CREATE INDEX IDX_F4B5511457B5D0A2 ON signalement (bailleur_id)');
+        $this->addSql('UPDATE territory SET name = "Seine-Saint-Denis" WHERE zip = "93"');
+        $this->addSql('UPDATE territory SET name = "Côtes-d\'Armor" WHERE zip = "22"');
     }
 
     public function down(Schema $schema): void
