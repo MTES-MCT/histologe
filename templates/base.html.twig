@@ -133,14 +133,14 @@
 <script src="{{ asset('js/app.js?v='~''|date('YmdH')) }}"></script>
 
 {#% if 'front_statistiques' in app.request.get('_route') or 'back_statistiques' in app.request.get('_route') %#}
-    {#
-    <script src="{{ asset('build/dsfr-chart/Charts/dsfr-chart.umd.js') }}"></script>
+    <script src="{{ asset('build/dsfr-chart/Charts/dsfr-chart.umd.js') }}" defer></script>
     <link rel="stylesheet" href="{{ asset('build/dsfr-chart/Charts/dsfr-chart.css') }}" />
-    <script src="{{ asset('build/dsfr-chart/MapChart/map-chart.umd.js') }}"></script>
+    {#
+    <script src="{{ asset('build/dsfr-chart/MapChart/map-chart.umd.js') }}" defer></script>
     <link rel="stylesheet" href="{{ asset('build/dsfr-chart/MapChart/map-chart.css') }}" />
-    #}
-    <script src="{{ asset('build/dsfr-chart/ScatterChart/scatter-chart.umd.js') }}"></script>
+    <script src="{{ asset('build/dsfr-chart/ScatterChart/scatter-chart.umd.js') }}" defer></script>
     <link rel="stylesheet" href="{{ asset('build/dsfr-chart/ScatterChart/scatter-chart.css') }}" />
+    #}
 {#% endif %#}
 
 {% if 'back_cartographie' in app.request.get('_route') or 'back_signalement_view' in app.request.get('_route') %}
