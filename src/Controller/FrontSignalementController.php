@@ -16,7 +16,6 @@ use App\Manager\UserManager;
 use App\Repository\CommuneRepository;
 use App\Repository\SignalementDraftRepository;
 use App\Repository\SignalementRepository;
-use App\Repository\UserRepository;
 use App\Serializer\SignalementDraftRequestSerializer;
 use App\Service\ImageManipulationHandler;
 use App\Service\Mailer\NotificationMail;
@@ -397,19 +396,8 @@ class FrontSignalementController extends AbstractController
             $fromEmail = \is_array($requestEmail) ? array_pop($requestEmail) : $requestEmail;
             $suiviAuto = $request->get('suiviAuto');
 
-            /** @var User $userOccupant */
-            $userOccupant = $userManager->createUsagerFromSignalement($signalement, UserManager::OCCUPANT);
-            /** @var User $userDeclarant */
-            $userDeclarant = $userManager->createUsagerFromSignalement($signalement, UserManager::DECLARANT);
-            $type = null;
-            $user = null;
-            if ($userOccupant && $fromEmail === $userOccupant->getEmail()) {
-                $type = UserManager::OCCUPANT;
-                $user = $userOccupant;
-            } elseif ($userDeclarant && $fromEmail === $userDeclarant->getEmail()) {
-                $type = UserManager::DECLARANT;
-                $user = $userDeclarant;
-            }
+            $user = $userManager->getOrCreateUserForSignalementAndEmail($signalement, $fromEmail);
+            $type = $userManager->getUserTypeForSignalementAndUser($signalement, $user);
             if ($user && $suiviAuto) {
                 $description = '';
                 if (Suivi::ARRET_PROCEDURE === $suiviAuto) {
@@ -461,7 +449,7 @@ class FrontSignalementController extends AbstractController
     public function postUserResponse(
         string $code,
         SignalementRepository $signalementRepository,
-        UserRepository $userRepository,
+        UserManager $userManager,
         Request $request,
         EntityManagerInterface $entityManager,
         SuiviFactory $suiviFactory,
@@ -470,7 +458,7 @@ class FrontSignalementController extends AbstractController
         if ($signalement = $signalementRepository->findOneByCodeForPublic($code)) {
             if ($this->isCsrfTokenValid('signalement_front_response_'.$signalement->getUuid(), $request->get('_token'))) {
                 $email = $request->get('signalement_front_response')['email'];
-                $user = $userRepository->findOneBy(['email' => $email]);
+                $user = $userManager->getOrCreateUserForSignalementAndEmail($signalement, $email);
                 $suivi = $suiviFactory->createInstanceFrom(
                     user: $user,
                     signalement: $signalement,
