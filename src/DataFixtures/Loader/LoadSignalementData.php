@@ -20,6 +20,7 @@ use App\Factory\Signalement\InformationComplementaireFactory;
 use App\Factory\Signalement\InformationProcedureFactory;
 use App\Factory\Signalement\SituationFoyerFactory;
 use App\Factory\Signalement\TypeCompositionLogementFactory;
+use App\Repository\BailleurRepository;
 use App\Repository\CritereRepository;
 use App\Repository\CriticiteRepository;
 use App\Repository\DesordreCategorieRepository;
@@ -31,6 +32,7 @@ use App\Repository\TagRepository;
 use App\Repository\TerritoryRepository;
 use App\Repository\UserRepository;
 use App\Service\ImageManipulationHandler;
+use App\Service\Signalement\ZipcodeProvider;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Common\DataFixtures\OrderedFixtureInterface;
 use Doctrine\Persistence\ObjectManager;
@@ -41,6 +43,7 @@ class LoadSignalementData extends Fixture implements OrderedFixtureInterface
 {
     public function __construct(
         private TerritoryRepository $territoryRepository,
+        private BailleurRepository $bailleurRepository,
         private SituationRepository $situationRepository,
         private CritereRepository $critereRepository,
         private CriticiteRepository $criticiteRepository,
@@ -191,6 +194,11 @@ class LoadSignalementData extends Fixture implements OrderedFixtureInterface
             foreach ($row['criticites'] as $criticite) {
                 $signalement->addCriticite($this->criticiteRepository->findOneBy(['label' => $criticite]));
             }
+        }
+
+        if (isset($row['bailleur'])) {
+            $zip = ZipcodeProvider::getZipCode($row['cp_occupant']);
+            $signalement->setBailleur($this->bailleurRepository->findOneBailleurBy($row['bailleur'], $zip));
         }
 
         $manager->persist($signalement);

@@ -61,8 +61,9 @@ class Territory
     #[ORM\Column]
     private ?bool $isAutoAffectationEnabled = false;
 
-    #[ORM\ManyToMany(targetEntity: Bailleur::class, mappedBy: 'territories')]
-    private Collection $bailleurs;
+    #[ORM\OneToMany(mappedBy: 'territory', targetEntity: BailleurTerritory::class)]
+    #[Ignore]
+    private Collection $bailleurTerritories;
 
     public function __construct()
     {
@@ -71,7 +72,7 @@ class Territory
         $this->signalements = new ArrayCollection();
         $this->affectations = new ArrayCollection();
         $this->tags = new ArrayCollection();
-        $this->bailleurs = new ArrayCollection();
+        $this->bailleurTerritories = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -315,27 +316,30 @@ class Territory
     }
 
     /**
-     * @return Collection<int, Bailleur>
+     * @return Collection<int, BailleurTerritory>
      */
-    public function getBailleurs(): Collection
+    public function getBailleurTerritories(): Collection
     {
-        return $this->bailleurs;
+        return $this->bailleurTerritories;
     }
 
-    public function addBailleur(Bailleur $bailleur): static
+    public function addBailleurTerritory(BailleurTerritory $bailleurTerritory): static
     {
-        if (!$this->bailleurs->contains($bailleur)) {
-            $this->bailleurs->add($bailleur);
-            $bailleur->addTerritory($this);
+        if (!$this->bailleurTerritories->contains($bailleurTerritory)) {
+            $this->bailleurTerritories->add($bailleurTerritory);
+            $bailleurTerritory->setTerritory($this);
         }
 
         return $this;
     }
 
-    public function removeBailleur(Bailleur $bailleur): static
+    public function removeBailleurTerritory(BailleurTerritory $bailleurTerritory): static
     {
-        if ($this->bailleurs->removeElement($bailleur)) {
-            $bailleur->removeTerritory($this);
+        if ($this->bailleurTerritories->removeElement($bailleurTerritory)) {
+            // set the owning side to null (unless already changed)
+            if ($bailleurTerritory->getTerritory() === $this) {
+                $bailleurTerritory->setTerritory(null);
+            }
         }
 
         return $this;

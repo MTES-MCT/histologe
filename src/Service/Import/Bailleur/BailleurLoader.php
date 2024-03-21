@@ -70,8 +70,7 @@ class BailleurLoader
         if (null === $bailleur) {
             $bailleur = (new Bailleur())
                 ->addTerritory($territory)
-                ->setName($bailleurName)
-                ->setIsSocial(true);
+                ->setName($bailleurName);
             ++$this->metadata['count_bailleurs'];
         } else {
             $bailleur->addTerritory($territory);

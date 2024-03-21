@@ -33,8 +33,7 @@ class LoadBailleurData extends Fixture implements OrderedFixtureInterface
         if (null === $bailleur) {
             $bailleur = (new Bailleur())
                 ->setName($row['name'])
-                ->addTerritory($territory)
-                ->setIsSocial($row['is_social']);
+                ->addTerritory($territory);
         } else {
             $bailleur->addTerritory($territory);
         }
@@ -44,6 +43,6 @@ class LoadBailleurData extends Fixture implements OrderedFixtureInterface
 
     public function getOrder(): int
     {
-        return 18;
+        return 11;
     }
 }

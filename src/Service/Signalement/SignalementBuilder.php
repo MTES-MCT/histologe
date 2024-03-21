@@ -414,7 +414,7 @@ class SignalementBuilder
                 ->setTelProprio($this->signalementDraftRequest->getCoordonneesBailleurTel())
                 ->setTelProprioSecondaire($this->signalementDraftRequest->getCoordonneesBailleurTelSecondaire());
 
-            $bailleur = $this->bailleurRepository->findOneActiveBy($bailleurNom, $this->territory->getZip());
+            $bailleur = $this->bailleurRepository->findOneBailleurBy($bailleurNom, $this->territory->getZip());
             if (null !== $bailleur) {
                 $this->signalement->setBailleur($bailleur);
             }

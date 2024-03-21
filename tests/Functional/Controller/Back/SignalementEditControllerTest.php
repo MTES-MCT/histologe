@@ -12,7 +12,7 @@ class SignalementEditControllerTest extends WebTestCase
 {
     use SessionHelper;
 
-    public function testEditCoordonneesBailleur(): void
+    public function testEditCoordonneesBailleurWithBailleur(): void
     {
         $client = static::createClient();
         /** @var UserRepository $userRepository */
@@ -50,5 +50,44 @@ class SignalementEditControllerTest extends WebTestCase
 
         $this->assertEquals('13 HABITAT', $signalement->getBailleur()->getName());
         $this->assertEquals('13 HABITAT', $signalement->getNomProprio());
+    }
+
+    public function testEditCoordonneesBailleurWithCustomBailleur(): void
+    {
+        $client = static::createClient();
+        /** @var UserRepository $userRepository */
+        $userRepository = static::getContainer()->get(UserRepository::class);
+        /** @var SignalementRepository $signalementRepository */
+        $signalementRepository = static::getContainer()->get(SignalementRepository::class);
+        /** @var RouterInterface $router */
+        $router = $client->getContainer()->get(RouterInterface::class);
+
+        $user = $userRepository->findOneBy(['email' => 'admin-01@histologe.fr']);
+        $signalement = $signalementRepository->findOneBy(['uuid' => '00000000-0000-0000-2024-000000000004']);
+        $client->loginUser($user);
+        $route = $router->generate('back_signalement_edit_coordonnees_bailleur', ['uuid' => $signalement->getUuid()]);
+
+        $payload = [
+            'nom' => 'Habitat Social Solidaire',
+            'prenom' => '',
+            'mail' => 'contact@13habitat.fr',
+            'telephone' => '0611000000',
+            'ville' => 'Marseille',
+            'beneficiaireRsa' => '',
+            'beneficiaireFsl' => '',
+            'revenuFiscal' => '',
+            'dateNaissance' => '',
+        ];
+
+        $payload['_token'] = $this->generateCsrfToken(
+            $client,
+            'signalement_edit_coordonnees_bailleur_'.$signalement->getId()
+        );
+
+        $client->request('POST', $route, [], [], [], json_encode($payload));
+
+        $this->assertResponseIsSuccessful();
+        $this->assertNull($signalement->getBailleur());
+        $this->assertEquals('Habitat Social Solidaire', $signalement->getNomProprio());
     }
 }

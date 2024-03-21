@@ -411,13 +411,11 @@ class SignalementManager extends AbstractManager
         Signalement $signalement,
         CoordonneesBailleurRequest $coordonneesBailleurRequest
     ) {
-        $bailleur = $this->bailleurRepository->findOneActiveBy(
+        $bailleur = $this->bailleurRepository->findOneBailleurBy(
             $coordonneesBailleurRequest->getNom(),
             ZipcodeProvider::getZipCode($signalement->getCpOccupant())
         );
-        if (null !== $bailleur) {
-            $signalement->setBailleur($bailleur);
-        }
+        $signalement->setBailleur($bailleur);
 
         $signalement->setNomProprio($coordonneesBailleurRequest->getNom())
             ->setPrenomProprio($coordonneesBailleurRequest->getPrenom())

@@ -21,15 +21,15 @@ class BailleurRepository extends ServiceEntityRepository
         parent::__construct($registry, Bailleur::class);
     }
 
-    public function findActiveBy(string $name, string $zip): array
+    public function findBailleursBy(string $name, string $zip): array
     {
         $terms = explode(' ', trim($name));
         $queryBuilder = $this
             ->createQueryBuilder('b')
-            ->innerJoin('b.territories', 't')
+            ->innerJoin('b.bailleurTerritories', 'bt')
+            ->innerJoin('bt.territory', 't')
             ->where('t.zip = :zip')
-            ->setParameter('zip', $zip)
-            ->andWhere('b.active = true');
+            ->setParameter('zip', $zip);
 
         foreach ($terms as $index => $term) {
             $placeholder = 'term_'.$index;
@@ -41,16 +41,16 @@ class BailleurRepository extends ServiceEntityRepository
         return $queryBuilder->getQuery()->getResult();
     }
 
-    public function findOneActiveBy(string $name, string $zip): ?Bailleur
+    public function findOneBailleurBy(string $name, string $zip): ?Bailleur
     {
         $queryBuilder = $this
             ->createQueryBuilder('b')
-            ->innerJoin('b.territories', 't')
+            ->innerJoin('b.bailleurTerritories', 'bt')
+            ->innerJoin('bt.territory', 't')
             ->where('t.zip = :zip')
             ->setParameter('zip', $zip)
             ->andWhere('b.name LIKE :name')
-            ->setParameter('name', $name)
-            ->andWhere('b.active = true');
+            ->setParameter('name', $name);
 
         return $queryBuilder->getQuery()->getOneOrNullResult();
     }

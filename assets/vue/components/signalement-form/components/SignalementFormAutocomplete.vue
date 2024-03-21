@@ -70,7 +70,9 @@ export default defineComponent({
       (newValue: any) => {
         clearTimeout(this.idFetchTimeout)
         this.idFetchTimeout = setTimeout(() => {
-          if (newValue.length > 1) {
+          const name = newValue.trim()
+          if (name.length > 1) {
+            this.selectedSuggestionIndex = -1
             const url = this.autocomplete.isAbsoluteLink
               ? variablesReplacer.replace(this.autocomplete.route)
               : window.location.origin + variablesReplacer.replace(this.autocomplete.route)

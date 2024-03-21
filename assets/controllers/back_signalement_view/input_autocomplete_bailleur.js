@@ -16,8 +16,10 @@ if (inputElement) {
     inputElement.addEventListener('keyup', function (event) {
         event.preventDefault();
         const isNavigationKey = ['ArrowDown', 'ArrowUp', 'Enter', ' '].includes(event.key);
-        if (!isNavigationKey && event.target.value.length > 1) {
-            const url = `${inputElement.dataset.autocompleteBailleurUrl}&name=${event.target.value}`;
+        const name = event.target.value.trim();
+        if (!isNavigationKey && name.length > 1) {
+            selectedSuggestionIndex = -1
+            const url = `${inputElement.dataset.autocompleteBailleurUrl}&name=${name}`;
             fetchBailleur(url);
         }
     });

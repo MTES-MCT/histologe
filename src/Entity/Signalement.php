@@ -736,6 +736,10 @@ class Signalement
 
     public function getNomProprio(): ?string
     {
+        if ($this->bailleur) {
+            return $this->bailleur->getName();
+        }
+
         return $this->nomProprio;
     }
 
