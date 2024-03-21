@@ -11,7 +11,7 @@
         </TheHistoStatsDetailsItem>
 
         <div class="fr-col-12">
-          <HistoChartLine :items=sharedState.stats.countSignalementPerMonth>
+          <HistoChartLine :items=sharedState.stats.countSignalementPerMonth name="Signalements">
             <template #title>Nombre total de signalements</template>
           </HistoChartLine>
         </div>

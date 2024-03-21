@@ -16,7 +16,7 @@
           <TheHistoFrontStatsTerritoryItem sizeClass="7" v-model="sharedState.filters.perMonthYearType" :onChange="handleChangePerMonth">
             <template #title>Signalements déposés</template>
             <template #graph>
-              <HistoChartLine v-if="!isLoadingPerMonth" :items=perMonthData />
+              <HistoChartLine v-if="!isLoadingPerMonth" :items=perMonthData name="Signalements" />
             </template>
           </TheHistoFrontStatsTerritoryItem>
 
