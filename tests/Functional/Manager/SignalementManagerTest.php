@@ -115,21 +115,6 @@ class SignalementManagerTest extends WebTestCase
         $this->assertCount(5, $partners['not_affected'], 'Five partners should not be affected');
     }
 
-    public function testFindAllPartnersWithCompetences()
-    {
-        $signalement = $this->signalementManager->findOneBy(['reference' => '2023-8']);
-
-        $partners = $this->signalementManager->findAllPartners($signalement, true);
-
-        $this->assertArrayHasKey('affected', $partners);
-        $this->assertArrayHasKey('not_affected', $partners);
-
-        $this->assertCount(0, $partners['affected'], '0 partner should be affected');
-        $this->assertCount(19, $partners['not_affected'], '19 partners should not be affected');
-        $firstPartner = $partners['not_affected'][0];
-        $this->assertArrayHasKey('competence', $firstPartner);
-    }
-
     public function testCloseSignalementForAllPartners()
     {
         $signalementRepository = $this->entityManager->getRepository(Signalement::class);

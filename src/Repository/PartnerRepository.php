@@ -119,7 +119,7 @@ class PartnerRepository extends ServiceEntityRepository
     /**
      * @throws Exception
      */
-    public function findByLocalization(Signalement $signalement, bool $affected = true, bool $addCompetences = false): array
+    public function findByLocalization(Signalement $signalement, bool $affected = true): array
     {
         $operator = $affected ? 'IN' : 'NOT IN';
 
@@ -148,10 +148,7 @@ class PartnerRepository extends ServiceEntityRepository
             $queryBuilder->andWhere('p.id '.$operator.' (:subquery)')
             ->setParameter('subquery', $affectedPartners);
         }
-        if ($addCompetences) {
-            $queryBuilder->addSelect('p.competence');
-            $queryBuilder->orderBy('p.competence', 'DESC');
-        }
+        $queryBuilder->orderBy('p.nom', 'ASC');
 
         return $queryBuilder->getQuery()->getArrayResult();
     }

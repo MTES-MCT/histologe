@@ -194,20 +194,18 @@ class SignalementManager extends AbstractManager
         }
     }
 
-    public function findAllPartners(Signalement $signalement, bool $addCompetences = false): array
+    public function findAllPartners(Signalement $signalement): array
     {
         /** @var PartnerRepository $partnerRepository */
         $partnerRepository = $this->managerRegistry->getRepository(Partner::class);
         $partners['affected'] = $partnerRepository->findByLocalization(
             signalement: $signalement,
-            affected: true,
-            addCompetences: $addCompetences
+            affected: true
         );
 
         $partners['not_affected'] = $partnerRepository->findByLocalization(
             signalement: $signalement,
-            affected: false,
-            addCompetences: $addCompetences
+            affected: false
         );
 
         return $partners;
