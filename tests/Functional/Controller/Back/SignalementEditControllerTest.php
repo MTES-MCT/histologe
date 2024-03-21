@@ -43,23 +43,7 @@ class SignalementEditControllerTest extends WebTestCase
             ['uuid' => $signalement->getUuid()]
         );
 
-        $payload = [
-            'nom' => '13 HABITAT',
-            'prenom' => '',
-            'mail' => 'contact@13habitat.fr',
-            'telephone' => '0611000000',
-            'ville' => 'Marseille',
-            'beneficiaireRsa' => '',
-            'beneficiaireFsl' => '',
-            'revenuFiscal' => '',
-            'dateNaissance' => '',
-        ];
-
-        $payload['_token'] = $this->generateCsrfToken(
-            $this->client,
-            'signalement_edit_coordonnees_bailleur_'.$signalement->getId()
-        );
-
+        $payload = $this->getPayload('13 habitat', $signalement->getId());
         $this->client->request('POST', $route, [], [], [], json_encode($payload));
 
         $this->assertResponseIsSuccessful();
@@ -76,8 +60,18 @@ class SignalementEditControllerTest extends WebTestCase
             ['uuid' => $signalement->getUuid()]
         );
 
+        $payload = $this->getPayload('Habitat Social Solidaire', $signalement->getId());
+        $this->client->request('POST', $route, [], [], [], json_encode($payload));
+
+        $this->assertResponseIsSuccessful();
+        $this->assertNull($signalement->getBailleur());
+        $this->assertEquals('Habitat Social Solidaire', $signalement->getNomProprio());
+    }
+
+    public function getPayload(string $bailleurName, int $signalementId): array
+    {
         $payload = [
-            'nom' => 'Habitat Social Solidaire',
+            'nom' => $bailleurName,
             'prenom' => '',
             'mail' => 'contact@13habitat.fr',
             'telephone' => '0611000000',
@@ -90,13 +84,9 @@ class SignalementEditControllerTest extends WebTestCase
 
         $payload['_token'] = $this->generateCsrfToken(
             $this->client,
-            'signalement_edit_coordonnees_bailleur_'.$signalement->getId()
+            'signalement_edit_coordonnees_bailleur_'.$signalementId
         );
 
-        $this->client->request('POST', $route, [], [], [], json_encode($payload));
-
-        $this->assertResponseIsSuccessful();
-        $this->assertNull($signalement->getBailleur());
-        $this->assertEquals('Habitat Social Solidaire', $signalement->getNomProprio());
+        return $payload;
     }
 }
