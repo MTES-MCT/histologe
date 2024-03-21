@@ -22,7 +22,7 @@ Encore
         to: 'dsfr/[path][name].[ext]'
     })
     .copyFiles({
-        from: './assets/dsfr-chart-1.0.0/',
+        from: './node_modules/@gouvfr/dsfr-chart/',
         to: 'dsfr-chart/[path][name].[ext]'
     })
 

@@ -134,8 +134,10 @@
 
 {#% if 'front_statistiques' in app.request.get('_route') or 'back_statistiques' in app.request.get('_route') %#}
     {#
-    <script src="{{ asset('build/dsfr-chart/Charts/dsfr-chart.umd.min.js') }}"></script>
+    <script src="{{ asset('build/dsfr-chart/Charts/dsfr-chart.umd.js') }}"></script>
     <link rel="stylesheet" href="{{ asset('build/dsfr-chart/Charts/dsfr-chart.css') }}" />
+    <script src="{{ asset('build/dsfr-chart/MapChart/map-chart.umd.js') }}"></script>
+    <link rel="stylesheet" href="{{ asset('build/dsfr-chart/MapChart/map-chart.css') }}" />
     #}
     <script src="{{ asset('build/dsfr-chart/ScatterChart/scatter-chart.umd.js') }}"></script>
     <link rel="stylesheet" href="{{ asset('build/dsfr-chart/ScatterChart/scatter-chart.css') }}" />
