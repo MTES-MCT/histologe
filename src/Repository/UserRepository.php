@@ -278,6 +278,5 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
             ->setParameter('date', new \DateTimeImmutable());
 
         return $qb->getQuery()->execute();
-        return $qb->getQuery()->getResult();
     }
 }
