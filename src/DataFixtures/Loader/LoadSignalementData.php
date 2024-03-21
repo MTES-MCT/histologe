@@ -89,7 +89,7 @@ class LoadSignalementData extends Fixture implements OrderedFixtureInterface
             ->setNbAdultes($row['nb_adultes'])
             ->setNbEnfantsM6($row['nb_enfants_m6'])
             ->setNbEnfantsP6($row['nb_enfants_p6'])
-            ->setMailOccupant($faker->email())
+            ->setMailOccupant($row['mail_occupant'] ?? $faker->email())
             ->setNumAppartOccupant($faker->randomNumber(3))
             ->setNatureLogement($row['nature_logement'])
             ->setTypeLogement($row['type_logement'] ?? null)

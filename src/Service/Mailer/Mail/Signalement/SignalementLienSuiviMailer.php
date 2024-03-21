@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Service\Mailer\Mail\Contact;
+namespace App\Service\Mailer\Mail\Signalement;
 
 use App\Service\Mailer\Mail\AbstractNotificationMailer;
 use App\Service\Mailer\NotificationMail;
@@ -10,12 +10,12 @@ use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Symfony\Component\Mailer\MailerInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
-class ContactFormMailer extends AbstractNotificationMailer
+class SignalementLienSuiviMailer extends AbstractNotificationMailer
 {
-    protected ?NotificationMailerType $mailerType = NotificationMailerType::TYPE_CONTACT_FORM;
-    protected ?string $mailerSubject = 'Vous avez reçu un message depuis la page %param.platform_name%';
-    protected ?string $mailerTemplate = 'nouveau_mail_front';
-    protected ?string $tagHeader = 'Contact';
+    protected ?NotificationMailerType $mailerType = NotificationMailerType::TYPE_SIGNALEMENT_LIEN_SUIVI;
+    protected ?string $mailerSubject = 'Lien vers votre page de suivi';
+    protected ?string $mailerTemplate = 'lien_suivi_signalement_email';
+    protected ?string $tagHeader = 'Lien de suivi du signalement';
 
     public function __construct(
         protected MailerInterface $mailer,
@@ -29,12 +29,11 @@ class ContactFormMailer extends AbstractNotificationMailer
     public function getMailerParamsFromNotification(NotificationMail $notificationMail): array
     {
         return [
-            'nom' => $notificationMail->getFromFullname(),
-            'mail' => $notificationMail->getFromEmail(),
-            'reply' => $notificationMail->getFromEmail(),
-            'message' => $notificationMail->getMessage(),
-            'organisme' => $notificationMail->getParams()['organisme'],
-            'objet' => $notificationMail->getParams()['objet'],
+            'signalement' => $notificationMail->getSignalement(),
+            'lien_suivi' => $this->generateLink(
+                'front_suivi_signalement',
+                ['code' => $notificationMail->getSignalement()->getCodeSuivi(), 'from' => $notificationMail->getTo()]
+            ),
         ];
     }
 }

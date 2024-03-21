@@ -2,12 +2,19 @@
 
 namespace App\Controller;
 
+use App\Dto\DemandeLienSignalement;
 use App\Form\ContactType;
+use App\Form\DemandeLienSignalementType;
 use App\Form\PostalCodeSearchType;
 use App\FormHandler\ContactFormHandler;
 use App\Repository\SignalementRepository;
+use App\Service\Mailer\NotificationMail;
+use App\Service\Mailer\NotificationMailerRegistry;
+use App\Service\Mailer\NotificationMailerType;
 use App\Service\Signalement\PostalCodeHomeChecker;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -47,12 +54,55 @@ class HomepageController extends AbstractController
             $displayModal = $inputPostalCode;
         }
 
+        $demandeLienSignalement = new DemandeLienSignalement();
+        $formDemandeLienSignalement = $this->createForm(DemandeLienSignalementType::class, $demandeLienSignalement, [
+            'action' => $this->generateUrl('front_demande_lien_signalement'),
+        ]);
+
         return $this->render('front/index.html.twig', [
             'title' => $title,
             'form_postalcode' => $form->createView(),
             'stats' => $stats,
             'display_modal' => $displayModal,
+            'formDemandeLienSignalement' => $formDemandeLienSignalement,
         ]);
+    }
+
+    #[Route('/demande-lien-signalement', name: 'front_demande_lien_signalement', methods: ['POST'])]
+    public function demandeLienSignalement(
+        Request $request,
+        SignalementRepository $signalementRepository,
+        NotificationMailerRegistry $notificationMailerRegistry,
+        ): JsonResponse {
+        $demandeLienSignalement = new DemandeLienSignalement();
+        $form = $this->createForm(DemandeLienSignalementType::class, $demandeLienSignalement, [
+            'action' => $this->generateUrl('front_demande_lien_signalement'),
+        ]);
+        $form->handleRequest($request);
+        if ($form->isSubmitted() && $form->isValid()) {
+            $signalement = $signalementRepository->findOneForEmailAndAddress(
+                $demandeLienSignalement->getEmail(),
+                $demandeLienSignalement->getAdresse(),
+                $demandeLienSignalement->getCodePostal(),
+                $demandeLienSignalement->getVille()
+            );
+            if ($signalement) {
+                $notificationMailerRegistry->send(
+                    new NotificationMail(
+                        type: NotificationMailerType::TYPE_SIGNALEMENT_LIEN_SUIVI,
+                        to: $demandeLienSignalement->getEmail(),
+                        signalement: $signalement,
+                    )
+                );
+            }
+            $view = $this->renderView('_partials/_demande-lien-signalement-ok.html.twig', ['form' => $form]);
+
+            return new JsonResponse(['html' => $view]);
+        }
+
+        $view = $this->renderView('_partials/_form-demande-lien-signalement.html.twig', ['form' => $form]);
+
+        return new JsonResponse(['html' => $view]);
     }
 
     #[Route('/qui-sommes-nous', name: 'front_about')]
@@ -69,6 +119,7 @@ class HomepageController extends AbstractController
     public function contact(
         Request $request,
         ContactFormHandler $contactFormHandler,
+        ParameterBagInterface $parameterBag
     ): Response {
         $title = 'Contact';
         $form = $this->createForm(ContactType::class, []);
@@ -77,16 +128,25 @@ class HomepageController extends AbstractController
             $contactFormHandler->handle(
                 $form->get('nom')->getData(),
                 $form->get('email')->getData(),
-                $form->get('message')->getData()
+                $form->get('message')->getData(),
+                (string) $form->get('organisme')->getData(),
+                $form->get('objet')->getData()
             );
             $this->addFlash('success', 'Votre message à bien été envoyé !');
 
             return $this->redirectToRoute('front_contact');
         }
 
+        $demandeLienSignalement = new DemandeLienSignalement();
+        $formDemandeLienSignalement = $this->createForm(DemandeLienSignalementType::class, $demandeLienSignalement, [
+            'action' => $this->generateUrl('front_demande_lien_signalement'),
+        ]);
+
         return $this->render('front/contact.html.twig', [
             'title' => $title,
             'form' => $form->createView(),
+            'contactEmail' => $parameterBag->get('contact_email'),
+            'formDemandeLienSignalement' => $formDemandeLienSignalement,
         ]);
     }
 

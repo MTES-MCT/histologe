@@ -1,0 +1,85 @@
+{% use 'form_div_layout.html.twig' %}
+
+{% block form_row %}
+    {% set widget_attr = {} %}
+    {% if help is not empty %}
+        {% set widget_attr = {attr: {'aria-describedby': id ~"_help"}} %}
+    {% endif %}
+    {% if 'choice' in block_prefixes %}
+        {% set row_attr = attr|merge({'class': (row_attr.class|default('') ~ ' fr-select-group')|trim}) %}
+    {% else %} 
+        {% set row_attr = attr|merge({'class': (row_attr.class|default('') ~ ' fr-input-group')|trim}) %}
+    {% endif %}
+    {% if errors|length > 0 %}
+        {% set row_attr = row_attr|merge({'class': (row_attr.class ~ ' fr-input-group--error')|trim}) %}
+    {% endif %}
+    <div{% with {attr: row_attr} %}{{ block('attributes') }}{% endwith %}>
+        {{form_label(form)}}
+        {{form_widget(form, widget_attr)}}
+        {{form_errors(form)}}
+    </div>
+{% endblock form_row %}
+
+{% block form_errors %}
+    {% if errors|length > 0 %}
+        <p class="fr-error-text">
+            {% for error in errors %}
+                {{ error.message }}
+                {% if not loop.last %}
+                    <br>
+                {% endif %}
+            {% endfor %}
+        </p>
+    {% endif %}
+{% endblock form_errors %}
+
+{% block form_widget_simple %}
+    {% set attr = attr|merge({'class': (attr.class|default('') ~ ' fr-input')|trim}) %}
+    {{parent()}}
+{% endblock form_widget_simple %}
+
+{% block choice_widget_collapsed %}
+    {% set attr = attr|merge({'class': (attr.class|default('') ~ ' fr-select')|trim}) %}
+    {{parent()}}
+{% endblock choice_widget_collapsed %}
+
+{% block textarea_widget -%}
+    {% set attr = attr|merge({'class': (attr.class|default('') ~ ' fr-input')|trim}) %}
+    {{parent()}}
+{% endblock textarea_widget %}
+
+{% block form_label %}
+    {% if label is not same as(false) %}
+        {% set label_attr = label_attr|merge({'class': (label_attr.class|default('') ~ ' fr-label')|trim}) %}
+        {% if not compound %}
+            {% set label_attr = label_attr|merge({'for': id}) %}
+        {% endif %}
+        {% if required -%}
+            {% set label_attr = label_attr|merge({'class': (label_attr.class|default('') ~ ' label-required')|trim}) %}
+        {% endif %}
+        <{{ element|default('label') }}{% if label_attr %}{% with { attr: label_attr } %}{{ block('attributes') }}{% endwith %}{% endif %}>
+            {{block('form_label_content')}}
+        </{{ element|default('label') }}>
+    {% endif %}
+{% endblock form_label %}
+
+{% block form_label_content %}
+    {{ parent() }}
+    {{ block('form_help')}}
+{% endblock form_label_content %}
+
+{% block form_help %}
+    {% if help is not empty -%}
+        {% set help_attr = help_attr|merge({class: (help_attr.class|default('') ~ ' fr-hint-text')|trim})%}
+        <{{ element|default('span') }} id="{{ id }}_help"{% with { attr: help_attr } %}{{ block('attributes') }}{% endwith %}>
+            {{- block('form_help_content') -}}
+        </{{ element|default('span') }}>
+    {% endif %}
+{% endblock form_help %}
+
+{% block button_attributes -%}
+    {% set attr = attr|merge({'class': (attr.class|default('') ~ ' fr-btn')|trim}) %}
+    id="{{ id }}" name="{{ full_name }}"{% if disabled %} disabled="disabled"{% endif -%}
+    {{ block('attributes') }}
+{% endblock button_attributes -%}
+

@@ -365,11 +365,6 @@ a.fr-btn.fr-btn--icon-left.fr-fi-file-pdf-fill.ignore-blank-style::before {
 }
 
 /*INPUTS*/
-.fr-adresse-suggestion:hover {
-    background-color: var(--artwork-minor-blue-cumulus);
-    color: white !important;
-}
-
 .fr-input--no-resize {
     resize: vertical;
 }
@@ -720,3 +715,29 @@ div.photos-album {
         justify-content: space-between;
     }
 }
+.fr-adresse-suggestion:hover {
+    background-color: var(--artwork-minor-blue-cumulus);
+    color: white !important;
+}
+.fr-address-group, .fr-address-group-bo{
+    cursor: pointer;
+}
+.fr-address-group {
+  margin-top: -1.5rem;
+}
+.fr-address-group-container {
+    position: relative;
+    .fr-address-group {
+        position: absolute;
+        width: 100%;
+    }
+}
+.fr-input:read-only {
+    box-shadow: inset 0 -2px 0 0 var(--border-disabled-grey);
+    color: var(--text-disabled-grey);
+    cursor: not-allowed;
+    &:focus{
+        outline-style: none;
+    }
+}
+

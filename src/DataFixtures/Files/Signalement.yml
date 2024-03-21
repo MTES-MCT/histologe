@@ -17,6 +17,7 @@ signalements:
     adresse_occupant: "3 rue Mars"
     cp_occupant: "13015"
     ville_occupant: "Marseille"
+    mail_occupant: "francis.cabrel@astaffort.com"
     statut: 2
     reference: "2022-1"
     geoloc: "{\"lat\":\"43.3426152\",\"lng\":\"5.3711848\"}"
