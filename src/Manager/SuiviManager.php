@@ -4,11 +4,13 @@ namespace App\Manager;
 
 use App\Entity\Enum\DocumentType;
 use App\Entity\File;
+use App\Entity\Intervention;
 use App\Entity\Signalement;
 use App\Entity\Suivi;
 use App\Entity\User;
 use App\EventListener\SignalementUpdatedListener;
 use App\Factory\SuiviFactory;
+use App\Repository\DesordreCritereRepository;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
@@ -21,6 +23,7 @@ class SuiviManager extends Manager
         private readonly UrlGeneratorInterface $urlGenerator,
         protected SignalementUpdatedListener $signalementUpdatedListener,
         protected Security $security,
+        private DesordreCritereRepository $desordreCritereRepository,
         string $entityName = Suivi::class
     ) {
         parent::__construct($managerRegistry, $entityName);
@@ -73,52 +76,97 @@ class SuiviManager extends Manager
 
     public function createInstanceForFilesSignalement(User $user, Signalement $signalement, array $files): Suivi
     {
-        $isRapportDeVisite = false;
-        $isPhotoDeVisite = false;
         $nbDocs = 0;
         $nbPhotos = 0;
+        /** @var ?DocumentType $documentType */
+        $documentType = null;
+
+        /** @var ?Intervention $intervention */
+        $intervention = null;
         foreach ($files as $file) {
             if (File::FILE_TYPE_PHOTO === $file->getFileType()) {
                 ++$nbPhotos;
             } else {
                 ++$nbDocs;
             }
-
-            if (DocumentType::PROCEDURE_RAPPORT_DE_VISITE === $file->getDocumentType()) {
-                $isRapportDeVisite = true;
-            }
-            if (DocumentType::PHOTO_VISITE === $file->getDocumentType()) {
-                $isPhotoDeVisite = true;
-            }
+            $documentType = $file->getDocumentType();
+            $intervention = $file->getIntervention();
         }
         $description = '';
-        if ($nbDocs > 0) {
-            $description .= $nbDocs;
-            if ($isRapportDeVisite) {
+        $isVisibleUsager = false;
+
+        if (\array_key_exists($documentType?->value, DocumentType::getProcedureList()) && null === $intervention) {
+            if ($nbDocs > 0) {
+                $description .= $nbDocs;
+                $description .= $nbDocs > 1 ? ' documents partenaires ont été ajoutés' : ' document partenaire a été ajouté';
+                $description .= ' au signalement.';
+            }
+        }
+
+        if (\array_key_exists($documentType?->value, DocumentType::getSituationList())) {
+            $isVisibleUsager = true;
+            if ($nbDocs > 0) {
+                $description .= $nbDocs;
+                $description .= $nbDocs > 1 ? ' documents ' : ' document ';
+                $description .= 'sur la situation usager';
+            }
+
+            if ($nbPhotos > 0) {
+                if ('' !== $description) {
+                    $description .= ' et ';
+                }
+                $description .= $nbPhotos;
+                $description .= $nbPhotos > 1 ? ' photos' : ' photo';
+                if (null !== $signalement->getCreatedFrom()) {
+                    $description .= ' concernant les désordres suivants';
+                }
+            }
+            if (0 === $nbDocs && $nbPhotos > 1) {
+                $description .= ' ont été ajoutées au signalement : ';
+            } elseif ($nbDocs + $nbPhotos > 1) {
+                $description .= ' ont été ajoutés au signalement : ';
+            } elseif (1 === $nbPhotos) {
+                $description .= ' a été ajoutée au signalement : ';
+            }
+        }
+
+        if (DocumentType::PROCEDURE_RAPPORT_DE_VISITE === $documentType && null !== $intervention) {
+            $isVisibleUsager = true;
+            if ($nbDocs > 0) {
+                $description .= $user->getPartner()->getNom().' a ajouté ';
+                $description .= $nbDocs;
                 $description .= $nbDocs > 1 ? ' rapports de visite' : ' rapport de visite';
-            } else {
-                $description .= $nbDocs > 1 ? ' documents partenaires' : ' document partenaire';
+                $description .= ' de la visite du '.$intervention->getScheduledAt()->format('d/m/Y').' :';
             }
         }
-        if ($nbPhotos > 0) {
-            if ('' !== $description) {
-                $description .= ' et ';
-            }
-            $description .= $nbPhotos;
-            $description .= $nbPhotos > 1 ? ' photos' : ' photo';
-            if ($isPhotoDeVisite) {
-                $description .= ' de visite';
+
+        if (DocumentType::PHOTO_VISITE === $documentType) {
+            $isVisibleUsager = true;
+            if ($nbPhotos > 0) {
+                $description .= $user->getPartner()->getNom().' a ajouté ';
+                $description .= $nbPhotos;
+                $description .= $nbPhotos > 1 ? ' photos' : ' photo';
+                $description .= ' de la visite du '.$intervention->getScheduledAt()->format('d/m/Y').' :';
             }
         }
-        if ($nbDocs + $nbPhotos > 1) {
-            $description .= ' ont été ajoutés au signalement : ';
-        } else {
-            $description .= ' a été ajouté au signalement : ';
-        }
+
         $descriptionList = [];
         foreach ($files as $file) {
-            $fileUrl = $this->urlGenerator->generate('show_uploaded_file', ['folder' => '_up', 'filename' => $file->getFilename()]);
-            $descriptionList[] = '<li><a class="fr-link" target="_blank" href="'.$fileUrl.'">'.$file->getTitle().'</a></li>';
+            $fileUrl = $this->urlGenerator->generate(
+                'show_uploaded_file',
+                ['folder' => '_up', 'filename' => $file->getFilename()]
+            );
+            $linkFile = '<li><a class="fr-link" target="_blank" href="'.$fileUrl.'">'.$file->getTitle().'</a>';
+            if (DocumentType::PHOTO_SITUATION === $file->getDocumentType() && null !== $file->getDesordreSlug()) {
+                $desordreCritere = $this->desordreCritereRepository->findOneBy(
+                    ['slugCritere' => $file->getDesordreSlug()]
+                );
+                if (null !== $desordreCritere) {
+                    $linkFile .= ' ('.$desordreCritere->getLabelCritere().')';
+                }
+            }
+            $linkFile .= '</li>';
+            $descriptionList[] = $linkFile;
         }
 
         $suivi = $this->suiviFactory->createInstanceFrom($user, $signalement);
@@ -129,9 +177,7 @@ class SuiviManager extends Manager
             .'</ul>'
         );
 
-        if ($isRapportDeVisite || $isPhotoDeVisite) {
-            $suivi->setIsPublic(true);
-        }
+        $suivi->setIsPublic($isVisibleUsager);
 
         $suivi->setType(SUIVI::TYPE_AUTO);
 
