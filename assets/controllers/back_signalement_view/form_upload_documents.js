@@ -130,6 +130,10 @@ function initializeUploadModal(
                         if (modal.dataset.fileType == 'photo') {
                             clone = selectDesordreToClone.cloneNode(true)
                             clone.id = 'select-desordre-' + response.response
+                        }else{
+                            console.log(modal.dataset.fileFilter)
+                            console.log(selectTypeSituationToClone)
+                            console.log(selectTypeProcedureToClone)
                             if ('situation' === modal.dataset.fileFilter ){
                                 clone = selectTypeSituationToClone.cloneNode(true)
                             } else {
@@ -138,6 +142,7 @@ function initializeUploadModal(
                             clone.id = 'select-type-' + response.response
                         }
                         clone.dataset.fileId = response.response
+                        console.log(clone)
                         if (clone.querySelectorAll('option').length == 1) {
                             clone.remove()
                         } else {
@@ -200,7 +205,8 @@ function initializeUploadModal(
             `
         } else{
             innerHTML += `<div class="fr-col-3 select-container">           
-            </div>`
+            </div>
+            <input type="hidden" id="file-id" name="file[id]">`
         }
         innerHTML += `<div class="fr-col-1">
             <a href="${deleteTmpFileRoute}" title="Supprimer" class="fr-btn fr-btn--sm fr-btn--secondary fr-background--white fr-fi-delete-line fr-hidden delete-tmp-file delete-html"></a>         

@@ -167,12 +167,13 @@ class SignalementFileController extends AbstractController
                 $suivi = $suiviFactory->createInstanceFrom($this->getUser(), $signalement);
                 /** @var User $user */
                 $user = $this->getUser();
-                $description = $user->getNomComplet().' a supprimé le document suivant :';
+                $description = $user->getNomComplet().' a supprimé ';
+                $description .= File::FILE_TYPE_DOCUMENT === $type ? 'le document suivant :' : 'la photo suivante :';
                 $suivi->setDescription(
                     $description
-                    .'<ul>'
+                    .'<ul><li>'
                     .$filename
-                    .'</ul>'
+                    .'</li></ul>'
                 );
                 $suivi->setType(SUIVI::TYPE_AUTO);
 

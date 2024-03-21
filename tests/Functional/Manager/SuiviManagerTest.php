@@ -9,6 +9,7 @@ use App\Entity\User;
 use App\EventListener\SignalementUpdatedListener;
 use App\Factory\SuiviFactory;
 use App\Manager\SuiviManager;
+use App\Repository\DesordreCritereRepository;
 use App\Repository\SuiviRepository;
 use App\Repository\UserRepository;
 use Doctrine\Persistence\ManagerRegistry;
@@ -24,6 +25,7 @@ class SuiviManagerTest extends KernelTestCase
     private UrlGeneratorInterface $urlGenerator;
     private SignalementUpdatedListener $signalementUpdatedListener;
     private Security $security;
+    private DesordreCritereRepository $desordreCritereRepository;
 
     protected function setUp(): void
     {
@@ -33,6 +35,7 @@ class SuiviManagerTest extends KernelTestCase
         $this->urlGenerator = static::getContainer()->get(UrlGeneratorInterface::class);
         $this->signalementUpdatedListener = static::getContainer()->get(SignalementUpdatedListener::class);
         $this->security = static::getContainer()->get(Security::class);
+        $this->desordreCritereRepository = static::getContainer()->get(DesordreCritereRepository::class);
     }
 
     public function testCreateSuivi(): void
@@ -43,6 +46,7 @@ class SuiviManagerTest extends KernelTestCase
             $this->urlGenerator,
             $this->signalementUpdatedListener,
             $this->security,
+            $this->desordreCritereRepository,
             Suivi::class,
         );
 
@@ -78,6 +82,7 @@ class SuiviManagerTest extends KernelTestCase
             $this->urlGenerator,
             $this->signalementUpdatedListener,
             $this->security,
+            $this->desordreCritereRepository,
             Suivi::class,
         );
 

@@ -20,7 +20,8 @@
             {% endif %}
         {% endif %}
     {% elseif intervention.status is same as constant('App\\Entity\\Intervention::STATUS_DONE') %}
-        {% if signalement.interventions is empty or intervention.files is empty %}
+        {% if signalement.interventions is empty or intervention.files is empty or intervention.getRapportDeVisite is empty%}
+        {# TODO les photos de visite sont considétées dans ce cas commme un rapport de visite #}
             {% if isDocumentsEnabled and is_granted('INTERVENTION_EDIT_VISITE', intervention) %}
                 <button 
                     class="fr-btn fr-btn--sm fr-fi-file-fill fr-btn--icon-left open-modal-upload-files-btn" 
@@ -41,7 +42,7 @@
                     Editer le rapport
                 </button>
             {% endif %}
-            <a href="{{ asset('_up/'~intervention.files[0].filename)~'/' ~ signalement.uuid }}"
+            <a href="{{ asset('_up/'~intervention.getRapportDeVisite[0].filename)~'/' ~ signalement.uuid }}"
                 class="fr-btn fr-btn--sm"
                 title="Afficher le document"
                 rel="noopener"
