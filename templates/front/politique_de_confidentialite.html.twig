@@ -16,17 +16,19 @@
                 <h2>Quelles sont les données à caractère personnel que nous traitons ?</h2>
                 <p>{{ platform.name }} traite les données à caractère personnel suivantes :</p>
                 <ul>
-                    <li>Données relatives au signalement du problème de logement par l’occupant : nom, prénom, numéro de
-                        téléphone, adresse e-mail, adresse postale, photos et documents complémentaires, numéro
-                        d’allocataire, date de naissance ;
+                    <li><strong>Données relatives au signalement du problème de logement par l’occupant :</strong>
+                        nom, prénom, numéro de téléphone, adresse e-mail, adresse postale, photos et documents complémentaires,
+                        numéro d’allocataire, date de naissance ;
                     </li>
-                    <li>Données relatives au signalement du problème de logement par le déclarant : nom, prénom, numéro
-                        de téléphone, adresse e-mail, photos et documents complémentaires ;
+                    <li><strong>Données relatives au signalement du problème de logement par le déclarant :</strong>
+                        nom, prénom, numéro de téléphone, adresse e-mail, photos et documents complémentaires ;
                     </li>
-                    <li>Données relatives au propriétaire ou gestionnaire bailleur : nom, raison sociale, adresse,
-                        numéro de téléphone, adresse e-mail ;
+                    <li><strong>Données relatives au propriétaire ou gestionnaire bailleur :</strong>
+                        nom, raison sociale, adresse, numéro de téléphone, adresse e-mail ;
                     </li>
-                    <li>Données relatives à l’espace professionnel : adresse e-mail, mot de passe.</li>
+                    <li><strong>Données relatives à l’espace professionnel :</strong>
+                        adresse e-mail, mot de passe.
+                    </li>
                 </ul>
 
                 <h2>Pourquoi traitons-nous des données à caractère personnel ?</h2>
@@ -42,13 +44,18 @@
                 </ul>
 
                 <h2>Qu’est-ce qui nous autorise à traiter ces données à caractère personnel ?</h2>
-                <p>{{ platform.name }} traite des données à caractère personnel en se basant sur l'exécution d'une mission
-                    d'intérêt public ou relevant de l'exercice de l'autorité publique, dont est investi le responsable
-                    de traitement au sens de l'article 6-1 e) du RGPD. Cette mission d'intérêt public ou relevant de
-                    l'exercice de l'autorité publique se traduit par l'article 7 du décret n° 2008-680 du 9 juillet 2008
-                    portant organisation de l'administration centrale des ministères chargés de la transition
-                    écologique, de la cohésion des territoires et de la mer aux conditions de la mise en œuvre de
-                    politiques du logement.</p>
+                <p>{{ platform.name }} traite des données à caractère personnel en se basant sur :</p>
+                <ul>
+                    <li>L'exécution d'une mission d'intérêt public ou relevant de l'exercice de l'autorité publique
+                        dont est investi le responsable de traitement au sens de l'article 6-1 e) du RGPD.</li>
+                </ul>
+                <p>Cette mission d'intérêt public ou relevant de l'exercice de l'autorité publique se traduit
+                    par l'article 7 du décret n° 2008-680 du 9 juillet 2008 portant organisation de l'administration
+                    centrale des ministères chargés de la transition écologique, de la cohésion des territoires
+                    et de la mer aux conditions de la mise en œuvre de politiques du logement.</p>
+                <p>Par ailleurs l’échange des données de signalement strictement nécessaires au suivi entre les
+                    acteurs publics est réalisée sur le fondement de l’obligation légale au sens de l’article 6-1 b) du RGPD.</p>
+                <p>Cette obligation est prévue par l’article L.114-8 du code des relations entre le public et l’administration.</p>
 
                 <h2>Pendant combien de temps conservons-nous ces données à caractère personnel ?</h2>
                 <div class="fr-table">
@@ -119,8 +126,9 @@
 
                 <p>Pour vous aider dans votre démarche, vous trouverez un modèle de courrier élaboré par la CNIL ici :
                     <a href="https://www.cnil.fr/fr/modele/courrier/exercer-son-droit-dacces" target="_blank"
-                       rel="noopener noreferrer">
-                        Modèle de Courrier CNIL
+                       rel="noopener noreferrer"
+                       title="Modèle de Courrier CNIL - ouvre une nouvelle fenêtre"
+                       >Modèle de Courrier CNIL
                     </a>
                 </p>
 
@@ -133,10 +141,23 @@
                     vont avoir accès aux données :</p>
                 <ul>
                     <li>Les membres du service numérique {{ platform.name }}</li>
-                    <li>Les acteurs publics compétents qui peuvent prendre en charge les dossiers de mal logement :
-                        ADIL, mairies, CAF, Agence régionale de santé…
-                    </li>
+                    <li>Les agents habilités au sein de la DGALN ;</li>
                 </ul>
+                <p>Sont destinaires des informations, notamment relativement au suivi des actions réalisées,
+                    les acteurs publics compétents qui peuvent prendre en charge les dossiers de mal logement,
+                    et pour les seules dossiers de leur ressort :</p>
+                <ul>
+                    <li>Les agents autorisés au sein des directions départementales interministérielles ;</li>
+                    <li>Les agents autorisés au sein des Directions départementales de l’emploi, du travail et des solidarités ;</li>
+                    <li>Les agents autorisés au sein des Agences régionale de santé ;</li>
+                    <li>Les agents autorisés au sein des conseils départementaux ;</li>
+                    <li>Les agents autorisés au sein des communes et notamment des services communaux d’hygiène ;</li>
+                    <li>Les agents autorisés au sein des MSA ;</li>
+                    <li>Les agents autorisés au sein des CAF ;</li>
+                    <li>Les agents autorisés au sein des ADIL, mairies</li>
+                </ul>
+
+
                 <h2>Quelles mesures de sécurité mettons-nous en place ?</h2>
                 <p>Nous mettons en place plusieurs mesures pour sécuriser les données :</p>
                 <ul>
@@ -171,9 +192,11 @@
                             <td>France</td>
                             <td>Hébergement</td>
                             <td><a
-                                        href="https://scalingo.com/fr/contrat-gestion-traitements-donnees-personnelles"
-                                        target="_blank"
-                                        rel="noreferrer noopener">Lien vers le contrat
+                                    href="https://scalingo.com/fr/contrat-gestion-traitements-donnees-personnelles"
+                                    target="_blank"
+                                    rel="noreferrer noopener"
+                                    title="Contrat de gestion de traitement des données personnelles Scalingo - ouvre une nouvelle fenêtre"
+                                    >Contrat de gestion de traitement des données personnelles Scalingo
                                 </a>
                             </td>
                         </tr>
@@ -182,13 +205,16 @@
                             <td>Union européenne</td>
                             <td>Mesure d’audience</td>
                             <td><a href="https://fr.matomo.org/matomo-cloud-privacy-policy/"
-                                   target="_blank"
-                                   rel="noreferrer noopener">Lien vers la politique de confidentialité de Matomo</a>
+                                    target="_blank"
+                                    rel="noreferrer noopener"
+                                    title="Politique de confidentialité de Matomo - ouvre une nouvelle fenêtre"
+                                    >Politique de confidentialité de Matomo</a>
                             </td>
                         </tr>
                         </tbody>
                     </table>
                 </div>
+
                 <h2 id="gestion-cookies">Cookies</h2>
                 <p>Un cookie est un fichier déposé sur votre terminal lors de la visite d’un site. Il a pour but de
                     collecter des informations relatives à votre navigation et de vous adresser des services adaptés à
@@ -240,8 +266,10 @@
                 </p>
                 <p><strong>L’utilisation des cookies est facultative</strong> et peut être à tout moment bloquée par l'Internaute.
                     Pour cela, l'Internaute peut configurer son navigateur web.
-                    Pour apprendre à paramétrer l’utilisation des cookies en fonction de votre navigateur,
-                    rendez-vous sur <a href="https://www.cnil.fr/fr/cookies-les-outils-pour-les-maitriser" target="_blank" rel="noopener">le site de la CNIL en cliquant ici</a>.
+                    Pour apprendre à paramétrer l’utilisation des cookies en fonction de votre navigateur, rendez-vous sur 
+                    <a href="https://www.cnil.fr/fr/cookies-les-outils-pour-les-maitriser" target="_blank" rel="noopener"
+                        title="le site de la CNIL - ouvre une nouvelle fenêtre"
+                    >le site de la CNIL</a>.
                 </p>
                 <ul>
                     <li>Les données collectées ne sont pas recoupées avec d’autres traitements.</li>
@@ -252,10 +280,12 @@
                 <p>Pour aller plus loin, vous pouvez consulter les ﬁches proposées par la Commission Nationale de
                     l'Informatique et des Libertés (CNIL) :</p>
                 <ul>
-                    <li><a href="https://www.cnil.fr/fr/cookies-traceurs-que-dit-la-loi" target="_blank" rel="noreferrer noopener">Cookies &
-                            traceurs : que dit la loi ?</a></li>
-                    <li><a href="https://www.cnil.fr/fr/cookies-les-outils-pour-les-maitriser" target="_blank" rel="noreferrer noopener">Cookies :
-                            les outils pour les maîtriser</a></li>
+                    <li><a href="https://www.cnil.fr/fr/cookies-traceurs-que-dit-la-loi" target="_blank" rel="noreferrer noopener"
+                            title="Cookies & traceurs : que dit la loi ? - ouvre une nouvelle fenêtre"
+                            >Cookies & traceurs : que dit la loi ?</a></li>
+                    <li><a href="https://www.cnil.fr/fr/cookies-les-outils-pour-les-maitriser" target="_blank" rel="noreferrer noopener"
+                            title="Cookies : les outils pour les maîtriser - ouvre une nouvelle fenêtre"
+                            >Cookies : les outils pour les maîtriser</a></li>
                 </ul>
             </div>
         </section>
