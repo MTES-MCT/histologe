@@ -1198,6 +1198,11 @@
           "type": "SignalementFormCheckbox",
           "slug": "utilisation_service_ok_demande_logement",
           "label": "Je comprends que {{formStore.props.platformName}} ne permet pas de faire une demande de logement social et relogement."
+        },
+        {
+          "type": "SignalementFormCheckbox",
+          "slug": "utilisation_service_ok_cgu",
+          "label": "Je certifie avoir pris connaissance et accepter les&nbsp;<a href='/cgu' target='_blank' rel='noopener' title='conditions générales d&apos;utilisation - ouvre une nouvelle fenêtre'>conditions générales d'utilisation</a>&nbsp;et la&nbsp;<a href='/politique-de-confidentialite' target='_blank' rel='noopener' title='politique de confidentialité - ouvre une nouvelle fenêtre'>politique de confidentialité</a>&nbsp;du service {{formStore.props.platformName}}."
         }
       ],
       "footer": [

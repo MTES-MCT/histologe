@@ -12,6 +12,7 @@ class InformationProcedure
         private ?bool $utilisationServiceOkPrevenirBailleur = null,
         private ?bool $utilisationServiceOkVisite = null,
         private ?bool $utilisationServiceOkDemandeLogement = null,
+        private ?bool $utilisationServiceOkCgu = null,
     ) {
     }
 
@@ -99,6 +100,18 @@ class InformationProcedure
         return $this;
     }
 
+    public function getUtilisationServiceOkCgu(): ?bool
+    {
+        return $this->utilisationServiceOkCgu;
+    }
+
+    public function setUtilisationServiceOkCgu(?bool $utilisationServiceOkCgu): self
+    {
+        $this->utilisationServiceOkCgu = $utilisationServiceOkCgu;
+
+        return $this;
+    }
+
     public function toArray(): array
     {
         return [
@@ -109,6 +122,7 @@ class InformationProcedure
             'utilisation_service_ok_prevenir_bailleur' => $this->utilisationServiceOkPrevenirBailleur,
             'utilisation_service_ok_visite' => $this->utilisationServiceOkVisite,
             'utilisation_service_ok_demande_logement' => $this->utilisationServiceOkDemandeLogement,
+            'utilisation_service_ok_cgu' => $this->utilisationServiceOkCgu,
         ];
     }
 }

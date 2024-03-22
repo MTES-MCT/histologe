@@ -57,6 +57,7 @@
   "adresse_logement_adresse_detail_commune": "Marseille",
   "signalement_concerne_profil_detail_tiers": "bailleur",
   "utilisation_service_ok_signalement_tiers": 1,
+  "utilisation_service_ok_cgu": 1,
   "adresse_logement_complement_adresse_autre": "Euroméditerranée",
   "adresse_logement_complement_adresse_etage": "2",
   "adresse_logement_adresse_detail_geoloc_lat": 43.301929,

@@ -740,6 +740,11 @@
           "type": "SignalementFormCheckbox",
           "slug": "utilisation_service_ok_signalement_tiers",
           "label": "Je comprends que je dépose un signalement pour le compte d'un tiers. Je certifie avoir le droit de déposer un signalement pour le compte d'un tiers."
+        },
+        {
+          "type": "SignalementFormCheckbox",
+          "slug": "utilisation_service_ok_cgu",
+          "label": "Je certifie avoir pris connaissance et accepter les&nbsp;<a href='/cgu' target='_blank' rel='noopener' title='conditions générales d&apos;utilisation - ouvre une nouvelle fenêtre'>conditions générales d'utilisation</a>&nbsp;et la&nbsp;<a href='/politique-de-confidentialite' target='_blank' rel='noopener' title='politique de confidentialité - ouvre une nouvelle fenêtre'>politique de confidentialité</a>&nbsp;du service {{formStore.props.platformName}}."
         }
       ],
       "footer": [

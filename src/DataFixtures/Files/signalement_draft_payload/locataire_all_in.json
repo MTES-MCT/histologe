@@ -105,6 +105,7 @@
     "desordres_logement_securite_plomb_pieces": 1,
     "desordres_logement_securite_sol_glissant": 1,
     "utilisation_service_ok_prevenir_bailleur": 1,
+    "utilisation_service_ok_cgu": 1,
     "vos_coordonnees_occupant_tel_countrycode": "FR:33",
     "adresse_logement_complement_adresse_autre": "La porte rouge",
     "adresse_logement_complement_adresse_etage": "4",
