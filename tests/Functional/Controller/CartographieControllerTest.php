@@ -47,7 +47,7 @@ class CartographieControllerTest extends WebTestCase
     {
         /** @var UserRepository $userRepository */
         $userRepository = static::getContainer()->get(UserRepository::class);
-        $users = $userRepository->findAll();
+        $users = $userRepository->findBy(['statut' => User::STATUS_ACTIVE]);
         /** @var User $user */
         foreach ($users as $user) {
             if ($user->getTerritory()) {

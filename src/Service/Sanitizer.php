@@ -10,4 +10,9 @@ class Sanitizer
 
         return str_replace('</p>', '<br>', $textSanitized); // Replace the end
     }
+
+    public static function tagArchivedEmail(string $email): string
+    {
+        return $email.'.archived@'.(new \DateTimeImmutable())->format('YmdHi');
+    }
 }

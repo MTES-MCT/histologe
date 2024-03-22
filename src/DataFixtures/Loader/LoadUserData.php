@@ -7,6 +7,7 @@ use App\EventListener\UserCreatedListener;
 use App\Factory\UserFactory;
 use App\Repository\PartnerRepository;
 use App\Repository\TerritoryRepository;
+use App\Service\Sanitizer;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Common\DataFixtures\OrderedFixtureInterface;
 use Doctrine\ORM\EntityManagerInterface;
@@ -55,9 +56,14 @@ class LoadUserData extends Fixture implements OrderedFixtureInterface
             ->setRoles(json_decode($row['roles'], true))
             ->setStatut($row['statut'])
             ->setIsMailingActive($row['is_mailing_active'])
-            ->setEmail($row['email'])
             ->setPrenom($faker->firstName())
             ->setNom($faker->lastName());
+
+        if (User::STATUS_ARCHIVE === $row['statut']) {
+            $user->setEmail(Sanitizer::tagArchivedEmail($row['email']));
+        } else {
+            $user->setEmail($row['email']);
+        }
 
         if (isset($row['territory'])) {
             $user->setTerritory($this->territoryRepository->findOneBy(['name' => $row['territory']]));

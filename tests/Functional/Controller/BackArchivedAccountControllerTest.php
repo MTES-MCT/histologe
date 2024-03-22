@@ -118,7 +118,7 @@ class BackArchivedAccountControllerTest extends WebTestCase
 
         $accountEmail = 'user-01-09@histologe.fr';
         /** @var User $account */
-        $account = $userRepository->findOneBy(['email' => $accountEmail]);
+        $account = $userRepository->findArchivedUserByEmail($accountEmail);
         $route = $router->generate('back_account_reactiver', [
             'id' => $account->getId(),
         ]);
@@ -141,6 +141,55 @@ class BackArchivedAccountControllerTest extends WebTestCase
         $this->assertResponseRedirects('/bo/comptes-archives/');
     }
 
+    public function testAccountReactivateDuplicateEmail(): void
+    {
+        $faker = Factory::create();
+
+        $client = static::createClient();
+
+        /** @var UserRepository $userRepository */
+        $userRepository = static::getContainer()->get(UserRepository::class);
+        $user = $userRepository->findOneBy(['email' => 'admin-01@histologe.fr']);
+        $client->loginUser($user);
+
+        /** @var RouterInterface $router */
+        $router = self::getContainer()->get(RouterInterface::class);
+
+        /** @var TerritoryRepository $territoryRepository */
+        $territoryRepository = static::getContainer()->get(TerritoryRepository::class);
+        $territory = $territoryRepository->findOneBy(['zip' => '01']);
+
+        /** @var PartnerRepository $partnerRepository */
+        $partnerRepository = static::getContainer()->get(PartnerRepository::class);
+        $partner = $partnerRepository->findOneBy([
+            'territory' => $territory->getId(),
+            'isArchive' => '0',
+        ]);
+
+        $accountEmail = 'user-01-06@histologe.fr';
+        /** @var User $account */
+        $account = $userRepository->findArchivedUserByEmail($accountEmail);
+        $route = $router->generate('back_account_reactiver', [
+            'id' => $account->getId(),
+        ]);
+
+        $crawler = $client->request('GET', $route);
+
+        $buttonCrawlerNode = $crawler->selectButton('submit_btn_account');
+        $form = $buttonCrawlerNode->form();
+
+        $form['user[prenom]'] = $faker->name();
+        $form['user[nom]'] = $faker->lastName();
+        $form['user[email]'] = (string) $account->getEmail();
+        $form['user[territory]'] = (string) $territory->getId();
+        $form['user[partner]'] = (string) $partner->getId();
+        $client->submit($form);
+
+        /** @var User $account */
+        $account = $userRepository->findArchivedUserByEmail($accountEmail);
+        $this->assertEquals(USER::STATUS_ARCHIVE, $account->getStatut());
+    }
+
     public function testAccountReactivateError(): void
     {
         $faker = Factory::create();
@@ -157,7 +206,7 @@ class BackArchivedAccountControllerTest extends WebTestCase
 
         $accountEmail = 'admin-02@histologe.fr';
         /** @var User $account */
-        $account = $userRepository->findOneBy(['email' => $accountEmail]);
+        $account = $userRepository->findArchivedUserByEmail($accountEmail);
         $route = $router->generate('back_account_reactiver', [
             'id' => $account->getId(),
         ]);
@@ -175,7 +224,7 @@ class BackArchivedAccountControllerTest extends WebTestCase
         $client->submit($form);
 
         /** @var User $account */
-        $account = $userRepository->findOneBy(['email' => $accountEmail]);
+        $account = $userRepository->findArchivedUserByEmail($accountEmail);
         $this->assertEquals(USER::STATUS_ARCHIVE, $account->getStatut());
     }
 }
