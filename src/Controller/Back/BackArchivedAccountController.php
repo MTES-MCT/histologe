@@ -87,6 +87,7 @@ class BackArchivedAccountController extends AbstractController
         User $user,
         TerritoryRepository $territoryRepository,
         PartnerRepository $partnerRepository,
+        UserRepository $userRepository,
         EntityManagerInterface $entityManager,
         NotificationMailerRegistry $notificationMailerRegistry,
     ): Response {
@@ -101,8 +102,20 @@ class BackArchivedAccountController extends AbstractController
         ]);
         $form->handleRequest($request);
 
-        if ($form->isSubmitted() && $form->isValid()) {
+        $untaggedEmail = explode('.archived@', $user->getEmail())[0];
+        $userExist = $userRepository->findOneBy(['email' => $untaggedEmail]);
+        if ($userExist && !\in_array('ROLE_USAGER', $userExist->getRoles())) {
+            $this->addFlash('error', 'Un utilisateur existe déjà avec cette adresse e-mail.');
+        }
+
+        $partnerExist = $partnerRepository->findOneBy(['email' => $untaggedEmail]);
+        if ($partnerExist) {
+            $this->addFlash('error', 'Un partenaire existe déjà avec cette adresse e-mail.');
+        }
+
+        if (!$userExist && !$partnerExist && $form->isSubmitted() && $form->isValid()) {
             $user->setStatut(User::STATUS_ACTIVE);
+            $user->setEmail($untaggedEmail);
             $entityManager->flush();
             $this->addFlash('success', 'Réactivation du compte effectuée.');
 

@@ -6,6 +6,7 @@ use App\Entity\Enum\PartnerType;
 use App\Entity\Enum\Qualification;
 use App\Entity\Partner;
 use App\Repository\TerritoryRepository;
+use App\Service\Sanitizer;
 use App\Service\Token\TokenGeneratorInterface;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Common\DataFixtures\OrderedFixtureInterface;
@@ -33,9 +34,14 @@ class LoadPartnerData extends Fixture implements OrderedFixtureInterface
     {
         $partner = (new Partner())
             ->setNom($row['nom'])
-            ->setEmail($row['email'] ?? null)
             ->setIsArchive($row['is_archive'])
             ->setIsEsaboraActive($row['is_esabora_active'] ?? false);
+
+        if ($row['is_archive'] && null !== $row['email']) {
+            $partner->setEmail(Sanitizer::tagArchivedEmail($row['email']));
+        } else {
+            $partner->setEmail($row['email'] ?? null);
+        }
 
         if (isset($row['insee'])) {
             $partner->setInsee(json_decode($row['insee'], true));

@@ -106,6 +106,13 @@
                                         {% if 'back_expired_account_' in app.request.get('_route') %}aria-current="page"{% endif %}>Comptes expirés</a>
                                     </li>
                                 {% endif %}
+                                {% if is_granted('ROLE_ADMIN') %}
+                                    <li class="fr-sidemenu__item {% if 'back_archived_partner' in app.request.get('_route') %}fr-sidemenu__item--active{% endif %}">
+                                        <a class="fr-sidemenu__link" href="{{ path('back_archived_partner_index') }}"
+                                        target="_self"
+                                        {% if 'back_archived_partner' in app.request.get('_route') %}aria-current="page"{% endif %}>Partenaires archivés</a>
+                                    </li>
+                                {% endif %}
                             {% endif %}
                         </ul>
                     </div>

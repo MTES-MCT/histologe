@@ -99,6 +99,50 @@ class PartnerRepository extends ServiceEntityRepository
             ->getResult();
     }
 
+    public function findAllArchivedOrWithoutTerritory(
+        Territory|null $territory,
+        bool $isNoneTerritory,
+        ?string $filterTerms,
+        $page
+    ): Paginator {
+        $maxResult = Partner::MAX_LIST_PAGINATION;
+        $firstResult = ($page - 1) * $maxResult;
+        $queryBuilder = $this->createQueryBuilder('p');
+
+        if ($isNoneTerritory) {
+            if ($isNoneTerritory) {
+                $queryBuilder
+                    ->where('p.territory IS NULL');
+            }
+        } else {
+            $builtOrCondition = '';
+            if (empty($territory)) {
+                $builtOrCondition .= ' OR p.territory IS NULL';
+            }
+
+            $queryBuilder
+                ->where('p.isArchive = 1'.$builtOrCondition);
+
+            if (!empty($territory)) {
+                $queryBuilder
+                    ->andWhere('p.territory = :territory')
+                    ->setParameter('territory', $territory);
+            }
+        }
+
+        if (!empty($filterTerms)) {
+            $queryBuilder
+                ->andWhere('LOWER(p.nom) LIKE :usersterms
+                OR LOWER(p.email) LIKE :usersterms');
+            $queryBuilder
+                ->setParameter('usersterms', '%'.strtolower($filterTerms).'%');
+        }
+
+        $queryBuilder->setFirstResult($firstResult)->setMaxResults($maxResult);
+
+        return new Paginator($queryBuilder->getQuery(), false);
+    }
+
     public function findAutoAssignable(string $codeInsee, PartnerType $partnerType): ?array
     {
         if (empty($codeInsee)) {

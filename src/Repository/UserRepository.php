@@ -55,6 +55,19 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
             ->getResult();
     }
 
+    public function findArchivedUserByEmail(string $email): ?User
+    {
+        $queryBuilder = $this->createQueryBuilder('u');
+
+        return $queryBuilder
+            ->andWhere('u.email LIKE :email')
+            ->setParameter('email', '%'.$email.'%')
+            ->andWhere('u.statut LIKE :archived')
+            ->setParameter('archived', User::STATUS_ARCHIVE)
+            ->getQuery()
+            ->getOneOrNullResult();
+    }
+
     public function findActiveTerritoryAdmins(?Territory $territory, ?string $inseeOccupant): ?array
     {
         if (empty($territory)) {
