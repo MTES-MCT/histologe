@@ -23,6 +23,9 @@ class InterventionVisiteServiceHandler implements InterventionSISHHandlerInterfa
     ) {
     }
 
+    /**
+     * @throws \Exception
+     */
     public function handle(Affectation $affectation): void
     {
         $hasDateError = false;
