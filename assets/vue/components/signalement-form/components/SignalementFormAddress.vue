@@ -103,6 +103,8 @@ export default defineComponent({
       suggestions: [] as any[],
       formStore,
       isModalOpen: false,
+      // Avoids searching when an option is selected in the list
+      isSearchSkipped: false,
       modalLabel: '',
       modalDescription: ''
     }
@@ -111,6 +113,9 @@ export default defineComponent({
     watch(
       () => this.formStore.data[this.idAddress],
       (newValue: any) => {
+        if (this.isSearchSkipped) {
+          return
+        }
         clearTimeout(this.idFetchTimeout)
         this.idFetchTimeout = setTimeout(() => {
           if (newValue.length > 10) {
@@ -137,7 +142,9 @@ export default defineComponent({
       this.formStore.data[this.idSubscreen] = newValue
     },
     handleClickSuggestion (index: number) {
+      this.isSearchSkipped = true
       if (this.suggestions) {
+        this.formStore.data[this.idAddress] = this.suggestions[index].properties.label
         this.formStore.data[this.id] = this.suggestions[index].properties.label
         this.formStore.data[this.id + '_detail_numero'] = this.suggestions[index].properties.name
         this.formStore.data[this.id + '_detail_code_postal'] = this.suggestions[index].properties.postcode
@@ -174,6 +181,7 @@ export default defineComponent({
 
         this.formStore.data[this.id] = ''
       }
+      this.isSearchSkipped = false
     },
     getCodePostalFromQueryParam () {
       const queryString = window.location.search
