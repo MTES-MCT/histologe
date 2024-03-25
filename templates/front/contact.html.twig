@@ -1,13 +1,12 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}
-	{{ title }}
-{% endblock %}
+{% block title %}Contact{% endblock %}
 
 {% block body %}
 	<main>
+        {% include "breadcrumbs.html.twig" with { 'breadcrumbsLabel': 'Contact' } %}
 		<section class="fr-container">
-			<h1 class="fr-mt-5w">Contact</h1>
+			<h1 class="fr-mt-5w">Contacter {{ platform.name }}</h1>
 		</section>
 		<section class="fr-container">
 			<h2>Je souhaite signaler un problème de logement</h2>

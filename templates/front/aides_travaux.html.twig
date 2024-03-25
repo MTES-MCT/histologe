@@ -1,0 +1,535 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Les aides aux travaux pour le logement{% endblock %}
+
+{% block body %}
+    <main class="fr-container">
+        {% include "breadcrumbs.html.twig" with { 'breadcrumbsLabel': 'Aides aux travaux' } %}
+
+        <h1>Quelles aides pour faire des travaux dans mon logement ?</h1>
+
+        <p>
+            Vous souhaitez faire des travaux dans votre logement ?
+            Il existe des aides financières pour <strong>les locataires, les propriétaires occupants et les propriétaires bailleurs</strong>.
+            Ces aides concernent la rénovation énergétique, la mise en conformité aux normes de sécurité et de salubrité
+            et l’adaptation du logement à la perte d’autonomie.
+        </p>
+
+        <p>
+            Le type et montant des aides versées dépendent du type de logement, de votre commune de résidence et de vos ressources.
+            Certaines aides sont cumulables.
+            Retrouvez les informations sur les aides à la réalisations de travaux en fonction de leur type :
+        </p>
+
+        <div class="fr-grid-row fr-grid-row--gutters fr-mb-3v">
+            <div class="fr-col-12 fr-col-md-4">
+                <div class="fr-tile fr-tile--horizontal fr-tile--vertical@md fr-enlarge-link" id="tile-aides">
+                    <div class="fr-tile__body">
+                        <div class="fr-tile__content">
+                            <h3 class="fr-tile__title">
+                                <a href="#aides">Les aides</a>
+                            </h3>
+                        </div>
+                    </div>
+                    <div class="fr-tile__header">
+                        <div class="fr-tile__pictogram">
+                            <svg aria-hidden="true" class="fr-artwork" viewBox="0 0 80 80" width="80px" height="80px">
+                                <use class="fr-artwork-decorative" href="/build/dsfr/artwork/pictograms/document/contract.svg#artwork-decorative"></use>
+                                <use class="fr-artwork-minor" href="/build/dsfr/artwork/pictograms/document/contract.svg#artwork-minor"></use>
+                                <use class="fr-artwork-major" href="/build/dsfr/artwork/pictograms/document/contract.svg#artwork-major"></use>
+                            </svg>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="fr-col-12 fr-col-md-4">
+                <div class="fr-tile fr-tile--horizontal fr-tile--vertical@md fr-enlarge-link" id="tile-prets">
+                    <div class="fr-tile__body">
+                        <div class="fr-tile__content">
+                            <h3 class="fr-tile__title">
+                                <a href="#prets">Les prêts</a>
+                            </h3>
+                        </div>
+                    </div>
+                    <div class="fr-tile__header">
+                        <div class="fr-tile__pictogram">
+                            <svg aria-hidden="true" class="fr-artwork" viewBox="0 0 80 80" width="80px" height="80px">
+                                <use class="fr-artwork-decorative" href="/build/dsfr/artwork/pictograms/institutions/money.svg#artwork-decorative"></use>
+                                <use class="fr-artwork-minor" href="/build/dsfr/artwork/pictograms/institutions/money.svg#artwork-minor"></use>
+                                <use class="fr-artwork-major" href="/build/dsfr/artwork/pictograms/institutions/money.svg#artwork-major"></use>
+                            </svg>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="fr-col-12 fr-col-md-4">
+                <div class="fr-tile fr-tile--horizontal fr-tile--vertical@md fr-enlarge-link" id="tile-avantages-fiscaux">
+                    <div class="fr-tile__body">
+                        <div class="fr-tile__content">
+                            <h3 class="fr-tile__title">
+                                <a href="#avantages-fiscaux">Les avantages fiscaux</a>
+                            </h3>
+                        </div>
+                    </div>
+                    <div class="fr-tile__header">
+                        <div class="fr-tile__pictogram">
+                            <svg aria-hidden="true" class="fr-artwork" viewBox="0 0 80 80" width="80px" height="80px">
+                                <use class="fr-artwork-decorative" href="/build/dsfr/artwork/pictograms/buildings/city-hall.svg#artwork-decorative"></use>
+                                <use class="fr-artwork-minor" href="/build/dsfr/artwork/pictograms/buildings/city-hall.svg#artwork-minor"></use>
+                                <use class="fr-artwork-major" href="/build/dsfr/artwork/pictograms/buildings/city-hall.svg#artwork-major"></use>
+                            </svg>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <h2>Quelles aides pour mon profil ?</h2>
+
+        <p>
+            Les aides varient selon que vous êtes locataire, propriétaire occupant ou propriétaire bailleur :
+            <br>
+            - Vous êtes locataire si vous vivez dans un logement dont vous n'êtes pas propriétaire.
+            <br>
+            - Vous êtes propriétaire occupant si vous êtes propriétaire du logement dans lequel vous vivez.
+            <br>
+            - Vous êtes propriétaire bailleur si vous êtes propriétaire d’un logement que vous louez à quelqu’un d’autre.
+        </p>
+
+        <p>
+            Consultez le tableau ci-dessous pour connaître les aides existantes en fonction de votre profil.
+        </p>
+
+        <div class="fr-table fr-table--blue-ecume ">
+            <table>
+                <caption>Synthèse des aides aux travaux disponibles selon votre profil</caption>
+                <thead>
+                    <tr>
+                        <th scope="col">Type</th>
+                        <th scope="col">Locataire</th>
+                        <th scope="col">Propriétaire occupant</th>
+                        <th scope="col">Propriétaire bailleur</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <th scope="row">Aides</th>
+                        <td>
+                            <ul>
+                                <li>Les certificats d’économie d’énergie (CEE) “Standard”</li>
+                                <li>Ma Prime Adapt’</li>
+                                <li>La prime « Coup de pouce Chauffage »</li>
+                            </ul>
+                        </td>
+                        <td>
+                            <ul>
+                                <li>Les certificats d’économie d’énergie (CEE) “Standard”</li>
+                                <li>Ma Prime Rénov’</li>
+                                <li>Ma Prime Adapt’</li>
+                                <li>Ma Prime Logement Décent</li>
+                                <li>La prime « Coup de pouce Chauffage »</li>
+                                <li>La prime « Coup de pouce Pilotage connecté du chauffage pièce par pièce »</li>
+                                <li>La prime « Coup de pouce Rénovation performante d’une maison individuelle »</li>
+                                <li>Aide à l'insonorisation de votre logement proche d'un aéroport</li>
+                            </ul>
+                        </td>
+                        <td>
+                            <ul>
+                                <li>Ma Prime Rénov’</li>
+                                <li>Ma Prime Adapt’</li>
+                                <li>Ma Prime Logement Décent</li>
+                                <li>La prime « Coup de pouce Rénovation performante d’une maison individuelle »</li>
+                                <li>La prime « Coup de pouce Rénovation performante de bâtiment résidentiel collectif »</li>
+                                <li>Subvention de l’Agence nationale de l’habitat (Anah)</li>
+                            </ul>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th scope="row">Prêts</th>
+                        <td>
+                            Prêt de votre caisse d’allocation familiale
+                        </td>
+                        <td>
+                            <ul>
+                                <li>Éco-prêt à taux zéro</li>
+                                <li>Prêt de votre caisse d’allocation familiale</li>
+                            </ul>
+                        </td>
+                        <td>
+                            Éco-prêt à taux zéro
+                        </td>
+                    </tr>
+                    <tr>
+                        <th scope="row">Avantages fiscaux</th>
+                        <td>
+                            Crédit d’impôt pour des dépenses d'équipement conçu pour les personnes âgées ou handicapées
+                        </td>
+                        <td>
+                            Crédit d’impôt pour des dépenses d'équipement conçu pour les personnes âgées ou handicapées
+                        </td>
+                        <td>
+                            Loc’Avantages
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="fr-callout fr-icon-information-line">
+            <h3 class="fr-callout__title">Propriétaire occupant ou bailleur ? Estimez vos aides !</h3>
+            <p class="fr-callout__text">
+                Pour savoir à quelles aides vous avez droit, nous vous invitons à faire une simulation
+                sur le site France Rénov’ en cliquant sur le bouton ci-dessous.
+            </p>
+            <a href="https://france-renov.gouv.fr/aides/simulation#/" target="_blank" class="fr-btn" rel="noopener external"
+                title="Accéder au simulateur - ouvre une nouvelle fenêtre"
+                >Accéder au simulateurs</a>
+        </div>
+
+        <h2 id="aides">Les aides</h2>
+
+        <h3>Les certificats d’économie d’énergie (CEE) “Standard”</h3>
+
+        <p class="fr-badge fr-badge--success fr-badge--no-icon">Locataire</p>
+        <p class="fr-badge fr-badge--error fr-badge--no-icon">Propriétaire occupant</p>
+
+        <p class="fr-mt-5v">
+            Il s’agit d’une aide versée par les fournisseurs d’énergie pour les travaux d’économies d’énergie dans le logement.
+        </p>
+
+        <ul>
+            <li>
+                Le certificat d'économie d'énergie (CEE) standard concerne les travaux dit standards permettant 
+                d’économiser de l’énergie comme l’isolation ou l’installation d’un nouveau système de chauffage.
+            </li>
+            <li>Votre logement doit avoir au moins 2 ans.</li>
+            <li>Vous devez choisir une entreprise RGE (Reconnu Garant de l’Environnement) pour effectuer les travaux.</li>
+        </ul>
+
+        <p>
+            Pour en savoir plus, rendez-vous sur 
+            <a href="https://www.service-public.fr/particuliers/vosdroits/F35584" target="_blank" rel="noopener external"
+                title="le site du service public - ouvre une nouvelle fenêtre"
+                >le site du service public</a>.
+        </p>
+
+        <h3>MaPrimeRénov'</h3>
+
+        <p class="fr-badge fr-badge--error fr-badge--no-icon">Propriétaire occupant</p>
+        <p class="fr-badge fr-badge--new fr-badge--no-icon">Propriétaire bailleur</p>
+
+        <p class="fr-mt-5v">
+            MaPrimeRénov’ est une aide pour effectuer des travaux de rénovation énergétique dans votre logement.
+            Elle est attribuée sous conditions.
+        </p>
+
+        <ul>
+            <li>
+                Le parcours accompagné permet de faire une rénovation globale de votre logement pour gagner au 
+                minimum 2 classes sur le diagnostic performance énergétique (DPE).
+            </li>
+            <li>Le parcours par geste permet de bénéficier d’une aide pour des travaux plus ciblés.</li>
+            <li>Les aidées accordées varient en fonction de vos revenus.</li>
+        </ul>
+
+        <p>
+            Pour en savoir plus, rendez-vous sur 
+            <a href="https://france-renov.gouv.fr/aides/maprimerenov" target="_blank" rel="noopener external"
+                title="le site France Rénov' - ouvre une nouvelle fenêtre"
+                >le site France Rénov'</a>.
+        </p>
+
+        <div class="fr-callout fr-icon-information-line">
+            <p class="fr-callout__text">
+                Le saviez-vous ? Il existe une prime Rénov’ pour les copropriétés !
+                <br>
+                Pour en savoir plus, rendez-vous sur
+                <a href="https://www.anah.gouv.fr/action/aides#813-amplifier-la-rnovation-nergtique" target="_blank" rel="noopener external"
+                    title="le site de l’agence nationale de l’habitat (Anah) - ouvre une nouvelle fenêtre"
+                    >le site de l’agence nationale de l’habitat (Anah)</a>.
+            </p>
+        </div>
+
+        <h3>Ma Prime Logement Décent</h3>
+
+        <p class="fr-badge fr-badge--error fr-badge--no-icon">Propriétaire occupant</p>
+        <p class="fr-badge fr-badge--new fr-badge--no-icon">Propriétaire bailleur</p>
+
+        <p class="fr-mt-5v">
+            Ma Prime Logement Décent permet de financer des travaux de rénovation de logements indignes ou d’habitats dégradés.
+            Elle est accordée sous conditions.
+        </p>
+
+        <ul>
+            <li>Les travaux doivent permettre d’améliorer le confort et la sécurité du logement.</li>
+            <li>Si vous êtes propriétaire occupant, la prime est soumise à un plafond de ressources.</li>
+            <li>
+                Si vous êtes propriétaire bailleur, vous devez remplir les conditions du dispositif Loc’Avantages 
+                (voir plus bas) pour bénéficier de la prime.
+            </li>
+        </ul>
+
+        <p>
+            Pour en savoir plus, rendez-vous sur 
+            <a href="https://france-renov.gouv.fr/aides/ma-prime-logement-decent" target="_blank" rel="noopener external"
+                title="le site France Rénov' - ouvre une nouvelle fenêtre"
+                >le site France Rénov'</a>.
+        </p>
+
+        <h3>MaPrimeAdapt'</h3>
+
+        <p class="fr-badge fr-badge--success fr-badge--no-icon">Locataire</p>
+        <p class="fr-badge fr-badge--error fr-badge--no-icon">Propriétaire occupant</p>
+        <p class="fr-badge fr-badge--new fr-badge--no-icon">Propriétaire bailleur</p>
+
+        <p class="fr-mt-5v">
+            MaPrimeAdapt’ est une aide proposée par l’Agence nationale de l’habitat (Anah).
+            Elle permet de financer des travaux d’adaptation du logement à la perte d’autonomie (vieillissement et / ou handicap).
+        </p>
+
+        <ul>
+            <li>Vous bénéficiez d'un accompagnement par un accompagnateur ou une accompagnatrice assistant à maîtrise d’ouvrage (AMO).</li>
+            <li>Le financement des travaux se fait en fonction de vos ressources.</li>
+            <li>Vous choisissez vos artisans.</li>
+        </ul>
+
+        <p>
+            Pour en savoir plus, rendez-vous sur 
+            <a href="https://www.service-public.fr/particuliers/vosdroits/F35083" target="_blank" rel="noopener external"
+                title="le site du service public - ouvre une nouvelle fenêtre"
+                >le site du service public</a>.
+        </p>
+
+        <h3>La prime coup de pouce Chauffage</h3>
+
+        <p class="fr-badge fr-badge--success fr-badge--no-icon">Locataire</p>
+        <p class="fr-badge fr-badge--error fr-badge--no-icon">Propriétaire occupant</p>
+
+        <p class="fr-mt-5v">
+            Il s’agit d’une aide financière pour le remplacement d'une chaudière au charbon ou 
+            au fioul ou au gaz par une installation qui consomme moins d’énergie.
+        </p>
+
+        <ul>
+            <li>Elle concerne les propriétaires et locataires de maisons individuelles.</li>
+            <li>Si vous êtes locataire, vous devez avoir l’autorisation du propriétaire pour les travaux.</li>
+            <li>Le montant de la prime diffère en fonction des travaux à faire et de vos revenus.</li>
+        </ul>
+
+        <p>
+            Pour en savoir plus, rendez-vous sur 
+            <a href="https://www.service-public.fr/particuliers/vosdroits/F34421" target="_blank" rel="noopener external"
+                title="le site du service public - ouvre une nouvelle fenêtre"
+                >le site du service public</a>.
+        </p>
+
+        <h3>La prime « Coup de pouce Pilotage connecté du chauffage pièce par pièce »</h3>
+
+        <p class="fr-badge fr-badge--error fr-badge--no-icon">Propriétaire occupant</p>
+
+        <p class="fr-mt-5v">
+            La prime « Coup de pouce Pilotage connecté du chauffage pièce par pièce » permet de financer 
+            l’installation de thermostats programmables sur les chauffages pour diminuer la consommation d’énergie.
+        </p>
+
+        <p>
+            Pour en savoir plus, rendez-vous sur 
+            <a href="https://www.service-public.fr/particuliers/vosdroits/F37655" target="_blank" rel="noopener external"
+                title="le site du service public - ouvre une nouvelle fenêtre"
+                >le site du service public</a>.
+        </p>
+
+        <h3>La prime « Coup de pouce Rénovation performante d’une maison individuelle »</h3>
+
+        <p class="fr-badge fr-badge--error fr-badge--no-icon">Propriétaire occupant</p>
+        <p class="fr-badge fr-badge--new fr-badge--no-icon">Propriétaire bailleur</p>
+
+        <p class="fr-mt-5v">
+            Cette aide s’inscrit dans le cadre des certificats d’économie d’énergie (CEE). 
+            Elle permet de financer une rénovation globale visant à améliorer les performances énergétique du logement. 
+            Elle est attribuée sous certaines conditions.
+        </p>
+
+        <ul>
+            <li>Votre logement doit être une maison individuelle.</li>
+            <li>Votre maison doit avoir été construite il y a plus de 2 ans.</li>
+            <li>Le montant de la prime varie selon vos ressources.</li>
+        </ul>
+
+        <p>
+            Pour en savoir plus, rendez-vous sur 
+            <a href="https://www.service-public.fr/particuliers/vosdroits/F35755" target="_blank" rel="noopener external"
+                title="le site du service public - ouvre une nouvelle fenêtre"
+                >le site du service public</a>.
+        </p>
+
+        <div class="fr-callout fr-icon-information-line">
+            <p class="fr-callout__text">
+                Le saviez-vous ?
+                La prime « Coup de pouce Rénovation performante de bâtiment résidentiel collectif » est faite pour les copropriétés !
+                Pour en savoir plus, rendez-vous sur le site du service public.
+                <br>
+                Pour en savoir plus, rendez-vous sur
+                <a href="https://www.service-public.fr/particuliers/vosdroits/F35779" target="_blank" rel="noopener external"
+                    title="le site du service public - ouvre une nouvelle fenêtre"
+                    >le site du service public</a>.
+            </p>
+        </div>
+
+        <h3>Aide à l'insonorisation de votre logement proche d'un aéroport</h3>
+
+        <p class="fr-badge fr-badge--error fr-badge--no-icon">Propriétaire occupant</p>
+
+        <p class="fr-mt-5v">
+            Si vous vivez à côté d’un aéroport, vous pouvez bénéficier d’une aide pour insonoriser votre logement, sous certaines conditions.
+        </p>
+
+        <ul>
+            <li>Vous devez vivre à côté d’un des 12 principaux aéroports de France.</li>
+            <li>Les aides varient selon que vous vivez en appartement ou dans une maison.</li>
+            <li>L’aide est versée par l’exploitant de l’aéroport, à la fin des travaux.</li>
+        </ul>
+
+        <p>
+            Pour en savoir plus, rendez-vous sur 
+            <a href="https://www.service-public.fr/particuliers/vosdroits/F1702" target="_blank" rel="noopener external"
+                title="le site du service public - ouvre une nouvelle fenêtre"
+                >le site du service public</a>.
+        </p>
+
+        <h3>Subvention de l’Agence nationale de l’habitat (Anah)</h3>
+
+        <p class="fr-badge fr-badge--new fr-badge--no-icon">Propriétaire bailleur</p>
+
+        <p class="fr-mt-5v">
+            L’Agence nationale de l’habitat (Anah) peut subventionner vos travaux.
+            Pour cela, il faut remplir une demande de subvention (Cerfa n° 12709*07) et la transmettre à l’Anah.
+            Cette aide concerne :
+        </p>
+
+        <ul>
+            <li>les travaux lourds pour les logements sans confort de base (sanitaires, chauffage, etc.) ou très dégradés ;</li>
+            <li>les travaux de rénovation énergétique ;</li>
+            <li>les travaux de mise en conformité aux normes de sécurité et de salubrité ;</li>
+            <li>les travaux d’adaptation à la perte d’autonomie (vieillissement, handicap).</li>
+        </ul>
+
+        <p>
+            Une fois la demande de subvention envoyée, l’Anah étudie chaque dossier et fait parvenir sa décision par courrier.
+        </p>
+
+        <p>
+            Pour accéder au formulaire et trouver votre agence Anah, rendez-vous sur
+            <a href="https://www.service-public.fr/particuliers/vosdroits/R2466" target="_blank" rel="noopener external"
+                title="le site du service public - ouvre une nouvelle fenêtre"
+                >le site du service public</a>.
+        </p>
+
+        <h2 id="prets">Les prêts</h2>
+
+        <h3>Éco-prêt à taux zéro (Éco-PTZ)</h3>
+
+        <p class="fr-badge fr-badge--error fr-badge--no-icon">Propriétaire occupant</p>
+        <p class="fr-badge fr-badge--new fr-badge--no-icon">Propriétaire bailleur</p>
+
+        <p class="fr-mt-5v">
+            L’éco-prêt à taux zéro (Éco-PTZ) est un prêt sans intérêts délivrés par certaines banques, pour réaliser certains types de travaux :
+        </p>
+
+        <ul>
+            <li>Les travaux ponctuels permettant d’améliorer la performance énergétique ;</li>
+            <li>La rénovation globale pour atteindre une performance énergétique minimale ;</li>
+            <li>La réhabilitation de l’installation d’assainissement non collectif.</li>
+        </ul>
+
+        <p>
+            Pour en savoir plus, rendez-vous sur 
+            <a href="https://www.service-public.fr/particuliers/vosdroits/F19905" target="_blank" rel="noopener external"
+                title="le site du service public - ouvre une nouvelle fenêtre"
+                >le site du service public</a>.
+        </p>
+
+        <div class="fr-notice fr-notice--info fr-mb-5v">
+            <div class="fr-container">
+                <div class="fr-notice__body">
+                    <p class="fr-notice__title">
+                    La loi de finances pour 2024 prévoit des modifications concernant l’éco-prêt à taux zéro.
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <h3>Le prêt de votre caisse d'allocations familiales (CAF)</h3>
+
+        <p class="fr-badge fr-badge--success fr-badge--no-icon">Locataire</p>
+        <p class="fr-badge fr-badge--error fr-badge--no-icon">Propriétaire occupant</p>
+
+        <p class="fr-mt-5v">
+            Votre caisse d’allocations familiales (CAF) peut vous accorder un prêt à l’amélioration de l’habitat, sous certaines conditions.
+        </p>
+
+        <ul>
+            <li>Les travaux doivent concerner votre résidence principale.</li>
+            <li>Il finance les travaux de rénovation ou d’isolation thermique.</li>
+            <li>Vous devez être bénéficiaire d’une prestation familiale.</li>
+        </ul>
+
+        <p>
+            Pour en savoir plus, rendez-vous sur 
+            <a href="https://www.service-public.fr/particuliers/vosdroits/F1616" target="_blank" rel="noopener external"
+                title="le site du service public - ouvre une nouvelle fenêtre"
+                >le site du service public</a>.
+        </p>
+
+        <h2 id="avantages-fiscaux">Les avantages fiscaux</h2>
+
+        <h3>Le crédit d’impôt pour des dépenses d'équipement conçu pour les personnes âgées ou handicapées</h3>
+
+        <p class="fr-badge fr-badge--success fr-badge--no-icon">Locataire</p>
+        <p class="fr-badge fr-badge--error fr-badge--no-icon">Propriétaire occupant</p>
+
+        <p class="fr-mt-5v">
+            Si vous réalisez des travaux pour adapter votre logement à la perte d’autonomie, 
+            vous pouvez bénéficier d’un crédit d’impôt, sous certaines conditions.
+        </p>
+
+        <ul>
+            <li>Les travaux sont réalisés dans votre résidence principale.</li>
+            <li>Il s’agit de travaux d’adaptation du logement à la perte d’autonomie ou au handicap.</li>
+            <li>
+                Vous devez avoir fait installer dans votre logement un ou plusieurs équipements sanitaires 
+                ou équipements de sécurité et d’accessibilité.
+            </li>
+        </ul>
+
+        <p>
+            Pour en savoir plus, rendez-vous sur 
+            <a href="https://www.service-public.fr/particuliers/vosdroits/F10752" target="_blank" rel="noopener external"
+                title="le site du service public - ouvre une nouvelle fenêtre"
+                >le site du service public</a>.
+        </p>
+
+        <h3>Loc’Avantages</h3>
+
+        <p class="fr-badge fr-badge--new fr-badge--no-icon">Propriétaire bailleur</p>
+
+        <p class="fr-mt-5v">
+            Le dispositif Loc’Avantages permet aux propriétaires bailleurs de bénéficier 
+            d’une réduction d’impôt si leur logement est loué à un loyer abordable, à un foyer aux ressources modestes.
+        </p>
+
+        <ul>
+            <li>Vous devez avoir signé une convention avec l’Agence nationale de l’habitat (Anah).</li>
+            <li>La réduction d’impôt dépend du montant du loyer et des ressources des locataires.</li>
+            <li>Le logement loué ne doit pas être une passoire thermique.</li>
+        </ul>
+
+        <p>
+            Pour en savoir plus, rendez-vous sur 
+            <a href="https://france-renov.gouv.fr/aides/loc-avantages" target="_blank" rel="noopener external"
+                title="le site France Rénov' - ouvre une nouvelle fenêtre"
+                >le site France Rénov'</a>.
+        </p>
+
+    </main>
+{% endblock %}

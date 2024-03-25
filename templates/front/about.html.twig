@@ -1,98 +1,128 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}{{ title }}{% endblock %}
+{% block title %}Qui sommes-nous ?{% endblock %}
 
 {% block body %}
     <main class="fr-container--fluid">
-        <header class="fr-background-contrast--blue-france fr-py-5w fr-py-md-10w">
+        <header class="fr-background-contrast--blue-france fr-py-1v">
+            {% include "breadcrumbs.html.twig" with { 'breadcrumbsLabel': 'Qui sommes-nous ?' } %}
             <div class="fr-container fr-grid-row fr-grid-row--middle">
-                <div class="fr-col-12 fr-col-md-8">
+                <div class="fr-col-12">
                     <h1>Qui sommes-nous ?</h1>
-                    <h2 class="fr-h6 fr-text--xx-light">
+                    <p>
                         {{ platform.name }} est un service public permettant de faciliter la détection, le signalement,
                         l’évaluation, l’envoi d’alertes et le suivi des logements pour accélérer la prise en charge du
                         “mal logement”.
-                        <br>
-                        <br>
+                    </p>
+                    <p>
                         {{ platform.name }} est une start-up d’Etat portée par le 
-                        <a href="https://www.ecologie.gouv.fr/" target="_blank" rel="noopener">
-                        Ministère de la Transition Ecologique et de la Cohésion des territoires
-                        </a>
-                        et accompagnée par le dispositif
-                        <a href="https://beta.gouv.fr">Beta.gouv.fr</a>.
+                        <a href="https://www.ecologie.gouv.fr/" title="Ministère de la Transition Ecologique - ouvre une nouvelle fenêtre" target="_blank" rel="noopener external"
+                            >Ministère de la Transition Ecologique</a>
+                        et de la Cohésion des territoires et accompagnée par le dispositif
+                        <a href="https://beta.gouv.fr" title="beta.gouv.fr - ouvre une nouvelle fenêtre" target="_blank" rel="noopener external"
+                            >Beta.gouv.fr</a>.
                         <br>
-                        Après une expérimentation réussie, la plateforme est aujourd'hui déployée sur plusieurs
-                        territoires partout en France.
-                    </h2>
-                </div>
-                <div class="fr-hidden fr-unhidden-md fr-col-md-4 fr-text--center">
-                    <figure>
-                        <img src="{{ asset('img/' ~ platform.logosvg) }}" alt="Logo {{ platform.name }}" width="240">
-                    </figure>
+                        Après une expérimentation réussie, la plateforme est aujourd'hui déployée sur plus de la moitié du territoire
+                        en France métropolitaine et dans les départements d'outre-mer.
+                    </p>
                 </div>
             </div>
         </header>
         
-        <h2 class="fr-mt-5w fr-text--center">Une solution reconnue !</h2>
+        <div class="fr-container">
+            <h2 class="fr-mt-5w">Une solution reconnue</h2>
 
-        <div class="fr-container fr-grid-row fr-py-5w">
-            <div class="fr-col-12 fr-col-md-6 fr-p-1v">
-                <div class="fr-grid-row fr-grid-row--gutters">
-                    <div class="fr-col-4">
-                        <img src="{{ asset('img/about/logo-territoire-innovant.png') }}" alt="Label territoire innovant" class="img-mw-100">
-                    </div>
-                    <div class="fr-col-8">
-                        <p>
-                            <strong>Lauréat du label Territoire Innovant (interconnectés 2021)</strong>
-                            <br>
-                            Le label « Territoire Innovant » est décerné aux collectivités qui ont mis en
-                            œuvre des initiatives marquantes en termes d’usages ou de services, ce label se
-                            différencie en reposant sur des valeurs comme critères d’attribution.
-                        </p>
-                    </div>
-                </div>
-            </div>
-            <div class="fr-col-12 fr-col-md-6 fr-p-1v">
-                <div class="fr-grid-row fr-grid-row--gutters">
-                    <div class="fr-col-4">
-                        <img src="{{ asset('img/about/logo-exclusion-energetique.png') }}" alt="Lauréat Stop Exclusion énergétique" class="img-mw-100">
-                    </div>
-                    <div class="fr-col-8">
-                        <p>
-                            <strong>Lauréat National de Stop Exclusion énergétique</strong>
-                            <br>
-                            Ce prix récompense les solutions qui améliorent la qualité des
-                            logements des précaires (énergétique ou sanitaire).
-                        </p>
+            <div class="fr-grid-row fr-py-5w">
+                <div class="fr-col-12 fr-col-md-6 fr-p-1v">
+                    <div class="fr-grid-row fr-grid-row--gutters">
+                        <div class="fr-col-4 fr-col-md-3">
+                            <div class="fr-tile__header">
+                                <div class="fr-tile__pictogram">
+                                    <svg aria-hidden="true" class="fr-artwork" viewBox="0 0 80 80" width="80px" height="80px">
+                                        <use class="fr-artwork-decorative" href="/build/dsfr/artwork/pictograms/system/success.svg#artwork-decorative"></use>
+                                        <use class="fr-artwork-minor" href="/build/dsfr/artwork/pictograms/system/success.svg#artwork-minor"></use>
+                                        <use class="fr-artwork-major" href="/build/dsfr/artwork/pictograms/system/success.svg#artwork-major"></use>
+                                    </svg>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="fr-col-8 fr-col-md-9">
+                            <p>
+                                <strong>Lauréat du label Territoire Innovant (interconnectés 2021)</strong>
+                                <br>
+                                Le label « Territoire Innovant » est décerné aux collectivités qui ont mis en
+                                œuvre des initiatives marquantes en termes d’usages ou de services, ce label se
+                                différencie en reposant sur des valeurs comme critères d’attribution.
+                            </p>
+                        </div>
                     </div>
                 </div>
-            </div>
-            <div class="fr-col-12 fr-col-md-6 fr-p-1v">
-                <div class="fr-grid-row fr-grid-row--gutters">
-                    <div class="fr-col-4">
-                        <img src="{{ asset('img/about/logo-prix-gazette-commues.png') }}" alt="Prix Territorial de la Gazette des Communes" class="img-mw-100">
-                    </div>
-                    <div class="fr-col-8">
-                        <p>
-                            <strong>Prix Territorial 2020 de la Gazette des Communes</strong>
-                            <br>
-                            Ce prix récompense les projets locaux impliquant plusieurs métiers et services.
-                        </p>
+                <div class="fr-col-12 fr-col-md-6 fr-p-1v">
+                    <div class="fr-grid-row fr-grid-row--gutters">
+                        <div class="fr-col-4 fr-col-md-3">
+                            <div class="fr-tile__header">
+                                <div class="fr-tile__pictogram">
+                                    <svg aria-hidden="true" class="fr-artwork" viewBox="0 0 80 80" width="80px" height="80px">
+                                        <use class="fr-artwork-decorative" href="/build/dsfr/artwork/pictograms/system/success.svg#artwork-decorative"></use>
+                                        <use class="fr-artwork-minor" href="/build/dsfr/artwork/pictograms/system/success.svg#artwork-minor"></use>
+                                        <use class="fr-artwork-major" href="/build/dsfr/artwork/pictograms/system/success.svg#artwork-major"></use>
+                                    </svg>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="fr-col-8 fr-col-md-9">
+                            <p>
+                                <strong>Lauréat National de Stop Exclusion énergétique</strong>
+                                <br>
+                                Ce prix récompense les solutions qui améliorent la qualité des
+                                logements des précaires (énergétique ou sanitaire).
+                            </p>
+                        </div>
                     </div>
                 </div>
-            </div>
-            <div class="fr-col-12 fr-col-md-6 fr-p-1v">
-                <div class="fr-grid-row fr-grid-row--gutters">
-                    <div class="fr-col-4">
-                        <img src="{{ asset('img/about/logo-prix-initiatives-locales.png') }}" alt="Prix de la grande enquête Initiatives Locales 2020" class="img-mw-100">
+                <div class="fr-col-12 fr-col-md-6 fr-p-1v">
+                    <div class="fr-grid-row fr-grid-row--gutters">
+                        <div class="fr-col-4 fr-col-md-3">
+                            <div class="fr-tile__header">
+                                <div class="fr-tile__pictogram">
+                                    <svg aria-hidden="true" class="fr-artwork" viewBox="0 0 80 80" width="80px" height="80px">
+                                        <use class="fr-artwork-decorative" href="/build/dsfr/artwork/pictograms/system/success.svg#artwork-decorative"></use>
+                                        <use class="fr-artwork-minor" href="/build/dsfr/artwork/pictograms/system/success.svg#artwork-minor"></use>
+                                        <use class="fr-artwork-major" href="/build/dsfr/artwork/pictograms/system/success.svg#artwork-major"></use>
+                                    </svg>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="fr-col-8 fr-col-md-9">
+                            <p>
+                                <strong>Prix Territorial 2020 de la Gazette des Communes</strong>
+                                <br>
+                                Ce prix récompense les projets locaux impliquant plusieurs métiers et services.
+                            </p>
+                        </div>
                     </div>
-                    <div class="fr-col-8">
-                        <p>
-                            <strong>Prix de la grande enquête Initiatives Locales 2020</strong>
-                            <br>
-                            {{ platform.name }} a été primé dans la catégorie "Cadre de vie"
-                            parmi plus de 400 candidatures.
-                        </p>
+                </div>
+                <div class="fr-col-12 fr-col-md-6 fr-p-1v">
+                    <div class="fr-grid-row fr-grid-row--gutters">
+                        <div class="fr-col-4 fr-col-md-3">
+                            <div class="fr-tile__header">
+                                <div class="fr-tile__pictogram">
+                                    <svg aria-hidden="true" class="fr-artwork" viewBox="0 0 80 80" width="80px" height="80px">
+                                        <use class="fr-artwork-decorative" href="/build/dsfr/artwork/pictograms/system/success.svg#artwork-decorative"></use>
+                                        <use class="fr-artwork-minor" href="/build/dsfr/artwork/pictograms/system/success.svg#artwork-minor"></use>
+                                        <use class="fr-artwork-major" href="/build/dsfr/artwork/pictograms/system/success.svg#artwork-major"></use>
+                                    </svg>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="fr-col-8 fr-col-md-9">
+                            <p>
+                                <strong>Prix de la grande enquête Initiatives Locales 2020</strong>
+                                <br>
+                                {{ platform.name }} a été primé dans la catégorie "Cadre de vie"
+                                parmi plus de 400 candidatures.
+                            </p>
+                        </div>
                     </div>
                 </div>
             </div>

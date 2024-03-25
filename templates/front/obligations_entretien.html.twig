@@ -1,0 +1,389 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Logement : les obligations des propriétaires et locataire{% endblock %}
+
+{% block body %}
+    <main class="fr-container">
+        {% include "breadcrumbs.html.twig" with { 'breadcrumbsLabel': 'Entretien du logement : les obligations' } %}
+
+        <h1>Entretien du logement : quelles obligations pour les propriétaires et les locataires ?</h1>
+
+        <p>
+            La 
+            <a href="https://www.legifrance.gouv.fr/loda/id/JORFTEXT000000509310/2025-01-01/" target="_blank" rel="noopener external"
+                title="loi n°89-462 du 6 juillet 1989 tendant à améliorer les rapports locatifs - ouvre une nouvelle fenêtre"
+                >loi n°89-462 du 6 juillet 1989 tendant à améliorer les rapports locatifs</a>
+            dispose quelles réparations incombent au locataire d’un logement et lesquelles incombent au propriétaire. 
+        </p>
+
+        <p>
+            D’après la loi, les locataires prennent en charge :
+        </p>
+
+        <ul>
+            <li>Les petites réparations et l’entretien courant du logement</li>
+            <li>Les réparations liées à un usage anormal du logement</li>
+        </ul>
+
+        <p>
+            De leur côté, les propriétaires prennent en charge :
+        </p>
+
+        <ul>
+            <li>Les réparations liées au vieillissement du logement</li>
+            <li>Les réparations liées à un vice de construction</li>
+            <li>Les réparations suite à un cas de force majeure comme une inondation ou une tempête</li>
+            <li>Dans les locations meublées, les réparations ou le remplacement d’équipements défaillants ou vétustes</li>
+        </ul>
+
+        <div class="fr-callout fr-icon-information-line">
+            <p class="fr-callout__text">
+                Le saviez-vous ?
+                Le bail doit contenir une notice d’information qui rappelle les obligations du bailleur
+                et du locataire concernant l’entretien et les réparations du logement !
+            </p>
+        </div>
+
+        <h2>Propriétaire, locataire : qui répare quoi ?</h2>
+
+        <p>
+            Propriétaire, locataire : qui répare quoi ?
+        </p>
+
+        <div class="fr-grid-row fr-grid-row--gutters fr-mb-3v">
+            <div class="fr-col-12 fr-col-md-4">
+                <div class="fr-tile fr-tile--horizontal fr-tile--vertical@md fr-enlarge-link" id="tile-entree">
+                    <div class="fr-tile__body">
+                        <div class="fr-tile__content">
+                            <h3 class="fr-tile__title">
+                                <a href="#entree">L'entrée</a>
+                            </h3>
+                        </div>
+                    </div>
+                    <div class="fr-tile__header">
+                        <div class="fr-tile__pictogram">
+                            <img src="{{ asset('img/picto-dsfr/organisation-logement.svg') }}" class="img-mw-100">
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="fr-col-12 fr-col-md-4">
+                <div class="fr-tile fr-tile--horizontal fr-tile--vertical@md fr-enlarge-link" id="tile-salon-chambres">
+                    <div class="fr-tile__body">
+                        <div class="fr-tile__content">
+                            <h3 class="fr-tile__title">
+                                <a href="#salon-chambres">Le salon et les chambres</a>
+                            </h3>
+                        </div>
+                    </div>
+                    <div class="fr-tile__header">
+                        <div class="fr-tile__pictogram">
+                            <img src="{{ asset('img/picto-dsfr/salon.svg') }}" class="img-mw-100">
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="fr-col-12 fr-col-md-4">
+                <div class="fr-tile fr-tile--horizontal fr-tile--vertical@md fr-enlarge-link" id="tile-cuisine">
+                    <div class="fr-tile__body">
+                        <div class="fr-tile__content">
+                            <h3 class="fr-tile__title">
+                                <a href="#cuisine">La cuisine</a>
+                            </h3>
+                        </div>
+                    </div>
+                    <div class="fr-tile__header">
+                        <div class="fr-tile__pictogram">
+                            <img src="{{ asset('img/picto-dsfr/cuisine.svg') }}" class="img-mw-100">
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="fr-col-12 fr-col-md-4">
+                <div class="fr-tile fr-tile--horizontal fr-tile--vertical@md fr-enlarge-link" id="tile-wc-sdb">
+                    <div class="fr-tile__body">
+                        <div class="fr-tile__content">
+                            <h3 class="fr-tile__title">
+                                <a href="#wc-sdb">Les WC et la salle de bain</a>
+                            </h3>
+                        </div>
+                    </div>
+                    <div class="fr-tile__header">
+                        <div class="fr-tile__pictogram">
+                            <img src="{{ asset('img/picto-dsfr/sdb-wc.svg') }}" class="img-mw-100">
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="fr-col-12 fr-col-md-4">
+                <div class="fr-tile fr-tile--horizontal fr-tile--vertical@md fr-enlarge-link" id="tile-autres-equipements">
+                    <div class="fr-tile__body">
+                        <div class="fr-tile__content">
+                            <h3 class="fr-tile__title">
+                                <a href="#autres-equipements">Les autres équipements</a>
+                            </h3>
+                        </div>
+                    </div>
+                    <div class="fr-tile__header">
+                        <div class="fr-tile__pictogram">
+                            <img src="{{ asset('img/picto-dsfr/electricite.svg') }}" class="img-mw-100">
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="fr-col-12 fr-col-md-4">
+                <div class="fr-tile fr-tile--horizontal fr-tile--vertical@md fr-enlarge-link" id="tile-exterieur">
+                    <div class="fr-tile__body">
+                        <div class="fr-tile__content">
+                            <h3 class="fr-tile__title">
+                                <a href="#exterieur">L'extérieur du logement</a>
+                            </h3>
+                        </div>
+                    </div>
+                    <div class="fr-tile__header">
+                        <div class="fr-tile__pictogram">
+                            <svg aria-hidden="true" class="fr-artwork" viewBox="0 0 80 80" width="80px" height="80px">
+                                <use class="fr-artwork-decorative" href="/build/dsfr/artwork/pictograms/environment/tree.svg#artwork-decorative"></use>
+                                <use class="fr-artwork-minor" href="/build/dsfr/artwork/pictograms/environment/tree.svg#artwork-minor"></use>
+                                <use class="fr-artwork-major" href="/build/dsfr/artwork/pictograms/environment/tree.svg#artwork-major"></use>
+                            </svg>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <h3 id="entree">L'entrée</h3>
+
+        <p>
+            Dans l’entrée, le <strong>locataire</strong> doit s’occuper de :
+        </p>
+
+        <ul>
+            <li>L’interphone en cas de dégradation</li>
+            <li>La porte : graissage des gonds, entretien et remplacement de la poignée</li>
+            <li>Les serrures et canons : graissage et remplacement des petites pièces</li>
+            <li>Les clés et badges : remplacement</li>
+            <li>Le sol : entretien et pose de raccords</li>
+            <li>Le plafond et les murs : propreté, raccords de peinture et rebouchage des trous</li>
+            <li>Les placards : remplacement des tablettes, des boutons ou poignées de portes</li>
+            <li>Les radiateurs : entretien</li>
+        </ul>
+
+        <p>
+            Dans l’entrée, le <strong>propriétaire</strong> prend en charge les réparations de :
+        </p>
+
+        <ul>
+            <li>La porte d’entrée : remplacement (sauf en cas de dégradation)</li>
+            <li>Les radiateurs : remplacement</li>
+        </ul>
+
+        <h3 id="salon-chambres">Le salon et les chambres</h3>
+
+        <p>
+            Dans les pièces à vivre (salon et chambres), le <strong>locataire</strong> s’occupe de :
+        </p>
+
+        <ul>
+            <li>Les radiateurs : entretien</li>
+            <li>
+                Les fenêtres : entretien des poignées, graissage, nettoyage de la grille 
+                d’entrée d’air, remplacement des vitres cassées, des joints et mastics vétustes
+            </li>
+            <li>Les volets et stores : graissage et entretien du mécanisme de commande</li>
+            <li>Les placards : remplacement des tablettes, des boutons ou poignées de portes</li>
+            <li>Le sol : entretien et pose de raccords</li>
+            <li>Le plafond et les murs : propreté, raccords de peinture et rebouchage des trous</li>
+        </ul>
+
+        <p>
+            Dans les pièces à vivre (salon et chambres), le <strong>propriétaire</strong> prend en charge les réparations de :
+        </p>
+
+        <ul>
+            <li>Les fenêtres : remplacement</li>
+            <li>Les radiateurs : remplacement</li>
+        </ul>
+
+        <h3 id="cuisine">La cuisine</h3>
+
+        <p>
+            Dans la cuisine, le <strong>locataire</strong> doit s’occuper de :
+        </p>
+
+        <ul>
+            <li>La grille de ventilation et VMC : nettoyage</li>
+            <li>
+                La chaudière : nettoyage de la grille, ramonage du conduit, 
+                entretien annuel par un professionnel, remplacement tétine gaz
+            </li>
+            <li>Le gaz : remplacement du flexible, entretien courant des robinets, siphons et ouverture d’aération</li>
+            <li>L’évacuation / arrivée d’eau : débouchage, entretien et remplacement des joints et colliers</li>
+            <li>L’évier : remplacement des joints silicone et nettoyage du calcaire</li>
+            <li>La robinetterie : remplacement des joints, clapets et presse-étoupe</li>
+            <li>Le sol : entretien et pose de raccords</li>
+            <li>Le plafond et les murs : propreté, raccords de peinture et rebouchage des trous</li>
+        </ul>
+
+        <p>
+            Dans la cuisine, le <strong>propriétaire</strong> prend en charge les réparations de :
+        </p>
+
+        <ul>
+            <li>La chaudière : remplacement</li>
+            <li>La colonne d’eau usée : remplacement</li>
+            <li>Les fenêtres : remplacement</li>
+            <li>Le conduit d’alimentation d’eau : remplacement</li>
+        </ul>
+
+        <div class="fr-callout fr-icon-information-line">
+            <p class="fr-callout__text">
+                Le saviez-vous ?
+                C'est au locataire de s'occuper de l'entretien de la chaudière individuel une fois par an !
+                Pour cela, faites appel à un professionnel.
+            </p>
+        </div>
+
+        <h3 id="wc-sdb">Les WC et la salle de bain</h3>
+
+        <p>
+            Dans les sanitaires (WC et salle de bain), le <strong>locataire</strong> s’occupe de :
+        </p>
+
+        <ul>
+            <li>La grille de ventilation et VMC : nettoyage</li>
+            <li>La porte de la gaine technique : nettoyage</li>
+            <li>Les WC : remplacement des joints et fixations sol, débouchage des évacuations</li>
+            <li>Les évacuation d’eau : débouchage, entretien et remplacement des joints et colliers</li>
+            <li>La douche et la baignoire : remplacement des flexibles et des joints silicone</li>
+            <li>Le lavabo : remplacement des joints silicone et nettoyage du calcaire</li>
+            <li>La robinetterie : remplacement des joints, clapets et presse-étoupe</li>
+            <li>Le sol : entretien et pose de raccords</li>
+            <li>Le plafond et les murs : propreté, raccords de peinture et rebouchage des trous</li>
+        </ul>
+
+        <p>
+            Dans les sanitaires (WC et salle de bain), le <strong>propriétaire</strong> prend en charge :
+        </p>
+
+        <ul>
+            <li>Le ballon électrique : remplacement et détartrage</li>
+            <li>La colonne d’eau usée : remplacement</li>
+            <li>Le conduit d’alimentation d’eau : remplacement</li>
+        </ul>
+
+        <h3 id="autres-equipements">Les autres équipements</h3>
+
+        <p>
+            Le <strong>locataire</strong> prend en charge l’entretien des équipements suivants :
+        </p>
+
+        <ul>
+            <li>Le tableau électrique : remplacement des fusibles du coupe circuits</li>
+            <li>Les ampoules et douilles : entretien et remplacement</li>
+            <li>Les interrupteurs, prises électriques et téléphoniques : entretien et remplacement si elles sont dégradées</li>
+            <li>Le détecteur de fumée : entretien et remplacement</li>
+            <li>Le compteur d’eau individuel : entretien</li>
+        </ul>
+
+        <p>
+            Le <strong>propriétaire</strong> prend en charge les réparations des équipements suivants :
+        </p>
+
+        <ul>
+            <li>Le tableau électrique : remplacement du tableau</li>
+            <li>Le remplacement des appareils vétustes ou défaillants fournis pour les locations meublées (par exemple : le réfrigérateur)</li>
+        </ul>
+
+        <div class="fr-callout fr-icon-information-line">
+            <p class="fr-callout__text">
+                Le saviez-vous ?
+                Si vous louez un logement meublé, c'est au propriétaire de remplacer les appareils vétustes
+                ou défaillants fournis avec la location. Attention toutefois, si l'appareil est dégradé par votre usage,
+                c'est à vous de prendre en charge sa réparation.
+            </p>
+        </div>
+
+        <h3 id="exterieur">L'extérieur du logement</h3>
+
+        <h4>Dans un immeuble collectif</h4>
+
+        <p>
+            Dans un immeuble collectif, à l’extérieur du logement, le <strong>locataire</strong> s’occupe de :
+        </p>
+
+        <ul>
+            <li>La cave : entretien de la porte</li>
+            <li>Le box : entretien de la poignée et chaînette</li>
+            <li>Le balcon : débouchage et évacuation</li>
+            <li>Les volets et grilles : entretien, remplacement des lames et graissage</li>
+            <li>La boîte aux lettres : entretien de la porte, remplacement des serrures, gonds et clés</li>
+        </ul>
+
+        <p>
+            Dans un immeuble collectif, à l’extérieur du logement, le <strong>propriétaire</strong> prend en charge :
+        </p>
+
+        <ul>
+            <li>La porte palière : remplacement (sauf dégradations du locataire)</li>
+            <li>Les arbres : élagage</li>
+            <li>La batterie de boîte aux lettres : remplacement</li>
+            <li>Les canalisations : réparation</li>
+        </ul>
+
+        <h4>Dans une maison individuelle</h4>
+
+        <p>
+            Dans une maison individuelle, à l’extérieur du logement, le <strong>locataire</strong> s’occupe de :
+        </p>
+
+        <ul>
+            <li>La cheminée : ramonage</li>
+            <li>Les gouttières et chéneaux descentes des eaux pluviales : débouchage, nettoyage et entretien</li>
+            <li>Le balcon : débouchage et évacuation</li>
+            <li>Les volets et grilles : entretien, remplacement des lames et graissage</li>
+            <li>Le auvent : entretien et nettoyage</li>
+            <li>
+                La porte d’entrée : graissage des gonds, entretien et remplacement de la poignée,
+                graissage et remplacement des serrures et canons, remplacement des clés et badges
+            </li>
+            <li>La boîte aux lettres : entretien de la porte, remplacement des serrures, gonds et clés</li>
+            <li>La porte du garage : entretien de la peinture, remplacement de la poignée</li>
+            <li>La fosse septique : vidange et entretien</li>
+            <li>Les compteurs d’eau : entretien et protection contre le gel</li>
+        </ul>
+
+        <p>
+            Dans une maison individuelle, à l’extérieur du logement, 
+            le <strong>propriétaire</strong> prend en charge l’entretien et la réparation de la toiture.
+        </p>
+
+        <h4>Le jardin privatif</h4>
+
+        <p>
+            Si vous avez un jardin privatif, son entretien incombe au <strong>locataire</strong> :
+        </p>
+
+        <ul>
+            <li>Les haies et arbustes : entretien, taille et remplacement</li>
+            <li>Les arbres : taille, élagage et échenillage</li>
+            <li>Le portillon : réparation</li>
+            <li>La pelouse : entretien</li>
+            <li>La terrasse : entretien et démoussage</li>
+            <li>La grille : nettoyage, graissage et remplacement</li>
+        </ul>
+
+        <div class="fr-callout fr-icon-information-line">
+            <h3 class="fr-callout__title">Le guide illustré des réparations locatives</h3>
+            <p class="fr-callout__text fr-mb-3v">
+                Pour vous aider, le Ministère de la cohésion des territoires a réalisé un guide illustré des réparations locatives.
+                Cliquez sur le bouton ci-dessous pour le télécharger.
+            </p>
+            <a class="fr-link fr-link--download" download href="{{ asset(guide_path) }}">
+                Télécharger le guide <span class="fr-link__detail">PDF – 1,1 Mo</span>
+            </a>
+        </div>
+
+    </main>
+{% endblock %}

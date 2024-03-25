@@ -27,8 +27,6 @@ class HomepageController extends AbstractController
         SignalementRepository $signalementRepository,
         PostalCodeHomeChecker $postalCodeHomeChecker
     ): Response {
-        $title = 'Un service public pour les locataires et propriétaires';
-
         $stats = ['pris_en_compte' => 0, 'clotures' => 0];
         $stats['total'] = $signalementRepository->countAll(
             territory: null,
@@ -60,7 +58,6 @@ class HomepageController extends AbstractController
         ]);
 
         return $this->render('front/index.html.twig', [
-            'title' => $title,
             'form_postalcode' => $form->createView(),
             'stats' => $stats,
             'display_modal' => $displayModal,
@@ -108,11 +105,21 @@ class HomepageController extends AbstractController
     #[Route('/qui-sommes-nous', name: 'front_about')]
     public function about(): Response
     {
-        $title = 'Qui sommes-nous ?';
+        return $this->render('front/about.html.twig');
+    }
 
-        return $this->render('front/about.html.twig', [
-            'title' => $title,
+    #[Route('/entretien-logement-obligations-proprietaire-locataire', name: 'front_obligations_entretien')]
+    public function obligations_entretien(): Response
+    {
+        return $this->render('front/obligations_entretien.html.twig', [
+            'guide_path' => 'build/files/GUIDE-QUI-REPARE-QUI-ENTRETIENT-Ministere2016-1.pdf',
         ]);
+    }
+
+    #[Route('/aides-travaux-logement', name: 'front_aides_travaux')]
+    public function aides_travaux(): Response
+    {
+        return $this->render('front/aides_travaux.html.twig');
     }
 
     #[Route('/contact', name: 'front_contact')]
@@ -121,7 +128,6 @@ class HomepageController extends AbstractController
         ContactFormHandler $contactFormHandler,
         ParameterBagInterface $parameterBag
     ): Response {
-        $title = 'Contact';
         $form = $this->createForm(ContactType::class, []);
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
@@ -143,7 +149,6 @@ class HomepageController extends AbstractController
         ]);
 
         return $this->render('front/contact.html.twig', [
-            'title' => $title,
             'form' => $form->createView(),
             'contactEmail' => $parameterBag->get('contact_email'),
             'formDemandeLienSignalement' => $formDemandeLienSignalement,
