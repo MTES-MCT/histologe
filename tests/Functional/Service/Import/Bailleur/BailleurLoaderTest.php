@@ -12,6 +12,9 @@ use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 
 class BailleurLoaderTest extends KernelTestCase
 {
+    private const BOUCHE_DU_RHONE = 'Bouches-du-Rhône';
+    private const CHARENTE = 'Charente';
+
     public function testLoadValidBailleur(): void
     {
         $bailleurLoader = new BailleurLoader(
@@ -32,35 +35,35 @@ class BailleurLoaderTest extends KernelTestCase
     {
         return [
             [
-                BailleurHeader::DEPARTEMENT => 'Bouches-du-Rhône',
+                BailleurHeader::DEPARTEMENT => self::BOUCHE_DU_RHONE,
                 BailleurHeader::ORGANISME_NOM => 'MEDITERRANEE 1',
             ],
             [
-                BailleurHeader::DEPARTEMENT => 'Bouches-du-Rhône',
+                BailleurHeader::DEPARTEMENT => self::BOUCHE_DU_RHONE,
                 BailleurHeader::ORGANISME_NOM => 'MEDITERRANEE 2',
             ],
             [
-                BailleurHeader::DEPARTEMENT => 'Bouches-du-Rhône',
+                BailleurHeader::DEPARTEMENT => self::BOUCHE_DU_RHONE,
                 BailleurHeader::ORGANISME_NOM => 'MEDITERRANEE 3',
             ],
             [
-                BailleurHeader::DEPARTEMENT => 'Bouches-du-Rhône',
+                BailleurHeader::DEPARTEMENT => self::BOUCHE_DU_RHONE,
                 BailleurHeader::ORGANISME_NOM => '',
             ],
             [
-                BailleurHeader::DEPARTEMENT => 'Charente',
+                BailleurHeader::DEPARTEMENT => self::CHARENTE,
                 BailleurHeader::ORGANISME_NOM => 'DOMOFRANCE 1',
             ],
             [
-                BailleurHeader::DEPARTEMENT => 'Charente',
+                BailleurHeader::DEPARTEMENT => self::CHARENTE,
                 BailleurHeader::ORGANISME_NOM => 'DOMOFRANCE 2',
             ],
             [
-                BailleurHeader::DEPARTEMENT => 'Charente',
+                BailleurHeader::DEPARTEMENT => self::CHARENTE,
                 BailleurHeader::ORGANISME_NOM => 'MEDITERRANEE 3',
             ],
             [
-                BailleurHeader::DEPARTEMENT => 'Charente',
+                BailleurHeader::DEPARTEMENT => self::CHARENTE,
                 BailleurHeader::ORGANISME_NOM => '',
             ],
             [
