@@ -384,7 +384,7 @@ desordre_precision:
     desordre_critere_slug: "desordres_type_composition_logement_cuisine" 
     coef: 0
     is_danger: 0
-    label: "Avec accès à cuisine collective"
+    label: "Pas de cuisine dans le logement mais accès à une cuisine collective"
     qualification: ['NON_DECENCE']
     desordre_precision_slug: "desordres_type_composition_logement_cuisine_collective_oui"
     is_suroccupation: 0
@@ -392,7 +392,7 @@ desordre_precision:
     desordre_critere_slug: "desordres_type_composition_logement_cuisine" 
     coef: 1
     is_danger: 0
-    label: "Sans accès à cuisine collective"
+    label: "Aucune cuisine (ni dans le logement, ni collective)"
     qualification: ['NON_DECENCE']
     desordre_precision_slug: "desordres_type_composition_logement_cuisine_collective_non"
     is_suroccupation: 0
@@ -400,7 +400,7 @@ desordre_precision:
     desordre_critere_slug: "desordres_type_composition_logement_douche" 
     coef: 0
     is_danger: 0
-    label: "Avec accès à douches collectives"
+    label: "Pas de SDB dans le logement mais accès à des douches collectives"
     qualification: ['NON_DECENCE']
     desordre_precision_slug: "desordres_type_composition_logement_douche_collective_oui"
     is_suroccupation: 0
@@ -408,7 +408,7 @@ desordre_precision:
     desordre_critere_slug: "desordres_type_composition_logement_douche" 
     coef: 1
     is_danger: 0
-    label: "Sans accès à douches collectives"
+    label: "Aucune SDB ou douche (ni dans le logement, ni collective)"
     qualification: ['NON_DECENCE']
     desordre_precision_slug: "desordres_type_composition_logement_douche_collective_non"
     is_suroccupation: 0
@@ -416,7 +416,7 @@ desordre_precision:
     desordre_critere_slug: "desordres_type_composition_logement_wc" 
     coef: 0
     is_danger: 0
-    label: "Avec accès à WC collectif"
+    label: "Pas de WC dans le logement mais accès à des WC collectifs"
     qualification: ['NON_DECENCE', 'RSD']
     desordre_precision_slug: "desordres_type_composition_logement_wc_collectif_oui"
     is_suroccupation: 0
@@ -424,7 +424,7 @@ desordre_precision:
     desordre_critere_slug: "desordres_type_composition_logement_wc" 
     coef: 1
     is_danger: 0
-    label: "Sans accès à WC collectif"
+    label: "Aucun WC (ni dans le logement, ni collectifs)"
     qualification: ['NON_DECENCE', 'RSD']
     desordre_precision_slug: "desordres_type_composition_logement_wc_collectif_non"
     is_suroccupation: 0
@@ -432,7 +432,7 @@ desordre_precision:
     desordre_critere_slug: "desordres_type_composition_logement_wc" 
     coef: 3
     is_danger: 0
-    label: "WC et cuisine dans la même pièce"
+    label: "Les WC et la cuisine sont dans la même pièce"
     qualification: ['NON_DECENCE', 'RSD', 'INSALUBRITE']
     desordre_precision_slug: "desordres_type_composition_logement_wc_cuisine_ensemble"
     is_suroccupation: 0
