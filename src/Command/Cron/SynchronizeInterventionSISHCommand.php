@@ -53,6 +53,7 @@ class SynchronizeInterventionSISHCommand extends AbstractSynchronizeEsaboraComma
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $countSuccess = $countFailed = 0;
+        $errorMessages = [];
 
         $io = new SymfonyStyle($input, $output);
         $uuidSignalement = $input->getArgument('uuid_signalement') ?? null;
@@ -65,10 +66,20 @@ class SynchronizeInterventionSISHCommand extends AbstractSynchronizeEsaboraComma
         foreach ($affectations as $affectation) {
             /** @var InterventionSISHHandlerInterface $interventionHandler */
             foreach ($this->interventionHandlers as $key => $interventionHandler) {
-                $interventionHandler->handle($affectation);
-                $countSuccess += $interventionHandler->getCountSuccess();
-                $countFailed += $interventionHandler->getCountFailed();
-                $io->writeln(sprintf('#%s: %s was executed', $key, $interventionHandler->getServiceName()));
+                try {
+                    $interventionHandler->handle($affectation);
+                    $countSuccess += $interventionHandler->getCountSuccess();
+                    $countFailed += $interventionHandler->getCountFailed();
+                    $io->writeln(sprintf('#%s: %s was executed', $key, $interventionHandler->getServiceName()));
+                } catch (\Throwable $e) {
+                    $signalement = $affectation->getSignalement();
+                    $message = $interventionHandler->getServiceName().' - Signalement '.$signalement->getUuid().' ('.$signalement->getId().') : '.$e->getMessage();
+                    if (!($e instanceof \Exception)) {
+                        $message .= ' - '.$e->getFile().' ('.$e->getLine().')';
+                    }
+                    $io->error($message);
+                    $errorMessages[] = $message;
+                }
             }
         }
         $io->table(['Count success', 'Count Failed'], [[$countSuccess, $countFailed]]);
@@ -86,6 +97,7 @@ class SynchronizeInterventionSISHCommand extends AbstractSynchronizeEsaboraComma
                     'message_failed' => $countFailed > 1
                         ? 'synchronisations n\'ont été effectuées'
                         : 'synchronisation effectuée',
+                    'error_messages' => $errorMessages,
                 ],
             )
         );

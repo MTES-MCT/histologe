@@ -10,4 +10,12 @@
     {% if count_failed is defined and message_failed is defined %}
         <p><span>&#10060;</span> {{ count_failed }}  {{ message_failed }}</p>
     {% endif %}
+    {% if error_messages is defined and error_messages|length %}
+        <p>Erreurs:</p>
+        <ul>
+            {% for error in error_messages %}
+                <li>{{ error }}</li>
+            {% endfor %}
+        </ul>
+    {% endif %}
 {% endblock %}
