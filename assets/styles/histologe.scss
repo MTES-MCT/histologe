@@ -732,7 +732,7 @@ div.photos-album {
         width: 100%;
     }
 }
-.fr-input:read-only {
+.fr-input:not([type="radio"]):read-only {
     box-shadow: inset 0 -2px 0 0 var(--border-disabled-grey);
     color: var(--text-disabled-grey);
     cursor: not-allowed;
