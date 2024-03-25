@@ -37,7 +37,7 @@ class BailleurLoader
             if (\count($item) > 1) {
                 if (null !== $territoryName = $item[BailleurHeader::DEPARTEMENT]) {
                     $territory = $this->territoryRepository->findOneBy(['name' => $territoryName]);
-                    if ($this->hasErrors($territoryName, $item, $key, $territory)) {
+                    if ($this->hasErrors($territoryName, $key, $territory)) {
                         continue;
                     }
 
@@ -84,7 +84,7 @@ class BailleurLoader
         return $bailleur;
     }
 
-    private function hasErrors(string $territoryName, array $item, int $key, ?Territory $territory = null): bool
+    private function hasErrors(string $territoryName, int $key, ?Territory $territory = null): bool
     {
         if (null === $territory) {
             $this->metadata['errors'][] = sprintf(

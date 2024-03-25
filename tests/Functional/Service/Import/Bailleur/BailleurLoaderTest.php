@@ -5,6 +5,7 @@ namespace App\Tests\Functional\Service\Import\Bailleur;
 use App\Repository\BailleurRepository;
 use App\Repository\BailleurTerritoryRepository;
 use App\Repository\TerritoryRepository;
+use App\Service\Import\Bailleur\BailleurHeader;
 use App\Service\Import\Bailleur\BailleurLoader;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
@@ -31,40 +32,40 @@ class BailleurLoaderTest extends KernelTestCase
     {
         return [
             [
-                'Département du logement attribué' => 'Bouches-du-Rhône',
-                "Organisme de l'attribution" => 'MEDITERRANEE 1',
+                BailleurHeader::DEPARTEMENT => 'Bouches-du-Rhône',
+                BailleurHeader::ORGANISME_NOM => 'MEDITERRANEE 1',
             ],
             [
-                'Département du logement attribué' => 'Bouches-du-Rhône',
-                "Organisme de l'attribution" => 'MEDITERRANEE 2',
+                BailleurHeader::DEPARTEMENT => 'Bouches-du-Rhône',
+                BailleurHeader::ORGANISME_NOM => 'MEDITERRANEE 2',
             ],
             [
-                'Département du logement attribué' => 'Bouches-du-Rhône',
-                "Organisme de l'attribution" => 'MEDITERRANEE 3',
+                BailleurHeader::DEPARTEMENT => 'Bouches-du-Rhône',
+                BailleurHeader::ORGANISME_NOM => 'MEDITERRANEE 3',
             ],
             [
-                'Département du logement attribué' => 'Bouches-du-Rhône',
-                "Organisme de l'attribution" => '',
+                BailleurHeader::DEPARTEMENT => 'Bouches-du-Rhône',
+                BailleurHeader::ORGANISME_NOM => '',
             ],
             [
-                'Département du logement attribué' => 'Charente',
-                "Organisme de l'attribution" => 'DOMOFRANCE 1',
+                BailleurHeader::DEPARTEMENT => 'Charente',
+                BailleurHeader::ORGANISME_NOM => 'DOMOFRANCE 1',
             ],
             [
-                'Département du logement attribué' => 'Charente',
-                "Organisme de l'attribution" => 'DOMOFRANCE 2',
+                BailleurHeader::DEPARTEMENT => 'Charente',
+                BailleurHeader::ORGANISME_NOM => 'DOMOFRANCE 2',
             ],
             [
-                'Département du logement attribué' => 'Charente',
-                "Organisme de l'attribution" => 'MEDITERRANEE 3',
+                BailleurHeader::DEPARTEMENT => 'Charente',
+                BailleurHeader::ORGANISME_NOM => 'MEDITERRANEE 3',
             ],
             [
-                'Département du logement attribué' => 'Charente',
-                "Organisme de l'attribution" => '',
+                BailleurHeader::DEPARTEMENT => 'Charente',
+                BailleurHeader::ORGANISME_NOM => '',
             ],
             [
-                'Département du logement attribué' => 'Saint Martin',
-                "Organisme de l'attribution" => 'LOGEMENT HLS',
+                BailleurHeader::DEPARTEMENT => 'Saint Martin',
+                BailleurHeader::ORGANISME_NOM => 'LOGEMENT HLS',
             ],
         ];
     }
