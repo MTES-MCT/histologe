@@ -12,8 +12,8 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 class AssignementNewMailer extends AbstractNotificationMailer
 {
+    public const MAILER_SUBJECT = '[%s] Un nouveau signalement vous attend.';
     protected ?NotificationMailerType $mailerType = NotificationMailerType::TYPE_ASSIGNMENT_NEW;
-    protected ?string $mailerSubject = '[%s] Un nouveau signalement vous attend.';
     protected ?string $mailerButtonText = 'Accéder au signalement';
     protected ?string $mailerTemplate = 'affectation_email';
     protected ?string $tagHeader = 'Pro Nouvelle affectation';
@@ -45,9 +45,8 @@ class AssignementNewMailer extends AbstractNotificationMailer
     public function updateMailerSubjectFromNotification(NotificationMail $notificationMail): void
     {
         $this->mailerSubject = sprintf(
-            $this->mailerSubject,
-            $notificationMail->getSignalement()->getCpOccupant(),
-            $this->parameterBag->get('platform_name'),
+            self::MAILER_SUBJECT,
+            $notificationMail->getSignalement()->getCpOccupant()
         );
     }
 }

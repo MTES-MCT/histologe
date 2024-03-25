@@ -12,9 +12,9 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 class SuiviVisiteNeededMailer extends AbstractNotificationMailer
 {
+    public const MAILER_SUBJECT = '[%s - %s] Date de visite à renseigner';
     protected ?NotificationMailerType $mailerType = NotificationMailerType::TYPE_VISITE_NEEDED;
-    protected ?string $mailerSubject = '[%s - %s] Date de visite à renseigner';
-    protected ?string $mailerButtonText = 'Accéder à mon signalement';
+    protected ?string $mailerButtonText = 'Accéder au signalement';
     protected ?string $mailerTemplate = 'nouveau_suivi_visite_needed_email';
     protected ?string $tagHeader = 'Pro Date Visite Manquante';
 
@@ -33,10 +33,7 @@ class SuiviVisiteNeededMailer extends AbstractNotificationMailer
 
         return [
             'signalement' => $signalement,
-            'lien_suivi' => $this->generateLink(
-                'front_suivi_signalement',
-                ['code' => $signalement->getCodeSuivi(), 'from' => $notificationMail->getTo()],
-            ),
+            'lien_suivi' => $this->generateLinkSignalementView($signalement->getUuid()),
         ];
     }
 
@@ -44,7 +41,7 @@ class SuiviVisiteNeededMailer extends AbstractNotificationMailer
     {
         $signalement = $notificationMail->getSignalement();
         $this->mailerSubject = sprintf(
-            $this->mailerSubject,
+            self::MAILER_SUBJECT,
             $signalement->getReference(),
             $signalement->getNomOccupantOrDeclarant()
         );

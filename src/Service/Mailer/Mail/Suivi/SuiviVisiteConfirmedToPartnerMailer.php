@@ -12,8 +12,8 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 class SuiviVisiteConfirmedToPartnerMailer extends AbstractNotificationMailer
 {
+    public const MAILER_SUBJECT = '[%s - %s] Conclusion de visite disponible';
     protected ?NotificationMailerType $mailerType = NotificationMailerType::TYPE_VISITE_CONFIRMED_TO_PARTNER;
-    protected ?string $mailerSubject = '[%s - %s] Conclusion de visite disponible';
     protected ?string $mailerButtonText = 'Accéder au signalement';
     protected ?string $mailerTemplate = 'nouveau_suivi_visite_confirmed_to_partner_email';
     protected ?string $tagHeader = 'Pro Conclusion Visite Disponible';
@@ -42,7 +42,8 @@ class SuiviVisiteConfirmedToPartnerMailer extends AbstractNotificationMailer
     public function updateMailerSubjectFromNotification(NotificationMail $notificationMail): void
     {
         $signalement = $notificationMail->getSignalement();
-        $this->mailerSubject = sprintf($this->mailerSubject,
+        $this->mailerSubject = sprintf(
+            self::MAILER_SUBJECT,
             $signalement->getReference(),
             $signalement->getNomOccupantOrDeclarant()
         );

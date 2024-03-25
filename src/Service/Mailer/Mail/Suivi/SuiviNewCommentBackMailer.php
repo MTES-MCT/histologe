@@ -12,8 +12,8 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 class SuiviNewCommentBackMailer extends AbstractNotificationMailer
 {
+    public const MAILER_SUBJECT = '[%s - %s] Nouveau suivi';
     protected ?NotificationMailerType $mailerType = NotificationMailerType::TYPE_NEW_COMMENT_BACK;
-    protected ?string $mailerSubject = '[%s - %s] Nouveau suivi';
     protected ?string $mailerButtonText = 'Accéder au signalement';
     protected ?string $mailerTemplate = 'nouveau_suivi_signalement_back_email';
     protected ?string $tagHeader = 'Pro Nouveau Suivi Signalement';
@@ -41,7 +41,7 @@ class SuiviNewCommentBackMailer extends AbstractNotificationMailer
     {
         $signalement = $notificationMail->getSignalement();
         $this->mailerSubject = sprintf(
-            $this->mailerSubject,
+            self::MAILER_SUBJECT,
             $signalement->getReference(),
             $signalement->getNomOccupantOrDeclarant()
         );
