@@ -136,12 +136,12 @@
             "maxLength": 255
           },
           "conditional": {
-            "show": "formStore.data.signalement_concerne_logement_social_autre_tiers === 'non'"
+            "show": "formStore.data.signalement_concerne_logement_social_service_secours === 'non'"
           }
         },
         {
           "type": "SignalementFormAutocomplete",
-          "label": "Nom de l'organisme",
+          "label": "Nom de l'organisme (facultatif)",
           "slug": "coordonnees_bailleur_nom_autocomplete",
           "placeholder": "Taper le nom de l'organisme ici",
           "validate": {
@@ -149,7 +149,7 @@
             "maxLength": 255
           },
           "conditional": {
-            "show": "formStore.data.signalement_concerne_logement_social_autre_tiers === 'oui'"
+            "show": "formStore.data.signalement_concerne_logement_social_service_secours === 'oui'"
           },
           "autocomplete": {
             "isAbsoluteLink": false,
