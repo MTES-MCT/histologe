@@ -5,6 +5,7 @@ namespace App\Service\Import\Bailleur;
 use App\Entity\Bailleur;
 use App\Entity\Territory;
 use App\Repository\BailleurRepository;
+use App\Repository\BailleurTerritoryRepository;
 use App\Repository\TerritoryRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Console\Helper\ProgressBar;
@@ -19,6 +20,7 @@ class BailleurLoader
 
     public function __construct(
         private BailleurRepository $bailleurRepository,
+        private BailleurTerritoryRepository $bailleurTerritoryRepository,
         private TerritoryRepository $territoryRepository,
         private EntityManagerInterface $entityManager,
     ) {
@@ -26,9 +28,11 @@ class BailleurLoader
 
     public function load(array $data, ?OutputInterface $output = null): void
     {
-        $progressBar = new ProgressBar($output, \count($data));
-        $progressBar->start();
-        $currentTerritory = $data[0][BailleurHeader::DEPARTEMENT];
+        if (null !== $output) {
+            $progressBar = new ProgressBar($output, \count($data));
+            $progressBar->start();
+        }
+
         foreach ($data as $key => $item) {
             if (\count($item) > 1) {
                 if (null !== $territoryName = $item[BailleurHeader::DEPARTEMENT]) {
@@ -37,13 +41,10 @@ class BailleurLoader
                         continue;
                     }
 
-                    if ($currentTerritory === $territoryName) {
+                    if (!empty($item[BailleurHeader::ORGANISME_NOM])) {
                         $bailleur = $this->createOrUpdateBailleur($item[BailleurHeader::ORGANISME_NOM], $territory);
                         $this->entityManager->persist($bailleur);
                     } else {
-                        $currentTerritory = $item[BailleurHeader::DEPARTEMENT];
-                        $bailleur = $this->createOrUpdateBailleur($item[BailleurHeader::ORGANISME_NOM], $territory);
-                        $this->entityManager->persist($bailleur);
                         $this->entityManager->flush();
                     }
                 }
@@ -67,12 +68,16 @@ class BailleurLoader
     private function createOrUpdateBailleur(string $bailleurName, Territory $territory): Bailleur
     {
         $bailleur = $this->bailleurRepository->findOneBy(['name' => $bailleurName]);
+        $bailleurTerritory = $this->bailleurTerritoryRepository->findOneBy([
+            'bailleur' => $bailleur,
+            'territory' => $territory,
+        ]);
         if (null === $bailleur) {
             $bailleur = (new Bailleur())
                 ->addTerritory($territory)
                 ->setName($bailleurName);
             ++$this->metadata['count_bailleurs'];
-        } else {
+        } elseif (null === $bailleurTerritory) {
             $bailleur->addTerritory($territory);
         }
 
@@ -84,15 +89,6 @@ class BailleurLoader
         if (null === $territory) {
             $this->metadata['errors'][] = sprintf(
                 '[%s] ligne %d - Le territoire n\'existe pas.',
-                $territoryName,
-                $key + 2);
-
-            return true;
-        }
-
-        if (empty($item[BailleurHeader::ORGANISME_NOM])) {
-            $this->metadata['errors'][] = sprintf(
-                '[%s] ligne %d - Le nom de l\'organisme est manquant.',
                 $territoryName,
                 $key + 2);
 

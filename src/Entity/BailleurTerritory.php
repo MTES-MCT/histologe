@@ -6,6 +6,7 @@ use App\Repository\BailleurTerritoryRepository;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: BailleurTerritoryRepository::class)]
+#[ORM\UniqueConstraint(columns: ['bailleur_id', 'territory_id'])]
 class BailleurTerritory
 {
     #[ORM\Id]
@@ -48,5 +49,10 @@ class BailleurTerritory
         $this->territory = $territory;
 
         return $this;
+    }
+
+    public function __toString(): string
+    {
+        return $this->bailleur->getName().'-'.$this->getTerritory()->getName();
     }
 }

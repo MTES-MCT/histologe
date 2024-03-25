@@ -153,7 +153,7 @@
           },
           "autocomplete": {
             "isAbsoluteLink": false,
-            "route": "/bailleurs?postcode={{formStore.data.adresse_logement_adresse_detail_code_postal}}&name={{formStore.data.coordonnees_bailleur_nom_autocomplete}}"
+            "route": "/bailleurs?postcode={{formStore.data.adresse_logement_adresse_detail_code_postal}}&name={{formStore.data.coordonnees_bailleur_nom_autocomplete_textfield}}"
           }
         },
         {

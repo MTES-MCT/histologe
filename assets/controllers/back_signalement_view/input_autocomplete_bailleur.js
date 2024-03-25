@@ -6,9 +6,7 @@ let isAutocompleteOpen = false;
 
 document.addEventListener('click', function(event) {
     if (!event.target.closest('.fr-autocomplete-list') && isAutocompleteOpen) {
-        document.querySelector('.fr-autocomplete-list').innerHTML = '';
-        isAutocompleteOpen = false;
-        selectedSuggestionIndex = -1;
+        closeSuggestions();
     }
 });
 
@@ -21,6 +19,8 @@ if (inputElement) {
             selectedSuggestionIndex = -1
             const url = `${inputElement.dataset.autocompleteBailleurUrl}&name=${name}`;
             fetchBailleur(url);
+        } else if (name.length <= 1) {
+            closeSuggestions();
         }
     });
 
@@ -102,8 +102,12 @@ function handleEnter() {
     const suggestions = document.querySelectorAll('.fr-autocomplete-suggestion');
     if (selectedSuggestionIndex !== -1) {
         inputElement.value = suggestions[selectedSuggestionIndex].textContent;
-        document.querySelector('.fr-autocomplete-list').innerHTML = '';
-        selectedSuggestionIndex = -1;
-        isAutocompleteOpen = false;
+        closeSuggestions();
     }
+}
+
+function closeSuggestions() {
+    document.querySelector('.fr-autocomplete-list').innerHTML = '';
+    selectedSuggestionIndex = -1;
+    isAutocompleteOpen = false;
 }

@@ -1,9 +1,9 @@
 <template>
-  <div :class="[customCss, 'fr-mb-3w']" :id="id + '_textfield'">
+  <div :class="[customCss, 'fr-mb-3w']" :id="id">
     <SignalementFormTextfield
-        :key="id"
-        :id="id"
-        v-model="formStore.data[id]"
+        :key="idAutocomplete"
+        :id="idAutocomplete"
+        v-model="formStore.data[idAutocomplete]"
         :label="label"
         :description="description"
         :placeholder="placeholder"
@@ -57,6 +57,7 @@ export default defineComponent({
   data () {
     return {
       idFetchTimeout: 0 as unknown as ReturnType<typeof setTimeout>,
+      idAutocomplete: this.id + '_textfield',
       suggestions: [] as any[],
       formStore,
       selectedSuggestion: '',
@@ -66,17 +67,21 @@ export default defineComponent({
   created () {
     document.addEventListener('click', this.closeAutocomplete)
     watch(
-      () => this.formStore.data[this.id],
+      () => this.formStore.data[this.idAutocomplete],
       (newValue: any) => {
         clearTimeout(this.idFetchTimeout)
         this.idFetchTimeout = setTimeout(() => {
           const name = newValue.trim()
+          this.updateValue(name)
           if (name.length > 1) {
             this.selectedSuggestionIndex = -1
             const url = this.autocomplete.isAbsoluteLink
               ? variablesReplacer.replace(this.autocomplete.route)
               : window.location.origin + variablesReplacer.replace(this.autocomplete.route)
             requests.getAutompleteSuggestions(url, this.handleSuggestions)
+          } else {
+            this.suggestions = []
+            this.selectedSuggestionIndex = -1
           }
         }, 200)
       }
@@ -89,17 +94,17 @@ export default defineComponent({
     handleClickSuggestion (index: number) {
       if (this.suggestions && this.suggestions[index]) {
         this.selectedSuggestionIndex = index
-        this.formStore.data[this.id] = this.suggestions[index].name
-        const idWithoutAutocomplete = this.id.replace('_autocomplete', '')
+        this.formStore.data[this.idAutocomplete] = this.suggestions[index].name
+        const idWithoutAutocomplete = this.idAutocomplete.replace('_autocomplete_textfield', '')
         this.formStore.data[idWithoutAutocomplete] = this.suggestions[index].name
         this.selectedSuggestion = this.suggestions[index].name
         this.suggestions.length = 0
       }
     },
     handleSuggestions (requestResponse: any) {
-      const idWithoutAutocomplete = this.id.replace('_autocomplete', '')
-      this.formStore.data[idWithoutAutocomplete] = this.formStore.data[this.id]
-      if (this.formStore.data[this.id] !== this.selectedSuggestion) {
+      const idWithoutAutocomplete = this.idAutocomplete.replace('_autocomplete_textfield', '')
+      this.formStore.data[idWithoutAutocomplete] = this.formStore.data[this.idAutocomplete]
+      if (this.formStore.data[this.idAutocomplete] !== this.selectedSuggestion) {
         this.suggestions = requestResponse
       }
     },
