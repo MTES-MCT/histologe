@@ -20,7 +20,19 @@
                                         signalement.profileDeclarant)
                                     }}
                                 </label>
-                                <input class="fr-input" type="text" id="coordonneesBailleurNom" name="nom" value="{{ signalement.nomProprio }}" maxlength="255">
+                                <input class="fr-input"
+                                       type="text"
+                                       id="coordonneesBailleurNom"
+                                       name="nom"
+                                       value="{{ signalement.nomProprio }}"
+                                       maxlength="255"
+                                       autocomplete="off"
+                                        {% if signalement.isLogementSocial  %}
+                                            data-autocomplete-bailleur-url="{{ path('app_bailleur', {'postcode': signalement.cpOccupant}) }}"
+                                        {% endif %}
+                                >
+                                <ul class="fr-grid-row fr-background-alt--blue-france fr-text-label--blue-france fr-autocomplete-list">
+                                </ul>
                             </div>
 
                             <div class="fr-input-group">

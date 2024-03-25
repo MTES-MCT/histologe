@@ -715,11 +715,19 @@ div.photos-album {
         justify-content: space-between;
     }
 }
+
+ul.fr-autocomplete-list {
+  list-style-type: none;
+}
+
+.fr-autocomplete-suggestion:hover,
 .fr-adresse-suggestion:hover {
     background-color: var(--artwork-minor-blue-cumulus);
     color: white !important;
 }
-.fr-address-group, .fr-address-group-bo{
+.fr-address-group,
+.fr-address-group-bo,
+.fr-autocomplete-list {
     cursor: pointer;
 }
 .fr-address-group {
@@ -741,3 +749,7 @@ div.photos-album {
     }
 }
 
+.fr-autocomplete-suggestion-highlighted {
+  background-color: #417dc4;
+  color: white !important;
+}

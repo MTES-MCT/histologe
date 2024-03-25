@@ -18,7 +18,7 @@ class ZipcodeProvider
     public const POLYNESIE_FRANCAISE_CODE_DEPARTMENT_987 = '987';
     public const NOUVELLE_CALEDONIE_CODE_DEPARTMENT_988 = '988';
 
-    public function getZipCode(string $postalCode): string
+    public static function getZipCode(string $postalCode): string
     {
         $zipChunk = substr(trim($postalCode), 0, 3);
 

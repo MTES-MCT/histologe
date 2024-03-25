@@ -9,14 +9,13 @@ class PostalCodeHomeChecker
 {
     public function __construct(
         private readonly TerritoryRepository $territoryRepository,
-        private ZipcodeProvider $zipcodeProvider
     ) {
     }
 
     public function isActive(string $postalCode, ?string $inseeCode = null): bool
     {
         $territoryItem = $this->territoryRepository->findOneBy([
-            'zip' => $this->zipcodeProvider->getZipCode($postalCode),
+            'zip' => ZipcodeProvider::getZipCode($postalCode),
             'isActive' => 1,
         ]);
 

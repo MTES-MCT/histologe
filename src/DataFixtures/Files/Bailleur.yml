@@ -1,0 +1,205 @@
+bailleurs:
+  -
+    territory: "Bouches-du-Rhône"
+    name: "13 HABITAT"
+  -
+    territory: "Bouches-du-Rhône"
+    name: "3F SUD SA HLM"
+  -
+    territory: "Bouches-du-Rhône"
+    name: "ADOMA"
+  -
+    territory: "Bouches-du-Rhône"
+    name: "ASSOCIATION DE GESTION VILOGIA"
+  -
+    territory: "Bouches-du-Rhône"
+    name: "BATIGERE SA D¿HLM"
+  -
+    territory: "Bouches-du-Rhône"
+    name: "CDC HABITAT SOCIAL SA H.L.M."
+  -
+    territory: "Bouches-du-Rhône"
+    name: "GRAND DELTA HABITAT"
+  -
+    territory: "Bouches-du-Rhône"
+    name: "HABITAT MARSEILLE PROVENCE"
+  -
+    territory: "Bouches-du-Rhône"
+    name: "I.C.F. HABITAT SUD-EST MEDITERRANEE"
+  -
+    territory: "Bouches-du-Rhône"
+    name: "NEOLIA"
+  -
+    territory: "Bouches-du-Rhône"
+    name: "O.P.H. GIRONDE HABITAT"
+  -
+    territory: "Bouches-du-Rhône"
+    name: "O.P.H. PAYS D'AIX HABITAT"
+  -
+    territory: "Bouches-du-Rhône"
+    name: "O.P.H. VENDEE HABITAT"
+  -
+    territory: "Bouches-du-Rhône"
+    name: "OUEST PROVENCE HABITAT"
+  -
+    territory: "Bouches-du-Rhône"
+    name: "PARIS HABITAT OPH"
+  -
+    territory: "Bouches-du-Rhône"
+    name: "POSTE HABITAT PROVENCE"
+  -
+    territory: "Bouches-du-Rhône"
+    name: "[Radié(e)] GRAND AVIGNON RESIDENCES O.P.H."
+  -
+    territory: "Bouches-du-Rhône"
+    name: "[Radié(e)] S.A. d'HLM LE NOUVEAU LOGIS AZUR"
+  -
+    territory: "Bouches-du-Rhône"
+    name: "[Radié(e)] S.A. FIAC"
+  -
+    territory: "Bouches-du-Rhône"
+    name: "[Radié(e)] S.A. HLM PHOCEENNE D'HABITATIONS"
+  -
+    territory: "Bouches-du-Rhône"
+    name: "[Radié(e)] S.A. LOGEO MEDITERRANEE"
+  -
+    territory: "Bouches-du-Rhône"
+    name: "[Radié(e)] S.A. MAISON SAINE AIR LUMIERE"
+  -
+    territory: "Bouches-du-Rhône"
+    name: "[Radié(e)] S.A. NOUVEAU LOGIS PROVENCAL - NLP"
+  -
+    territory: "Bouches-du-Rhône"
+    name: "[Radié(e)] S.A. NOUVELLE DE MARSEILLE - SNHM"
+  -
+    territory: "Bouches-du-Rhône"
+    name: "[Radié(e)] S.A. REGIONALE DE L'HABITAT"
+  -
+    territory: "Bouches-du-Rhône"
+    name: "[Radié(e)] UNION ENTREPR SALARIES LOGEMENT - UESL"
+  -
+    territory: "Bouches-du-Rhône"
+    name: "SA CO GI VA"
+  -
+    territory: "Bouches-du-Rhône"
+    name: "S.A. D'HLM LOGIS MEDITERRANEE"
+  -
+    territory: "Bouches-du-Rhône"
+    name: "S.A.E.M. MARSEILLE HABITAT"
+  -
+    territory: "Bouches-du-Rhône"
+    name: "S.A. ERILIA"
+  -
+    territory: "Bouches-du-Rhône"
+    name: "S.A. ESPACIL HABITAT"
+  -
+    territory: "Bouches-du-Rhône"
+    name: "S.A. FAMILLE ET PROVENCE"
+  -
+    territory: "Bouches-du-Rhône"
+    name: "S.A. FDI HABITAT"
+  -
+    territory: "Bouches-du-Rhône"
+    name: "S.A. FRANCAISE DES HABITATIONS ECONOMIQUES"
+  -
+    territory: "Bouches-du-Rhône"
+    name: "S.A. GASCONNE"
+  -
+    territory: "Bouches-du-Rhône"
+    name: "S.A. LOGIREM"
+  -
+    territory: "Bouches-du-Rhône"
+    name: "S.A. PROMOLOGIS S.A M.A.I HLM"
+  -
+    territory: "Bouches-du-Rhône"
+    name: "S.A. TOIT ET JOIE"
+  -
+    territory: "Bouches-du-Rhône"
+    name: "S.A. UN TOIT POUR TOUS"
+  -
+    territory: "Bouches-du-Rhône"
+    name: "S.A. VILOGIA"
+  -
+    territory: "Bouches-du-Rhône"
+    name: "S.E.M. CDC Habitat"
+  -
+    territory: "Bouches-du-Rhône"
+    name: "S.E.M. DU PAYS D'ARLES - SEMPA"
+  -
+    territory: "Bouches-du-Rhône"
+    name: "S.E.M.I. DE MARTIGUES SEMIVIM"
+  -
+    territory: "Bouches-du-Rhône"
+    name: "S.E.M.I. SALON-DE-PROVENCE"
+  -
+    territory: "Bouches-du-Rhône"
+    name: "STE GESTION IMMOB VILLE MARSEILLE - SOGIMA"
+  -
+    territory: "Bouches-du-Rhône"
+    name: "UNICIL SA D'HLM"
+  -
+    territory: "Bouches-du-Rhône"
+    name: "VALLIS HABITAT"
+  -
+    territory: "Loire-Atlantique"
+    name: "O.P.H. DE HAUTE LOIRE"
+  -
+    territory: "Loire-Atlantique"
+    name: "[Radié(e)] S.A. FOYER VELLAVE (ALLIADE HABITAT)"
+  -
+    territory: "Loire-Atlantique"
+    name: "S.A. AUVERGNE HABITAT"
+  -
+    territory: "Loire-Atlantique"
+    name: "S.A. BATIR ET LOGER"
+  -
+    territory: "Loire-Atlantique"
+    name: "SA HLM ALLIADE HABITAT"
+  -
+    territory: "Loire-Atlantique"
+    name: "S.C.I.C. LE TOIT FOREZIEN"
+  -
+    territory: "Gard"
+    name: "Douarnenez Habitat"
+  -
+    territory: "Gard"
+    name: "Finistère Habitat"
+  -
+    territory: "Gard"
+    name: "I.C.F. ATLANTIQUE"
+  -
+    territory: "Gard"
+    name: "LE LOGIS BRETON"
+  -
+    territory: "Gard"
+    name: "O.P.A.C. DE LA SAVOIE"
+  -
+    territory: "Gard"
+    name: "O.P.H. BOURG HABITAT"
+  -
+    territory: "Gard"
+    name: "O.P.H. BREST METROPOLE HABITAT"
+  -
+    territory: "Gard"
+    name: "O.P.H. DE QUIMPER ET CORNOUAILLE"
+  -
+    territory: "Gard"
+    name: "S.A. AIGUILLON-CONSTRUCTION"
+  -
+    territory: "Gard"
+    name: "S.A. ARMORIQUE HABITAT"
+  -
+    territory: "Gard"
+    name: "SA D'HLM LES FOYERS"
+  -
+    territory: "Gard"
+    name: "S.A. ESPACIL HABITAT"
+  -
+    territory: "Gard"
+    name: "S.A. LE FOYER D'ARMOR"
+  -
+    territory: "Gard"
+    name: "S.E.M. CDC Habitat"
+  -
+    territory: "Gard"
+    name: "SOCIETE IMMOBILIERE GRAND HAINAUT - SIGH"

@@ -39,6 +39,7 @@
         :hasError="formStore.validationErrors[component.slug]  !== undefined"
         :error="formStore.validationErrors[component.slug]"
         :class="{ 'fr-hidden': component.conditional && !formStore.shouldShowField(component.conditional.show) }"
+        :autocomplete="component.autocomplete"
         :clickEvent="handleClickComponent"
         :handleClickComponent="handleClickComponent"
       />
@@ -110,6 +111,7 @@ import SignalementFormUploadPhotos from './SignalementFormUploadPhotos.vue'
 import SignalementFormWarning from './SignalementFormWarning.vue'
 import SignalementFormYear from './SignalementFormYear.vue'
 import SignalementFormModal from './SignalementFormModal.vue'
+import SignalementFormAutocomplete from './SignalementFormAutocomplete.vue'
 import { variablesReplacer } from './../services/variableReplacer'
 import { componentValidator } from './../services/componentValidator'
 import { findPreviousScreen, findNextScreen } from '../services/disorderScreenNavigator'
@@ -142,7 +144,8 @@ export default defineComponent({
     SignalementFormDisorderCategoryList,
     SignalementFormDisorderOverview,
     SignalementFormRoomList,
-    SignalementFormModal
+    SignalementFormModal,
+    SignalementFormAutocomplete
   },
   props: {
     label: String,

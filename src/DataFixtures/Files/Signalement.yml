@@ -1750,7 +1750,8 @@ signalements:
     uuid: "00000000-0000-0000-2024-000000000004"
     details: "Actuellement locataire, j'attire votre attention sur certaines conditions de non-décence et de confort qui affectent ma qualité de vie quotidienne."
     is_proprio_averti: 1
-    is_logement_social: 0
+    is_logement_social: 1
+    bailleur: "13 Habitat"
     nb_adultes: "2"
     nb_enfants_m6: "0"
     nb_enfants_p6: "2"
