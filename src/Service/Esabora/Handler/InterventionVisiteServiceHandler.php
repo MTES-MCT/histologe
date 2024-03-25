@@ -25,9 +25,15 @@ class InterventionVisiteServiceHandler implements InterventionSISHHandlerInterfa
 
     public function handle(Affectation $affectation): void
     {
+        $hasDateError = false;
         $dossierVisiteSISHCollectionResponse = $this->esaboraSISHService->getVisiteDossier($affectation);
         if ($hasSuccess = AbstractEsaboraService::hasSuccess($dossierVisiteSISHCollectionResponse)) {
             foreach ($dossierVisiteSISHCollectionResponse->getCollection() as $dossierVisite) {
+                if (!$dossierVisite->getVisiteDate()) {
+                    $hasDateError = true;
+                    $hasSuccess = false;
+                    continue;
+                }
                 $this->esaboraManager->createOrUpdateVisite($affectation, $dossierVisite);
             }
             ++$this->countSuccess;
@@ -52,6 +58,9 @@ class InterventionVisiteServiceHandler implements InterventionSISHHandlerInterfa
             partnerId: $affectation->getPartner()->getId(),
             partnerType: $affectation->getPartner()->getType(),
         );
+        if ($hasDateError) {
+            throw new \Exception('Date de visite manquante');
+        }
     }
 
     public function getCountSuccess(): int
