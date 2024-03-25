@@ -68,8 +68,8 @@ class ImportBailleurCommandTest extends KernelTestCase
             ->method('getMetadata')
             ->willReturn([
                 'count_bailleurs' => 10,
-                'errors' => ['[Wallis-et-Futuna] ligne 2 - Le territoire n\'existe pas',
-                ], ]);
+                'errors' => ['[Wallis-et-Futuna] ligne 2 - Le territoire n\'existe pas'],
+            ]);
 
         $command = $application->add(new ImportBailleurCommand(
             $this->csvParser,
