@@ -61,13 +61,8 @@ document.querySelectorAll('.btn-signalement-file-edit').forEach(swbtn => {
     document.querySelector('#file-edit-fileid').value = target.getAttribute('data-file-id')
 
     const selectedDocumentType = target.getAttribute('data-documentType'); 
-    // if (target.getAttribute('data-description') || selectedDocumentType === 'PHOTO_VISITE') {
-      document.querySelector('#fileDescription').value = target.getAttribute('data-description')
-      document.querySelector('#fr-modal-edit-file-description').classList.remove('fr-hidden')
-    // }else {
-    //   document.querySelector('#fileDescription').value = ''
-    //   document.querySelector('#fr-modal-edit-file-description').classList.remove('fr-hidden')
-    // }
+    document.querySelector('#fileDescription').value = target.getAttribute('data-description')
+    document.querySelector('#fr-modal-edit-file-description').classList.remove('fr-hidden')
 
     const documentTypes = JSON.parse(target.getAttribute('data-documentType-list'));
     let typeSelectBox = document.querySelector('#document-type-select');

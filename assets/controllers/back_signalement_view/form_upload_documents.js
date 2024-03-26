@@ -131,9 +131,6 @@ function initializeUploadModal(
                             clone = selectDesordreToClone.cloneNode(true)
                             clone.id = 'select-desordre-' + response.response
                         }else{
-                            console.log(modal.dataset.fileFilter)
-                            console.log(selectTypeSituationToClone)
-                            console.log(selectTypeProcedureToClone)
                             if ('situation' === modal.dataset.fileFilter ){
                                 clone = selectTypeSituationToClone.cloneNode(true)
                             } else {
@@ -142,7 +139,6 @@ function initializeUploadModal(
                             clone.id = 'select-type-' + response.response
                         }
                         clone.dataset.fileId = response.response
-                        console.log(clone)
                         if (clone.querySelectorAll('option').length == 1) {
                             clone.remove()
                         } else {
@@ -313,7 +309,7 @@ function initializeUploadModal(
     document.querySelectorAll('.open-modal-upload-files-btn').forEach((button) => {
         button.addEventListener('click', (e) => {
             fileType = e.target.dataset.fileType
-            fileFilter = e.target.dataset.fileFilter
+            fileFilter = e.target.dataset.fileFilter ?? null
             documentType = e.target.dataset.documentType ?? null
             interventionId = e.target.dataset.interventionId ?? null
         })

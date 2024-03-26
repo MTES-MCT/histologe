@@ -133,20 +133,26 @@ class SuiviManager extends Manager
         if (DocumentType::PROCEDURE_RAPPORT_DE_VISITE === $documentType && null !== $intervention) {
             $isVisibleUsager = true;
             if ($nbDocs > 0) {
-                $description .= $user->getPartner()->getNom().' a ajouté ';
-                $description .= $nbDocs;
-                $description .= $nbDocs > 1 ? ' rapports de visite' : ' rapport de visite';
-                $description .= ' de la visite du '.$intervention->getScheduledAt()->format('d/m/Y').' :';
+                $description .= sprintf(
+                    '%s a ajouté %s %s de la visite du %s :',
+                    $user->getPartner()->getNom(),
+                    $nbDocs,
+                    $nbDocs > 1 ? ' rapports de visite' : ' rapport de visite',
+                    $intervention->getScheduledAt()->format('d/m/Y')
+                );
             }
         }
 
         if (DocumentType::PHOTO_VISITE === $documentType) {
             $isVisibleUsager = true;
             if ($nbPhotos > 0) {
-                $description .= $user->getPartner()->getNom().' a ajouté ';
-                $description .= $nbPhotos;
-                $description .= $nbPhotos > 1 ? ' photos' : ' photo';
-                $description .= ' de la visite du '.$intervention->getScheduledAt()->format('d/m/Y').' :';
+                $description .= sprintf(
+                    '%s a ajouté %s %s de la visite du %s :',
+                    $user->getPartner()->getNom(),
+                    $nbDocs,
+                    $nbDocs > 1 ? ' photos' : ' photo',
+                    $intervention->getScheduledAt()->format('d/m/Y')
+                );
             }
         }
 

@@ -255,8 +255,8 @@ class SignalementFileController extends AbstractController
         $file->setDesordreSlug($desordreSlug);
         $interventionId = $request->get('interventionId');
         if (null !== $interventionId) {
-            $intervention = $interventionRepository->findOneBy(['id' => $interventionId]);
-            if ($intervention->getSignalement() === $file->getSignalement()) {
+            $intervention = $interventionRepository->find($interventionId);
+            if ($intervention?->getSignalement() === $file->getSignalement()) {
                 $file->setIntervention($intervention);
             }
         }
