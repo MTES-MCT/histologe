@@ -316,12 +316,8 @@ class SignalementBuilder
 
     private function setAddressData(): void
     {
-        $isLogementSocial = $this->isServiceSecours()
-            ? $this->evalBoolean($this->signalementDraftRequest->getSignalementConcerneLogementSocialServiceSecours())
-            : $this->evalBoolean($this->signalementDraftRequest->getSignalementConcerneLogementSocialAutreTiers());
-
         $this->signalement
-            ->setIsLogementSocial($isLogementSocial)
+            ->setIsLogementSocial($this->isLogementSocial())
             ->setAdresseOccupant($this->signalementDraftRequest->getAdresseLogementAdresseDetailNumero())
             ->setCpOccupant($this->signalementDraftRequest->getAdresseLogementAdresseDetailCodePostal())
             ->setInseeOccupant($this->signalementDraftRequest->getAdresseLogementAdresseDetailInsee())
@@ -414,9 +410,12 @@ class SignalementBuilder
                 ->setTelProprio($this->signalementDraftRequest->getCoordonneesBailleurTel())
                 ->setTelProprioSecondaire($this->signalementDraftRequest->getCoordonneesBailleurTelSecondaire());
 
-            $bailleur = $this->bailleurRepository->findOneBailleurBy($bailleurNom, $this->territory->getZip());
-            if (null !== $bailleur) {
-                $this->signalement->setBailleur($bailleur);
+            if ($this->isLogementSocial() && $bailleurNom) {
+                $bailleur = $this->bailleurRepository->findOneBailleurBy($bailleurNom, $this->territory->getZip());
+
+                if (null !== $bailleur) {
+                    $this->signalement->setBailleur($bailleur);
+                }
             }
         }
     }
@@ -449,7 +448,7 @@ class SignalementBuilder
 
     private function evalBoolean(?string $value): ?bool
     {
-        if (null === $value) {
+        if (null === $value || 'ne-sais-pas' === $value || 'nsp' === $value) {
             return null;
         }
 
@@ -537,5 +536,12 @@ class SignalementBuilder
         }
 
         return new \DateTimeImmutable($this->signalementDraftRequest->getLogementSocialDateNaissance());
+    }
+
+    private function isLogementSocial(): ?bool
+    {
+        return $this->isServiceSecours()
+            ? $this->evalBoolean($this->signalementDraftRequest->getSignalementConcerneLogementSocialServiceSecours())
+            : $this->evalBoolean($this->signalementDraftRequest->getSignalementConcerneLogementSocialAutreTiers());
     }
 }
