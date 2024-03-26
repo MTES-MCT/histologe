@@ -161,6 +161,7 @@ export default defineComponent({
           formStore.existingDraft.createdAt = requestResponse.created_at
           formStore.existingDraft.updatedAt = requestResponse.updated_at
           if (link) {
+            formStore.lastButtonClicked = ''
             link.click()
           } else {
             Sentry.captureException(new Error('L\'élément lien n\'a pas été trouvé'))

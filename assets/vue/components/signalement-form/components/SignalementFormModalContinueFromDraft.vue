@@ -13,6 +13,7 @@
                 Il semblerait que vous ayez commencé à remplir un signalement pour le logement situé <strong>{{ formStore.data.adresse_logement_adresse }}</strong>,
                 le <strong>{{ formatDate(formStore.existingDraft.createdAt) }}</strong>.
                 <br>
+                <br>
                 Vous pouvez récupérer les infos de ce signalement et reprendre où vous en étiez.
                 <br>
                 Souhaitez-vous reprendre le signalement ?
@@ -25,7 +26,7 @@
               </SignalementFormWarning>
             </div>
             <div class="fr-modal__footer">
-              <ul class="fr-btns-group fr-btns-group--right fr-btns-group--inline-reverse fr-btns-group--inline-lg fr-btns-group--icon-left">
+              <ul class="fr-btns-group fr-btns-group--center fr-btns-group--inline-reverse fr-btns-group--inline-lg fr-btns-group--icon-left">
                 <li>
                   <button class="fr-btn" aria-controls="fr-modal-continue-draft" @click="continueFromDraft">
                     Oui, reprendre le signalement
