@@ -32,7 +32,8 @@ class InformationProcedureFactory
             infoProcedureReponseAssurance: $data['info_procedure_reponse_assurance'] ?? null,
             utilisationServiceOkPrevenirBailleur: $data['utilisation_service_ok_prevenir_bailleur'] ?? null,
             utilisationServiceOkVisite: $data['utilisation_service_ok_visite'] ?? null,
-            utilisationServiceOkDemandeLogement: $data['utilisation_service_ok_demande_logement'] ?? null
+            utilisationServiceOkDemandeLogement: $data['utilisation_service_ok_demande_logement'] ?? null,
+            utilisationServiceOkCgu: $data['utilisation_service_cgu'] ?? null
         );
     }
 }
