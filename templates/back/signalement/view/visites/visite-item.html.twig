@@ -114,14 +114,6 @@
                         data-signalement-desordres="{{ criteres | json_encode }}"
                     ></button>
                 {% endif %}
-                {# {% if is_granted('FILE_DELETE', photo) %}
-                    <button 
-                        title="Supprimer la photo {{ photo.filename }}"
-                        data-delete="{{ path('back_signalement_delete_file',{uuid:signalement.uuid,type:'photos',filename:photo.filename}) }}"
-                        data-token="{{ csrf_token('signalement_delete_file_'~signalement.id) }}"
-                        class="fr-btn fr-btn--sm fr-btn--secondary fr-background--white fr-fi-delete-line signalement-file-delete"
-                    ></button>
-                {% endif %} #}
             </div>
         </div>
     {% endfor %}

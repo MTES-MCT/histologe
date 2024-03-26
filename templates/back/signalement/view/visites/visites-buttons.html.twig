@@ -1,30 +1,29 @@
-<div class="signalement-visites-buttons fr-text--right">
+<div class="signalement-visites-buttons fr-text--right fr-btns-group fr-btns-group--inline fr-btns-group--sm fr-btns-group--right fr-btns-group--icon-left">
     {% if signalement.interventions is empty %} 
-        <button class="fr-btn fr-btn--sm fr-fi-calendar-line fr-btn--icon-left" aria-controls="add-visite-modal" data-fr-opened="false">
+        <button class="fr-btn fr-fi-calendar-line" aria-controls="add-visite-modal" data-fr-opened="false">
             Ajouter une visite
         </button>
     {% elseif intervention.status is same as constant('App\\Entity\\Intervention::STATUS_PLANNED') %}    
         {% if is_granted('INTERVENTION_EDIT_VISITE', intervention) %}
             {% if workflow_can(intervention, 'cancel') %}
-                <button class="fr-btn fr-btn--sm fr-btn--danger fr-fi-close-line fr-btn--icon-left" aria-controls="cancel-visite-modal-{{intervention.id}}" data-fr-opened="false">
+                <button class="fr-btn fr-btn--danger fr-fi-close-line" aria-controls="cancel-visite-modal-{{intervention.id}}" data-fr-opened="false">
                     Annuler la visite
                 </button>
             {% endif %}
-            <button class="fr-btn fr-btn--sm fr-btn--secondary fr-fi-edit-line fr-btn--icon-left" aria-controls="reschedule-visite-modal-{{intervention.id}}" data-fr-opened="false">
+            <button class="fr-btn fr-btn--secondary fr-fi-edit-line" aria-controls="reschedule-visite-modal-{{intervention.id}}" data-fr-opened="false">
                 Modifier la date
             </button>
             {% if workflow_can(intervention, 'confirm') %}
-                <button class="fr-btn fr-btn--sm fr-fi-check-line fr-btn--icon-left" aria-controls="confirm-visite-modal-{{intervention.id}}" data-fr-opened="false">
+                <button class="fr-btn fr-fi-check-line" aria-controls="confirm-visite-modal-{{intervention.id}}" data-fr-opened="false">
                     Confirmer la visite
                 </button>
             {% endif %}
         {% endif %}
     {% elseif intervention.status is same as constant('App\\Entity\\Intervention::STATUS_DONE') %}
         {% if signalement.interventions is empty or intervention.files is empty or intervention.getRapportDeVisite is empty%}
-        {# TODO les photos de visite sont considétées dans ce cas commme un rapport de visite #}
             {% if isDocumentsEnabled and is_granted('INTERVENTION_EDIT_VISITE', intervention) %}
                 <button 
-                    class="fr-btn fr-btn--sm fr-fi-file-fill fr-btn--icon-left open-modal-upload-files-btn" 
+                    class="fr-btn fr-fi-file-fill open-modal-upload-files-btn" 
                     data-fr-opened="false" 
                     aria-controls="visites-upload-files-{{intervention.id}}"
                     data-file-type="document"
@@ -36,14 +35,14 @@
         {% else %}
             {% if is_granted('INTERVENTION_EDIT_VISITE', intervention) %}
                 <button 
-                    class="fr-btn fr-btn--sm fr-btn--secondary fr-fi-edit-line fr-btn--icon-left" 
+                    class="fr-btn fr-btn--secondary fr-fi-edit-line" 
                     aria-controls="edit-visite-modal-{{intervention.id}}" 
                     data-fr-opened="false">
                     Editer le rapport
                 </button>
             {% endif %}
             <a href="{{ asset('_up/'~intervention.getRapportDeVisite[0].filename)~'/' ~ signalement.uuid }}"
-                class="fr-btn fr-btn--sm"
+                class="fr-btn"
                 title="Afficher le document"
                 rel="noopener"
                 target="_blank">
@@ -52,7 +51,7 @@
         {% endif %}
         {% if isDocumentsEnabled and is_granted('INTERVENTION_EDIT_VISITE', intervention)%}
             <button 
-                class="fr-btn fr-btn--sm fr-btn--secondary fr-btn--icon-left fr-icon-camera-fill open-modal-upload-files-btn" 
+                class="fr-btn fr-btn--secondary fr-icon-camera-fill open-modal-upload-files-btn" 
                 data-fr-opened="false" 
                 aria-controls="visites-upload-files-{{intervention.id}}"
                 data-file-type="photo"

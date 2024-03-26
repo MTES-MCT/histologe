@@ -816,27 +816,26 @@ class SignalementManager extends AbstractManager
 
     public function getAllPhotosOrdered(Signalement $signalement): ?array
     {
-        $photos = $signalement->getPhotos();
-        $photosArray = $photos->toArray();
-        $photoArraysByType = [
+        $photoList = $signalement->getPhotos()->toArray();
+        $photoListByType = [
             DocumentType::PHOTO_SITUATION->value => [],
             DocumentType::PHOTO_VISITE->value => [],
             DocumentType::AUTRE->value => [],
         ];
 
-        foreach ($photosArray as $photo) {
-            $type = $photo->getDocumentType();
-            $photoArraysByType[$type->value][] = $photo;
+        foreach ($photoList as $photoItem) {
+            $type = $photoItem->getDocumentType();
+            $photoListByType[$type->value][] = $photoItem;
         }
 
-        foreach ($photoArraysByType as &$photoArray) {
-            usort($photoArray, function (File $a, File $b) {
-                if (DocumentType::PHOTO_SITUATION === $a->getDocumentType()) {
-                    return $a->getId() <=> $b->getId();
+        foreach ($photoListByType as &$photoArray) {
+            usort($photoArray, function (File $fileA, File $fileB) {
+                if (DocumentType::PHOTO_SITUATION === $fileA->getDocumentType()) {
+                    return $fileA->getId() <=> $fileB->getId();
                 }
-                if (DocumentType::PHOTO_VISITE === $a->getDocumentType()) {
-                    $interventionA = $a->getIntervention();
-                    $interventionB = $b->getIntervention();
+                if (DocumentType::PHOTO_VISITE === $fileA->getDocumentType()) {
+                    $interventionA = $fileA->getIntervention();
+                    $interventionB = $fileB->getIntervention();
                     if (null === $interventionA && null === $interventionB) {
                         return 0;
                     }
@@ -850,17 +849,15 @@ class SignalementManager extends AbstractManager
                     return $interventionA->getId() <=> $interventionB->getId();
                 }
 
-                return $a->getId() <=> $b->getId();
+                return $fileA->getId() <=> $fileB->getId();
             });
         }
 
-        $sortedPhotos = array_merge(
-            $photoArraysByType[DocumentType::PHOTO_SITUATION->value],
-            $photoArraysByType[DocumentType::AUTRE->value],
-            $photoArraysByType[DocumentType::PHOTO_VISITE->value]
+        return array_merge(
+            $photoListByType[DocumentType::PHOTO_SITUATION->value],
+            $photoListByType[DocumentType::AUTRE->value],
+            $photoListByType[DocumentType::PHOTO_VISITE->value]
         );
-
-        return $sortedPhotos;
     }
 
     /**

@@ -70,10 +70,8 @@
 {% if filesFilter is same as 'situation' %}
     <div class="fr-grid-row fr-grid-row--middle fr-grid-row--gutters fr-mb-3v">
         {% for index, photo in signalement.files|filter(
-            photo => photo.fileType == 'photo'
-                    and photo.intervention is null
+            photo => photo.isSituationPhoto
                     and filesFilter is same as 'situation' 
-                    and photo.documentType.label() in  DocumentType.getSituationList
             ) %}
             <div class="fr-col-6 fr-col-md-2 fr-rounded signalement-file-item">
                 <div class="fr-px-5w fr-py-8w fr-rounded fr-border fr-text--center part-infos-hover"

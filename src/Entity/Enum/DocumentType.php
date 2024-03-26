@@ -47,7 +47,6 @@ enum DocumentType: String
     {
         return [
             self::PHOTO_SITUATION->name => self::PHOTO_SITUATION->label(),
-            self::PHOTO_VISITE->name => self::PHOTO_VISITE->label(), // TODO, garder ?
             self::AUTRE->name => self::AUTRE->label(),
         ];
     }
