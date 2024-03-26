@@ -101,17 +101,11 @@ class SignalementBuilder
 
     public function withTypeCompositionLogement(): self
     {
-        // Some people write unexpected float values, round to superior
-        $compositionLogementNombrePersonnes = $this->signalementDraftRequest->getCompositionLogementNombrePersonnes();
-        if (!empty($compositionLogementNombrePersonnes) && is_numeric($compositionLogementNombrePersonnes)) {
-            $compositionLogementNombrePersonnes = ceil($compositionLogementNombrePersonnes);
-        }
-
         $this->signalement
             ->setTypeCompositionLogement(
                 $this->typeCompositionLogementFactory->createFromSignalementDraftPayload($this->payload)
             )
-            ->setNbOccupantsLogement($compositionLogementNombrePersonnes)
+            ->setNbOccupantsLogement($this->signalementDraftRequest->getCompositionLogementNombrePersonnes())
             ->setNatureLogement($this->signalementDraftRequest->getTypeLogementNature())
             ->setTypeLogement($this->signalementDraftRequest->getTypeLogementNature())
             ->setSuperficie($this->signalementDraftRequest->getCompositionLogementSuperficie())

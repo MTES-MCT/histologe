@@ -17,6 +17,7 @@ class SignalementDraftRequest
     public const PATTERN_PHONE_KEY = '/.*(_tel|_tel_secondaire)$/';
 
     public const PATTERN_FILE_UPLOAD = '/\w+_upload/';
+    public const PATTERN_NOMBRE = '/_nb_|_nombre_/';
     public const FILE_UPLOAD_KEY = 'files';
 
     private ?string $profil = null;
