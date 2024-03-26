@@ -458,16 +458,14 @@ class FrontSignalementController extends AbstractController
                         );
                     }
                 }
-
-                return $this->render('front/suivi_signalement.html.twig', [
-                    'signalement' => $signalement,
-                    'email' => $fromEmail,
-                    'type' => $type,
-                    'suiviAuto' => $suiviAuto,
-                ]);
             }
 
-            return $this->redirectToRoute('front_suivi_signalement');
+            return $this->render('front/suivi_signalement.html.twig', [
+                'signalement' => $signalement,
+                'email' => $fromEmail,
+                'type' => $type,
+                'suiviAuto' => $suiviAuto,
+            ]);
         }
         $this->addFlash('error', 'Le lien utilisé est invalide, vérifiez votre saisie.');
 
@@ -558,68 +556,69 @@ class FrontSignalementController extends AbstractController
         SuiviFactory $suiviFactory,
         SignalementFileProcessor $signalementFileProcessor,
     ): RedirectResponse {
-        if ($signalement = $signalementRepository->findOneByCodeForPublic($code)) {
-            if ($this->isCsrfTokenValid('signalement_front_response_'.$signalement->getUuid(), $request->get('_token'))) {
-                $email = $request->get('signalement_front_response')['email'];
-                $user = $userRepository->findOneBy(['email' => $email]);
-                $suivi = $suiviFactory->createInstanceFrom(
-                    user: $user,
-                    signalement: $signalement,
-                    params: ['type' => Suivi::TYPE_USAGER],
-                    isPublic: true,
-                );
-
-                $description = htmlspecialchars(
-                    nl2br($request->get('signalement_front_response')['content']),
-                    \ENT_QUOTES,
-                    'UTF-8'
-                );
-
-                $fileList = $descriptionList = [];
-                if ($data = $request->get('signalement')) {
-                    if (isset($data['files'])) {
-                        $dataFiles = $data['files'];
-                        foreach ($dataFiles as $inputName => $files) {
-                            list($files, $descriptions) = $signalementFileProcessor->process(
-                                $dataFiles,
-                                $inputName,
-                                DocumentType::AUTRE
-                            );
-                            $fileList = [...$fileList, ...$files];
-                            $descriptionList = [...$descriptionList, ...$descriptions];
-                        }
-                        unset($data['files']);
-                    }
-                    if (!empty($descriptionList)) {
-                        $description .= '<br>Ajout de pièces au signalement<ul>'
-                            .implode('', $descriptionList).'</ul>';
-                        $signalementFileProcessor->addFilesToSignalement($fileList, $signalement, $user);
-                    }
-                }
-
-                $suivi->setDescription($description);
-                $entityManager->persist($suivi);
-                $entityManager->flush();
-                $this->addFlash('success', <<<SUCCESS
-                Votre message a bien été envoyé, vous recevrez un email lorsque votre dossier sera mis à jour.
-                N'hésitez pas à consulter votre page de suivi !
-                SUCCESS);
-            } else {
-                $this->addFlash('error', 'Token CSRF invalide');
-            }
-        } else {
+        $signalement = $signalementRepository->findOneByCodeForPublic($code);
+        if (!$signalement) {
             $this->addFlash('error', 'Le lien utilisé est expiré ou invalide, vérifiez votre saisie.');
 
             return $this->redirectToRoute('home');
         }
+        if (!$this->isCsrfTokenValid('signalement_front_response_'.$signalement->getUuid(), $request->get('_token'))) {
+            $this->addFlash('error', 'Token CSRF invalide');
 
-        if (!empty($email)) {
-            return $this->redirectToRoute(
-                'front_suivi_signalement',
-                ['code' => $signalement->getCodeSuivi(), 'from' => $email]
-            );
+            return $this->redirectToRoute('front_suivi_signalement', ['code' => $signalement->getCodeSuivi()]);
+        }
+        if (Signalement::STATUS_CLOSED === $signalement->getStatut()) {
+            return $this->redirectToRoute('front_suivi_signalement', ['code' => $signalement->getCodeSuivi()]);
         }
 
-        return $this->redirectToRoute('front_suivi_signalement', ['code' => $signalement->getCodeSuivi()]);
+        $email = $request->get('signalement_front_response')['email'];
+        $user = $userRepository->findOneBy(['email' => $email]);
+        $suivi = $suiviFactory->createInstanceFrom(
+            user: $user,
+            signalement: $signalement,
+            params: ['type' => Suivi::TYPE_USAGER],
+            isPublic: true,
+        );
+
+        $description = htmlspecialchars(
+            nl2br($request->get('signalement_front_response')['content']),
+            \ENT_QUOTES,
+            'UTF-8'
+        );
+
+        $fileList = $descriptionList = [];
+        if ($data = $request->get('signalement')) {
+            if (isset($data['files'])) {
+                $dataFiles = $data['files'];
+                foreach ($dataFiles as $inputName => $files) {
+                    list($files, $descriptions) = $signalementFileProcessor->process(
+                        $dataFiles,
+                        $inputName,
+                        DocumentType::AUTRE
+                    );
+                    $fileList = [...$fileList, ...$files];
+                    $descriptionList = [...$descriptionList, ...$descriptions];
+                }
+                unset($data['files']);
+            }
+            if (!empty($descriptionList)) {
+                $description .= '<br>Ajout de pièces au signalement<ul>'
+                    .implode('', $descriptionList).'</ul>';
+                $signalementFileProcessor->addFilesToSignalement($fileList, $signalement, $user);
+            }
+        }
+
+        $suivi->setDescription($description);
+        $entityManager->persist($suivi);
+        $entityManager->flush();
+        $this->addFlash('success', <<<SUCCESS
+                Votre message a bien été envoyé, vous recevrez un email lorsque votre dossier sera mis à jour.
+                N'hésitez pas à consulter votre page de suivi !
+                SUCCESS);
+
+        return $this->redirectToRoute(
+            'front_suivi_signalement',
+            ['code' => $signalement->getCodeSuivi(), 'from' => $email]
+        );
     }
 }
