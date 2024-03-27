@@ -2,7 +2,9 @@ if(document.querySelector('[data-fr-adresse-autocomplete]')){
     attachAutocompleteClickOutsideEvent()
 }
 document.querySelectorAll('[data-fr-adresse-autocomplete]').forEach((inputAdresse) => {
-    attacheAutocompleteAddressEvent(inputAdresse)
+    if (inputAdresse.matches('input')) {
+        attacheAutocompleteAddressEvent(inputAdresse);
+    }
 })
 
 function attachAutocompleteClickOutsideEvent() {
