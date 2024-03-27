@@ -411,7 +411,11 @@ class SignalementBuilder
                 ->setTelProprioSecondaire($this->signalementDraftRequest->getCoordonneesBailleurTelSecondaire());
 
             if ($this->isLogementSocial() && $bailleurNom) {
-                $bailleur = $this->bailleurRepository->findOneBailleurBy($bailleurNom, $this->territory->getZip());
+                $bailleur = $this->bailleurRepository->findOneBailleurBy(
+                    name: $bailleurNom,
+                    zip: $this->territory->getZip(),
+                    bailleurSanitized: true
+                );
 
                 if (null !== $bailleur) {
                     $this->signalement->setBailleur($bailleur);

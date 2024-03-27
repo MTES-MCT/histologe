@@ -2,20 +2,28 @@
 
 namespace App\Tests\Functional\Controller;
 
+use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\Routing\RouterInterface;
 
 class BailleurControllerTest extends WebTestCase
 {
+    private KernelBrowser $client;
+    private RouterInterface $router;
+
+    protected function setUp(): void
+    {
+        $this->client = static::createClient();
+        /* @var RouterInterface $router */
+        $this->router = self::getContainer()->get(RouterInterface::class);
+    }
+
     public function testSearchBailleurs(): void
     {
-        $client = static::createClient();
-        /** @var RouterInterface $router */
-        $router = self::getContainer()->get(RouterInterface::class);
-        $route = $router->generate('app_bailleur', ['name' => 'habitat', 'postcode' => 13002]);
+        $route = $this->router->generate('app_bailleur', ['name' => 'habitat', 'postcode' => 13002]);
 
-        $client->request('GET', $route);
-        $response = json_decode($client->getResponse()->getContent(), true);
+        $this->client->request('GET', $route);
+        $response = json_decode($this->client->getResponse()->getContent(), true);
         $this->assertCount(19, $response);
 
         foreach ($response as $item) {
@@ -25,18 +33,40 @@ class BailleurControllerTest extends WebTestCase
 
     public function testSearchTerms(): void
     {
-        $client = static::createClient();
-        /** @var RouterInterface $router */
-        $router = self::getContainer()->get(RouterInterface::class);
-        $routeFirst = $router->generate('app_bailleur', ['name' => 'habitat 13', 'postcode' => 13002]);
+        $routeFirst = $this->router->generate('app_bailleur', ['name' => 'habitat 13', 'postcode' => 13002]);
 
-        $client->request('GET', $routeFirst);
-        $responseFirst = json_decode($client->getResponse()->getContent(), true);
+        $this->client->request('GET', $routeFirst);
+        $responseFirst = json_decode($this->client->getResponse()->getContent(), true);
 
-        $routeSecond = $router->generate('app_bailleur', ['name' => '13 habitat', 'postcode' => 13002]);
-        $client->request('GET', $routeSecond);
-        $responseSecond = json_decode($client->getResponse()->getContent(), true);
+        $routeSecond = $this->router->generate('app_bailleur', ['name' => '13 habitat', 'postcode' => 13002]);
+        $this->client->request('GET', $routeSecond);
+        $responseSecond = json_decode($this->client->getResponse()->getContent(), true);
 
         $this->assertEquals($responseFirst, $responseSecond);
+    }
+
+    public function testSearchBailleursSanitized(): void
+    {
+        $route = $this->router->generate('app_bailleur', ['name' => 'ra', 'postcode' => 13002, 'sanitize' => true]);
+
+        $this->client->request('GET', $route);
+        $response = json_decode($this->client->getResponse()->getContent(), true);
+
+        foreach ($response as $item) {
+            $this->assertStringContainsString('ra', strtolower($item['name']));
+            $this->assertStringNotContainsString('[Radié(e)]', strtolower($item['name']));
+        }
+    }
+
+    public function testSearchBailleursRadies(): void
+    {
+        $route = $this->router->generate('app_bailleur', ['name' => 'rad', 'postcode' => 13002]);
+
+        $this->client->request('GET', $route);
+        $response = json_decode($this->client->getResponse()->getContent(), true);
+
+        foreach ($response as $item) {
+            $this->assertStringContainsString('[Radié(e)]', $item['name']);
+        }
     }
 }
