@@ -1,19 +1,45 @@
-const modalUploadFiles = document?.querySelector('#fr-modal-upload-files')
-if (modalUploadFiles) {
-    const dropArea = document.querySelector('.modal-upload-drop-section')
-    const listContainer = document.querySelector('.modal-upload-list')
-    const fileSelector = document.querySelector('.modal-upload-files-selector')
-    const fileSelectorInput = document.querySelector('.modal-upload-files-selector-input')
-    const addFileRoute = modalUploadFiles.dataset.addFileRoute
-    const addFileToken = modalUploadFiles.dataset.addFileToken
-    const waitingSuiviRoute = modalUploadFiles.dataset.waitingSuiviRoute
-    const deleteTmpFileRoute = modalUploadFiles.dataset.deleteTmpFileRoute
-    const selectTypeToClone = document.querySelector('#select-type-to-clone')
-    const selectDesordreToClone = document.querySelector('#select-desordre-to-clone')
-    const editFileRoute = modalUploadFiles.dataset.editFileRoute
-    const editFileToken = modalUploadFiles.dataset.editFileToken
-    const ancre = document.querySelector('#modal-upload-file-dynamic-content')
-    const btnValidate = document.querySelector('#btn-validate-modal-upload-files')
+initializeUploadModal(
+    '#fr-modal-upload-files',
+    '#select-type-situation-to-clone',
+    '#select-type-procedure-to-clone',
+    '#select-desordre-to-clone',
+);
+
+document?.querySelectorAll('.fr-modal-visites-upload-files')?.forEach(modalVisiteUpload => {
+    initializeUploadModal(
+        '#'+modalVisiteUpload.id,
+        null,
+        null,
+        null,
+    )
+})
+
+
+function initializeUploadModal(
+    modalSelector, 
+    selectTypeSituationToCloneSelector, 
+    selectTypeProcedureToCloneSelector, 
+    selectDesordreToCloneSelector, 
+) {
+    const modal = document?.querySelector(modalSelector);
+    if (!modal) return;
+
+    const dropArea = modal.querySelector('.modal-upload-drop-section');
+    const listContainer = modal.querySelector('.modal-upload-list');
+    const fileSelector = modal.querySelector('.modal-upload-files-selector')
+    const fileSelectorInput = modal.querySelector('.modal-upload-files-selector-input')
+    const addFileRoute = modal.dataset.addFileRoute;
+    const addFileToken = modal.dataset.addFileToken;
+    const waitingSuiviRoute = modal.dataset.waitingSuiviRoute;
+    const deleteTmpFileRoute = modal.dataset.deleteTmpFileRoute;
+    const selectTypeSituationToClone = selectTypeSituationToCloneSelector ? modal.querySelector(selectTypeSituationToCloneSelector) : null;
+    const selectTypeProcedureToClone = selectTypeProcedureToCloneSelector ? modal.querySelector(selectTypeProcedureToCloneSelector) : null;
+    const selectDesordreToClone = selectDesordreToCloneSelector ? modal.querySelector(selectDesordreToCloneSelector) : null;    
+    const editFileRoute = modal.dataset.editFileRoute;
+    const editFileToken = modal.dataset.editFileToken;
+    const btnValidate = modal.querySelector('#btn-validate-modal-upload-files');
+    const ancre = modal.querySelector('#modal-upload-file-dynamic-content');
+
 
     fileSelector.onclick = () => fileSelectorInput.click()
     fileSelectorInput.onchange = () => {
@@ -81,7 +107,7 @@ if (modalUploadFiles) {
         listContainer.prepend(div)
         let http = new XMLHttpRequest()
         let data = new FormData()
-        if (modalUploadFiles.dataset.fileType == 'photo') {
+        if (modal.dataset.fileType == 'photo') {
             data.append('signalement-add-file[photos][]', file)
         } else {
             data.append('signalement-add-file[documents][]', file)
@@ -98,20 +124,35 @@ if (modalUploadFiles) {
                 let btnDeleteTmpFile = div.querySelector('a.delete-tmp-file')
                 addEventListenerDeleteTmpFile(btnDeleteTmpFile)
                 if (this.status == 200) {
-                    modalUploadFiles.dataset.hasChanges = true
-                    if (modalUploadFiles.dataset.fileType == 'photo') {
-                        var clone = selectDesordreToClone.cloneNode(true)
-                        clone.id = 'select-desordre-' + response.response
+                    modal.dataset.hasChanges = true
+                    if (null !== selectDesordreToClone || null !== selectTypeSituationToClone || null !== selectTypeProcedureToClone){
+                        let clone
+                        if (modal.dataset.fileType == 'photo') {
+                            clone = selectDesordreToClone.cloneNode(true)
+                            clone.id = 'select-desordre-' + response.response
+                        }else{
+                            if ('situation' === modal.dataset.fileFilter ){
+                                clone = selectTypeSituationToClone.cloneNode(true)
+                            } else {
+                                clone = selectTypeProcedureToClone.cloneNode(true)
+                            }
+                            clone.id = 'select-type-' + response.response
+                        }
+                        clone.dataset.fileId = response.response
+                        if (clone.querySelectorAll('option').length == 1) {
+                            clone.remove()
+                        } else {
+                            div.querySelector('.select-container').appendChild(clone)
+                            addEventListenerSelectTypeDesordre(clone)
+                        }
                     } else {
-                        var clone = selectTypeToClone.cloneNode(true)
-                        clone.id = 'select-type-' + response.response
-                    }
-                    clone.dataset.fileId = response.response
-                    if (clone.querySelectorAll('option').length == 1) {
-                        clone.remove()
-                    } else {
-                        div.querySelector('.select-container').appendChild(clone)
-                        addEventListenerSelectTypeDesordre(clone)
+                        if (null !== modal.dataset.documentType){
+                            let divFileId = div.querySelector('#file-id')
+                            divFileId.value = response.response
+                            callEditFileRoute(div)
+                            addEventListenerDescription(div)
+                        }
+
                     }
                     btnDeleteTmpFile.href = btnDeleteTmpFile.href.replace('REPLACE', response.response)
                     btnDeleteTmpFile.classList.remove('fr-hidden', 'delete-html')
@@ -127,8 +168,8 @@ if (modalUploadFiles) {
     }
 
     function initInnerHtml(file) {
-        var innerHTML =`<div class="fr-col-12 file-error"></div>`;
-        if (modalUploadFiles.dataset.fileType == 'photo') {
+        let innerHTML =`<div class="fr-col-12 file-error"></div>`;
+        if (modal.dataset.fileType == 'photo') {
             innerHTML += `
             <div class="fr-col-2">
                 <img class="fr-content-media__img" src="${URL.createObjectURL(file)}">
@@ -149,9 +190,21 @@ if (modalUploadFiles) {
                 <span>0%</span>
             </div>
         </div>
-        <div class="fr-col-3 select-container">           
-        </div>
-        <div class="fr-col-1">
+        `
+        if (modal.dataset.documentType == 'PHOTO_VISITE') {
+            innerHTML += `
+            <div class="fr-col-3">                
+                <input type="text" id="file-description" name="file[description]"
+                required="required" class="fr-input" placeholder="Description de l'image">
+                <input type="hidden" id="file-id" name="file[id]">
+            </div>           
+            `
+        } else{
+            innerHTML += `<div class="fr-col-3 select-container">           
+            </div>
+            <input type="hidden" id="file-id" name="file[id]">`
+        }
+        innerHTML += `<div class="fr-col-1">
             <a href="${deleteTmpFileRoute}" title="Supprimer" class="fr-btn fr-btn--sm fr-btn--secondary fr-background--white fr-fi-delete-line fr-hidden delete-tmp-file delete-html"></a>         
         </div>
         `
@@ -164,7 +217,7 @@ if (modalUploadFiles) {
             let http = new XMLHttpRequest()
             let data = new FormData()
             data.append('file_id', selectField.dataset.fileId)
-            if (modalUploadFiles.dataset.fileType == 'photo') {
+            if (modal.dataset.fileType == 'photo') {
                 data.append('documentType', 'PHOTO_SITUATION')
                 data.append('desordreSlug', selectField.value)
             } else {
@@ -206,9 +259,41 @@ if (modalUploadFiles) {
         })
     }
 
+    function callEditFileRoute(divFileItem) {
+        let httpEdit = new XMLHttpRequest()
+        let dataEdit = new FormData()
+        dataEdit.append('file_id', divFileItem.querySelector('#file-id')?.value)
+        dataEdit.append('documentType', modal.dataset.documentType)            
+        dataEdit.append('interventionId', modal.dataset.interventionId) 
+        dataEdit.append('description', divFileItem.querySelector('#file-description')?.value)
 
-    modalUploadFiles.addEventListener('dsfr.conceal', (e) => {
-        if (modalUploadFiles.dataset.validated == "true" && modalUploadFiles.dataset.hasChanges == "true") {
+        dataEdit.append('_token', editFileToken)
+        httpEdit.onreadystatechange = function () {
+            if (this.readyState == XMLHttpRequest.DONE) {
+                let response = JSON.parse(this.response)
+                if (this.status != 200) {
+                    let parent = divFileItem
+                    parent.querySelector('.file-error').innerHTML = '<div class="fr-alert fr-alert--error fr-alert--sm">' + response.response + '</div>'
+
+                }
+            }
+        }
+        httpEdit.open('POST', editFileRoute, true)
+        httpEdit.setRequestHeader("X-Requested-With", "XMLHttpRequest")
+        httpEdit.send(dataEdit)
+    }
+
+    function addEventListenerDescription(divFileItem) {
+            listContainer?.querySelectorAll('.fr-grid-row')?.forEach(divFileItem => {
+                divFileItem.querySelector('#file-description')?.addEventListener('change', (e) => {
+                    callEditFileRoute(divFileItem)
+                })
+            })
+    }
+
+
+    modal.addEventListener('dsfr.conceal', (e) => {
+        if (modal.dataset.validated == "true" && modal.dataset.hasChanges == "true") {
             fetch(waitingSuiviRoute).then((response) => {
                 window.location.reload()
             })
@@ -217,37 +302,49 @@ if (modalUploadFiles) {
         document.querySelectorAll('a.delete-tmp-file').forEach((button) => {
             button.click()
         })
-        modalUploadFiles.dataset.hasChanges = false
+        modal.dataset.hasChanges = false
     })
 
-    let fileType
+    let fileType, fileFilter, documentType, interventionId
     document.querySelectorAll('.open-modal-upload-files-btn').forEach((button) => {
         button.addEventListener('click', (e) => {
             fileType = e.target.dataset.fileType
+            fileFilter = e.target.dataset.fileFilter ?? null
+            documentType = e.target.dataset.documentType ?? null
+            interventionId = e.target.dataset.interventionId ?? null
         })
     })
 
-    modalUploadFiles.addEventListener('dsfr.disclose', (e) => {
+    modal.addEventListener('dsfr.disclose', (e) => {
         listContainer.innerHTML = '';
-        modalUploadFiles.dataset.validated = false
-        modalUploadFiles.dataset.hasChanges = false
-        modalUploadFiles.querySelectorAll('.type-conditional').forEach((type) => {
+        modal.dataset.validated = false
+        modal.dataset.hasChanges = false
+        modal.querySelectorAll('.type-conditional').forEach((type) => {
             type.classList.add('fr-hidden')
         })
+        modal.querySelectorAll('.filter-conditional').forEach((type) => {
+            type.classList.add('fr-hidden')
+        })
+        modal.dataset.documentType = documentType
+        modal.dataset.fileFilter = fileFilter
+        modal.dataset.interventionId = interventionId        
         if (fileType == 'photo') {
-            modalUploadFiles.dataset.fileType = 'photo'
-            modalUploadFiles.querySelector('.type-photo').classList.remove('fr-hidden')
+            modal.dataset.fileType = 'photo'
+            modal.querySelector('.type-photo').classList.remove('fr-hidden')
             fileSelectorInput.setAttribute('accept', 'image/*')
         } else {
-            modalUploadFiles.dataset.fileType = 'document'
-            modalUploadFiles.querySelector('.type-document').classList.remove('fr-hidden')
+            modal.dataset.fileType = 'document'
+            modal.querySelector('.type-document').classList.remove('fr-hidden')
             fileSelectorInput.setAttribute('accept', '*/*')
+        }   
+        if (fileFilter == 'procedure') {
+            modal.querySelector('.filter-procedure').classList.remove('fr-hidden')
+        } else if (fileFilter == 'situation')  {
+            modal.querySelector('.filter-situation').classList.remove('fr-hidden')
         }
     })
 
     btnValidate.addEventListener('click', (e) => {
-        modalUploadFiles.dataset.validated = true
+        modal.dataset.validated = true
     })
-
-
 }

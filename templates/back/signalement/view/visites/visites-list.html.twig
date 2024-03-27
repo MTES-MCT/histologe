@@ -24,8 +24,8 @@
             <div class="fr-col-12 fr-col-md-6">
                 {% if is_granted('INTERVENTION_EDIT_VISITE', intervention) %}
                     {% include 'back/signalement/view/visites/modals/visites-modals.html.twig' %}
-                    {% include 'back/signalement/view/visites/visites-buttons.html.twig' %}
                 {% endif %}
+                {% include 'back/signalement/view/visites/visites-buttons.html.twig' %}
             </div>
         </div>
         {% include 'back/signalement/view/visites/visite-item.html.twig' %}

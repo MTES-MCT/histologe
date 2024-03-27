@@ -260,4 +260,11 @@ class File
 
         return $this;
     }
+
+    public function isSituationPhoto(): bool
+    {
+        return $this->fileType === $this::FILE_TYPE_PHOTO
+        && \array_key_exists($this->documentType->value, DocumentType::getSituationList())
+        && null === $this->intervention;
+    }
 }
