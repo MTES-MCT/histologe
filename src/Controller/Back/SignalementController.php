@@ -21,6 +21,7 @@ use App\Repository\InterventionRepository;
 use App\Repository\SignalementQualificationRepository;
 use App\Repository\TagRepository;
 use App\Security\Voter\UserVoter;
+use App\Service\Signalement\PhotoHelper;
 use App\Service\Signalement\SignalementDesordresProcessor;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -178,7 +179,7 @@ class SignalementController extends AbstractController
 
         $partnerVisite = $affectationRepository->findAffectationWithQualification(Qualification::VISITES, $signalement);
 
-        $allPhotosOrdered = $signalementManager->getAllPhotosOrdered($signalement);
+        $allPhotosOrdered = PhotoHelper::getSortedPhotos($signalement);
 
         return $this->render('back/signalement/view.html.twig', [
             'title' => 'Signalement',
