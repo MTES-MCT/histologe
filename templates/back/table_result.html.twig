@@ -47,9 +47,15 @@
                 {% if 'OCCUPANT' == signalement.lastSuiviBy or 'DECLARANT' == signalement.lastSuiviBy %}
                     {% set classe = 'fr-badge fr-badge--warning' %}
                 {% endif %}
-                <small class="{{ classe }}">{{ signalement.lastSuiviBy }}</small> <br>
+                <small class="{{ classe }}">                
+                    {% if signalement.lastSuiviBy is same as 'Aucun' %}   
+                        Occupant ou déclarant         
+                    {% else %}
+                        {{ signalement.lastSuiviBy }}
+                    {% endif %}
+                </small> <br>
             {% else %}
-                Occupant ou déclarant
+                Aucun
             {% endif %}
         </td>
         <td>
