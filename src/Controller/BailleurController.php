@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Entity\Bailleur;
 use App\Repository\BailleurRepository;
 use App\Service\Signalement\ZipcodeProvider;
 use Doctrine\Common\Collections\ArrayCollection;
@@ -43,6 +44,6 @@ class BailleurController extends AbstractController
 
     private function sanitizeName($name): string
     {
-        return trim(str_replace('[Radié(e)]', '', $name));
+        return trim(str_replace(Bailleur::BAILLEUR_RADIE, '', $name));
     }
 }

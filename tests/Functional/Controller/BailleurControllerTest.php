@@ -2,6 +2,7 @@
 
 namespace App\Tests\Functional\Controller;
 
+use App\Entity\Bailleur;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\Routing\RouterInterface;
@@ -54,7 +55,7 @@ class BailleurControllerTest extends WebTestCase
 
         foreach ($response as $item) {
             $this->assertStringContainsString('ra', strtolower($item['name']));
-            $this->assertStringNotContainsString('[Radié(e)]', strtolower($item['name']));
+            $this->assertStringNotContainsString(Bailleur::BAILLEUR_RADIE, strtolower($item['name']));
         }
     }
 
@@ -66,7 +67,7 @@ class BailleurControllerTest extends WebTestCase
         $response = json_decode($this->client->getResponse()->getContent(), true);
 
         foreach ($response as $item) {
-            $this->assertStringContainsString('[Radié(e)]', $item['name']);
+            $this->assertStringContainsString(Bailleur::BAILLEUR_RADIE, $item['name']);
         }
     }
 }
