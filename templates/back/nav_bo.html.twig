@@ -68,8 +68,9 @@
                     </ul>
                 </div>
                 {% if is_granted('ROLE_ADMIN_PARTNER') %}
+                    {% set routesAdmin = ['back_user_report_index', 'back_situation_', 'back_partner_', 'back_account_', 'back_inactive_account_'] %}
                     <button class="fr-sidemenu__btn"
-                            aria-expanded="{% if 'back_user_report_index' is same as(app.request.get('_route')) or 'back_situation_' in app.request.get('_route') or 'back_partner_' in app.request.get('_route') %}true{% else %}false{% endif %}"
+                            aria-expanded="{% if routesAdmin|filter(route => app.request.get('_route') starts with route)|length > 0  %}true{% else %}false{% endif %}"
                             aria-controls="fr-sidemenu-outils-admin">Outils Admin
                     </button>
                     <div class="fr-collapse" id="fr-sidemenu-outils-admin">
@@ -89,10 +90,15 @@
                                        {% if 'back_partner' in app.request.get('_route') %}aria-current="page"{% endif %}>Partenaires</a>
                                 </li>
                                 {% if is_granted('ROLE_ADMIN') %}
-                                    <li class="fr-sidemenu__item {% if 'back_account' in app.request.get('_route') %}fr-sidemenu__item--active{% endif %}">
+                                    <li class="fr-sidemenu__item {% if 'back_account_' in app.request.get('_route') %}fr-sidemenu__item--active{% endif %}">
                                         <a class="fr-sidemenu__link" href="{{ path('back_account_index') }}"
                                         target="_self"
-                                        {% if 'back_account' in app.request.get('_route') %}aria-current="page"{% endif %}>Comptes archivés</a>
+                                        {% if 'back_account_' in app.request.get('_route') %}aria-current="page"{% endif %}>Comptes archivés</a>
+                                    </li>
+                                    <li class="fr-sidemenu__item {% if 'back_inactive_account_' in app.request.get('_route') %}fr-sidemenu__item--active{% endif %}">
+                                        <a class="fr-sidemenu__link" href="{{ path('back_inactive_account_index') }}"
+                                        target="_self"
+                                        {% if 'back_inactive_account_' in app.request.get('_route') %}aria-current="page"{% endif %}>Comptes Inactifs</a>
                                     </li>
                                 {% endif %}
                             {% endif %}

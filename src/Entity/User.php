@@ -119,6 +119,15 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column]
     private bool $isActivateAccountNotificationEnabled = true;
 
+    #[ORM\OneToMany(mappedBy: 'declarant', targetEntity: SignalementUsager::class)]
+    private $signalementUsagerDeclarants;
+
+    #[ORM\OneToMany(mappedBy: 'occupant', targetEntity: SignalementUsager::class)]
+    private $signalementUsagerOccupants;
+
+    #[ORM\Column(type: Types::DATE_IMMUTABLE, nullable: true)]
+    private ?\DateTimeInterface $archivingScheduledAt = null;
+
     public function __construct()
     {
         $this->suivis = new ArrayCollection();
@@ -126,6 +135,8 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         $this->notifications = new ArrayCollection();
         $this->uuid = Uuid::v4();
         $this->files = new ArrayCollection();
+        $this->signalementUsagerDeclarants = new ArrayCollection();
+        $this->signalementUsagerOccupants = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -314,6 +325,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setLastLoginAt(?DateTimeImmutable $lastLoginAt): self
     {
         $this->lastLoginAt = $lastLoginAt;
+        $this->archivingScheduledAt = null;
 
         return $this;
     }
@@ -500,5 +512,27 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function getFullname(): string
     {
         return $this->prenom.' '.$this->nom;
+    }
+
+    public function getSignalementUsagerDeclarants(): Collection
+    {
+        return $this->signalementUsagerDeclarants;
+    }
+
+    public function getSignalementUsagerOccupants(): Collection
+    {
+        return $this->signalementUsagerOccupants;
+    }
+
+    public function getArchivingScheduledAt(): ?\DateTimeInterface
+    {
+        return $this->archivingScheduledAt;
+    }
+
+    public function setArchivingScheduledAt(?\DateTimeInterface $archivingScheduledAt): self
+    {
+        $this->archivingScheduledAt = $archivingScheduledAt;
+
+        return $this;
     }
 }

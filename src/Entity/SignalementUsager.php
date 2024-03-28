@@ -17,10 +17,10 @@ class SignalementUsager
     #[ORM\JoinColumn(nullable: false)]
     private ?Signalement $signalement = null;
 
-    #[ORM\ManyToOne]
+    #[ORM\ManyToOne(inversedBy: 'signalementUsagerDeclarants')]
     private ?User $declarant = null;
 
-    #[ORM\ManyToOne]
+    #[ORM\ManyToOne(inversedBy: 'signalementUsagerOccupants')]
     private ?User $occupant = null;
 
     public function getId(): ?int

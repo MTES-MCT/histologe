@@ -16,6 +16,9 @@
       "command": "0 5 * * * php bin/console app:notify-visits"
     },
     {
+      "command": "0 4 * * * php bin/console app:notify-and-archive-inactive-accounts"
+    },
+    {
       "command": "0 1 * * * sh /app/scripts/sync-db.sh"
     }
   ]
