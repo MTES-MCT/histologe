@@ -43,6 +43,7 @@ class SituationFoyerRequest implements RequestInterface
             message: 'Veuillez préciser si l\'occupant est accompagné par un travailleur social.',
             groups: ['LOCATAIRE', 'BAILLEUR_OCCUPANT', 'TIERS_PARTICULIER', 'TIERS_PRO']
         )]
+        private readonly ?string $travailleurSocialAccompagnement = null,
         private readonly ?string $travailleurSocialAccompagnementDeclarant = null,
         private readonly ?string $beneficiaireRsa = null,
         private readonly ?string $beneficiaireFsl = null,
@@ -88,6 +89,11 @@ class SituationFoyerRequest implements RequestInterface
     public function getTravailleurSocialPreavisDepart(): ?string
     {
         return $this->travailleurSocialPreavisDepart;
+    }
+
+    public function getTravailleurSocialAccompagnement(): ?string
+    {
+        return $this->travailleurSocialAccompagnement;
     }
 
     public function getTravailleurSocialAccompagnementDeclarant(): ?string
