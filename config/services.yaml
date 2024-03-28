@@ -7,7 +7,6 @@
 imports:
     - { resource: 'app/widgets.yaml'}
     - { resource: 'app/insee.yaml'}
-    - { resource: 'app/nondecence.yaml'}
     - { resource: 'app/documents.yaml'}
     - { resource: 'app/competences.yaml'}
     - { resource: 'app/suivi_messages.yaml'}
@@ -31,7 +30,6 @@ parameters:
     cron_enable: '%env(bool:CRON_ENABLE)%'
     mail_enable: '%env(bool:MAIL_ENABLE)%'
     feature_ask_visite: '%env(FEATURE_ASK_VISITE_ENABLE)%'
-    feature_new_form: '%env(bool:FEATURE_NEW_FORM_ENABLE)%'
     feature_oilhi_enable: '%env(bool:FEATURE_OILHI_ENABLE)%'
     feature_documents_enable: '%env(bool:FEATURE_DOCUMENTS_ENABLE)%'
     platform_name: 'Histologe'

@@ -11,7 +11,7 @@ class QualificationNDERequest
         private ?string $dateEntree = null,
         private ?string $dateDernierBail = null,
         private ?string $dateDernierDPE = null,
-        private ?int $superficie = null,
+        private ?float $superficie = null,
         private ?int $consommationEnergie = null,
         private ?bool $dpe = null,
     ) {
@@ -22,7 +22,7 @@ class QualificationNDERequest
         return $this->dateEntree;
     }
 
-    public function getSuperficie(): ?int
+    public function getSuperficie(): ?float
     {
         return $this->superficie;
     }

@@ -1,6 +1,6 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}{{ title }}{% endblock %}
+{% block title %}Lutter contre le mal logement{% endblock %}
 
 {% block body %}
 
@@ -187,6 +187,8 @@
                     Ce n’est pas un service de relogement ou de demande de logement social.
                 </div>
             </section>
+
+            {% include '_partials/_demande-lien-signalement.html.twig' %}
 
             <h2 class="fr-mt-5w">Un signalement, et après ?</h2>
 

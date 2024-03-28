@@ -84,6 +84,7 @@
   "utilisation_service_ok_prevenir_bailleur": 1,
   "utilisation_service_ok_visite": 1,
   "utilisation_service_ok_demande_logement": 1,
+  "utilisation_service_ok_cgu": 1,
   "message_administration": "Merci de prendre en consid\u00e9ration ma demande",
   "informations_complementaires_logement_montant_loyer": "700",
   "informations_complementaires_logement_nombre_etages": "5",

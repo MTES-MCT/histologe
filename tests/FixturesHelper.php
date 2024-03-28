@@ -468,6 +468,7 @@ trait FixturesHelper
             'info_procedure_depart_apres_travaux' => 'oui',
             'utilisation_service_ok_demande_logement' => 1,
             'utilisation_service_ok_prevenir_bailleur' => 1,
+            'utilisation_service_ok_cgu' => 1,
             'info_procedure_reponse_assurance' => 'Dossier reçu',
         ];
     }

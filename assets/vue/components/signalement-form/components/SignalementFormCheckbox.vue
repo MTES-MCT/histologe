@@ -11,7 +11,7 @@
           aria-describedby="checkbox-error-messages"
           :checked="Boolean(modelValue)"
           >
-      <label :class="[ customCss, 'fr-label' ]" :for="idCheckbox">{{ variablesReplacer.replace(label) }}</label>
+      <label :class="[ customCss, 'fr-label' ]" :for="idCheckbox" v-html="variablesReplacer.replace(label)"></label>
       <div class="fr-messages-group" id="checkbox-error-messages" aria-live="assertive">
         <p
           id="checkbox-error-messages"

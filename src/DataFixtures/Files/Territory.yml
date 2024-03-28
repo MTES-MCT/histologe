@@ -112,7 +112,7 @@ territories:
     bbox: "{\"n\":\"48.031311\",\"e\":\"5.518767\",\"s\":\"46.899847\",\"w\":\"4.06519\"}"
   -
     zip: "22"
-    name: "Côtes d'Armor"
+    name: "Côtes-d'Armor"
     is_active: 0
     bbox: "{\"n\":\"48.900942\",\"e\":\"-1.909064\",\"s\":\"48.032568\",\"w\":\"-3.665906\"}"
   -
@@ -571,7 +571,7 @@ territories:
     bbox: "{\"n\":\"48.950962\",\"s\":\"48.729351\",\"e\":\"2.336941\",\"w\":\"2.145702\"}"
   -
     zip: "93"
-    name: "Seine-St-Denis"
+    name: "Seine-Saint-Denis"
     is_active: 0
     bbox: "{\"n\":\"49.012329\",\"s\":\"48.807248\",\"e\":\"2.603292\",\"w\":\"2.288311\"}"
   -
@@ -613,7 +613,7 @@ territories:
     name: "Mayotte"
     is_active: 0
     bbox: "[]"
-    
+
   -
     zip: "64"
     name: "Agglo de Pau"

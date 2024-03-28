@@ -19,6 +19,7 @@ use Symfony\Component\Security\Core\User\UserInterface;
 class SignalementFileProcessor
 {
     private array $errors = [];
+    private File $lastFile;
 
     public function __construct(
         private readonly UploadHandlerService $uploadHandlerService,
@@ -48,6 +49,7 @@ class SignalementFileProcessor
                 $this->logger->error($message);
                 $this->errors[] = $message;
             } else {
+                $inputTypeDetection = $inputName;
                 try {
                     if ($file instanceof UploadedFile) {
                         $filename = $this->uploadHandlerService->uploadFromFile(
@@ -58,6 +60,8 @@ class SignalementFileProcessor
 
                         if (\in_array($file->getMimeType(), ImageManipulationHandler::IMAGE_MIME_TYPES)) {
                             $this->imageManipulationHandler->setUseTmpDir(false)->resize($filename)->thumbnail($filename);
+                        } else {
+                            $inputTypeDetection = 'documents';
                         }
                     } else {
                         $filename = $this->uploadHandlerService->moveFromBucketTempFolder($file);
@@ -71,7 +75,7 @@ class SignalementFileProcessor
                 }
                 if (!empty($filename)) {
                     $descriptionList[] = $this->generateListItemDescription($filename, $title, $withTokenGenerated);
-                    $fileList[] = $this->createFileItem($filename, $title, $inputName, $documentType);
+                    $fileList[] = $this->createFileItem($filename, $title, $inputTypeDetection, $documentType);
                 }
             }
         }
@@ -84,7 +88,9 @@ class SignalementFileProcessor
         Signalement $signalement,
         ?UserInterface $user = null,
         ?Intervention $intervention = null,
-    ): void {
+        ?bool $isWaitingSuivi = false
+    ): array {
+        $list = [];
         foreach ($fileList as $fileItem) {
             $file = $this->fileFactory->createInstanceFrom(
                 filename: $fileItem['file'],
@@ -93,11 +99,16 @@ class SignalementFileProcessor
                 user: $user,
                 intervention: $intervention,
                 documentType: $fileItem['documentType'],
+                isWaitingSuivi: $isWaitingSuivi
             );
             $file->setSize($this->uploadHandlerService->getFileSize($file->getFilename()));
             $file->setIsVariantsGenerated($this->uploadHandlerService->hasVariants($file->getFilename()));
             $signalement->addFile($file);
+            $this->lastFile = $file;
+            $list[] = $file;
         }
+
+        return $list;
     }
 
     public function isValid(): bool
@@ -143,5 +154,10 @@ class SignalementFileProcessor
             'type' => 'documents' === $inputName ? File::FILE_TYPE_DOCUMENT : File::FILE_TYPE_PHOTO,
             'documentType' => $documentType,
         ];
+    }
+
+    public function getLastFile(): File
+    {
+        return $this->lastFile;
     }
 }

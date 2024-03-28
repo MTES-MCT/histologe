@@ -4,6 +4,7 @@ namespace App\Serializer;
 
 use App\Dto\Request\Signalement\RequestInterface;
 use App\Dto\Request\Signalement\SignalementDraftRequest;
+use App\Entity\Model\InformationComplementaire;
 use App\Entity\Model\TypeCompositionLogement;
 use App\Entity\SignalementDraft;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
@@ -46,6 +47,8 @@ class SignalementDraftRequestNormalizer implements DenormalizerInterface, Normal
                 }
 
                 $transformedData[SignalementDraftRequest::FILE_UPLOAD_KEY][$keyUpdated] = $data[$key];
+            } elseif (preg_match(SignalementDraftRequest::PATTERN_NOMBRE, $key, $matches) && is_numeric($value)) {
+                $transformedData[$key] = ceil($value);
             } else {
                 if ('isProprioAverti' === $key) {
                     $transformedData[$key] = $value;
@@ -92,6 +95,7 @@ class SignalementDraftRequestNormalizer implements DenormalizerInterface, Normal
         return [
             SignalementDraftRequest::class => true,
             TypeCompositionLogement::class => true,
+            InformationComplementaire::class => true,
             RequestInterface::class => true,
         ];
     }

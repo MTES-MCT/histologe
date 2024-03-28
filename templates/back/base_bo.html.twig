@@ -10,7 +10,11 @@
                 {% for label, messages in app.flashes %}
                     {% for message in messages %}
                         <div role="alert" class="fr-alert fr-alert--{{ label }} fr-alert--sm">
+                        {% if label is same as('error error-raw')  %}
+                            <p>{{ message|raw }}</p>
+                        {% else %}
                             <p>{{ message }}</p>
+                        {% endif %}
                         </div>
                     {% endfor %}
                 {% endfor %}

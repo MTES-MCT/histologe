@@ -15,12 +15,12 @@ class SignalementDraftFactory
         return (new SignalementDraft())
             ->setPayload($payload)
             ->setAddressComplete($signalementDraftRequest->getAdresseLogementAdresse())
-            ->setEmailDeclarant($this->getEmailDeclarent($signalementDraftRequest))
+            ->setEmailDeclarant($this->getEmailDeclarant($signalementDraftRequest))
             ->setCurrentStep($signalementDraftRequest->getCurrentStep())
             ->setProfileDeclarant(ProfileDeclarant::from(strtoupper($signalementDraftRequest->getProfil())));
     }
 
-    public function getEmailDeclarent(SignalementDraftRequest $signalementDraftRequest): ?string
+    public function getEmailDeclarant(SignalementDraftRequest $signalementDraftRequest): ?string
     {
         switch (strtoupper($signalementDraftRequest->getProfil())) {
             case ProfileDeclarant::SERVICE_SECOURS->name:

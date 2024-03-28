@@ -110,6 +110,7 @@
   "vos_coordonnees_occupant_tel_secondaire": "3621161",
   "vos_coordonnees_occupant_tel_secondaire_countrycode": "KM:269",
   "utilisation_service_ok_prevenir_bailleur": 1,
+  "utilisation_service_ok_cgu": 1,
   "adresse_logement_complement_adresse_etage": "5",
   "adresse_logement_adresse_detail_geoloc_lat": 43.302242,
   "adresse_logement_adresse_detail_geoloc_lng": 5.367851,

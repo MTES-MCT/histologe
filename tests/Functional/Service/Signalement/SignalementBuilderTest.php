@@ -11,6 +11,7 @@ use App\Factory\Signalement\InformationProcedureFactory;
 use App\Factory\Signalement\SituationFoyerFactory;
 use App\Factory\Signalement\TypeCompositionLogementFactory;
 use App\Manager\DesordreCritereManager;
+use App\Repository\BailleurRepository;
 use App\Repository\DesordreCategorieRepository;
 use App\Repository\DesordreCritereRepository;
 use App\Repository\DesordrePrecisionRepository;
@@ -22,7 +23,6 @@ use App\Service\Signalement\DesordreTraitement\DesordreTraitementProcessor;
 use App\Service\Signalement\Qualification\SignalementQualificationUpdater;
 use App\Service\Signalement\ReferenceGenerator;
 use App\Service\Signalement\SignalementBuilder;
-use App\Service\Signalement\ZipcodeProvider;
 use App\Service\Token\TokenGeneratorInterface;
 use App\Service\UploadHandlerService;
 use App\Tests\FixturesHelper;
@@ -44,7 +44,7 @@ class SignalementBuilderTest extends KernelTestCase
         self::bootKernel();
 
         $territoryRepository = static::getContainer()->get(TerritoryRepository::class);
-        $zipcodeProvider = static::getContainer()->get(ZipcodeProvider::class);
+        $bailleurRepository = static::getContainer()->get(BailleurRepository::class);
         $referenceGenerator = static::getContainer()->get(ReferenceGenerator::class);
         $tokenGenerator = static::getContainer()->get(TokenGeneratorInterface::class);
         $signalementDraftRequestSerializer = static::getContainer()->get(SignalementDraftRequestSerializer::class);
@@ -66,7 +66,7 @@ class SignalementBuilderTest extends KernelTestCase
 
         $this->signalementBuilder = new SignalementBuilder(
             $territoryRepository,
-            $zipcodeProvider,
+            $bailleurRepository,
             $referenceGenerator,
             $tokenGenerator,
             $signalementDraftRequestSerializer,

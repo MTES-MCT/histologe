@@ -36,6 +36,11 @@ else
     exit 1
   fi
   case "$option" in
+    "bailleurs")
+        echo "Upload bailleurs.csv to cloud..."
+        aws s3 cp data/bailleurs.csv s3://${BUCKET_URL}/csv/ ${debug}
+        aws s3 ls s3://${BUCKET_URL}/csv/bailleurs.csv
+        ;;
     "desordres")
       echo "Upload desordres_tables.csv to cloud..."
       aws s3 cp data/desordres_tables.csv s3://${BUCKET_URL}/csv/ ${debug}

@@ -41,12 +41,15 @@ class FileFactoryTest extends TestCase
         string $fileType,
         DocumentType $documentType
     ): void {
-        $file = (new FileFactory())->createFromFileArray($dataItem);
+        $signalement = $this->getSignalement();
+        $file = (new FileFactory())->createFromFileArray($dataItem, $signalement);
 
         $this->assertEquals($fileType, $file->getFileType());
         $this->assertEquals($documentType, $file->getDocumentType());
         $this->assertEquals($filename, $file->getFilename());
-        if (DocumentType::PHOTO_SITUATION === $file->getDocumentType()) {
+        if (DocumentType::PHOTO_SITUATION === $file->getDocumentType()
+        && (\in_array($dataItem['slug'], $signalement->getDesordreCritereSlugs())
+        || \in_array($dataItem['slug'], $signalement->getDesordrePrecisionSlugs()))) {
             $this->assertNotEmpty($file->getDesordreSlug());
         }
     }

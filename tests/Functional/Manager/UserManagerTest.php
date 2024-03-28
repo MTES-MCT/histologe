@@ -3,12 +3,14 @@
 namespace App\Tests\Functional\Manager;
 
 use App\Entity\Partner;
+use App\Entity\Signalement;
 use App\Entity\SignalementUsager;
 use App\Entity\User;
 use App\Factory\UserFactory;
 use App\Manager\SignalementUsagerManager;
 use App\Manager\UserManager;
 use App\Repository\PartnerRepository;
+use App\Repository\SignalementRepository;
 use App\Repository\UserRepository;
 use App\Service\Mailer\NotificationMailerRegistry;
 use App\Service\Token\TokenGeneratorInterface;
@@ -159,5 +161,32 @@ class UserManagerTest extends KernelTestCase
         $this->userManager->transferUserToPartner($user, $partner);
 
         return $userRepository->findOneBy(['email' => $userEmail]);
+    }
+
+    public function testGetUserAndTypeForSignalementAndEmail()
+    {
+        /** @var SignalementRepository $signalementRepository */
+        $signalementRepository = $this->entityManager->getRepository(Signalement::class);
+        $signalement = $signalementRepository->findOneBy(['reference' => '2023-120']);
+
+        $user = $this->userManager->getOrCreateUserForSignalementAndEmail($signalement, $signalement->getMailOccupant());
+        $this->assertEquals($signalement->getMailOccupant(), $user->getEmail());
+        $type = $this->userManager->getUserTypeForSignalementAndUser($signalement, $user);
+        $this->assertEquals(UserManager::OCCUPANT, $type);
+
+        $user = $this->userManager->getOrCreateUserForSignalementAndEmail($signalement, $signalement->getMailDeclarant());
+        $this->assertEquals($signalement->getMailDeclarant(), $user->getEmail());
+        $type = $this->userManager->getUserTypeForSignalementAndUser($signalement, $user);
+        $this->assertEquals(UserManager::DECLARANT, $type);
+
+        $user = $this->userManager->getOrCreateUserForSignalementAndEmail($signalement, 'lalala@nanani.fr');
+        $this->assertNull($user);
+        $type = $this->userManager->getUserTypeForSignalementAndUser($signalement, $user);
+        $this->assertNull($type);
+
+        $signalement->setMailDeclarant($signalement->getMailOccupant());
+        $user = $this->userManager->getOrCreateUserForSignalementAndEmail($signalement, $signalement->getMailDeclarant());
+        $type = $this->userManager->getUserTypeForSignalementAndUser($signalement, $user);
+        $this->assertEquals(UserManager::OCCUPANT, $type);
     }
 }

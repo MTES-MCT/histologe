@@ -2,7 +2,9 @@
 {% block title %}Mentions légales {% endblock %}
 
 {% block body %}
-    <main class="fr-container fr-py-5w fr-py-md-10w">
+    {% include "breadcrumbs.html.twig" with { 'breadcrumbsLabel': 'Mentions légales' } %}
+
+    <main class="fr-container fr-py-1w">
         <section class="cgu fr-grid-row">
             <div class="fr-col-12 fr-col-lg-8">
                 <h1>Mentions légales de la Plateforme {{ platform.name }}</h1>

@@ -53,6 +53,7 @@
   "info_procedure_depart_apres_travaux": "oui",
   "utilisation_service_ok_demande_logement": 1,
   "utilisation_service_ok_visite": 1,
+  "utilisation_service_ok_cgu": 1,
   "informations_complementaires_logement_nombre_etages": null,
   "informations_complementaires_situation_occupants_revenu_fiscal": null
 }

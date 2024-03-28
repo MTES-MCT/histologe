@@ -1,7 +1,7 @@
 {
   "dependencies": {
     "@braintree/sanitize-url": "^6.0.2",
-    "@gouvfr/dsfr": "^1.10.0",
+    "@gouvfr/dsfr": "^1.11.2",
     "@sentry/browser": "^7.99.0",
     "@sentry/tracing": "^7.99.0",
     "@symfony/webpack-encore": "^3.0.0",

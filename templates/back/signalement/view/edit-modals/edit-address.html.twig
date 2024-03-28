@@ -22,35 +22,34 @@
                                             <span class="fr-hint-text">Tapez l'adresse et sélectionnez-la dans la liste</span>
                                         </label>
                                         <input class="fr-input search-address-autocomplete" type="text" id="edit-address-search"
-                                            data-fr-adresse-bo-autocomplete="true" data-form-id="form-edit-address" 
+                                            data-fr-adresse-autocomplete="true" 
+                                            data-autocomplete-query-selector="#form-edit-address .fr-address-group-bo"
+                                            data-form-id="form-edit-address" 
                                             data-form-lat="{% if signalement.geoloc.lat is defined %}{{ signalement.geoloc.lat }}{% endif %}" 
                                             data-form-lng="{% if signalement.geoloc.lng is defined %}{{ signalement.geoloc.lng }}{% endif %}" 
                                             {% if is_granted('ROLE_ADMIN') is not same as true %}data-form-limit="{{ signalement.territory.zip }}" {% endif %}>
-                                        <div class="fr-grid-row fr-background-alt--blue-france fr-text-label--blue-france search-address-autocomplete-list">
+                                        <div class="fr-grid-row fr-background-alt--blue-france fr-text-label--blue-france fr-address-group-bo">
                                         </div>
                                     </div>
 
                                     <div class="fr-input-group fr-input-group--disabled">
-                                        <label class="fr-label" for="adresse-visible">Numéro et voie</label>
-                                        <input class="fr-input" type="text" disabled name="adresse-visible" value="{{ signalement.adresseOccupant }}">
-                                        <input type="hidden" name="adresse" value="{{ signalement.adresseOccupant }}">
+                                        <label class="fr-label" for="form-edit-address-adresse">Numéro et voie</label>
+                                        <input class="fr-input" id="form-edit-address-adresse" type="text" readonly name="adresse" value="{{ signalement.adresseOccupant }}" data-autocomplete-addresse="true">
                                     </div>
 
                                     <div class="fr-input-group fr-input-group--disabled">
-                                        <label class="fr-label" for="codePostal-visible">Code postal</label>
-                                        <input class="fr-input" type="text" disabled name="codePostal-visible" value="{{ signalement.cpOccupant }}">
-                                        <input type="hidden" name="codePostal" value="{{ signalement.cpOccupant }}">
+                                        <label class="fr-label" for="form-edit-address-codepostal">Code postal</label>
+                                        <input class="fr-input" id="form-edit-address-codepostal" type="text" readonly name="codePostal" value="{{ signalement.cpOccupant }}" data-autocomplete-codepostal="true">
                                     </div>
 
                                     <div class="fr-input-group fr-input-group--disabled">
-                                        <label class="fr-label" for="ville-visible">Commune</label>
-                                        <input class="fr-input" type="text" disabled name="ville-visible" value="{{ signalement.villeOccupant }}">
-                                        <input type="hidden" name="ville" value="{{ signalement.villeOccupant }}">
+                                        <label class="fr-label" for="form-edit-address-ville">Commune</label>
+                                        <input class="fr-input" id="form-edit-address-ville" type="text" readonly name="ville" value="{{ signalement.villeOccupant }}" data-autocomplete-ville="true">
                                     </div>
 
-                                    <input type="hidden" name="insee" value="{{ signalement.inseeOccupant }}">
-                                    <input type="hidden" name="geolocLat" value="{% if signalement.geoloc.lat is defined %}{{ signalement.geoloc.lat }}{% endif %}">
-                                    <input type="hidden" name="geolocLng" value="{% if signalement.geoloc.lng is defined %}{{ signalement.geoloc.lng }}{% endif %}">
+                                    <input type="hidden" name="insee" value="{{ signalement.inseeOccupant }}" data-autocomplete-insee="true">
+                                    <input type="hidden" name="geolocLat" value="{% if signalement.geoloc.lat is defined %}{{ signalement.geoloc.lat }}{% endif %}" data-autocomplete-geoloclat="true">
+                                    <input type="hidden" name="geolocLng" value="{% if signalement.geoloc.lng is defined %}{{ signalement.geoloc.lng }}{% endif %}" data-autocomplete-geoloclng="true">
                                 </div>
                                 <div class="fr-col-12 fr-col-md-6">
                                     <h2 class="fr-h5">Complément d'adresse (facultatif)</h2>

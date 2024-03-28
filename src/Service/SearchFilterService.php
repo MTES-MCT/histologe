@@ -374,25 +374,25 @@ class SearchFilterService
                 ->setParameter('cities', $filters['cities']);
         }
         if (!empty($filters['visites'])) {
-            $qb->leftJoin('s.interventions', 'i');
+            $qb->leftJoin('s.interventions', 'intervSearch');
             $queryVisites = '';
 
             foreach ($filters['visites'] as $visiteFilter) {
                 $queryVisites .= ('' !== $queryVisites) ? ' OR ' : '';
                 switch ($visiteFilter) {
                     case VisiteStatus::NON_PLANIFIEE->value:
-                        $queryVisites .= '(i.id IS NULL)';
+                        $queryVisites .= '(intervSearch.id IS NULL)';
                         break;
                     case VisiteStatus::PLANIFIEE->value:
                         $todayDatetime = new \DateTime();
-                        $queryVisites .= '(i.status = \''.Intervention::STATUS_PLANNED.'\' AND i.scheduledAt > '.$todayDatetime->format('Y-m-d').')';
+                        $queryVisites .= '(intervSearch.status = \''.Intervention::STATUS_PLANNED.'\' AND intervSearch.scheduledAt > '.$todayDatetime->format('Y-m-d').')';
                         break;
                     case VisiteStatus::CONCLUSION_A_RENSEIGNER->value:
                         $todayDatetime = new \DateTime();
-                        $queryVisites .= '(i.status = \''.Intervention::STATUS_PLANNED.'\' AND i.scheduledAt <= '.$todayDatetime->format('Y-m-d').')';
+                        $queryVisites .= '(intervSearch.status = \''.Intervention::STATUS_PLANNED.'\' AND intervSearch.scheduledAt <= '.$todayDatetime->format('Y-m-d').')';
                         break;
                     case VisiteStatus::TERMINEE->value:
-                        $queryVisites .= '(i.status = \''.Intervention::STATUS_DONE.'\')';
+                        $queryVisites .= '(intervSearch.status = \''.Intervention::STATUS_DONE.'\')';
                         break;
                 }
             }

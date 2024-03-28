@@ -3,10 +3,12 @@
 namespace App\Tests\Functional\Manager;
 
 use App\Dto\Request\Signalement\CompositionLogementRequest;
+use App\Dto\Request\Signalement\QualificationNDERequest;
 use App\Entity\Affectation;
 use App\Entity\Enum\DocumentType;
 use App\Entity\Enum\MotifCloture;
 use App\Entity\Signalement;
+use App\Entity\SignalementQualification;
 use App\Entity\Territory;
 use App\Entity\User;
 use App\Factory\SignalementAffectationListViewFactory;
@@ -14,6 +16,7 @@ use App\Factory\SignalementExportFactory;
 use App\Factory\SignalementFactory;
 use App\Manager\SignalementManager;
 use App\Manager\SuiviManager;
+use App\Repository\BailleurRepository;
 use App\Repository\DesordreCritereRepository;
 use App\Repository\DesordrePrecisionRepository;
 use App\Service\Signalement\CriticiteCalculator;
@@ -54,6 +57,7 @@ class SignalementManagerTest extends WebTestCase
     private DesordreCritereRepository $desordreCritereRepository;
     private DesordreCompositionLogementLoader $desordreCompositionLogementLoader;
     private SuiviManager $suiviManager;
+    private BailleurRepository $bailleurRepository;
 
     protected function setUp(): void
     {
@@ -78,6 +82,7 @@ class SignalementManagerTest extends WebTestCase
         $this->desordreCritereRepository = static::getContainer()->get(DesordreCritereRepository::class);
         $this->desordreCompositionLogementLoader = static::getContainer()->get(DesordreCompositionLogementLoader::class);
         $this->suiviManager = static::getContainer()->get(SuiviManager::class);
+        $this->bailleurRepository = static::getContainer()->get(BailleurRepository::class);
 
         $this->signalementManager = new SignalementManager(
             $this->managerRegistry,
@@ -96,6 +101,7 @@ class SignalementManagerTest extends WebTestCase
             $this->desordreCritereRepository,
             $this->desordreCompositionLogementLoader,
             $this->suiviManager,
+            $this->bailleurRepository,
         );
         $user = $this->entityManager->getRepository(User::class)->findOneBy(['email' => 'admin-01@histologe.fr']);
         $client->loginUser($user);
@@ -111,21 +117,6 @@ class SignalementManagerTest extends WebTestCase
 
         $this->assertCount(1, $partners['affected'], 'One partner should be affected');
         $this->assertCount(5, $partners['not_affected'], 'Five partners should not be affected');
-    }
-
-    public function testFindAllPartnersWithCompetences()
-    {
-        $signalement = $this->signalementManager->findOneBy(['reference' => '2023-8']);
-
-        $partners = $this->signalementManager->findAllPartners($signalement, true);
-
-        $this->assertArrayHasKey('affected', $partners);
-        $this->assertArrayHasKey('not_affected', $partners);
-
-        $this->assertCount(0, $partners['affected'], '0 partner should be affected');
-        $this->assertCount(19, $partners['not_affected'], '19 partners should not be affected');
-        $firstPartner = $partners['not_affected'][0];
-        $this->assertArrayHasKey('competence', $firstPartner);
     }
 
     public function testCloseSignalementForAllPartners()
@@ -289,6 +280,46 @@ class SignalementManagerTest extends WebTestCase
         $desordrePrecisionSlug = 'desordres_batiment_isolation_murs';
         $photos = $this->signalementManager->getPhotosBySlug($signalement, $desordrePrecisionSlug);
         $this->assertCount(0, $photos);
+    }
+
+    public function testUpdateFromSignalementQualificationWithNdeRequest(): void
+    {
+        /** @var Signalement $signalement */
+        $signalement = $this->signalementManager->findOneBy(['reference' => '2023-8']);
+        /** @var SignalementQualification $signalementQualification */
+        $signalementQualification = $signalement->getSignalementQualifications()->first();
+        $qualificationNDERequest = new QualificationNDERequest(
+            dateEntree: '1970-01-01',
+            dateDernierBail: '1970-01-01',
+            dateDernierDPE: '2023-01-02',
+            superficie: 50,
+            consommationEnergie: 10000,
+            dpe: true
+        );
+        $this->signalementManager->updateFromSignalementQualification($signalementQualification, $qualificationNDERequest);
+        $this->assertEquals('1970-01-01', $signalement->getDateEntree()->format('Y-m-d'));
+        $this->assertEquals(50, $signalement->getSuperficie());
+        $this->assertEquals('1970-01-01', $signalementQualification->getDernierBailAt()->format('Y-m-d'));
+    }
+
+    public function testUpdateFromSignalementQualificationWithNullNdeRequest(): void
+    {
+        /** @var Signalement $signalement */
+        $signalement = $this->signalementManager->findOneBy(['reference' => '2023-8']);
+        /** @var SignalementQualification $signalementQualification */
+        $signalementQualification = $signalement->getSignalementQualifications()->first();
+        $qualificationNDERequest = new QualificationNDERequest(
+            dateEntree: null,
+            dateDernierBail: null,
+            dateDernierDPE: null,
+            superficie: null,
+            consommationEnergie: null,
+            dpe: null
+        );
+        $this->signalementManager->updateFromSignalementQualification($signalementQualification, $qualificationNDERequest);
+        $this->assertEquals('2023-01-08', $signalement->getDateEntree()->format('Y-m-d'));
+        $this->assertEquals(100, $signalement->getSuperficie());
+        $this->assertEquals('2023-01-08', $signalementQualification->getDernierBailAt()->format('Y-m-d'));
     }
 
     private function getSignalementData(string $reference = null): array

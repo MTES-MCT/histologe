@@ -31,6 +31,7 @@ use App\Event\SignalementCreatedEvent;
 use App\Factory\SignalementAffectationListViewFactory;
 use App\Factory\SignalementExportFactory;
 use App\Factory\SignalementFactory;
+use App\Repository\BailleurRepository;
 use App\Repository\DesordreCritereRepository;
 use App\Repository\DesordrePrecisionRepository;
 use App\Repository\PartnerRepository;
@@ -41,6 +42,7 @@ use App\Service\Signalement\DesordreTraitement\DesordreCompositionLogementLoader
 use App\Service\Signalement\Qualification\QualificationStatusService;
 use App\Service\Signalement\Qualification\SignalementQualificationUpdater;
 use App\Service\Signalement\SignalementInputValueMapper;
+use App\Service\Signalement\ZipcodeProvider;
 use App\Specification\Signalement\SuroccupationSpecification;
 use Doctrine\ORM\Tools\Pagination\Paginator;
 use Doctrine\Persistence\ManagerRegistry;
@@ -69,6 +71,7 @@ class SignalementManager extends AbstractManager
         private DesordreCritereRepository $desordreCritereRepository,
         private DesordreCompositionLogementLoader $desordreCompositionLogementLoader,
         private SuiviManager $suiviManager,
+        private BailleurRepository $bailleurRepository,
         string $entityName = Signalement::class
     ) {
         parent::__construct($managerRegistry, $entityName);
@@ -194,20 +197,18 @@ class SignalementManager extends AbstractManager
         }
     }
 
-    public function findAllPartners(Signalement $signalement, bool $addCompetences = false): array
+    public function findAllPartners(Signalement $signalement): array
     {
         /** @var PartnerRepository $partnerRepository */
         $partnerRepository = $this->managerRegistry->getRepository(Partner::class);
         $partners['affected'] = $partnerRepository->findByLocalization(
             signalement: $signalement,
-            affected: true,
-            addCompetences: $addCompetences
+            affected: true
         );
 
         $partners['not_affected'] = $partnerRepository->findByLocalization(
             signalement: $signalement,
-            affected: false,
-            addCompetences: $addCompetences
+            affected: false
         );
 
         return $partners;
@@ -267,17 +268,19 @@ class SignalementManager extends AbstractManager
         QualificationNDERequest $qualificationNDERequest
     ) {
         $signalement = $signalementQualification->getSignalement();
-        // // mise à jour du signalement
-        if (QualificationNDERequest::RADIO_VALUE_AFTER_2023 === $qualificationNDERequest->getDateEntree()
-            && ($signalement->getDateEntree()->format('Y') < '2023' || null === $signalement->getDateEntree())
-        ) {
-            $signalement->setDateEntree(new \DateTimeImmutable(QualificationNDERequest::RADIO_VALUE_AFTER_2023));
-        }
+        // mise à jour du signalement
+        if ($qualificationNDERequest->getDateEntree()) {
+            if (QualificationNDERequest::RADIO_VALUE_AFTER_2023 === $qualificationNDERequest->getDateEntree()
+                && (null === $signalement->getDateEntree() || $signalement->getDateEntree()->format('Y') < '2023')
+            ) {
+                $signalement->setDateEntree(new \DateTimeImmutable(QualificationNDERequest::RADIO_VALUE_AFTER_2023));
+            }
 
-        if (QualificationNDERequest::RADIO_VALUE_BEFORE_2023 === $qualificationNDERequest->getDateEntree()
-            && ($signalement->getDateEntree()->format('Y') >= '2023' || null === $signalement->getDateEntree())
-        ) {
-            $signalement->setDateEntree(new \DateTimeImmutable(QualificationNDERequest::RADIO_VALUE_BEFORE_2023));
+            if (QualificationNDERequest::RADIO_VALUE_BEFORE_2023 === $qualificationNDERequest->getDateEntree()
+                && (null === $signalement->getDateEntree() || $signalement->getDateEntree()->format('Y') >= '2023')
+            ) {
+                $signalement->setDateEntree(new \DateTimeImmutable(QualificationNDERequest::RADIO_VALUE_BEFORE_2023));
+            }
         }
 
         if (null !== $qualificationNDERequest->getSuperficie()
@@ -287,26 +290,28 @@ class SignalementManager extends AbstractManager
         }
         $this->save($signalement);
 
-        // // mise à jour du signalementqualification
-        if (QualificationNDERequest::RADIO_VALUE_AFTER_2023 === $qualificationNDERequest->getDateDernierBail()
-            && (
-                null === $signalementQualification->getDernierBailAt()
-                || $signalementQualification->getDernierBailAt()?->format('Y') < '2023'
-            )
-        ) {
-            $signalementQualification->setDernierBailAt(new \DateTimeImmutable(
-                QualificationNDERequest::RADIO_VALUE_AFTER_2023
-            ));
-        }
-        if (QualificationNDERequest::RADIO_VALUE_BEFORE_2023 === $qualificationNDERequest->getDateDernierBail()
-            && (
-                null === $signalementQualification->getDernierBailAt()
-                || $signalementQualification->getDernierBailAt()?->format('Y') >= '2023'
-            )
-        ) {
-            $signalementQualification->setDernierBailAt(
-                new \DateTimeImmutable(QualificationNDERequest::RADIO_VALUE_BEFORE_2023)
-            );
+        // mise à jour du signalementqualification
+        if ($qualificationNDERequest->getDateDernierBail()) {
+            if (QualificationNDERequest::RADIO_VALUE_AFTER_2023 === $qualificationNDERequest->getDateDernierBail()
+                && (
+                    null === $signalementQualification->getDernierBailAt()
+                    || $signalementQualification->getDernierBailAt()?->format('Y') < '2023'
+                )
+            ) {
+                $signalementQualification->setDernierBailAt(new \DateTimeImmutable(
+                    QualificationNDERequest::RADIO_VALUE_AFTER_2023
+                ));
+            }
+            if (QualificationNDERequest::RADIO_VALUE_BEFORE_2023 === $qualificationNDERequest->getDateDernierBail()
+                && (
+                    null === $signalementQualification->getDernierBailAt()
+                    || $signalementQualification->getDernierBailAt()?->format('Y') >= '2023'
+                )
+            ) {
+                $signalementQualification->setDernierBailAt(
+                    new \DateTimeImmutable(QualificationNDERequest::RADIO_VALUE_BEFORE_2023)
+                );
+            }
         }
 
         $signalementQualification->setDetails($qualificationNDERequest->getDetails());
@@ -404,7 +409,16 @@ class SignalementManager extends AbstractManager
         Signalement $signalement,
         CoordonneesBailleurRequest $coordonneesBailleurRequest
     ) {
-        $signalement->setNomProprio($coordonneesBailleurRequest->getNom())
+        $bailleur = null;
+        if ($signalement->getIsLogementSocial() && $coordonneesBailleurRequest->getNom()) {
+            $bailleur = $this->bailleurRepository->findOneBailleurBy(
+                $coordonneesBailleurRequest->getNom(),
+                ZipcodeProvider::getZipCode($signalement->getCpOccupant())
+            );
+        }
+
+        $signalement->setBailleur($bailleur)
+            ->setNomProprio($coordonneesBailleurRequest->getNom())
             ->setPrenomProprio($coordonneesBailleurRequest->getPrenom())
             ->setMailProprio($coordonneesBailleurRequest->getMail())
             ->setTelProprio($coordonneesBailleurRequest->getTelephone())

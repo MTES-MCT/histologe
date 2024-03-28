@@ -45,5 +45,6 @@
   },
   "utilisation_service_ok_prevenir_bailleur": 1,
   "utilisation_service_ok_visite": 1,
-  "utilisation_service_ok_signalement_tiers": 1
+  "utilisation_service_ok_signalement_tiers": 1,
+  "utilisation_service_ok_cgu": 1
 }

@@ -37,7 +37,6 @@ class SignalementListController extends AbstractController
             return $this->stream('back/table_result.html.twig', [
                 'filters' => $filters,
                 'signalements' => $signalements,
-                'isNewFormEnabled' => $parameterBag->get('feature_new_form'),
             ]);
         }
 
@@ -47,7 +46,6 @@ class SignalementListController extends AbstractController
             'countActiveFilters' => $searchFilterService->getCountActive(),
             'displayRefreshAll' => true,
             'signalements' => $signalements,
-            'isNewFormEnabled' => $parameterBag->get('feature_new_form'),
         ]);
     }
 }

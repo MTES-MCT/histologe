@@ -4,5 +4,7 @@
     <p>Bonjour,</p>
     <p>Vous avez reçu un nouveau message depuis le formulaire de contact</p>
     De: <strong>{{ nom }}</strong> - ({{ mail }}) <br>
+    Organisme : <strong>{{ organisme }}</strong> <br>
+    Objet : <strong>{{ objet }}</strong> <br><br>
     Message: <p>{{ message|raw }}</p>
 {% endblock %}

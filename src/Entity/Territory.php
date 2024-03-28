@@ -61,6 +61,10 @@ class Territory
     #[ORM\Column]
     private ?bool $isAutoAffectationEnabled = false;
 
+    #[ORM\OneToMany(mappedBy: 'territory', targetEntity: BailleurTerritory::class)]
+    #[Ignore]
+    private Collection $bailleurTerritories;
+
     public function __construct()
     {
         $this->users = new ArrayCollection();
@@ -68,6 +72,7 @@ class Territory
         $this->signalements = new ArrayCollection();
         $this->affectations = new ArrayCollection();
         $this->tags = new ArrayCollection();
+        $this->bailleurTerritories = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -306,6 +311,36 @@ class Territory
     public function setIsAutoAffectationEnabled(bool $isAutoAffectationEnabled): self
     {
         $this->isAutoAffectationEnabled = $isAutoAffectationEnabled;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, BailleurTerritory>
+     */
+    public function getBailleurTerritories(): Collection
+    {
+        return $this->bailleurTerritories;
+    }
+
+    public function addBailleurTerritory(BailleurTerritory $bailleurTerritory): static
+    {
+        if (!$this->bailleurTerritories->contains($bailleurTerritory)) {
+            $this->bailleurTerritories->add($bailleurTerritory);
+            $bailleurTerritory->setTerritory($this);
+        }
+
+        return $this;
+    }
+
+    public function removeBailleurTerritory(BailleurTerritory $bailleurTerritory): static
+    {
+        if ($this->bailleurTerritories->removeElement($bailleurTerritory)) {
+            // set the owning side to null (unless already changed)
+            if ($bailleurTerritory->getTerritory() === $this) {
+                $bailleurTerritory->setTerritory(null);
+            }
+        }
 
         return $this;
     }

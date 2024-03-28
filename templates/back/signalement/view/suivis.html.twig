@@ -29,6 +29,7 @@
                 Suivi automatique
 
             {% elseif suivi.createdBy is not null %}
+                <strong>{{ suivi.createdBy.nomComplet|capitalize }}</strong>
                 <div class="part-infos-hover"
                      data-user="{{ suivi.createdBy.nomComplet }}"
                      data-mail="{{ suivi.createdBy.email }}">
@@ -47,9 +48,14 @@
                 }}
                 </div>
             {% else %}
-                <strong>{{ signalement.isNotOccupant ? signalement.nomDeclarant|upper~' '~signalement.prenomDeclarant|capitalize : signalement.nomOccupant|upper~' '~signalement.prenomOccupant|capitalize }}</strong>
-                <br>
-                {{ signalement.isNotOccupant ? 'DECLARANT':'OCCUPANT'}}
+                {# si le suivi est de 2024 ou posterieur on indique annonyme #}
+                {% if suivi.createdAt|date('Y') >= 2024 %}
+                    Occupant ou déclarant
+                {% else %}
+                    <strong>{{ signalement.isNotOccupant ? signalement.nomDeclarant|upper~' '~signalement.prenomDeclarant|capitalize : signalement.nomOccupant|upper~' '~signalement.prenomOccupant|capitalize }}</strong>
+                    <br>
+                    {{ signalement.isNotOccupant ? 'DECLARANT':'OCCUPANT'}}
+                {% endif %}
             {% endif %}
         </div>
 

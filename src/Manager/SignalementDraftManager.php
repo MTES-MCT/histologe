@@ -47,7 +47,7 @@ class SignalementDraftManager extends AbstractManager
             ->setPayload($payload)
             ->setCurrentStep($signalementDraftRequest->getCurrentStep())
             ->setAddressComplete($signalementDraftRequest->getAdresseLogementAdresse())
-            ->setEmailDeclarant($this->signalementDraftFactory->getEmailDeclarent($signalementDraftRequest))
+            ->setEmailDeclarant($this->signalementDraftFactory->getEmailDeclarant($signalementDraftRequest))
             ->setProfileDeclarant(ProfileDeclarant::from(strtoupper($signalementDraftRequest->getProfil())));
 
         if (self::LAST_STEP === $signalementDraftRequest->getCurrentStep()) {

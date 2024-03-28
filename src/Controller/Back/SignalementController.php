@@ -8,12 +8,10 @@ use App\Entity\Enum\QualificationStatus;
 use App\Entity\Intervention;
 use App\Entity\Signalement;
 use App\Entity\SignalementQualification;
-use App\Entity\Suivi;
 use App\Entity\User;
 use App\Event\SignalementClosedEvent;
 use App\Event\SignalementViewedEvent;
 use App\Form\ClotureType;
-use App\Form\SignalementType;
 use App\Manager\AffectationManager;
 use App\Manager\SignalementManager;
 use App\Repository\AffectationRepository;
@@ -21,14 +19,9 @@ use App\Repository\CriticiteRepository;
 use App\Repository\DesordrePrecisionRepository;
 use App\Repository\InterventionRepository;
 use App\Repository\SignalementQualificationRepository;
-use App\Repository\SituationRepository;
 use App\Repository\TagRepository;
 use App\Security\Voter\UserVoter;
-use App\Service\FormHelper;
-use App\Service\Signalement\CriticiteCalculator;
-use App\Service\Signalement\Qualification\SignalementQualificationUpdater;
 use App\Service\Signalement\SignalementDesordresProcessor;
-use DateTimeImmutable;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
@@ -212,7 +205,6 @@ class SignalementController extends AbstractController
             'listConcludeProcedures' => $listConcludeProcedures,
             'partnersCanVisite' => $partnerVisite,
             'pendingVisites' => $interventionRepository->getPendingVisitesForSignalement($signalement),
-            'isNewFormEnabled' => $parameterBag->get('feature_new_form'),
             'isDocumentsEnabled' => $parameterBag->get('feature_documents_enable'),
         ]);
     }
@@ -224,71 +216,6 @@ class SignalementController extends AbstractController
         }
 
         return false;
-    }
-
-    #[Route('/{uuid}/editer', name: 'back_signalement_edit', methods: ['GET', 'POST'])]
-    public function editSignalement(
-        Signalement $signalement,
-        Request $request,
-        ManagerRegistry $doctrine,
-        SituationRepository $situationRepository,
-        CriticiteCalculator $criticiteCalculator,
-        SignalementQualificationUpdater $signalementQualificationUpdater,
-        ParameterBagInterface $parameterBag,
-    ): Response {
-        $this->denyAccessUnlessGranted('SIGN_EDIT', $signalement);
-        if (Signalement::STATUS_ACTIVE !== $signalement->getStatut()) {
-            $this->addFlash('error', "Ce signalement n'est pas éditable.");
-
-            return $this->redirectToRoute('back_index');
-        }
-        if ($parameterBag->get('feature_new_form')) {
-            return $this->redirectToRoute('back_signalement_view', ['uuid' => $signalement->getUuid()]);
-        }
-        $title = 'Administration - Edition signalement #'.$signalement->getReference();
-        $etats = ['Etat moyen', 'Mauvais état', 'Très mauvais état'];
-        $etats_classes = ['moyen', 'grave', 'tres-grave'];
-        $form = $this->createForm(SignalementType::class, $signalement);
-        $form->handleRequest($request);
-        if ($form->isSubmitted()) {
-            if ($form->isValid()) {
-                $signalement->setModifiedBy($this->getUser());
-                $signalement->setModifiedAt(new DateTimeImmutable());
-                $signalement->setScore($criticiteCalculator->calculate($signalement));
-
-                $signalementQualificationUpdater->updateQualificationFromScore($signalement);
-                $suivi = new Suivi();
-                $suivi->setCreatedBy($this->getUser());
-                $suivi->setSignalement($signalement);
-                $suivi->setIsPublic(false);
-                $suivi->setDescription('Modification du signalement par un partenaire');
-                $suivi->setType(SUIVI::TYPE_AUTO);
-                $doctrine->getManager()->persist($suivi);
-                $signalement->setGeoloc($form->getExtraData()['geoloc']);
-                $signalement->setInseeOccupant($form->getExtraData()['inseeOccupant']);
-                $doctrine->getManager()->persist($signalement);
-                $doctrine->getManager()->flush();
-                $this->addFlash('success', 'Signalement modifié avec succès !');
-
-                return $this->json(['response' => 'success_edited']);
-            }
-
-            return $this->json(
-                [
-                    'response' => 'formErrors',
-                    'errsMsgList' => FormHelper::getErrorsFromForm($form),
-                ],
-            );
-        }
-
-        return $this->render('back/signalement/edit.html.twig', [
-            'title' => $title,
-            'form' => $form->createView(),
-            'signalement' => $signalement,
-            'situations' => $situationRepository->findAllActive(),
-            'etats' => $etats,
-            'etats_classes' => $etats_classes,
-        ]);
     }
 
     #[Route('/{uuid}/supprimer', name: 'back_signalement_delete', methods: 'POST')]

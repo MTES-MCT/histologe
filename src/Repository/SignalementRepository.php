@@ -153,7 +153,7 @@ class SignalementRepository extends ServiceEntityRepository
 
             if (!empty($qualificationStatuses)) {
                 $qb->andWhere('sq.status IN (:statuses)')
-                ->setParameter('statuses', $qualificationStatuses);
+                    ->setParameter('statuses', $qualificationStatuses);
             }
         }
 
@@ -370,13 +370,13 @@ class SignalementRepository extends ServiceEntityRepository
             GROUP_CONCAT(DISTINCT p.id SEPARATOR :group_concat_separator) as affectationPartnerId,
             GROUP_CONCAT(DISTINCT sq.qualification SEPARATOR :group_concat_separator) as qualifications,
             GROUP_CONCAT(DISTINCT sq.status SEPARATOR :group_concat_separator) as qualificationsStatuses')
-             ->leftJoin('s.affectations', 'a')
-             ->leftJoin('a.partner', 'p')
-             ->leftJoin('s.signalementQualifications', 'sq', 'WITH', 'sq.status LIKE \'%AVEREE%\' OR sq.status LIKE \'%CHECK%\'')
-             ->where('s.statut != :status')
-             ->groupBy('s.id')
-             ->setParameter('concat_separator', SignalementAffectationListView::SEPARATOR_CONCAT)
-             ->setParameter('group_concat_separator', SignalementAffectationListView::SEPARATOR_GROUP_CONCAT);
+            ->leftJoin('s.affectations', 'a')
+            ->leftJoin('a.partner', 'p')
+            ->leftJoin('s.signalementQualifications', 'sq', 'WITH', 'sq.status LIKE \'%AVEREE%\' OR sq.status LIKE \'%CHECK%\'')
+            ->where('s.statut != :status')
+            ->groupBy('s.id')
+            ->setParameter('concat_separator', SignalementAffectationListView::SEPARATOR_CONCAT)
+            ->setParameter('group_concat_separator', SignalementAffectationListView::SEPARATOR_GROUP_CONCAT);
 
         if ($user->isTerritoryAdmin()) {
             $qb->andWhere('s.territory = :territory')->setParameter('territory', $user->getTerritory());
@@ -809,28 +809,28 @@ class SignalementRepository extends ServiceEntityRepository
             }
 
             $qb->andWhere('s.statut IN (:statutSelected)')
-            ->setParameter('statutSelected', $statutParameter);
+                ->setParameter('statutSelected', $statutParameter);
 
         // We're supposed to keep all statuses, but we remove at least the Archived
         } else {
             // If we don't want Refused status
             if (!$filters->isCountRefused()) {
                 $qb->andWhere('s.statut != :statutRefused')
-                ->setParameter('statutRefused', Signalement::STATUS_REFUSED);
+                    ->setParameter('statutRefused', Signalement::STATUS_REFUSED);
             }
             // If we don't want Archived status
             if (!$filters->isCountArchived()) {
                 $qb->andWhere('s.statut != :statutArchived')
-                ->setParameter('statutArchived', Signalement::STATUS_ARCHIVED);
+                    ->setParameter('statutArchived', Signalement::STATUS_ARCHIVED);
             }
         }
 
         // Filter on creation date
         if (null !== $filters->getDateStart()) {
             $qb->andWhere('s.createdAt >= :dateStart')
-            ->setParameter('dateStart', $filters->getDateStart())
-            ->andWhere('s.createdAt <= :dateEnd')
-            ->setParameter('dateEnd', $filters->getDateEnd());
+                ->setParameter('dateStart', $filters->getDateStart())
+                ->andWhere('s.createdAt <= :dateEnd')
+                ->setParameter('dateEnd', $filters->getDateEnd());
         }
 
         // Filter on Signalement type (logement social)
@@ -838,11 +838,11 @@ class SignalementRepository extends ServiceEntityRepository
             switch ($filters->getType()) {
                 case 'public':
                     $qb->andWhere('s.isLogementSocial = :statutLogementSocial')
-                    ->setParameter('statutLogementSocial', true);
+                        ->setParameter('statutLogementSocial', true);
                     break;
                 case 'private':
                     $qb->andWhere('s.isLogementSocial = :statutLogementSocial')
-                    ->setParameter('statutLogementSocial', false);
+                        ->setParameter('statutLogementSocial', false);
                     break;
                 case 'unset':
                     $qb->andWhere('s.isLogementSocial is NULL');
@@ -870,9 +870,9 @@ class SignalementRepository extends ServiceEntityRepository
 
         if ($filters->getPartner()) {
             $qb->leftJoin('s.affectations', 'affectations')
-            ->leftJoin('affectations.partner', 'partner')
-            ->andWhere('partner = :partner')
-            ->setParameter('partner', $filters->getPartner());
+                ->leftJoin('affectations.partner', 'partner')
+                ->andWhere('partner = :partner')
+                ->setParameter('partner', $filters->getPartner());
         }
 
         return $qb;
@@ -898,7 +898,8 @@ class SignalementRepository extends ServiceEntityRepository
         string $partnerName,
         array $options
     ): QueryBuilder {
-        if (isset($this->params[$territoryZip])
+        if (
+            isset($this->params[$territoryZip])
             && isset($this->params[$territoryZip][$partnerName])
         ) {
             $qb->andWhere('s.inseeOccupant IN (:authorized_codes_insee)')
@@ -943,16 +944,16 @@ class SignalementRepository extends ServiceEntityRepository
     public function countSignalementAcceptedNoSuivi(Territory $territory)
     {
         $subquery = $this->_em->createQueryBuilder()
-                ->select('IDENTITY(su.signalement)')
-                ->from(Suivi::class, 'su')
-                ->innerJoin('su.signalement', 'sig')
-                ->where('sig.territory = :territory_1')
-                ->andWhere('sig.statut IN (:statut)')
-                ->andWhere('su.type IN (:suivi_type)')
-                ->setParameter('suivi_type', [Suivi::TYPE_USAGER, Suivi::TYPE_PARTNER])
-                ->setParameter('statut', [Signalement::STATUS_ACTIVE, Signalement::STATUS_NEED_PARTNER_RESPONSE])
-                ->setParameter('territory_1', $territory)
-                ->distinct();
+            ->select('IDENTITY(su.signalement)')
+            ->from(Suivi::class, 'su')
+            ->innerJoin('su.signalement', 'sig')
+            ->where('sig.territory = :territory_1')
+            ->andWhere('sig.statut IN (:statut)')
+            ->andWhere('su.type IN (:suivi_type)')
+            ->setParameter('suivi_type', [Suivi::TYPE_USAGER, Suivi::TYPE_PARTNER])
+            ->setParameter('statut', [Signalement::STATUS_ACTIVE, Signalement::STATUS_NEED_PARTNER_RESPONSE])
+            ->setParameter('territory_1', $territory)
+            ->distinct();
 
         $queryBuilder = $this->createQueryBuilder('s')
             ->select('COUNT(s.id) as count_no_suivi, p.nom')
@@ -1048,5 +1049,33 @@ class SignalementRepository extends ServiceEntityRepository
         }
 
         return $qb->getQuery()->getResult();
+    }
+
+    public function findOneForEmailAndAddress(string $email, string $address, string $zipcode, string $city): ?Signalement
+    {
+        $list = $this->createQueryBuilder('s')
+            ->andWhere('s.mailDeclarant = :email OR s.mailOccupant = :email')->setParameter('email', $email)
+            ->andWhere('s.adresseOccupant = :address')->setParameter('address', $address)
+            ->andWhere('s.cpOccupant = :zipcode')->setParameter('zipcode', $zipcode)
+            ->andWhere('s.villeOccupant = :city')->setParameter('city', $city)
+            ->andWhere('s.statut != :statutArchived')->setParameter('statutArchived', Signalement::STATUS_ARCHIVED)
+            ->addOrderBy('s.createdAt', 'DESC')
+            ->getQuery()->getResult();
+        $statutsList = [
+            Signalement::STATUS_ACTIVE,
+            Signalement::STATUS_NEED_PARTNER_RESPONSE,
+            Signalement::STATUS_NEED_VALIDATION,
+            Signalement::STATUS_CLOSED,
+            Signalement::STATUS_REFUSED,
+        ];
+        foreach ($statutsList as $statut) {
+            foreach ($list as $item) {
+                if ($item->getStatut() === $statut) {
+                    return $item;
+                }
+            }
+        }
+
+        return null;
     }
 }

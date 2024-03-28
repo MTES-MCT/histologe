@@ -47,6 +47,9 @@ class SignalementDraft
     #[ORM\OneToMany(mappedBy: 'createdFrom', targetEntity: Signalement::class)]
     private Collection $signalements;
 
+    #[ORM\Column(type: 'string', length: 255, nullable: true)]
+    private $checksum;
+
     private ?SignalementDraftRequest $signalementDraftRequest = null;
 
     public function __construct()
@@ -93,6 +96,7 @@ class SignalementDraft
     public function setEmailDeclarant(string $emailDeclarant): self
     {
         $this->emailDeclarant = $emailDeclarant;
+        $this->setChecksum();
 
         return $this;
     }
@@ -105,6 +109,7 @@ class SignalementDraft
     public function setAddressComplete(?string $addressComplete): self
     {
         $this->addressComplete = $addressComplete;
+        $this->setChecksum();
 
         return $this;
     }
@@ -185,5 +190,24 @@ class SignalementDraft
         }
 
         return $this;
+    }
+
+    public function getChecksum(): string
+    {
+        return $this->checksum;
+    }
+
+    public function setChecksum(): self
+    {
+        $this->checksum = $this->calculateChecksum();
+
+        return $this;
+    }
+
+    public function calculateChecksum(): string
+    {
+        $dataToHash = $this->emailDeclarant.$this->addressComplete;
+
+        return hash('sha256', $dataToHash);
     }
 }

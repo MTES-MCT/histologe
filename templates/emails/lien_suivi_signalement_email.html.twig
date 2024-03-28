@@ -1,0 +1,39 @@
+{% extends 'emails/base_email.html.twig' %}
+
+{% block body %}
+	<p>
+		Vous avez demandé à recevoir un lien vers la page de suivi de votre signalement pour le logement situé
+		<strong>{{signalement.adresseOccupant}} {{signalement.cpOccupant}} {{signalement.villeOccupant}}</strong>
+	</p>
+	<p>Pour rappel, votre page de suivi vous permet de :</p>
+	<ul>
+		<li>Suivre l'avancée de votre dossier</li>
+		<li>Ajouter des photos, des documents ou des précisions sur votre situation</li>
+		<li>Envoyer un message à l'administration</li>
+	</ul>
+
+	<p>Conservez précieusement cet e-mail pour pouvoir y accéder à tout moment.</p>
+
+	<p>Pour accéder à votre page de suivi, cliquez sur le bouton ci-dessous :</p>
+
+	<table role="presentation" border="0" cellpadding="0" cellspacing="0" class="btn btn-primary" style="text-align: center">
+		<tbody>
+			<tr>
+				<td align="left">
+					<table role="presentation" border="0" cellpadding="0" cellspacing="0">
+						<tbody>
+							<tr style="text-align: center;width: 100%">
+								<td>
+									<a href="{{ lien_suivi|raw }}" target="_blank" rel="noopener">{{ "Accéder à ma page de suivi" }}</a>
+								</td>
+							</tr>
+						</tbody>
+					</table>
+				</td>
+			</tr>
+		</tbody>
+	</table>
+	<p>Si le bouton ne fonctionne pas
+		<a href="{{ lien_suivi|raw }}">cliquez ici</a>
+	</p>
+{% endblock %}

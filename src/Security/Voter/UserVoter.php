@@ -93,16 +93,7 @@ class UserVoter extends Voter
 
     public function canSeeNde(User $user): bool
     {
-        $experimentationTerritories = $this->parameterBag->get('experimentation_territory');
-        $isExperimentationTerritory = \array_key_exists(
-            $user->getPartner()->getTerritory()->getZip(),
-            $experimentationTerritories
-        );
-        if ($isExperimentationTerritory || $this->parameterBag->get('feature_new_form')) {
-            return $user->isTerritoryAdmin()
+        return $user->isTerritoryAdmin()
             || \in_array(Qualification::NON_DECENCE_ENERGETIQUE, $user->getPartner()->getCompetence());
-        }
-
-        return false;
     }
 }

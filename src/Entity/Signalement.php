@@ -403,6 +403,9 @@ class Signalement
     #[ORM\ManyToMany(targetEntity: DesordrePrecision::class, mappedBy: 'signalement')]
     private Collection $desordrePrecisions;
 
+    #[ORM\ManyToOne(inversedBy: 'signalements')]
+    private ?Bailleur $bailleur = null;
+
     public function __construct()
     {
         $this->situations = new ArrayCollection();
@@ -733,6 +736,10 @@ class Signalement
 
     public function getNomProprio(): ?string
     {
+        if ($this->bailleur) {
+            return $this->bailleur->getName();
+        }
+
         return $this->nomProprio;
     }
 
@@ -2290,5 +2297,27 @@ class Signalement
         }
 
         return $desordreSlug;
+    }
+
+    public function getDesordreCritereSlugs()
+    {
+        return $this->getDesordreCriteres()->map(fn (DesordreCritere $desordreCritere) => $desordreCritere->getSlugCritere())->toArray();
+    }
+
+    public function getDesordrePrecisionSlugs()
+    {
+        return $this->getDesordrePrecisions()->map(fn (DesordrePrecision $desordrePrecision) => $desordrePrecision->getDesordrePrecisionSlug())->toArray();
+    }
+
+    public function getBailleur(): ?Bailleur
+    {
+        return $this->bailleur;
+    }
+
+    public function setBailleur(?Bailleur $bailleur): self
+    {
+        $this->bailleur = $bailleur;
+
+        return $this;
     }
 }

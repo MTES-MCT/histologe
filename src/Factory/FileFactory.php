@@ -22,11 +22,13 @@ class FileFactory
         ?DocumentType $documentType = null,
         ?string $desordreSlug = null,
         ?string $description = null,
+        ?bool $isWaitingSuivi = false
     ): ?File {
         $file = (new File())
             ->setFilename($filename)
             ->setTitle($title)
-            ->setFileType($type);
+            ->setFileType($type)
+            ->setIsWaitingSuivi($isWaitingSuivi);
         if (null !== $signalement) {
             $file->setSignalement($signalement);
         }

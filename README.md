@@ -38,7 +38,7 @@ Service|Version
 Nginx | 1.20.2
 PHP | 8.1.x (latest)
 Node.js | 18.x
-MySQL | 5.7.38
+MySQL | 8.0
 Redis | 7.0.x (latest)
 
 ### URL(s)
