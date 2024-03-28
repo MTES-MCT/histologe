@@ -409,13 +409,16 @@ class SignalementManager extends AbstractManager
         Signalement $signalement,
         CoordonneesBailleurRequest $coordonneesBailleurRequest
     ) {
-        $bailleur = $this->bailleurRepository->findOneBailleurBy(
-            $coordonneesBailleurRequest->getNom(),
-            ZipcodeProvider::getZipCode($signalement->getCpOccupant())
-        );
-        $signalement->setBailleur($bailleur);
+        $bailleur = null;
+        if ($signalement->getIsLogementSocial() && $coordonneesBailleurRequest->getNom()) {
+            $bailleur = $this->bailleurRepository->findOneBailleurBy(
+                $coordonneesBailleurRequest->getNom(),
+                ZipcodeProvider::getZipCode($signalement->getCpOccupant())
+            );
+        }
 
-        $signalement->setNomProprio($coordonneesBailleurRequest->getNom())
+        $signalement->setBailleur($bailleur)
+            ->setNomProprio($coordonneesBailleurRequest->getNom())
             ->setPrenomProprio($coordonneesBailleurRequest->getPrenom())
             ->setMailProprio($coordonneesBailleurRequest->getMail())
             ->setTelProprio($coordonneesBailleurRequest->getTelephone())
