@@ -757,6 +757,9 @@ ul.fr-autocomplete-list {
 p + ul {
     margin-top: -1rem;
 }
+ul + p {
+    margin-top: 1.5rem;
+}
 h2, h3 {
     margin-top: 2rem;
 }
