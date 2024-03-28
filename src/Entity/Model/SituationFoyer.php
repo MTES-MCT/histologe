@@ -92,7 +92,9 @@ class SituationFoyer
 
     public function getTravailleurSocialQuitteLogement(bool $raw = true): ?string
     {
-        return (!$raw && 'nsp' === $this->travailleurSocialQuitteLogement) ? 'Ne sait pas' : $this->travailleurSocialQuitteLogement;
+        return (!$raw && 'nsp' === $this->travailleurSocialQuitteLogement)
+            ? 'Ne sait pas'
+            : $this->travailleurSocialQuitteLogement;
     }
 
     public function setTravailleurSocialQuitteLogement(?string $travailleurSocialQuitteLogement): self
@@ -104,7 +106,9 @@ class SituationFoyer
 
     public function getTravailleurSocialPreavisDepart(bool $raw = true): ?string
     {
-        return (!$raw && 'nsp' === $this->travailleurSocialPreavisDepart) ? 'Ne sait pas' : $this->travailleurSocialPreavisDepart;
+        return (!$raw && 'nsp' === $this->travailleurSocialPreavisDepart)
+            ? 'Ne sait pas'
+            : $this->travailleurSocialPreavisDepart;
     }
 
     public function setTravailleurSocialPreavisDepart(?string $travailleurSocialPreavisDepart): self
@@ -114,9 +118,11 @@ class SituationFoyer
         return $this;
     }
 
-    public function getTravailleurSocialAccompagnement(): ?string
+    public function getTravailleurSocialAccompagnement(bool $raw = true): ?string
     {
-        return $this->travailleurSocialAccompagnement;
+        return (!$raw && 'nsp' === $this->travailleurSocialAccompagnement)
+            ? 'Ne sait pas'
+            : $this->travailleurSocialAccompagnement;
     }
 
     public function setTravailleurSocialAccompagnement(?string $travailleurSocialAccompagnement): self
@@ -128,7 +134,9 @@ class SituationFoyer
 
     public function getTravailleurSocialAccompagnementDeclarant(bool $raw = true): ?string
     {
-        return (!$raw && 'nsp' === $this->travailleurSocialAccompagnementDeclarant) ? 'Ne sait pas' : $this->travailleurSocialAccompagnementDeclarant;
+        return (!$raw && 'nsp' === $this->travailleurSocialAccompagnementDeclarant)
+            ? 'Ne sait pas'
+            : $this->travailleurSocialAccompagnementDeclarant;
     }
 
     public function setTravailleurSocialAccompagnementDeclarant(?string $travailleurSocialAccompagnementDeclarant): self
