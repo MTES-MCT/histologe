@@ -8,55 +8,29 @@
 	<header>
 		<div class="fr-grid-row">
 			<div class="fr-col-12 fr-text--left">
-				<h1 class="fr-mb-0">Comptes inactifs et expirés</h1>
+				<h1 class="fr-mb-0">Comptes inactifs</h1>
 			</div>
 		</div>
 	</header>
 </section>
-<section class="fr-grid-row fr-grid-row--middle fr-p-5v">
-	<h2 class="fr-mb-0" id="desc-table-expired">{{expiredUsers|length}} comptes expirés</h2>
-	{% if expiredUsers|length %}
-		<div class="fr-col-12 fr-table fr-table--bordered fr-table--no-caption">
-			<table aria-label="Liste des comptes expirés" aria-describedby="desc-table-expired">
-			<caption>Liste des comptes expirés</caption>
-				<thead>
-					<tr>
-						<th>Nom</th>
-						<th>Prénom</th>
-						<th>E-mail</th>
-						<th>Role</th>
-					</tr>
-				</thead>
-				<tbody>
-					{% for user in expiredUsers %}
-						<tr class="user-row">
-							<td>{{ user.nom}}</td>
-							<td>{{ user.prenom}}</td>
-							<td>{{ user.email}}</td>
-							<td>{{ user.roles[0]}}</td>
-						</tr>
-					{% endfor %}
-				</tbody>
-			</table>
-		</div>
-	{% endif %}
-</section>
 
 <section class="fr-grid-row fr-grid-row--middle fr-p-5v">
-	<h2 class="fr-mb-0" id="desc-table-inactive">{{inactiveUsers|length}} comptes inactifs</h2>
+	<h2 class="fr-mb-0" id="desc-table-inactive">{{inactiveUsers|length}} comptes agents inactifs</h2>
     {% if inactiveUsers|length %}
 	<div class="fr-col-12 fr-table fr-table--bordered fr-table--no-caption">
 		<table aria-label="Liste des comptes inactifs" aria-describedby="desc-table-inactive">
-		<caption>Liste des comptes inactifs</caption>
+		<caption>Liste des comptes agents inactifs</caption>
 			<thead>
 				<tr>
 					<th>Nom</th>
 					<th>Prénom</th>
 					<th>E-mail</th>
                     <th>Role</th>
+					<th>Status</th>
 					<th>Date de connexion</th>
 					<th>Département</th>
 					<th>Partenaire</th>
+					<th>Archivage prévue le</th>
 				</tr>
 			</thead>
 			<tbody>
@@ -66,9 +40,11 @@
 						<td>{{ user.prenom}}</td>
 						<td>{{ user.email}}</td>
                         <td>{{ user.roles[0]}}</td>
-						<td>{{ user.lastLoginAt|date('d/m/Y H:i')}}</td>
+						<td>{{ user.statutLabel }}</td>
+						<td>{{ user.lastLoginAt ? user.lastLoginAt|date('d/m/Y H:i')}}</td>
 						<td>{{ user.territory }}</td>
 						<td>{{ user.partner ? user.partner.nom : 'aucun' }}</td>
+						<td>{{ user.archivingScheduledAt ? user.archivingScheduledAt|date('d/m/Y') }}</td>
 					</tr>
 				{% endfor %}
 			</tbody>

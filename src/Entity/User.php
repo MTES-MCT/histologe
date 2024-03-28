@@ -26,6 +26,12 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public const STATUS_INACTIVE = 0;
     public const STATUS_ACTIVE = 1;
     public const STATUS_ARCHIVE = 2;
+    public const STATUS_LABELS = [
+        self::STATUS_INACTIVE => 'Inactif',
+        self::STATUS_ACTIVE => 'Actif',
+        self::STATUS_ARCHIVE => 'Archivé',
+    ];
+
     public const MAX_LIST_PAGINATION = 20;
 
     public const ROLE_USAGER = self::ROLES['Usager'];
@@ -306,6 +312,11 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         $this->statut = $statut;
 
         return $this;
+    }
+
+    public function getStatutLabel(): string
+    {
+        return self::STATUS_LABELS[$this->statut];
     }
 
     public function getLastLoginAt(): ?DateTimeImmutable
