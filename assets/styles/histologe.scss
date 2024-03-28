@@ -753,3 +753,10 @@ ul.fr-autocomplete-list {
   background-color: #417dc4;
   color: white !important;
 }
+
+p + ul {
+    margin-top: -1rem;
+}
+h2, h3 {
+    margin-top: 2rem;
+}
