@@ -12,6 +12,8 @@ use Symfony\Component\Serializer\Annotation\Ignore;
 #[ORM\UniqueConstraint(columns: ['name'])]
 class Bailleur
 {
+    public const BAILLEUR_RADIE = '[Radié(e)]';
+
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]

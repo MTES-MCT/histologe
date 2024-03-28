@@ -41,8 +41,9 @@ class BailleurRepository extends ServiceEntityRepository
         return $queryBuilder->getQuery()->getResult();
     }
 
-    public function findOneBailleurBy(string $name, string $zip): ?Bailleur
+    public function findOneBailleurBy(string $name, string $zip, bool $bailleurSanitized = false): ?Bailleur
     {
+        $name = $bailleurSanitized ? Bailleur::BAILLEUR_RADIE.' '.$name : $name;
         $queryBuilder = $this
             ->createQueryBuilder('b')
             ->innerJoin('b.bailleurTerritories', 'bt')

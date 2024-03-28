@@ -94,6 +94,7 @@
           "label": "Nom de l'organisme",
           "slug": "coordonnees_bailleur_nom_autocomplete",
           "placeholder": "Taper le nom de l'organisme ici",
+          "description": "Tapez le nom de votre bailleur et sélectionnez-le dans la liste.",
           "validate": {
             "maxLength": 255
           },
@@ -102,7 +103,7 @@
           },
           "autocomplete": {
             "isAbsoluteLink": false,
-            "route": "/bailleurs?postcode={{formStore.data.adresse_logement_adresse_detail_code_postal}}&name={{formStore.data.coordonnees_bailleur_nom_autocomplete_textfield}}"
+            "route": "/bailleurs?postcode={{formStore.data.adresse_logement_adresse_detail_code_postal}}&name={{formStore.data.coordonnees_bailleur_nom_autocomplete_textfield}}&sanitize=true"
           }
         },
         {
