@@ -588,12 +588,12 @@
                     <div class="fr-col-12">
                         <strong>Accompagnement par un ou une travailleuse sociale :</strong>
                         {% if signalement.situationFoyer %}
-                            {% if signalement.situationFoyer.travailleurSocialAccompagnementDeclarant is same as '1' %}
+                            {% if signalement.situationFoyer.travailleurSocialAccompagnement is same as 'oui' %}
                                 {{ static_picto_yes|raw }}
-                            {% elseif signalement.situationFoyer.travailleurSocialAccompagnementDeclarant is same as '0' %}
+                            {% elseif signalement.situationFoyer.travailleurSocialAccompagnement is same as 'non' %}
                                 {{ static_picto_no|raw }}
                             {% else %}
-                                {{signalement.situationFoyer.travailleurSocialAccompagnementDeclarant(false)}}
+                                {{signalement.situationFoyer.travailleurSocialAccompagnement(false)}}
                             {% endif %}
                         {% endif %}
                     </div>

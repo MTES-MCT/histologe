@@ -52,8 +52,8 @@
                                     <option value="" {{isAllocataire in [null, ''] ? 'selected' : '' }}></option>
                                     <option value="CAF" {{ isAllocataire is same as 'CAF' ? 'selected' : '' }}>CAF</option>
                                     <option value="MSA" {{ isAllocataire is same as 'MSA' ? 'selected' : '' }}>MSA</option>
-                                    <option value="oui" {{ isAllocataire in ['Oui', '1'] ? 'selected' : '' }}>Oui</option>
-                                    <option value="non" {{ isAllocataire in ['Non', '0'] ? 'selected' : '' }}>Non</option>
+                                    <option value="oui" {{ isAllocataire in ['oui', 'Oui', '1'] ? 'selected' : '' }}>Oui</option>
+                                    <option value="non" {{ isAllocataire in ['non', 'Non', '0'] ? 'selected' : '' }}>Non</option>
                                 </select>
                             </div>
 
@@ -113,21 +113,21 @@
                             </div>
 
                             <div class="fr-select-group">
-                                {% set travailleurSocialAccompagnementDeclarant = signalement.situationFoyer ? signalement.situationFoyer.travailleurSocialAccompagnementDeclarant : null %}
-                                <label class="fr-label" for="situationFoyerTravailleurSocialAccompagnementDeclarant">
+                                {% set travailleurSocialAccompagnement = signalement.situationFoyer ? signalement.situationFoyer.travailleurSocialAccompagnement : null %}
+                                <label class="fr-label" for="situationFoyerTravailleurSocialAccompagnement">
                                     Accompagnement par un ou une travailleuse sociale
                                     {{ show_label_facultatif(
                                         'App\\Dto\\Request\\Signalement\\SituationFoyerRequest',
-                                        'travailleurSocialAccompagnementDeclarant',
+                                        'travailleurSocialAccompagnement',
                                         signalement.profileDeclarant,
                                         null != signalement.createdFrom)
                                     }}
                                 </label>
-                                <select class="fr-select" id="situationFoyerTravailleurSocialAccompagnementDeclarant" name="travailleurSocialAccompagnementDeclarant">
-                                    <option value="" {{ travailleurSocialAccompagnementDeclarant not in ['1', '0', 'nsp'] ? 'selected' : '' }}></option>
-                                    <option value="1" {{ travailleurSocialAccompagnementDeclarant is same as '1' ? 'selected' : '' }}>Oui</option>
-                                    <option value="0" {{ travailleurSocialAccompagnementDeclarant is same as '0' ? 'selected' : '' }}>Non</option>
-                                    <option value="nsp" {{ travailleurSocialAccompagnementDeclarant is same as 'nsp' ? 'selected' : '' }}>Je ne sais pas</option>
+                                <select class="fr-select" id="situationFoyerTravailleurSocialAccompagnement" name="travailleurSocialAccompagnement">
+                                    <option value="" {{ travailleurSocialAccompagnement not in ['oui', 'non', 'nsp'] ? 'selected' : '' }}></option>
+                                    <option value="oui" {{ travailleurSocialAccompagnement is same as 'oui' ? 'selected' : '' }}>Oui</option>
+                                    <option value="non" {{ travailleurSocialAccompagnement is same as 'non' ? 'selected' : '' }}>Non</option>
+                                    <option value="nsp" {{ travailleurSocialAccompagnement is same as 'nsp' ? 'selected' : '' }}>Je ne sais pas</option>
                                 </select>
                             </div>
 

@@ -657,8 +657,8 @@ class SignalementManager extends AbstractManager
             ->setLogementSocialMontantAllocation($situationFoyerRequest->getLogementSocialMontantAllocation())
             ->setTravailleurSocialQuitteLogement($situationFoyerRequest->getTravailleurSocialQuitteLogement())
             ->setTravailleurSocialPreavisDepart($situationFoyerRequest->getTravailleurSocialPreavisDepart())
-            ->setTravailleurSocialAccompagnementDeclarant(
-                $situationFoyerRequest->getTravailleurSocialAccompagnementDeclarant()
+            ->setTravailleurSocialAccompagnement(
+                $situationFoyerRequest->getTravailleurSocialAccompagnement()
             )
             ->setLogementSocialAllocationCaisse($situationFoyerRequest->getIsAllocataire());
 
