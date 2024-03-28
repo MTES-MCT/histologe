@@ -48,7 +48,7 @@ class BailleurRepository extends ServiceEntityRepository
             ->createQueryBuilder('b')
             ->innerJoin('b.bailleurTerritories', 'bt')
             ->innerJoin('bt.territory', 't')
-            ->where('t.zip LIKE :zip')
+            ->where('t.zip = :zip')
             ->setParameter('zip', $zip)
             ->andWhere('b.name LIKE :name')
             ->setParameter('name', $name);
