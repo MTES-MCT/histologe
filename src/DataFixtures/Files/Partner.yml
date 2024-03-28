@@ -51,6 +51,12 @@ partners:
     type: "ARS"
     competence: "VISITES"
   -
+    nom: "Partenaire 13-07"
+    email: "partenaire-13-07@histologe.fr"
+    is_archive: 1
+    territory: "Bouches-du-Rhône"
+    type: "AUTRE"
+  -
     nom: "Partenaire 01-01"
     email: "partenaire-01-01@histologe.fr"
     is_archive: 0

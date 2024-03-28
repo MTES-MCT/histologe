@@ -3,6 +3,7 @@
 namespace App\Tests\Functional\Service\Token;
 
 use App\Entity\User;
+use App\Repository\UserRepository;
 use App\Service\Token\ActivationTokenGenerator;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
@@ -47,8 +48,9 @@ class ActivationTokenGeneratorTest extends KernelTestCase
 
     public function testValidateTokenNok(): void
     {
+        /** @var UserRepository $userRepository */
         $userRepository = $this->entityManager->getRepository(User::class);
-        $user = $userRepository->findOneBy(['email' => 'user-01-07@histologe.fr']);
+        $user = $userRepository->findArchivedUserByEmail('user-01-07@histologe.fr');
 
         $container = static::getContainer();
         $activationTokenGenerator = $container->get(ActivationTokenGenerator::class);

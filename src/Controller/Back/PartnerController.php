@@ -20,6 +20,7 @@ use App\Repository\UserRepository;
 use App\Service\Mailer\NotificationMail;
 use App\Service\Mailer\NotificationMailerRegistry;
 use App\Service\Mailer\NotificationMailerType;
+use App\Service\Sanitizer;
 use App\Service\Signalement\VisiteNotifier;
 use Doctrine\ORM\EntityManagerInterface;
 use Egulias\EmailValidator\EmailValidator;
@@ -248,8 +249,12 @@ class PartnerController extends AbstractController
             $partner
             && $this->isCsrfTokenValid('partner_delete', $request->request->get('_token'))
         ) {
+            if (null !== $partner->getEmail()) {
+                $partner->setEmail(Sanitizer::tagArchivedEmail($partner->getEmail()));
+            }
             $partner->setIsArchive(true);
             foreach ($partner->getUsers() as $user) {
+                $user->setEmail(Sanitizer::tagArchivedEmail($user->getEmail()));
                 $user->setStatut(User::STATUS_ARCHIVE);
                 $entityManager->persist($user);
                 $notificationMailerRegistry->send(
@@ -490,7 +495,7 @@ class PartnerController extends AbstractController
         /** @var User $user */
         $user = $userManager->find($userId);
         $this->denyAccessUnlessGranted('USER_DELETE', $user);
-
+        $user->setEmail(Sanitizer::tagArchivedEmail($user->getEmail()));
         $user->setStatut(User::STATUS_ARCHIVE);
         $userManager->save($user);
         $notificationMailerRegistry->send(
