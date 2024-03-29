@@ -82,12 +82,12 @@
                     <td>{{ user.territory }}</td>
                     <td>{{ user.partner ? user.partner.nom : 'aucun' }}</td>
                     <td><span class="fr-badge {{ classe }} fr-badge--no-icon fr-ws-nowrap ">{{ statut|upper }}</span></td>
-                    <td>{{ user.email|clean_tagged_text('.archived@', 'left') }}</ail td>
+                    <td>{{ user.email|clean_tagged_text(constant('App\\Entity\\User::SUFFIXE_ARCHIVED'), 'left') }}</ail td>
                     <td>{{ user.nom}}</ail td>
                     <td>{{ user.prenom}}</ail td>
                     <td class="fr-text--right">
                         <a href="{{ path('back_account_reactiver', {'id': user.id}) }}"
-                           class="fr-btn fr-icon-flashlight-fill fr-btn--sm" title="Réactiver le compte {{user.email}}"></a>
+                           class="fr-btn fr-icon-flashlight-fill fr-btn--sm" title="Réactiver le compte {{user.email|clean_tagged_text(constant('App\\Entity\\User::SUFFIXE_ARCHIVED'), 'left')}}"></a>
                     </td>
                 </tr>
             {% else %}

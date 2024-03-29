@@ -2,7 +2,7 @@
 
 namespace App\Controller\Back;
 
-use App\Entity\User;
+use App\Entity\Partner;
 use App\Repository\PartnerRepository;
 use App\Repository\TerritoryRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -56,7 +56,7 @@ class BackArchivedPartnerController extends AbstractController
             'partners' => $paginatedArchivedPartners,
             'total' => $totalArchivedPartners,
             'page' => $page,
-            'pages' => (int) ceil($totalArchivedPartners / User::MAX_LIST_PAGINATION),
+            'pages' => (int) ceil($totalArchivedPartners / Partner::MAX_LIST_PAGINATION),
         ]);
     }
 }

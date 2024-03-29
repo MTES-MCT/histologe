@@ -125,10 +125,10 @@ class PartnerControllerTest extends WebTestCase
 
         $this->assertResponseRedirects('/bo/partenaires/');
         $this->assertTrue($partner->getIsArchive());
-        $this->assertStringStartsWith($mailBeforArchive.'.archived@', $partner->getEmail());
+        $this->assertStringStartsWith($mailBeforArchive.User::SUFFIXE_ARCHIVED, $partner->getEmail());
         foreach ($partnerUsers as $user) {
             $this->assertEquals(User::STATUS_ARCHIVE, $user->getStatut());
-            $this->assertStringContainsString('.archived@', $user->getEmail());
+            $this->assertStringContainsString(User::SUFFIXE_ARCHIVED, $user->getEmail());
         }
     }
 
@@ -259,7 +259,7 @@ class PartnerControllerTest extends WebTestCase
         ]);
 
         $this->assertEquals(2, $user->getStatut());
-        $this->assertStringContainsString('.archived@', $user->getEmail());
+        $this->assertStringContainsString(User::SUFFIXE_ARCHIVED, $user->getEmail());
     }
 
     public function testDeleteUserAccountWithCsrfUnvalid(): void
@@ -273,7 +273,7 @@ class PartnerControllerTest extends WebTestCase
         ]);
 
         $this->assertNotEquals(2, $user->getStatut());
-        $this->assertStringNotContainsString('.archived@', $user->getEmail());
+        $this->assertStringNotContainsString(User::SUFFIXE_ARCHIVED, $user->getEmail());
         $this->assertResponseRedirects('/bo/partenaires/');
     }
 }

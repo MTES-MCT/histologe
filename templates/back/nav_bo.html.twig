@@ -68,7 +68,7 @@
                     </ul>
                 </div>
                 {% if is_granted('ROLE_ADMIN_PARTNER') %}
-                    {% set routesAdmin = ['back_user_report_index', 'back_situation_', 'back_partner_', 'back_account_', 'back_inactive_account_', 'back_expired_account_'] %}
+                    {% set routesAdmin = ['back_user_report_index', 'back_situation_', 'back_partner_', 'back_account_', 'back_inactive_account_', 'back_expired_account_', 'back_archived_partner'] %}
                     <button class="fr-sidemenu__btn"
                             aria-expanded="{% if routesAdmin|filter(route => app.request.get('_route') starts with route)|length > 0  %}true{% else %}false{% endif %}"
                             aria-controls="fr-sidemenu-outils-admin">Outils Admin

@@ -102,15 +102,19 @@ class BackArchivedAccountController extends AbstractController
         ]);
         $form->handleRequest($request);
 
-        $untaggedEmail = explode('.archived@', $user->getEmail())[0];
+        $untaggedEmail = explode(User::SUFFIXE_ARCHIVED, $user->getEmail())[0];
         $userExist = $userRepository->findOneBy(['email' => $untaggedEmail]);
-        if ($userExist && !\in_array('ROLE_USAGER', $userExist->getRoles())) {
-            $this->addFlash('error', 'Un utilisateur existe déjà avec cette adresse e-mail.');
+        if ($userExist) {
+            $this->addFlash('error', 'Un utilisateur existe déjà avec cette adresse e-mail. '
+            .$userExist->getNomComplet().' ( id '.$userExist->getId().' ) avec le rôle '
+            .$userExist->getRoleLabel());
         }
 
         $partnerExist = $partnerRepository->findOneBy(['email' => $untaggedEmail]);
         if ($partnerExist) {
-            $this->addFlash('error', 'Un partenaire existe déjà avec cette adresse e-mail.');
+            $this->addFlash('error', 'Un partenaire existe déjà avec cette adresse e-mail. '
+            .$partnerExist->getNom().' ( id '.$partnerExist->getId().' ) dans le territoire '
+            .$partnerExist->getTerritory()->getName());
         }
 
         if (!$userExist && !$partnerExist && $form->isSubmitted() && $form->isValid()) {

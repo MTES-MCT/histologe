@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace DoctrineMigrations;
 
+use App\Entity\User;
 use Doctrine\DBAL\Schema\Schema;
 use Doctrine\Migrations\AbstractMigration;
 
@@ -17,10 +18,10 @@ final class Version20240322123431 extends AbstractMigration
     public function up(Schema $schema): void
     {
         $this->addSql(
-            "UPDATE partner SET email = CONCAT(email, '.archived@', DATE_FORMAT(NOW(), '%Y%m%d%H%i')) WHERE is_archive = 1"
+            "UPDATE partner SET email = CONCAT(email, '".User::SUFFIXE_ARCHIVED."', DATE_FORMAT(NOW(), '%Y%m%d%H%i')) WHERE is_archive = 1"
         );
         $this->addSql(
-            "UPDATE user SET email = CONCAT(email, '.archived@', DATE_FORMAT(NOW(), '%Y%m%d%H%i')) WHERE statut = 2"
+            "UPDATE user SET email = CONCAT(email, '".User::SUFFIXE_ARCHIVED."', DATE_FORMAT(NOW(), '%Y%m%d%H%i')) WHERE statut = 2"
         );
     }
 

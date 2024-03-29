@@ -2,6 +2,8 @@
 
 namespace App\Service;
 
+use App\Entity\User;
+
 class Sanitizer
 {
     public static function sanitize($text): string
@@ -13,6 +15,6 @@ class Sanitizer
 
     public static function tagArchivedEmail(string $email): string
     {
-        return $email.'.archived@'.(new \DateTimeImmutable())->format('YmdHi');
+        return $email.User::SUFFIXE_ARCHIVED.(new \DateTimeImmutable())->format('YmdHi');
     }
 }
