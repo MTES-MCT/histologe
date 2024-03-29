@@ -44,9 +44,9 @@ class NotifyAndArchiveInactiveAccountCommand extends AbstractCronCommand
 
         $this->entityManager->flush();
 
-        $message = $nbFirst.' Premières notifications de compte inactif envoyés. ';
-        $message .= $nbSecond.' Secondes notifications de compte inactif envoyés. ';
-        $message .= $nbArchive.' Compte inactifs archivés.';
+        $message = $nbFirst.' premières notifications de compte inactif envoyées. ';
+        $message .= $nbSecond.' secondes notifications de compte inactif envoyées. ';
+        $message .= $nbArchive.' comptes inactifs archivés.';
 
         $this->notificationMailerRegistry->send(
             new NotificationMail(

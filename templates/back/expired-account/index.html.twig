@@ -14,10 +14,15 @@
 	</header>
 </section>
 <section class="fr-grid-row fr-grid-row--middle fr-p-5v">
-	<h2 class="fr-mb-0" id="desc-table-expired">{{expiredUsagers|length}} comptes usagers expirés</h2>
+	<h2 class="fr-mb-0" id="desc-table-expired">
+		{{expiredUsagers|length}} comptes usagers expirés
+		<div class="fr-text--sm fr-text--light">
+			Les comptes usagers expirés sont les comptes des usagers (occupants ou déclarants) dont les signalements n'ont pas eu d'activité depuis plus de 5 ans.
+		</div>
+	</h2>
 	{% if expiredUsagers|length %}
 		<div class="fr-col-12 fr-table fr-table--bordered fr-table--no-caption">
-			<table aria-label="Liste des comptes expirés" aria-describedby="desc-table-expired">
+			<table class="fr-display-inline-table" aria-label="Liste des comptes expirés" aria-describedby="desc-table-expired">
 			<caption>Liste des comptes usagers expirés</caption>
 				<thead>
 					<tr>
@@ -41,10 +46,15 @@
 </section>
 
 <section class="fr-grid-row fr-grid-row--middle fr-p-5v">
-	<h2 class="fr-mb-0" id="desc-table-inactive">{{expiredUsers|length}} comptes agents expirés</h2>
+	<h2 class="fr-mb-0" id="desc-table-inactive">
+		{{expiredUsers|length}} comptes agents expirés
+		<div class="fr-text--sm fr-text--light">
+			Les comptes agents expirés sont les comptes des ayant les droit d'accès au back-office sans connexion depuis plus de 2 ans.
+		</div>
+	</h2>
     {% if expiredUsers|length %}
 	<div class="fr-col-12 fr-table fr-table--bordered fr-table--no-caption">
-		<table aria-label="Liste des comptes inactifs" aria-describedby="desc-table-inactive">
+		<table class="fr-display-inline-table" aria-label="Liste des comptes inactifs" aria-describedby="desc-table-inactive">
 		<caption>Liste des comptes agents expirés</caption>
 			<thead>
 				<tr>

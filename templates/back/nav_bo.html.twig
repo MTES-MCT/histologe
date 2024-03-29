@@ -98,12 +98,12 @@
                                     <li class="fr-sidemenu__item {% if 'back_inactive_account_' in app.request.get('_route') %}fr-sidemenu__item--active{% endif %}">
                                         <a class="fr-sidemenu__link" href="{{ path('back_inactive_account_index') }}"
                                         target="_self"
-                                        {% if 'back_inactive_account_' in app.request.get('_route') %}aria-current="page"{% endif %}>Comptes Inactifs</a>
+                                        {% if 'back_inactive_account_' in app.request.get('_route') %}aria-current="page"{% endif %}>Comptes inactifs</a>
                                     </li>
                                     <li class="fr-sidemenu__item {% if 'back_inactive_account_' in app.request.get('_route') %}fr-sidemenu__item--active{% endif %}">
                                         <a class="fr-sidemenu__link" href="{{ path('back_expired_account_index') }}"
                                         target="_self"
-                                        {% if 'back_expired_account_' in app.request.get('_route') %}aria-current="page"{% endif %}>Comptes Expirés</a>
+                                        {% if 'back_expired_account_' in app.request.get('_route') %}aria-current="page"{% endif %}>Comptes expirés</a>
                                     </li>
                                 {% endif %}
                             {% endif %}
