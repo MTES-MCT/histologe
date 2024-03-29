@@ -151,6 +151,7 @@ users:
     is_generique: 0
     is_mailing_active: 1
     territory: "Bouches-du-Rhône"
+    last_login_at: '-1 year'
   -  
     email: user-13-02@histologe.fr
     roles: "[\"ROLE_USER_PARTNER\"]"
@@ -159,6 +160,7 @@ users:
     is_generique: 0
     is_mailing_active: 1
     territory: "Bouches-du-Rhône"
+    last_login_at: '-2 year'
   -
     email: user-13-03@histologe.fr
     roles: "[\"ROLE_USER_PARTNER\"]"
@@ -380,3 +382,10 @@ users:
     is_generique: 0
     is_mailing_active: 1
     territory: "Pas-de-Calais"
+  -  
+    email: usager-01@histologe.fr
+    roles: "[\"ROLE_USAGER\"]"
+    statut: 0
+    is_generique: 0
+    is_mailing_active: 0
+    last_login_at: '-5 year'

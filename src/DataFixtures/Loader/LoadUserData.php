@@ -67,6 +67,11 @@ class LoadUserData extends Fixture implements OrderedFixtureInterface
             $user->setPartner($this->partnerRepository->findOneBy(['nom' => $row['partner']]));
         }
 
+        if (isset($row['last_login_at'])) {
+            $lastLoginAt = (new \DateTimeImmutable())->modify($row['last_login_at']);
+            $user->setLastLoginAt($lastLoginAt);
+        }
+
         if (isset($row['token'])) {
             $user
                 ->setToken($row['token'])

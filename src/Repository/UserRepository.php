@@ -231,13 +231,13 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
             ->leftJoin('suo.signalement', 'so')
 
             ->where('(u.lastLoginAt IS NOT NULL AND u.lastLoginAt < :dateLimit) OR (u.lastLoginAt IS NULL AND u.createdAt < :dateLimit)')
-            ->andWhere('sd.createdAt < :dateLimit AND so.createdAt < :dateLimit')
+            ->andWhere('sd.createdAt IS NULL OR (sd.createdAt < :dateLimit AND so.createdAt < :dateLimit)')
             ->andWhere('(sd.modifiedAt IS NULL OR sd.modifiedAt < :dateLimit) AND (so.modifiedAt IS NULL OR so.modifiedAt < :dateLimit)')
             ->andWhere('(sd.lastSuiviAt IS NULL OR sd.lastSuiviAt < :dateLimit) AND (so.lastSuiviAt IS NULL OR so.lastSuiviAt < :dateLimit)')
-            ->andWhere('u.roles = :roles')
+            ->andWhere('JSON_CONTAINS(u.roles, :roles) = 1')
 
             ->setParameter('dateLimit', $dateLimit)
-            ->setParameter('roles', '["ROLE_USAGER"]');
+            ->setParameter('roles', '"ROLE_USAGER"');
 
         return $qb->getQuery()->execute();
     }
@@ -279,10 +279,10 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
             ->leftJoin('u.territory', 't')
 
             ->where('(u.lastLoginAt IS NOT NULL AND u.lastLoginAt < :dateLimit) OR (u.lastLoginAt IS NULL AND u.createdAt < :dateLimit)')
-            ->andWhere('u.roles != :roles')
+            ->andWhere('JSON_CONTAINS(u.roles, :roles) = 0')
 
             ->setParameter('dateLimit', $dateLimit)
-            ->setParameter('roles', '["ROLE_USAGER"]');
+            ->setParameter('roles', '"ROLE_USAGER"');
 
         return $qb;
     }

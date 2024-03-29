@@ -6,14 +6,14 @@ use Symfony\Bundle\FrameworkBundle\Console\Application;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use Symfony\Component\Console\Tester\CommandTester;
 
-class RemindInactiveUserCommandTest extends KernelTestCase
+class NotifyAndArchiveInactiveAccountCommandTest extends KernelTestCase
 {
     public function testDisplayMessageSuccessfully(): void
     {
         $kernel = self::bootKernel();
         $application = new Application($kernel);
 
-        $command = $application->find('app:remind-inactive-user');
+        $command = $application->find('app:notify-and-archive-inactive-accounts');
 
         $commandTester = new CommandTester($command);
 
@@ -22,7 +22,9 @@ class RemindInactiveUserCommandTest extends KernelTestCase
         $commandTester->assertCommandIsSuccessful();
 
         $output = $commandTester->getDisplay();
-        $this->assertStringContainsString('9 users has been notified', $output);
-        $this->assertEmailCount(10);
+        $this->assertStringContainsString('2 first notifications sent to inactive users.', $output);
+        $this->assertStringContainsString('0 second notifications sent to inactive users.', $output);
+        $this->assertStringContainsString('0 accounts archived.', $output);
+        $this->assertEmailCount(3);
     }
 }
