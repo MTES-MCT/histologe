@@ -1,7 +1,8 @@
 <?php
 
-namespace App\Service;
+namespace App\Service\Signalement;
 
+use App\Dto\Request\Signalement\SignalementSearchQuery;
 use App\Entity\Affectation;
 use App\Entity\Enum\AffectationStatus;
 use App\Entity\Enum\Qualification;
@@ -23,12 +24,13 @@ use Doctrine\DBAL\Exception;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\QueryBuilder;
 use Symfony\Bundle\SecurityBundle\Security;
+use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\HttpFoundation\Request;
 
-class SearchFilterService
+class SearchFilter
 {
     private array $filters;
-    private Request $request;
+    private SignalementSearchQuery|Request $request;
     private int $countActive;
     private const REQUESTS = [
         'searchterms',
@@ -60,11 +62,13 @@ class SearchFilterService
         private SuiviRepository $suiviRepository,
         private TerritoryRepository $territoryRepository,
         private EntityManagerInterface $entityManager,
-        private SignalementQualificationRepository $signalementQualificationRepository
+        private SignalementQualificationRepository $signalementQualificationRepository,
+        #[Autowire(env: 'FEATURE_LIST_FILTER_ENABLE')]
+        private bool $featureListFilterEnable
     ) {
     }
 
-    public function setRequest(Request $request): static
+    public function setRequest(SignalementSearchQuery|Request $request): static
     {
         $this->request = $request;
 
@@ -76,6 +80,11 @@ class SearchFilterService
         return $this->filters ?? null;
     }
 
+    public function buildFilters(): array
+    {
+        return $this->request->getFilters();
+    }
+
     public function setFilters(): self
     {
         $this->countActive = 0;
@@ -85,6 +94,10 @@ class SearchFilterService
         $filters = self::REQUESTS;
         $this->filters = [];
         $territory = $this->getTerritory($user, $request);
+
+        if (!$request instanceof Request) {
+            return $this;
+        }
         foreach ($filters as $filter) {
             $this->filters[$filter] = $request->get('bo-filters-'.$filter) ?? null;
 
@@ -173,7 +186,7 @@ class SearchFilterService
         return $this;
     }
 
-    private function getRequest(): Request
+    private function getRequest(): Request|SignalementSearchQuery
     {
         return $this->request;
     }
@@ -369,9 +382,17 @@ class SearchFilterService
                     ->setParameter('status_affectation', '%'.$statuses.'%');
             }
         }
-        if (!empty($filters['cities'])) {
-            $qb->andWhere('s.villeOccupant IN (:cities)')
-                ->setParameter('cities', $filters['cities']);
+
+        if ($this->featureListFilterEnable) {
+            if (!empty($filters['cities'])) {
+                $qb->andWhere('s.villeOccupant IN (:cities) OR s.cpOccupant IN (:cities)')
+                    ->setParameter('cities', $filters['cities']);
+            }
+        } else {
+            if (!empty($filters['cities'])) {
+                $qb->andWhere('s.villeOccupant IN (:cities)')
+                    ->setParameter('cities', $filters['cities']);
+            }
         }
         if (!empty($filters['visites'])) {
             $qb->leftJoin('s.interventions', 'intervSearch');
@@ -455,7 +476,8 @@ class SearchFilterService
             if (!empty($filters['scores']['on'])) {
                 $qb->andWhere('s.score >= :score_on')
                     ->setParameter('score_on', $filters['scores']['on']);
-            } elseif (!empty($filters['scores']['off'])) {
+            }
+            if (!empty($filters['scores']['off'])) {
                 $qb->andWhere('s.score <= :score_off')
                     ->setParameter('score_off', $filters['scores']['off']);
             }
@@ -476,14 +498,26 @@ class SearchFilterService
                 ->setParameter('signalement_ids', $filters['signalement_ids']);
         }
 
+        if (!empty($filters['typeDeclarant'])) {
+            $qb
+                ->andWhere('s.profileDeclarant LIKE :profile_declarant')
+                ->setParameter('profile_declarant', $filters['typeDeclarant']);
+        }
+
         return $qb;
     }
 
-    private function getTerritory(User $user, Request $request): ?Territory
+    private function getTerritory(User $user, SignalementSearchQuery|Request $request): ?Territory
     {
         $territory = null;
-        if ($user->isSuperAdmin() && $request->query->get('territoire_id')) {
-            $territory = $this->territoryRepository->find($request->query->get('territoire_id'));
+        if ($user->isSuperAdmin()) {
+            if ($request instanceof Request && $request->query->get('territoire_id')) {
+                $territory = $this->territoryRepository->find($request->query->get('territoire_id'));
+            }
+            /** @var SignalementSearchQuery $request */
+            if ($request instanceof SignalementSearchQuery && null !== $zip = $request->getTerritory()) {
+                $territory = $this->territoryRepository->findOneBy(['zip' => $zip]);
+            }
         } elseif (!$user->isSuperAdmin()) {
             $territory = $user->getTerritory();
         }

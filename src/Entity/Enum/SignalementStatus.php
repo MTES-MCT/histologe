@@ -34,4 +34,14 @@ enum SignalementStatus: int
             self::REFUSED => 'refusé',
         };
     }
+
+    public static function mapFilterStatus(string $label): int
+    {
+        return match ($label) {
+            'nouveau' => SignalementStatus::NEED_VALIDATION->value,
+            'en cours' => SignalementStatus::ACTIVE->value,
+            'ferme' => SignalementStatus::CLOSED->value,
+            'refuse' => SignalementStatus::REFUSED->value,
+        };
+    }
 }
