@@ -566,6 +566,7 @@ class FrontSignalementController extends AbstractController
         EntityManagerInterface $entityManager,
         SuiviFactory $suiviFactory,
         SignalementFileProcessor $signalementFileProcessor,
+        UserManager $userManager
     ): RedirectResponse {
         $signalement = $signalementRepository->findOneByCodeForPublic($code);
         if (!$signalement) {
@@ -581,6 +582,11 @@ class FrontSignalementController extends AbstractController
         if (\in_array($signalement->getStatut(), [Signalement::STATUS_CLOSED, Signalement::STATUS_REFUSED])) {
             return $this->redirectToRoute('front_suivi_signalement', ['code' => $signalement->getCodeSuivi()]);
         }
+        /* @var User $userOccupant */
+        $userManager->createUsagerFromSignalement($signalement, UserManager::OCCUPANT);
+        /* @var User $userDeclarant */
+        $userManager->createUsagerFromSignalement($signalement, UserManager::DECLARANT);
+
         $email = $request->get('signalement_front_response')['email'];
         $user = $userRepository->findOneBy(['email' => $email]);
         $suivi = $suiviFactory->createInstanceFrom(
