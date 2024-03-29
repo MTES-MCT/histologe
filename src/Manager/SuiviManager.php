@@ -149,8 +149,8 @@ class SuiviManager extends Manager
                 $description .= sprintf(
                     '%s a ajouté %s %s de la visite du %s :',
                     $user->getPartner()->getNom(),
-                    $nbDocs,
-                    $nbDocs > 1 ? ' photos' : ' photo',
+                    $nbPhotos,
+                    $nbPhotos > 1 ? ' photos' : ' photo',
                     $intervention->getScheduledAt()->format('d/m/Y')
                 );
             }
@@ -160,8 +160,10 @@ class SuiviManager extends Manager
         foreach ($files as $file) {
             $fileUrl = $this->urlGenerator->generate(
                 'show_uploaded_file',
-                ['folder' => '_up', 'filename' => $file->getFilename()]
-            );
+                ['filename' => $file->getFilename()],
+                UrlGeneratorInterface::ABSOLUTE_URL
+            ).'?t=___TOKEN___';
+
             $linkFile = '<li><a class="fr-link" target="_blank" href="'.$fileUrl.'">'.$file->getTitle().'</a>';
             if (DocumentType::PHOTO_SITUATION === $file->getDocumentType() && null !== $file->getDesordreSlug()) {
                 $desordreCritere = $this->desordreCritereRepository->findOneBy(

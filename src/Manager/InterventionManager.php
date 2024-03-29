@@ -13,7 +13,6 @@ use App\Entity\Signalement;
 use App\Entity\User;
 use App\Factory\FileFactory;
 use App\Repository\InterventionRepository;
-use App\Service\ImageManipulationHandler;
 use App\Service\Signalement\Qualification\SignalementQualificationUpdater;
 use Doctrine\Persistence\ManagerRegistry;
 use League\Flysystem\FilesystemOperator;
@@ -207,24 +206,22 @@ class InterventionManager extends AbstractManager
         return $intervention;
     }
 
-    private function createFile(Intervention $intervention, string $document): File
-    {
+    private function createFile(
+        Intervention $intervention,
+        string $document,
+        string $fileType = File::FILE_TYPE_DOCUMENT,
+        DocumentType $documentType = DocumentType::PROCEDURE_RAPPORT_DE_VISITE
+    ): File {
         /** @var User $user */
         $user = $this->security->getUser();
 
-        $fileType = File::FILE_TYPE_DOCUMENT;
-        if (\in_array($this->fileStorage->mimeType($document), ImageManipulationHandler::IMAGE_MIME_TYPES)) {
-            $fileType = File::FILE_TYPE_PHOTO;
-        }
-
-        // TODO : quand la modale sera fait, le documentType pourra être différent
         return $this->fileFactory->createInstanceFrom(
             filename: $document,
             title: $document,
             type: $fileType,
             signalement: $intervention->getSignalement(),
             user: $user,
-            documentType: DocumentType::PROCEDURE_RAPPORT_DE_VISITE
+            documentType: $documentType
         );
     }
 }

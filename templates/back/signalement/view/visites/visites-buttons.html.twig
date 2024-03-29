@@ -41,7 +41,7 @@
                     Editer le rapport
                 </button>
             {% endif %}
-            <a href="{{ asset('_up/'~intervention.getRapportDeVisite[0].filename)~'/' ~ signalement.uuid }}"
+            <a href="{{ asset('_up/'~intervention.getRapportDeVisite.first.filename)~'/' ~ signalement.uuid }}"
                 class="fr-btn"
                 title="Afficher le document"
                 rel="noopener"

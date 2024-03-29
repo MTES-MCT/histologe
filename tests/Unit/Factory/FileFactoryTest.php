@@ -76,7 +76,7 @@ class FileFactoryTest extends TestCase
                 'slug' => 'bail_dpe_dpe_upload',
             ],
             'dummy-filename-dpe.PNG',
-            File::FILE_TYPE_PHOTO,
+            File::FILE_TYPE_DOCUMENT,
             DocumentType::SITUATION_FOYER_DPE,
         ];
 
@@ -112,7 +112,7 @@ class FileFactoryTest extends TestCase
                 'slug' => 'bail_dpe_bail_upload',
             ],
             'dummy-filename-bail.png',
-            File::FILE_TYPE_PHOTO,
+            File::FILE_TYPE_DOCUMENT,
             DocumentType::SITUATION_FOYER_BAIL,
         ];
 
@@ -137,6 +137,18 @@ class FileFactoryTest extends TestCase
             ],
             'dummy-filename-desordre.pdf',
             File::FILE_TYPE_DOCUMENT,
+            DocumentType::PHOTO_SITUATION,
+        ];
+
+        yield 'Désordre photos ' => [
+            [
+                'key' => 'photos',
+                'file' => 'dummy-filename-desordre.png',
+                'titre' => 'dummy-filename-desordre-titre.png',
+                'slug' => 'desordres_batiment_isolation_photos_upload',
+            ],
+            'dummy-filename-desordre.png',
+            File::FILE_TYPE_PHOTO,
             DocumentType::PHOTO_SITUATION,
         ];
     }
