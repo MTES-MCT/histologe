@@ -2,6 +2,7 @@
 
 namespace App\EventSubscriber;
 
+use App\Entity\Enum\InterventionType;
 use App\Entity\Intervention;
 use App\Entity\Suivi;
 use App\Event\InterventionCreatedEvent;
@@ -38,10 +39,12 @@ class InterventionCreatedSubscriber implements EventSubscriberInterface
         );
         $this->suiviManager->save($suivi);
 
-        $this->visiteNotifier->notifyUsagers(
-            $intervention,
-            NotificationMailerType::TYPE_VISITE_CREATED_TO_USAGER
-        );
+        if (InterventionType::VISITE === $intervention->getType() && $intervention->getScheduledAt() >= new \DateTimeImmutable()) {
+            $this->visiteNotifier->notifyUsagers(
+                $intervention,
+                NotificationMailerType::TYPE_VISITE_CREATED_TO_USAGER
+            );
+        }
 
         $this->visiteNotifier->notifyAgents(
             intervention: $intervention,
