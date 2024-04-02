@@ -78,8 +78,12 @@ class AppExtension extends AbstractExtension
         ];
     }
 
-    public function cleanTaggedText(string $taggedText, string $tag, string $direction): string
+    public function cleanTaggedText(?string $taggedText, string $tag, string $direction): string
     {
+        if (null === $taggedText) {
+            return '';
+        }
+
         $parts = explode($tag, $taggedText);
 
         switch ($direction) {
