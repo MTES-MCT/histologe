@@ -24,35 +24,43 @@
                 </div>
             </header>
             <hr>
-            
-            {% if suiviAuto is defined and suiviAuto is not empty %}
-                <div class="fr-grid-row fr-grid-row--middle fr-rounded fr-p-5v">
-                    <div class="fr-col-12">
-                        <div class="fr-grid-row">
-                            <div class="fr-col-12">
-                            {% if suiviAuto is same as constant('App\\Entity\\Suivi::ARRET_PROCEDURE')  %}
-                                Vous souhaitez arrêter la procédure ?<br>
-                            {% endif %}
-                            {% if suiviAuto is same as constant('App\\Entity\\Suivi::POURSUIVRE_PROCEDURE')  %}
-                                Vous souhaitez poursuivre la procédure ?<br>
-                            {% endif %}
-                            Nous allons informer les services de votre réponse. <br>
-                            Attention votre choix pourra avoir un impact sur la poursuite de votre dossier. <br>
+            {% if signalement.statut is same as constant('App\\Entity\\Signalement::STATUS_REFUSED') %}
+                <div role="alert" class="fr-alert fr-alert--error fr-alert--sm">
+                    <p>Votre signalement a été refusé, vous ne pouvez plus envoyer de messages.</p>
+                </div>
+            {% elseif signalement.statut is same as constant('App\\Entity\\Signalement::STATUS_CLOSED') %}
+                <div role="alert" class="fr-alert fr-alert--error fr-alert--sm">
+                    <p>Votre signalement a été clôturé, vous ne pouvez plus envoyer de messages.</p>
+                </div>
+            {% else %}
+                {% if suiviAuto is defined and suiviAuto is not empty %}
+                    <div class="fr-grid-row fr-grid-row--middle fr-rounded fr-p-5v">
+                        <div class="fr-col-12">
+                            <div class="fr-grid-row">
+                                <div class="fr-col-12">
+                                {% if suiviAuto is same as constant('App\\Entity\\Suivi::ARRET_PROCEDURE')  %}
+                                    Vous souhaitez arrêter la procédure ?<br>
+                                {% endif %}
+                                {% if suiviAuto is same as constant('App\\Entity\\Suivi::POURSUIVRE_PROCEDURE')  %}
+                                    Vous souhaitez poursuivre la procédure ?<br>
+                                {% endif %}
+                                Nous allons informer les services de votre réponse. <br>
+                                Attention votre choix pourra avoir un impact sur la poursuite de votre dossier. <br>
+                                </div>
                             </div>
-                        </div>
-                        <div class="fr-grid-row fr-p-5v">
-                            <div class="fr-col-6 fr-text--center">
-                                <a class="fr-btn fr-btn--secondary fr-fi-arrow-left-line fr-btn--icon-left"
-                                href="{{ path('front_suivi_signalement',{code:signalement.codeSuivi, from:email}) }}">Annuler</a>
-                            </div>
-                            <div class="fr-col-6 fr-text--center">
-                                <a class="fr-btn fr-icon-checkbox-circle-fill fr-btn--icon-right"
-                                href="{{ path('front_suivi_signalement',{code:signalement.codeSuivi, from:email, suiviAuto:suiviAuto}) }}">Confirmer</a>
+                            <div class="fr-grid-row fr-p-5v">
+                                <div class="fr-col-6 fr-text--center">
+                                    <a class="fr-btn fr-btn--secondary fr-fi-arrow-left-line fr-btn--icon-left"
+                                    href="{{ path('front_suivi_signalement',{code:signalement.codeSuivi, from:email}) }}">Annuler</a>
+                                </div>
+                                <div class="fr-col-6 fr-text--center">
+                                    <a class="fr-btn fr-icon-checkbox-circle-fill fr-btn--icon-right"
+                                    href="{{ path('front_suivi_procedure',{code:signalement.codeSuivi, from:email, suiviAuto:suiviAuto}) }}&_token={{csrf_token('suivi_procedure')}}">Confirmer</a>
+                                </div>
                             </div>
                         </div>
                     </div>
-                </div>
-            {% elseif signalement.statut != constant('App\\Entity\\Signalement::STATUS_CLOSED')  %}
+                {% endif %}
                 <div class="fr-grid-row fr-grid-row--middle fr-rounded fr-p-5v">
                     <div class="fr-col-12">
                         <form action="{{ path('front_suivi_signalement_user_response',{code:signalement.codeSuivi}) }}"
