@@ -1,0 +1,62 @@
+{% extends 'back/base_bo.html.twig' %}
+
+{% block title %}Comptes inactifs
+{% endblock %}
+
+{% block content %}
+<section class="fr-p-5v">
+	<header>
+		<div class="fr-grid-row">
+			<div class="fr-col-12 fr-text--left">
+				<h1 class="fr-mb-0">Comptes inactifs</h1>
+			</div>
+		</div>
+	</header>
+</section>
+
+<section class="fr-grid-row fr-grid-row--middle fr-p-5v">
+	<h2 class="fr-mb-0" id="desc-table-inactive">
+		{{inactiveUsers|length}} comptes agents inactifs
+		<div class="fr-text--sm fr-text--light">
+			Les comptes inactifs sont les comptes des agents qui n'ont pas eu de connexion depuis plus de 11 mois et qui ne sont pas archivés. 
+			<br>
+			Un mail leur est envoyé 30 jours et 7 jours avant la suppression des comptes, puis ils sont archivés s'il n'y a toujours pas de connexion 30 jours après la première notification.
+		</div>
+	</h2>
+    {% if inactiveUsers|length %}
+	<div class="fr-col-12 fr-table fr-table--bordered fr-table--no-caption">
+		<table class="fr-display-inline-table"  aria-label="Liste des comptes inactifs" aria-describedby="desc-table-inactive">
+		<caption>Liste des comptes agents inactifs</caption>
+			<thead>
+				<tr>
+					<th>Nom</th>
+					<th>Prénom</th>
+					<th>E-mail</th>
+                    <th>Role</th>
+					<th>Status</th>
+					<th>Date de connexion</th>
+					<th>Département</th>
+					<th>Partenaire</th>
+					<th>Archivage prévue le</th>
+				</tr>
+			</thead>
+			<tbody>
+				{% for user in inactiveUsers %}
+					<tr class="user-row">
+						<td>{{ user.nom}}</td>
+						<td>{{ user.prenom}}</td>
+						<td>{{ user.email}}</td>
+                        <td>{{ user.roles[0]}}</td>
+						<td>{{ user.statutLabel }}</td>
+						<td>{{ user.lastLoginAt ? user.lastLoginAt|date('d/m/Y H:i')}}</td>
+						<td>{{ user.territory }}</td>
+						<td>{{ user.partner ? user.partner.nom : 'aucun' }}</td>
+						<td>{{ user.archivingScheduledAt ? user.archivingScheduledAt|date('d/m/Y') }}</td>
+					</tr>
+				{% endfor %}
+			</tbody>
+		</table>
+	</div>
+    {% endif %}
+</section>
+{% endblock %}

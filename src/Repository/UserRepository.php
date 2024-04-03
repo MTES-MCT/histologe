@@ -8,6 +8,7 @@ use App\Entity\Territory;
 use App\Entity\User;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\NonUniqueResultException;
+use Doctrine\ORM\QueryBuilder;
 use Doctrine\ORM\Tools\Pagination\Paginator;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Component\Security\Core\Exception\UnsupportedUserException;
@@ -214,5 +215,85 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
         }
 
         return $qb->getQuery()->getOneOrNullResult();
+    }
+
+    public function findExpiredUsagers(string $limitConservation = '5 years'): array
+    {
+        $dateLimit = new \DateTimeImmutable('-'.$limitConservation);
+        // retourne les usagers :
+        // - non connectés depuis plus de limitConservation
+        // - et n'etant pas occupant ou declarant sur des signalements actif (creation/edition/dernier suivi) depuis limitConservation
+        $qb = $this->createQueryBuilder('u')
+            ->select('u')
+            ->leftJoin('u.signalementUsagerDeclarants', 'sud')
+            ->leftJoin('u.signalementUsagerOccupants', 'suo')
+            ->leftJoin('sud.signalement', 'sd')
+            ->leftJoin('suo.signalement', 'so')
+
+            ->where('(u.lastLoginAt IS NOT NULL AND u.lastLoginAt < :dateLimit) OR (u.lastLoginAt IS NULL AND u.createdAt < :dateLimit)')
+            ->andWhere('sd.createdAt IS NULL OR (sd.createdAt < :dateLimit AND so.createdAt < :dateLimit)')
+            ->andWhere('(sd.modifiedAt IS NULL OR sd.modifiedAt < :dateLimit) AND (so.modifiedAt IS NULL OR so.modifiedAt < :dateLimit)')
+            ->andWhere('(sd.lastSuiviAt IS NULL OR sd.lastSuiviAt < :dateLimit) AND (so.lastSuiviAt IS NULL OR so.lastSuiviAt < :dateLimit)')
+            ->andWhere('JSON_CONTAINS(u.roles, :roles) = 1')
+
+            ->setParameter('dateLimit', $dateLimit)
+            ->setParameter('roles', '"ROLE_USAGER"');
+
+        return $qb->getQuery()->execute();
+    }
+
+    public function findExpiredUsers(string $limitConservation = '2 years'): array
+    {
+        $qb = $this->getQueryBuilerForinactiveUsersSince($limitConservation);
+
+        return $qb->getQuery()->execute();
+    }
+
+    public function findInactiveUsers(?bool $isArchivingScheduled = null, ?\DateTimeImmutable $archivingScheduledAt = null, string $limitConservation = '11 months'): array
+    {
+        $qb = $this->getQueryBuilerForinactiveUsersSince($limitConservation);
+
+        $qb->andWhere('u.statut != :statut')->setParameter('statut', User::STATUS_ARCHIVE);
+
+        if (true === $isArchivingScheduled) {
+            $qb->andWhere('u.archivingScheduledAt IS NOT NULL');
+        }
+        if (false === $isArchivingScheduled) {
+            $qb->andWhere('u.archivingScheduledAt IS NULL');
+        }
+
+        if ($archivingScheduledAt) {
+            $qb->andWhere('u.archivingScheduledAt = :date')
+                ->setParameter('date', $archivingScheduledAt->format('Y-m-d'));
+        }
+
+        return $qb->getQuery()->execute();
+    }
+
+    private function getQueryBuilerForinactiveUsersSince(string $limitConservation): QueryBuilder
+    {
+        $dateLimit = new \DateTimeImmutable('-'.$limitConservation);
+        $qb = $this->createQueryBuilder('u')
+            ->select('u', 'p', 't')
+            ->leftJoin('u.partner', 'p')
+            ->leftJoin('u.territory', 't')
+
+            ->where('(u.lastLoginAt IS NOT NULL AND u.lastLoginAt < :dateLimit) OR (u.lastLoginAt IS NULL AND u.createdAt < :dateLimit)')
+            ->andWhere('JSON_CONTAINS(u.roles, :roles) = 0')
+
+            ->setParameter('dateLimit', $dateLimit)
+            ->setParameter('roles', '"ROLE_USAGER"');
+
+        return $qb;
+    }
+
+    public function findUsersToArchive(): array
+    {
+        $qb = $this->createQueryBuilder('u')
+            ->where('u.archivingScheduledAt IS NOT NULL')
+            ->andWhere('u.archivingScheduledAt < :date')
+            ->setParameter('date', new \DateTimeImmutable());
+
+        return $qb->getQuery()->execute();
     }
 }

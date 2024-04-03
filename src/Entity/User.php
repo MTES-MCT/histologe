@@ -26,6 +26,12 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public const STATUS_INACTIVE = 0;
     public const STATUS_ACTIVE = 1;
     public const STATUS_ARCHIVE = 2;
+    public const STATUS_LABELS = [
+        self::STATUS_INACTIVE => 'Inactif',
+        self::STATUS_ACTIVE => 'Actif',
+        self::STATUS_ARCHIVE => 'Archivé',
+    ];
+
     public const MAX_LIST_PAGINATION = 20;
 
     public const ROLE_USAGER = self::ROLES['Usager'];
@@ -119,6 +125,15 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column]
     private bool $isActivateAccountNotificationEnabled = true;
 
+    #[ORM\OneToMany(mappedBy: 'declarant', targetEntity: SignalementUsager::class)]
+    private $signalementUsagerDeclarants;
+
+    #[ORM\OneToMany(mappedBy: 'occupant', targetEntity: SignalementUsager::class)]
+    private $signalementUsagerOccupants;
+
+    #[ORM\Column(type: Types::DATE_IMMUTABLE, nullable: true)]
+    private ?\DateTimeInterface $archivingScheduledAt = null;
+
     public function __construct()
     {
         $this->suivis = new ArrayCollection();
@@ -126,6 +141,8 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         $this->notifications = new ArrayCollection();
         $this->uuid = Uuid::v4();
         $this->files = new ArrayCollection();
+        $this->signalementUsagerDeclarants = new ArrayCollection();
+        $this->signalementUsagerOccupants = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -297,6 +314,11 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
+    public function getStatutLabel(): string
+    {
+        return self::STATUS_LABELS[$this->statut];
+    }
+
     public function getLastLoginAt(): ?DateTimeImmutable
     {
         return $this->lastLoginAt;
@@ -314,6 +336,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setLastLoginAt(?DateTimeImmutable $lastLoginAt): self
     {
         $this->lastLoginAt = $lastLoginAt;
+        $this->archivingScheduledAt = null;
 
         return $this;
     }
@@ -500,5 +523,27 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function getFullname(): string
     {
         return $this->prenom.' '.$this->nom;
+    }
+
+    public function getSignalementUsagerDeclarants(): Collection
+    {
+        return $this->signalementUsagerDeclarants;
+    }
+
+    public function getSignalementUsagerOccupants(): Collection
+    {
+        return $this->signalementUsagerOccupants;
+    }
+
+    public function getArchivingScheduledAt(): ?\DateTimeInterface
+    {
+        return $this->archivingScheduledAt;
+    }
+
+    public function setArchivingScheduledAt(?\DateTimeInterface $archivingScheduledAt): self
+    {
+        $this->archivingScheduledAt = $archivingScheduledAt;
+
+        return $this;
     }
 }

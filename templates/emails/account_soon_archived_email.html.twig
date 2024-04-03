@@ -1,0 +1,27 @@
+{% extends 'emails/base_email.html.twig' %}
+
+{% block body %}
+    <p>Bonjour,</p>
+    <p>
+        Votre compte Histologe va être supprimé dans {{nbDays}} jours parce qu'aucune connexion n'a été enregistrée depuis plus de 11 mois.
+        <br>
+        Si vous souhaitez le garder, veuillez réinitialiser votre mot de passe et vous connecter.
+    </p>
+
+    <table role="presentation" border="0" cellpadding="0" cellspacing="0" class="btn btn-primary" style="text-align: center">
+        <tbody>
+            <tr>
+                <td align="left">
+                    <table role="presentation" border="0" cellpadding="0" cellspacing="0">
+                        <tbody>
+                            <tr style="text-align: center;width: 100%">
+                                <td><a href="{{ link|raw }}" target="_blank" rel="noopener">{{ btntext }}</a></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <p>Si le bouton ne fonctionne pas <a href="{{ link|raw }}">cliquez ici</a></p>
+{% endblock %}

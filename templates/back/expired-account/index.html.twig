@@ -1,0 +1,90 @@
+{% extends 'back/base_bo.html.twig' %}
+
+{% block title %}Comptes expirés
+{% endblock %}
+
+{% block content %}
+<section class="fr-p-5v">
+	<header>
+		<div class="fr-grid-row">
+			<div class="fr-col-12 fr-text--left">
+				<h1 class="fr-mb-0">Comptes expirés</h1>
+			</div>
+		</div>
+	</header>
+</section>
+<section class="fr-grid-row fr-grid-row--middle fr-p-5v">
+	<h2 class="fr-mb-0" id="desc-table-expired">
+		{{expiredUsagers|length}} comptes usagers expirés
+		<div class="fr-text--sm fr-text--light">
+			Les comptes usagers expirés sont les comptes des usagers (occupants ou déclarants) dont les signalements n'ont pas eu d'activité depuis plus de 5 ans.
+		</div>
+	</h2>
+	{% if expiredUsagers|length %}
+		<div class="fr-col-12 fr-table fr-table--bordered fr-table--no-caption">
+			<table class="fr-display-inline-table" aria-label="Liste des comptes expirés" aria-describedby="desc-table-expired">
+			<caption>Liste des comptes usagers expirés</caption>
+				<thead>
+					<tr>
+						<th>Nom</th>
+						<th>Prénom</th>
+						<th>E-mail</th>
+					</tr>
+				</thead>
+				<tbody>
+					{% for user in expiredUsagers %}
+						<tr class="user-row">
+							<td>{{ user.nom}}</td>
+							<td>{{ user.prenom}}</td>
+							<td>{{ user.email}}</td>
+						</tr>
+					{% endfor %}
+				</tbody>
+			</table>
+		</div>
+	{% endif %}
+</section>
+
+<section class="fr-grid-row fr-grid-row--middle fr-p-5v">
+	<h2 class="fr-mb-0" id="desc-table-inactive">
+		{{expiredUsers|length}} comptes agents expirés
+		<div class="fr-text--sm fr-text--light">
+			Les comptes agents expirés sont les comptes des utilisateurs ayant les droits d'accès au back-office sans connexion depuis plus de 2 ans.
+		</div>
+	</h2>
+    {% if expiredUsers|length %}
+	<div class="fr-col-12 fr-table fr-table--bordered fr-table--no-caption">
+		<table class="fr-display-inline-table" aria-label="Liste des comptes inactifs" aria-describedby="desc-table-inactive">
+		<caption>Liste des comptes agents expirés</caption>
+			<thead>
+				<tr>
+					<th>Nom</th>
+					<th>Prénom</th>
+					<th>E-mail</th>
+                    <th>Role</th>
+					<th>Statut</th>
+					<th>Date de connexion</th>
+					<th>Département</th>
+					<th>Partenaire</th>
+				</tr>
+			</thead>
+			<tbody>
+				{% for user in expiredUsers %}
+					<tr class="user-row">
+						<td>{{ user.nom}}</td>
+						<td>{{ user.prenom}}</td>
+						<td>{{ user.email}}</td>
+                        <td>{{ user.roles[0]}}</td>
+						<td>{{ user.statutLabel}}</td>
+						<td>{{ user.lastLoginAt ? user.lastLoginAt|date('d/m/Y H:i')}}</td>
+						<td>{{ user.territory }}</td>
+						<td>{{ user.partner ? user.partner.nom : 'aucun' }}</td>
+					</tr>
+				{% endfor %}
+			</tbody>
+		</table>
+	</div>
+    {% endif %}
+</section>
+
+{% endblock %}
