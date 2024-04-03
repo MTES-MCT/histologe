@@ -130,6 +130,7 @@ signalements:
     score_logement: 13.990384615385
     score_batiment: 50
     created_at: "2024-01-11 14:00"
+    is_relogement: 1
     desordre_categorie:
       - "Usage / entretien"
       - "Etanchéité / isolation"

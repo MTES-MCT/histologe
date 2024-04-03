@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Tests\Functional\Controller;
+namespace App\Tests\Functional\Controller\Back;
 
 use App\Entity\Signalement;
 use App\Entity\Suivi;
@@ -197,5 +197,85 @@ class SignalementListControllerTest extends WebTestCase
         yield 'Search by Tags' => ['bo-filters-tags', ['3'], '4 signalement(s)'];
         yield 'Search by Parc public/prive' => ['bo-filters-housetypes', ['1'], '5 signalement(s)'];
         yield 'Search by Relances usagers' => ['bo-filters-relances_usager', ['NO_SUIVI_AFTER_3_RELANCES'], '1 signalement(s)'];
+    }
+
+    /**
+     * @dataProvider provideUserEmail
+     */
+    public function testListSignalementAsJson(string $email): void
+    {
+        $client = static::createClient();
+        /** @var UrlGeneratorInterface $generatorUrl */
+        $generatorUrl = static::getContainer()->get(UrlGeneratorInterface::class);
+
+        /** @var UserRepository $userRepository */
+        $userRepository = static::getContainer()->get(UserRepository::class);
+        $user = $userRepository->findOneBy(['email' => $email]);
+        $client->loginUser($user);
+        $route = $generatorUrl->generate('back_signalement_list_json');
+
+        $client->request('GET', $route, [], [], ['HTTP_Accept' => 'application/json']);
+        $result = json_decode($client->getResponse()->getContent(), true);
+        $this->assertArrayHasKey('pagination', $result);
+        $this->assertArrayHasKey('list', $result);
+        $this->assertArrayHasKey('filters', $result);
+        $this->assertResponseIsSuccessful();
+        $this->assertResponseHeaderSame('Content-Type', 'application/json');
+    }
+
+    public function provideNewFilterSearch(): \Generator
+    {
+        yield 'Search Terms with Reference' => [['searchTerms' => '2022-1'], 1];
+        yield 'Search Terms with cp Occupant' => [['searchTerms' => '13003'], 12];
+        yield 'Search Terms with cp Occupant 13005' => [['searchTerms' => '13005'], 3];
+        yield 'Search Terms with city Occupant' => [['searchTerms' => 'Gex'], 5];
+        yield 'Search Terms with Nom Occupant' => [['searchTerms' => 'Gex'], 5];
+        yield 'Search Terms with Firstname Occupant' => [['searchTerms' => 'Mapaire'], 1];
+        yield 'Search Terms with Lastname Occupant' => [['searchTerms' => 'Nawell'], 2];
+        yield 'Search Terms with Email Occupant' => [['searchTerms' => 'nawell.mapaire@yopmail.com'], 1];
+        yield 'Search by Territory' => [['territory' => '13'], 25];
+        yield 'Search by Commune' => [['commune' => 'gex'], 5];
+        yield 'Search by Commune code postal' => [['commune' => '13002'], 1];
+        yield 'Search by Partner' => [['partenaires' => ['5']], 2];
+        yield 'Search by Etiquettes' => [['etiquettes' => ['3']], 4];
+        yield 'Search by Parc public' => [['natureParc' => 'public'], 5];
+        yield 'Search by Parc public/prive non renseigné' => [['natureParc' => 'non_renseigne'], 1];
+        yield 'Search by Enfant moins de 6ans' => [['enfantsM6' => '0'], 4];
+        yield 'Search by Date de depot' => [['dateDepotDebut' => '2023-03-01', 'dateDepotFin' => '2023-04-01'], 2];
+        yield 'Search by Prcedure estimé' => [['procedure' => 'rsd'], 3];
+        yield 'Search by Partenaires affectés' => [['partenaires' => ['10']], 2];
+        yield 'Search by Statut de la visite' => [['visiteStatus' => 'Planifiée'], 5];
+        yield 'Search by Type de dernier suivi' => [['typeDernierSuivi' => 'automatique'], 16];
+        yield 'Search by Date de dernier suivi' => [['dateDernierSuiviDebut' => '2023-03-01', 'dateDernierSuiviFin' => '2023-12-31'], 3];
+        yield 'Search by Statut de l\'affectation' => [['statusAffectation' => 'refuse'], 1];
+        yield 'Search by Score criticite' => [['criticiteScoreMin' => 5, 'criticiteScoreMax' => 6], 9];
+        yield 'Search by Declarant' => [['typeDeclarant' => 'locataire'], 3];
+        yield 'Search by Nature du parc' => [['natureParc' => 'public'], 5];
+        yield 'Search by Allocataire' => [['allocataire' => 'caf'], 13];
+        yield 'Search by Enfants de moins de 6 ans' => [['enfantsM6' => 0], 4];
+        yield 'Search by Situation Bail en cours' => [['situation' => 'bail_en_cours'], 3];
+        yield 'Search by Situation Prévis de départ' => [['situation' => 'preavis_de_depart'], 1];
+        yield 'Search by Situation Attente de relogement' => [['situation' => 'attente_relogement'], 2];
+    }
+
+    /**
+     * @dataProvider provideNewFilterSearch
+     */
+    public function testFilterSignalements(array $filter, int $results)
+    {
+        $client = static::createClient();
+        /** @var UrlGeneratorInterface $generatorUrl */
+        $generatorUrl = static::getContainer()->get(UrlGeneratorInterface::class);
+
+        /** @var UserRepository $userRepository */
+        $userRepository = static::getContainer()->get(UserRepository::class);
+        $user = $userRepository->findOneBy(['email' => 'admin-01@histologe.fr']);
+        $client->loginUser($user);
+        $route = $generatorUrl->generate('back_signalement_list_json');
+
+        $client->request('GET', $route, $filter, [], ['HTTP_Accept' => 'application/json']);
+        $result = json_decode($client->getResponse()->getContent(), true);
+
+        $this->assertEquals($results, $result['pagination']['total_items'], json_encode($result['list']));
     }
 }

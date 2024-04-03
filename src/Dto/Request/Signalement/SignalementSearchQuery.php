@@ -23,20 +23,30 @@ class SignalementSearchQuery
         private readonly ?array $partenaires = null,
         #[Assert\Choice(['Non planifiée', 'Planifiée', 'Conclusion à renseigner', 'Terminée'])]
         private readonly ?string $visiteStatus = null,
+        #[Assert\Choice(['partenaire', 'usager', 'automatique'])]
         private readonly ?string $typeDernierSuivi = null,
-        private readonly ?string $statusAffectations = null,
+        #[Assert\Date(message: 'La date de début n\'est pas une date valide')]
+        private readonly ?string $dateDernierSuiviDebut = null,
+        #[Assert\Date(message: 'La date de fin n\'est pas une date valide')]
+        private readonly ?string $dateDernierSuiviFin = null,
+        #[Assert\Choice(['accepte', 'en_attente', 'refuse', 'cloture_un_partnaire', 'cloture_tous_partenaire'])]
+        private readonly ?string $statusAffectation = null,
         #[Assert\GreaterThanOrEqual(0)]
         private readonly ?float $criticiteScoreMin = null,
         #[Assert\LessThanOrEqual(100)]
         private readonly ?float $criticiteScoreMax = null,
         #[Assert\Choice(['locataire', 'bailleur_occupant', 'tiers_particulier', 'tiers_pro', 'service_secours', 'bailleur'])]
         private readonly ?string $typeDeclarant = null,
-        #[Assert\Choice(['privee', 'public'])]
+        #[Assert\Choice(['privee', 'public', 'non_renseigne'])]
         private readonly ?string $natureParc = null,
-        #[Assert\Choice(['caf', 'msa', 'non', 'oui'])]
+        #[Assert\Choice(['caf', 'msa', 'oui', 'non', 'non_renseigne'])]
         private readonly ?string $allocataire = null,
-        private readonly ?bool $enfantsM6 = null,
+        #[Assert\Choice(['oui', 'non', 'non_renseigne'])]
+        private readonly ?string $enfantsM6 = null,
+        #[Assert\Choice(['attente_relogement', 'bail_en_cours', 'preavis_de_depart'])]
         private readonly ?string $situation = null,
+        #[Assert\Choice(['non_decence_energetique', 'non_decence', 'rsd', 'danger', 'insalubrite', 'mise_en_securite_peril', 'suroccupation'])]
+        private readonly ?string $procedure = null,
         private readonly ?int $page = 1,
         #[Assert\Choice(['reference', 'nomOccupant', 'createdAt'])]
         private readonly string $sortBy = 'reference',
@@ -94,9 +104,19 @@ class SignalementSearchQuery
         return $this->typeDernierSuivi;
     }
 
-    public function getStatusAffectations(): ?string
+    public function getDateDernierSuiviDebut(): ?string
     {
-        return $this->statusAffectations;
+        return $this->dateDernierSuiviDebut;
+    }
+
+    public function getDateDernierSuiviFin(): ?string
+    {
+        return $this->dateDernierSuiviFin;
+    }
+
+    public function getStatusAffectation(): ?string
+    {
+        return $this->statusAffectation;
     }
 
     public function getCriticiteScoreMin(): ?float
@@ -121,10 +141,10 @@ class SignalementSearchQuery
 
     public function getAllocataire(): ?string
     {
-        return !empty($this->allocataire) ? strtoupper($this->allocataire) : null;
+        return !empty($this->allocataire) ? $this->allocataire : null;
     }
 
-    public function getEnfantsM6(): ?bool
+    public function getEnfantsM6(): ?string
     {
         return $this->enfantsM6;
     }
@@ -132,6 +152,11 @@ class SignalementSearchQuery
     public function getSituation(): ?string
     {
         return $this->situation;
+    }
+
+    public function getProcedure(): ?string
+    {
+        return !empty($this->procedure) ? strtoupper($this->procedure) : null;
     }
 
     public function getPage(): ?int
@@ -160,8 +185,19 @@ class SignalementSearchQuery
         $filters['cities'] = null !== $this->getCommune() ? [$this->getCommune()] : null;
         $filters['partners'] = $this->getPartenaires() ?? null;
         $filters['allocs'] = null !== $this->getAllocataire() ? [$this->getAllocataire()] : null;
-        $filters['housetypes'] = null !== $this->getNatureParc() ? ['public' === $this->getNatureParc()] : null;
-        $filters['enfantsM6'] = null !== $this->getEnfantsM6() ? [$this->getEnfantsM6()] : null;
+        $filters['housetypes'] = match ($this->getNatureParc()) {
+            'public' => [1],
+            'privee' => [0],
+            'non_renseigne' => ['non_renseigne'],
+            default => null
+        };
+        $filters['enfantsM6'] = match ($this->getEnfantsM6()) {
+            'oui' => [1],
+            'non' => [0],
+            'non_renseigne' => ['non_renseigne'],
+            default => null
+        };
+
         $filters['visites'] = null !== $this->getVisiteStatus() ? [$this->getVisiteStatus()] : null;
         if (null !== $this->getCriticiteScoreMin() || null !== $this->getCriticiteScoreMax()) {
             $filters['scores'] = [
@@ -177,6 +213,21 @@ class SignalementSearchQuery
         }
         $filters['tags'] = $this->getEtiquettes() ?? null;
         $filters['typeDeclarant'] = $this->getTypeDeclarant();
+        $filters['situation'] = $this->getSituation();
+        $filters['procedure'] = $this->getProcedure();
+        $filters['typeDernierSuivi'] = $this->getTypeDernierSuivi();
+        if (null !== $this->getDateDernierSuiviDebut() && null !== $this->getDateDernierSuiviFin()) {
+            $filters['datesDernierSuivi'] = [
+                'on' => $this->getDateDernierSuiviDebut(),
+                'off' => $this->getDateDernierSuiviFin(),
+            ];
+        }
+        $filters['statusAffectation'] = $this->getStatusAffectation();
+        $filters['closed_affectation'] = match ($filters['statusAffectation']) {
+            'cloture_un_partnaire' => ['ONE_CLOSED'],
+            'cloture_tous_partenaire' => ['ALL_CLOSED'],
+            default => null
+        };
         $filters['page'] = $this->getPage() ?? 1;
         $filters['maxItemsPerPage'] = self::MAX_LIST_PAGINATION;
         $filters['sortBy'] = $this->getSortBy() ?? 'reference';

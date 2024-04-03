@@ -223,6 +223,7 @@ class SearchFilter
             } else {
                 $qb->andWhere('LOWER(s.nomOccupant) LIKE :searchterms
                 OR LOWER(s.prenomOccupant) LIKE :searchterms
+                OR LOWER(s.mailOccupant) LIKE :searchterms
                 OR LOWER(s.reference) LIKE :searchterms
                 OR LOWER(s.adresseOccupant) LIKE :searchterms
                 OR LOWER(s.villeOccupant) LIKE :searchterms
@@ -397,8 +398,13 @@ class SearchFilter
             $qb->andWhere($queryVisites);
         }
         if (!empty($filters['enfantsM6'])) {
-            $qb->andWhere('IF(s.nbEnfantsM6 IS NOT NULL AND s.nbEnfantsM6 != 0,1,0) IN (:enfantsM6)')
-                ->setParameter('enfantsM6', $filters['enfantsM6']);
+            if (\in_array('non_renseigne', $filters['enfantsM6'])) {
+                $qb->andWhere('s.nbEnfantsM6 IS NULL');
+            } else {
+                $qb
+                    ->andWhere('IF(s.nbEnfantsM6 IS NOT NULL AND s.nbEnfantsM6 != 0, 1, 0) IN (:enfantsM6)')
+                    ->setParameter('enfantsM6', $filters['enfantsM6']);
+            }
         }
         if (!empty($filters['avant1949'])) {
             $qb->andWhere('s.isConstructionAvant1949 IN (:avant1949)')
@@ -424,12 +430,18 @@ class SearchFilter
                 ->setParameter('criteres', $filters['criteres']);
         }
         if (!empty($filters['housetypes'])) {
-            $qb->andWhere('s.isLogementSocial IN (:housetypes)')
-                ->setParameter('housetypes', $filters['housetypes']);
+            if (\in_array('non_renseigne', $filters['housetypes'])) {
+                $qb->andWhere('s.isLogementSocial IS NULL');
+            } else {
+                $qb->andWhere('s.isLogementSocial IN (:housetypes)')->setParameter('housetypes', $filters['housetypes']);
+            }
         }
         if (!empty($filters['allocs'])) {
-            $qb->andWhere('s.isAllocataire IN (:allocs)')
-                ->setParameter('allocs', $filters['allocs']);
+            if (\in_array('non_renseigne', $filters['allocs'])) {
+                $qb->andWhere('s.isAllocataire IS NULL');
+            } else {
+                $qb->andWhere('s.isAllocataire IN (:allocs)')->setParameter('allocs', $filters['allocs']);
+            }
         }
         if (!empty($filters['declarants'])) {
             $qb->andWhere('s.isNotOccupant IN (:declarants)')
@@ -480,6 +492,26 @@ class SearchFilter
                 ->setParameter('profile_declarant', $filters['typeDeclarant']);
         }
 
+        if (!empty($filters['situation'])) {
+            $qb = $this->addFilterSituation($qb, $filters['situation']);
+        }
+
+        if (!empty($filters['procedure'])) {
+            $qb = $this->addFilterProcedure($qb, $filters['procedure']);
+        }
+
+        if (!empty($filters['typeDernierSuivi'])) {
+            $qb = $this->addFilterTypeDernierSuivi($qb, $filters['typeDernierSuivi']);
+        }
+
+        if (!empty($filters['datesDernierSuivi'])) {
+            $qb = $this->addFilterDateDenierSuivi($qb, $filters['datesDernierSuivi']);
+        }
+
+        if (!empty($filters['statusAffectation'])) {
+            $qb = $this->addFilterStatusAffectation($qb, $filters['statusAffectation']);
+        }
+
         return $qb;
     }
 
@@ -499,5 +531,85 @@ class SearchFilter
         }
 
         return $territory;
+    }
+
+    private function addFilterSituation(QueryBuilder $qb, string $situation): QueryBuilder
+    {
+        switch ($situation) {
+            case 'attente_relogement':
+                $qb->andWhere('s.isRelogement = :is_relogement')->setParameter('is_relogement', true);
+                break;
+            case 'bail_en_cours':
+                $qb->andWhere('s.isBailEnCours = :is_bail_en_cours')->setParameter('is_bail_en_cours', true);
+                break;
+            case 'preavis_de_depart':
+                $qb->andWhere('s.isPreavisDepart = :is_preavis_depart')->setParameter('is_preavis_depart', true);
+                break;
+        }
+
+        return $qb;
+    }
+
+    private function addFilterProcedure(QueryBuilder $qb, string $procedure): QueryBuilder
+    {
+        $qualification = Qualification::tryFrom($procedure);
+        $subqueryResults = $this->signalementQualificationRepository->findSignalementsByQualification($qualification);
+
+        $qb
+            ->andWhere('s.id IN (:subqueryResults)')
+            ->setParameter('subqueryResults', $subqueryResults);
+
+        return $qb;
+    }
+
+    private function addFilterTypeDernierSuivi(QueryBuilder $qb, string $typeDernierSuivi): QueryBuilder
+    {
+        if ('automatique' === $typeDernierSuivi) {
+            $values = ['Administrateurs Histologe ALL', 'MESSAGE AUTOMATIQUE'];
+            $qb
+                ->andWhere('s.lastSuiviBy IN (:typeDernierSuivi)')
+                ->setParameter('typeDernierSuivi', $values);
+        } elseif ('usager' === $typeDernierSuivi) {
+            $values = ['DECLARANT', 'OCCUPANT'];
+            $qb
+                ->andWhere('s.lastSuiviBy IN (:typeDernierSuivi)')
+                ->setParameter('typeDernierSuivi', $values);
+        } else {
+            $values = ['DECLARANT', 'OCCUPANT', 'Administrateurs Histologe ALL', 'MESSAGE AUTOMATIQUE'];
+            $qb
+                ->andWhere('s.lastSuiviBy NOT IN (:typeDernierSuivi)')
+                ->setParameter('typeDernierSuivi', $values);
+        }
+
+        return $qb;
+    }
+
+    private function addFilterDateDenierSuivi(
+        QueryBuilder $qb,
+        array $dateDernierSuivi
+    ): QueryBuilder {
+        if (!empty($dateDernierSuivi['on']) && !empty($dateDernierSuivi['off'])) {
+            $qb
+                ->andWhere('s.lastSuiviAt BETWEEN :lastSuiviStartAt AND :lastSuiviEndAt')
+                ->setParameter('lastSuiviStartAt', $dateDernierSuivi['on'])
+                ->setParameter('lastSuiviEndAt', $dateDernierSuivi['off']);
+        }
+
+        return $qb;
+    }
+
+    private function addFilterStatusAffectation(QueryBuilder $qb, string $statusAffectation): QueryBuilder
+    {
+        if ('accepte' === $statusAffectation
+            || 'en_attente' === $statusAffectation
+            || 'refuse' === $statusAffectation
+        ) {
+            $status = AffectationStatus::mapFilterStatus($statusAffectation);
+            $qb
+                ->having('affectationStatus LIKE :status_affectation')
+                ->setParameter('status_affectation', '%'.$status.'%');
+        }
+
+        return $qb;
     }
 }
