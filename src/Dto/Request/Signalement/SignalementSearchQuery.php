@@ -18,7 +18,7 @@ class SignalementSearchQuery
         private readonly ?string $dateDepotDebut = null,
         #[Assert\Date(message: 'La date de fin n\'est pas une date valide')]
         private readonly ?string $dateDepotFin = null,
-        private readonly ?array $partnersAffected = null,
+        private readonly ?array $partenaires = null,
         #[Assert\Choice(['Non planifiée', 'Planifiée', 'Conclusion à renseigner', 'Terminée'])]
         private readonly ?string $visiteStatus = null,
         private readonly ?string $typeDernierSuivi = null,
@@ -78,9 +78,9 @@ class SignalementSearchQuery
         return $this->dateDepotFin;
     }
 
-    public function getPartnersAffected(): ?array
+    public function getPartenaires(): ?array
     {
-        return $this->partnersAffected;
+        return $this->partenaires;
     }
 
     public function getVisiteStatus(): ?string
@@ -162,7 +162,7 @@ class SignalementSearchQuery
             ? [SignalementStatus::mapFilterStatus($this->getStatus())]
             : null;
         $filters['cities'] = null !== $this->getCommune() ? [$this->getCommune()] : null;
-        $filters['partners'] = $this->getPartnersAffected() ?? null;
+        $filters['partners'] = $this->getPartenaires() ?? null;
         $filters['allocs'] = null !== $this->getAllocataire() ? [$this->getAllocataire()] : null;
         $filters['housetypes'] = null !== $this->getNatureParc() ? ['public' === $this->getNatureParc()] : null;
         $filters['enfantsM6'] = null !== $this->getEnfantsM6() ? [$this->getEnfantsM6()] : null;
