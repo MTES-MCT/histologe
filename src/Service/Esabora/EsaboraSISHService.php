@@ -12,6 +12,7 @@ use App\Service\Esabora\Response\DossierVisiteSISHCollectionResponse;
 use App\Service\UploadHandlerService;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Intl\Transliterator\EmojiTransliterator;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
 
 class EsaboraSISHService extends AbstractEsaboraService
@@ -237,6 +238,8 @@ class EsaboraSISHService extends AbstractEsaboraService
             }, $dossierMessageSISH->getPiecesJointesDocuments());
         }
 
+        $transliterator = EmojiTransliterator::create('strip');
+
         return [
             [
                 'fieldName' => 'Sas_Adresse',
@@ -404,7 +407,7 @@ class EsaboraSISHService extends AbstractEsaboraService
             ],
             [
                 'fieldName' => 'Signalement_Details',
-                'fieldValue' => $dossierMessageSISH->getSignalementDetails(),
+                'fieldValue' => $transliterator->transliterate((string) $dossierMessageSISH->getSignalementDetails()),
             ],
             [
                 'fieldName' => 'Signalement_Problemes',
