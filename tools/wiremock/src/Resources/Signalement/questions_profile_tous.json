@@ -369,5 +369,32 @@
         }
       ]
     }
+  },
+  {
+    "type": "SignalementFormScreen",
+    "label": "Votre lien de suivi a bien été envoyé",
+    "description": "<p>Le lien vers votre page de suivi vous a été envoyé par email. Consultez votre boîte mail et n'oubliez de regarder dans les emails indésirables (spam).</p>",
+    "slug": "lien_suivi_mail",
+    "screenCategory": "Adresse et coordonnées",
+    "components": {
+      "body": [
+        {
+          "type": "SignalementFormSubscreen",
+          "slug": "lien_suivi_mail_buttons",
+          "customCss": "button-group-full-size",
+          "components": {
+            "body": [
+              {
+                "type": "SignalementFormLink",
+                "label": "Retourner à l'accueil",
+                "slug": "lien_suivi_mail_homepage",
+                "customCss": "fr-btn",
+                "link": "/"
+              }
+            ]
+          }
+        }
+      ]
+    }
   }
 ]

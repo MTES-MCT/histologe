@@ -84,14 +84,15 @@ class FrontSignalementController extends AbstractController
         return $this->json($errors);
     }
 
-    #[Route('/signalement-draft/check', name: 'check_signalement_draft_existe', methods: 'POST')]
-    public function checkSignalementDraftExists(
+    #[Route('/signalement-draft/check', name: 'check_signalement_or_draft_already_exists', methods: 'POST')]
+    public function checkSignalementOrDraftAlreadyExists(
         Request $request,
         SignalementDraftRequestSerializer $serializer,
         SignalementDraftManager $signalementDraftManager,
         ValidatorInterface $validator,
         SignalementDraftFactory $signalementDraftFactory,
         SignalementDraftRepository $signalementDraftRepository,
+        SignalementRepository $signalementRepository,
     ): Response {
         /** @var SignalementDraftRequest $signalementDraftRequest */
         $signalementDraftRequest = $serializer->deserialize(
@@ -105,6 +106,16 @@ class FrontSignalementController extends AbstractController
             ['Default', 'POST_'.strtoupper($signalementDraftRequest->getProfil())]
         );
         if (0 === $errors->count()) {
+            $isTiersDeclarant = $signalementDraftFactory->isTiersDeclarant($signalementDraftRequest);
+            $existingSignalement = $signalementRepository->findOneForEmailAndAddress(
+                $signalementDraftFactory->getEmailDeclarant($signalementDraftRequest),
+                $signalementDraftRequest->getAdresseLogementAdresseDetailNumero(),
+                $signalementDraftRequest->getAdresseLogementAdresseDetailCodePostal(),
+                $signalementDraftRequest->getAdresseLogementAdresseDetailCommune(),
+                $isTiersDeclarant ? $signalementDraftRequest->getCoordonneesOccupantNom() : null,
+                $isTiersDeclarant ? $signalementDraftRequest->getCoordonneesOccupantPrenom() : null,
+            );
+
             $dataToHash = $signalementDraftFactory->getEmailDeclarant($signalementDraftRequest);
             $dataToHash .= $signalementDraftRequest->getAdresseLogementAdresse();
             $hash = hash('sha256', $dataToHash);
@@ -119,9 +130,24 @@ class FrontSignalementController extends AbstractController
                 ]
             );
 
+            if (
+                null !== $existingSignalement
+                && Signalement::STATUS_CLOSED !== $existingSignalement->getStatut()
+                && Signalement::STATUS_REFUSED !== $existingSignalement->getStatut()
+            ) {
+                return $this->json([
+                    'already_exists' => true,
+                    'type' => 'signalement',
+                    'uuid' => $existingSignalement->getUuid(),
+                    'created_at' => $existingSignalement->getCreatedAt(),
+                    'uuid_draft' => $existingSignalementDraft->getUuid(),
+                ]);
+            }
+
             if (null !== $existingSignalementDraft) {
                 return $this->json([
                     'already_exists' => true,
+                    'type' => 'draft',
                     'uuid' => $existingSignalementDraft->getUuid(),
                     'created_at' => $existingSignalementDraft->getCreatedAt(),
                     'updated_at' => $existingSignalementDraft->getUpdatedAt(),
@@ -201,6 +227,38 @@ class FrontSignalementController extends AbstractController
                     signalementDraft: $signalementDraft,
                 )
             );
+            if ($success) {
+                return $this->json(['success' => true]);
+            }
+
+            return $this->json([
+                'success' => false,
+                'label' => 'Erreur',
+                'message' => 'L\'envoi du mail n\'a pas fonctionné, veuillez réessayer ou faire un nouveau signalement.',
+            ]);
+        }
+
+        return $this->json(['response' => 'error'], Response::HTTP_BAD_REQUEST);
+    }
+
+    #[Route('/signalement/{uuid}/send_mail_get_lien_suivi', name: 'send_mail_get_lien_suivi')]
+    public function sendMailGetLienSuivi(
+        NotificationMailerRegistry $notificationMailerRegistry,
+        Signalement $signalement,
+        Request $request
+    ): Response {
+        if (
+            $request->isMethod('POST')
+            && $signalement // TODO : vérifier qu'on reçoit bien le bon signalement
+        ) {
+            $success = $notificationMailerRegistry->send(
+                new NotificationMail(
+                    type: NotificationMailerType::TYPE_SIGNALEMENT_LIEN_SUIVI,
+                    to: $signalement->getMailUsagers(), // TODO : choisir le bon mail ?
+                    signalement: $signalement,
+                )
+            );
+
             if ($success) {
                 return $this->json(['success' => true]);
             }

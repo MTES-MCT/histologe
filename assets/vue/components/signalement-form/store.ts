@@ -47,8 +47,10 @@ interface FormStore {
     components: ZoneComponents
     customCss: string
   } | null
-  existingDraft: {
+  alreadyExists: {
+    type: string | null
     uuid: string | null
+    uuidDraft: string | null
     createdAt: string | null
     updatedAt: string | null
   }
@@ -78,14 +80,17 @@ const formStore: FormStore = reactive({
     platformName: '',
     urlApiAdress: 'https://api-adresse.data.gouv.fr/search/?q=',
     ajaxurlCheckTerritory: '',
-    ajaxurlCheckSignalementDraftExists: '',
+    ajaxurlCheckSignalementOrDraftAlreadyExists: '',
     ajaxurlSendMailContinueFromDraft: '',
+    ajaxurlSendMailGetLienSuivi: '',
     ajaxurlArchiveDraft: ''
   },
   screenData: [],
   currentScreen: null,
-  existingDraft: {
+  alreadyExists: {
     uuid: null,
+    type: null,
+    uuidDraft: null,
     createdAt: null,
     updatedAt: null
   },

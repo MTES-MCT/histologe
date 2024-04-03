@@ -23,8 +23,9 @@
         {% endif %}
         data-platform-name="{{ platform.name }}"
         data-ajaxurl-check-territory="{{ path('front_signalement_check_territory') }}"
-        data-ajaxurl-check-signalement-draft-exists="{{ path('check_signalement_draft_existe') }}"
+        data-ajaxurl-check-signalement-or-draft-already-exists="{{ path('check_signalement_or_draft_already_exists') }}"
         data-ajaxurl-send-mail-continue-from-draft="{{ path('send_mail_continue_from_draft', {uuid: 'uuid'}) }}"
+        data-ajaxurl-send-mail-get-lien-suivi="{{ path('send_mail_get_lien_suivi', {uuid: 'uuid'}) }}"
         data-ajaxurl-archive-draft="{{ path('archive_draft', {uuid: 'uuid'}) }}"
         ></div>
   </div>

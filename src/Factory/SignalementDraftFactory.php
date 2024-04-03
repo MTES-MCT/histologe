@@ -35,4 +35,20 @@ class SignalementDraftFactory
                 return null;
         }
     }
+
+    public function isTiersDeclarant(SignalementDraftRequest $signalementDraftRequest): ?bool
+    {
+        switch (strtoupper($signalementDraftRequest->getProfil())) {
+            case ProfileDeclarant::SERVICE_SECOURS->name:
+            case ProfileDeclarant::BAILLEUR->name:
+            case ProfileDeclarant::TIERS_PRO->name:
+            case ProfileDeclarant::TIERS_PARTICULIER->name:
+                return true;
+            case ProfileDeclarant::LOCATAIRE->name:
+            case ProfileDeclarant::BAILLEUR_OCCUPANT->name:
+                return false;
+            default:
+                return null;
+        }
+    }
 }
