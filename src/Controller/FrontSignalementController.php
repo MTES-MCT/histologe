@@ -5,6 +5,7 @@ namespace App\Controller;
 use App\Dto\Request\Signalement\SignalementDraftRequest;
 use App\Entity\Enum\DocumentType;
 use App\Entity\Enum\SignalementDraftStatus;
+use App\Entity\Signalement;
 use App\Entity\SignalementDraft;
 use App\Entity\Suivi;
 use App\Entity\User;
@@ -465,8 +466,7 @@ class FrontSignalementController extends AbstractController
         Request $request,
         EntityManagerInterface $entityManager,
         SuiviFactory $suiviFactory,
-        SignalementFileProcessor $signalementFileProcessor,
-        UserManager $userManager
+        SignalementFileProcessor $signalementFileProcessor
     ): RedirectResponse {
         $signalement = $signalementRepository->findOneByCodeForPublic($code);
         if (!$signalement) {
