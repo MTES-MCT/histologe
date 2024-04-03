@@ -411,67 +411,117 @@ class FrontSignalementController extends AbstractController
         Request $request,
         UserManager $userManager,
         SuiviManager $suiviManager,
+        EntityManagerInterface $entityManager,
+        SuiviFactory $suiviFactory
     ) {
-        if ($signalement = $signalementRepository->findOneByCodeForPublic($code)) {
-            $requestEmail = $request->get('from');
-            $fromEmail = \is_array($requestEmail) ? array_pop($requestEmail) : $requestEmail;
-            $suiviAuto = $request->get('suiviAuto');
+        $signalement = $signalementRepository->findOneByCodeForPublic($code);
+        if (!$signalement) {
+            $this->addFlash('error', 'Le lien utilisé est expiré ou invalide.');
 
-            /** @var User $userOccupant */
-            $userOccupant = $userManager->createUsagerFromSignalement($signalement, UserManager::OCCUPANT);
-            /** @var User $userDeclarant */
-            $userDeclarant = $userManager->createUsagerFromSignalement($signalement, UserManager::DECLARANT);
-            $type = null;
-            $user = null;
-            if ($userOccupant && $fromEmail === $userOccupant->getEmail()) {
-                $type = UserManager::OCCUPANT;
-                $user = $userOccupant;
-            } elseif ($userDeclarant && $fromEmail === $userDeclarant->getEmail()) {
-                $type = UserManager::DECLARANT;
-                $user = $userDeclarant;
-            }
-            if ($user && $suiviAuto) {
-                if ($signalement->getIsUsagerAbandonProcedure()) {
-                    $this->addFlash('error', 'Les services ont déjà été informés de votre volonté d\'arrêter la procédure.
+            return $this->redirectToRoute('home');
+        }
+        $requestEmail = $request->get('from');
+        $fromEmail = \is_array($requestEmail) ? array_pop($requestEmail) : $requestEmail;
+        $suiviAuto = $request->get('suiviAuto');
+
+        /** @var User $userOccupant */
+        $userOccupant = $userManager->createUsagerFromSignalement($signalement, UserManager::OCCUPANT);
+        /** @var User $userDeclarant */
+        $userDeclarant = $userManager->createUsagerFromSignalement($signalement, UserManager::DECLARANT);
+        $type = null;
+        $user = null;
+        if ($userOccupant && $fromEmail === $userOccupant->getEmail()) {
+            $type = UserManager::OCCUPANT;
+            $user = $userOccupant;
+        } elseif ($userDeclarant && $fromEmail === $userDeclarant->getEmail()) {
+            $type = UserManager::DECLARANT;
+            $user = $userDeclarant;
+        }
+
+        if (!$user
+        || !\in_array($suiviAuto, [Suivi::POURSUIVRE_PROCEDURE, Suivi::ARRET_PROCEDURE])
+        || \in_array($signalement->getStatut(), [Signalement::STATUS_CLOSED, Signalement::STATUS_REFUSED])) {
+            $this->addFlash('error', 'Le lien utilisé est invalide.');
+
+            return $this->redirectToRoute(
+                'front_suivi_signalement',
+                ['code' => $signalement->getCodeSuivi(), 'from' => $fromEmail]
+            );
+        }
+
+        if ($signalement->getIsUsagerAbandonProcedure()) {
+            $this->addFlash('error', 'Les services ont déjà été informés de votre volonté d\'arrêter la procédure.
                     Si vous le souhaitez, vous pouvez préciser la raison de l\'arrêt de procédure
                     en envoyant un message via le formulaire ci-dessous.');
 
-                    return $this->redirectToRoute(
-                        'front_suivi_signalement',
-                        ['code' => $signalement->getCodeSuivi(), 'from' => $fromEmail]
-                    );
-                }
+            return $this->redirectToRoute(
+                'front_suivi_signalement',
+                ['code' => $signalement->getCodeSuivi(), 'from' => $fromEmail]
+            );
+        }
 
-                if (Suivi::POURSUIVRE_PROCEDURE === $suiviAuto) {
-                    $description = $user->getNomComplet().' ('.$type.') a indiqué vouloir poursuivre la procédure.';
-                    $suiviPoursuivreProcedure = $suiviManager->findOneBy([
-                        'description' => $description,
-                        'signalement' => $signalement,
-                    ]);
-                    if (null !== $suiviPoursuivreProcedure) {
-                        $this->addFlash('error', 'Les services ont déjà été informés de votre volonté de continuer la procédure.
+        if (Suivi::POURSUIVRE_PROCEDURE === $suiviAuto) {
+            $description = $user->getNomComplet().' ('.$type.') a indiqué vouloir poursuivre la procédure.';
+            $suiviPoursuivreProcedure = $suiviManager->findOneBy([
+                'description' => $description,
+                'signalement' => $signalement,
+            ]);
+            if (null !== $suiviPoursuivreProcedure) {
+                $this->addFlash('error', 'Les services ont déjà été informés de votre volonté de continuer la procédure.
                         Si vous le souhaitez, vous pouvez envoyer un message via le formulaire ci-dessous.');
 
-                        return $this->redirectToRoute(
-                            'front_suivi_signalement',
-                            ['code' => $signalement->getCodeSuivi(), 'from' => $fromEmail]
-                        );
-                    }
-                }
+                return $this->redirectToRoute(
+                    'front_suivi_signalement',
+                    ['code' => $signalement->getCodeSuivi(), 'from' => $fromEmail]
+                );
+            }
+        }
 
-                return $this->render('front/suivi_signalement.html.twig', [
-                    'signalement' => $signalement,
-                    'email' => $fromEmail,
-                    'type' => $type,
-                    'suiviAuto' => $suiviAuto,
-                ]);
+        $token = $request->get('_token');
+        $tokenValid = $this->isCsrfTokenValid('suivi_procedure', $token);
+        if ($token && !$tokenValid) {
+            $this->addFlash('error', 'Token CSRF invalide, merci de réessayer.');
+        }
+        if ($token && $tokenValid) {
+            if (Suivi::ARRET_PROCEDURE === $suiviAuto) {
+                $description = $user->getNomComplet().' ('.$type.') a demandé l\'arrêt de la procédure.';
+                $signalement->setIsUsagerAbandonProcedure(true);
+                $entityManager->persist($signalement);
+                $this->addFlash('success', "Les services ont été informés de votre volonté d'arrêter la procédure.
+                Si vous le souhaitez, vous pouvez préciser la raison de l'arrêt de procédure
+                en envoyant un message via le formulaire ci-dessous.");
+            } else {
+                $description = $user->getNomComplet().' ('.$type.') a indiqué vouloir poursuivre la procédure.';
+                $this->addFlash('success', "Les services ont été informés de votre volonté de poursuivre la procédure.
+                N'hésitez pas à mettre à jour votre situation en envoyant un message via le formulaire ci-dessous.");
             }
 
-            return $this->redirectToRoute('front_suivi_signalement');
-        }
-        $this->addFlash('error', 'Le lien utilisé est invalide, vérifiez votre saisie.');
+            $params = [
+                'type' => SUIVI::TYPE_USAGER,
+                'description' => $description,
+            ];
 
-        return $this->redirectToRoute('front_signalement');
+            $suivi = $suiviFactory->createInstanceFrom(
+                $user,
+                $signalement,
+                $params,
+                true
+            );
+            $entityManager->persist($suivi);
+            $entityManager->flush();
+
+            return $this->redirectToRoute(
+                'front_suivi_signalement',
+                ['code' => $signalement->getCodeSuivi(), 'from' => $fromEmail]
+            );
+        }
+
+        return $this->render('front/suivi_signalement.html.twig', [
+            'signalement' => $signalement,
+            'email' => $fromEmail,
+            'type' => $type,
+            'suiviAuto' => $suiviAuto,
+        ]);
     }
 
     #[Route('/suivre-mon-signalement/{code}', name: 'front_suivi_signalement', methods: 'GET')]
@@ -479,64 +529,23 @@ class FrontSignalementController extends AbstractController
         string $code,
         SignalementRepository $signalementRepository,
         Request $request,
-        UserManager $userManager,
-        EntityManagerInterface $entityManager,
-        SuiviFactory $suiviFactory,
+        UserManager $userManager
     ) {
         if ($signalement = $signalementRepository->findOneByCodeForPublic($code)) {
             $requestEmail = $request->get('from');
             $fromEmail = \is_array($requestEmail) ? array_pop($requestEmail) : $requestEmail;
-            $suiviAuto = $request->get('suiviAuto');
 
             /** @var User $userOccupant */
             $userOccupant = $userManager->createUsagerFromSignalement($signalement, UserManager::OCCUPANT);
             /** @var User $userDeclarant */
             $userDeclarant = $userManager->createUsagerFromSignalement($signalement, UserManager::DECLARANT);
             $type = null;
-            $user = null;
             if ($userOccupant && $fromEmail === $userOccupant->getEmail()) {
                 $type = UserManager::OCCUPANT;
-                $user = $userOccupant;
             } elseif ($userDeclarant && $fromEmail === $userDeclarant->getEmail()) {
                 $type = UserManager::DECLARANT;
-                $user = $userDeclarant;
-            }
-            if ($user && $suiviAuto) {
-                $description = '';
-                if (Suivi::ARRET_PROCEDURE === $suiviAuto) {
-                    $description = $user->getNomComplet().' ('.$type.') a demandé l\'arrêt de la procédure.';
-                    $signalement->setIsUsagerAbandonProcedure(true);
-                    $entityManager->persist($signalement);
-                }
-                if (Suivi::POURSUIVRE_PROCEDURE === $suiviAuto) {
-                    $description = $user->getNomComplet().' ('.$type.') a indiqué vouloir poursuivre la procédure.';
-                }
-
-                $params = [
-                    'type' => SUIVI::TYPE_USAGER,
-                    'description' => $description,
-                ];
-
-                $suivi = $suiviFactory->createInstanceFrom(
-                    $user,
-                    $signalement,
-                    $params,
-                    true
-                );
-                $entityManager->persist($suivi);
-                $entityManager->flush();
-                if (Suivi::ARRET_PROCEDURE === $suiviAuto) {
-                    $this->addFlash('success', "Les services ont été informés de votre volonté d'arrêter la procédure.
-                Si vous le souhaitez, vous pouvez préciser la raison de l'arrêt de procédure
-                en envoyant un message via le formulaire ci-dessous.");
-                }
-                if (Suivi::POURSUIVRE_PROCEDURE === $suiviAuto) {
-                    $this->addFlash('success', "Les services ont été informés de votre volonté de poursuivre la procédure.
-                N'hésitez pas à mettre à jour votre situation en envoyant un message via le formulaire ci-dessous.");
-                }
             }
 
-            // TODO: Verif info perso pour plus de sécu
             return $this->render('front/suivi_signalement.html.twig', [
                 'signalement' => $signalement,
                 'email' => $fromEmail,
@@ -557,69 +566,75 @@ class FrontSignalementController extends AbstractController
         EntityManagerInterface $entityManager,
         SuiviFactory $suiviFactory,
         SignalementFileProcessor $signalementFileProcessor,
+        UserManager $userManager
     ): RedirectResponse {
-        if ($signalement = $signalementRepository->findOneByCodeForPublic($code)) {
-            if ($this->isCsrfTokenValid('signalement_front_response_'.$signalement->getUuid(), $request->get('_token'))) {
-                $email = $request->get('signalement_front_response')['email'];
-                $user = $userRepository->findOneBy(['email' => $email]);
-                $suivi = $suiviFactory->createInstanceFrom(
-                    user: $user,
-                    signalement: $signalement,
-                    params: ['type' => Suivi::TYPE_USAGER],
-                    isPublic: true,
-                );
-
-                $description = htmlspecialchars(
-                    nl2br($request->get('signalement_front_response')['content']),
-                    \ENT_QUOTES,
-                    'UTF-8'
-                );
-
-                $fileList = $descriptionList = [];
-                if ($data = $request->get('signalement')) {
-                    if (isset($data['files'])) {
-                        $dataFiles = $data['files'];
-                        foreach ($dataFiles as $inputName => $files) {
-                            list($files, $descriptions) = $signalementFileProcessor->process(
-                                $dataFiles,
-                                $inputName,
-                                DocumentType::AUTRE
-                            );
-                            $fileList = [...$fileList, ...$files];
-                            $descriptionList = [...$descriptionList, ...$descriptions];
-                        }
-                        unset($data['files']);
-                    }
-                    if (!empty($descriptionList)) {
-                        $description .= '<br>Ajout de pièces au signalement<ul>'
-                            .implode('', $descriptionList).'</ul>';
-                        $signalementFileProcessor->addFilesToSignalement($fileList, $signalement, $user);
-                    }
-                }
-
-                $suivi->setDescription($description);
-                $entityManager->persist($suivi);
-                $entityManager->flush();
-                $this->addFlash('success', <<<SUCCESS
-                Votre message a bien été envoyé, vous recevrez un email lorsque votre dossier sera mis à jour.
-                N'hésitez pas à consulter votre page de suivi !
-                SUCCESS);
-            } else {
-                $this->addFlash('error', 'Token CSRF invalide');
-            }
-        } else {
+        $signalement = $signalementRepository->findOneByCodeForPublic($code);
+        if (!$signalement) {
             $this->addFlash('error', 'Le lien utilisé est expiré ou invalide, vérifiez votre saisie.');
 
             return $this->redirectToRoute('home');
         }
+        if (!$this->isCsrfTokenValid('signalement_front_response_'.$signalement->getUuid(), $request->get('_token'))) {
+            $this->addFlash('error', 'Token CSRF invalide');
 
-        if (!empty($email)) {
-            return $this->redirectToRoute(
-                'front_suivi_signalement',
-                ['code' => $signalement->getCodeSuivi(), 'from' => $email]
-            );
+            return $this->redirectToRoute('front_suivi_signalement', ['code' => $signalement->getCodeSuivi()]);
+        }
+        if (\in_array($signalement->getStatut(), [Signalement::STATUS_CLOSED, Signalement::STATUS_REFUSED])) {
+            return $this->redirectToRoute('front_suivi_signalement', ['code' => $signalement->getCodeSuivi()]);
+        }
+        /* @var User $userOccupant */
+        $userManager->createUsagerFromSignalement($signalement, UserManager::OCCUPANT);
+        /* @var User $userDeclarant */
+        $userManager->createUsagerFromSignalement($signalement, UserManager::DECLARANT);
+
+        $email = $request->get('signalement_front_response')['email'];
+        $user = $userRepository->findOneBy(['email' => $email]);
+        $suivi = $suiviFactory->createInstanceFrom(
+            user: $user,
+            signalement: $signalement,
+            params: ['type' => Suivi::TYPE_USAGER],
+            isPublic: true,
+        );
+
+        $description = htmlspecialchars(
+            nl2br($request->get('signalement_front_response')['content']),
+            \ENT_QUOTES,
+            'UTF-8'
+        );
+
+        $fileList = $descriptionList = [];
+        if ($data = $request->get('signalement')) {
+            if (isset($data['files'])) {
+                $dataFiles = $data['files'];
+                foreach ($dataFiles as $inputName => $files) {
+                    list($files, $descriptions) = $signalementFileProcessor->process(
+                        $dataFiles,
+                        $inputName,
+                        DocumentType::AUTRE
+                    );
+                    $fileList = [...$fileList, ...$files];
+                    $descriptionList = [...$descriptionList, ...$descriptions];
+                }
+                unset($data['files']);
+            }
+            if (!empty($descriptionList)) {
+                $description .= '<br>Ajout de pièces au signalement<ul>'
+                    .implode('', $descriptionList).'</ul>';
+                $signalementFileProcessor->addFilesToSignalement($fileList, $signalement, $user);
+            }
         }
 
-        return $this->redirectToRoute('front_suivi_signalement', ['code' => $signalement->getCodeSuivi()]);
+        $suivi->setDescription($description);
+        $entityManager->persist($suivi);
+        $entityManager->flush();
+        $this->addFlash('success', <<<SUCCESS
+                Votre message a bien été envoyé, vous recevrez un email lorsque votre dossier sera mis à jour.
+                N'hésitez pas à consulter votre page de suivi !
+                SUCCESS);
+
+        return $this->redirectToRoute(
+            'front_suivi_signalement',
+            ['code' => $signalement->getCodeSuivi(), 'from' => $email]
+        );
     }
 }
