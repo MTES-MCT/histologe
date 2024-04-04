@@ -31,7 +31,9 @@ class UserUpdatedListener
 
     private function sendNotification(User $user): void
     {
-        if (!\in_array('ROLE_USAGER', $user->getRoles())) {
+        if (!\in_array('ROLE_USAGER', $user->getRoles())
+            && User::STATUS_ARCHIVE !== $user->getStatut()
+        ) {
             $this->notificationMailerRegistry->send(
                 new NotificationMail(
                     type: NotificationMailerType::TYPE_ACCOUNT_ACTIVATION_FROM_BO,
@@ -46,7 +48,8 @@ class UserUpdatedListener
     private function shouldChangePassword(array $changes): bool
     {
         if (\array_key_exists('email', $changes) // if email has changed
-            || (\array_key_exists('roles', $changes)
+            || (
+                \array_key_exists('roles', $changes)
                 && \in_array('ROLE_USAGER', $changes['roles'][0])
             ) // if usager becomes user
         ) {
