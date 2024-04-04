@@ -507,7 +507,9 @@ class SignalementRepository extends ServiceEntityRepository
                 ->setParameter('territory', $territory);
         }
 
-        return $qb->groupBy('s.villeOccupant')
+        return $qb
+            ->groupBy('s.villeOccupant')
+            ->orderBy('s.villeOccupant', 'ASC')
             ->getQuery()
             ->getResult();
     }
