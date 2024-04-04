@@ -495,9 +495,6 @@ class PartnerController extends AbstractController
         /** @var User $user */
         $user = $userManager->find($userId);
         $this->denyAccessUnlessGranted('USER_DELETE', $user);
-        $user->setEmail(Sanitizer::tagArchivedEmail($user->getEmail()));
-        $user->setStatut(User::STATUS_ARCHIVE);
-        $userManager->save($user);
         $notificationMailerRegistry->send(
             new NotificationMail(
                 type: NotificationMailerType::TYPE_ACCOUNT_DELETE,
@@ -505,6 +502,9 @@ class PartnerController extends AbstractController
                 territory: $user->getTerritory()
             )
         );
+        $user->setEmail(Sanitizer::tagArchivedEmail($user->getEmail()));
+        $user->setStatut(User::STATUS_ARCHIVE);
+        $userManager->save($user);
         $this->addFlash('success', 'L\'utilisateur a bien été supprimé.');
 
         return $this->redirectToRoute(
