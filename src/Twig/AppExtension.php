@@ -22,6 +22,7 @@ class AppExtension extends AbstractExtension
             new TwigFilter('signalement_lien_declarant_occupant', [$this, 'getLabelLienDeclarantOccupant']),
             new TwigFilter('image64', [ImageBase64Encoder::class, 'encode']),
             new TwigFilter('truncate_filename', [$this, 'getTruncatedFilename']),
+            new TwigFilter('clean_tagged_text', [$this, 'cleanTaggedText']),
         ];
     }
 
@@ -75,5 +76,23 @@ class AppExtension extends AbstractExtension
             new TwigFunction('can_edit_esabora_credentials', [EsaboraPartnerTypeSubscription::class, 'isSubscribed']),
             new TwigFunction('show_label_facultatif', [AttributeParser::class, 'showLabelAsFacultatif']),
         ];
+    }
+
+    public function cleanTaggedText(?string $taggedText, string $tag, string $direction): string
+    {
+        if (null === $taggedText) {
+            return '';
+        }
+
+        $parts = explode($tag, $taggedText);
+
+        switch ($direction) {
+            case 'left':
+                return $parts[0];
+            case 'right':
+                return $parts[1];
+            default:
+                return $taggedText;
+        }
     }
 }

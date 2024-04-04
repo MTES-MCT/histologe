@@ -4,7 +4,7 @@
 
 {% block content %}
     <section class="fr-col-12 fr-p-5v">
-        <h2 class="fr-h2 fr-mb-0">Réactivation du compte {{ user.email }}</h2>
+        <h2 class="fr-h2 fr-mb-0">Réactivation du compte {{ user.email|clean_tagged_text(constant('App\\Entity\\User::SUFFIXE_ARCHIVED'), 'left')  }}</h2>
         <div class="fr-pt-5v">
             {{ include('back/account/_form.html.twig') }}
         </div>

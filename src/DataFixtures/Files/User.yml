@@ -194,6 +194,14 @@ users:
     is_mailing_active: 1
     territory: "Bouches-du-Rhône"
   -
+    email: user-13-07@histologe.fr
+    roles: "[\"ROLE_USER_PARTNER\"]"
+    partner: "Partenaire 13-07"
+    statut: 2
+    is_generique: 0
+    is_mailing_active: 1
+    territory: "Bouches-du-Rhône"
+  -
     email: user-2A-01@histologe.fr
     roles: "[\"ROLE_USER_PARTNER\"]"
     partner: "Partenaire 2A-01"
@@ -255,6 +263,14 @@ users:
     roles: "[\"ROLE_USER_PARTNER\"]"
     partner: "Partenaire 01-02"
     statut: 1
+    is_generique: 0
+    is_mailing_active: 0
+    territory: "Ain"
+  -
+    email: user-01-06@histologe.fr
+    roles: "[\"ROLE_USER_PARTNER\"]"
+    partner: "Partenaire 01-03-ARCHIVE"
+    statut: 2
     is_generique: 0
     is_mailing_active: 0
     territory: "Ain"

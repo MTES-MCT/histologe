@@ -40,6 +40,8 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public const ROLE_ADMIN_TERRITORY = self::ROLES['Responsable Territoire'];
     public const ROLE_ADMIN = self::ROLES['Super Admin'];
 
+    public const SUFFIXE_ARCHIVED = '.archived@';
+
     public const ROLES = [
         'Usager' => 'ROLE_USAGER',
         'Utilisateur' => 'ROLE_USER_PARTNER',

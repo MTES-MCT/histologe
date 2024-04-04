@@ -1,13 +1,13 @@
 {% extends 'back/base_bo.html.twig' %}
 
-{% block title %}Comptes archivés ou sans territoires et/ou partenaires{% endblock %}
+{% block title %}Partenaires archivés ou sans territoires{% endblock %}
 
 {% block content %}
     <section class="fr-p-5v">
         <header>
             <div class="fr-grid-row">
                 <div class="fr-col-6 fr-text--left">
-                    <h1 class="fr-h1 fr-mb-0">Comptes archivés</h1>
+                    <h1 class="fr-h1 fr-mb-0">Partenaires archivés</h1>
                 </div>
             </div>
         </header>
@@ -19,10 +19,10 @@
               
             <div class="fr-col-4 fr-p-2v">
                 <div class="fr-search-bar fr-mt-2v" id="header-search">
-                    <input class="fr-input" placeholder="Utilisateur" type="search" id="header-search-input"
-                        name="bo-filters-usersterms" value="{{ userTerms ?? '' }}">
+                    <input class="fr-input" placeholder="Partenaire" type="search" id="header-search-input"
+                        name="bo-filters-partnerterms" value="{{ partnerTerms ?? '' }}">
                     <button class="fr-btn" title="Rechercher">
-                        {{userTerms is null ? 'Utilisateur' : userTerms}}
+                        {{partnerTerms is null ? 'Partenaire' : partnerTerms}}
                     </button>&nbsp;
                 </div>
             </div>
@@ -35,43 +35,32 @@
                     {% endfor %}
                 </select>
             </div>
-            <div class="fr-col-3 fr-p-2v">
-                <select id="bo-filters-partners" class="fr-select" onchange="this.form.submit()" name="partner">
-                    <option value="" {{ not isNonePartner and currentPartner is null ? 'selected' : '' }}>Tous les partenaires</option>
-                    <option value="none" {{ isNonePartner ? 'selected' : '' }}>Aucun</option>
-                    {% for partner in partners %}
-                        <option value="{{ partner.id }}" {{ currentPartner ? (partner.id == currentPartner.id ? 'selected' : '') : '' }}>{{ partner.nom|upper }}</option>
-                    {% endfor %}
-                </select>
-            </div>
             <div class="fr-col-2 fr-p-2v">
-                <a href="{{ path('back_account_index') }}" class="fr-link fr-link--icon-left fr-icon-close-circle-line">Réinitialiser</a>
+                <a href="{{ path('back_archived_partner_index') }}" class="fr-link fr-link--icon-left fr-icon-close-circle-line">Réinitialiser</a>
             </div>
         </form>
     </section>
     {% endif %}
     <section class="fr-grid-row fr-grid-row--middle fr-p-5v">
-        <h1 class="fr-h2 fr-mb-0" id="desc-table">{{total}} comptes archivés ou sans territoires et/ou partenaires trouvés</h1>
+        <h1 class="fr-h2 fr-mb-0" id="desc-table">{{total}} partenaires archivés ou sans territoires trouvés</h1>
     </section>
     <section class="fr-col-12 fr-table fr-table--bordered fr-pt-0">
-        <table class="fr-display-inline-table sortable" aria-label="Liste des comptes archivés ou sans territoires et/ou partenaires" aria-describedby="desc-table">
+        <table class="fr-display-inline-table sortable" aria-label="Liste des partenaires archivés ou sans territoires" aria-describedby="desc-table">
             <thead>
             <tr>
                 <th>Dpt.</th>
-                <th>Partenaire</th>
-                <th>Statut part.</th>
+                <th>Statut</th>
                 <th>Email</th>
                 <th>Nom</th>
-                <th>Prénom</th>
-                <th class="fr-text--right"></th>
+                <th>Type</th>
             </tr>
             </thead>
             <tbody>
-            {% for user in users %}
-                {% if user.partner is null %}
+            {% for partner in partners %}
+                {% if partner is null %}
                     {% set classe = 'fr-badge--info' %}
                     {% set statut = 'aucun' %}
-                {% elseif user.partner and user.partner.isArchive  %}
+                {% elseif partner and partner.isArchive  %}
                     {% set classe = 'fr-badge--error' %}
                     {% set statut = 'archivé' %}
                 {% else %}
@@ -79,20 +68,15 @@
                     {% set statut = 'actif' %}
                 {% endif %}
                 <tr class="user-row">
-                    <td>{{ user.territory }}</td>
-                    <td>{{ user.partner ? user.partner.nom : 'aucun' }}</td>
+                    <td>{{ partner.territory }}</td>
                     <td><span class="fr-badge {{ classe }} fr-badge--no-icon fr-ws-nowrap ">{{ statut|upper }}</span></td>
-                    <td>{{ user.email|clean_tagged_text(constant('App\\Entity\\User::SUFFIXE_ARCHIVED'), 'left') }}</ail td>
-                    <td>{{ user.nom}}</ail td>
-                    <td>{{ user.prenom}}</ail td>
-                    <td class="fr-text--right">
-                        <a href="{{ path('back_account_reactiver', {'id': user.id}) }}"
-                           class="fr-btn fr-icon-flashlight-fill fr-btn--sm" title="Réactiver le compte {{user.email|clean_tagged_text(constant('App\\Entity\\User::SUFFIXE_ARCHIVED'), 'left')}}"></a>
-                    </td>
+                    <td>{{ partner.email|clean_tagged_text(constant('App\\Entity\\User::SUFFIXE_ARCHIVED'), 'left') }}</ail td>
+                    <td>{{ partner.nom}}</ail td>
+                    <td>{{ partner.type.label}}</ail td>
                 </tr>
             {% else %}
                 <tr>
-                    <td colspan="7">Aucun utilisateur trouvé</td>
+                    <td colspan="4">Aucun partenaire trouvé</td>
                 </tr>
             {% endfor %}
             </tbody>
@@ -103,7 +87,7 @@
                     <li>
                         <a class="fr-pagination__link fr-pagination__link--first"
                                 {% if pages > 1 %}
-                                    href="{{ path('back_account_index', {page : 1, territory: (currentTerritory ? currentTerritory.id : (isNoneTerritory ? 'none' : null)), partner: (currentPartner ? currentPartner.id : (isNonePartner ? 'none' : null)), userTerms: userTerms }) }}"
+                                    href="{{ path('back_archived_partner_index', {page : 1, territory: (currentTerritory ? currentTerritory.id : (isNoneTerritory ? 'none' : null)), partnerTerms: partnerTerms }) }}"
                                 {% else %}
                                     aria-disabled="true"
                                 {% endif %}>
@@ -113,7 +97,7 @@
                     <li>
                         <a class="fr-pagination__link fr-pagination__link--prev fr-pagination__link--lg-label"
                                 {% if pages > 1 and page != 1 %}
-                                    href="{{ path('back_account_index', {page : page - 1, territory: (currentTerritory ? currentTerritory.id : (isNoneTerritory ? 'none' : null)), partner: (currentPartner ? currentPartner.id : (isNonePartner ? 'none' : null)), userTerms: userTerms }) }}"
+                                    href="{{ path('back_archived_partner_index', {page : page - 1, territory: (currentTerritory ? currentTerritory.id : (isNoneTerritory ? 'none' : null)), partnerTerms: partnerTerms }) }}"
                                 {% else %}
                                     aria-disabled="true"
                                 {% endif %} role="link">
@@ -124,7 +108,7 @@
                         <a class="fr-pagination__link" {{ page == 1 ? 'aria-current="page"' : '' }}
                            title="Page 1"
                            data-page="1"
-                                href="{{ path('back_account_index', {page : 1, territory: (currentTerritory ? currentTerritory.id : (isNoneTerritory ? 'none' : null)), partner: (currentPartner ? currentPartner.id : (isNonePartner ? 'none' : null)), userTerms: userTerms }) }}"
+                                href="{{ path('back_archived_partner_index', {page : 1, territory: (currentTerritory ? currentTerritory.id : (isNoneTerritory ? 'none' : null)), partnerTerms: partnerTerms }) }}"
                         >
                             1
                         </a>
@@ -133,7 +117,7 @@
                         {% for i in 2..pages %}
                             <li class="{% if loop.index > 2 and loop.index < pages-3 %}fr-hidden{% endif %}">
                                 <a class="fr-pagination__link" {{ page == i ? 'aria-current="page"' : '' }}
-                                        href="{{ path('back_account_index', {page : i, territory: (currentTerritory ? currentTerritory.id : (isNoneTerritory ? 'none' : null)), partner: (currentPartner ? currentPartner.id : (isNonePartner ? 'none' : null)), userTerms: userTerms }) }}"
+                                        href="{{ path('back_archived_partner_index', {page : i, territory: (currentTerritory ? currentTerritory.id : (isNoneTerritory ? 'none' : null)), partnerTerms: partnerTerms }) }}"
                                    title="Page {{ i }}"
                                    data-page="{{ i }}">
                                     {{ i }}
@@ -151,7 +135,7 @@
                     <li>
                         <a class="fr-pagination__link fr-pagination__link--next fr-pagination__link--lg-label"
                                 {% if pages > 1  and page < pages %}
-                                    href="{{ path('back_account_index', {page : page + 1, territory: (currentTerritory ? currentTerritory.id : (isNoneTerritory ? 'none' : null)), partner: (currentPartner ? currentPartner.id : (isNonePartner ? 'none' : null)), userTerms: userTerms }) }}"
+                                    href="{{ path('back_archived_partner_index', {page : page + 1, territory: (currentTerritory ? currentTerritory.id : (isNoneTerritory ? 'none' : null)), partnerTerms: partnerTerms }) }}"
                                 {% else %}
                                     aria-disabled="true"
                                 {% endif %} role="link">
@@ -161,7 +145,7 @@
                     <li>
                         <a class="fr-pagination__link fr-pagination__link--last"
                                 {% if pages > 1 %}
-                                    href="{{ path('back_account_index', {page : pages, territory: (currentTerritory ? currentTerritory.id : (isNoneTerritory ? 'none' : null)), partner: (currentPartner ? currentPartner.id : (isNonePartner ? 'none' : null)), userTerms: userTerms }) }}"
+                                    href="{{ path('back_archived_partner_index', {page : pages, territory: (currentTerritory ? currentTerritory.id : (isNoneTerritory ? 'none' : null)), partnerTerms: partnerTerms }) }}"
                                 {% else %}
                                     aria-disabled="true"
                                 {% endif %}
