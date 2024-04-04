@@ -1077,8 +1077,8 @@ class SignalementRepository extends ServiceEntityRepository
         string $address,
         string $zipcode,
         string $city,
-        ?string $nomOccupant = null,
-        ?string $prenomOccupant = null
+        // ?string $nomOccupant = null,
+        // ?string $prenomOccupant = null
     ): ?Signalement {
         $qb = $this->createQueryBuilder('s')
             ->andWhere('s.mailDeclarant = :email OR s.mailOccupant = :email')->setParameter('email', $email)
@@ -1087,19 +1087,13 @@ class SignalementRepository extends ServiceEntityRepository
             ->andWhere('s.villeOccupant = :city')->setParameter('city', $city)
             ->andWhere('s.statut != :statutArchived')->setParameter('statutArchived', Signalement::STATUS_ARCHIVED);
 
-        if (null !== $nomOccupant) {
-            $qb = $qb->andWhere('s.nomOccupant LIKE :nomOccupant')->setParameter('nomOccupant', '%'.$nomOccupant.'%');
-            // TODO : utiliser LOWER et COLLATE
-            // ->where($qb->expr()->eq(
-            //     'LOWER(e.colonne) COLLATE utf8_general_ci',
-            //     ':valeur_recherche COLLATE utf8_general_ci'
-            // ))
-            // ->setParameter('valeur_recherche', mb_strtolower($valeurRecherche))
-        }
-        if (null !== $prenomOccupant) {
-            $qb = $qb->andWhere('s.prenomOccupant LIKE :prenomOccupant')->setParameter('prenomOccupant', '%'.$prenomOccupant.'%');
-            // TODO : idem
-        }
+        // if (null !== $nomOccupant) {
+        //     $qb = $qb->andWhere('s.nomOccupant LIKE :nomOccupant')->setParameter('nomOccupant', '%'.$nomOccupant.'%');
+        // }
+        // if (null !== $prenomOccupant) {
+        //     $qb = $qb->andWhere('s.prenomOccupant LIKE :prenomOccupant')
+        //     ->setParameter('prenomOccupant', '%'.$prenomOccupant.'%');
+        // }
 
         $list = $qb->addOrderBy('s.createdAt', 'DESC')
             ->getQuery()->getResult();

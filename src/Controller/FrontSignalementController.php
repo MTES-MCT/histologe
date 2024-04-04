@@ -106,14 +106,14 @@ class FrontSignalementController extends AbstractController
             ['Default', 'POST_'.strtoupper($signalementDraftRequest->getProfil())]
         );
         if (0 === $errors->count()) {
-            $isTiersDeclarant = $signalementDraftFactory->isTiersDeclarant($signalementDraftRequest);
+            // $isTiersDeclarant = $signalementDraftFactory->isTiersDeclarant($signalementDraftRequest);
             $existingSignalement = $signalementRepository->findOneForEmailAndAddress(
                 $signalementDraftFactory->getEmailDeclarant($signalementDraftRequest),
                 $signalementDraftRequest->getAdresseLogementAdresseDetailNumero(),
                 $signalementDraftRequest->getAdresseLogementAdresseDetailCodePostal(),
                 $signalementDraftRequest->getAdresseLogementAdresseDetailCommune(),
-                $isTiersDeclarant ? $signalementDraftRequest->getCoordonneesOccupantNom() : null,
-                $isTiersDeclarant ? $signalementDraftRequest->getCoordonneesOccupantPrenom() : null,
+                // $isTiersDeclarant ? $signalementDraftRequest->getCoordonneesOccupantNom() : null,
+                // $isTiersDeclarant ? $signalementDraftRequest->getCoordonneesOccupantPrenom() : null,
             );
 
             $dataToHash = $signalementDraftFactory->getEmailDeclarant($signalementDraftRequest);
@@ -140,7 +140,7 @@ class FrontSignalementController extends AbstractController
                     'type' => 'signalement',
                     'uuid' => $existingSignalement->getUuid(),
                     'created_at' => $existingSignalement->getCreatedAt(),
-                    'uuid_draft' => $existingSignalementDraft->getUuid(),
+                    'uuid_draft' => $existingSignalementDraft?->getUuid() ?? null,
                 ]);
             }
 

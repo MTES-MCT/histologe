@@ -4,8 +4,8 @@ namespace App\Tests\Functional\Controller;
 
 use App\Entity\Enum\SignalementDraftStatus;
 use App\Entity\Signalement;
-use App\Entity\Suivi;
 use App\Entity\SignalementDraft;
+use App\Entity\Suivi;
 use App\Manager\UserManager;
 use App\Tests\SessionHelper;
 use Doctrine\ORM\EntityManagerInterface;
