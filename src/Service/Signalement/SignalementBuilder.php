@@ -402,7 +402,7 @@ class SignalementBuilder
         } else {
             $this->signalement
                 ->setAdresseProprio($this->signalementDraftRequest->getCoordonneesBailleurAdresseDetailNumero())
-                ->setVilleProprio($this->signalementDraftRequest->getCoordonneesBailleurAdresseCommune())
+                ->setVilleProprio($this->signalementDraftRequest->getCoordonneesBailleurAdresseDetailCommune())
                 ->setCodePostalProprio($this->signalementDraftRequest->getCoordonneesBailleurAdresseDetailCodePostal())
                 ->setMailProprio($this->signalementDraftRequest->getCoordonneesBailleurEmail())
                 ->setNomProprio($bailleurNom = $this->signalementDraftRequest->getCoordonneesBailleurNom())
