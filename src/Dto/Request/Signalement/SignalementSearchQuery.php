@@ -7,6 +7,8 @@ use Symfony\Component\Validator\Constraints as Assert;
 
 class SignalementSearchQuery
 {
+    public const MAX_LIST_PAGINATION = 25;
+
     public function __construct(
         private readonly ?string $territory = null,
         private readonly ?string $searchTerms = null,
@@ -31,7 +33,7 @@ class SignalementSearchQuery
         private readonly ?string $typeDeclarant = null,
         #[Assert\Choice(['privee', 'public'])]
         private readonly ?string $natureParc = null,
-        #[Assert\Choice(['caf', 'msa', 'non'])]
+        #[Assert\Choice(['caf', 'msa', 'non', 'oui'])]
         private readonly ?string $allocataire = null,
         private readonly ?bool $enfantsM6 = null,
         private readonly ?string $situation = null,
@@ -39,7 +41,6 @@ class SignalementSearchQuery
         #[Assert\Choice(['reference', 'nomOccupant', 'createdAt'])]
         private readonly string $sortBy = 'reference',
         private readonly string $orderBy = 'DESC',
-        private readonly int $maxItemPerPage = 25,
     ) {
     }
 
@@ -148,11 +149,6 @@ class SignalementSearchQuery
         return $this->orderBy;
     }
 
-    public function getMaxItemPerPage(): int
-    {
-        return $this->maxItemPerPage;
-    }
-
     public function getFilters(): array
     {
         $filters = [];
@@ -182,9 +178,9 @@ class SignalementSearchQuery
         $filters['tags'] = $this->getEtiquettes() ?? null;
         $filters['typeDeclarant'] = $this->getTypeDeclarant();
         $filters['page'] = $this->getPage() ?? 1;
-        $filters['maxItemsPerPage'] = $this->getMaxItemPerPage();
+        $filters['maxItemsPerPage'] = self::MAX_LIST_PAGINATION;
         $filters['sortBy'] = $this->getSortBy() ?? 'reference';
-        $filters['orderBy'] = $this->getOrderBy() ?? 'orderBy';
+        $filters['orderBy'] = $this->getOrderBy() ?? 'DESC';
 
         return array_filter($filters);
     }

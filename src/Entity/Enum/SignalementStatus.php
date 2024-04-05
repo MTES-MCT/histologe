@@ -2,8 +2,12 @@
 
 namespace App\Entity\Enum;
 
+use App\Entity\Behaviour\EnumTrait;
+
 enum SignalementStatus: int
 {
+    use EnumTrait;
+
     case NEED_VALIDATION = 1;
     case ACTIVE = 2;
     case NEED_PARTNER_RESPONSE = 3;
@@ -20,9 +24,15 @@ enum SignalementStatus: int
         };
     }
 
-    public function label(): string
+    public static function getLabelList(): array
     {
-        return self::getLabel($this);
+        return [
+            self::NEED_VALIDATION->name => 'nouveau',
+            self::ACTIVE->name => 'en cours',
+            self::NEED_PARTNER_RESPONSE->name => 'en cours',
+            self::CLOSED->name => 'fermé',
+            self::REFUSED->name => 'refusé',
+        ];
     }
 
     public static function getLabel(self $value): string

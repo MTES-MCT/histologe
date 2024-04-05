@@ -24,7 +24,6 @@ use Doctrine\DBAL\Exception;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\QueryBuilder;
 use Symfony\Bundle\SecurityBundle\Security;
-use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\HttpFoundation\Request;
 
 class SearchFilter
@@ -32,6 +31,10 @@ class SearchFilter
     private array $filters;
     private SignalementSearchQuery|Request $request;
     private int $countActive;
+
+    /** @deprecated Cette constante est obsolete et ne doit plus être utilisé dans le cadre de la nouvelle liste
+     *  Les filtres sont gérés par la classe SignalementSearchQuery
+     */
     private const REQUESTS = [
         'searchterms',
         'territories',
@@ -63,11 +66,12 @@ class SearchFilter
         private TerritoryRepository $territoryRepository,
         private EntityManagerInterface $entityManager,
         private SignalementQualificationRepository $signalementQualificationRepository,
-        #[Autowire(env: 'FEATURE_LIST_FILTER_ENABLE')]
-        private bool $featureListFilterEnable
     ) {
     }
 
+    /**
+     * @todo Ne plus injecter Request apres la refonte de la liste.
+     */
     public function setRequest(SignalementSearchQuery|Request $request): static
     {
         $this->request = $request;
@@ -75,6 +79,10 @@ class SearchFilter
         return $this;
     }
 
+    /**
+     * @deprecated  Cette méthode est obsolete et ne doit plus être utilisé dans le cadre de la nouvelle liste.
+     * Utilisez @see SignalementSearchQuery::getFilters()
+     */
     public function getFilters(): ?array
     {
         return $this->filters ?? null;
@@ -82,9 +90,16 @@ class SearchFilter
 
     public function buildFilters(): array
     {
-        return $this->request->getFilters();
+        /** @var SignalementSearchQuery $signalementSearchQuery */
+        $signalementSearchQuery = $this->request;
+
+        return $signalementSearchQuery->getFilters();
     }
 
+    /**
+     * @deprecated  cette méthode est obsolete et ne doit plus être utilisé dans le cadre de la nouvelle liste.
+     * Utilisez @see buildFilters() qui s'appuie sur la clsse @see SignalementSearchQuery
+     */
     public function setFilters(): self
     {
         $this->countActive = 0;
@@ -162,7 +177,8 @@ class SearchFilter
             }
 
             if ($request->query->get('sort')) {
-                $this->filters['sort'] = $request->query->get('sort');
+                $this->filters['sortBy'] = $request->query->get('sort');
+                $this->filters['orderBy'] = 'DESC';
             }
         }
 
@@ -179,46 +195,12 @@ class SearchFilter
             $this->filters['delays_partner'] = $partner;
         }
 
-        if ($request->query->get('sort')) {
-            $this->filters['sort'] = $request->query->get('sort');
-        }
-
         return $this;
     }
 
     private function getRequest(): Request|SignalementSearchQuery
     {
         return $this->request;
-    }
-
-    public function getFilter(string $filterName): ?string
-    {
-        return $this->filters[$filterName] ?? null;
-    }
-
-    public function setFilter(string $filterName, string $filterValue): void
-    {
-        $this->filters[$filterName] = $filterValue;
-    }
-
-    public function removeFilter(string $filterName): void
-    {
-        unset($this->filters[$filterName]);
-    }
-
-    public function getFiltersAsString(): string
-    {
-        $filters = [];
-        foreach ($this->filters as $filterName => $filterValue) {
-            $filters[] = $filterName.'='.$filterValue;
-        }
-
-        return implode('&', $filters);
-    }
-
-    public function getFiltersAsArray(): array
-    {
-        return $this->filters;
     }
 
     public function getCountActive(): int
@@ -383,17 +365,11 @@ class SearchFilter
             }
         }
 
-        if ($this->featureListFilterEnable) {
-            if (!empty($filters['cities'])) {
-                $qb->andWhere('s.villeOccupant IN (:cities) OR s.cpOccupant IN (:cities)')
-                    ->setParameter('cities', $filters['cities']);
-            }
-        } else {
-            if (!empty($filters['cities'])) {
-                $qb->andWhere('s.villeOccupant IN (:cities)')
-                    ->setParameter('cities', $filters['cities']);
-            }
+        if (!empty($filters['cities'])) {
+            $qb->andWhere('s.villeOccupant IN (:cities) OR s.cpOccupant IN (:cities)')
+                ->setParameter('cities', $filters['cities']);
         }
+
         if (!empty($filters['visites'])) {
             $qb->leftJoin('s.interventions', 'intervSearch');
             $queryVisites = '';

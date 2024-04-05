@@ -62,7 +62,8 @@ class SignalementListController extends AbstractController
         $user = $this->getUser();
         $filters = null !== $signalementQuery
             ? $searchFilter->setRequest($signalementQuery)->buildFilters()
-            : [];
+            : ['maxItemsPerPage' => SignalementSearchQuery::MAX_LIST_PAGINATION];
+
         $signalements = $signalementManager->findSignalementAffectationList($user, $filters);
 
         return $this->json($signalements);
