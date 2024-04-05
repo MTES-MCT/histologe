@@ -88,14 +88,14 @@ class AffectationController extends AbstractController
         $this->denyAccessUnlessGranted('ASSIGN_TOGGLE', $signalement);
         if ($this->isCsrfTokenValid('signalement_remove_partner_'.$signalement->getId(), $request->get('_token'))) {
             $idAffectation = $request->get('affectation');
-            if (!empty($idAffectation)) {
-                $affectation = $affectationRepository->findOneBy(['id' => $idAffectation]);
+            $affectation = $affectationRepository->findOneBy(['id' => $idAffectation]);
+            if ($affectation) {
                 $partnersIdToRemove = [];
                 $partnersIdToRemove[] = $affectation->getPartner()->getId();
                 $this->affectationManager->removeAffectationsFrom($signalement, [], $partnersIdToRemove);
+                $this->affectationManager->flush();
+                $this->addFlash('success', 'Le partenaire a été désaffecté.');
             }
-            $this->affectationManager->flush();
-            $this->addFlash('success', 'Le partenaire a été désaffecté.');
 
             return $this->json(['status' => 'success']);
         }
