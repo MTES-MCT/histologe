@@ -59,7 +59,11 @@ class SecurityController extends AbstractController
             $tmpFilepath = $this->getParameter('uploads_tmp_dir').$filename;
             $bucketFilepath = $this->getParameter('url_bucket').'/'.$filename;
 
-            file_put_contents($tmpFilepath, file_get_contents($bucketFilepath));
+            $content = file_get_contents($bucketFilepath);
+            if (false === $content) {
+                throw new \Exception('File "'.$bucketFilepath.'" not found');
+            }
+            file_put_contents($tmpFilepath, $content);
             $file = new File($tmpFilepath);
 
             return new BinaryFileResponse($file);
