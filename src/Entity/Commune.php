@@ -30,6 +30,9 @@ class Commune
     #[ORM\Column(type: 'boolean')]
     private $isZonePermisLouer;
 
+    #[ORM\ManyToOne(inversedBy: 'communes', cascade: ['persist'])]
+    private ?Epci $epci = null;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -79,6 +82,18 @@ class Commune
     public function setTerritory(?Territory $territory): self
     {
         $this->territory = $territory;
+
+        return $this;
+    }
+
+    public function getEpci(): ?Epci
+    {
+        return $this->epci;
+    }
+
+    public function setEpci(?Epci $epci): static
+    {
+        $this->epci = $epci;
 
         return $this;
     }

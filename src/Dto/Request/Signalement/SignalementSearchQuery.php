@@ -3,6 +3,7 @@
 namespace App\Dto\Request\Signalement;
 
 use App\Entity\Enum\SignalementStatus;
+use App\Service\Signalement\SearchFilter;
 use Symfony\Component\Validator\Constraints as Assert;
 
 class SignalementSearchQuery
@@ -14,7 +15,7 @@ class SignalementSearchQuery
         private readonly ?string $searchTerms = null,
         #[Assert\Choice(['nouveau', 'en cours', 'ferme', 'refuse'])]
         private readonly ?string $status = null,
-        private readonly ?string $commune = null,
+        private readonly ?array $communes = null,
         private readonly ?array $etiquettes = null,
         #[Assert\Date(message: 'La date de début n\'est pas une date valide')]
         private readonly ?string $dateDepotDebut = null,
@@ -29,7 +30,7 @@ class SignalementSearchQuery
         private readonly ?string $dateDernierSuiviDebut = null,
         #[Assert\Date(message: 'La date de fin n\'est pas une date valide')]
         private readonly ?string $dateDernierSuiviFin = null,
-        #[Assert\Choice(['accepte', 'en_attente', 'refuse', 'cloture_un_partnaire', 'cloture_tous_partenaire'])]
+        #[Assert\Choice(['accepte', 'en_attente', 'refuse', 'cloture_un_partenaire', 'cloture_tous_partenaire'])]
         private readonly ?string $statusAffectation = null,
         #[Assert\GreaterThanOrEqual(0)]
         private readonly ?float $criticiteScoreMin = null,
@@ -69,9 +70,9 @@ class SignalementSearchQuery
         return $this->status;
     }
 
-    public function getCommune(): ?string
+    public function getCommunes(): ?array
     {
-        return $this->commune;
+        return $this->communes;
     }
 
     public function getEtiquettes(): ?array
@@ -174,6 +175,11 @@ class SignalementSearchQuery
         return $this->orderBy;
     }
 
+    /**
+     * @todo: Après la MEP, s'appuyer exclusivement sur le DTO au lieu du tableau de filtres
+     *
+     * @see SearchFilter::buildFilters()
+     */
     public function getFilters(): array
     {
         $filters = [];
@@ -182,7 +188,7 @@ class SignalementSearchQuery
         $filters['statuses'] = null !== $this->getStatus()
             ? [SignalementStatus::mapFilterStatus($this->getStatus())]
             : null;
-        $filters['cities'] = null !== $this->getCommune() ? [$this->getCommune()] : null;
+        $filters['cities'] = $this->getCommunes() ?? null;
         $filters['partners'] = $this->getPartenaires() ?? null;
         $filters['allocs'] = null !== $this->getAllocataire() ? [$this->getAllocataire()] : null;
         $filters['housetypes'] = match ($this->getNatureParc()) {
@@ -224,7 +230,7 @@ class SignalementSearchQuery
         }
         $filters['statusAffectation'] = $this->getStatusAffectation();
         $filters['closed_affectation'] = match ($filters['statusAffectation']) {
-            'cloture_un_partnaire' => ['ONE_CLOSED'],
+            'cloture_un_partenaire' => ['ONE_CLOSED'],
             'cloture_tous_partenaire' => ['ALL_CLOSED'],
             default => null
         };

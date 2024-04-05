@@ -14,7 +14,7 @@ class SignalementSearchQueryTest extends TestCase
             '13',
             'John',
             'nouveau',
-            'Marseille',
+            ['Marseille'],
             ['1', '5'],
             '2022-01-01',
             '2022-12-31',

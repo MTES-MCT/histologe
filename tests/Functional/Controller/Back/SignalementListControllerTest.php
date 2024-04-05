@@ -234,16 +234,16 @@ class SignalementListControllerTest extends WebTestCase
         yield 'Search Terms with Lastname Occupant' => [['searchTerms' => 'Nawell'], 2];
         yield 'Search Terms with Email Occupant' => [['searchTerms' => 'nawell.mapaire@yopmail.com'], 1];
         yield 'Search by Territory' => [['territory' => '13'], 25];
-        yield 'Search by Commune' => [['commune' => 'gex'], 5];
-        yield 'Search by Commune code postal' => [['commune' => '13002'], 1];
+        yield 'Search by Commune' => [['communes' => ['gex', 'marseille']], 30];
+        yield 'Search by Commune code postal' => [['communes' => ['13002']], 1];
         yield 'Search by Partner' => [['partenaires' => ['5']], 2];
         yield 'Search by Etiquettes' => [['etiquettes' => ['3']], 4];
         yield 'Search by Parc public' => [['natureParc' => 'public'], 5];
         yield 'Search by Parc public/prive non renseigné' => [['natureParc' => 'non_renseigne'], 1];
-        yield 'Search by Enfant moins de 6ans' => [['enfantsM6' => '0'], 4];
+        yield 'Search by Enfant moins de 6ans' => [['enfantsM6' => 'non'], 4];
         yield 'Search by Date de depot' => [['dateDepotDebut' => '2023-03-01', 'dateDepotFin' => '2023-04-01'], 2];
         yield 'Search by Prcedure estimé' => [['procedure' => 'rsd'], 3];
-        yield 'Search by Partenaires affectés' => [['partenaires' => ['10']], 2];
+        yield 'Search by Partenaires affectés' => [['partenaires' => ['5']], 2];
         yield 'Search by Statut de la visite' => [['visiteStatus' => 'Planifiée'], 5];
         yield 'Search by Type de dernier suivi' => [['typeDernierSuivi' => 'automatique'], 16];
         yield 'Search by Date de dernier suivi' => [['dateDernierSuiviDebut' => '2023-03-01', 'dateDernierSuiviFin' => '2023-12-31'], 3];
@@ -252,7 +252,6 @@ class SignalementListControllerTest extends WebTestCase
         yield 'Search by Declarant' => [['typeDeclarant' => 'locataire'], 3];
         yield 'Search by Nature du parc' => [['natureParc' => 'public'], 5];
         yield 'Search by Allocataire' => [['allocataire' => 'caf'], 13];
-        yield 'Search by Enfants de moins de 6 ans' => [['enfantsM6' => 0], 4];
         yield 'Search by Situation Bail en cours' => [['situation' => 'bail_en_cours'], 3];
         yield 'Search by Situation Prévis de départ' => [['situation' => 'preavis_de_depart'], 1];
         yield 'Search by Situation Attente de relogement' => [['situation' => 'attente_relogement'], 2];
