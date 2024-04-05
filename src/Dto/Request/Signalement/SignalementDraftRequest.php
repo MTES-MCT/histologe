@@ -143,7 +143,7 @@ class SignalementDraftRequest
     private ?string $coordonneesBailleurAdresse = null;
     private ?string $coordonneesBailleurAdresseDetailNumero = null;
     private ?string $coordonneesBailleurAdresseDetailCodePostal = null;
-    private ?string $coordonneesBailleurAdresseCommune = null;
+    private ?string $coordonneesBailleurAdresseDetailCommune = null;
     private ?string $zoneConcerneeZone = null;
     private ?string $typeLogementNature = null;
     private ?string $typeLogementNatureAutrePrecision = null;
@@ -693,14 +693,14 @@ class SignalementDraftRequest
         return $this;
     }
 
-    public function getCoordonneesBailleurAdresseCommune(): ?string
+    public function getCoordonneesBailleurAdresseDetailCommune(): ?string
     {
-        return $this->coordonneesBailleurAdresseCommune;
+        return $this->coordonneesBailleurAdresseDetailCommune;
     }
 
-    public function setCoordonneesBailleurAdresseCommune(?string $coordonneesBailleurAdresseCommune): self
+    public function setCoordonneesBailleurAdresseDetailCommune(?string $coordonneesBailleurAdresseDetailCommune): self
     {
-        $this->coordonneesBailleurAdresseCommune = $coordonneesBailleurAdresseCommune;
+        $this->coordonneesBailleurAdresseDetailCommune = $coordonneesBailleurAdresseDetailCommune;
 
         return $this;
     }

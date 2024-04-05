@@ -156,6 +156,13 @@ class SignalementBuilderTest extends KernelTestCase
         $this->assertArrayHasKey('lat', $signalement->getGeoloc());
         $this->assertArrayHasKey('lng', $signalement->getGeoloc());
 
+        $this->assertEquals('13 Habitat', $signalement->getNomProprio());
+        $this->assertEquals('Sandrine', $signalement->getPrenomProprio());
+        $this->assertEquals('sandrine@histologe.fr', $signalement->getMailProprio());
+        $this->assertEquals('10 rue du 14 juillet', $signalement->getAdresseProprio());
+        $this->assertEquals('64000', $signalement->getCodePostalProprio());
+        $this->assertEquals('Pau', $signalement->getVilleProprio());
+
         $this->assertTrue($signalement->getIsLogementSocial());
         $this->assertTrue($signalement->getIsBailEnCours());
         $this->assertTrue($signalement->getIsProprioAverti());
