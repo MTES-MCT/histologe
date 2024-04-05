@@ -23,12 +23,10 @@
         {% if signalement.interventions is empty or intervention.files is empty or intervention.getRapportDeVisite is empty%}
             {% if isDocumentsEnabled and is_granted('INTERVENTION_EDIT_VISITE', intervention) %}
                 <button 
-                    class="fr-btn fr-fi-file-fill open-modal-upload-files-btn" 
-                    data-fr-opened="false" 
-                    aria-controls="visites-upload-files-{{intervention.id}}"
-                    data-file-type="document"
-                    data-document-type="PROCEDURE_RAPPORT_DE_VISITE"
-                    data-intervention-id="{{intervention.id}}">
+                    class="fr-btn fr-fi-file-fill"
+                    aria-controls="edit-visite-modal-{{intervention.id}}"  
+                    data-fr-opened="false"
+                    >
                     Ajouter un rapport de visite
                 </button>
             {% endif %}
