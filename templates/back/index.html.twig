@@ -9,7 +9,7 @@
             <caption class="fr-w-100 fr-px-3v fr-pt-3v fr-pb-0">
                 <div class="fr-grid-row">
                     <div class="fr-col">
-                        {{ signalements.total }} signalement(s)
+                        {{ signalements.pagination.total_items }} signalement(s)
                     </div>
                     <div class="fr-col fr-text--right">
                         <a href="{{ path('back_signalement_list_export', {'_token': csrf_token('export_token_'~app.user.id) }) }}"
@@ -55,9 +55,9 @@
                             1
                         </a>
                     </li>
-                    {% if signalements.pages > 1 %}
-                        {% for i in 2..signalements.pages %}
-                            <li class="{% if loop.index > 2 and loop.index < signalements.pages-3 %}fr-hidden{% endif %}">
+                    {% if signalements.pagination.total_pages > 1 %}
+                        {% for i in 2..signalements.pagination.total_pages %}
+                            <li class="{% if loop.index > 2 and loop.index < signalements.total_pages-3 %}fr-hidden{% endif %}">
                                 <a class="fr-pagination__link" href="#" title="Page {{ i }}" data-page="{{ i }}">
                                     {{ i }}
                                 </a>
@@ -73,13 +73,14 @@
                     {% endif %}
                     <li>
                         <a class="fr-pagination__link fr-pagination__link--next fr-pagination__link--lg-label"
-                           {% if signalements.pages > 1 %}href="#" {% else %}aria-disabled="true" {% endif %}>
+                           {% if signalements.pagination.total_pages > 1 %}href="#" {% else %}aria-disabled="true" {% endif %}>
                             Page suivante
                         </a>
                     </li>
                     <li>
-                        <a class="fr-pagination__link fr-pagination__link--last" {% if signalements.pages > 1 %}href="#"
-                           {% else %}aria-disabled="true" {% endif %} data-page="{{ signalements.pages }}">
+                        <a class="fr-pagination__link fr-pagination__link--last"
+                           {% if signalements.pagination.total_pages > 1 %}href="#"
+                           {% else %}aria-disabled="true" {% endif %} data-page="{{ signalements.pagination.total_pages }}">
                             Dernière page
                         </a>
                     </li>

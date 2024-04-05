@@ -1,7 +1,8 @@
 <?php
 
-namespace App\Service;
+namespace App\Service\Signalement;
 
+use App\Dto\Request\Signalement\SignalementSearchQuery;
 use App\Entity\Affectation;
 use App\Entity\Enum\AffectationStatus;
 use App\Entity\Enum\Qualification;
@@ -25,11 +26,15 @@ use Doctrine\ORM\QueryBuilder;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\HttpFoundation\Request;
 
-class SearchFilterService
+class SearchFilter
 {
     private array $filters;
-    private Request $request;
+    private SignalementSearchQuery|Request $request;
     private int $countActive;
+
+    /** @deprecated Cette constante est obsolete et ne doit plus être utilisé dans le cadre de la nouvelle liste
+     *  Les filtres sont gérés par la classe SignalementSearchQuery
+     */
     private const REQUESTS = [
         'searchterms',
         'territories',
@@ -60,22 +65,41 @@ class SearchFilterService
         private SuiviRepository $suiviRepository,
         private TerritoryRepository $territoryRepository,
         private EntityManagerInterface $entityManager,
-        private SignalementQualificationRepository $signalementQualificationRepository
+        private SignalementQualificationRepository $signalementQualificationRepository,
     ) {
     }
 
-    public function setRequest(Request $request): static
+    /**
+     * @todo Ne plus injecter Request apres la refonte de la liste.
+     */
+    public function setRequest(SignalementSearchQuery|Request $request): static
     {
         $this->request = $request;
 
         return $this;
     }
 
+    /**
+     * @deprecated  Cette méthode est obsolete et ne doit plus être utilisé dans le cadre de la nouvelle liste.
+     * Utilisez @see SignalementSearchQuery::getFilters()
+     */
     public function getFilters(): ?array
     {
         return $this->filters ?? null;
     }
 
+    public function buildFilters(): array
+    {
+        /** @var SignalementSearchQuery $signalementSearchQuery */
+        $signalementSearchQuery = $this->request;
+
+        return $signalementSearchQuery->getFilters();
+    }
+
+    /**
+     * @deprecated  cette méthode est obsolete et ne doit plus être utilisé dans le cadre de la nouvelle liste.
+     * Utilisez @see buildFilters() qui s'appuie sur la clsse @see SignalementSearchQuery
+     */
     public function setFilters(): self
     {
         $this->countActive = 0;
@@ -85,6 +109,10 @@ class SearchFilterService
         $filters = self::REQUESTS;
         $this->filters = [];
         $territory = $this->getTerritory($user, $request);
+
+        if (!$request instanceof Request) {
+            return $this;
+        }
         foreach ($filters as $filter) {
             $this->filters[$filter] = $request->get('bo-filters-'.$filter) ?? null;
 
@@ -149,7 +177,8 @@ class SearchFilterService
             }
 
             if ($request->query->get('sort')) {
-                $this->filters['sort'] = $request->query->get('sort');
+                $this->filters['sortBy'] = $request->query->get('sort');
+                $this->filters['orderBy'] = 'DESC';
             }
         }
 
@@ -166,46 +195,12 @@ class SearchFilterService
             $this->filters['delays_partner'] = $partner;
         }
 
-        if ($request->query->get('sort')) {
-            $this->filters['sort'] = $request->query->get('sort');
-        }
-
         return $this;
     }
 
-    private function getRequest(): Request
+    private function getRequest(): Request|SignalementSearchQuery
     {
         return $this->request;
-    }
-
-    public function getFilter(string $filterName): ?string
-    {
-        return $this->filters[$filterName] ?? null;
-    }
-
-    public function setFilter(string $filterName, string $filterValue): void
-    {
-        $this->filters[$filterName] = $filterValue;
-    }
-
-    public function removeFilter(string $filterName): void
-    {
-        unset($this->filters[$filterName]);
-    }
-
-    public function getFiltersAsString(): string
-    {
-        $filters = [];
-        foreach ($this->filters as $filterName => $filterValue) {
-            $filters[] = $filterName.'='.$filterValue;
-        }
-
-        return implode('&', $filters);
-    }
-
-    public function getFiltersAsArray(): array
-    {
-        return $this->filters;
     }
 
     public function getCountActive(): int
@@ -369,10 +364,12 @@ class SearchFilterService
                     ->setParameter('status_affectation', '%'.$statuses.'%');
             }
         }
+
         if (!empty($filters['cities'])) {
-            $qb->andWhere('s.villeOccupant IN (:cities)')
+            $qb->andWhere('s.villeOccupant IN (:cities) OR s.cpOccupant IN (:cities)')
                 ->setParameter('cities', $filters['cities']);
         }
+
         if (!empty($filters['visites'])) {
             $qb->leftJoin('s.interventions', 'intervSearch');
             $queryVisites = '';
@@ -455,7 +452,8 @@ class SearchFilterService
             if (!empty($filters['scores']['on'])) {
                 $qb->andWhere('s.score >= :score_on')
                     ->setParameter('score_on', $filters['scores']['on']);
-            } elseif (!empty($filters['scores']['off'])) {
+            }
+            if (!empty($filters['scores']['off'])) {
                 $qb->andWhere('s.score <= :score_off')
                     ->setParameter('score_off', $filters['scores']['off']);
             }
@@ -476,14 +474,26 @@ class SearchFilterService
                 ->setParameter('signalement_ids', $filters['signalement_ids']);
         }
 
+        if (!empty($filters['typeDeclarant'])) {
+            $qb
+                ->andWhere('s.profileDeclarant LIKE :profile_declarant')
+                ->setParameter('profile_declarant', $filters['typeDeclarant']);
+        }
+
         return $qb;
     }
 
-    private function getTerritory(User $user, Request $request): ?Territory
+    private function getTerritory(User $user, SignalementSearchQuery|Request $request): ?Territory
     {
         $territory = null;
-        if ($user->isSuperAdmin() && $request->query->get('territoire_id')) {
-            $territory = $this->territoryRepository->find($request->query->get('territoire_id'));
+        if ($user->isSuperAdmin()) {
+            if ($request instanceof Request && $request->query->get('territoire_id')) {
+                $territory = $this->territoryRepository->find($request->query->get('territoire_id'));
+            }
+            /** @var SignalementSearchQuery $request */
+            if ($request instanceof SignalementSearchQuery && null !== $zip = $request->getTerritory()) {
+                $territory = $this->territoryRepository->findOneBy(['zip' => $zip]);
+            }
         } elseif (!$user->isSuperAdmin()) {
             $territory = $user->getTerritory();
         }

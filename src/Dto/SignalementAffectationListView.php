@@ -28,6 +28,7 @@ class SignalementAffectationListView
         private ?array $affectations = null,
         private ?array $qualifications = null,
         private ?array $qualificationsStatuses = null,
+        private ?string $csrfToken = null,
     ) {
     }
 
@@ -136,5 +137,17 @@ class SignalementAffectationListView
         }
 
         return $listLabels;
+    }
+
+    public function getCsrfToken(): ?string
+    {
+        return $this->csrfToken;
+    }
+
+    public function setCsrfToken(string $csrfToken): self
+    {
+        $this->csrfToken = $csrfToken;
+
+        return $this;
     }
 }

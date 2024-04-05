@@ -14,7 +14,7 @@ use App\Entity\Signalement;
 use App\Entity\Suivi;
 use App\Entity\Territory;
 use App\Entity\User;
-use App\Service\SearchFilterService;
+use App\Service\Signalement\SearchFilter;
 use App\Service\Statistics\CriticitePercentStatisticProvider;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\DBAL\Exception;
@@ -40,7 +40,7 @@ class SignalementRepository extends ServiceEntityRepository
 
     public function __construct(
         ManagerRegistry $registry,
-        private SearchFilterService $searchFilterService,
+        private SearchFilter $searchFilter,
         private array $params
     ) {
         parent::__construct($registry, Signalement::class);
@@ -61,19 +61,12 @@ class SignalementRepository extends ServiceEntityRepository
 
         $qb = $this->findSignalementAffectationQuery($user, $options);
 
-        $qb->addSelect('s.geoloc, s.details, s.cpOccupant, s.inseeOccupant, GROUP_CONCAT(DISTINCT c.label SEPARATOR :group_concat_separator_1) as desordres');
-        $qb->setParameter('group_concat_separator_1', self::SEPARATOR_GROUP_CONCAT);
-
-        if (null === $options['criteres']) {
-            $qb->leftJoin('s.criteres', 'c');
-        }
-
-        $qb->andWhere("JSON_EXTRACT(s.geoloc,'$.lat') != ''")
+        $qb->addSelect('s.geoloc, s.details, s.cpOccupant, s.inseeOccupant')
+            ->andWhere("JSON_EXTRACT(s.geoloc,'$.lat') != ''")
             ->andWhere("JSON_EXTRACT(s.geoloc,'$.lng') != ''")
             ->andWhere('s.statut != 7');
 
-        $qb->setFirstResult($firstResult)
-            ->setMaxResults(self::MARKERS_PAGE_SIZE);
+        $qb->setFirstResult($firstResult)->setMaxResults(self::MARKERS_PAGE_SIZE);
 
         return $qb->getQuery()->getArrayResult();
     }
@@ -333,8 +326,8 @@ class SignalementRepository extends ServiceEntityRepository
         User|null $user,
         array $options,
     ): Paginator {
-        $maxResult = SignalementAffectationListView::MAX_LIST_PAGINATION;
-        $page = (int) $options['page'];
+        $maxResult = $options['maxItemsPerPage'] ?? SignalementAffectationListView::MAX_LIST_PAGINATION;
+        $page = \array_key_exists('page', $options) ? (int) $options['page'] : 1;
         $firstResult = (($page < 1 ? 1 : $page) - 1) * $maxResult;
         $qb = $this->findSignalementAffectationQuery($user, $options);
         $qb
@@ -421,11 +414,26 @@ class SignalementRepository extends ServiceEntityRepository
         }
 
         $qb->setParameter('status', Signalement::STATUS_ARCHIVED);
-        $qb = $this->searchFilterService->applyFilters($qb, $options);
-        $qb->orderBy(isset($options['sort']) && 'lastSuiviAt' === $options['sort']
-            ? 's.lastSuiviAt'
-            : 's.createdAt', 'DESC')
-            ->getQuery();
+        $qb = $this->searchFilter->applyFilters($qb, $options);
+
+        if (isset($options['sortBy'])) {
+            switch ($options['sortBy']) {
+                case 'reference':
+                    $qb->orderBy('s.reference', $options['orderBy']);
+                    break;
+                case 'nomOccupant':
+                    $qb->orderBy('s.nomOccupant', $options['orderBy']);
+                    break;
+                case 'createdAt':
+                    $qb->orderBy('s.createdAt', $options['orderBy']);
+                    break;
+                case 'lastSuiviAt':
+                    $qb->orderBy('s.lastSuiviAt', $options['orderBy']);
+                    break;
+                default:
+                    $qb->orderBy('s.reference', 'DESC');
+            }
+        }
 
         return $qb;
     }

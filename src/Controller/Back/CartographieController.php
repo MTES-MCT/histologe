@@ -6,7 +6,7 @@ use App\Entity\User;
 use App\Repository\CritereRepository;
 use App\Repository\SignalementRepository;
 use App\Repository\TagRepository;
-use App\Service\SearchFilterService;
+use App\Service\Signalement\SearchFilter;
 use App\Service\Signalement\SearchFilterOptionDataProvider;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -17,7 +17,7 @@ use Symfony\Component\Routing\Annotation\Route;
 class CartographieController extends AbstractController
 {
     public function __construct(
-        private SearchFilterService $searchFilterService,
+        private SearchFilter $searchFilter,
         private SearchFilterOptionDataProvider $searchFilterOptionDataProvider
     ) {
     }
@@ -30,8 +30,8 @@ class CartographieController extends AbstractController
         CritereRepository $critereRepository,
     ): Response {
         $title = 'Cartographie';
-        $filters = $this->searchFilterService->setRequest($request)->setFilters()->getFilters();
-        $countActiveFilters = $this->searchFilterService->getCountActive();
+        $filters = $this->searchFilter->setRequest($request)->setFilters()->getFilters();
+        $countActiveFilters = $this->searchFilter->getCountActive();
 
         /** @var User $user */
         $user = $this->getUser();
