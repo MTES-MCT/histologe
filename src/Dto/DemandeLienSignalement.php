@@ -23,7 +23,7 @@ class DemandeLienSignalement
     #[Assert\Callback]
     public function validate(ExecutionContextInterface $context, $payload)
     {
-        if (empty(trim($this->adresse)) || empty(trim($this->codePostal)) || empty(trim($this->ville))) {
+        if (empty(trim((string) $this->adresse)) || empty(trim((string) $this->codePostal)) || empty(trim((string) $this->ville))) {
             $context->buildViolation('Vous devez sélectionner une adresse dans la liste des propositions')
                 ->atPath('adresseHelper')
                 ->addViolation();
