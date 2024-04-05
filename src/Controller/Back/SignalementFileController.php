@@ -12,6 +12,7 @@ use App\Manager\FileManager;
 use App\Manager\SuiviManager;
 use App\Messenger\Message\PdfExportMessage;
 use App\Repository\FileRepository;
+use App\Repository\InterventionRepository;
 use App\Service\Signalement\SignalementFileProcessor;
 use App\Service\UploadHandlerService;
 use Doctrine\ORM\EntityManagerInterface;
@@ -166,12 +167,13 @@ class SignalementFileController extends AbstractController
                 $suivi = $suiviFactory->createInstanceFrom($this->getUser(), $signalement);
                 /** @var User $user */
                 $user = $this->getUser();
-                $description = $user->getNomComplet().' a supprimé le document suivant :';
+                $description = $user->getNomComplet().' a supprimé ';
+                $description .= File::FILE_TYPE_DOCUMENT === $type ? 'le document suivant :' : 'la photo suivante :';
                 $suivi->setDescription(
                     $description
-                    .'<ul>'
+                    .'<ul><li>'
                     .$filename
-                    .'</ul>'
+                    .'</li></ul>'
                 );
                 $suivi->setType(SUIVI::TYPE_AUTO);
 
@@ -214,6 +216,7 @@ class SignalementFileController extends AbstractController
         Request $request,
         FileRepository $fileRepository,
         EntityManagerInterface $entityManager,
+        InterventionRepository $interventionRepository,
     ): Response {
         if (!$this->isCsrfTokenValid('signalement_edit_file_'.$signalement->getId(), $request->get('_token'))) {
             if ($request->isXmlHttpRequest()) {
@@ -250,6 +253,17 @@ class SignalementFileController extends AbstractController
         $file->setDocumentType($documentType);
         $desordreSlug = $request->get('desordreSlug');
         $file->setDesordreSlug($desordreSlug);
+        $interventionId = $request->get('interventionId');
+        if (null !== $interventionId) {
+            $intervention = $interventionRepository->find($interventionId);
+            if ($intervention?->getSignalement() === $file->getSignalement()) {
+                $file->setIntervention($intervention);
+            }
+        }
+        $description = $request->get('description');
+        if (null !== $description) {
+            $file->setDescription($description);
+        }
         $entityManager->persist($file);
         $entityManager->flush();
         if ($request->isXmlHttpRequest()) {

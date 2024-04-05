@@ -3,6 +3,7 @@
 namespace App\Entity;
 
 use App\Entity\Behaviour\TimestampableTrait;
+use App\Entity\Enum\DocumentType;
 use App\Entity\Enum\InterventionType;
 use App\Entity\Enum\ProcedureType;
 use App\Repository\InterventionRepository;
@@ -315,5 +316,15 @@ class Intervention
         }
 
         return $this;
+    }
+
+    /**
+     * @return Collection<int, File>
+     */
+    public function getRapportDeVisite(): Collection
+    {
+        return $this->files->filter(function (File $file) {
+            return DocumentType::PROCEDURE_RAPPORT_DE_VISITE === $file->getDocumentType();
+        });
     }
 }

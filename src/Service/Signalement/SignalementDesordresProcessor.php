@@ -67,7 +67,7 @@ class SignalementDesordresProcessor
         }
 
         $photos[$key] = array_unique(
-            array_merge($photos[$key], $this->signalementManager->getPhotosBySlug($signalement, $slug)),
+            array_merge($photos[$key], PhotoHelper::getPhotosBySlug($signalement, $slug)),
             \SORT_REGULAR
         );
     }

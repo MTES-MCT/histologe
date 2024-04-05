@@ -3,6 +3,7 @@
 namespace App\Entity\Enum;
 
 use App\Entity\Behaviour\EnumTrait;
+use App\Entity\File;
 
 enum DocumentType: String
 {
@@ -47,18 +48,25 @@ enum DocumentType: String
     {
         return [
             self::PHOTO_SITUATION->name => self::PHOTO_SITUATION->label(),
-            self::PHOTO_VISITE->name => self::PHOTO_VISITE->label(),
             self::AUTRE->name => self::AUTRE->label(),
         ];
     }
 
-    public static function getDocumentsList(): array
+    public static function getSituationList(): array
     {
         return [
+            self::PHOTO_SITUATION->name => self::PHOTO_SITUATION->label(),
+            self::AUTRE->name => self::AUTRE->label(),
             self::SITUATION_FOYER_BAIL->name => self::SITUATION_FOYER_BAIL->label(),
             self::SITUATION_FOYER_DPE->name => self::SITUATION_FOYER_DPE->label(),
             self::SITUATION_FOYER_ETAT_DES_LIEUX->name => self::SITUATION_FOYER_ETAT_DES_LIEUX->label(),
             self::SITUATION_DIAGNOSTIC_PLOMB_AMIANTE->name => self::SITUATION_DIAGNOSTIC_PLOMB_AMIANTE->label(),
+        ];
+    }
+
+    public static function getProcedureList(): array
+    {
+        return [
             self::PROCEDURE_MISE_EN_DEMEURE->name => self::PROCEDURE_MISE_EN_DEMEURE->label(),
             self::PROCEDURE_RAPPORT_DE_VISITE->name => self::PROCEDURE_RAPPORT_DE_VISITE->label(),
             self::PROCEDURE_ARRETE_MUNICIPAL->name => self::PROCEDURE_ARRETE_MUNICIPAL->label(),
@@ -66,9 +74,20 @@ enum DocumentType: String
             self::PROCEDURE_SAISINE->name => self::PROCEDURE_SAISINE->label(),
             self::BAILLEUR_DEVIS_POUR_TRAVAUX->name => self::BAILLEUR_DEVIS_POUR_TRAVAUX->label(),
             self::BAILLEUR_REPONSE_BAILLEUR->name => self::BAILLEUR_REPONSE_BAILLEUR->label(),
-            self::PHOTO_SITUATION->name => self::PHOTO_SITUATION->label(),
-            self::PHOTO_VISITE->name => self::PHOTO_VISITE->label(),
-            self::AUTRE->name => self::AUTRE->label(),
         ];
+    }
+
+    public function mapFileType(): ?string
+    {
+        return match ($this) {
+            self::SITUATION_FOYER_BAIL, self::SITUATION_FOYER_DPE,
+            self::SITUATION_FOYER_ETAT_DES_LIEUX, self::SITUATION_DIAGNOSTIC_PLOMB_AMIANTE,
+            self::PROCEDURE_MISE_EN_DEMEURE, self::PROCEDURE_RAPPORT_DE_VISITE,
+            self::PROCEDURE_ARRETE_MUNICIPAL, self::PROCEDURE_ARRETE_PREFECTORAL,
+            self::PROCEDURE_SAISINE, self::BAILLEUR_DEVIS_POUR_TRAVAUX,
+            self::BAILLEUR_REPONSE_BAILLEUR, => File::FILE_TYPE_DOCUMENT,
+            self::PHOTO_SITUATION,self::PHOTO_VISITE => File::FILE_TYPE_PHOTO,
+            self::AUTRE => null,
+        };
     }
 }

@@ -78,19 +78,20 @@ class FileFactory
         return $this->createInstanceFrom(
             filename: $file['file'],
             title: $file['titre'],
-            type: $this->getFileType($file),
+            type: $this->getFileType($file, $documentType),
             signalement: $signalement,
             user: $user,
             intervention: $intervention,
-            documentType: SignalementDocumentTypeMapper::map($file['slug']),
+            documentType: $documentType,
             desordreSlug: $desordreSlug,
             description: $fileDescription,
         );
     }
 
-    private function getFileType(array $file)
+    private function getFileType(array $file, DocumentType $documentType)
     {
         if ('photos' === $file['key']
+            && File::FILE_TYPE_PHOTO === $documentType->mapFileType()
             && \in_array(
                 strtolower(pathinfo($file['file'], \PATHINFO_EXTENSION)),
                 ImageManipulationHandler::IMAGE_EXTENSION

@@ -13,11 +13,9 @@ use App\Dto\Request\Signalement\QualificationNDERequest;
 use App\Dto\Request\Signalement\SituationFoyerRequest;
 use App\Dto\SignalementAffectationListView;
 use App\Entity\Affectation;
-use App\Entity\Enum\DocumentType;
 use App\Entity\Enum\MotifCloture;
 use App\Entity\Enum\ProfileDeclarant;
 use App\Entity\Enum\ProprioType;
-use App\Entity\File;
 use App\Entity\Model\InformationComplementaire;
 use App\Entity\Model\InformationProcedure;
 use App\Entity\Model\SituationFoyer;
@@ -806,16 +804,6 @@ class SignalementManager extends AbstractManager
                 $row
             );
         }
-    }
-
-    public function getPhotosBySlug(Signalement $signalement, string $desordrePrecisionSlug): ?array
-    {
-        $photos = $signalement->getPhotos()->filter(function (File $file) use ($desordrePrecisionSlug) {
-            return DocumentType::PHOTO_SITUATION === $file->getDocumentType()
-            && $file->getDesordreSlug() === $desordrePrecisionSlug;
-        });
-
-        return $photos->toArray();
     }
 
     /**

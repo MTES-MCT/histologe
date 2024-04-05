@@ -2,17 +2,16 @@
     <div class="photos-album-close-button-container">
         <button class="photos-album-btn-close fr-btn">Fermer</button>
     </div>
-
-    {% set loopLength = signalement.files|filter( photo => photo.fileType == 'photo' and photo.intervention is null )|length %}
+    {% set loopLength = allPhotosOrdered|length %}
     <div class="photos-album-navigation-container">
         <div>
             <button class="fr-btn photos-album-swipe" data-direction="-1">&lt;</button>
         </div>
         <div>
-            {% for index, photo in signalement.files|filter( photo => photo.fileType == 'photo' and photo.intervention is null ) %}
+            {% for index, photo in allPhotosOrdered %}
             <div class="photos-album-image-item {{ loop.index > 1 ? 'fr-hidden' : 'loop-current' }}" data-id="{{ photo.id }}">
                 <div>
-                    Photo de la situation - {{ loop.index }} / {{ loopLength }}
+                    {{ photo.documentType.label}} - {{ loop.index }} / {{ loopLength }}
                 </div>
                 <div>
                     <img
@@ -26,11 +25,17 @@
                         {% if photo.documentType is same as enum('App\\Entity\\Enum\\DocumentType').PHOTO_SITUATION
                                 and photo.desordreSlug is not same as null %}
                             {{ signalement.getDesordreLabel(photo.desordreSlug) }}
+                        {% elseif photo.documentType is same as enum('App\\Entity\\Enum\\DocumentType').PHOTO_VISITE %}
+                            {{ photo.documentType.label() }} du {{ photo.intervention.scheduledAt|date('d/m/Y') }} par {{ photo.intervention.partner.nom}}
                         {% else %}
                             {{ photo.documentType.label() }}
                         {% endif %}
                         <br>
                     {% endif %}
+                    {% if photo.description is not same as null %}
+                        {{ photo.description }}
+                    {% endif %}
+                    <br>
                     Photo ajoutée par {{ photo.uploadedBy.nomComplet ?? 'l\'usager' }}
                 </div>
             </div>
@@ -42,8 +47,8 @@
     </div>
     <script type="text/javascript">
         const histoPhotoIds = []
-        {% for index, photo in signalement.files|filter( photo => photo.fileType == 'photo' and photo.intervention is null ) %}
-            histoPhotoIds.push({{photo.id}})
+        {% for index, photo in allPhotosOrdered %}
+            histoPhotoIds.push({{ photo.id }})
         {% endfor %}
     </script>
 </div>

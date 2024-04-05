@@ -5,7 +5,6 @@ namespace App\Tests\Functional\Manager;
 use App\Dto\Request\Signalement\CompositionLogementRequest;
 use App\Dto\Request\Signalement\QualificationNDERequest;
 use App\Entity\Affectation;
-use App\Entity\Enum\DocumentType;
 use App\Entity\Enum\MotifCloture;
 use App\Entity\Signalement;
 use App\Entity\SignalementQualification;
@@ -264,22 +263,6 @@ class SignalementManagerTest extends WebTestCase
         /** @var ConstraintViolationList $errors */
         $errorsAsString = (string) $errors;
         $this->assertStringContainsString('Merci de définir le nombre de pièces à vivre', $errorsAsString);
-    }
-
-    public function testGetPhotosBySlug(): void
-    {
-        $signalement = $this->signalementManager->findOneBy(['reference' => '2023-27']);
-
-        $desordrePrecisionSlug = 'desordres_batiment_proprete_interieur';
-        $photos = $this->signalementManager->getPhotosBySlug($signalement, $desordrePrecisionSlug);
-        $this->assertCount(1, $photos);
-        $firstKey = array_keys($photos)[0];
-        $this->assertEquals(DocumentType::PHOTO_SITUATION, $photos[$firstKey]->getDocumentType());
-        $this->assertEquals('Capture-d-ecran-du-2023-06-13-12-58-43-648b2a6b9730f.png', $photos[$firstKey]->getTitle());
-
-        $desordrePrecisionSlug = 'desordres_batiment_isolation_murs';
-        $photos = $this->signalementManager->getPhotosBySlug($signalement, $desordrePrecisionSlug);
-        $this->assertCount(0, $photos);
     }
 
     public function testUpdateFromSignalementQualificationWithNdeRequest(): void
