@@ -106,15 +106,30 @@ class FrontSignalementController extends AbstractController
             ['Default', 'POST_'.strtoupper($signalementDraftRequest->getProfil())]
         );
         if (0 === $errors->count()) {
-            // $isTiersDeclarant = $signalementDraftFactory->isTiersDeclarant($signalementDraftRequest);
-            $existingSignalement = $signalementRepository->findOneForEmailAndAddress(
-                $signalementDraftFactory->getEmailDeclarant($signalementDraftRequest),
-                $signalementDraftRequest->getAdresseLogementAdresseDetailNumero(),
-                $signalementDraftRequest->getAdresseLogementAdresseDetailCodePostal(),
-                $signalementDraftRequest->getAdresseLogementAdresseDetailCommune(),
-                // $isTiersDeclarant ? $signalementDraftRequest->getCoordonneesOccupantNom() : null,
-                // $isTiersDeclarant ? $signalementDraftRequest->getCoordonneesOccupantPrenom() : null,
-            );
+            $isTiersDeclarant = $signalementDraftFactory->isTiersDeclarant($signalementDraftRequest);
+            if ($isTiersDeclarant) {
+                $existingSignalements = $signalementRepository->findAllForEmailAndAddress(
+                    $signalementDraftFactory->getEmailDeclarant($signalementDraftRequest),
+                    $signalementDraftRequest->getAdresseLogementAdresseDetailNumero(),
+                    $signalementDraftRequest->getAdresseLogementAdresseDetailCodePostal(),
+                    $signalementDraftRequest->getAdresseLogementAdresseDetailCommune(),
+                );
+            } else {
+                $existingSignalement = $signalementRepository->findOneForEmailAndAddress(
+                    $signalementDraftFactory->getEmailDeclarant($signalementDraftRequest),
+                    $signalementDraftRequest->getAdresseLogementAdresseDetailNumero(),
+                    $signalementDraftRequest->getAdresseLogementAdresseDetailCodePostal(),
+                    $signalementDraftRequest->getAdresseLogementAdresseDetailCommune(),
+                );
+                if (
+                    null !== $existingSignalement
+                    && Signalement::STATUS_CLOSED !== $existingSignalement->getStatut()
+                    && Signalement::STATUS_REFUSED !== $existingSignalement->getStatut()
+                ) {
+                    $existingSignalements = [];
+                    $existingSignalements[] = $existingSignalement;
+                }
+            }
 
             $dataToHash = $signalementDraftFactory->getEmailDeclarant($signalementDraftRequest);
             $dataToHash .= $signalementDraftRequest->getAdresseLogementAdresse();
@@ -130,16 +145,24 @@ class FrontSignalementController extends AbstractController
                 ]
             );
 
-            if (
-                null !== $existingSignalement
-                && Signalement::STATUS_CLOSED !== $existingSignalement->getStatut()
-                && Signalement::STATUS_REFUSED !== $existingSignalement->getStatut()
-            ) {
+            if (!empty($existingSignalements)) {
+                $signalements = array_map(function (Signalement $existingSignalement) {
+                    return [
+                        'uuid' => $existingSignalement->getUuid(),
+                        'created_at' => $existingSignalement->getCreatedAt(),
+                        'prenom_occupant' => $existingSignalement->getPrenomOccupant(),
+                        'nom_occupant' => $existingSignalement->getNomOccupant(),
+                        'adresse_autre_occupant' => $existingSignalement->getAdresseAutreOccupant(),
+                        'num_appart_occupant' => $existingSignalement->getNumAppartOccupant(),
+                        'escalier_occupant' => $existingSignalement->getEscalierOccupant(),
+                        'etage_occupant' => $existingSignalement->getEtageOccupant(),
+                    ];
+                }, $existingSignalements);
+
                 return $this->json([
                     'already_exists' => true,
                     'type' => 'signalement',
-                    'uuid' => $existingSignalement->getUuid(),
-                    'created_at' => $existingSignalement->getCreatedAt(),
+                    'signalements' => $signalements,
                     'uuid_draft' => $existingSignalementDraft?->getUuid() ?? null,
                 ]);
             }

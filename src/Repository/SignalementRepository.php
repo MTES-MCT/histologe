@@ -1077,8 +1077,6 @@ class SignalementRepository extends ServiceEntityRepository
         string $address,
         string $zipcode,
         string $city,
-        // ?string $nomOccupant = null,
-        // ?string $prenomOccupant = null
     ): ?Signalement {
         $qb = $this->createQueryBuilder('s')
             ->andWhere('s.mailDeclarant = :email OR s.mailOccupant = :email')->setParameter('email', $email)
@@ -1086,14 +1084,6 @@ class SignalementRepository extends ServiceEntityRepository
             ->andWhere('s.cpOccupant = :zipcode')->setParameter('zipcode', $zipcode)
             ->andWhere('s.villeOccupant = :city')->setParameter('city', $city)
             ->andWhere('s.statut != :statutArchived')->setParameter('statutArchived', Signalement::STATUS_ARCHIVED);
-
-        // if (null !== $nomOccupant) {
-        //     $qb = $qb->andWhere('s.nomOccupant LIKE :nomOccupant')->setParameter('nomOccupant', '%'.$nomOccupant.'%');
-        // }
-        // if (null !== $prenomOccupant) {
-        //     $qb = $qb->andWhere('s.prenomOccupant LIKE :prenomOccupant')
-        //     ->setParameter('prenomOccupant', '%'.$prenomOccupant.'%');
-        // }
 
         $list = $qb->addOrderBy('s.createdAt', 'DESC')
             ->getQuery()->getResult();
@@ -1113,5 +1103,29 @@ class SignalementRepository extends ServiceEntityRepository
         }
 
         return null;
+    }
+
+    public function findAllForEmailAndAddress(
+        string $email,
+        string $address,
+        string $zipcode,
+        string $city,
+    ): array {
+        $qb = $this->createQueryBuilder('s')
+            ->andWhere('s.mailDeclarant = :email OR s.mailOccupant = :email')->setParameter('email', $email)
+            ->andWhere('s.adresseOccupant = :address')->setParameter('address', $address)
+            ->andWhere('s.cpOccupant = :zipcode')->setParameter('zipcode', $zipcode)
+            ->andWhere('s.villeOccupant = :city')->setParameter('city', $city)
+            ->andWhere('s.statut IN (:statusSignalement)')
+            ->setParameter(
+                'statusSignalement',
+                [
+                    Signalement::STATUS_ACTIVE,
+                    Signalement::STATUS_NEED_PARTNER_RESPONSE,
+                    Signalement::STATUS_NEED_VALIDATION,
+                ]
+            );
+
+        return $qb->addOrderBy('s.createdAt', 'DESC')->getQuery()->getResult();
     }
 }

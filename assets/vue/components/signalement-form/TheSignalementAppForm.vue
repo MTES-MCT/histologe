@@ -160,7 +160,7 @@ export default defineComponent({
         if (requestResponse.already_exists === true) {
           const link = document.getElementById('fr-modal-already-exists-button')
           formStore.alreadyExists.type = requestResponse.type
-          formStore.alreadyExists.uuid = requestResponse.uuid
+          formStore.alreadyExists.signalements = requestResponse.signalements
           formStore.alreadyExists.createdAt = requestResponse.created_at
           formStore.alreadyExists.updatedAt = requestResponse.updated_at
           formStore.alreadyExists.uuidDraft = requestResponse.uuid_draft

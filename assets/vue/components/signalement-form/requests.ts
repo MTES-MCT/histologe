@@ -124,8 +124,8 @@ export const requests = {
     requests.doRequestPost(url, '', functionReturn, undefined)
   },
 
-  sendMailGetLienSuivi (functionReturn: Function) {
-    const url = formStore.props.ajaxurlSendMailGetLienSuivi.replace('uuid', formStore.alreadyExists.uuid)
+  sendMailGetLienSuivi (uuid: any, functionReturn: Function) {
+    const url = formStore.props.ajaxurlSendMailGetLienSuivi.replace('uuid', uuid)
     requests.doRequestPost(url, '', functionReturn, undefined)
   },
 

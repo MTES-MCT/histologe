@@ -8,16 +8,34 @@
               <button class="fr-btn--close fr-btn" title="Fermer la fenêtre modale" aria-controls="fr-modal-already-exists">Fermer</button>
             </div>
             <div class="fr-modal__content" v-if="formStore.alreadyExists.type==='signalement'">
-              <h1 id="fr-modal-title-modal-already-exists" class="fr-modal__title">Ce signalement existe déjà</h1>
-              <p>
+              <h1 id="fr-modal-title-modal-already-exists" class="fr-modal__title"><span v-if="formStore.alreadyExists.signalements?.length === 1">Ce signalement existe déjà</span><span v-else>Ces signalements existent déjà</span></h1>
+              <div v-if="formStore.data.profil === 'bailleur_occupant' || formStore.data.profil === 'locataire' || formStore.alreadyExists.signalements?.length === 1">
                 Il semblerait que vous ayez déjà déposé un signalement pour le logement situé <strong>{{ formStore.data.adresse_logement_adresse }}</strong>
-                <span v-if="formStore.data.coordonnees_occupant_nom || formStore.data.coordonnees_occupant_prenom"> pour le compte de {{ formStore.data.coordonnees_occupant_nom }} {{ formStore.data.coordonnees_occupant_prenom }}</span>.
+                pour le compte de
+                <span v-if="formStore.alreadyExists.signalements && formStore.alreadyExists.signalements[0]?.prenom_occupant !== null">{{ formStore.alreadyExists.signalements[0]?.prenom_occupant }}</span>
+                <span v-if="formStore.alreadyExists.signalements && formStore.alreadyExists.signalements[0]?.nom_occupant !== null">{{ formStore.alreadyExists.signalements[0]?.nom_occupant }}</span>.
                 Ce signalement est en cours de traitement.<br>
                 Vous pouvez le compléter depuis votre page de suivi ou créer un nouveau signalement.
                 <br>
                 <br>
                 Souhaitez-vous compléter le signalement existant ou en créer un nouveau ?
-              </p>
+              </div>
+              <div v-else>
+                Il semblerait que vous ayez déjà déposé plusieurs signalements pour le logement situé <strong>{{ formStore.data.adresse_logement_adresse }}</strong>.<br><br>
+                <div v-for="signalement in formStore.alreadyExists.signalements" v-bind:key="signalement.uuid">
+                  Déposé le {{ formatDate(signalement.created_at) }} pour le compte de <span v-if="signalement.prenom_occupant !== null">{{ signalement.prenom_occupant }}</span> <span v-if="signalement.nom_occupant !== null">{{ signalement.nom_occupant }}</span>
+                  (<span v-if="signalement.num_appart_occupant !== null">Numéro d'appartement : {{ signalement.num_appart_occupant }}</span><span v-if="signalement.escalier_occupant !== null">Escalier : {{ signalement.escalier_occupant }}</span>
+                  <span v-if="signalement.etage_occupant !== null">Etage : {{ signalement.etage_occupant }}</span><span v-if="signalement.adresse_autre_occupant !== null">Autre : {{ signalement.adresse_autre_occupant }}</span>)<br><br>
+                  <button class="fr-btn" @click="selectedSignalementUuid = signalement.uuid">
+                    Ah, c'est ce signalement !
+                  </button>
+                </div>
+                Ces signalements sont en cours de traitement.<br>
+                Vous pouvez les compléter depuis votre page de suivi ou créer un nouveau signalement.
+                <br>
+                <br>
+                Souhaitez-vous compléter un des signalements existants ou en créer un nouveau ?
+              </div>
               <SignalementFormWarning
                 id="fr-modal-already-exists-warning"
                 label="Créer un nouveau signalement pour le même logement risque de ralentir la procédure."
@@ -96,7 +114,8 @@ export default defineComponent({
   data () {
     return {
       formStore,
-      errorMessage: ''
+      errorMessage: '',
+      selectedSignalementUuid: null as string | null
     }
   },
   methods: {
@@ -104,7 +123,13 @@ export default defineComponent({
       requests.sendMailContinueFromDraft(this.gotoValidationScreen)
     },
     getLienSuivi () {
-      requests.sendMailGetLienSuivi(this.gotoValidationScreen)
+      if (this.selectedSignalementUuid === null) {
+        if (this.formStore.alreadyExists.signalements) {
+          this.selectedSignalementUuid = this.formStore.alreadyExists.signalements[0]?.uuid
+        }
+      }
+      console.log('Lien de suivi pour le signalement avec UUID :', this.selectedSignalementUuid)
+      requests.sendMailGetLienSuivi(this.selectedSignalementUuid, this.gotoValidationScreen)
     },
     gotoValidationScreen (requestResponse: any) {
       if (requestResponse && requestResponse.success === true) {

@@ -50,6 +50,7 @@ interface FormStore {
   alreadyExists: {
     type: string | null
     uuid: string | null
+    signalements: any[] | null
     uuidDraft: string | null
     createdAt: string | null
     updatedAt: string | null
@@ -90,6 +91,7 @@ const formStore: FormStore = reactive({
   alreadyExists: {
     uuid: null,
     type: null,
+    signalements: null,
     uuidDraft: null,
     createdAt: null,
     updatedAt: null
