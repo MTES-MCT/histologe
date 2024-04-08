@@ -25,8 +25,8 @@ class ExportSignalementController extends AbstractController
             set_error_handler(function ($err_severity, $err_msg, $err_file, $err_line) {
                 throw new \ErrorException($err_msg, 0, $err_severity, $err_file, $err_line);
             }, \E_WARNING);
+            $filters = $request->getSession()->get('filters');
             try {
-                $filters = $request->getSession()->get('filters');
                 $response = new StreamedResponse();
                 $response->setCallback(function () use ($signalementExportLoader, $filters, $user) {
                     $signalementExportLoader->load($user, $filters);
