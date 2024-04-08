@@ -8,6 +8,7 @@ use App\Entity\Signalement;
 use App\Entity\Suivi;
 use App\Entity\Tag;
 use App\Entity\User;
+use App\Repository\SuiviRepository;
 use App\Service\Mailer\NotificationMail;
 use App\Service\Mailer\NotificationMailerRegistry;
 use App\Service\Mailer\NotificationMailerType;
@@ -114,7 +115,38 @@ class SignalementActionController extends AbstractController
             $this->addFlash('error', 'Une erreur est survenu lors de la publication');
         }
 
-        return $this->redirect($this->generateUrl('back_signalement_view', ['uuid' => $signalement->getUuid()]).'#suivis');
+        return $this->redirect(
+            $this->generateUrl('back_signalement_view', ['uuid' => $signalement->getUuid()]).'#suivis'
+        );
+    }
+
+    #[Route('/{uuid}/suivi/delete', name: 'back_signalement_delete_suivi', methods: 'POST')]
+    public function deleteSuivi(
+        Request $request,
+        Signalement $signalement,
+        SuiviRepository $suiviRepository,
+        ManagerRegistry $doctrine,
+    ): RedirectResponse {
+        $this->denyAccessUnlessGranted('COMMENT_DELETE', $signalement);
+        if ($this->isCsrfTokenValid('signalement_delete_suivi_'.$signalement->getId(), $request->get('_token'))) {
+            $idSuivi = $request->get('suivi');
+            $suivi = $suiviRepository->findOneBy(['id' => $idSuivi]);
+            if ($suivi) {
+                $content = 'Ce suivi a été supprimé par un administrateur le '
+                    .(new DateTimeImmutable())->format('d/m/Y');
+                $suivi->setDescription($content);
+                $doctrine->getManager()->persist($suivi);
+                $doctrine->getManager()->flush();
+
+                $this->addFlash('success', 'Le suivi a été supprimé.');
+            } else {
+                $this->addFlash('success', 'Ce suivi n\'existe pas.');
+            }
+        }
+
+        return $this->redirect(
+            $this->generateUrl('back_signalement_view', ['uuid' => $signalement->getUuid()]).'#suivis'
+        );
     }
 
     #[Route('/{uuid}/reopen', name: 'back_signalement_reopen')]

@@ -14,10 +14,11 @@ class SuiviVoter extends Voter
 {
     public const CREATE = 'COMMENT_CREATE';
     public const VIEW = 'COMMENT_VIEW';
+    public const DELETE = 'COMMENT_DELETE';
 
     protected function supports(string $attribute, $subject): bool
     {
-        return \in_array($attribute, [self::CREATE, self::VIEW])
+        return \in_array($attribute, [self::CREATE, self::VIEW, self::DELETE])
             && ($subject instanceof Suivi || $subject instanceof Signalement);
     }
 
@@ -25,7 +26,11 @@ class SuiviVoter extends Voter
     {
         /** @var User $user */
         $user = $token->getUser();
-        if (!$user instanceof UserInterface || !$user->isSuperAdmin() && $subject->getTerritory() !== $user->getTerritory()) {
+        if (
+            !$user instanceof UserInterface
+            || !$user->isSuperAdmin()
+            && $subject->getTerritory() !== $user->getTerritory()
+        ) {
             return false;
         }
         if ($user->isSuperAdmin()) {
@@ -35,15 +40,17 @@ class SuiviVoter extends Voter
         return match ($attribute) {
             self::CREATE => $this->canCreate($subject, $user),
             self::VIEW => $this->canView($subject, $user),
+            self::DELETE => $this->canDelete($subject, $user),
             default => false,
         };
     }
 
     private function canCreate(Signalement $signalement, User $user): bool
     {
-        return Signalement::STATUS_ACTIVE === $signalement->getStatut() && $signalement->getAffectations()->filter(function (Affectation $affectation) use ($user) {
-            return $affectation->getPartner()->getId() === $user->getPartner()->getId();
-        })->count() > 0 || $user->isTerritoryAdmin();
+        return Signalement::STATUS_ACTIVE === $signalement->getStatut()
+            && $signalement->getAffectations()->filter(function (Affectation $affectation) use ($user) {
+                return $affectation->getPartner()->getId() === $user->getPartner()->getId();
+            })->count() > 0 || $user->isTerritoryAdmin();
     }
 
     private function canView(mixed $comment, User $user): bool
@@ -53,5 +60,14 @@ class SuiviVoter extends Voter
         }
 
         return true;
+    }
+
+    private function canDelete(mixed $comment, User $user): bool
+    {
+        if ($user->isSuperAdmin()) {
+            return true;
+        }
+
+        return false;
     }
 }
