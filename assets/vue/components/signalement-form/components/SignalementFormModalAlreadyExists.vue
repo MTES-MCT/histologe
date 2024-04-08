@@ -1,11 +1,11 @@
 <template>
-  <dialog aria-labelledby="fr-modal-title-modal-already-exists" role="dialog" id="fr-modal-already-exists" class="fr-modal">
+  <dialog aria-labelledby="fr-modal-title-modal-already-exists" role="dialog" id="fr-modal-already-exists" class="fr-modal signalement-form-modal-already-exists">
     <div class="fr-container fr-container--fluid fr-container-md">
       <div class="fr-grid-row fr-grid-row--center">
         <div class="fr-col-12 fr-col-md-8 fr-col-lg-6">
           <div class="fr-modal__body">
             <div class="fr-modal__header">
-              <button class="fr-btn--close fr-btn" title="Fermer la fenêtre modale" aria-controls="fr-modal-already-exists">Fermer</button>
+              <button class="fr-btn--close fr-btn" title="Fermer la fenêtre modale" aria-controls="fr-modal-already-exists" id="fr-modal-already-exists-close">Fermer</button>
             </div>
             <div class="fr-modal__content" v-if="formStore.alreadyExists.type==='signalement'">
               <h1 id="fr-modal-title-modal-already-exists" class="fr-modal__title"><span v-if="formStore.alreadyExists.signalements?.length === 1">Ce signalement existe déjà</span><span v-else>Ces signalements existent déjà</span></h1>
@@ -22,22 +22,29 @@
               </div>
               <div v-else>
                 Il semblerait que vous ayez déjà déposé plusieurs signalements pour le logement situé <strong>{{ formStore.data.adresse_logement_adresse }}</strong>.<br><br>
-                <div v-for="signalement in formStore.alreadyExists.signalements" v-bind:key="signalement.uuid">
-                  Déposé le {{ formatDate(signalement.created_at) }} pour le compte de <span v-if="signalement.prenom_occupant !== null">{{ signalement.prenom_occupant }}</span> <span v-if="signalement.nom_occupant !== null">{{ signalement.nom_occupant }}</span>
-                  (<span v-if="signalement.num_appart_occupant !== null">Numéro d'appartement : {{ signalement.num_appart_occupant }}</span><span v-if="signalement.escalier_occupant !== null">Escalier : {{ signalement.escalier_occupant }}</span>
-                  <span v-if="signalement.etage_occupant !== null">Etage : {{ signalement.etage_occupant }}</span><span v-if="signalement.adresse_autre_occupant !== null">Autre : {{ signalement.adresse_autre_occupant }}</span>)<br><br>
-                  <button class="fr-btn" @click="selectedSignalementUuid = signalement.uuid">
-                    Ah, c'est ce signalement !
-                  </button>
-                </div>
-                Ces signalements sont en cours de traitement.<br>
-                Vous pouvez les compléter depuis votre page de suivi ou créer un nouveau signalement.
-                <br>
-                <br>
-                Souhaitez-vous compléter un des signalements existants ou en créer un nouveau ?
+                <fieldset class="fr-fieldset" id="radio-hint-element" aria-labelledby="radio-hint-element-legend radio-hint-element-messages">
+                  <legend class="fr-fieldset__legend--regular fr-fieldset__legend" id="radio-hint-element-legend">
+                    Pour compléter un des signalements ci-dessous, sélectionnez le signalement puis cliquez sur le bouton "Recevoir mon lien de suivi".
+                  </legend>
+                  <div class="fr-fieldset__element" v-for="signalement in formStore.alreadyExists.signalements" :key="signalement.uuid">
+                    <div class="fr-radio-group">
+                      <input type="radio" :id="'selected-signalement-' + signalement.uuid" name="selectedSignalement" :value="signalement.uuid" @change="selectedSignalementUuid = signalement.uuid">
+                      <label class="fr-label" :for="'selected-signalement-' + signalement.uuid" >
+                        {{ signalementLabel(signalement) }}
+                      </label>
+                    </div>
+                  </div>
+                </fieldset>
+                <SignalementFormWarning
+                  v-if="errorMessage !== ''"
+                  id="fr-modal-already-exists-warning"
+                  :label="errorMessage"
+                >
+                </SignalementFormWarning>
+                Souhaitez-vous compléter le signalement sélectionné ou en créer un nouveau ?
               </div>
               <SignalementFormWarning
-                id="fr-modal-already-exists-warning"
+                id="fr-modal-already-exists-info"
                 label="Créer un nouveau signalement pour le même logement risque de ralentir la procédure."
               >
               </SignalementFormWarning>
@@ -63,7 +70,7 @@
             <div class="fr-modal__footer" v-if="formStore.alreadyExists.type==='signalement'">
               <ul class="fr-btns-group fr-btns-group--center fr-btns-group--inline-reverse fr-btns-group--inline-lg fr-btns-group--icon-left">
                 <li>
-                  <button class="fr-btn" aria-controls="fr-modal-already-exists" @click="getLienSuivi">
+                  <button class="fr-btn" @click="getLienSuivi">
                     Recevoir mon lien de suivi
                   </button>
                 </li>
@@ -123,13 +130,21 @@ export default defineComponent({
       requests.sendMailContinueFromDraft(this.gotoValidationScreen)
     },
     getLienSuivi () {
+      this.errorMessage = ''
       if (this.selectedSignalementUuid === null) {
-        if (this.formStore.alreadyExists.signalements) {
+        if (this.formStore.alreadyExists.signalements && formStore.alreadyExists.signalements?.length === 1) {
           this.selectedSignalementUuid = this.formStore.alreadyExists.signalements[0]?.uuid
+        } else {
+          this.errorMessage = 'Merci de sélectionner un signalement'
         }
       }
-      console.log('Lien de suivi pour le signalement avec UUID :', this.selectedSignalementUuid)
-      requests.sendMailGetLienSuivi(this.selectedSignalementUuid, this.gotoValidationScreen)
+      if (this.selectedSignalementUuid !== null) {
+        requests.sendMailGetLienSuivi(this.selectedSignalementUuid, this.gotoValidationScreen)
+        const link = document.getElementById('fr-modal-already-exists-close')
+        if (link) {
+          link.click()
+        }
+      }
     },
     gotoValidationScreen (requestResponse: any) {
       if (requestResponse && requestResponse.success === true) {
@@ -168,10 +183,53 @@ export default defineComponent({
         return `${day}/${month}/${year} à ${hours}:${minutes}`
       }
       return ''
+    },
+    signalementLabel (signalement: any) {
+      let label = 'Signalement déposé le ' + this.formatDate(signalement.created_at) + ' pour le compte de '
+      if (signalement.prenom_occupant !== null) {
+        label += signalement.prenom_occupant + ' '
+      }
+      if (signalement.nom_occupant !== null) {
+        label += signalement.nom_occupant
+      }
+      label += ' ( '
+      if (signalement.num_appart_occupant !== null) {
+        label += 'Numéro d\'appartement : ' + signalement.num_appart_occupant
+      }
+      if (signalement.escalier_occupant !== null) {
+        label += 'Escalier : ' + signalement.escalier_occupant
+      }
+      if (signalement.etage_occupant !== null) {
+        label += 'Etage : ' + signalement.etage_occupant
+      }
+      if (signalement.adresse_autre_occupant !== null) {
+        label += 'Autre : ' + signalement.adresse_autre_occupant
+      }
+      label += ' )'
+      return label
     }
   }
 })
 </script>
 
 <style>
+  .signalement-form-modal-already-exists .fr-radio-group {
+    width: 100%;
+    max-width: 500px;
+    padding: 1rem;
+    border: 1px solid var(--border-disabled-grey);
+    background-color: var(--grey-1000-50);
+  }
+  .signalement-form-modal-already-exists .fr-radio-group:hover {
+    background-color: var(--grey-1000-50-hover);
+  }
+  .signalement-form-modal-already-exists .fr-radio-group.is-checked {
+    border: 1px solid rgb(0, 0, 145);
+  }
+
+  @media (max-width: 48em) {
+    .signalement-form-modal-already-exists .fr-fieldset__element.item-divided {
+      flex-basis: content;
+    }
+  }
 </style>
