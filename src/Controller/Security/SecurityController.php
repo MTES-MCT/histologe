@@ -56,13 +56,12 @@ class SecurityController extends AbstractController
             } elseif ('resize' == $variant && $fileStorage->fileExists($variantNames[ImageManipulationHandler::SUFFIX_RESIZE])) {
                 $filename = $variantNames[ImageManipulationHandler::SUFFIX_RESIZE];
             }
+            if (!$fileStorage->fileExists($filename)) {
+                throw new \Exception('File "'.$filename.'" not found');
+            }
             $tmpFilepath = $this->getParameter('uploads_tmp_dir').$filename;
             $bucketFilepath = $this->getParameter('url_bucket').'/'.$filename;
-
             $content = file_get_contents($bucketFilepath);
-            if (false === $content) {
-                throw new \Exception('File "'.$bucketFilepath.'" not found');
-            }
             file_put_contents($tmpFilepath, $content);
             $file = new File($tmpFilepath);
 

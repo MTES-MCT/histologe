@@ -563,9 +563,12 @@ class SignalementRepository extends ServiceEntityRepository
                 ->setParameter('partner', $partnerToExclude);
         }
 
-        $usersEmail = array_map(function ($value) {
-            return $value['email'];
-        }, $queryBuilder->getQuery()->getArrayResult());
+        $usersEmail = [];
+        foreach ($queryBuilder->getQuery()->getArrayResult() as $value) {
+            if ($value['email'] && !\in_array($value['email'], $usersEmail)) {
+                $usersEmail[] = $value['email'];
+            }
+        }
 
         return $usersEmail;
     }
@@ -580,9 +583,12 @@ class SignalementRepository extends ServiceEntityRepository
             ->where('s.id = :signalement_id')
             ->setParameter('signalement_id', $signalementId);
 
-        $partnersEmail = array_map(function ($value) {
-            return $value['email'];
-        }, $queryBuilder->getQuery()->getArrayResult());
+        $partnersEmail = [];
+        foreach ($queryBuilder->getQuery()->getArrayResult() as $value) {
+            if ($value['email'] && !\in_array($value['email'], $partnersEmail)) {
+                $partnersEmail[] = $value['email'];
+            }
+        }
 
         return $partnersEmail;
     }
