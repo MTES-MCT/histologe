@@ -14,7 +14,6 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\String\Slugger\SluggerInterface;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
 
 #[AsCommand(
@@ -32,7 +31,6 @@ class LoadEpciCommand extends Command
         private CommuneRepository $communeRepository,
         private EpciRepository $epciRepository,
         private EntityManagerInterface $entityManager,
-        private SluggerInterface $slugger,
     ) {
         parent::__construct();
     }
@@ -56,7 +54,7 @@ class LoadEpciCommand extends Command
             if (!$epci) {
                 $epci = (new Epci())
                     ->setNom($epciNom)
-                    ->setSlug($this->slugger->slug($epciNom));
+                    ->setCode($epciItem['code']);
             }
             $response = $this->httpClient->request(
                 'GET',
@@ -71,10 +69,10 @@ class LoadEpciCommand extends Command
                         $epci->addCommune($commune);
                     }
                 }
-                $this->entityManager->flush();
             } else {
                 $io->error(sprintf('API failed for: %s', $epciCommunesUrl));
             }
+            $this->entityManager->persist($epci);
             $progressBar->advance();
         }
 

@@ -9,7 +9,7 @@ use Doctrine\ORM\Mapping as ORM;
 use Doctrine\ORM\Mapping\UniqueConstraint;
 
 #[ORM\Entity(repositoryClass: EpciRepository::class)]
-#[UniqueConstraint(name: 'slug_unique', columns: ['slug'])]
+#[UniqueConstraint(name: 'code_unique', columns: ['code'])]
 class Epci
 {
     #[ORM\Id]
@@ -18,10 +18,10 @@ class Epci
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
-    private ?string $nom = null;
+    private ?string $code = null;
 
     #[ORM\Column(length: 255)]
-    private ?string $slug = null;
+    private ?string $nom = null;
 
     #[ORM\OneToMany(mappedBy: 'epci', targetEntity: Commune::class)]
     private Collection $communes;
@@ -48,14 +48,14 @@ class Epci
         return $this;
     }
 
-    public function getSlug(): ?string
+    public function getCode(): ?string
     {
-        return $this->slug;
+        return $this->code;
     }
 
-    public function setSlug(string $slug): static
+    public function setCode(?string $code): static
     {
-        $this->slug = strtolower($slug);
+        $this->code = $code;
 
         return $this;
     }

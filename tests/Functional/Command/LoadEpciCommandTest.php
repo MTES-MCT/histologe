@@ -11,7 +11,6 @@ use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use Symfony\Component\Console\Tester\CommandTester;
 use Symfony\Component\HttpClient\MockHttpClient;
 use Symfony\Component\HttpClient\Response\MockResponse;
-use Symfony\Component\String\Slugger\SluggerInterface;
 
 class LoadEpciCommandTest extends KernelTestCase
 {
@@ -31,8 +30,7 @@ class LoadEpciCommandTest extends KernelTestCase
             self::getContainer()->get(TerritoryRepository::class),
             self::getContainer()->get(CommuneRepository::class),
             self::getContainer()->get(EpciRepository::class),
-            $entityManager,
-            self::getContainer()->get(SluggerInterface::class)
+            $entityManager
         );
 
         $commandTester = new CommandTester($command);
