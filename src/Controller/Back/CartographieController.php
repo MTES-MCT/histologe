@@ -50,7 +50,7 @@ class CartographieController extends AbstractController
         }
 
         $userToFilterCities = $user;
-        if ($this->isGranted('ROLE_ADMIN') || $this->isGranted('ROLE_ADMIN_TERRITORY')) {
+        if ($this->isGranted('ROLE_ADMIN')) {
             $userToFilterCities = null;
         }
 
