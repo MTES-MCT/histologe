@@ -56,14 +56,6 @@ class SignalementDraftManager extends AbstractManager
         $this->save($signalementDraft);
 
         if (SignalementDraftStatus::EN_SIGNALEMENT === $signalementDraft->getStatus() && isset($signalement)) {
-            if (ProfileDeclarant::LOCATAIRE === $signalement->getProfileDeclarant()
-                || ProfileDeclarant::BAILLEUR_OCCUPANT === $signalementDraft->getProfileDeclarant()
-            ) {
-                $toRecipient = $signalement->getMailDeclarant();
-            } else {
-                $toRecipient = $signalement->getMailOccupant();
-            }
-
             return [
                 'uuid' => $signalementDraft->getUuid(),
                 'signalementReference' => $signalement->getReference(),
@@ -71,7 +63,7 @@ class SignalementDraftManager extends AbstractManager
                     'front_suivi_signalement',
                     [
                     'code' => $signalement->getCodeSuivi(),
-                    'from' => $toRecipient,
+                    'from' => $signalement->getMailDeclarant(),
                 ],
                     UrlGeneratorInterface::ABSOLUTE_URL
                 ),
