@@ -7,6 +7,7 @@ use App\Repository\FileRepository;
 use App\Service\ImageManipulationHandler;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: FileRepository::class)]
 class File
@@ -56,7 +57,8 @@ class File
     #[ORM\Column]
     private ?bool $isVariantsGenerated = null;
 
-    #[ORM\Column(type: 'text', nullable: true)]
+    #[ORM\Column(type: 'text', nullable: true, length: 250)]
+    #[Assert\Length(max: 250)]
     private ?string $description;
 
     #[ORM\Column]
