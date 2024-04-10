@@ -59,7 +59,11 @@
             {% endif %}
         </div>
 
-        <div class="fr-col-7 bloc-suivi-content-row fr-pl-3v">
+        {% if is_granted('ROLE_ADMIN') %}
+            <div class="fr-col-6 bloc-suivi-content-row fr-pl-3v">
+        {% else %}
+            <div class="fr-col-7 bloc-suivi-content-row fr-pl-3v">
+        {% endif %}
             {{ suivi.description
                 |replace({'&t=___TOKEN___':'/'~signalement.uuid})
                 |replace({'?t=___TOKEN___':'/'~signalement.uuid})
@@ -74,6 +78,16 @@
                 <span class="fr-badge fr-badge--no-icon" title="Suivi interne">Suivi interne</span>
             {% endif %}
         </div>
+        {% if is_granted('ROLE_ADMIN') %}
+            <div class="fr-col-1 fr-text--right">
+                {% if suivi.deletedAt is null %}
+                <button title="Supprimer le suivi"
+                    data-delete="{{ path('back_signalement_delete_suivi',{uuid:signalement.uuid,suivi:suivi.id}) }}"
+                    data-token="{{ csrf_token('signalement_delete_suivi_'~signalement.id) }}"
+                    class="fr-btn fr-btn--sm fr-btn--secondary fr-fi-delete-line suivi-row-delete"></button>
+                {% endif %}
+            </div>            
+        {% endif %}
     </div>
 {% endfor %}
 

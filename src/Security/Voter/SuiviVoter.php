@@ -25,7 +25,11 @@ class SuiviVoter extends Voter
     {
         /** @var User $user */
         $user = $token->getUser();
-        if (!$user instanceof UserInterface || !$user->isSuperAdmin() && $subject->getTerritory() !== $user->getTerritory()) {
+        if (
+            !$user instanceof UserInterface
+            || !$user->isSuperAdmin()
+            && $subject->getTerritory() !== $user->getTerritory()
+        ) {
             return false;
         }
         if ($user->isSuperAdmin()) {
@@ -41,9 +45,10 @@ class SuiviVoter extends Voter
 
     private function canCreate(Signalement $signalement, User $user): bool
     {
-        return Signalement::STATUS_ACTIVE === $signalement->getStatut() && $signalement->getAffectations()->filter(function (Affectation $affectation) use ($user) {
-            return $affectation->getPartner()->getId() === $user->getPartner()->getId();
-        })->count() > 0 || $user->isTerritoryAdmin();
+        return Signalement::STATUS_ACTIVE === $signalement->getStatut()
+            && $signalement->getAffectations()->filter(function (Affectation $affectation) use ($user) {
+                return $affectation->getPartner()->getId() === $user->getPartner()->getId();
+            })->count() > 0 || $user->isTerritoryAdmin();
     }
 
     private function canView(mixed $comment, User $user): bool

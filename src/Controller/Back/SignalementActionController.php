@@ -8,6 +8,7 @@ use App\Entity\Signalement;
 use App\Entity\Suivi;
 use App\Entity\Tag;
 use App\Entity\User;
+use App\Repository\SuiviRepository;
 use App\Service\Mailer\NotificationMail;
 use App\Service\Mailer\NotificationMailerRegistry;
 use App\Service\Mailer\NotificationMailerType;
@@ -20,6 +21,7 @@ use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 #[Route('/bo/signalements')]
 class SignalementActionController extends AbstractController
@@ -114,7 +116,38 @@ class SignalementActionController extends AbstractController
             $this->addFlash('error', 'Une erreur est survenu lors de la publication');
         }
 
-        return $this->redirect($this->generateUrl('back_signalement_view', ['uuid' => $signalement->getUuid()]).'#suivis');
+        return $this->redirect(
+            $this->generateUrl('back_signalement_view', ['uuid' => $signalement->getUuid()]).'#suivis'
+        );
+    }
+
+    #[Route('/{uuid}/suivi/delete', name: 'back_signalement_delete_suivi', methods: 'POST')]
+    #[IsGranted('ROLE_ADMIN')]
+    public function deleteSuivi(
+        Request $request,
+        Signalement $signalement,
+        SuiviRepository $suiviRepository,
+        ManagerRegistry $doctrine,
+    ): RedirectResponse {
+        if ($this->isCsrfTokenValid('signalement_delete_suivi_'.$signalement->getId(), $request->get('_token'))
+            && $idSuivi = $request->get('suivi')
+        ) {
+            $suivi = $suiviRepository->findOneBy(['id' => $idSuivi]);
+            if ($suivi) {
+                $suivi->setDeletedAt(new DateTimeImmutable());
+                $suivi->setDeletedBy($this->getUser());
+                $doctrine->getManager()->persist($suivi);
+                $doctrine->getManager()->flush();
+
+                $this->addFlash('success', 'Le suivi a été supprimé.');
+            } else {
+                $this->addFlash('success', 'Ce suivi n\'existe pas.');
+            }
+        }
+
+        return $this->redirect(
+            $this->generateUrl('back_signalement_view', ['uuid' => $signalement->getUuid()]).'#suivis'
+        );
     }
 
     #[Route('/{uuid}/reopen', name: 'back_signalement_reopen')]
