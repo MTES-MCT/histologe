@@ -120,7 +120,7 @@ export const requests = {
   },
 
   sendMailContinueFromDraft (functionReturn: Function) {
-    const url = formStore.props.ajaxurlSendMailContinueFromDraft.replace('uuid', formStore.alreadyExists.uuid)
+    const url = formStore.props.ajaxurlSendMailContinueFromDraft.replace('uuid', formStore.alreadyExists.uuidDraft)
     requests.doRequestPost(url, '', functionReturn, undefined)
   },
 

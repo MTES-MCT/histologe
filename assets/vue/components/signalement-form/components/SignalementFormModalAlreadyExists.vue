@@ -10,10 +10,8 @@
             <div class="fr-modal__content" v-if="formStore.alreadyExists.type==='signalement'">
               <h1 id="fr-modal-title-modal-already-exists" class="fr-modal__title"><span v-if="formStore.alreadyExists.signalements?.length === 1">Ce signalement existe déjà</span><span v-else>Ces signalements existent déjà</span></h1>
               <div v-if="formStore.data.profil === 'bailleur_occupant' || formStore.data.profil === 'locataire' || formStore.alreadyExists.signalements?.length === 1">
-                Il semblerait que vous ayez déjà déposé un signalement pour le logement situé <strong>{{ formStore.data.adresse_logement_adresse }}</strong>
-                pour le compte de
-                <span v-if="formStore.alreadyExists.signalements && formStore.alreadyExists.signalements[0]?.prenom_occupant !== null">{{ formStore.alreadyExists.signalements[0]?.prenom_occupant }}</span>
-                <span v-if="formStore.alreadyExists.signalements && formStore.alreadyExists.signalements[0]?.nom_occupant !== null">{{ formStore.alreadyExists.signalements[0]?.nom_occupant }}</span>.
+                Il semblerait que vous ayez déjà déposé un signalement pour le logement situé <strong>{{ formStore.data.adresse_logement_adresse }}</strong><div class=""></div>
+                <span v-if="formStore.data.profil !== 'bailleur_occupant' && formStore.data.profil !== 'locataire' && formStore.alreadyExists.signalements">{{ signalementLabel(formStore.alreadyExists.signalements[0]) }}</span>
                 Ce signalement est en cours de traitement.<br>
                 Vous pouvez le compléter depuis votre page de suivi ou créer un nouveau signalement.
                 <br>

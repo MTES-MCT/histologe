@@ -1110,12 +1110,17 @@ class SignalementRepository extends ServiceEntityRepository
         string $address,
         string $zipcode,
         string $city,
+        bool $isTiersDeclarant = true
     ): array {
-        $qb = $this->createQueryBuilder('s')
-            ->andWhere('s.mailDeclarant = :email OR s.mailOccupant = :email')->setParameter('email', $email)
-            ->andWhere('s.adresseOccupant = :address')->setParameter('address', $address)
+        $qb = $this->createQueryBuilder('s');
+        if ($isTiersDeclarant) {
+            $qb->andWhere('s.mailDeclarant = :email')->setParameter('email', $email);
+        } else {
+            $qb->andWhere('s.mailOccupant = :email')->setParameter('email', $email);
+        }
+        $qb->andWhere('LOWER(s.adresseOccupant) = :address')->setParameter('address', strtolower($address))
             ->andWhere('s.cpOccupant = :zipcode')->setParameter('zipcode', $zipcode)
-            ->andWhere('s.villeOccupant = :city')->setParameter('city', $city)
+            ->andWhere('LOWER(s.villeOccupant) = :city')->setParameter('city', strtolower($city))
             ->andWhere('s.statut IN (:statusSignalement)')
             ->setParameter(
                 'statusSignalement',
@@ -1126,6 +1131,12 @@ class SignalementRepository extends ServiceEntityRepository
                 ]
             );
 
-        return $qb->addOrderBy('s.createdAt', 'DESC')->getQuery()->getResult();
+        if ($isTiersDeclarant) {
+            $qb->addOrderBy('s.createdAt', 'DESC');
+        } else {
+            $qb->addOrderBy('s.lastSuiviAt', 'DESC');
+        }
+
+        return $qb->getQuery()->getResult();
     }
 }

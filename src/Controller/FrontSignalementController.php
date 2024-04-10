@@ -107,29 +107,13 @@ class FrontSignalementController extends AbstractController
         );
         if (0 === $errors->count()) {
             $isTiersDeclarant = $signalementDraftFactory->isTiersDeclarant($signalementDraftRequest);
-            if ($isTiersDeclarant) {
-                $existingSignalements = $signalementRepository->findAllForEmailAndAddress(
-                    $signalementDraftFactory->getEmailDeclarant($signalementDraftRequest),
-                    $signalementDraftRequest->getAdresseLogementAdresseDetailNumero(),
-                    $signalementDraftRequest->getAdresseLogementAdresseDetailCodePostal(),
-                    $signalementDraftRequest->getAdresseLogementAdresseDetailCommune(),
-                );
-            } else {
-                $existingSignalement = $signalementRepository->findOneForEmailAndAddress(
-                    $signalementDraftFactory->getEmailDeclarant($signalementDraftRequest),
-                    $signalementDraftRequest->getAdresseLogementAdresseDetailNumero(),
-                    $signalementDraftRequest->getAdresseLogementAdresseDetailCodePostal(),
-                    $signalementDraftRequest->getAdresseLogementAdresseDetailCommune(),
-                );
-                if (
-                    null !== $existingSignalement
-                    && Signalement::STATUS_CLOSED !== $existingSignalement->getStatut()
-                    && Signalement::STATUS_REFUSED !== $existingSignalement->getStatut()
-                ) {
-                    $existingSignalements = [];
-                    $existingSignalements[] = $existingSignalement;
-                }
-            }
+            $existingSignalements = $signalementRepository->findAllForEmailAndAddress(
+                $signalementDraftFactory->getEmailDeclarant($signalementDraftRequest),
+                $signalementDraftRequest->getAdresseLogementAdresseDetailNumero(),
+                $signalementDraftRequest->getAdresseLogementAdresseDetailCodePostal(),
+                $signalementDraftRequest->getAdresseLogementAdresseDetailCommune(),
+                $isTiersDeclarant
+            );
 
             $dataToHash = $signalementDraftFactory->getEmailDeclarant($signalementDraftRequest);
             $dataToHash .= $signalementDraftRequest->getAdresseLogementAdresse();
@@ -171,7 +155,7 @@ class FrontSignalementController extends AbstractController
                 return $this->json([
                     'already_exists' => true,
                     'type' => 'draft',
-                    'uuid' => $existingSignalementDraft->getUuid(),
+                    'uuid_draft' => $existingSignalementDraft->getUuid(),
                     'created_at' => $existingSignalementDraft->getCreatedAt(),
                     'updated_at' => $existingSignalementDraft->getUpdatedAt(),
                 ]);
@@ -270,14 +254,11 @@ class FrontSignalementController extends AbstractController
         Signalement $signalement,
         Request $request
     ): Response {
-        if (
-            $request->isMethod('POST')
-            && $signalement // TODO : vérifier qu'on reçoit bien le bon signalement
-        ) {
+        if ($request->isMethod('POST')) {
             $success = $notificationMailerRegistry->send(
                 new NotificationMail(
                     type: NotificationMailerType::TYPE_SIGNALEMENT_LIEN_SUIVI,
-                    to: $signalement->getMailUsagers(), // TODO : choisir le bon mail ?
+                    to: $signalement->isTiersDeclarant() ? $signalement->getMailDeclarant() : $signalement->getMailOccupant(),
                     signalement: $signalement,
                 )
             );
