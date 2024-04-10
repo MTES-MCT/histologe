@@ -21,6 +21,7 @@ use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 #[Route('/bo/signalements')]
 class SignalementActionController extends AbstractController
@@ -121,20 +122,20 @@ class SignalementActionController extends AbstractController
     }
 
     #[Route('/{uuid}/suivi/delete', name: 'back_signalement_delete_suivi', methods: 'POST')]
+    #[IsGranted('ROLE_ADMIN')]
     public function deleteSuivi(
         Request $request,
         Signalement $signalement,
         SuiviRepository $suiviRepository,
         ManagerRegistry $doctrine,
     ): RedirectResponse {
-        $this->denyAccessUnlessGranted('COMMENT_DELETE', $signalement);
-        if ($this->isCsrfTokenValid('signalement_delete_suivi_'.$signalement->getId(), $request->get('_token'))) {
-            $idSuivi = $request->get('suivi');
+        if ($this->isCsrfTokenValid('signalement_delete_suivi_'.$signalement->getId(), $request->get('_token'))
+            && $idSuivi = $request->get('suivi')
+        ) {
             $suivi = $suiviRepository->findOneBy(['id' => $idSuivi]);
             if ($suivi) {
-                $content = 'Ce suivi a été supprimé par un administrateur le '
-                    .(new DateTimeImmutable())->format('d/m/Y');
-                $suivi->setDescription($content);
+                $suivi->setDeletedAt(new DateTimeImmutable());
+                $suivi->setDeletedBy($this->getUser());
                 $doctrine->getManager()->persist($suivi);
                 $doctrine->getManager()->flush();
 

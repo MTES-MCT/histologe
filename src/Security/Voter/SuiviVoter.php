@@ -14,11 +14,10 @@ class SuiviVoter extends Voter
 {
     public const CREATE = 'COMMENT_CREATE';
     public const VIEW = 'COMMENT_VIEW';
-    public const DELETE = 'COMMENT_DELETE';
 
     protected function supports(string $attribute, $subject): bool
     {
-        return \in_array($attribute, [self::CREATE, self::VIEW, self::DELETE])
+        return \in_array($attribute, [self::CREATE, self::VIEW])
             && ($subject instanceof Suivi || $subject instanceof Signalement);
     }
 
@@ -40,7 +39,6 @@ class SuiviVoter extends Voter
         return match ($attribute) {
             self::CREATE => $this->canCreate($subject, $user),
             self::VIEW => $this->canView($subject, $user),
-            self::DELETE => $this->canDelete($subject, $user),
             default => false,
         };
     }
@@ -60,14 +58,5 @@ class SuiviVoter extends Voter
         }
 
         return true;
-    }
-
-    private function canDelete(mixed $comment, User $user): bool
-    {
-        if ($user->isSuperAdmin()) {
-            return true;
-        }
-
-        return false;
     }
 }
