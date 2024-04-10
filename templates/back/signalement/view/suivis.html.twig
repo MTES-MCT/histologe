@@ -59,7 +59,7 @@
             {% endif %}
         </div>
 
-        {% if is_granted('ROLE_ADMIN') %}
+        {% if is_granted('ROLE_ADMIN') and suivi.deletedAt is null %}
             <div class="fr-col-6 bloc-suivi-content-row fr-pl-3v">
         {% else %}
             <div class="fr-col-7 bloc-suivi-content-row fr-pl-3v">
