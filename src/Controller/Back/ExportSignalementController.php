@@ -38,9 +38,11 @@ class ExportSignalementController extends AbstractController
                 );
                 $response->headers->set('Content-Type', 'text/csv');
                 $response->headers->set('Content-Disposition', $disposition);
+                restore_error_handler();
 
                 return $response->send();
-            } catch (\Exception $e) {
+            } catch (\ErrorException $e) {
+                restore_error_handler();
                 throw new \Exception('Erreur lors de l\'export du fichier par l\'user "'.$user->getId().'" : '.$e->getMessage().' - '.print_r($filters, true));
             }
         }
