@@ -78,7 +78,7 @@
                 <span class="fr-badge fr-badge--no-icon" title="Suivi interne">Suivi interne</span>
             {% endif %}
         </div>
-        {% if is_granted('ROLE_ADMIN') %}
+        {% if is_granted('ROLE_ADMIN') and suivi.deletedAt is null %}
             <div class="fr-col-1 fr-text--right">
                 <button title="Supprimer le suivi"
                     data-delete="{{ path('back_signalement_delete_suivi',{uuid:signalement.uuid,suivi:suivi.id}) }}"
