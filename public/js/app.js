@@ -336,8 +336,11 @@ document?.querySelectorAll('[data-delete]')?.forEach(actionBtn => {
                 body: formData,
             }).then(r => {
                 if (r.ok) {
-                    actionBtn.closest(className).remove()
-                    if (event.target.classList.contains('partner-row-delete')) {
+                    if (className && className !== undefined && className !== null){
+                        actionBtn?.closest(className).remove()
+                    }
+                    if (event.target.classList.contains('partner-row-delete')
+                        || event.target.classList.contains('suivi-row-delete')) {
                         window.location.reload(true)
                     }
                 }

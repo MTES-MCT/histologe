@@ -22,6 +22,7 @@ class Suivi
     public const DESCRIPTION_MOTIF_CLOTURE_ALL = 'Le signalement a été cloturé pour tous';
     public const DESCRIPTION_MOTIF_CLOTURE_PARTNER = 'Le signalement a été cloturé pour';
     public const DESCRIPTION_SIGNALEMENT_VALIDE = 'Signalement validé';
+    public const DESCRIPTION_DELETED = 'Ce suivi a été supprimé par un administrateur le ';
 
     public const ARRET_PROCEDURE = 'arret-procedure';
     public const POURSUIVRE_PROCEDURE = 'poursuivre-procedure';
@@ -55,6 +56,13 @@ class Suivi
     private ?string $context = null;
 
     private bool $sendMail = true;
+
+    #[ORM\Column(type: 'datetime_immutable', nullable: true)]
+    private $deletedAt;
+
+    #[ORM\ManyToOne(targetEntity: User::class)]
+    #[ORM\JoinColumn(nullable: true)]
+    private $deletedBy;
 
     public function __construct()
     {
@@ -93,6 +101,10 @@ class Suivi
 
     public function getDescription(): ?string
     {
+        if (null !== $this->deletedAt) {
+            return self::DESCRIPTION_DELETED.' '.$this->deletedAt->format('d/m/Y');
+        }
+
         return $this->description;
     }
 
@@ -159,6 +171,30 @@ class Suivi
     public function setSendMail(bool $sendMail): self
     {
         $this->sendMail = $sendMail;
+
+        return $this;
+    }
+
+    public function getDeletedAt(): ?DateTimeImmutable
+    {
+        return $this->deletedAt;
+    }
+
+    public function setDeletedAt(DateTimeImmutable $deletedAt): self
+    {
+        $this->deletedAt = $deletedAt;
+
+        return $this;
+    }
+
+    public function getDeletedBy(): ?User
+    {
+        return $this->deletedBy;
+    }
+
+    public function setDeletedBy(?User $deletedBy): self
+    {
+        $this->deletedBy = $deletedBy;
 
         return $this;
     }
