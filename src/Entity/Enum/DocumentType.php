@@ -55,12 +55,12 @@ enum DocumentType: String
     public static function getSituationList(): array
     {
         return [
-            self::PHOTO_SITUATION->name => self::PHOTO_SITUATION->label(),
-            self::AUTRE->name => self::AUTRE->label(),
             self::SITUATION_FOYER_BAIL->name => self::SITUATION_FOYER_BAIL->label(),
             self::SITUATION_FOYER_DPE->name => self::SITUATION_FOYER_DPE->label(),
             self::SITUATION_FOYER_ETAT_DES_LIEUX->name => self::SITUATION_FOYER_ETAT_DES_LIEUX->label(),
             self::SITUATION_DIAGNOSTIC_PLOMB_AMIANTE->name => self::SITUATION_DIAGNOSTIC_PLOMB_AMIANTE->label(),
+            self::PHOTO_SITUATION->name => self::PHOTO_SITUATION->label(),
+            self::AUTRE->name => self::AUTRE->label(),
         ];
     }
 
