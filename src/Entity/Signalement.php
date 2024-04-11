@@ -2301,12 +2301,23 @@ class Signalement
 
     public function getDesordreCritereSlugs()
     {
-        return $this->getDesordreCriteres()->map(fn (DesordreCritere $desordreCritere) => $desordreCritere->getSlugCritere())->toArray();
+        return $this->getDesordreCriteres()->map(
+            fn (DesordreCritere $desordreCritere) => $desordreCritere->getSlugCritere()
+        )->toArray();
     }
 
     public function getDesordrePrecisionSlugs()
     {
-        return $this->getDesordrePrecisions()->map(fn (DesordrePrecision $desordrePrecision) => $desordrePrecision->getDesordrePrecisionSlug())->toArray();
+        return $this->getDesordrePrecisions()->map(
+            fn (DesordrePrecision $desordrePrecision) => $desordrePrecision->getDesordrePrecisionSlug()
+        )->toArray();
+    }
+
+    public function getDesordreCategorieSlugs()
+    {
+        return $this->getDesordreCriteres()->map(
+            fn (DesordreCritere $desordreCritere) => $desordreCritere->getSlugCategorie()
+        )->toArray();
     }
 
     public function getBailleur(): ?Bailleur
