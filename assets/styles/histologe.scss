@@ -627,6 +627,29 @@ div.photos-album {
         text-align: right;
     }
 
+    .photos-album-swipe {
+        background-color: rgb(133, 133, 246);//blue-france-625
+        color: rgb(0, 0, 145);//blue-france-sun-113
+        
+        &:active {
+            background: rgb(177,177,249);//blue-france-625-active
+        }
+        &:hover {
+            background: rgb(198,198,251);//var(--blue-france-625-hover);
+        }
+    }
+    .photos-album-btn-close {
+        background-color: rgb(133, 133, 246);//blue-france-625
+        color: rgb(0, 0, 145);//blue-france-sun-113
+        
+        &:active {
+            background: rgb(177,177,249);//blue-france-625-active
+        }
+        &:hover {
+            background: rgb(198,198,251);//var(--blue-france-625-hover);
+        }
+    }
+
     .photos-album-navigation-container {
         display: flex;
         height: calc(100% - 4rem);
