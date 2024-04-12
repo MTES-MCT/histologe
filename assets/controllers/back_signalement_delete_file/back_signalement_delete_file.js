@@ -12,6 +12,6 @@ document.querySelectorAll('.btn-signalement-file-delete').forEach(swbtn => {
       })
     }
     document.querySelector('.fr-modal-file-delete-filename').innerHTML = target.getAttribute('data-filename')
-    document.querySelector('#fr-modal-file-delete_fileid').value = target.getAttribute('data-file-id')
+    document.querySelector('#file-delete-fileid').value = target.getAttribute('data-file-id')
   })
 })
