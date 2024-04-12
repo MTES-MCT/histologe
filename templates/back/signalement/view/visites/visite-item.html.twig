@@ -112,6 +112,18 @@
                         data-desordreSlug="{{ photo.desordreSlug }}"
                         data-signalement-desordres="{{ criteres | json_encode }}"
                     ></button>
+                {% endif %}                
+                {% if is_granted('FILE_DELETE', photo) %}
+                    {% include '_partials/_modal_file_delete.html.twig' %}
+                    <button class="fr-btn fr-btn--sm fr-btn--secondary fr-background--white fr-fi-delete-line btn-signalement-file-delete"
+                        id="file_delete_{{ photo.id }}" 
+                        title="Supprimer la photo {{ photo.filename }}"
+                        aria-controls="fr-modal-file-delete"
+                        data-fr-opened="false" 
+                        data-filename="{{ photo.filename }}" 
+                        data-type="photo" 
+                        data-file-id="{{ photo.id}}"                     
+                    ></button>
                 {% endif %}
             </div>
         </div>

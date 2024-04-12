@@ -319,8 +319,6 @@ document?.querySelectorAll('[data-delete]')?.forEach(actionBtn => {
             className = '.partner-row-user';
         else if (event.target.classList.contains('situation-critere-delete'))
             className = '.situation-row-critere';
-        else if (event.target.classList.contains('signalement-file-delete'))
-            className = '.signalement-file-item';
         else if (event.target.classList.contains('signalement-row-delete'))
             className = '.signalement-row';
         else if (event.target.classList.contains('partner-row-delete'))
