@@ -11,7 +11,7 @@ final class Version20240410151123 extends AbstractMigration
 {
     public function getDescription(): string
     {
-        return 'Change description column formmat on file';
+        return 'Change description column format on file';
     }
 
     public function up(Schema $schema): void
