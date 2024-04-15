@@ -296,6 +296,7 @@ function initializeUploadModal(
         if (modal.dataset.validated == "true" && modal.dataset.hasChanges == "true") {
             fetch(waitingSuiviRoute).then((response) => {
                 window.location.reload()
+                window.scrollTo(0, 0)
             })
             return true;
         }
