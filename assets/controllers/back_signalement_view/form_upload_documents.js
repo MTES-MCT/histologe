@@ -86,7 +86,7 @@ function initializeUploadModal(
 
     function typeValidation(file) {
         let acceptedType = fileSelectorInput.getAttribute('accept');
-        if (acceptedType == '*') {
+        if (acceptedType == '*/*') {
             return true
         }
         let acceptedTypes = acceptedType.split(',').map((type) => type.trim())
