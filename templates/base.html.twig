@@ -41,14 +41,14 @@
     <link rel="stylesheet" href="{{ asset('build/dsfr/utility/icons/icons-user/icons-user.min.css') }}"/>
     <link rel="stylesheet" href="{{ asset('build/dsfr/utility/icons/icons-weather/icons-weather.min.css') }}"/>
     <link rel="stylesheet" href={{ asset('build/app.css') }}>
-    {% if 'back_cartographie' in app.request.get('_route') or 'back_signalement_view' in app.request.get('_route') %}
-        <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css"/>
-        <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.Default.css"/>
-        <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.css"/>
+    {% if 'back_cartographie' in app.request.get('_route') %}
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet@1.7.1/dist/leaflet.css"/>
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet.markercluster@1.5.3/dist/MarkerCluster.Default.css"/>
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet.markercluster@1.5.3/dist/MarkerCluster.css"/>
     {% endif %}
 
     {% if 'back_signalement_view' in app.request.get('_route') %}
-        <link rel="stylesheet" href="https://unpkg.com/tippy.js@6/themes/light-border.css"/>
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/tippy.js@6/themes/light-border.css"/>
     {% endif %}
 
     {% block stylesheets %}{% endblock %}
@@ -131,13 +131,14 @@
 <script src="{{ asset('js/const.min.js?v='~''|date('YmdH')) }}"></script>
 <script src="{{ asset('js/app.js?v='~''|date('YmdH')) }}"></script>
 
-{% if 'back_cartographie' in app.request.get('_route') or 'back_signalement_view' in app.request.get('_route') %}
-    <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
-    <script src="https://unpkg.com/leaflet.markercluster@1.5.3/dist/leaflet.markercluster.js"></script>
+{% if 'back_cartographie' in app.request.get('_route') %}
+    <script src="https://cdn.jsdelivr.net/npm/leaflet@1.7.1/dist/leaflet.js"></script> 
+    <script src="https://cdn.jsdelivr.net/npm/leaflet.markercluster@1.5.3/dist/leaflet.markercluster.js"></script>
+
 {% endif %}
 {% if 'back_signalement_view' in app.request.get('_route') %}
-    <script src="https://unpkg.com/@popperjs/core@2"></script>
-    <script src="https://unpkg.com/tippy.js@6"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/tippy.js@6/dist/tippy-bundle.umd.js"></script>
 {% endif %}
 
 <script>
