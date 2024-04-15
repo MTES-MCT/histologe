@@ -19,11 +19,28 @@ class MotifClotureStatisticProvider
         return $this->createFullArray($countPerMotifsCloture);
     }
 
-    public function getData(Territory|null $territory, int|null $year): array
-    {
+    public function getData(
+        Territory|null $territory,
+        int|null $year,
+        string $type = 'doughnut'
+    ): array {
         $countPerMotifsCloture = $this->signalementRepository->countByMotifCloture($territory, $year, true);
 
-        return $this->createFullArray($countPerMotifsCloture);
+        if ('doughnut' === $type) {
+            return $this->createFullArray($countPerMotifsCloture);
+        }
+
+        return $this->createArrayBar($countPerMotifsCloture);
+    }
+
+    private function createArrayBar($countPerMotifsCloture): array
+    {
+        $data = [];
+        foreach ($countPerMotifsCloture as $countPerMotifCloture) {
+            $data[$countPerMotifCloture['motifCloture']->label()] = $countPerMotifCloture['count'];
+        }
+
+        return $data;
     }
 
     private function createFullArray($countPerMotifsCloture): array

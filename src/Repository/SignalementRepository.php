@@ -7,6 +7,7 @@ use App\Dto\SignalementAffectationListView;
 use App\Dto\SignalementExport;
 use App\Dto\StatisticsFilters;
 use App\Entity\Affectation;
+use App\Entity\Enum\DesordreCritereZone;
 use App\Entity\Enum\Qualification;
 use App\Entity\Enum\SignalementStatus;
 use App\Entity\Partner;
@@ -188,6 +189,28 @@ class SignalementRepository extends ServiceEntityRepository
             ->getSingleScalarResult();
     }
 
+    public function countRefused(
+        bool $removeImported = false,
+        bool $removeArchived = false
+    ): int {
+        $qb = $this->createQueryBuilder('s');
+        $qb->select('COUNT(s.id)');
+        $qb->andWhere('s.statut = :refusedStatus')
+            ->setParameter('refusedStatus', Signalement::STATUS_REFUSED);
+
+        if ($removeArchived) {
+            $qb->andWhere('s.statut != :statutArchived')
+                ->setParameter('statutArchived', Signalement::STATUS_ARCHIVED);
+        }
+
+        if ($removeImported) {
+            $qb->andWhere('s.isImported IS NULL OR s.isImported = 0');
+        }
+
+        return $qb->getQuery()
+            ->getSingleScalarResult();
+    }
+
     public function countByTerritory(bool $removeImported = false): array
     {
         $qb = $this->createQueryBuilder('s');
@@ -259,6 +282,44 @@ class SignalementRepository extends ServiceEntityRepository
         }
 
         $qb->groupBy('sit.id');
+
+        return $qb->getQuery()
+            ->getResult();
+    }
+
+    public function countByDesordresCriteres(
+        ?Territory $territory,
+        ?int $year,
+        bool $removeImported = false,
+        ?DesordreCritereZone $desordreCritereZone = null,
+    ): array {
+        $qb = $this->createQueryBuilder('s');
+        $qb->select('COUNT(s.id) AS count, desordreCriteres.id, desordreCriteres.labelCritere')
+            ->leftJoin('s.desordreCriteres', 'desordreCriteres')
+
+            ->where('s.statut != :statutArchived')
+            ->setParameter('statutArchived', Signalement::STATUS_ARCHIVED)
+            ->andWhere('s.createdFrom IS NOT NULL');
+
+        if ($removeImported) {
+            $qb->andWhere('s.isImported IS NULL OR s.isImported = 0');
+        }
+
+        if ($territory) {
+            $qb->andWhere('s.territory = :territory')->setParameter('territory', $territory);
+        }
+        if ($year) {
+            $qb->andWhere('YEAR(s.createdAt) = :year')->setParameter('year', $year);
+        }
+
+        if ($desordreCritereZone) {
+            $qb->andWhere('desordreCriteres.zoneCategorie = :desordreCritereZone')
+            ->setParameter('desordreCritereZone', $desordreCritereZone->value);
+        }
+
+        $qb->groupBy('desordreCriteres.id')
+        ->orderBy('COUNT(s.id)', 'DESC')
+        ->setMaxResults(5);
 
         return $qb->getQuery()
             ->getResult();
