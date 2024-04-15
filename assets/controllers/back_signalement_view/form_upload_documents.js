@@ -85,17 +85,17 @@ function initializeUploadModal(
     }
 
     function typeValidation(file) {
-        let splitType = file.type.split('/')[0]
-        let acceptedType = fileSelectorInput.getAttribute('accept').split('/')[0];
-        if (acceptedType == '*') {
+        let acceptedType = fileSelectorInput.getAttribute('accept');
+        if (acceptedType == '*/*') {
             return true
         }
-        if (acceptedType == splitType) {
+        let acceptedTypes = acceptedType.split(',').map((type) => type.trim())
+        if (acceptedTypes.includes(file.type)) {
             return true
         }
         let div = document.createElement('div')
         div.classList.add('fr-alert', 'fr-alert--error', 'fr-alert--sm')
-        div.innerHTML = `Le type du fichier ${file.name} n'est pas accepté (acceptés : ".jpg", ".png", ".gif")`;
+        div.innerHTML = `Impossible d'ajouter le fichier "${file.name}" car le format n'est pas pris en charge. Veuillez sélectionner une photo au format JPG, PNG ou GIF.`;
         listContainer.prepend(div)
         return false;
     }
@@ -332,7 +332,8 @@ function initializeUploadModal(
         if (fileType == 'photo') {
             modal.dataset.fileType = 'photo'
             modal.querySelector('.type-photo').classList.remove('fr-hidden')
-            fileSelectorInput.setAttribute('accept', 'image/*')
+            fileSelectorInput.setAttribute('accept', 'image/jpeg,image/png,image/gif')
+
         } else {
             modal.dataset.fileType = 'document'
             modal.querySelector('.type-document').classList.remove('fr-hidden')
