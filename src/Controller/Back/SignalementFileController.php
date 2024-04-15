@@ -168,7 +168,7 @@ class SignalementFileController extends AbstractController
                 /** @var User $user */
                 $user = $this->getUser();
                 $description = $user->getNomComplet().' a supprimé ';
-                $description .= File::FILE_TYPE_DOCUMENT === $type ? 'le document suivant :' : 'la photo suivante :';
+                $description .= File::INPUT_NAME_DOCUMENTS === $type ? 'le document suivant :' : 'la photo suivante :';
                 $suivi->setDescription(
                     $description
                     .'<ul><li>'
