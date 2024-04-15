@@ -198,7 +198,7 @@ class WidgetDataKpiBuilder
         $this
             ->addWidgetCard('cardNouveauxSignalements', $this->countSignalement->getNew())
             ->addWidgetCard('cardCloturesPartenaires', $this->countSignalement->getClosedByAtLeastOnePartner())
-            ->addWidgetCard('cardMesAffectations')
+            ->addWidgetCard('cardMesAffectations', null, ['partenaires' => $this->user?->getPartner()?->getId()])
             ->addWidgetCard('cardTousLesSignalements', $this->countSignalement->getTotal())
             ->addWidgetCard('cardCloturesGlobales', $this->countSignalement->getClosedAllPartnersRecently())
             ->addWidgetCard('cardNouvellesAffectations', $this->countSignalement->getNew())
