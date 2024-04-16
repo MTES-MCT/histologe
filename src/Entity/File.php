@@ -266,7 +266,7 @@ class File
     public function isSituationPhoto(): bool
     {
         return $this->fileType === $this::FILE_TYPE_PHOTO
-        && \array_key_exists($this->documentType->value, DocumentType::getSituationList())
+        && \array_key_exists($this->documentType->value, DocumentType::getOrderedSituationList())
         && null === $this->intervention;
     }
 }

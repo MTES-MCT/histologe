@@ -44,7 +44,7 @@ enum DocumentType: String
         ];
     }
 
-    public static function getPhotosList(): array
+    public static function getOrderedPhotosList(): array
     {
         return [
             self::PHOTO_SITUATION->name => self::PHOTO_SITUATION->label(),
@@ -52,19 +52,19 @@ enum DocumentType: String
         ];
     }
 
-    public static function getSituationList(): array
+    public static function getOrderedSituationList(): array
     {
         return [
-            self::PHOTO_SITUATION->name => self::PHOTO_SITUATION->label(),
-            self::AUTRE->name => self::AUTRE->label(),
             self::SITUATION_FOYER_BAIL->name => self::SITUATION_FOYER_BAIL->label(),
             self::SITUATION_FOYER_DPE->name => self::SITUATION_FOYER_DPE->label(),
             self::SITUATION_FOYER_ETAT_DES_LIEUX->name => self::SITUATION_FOYER_ETAT_DES_LIEUX->label(),
             self::SITUATION_DIAGNOSTIC_PLOMB_AMIANTE->name => self::SITUATION_DIAGNOSTIC_PLOMB_AMIANTE->label(),
+            self::PHOTO_SITUATION->name => self::PHOTO_SITUATION->label(),
+            self::AUTRE->name => self::AUTRE->label(),
         ];
     }
 
-    public static function getProcedureList(): array
+    public static function getOrderedProcedureList(): array
     {
         return [
             self::PROCEDURE_MISE_EN_DEMEURE->name => self::PROCEDURE_MISE_EN_DEMEURE->label(),
