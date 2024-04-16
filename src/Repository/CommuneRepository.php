@@ -33,13 +33,4 @@ class CommuneRepository extends ServiceEntityRepository
             $this->getEntityManager()->flush();
         }
     }
-
-    public function findByCodesPostaux(array $codesPostaux): array
-    {
-        return $this->createQueryBuilder('c')
-            ->where('c.codePostal IN (:codePostaux)')
-            ->setParameter('codePostaux', $codesPostaux)
-            ->getQuery()
-            ->getResult();
-    }
 }

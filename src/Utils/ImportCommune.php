@@ -22,4 +22,9 @@ class ImportCommune
 
         return $zipCode;
     }
+
+    public static function sanitizeCommuneWithArrondissement(string $nom): string
+    {
+        return trim(preg_replace('/(\d+e|\d+er) Arrondissement$/', '', $nom));
+    }
 }

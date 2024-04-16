@@ -29,6 +29,7 @@ class SignalementAffectationListViewFactory
             nomOccupant: $data['nomOccupant'],
             prenomOccupant: $data['prenomOccupant'],
             adresseOccupant: $data['adresseOccupant'],
+            codepostalOccupant: $data['cpOccupant'],
             villeOccupant: $data['villeOccupant'],
             lastSuiviAt: $data['lastSuiviAt'],
             lastSuiviBy: $data['lastSuiviBy'],

@@ -233,20 +233,22 @@ class SignalementListControllerTest extends WebTestCase
         yield 'Search Terms with Firstname Occupant' => [['searchTerms' => 'Mapaire'], 1];
         yield 'Search Terms with Lastname Occupant' => [['searchTerms' => 'Nawell'], 2];
         yield 'Search Terms with Email Occupant' => [['searchTerms' => 'nawell.mapaire@yopmail.com'], 1];
-        yield 'Search by Territory' => [['territory' => '13'], 25];
+        yield 'Search by Territory 13' => [['territories' => ['13']], 25];
+        yield 'Search by Territory 01 and 69' => [['territories' => ['01', '70']], 9];
         yield 'Search by Commune' => [['communes' => ['gex', 'marseille']], 30];
         yield 'Search by Commune code postal' => [['communes' => ['13002']], 1];
+        yield 'Search by EPCIS' => [['epcis' => ['244400503']], 1];
         yield 'Search by Partner' => [['partenaires' => ['5']], 2];
         yield 'Search by Etiquettes' => [['etiquettes' => ['3']], 4];
         yield 'Search by Parc public' => [['natureParc' => 'public'], 5];
         yield 'Search by Parc public/prive non renseigné' => [['natureParc' => 'non_renseigne'], 1];
         yield 'Search by Enfant moins de 6ans' => [['enfantsM6' => 'non'], 4];
-        yield 'Search by Date de depot' => [['dateDepotDebut' => '2023-03-01', 'dateDepotFin' => '2023-04-01'], 2];
+        yield 'Search by Date de depot' => [['dateDepotDebut' => '2023-03-08', 'dateDepotFin' => '2023-03-16'], 2];
         yield 'Search by Prcedure estimé' => [['procedure' => 'rsd'], 3];
         yield 'Search by Partenaires affectés' => [['partenaires' => ['5']], 2];
         yield 'Search by Statut de la visite' => [['visiteStatus' => 'Planifiée'], 5];
         yield 'Search by Type de dernier suivi' => [['typeDernierSuivi' => 'automatique'], 16];
-        yield 'Search by Date de dernier suivi' => [['dateDernierSuiviDebut' => '2023-03-01', 'dateDernierSuiviFin' => '2023-12-31'], 3];
+        yield 'Search by Date de dernier suivi' => [['dateDernierSuiviDebut' => '2023-04-01', 'dateDernierSuiviFin' => '2023-04-18'], 3];
         yield 'Search by Statut de l\'affectation' => [['statusAffectation' => 'refuse'], 1];
         yield 'Search by Score criticite' => [['criticiteScoreMin' => 5, 'criticiteScoreMax' => 6], 9];
         yield 'Search by Declarant' => [['typeDeclarant' => 'locataire'], 3];
@@ -276,5 +278,30 @@ class SignalementListControllerTest extends WebTestCase
         $result = json_decode($client->getResponse()->getContent(), true);
 
         $this->assertEquals($results, $result['pagination']['total_items'], json_encode($result['list']));
+    }
+
+    /**
+     * @dataProvider provideUserEmail
+     */
+    public function testTotalFilterByUser(string $email): void
+    {
+        $client = static::createClient();
+        /** @var UrlGeneratorInterface $generatorUrl */
+        $generatorUrl = static::getContainer()->get(UrlGeneratorInterface::class);
+
+        /** @var UserRepository $userRepository */
+        $userRepository = static::getContainer()->get(UserRepository::class);
+        $user = $userRepository->findOneBy(['email' => $email]);
+        $client->loginUser($user);
+        $route = $generatorUrl->generate('back_signalement_list_json');
+
+        $client->request('GET', $route, [], [], ['HTTP_Accept' => 'application/json']);
+        $result = json_decode($client->getResponse()->getContent(), true);
+
+        if (\count($result['list']) > 0) {
+            $this->assertGreaterThanOrEqual(1, \count($result['list']));
+        }
+
+        $this->assertEquals($result['pagination']['total_items'], \count($result['list']));
     }
 }

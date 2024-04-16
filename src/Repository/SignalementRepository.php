@@ -354,6 +354,7 @@ class SignalementRepository extends ServiceEntityRepository
             s.nomOccupant,
             s.prenomOccupant,
             s.adresseOccupant,
+            s.cpOccupant,
             s.villeOccupant,
             s.lastSuiviAt,
             s.lastSuiviBy,
@@ -433,6 +434,8 @@ class SignalementRepository extends ServiceEntityRepository
                 default:
                     $qb->orderBy('s.reference', 'DESC');
             }
+        } else {
+            $qb->orderBy('s.createdAt', 'DESC');
         }
 
         return $qb;

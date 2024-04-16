@@ -11,10 +11,11 @@ class SignalementSearchQueryTest extends TestCase
     public function testGetFilters(): void
     {
         $query = new SignalementSearchQuery(
-            '13',
+            ['13'],
             'John',
             'nouveau',
             ['Marseille'],
+            ['244400503'],
             ['1', '5'],
             '2022-01-01',
             '2022-12-31',
@@ -28,7 +29,7 @@ class SignalementSearchQueryTest extends TestCase
             100,
             'locataire',
             'privee',
-            'caf',
+            'oui',
             'oui',
             'attente_relogement',
             'non_decence_energetique',
@@ -39,11 +40,12 @@ class SignalementSearchQueryTest extends TestCase
 
         $expectedFilters = [
             'searchterms' => 'John',
-            'territories' => '13',
+            'territories' => ['13'],
             'statuses' => [SignalementStatus::mapFilterStatus('nouveau')],
             'cities' => ['Marseille'],
+            'epcis' => ['244400503'],
             'partners' => ['23'],
-            'allocs' => ['caf'],
+            'allocs' => ['oui', 'caf', 'msa'],
             'housetypes' => [0],
             'enfantsM6' => [1],
             'visites' => ['Non planifiée'],

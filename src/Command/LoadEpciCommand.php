@@ -23,7 +23,9 @@ use Symfony\Contracts\HttpClient\HttpClientInterface;
 class LoadEpciCommand extends Command
 {
     public const API_EPCI_ALL_URL = 'https://geo.api.gouv.fr/epcis?fields=nom';
-    public const API_EPCI_COMMUNE_URL = 'https://geo.api.gouv.fr/epcis/%d/communes';
+    public const API_EPCI_COMMUNE_URL = 'https://geo.api.gouv.fr/epcis/%d/communes?fields=nom,codesPostaux';
+    private array $epcis = [];
+    private array $communes = [];
 
     public function __construct(
         private HttpClientInterface $httpClient,
@@ -38,6 +40,7 @@ class LoadEpciCommand extends Command
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $io = new SymfonyStyle($input, $output);
+        $this->initDataFromRepository();
 
         $response = $this->httpClient->request('GET', self::API_EPCI_ALL_URL);
         if (Response::HTTP_OK !== $response->getStatusCode()) {
@@ -50,10 +53,10 @@ class LoadEpciCommand extends Command
         $progressBar = new ProgressBar($output, \count($epciList));
         $progressBar->start();
         foreach ($epciList as $epciItem) {
-            $epci = $this->epciRepository->findOneBy(['nom' => $epciNom = $epciItem['nom']]);
+            $epci = $this->epcis[$epciItem['code']] ?? null;
             if (!$epci) {
                 $epci = (new Epci())
-                    ->setNom($epciNom)
+                    ->setNom($epciItem['nom'])
                     ->setCode($epciItem['code']);
             }
             $response = $this->httpClient->request(
@@ -64,9 +67,10 @@ class LoadEpciCommand extends Command
             if (Response::HTTP_OK === $response->getStatusCode()) {
                 $communeList = json_decode($response->getContent(), true);
                 foreach ($communeList as $communeItem) {
-                    $communes = $this->communeRepository->findByCodesPostaux($communeItem['codesPostaux']);
-                    foreach ($communes as $commune) {
-                        $epci->addCommune($commune);
+                    foreach ($communeItem['codesPostaux'] as $codePostal) {
+                        if (isset($this->communes[$communeItem['nom']][$codePostal])) {
+                            $epci->addCommune($this->communes[$communeItem['nom']][$codePostal]);
+                        }
                     }
                 }
             } else {
@@ -86,11 +90,24 @@ class LoadEpciCommand extends Command
         ));
         if ($nbCommunesWithoutECPI > 0) {
             $io->warning(sprintf(
-                '%d communes do not belong to EPCI, the code postal might be obsolete.',
+                '%d communes code postal might be obsolete.',
                 $nbCommunesWithoutECPI
             ));
         }
 
         return Command::SUCCESS;
+    }
+
+    private function initDataFromRepository(): void
+    {
+        $epcis = $this->epciRepository->findAll();
+        foreach ($epcis as $epci) {
+            $this->epcis[$epci->getCode()] = $epci;
+        }
+
+        $communes = $this->communeRepository->findAll();
+        foreach ($communes as $commune) {
+            $this->communes[$commune->getNom()][$commune->getCodePostal()] = $commune;
+        }
     }
 }

@@ -3,6 +3,7 @@
 namespace App\Entity;
 
 use App\Repository\CommuneRepository;
+use App\Utils\ImportCommune;
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\ORM\Mapping\UniqueConstraint;
 
@@ -40,7 +41,7 @@ class Commune
 
     public function getNom(): ?string
     {
-        return $this->nom;
+        return ImportCommune::sanitizeCommuneWithArrondissement($this->nom);
     }
 
     public function setNom(string $nom): self

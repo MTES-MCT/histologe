@@ -11,11 +11,12 @@ class SignalementSearchQuery
     public const MAX_LIST_PAGINATION = 25;
 
     public function __construct(
-        private readonly ?string $territory = null,
+        private readonly ?array $territories = null,
         private readonly ?string $searchTerms = null,
         #[Assert\Choice(['nouveau', 'en cours', 'ferme', 'refuse'])]
         private readonly ?string $status = null,
         private readonly ?array $communes = null,
+        private readonly ?array $epcis = null,
         private readonly ?array $etiquettes = null,
         #[Assert\Date(message: 'La date de début n\'est pas une date valide')]
         private readonly ?string $dateDepotDebut = null,
@@ -36,7 +37,13 @@ class SignalementSearchQuery
         private readonly ?float $criticiteScoreMin = null,
         #[Assert\LessThanOrEqual(100)]
         private readonly ?float $criticiteScoreMax = null,
-        #[Assert\Choice(['locataire', 'bailleur_occupant', 'tiers_particulier', 'tiers_pro', 'service_secours', 'bailleur'])]
+        #[Assert\Choice([
+            'locataire',
+            'bailleur_occupant',
+            'tiers_particulier',
+            'tiers_pro',
+            'service_secours',
+            'bailleur', ])]
         private readonly ?string $typeDeclarant = null,
         #[Assert\Choice(['privee', 'public', 'non_renseigne'])]
         private readonly ?string $natureParc = null,
@@ -46,7 +53,14 @@ class SignalementSearchQuery
         private readonly ?string $enfantsM6 = null,
         #[Assert\Choice(['attente_relogement', 'bail_en_cours', 'preavis_de_depart'])]
         private readonly ?string $situation = null,
-        #[Assert\Choice(['non_decence_energetique', 'non_decence', 'rsd', 'danger', 'insalubrite', 'mise_en_securite_peril', 'suroccupation'])]
+        #[Assert\Choice([
+            'non_decence_energetique',
+            'non_decence',
+            'rsd',
+            'danger',
+            'insalubrite',
+            'mise_en_securite_peril',
+            'suroccupation', ])]
         private readonly ?string $procedure = null,
         private readonly ?int $page = 1,
         #[Assert\Choice(['reference', 'nomOccupant', 'createdAt'])]
@@ -55,9 +69,9 @@ class SignalementSearchQuery
     ) {
     }
 
-    public function getTerritory(): ?string
+    public function getTerritories(): ?array
     {
-        return $this->territory;
+        return $this->territories;
     }
 
     public function getSearchTerms(): ?string
@@ -73,6 +87,11 @@ class SignalementSearchQuery
     public function getCommunes(): ?array
     {
         return $this->communes;
+    }
+
+    public function getEpcis(): ?array
+    {
+        return $this->epcis;
     }
 
     public function getEtiquettes(): ?array
@@ -184,11 +203,12 @@ class SignalementSearchQuery
     {
         $filters = [];
         $filters['searchterms'] = $this->getSearchTerms() ?? null;
-        $filters['territories'] = $this->getTerritory() ?? null;
+        $filters['territories'] = $this->getTerritories() ?? null;
         $filters['statuses'] = null !== $this->getStatus()
             ? [SignalementStatus::mapFilterStatus($this->getStatus())]
             : null;
         $filters['cities'] = $this->getCommunes() ?? null;
+        $filters['epcis'] = $this->getEpcis() ?? null;
         $filters['partners'] = $this->getPartenaires() ?? null;
         $filters['allocs'] = null !== $this->getAllocataire() ? [$this->getAllocataire()] : null;
         $filters['housetypes'] = match ($this->getNatureParc()) {
@@ -204,6 +224,10 @@ class SignalementSearchQuery
             default => null
         };
 
+        if ('oui' === $this->getAllocataire()) {
+            $filters['allocs'] = ['oui', 'caf', 'msa'];
+        }
+
         $filters['visites'] = null !== $this->getVisiteStatus() ? [$this->getVisiteStatus()] : null;
         if (null !== $this->getCriticiteScoreMin() || null !== $this->getCriticiteScoreMax()) {
             $filters['scores'] = [
@@ -211,7 +235,7 @@ class SignalementSearchQuery
                 'off' => $this->getCriticiteScoreMax() ?? 100,
             ];
         }
-        if (null !== $this->getDateDepotDebut() && null !== $this->getDateDepotFin()) {
+        if (null !== $this->getDateDepotDebut() || null !== $this->getDateDepotFin()) {
             $filters['dates'] = [
                 'on' => $this->getDateDepotDebut(),
                 'off' => $this->getDateDepotFin(),
@@ -222,7 +246,7 @@ class SignalementSearchQuery
         $filters['situation'] = $this->getSituation();
         $filters['procedure'] = $this->getProcedure();
         $filters['typeDernierSuivi'] = $this->getTypeDernierSuivi();
-        if (null !== $this->getDateDernierSuiviDebut() && null !== $this->getDateDernierSuiviFin()) {
+        if (null !== $this->getDateDernierSuiviDebut() || null !== $this->getDateDernierSuiviFin()) {
             $filters['datesDernierSuivi'] = [
                 'on' => $this->getDateDernierSuiviDebut(),
                 'off' => $this->getDateDernierSuiviFin(),

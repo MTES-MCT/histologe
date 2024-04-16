@@ -34,6 +34,7 @@ class SignalementAffectationListViewFactoryTest extends KernelTestCase
             'prenomOccupant' => $faker->firstName(),
             'adresseOccupant' => $faker->streetAddress(),
             'villeOccupant' => $faker->city(),
+            'cpOccupant' => $faker->postcode(),
             'lastSuiviAt' => new \DateTimeImmutable(),
             'lastSuiviBy' => $faker->name(),
             'rawAffectations' => 'Partenaire 13-02||1;Partenaire 13-03||1;Partenaire 13-04||1',
@@ -72,6 +73,7 @@ class SignalementAffectationListViewFactoryTest extends KernelTestCase
         $this->assertEquals($dataSignalement['prenomOccupant'], $signalementAffectationListView->getPrenomOccupant());
         $this->assertEquals($dataSignalement['adresseOccupant'], $signalementAffectationListView->getAdresseOccupant());
         $this->assertEquals($dataSignalement['villeOccupant'], $signalementAffectationListView->getVilleOccupant());
+        $this->assertEquals($dataSignalement['cpOccupant'], $signalementAffectationListView->getCodepostalOccupant());
         $this->assertSame($dataSignalement['lastSuiviAt'], $signalementAffectationListView->getLastSuiviAt());
         $this->assertEquals($dataSignalement['lastSuiviBy'], $signalementAffectationListView->getLastSuiviBy());
         $this->assertSame($expectedAffectations, $signalementAffectationListView->getAffectations());

@@ -19,7 +19,9 @@ class LoadEpciCommandTest extends KernelTestCase
         self::bootKernel();
         $responses = [
             new MockResponse($this->getEpciAllResponse()),
-            new MockResponse($this->getEpciCommunes()),
+            new MockResponse($this->getEpciErdreGesvresCommunes()),
+            new MockResponse($this->getEpciPaysAncenis()),
+            new MockResponse($this->getEpciAixMarseilleProvence()),
         ];
         $mockHttpClient = new MockHttpClient($responses);
         /** @var EntityManagerInterface $entityManager */
@@ -36,65 +38,82 @@ class LoadEpciCommandTest extends KernelTestCase
         $commandTester = new CommandTester($command);
         $commandTester->execute([]);
         $output = $commandTester->getDisplay();
-        $this->assertStringContainsString('EPCI loaded with 8 communes that belong to EPCI', $output, $output);
-        $this->assertStringContainsString('35720 communes do not belong to EPCI', $output, $output);
+        $this->assertStringContainsString('EPCI loaded with 25 communes that belong to EPCI', $output, $output);
+        $this->assertStringContainsString(
+            '35703 communes code postal might be obsolete.',
+            $output,
+            $output);
     }
 
     private function getEpciAllResponse(): string
     {
         return json_encode([
             [
-                'nom' => 'CC Faucigny - Glières',
-                'code' => '200000172',
-                'codesDepartements' => [
-                    '74',
-                ],
-                'codesRegions' => [
-                    '84',
-                ],
-                'population' => 27764,
+                'nom' => 'CC d\'Erdre et Gesvres',
+                'code' => '244400503',
+            ],
+            [
+                'nom' => 'CC du Pays d\'Ancenis',
+                'code' => '244400552',
+            ],
+            [
+                'nom' => 'Métropole d\'Aix-Marseille-Provence',
+                'code' => '200054807',
             ],
         ]);
     }
 
-    private function getEpciCommunes(): string
+    private function getEpciErdreGesvresCommunes(): string
+    {
+        return json_encode([
+            ['nom' => 'Petit-Mars', 'codesPostaux' => ['44390'], 'code' => '44122'],
+            ['nom' => 'Saint-Mars-du-Désert', 'codesPostaux' => ['44850'], 'code' => '44179'],
+        ]);
+    }
+
+    private function getEpciPaysAncenis(): string
+    {
+        return json_encode([
+                ['nom' => 'Le Cellier', 'codesPostaux' => ['44850'], 'code' => '44028'],
+                ['nom' => 'Ligné', 'codesPostaux' => ['44850'], 'code' => '44082'],
+        ]);
+    }
+
+    private function getEpciAixMarseilleProvence(): string
     {
         return json_encode([
             [
-                'nom' => 'Ayse',
-                'code' => '74024',
-                'codeDepartement' => '74',
-                'siren' => '217400241',
-                'codeEpci' => '200000172',
-                'codeRegion' => '84',
+                'nom' => 'Marseille',
+                'code' => '13055',
                 'codesPostaux' => [
-                    '74130',
+                    '13001',
+                    '13002',
+                    '13003',
+                    '13004',
+                    '13005',
+                    '13006',
+                    '13007',
+                    '13008',
+                    '13009',
+                    '13010',
+                    '13011',
+                    '13012',
+                    '13013',
+                    '13014',
+                    '13015',
+                    '13016',
                 ],
-                'population' => 2274,
             ],
             [
-                'nom' => 'Bonneville',
-                'code' => '74042',
-                'codeDepartement' => '74',
-                'siren' => '217400423',
-                'codeEpci' => '200000172',
-                'codeRegion' => '84',
+                'nom' => 'Aix-en-Provence',
+                'code' => '13001',
                 'codesPostaux' => [
-                    '74130',
+                    '13080',
+                    '13090',
+                    '13100',
+                    '13290',
+                    '13540',
                 ],
-                'population' => 12895,
-            ],
-            [
-                'nom' => 'Brizon',
-                'code' => '74049',
-                'codeDepartement' => '74',
-                'siren' => '217400498',
-                'codeEpci' => '200000172',
-                'codeRegion' => '84',
-                'codesPostaux' => [
-                    '74130',
-                ],
-                'population' => 473,
             ],
         ]);
     }

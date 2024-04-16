@@ -22,6 +22,7 @@ class SignalementAffectationListView
         private ?string $nomOccupant = null,
         private ?string $prenomOccupant = null,
         private ?string $adresseOccupant = null,
+        private ?string $codepostalOccupant = null,
         private ?string $villeOccupant = null,
         private \DateTimeImmutable|string|null $lastSuiviAt = null,
         private ?string $lastSuiviBy = null,
@@ -80,6 +81,11 @@ class SignalementAffectationListView
     public function getAdresseOccupant(): ?string
     {
         return $this->adresseOccupant;
+    }
+
+    public function getCodepostalOccupant(): ?string
+    {
+        return $this->codepostalOccupant;
     }
 
     public function getVilleOccupant(): ?string
