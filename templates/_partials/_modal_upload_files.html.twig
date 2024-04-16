@@ -77,13 +77,13 @@
                             {% set DocumentType = enum('\\App\\Entity\\Enum\\DocumentType') %}
                             <select class="fr-select select-type" data-file-id="" id="select-type-situation-to-clone">
                                 <option value="">Sélectionner un type</option>
-                                {% for key, value in DocumentType.getSituationList() %}
+                                {% for key, value in DocumentType.getOrderedSituationList() %}
                                     <option value="{{ key }}">{{ value }}</option>
                                 {% endfor %}
                             </select>
                             <select class="fr-select select-type" data-file-id="" id="select-type-procedure-to-clone">
                                 <option value="">Sélectionner un type</option>
-                                {% for key, value in DocumentType.getProcedureList() %}
+                                {% for key, value in DocumentType.getOrderedProcedureList() %}
                                     <option value="{{ key }}">{{ value }}</option>
                                 {% endfor %}
                             </select>

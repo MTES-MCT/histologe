@@ -97,7 +97,7 @@
                             data-signalement-uuid="{{ signalement.uuid}}" 
                             data-description="{{ photo.description }}" 
                             data-documentType="{{ photo.documentType.name }}" 
-                            data-documentType-list="{{ DocumentType.getPhotosList() | json_encode }}"
+                            data-documentType-list="{{ DocumentType.getOrderedPhotosList() | json_encode }}"
                             data-createdAt="{{ photo.createdAt is defined ? photo.createdAt|date('d.m.Y') : 'N/R' }}"
                             data-partner-name="{{ photo.uploadedBy and photo.uploadedBy.partner ? photo.uploadedBy.partner.nom ~ ' - ' : '' }}"
                             data-user-name="{{ photo.uploadedBy.nomComplet ?? 'N/R' }}"
@@ -123,10 +123,10 @@
     doc => doc.fileType == 'document'
         and (
             (filesFilter is same as 'situation' 
-            and doc.documentType.label() in  DocumentType.getSituationList)
+            and doc.documentType.label() in  DocumentType.getOrderedSituationList)
             or 
             (filesFilter is same as 'procedure' 
-            and doc.documentType.label() in  DocumentType.getProcedureList)
+            and doc.documentType.label() in  DocumentType.getOrderedProcedureList)
         )
     ) %}
     <div class="fr-grid-row fr-grid-row--middle fr-background-alt--grey fr-rounded fr-p-3v signalement-file-item">
@@ -166,7 +166,7 @@
                     data-type="document" 
                     data-file-id="{{ doc.id}}" 
                     data-documentType="{{ doc.documentType.name }}" 
-                    data-documentType-list="{{ filesFilter is same as 'situation' ? DocumentType.getSituationList() | json_encode : DocumentType.getProcedureList() | json_encode }}"
+                    data-documentType-list="{{ filesFilter is same as 'situation' ? DocumentType.getOrderedSituationList() | json_encode : DocumentType.getOrderedProcedureList() | json_encode }}"
                     data-createdAt="{{ doc.createdAt is defined ? doc.createdAt|date('d.m.Y') : 'N/R' }}"
                     data-partner-name="{{ doc.uploadedBy and doc.uploadedBy.partner ? doc.uploadedBy.partner.nom ~ ' - ' : '' }}"
                     data-user-name="{{ doc.uploadedBy.nomComplet ?? 'N/R' }}"

@@ -44,7 +44,7 @@ enum DocumentType: String
         ];
     }
 
-    public static function getPhotosList(): array
+    public static function getOrderedPhotosList(): array
     {
         return [
             self::PHOTO_SITUATION->name => self::PHOTO_SITUATION->label(),
@@ -52,7 +52,7 @@ enum DocumentType: String
         ];
     }
 
-    public static function getSituationList(): array
+    public static function getOrderedSituationList(): array
     {
         return [
             self::SITUATION_FOYER_BAIL->name => self::SITUATION_FOYER_BAIL->label(),
@@ -64,7 +64,7 @@ enum DocumentType: String
         ];
     }
 
-    public static function getProcedureList(): array
+    public static function getOrderedProcedureList(): array
     {
         return [
             self::PROCEDURE_MISE_EN_DEMEURE->name => self::PROCEDURE_MISE_EN_DEMEURE->label(),

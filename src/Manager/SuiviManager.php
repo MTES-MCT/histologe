@@ -95,7 +95,10 @@ class SuiviManager extends Manager
         $description = '';
         $isVisibleUsager = false;
 
-        if (\array_key_exists($documentType?->value, DocumentType::getProcedureList()) && null === $intervention) {
+        if (
+            \array_key_exists($documentType?->value, DocumentType::getOrderedProcedureList())
+            && null === $intervention
+        ) {
             if ($nbDocs > 0) {
                 $description .= $nbDocs;
                 $description .= $nbDocs > 1 ? ' documents partenaires ont été ajoutés' : ' document partenaire a été ajouté';
@@ -103,7 +106,7 @@ class SuiviManager extends Manager
             }
         }
 
-        if (\array_key_exists($documentType?->value, DocumentType::getSituationList())) {
+        if (\array_key_exists($documentType?->value, DocumentType::getOrderedSituationList())) {
             $isVisibleUsager = true;
             if ($nbDocs > 0) {
                 $description .= $nbDocs;
