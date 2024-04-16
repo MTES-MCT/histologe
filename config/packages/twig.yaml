@@ -7,7 +7,7 @@ twig:
             logo145: 'logo_145.png'
             logosvg: 'logo-histologe.svg'
             url: '%host_url%'
-            demo: 'https://app.livestorm.co/incubateur-des-territoires/demonstration-histologe?type=detailed'
+            demo: 'https://app.livestorm.co/mte/demonstration-histologe'
         gitbook:
             documentation: https://documentation.histologe.beta.gouv.fr
             faq: https://faq.histologe.beta.gouv.fr
