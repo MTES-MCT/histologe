@@ -17,6 +17,7 @@ use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\RateLimiter\RateLimiterFactory;
 use Symfony\Component\Routing\Annotation\Route;
 
 class HomepageController extends AbstractController
@@ -126,11 +127,18 @@ class HomepageController extends AbstractController
     public function contact(
         Request $request,
         ContactFormHandler $contactFormHandler,
-        ParameterBagInterface $parameterBag
+        ParameterBagInterface $parameterBag,
+        RateLimiterFactory $contactFormLimiter
     ): Response {
         $form = $this->createForm(ContactType::class, []);
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
+            $limiter = $contactFormLimiter->create($request->getClientIp());
+            if (false === $limiter->consume(1)->isAccepted()) {
+                $this->addFlash('error', 'Vous avez atteint le nombre maximum de messages que vous pouvez envoyer. Veuillez réessayer plus tard.');
+
+                return $this->redirectToRoute('home');
+            }
             $contactFormHandler->handle(
                 $form->get('nom')->getData(),
                 $form->get('email')->getData(),
