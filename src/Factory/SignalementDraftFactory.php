@@ -5,6 +5,7 @@ namespace App\Factory;
 use App\Dto\Request\Signalement\SignalementDraftRequest;
 use App\Entity\Enum\ProfileDeclarant;
 use App\Entity\SignalementDraft;
+use App\Service\Signalement\SignalementDraftHelper;
 
 class SignalementDraftFactory
 {
@@ -15,39 +16,8 @@ class SignalementDraftFactory
         return (new SignalementDraft())
             ->setPayload($payload)
             ->setAddressComplete($signalementDraftRequest->getAdresseLogementAdresse())
-            ->setEmailDeclarant($this->getEmailDeclarant($signalementDraftRequest))
+            ->setEmailDeclarant(SignalementDraftHelper::getEmailDeclarant($signalementDraftRequest))
             ->setCurrentStep($signalementDraftRequest->getCurrentStep())
             ->setProfileDeclarant(ProfileDeclarant::from(strtoupper($signalementDraftRequest->getProfil())));
-    }
-
-    public function getEmailDeclarant(SignalementDraftRequest $signalementDraftRequest): ?string
-    {
-        switch (strtoupper($signalementDraftRequest->getProfil())) {
-            case ProfileDeclarant::SERVICE_SECOURS->name:
-            case ProfileDeclarant::BAILLEUR->name:
-            case ProfileDeclarant::TIERS_PRO->name:
-            case ProfileDeclarant::TIERS_PARTICULIER->name:
-                return $signalementDraftRequest->getVosCoordonneesTiersEmail();
-            case ProfileDeclarant::LOCATAIRE->name:
-            case ProfileDeclarant::BAILLEUR_OCCUPANT->name:
-                return $signalementDraftRequest->getVosCoordonneesOccupantEmail();
-            default:
-                return null;
-        }
-    }
-
-    public function isTiersDeclarant(SignalementDraftRequest $signalementDraftRequest): bool
-    {
-        switch (strtoupper($signalementDraftRequest->getProfil())) {
-            case ProfileDeclarant::SERVICE_SECOURS->name:
-            case ProfileDeclarant::BAILLEUR->name:
-            case ProfileDeclarant::TIERS_PRO->name:
-            case ProfileDeclarant::TIERS_PARTICULIER->name:
-                return true;
-            case ProfileDeclarant::LOCATAIRE->name:
-            case ProfileDeclarant::BAILLEUR_OCCUPANT->name:
-            default:
-                return false;
-        }
     }
 }

@@ -23,6 +23,7 @@ use App\Service\Mailer\NotificationMail;
 use App\Service\Mailer\NotificationMailerRegistry;
 use App\Service\Mailer\NotificationMailerType;
 use App\Service\Signalement\PostalCodeHomeChecker;
+use App\Service\Signalement\SignalementDraftHelper;
 use App\Service\Signalement\SignalementFileProcessor;
 use App\Service\UploadHandlerService;
 use Doctrine\ORM\EntityManagerInterface;
@@ -106,16 +107,16 @@ class FrontSignalementController extends AbstractController
             ['Default', 'POST_'.strtoupper($signalementDraftRequest->getProfil())]
         );
         if (0 === $errors->count()) {
-            $isTiersDeclarant = $signalementDraftFactory->isTiersDeclarant($signalementDraftRequest);
+            $isTiersDeclarant = SignalementDraftHelper::isTiersDeclarant($signalementDraftRequest);
             $existingSignalements = $signalementRepository->findAllForEmailAndAddress(
-                $signalementDraftFactory->getEmailDeclarant($signalementDraftRequest),
+                SignalementDraftHelper::getEmailDeclarant($signalementDraftRequest),
                 $signalementDraftRequest->getAdresseLogementAdresseDetailNumero(),
                 $signalementDraftRequest->getAdresseLogementAdresseDetailCodePostal(),
                 $signalementDraftRequest->getAdresseLogementAdresseDetailCommune(),
                 $isTiersDeclarant
             );
 
-            $dataToHash = $signalementDraftFactory->getEmailDeclarant($signalementDraftRequest);
+            $dataToHash = SignalementDraftHelper::getEmailDeclarant($signalementDraftRequest);
             $dataToHash .= $signalementDraftRequest->getAdresseLogementAdresse();
             $hash = hash('sha256', $dataToHash);
 

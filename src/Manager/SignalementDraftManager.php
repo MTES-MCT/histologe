@@ -10,6 +10,7 @@ use App\Entity\SignalementDraft;
 use App\Event\SignalementCreatedEvent;
 use App\Event\SignalementDraftCompletedEvent;
 use App\Factory\SignalementDraftFactory;
+use App\Service\Signalement\SignalementDraftHelper;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
@@ -47,7 +48,7 @@ class SignalementDraftManager extends AbstractManager
             ->setPayload($payload)
             ->setCurrentStep($signalementDraftRequest->getCurrentStep())
             ->setAddressComplete($signalementDraftRequest->getAdresseLogementAdresse())
-            ->setEmailDeclarant($this->signalementDraftFactory->getEmailDeclarant($signalementDraftRequest))
+            ->setEmailDeclarant(SignalementDraftHelper::getEmailDeclarant($signalementDraftRequest))
             ->setProfileDeclarant(ProfileDeclarant::from(strtoupper($signalementDraftRequest->getProfil())));
 
         if (self::LAST_STEP === $signalementDraftRequest->getCurrentStep()) {
