@@ -11,7 +11,7 @@ class SignalementSearchQuery
     public const MAX_LIST_PAGINATION = 25;
 
     public function __construct(
-        private readonly ?array $territories = null,
+        private readonly ?array $territoires = null,
         private readonly ?string $searchTerms = null,
         #[Assert\Choice(['nouveau', 'en cours', 'ferme', 'refuse'])]
         private readonly ?string $status = null,
@@ -69,9 +69,9 @@ class SignalementSearchQuery
     ) {
     }
 
-    public function getTerritories(): ?array
+    public function getTerritoires(): ?array
     {
-        return $this->territories;
+        return $this->territoires;
     }
 
     public function getSearchTerms(): ?string
@@ -203,7 +203,7 @@ class SignalementSearchQuery
     {
         $filters = [];
         $filters['searchterms'] = $this->getSearchTerms() ?? null;
-        $filters['territories'] = $this->getTerritories() ?? null;
+        $filters['territories'] = $this->getTerritoires() ?? null;
         $filters['statuses'] = null !== $this->getStatus()
             ? [SignalementStatus::mapFilterStatus($this->getStatus())]
             : null;
@@ -225,7 +225,9 @@ class SignalementSearchQuery
         };
 
         if ('oui' === $this->getAllocataire()) {
-            $filters['allocs'] = ['oui', 'caf', 'msa'];
+            $filters['allocs'] = ['1', 'caf', 'msa'];
+        } elseif ('non' === $this->getAllocataire()) {
+            $filters['allocs'] = ['0'];
         }
 
         $filters['visites'] = null !== $this->getVisiteStatus() ? [$this->getVisiteStatus()] : null;
@@ -260,7 +262,7 @@ class SignalementSearchQuery
         };
         $filters['page'] = $this->getPage() ?? 1;
         $filters['maxItemsPerPage'] = self::MAX_LIST_PAGINATION;
-        $filters['sortBy'] = $this->getSortBy() ?? 'reference';
+        $filters['sortBy'] = $this->getSortBy() ?? 'createdAt';
         $filters['orderBy'] = $this->getOrderBy() ?? 'DESC';
 
         return array_filter($filters);

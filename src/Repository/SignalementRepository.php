@@ -432,7 +432,7 @@ class SignalementRepository extends ServiceEntityRepository
                     $qb->orderBy('s.lastSuiviAt', $options['orderBy']);
                     break;
                 default:
-                    $qb->orderBy('s.reference', 'DESC');
+                    $qb->orderBy('s.createdAt', 'DESC');
             }
         } else {
             $qb->orderBy('s.createdAt', 'DESC');

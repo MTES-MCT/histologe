@@ -45,7 +45,7 @@ class SignalementSearchQueryTest extends TestCase
             'cities' => ['Marseille'],
             'epcis' => ['244400503'],
             'partners' => ['23'],
-            'allocs' => ['oui', 'caf', 'msa'],
+            'allocs' => ['1', 'caf', 'msa'],
             'housetypes' => [0],
             'enfantsM6' => [1],
             'visites' => ['Non planifiée'],

@@ -413,11 +413,11 @@ class SearchFilter
         }
         if (!empty($filters['enfantsM6'])) {
             if (\in_array('non_renseigne', $filters['enfantsM6'])) {
-                $qb->andWhere('s.nbEnfantsM6 IS NULL');
-            } else {
-                $qb
-                    ->andWhere('IF(s.nbEnfantsM6 IS NOT NULL AND s.nbEnfantsM6 != 0, 1, 0) IN (:enfantsM6)')
-                    ->setParameter('enfantsM6', $filters['enfantsM6']);
+                $qb->andWhere('s.nbEnfantsM6 IS NULL OR s.nbEnfantsM6 LIKE \'\'');
+            } elseif (\in_array(0, $filters['enfantsM6'])) {
+                $qb->andWhere('s.nbEnfantsM6 = 0');
+            } elseif (\in_array(1, $filters['enfantsM6'])) {
+                $qb->andWhere('s.nbEnfantsM6 > 0');
             }
         }
         if (!empty($filters['avant1949'])) {
@@ -439,7 +439,7 @@ class SearchFilter
         }
         if (!empty($filters['allocs'])) {
             if (\in_array('non_renseigne', $filters['allocs'])) {
-                $qb->andWhere('s.isAllocataire IS NULL');
+                $qb->andWhere('s.isAllocataire IS NULL OR s.isAllocataire LIKE \'\' ');
             } else {
                 $qb->andWhere('s.isAllocataire IN (:allocs)')->setParameter('allocs', $filters['allocs']);
             }
