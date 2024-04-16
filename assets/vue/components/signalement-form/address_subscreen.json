@@ -3,20 +3,17 @@
         {
         "type": "SignalementFormTextfield",
         "label": "Numéro et voie",
-        "slug": "detail_numero",
-        "disabled": true
+        "slug": "detail_numero"
         },
         {
         "type": "SignalementFormTextfield",
         "label": "Code postal",
-        "slug": "detail_code_postal",
-        "disabled": true
+        "slug": "detail_code_postal"
         },
         {
         "type": "SignalementFormTextfield",
         "label": "Commune",
-        "slug": "detail_commune",
-        "disabled": true
+        "slug": "detail_commune"
         }
     ]
 }
