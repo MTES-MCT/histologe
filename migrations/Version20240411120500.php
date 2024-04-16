@@ -50,7 +50,10 @@ final class Version20240411120500 extends AbstractMigration
             if (\is_array($value) && isset($value[0]['file'])) {
                 foreach ($value as $photo) {
                     if ($photo['file'] === $filename) {
-                        return str_replace('_details_photos_upload', '', $key);
+                        $key = str_replace('_details_photos_upload', '', $key);
+                        $key = str_replace('_photos_upload', '', $key);
+
+                        return $key;
                     }
                 }
             }
