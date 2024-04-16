@@ -68,20 +68,4 @@ class FileManager extends AbstractManager
             }
         }
     }
-
-    public function getFileFromSignalement(
-        Signalement $signalement,
-        int $fileId
-    ): ?File {
-        $fileCollection = $signalement->getFiles()->filter(
-            function (File $file) use ($fileId) {
-                return $fileId === $file->getId();
-            }
-        );
-        if (!$fileCollection->isEmpty()) {
-            return $fileCollection->current();
-        }
-
-        return null;
-    }
 }

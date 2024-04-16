@@ -157,7 +157,12 @@ class SignalementFileController extends AbstractController
         FileManager $fileManager,
     ): Response {
         $fileId = $request->get('file_id');
-        $file = $fileManager->getFileFromSignalement($signalement, $fileId);
+        $file = $fileRepository->findOneBy(
+            [
+                'id' => $fileId,
+                'signalement' => $signalement,
+            ]
+        );
         $this->denyAccessUnlessGranted('FILE_DELETE', $file);
         if (null === $file) {
             $this->addFlash('error', 'Ce fichier n\'existe plus');
