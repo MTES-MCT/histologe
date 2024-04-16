@@ -195,7 +195,7 @@ function initializeUploadModal(
             innerHTML += `
             <div class="fr-col-3">                
                 <input type="text" id="file-description" name="file[description]"
-                required="required" class="fr-input" placeholder="Description de l'image">
+                required="required" class="fr-input" placeholder="Description de l'image" maxlength=250>
                 <input type="hidden" id="file-id" name="file[id]">
             </div>           
             `

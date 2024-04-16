@@ -67,26 +67,34 @@ document.querySelectorAll('.btn-signalement-file-edit').forEach(swbtn => {
     const documentTypes = JSON.parse(target.getAttribute('data-documentType-list'));
     let typeSelectBox = document.querySelector('#document-type-select');
     typeSelectBox.innerHTML = '';
-    let option = new Option('Sélectionnez un type', '');
-    if ('' === selectedDocumentType) {
-        option.selected = true;
-    }
-    typeSelectBox.appendChild(option);
-    for (let key in documentTypes) {
-      if (documentTypes.hasOwnProperty(key)) {
-        let label = documentTypes[key];
-        let option = new Option(label, key);
-        if (key === selectedDocumentType) {
-            option.selected = true;
-        }
-        typeSelectBox.appendChild(option);
+    if (documentTypes !== null ) {
+      let option = new Option('Sélectionnez un type', '');
+      if ('' === selectedDocumentType) {
+          option.selected = true;
       }
-    }
-    histoUpdateDesordreSelect(target, selectedDocumentType)    
+      typeSelectBox.appendChild(option);
+      for (let key in documentTypes) {
+        if (documentTypes.hasOwnProperty(key)) {
+          let label = documentTypes[key];
+          let option = new Option(label, key);
+          if (key === selectedDocumentType) {
+              option.selected = true;
+          }
+          typeSelectBox.appendChild(option);
+        }
+      }
+      histoUpdateDesordreSelect(target, selectedDocumentType)    
+  
+      document.querySelector('#document-type-select').addEventListener('change', function () {
+        const selectedValue = this.value;
+        histoUpdateDesordreSelect(target, selectedValue)   
+      });
 
-    document.querySelector('#document-type-select').addEventListener('change', function () {
-      const selectedValue = this.value;
-      histoUpdateDesordreSelect(target, selectedValue)   
-    });
+    } else {
+      let option = new Option(selectedDocumentType, selectedDocumentType);
+      option.selected = true;
+      typeSelectBox.appendChild(option);
+      typeSelectBox.classList.add('fr-hidden')
+    }
   })
 })
