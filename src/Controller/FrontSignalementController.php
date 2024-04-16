@@ -9,7 +9,6 @@ use App\Entity\Signalement;
 use App\Entity\SignalementDraft;
 use App\Entity\Suivi;
 use App\Entity\User;
-use App\Factory\SignalementDraftFactory;
 use App\Factory\SuiviFactory;
 use App\Manager\SignalementDraftManager;
 use App\Manager\SuiviManager;
@@ -91,7 +90,6 @@ class FrontSignalementController extends AbstractController
         SignalementDraftRequestSerializer $serializer,
         SignalementDraftManager $signalementDraftManager,
         ValidatorInterface $validator,
-        SignalementDraftFactory $signalementDraftFactory,
         SignalementDraftRepository $signalementDraftRepository,
         SignalementRepository $signalementRepository,
     ): Response {
