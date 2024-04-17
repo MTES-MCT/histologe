@@ -146,23 +146,30 @@ class SignalementFileController extends AbstractController
     /**
      * @throws FilesystemException
      */
-    #[Route('/{uuid}/file/{type}/{filename}/delete', name: 'back_signalement_delete_file')]
+    #[Route('/{uuid}/file/delete', name: 'back_signalement_delete_file')]
     public function deleteFileSignalement(
         Signalement $signalement,
-        string $type,
-        string $filename,
         Request $request,
         FileRepository $fileRepository,
         UploadHandlerService $uploadHandlerService,
         EntityManagerInterface $entityManager,
         SuiviFactory $suiviFactory,
         FileManager $fileManager,
-    ): JsonResponse {
-        $file = $fileManager->getFileFromSignalement($signalement, $type, $filename);
+    ): Response {
+        $fileId = $request->get('file_id');
+        $file = $fileRepository->findOneBy(
+            [
+                'id' => $fileId,
+                'signalement' => $signalement,
+            ]
+        );
         $this->denyAccessUnlessGranted('FILE_DELETE', $file);
-        if (null !== $file
-            && $this->isCsrfTokenValid('signalement_delete_file_'.$signalement->getId(), $request->get('_token'))
+        if (null === $file) {
+            $this->addFlash('error', 'Ce fichier n\'existe plus');
+        } elseif ($this->isCsrfTokenValid('signalement_delete_file_'.$signalement->getId(), $request->get('_token'))
         ) {
+            $filename = $file->getFilename();
+            $type = $file->getFileType();
             if ($uploadHandlerService->deleteSignalementFile($file, $fileRepository)) {
                 $suivi = $suiviFactory->createInstanceFrom($this->getUser(), $signalement);
                 /** @var User $user */
@@ -180,11 +187,19 @@ class SignalementFileController extends AbstractController
                 $entityManager->persist($suivi);
                 $entityManager->flush();
 
-                return $this->json(['response' => 'success']);
+                if ('document' === $type) {
+                    $this->addFlash('success', 'Le document a bien été supprimé.');
+                } else {
+                    $this->addFlash('success', 'La photo a bien été supprimée.');
+                }
+            } else {
+                $this->addFlash('error', 'Le fichier n\'a pas été supprimé.');
             }
+        } else {
+            $this->addFlash('error', 'Token CSRF invalide, veuillez rechargez la page');
         }
 
-        return $this->json(['response' => 'error'], Response::HTTP_BAD_REQUEST);
+        return $this->redirect($this->generateUrl('back_signalement_view', ['uuid' => $signalement->getUuid()]));
     }
 
     #[Route('/file/delete-tmp/{id}', name: 'back_signalement_delete_tmpfile', methods: ['DELETE'])]

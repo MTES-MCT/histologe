@@ -1,0 +1,49 @@
+<dialog aria-labelledby="fr-modal-title-modal-delete-file" role="dialog" id="fr-modal-delete-file" class="fr-modal">
+    <div class="fr-container fr-container--fluid fr-container-md  fr-text--left">
+        <div class="fr-grid-row fr-grid-row--center">
+            <div class="fr-col-12 fr-col-md-8">
+                <form method="POST" id="form-delete-file" enctype="application/json" action="{{ path('back_signalement_delete_file',{uuid:signalement.uuid}) }}">
+                    <div class="fr-modal__body">
+                        <div class="fr-modal__header">
+                            <button type="button" class="fr-btn--close fr-btn" aria-controls="fr-modal-delete-file">Fermer</button>
+                        </div>
+                        <div class="fr-modal__content">
+                            <h1 id="fr-modal-title-modal-delete-file" class="fr-modal__title">
+                                Supprimer  <span class="fr-modal-file-delete-type"></span>
+                            </h1>
+
+                            <div class="fr-select-group">
+                                Vous êtes sur le point de supprimer <span class="fr-modal-file-delete-type"></span> <b><span class="fr-modal-file-delete-filename"></span></b>. <br>
+                                Une fois supprimé, le fichier ne sera plus visible dans le signalement. <br>
+                                Si vous avez partagé <span class="fr-modal-file-delete-type"></span> à l'usager, il n'y aura plus accès.
+                            </div>
+                            <div class="fr-alert fr-alert--info">
+                                <p>Voulez-vous vraiment supprimer <span class="fr-modal-file-delete-type"></span> ?</p>
+                            </div>
+
+                        </div>
+                        
+                        <div class="fr-modal__footer">
+                            <ul class="fr-btns-group fr-btns-group--right fr-btns-group--inline-lg fr-btns-group--icon-left">
+                                <li>
+                                    <button type="button" class="fr-btn fr-btn--secondary fr-icon-close-line"
+                                            aria-controls="fr-modal-delete-file">
+                                        Non, annuler
+                                    </button>
+                                </li>
+                                <li>
+                                    <button class="fr-btn  fr-icon-checkbox-line" type="submit" form="form-delete-file"
+                                        id="form-delete-file-submit">
+                                        Oui, supprimer
+                                    </button>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                    <input type="hidden" name="_token" value="{{ csrf_token('signalement_delete_file_'~signalement.id) }}">
+                    <input type="hidden" name="file_id" id="file-delete-fileid">
+                </form>
+            </div>
+        </div>
+    </div>
+</dialog>

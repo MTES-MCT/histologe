@@ -68,23 +68,4 @@ class FileManager extends AbstractManager
             }
         }
     }
-
-    public function getFileFromSignalement(
-        Signalement $signalement,
-        string $type,
-        string $filename
-    ): ?File {
-        $fileType = 'documents' === $type ? File::FILE_TYPE_DOCUMENT : File::FILE_TYPE_PHOTO;
-        $fileCollection = $signalement->getFiles()->filter(
-            function (File $file) use ($fileType, $filename) {
-                return $fileType === $file->getFileType()
-                    && $filename === $file->getFilename();
-            }
-        );
-        if (!$fileCollection->isEmpty()) {
-            return $fileCollection->current();
-        }
-
-        return null;
-    }
 }

@@ -65,6 +65,8 @@
     </p>
 {% endif %}
 
+{% include '_partials/_modal_file_delete.html.twig' %}
+{% include 'back/signalement/view/edit-modals/edit-file.html.twig' %}
 
 {% set DocumentType = enum('\\App\\Entity\\Enum\\DocumentType') %}
 {% if filesFilter is same as 'situation' %}
@@ -83,8 +85,7 @@
                         data-id={{ photo.id }} 
                         title="Voir la photo {{ photo.filename }}"
                     ></button>
-                    {% if is_granted('FILE_EDIT', photo) %}
-                        {% include 'back/signalement/view/edit-modals/edit-file.html.twig' %}
+                    {% if is_granted('FILE_EDIT', photo) %}                       
                         <button 
                             class="fr-btn fr-btn--sm fr-btn--secondary fr-background--white fr-fi-edit-line btn-signalement-file-edit"
                             id="file_edit_{{ photo.id }}" 
@@ -106,11 +107,14 @@
                         ></button>
                     {% endif %}
                     {% if is_granted('FILE_DELETE', photo) %}
-                        <button 
+                        <button class="fr-btn fr-btn--sm fr-btn--secondary fr-background--white fr-fi-delete-line btn-signalement-file-delete"
+                            id="file_delete_{{ photo.id }}" 
                             title="Supprimer la photo {{ photo.filename }}"
-                            data-delete="{{ path('back_signalement_delete_file',{uuid:signalement.uuid,type:'photos',filename:photo.filename}) }}"
-                            data-token="{{ csrf_token('signalement_delete_file_'~signalement.id) }}"
-                            class="fr-btn fr-btn--sm fr-btn--secondary fr-background--white fr-fi-delete-line signalement-file-delete"
+                            aria-controls="fr-modal-delete-file"
+                            data-fr-opened="false" 
+                            data-filename="{{ photo.filename }}" 
+                            data-type="photo" 
+                            data-file-id="{{ photo.id}}"                     
                         ></button>
                     {% endif %}
                 </div>
@@ -156,7 +160,6 @@
                 target="_blank" rel="noopener"></a>           
             {% if is_granted('FILE_EDIT', doc) and doc.intervention is null %}
                 {% set DocumentType = enum('\\App\\Entity\\Enum\\DocumentType') %}
-                {% include 'back/signalement/view/edit-modals/edit-file.html.twig' %}
                 <button class="fr-btn fr-btn--sm fr-btn--secondary fr-background--white fr-fi-edit-line btn-signalement-file-edit"
                     id="file_edit_{{ doc.id }}" 
                     title="Editer le document {{ doc.filename }}"
@@ -173,10 +176,15 @@
                 ></button>
             {% endif %}       
             {% if is_granted('FILE_DELETE', doc) and doc.intervention is null %}
-                <button title="Supprimer le document {{ doc.filename }}"
-                    data-delete="{{ path('back_signalement_delete_file',{uuid:signalement.uuid,type:'documents',filename:doc.filename}) }}"
-                    data-token="{{ csrf_token('signalement_delete_file_'~signalement.id) }}"
-                    class="fr-btn fr-btn--sm fr-btn--secondary fr-fi-delete-line signalement-file-delete"></button>
+                <button class="fr-btn fr-btn--sm fr-btn--secondary fr-fi-delete-line btn-signalement-file-delete"
+                    id="file_delete_{{ doc.id }}" 
+                    title="Supprimer le document {{ doc.filename }}"
+                    aria-controls="fr-modal-delete-file"
+                    data-fr-opened="false" 
+                    data-filename="{{ doc.filename }}" 
+                    data-type="document" 
+                    data-file-id="{{ doc.id}}"                     
+                ></button>
             {% endif %}
         </div>
     </div>
