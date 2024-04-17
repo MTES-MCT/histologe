@@ -2,6 +2,7 @@
 
 namespace App\Tests\Functional\Messenger\MessageHandler;
 
+use App\Entity\Enum\DocumentType;
 use App\Messenger\Message\SignalementDraftFileMessage;
 use App\Messenger\MessageHandler\SignalementDraftFileMessageHandler;
 use App\Repository\SignalementDraftRepository;
@@ -43,6 +44,21 @@ class SignalementDraftFileMessageHandlerTest extends KernelTestCase
         $handler = $this->signalementDraftFileMessageHandler;
         $handler($message);
         $this->assertCount(7, $signalement->getFiles());
+        foreach ($signalement->getFiles() as $file) {
+            switch ($file->getFilename()) {
+                case 'Capture-d-ecran-1-desordre.png':
+                case 'Capture-d-ecran-é-desordre.png':
+                    $this->assertEquals(DocumentType::PHOTO_SITUATION, $file->getDocumentType());
+                    $this->assertEquals('desordres_batiment_proprete', $file->getDesordreSlug());
+                    break;
+                case 'Capture-d-ecran-bail-2.png':
+                    $this->assertEquals(DocumentType::SITUATION_FOYER_BAIL, $file->getDocumentType());
+                    $this->assertNull($file->getDesordreSlug());
+                    break;
+                default:
+                    $this->assertNotNull($file->getDocumentType());
+            }
+        }
     }
 
     public function testHandleMessageWithFailure(): void

@@ -210,15 +210,22 @@ class File
 
     public function setDesordreSlug(?string $desordreSlug): self
     {
-        if (!$this->getSignalement() || !$this->getDocumentType() || DocumentType::PHOTO_SITUATION !== $this->getDocumentType()) {
+        if (
+            !$this->getSignalement()
+            || !$this->getDocumentType()
+            || DocumentType::PHOTO_SITUATION !== $this->getDocumentType()
+        ) {
             $this->desordreSlug = null;
 
             return $this;
         }
         if (!$desordreSlug) {
             $this->desordreSlug = null;
-        } elseif (\in_array($desordreSlug, $this->getSignalement()->getDesordreCritereSlugs())
-            || \in_array($desordreSlug, $this->getSignalement()->getDesordrePrecisionSlugs())) {
+        } elseif (
+            \in_array($desordreSlug, $this->getSignalement()->getDesordreCritereSlugs())
+            || \in_array($desordreSlug, $this->getSignalement()->getDesordrePrecisionSlugs())
+            || \in_array($desordreSlug, $this->getSignalement()->getDesordreCategorieSlugs())
+        ) {
             $this->desordreSlug = $desordreSlug;
         }
 
