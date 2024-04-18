@@ -29,7 +29,6 @@
                 Suivi automatique
 
             {% elseif suivi.createdBy is not null %}
-                <strong>{{ suivi.createdBy.nomComplet|capitalize }}</strong>
                 <div class="part-infos-hover"
                      data-user="{{ suivi.createdBy.nomComplet }}"
                      data-mail="{{ suivi.createdBy.email }}">
