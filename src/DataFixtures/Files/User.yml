@@ -398,6 +398,14 @@ users:
     is_generique: 0
     is_mailing_active: 1
     territory: "Pas-de-Calais"
+  -
+    email: user-93-01@histologe.fr
+    roles: "[\"ROLE_USER_PARTNER\"]"
+    partner: "Mairie de Saint-Denis"
+    statut: 1
+    is_generique: 0
+    is_mailing_active: 1
+    territory: "Seine-Saint-Denis"
   -  
     email: usager-01@histologe.fr
     roles: "[\"ROLE_USAGER\"]"

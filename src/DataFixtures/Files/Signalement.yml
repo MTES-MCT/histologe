@@ -1785,3 +1785,42 @@ signalements:
     qualifications:
       - "RSD"
       - "NON_DECENCE"
+  -
+    uuid: "00000000-0000-0093-2024-000000000005"
+    details: "Un signalement auto-assigné."
+    is_proprio_averti: 1
+    is_logement_social: 1
+    bailleur: "Seine-Saint-Denis Style"
+    nb_adultes: "2"
+    nb_enfants_m6: "0"
+    nb_enfants_p6: "2"
+    is_allocataire: ""
+    nature_logement: "maison"
+    superficie: 100
+    phone_number: 0621127286
+    adresse_occupant: "17 Avenue Didier Morville"
+    cp_occupant: "93002"
+    ville_occupant: "Saint-Denis"
+    statut: 7
+    reference: "2024-05"
+    geoloc: "{\"lng\":\"43.301787\", \"lat\":\"5.364626\"}"
+    created_at: "2024-01-01 16:06:33"
+    score: 0
+    insee_occupant: "93066"
+    is_rsa: 0
+    nb_occupants_logement: 4
+    territory: "Seine-Saint-Denis"
+    mode_contact_proprio: "[\"\",\"t\\u00e9l\\u00e9phone\"]"
+    situations:
+      - "le confort du logement"
+    criteres:
+      - "De l’air s’infiltre dans mon logement."
+      - "Mes factures de chauffage sont anormalement élevées."
+      - "Mon logement est mal isolé."
+    criticites:
+      - "Infiltration ou fuite d'air dans plus de deux des éléments suivants : toit, charpente, façades, murs extérieurs. Sensation de courant d'air régulière ou très fréquente."
+      - "Ma facture est trop élevée et le chauffage est limité dans le logement."
+      - "Le DPE indique une étiquette énergie F ou G ou n’a pas été fait. J’ai tout le temps la sensation d'avoir froid en hiver et/ou très chaud en été."
+    qualifications:
+      - "RSD"
+      - "NON_DECENCE"

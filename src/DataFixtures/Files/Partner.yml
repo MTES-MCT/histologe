@@ -455,3 +455,10 @@ partners:
       - 'FSL'
       - 'VISITES'
       - 'RSD'
+  -
+    nom: "Mairie de Saint-Denis"
+    email: "partenaire-93-01@histologe.fr"
+    is_archive: 0
+    insee: "[\"93066\"]"
+    territory: "Seine-Saint-Denis"
+    type: "COMMUNE_SCHS"

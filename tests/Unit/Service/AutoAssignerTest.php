@@ -29,12 +29,12 @@ class AutoAssignerTest extends KernelTestCase
 
     public function testAutoAssignmentSuccess(): void
     {
-        $this->testHelper('2023-1', 1);
+        $this->testHelper('2024-05', 1);
     }
 
     public function testAutoAssignmentFailed(): void
     {
-        $this->testHelper('2023-2', 0);
+        $this->testHelper('2023-1', 0);
     }
 
     private function testHelper($reference, $expectedCount)
@@ -61,6 +61,6 @@ class AutoAssignerTest extends KernelTestCase
         );
 
         $autoAssigner->assign($signalement);
-        $this->assertEquals($autoAssigner->getCountAffectations(), $expectedCount);
+        $this->assertEquals($expectedCount, $autoAssigner->getCountAffectations());
     }
 }
