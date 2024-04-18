@@ -35,9 +35,9 @@
                 {{
                     'ROLE_USAGER' in suivi.createdBy.roles
                         ? (suivi.createdBy.email is same as signalement.mailOccupant
-                            ? 'OCCUPANT'
-                            : 'DECLARANT'
-                        )
+                            ? 'OCCUPANT'~ '\n' ~ suivi.createdBy.nomComplet|capitalize
+                            : 'DECLARANT'~ '\n' ~ suivi.createdBy.nomComplet|capitalize
+                        )|nl2br
                         : (suivi.createdBy.partner
                             ? (suivi.createdBy.partner.isArchive or ('ROLE_ADMIN' not in suivi.createdBy.roles and suivi.createdBy.partner.territory is not same as(signalement.territory))
                                 ? 'Partenaire supprimé'
