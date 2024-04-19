@@ -21,7 +21,7 @@ class EpciRepository extends ServiceEntityRepository
         parent::__construct($registry, Epci::class);
     }
 
-    public function findCommunesByEpics(array $epciCodes): array
+    public function findCommunesByEpcis(array $epciCodes): array
     {
         $queryBuilder = $this->createQueryBuilder('e')
             ->select('DISTINCT c.nom, c.codePostal')

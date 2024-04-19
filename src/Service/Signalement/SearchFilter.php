@@ -602,7 +602,7 @@ class SearchFilter
 
     private function addFilterEpci(QueryBuilder $qb, array $epcis): QueryBuilder
     {
-        $communes = $this->epciRepository->findCommunesByEpics($epcis);
+        $communes = $this->epciRepository->findCommunesByEpcis($epcis);
         $orX = $qb->expr()->orX();
         foreach ($communes as $key => $commune) {
             $orX->add($qb->expr()->andX(

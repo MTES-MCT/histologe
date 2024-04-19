@@ -15,7 +15,7 @@ class LoadEpciData extends Fixture implements OrderedFixtureInterface
     {
     }
 
-    public function load(ObjectManager $manager)
+    public function load(ObjectManager $manager): void
     {
         $partnersRows = Yaml::parseFile(__DIR__.'/../Files/Epci.yml');
         foreach ($partnersRows['epcis'] as $row) {
