@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use App\Repository\TerritoryRepository;
 use App\Service\Statistics\BatimentDesordresStatisticProvider;
+use App\Service\Statistics\DesordresCategoriesStatisticProvider;
 use App\Service\Statistics\GlobalAnalyticsProvider;
 use App\Service\Statistics\ListTerritoryStatisticProvider;
 use App\Service\Statistics\LogementDesordresStatisticProvider;
@@ -27,6 +28,7 @@ class FrontStatistiquesController extends AbstractController
         private TerritoryStatisticProvider $territoryStatisticProvider,
         private MonthStatisticProvider $monthStatisticProvider,
         private StatusStatisticProvider $statusStatisticProvider,
+        private DesordresCategoriesStatisticProvider $desordresCategoriesStatisticProvider,
         private LogementDesordresStatisticProvider $logementDesordresStatisticProvider,
         private BatimentDesordresStatisticProvider $batimentDesordresStatisticProvider,
         private MotifClotureStatisticProvider $motifClotureStatisticProvider
@@ -73,6 +75,9 @@ class FrontStatistiquesController extends AbstractController
 
         $this->ajaxResult['signalement_per_motif_cloture'] = $this->motifClotureStatisticProvider->getData($territory, null, 'bar');
         $this->ajaxResult['signalement_per_motif_cloture_this_year'] = $this->motifClotureStatisticProvider->getData($territory, $currentYear, 'bar');
+
+        $this->ajaxResult['signalement_per_desordres_categories'] = $this->desordresCategoriesStatisticProvider->getData($territory, null);
+        $this->ajaxResult['signalement_per_desordres_categories_this_year'] = $this->desordresCategoriesStatisticProvider->getData($territory, $currentYear);
 
         $this->ajaxResult['signalement_per_logement_desordres'] = $this->logementDesordresStatisticProvider->getData($territory, null);
         $this->ajaxResult['signalement_per_logement_desordres_this_year'] = $this->logementDesordresStatisticProvider->getData($territory, $currentYear);

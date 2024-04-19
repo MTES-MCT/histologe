@@ -29,7 +29,7 @@ class LogementDesordresStatisticProvider
         $data = self::initLogementDesordresPerValue();
         $i = 0;
         foreach ($countPerLogementDesordres as $countPerLogementDesordre) {
-            if ($data[$i]) {
+            if (isset($data[$i])) {
                 $data[$i]['count'] = $countPerLogementDesordre['count'];
                 $data[$i]['label'] = $countPerLogementDesordre['labelCritere'];
                 ++$i;

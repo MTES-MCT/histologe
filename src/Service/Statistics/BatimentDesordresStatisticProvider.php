@@ -29,7 +29,7 @@ class BatimentDesordresStatisticProvider
         $data = self::initBatimentDesordresPerValue();
         $i = 0;
         foreach ($countPerBatimentDesordres as $countPerBatimentDesordre) {
-            if ($data[$i]) {
+            if (isset($data[$i])) {
                 $data[$i]['count'] = $countPerBatimentDesordre['count'];
                 $data[$i]['label'] = $countPerBatimentDesordre['labelCritere'];
                 ++$i;

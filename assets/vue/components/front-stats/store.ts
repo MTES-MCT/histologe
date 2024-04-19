@@ -6,6 +6,7 @@ export const store = {
       perMonthYearType: 'year',
       perStatutYearType: 'year',
       perMotifClotureYearType: 'year',
+      perDesordresCategoriesYearType: 'year',
       perLogementDesordresYearType: 'year',
       perBatimentDesordresYearType: 'year',
       territoire: 'all',
@@ -23,11 +24,13 @@ export const store = {
       countSignalementPerMonth: Object,
       countSignalementPerStatut: Object,
       countSignalementPerMotifCloture: Object,
+      countSignalementPerDesordresCategories: Object,
       countSignalementPerLogementDesordres: Object,
       countSignalementPerBatimentDesordres: Object,
       countSignalementPerMonthThisYear: Object,
       countSignalementPerStatutThisYear: Object,
       countSignalementPerMotifClotureThisYear: Object,
+      countSignalementPerDesordresCategoriesThisYear: Object,
       countSignalementPerLogementDesordresThisYear: Object,
       countSignalementPerBatimentDesordresThisYear: Object
     }

@@ -36,6 +36,17 @@
 
           <TheHistoFrontStatsTerritoryItem
             sizeClass="4"
+            v-model="sharedState.filters.perDesordresCategoriesYearType"
+            :onChange="handleChangePerDesordresCategories"
+          >
+            <template #title>Désordres par catégorie</template>
+            <template #graph>
+              <HistoChartDoughnut v-if="!isLoadingPerDesordresCategories" :items=perDesordresCategoriesData />
+            </template>
+          </TheHistoFrontStatsTerritoryItem>
+
+          <TheHistoFrontStatsTerritoryItem
+            sizeClass="4"
             :isTotalActive="false"
             v-model="sharedState.filters.perLogementDesordresYearType"
             :onChange="handleChangePerLogementDesordres"
@@ -94,6 +105,7 @@ export default defineComponent({
       isLoadingPerMonth: false,
       isLoadingPerStatut: false,
       isLoadingPerMotifCloture: false,
+      isLoadingPerDesordresCategories: false,
       isLoadingPerLogementDesordres: false,
       isLoadingPerBatimentDesordres: false
     }
@@ -115,6 +127,10 @@ export default defineComponent({
     handleChangePerMotifCloture () {
       this.isLoadingPerMotifCloture = true
       setTimeout(() => { this.isLoadingPerMotifCloture = false }, 100)
+    },
+    handleChangePerDesordresCategories () {
+      this.isLoadingPerDesordresCategories = true
+      setTimeout(() => { this.isLoadingPerDesordresCategories = false }, 100)
     },
     handleChangePerLogementDesordres () {
       this.isLoadingPerLogementDesordres = true
@@ -143,6 +159,12 @@ export default defineComponent({
         return this.sharedState.stats.countSignalementPerMotifClotureThisYear
       }
       return this.sharedState.stats.countSignalementPerMotifCloture
+    },
+    perDesordresCategoriesData () {
+      if (this.sharedState.filters.perDesordresCategoriesYearType === 'year') {
+        return this.sharedState.stats.countSignalementPerDesordresCategoriesThisYear
+      }
+      return this.sharedState.stats.countSignalementPerDesordresCategories
     },
     perLogementDesordresData () {
       if (this.sharedState.filters.perLogementDesordresYearType === 'year') {

@@ -287,6 +287,35 @@ class SignalementRepository extends ServiceEntityRepository
             ->getResult();
     }
 
+    public function countCritereByZone(?Territory $territory, ?int $year, bool $removeImported = false): array
+    {
+        $qb = $this->createQueryBuilder('s');
+
+        $qb->select('SUM(CASE WHEN c.type = :batiment THEN 1 ELSE 0 END) AS critere_batiment_count')
+           ->addSelect('SUM(CASE WHEN c.type = :logement THEN 1 ELSE 0 END) AS critere_logement_count')
+           ->addSelect('SUM(CASE WHEN dc.zoneCategorie = :batimentString THEN 1 ELSE 0 END) AS desordrecritere_batiment_count')
+           ->addSelect('SUM(CASE WHEN dc.zoneCategorie = :logementString THEN 1 ELSE 0 END) AS desordrecritere_logement_count')
+           ->leftJoin('s.criteres', 'c')
+           ->leftJoin('s.desordreCriteres', 'dc')
+           ->setParameter('batiment', 1)
+           ->setParameter('logement', 2)
+           ->setParameter('batimentString', 'BATIMENT')
+           ->setParameter('logementString', 'LOGEMENT');
+
+        if ($removeImported) {
+            $qb->andWhere('s.isImported IS NULL OR s.isImported = 0');
+        }
+
+        if ($territory) {
+            $qb->andWhere('s.territory = :territory')->setParameter('territory', $territory);
+        }
+        if ($year) {
+            $qb->andWhere('YEAR(s.createdAt) = :year')->setParameter('year', $year);
+        }
+
+        return $qb->getQuery()->getSingleResult();
+    }
+
     public function countByDesordresCriteres(
         ?Territory $territory,
         ?int $year,

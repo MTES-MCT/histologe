@@ -97,11 +97,13 @@ export default defineComponent({
       this.sharedState.stats.countSignalementPerMonth = requestResponse.signalement_per_month
       this.sharedState.stats.countSignalementPerStatut = requestResponse.signalement_per_statut
       this.sharedState.stats.countSignalementPerMotifCloture = requestResponse.signalement_per_motif_cloture
+      this.sharedState.stats.countSignalementPerDesordresCategories = requestResponse.signalement_per_desordres_categories
       this.sharedState.stats.countSignalementPerLogementDesordres = requestResponse.signalement_per_logement_desordres
       this.sharedState.stats.countSignalementPerBatimentDesordres = requestResponse.signalement_per_batiment_desordres
       this.sharedState.stats.countSignalementPerMonthThisYear = requestResponse.signalement_per_month_this_year
       this.sharedState.stats.countSignalementPerStatutThisYear = requestResponse.signalement_per_statut_this_year
       this.sharedState.stats.countSignalementPerMotifClotureThisYear = requestResponse.signalement_per_motif_cloture_this_year
+      this.sharedState.stats.countSignalementPerDesordresCategoriesThisYear = requestResponse.signalement_per_desordres_categories_this_year
       this.sharedState.stats.countSignalementPerLogementDesordresThisYear = requestResponse.signalement_per_logement_desordres_this_year
       this.sharedState.stats.countSignalementPerBatimentDesordresThisYear = requestResponse.signalement_per_batiment_desordres_this_year
     }
