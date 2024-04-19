@@ -176,7 +176,9 @@ class SignalementEditController extends AbstractController
                 $validationGroups[] = $signalement->getProfileDeclarant()->value;
             }
             $errorMessage = FormHelper::getErrorsFromRequest(
-                $validator, $coordonneesBailleurRequest, $validationGroups
+                $validator,
+                $coordonneesBailleurRequest,
+                $validationGroups
             );
 
             if (empty($errorMessage)) {
@@ -224,7 +226,9 @@ class SignalementEditController extends AbstractController
                 'EDIT_'.$signalement->getProfileDeclarant()->value;
 
             $errorMessage = FormHelper::getErrorsFromRequest(
-                $validator, $informationsLogementRequest, $validationGroups
+                $validator,
+                $informationsLogementRequest,
+                $validationGroups
             );
 
             if (empty($errorMessage)) {
@@ -272,12 +276,14 @@ class SignalementEditController extends AbstractController
                 'EDIT_'.$signalement->getProfileDeclarant()->value;
 
             $errorMessage = FormHelper::getErrorsFromRequest(
-                $validator, $compositionLogementRequest, $validationGroups
+                $validator,
+                $compositionLogementRequest,
+                $validationGroups
             );
             if (empty($errorMessage)) {
                 $signalementManager->updateFromCompositionLogementRequest($signalement, $compositionLogementRequest);
                 $response = ['code' => Response::HTTP_OK];
-                $this->addFlash('success', 'La composition du logement a bien été modifiée.');
+                $this->addFlash('success', 'La description du logement a bien été modifiée.');
             } else {
                 $response = ['code' => Response::HTTP_BAD_REQUEST];
                 $response = [...$response, ...$errorMessage];
