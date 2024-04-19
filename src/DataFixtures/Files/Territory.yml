@@ -4,7 +4,6 @@ territories:
     name: "Ain"
     is_active: 1
     bbox: "{\"n\":\"46.519953\",\"e\":\"6.170198\",\"s\":\"45.611093\",\"w\":\"4.728067\"}"
-    is_auto_affectation_enabled: 1
   -
     zip: "02"
     name: "Aisne"
@@ -43,7 +42,7 @@ territories:
   -
     zip: "09"
     name: "Ariège"
-    is_active: 0
+    is_active: 1
     bbox: "{\"n\":\"43.316222\",\"e\":\"2.175847\",\"s\":\"42.571489\",\"w\":\"0.825994\"}"
   -
     zip: "10"
@@ -58,7 +57,7 @@ territories:
   -
     zip: "12"
     name: "Aveyron"
-    is_active: 0
+    is_active: 1
     bbox: "{\"n\":\"44.941441\",\"e\":\"3.451754\",\"s\":\"43.690619\",\"w\":\"1.839313\"}"
   -
     zip: "13"
@@ -83,12 +82,12 @@ territories:
   -
     zip: "17"
     name: "Charente-Maritime"
-    is_active: 0
+    is_active: 1
     bbox: "{\"n\":\"46.371485\",\"e\":\"0.005972\",\"s\":\"45.08875\",\"w\":\"-1.562669\"}"
   -
     zip: "18"
     name: "Cher"
-    is_active: 0
+    is_active: 1
     bbox: "{\"n\":\"47.629116\",\"e\":\"3.079745\",\"s\":\"46.420477\",\"w\":\"1.773677\"}"
   -
     zip: "19"
@@ -118,12 +117,12 @@ territories:
   -
     zip: "23"
     name: "Creuse"
-    is_active: 0
+    is_active: 1
     bbox: "{\"n\":\"46.45537\",\"e\":\"2.611293\",\"s\":\"45.663551\",\"w\":\"1.372604\"}"
   -
     zip: "24"
     name: "Dordogne"
-    is_active: 0
+    is_active: 1
     bbox: "{\"n\":\"45.714769\",\"e\":\"1.448245\",\"s\":\"44.570736\",\"w\":\"-0.041877\"}"
   -
     zip: "25"
@@ -156,7 +155,7 @@ territories:
   -
     zip: "30"
     name: "Gard"
-    is_active: 0
+    is_active: 1
     bbox: "{\"n\":\"44.459664\",\"e\":\"4.845564\",\"s\":\"43.460159\",\"w\":\"3.261869\"}"
   -
     zip: "31"
@@ -171,17 +170,17 @@ territories:
   -
     zip: "33"
     name: "Gironde"
-    is_active: 0
+    is_active: 1
     bbox: "{\"n\":\"45.573636\",\"e\":\"0.315137\",\"s\":\"44.193902\",\"w\":\"-1.261424\"}"
   -
     zip: "34"
     name: "Hérault"
-    is_active: 0
+    is_active: 1
     bbox: "{\"n\":\"43.97276\",\"e\":\"4.19454\",\"s\":\"43.21021\",\"w\":\"2.539549\"}"
   -
     zip: "35"
     name: "Ille-et-Vilaine"
-    is_active: 0
+    is_active: 1
     bbox: "{\"n\":\"48.721737\",\"e\":\"-1.015621\",\"s\":\"47.631614\",\"w\":\"-2.289611\"}"
   -
     zip: "36"
@@ -191,7 +190,7 @@ territories:
   -
     zip: "37"
     name: "Indre-et-Loire"
-    is_active: 0
+    is_active: 1
     bbox: "{\"n\":\"47.709868\",\"e\":\"1.366049\",\"s\":\"46.736714\",\"w\":\"0.052737\"}"
   -
     zip: "38"
@@ -206,12 +205,12 @@ territories:
   -
     zip: "40"
     name: "Landes"
-    is_active: 0
+    is_active: 1
     bbox: "{\"n\":\"44.532381\",\"e\":\"0.136691\",\"s\":\"43.48743\",\"w\":\"-1.523575\"}"
   -
     zip: "41"
     name: "Loir-et-Cher"
-    is_active: 0
+    is_active: 1
     bbox: "{\"n\":\"48.133235\",\"e\":\"2.247891\",\"s\":\"47.186391\",\"w\":\"0.580487\"}"
   -
     zip: "42"
@@ -221,7 +220,7 @@ territories:
   -
     zip: "43"
     name: "Haute-Loire"
-    is_active: 0
+    is_active: 1
     bbox: "{\"n\":\"45.427609\",\"e\":\"4.490819\",\"s\":\"44.743961\",\"w\":\"3.082197\"}"
   -
     zip: "44"
@@ -231,12 +230,12 @@ territories:
   -
     zip: "45"
     name: "Loiret"
-    is_active: 0
+    is_active: 1
     bbox: "{\"n\":\"48.344954\",\"e\":\"3.12841\",\"s\":\"47.483027\",\"w\":\"1.51145\"}"
   -
     zip: "46"
     name: "Lot"
-    is_active: 0
+    is_active: 1
     bbox: "{\"n\":\"45.046684\",\"e\":\"2.210891\",\"s\":\"44.203348\",\"w\":\"0.981522\"}"
   -
     zip: "47"
@@ -246,7 +245,7 @@ territories:
   -
     zip: "48"
     name: "Lozère"
-    is_active: 0
+    is_active: 1
     bbox: "{\"n\":\"44.975761\",\"s\":\"44.109591\",\"e\":\"3.998366\",\"w\":\"2.981197\"}"
   -
     zip: "49"
@@ -256,17 +255,17 @@ territories:
   -
     zip: "50"
     name: "Manche"
-    is_active: 0
+    is_active: 1
     bbox: "{\"n\":\"49.729982\",\"s\":\"48.455797\",\"e\":\"-0.734817\",\"w\":\"-1.954995\"}"
   -
     zip: "51"
     name: "Marne"
-    is_active: 0
+    is_active: 1
     bbox: "{\"n\":\"49.407828\",\"s\":\"48.515251\",\"e\":\"5.039668\",\"w\":\"3.395865\"}"
   -
     zip: "52"
     name: "Haute-Marne"
-    is_active: 0
+    is_active: 1
     bbox: "{\"n\":\"48.689322\",\"s\":\"47.576566\",\"e\":\"5.891043\",\"w\":\"4.626603\"}"
   -
     zip: "53"
@@ -276,12 +275,12 @@ territories:
   -
     zip: "54"
     name: "Meurthe-et-Moselle"
-    is_active: 0
+    is_active: 1
     bbox: "{\"n\":\"49.563268\",\"s\":\"48.348987\",\"e\":\"7.123213\",\"w\":\"5.426108\"}"
   -
     zip: "55"
     name: "Meuse"
-    is_active: 0
+    is_active: 1
     bbox: "{\"n\":\"49.616864\",\"s\":\"48.408992\",\"e\":\"5.854206\",\"w\":\"4.888377\"}"
   -
     zip: "56"
@@ -296,7 +295,7 @@ territories:
   -
     zip: "58"
     name: "Nièvre"
-    is_active: 0
+    is_active: 1
     bbox: "{\"n\":\"47.588288\",\"s\":\"46.651024\",\"e\":\"4.23191\",\"w\":\"2.844891\"}"
   -
     zip: "59"
@@ -306,7 +305,7 @@ territories:
   -
     zip: "60"
     name: "Oise"
-    is_active: 0
+    is_active: 1
     bbox: "{\"n\":\"49.763922\",\"s\":\"49.060525\",\"e\":\"3.166125\",\"w\":\"1.688866\"}"
   -
     zip: "61"
@@ -341,7 +340,7 @@ territories:
   -
     zip: "67"
     name: "Bas-Rhin"
-    is_active: 0
+    is_active: 1
     bbox: "{\"n\":\"49.077858\",\"s\":\"48.120387\",\"e\":\"8.233549\",\"w\":\"6.940614\"}"
   -
     zip: "68"
@@ -457,7 +456,7 @@ territories:
   -
     zip: "70"
     name: "Haute-Saône"
-    is_active: 0
+    is_active: 1
     bbox: "{\"n\":\"48.024154\",\"s\":\"47.252553\",\"e\":\"6.824947\",\"w\":\"5.366937\"}"
   -
     zip: "71"
@@ -467,12 +466,12 @@ territories:
   -
     zip: "72"
     name: "Sarthe"
-    is_active: 0
+    is_active: 1
     bbox: "{\"n\":\"48.48502\",\"s\":\"47.568401\",\"e\":\"0.916639\",\"w\":\"-0.448063\"}"
   -
     zip: "73"
     name: "Savoie"
-    is_active: 0
+    is_active: 1
     bbox: "{\"n\":\"45.938537\",\"s\":\"45.051689\",\"e\":\"7.185566\",\"w\":\"5.621902\"}"
   -
     zip: "74"
@@ -487,7 +486,7 @@ territories:
   -
     zip: "76"
     name: "Seine-Maritime"
-    is_active: 0
+    is_active: 1
     bbox: "{\"n\":\"50.072097\",\"s\":\"49.250643\",\"e\":\"1.790589\",\"w\":\"0.065572\"}"
   -
     zip: "77"
@@ -497,7 +496,7 @@ territories:
   -
     zip: "78"
     name: "Yvelines"
-    is_active: 0
+    is_active: 1
     bbox: "{\"n\":\"49.085448\",\"s\":\"48.438557\",\"e\":\"2.229127\",\"w\":\"1.44617\"}"
   -
     zip: "79"
@@ -527,22 +526,22 @@ territories:
   -
     zip: "84"
     name: "Vaucluse"
-    is_active: 0
+    is_active: 1
     bbox: "{\"n\":\"44.431566\",\"s\":\"43.658718\",\"e\":\"5.757335\",\"w\":\"4.649082\"}"
   -
     zip: "85"
     name: "Vendée"
-    is_active: 0
+    is_active: 1
     bbox: "{\"n\":\"47.085008\",\"s\":\"46.266539\",\"e\":\"-0.538134\",\"w\":\"-2.400631\"}"
   -
     zip: "86"
     name: "Vienne"
-    is_active: 0
+    is_active: 1
     bbox: "{\"n\":\"47.17599\",\"s\":\"46.048269\",\"e\":\"1.21323\",\"w\":\"-0.105026\"}"
   -
     zip: "87"
     name: "Haute-Vienne"
-    is_active: 0
+    is_active: 1
     bbox: "{\"n\":\"46.401586\",\"s\":\"45.43663\",\"e\":\"1.911079\",\"w\":\"0.62925\"}"
   -
     zip: "88"
@@ -572,8 +571,9 @@ territories:
   -
     zip: "93"
     name: "Seine-Saint-Denis"
-    is_active: 0
+    is_active: 1
     bbox: "{\"n\":\"49.012329\",\"s\":\"48.807248\",\"e\":\"2.603292\",\"w\":\"2.288311\"}"
+    is_auto_affectation_enabled: 1
   -
     zip: "94"
     name: "Val-de-Marne"
@@ -599,13 +599,13 @@ territories:
   -
     zip: "973"
     name: "Guyane"
-    is_active: 0
+    is_active: 1
     bbox: "[]"
     
   -
     zip: "974"
     name: "La Réunion"
-    is_active: 1
+    is_active: 0
     bbox: "[]"
     
   -
@@ -619,8 +619,3 @@ territories:
     name: "Agglo de Pau"
     is_active: 1
     bbox: "{\"n\":\"43.596725\",\"s\":\"42.777531\",\"e\":\"0.029807\",\"w\":\"-1.792325\"}"
-  -
-    zip: "38"
-    name: "Isère"
-    is_active: 0
-    bbox: "{\"n\":\"49.763922\",\"s\":\"49.060525\",\"e\":\"3.166125\",\"w\":\"1.688866\"}"
