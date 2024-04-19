@@ -48,7 +48,7 @@ class SignalementDraftFileMessageHandler
             foreach ($files as $key => $fileList) {
                 foreach ($fileList as $fileItem) {
                     $fileItem['slug'] = $key;
-                    $file = $this->fileFactory->createFromFileArray(file: $fileItem);
+                    $file = $this->fileFactory->createFromFileArray(file: $fileItem, signalement: $signalement);
                     $this->uploadHandlerService->moveFromBucketTempFolder($file->getFilename());
                     $file->setSize($this->uploadHandlerService->getFileSize($file->getFilename()));
                     $file->setIsVariantsGenerated($this->uploadHandlerService->hasVariants($file->getFilename()));
