@@ -2,7 +2,7 @@
   <div :class="[ 'histo-front-stats-territory-item fr-col-12 fr-mb-5w', 'fr-col-md-' + sizeClass ]">
     <div class="fr-p-2w">
       <div class="title"><slot name="title"></slot></div>
-      <TheHistoFrontStatsYearToggle v-model="yearType" :on-change="onYearTypeChange" />
+      <TheHistoFrontStatsYearToggle v-model="yearType" :on-change="onYearTypeChange" :isTotalActive="isTotalActive" />
       <div class="clear"></div>
       <div class="graph"><slot name="graph"></slot></div>
     </div>
@@ -19,6 +19,7 @@ export default defineComponent({
   props: {
     sizeClass: { type: String, default: '' },
     modelValue: { type: String, default: '' },
+    isTotalActive: { type: Boolean, default: true },
     onChange: { type: Function }
   },
   emits: ['update:modelValue'],

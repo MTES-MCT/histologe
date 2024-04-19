@@ -34,20 +34,31 @@
             </template>
           </TheHistoFrontStatsTerritoryItem>
 
-          <TheHistoFrontStatsTerritoryItem sizeClass="4" v-model="sharedState.filters.perLogementDesordresYearType" :onChange="handleChangePerLogementDesordres">
+          <TheHistoFrontStatsTerritoryItem
+            sizeClass="4"
+            :isTotalActive="false"
+            v-model="sharedState.filters.perLogementDesordresYearType"
+            :onChange="handleChangePerLogementDesordres"
+          >
             <template #title>Logement : désordres les plus courants*</template>
             <template #graph>
               <HistoChartDoughnut v-if="!isLoadingPerLogementDesordres" :items=perLogementDesordresData />
             </template>
           </TheHistoFrontStatsTerritoryItem>
 
-          <TheHistoFrontStatsTerritoryItem sizeClass="4" v-model="sharedState.filters.perBatimentDesordresYearType" :onChange="handleChangePerBatimentDesordres">
+          <TheHistoFrontStatsTerritoryItem
+            sizeClass="4"
+            v-model="sharedState.filters.perBatimentDesordresYearType"
+            :onChange="handleChangePerBatimentDesordres"
+            :isTotalActive="false"
+          >
             <template #title>Bâtiment : désordres les plus courants*</template>
             <template #graph>
               <HistoChartDoughnut v-if="!isLoadingPerBatimentDesordres" :items=perBatimentDesordresData />
             </template>
           </TheHistoFrontStatsTerritoryItem>
         </div>
+        <i>* Les statistiques concernant les désordres les plus courants par catégorie sont disponibles depuis février 2024 uniquement.</i>
       </div>
     </div>
   </div>

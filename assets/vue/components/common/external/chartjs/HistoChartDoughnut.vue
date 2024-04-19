@@ -96,7 +96,8 @@ export default defineComponent({
         maintainAspectRatio: false,
         plugins: {
           legend: {
-            position: 'bottom'
+            position: 'bottom',
+            align: 'start'
           }
         }
       }
