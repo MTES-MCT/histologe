@@ -125,7 +125,7 @@ export const requests = {
   },
 
   sendMailGetLienSuivi (uuid: any, functionReturn: Function) {
-    const url = formStore.props.ajaxurlSendMailGetLienSuivi.replace('uuid', uuid)
+    const url = (formStore.props.ajaxurlSendMailGetLienSuivi.replace('uuid', uuid) as string) + '?profil=' + (formStore.data.profil as string)
     requests.doRequestPost(url, '', functionReturn, undefined)
   },
 

@@ -254,10 +254,13 @@ class FrontSignalementController extends AbstractController
         Request $request
     ): Response {
         if ($request->isMethod('POST')) {
+            $profil = $request->get('profil');
             $success = $notificationMailerRegistry->send(
                 new NotificationMail(
                     type: NotificationMailerType::TYPE_SIGNALEMENT_LIEN_SUIVI,
-                    to: $signalement->isTiersDeclarant() ? $signalement->getMailDeclarant() : $signalement->getMailOccupant(),
+                    to: 'locataire' === $profil || 'bailleur_occupant' === $profil
+                        ? $signalement->getMailOccupant()
+                        : $signalement->getMailDeclarant(),
                     signalement: $signalement,
                 )
             );
