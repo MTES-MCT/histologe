@@ -175,7 +175,7 @@ class SignalementFileController extends AbstractController
                 /** @var User $user */
                 $user = $this->getUser();
                 $description = $user->getNomComplet().' a supprimé ';
-                $description .= File::INPUT_NAME_DOCUMENTS === $type ? 'le document suivant :' : 'la photo suivante :';
+                $description .= File::FILE_TYPE_DOCUMENT === $type ? 'le document suivant :' : 'la photo suivante :';
                 $suivi->setDescription(
                     $description
                     .'<ul><li>'
@@ -187,7 +187,7 @@ class SignalementFileController extends AbstractController
                 $entityManager->persist($suivi);
                 $entityManager->flush();
 
-                if ('document' === $type) {
+                if (File::FILE_TYPE_DOCUMENT === $type) {
                     $this->addFlash('success', 'Le document a bien été supprimé.');
                 } else {
                     $this->addFlash('success', 'La photo a bien été supprimée.');
