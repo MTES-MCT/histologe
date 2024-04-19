@@ -54,22 +54,22 @@ class SignalementListControllerTest extends WebTestCase
         }
     }
 
-//    public function testDisplayGitBookDocumentationExternalLink(): void
-//    {
-//        $client = static::createClient();
-//        /** @var UrlGeneratorInterface $generatorUrl */
-//        $generatorUrl = static::getContainer()->get(UrlGeneratorInterface::class);
-//
-//        /** @var UserRepository $userRepository */
-//        $userRepository = static::getContainer()->get(UserRepository::class);
-//        $user = $userRepository->findOneBy(['email' => 'admin-01@histologe.fr']);
-//        $client->loginUser($user);
-//        $crawler = $client->request('GET', $generatorUrl->generate('back_index'));
-//
-//        $this->assertSelectorTextContains('.fr-sidemenu ul:nth-of-type(2)', 'Documentation');
-//        $link = $crawler->selectLink('Documentation')->link();
-//        $this->assertEquals('https://documentation.histologe.beta.gouv.fr', $link->getUri());
-//    }
+    public function testDisplayGitBookDocumentationExternalLink(): void
+    {
+        $client = static::createClient();
+        /** @var UrlGeneratorInterface $generatorUrl */
+        $generatorUrl = static::getContainer()->get(UrlGeneratorInterface::class);
+
+        /** @var UserRepository $userRepository */
+        $userRepository = static::getContainer()->get(UserRepository::class);
+        $user = $userRepository->findOneBy(['email' => 'admin-01@histologe.fr']);
+        $client->loginUser($user);
+        $crawler = $client->request('GET', $generatorUrl->generate('back_index'));
+
+        $this->assertSelectorTextContains('.fr-sidemenu ul:nth-of-type(2)', 'Documentation');
+        $link = $crawler->selectLink('Documentation')->link();
+        $this->assertEquals('https://documentation.histologe.beta.gouv.fr', $link->getUri());
+    }
 
     public function testDisplaySignalementMDLRoleAdminTerritory()
     {
@@ -107,24 +107,24 @@ class SignalementListControllerTest extends WebTestCase
         $this->assertSelectorTextContains('table', '2 signalement(s)');
     }
 
-//    /**
-//     * @dataProvider provideLinkFilterDashboard
-//     */
-//    public function testWidgetLinkFilterDashboard(string $emailUser, string $filter): void
-//    {
-//        $client = static::createClient();
-//        /** @var UrlGeneratorInterface $generatorUrl */
-//        $generatorUrl = static::getContainer()->get(UrlGeneratorInterface::class);
-//        /** @var UserRepository $userRepository */
-//        $userRepository = static::getContainer()->get(UserRepository::class);
-//
-//        $user = $userRepository->findOneBy(['email' => $emailUser]);
-//        $client->loginUser($user);
-//        $route = $generatorUrl->generate('back_index').$filter;
-//        $client->request('GET', $route);
-//
-//        $this->assertResponseIsSuccessful();
-//    }
+    /**
+     * @dataProvider provideLinkFilterDashboard
+     */
+    public function testWidgetLinkFilterDashboard(string $emailUser, string $filter): void
+    {
+        $client = static::createClient();
+        /** @var UrlGeneratorInterface $generatorUrl */
+        $generatorUrl = static::getContainer()->get(UrlGeneratorInterface::class);
+        /** @var UserRepository $userRepository */
+        $userRepository = static::getContainer()->get(UserRepository::class);
+
+        $user = $userRepository->findOneBy(['email' => $emailUser]);
+        $client->loginUser($user);
+        $route = $generatorUrl->generate('back_index').$filter;
+        $client->request('GET', $route);
+
+        $this->assertResponseIsSuccessful();
+    }
 
     private function provideLinkFilterDashboard(): \Generator
     {
