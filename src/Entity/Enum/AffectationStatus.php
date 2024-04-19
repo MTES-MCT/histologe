@@ -32,4 +32,13 @@ enum AffectationStatus: int
             self::STATUS_REFUSED => 'refusé',
         };
     }
+
+    public static function mapFilterStatus(string $label): int
+    {
+        return match ($label) {
+            'en_attente' => AffectationStatus::STATUS_WAIT->value,
+            'accepte' => AffectationStatus::STATUS_ACCEPTED->value,
+            'refuse' => AffectationStatus::STATUS_REFUSED->value,
+        };
+    }
 }

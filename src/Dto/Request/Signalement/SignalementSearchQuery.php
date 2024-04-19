@@ -3,6 +3,7 @@
 namespace App\Dto\Request\Signalement;
 
 use App\Entity\Enum\SignalementStatus;
+use App\Service\Signalement\SearchFilter;
 use Symfony\Component\Validator\Constraints as Assert;
 
 class SignalementSearchQuery
@@ -10,11 +11,12 @@ class SignalementSearchQuery
     public const MAX_LIST_PAGINATION = 25;
 
     public function __construct(
-        private readonly ?string $territory = null,
+        private readonly ?array $territoires = null,
         private readonly ?string $searchTerms = null,
         #[Assert\Choice(['nouveau', 'en cours', 'ferme', 'refuse'])]
         private readonly ?string $status = null,
-        private readonly ?string $commune = null,
+        private readonly ?array $communes = null,
+        private readonly ?array $epcis = null,
         private readonly ?array $etiquettes = null,
         #[Assert\Date(message: 'La date de début n\'est pas une date valide')]
         private readonly ?string $dateDepotDebut = null,
@@ -23,20 +25,43 @@ class SignalementSearchQuery
         private readonly ?array $partenaires = null,
         #[Assert\Choice(['Non planifiée', 'Planifiée', 'Conclusion à renseigner', 'Terminée'])]
         private readonly ?string $visiteStatus = null,
+        #[Assert\Choice(['partenaire', 'usager', 'automatique'])]
         private readonly ?string $typeDernierSuivi = null,
-        private readonly ?string $statusAffectations = null,
+        #[Assert\Date(message: 'La date de début n\'est pas une date valide')]
+        private readonly ?string $dateDernierSuiviDebut = null,
+        #[Assert\Date(message: 'La date de fin n\'est pas une date valide')]
+        private readonly ?string $dateDernierSuiviFin = null,
+        #[Assert\Choice(['accepte', 'en_attente', 'refuse', 'cloture_un_partenaire', 'cloture_tous_partenaire'])]
+        private readonly ?string $statusAffectation = null,
         #[Assert\GreaterThanOrEqual(0)]
         private readonly ?float $criticiteScoreMin = null,
         #[Assert\LessThanOrEqual(100)]
         private readonly ?float $criticiteScoreMax = null,
-        #[Assert\Choice(['locataire', 'bailleur_occupant', 'tiers_particulier', 'tiers_pro', 'service_secours', 'bailleur'])]
+        #[Assert\Choice([
+            'locataire',
+            'bailleur_occupant',
+            'tiers_particulier',
+            'tiers_pro',
+            'service_secours',
+            'bailleur', ])]
         private readonly ?string $typeDeclarant = null,
-        #[Assert\Choice(['privee', 'public'])]
+        #[Assert\Choice(['privee', 'public', 'non_renseigne'])]
         private readonly ?string $natureParc = null,
-        #[Assert\Choice(['caf', 'msa', 'non', 'oui'])]
+        #[Assert\Choice(['caf', 'msa', 'oui', 'non', 'non_renseigne'])]
         private readonly ?string $allocataire = null,
-        private readonly ?bool $enfantsM6 = null,
+        #[Assert\Choice(['oui', 'non', 'non_renseigne'])]
+        private readonly ?string $enfantsM6 = null,
+        #[Assert\Choice(['attente_relogement', 'bail_en_cours', 'preavis_de_depart'])]
         private readonly ?string $situation = null,
+        #[Assert\Choice([
+            'non_decence_energetique',
+            'non_decence',
+            'rsd',
+            'danger',
+            'insalubrite',
+            'mise_en_securite_peril',
+            'suroccupation', ])]
+        private readonly ?string $procedure = null,
         private readonly ?int $page = 1,
         #[Assert\Choice(['reference', 'nomOccupant', 'createdAt'])]
         private readonly string $sortBy = 'reference',
@@ -44,9 +69,9 @@ class SignalementSearchQuery
     ) {
     }
 
-    public function getTerritory(): ?string
+    public function getTerritoires(): ?array
     {
-        return $this->territory;
+        return $this->territoires;
     }
 
     public function getSearchTerms(): ?string
@@ -59,9 +84,14 @@ class SignalementSearchQuery
         return $this->status;
     }
 
-    public function getCommune(): ?string
+    public function getCommunes(): ?array
     {
-        return $this->commune;
+        return $this->communes;
+    }
+
+    public function getEpcis(): ?array
+    {
+        return $this->epcis;
     }
 
     public function getEtiquettes(): ?array
@@ -94,9 +124,19 @@ class SignalementSearchQuery
         return $this->typeDernierSuivi;
     }
 
-    public function getStatusAffectations(): ?string
+    public function getDateDernierSuiviDebut(): ?string
     {
-        return $this->statusAffectations;
+        return $this->dateDernierSuiviDebut;
+    }
+
+    public function getDateDernierSuiviFin(): ?string
+    {
+        return $this->dateDernierSuiviFin;
+    }
+
+    public function getStatusAffectation(): ?string
+    {
+        return $this->statusAffectation;
     }
 
     public function getCriticiteScoreMin(): ?float
@@ -121,10 +161,10 @@ class SignalementSearchQuery
 
     public function getAllocataire(): ?string
     {
-        return !empty($this->allocataire) ? strtoupper($this->allocataire) : null;
+        return !empty($this->allocataire) ? $this->allocataire : null;
     }
 
-    public function getEnfantsM6(): ?bool
+    public function getEnfantsM6(): ?string
     {
         return $this->enfantsM6;
     }
@@ -132,6 +172,11 @@ class SignalementSearchQuery
     public function getSituation(): ?string
     {
         return $this->situation;
+    }
+
+    public function getProcedure(): ?string
+    {
+        return !empty($this->procedure) ? strtoupper($this->procedure) : null;
     }
 
     public function getPage(): ?int
@@ -149,19 +194,42 @@ class SignalementSearchQuery
         return $this->orderBy;
     }
 
+    /**
+     * @todo: Après la MEP, s'appuyer exclusivement sur le DTO au lieu du tableau de filtres
+     *
+     * @see SearchFilter::buildFilters()
+     */
     public function getFilters(): array
     {
         $filters = [];
         $filters['searchterms'] = $this->getSearchTerms() ?? null;
-        $filters['territories'] = $this->getTerritory() ?? null;
+        $filters['territories'] = $this->getTerritoires() ?? null;
         $filters['statuses'] = null !== $this->getStatus()
             ? [SignalementStatus::mapFilterStatus($this->getStatus())]
             : null;
-        $filters['cities'] = null !== $this->getCommune() ? [$this->getCommune()] : null;
+        $filters['cities'] = $this->getCommunes() ?? null;
+        $filters['epcis'] = $this->getEpcis() ?? null;
         $filters['partners'] = $this->getPartenaires() ?? null;
         $filters['allocs'] = null !== $this->getAllocataire() ? [$this->getAllocataire()] : null;
-        $filters['housetypes'] = null !== $this->getNatureParc() ? ['public' === $this->getNatureParc()] : null;
-        $filters['enfantsM6'] = null !== $this->getEnfantsM6() ? [$this->getEnfantsM6()] : null;
+        $filters['housetypes'] = match ($this->getNatureParc()) {
+            'public' => [1],
+            'privee' => [0],
+            'non_renseigne' => ['non_renseigne'],
+            default => null
+        };
+        $filters['enfantsM6'] = match ($this->getEnfantsM6()) {
+            'oui' => [1],
+            'non' => [0],
+            'non_renseigne' => ['non_renseigne'],
+            default => null
+        };
+
+        if ('oui' === $this->getAllocataire()) {
+            $filters['allocs'] = ['1', 'caf', 'msa'];
+        } elseif ('non' === $this->getAllocataire()) {
+            $filters['allocs'] = ['0'];
+        }
+
         $filters['visites'] = null !== $this->getVisiteStatus() ? [$this->getVisiteStatus()] : null;
         if (null !== $this->getCriticiteScoreMin() || null !== $this->getCriticiteScoreMax()) {
             $filters['scores'] = [
@@ -169,7 +237,7 @@ class SignalementSearchQuery
                 'off' => $this->getCriticiteScoreMax() ?? 100,
             ];
         }
-        if (null !== $this->getDateDepotDebut() && null !== $this->getDateDepotFin()) {
+        if (null !== $this->getDateDepotDebut() || null !== $this->getDateDepotFin()) {
             $filters['dates'] = [
                 'on' => $this->getDateDepotDebut(),
                 'off' => $this->getDateDepotFin(),
@@ -177,9 +245,24 @@ class SignalementSearchQuery
         }
         $filters['tags'] = $this->getEtiquettes() ?? null;
         $filters['typeDeclarant'] = $this->getTypeDeclarant();
+        $filters['situation'] = $this->getSituation();
+        $filters['procedure'] = $this->getProcedure();
+        $filters['typeDernierSuivi'] = $this->getTypeDernierSuivi();
+        if (null !== $this->getDateDernierSuiviDebut() || null !== $this->getDateDernierSuiviFin()) {
+            $filters['datesDernierSuivi'] = [
+                'on' => $this->getDateDernierSuiviDebut(),
+                'off' => $this->getDateDernierSuiviFin(),
+            ];
+        }
+        $filters['statusAffectation'] = $this->getStatusAffectation();
+        $filters['closed_affectation'] = match ($filters['statusAffectation']) {
+            'cloture_un_partenaire' => ['ONE_CLOSED'],
+            'cloture_tous_partenaire' => ['ALL_CLOSED'],
+            default => null
+        };
         $filters['page'] = $this->getPage() ?? 1;
         $filters['maxItemsPerPage'] = self::MAX_LIST_PAGINATION;
-        $filters['sortBy'] = $this->getSortBy() ?? 'reference';
+        $filters['sortBy'] = $this->getSortBy() ?? 'createdAt';
         $filters['orderBy'] = $this->getOrderBy() ?? 'DESC';
 
         return array_filter($filters);

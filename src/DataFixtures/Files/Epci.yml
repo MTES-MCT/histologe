@@ -1,0 +1,35 @@
+epcis:
+  -
+    code: "200054807"
+    nom: "Métropole d'Aix-Marseille-Provence"
+    communes:
+      -
+        nom: "Marseille"
+        codesPostaux:
+          - "13001"
+          - "13002"
+          - "13003"
+          - "13004"
+          - "13005"
+          - "13006"
+          - "13007"
+          - "13008"
+          - "13009"
+          - "13010"
+          - "13011"
+          - "13012"
+          - "13013"
+          - "13014"
+          - "13015"
+          - "13016"
+  -
+    code: "244400503"
+    nom: "CC d'Erdre et Gesvres"
+    communes:
+      -
+        nom: "Petit-Mars"
+        codesPostaux:
+          - "44390"
+      - nom: "Saint-Mars-du-Désert"
+        codesPostaux:
+          - "44850"

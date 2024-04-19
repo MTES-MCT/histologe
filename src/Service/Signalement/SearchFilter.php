@@ -14,12 +14,13 @@ use App\Entity\Signalement;
 use App\Entity\Suivi;
 use App\Entity\Territory;
 use App\Entity\User;
+use App\Repository\CommuneRepository;
+use App\Repository\EpciRepository;
 use App\Repository\NotificationRepository;
 use App\Repository\SignalementQualificationRepository;
 use App\Repository\SuiviRepository;
 use App\Repository\TerritoryRepository;
-use DateInterval;
-use DateTime;
+use App\Utils\ImportCommune;
 use Doctrine\DBAL\Exception;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\QueryBuilder;
@@ -66,6 +67,8 @@ class SearchFilter
         private TerritoryRepository $territoryRepository,
         private EntityManagerInterface $entityManager,
         private SignalementQualificationRepository $signalementQualificationRepository,
+        private CommuneRepository $communeRepository,
+        private EpciRepository $epciRepository,
     ) {
     }
 
@@ -92,8 +95,14 @@ class SearchFilter
     {
         /** @var SignalementSearchQuery $signalementSearchQuery */
         $signalementSearchQuery = $this->request;
+        $filters = $signalementSearchQuery->getFilters();
+        if (!$this->security->isGranted('ROLE_ADMIN')) {
+            /** @var User $user */
+            $user = $this->security->getUser();
+            $filters['territories'][] = $user->getTerritory()->getId();
+        }
 
-        return $signalementSearchQuery->getFilters();
+        return $filters;
     }
 
     /**
@@ -108,11 +117,12 @@ class SearchFilter
         $user = $this->security->getUser();
         $filters = self::REQUESTS;
         $this->filters = [];
-        $territory = $this->getTerritory($user, $request);
 
         if (!$request instanceof Request) {
             return $this;
         }
+
+        $territory = $this->getTerritory($user, $request);
         foreach ($filters as $filter) {
             $this->filters[$filter] = $request->get('bo-filters-'.$filter) ?? null;
 
@@ -223,6 +233,7 @@ class SearchFilter
             } else {
                 $qb->andWhere('LOWER(s.nomOccupant) LIKE :searchterms
                 OR LOWER(s.prenomOccupant) LIKE :searchterms
+                OR LOWER(s.mailOccupant) LIKE :searchterms
                 OR LOWER(s.reference) LIKE :searchterms
                 OR LOWER(s.adresseOccupant) LIKE :searchterms
                 OR LOWER(s.villeOccupant) LIKE :searchterms
@@ -370,6 +381,10 @@ class SearchFilter
                 ->setParameter('cities', $filters['cities']);
         }
 
+        if (!empty($filters['epcis'])) {
+            $qb = $this->addFilterEpci($qb, $filters['epcis']);
+        }
+
         if (!empty($filters['visites'])) {
             $qb->leftJoin('s.interventions', 'intervSearch');
             $queryVisites = '';
@@ -397,25 +412,17 @@ class SearchFilter
             $qb->andWhere($queryVisites);
         }
         if (!empty($filters['enfantsM6'])) {
-            $qb->andWhere('IF(s.nbEnfantsM6 IS NOT NULL AND s.nbEnfantsM6 != 0,1,0) IN (:enfantsM6)')
-                ->setParameter('enfantsM6', $filters['enfantsM6']);
+            if (\in_array('non_renseigne', $filters['enfantsM6'])) {
+                $qb->andWhere('s.nbEnfantsM6 IS NULL OR s.nbEnfantsM6 LIKE \'\'');
+            } elseif (\in_array(0, $filters['enfantsM6'])) {
+                $qb->andWhere('s.nbEnfantsM6 = 0');
+            } elseif (\in_array(1, $filters['enfantsM6'])) {
+                $qb->andWhere('s.nbEnfantsM6 > 0');
+            }
         }
         if (!empty($filters['avant1949'])) {
             $qb->andWhere('s.isConstructionAvant1949 IN (:avant1949)')
                 ->setParameter('avant1949', $filters['avant1949']);
-        }
-        if (!empty($filters['dates'])) {
-            $field = 's.createdAt';
-            if (!empty($filters['dates']['on'])) {
-                $qb->andWhere($field.' >= :date_in')
-                    ->setParameter('date_in', $filters['dates']['on']);
-            }
-            if (!empty($filters['dates']['off'])) {
-                $date_off_p1d = new DateTime($filters['dates']['off']);
-                $date_off_p1d->add(new DateInterval('P1D'));
-                $qb->andWhere($field.' <= :date_off')
-                    ->setParameter('date_off', $date_off_p1d->format('Y-m-d'));
-            }
         }
 
         if (!empty($filters['criteres'])) {
@@ -424,12 +431,18 @@ class SearchFilter
                 ->setParameter('criteres', $filters['criteres']);
         }
         if (!empty($filters['housetypes'])) {
-            $qb->andWhere('s.isLogementSocial IN (:housetypes)')
-                ->setParameter('housetypes', $filters['housetypes']);
+            if (\in_array('non_renseigne', $filters['housetypes'])) {
+                $qb->andWhere('s.isLogementSocial IS NULL');
+            } else {
+                $qb->andWhere('s.isLogementSocial IN (:housetypes)')->setParameter('housetypes', $filters['housetypes']);
+            }
         }
         if (!empty($filters['allocs'])) {
-            $qb->andWhere('s.isAllocataire IN (:allocs)')
-                ->setParameter('allocs', $filters['allocs']);
+            if (\in_array('non_renseigne', $filters['allocs'])) {
+                $qb->andWhere('s.isAllocataire IS NULL OR s.isAllocataire LIKE \'\' ');
+            } else {
+                $qb->andWhere('s.isAllocataire IN (:allocs)')->setParameter('allocs', $filters['allocs']);
+            }
         }
         if (!empty($filters['declarants'])) {
             $qb->andWhere('s.isNotOccupant IN (:declarants)')
@@ -480,24 +493,148 @@ class SearchFilter
                 ->setParameter('profile_declarant', $filters['typeDeclarant']);
         }
 
+        if (!empty($filters['situation'])) {
+            $qb = $this->addFilterSituation($qb, $filters['situation']);
+        }
+
+        if (!empty($filters['procedure'])) {
+            $qb = $this->addFilterProcedure($qb, $filters['procedure']);
+        }
+
+        if (!empty($filters['typeDernierSuivi'])) {
+            $qb = $this->addFilterTypeDernierSuivi($qb, $filters['typeDernierSuivi']);
+        }
+
+        if (!empty($filters['dates'])) {
+            $qb = $this->addFilterDate($qb, 's.createdAt', $filters['dates']);
+        }
+
+        if (!empty($filters['datesDernierSuivi'])) {
+            $qb = $this->addFilterDate($qb, 's.lastSuiviAt', $filters['datesDernierSuivi']);
+        }
+
+        if (!empty($filters['statusAffectation'])) {
+            $qb = $this->addFilterStatusAffectation($qb, $filters['statusAffectation']);
+        }
+
         return $qb;
     }
 
-    private function getTerritory(User $user, SignalementSearchQuery|Request $request): ?Territory
+    private function getTerritory(User $user, Request $request): ?Territory
     {
         $territory = null;
         if ($user->isSuperAdmin()) {
-            if ($request instanceof Request && $request->query->get('territoire_id')) {
+            if ($request->query->get('territoire_id')) {
                 $territory = $this->territoryRepository->find($request->query->get('territoire_id'));
-            }
-            /** @var SignalementSearchQuery $request */
-            if ($request instanceof SignalementSearchQuery && null !== $zip = $request->getTerritory()) {
-                $territory = $this->territoryRepository->findOneBy(['zip' => $zip]);
             }
         } elseif (!$user->isSuperAdmin()) {
             $territory = $user->getTerritory();
         }
 
         return $territory;
+    }
+
+    private function addFilterSituation(QueryBuilder $qb, string $situation): QueryBuilder
+    {
+        switch ($situation) {
+            case 'attente_relogement':
+                $qb->andWhere('s.isRelogement = :is_relogement')->setParameter('is_relogement', true);
+                break;
+            case 'bail_en_cours':
+                $qb->andWhere('s.isBailEnCours = :is_bail_en_cours')->setParameter('is_bail_en_cours', true);
+                break;
+            case 'preavis_de_depart':
+                $qb->andWhere('s.isPreavisDepart = :is_preavis_depart')->setParameter('is_preavis_depart', true);
+                break;
+        }
+
+        return $qb;
+    }
+
+    private function addFilterProcedure(QueryBuilder $qb, string $procedure): QueryBuilder
+    {
+        $qualification = Qualification::tryFrom($procedure);
+        $subqueryResults = $this->signalementQualificationRepository->findSignalementsByQualification($qualification);
+
+        $qb
+            ->andWhere('s.id IN (:subqueryResults)')
+            ->setParameter('subqueryResults', $subqueryResults);
+
+        return $qb;
+    }
+
+    private function addFilterTypeDernierSuivi(QueryBuilder $qb, string $typeDernierSuivi): QueryBuilder
+    {
+        if ('automatique' === $typeDernierSuivi) {
+            $values = ['Administrateurs Histologe ALL', 'MESSAGE AUTOMATIQUE'];
+            $qb
+                ->andWhere('s.lastSuiviBy IN (:typeDernierSuivi)')
+                ->setParameter('typeDernierSuivi', $values);
+        } elseif ('usager' === $typeDernierSuivi) {
+            $values = ['DECLARANT', 'OCCUPANT'];
+            $qb
+                ->andWhere('s.lastSuiviBy IN (:typeDernierSuivi)')
+                ->setParameter('typeDernierSuivi', $values);
+        } else {
+            $values = ['DECLARANT', 'OCCUPANT', 'Administrateurs Histologe ALL', 'MESSAGE AUTOMATIQUE'];
+            $qb
+                ->andWhere('s.lastSuiviBy NOT IN (:typeDernierSuivi)')
+                ->setParameter('typeDernierSuivi', $values);
+        }
+
+        return $qb;
+    }
+
+    private function addFilterStatusAffectation(QueryBuilder $qb, string $statusAffectation): QueryBuilder
+    {
+        if ('accepte' === $statusAffectation
+            || 'en_attente' === $statusAffectation
+            || 'refuse' === $statusAffectation
+        ) {
+            $status = AffectationStatus::mapFilterStatus($statusAffectation);
+            $qb
+                ->having('affectationStatus LIKE :status_affectation')
+                ->setParameter('status_affectation', '%'.$status.'%');
+        }
+
+        return $qb;
+    }
+
+    private function addFilterEpci(QueryBuilder $qb, array $epcis): QueryBuilder
+    {
+        $communes = $this->epciRepository->findCommunesByEpcis($epcis);
+        $orX = $qb->expr()->orX();
+        foreach ($communes as $key => $commune) {
+            $orX->add($qb->expr()->andX(
+                $qb->expr()->eq('s.cpOccupant', ':cpOccupant_'.$key),
+                $qb->expr()->eq('s.villeOccupant', ':villeOccupant_'.$key)
+            ));
+
+            $qb
+                ->setParameter('cpOccupant_'.$key, $commune['codePostal'])
+                ->setParameter(
+                    'villeOccupant_'.$key,
+                    ImportCommune::sanitizeCommuneWithArrondissement($commune['nom'])
+                );
+        }
+
+        $qb->andWhere($orX);
+
+        return $qb;
+    }
+
+    private function addFilterDate(QueryBuilder $qb, string $columnDbField, array $dates): QueryBuilder
+    {
+        if (!empty($dates['on'])) {
+            $qb->andWhere($columnDbField.' >= :date_in')->setParameter('date_in', $dates['on']);
+        }
+
+        if (!empty($dates['off'])) {
+            $endDate = new \DateTime($dates['off']);
+            $endDate->add(new \DateInterval('P1D'));
+            $qb->andWhere($columnDbField.' <= :date_off')->setParameter('date_off', $endDate->format('Y-m-d'));
+        }
+
+        return $qb;
     }
 }

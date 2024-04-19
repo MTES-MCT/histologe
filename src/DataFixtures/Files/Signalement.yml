@@ -282,7 +282,6 @@ signalements:
     nb_enfants_m6: "1"
     nb_enfants_p6: "2"
     is_allocataire: ""
-    is_logement_social: 0
     nature_logement: "Appartement"
     type_logement: "T2"
     superficie: 30
@@ -966,7 +965,7 @@ signalements:
     nb_adultes: "2"
     nb_enfants_m6: "1"
     nb_enfants_p6: "2"
-    is_allocataire: ""
+    is_allocataire: "MSA"
     is_logement_social: 0
     nature_logement: "Appartement"
     type_logement: "T2"
@@ -1008,7 +1007,6 @@ signalements:
     nb_adultes: "2"
     nb_enfants_m6: "1"
     nb_enfants_p6: "2"
-    is_allocataire: ""
     is_logement_social: 0
     nature_logement: "Appartement"
     type_logement: "T2"
@@ -1682,6 +1680,7 @@ signalements:
     details: "Absence d’isolation toiture<br><br>Courrier adressé non pas à la mairie mais au bailleur social"
     is_proprio_averti: 1
     is_logement_social: 1
+    is_preavis_depart: 1
     nb_adultes: "2"
     nb_enfants_m6: "1"
     nb_enfants_p6: "2"
@@ -1712,6 +1711,7 @@ signalements:
     uuid: "00000000-0000-0000-2024-000000000001"
     details: "Actuellement locataire, j'attire votre attention sur certaines conditions de non-décence et de confort qui affectent ma qualité de vie quotidienne."
     is_proprio_averti: 1
+    is_relogement: 1
     is_logement_social: 0
     nb_adultes: "2"
     nb_enfants_m6: "0"
@@ -1751,6 +1751,7 @@ signalements:
     details: "Actuellement locataire, j'attire votre attention sur certaines conditions de non-décence et de confort qui affectent ma qualité de vie quotidienne."
     is_proprio_averti: 1
     is_logement_social: 1
+    is_preavis_depart: 1
     bailleur: "13 Habitat"
     nb_adultes: "2"
     nb_enfants_m6: "0"
