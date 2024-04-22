@@ -620,7 +620,7 @@ class SignalementManager extends AbstractManager
         $this->save($signalement);
         $this->suiviManager->addSuiviIfNeeded(
             signalement: $signalement,
-            description: 'La composition du logement a été modifée par ',
+            description: 'La description du logement a été modifée par ',
         );
     }
 
