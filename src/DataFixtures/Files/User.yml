@@ -152,7 +152,7 @@ users:
     is_mailing_active: 1
     territory: "Bouches-du-Rhône"
     last_login_at: '-1 year'
-  -  
+  -
     email: user-13-02@histologe.fr
     roles: "[\"ROLE_USER_PARTNER\"]"
     partner: "Partenaire 13-03"
@@ -213,10 +213,10 @@ users:
     email: user-974-01@histologe.fr
     roles: "[\"ROLE_USER_PARTNER\"]"
     partner: "Partenaire 974-01"
-    statut: 1
+    statut: 2
     is_generique: 0
     is_mailing_active: 1
-    territory: "Partner La réunion"
+    territory: "La Réunion"
   -
     email: user-01-01@histologe.fr
     roles: "[\"ROLE_USER_PARTNER\"]"
@@ -406,7 +406,7 @@ users:
     is_generique: 0
     is_mailing_active: 1
     territory: "Seine-Saint-Denis"
-  -  
+  -
     email: usager-01@histologe.fr
     roles: "[\"ROLE_USAGER\"]"
     statut: 0
