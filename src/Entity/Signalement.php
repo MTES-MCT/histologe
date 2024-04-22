@@ -2007,6 +2007,21 @@ class Signalement
         return $this;
     }
 
+    public function isTiersDeclarant(): bool
+    {
+        switch ($this->getProfileDeclarant()) {
+            case ProfileDeclarant::SERVICE_SECOURS:
+            case ProfileDeclarant::BAILLEUR:
+            case ProfileDeclarant::TIERS_PRO:
+            case ProfileDeclarant::TIERS_PARTICULIER:
+                return true;
+            case ProfileDeclarant::LOCATAIRE:
+            case ProfileDeclarant::BAILLEUR_OCCUPANT:
+            default:
+                return false;
+        }
+    }
+
     public function getPrenomProprio(): ?string
     {
         return $this->prenomProprio;

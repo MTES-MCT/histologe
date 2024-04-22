@@ -9,7 +9,6 @@ use App\Entity\Signalement;
 use App\Entity\SignalementDraft;
 use App\Entity\Suivi;
 use App\Entity\User;
-use App\Factory\SignalementDraftFactory;
 use App\Factory\SuiviFactory;
 use App\Manager\SignalementDraftManager;
 use App\Manager\SuiviManager;
@@ -23,6 +22,7 @@ use App\Service\Mailer\NotificationMail;
 use App\Service\Mailer\NotificationMailerRegistry;
 use App\Service\Mailer\NotificationMailerType;
 use App\Service\Signalement\PostalCodeHomeChecker;
+use App\Service\Signalement\SignalementDraftHelper;
 use App\Service\Signalement\SignalementFileProcessor;
 use App\Service\UploadHandlerService;
 use Doctrine\ORM\EntityManagerInterface;
@@ -84,14 +84,14 @@ class FrontSignalementController extends AbstractController
         return $this->json($errors);
     }
 
-    #[Route('/signalement-draft/check', name: 'check_signalement_draft_existe', methods: 'POST')]
-    public function checkSignalementDraftExists(
+    #[Route('/signalement-draft/check', name: 'check_signalement_or_draft_already_exists', methods: 'POST')]
+    public function checkSignalementOrDraftAlreadyExists(
         Request $request,
         SignalementDraftRequestSerializer $serializer,
         SignalementDraftManager $signalementDraftManager,
         ValidatorInterface $validator,
-        SignalementDraftFactory $signalementDraftFactory,
         SignalementDraftRepository $signalementDraftRepository,
+        SignalementRepository $signalementRepository,
     ): Response {
         /** @var SignalementDraftRequest $signalementDraftRequest */
         $signalementDraftRequest = $serializer->deserialize(
@@ -105,7 +105,16 @@ class FrontSignalementController extends AbstractController
             ['Default', 'POST_'.strtoupper($signalementDraftRequest->getProfil())]
         );
         if (0 === $errors->count()) {
-            $dataToHash = $signalementDraftFactory->getEmailDeclarant($signalementDraftRequest);
+            $isTiersDeclarant = SignalementDraftHelper::isTiersDeclarant($signalementDraftRequest);
+            $existingSignalements = $signalementRepository->findAllForEmailAndAddress(
+                SignalementDraftHelper::getEmailDeclarant($signalementDraftRequest),
+                $signalementDraftRequest->getAdresseLogementAdresseDetailNumero(),
+                $signalementDraftRequest->getAdresseLogementAdresseDetailCodePostal(),
+                $signalementDraftRequest->getAdresseLogementAdresseDetailCommune(),
+                $isTiersDeclarant
+            );
+
+            $dataToHash = SignalementDraftHelper::getEmailDeclarant($signalementDraftRequest);
             $dataToHash .= $signalementDraftRequest->getAdresseLogementAdresse();
             $hash = hash('sha256', $dataToHash);
 
@@ -119,10 +128,33 @@ class FrontSignalementController extends AbstractController
                 ]
             );
 
+            if (!empty($existingSignalements)) {
+                $signalements = array_map(function (Signalement $existingSignalement) {
+                    return [
+                        'uuid' => $existingSignalement->getUuid(),
+                        'created_at' => $existingSignalement->getCreatedAt(),
+                        'prenom_occupant' => $existingSignalement->getPrenomOccupant(),
+                        'nom_occupant' => $existingSignalement->getNomOccupant(),
+                        'adresse_autre_occupant' => $existingSignalement->getAdresseAutreOccupant(),
+                        'num_appart_occupant' => $existingSignalement->getNumAppartOccupant(),
+                        'escalier_occupant' => $existingSignalement->getEscalierOccupant(),
+                        'etage_occupant' => $existingSignalement->getEtageOccupant(),
+                    ];
+                }, $existingSignalements);
+
+                return $this->json([
+                    'already_exists' => true,
+                    'type' => 'signalement',
+                    'signalements' => $signalements,
+                    'uuid_draft' => $existingSignalementDraft?->getUuid() ?? null,
+                ]);
+            }
+
             if (null !== $existingSignalementDraft) {
                 return $this->json([
                     'already_exists' => true,
-                    'uuid' => $existingSignalementDraft->getUuid(),
+                    'type' => 'draft',
+                    'uuid_draft' => $existingSignalementDraft->getUuid(),
                     'created_at' => $existingSignalementDraft->getCreatedAt(),
                     'updated_at' => $existingSignalementDraft->getUpdatedAt(),
                 ]);
@@ -201,6 +233,38 @@ class FrontSignalementController extends AbstractController
                     signalementDraft: $signalementDraft,
                 )
             );
+            if ($success) {
+                return $this->json(['success' => true]);
+            }
+
+            return $this->json([
+                'success' => false,
+                'label' => 'Erreur',
+                'message' => 'L\'envoi du mail n\'a pas fonctionné, veuillez réessayer ou faire un nouveau signalement.',
+            ]);
+        }
+
+        return $this->json(['response' => 'error'], Response::HTTP_BAD_REQUEST);
+    }
+
+    #[Route('/signalement/{uuid}/send_mail_get_lien_suivi', name: 'send_mail_get_lien_suivi')]
+    public function sendMailGetLienSuivi(
+        NotificationMailerRegistry $notificationMailerRegistry,
+        Signalement $signalement,
+        Request $request
+    ): Response {
+        if ($request->isMethod('POST')) {
+            $profil = $request->get('profil');
+            $success = $notificationMailerRegistry->send(
+                new NotificationMail(
+                    type: NotificationMailerType::TYPE_SIGNALEMENT_LIEN_SUIVI,
+                    to: 'locataire' === $profil || 'bailleur_occupant' === $profil
+                        ? $signalement->getMailOccupant()
+                        : $signalement->getMailDeclarant(),
+                    signalement: $signalement,
+                )
+            );
+
             if ($success) {
                 return $this->json(['success' => true]);
             }

@@ -1072,15 +1072,20 @@ class SignalementRepository extends ServiceEntityRepository
         return $qb->getQuery()->getResult();
     }
 
-    public function findOneForEmailAndAddress(string $email, string $address, string $zipcode, string $city): ?Signalement
-    {
-        $list = $this->createQueryBuilder('s')
+    public function findOneForEmailAndAddress(
+        string $email,
+        string $address,
+        string $zipcode,
+        string $city,
+    ): ?Signalement {
+        $qb = $this->createQueryBuilder('s')
             ->andWhere('s.mailDeclarant = :email OR s.mailOccupant = :email')->setParameter('email', $email)
             ->andWhere('s.adresseOccupant = :address')->setParameter('address', $address)
             ->andWhere('s.cpOccupant = :zipcode')->setParameter('zipcode', $zipcode)
             ->andWhere('s.villeOccupant = :city')->setParameter('city', $city)
-            ->andWhere('s.statut != :statutArchived')->setParameter('statutArchived', Signalement::STATUS_ARCHIVED)
-            ->addOrderBy('s.createdAt', 'DESC')
+            ->andWhere('s.statut != :statutArchived')->setParameter('statutArchived', Signalement::STATUS_ARCHIVED);
+
+        $list = $qb->addOrderBy('s.createdAt', 'DESC')
             ->getQuery()->getResult();
         $statutsList = [
             Signalement::STATUS_ACTIVE,
@@ -1098,5 +1103,40 @@ class SignalementRepository extends ServiceEntityRepository
         }
 
         return null;
+    }
+
+    public function findAllForEmailAndAddress(
+        string $email,
+        string $address,
+        string $zipcode,
+        string $city,
+        bool $isTiersDeclarant = true
+    ): array {
+        $qb = $this->createQueryBuilder('s');
+        if ($isTiersDeclarant) {
+            $qb->andWhere('s.mailDeclarant = :email')->setParameter('email', $email);
+        } else {
+            $qb->andWhere('s.mailOccupant = :email')->setParameter('email', $email);
+        }
+        $qb->andWhere('LOWER(s.adresseOccupant) = :address')->setParameter('address', strtolower($address))
+            ->andWhere('s.cpOccupant = :zipcode')->setParameter('zipcode', $zipcode)
+            ->andWhere('LOWER(s.villeOccupant) = :city')->setParameter('city', strtolower($city))
+            ->andWhere('s.statut IN (:statusSignalement)')
+            ->setParameter(
+                'statusSignalement',
+                [
+                    Signalement::STATUS_ACTIVE,
+                    Signalement::STATUS_NEED_PARTNER_RESPONSE,
+                    Signalement::STATUS_NEED_VALIDATION,
+                ]
+            );
+
+        if ($isTiersDeclarant) {
+            $qb->addOrderBy('s.createdAt', 'DESC');
+        } else {
+            $qb->addOrderBy('s.lastSuiviAt', 'DESC');
+        }
+
+        return $qb->getQuery()->getResult();
     }
 }
