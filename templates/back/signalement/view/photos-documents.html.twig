@@ -51,14 +51,6 @@
     </div>
 </div>
 
-{% if filesFilter is same as 'situation' %}
-    <div class="fr-alert fr-alert--info fr-alert--sm fr-mb-3v">
-        <p>
-            Pour ajouter plusieurs photos ou documents à la fois, sélectionnez vos fichiers en maintenant la touche CTRL enfoncée.
-        </p>
-    </div>
-{% endif %}
-
 {% if signalement.files|length == 0 %}
     <p class="fr-text--sm">
         Aucun document ou photo disponible
