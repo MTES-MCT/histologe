@@ -35,7 +35,6 @@ parameters:
     platform_name: 'Histologe'
     matomo_enable: '%env(bool:MATOMO_ENABLE)%'
     matomo_site_id: '%env(resolve:MATOMO_SITE_ID)%'
-    chatbot_enable: '%env(bool:CHATBOT_ENABLE)%'
     maintenance_enable: '%env(bool:MAINTENANCE_ENABLE)%'
     maintenance_banner_enable: '%env(bool:MAINTENANCE_BANNER_ENABLE)%'
     maintenance_banner_message: '%env(resolve:MAINTENANCE_BANNER_MESSAGE)%'
