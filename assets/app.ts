@@ -27,6 +27,7 @@ import './vue/index';
 import './vue/front-stats';
 import './vue/dashboard';
 import './vue/signalement-form';
+import './vue/signalement-list';
 
 import './controllers/component_search_address';
 import './controllers/form_account';
