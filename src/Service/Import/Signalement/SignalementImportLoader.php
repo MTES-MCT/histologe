@@ -157,7 +157,7 @@ class SignalementImportLoader
     {
         $affectationCollection = new ArrayCollection();
         if (isset($dataMapped['partners']) && !empty($dataMapped['partners'])) {
-            if (str_contains($dataMapped['partners'], ',')) {
+            if (str_contains($dataMapped['partners'], ',') && '62' !== $territory->getZip()) {
                 $partnersName = explode(',', $dataMapped['partners']);
             } elseif (str_contains($dataMapped['partners'], '|')) {
                 $partnersName = explode('|', $dataMapped['partners']);

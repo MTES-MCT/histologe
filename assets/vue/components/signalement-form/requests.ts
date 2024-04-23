@@ -107,8 +107,8 @@ export const requests = {
     }
   },
 
-  checkIfExistingDraft (functionReturn: Function) {
-    const url = formStore.props.ajaxurlCheckSignalementDraftExists
+  checkIfAlreadyExists (functionReturn: Function) {
+    const url = formStore.props.ajaxurlCheckSignalementOrDraftAlreadyExists
     if (formStore.data.adresse_logement_adresse !== undefined &&
       (formStore.data.vos_coordonnees_occupant_email !== undefined ||
         formStore.data.vos_coordonnees_tiers_email !== undefined)
@@ -120,13 +120,25 @@ export const requests = {
   },
 
   sendMailContinueFromDraft (functionReturn: Function) {
-    const url = formStore.props.ajaxurlSendMailContinueFromDraft.replace('uuid', formStore.existingDraft.uuid)
+    const url = formStore.props.ajaxurlSendMailContinueFromDraft.replace('uuid', formStore.alreadyExists.uuidDraft)
+    requests.doRequestPost(url, '', functionReturn, undefined)
+  },
+
+  sendMailGetLienSuivi (uuid: any, functionReturn: Function) {
+    const url = (formStore.props.ajaxurlSendMailGetLienSuivi.replace('uuid', uuid) as string) + '?profil=' + (formStore.data.profil as string)
     requests.doRequestPost(url, '', functionReturn, undefined)
   },
 
   archiveDraft (functionReturn: Function) {
-    const url = formStore.props.ajaxurlArchiveDraft.replace('uuid', formStore.existingDraft.uuid)
-    requests.doRequestPost(url, '', functionReturn, undefined)
+    if (formStore.alreadyExists.type === 'draft') {
+      const url = formStore.props.ajaxurlArchiveDraft.replace('uuid', formStore.alreadyExists.uuid)
+      requests.doRequestPost(url, '', functionReturn, undefined)
+    } else if (formStore.alreadyExists.type === 'signalement' && formStore.alreadyExists.uuidDraft !== null) {
+      const url = formStore.props.ajaxurlArchiveDraft.replace('uuid', formStore.alreadyExists.uuidDraft)
+      requests.doRequestPost(url, '', functionReturn, undefined)
+    } else {
+      functionReturn(undefined)
+    }
   },
 
   validateAddress (valueAdress: string, functionReturn: Function) {

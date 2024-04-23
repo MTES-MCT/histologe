@@ -7,26 +7,32 @@
     <div class="fr-col-3 fr-col-md-6 fr-text--right">
         {% if (is_granted('FILE_CREATE', signalement)) %}
             {% if isDocumentsEnabled %}
-                <button 
-                class="fr-btn fr-btn--sm fr-fi-file-fill fr-btn--icon-left open-modal-upload-files-btn" 
-                data-fr-opened="false" 
-                aria-controls="fr-modal-upload-files" 
-                data-file-type="document"
-                data-file-filter={{filesFilter}}
-                >
-                    Ajouter des documents
-                </button>
-                {% if filesFilter is same as 'situation' %}
-                    <button 
-                    class="fr-btn fr-btn--sm fr-btn--secondary fr-btn--icon-left fr-icon-camera-fill open-modal-upload-files-btn" 
-                    data-fr-opened="false" 
-                    aria-controls="fr-modal-upload-files" 
-                    data-file-type="photo"
-                    data-file-filter={{filesFilter}}
-                    >
-                        Ajouter des photos
-                    </button>
-                {% endif %}
+                <ul class="fr-btns-group fr-btns-group--inline fr-btns-group--sm fr-btns-group--right fr-btns-group--icon-left">
+                    <li>
+                        <button 
+                        class="fr-btn fr-btn--secondary fr-icon-file-add-line open-modal-upload-files-btn" 
+                        data-fr-opened="false" 
+                        aria-controls="fr-modal-upload-files" 
+                        data-file-type="document"
+                        data-file-filter={{filesFilter}}
+                        >
+                            Ajouter des documents
+                        </button>
+                    </li>
+                    {% if filesFilter is same as 'situation' %}
+                        <li>
+                            <button 
+                            class="fr-btn fr-btn--secondary fr-icon-image-add-line open-modal-upload-files-btn" 
+                            data-fr-opened="false" 
+                            aria-controls="fr-modal-upload-files" 
+                            data-file-type="photo"
+                            data-file-filter={{filesFilter}}
+                            >
+                                Ajouter des photos
+                            </button>
+                        </li>
+                    {% endif %}
+                </ul>
             {% else %}
                 <form method="POST" enctype="multipart/form-data" class="inline-form" action="{{ path('back_signalement_add_file',{uuid:signalement.uuid}) }}">
                     <label class="fr-btn fr-btn--sm fr-fi-file-fill fr-btn--icon-left"> Ajouter des documents
@@ -49,15 +55,18 @@
 
         {% endif %}
     </div>
-</div>
-
-{% if filesFilter is same as 'situation' %}
-    <div class="fr-alert fr-alert--info fr-alert--sm fr-mb-3v">
-        <p>
-            Pour ajouter plusieurs photos ou documents à la fois, sélectionnez vos fichiers en maintenant la touche CTRL enfoncée.
+    {% if filesFilter is same as 'situation' %}
+        <p class="fr-text--sm fr-mt-n2w fr-mb-2w">
+            Ajoutez ici des photos ou documents concernant la situation de l'usager (photos de désordres, bail, DPE, diagnostic et état des lieux). 
+            Les fichiers ajoutés sont partagés à l'usager.
         </p>
-    </div>
-{% endif %}
+    {% endif %}
+    {% if filesFilter is same as 'procedure' %}
+        <p class="fr-text--sm fr-mt-n2w fr-mb-2w">
+            Ajoutez ici les documents liés à la procédure (mise en demeure, rapport de visite, arrêté, etc.). Vous pouvez supprimer uniquement les documents que vous avez ajoutés.
+        </p>
+    {% endif %}
+</div>
 
 {% if signalement.files|length == 0 %}
     <p class="fr-text--sm">
