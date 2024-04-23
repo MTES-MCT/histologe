@@ -910,7 +910,7 @@ signalements:
     criticites:
       - "Le DPE indique une étiquette énergie F ou G ou n’a pas été fait. J’ai tout le temps la sensation d'avoir froid en hiver et/ou très chaud en été."
       - "J’utilise plusieurs chauffages d'appoint et/ou des pièces principales ne possèdent pas de moyen de chauffage."
-    qualifications: 
+    qualifications:
       - "NON_DECENCE_ENERGETIQUE"
     date_entree: "2022-06-08 17:06:33"
   -
@@ -955,7 +955,7 @@ signalements:
     criticites:
       - "Le DPE indique une étiquette énergie F ou G ou n’a pas été fait. J’ai tout le temps la sensation d'avoir froid en hiver et/ou très chaud en été."
       - "J’utilise plusieurs chauffages d'appoint et/ou des pièces principales ne possèdent pas de moyen de chauffage."
-    qualifications: 
+    qualifications:
       - "NON_DECENCE_ENERGETIQUE"
     date_entree: "2023-01-08 17:06:33"
   -
@@ -1675,7 +1675,7 @@ signalements:
     situation_occupant: "1"
     territory: "Finistère"
     is_imported: true
-  - 
+  -
     uuid: "00000000-0000-0000-2023-000000000026"
     details: "Absence d’isolation toiture<br><br>Courrier adressé non pas à la mairie mais au bailleur social"
     is_proprio_averti: 1
