@@ -88,7 +88,7 @@ class PushEsaboraDossierCommandTest extends TestCase
             ->method('findAffectationSubscribedToEsabora')
             ->with(
                 $this->equalTo(PartnerType::ARS),
-                true,
+                null,
                 $this->equalTo('00000000-0000-0000-2023-000000000010')
             )
             ->willReturn([$affectation]);
