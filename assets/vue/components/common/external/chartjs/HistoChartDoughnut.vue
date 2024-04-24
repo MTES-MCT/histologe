@@ -67,6 +67,10 @@ export default defineComponent({
     plugins: {
       type: Array,
       default: () => []
+    },
+    labelCharMax: {
+      type: Number,
+      default: 50
     }
   },
   data () {
@@ -74,9 +78,11 @@ export default defineComponent({
     const inData = []
     const inColors = []
     for (const i in this.items) {
-      inLabels.push(this.items[i].label)
-      inData.push(this.items[i].count)
-      inColors.push(this.items[i].color)
+      const { label, count, color } = this.items[i]
+      const labelChunks = this.splitLabelIntoChunks(label, this.labelCharMax)
+      inLabels.push(labelChunks)
+      inData.push(count)
+      inColors.push(color)
     }
     return {
       chartData: {
@@ -97,10 +103,38 @@ export default defineComponent({
         plugins: {
           legend: {
             position: 'bottom',
-            align: 'start'
+            align: 'start',
+            labels: {
+              padding: 20
+            }
           }
         }
       }
+    }
+  },
+  methods: {
+    splitLabelIntoChunks (label, labelCharMax) {
+      const labelChunks = []
+      let currentChunk = ''
+      let currentLength = 0
+
+      const words = label.split(' ')
+      for (const word of words) {
+        if (currentLength + word.length + 1 <= labelCharMax) {
+          currentChunk += word + ' '
+          currentLength += word.length + 1
+        } else {
+          labelChunks.push(currentChunk.trim())
+          currentChunk = word + ' '
+          currentLength = word.length + 1
+        }
+      }
+
+      if (currentChunk.trim() !== '') {
+        labelChunks.push(currentChunk.trim())
+      }
+
+      return labelChunks
     }
   }
 })
