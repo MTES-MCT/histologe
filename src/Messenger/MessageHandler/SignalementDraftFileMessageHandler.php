@@ -45,7 +45,7 @@ class SignalementDraftFileMessageHandler
         );
 
         $signalement = $this->signalementRepository->find($signalementDraftFileMessage->getSignalementId());
-        $uploadUser = $this->userManager->getUserCreatorOfSignalement($signalement);
+        $uploadUser = $this->userManager->findOneBy(['email' => $signalement->getMailDeclarant()]);
         if ($files = $signalementDraftRequest->getFiles()) {
             foreach ($files as $key => $fileList) {
                 foreach ($fileList as $fileItem) {

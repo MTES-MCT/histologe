@@ -183,25 +183,6 @@ class UserManager extends AbstractManager
         return null;
     }
 
-    public function getUserCreatorOfSignalement(Signalement $signalement): ?User
-    {
-        $mail = ($signalement->getIsNotOccupant())
-            ? $signalement->getMailDeclarant()
-            : $signalement->getMailOccupant();
-
-        if (null !== $mail) {
-            /** @var User $user */
-            $user = $this->findOneBy(['email' => $mail]);
-            if (null !== $user) {
-                return $user;
-            }
-
-            return $user;
-        }
-
-        return null;
-    }
-
     public function getUserTypeForSignalementAndUser(Signalement $signalement, ?User $user): ?string
     {
         if (!$user) {
