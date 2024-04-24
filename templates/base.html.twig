@@ -187,7 +187,7 @@
                                     type: 'menuitem',
                                     text: "{{ doc.title|raw }}",
                                     onAction: function () {
-                                        editor.insertContent('&nbsp;<a href="{{ asset(files.path~doc.file) }}?t=___TOKEN___" class="fr-link" title="Afficher le document" target="_blank">Consulter "{{ doc.title }}"</a></br>');
+                                        editor.insertContent('&nbsp;<a href="{{ asset(files.path~doc.file) }}" class="fr-link" title="Afficher le document" target="_blank">Consulter "{{ doc.title }}"</a></br>');
                                     }
                                 })     
                             {% endif %}   
