@@ -73,19 +73,32 @@
                 <div class="fr-col-12 fr-col-md-6 fr-p-1v">
                     <span class="fr-label">Synchronisation Esabora (facultatif)</span>
                     <div class="fr-toggle">
-                        {{ form_widget(form.isEsaboraActive) }}
+                        {% if is_granted('ROLE_ADMIN_TERRITORY') %}
+                            {{ form_widget(form.isEsaboraActive) }}
+                        {% else %}
+                            {{ form_widget(form.isEsaboraActive, { 'attr': {'disabled': true}}) }}
+                        {% endif %}
                         <label class="fr-toggle__label" for="{{ form.isEsaboraActive.vars.id }}"
                             data-fr-checked-label="Activée" data-fr-unchecked-label="Désactivée">
                         </label>
-                    </div>
+                    </div>        
                 </div>
                 <div class="fr-col-12 fr-col-md-6 fr-p-1v">
-                    <label for="{{ form.esaboraUrl.vars.id }}" class="fr-label">URL Esabora (facultatif)</label>
-                    {{ form_widget(form.esaboraUrl) }}
+                    <label for="{{ form.esaboraUrl.vars.id }}" class="fr-label">URL Esabora (facultatif)</label>                        
+                    {% if is_granted('ROLE_ADMIN') %}
+                        {{ form_widget(form.esaboraUrl) }}
+                    {% else %}
+                        {{ form_widget(form.esaboraUrl, { 'attr': {'disabled': true}}) }}
+                    {% endif %}
                 </div>
                 <div class="fr-col-12 fr-col-md-6 fr-p-1v">
-                    <label for="{{ form.esaboraToken.vars.id }}" class="fr-label">Token Esabora (facultatif)</label>
-                    {{ form_widget(form.esaboraToken) }}</div>
+                    <label for="{{ form.esaboraToken.vars.id }}" class="fr-label">Token Esabora (facultatif)</label>                     
+                    {% if is_granted('ROLE_ADMIN') %}
+                        {{ form_widget(form.esaboraToken) }}
+                    {% else %}
+                        {{ form_widget(form.esaboraToken, { 'attr': {'disabled': true}}) }}
+                    {% endif %}
+                </div>      
             </div>
         </div>
     </div>
