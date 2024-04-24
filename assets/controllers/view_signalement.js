@@ -44,6 +44,9 @@ document?.querySelectorAll('.photos-album-swipe')?.forEach(btn => {
     })
 })
 const displayPhotoAlbum = (photoId) => {
+    if (document?.documentElement.getAttribute('data-fr-theme') == 'light') {
+        document?.documentElement.setAttribute('data-fr-theme', 'dark')
+    }
     document?.querySelectorAll('.photos-album-image-item.loop-current')?.forEach(element => {
         element.classList?.remove('loop-current')
         element.classList?.add('fr-hidden')
