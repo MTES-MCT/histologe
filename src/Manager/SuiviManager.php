@@ -101,7 +101,7 @@ class SuiviManager extends Manager
         ) {
             if ($nbDocs > 0) {
                 $description .= $nbDocs;
-                $description .= $nbDocs > 1 ? ' documents partenaires ont été ajoutés' : ' document partenaire a été ajouté';
+                $description .= $nbDocs > 1 ? ' documents liés à la procédure ont été ajoutés' : ' document lié à la procédure a été ajouté';
                 $description .= ' au signalement.';
             }
         }
