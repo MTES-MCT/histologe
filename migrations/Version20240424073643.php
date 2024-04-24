@@ -30,7 +30,7 @@ final class Version20240424073643 extends AbstractMigration
             UPDATE suivi
             SET description = REPLACE(description, '$file?t=___TOKEN___', '$file')
             WHERE description LIKE '%$file?t=___TOKEN___%';
-        SQL);
+            SQL);
         }
     }
 
