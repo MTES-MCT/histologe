@@ -9,17 +9,17 @@ document?.querySelector('#btn-display-all-suivis')?.addEventListeners('click tou
 document?.querySelectorAll('.open-photo-album')?.forEach(btn => {
     const swipeId = btn.getAttribute('data-id')
     btn.addEventListeners('click touchdown', (event) => {
+        document?.documentElement.setAttribute('data-fr-theme', 'dark')
         document?.querySelectorAll('.photos-album')?.forEach(element => {
             element.classList?.remove('fr-hidden')
-            document.documentElement.setAttribute('data-fr-theme', 'dark')
             displayPhotoAlbum(swipeId)
         })
     })
 })
 document?.querySelectorAll('.photos-album-btn-close')?.forEach(btn => {
     btn.addEventListeners('click touchdown', (event) => {
+        document?.documentElement.setAttribute('data-fr-theme', 'light')
         document?.querySelectorAll('.photos-album')?.forEach(element => {
-            document.documentElement.setAttribute('data-fr-theme', 'light')
             element.classList?.add('fr-hidden')
         })
     })
