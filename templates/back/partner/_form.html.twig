@@ -85,19 +85,11 @@
                 </div>
                 <div class="fr-col-12 fr-col-md-6 fr-p-1v">
                     <label for="{{ form.esaboraUrl.vars.id }}" class="fr-label">URL Esabora (facultatif)</label>                        
-                    {% if is_granted('ROLE_ADMIN') %}
-                        {{ form_widget(form.esaboraUrl) }}
-                    {% else %}
-                        {{ form_widget(form.esaboraUrl, { 'attr': {'disabled': true}}) }}
-                    {% endif %}
+                    {{ form_widget(form.esaboraUrl) }}
                 </div>
                 <div class="fr-col-12 fr-col-md-6 fr-p-1v">
                     <label for="{{ form.esaboraToken.vars.id }}" class="fr-label">Token Esabora (facultatif)</label>                     
-                    {% if is_granted('ROLE_ADMIN') %}
-                        {{ form_widget(form.esaboraToken) }}
-                    {% else %}
-                        {{ form_widget(form.esaboraToken, { 'attr': {'disabled': true}}) }}
-                    {% endif %}
+                    {{ form_widget(form.esaboraToken) }}
                 </div>      
             </div>
         </div>
