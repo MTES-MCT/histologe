@@ -4,7 +4,7 @@
     <p>Bonjour,</p>
     <p>Nous avons bien reçu votre signalement concernant le logement situé <br>
         <strong>{{ signalement.adresseOccupant~', '~signalement.cpOccupant~' '~signalement.villeOccupant|upper }}</strong>
-        <br>Vous recevrez par email les mises à jour concernant votre signalement.</p>
+        <br>Vous recevrez par e-mail les mises à jour concernant votre signalement.</p>
     {% if not signalement.isProprioAverti %}
         <p>
             Vous avez mentionné ne pas encore avoir alerté votre propriétaire. Il est nécessaire de l'informer de la

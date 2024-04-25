@@ -50,7 +50,7 @@
         },
         {
           "type": "SignalementFormEmailfield",
-          "label": "Adresse email",
+          "label": "Adresse e-mail",
           "slug": "vos_coordonnees_occupant_email"
         },
         {

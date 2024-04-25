@@ -18,7 +18,7 @@ class SignalementExportHeader
             'Prénom',
             'Téléphone',
             'Téléphone sec.',
-            'Email',
+            'E-mail',
             'Adresse',
             'Code postal',
             'Commune',

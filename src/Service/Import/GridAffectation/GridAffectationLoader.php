@@ -73,7 +73,8 @@ class GridAffectationLoader
                 if (!empty($emailPartner)) {
                     $violations = $this->validator->validate($emailPartner, $emailConstraint);
                     if (\count($violations) > 0) {
-                        $errors[] = sprintf('line %d : Email incorrect pour un partenaire : %s',
+                        $errors[] = sprintf(
+                            'line %d : E-mail incorrect pour un partenaire : %s',
                             $numLine,
                             $emailPartner
                         );
@@ -103,7 +104,7 @@ class GridAffectationLoader
                 $emailUser = trim($item[GridAffectationHeader::USER_EMAIL]);
                 if (empty($emailUser) && !empty($item[GridAffectationHeader::USER_ROLE])) {
                     $errors[] = sprintf(
-                        'line %d : Email manquant pour %s %s, partenaire %s',
+                        'line %d : E-mail manquant pour %s %s, partenaire %s',
                         $numLine,
                         $item[GridAffectationHeader::USER_FIRSTNAME],
                         $item[GridAffectationHeader::USER_LASTNAME],
@@ -113,7 +114,7 @@ class GridAffectationLoader
                     // email must be valid and not used by another user of another partner
                     $violations = $this->validator->validate($emailUser, $emailConstraint);
                     if (\count($violations) > 0) {
-                        $errors[] = sprintf('line %d : Email incorrect pour un utilisateur : %s', $numLine, $emailUser);
+                        $errors[] = sprintf('line %d : E-mail incorrect pour un utilisateur : %s', $numLine, $emailUser);
                     }
 
                     /** @var User $userToCreate */
@@ -151,20 +152,20 @@ class GridAffectationLoader
         // check if there are no duplicate email between partners
         $duplicatesMailPartners = $this->checkIfDuplicates($mailPartners);
         if (\count($duplicatesMailPartners) > 0) {
-            $errors[] = 'Certains partenaires ont un mail en commun '.implode(',', array_keys($duplicatesMailPartners));
+            $errors[] = 'Certains partenaires ont un e-mail en commun '.implode(',', array_keys($duplicatesMailPartners));
         }
 
         // check if there are no duplicate email between users
         $duplicatesMailUsers = $this->checkIfDuplicates($mailUsers);
         if (\count($duplicatesMailUsers) > 0) {
-            $errors[] = 'Certains utilisateurs ont un mail en commun '.implode(',', array_keys($duplicatesMailUsers));
+            $errors[] = 'Certains utilisateurs ont un e-mail en commun '.implode(',', array_keys($duplicatesMailUsers));
         }
 
         // check if there are no duplicate email between partners and users
         $mails = array_merge($mailPartners, $mailUsers);
         $duplicatesMails = $this->checkIfDuplicates($mails);
         if (\count($duplicatesMails) > 0) {
-            $errors[] = 'Certains utilisateurs ont un mail en commun avec un partenaire '
+            $errors[] = 'Certains utilisateurs ont un e-mail en commun avec un partenaire '
                 .implode(',', array_keys($duplicatesMails));
         }
 

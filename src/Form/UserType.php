@@ -38,7 +38,7 @@ class UserType extends AbstractType
                     'class' => 'fr-input-group fr-col-6',
                 ], 'attr' => [
                     'class' => 'fr-input',
-                ], 'label' => 'Adresse email',
+                ], 'label' => 'Adresse e-mail',
                 'required' => true,
             ])
             ->add('nom', TextType::class, [

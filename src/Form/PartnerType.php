@@ -270,8 +270,8 @@ class PartnerType extends AbstractType
             });
 
             if (!$canBeNotified) {
-                $context->addViolation('Email générique manquante: Il faut donc obligatoirement qu\'au moins
-                1 compte utilisateur accepte de recevoir les emails.');
+                $context->addViolation('E-mail générique manquante: Il faut donc obligatoirement qu\'au moins
+                1 compte utilisateur accepte de recevoir les e-mails.');
             }
         }
     }

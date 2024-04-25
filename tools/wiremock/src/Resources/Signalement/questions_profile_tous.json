@@ -346,7 +346,7 @@
   {
     "type": "SignalementFormScreen",
     "label": "",
-    "description": "<p>Un email a été envoyé à votre adresse. <br>Cliquez sur le lien dans l'email pour reprendre votre signalement.</p>",
+    "description": "<p>Un e-mail a été envoyé à votre adresse. <br>Cliquez sur le lien dans l'e-mail pour reprendre votre signalement.</p>",
     "slug": "draft_mail",
     "screenCategory": "Adresse et coordonnées",
     "components": {
@@ -373,7 +373,7 @@
   {
     "type": "SignalementFormScreen",
     "label": "Votre lien de suivi a bien été envoyé",
-    "description": "<p>Le lien vers votre page de suivi vous a été envoyé par email. Consultez votre boîte mail et n'oubliez de regarder dans les emails indésirables (spam).</p>",
+    "description": "<p>Le lien vers votre page de suivi vous a été envoyé par e-mail. Consultez votre boîte mail et n'oubliez de regarder dans les e-mails indésirables (spam).</p>",
     "slug": "lien_suivi_mail",
     "screenCategory": "Adresse et coordonnées",
     "components": {
