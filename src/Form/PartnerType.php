@@ -13,6 +13,7 @@ use App\Repository\PartnerRepository;
 use App\Repository\TerritoryRepository;
 use App\Repository\UserRepository;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
+use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\CallbackTransformer;
@@ -32,12 +33,22 @@ use Symfony\Component\Validator\Context\ExecutionContextInterface;
 
 class PartnerType extends AbstractType
 {
+    private $isAdmin = false;
+    private $isAdminTerritory = false;
+
     public function __construct(
         private readonly ParameterBagInterface $parameterBag,
         private readonly CommuneManager $communeManager,
         private readonly UserRepository $userRepository,
         private readonly PartnerRepository $partnerRepository,
+        private readonly Security $security
     ) {
+        if ($this->security->isGranted('ROLE_ADMIN')) {
+            $this->isAdmin = true;
+        }
+        if ($this->security->isGranted('ROLE_ADMIN_TERRITORY')) {
+            $this->isAdminTerritory = true;
+        }
     }
 
     public function buildForm(FormBuilderInterface $builder, array $options): void
@@ -129,18 +140,21 @@ class PartnerType extends AbstractType
                     'class' => 'fr-toggle__input',
                 ],
                 'required' => false,
+                'disabled' => !$this->isAdminTerritory,
             ])
             ->add('esaboraUrl', UrlType::class, [
                 'attr' => [
                     'class' => 'fr-input',
                 ],
                 'required' => false,
+                'disabled' => !$this->isAdmin,
             ])
             ->add('esaboraToken', TextType::class, [
                 'attr' => [
                     'class' => 'fr-input',
                 ],
                 'required' => false,
+                'disabled' => !$this->isAdmin,
             ])
             ->add('territory', EntityType::class, [
                 'class' => Territory::class,
