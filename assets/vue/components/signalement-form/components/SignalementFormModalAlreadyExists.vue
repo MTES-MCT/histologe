@@ -11,7 +11,7 @@
               <h1 id="fr-modal-title-modal-already-exists" class="fr-modal__title"><span v-if="formStore.alreadyExists.signalements?.length === 1">Ce signalement existe déjà</span><span v-else>Ces signalements existent déjà</span></h1>
               <div v-if="formStore.data.profil === 'bailleur_occupant' || formStore.data.profil === 'locataire' || formStore.alreadyExists.signalements?.length === 1">
                 Il semblerait que vous ayez déjà déposé un signalement pour le logement situé <strong>{{ formStore.data.adresse_logement_adresse }}</strong><div class=""></div>
-                <span v-if="formStore.data.profil !== 'bailleur_occupant' && formStore.data.profil !== 'locataire' && formStore.alreadyExists.signalements">{{ signalementLabel(formStore.alreadyExists.signalements[0]) }}</span>
+                <span v-if="formStore.data.profil !== 'bailleur_occupant' && formStore.data.profil !== 'locataire' && formStore.alreadyExists.signalements" v-html="signalementLabel(formStore.alreadyExists.signalements[0])"></span>
                 Ce signalement est en cours de traitement.<br>
                 Vous pouvez le compléter depuis votre page de suivi ou créer un nouveau signalement.
                 <br>
@@ -26,9 +26,18 @@
                   </legend>
                   <div class="fr-fieldset__element" v-for="signalement in formStore.alreadyExists.signalements" :key="signalement.uuid">
                     <div class="fr-radio-group">
-                      <input type="radio" :id="'selected-signalement-' + signalement.uuid" name="selectedSignalement" :value="signalement.uuid" @change="selectedSignalementUuid = signalement.uuid">
-                      <label class="fr-label" :for="'selected-signalement-' + signalement.uuid" >
-                        {{ signalementLabel(signalement) }}
+                      <input
+                        class="fr-input"
+                        type="radio"
+                        :id="'selected-signalement-' + signalement.uuid" name="selectedSignalement"
+                        :value="signalement.uuid"
+                        @change="selectedSignalementUuid = signalement.uuid"
+                      >
+                      <label
+                        class="fr-label"
+                        :for="'selected-signalement-' + signalement.uuid"
+                      >
+                        <span v-html="signalementLabel(signalement)"></span>
                       </label>
                     </div>
                   </div>
@@ -183,14 +192,17 @@ export default defineComponent({
       return ''
     },
     signalementLabel (signalement: any) {
-      let label = 'Signalement déposé le ' + this.formatDate(signalement.created_at) + ' pour le compte de '
+      let label = 'Signalement déposé le ' + this.formatDate(signalement.created_at) + ' pour le compte de <strong>'
       if (signalement.prenom_occupant !== null) {
         label += signalement.prenom_occupant + ' '
       }
       if (signalement.nom_occupant !== null) {
         label += signalement.nom_occupant
       }
-      label += ' ( '
+      label += '</strong>'
+      if (this.signalementHasInfosComplementaires(signalement)) {
+        label += ' ( '
+      }
       if (signalement.num_appart_occupant !== null) {
         label += 'Numéro d\'appartement : ' + signalement.num_appart_occupant
       }
@@ -203,8 +215,21 @@ export default defineComponent({
       if (signalement.adresse_autre_occupant !== null) {
         label += 'Autre : ' + signalement.adresse_autre_occupant
       }
-      label += ' )'
+      if (this.signalementHasInfosComplementaires(signalement)) {
+        label += ' )'
+      }
+      label += '.'
       return label
+    },
+    signalementHasInfosComplementaires (signalement: any) {
+      if (signalement.num_appart_occupant !== null ||
+          signalement.escalier_occupant !== null ||
+          signalement.etage_occupant !== null ||
+          signalement.adresse_autre_occupant !== null
+      ) {
+        return true
+      }
+      return false
     }
   }
 })
@@ -224,7 +249,6 @@ export default defineComponent({
   .signalement-form-modal-already-exists .fr-radio-group.is-checked {
     border: 1px solid rgb(0, 0, 145);
   }
-
   @media (max-width: 48em) {
     .signalement-form-modal-already-exists .fr-fieldset__element.item-divided {
       flex-basis: content;
