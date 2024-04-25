@@ -56,7 +56,7 @@
 import { defineComponent } from 'vue'
 
 export default defineComponent({
-  name: "TheHistoSignalementListCard"
+  name: 'TheHistoSignalementListCard'
 })
 </script>
 

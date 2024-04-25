@@ -27,7 +27,7 @@
 import { defineComponent } from 'vue'
 
 export default defineComponent({
-  name: "TheHistoSignalementListHeader"
+  name: 'TheHistoSignalementListHeader'
 })
 </script>
 

@@ -15,22 +15,21 @@
 import { defineComponent } from 'vue'
 import { store } from './store'
 import { requests } from './requests'
-import TheHistoSignalementListFilter from "../signalement-list/TheHistoSignalementListFilter.vue";
-import TheHistoSignalementListHeader from "../signalement-list/TheHistoSignalementListHeader.vue";
-import TheHistoSignalementListCard from "../signalement-list/TheHistoSignalementListCard.vue";
-import TheHistoSignalementListPagination from "../signalement-list/TheHistoSignalementListPagination.vue";
+import TheHistoSignalementListFilter from '../signalement-list/TheHistoSignalementListFilter.vue'
+import TheHistoSignalementListHeader from '../signalement-list/TheHistoSignalementListHeader.vue'
+import TheHistoSignalementListCard from '../signalement-list/TheHistoSignalementListCard.vue'
+import TheHistoSignalementListPagination from '../signalement-list/TheHistoSignalementListPagination.vue'
 
 export default defineComponent({
-  name: "TheHistoAppSignalementList",
+  name: 'TheHistoAppSignalementList',
   components: {
     TheHistoSignalementListFilter,
     TheHistoSignalementListHeader,
     TheHistoSignalementListCard,
     TheHistoSignalementListPagination
-  },
+  }
 })
 </script>
-
 
 <style scoped>
 
