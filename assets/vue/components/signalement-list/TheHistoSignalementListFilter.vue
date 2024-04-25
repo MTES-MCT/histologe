@@ -41,13 +41,7 @@
               </button>
             </div>
             <div class="fr-col-12 fr-col-lg-6 fr-col-xl-8">
-              <span class="fr-badge fr-badge--info fr-badge--no-icon fr-badge--sm">Label badge</span>
-              <span class="fr-badge fr-badge--info fr-badge--no-icon fr-badge--sm">Label badge</span>
-              <span class="fr-badge fr-badge--info fr-badge--no-icon fr-badge--sm">Label badge</span>
-              <span class="fr-badge fr-badge--info fr-badge--no-icon fr-badge--sm">Label badge</span>
-              <span class="fr-badge fr-badge--info fr-badge--no-icon fr-badge--sm">Label badge</span>
-              <span class="fr-badge fr-badge--info fr-badge--no-icon fr-badge--sm">Label badge</span>
-              <span class="fr-badge fr-badge--info fr-badge--no-icon fr-badge--sm">Label badge</span>
+              <span class="fr-badge fr-badge--info fr-badge--no-icon fr-badge--sm fr-mx-1v" v-for="count in 8" :key="count">Label badge</span>
             </div>
             <div class="fr-col-12 fr-col-lg-6 fr-col-xl-2">
               <a href="/bo/partenaires/"

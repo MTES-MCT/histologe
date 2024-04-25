@@ -6,7 +6,7 @@
       <div class="fr-grid-row fr-my-2w" v-for="count in 25" :key="count">
         <TheHistoSignalementListCard/>
       </div>
-      <TheHistoSignalementPagination/>
+      <TheHistoSignalementListPagination/>
     </div>
   </section>
 </template>
