@@ -73,11 +73,7 @@
                 <div class="fr-col-12 fr-col-md-6 fr-p-1v">
                     <span class="fr-label">Synchronisation Esabora (facultatif)</span>
                     <div class="fr-toggle">
-                        {% if is_granted('ROLE_ADMIN_TERRITORY') %}
-                            {{ form_widget(form.isEsaboraActive) }}
-                        {% else %}
-                            {{ form_widget(form.isEsaboraActive, { 'attr': {'disabled': true}}) }}
-                        {% endif %}
+                        {{ form_widget(form.isEsaboraActive) }}
                         <label class="fr-toggle__label" for="{{ form.isEsaboraActive.vars.id }}"
                             data-fr-checked-label="Activée" data-fr-unchecked-label="Désactivée">
                         </label>

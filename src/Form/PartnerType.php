@@ -34,6 +34,7 @@ use Symfony\Component\Validator\Context\ExecutionContextInterface;
 class PartnerType extends AbstractType
 {
     private $isAdmin = false;
+    private $isAdminTerritory = false;
 
     public function __construct(
         private readonly ParameterBagInterface $parameterBag,
@@ -44,6 +45,9 @@ class PartnerType extends AbstractType
     ) {
         if ($this->security->isGranted('ROLE_ADMIN')) {
             $this->isAdmin = true;
+        }
+        if ($this->security->isGranted('ROLE_ADMIN_TERRITORY')) {
+            $this->isAdminTerritory = true;
         }
     }
 
@@ -136,6 +140,7 @@ class PartnerType extends AbstractType
                     'class' => 'fr-toggle__input',
                 ],
                 'required' => false,
+                'disabled' => !$this->isAdminTerritory,
             ])
             ->add('esaboraUrl', UrlType::class, [
                 'attr' => [
