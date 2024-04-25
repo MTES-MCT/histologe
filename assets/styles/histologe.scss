@@ -772,3 +772,27 @@ h2, h3 {
         border-radius: 50%;
     }
 }
+
+
+@media (min-width: 992px) {
+    .text-align-right--lg {
+        text-align: right;
+    }
+}
+
+.message-box{
+    margin-top: 1rem;
+    .message-box-message{
+        background: #E5E5E5;
+        padding: 1rem;
+    }
+}
+.message-box.message-box--usager{ 
+    text-align: right;
+    .message-box-message{
+        background: #ececfe;
+    }
+    ul{
+        list-style-position: inside;
+    }
+}

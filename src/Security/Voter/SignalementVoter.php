@@ -19,13 +19,13 @@ class SignalementVoter extends Voter
     public const EDIT = 'SIGN_EDIT';
     public const VIEW = 'SIGN_VIEW';
     public const REOPEN = 'SIGN_REOPEN';
-    public const EXPORT = 'SIGN_EXPORT';
     public const ADD_VISITE = 'SIGN_ADD_VISITE';
+    public const USAGER_EDIT = 'SIGN_USAGER_EDIT';
 
     protected function supports(string $attribute, $subject): bool
     {
-        return \in_array($attribute, [self::EDIT, self::VIEW, self::DELETE, self::VALIDATE, self::REOPEN, self::CLOSE, self::EXPORT, self::ADD_VISITE])
-            && ($subject instanceof Signalement || $subject instanceof ArrayCollection);
+        return \in_array($attribute, [self::EDIT, self::VIEW, self::DELETE, self::VALIDATE, self::REOPEN, self::CLOSE, self::ADD_VISITE, self::USAGER_EDIT])
+            && ($subject instanceof Signalement);
     }
 
     protected function voteOnAttribute(string $attribute, $subject, TokenInterface $token): bool
@@ -33,6 +33,9 @@ class SignalementVoter extends Voter
         /** @var User $user */
         $user = $token->getUser();
         if (!$user instanceof UserInterface) {
+            if($attribute === self::USAGER_EDIT && !in_array($subject->getStatut(), Signalement::DISABLED_STATUSES)){
+                return true;
+            }
             return false;
         }
 
@@ -51,7 +54,6 @@ class SignalementVoter extends Voter
             self::REOPEN => $this->canReopen($subject, $user),
             self::EDIT => $this->canEdit($subject, $user),
             self::VIEW => $this->canView($subject, $user),
-            self::EXPORT => $this->canExport($subject, $user),
             default => false,
         };
     }
@@ -90,13 +92,6 @@ class SignalementVoter extends Voter
         }
 
         return false;
-    }
-
-    public function canExport(ArrayCollection $signalements, User $user): bool
-    {
-        return $user->isTerritoryAdmin() && 0 == $signalements->filter(function (Signalement $signalement) use ($user) {
-            return $signalement->getTerritory() !== $user->getTerritory();
-        })->count();
     }
 
     public function canAddVisite(Signalement $signalement, User $user): bool

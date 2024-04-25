@@ -22,6 +22,7 @@ use App\Service\Mailer\NotificationMail;
 use App\Service\Mailer\NotificationMailerRegistry;
 use App\Service\Mailer\NotificationMailerType;
 use App\Service\Signalement\PostalCodeHomeChecker;
+use App\Service\Signalement\SignalementDesordresProcessor;
 use App\Service\Signalement\SignalementDraftHelper;
 use App\Service\Signalement\SignalementFileProcessor;
 use App\Service\UploadHandlerService;
@@ -502,7 +503,8 @@ class FrontSignalementController extends AbstractController
         string $code,
         SignalementRepository $signalementRepository,
         Request $request,
-        UserManager $userManager
+        UserManager $userManager,
+        SignalementDesordresProcessor $signalementDesordresProcessor
     ) {
         if ($signalement = $signalementRepository->findOneByCodeForPublic($code)) {
             $requestEmail = $request->get('from');
@@ -511,10 +513,13 @@ class FrontSignalementController extends AbstractController
             $user = $userManager->getOrCreateUserForSignalementAndEmail($signalement, $fromEmail);
             $type = $userManager->getUserTypeForSignalementAndUser($signalement, $user);
 
+            $infoDesordres = $signalementDesordresProcessor->process($signalement);
+
             return $this->render('front/suivi_signalement.html.twig', [
                 'signalement' => $signalement,
                 'email' => $fromEmail,
                 'type' => $type,
+                'infoDesordres' => $infoDesordres,
             ]);
         }
         $this->addFlash('error', 'Le lien utilisé est invalide, vérifiez votre saisie.');
@@ -533,20 +538,12 @@ class FrontSignalementController extends AbstractController
         SignalementFileProcessor $signalementFileProcessor
     ): RedirectResponse {
         $signalement = $signalementRepository->findOneByCodeForPublic($code);
-        if (!$signalement) {
-            $this->addFlash('error', 'Le lien utilisé est expiré ou invalide, vérifiez votre saisie.');
-
-            return $this->redirectToRoute('home');
-        }
+        $this->denyAccessUnlessGranted('SIGN_USAGER_EDIT', $signalement);
         if (!$this->isCsrfTokenValid('signalement_front_response_'.$signalement->getUuid(), $request->get('_token'))) {
             $this->addFlash('error', 'Token CSRF invalide');
 
             return $this->redirectToRoute('front_suivi_signalement', ['code' => $signalement->getCodeSuivi()]);
         }
-        if (\in_array($signalement->getStatut(), [Signalement::STATUS_CLOSED, Signalement::STATUS_REFUSED])) {
-            return $this->redirectToRoute('front_suivi_signalement', ['code' => $signalement->getCodeSuivi()]);
-        }
-
         $email = $request->get('signalement_front_response')['email'];
         $user = $userManager->getOrCreateUserForSignalementAndEmail($signalement, $email);
         $suivi = $suiviFactory->createInstanceFrom(
