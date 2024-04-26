@@ -4,6 +4,7 @@ namespace App\Messenger\MessageHandler;
 
 use App\Dto\Request\Signalement\SignalementDraftRequest;
 use App\Factory\FileFactory;
+use App\Manager\UserManager;
 use App\Messenger\Message\SignalementDraftFileMessage;
 use App\Repository\SignalementDraftRepository;
 use App\Repository\SignalementRepository;
@@ -22,6 +23,7 @@ class SignalementDraftFileMessageHandler
         private FileFactory $fileFactory,
         private UploadHandlerService $uploadHandlerService,
         private LoggerInterface $logger,
+        private UserManager $userManager,
     ) {
     }
 
@@ -43,7 +45,7 @@ class SignalementDraftFileMessageHandler
         );
 
         $signalement = $this->signalementRepository->find($signalementDraftFileMessage->getSignalementId());
-
+        $uploadUser = $this->userManager->findOneBy(['email' => $signalement->getMailDeclarant()]);
         if ($files = $signalementDraftRequest->getFiles()) {
             foreach ($files as $key => $fileList) {
                 foreach ($fileList as $fileItem) {
@@ -52,6 +54,7 @@ class SignalementDraftFileMessageHandler
                     $this->uploadHandlerService->moveFromBucketTempFolder($file->getFilename());
                     $file->setSize($this->uploadHandlerService->getFileSize($file->getFilename()));
                     $file->setIsVariantsGenerated($this->uploadHandlerService->hasVariants($file->getFilename()));
+                    $file->setUploadedBy($uploadUser);
                     $signalement->addFile($file);
                 }
             }

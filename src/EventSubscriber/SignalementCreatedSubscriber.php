@@ -26,14 +26,7 @@ class SignalementCreatedSubscriber implements EventSubscriberInterface
     {
         $signalement = $event->getSignalement();
 
-        $userOccupant = $this->userManager->createUsagerFromSignalement($signalement, $this->userManager::OCCUPANT);
-        $userDeclarant = $this->userManager->createUsagerFromSignalement($signalement, $this->userManager::DECLARANT);
-
-        if ($signalement->getIsNotOccupant()) {
-            $user = $userDeclarant;
-        } else {
-            $user = $userOccupant;
-        }
-        $this->fileManager->updateSignalementFilesUser($signalement, $user);
+        $this->userManager->createUsagerFromSignalement($signalement, $this->userManager::OCCUPANT);
+        $this->userManager->createUsagerFromSignalement($signalement, $this->userManager::DECLARANT);
     }
 }
