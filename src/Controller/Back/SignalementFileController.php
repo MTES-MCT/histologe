@@ -79,10 +79,7 @@ class SignalementFileController extends AbstractController
         list($fileList) = $signalementFileProcessor->process($files, $inputName, $documentType);
 
         if (!$signalementFileProcessor->isValid()) {
-            $errorMessages = '';
-            foreach ($signalementFileProcessor->getErrors() as $errorMessage) {
-                $errorMessages .= $errorMessage.'<br>';
-            }
+            $errorMessages = $signalementFileProcessor->getErrorMessages();
             if ($request->isXmlHttpRequest()) {
                 return $this->json(['response' => $errorMessages], Response::HTTP_BAD_REQUEST);
             }

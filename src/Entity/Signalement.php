@@ -1928,7 +1928,7 @@ class Signalement
     public function getPhotos(): Collection
     {
         return $this->files->filter(function (File $file) {
-            return 'photo' === $file->getFiletype();
+            return 'photo' === $file->getFiletype() && !$file->isTemp();
         });
     }
 
@@ -1938,7 +1938,7 @@ class Signalement
     public function getDocuments(): Collection
     {
         return $this->files->filter(function (File $file) {
-            return 'document' === $file->getFiletype();
+            return 'document' === $file->getFiletype() && !$file->isTemp();
         });
     }
 
@@ -1947,7 +1947,9 @@ class Signalement
      */
     public function getFiles(): Collection
     {
-        return $this->files;
+        return $this->files->filter(function (File $file) {
+            return !$file->isTemp();
+        });
     }
 
     public function addFile(File $file): self

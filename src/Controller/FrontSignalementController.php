@@ -5,6 +5,7 @@ namespace App\Controller;
 use App\Dto\Request\Signalement\SignalementDraftRequest;
 use App\Entity\Enum\DocumentType;
 use App\Entity\Enum\SignalementDraftStatus;
+use App\Entity\File;
 use App\Entity\Signalement;
 use App\Entity\SignalementDraft;
 use App\Entity\Suivi;
@@ -559,26 +560,14 @@ class FrontSignalementController extends AbstractController
             'UTF-8'
         );
 
-        $fileList = $descriptionList = [];
-        if ($data = $request->get('signalement')) {
-            if (isset($data['files'])) {
-                $dataFiles = $data['files'];
-                foreach ($dataFiles as $inputName => $files) {
-                    list($files, $descriptions) = $signalementFileProcessor->process(
-                        $dataFiles,
-                        $inputName,
-                        DocumentType::AUTRE
-                    );
-                    $fileList = [...$fileList, ...$files];
-                    $descriptionList = [...$descriptionList, ...$descriptions];
-                }
-                unset($data['files']);
+        $docs = $entityManager->getRepository(File::class)->findBy(['signalement' => $signalement, 'isTemp' => true, 'uploadedBy' => $user]);
+        if (count($docs)) {
+            $descriptionList = [];
+            foreach ($docs as $doc) {
+                $doc->setIsTemp(false);
+                $descriptionList[] = $signalementFileProcessor->generateListItemDescription($doc->getFilename(), $doc->getTitle(), true);
             }
-            if (!empty($descriptionList)) {
-                $description .= '<br>Ajout de pièces au signalement<ul>'
-                    .implode('', $descriptionList).'</ul>';
-                $signalementFileProcessor->addFilesToSignalement($fileList, $signalement, $user);
-            }
+            $description .= '<br>Ajout de pièces au signalement<ul>'.implode('', $descriptionList).'</ul>';
         }
 
         $suivi->setDescription($description);

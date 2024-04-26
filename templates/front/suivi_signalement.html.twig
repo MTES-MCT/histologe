@@ -6,7 +6,7 @@
 {% block body %}
 
 {% if (is_granted('SIGN_USAGER_EDIT', signalement)) %}
-	{% include '_partials/_modal_upload_files.html.twig' with {'criteres': infoDesordres['criteres']} %}
+	{% include '_partials/_modal_upload_files_usager.html.twig' with {'criteres': infoDesordres['criteres']} %}
 {% endif %}
 
 	<main class="fr-container">
@@ -99,18 +99,32 @@
 							<div class="fr-input-group">
 								<label for="signalement_front_response_content" class="fr-h4">Envoyer un message</label>
 								<p class="fr-hint-text fr-mb-2v">Dix (10) caractères minimum</p>
-								<input type="hidden" name="signalement_front_response[email]" value="{{ email }}">
+								<input type="hidden" name="signalement_front_response[email]" value="{{ email }}" id="suivi_from_email">
 								<input type="hidden" name="signalement_front_response[type]" value="{{ type }}">
 								<textarea name="signalement_front_response[content]" id="signalement_front_response_content" rows="10" class="fr-input" required minlength="10"></textarea>
 								<p class="fr-error-text fr-hidden">Veuillez composer un message d'au moins 10 caractères.</p>
 							</div>
 							<ul class="fr-btns-group fr-btns-group--icon-left">
 								<li>
-									<button class="fr-btn fr-btn--secondary fr-icon-add-line" type="button" data-fr-opened="false" aria-controls="fr-modal-upload-files">Ajouter des photos
+									<button 
+									class="fr-btn fr-btn--secondary fr-icon-add-line open-modal-upload-files-btn" 
+									type="button" 
+									data-fr-opened="false" 
+									aria-controls="fr-modal-upload-files-usager"
+									data-file-type="photo"
+									>
+										Ajouter des photos
 									</button>
 								</li>
 								<li>
-									<button class="fr-btn fr-btn--secondary fr-icon-add-line" type="button" data-fr-opened="false" aria-controls="fr-modal-upload-files">Ajouter des documents
+									<button 
+									class="fr-btn fr-btn--secondary fr-icon-add-line open-modal-upload-files-btn" 
+									type="button" 
+									data-fr-opened="false" 
+									aria-controls="fr-modal-upload-files-usager"
+									data-file-type="document"
+									>
+										Ajouter des documents
 									</button>
 								</li>
 								<li>

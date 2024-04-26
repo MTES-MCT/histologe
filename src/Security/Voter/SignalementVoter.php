@@ -6,7 +6,6 @@ use App\Entity\Affectation;
 use App\Entity\Enum\Qualification;
 use App\Entity\Signalement;
 use App\Entity\User;
-use Doctrine\Common\Collections\ArrayCollection;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Authorization\Voter\Voter;
 use Symfony\Component\Security\Core\User\UserInterface;

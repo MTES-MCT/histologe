@@ -88,7 +88,8 @@ class SignalementFileProcessor
         Signalement $signalement,
         ?UserInterface $user = null,
         ?Intervention $intervention = null,
-        ?bool $isWaitingSuivi = false
+        ?bool $isWaitingSuivi = false,
+        ?bool $isTemp = false
     ): array {
         $list = [];
         foreach ($fileList as $fileItem) {
@@ -99,7 +100,8 @@ class SignalementFileProcessor
                 user: $user,
                 intervention: $intervention,
                 documentType: $fileItem['documentType'],
-                isWaitingSuivi: $isWaitingSuivi
+                isWaitingSuivi: $isWaitingSuivi,
+                isTemp: $isTemp
             );
             $file->setSize($this->uploadHandlerService->getFileSize($file->getFilename()));
             $file->setIsVariantsGenerated($this->uploadHandlerService->hasVariants($file->getFilename()));
@@ -121,7 +123,12 @@ class SignalementFileProcessor
         return $this->errors;
     }
 
-    private function generateListItemDescription(
+    public function getErrorMessages(): string
+    {
+        return implode('<br>', $this->errors);
+    }
+
+    public function generateListItemDescription(
         string $filename,
         string $title,
         bool $withTokenGenerated = false,
