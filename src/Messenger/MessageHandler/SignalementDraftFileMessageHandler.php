@@ -54,9 +54,7 @@ class SignalementDraftFileMessageHandler
                     $this->uploadHandlerService->moveFromBucketTempFolder($file->getFilename());
                     $file->setSize($this->uploadHandlerService->getFileSize($file->getFilename()));
                     $file->setIsVariantsGenerated($this->uploadHandlerService->hasVariants($file->getFilename()));
-                    if (null !== $uploadUser) {
-                        $file->setUploadedBy($uploadUser);
-                    }
+                    $file->setUploadedBy($uploadUser);
                     $signalement->addFile($file);
                 }
             }
