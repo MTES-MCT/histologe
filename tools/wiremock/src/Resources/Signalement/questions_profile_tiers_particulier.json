@@ -46,7 +46,7 @@
         },
         {
           "type": "SignalementFormEmailfield",
-          "label": "Adresse email",
+          "label": "Adresse e-mail",
           "slug": "vos_coordonnees_tiers_email"
         },
         {
@@ -98,7 +98,7 @@
         },
         {
           "type": "SignalementFormEmailfield",
-          "label": "Adresse email (facultatif)",
+          "label": "Adresse e-mail (facultatif)",
           "slug": "coordonnees_occupant_email",
           "validate": {
             "required": false
@@ -177,7 +177,7 @@
         },
         {
           "type": "SignalementFormEmailfield",
-          "label": "Adresse email (facultatif)",
+          "label": "Adresse e-mail (facultatif)",
           "slug": "coordonnees_bailleur_email",
           "validate": {
             "required": false

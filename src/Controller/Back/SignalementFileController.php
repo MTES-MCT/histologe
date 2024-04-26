@@ -45,7 +45,7 @@ class SignalementFileController extends AbstractController
         $this->addFlash(
             'success',
             sprintf(
-                'L\'export pdf vous sera envoyé par email à l\'adresse suivante : %s. N\'oubliez pas de regarder vos courriers indésirables (spam) !',
+                'L\'export pdf vous sera envoyé par e-mail à l\'adresse suivante : %s. N\'oubliez pas de regarder vos courriers indésirables (spam) !',
                 $user->getEmail()
             )
         );

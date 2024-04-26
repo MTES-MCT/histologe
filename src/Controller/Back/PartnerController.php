@@ -363,7 +363,7 @@ class PartnerController extends AbstractController
             $user = $userManager->createUserFromData($partner, $data);
         }
 
-        $message = 'L\'utilisateur a bien été créé. Un email de confirmation a été envoyé à '.$user->getEmail();
+        $message = 'L\'utilisateur a bien été créé. Un e-mail de confirmation a été envoyé à '.$user->getEmail();
         $this->addFlash('success', $message);
 
         return $this->redirectToRoute('back_partner_view', ['id' => $partner->getId()], Response::HTTP_SEE_OTHER);

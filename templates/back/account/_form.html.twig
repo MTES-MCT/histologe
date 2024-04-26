@@ -6,10 +6,10 @@
     </legend>
     <div class="fr-grid-row fr-grid-row--gutters">
         <div class="fr-col-lg-6">
-            <label for="{{ form.email.vars.id }}" class="fr-label">Adresse email</label>
+            <label for="{{ form.email.vars.id }}" class="fr-label">Adresse e-mail</label>
                 {{ form_widget(form.email, {'value': user.email|clean_tagged_text(constant('App\\Entity\\User::SUFFIXE_ARCHIVED'), 'left')}) }}
             </br>
-            <span class="fr-hint-text">L'adresse email ne peut pas être modifiée</span>
+            <span class="fr-hint-text">L'adresse e-mail ne peut pas être modifiée</span>
         </div>
         
         {% if 'ROLE_USAGER' not in user.roles %}

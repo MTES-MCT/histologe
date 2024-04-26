@@ -118,25 +118,25 @@ class GridAffectationLoaderTest extends KernelTestCase
         $this->assertCount(
             2,
             $metaData['errors'],
-            'user-13-06@histologe.fr already exists and Partner emails exists partenaire-13-01@histologe.fr'
+            'user-13-06@histologe.fr already exists and Partner e-mails exists partenaire-13-01@histologe.fr'
         );
     }
 
     public function testValidateWithErrors(): void
     {
         $errors = [
-            'line 3 : Email incorrect pour un partenaire : arshistologe.fr',
+            'line 3 : E-mail incorrect pour un partenaire : arshistologe.fr',
             'line 5 : Type incorrect pour Random Type --> Random Type',
             'line 5 : Rôle incorrect pour jon.conor@histologe.fr --> Fake role',
             'line 6 : Type incorrect pour Random Type --> Random Type',
-            'line 6 : Email incorrect pour un utilisateur : john.doe@',
+            'line 6 : E-mail incorrect pour un utilisateur : john.doe@',
             'line 7 : Partenaire déjà existant avec (partenaire-13-01@histologe.fr) dans Bouches-du-Rhône, nom : Partenaire 13-01',
-            'line 8 : Email manquant pour Margaretta Borer, partenaire ADIL',
+            'line 8 : E-mail manquant pour Margaretta Borer, partenaire ADIL',
             'line 9 : Nom de partenaire manquant',
             'line 10 : Utilisateur déjà existant avec (user-13-06@histologe.fr) dans Bouches-du-Rhône, partenaire : Partenaire 13-06 ESABORA ARS, rôle : Utilisateur',
-            'Certains partenaires ont un mail en commun ddt-m@histologe.fr',
-            'Certains utilisateurs ont un mail en commun user-ddt@histologe.fr',
-            'Certains utilisateurs ont un mail en commun avec un partenaire ddt-m@histologe.fr,user-ddt@histologe.fr',
+            'Certains partenaires ont un e-mail en commun ddt-m@histologe.fr',
+            'Certains utilisateurs ont un e-mail en commun user-ddt@histologe.fr',
+            'Certains utilisateurs ont un e-mail en commun avec un partenaire ddt-m@histologe.fr,user-ddt@histologe.fr',
         ];
 
         $this->assertEquals(

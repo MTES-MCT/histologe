@@ -160,7 +160,7 @@ class Signalement
     private ?string $telDeclarantSecondaire;
 
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
-    #[Assert\Email(message: 'L\'adresse email du déclarant n\'est pas valide.')]
+    #[Assert\Email(message: 'L\'adresse e-mail du déclarant n\'est pas valide.')]
     private $mailDeclarant;
 
     #[ORM\Column(type: 'string', length: 200, nullable: true)]
@@ -184,7 +184,7 @@ class Signalement
     private $telOccupant;
 
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
-    #[Assert\Email(message: 'L\'adresse email de l\'occupant n\'est pas valide.')]
+    #[Assert\Email(message: 'L\'adresse e-mail de l\'occupant n\'est pas valide.')]
     private $mailOccupant;
 
     #[ORM\Column(type: 'string', length: 100, nullable: true)]
@@ -435,13 +435,13 @@ class Signalement
     {
         // check mails
         if (!$this->mailDeclarant && !$this->mailOccupant) {
-            $context->buildViolation('Vous devez renseigner au moins une adresse email pour le déclarant ou l\'occupant.')
+            $context->buildViolation('Vous devez renseigner au moins une adresse e-mail pour le déclarant ou l\'occupant.')
                 ->atPath('mailDeclarant')
                 ->atPath('mailOccupant')
                 ->addViolation();
         }
         if ($this->mailDeclarant && $this->mailOccupant && $this->mailDeclarant === $this->mailOccupant) {
-            $context->buildViolation('les adresses emails du déclarant et de l\'occupant sont identiques (laisser l\'adresse vide si l\'occupant n\'en dispose pas).')
+            $context->buildViolation('les adresses e-mails du déclarant et de l\'occupant sont identiques (laisser l\'adresse vide si l\'occupant n\'en dispose pas).')
                 ->atPath('mailDeclarant')
                 ->atPath('mailOccupant')
                 ->addViolation();
