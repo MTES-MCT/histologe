@@ -15,13 +15,14 @@
   </div>
 </template>
 
-<script>
+<script lang="ts">
+import { defineComponent } from 'vue'
 import { Bar } from 'vue-chartjs'
 import { Chart as ChartJS, Title, Tooltip, Legend, BarElement, CategoryScale, LinearScale } from 'chart.js'
 
 ChartJS.register(Title, Tooltip, Legend, BarElement, CategoryScale, LinearScale)
 
-export default {
+export default defineComponent({
   name: 'HistoChartBar',
   components: { Bar },
   props: {
@@ -45,8 +46,8 @@ export default {
       default: 250
     },
     cssClasses: {
-      default: '',
-      type: String
+      type: String,
+      default: ''
     },
     indexAxis: {
       default: 'y',
@@ -102,7 +103,7 @@ export default {
           },
           tooltip: {
             callbacks: {
-              title: function (context) {
+              title: function (context: any) {
                 return context[0].label.split(' ,').join('\n')
               }
             }
@@ -111,7 +112,7 @@ export default {
       }
     }
   }
-}
+})
 </script>
 
 <style>

@@ -15,8 +15,7 @@ class DesordresCategoriesStatisticProvider
     {
         $countPerDesordresCategories = $this->signalementRepository->countCritereByZone(
             $territory,
-            $year,
-            true
+            $year
         );
 
         return $this->createFullArray($countPerDesordresCategories);

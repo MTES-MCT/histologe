@@ -15,7 +15,7 @@
   </div>
 </template>
 
-<script>
+<script lang="ts">
 import { defineComponent } from 'vue'
 import { Doughnut } from 'vue-chartjs'
 
@@ -57,8 +57,8 @@ export default defineComponent({
       default: 400
     },
     cssClasses: {
-      default: '',
-      type: String
+      type: String,
+      default: ''
     },
     styles: {
       type: Object,
@@ -113,7 +113,7 @@ export default defineComponent({
     }
   },
   methods: {
-    splitLabelIntoChunks (label, labelCharMax) {
+    splitLabelIntoChunks (label: string, labelCharMax: number) {
       const labelChunks = []
       let currentChunk = ''
       let currentLength = 0

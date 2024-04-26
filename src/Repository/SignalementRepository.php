@@ -189,23 +189,14 @@ class SignalementRepository extends ServiceEntityRepository
             ->getSingleScalarResult();
     }
 
-    public function countRefused(
-        bool $removeImported = false,
-        bool $removeArchived = false
-    ): int {
+    public function countRefused(): int
+    {
         $qb = $this->createQueryBuilder('s');
         $qb->select('COUNT(s.id)');
         $qb->andWhere('s.statut = :refusedStatus')
             ->setParameter('refusedStatus', Signalement::STATUS_REFUSED);
 
-        if ($removeArchived) {
-            $qb->andWhere('s.statut != :statutArchived')
-                ->setParameter('statutArchived', Signalement::STATUS_ARCHIVED);
-        }
-
-        if ($removeImported) {
-            $qb->andWhere('s.isImported IS NULL OR s.isImported = 0');
-        }
+        $qb->andWhere('s.isImported IS NULL OR s.isImported = 0');
 
         return $qb->getQuery()
             ->getSingleScalarResult();
@@ -287,7 +278,7 @@ class SignalementRepository extends ServiceEntityRepository
             ->getResult();
     }
 
-    public function countCritereByZone(?Territory $territory, ?int $year, bool $removeImported = false): array
+    public function countCritereByZone(?Territory $territory, ?int $year): array
     {
         $qb = $this->createQueryBuilder('s');
 
@@ -302,9 +293,7 @@ class SignalementRepository extends ServiceEntityRepository
            ->setParameter('batimentString', 'BATIMENT')
            ->setParameter('logementString', 'LOGEMENT');
 
-        if ($removeImported) {
-            $qb->andWhere('s.isImported IS NULL OR s.isImported = 0');
-        }
+        $qb->andWhere('s.isImported IS NULL OR s.isImported = 0');
 
         if ($territory) {
             $qb->andWhere('s.territory = :territory')->setParameter('territory', $territory);
@@ -319,20 +308,16 @@ class SignalementRepository extends ServiceEntityRepository
     public function countByDesordresCriteres(
         ?Territory $territory,
         ?int $year,
-        bool $removeImported = false,
         ?DesordreCritereZone $desordreCritereZone = null,
     ): array {
         $qb = $this->createQueryBuilder('s');
         $qb->select('COUNT(s.id) AS count, desordreCriteres.id, desordreCriteres.labelCritere')
             ->leftJoin('s.desordreCriteres', 'desordreCriteres')
-
             ->where('s.statut != :statutArchived')
             ->setParameter('statutArchived', Signalement::STATUS_ARCHIVED)
             ->andWhere('s.createdFrom IS NOT NULL');
 
-        if ($removeImported) {
-            $qb->andWhere('s.isImported IS NULL OR s.isImported = 0');
-        }
+        $qb->andWhere('s.isImported IS NULL OR s.isImported = 0');
 
         if ($territory) {
             $qb->andWhere('s.territory = :territory')->setParameter('territory', $territory);
@@ -347,7 +332,7 @@ class SignalementRepository extends ServiceEntityRepository
         }
 
         $qb->groupBy('desordreCriteres.id')
-        ->orderBy('COUNT(s.id)', 'DESC')
+        ->orderBy('count', 'DESC')
         ->setMaxResults(5);
 
         return $qb->getQuery()
@@ -379,6 +364,7 @@ class SignalementRepository extends ServiceEntityRepository
         }
 
         $qb->groupBy('s.motifCloture');
+        $qb->orderBy('s.motifCloture');
 
         return $qb->getQuery()
             ->getResult();

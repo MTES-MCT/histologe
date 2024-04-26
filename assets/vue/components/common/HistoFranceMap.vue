@@ -682,7 +682,7 @@ export default defineComponent({
       captionTerritoryCountPlural: '',
       minValue: 0,
       maxValue: 6000,
-      minColor: '#FFFFFF',
+      minColor: '#bfc4d5',
       maxColor: '#2F4077'
 
     }
@@ -796,7 +796,7 @@ export default defineComponent({
   .histo-france-map .legend-gradient {
     width: 266px;
     height: 24px;
-    background: linear-gradient(to right, #FFFFFF, #2F4077);
+    background: linear-gradient(to right, #bfc4d5, #2F4077);
   }
 
   .histo-france-map .legend-undeployed {

@@ -11,7 +11,7 @@
         :option-items=sharedState.filters.territoiresList
         />
 
-      <div class="fr-container--fluid fr-my-10v">
+      <div class="fr-container--fluid fr-py-5v">
         <div class="fr-grid-row fr-grid-row--gutters">
           <TheHistoFrontStatsTerritoryItem sizeClass="7" v-model="sharedState.filters.perMonthYearType" :onChange="handleChangePerMonth">
             <template #title>Nombre de signalements déposés</template>
@@ -41,7 +41,7 @@
           >
             <template #title>Désordres par catégorie</template>
             <template #graph>
-              <HistoChartDoughnut v-if="!isLoadingPerDesordresCategories" :items=perDesordresCategoriesData />
+              <HistoChartPie v-if="!isLoadingPerDesordresCategories" :items=perDesordresCategoriesData />
             </template>
           </TheHistoFrontStatsTerritoryItem>
 
@@ -69,6 +69,7 @@
             </template>
           </TheHistoFrontStatsTerritoryItem>
         </div>
+        <br>
         <i>* Les statistiques concernant les désordres les plus courants par catégorie sont disponibles depuis février 2024 uniquement.</i>
       </div>
     </div>

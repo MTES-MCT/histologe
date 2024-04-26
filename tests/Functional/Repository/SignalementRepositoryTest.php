@@ -101,4 +101,34 @@ class SignalementRepositoryTest extends KernelTestCase
 
         $this->assertTrue($signalement->hasQualificaton(Qualification::RSD));
     }
+
+    public function testCountRefused(): void
+    {
+        /** @var SignalementRepository $signalementRepository */
+        $signalementRepository = $this->entityManager->getRepository(Signalement::class);
+        $signalementsRefused = $signalementRepository->countRefused();
+        $this->assertEquals(1, $signalementsRefused);
+    }
+
+    public function testCountCritereByZone(): void
+    {
+        /** @var SignalementRepository $signalementRepository */
+        $signalementRepository = $this->entityManager->getRepository(Signalement::class);
+        $zones = $signalementRepository->countCritereByZone(null, null);
+        $this->assertEquals(4, \count($zones));
+        $this->assertArrayHasKey('critere_batiment_count', $zones);
+        $this->assertArrayHasKey('critere_logement_count', $zones);
+        $this->assertArrayHasKey('desordrecritere_batiment_count', $zones);
+        $this->assertArrayHasKey('desordrecritere_logement_count', $zones);
+    }
+
+    public function testCountByDesordresCriteres(): void
+    {
+        /** @var SignalementRepository $signalementRepository */
+        $signalementRepository = $this->entityManager->getRepository(Signalement::class);
+        $desordreCriteres = $signalementRepository->countByDesordresCriteres(null, null, null);
+        $this->assertEquals(5, \count($desordreCriteres));
+        $this->assertArrayHasKey('count', $desordreCriteres[0]);
+        $this->assertArrayHasKey('labelCritere', $desordreCriteres[0]);
+    }
 }

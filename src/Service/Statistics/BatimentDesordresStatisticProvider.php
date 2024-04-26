@@ -17,7 +17,6 @@ class BatimentDesordresStatisticProvider
         $countPerBatimentDesordres = $this->signalementRepository->countByDesordresCriteres(
             $territory,
             $year,
-            true,
             DesordreCritereZone::BATIMENT
         );
 
