@@ -21,6 +21,9 @@
     {% if (is_granted('FILE_CREATE', signalement) and isDocumentsEnabled) %}
         {% include '_partials/_modal_upload_files.html.twig' %}
     {% endif %}
+    {% if is_granted('ROLE_ADMIN') %}
+        {% include '_partials/_modal_send_lien_suivi.html.twig' %}
+    {% endif %}
     <section id="signalement-{{ signalement.id }}-content"
         class="fr-p-5v fr-background--white
             {{ (isClosedForMe and not is_granted('ROLE_ADMIN_TERRITORY'))

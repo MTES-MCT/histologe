@@ -74,6 +74,13 @@
                 </a>
             {% endif %}
 
+            {% if is_granted('ROLE_ADMIN') %}
+                    <a href="#" aria-controls="send-lien-suivi-modal" data-fr-opened="false"
+                       class="fr-btn fr-btn--sm fr-btn--secondary fr-btn--icon-left fr-icon-mail-fill ignore-blank-style"
+                       title="Envoyer le lien de suivi">Envoyer le lien de suivi
+                    </a>
+            {% endif %}
+
             {% if canExportSignalement %}
                     <a href="{{ path('back_signalement_gen_pdf',{uuid:signalement.uuid}) }}"
                        class="fr-btn fr-btn--sm fr-btn--icon-left fr-fi-file-pdf-fill ignore-blank-style"
