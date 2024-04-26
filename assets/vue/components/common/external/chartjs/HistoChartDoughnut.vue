@@ -105,7 +105,10 @@ export default defineComponent({
             position: 'bottom',
             align: 'start',
             labels: {
-              padding: 20
+              padding: 20,
+              font: {
+                lineHeight: 0.9
+              }
             }
           }
         }
