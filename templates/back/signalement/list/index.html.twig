@@ -1,0 +1,12 @@
+{% extends 'back/base_bo.html.twig' %}
+
+{% block title %}Administration - Tous mes signalements{% endblock %}
+
+{% block customscripts %}
+    {{ encore_entry_script_tags('app') }}
+    {{ encore_entry_link_tags('app') }}
+{% endblock %}
+
+{% block content %}
+    <div id="app-signalement-list" data-ajaxurl=""></div>
+{% endblock %}

@@ -9,6 +9,7 @@ use App\Service\Signalement\SearchFilter;
 use App\Service\Signalement\SearchFilterOptionDataProvider;
 use Psr\Cache\InvalidArgumentException;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -50,6 +51,18 @@ class SignalementListController extends AbstractController
             'displayRefreshAll' => true,
             'signalements' => $signalements,
         ]);
+    }
+
+    #[Route('/v2/signalements/', name: 'v2_back_index')]
+    public function show(
+        #[Autowire(env: 'FEATURE_LIST_FILTER_ENABLE')]
+        bool $featureListFilterEnable
+    ): Response {
+        if (!$featureListFilterEnable) {
+            return $this->redirectToRoute('back_index');
+        }
+
+        return $this->render('back/signalement/list/index.html.twig');
     }
 
     #[Route('/list/signalements/', name: 'back_signalement_list_json')]
