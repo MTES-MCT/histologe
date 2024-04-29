@@ -29,6 +29,7 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 class ImportGridAffectationCommand extends Command
 {
     private const PARAM_TERRITORY_ZIP = 'territory_zip';
+    private const PARAM_IGNORE_NOTIFICATION_ALL_PARTNER = 'ignore-notification-all';
     private const PARAM_IGNORE_NOTIFICATION_PARTNER = 'ignore-notification-partners';
     private const PARAM_FILE_VERSION = 'file-version';
 
@@ -57,6 +58,12 @@ class ImportGridAffectationCommand extends Command
                 null,
                 InputOption::VALUE_REQUIRED,
                 'Add partners types separated with comma'
+            )
+            ->addOption(
+                self::PARAM_IGNORE_NOTIFICATION_ALL_PARTNER,
+                null,
+                null,
+                'Partners will not be notify'
             )
             ->addOption(self::PARAM_FILE_VERSION, null, InputOption::VALUE_REQUIRED, 'Grid affectation file version')
         ;
@@ -100,8 +107,11 @@ class ImportGridAffectationCommand extends Command
 
         $ignoreNotifPartnerTypes = [];
         $ignoreNotifPartnerTypesParam = $input->getOption(self::PARAM_IGNORE_NOTIFICATION_PARTNER);
+        $ignoredNotifAllPartners = $input->getOption(self::PARAM_IGNORE_NOTIFICATION_ALL_PARTNER);
         if (null !== $ignoreNotifPartnerTypesParam) {
             $ignoreNotifPartnerTypes = explode(',', $ignoreNotifPartnerTypesParam);
+        } elseif ($ignoredNotifAllPartners) {
+            $ignoreNotifPartnerTypes = array_keys(PartnerType::getLabelList());
         }
 
         $this->gridAffectationLoader->load(
