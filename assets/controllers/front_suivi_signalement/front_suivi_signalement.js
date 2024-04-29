@@ -117,6 +117,7 @@ if (modalUploadFiles) {
                     }
                     btnDeleteTmpFile.href = btnDeleteTmpFile.href + '?file_id=' + response.response
                     btnDeleteTmpFile.classList.remove('fr-hidden', 'delete-html')
+                    addHtmlFile(file, response)
                 } else {
                     div.querySelector('.file-error').innerHTML = '<div class="fr-alert fr-alert--error fr-alert--sm">' + response.response + '</div>'
                     btnDeleteTmpFile.classList.remove('fr-hidden')
@@ -126,6 +127,33 @@ if (modalUploadFiles) {
         http.open('POST', addFileRoute, true)
         http.setRequestHeader("X-Requested-With", "XMLHttpRequest")
         http.send(data)
+    }
+
+    function addHtmlFile(file, response) {
+        let uploadedFilesList = document.querySelector('#uploaded-files-list')
+        let div = document.createElement('div')
+        div.id = 'uploaded-file-' + response.response
+        div.innerHTML = file.name
+        let deleteFileLink = document.createElement('a')
+        deleteFileLink.href = deleteTmpFileRoute + '?file_id=' + response.response
+        deleteFileLink.classList.add('uploaded-file-delete', 'fr-ml-2v')
+        deleteFileLink.title = 'Supprimer'
+        deleteFileLink.innerHTML = '<i class="fr-icon-delete-line"></i>'
+        div.appendChild(deleteFileLink)
+        uploadedFilesList.appendChild(div)
+        deleteFileLink.addEventListener('click', (e) => {
+            e.preventDefault()
+            deleteFileLink.style.display = 'none'
+            fetch(deleteFileLink.href, { method: 'DELETE' })
+                .then((response) => response.json())
+                .then((data) => {
+                    if (data.success) {
+                        deleteFileLink.closest('div').remove()
+                    }else{
+                        deleteFileLink.style.display = 'inline'
+                    }
+                })
+        })
     }
 
     function initInnerHtml(file) {
@@ -203,6 +231,7 @@ if (modalUploadFiles) {
                 .then((data) => {
                     if (data.success) {
                         button.closest('.fr-grid-row').remove()
+                        document.querySelector('#uploaded-file-' + data.fileId).remove()
                     } else {
                         button.removeAttribute('disabled')
                     }

@@ -94,7 +94,7 @@ class FrontSignalementFileController extends AbstractController
         }
         $entityManager->remove($file);
         $entityManager->flush();
-        return $this->json(['success' => true]);
+        return $this->json(['success' => true, 'fileId' => $request->get('file_id')]);
     }
 
 }
