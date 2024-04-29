@@ -15,7 +15,7 @@
   </div>
 </template>
 
-<script>
+<script lang="ts">
 import { defineComponent } from 'vue'
 import { Doughnut } from 'vue-chartjs'
 
@@ -57,8 +57,8 @@ export default defineComponent({
       default: 400
     },
     cssClasses: {
-      default: '',
-      type: String
+      type: String,
+      default: ''
     },
     styles: {
       type: Object,
@@ -67,6 +67,10 @@ export default defineComponent({
     plugins: {
       type: Array,
       default: () => []
+    },
+    labelCharMax: {
+      type: Number,
+      default: 50
     }
   },
   data () {
@@ -74,9 +78,11 @@ export default defineComponent({
     const inData = []
     const inColors = []
     for (const i in this.items) {
-      inLabels.push(this.items[i].label)
-      inData.push(this.items[i].count)
-      inColors.push(this.items[i].color)
+      const { label, count, color } = this.items[i]
+      const labelChunks = this.splitLabelIntoChunks(label, this.labelCharMax)
+      inLabels.push(labelChunks)
+      inData.push(count)
+      inColors.push(color)
     }
     return {
       chartData: {
@@ -96,10 +102,42 @@ export default defineComponent({
         maintainAspectRatio: false,
         plugins: {
           legend: {
-            position: 'bottom'
+            position: 'bottom',
+            align: 'start',
+            labels: {
+              padding: 20,
+              font: {
+                lineHeight: 0.9
+              }
+            }
           }
         }
       }
+    }
+  },
+  methods: {
+    splitLabelIntoChunks (label: string, labelCharMax: number) {
+      const labelChunks = []
+      let currentChunk = ''
+      let currentLength = 0
+
+      const words = label.split(' ')
+      for (const word of words) {
+        if (currentLength + word.length + 1 <= labelCharMax) {
+          currentChunk += word + ' '
+          currentLength += word.length + 1
+        } else {
+          labelChunks.push(currentChunk.trim())
+          currentChunk = word + ' '
+          currentLength = word.length + 1
+        }
+      }
+
+      if (currentChunk.trim() !== '') {
+        labelChunks.push(currentChunk.trim())
+      }
+
+      return labelChunks
     }
   }
 })

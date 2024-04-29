@@ -18,6 +18,9 @@
           <TheHistoFrontStatsDetailsItem :data="strPercentClosed">
             <template #title>taux de clôture des signalements</template>
           </TheHistoFrontStatsDetailsItem>
+          <TheHistoFrontStatsDetailsItem :data="strPercentRefused">
+            <template #title>taux de signalements refusés</template>
+          </TheHistoFrontStatsDetailsItem>
         </div>
         <div class="fr-col-12 fr-col-lg-9">
           <HistoFranceMap :data=sharedState.stats.countSignalementPerTerritory />
@@ -73,6 +76,9 @@ export default defineComponent({
     },
     strPercentClosed () {
       return this.sharedState.stats.percentCloture.toString() + ' %'
+    },
+    strPercentRefused () {
+      return this.sharedState.stats.percentRefused.toString() + ' %'
     },
     strCountImported () {
       return this.sharedState.stats.countImported.toString()

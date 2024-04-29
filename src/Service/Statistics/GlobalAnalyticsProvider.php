@@ -22,6 +22,7 @@ class GlobalAnalyticsProvider
         $data['count_territory'] = $this->getCountTerritoryData();
         $data['percent_validation'] = $this->getValidatedData();
         $data['percent_cloture'] = $this->getClotureData();
+        $data['percent_refused'] = $this->getRefusedData();
         $data['count_imported'] = $this->getImportedData();
 
         return $data;
@@ -80,6 +81,16 @@ class GlobalAnalyticsProvider
         $total = $this->getCountSignalementData();
         if ($total > 0) {
             return round($this->signalementRepository->countClosed(true) / $total * 1000) / 10;
+        }
+
+        return '-';
+    }
+
+    private function getRefusedData(): string|float
+    {
+        $total = $this->getCountSignalementData();
+        if ($total > 0) {
+            return round($this->signalementRepository->countRefused() / $total * 1000) / 10;
         }
 
         return '-';

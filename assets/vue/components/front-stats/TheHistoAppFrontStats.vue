@@ -4,7 +4,9 @@
     class="histo-app-front-stats fr-pt-5w"
     :data-ajaxurl="sharedProps.ajaxurl"
     >
-    <h1>Histologe en quelques chiffres</h1>
+    <div class="fr-container">
+      <h1>Histologe en quelques chiffres</h1>
+    </div>
     <div v-if="loadingInit" class="loading fr-m-10w">
       Initialisation des statistiques...
     </div>
@@ -89,16 +91,21 @@ export default defineComponent({
       this.sharedState.stats.countTerritory = requestResponse.count_territory
       this.sharedState.stats.percentValidation = requestResponse.percent_validation
       this.sharedState.stats.percentCloture = requestResponse.percent_cloture
+      this.sharedState.stats.percentRefused = requestResponse.percent_refused
       this.sharedState.stats.countImported = requestResponse.count_imported
       this.sharedState.stats.countSignalementPerTerritory = requestResponse.signalement_per_territoire
       this.sharedState.stats.countSignalementPerMonth = requestResponse.signalement_per_month
       this.sharedState.stats.countSignalementPerStatut = requestResponse.signalement_per_statut
-      this.sharedState.stats.countSignalementPerSituation = requestResponse.signalement_per_situation
       this.sharedState.stats.countSignalementPerMotifCloture = requestResponse.signalement_per_motif_cloture
+      this.sharedState.stats.countSignalementPerDesordresCategories = requestResponse.signalement_per_desordres_categories
+      this.sharedState.stats.countSignalementPerLogementDesordres = requestResponse.signalement_per_logement_desordres
+      this.sharedState.stats.countSignalementPerBatimentDesordres = requestResponse.signalement_per_batiment_desordres
       this.sharedState.stats.countSignalementPerMonthThisYear = requestResponse.signalement_per_month_this_year
       this.sharedState.stats.countSignalementPerStatutThisYear = requestResponse.signalement_per_statut_this_year
-      this.sharedState.stats.countSignalementPerSituationThisYear = requestResponse.signalement_per_situation_this_year
       this.sharedState.stats.countSignalementPerMotifClotureThisYear = requestResponse.signalement_per_motif_cloture_this_year
+      this.sharedState.stats.countSignalementPerDesordresCategoriesThisYear = requestResponse.signalement_per_desordres_categories_this_year
+      this.sharedState.stats.countSignalementPerLogementDesordresThisYear = requestResponse.signalement_per_logement_desordres_this_year
+      this.sharedState.stats.countSignalementPerBatimentDesordresThisYear = requestResponse.signalement_per_batiment_desordres_this_year
     }
   }
 })
@@ -109,7 +116,7 @@ export default defineComponent({
     background-color: '#FFF';
   }
   .histo-app-front-stats h1 {
-    text-align: center;
+    text-align: left;
     color: var(--blue-france-sun-113-625);
   }
 

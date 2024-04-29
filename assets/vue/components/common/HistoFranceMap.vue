@@ -1,25 +1,15 @@
 <template>
   <div class="histo-france-map">
-    <h3>Répartition par territoire</h3>
+    <h3>Répartition des signalements par département</h3>
 
     <div class="fr-container--fluid fr-my-10v">
       <div class="fr-grid-row fr-grid-row--gutters">
-        <div class="captions fr-col-12 fr-col-md-3">
-          <ul>
-            <li>Aucune donnée</li>
-            <li>1 - 50</li>
-            <li>51 - 250</li>
-            <li>251 - 1 000</li>
-            <li>1 001+</li>
-          </ul>
-        </div>
-
         <div v-if="displayTerritoryCaption" class="territory-caption" :style="{ left: territoryCaptionX+'px', top: territoryCaptionY+'px'}">
           {{ captionTerritoryName }} ({{ captionTerritoryZip }})<br>
           {{ captionTerritoryCount }} signalement{{ captionTerritoryCountPlural }}
         </div>
 
-        <div ref="francemap" class="map fr-col-12 fr-col-md-9">
+        <div ref="francemap" class="map fr-col-12 fr-col-md-12">
           <svg viewBox="0 0 588 550" preserveAspectRatio="xMinYMin meet" @mouseover="handleStateHover" @mouseout="handleStateOut">
             <path id="dpt2B" inkscape:label="Haute-Corse" class="st0" d="M562.1,441.7l-2.8,1.9l0.4,1.9l1.5,1.9l-1.7,1.3l0.8,1.5l-1.1,1.3v1.7l1.9,1.7
               v2.6l-1.1,2.5l-1.3,0.6l-1.5-2.1l-2.7,0.2l-0.6-0.4h-2.3l-2.1,1.9l-0.8,3.2l-4.9,0.9l-3.8,3.2l-0.8,2.1l-1.9-0.2l-1-1.1l-0.5,3.2
@@ -649,6 +639,21 @@
         </div>
 
       </div>
+      <div class="fr-grid-row fr-grid-row--gutters">
+        <div class="legend fr-col-12 fr-col-md-12">
+          <div class="legend-title">Légende</div>
+          <div class="legend-bar">
+            <div class="legend-gradient"></div>
+            <div class="legend-labels">
+              <span>{{ minValue }}</span>
+              <span>{{ maxValue }}+</span>
+            </div>
+            <div class="legend-labels">
+              <div class="legend-undeployed"></div> Département non déployé
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 </template>
@@ -674,7 +679,12 @@ export default defineComponent({
       captionTerritoryName: '',
       captionTerritoryZip: '',
       captionTerritoryCount: '',
-      captionTerritoryCountPlural: ''
+      captionTerritoryCountPlural: '',
+      minValue: 0,
+      maxValue: 6000,
+      minColor: '#bfc4d5',
+      maxColor: '#2F4077'
+
     }
   },
   mounted () {
@@ -682,19 +692,30 @@ export default defineComponent({
       const zipCode:string = territoryItem.zip
       const el = this.$el.querySelector('#dpt' + zipCode)
       if (el !== undefined) {
-        if (territoryItem.count > 1000) {
-          el.classList.add('color-1001')
-        } else if (territoryItem.count > 250) {
-          el.classList.add('color-251')
-        } else if (territoryItem.count > 50) {
-          el.classList.add('color-51')
-        } else if (territoryItem.count > 0) {
-          el.classList.add('color-1')
-        }
+        const color = this.getBackgroundColor(territoryItem.count)
+        el.style.fill = color
       }
     }
   },
   methods: {
+    getBackgroundColor (count:number) {
+      if (count > this.maxValue) {
+        return this.maxColor
+      } else {
+        const percent = count / this.maxValue
+        const color1 = this.hexToRgb(this.minColor)
+        const color2 = this.hexToRgb(this.maxColor)
+        const color = color1.map((channel: any, index: any) => Math.round(channel + (color2[index] - channel) * percent))
+        return `rgb(${color.join(',')})`
+      }
+    },
+    hexToRgb (hex: string) {
+      return [
+        parseInt(hex.slice(1, 3), 16),
+        parseInt(hex.slice(3, 5), 16),
+        parseInt(hex.slice(5, 7), 16)
+      ]
+    },
     handleStateHover (e:any) {
       if (e.target.tagName === 'path') {
         const territoryItem = this.getTerritoryItemByZip(e.target.id.substring(3))
@@ -759,48 +780,52 @@ export default defineComponent({
     left: 0;
   }
 
-  .histo-france-map .captions {
-    text-align: left;
-    margin-top: 40px;
-    padding-left: 20px;
+  .histo-france-map .legend {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
   }
-  .histo-france-map .captions > ul {
-    padding-left: 40px;
+
+  .histo-france-map .legend-bar {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 266px;
   }
-  .histo-france-map .captions > ul li::marker {
-    font-size: 40px;
-    line-height: 35px;
+
+  .histo-france-map .legend-gradient {
+    width: 266px;
+    height: 24px;
+    background: linear-gradient(to right, #bfc4d5, #2F4077);
   }
-  .histo-france-map .captions > ul li:nth-child(1)::marker {
-    color: #CCCCCC;
+
+  .histo-france-map .legend-undeployed {
+    width: 14px;
+    height: 14px;
+    background: #E5E5E5;
   }
-  .histo-france-map .captions > ul li:nth-child(2)::marker {
-    color: #E3E3FD;
+
+  .histo-france-map .legend-labels {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
   }
-  .histo-france-map .captions > ul li:nth-child(3)::marker {
-    color: #CACAFB;
-  }
-  .histo-france-map .captions > ul li:nth-child(4)::marker {
-    color: #6A6AF4;
-  }
-  .histo-france-map .captions > ul li:nth-child(5)::marker {
-    color: #000091;
+
+  .histo-france-map .legend-title {
+    margin-top: 8px;
+    font-weight: bold;
   }
 
   .st0{
-    fill:#CCCCCC;
+    fill:#E5E5E5;
     stroke:#FFFFFF;
     stroke-width:0.5;
     stroke-miterlimit:3.9745;
   }
   .st1{
-    fill:#CCCCCC;
+    fill:#E5E5E5;
     fill-opacity:0;
   }
-  .color-1{fill:#E3E3FD}
-  .color-51{fill:#CACAFB}
-  .color-251{fill:#6A6AF4}
-  .color-1001{fill:#000091}
 
   .st0:hover {
     fill:#fcc0b0;

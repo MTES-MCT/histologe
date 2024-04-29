@@ -1,7 +1,7 @@
 <template>
   <div class="histo-front-stats-territory fr-px-5w fr-pt-5w">
     <div class="fr-container">
-      <h2>Evolution territoriale du logement</h2>
+      <h2>Evolution territoriale du mal-logement</h2>
       <label for="filter-territoires">Sélectionnez un territoire pour afficher ses statistiques</label>
       <HistoSelect
         id="filter-territoires"
@@ -11,36 +11,66 @@
         :option-items=sharedState.filters.territoiresList
         />
 
-      <div class="fr-container--fluid fr-my-10v">
+      <div class="fr-container--fluid fr-py-5v">
         <div class="fr-grid-row fr-grid-row--gutters">
           <TheHistoFrontStatsTerritoryItem sizeClass="7" v-model="sharedState.filters.perMonthYearType" :onChange="handleChangePerMonth">
-            <template #title>Signalements déposés</template>
+            <template #title>Nombre de signalements déposés</template>
             <template #graph>
               <HistoChartLine v-if="!isLoadingPerMonth" :items=perMonthData />
             </template>
           </TheHistoFrontStatsTerritoryItem>
 
           <TheHistoFrontStatsTerritoryItem sizeClass="5" v-model="sharedState.filters.perStatutYearType" :onChange="handleChangePerStatut">
-            <template #title>Statut du signalement</template>
+            <template #title>Répartition des signalements par statut</template>
             <template #graph>
               <HistoChartPie v-if="!isLoadingPerStatut" :items=perStatutData />
             </template>
           </TheHistoFrontStatsTerritoryItem>
 
-          <TheHistoFrontStatsTerritoryItem sizeClass="7" v-model="sharedState.filters.perSituationYearType" :onChange="handleChangePerSituation">
-            <template #title>Répartition par famille de désordres</template>
+          <TheHistoFrontStatsTerritoryItem sizeClass="12" v-model="sharedState.filters.perMotifClotureYearType" :onChange="handleChangePerMotifCloture">
+            <template #title>Répartition des signalements clôturés par motif de clôture</template>
             <template #graph>
-              <HistoChartBar v-if="!isLoadingPerSituation" :items=perSituationData indexAxis="x" />
+              <HistoChartBar v-if="!isLoadingPerMotifCloture" :items=perMotifClotureData indexAxis="x"  />
             </template>
           </TheHistoFrontStatsTerritoryItem>
 
-          <TheHistoFrontStatsTerritoryItem sizeClass="5" v-model="sharedState.filters.perMotifClotureYearType" :onChange="handleChangePerMotifCloture">
-            <template #title>Motif de clôture</template>
+          <TheHistoFrontStatsTerritoryItem
+            sizeClass="4"
+            v-model="sharedState.filters.perDesordresCategoriesYearType"
+            :onChange="handleChangePerDesordresCategories"
+          >
+            <template #title>Désordres par catégorie</template>
             <template #graph>
-              <HistoChartDoughnut v-if="!isLoadingPerMotifCloture" :items=perMotifClotureData />
+              <HistoChartPie v-if="!isLoadingPerDesordresCategories" :items=perDesordresCategoriesData />
+            </template>
+          </TheHistoFrontStatsTerritoryItem>
+
+          <TheHistoFrontStatsTerritoryItem
+            sizeClass="4"
+            :isTotalActive="false"
+            v-model="sharedState.filters.perLogementDesordresYearType"
+            :onChange="handleChangePerLogementDesordres"
+          >
+            <template #title>Logement : désordres les plus courants*</template>
+            <template #graph>
+              <HistoChartDoughnut v-if="!isLoadingPerLogementDesordres" :items=perLogementDesordresData />
+            </template>
+          </TheHistoFrontStatsTerritoryItem>
+
+          <TheHistoFrontStatsTerritoryItem
+            sizeClass="4"
+            v-model="sharedState.filters.perBatimentDesordresYearType"
+            :onChange="handleChangePerBatimentDesordres"
+            :isTotalActive="false"
+          >
+            <template #title>Bâtiment : désordres les plus courants*</template>
+            <template #graph>
+              <HistoChartDoughnut v-if="!isLoadingPerBatimentDesordres" :items=perBatimentDesordresData />
             </template>
           </TheHistoFrontStatsTerritoryItem>
         </div>
+        <br>
+        <i>* Les statistiques concernant les désordres les plus courants par catégorie sont disponibles depuis février 2024 uniquement.</i>
       </div>
     </div>
   </div>
@@ -75,8 +105,10 @@ export default defineComponent({
       sharedState: store.state,
       isLoadingPerMonth: false,
       isLoadingPerStatut: false,
-      isLoadingPerSituation: false,
-      isLoadingPerMotifCloture: false
+      isLoadingPerMotifCloture: false,
+      isLoadingPerDesordresCategories: false,
+      isLoadingPerLogementDesordres: false,
+      isLoadingPerBatimentDesordres: false
     }
   },
   methods: {
@@ -93,13 +125,21 @@ export default defineComponent({
       this.isLoadingPerStatut = true
       setTimeout(() => { this.isLoadingPerStatut = false }, 100)
     },
-    handleChangePerSituation () {
-      this.isLoadingPerSituation = true
-      setTimeout(() => { this.isLoadingPerSituation = false }, 100)
-    },
     handleChangePerMotifCloture () {
       this.isLoadingPerMotifCloture = true
       setTimeout(() => { this.isLoadingPerMotifCloture = false }, 100)
+    },
+    handleChangePerDesordresCategories () {
+      this.isLoadingPerDesordresCategories = true
+      setTimeout(() => { this.isLoadingPerDesordresCategories = false }, 100)
+    },
+    handleChangePerLogementDesordres () {
+      this.isLoadingPerLogementDesordres = true
+      setTimeout(() => { this.isLoadingPerLogementDesordres = false }, 100)
+    },
+    handleChangePerBatimentDesordres () {
+      this.isLoadingPerBatimentDesordres = true
+      setTimeout(() => { this.isLoadingPerBatimentDesordres = false }, 100)
     }
   },
   computed: {
@@ -115,17 +155,29 @@ export default defineComponent({
       }
       return this.sharedState.stats.countSignalementPerStatut
     },
-    perSituationData () {
-      if (this.sharedState.filters.perSituationYearType === 'year') {
-        return this.sharedState.stats.countSignalementPerSituationThisYear
-      }
-      return this.sharedState.stats.countSignalementPerSituation
-    },
     perMotifClotureData () {
       if (this.sharedState.filters.perMotifClotureYearType === 'year') {
         return this.sharedState.stats.countSignalementPerMotifClotureThisYear
       }
       return this.sharedState.stats.countSignalementPerMotifCloture
+    },
+    perDesordresCategoriesData () {
+      if (this.sharedState.filters.perDesordresCategoriesYearType === 'year') {
+        return this.sharedState.stats.countSignalementPerDesordresCategoriesThisYear
+      }
+      return this.sharedState.stats.countSignalementPerDesordresCategories
+    },
+    perLogementDesordresData () {
+      if (this.sharedState.filters.perLogementDesordresYearType === 'year') {
+        return this.sharedState.stats.countSignalementPerLogementDesordresThisYear
+      }
+      return this.sharedState.stats.countSignalementPerLogementDesordres
+    },
+    perBatimentDesordresData () {
+      if (this.sharedState.filters.perBatimentDesordresYearType === 'year') {
+        return this.sharedState.stats.countSignalementPerBatimentDesordresThisYear
+      }
+      return this.sharedState.stats.countSignalementPerBatimentDesordres
     }
   }
 })

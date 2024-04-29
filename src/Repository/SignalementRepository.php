@@ -7,6 +7,7 @@ use App\Dto\SignalementAffectationListView;
 use App\Dto\SignalementExport;
 use App\Dto\StatisticsFilters;
 use App\Entity\Affectation;
+use App\Entity\Enum\DesordreCritereZone;
 use App\Entity\Enum\Qualification;
 use App\Entity\Enum\SignalementStatus;
 use App\Entity\Partner;
@@ -188,6 +189,19 @@ class SignalementRepository extends ServiceEntityRepository
             ->getSingleScalarResult();
     }
 
+    public function countRefused(): int
+    {
+        $qb = $this->createQueryBuilder('s');
+        $qb->select('COUNT(s.id)');
+        $qb->andWhere('s.statut = :refusedStatus')
+            ->setParameter('refusedStatus', Signalement::STATUS_REFUSED);
+
+        $qb->andWhere('s.isImported IS NULL OR s.isImported = 0');
+
+        return $qb->getQuery()
+            ->getSingleScalarResult();
+    }
+
     public function countByTerritory(bool $removeImported = false): array
     {
         $qb = $this->createQueryBuilder('s');
@@ -264,6 +278,67 @@ class SignalementRepository extends ServiceEntityRepository
             ->getResult();
     }
 
+    public function countCritereByZone(?Territory $territory, ?int $year): array
+    {
+        $qb = $this->createQueryBuilder('s');
+
+        $qb->select('SUM(CASE WHEN c.type = :batiment THEN 1 ELSE 0 END) AS critere_batiment_count')
+           ->addSelect('SUM(CASE WHEN c.type = :logement THEN 1 ELSE 0 END) AS critere_logement_count')
+           ->addSelect('SUM(CASE WHEN dc.zoneCategorie = :batimentString THEN 1 ELSE 0 END) AS desordrecritere_batiment_count')
+           ->addSelect('SUM(CASE WHEN dc.zoneCategorie = :logementString THEN 1 ELSE 0 END) AS desordrecritere_logement_count')
+           ->leftJoin('s.criteres', 'c')
+           ->leftJoin('s.desordreCriteres', 'dc')
+           ->setParameter('batiment', 1)
+           ->setParameter('logement', 2)
+           ->setParameter('batimentString', 'BATIMENT')
+           ->setParameter('logementString', 'LOGEMENT');
+
+        $qb->andWhere('s.isImported IS NULL OR s.isImported = 0');
+
+        if ($territory) {
+            $qb->andWhere('s.territory = :territory')->setParameter('territory', $territory);
+        }
+        if ($year) {
+            $qb->andWhere('YEAR(s.createdAt) = :year')->setParameter('year', $year);
+        }
+
+        return $qb->getQuery()->getSingleResult();
+    }
+
+    public function countByDesordresCriteres(
+        ?Territory $territory,
+        ?int $year,
+        ?DesordreCritereZone $desordreCritereZone = null,
+    ): array {
+        $qb = $this->createQueryBuilder('s');
+        $qb->select('COUNT(s.id) AS count, desordreCriteres.id, desordreCriteres.labelCritere')
+            ->leftJoin('s.desordreCriteres', 'desordreCriteres')
+            ->where('s.statut != :statutArchived')
+            ->setParameter('statutArchived', Signalement::STATUS_ARCHIVED)
+            ->andWhere('s.createdFrom IS NOT NULL');
+
+        $qb->andWhere('s.isImported IS NULL OR s.isImported = 0');
+
+        if ($territory) {
+            $qb->andWhere('s.territory = :territory')->setParameter('territory', $territory);
+        }
+        if ($year) {
+            $qb->andWhere('YEAR(s.createdAt) = :year')->setParameter('year', $year);
+        }
+
+        if ($desordreCritereZone) {
+            $qb->andWhere('desordreCriteres.zoneCategorie = :desordreCritereZone')
+            ->setParameter('desordreCritereZone', $desordreCritereZone->value);
+        }
+
+        $qb->groupBy('desordreCriteres.id')
+        ->orderBy('count', 'DESC')
+        ->setMaxResults(5);
+
+        return $qb->getQuery()
+            ->getResult();
+    }
+
     public function countByMotifCloture(?Territory $territory, ?int $year, bool $removeImported = false): array
     {
         $qb = $this->createQueryBuilder('s');
@@ -289,6 +364,7 @@ class SignalementRepository extends ServiceEntityRepository
         }
 
         $qb->groupBy('s.motifCloture');
+        $qb->orderBy('s.motifCloture');
 
         return $qb->getQuery()
             ->getResult();

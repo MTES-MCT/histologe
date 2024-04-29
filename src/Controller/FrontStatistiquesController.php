@@ -3,11 +3,13 @@
 namespace App\Controller;
 
 use App\Repository\TerritoryRepository;
+use App\Service\Statistics\BatimentDesordresStatisticProvider;
+use App\Service\Statistics\DesordresCategoriesStatisticProvider;
 use App\Service\Statistics\GlobalAnalyticsProvider;
 use App\Service\Statistics\ListTerritoryStatisticProvider;
+use App\Service\Statistics\LogementDesordresStatisticProvider;
 use App\Service\Statistics\MonthStatisticProvider;
 use App\Service\Statistics\MotifClotureStatisticProvider;
-use App\Service\Statistics\SituationStatisticProvider;
 use App\Service\Statistics\StatusStatisticProvider;
 use App\Service\Statistics\TerritoryStatisticProvider;
 use DateTime;
@@ -26,9 +28,11 @@ class FrontStatistiquesController extends AbstractController
         private TerritoryStatisticProvider $territoryStatisticProvider,
         private MonthStatisticProvider $monthStatisticProvider,
         private StatusStatisticProvider $statusStatisticProvider,
-        private SituationStatisticProvider $situationStatisticProvider,
+        private DesordresCategoriesStatisticProvider $desordresCategoriesStatisticProvider,
+        private LogementDesordresStatisticProvider $logementDesordresStatisticProvider,
+        private BatimentDesordresStatisticProvider $batimentDesordresStatisticProvider,
         private MotifClotureStatisticProvider $motifClotureStatisticProvider
-        ) {
+    ) {
     }
 
     #[Route('/statistiques', name: 'front_statistiques')]
@@ -49,6 +53,7 @@ class FrontStatistiquesController extends AbstractController
         $this->ajaxResult['count_territory'] = $globalStatistics['count_territory'];
         $this->ajaxResult['percent_validation'] = $globalStatistics['percent_validation'];
         $this->ajaxResult['percent_cloture'] = $globalStatistics['percent_cloture'];
+        $this->ajaxResult['percent_refused'] = $globalStatistics['percent_refused'];
         $this->ajaxResult['count_imported'] = $globalStatistics['count_imported'];
 
         $this->ajaxResult['list_territoires'] = $this->listTerritoryStatisticProvider->getData();
@@ -68,11 +73,17 @@ class FrontStatistiquesController extends AbstractController
         $this->ajaxResult['signalement_per_statut'] = $this->statusStatisticProvider->getData($territory, null);
         $this->ajaxResult['signalement_per_statut_this_year'] = $this->statusStatisticProvider->getData($territory, $currentYear);
 
-        $this->ajaxResult['signalement_per_situation'] = $this->situationStatisticProvider->getData($territory, null);
-        $this->ajaxResult['signalement_per_situation_this_year'] = $this->situationStatisticProvider->getData($territory, $currentYear);
+        $this->ajaxResult['signalement_per_motif_cloture'] = $this->motifClotureStatisticProvider->getData($territory, null, 'bar');
+        $this->ajaxResult['signalement_per_motif_cloture_this_year'] = $this->motifClotureStatisticProvider->getData($territory, $currentYear, 'bar');
 
-        $this->ajaxResult['signalement_per_motif_cloture'] = $this->motifClotureStatisticProvider->getData($territory, null);
-        $this->ajaxResult['signalement_per_motif_cloture_this_year'] = $this->motifClotureStatisticProvider->getData($territory, $currentYear);
+        $this->ajaxResult['signalement_per_desordres_categories'] = $this->desordresCategoriesStatisticProvider->getData($territory, null);
+        $this->ajaxResult['signalement_per_desordres_categories_this_year'] = $this->desordresCategoriesStatisticProvider->getData($territory, $currentYear);
+
+        $this->ajaxResult['signalement_per_logement_desordres'] = $this->logementDesordresStatisticProvider->getData($territory, null);
+        $this->ajaxResult['signalement_per_logement_desordres_this_year'] = $this->logementDesordresStatisticProvider->getData($territory, $currentYear);
+
+        $this->ajaxResult['signalement_per_batiment_desordres'] = $this->batimentDesordresStatisticProvider->getData($territory, null);
+        $this->ajaxResult['signalement_per_batiment_desordres_this_year'] = $this->batimentDesordresStatisticProvider->getData($territory, $currentYear);
 
         return $this->json($this->ajaxResult);
     }

@@ -1,8 +1,8 @@
 <template>
   <div class="histo-front-stats-year-toggle">
     <div>
-      <button :class="classSelectedYear" @click="handleToggle('year')">{{ this.year }}</button>
-      <button :class="classSelectedAll" @click="handleToggle('all')">Total</button>
+      <button :class="classSelectedYear" @click="handleToggle('year')">{{ year }}</button>
+      <button v-if="isTotalActive" :class="classSelectedAll" @click="handleToggle('all')">Total</button>
     </div>
   </div>
 </template>
@@ -14,6 +14,7 @@ export default defineComponent({
   name: 'TheHistoFrontStatsYearToggle',
   props: {
     modelValue: { type: String, default: '' },
+    isTotalActive: { type: Boolean, default: true },
     onChange: { type: Function }
   },
   data () {
