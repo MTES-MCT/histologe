@@ -57,7 +57,7 @@
                     </li>
                     {% if signalements.pagination.total_pages > 1 %}
                         {% for i in 2..signalements.pagination.total_pages %}
-                            <li class="{% if loop.index > 2 and loop.index < signalements.total_pages-3 %}fr-hidden{% endif %}">
+                            <li class="{% if loop.index > 2 and loop.index < signalements.pagination.total_pages-3 %}fr-hidden{% endif %}">
                                 <a class="fr-pagination__link" href="#" title="Page {{ i }}" data-page="{{ i }}">
                                     {{ i }}
                                 </a>
