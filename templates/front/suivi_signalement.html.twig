@@ -281,15 +281,72 @@
 				</div>
 				</section>
 
-				<h4 class="fr-mb-2v">situation du foyer</h4>
+				<h4 class="fr-mb-2v">Situation du foyer</h4>
 				<section class="fr-accordion fr-mb-4v">
 				<h3 class="fr-accordion__title">
 					<button class="fr-accordion__btn" aria-expanded="false" aria-controls="accordion-situation-foyer">Afficher les informations</button>
 				</h3>
 				<div class="fr-collapse" id="accordion-situation-foyer">
-					//TODO
+					{% if signalement.isLogementSocial %}
+						Logement social : Oui
+						<br>
+					{% endif %}
+					{% if signalement.isRelogement is same as true %}
+						Demande de relogement : Oui
+						<br>
+                    {% endif %}
+                    {% if signalement.isAllocataire in [null, ''] %}
+                    {% elseif signalement.isAllocataire in ['oui', '1'] %}
+                        Allocataire : Oui
+						<br>
+                    {% elseif signalement.isAllocataire in ['non', '0'] %}
+                        Allocataire : Non
+						<br>
+                    {% elseif signalement.isAllocataire %}
+                       Allocataire : {{ signalement.isAllocataire }}
+					   <br>
+                    {% endif %}
+                    {% if (signalement.dateNaissanceOccupant) %}
+                        Date de naissance : {{ signalement.dateNaissanceOccupant.format('d/m/Y') }}
+						<br>
+                    {% elseif signalement.naissanceOccupants %}
+                        Date de naissance : {{ signalement.naissanceOccupants}}
+						<br>
+                    {% endif %}
+					{% if signalement.numAllocataire %}
+						N° allocataire : {{ signalement.numAllocataire }}
+						<br>
+					{% endif %}
+					{% if signalement.situationFoyer %}
+						{% if signalement.situationFoyer.logementSocialMontantAllocation %}
+					 		Montant allocation : {{ signalement.situationFoyer.logementSocialMontantAllocation }} €
+							<br>
+                    	{% endif %}
+						Souhaite quitter le logement : 
+                        {{signalement.situationFoyer.travailleurSocialQuitteLogement(false)|capitalize}}
+						<br>
+						Accompagnement par un ou une travailleuse sociale : 
+						{{signalement.situationFoyer.travailleurSocialAccompagnement(false)|capitalize}}
+						<br>
+                    {% endif %}
+					{% if signalement.informationComplementaire %}
+						{% if signalement.informationComplementaire.informationsComplementairesSituationOccupantsBeneficiaireRsa %}
+	                    	Bénéficiaire RSA :
+							{{signalement.informationComplementaire.informationsComplementairesSituationOccupantsBeneficiaireRsa|capitalize}}
+							<br>
+						{% endif %}
+						{% if signalement.informationComplementaire.informationsComplementairesSituationOccupantsBeneficiaireFsl %}
+							Bénéficiaire FSL :
+							{{signalement.informationComplementaire.informationsComplementairesSituationOccupantsBeneficiaireFsl|capitalize}}
+							<br>
+						{% endif %}
+						{% if signalement.informationComplementaire.informationsComplementairesSituationOccupantsRevenuFiscal %}
+							Revenu fiscal de référence :
+							{{signalement.informationComplementaire.informationsComplementairesSituationOccupantsRevenuFiscal}} €
+							<br>
+						{% endif %}
+					{% endif %}
 				</div>
-
 
 
 				<div>
