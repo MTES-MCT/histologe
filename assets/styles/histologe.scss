@@ -763,3 +763,12 @@ ul + p {
 h2, h3 {
     margin-top: 2rem;
 }
+
+.faq-redirection {
+    position: fixed;
+    bottom: 1rem;
+    right: 1rem;
+    a {
+        border-radius: 50%;
+    }
+}

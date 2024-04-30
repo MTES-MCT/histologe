@@ -24,5 +24,16 @@
     </main>
 {% endblock %}
 
+{% block chatbot %}
+    {% if chatbot.enable %}
+        <div class="faq-redirection">
+            <a href="https://documentation.histologe.beta.gouv.fr/?q="
+               class="fr-btn fr-icon-questionnaire-line"
+               target="blank"
+               title="Vous avez une question ?"
+               rel="noopener"></a>
+        </div>
+    {% endif %}
+{% endblock %}
 {% block javascripts %}
 {% endblock %}
