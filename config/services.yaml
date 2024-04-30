@@ -20,7 +20,6 @@ parameters:
     url_bucket: '%env(resolve:S3_URL_BUCKET)%'
     capture_dir: '%kernel.project_dir%/uploaded_files/capture/'
     images_dir: '%kernel.project_dir%/public/img/'
-    mail_attachment_dir: '%kernel.project_dir%/templates/emails/attachment/'
     admin_email: '%env(resolve:ADMIN_EMAIL)%'
     notifications_email: '%env(resolve:NOTIFICATIONS_EMAIL)%'
     contact_email: '%env(resolve:CONTACT_EMAIL)%'

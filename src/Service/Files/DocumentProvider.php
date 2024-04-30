@@ -14,7 +14,7 @@ class DocumentProvider
     public function getModeleCourrierPourProprietaire(Signalement $signalement): ?string
     {
         if (!$signalement->getIsProprioAverti()
-            && file_exists($modeleCourrier = $this->parameterBag->get('mail_attachment_dir').'ModeleCourrier.pdf')) {
+            && file_exists($modeleCourrier = $this->parameterBag->get('kernel.project_dir').'/public/build/files/Lettre-information-proprietaire-bailleur_A-COMPLETER.pdf')) {
             return $modeleCourrier;
         }
 

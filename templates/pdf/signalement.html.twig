@@ -29,11 +29,10 @@
                                         href="tel:{{ signalement.telOccupant }}">{{ signalement.telOccupant }}</a></li>
                             <li>
                                 <b>Adresse :</b> {{ signalement.adresseOccupant ~', '~signalement.cpOccupant ~' '~ signalement.villeOccupant|upper }}
-                                <br>
-                                {{ signalement.etageOccupant ? 'étage ' ~ signalement.etageOccupant ~ ',' : '' }}
-                                {{ signalement.escalierOccupant ? 'escalier ' ~ signalement.escalierOccupant ~ ',' : '' }}
-                                {{ signalement.numAppartOccupant ? 'appartement ' ~ signalement.numAppartOccupant ~ ',' : '' }}
-                                {{ signalement.adresseAutreOccupant ? signalement.adresseAutreOccupant ~ ',' : '' }}
+                                {% if signalement.complementAdresseOccupant %}
+                                    <br>
+                                    {{signalement.complementAdresseOccupant}}
+                                {% endif %}
                             </li>
                             <li><b>Occupant(s) :</b> {{ signalement.nbAdultes }}
                                 <b>Adulte(s)</b>{% if signalement.nbEnfantsM6 %} - {{ signalement.nbEnfantsM6 }} Enfant(s)

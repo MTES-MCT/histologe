@@ -13,11 +13,10 @@
         </h3>
         
         {{ signalement.adresseOccupant }},
-        <br>
-        {{ signalement.etageOccupant ? 'étage ' ~ signalement.etageOccupant ~ ',' : '' }}
-        {{ signalement.escalierOccupant ? 'escalier ' ~ signalement.escalierOccupant ~ ',' : '' }}
-        {{ signalement.numAppartOccupant ? 'appartement ' ~ signalement.numAppartOccupant ~ ',' : '' }}
-        {{ signalement.adresseAutreOccupant ? signalement.adresseAutreOccupant ~ ',' : '' }}
+		{% if signalement.complementAdresseOccupant %}
+            <br>
+            {{signalement.complementAdresseOccupant}}
+        {% endif %}
         <br>
         {{ signalement.cpOccupant ~' '~ signalement.villeOccupant|upper }}
         <br>

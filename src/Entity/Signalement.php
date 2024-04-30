@@ -1273,6 +1273,24 @@ class Signalement
         return $this;
     }
 
+    public function getComplementAdresseOccupant(): string
+    {
+        $complement = '';
+        if ($this->etageOccupant) {
+            $complement .= 'étage ' . $this->etageOccupant . ', ';
+        }
+        if ($this->escalierOccupant) {
+            $complement .= 'escalier ' . $this->escalierOccupant . ', ';
+        }
+        if ($this->numAppartOccupant) {
+            $complement .= 'appartement ' . $this->numAppartOccupant . ', ';
+        }
+        if ($this->adresseAutreOccupant) {
+            $complement .= $this->adresseAutreOccupant;
+        }
+        return mb_strtoupper(mb_substr($complement, 0, 1)) . mb_substr($complement, 1);
+    }
+
     public function getModeContactProprio(): ?array
     {
         return $this->modeContactProprio;

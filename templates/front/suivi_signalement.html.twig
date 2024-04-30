@@ -141,7 +141,92 @@
 			</div>
 			<div id="tabpanel-mes-infos-panel" class="fr-tabs__panel" role="tabpanel" aria-labelledby="tabpanel-mes-infos" tabindex="0">
 				<h2 class="fr-h3 fr-mb-2v">Mes infos</h2>
-				TODO TODO
+				<h4 class="fr-mb-2v">Adresse du logement</h4>
+				<div class="fr-mb-4v">
+					{{ signalement.adresseOccupant }} {{ signalement.cpOccupant }} {{ signalement.villeOccupant }}
+					{% if signalement.complementAdresseOccupant %}
+                        <br>
+                        {{signalement.complementAdresseOccupant}}
+                    {% endif %}
+				</div>
+				<h4 class="fr-mb-2v">Les coordonnées de l'occupant</h4>
+				<div class="fr-mb-4v">
+					{{signalement.civiliteOccupant(false)}} {{ signalement.nomOccupant|capitalize }} {{ signalement.prenomOccupant|capitalize }} 
+					{% if signalement.mailOccupant %}
+						<br>
+						{{ signalement.mailOccupant }}
+					{% endif %}
+					{% if signalement.telOccupant %}
+						<br>
+						{{ signalement.telOccupant }}
+					{% endif %}
+					{% if signalement.telOccupantBis %}
+						<br>
+						{{ signalement.telOccupantBis }}
+					{% endif %}
+				</div>
+				<h4 class="fr-mb-2v">Les coordonnées du bailleur</h4>
+				<div class="fr-mb-4v">
+					{{signalement.nomProprio}}
+					{% if signalement.prenomProprio %}
+						{{ signalement.prenomProprio }}
+					{% endif %}
+					{% if signalement.adresseProprio %}
+						<br>
+						{{ signalement.adresseProprio }}
+					{% endif %}
+					{% if signalement.codePostalProprio %}
+						{{ signalement.codePostalProprio }}
+					{% endif %}
+					{% if signalement.villeProprio %}
+						{{ signalement.villeProprio }}
+					{% endif %}
+					{% if signalement.mailProprio %}
+						<br>
+						{{ signalement.mailProprio }}
+					{% endif %}
+					{% if signalement.telProprio %}
+						<br>
+						{{ signalement.telProprio }}
+					{% endif %}
+					{% if signalement.telProprioSecondaire %}
+						<br>
+						{{ signalement.telProprioSecondaire }}
+					{% endif %}
+				</div>
+				{% if 
+					signalement.isProprioAverti is not same as true 
+					and signalement.profileDeclarant is not same as enum('App\\Entity\\Enum\\ProfileDeclarant').BAILLEUR_OCCUPANT
+					and signalement.profileDeclarant is not same as enum('App\\Entity\\Enum\\ProfileDeclarant').BAILLEUR
+				 %}
+					<h4 class="fr-mb-2v">Prévenez votre bailleur (propriétaire) !</h4>
+					<div class="fr-mb-4v">
+						Il est recommandé d'informer le bailleur du logement des problèmes rencontrés dans le logement. 
+						<br>
+						Nous vous mettons à disposition un modèle de courrier à remplir et envoyer à votre bailleur. 
+						Cliquez sur le bouton ci-dessous pour le télécharger.
+						<br>
+						<a class="fr-btn fr-btn--icon-left open-modal-upload-files-btn fr-icon-arrow-down-line fr-mt-2v" download 
+						href="{{ asset('build/files/Lettre-information-proprietaire-bailleur_A-COMPLETER.pdf') }}">
+							Télécharger le courrier
+						</a>
+					</div>
+				{% endif %}
+				<h4 class="fr-mb-2v">Type et composition du logement</h4>
+				<section class="fr-accordion fr-mb-4v">
+				<h3 class="fr-accordion__title">
+					<button class="fr-accordion__btn" aria-expanded="false" aria-controls="accordion-type-composition">Afficher les informations</button>
+				</h3>
+				<div class="fr-collapse" id="accordion-type-composition">
+					<p>
+						Nature du logement  : {{ signalement.natureLogement|capitalize }}
+					</p>
+				</div>
+				</section>
+
+
+
+
 				<div>
 					<h2 class="fr-mb-0">Photo(s) liée(s) à votre signalement</h2>
 					<p class="fr-hint-text">Ci-dessous, les photos ajoutées lors du dépôt de votre signalement ainsi que celles

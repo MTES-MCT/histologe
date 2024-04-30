@@ -102,7 +102,7 @@ function initializeUploadModal(
 
     function uploadFile(file) {
         let div = document.createElement('div')
-        div.classList.add('fr-grid-row', 'fr-grid-row--gutters', 'fr-grid-row--middle', 'fr-mb-2w')
+        div.classList.add('fr-grid-row', 'fr-grid-row--gutters', 'fr-grid-row--middle', 'fr-mb-2w', 'modal-upload-list-item')
         div.innerHTML = initInnerHtml(file)
         listContainer.prepend(div)
         let http = new XMLHttpRequest()
@@ -227,8 +227,10 @@ function initializeUploadModal(
             http.onreadystatechange = function () {
                 if (this.readyState == XMLHttpRequest.DONE) {
                     let response = JSON.parse(this.response)
-                    if (this.status != 200) {
-                        let parent = selectField.closest('.modal-upload-list')
+                    let parent = selectField.closest('.modal-upload-list-item')
+                    if (this.status == 200) {
+                        parent.querySelector('.file-error').innerHTML = ''
+                    } else {
                         parent.querySelector('.file-error').innerHTML = '<div class="fr-alert fr-alert--error fr-alert--sm">' + response.response + '</div>'
                     }
                 }

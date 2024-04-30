@@ -65,7 +65,7 @@ class FrontSignalementFileController extends AbstractController
             return $this->json(['response' => 'Document introuvable'], Response::HTTP_BAD_REQUEST);
         }
         $documentType = DocumentType::tryFrom($request->get('documentType'));
-        if (null === $documentType) {
+        if (null === $documentType || !isset(DocumentType::getOrderedSituationList()[$documentType->name])) {
             return $this->json(['response' => 'Type de document invalide'], Response::HTTP_BAD_REQUEST);
         }
         $file->setDocumentType($documentType);
