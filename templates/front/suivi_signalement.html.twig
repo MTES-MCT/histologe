@@ -218,12 +218,77 @@
 					<button class="fr-accordion__btn" aria-expanded="false" aria-controls="accordion-type-composition">Afficher les informations</button>
 				</h3>
 				<div class="fr-collapse" id="accordion-type-composition">
-					<p>
-						Nature du logement  : {{ signalement.natureLogement|capitalize }}
-					</p>
+					Nature du logement  : {{ signalement.natureLogement|capitalize }}
+					{% if signalement.typeCompositionLogement %}
+						{% if signalement.typeCompositionLogement.typeLogementNatureAutrePrecision %}
+							({{signalement.typeCompositionLogement.typeLogementNatureAutrePrecision}})
+						{% endif %}
+						{% if signalement.typeCompositionLogement.typeLogementRdc == 'oui' %}, RDC{% endif %}
+						{% if signalement.typeCompositionLogement.typeLogementDernierEtage == 'oui' %}, Dernier étage{% endif %}
+						{% if signalement.typeCompositionLogement.typeLogementSousCombleSansFenetre == 'oui' %}, Combles sans fenêtres{% endif %} 
+					{% endif %} 
+					<br>
+					Superficie en m² : {{ signalement.superficie }} m²
+					<br>
+					{% if signalement.typeCompositionLogement %}
+						La hauteur jusqu'au plafond est de 2m (200cm) ou plus ?
+                        {{ signalement.typeCompositionLogement.compositionLogementHauteur(false)|capitalize }}
+						<br>
+						Une seule ou plusieurs pièces ?
+                        {{ signalement.typeCompositionLogement.compositionLogementPieceUnique(false) }}
+						<br>
+                        Nombre de pièces à vivre : {{ signalement.typeCompositionLogement.compositionLogementNbPieces }}
+						<br>
+						Est-ce qu'au moins une des pièces à vivre (salon, chambre) fait 9m² ou plus ?
+						{{ signalement.typeCompositionLogement.typeLogementCommoditesPieceAVivre9m(false)|capitalize }}
+						<br>
+						Cuisine ou coin cuisine ?
+						{{ signalement.typeCompositionLogement.typeLogementCommoditesCuisine|capitalize }}
+						<br>
+						{% if signalement.typeCompositionLogement.typeLogementCommoditesCuisine == 'non' %}
+							Accès à une cuisine collective ?
+							{{ signalement.typeCompositionLogement.typeLogementCommoditesCuisineCollective|capitalize }}
+							<br>
+						{% endif %}
+						Salle de bain, salle d'eau avec douche ou baignoire ?
+						{{ signalement.typeCompositionLogement.typeLogementCommoditesSalleDeBain|capitalize }}
+						<br>
+						{% if signalement.typeCompositionLogement.typeLogementCommoditesSalleDeBain == 'non' %}
+							Accès à une salle de bain ou des douches collectives ?
+							{{ signalement.typeCompositionLogement.typeLogementCommoditesSalleDeBainCollective|capitalize }}
+							<br>
+						{% endif %}
+						Toilettes (WC) ?
+						{{ signalement.typeCompositionLogement.typeLogementCommoditesWc|capitalize }}
+						<br>
+						{% if signalement.typeCompositionLogement.typeLogementCommoditesWc == 'non' %}
+							Accès à des toilettes (WC) collectives ?
+							{{ signalement.typeCompositionLogement.typeLogementCommoditesWcCollective|capitalize }}
+							<br>
+						{% endif %}
+						{% if signalement.typeCompositionLogement.typeLogementCommoditesWcCuisine == 'oui' %}
+							Toilettes (WC) et cuisine dans la même pièce
+							<br>
+						{% endif %}
+                    {% endif %}
+					Nombre de personnes : {{ signalement.nbOccupantsLogement }}
+					<br>
+					{% if signalement.typeCompositionLogement %}
+						Enfants de moins de 6 ans ? 
+                        {{signalement.typeCompositionLogement.compositionLogementEnfants|capitalize}}
+						<br>
+					{% endif %}
 				</div>
 				</section>
 
+				<h4 class="fr-mb-2v">situation du foyer</h4>
+				<section class="fr-accordion fr-mb-4v">
+				<h3 class="fr-accordion__title">
+					<button class="fr-accordion__btn" aria-expanded="false" aria-controls="accordion-situation-foyer">Afficher les informations</button>
+				</h3>
+				<div class="fr-collapse" id="accordion-situation-foyer">
+					//TODO
+				</div>
 
 
 
