@@ -110,6 +110,9 @@ function initializeUploadModal(
         if (modal.dataset.fileType == 'photo') {
             data.append('signalement-add-file[photos][]', file)
         } else {
+            if (modal.dataset.fileFilter == 'procedure') {
+                data.append('documentType', 'AUTRE_PROCEDURE')
+            }
             data.append('signalement-add-file[documents][]', file)
         }
         data.append('_token', addFileToken)
