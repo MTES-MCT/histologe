@@ -38,6 +38,7 @@ parameters:
     maintenance_enable: '%env(bool:MAINTENANCE_ENABLE)%'
     maintenance_banner_enable: '%env(bool:MAINTENANCE_BANNER_ENABLE)%'
     maintenance_banner_message: '%env(resolve:MAINTENANCE_BANNER_MESSAGE)%'
+    chatbot_enable: '%env(bool:CHATBOT_ENABLE)%'
 
 services:
     # default configuration for services in *this* file

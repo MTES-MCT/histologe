@@ -26,6 +26,8 @@ when@test:
         globals:
             matomo:
                 enable: 0 # matomo is useless in test env
+            chatbot:
+                enable: 0
 
 when@dev:
     twig:
@@ -35,6 +37,8 @@ when@dev:
                 cdn: http://localhost:8083/matomo.js
                 site_id: 1
                 enable: '%matomo_enable%'
+            chatbot:
+                enable: '%chatbot_enable%'
 
 when@prod:
     twig:
@@ -44,3 +48,5 @@ when@prod:
                 cdn: //cdn.matomo.cloud/histologe.matomo.cloud/matomo.js
                 site_id: '%matomo_site_id%'
                 enable: '%matomo_enable%'
+            chatbot:
+                enable: '%chatbot_enable%'
