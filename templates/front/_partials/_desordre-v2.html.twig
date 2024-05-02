@@ -1,0 +1,37 @@
+<section class="fr-accordion">
+        <h3 class="fr-accordion__title">
+            <button class="fr-accordion__btn" aria-expanded="false" aria-controls="{{ zone }}-collapse-{{ loop.index }}"><strong>{{ situation|capitalize }}</strong></button>
+        </h3>
+        <div class="fr-collapse" id="{{ zone }}-collapse-{{ loop.index }}">  
+            {# Affichage des données spécifiques liées à la catégorie #}
+            {% set firstCritere = criteres|first %}
+            {% if firstCritere is defined %}
+                {% set firstPrecision = firstCritere|first %}
+                {% if firstPrecision is defined %}
+                    {% if signalement.jsonContent[firstPrecision.desordreCritere.slugCategorie] is defined %}
+                        {{ signalement.jsonContent[firstPrecision.desordreCritere.slugCategorie] }}
+                    {% endif %}
+                {% endif %}
+            {% endif %}    
+            <ul>
+                {% for critere,precisions in criteres %}
+                    <li>
+                        {{ critere }}     
+                        {% for precision in precisions %}
+                            {% if precision.label is not same as '' %}
+                                <ul class="fr-list fr-list--none">
+                                    <li>
+                                        {{ precision.label|raw }}                
+                                        {# Affichage des données spécifiques liées au critère #}
+                                        {% if signalement.jsonContent[precision.desordreCritere.slugCritere] is defined %}
+                                            <br>Commentaire : <i>{{ signalement.jsonContent[precision.desordreCritere.slugCritere] }}</i>
+                                        {% endif %}
+                                    </li>
+                                </ul>                                            
+                            {% endif %}
+                        {% endfor %}
+                    </li>
+                {% endfor %}
+            </ul>
+        </div>
+</section>

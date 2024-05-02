@@ -28,7 +28,7 @@ class FrontSignalementFileController extends AbstractController
         UserManager $userManager,
     ): JsonResponse {
         $this->denyAccessUnlessGranted('SIGN_USAGER_EDIT', $signalement);
-        if(!$this->isGranted('SIGN_USAGER_EDIT', $signalement) || !$request->isXmlHttpRequest()) {
+        if (!$this->isGranted('SIGN_USAGER_EDIT', $signalement) || !$request->isXmlHttpRequest()) {
             return $this->json(['response' => 'Requête incorrecte'], Response::HTTP_BAD_REQUEST);
         }
         if (!$this->isCsrfTokenValid('signalement_add_file_'.$signalement->getId(), $request->get('_token')) || !$files = $request->files->get('signalement-add-file')) {
@@ -40,9 +40,10 @@ class FrontSignalementFileController extends AbstractController
             return $this->json(['response' => $signalementFileProcessor->getErrorMessages()], Response::HTTP_BAD_REQUEST);
         }
         $user = $userManager->getOrCreateUserForSignalementAndEmail($signalement, $request->get('email'));
-        $signalementFileProcessor->addFilesToSignalement(fileList: $fileList, signalement: $signalement, user: $user ,isTemp : true);
+        $signalementFileProcessor->addFilesToSignalement(fileList: $fileList, signalement: $signalement, user: $user, isTemp : true);
         $entityManager->persist($signalement);
         $entityManager->flush();
+
         return $this->json(['response' => $signalementFileProcessor->getLastFile()->getId()]);
     }
 
@@ -54,7 +55,7 @@ class FrontSignalementFileController extends AbstractController
         EntityManagerInterface $entityManager,
     ): JsonResponse {
         $this->denyAccessUnlessGranted('SIGN_USAGER_EDIT', $signalement);
-        if(!$this->isGranted('SIGN_USAGER_EDIT', $signalement) || !$request->isXmlHttpRequest()) {
+        if (!$this->isGranted('SIGN_USAGER_EDIT', $signalement) || !$request->isXmlHttpRequest()) {
             return $this->json(['response' => 'Requête incorrecte'], Response::HTTP_BAD_REQUEST);
         }
         if (!$this->isCsrfTokenValid('signalement_edit_file_'.$signalement->getId(), $request->get('_token'))) {
@@ -73,6 +74,7 @@ class FrontSignalementFileController extends AbstractController
         $file->setDesordreSlug($desordreSlug);
         $entityManager->persist($file);
         $entityManager->flush();
+
         return $this->json(['response' => 'success']);
     }
 
@@ -94,7 +96,7 @@ class FrontSignalementFileController extends AbstractController
         }
         $entityManager->remove($file);
         $entityManager->flush();
+
         return $this->json(['success' => true, 'fileId' => $request->get('file_id')]);
     }
-
 }

@@ -5,9 +5,9 @@
 
 {% block body %}
 
-{% if (is_granted('SIGN_USAGER_EDIT', signalement)) %}
-	{% include '_partials/_modal_upload_files_usager.html.twig' with {'criteres': infoDesordres['criteres']} %}
-{% endif %}
+	{% if (is_granted('SIGN_USAGER_EDIT', signalement)) %}
+		{% include '_partials/_modal_upload_files_usager.html.twig' with {'criteres': infoDesordres['criteres']} %}
+	{% endif %}
 
 	<main class="fr-container">
 		<header>
@@ -34,6 +34,40 @@
 						<span class="fr-badge fr-badge--no-icon fr-badge--error">Fermé</span>
 					{% endif %}
 				</div>
+
+					{% if suiviAuto is defined and suiviAuto is not empty %}
+						{% if signalement.statut is same as constant('App\\Entity\\Signalement::STATUS_REFUSED') or signalement.statut is same as constant('App\\Entity\\Signalement::STATUS_CLOSED') %}
+							<div class="fr-col-12 fr-mt-2v">
+								<div role="alert" class="fr-alert fr-alert--error fr-alert--sm">
+									<p>Vous ne pouvez plus modifier la procédure.</p>
+								</div>
+							</div>
+						{% else %}
+							<div class="fr-col-12 fr-mt-2v">
+								<div class="fr-tile">
+									{% if suiviAuto is same as constant('App\\Entity\\Suivi::ARRET_PROCEDURE')  %}
+										Vous souhaitez arrêter la procédure ?<br>
+									{% endif %}
+									{% if suiviAuto is same as constant('App\\Entity\\Suivi::POURSUIVRE_PROCEDURE')  %}
+										Vous souhaitez poursuivre la procédure ?<br>
+									{% endif %}
+									Nous allons informer les services de votre réponse.
+									<br>
+									Attention votre choix pourra avoir un impact sur la poursuite de votre dossier.
+									<br>
+									<div class="fr-grid-row fr-mt-4v">
+										<div class="fr-col">
+											<a class="fr-btn fr-btn--secondary fr-fi-arrow-left-line fr-btn--icon-left" href="{{ path('front_suivi_signalement',{code:signalement.codeSuivi, from:email}) }}">Annuler</a>
+										</div>
+										<div class="fr-col">
+											<a class="fr-btn fr-icon-checkbox-circle-fill fr-btn--icon-right" href="{{ path('front_suivi_procedure',{code:signalement.codeSuivi, from:email, suiviAuto:suiviAuto}) }}&_token={{csrf_token('suivi_procedure')}}">Confirmer</a>
+										</div>
+									</div>
+								</div>
+							</div>
+						{% endif %}
+					{% endif %}
+
 				<div class="fr-col-12 fr-mt-2v">
 					<div class="fr-notice fr-notice--info">
 						<div class="fr-container">
@@ -107,24 +141,12 @@
 							<div id="uploaded-files-list" class="fr-mt-n2v fr-mb-2v"></div>
 							<ul class="fr-btns-group fr-btns-group--icon-left">
 								<li>
-									<button 
-									class="fr-btn fr-btn--secondary fr-icon-add-line open-modal-upload-files-btn" 
-									type="button" 
-									data-fr-opened="false" 
-									aria-controls="fr-modal-upload-files-usager"
-									data-file-type="photo"
-									>
+									<button class="fr-btn fr-btn--secondary fr-icon-add-line open-modal-upload-files-btn" type="button" data-fr-opened="false" aria-controls="fr-modal-upload-files-usager" data-file-type="photo">
 										Ajouter des photos
 									</button>
 								</li>
 								<li>
-									<button 
-									class="fr-btn fr-btn--secondary fr-icon-add-line open-modal-upload-files-btn" 
-									type="button" 
-									data-fr-opened="false" 
-									aria-controls="fr-modal-upload-files-usager"
-									data-file-type="document"
-									>
+									<button class="fr-btn fr-btn--secondary fr-icon-add-line open-modal-upload-files-btn" type="button" data-fr-opened="false" aria-controls="fr-modal-upload-files-usager" data-file-type="document">
 										Ajouter des documents
 									</button>
 								</li>
@@ -143,15 +165,19 @@
 				<h2 class="fr-h3 fr-mb-2v">Mes infos</h2>
 				<h4 class="fr-mb-2v">Adresse du logement</h4>
 				<div class="fr-mb-4v">
-					{{ signalement.adresseOccupant }} {{ signalement.cpOccupant }} {{ signalement.villeOccupant }}
+					{{ signalement.adresseOccupant }}
+					{{ signalement.cpOccupant }}
+					{{ signalement.villeOccupant }}
 					{% if signalement.complementAdresseOccupant %}
-                        <br>
-                        {{signalement.complementAdresseOccupant}}
-                    {% endif %}
+						<br>
+						{{signalement.complementAdresseOccupant}}
+					{% endif %}
 				</div>
 				<h4 class="fr-mb-2v">Les coordonnées de l'occupant</h4>
 				<div class="fr-mb-4v">
-					{{signalement.civiliteOccupant(false)}} {{ signalement.nomOccupant|capitalize }} {{ signalement.prenomOccupant|capitalize }} 
+					{{signalement.civiliteOccupant(false)}}
+					{{ signalement.nomOccupant|capitalize }}
+					{{ signalement.prenomOccupant|capitalize }}
 					{% if signalement.mailOccupant %}
 						<br>
 						{{ signalement.mailOccupant }}
@@ -201,210 +227,301 @@
 				 %}
 					<h4 class="fr-mb-2v">Prévenez votre bailleur (propriétaire) !</h4>
 					<div class="fr-mb-4v">
-						Il est recommandé d'informer le bailleur du logement des problèmes rencontrés dans le logement. 
+						Il est recommandé d'informer le bailleur du logement des problèmes rencontrés dans le logement.
 						<br>
 						Nous vous mettons à disposition un modèle de courrier à remplir et envoyer à votre bailleur. 
-						Cliquez sur le bouton ci-dessous pour le télécharger.
+												Cliquez sur le bouton ci-dessous pour le télécharger.
 						<br>
-						<a class="fr-btn fr-btn--icon-left open-modal-upload-files-btn fr-icon-arrow-down-line fr-mt-2v" download 
-						href="{{ asset('build/files/Lettre-information-proprietaire-bailleur_A-COMPLETER.pdf') }}">
+						<a class="fr-btn fr-btn--icon-left open-modal-upload-files-btn fr-icon-arrow-down-line fr-mt-2v" download href="{{ asset('build/files/Lettre-information-proprietaire-bailleur_A-COMPLETER.pdf') }}">
 							Télécharger le courrier
 						</a>
 					</div>
 				{% endif %}
-				<h4 class="fr-mb-2v">Type et composition du logement</h4>
-				<section class="fr-accordion fr-mb-4v">
-				<h3 class="fr-accordion__title">
-					<button class="fr-accordion__btn" aria-expanded="false" aria-controls="accordion-type-composition">Afficher les informations</button>
-				</h3>
-				<div class="fr-collapse" id="accordion-type-composition">
-					Nature du logement  : {{ signalement.natureLogement|capitalize }}
-					{% if signalement.typeCompositionLogement %}
-						{% if signalement.typeCompositionLogement.typeLogementNatureAutrePrecision %}
-							({{signalement.typeCompositionLogement.typeLogementNatureAutrePrecision}})
-						{% endif %}
-						{% if signalement.typeCompositionLogement.typeLogementRdc == 'oui' %}, RDC{% endif %}
-						{% if signalement.typeCompositionLogement.typeLogementDernierEtage == 'oui' %}, Dernier étage{% endif %}
-						{% if signalement.typeCompositionLogement.typeLogementSousCombleSansFenetre == 'oui' %}, Combles sans fenêtres{% endif %} 
-					{% endif %} 
-					<br>
-					Superficie en m² : {{ signalement.superficie }} m²
-					<br>
-					{% if signalement.typeCompositionLogement %}
-						La hauteur jusqu'au plafond est de 2m (200cm) ou plus ?
-                        {{ signalement.typeCompositionLogement.compositionLogementHauteur(false)|capitalize }}
-						<br>
-						Une seule ou plusieurs pièces ?
-                        {{ signalement.typeCompositionLogement.compositionLogementPieceUnique(false) }}
-						<br>
-                        Nombre de pièces à vivre : {{ signalement.typeCompositionLogement.compositionLogementNbPieces }}
-						<br>
-						Est-ce qu'au moins une des pièces à vivre (salon, chambre) fait 9m² ou plus ?
-						{{ signalement.typeCompositionLogement.typeLogementCommoditesPieceAVivre9m(false)|capitalize }}
-						<br>
-						Cuisine ou coin cuisine ?
-						{{ signalement.typeCompositionLogement.typeLogementCommoditesCuisine|capitalize }}
-						<br>
-						{% if signalement.typeCompositionLogement.typeLogementCommoditesCuisine == 'non' %}
-							Accès à une cuisine collective ?
-							{{ signalement.typeCompositionLogement.typeLogementCommoditesCuisineCollective|capitalize }}
-							<br>
-						{% endif %}
-						Salle de bain, salle d'eau avec douche ou baignoire ?
-						{{ signalement.typeCompositionLogement.typeLogementCommoditesSalleDeBain|capitalize }}
-						<br>
-						{% if signalement.typeCompositionLogement.typeLogementCommoditesSalleDeBain == 'non' %}
-							Accès à une salle de bain ou des douches collectives ?
-							{{ signalement.typeCompositionLogement.typeLogementCommoditesSalleDeBainCollective|capitalize }}
-							<br>
-						{% endif %}
-						Toilettes (WC) ?
-						{{ signalement.typeCompositionLogement.typeLogementCommoditesWc|capitalize }}
-						<br>
-						{% if signalement.typeCompositionLogement.typeLogementCommoditesWc == 'non' %}
-							Accès à des toilettes (WC) collectives ?
-							{{ signalement.typeCompositionLogement.typeLogementCommoditesWcCollective|capitalize }}
-							<br>
-						{% endif %}
-						{% if signalement.typeCompositionLogement.typeLogementCommoditesWcCuisine == 'oui' %}
-							Toilettes (WC) et cuisine dans la même pièce
-							<br>
-						{% endif %}
-                    {% endif %}
-					Nombre de personnes : {{ signalement.nbOccupantsLogement }}
-					<br>
-					{% if signalement.typeCompositionLogement %}
-						Enfants de moins de 6 ans ? 
-                        {{signalement.typeCompositionLogement.compositionLogementEnfants|capitalize}}
-						<br>
-					{% endif %}
-				</div>
-				</section>
 
-				<h4 class="fr-mb-2v">Situation du foyer</h4>
-				<section class="fr-accordion fr-mb-4v">
-				<h3 class="fr-accordion__title">
-					<button class="fr-accordion__btn" aria-expanded="false" aria-controls="accordion-situation-foyer">Afficher les informations</button>
-				</h3>
-				<div class="fr-collapse" id="accordion-situation-foyer">
-					{% if signalement.isLogementSocial %}
-						Logement social : Oui
-						<br>
-					{% endif %}
-					{% if signalement.isRelogement is same as true %}
-						Demande de relogement : Oui
-						<br>
-                    {% endif %}
-                    {% if signalement.isAllocataire in [null, ''] %}
-                    {% elseif signalement.isAllocataire in ['oui', '1'] %}
-                        Allocataire : Oui
-						<br>
-                    {% elseif signalement.isAllocataire in ['non', '0'] %}
-                        Allocataire : Non
-						<br>
-                    {% elseif signalement.isAllocataire %}
-                       Allocataire : {{ signalement.isAllocataire }}
-					   <br>
-                    {% endif %}
-                    {% if (signalement.dateNaissanceOccupant) %}
-                        Date de naissance : {{ signalement.dateNaissanceOccupant.format('d/m/Y') }}
-						<br>
-                    {% elseif signalement.naissanceOccupants %}
-                        Date de naissance : {{ signalement.naissanceOccupants}}
-						<br>
-                    {% endif %}
-					{% if signalement.numAllocataire %}
-						N° allocataire : {{ signalement.numAllocataire }}
-						<br>
-					{% endif %}
-					{% if signalement.situationFoyer %}
-						{% if signalement.situationFoyer.logementSocialMontantAllocation %}
-					 		Montant allocation : {{ signalement.situationFoyer.logementSocialMontantAllocation }} €
-							<br>
-                    	{% endif %}
-						Souhaite quitter le logement : 
-                        {{signalement.situationFoyer.travailleurSocialQuitteLogement(false)|capitalize}}
-						<br>
-						Accompagnement par un ou une travailleuse sociale : 
-						{{signalement.situationFoyer.travailleurSocialAccompagnement(false)|capitalize}}
-						<br>
-                    {% endif %}
-					{% if signalement.informationComplementaire %}
-						{% if signalement.informationComplementaire.informationsComplementairesSituationOccupantsBeneficiaireRsa %}
-	                    	Bénéficiaire RSA :
-							{{signalement.informationComplementaire.informationsComplementairesSituationOccupantsBeneficiaireRsa|capitalize}}
-							<br>
-						{% endif %}
-						{% if signalement.informationComplementaire.informationsComplementairesSituationOccupantsBeneficiaireFsl %}
-							Bénéficiaire FSL :
-							{{signalement.informationComplementaire.informationsComplementairesSituationOccupantsBeneficiaireFsl|capitalize}}
-							<br>
-						{% endif %}
-						{% if signalement.informationComplementaire.informationsComplementairesSituationOccupantsRevenuFiscal %}
-							Revenu fiscal de référence :
-							{{signalement.informationComplementaire.informationsComplementairesSituationOccupantsRevenuFiscal}} €
-							<br>
-						{% endif %}
-					{% endif %}
-				</div>
-
-
-				<div>
-					<h2 class="fr-mb-0">Photo(s) liée(s) à votre signalement</h2>
-					<p class="fr-hint-text">Ci-dessous, les photos ajoutées lors du dépôt de votre signalement ainsi que celles
-																								                ajoutées par le(s) partenaire(s) en charge de votre dossier.</p>
-					{% for photo in signalement.files|filter(photo => photo.fileType == 'photo') %}
-						<div class="fr-grid-row fr-grid-row--middle fr-stripped fr-rounded fr-p-5v">
-							<div class="fr-col-10">
-								Photos N°{{ loop.index }}
-							</div>
-							<div class="fr-col-2 fr-text--right">
-								<a href="{{ asset('_up/'~photo.filename~'?variant=resize') }}&t={{ csrf_token('suivi_signalement_ext_file_view') }}" class="fr-btn fr-fi-eye-fill fr-btn--icon-left" title="Afficher la photo" target="_blank" rel="noopener">Afficher</a>
-							</div>
-						</div>
-					{% else %}
-						<div class="fr-grid-row fr-grid-row--middle fr-background-contrast--red-marianne fr-rounded fr-p-5v">
-							<div class="fr-col-12">
-								Aucune photo à afficher, si vous avez ajouté des photos dans votre signalement, rafraîchissez la page pour les voir apparaître.
-							</div>
-						</div>
-					{% endfor %}
-				</div>
-			</div>
-		</div>
-
-		{# TODO : NE PAS OUBLIER DE GARDER LA FEATURE !!!!!
-								{% if suiviAuto is defined and suiviAuto is not empty %}
-									<div class="fr-grid-row fr-grid-row--middle fr-rounded fr-p-5v">
-										<div class="fr-col-12">
-											<div class="fr-grid-row">
-												<div class="fr-col-12">
-													{% if suiviAuto is same as constant('App\\Entity\\Suivi::ARRET_PROCEDURE')  %}
-														Vous souhaitez arrêter la procédure ?<br>
-													{% endif %}
-													{% if suiviAuto is same as constant('App\\Entity\\Suivi::POURSUIVRE_PROCEDURE')  %}
-														Vous souhaitez poursuivre la procédure ?<br>
-													{% endif %}
-													Nous allons informer les services de votre réponse.
-													<br>
-													Attention votre choix pourra avoir un impact sur la poursuite de votre dossier.
-													<br>
-												</div>
-											</div>
-											<div class="fr-grid-row fr-p-5v">
-												<div class="fr-col-6 fr-text--center">
-													<a class="fr-btn fr-btn--secondary fr-fi-arrow-left-line fr-btn--icon-left" href="{{ path('front_suivi_signalement',{code:signalement.codeSuivi, from:email}) }}">Annuler</a>
-												</div>
-												<div class="fr-col-6 fr-text--center">
-													<a class="fr-btn fr-icon-checkbox-circle-fill fr-btn--icon-right" href="{{ path('front_suivi_procedure',{code:signalement.codeSuivi, from:email, suiviAuto:suiviAuto}) }}&_token={{csrf_token('suivi_procedure')}}">Confirmer</a>
-												</div>
-											</div>
-										</div>
-									</div>
+				<div class="fr-mb-4v">
+					<h4 class="fr-mb-2v">Type et composition du logement</h4>
+					<section class="fr-accordion fr-mb-4v">
+						<h3 class="fr-accordion__title">
+							<button class="fr-accordion__btn" aria-expanded="false" aria-controls="accordion-type-composition">Afficher les informations</button>
+						</h3>
+						<div class="fr-collapse" id="accordion-type-composition">
+							Nature du logement  :
+							{{ signalement.natureLogement|capitalize }}
+							{% if signalement.typeCompositionLogement %}
+								{% if signalement.typeCompositionLogement.typeLogementNatureAutrePrecision %}
+									({{signalement.typeCompositionLogement.typeLogementNatureAutrePrecision}})
 								{% endif %}
-						        #}
-	</main>
-{% endblock %}
-{% block javascripts %}
-	{{ encore_entry_script_tags('app') }}
-{% endblock %}
+								{% if signalement.typeCompositionLogement.typeLogementRdc == 'oui' %}, RDC
+								{% endif %}
+								{% if signalement.typeCompositionLogement.typeLogementDernierEtage == 'oui' %}, Dernier étage
+								{% endif %}
+								{% if signalement.typeCompositionLogement.typeLogementSousCombleSansFenetre == 'oui' %}, Combles sans fenêtres
+								{% endif %}
+							{% endif %}
+							<br>
+							Superficie en m² :
+							{{ signalement.superficie }}
+							m²
+							<br>
+							{% if signalement.typeCompositionLogement %}
+								La hauteur jusqu'au plafond est de 2m (200cm) ou plus ?
+								{{ signalement.typeCompositionLogement.compositionLogementHauteur(false)|capitalize }}
+								<br>
+								Une seule ou plusieurs pièces ?
+								{{ signalement.typeCompositionLogement.compositionLogementPieceUnique(false) }}
+								<br>
+								Nombre de pièces à vivre :
+								{{ signalement.typeCompositionLogement.compositionLogementNbPieces }}
+								<br>
+								Est-ce qu'au moins une des pièces à vivre (salon, chambre) fait 9m² ou plus ?
+								{{ signalement.typeCompositionLogement.typeLogementCommoditesPieceAVivre9m(false)|capitalize }}
+								<br>
+								Cuisine ou coin cuisine ?
+								{{ signalement.typeCompositionLogement.typeLogementCommoditesCuisine|capitalize }}
+								<br>
+								{% if signalement.typeCompositionLogement.typeLogementCommoditesCuisine == 'non' %}
+									Accès à une cuisine collective ?
+									{{ signalement.typeCompositionLogement.typeLogementCommoditesCuisineCollective|capitalize }}
+									<br>
+								{% endif %}
+								Salle de bain, salle d'eau avec douche ou baignoire ?
+								{{ signalement.typeCompositionLogement.typeLogementCommoditesSalleDeBain|capitalize }}
+								<br>
+								{% if signalement.typeCompositionLogement.typeLogementCommoditesSalleDeBain == 'non' %}
+									Accès à une salle de bain ou des douches collectives ?
+									{{ signalement.typeCompositionLogement.typeLogementCommoditesSalleDeBainCollective|capitalize }}
+									<br>
+								{% endif %}
+								Toilettes (WC) ?
+								{{ signalement.typeCompositionLogement.typeLogementCommoditesWc|capitalize }}
+								<br>
+								{% if signalement.typeCompositionLogement.typeLogementCommoditesWc == 'non' %}
+									Accès à des toilettes (WC) collectives ?
+									{{ signalement.typeCompositionLogement.typeLogementCommoditesWcCollective|capitalize }}
+									<br>
+								{% endif %}
+								{% if signalement.typeCompositionLogement.typeLogementCommoditesWcCuisine == 'oui' %}
+									Toilettes (WC) et cuisine dans la même pièce
+									<br>
+								{% endif %}
+							{% endif %}
+							Nombre de personnes :
+							{{ signalement.nbOccupantsLogement }}
+							<br>
+							{% if signalement.typeCompositionLogement %}
+								Enfants de moins de 6 ans ?
+								{{signalement.typeCompositionLogement.compositionLogementEnfants|capitalize}}
+								<br>
+							{% endif %}
+						</div>
+					</section>
+				</div>
+
+				<div class="fr-mb-4v">
+					<h4 class="fr-mb-2v">Situation du foyer</h4>
+					<section class="fr-accordion fr-mb-4v">
+						<h3 class="fr-accordion__title">
+							<button class="fr-accordion__btn" aria-expanded="false" aria-controls="accordion-situation-foyer">Afficher les informations</button>
+						</h3>
+						<div class="fr-collapse" id="accordion-situation-foyer">
+							{% if signalement.isLogementSocial %}
+								Logement social : Oui
+								<br>
+							{% endif %}
+							{% if signalement.isRelogement is same as true %}
+								Demande de relogement : Oui
+								<br>
+							{% endif %}
+							{% if signalement.isAllocataire in [null, ''] %}
+								{% elseif signalement.isAllocataire in ['oui', '1'] %}
+									Allocataire : Oui
+									<br>
+								{% elseif signalement.isAllocataire in ['non', '0'] %}
+									Allocataire : Non
+									<br>
+								{% elseif signalement.isAllocataire %}
+									Allocataire :
+									{{ signalement.isAllocataire }}
+									<br>
+							{% endif %}
+							{% if (signalement.dateNaissanceOccupant) %}
+								Date de naissance :
+								{{ signalement.dateNaissanceOccupant.format('d/m/Y') }}
+								<br>
+							{% elseif signalement.naissanceOccupants %}
+								Date de naissance :
+								{{ signalement.naissanceOccupants}}
+								<br>
+							{% endif %}
+							{% if signalement.numAllocataire %}
+								N° allocataire :
+								{{ signalement.numAllocataire }}
+								<br>
+							{% endif %}
+							{% if signalement.situationFoyer %}
+								{% if signalement.situationFoyer.logementSocialMontantAllocation %}
+									Montant allocation :
+									{{ signalement.situationFoyer.logementSocialMontantAllocation }}
+									€
+									<br>
+								{% endif %}
+								Souhaite quitter le logement :
+								{{signalement.situationFoyer.travailleurSocialQuitteLogement(false)|capitalize}}
+								<br>
+								Accompagnement par un ou une travailleuse sociale :
+								{{signalement.situationFoyer.travailleurSocialAccompagnement(false)|capitalize}}
+								<br>
+							{% endif %}
+							{% if signalement.informationComplementaire %}
+								{% if signalement.informationComplementaire.informationsComplementairesSituationOccupantsBeneficiaireRsa %}
+									Bénéficiaire RSA :
+									{{signalement.informationComplementaire.informationsComplementairesSituationOccupantsBeneficiaireRsa|capitalize}}
+									<br>
+								{% endif %}
+								{% if signalement.informationComplementaire.informationsComplementairesSituationOccupantsBeneficiaireFsl %}
+									Bénéficiaire FSL :
+									{{signalement.informationComplementaire.informationsComplementairesSituationOccupantsBeneficiaireFsl|capitalize}}
+									<br>
+								{% endif %}
+								{% if signalement.informationComplementaire.informationsComplementairesSituationOccupantsRevenuFiscal %}
+									Revenu fiscal de référence :
+									{{signalement.informationComplementaire.informationsComplementairesSituationOccupantsRevenuFiscal}}
+									€
+									<br>
+								{% endif %}
+							{% endif %}
+						</div>
+					</div>
+
+					<div class="fr-mb-4v">
+						<h4 class="fr-mb-2v">Les désordres</h4>
+						{% if signalement.createdFrom %}
+							{% if infoDesordres['criticitesArranged'][enum('App\\Entity\\Enum\\DesordreCritereZone').LOGEMENT.name] is defined %}
+								<div class="fr-grid-row fr-grid-row--gutters fr-grid-row--middle">
+									<div class="fr-col-2 fr-col-md-1">
+										<img src="{{asset('img/form/BATIMENT/Picto-batiment.svg')}}" class="fr-disorder-overview-image">
+									</div>
+									<div class="fr-col-10 fr-col-md-11 fr-h5 fr-disorder-overview-title">Le bâtiment</div>
+								</div>
+								{% set zone = 'logement' %}
+								{% for situation,criteres in infoDesordres['criticitesArranged'][enum('App\\Entity\\Enum\\DesordreCritereZone').LOGEMENT.name] %}
+									{% include 'front/_partials/_desordre-v2.html.twig' %}
+								{% endfor %}
+							{% endif %}
+							{% if infoDesordres['criticitesArranged'][enum('App\\Entity\\Enum\\DesordreCritereZone').BATIMENT.name] is defined %}
+								<div class="fr-grid-row fr-grid-row--gutters fr-grid-row--middle">
+									<div class="fr-col-2 fr-col-md-1">
+										<img src="{{asset('img/form/LOGEMENT/Picto-logement.svg')}}" class="fr-disorder-overview-image">
+									</div>
+									<div class="fr-col-10 fr-col-md-11 fr-h5 fr-disorder-overview-title">Le logement</div>
+								</div>
+								{% set zone = 'batiment' %}
+								{% for situation,criteres in infoDesordres['criticitesArranged'][enum('App\\Entity\\Enum\\DesordreCritereZone').LOGEMENT.name] %}
+									{% include 'front/_partials/_desordre-v2.html.twig' %}
+								{% endfor %}
+							{% endif %}
+						{% else %}
+							{% for situation,criteres in infoDesordres['criticitesArranged'] %}
+								<section class="fr-accordion">
+									<h3 class="fr-accordion__title">
+										<button class="fr-accordion__btn" aria-expanded="false" aria-controls="desordre-collapse-{{ loop.index }}">
+											<strong>{{ situation|capitalize }}</strong>
+										</button>
+									</h3>
+									<div class="fr-collapse" id="desordre-collapse-{{ loop.index }}">
+										{% for critere,criticite in criteres %}
+											{# TODO à revoir avec le nouvel algo de criticité (les scores ne sont plus forcément 1, 2, 3, et le isDanger est au niveau de la criticité) #}
+											{% if criticite.score is same as(1) %}
+												{% set icon = 'moyen' %}
+											{% elseif criticite.score is same as(2) %}
+												{% set icon = 'grave' %}
+											{% else %}
+												{% set icon = 'tres-grave' %}
+											{% endif %}
+											<ul>
+												<li class="fr-grid-row">
+													<div class="fr-col-md-2 fr-col-lg-1">
+														<img src="{{ asset('img/'~icon~'-actif.svg') }}" alt="" width="50">
+													</div>
+													<div class="fr-col-md-10 fr-col-lg-11">
+														<strong>{{ critere }}</strong>
+														<br>
+														{{ criticite.label|capitalize }}
+													</div>
+												</li>
+											</ul>
+										{% endfor %}
+									</div>
+								</section>
+							{% endfor %}
+						{% endif %}
+					</div>
+
+					<h4 class="fr-mb-2v">Photos</h4>
+					<div class="fr-mb-4v">
+						{% if signalement.files|filter(photo => photo.fileType == 'photo')|length %}
+							Cliquez sur la photo pour l'ouvrir dans un nouvel onglet.
+							<br>
+							{% for photo in signalement.files|filter(photo => photo.fileType == 'photo') %}
+								<a href="{{ asset('_up/'~photo.filename~'?variant=resize') }}&t={{ csrf_token('suivi_signalement_ext_file_view') }}" class="photo-preview" target="_blank" rel="noopener">
+									<img src="{{ asset('_up/'~photo.filename~'?variant=thumb') }}&t={{ csrf_token('suivi_signalement_ext_file_view') }}" alt="{{photo.title}}">
+								</a>
+							{% endfor %}
+						{% else %}
+							Aucune photo à afficher, si vous avez ajouté des photos dans votre signalement, rafraîchissez la page pour les voir apparaître.
+						{% endif %}
+					</div>
+
+					<div class="fr-mb-4v">
+						<h4 class="fr-mb-2v">La procédure</h4>
+						<section class="fr-accordion fr-mb-4v">
+							<h3 class="fr-accordion__title">
+								<button class="fr-accordion__btn" aria-expanded="false" aria-controls="accordion-procedure-demarche">Afficher les informations</button>
+							</h3>
+							<div class="fr-collapse" id="accordion-procedure-demarche">
+								Bailleur (propriétaire) prévenu ?
+								{% if signalement.isProprioAverti is null %}
+								{% elseif signalement.isProprioAverti %}
+									Oui
+								{% else %}
+									Non
+                        		{% endif %}
+								<br>
+								{% if signalement.informationProcedure %}
+									Assurance contactée ? 
+									{{signalement.informationProcedure.infoProcedureAssuranceContactee(false)|capitalize}}
+									<br>
+									{% if signalement.informationProcedure.infoProcedureAssuranceContactee == 'oui' %}
+										Réponse de l'assurance : 
+										{{ signalement.informationProcedure.infoProcedureReponseAssurance | nl2br  }}
+										<br>
+									{% endif %}
+									Si des travaux sont faits, voulez-vous rester dans le logement ? 
+									{{signalement.informationProcedure.infoProcedureDepartApresTravaux(false)|capitalize}}
+                        		{% endif %}
+							</div>
+						</section>
+					</div>
+
+					<h4 class="fr-mb-2v">En savoir plus</h4>
+					<div class="fr-mb-4v">
+						Cliquez sur les liens ci-dessous pour consulter la documentation et trouver des réponses à vos questions !
+						<ul class="fr-list fr-list--none">
+							<li>
+								<a href="https://faq.histologe.beta.gouv.fr/usager/traitement-signalement/evolution-dossier" class="fr-link" target="_blank" rel="noopener">J'ai déposé un signalement, et après ?</a>
+							</li>
+							<li>
+								<a href="{{path('front_obligations_entretien')}}" class="fr-link" target="_blank" rel="noopener">Propriétaire, locataire : les obligations</a>
+							</li>
+							<li>
+								<a href="{{path('front_aides_travaux')}}" class="fr-link" target="_blank" rel="noopener">Aides aux travaux</a>
+							</li>
+							<li>
+								<a href="{{path('politique_de_confidentialite')}}" class="fr-link" target="_blank" rel="noopener">Politique de confidentialité</a>
+							</li>
+						</div>
+					</main>
+				{% endblock %}
+				{% block javascripts %}
+					{{ encore_entry_script_tags('app') }}
+				{% endblock %}

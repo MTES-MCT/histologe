@@ -32,9 +32,10 @@ class SignalementVoter extends Voter
         /** @var User $user */
         $user = $token->getUser();
         if (!$user instanceof UserInterface) {
-            if($attribute === self::USAGER_EDIT && !in_array($subject->getStatut(), Signalement::DISABLED_STATUSES)){
+            if (self::USAGER_EDIT === $attribute && !\in_array($subject->getStatut(), Signalement::DISABLED_STATUSES)) {
                 return true;
             }
+
             return false;
         }
 

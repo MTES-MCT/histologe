@@ -3,7 +3,6 @@
 namespace App\Controller;
 
 use App\Dto\Request\Signalement\SignalementDraftRequest;
-use App\Entity\Enum\DocumentType;
 use App\Entity\Enum\SignalementDraftStatus;
 use App\Entity\File;
 use App\Entity\Signalement;
@@ -387,7 +386,8 @@ class FrontSignalementController extends AbstractController
         UserManager $userManager,
         SuiviManager $suiviManager,
         EntityManagerInterface $entityManager,
-        SuiviFactory $suiviFactory
+        SuiviFactory $suiviFactory,
+        SignalementDesordresProcessor $signalementDesordresProcessor
     ) {
         $signalement = $signalementRepository->findOneByCodeForPublic($code);
         if (!$signalement) {
@@ -491,11 +491,14 @@ class FrontSignalementController extends AbstractController
             );
         }
 
+        $infoDesordres = $signalementDesordresProcessor->process($signalement);
+
         return $this->render('front/suivi_signalement.html.twig', [
             'signalement' => $signalement,
             'email' => $fromEmail,
             'type' => $type,
             'suiviAuto' => $suiviAuto,
+            'infoDesordres' => $infoDesordres,
         ]);
     }
 
@@ -561,7 +564,7 @@ class FrontSignalementController extends AbstractController
         );
 
         $docs = $entityManager->getRepository(File::class)->findBy(['signalement' => $signalement, 'isTemp' => true, 'uploadedBy' => $user]);
-        if (count($docs)) {
+        if (\count($docs)) {
             $descriptionList = [];
             foreach ($docs as $doc) {
                 $doc->setIsTemp(false);
