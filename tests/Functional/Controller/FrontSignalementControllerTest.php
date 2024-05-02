@@ -117,7 +117,7 @@ class FrontSignalementControllerTest extends WebTestCase
                 'email' => $emailOccupant = $signalement->getMailOccupant(),
                 'type' => UserManager::OCCUPANT,
                 'content' => 'Lorem Ipsum is simply dummy text of the printing and typesetting industry',
-            ]
+            ],
         ]);
         if (Signalement::STATUS_ACTIVE === $status) {
             $this->assertResponseRedirects('/suivre-mon-signalement/'.$codeSuivi.'?from='.$emailOccupant);
