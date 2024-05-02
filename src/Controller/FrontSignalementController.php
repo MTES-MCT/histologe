@@ -542,7 +542,9 @@ class FrontSignalementController extends AbstractController
         SignalementFileProcessor $signalementFileProcessor
     ): RedirectResponse {
         $signalement = $signalementRepository->findOneByCodeForPublic($code);
-        $this->denyAccessUnlessGranted('SIGN_USAGER_EDIT', $signalement);
+        if (!$this->isGranted('SIGN_USAGER_EDIT', $signalement)) {
+            return $this->redirectToRoute('home');
+        }
         if (!$this->isCsrfTokenValid('signalement_front_response_'.$signalement->getUuid(), $request->get('_token'))) {
             $this->addFlash('error', 'Token CSRF invalide');
 
