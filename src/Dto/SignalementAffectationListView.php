@@ -26,6 +26,7 @@ class SignalementAffectationListView
         private ?string $villeOccupant = null,
         private \DateTimeImmutable|string|null $lastSuiviAt = null,
         private ?string $lastSuiviBy = null,
+        private ?string $profileDeclarant = null,
         private ?array $affectations = null,
         private ?array $qualifications = null,
         private ?array $qualificationsStatuses = null,
@@ -101,6 +102,11 @@ class SignalementAffectationListView
     public function getLastSuiviBy(): ?string
     {
         return $this->lastSuiviBy;
+    }
+
+    public function getProfileDeclarant(): ?string
+    {
+        return $this->profileDeclarant;
     }
 
     public function getAffectations(): array

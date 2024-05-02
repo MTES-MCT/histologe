@@ -27,6 +27,7 @@ use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -236,5 +237,33 @@ class SignalementController extends AbstractController
         }
 
         return $this->redirectToRoute('back_index');
+    }
+
+    #[Route('/v2/{uuid}/supprimer', name: 'back_v2_signalement_delete', methods: 'POST')]
+    public function newDeleteSignalement(
+        Signalement $signalement,
+        Request $request,
+        ManagerRegistry $doctrine
+    ): JsonResponse {
+        $this->denyAccessUnlessGranted('SIGN_DELETE', $signalement);
+        if ($this->isCsrfTokenValid(
+            'signalement_delete_'.$signalement->getId(),
+            $request->getPayload()->get('_token'))
+        ) {
+            $signalement->setStatut(Signalement::STATUS_ARCHIVED);
+            $doctrine->getManager()->persist($signalement);
+            $doctrine->getManager()->flush();
+            $response = [
+                'code' => Response::HTTP_OK,
+                'message' => sprintf('Signalement %s supprimé avec succès !', $signalement->getReference()),
+            ];
+        } else {
+            $response = [
+                'code' => Response::HTTP_BAD_REQUEST,
+                'message' => 'Une erreur est survenu lors de la suppression',
+            ];
+        }
+
+        return $this->json($response, $response['code']);
     }
 }

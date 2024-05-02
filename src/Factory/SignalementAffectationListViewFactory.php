@@ -3,6 +3,7 @@
 namespace App\Factory;
 
 use App\Dto\SignalementAffectationListView;
+use App\Entity\Enum\ProfileDeclarant;
 use App\Entity\User;
 use App\Service\Signalement\SignalementAffectationHelper;
 use Symfony\Component\Security\Core\User\UserInterface;
@@ -18,6 +19,8 @@ class SignalementAffectationListViewFactory
     {
         list($status, $affectations) = SignalementAffectationHelper::getStatusAndAffectationFrom($user, $data);
 
+        /** @var ProfileDeclarant $profileDeclarant */
+        $profileDeclarant = $data['profileDeclarant'];
         $signalementAffectationListView = new SignalementAffectationListView(
             id: $data['id'],
             uuid: $data['uuid'],
@@ -33,6 +36,7 @@ class SignalementAffectationListViewFactory
             villeOccupant: $data['villeOccupant'],
             lastSuiviAt: $data['lastSuiviAt'],
             lastSuiviBy: $data['lastSuiviBy'],
+            profileDeclarant: $profileDeclarant->label(),
             affectations: $affectations,
             qualifications: SignalementAffectationHelper::getQualificationFrom($data),
             qualificationsStatuses: SignalementAffectationHelper::getQualificationStatusesFrom($data)

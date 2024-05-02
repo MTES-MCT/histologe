@@ -2,6 +2,7 @@
 
 namespace App\Tests\Functional\Factory;
 
+use App\Entity\Enum\ProfileDeclarant;
 use App\Entity\Enum\SignalementStatus;
 use App\Entity\User;
 use App\Factory\SignalementAffectationListViewFactory;
@@ -37,6 +38,7 @@ class SignalementAffectationListViewFactoryTest extends KernelTestCase
             'cpOccupant' => $faker->postcode(),
             'lastSuiviAt' => new \DateTimeImmutable(),
             'lastSuiviBy' => $faker->name(),
+            'profileDeclarant' => ProfileDeclarant::LOCATAIRE,
             'rawAffectations' => 'Partenaire 13-02||1;Partenaire 13-03||1;Partenaire 13-04||1',
             'qualifications' => null,
             'qualificationsStatuses' => null,
@@ -76,6 +78,7 @@ class SignalementAffectationListViewFactoryTest extends KernelTestCase
         $this->assertEquals($dataSignalement['cpOccupant'], $signalementAffectationListView->getCodepostalOccupant());
         $this->assertSame($dataSignalement['lastSuiviAt'], $signalementAffectationListView->getLastSuiviAt());
         $this->assertEquals($dataSignalement['lastSuiviBy'], $signalementAffectationListView->getLastSuiviBy());
+        $this->assertEquals('Locataire', $signalementAffectationListView->getProfileDeclarant());
         $this->assertSame($expectedAffectations, $signalementAffectationListView->getAffectations());
     }
 }
