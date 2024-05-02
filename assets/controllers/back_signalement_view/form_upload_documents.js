@@ -104,6 +104,8 @@ function initializeUploadModal(
         let div = document.createElement('div')
         div.classList.add('fr-grid-row', 'fr-grid-row--gutters', 'fr-grid-row--middle', 'fr-mb-2w', 'modal-upload-list-item')
         div.innerHTML = initInnerHtml(file)
+        let btnDeleteTmpFile = div.querySelector('a.delete-tmp-file')
+        addEventListenerDeleteTmpFile(btnDeleteTmpFile)
         listContainer.prepend(div)
         let http = new XMLHttpRequest()
         let data = new FormData()
@@ -121,8 +123,6 @@ function initializeUploadModal(
         http.onreadystatechange = function () {
             if (this.readyState == XMLHttpRequest.DONE) {
                 let response = JSON.parse(this.response)
-                let btnDeleteTmpFile = div.querySelector('a.delete-tmp-file')
-                addEventListenerDeleteTmpFile(btnDeleteTmpFile)
                 if (this.status == 200) {
                     modal.dataset.hasChanges = true
                     if (null !== selectDesordreToClone || null !== selectTypeSituationToClone || null !== selectTypeProcedureToClone){
