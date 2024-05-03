@@ -33,7 +33,7 @@
                   <span
                       v-else
                       class="fr-mx-1v"
-                      :class="resolveBadgeStyleAffectation(affectation)"
+                      :class="getBadgeStyleAffectation(affectation)"
                       v-for="(affectation, index) in item.affectations"
                       :key="index">{{ affectation.partner }}</span>
                 </p>
@@ -47,7 +47,7 @@
                 </p>
               </div>
               <div class="fr-col-xl-2 fr-col-12 fr-text--right">
-                <p :class="resolveStatusLabel(item.statut).className">{{ resolveStatusLabel(item.statut).label}}</p>
+                <p :class="getStatusLabel(item.statut).className">{{ getStatusLabel(item.statut).label}}</p>
               </div>
             </div>
           </div>
@@ -103,7 +103,7 @@ export default defineComponent({
 
       return `${day}/${month}/${year}`
     },
-    resolveBadgeStyleAffectation (affectation: any): string {
+    getBadgeStyleAffectation (affectation: any): string {
       let className = 'fr-badge'
       if (!this.sharedState.user.canSeeStatusAffectation) {
         return ''
@@ -125,7 +125,7 @@ export default defineComponent({
 
       return className
     },
-    resolveStatusLabel (status: number): Object {
+    getStatusLabel (status: number): Object {
       const statusSignalement = { className: 'fr-badge fr-badge--no-icon ', label: '' }
       switch (status) {
         case 1:

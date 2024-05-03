@@ -260,7 +260,7 @@ class SignalementController extends AbstractController
         } else {
             $response = [
                 'code' => Response::HTTP_BAD_REQUEST,
-                'message' => 'Une erreur est survenu lors de la suppression',
+                'message' => 'Une erreur est survenue lors de la suppression.',
             ];
         }
 
