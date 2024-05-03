@@ -270,7 +270,7 @@
                                 {% endif %}
                                 <small>{{ suivi.createdAt|date('d/m/Y') }}</small>
                             </td>
-                            <td style="padding:.5rem;width:85%">  {{ suivi.description|raw }}</td>
+                            <td style="padding:.5rem;width:85%">  {{ suivi.description|sanitize_html('app.message_sanitizer') }}</td>
                         </tr>
                     {% endfor %}
                 </table>

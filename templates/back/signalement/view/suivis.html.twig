@@ -67,7 +67,7 @@
                 |replace({'&t=___TOKEN___':'/'~signalement.uuid})
                 |replace({'?t=___TOKEN___':'/'~signalement.uuid})
                 |replace({'?folder=_up':'/'~signalement.uuid~'?variant=resize'})
-                |raw
+                |sanitize_html('app.message_sanitizer')
             }}
         </div>
         <div class="fr-col-2">

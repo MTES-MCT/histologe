@@ -99,13 +99,17 @@ class Suivi
         return $this;
     }
 
-    public function getDescription(): ?string
+    public function getDescription($transformHtml = true): ?string
     {
         if (null !== $this->deletedAt) {
             return self::DESCRIPTION_DELETED.' '.$this->deletedAt->format('d/m/Y');
         }
 
-        return $this->description;
+        if (!$transformHtml) {
+            return $this->description;
+        }
+
+        return str_replace('&lt;br /&gt;', '<br>', nl2br($this->description));
     }
 
     public function setDescription(string $description): self

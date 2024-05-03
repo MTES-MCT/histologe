@@ -51,7 +51,7 @@ class DossierMessageSISHFactory extends AbstractDossierMessageFactory
         $firstSuivi = $this->suiviRepository->findFirstSuiviBy($signalement, Suivi::TYPE_PARTNER);
 
         $cleanedSuiviDescription = null !== $firstSuivi && null !== $firstSuivi->getDescription()
-            ? HtmlCleaner::clean($firstSuivi->getDescription())
+            ? HtmlCleaner::clean($firstSuivi->getDescription(false))
             : null;
 
         $formatDate = AbstractEsaboraService::FORMAT_DATE;

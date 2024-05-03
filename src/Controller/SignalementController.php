@@ -557,7 +557,7 @@ class SignalementController extends AbstractController
         );
 
         $description = htmlspecialchars(
-            nl2br($request->get('signalement_front_response')['content']),
+            $request->get('signalement_front_response')['content'],
             \ENT_QUOTES,
             'UTF-8'
         );

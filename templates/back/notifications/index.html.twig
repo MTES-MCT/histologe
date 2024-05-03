@@ -61,7 +61,7 @@
                         |replace({'&t=___TOKEN___':'/'~notification.signalement.uuid})
                         |replace({'?t=___TOKEN___':'/'~notification.signalement.uuid})
                         |replace({'?folder=_up':'/'~notification.signalement.uuid~'?variant=resize'})
-                        |raw }}
+                        |sanitize_html('app.message_sanitizer') }}
                     </td>
                     <td>{{ notification.suivi.createdBy ? notification.suivi.createdBy.nomComplet : notification.signalement.nomOccupant|upper~' '~notification.signalement.prenomOccupant|capitalize }}</td>
                     <td class="fr-text--right">
