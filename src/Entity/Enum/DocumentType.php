@@ -21,6 +21,7 @@ enum DocumentType: String
     case BAILLEUR_DEVIS_POUR_TRAVAUX = 'BAILLEUR_DEVIS_POUR_TRAVAUX';
     case BAILLEUR_REPONSE_BAILLEUR = 'BAILLEUR_REPONSE_BAILLEUR';
     case AUTRE = 'AUTRE';
+    case AUTRE_PROCEDURE = 'AUTRE_PROCEDURE';
     case PHOTO_SITUATION = 'PHOTO_SITUATION';
     case PHOTO_VISITE = 'PHOTO_VISITE';
 
@@ -39,6 +40,7 @@ enum DocumentType: String
             self::BAILLEUR_DEVIS_POUR_TRAVAUX->name => 'Devis pour travaux',
             self::BAILLEUR_REPONSE_BAILLEUR->name => 'Réponse bailleur',
             self::AUTRE->name => 'Autre',
+            self::AUTRE_PROCEDURE->name => 'Autre procédure',
             self::PHOTO_SITUATION->name => 'Photo de désordre',
             self::PHOTO_VISITE->name => 'Photo de visite',
         ];
@@ -74,6 +76,7 @@ enum DocumentType: String
             self::PROCEDURE_SAISINE->name => self::PROCEDURE_SAISINE->label(),
             self::BAILLEUR_DEVIS_POUR_TRAVAUX->name => self::BAILLEUR_DEVIS_POUR_TRAVAUX->label(),
             self::BAILLEUR_REPONSE_BAILLEUR->name => self::BAILLEUR_REPONSE_BAILLEUR->label(),
+            self::AUTRE_PROCEDURE->name => self::AUTRE_PROCEDURE->label(),
         ];
     }
 
