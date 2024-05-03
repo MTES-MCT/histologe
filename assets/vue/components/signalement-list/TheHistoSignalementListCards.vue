@@ -6,7 +6,7 @@
           <div class="fr-card__content fr-mb-1v">
             <div class="fr-grid-row">
               <div class="fr-col-xl-8 fr-col-lg-6 fr-col-12">
-                <h3 class="fr-card__title fr-my-1v">#{{ item.reference }} - {{ item.nomOccupant.toUpperCase()  + ' ' + item.prenomOccupant }}</h3>
+                <h3 class="fr-card__title fr-my-1v">#{{ item.reference }} - {{ item.nomOccupant && item.nomOccupant.toUpperCase()  + ' ' + item.prenomOccupant }}</h3>
                 <p class="fr-my-1v fr-text--bold fr-text--lg">{{ item.adresseOccupant }}, {{ item.codepostalOccupant }} {{ item.villeOccupant }}</p>
               </div>
               <div class="fr-col-xl-4 fr-col-lg-6 fr-col-12">
@@ -194,7 +194,3 @@ export default defineComponent({
   }
 })
 </script>
-
-<style scoped>
-
-</style>

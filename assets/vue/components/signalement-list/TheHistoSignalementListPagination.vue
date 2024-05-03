@@ -3,23 +3,23 @@
     <nav role="navigation" class="fr-pagination" aria-label="Pagination">
       <ul class="fr-pagination__list">
         <li>
-          <a href="#"
+          <a :href="pagination.current_page > 1 ? '#': null"
              @click.prevent="pagination.current_page > 1 && $emit('changePage', 1)"
              :aria-disabled="pagination.current_page <= 1"
              class="fr-pagination__link fr-pagination__link--first"
-             role="link">Première page </a>
+             :role="pagination.current_page <= 1 ? 'link' : null">Première page </a>
         </li>
         <li>
-          <a href="#"
+          <a :href="pagination.current_page > 1 ? '#': null"
              @click.prevent="pagination.current_page > 1 && $emit('changePage', pagination.current_page - 1)"
              class="fr-pagination__link fr-pagination__link--prev fr-pagination__link--lg-label"
              :aria-disabled="pagination.current_page <= 1"
-             role="link"> Page précédente
+             :role="pagination.current_page <= 1 ? 'link' : null"> Page précédente
           </a>
         </li>
         <li v-for="page in pageNumbers" :key="page">
           <a href="#"
-             @click.prevent="page !== '...' && $emit('changePage', page)"
+             @click.prevent="page !== '…' && $emit('changePage', page)"
              class="fr-pagination__link"
              :class="{ 'fr-pagination__link--active': typeof page === 'number' && page === pagination.current_page }"
              :title="`Page ${page}`"
@@ -27,18 +27,20 @@
         </li>
 
         <li>
-          <a href="#"
+          <a :href="pagination.current_page < pagination.total_pages ? '#' : null"
              @click.prevent="pagination.current_page < pagination.total_pages && $emit('changePage', pagination.current_page + 1)"
              :aria-disabled="pagination.current_page < pagination.total_pages"
-             class="fr-pagination__link fr-pagination__link--next fr-pagination__link--lg-label">
+             class="fr-pagination__link fr-pagination__link--next fr-pagination__link--lg-label"
+             :role="pagination.current_page === pagination.total_pages ? 'link' : null">
             Page suivante </a>
         </li>
 
         <li>
-          <a href="#"
+          <a :href="pagination.current_page !== pagination.total_pages ? '#' : null"
              @click.prevent="pagination.current_page < pagination.total_pages && $emit('changePage', pagination.total_pages)"
              :aria-disabled="pagination.current_page === pagination.total_pages"
-             class="fr-pagination__link fr-pagination__link--last" >
+             class="fr-pagination__link fr-pagination__link--last"
+             :role="pagination.current_page === pagination.total_pages ? 'link' : null">
             Dernière page </a>
         </li>
       </ul>
@@ -56,41 +58,50 @@ export default defineComponent({
       required: true
     }
   },
+  emits: ['changePage'],
   computed: {
     pageNumbers () {
       let pages = []
       const currentPage = this.pagination.current_page
       const totalPage = this.pagination.total_pages
-      const limit = 10
-      if (currentPage < limit) {
-        if (totalPage <= limit) {
-          for (let i = 1; i <= totalPage; i++) {
-            pages.push(i)
+      const limitPageToShow = 5
+      const offsetPage = totalPage - limitPageToShow
+      const addPages = (start : number, end : number) => {
+        for (let i = start; i <= end; i++) {
+          pages.push(i)
+        }
+      }
+
+      if (currentPage < limitPageToShow) {
+        if (totalPage <= limitPageToShow) {
+          addPages(1, totalPage)
+        } else if (totalPage > limitPageToShow) {
+          addPages(1, limitPageToShow)
+          if (offsetPage > 1) {
+            pages.push('…')
           }
-        } else if (totalPage > limit) {
-          for (let i = 1; i <= limit; i++) {
-            pages.push(i)
-          }
-          pages.push('...')
           pages.push(this.pagination.total_pages)
         }
-      } else {
-        if (currentPage >= limit && currentPage < totalPage - limit) {
-          pages = [1, '...', currentPage - 1, currentPage, currentPage + 1, '...', totalPage]
-        } else {
-          pages.push(1)
-          pages.push('...')
-          for (let i = totalPage - limit; i <= totalPage; i++) {
-            pages.push(i)
-          }
+      } else if (currentPage >= limitPageToShow && currentPage <= offsetPage) {
+        pages = [1, '…']
+        addPages(currentPage - 1, currentPage + limitPageToShow - 2)
+        if (totalPage - (currentPage + limitPageToShow - 2) > 1) {
+          pages.push('…')
         }
+        pages.push(totalPage)
+      } else {
+        if (offsetPage > 1) {
+          pages.push(1, '…')
+        }
+        addPages(offsetPage, totalPage)
       }
       return pages
     }
   }
 })
 </script>
-
 <style scoped>
-
+  a.fr-pagination__link[title="Page …"] {
+    cursor: default;
+  }
 </style>

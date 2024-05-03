@@ -5,12 +5,16 @@ namespace App\Tests\Functional\Controller\Back;
 use App\Entity\Signalement;
 use App\Repository\SignalementRepository;
 use App\Repository\UserRepository;
+use App\Tests\SessionHelper;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Routing\RouterInterface;
 
 class SignalementControllerTest extends WebTestCase
 {
+    use SessionHelper;
+
     protected function setUp(): void
     {
         self::ensureKernelShutdown();
@@ -240,5 +244,39 @@ class SignalementControllerTest extends WebTestCase
 
         $this->assertEmailSubjectContains($this->getMailerMessages()[0], 'Nouveau suivi');
         $this->assertEmailSubjectContains($this->getMailerMessages()[1], 'a terminé son intervention');
+    }
+
+    public function testNewDeleteSignalement(): void
+    {
+        $client = static::createClient();
+
+        /** @var SignalementRepository $signalementRepository */
+        $signalementRepository = self::getContainer()->get(SignalementRepository::class);
+        /** @var Signalement $signalement */
+        $signalement = $signalementRepository->findOneBy(['reference' => '2022-10']);
+
+        /** @var UserRepository $userRepository */
+        $userRepository = self::getContainer()->get(UserRepository::class);
+        $user = $userRepository->findOneBy(['email' => 'admin-01@histologe.fr']);
+        $client->loginUser($user);
+        $uuid = $signalement->getUuid();
+        $csrfToken = $this->generateCsrfToken(
+            $client,
+            'signalement_delete_'.$signalement->getId()
+        );
+
+        $client->request(
+            'POST',
+            '/bo/signalements/v2/'.$uuid.'/supprimer',
+            [],
+            [],
+            ['Content-Type' => 'application/json'],
+            json_encode(['_token' => $csrfToken])
+        );
+
+        $this->assertEquals(Response::HTTP_OK, $client->getResponse()->getStatusCode());
+        $response = json_decode($client->getResponse()->getContent(), true);
+        $this->assertArrayHasKey('message', $response);
+        $this->assertStringContainsString('supprimé avec succès', $response['message']);
     }
 }

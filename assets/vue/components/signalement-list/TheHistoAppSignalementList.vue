@@ -1,9 +1,5 @@
 <template>
-  <div id="histo-app-signalement-list"
-       :data-ajaxurl="sharedProps.ajaxurl"
-       :data-ajaxurl-export-csv="sharedProps.ajaxurlExportCsv"
-       :data-ajaxurl-settings="sharedProps.ajaxurlSettings"
-       :data-ajaxur-remove-signalement="sharedProps.ajaxurlRemoveSignalement">
+  <div id="histo-app-signalement-list">
     <TheHistoSignalementListFilter/>
     <section v-if="loadingList" class="loading fr-m-10w">
       <h2 class="fr-text--light">Chargement de la liste...</h2>
@@ -82,12 +78,14 @@ export default defineComponent({
     },
     handlePageChange (pageNumber: number) {
       this.loadingList = true
+      window.scrollTo(0, 0)
       this.addQueryParameter('page', pageNumber.toString())
       this.buildUrl()
       requests.getSignalements(this.handleSignalements)
     },
     handleOrderChange () {
       this.loadingList = true
+      window.scrollTo(0, 0)
       const [field, sort] = this.sharedState.input.order.split('-')
       this.removeQueryParameter('page')
       this.addQueryParameter('sortBy', field)
@@ -101,6 +99,7 @@ export default defineComponent({
     },
     async deleteItem (item: SignalementItem) {
       this.loadingList = true
+      window.scrollTo(0, 0)
       await requests.deleteSignalement(
         item.uuid,
         item.csrfToken,
@@ -111,7 +110,6 @@ export default defineComponent({
       const url = store.props.ajaxurlSettings
       requests.doRequest(url, functionReturn)
     },
-
     addQueryParameter (name: string, value: string) {
       const param = this.sharedState.input.queryParameters.find(parameter => parameter.name === name)
       if (param) {
@@ -121,20 +119,20 @@ export default defineComponent({
       }
     },
     removeQueryParameter (name: string) {
-      const index = this.sharedState.input.queryParameters.findIndex(param => param.name === name)
+      const index = this.sharedState.input.queryParameters.findIndex(parameter => parameter.name === name)
       if (index !== -1) {
         this.sharedState.input.queryParameters.splice(index, 1)
       }
     },
     buildUrl () {
-      const queryParams = this.sharedState.input.queryParameters.map(param => `${param.name}=${param.value}`)
+      const queryParams = this
+        .sharedState
+        .input
+        .queryParameters
+        .map(parameter => `${parameter.name}=${parameter.value}`)
       this.sharedProps.ajaxurlSignalement = initElements.dataset.ajaxurl + '?' + queryParams.join('&')
     }
   }
 })
 
 </script>
-
-<style scoped>
-
-</style>

@@ -12,7 +12,7 @@
                         {{ signalements.pagination.total_items }} signalement(s)
                     </div>
                     <div class="fr-col fr-text--right">
-                        <a href="{{ path('back_signalement_list_export', {'_token': csrf_token('export_token_'~app.user.id) }) }}"
+                        <a href="{{ path('back_signalement_list_export') }}"
                            class="fr-link fr-link--icon-left fr-fi-download-line">
                             Exporter les résultats
                         </a>

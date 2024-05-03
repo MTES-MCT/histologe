@@ -15,6 +15,8 @@ twig:
             banner_enable: '%maintenance_banner_enable%'
             banner_message: '%maintenance_banner_message%'
             enable: '%maintenance_enable%'
+        feature:
+            signalement_liste_enable: '%feature_signalement_liste_enable%'
     date:
         timezone: 'Europe/Paris'
     paths:

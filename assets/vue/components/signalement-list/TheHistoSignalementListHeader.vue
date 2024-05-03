@@ -45,7 +45,7 @@ export default defineComponent({
       sharedProps: store.props,
 
       orderList: [
-        { Id: 'reference-DESC', Text: 'Ordre décroissant' },
+        { Id: 'reference-DESC', Text: 'Ordre décroissant : par référence' },
         { Id: 'reference-ASC', Text: 'Ordre croissant : par référence' },
         { Id: 'nomOccupant-ASC', Text: 'Ordre alphabétique (A -> Z)' },
         { Id: 'nomOccupant-DESC', Text: 'Ordre alphabétique inversé (Z -> A)' },
@@ -56,7 +56,3 @@ export default defineComponent({
   }
 })
 </script>
-
-<style scoped>
-
-</style>

@@ -11,7 +11,7 @@ class SignalementExportLoader
     {
     }
 
-    public function load(User $user, array $filters): void
+    public function load(User $user, ?array $filters): void
     {
         $handle = fopen('php://output', 'w');
         fputcsv($handle, SignalementExportHeader::getHeaders(), SignalementExportHeader::SEPARATOR);
