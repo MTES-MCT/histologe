@@ -648,7 +648,7 @@
               <span>{{ minValue }}</span>
               <span>{{ maxValue }}+</span>
             </div>
-            <div class="legend-labels">
+            <div class="legend-labels fr-my-1w">
               <div class="legend-undeployed"></div> Département non déployé
             </div>
           </div>
