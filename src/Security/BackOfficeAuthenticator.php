@@ -48,7 +48,7 @@ class BackOfficeAuthenticator extends AbstractLoginFormAuthenticator
 
         return new Passport(
             new UserBadge($email, function (string $email) {
-                return $this->userRepository->findOneBy(['email' => $email, 'statut' => [User::STATUS_ACTIVE, User::STATUS_INACTIVE]]);
+                return $this->userRepository->findOneBy(['email' => $email, 'statut' => User::STATUS_ACTIVE]);
             }),
             new PasswordCredentials($request->request->get('password', '')),
             [
