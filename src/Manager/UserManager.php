@@ -18,7 +18,7 @@ use Symfony\Component\PasswordHasher\Hasher\PasswordHasherFactoryInterface;
 class UserManager extends AbstractManager
 {
     public const OCCUPANT = 'occupant';
-    public const DECLARANT = 'declarant';
+    public const DECLARANT = 'déclarant';
 
     public function __construct(
         private NotificationMailerRegistry $notificationMailerRegistry,

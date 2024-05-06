@@ -136,10 +136,7 @@ class FrontSignalementController extends AbstractController
                         'created_at' => $existingSignalement->getCreatedAt(),
                         'prenom_occupant' => $existingSignalement->getPrenomOccupant(),
                         'nom_occupant' => $existingSignalement->getNomOccupant(),
-                        'adresse_autre_occupant' => $existingSignalement->getAdresseAutreOccupant(),
-                        'num_appart_occupant' => $existingSignalement->getNumAppartOccupant(),
-                        'escalier_occupant' => $existingSignalement->getEscalierOccupant(),
-                        'etage_occupant' => $existingSignalement->getEtageOccupant(),
+                        'complement_adresse_occupant' => $existingSignalement->getComplementAdresseOccupant(),
                     ];
                 }, $existingSignalements);
 

@@ -200,36 +200,11 @@ export default defineComponent({
         label += signalement.nom_occupant
       }
       label += '</strong>'
-      if (this.signalementHasInfosComplementaires(signalement)) {
-        label += ' ( '
-      }
-      if (signalement.num_appart_occupant !== null) {
-        label += 'Numéro d\'appartement : ' + signalement.num_appart_occupant
-      }
-      if (signalement.escalier_occupant !== null) {
-        label += 'Escalier : ' + signalement.escalier_occupant
-      }
-      if (signalement.etage_occupant !== null) {
-        label += 'Etage : ' + signalement.etage_occupant
-      }
-      if (signalement.adresse_autre_occupant !== null) {
-        label += 'Autre : ' + signalement.adresse_autre_occupant
-      }
-      if (this.signalementHasInfosComplementaires(signalement)) {
-        label += ' )'
+      if (signalement.complement_adresse_occupant !== '') {
+        label += ' (' + signalement.complement_adresse_occupant + ')'
       }
       label += '.'
       return label
-    },
-    signalementHasInfosComplementaires (signalement: any) {
-      if (signalement.num_appart_occupant !== null ||
-          signalement.escalier_occupant !== null ||
-          signalement.etage_occupant !== null ||
-          signalement.adresse_autre_occupant !== null
-      ) {
-        return true
-      }
-      return false
     }
   }
 })
