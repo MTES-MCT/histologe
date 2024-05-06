@@ -23,17 +23,17 @@
                     <form action="{{ path('send_mail_get_lien_suivi',{uuid:signalement.uuid}) }}" name="send_lien_suivi"
                             id="send_lien_suivi" method="POST"  class='needs-validation' novalidate="novalidate">
                         <div class="fr-modal__content">
-                            Vous êtes sur le point d'envoyer le lien de la page de suivi du signalement #{{ signalement.reference }} 
+                            Vous êtes sur le point d'envoyer le lien de la page de suivi du signalement <strong>#{{ signalement.reference }}</strong> 
                             {% if hasMail is same as 'declarant' %}
-                                au tiers déclarant {{signalement.nomDeclarant}} {{signalement.prenomDeclarant}} ({{signalement.mailDeclarant}}).<br>
+                                au tiers déclarant <strong>{{signalement.nomDeclarant}} {{signalement.prenomDeclarant}} ({{signalement.mailDeclarant}})</strong>.<br>
                                 <input type="hidden" name="profil" value="tiers"> 
                             {% elseif hasMail is same as 'occupant' %}
-                                à l'occupant du logement {{signalement.nomOccupant}} {{signalement.prenomOccupant}} ({{signalement.mailOccupant}}).<br>
+                                à l'occupant du logement <strong>{{signalement.nomOccupant}} {{signalement.prenomOccupant}} ({{signalement.mailOccupant}})</strong>.<br>
                                 <input type="hidden" name="profil" value="locataire">
                             {% elseif hasMail is same as 'both' %}
-                                . Ce signalement a un occupant ({{signalement.nomOccupant}} {{signalement.prenomOccupant}} - {{signalement.mailOccupant}}) et un tiers déclarant ({{signalement.nomDeclarant}} {{signalement.prenomDeclarant}} - {{signalement.mailDeclarant}}).<br> 
+                                . Ce signalement a un occupant <strong>({{signalement.nomOccupant}} {{signalement.prenomOccupant}} - {{signalement.mailOccupant}})</strong> et un tiers déclarant <strong>({{signalement.nomDeclarant}} {{signalement.prenomDeclarant}} - {{signalement.mailDeclarant}})</strong>.<br><br> 
                                 Sélectionnez la personne à qui envoyer le lien de suivi puis cliquez sur le bouton envoyer. <br>
-                                Pour envoyer le lien aux deux personnes, la procédure doit être faite deux fois.  <br>
+                                Pour envoyer le lien aux deux personnes, la procédure doit être faite deux fois.  <br><br>
                                 <fieldset class="fr-fieldset" id="radio-hint" aria-labelledby="radio-hint-legend radio-hint-messages">
                                     <div class="fr-fieldset__element">
                                         <div class="fr-radio-group">
@@ -78,7 +78,7 @@
                                 </li>
                             </ul>
                         </div>
-                    <form>
+                    </form>
                 </div>
             </div>
         </div>
