@@ -106,6 +106,7 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
                 FROM user u
                 LEFT JOIN affectation a  on a.partner_id = u.partner_id and a.statut = 0
                 WHERE u.statut = 0 AND DATE(u.created_at) <= (DATE(NOW()) - INTERVAL 10 DAY)
+                AND u.roles NOT LIKE "%ROLE_USAGER%"
                 GROUP BY u.email, u.created_at
                 ORDER BY nb_signalements desc';
 

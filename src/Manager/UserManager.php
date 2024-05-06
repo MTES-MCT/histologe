@@ -152,7 +152,6 @@ class UserManager extends AbstractManager
                 );
 
                 $user->setIsMailingActive(true);
-                $user->setStatut(User::STATUS_ACTIVE);
                 $this->save($user);
             }
 
