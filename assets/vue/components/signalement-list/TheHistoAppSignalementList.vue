@@ -1,6 +1,6 @@
 
 <template>
-  <div v-if="classNameDeleteConfirmation.length > 0" class="fr-alert fr-alert--sm" :class="this.classNameDeleteConfirmation">
+  <div v-if="classNameDeleteConfirmation.length > 0" class="fr-alert fr-alert--sm" :class="classNameDeleteConfirmation">
     <p>{{ messageDeleteConfirmation }}</p>
   </div>
   <div id="histo-app-signalement-list">
