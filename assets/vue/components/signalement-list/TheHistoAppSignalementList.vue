@@ -104,14 +104,14 @@ export default defineComponent({
       this.sharedState.signalements.filters = requestResponse.filters
       this.sharedState.signalements.list = requestResponse.list
       this.sharedState.signalements.pagination = requestResponse.pagination
-      window.scrollTo(0, 0)
       this.loadingList = false
+      window.scrollTo(0, 0)
     },
     handlePageChange (pageNumber: number) {
+      this.clearScreen()
       const url = new URL(window.location.toString())
       url.searchParams.set('page', pageNumber.toString())
       window.history.replaceState({}, '', url)
-      this.clearScreen()
       this.addQueryParameter('page', pageNumber.toString())
       this.buildUrl()
       requests.getSignalements(this.handleSignalements)
@@ -146,8 +146,7 @@ export default defineComponent({
       requests.getSignalements(this.handleSignalements)
     },
     async deleteItem (item: SignalementItem) {
-      this.loadingList = true
-      window.scrollTo(0, 0)
+      this.clearScreen()
       await requests.deleteSignalement(
         item.uuid,
         item.csrfToken,
@@ -184,7 +183,6 @@ export default defineComponent({
       this.messageDeleteConfirmation = ''
       this.classNameDeleteConfirmation = ''
       this.loadingList = true
-      window.scrollTo(0, 0)
     }
   }
 })
