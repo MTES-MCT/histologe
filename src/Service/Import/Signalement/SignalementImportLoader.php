@@ -181,7 +181,7 @@ class SignalementImportLoader
                 $affectation = $this->affectationManager->createAffectationFrom(
                     $signalement,
                     $partner,
-                    $partner?->getUsers()?->first()
+                    $partner->getUsers()->isEmpty() ? null : $partner->getUsers()->first(),
                 );
                 if ($affectation instanceof Affectation) {
                     $affectation
