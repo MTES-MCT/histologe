@@ -10,12 +10,12 @@ use Symfony\Component\Routing\Annotation\Route;
 #[Route('/api')]
 class QuestionController extends AbstractController
 {
-    public const MOCK_BASE_PATH = '/../../tools/wiremock/src/Resources/Signalement/';
+    public const JSON_BASE_PATH = '/../../public/build/json/Signalement/';
 
     #[Route('/dictionary', name: 'api_dictionary')]
     public function getDictionary(): Response
     {
-        $filepath = self::MOCK_BASE_PATH.'dictionary.json';
+        $filepath = self::JSON_BASE_PATH.'dictionary.json';
 
         return $this->json(json_decode(file_get_contents(__DIR__.$filepath), true));
     }
@@ -25,28 +25,28 @@ class QuestionController extends AbstractController
     {
         switch ($request->query->get('profil')) {
             case 'tous':
-                $filepath = self::MOCK_BASE_PATH.'questions_profile_tous.json';
+                $filepath = self::JSON_BASE_PATH.'questions_profile_tous.json';
                 break;
             case 'locataire':
-                $filepath = self::MOCK_BASE_PATH.'questions_profile_locataire.json';
+                $filepath = self::JSON_BASE_PATH.'questions_profile_locataire.json';
                 break;
             case 'bailleur_occupant':
-                $filepath = self::MOCK_BASE_PATH.'questions_profile_bailleur_occupant.json';
+                $filepath = self::JSON_BASE_PATH.'questions_profile_bailleur_occupant.json';
                 break;
             case 'tiers_pro':
-                $filepath = self::MOCK_BASE_PATH.'questions_profile_tiers_pro.json';
+                $filepath = self::JSON_BASE_PATH.'questions_profile_tiers_pro.json';
                 break;
             case 'tiers_particulier':
-                $filepath = self::MOCK_BASE_PATH.'questions_profile_tiers_particulier.json';
+                $filepath = self::JSON_BASE_PATH.'questions_profile_tiers_particulier.json';
                 break;
             case 'service_secours':
-                $filepath = self::MOCK_BASE_PATH.'questions_profile_service_secours.json';
+                $filepath = self::JSON_BASE_PATH.'questions_profile_service_secours.json';
                 break;
             case 'bailleur':
-                $filepath = self::MOCK_BASE_PATH.'questions_profile_bailleur.json';
+                $filepath = self::JSON_BASE_PATH.'questions_profile_bailleur.json';
                 break;
             default:
-                $filepath = self::MOCK_BASE_PATH.'empty.json';
+                $filepath = self::JSON_BASE_PATH.'empty.json';
         }
 
         return $this->json(json_decode(file_get_contents(__DIR__.$filepath), true));
@@ -58,16 +58,16 @@ class QuestionController extends AbstractController
         switch ($request->query->get('profil')) {
             case 'locataire':
             case 'bailleur_occupant':
-                $filepath = self::MOCK_BASE_PATH.'desordres_profile_occupant.json';
+                $filepath = self::JSON_BASE_PATH.'desordres_profile_occupant.json';
                 break;
             case 'tiers_pro':
             case 'tiers_particulier':
             case 'service_secours':
             case 'bailleur':
-                $filepath = self::MOCK_BASE_PATH.'desordres_profile_tiers.json';
+                $filepath = self::JSON_BASE_PATH.'desordres_profile_tiers.json';
                 break;
             default:
-                $filepath = self::MOCK_BASE_PATH.'empty.json';
+                $filepath = self::JSON_BASE_PATH.'empty.json';
         }
 
         return $this->json(json_decode(file_get_contents(__DIR__.$filepath), true));

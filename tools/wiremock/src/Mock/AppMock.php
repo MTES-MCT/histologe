@@ -6,7 +6,6 @@ include_once __DIR__.'/../../vendor/autoload.php';
 
 use Mock\Esabora\EsaboraSCHSMock;
 use Mock\Esabora\EsaboraSISHMock;
-use Mock\Signalement\QuestionMock;
 use WireMock\Client\WireMock;
 
 class AppMock
@@ -19,7 +18,6 @@ class AppMock
             $wireMock = WireMock::create(getenv('WIREMOCK_HOSTNAME'), getenv('WIREMOCK_PORT'));
             EsaboraSCHSMock::prepareMockForEsabora($wireMock);
             EsaboraSISHMock::prepareMockForEsabora($wireMock);
-            QuestionMock::prepareMockForQuestionAllProfiles($wireMock);
         } catch (\Throwable $exception) {
             printf('Error message: %s', $exception->getMessage());
         }

@@ -18,6 +18,10 @@ Encore
         to: 'files/[path][name].[ext]'
     })
     .copyFiles({
+        from: './assets/json/Signalement',
+        to: 'json/Signalement/[path][name].[ext]'
+    })
+    .copyFiles({
         from: './node_modules/@gouvfr/dsfr/dist/',
         to: 'dsfr/[path][name].[ext]'
     })

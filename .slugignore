@@ -11,3 +11,4 @@ Makefile
 .php-cs-fixer.dist.php
 phpstan.neon
 phpunit.xml.dist
+tools
