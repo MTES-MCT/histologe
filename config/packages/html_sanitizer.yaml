@@ -20,3 +20,4 @@ framework:
                     th: ''
                     td: ''
                 drop_elements: ['img']
+                max_input_length: 20000000

@@ -109,9 +109,7 @@ class Suivi
             return $this->description;
         }
 
-        $transformed = str_replace('&lt;br /&gt;', '<br />', $this->description);
-
-        return $transformed;
+        return str_replace('&lt;br /&gt;', '<br />', $this->description);
     }
 
     public function setDescription(string $description): self
