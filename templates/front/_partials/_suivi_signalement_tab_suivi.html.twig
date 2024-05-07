@@ -14,7 +14,7 @@
 				</strong>
 			</div>
 			<div class="message-box-message">
-				{{ suivi.description|replace({'___TOKEN___':csrf_token('suivi_signalement_ext_file_view')})|raw }}
+				{{ suivi.description|replace({'___TOKEN___':csrf_token('suivi_signalement_ext_file_view')})|sanitize_html('app.message_sanitizer') }}
 			</div>
 		</div>
 	{% endfor %}
