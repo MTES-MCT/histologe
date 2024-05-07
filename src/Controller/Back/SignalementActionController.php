@@ -194,7 +194,6 @@ class SignalementActionController extends AbstractController
     {
         $this->denyAccessUnlessGranted('SIGN_EDIT', $signalement);
         if ($this->isCsrfTokenValid('signalement_switch_value_'.$signalement->getUuid(), $request->get('_token'))) {
-            $return = 0;
             $value = $request->get('value');
 
             $tag = $entityManager->getRepository(Tag::class)->find((int) $value);
@@ -207,7 +206,7 @@ class SignalementActionController extends AbstractController
             $entityManager->persist($signalement);
             $entityManager->flush();
 
-            return $this->json(['response' => 'success', 'return' => $return]);
+            return $this->json(['response' => 'success']);
         }
 
         return $this->json(['response' => 'error'], 400);

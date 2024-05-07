@@ -59,4 +59,47 @@ class SignalementActionControllerTest extends WebTestCase
         $this->assertStringContainsString(Suivi::DESCRIPTION_DELETED, $suivi->getDescription());
         $this->assertResponseRedirects('/bo/signalements/'.$signalement->getUuid().'#suivis');
     }
+
+    public function testSwitchValue(): void
+    {
+        $signalement = $this->signalementRepository->findOneBy(['uuid' => '00000000-0000-0000-2023-000000000010']);
+
+        $route = $this->router->generate('back_signalement_switch_value', ['uuid' => $signalement->getUuid()]);
+        $this->client->request('GET', $route);
+
+        $this->client->request(
+            'POST',
+            $route,
+            [
+                'value' => 1,
+                '_token' => $this->generateCsrfToken($this->client, 'KO'),
+            ]
+        );
+        $this->assertResponseHeaderSame('Content-Type', 'application/json');
+        $this->assertEquals('{"response":"error"}', $this->client->getResponse()->getContent());
+
+        $this->client->request(
+            'POST',
+            $route,
+            [
+                'value' => 1,
+                '_token' => $this->generateCsrfToken($this->client, 'signalement_switch_value_'.$signalement->getUuid()),
+            ]
+        );
+        $this->assertResponseHeaderSame('Content-Type', 'application/json');
+        $this->assertEquals('{"response":"success"}', $this->client->getResponse()->getContent());
+
+        $this->client->request(
+            'POST',
+            $route,
+            [
+                'value' => 3,
+                '_token' => $this->generateCsrfToken($this->client, 'signalement_switch_value_'.$signalement->getUuid()),
+            ]
+        );
+        $this->assertResponseHeaderSame('Content-Type', 'application/json');
+        $this->assertEquals('{"response":"success"}', $this->client->getResponse()->getContent());
+        $this->assertEquals(1, $signalement->getTags()->count());
+        $this->assertEquals(3, $signalement->getTags()->first()->getId());
+    }
 }
