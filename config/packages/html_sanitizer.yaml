@@ -2,6 +2,7 @@ framework:
     html_sanitizer:
         sanitizers:
             app.message_sanitizer:
+                allow_safe_elements: true
                 allow_relative_links: true
                 allow_elements:
                     a: ['class', 'target', 'href', 'title', 'rel']
@@ -10,7 +11,12 @@ framework:
                     li: ''
                     strong: ''
                     em: ''
-                    br: ''
                     span: ''
                     div: ''
-                block_elements: ['p', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6']
+                    table: ''
+                    thead: ''
+                    tbody: ''
+                    tr: ''
+                    th: ''
+                    td: ''
+                drop_elements: ['img']

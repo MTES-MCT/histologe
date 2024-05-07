@@ -68,7 +68,7 @@
             {% if signalement.interventions is empty or intervention.details is empty %}
                 Non renseigné
             {% else %}
-                {{ intervention.details|raw|nl2br|sanitize_html('app.message_sanitizer') }}
+                {{ intervention.details|sanitize_html('app.message_sanitizer') }}
             {% endif %}
             </p>
         </div>

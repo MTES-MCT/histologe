@@ -63,6 +63,12 @@
         {% else %}
             <div class="fr-col-7 bloc-suivi-content-row fr-pl-3v">
         {% endif %}
+            {#{{ dump(suivi.description
+                |replace({'&t=___TOKEN___':'/'~signalement.uuid})
+                |replace({'?t=___TOKEN___':'/'~signalement.uuid})
+                |replace({'?folder=_up':'/'~signalement.uuid~'?variant=resize'})
+                |sanitize_html('app.message_sanitizer'))
+            }}#}
             {{ suivi.description
                 |replace({'&t=___TOKEN___':'/'~signalement.uuid})
                 |replace({'?t=___TOKEN___':'/'~signalement.uuid})
