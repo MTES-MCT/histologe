@@ -52,7 +52,6 @@ class BailleurControllerTest extends WebTestCase
 
         $this->client->request('GET', $route);
         $response = json_decode($this->client->getResponse()->getContent(), true);
-
         foreach ($response as $item) {
             $this->assertStringContainsString('ra', strtolower($item['name']));
             $this->assertStringNotContainsString(Bailleur::BAILLEUR_RADIE, strtolower($item['name']));
@@ -69,5 +68,19 @@ class BailleurControllerTest extends WebTestCase
         foreach ($response as $item) {
             $this->assertStringContainsString(Bailleur::BAILLEUR_RADIE, $item['name']);
         }
+    }
+
+    public function testSearchTermsSanitized(): void
+    {
+        $routeFirst = $this->router->generate('app_bailleur', ['name' => 'habitat 13', 'postcode' => 13002, 'sanitize' => true]);
+
+        $this->client->request('GET', $routeFirst);
+        $responseFirst = json_decode($this->client->getResponse()->getContent(), true);
+
+        $routeSecond = $this->router->generate('app_bailleur', ['name' => '13 habitat', 'postcode' => 13002, 'sanitize' => true]);
+        $this->client->request('GET', $routeSecond);
+        $responseSecond = json_decode($this->client->getResponse()->getContent(), true);
+
+        $this->assertEquals($responseFirst, $responseSecond);
     }
 }
