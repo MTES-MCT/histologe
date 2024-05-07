@@ -33,6 +33,7 @@ class SignalementDraftRequest
     private ?string $adresseLogementAdresseDetailInsee = null;
     private ?float $adresseLogementAdresseDetailGeolocLat = null;
     private ?float $adresseLogementAdresseDetailGeolocLng = null;
+    private ?bool $adresseLogementAdresseDetailManual = null;
     #[Assert\Length(max: 3)]
     private ?string $adresseLogementComplementAdresseEscalier = null;
     #[Assert\Length(max: 5)]
@@ -334,6 +335,18 @@ class SignalementDraftRequest
     public function setAdresseLogementAdresseDetailGeolocLng(?float $adresseLogementAdresseDetailGeolocLng): self
     {
         $this->adresseLogementAdresseDetailGeolocLng = $adresseLogementAdresseDetailGeolocLng;
+
+        return $this;
+    }
+
+    public function getAdresseLogementAdresseDetailManual(): ?bool
+    {
+        return $this->adresseLogementAdresseDetailManual;
+    }
+
+    public function setAdresseLogementAdresseDetailManual(?bool $adresseLogementAdresseDetailManual): self
+    {
+        $this->adresseLogementAdresseDetailManual = $adresseLogementAdresseDetailManual;
 
         return $this;
     }
