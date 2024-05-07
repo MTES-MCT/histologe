@@ -9,7 +9,6 @@ use App\Entity\User;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Authorization\Voter\Voter;
-use Symfony\Component\Security\Core\User\UserInterface;
 
 class FileVoter extends Voter
 {
@@ -24,17 +23,13 @@ class FileVoter extends Voter
 
     protected function supports(string $attribute, $subject): bool
     {
-        return \in_array($attribute, [self::DELETE, self::VIEW, self::CREATE, self::EDIT])
-            && ($subject instanceof Signalement || $subject instanceof File || 'boolean' === \gettype($subject));
+        return \in_array($attribute, [self::DELETE, self::VIEW, self::CREATE, self::EDIT]) && ($subject instanceof Signalement || $subject instanceof File);
     }
 
     protected function voteOnAttribute(string $attribute, $subject, TokenInterface $token): bool
     {
         /** @var User $user */
         $user = $token->getUser();
-        if (!$user instanceof UserInterface && self::VIEW === $attribute) {
-            return $this->canView($subject);
-        }
 
         if (!$subject instanceof Signalement && !$subject instanceof File) {
             return false;
@@ -61,9 +56,9 @@ class FileVoter extends Voter
             && $this->checkSignalementPermission($signalement, $user);
     }
 
-    private function canView(bool|Signalement $subject, ?User $user = null): bool
+    private function canView(Signalement $subject, User $user = null): bool
     {
-        return $subject instanceof Signalement ? $this->checkSignalementPermission($subject, $user) : $subject;
+        return $this->checkSignalementPermission($subject, $user);
     }
 
     private function canEdit(File $file, User $user): bool

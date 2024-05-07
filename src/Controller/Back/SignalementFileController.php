@@ -8,7 +8,6 @@ use App\Entity\Signalement;
 use App\Entity\Suivi;
 use App\Entity\User;
 use App\Factory\SuiviFactory;
-use App\Manager\FileManager;
 use App\Manager\SuiviManager;
 use App\Messenger\Message\PdfExportMessage;
 use App\Repository\FileRepository;
@@ -150,8 +149,7 @@ class SignalementFileController extends AbstractController
         FileRepository $fileRepository,
         UploadHandlerService $uploadHandlerService,
         EntityManagerInterface $entityManager,
-        SuiviFactory $suiviFactory,
-        FileManager $fileManager,
+        SuiviFactory $suiviFactory
     ): Response {
         $fileId = $request->get('file_id');
         $file = $fileRepository->findOneBy(
