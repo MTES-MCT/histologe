@@ -277,6 +277,6 @@ class SignalementControllerTest extends WebTestCase
         $this->assertEquals(Response::HTTP_OK, $client->getResponse()->getStatusCode());
         $response = json_decode($client->getResponse()->getContent(), true);
         $this->assertArrayHasKey('message', $response);
-        $this->assertStringContainsString('supprimé avec succès', $response['message']);
+        $this->assertStringContainsString('a bien été supprimé.', $response['message']);
     }
 }

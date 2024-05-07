@@ -253,7 +253,7 @@ class SignalementListControllerTest extends WebTestCase
         yield 'Search by Date de dernier suivi' => [['dateDernierSuiviDebut' => '2023-04-01', 'dateDernierSuiviFin' => '2023-04-18'], 3];
         yield 'Search by Statut de l\'affectation' => [['statusAffectation' => 'refuse'], 1];
         yield 'Search by Score criticite' => [['criticiteScoreMin' => 5, 'criticiteScoreMax' => 6], 9];
-        yield 'Search by Declarant' => [['typeDeclarant' => 'locataire'], 3];
+        yield 'Search by Declarant' => [['typeDeclarant' => 'locataire'], 39];
         yield 'Search by Nature du parc' => [['natureParc' => 'public'], 5];
         yield 'Search by Allocataire CAF' => [['allocataire' => 'caf'], 13];
         yield 'Search by Allocataire MSA' => [['allocataire' => 'msa'], 1];
