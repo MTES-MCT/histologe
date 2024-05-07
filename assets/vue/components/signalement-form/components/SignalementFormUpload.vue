@@ -14,8 +14,8 @@
       :disabled="disabled"
       :multiple="multiple"
       @change="uploadFile($event)"
+      :accept="accept"
       >
-      <!-- TODO : gérer type de fichier accept=".pdf,.doc,.docx" -->
   </div>
 
   <div v-if="formStore.data[id] !== undefined">
@@ -86,7 +86,24 @@ export default defineComponent({
       error: '',
       uploadPercentage: 0,
       uploadedFiles: <any>[],
+      photosMimeTypes: [
+        'image/jpeg',
+        'image/png',
+        'image/gif'
+      ],
+      documentsMimeTypes: [
+        'application/*'
+      ],
       formStore
+    }
+  },
+  computed: {
+    accept () {
+      if (this.type === 'documents') {
+        return this.documentsMimeTypes.join(',')
+      } else {
+        return this.photosMimeTypes.join(',')
+      }
     }
   },
   methods: {
@@ -134,6 +151,16 @@ export default defineComponent({
             fileInput.value = ''
             this.hasError = true
             this.error = 'Les fichiers de format HEIC/HEIF ne sont pas pris en charge, merci de convertir votre image en JPEG ou en PNG avant de l\'envoyer.'
+            break
+          } else if (this.type === 'documents' && this.documentsMimeTypes.indexOf(file.type) === -1) {
+            fileInput.value = ''
+            this.hasError = true
+            this.error = 'Les fichiers de format ' + file.type + ' ne sont pas pris en charge.'
+            break
+          } else if (this.type === 'photos' && this.photosMimeTypes.indexOf(file.type) === -1) {
+            fileInput.value = ''
+            this.hasError = true
+            this.error = 'Les fichiers de format ' + file.type + ' ne sont pas pris en charge, merci de convertir votre image en JPEG ou en PNG avant de l\'envoyer.'
             break
           } else if (file.size > 10 * 1024 * 1024) {
             fileInput.value = ''
