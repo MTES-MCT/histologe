@@ -1,145 +1,111 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Suivre mon signalement #{{ signalement.reference }}{% endblock %}
+{% block title %}Suivre mon signalement #{{ signalement.reference }}
+{% endblock %}
 
 {% block body %}
 
-    <main class="fr-container--fluid">
-        <section class="fr-container fr-p-5v fr-p-md-5w">
-            <header>
-                <div class="fr-grid-row fr-grid-row--middle">
-                    <div class="fr-col-12 fr-col-md-6">
-                        <h1 class="fr-h2 fr-mb-2v">Signalement #{{ signalement.reference }}  </h1>
-                        {% if type is same as 'declarant' or (type is null and signalement.isNotOccupant) %}
-                            <small class="fr-background-contrast--red-marianne fr-text-default--error fr-rounded fr-p-1v fr-text--bold fr-fi-information-fill fr-link--icon-right fr-pr-3v">&nbsp;
-                                Signalement par un tiers</small>
-                        {% else %}
-                            <small class="fr-background-alt--blue-france fr-text-label--blue-france fr-rounded fr-p-1v fr-text--bold fr-fi-information-fill fr-link--icon-right fr-pr-3v">&nbsp;
-                                Signalement par l'occupant</small>
-                        {% endif %}
-                        <text><strong>Déposé le:</strong> {{ signalement.createdAt|format_datetime(locale='fr') }}
-                        </text>
-                    </div>
+	{% if (is_granted('SIGN_USAGER_EDIT', signalement)) %}
+		{% include '_partials/_modal_upload_files_usager.html.twig' with {'criteres': infoDesordres['criteres']} %}
+	{% endif %}
 
-                </div>
-            </header>
-            <hr>
-            {% if signalement.statut is same as constant('App\\Entity\\Signalement::STATUS_REFUSED') %}
-                <div role="alert" class="fr-alert fr-alert--error fr-alert--sm">
-                    <p>Votre signalement a été refusé, vous ne pouvez plus envoyer de messages.</p>
-                </div>
-            {% elseif signalement.statut is same as constant('App\\Entity\\Signalement::STATUS_CLOSED') %}
-                <div role="alert" class="fr-alert fr-alert--error fr-alert--sm">
-                    <p>Votre signalement a été clôturé, vous ne pouvez plus envoyer de messages.</p>
-                </div>
-            {% else %}
-                {% if suiviAuto is defined and suiviAuto is not empty %}
-                    <div class="fr-grid-row fr-grid-row--middle fr-rounded fr-p-5v">
-                        <div class="fr-col-12">
-                            <div class="fr-grid-row">
-                                <div class="fr-col-12">
-                                {% if suiviAuto is same as constant('App\\Entity\\Suivi::ARRET_PROCEDURE')  %}
-                                    Vous souhaitez arrêter la procédure ?<br>
-                                {% endif %}
-                                {% if suiviAuto is same as constant('App\\Entity\\Suivi::POURSUIVRE_PROCEDURE')  %}
-                                    Vous souhaitez poursuivre la procédure ?<br>
-                                {% endif %}
-                                Nous allons informer les services de votre réponse. <br>
-                                Attention votre choix pourra avoir un impact sur la poursuite de votre dossier. <br>
-                                </div>
-                            </div>
-                            <div class="fr-grid-row fr-p-5v">
-                                <div class="fr-col-6 fr-text--center">
-                                    <a class="fr-btn fr-btn--secondary fr-fi-arrow-left-line fr-btn--icon-left"
-                                    href="{{ path('front_suivi_signalement',{code:signalement.codeSuivi, from:email}) }}">Annuler</a>
-                                </div>
-                                <div class="fr-col-6 fr-text--center">
-                                    <a class="fr-btn fr-icon-checkbox-circle-fill fr-btn--icon-right"
-                                    href="{{ path('front_suivi_procedure',{code:signalement.codeSuivi, from:email, suiviAuto:suiviAuto}) }}&_token={{csrf_token('suivi_procedure')}}">Confirmer</a>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                {% endif %}
-                <div class="fr-grid-row fr-grid-row--middle fr-rounded fr-p-5v">
-                    <div class="fr-col-12">
-                        <form action="{{ path('front_suivi_signalement_user_response',{code:signalement.codeSuivi}) }}"
-                                class="needs-validation fr-disable-button-when-submit" novalidate method="POST">
-                            <div class="fr-input-group">
-                                <label for="signalement_front_response_content" class="fr-label">Votre
-                                    message:</label>
-                                <p class="fr-hint-text">Dix (10) caractères minimum</p>
-                                <input type="hidden" name="signalement_front_response[email]" value="{{ email }}">
-                                <input type="hidden" name="signalement_front_response[type]" value="{{ type }}">
-                                <textarea name="signalement_front_response[content]"
-                                            id="signalement_front_response_content" rows="10" class="fr-input"
-                                            required minlength="10"></textarea>
-                                <p class="fr-error-text fr-hidden">Veuillez composer un message d'au moins 10
-                                    caractères.</p>
-                            </div>
-                            {% include '_partials/_signalement_upload.html.twig' with {
-                                limit:1
-                            } %}
-                            <div class="fr-grid-row">
-                                <div class="fr-col-12 fr-text--center">
-                                    <progress max="100" id="form_global_file_progress" value="0"
-                                                class="final-progress fr-hidden"></progress>
-                                </div>
-                            </div>
-                            <div class="fr-grid-row">
-                                <div class="fr-col-12 fr-text--center">
-                                    <button class="fr-btn fr-icon-checkbox-circle-fill fr-btn--icon-right"
-                                            type="submit" id="form_finish_submit">Confirmer
-                                    </button>
-                                </div>
-                            </div>
-                            <input type="hidden" name="_token"
-                                    value="{{ csrf_token('signalement_front_response_'~signalement.uuid) }}">
-                        </form>
-                    </div>
-                </div>
-            {% endif %}
+<main class="fr-container">
+	<header>
+		<div class="fr-grid-row fr-grid fr-mt-2v">
+			<div class="fr-col-12 fr-col-lg-6">
+				<h1 class="fr-h2 fr-mb-2v">
+					Signalement #{{ signalement.reference }}
+					<br>
+					{{signalement.prenomOccupant|capitalize}}
+					{{signalement.nomOccupant|capitalize}}
+				</h1>
+			</div>
+			<div class="fr-col-12 fr-col-lg-6 text-align-right--lg">
+				<div>Déposé le :
+					{{ signalement.createdAt|date('d/m/Y') }}</div>
+				{% if signalement.statut is same as constant('App\\Entity\\Signalement::STATUS_NEED_VALIDATION') %}
+					<span class="fr-badge fr-badge--no-icon fr-badge--info">Nouveau</span>
+				{% elseif signalement.statut is same as constant('App\\Entity\\Signalement::STATUS_ACTIVE')
+						or signalement.statut is same as constant('App\\Entity\\Signalement::STATUS_NEED_PARTNER_RESPONSE') %}
+					<span class="fr-badge fr-badge--no-icon fr-badge--success">En cours</span>
+				{% elseif signalement.statut is same as constant('App\\Entity\\Signalement::STATUS_CLOSED')
+						or signalement.statut is same as constant('App\\Entity\\Signalement::STATUS_ARCHIVED')
+						or signalement.statut is same as constant('App\\Entity\\Signalement::STATUS_REFUSED') %}
+					<span class="fr-badge fr-badge--no-icon fr-badge--error">Fermé</span>
+				{% endif %}
+			</div>
 
-            {% for suivi in signalement.suivis|reverse %}
-                <div class="fr-grid-row fr-grid-row--middle fr-stripped fr-rounded fr-p-5v {% if not suivi.createdBy %}fr-background-alt--orange-terre-battue{% endif %}">
-                    <div class="fr-col-12 fr-col-md-2">
-                        <small>[{{ suivi.createdBy ? (suivi.createdBy.partner ? suivi.createdBy.partner.nom : (suivi.createdBy.email ? (suivi.createdBy.email is same as signalement.mailOccupant ? 'OCCUPANT' : 'DECLARANT') : 'Aucun')): (suivi.createdAt|date('Y') >= 2024) ? 'Occupant ou déclarant' : 'Vous' }}]</small>
-                        <br>
-                        <small>{{ suivi.createdAt|date('d/m/Y') }}</small>
-                    </div>
-                    <div class="fr-col-12 fr-col-md-10">
-                        {{ suivi.description|replace({'___TOKEN___':csrf_token('suivi_signalement_ext_file_view')})|raw }}
-                    </div>
-                </div>
-            {% endfor %}
-            <hr>
-            <h2 class="fr-mb-0">Photo(s) liée(s) à votre signalement</h2>
-            <p class="fr-hint-text">Ci-dessous, les photos ajoutées lors du dépôt de votre signalement ainsi que celles
-                ajoutées par le(s) partenaire(s) en charge de votre dossier.</p>
-            {% for photo in signalement.files|filter(photo => photo.fileType == 'photo') %}
-                <div class="fr-grid-row fr-grid-row--middle fr-stripped fr-rounded fr-p-5v">
-                    <div class="fr-col-10">
-                        Photos N°{{ loop.index }}
-                    </div>
-                    <div class="fr-col-2 fr-text--right">
-                        <a href="{{ asset('_up/'~photo.filename~'?variant=resize') }}&t={{ csrf_token('suivi_signalement_ext_file_view') }}"
-                           class="fr-btn fr-fi-eye-fill fr-btn--icon-left"
-                           title="Afficher la photo"
-                           target="_blank"
-                           rel="noopener">Afficher</a>
-                    </div>
-                </div>
-            {% else %}
-                <div class="fr-grid-row fr-grid-row--middle fr-background-contrast--red-marianne fr-rounded fr-p-5v">
-                    <div class="fr-col-12">
-                        Aucune photo à afficher, si vous avez ajouté des photos dans votre signalement, rafraîchissez la page pour les voir apparaître.
-                    </div>
-                </div>
-            {% endfor %}
-        </section>
-    </main>
+			{% if suiviAuto is defined and suiviAuto is not empty %}
+				{% if signalement.statut is same as constant('App\\Entity\\Signalement::STATUS_REFUSED') or signalement.statut is same as constant('App\\Entity\\Signalement::STATUS_CLOSED') %}
+					<div class="fr-col-12 fr-mt-2v">
+						<div role="alert" class="fr-alert fr-alert--error fr-alert--sm">
+							<p>Vous ne pouvez plus modifier la procédure.</p>
+						</div>
+					</div>
+				{% else %}
+					<div class="fr-col-12 fr-mt-2v">
+						<div class="fr-tile">
+							{% if suiviAuto is same as constant('App\\Entity\\Suivi::ARRET_PROCEDURE')  %}
+								Vous souhaitez arrêter la procédure ?<br>
+							{% endif %}
+							{% if suiviAuto is same as constant('App\\Entity\\Suivi::POURSUIVRE_PROCEDURE')  %}
+								Vous souhaitez poursuivre la procédure ?<br>
+							{% endif %}
+							Nous allons informer les services de votre réponse.
+							<br>
+							Attention votre choix pourra avoir un impact sur la poursuite de votre dossier.
+							<br>
+							<div class="fr-grid-row fr-mt-4v">
+								<div class="fr-col">
+									<a class="fr-btn fr-btn--secondary fr-fi-arrow-left-line fr-btn--icon-left" href="{{ path('front_suivi_signalement',{code:signalement.codeSuivi, from:email}) }}">Annuler</a>
+								</div>
+								<div class="fr-col">
+									<a class="fr-btn fr-icon-checkbox-circle-fill fr-btn--icon-right" href="{{ path('front_suivi_procedure',{code:signalement.codeSuivi, from:email, suiviAuto:suiviAuto}) }}&_token={{csrf_token('suivi_procedure')}}">Confirmer</a>
+								</div>
+							</div>
+						</div>
+					</div>
+				{% endif %}
+			{% endif %}
+
+			<div class="fr-col-12 fr-mt-2v">
+				<div class="fr-notice fr-notice--info">
+					<div class="fr-container">
+						<div class="fr-notice__body">
+							<p>
+								Consultez vos échanges avec l'administration dans l'onglet
+								<strong>"Suivi du dossier"</strong>
+								et retrouvez les détails de votre signalement dans l'onglet
+								<strong>"Mes infos"</strong>.
+							</p>
+							<button class="fr-btn--close fr-btn" title="Masquer le message" onclick="const notice = this.parentNode.parentNode.parentNode; notice.parentNode.removeChild(notice)">
+								Masquer le message
+							</button>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</header>
+
+	<div class="fr-tabs fr-mt-4v fr-mb-4v">
+		<ul class="fr-tabs__list" role="tablist" aria-label="Suivi du dossier / mes infos">
+			<li role="presentation">
+				<button id="tabpanel-suivi-dossier" class="fr-tabs__tab" tabindex="0" role="tab" aria-selected="true" aria-controls="tabpanel-suivi-dossier-panel">Suivi du dossier</button>
+			</li>
+			<li role="presentation">
+				<button id="tabpanel-mes-infos" class="fr-tabs__tab" tabindex="-1" role="tab" aria-selected="false" aria-controls="tabpanel-mes-infos-panel">Mes infos</button>
+			</li>
+		</ul>
+		<div id="tabpanel-suivi-dossier-panel" class="fr-tabs__panel fr-tabs__panel--selected" role="tabpanel" aria-labelledby="tabpanel-suivi-dossier" tabindex="0">
+			{% include 'front/_partials/_suivi_signalement_tab_suivi.html.twig' %}
+		</div>
+		<div id="tabpanel-mes-infos-panel" class="fr-tabs__panel" role="tabpanel" aria-labelledby="tabpanel-mes-infos" tabindex="0">
+			{% include 'front/_partials/_suivi_signalement_tab_infos.html.twig' %}
+		</div>
+	</div>
+</main>
 {% endblock %}
-
 {% block javascripts %}
-    {{ encore_entry_script_tags('app') }}
+	{{ encore_entry_script_tags('app') }}
 {% endblock %}

@@ -772,3 +772,41 @@ h2, h3 {
         border-radius: 50%;
     }
 }
+
+
+@media (min-width: 992px) {
+    .text-align-right--lg {
+        text-align: right;
+    }
+}
+
+.message-box{
+    margin-top: 1rem;
+    .message-box-message{
+        background: #E5E5E5;
+        padding: 1rem;
+    }
+}
+.message-box.message-box--usager{ 
+    text-align: right;
+    .message-box-message{
+        background: #ececfe;
+    }
+    ul{
+        list-style-position: inside;
+    }
+}
+
+a.photo-preview {
+    margin: 0.25rem;
+    margin-left: 0;
+    display: inline-block;
+    background-image: none;
+    img {
+        max-width: 100px;
+    }
+    &::after {
+        mask-image: none;
+        width: 0;
+    }
+}

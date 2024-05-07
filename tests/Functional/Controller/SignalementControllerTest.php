@@ -13,7 +13,7 @@ use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\RouterInterface;
 
-class FrontSignalementControllerTest extends WebTestCase
+class SignalementControllerTest extends WebTestCase
 {
     use SessionHelper;
 
@@ -48,7 +48,7 @@ class FrontSignalementControllerTest extends WebTestCase
         if (Signalement::STATUS_ARCHIVED === $status) {
             $this->assertResponseRedirects('/');
         } elseif (Signalement::STATUS_ACTIVE === $status) {
-            $this->assertEquals('Signalement #2022-1', $crawler->filter('h1')->text());
+            $this->assertEquals('Signalement #2022-1 '.$signalement->getPrenomOccupant().' '.$signalement->getNomOccupant(), $crawler->filter('h1')->eq(2)->text());
         } else {
             $this->assertResponseRedirects(
                 '/suivre-mon-signalement/'.$signalement->getCodeSuivi().'?from='.$signalement->getMailOccupant()
@@ -79,7 +79,7 @@ class FrontSignalementControllerTest extends WebTestCase
         if (Signalement::STATUS_ARCHIVED === $status) {
             $this->assertResponseRedirects('/');
         } elseif (Signalement::STATUS_ACTIVE === $status) {
-            $this->assertEquals('Signalement #2022-1', $crawler->filter('h1')->text());
+            $this->assertEquals('Signalement #2022-1 '.$signalement->getPrenomOccupant().' '.$signalement->getNomOccupant(), $crawler->filter('h1')->eq(2)->text());
         } elseif (Signalement::STATUS_CLOSED === $status) {
             $this->assertEquals(
                 'Votre signalement a été clôturé, vous ne pouvez plus envoyer de messages.',
@@ -118,23 +118,11 @@ class FrontSignalementControllerTest extends WebTestCase
                 'type' => UserManager::OCCUPANT,
                 'content' => 'Lorem Ipsum is simply dummy text of the printing and typesetting industry',
             ],
-            'signalement' => [
-                'files' => [
-                    'photos' => [
-                        'blank.jpg' => 'blank-64969c273a28a.jpg',
-                    ],
-                    'documents' => [
-                        'blank.pdf' => 'blank-64969be831063.pdf',
-                    ],
-                ],
-            ],
         ]);
-        if (Signalement::STATUS_ARCHIVED === $status) {
-            $this->assertResponseRedirects('/');
-        } elseif (Signalement::STATUS_ACTIVE === $status) {
+        if (Signalement::STATUS_ACTIVE === $status) {
             $this->assertResponseRedirects('/suivre-mon-signalement/'.$codeSuivi.'?from='.$emailOccupant);
         } else {
-            $this->assertResponseRedirects('/suivre-mon-signalement/'.$codeSuivi);
+            $this->assertResponseRedirects('/');
         }
     }
 

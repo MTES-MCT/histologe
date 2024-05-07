@@ -3,8 +3,8 @@
 namespace App\Controller;
 
 use App\Dto\Request\Signalement\SignalementDraftRequest;
-use App\Entity\Enum\DocumentType;
 use App\Entity\Enum\SignalementDraftStatus;
+use App\Entity\File;
 use App\Entity\Signalement;
 use App\Entity\SignalementDraft;
 use App\Entity\Suivi;
@@ -22,6 +22,7 @@ use App\Service\Mailer\NotificationMail;
 use App\Service\Mailer\NotificationMailerRegistry;
 use App\Service\Mailer\NotificationMailerType;
 use App\Service\Signalement\PostalCodeHomeChecker;
+use App\Service\Signalement\SignalementDesordresProcessor;
 use App\Service\Signalement\SignalementDraftHelper;
 use App\Service\Signalement\SignalementFileProcessor;
 use App\Service\UploadHandlerService;
@@ -35,7 +36,7 @@ use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 #[Route('/')]
-class FrontSignalementController extends AbstractController
+class SignalementController extends AbstractController
 {
     #[Route('/signalement', name: 'front_signalement')]
     public function index(
@@ -135,10 +136,7 @@ class FrontSignalementController extends AbstractController
                         'created_at' => $existingSignalement->getCreatedAt(),
                         'prenom_occupant' => $existingSignalement->getPrenomOccupant(),
                         'nom_occupant' => $existingSignalement->getNomOccupant(),
-                        'adresse_autre_occupant' => $existingSignalement->getAdresseAutreOccupant(),
-                        'num_appart_occupant' => $existingSignalement->getNumAppartOccupant(),
-                        'escalier_occupant' => $existingSignalement->getEscalierOccupant(),
-                        'etage_occupant' => $existingSignalement->getEtageOccupant(),
+                        'complement_adresse_occupant' => $existingSignalement->getComplementAdresseOccupant(),
                     ];
                 }, $existingSignalements);
 
@@ -385,7 +383,8 @@ class FrontSignalementController extends AbstractController
         UserManager $userManager,
         SuiviManager $suiviManager,
         EntityManagerInterface $entityManager,
-        SuiviFactory $suiviFactory
+        SuiviFactory $suiviFactory,
+        SignalementDesordresProcessor $signalementDesordresProcessor
     ) {
         $signalement = $signalementRepository->findOneByCodeForPublic($code);
         if (!$signalement) {
@@ -489,11 +488,14 @@ class FrontSignalementController extends AbstractController
             );
         }
 
+        $infoDesordres = $signalementDesordresProcessor->process($signalement);
+
         return $this->render('front/suivi_signalement.html.twig', [
             'signalement' => $signalement,
             'email' => $fromEmail,
             'type' => $type,
             'suiviAuto' => $suiviAuto,
+            'infoDesordres' => $infoDesordres,
         ]);
     }
 
@@ -502,7 +504,8 @@ class FrontSignalementController extends AbstractController
         string $code,
         SignalementRepository $signalementRepository,
         Request $request,
-        UserManager $userManager
+        UserManager $userManager,
+        SignalementDesordresProcessor $signalementDesordresProcessor
     ) {
         if ($signalement = $signalementRepository->findOneByCodeForPublic($code)) {
             $requestEmail = $request->get('from');
@@ -511,10 +514,13 @@ class FrontSignalementController extends AbstractController
             $user = $userManager->getOrCreateUserForSignalementAndEmail($signalement, $fromEmail);
             $type = $userManager->getUserTypeForSignalementAndUser($signalement, $user);
 
+            $infoDesordres = $signalementDesordresProcessor->process($signalement);
+
             return $this->render('front/suivi_signalement.html.twig', [
                 'signalement' => $signalement,
                 'email' => $fromEmail,
                 'type' => $type,
+                'infoDesordres' => $infoDesordres,
             ]);
         }
         $this->addFlash('error', 'Le lien utilisé est invalide, vérifiez votre saisie.');
@@ -533,9 +539,7 @@ class FrontSignalementController extends AbstractController
         SignalementFileProcessor $signalementFileProcessor
     ): RedirectResponse {
         $signalement = $signalementRepository->findOneByCodeForPublic($code);
-        if (!$signalement) {
-            $this->addFlash('error', 'Le lien utilisé est expiré ou invalide, vérifiez votre saisie.');
-
+        if (!$this->isGranted('SIGN_USAGER_EDIT', $signalement)) {
             return $this->redirectToRoute('home');
         }
         if (!$this->isCsrfTokenValid('signalement_front_response_'.$signalement->getUuid(), $request->get('_token'))) {
@@ -543,10 +547,6 @@ class FrontSignalementController extends AbstractController
 
             return $this->redirectToRoute('front_suivi_signalement', ['code' => $signalement->getCodeSuivi()]);
         }
-        if (\in_array($signalement->getStatut(), [Signalement::STATUS_CLOSED, Signalement::STATUS_REFUSED])) {
-            return $this->redirectToRoute('front_suivi_signalement', ['code' => $signalement->getCodeSuivi()]);
-        }
-
         $email = $request->get('signalement_front_response')['email'];
         $user = $userManager->getOrCreateUserForSignalementAndEmail($signalement, $email);
         $suivi = $suiviFactory->createInstanceFrom(
@@ -562,26 +562,14 @@ class FrontSignalementController extends AbstractController
             'UTF-8'
         );
 
-        $fileList = $descriptionList = [];
-        if ($data = $request->get('signalement')) {
-            if (isset($data['files'])) {
-                $dataFiles = $data['files'];
-                foreach ($dataFiles as $inputName => $files) {
-                    list($files, $descriptions) = $signalementFileProcessor->process(
-                        $dataFiles,
-                        $inputName,
-                        DocumentType::AUTRE
-                    );
-                    $fileList = [...$fileList, ...$files];
-                    $descriptionList = [...$descriptionList, ...$descriptions];
-                }
-                unset($data['files']);
+        $docs = $entityManager->getRepository(File::class)->findBy(['signalement' => $signalement, 'isTemp' => true, 'uploadedBy' => $user]);
+        if (\count($docs)) {
+            $descriptionList = [];
+            foreach ($docs as $doc) {
+                $doc->setIsTemp(false);
+                $descriptionList[] = $signalementFileProcessor->generateListItemDescription($doc->getFilename(), $doc->getTitle(), true);
             }
-            if (!empty($descriptionList)) {
-                $description .= '<br>Ajout de pièces au signalement<ul>'
-                    .implode('', $descriptionList).'</ul>';
-                $signalementFileProcessor->addFilesToSignalement($fileList, $signalement, $user);
-            }
+            $description .= '<br>Ajout de pièces au signalement<ul>'.implode('', $descriptionList).'</ul>';
         }
 
         $suivi->setDescription($description);

@@ -43,10 +43,10 @@ class SecurityController extends AbstractController
         ?Signalement $signalement = null,
     ): BinaryFileResponse|RedirectResponse {
         $request = Request::createFromGlobals();
-        $this->denyAccessUnlessGranted(
-            'FILE_VIEW',
-            null === $this->getUser() ? $this->isCsrfTokenValid('suivi_signalement_ext_file_view', $request->get('t')) : $signalement
-        );
+
+        if (!$this->isCsrfTokenValid('suivi_signalement_ext_file_view', $request->get('t') || !$this->isGranted('FILE_VIEW', $signalement))) {
+            $this->createAccessDeniedException();
+        }
         try {
             $variant = $request->query->get('variant');
             $variantNames = ImageManipulationHandler::getVariantNames($filename);

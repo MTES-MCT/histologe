@@ -5,7 +5,7 @@ namespace App\Tests\Functional\Controller;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\Routing\RouterInterface;
 
-class FrontStatistiquesControllerTest extends WebTestCase
+class StatistiquesControllerTest extends WebTestCase
 {
     public function testFrontStatistiques(): void
     {

@@ -34,6 +34,7 @@ class Signalement
     public const STATUS_CLOSED = 6;
     public const STATUS_ARCHIVED = 7;
     public const STATUS_REFUSED = 8;
+    public const DISABLED_STATUSES = [self::STATUS_CLOSED, self::STATUS_ARCHIVED, self::STATUS_REFUSED];
 
     #[ORM\Id]
     #[ORM\GeneratedValue]
@@ -1272,6 +1273,25 @@ class Signalement
         return $this;
     }
 
+    public function getComplementAdresseOccupant(): string
+    {
+        $complement = '';
+        if ($this->etageOccupant) {
+            $complement .= 'étage '.$this->etageOccupant.', ';
+        }
+        if ($this->escalierOccupant) {
+            $complement .= 'escalier '.$this->escalierOccupant.', ';
+        }
+        if ($this->numAppartOccupant) {
+            $complement .= 'appartement '.$this->numAppartOccupant.', ';
+        }
+        if ($this->adresseAutreOccupant) {
+            $complement .= $this->adresseAutreOccupant;
+        }
+
+        return mb_strtoupper(mb_substr($complement, 0, 1)).mb_substr($complement, 1);
+    }
+
     public function getModeContactProprio(): ?array
     {
         return $this->modeContactProprio;
@@ -1927,7 +1947,7 @@ class Signalement
     public function getPhotos(): Collection
     {
         return $this->files->filter(function (File $file) {
-            return 'photo' === $file->getFiletype();
+            return 'photo' === $file->getFiletype() && !$file->isTemp();
         });
     }
 
@@ -1937,7 +1957,7 @@ class Signalement
     public function getDocuments(): Collection
     {
         return $this->files->filter(function (File $file) {
-            return 'document' === $file->getFiletype();
+            return 'document' === $file->getFiletype() && !$file->isTemp();
         });
     }
 
@@ -1946,7 +1966,9 @@ class Signalement
      */
     public function getFiles(): Collection
     {
-        return $this->files;
+        return $this->files->filter(function (File $file) {
+            return !$file->isTemp();
+        });
     }
 
     public function addFile(File $file): self

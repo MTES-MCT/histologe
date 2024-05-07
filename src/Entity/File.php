@@ -64,11 +64,15 @@ class File
     #[ORM\Column]
     private ?bool $isWaitingSuivi = null;
 
+    #[ORM\Column]
+    private ?bool $isTemp = null;
+
     public function __construct()
     {
         $this->createdAt = new \DateTimeImmutable();
         $this->isVariantsGenerated = false;
         $this->isWaitingSuivi = false;
+        $this->isTemp = false;
     }
 
     public function getId(): ?int
@@ -275,5 +279,17 @@ class File
         return $this->fileType === $this::FILE_TYPE_PHOTO
         && \array_key_exists($this->documentType->value, DocumentType::getOrderedSituationList())
         && null === $this->intervention;
+    }
+
+    public function isTemp(): ?bool
+    {
+        return $this->isTemp;
+    }
+
+    public function setIsTemp(?bool $isTemp): static
+    {
+        $this->isTemp = $isTemp;
+
+        return $this;
     }
 }

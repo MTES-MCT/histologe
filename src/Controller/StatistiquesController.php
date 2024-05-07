@@ -18,7 +18,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
-class FrontStatistiquesController extends AbstractController
+class StatistiquesController extends AbstractController
 {
     private $ajaxResult;
 

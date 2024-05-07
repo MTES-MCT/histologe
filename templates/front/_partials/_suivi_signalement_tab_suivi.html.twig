@@ -1,0 +1,63 @@
+<h2 class="fr-h3 fr-mb-2v">Suivi du dossier</h2>
+<div>
+	Votre signalement a bien été enregistré le
+	{{ signalement.createdAt|date('d/m/Y') }}.
+</div>
+<div class="fr-mt-4v">
+	{% for suivi in signalement.suivis %}
+		<div class="message-box {% if suivi.createdBy and suivi.createdBy.partner %}message-box--partner{% else %}message-box--usager{% endif %}">
+			<div>
+				<strong>
+					{{ suivi.createdBy ? (suivi.createdBy.partner ? suivi.createdBy.partner.nom : (suivi.createdBy.email ? (suivi.createdBy.email is same as signalement.mailOccupant ? 'OCCUPANT' : 'DECLARANT') : 'Aucun')): (suivi.createdAt|date('Y') >= 2024) ? 'Occupant ou déclarant' : 'Vous' }}
+					-
+					{{ suivi.createdAt|date('d/m/Y') }}
+				</strong>
+			</div>
+			<div class="message-box-message">
+				{{ suivi.description|replace({'___TOKEN___':csrf_token('suivi_signalement_ext_file_view')})|raw }}
+			</div>
+		</div>
+	{% endfor %}
+</div>
+<div class="fr-mt-6v">
+	{% if signalement.statut is same as constant('App\\Entity\\Signalement::STATUS_REFUSED') %}
+		<div role="alert" class="fr-alert fr-alert--error fr-alert--sm">
+			<p>Votre signalement a été refusé, vous ne pouvez plus envoyer de messages.</p>
+		</div>
+	{% elseif signalement.statut is same as constant('App\\Entity\\Signalement::STATUS_CLOSED') %}
+		<div role="alert" class="fr-alert fr-alert--error fr-alert--sm">
+			<p>Votre signalement a été clôturé, vous ne pouvez plus envoyer de messages.</p>
+		</div>
+	{% else %}
+		<form action="{{ path('front_suivi_signalement_user_response',{code:signalement.codeSuivi}) }}" class="needs-validation fr-disable-button-when-submit" novalidate method="POST">
+			<div class="fr-input-group">
+				<label for="signalement_front_response_content" class="fr-h4">Envoyer un message</label>
+				<p class="fr-hint-text fr-mb-2v">Dix (10) caractères minimum</p>
+				<input type="hidden" name="signalement_front_response[email]" value="{{ email }}" id="suivi_from_email">
+				<input type="hidden" name="signalement_front_response[type]" value="{{ type }}">
+				<textarea name="signalement_front_response[content]" id="signalement_front_response_content" rows="10" class="fr-input" required minlength="10"></textarea>
+				<p class="fr-error-text fr-hidden">Veuillez composer un message d'au moins 10 caractères.</p>
+			</div>
+			<div id="uploaded-files-list" class="fr-mt-n2v fr-mb-2v"></div>
+			<ul class="fr-btns-group fr-btns-group--icon-left">
+				<li>
+					<button class="fr-btn fr-btn--secondary fr-icon-add-line open-modal-upload-files-btn" type="button" data-fr-opened="false" aria-controls="fr-modal-upload-files-usager" data-file-type="photo">
+						Ajouter des photos
+					</button>
+				</li>
+				<li>
+					<button class="fr-btn fr-btn--secondary fr-icon-add-line open-modal-upload-files-btn" type="button" data-fr-opened="false" aria-controls="fr-modal-upload-files-usager" data-file-type="document">
+						Ajouter des documents
+					</button>
+				</li>
+				<li>
+					<button class="fr-btn fr-icon-check-line" type="submit" id="form_finish_submit">
+						Envoyer le message
+					</button>
+				</li>
+			</ul>
+			<input type="hidden" name="_token" value="{{ csrf_token('signalement_front_response_'~signalement.uuid) }}">
+		</form>
+	{% endif %}
+</div>
+			
