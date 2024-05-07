@@ -152,6 +152,7 @@ export default defineComponent({
         this.formStore.data[this.id + '_detail_insee'] = this.suggestions[index].properties.citycode
         this.formStore.data[this.id + '_detail_geoloc_lng'] = this.suggestions[index].geometry.coordinates[0]
         this.formStore.data[this.id + '_detail_geoloc_lat'] = this.suggestions[index].geometry.coordinates[1]
+        this.formStore.data[this.id + '_detail_manual'] = 0
         if (this.isTerritoryToCheck) {
           requests.checkTerritory(
             this.suggestions[index].properties.postcode,

@@ -6,6 +6,7 @@ export const subscreenManager = {
       return {
         ...component,
         slug: id + '_' + (component.slug as string),
+        tagWhenEdit: id + '_' + (component.tagWhenEdit as string),
         validate: validateParent
       }
     })
