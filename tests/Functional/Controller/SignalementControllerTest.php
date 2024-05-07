@@ -13,7 +13,7 @@ use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\RouterInterface;
 
-class FrontSignalementControllerTest extends WebTestCase
+class SignalementControllerTest extends WebTestCase
 {
     use SessionHelper;
 

@@ -36,7 +36,7 @@ use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 #[Route('/')]
-class FrontSignalementController extends AbstractController
+class SignalementController extends AbstractController
 {
     #[Route('/signalement', name: 'front_signalement')]
     public function index(

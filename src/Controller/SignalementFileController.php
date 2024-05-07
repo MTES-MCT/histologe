@@ -17,7 +17,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
 #[Route('/signalement')]
-class FrontSignalementFileController extends AbstractController
+class SignalementFileController extends AbstractController
 {
     #[Route('/{uuid}/file/add', name: 'signalement_add_file')]
     public function addFileSignalement(
