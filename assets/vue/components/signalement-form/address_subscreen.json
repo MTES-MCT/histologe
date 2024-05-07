@@ -10,13 +10,21 @@
             "type": "SignalementFormTextfield",
             "label": "Code postal",
             "slug": "detail_code_postal",
-            "tagWhenEdit": "detail_manual"
+            "tagWhenEdit": "detail_manual",
+            "searchWhenEdit": {
+                "values": ["detail_code_postal", "detail_commune"],
+                "result": "detail_insee"
+            }
         },
         {
             "type": "SignalementFormTextfield",
             "label": "Commune",
             "slug": "detail_commune",
-            "tagWhenEdit": "detail_manual"
+            "tagWhenEdit": "detail_manual",
+            "searchWhenEdit": {
+                "values": ["detail_code_postal", "detail_commune"],
+                "result": "detail_insee"
+            }
         }
     ]
 }

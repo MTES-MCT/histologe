@@ -3,10 +3,23 @@ import formStore from '../store'
 export const subscreenManager = {
   generateSubscreenData (id: string, data: any[], validateParent: any) {
     return data.map((component) => {
+      let updatedSearchWhenEdit
+      if (component.searchWhenEdit !== undefined) {
+        const updatedValues = []
+        for (const index of component.searchWhenEdit.values) {
+          updatedValues.push(id + '_' + (index as string))
+        }
+        updatedSearchWhenEdit = {
+          values: updatedValues,
+          result: id + '_' + (component.searchWhenEdit.result as string)
+        }
+      }
+
       return {
         ...component,
         slug: id + '_' + (component.slug as string),
         tagWhenEdit: id + '_' + (component.tagWhenEdit as string),
+        searchWhenEdit: updatedSearchWhenEdit,
         validate: validateParent
       }
     })
