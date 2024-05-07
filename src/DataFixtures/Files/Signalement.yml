@@ -1,6 +1,7 @@
 signalements:
   -
     uuid: "00000000-0000-0000-2022-000000000001"
+    profile_declarant: "TIERS_PRO"
     details: "Absence d’isolation toiture<br><br>Courrier adressé non pas à la mairie mais au bailleur social"
     is_proprio_averti: 1
     is_logement_social: 1
@@ -47,6 +48,7 @@ signalements:
       - "le sol ou la base des murs est très humide."
   -
     uuid: "00000000-0000-0000-2022-000000000002"
+    profile_declarant: "LOCATAIRE"
     details: "Première personne à s’identifier (pour rappel l’A.S. nous a donner le signalement de ce lotissement ou plusieurs désordres mais locataires non volontaires pour procédure)<br><br>Demande à la mairie, par mail, de visiter les logements de ce lotissement (tous concernés)<br><br>Le 11/09/20 Mme FUCHS est dans l’attente d’un nouveau logement (DALO) la commission doit se tenir dans le mois. Aucun travaux n’a été réalisé dans son logement"
     is_proprio_averti: 1
     nb_adultes: "3"
@@ -94,6 +96,7 @@ signalements:
       - "le sol ou la base des murs est très humide."
   -
     uuid: "00000000-0000-0000-2022-000000000003"
+    profile_declarant: "LOCATAIRE"
     details: "appartement insalubre avec des..."
     is_proprio_averti: 1
     nb_adultes: "2"
@@ -140,6 +143,7 @@ signalements:
       - "le sol ou la base des murs est très humide."
   -
     uuid: "00000000-0000-0000-2022-000000000004"
+    profile_declarant: "TIERS_PARTICULIER"
     details: "appartement insalubre avec des..."
     is_proprio_averti: 1
     is_not_occupant: true
@@ -186,6 +190,7 @@ signalements:
       - "le sol ou la base des murs est très humide."
   -
     uuid: "00000000-0000-0000-2022-000000000005"
+    profile_declarant: "LOCATAIRE"
     details: "appartement insalubre avec des..."
     is_proprio_averti: 1
     nb_adultes: "2"
@@ -231,6 +236,7 @@ signalements:
       - "le sol ou la base des murs est très humide."
   -
     uuid: "00000000-0000-0000-2022-000000000006"
+    profile_declarant: "LOCATAIRE"
     details: "appartement insalubre avec des..."
     is_proprio_averti: 1
     nb_adultes: "2"
@@ -276,6 +282,7 @@ signalements:
       - "le sol ou la base des murs est très humide."
   -
     uuid: "00000000-0000-0000-2022-000000000007"
+    profile_declarant: "LOCATAIRE"
     details: "appartement insalubre avec des..."
     is_proprio_averti: 1
     nb_adultes: "2"
@@ -320,6 +327,7 @@ signalements:
       - "le sol ou la base des murs est très humide."
   -
     uuid: "00000000-0000-0000-2022-000000000008"
+    profile_declarant: "LOCATAIRE"
     details: "appartement insalubre avec des..."
     is_proprio_averti: 1
     is_logement_social: 0
@@ -366,6 +374,7 @@ signalements:
       - "le sol ou la base des murs est très humide."
   -
     uuid: "00000000-0000-0000-2022-000000000009"
+    profile_declarant: "LOCATAIRE"
     details: "appartement insalubre avec des..."
     is_proprio_averti: 1
     is_logement_social: 0
@@ -411,6 +420,7 @@ signalements:
       - "le sol ou la base des murs est très humide."
   -
     uuid: "00000000-0000-0000-2022-000000000010"
+    profile_declarant: "LOCATAIRE"
     details: "appartement insalubre avec des..."
     is_proprio_averti: 1
     is_logement_social: 0
@@ -456,6 +466,7 @@ signalements:
       - "le sol ou la base des murs est très humide."
   -
     uuid: "00000000-0000-0000-2022-000000000011"
+    profile_declarant: "LOCATAIRE"
     details: "appartement insalubre avec des..."
     is_proprio_averti: 1
     is_logement_social: 0
@@ -501,6 +512,7 @@ signalements:
       - "le sol ou la base des murs est très humide."
   -
     uuid: "00000000-0000-0000-2022-000000000012"
+    profile_declarant: "LOCATAIRE"
     details: "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum."
     is_proprio_averti: 1
     is_logement_social: 0
@@ -548,6 +560,7 @@ signalements:
       - "le sol ou la base des murs est très humide."
   -
     uuid: "00000000-0000-0000-2022-000000000013"
+    profile_declarant: "LOCATAIRE"
     details: "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum."
     is_proprio_averti: 1
     is_logement_social: 0
@@ -595,6 +608,7 @@ signalements:
       - "le sol ou la base des murs est très humide."
   -
     uuid: "00000000-0000-0000-2022-000000000014"
+    profile_declarant: "TIERS_PRO"
     details: "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum."
     is_proprio_averti: 1
     is_logement_social: 0
@@ -643,6 +657,7 @@ signalements:
       - "le sol ou la base des murs est très humide."
   -
     uuid: "00000000-0000-0000-2023-000000000001"
+    profile_declarant: "LOCATAIRE"
     details: "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum."
     is_proprio_averti: 1
     is_logement_social: 0
@@ -681,6 +696,7 @@ signalements:
     criticites: []
   -
     uuid: "00000000-0000-0000-2023-000000000002"
+    profile_declarant: "LOCATAIRE"
     details: "[COR] Signalement dans la commune Affoux (code insee: 69001, code postal: 69170)"
     is_proprio_averti: 0
     is_logement_social: 0
@@ -717,6 +733,7 @@ signalements:
     criticites: []
   -
     uuid: "00000000-0000-0000-2023-000000000003"
+    profile_declarant: "LOCATAIRE"
     details: "[MDL] Signalement dans la commune Lyon (code insee: 69381, code postal: 69001)"
     is_proprio_averti: 1
     is_logement_social: 0
@@ -753,6 +770,7 @@ signalements:
     criticites: []
   -
     uuid: "00000000-0000-0000-2023-000000000004"
+    profile_declarant: "LOCATAIRE"
     details: "[MDL] Signalement pour la commune St Genis les Ollieres	(code insee: 69205, code postal: 69290)"
     is_proprio_averti: 1
     is_logement_social: 0
@@ -789,6 +807,7 @@ signalements:
     criticites: []
   -
     uuid: "00000000-0000-0000-2023-000000000005"
+    profile_declarant: "LOCATAIRE"
     details: "[COR] Signalement pour la commune Chenelette (code insee: 69054, code postal: 69430)"
     is_proprio_averti: 1
     is_logement_social: 0
@@ -825,6 +844,7 @@ signalements:
     criticites: []
   -
     uuid: "00000000-0000-0000-2023-000000000006"
+    profile_declarant: "LOCATAIRE"
     details: "appartement insalubre avec des..."
     is_proprio_averti: 1
     is_logement_social: 0
@@ -870,6 +890,7 @@ signalements:
       - "le sol ou la base des murs est très humide."
   -
     uuid: "00000000-0000-0000-2023-000000000007"
+    profile_declarant: "LOCATAIRE"
     details: "Signalement Non-Décence dans l'Yonne"
     is_proprio_averti: 1
     is_logement_social: 0
@@ -915,6 +936,7 @@ signalements:
     date_entree: "2022-06-08 17:06:33"
   -
     uuid: "00000000-0000-0000-2023-000000000008"
+    profile_declarant: "LOCATAIRE"
     details: "Signalement Non-Décence dans le Puy de dôme"
     is_proprio_averti: 1
     is_logement_social: 0
@@ -960,6 +982,7 @@ signalements:
     date_entree: "2023-01-08 17:06:33"
   -
     uuid: "00000000-0000-0000-2023-000000000009"
+    profile_declarant: "LOCATAIRE"
     details: "appartement insalubre avec des problèmes d'humidité, moisissures, infiltrations d'eau, électricité défectueuse et absence de chauffage adéquat. La situation est inacceptable et nécessite une intervention urgente des autorités compétentes pour assurer la sécurité et la santé des occupants. Il est important de prendre des mesures immédiates pour remédier à ces problèmes et garantir un logement décent pour tous."
     is_proprio_averti: 1
     nb_adultes: "2"
@@ -1002,6 +1025,7 @@ signalements:
       - "il n’y a pas de ventilation dans au moins deux pièces parmi : les WC, la salle de bain et la cuisine."
   -
     uuid: "00000000-0000-0000-2023-000000000010"
+    profile_declarant: "LOCATAIRE"
     details: "Malgré nos multiples tentatives pour résoudre les problèmes de cet appartement insalubre, les conditions de vie restent précaires pour les occupants. Les moisissures et les odeurs nauséabondes persistent, l'électricité est toujours défectueuse, et le manque de chauffage en hiver est inquiétant. Nous sollicitons votre aide pour trouver une solution rapide et efficace à cette situation difficile. Les locataires méritent un logement sûr et salubre, et nous sommes prêts à travailler avec vous pour y parvenir."
     is_proprio_averti: 1
     nb_adultes: "2"
@@ -1043,6 +1067,7 @@ signalements:
       - "il n’y a pas de ventilation dans au moins deux pièces parmi : les WC, la salle de bain et la cuisine."
   -
     uuid: "00000000-0000-0000-2023-000000000012"
+    profile_declarant: "LOCATAIRE"
     details: "Malgré nos multiples tentatives pour résoudre les problèmes de cet appartement insalubre, les conditions de vie restent précaires pour les occupants. Les moisissures et les odeurs nauséabondes persistent, l'électricité est toujours défectueuse, et le manque de chauffage en hiver est inquiétant. Nous sollicitons votre aide pour trouver une solution rapide et efficace à cette situation difficile. Les locataires méritent un logement sûr et salubre, et nous sommes prêts à travailler avec vous pour y parvenir."
     is_proprio_averti: 1
     nb_adultes: "2"
@@ -1085,6 +1110,7 @@ signalements:
       - "il n’y a pas de ventilation dans au moins deux pièces parmi : les WC, la salle de bain et la cuisine."
   -
     uuid: "00000000-0000-0000-2023-000000000013"
+    profile_declarant: "LOCATAIRE"
     details: "Signalement ancien"
     is_proprio_averti: 1
     is_logement_social: 0
@@ -1131,6 +1157,7 @@ signalements:
       - "le sol ou la base des murs est très humide."
   -
     uuid: "00000000-0000-0000-2023-000000000014"
+    profile_declarant: "LOCATAIRE"
     details: "Signalement ancien"
     is_proprio_averti: 1
     is_logement_social: 0
@@ -1177,6 +1204,7 @@ signalements:
       - "le sol ou la base des murs est très humide."
   -
     uuid: "00000000-0000-0000-2023-000000000015"
+    profile_declarant: "LOCATAIRE"
     details: "Signalement ancien"
     is_proprio_averti: 1
     is_logement_social: 0
@@ -1223,6 +1251,7 @@ signalements:
       - "le sol ou la base des murs est très humide."
   -
     uuid: "00000000-0000-0000-2023-000000000016"
+    profile_declarant: "LOCATAIRE"
     details: "Signalement Lorem Ipsum is simply dummy text of the printing and typesetting industry."
     is_proprio_averti: 1
     is_logement_social: 0
@@ -1269,6 +1298,7 @@ signalements:
       - "le sol ou la base des murs est très humide."
   -
     uuid: "00000000-0000-0000-2023-000000000017"
+    profile_declarant: "LOCATAIRE"
     details: "Signalement Lorem Ipsum is simply dummy text of the printing and typesetting industry."
     is_proprio_averti: 1
     is_logement_social: 0
@@ -1315,6 +1345,7 @@ signalements:
       - "le sol ou la base des murs est très humide."
   -
     uuid: "00000000-0000-0000-2023-000000000018"
+    profile_declarant: "LOCATAIRE"
     details: "Signalement Lorem Ipsum is simply dummy text of the printing and typesetting industry."
     is_proprio_averti: 1
     is_logement_social: 0
@@ -1362,6 +1393,7 @@ signalements:
       - "le sol ou la base des murs est très humide."
   -
     uuid: "00000000-0000-0000-2023-000000000019"
+    profile_declarant: "LOCATAIRE"
     details: "Signalement ancien"
     is_proprio_averti: 1
     is_logement_social: 0
@@ -1408,6 +1440,7 @@ signalements:
       - "le sol ou la base des murs est très humide."
   -
     uuid: "00000000-0000-0000-2023-000000000020"
+    profile_declarant: "TIERS_PARTICULIER"
     details: "Signalement ancien sans suivi"
     is_proprio_averti: 1
     is_logement_social: 0
@@ -1455,6 +1488,7 @@ signalements:
       - "le sol ou la base des murs est très humide."
   -
     uuid: "00000000-0000-0000-2023-000000000120"
+    profile_declarant: "TIERS_PARTICULIER"
     details: "Signalement ancien sans suivi"
     is_proprio_averti: 1
     is_logement_social: 0
@@ -1503,6 +1537,7 @@ signalements:
       - "le sol ou la base des murs est très humide."
   -
     uuid: "00000000-0000-0000-2023-000000000021"
+    profile_declarant: "LOCATAIRE"
     details: "Signalement au statut refusé."
     is_proprio_averti: 1
     is_logement_social: 0
@@ -1545,6 +1580,7 @@ signalements:
       - "les déchets ne peuvent être stockés nulle part. Il y a des ordures stockées n’importe où à l'intérieur ou à l'extérieur du bâtiment."
   -
     uuid: "00000000-0000-0000-2023-000000000022"
+    profile_declarant: "LOCATAIRE"
     details: "[Migration][Version20231027135554] Signalement à cloturer Isère avec création de suivi et de tag"
     is_proprio_averti: 1
     is_logement_social: 0
@@ -1578,6 +1614,7 @@ signalements:
     is_imported: true
   -
     uuid: "00000000-0000-0000-2023-000000000023"
+    profile_declarant: "LOCATAIRE"
     details: "[Migration][Version20231027135554] Signalement à cloturer Isère avec création de suivi et de tag"
     is_proprio_averti: 1
     is_logement_social: 0
@@ -1611,6 +1648,7 @@ signalements:
     is_imported: true
   -
     uuid: "00000000-0000-0000-2023-000000000024"
+    profile_declarant: "LOCATAIRE"
     details: "[Migration][Version20231107132016] Signalement à cloturer Finistère"
     is_proprio_averti: 1
     is_logement_social: 0
@@ -1644,6 +1682,7 @@ signalements:
     is_imported: true
   -
     uuid: "00000000-0000-0000-2023-000000000025"
+    profile_declarant: "LOCATAIRE"
     details: "[Migration][Version20231107132016] Signalement à cloturer Finistère"
     is_proprio_averti: 1
     is_logement_social: 0
@@ -1677,6 +1716,7 @@ signalements:
     is_imported: true
   -
     uuid: "00000000-0000-0000-2023-000000000026"
+    profile_declarant: "LOCATAIRE"
     details: "Absence d’isolation toiture<br><br>Courrier adressé non pas à la mairie mais au bailleur social"
     is_proprio_averti: 1
     is_logement_social: 1
@@ -1709,6 +1749,7 @@ signalements:
     is_imported: true
   -
     uuid: "00000000-0000-0000-2024-000000000001"
+    profile_declarant: "LOCATAIRE"
     details: "Actuellement locataire, j'attire votre attention sur certaines conditions de non-décence et de confort qui affectent ma qualité de vie quotidienne."
     is_proprio_averti: 1
     is_relogement: 1
@@ -1748,6 +1789,7 @@ signalements:
       - "NON_DECENCE"
   -
     uuid: "00000000-0000-0000-2024-000000000004"
+    profile_declarant: "LOCATAIRE"
     details: "Actuellement locataire, j'attire votre attention sur certaines conditions de non-décence et de confort qui affectent ma qualité de vie quotidienne."
     is_proprio_averti: 1
     is_logement_social: 1
@@ -1788,6 +1830,7 @@ signalements:
       - "NON_DECENCE"
   -
     uuid: "00000000-0000-0093-2024-000000000005"
+    profile_declarant: "LOCATAIRE"
     details: "Un signalement auto-assigné."
     is_proprio_averti: 1
     is_logement_social: 1

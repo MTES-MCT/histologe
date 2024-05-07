@@ -24,6 +24,7 @@ export const store = {
     ajaxurlSignalement: '',
     ajaxurlRemoveSignalement: '',
     ajaxurlExportCsv: '',
-    ajaxurlSettings: ''
+    ajaxurlSettings: '',
+    ajaxurlContact: ''
   }
 }

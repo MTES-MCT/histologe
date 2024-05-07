@@ -1,8 +1,14 @@
+
 <template>
+  <div v-if="classNameDeleteConfirmation.length > 0" class="fr-alert fr-alert--sm" :class="this.classNameDeleteConfirmation">
+    <p>{{ messageDeleteConfirmation }}</p>
+  </div>
   <div id="histo-app-signalement-list">
     <TheHistoSignalementListFilter/>
     <section v-if="loadingList" class="loading fr-m-10w">
-      <h2 class="fr-text--light">Chargement de la liste...</h2>
+      <h2 class="fr-text--light" v-if="!hasErrorLoading">Chargement de la liste...</h2>
+      <h2 class="fr-text--light" v-if="hasErrorLoading">Erreur lors du chargement de la liste.</h2>
+      <p v-if="hasErrorLoading">Veuillez recharger la page ou nous prévenir <a :href="sharedProps.ajaxurlContact">via le formulaire de contact</a>.</p>
     </section>
     <section v-else class="fr-col-12 fr-background-alt--blue-france fr-mt-0">
         <div class="fr-px-3w">
@@ -43,7 +49,10 @@ export default defineComponent({
     return {
       sharedProps: store.props,
       sharedState: store.state,
-      loadingList: true
+      loadingList: true,
+      hasErrorLoading: false,
+      messageDeleteConfirmation: '',
+      classNameDeleteConfirmation: ''
     }
   },
   created () {
@@ -52,10 +61,33 @@ export default defineComponent({
       this.sharedProps.ajaxurlRemoveSignalement = initElements.dataset.ajaxurlRemoveSignalement
       this.sharedProps.ajaxurlSettings = initElements.dataset.ajaxurlSettings
       this.sharedProps.ajaxurlExportCsv = initElements.dataset.ajaxurlExportCsv
+      this.sharedProps.ajaxurlContact = initElements.dataset.ajaxurlContact
+
+      const url = new URL(window.location.toString())
+      const params = new URLSearchParams(url.search)
+      const page = params.get('page')
+      const sortBy = params.get('sortBy')
+      const direction = params.get('direction')
+
+      if (page) {
+        this.addQueryParameter('page', page)
+        this.buildUrl()
+      }
+
+      if (sortBy) {
+        this.addQueryParameter('sortBy', sortBy)
+        if (direction) {
+          this.addQueryParameter('orderBy', direction)
+        } else {
+          this.addQueryParameter('orderBy', 'DESC')
+        }
+        this.buildUrl()
+      }
+
       requests.getSettings(this.handleSettings)
       requests.getSignalements(this.handleSignalements)
     } else {
-      alert('Error while loading signalements')
+      this.hasErrorLoading = true
     }
   },
   methods: {
@@ -72,28 +104,44 @@ export default defineComponent({
       this.sharedState.signalements.filters = requestResponse.filters
       this.sharedState.signalements.list = requestResponse.list
       this.sharedState.signalements.pagination = requestResponse.pagination
-
       window.scrollTo(0, 0)
       this.loadingList = false
     },
     handlePageChange (pageNumber: number) {
-      this.loadingList = true
-      window.scrollTo(0, 0)
+      const url = new URL(window.location.toString())
+      url.searchParams.set('page', pageNumber.toString())
+      window.history.replaceState({}, '', url)
+      this.clearScreen()
       this.addQueryParameter('page', pageNumber.toString())
       this.buildUrl()
       requests.getSignalements(this.handleSignalements)
     },
     handleOrderChange () {
-      this.loadingList = true
-      window.scrollTo(0, 0)
-      const [field, sort] = this.sharedState.input.order.split('-')
+      this.clearScreen()
+      const [field, direction] = this.sharedState.input.order.split('-')
       this.removeQueryParameter('page')
+
+      const url = new URL(window.location.toString())
+      url.searchParams.delete('page')
+      url.searchParams.set('sortBy', field)
+      url.searchParams.set('direction', direction)
+      window.history.pushState({}, '', url.toString())
+
       this.addQueryParameter('sortBy', field)
-      this.addQueryParameter('orderBy', sort)
+      this.addQueryParameter('orderBy', direction)
       this.buildUrl()
       requests.getSignalements(this.handleSignalements)
     },
     handleDelete (requestResponse: any) {
+      this.messageDeleteConfirmation =
+          requestResponse.status === 200
+            ? requestResponse.message
+            : 'Une erreur s\'est produite lors de la suppression. Veuillez réessayer plus tard.'
+      this.classNameDeleteConfirmation =
+          requestResponse.status === 200
+            ? 'fr-alert--success'
+            : 'fr-alert--error'
+
       this.buildUrl()
       requests.getSignalements(this.handleSignalements)
     },
@@ -131,6 +179,12 @@ export default defineComponent({
         .queryParameters
         .map(parameter => `${parameter.name}=${parameter.value}`)
       this.sharedProps.ajaxurlSignalement = initElements.dataset.ajaxurl + '?' + queryParams.join('&')
+    },
+    clearScreen () {
+      this.messageDeleteConfirmation = ''
+      this.classNameDeleteConfirmation = ''
+      this.loadingList = true
+      window.scrollTo(0, 0)
     }
   }
 })

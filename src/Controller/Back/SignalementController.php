@@ -254,16 +254,16 @@ class SignalementController extends AbstractController
             $doctrine->getManager()->persist($signalement);
             $doctrine->getManager()->flush();
             $response = [
-                'code' => Response::HTTP_OK,
-                'message' => sprintf('Signalement %s supprimé avec succès !', $signalement->getReference()),
+                'status' => Response::HTTP_OK,
+                'message' => sprintf('Le signalement %s a bien été supprimé.', $signalement->getReference()),
             ];
         } else {
             $response = [
-                'code' => Response::HTTP_BAD_REQUEST,
-                'message' => 'Une erreur est survenue lors de la suppression.',
+                'status' => Response::HTTP_BAD_REQUEST,
+                'message' => 'Une erreur s\'est produite lors de la suppression. Veuillez réessayer plus tard.',
             ];
         }
 
-        return $this->json($response, $response['code']);
+        return $this->json($response, $response['status']);
     }
 }

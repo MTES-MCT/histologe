@@ -497,7 +497,9 @@ class SignalementRepository extends ServiceEntityRepository
         if (isset($options['sortBy'])) {
             switch ($options['sortBy']) {
                 case 'reference':
-                    $qb->orderBy('s.reference', $options['orderBy']);
+                    $qb
+                        ->orderBy('CAST(SUBSTRING_INDEX(s.reference, \'-\', 1) AS UNSIGNED)', $options['orderBy'])
+                        ->addOrderBy('CAST(SUBSTRING_INDEX(s.reference, \'-\', -1) AS UNSIGNED)', $options['orderBy']);
                     break;
                 case 'nomOccupant':
                     $qb->orderBy('s.nomOccupant', $options['orderBy']);

@@ -5,16 +5,16 @@
     </div>
   </div>
   <div class="fr-grid-row fr-mb-1w">
-    <div class="fr-col-12 fr-col-lg-6 fr-col-xl-3">
+    <div class="fr-col-12 fr-col-lg-6 fr-col-xl-4">
+      <label for="order-type" class="fr-mr-1w">Trier par :</label>
       <HistoSelect
           id="order-type"
           v-model="sharedState.input.order"
           @update:modelValue="onChange(false)"
-          inner-label="Trier par"
           :option-items=orderList
       />
     </div>
-    <div class="fr-col-12 fr-col-lg-6 fr-col-xl-9 fr-text--right">
+    <div class="fr-col-12 fr-col-lg-6 fr-col-xl-8 fr-text--right">
       <a :href="`${sharedProps.ajaxurlExportCsv}`" class="fr-btn fr-btn--secondary fr-btn--icon-left fr-icon-download-fill">
         Exporter les résultats
       </a>
@@ -32,6 +32,17 @@ export default defineComponent({
   components: {
     HistoSelect
   },
+  mounted () {
+    const urlParams = new URLSearchParams(window.location.search)
+    const sortBy = urlParams.get('sortBy')
+    const direction = urlParams.get('direction')
+    if (sortBy && direction) {
+      const orderValue = `${sortBy}-${direction.toUpperCase()}`
+      if (this.orderList.some(item => item.Id === orderValue)) {
+        this.sharedState.input.order = orderValue
+      }
+    }
+  },
   props: {
     total: {
       type: Number,
@@ -45,8 +56,8 @@ export default defineComponent({
       sharedProps: store.props,
 
       orderList: [
-        { Id: 'reference-DESC', Text: 'Ordre décroissant : par référence' },
-        { Id: 'reference-ASC', Text: 'Ordre croissant : par référence' },
+        { Id: 'reference-DESC', Text: 'Ordre décroissant' },
+        { Id: 'reference-ASC', Text: 'Ordre croissant' },
         { Id: 'nomOccupant-ASC', Text: 'Ordre alphabétique (A -> Z)' },
         { Id: 'nomOccupant-DESC', Text: 'Ordre alphabétique inversé (Z -> A)' },
         { Id: 'createdAt-DESC', Text: 'Le plus récent' },
@@ -56,3 +67,9 @@ export default defineComponent({
   }
 })
 </script>
+<style>
+  #order-type {
+    width: max-content;
+    display: inline-block;
+  }
+</style>

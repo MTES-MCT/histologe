@@ -31,9 +31,16 @@ export const requests = {
         functionReturn(responseData)
       })
       .catch(error => {
-        console.error(error)
         Sentry.captureException(new Error(error))
-        functionReturn('error')
+        if (error.response !== undefined) {
+          functionReturn(error.response)
+        } else {
+          const customResponse = {
+            status: 500,
+            message: 'Une erreur s\'est produite lors de la suppression. Veuillez réessayer plus tard.'
+          }
+          functionReturn(customResponse)
+        }
       })
   },
   getSettings (functionReturn: Function) {

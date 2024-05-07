@@ -3,7 +3,7 @@
     <div class="fr-col-12">
       <div class="fr-card">
         <div class="fr-card__body">
-          <div class="fr-card__content fr-mb-1v">
+          <div class="fr-card__content">
             <div class="fr-grid-row">
               <div class="fr-col-xl-8 fr-col-lg-6 fr-col-12">
                 <h3 class="fr-card__title fr-my-1v">#{{ item.reference }} - {{ item.nomOccupant && item.nomOccupant.toUpperCase()  + ' ' + item.prenomOccupant }}</h3>
@@ -37,7 +37,7 @@
                       v-for="(affectation, index) in item.affectations"
                       :key="index">{{ affectation.partner }}</span>
                 </p>
-                <p v-if="item.lastSuiviBy !== null" class="fr-my-1w">
+                <p v-if="item.lastSuiviBy !== null">
                   <span class="fr-icon-discuss-line" aria-hidden="true"></span>
                   Dernier suivi par {{ item.lastSuiviBy}} le {{ formatDate(item.lastSuiviAt) }}
                   <span :class="getBadgeSuivi(item.lastSuiviBy)">{{ getSuiviLabel(item.lastSuiviBy) }}</span>
@@ -194,3 +194,8 @@ export default defineComponent({
   }
 })
 </script>
+<style scoped>
+  .fr-card__content {
+    margin: 0 -2rem -3rem -2rem;
+  }
+</style>
