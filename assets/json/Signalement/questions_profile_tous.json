@@ -23,6 +23,7 @@
               {
                 "type": "SignalementFormLink",
                 "label": "Annuler",
+                "description": "Retourner à l'accueil",
                 "slug": "introduction_cancel",
                 "link": "/",
                 "customCss": "fr-btn fr-btn--secondary fr-btn--icon-left fr-icon-close-line"
@@ -61,6 +62,7 @@
               {
                 "type": "SignalementFormLink",
                 "label": "Annuler",
+                "description": "Retourner à l'accueil",
                 "slug": "adresse_logement_intro_cancel",
                 "link": "/",
                 "customCss": "fr-btn fr-btn--secondary fr-btn--icon-left fr-icon-close-line"

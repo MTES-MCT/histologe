@@ -541,7 +541,7 @@
             "body": [
               {
                 "type": "SignalementFormInfo",
-                "label": "Le saviez-vous ? Le service Stop Punaises vous permet de trouver une entreprise labellisée pour traiter les punaises de lit. <a href='http://stop-punaises.beta.gouv.fr/' target='_blank'>Cliquez ici pour y accéder.</a>",
+                "label": "Le saviez-vous ? Le service Stop Punaises vous permet de trouver une entreprise labellisée pour traiter les punaises de lit. <a href='http://stop-punaises.beta.gouv.fr/' target='_blank' rel='noopener' title='Service Stop Punaises - Ouvre une nouvelle fenêtre'>Cliquez ici pour y accéder.</a>",
                 "slug": "desordres_batiment_nuisibles_punaises_details_info"
               }
             ]
@@ -1650,7 +1650,7 @@
               },
               {
                 "type": "SignalementFormInfo",
-                "label": "Les dégâts des eaux sont généralement pris en charge par les assurances. Pour savoir comment faire un constat auprès de votre assurance, rendez-vous sur <a href='https://www.service-public.fr/particuliers/vosdroits/F1352' target='_blank'>le site du service public.</a>",
+                "label": "Les dégâts des eaux sont généralement pris en charge par les assurances. Pour savoir comment faire un constat auprès de votre assurance, rendez-vous sur <a href='https://www.service-public.fr/particuliers/vosdroits/F1352' target='_blank' rel='noopener' title='Le site du Service Public - Ouvre une nouvelle fenêtre'>le site du Service Public</a>.",
                 "slug": "desordres_logement_humidite_piece_a_vivre_details_fuite_info",
                 "conditional": {
                   "show": "formStore.data.desordres_logement_humidite_piece_a_vivre_details_fuite ===  'oui'"
@@ -1724,7 +1724,7 @@
               },
               {
                 "type": "SignalementFormInfo",
-                "label": "Les dégâts des eaux sont généralement pris en charge par les assurances. Pour savoir comment faire un constat auprès de votre assurance, rendez-vous sur <a href='https://www.service-public.fr/particuliers/vosdroits/F1352' target='_blank'>le site du service public.</a>",
+                "label": "Les dégâts des eaux sont généralement pris en charge par les assurances. Pour savoir comment faire un constat auprès de votre assurance, rendez-vous sur <a href='https://www.service-public.fr/particuliers/vosdroits/F1352' target='_blank' rel='noopener' title='Le site du Service Public - Ouvre une nouvelle fenêtre'>le site du Service Public</a>.",
                 "slug": "desordres_logement_humidite_cuisine_details_fuite_info",
                 "conditional": {
                   "show": "formStore.data.desordres_logement_humidite_cuisine_details_fuite ===  'oui'"
@@ -1798,7 +1798,7 @@
               },
               {
                 "type": "SignalementFormInfo",
-                "label": "Les dégâts des eaux sont généralement pris en charge par les assurances. Pour savoir comment faire un constat auprès de votre assurance, rendez-vous sur <a href='https://www.service-public.fr/particuliers/vosdroits/F1352' target='_blank'>le site du service public.</a>",
+                "label": "Les dégâts des eaux sont généralement pris en charge par les assurances. Pour savoir comment faire un constat auprès de votre assurance, rendez-vous sur <a href='https://www.service-public.fr/particuliers/vosdroits/F1352' target='_blank' rel='noopener' title='Le site du Service Public - Ouvre une nouvelle fenêtre'>le site du Service Public</a>.",
                 "slug": "desordres_logement_humidite_salle_de_bain_details_fuite_info",
                 "conditional": {
                   "show": "formStore.data.desordres_logement_humidite_salle_de_bain_details_fuite ===  'oui'"
@@ -2270,7 +2270,7 @@
               },
               {
                 "type": "SignalementFormInfo",
-                "label": "Le saviez-vous ? Le service Stop Punaises vous permet de trouver une entreprise labellisée pour traiter les punaises de lit. <a href='http://stop-punaises.beta.gouv.fr/' target='_blank'>Cliquez ici pour y accéder.</a>",
+                "label": "Le saviez-vous ? Le service Stop Punaises vous permet de trouver une entreprise labellisée pour traiter les punaises de lit. <a href='http://stop-punaises.beta.gouv.fr/' target='_blank' rel='noopener' title='Service Stop Punaises - Ouvre une nouvelle fenêtre'>Cliquez ici pour y accéder.</a>",
                 "slug": "desordres_logement_nuisibles_punaises_details_info"
               }
             ]
@@ -2388,7 +2388,7 @@
             "body": [
               {
                 "type": "SignalementFormInfo",
-                "label": "Info : {{formStore.props.platformName}} ne permet pas de régler les problèmes de voisinage. Pour savoir s'il s'agit d'un problème de logement ou un trouble du voisinage, consultez le site du service public <a href='https://www.service-public.fr/particuliers/vosdroits/F612' target='_blank'>en cliquant ici.</a>",
+                "label": "Info : {{formStore.props.platformName}} ne permet pas de régler les problèmes de voisinage. Pour savoir s'il s'agit d'un problème de logement ou un trouble du voisinage, rendez-vous sur <a href='https://www.service-public.fr/particuliers/vosdroits/F612' target='_blank' rel='noopener' title='Le site du Service Public - Ouvre une nouvelle fenêtre'>le site du Service Public</a>.",
                 "slug": "desordres_logement_bruit_voisins_details_info"
               }
             ]

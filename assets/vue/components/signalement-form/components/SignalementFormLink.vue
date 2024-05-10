@@ -8,6 +8,7 @@
       @click="handleClick"
       :aria-controls="ariaControls"
       data-fr-opened="false"
+      :title="description"
       >
         {{ label}}
     </a>
@@ -25,6 +26,7 @@ export default defineComponent({
     label: { type: String, default: '' },
     link: { type: String, default: '' },
     linktarget: { type: String, default: '' },
+    description: { type: String, default: null },
     customCss: { type: String, default: '' },
     ariaControls: { type: String, default: '' },
     clickEvent: Function
