@@ -1,4 +1,4 @@
-<header role="banner" class="fr-header">
+<header class="fr-header">
     <div class="fr-header__body">
         <div class="fr-container">
             <div class="fr-header__body-row">
@@ -17,7 +17,7 @@
                     </div>
                     <div class="fr-header__service">
                         <a href="{{ path('home') }}" title="Accueil - {{ platform.name }} - Ministère de la transition écologique">
-                            <img class="fr-responsive-img" style="width:3.5rem;" src="{{ asset('img/' ~ platform.logo145) }}" alt="{{ platform.name }}" />
+                            <img class="fr-responsive-img" style="width:3.5rem;" src="{{ asset('img/' ~ platform.logo145) }}" alt="{{ platform.name }}">
                         </a>
                     </div>
                 </div>
@@ -48,7 +48,7 @@
             </button>
             <div class="fr-header__menu-links">
             </div>
-            <nav class="fr-nav" id="navigation-main" role="navigation" aria-label="Menu principal">
+            <nav class="fr-nav" id="navigation-main" aria-label="Menu principal">
                 <ul class="fr-nav__list">
                     <li class="fr-nav__item">
                         <a class="fr-nav__link" href="{{ path('home') }}" target="_self"

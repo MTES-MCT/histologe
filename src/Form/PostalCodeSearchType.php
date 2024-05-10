@@ -37,7 +37,6 @@ class PostalCodeSearchType extends AbstractType
             'attr' => [
                 'id' => 'front_postalcodesearch',
                 'class' => 'needs-validation',
-                'novalidate' => 'true',
             ],
         ]);
     }

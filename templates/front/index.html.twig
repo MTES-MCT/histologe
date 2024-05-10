@@ -10,11 +10,10 @@
     <main>
         <section class="fr-background-contrast--blue-france fr-pt-3w">
             <div class="fr-container fr-grid-row">
-                <div class="fr-col-12 fr-col-md-8">
-                    <p class="fr-mt-5w">
-                        <p class="fr-text--lead">Avec {{ platform.name }},</p>
-                        <h1>Sortez du mal-logement</h1>
-                        {{ form_start(form_postalcode) }}
+                <div class="fr-col-12 fr-col-md-8 fr-mt-5w">
+                    <p class="fr-text--lead">Avec {{ platform.name }},</p>
+                    <h1>Sortez du mal-logement</h1>
+                    {{ form_start(form_postalcode) }}
                         <div class="fr-grid-row fr-grid-row--gutters fr-mb-5v">
                             {{ form_row(form_postalcode.postalcode) }}
 
@@ -24,8 +23,7 @@
                                     form="front_postalcodesearch">Signaler mon problème</button>
                             </div>
                         </div>
-                        {{ form_end(form_postalcode) }}
-                    </p>
+                    {{ form_end(form_postalcode) }}
                 </div>
                 <div class="fr-col-12 fr-col-md-4">
                     <img src="{{ asset('img/illustration-undraw-home.svg') }}" alt="Illustration cible">
