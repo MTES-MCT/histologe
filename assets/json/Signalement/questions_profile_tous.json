@@ -171,11 +171,10 @@
           "slug": "signalement_concerne_modal"
         },
         {
-          "type": "SignalementFormLink",
+          "type": "SignalementFormButton",
           "label": "En savoir plus",
           "slug": "signalement_concerne_savoir_plus",
           "customCss": "fr-badge fr-badge--info",
-          "link": "#",
           "ariaControls": "signalement_concerne_modal"
         },
         {

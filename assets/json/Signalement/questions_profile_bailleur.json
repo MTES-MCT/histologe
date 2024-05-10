@@ -131,11 +131,10 @@
           "slug": "zone_concernee_modal"
         },
         {
-          "type": "SignalementFormLink",
+          "type": "SignalementFormButton",
           "label": "En savoir plus",
           "slug": "zone_concernee_savoir_plus",
           "customCss": "fr-badge fr-badge--info",
-          "link": "#",
           "ariaControls": "zone_concernee_modal"
         },
         {
