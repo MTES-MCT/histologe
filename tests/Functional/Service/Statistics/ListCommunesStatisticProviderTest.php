@@ -30,6 +30,5 @@ class ListCommunesStatisticProviderTest extends KernelTestCase
     {
         yield 'Lyon' => ['69', 'Lyon'];
         yield 'Marseille' => ['13', 'Marseille'];
-        yield 'Paris' => ['75', 'Paris'];
     }
 }

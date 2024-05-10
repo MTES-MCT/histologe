@@ -16,6 +16,7 @@ use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 class LoadCommuneData extends Fixture implements OrderedFixtureInterface
 {
     private const FLUSH_COUNT = 1000;
+    private const ZIP_CODES_ALLOWED = ['01', '06', '13', '44', '30', '62', '64', '67', '69', '89', '93'];
 
     public function __construct(
         private readonly ParameterBagInterface $params,
@@ -55,17 +56,24 @@ class LoadCommuneData extends Fixture implements OrderedFixtureInterface
 
             $zipCode = ImportCommune::getZipCodeByCodeCommune($itemCodeCommune);
 
-            if (null === $territory || $zipCode != $territory->getZip()) {
-                $territory = $this->territoryManager->findOneBy(['zip' => $zipCode]);
-            }
+            if (array_filter(self::ZIP_CODES_ALLOWED, fn ($zipCodeAllowed) => $zipCode === $zipCodeAllowed)) {
+                if (null === $territory || $zipCode != $territory->getZip()) {
+                    $territory = $this->territoryManager->findOneBy(['zip' => $zipCode]);
+                }
 
-            $commune = $this->communeFactory->createInstanceFrom($territory, $itemNomCommune, $itemCodePostal, $itemCodeCommune);
-            $existingCpAndInseeCode[$keyCommune] = 1;
+                $commune = $this->communeFactory->createInstanceFrom(
+                    $territory,
+                    $itemNomCommune,
+                    $itemCodePostal,
+                    $itemCodeCommune);
 
-            if (0 === $totalRead % self::FLUSH_COUNT) {
-                $this->communeManager->save($commune);
-            } else {
-                $this->communeManager->save($commune, false);
+                $existingCpAndInseeCode[$keyCommune] = 1;
+
+                if (0 === $totalRead % self::FLUSH_COUNT) {
+                    $this->communeManager->save($commune);
+                } else {
+                    $this->communeManager->save($commune, false);
+                }
             }
         }
 
