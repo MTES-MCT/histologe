@@ -21,30 +21,23 @@ class ExportSignalementController extends AbstractController
     ): RedirectResponse|StreamedResponse {
         /** @var User $user */
         $user = $this->getUser();
-        if ($this->isCsrfTokenValid('export_token_'.$user->getId(), $request->get('_token'))) {
-            set_error_handler(function ($err_severity, $err_msg, $err_file, $err_line) {
-                throw new \ErrorException($err_msg, 0, $err_severity, $err_file, $err_line);
-            }, \E_WARNING);
-            $filters = $request->getSession()->get('filters');
-            try {
-                $response = new StreamedResponse();
-                $response->setCallback(function () use ($signalementExportLoader, $filters, $user) {
-                    $signalementExportLoader->load($user, $filters);
-                });
+        $filters = $request->getSession()->get('filters');
+        try {
+            $response = new StreamedResponse();
+            $response->setCallback(function () use ($signalementExportLoader, $filters, $user) {
+                $signalementExportLoader->load($user, $filters);
+            });
 
-                $disposition = HeaderUtils::makeDisposition(
-                    HeaderUtils::DISPOSITION_ATTACHMENT,
-                    'export-histologe-'.date('dmY').'.csv'
-                );
-                $response->headers->set('Content-Type', 'text/csv');
-                $response->headers->set('Content-Disposition', $disposition);
-                restore_error_handler();
+            $disposition = HeaderUtils::makeDisposition(
+                HeaderUtils::DISPOSITION_ATTACHMENT,
+                'export-histologe-'.date('dmY').'.csv'
+            );
+            $response->headers->set('Content-Type', 'text/csv');
+            $response->headers->set('Content-Disposition', $disposition);
 
-                return $response;
-            } catch (\ErrorException $e) {
-                restore_error_handler();
-                throw new \Exception('Erreur lors de l\'export du fichier par l\'user "'.$user->getId().'" : '.$e->getMessage().' - '.print_r($filters, true));
-            }
+            return $response;
+        } catch (\ErrorException $e) {
+            throw new \Exception('Erreur lors de l\'export du fichier par l\'user "'.$user->getId().'" : '.$e->getMessage().' - '.print_r($filters, true));
         }
         $this->addFlash('error', 'Problème d\'identification de votre demande. Merci de réessayer.');
 

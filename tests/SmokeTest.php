@@ -14,6 +14,7 @@ class SmokeTest extends WebTestCase
      */
     public function testPageSuccessfullyRespondWithoutError500WithAnonymousUser(string $path, int $statusCode): void
     {
+        self::ensureKernelShutdown();
         $client = static::createClient();
         $client->request('GET', $path);
 

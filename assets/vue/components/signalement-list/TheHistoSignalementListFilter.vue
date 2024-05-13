@@ -1,5 +1,5 @@
 <template>
-  <section class="fr-background--white">
+  <section class="fr-background--white" :style="{ display: isVisible ? 'block' : 'none' }">
     <div class="fr-grid-row fr-p-3w fr-pb-6w">
       <div class="fr-col-12">
         <h1 class="fr-mb-2w fr-h2">Liste des signalements</h1>
@@ -166,10 +166,11 @@
 import { defineComponent } from 'vue'
 
 export default defineComponent({
-  name: 'TheHistoSignalementListFilter'
+  name: 'TheHistoSignalementListFilter',
+  data () {
+    return {
+      isVisible: false
+    }
+  }
 })
 </script>
-
-<style scoped>
-
-</style>

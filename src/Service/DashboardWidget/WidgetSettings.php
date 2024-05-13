@@ -16,8 +16,10 @@ class WidgetSettings
     private array $territories = [];
 
     public function __construct(
-        User $user, array $territories, bool $canSeeNDE)
-    {
+        User $user,
+        array $territories,
+        bool $canSeeNDE
+    ) {
         $this->firstname = $user->getPrenom();
         $this->lastname = $user->getNom();
         $this->roleLabel = $user->getRoleLabel();

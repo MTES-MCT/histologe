@@ -32,6 +32,7 @@ parameters:
     feature_ask_visite: '%env(FEATURE_ASK_VISITE_ENABLE)%'
     feature_oilhi_enable: '%env(bool:FEATURE_OILHI_ENABLE)%'
     feature_documents_enable: '%env(bool:FEATURE_DOCUMENTS_ENABLE)%'
+    feature_signalement_liste_enable: '%env(bool:FEATURE_LIST_FILTER_ENABLE)%'
     platform_name: 'Histologe'
     matomo_enable: '%env(bool:MATOMO_ENABLE)%'
     matomo_site_id: '%env(resolve:MATOMO_SITE_ID)%'

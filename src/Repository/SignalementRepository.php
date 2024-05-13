@@ -434,6 +434,7 @@ class SignalementRepository extends ServiceEntityRepository
             s.villeOccupant,
             s.lastSuiviAt,
             s.lastSuiviBy,
+            s.profileDeclarant,
             GROUP_CONCAT(DISTINCT CONCAT(p.nom, :concat_separator, a.statut) SEPARATOR :group_concat_separator) as rawAffectations,
             GROUP_CONCAT(DISTINCT p.nom SEPARATOR :group_concat_separator) as affectationPartnerName,
             GROUP_CONCAT(DISTINCT a.statut SEPARATOR :group_concat_separator) as affectationStatus,
@@ -496,7 +497,9 @@ class SignalementRepository extends ServiceEntityRepository
         if (isset($options['sortBy'])) {
             switch ($options['sortBy']) {
                 case 'reference':
-                    $qb->orderBy('s.reference', $options['orderBy']);
+                    $qb
+                        ->orderBy('CAST(SUBSTRING_INDEX(s.reference, \'-\', 1) AS UNSIGNED)', $options['orderBy'])
+                        ->addOrderBy('CAST(SUBSTRING_INDEX(s.reference, \'-\', -1) AS UNSIGNED)', $options['orderBy']);
                     break;
                 case 'nomOccupant':
                     $qb->orderBy('s.nomOccupant', $options['orderBy']);
