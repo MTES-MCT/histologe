@@ -40,7 +40,7 @@ class LoadEpciCommandTest extends KernelTestCase
         $output = $commandTester->getDisplay();
         $this->assertStringContainsString('EPCI loaded with 25 communes that belong to EPCI', $output, $output);
         $this->assertStringContainsString(
-            '35703 communes code postal might be obsolete.',
+            '3990 communes code postal might be obsolete.',
             $output,
             $output);
     }
