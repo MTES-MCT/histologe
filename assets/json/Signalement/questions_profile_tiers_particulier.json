@@ -235,7 +235,7 @@
           "type": "SignalementFormButton",
           "label": "En savoir plus",
           "slug": "zone_concernee_savoir_plus",
-          "customCss": "fr-badge fr-badge--info",
+          "customCss": "fr-btn--sm fr-badge fr-badge--info",
           "ariaControls": "zone_concernee_modal"
         },
         {

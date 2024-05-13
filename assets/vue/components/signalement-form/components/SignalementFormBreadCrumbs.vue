@@ -44,25 +44,21 @@
               v-bind:key="menuItem.label"
               :class="[ 'fr-sidemenu__item', (menuItem.active) ? 'fr-sidemenu__item--active' : '' ]"
               >
-              <a
+              <button
                 v-if="menuItem.current"
-                class="fr-sidemenu__link"
-                href="#"
+                class="fr-link fr-sidemenu__link"
                 aria-current="page"
-                >{{ menuItem.label }}</a
-              >
-              <a
+                >{{ menuItem.label }}</button>
+              <button
                 v-else-if="menuItem.active"
-                class="fr-sidemenu__link"
-                href="#"
+                class="fr-link fr-sidemenu__link"
                 @click="handleClick(menuItem.slug)"
-                >{{ menuItem.label }}</a
-              >
-              <a
+                >{{ menuItem.label }}</button>
+              <button
                 v-else
-                class="fr-sidemenu__link"
-                >{{ menuItem.label }}</a
-              >
+                class="fr-link fr-sidemenu__link"
+                disabled
+                >{{ menuItem.label }}</button>
             </li>
           </ul>
         </div>
@@ -152,7 +148,7 @@ export default defineComponent({
     background-color: #c2a1f8;
   }
 
-  .fr-sidemenu__item a.fr-sidemenu__link:not([href]) {
+  .fr-sidemenu__item button.fr-sidemenu__link:disabled {
     color: var(--text-disabled-grey);
   }
 

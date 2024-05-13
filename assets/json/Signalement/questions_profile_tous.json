@@ -174,7 +174,7 @@
           "type": "SignalementFormButton",
           "label": "En savoir plus",
           "slug": "signalement_concerne_savoir_plus",
-          "customCss": "fr-badge fr-badge--info",
+          "customCss": "fr-btn--sm fr-badge fr-badge--info",
           "ariaControls": "signalement_concerne_modal"
         },
         {
