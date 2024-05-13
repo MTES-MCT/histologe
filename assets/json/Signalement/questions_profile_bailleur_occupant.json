@@ -958,7 +958,7 @@
         },
         {
           "type": "SignalementFormInfo",
-          "label": "Il est fortement recommandé de prendre une assurance habitation pour votre logement. Pour plus d'info, rendez-vous sur <a href='https://www.service-public.fr/particuliers/vosdroits/F2023' target='_blank' rel='nopener' title='Le site du Service Public - Ouvre une nouvelle fenêtre'>le site du Service Public</a>.",
+          "label": "Il est fortement recommandé de prendre une assurance habitation pour votre logement. Pour plus d'info, rendez-vous sur <a href='https://www.service-public.fr/particuliers/vosdroits/F2023' target='_blank' rel='noopener' title='Le site du Service Public - Ouvre une nouvelle fenêtre'>le site du Service Public</a>.",
           "slug": "info_procedure_assurance_info",
           "conditional": {
             "show": "formStore.data.info_procedure_assurance_contactee === 'pas_assurance_logement'"

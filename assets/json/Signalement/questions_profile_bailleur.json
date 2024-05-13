@@ -684,7 +684,7 @@
         {
           "type": "SignalementFormInfo",
           "slug": "bail_dpe_bail_info",
-          "label": "Etablir un bail écrit et signé avec ses locataires est fortement recommandé. Pour savoir comment rédiger un bail, rendez-vous sur <a href='https://www.service-public.fr/particuliers/vosdroits/N349' target='_blank' rel='nopener' title='Le site du Service Public - Ouvre une nouvelle fenêtre'>le site du Service Public</a>.",
+          "label": "Etablir un bail écrit et signé avec ses locataires est fortement recommandé. Pour savoir comment rédiger un bail, rendez-vous sur <a href='https://www.service-public.fr/particuliers/vosdroits/N349' target='_blank' rel='noopener' title='Le site du Service Public - Ouvre une nouvelle fenêtre'>le site du Service Public</a>.",
           "conditional": {
             "show": "formStore.data.bail_dpe_bail === 'non' || formStore.data.bail_dpe_bail === 'nsp'"
           }
@@ -760,7 +760,7 @@
         {
           "type": "SignalementFormWarning",
           "slug": "bail_dpe_dpe_warning",
-          "label": "Le DPE fait partie des documents à réaliser obligatoirement pour son logement. Plus d'info sur <a href='https://www.service-public.fr/particuliers/vosdroits/F16096' target='_blank' rel='nopener' title='Le site du Service Public - Ouvre une nouvelle fenêtre'>le site du Service Public</a>.",
+          "label": "Le DPE fait partie des documents à réaliser obligatoirement pour son logement. Plus d'info sur <a href='https://www.service-public.fr/particuliers/vosdroits/F16096' target='_blank' rel='noopener' title='Le site du Service Public - Ouvre une nouvelle fenêtre'>le site du Service Public</a>.",
           "conditional": {
             "show": "formStore.data.bail_dpe_dpe === 'non' || formStore.data.bail_dpe_dpe === 'nsp'"
           }
@@ -1080,7 +1080,7 @@
         },
         {
           "type": "SignalementFormInfo",
-          "label": "Il est fortement recommandé de prendre une assurance habitation pour votre logement. Pour plus d'info, rendez-vous sur <a href='https://www.service-public.fr/particuliers/vosdroits/F2023' target='_blank' rel='nopener' title='Le site du Service Public - Ouvre une nouvelle fenêtre'>le site du Service Public</a>.",
+          "label": "Il est fortement recommandé de prendre une assurance habitation pour votre logement. Pour plus d'info, rendez-vous sur <a href='https://www.service-public.fr/particuliers/vosdroits/F2023' target='_blank' rel='noopener' title='Le site du Service Public - Ouvre une nouvelle fenêtre'>le site du Service Public</a>.",
           "slug": "info_procedure_assurance_info",
           "conditional": {
             "show": "formStore.data.info_procedure_assurance_contactee === 'pas_assurance_logement'"
