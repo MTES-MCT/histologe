@@ -1,13 +1,7 @@
 {% extends 'back/base_bo.html.twig' %}
 
-{% set picto_yes = '<p class="fr-badge fr-badge--success" data-action="click" data-item="%s" data-url="'~path('back_signalement_switch_value',{uuid:signalement.uuid})~'" data-token="'~csrf_token('signalement_switch_value_'~signalement.uuid)~'">Oui</p>' %}
-{% set picto_no = '<p class="fr-badge fr-badge--error" data-action="click" data-item="%s" data-url="'~path('back_signalement_switch_value',{uuid:signalement.uuid})~'" data-token="'~csrf_token('signalement_switch_value_'~signalement.uuid)~'">Non</p>' %}
-{% set picto_nsp = '<p class="fr-badge fr-badge--warning" data-action="click" data-item="%s" data-url="'~path('back_signalement_switch_value',{uuid:signalement.uuid})~'" data-token="'~csrf_token('signalement_switch_value_'~signalement.uuid)~'">NSP</p>' %}
 {% set static_picto_yes = '<p class="fr-badge fr-badge--success">Oui</p>' %}
 {% set static_picto_no = '<p class="fr-badge fr-badge--error">Non</p>' %}
-{% set static_picto_nsp = '<p class="fr-badge fr-badge--warning">NSP</p>' %}
-{% set procedures = ["RSD" , "Mise en sécurité","Incurie","Insalubrité", "Décence", "ADIL"] %}
-
 
 {% block content %}
     {% include '_partials/_modal_affectation.html.twig' %}

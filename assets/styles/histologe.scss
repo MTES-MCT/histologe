@@ -773,6 +773,10 @@ h2, h3 {
     }
 }
 
+#tags_active_container, #tags_inactive_container{
+    .fr-badge{cursor: pointer;}
+}
+
 
 @media (min-width: 992px) {
     .text-align-right--lg {

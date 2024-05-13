@@ -194,37 +194,19 @@ class SignalementActionController extends AbstractController
     {
         $this->denyAccessUnlessGranted('SIGN_EDIT', $signalement);
         if ($this->isCsrfTokenValid('signalement_switch_value_'.$signalement->getUuid(), $request->get('_token'))) {
-            $return = 0;
-            $item = $request->get('item');
-            $getMethod = 'get'.$item;
-            $setMethod = 'set'.$item;
             $value = $request->get('value');
-            if ('Tag' === $item) {
-                $tag = $entityManager->getRepository(Tag::class)->find((int) $value);
-                if ($signalement->getTags()->contains($tag)) {
-                    $signalement->removeTag($tag);
-                } else {
-                    $signalement->addTag($tag);
-                }
-            } else {
-                if (!$value) {
-                    $value = !(int) $signalement->$getMethod() ?? 1;
-                    $return = 1;
-                }
 
-                $signalement->$setMethod($value);
+            $tag = $entityManager->getRepository(Tag::class)->find((int) $value);
+            if ($signalement->getTags()->contains($tag)) {
+                $signalement->removeTag($tag);
+            } else {
+                $signalement->addTag($tag);
             }
+
             $entityManager->persist($signalement);
             $entityManager->flush();
-            if ('CodeProcedure' === $item) {
-                $item = 'Le type de procédure';
-            }
-            if (\is_bool($value) || 'Tag' === $item) {
-                return $this->json(['response' => 'success', 'return' => $return]);
-            }
-            $this->addFlash('success', $item.' a bien été enregistré !');
 
-            return $this->redirectToRoute('back_signalement_view', ['uuid' => $signalement->getUuid()]);
+            return $this->json(['response' => 'success']);
         }
 
         return $this->json(['response' => 'error'], 400);
