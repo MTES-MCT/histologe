@@ -1,0 +1,86 @@
+<dialog aria-labelledby="send-lien-suivi-modal-title" id="send-lien-suivi-modal" class="fr-modal" role="dialog">
+    <div class="fr-container fr-container--fluid fr-container-md">
+        <div class="fr-grid-row fr-grid-row--center">
+            <div class="fr-col-12 fr-col-md-8 fr-col-lg-6">
+                <div class="fr-modal__body">
+                    <div class="fr-modal__header">
+                        <h1 id="send-lien-suivi-modal-title" class="fr-modal__title">
+                            <span class="fr-fi-arrow-right-line fr-fi--sm"></span>
+                            Envoyer le lien de suivi pour le signalement #{{ signalement.reference }}
+                        </h1>
+                        <a href="#" class="fr-link--close fr-link" aria-controls="send-lien-suivi-modal">Fermer</a>
+                    </div>
+                    {% set lienSuivi = platform.url ~ path('front_suivi_signalement',{code:signalement.codeSuivi}) %}
+                    {% set hasMail = '' %}
+                    {% if signalement.isNotOccupant %}
+                        {% set hasMail = 'declarant' %}
+                        {% if  signalement.mailOccupant is defined and signalement.mailOccupant is not empty and signalement.mailDeclarant is not same as signalement.mailOccupant %}
+                            {% set hasMail = 'both' %}
+                        {% endif %}
+                    {% else %}
+                        {% set hasMail = 'occupant' %}
+                    {% endif %}                    
+                    <form action="{{ path('send_mail_get_lien_suivi',{uuid:signalement.uuid}) }}" name="send_lien_suivi"
+                            id="send_lien_suivi" method="POST"  class='needs-validation' novalidate="novalidate">
+                        <div class="fr-modal__content">
+                            Vous êtes sur le point d'envoyer le lien de la page de suivi du signalement <strong>#{{ signalement.reference }}</strong> 
+                            {% if hasMail is same as 'declarant' %}
+                                au tiers déclarant <strong>{{signalement.nomDeclarant}} {{signalement.prenomDeclarant}} ({{signalement.mailDeclarant}})</strong>.<br>
+                                <input type="hidden" name="profil" value="tiers"> 
+                            {% elseif hasMail is same as 'occupant' %}
+                                à l'occupant du logement <strong>{{signalement.nomOccupant}} {{signalement.prenomOccupant}} ({{signalement.mailOccupant}})</strong>.<br>
+                                <input type="hidden" name="profil" value="locataire">
+                            {% elseif hasMail is same as 'both' %}
+                                . Ce signalement a un occupant <strong>({{signalement.nomOccupant}} {{signalement.prenomOccupant}} - {{signalement.mailOccupant}})</strong> et un tiers déclarant <strong>({{signalement.nomDeclarant}} {{signalement.prenomDeclarant}} - {{signalement.mailDeclarant}})</strong>.<br><br> 
+                                Sélectionnez la personne à qui envoyer le lien de suivi puis cliquez sur le bouton envoyer. <br>
+                                Pour envoyer le lien aux deux personnes, la procédure doit être faite deux fois.  <br><br>
+                                <fieldset class="fr-fieldset" id="radio-hint" aria-labelledby="radio-hint-legend radio-hint-messages">
+                                    <div class="fr-fieldset__element">
+                                        <div class="fr-radio-group">
+                                            <input type="radio" id="profil-occupant" name="profil" value="locataire" checked>
+                                            <label class="fr-label" for="profil-occupant">
+                                                L'occupant du logement {{signalement.nomOccupant}} {{signalement.prenomOccupant}} - {{signalement.mailOccupant}}.
+                                            </label>
+                                        </div>
+                                    </div>
+                                    <div class="fr-fieldset__element">
+                                        <div class="fr-radio-group">
+                                            <input type="radio" id="profil-declarant" name="profil" value="tiers">
+                                            <label class="fr-label" for="profil-declarant">
+                                                Le tiers déclarant {{signalement.nomDeclarant}} {{signalement.prenomDeclarant}} - {{signalement.mailDeclarant}}.
+                                            </label>
+                                        </div>
+                                    </div>
+                                </fieldset>
+                            {% endif %}
+                            Voici le lien vers la page de suivi : {{ lienSuivi }}.<br>
+                            Pour envoyer le lien par mail, cliquez sur le bouton ci-dessous.
+                            <input type="hidden" name="preferedResponse" value="redirection">
+                        </div>
+                        <div class="fr-modal__footer">
+                            <ul class="fr-btns-group fr-btns-group--right fr-btns-group--icon-left">
+                                <li>
+                                    <button class="fr-btn fr-btn--secondary"
+                                            aria-controls="send-lien-suivi-modal">
+                                        Annuler
+                                    </button>
+                                </li>
+                                <li>
+                                    <button class="fr-btn fr-w-100" form="send_lien_suivi" type="submit">                                            
+                                        {% if hasMail is same as 'declarant' %}
+                                            Envoyer le lien au tiers déclarant
+                                        {% elseif hasMail is same as 'occupant' %}
+                                            Envoyer le lien à l'occupant
+                                        {% elseif hasMail is same as 'both' %}
+                                            Envoyer le lien de suivi
+                                        {% endif %}
+                                    </button>
+                                </li>
+                            </ul>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</dialog>

@@ -29,6 +29,7 @@ use App\Service\UploadHandlerService;
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -61,7 +62,7 @@ class SignalementController extends AbstractController
         SignalementDraftRequestSerializer $serializer,
         SignalementDraftManager $signalementDraftManager,
         ValidatorInterface $validator,
-    ): Response {
+    ): JsonResponse {
         /** @var SignalementDraftRequest $signalementDraftRequest */
         $signalementDraftRequest = $serializer->deserialize(
             $payload = $request->getContent(),
@@ -93,7 +94,7 @@ class SignalementController extends AbstractController
         ValidatorInterface $validator,
         SignalementDraftRepository $signalementDraftRepository,
         SignalementRepository $signalementRepository,
-    ): Response {
+    ): JsonResponse {
         /** @var SignalementDraftRequest $signalementDraftRequest */
         $signalementDraftRequest = $serializer->deserialize(
             $payload = $request->getContent(),
@@ -177,7 +178,7 @@ class SignalementController extends AbstractController
         SignalementDraftManager $signalementDraftManager,
         ValidatorInterface $validator,
         SignalementDraft $signalementDraft,
-    ): Response {
+    ): JsonResponse {
         /** @var SignalementDraftRequest $signalementDraftRequest */
         $signalementDraftRequest = $serializer->deserialize(
             $payload = $request->getContent(),
@@ -205,7 +206,7 @@ class SignalementController extends AbstractController
     #[Route('/signalement-draft/{uuid}/informations', name: 'informations_signalement_draft', methods: 'GET')]
     public function getSignalementDraft(
         SignalementDraft $signalementDraft,
-    ): Response {
+    ): JsonResponse {
         return $this->json([
             'signalement' => SignalementDraftStatus::EN_COURS === $signalementDraft->getStatus()
                 ? $signalementDraft :
@@ -218,7 +219,7 @@ class SignalementController extends AbstractController
         NotificationMailerRegistry $notificationMailerRegistry,
         SignalementDraft $signalementDraft,
         Request $request
-    ): Response {
+    ): JsonResponse {
         if (
             $request->isMethod('POST')
             && $signalementDraft
@@ -250,7 +251,7 @@ class SignalementController extends AbstractController
         NotificationMailerRegistry $notificationMailerRegistry,
         Signalement $signalement,
         Request $request
-    ): Response {
+    ): JsonResponse|RedirectResponse {
         if ($request->isMethod('POST')) {
             $profil = $request->get('profil');
             $success = $notificationMailerRegistry->send(
@@ -262,6 +263,16 @@ class SignalementController extends AbstractController
                     signalement: $signalement,
                 )
             );
+
+            if ($request->get('preferedResponse') && 'redirection' === $request->get('preferedResponse')) {
+                if ($success) {
+                    $this->addFlash('success', 'Le lien de suivi a été envoyé par e-mail.');
+                } else {
+                    $this->addFlash('error', 'Le lien de suivi n\'a pas pu être envoyé par e-mail.');
+                }
+
+                return $this->redirect($this->generateUrl('back_signalement_view', ['uuid' => $signalement->getUuid()]));
+            }
 
             if ($success) {
                 return $this->json(['success' => true]);
@@ -282,7 +293,7 @@ class SignalementController extends AbstractController
         SignalementDraft $signalementDraft,
         Request $request,
         SignalementDraftManager $signalementDraftManager
-    ): Response {
+    ): JsonResponse {
         if (
             $request->isMethod('POST')
             && $signalementDraft
@@ -302,7 +313,7 @@ class SignalementController extends AbstractController
         Request $request,
         PostalCodeHomeChecker $postalCodeHomeChecker,
         CommuneRepository $communeRepository
-    ): Response {
+    ): JsonResponse {
         $postalCode = $request->get('cp');
         if (empty($postalCode)) {
             return $this->json([

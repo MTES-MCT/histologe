@@ -80,6 +80,13 @@
                        title="Exporter le PDF">Exporter le PDF
                     </a>
             {% endif %}
+
+            {% if is_granted('ROLE_ADMIN') %}
+                    <a href="#" aria-controls="send-lien-suivi-modal" data-fr-opened="false"
+                       class="fr-btn fr-btn--sm fr-btn--secondary fr-btn--icon-left fr-icon-send-plane-fill"
+                       title="Envoyer le lien de suivi">Envoyer le lien de suivi
+                    </a>
+            {% endif %}
         </div>
     </div>
 
