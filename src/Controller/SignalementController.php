@@ -556,11 +556,11 @@ class SignalementController extends AbstractController
             isPublic: true,
         );
 
-        $description = htmlspecialchars(
-            nl2br($request->get('signalement_front_response')['content']),
+        $description = nl2br(htmlspecialchars(
+            $request->get('signalement_front_response')['content'],
             \ENT_QUOTES,
             'UTF-8'
-        );
+        ));
 
         $docs = $entityManager->getRepository(File::class)->findBy(['signalement' => $signalement, 'isTemp' => true, 'uploadedBy' => $user]);
         if (\count($docs)) {
