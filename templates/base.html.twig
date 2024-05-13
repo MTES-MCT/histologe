@@ -29,28 +29,28 @@
     <meta name="twitter:description" content="Signalez vos problèmes de logement.">
     <meta name="apple-mobile-web-app-title" content="{{ platform.name }}">
     <link rel="icon" href={{ asset('favicon.ico') }}>
-    <link rel="stylesheet" href="{{ asset('build/dsfr/dsfr.min.css') }}"/>
-    <link rel="stylesheet" href="{{ asset('build/dsfr/utility/icons/icons-business/icons-business.min.css') }}"/>
-    <link rel="stylesheet" href="{{ asset('build/dsfr/utility/icons/icons-communication/icons-communication.min.css') }}"/>
-    <link rel="stylesheet" href="{{ asset('build/dsfr/utility/icons/icons-others/icons-others.min.css') }}"/>
-    <link rel="stylesheet" href="{{ asset('build/dsfr/utility/icons/icons-device/icons-device.min.css') }}"/>
-    <link rel="stylesheet" href="{{ asset('build/dsfr/utility/icons/icons-design/icons-design.min.css') }}"/>
-    <link rel="stylesheet" href="{{ asset('build/dsfr/utility/icons/icons-document/icons-document.min.css') }}"/>
-    <link rel="stylesheet" href="{{ asset('build/dsfr/utility/icons/icons-editor/icons-editor.min.css') }}"/>
-    <link rel="stylesheet" href="{{ asset('build/dsfr/utility/icons/icons-map/icons-map.min.css') }}"/>
-    <link rel="stylesheet" href="{{ asset('build/dsfr/utility/icons/icons-media/icons-media.min.css') }}"/>
-    <link rel="stylesheet" href="{{ asset('build/dsfr/utility/icons/icons-system/icons-system.min.css') }}"/>
-    <link rel="stylesheet" href="{{ asset('build/dsfr/utility/icons/icons-user/icons-user.min.css') }}"/>
-    <link rel="stylesheet" href="{{ asset('build/dsfr/utility/icons/icons-weather/icons-weather.min.css') }}"/>
+    <link rel="stylesheet" href="{{ asset('build/dsfr/dsfr.min.css') }}">
+    <link rel="stylesheet" href="{{ asset('build/dsfr/utility/icons/icons-business/icons-business.min.css') }}">
+    <link rel="stylesheet" href="{{ asset('build/dsfr/utility/icons/icons-communication/icons-communication.min.css') }}">
+    <link rel="stylesheet" href="{{ asset('build/dsfr/utility/icons/icons-others/icons-others.min.css') }}">
+    <link rel="stylesheet" href="{{ asset('build/dsfr/utility/icons/icons-device/icons-device.min.css') }}">
+    <link rel="stylesheet" href="{{ asset('build/dsfr/utility/icons/icons-design/icons-design.min.css') }}">
+    <link rel="stylesheet" href="{{ asset('build/dsfr/utility/icons/icons-document/icons-document.min.css') }}">
+    <link rel="stylesheet" href="{{ asset('build/dsfr/utility/icons/icons-editor/icons-editor.min.css') }}">
+    <link rel="stylesheet" href="{{ asset('build/dsfr/utility/icons/icons-map/icons-map.min.css') }}">
+    <link rel="stylesheet" href="{{ asset('build/dsfr/utility/icons/icons-media/icons-media.min.css') }}">
+    <link rel="stylesheet" href="{{ asset('build/dsfr/utility/icons/icons-system/icons-system.min.css') }}">
+    <link rel="stylesheet" href="{{ asset('build/dsfr/utility/icons/icons-user/icons-user.min.css') }}">
+    <link rel="stylesheet" href="{{ asset('build/dsfr/utility/icons/icons-weather/icons-weather.min.css') }}">
     <link rel="stylesheet" href={{ asset('build/app.css') }}>
     {% if 'back_cartographie' in app.request.get('_route') %}
-        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet@1.7.1/dist/leaflet.css"/>
-        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet.markercluster@1.5.3/dist/MarkerCluster.Default.css"/>
-        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet.markercluster@1.5.3/dist/MarkerCluster.css"/>
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet@1.7.1/dist/leaflet.css">
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet.markercluster@1.5.3/dist/MarkerCluster.Default.css">
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet.markercluster@1.5.3/dist/MarkerCluster.css">
     {% endif %}
 
     {% if 'back_signalement_view' in app.request.get('_route') %}
-        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/tippy.js@6/themes/light-border.css"/>
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/tippy.js@6/themes/light-border.css">
     {% endif %}
 
     {% block stylesheets %}{% endblock %}
@@ -128,7 +128,7 @@
 {% include "footer.html.twig" %}
 
 <script type="module" src="{{ asset('build/dsfr/dsfr.module.min.js') }}"></script>
-<script type="text/javascript" nomodule src="{{ asset('build/dsfr/dsfr.nomodule.min.js') }}"></script>
+<script nomodule src="{{ asset('build/dsfr/dsfr.nomodule.min.js') }}"></script>
 <script src="{{ asset('js/tinymce/tinymce.min.js') }}"></script>
 <script src="{{ asset('js/const.min.js?v='~''|date('YmdH')) }}"></script>
 <script src="{{ asset('js/app.js?v='~''|date('YmdH')) }}"></script>
