@@ -109,6 +109,30 @@ class UploadHandlerServiceTest extends KernelTestCase
         $uploadHandlerService->uploadFromFile($uploadedFileMock, 'test.png');
     }
 
+    public function testUploadVideoFileShouldThrowsException(): void
+    {
+        /** @var ParameterBagInterface $parameterBag */
+        $parameterBag = static::getContainer()->get(ParameterBagInterface::class);
+
+        $uploadHandlerService = new UploadHandlerService(
+            $this->createMock(FilesystemOperator::class),
+            $parameterBag,
+            $this->createMock(LoggerInterface::class),
+            $this->createMock(HeicToJpegConverter::class),
+            $this->createMock(FilenameGenerator::class),
+        );
+
+        $uploadedFileMock = $this->createMock(UploadedFile::class);
+        $uploadedFileMock
+            ->expects($this->atLeast(1))
+            ->method('getMimeType')
+            ->willReturn('video/webm');
+
+        $this->expectException(\Exception::class);
+        $this->expectExceptionMessage('Le format video/webm n\'est pas supporté, merci d\'essayer avec un format jpeg,jpg,png,gif,pdf,docx,odt,doc,txt,xls,xlsx');
+        $uploadHandlerService->uploadFromFile($uploadedFileMock, 'test.webm');
+    }
+
     public function testUploadToTempFolderThrowException(): void
     {
         $uploadFile = new UploadedFile(
