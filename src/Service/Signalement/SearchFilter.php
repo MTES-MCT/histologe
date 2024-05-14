@@ -517,6 +517,10 @@ class SearchFilter
             $qb = $this->addFilterStatusAffectation($qb, $filters['statusAffectation']);
         }
 
+        if (!empty($filters['isImported'])) {
+            $qb = $this->addFilterImported($qb);
+        }
+
         return $qb;
     }
 
@@ -634,6 +638,13 @@ class SearchFilter
             $endDate->add(new \DateInterval('P1D'));
             $qb->andWhere($columnDbField.' <= :date_off')->setParameter('date_off', $endDate->format('Y-m-d'));
         }
+
+        return $qb;
+    }
+
+    private function addFilterImported(QueryBuilder $qb)
+    {
+        $qb->andWhere('s.isImported = true');
 
         return $qb;
     }

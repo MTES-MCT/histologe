@@ -34,6 +34,7 @@ class SignalementSearchQueryTest extends TestCase
             'attente_relogement',
             'non_decence_energetique',
             1,
+            'oui',
             'createdAt',
             'DESC',
         );
@@ -67,6 +68,7 @@ class SignalementSearchQueryTest extends TestCase
                 'off' => '2023-01-01',
             ],
             'statusAffectation' => 'accepte',
+            'isImported' => true,
             'page' => 1,
             'maxItemsPerPage' => 25,
             'sortBy' => 'createdAt',

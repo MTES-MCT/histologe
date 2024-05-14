@@ -13,7 +13,7 @@ class SignalementSearchQuery
     public function __construct(
         private readonly ?array $territoires = null,
         private readonly ?string $searchTerms = null,
-        #[Assert\Choice(['nouveau', 'en cours', 'ferme', 'refuse'])]
+        #[Assert\Choice(['nouveau', 'en_cours', 'ferme', 'refuse'])]
         private readonly ?string $status = null,
         private readonly ?array $communes = null,
         private readonly ?array $epcis = null,
@@ -63,6 +63,8 @@ class SignalementSearchQuery
             'suroccupation', ])]
         private readonly ?string $procedure = null,
         private readonly ?int $page = 1,
+        #[Assert\Choice(['oui'])]
+        private readonly ?string $isImported = null,
         #[Assert\Choice(['reference', 'nomOccupant', 'createdAt'])]
         private readonly string $sortBy = 'reference',
         private readonly string $orderBy = 'DESC',
@@ -179,6 +181,11 @@ class SignalementSearchQuery
         return !empty($this->procedure) ? strtoupper($this->procedure) : null;
     }
 
+    public function getIsImported(): ?string
+    {
+        return $this->isImported;
+    }
+
     public function getPage(): ?int
     {
         return $this->page;
@@ -260,6 +267,12 @@ class SignalementSearchQuery
             'cloture_tous_partenaire' => ['ALL_CLOSED'],
             default => null
         };
+
+        $filters['isImported'] = match ($this->getIsImported()) {
+            'oui' => true,
+            default => null
+        };
+
         $filters['page'] = $this->getPage() ?? 1;
         $filters['maxItemsPerPage'] = self::MAX_LIST_PAGINATION;
         $filters['sortBy'] = $this->getSortBy() ?? 'createdAt';

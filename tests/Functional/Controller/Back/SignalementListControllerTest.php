@@ -262,6 +262,7 @@ class SignalementListControllerTest extends WebTestCase
         yield 'Search by Situation Bail en cours' => [['situation' => 'bail_en_cours'], 3];
         yield 'Search by Situation Prévis de départ' => [['situation' => 'preavis_de_depart'], 1];
         yield 'Search by Situation Attente de relogement' => [['situation' => 'attente_relogement'], 2];
+        yield 'Search by Signalement Imported' => [['isImported' => 'oui'], 6];
     }
 
     /**

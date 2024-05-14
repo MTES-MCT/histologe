@@ -3,6 +3,7 @@
 namespace App\Repository;
 
 use App\Entity\Commune;
+use App\Entity\Territory;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
@@ -32,5 +33,16 @@ class CommuneRepository extends ServiceEntityRepository
         if ($flush) {
             $this->getEntityManager()->flush();
         }
+    }
+
+    public function findEpciByCommuneTerritory(Territory $territory): array
+    {
+        $qb = $this->createQueryBuilder('c')
+            ->select('distinct e.code, e.nom')
+            ->join('c.epci', 'e')
+            ->where('c.territory = :territory')
+            ->setParameter('territory', $territory);
+
+        return $qb->getQuery()->getResult();
     }
 }

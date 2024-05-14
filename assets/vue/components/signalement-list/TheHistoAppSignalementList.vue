@@ -4,7 +4,10 @@
     <p>{{ messageDeleteConfirmation }}</p>
   </div>
   <div id="histo-app-signalement-list">
-    <TheHistoSignalementListFilter/>
+    <TheHistoSignalementListFilter
+        :on-change="handleFilters"
+        @changeTerritory="handleTerritoryChange"
+    />
     <section v-if="loadingList" class="loading fr-m-10w">
       <h2 class="fr-text--light" v-if="!hasErrorLoading">Chargement de la liste...</h2>
       <h2 class="fr-text--light" v-if="hasErrorLoading">Erreur lors du chargement de la liste.</h2>
@@ -35,6 +38,7 @@ import TheHistoSignalementListFilter from '../signalement-list/TheHistoSignaleme
 import TheHistoSignalementListHeader from '../signalement-list/TheHistoSignalementListHeader.vue'
 import TheHistoSignalementListCards from '../signalement-list/TheHistoSignalementListCards.vue'
 import TheHistoSignalementListPagination from '../signalement-list/TheHistoSignalementListPagination.vue'
+import HistoInterfaceSelectOption from '../common/HistoInterfaceSelectOption'
 const initElements:any = document.querySelector('#app-signalement-list')
 
 export default defineComponent({
@@ -68,6 +72,12 @@ export default defineComponent({
       const page = params.get('page')
       const sortBy = params.get('sortBy')
       const direction = params.get('direction')
+      const status = params.get('status')
+
+      if (status) {
+        this.addQueryParameter('status', status)
+        this.buildUrl()
+      }
 
       if (page) {
         this.addQueryParameter('page', page)
@@ -99,6 +109,53 @@ export default defineComponent({
       const isAdminOrAdminTerritoire = this.sharedState.user.isAdmin || this.sharedState.user.isResponsableTerritoire
       this.sharedState.user.canSeeStatusAffectation = isAdminOrAdminTerritoire
       this.sharedState.user.canDeleteSignalement = isAdminOrAdminTerritoire
+      this.sharedState.user.canSeeScore = isAdminOrAdminTerritoire
+
+      this.sharedState.territories = []
+      const optionAllItem = new HistoInterfaceSelectOption()
+      optionAllItem.Id = 'all'
+      optionAllItem.Text = 'Tous'
+      this.sharedState.territories.push(optionAllItem)
+      for (const id in requestResponse.territories) {
+        const optionItem = new HistoInterfaceSelectOption()
+        optionItem.Id = requestResponse.territories[id].id
+        optionItem.Text = `${requestResponse.territories[id].zip} - ${requestResponse.territories[id].name}`
+        this.sharedState.territories.push(optionItem)
+      }
+
+      this.sharedState.partenaires = []
+      const optionNoneItem = new HistoInterfaceSelectOption()
+      optionNoneItem.Id = 'AUCUN'
+      optionNoneItem.Text = 'Aucun'
+      this.sharedState.partenaires.push(optionNoneItem)
+      for (const id in requestResponse.partners) {
+        const optionItem = new HistoInterfaceSelectOption()
+        optionItem.Id = requestResponse.partners[id].id.toString()
+        optionItem.Text = requestResponse.partners[id].nom
+        this.sharedState.partenaires.push(optionItem)
+      }
+
+      this.sharedState.etiquettes = []
+      for (const id in requestResponse.tags) {
+        const optionItem = new HistoInterfaceSelectOption()
+        optionItem.Id = requestResponse.tags[id].id.toString()
+        optionItem.Text = requestResponse.tags[id].label
+        this.sharedState.etiquettes.push(optionItem)
+      }
+
+      this.sharedState.communes = []
+      for (const id in requestResponse.communes) {
+        this.sharedState.communes.push(requestResponse.communes[id])
+      }
+
+      this.sharedState.epcis = []
+      for (const id in requestResponse.epcis) {
+        this.sharedState.epcis.push(`${requestResponse.epcis[id].code} - ${requestResponse.epcis[id].nom}`)
+      }
+    },
+    handleTerritoryChange (value: any) {
+      this.sharedState.currentTerritoryId = value.toString()
+      requests.getSettings(this.handleSettings)
     },
     handleSignalements (requestResponse: any) {
       this.sharedState.signalements.filters = requestResponse.filters
@@ -132,6 +189,65 @@ export default defineComponent({
       this.buildUrl()
       requests.getSignalements(this.handleSignalements)
     },
+    handleFilters () {
+      this.clearScreen()
+      const url = new URL(window.location.toString())
+      url.search = ''
+      this.sharedState.input.queryParameters = []
+
+      for (const [key, value] of Object.entries(this.sharedState.input.filters)) {
+        if (value && value !== null && value !== '') {
+          if (key === 'dateDepot' || key === 'dateDernierSuivi') {
+            const [dateDebut, dateFin] = this.handleDateParameter(key, value)
+            url.searchParams.set(`${key}Debut`, dateDebut)
+            url.searchParams.set(`${key}Fin`, dateFin)
+            url.searchParams.delete(key)
+          } else if (
+            key === 'territoires' ||
+              key === 'partenaires' ||
+              key === 'communes' ||
+              key === 'etiquettes' ||
+              key === 'epcis'
+          ) {
+            if (typeof value === 'object') {
+              if (key === 'epcis') {
+                value.forEach((valueItem: any) => {
+                  const code = valueItem.split('-').shift()
+                  this.addQueryParameter(`${key}[]`, code)
+                  url.searchParams.append(`${key}[]`, code)
+                })
+              } else {
+                value.forEach((valueItem: any) => {
+                  this.addQueryParameter(`${key}[]`, valueItem)
+                  url.searchParams.append(`${key}[]`, valueItem)
+                })
+              }
+            } else {
+              this.addQueryParameter(`${key}[]`, value)
+              url.searchParams.set(`${key}[]`, value)
+            }
+          } else {
+            this.addQueryParameter(key, value)
+            url.searchParams.set(key, value)
+          }
+        } else {
+          this.removeQueryParameter(key)
+          url.searchParams.delete(key)
+        }
+      }
+      window.history.pushState({}, '', decodeURIComponent(url.toString()))
+      this.buildUrl()
+      requests.getSignalements(this.handleSignalements)
+    },
+    handleDateParameter (key: string, value: any) {
+      const dateDebut = new Date(value[0]).toISOString().split('T')[0]
+      const dateFin = new Date(value[1]).toISOString().split('T')[0]
+      this.addQueryParameter(`${key}Debut`, dateDebut)
+      this.addQueryParameter(`${key}Fin`, dateFin)
+      this.removeQueryParameter(key)
+
+      return [dateDebut, dateFin]
+    },
     handleDelete (requestResponse: any) {
       this.messageDeleteConfirmation =
           requestResponse.status === 200
@@ -158,7 +274,11 @@ export default defineComponent({
       requests.doRequest(url, functionReturn)
     },
     addQueryParameter (name: string, value: string) {
-      const param = this.sharedState.input.queryParameters.find(parameter => parameter.name === name)
+      const param = this
+        .sharedState
+        .input
+        .queryParameters
+        .find(parameter => parameter.name === name && parameter.value === value)
       if (param) {
         param.value = value
       } else {

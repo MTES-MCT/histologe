@@ -6,6 +6,7 @@ use App\Repository\TagRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Ignore;
 
 #[ORM\Entity(repositoryClass: TagRepository::class)]
 class Tag
@@ -16,16 +17,19 @@ class Tag
     private $id;
 
     #[ORM\ManyToMany(targetEntity: Signalement::class, inversedBy: 'tags', cascade: ['persist'])]
+    #[Ignore]
     private $signalement;
 
     #[ORM\Column(type: 'string', length: 255)]
     private $label;
 
     #[ORM\Column(type: 'boolean')]
+    #[Ignore]
     private $isArchive;
 
     #[ORM\ManyToOne(targetEntity: Territory::class, inversedBy: 'tags')]
     #[ORM\JoinColumn(nullable: false)]
+    #[Ignore]
     private $territory;
 
     public function __construct()

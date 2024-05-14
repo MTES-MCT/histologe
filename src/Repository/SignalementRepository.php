@@ -604,6 +604,32 @@ class SignalementRepository extends ServiceEntityRepository
             ->getResult();
     }
 
+    public function findZipcodes(User|null $user = null, Territory|null $territory = null): array|int|string
+    {
+        $user = $user?->isUserPartner() || $user?->isPartnerAdmin() ? $user : null;
+
+        $qb = $this->createQueryBuilder('s')
+            ->select('s.cpOccupant zipcode')
+            ->where('s.statut != :status')
+            ->setParameter('status', Signalement::STATUS_ARCHIVED);
+        if ($user) {
+            $qb->leftJoin('s.affectations', 'affectations')
+                ->leftJoin('affectations.partner', 'partner')
+                ->andWhere('partner = :partner')
+                ->setParameter('partner', $user->getPartner());
+        }
+        if ($territory) {
+            $qb->andWhere('s.territory = :territory')
+                ->setParameter('territory', $territory);
+        }
+
+        return $qb
+            ->groupBy('s.cpOccupant')
+            ->orderBy('s.cpOccupant', 'ASC')
+            ->getQuery()
+            ->getResult();
+    }
+
     public function findOneByCodeForPublic($code): ?Signalement
     {
         return $this->createQueryBuilder('s')

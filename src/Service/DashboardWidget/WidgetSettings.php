@@ -14,11 +14,19 @@ class WidgetSettings
     private ?string $territoryName = null;
 
     private array $territories = [];
+    private array $partners = [];
+    private array $communes = [];
+    private array $epcis = [];
+    private array $tags = [];
 
     public function __construct(
         User $user,
         array $territories,
-        bool $canSeeNDE
+        bool $canSeeNDE,
+        array $partners = [],
+        array $communes = [],
+        array $epcis = [],
+        array $tags = [],
     ) {
         $this->firstname = $user->getPrenom();
         $this->lastname = $user->getNom();
@@ -27,6 +35,10 @@ class WidgetSettings
         $this->partnerName = $user->getPartner()->getNom();
         $this->territoryName = $user->getTerritory()?->getZip().'-'.$user->getTerritory()?->getName();
         $this->territories = $territories;
+        $this->partners = $partners;
+        $this->communes = $communes;
+        $this->epcis = $epcis;
+        $this->tags = $tags;
     }
 
     public function getFirstname(): ?string
@@ -62,5 +74,25 @@ class WidgetSettings
     public function getTerritories(): array
     {
         return $this->territories;
+    }
+
+    public function getPartners(): array
+    {
+        return $this->partners;
+    }
+
+    public function getCommunes(): array
+    {
+        return $this->communes;
+    }
+
+    public function getEpcis(): array
+    {
+        return $this->epcis;
+    }
+
+    public function getTags(): array
+    {
+        return $this->tags;
     }
 }
