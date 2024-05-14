@@ -60,8 +60,10 @@ class UploadHandlerService
      * @throws FilesystemException
      * @throws UnsupportedFileFormatException
      */
-    public function toTempFolder(UploadedFile $file): self|array
-    {
+    public function toTempFolder(
+        UploadedFile $file,
+        ?string $fileType = File::INPUT_NAME_DOCUMENTS
+    ): self|array {
         $originalFilename = pathinfo($file->getClientOriginalName(), \PATHINFO_FILENAME);
         if (empty($originalFilename) || !$file->isValid()) {
             return ['error' => 'Erreur lors du téléversement.', 'message' => 'Fichier vide', 'status' => 500];
@@ -71,10 +73,21 @@ class UploadHandlerService
         if ($file->getSize() > self::MAX_FILESIZE) {
             throw new MaxUploadSizeExceededException(self::MAX_FILESIZE);
         }
-
-        if (\in_array($file->getMimeType(), HeicToJpegConverter::HEIC_FORMAT)) {
-            throw new UnsupportedFileFormatException($file->getMimeType());
+        if (
+            File::INPUT_NAME_DOCUMENTS === $fileType
+            && !\in_array($file->getMimeType(), self::DOCUMENT_MIME_TYPES)
+        ) {
+            throw new UnsupportedFileFormatException($file->getMimeType(), self::DOCUMENT_EXTENSION);
+        } elseif (
+            File::INPUT_NAME_PHOTOS === $fileType
+            && !\in_array($file->getMimeType(), ImageManipulationHandler::IMAGE_MIME_TYPES)
+        ) {
+            throw new UnsupportedFileFormatException($file->getMimeType(), ImageManipulationHandler::IMAGE_EXTENSION);
         }
+
+        // if (\in_array($file->getMimeType(), HeicToJpegConverter::HEIC_FORMAT)) {
+        //     throw new UnsupportedFileFormatException($file->getMimeType(), ImageManipulationHandler::IMAGE_EXTENSION);
+        // }
 
         try {
             $distantFolder = $this->parameterBag->get('bucket_tmp_dir');
@@ -190,11 +203,26 @@ class UploadHandlerService
 
     /**
      * @throws MaxUploadSizeExceededException
+     * @throws UnsupportedFileFormatException
      */
-    public function uploadFromFile(UploadedFile $file, $newFilename): ?string
-    {
+    public function uploadFromFile(
+        UploadedFile $file,
+        string $newFilename,
+        ?string $fileType = File::INPUT_NAME_DOCUMENTS
+    ): ?string {
         if ($file->getSize() > self::MAX_FILESIZE) {
             throw new MaxUploadSizeExceededException(self::MAX_FILESIZE);
+        }
+        if (
+            File::INPUT_NAME_DOCUMENTS === $fileType
+            && !\in_array($file->getMimeType(), self::DOCUMENT_MIME_TYPES)
+        ) {
+            throw new UnsupportedFileFormatException($file->getMimeType(), self::DOCUMENT_EXTENSION);
+        } elseif (
+            File::INPUT_NAME_PHOTOS === $fileType
+            && !\in_array($file->getMimeType(), ImageManipulationHandler::IMAGE_MIME_TYPES)
+        ) {
+            throw new UnsupportedFileFormatException($file->getMimeType(), ImageManipulationHandler::IMAGE_EXTENSION);
         }
         try {
             $tmpFilepath = $file->getPathname();

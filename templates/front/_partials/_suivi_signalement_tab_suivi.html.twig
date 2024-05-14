@@ -48,12 +48,27 @@
 			<div id="uploaded-files-list" class="fr-mt-n2v fr-mb-2v"></div>
 			<ul class="fr-btns-group fr-btns-group--icon-left">
 				<li>
-					<button class="fr-btn fr-btn--secondary fr-icon-add-line open-modal-upload-files-btn" type="button" data-fr-opened="false" aria-controls="fr-modal-upload-files-usager" data-file-type="photo">
+					<button 
+						class="fr-btn fr-btn--secondary fr-icon-add-line open-modal-upload-files-btn" 
+						type="button" 
+						data-fr-opened="false" 
+						aria-controls="fr-modal-upload-files-usager" 
+						data-file-type="photo"
+						data-accepted-type-mimes={{ get_accepted_mime_type('photo')}}
+						data-accepted-extensions={{ get_accepted_extensions('photo')}}
+						>
 						Ajouter des photos
 					</button>
 				</li>
 				<li>
-					<button class="fr-btn fr-btn--secondary fr-icon-add-line open-modal-upload-files-btn" type="button" data-fr-opened="false" aria-controls="fr-modal-upload-files-usager" data-file-type="document">
+					<button 
+						class="fr-btn fr-btn--secondary fr-icon-add-line open-modal-upload-files-btn" 
+						type="button" 
+						data-fr-opened="false" 
+						aria-controls="fr-modal-upload-files-usager" 
+						data-file-type="document"
+						data-accepted-type-mimes={{ get_accepted_mime_type('document')}}
+						data-accepted-extensions={{ get_accepted_extensions('document')}}>
 						Ajouter des documents
 					</button>
 				</li>

@@ -48,13 +48,36 @@ class SignalementFileProcessor
                     ERROR;
                 $this->logger->error($message);
                 $this->errors[] = $message;
+            } elseif (
+                $file instanceof UploadedFile
+                && File::INPUT_NAME_DOCUMENTS === $inputName
+                && !\in_array($file->getMimeType(), UploadHandlerService::DOCUMENT_MIME_TYPES)
+            ) {
+                $message = <<<ERROR
+                    Les fichiers de format {$file->getMimeType()} ne sont pas pris en charge,
+                    merci de choisir un fichier au format adéquat.
+                    ERROR;
+                $this->logger->error($message);
+                $this->errors[] = $message;
+            } elseif (
+                $file instanceof UploadedFile
+                && File::INPUT_NAME_PHOTOS === $inputName
+                && !\in_array($file->getMimeType(), ImageManipulationHandler::IMAGE_MIME_TYPES)
+            ) {
+                $message = <<<ERROR
+                    Les fichiers de format {$file->getMimeType()} ne sont pas pris en charge,
+                    merci de convertir votre image en JPEG ou en PNG avant de l'envoyer.
+                    ERROR;
+                $this->logger->error($message);
+                $this->errors[] = $message;
             } else {
                 $inputTypeDetection = $inputName;
                 try {
                     if ($file instanceof UploadedFile) {
                         $filename = $this->uploadHandlerService->uploadFromFile(
                             $file,
-                            $this->filenameGenerator->generate($file)
+                            $this->filenameGenerator->generate($file),
+                            $inputTypeDetection
                         );
                         $title = $this->filenameGenerator->getTitle();
 

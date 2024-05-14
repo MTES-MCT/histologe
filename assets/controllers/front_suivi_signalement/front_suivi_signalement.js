@@ -69,7 +69,7 @@ if (modalUploadFiles) {
         }
         let div = document.createElement('div')
         div.classList.add('fr-alert', 'fr-alert--error', 'fr-alert--sm')
-        div.innerHTML = `Impossible d'ajouter le fichier "${file.name}" car le format n'est pas pris en charge. Veuillez sélectionner une photo au format JPG, PNG ou GIF.`;
+        div.innerHTML = `Impossible d'ajouter le fichier "${file.name}" car le format n'est pas pris en charge. Veuillez sélectionner un fichier au format ${modalUploadFiles.dataset.acceptedExtensions}.`;
         listContainer.prepend(div)
         return false;
     }
@@ -251,10 +251,12 @@ if (modalUploadFiles) {
         modalUploadFiles.dataset.hasChanges = false
     })
 
-    let fileType
+    let fileType, acceptedTypeMimes, acceptedExtensions
     document.querySelectorAll('.open-modal-upload-files-btn').forEach((button) => {
         button.addEventListener('click', (e) => {
             fileType = e.target.dataset.fileType
+            acceptedTypeMimes = e.target.dataset.acceptedTypeMimes ?? null
+            acceptedExtensions = e.target.dataset.acceptedExtensions ?? null
         })
     })
 
@@ -265,13 +267,17 @@ if (modalUploadFiles) {
         modalUploadFiles.querySelectorAll('.type-conditional').forEach((type) => {
             type.classList.add('fr-hidden')
         })
+        modalUploadFiles.dataset.acceptedExtensions = acceptedExtensions    
         if (fileType == 'photo') {
             modalUploadFiles.dataset.fileType = 'photo'
             modalUploadFiles.querySelector('.type-photo').classList.remove('fr-hidden')
-            fileSelectorInput.setAttribute('accept', 'image/jpeg,image/png,image/gif')
         } else {
             modalUploadFiles.dataset.fileType = 'document'
             modalUploadFiles.querySelector('.type-document').classList.remove('fr-hidden')
+        }
+        if (null !== acceptedTypeMimes) {
+            fileSelectorInput.setAttribute('accept', acceptedTypeMimes)
+        }else{
             fileSelectorInput.setAttribute('accept', '*/*')
         }
     })

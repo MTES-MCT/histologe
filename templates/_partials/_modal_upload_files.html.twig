@@ -68,7 +68,7 @@
                             </div>
                             <p class="fr-mb-1w">ou</p>
                             <button class="modal-upload-files-selector fr-btn fr-icon-search-line fr-btn--icon-left fr-btn--secondary">Parcourir les fichiers de l'appareil</button>
-                            <input type="file" class="modal-upload-files-selector-input" multiple accept="application/*">
+                            <input type="file" class="modal-upload-files-selector-input" multiple accept={{ get_accepted_mime_type('document')}}>
                         </div>
                         <div class="modal-upload-list-section" id="modal-upload-file-dynamic-content">
                             <div class="modal-upload-list"></div>

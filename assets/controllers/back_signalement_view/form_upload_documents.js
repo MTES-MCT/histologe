@@ -95,7 +95,7 @@ function initializeUploadModal(
         }
         let div = document.createElement('div')
         div.classList.add('fr-alert', 'fr-alert--error', 'fr-alert--sm')
-        div.innerHTML = `Impossible d'ajouter le fichier "${file.name}" car le format n'est pas pris en charge. Veuillez sélectionner une photo au format JPG, PNG ou GIF.`;
+        div.innerHTML = `Impossible d'ajouter le fichier "${file.name}" car le format n'est pas pris en charge. Veuillez sélectionner un fichier au format ${modal.dataset.acceptedExtensions}.`;
         listContainer.prepend(div)
         return false;
     }
@@ -311,13 +311,15 @@ function initializeUploadModal(
         modal.dataset.hasChanges = false
     })
 
-    let fileType, fileFilter, documentType, interventionId
+    let fileType, fileFilter, documentType, interventionId, acceptedTypeMimes, acceptedExtensions
     document.querySelectorAll('.open-modal-upload-files-btn').forEach((button) => {
         button.addEventListener('click', (e) => {
             fileType = e.target.dataset.fileType
             fileFilter = e.target.dataset.fileFilter ?? null
             documentType = e.target.dataset.documentType ?? null
             interventionId = e.target.dataset.interventionId ?? null
+            acceptedTypeMimes = e.target.dataset.acceptedTypeMimes ?? null
+            acceptedExtensions = e.target.dataset.acceptedExtensions ?? null
         })
     })
 
@@ -333,17 +335,21 @@ function initializeUploadModal(
         })
         modal.dataset.documentType = documentType
         modal.dataset.fileFilter = fileFilter
-        modal.dataset.interventionId = interventionId        
+        modal.dataset.interventionId = interventionId    
+        modal.dataset.acceptedExtensions = acceptedExtensions        
         if (fileType == 'photo') {
             modal.dataset.fileType = 'photo'
             modal.querySelector('.type-photo').classList.remove('fr-hidden')
-            fileSelectorInput.setAttribute('accept', 'image/jpeg,image/png,image/gif')
 
         } else {
             modal.dataset.fileType = 'document'
             modal.querySelector('.type-document').classList.remove('fr-hidden')
-            fileSelectorInput.setAttribute('accept', '*/*')
         }   
+        if (null !== acceptedTypeMimes) {
+            fileSelectorInput.setAttribute('accept', acceptedTypeMimes)
+        }else{
+            fileSelectorInput.setAttribute('accept', '*/*')
+        }
         if (fileFilter == 'procedure') {
             modal.querySelector('.filter-procedure').classList.remove('fr-hidden')
         } else if (fileFilter == 'situation')  {
