@@ -20,13 +20,15 @@
                 <small class="fr-text-label--blue-france">{{ app.user.prenom ~' '~app.user.nom[:1]|capitalize~'.' }}</small>
             </div>
             <ul class="fr-sidemenu__list">
-                <li class="fr-sidemenu__item">
-                    <a class="fr-sidemenu__link" href="{{ path('back_dashboard') }}">
+                <li class="fr-sidemenu__item" {% if 'back_dashboard' is same as(app.request.get('_route')) %}fr-sidemenu__item--active{% endif %}>
+                    <a class="fr-sidemenu__link" href="{{ path('back_dashboard') }}" 
+                    {% if 'back_dashboard' is same as(app.request.get('_route')) %}aria-current="page"{% endif %}>
                        Tableau de bord
                     </a>
                 </li>
-                <li class="fr-sidemenu__item">
-                    <a class="fr-sidemenu__link" href="{{ path('back_notifications_list') }}">Notifications
+                <li class="fr-sidemenu__item" {% if 'back_notifications_list' is same as(app.request.get('_route')) %}fr-sidemenu__item--active{% endif %}>
+                    <a class="fr-sidemenu__link" href="{{ path('back_notifications_list') }}"
+                        {% if 'back_notifications_list' is same as(app.request.get('_route')) %}aria-current="page"{% endif %}>Notifications
                         <span class="fr-puce fr-puce--danger">{{ count_notification(app.user) }} </span>
                     </a>
                 </li>
@@ -61,7 +63,7 @@
                     </ul>
                 </div>
                 <button class="fr-sidemenu__btn"
-                        aria-expanded="{% if 'back_cartographie' is same as(app.request.get('_route')) or 'back_statistique' is same as(app.request.get('_route')) %}true{% else %}false{% endif %}"
+                        aria-expanded="{% if 'back_cartographie' is same as(app.request.get('_route')) or 'back_statistiques' is same as(app.request.get('_route')) %}true{% else %}false{% endif %}"
                         aria-controls="fr-sidemenu-pilotage">Données chiffrées
                 </button>
                 <div class="fr-collapse" id="fr-sidemenu-pilotage">
@@ -71,7 +73,8 @@
                                {% if 'back_cartographie' is same as(app.request.get('_route')) %}aria-current="page"{% endif %}>Cartographie</a>
                         </li>
                         <li class="fr-sidemenu__item {% if 'back_statistiques' is same as(app.request.get('_route')) %}fr-sidemenu__item--active{% endif %}">
-                            <a class="fr-sidemenu__link" href="{{ path('back_statistiques') }}" target="_self">Statistiques</a>
+                            <a class="fr-sidemenu__link" href="{{ path('back_statistiques') }}" target="_self"
+                            {% if 'back_statistiques' is same as(app.request.get('_route')) %}aria-current="page"{% endif %}>Statistiques</a>
                         </li>
                     </ul>
                 </div>
