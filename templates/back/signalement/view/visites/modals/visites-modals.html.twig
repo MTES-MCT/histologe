@@ -9,7 +9,7 @@
         {% include 'back/signalement/view/visites/modals/visites-modal-reschedule.html.twig' %}
     {% elseif intervention.status is same as constant('App\\Entity\\Intervention::STATUS_DONE') %}
         {% include 'back/signalement/view/visites/modals/visites-modal-edit.html.twig' %}
-        {% if (is_granted('FILE_CREATE', signalement) and  isDocumentsEnabled) %}
+        {% if is_granted('FILE_CREATE', signalement) %}
             {% include 'back/signalement/view/visites/modals/visites-modal-upload-files.html.twig' %}
         {% endif %}
     {% endif %}

@@ -64,7 +64,6 @@ class FileVoter extends Voter
     private function canEdit(File $file, User $user): bool
     {
         return $this->canCreate($file->getSignalement(), $user)
-            && $this->parameterBag->get('feature_documents_enable')
             && (
                 $this->isFileUploadedByUser($file, $user)
                 ||

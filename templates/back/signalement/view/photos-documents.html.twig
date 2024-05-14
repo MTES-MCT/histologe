@@ -6,53 +6,32 @@
     </div>
     <div class="fr-col-3 fr-col-md-6 fr-text--right">
         {% if (is_granted('FILE_CREATE', signalement)) %}
-            {% if isDocumentsEnabled %}
-                <ul class="fr-btns-group fr-btns-group--inline fr-btns-group--sm fr-btns-group--right fr-btns-group--icon-left">
+            <ul class="fr-btns-group fr-btns-group--inline fr-btns-group--sm fr-btns-group--right fr-btns-group--icon-left">
+                <li>
+                    <button 
+                    class="fr-btn fr-btn--secondary fr-icon-file-add-line open-modal-upload-files-btn" 
+                    data-fr-opened="false" 
+                    aria-controls="fr-modal-upload-files" 
+                    data-file-type="document"
+                    data-file-filter={{filesFilter}}
+                    >
+                        Ajouter des documents
+                    </button>
+                </li>
+                {% if filesFilter is same as 'situation' %}
                     <li>
                         <button 
-                        class="fr-btn fr-btn--secondary fr-icon-file-add-line open-modal-upload-files-btn" 
+                        class="fr-btn fr-btn--secondary fr-icon-image-add-line open-modal-upload-files-btn" 
                         data-fr-opened="false" 
                         aria-controls="fr-modal-upload-files" 
-                        data-file-type="document"
+                        data-file-type="photo"
                         data-file-filter={{filesFilter}}
                         >
-                            Ajouter des documents
+                            Ajouter des photos
                         </button>
                     </li>
-                    {% if filesFilter is same as 'situation' %}
-                        <li>
-                            <button 
-                            class="fr-btn fr-btn--secondary fr-icon-image-add-line open-modal-upload-files-btn" 
-                            data-fr-opened="false" 
-                            aria-controls="fr-modal-upload-files" 
-                            data-file-type="photo"
-                            data-file-filter={{filesFilter}}
-                            >
-                                Ajouter des photos
-                            </button>
-                        </li>
-                    {% endif %}
-                </ul>
-            {% else %}
-                <form method="POST" enctype="multipart/form-data" class="inline-form" action="{{ path('back_signalement_add_file',{uuid:signalement.uuid}) }}">
-                    <label class="fr-btn fr-btn--sm fr-fi-file-fill fr-btn--icon-left"> Ajouter des documents
-                        <input type="file" accept="application/*" name="signalement-add-file[documents][]" class="fr-hidden fr-input--file-signalement" multiple>
-                    </label>
-                    <input type="hidden" name="_token" value="{{ csrf_token('signalement_add_file_'~signalement.id) }}">
-                    <input type="hidden" name="document_type" value="{{ enum('App\\Entity\\Enum\\DocumentType').AUTRE.name }}">
-                </form>
-                {% if filesFilter is same as 'situation' %}
-                    <form method="POST" enctype="multipart/form-data" class="inline-form" action="{{ path('back_signalement_add_file',{uuid:signalement.uuid}) }}">
-                        <label class="fr-btn fr-btn--sm fr-btn--secondary fr-btn--icon-left fr-icon-camera-fill"> Ajouter des photos
-                            <input type="file" accept="image/*" name="signalement-add-file[photos][]" class="fr-hidden fr-input--file-signalement" multiple>
-                        </label>
-                        <input type="hidden" name="_token" value="{{ csrf_token('signalement_add_file_'~signalement.id) }}">
-                        <input type="hidden" name="document_type" value="{{ enum('App\\Entity\\Enum\\DocumentType').AUTRE.name }}">
-                    </form>
                 {% endif %}
-            {% endif %}
-            
-
+            </ul>  
         {% endif %}
     </div>
     {% if filesFilter is same as 'situation' %}

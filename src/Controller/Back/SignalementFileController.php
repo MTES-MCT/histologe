@@ -17,7 +17,6 @@ use App\Service\UploadHandlerService;
 use Doctrine\ORM\EntityManagerInterface;
 use League\Flysystem\FilesystemException;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -57,10 +56,7 @@ class SignalementFileController extends AbstractController
         Signalement $signalement,
         Request $request,
         EntityManagerInterface $entityManager,
-        SuiviManager $suiviManager,
-        SignalementFileProcessor $signalementFileProcessor,
-        #[Autowire(env: 'FEATURE_DOCUMENTS_ENABLE')]
-        bool $featureDocumentsEnable
+        SignalementFileProcessor $signalementFileProcessor
     ): Response {
         $this->denyAccessUnlessGranted('FILE_CREATE', $signalement);
         if (!$this->isCsrfTokenValid('signalement_add_file_'.$signalement->getId(), $request->get('_token')) || !$files = $request->files->get('signalement-add-file')) {
@@ -89,18 +85,12 @@ class SignalementFileController extends AbstractController
 
             return $this->redirect($this->generateUrl('back_signalement_view', ['uuid' => $signalement->getUuid()]));
         }
-        if ($featureDocumentsEnable) {
-            $signalementFileProcessor->addFilesToSignalement(
-                fileList: $fileList,
-                signalement: $signalement,
-                user: $this->getUser(),
-                isWaitingSuivi: true
-            );
-        } else {
-            $filesList = $signalementFileProcessor->addFilesToSignalement($fileList, $signalement, $this->getUser());
-            $suivi = $suiviManager->createInstanceForFilesSignalement($this->getUser(), $signalement, $filesList);
-            $entityManager->persist($suivi);
-        }
+        $signalementFileProcessor->addFilesToSignalement(
+            fileList: $fileList,
+            signalement: $signalement,
+            user: $this->getUser(),
+            isWaitingSuivi: true
+        );
         $entityManager->persist($signalement);
         $entityManager->flush();
         if ($request->isXmlHttpRequest()) {
