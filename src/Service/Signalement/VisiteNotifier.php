@@ -70,7 +70,7 @@ class VisiteNotifier
                 $affectations = $intervention->getSignalement()->getAffectations();
                 foreach ($affectations as $affectation) {
                     $partner = $affectation->getPartner();
-                    if (AffectationStatus::STATUS_ACCEPTED->value === $affectation->getStatut()) {
+                    if ((!$intervention->getPartner() || $intervention->getPartner() != $partner) && AffectationStatus::STATUS_ACCEPTED->value === $affectation->getStatut()) {
                         $listUsersToNotify = array_unique(array_merge($listUsersToNotify, $partner->getUsers()->toArray()), \SORT_REGULAR);
                     }
                 }
