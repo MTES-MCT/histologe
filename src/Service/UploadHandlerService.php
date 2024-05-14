@@ -18,6 +18,31 @@ use Symfony\Component\HttpFoundation\File\UploadedFile;
 class UploadHandlerService
 {
     public const MAX_FILESIZE = 10 * 1024 * 1024;
+    public const DOCUMENT_MIME_TYPES = [
+        'image/jpeg',
+        'image/png',
+        'image/gif',
+        'application/pdf',
+        'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+        'application/vnd.oasis.opendocument.text',
+        'application/msword',
+        'text/plain',
+        'application/vnd.ms-excel',
+        'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+    ];
+    public const DOCUMENT_EXTENSION = [
+        'jpeg',
+        'jpg',
+        'png',
+        'gif',
+        'pdf',
+        'docx',
+        'odt',
+        'doc',
+        'txt',
+        'xls',
+        'xlsx',
+    ];
 
     private array $file = [];
 

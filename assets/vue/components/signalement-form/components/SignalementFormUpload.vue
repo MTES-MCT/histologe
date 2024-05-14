@@ -92,7 +92,16 @@ export default defineComponent({
         'image/gif'
       ],
       documentsMimeTypes: [
-        'application/*'
+        'image/jpeg',
+        'image/png',
+        'image/gif',
+        'application/pdf',
+        'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+        'application/vnd.oasis.opendocument.text',
+        'application/msword',
+        'text/plain',
+        'application/vnd.ms-excel',
+        'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
       ],
       formStore
     }
