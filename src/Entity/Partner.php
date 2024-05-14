@@ -93,7 +93,7 @@ class Partner
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $idossToken = null;
 
-    #[ORM\Column(type: Types::DATETIME_IMMUTABLE, nullable: true)]
+    #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: true)]
     private ?\DateTimeInterface $idossTokenExpirationDate = null;
 
     public function __construct()
@@ -102,6 +102,7 @@ class Partner
         $this->isArchive = false;
         $this->affectations = new ArrayCollection();
         $this->interventions = new ArrayCollection();
+        $this->isIdossActive = false;
         $this->isIdossActive = false;
     }
 
@@ -371,17 +372,12 @@ class Partner
             );
     }
 
-    public function canSyncWithIdoss(): bool
-    {
-        return $this->isIdossActive && $this->idossUrl;
-    }
-
     public function isIdossActive(): ?bool
     {
         return $this->isIdossActive;
     }
 
-    public function setIsIdossActive(bool $isIdossActive): self
+    public function setIsIdossActive(bool $isIdossActive): static
     {
         $this->isIdossActive = $isIdossActive;
 
@@ -393,7 +389,7 @@ class Partner
         return $this->idossUrl;
     }
 
-    public function setIdossUrl(?string $idossUrl): self
+    public function setIdossUrl(?string $idossUrl): static
     {
         $this->idossUrl = $idossUrl;
 
@@ -405,7 +401,7 @@ class Partner
         return $this->idossToken;
     }
 
-    public function setIdossToken(?string $idossToken): self
+    public function setIdossToken(?string $idossToken): static
     {
         $this->idossToken = $idossToken;
 
@@ -417,7 +413,7 @@ class Partner
         return $this->idossTokenExpirationDate;
     }
 
-    public function setIdossTokenExpirationDate(?\DateTimeInterface $idossTokenExpirationDate): self
+    public function setIdossTokenExpirationDate(?\DateTimeInterface $idossTokenExpirationDate): static
     {
         $this->idossTokenExpirationDate = $idossTokenExpirationDate;
 

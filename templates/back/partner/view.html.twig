@@ -87,16 +87,18 @@
                 </div>
             </div>
         {% endif %}
-        {% if partner.isIdossActive %}
-            <div class="fr-col-12 fr-grid-row fr-grid-row--gutters">
-                <div class="fr-col-6">
-                    <div>
-                        <b>Synchronisation iDoss :</b>
+        <div class="fr-col-12 fr-grid-row fr-grid-row--gutters">
+            <div class="fr-col-6">
+                <div>
+                    <b>Synchronisation iDoss :</b>
+                    {% if partner.isIdossActive %}
                         <span class="fr-badge fr-badge--success">Active</span>
-                    </div>
+                    {% else %}
+                        <span class="fr-badge fr-badge--info">Inactive</span>
+                    {% endif %}
                 </div>
             </div>
-        {% endif %}
+        </div>
 
     </section>
     <hr>
