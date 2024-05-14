@@ -2,21 +2,16 @@ function histoUpdateSubmitButton(elementName, elementLabel) {
   document.querySelector(elementName).innerHTML = elementLabel
   document.querySelector(elementName).disabled = true
 }
-function histoUpdateFieldsVisibility(showZonePDL, showEsaboraTitle, showEsaboraDiv) {
+function histoUpdateFieldsVisibility(showZonePDL, showEsabora) {
   if (showZonePDL) {
     document.querySelector('#partner_create_zone_pdl').classList.remove('fr-hidden')
   } else {
     document.querySelector('#partner_create_zone_pdl').classList.add('fr-hidden')
   }
-  if (showEsaboraTitle) {
-    document.querySelector('#partner_create_esabora_title').classList.remove('fr-hidden')
+  if (showEsabora) {
+    document.querySelector('#partner_esabora').classList.remove('fr-hidden')
   } else {
-    document.querySelector('#partner_create_esabora_title').classList.add('fr-hidden')
-  }
-  if (showEsaboraDiv) {
-    document.querySelector('#partner_create_esabora_div').classList.remove('fr-hidden')
-  } else {
-    document.querySelector('#partner_create_esabora_div').classList.add('fr-hidden')
+    document.querySelector('#partner_esabora').classList.add('fr-hidden')
   }
 }
 function histoUpdateValueFromData(elementName, elementData, target) {
@@ -94,11 +89,11 @@ if (document.querySelector('#partner_type')) {
     const partner_type = document.getElementById("partner_type");
     partner_type.value = partner_type.value.toUpperCase();
     if (partner_type.value === 'COMMUNE_SCHS') {
-      histoUpdateFieldsVisibility(true, true, true)
+      histoUpdateFieldsVisibility(true, true)
     } else if (partner_type.value === 'EPCI') {
-      histoUpdateFieldsVisibility(true, false, false)
+      histoUpdateFieldsVisibility(true, false)
     } else {
-      histoUpdateFieldsVisibility(false, false, false)
+      histoUpdateFieldsVisibility(false, false)
     }
   });
 }

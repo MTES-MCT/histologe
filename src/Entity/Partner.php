@@ -84,12 +84,25 @@ class Partner
     #[Ignore]
     private Collection $interventions;
 
+    #[ORM\Column]
+    private ?bool $isIdossActive = null;
+
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $idossUrl = null;
+
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $idossToken = null;
+
+    #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: true)]
+    private ?\DateTimeInterface $idossTokenExpirationDate = null;
+
     public function __construct()
     {
         $this->users = new ArrayCollection();
         $this->isArchive = false;
         $this->affectations = new ArrayCollection();
         $this->interventions = new ArrayCollection();
+        $this->isIdossActive = false;
     }
 
     public function getId(): ?int
@@ -356,5 +369,53 @@ class Partner
                 $this->territory->getZip(),
                 self::TERRITORY_ZIP_ALLOWED
             );
+    }
+
+    public function isIdossActive(): ?bool
+    {
+        return $this->isIdossActive;
+    }
+
+    public function setIsIdossActive(bool $isIdossActive): static
+    {
+        $this->isIdossActive = $isIdossActive;
+
+        return $this;
+    }
+
+    public function getIdossUrl(): ?string
+    {
+        return $this->idossUrl;
+    }
+
+    public function setIdossUrl(?string $idossUrl): static
+    {
+        $this->idossUrl = $idossUrl;
+
+        return $this;
+    }
+
+    public function getIdossToken(): ?string
+    {
+        return $this->idossToken;
+    }
+
+    public function setIdossToken(?string $idossToken): static
+    {
+        $this->idossToken = $idossToken;
+
+        return $this;
+    }
+
+    public function getIdossTokenExpirationDate(): ?\DateTimeInterface
+    {
+        return $this->idossTokenExpirationDate;
+    }
+
+    public function setIdossTokenExpirationDate(?\DateTimeInterface $idossTokenExpirationDate): static
+    {
+        $this->idossTokenExpirationDate = $idossTokenExpirationDate;
+
+        return $this;
     }
 }

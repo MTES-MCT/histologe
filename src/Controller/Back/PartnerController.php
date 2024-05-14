@@ -223,7 +223,7 @@ class PartnerController extends AbstractController
 
         $this->displayErrors($form);
 
-        return $this->renderForm('back/partner/edit.html.twig', [
+        return $this->render('back/partner/edit.html.twig', [
             'partner' => $partner,
             'partners' => $partnerRepository->findAllList($partner->getTerritory()),
             'form' => $form,
