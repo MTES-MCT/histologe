@@ -25,6 +25,7 @@ class AppExtension extends AbstractExtension
             new TwigFilter('image64', [ImageBase64Encoder::class, 'encode']),
             new TwigFilter('truncate_filename', [$this, 'getTruncatedFilename']),
             new TwigFilter('clean_tagged_text', [$this, 'cleanTaggedText']),
+            new TwigFilter('email_alert', [$this, 'emailAlert']),
         ];
     }
 
@@ -106,5 +107,14 @@ class AppExtension extends AbstractExtension
         }
 
         return implode(',', File::IMAGE_MIME_TYPES);
+    }
+
+    public function emailAlert(?string $emailAddress): bool
+    {
+        if (!empty($emailAddress) && !filter_var($emailAddress, \FILTER_VALIDATE_EMAIL)) {
+            return true;
+        }
+
+        return false;
     }
 }

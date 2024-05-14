@@ -62,6 +62,10 @@
                     <div class="fr-col-12">
                         <strong>Courriel :</strong>
                         <a href="mailto:{{ signalement.mailDeclarant }}">{{ signalement.mailDeclarant }}</a>
+                                
+                        {% if signalement.mailDeclarant|email_alert %}
+                            <p class="fr-badge fr-badge--error">Format non valide</p>
+                        {% endif %}
                     </div>
                     <div class="fr-col-12">
                         <strong>Tél. :</strong> {{ signalement.telDeclarantDecoded }}
@@ -112,6 +116,9 @@
                     <div class="fr-col-12">
                         <strong>Courriel :</strong>
                         <a href="mailto:{{ signalement.mailOccupant }}">{{ signalement.mailOccupant }}</a>
+                        {% if signalement.mailOccupant|email_alert %}
+                            <p class="fr-badge fr-badge--error">Format non valide</p>
+                        {% endif %}
                     </div>
                     <div class="fr-col-12 fr-col-md-6">
                         <strong>Tél. :</strong>
@@ -151,6 +158,10 @@
                             <strong>Courriel :</strong>
                             {% if signalement.mailProprio %}
                                 <a href="mailto:{{ signalement.mailProprio }}">{{ signalement.mailProprio }}</a>
+                                
+                                {% if signalement.mailProprio|email_alert %}
+                                    <p class="fr-badge fr-badge--error">Format non valide</p>
+                                {% endif %}
                             {% endif %}
                         </div>
                         <div class="fr-col-12 fr-col-md-6">
