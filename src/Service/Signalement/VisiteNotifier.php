@@ -3,6 +3,7 @@
 namespace App\Service\Signalement;
 
 use App\Entity\Affectation;
+use App\Entity\Enum\AffectationStatus;
 use App\Entity\Enum\Qualification;
 use App\Entity\Intervention;
 use App\Entity\Suivi;
@@ -53,8 +54,10 @@ class VisiteNotifier
         ?NotificationMailerType $notificationMailerType,
         bool $notifyAdminTerritory = true,
         ?Affectation $affectation = null,
+        bool $notifyOtherAffectedPartners = false,
     ): void {
         if ($intervention) {
+            $listUsersToNotify = [];
             $listUsersPartner = $intervention->getPartner() && $intervention->getPartner() != $currentUser?->getPartner() ?
                 $intervention->getPartner()->getUsers()->toArray() : [];
             if ($notifyAdminTerritory) {
@@ -62,6 +65,15 @@ class VisiteNotifier
                 $listUsersToNotify = array_unique(array_merge($listUsersTerritoryAdmin, $listUsersPartner), \SORT_REGULAR);
             } else {
                 $listUsersToNotify = $listUsersPartner;
+            }
+            if ($notifyOtherAffectedPartners) {
+                $affectations = $intervention->getSignalement()->getAffectations();
+                foreach ($affectations as $affectation) {
+                    $partner = $affectation->getPartner();
+                    if (AffectationStatus::STATUS_ACCEPTED->value === $affectation->getStatut()) {
+                        $listUsersToNotify = array_unique(array_merge($listUsersToNotify, $partner->getUsers()->toArray()), \SORT_REGULAR);
+                    }
+                }
             }
         } else {
             $listUsersToNotify = $affectation->getPartner()->getUsers();

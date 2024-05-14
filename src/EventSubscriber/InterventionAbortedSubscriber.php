@@ -56,6 +56,7 @@ class InterventionAbortedSubscriber implements EventSubscriberInterface
                 suivi: $suivi,
                 currentUser: $currentUser,
                 notificationMailerType: NotificationMailerType::TYPE_VISITE_ABORTED_TO_PARTNER,
+                notifyOtherAffectedPartners: true,
             );
         }
     }

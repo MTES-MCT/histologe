@@ -60,6 +60,7 @@ class InterventionCanceledSubscriber implements EventSubscriberInterface
                 suivi: $suivi,
                 currentUser: $currentUser,
                 notificationMailerType: null,
+                notifyOtherAffectedPartners: true,
             );
         }
     }
