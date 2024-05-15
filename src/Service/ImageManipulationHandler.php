@@ -2,9 +2,11 @@
 
 namespace App\Service;
 
+use App\Entity\File;
 use Intervention\Image\ImageManager;
 use League\Flysystem\FilesystemOperator;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
+use Symfony\Component\HttpFoundation\File\UploadedFile;
 
 class ImageManipulationHandler
 {
@@ -46,6 +48,22 @@ class ImageManipulationHandler
         $this->imagePath = $path;
 
         return $this;
+    }
+
+    public static function isAcceptedPhotoFormat(
+        UploadedFile $file,
+        string $fileType
+    ): bool {
+        if (File::INPUT_NAME_PHOTOS === $fileType &&
+            \in_array($file->getMimeType(), self::IMAGE_MIME_TYPES) &&
+            (\in_array($file->getClientOriginalExtension(), self::IMAGE_EXTENSION) ||
+            \in_array($file->getExtension(), self::IMAGE_EXTENSION) ||
+            \in_array($file->guessExtension(), self::IMAGE_EXTENSION))
+        ) {
+            return true;
+        }
+
+        return false;
     }
 
     /**

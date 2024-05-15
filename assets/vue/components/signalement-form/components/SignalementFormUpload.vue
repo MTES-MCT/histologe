@@ -91,6 +91,12 @@ export default defineComponent({
         'image/png',
         'image/gif'
       ],
+      photosExtensions: [
+        'jpeg',
+        'jpg',
+        'png',
+        'gif'
+      ],
       documentsMimeTypes: [
         'image/jpeg',
         'image/png',
@@ -101,7 +107,25 @@ export default defineComponent({
         'application/msword',
         'text/plain',
         'application/vnd.ms-excel',
-        'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+        'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+        'application/octet-stream',
+        'message/rfc822',
+        'application/vnd.ms-outlook'
+      ],
+      documentsExtensions: [
+        'jpeg',
+        'jpg',
+        'png',
+        'gif',
+        'pdf',
+        'docx',
+        'odt',
+        'doc',
+        'txt',
+        'xls',
+        'xlsx',
+        'eml',
+        'msg'
       ],
       formStore
     }
@@ -156,20 +180,21 @@ export default defineComponent({
       if (fileInput.files && fileInput.files.length > 0) {
         for (let i = 0; i < fileInput.files.length; i++) {
           const file = fileInput.files[i]
+          const ext = file.name.split('.').pop()?.toLowerCase() ?? ''
           if (file.type === 'image/heic' || file.type === 'image/heif') {
             fileInput.value = ''
             this.hasError = true
             this.error = 'Les fichiers de format HEIC/HEIF ne sont pas pris en charge, merci de convertir votre image en JPEG ou en PNG avant de l\'envoyer.'
             break
-          } else if (this.type === 'documents' && this.documentsMimeTypes.indexOf(file.type) === -1) {
+          } else if (this.type === 'documents' && (this.documentsMimeTypes.indexOf(file.type) === -1 || this.documentsExtensions.indexOf(ext) === -1)) {
             fileInput.value = ''
             this.hasError = true
-            this.error = 'Les fichiers de format ' + file.type + ' ne sont pas pris en charge.'
+            this.error = 'Les fichiers de format ' + ext?.toUpperCase() + ' ne sont pas pris en charge.'
             break
-          } else if (this.type === 'photos' && this.photosMimeTypes.indexOf(file.type) === -1) {
+          } else if (this.type === 'photos' && (this.photosMimeTypes.indexOf(file.type) === -1 || this.photosExtensions.indexOf(ext) === -1)) {
             fileInput.value = ''
             this.hasError = true
-            this.error = 'Les fichiers de format ' + file.type + ' ne sont pas pris en charge, merci de convertir votre image en JPEG ou en PNG avant de l\'envoyer.'
+            this.error = 'Les fichiers de format ' + ext?.toUpperCase() + ' ne sont pas pris en charge, merci de convertir votre image en JPEG ou en PNG avant de l\'envoyer.'
             break
           } else if (file.size > 10 * 1024 * 1024) {
             fileInput.value = ''

@@ -95,7 +95,7 @@ function initializeUploadModal(
         }
         let div = document.createElement('div')
         div.classList.add('fr-alert', 'fr-alert--error', 'fr-alert--sm')
-        div.innerHTML = `Impossible d'ajouter le fichier "${file.name}" car le format n'est pas pris en charge. Veuillez sélectionner un fichier au format ${modal.dataset.acceptedExtensions}.`;
+        div.innerHTML = 'Impossible d\'ajouter le fichier ' +file.name +' car le format n\'est pas pris en charge. Veuillez sélectionner un fichier au format ' +modal.dataset.acceptedExtensions+'.';
         listContainer.prepend(div)
         return false;
     }

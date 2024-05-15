@@ -29,6 +29,9 @@ class UploadHandlerService
         'text/plain',
         'application/vnd.ms-excel',
         'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+        'application/octet-stream',
+        'message/rfc822',
+        'application/vnd.ms-outlook',
     ];
     public const DOCUMENT_EXTENSION = [
         'jpeg',
@@ -42,6 +45,8 @@ class UploadHandlerService
         'txt',
         'xls',
         'xlsx',
+        'eml',
+        'msg',
     ];
 
     private array $file = [];
@@ -75,19 +80,15 @@ class UploadHandlerService
         }
         if (
             File::INPUT_NAME_DOCUMENTS === $fileType
-            && !\in_array($file->getMimeType(), self::DOCUMENT_MIME_TYPES)
+            && !self::isAcceptedDocumentFormat($file, $fileType)
         ) {
             throw new UnsupportedFileFormatException($file->getMimeType(), self::DOCUMENT_EXTENSION);
         } elseif (
             File::INPUT_NAME_PHOTOS === $fileType
-            && !\in_array($file->getMimeType(), ImageManipulationHandler::IMAGE_MIME_TYPES)
+            && !ImageManipulationHandler::isAcceptedPhotoFormat($file, $fileType)
         ) {
             throw new UnsupportedFileFormatException($file->getMimeType(), ImageManipulationHandler::IMAGE_EXTENSION);
         }
-
-        // if (\in_array($file->getMimeType(), HeicToJpegConverter::HEIC_FORMAT)) {
-        //     throw new UnsupportedFileFormatException($file->getMimeType(), ImageManipulationHandler::IMAGE_EXTENSION);
-        // }
 
         try {
             $distantFolder = $this->parameterBag->get('bucket_tmp_dir');
@@ -110,6 +111,22 @@ class UploadHandlerService
         }
 
         return $this;
+    }
+
+    public static function isAcceptedDocumentFormat(
+        UploadedFile $file,
+        string $fileType
+    ): bool {
+        if (File::INPUT_NAME_DOCUMENTS === $fileType &&
+            \in_array($file->getMimeType(), self::DOCUMENT_MIME_TYPES) &&
+            (\in_array($file->getClientOriginalExtension(), self::DOCUMENT_EXTENSION) ||
+            \in_array($file->getExtension(), self::DOCUMENT_EXTENSION) ||
+            \in_array($file->guessExtension(), self::DOCUMENT_EXTENSION))
+        ) {
+            return true;
+        }
+
+        return false;
     }
 
     private function moveFilePath(string $filePath): ?string
@@ -215,12 +232,12 @@ class UploadHandlerService
         }
         if (
             File::INPUT_NAME_DOCUMENTS === $fileType
-            && !\in_array($file->getMimeType(), self::DOCUMENT_MIME_TYPES)
+            && !self::isAcceptedDocumentFormat($file, $fileType)
         ) {
             throw new UnsupportedFileFormatException($file->getMimeType(), self::DOCUMENT_EXTENSION);
         } elseif (
             File::INPUT_NAME_PHOTOS === $fileType
-            && !\in_array($file->getMimeType(), ImageManipulationHandler::IMAGE_MIME_TYPES)
+            && !ImageManipulationHandler::isAcceptedPhotoFormat($file, $fileType)
         ) {
             throw new UnsupportedFileFormatException($file->getMimeType(), ImageManipulationHandler::IMAGE_EXTENSION);
         }

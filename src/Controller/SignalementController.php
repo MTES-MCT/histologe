@@ -364,7 +364,7 @@ class SignalementController extends AbstractController
         if (null !== ($files = $request->files->get('signalement'))) {
             try {
                 foreach ($files as $key => $file) {
-                    $res = $uploadHandlerService->toTempFolder($file);
+                    $res = $uploadHandlerService->toTempFolder($file, $key);
                     if (\is_array($res) && isset($res['error'])) {
                         throw new \Exception($res['error']);
                     }

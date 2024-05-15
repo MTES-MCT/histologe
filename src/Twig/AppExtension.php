@@ -112,9 +112,19 @@ class AppExtension extends AbstractExtension
     public function getAcceptedExtensions(?string $type = 'document'): string
     {
         if ('document' === $type) {
-            return implode(',', UploadHandlerService::DOCUMENT_EXTENSION);
+            $extensions = array_map('strtoupper', UploadHandlerService::DOCUMENT_EXTENSION);
+        } else {
+            $extensions = array_map('strtoupper', ImageManipulationHandler::IMAGE_EXTENSION);
         }
 
-        return implode(',', ImageManipulationHandler::IMAGE_EXTENSION);
+        if (1 === \count($extensions)) {
+            return $extensions[0];
+        }
+
+        $allButLast = \array_slice($extensions, 0, -1);
+        $last = end($extensions);
+        $all = implode(', ', $allButLast).' ou '.$last;
+
+        return $all;
     }
 }

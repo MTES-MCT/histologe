@@ -15,7 +15,7 @@
                     data-file-type="document"
                     data-file-filter={{filesFilter}}
                     data-accepted-type-mimes={{ get_accepted_mime_type('document')}}
-					data-accepted-extensions={{ get_accepted_extensions('document')}}
+					data-accepted-extensions="{{ get_accepted_extensions('document')}}"
                     >
                         Ajouter des documents
                     </button>
@@ -29,7 +29,7 @@
                         data-file-type="photo"
                         data-file-filter={{filesFilter}}
                         data-accepted-type-mimes={{ get_accepted_mime_type('photo')}}
-						data-accepted-extensions={{ get_accepted_extensions('photo')}}
+						data-accepted-extensions="{{ get_accepted_extensions('photo')}}"
                         >
                             Ajouter des photos
                         </button>

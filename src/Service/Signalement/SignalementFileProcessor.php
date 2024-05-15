@@ -51,10 +51,10 @@ class SignalementFileProcessor
             } elseif (
                 $file instanceof UploadedFile
                 && File::INPUT_NAME_DOCUMENTS === $inputName
-                && !\in_array($file->getMimeType(), UploadHandlerService::DOCUMENT_MIME_TYPES)
+                && !UploadHandlerService::isAcceptedDocumentFormat($file, $inputName)
             ) {
                 $message = <<<ERROR
-                    Les fichiers de format {$file->getMimeType()} ne sont pas pris en charge,
+                    Les fichiers de format {$file->getExtension()} ne sont pas pris en charge,
                     merci de choisir un fichier au format adéquat.
                     ERROR;
                 $this->logger->error($message);
@@ -62,10 +62,10 @@ class SignalementFileProcessor
             } elseif (
                 $file instanceof UploadedFile
                 && File::INPUT_NAME_PHOTOS === $inputName
-                && !\in_array($file->getMimeType(), ImageManipulationHandler::IMAGE_MIME_TYPES)
+                && !ImageManipulationHandler::isAcceptedPhotoFormat($file, $inputName)
             ) {
                 $message = <<<ERROR
-                    Les fichiers de format {$file->getMimeType()} ne sont pas pris en charge,
+                    Les fichiers de format {$file->getExtension()} ne sont pas pris en charge,
                     merci de convertir votre image en JPEG ou en PNG avant de l'envoyer.
                     ERROR;
                 $this->logger->error($message);
