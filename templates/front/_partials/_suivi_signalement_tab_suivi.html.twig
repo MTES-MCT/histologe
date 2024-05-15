@@ -5,10 +5,17 @@
 </div>
 <div class="fr-mt-4v">
 	{% for suivi in signalement.suivis %}
-		<div class="message-box {% if suivi.createdBy and suivi.createdBy.partner %}message-box--partner{% else %}message-box--usager{% endif %}">
+		<div class="message-box {% if (suivi.createdBy and suivi.createdBy.partner) or suivi.type is same as constant('App\\Entity\\Suivi::TYPE_TECHNICAL') %}message-box--partner{% else %}message-box--usager{% endif %}">
 			<div>
 				<strong>
-					{{ suivi.createdBy ? (suivi.createdBy.partner ? suivi.createdBy.partner.nom : (suivi.createdBy.email ? (suivi.createdBy.email is same as signalement.mailOccupant ? 'OCCUPANT' : 'DECLARANT') : 'Aucun')): (suivi.createdAt|date('Y') >= 2024) ? 'Occupant ou déclarant' : 'Vous' }}
+				
+					{% if suivi.type is same as constant('App\\Entity\\Suivi::TYPE_TECHNICAL') %}
+						Suivi automatique
+					{% elseif suivi.createdBy is not null %}
+						{{ suivi.createdBy.partner ? suivi.createdBy.partner.nom : (suivi.createdBy.email ? (suivi.createdBy.email is same as signalement.mailOccupant ? 'OCCUPANT' : 'DECLARANT') : 'Aucun')}}					
+            		{% else %}
+						{{(suivi.createdAt|date('Y') >= 2024) ? 'Occupant ou déclarant' : 'Vous' }}					
+                	{% endif %}
 					-
 					{{ suivi.createdAt|date('d/m/Y') }}
 				</strong>
