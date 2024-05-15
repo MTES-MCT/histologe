@@ -1024,6 +1024,14 @@
           ]
         },
         {
+          "type": "SignalementFormWarning",
+          "slug": "desordres_renseignes_batiment_warning",
+          "label": "Vous n'avez renseigné aucun désordre dans la partie Bâtiment. Pour ajouter des désordres, cliquez sur le bouton \"Non, j'en ai encore à déclarer\" ci-dessous.",
+          "conditional": {
+            "show": "formStore.hasDesordre('desordres_batiment') === false"
+          }
+        },
+        {
           "type": "SignalementFormSubscreen",
           "label": "Avez-vous terminé avec les désordres sur le bâtiment ?",
           "slug": "desordres_renseignes_batiment_subscreen",
@@ -2534,34 +2542,50 @@
               "alt": ""
             }
           ]
-        }
-      ],
-      "footer": [
-        {
-          "type": "SignalementFormButton",
-          "label": "Précédent",
-          "slug": "desordres_renseignes_previous",
-          "action": "resolve:findPreviousScreen",
-          "customCss": "fr-btn--secondary fr-btn--icon-left fr-icon-arrow-left-line"
         },
         {
-          "type": "SignalementFormButton",
-          "label": "Suivant",
-          "slug": "desordres_renseignes_next_autre",
-          "action": "goto:ecran_intermediaire_procedure",
-          "customCss": "fr-btn--icon-right fr-icon-arrow-right-line",
+          "type": "SignalementFormWarning",
+          "slug": "desordres_renseignes_warning",
+          "label": "Vous n'avez renseigné aucun désordre. Pour vous assurer du bon traitement de votre signalement, veuillez sélectionner au moins un désordre. Nous vous invitons également à renseigner le champ \"Précisions sur les désordres\" ci-dessus pour décrire votre problème.",
           "conditional": {
-            "show": "formStore.data.signalement_concerne_profil_detail_tiers === 'tiers_particulier' || formStore.data.signalement_concerne_profil_detail_tiers === 'tiers_pro' || formStore.data.signalement_concerne_profil_detail_tiers === 'bailleur'"
+            "show": "formStore.hasDesordre('desordres_') === false"
           }
         },
         {
-          "type": "SignalementFormButton",
-          "label": "Suivant",
-          "slug": "desordres_renseignes_next_secours",
-          "action": "goto:utilisation_service",
-          "customCss": "fr-btn--icon-right fr-icon-arrow-right-line",
-          "conditional": {
-            "show": "formStore.data.signalement_concerne_profil_detail_tiers === 'service_secours'"
+          "type": "SignalementFormSubscreen",
+          "label": "",
+          "slug": "desordres_renseignes_subscreen",
+          "customCss": "button-group-full-size",
+          "components": {
+            "body": [
+              {
+                "type": "SignalementFormButton",
+                "label": "Je passe à la suite",
+                "slug": "desordres_renseignes_next_autre",
+                "action": "goto:ecran_intermediaire_procedure",
+                "customCss": "fr-mb-3v",
+                "conditional": {
+                  "show": "formStore.data.signalement_concerne_profil_detail_tiers === 'tiers_particulier' || formStore.data.signalement_concerne_profil_detail_tiers === 'tiers_pro' || formStore.data.signalement_concerne_profil_detail_tiers === 'bailleur'"
+                }
+              },
+              {
+                "type": "SignalementFormButton",
+                "label": "Je passe à la suite",
+                "slug": "desordres_renseignes_next_secours",
+                "action": "goto:utilisation_service",
+                "customCss": "fr-mb-3v",
+                "conditional": {
+                  "show": "formStore.data.signalement_concerne_profil_detail_tiers === 'service_secours'"
+                }
+              },
+              {
+                "type": "SignalementFormButton",
+                "label": "Je renseigne les désordres",
+                "slug": "desordres_renseignes_previous",
+                "action": "resolve:findPreviousScreen",
+                "customCss": "fr-btn--secondary fr-mb-3v"
+              }
+            ]
           }
         }
       ]
