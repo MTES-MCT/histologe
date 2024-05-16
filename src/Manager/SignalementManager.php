@@ -339,8 +339,7 @@ class SignalementManager extends AbstractManager
             ->setEtageOccupant($adresseOccupantRequest->getEtage())
             ->setEscalierOccupant($adresseOccupantRequest->getEscalier())
             ->setNumAppartOccupant($adresseOccupantRequest->getNumAppart())
-            ->setAdresseAutreOccupant($adresseOccupantRequest->getAutre())
-            ->setManualAddressOccupant(false);
+            ->setAdresseAutreOccupant($adresseOccupantRequest->getAutre());
 
         $this->save($signalement);
 
