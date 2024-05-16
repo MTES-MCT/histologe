@@ -111,6 +111,6 @@ class SignalementVisitesControllerTest extends WebTestCase
         );
 
         $this->assertResponseRedirects('/bo/signalements/'.$signalement->getUuid());
-        $this->assertEmailCount(3);
+        $this->assertEmailCount(2);
     }
 }

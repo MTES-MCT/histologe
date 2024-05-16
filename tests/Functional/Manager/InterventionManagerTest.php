@@ -106,7 +106,7 @@ class InterventionManagerTest extends KernelTestCase
                 $intervention->getConcludeProcedure()
             ));
 
-        $this->assertEmailCount(3);
+        $this->assertEmailCount(2);
     }
 
     /**
