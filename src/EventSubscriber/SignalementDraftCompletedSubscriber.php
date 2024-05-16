@@ -49,10 +49,12 @@ class SignalementDraftCompletedSubscriber implements EventSubscriberInterface
             ->withDesordres()
             ->build();
 
-        $this->signalementManager->save($signalement);
-        $this->sendNotifications($signalement);
-        $this->processFiles($signalementDraft, $signalement);
-        $this->autoAssigner->assign($signalement);
+        if (null !== $signalement) {
+            $this->signalementManager->save($signalement);
+            $this->sendNotifications($signalement);
+            $this->processFiles($signalementDraft, $signalement);
+            $this->autoAssigner->assign($signalement);
+        }
     }
 
     private function sendNotifications(Signalement $signalement): void

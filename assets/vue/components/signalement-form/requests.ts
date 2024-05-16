@@ -129,15 +129,9 @@ export const requests = {
     requests.doRequestPost(url, '', functionReturn, undefined)
   },
 
-  archiveDraft (functionReturn: Function) {
-    if (formStore.alreadyExists.uuidDraft !== null && (
-      formStore.alreadyExists.type === 'draft' || formStore.alreadyExists.type === 'signalement'
-    )) {
-      const url = formStore.props.ajaxurlArchiveDraft.replace('uuid', formStore.alreadyExists.uuidDraft)
-      requests.doRequestPost(url, '', functionReturn, undefined)
-    } else {
-      functionReturn(undefined)
-    }
+  archiveDraft (uuidDraft: string, functionReturn: Function) {
+    const url = formStore.props.ajaxurlArchiveDraft.replace('uuid', uuidDraft)
+    requests.doRequestPost(url, '', functionReturn, undefined)
   },
 
   validateAddress (valueAdress: string, functionReturn: Function) {

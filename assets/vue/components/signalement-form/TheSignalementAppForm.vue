@@ -217,6 +217,9 @@ export default defineComponent({
 
       if (formStore.screenData) {
         this.removeNextScreensIfProfileUpdated()
+        if (this.nextSlug === 'confirmation_signalement' && formStore.data.signalementReference === '') {
+          this.nextSlug = 'signalement_incomplet'
+        }
         const nextScreen = formStore.screenData.find((screen: any) => screen.slug === this.nextSlug)
         if (nextScreen !== undefined) {
           formStore.currentScreen = nextScreen

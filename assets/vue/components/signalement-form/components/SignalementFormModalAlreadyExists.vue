@@ -172,7 +172,11 @@ export default defineComponent({
       }
     },
     makeNewSignalement () {
-      requests.archiveDraft(this.saveAndContinue)
+      if (formStore.alreadyExists.uuidDraft !== null && (
+        formStore.alreadyExists.type === 'draft' || formStore.alreadyExists.type === 'signalement'
+      )) {
+        requests.archiveDraft(formStore.alreadyExists.uuidDraft, this.saveAndContinue)
+      }
     },
     saveAndContinue () {
       if (this.newClickEvent !== undefined) {
