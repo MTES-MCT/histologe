@@ -209,7 +209,6 @@ class SignalementController extends AbstractController
             'listConcludeProcedures' => $listConcludeProcedures,
             'partnersCanVisite' => $partnerVisite,
             'pendingVisites' => $interventionRepository->getPendingVisitesForSignalement($signalement),
-            'isDocumentsEnabled' => $parameterBag->get('feature_documents_enable'),
             'allPhotosOrdered' => $allPhotosOrdered,
         ]);
     }
@@ -248,7 +247,8 @@ class SignalementController extends AbstractController
         $this->denyAccessUnlessGranted('SIGN_DELETE', $signalement);
         if ($this->isCsrfTokenValid(
             'signalement_delete_'.$signalement->getId(),
-            $request->getPayload()->get('_token'))
+            $request->getPayload()->get('_token')
+        )
         ) {
             $signalement->setStatut(Signalement::STATUS_ARCHIVED);
             $doctrine->getManager()->persist($signalement);
