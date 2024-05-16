@@ -26,8 +26,8 @@
     <SignalementFormButton
       :key="idShow"
       :id="idShow"
-      label="Afficher tous les champs"
-      :customCss="buttonCss + ' btn-link fr-btn--icon-left fr-icon-eye-line'"
+      label="Saisir une adresse manuellement"
+      :customCss="buttonCss + ' btn-link fr-btn--icon-left fr-icon-edit-line'"
       :validate="validate"
       :action="actionShow"
       :clickEvent="handleClickButton"
