@@ -31,7 +31,6 @@
 <script lang="ts">
 import { defineComponent } from 'vue'
 import formStore from './../store'
-import { requests } from './../requests'
 import { variablesReplacer } from './../services/variableReplacer'
 
 export default defineComponent({
@@ -47,8 +46,7 @@ export default defineComponent({
     hasError: { type: Boolean, default: false },
     disabled: { type: Boolean, default: false },
     error: { type: String, default: '' },
-    tagWhenEdit: { type: String, default: '' },
-    searchWhenEdit: { type: Object, default: null }
+    tagWhenEdit: { type: String, default: '' }
   },
   data () {
     return {
@@ -72,31 +70,6 @@ export default defineComponent({
       this.$emit('update:modelValue', value)
       if (this.tagWhenEdit !== '') {
         formStore.data[this.tagWhenEdit] = 1
-      }
-
-      if (this.searchWhenEdit !== undefined && this.searchWhenEdit !== null) {
-        let isUpdateAddress = true
-        let search = ''
-        for (const index of this.searchWhenEdit.values) {
-          if (formStore.data[index] === '') {
-            isUpdateAddress = false
-          } else {
-            search += formStore.data[index] + ' '
-          }
-        }
-
-        if (isUpdateAddress) {
-          clearTimeout(this.idFetchTimeout)
-          this.idFetchTimeout = setTimeout(() => {
-            requests.validateAddress(search, this.handleUpdateInsee)
-          }, 200)
-        }
-      }
-    },
-    handleUpdateInsee (requestResponse: any) {
-      const suggestions = requestResponse.features
-      if (suggestions[0] !== undefined) {
-        formStore.data[this.searchWhenEdit.result] = suggestions[0].properties.citycode
       }
     }
   },

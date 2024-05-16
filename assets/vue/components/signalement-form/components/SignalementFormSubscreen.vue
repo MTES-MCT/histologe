@@ -27,7 +27,6 @@
         :multiple="component.multiple"
         :ariaControls="component.ariaControls"
         :tagWhenEdit="component.tagWhenEdit"
-        :searchWhenEdit="component.searchWhenEdit"
         v-model="formStore.data[component.slug]"
         :hasError="formStore.validationErrors[component.slug]  !== undefined"
         :error="formStore.validationErrors[component.slug]"
