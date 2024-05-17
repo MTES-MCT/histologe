@@ -255,6 +255,9 @@ class Signalement
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
     private $inseeOccupant;
 
+    #[ORM\Column(type: 'boolean', nullable: true)]
+    private $manualAddressOccupant;
+
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
     private $codeSuivi;
 
@@ -1312,6 +1315,18 @@ class Signalement
     public function setInseeOccupant(?string $inseeOccupant): self
     {
         $this->inseeOccupant = $inseeOccupant;
+
+        return $this;
+    }
+
+    public function getManualAddressOccupant(): ?bool
+    {
+        return $this->manualAddressOccupant;
+    }
+
+    public function setManualAddressOccupant(?bool $manualAddressOccupant): self
+    {
+        $this->manualAddressOccupant = $manualAddressOccupant;
 
         return $this;
     }

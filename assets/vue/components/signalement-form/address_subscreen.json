@@ -1,22 +1,22 @@
 {
     "body": [
         {
-        "type": "SignalementFormTextfield",
-        "label": "Numéro et voie",
-        "slug": "detail_numero",
-        "disabled": true
+            "type": "SignalementFormTextfield",
+            "label": "Numéro et voie",
+            "slug": "detail_numero",
+            "tagWhenEdit": "detail_manual"
         },
         {
-        "type": "SignalementFormTextfield",
-        "label": "Code postal",
-        "slug": "detail_code_postal",
-        "disabled": true
+            "type": "SignalementFormTextfield",
+            "label": "Code postal",
+            "slug": "detail_code_postal",
+            "tagWhenEdit": "detail_manual"
         },
         {
-        "type": "SignalementFormTextfield",
-        "label": "Commune",
-        "slug": "detail_commune",
-        "disabled": true
+            "type": "SignalementFormTextfield",
+            "label": "Commune",
+            "slug": "detail_commune",
+            "tagWhenEdit": "detail_manual"
         }
     ]
 }

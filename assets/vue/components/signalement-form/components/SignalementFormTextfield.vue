@@ -30,6 +30,7 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue'
+import formStore from './../store'
 import { variablesReplacer } from './../services/variableReplacer'
 
 export default defineComponent({
@@ -44,10 +45,12 @@ export default defineComponent({
     validate: { type: Object, default: null },
     hasError: { type: Boolean, default: false },
     disabled: { type: Boolean, default: false },
-    error: { type: String, default: '' }
+    error: { type: String, default: '' },
+    tagWhenEdit: { type: String, default: '' }
   },
   data () {
     return {
+      idFetchTimeout: 0 as unknown as ReturnType<typeof setTimeout>,
       variablesReplacer
     }
   },
@@ -65,6 +68,9 @@ export default defineComponent({
     updateValue (event: Event) {
       const value = (event.target as HTMLInputElement).value
       this.$emit('update:modelValue', value)
+      if (this.tagWhenEdit !== '') {
+        formStore.data[this.tagWhenEdit] = 1
+      }
     }
   },
   emits: ['update:modelValue']

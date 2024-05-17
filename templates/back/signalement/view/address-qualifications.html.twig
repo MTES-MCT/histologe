@@ -1,4 +1,4 @@
-<div class="fr-grid-row fr-mt-3w">
+<div class="fr-grid-row fr-grid-row--gutters fr-mt-3w">
     <div class="fr-col-12 fr-col-md-6" data-ajax-form>
         {% if canEditSignalement %}
             {% include 'back/signalement/view/edit-modals/edit-address.html.twig' %}
@@ -25,6 +25,11 @@
                 href="http://www.openstreetmap.org/?mlat={{ signalement.geoloc.lat }}&mlon={{ signalement.geoloc.lng }}#map=18/{{ signalement.geoloc.lat }}/{{ signalement.geoloc.lng }}">
                 Voir sur la carte
             </a>
+        {% endif %}
+        {% if signalement.manualAddressOccupant %}
+            <div class="fr-alert fr-alert--info fr-alert--sm fr-mt-3v">
+                Cette adresse a été éditée manuellement lors de la déclaration.
+            </div>
         {% endif %}
     </div>
     

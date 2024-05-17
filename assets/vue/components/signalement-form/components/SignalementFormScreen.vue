@@ -34,6 +34,7 @@
         :disabled="component.disabled"
         :multiple="component.multiple"
         :ariaControls="component.ariaControls"
+        :tagWhenEdit="component.tagWhenEdit"
         :isTerritoryToCheck="component.isTerritoryToCheck"
         v-model="formStore.data[component.slug]"
         :hasError="formStore.validationErrors[component.slug]  !== undefined"
@@ -193,7 +194,11 @@ export default defineComponent({
       for (const component of components) {
         const value = formStore.data[component.slug]
         if (this.isRequired(component)) {
-          if (!value) {
+          // Cas particulier de validation de composant de type adresse SignalementFormAddress
+          if (component.type === 'SignalementFormAddress') {
+            this.validateComponentAddress(component.slug)
+          // Les autres composants requis doivent avoir une valeur correspondante dans le Store
+          } else if (!value) {
             formStore.validationErrors[component.slug] = 'Ce champ est requis'
           }
         }
@@ -203,6 +208,29 @@ export default defineComponent({
         // Vérifier si ce composant nécessite une validation de ses sous-composants
         if (this.needToValidateSubComponents(component)) {
           this.validateComponents(component.components.body)
+        }
+      }
+    },
+    validateComponentAddress (componentSlug: any) {
+      const validationError = 'Ce champ est requis'
+      // tous les champs sont vides, on affiche l'erreur sur le champs de recherche
+      if (!formStore.data[componentSlug] &&
+            !formStore.data[componentSlug + '_detail_numero'] &&
+            !formStore.data[componentSlug + '_detail_code_postal'] &&
+            !formStore.data[componentSlug + '_detail_commune']
+      ) {
+        formStore.validationErrors[componentSlug] = validationError
+
+      // il y a eu une édition manuelle : on vérifie tous les sous-champs
+      } else if (formStore.data[componentSlug + '_detail_manual'] !== 0) {
+        if (!formStore.data[componentSlug + '_detail_numero']) {
+          formStore.validationErrors[componentSlug + '_detail_numero'] = validationError
+        }
+        if (!formStore.data[componentSlug + '_detail_code_postal']) {
+          formStore.validationErrors[componentSlug + '_detail_code_postal'] = validationError
+        }
+        if (!formStore.data[componentSlug + '_detail_commune']) {
+          formStore.validationErrors[componentSlug + '_detail_commune'] = validationError
         }
       }
     },

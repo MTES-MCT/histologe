@@ -331,7 +331,8 @@ class SignalementBuilder
             ->setNumAppartOccupant(
                 $this->signalementDraftRequest->getAdresseLogementComplementAdresseNumeroAppartement()
             )
-            ->setAdresseAutreOccupant($this->signalementDraftRequest->getAdresseLogementComplementAdresseAutre());
+            ->setAdresseAutreOccupant($this->signalementDraftRequest->getAdresseLogementComplementAdresseAutre())
+            ->setManualAddressOccupant($this->signalementDraftRequest->getAdresseLogementAdresseDetailManual());
     }
 
     private function setOccupantDeclarantData(): void
