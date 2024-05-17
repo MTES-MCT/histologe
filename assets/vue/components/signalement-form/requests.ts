@@ -130,10 +130,9 @@ export const requests = {
   },
 
   archiveDraft (functionReturn: Function) {
-    if (formStore.alreadyExists.type === 'draft') {
-      const url = formStore.props.ajaxurlArchiveDraft.replace('uuid', formStore.alreadyExists.uuid)
-      requests.doRequestPost(url, '', functionReturn, undefined)
-    } else if (formStore.alreadyExists.type === 'signalement' && formStore.alreadyExists.uuidDraft !== null) {
+    if (formStore.alreadyExists.uuidDraft !== null && (
+      formStore.alreadyExists.type === 'draft' || formStore.alreadyExists.type === 'signalement'
+    )) {
       const url = formStore.props.ajaxurlArchiveDraft.replace('uuid', formStore.alreadyExists.uuidDraft)
       requests.doRequestPost(url, '', functionReturn, undefined)
     } else {
