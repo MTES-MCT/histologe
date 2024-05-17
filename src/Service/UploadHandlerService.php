@@ -18,36 +18,6 @@ use Symfony\Component\HttpFoundation\File\UploadedFile;
 class UploadHandlerService
 {
     public const MAX_FILESIZE = 10 * 1024 * 1024;
-    public const DOCUMENT_MIME_TYPES = [
-        'image/jpeg',
-        'image/png',
-        'image/gif',
-        'application/pdf',
-        'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
-        'application/vnd.oasis.opendocument.text',
-        'application/msword',
-        'text/plain',
-        'application/vnd.ms-excel',
-        'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-        'application/octet-stream',
-        'message/rfc822',
-        'application/vnd.ms-outlook',
-    ];
-    public const DOCUMENT_EXTENSION = [
-        'jpeg',
-        'jpg',
-        'png',
-        'gif',
-        'pdf',
-        'docx',
-        'odt',
-        'doc',
-        'txt',
-        'xls',
-        'xlsx',
-        'eml',
-        'msg',
-    ];
 
     private array $file = [];
 
@@ -118,10 +88,10 @@ class UploadHandlerService
         string $fileType
     ): bool {
         if (File::INPUT_NAME_DOCUMENTS === $fileType &&
-            \in_array($file->getMimeType(), self::DOCUMENT_MIME_TYPES) &&
-            (\in_array($file->getClientOriginalExtension(), self::DOCUMENT_EXTENSION) ||
-            \in_array($file->getExtension(), self::DOCUMENT_EXTENSION) ||
-            \in_array($file->guessExtension(), self::DOCUMENT_EXTENSION))
+            \in_array($file->getMimeType(), File::DOCUMENT_MIME_TYPES) &&
+            (\in_array($file->getClientOriginalExtension(), File::DOCUMENT_EXTENSION) ||
+            \in_array($file->getExtension(), File::DOCUMENT_EXTENSION) ||
+            \in_array($file->guessExtension(), File::DOCUMENT_EXTENSION))
         ) {
             return true;
         }
@@ -132,9 +102,9 @@ class UploadHandlerService
     public static function getAcceptedExtensions(?string $type = 'document'): string
     {
         if ('document' === $type || 'documents' === $type) {
-            $extensions = array_map('strtoupper', self::DOCUMENT_EXTENSION);
+            $extensions = array_map('strtoupper', File::DOCUMENT_EXTENSION);
         } else {
-            $extensions = array_map('strtoupper', ImageManipulationHandler::IMAGE_EXTENSION);
+            $extensions = array_map('strtoupper', File::IMAGE_EXTENSION);
         }
 
         if (1 === \count($extensions)) {

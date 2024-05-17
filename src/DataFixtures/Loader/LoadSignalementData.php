@@ -31,7 +31,6 @@ use App\Repository\SituationRepository;
 use App\Repository\TagRepository;
 use App\Repository\TerritoryRepository;
 use App\Repository\UserRepository;
-use App\Service\ImageManipulationHandler;
 use App\Service\Signalement\ZipcodeProvider;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Common\DataFixtures\OrderedFixtureInterface;
@@ -257,7 +256,7 @@ class LoadSignalementData extends Fixture implements OrderedFixtureInterface
             $file = $this->fileFactory->createInstanceFrom(
                 filename: $document['file'],
                 title: $document['titre'],
-                type: \in_array(pathinfo($document['file'], \PATHINFO_EXTENSION), ImageManipulationHandler::IMAGE_EXTENSION)
+                type: \in_array(pathinfo($document['file'], \PATHINFO_EXTENSION), File::IMAGE_EXTENSION)
                     ? File::FILE_TYPE_DOCUMENT
                     : File::FILE_TYPE_PHOTO,
                 signalement: $signalement,

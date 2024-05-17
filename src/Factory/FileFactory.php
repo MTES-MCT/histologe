@@ -7,7 +7,6 @@ use App\Entity\File;
 use App\Entity\Intervention;
 use App\Entity\Signalement;
 use App\Entity\User;
-use App\Service\ImageManipulationHandler;
 use App\Service\Signalement\SignalementDocumentTypeMapper;
 
 class FileFactory
@@ -96,7 +95,7 @@ class FileFactory
             && File::FILE_TYPE_PHOTO === $documentType->mapFileType()
             && \in_array(
                 strtolower(pathinfo($file['file'], \PATHINFO_EXTENSION)),
-                ImageManipulationHandler::IMAGE_EXTENSION
+                File::IMAGE_EXTENSION
             )
         ) {
             return File::FILE_TYPE_PHOTO;

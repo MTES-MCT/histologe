@@ -12,17 +12,6 @@ class ImageManipulationHandler
 {
     public const SUFFIX_RESIZE = '_resize';
     public const SUFFIX_THUMB = '_thumb';
-    public const IMAGE_MIME_TYPES = [
-        'image/jpeg',
-        'image/png',
-        'image/gif',
-    ];
-    public const IMAGE_EXTENSION = [
-        'jpeg',
-        'jpg',
-        'png',
-        'gif',
-    ];
 
     private const DEFAULT_SIZE_RESIZE = 1000;
     private const DEFAULT_SIZE_THUMB = 400;
@@ -55,10 +44,10 @@ class ImageManipulationHandler
         string $fileType
     ): bool {
         if (File::INPUT_NAME_PHOTOS === $fileType &&
-            \in_array($file->getMimeType(), self::IMAGE_MIME_TYPES) &&
-            (\in_array($file->getClientOriginalExtension(), self::IMAGE_EXTENSION) ||
-            \in_array($file->getExtension(), self::IMAGE_EXTENSION) ||
-            \in_array($file->guessExtension(), self::IMAGE_EXTENSION))
+            \in_array($file->getMimeType(), File::IMAGE_MIME_TYPES) &&
+            (\in_array($file->getClientOriginalExtension(), File::IMAGE_EXTENSION) ||
+            \in_array($file->getExtension(), File::IMAGE_EXTENSION) ||
+            \in_array($file->guessExtension(), File::IMAGE_EXTENSION))
         ) {
             return true;
         }

@@ -74,7 +74,7 @@ class SignalementFileProcessor
                         );
                         $title = $this->filenameGenerator->getTitle();
 
-                        if (\in_array($file->getMimeType(), ImageManipulationHandler::IMAGE_MIME_TYPES)) {
+                        if (\in_array($file->getMimeType(), File::IMAGE_MIME_TYPES)) {
                             $this->imageManipulationHandler->setUseTmpDir(false)->resize($filename)->thumbnail($filename);
                         } else {
                             $inputTypeDetection = 'documents';

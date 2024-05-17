@@ -18,7 +18,6 @@ use App\Manager\SuiviManager;
 use App\Manager\TagManager;
 use App\Repository\CritereRepository;
 use App\Repository\CriticiteRepository;
-use App\Service\ImageManipulationHandler;
 use App\Service\Signalement\CriticiteCalculator;
 use App\Service\Signalement\Qualification\SignalementQualificationUpdater;
 use Doctrine\Common\Collections\ArrayCollection;
@@ -298,7 +297,7 @@ class SignalementImportLoader
                 continue;
             }
             $fileType = File::FILE_TYPE_DOCUMENT;
-            if (\in_array($this->fileStorage->mimeType($filename), ImageManipulationHandler::IMAGE_MIME_TYPES)) {
+            if (\in_array($this->fileStorage->mimeType($filename), File::IMAGE_MIME_TYPES)) {
                 $fileType = File::FILE_TYPE_PHOTO;
             }
 

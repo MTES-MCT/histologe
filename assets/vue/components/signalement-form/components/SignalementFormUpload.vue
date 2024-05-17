@@ -161,7 +161,7 @@ export default defineComponent({
       if (requestResponse) {
         if (requestResponse.name === 'AxiosError') {
           this.hasError = true
-          this.error = requestResponse.message
+          this.error = requestResponse.response.data.error ?? requestResponse.message
         }
         if (requestResponse.file !== undefined) {
           this.uploadedFiles.push(requestResponse)

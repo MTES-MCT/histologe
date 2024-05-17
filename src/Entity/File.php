@@ -16,6 +16,47 @@ class File
     public const FILE_TYPE_PHOTO = 'photo';
     public const INPUT_NAME_PHOTOS = 'photos';
     public const INPUT_NAME_DOCUMENTS = 'documents';
+    public const DOCUMENT_MIME_TYPES = [
+        'image/jpeg',
+        'image/png',
+        'image/gif',
+        'application/pdf',
+        'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+        'application/vnd.oasis.opendocument.text',
+        'application/msword',
+        'text/plain',
+        'application/vnd.ms-excel',
+        'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+        'application/octet-stream',
+        'message/rfc822',
+        'application/vnd.ms-outlook',
+    ];
+    public const DOCUMENT_EXTENSION = [
+        'jpeg',
+        'jpg',
+        'png',
+        'gif',
+        'pdf',
+        'docx',
+        'odt',
+        'doc',
+        'txt',
+        'xls',
+        'xlsx',
+        'eml',
+        'msg',
+    ];
+    public const IMAGE_MIME_TYPES = [
+        'image/jpeg',
+        'image/png',
+        'image/gif',
+    ];
+    public const IMAGE_EXTENSION = [
+        'jpeg',
+        'jpg',
+        'png',
+        'gif',
+    ];
 
     #[ORM\Id]
     #[ORM\GeneratedValue]

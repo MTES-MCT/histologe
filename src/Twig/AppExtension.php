@@ -4,9 +4,9 @@ namespace App\Twig;
 
 use App\Entity\Enum\OccupantLink;
 use App\Entity\Enum\QualificationStatus;
+use App\Entity\File;
 use App\Service\Esabora\EsaboraPartnerTypeSubscription;
 use App\Service\Files\ImageBase64Encoder;
-use App\Service\ImageManipulationHandler;
 use App\Service\Notification\NotificationCounter;
 use App\Service\Signalement\Qualification\QualificationStatusService;
 use App\Service\UploadHandlerService;
@@ -91,7 +91,6 @@ class AppExtension extends AbstractExtension
     {
         return [
             new TwigFunction('count_notification', [NotificationCounter::class, 'countUnseenNotification']),
-            new TwigFunction('can_see_nde_qualification', [QualificationStatusService::class, 'canSeenNDEQualification']), // TODO -> plus utilisé ?
             new TwigFunction('can_see_nde_edit_zone', [QualificationStatusService::class, 'canSeenNDEEditZone']),
             new TwigFunction('can_edit_esabora_credentials', [EsaboraPartnerTypeSubscription::class, 'isSubscribed']),
             new TwigFunction('show_label_facultatif', [AttributeParser::class, 'showLabelAsFacultatif']),
@@ -103,9 +102,9 @@ class AppExtension extends AbstractExtension
     public function getAcceptedMimeTypes(?string $type = 'document'): string
     {
         if ('document' === $type) {
-            return implode(',', UploadHandlerService::DOCUMENT_MIME_TYPES);
+            return implode(',', File::DOCUMENT_MIME_TYPES);
         }
 
-        return implode(',', ImageManipulationHandler::IMAGE_MIME_TYPES);
+        return implode(',', File::IMAGE_MIME_TYPES);
     }
 }
