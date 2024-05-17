@@ -11,12 +11,18 @@ use App\Service\Notification\NotificationCounter;
 use App\Service\Signalement\Qualification\QualificationStatusService;
 use App\Service\UploadHandlerService;
 use App\Utils\AttributeParser;
+use Symfony\Component\Validator\Constraints as Assert;
+use Symfony\Component\Validator\Validator\ValidatorInterface;
 use Twig\Extension\AbstractExtension;
 use Twig\TwigFilter;
 use Twig\TwigFunction;
 
 class AppExtension extends AbstractExtension
 {
+    public function __construct(private readonly ValidatorInterface $validator)
+    {
+    }
+
     public function getFilters(): array
     {
         return [
@@ -25,7 +31,6 @@ class AppExtension extends AbstractExtension
             new TwigFilter('image64', [ImageBase64Encoder::class, 'encode']),
             new TwigFilter('truncate_filename', [$this, 'getTruncatedFilename']),
             new TwigFilter('clean_tagged_text', [$this, 'cleanTaggedText']),
-            new TwigFilter('email_alert', [$this, 'emailAlert']),
         ];
     }
 
@@ -97,6 +102,7 @@ class AppExtension extends AbstractExtension
             new TwigFunction('show_label_facultatif', [AttributeParser::class, 'showLabelAsFacultatif']),
             new TwigFunction('get_accepted_mime_type', [$this, 'getAcceptedMimeTypes']),
             new TwigFunction('get_accepted_extensions', [UploadHandlerService::class, 'getAcceptedExtensions']),
+            new TwigFunction('show_email_alert', [$this, 'showEmailAlert']),
         ];
     }
 
@@ -109,9 +115,15 @@ class AppExtension extends AbstractExtension
         return implode(',', File::IMAGE_MIME_TYPES);
     }
 
-    public function emailAlert(?string $emailAddress): bool
+    public function showEmailAlert(?string $emailAddress): bool
     {
-        if (!empty($emailAddress) && !filter_var($emailAddress, \FILTER_VALIDATE_EMAIL)) {
+        $emailConstraint = new Assert\Email();
+        $errors = $this->validator->validate(
+            $emailAddress,
+            $emailConstraint
+        );
+
+        if ($errors->count()) {
             return true;
         }
 
