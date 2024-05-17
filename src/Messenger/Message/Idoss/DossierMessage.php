@@ -88,7 +88,6 @@ final class DossierMessage implements DossierMessageInterface
         }
         $this->numAllocataire = $affectation->getSignalement()->getNumAllocataire();
         $this->montantAllocation = $affectation->getSignalement()->getMontantAllocation();
-        $this->bailEnCour = 'ne sait pas';
         if (true === $affectation->getSignalement()->getIsBailEnCours()) {
             $this->bailEnCour = 'oui';
         } elseif (false === $affectation->getSignalement()->getIsBailEnCours()) {
