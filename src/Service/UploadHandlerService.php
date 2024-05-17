@@ -82,12 +82,12 @@ class UploadHandlerService
             File::INPUT_NAME_DOCUMENTS === $fileType
             && !self::isAcceptedDocumentFormat($file, $fileType)
         ) {
-            throw new UnsupportedFileFormatException($file->getMimeType(), self::DOCUMENT_EXTENSION);
+            throw new UnsupportedFileFormatException($file->getMimeType(), $fileType);
         } elseif (
             File::INPUT_NAME_PHOTOS === $fileType
             && !ImageManipulationHandler::isAcceptedPhotoFormat($file, $fileType)
         ) {
-            throw new UnsupportedFileFormatException($file->getMimeType(), ImageManipulationHandler::IMAGE_EXTENSION);
+            throw new UnsupportedFileFormatException($file->getMimeType(), $fileType);
         }
 
         try {
@@ -127,6 +127,25 @@ class UploadHandlerService
         }
 
         return false;
+    }
+
+    public static function getAcceptedExtensions(?string $type = 'document'): string
+    {
+        if ('document' === $type || 'documents' === $type) {
+            $extensions = array_map('strtoupper', self::DOCUMENT_EXTENSION);
+        } else {
+            $extensions = array_map('strtoupper', ImageManipulationHandler::IMAGE_EXTENSION);
+        }
+
+        if (1 === \count($extensions)) {
+            return $extensions[0];
+        }
+
+        $allButLast = \array_slice($extensions, 0, -1);
+        $last = end($extensions);
+        $all = implode(', ', $allButLast).' ou '.$last;
+
+        return $all;
     }
 
     private function moveFilePath(string $filePath): ?string
@@ -234,12 +253,12 @@ class UploadHandlerService
             File::INPUT_NAME_DOCUMENTS === $fileType
             && !self::isAcceptedDocumentFormat($file, $fileType)
         ) {
-            throw new UnsupportedFileFormatException($file->getMimeType(), self::DOCUMENT_EXTENSION);
+            throw new UnsupportedFileFormatException($file->getMimeType(), $fileType);
         } elseif (
             File::INPUT_NAME_PHOTOS === $fileType
             && !ImageManipulationHandler::isAcceptedPhotoFormat($file, $fileType)
         ) {
-            throw new UnsupportedFileFormatException($file->getMimeType(), ImageManipulationHandler::IMAGE_EXTENSION);
+            throw new UnsupportedFileFormatException($file->getMimeType(), $fileType);
         }
         try {
             $tmpFilepath = $file->getPathname();

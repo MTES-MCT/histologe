@@ -96,7 +96,7 @@ class AppExtension extends AbstractExtension
             new TwigFunction('can_edit_esabora_credentials', [EsaboraPartnerTypeSubscription::class, 'isSubscribed']),
             new TwigFunction('show_label_facultatif', [AttributeParser::class, 'showLabelAsFacultatif']),
             new TwigFunction('get_accepted_mime_type', [$this, 'getAcceptedMimeTypes']),
-            new TwigFunction('get_accepted_extensions', [$this, 'getAcceptedExtensions']),
+            new TwigFunction('get_accepted_extensions', [UploadHandlerService::class, 'getAcceptedExtensions']),
         ];
     }
 
@@ -107,24 +107,5 @@ class AppExtension extends AbstractExtension
         }
 
         return implode(',', ImageManipulationHandler::IMAGE_MIME_TYPES);
-    }
-
-    public function getAcceptedExtensions(?string $type = 'document'): string
-    {
-        if ('document' === $type) {
-            $extensions = array_map('strtoupper', UploadHandlerService::DOCUMENT_EXTENSION);
-        } else {
-            $extensions = array_map('strtoupper', ImageManipulationHandler::IMAGE_EXTENSION);
-        }
-
-        if (1 === \count($extensions)) {
-            return $extensions[0];
-        }
-
-        $allButLast = \array_slice($extensions, 0, -1);
-        $last = end($extensions);
-        $all = implode(', ', $allButLast).' ou '.$last;
-
-        return $all;
     }
 }

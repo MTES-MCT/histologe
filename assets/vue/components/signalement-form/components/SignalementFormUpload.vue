@@ -181,12 +181,7 @@ export default defineComponent({
         for (let i = 0; i < fileInput.files.length; i++) {
           const file = fileInput.files[i]
           const ext = file.name.split('.').pop()?.toLowerCase() ?? ''
-          if (file.type === 'image/heic' || file.type === 'image/heif') {
-            fileInput.value = ''
-            this.hasError = true
-            this.error = 'Les fichiers de format HEIC/HEIF ne sont pas pris en charge, merci de convertir votre image en JPEG ou en PNG avant de l\'envoyer.'
-            break
-          } else if (this.type === 'documents' && (this.documentsMimeTypes.indexOf(file.type) === -1 || this.documentsExtensions.indexOf(ext) === -1)) {
+          if (this.type === 'documents' && (this.documentsMimeTypes.indexOf(file.type) === -1 || this.documentsExtensions.indexOf(ext) === -1)) {
             fileInput.value = ''
             this.hasError = true
             this.error = 'Les fichiers de format ' + ext?.toUpperCase() + ' ne sont pas pris en charge.'
@@ -194,7 +189,7 @@ export default defineComponent({
           } else if (this.type === 'photos' && (this.photosMimeTypes.indexOf(file.type) === -1 || this.photosExtensions.indexOf(ext) === -1)) {
             fileInput.value = ''
             this.hasError = true
-            this.error = 'Les fichiers de format ' + ext?.toUpperCase() + ' ne sont pas pris en charge, merci de convertir votre image en JPEG ou en PNG avant de l\'envoyer.'
+            this.error = 'Les fichiers de format ' + ext?.toUpperCase() + ' ne sont pas pris en charge, merci de convertir votre image en JPEG, PNG ou en GIF avant de l\'envoyer.'
             break
           } else if (file.size > 10 * 1024 * 1024) {
             fileInput.value = ''
