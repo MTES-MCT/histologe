@@ -61,6 +61,7 @@ interface FormStore {
   updateData: (key: string, value: any) => void
   shouldShowField: (conditional: string) => boolean
   preprocessScreen: (screenBodyComponents: any) => Component[]
+  hasDesordre: (categorieSlug: string) => boolean
 }
 
 const formStore: FormStore = reactive({
@@ -181,6 +182,17 @@ const formStore: FormStore = reactive({
         }
       }
     }
+  },
+  hasDesordre (categorieSlug: string) {
+    let hasDesordre = false
+    for (const dataname in formStore.data) {
+      if (dataname.includes(categorieSlug) && formStore.data[dataname] !== null) {
+        hasDesordre = true
+        break
+      }
+    }
+
+    return hasDesordre
   }
 })
 

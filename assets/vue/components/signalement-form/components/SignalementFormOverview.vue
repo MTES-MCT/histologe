@@ -120,6 +120,11 @@
             <button @click="handleEdit('ecran_intermediaire_les_desordres')" class="fr-btn fr-btn--tertiary fr-btn--icon-left fr-icon-edit-line">Editer</button>
           </div>
         </div>
+        <SignalementFormWarning
+          v-if="formStore.hasDesordre('desordres_') === false"
+          :id="idDisorderOverview+'_warning'"
+          label="Vous n'avez renseigné aucun désordre. Pour vous assurer du bon traitement de votre signalement, veuillez sélectionner au moins un désordre."
+        />
         <SignalementFormDisorderOverview
           :id="idDisorderOverview"
           :icons="disorderIcons"
@@ -184,12 +189,14 @@ import { defineComponent } from 'vue'
 import formStore from './../store'
 import dictionaryStore from './../dictionary-store'
 import SignalementFormDisorderOverview from './SignalementFormDisorderOverview.vue'
+import SignalementFormWarning from './SignalementFormWarning.vue'
 import { dictionaryManager } from './../services/dictionaryManager'
 
 export default defineComponent({
   name: 'SignalementFormOverview',
   components: {
-    SignalementFormDisorderOverview
+    SignalementFormDisorderOverview,
+    SignalementFormWarning
   },
   props: {
     id: { type: String, default: null },
