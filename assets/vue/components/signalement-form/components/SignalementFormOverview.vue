@@ -11,7 +11,7 @@
             <h3 class="fr-h6">Adresse du logement</h3>
           </div>
           <div class="fr-col-4 fr-text--right">
-            <a href="#" class="btn-link fr-btn--icon-left fr-icon-edit-line" @click="handleEdit('adresse_logement')">Editer</a>
+            <button @click="handleEdit('adresse_logement')" class="fr-btn fr-btn--tertiary fr-btn--icon-left fr-icon-edit-line">Editer</button>
           </div>
         </div>
         <p v-html="getFormDataAdresse()"></p>
@@ -24,7 +24,7 @@
             <h3 class="fr-h6">Vos coordonnées</h3>
           </div>
           <div class="fr-col-4 fr-text--right">
-            <a href="#" @click="handleEdit('vos_coordonnees_occupant')" class="btn-link fr-btn--icon-left fr-icon-edit-line" >Editer</a>
+            <button @click="handleEdit('vos_coordonnees_occupant')" class="fr-btn fr-btn--tertiary fr-btn--icon-left fr-icon-edit-line">Editer</button>
           </div>
         </div>
         <p v-html="getFormDataCoordonneesOccupant()"></p>
@@ -37,7 +37,7 @@
             <h3 class="fr-h6">Vos coordonnées</h3>
           </div>
           <div class="fr-col-4 fr-text--right">
-            <a href="#" @click="handleEdit('vos_coordonnees_tiers')"  class="btn-link fr-btn--icon-left fr-icon-edit-line" >Editer</a>
+            <button @click="handleEdit('vos_coordonnees_tiers')"  class="fr-btn fr-btn--tertiary fr-btn--icon-left fr-icon-edit-line">Editer</button>
           </div>
         </div>
         <p v-html="getFormDataCoordonneesDeclarant()"></p>
@@ -50,7 +50,7 @@
             <h3 class="fr-h6">Les coordonnées du bailleur</h3>
           </div>
           <div class="fr-col-4 fr-text--right">
-            <a href="#" @click="handleEdit('coordonnees_bailleur')" class="btn-link fr-btn--icon-left fr-icon-edit-line" >Editer</a>
+            <button @click="handleEdit('coordonnees_bailleur')" class="fr-btn fr-btn--tertiary fr-btn--icon-left fr-icon-edit-line">Editer</button>
           </div>
         </div>
         <p v-html="getFormDataCoordonneesBailleur()"></p>
@@ -63,7 +63,7 @@
             <h3 class="fr-h6">Les coordonnées du foyer</h3>
           </div>
           <div class="fr-col-4 fr-text--right">
-            <a href="#" @click="handleEdit('coordonnees_occupant')" class="btn-link fr-btn--icon-left fr-icon-edit-line" >Editer</a>
+            <button @click="handleEdit('coordonnees_occupant')" class="fr-btn fr-btn--tertiary fr-btn--icon-left fr-icon-edit-line" >Editer</button>
           </div>
         </div>
         <p v-html="getFormDataCoordonneesOccupantSiTiers()"></p>
@@ -76,7 +76,7 @@
             <h3 class="fr-h6">Type et composition du logement</h3>
           </div>
           <div class="fr-col-4 fr-text--right">
-            <a href="#" class="btn-link fr-btn--icon-left fr-icon-edit-line" @click="handleEdit('ecran_intermediaire_type_composition')">Editer</a>
+            <button @click="handleEdit('ecran_intermediaire_type_composition')" class="fr-btn fr-btn--tertiary fr-btn--icon-left fr-icon-edit-line">Editer</button>
           </div>
         </div>
         <section class="fr-accordion fr-mb-3w">
@@ -97,7 +97,7 @@
             <h3 class="fr-h6" v-else>La situation du foyer</h3>
           </div>
           <div class="fr-col-4 fr-text--right">
-            <a href="#" class="btn-link fr-btn--icon-left fr-icon-edit-line" @click="handleEdit('ecran_intermediaire_situation_occupant')">Editer</a>
+            <button @click="handleEdit('ecran_intermediaire_situation_occupant')" class="fr-btn fr-btn--tertiary fr-btn--icon-left fr-icon-edit-line">Editer</button>
           </div>
         </div>
         <section class="fr-accordion fr-mb-3w">
@@ -117,7 +117,7 @@
             <h3 class="fr-h6">Les désordres</h3>
           </div>
           <div class="fr-col-4 fr-text--right">
-            <a href="#" class="btn-link fr-btn--icon-left fr-icon-edit-line" @click="handleEdit('ecran_intermediaire_les_desordres')">Editer</a>
+            <button @click="handleEdit('ecran_intermediaire_les_desordres')" class="fr-btn fr-btn--tertiary fr-btn--icon-left fr-icon-edit-line">Editer</button>
           </div>
         </div>
         <SignalementFormDisorderOverview
@@ -133,7 +133,7 @@
             <h3 class="fr-h6">La procédure</h3>
           </div>
           <div class="fr-col-4 fr-text--right">
-            <a href="#" class="btn-link fr-btn--icon-left fr-icon-edit-line" @click="handleEdit('info_procedure')">Editer</a>
+            <button @click="handleEdit('info_procedure')" class="fr-btn fr-btn--tertiary fr-btn--icon-left fr-icon-edit-line">Editer</button>
           </div>
         </div>
         <section class="fr-accordion fr-mb-3w">
@@ -154,7 +154,7 @@
               <h2 class="fr-h4">Informations complémentaires</h2>
             </div>
             <div class="fr-col-4 fr-text--right">
-              <a href="#" class="btn-link fr-btn--icon-left fr-icon-edit-line" @click="handleEdit('informations_complementaires')">Editer</a>
+              <button @click="handleEdit('informations_complementaires')" class="fr-btn fr-btn--tertiary fr-btn--icon-left fr-icon-edit-line">Editer</button>
             </div>
           </div>
           <p v-html="getFormDataInformationsComplementaires()"></p>

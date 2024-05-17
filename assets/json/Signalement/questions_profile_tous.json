@@ -23,6 +23,7 @@
               {
                 "type": "SignalementFormLink",
                 "label": "Annuler",
+                "description": "Retourner à l'accueil",
                 "slug": "introduction_cancel",
                 "link": "/",
                 "customCss": "fr-btn fr-btn--secondary fr-btn--icon-left fr-icon-close-line"
@@ -61,6 +62,7 @@
               {
                 "type": "SignalementFormLink",
                 "label": "Annuler",
+                "description": "Retourner à l'accueil",
                 "slug": "adresse_logement_intro_cancel",
                 "link": "/",
                 "customCss": "fr-btn fr-btn--secondary fr-btn--icon-left fr-icon-close-line"
@@ -169,11 +171,10 @@
           "slug": "signalement_concerne_modal"
         },
         {
-          "type": "SignalementFormLink",
+          "type": "SignalementFormButton",
           "label": "En savoir plus",
           "slug": "signalement_concerne_savoir_plus",
-          "customCss": "fr-badge fr-badge--info",
-          "link": "#",
+          "customCss": "fr-btn--sm fr-badge fr-badge--info",
           "ariaControls": "signalement_concerne_modal"
         },
         {

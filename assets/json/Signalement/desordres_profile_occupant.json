@@ -17,11 +17,10 @@
           "slug": "zone_concernee_modal"
         },
         {
-          "type": "SignalementFormLink",
+          "type": "SignalementFormButton",
           "label": "En savoir plus",
           "slug": "zone_concernee_savoir_plus",
-          "customCss": "fr-badge fr-badge--info",
-          "link": "#",
+          "customCss": "fr-btn--sm fr-badge fr-badge--info",
           "ariaControls": "zone_concernee_modal"
         },
         {
@@ -528,7 +527,7 @@
             "body": [
               {
                 "type": "SignalementFormInfo",
-                "label": "Le saviez-vous ? Le service Stop Punaises vous permet de trouver une entreprise labellisée pour traiter les punaises de lit. <a href='http://stop-punaises.beta.gouv.fr/' target='_blank'>Cliquez ici pour y accéder.</a>",
+                "label": "Le saviez-vous ? Le service Stop Punaises vous permet de trouver une entreprise labellisée pour traiter les punaises de lit. <a href='http://stop-punaises.beta.gouv.fr/' target='_blank' rel='noopener' title='Service Stop Punaises - Ouvre une nouvelle fenêtre'>Cliquez ici pour y accéder.</a>",
                 "slug": "desordres_batiment_nuisibles_punaises_details_info"
               }
             ]
@@ -1621,7 +1620,7 @@
               },
               {
                 "type": "SignalementFormInfo",
-                "label": "Les dégâts des eaux sont généralement pris en charge par les assurances. Pour savoir comment faire un constat auprès de votre assurance, rendez-vous sur <a href='https://www.service-public.fr/particuliers/vosdroits/F1352' target='_blank'>le site du service public.</a>",
+                "label": "Les dégâts des eaux sont généralement pris en charge par les assurances. Pour savoir comment faire un constat auprès de votre assurance, rendez-vous sur <a href='https://www.service-public.fr/particuliers/vosdroits/F1352' target='_blank' rel='noopener' title='Le site du Service Public - Ouvre une nouvelle fenêtre'>le site du Service Public</a>.",
                 "slug": "desordres_logement_humidite_piece_a_vivre_details_fuite_info",
                 "conditional": {
                   "show": "formStore.data.desordres_logement_humidite_piece_a_vivre_details_fuite ===  'oui'"
@@ -1671,7 +1670,7 @@
               },
               {
                 "type": "SignalementFormInfo",
-                "label": "Conseils : vous pouvez nettoyer la moisissure avec de l'eau de javel ou du vinaigre blanc. Dans tous les cas : protégez vous avec un masque et des gants ! Pour plus d'info, <a href='https://www.auvergne-rhone-alpes.ars.sante.fr/lutter-contre-les-moisissures-dans-le-logement' target='_blank'>cliquez sur ce lien</a>.",
+                "label": "Conseils : vous pouvez nettoyer la moisissure avec de l'eau de javel ou du vinaigre blanc. Dans tous les cas : protégez vous avec un masque et des gants ! Pour plus d'info, <a href='https://www.auvergne-rhone-alpes.ars.sante.fr/lutter-contre-les-moisissures-dans-le-logement' target='_blank' rel='noopener' title='Le site de l'ARS Auvergne-Rhône-Alpes - Ouvre une nouvelle fenêtre'>cliquez sur ce lien</a>.",
                 "slug": "desordres_logement_humidite_piece_a_vivre_details_moisissure_info",
                 "conditional": {
                   "show": "formStore.data.desordres_logement_humidite_piece_a_vivre_details_moisissure_apres_nettoyage ===  'nsp'"
@@ -1718,7 +1717,7 @@
               },
               {
                 "type": "SignalementFormInfo",
-                "label": "Les dégâts des eaux sont généralement pris en charge par les assurances. Pour savoir comment faire un constat auprès de votre assurance, rendez-vous sur <a href='https://www.service-public.fr/particuliers/vosdroits/F1352' target='_blank'>le site du service public.</a>",
+                "label": "Les dégâts des eaux sont généralement pris en charge par les assurances. Pour savoir comment faire un constat auprès de votre assurance, rendez-vous sur <a href='https://www.service-public.fr/particuliers/vosdroits/F1352' target='_blank' rel='noopener' title='Le site du Service Public - Ouvre une nouvelle fenêtre'>le site du Service Public</a>.",
                 "slug": "desordres_logement_humidite_cuisine_details_fuite_info",
                 "conditional": {
                   "show": "formStore.data.desordres_logement_humidite_cuisine_details_fuite ===  'oui'"
@@ -1768,7 +1767,7 @@
               },
               {
                 "type": "SignalementFormInfo",
-                "label": "Conseils : vous pouvez nettoyer la moisissure avec de l'eau de javel ou du vinaigre blanc. Dans tous les cas : protégez vous avec un masque et des gants ! Pour plus d'info, <a href='https://www.auvergne-rhone-alpes.ars.sante.fr/lutter-contre-les-moisissures-dans-le-logement' target='_blank'>cliquez sur ce lien</a>.",
+                "label": "Conseils : vous pouvez nettoyer la moisissure avec de l'eau de javel ou du vinaigre blanc. Dans tous les cas : protégez vous avec un masque et des gants ! Pour plus d'info, <a href='https://www.auvergne-rhone-alpes.ars.sante.fr/lutter-contre-les-moisissures-dans-le-logement' target='_blank' rel='noopener' title='Le site de l'ARS Auvergne-Rhône-Alpes - Ouvre une nouvelle fenêtre'>cliquez sur ce lien</a>.",
                 "slug": "desordres_logement_humidite_cuisine_details_moisissure_info",
                 "conditional": {
                   "show": "formStore.data.desordres_logement_humidite_cuisine_details_moisissure_apres_nettoyage ===  'nsp'"
@@ -1815,7 +1814,7 @@
               },
               {
                 "type": "SignalementFormInfo",
-                "label": "Les dégâts des eaux sont généralement pris en charge par les assurances. Pour savoir comment faire un constat auprès de votre assurance, rendez-vous sur <a href='https://www.service-public.fr/particuliers/vosdroits/F1352' target='_blank'>le site du service public.</a>",
+                "label": "Les dégâts des eaux sont généralement pris en charge par les assurances. Pour savoir comment faire un constat auprès de votre assurance, rendez-vous sur <a href='https://www.service-public.fr/particuliers/vosdroits/F1352' target='_blank' rel='noopener' title='Le site du Service Public - Ouvre une nouvelle fenêtre'>le site du Service Public</a>.",
                 "slug": "desordres_logement_humidite_salle_de_bain_details_fuite_info",
                 "conditional": {
                   "show": "formStore.data.desordres_logement_humidite_salle_de_bain_details_fuite ===  'oui'"
@@ -1865,7 +1864,7 @@
               },
               {
                 "type": "SignalementFormInfo",
-                "label": "Conseils : vous pouvez nettoyer la moisissure avec de l'eau de javel ou du vinaigre blanc. Dans tous les cas : protégez vous avec un masque et des gants ! Pour plus d'info, <a href='https://www.auvergne-rhone-alpes.ars.sante.fr/lutter-contre-les-moisissures-dans-le-logement' target='_blank'>cliquez sur ce lien</a>.",
+                "label": "Conseils : vous pouvez nettoyer la moisissure avec de l'eau de javel ou du vinaigre blanc. Dans tous les cas : protégez vous avec un masque et des gants ! Pour plus d'info, <a href='https://www.auvergne-rhone-alpes.ars.sante.fr/lutter-contre-les-moisissures-dans-le-logement' target='_blank' rel='noopener' title='Le site de l'ARS Auvergne-Rhône-Alpes - Ouvre une nouvelle fenêtre'>cliquez sur ce lien</a>.",
                 "slug": "desordres_logement_humidite_salle_de_bain_details_moisissure_info",
                 "conditional": {
                   "show": "formStore.data.desordres_logement_humidite_salle_de_bain_details_moisissure_apres_nettoyage ===  'nsp'"
@@ -2294,7 +2293,7 @@
               },
               {
                 "type": "SignalementFormInfo",
-                "label": "Le saviez-vous ? Le service Stop Punaises vous permet de trouver une entreprise labellisée pour traiter les punaises de lit. <a href='http://stop-punaises.beta.gouv.fr/' target='_blank'>Cliquez ici pour y accéder.</a>",
+                "label": "Le saviez-vous ? Le service Stop Punaises vous permet de trouver une entreprise labellisée pour traiter les punaises de lit. <a href='http://stop-punaises.beta.gouv.fr/' target='_blank' rel='noopener' title='Service Stop Punaises - Ouvre une nouvelle fenêtre'>Cliquez ici pour y accéder.</a>",
                 "slug": "desordres_logement_nuisibles_punaises_details_info"
               }
             ]
@@ -2408,7 +2407,7 @@
             "body": [
               {
                 "type": "SignalementFormInfo",
-                "label": "Info : {{formStore.props.platformName}} ne permet pas de régler les problèmes de voisinage. Pour savoir s'il s'agit d'un problème de logement ou un trouble du voisinage, consultez le site du service public <a href='https://www.service-public.fr/particuliers/vosdroits/F612' target='_blank'>en cliquant ici</a>.",
+                "label": "Info : {{formStore.props.platformName}} ne permet pas de régler les problèmes de voisinage. Pour savoir s'il s'agit d'un problème de logement ou un trouble du voisinage, rendez-vous sur <a href='https://www.service-public.fr/particuliers/vosdroits/F612' target='_blank' rel='noopener' title='Le site du Service Public - Ouvre une nouvelle fenêtre'>le site du Service Public</a>.",
                 "slug": "desordres_logement_bruit_voisins_details_info"
               }
             ]

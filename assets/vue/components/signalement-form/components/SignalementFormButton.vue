@@ -5,8 +5,10 @@
         :class="[ 'fr-btn', customCss, formStore.lastButtonClicked === id ? 'fr-btn--loading fr-btn--icon-right fr-icon-refresh-line' : '' ]"
         :disabled="formStore.lastButtonClicked !== ''"
         @click="handleClick"
+        :aria-controls="ariaControls"
+        data-fr-opened="false"
         >
-        {{ label}}
+        {{ label }}
       </button>
     </div>
 </template>
@@ -34,6 +36,7 @@ export default defineComponent({
     },
     type: { type: String as PropType<'button' | 'submit' | 'reset' | undefined>, default: 'button' },
     customCss: { type: String, default: '' },
+    ariaControls: { type: String, default: '' },
     clickEvent: Function
   },
   data () {
