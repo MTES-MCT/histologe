@@ -217,6 +217,11 @@ export default defineComponent({
 
       if (formStore.screenData) {
         this.removeNextScreensIfProfileUpdated()
+        // si le signalement n'a pas pu être créé (par exemple pas de désordres) la route ne renvoie pas de référence de signalement
+        // du coup on ne va pas sur la page de confirmation, mais sur une page spéciale
+        if (this.nextSlug === 'confirmation_signalement' && formStore.data.signalementReference === '') {
+          this.nextSlug = 'signalement_incomplet'
+        }
         const nextScreen = formStore.screenData.find((screen: any) => screen.slug === this.nextSlug)
         if (nextScreen !== undefined) {
           formStore.currentScreen = nextScreen

@@ -86,6 +86,7 @@
 <script lang="ts">
 import { defineComponent } from 'vue'
 import formStore from './../store'
+import { requests } from '../requests'
 import SignalementFormAddress from './SignalementFormAddress.vue'
 import SignalementFormButton from './SignalementFormButton.vue'
 import SignalementFormCheckbox from './SignalementFormCheckbox.vue'
@@ -159,6 +160,7 @@ export default defineComponent({
   data () {
     return {
       formStore,
+      requests,
       variablesReplacer,
       componentValidator,
       currentDisorderIndex: {
@@ -240,12 +242,12 @@ export default defineComponent({
     async handleClickComponent (type:string, param:string, param2:string) {
       if (type === 'link') {
         window.location.href = param
-      } else if (type === 'cancel') {
-        alert('on fait quoi quand on annule ?')
       } else if (type === 'show') {
         this.showComponentBySlug(param, param2)
       } else if (type === 'toggle') {
         this.toggleComponentBySlug(param, param2)
+      } else if (type === 'archive') {
+        requests.archiveDraft(formStore.data.uuidSignalementDraft, this.gotoHomepage)
       } else if (type.includes('goto')) {
         await this.showScreenBySlug(param, param2, type.includes('save'))
       } else if (type.includes('resolve')) {
@@ -304,6 +306,9 @@ export default defineComponent({
 
         this.currentDisorderIndex[currentCategory] = decrementIndex < 0 ? 0 : decrementIndex
       }
+    },
+    gotoHomepage () {
+      window.location.href = '/'
     }
   }
 })

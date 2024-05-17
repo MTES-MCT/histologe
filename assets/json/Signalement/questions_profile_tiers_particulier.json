@@ -1256,5 +1256,39 @@
         }
       ]
     }
+  },
+  {
+    "type": "SignalementFormScreen",
+    "label": "Votre signalement est incomplet",
+    "description": "<p>D'après les informations saisies, nous ne sommes pas en mesure de valider votre signalement : aucun désordre n'a été renseigné pour ce signalement.<br>Les signalements sans désordre ne peuvent pas être pris en charge par notre service.</p><p>Nous vous invitons à vérifier votre signalement et compléter les informations dans les parties :<ul><li>Type et composition du logement</li><li>Désordres</li></ul></p><p>Cliquez sur le bouton ci-dessous pour compléter votre signalement en renseignant au moins un désordre.</p>",
+    "slug": "signalement_incomplet",
+    "screenCategory": "Récapitulatif",
+    "components": {
+      "body": [
+        {
+          "type": "SignalementFormSubscreen",
+          "slug": "signalement_incomplet_buttons",
+          "customCss": "button-group-full-size",
+          "components": {
+            "body": [
+              {
+                "type": "SignalementFormButton",
+                "label": "Compléter mon signalement",
+                "slug": "signalement_incomplet_complete",
+                "action": "goto:ecran_intermediaire_type_composition",
+                "customCss": "fr-mb-3v"
+              },
+              {
+                "type": "SignalementFormButton",
+                "label": "Abandonner mon signalement",
+                "slug": "signalement_incomplet_archive",
+                "action": "archive:",
+                "customCss": "fr-btn--secondary fr-mb-3v"
+              }
+            ]
+          }
+        }
+      ]
+    }
   }
 ]

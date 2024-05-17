@@ -10,6 +10,7 @@ use App\Entity\SignalementDraft;
 use App\Event\SignalementCreatedEvent;
 use App\Event\SignalementDraftCompletedEvent;
 use App\Factory\SignalementDraftFactory;
+use App\Serializer\SignalementDraftRequestSerializer;
 use App\Service\Signalement\SignalementDraftHelper;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
@@ -24,6 +25,7 @@ class SignalementDraftManager extends AbstractManager
         protected EventDispatcherInterface $eventDispatcher,
         protected ManagerRegistry $managerRegistry,
         protected UrlGeneratorInterface $urlGenerator,
+        protected SignalementDraftRequestSerializer $signalementDraftRequestSerializer,
         protected string $entityName = SignalementDraft::class,
     ) {
         parent::__construct($managerRegistry, $entityName);
@@ -78,16 +80,20 @@ class SignalementDraftManager extends AbstractManager
 
     private function dispatchSignalementDraftCompleted(
         SignalementDraft $signalementDraft,
-    ): Signalement {
-        $signalementDraft->setStatus(SignalementDraftStatus::EN_SIGNALEMENT);
+    ): ?Signalement {
         $signalementDraftCompletedEvent = $this->eventDispatcher->dispatch(
             new SignalementDraftCompletedEvent($signalementDraft),
             SignalementDraftCompletedEvent::NAME
         );
 
         $signalement = $signalementDraftCompletedEvent->getSignalementDraft()->getSignalements()->first();
-        $this->eventDispatcher->dispatch(new SignalementCreatedEvent($signalement), SignalementCreatedEvent::NAME);
+        if ($signalement) {
+            $signalementDraft->setStatus(SignalementDraftStatus::EN_SIGNALEMENT);
+            $this->eventDispatcher->dispatch(new SignalementCreatedEvent($signalement), SignalementCreatedEvent::NAME);
 
-        return $signalement;
+            return $signalement;
+        }
+
+        return null;
     }
 }

@@ -309,8 +309,12 @@ class SignalementBuilder
         return $this;
     }
 
-    public function build(): Signalement
+    public function build(): ?Signalement
     {
+        if ($this->signalement->getDesordrePrecisions()->isEmpty() && 0.0 === $this->signalement->getScore()) {
+            return null;
+        }
+
         return $this->signalement;
     }
 
