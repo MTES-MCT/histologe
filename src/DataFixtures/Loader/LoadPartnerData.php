@@ -69,6 +69,13 @@ class LoadPartnerData extends Fixture implements OrderedFixtureInterface
             $partner->setCompetence($competences);
         }
 
+        if (isset($row['is_idoss_active'])) {
+            $partner->setIsIdossActive($row['is_idoss_active']);
+        }
+        if (isset($row['idoss_url'])) {
+            $partner->setIdossUrl($row['idoss_url']);
+        }
+
         $manager->persist($partner);
     }
 

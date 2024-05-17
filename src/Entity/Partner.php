@@ -371,12 +371,17 @@ class Partner
             );
     }
 
+    public function canSyncWithIdoss(): bool
+    {
+        return $this->isIdossActive && $this->idossUrl;
+    }
+
     public function isIdossActive(): ?bool
     {
         return $this->isIdossActive;
     }
 
-    public function setIsIdossActive(bool $isIdossActive): static
+    public function setIsIdossActive(bool $isIdossActive): self
     {
         $this->isIdossActive = $isIdossActive;
 
@@ -388,7 +393,7 @@ class Partner
         return $this->idossUrl;
     }
 
-    public function setIdossUrl(?string $idossUrl): static
+    public function setIdossUrl(?string $idossUrl): self
     {
         $this->idossUrl = $idossUrl;
 
@@ -400,7 +405,7 @@ class Partner
         return $this->idossToken;
     }
 
-    public function setIdossToken(?string $idossToken): static
+    public function setIdossToken(?string $idossToken): self
     {
         $this->idossToken = $idossToken;
 
@@ -412,7 +417,7 @@ class Partner
         return $this->idossTokenExpirationDate;
     }
 
-    public function setIdossTokenExpirationDate(?\DateTimeInterface $idossTokenExpirationDate): static
+    public function setIdossTokenExpirationDate(?\DateTimeInterface $idossTokenExpirationDate): self
     {
         $this->idossTokenExpirationDate = $idossTokenExpirationDate;
 

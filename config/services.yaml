@@ -40,6 +40,8 @@ parameters:
     maintenance_banner_enable: '%env(bool:MAINTENANCE_BANNER_ENABLE)%'
     maintenance_banner_message: '%env(resolve:MAINTENANCE_BANNER_MESSAGE)%'
     chatbot_enable: '%env(bool:CHATBOT_ENABLE)%'
+    idoss_username: '%env(resolve:IDOSS_USERNAME)%'
+    idoss_password: '%env(resolve:IDOSS_PASSWORD)%'
     feature_anonymize_expired_account: '%env(bool:FEATURE_ANONYMIZE_EXPIRED_ACCOUNT)%'
 
 services:

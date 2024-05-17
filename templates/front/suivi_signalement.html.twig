@@ -16,8 +16,8 @@
 				<h1 class="fr-h2 fr-mb-2v">
 					Signalement #{{ signalement.reference }}
 					<br>
-					{{signalement.prenomOccupant|capitalize}}
-					{{signalement.nomOccupant|capitalize}}
+					{{signalement.prenomOccupant|title}}
+					{{signalement.nomOccupant|title}}
 				</h1>
 				<div>Déposé le :
 					{{ signalement.createdAt|date('d/m/Y') }}</div>
