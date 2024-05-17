@@ -26,10 +26,11 @@
             <input
               type="text"
               :id="id"
-              :name="id"
+              name="telephone"
               v-model="formStore.data[id]"
               class="fr-input"
               :aria-describedby="'text-input-error-desc-error-'+id"
+              autocomplete="tel-national"
               >
           </div>
         </div>

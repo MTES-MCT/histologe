@@ -27,6 +27,10 @@
           "slug": "vos_coordonnees_occupant_nom",
           "validate": {
             "maxLength": 50
+          },
+          "accessibility": {
+            "name": "lastName",
+            "autocomplete": "family-name"
           }
         },
         {
@@ -35,6 +39,10 @@
           "slug": "vos_coordonnees_occupant_prenom",
           "validate": {
             "maxLength": 50
+          },
+          "accessibility": {
+            "name": "firstName",
+            "autocomplete": "given-name"
           }
         },
         {

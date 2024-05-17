@@ -43,6 +43,8 @@
         :autocomplete="component.autocomplete"
         :clickEvent="handleClickComponent"
         :handleClickComponent="handleClickComponent"
+        :access_name="component.accessibility?.name"
+        :access_autocomplete="component.accessibility?.autocomplete"
       />
     </div>
   </div>

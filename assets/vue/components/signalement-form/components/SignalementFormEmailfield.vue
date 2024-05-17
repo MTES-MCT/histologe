@@ -8,12 +8,13 @@
       <input
           type="email"
           :id="id + '_input'"
-          :name="id"
+          name="mail"
           :value="internalValue"
           :class="[ customCss, 'fr-input' ]"
           @input="updateValue($event)"
           aria-describedby="text-input-error-desc-error"
           :disabled="disabled"
+          autocomplete="email"
       >
     </div>
     <div

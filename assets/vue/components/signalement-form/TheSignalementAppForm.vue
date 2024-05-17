@@ -37,14 +37,17 @@
                 />
           </div>
           <div class="fr-col-12 fr-col-md-8">
-            <SignalementFormScreen
-              :label="formStore.currentScreen.label"
-              :description="formStore.currentScreen.description"
-              :icon="formStore.currentScreen.icon"
-              :components="formStore.currentScreen.components"
-              :customCss="formStore.currentScreen.customCss"
-              :changeEvent="saveAndChangeScreenBySlug"
-              />
+            <form @submit.prevent="handleSubmit">
+              <SignalementFormScreen
+                :label="formStore.currentScreen.label"
+                :description="formStore.currentScreen.description"
+                :icon="formStore.currentScreen.icon"
+                :components="formStore.currentScreen.components"
+                :customCss="formStore.currentScreen.customCss"
+                :changeEvent="saveAndChangeScreenBySlug"
+                />
+              <button type="submit" class="hidden-submit">Submit</button>
+            </form>
           </div>
         </div>
         <SignalementFormModalAlreadyExists
@@ -248,6 +251,10 @@ export default defineComponent({
       setTimeout(() => {
         window.scrollTo(0, 0)
       }, 50)
+    },
+    handleSubmit () {
+      // Vous pouvez gérer la soumission du formulaire ici
+      console.log('Form submitted!')
     }
   }
 })
@@ -264,5 +271,8 @@ export default defineComponent({
   }
   .signalement-form {
     background-color: white;
+  }
+  .hidden-submit {
+    display: none;
   }
 </style>
