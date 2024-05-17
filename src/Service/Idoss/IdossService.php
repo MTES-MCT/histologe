@@ -76,7 +76,7 @@ class IdossService
         return $this->request($url, $payload, $token);
     }
 
-    private function getToken(DossierMessage $dossierMessage): string
+    public function getToken(DossierMessage $dossierMessage): string
     {
         if ($dossierMessage->getToken() && $dossierMessage->getTokenExpirationDate() && $dossierMessage->getTokenExpirationDate() > new \DateTime()) {
             return $dossierMessage->getToken();
@@ -96,7 +96,7 @@ class IdossService
         if (isset($jsonResponse->token) && isset($jsonResponse->expirationDate)) {
             $partner = $this->entityManager->getRepository(Partner::class)->find($dossierMessage->getPartnerId());
             $partner->setIdossToken($jsonResponse->token);
-            $partner->setIdossTokenExpirationDate(new \DateTimeImmutable($jsonResponse->expirationDate));
+            $partner->setIdossTokenExpirationDate(new \DateTime($jsonResponse->expirationDate));
             $this->entityManager->flush();
 
             return $jsonResponse->token;
@@ -104,7 +104,7 @@ class IdossService
         throw new \Exception('Token not found : '.$response->getContent(throw: false));
     }
 
-    private function request(string $url, array $payload, ?string $token = null): ResponseInterface
+    protected function request(string $url, array $payload, ?string $token = null): ResponseInterface
     {
         $options = [
             'headers' => [
@@ -115,7 +115,8 @@ class IdossService
         if ($token) {
             $options['headers'][] = 'Authorization: Bearer '.$token;
         }
+        $response = $this->client->request('POST', $url, $options);
 
-        return $this->client->request('POST', $url, $options);
+        return $response;
     }
 }

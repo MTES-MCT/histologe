@@ -3,10 +3,11 @@
 namespace App\Factory\Interconnection\Idoss;
 
 use App\Entity\Affectation;
+use App\Factory\Interconnection\DossierMessageFactoryInterface;
 use App\Messenger\Message\Idoss\DossierMessage;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 
-class DossierMessageFactory
+class DossierMessageFactory implements DossierMessageFactoryInterface
 {
     public function __construct(
         #[Autowire(env: 'FEATURE_IDOSS_ENABLE')]
