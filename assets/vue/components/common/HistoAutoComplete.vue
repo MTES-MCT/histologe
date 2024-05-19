@@ -2,6 +2,7 @@
   <div class="histo-autocomplete" @click="closeAutocomplete">
     <input
         :id="id"
+        :name="id"
         class="fr-input"
         type="text"
         v-model="searchText"
@@ -46,6 +47,15 @@ export default defineComponent({
     placeholder: {
       type: String,
       default: ''
+    },
+    reset: {
+      type: Boolean,
+      default: false
+    }
+  },
+  watch: {
+    reset () {
+      this.resetData()
     }
   },
   data () {
@@ -66,17 +76,16 @@ export default defineComponent({
       if (this.multiple) {
         this.selectedSuggestions.push(this.suggestionFilteredList[index])
         this.searchText = ''
-        this.suggestionFilteredList = []
       } else {
         this.searchText = this.suggestionFilteredList[index]
-        this.suggestionFilteredList = []
       }
+      this.suggestionFilteredList = []
       this.$emit('update:modelValue', this.multiple ? this.selectedSuggestions : this.searchText)
     },
     updateSearch () {
       if (this.searchText.length < 1) {
         this.suggestionFilteredList = []
-      } else {
+      } else if (this.searchText.length > 2) {
         this.suggestionFilteredList = (this.suggestions as string[])
           .filter((item: string) =>
             !this.selectedSuggestions.includes(item) &&
@@ -85,7 +94,7 @@ export default defineComponent({
       }
     },
     handleDownSuggestion () {
-      if (this.selectedSuggestionIndex < this.suggestions.length - 1) {
+      if (this.selectedSuggestionIndex < this.suggestionFilteredList.length - 1) {
         this.selectedSuggestionIndex++
       }
     },
@@ -106,6 +115,13 @@ export default defineComponent({
         this.suggestionFilteredList = []
         this.selectedSuggestionIndex = -1
       }
+    },
+    resetData () {
+      this.searchText = ''
+      this.selectedSuggestions = []
+      this.suggestionFilteredList = []
+      this.selectedSuggestion = ''
+      this.selectedSuggestionIndex = -1
     }
   }
 })

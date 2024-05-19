@@ -29,4 +29,25 @@ class WidgetSettingsControllerTest extends WebTestCase
         $this->assertArrayHasKey('territoryName', $responseContent);
         $this->assertArrayHasKey('territories', $responseContent);
     }
+
+    public function testWidgetSettingsWithTerritory(): void
+    {
+        $client = static::createClient();
+
+        /** @var UserRepository $userRepository */
+        $userRepository = self::getContainer()->get(UserRepository::class);
+        $user = $userRepository->findOneBy(['email' => 'admin-territoire-13-01@histologe.fr']);
+        $client->loginUser($user);
+
+        /** @var RouterInterface $router */
+        $router = self::getContainer()->get(RouterInterface::class);
+        $client->request('GET', $router->generate('back_widget_settings', ['territoryId' => 13]));
+
+        $this->assertEquals('200', $client->getResponse()->getStatusCode());
+        $responseContent = json_decode($client->getResponse()->getContent(), true);
+
+        $this->assertArrayHasKey('partners', $responseContent);
+        $this->assertArrayHasKey('epcis', $responseContent);
+        $this->assertArrayHasKey('tags', $responseContent);
+    }
 }

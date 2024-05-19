@@ -198,4 +198,15 @@ export default defineComponent({
   .fr-card__content {
     margin: 0 -2rem -3rem -2rem;
   }
+
+  .fr-card__footer {
+    margin: 0 -2.5rem;
+  }
+
+  @media (max-width: 1250px) {
+    .fr-card__footer {
+      margin: 2rem -0.5rem;
+      padding: 0;
+    }
+  }
 </style>

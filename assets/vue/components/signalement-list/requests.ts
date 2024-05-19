@@ -46,7 +46,7 @@ export const requests = {
   getSettings (functionReturn: Function) {
     let url = store.props.ajaxurlSettings
     if (store.state.currentTerritoryId.length > 0) {
-      url += `?territory=${store.state.currentTerritoryId}`
+      url += `?territoryId=${store.state.currentTerritoryId}`
     }
 
     requests.doRequest(url, functionReturn)

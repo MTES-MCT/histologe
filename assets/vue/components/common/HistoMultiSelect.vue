@@ -82,6 +82,11 @@ export default defineComponent({
     handleClickItem (event:any) {
       const clickedElement:any = event.target
       const clickedOptionId:string = clickedElement.dataset.optionid
+
+      if (!clickedOptionId) {
+        return
+      }
+
       this.modelValue.push(clickedOptionId)
       this.$emit('update:modelValue', this.modelValue)
       if (this.onChange !== undefined) {

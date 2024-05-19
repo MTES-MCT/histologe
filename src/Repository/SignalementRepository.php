@@ -580,36 +580,24 @@ class SignalementRepository extends ServiceEntityRepository
 
     public function findCities(User|null $user = null, Territory|null $territory = null): array|int|string
     {
-        $user = $user?->isUserPartner() || $user?->isPartnerAdmin() ? $user : null;
-
-        $qb = $this->createQueryBuilder('s')
-            ->select('s.villeOccupant city')
-            ->where('s.statut != :status')
-            ->setParameter('status', Signalement::STATUS_ARCHIVED);
-        if ($user) {
-            $qb->leftJoin('s.affectations', 'affectations')
-                ->leftJoin('affectations.partner', 'partner')
-                ->andWhere('partner = :partner')
-                ->setParameter('partner', $user->getPartner());
-        }
-        if ($territory) {
-            $qb->andWhere('s.territory = :territory')
-                ->setParameter('territory', $territory);
-        }
-
-        return $qb
-            ->groupBy('s.villeOccupant')
-            ->orderBy('s.villeOccupant', 'ASC')
-            ->getQuery()
-            ->getResult();
+        return $this->findCommunes($user, $territory, 's.villeOccupant', 'city');
     }
 
     public function findZipcodes(User|null $user = null, Territory|null $territory = null): array|int|string
     {
+        return $this->findCommunes($user, $territory, 's.cpOccupant', 'zipcode');
+    }
+
+    public function findCommunes(
+        ?User $user = null,
+        ?Territory $territory = null,
+        ?string $field = null,
+        ?string $alias = null
+    ): array|int|string {
         $user = $user?->isUserPartner() || $user?->isPartnerAdmin() ? $user : null;
 
         $qb = $this->createQueryBuilder('s')
-            ->select('s.cpOccupant zipcode')
+            ->select($field.' '.$alias)
             ->where('s.statut != :status')
             ->setParameter('status', Signalement::STATUS_ARCHIVED);
         if ($user) {
@@ -624,8 +612,8 @@ class SignalementRepository extends ServiceEntityRepository
         }
 
         return $qb
-            ->groupBy('s.cpOccupant')
-            ->orderBy('s.cpOccupant', 'ASC')
+            ->groupBy($field)
+            ->orderBy($field, 'ASC')
             ->getQuery()
             ->getResult();
     }

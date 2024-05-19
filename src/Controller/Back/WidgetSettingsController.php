@@ -30,7 +30,7 @@ class WidgetSettingsController extends AbstractController
         SignalementRepository $signalementRepository,
         SerializerInterface $serializer,
         Security $security,
-        #[MapQueryParameter] ?int $territory = null,
+        #[MapQueryParameter] ?int $territoryId = null,
     ): Response {
         $territories = $territoryRepository->findBy(['isActive' => 1]);
         $partners = $tags = $epcis = $communesAndZipCodes = [];
@@ -38,8 +38,8 @@ class WidgetSettingsController extends AbstractController
         $user = $this->getUser();
         $canSeeNDE = $security->isGranted(UserVoter::SEE_NDE, $user);
 
-        $territory = ($security->isGranted('ROLE_ADMIN') && null !== $territory)
-            ? $territoryRepository->find($territory)
+        $territory = ($security->isGranted('ROLE_ADMIN') && null !== $territoryId)
+            ? $territoryRepository->find($territoryId)
             : $user->getTerritory();
 
         if ($territory instanceof Territory) {

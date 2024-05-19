@@ -18,6 +18,7 @@ export const store = {
       isAdmin: false,
       isResponsableTerritoire: false,
       isAdministrateurPartenaire: false,
+      isAgent: false,
       canSeeStatusAffectation: false,
       canDeleteSignalement: false,
       canSeeNonDecenceEnergetique: false,
@@ -101,75 +102,5 @@ export const store = {
     ajaxurlExportCsv: '',
     ajaxurlSettings: '',
     ajaxurlContact: ''
-  },
-  getTextFromList (id: any, context: string | null): string | undefined {
-    if (context === 'territoires') {
-      return this.state.territories.find(territory => territory.Id.toString() === id)?.Text
-    }
-
-    if ((context === 'communes' || context === 'epcis') && typeof id !== 'undefined') {
-      return id.join(', ')
-    }
-
-    if (context === 'enfantsM6') {
-      const item = this.state.enfantMoinsSixList.find(item => item.Id === id)
-      if (item != null) {
-        return item.Text
-      }
-    }
-
-    if (context === 'allocataire') {
-      const item = this.state.allocataireList.find(item => item.Id === id)
-      if (item != null) {
-        return item.Text
-      }
-    }
-
-    if (context === 'criticiteScoreMin') {
-      return `Criticité Minimum : ${id}`
-    }
-
-    if (context === 'criticiteScoreMax') {
-      return `Criticité Maximum : ${id}`
-    }
-
-    if (context === 'dateDernierSuivi' || context === 'dateDepot') {
-      let label: string = ''
-      let startDate: string = ''
-      let endDate: string = ''
-
-      startDate = id[0].toLocaleDateString('fr-FR', { day: '2-digit', month: '2-digit', year: 'numeric' })
-      endDate = id[1].toLocaleDateString('fr-FR', { day: '2-digit', month: '2-digit', year: 'numeric' })
-
-      if (context === 'dateDernierSuivi') {
-        label = 'Date de dernier suivi : '
-      }
-
-      if (context === 'dateDepot') {
-        label = 'Date de dépôt : '
-      }
-
-      return `${label} ${startDate} - ${endDate}`
-    }
-
-    const staticListsWithNoDuplicateId = [
-      this.state.statusSignalementList,
-      this.state.statusAffectationList,
-      this.state.statusVisiteList,
-      this.state.situationList,
-      this.state.procedureList,
-      this.state.typeDernierSuiviList,
-      this.state.typeDeclarantList,
-      this.state.natureParcList
-    ]
-
-    for (const list of staticListsWithNoDuplicateId) {
-      const item = list.find(item => item.Id === id)
-      if (item != null) {
-        return item.Text
-      }
-    }
-
-    return id
   }
 }

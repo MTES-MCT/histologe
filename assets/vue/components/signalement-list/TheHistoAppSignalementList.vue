@@ -7,6 +7,7 @@
     <TheHistoSignalementListFilter
         :on-change="handleFilters"
         @changeTerritory="handleTerritoryChange"
+        @clickReset="handleClickReset"
     />
     <section v-if="loadingList" class="loading fr-m-10w">
       <h2 class="fr-text--light" v-if="!hasErrorLoading">Chargement de la liste...</h2>
@@ -60,51 +61,55 @@ export default defineComponent({
     }
   },
   created () {
-    if (initElements !== null) {
-      this.sharedProps.ajaxurlSignalement = initElements.dataset.ajaxurl
-      this.sharedProps.ajaxurlRemoveSignalement = initElements.dataset.ajaxurlRemoveSignalement
-      this.sharedProps.ajaxurlSettings = initElements.dataset.ajaxurlSettings
-      this.sharedProps.ajaxurlExportCsv = initElements.dataset.ajaxurlExportCsv
-      this.sharedProps.ajaxurlContact = initElements.dataset.ajaxurlContact
-
-      const url = new URL(window.location.toString())
-      const params = new URLSearchParams(url.search)
-      const page = params.get('page')
-      const sortBy = params.get('sortBy')
-      const direction = params.get('direction')
-      const status = params.get('status')
-
-      if (status) {
-        this.addQueryParameter('status', status)
-        this.buildUrl()
-      }
-
-      if (page) {
-        this.addQueryParameter('page', page)
-        this.buildUrl()
-      }
-
-      if (sortBy) {
-        this.addQueryParameter('sortBy', sortBy)
-        if (direction) {
-          this.addQueryParameter('orderBy', direction)
-        } else {
-          this.addQueryParameter('orderBy', 'DESC')
-        }
-        this.buildUrl()
-      }
-
-      requests.getSettings(this.handleSettings)
-      requests.getSignalements(this.handleSignalements)
-    } else {
-      this.hasErrorLoading = true
-    }
+    this.init()
   },
   methods: {
+    init () {
+      if (initElements !== null) {
+        this.sharedProps.ajaxurlSignalement = initElements.dataset.ajaxurl
+        this.sharedProps.ajaxurlRemoveSignalement = initElements.dataset.ajaxurlRemoveSignalement
+        this.sharedProps.ajaxurlSettings = initElements.dataset.ajaxurlSettings
+        this.sharedProps.ajaxurlExportCsv = initElements.dataset.ajaxurlExportCsv
+        this.sharedProps.ajaxurlContact = initElements.dataset.ajaxurlContact
+
+        const url = new URL(window.location.toString())
+        const params = new URLSearchParams(url.search)
+        const page = params.get('page')
+        const sortBy = params.get('sortBy')
+        const direction = params.get('direction')
+        const status = params.get('status')
+
+        if (status) {
+          this.addQueryParameter('status', status)
+          this.buildUrl()
+        }
+
+        if (page) {
+          this.addQueryParameter('page', page)
+          this.buildUrl()
+        }
+
+        if (sortBy) {
+          this.addQueryParameter('sortBy', sortBy)
+          if (direction) {
+            this.addQueryParameter('orderBy', direction)
+          } else {
+            this.addQueryParameter('orderBy', 'DESC')
+          }
+          this.buildUrl()
+        }
+
+        requests.getSettings(this.handleSettings)
+        requests.getSignalements(this.handleSignalements)
+      } else {
+        this.hasErrorLoading = true
+      }
+    },
     handleSettings (requestResponse: any) {
       this.sharedState.user.isAdmin = requestResponse.roleLabel === 'Super Admin'
       this.sharedState.user.isResponsableTerritoire = requestResponse.roleLabel === 'Responsable Territoire'
       this.sharedState.user.isAdministrateurPartenaire = requestResponse.roleLabel === 'Administrateur'
+      this.sharedState.user.isAgent = requestResponse.roleLabel === 'Administrateur' || requestResponse.roleLabel === 'Utilisateur'
       this.sharedState.user.canSeeNonDecenceEnergetique = requestResponse.canSeeNDE === '1'
       const isAdminOrAdminTerritoire = this.sharedState.user.isAdmin || this.sharedState.user.isResponsableTerritoire
       this.sharedState.user.canSeeStatusAffectation = isAdminOrAdminTerritoire
@@ -112,10 +117,6 @@ export default defineComponent({
       this.sharedState.user.canSeeScore = isAdminOrAdminTerritoire
 
       this.sharedState.territories = []
-      const optionAllItem = new HistoInterfaceSelectOption()
-      optionAllItem.Id = 'all'
-      optionAllItem.Text = 'Tous'
-      this.sharedState.territories.push(optionAllItem)
       for (const id in requestResponse.territories) {
         const optionItem = new HistoInterfaceSelectOption()
         optionItem.Id = requestResponse.territories[id].id
@@ -136,6 +137,9 @@ export default defineComponent({
       }
 
       this.sharedState.etiquettes = []
+      optionNoneItem.Id = ''
+      optionNoneItem.Text = ''
+      this.sharedState.etiquettes.push(optionNoneItem)
       for (const id in requestResponse.tags) {
         const optionItem = new HistoInterfaceSelectOption()
         optionItem.Id = requestResponse.tags[id].id.toString()
@@ -154,8 +158,12 @@ export default defineComponent({
       }
     },
     handleTerritoryChange (value: any) {
+      console.log(value)
       this.sharedState.currentTerritoryId = value.toString()
       requests.getSettings(this.handleSettings)
+    },
+    handleClickReset () {
+      this.init()
     },
     handleSignalements (requestResponse: any) {
       this.sharedState.signalements.filters = requestResponse.filters

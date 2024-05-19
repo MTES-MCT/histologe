@@ -3,7 +3,7 @@
     <div class="fr-grid-row fr-p-3w fr-pb-6w">
       <div class="fr-col-12">
         <h1 class="fr-mb-2w fr-h2">Liste des signalements</h1>
-        <div class="fr-container--fluid">
+        <div class="fr-container--fluid" role="search">
           <div class="fr-grid-row fr-grid-row--gutters">
             <ul class="fr-col-12 fr-tags-group fr-mt-2w">
               <li>
@@ -20,7 +20,7 @@
             </ul>
           </div>
           <div class="fr-grid-row fr-grid-row--gutters">
-            <div v-if="sharedState.user.isAdmin" class="fr-col-12 fr-col-lg-6 fr-col-xl-3 grey-background">
+            <div v-if="sharedState.user.isAdmin" class="fr-col-12 fr-col-lg-6 fr-col-xl-2 grey-background">
               <HistoSelect
                   v-if="sharedState.territories.length > 0"
                   id="filter-territoires"
@@ -28,9 +28,10 @@
                   @update:modelValue="updateTerritory"
                   inner-label="Territoire"
                   :option-items=sharedState.territories
+                  :placeholder="'Territoire'"
               />
             </div>
-            <div class="fr-col-12 fr-col-lg-6 fr-col-xl-6">
+            <div class="fr-col-12 fr-col-lg-6" :class="sharedState.user.isAdmin ? 'fr-col-xl-3' : 'fr-col-xl-4'">
               <HistoSearch
                   id="filter-search-terms"
                   v-model="sharedState.input.filters.searchTerms"
@@ -39,7 +40,31 @@
                   @update:modelValue="onChange(false)"
               />
             </div>
-            <div class="fr-col-12 fr-col-lg-6 fr-col-xl-3 grey-background">
+            <div class="fr-col-12 fr-col-lg-6" :class="sharedState.user.isAdmin ? 'fr-col-xl-2' : 'fr-col-xl-3'">
+              <HistoAutoComplete
+                  id="filter-communes"
+                  v-model="sharedState.input.filters.communes"
+                  :suggestions="sharedState.communes"
+                  :multiple="true"
+                  :placeholder="'Commune ou code postal'"
+                  @update:modelValue="onChange(false)"
+                  :reset="reset"
+                  class="fr-input-wrap fr-icon-map-pin-2-line"
+              />
+            </div>
+            <div class="fr-col-12 fr-col-lg-6 fr-col-xl-3">
+              <HistoAutoComplete
+                  id="filter-epci"
+                  v-model="sharedState.input.filters.epcis"
+                  :suggestions="sharedState.epcis"
+                  :multiple="true"
+                  :placeholder="'EPCI'"
+                  @update:modelValue="onChange(false)"
+                  :reset="reset"
+                  class="fr-input-wrap fr-icon-map-pin-2-line"
+              />
+            </div>
+            <div class="fr-col-12 fr-col-lg-6 fr-col-xl-2 grey-background">
               <HistoSelect
                   id="filter-status"
                   v-model="sharedState.input.filters.status"
@@ -48,44 +73,24 @@
                   :placeholder="'Statut'"
               />
             </div>
-            <div class="fr-col-12 fr-col-lg-6 fr-col-xl-4">
-              <HistoAutoComplete
-                  id="filter-communes"
-                  v-model="sharedState.input.filters.communes"
-                  :suggestions="sharedState.communes"
-                  :multiple="true"
-                  :placeholder="'Commune ou code postal'"
-                  @update:modelValue="onChange(false)"
-              />
-            </div>
-            <div class="fr-col-12 fr-col-lg-6 fr-col-xl-4">
-              <HistoAutoComplete
-                  id="filter-epci"
-                  v-model="sharedState.input.filters.epcis"
-                  :suggestions="sharedState.epcis"
-                  :multiple="true"
-                  :placeholder="'EPCI'"
-                  @update:modelValue="onChange(false)"
-              />
-            </div>
           </div>
           <div class="fr-grid-row fr-grid-row--gutters">
-            <div class="fr-col-12 fr-col-lg-6 fr-col-xl-2">
+            <div class="fr-col-12 fr-col-lg-6 fr-col-xl-3">
               <button class="fr-btn fr-btn--secondary" @click="showOptions = !showOptions">
-                {{ showOptions ? 'Masquer les options' : 'Afficher les options' }}
+                {{ showOptions ? 'Masquer les options' : 'Plus d\'options de recherche' }}
               </button>
             </div>
-            <div class="fr-col-12 fr-col-lg-6 fr-col-xl-8">
+            <div class="fr-col-12 fr-col-lg-6 fr-col-xl-7">
               <ul class="fr-tags-group">
                 <li>
                   <button
                       class="fr-tag fr-tag--sm fr-tag--dismiss"
-                      v-for="(filter, key) in filtersSanitized"
+                      v-for="(value, key) in filtersSanitized"
                       :aria-label="`Retirer ${key}`"
                       :key="key"
-                      @click="removeFilter(filter, key)"
+                      @click="removeFilter(key)"
                   >
-                    {{ getTextFromList(filter, key) }}
+                    {{ getBadgeFilterLabel(key, value) }}
                   </button>
                 </li>
               </ul>
@@ -98,22 +103,8 @@
               </button>
             </div>
           </div>
-
           <div v-if="showOptions">
             <div class="fr-grid-row fr-grid-row--gutters">
-              <div class="fr-col-12 fr-col-lg-4 fr-col-xl-3 grey-background"
-                   v-if="showWorkInProgress &&  sharedState.partenaires.length > 0">
-                <HistoMultiSelect
-                    v-if="showWorkInProgress"
-                    id="filter-partenaires"
-                    v-model="sharedState.input.filters.partenaires"
-                    @update:modelValue="onChange(false)"
-                    inner-label="Partenaires"
-                    :option-items=sharedState.partenaires
-                    :isInnerLabelFemale="false"
-                    :active=true
-                />
-              </div>
               <div class="fr-col-12 fr-col-lg-6 fr-col-xl-3 grey-background"
                    v-if="showWorkInProgress && sharedState.etiquettes.length > 0">
                 <HistoMultiSelect
@@ -125,15 +116,6 @@
                     :active=true
                 />
               </div>
-              <div v-if="sharedState.user.canSeeStatusAffectation" class="fr-col-12 fr-col-lg-4 fr-col-xl-3 grey-background">
-                <HistoSelect
-                    id="filter-statut-affectation"
-                    v-model="sharedState.input.filters.statusAffectation"
-                    @update:modelValue="onChange(false)"
-                    :option-items=statusAffectationList
-                    :placeholder="'Statut de l\'affectation'"
-                />
-              </div>
               <div class="fr-col-12 fr-col-lg-6 fr-col-xl-3 grey-background">
                 <HistoDatePicker
                     id="histofiltersdatepicker"
@@ -143,15 +125,6 @@
                     @update:modelValue="onChange(false)"
                 />
               </div>
-              <div class="fr-col-12 fr-col-lg-4 fr-col-xl-3 grey-background">
-                <HistoSelect
-                    id="filter-type-declarant"
-                    v-model="sharedState.input.filters.typeDeclarant"
-                    @update:modelValue="onChange(false)"
-                    :option-items=typeDeclarantList
-                    :placeholder="'Déclarant'"
-                />
-              </div>
               <div class="fr-col-12 fr-col-lg-6 fr-col-xl-3 grey-background">
                 <HistoSelect
                     id="filter-procedure"
@@ -159,6 +132,19 @@
                     @update:modelValue="onChange(false)"
                     :option-items=procedureList
                     :placeholder="'Procédure suspectée'"
+                />
+              </div>
+              <div class="fr-col-12 fr-col-lg-4 fr-col-xl-3 grey-background"
+                   v-if="showWorkInProgress &&  sharedState.partenaires.length > 0">
+                <HistoMultiSelect
+                    v-if="showWorkInProgress"
+                    id="filter-partenaires"
+                    v-model="sharedState.input.filters.partenaires"
+                    @update:modelValue="onChange(false)"
+                    inner-label="Partenaires"
+                    :option-items=sharedState.partenaires
+                    :isInnerLabelFemale="false"
+                    :active=true
                 />
               </div>
               <div class="fr-col-12 fr-col-lg-6 fr-col-xl-3 grey-background">
@@ -188,7 +174,43 @@
                     @update:modelValue="onChange(false)"
                 />
               </div>
-              <div class="fr-col-12 fr-col-lg-4 fr-col-xl-2 grey-background">
+              <div v-if="sharedState.user.canSeeStatusAffectation" class="fr-col-12 fr-col-lg-4 fr-col-xl-3 grey-background">
+                <HistoSelect
+                    id="filter-statut-affectation"
+                    v-model="sharedState.input.filters.statusAffectation"
+                    @update:modelValue="onChange(false)"
+                    :option-items=statusAffectationList
+                    :placeholder="'Statut de l\'affectation'"
+                />
+              </div>
+              <div v-if="sharedState.user.canSeeScore"
+                   class="histo-score-range fr-col-12 fr-col-lg-4 fr-col-xl-2 grey-background">
+                <HistoNumber
+                    id="filter-score-min"
+                    v-model="sharedState.input.filters.criticiteScoreMin"
+                    placeholder="Min"
+                    @update:modelValue="onChange(false)"
+                />
+                <HistoNumber
+                    id="filter-score-max"
+                    v-model="sharedState.input.filters.criticiteScoreMax"
+                    placeholder="Max"
+                    @update:modelValue="onChange(false)"
+                />
+              </div>
+              <div
+                  class="fr-col-12 fr-col-lg-4 grey-background"
+                  :class="sharedState.user.isAgent ? 'fr-col-xl-3' : 'fr-col-xl-2'">
+                <HistoSelect
+                    id="filter-type-declarant"
+                    v-model="sharedState.input.filters.typeDeclarant"
+                    @update:modelValue="onChange(false)"
+                    :option-items=typeDeclarantList
+                    :placeholder="'Déclarant'"
+                />
+              </div>
+              <div class="fr-col-12 fr-col-lg-4 grey-background"
+                   :class="sharedState.user.isAgent ? 'fr-col-xl-3' : 'fr-col-xl-2'">
                 <HistoSelect
                     id="filter-type-declarant"
                     v-model="sharedState.input.filters.natureParc"
@@ -197,7 +219,8 @@
                     :placeholder="'Nature du parc'"
                 />
               </div>
-              <div class="fr-col-12 fr-col-lg-4 fr-col-xl-2 grey-background">
+              <div class="fr-col-12 fr-col-lg-4 grey-background"
+                   :class="sharedState.user.isAgent ? 'fr-col-xl-3' : 'fr-col-xl-2'">
                 <HistoSelect
                     id="filter-allocataire"
                     v-model="sharedState.input.filters.allocataire"
@@ -206,7 +229,8 @@
                     :placeholder="'Allocataire'"
                 />
               </div>
-              <div class="fr-col-12 fr-col-lg-4 fr-col-xl-2 grey-background">
+              <div class="fr-col-12 fr-col-lg-4 grey-background"
+                   :class="sharedState.user.isAgent ? 'fr-col-xl-3' : 'fr-col-xl-2'">
                 <HistoSelect
                     id="filter-enfants-m6"
                     v-model="sharedState.input.filters.enfantsM6"
@@ -215,29 +239,14 @@
                     :placeholder="'Enfant de - 6 ans'"
                 />
               </div>
-              <div class="fr-col-12 fr-col-lg-4 fr-col-xl-2 grey-background">
+              <div class="fr-col-12 fr-col-lg-4 grey-background"
+                   :class="sharedState.user.isAgent ? 'fr-col-xl-3' : 'fr-col-xl-2'">
                 <HistoSelect
                     id="filter-situation"
                     v-model="sharedState.input.filters.situation"
                     @update:modelValue="onChange(false)"
                     :option-items=situationList
                     :placeholder="'Situation'"
-                />
-              </div>
-              <div v-if="sharedState.user.canSeeScore"
-                   class="histo-score-range fr-col-12 fr-col-lg-4 fr-col-xl-4 grey-background">
-                <HistoNumber
-                    id="filter-score-min"
-                    v-model="sharedState.input.filters.criticiteScoreMin"
-                    placeholder="Score de criticité min"
-                    @update:modelValue="onChange(false)"
-
-                />
-                <HistoNumber
-                    id="filter-score-max"
-                    v-model="sharedState.input.filters.criticiteScoreMax"
-                    placeholder="Score de criticité max"
-                    @update:modelValue="onChange(false)"
                 />
               </div>
             </div>
@@ -257,6 +266,7 @@ import HistoSearch from '../common/HistoSearch.vue'
 import HistoMultiSelect from '../common/HistoMultiSelect.vue'
 import HistoAutoComplete from '../common/HistoAutoComplete.vue'
 import HistoNumber from '../common/HistoNumber.vue'
+import { buildBadge } from './services/badgeFilterLabelBuilder'
 
 export default defineComponent({
   name: 'TheHistoSignalementListFilter',
@@ -271,7 +281,13 @@ export default defineComponent({
   props: {
     onChange: { type: Function }
   },
-  emits: ['changeTerritory'],
+  emits: ['changeTerritory', 'clickReset'],
+  mounted () {
+    const container = document.querySelector('.fr-container--fluid') as HTMLElement
+    if (container) {
+      container.style.overflow = 'visible'
+    }
+  },
   computed: {
     isImportedPressed () {
       return this.sharedState.input.filters.isImported === 'oui'
@@ -289,6 +305,7 @@ export default defineComponent({
         }
         return false
       })
+
       return Object.fromEntries(filters)
     }
   },
@@ -301,8 +318,8 @@ export default defineComponent({
         this.onChange(false)
       }
     },
-    removeFilter (filter: string, index: string) {
-      delete (this.sharedState.input.filters as any)[index]
+    removeFilter (key: string) {
+      delete (this.sharedState.input.filters as any)[key]
       if (typeof this.onChange === 'function') {
         this.onChange(false)
       }
@@ -337,19 +354,24 @@ export default defineComponent({
         criticiteScoreMin: null,
         criticiteScoreMax: null
       }
+      this.sharedState.currentTerritoryId = ''
+      this.reset = !this.reset
+      this.$emit('clickReset')
+
       if (typeof this.onChange === 'function') {
         this.onChange(false)
       }
     },
-    getTextFromList (id: any, context: string|null) {
-      return store.getTextFromList(id, context)
+    getBadgeFilterLabel (key: string, value: any) {
+      return buildBadge(key, value)
     }
   },
   data () {
     return {
       isVisible: true,
       showOptions: false,
-      showWorkInProgress: false,
+      reset: false,
+      showWorkInProgress: true,
       sharedState: store.state,
       statusSignalementList: store.state.statusSignalementList,
       statusAffectationList: store.state.statusAffectationList,
