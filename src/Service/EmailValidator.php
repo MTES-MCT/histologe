@@ -17,6 +17,6 @@ class EmailValidator
             $emailConstraint
         );
 
-        return $errors->count() == 0;
+        return 0 == $errors->count();
     }
 }
