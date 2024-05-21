@@ -8,13 +8,13 @@
       <input
           type="email"
           :id="id + '_input'"
-          name="mail"
+          :name="access_name"
+          :autocomplete="access_autocomplete"
           :value="internalValue"
           :class="[ customCss, 'fr-input' ]"
           @input="updateValue($event)"
           aria-describedby="text-input-error-desc-error"
           :disabled="disabled"
-          autocomplete="email"
       >
     </div>
     <div
@@ -41,7 +41,9 @@ export default defineComponent({
     validate: { type: Object, default: null },
     hasError: { type: Boolean, default: false },
     disabled: { type: Boolean, default: false },
-    error: { type: String, default: '' }
+    error: { type: String, default: '' },
+    access_name: { type: String, default: '' },
+    access_autocomplete: { type: String, default: '' }
   },
   computed: {
     internalValue: {

@@ -37,7 +37,7 @@
                 />
           </div>
           <div class="fr-col-12 fr-col-md-8">
-            <form @submit.prevent="handleSubmit">
+            <form @submit.prevent="handleSubmit" autocomplete="on">
               <SignalementFormScreen
                 :label="formStore.currentScreen.label"
                 :description="formStore.currentScreen.description"

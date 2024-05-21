@@ -48,12 +48,20 @@
         {
           "type": "SignalementFormEmailfield",
           "label": "Adresse e-mail",
-          "slug": "vos_coordonnees_occupant_email"
+          "slug": "vos_coordonnees_occupant_email",
+          "accessibility": {
+            "name": "mail",
+            "autocomplete": "email"
+          }
         },
         {
           "type": "SignalementFormPhonefield",
           "label": "Téléphone",
-          "slug": "vos_coordonnees_occupant_tel"
+          "slug": "vos_coordonnees_occupant_tel",
+          "accessibility": {
+            "name": "telephone",
+            "autocomplete": "tel-national"
+          }
         }
       ],
       "footer": [
@@ -95,6 +103,10 @@
           },
           "conditional": {
             "show": "formStore.data.signalement_concerne_logement_social_autre_tiers === 'non'"
+          },
+          "accessibility": {
+            "name": "lastName",
+            "autocomplete": "family-name"
           }
         },
         {
@@ -121,6 +133,10 @@
           "validate": {
             "required": false,
             "maxLength": 255
+          },
+          "accessibility": {
+            "name": "firstName",
+            "autocomplete": "given-name"
           }
         },
         {
@@ -129,6 +145,10 @@
           "slug": "coordonnees_bailleur_email",
           "validate": {
             "required": false
+          },
+          "accessibility": {
+            "name": "mail",
+            "autocomplete": "email"
           }
         },
         {
@@ -137,6 +157,10 @@
           "slug": "coordonnees_bailleur_tel",
           "validate": {
             "required": false
+          },
+          "accessibility": {
+            "name": "telephone",
+            "autocomplete": "tel-national"
           }
         },
         {

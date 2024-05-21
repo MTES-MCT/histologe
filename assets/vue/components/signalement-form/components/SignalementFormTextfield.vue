@@ -9,6 +9,7 @@
         type="text"
         :id="id + '_input'"
         :name="access_name"
+        :autocomplete="access_autocomplete"
         :value="internalValue"
         :placeholder="placeholder"
         :class="[ customCss, 'fr-input' ]"
@@ -16,7 +17,6 @@
         aria-describedby="text-input-error-desc-error"
         :disabled="disabled"
         :maxlength="validate?.maxLength"
-        :autocomplete="access_autocomplete"
         >
     </div>
     <div
