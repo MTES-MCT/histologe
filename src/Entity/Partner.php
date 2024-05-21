@@ -93,7 +93,7 @@ class Partner
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $idossToken = null;
 
-    #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: true)]
+    #[ORM\Column(type: Types::DATETIME_IMMUTABLE, nullable: true)]
     private ?\DateTimeInterface $idossTokenExpirationDate = null;
 
     public function __construct()

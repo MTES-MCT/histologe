@@ -37,20 +37,9 @@ class DossierMessageFactory implements DossierMessageFactoryInterface
         $partner = $affectation->getPartner();
         $signalement = $affectation->getSignalement();
 
-        if (!$this->featureEnable) {
-            return false;
-        }
-        if (Affectation::STATUS_WAIT !== $affectation->getStatut()) {
-            return false;
-        }
-        if (!$signalement->hasQualificaton(Qualification::RSD)) {
-            return false;
-        }
-        if (!$partner->canSyncWithOilhi()) {
-            return false;
-        }
-
-        return true;
+        return $this->featureEnable
+        && $signalement->hasQualificaton(Qualification::RSD)
+        && $partner->canSyncWithOilhi();
     }
 
     public function createInstance(Affectation $affectation): DossierMessage

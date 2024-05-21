@@ -146,8 +146,9 @@ class AffectationController extends AbstractController
             $this->addFlash('success', 'Affectation mise à jour avec succès !');
             if (Affectation::STATUS_REFUSED == $status) {
                 $this->dispatchAffectationAnsweredEvent($affectation, $response);
-            } else {
-                $this->dispatchDossier($affectation);
+            }
+            if ($dossierMessageFactory->supports($affectation)) {
+                $bus->dispatch($dossierMessageFactory->createInstance($affectation));
             }
             if ($dossierMessageFactory->supports($affectation)) {
                 $bus->dispatch($dossierMessageFactory->createInstance($affectation));
@@ -174,7 +175,7 @@ class AffectationController extends AbstractController
     private function dispatchDossier(Affectation $affectation): void
     {
         $partner = $affectation->getPartner();
-        if ($partner->canSyncWithEsabora() || $partner->canSyncWithOilhi() || $partner->canSyncWithIdoss()) {
+        if ($partner->canSyncWithEsabora() || $partner->canSyncWithOilhi()) {
             $this->interconnectionBus->dispatch($affectation);
         }
     }

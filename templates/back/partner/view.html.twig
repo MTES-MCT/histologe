@@ -87,18 +87,16 @@
                 </div>
             </div>
         {% endif %}
-        <div class="fr-col-12 fr-grid-row fr-grid-row--gutters">
-            <div class="fr-col-6">
-                <div>
-                    <b>Synchronisation iDoss :</b>
-                    {% if partner.isIdossActive %}
+        {% if partner.isIdossActive %}
+            <div class="fr-col-12 fr-grid-row fr-grid-row--gutters">
+                <div class="fr-col-6">
+                    <div>
+                        <b>Synchronisation iDoss :</b>
                         <span class="fr-badge fr-badge--success">Active</span>
-                    {% else %}
-                        <span class="fr-badge fr-badge--info">Inactive</span>
-                    {% endif %}
+                    </div>
                 </div>
             </div>
-        </div>
+        {% endif %}
 
     </section>
     <hr>
