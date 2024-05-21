@@ -10,6 +10,9 @@ use App\Utils\AddressParser;
 
 final class DossierMessage implements DossierMessageInterface
 {
+    private const CODE_VOIE = '1234';
+    private const DEPT_BOUCHES_DU_RHONE = '13';
+    private const DESCRIPTION_MAX_LENGTH = 250;
     private int $signalementId;
     private int $partnerId;
     private string $url;
@@ -61,7 +64,7 @@ final class DossierMessage implements DossierMessageInterface
             'adresseLogement' => [
                 'adresse' => $affectation->getSignalement()->getAddressCompleteOccupant(),
                 'novoie' => $addressParsed['number'],
-                'codevoie' => '1234', // valeur obligatoire que nous ne ne possédons pas, utilisation d'une valeur par défaut qui fonctionne (teamnet ok) en attendant que le champ soit facultatif
+                'codevoie' => self::CODE_VOIE, // valeur obligatoire que nous ne ne possédons pas, utilisation d'une valeur par défaut qui fonctionne (teamnet ok) en attendant que le champ soit facultatif
                 'nomvoie' => $addressParsed['street'],
                 'CP' => $affectation->getSignalement()->getCpOccupant(),
                 'nomCommune' => $affectation->getSignalement()->getVilleOccupant(),
@@ -69,7 +72,7 @@ final class DossierMessage implements DossierMessageInterface
             ],
         ];
         // seul code insee accepté par IDOSS pour le service Habitat de Marseille, on force la valeur tant qu'on est dans le 13
-        if (str_starts_with($affectation->getSignalement()->getInseeOccupant(), '13')) {
+        if (str_starts_with($affectation->getSignalement()->getInseeOccupant(), self::DEPT_BOUCHES_DU_RHONE)) {
             $this->occupant['adresseLogement']['codeInseeCommune'] = IdossService::CODE_INSEE_BASSIN_VIE_MARSEILLE;
         }
 
@@ -82,7 +85,7 @@ final class DossierMessage implements DossierMessageInterface
             'telephoneProprietaire' => $affectation->getSignalement()->getTelProprioDecoded(),
             'mailProprietaire' => $affectation->getSignalement()->getMailProprio(),
         ];
-        $this->descriptionProblemes = mb_strimwidth($affectation->getSignalement()->getDetails(), 0, 250);
+        $this->descriptionProblemes = mb_strimwidth($affectation->getSignalement()->getDetails(), 0, self::DESCRIPTION_MAX_LENGTH);
         foreach ($affectation->getSignalement()->getFiles() as $file) {
             $this->pj[] = $file->getFilename();
         }

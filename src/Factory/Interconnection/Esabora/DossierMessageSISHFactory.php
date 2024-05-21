@@ -35,17 +35,7 @@ class DossierMessageSISHFactory extends AbstractDossierMessageFactory
 
     public function supports(Affectation $affectation): bool
     {
-        if (Affectation::STATUS_WAIT !== $affectation->getStatut()) {
-            return false;
-        }
-        if (!$this->isEsaboraPartnerActive($affectation)) {
-            return false;
-        }
-        if (PartnerType::ARS !== $affectation->getPartner()->getType()) {
-            return false;
-        }
-
-        return true;
+        return $this->isEsaboraPartnerActive($affectation) && PartnerType::ARS === $affectation->getPartner()->getType();
     }
 
     /**
