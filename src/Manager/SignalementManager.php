@@ -13,6 +13,7 @@ use App\Dto\Request\Signalement\QualificationNDERequest;
 use App\Dto\Request\Signalement\SituationFoyerRequest;
 use App\Dto\SignalementAffectationListView;
 use App\Entity\Affectation;
+use App\Entity\Enum\AffectationStatus;
 use App\Entity\Enum\MotifCloture;
 use App\Entity\Enum\ProfileDeclarant;
 use App\Entity\Enum\ProprioType;
@@ -259,6 +260,23 @@ class SignalementManager extends AbstractManager
         );
 
         return array_merge($sendTo, $partnersEmail);
+    }
+
+    public function findUsersAffectedToSignalement(
+        Signalement $signalement,
+        AffectationStatus $statusAffectation,
+        Partner $partnerToExclude
+    ): array {
+        $list = [];
+        $affectations = $signalement->getAffectations();
+        foreach ($affectations as $affectation) {
+            $partner = $affectation->getPartner();
+            if ((!$partnerToExclude || $partnerToExclude != $partner) && $affectation->getStatut() === $statusAffectation->value) {
+                $list = array_merge($list, $partner->getUsers()->toArray());
+            }
+        }
+
+        return array_unique($list, \SORT_REGULAR);
     }
 
     public function updateFromSignalementQualification(

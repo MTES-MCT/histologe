@@ -3,12 +3,14 @@
 namespace App\Service\Signalement;
 
 use App\Entity\Affectation;
+use App\Entity\Enum\AffectationStatus;
 use App\Entity\Enum\Qualification;
 use App\Entity\Intervention;
 use App\Entity\Suivi;
 use App\Entity\User;
 use App\Factory\NotificationFactory;
 use App\Factory\SuiviFactory;
+use App\Manager\SignalementManager;
 use App\Manager\SuiviManager;
 use App\Repository\UserRepository;
 use App\Service\Mailer\NotificationMail;
@@ -21,6 +23,7 @@ class VisiteNotifier
 {
     public function __construct(
         private EntityManagerInterface $entityManager,
+        private SignalementManager $signalementManager,
         private SuiviFactory $suiviFactory,
         private SuiviManager $suiviManager,
         private NotificationFactory $notificationFactory,
@@ -53,15 +56,25 @@ class VisiteNotifier
         ?NotificationMailerType $notificationMailerType,
         bool $notifyAdminTerritory = true,
         ?Affectation $affectation = null,
+        bool $notifyOtherAffectedPartners = false,
     ): void {
         if ($intervention) {
-            $listUsersPartner = $intervention->getPartner() && $intervention->getPartner() != $currentUser?->getPartner() ?
+            $listUsersToNotify = [];
+            $listUsersPartner = $intervention->getPartner() && $intervention->getPartner() != $currentUser?->getPartner() && !$notifyOtherAffectedPartners ?
                 $intervention->getPartner()->getUsers()->toArray() : [];
             if ($notifyAdminTerritory) {
                 $listUsersTerritoryAdmin = $this->userRepository->findActiveTerritoryAdmins($intervention->getSignalement()->getTerritory(), $intervention->getSignalement()->getInseeOccupant());
                 $listUsersToNotify = array_unique(array_merge($listUsersTerritoryAdmin, $listUsersPartner), \SORT_REGULAR);
             } else {
                 $listUsersToNotify = $listUsersPartner;
+            }
+            if ($notifyOtherAffectedPartners) {
+                $listAffected = $this->signalementManager->findUsersAffectedToSignalement(
+                    $intervention->getSignalement(),
+                    AffectationStatus::STATUS_ACCEPTED,
+                    $intervention->getPartner()
+                );
+                $listUsersToNotify = array_unique(array_merge($listUsersToNotify, $listAffected), \SORT_REGULAR);
             }
         } else {
             $listUsersToNotify = $affectation->getPartner()->getUsers();

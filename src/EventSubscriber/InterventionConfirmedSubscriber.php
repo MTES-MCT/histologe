@@ -82,6 +82,7 @@ class InterventionConfirmedSubscriber implements EventSubscriberInterface
                 suivi: $suivi,
                 currentUser: $currentUser,
                 notificationMailerType: NotificationMailerType::TYPE_VISITE_CONFIRMED_TO_PARTNER,
+                notifyOtherAffectedPartners: true,
             );
         }
     }

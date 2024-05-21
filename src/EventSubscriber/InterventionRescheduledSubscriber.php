@@ -59,6 +59,7 @@ class InterventionRescheduledSubscriber implements EventSubscriberInterface
                 suivi: $suivi,
                 currentUser: $event->getUser(),
                 notificationMailerType: null,
+                notifyOtherAffectedPartners: true,
             );
         }
     }
