@@ -24,11 +24,11 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue'
-import { store } from './store'
-import HistoSelect from '../common/HistoSelect.vue'
+import { store } from '../store'
+import HistoSelect from '../../common/HistoSelect.vue'
 
 export default defineComponent({
-  name: 'TheHistoSignalementListHeader',
+  name: 'SignalementListHeader',
   components: {
     HistoSelect
   },

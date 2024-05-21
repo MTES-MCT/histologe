@@ -259,17 +259,17 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue'
-import HistoSelect from '../common/HistoSelect.vue'
-import { store } from './store'
-import HistoDatePicker from '../common/external/HistoDatePicker.vue'
-import HistoSearch from '../common/HistoSearch.vue'
-import HistoMultiSelect from '../common/HistoMultiSelect.vue'
-import HistoAutoComplete from '../common/HistoAutoComplete.vue'
-import HistoNumber from '../common/HistoNumber.vue'
-import { buildBadge } from './services/badgeFilterLabelBuilder'
+import HistoSelect from '../../common/HistoSelect.vue'
+import { store } from '../store'
+import HistoDatePicker from '../../common/external/HistoDatePicker.vue'
+import HistoSearch from '../../common/HistoSearch.vue'
+import HistoMultiSelect from '../../common/HistoMultiSelect.vue'
+import HistoAutoComplete from '../../common/HistoAutoComplete.vue'
+import HistoNumber from '../../common/HistoNumber.vue'
+import { buildBadge } from '../services/badgeFilterLabelBuilder'
 
 export default defineComponent({
-  name: 'TheHistoSignalementListFilter',
+  name: 'SignalementListFilters',
   components: {
     HistoNumber,
     HistoAutoComplete,

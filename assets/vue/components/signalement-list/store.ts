@@ -39,11 +39,11 @@ export const store = {
       { Id: 'refuse', Text: 'Refusé' }
     ],
     statusAffectationList: [
-      { Id: 'accepte', Text: 'Accepté' },
+      { Id: 'accepte', Text: 'Acceptée' },
       { Id: 'en_attente', Text: 'En attente' },
-      { Id: 'refuse', Text: 'Refusé' },
-      { Id: 'cloture_un_partenaire', Text: 'Clôturé par au moins un partenaire' },
-      { Id: 'cloture_tous_partenaire', Text: 'Clôturé par tous les partenaires' }
+      { Id: 'refuse', Text: 'Refusée' },
+      { Id: 'cloture_un_partenaire', Text: 'Clôturée par au moins un partenaire' },
+      { Id: 'cloture_tous_partenaire', Text: 'Clôturée par tous les partenaires' }
     ],
     statusVisiteList: [
       { Id: 'Non planifiée', Text: 'Visite non planifiée' },
@@ -52,7 +52,7 @@ export const store = {
       { Id: 'Terminée', Text: 'Visite terminée' }
     ],
     situationList: [
-      { Id: 'attente_relogement', Text: 'Attente relogement' },
+      { Id: 'attente_relogement', Text: 'Attente de relogement' },
       { Id: 'bail_en_cours', Text: 'Bail en cours' },
       { Id: 'preavis_de_depart', Text: 'Préavis de départ' }
     ],
@@ -73,27 +73,27 @@ export const store = {
     typeDeclarantList: [
       { Id: 'locataire', Text: 'Occupant' },
       { Id: 'bailleur_occupant', Text: 'Bailleur occupant' },
-      { Id: 'bailleur', Text: 'Tiers bailleurs' },
+      { Id: 'bailleur', Text: 'Tiers bailleur' },
       { Id: 'tiers_particulier', Text: 'Tiers particulier' },
       { Id: 'tiers_pro', Text: 'Tiers professionnel' },
       { Id: 'service_secours', Text: 'Service de secours' }
     ],
     natureParcList: [
-      { Id: 'privee', Text: 'Parc privée' },
+      { Id: 'privee', Text: 'Parc privé' },
       { Id: 'public', Text: 'Parc public' },
       { Id: 'non_renseigne', Text: 'Parc Non renseigné' }
     ],
     allocataireList: [
-      { Id: 'non', Text: 'Non - Allocataire' },
-      { Id: 'oui', Text: 'Oui - Allocataire' },
-      { Id: 'caf', Text: 'CAF' },
-      { Id: 'msa', Text: 'MSA' },
-      { Id: 'non_renseigne', Text: 'Allocataire Non renseigné' }
+      { Id: 'non', Text: 'Non allocataire' },
+      { Id: 'oui', Text: 'Allocataire' },
+      { Id: 'caf', Text: 'Allocataire CAF' },
+      { Id: 'msa', Text: 'Allocataire MSA' },
+      { Id: 'non_renseigne', Text: 'Allocataire non renseigné' }
     ],
     enfantMoinsSixList: [
-      { Id: 'oui', Text: 'Oui - Enfant(s) moins de six ans' },
-      { Id: 'non', Text: 'Non - Enfant(s) moins de six ans' },
-      { Id: 'non_renseigne', Text: 'Non renseigné - Enfant(s) moins de six ans' }
+      { Id: 'oui', Text: 'Enfant(s) moins de 6ans' },
+      { Id: 'non', Text: 'Aucun enfant(s) moins de 6ans' },
+      { Id: 'non_renseigne', Text: 'Présence d\'enfants moins de 6ans non renseignée' }
     ]
   },
   props: {

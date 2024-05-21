@@ -4,8 +4,8 @@
     <p>{{ messageDeleteConfirmation }}</p>
   </div>
   <div id="histo-app-signalement-list">
-    <TheHistoSignalementListFilter
-        :on-change="handleFilters"
+    <SignalementListFilters
+        @change="handleFilters"
         @changeTerritory="handleTerritoryChange"
         @clickReset="handleClickReset"
     />
@@ -16,13 +16,13 @@
     </section>
     <section v-else class="fr-col-12 fr-background-alt--blue-france fr-mt-0">
         <div class="fr-px-3w">
-          <TheHistoSignalementListHeader
+          <SignalementListHeader
               :total="sharedState.signalements.pagination.total_items"
-              :on-change="handleOrderChange"/>
-          <TheHistoSignalementListCards
+              @change="handleOrderChange"/>
+          <SignalementListCards
               :list="sharedState.signalements.list"
               @deleteSignalementItem="deleteItem" />
-          <TheHistoSignalementListPagination
+          <SignalementListPagination
               :pagination="sharedState.signalements.pagination"
               @changePage="handlePageChange"/>
         </div>
@@ -35,20 +35,20 @@ import { defineComponent } from 'vue'
 import { store } from './store'
 import { requests } from './requests'
 import { SignalementItem } from './interfaces/signalementItem'
-import TheHistoSignalementListFilter from '../signalement-list/TheHistoSignalementListFilter.vue'
-import TheHistoSignalementListHeader from '../signalement-list/TheHistoSignalementListHeader.vue'
-import TheHistoSignalementListCards from '../signalement-list/TheHistoSignalementListCards.vue'
-import TheHistoSignalementListPagination from '../signalement-list/TheHistoSignalementListPagination.vue'
+import SignalementListFilters from './components/SignalementListFilters.vue'
+import SignalementListHeader from './components/SignalementListHeader.vue'
+import SignalementListCards from './components/SignalementListCards.vue'
+import SignalementListPagination from './components/SignalementListPagination.vue'
 import HistoInterfaceSelectOption from '../common/HistoInterfaceSelectOption'
 const initElements:any = document.querySelector('#app-signalement-list')
 
 export default defineComponent({
-  name: 'TheHistoAppSignalementList',
+  name: 'TheSignalementAppList',
   components: {
-    TheHistoSignalementListFilter,
-    TheHistoSignalementListHeader,
-    TheHistoSignalementListCards,
-    TheHistoSignalementListPagination
+    SignalementListHeader,
+    SignalementListFilters,
+    SignalementListCards,
+    SignalementListPagination
   },
   data () {
     return {
@@ -158,7 +158,6 @@ export default defineComponent({
       }
     },
     handleTerritoryChange (value: any) {
-      console.log(value)
       this.sharedState.currentTerritoryId = value.toString()
       requests.getSettings(this.handleSettings)
     },

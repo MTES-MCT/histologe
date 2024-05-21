@@ -74,11 +74,11 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue'
-import { SignalementItem } from './interfaces/signalementItem'
-import { store } from './store'
+import { SignalementItem } from '../interfaces/signalementItem'
+import { store } from '../store'
 
 export default defineComponent({
-  name: 'TheHistoSignalementListCards',
+  name: 'SignalementListCards',
   props: {
     list: {
       type: Object

@@ -50,7 +50,7 @@
 import { defineComponent } from 'vue'
 
 export default defineComponent({
-  name: 'TheHistoSignalementListPagination',
+  name: 'SignalementListPagination',
   props: {
     pagination: {
       type: Object,
