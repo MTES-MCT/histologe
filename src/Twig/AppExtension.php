@@ -5,13 +5,13 @@ namespace App\Twig;
 use App\Entity\Enum\OccupantLink;
 use App\Entity\Enum\QualificationStatus;
 use App\Entity\File;
+use App\Service\EmailValidator;
 use App\Service\Esabora\EsaboraPartnerTypeSubscription;
 use App\Service\Files\ImageBase64Encoder;
 use App\Service\Notification\NotificationCounter;
 use App\Service\Signalement\Qualification\QualificationStatusService;
 use App\Service\UploadHandlerService;
 use App\Utils\AttributeParser;
-use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 use Twig\Extension\AbstractExtension;
 use Twig\TwigFilter;
@@ -117,16 +117,6 @@ class AppExtension extends AbstractExtension
 
     public function showEmailAlert(?string $emailAddress): bool
     {
-        $emailConstraint = new Assert\Email();
-        $errors = $this->validator->validate(
-            $emailAddress,
-            $emailConstraint
-        );
-
-        if ($errors->count()) {
-            return true;
-        }
-
-        return false;
+        return !EmailValidator::validate($this->validator, $emailAddress);
     }
 }
