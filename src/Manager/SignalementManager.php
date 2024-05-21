@@ -272,11 +272,11 @@ class SignalementManager extends AbstractManager
         foreach ($affectations as $affectation) {
             $partner = $affectation->getPartner();
             if ((!$partnerToExclude || $partnerToExclude != $partner) && $affectation->getStatut() === $statusAffectation->value) {
-                $list = array_unique(array_merge($list, $partner->getUsers()->toArray()), \SORT_REGULAR);
+                $list = array_merge($list, $partner->getUsers()->toArray());
             }
         }
 
-        return $list;
+        return array_unique($list, \SORT_REGULAR);
     }
 
     public function updateFromSignalementQualification(
