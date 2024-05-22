@@ -175,7 +175,7 @@ export default defineComponent({
       if (formStore.alreadyExists.uuidDraft !== null && (
         formStore.alreadyExists.type === 'draft' || formStore.alreadyExists.type === 'signalement'
       )) {
-        requests.archiveDraft(formStore.alreadyExists.uuidDraft, this.saveAndContinue)
+        this.saveAndContinue()
       }
     },
     saveAndContinue () {
