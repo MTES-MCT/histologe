@@ -253,8 +253,7 @@ export default defineComponent({
       }, 50)
     },
     handleSubmit () {
-      // Vous pouvez gérer la soumission du formulaire ici
-      console.log('Form submitted!')
+      // il ne se passe rien, ce bouton ne sert que pour gérer l'accessibilité et l'autocomplete
     }
   }
 })
