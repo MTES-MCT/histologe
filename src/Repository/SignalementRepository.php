@@ -1238,22 +1238,23 @@ class SignalementRepository extends ServiceEntityRepository
         return $qb->getQuery()->getResult();
     }
 
-    public function findUsersByEmailContainStrings(array $needles, string $field): array
+    public function findByEmailContainStrings(array $needles, string $field, bool $strict = false): array
     {
         if (empty($needles)) {
             return [];
         }
-        
-        $qb = $this->createQueryBuilder('s');
 
+        $qb = $this->createQueryBuilder('s');
         if (\count($needles) > 1) {
-            foreach ($needles as $needle) {
-                $qb->orWhere('s.'.$field.' LIKE :needle')
-                    ->setParameter('needle', '%'.$needle.'%');
+            foreach ($needles as $index => $needle) {
+                $needle = $strict ? $needle : '%'.$needle.'%';
+                $qb->orWhere('s.'.$field.' LIKE :needle'.$index)
+                    ->setParameter('needle'.$index, $needle);
             }
         } else {
+            $needle = $strict ? $needles[0] : '%'.$needles[0].'%';
             $qb->where('s.'.$field.' LIKE :needle')
-                ->setParameter('needle', '%'.$needles[0].'%');
+                ->setParameter('needle', $needles[0]);
         }
 
         return $qb->getQuery()->getResult();

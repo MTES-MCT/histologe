@@ -36,6 +36,14 @@ class FixEmailAddressesCommand extends Command
         'test@fr',
         'x@x.xx',
     ];
+    private const STRINGS_TO_REPLACE = [
+        ',com' => '.com',
+        ',fr' => '.fr',
+        ',net' => '.net',
+        '?com' => '.com',
+        '?fr' => '.fr',
+        '?net' => '.net',
+    ];
 
     public function __construct(
         private EntityManagerInterface $entityManager,
@@ -54,15 +62,24 @@ class FixEmailAddressesCommand extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
+        $count = 0;
+        $listSearch = array_keys(self::STRINGS_TO_REPLACE);
+        $listReplace = array_values(self::STRINGS_TO_REPLACE);
         foreach (self::FIELDS as $field) {
-            $listSignalements = $this->signalementRepository->findUsersByEmailContainString(self::EMAILS_TO_NULL, $field);
-            $this->fixEmailsWithValue($listSignalements, $field, null);
+            $listSignalementsToNull = $this->signalementRepository->findByEmailContainStrings(self::EMAILS_TO_NULL, $field, true);
+            $count += \count($listSignalementsToNull);
+            $this->fixEmailsWithValue($listSignalementsToNull, $field, null);
 
-            $listSignalements = $this->signalementRepository->findUsersByEmailContainString(self::EMAILS_TO_INCONNU, $field);
-            $this->fixEmailsWithValue($listSignalements, $field, 'inconnu@histologe.fr');
+            $listSignalementsToInconnu = $this->signalementRepository->findByEmailContainStrings(self::EMAILS_TO_INCONNU, $field, true);
+            $count += \count($listSignalementsToInconnu);
+            $this->fixEmailsWithValue($listSignalementsToInconnu, $field, 'inconnu@histologe.fr');
+
+            $listSignalementsToReplace = $this->signalementRepository->findByEmailContainStrings($listSearch, $field);
+            $count += \count($listSignalementsToReplace);
+            $this->fixEmailsWithReplace($listSignalementsToReplace, $field, $listSearch, $listReplace);
         }
 
-        $this->io->success('E-mail addresses were successfully fixed.');
+        $this->io->success(sprintf('%s e-mail addresses were successfully fixed.', $count));
 
         return Command::SUCCESS;
     }
@@ -80,6 +97,25 @@ class FixEmailAddressesCommand extends Command
                     break;
                 case 'mailProprio':
                     $signalement->setMailProprio($newValue);
+                    break;
+            }
+            $this->signalementManager->save($signalement);
+        }
+    }
+
+    private function fixEmailsWithReplace(array $listSignalements, string $field, array $listSearch, array $listReplace): void
+    {
+        /** @var Signalement $signalement */
+        foreach ($listSignalements as $signalement) {
+            switch ($field) {
+                case 'mailOccupant':
+                    $signalement->setMailOccupant(str_replace($listSearch, $listReplace, $signalement->getMailOccupant()));
+                    break;
+                case 'mailDeclarant':
+                    $signalement->setMailDeclarant(str_replace($listSearch, $listReplace, $signalement->getMailDeclarant()));
+                    break;
+                case 'mailProprio':
+                    $signalement->setMailProprio(str_replace($listSearch, $listReplace, $signalement->getMailProprio()));
                     break;
             }
             $this->signalementManager->save($signalement);
