@@ -54,7 +54,11 @@ class SignalementDraftManager extends AbstractManager
             ->setProfileDeclarant(ProfileDeclarant::from(strtoupper($signalementDraftRequest->getProfil())));
 
         if (self::LAST_STEP === $signalementDraftRequest->getCurrentStep()) {
-            $signalement = $this->dispatchSignalementDraftCompleted($signalementDraft);
+            if (SignalementDraftStatus::EN_SIGNALEMENT === $signalementDraft->getStatus()) {
+                $signalement = $signalementDraft->getSignalements()->first();
+            } else {
+                $signalement = $this->dispatchSignalementDraftCompleted($signalementDraft);
+            }
         }
         $this->save($signalementDraft);
 

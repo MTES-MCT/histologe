@@ -1192,11 +1192,11 @@ class SignalementRepository extends ServiceEntityRepository
         bool $isTiersDeclarant = true
     ): array {
         $qb = $this->createQueryBuilder('s');
-        /*if ($isTiersDeclarant) {
+        if ($isTiersDeclarant) {
             $qb->andWhere('s.mailDeclarant = :email')->setParameter('email', $email);
         } else {
             $qb->andWhere('s.mailOccupant = :email')->setParameter('email', $email);
-        }*/
+        }
         $qb->andWhere('LOWER(s.adresseOccupant) = :address')->setParameter('address', strtolower($address))
             ->andWhere('s.cpOccupant = :zipcode')->setParameter('zipcode', $zipcode)
             ->andWhere('LOWER(s.villeOccupant) = :city')->setParameter('city', strtolower($city))
@@ -1214,6 +1214,7 @@ class SignalementRepository extends ServiceEntityRepository
             $qb->addOrderBy('s.createdAt', 'DESC');
         } else {
             $qb->addOrderBy('s.lastSuiviAt', 'DESC');
+            $qb->setMaxResults(1);
         }
 
         return $qb->getQuery()->getResult();

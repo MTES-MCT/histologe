@@ -258,7 +258,7 @@ and signalement.profileDeclarant is not same as enum('App\\Entity\\Enum\\Profile
 				<div class="fr-col-10 fr-col-md-11 fr-h5 fr-disorder-overview-title">Le logement</div>
 			</div>
 			{% set zone = 'batiment' %}
-			{% for situation,criteres in infoDesordres['criticitesArranged'][enum('App\\Entity\\Enum\\DesordreCritereZone').LOGEMENT.name] %}
+			{% for situation,criteres in infoDesordres['criticitesArranged'][enum('App\\Entity\\Enum\\DesordreCritereZone').BATIMENT.name] %}
 				{% include 'front/_partials/_desordre-v2.html.twig' %}
 			{% endfor %}
 		{% endif %}
