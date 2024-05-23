@@ -39,8 +39,8 @@
                 </p>
                 <p v-if="item.lastSuiviBy !== null">
                   <span class="fr-icon-discuss-line" aria-hidden="true"></span>
-                  Dernier suivi par {{ item.lastSuiviBy}} le {{ formatDate(item.lastSuiviAt) }}
-                  <span :class="getBadgeSuivi(item.lastSuiviBy)">{{ getSuiviLabel(item.lastSuiviBy) }}</span>
+                  Dernier suivi par {{ getSuiviLabel(item.lastSuiviBy) }} le {{ formatDate(item.lastSuiviAt) }}
+                  <span :class="getBadgeSuivi(item.lastSuiviBy)">{{ getSuiviVisibility(item.lastSuiviIsPublic) }}</span>
                 </p>
                 <p v-else>
                   <span class="fr-icon-discuss-line" aria-hidden="true"></span> Aucun suivi effectué
@@ -172,18 +172,21 @@ export default defineComponent({
     getBadgeSuivi (label: string): string {
       let className = 'fr-badge fr-badge--sm fr-badge--no-icon'
 
-      if (label === 'OCCUPANT' || label === 'DECLARANT') {
+      if (label === 'OCCUPANT' || label === 'DECLARANT' || label === 'Aucun') {
         className += ' fr-badge--warning'
       }
 
       return className
     },
     getSuiviLabel (label: string): string {
-      let suiviLabel = 'Suivi interne'
-      if (label === 'OCCUPANT' || label === 'DECLARANT') {
-        suiviLabel = 'Suivi ' + label
+      let suiviLabel = label
+      if (label === 'Aucun') {
+        suiviLabel = 'occupant ou déclarant'
       }
       return suiviLabel
+    },
+    getSuiviVisibility (label: boolean): string {
+      return label ? 'Visible par l\'usager' : 'Suivi interne'
     },
     deleteSignalementItem (item: SignalementItem) {
       const confirmation = confirm('Êtes-vous sûr de vouloir supprimer ce signalement ?')

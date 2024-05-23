@@ -35,13 +35,16 @@ class CommuneRepository extends ServiceEntityRepository
         }
     }
 
-    public function findEpciByCommuneTerritory(Territory $territory): array
+    public function findEpciByCommuneTerritory(?Territory $territory = null): array
     {
         $qb = $this->createQueryBuilder('c')
             ->select('distinct e.code, e.nom')
-            ->join('c.epci', 'e')
-            ->where('c.territory = :territory')
-            ->setParameter('territory', $territory);
+            ->join('c.epci', 'e');
+        if (null !== $territory) {
+            $qb
+                ->where('c.territory = :territory')
+                ->setParameter('territory', $territory);
+        }
 
         return $qb->getQuery()->getResult();
     }

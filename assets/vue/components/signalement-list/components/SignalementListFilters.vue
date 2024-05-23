@@ -32,7 +32,7 @@
               />
             </div>
             <div class="fr-col-12 fr-col-lg-6" :class="sharedState.user.isAdmin ? 'fr-col-xl-3' : 'fr-col-xl-4'">
-              <HistoSearch
+              <AppSearch
                   id="filter-search-terms"
                   v-model="sharedState.input.filters.searchTerms"
                   :placeholder="'Taper un nom, référence ou email'"
@@ -41,7 +41,7 @@
               />
             </div>
             <div class="fr-col-12 fr-col-lg-6" :class="sharedState.user.isAdmin ? 'fr-col-xl-2' : 'fr-col-xl-3'">
-              <HistoAutoComplete
+              <AppAutoComplete
                   id="filter-communes"
                   v-model="sharedState.input.filters.communes"
                   :suggestions="sharedState.communes"
@@ -53,7 +53,7 @@
               />
             </div>
             <div class="fr-col-12 fr-col-lg-6 fr-col-xl-3">
-              <HistoAutoComplete
+              <AppAutoComplete
                   id="filter-epci"
                   v-model="sharedState.input.filters.epcis"
                   :suggestions="sharedState.epcis"
@@ -185,13 +185,13 @@
               </div>
               <div v-if="sharedState.user.canSeeScore"
                    class="histo-score-range fr-col-12 fr-col-lg-4 fr-col-xl-2 grey-background">
-                <HistoNumber
+                <AppNumber
                     id="filter-score-min"
                     v-model="sharedState.input.filters.criticiteScoreMin"
                     placeholder="Min"
                     @update:modelValue="onChange(false)"
                 />
-                <HistoNumber
+                <AppNumber
                     id="filter-score-max"
                     v-model="sharedState.input.filters.criticiteScoreMax"
                     placeholder="Max"
@@ -259,22 +259,22 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue'
+import AppAutoComplete from '../../common/AppAutoComplete.vue'
+import AppNumber from '../../common/AppNumber.vue'
+import AppSearch from '../../common/AppSearch.vue'
 import HistoSelect from '../../common/HistoSelect.vue'
-import { store } from '../store'
 import HistoDatePicker from '../../common/external/HistoDatePicker.vue'
-import HistoSearch from '../../common/HistoSearch.vue'
 import HistoMultiSelect from '../../common/HistoMultiSelect.vue'
-import HistoAutoComplete from '../../common/HistoAutoComplete.vue'
-import HistoNumber from '../../common/HistoNumber.vue'
+import { store } from '../store'
 import { buildBadge } from '../services/badgeFilterLabelBuilder'
 
 export default defineComponent({
   name: 'SignalementListFilters',
   components: {
-    HistoNumber,
-    HistoAutoComplete,
+    AppNumber,
+    AppAutoComplete,
+    AppSearch,
     HistoMultiSelect,
-    HistoSearch,
     HistoDatePicker,
     HistoSelect
   },
@@ -313,7 +313,7 @@ export default defineComponent({
     toggleIsImported () {
       this.sharedState.input.filters.isImported = this.sharedState.input.filters.isImported !== 'oui'
         ? 'oui'
-        : ''
+        : null
       if (typeof this.onChange === 'function') {
         this.onChange(false)
       }

@@ -1,14 +1,14 @@
 <template>
-  <div class="histo-number-input">
+  <div class="histo-search fr-input-wrap fr-icon-search-line">
     <input
         class="fr-input"
         :id="id"
         :name="id"
         :value="modelValue"
         @input="onInputEvent"
+        @search="onSearchEvent"
         :placeholder="placeholder"
-        min="0"
-        type="number"
+        type="search"
     />
   </div>
 </template>
@@ -17,20 +17,29 @@
 import { defineComponent } from 'vue'
 
 export default defineComponent({
-  name: 'HistoNumber',
+  name: 'AppSearch',
   props: {
     id: { type: String, default: '' },
-    modelValue: String,
+    modelValue: { type: String, default: '' },
     onInput: { type: Function },
-    placeholder: String
+    placeholder: { type: String, default: '' },
+    minLengthSearch: { type: Number, default: 0 }
   },
   emits: ['update:modelValue'],
   methods: {
     onInputEvent (e: any) {
-      if (e.target.value > 0) {
+      if (e.target.value.length >= this.minLengthSearch) {
         this.$emit('update:modelValue', e.target.value)
         if (this.onInput !== undefined) {
           this.onInput(e.target.value)
+        }
+      }
+    },
+    onSearchEvent (e: any) {
+      if (e.target.value === '') {
+        this.$emit('update:modelValue', null)
+        if (this.onInput !== undefined) {
+          this.onInput(null)
         }
       }
     }

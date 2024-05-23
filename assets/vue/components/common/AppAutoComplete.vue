@@ -32,10 +32,11 @@
 import { defineComponent } from 'vue'
 
 export default defineComponent({
-  name: 'HistoAutoComplete',
+  name: 'AppAutoComplete',
   emits: ['update:modelValue'],
   props: {
     id: { type: String, default: '' },
+    modelValue: { type: Array, default: () => [] },
     suggestions: {
       type: Array,
       required: true
@@ -56,6 +57,9 @@ export default defineComponent({
   watch: {
     reset () {
       this.resetData()
+    },
+    modelValue (newValue: any) {
+      this.selectedSuggestions = newValue
     }
   },
   data () {
@@ -85,7 +89,7 @@ export default defineComponent({
     updateSearch () {
       if (this.searchText.length < 1) {
         this.suggestionFilteredList = []
-      } else if (this.searchText.length > 2) {
+      } else if (this.searchText.length > 1) {
         this.suggestionFilteredList = (this.suggestions as string[])
           .filter((item: string) =>
             !this.selectedSuggestions.includes(item) &&

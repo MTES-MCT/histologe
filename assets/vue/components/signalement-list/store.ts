@@ -1,5 +1,4 @@
 import { QueryParameter } from './interfaces/queryParameter'
-import { InputFilter } from './interfaces/inputFilter'
 import HistoInterfaceSelectOption from '../common/HistoInterfaceSelectOption'
 
 export const store = {
@@ -12,7 +11,29 @@ export const store = {
     input: {
       order: 'reference-DESC',
       queryParameters: [] as QueryParameter[],
-      filters: {} as InputFilter
+      filters: {
+        territoires: new Array<string>(),
+        etiquettes: new Array<HistoInterfaceSelectOption>(),
+        partenaires: new Array<HistoInterfaceSelectOption>(),
+        communes: new Array<string>(),
+        epcis: new Array<string>(),
+        searchTerms: null,
+        status: null,
+        procedure: null,
+        visiteStatus: null,
+        typeDernierSuivi: null,
+        typeDeclarant: null,
+        natureParc: null,
+        allocataire: null,
+        enfantsM6: null,
+        situation: null,
+        dateDepot: null,
+        dateDernierSuivi: null,
+        isImported: null as 'oui' | null,
+        statusAffectation: null,
+        criticiteScoreMin: null,
+        criticiteScoreMax: null
+      }
     },
     user: {
       isAdmin: false,
@@ -30,7 +51,7 @@ export const store = {
     communes: new Array<string>(),
     epcis: new Array<string>(),
     currentTerritoryId: '',
-    currentCommmunes: '',
+    currentCommunes: '',
     currentPartenaires: '',
     statusSignalementList: [
       { Id: 'nouveau', Text: 'Nouveau' },

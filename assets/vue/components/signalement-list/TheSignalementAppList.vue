@@ -203,7 +203,7 @@ export default defineComponent({
       this.sharedState.input.queryParameters = []
 
       for (const [key, value] of Object.entries(this.sharedState.input.filters)) {
-        if (value && value !== null && value !== '') {
+        if (value && value !== null) {
           if (key === 'dateDepot' || key === 'dateDernierSuivi') {
             const [dateDebut, dateFin] = this.handleDateParameter(key, value)
             url.searchParams.set(`${key}Debut`, dateDebut)
@@ -233,7 +233,7 @@ export default defineComponent({
               this.addQueryParameter(`${key}[]`, value)
               url.searchParams.set(`${key}[]`, value)
             }
-          } else {
+          } else if (typeof value === 'string') {
             this.addQueryParameter(key, value)
             url.searchParams.set(key, value)
           }

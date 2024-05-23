@@ -2,6 +2,7 @@
 
 namespace App\Tests\Functional\Service\Signalement;
 
+use App\Repository\CommuneRepository;
 use App\Repository\CritereRepository;
 use App\Repository\PartnerRepository;
 use App\Repository\SignalementRepository;
@@ -17,6 +18,7 @@ class SearchFilterOptionDataProviderTest extends KernelTestCase
     private SearchFilterOptionDataProvider $searchFilterOptionDataProvider;
     private CritereRepository $critereRepository;
     private TerritoryRepository $territoryRepository;
+    private CommuneRepository $communeRepository;
     private PartnerRepository $partnerRepository;
     private TagRepository $tagsRepository;
     private SignalementRepository $signalementRepository;
@@ -29,6 +31,7 @@ class SearchFilterOptionDataProviderTest extends KernelTestCase
 
         $this->critereRepository = self::getContainer()->get(CritereRepository::class);
         $this->territoryRepository = self::getContainer()->get(TerritoryRepository::class);
+        $this->communeRepository = self::getContainer()->get(CommuneRepository::class);
         $this->partnerRepository = self::getContainer()->get(PartnerRepository::class);
         $this->tagsRepository = self::getContainer()->get(TagRepository::class);
         $this->signalementRepository = self::getContainer()->get(SignalementRepository::class);
@@ -38,6 +41,7 @@ class SearchFilterOptionDataProviderTest extends KernelTestCase
         $this->searchFilterOptionDataProvider = new SearchFilterOptionDataProvider(
             $this->critereRepository,
             $this->territoryRepository,
+            $this->communeRepository,
             $this->partnerRepository,
             $this->tagsRepository,
             $this->signalementRepository,
