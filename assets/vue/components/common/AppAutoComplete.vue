@@ -90,11 +90,13 @@ export default defineComponent({
       if (this.searchText.length < 1) {
         this.suggestionFilteredList = []
       } else if (this.searchText.length > 1) {
+        const searchTextNormalized = this.searchText.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+
         this.suggestionFilteredList = (this.suggestions as string[])
-          .filter((item: string) =>
-            !this.selectedSuggestions.includes(item) &&
-                item.toLowerCase().includes(this.searchText.toLowerCase())
-          )
+          .filter((item: string) => {
+            const itemNormalized = item.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+            return !this.selectedSuggestions.includes(item) && itemNormalized.includes(searchTextNormalized)
+          })
       }
     },
     handleDownSuggestion () {
