@@ -3,22 +3,28 @@ import { store } from './store'
 import * as Sentry from '@sentry/browser'
 
 export const requests = {
-  doRequest (ajaxUrl: string, functionReturn: Function) {
+  doRequest (ajaxUrl: string, functionReturn: Function, options = {}) {
+    const defaultOptions = { timeout: 15000 }
+
     axios
-      .get(ajaxUrl, { timeout: 15000 })
+      .get(ajaxUrl, { ...defaultOptions, ...options })
       .then(response => {
         const responseData = response.data
         functionReturn(responseData)
       })
       .catch(error => {
-        console.error(error)
-        Sentry.captureException(new Error(error))
-        functionReturn('error')
+        if (axios.isCancel(error)) {
+          console.warn('Request cancelled', error.message)
+        } else {
+          console.error(error)
+          Sentry.captureException(new Error(error))
+          functionReturn('error')
+        }
       })
   },
-  getSignalements (functionReturn: Function) {
+  getSignalements (functionReturn: Function, options = {}) {
     const ajaxUrl = store.props.ajaxurlSignalement
-    this.doRequest(ajaxUrl, functionReturn)
+    this.doRequest(ajaxUrl, functionReturn, options)
   },
   deleteSignalement (uuid: string, csrfToken: string, functionReturn: Function) {
     let ajaxurlRemoveSignalement = decodeURIComponent(store.props.ajaxurlRemoveSignalement)

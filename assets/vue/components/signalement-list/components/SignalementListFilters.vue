@@ -27,6 +27,7 @@
                   v-model="sharedState.input.filters.territoires"
                   @update:modelValue="updateTerritory"
                   inner-label="Territoire"
+                  title="Rechercher par territoire"
                   :option-items=sharedState.territories
                   :placeholder="'Territoire'"
               />
@@ -37,6 +38,7 @@
                   v-model="sharedState.input.filters.searchTerms"
                   :placeholder="'Taper un nom, référence ou email'"
                   :minLengthSearch=3
+                  title="Rechercher par nom, référence ou email"
                   @update:modelValue="onChange(false)"
               />
             </div>
@@ -58,9 +60,10 @@
                   v-model="sharedState.input.filters.epcis"
                   :suggestions="sharedState.epcis"
                   :multiple="true"
-                  :placeholder="'EPCI'"
+                  :placeholder="'EPCI (Établissement public de coopération intercommunale)'"
                   @update:modelValue="onChange(false)"
                   :reset="reset"
+                  title="Rechercher par EPCI (Établissement public de coopération intercommunale)"
                   class="fr-input-wrap fr-icon-map-pin-2-line"
               />
             </div>
@@ -70,6 +73,7 @@
                   v-model="sharedState.input.filters.status"
                   @update:modelValue="onChange(false)"
                   :option-items=statusSignalementList
+                  title="Rechercher par statut"
                   :placeholder="'Statut'"
               />
             </div>
@@ -113,6 +117,7 @@
                     @update:modelValue="onChange(false)"
                     inner-label="Etiquettes"
                     :option-items=sharedState.etiquettes
+                    title="Rechercher par étiquettes"
                     :active=true
                 />
               </div>
@@ -122,6 +127,7 @@
                     ref="histofiltersdatepicker"
                     v-model="sharedState.input.filters.dateDepot"
                     :placeholder="'Date de dépot'"
+                    title="Rechercher par date de dépot"
                     @update:modelValue="onChange(false)"
                 />
               </div>
@@ -131,6 +137,7 @@
                     v-model="sharedState.input.filters.procedure"
                     @update:modelValue="onChange(false)"
                     :option-items=procedureList
+                    title="Rechercher par procédure suspectée"
                     :placeholder="'Procédure suspectée'"
                 />
               </div>
@@ -145,6 +152,7 @@
                     :option-items=sharedState.partenaires
                     :isInnerLabelFemale="false"
                     :active=true
+                    title="Rechercher par partenaire"
                 />
               </div>
               <div class="fr-col-12 fr-col-lg-6 fr-col-xl-3 grey-background">
@@ -154,6 +162,7 @@
                     @update:modelValue="onChange(false)"
                     :option-items=statusVisiteList
                     :placeholder="'Statut de la visite'"
+                    title="Rechercher par statut de visite"
                 />
               </div>
               <div class="fr-col-12 fr-col-lg-6 fr-col-xl-3 grey-background">
@@ -163,6 +172,7 @@
                     @update:modelValue="onChange(false)"
                     :option-items=typeDernierSuiviList
                     :placeholder="'Type dernier suivi'"
+                    title="Rechercher par type dernier suivi"
                 />
               </div>
               <div class="fr-col-12 fr-col-lg-6 fr-col-xl-3 grey-background">
@@ -171,6 +181,7 @@
                     ref="filter-date-dernier-suivi"
                     v-model="sharedState.input.filters.dateDernierSuivi"
                     :placeholder="'Date de dernier suivi'"
+                    title="Rechercher par date de dernier suivi"
                     @update:modelValue="onChange(false)"
                 />
               </div>
@@ -181,6 +192,7 @@
                     @update:modelValue="onChange(false)"
                     :option-items=statusAffectationList
                     :placeholder="'Statut de l\'affectation'"
+                    title="Rechercher par statut de l'affectation"
                 />
               </div>
               <div v-if="sharedState.user.canSeeScore"
@@ -189,12 +201,14 @@
                     id="filter-score-min"
                     v-model="sharedState.input.filters.criticiteScoreMin"
                     placeholder="Min Criticité"
+                    title="Rechercher par un score de criticité minimum"
                     @update:modelValue="onChange(false)"
                 />
                 <AppNumber
                     id="filter-score-max"
                     v-model="sharedState.input.filters.criticiteScoreMax"
                     placeholder="Max Criticité"
+                    title="Rechercher par un score de criticité maximum"
                     @update:modelValue="onChange(false)"
                 />
               </div>
@@ -207,6 +221,7 @@
                     @update:modelValue="onChange(false)"
                     :option-items=typeDeclarantList
                     :placeholder="'Déclarant'"
+                    title="Rechercher par déclarant"
                 />
               </div>
               <div class="fr-col-12 fr-col-lg-4 grey-background"
@@ -217,6 +232,7 @@
                     @update:modelValue="onChange(false)"
                     :option-items=natureParcList
                     :placeholder="'Nature du parc'"
+                    title="Rechercher par nature du parc"
                 />
               </div>
               <div class="fr-col-12 fr-col-lg-4 grey-background"
@@ -227,6 +243,7 @@
                     @update:modelValue="onChange(false)"
                     :option-items=allocataireList
                     :placeholder="'Allocataire'"
+                    title="Rechercher par allocataire"
                 />
               </div>
               <div class="fr-col-12 fr-col-lg-4 grey-background"
@@ -236,7 +253,8 @@
                     v-model="sharedState.input.filters.enfantsM6"
                     @update:modelValue="onChange(false)"
                     :option-items=enfantMoinsSixList
-                    :placeholder="'Enfant de - 6 ans'"
+                    :placeholder="'Enfant de moins 6 ans'"
+                    title="Rechercher par enfant de moins de 6 ans"
                 />
               </div>
               <div class="fr-col-12 fr-col-lg-4 grey-background"
@@ -247,6 +265,7 @@
                     @update:modelValue="onChange(false)"
                     :option-items=situationList
                     :placeholder="'Situation'"
+                    title="Rechercher par situation"
                 />
               </div>
             </div>

@@ -57,7 +57,8 @@ export default defineComponent({
       loadingList: true,
       hasErrorLoading: false,
       messageDeleteConfirmation: '',
-      classNameDeleteConfirmation: ''
+      classNameDeleteConfirmation: '',
+      abortRequest: null as AbortController | null
     }
   },
   created () {
@@ -198,6 +199,13 @@ export default defineComponent({
     },
     handleFilters () {
       this.clearScreen()
+
+      if (this.abortRequest) {
+        this.abortRequest?.abort()
+      }
+
+      this.abortRequest = new AbortController()
+
       const url = new URL(window.location.toString())
       url.search = ''
       this.sharedState.input.queryParameters = []
@@ -244,7 +252,7 @@ export default defineComponent({
       }
       window.history.pushState({}, '', decodeURIComponent(url.toString()))
       this.buildUrl()
-      requests.getSignalements(this.handleSignalements)
+      requests.getSignalements(this.handleSignalements, { signal: this.abortRequest?.signal })
     },
     handleDateParameter (key: string, value: any) {
       const dateDebut = new Date(value[0]).toISOString().split('T')[0]
