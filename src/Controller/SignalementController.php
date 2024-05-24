@@ -364,12 +364,12 @@ class SignalementController extends AbstractController
         if (null !== ($files = $request->files->get('signalement'))) {
             try {
                 foreach ($files as $key => $file) {
-                    $res = $uploadHandlerService->toTempFolder($file);
+                    $res = $uploadHandlerService->toTempFolder($file, $key);
                     if (\is_array($res) && isset($res['error'])) {
                         throw new \Exception($res['error']);
                     }
                     $res = $uploadHandlerService->setKey($key);
-                    if (\in_array($file->getMimeType(), ImageManipulationHandler::IMAGE_MIME_TYPES)) {
+                    if (\in_array($file->getMimeType(), File::IMAGE_MIME_TYPES)) {
                         $imageManipulationHandler->resize($res['filePath'])->thumbnail();
                     }
 

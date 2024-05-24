@@ -35,8 +35,10 @@ class UploadHandlerService
      * @throws FilesystemException
      * @throws UnsupportedFileFormatException
      */
-    public function toTempFolder(UploadedFile $file): self|array
-    {
+    public function toTempFolder(
+        UploadedFile $file,
+        ?string $fileType = File::INPUT_NAME_DOCUMENTS
+    ): self|array {
         $originalFilename = pathinfo($file->getClientOriginalName(), \PATHINFO_FILENAME);
         if (empty($originalFilename) || !$file->isValid()) {
             return ['error' => 'Erreur lors du téléversement.', 'message' => 'Fichier vide', 'status' => 500];
@@ -46,9 +48,16 @@ class UploadHandlerService
         if ($file->getSize() > self::MAX_FILESIZE) {
             throw new MaxUploadSizeExceededException(self::MAX_FILESIZE);
         }
-
-        if (\in_array($file->getMimeType(), HeicToJpegConverter::HEIC_FORMAT)) {
-            throw new UnsupportedFileFormatException($file->getMimeType());
+        if (
+            File::INPUT_NAME_DOCUMENTS === $fileType
+            && !self::isAcceptedDocumentFormat($file, $fileType)
+        ) {
+            throw new UnsupportedFileFormatException($file->getMimeType(), $fileType);
+        } elseif (
+            File::INPUT_NAME_PHOTOS === $fileType
+            && !ImageManipulationHandler::isAcceptedPhotoFormat($file, $fileType)
+        ) {
+            throw new UnsupportedFileFormatException($file->getMimeType(), $fileType);
         }
 
         try {
@@ -72,6 +81,41 @@ class UploadHandlerService
         }
 
         return $this;
+    }
+
+    public static function isAcceptedDocumentFormat(
+        UploadedFile $file,
+        string $fileType
+    ): bool {
+        if (File::INPUT_NAME_DOCUMENTS === $fileType &&
+            \in_array($file->getMimeType(), File::DOCUMENT_MIME_TYPES) &&
+            (\in_array($file->getClientOriginalExtension(), File::DOCUMENT_EXTENSION) ||
+            \in_array($file->getExtension(), File::DOCUMENT_EXTENSION) ||
+            \in_array($file->guessExtension(), File::DOCUMENT_EXTENSION))
+        ) {
+            return true;
+        }
+
+        return false;
+    }
+
+    public static function getAcceptedExtensions(?string $type = 'document'): string
+    {
+        if ('document' === $type || 'documents' === $type) {
+            $extensions = array_map('strtoupper', File::DOCUMENT_EXTENSION);
+        } else {
+            $extensions = array_map('strtoupper', File::IMAGE_EXTENSION);
+        }
+
+        if (1 === \count($extensions)) {
+            return $extensions[0];
+        }
+
+        $allButLast = \array_slice($extensions, 0, -1);
+        $last = end($extensions);
+        $all = implode(', ', $allButLast).' ou '.$last;
+
+        return $all;
     }
 
     private function moveFilePath(string $filePath): ?string
@@ -165,11 +209,26 @@ class UploadHandlerService
 
     /**
      * @throws MaxUploadSizeExceededException
+     * @throws UnsupportedFileFormatException
      */
-    public function uploadFromFile(UploadedFile $file, $newFilename): ?string
-    {
+    public function uploadFromFile(
+        UploadedFile $file,
+        string $newFilename,
+        ?string $fileType = File::INPUT_NAME_DOCUMENTS
+    ): ?string {
         if ($file->getSize() > self::MAX_FILESIZE) {
             throw new MaxUploadSizeExceededException(self::MAX_FILESIZE);
+        }
+        if (
+            File::INPUT_NAME_DOCUMENTS === $fileType
+            && !self::isAcceptedDocumentFormat($file, $fileType)
+        ) {
+            throw new UnsupportedFileFormatException($file->getMimeType(), $fileType);
+        } elseif (
+            File::INPUT_NAME_PHOTOS === $fileType
+            && !ImageManipulationHandler::isAcceptedPhotoFormat($file, $fileType)
+        ) {
+            throw new UnsupportedFileFormatException($file->getMimeType(), $fileType);
         }
         try {
             $tmpFilepath = $file->getPathname();

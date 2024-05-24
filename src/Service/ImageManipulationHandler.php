@@ -2,25 +2,16 @@
 
 namespace App\Service;
 
+use App\Entity\File;
 use Intervention\Image\ImageManager;
 use League\Flysystem\FilesystemOperator;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
+use Symfony\Component\HttpFoundation\File\UploadedFile;
 
 class ImageManipulationHandler
 {
     public const SUFFIX_RESIZE = '_resize';
     public const SUFFIX_THUMB = '_thumb';
-    public const IMAGE_MIME_TYPES = [
-        'image/jpeg',
-        'image/png',
-        'image/gif',
-    ];
-    public const IMAGE_EXTENSION = [
-        'jpeg',
-        'jpg',
-        'png',
-        'gif',
-    ];
 
     private const DEFAULT_SIZE_RESIZE = 1000;
     private const DEFAULT_SIZE_THUMB = 400;
@@ -46,6 +37,22 @@ class ImageManipulationHandler
         $this->imagePath = $path;
 
         return $this;
+    }
+
+    public static function isAcceptedPhotoFormat(
+        UploadedFile $file,
+        string $fileType
+    ): bool {
+        if (File::INPUT_NAME_PHOTOS === $fileType &&
+            \in_array($file->getMimeType(), File::IMAGE_MIME_TYPES) &&
+            (\in_array($file->getClientOriginalExtension(), File::IMAGE_EXTENSION) ||
+            \in_array($file->getExtension(), File::IMAGE_EXTENSION) ||
+            \in_array($file->guessExtension(), File::IMAGE_EXTENSION))
+        ) {
+            return true;
+        }
+
+        return false;
     }
 
     /**

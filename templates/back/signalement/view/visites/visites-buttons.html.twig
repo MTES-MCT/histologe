@@ -54,6 +54,8 @@
                 aria-controls="visites-upload-files-{{intervention.id}}"
                 data-file-type="photo"
                 data-document-type="PHOTO_VISITE"
+                data-accepted-type-mimes={{ get_accepted_mime_type('photo')}}
+				data-accepted-extensions="{{ get_accepted_extensions('photo')}}"
                 data-intervention-id="{{intervention.id}}">
                 Ajouter les photos de la visite
             </button>

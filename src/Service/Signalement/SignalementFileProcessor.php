@@ -8,7 +8,6 @@ use App\Entity\Intervention;
 use App\Entity\Signalement;
 use App\Factory\FileFactory;
 use App\Service\Files\FilenameGenerator;
-use App\Service\Files\HeicToJpegConverter;
 use App\Service\ImageManipulationHandler;
 use App\Service\UploadHandlerService;
 use Psr\Log\LoggerInterface;
@@ -39,13 +38,29 @@ class SignalementFileProcessor
         $fileList = $descriptionList = [];
         $withTokenGenerated = false;
         foreach ($files[$inputName] as $key => $file) {
-            if ($file instanceof UploadedFile
-                && \in_array($file->getMimeType(), HeicToJpegConverter::HEIC_FORMAT)
+            $fileExtension = $file instanceof UploadedFile ? $file->getExtension() : null;
+            if (
+                $file instanceof UploadedFile
+                && File::INPUT_NAME_DOCUMENTS === $inputName
+                && !UploadHandlerService::isAcceptedDocumentFormat($file, $inputName)
             ) {
+                $acceptedExtensions = UploadHandlerService::getAcceptedExtensions('document');
                 $message = <<<ERROR
-                    Les fichiers de format HEIC/HEIF ne sont pas pris en charge,
-                    merci de convertir votre image en JPEG ou en PNG avant de l'envoyer.
-                    ERROR;
+                Les fichiers de format {$fileExtension} ne sont pas pris en charge,
+                merci de choisir un fichier au format {$acceptedExtensions}.
+                ERROR;
+                $this->logger->error($message);
+                $this->errors[] = $message;
+            } elseif (
+                $file instanceof UploadedFile
+                && File::INPUT_NAME_PHOTOS === $inputName
+                && !ImageManipulationHandler::isAcceptedPhotoFormat($file, $inputName)
+            ) {
+                $acceptedExtensions = UploadHandlerService::getAcceptedExtensions('photo');
+                $message = <<<ERROR
+                Les fichiers de format {$fileExtension} ne sont pas pris en charge,
+                merci de choisir un fichier au format {$acceptedExtensions}.
+                ERROR;
                 $this->logger->error($message);
                 $this->errors[] = $message;
             } else {
@@ -54,11 +69,12 @@ class SignalementFileProcessor
                     if ($file instanceof UploadedFile) {
                         $filename = $this->uploadHandlerService->uploadFromFile(
                             $file,
-                            $this->filenameGenerator->generate($file)
+                            $this->filenameGenerator->generate($file),
+                            $inputTypeDetection
                         );
                         $title = $this->filenameGenerator->getTitle();
 
-                        if (\in_array($file->getMimeType(), ImageManipulationHandler::IMAGE_MIME_TYPES)) {
+                        if (\in_array($file->getMimeType(), File::IMAGE_MIME_TYPES)) {
                             $this->imageManipulationHandler->setUseTmpDir(false)->resize($filename)->thumbnail($filename);
                         } else {
                             $inputTypeDetection = 'documents';

@@ -4,10 +4,12 @@ namespace App\Twig;
 
 use App\Entity\Enum\OccupantLink;
 use App\Entity\Enum\QualificationStatus;
+use App\Entity\File;
 use App\Service\Esabora\EsaboraPartnerTypeSubscription;
 use App\Service\Files\ImageBase64Encoder;
 use App\Service\Notification\NotificationCounter;
 use App\Service\Signalement\Qualification\QualificationStatusService;
+use App\Service\UploadHandlerService;
 use App\Utils\AttributeParser;
 use Twig\Extension\AbstractExtension;
 use Twig\TwigFilter;
@@ -67,17 +69,6 @@ class AppExtension extends AbstractExtension
         return $fileName;
     }
 
-    public function getFunctions(): array
-    {
-        return [
-            new TwigFunction('count_notification', [NotificationCounter::class, 'countUnseenNotification']),
-            new TwigFunction('can_see_nde_qualification', [QualificationStatusService::class, 'canSeenNDEQualification']),
-            new TwigFunction('can_see_nde_edit_zone', [QualificationStatusService::class, 'canSeenNDEEditZone']),
-            new TwigFunction('can_edit_esabora_credentials', [EsaboraPartnerTypeSubscription::class, 'isSubscribed']),
-            new TwigFunction('show_label_facultatif', [AttributeParser::class, 'showLabelAsFacultatif']),
-        ];
-    }
-
     public function cleanTaggedText(?string $taggedText, string $tag, string $direction): string
     {
         if (null === $taggedText) {
@@ -94,5 +85,26 @@ class AppExtension extends AbstractExtension
             default:
                 return $taggedText;
         }
+    }
+
+    public function getFunctions(): array
+    {
+        return [
+            new TwigFunction('count_notification', [NotificationCounter::class, 'countUnseenNotification']),
+            new TwigFunction('can_see_nde_edit_zone', [QualificationStatusService::class, 'canSeenNDEEditZone']),
+            new TwigFunction('can_edit_esabora_credentials', [EsaboraPartnerTypeSubscription::class, 'isSubscribed']),
+            new TwigFunction('show_label_facultatif', [AttributeParser::class, 'showLabelAsFacultatif']),
+            new TwigFunction('get_accepted_mime_type', [$this, 'getAcceptedMimeTypes']),
+            new TwigFunction('get_accepted_extensions', [UploadHandlerService::class, 'getAcceptedExtensions']),
+        ];
+    }
+
+    public function getAcceptedMimeTypes(?string $type = 'document'): string
+    {
+        if ('document' === $type) {
+            return implode(',', File::DOCUMENT_MIME_TYPES);
+        }
+
+        return implode(',', File::IMAGE_MIME_TYPES);
     }
 }

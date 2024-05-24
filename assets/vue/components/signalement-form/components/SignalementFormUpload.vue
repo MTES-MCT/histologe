@@ -14,8 +14,8 @@
       :disabled="disabled"
       :multiple="multiple"
       @change="uploadFile($event)"
+      :accept="accept"
       >
-      <!-- TODO : gérer type de fichier accept=".pdf,.doc,.docx" -->
   </div>
 
   <div v-if="formStore.data[id] !== undefined">
@@ -86,7 +86,57 @@ export default defineComponent({
       error: '',
       uploadPercentage: 0,
       uploadedFiles: <any>[],
+      photosMimeTypes: [
+        'image/jpeg',
+        'image/png',
+        'image/gif'
+      ],
+      photosExtensions: [
+        'jpeg',
+        'jpg',
+        'png',
+        'gif'
+      ],
+      documentsMimeTypes: [
+        'image/jpeg',
+        'image/png',
+        'image/gif',
+        'application/pdf',
+        'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+        'application/vnd.oasis.opendocument.text',
+        'application/msword',
+        'text/plain',
+        'application/vnd.ms-excel',
+        'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+        'application/octet-stream',
+        'message/rfc822',
+        'application/vnd.ms-outlook'
+      ],
+      documentsExtensions: [
+        'jpeg',
+        'jpg',
+        'png',
+        'gif',
+        'pdf',
+        'docx',
+        'odt',
+        'doc',
+        'txt',
+        'xls',
+        'xlsx',
+        'eml',
+        'msg'
+      ],
       formStore
+    }
+  },
+  computed: {
+    accept () {
+      if (this.type === 'documents') {
+        return this.documentsMimeTypes.join(',')
+      } else {
+        return this.photosMimeTypes.join(',')
+      }
     }
   },
   methods: {
@@ -111,7 +161,7 @@ export default defineComponent({
       if (requestResponse) {
         if (requestResponse.name === 'AxiosError') {
           this.hasError = true
-          this.error = requestResponse.message
+          this.error = requestResponse.response.data.error ?? requestResponse.message
         }
         if (requestResponse.file !== undefined) {
           this.uploadedFiles.push(requestResponse)
@@ -130,10 +180,16 @@ export default defineComponent({
       if (fileInput.files && fileInput.files.length > 0) {
         for (let i = 0; i < fileInput.files.length; i++) {
           const file = fileInput.files[i]
-          if (file.type === 'image/heic' || file.type === 'image/heif') {
+          const ext = file.name.split('.').pop()?.toLowerCase() ?? ''
+          if (this.type === 'documents' && (this.documentsMimeTypes.indexOf(file.type) === -1 || this.documentsExtensions.indexOf(ext) === -1)) {
             fileInput.value = ''
             this.hasError = true
-            this.error = 'Les fichiers de format HEIC/HEIF ne sont pas pris en charge, merci de convertir votre image en JPEG ou en PNG avant de l\'envoyer.'
+            this.error = 'Les fichiers de format ' + ext?.toUpperCase() + ' ne sont pas pris en charge.'
+            break
+          } else if (this.type === 'photos' && (this.photosMimeTypes.indexOf(file.type) === -1 || this.photosExtensions.indexOf(ext) === -1)) {
+            fileInput.value = ''
+            this.hasError = true
+            this.error = 'Les fichiers de format ' + ext?.toUpperCase() + ' ne sont pas pris en charge, merci de convertir votre image en JPEG, PNG ou en GIF avant de l\'envoyer.'
             break
           } else if (file.size > 10 * 1024 * 1024) {
             fileInput.value = ''

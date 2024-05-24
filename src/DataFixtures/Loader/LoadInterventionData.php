@@ -11,7 +11,6 @@ use App\Factory\FileFactory;
 use App\Repository\PartnerRepository;
 use App\Repository\SignalementRepository;
 use App\Repository\UserRepository;
-use App\Service\ImageManipulationHandler;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Common\DataFixtures\OrderedFixtureInterface;
 use Doctrine\Persistence\ObjectManager;
@@ -68,7 +67,7 @@ class LoadInterventionData extends Fixture implements OrderedFixtureInterface
                 $file = $this->fileFactory->createInstanceFrom(
                     filename: $document,
                     title: $document,
-                    type: \in_array(pathinfo($document, \PATHINFO_EXTENSION), ImageManipulationHandler::IMAGE_EXTENSION)
+                    type: \in_array(pathinfo($document, \PATHINFO_EXTENSION), File::IMAGE_EXTENSION)
                         ? File::FILE_TYPE_DOCUMENT
                         : File::FILE_TYPE_PHOTO,
                     intervention: $intervention,
