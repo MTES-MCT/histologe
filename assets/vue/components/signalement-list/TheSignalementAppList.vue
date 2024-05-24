@@ -79,6 +79,12 @@ export default defineComponent({
         const sortBy = params.get('sortBy')
         const direction = params.get('direction')
         const status = params.get('status')
+        const searchTerms = params.get('searchTerms')
+
+        if (searchTerms) {
+          this.addQueryParameter('searchTerms', searchTerms)
+          this.buildUrl()
+        }
 
         if (status) {
           this.addQueryParameter('status', status)
