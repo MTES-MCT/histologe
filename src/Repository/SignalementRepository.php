@@ -1245,16 +1245,10 @@ class SignalementRepository extends ServiceEntityRepository
         }
 
         $qb = $this->createQueryBuilder('s');
-        if (\count($needles) > 1) {
-            foreach ($needles as $index => $needle) {
-                $needle = $strict ? $needle : '%'.$needle.'%';
-                $qb->orWhere('s.'.$field.' LIKE :needle'.$index)
-                    ->setParameter('needle'.$index, $needle);
-            }
-        } else {
-            $needle = $strict ? $needles[0] : '%'.$needles[0].'%';
-            $qb->where('s.'.$field.' LIKE :needle')
-                ->setParameter('needle', $needles[0]);
+        foreach ($needles as $index => $needle) {
+            $needle = $strict ? $needle : '%'.$needle.'%';
+            $qb->orWhere('s.'.$field.' LIKE :needle'.$index)
+                ->setParameter('needle'.$index, $needle);
         }
 
         return $qb->getQuery()->getResult();

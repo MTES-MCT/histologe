@@ -21,10 +21,10 @@ class EmailFormatValidator
             $emailConstraint
         );
 
-        if ($errors->count() == 0) {
+        if (0 == $errors->count()) {
             return true;
         }
-       
+
         return false;
     }
 }

@@ -5,13 +5,11 @@ namespace App\Command;
 use App\Entity\Signalement;
 use App\Manager\SignalementManager;
 use App\Repository\SignalementRepository;
-use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
-use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 #[AsCommand(
     name: 'app:fix-email-addresses',
@@ -46,8 +44,6 @@ class FixEmailAddressesCommand extends Command
     ];
 
     public function __construct(
-        private EntityManagerInterface $entityManager,
-        private ValidatorInterface $validator,
         private SignalementRepository $signalementRepository,
         private SignalementManager $signalementManager,
     ) {
@@ -78,6 +74,7 @@ class FixEmailAddressesCommand extends Command
             $count += \count($listSignalementsToReplace);
             $this->fixEmailsWithReplace($listSignalementsToReplace, $field, $listSearch, $listReplace);
         }
+        $this->signalementManager->flush();
 
         $this->io->success(sprintf('%s e-mail addresses were successfully fixed.', $count));
 
@@ -99,7 +96,7 @@ class FixEmailAddressesCommand extends Command
                     $signalement->setMailProprio($newValue);
                     break;
             }
-            $this->signalementManager->save($signalement);
+            $this->signalementManager->persist($signalement);
         }
     }
 
@@ -118,7 +115,7 @@ class FixEmailAddressesCommand extends Command
                     $signalement->setMailProprio(str_replace($listSearch, $listReplace, $signalement->getMailProprio()));
                     break;
             }
-            $this->signalementManager->save($signalement);
+            $this->signalementManager->persist($signalement);
         }
     }
 }
