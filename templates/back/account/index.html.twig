@@ -98,79 +98,8 @@
             </tbody>
         </table>
         <div class="fr-grid-row fr-mt-2v fr-grid-row--center">
-            <nav role="navigation" class="fr-pagination" aria-label="Pagination">
-                <ul class="fr-pagination__list">
-                    <li>
-                        <a class="fr-pagination__link fr-pagination__link--first"
-                                {% if pages > 1 %}
-                                    href="{{ path('back_account_index', {page : 1, territory: (currentTerritory ? currentTerritory.id : (isNoneTerritory ? 'none' : null)), partner: (currentPartner ? currentPartner.id : (isNonePartner ? 'none' : null)), userTerms: userTerms }) }}"
-                                {% else %}
-                                    aria-disabled="true"
-                                {% endif %}>
-                            Première page
-                        </a>
-                    </li>
-                    <li>
-                        <a class="fr-pagination__link fr-pagination__link--prev fr-pagination__link--lg-label"
-                                {% if pages > 1 and page != 1 %}
-                                    href="{{ path('back_account_index', {page : page - 1, territory: (currentTerritory ? currentTerritory.id : (isNoneTerritory ? 'none' : null)), partner: (currentPartner ? currentPartner.id : (isNonePartner ? 'none' : null)), userTerms: userTerms }) }}"
-                                {% else %}
-                                    aria-disabled="true"
-                                {% endif %} role="link">
-                            Page précédente
-                        </a>
-                    </li>
-                    <li>
-                        <a class="fr-pagination__link" {{ page == 1 ? 'aria-current="page"' : '' }}
-                           title="Page 1"
-                           data-page="1"
-                                href="{{ path('back_account_index', {page : 1, territory: (currentTerritory ? currentTerritory.id : (isNoneTerritory ? 'none' : null)), partner: (currentPartner ? currentPartner.id : (isNonePartner ? 'none' : null)), userTerms: userTerms }) }}"
-                        >
-                            1
-                        </a>
-                    </li>
-                    {% if pages > 1 %}
-                        {% for i in 2..pages %}
-                            <li class="{% if loop.index > 2 and loop.index < pages-3 %}fr-hidden{% endif %}">
-                                <a class="fr-pagination__link" {{ page == i ? 'aria-current="page"' : '' }}
-                                        href="{{ path('back_account_index', {page : i, territory: (currentTerritory ? currentTerritory.id : (isNoneTerritory ? 'none' : null)), partner: (currentPartner ? currentPartner.id : (isNonePartner ? 'none' : null)), userTerms: userTerms }) }}"
-                                   title="Page {{ i }}"
-                                   data-page="{{ i }}">
-                                    {{ i }}
-                                </a>
-                            </li>
-                            {% if loop.index is same as(3) %}
-                                <li>
-                                    <a class="fr-pagination__link" title="placeholder">
-                                        ...
-                                    </a>
-                                </li>
-                            {% endif %}
-                        {% endfor %}
-                    {% endif %}
-                    <li>
-                        <a class="fr-pagination__link fr-pagination__link--next fr-pagination__link--lg-label"
-                                {% if pages > 1  and page < pages %}
-                                    href="{{ path('back_account_index', {page : page + 1, territory: (currentTerritory ? currentTerritory.id : (isNoneTerritory ? 'none' : null)), partner: (currentPartner ? currentPartner.id : (isNonePartner ? 'none' : null)), userTerms: userTerms }) }}"
-                                {% else %}
-                                    aria-disabled="true"
-                                {% endif %} role="link">
-                            Page suivante
-                        </a>
-                    </li>
-                    <li>
-                        <a class="fr-pagination__link fr-pagination__link--last"
-                                {% if pages > 1 %}
-                                    href="{{ path('back_account_index', {page : pages, territory: (currentTerritory ? currentTerritory.id : (isNoneTerritory ? 'none' : null)), partner: (currentPartner ? currentPartner.id : (isNonePartner ? 'none' : null)), userTerms: userTerms }) }}"
-                                {% else %}
-                                    aria-disabled="true"
-                                {% endif %}
-                           data-page="{{ pages }}">
-                            Dernière page
-                        </a>
-                    </li>
-                </ul>
-            </nav>
+            {% import '_partials/macros.html.twig' as macros %}
+            {{ macros.customPagination(pages, page, 'back_account_index', {territory: (currentTerritory ? currentTerritory.id : (isNoneTerritory ? 'none' : null)), partner: (currentPartner ? currentPartner.id : (isNonePartner ? 'none' : null)), userTerms: userTerms}) }}
         </div>
     </section>
 

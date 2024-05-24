@@ -1,0 +1,82 @@
+
+{% macro customPagination(pages, currentPage, routeName, queryParams) %}
+<nav role="navigation" class="fr-pagination" aria-label="Pagination">
+    <ul class="fr-pagination__list">
+        <li>
+            <a class="fr-pagination__link fr-pagination__link--first"
+               {% if currentPage > 1 %}
+                       href="{{ path(routeName, queryParams | merge({page: 1})) }}"
+                {% else %}
+                   aria-disabled="true"
+               {% endif %}>
+                Première page
+            </a>
+        </li>
+        <li>
+            <a class="fr-pagination__link fr-pagination__link--prev fr-pagination__link--lg-label"
+               {% if currentPage > 1 %}
+                       href="{{ path(routeName, queryParams | merge({page: currentPage - 1})) }}"
+               {% else %}
+                   aria-disabled="true"
+               {% endif %} role="link">
+                Page précédente
+            </a>
+        </li>
+
+        {% if currentPage > 3 %}
+            <li>
+                <a class="fr-pagination__link" href="{{ path(routeName, queryParams | merge({page: 1})) }}">1</a>
+            </li>
+        {% endif %}
+        {% if currentPage > 4 %}
+            <li>
+                <a class="fr-pagination__link" title="placeholder">...</a>
+            </li>
+        {% endif %}
+
+        {% for i in max(1, currentPage - 2)..min(pages, currentPage + 2) %}
+            <li>
+                <a class="fr-pagination__link" {{ currentPage == i ? 'aria-current="page"' : '' }}
+                   href="{{ path(routeName, queryParams | merge({page: i})) }}"
+                   title="Page {{ i }}"
+                   data-page="{{ i }}">
+                    {{ i }}
+                </a>
+            </li>
+        {% endfor %}
+
+        {% if currentPage < pages - 3 %}
+            <li>
+                <a class="fr-pagination__link" title="placeholder">...</a>
+            </li>
+        {% endif %}
+        {% if currentPage < pages - 2 %}
+            <li>
+                <a class="fr-pagination__link" href="{{ path(routeName, queryParams | merge({page: pages})) }}">{{ pages }}</a>
+            </li>
+        {% endif %}
+
+        <li>
+            <a class="fr-pagination__link fr-pagination__link--next fr-pagination__link--lg-label"
+               {% if currentPage < pages %}
+                   href="{{ path(routeName, queryParams | merge({page: currentPage + 1})) }}"
+               {% else %}
+                   aria-disabled="true"
+               {% endif %} role="link">
+                Page suivante
+            </a>
+        </li>
+        <li>
+            <a class="fr-pagination__link fr-pagination__link--last"
+               {% if currentPage < pages %}
+                   href="{{ path(routeName, queryParams | merge({page: pages})) }}"
+               {% else %}
+                   aria-disabled="true"
+               {% endif %}
+               data-page="{{ pages }}">
+                Dernière page
+            </a>
+        </li>
+    </ul>
+</nav>
+{% endmacro %}
