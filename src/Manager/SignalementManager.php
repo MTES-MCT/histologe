@@ -359,6 +359,12 @@ class SignalementManager extends AbstractManager
             ->setNumAppartOccupant($adresseOccupantRequest->getNumAppart())
             ->setAdresseAutreOccupant($adresseOccupantRequest->getAutre());
 
+        if (empty($adresseOccupantRequest->getGeolocLat())) {
+            $signalement->setManualAddressOccupant(true);
+        } else {
+            $signalement->setManualAddressOccupant(false);
+        }
+
         $this->save($signalement);
 
         $this->suiviManager->addSuiviIfNeeded(

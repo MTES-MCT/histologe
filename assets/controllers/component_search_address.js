@@ -5,6 +5,10 @@ document.querySelectorAll('[data-fr-adresse-autocomplete]').forEach((inputAdress
     attacheAutocompleteAddressEvent(inputAdresse)
 })
 
+document.querySelector('#form-edit-address-adresse')?.addEventListener('input', (event) => addressResetGeoloc(event.target, false));
+document.querySelector('#form-edit-address-codepostal')?.addEventListener('input', (event) => addressResetGeoloc(event.target, true));
+document.querySelector('#form-edit-address-ville')?.addEventListener('input', (event) => addressResetGeoloc(event.target, true));
+
 function attachAutocompleteClickOutsideEvent() {
     document.addEventListener('click', function (event) {
         document?.querySelectorAll('.fr-address-group, .fr-address-group-bo').forEach((addressGroup) => {
@@ -100,4 +104,36 @@ function attachAddressSuggestionEvent(inputAdresse, suggestion, feature) {
         const addressGroup = document?.querySelector(inputAdresse.dataset.autocompleteQuerySelector)
         addressGroup.innerHTML = ''
     })
+}
+
+var idTimeout
+function addressResetGeoloc(input, isResetInsee) {
+    clearTimeout(idTimeout);
+    idTimeout = setTimeout(() => {
+        let idForm = input.closest('form').id
+        if (document?.querySelector('#' + idForm + ' [data-autocomplete-geoloclng]')) {
+            document.querySelector('#' + idForm + ' [data-autocomplete-geoloclng]').value = ''
+        }
+        if (document?.querySelector('#' + idForm + ' [data-autocomplete-geoloclat]')) {
+            document.querySelector('#' + idForm + ' [data-autocomplete-geoloclat]').value = ''
+        }
+    
+        if (isResetInsee) {
+            const apiAdresse = 'https://api-adresse.data.gouv.fr/search/?q='
+            let newCodePostal = document.querySelector('#form-edit-address-codepostal')?.value;
+            let newVille = document.querySelector('#form-edit-address-ville')?.value;
+            if (newCodePostal !== '' && newVille !== '') {
+                let query = apiAdresse + newCodePostal + ' ' + newVille
+                fetch(query)
+                    .then(response => response.json())
+                    .then(json => {
+                        json.features.forEach((feature) => {
+                            if (feature.properties.citycode) {
+                                document.querySelector('#' + idForm + ' [data-autocomplete-insee]').value = feature.properties.citycode
+                            }
+                        })
+                    })
+            }
+        }
+    }, 200)
 }
