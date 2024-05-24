@@ -32,6 +32,7 @@
             v-if="formStore.currentScreen.slug !== 'introduction'"
             class="fr-col-12 fr-col-md-4"
             >
+              <h1 class="fr-h6">Mon signalement</h1>
               <SignalementFormBreadCrumbs
                 :clickEvent="saveAndChangeScreenBySlug"
                 />

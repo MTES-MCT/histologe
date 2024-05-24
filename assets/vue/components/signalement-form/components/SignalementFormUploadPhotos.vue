@@ -1,6 +1,6 @@
 <template>
   <div class="signalement-form-upload-photos" :id="id">
-    <h2 v-if="label">{{ label }}</h2>
+    <h3 v-if="label">{{ label }}</h3>
     <p v-if="description" v-html="description"></p>
     <SignalementFormInfo
       :id="id + '_info'"

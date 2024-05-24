@@ -6,7 +6,8 @@
       >
       <img :src="icon.src" :alt="icon.alt">
     </div>
-    <h1>{{ label }}</h1>
+    <h1 v-if="formStore.currentScreen?.slug === 'introduction'" >{{ label }}</h1>
+    <h2 v-else-if="label !== ''">{{ label }}</h2>
     <div v-html="variablesReplacer.replace(description)"></div>
     <div
       v-if="components != undefined"

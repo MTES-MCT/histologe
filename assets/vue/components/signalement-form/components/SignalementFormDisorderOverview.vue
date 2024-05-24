@@ -3,7 +3,8 @@
     <div v-if="formStore.data.categorieDisorders.batiment.length > 0">
       <div class="fr-grid-row fr-grid-row--gutters fr-grid-row--middle">
         <div class="fr-col-2 fr-col-md-1"><img :src="icons ? icons[0].src : ''" :alt="icons ? icons[0].alt : ''" class="fr-disorder-overview-image"></div>
-        <div class="fr-col-10 fr-col-md-11 fr-h2 fr-disorder-overview-title">Le bâtiment</div>
+        <h5 v-if="isValidationScreen" class="fr-col-10 fr-col-md-11 fr-h2 fr-disorder-overview-title">Le bâtiment</h5>
+        <h3 v-else class="fr-col-10 fr-col-md-11 fr-h2 fr-disorder-overview-title">Le bâtiment</h3>
       </div>
       <div class="fr-accordions-group">
         <section
@@ -14,9 +15,12 @@
           <div
             v-if="hasCategoryFields(disorder)"
             >
-            <h3 class="fr-accordion__title">
+            <h6 v-if="isValidationScreen" class="fr-accordion__title">
               <button class="fr-accordion__btn" aria-expanded="false" :aria-controls="'accordion-disorder-batiment-' + index">{{ dictionaryStore[disorder].default }}</button>
-            </h3>
+            </h6>
+            <h4 v-else  class="fr-accordion__title">
+              <button class="fr-accordion__btn" aria-expanded="false" :aria-controls="'accordion-disorder-batiment-' + index">{{ dictionaryStore[disorder].default }}</button>
+            </h4>
             <div class="fr-collapse" :id="'accordion-disorder-batiment-' + index">
               <div
                 v-for="field in categoryFields(disorder)"
@@ -33,7 +37,8 @@
     <div v-if="formStore.data.categorieDisorders.logement.length > 0">
       <div class="fr-grid-row fr-grid-row--gutters fr-grid-row--middle">
         <div class="fr-col-2 fr-col-md-1"><img :src="icons ? icons[1].src : ''" :alt="icons ? icons[1].alt : ''" class="fr-disorder-overview-image"></div>
-        <div class="fr-col-10 fr-col-md-11 fr-h2 fr-disorder-overview-title">Le logement</div>
+        <h5 v-if="isValidationScreen" class="fr-col-10 fr-col-md-11 fr-h2 fr-disorder-overview-title">Le logement</h5>
+        <h3 v-else class="fr-col-10 fr-col-md-11 fr-h2 fr-disorder-overview-title">Le logement</h3>
       </div>
       <div class="fr-accordions-group">
         <section
@@ -44,9 +49,12 @@
           <div
             v-if="hasCategoryFields(disorder)"
             >
-            <h3 class="fr-accordion__title">
+            <h6 v-if="isValidationScreen" class="fr-accordion__title">
               <button class="fr-accordion__btn" aria-expanded="false" :aria-controls="'accordion-disorder-logement-' + index">{{ dictionaryStore[disorder].default }}</button>
-            </h3>
+            </h6>
+            <h4 v-else class="fr-accordion__title">
+              <button class="fr-accordion__btn" aria-expanded="false" :aria-controls="'accordion-disorder-logement-' + index">{{ dictionaryStore[disorder].default }}</button>
+            </h4>
             <div class="fr-collapse" :id="'accordion-disorder-logement-' + index">
               <div
                 v-for="field in categoryFields(disorder)"
@@ -77,7 +85,7 @@
     </div>
     <div v-else-if="formStore.currentScreen?.slug === 'validation_signalement' && formStore.data[idMessageAdministration] !== undefined">
       <br>
-      <h3 class="fr-h6">Précisions sur les désordres</h3>
+      <h5 class="fr-h6">Précisions sur les désordres</h5>
       <p class="white-space-pre-line">{{ formStore.data[idMessageAdministration] }}</p>
     </div>
   </div>
@@ -97,7 +105,8 @@ export default defineComponent({
   },
   props: {
     id: { type: String, default: null },
-    icons: { type: Object }
+    icons: { type: Object },
+    isValidationScreen: { type: Boolean, default: false }
   },
   data () {
     return {
