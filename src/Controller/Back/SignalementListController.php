@@ -14,6 +14,7 @@ use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use Symfony\Component\HttpKernel\Attribute\MapQueryString;
 use Symfony\Component\Routing\Annotation\Route;
 
@@ -67,6 +68,7 @@ class SignalementListController extends AbstractController
 
     #[Route('/list/signalements/', name: 'back_signalement_list_json')]
     public function list(
+        SessionInterface $session,
         SignalementManager $signalementManager,
         SearchFilter $searchFilter,
         #[MapQueryString] ?SignalementSearchQuery $signalementQuery = null,
@@ -81,6 +83,7 @@ class SignalementListController extends AbstractController
                 'sortBy' => 'reference',
             ];
 
+        $session->set('filters', $filters);
         $signalements = $signalementManager->findSignalementAffectationList($user, $filters);
 
         return $this->json($signalements);

@@ -21,8 +21,12 @@ export function buildBadge (key: string, value: any): string | undefined {
     return undefined
   }
 
-  if (key === 'communes' || key === 'epcis') {
+  if (key === 'communes') {
     return value.join(', ')
+  }
+
+  if (key === 'epcis') {
+    return value.map((item: string) => item.split('|')[1]).join(', ')
   }
 
   if (key === 'enfantsM6') {

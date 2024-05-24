@@ -40,7 +40,7 @@ class SearchFilterOptionDataProvider
         }
 
         return $this->cache->get(
-            $this->getCacheKey($user),
+            $this->getCacheKey($user, $territory),
             function (ItemInterface $item) use ($territory, $user) {
                 $item->expiresAfter(3600);
 
@@ -59,7 +59,7 @@ class SearchFilterOptionDataProvider
         );
     }
 
-    private function getCacheKey(?User $user): string
+    private function getCacheKey(?User $user, ?Territory $territory = null): string
     {
         $className = (new \ReflectionClass(__CLASS__))->getShortName();
 
@@ -67,7 +67,7 @@ class SearchFilterOptionDataProvider
             return $className.User::ROLE_ADMIN;
         }
         $role = $user->getRoles();
-        $territory = !$user?->isSuperAdmin() ? $user?->getTerritory() : null;
+        $territory = !$user?->isSuperAdmin() ? $user?->getTerritory() : $territory;
         $partner = !$user?->isSuperAdmin() ? $user?->getPartner() : null;
 
         return $className.array_shift($role).'-partner-'.$partner?->getId().'-territory-'.$territory?->getZip();

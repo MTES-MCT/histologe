@@ -154,7 +154,7 @@ export default defineComponent({
 
       this.sharedState.epcis = []
       for (const id in requestResponse.epcis) {
-        this.sharedState.epcis.push(`${requestResponse.epcis[id].code} - ${requestResponse.epcis[id].nom}`)
+        this.sharedState.epcis.push(`${requestResponse.epcis[id].code} | ${requestResponse.epcis[id].nom}`)
       }
     },
     handleTerritoryChange (value: any) {
@@ -219,7 +219,7 @@ export default defineComponent({
             if (typeof value === 'object') {
               if (key === 'epcis') {
                 value.forEach((valueItem: any) => {
-                  const code = valueItem.split('-').shift()
+                  const code = valueItem.split('|').shift()
                   this.addQueryParameter(`${key}[]`, code)
                   url.searchParams.append(`${key}[]`, code)
                 })

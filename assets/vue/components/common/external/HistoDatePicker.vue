@@ -29,6 +29,11 @@ export default defineComponent({
     modelValue: { type: Array },
     placeholder: { type: String, default: null }
   },
+  watch: {
+    modelValue (newValue: any) {
+      this.dates = newValue
+    }
+  },
   data () {
     return {
       dates: this.modelValue

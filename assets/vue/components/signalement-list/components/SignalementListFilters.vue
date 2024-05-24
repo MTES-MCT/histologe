@@ -188,13 +188,13 @@
                 <AppNumber
                     id="filter-score-min"
                     v-model="sharedState.input.filters.criticiteScoreMin"
-                    placeholder="Min"
+                    placeholder="Min Criticité"
                     @update:modelValue="onChange(false)"
                 />
                 <AppNumber
                     id="filter-score-max"
                     v-model="sharedState.input.filters.criticiteScoreMax"
-                    placeholder="Max"
+                    placeholder="Max Criticité"
                     @update:modelValue="onChange(false)"
                 />
               </div>

@@ -36,9 +36,11 @@ class WidgetSettingsFactory
     {
         $suggestionsCommuneZipCode = [...$filterOptionData['cities'], ...$filterOptionData['zipcodes']];
 
-        return array_map(
-            fn ($suggestion): string => $suggestion['city'] ?? $suggestion['zipcode'],
+        $suggestionsCommuneZipCode = array_map(
+            fn ($suggestion): string => $suggestion['city'] ?? $suggestion['zipcode'] ?? '',
             $suggestionsCommuneZipCode
         );
+
+        return array_filter($suggestionsCommuneZipCode);
     }
 }
