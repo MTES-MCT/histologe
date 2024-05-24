@@ -1,28 +1,18 @@
 <?php
 
-namespace App\Tests\Unit\Service;
+namespace App\Tests\Unit\Validator;
 
-use App\Service\EmailValidator;
+use App\Validator\EmailFormatValidator;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
-use Symfony\Component\Validator\Validator\ValidatorInterface;
 
-class EmailValidatorTest extends KernelTestCase
+class EmailFormatValidatorTest extends KernelTestCase
 {
-    private ValidatorInterface $validator;
-
-    protected function setUp(): void
-    {
-        self::bootKernel();
-        /* @var ValidatorInterface validator */
-        $this->validator = static::getContainer()->get(ValidatorInterface::class);
-    }
-
     /**
      * @dataProvider provideEmail
      */
-    public function testTextWithHtml(string $email, bool $isEmailValid): void
+    public function testEmailsFormat(string $email, bool $isEmailValid): void
     {
-        $this->assertEquals($isEmailValid, EmailValidator::validate($this->validator, $email));
+        $this->assertEquals($isEmailValid, EmailFormatValidator::validate($email));
     }
 
     public function provideEmail(): \Generator

@@ -3,12 +3,13 @@
 namespace App\Dto;
 
 use Symfony\Component\Validator\Constraints as Assert;
+use Symfony\Component\Validator\Constraints\Email;
 use Symfony\Component\Validator\Context\ExecutionContextInterface;
 
 class DemandeLienSignalement
 {
     #[Assert\NotBlank()]
-    #[Assert\Email()]
+    #[Assert\Email(mode: Email::VALIDATION_MODE_STRICT)]
     private string $email;
 
     #[Assert\NotBlank()]
