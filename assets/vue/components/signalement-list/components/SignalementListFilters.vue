@@ -6,15 +6,18 @@
         <div class="fr-container--fluid" role="search">
           <div class="fr-grid-row fr-grid-row--gutters">
             <ul class="fr-col-12 fr-tags-group fr-mt-2w">
-              <li>
+              <li v-if="sharedState.user.isResponsableTerritoire">
                 <button class="fr-tag"
-                        aria-pressed="false"
+                        ref="myAffectationButton"
+                        aria-pressed="sharedState.input.filters.showMyAffectationOnly === 'oui'"
                         @click="toggleCurrentPartnerAffectation">
                   Afficher mes affectations uniquement
                 </button>
               </li>
               <li>
                 <button
+                    v-if="sharedState.hasSignalementImported"
+                    ref="isImportedButton"
                     class="fr-tag"
                     aria-pressed="sharedState.input.filters.isImported === 'oui'"
                     @click="toggleIsImported"
@@ -290,6 +293,7 @@ import HistoDatePicker from '../../common/external/HistoDatePicker.vue'
 import HistoMultiSelect from '../../common/HistoMultiSelect.vue'
 import { store } from '../store'
 import { buildBadge } from '../services/badgeFilterLabelBuilder'
+import HistoInterfaceSelectOption from '../../common/HistoInterfaceSelectOption'
 
 export default defineComponent({
   name: 'SignalementListFilters',
@@ -312,12 +316,9 @@ export default defineComponent({
     }
   },
   computed: {
-    isImportedPressed () {
-      return this.sharedState.input.filters.isImported === 'oui'
-    },
     filtersSanitized () {
       const filters = Object.entries(this.sharedState.input.filters).filter(([key, value]) => {
-        if (key === 'isImported') {
+        if (key === 'isImported' || key === 'showMyAffectationOnly') {
           return false
         }
         if (value !== null) {
@@ -342,12 +343,33 @@ export default defineComponent({
       }
     },
     toggleCurrentPartnerAffectation () {
-      this.sharedState.input.filters.partenaires = [] // [this.sharedState.user.partnerId]
+      this.sharedState.input.filters.partenaires = []
+      this.sharedState.input.filters.showMyAffectationOnly =
+          this.sharedState.input.filters.showMyAffectationOnly !== 'oui' ? 'oui' : null
+
+      if (this.sharedState.input.filters.showMyAffectationOnly === 'oui') {
+        const currentPartner = this.sharedState.partenaires.filter((partner: HistoInterfaceSelectOption) => {
+          return partner.Id === this.sharedState.user.partnerId?.toString() ?? ''
+        })
+        this.sharedState.input.filters.partenaires = [currentPartner[0].Id]
+      } else {
+        delete this.sharedState.input.filters.partenaires[0]
+      }
+
       if (typeof this.onChange === 'function') {
         this.onChange(false)
       }
     },
     removeFilter (key: string) {
+      const currentMyAffectationOnly = (this.sharedState.input.filters as any)[key][0]
+      const showMyAffectationOnly = this.sharedState.input.filters.showMyAffectationOnly
+      if (showMyAffectationOnly === 'oui' && currentMyAffectationOnly === this.sharedState.user.partnerId?.toString()) {
+        this.sharedState.input.filters.showMyAffectationOnly = null
+        if (this.$refs.myAffectationButton) {
+          (this.$refs.myAffectationButton as HTMLElement).setAttribute('aria-pressed', 'false')
+        }
+      }
+
       delete (this.sharedState.input.filters as any)[key]
       if (typeof this.onChange === 'function') {
         this.onChange(false)
@@ -379,11 +401,21 @@ export default defineComponent({
         dateDepot: null,
         dateDernierSuivi: null,
         isImported: null,
+        showMyAffectationOnly: null,
         statusAffectation: null,
         criticiteScoreMin: null,
         criticiteScoreMax: null
       }
       this.sharedState.currentTerritoryId = ''
+
+      if (this.$refs.myAffectationButton) {
+        (this.$refs.myAffectationButton as HTMLElement).setAttribute('aria-pressed', 'false')
+      }
+
+      if (this.$refs.isImportedButton) {
+        (this.$refs.isImportedButton as HTMLElement).setAttribute('aria-pressed', 'false')
+      }
+
       this.reset = !this.reset
       this.$emit('clickReset')
 

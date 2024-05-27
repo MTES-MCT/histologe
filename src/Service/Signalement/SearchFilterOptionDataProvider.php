@@ -54,6 +54,7 @@ class SearchFilterOptionDataProvider
                     'zipcodes' => $this->signalementRepository->findZipcodes($user, $territory),
                     'listQualificationStatus' => $this->qualificationStatusService->getList(),
                     'listVisiteStatus' => VisiteStatus::getLabelList(),
+                    'hasSignalementsImported' => $this->signalementRepository->countImported($territory),
                 ];
             }
         );

@@ -123,6 +123,7 @@ export default defineComponent({
       this.sharedState.user.canDeleteSignalement = isAdminOrAdminTerritoire
       this.sharedState.user.canSeeScore = isAdminOrAdminTerritoire
       this.sharedState.user.partnerId = requestResponse.partnerId
+      this.sharedState.hasSignalementImported = requestResponse.hasSignalementImported
 
       this.sharedState.territories = []
       for (const id in requestResponse.territories) {

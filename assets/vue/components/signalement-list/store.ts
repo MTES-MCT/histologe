@@ -14,7 +14,7 @@ export const store = {
       filters: {
         territoires: new Array<string>(),
         etiquettes: new Array<HistoInterfaceSelectOption>(),
-        partenaires: new Array<HistoInterfaceSelectOption>(),
+        partenaires: new Array<HistoInterfaceSelectOption | string>(),
         communes: new Array<string>(),
         epcis: new Array<string>(),
         searchTerms: null,
@@ -30,6 +30,7 @@ export const store = {
         dateDepot: null,
         dateDernierSuivi: null,
         isImported: null as 'oui' | null,
+        showMyAffectationOnly: null as 'oui' | null,
         statusAffectation: null,
         criticiteScoreMin: null,
         criticiteScoreMax: null
@@ -54,6 +55,7 @@ export const store = {
     currentTerritoryId: '',
     currentCommunes: '',
     currentPartenaires: '',
+    hasSignalementImported: false,
     statusSignalementList: [
       { Id: 'nouveau', Text: 'Nouveau' },
       { Id: 'en_cours', Text: 'En cours' },

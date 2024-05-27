@@ -103,7 +103,7 @@ class SignalementRepository extends ServiceEntityRepository
             ->getSingleScalarResult();
     }
 
-    public function countImported(): int
+    public function countImported(?Territory $territory = null): int
     {
         $qb = $this->createQueryBuilder('s');
         $qb->select('COUNT(s.id)');
@@ -111,8 +111,11 @@ class SignalementRepository extends ServiceEntityRepository
             ->setParameter('statutArchived', Signalement::STATUS_ARCHIVED);
         $qb->andWhere('s.isImported = 1');
 
-        return $qb->getQuery()
-            ->getSingleScalarResult();
+        if (null !== $territory) {
+            $qb->andWhere('s.territory = :territory')->setParameter('territory', $territory);
+        }
+
+        return $qb->getQuery()->getSingleScalarResult();
     }
 
     public function countByStatus(?Territory $territory, ?Partner $partner, ?int $year = null, bool $removeImported = false, Qualification $qualification = null, array $qualificationStatuses = null): array

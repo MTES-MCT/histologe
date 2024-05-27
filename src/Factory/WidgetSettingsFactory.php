@@ -28,7 +28,8 @@ class WidgetSettingsFactory
             partners: $filterOptionData['partners'],
             communes: $this->getCommunesAndZipCodes($filterOptionData),
             epcis: $filterOptionData['epcis'],
-            tags: $filterOptionData['tags']
+            tags: $filterOptionData['tags'],
+            hasSignalementImported: $filterOptionData['hasSignalementsImported'] > 0,
         );
     }
 

@@ -19,6 +19,7 @@ class WidgetSettings
     private array $communes = [];
     private array $epcis = [];
     private array $tags = [];
+    private ?bool $hasSignalementImported = false;
 
     public function __construct(
         User $user,
@@ -28,6 +29,7 @@ class WidgetSettings
         array $communes = [],
         array $epcis = [],
         array $tags = [],
+        bool $hasSignalementImported = false,
     ) {
         $this->firstname = $user->getPrenom();
         $this->lastname = $user->getNom();
@@ -41,6 +43,7 @@ class WidgetSettings
         $this->communes = $communes;
         $this->epcis = $epcis;
         $this->tags = $tags;
+        $this->hasSignalementImported = $hasSignalementImported;
     }
 
     public function getFirstname(): ?string
@@ -101,5 +104,10 @@ class WidgetSettings
     public function getTags(): array
     {
         return $this->tags;
+    }
+
+    public function getHasSignalementImported(): bool
+    {
+        return $this->hasSignalementImported;
     }
 }

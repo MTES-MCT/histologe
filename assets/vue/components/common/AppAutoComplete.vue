@@ -98,11 +98,20 @@ export default defineComponent({
       if (this.searchText.length < 1) {
         this.suggestionFilteredList = []
       } else if (this.searchText.length > 1) {
-        const searchTextNormalized = this.searchText.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+        const searchTextNormalized = this.searchText
+          .toLowerCase()
+          .normalize('NFD')
+          .replace(/[\u0300-\u036f]/g, '')
+          .replace(/[\s-]/g, '')
 
         this.suggestionFilteredList = (this.suggestions as string[])
           .filter((item: string) => {
-            const itemNormalized = item.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+            const itemNormalized = item
+              .toLowerCase()
+              .normalize('NFD')
+              .replace(/[\u0300-\u036f]/g, '')
+              .replace(/[\s-]/g, '')
+
             return !this.selectedSuggestions.includes(item) && itemNormalized.includes(searchTextNormalized)
           })
       }
@@ -128,6 +137,7 @@ export default defineComponent({
       if (target && !event.target.closest('.fr-autocomplete-list')) {
         this.suggestionFilteredList = []
         this.selectedSuggestionIndex = -1
+        this.searchText = ''
       }
     },
     resetData () {
