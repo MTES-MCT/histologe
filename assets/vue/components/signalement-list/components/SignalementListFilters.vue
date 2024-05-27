@@ -117,7 +117,7 @@
           <div v-if="showOptions">
             <div class="fr-grid-row fr-grid-row--gutters">
               <div class="fr-col-12 fr-col-lg-6 fr-col-xl-3 grey-background"
-                   v-if="showWorkInProgress && sharedState.etiquettes.length > 0">
+                   v-if="sharedState.etiquettes.length > 0">
                 <HistoMultiSelect
                     id="filter-etiquettes"
                     v-model="sharedState.input.filters.etiquettes"
@@ -149,9 +149,8 @@
                 />
               </div>
               <div class="fr-col-12 fr-col-lg-4 fr-col-xl-3 grey-background"
-                   v-if="showWorkInProgress &&  sharedState.partenaires.length > 0">
+                   v-if="sharedState.partenaires.length > 0">
                 <HistoMultiSelect
-                    v-if="showWorkInProgress"
                     id="filter-partenaires"
                     v-model="sharedState.input.filters.partenaires"
                     @update:modelValue="onChange(false)"
@@ -349,7 +348,7 @@ export default defineComponent({
 
       if (this.sharedState.input.filters.showMyAffectationOnly === 'oui') {
         const currentPartner = this.sharedState.partenaires.filter((partner: HistoInterfaceSelectOption) => {
-          return partner.Id === this.sharedState.user.partnerId?.toString() ?? ''
+          return partner.Id === this.sharedState.user.partnerId?.toString() || ''
         })
         this.sharedState.input.filters.partenaires = [currentPartner[0].Id]
       } else {
@@ -432,7 +431,6 @@ export default defineComponent({
       isVisible: true,
       showOptions: false,
       reset: false,
-      showWorkInProgress: true,
       sharedState: store.state,
       statusSignalementList: store.state.statusSignalementList,
       statusAffectationList: store.state.statusAffectationList,
