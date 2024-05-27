@@ -342,7 +342,7 @@ export default defineComponent({
       }
     },
     toggleCurrentPartnerAffectation () {
-      this.sharedState.input.filters.partenaires = [this.sharedState.user.partnerId]
+      this.sharedState.input.filters.partenaires = [] // [this.sharedState.user.partnerId]
       if (typeof this.onChange === 'function') {
         this.onChange(false)
       }
