@@ -308,10 +308,10 @@ class SignalementRepository extends ServiceEntityRepository
     public function countByDesordresCriteres(
         ?Territory $territory,
         ?int $year,
-        ?DesordreCritereZone $desordreCritereZone = null,
+        ?DesordreCritereZone $desordreCritereZone = null
     ): array {
         $qb = $this->createQueryBuilder('s');
-        $qb->select('COUNT(s.id) AS count, desordreCriteres.id, desordreCriteres.labelCritere')
+        $qb->select('COUNT(s.id) AS count, desordreCriteres.labelCritere')
             ->leftJoin('s.desordreCriteres', 'desordreCriteres')
             ->where('s.statut != :statutArchived')
             ->setParameter('statutArchived', Signalement::STATUS_ARCHIVED)
@@ -328,12 +328,12 @@ class SignalementRepository extends ServiceEntityRepository
 
         if ($desordreCritereZone) {
             $qb->andWhere('desordreCriteres.zoneCategorie = :desordreCritereZone')
-            ->setParameter('desordreCritereZone', $desordreCritereZone->value);
+                ->setParameter('desordreCritereZone', $desordreCritereZone->value);
         }
 
-        $qb->groupBy('desordreCriteres.id')
-        ->orderBy('count', 'DESC')
-        ->setMaxResults(5);
+        $qb->groupBy('desordreCriteres.labelCritere')
+            ->orderBy('count', 'DESC')
+            ->setMaxResults(5);
 
         return $qb->getQuery()
             ->getResult();
