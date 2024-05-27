@@ -10,6 +10,7 @@ class WidgetSettings
     private ?string $lastname = null;
     private ?string $roleLabel = null;
     private ?string $canSeeNDE = null;
+    private ?int $partnerId = null;
     private ?string $partnerName = null;
     private ?string $territoryName = null;
 
@@ -32,6 +33,7 @@ class WidgetSettings
         $this->lastname = $user->getNom();
         $this->roleLabel = $user->getRoleLabel();
         $this->canSeeNDE = (string) $canSeeNDE;
+        $this->partnerId = $user->getPartner()->getId();
         $this->partnerName = $user->getPartner()->getNom();
         $this->territoryName = $user->getTerritory()?->getZip().'-'.$user->getTerritory()?->getName();
         $this->territories = $territories;
@@ -59,6 +61,11 @@ class WidgetSettings
     public function getCanSeeNDE(): ?string
     {
         return $this->canSeeNDE;
+    }
+
+    public function getPartnerId(): ?int
+    {
+        return $this->partnerId;
     }
 
     public function getPartnerName(): ?string

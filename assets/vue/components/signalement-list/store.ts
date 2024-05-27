@@ -43,7 +43,8 @@ export const store = {
       canSeeStatusAffectation: false,
       canDeleteSignalement: false,
       canSeeNonDecenceEnergetique: false,
-      canSeeScore: false
+      canSeeScore: false,
+      partnerId: null as number | null
     },
     territories: new Array<HistoInterfaceSelectOption>(),
     etiquettes: new Array<HistoInterfaceSelectOption>(),

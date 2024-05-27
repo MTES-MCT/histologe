@@ -1,5 +1,5 @@
 <template>
-  <div class="histo-autocomplete" @click="closeAutocomplete">
+  <div class="app-autocomplete" @click="closeAutocomplete">
     <input
         :id="id"
         :name="id"
@@ -24,6 +24,10 @@
       >
         {{ suggestion }}
       </li>
+    </ul>
+    <ul v-else-if="searchText.length > 0"
+        class="fr-grid-row fr-background--white fr-text-label--red-marianne fr-autocomplete-list">
+      <li class="fr-col-12 fr-p-3v fr-autocomplete-suggestion--disabled fr-text--xs">Aucun résultat trouvé</li>
     </ul>
   </div>
 </template>
@@ -59,7 +63,11 @@ export default defineComponent({
       this.resetData()
     },
     modelValue (newValue: any) {
-      this.selectedSuggestions = newValue
+      if (newValue !== this.selectedSuggestions) {
+        this.selectedSuggestions = []
+      } else {
+        this.selectedSuggestions = newValue
+      }
     }
   },
   data () {
@@ -134,7 +142,7 @@ export default defineComponent({
 </script>
 
 <style>
- .histo-autocomplete {
+ .app-autocomplete {
    position: relative;
    width: 100%;
    ul {
@@ -142,5 +150,9 @@ export default defineComponent({
      width: 100%;
      z-index: 1;
    }
+ }
+ .fr-autocomplete-suggestion--disabled:hover {
+   background-color: unset;
+   cursor: default;
  }
 </style>

@@ -14,19 +14,21 @@ export function buildBadge (key: string, value: any): string | undefined {
       .filter(item => item.Id !== '' && Array.from(value).includes(item.Id.toString()))
 
     if (matchedItems.length > 0) {
-      return `${matchedItems[0].Text}${matchedItems.length > 1
+      const label = `${key.charAt(0).toUpperCase()}${key.slice(1)} : `
+      return `${label} ${matchedItems[0].Text}${matchedItems.length > 1
                 ? ` +${matchedItems.length - 1}`
                 : ''}`
     }
     return undefined
   }
 
-  if (key === 'communes') {
-    return value.join(', ')
+  if (key === 'communes' && value instanceof Array) {
+    const values: string = value.join(', ')
+    return `Commune ou code postal :  ${values}`
   }
 
-  if (key === 'epcis') {
-    return value.map((item: string) => item.split('|')[1]).join(', ')
+  if (key === 'epcis' && value instanceof Array) {
+    return `EPCI : ${value.map((item: string) => item.split('|')[1]).join(', ')}`
   }
 
   if (key === 'enfantsM6') {
@@ -55,7 +57,7 @@ export function buildBadge (key: string, value: any): string | undefined {
     return buildRandgeDateBadge(key, value)
   }
 
-  return builStaticBadge(key, value)
+  return buildStaticBadge(key, value)
 }
 
 function buildRandgeDateBadge (key: string, value: any): string | undefined {
@@ -77,7 +79,7 @@ function buildRandgeDateBadge (key: string, value: any): string | undefined {
   return `${label} ${startDate} - ${endDate}`
 }
 
-function builStaticBadge (key: string, value: any): string | undefined {
+function buildStaticBadge (key: string, value: any): string | undefined {
   const staticListsWithNoDuplicateId = [
     store.state.statusSignalementList,
     store.state.statusAffectationList,

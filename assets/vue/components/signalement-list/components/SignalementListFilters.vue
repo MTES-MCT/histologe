@@ -7,7 +7,11 @@
           <div class="fr-grid-row fr-grid-row--gutters">
             <ul class="fr-col-12 fr-tags-group fr-mt-2w">
               <li>
-                <button class="fr-tag" aria-pressed="false" v-if="showWorkInProgress">Afficher mes affectations uniquement</button>
+                <button class="fr-tag"
+                        aria-pressed="false"
+                        @click="toggleCurrentPartnerAffectation">
+                  Afficher mes affectations uniquement
+                </button>
               </li>
               <li>
                 <button
@@ -333,6 +337,12 @@ export default defineComponent({
       this.sharedState.input.filters.isImported = this.sharedState.input.filters.isImported !== 'oui'
         ? 'oui'
         : null
+      if (typeof this.onChange === 'function') {
+        this.onChange(false)
+      }
+    },
+    toggleCurrentPartnerAffectation () {
+      this.sharedState.input.filters.partenaires = [this.sharedState.user.partnerId]
       if (typeof this.onChange === 'function') {
         this.onChange(false)
       }
