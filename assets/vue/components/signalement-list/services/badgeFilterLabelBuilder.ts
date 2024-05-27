@@ -54,13 +54,13 @@ export function buildBadge (key: string, value: any): string | undefined {
   }
 
   if (key === 'dateDernierSuivi' || key === 'dateDepot') {
-    return buildRandgeDateBadge(key, value)
+    return buildRangeDateBadge(key, value)
   }
 
   return buildStaticBadge(key, value)
 }
 
-function buildRandgeDateBadge (key: string, value: any): string | undefined {
+function buildRangeDateBadge (key: string, value: any): string | undefined {
   let label: string = ''
   let startDate: string = ''
   let endDate: string = ''
