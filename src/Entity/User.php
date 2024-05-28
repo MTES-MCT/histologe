@@ -4,7 +4,6 @@ namespace App\Entity;
 
 use App\Entity\Behaviour\TimestampableTrait;
 use App\Repository\UserRepository;
-use DateTimeImmutable;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
@@ -135,6 +134,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     #[ORM\Column(type: Types::DATE_IMMUTABLE, nullable: true)]
     private ?\DateTimeInterface $archivingScheduledAt = null;
+
+    #[ORM\Column(nullable: true)]
+    private ?\DateTimeImmutable $anonymizedAt = null;
 
     public function __construct()
     {
@@ -321,7 +323,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return self::STATUS_LABELS[$this->statut];
     }
 
-    public function getLastLoginAt(): ?DateTimeImmutable
+    public function getLastLoginAt(): ?\DateTimeImmutable
     {
         return $this->lastLoginAt;
     }
@@ -335,7 +337,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return '';
     }
 
-    public function setLastLoginAt(?DateTimeImmutable $lastLoginAt): self
+    public function setLastLoginAt(?\DateTimeImmutable $lastLoginAt): self
     {
         $this->lastLoginAt = $lastLoginAt;
         $this->archivingScheduledAt = null;
@@ -456,12 +458,12 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
-    public function getTokenExpiredAt(): ?DateTimeImmutable
+    public function getTokenExpiredAt(): ?\DateTimeImmutable
     {
         return $this->tokenExpiredAt;
     }
 
-    public function setTokenExpiredAt(?DateTimeImmutable $tokenExpiredAt): self
+    public function setTokenExpiredAt(?\DateTimeImmutable $tokenExpiredAt): self
     {
         $this->tokenExpiredAt = $tokenExpiredAt;
 
@@ -545,6 +547,23 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setArchivingScheduledAt(?\DateTimeInterface $archivingScheduledAt): self
     {
         $this->archivingScheduledAt = $archivingScheduledAt;
+
+        return $this;
+    }
+
+    public function getAnonymizedAt(): ?\DateTimeImmutable
+    {
+        return $this->anonymizedAt;
+    }
+
+    public function anonymize(): static
+    {
+        if (self::STATUS_ARCHIVE === $this->getStatut() && null === $this->anonymizedAt) {
+            $this->setEmail('anonyme@'.date('YmdHis').'.'.uniqid());
+            $this->setPrenom('Utilisateur');
+            $this->setNom('Anonymisé');
+            $this->anonymizedAt = new \DateTimeImmutable();
+        }
 
         return $this;
     }

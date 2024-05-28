@@ -61,9 +61,33 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
 
         return $queryBuilder
             ->andWhere('u.email LIKE :email')
-            ->setParameter('email', '%'.$email.'%')
+            ->setParameter('email', $email.'%')
             ->andWhere('u.statut LIKE :archived')
             ->setParameter('archived', User::STATUS_ARCHIVE)
+            ->andWhere('u.anonymizedAt IS NULL')
+            ->getQuery()
+            ->getOneOrNullResult();
+    }
+
+    public function findAnonymizedUsers(): ?array
+    {
+        $queryBuilder = $this->createQueryBuilder('u');
+
+        return $queryBuilder
+            ->andWhere('u.anonymizedAt IS NOT NULL')
+            ->getQuery()
+            ->getResult();
+    }
+
+    public function findOneByEmailExcepted(string $email, User $user): ?User
+    {
+        $queryBuilder = $this->createQueryBuilder('u');
+
+        return $queryBuilder
+            ->andWhere('u.email = :email')
+            ->setParameter('email', $email)
+            ->andWhere('u.id != :id')
+            ->setParameter('id', $user->getId())
             ->getQuery()
             ->getOneOrNullResult();
     }
@@ -136,11 +160,12 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
         $firstResult = ($page - 1) * $maxResult;
 
         $queryBuilder = $this->createQueryBuilder('u');
+        $queryBuilder->andWhere('u.anonymizedAt IS NULL');
 
         if ($isNoneTerritory || $isNonePartner) {
             if ($isNoneTerritory) {
                 $queryBuilder
-                    ->where('u.territory IS NULL');
+                    ->andWhere('u.territory IS NULL');
             }
             if ($isNonePartner) {
                 $queryBuilder
@@ -156,7 +181,7 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
             }
 
             $queryBuilder
-                ->where('u.statut = :archived'.$builtOrCondition)
+                ->andWhere('u.statut = :archived'.$builtOrCondition)
                 ->setParameter('archived', User::STATUS_ARCHIVE);
 
             if (!empty($territory)) {
@@ -256,9 +281,13 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
         return $qb->getQuery()->execute();
     }
 
-    public function findExpiredUsers(string $limitConservation = '2 years'): array
+    public function findExpiredUsers(bool $areArchived = false, string $limitConservation = '2 years'): array
     {
         $qb = $this->getQueryBuilerForinactiveUsersSince($limitConservation);
+        $qb->andWhere('u.anonymizedAt IS NULL');
+        if ($areArchived) {
+            $qb->andWhere('u.statut = :statut')->setParameter('statut', User::STATUS_ARCHIVE);
+        }
 
         return $qb->getQuery()->execute();
     }
@@ -268,6 +297,7 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
         $qb = $this->getQueryBuilerForinactiveUsersSince($limitConservation);
 
         $qb->andWhere('u.statut != :statut')->setParameter('statut', User::STATUS_ARCHIVE);
+        $qb->andWhere('u.anonymizedAt IS NULL');
 
         if (true === $isArchivingScheduled) {
             $qb->andWhere('u.archivingScheduledAt IS NOT NULL');

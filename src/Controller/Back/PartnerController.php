@@ -502,10 +502,16 @@ class PartnerController extends AbstractController
                 territory: $user->getTerritory()
             )
         );
-        $user->setEmail(Sanitizer::tagArchivedEmail($user->getEmail()));
-        $user->setStatut(User::STATUS_ARCHIVE);
-        $userManager->save($user);
-        $this->addFlash('success', 'L\'utilisateur a bien été supprimé.');
+        if ($user->getAnonymizedAt()) {
+            $this->addFlash('error', 'Cet utilisateur est anonymisé.');
+        } elseif (User::STATUS_ARCHIVE === $user->getStatut()) {
+            $this->addFlash('error', 'Cet utilisateur est déjà supprimé.');
+        } else {
+            $user->setEmail(Sanitizer::tagArchivedEmail($user->getEmail()));
+            $user->setStatut(User::STATUS_ARCHIVE);
+            $userManager->save($user);
+            $this->addFlash('success', 'L\'utilisateur a bien été supprimé.');
+        }
 
         return $this->redirectToRoute(
             'back_partner_view',

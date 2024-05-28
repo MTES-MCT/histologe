@@ -29,12 +29,13 @@ class BackArchivedAccountControllerTest extends WebTestCase
         $router = self::getContainer()->get(RouterInterface::class);
 
         $route = $router->generate('back_account_index');
-        $client->request('GET', $route);
+        $crawler = $client->request('GET', $route);
         $this->assertLessThan(
             Response::HTTP_INTERNAL_SERVER_ERROR,
             $client->getResponse()->getStatusCode(),
             sprintf('Result value: %d', $client->getResponse()->getStatusCode())
         );
+        $this->assertEquals(1, $crawler->filter('h1:contains("10 comptes archivés ou sans territoires et/ou partenaires trouvés")')->count());
     }
 
     public function testAccountListWithTerritory(): void
@@ -166,7 +167,7 @@ class BackArchivedAccountControllerTest extends WebTestCase
             'isArchive' => '0',
         ]);
 
-        $accountEmail = 'user-01-06@histologe.fr';
+        $accountEmail = 'user-01-06@histologe.fr'.User::SUFFIXE_ARCHIVED;
         /** @var User $account */
         $account = $userRepository->findArchivedUserByEmail($accountEmail);
         $route = $router->generate('back_account_reactiver', [
@@ -226,5 +227,76 @@ class BackArchivedAccountControllerTest extends WebTestCase
         /** @var User $account */
         $account = $userRepository->findArchivedUserByEmail($accountEmail);
         $this->assertEquals(USER::STATUS_ARCHIVE, $account->getStatut());
+    }
+
+    public function testAccountReactivateAnonymizedUser(): void
+    {
+        $client = static::createClient();
+
+        /** @var UserRepository $userRepository */
+        $userRepository = static::getContainer()->get(UserRepository::class);
+        $user = $userRepository->findOneBy(['email' => 'admin-01@histologe.fr']);
+        $client->loginUser($user);
+
+        /** @var RouterInterface $router */
+        $router = self::getContainer()->get(RouterInterface::class);
+
+        /** @var User $account */
+        $account = $userRepository->findAnonymizedUsers()[0];
+        $route = $router->generate('back_account_reactiver', [
+            'id' => $account->getId(),
+        ]);
+
+        $client->request('GET', $route);
+        $this->assertResponseRedirects('/bo/comptes-archives/');
+    }
+
+    public function testAccountReactivateUnlinkedUser(): void
+    {
+        $client = static::createClient();
+
+        /** @var UserRepository $userRepository */
+        $userRepository = static::getContainer()->get(UserRepository::class);
+        $user = $userRepository->findOneBy(['email' => 'admin-01@histologe.fr']);
+        $client->loginUser($user);
+
+        /** @var RouterInterface $router */
+        $router = self::getContainer()->get(RouterInterface::class);
+
+        /** @var TerritoryRepository $territoryRepository */
+        $territoryRepository = static::getContainer()->get(TerritoryRepository::class);
+        $territory = $territoryRepository->findOneBy(['zip' => '01']);
+
+        /** @var PartnerRepository $partnerRepository */
+        $partnerRepository = static::getContainer()->get(PartnerRepository::class);
+        $partner = $partnerRepository->findOneBy([
+            'territory' => $territory->getId(),
+            'isArchive' => '0',
+        ]);
+
+        $accountEmail = 'user-unlinked@histologe.fr';
+        /** @var User $account */
+        $account = $userRepository->findOneBy(['email' => $accountEmail]);
+        $account->setTerritory($territory);
+        $route = $router->generate('back_account_reactiver', [
+            'id' => $account->getId(),
+        ]);
+
+        $crawler = $client->request('GET', $route);
+
+        $buttonCrawlerNode = $crawler->selectButton('submit_btn_account');
+        $form = $buttonCrawlerNode->form();
+
+        $form['user[prenom]'] = (string) $account->getPrenom();
+        $form['user[nom]'] = (string) $account->getNom();
+        $form['user[email]'] = (string) $account->getEmail();
+        $form['user[territory]'] = (string) $territory->getId();
+        $form['user[partner]'] = (string) $partner->getId();
+        $client->submit($form);
+
+        /** @var User $account */
+        $account = $userRepository->findOneBy(['email' => $accountEmail]);
+        $this->assertEquals(USER::STATUS_ACTIVE, $account->getStatut());
+        $this->assertResponseRedirects('/bo/comptes-archives/');
     }
 }
