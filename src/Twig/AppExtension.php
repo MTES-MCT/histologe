@@ -5,7 +5,6 @@ namespace App\Twig;
 use App\Command\FixEmailAddressesCommand;
 use App\Entity\Enum\OccupantLink;
 use App\Entity\Enum\QualificationStatus;
-use App\Entity\File;
 use App\Service\Files\ImageBase64Encoder;
 use App\Service\Notification\NotificationCounter;
 use App\Service\Signalement\Qualification\QualificationStatusService;

@@ -2,7 +2,20 @@ function histoUpdateSubmitButton(elementName, elementLabel) {
   document.querySelector(elementName).innerHTML = elementLabel
   document.querySelector(elementName).disabled = true
 }
-function histoUpdateFieldsVisibility(showZonePDL, showEsabora) {
+function histoUpdateFieldsVisibility() {
+  const partner_type = document.getElementById("partner_type");
+  partner_type.value = partner_type.value.toUpperCase();
+
+  let showZonePDL = showEsabora = showIdoss = false;
+  if (partner_type.value === 'COMMUNE_SCHS') {
+    showZonePDL = true
+    showEsabora = true
+    showIdoss = true
+  } else if (partner_type.value === 'ARS') {
+    showEsabora = true
+  } else if (partner_type.value === 'EPCI') {
+    showZonePDL = true
+  }
   if (showZonePDL) {
     document.querySelector('#partner_create_zone_pdl').classList.remove('fr-hidden')
   } else {
@@ -14,6 +27,11 @@ function histoUpdateFieldsVisibility(showZonePDL, showEsabora) {
     document.querySelector('#partner_esabora').classList.remove('fr-hidden')
   } else {
     document.querySelector('#partner_esabora').classList.add('fr-hidden')
+  }
+  if (showIdoss) {
+    document.querySelector('#partner_idoss').classList.remove('fr-hidden')
+  } else {
+    document.querySelector('#partner_idoss').classList.add('fr-hidden')
   }
 }
 function histoUpdateValueFromData(elementName, elementData, target) {
@@ -89,14 +107,6 @@ document.querySelectorAll('.btn-edit-partner-user').forEach(swbtn => {
 if (document.querySelector('#partner_type')) {
   histoUpdateFieldsVisibility()
   document.querySelector('#partner_type').addEventListener('change', (event) => {
-    const partner_type = document.getElementById("partner_type");
-    partner_type.value = partner_type.value.toUpperCase();
-    if (partner_type.value === 'COMMUNE_SCHS') {
-      histoUpdateFieldsVisibility(true, true)
-    } else if (partner_type.value === 'EPCI') {
-      histoUpdateFieldsVisibility(true, false)
-    } else {
-      histoUpdateFieldsVisibility(false, false)
-    }
+    histoUpdateFieldsVisibility()
   });
 }
