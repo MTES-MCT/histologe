@@ -10,6 +10,8 @@
         :is="component.type"
         v-bind:key="component.slug"
         :id="component.slug"
+        :access_name="component.accessibility?.name ?? component.slug"
+        :access_autocomplete="component.accessibility?.autocomplete ?? 'off'"
         :label="component.label"
         :hint="component.hint"
         :labelInfo="component.labelInfo"

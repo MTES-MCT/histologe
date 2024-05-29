@@ -26,7 +26,8 @@
             <input
               type="text"
               :id="id"
-              :name="id"
+              :name="access_name"
+              :autocomplete="access_autocomplete"
               v-model="formStore.data[id]"
               class="fr-input"
               :aria-describedby="'text-input-error-desc-error-'+id"
@@ -84,6 +85,7 @@
               v-model="formStore.data[idSecond]"
               class="fr-input"
               :aria-describedby="'text-input-error-desc-error-'+idSecond"
+              :autocomplete="access_autocomplete"
               >
           </div>
         </div>
@@ -120,6 +122,8 @@ export default defineComponent({
     validate: { type: Object, default: null },
     hasError: { type: Boolean, default: false },
     error: { type: String, default: '' },
+    access_name: { type: String, default: '' },
+    access_autocomplete: { type: String, default: '' },
     clickEvent: Function
   },
   data () {

@@ -12,6 +12,10 @@
           "slug": "vos_coordonnees_tiers_nom_organisme",
           "conditional": {
             "show": "formStore.data.signalement_concerne_profil_detail_tiers === 'service_secours'"
+          },
+          "accessibility": {
+            "name": "organizationName",
+            "autocomplete": "organization"
           }
         },
         {
@@ -20,6 +24,10 @@
           "slug": "vos_coordonnees_tiers_nom",
           "validate": {
             "maxLength": 50
+          },
+          "accessibility": {
+            "name": "lastName",
+            "autocomplete": "family-name"
           }
         },
         {
@@ -28,17 +36,29 @@
           "slug": "vos_coordonnees_tiers_prenom",
           "validate": {
             "maxLength": 50
+          },
+          "accessibility": {
+            "name": "firstName",
+            "autocomplete": "given-name"
           }
         },
         {
           "type": "SignalementFormEmailfield",
           "label": "Adresse e-mail",
-          "slug": "vos_coordonnees_tiers_email"
+          "slug": "vos_coordonnees_tiers_email",
+          "accessibility": {
+            "name": "mail",
+            "autocomplete": "email"
+          }
         },
         {
           "type": "SignalementFormPhonefield",
           "label": "Téléphone",
-          "slug": "vos_coordonnees_tiers_tel"
+          "slug": "vos_coordonnees_tiers_tel",
+          "accessibility": {
+            "name": "telephone",
+            "autocomplete": "tel-national"
+          }
         }
       ],
       "footer": [
@@ -73,6 +93,10 @@
           "validate": {
             "required": false,
             "maxLength": 50
+          },
+          "accessibility": {
+            "name": "lastName",
+            "autocomplete": "family-name"
           }
         },
         {
@@ -82,6 +106,10 @@
           "validate": {
             "required": false,
             "maxLength": 50
+          },
+          "accessibility": {
+            "name": "firstName",
+            "autocomplete": "given-name"
           }
         },
         {
@@ -91,6 +119,10 @@
           "validate": {
             "required": false,
             "maxLength": 255
+          },
+          "accessibility": {
+            "name": "mail",
+            "autocomplete": "email"
           }
         },
         {
@@ -99,6 +131,10 @@
           "slug": "coordonnees_occupant_tel",
           "validate": {
             "required": false
+          },
+          "accessibility": {
+            "name": "telephone",
+            "autocomplete": "tel-national"
           }
         }
       ],
@@ -137,6 +173,10 @@
           },
           "conditional": {
             "show": "formStore.data.signalement_concerne_logement_social_service_secours === 'non'"
+          },
+          "accessibility": {
+            "name": "lastName",
+            "autocomplete": "family-name"
           }
         },
         {
@@ -164,6 +204,10 @@
           "validate": {
             "required": false,
             "maxLength": 255
+          },
+          "accessibility": {
+            "name": "firstName",
+            "autocomplete": "given-name"
           }
         },
         {
@@ -173,6 +217,10 @@
           "validate": {
             "required": false,
             "maxLength": 255
+          },
+          "accessibility": {
+            "name": "mail",
+            "autocomplete": "email"
           }
         },
         {
@@ -181,6 +229,10 @@
           "slug": "coordonnees_bailleur_tel",
           "validate": {
             "required": false
+          },
+          "accessibility": {
+            "name": "telephone",
+            "autocomplete": "tel-national"
           }
         },
         {

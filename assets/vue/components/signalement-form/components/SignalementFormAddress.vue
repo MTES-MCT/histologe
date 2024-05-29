@@ -10,6 +10,8 @@
       v-model="formStore.data[idAddress]"
       :hasError="hasError"
       :error="error"
+      access_name="address"
+      access_autocomplete="address-line1"
     />
 
     <div class="fr-grid-row fr-background-alt--blue-france fr-text-label--blue-france fr-address-group">

@@ -8,7 +8,8 @@
       <input
         type="text"
         :id="id + '_input'"
-        :name="id"
+        :name="access_name"
+        :autocomplete="access_autocomplete"
         :value="internalValue"
         :placeholder="placeholder"
         :class="[ customCss, 'fr-input' ]"
@@ -46,7 +47,9 @@ export default defineComponent({
     hasError: { type: Boolean, default: false },
     disabled: { type: Boolean, default: false },
     error: { type: String, default: '' },
-    tagWhenEdit: { type: String, default: '' }
+    tagWhenEdit: { type: String, default: '' },
+    access_name: { type: String, default: '' },
+    access_autocomplete: { type: String, default: '' }
   },
   data () {
     return {
