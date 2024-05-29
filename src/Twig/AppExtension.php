@@ -6,7 +6,6 @@ use App\Command\FixEmailAddressesCommand;
 use App\Entity\Enum\OccupantLink;
 use App\Entity\Enum\QualificationStatus;
 use App\Entity\File;
-use App\Service\Esabora\EsaboraPartnerTypeSubscription;
 use App\Service\Files\ImageBase64Encoder;
 use App\Service\Notification\NotificationCounter;
 use App\Service\Signalement\Qualification\QualificationStatusService;
@@ -69,6 +68,16 @@ class AppExtension extends AbstractExtension
         }
 
         return $fileName;
+    }
+
+    public function getFunctions(): array
+    {
+        return [
+            new TwigFunction('count_notification', [NotificationCounter::class, 'countUnseenNotification']),
+            new TwigFunction('can_see_nde_qualification', [QualificationStatusService::class, 'canSeenNDEQualification']),
+            new TwigFunction('can_see_nde_edit_zone', [QualificationStatusService::class, 'canSeenNDEEditZone']),
+            new TwigFunction('show_label_facultatif', [AttributeParser::class, 'showLabelAsFacultatif']),
+        ];
     }
 
     public function cleanTaggedText(?string $taggedText, string $tag, string $direction): string

@@ -180,6 +180,13 @@ class PartnerController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
+            if (!\in_array($partner->getType(), [EnumPartnerType::ARS, EnumPartnerType::COMMUNE_SCHS])) {
+                $partner->setIsEsaboraActive(false);
+            }
+            if (!\in_array($partner->getType(), [EnumPartnerType::COMMUNE_SCHS])) {
+                $partner->setIsIdossActive(false);
+            }
+
             if ($partner->getTerritory() != $previousTerritory) {
                 /** @var User $partnerUser */
                 foreach ($partner->getUsers() as $partnerUser) {

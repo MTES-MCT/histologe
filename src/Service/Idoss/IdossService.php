@@ -115,8 +115,7 @@ class IdossService
         if ($token) {
             $options['headers'][] = 'Authorization: Bearer '.$token;
         }
-        $response = $this->client->request('POST', $url, $options);
 
-        return $response;
+        return $this->client->request('POST', $url, $options);
     }
 }
