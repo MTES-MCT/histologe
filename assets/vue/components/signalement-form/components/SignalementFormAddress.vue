@@ -47,13 +47,6 @@
       :error="formStore.validationErrors[idSubscreen]"
       @update:modelValue="handleSubscreenModelUpdate"
     />
-
-    <SignalementFormModal
-      v-model="isModalOpen"
-      id="check_territory_modal"
-      :label="modalLabel"
-      :description="modalDescription"
-    />
   </div>
 </template>
 
@@ -66,15 +59,13 @@ import subscreenData from './../address_subscreen.json'
 import SignalementFormTextfield from './SignalementFormTextfield.vue'
 import SignalementFormButton from './SignalementFormButton.vue'
 import SignalementFormSubscreen from './SignalementFormSubscreen.vue'
-import SignalementFormModal from './SignalementFormModal.vue'
 
 export default defineComponent({
   name: 'SignalementFormAddress',
   components: {
     SignalementFormTextfield,
     SignalementFormButton,
-    SignalementFormSubscreen,
-    SignalementFormModal
+    SignalementFormSubscreen
   },
   props: {
     id: { type: String, default: null },
@@ -85,7 +76,6 @@ export default defineComponent({
     validate: { type: Object, default: null },
     hasError: { type: Boolean, default: false },
     error: { type: String, default: '' },
-    isTerritoryToCheck: { type: Boolean, default: false },
     clickEvent: Function
   },
   data () {
@@ -102,11 +92,8 @@ export default defineComponent({
       screens: { body: updatedSubscreenData },
       suggestions: [] as any[],
       formStore,
-      isModalOpen: false,
       // Avoids searching when an option is selected in the list
-      isSearchSkipped: false,
-      modalLabel: '',
-      modalDescription: ''
+      isSearchSkipped: false
     }
   },
   created () {
@@ -166,45 +153,7 @@ export default defineComponent({
       this.$emit('update:modelValue', value)
     },
     handleAddressFieldsEdited () {
-      let isUpdateAddress = true
-      let search = ''
-      if (formStore.data[this.id + '_detail_code_postal'] === '' || formStore.data[this.id + '_detail_code_postal'] === undefined) {
-        isUpdateAddress = false
-      } else {
-        search = formStore.data[this.id + '_detail_code_postal'] + ' '
-      }
-
-      if (formStore.data[this.id + '_detail_commune'] === '' || formStore.data[this.id + '_detail_commune'] === undefined) {
-        isUpdateAddress = false
-      } else {
-        search += formStore.data[this.id + '_detail_commune']
-      }
-
-      if (isUpdateAddress) {
-        formStore.data[this.id] = formStore.data[this.id + '_detail_numero'] + ' ' + formStore.data[this.id + '_detail_code_postal'] + ' ' + formStore.data[this.id + '_detail_commune']
-        this.isTyping = true
-        clearTimeout(this.idFetchTimeout)
-        this.idFetchTimeout = setTimeout(() => {
-          this.isTyping = false
-          requests.validateAddress(search, this.handleUpdateInsee)
-        }, 700)
-      }
-    },
-    handleUpdateInsee (requestResponse: any) {
-      // Si le code postal / la commune ont été édités à la main, on valide l'ouverture du territoire
-      if (requestResponse.features !== undefined) {
-        const suggestions = requestResponse.features
-        if (suggestions[0] !== undefined) {
-          formStore.data[this.id + '_detail_commune'] = suggestions[0].properties.city
-          formStore.data[this.id + '_detail_insee'] = suggestions[0].properties.citycode
-          formStore.data[this.id + '_detail_geoloc_lng'] = suggestions[0].geometry.coordinates[0]
-          formStore.data[this.id + '_detail_geoloc_lat'] = suggestions[0].geometry.coordinates[1]
-          this.checkTerritory(
-            formStore.data[this.id + '_detail_code_postal'],
-            formStore.data[this.id + '_detail_insee']
-          )
-        }
-      }
+      formStore.data[this.id + '_detail_need_refresh_insee'] = true
     },
     handleClickButton (type:string, param:string, slugButton:string) {
       this.formStore.data[this.idShow] = 1
@@ -219,6 +168,7 @@ export default defineComponent({
     handleClickSuggestion (index: number) {
       this.isSearchSkipped = true
       if (this.suggestions) {
+        this.formStore.data[this.id + '_detail_need_refresh_insee'] = false
         this.formStore.data[this.idAddress] = this.suggestions[index].properties.label
         this.formStore.data[this.id] = this.suggestions[index].properties.label
         this.formStore.data[this.id + '_detail_numero'] = this.suggestions[index].properties.name
@@ -228,38 +178,14 @@ export default defineComponent({
         this.formStore.data[this.id + '_detail_geoloc_lng'] = this.suggestions[index].geometry.coordinates[0]
         this.formStore.data[this.id + '_detail_geoloc_lat'] = this.suggestions[index].geometry.coordinates[1]
         this.formStore.data[this.id + '_detail_manual'] = 0
-        if (this.isTerritoryToCheck) {
-          this.checkTerritory(
-            this.suggestions[index].properties.postcode,
-            this.suggestions[index].properties.citycode
-          )
-        }
         this.suggestions.length = 0
+        setTimeout(() => {
+          this.isSearchSkipped = false
+        }, 200)
       }
     },
     handleAddressFound (requestResponse: any) {
       this.suggestions = requestResponse.features
-    },
-    handleTerritoryChecked (requestResponse: any) {
-      // Si on a re-saisi du texte entre-temps, pas la peine de faire cette requête complémentaire
-      if (this.isTyping) {
-        return
-      }
-      if (!requestResponse.success) {
-        this.modalLabel = requestResponse.label
-        this.modalDescription = requestResponse.message
-        this.isModalOpen = true
-
-        this.formStore.data[this.id] = ''
-      }
-      this.isSearchSkipped = false
-    },
-    checkTerritory (postCode: any, cityCode: any) {
-      requests.checkTerritory(
-        postCode,
-        cityCode,
-        this.handleTerritoryChecked
-      )
     },
     getCodePostalFromQueryParam () {
       const queryString = window.location.search

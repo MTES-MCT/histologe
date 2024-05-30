@@ -36,7 +36,6 @@
         :multiple="component.multiple"
         :ariaControls="component.ariaControls"
         :tagWhenEdit="component.tagWhenEdit"
-        :isTerritoryToCheck="component.isTerritoryToCheck"
         v-model="formStore.data[component.slug]"
         :hasError="formStore.validationErrors[component.slug]  !== undefined"
         :error="formStore.validationErrors[component.slug]"
@@ -252,7 +251,7 @@ export default defineComponent({
       } else if (type === 'archive') {
         requests.archiveDraft(formStore.data.uuidSignalementDraft, this.gotoHomepage)
       } else if (type.includes('goto')) {
-        await this.showScreenBySlug(param, param2, type.includes('save'))
+        await this.showScreenBySlug(param, param2, type.includes('save'), type.includes('checkloc'))
       } else if (type.includes('resolve')) {
         this.navigateToDisorderScreen(param, param2, type.includes('save'))
       }
@@ -273,10 +272,10 @@ export default defineComponent({
         (componentToToggle as HTMLButtonElement).disabled = (isVisible !== '1')
       }
     },
-    async showScreenBySlug (slug: string, slugButton:string, isSaveAndCheck:boolean) {
+    async showScreenBySlug (slug: string, slugButton:string, isSaveAndCheck:boolean, isCheckLocation:boolean) {
       formStore.validationErrors = {}
 
-      if (isSaveAndCheck) {
+      if (isSaveAndCheck || isCheckLocation) {
         if (this.components && this.components.body) {
           this.validateComponents(this.components.body)
           if (Object.keys(formStore.validationErrors).length > 0) {
@@ -289,14 +288,14 @@ export default defineComponent({
       // Si pas d'erreur de validation, ou screen précédent (donc pas de validation), on change d'écran
       if (this.changeEvent !== undefined) {
         formStore.lastButtonClicked = slugButton
-        await this.changeEvent(slug, isSaveAndCheck)
+        await this.changeEvent(slug, isSaveAndCheck, isCheckLocation)
       }
     },
     async navigateToDisorderScreen (action: string, slugButton:string, isSaveAndCheck:boolean) {
       if (action === 'findNextScreen') {
         const index = formStore.data.currentStep.includes('batiment') ? this.currentDisorderIndex.batiment : this.currentDisorderIndex.logement
         const { currentCategory, incrementIndex, nextScreenSlug } = findNextScreen(formStore, index, slugButton)
-        await this.showScreenBySlug(nextScreenSlug, slugButton, isSaveAndCheck)
+        await this.showScreenBySlug(nextScreenSlug, slugButton, isSaveAndCheck, false)
         if (Object.keys(formStore.validationErrors).length === 0) {
           this.currentDisorderIndex[currentCategory] = incrementIndex
         }
@@ -305,7 +304,7 @@ export default defineComponent({
       if (action === 'findPreviousScreen') {
         const index = formStore.data.currentStep.includes('batiment') ? this.currentDisorderIndex.batiment : this.currentDisorderIndex.logement
         const { currentCategory, decrementIndex, previousScreenSlug } = findPreviousScreen(formStore, index)
-        await this.showScreenBySlug(previousScreenSlug, slugButton, isSaveAndCheck)
+        await this.showScreenBySlug(previousScreenSlug, slugButton, isSaveAndCheck, false)
 
         this.currentDisorderIndex[currentCategory] = decrementIndex < 0 ? 0 : decrementIndex
       }

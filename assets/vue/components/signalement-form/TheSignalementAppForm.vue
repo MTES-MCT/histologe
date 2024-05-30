@@ -50,6 +50,12 @@
               <button type="submit" class="hidden-submit">Submit</button>
             </form>
           </div>
+          <SignalementFormModal
+            v-model="isTerritoryModalOpen"
+            id="check_territory_modal"
+            :label="territoryModalLabel"
+            :description="territoryModalDescription"
+          />
         </div>
         <SignalementFormModalAlreadyExists
           :mailSentEvent="saveAndChangeScreenBySlug"
@@ -68,6 +74,7 @@ import * as Sentry from '@sentry/browser'
 import { profileUpdater } from './services/profileUpdater'
 import SignalementFormScreen from './components/SignalementFormScreen.vue'
 import SignalementFormBreadCrumbs from './components/SignalementFormBreadCrumbs.vue'
+import SignalementFormModal from './components/SignalementFormModal.vue'
 import SignalementFormModalAlreadyExists from './components/SignalementFormModalAlreadyExists.vue'
 const initElements:any = document.querySelector('#app-signalement-form')
 
@@ -76,6 +83,7 @@ export default defineComponent({
   components: {
     SignalementFormScreen,
     SignalementFormBreadCrumbs,
+    SignalementFormModal,
     SignalementFormModalAlreadyExists
   },
   data () {
@@ -87,7 +95,10 @@ export default defineComponent({
       isLoadingInit: true,
       formStore,
       dictionaryStore,
-      sharedProps: formStore.props
+      sharedProps: formStore.props,
+      isTerritoryModalOpen: false,
+      territoryModalLabel: '',
+      territoryModalDescription: ''
     }
   },
   created () {
@@ -147,13 +158,23 @@ export default defineComponent({
         }
       }
     },
-    saveAndChangeScreenBySlug (slug:string, isSaveAndCheck:boolean) {
+    saveAndChangeScreenBySlug (slug:string, isSaveAndCheck:boolean, isCheckLocation:boolean = false) {
       this.nextSlug = slug
       if (isSaveAndCheck) {
         if (formStore.data.uuidSignalementDraft === '') {
           requests.checkIfAlreadyExists(this.showDraftModalOrNot)
         } else {
           requests.saveSignalementDraft(this.changeScreenBySlug)
+        }
+      } else if (isCheckLocation) {
+        if (formStore.data.adresse_logement_adresse_detail_need_refresh_insee) {
+          const search = formStore.data.adresse_logement_adresse_detail_code_postal + ' ' + formStore.data.adresse_logement_adresse_detail_commune
+          requests.validateAddress(search, this.handleValidateAddress)
+        } else {
+          this.checkTerritory(
+            formStore.data.adresse_logement_adresse_detail_code_postal,
+            formStore.data.adresse_logement_adresse_detail_insee
+          )
         }
       } else {
         this.changeScreenBySlug(undefined)
@@ -191,6 +212,40 @@ export default defineComponent({
             (screen: any) => this.slugCommonProfil.includes(screen.slug)
           )
         }
+      }
+    },
+    handleValidateAddress (requestResponse: any) {
+      // Si le code postal / la commune ont été édités à la main, on valide l'ouverture du territoire
+      if (requestResponse.features !== undefined) {
+        const suggestions = requestResponse.features
+        if (suggestions[0] !== undefined) {
+          formStore.data.adresse_logement_adresse_detail_commune = suggestions[0].properties.city
+          formStore.data.adresse_logement_adresse_detail_insee = suggestions[0].properties.citycode
+          formStore.data.adresse_logement_adresse_detail_geoloc_lng = suggestions[0].geometry.coordinates[0]
+          formStore.data.adresse_logement_adresse_detail_geoloc_lat = suggestions[0].geometry.coordinates[1]
+
+          this.checkTerritory(
+            formStore.data.adresse_logement_adresse_detail_code_postal,
+            formStore.data.adresse_logement_adresse_detail_insee
+          )
+        }
+      }
+    },
+    checkTerritory (postCode: any, cityCode: any) {
+      requests.checkTerritory(
+        postCode,
+        cityCode,
+        this.handleTerritoryChecked
+      )
+    },
+    handleTerritoryChecked (requestResponse: any) {
+      formStore.lastButtonClicked = ''
+      if (requestResponse.success) {
+        this.changeScreenBySlug(undefined)
+      } else {
+        this.territoryModalLabel = requestResponse.label
+        this.territoryModalDescription = requestResponse.message
+        this.isTerritoryModalOpen = true
       }
     },
     changeScreenBySlug (requestResponse: any) {
