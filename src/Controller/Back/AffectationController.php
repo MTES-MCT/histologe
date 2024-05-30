@@ -143,16 +143,13 @@ class AffectationController extends AbstractController
                 );
             }
 
-            $this->addFlash('success', 'Affectation mise à jour avec succès !');
             if (Affectation::STATUS_REFUSED == $status) {
                 $this->dispatchAffectationAnsweredEvent($affectation, $response);
             }
             if ($dossierMessageFactory->supports($affectation)) {
                 $bus->dispatch($dossierMessageFactory->createInstance($affectation));
             }
-            if ($dossierMessageFactory->supports($affectation)) {
-                $bus->dispatch($dossierMessageFactory->createInstance($affectation));
-            }
+            $this->addFlash('success', 'Affectation mise à jour avec succès !');
         } else {
             $this->addFlash('error', "Une erreur est survenu lors de l'affectation");
         }

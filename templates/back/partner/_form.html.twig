@@ -1,176 +1,135 @@
-
-
 {{ form_start(form,{attr:{'class':'needs-validation','novalidate':true}}) }}
 
 <div class="fr-grid-row">
-    <div class="fr-col-6">
-        {{ form_row(form.territory,{}) }}
-    </div>
-<div class="fr-grid-row">
-    <div class="fr-col-6">
-        {{ form_row(form.territory,{}) }}
-    </div>
+	<div class="fr-col-6">
+		{{ form_row(form.territory,{}) }}
+	</div>
 </div>
 
 <div class="fr-grid-row fr-grid-row--gutters">
-    <div class="fr-col-6 fr-mt-5w">
-        <fieldset class="fr-fieldset" role="group" aria-labelledby="info-generale-fieldset-legend">
-            <legend class="fr-fieldset__legend fr-h3 fr-mb-0" id="info-generale-fieldset-legend">Informations générales</legend>
-            <div class="fr-fieldset__element">
-                <div class="fr-input-group">
-                    <label for="{{ form.nom.vars.id }}" class="fr-label">Nom du partenaire<sup class="fr-text-label--red-marianne">*</sup></label>
-
-<div class="fr-grid-row fr-grid-row--gutters">
-    <div class="fr-col-6 fr-mt-5w">
-        <fieldset class="fr-fieldset" role="group" aria-labelledby="info-generale-fieldset-legend">
-            <legend class="fr-fieldset__legend fr-h3 fr-mb-0" id="info-generale-fieldset-legend">Informations générales</legend>
-            <div class="fr-fieldset__element">
-                <div class="fr-input-group">
-                    <label for="{{ form.nom.vars.id }}" class="fr-label">Nom du partenaire<sup class="fr-text-label--red-marianne">*</sup></label>
-                    {{ form_widget(form.nom) }}
-                    <span class="fr-hint-text">Le nom du partenaire sera visible dans les signalements pour les autres partenaires</span>
-                    <p class="fr-error-text fr-hidden">
-                        Vous devez renseigner le nom du partenaire.
-                    </p>
-                </div>
-            </div>
-            <div class="fr-fieldset__element">
-                <div class="fr-input-group">
-            </div>
-            <div class="fr-fieldset__element">
-                <div class="fr-input-group">
-                    <label for="{{ form.insee.vars.id }}" class="fr-label">E-mail générique (facultatif)</label>
-                    {{ form_widget(form.email) }}
-                    <span class="fr-hint-text">Des e-mails concernant les signalements du partenaire seront envoyés à cette adresse.</span>
-                </div>
-            </div>
-            <div class="fr-fieldset__element">
-                <div class="fr-select-group">
-                    <label for="{{ form.type.vars.id }}" class="fr-label">Type de partenaire<sup class="fr-text-label--red-marianne">*</sup></label>
-            <div class="fr-fieldset__element">
-                <div class="fr-select-group">
-                    <label for="{{ form.type.vars.id }}" class="fr-label">Type de partenaire<sup class="fr-text-label--red-marianne">*</sup></label>
-                    {{ form_widget(form.type) }}
-                    <span class="fr-hint-text">Sélectionnez un type pour afficher les champs à remplir. Si vous ne trouvez pas de type de partenaire adapté, sélectionnez "Autre".</span>
-                    <p class="fr-error-text fr-hidden">
-                        Vous devez renseigner le type de partenaire.
-                    </p>
-                </div>
-            </div>
-            <div class="fr-fieldset__element">
-                <div class="fr-select-group">
-            </div>
-            <div class="fr-fieldset__element">
-                <div class="fr-select-group">
-                    <label for="{{ form.competence.vars.id }}" class="fr-label">Compétences (facultatif)</label>
-                    {{ form_widget(form.competence) }}
-                    <span class="fr-hint-text">Maintenez la touche CTRL enfoncée pour sélectionner plusieurs compétences.</span>
-                </div>
-            </div>
-        </fieldset>
-    </div>
-
-    <div class="fr-col-6 fr-mt-5w">
-        <fieldset class="fr-fieldset" role="group" aria-labelledby="perimetre-fieldset-legend">
-            <legend class="fr-fieldset__legend fr-h3 fr-mb-0" id="perimetre-fieldset-legend">Périmètre</legend>
-            <div class="fr-fieldset__element">
-                <div class="fr-input-group">
-                    <label for="{{ form.insee.vars.id }}" class="fr-label">Code(s) INSEE</label>
-                    {{ form_widget(form.insee) }}
-                    <span class="fr-hint-text">Renseignez le ou les codes INSEE, séparés par une virgule. Exemple: 67001, 67002, 67003.</span>
-                </div>
-                <div class="fr-input-group" id="partner_create_zone_pdl">
-                    <label for="{{ form.zones_pdl.vars.id }}" class="fr-label">Zones permis de louer (facultatif)</label>
-                    {{ form_widget(form.zones_pdl) }}
-                    <span class="fr-hint-text">Renseignez le ou les codes INSEE des communes concernées, séparées par une virgule. Exemple: 67001, 67002, 67003.</span>
-                </div>
-            </div>
-        </fieldset>
-
-    </div>
+	<div class="fr-col-6 fr-mt-5w">
+		<fieldset class="fr-fieldset" role="group" aria-labelledby="info-generale-fieldset-legend">
+			<legend class="fr-fieldset__legend fr-h3 fr-mb-0" id="info-generale-fieldset-legend">Informations générales</legend>
+			<div class="fr-fieldset__element">
+				<div class="fr-input-group">
+					<label for="{{ form.nom.vars.id }}" class="fr-label">Nom du partenaire<sup class="fr-text-label--red-marianne">*</sup>
+					</label>
+					{{ form_widget(form.nom) }}
+					<span class="fr-hint-text">Le nom du partenaire sera visible dans les signalements pour les autres partenaires</span>
+					<p class="fr-error-text fr-hidden">
+						Vous devez renseigner le nom du partenaire.
+					</p>
+				</div>
+			</div>
+			<div class="fr-fieldset__element">
+				<div class="fr-input-group">
+					<label for="{{ form.insee.vars.id }}" class="fr-label">E-mail générique (facultatif)</label>
+					{{ form_widget(form.email) }}
+					<span class="fr-hint-text">Des e-mails concernant les signalements du partenaire seront envoyés à cette adresse.</span>
+				</div>
+			</div>
+			<div class="fr-fieldset__element">
+				<div class="fr-select-group">
+					<label for="{{ form.type.vars.id }}" class="fr-label">Type de partenaire<sup class="fr-text-label--red-marianne">*</sup>
+					</label>
+					{{ form_widget(form.type) }}
+					<span class="fr-hint-text">Sélectionnez un type pour afficher les champs à remplir. Si vous ne trouvez pas de type de partenaire adapté, sélectionnez "Autre".</span>
+					<p class="fr-error-text fr-hidden">
+						Vous devez renseigner le type de partenaire.
+					</p>
+				</div>
+			</div>
+			<div class="fr-fieldset__element">
+				<div class="fr-select-group">
+					<label for="{{ form.competence.vars.id }}" class="fr-label">Compétences (facultatif)</label>
+					{{ form_widget(form.competence) }}
+					<span class="fr-hint-text">Maintenez la touche CTRL enfoncée pour sélectionner plusieurs compétences.</span>
+				</div>
+			</div>
+		</fieldset>
+	</div>
+	<div class="fr-col-6 fr-mt-5w">
+		<fieldset class="fr-fieldset" role="group" aria-labelledby="perimetre-fieldset-legend">
+			<legend class="fr-fieldset__legend fr-h3 fr-mb-0" id="perimetre-fieldset-legend">Périmètre</legend>
+			<div class="fr-fieldset__element">
+				<div class="fr-input-group">
+					<label for="{{ form.insee.vars.id }}" class="fr-label">Code(s) INSEE</label>
+					{{ form_widget(form.insee) }}
+					<span class="fr-hint-text">Renseignez le ou les codes INSEE, séparés par une virgule. Exemple: 67001, 67002, 67003.</span>
+				</div>
+				<div class="fr-input-group" id="partner_create_zone_pdl">
+					<label for="{{ form.zones_pdl.vars.id }}" class="fr-label">Zones permis de louer (facultatif)</label>
+					{{ form_widget(form.zones_pdl) }}
+					<span class="fr-hint-text">Renseignez le ou les codes INSEE des communes concernées, séparées par une virgule. Exemple: 67001, 67002, 67003.</span>
+				</div>
+			</div>
+		</fieldset>
+	</div>
 </div>
 
 <div class="fr-grid-row fr-grid-row--gutters">
-    {% if is_granted('ROLE_ADMIN') %}
-        <div class="fr-col-6 fr-mt-5w" id="partner_idoss">
-            <fieldset class="fr-fieldset " role="group" aria-labelledby="idoss-fieldset-legend">
-                <legend class="fr-fieldset__legend fr-h3 fr-mb-0 " id="idoss-fieldset-legend">Interfaçage iDoss</legend>
-                <div class="fr-fieldset__element">
-                    <div class="fr-toggle">
-                        {{ form_widget(form.isIdossActive) }}
-                        <label class="fr-toggle__label" for="{{ form.isIdossActive.vars.id }}" data-fr-checked-label="Activée" data-fr-unchecked-label="Désactivée">
-                            Synchronisation iDoss (facultatif)
-                        {{ form_widget(form.isIdossActive) }}
-                        <label class="fr-toggle__label" for="{{ form.isIdossActive.vars.id }}" data-fr-checked-label="Activée" data-fr-unchecked-label="Désactivée">
-                            Synchronisation iDoss (facultatif)
-                        </label>
-                    </div>
-                    </div>
-                </div>
-                <div class="fr-fieldset__element"> 
-                    <div class="fr-input-group">
-                        <label for="{{ form.idossUrl.vars.id }}" class="fr-label">URL Idoss (facultatif)</label>                        
-                        {{ form_widget(form.idossUrl) }}
-                    </div>
-                </div>    
-            </fieldset>
-        </div>
-    {% endif %}
-    <div class="fr-col-6 fr-mt-5w" id="partner_esabora">
-        <fieldset class="fr-fieldset " role="group" aria-labelledby="esabora-fieldset-legend">
-            <legend class="fr-fieldset__legend fr-h3 fr-mb-0 " id="esabora-fieldset-legend">Interfaçage Esabora</legend>
-            <div class="fr-fieldset__element">
-                <div class="fr-toggle">
-                    {{ form_widget(form.isEsaboraActive) }}
-                    <label class="fr-toggle__label" for="{{ form.isEsaboraActive.vars.id }}" data-fr-checked-label="Activée" data-fr-unchecked-label="Désactivée">
-                        Synchronisation Esabora (facultatif)
-                    </label>
-                </div>       
-            </div>
-            <div class="fr-fieldset__element"> 
-                <div class="fr-input-group">
-                    <label for="{{ form.esaboraUrl.vars.id }}" class="fr-label">URL Esabora (facultatif)</label>                        
-                    {{ form_widget(form.esaboraUrl) }}
-                </div>
-            </div>
-            <div class="fr-fieldset__element">
-                <div class="fr-input-group">
-            </div>
-            <div class="fr-fieldset__element">
-                <div class="fr-input-group">
-                    <label for="{{ form.esaboraToken.vars.id }}" class="fr-label">Token Esabora (facultatif)</label>                     
-                    {{ form_widget(form.esaboraToken) }}
-                </div>
-            </div>      
-        </fieldset>
-                </div>
-            </div>      
-        </fieldset>
-    </div>
+	{% if is_granted('ROLE_ADMIN') %}
+		<div class="fr-col-6 fr-mt-5w" id="partner_idoss">
+			<fieldset class="fr-fieldset " role="group" aria-labelledby="idoss-fieldset-legend">
+				<legend class="fr-fieldset__legend fr-h3 fr-mb-0 " id="idoss-fieldset-legend">Interfaçage iDoss</legend>
+				<div class="fr-fieldset__element">
+					<div class="fr-toggle">
+						{{ form_widget(form.isIdossActive) }}
+						<label class="fr-toggle__label" for="{{ form.isIdossActive.vars.id }}" data-fr-checked-label="Activée" data-fr-unchecked-label="Désactivée">
+							Synchronisation iDoss (facultatif)
+						</label>
+					</div>
+				</div>
+				<div class="fr-fieldset__element">
+					<div class="fr-input-group">
+						<label for="{{ form.idossUrl.vars.id }}" class="fr-label">URL Idoss (facultatif)</label>
+						{{ form_widget(form.idossUrl) }}
+					</div>
+				</div>
+			</fieldset>
+		</div>
+	{% endif %}
+	<div class="fr-col-6 fr-mt-5w" id="partner_esabora">
+		<fieldset class="fr-fieldset " role="group" aria-labelledby="esabora-fieldset-legend">
+			<legend class="fr-fieldset__legend fr-h3 fr-mb-0 " id="esabora-fieldset-legend">Interfaçage Esabora</legend>
+			<div class="fr-fieldset__element">
+				<div class="fr-toggle">
+					{{ form_widget(form.isEsaboraActive) }}
+					<label class="fr-toggle__label" for="{{ form.isEsaboraActive.vars.id }}" data-fr-checked-label="Activée" data-fr-unchecked-label="Désactivée">
+						Synchronisation Esabora (facultatif)
+					</label>
+				</div>
+			</div>
+			<div class="fr-fieldset__element">
+				<div class="fr-input-group">
+					<label for="{{ form.esaboraUrl.vars.id }}" class="fr-label">URL Esabora (facultatif)</label>
+					{{ form_widget(form.esaboraUrl) }}
+				</div>
+			</div>
+			<div class="fr-fieldset__element">
+				<div class="fr-input-group">
+					<label for="{{ form.esaboraToken.vars.id }}" class="fr-label">Token Esabora (facultatif)</label>
+					{{ form_widget(form.esaboraToken) }}
+				</div>
+			</div>
+		</fieldset>
+	</div>
 </div>
-
-
-
-</div>
-
-
 
 <div class="fr-grid-row">
-    <div class="fr-col-6">
-        {% if create %}
-            <a class="fr-btn fr-btn--danger fr-fi-close-line fr-btn--icon-left"
-            href="{{ path('back_partner_index') }}">Annuler</a>
-        {% else %}
-            <a class="fr-btn fr-btn--danger fr-fi-close-line fr-btn--icon-left"
-            href="{{ path('back_partner_view', {'id': partner.id}) }}">Annuler</a>
-        {% endif %}
-    </div>
-    <div class="fr-col-6 fr-text--right">
-        {% if create %}
-            <button class="fr-btn fr-btn--success fr-fi-check-line fr-btn--icon-left" id="submit_btn_partner">Créer le partenaire</button>
-        {% else %}
-            <button class="fr-btn fr-btn--success fr-fi-check-line fr-btn--icon-left" id="submit_btn_partner">Enregistrer</button>
-        {% endif %}
-    </div>
+	<div class="fr-col-6">
+		{% if create %}
+			<a class="fr-btn fr-btn--danger fr-fi-close-line fr-btn--icon-left" href="{{ path('back_partner_index') }}">Annuler</a>
+		{% else %}
+			<a class="fr-btn fr-btn--danger fr-fi-close-line fr-btn--icon-left" href="{{ path('back_partner_view', {'id': partner.id}) }}">Annuler</a>
+		{% endif %}
+	</div>
+	<div class="fr-col-6 fr-text--right">
+		{% if create %}
+			<button class="fr-btn fr-btn--success fr-fi-check-line fr-btn--icon-left" id="submit_btn_partner">Créer le partenaire</button>
+		{% else %}
+			<button class="fr-btn fr-btn--success fr-fi-check-line fr-btn--icon-left" id="submit_btn_partner">Enregistrer</button>
+		{% endif %}
+	</div>
 </div>
 {{ form_end(form) }}

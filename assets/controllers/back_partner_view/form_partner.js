@@ -23,8 +23,6 @@ function histoUpdateFieldsVisibility() {
   }
   if (showEsabora) {
     document.querySelector('#partner_esabora').classList.remove('fr-hidden')
-  if (showEsabora) {
-    document.querySelector('#partner_esabora').classList.remove('fr-hidden')
   } else {
     document.querySelector('#partner_esabora').classList.add('fr-hidden')
   }
@@ -106,7 +104,7 @@ document.querySelectorAll('.btn-edit-partner-user').forEach(swbtn => {
 
 if (document.querySelector('#partner_type')) {
   histoUpdateFieldsVisibility()
-  document.querySelector('#partner_type').addEventListener('change', (event) => {
+  document.querySelector('#partner_type').addEventListener('change', () => {
     histoUpdateFieldsVisibility()
-  });
+  })
 }
