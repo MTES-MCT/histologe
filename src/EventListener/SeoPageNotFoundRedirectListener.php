@@ -11,10 +11,11 @@ class SeoPageNotFoundRedirectListener
 {
     public const SEO_URL_MAPPING = [
         '/Home' => 'home',
-        '/Aide' => 'front_about',
+        '/Aide' => 'front_aides_travaux',
         '/Territoires' => 'front_about',
         '/Contact' => 'front_contact',
         '/Statistiques' => 'front_statistiques',
+        '/statistiques' => 'front_statistiques',
         '/Chiffres' => 'front_statistiques',
         '/CGU' => 'front_cgu',
     ];

@@ -35,7 +35,7 @@ class StatistiquesController extends AbstractController
     ) {
     }
 
-    #[Route('/statistiques', name: 'front_statistiques')]
+    #[Route('/stats', name: 'front_statistiques')]
     public function statistiques(): Response
     {
         return $this->render('front/statistiques.html.twig');
