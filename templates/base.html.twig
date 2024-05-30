@@ -176,7 +176,7 @@
                             type: 'menuitem',
                             text: '{{ doc.title }}',
                             onAction: function () {
-                                editor.insertContent('&nbsp;<a href="{{ asset('_up/'~doc.filename) }}?t=___TOKEN___" class="fr-btn fr-fi-eye-fill fr-btn--icon-left" title="Afficher le document" target="_blank">Consulter "{{ doc.title }}"</a>');
+                                editor.insertContent('&nbsp;<a href="{{ asset('_up/'~doc.filename) }}?t=___TOKEN___" class="fr-btn fr-fi-eye-fill fr-btn--icon-left" title="Afficher le document" target="_blank" rel="noopener">Consulter "{{ doc.title }}"</a>');
                             }
                         },
                         {% endfor %}
@@ -189,7 +189,7 @@
                                     type: 'menuitem',
                                     text: "{{ doc.title|raw }}",
                                     onAction: function () {
-                                        editor.insertContent('&nbsp;<a href="{{ asset(files.path~doc.file) }}" class="fr-link" title="Afficher le document" target="_blank">Consulter "{{ doc.title }}"</a></br>');
+                                        editor.insertContent('&nbsp;<a href="{{ asset(files.path~doc.file) }}" class="fr-link" title="Afficher le document" target="_blank" rel="noopener">Consulter "{{ doc.title }}"</a></br>');
                                     }
                                 })     
                             {% endif %}   
