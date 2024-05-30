@@ -5,9 +5,12 @@ document.querySelectorAll('[data-fr-adresse-autocomplete]').forEach((inputAdress
     attacheAutocompleteAddressEvent(inputAdresse)
 })
 
-document.querySelector('#form-edit-address-adresse')?.addEventListener('input', (event) => addressResetGeoloc(event.target, false));
-document.querySelector('#form-edit-address-codepostal')?.addEventListener('input', (event) => addressResetGeoloc(event.target, true));
-document.querySelector('#form-edit-address-ville')?.addEventListener('input', (event) => addressResetGeoloc(event.target, true));
+document.querySelector('#form-edit-address-adresse')?.addEventListener('input', (event) => {
+    let idForm = event.target.closest('form').id
+    document.querySelector('#' + idForm + ' [data-autocomplete-manual]').value = 1
+});
+document.querySelector('#form-edit-address-codepostal')?.addEventListener('input', (event) => addressResetGeoloc(event.target));
+document.querySelector('#form-edit-address-ville')?.addEventListener('input', (event) => addressResetGeoloc(event.target));
 
 function attachAutocompleteClickOutsideEvent() {
     document.addEventListener('click', function (event) {
@@ -92,6 +95,9 @@ function attachAddressSuggestionEvent(inputAdresse, suggestion, feature) {
         if (document?.querySelector('#' + idForm + ' [data-autocomplete-ville]')) {
             document.querySelector('#' + idForm + ' [data-autocomplete-ville]').value = feature.properties.city
         }
+        if (document?.querySelector('#' + idForm + ' [data-autocomplete-manual]')) {
+            document.querySelector('#' + idForm + ' [data-autocomplete-manual]').value = 0
+        }
         if (document?.querySelector('#' + idForm + ' [data-autocomplete-insee]')) {
             document.querySelector('#' + idForm + ' [data-autocomplete-insee]').value = feature.properties.citycode
         }
@@ -107,36 +113,28 @@ function attachAddressSuggestionEvent(inputAdresse, suggestion, feature) {
 }
 
 var idTimeout
-function addressResetGeoloc(input, isResetInsee) {
-    clearTimeout(idTimeout);
+function addressResetGeoloc(input) {
+    clearTimeout(idTimeout)
     idTimeout = setTimeout(() => {
+        const apiAdresse = 'https://api-adresse.data.gouv.fr/search/?q='
+        let newCodePostal = document.querySelector('#form-edit-address-codepostal')?.value
+        let newVille = document.querySelector('#form-edit-address-ville')?.value
         let idForm = input.closest('form').id
-        if (document?.querySelector('#' + idForm + ' [data-autocomplete-geoloclng]')) {
-            document.querySelector('#' + idForm + ' [data-autocomplete-geoloclng]').value = ''
-        }
-        if (document?.querySelector('#' + idForm + ' [data-autocomplete-geoloclat]')) {
-            document.querySelector('#' + idForm + ' [data-autocomplete-geoloclat]').value = ''
-        }
-    
-        if (isResetInsee) {
-            const apiAdresse = 'https://api-adresse.data.gouv.fr/search/?q='
-            let newCodePostal = document.querySelector('#form-edit-address-codepostal')?.value;
-            let newVille = document.querySelector('#form-edit-address-ville')?.value;
-            if (newCodePostal !== '' && newVille !== '') {
-                let query = apiAdresse + newCodePostal + ' ' + newVille
-                fetch(query)
-                    .then(response => response.json())
-                    .then(json => {
-                        json.features.forEach((feature) => {
-                            if (feature.properties.citycode) {
-                                document.querySelector('#' + idForm + ' [data-autocomplete-ville]').value = feature.properties.city
-                                document.querySelector('#' + idForm + ' [data-autocomplete-insee]').value = feature.properties.citycode
-                                document.querySelector('#' + idForm + ' [data-autocomplete-geoloclng]').value = feature.geometry.coordinates[0]
-                                document.querySelector('#' + idForm + ' [data-autocomplete-geoloclat]').value = feature.geometry.coordinates[1]
-                            }
-                        })
+        if (newCodePostal !== '' && newVille !== '') {
+            let query = apiAdresse + newCodePostal + ' ' + newVille
+            fetch(query)
+                .then(response => response.json())
+                .then(json => {
+                    json.features.forEach((feature) => {
+                        if (feature.properties.citycode) {
+                            document.querySelector('#' + idForm + ' [data-autocomplete-ville]').value = feature.properties.city
+                            document.querySelector('#' + idForm + ' [data-autocomplete-manual]').value = 1
+                            document.querySelector('#' + idForm + ' [data-autocomplete-insee]').value = feature.properties.citycode
+                            document.querySelector('#' + idForm + ' [data-autocomplete-geoloclng]').value = feature.geometry.coordinates[0]
+                            document.querySelector('#' + idForm + ' [data-autocomplete-geoloclat]').value = feature.geometry.coordinates[1]
+                        }
                     })
-            }
+                })
         }
     }, 1000)
 }
