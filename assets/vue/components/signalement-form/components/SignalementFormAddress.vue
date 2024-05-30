@@ -181,12 +181,13 @@ export default defineComponent({
       }
 
       if (isUpdateAddress) {
+        formStore.data[this.id] = formStore.data[this.id + '_detail_numero'] + ' ' + formStore.data[this.id + '_detail_code_postal'] + ' ' + formStore.data[this.id + '_detail_commune']
         this.isTyping = true
         clearTimeout(this.idFetchTimeout)
         this.idFetchTimeout = setTimeout(() => {
           this.isTyping = false
           requests.validateAddress(search, this.handleUpdateInsee)
-        }, 300)
+        }, 700)
       }
     },
     handleUpdateInsee (requestResponse: any) {
