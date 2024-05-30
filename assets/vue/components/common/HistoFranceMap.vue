@@ -1,6 +1,6 @@
 <template>
   <div class="histo-france-map">
-    <h3>Répartition des signalements par département</h3>
+    <h2>Répartition des signalements par département</h2>
 
     <div class="fr-container--fluid fr-my-10v">
       <div class="fr-grid-row fr-grid-row--gutters">
