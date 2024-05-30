@@ -129,11 +129,14 @@ function addressResetGeoloc(input, isResetInsee) {
                     .then(json => {
                         json.features.forEach((feature) => {
                             if (feature.properties.citycode) {
+                                document.querySelector('#' + idForm + ' [data-autocomplete-ville]').value = feature.properties.city
                                 document.querySelector('#' + idForm + ' [data-autocomplete-insee]').value = feature.properties.citycode
+                                document.querySelector('#' + idForm + ' [data-autocomplete-geoloclng]').value = feature.geometry.coordinates[0]
+                                document.querySelector('#' + idForm + ' [data-autocomplete-geoloclat]').value = feature.geometry.coordinates[1]
                             }
                         })
                     })
             }
         }
-    }, 200)
+    }, 1000)
 }
