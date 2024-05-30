@@ -38,6 +38,9 @@ class UserVoter extends Voter
         if (!$user instanceof UserInterface) {
             return false;
         }
+        if ($subject->getAnonymizedAt()) {
+            return false;
+        }
         if ($this->security->isGranted('ROLE_ADMIN')) {
             return true;
         }

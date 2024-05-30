@@ -60,9 +60,9 @@ class UserTest extends KernelTestCase
         $user->setStatut(User::STATUS_ARCHIVE);
         $user->anonymize();
         $this->assertNotNull($user->getAnonymizedAt());
-        $this->assertEquals('Utilisateur', $user->getPrenom());
-        $this->assertEquals('Anonymisé', $user->getNom());
-        $this->assertStringStartsWith('anonyme@', $user->getEmail());
+        $this->assertEquals(user::ANONYMIZED_PRENOM, $user->getPrenom());
+        $this->assertEquals(User::ANONYMIZED_NOM, $user->getNom());
+        $this->assertStringStartsWith(User::ANONYMIZED_MAIL, $user->getEmail());
 
         $tmp = $user->getAnonymizedAt();
         $user->anonymize();

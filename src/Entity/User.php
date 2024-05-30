@@ -40,6 +40,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public const ROLE_ADMIN = self::ROLES['Super Admin'];
 
     public const SUFFIXE_ARCHIVED = '.archived@';
+    public const ANONYMIZED_MAIL = 'anonyme@';
+    public const ANONYMIZED_PRENOM = 'Utilisateur';
+    public const ANONYMIZED_NOM = 'Anonymisé';
 
     public const ROLES = [
         'Usager' => 'ROLE_USAGER',
@@ -559,9 +562,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function anonymize(): static
     {
         if (self::STATUS_ARCHIVE === $this->getStatut() && null === $this->anonymizedAt) {
-            $this->setEmail('anonyme@'.date('YmdHis').'.'.uniqid());
-            $this->setPrenom('Utilisateur');
-            $this->setNom('Anonymisé');
+            $this->setEmail(self::ANONYMIZED_MAIL.date('YmdHis').'.'.uniqid());
+            $this->setPrenom(self::ANONYMIZED_PRENOM);
+            $this->setNom(self::ANONYMIZED_NOM);
             $this->anonymizedAt = new \DateTimeImmutable();
         }
 
