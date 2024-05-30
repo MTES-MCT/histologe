@@ -39,7 +39,7 @@
     "label": "Adresse et coordonnées",
     "slug": "adresse_logement_intro",
     "screenCategory": "Adresse et coordonnées",
-    "description": "<p>Les infos utiles pour cette partie :<br>- L'adresse du logement<br>- Les coordonnées du foyer occupant le logement<br>- Les coordonnées du bailleur (propriétaire) du logement</p><p><b>Toutes les questions sont obligatoires, sauf mention contraire.</b></p>",
+    "description": "<p>Les infos utiles pour cette partie :<ul><li>L'adresse du logement</li><li>Les coordonnées du foyer occupant le logement</li><li>Les coordonnées du bailleur (propriétaire) du logement</li></ul><b>Toutes les questions sont obligatoires, sauf mention contraire.</b></p>",
     "icon": {
       "src": "/img/form/screens/adresse_coordonnees-colors.svg",
       "alt": ""
