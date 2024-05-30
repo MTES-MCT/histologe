@@ -195,7 +195,10 @@ export default defineComponent({
       if (requestResponse.features !== undefined) {
         const suggestions = requestResponse.features
         if (suggestions[0] !== undefined) {
+          formStore.data[this.id + '_detail_commune'] = suggestions[0].properties.city
           formStore.data[this.id + '_detail_insee'] = suggestions[0].properties.citycode
+          formStore.data[this.id + '_detail_geoloc_lng'] = suggestions[0].geometry.coordinates[0]
+          formStore.data[this.id + '_detail_geoloc_lat'] = suggestions[0].geometry.coordinates[1]
           this.checkTerritory(
             formStore.data[this.id + '_detail_code_postal'],
             formStore.data[this.id + '_detail_insee']
