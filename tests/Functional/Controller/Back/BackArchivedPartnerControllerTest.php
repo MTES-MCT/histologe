@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Tests\Functional\Controller;
+namespace App\Tests\Functional\Controller\Back;
 
 use App\Repository\TerritoryRepository;
 use App\Repository\UserRepository;

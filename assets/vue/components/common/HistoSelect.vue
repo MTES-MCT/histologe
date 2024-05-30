@@ -7,6 +7,7 @@
       :value="modelValue"
       @change="onSelectedEvent"
       >
+      <option v-if="placeholder" value="" selected disabled hidden>{{ placeholder }}</option>
       <option v-for="item in displayedItems" :value="item.Id" :key="item.Id">{{ item.Text }}</option>
     </select>
   </span>
@@ -26,7 +27,8 @@ export default defineComponent({
     optionItems: {
       type: Array as () => Array<HistoInterfaceSelectOption>,
       default: () => []
-    }
+    },
+    placeholder: { type: String, default: '' }
   },
   data: function () {
     return {

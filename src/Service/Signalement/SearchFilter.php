@@ -411,15 +411,11 @@ class SearchFilter
 
             $qb->andWhere($queryVisites);
         }
+
         if (!empty($filters['enfantsM6'])) {
-            if (\in_array('non_renseigne', $filters['enfantsM6'])) {
-                $qb->andWhere('s.nbEnfantsM6 IS NULL OR s.nbEnfantsM6 LIKE \'\'');
-            } elseif (\in_array(0, $filters['enfantsM6'])) {
-                $qb->andWhere('s.nbEnfantsM6 = 0');
-            } elseif (\in_array(1, $filters['enfantsM6'])) {
-                $qb->andWhere('s.nbEnfantsM6 > 0');
-            }
+            $qb = $this->addFilterEnfantM6($qb, $filters['enfantsM6']);
         }
+
         if (!empty($filters['avant1949'])) {
             $qb->andWhere('s.isConstructionAvant1949 IN (:avant1949)')
                 ->setParameter('avant1949', $filters['avant1949']);
@@ -517,6 +513,10 @@ class SearchFilter
             $qb = $this->addFilterStatusAffectation($qb, $filters['statusAffectation']);
         }
 
+        if (!empty($filters['isImported'])) {
+            $qb = $this->addFilterImported($qb);
+        }
+
         return $qb;
     }
 
@@ -571,12 +571,12 @@ class SearchFilter
                 ->andWhere('s.lastSuiviBy IN (:typeDernierSuivi)')
                 ->setParameter('typeDernierSuivi', $values);
         } elseif ('usager' === $typeDernierSuivi) {
-            $values = ['DECLARANT', 'OCCUPANT'];
+            $values = ['DECLARANT', 'OCCUPANT', 'Aucun'];
             $qb
                 ->andWhere('s.lastSuiviBy IN (:typeDernierSuivi)')
                 ->setParameter('typeDernierSuivi', $values);
         } else {
-            $values = ['DECLARANT', 'OCCUPANT', 'Administrateurs Histologe ALL', 'MESSAGE AUTOMATIQUE'];
+            $values = ['DECLARANT', 'OCCUPANT', 'Aucun', 'Administrateurs Histologe ALL', 'MESSAGE AUTOMATIQUE'];
             $qb
                 ->andWhere('s.lastSuiviBy NOT IN (:typeDernierSuivi)')
                 ->setParameter('typeDernierSuivi', $values);
@@ -633,6 +633,60 @@ class SearchFilter
             $endDate = new \DateTime($dates['off']);
             $endDate->add(new \DateInterval('P1D'));
             $qb->andWhere($columnDbField.' <= :date_off')->setParameter('date_off', $endDate->format('Y-m-d'));
+        }
+
+        return $qb;
+    }
+
+    private function addFilterImported(QueryBuilder $qb): QueryBuilder
+    {
+        $qb->andWhere('s.isImported = true');
+
+        return $qb;
+    }
+
+    private function addFilterEnfantM6(QueryBuilder $qb, array $enfantM6): QueryBuilder
+    {
+        if (\in_array('non_renseigne', $enfantM6)) {
+            $qb->andWhere(
+                $qb->expr()->andX(
+                    $qb->expr()->orX(
+                        $qb->expr()->isNull('s.nbEnfantsM6'),
+                        $qb->expr()->like('s.nbEnfantsM6', $qb->expr()->literal(''))
+                    ),
+                    $qb->expr()->orX(
+                        $qb->expr()->isNull(
+                            'JSON_EXTRACT(s.typeCompositionLogement, \'$.composition_logement_enfants\')'
+                        ),
+                        $qb->expr()->like(
+                            'JSON_EXTRACT(s.typeCompositionLogement, \'$.composition_logement_enfants\')',
+                            $qb->expr()->literal('')
+                        )
+                    )
+                )
+            );
+        } elseif (\in_array(0, $enfantM6)) {
+            $qb->andWhere(
+                $qb->expr()->orX(
+                    $qb->expr()->eq('s.nbEnfantsM6', 0),
+                    $qb->expr()->eq(
+                        'JSON_EXTRACT(s.typeCompositionLogement,
+                            \'$.composition_logement_enfants\')',
+                        ':non')
+                )
+            );
+            $qb->setParameter('non', 'non');
+        } elseif (\in_array(1, $enfantM6)) {
+            $qb->andWhere(
+                $qb->expr()->orX(
+                    $qb->expr()->gt('s.nbEnfantsM6', 0),
+                    $qb->expr()->eq(
+                        'JSON_EXTRACT(s.typeCompositionLogement,
+                            \'$.composition_logement_enfants\')',
+                        ':oui')
+                )
+            );
+            $qb->setParameter('oui', 'oui');
         }
 
         return $qb;

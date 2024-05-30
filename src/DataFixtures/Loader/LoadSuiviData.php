@@ -2,12 +2,14 @@
 
 namespace App\DataFixtures\Loader;
 
+use App\Entity\Signalement;
 use App\Entity\Suivi;
 use App\Repository\SignalementRepository;
 use App\Repository\UserRepository;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Common\DataFixtures\OrderedFixtureInterface;
 use Doctrine\Persistence\ObjectManager;
+use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Symfony\Component\Yaml\Yaml;
 
 class LoadSuiviData extends Fixture implements OrderedFixtureInterface
@@ -15,11 +17,33 @@ class LoadSuiviData extends Fixture implements OrderedFixtureInterface
     public function __construct(
         private SignalementRepository $signalementRepository,
         private UserRepository $userRepository,
+        private ParameterBagInterface $parameterBag
     ) {
     }
 
     public function load(ObjectManager $manager): void
     {
+        $signalements = $this->signalementRepository->findBy(['statut' => [
+            Signalement::STATUS_ACTIVE,
+            Signalement::STATUS_NEED_PARTNER_RESPONSE,
+            Signalement::STATUS_CLOSED,
+        ]]);
+
+        foreach ($signalements as $signalement) {
+            $suivi = (new Suivi())
+                ->setSignalement($signalement)
+                ->setType(Suivi::TYPE_AUTO)
+                ->setDescription(Suivi::DESCRIPTION_SIGNALEMENT_VALIDE)
+                ->setIsPublic(true)
+                ->setCreatedBy($this->userRepository->findOneBy(
+                    ['email' => $this->parameterBag->get('user_system_email')]
+                ))
+                ->setCreatedAt($signalement->getCreatedAt());
+
+            $manager->persist($suivi);
+        }
+        $manager->flush();
+
         $suiviRows = Yaml::parseFile(__DIR__.'/../Files/Suivi.yml');
         foreach ($suiviRows['suivis'] as $row) {
             $this->loadSuivi($manager, $row);

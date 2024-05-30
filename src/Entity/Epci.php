@@ -7,6 +7,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\ORM\Mapping\UniqueConstraint;
+use Symfony\Component\Serializer\Attribute\Ignore;
 
 #[ORM\Entity(repositoryClass: EpciRepository::class)]
 #[UniqueConstraint(name: 'code_unique', columns: ['code'])]
@@ -15,6 +16,7 @@ class Epci
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
+    #[Ignore]
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
@@ -24,6 +26,7 @@ class Epci
     private ?string $nom = null;
 
     #[ORM\OneToMany(mappedBy: 'epci', targetEntity: Commune::class)]
+    #[Ignore]
     private Collection $communes;
 
     public function __construct()

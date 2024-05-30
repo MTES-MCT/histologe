@@ -103,7 +103,7 @@ class SignalementRepository extends ServiceEntityRepository
             ->getSingleScalarResult();
     }
 
-    public function countImported(): int
+    public function countImported(?Territory $territory = null): int
     {
         $qb = $this->createQueryBuilder('s');
         $qb->select('COUNT(s.id)');
@@ -111,8 +111,11 @@ class SignalementRepository extends ServiceEntityRepository
             ->setParameter('statutArchived', Signalement::STATUS_ARCHIVED);
         $qb->andWhere('s.isImported = 1');
 
-        return $qb->getQuery()
-            ->getSingleScalarResult();
+        if (null !== $territory) {
+            $qb->andWhere('s.territory = :territory')->setParameter('territory', $territory);
+        }
+
+        return $qb->getQuery()->getSingleScalarResult();
     }
 
     public function countByStatus(?Territory $territory, ?Partner $partner, ?int $year = null, bool $removeImported = false, Qualification $qualification = null, array $qualificationStatuses = null): array
@@ -434,6 +437,7 @@ class SignalementRepository extends ServiceEntityRepository
             s.villeOccupant,
             s.lastSuiviAt,
             s.lastSuiviBy,
+            s.lastSuiviIsPublic,
             s.profileDeclarant,
             GROUP_CONCAT(DISTINCT CONCAT(p.nom, :concat_separator, a.statut) SEPARATOR :group_concat_separator) as rawAffectations,
             GROUP_CONCAT(DISTINCT p.nom SEPARATOR :group_concat_separator) as affectationPartnerName,
@@ -580,10 +584,24 @@ class SignalementRepository extends ServiceEntityRepository
 
     public function findCities(User|null $user = null, Territory|null $territory = null): array|int|string
     {
+        return $this->findCommunes($user, $territory, 's.villeOccupant', 'city');
+    }
+
+    public function findZipcodes(User|null $user = null, Territory|null $territory = null): array|int|string
+    {
+        return $this->findCommunes($user, $territory, 's.cpOccupant', 'zipcode');
+    }
+
+    public function findCommunes(
+        ?User $user = null,
+        ?Territory $territory = null,
+        ?string $field = null,
+        ?string $alias = null
+    ): array|int|string {
         $user = $user?->isUserPartner() || $user?->isPartnerAdmin() ? $user : null;
 
         $qb = $this->createQueryBuilder('s')
-            ->select('s.villeOccupant city')
+            ->select($field.' '.$alias)
             ->where('s.statut != :status')
             ->setParameter('status', Signalement::STATUS_ARCHIVED);
         if ($user) {
@@ -598,8 +616,8 @@ class SignalementRepository extends ServiceEntityRepository
         }
 
         return $qb
-            ->groupBy('s.villeOccupant')
-            ->orderBy('s.villeOccupant', 'ASC')
+            ->groupBy($field)
+            ->orderBy($field, 'ASC')
             ->getQuery()
             ->getResult();
     }

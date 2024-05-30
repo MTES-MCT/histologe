@@ -3,33 +3,33 @@
 namespace App\Controller\Back;
 
 use App\Entity\User;
+use App\Factory\WidgetSettingsFactory;
 use App\Repository\TerritoryRepository;
-use App\Security\Voter\UserVoter;
-use App\Service\DashboardWidget\WidgetSettings;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Bundle\SecurityBundle\Security;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Attribute\MapQueryParameter;
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Component\Serializer\SerializerInterface;
 
 #[Route('/bo')]
 class WidgetSettingsController extends AbstractController
 {
     #[Route('/widget-settings', name: 'back_widget_settings')]
     public function index(
+        WidgetSettingsFactory $widgetSettingsFactory,
         TerritoryRepository $territoryRepository,
-        SerializerInterface $serializer,
         Security $security,
-    ): Response {
-        $territories = $territoryRepository->findBy(['isActive' => 1]);
+        #[MapQueryParameter] ?int $territoryId = null,
+    ): JsonResponse {
         /** @var User $user */
         $user = $this->getUser();
-        $canSeeNDE = $security->isGranted(UserVoter::SEE_NDE, $user);
+        $territory = ($security->isGranted('ROLE_ADMIN') && null !== $territoryId)
+            ? $territoryRepository->find($territoryId)
+            : $user->getTerritory();
 
-        $widgetSettings = $serializer->serialize(new WidgetSettings($user, $territories, $canSeeNDE), 'json');
-
-        return new Response(
-            $widgetSettings,
+        return $this->json(
+            $widgetSettingsFactory->createInstanceFrom($user, $territory),
             Response::HTTP_OK,
             ['content-type' => 'application/json']
         );

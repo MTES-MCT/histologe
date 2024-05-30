@@ -49,7 +49,7 @@ enum SignalementStatus: int
     {
         return match ($label) {
             'nouveau' => SignalementStatus::NEED_VALIDATION->value,
-            'en cours' => SignalementStatus::ACTIVE->value,
+            'en_cours' => SignalementStatus::ACTIVE->value,
             'ferme' => SignalementStatus::CLOSED->value,
             'refuse' => SignalementStatus::REFUSED->value,
         };

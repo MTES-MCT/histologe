@@ -243,25 +243,26 @@ class SignalementListControllerTest extends WebTestCase
         yield 'Search by Parc public' => [['natureParc' => 'public'], 5];
         yield 'Search by Parc public/prive non renseigné' => [['natureParc' => 'non_renseigne'], 1];
         yield 'Search by Enfant moins de 6ans (non)' => [['enfantsM6' => 'non'], 1];
-        yield 'Search by Enfant moins de 6ans (oui)' => [['enfantsM6' => 'oui'], 40];
-        yield 'Search by Enfant moins de 6ans (non_renseignee)' => [['enfantsM6' => 'non_renseigne'], 3];
+        yield 'Search by Enfant moins de 6ans (oui)' => [['enfantsM6' => 'oui'], 44];
+        yield 'Search by Enfant moins de 6ans (non_renseignee)' => [['enfantsM6' => 'non_renseigne'], 0];
         yield 'Search by Date de depot' => [['dateDepotDebut' => '2023-03-08', 'dateDepotFin' => '2023-03-16'], 2];
-        yield 'Search by Prcedure estimé' => [['procedure' => 'rsd'], 3];
+        yield 'Search by Prcedure estimé' => [['procedure' => 'rsd'], 4];
         yield 'Search by Partenaires affectés' => [['partenaires' => ['5']], 2];
         yield 'Search by Statut de la visite' => [['visiteStatus' => 'Planifiée'], 5];
-        yield 'Search by Type de dernier suivi' => [['typeDernierSuivi' => 'automatique'], 16];
+        yield 'Search by Type de dernier suivi' => [['typeDernierSuivi' => 'automatique'], 32];
         yield 'Search by Date de dernier suivi' => [['dateDernierSuiviDebut' => '2023-04-01', 'dateDernierSuiviFin' => '2023-04-18'], 3];
         yield 'Search by Statut de l\'affectation' => [['statusAffectation' => 'refuse'], 1];
         yield 'Search by Score criticite' => [['criticiteScoreMin' => 5, 'criticiteScoreMax' => 6], 9];
-        yield 'Search by Declarant' => [['typeDeclarant' => 'locataire'], 39];
+        yield 'Search by Declarant' => [['typeDeclarant' => 'locataire'], 40];
         yield 'Search by Nature du parc' => [['natureParc' => 'public'], 5];
         yield 'Search by Allocataire CAF' => [['allocataire' => 'caf'], 13];
         yield 'Search by Allocataire MSA' => [['allocataire' => 'msa'], 1];
         yield 'Search by Allocataire Oui (CAF+MSA+1)' => [['allocataire' => 'oui'], 14];
-        yield 'Search by Allocataire Non (null+empty)' => [['allocataire' => 'non'], 3];
-        yield 'Search by Situation Bail en cours' => [['situation' => 'bail_en_cours'], 3];
+        yield 'Search by Allocataire Non (null+empty)' => [['allocataire' => 'non'], 4];
+        yield 'Search by Situation Bail en cours' => [['situation' => 'bail_en_cours'], 4];
         yield 'Search by Situation Prévis de départ' => [['situation' => 'preavis_de_depart'], 1];
         yield 'Search by Situation Attente de relogement' => [['situation' => 'attente_relogement'], 2];
+        yield 'Search by Signalement Imported' => [['isImported' => 'oui'], 6];
     }
 
     /**

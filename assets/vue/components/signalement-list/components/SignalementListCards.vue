@@ -39,8 +39,8 @@
                 </p>
                 <p v-if="item.lastSuiviBy !== null">
                   <span class="fr-icon-discuss-line" aria-hidden="true"></span>
-                  Dernier suivi par {{ item.lastSuiviBy}} le {{ formatDate(item.lastSuiviAt) }}
-                  <span :class="getBadgeSuivi(item.lastSuiviBy)">{{ getSuiviLabel(item.lastSuiviBy) }}</span>
+                  Dernier suivi par {{ getSuiviLabel(item.lastSuiviBy) }} le {{ formatDate(item.lastSuiviAt) }}
+                  <span :class="getBadgeSuivi(item.lastSuiviBy)">{{ getSuiviVisibility(item.lastSuiviIsPublic) }}</span>
                 </p>
                 <p v-else>
                   <span class="fr-icon-discuss-line" aria-hidden="true"></span> Aucun suivi effectué
@@ -74,11 +74,11 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue'
-import { SignalementItem } from './interfaces/signalementItem'
-import { store } from './store'
+import { SignalementItem } from '../interfaces/signalementItem'
+import { store } from '../store'
 
 export default defineComponent({
-  name: 'TheHistoSignalementListCards',
+  name: 'SignalementListCards',
   props: {
     list: {
       type: Object
@@ -172,18 +172,21 @@ export default defineComponent({
     getBadgeSuivi (label: string): string {
       let className = 'fr-badge fr-badge--sm fr-badge--no-icon'
 
-      if (label === 'OCCUPANT' || label === 'DECLARANT') {
+      if (label === 'OCCUPANT' || label === 'DECLARANT' || label === 'Aucun') {
         className += ' fr-badge--warning'
       }
 
       return className
     },
     getSuiviLabel (label: string): string {
-      let suiviLabel = 'Suivi interne'
-      if (label === 'OCCUPANT' || label === 'DECLARANT') {
-        suiviLabel = 'Suivi ' + label
+      let suiviLabel = label
+      if (label === 'Aucun') {
+        suiviLabel = 'occupant ou déclarant'
       }
       return suiviLabel
+    },
+    getSuiviVisibility (label: boolean): string {
+      return label ? 'Visible par l\'usager' : 'Suivi interne'
     },
     deleteSignalementItem (item: SignalementItem) {
       const confirmation = confirm('Êtes-vous sûr de vouloir supprimer ce signalement ?')
@@ -197,5 +200,16 @@ export default defineComponent({
 <style scoped>
   .fr-card__content {
     margin: 0 -2rem -3rem -2rem;
+  }
+
+  .fr-card__footer {
+    margin: 0 -2.5rem;
+  }
+
+  @media (max-width: 1250px) {
+    .fr-card__footer {
+      margin: 2rem -0.5rem;
+      padding: 0;
+    }
   }
 </style>

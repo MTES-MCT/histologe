@@ -410,6 +410,9 @@ class Signalement
     #[ORM\ManyToOne(inversedBy: 'signalements')]
     private ?Bailleur $bailleur = null;
 
+    #[ORM\Column(nullable: true)]
+    private ?bool $lastSuiviIsPublic = null;
+
     public function __construct()
     {
         $this->situations = new ArrayCollection();
@@ -2380,6 +2383,18 @@ class Signalement
     public function setBailleur(?Bailleur $bailleur): self
     {
         $this->bailleur = $bailleur;
+
+        return $this;
+    }
+
+    public function isLastSuiviIsPublic(): ?bool
+    {
+        return $this->lastSuiviIsPublic;
+    }
+
+    public function setLastSuiviIsPublic(?bool $lastSuiviIsPublic): static
+    {
+        $this->lastSuiviIsPublic = $lastSuiviIsPublic;
 
         return $this;
     }

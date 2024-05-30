@@ -11,6 +11,7 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
+use Symfony\Component\Serializer\Annotation\Ignore;
 use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: PartnerRepository::class)]
@@ -33,42 +34,54 @@ class Partner
     private ?string $nom = null;
 
     #[ORM\OneToMany(mappedBy: 'partner', targetEntity: User::class, cascade: ['persist'])]
+    #[Ignore]
     private Collection $users;
 
     #[ORM\Column(type: 'boolean')]
+    #[Ignore]
     private bool $isArchive = false;
 
     #[ORM\Column(type: 'json')]
+    #[Ignore]
     private array $insee = [];
 
     #[ORM\OneToMany(mappedBy: 'partner', targetEntity: Affectation::class, orphanRemoval: true)]
+    #[Ignore]
     private Collection $affectations;
 
     #[ORM\Column(type: 'string', length: 100, nullable: true)]
     #[Assert\Email]
+    #[Ignore]
     private ?string $email = null;
 
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
     #[Assert\Url]
+    #[Ignore]
     private ?string $esaboraUrl = null;
 
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
+    #[Ignore]
     private ?string $esaboraToken = null;
 
     #[ORM\ManyToOne(targetEntity: Territory::class, inversedBy: 'partners')]
     #[ORM\JoinColumn(nullable: true)]
+    #[Ignore]
     private ?Territory $territory = null;
 
     #[ORM\Column(type: 'string', enumType: PartnerType::class, nullable: true)]
+    #[Ignore]
     private ?PartnerType $type = null;
 
     #[ORM\Column(type: Types::SIMPLE_ARRAY, length: 255, nullable: true, enumType: Qualification::class)]
+    #[Ignore]
     private array $competence = [];
 
     #[ORM\Column(nullable: true)]
+    #[Ignore]
     private ?bool $isEsaboraActive = null;
 
     #[ORM\OneToMany(mappedBy: 'partner', targetEntity: Intervention::class)]
+    #[Ignore]
     private Collection $interventions;
 
     public function __construct()
@@ -158,34 +171,12 @@ class Partner
         return $this;
     }
 
-    public function isAffected(Signalement $signalement)
-    {
-        $isAffected = $this->getAffectations()->filter(function (Affectation $affectation) use ($signalement) {
-            if ($affectation->getSignalement()->getId() === $signalement->getId()) {
-                return $signalement;
-            }
-        });
-
-        return !$isAffected->isEmpty();
-    }
-
     /**
      * @return Collection|Affectation[]
      */
     public function getAffectations(): Collection
     {
         return $this->affectations;
-    }
-
-    public function hasGeneriqueUsers(): bool
-    {
-        foreach ($this->users as $user) {
-            if ($user->getIsGenerique()) {
-                return true;
-            }
-        }
-
-        return false;
     }
 
     public function addAffectation(Affectation $affectation): self
@@ -258,6 +249,7 @@ class Partner
         return $this;
     }
 
+    #[Ignore]
     public function getEsaboraCredential(): array
     {
         return [
@@ -278,6 +270,7 @@ class Partner
         return $this;
     }
 
+    #[Ignore]
     public function getIsCommune(): ?bool
     {
         return PartnerType::COMMUNE_SCHS === $this->type;
@@ -338,6 +331,7 @@ class Partner
         return $this;
     }
 
+    #[Ignore]
     public function getEmailActiveUsers(): array
     {
         $emailUsers = $this->users->map(function (User $user) {

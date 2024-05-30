@@ -10,6 +10,7 @@
       format="dd/MM/yyyy"
       selectText="Appliquer"
       cancelText="Annuler"
+      :placeholder=placeholder
       :ref="id"
       />
   </div>
@@ -25,7 +26,13 @@ export default defineComponent({
   expose: ['updateDate'],
   props: {
     id: { type: String, default: null },
-    modelValue: { type: Array }
+    modelValue: { type: Array },
+    placeholder: { type: String, default: null }
+  },
+  watch: {
+    modelValue (newValue: any) {
+      this.dates = newValue
+    }
   },
   data () {
     return {
@@ -38,7 +45,7 @@ export default defineComponent({
       this.dates = newDates
     },
     handleDate: function (modelData: any) {
-      if (modelData[1] === null) {
+      if (modelData !== null && modelData[1] === null) {
         modelData[1] = new Date()
       }
       if (this.dates !== undefined && this.dates !== null) {

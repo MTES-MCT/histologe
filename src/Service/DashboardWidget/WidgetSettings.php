@@ -10,23 +10,40 @@ class WidgetSettings
     private ?string $lastname = null;
     private ?string $roleLabel = null;
     private ?string $canSeeNDE = null;
+    private ?int $partnerId = null;
     private ?string $partnerName = null;
     private ?string $territoryName = null;
 
     private array $territories = [];
+    private array $partners = [];
+    private array $communes = [];
+    private array $epcis = [];
+    private array $tags = [];
+    private ?bool $hasSignalementImported = false;
 
     public function __construct(
         User $user,
         array $territories,
-        bool $canSeeNDE
+        bool $canSeeNDE,
+        array $partners = [],
+        array $communes = [],
+        array $epcis = [],
+        array $tags = [],
+        bool $hasSignalementImported = false,
     ) {
         $this->firstname = $user->getPrenom();
         $this->lastname = $user->getNom();
         $this->roleLabel = $user->getRoleLabel();
         $this->canSeeNDE = (string) $canSeeNDE;
+        $this->partnerId = $user->getPartner()->getId();
         $this->partnerName = $user->getPartner()->getNom();
         $this->territoryName = $user->getTerritory()?->getZip().'-'.$user->getTerritory()?->getName();
         $this->territories = $territories;
+        $this->partners = $partners;
+        $this->communes = $communes;
+        $this->epcis = $epcis;
+        $this->tags = $tags;
+        $this->hasSignalementImported = $hasSignalementImported;
     }
 
     public function getFirstname(): ?string
@@ -49,6 +66,11 @@ class WidgetSettings
         return $this->canSeeNDE;
     }
 
+    public function getPartnerId(): ?int
+    {
+        return $this->partnerId;
+    }
+
     public function getPartnerName(): ?string
     {
         return $this->partnerName;
@@ -62,5 +84,30 @@ class WidgetSettings
     public function getTerritories(): array
     {
         return $this->territories;
+    }
+
+    public function getPartners(): array
+    {
+        return $this->partners;
+    }
+
+    public function getCommunes(): array
+    {
+        return $this->communes;
+    }
+
+    public function getEpcis(): array
+    {
+        return $this->epcis;
+    }
+
+    public function getTags(): array
+    {
+        return $this->tags;
+    }
+
+    public function getHasSignalementImported(): bool
+    {
+        return $this->hasSignalementImported;
     }
 }
