@@ -47,6 +47,7 @@
                                         <input class="fr-input" id="form-edit-address-ville" type="text" name="ville" value="{{ signalement.villeOccupant }}" data-autocomplete-ville="true">
                                     </div>
 
+                                    <input type="hidden" name="manual" value="{{ signalement.manualAddressOccupant }}" data-autocomplete-manual="true">
                                     <input type="hidden" name="insee" value="{{ signalement.inseeOccupant }}" data-autocomplete-insee="true">
                                     <input type="hidden" name="geolocLat" value="{% if signalement.geoloc.lat is defined %}{{ signalement.geoloc.lat }}{% endif %}" data-autocomplete-geoloclat="true">
                                     <input type="hidden" name="geolocLng" value="{% if signalement.geoloc.lng is defined %}{{ signalement.geoloc.lng }}{% endif %}" data-autocomplete-geoloclng="true">

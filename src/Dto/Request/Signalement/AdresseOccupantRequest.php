@@ -24,6 +24,7 @@ class AdresseOccupantRequest implements RequestInterface
         private readonly ?string $geolocLng = null,
         private readonly ?string $geolocLat = null,
         private readonly ?string $insee = null,
+        private readonly ?string $manual = null,
     ) {
     }
 
@@ -75,5 +76,10 @@ class AdresseOccupantRequest implements RequestInterface
     public function getInsee(): ?string
     {
         return $this->insee;
+    }
+
+    public function getManual(): ?string
+    {
+        return $this->manual;
     }
 }
