@@ -185,7 +185,7 @@ export default defineComponent({
         this.idFetchTimeout = setTimeout(() => {
           this.isTyping = false
           requests.validateAddress(search, this.handleUpdateInsee)
-        }, 2000)
+        }, 700)
       }
     },
     handleUpdateInsee (requestResponse: any) {
