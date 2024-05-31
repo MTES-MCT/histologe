@@ -9,10 +9,10 @@ use Symfony\Component\Routing\Attribute\Route;
 class ExpeController extends AbstractController
 {
 
-    #[Route('/rnb-vector-tile', name: 'expe_rnb_vector_tile')]
+    #[Route('/rnb-selecteur-batiment', name: 'expe_rnb_selecteur_batiment')]
     public function rnbVectorTile()
     {
-        return $this->render('expe/rnb/vector-tile.html.twig');
+        return $this->render('expe/rnb/selecteur-batiment.html.twig');
     }
 
     

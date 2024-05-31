@@ -3,7 +3,7 @@
 	<head>
 		<meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
-		<title>Vector Tile</title>
+		<title>Test sélecteur batiment RNB</title>
         <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
         <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
 		<script src="https://unpkg.com/leaflet.vectorgrid@latest/dist/Leaflet.VectorGrid.bundled.js"></script>
@@ -13,9 +13,12 @@
 			<div id="map" style="height: 80vh;"></div>
 		</div>
 		<div style="width:28%;float:right;" id="data">
+			<input type="text" id="search" placeholder="Rechercher une adresse" style="width:100%;">
+			<div id="ban"></div>
 			<pre></pre>
 		</div>
         <script>
+			
 			var map = L.map('map').setView([44.05296, 4.14382], 18);
 			L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
     			maxZoom: 19,
@@ -104,6 +107,35 @@
 					// Gestion des erreurs éventuelles lors de l'interrogation de l'API du RNB (500, 404, ...)
 				}
 			});
+
+			// Recherche d'adresse
+			const apiAdresse = 'https://api-adresse.data.gouv.fr/search/?q='
+			var inputAdresse = document.getElementById('search');
+			var listAdresses = document.getElementById('ban');
+			inputAdresse.addEventListener('input', (e) => {
+				let adresse = e.target.value
+				if (adresse.length > 3) {
+					let query = apiAdresse + adresse
+					fetch(query)
+						.then(response => response.json())
+						.then(json => {
+							listAdresses.innerHTML = ''
+							json.features.forEach((feature) => {
+								console.log(feature)
+								let suggestion = document.createElement('div')
+								suggestion.innerHTML = feature.properties.label
+								attachAddressSuggestionEvent(suggestion, feature)
+								listAdresses.appendChild(suggestion)
+							})
+						})
+				}
+			})
+
+			function attachAddressSuggestionEvent(suggestion, feature) {
+				suggestion.addEventListener('click', (e) => {
+					map.setView([feature.geometry.coordinates[1], feature.geometry.coordinates[0]], 20)
+				})
+			}
 
 		</script>
 	</body>
