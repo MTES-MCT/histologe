@@ -11,6 +11,8 @@
             :id="idCountryCode"
             :name="idCountryCode"
             v-model="formStore.data[idCountryCode]"
+            title="Indicatif national"
+            :aria-describedby="'text-input-error-desc-error-'+id"
             >
             <option
               v-for="countryItem in countryList"
@@ -66,6 +68,8 @@
             :id="idCountryCodeSecond"
             :name="idCountryCodeSecond"
             v-model="formStore.data[idCountryCodeSecond]"
+            title="Indicatif national"
+            :aria-describedby="'text-input-error-desc-error-'+idSecond"
             >
             <option
               v-for="countryItem in countryList"

@@ -2,13 +2,13 @@
   <div :id="id" class="text-word-break-all">
     <div>
       <br>
-      <h2 class="fr-h4">Récapitulatif</h2>
+      <h3 class="fr-h4">Récapitulatif</h3>
 
       <!-- ADRESSE DU LOGEMENT -->
       <div>
         <div class="fr-grid-row fr-grid-row--gutters fr-grid-row--top">
           <div class="fr-col-8">
-            <h3 class="fr-h6">Adresse du logement</h3>
+            <h4 class="fr-h6">Adresse du logement</h4>
           </div>
           <div class="fr-col-4 fr-text--right">
             <button @click="handleEdit('adresse_logement')" class="fr-btn fr-btn--tertiary fr-btn--icon-left fr-icon-edit-line">Editer</button>
@@ -21,7 +21,7 @@
       <div v-if="formStore.data.profil === 'bailleur_occupant' || formStore.data.profil === 'locataire'">
         <div class="fr-grid-row fr-grid-row--gutters fr-grid-row--top">
           <div class="fr-col-8">
-            <h3 class="fr-h6">Vos coordonnées</h3>
+            <h4 class="fr-h6">Vos coordonnées</h4>
           </div>
           <div class="fr-col-4 fr-text--right">
             <button @click="handleEdit('vos_coordonnees_occupant')" class="fr-btn fr-btn--tertiary fr-btn--icon-left fr-icon-edit-line">Editer</button>
@@ -34,7 +34,7 @@
       <div v-else>
         <div class="fr-grid-row fr-grid-row--gutters fr-grid-row--top">
           <div class="fr-col-8">
-            <h3 class="fr-h6">Vos coordonnées</h3>
+            <h4 class="fr-h6">Vos coordonnées</h4>
           </div>
           <div class="fr-col-4 fr-text--right">
             <button @click="handleEdit('vos_coordonnees_tiers')"  class="fr-btn fr-btn--tertiary fr-btn--icon-left fr-icon-edit-line">Editer</button>
@@ -47,7 +47,7 @@
       <div v-if="formStore.data.profil !== 'bailleur_occupant' && formStore.data.profil !== 'bailleur'">
         <div class="fr-grid-row fr-grid-row--gutters fr-grid-row--top">
           <div class="fr-col-8">
-            <h3 class="fr-h6">Les coordonnées du bailleur</h3>
+            <h4 class="fr-h6">Les coordonnées du bailleur</h4>
           </div>
           <div class="fr-col-4 fr-text--right">
             <button @click="handleEdit('coordonnees_bailleur')" class="fr-btn fr-btn--tertiary fr-btn--icon-left fr-icon-edit-line">Editer</button>
@@ -60,7 +60,7 @@
       <div v-if="formStore.data.profil !== 'bailleur_occupant' && formStore.data.profil !== 'locataire' && formStore.data.profil !== 'service_secours'">
         <div class="fr-grid-row fr-grid-row--gutters fr-grid-row--top">
           <div class="fr-col-8">
-            <h3 class="fr-h6">Les coordonnées du foyer</h3>
+            <h4 class="fr-h6">Les coordonnées du foyer</h4>
           </div>
           <div class="fr-col-4 fr-text--right">
             <button @click="handleEdit('coordonnees_occupant')" class="fr-btn fr-btn--tertiary fr-btn--icon-left fr-icon-edit-line" >Editer</button>
@@ -73,16 +73,16 @@
       <div>
         <div class="fr-grid-row fr-grid-row--gutters fr-grid-row--top">
           <div class="fr-col-8">
-            <h3 class="fr-h6">Type et composition du logement</h3>
+            <h4 class="fr-h6">Type et composition du logement</h4>
           </div>
           <div class="fr-col-4 fr-text--right">
             <button @click="handleEdit('ecran_intermediaire_type_composition')" class="fr-btn fr-btn--tertiary fr-btn--icon-left fr-icon-edit-line">Editer</button>
           </div>
         </div>
         <section class="fr-accordion fr-mb-3w">
-          <h3 class="fr-accordion__title">
+          <h5 class="fr-accordion__title">
             <button class="fr-accordion__btn" aria-expanded="false" aria-controls="accordion-type-composition">Afficher les informations</button>
-          </h3>
+          </h5>
           <div class="fr-collapse" id="accordion-type-composition">
             <p v-html="getFormDataTypeComposition()"></p>
           </div>
@@ -93,17 +93,17 @@
       <div v-if="formStore.data.profil !== 'service_secours'">
         <div class="fr-grid-row fr-grid-row--gutters fr-grid-row--top">
           <div class="fr-col-8">
-            <h3 class="fr-h6" v-if="formStore.data.profil === 'bailleur_occupant' || formStore.data.profil === 'locataire'">Votre situation</h3>
-            <h3 class="fr-h6" v-else>La situation du foyer</h3>
+            <h4 class="fr-h6" v-if="formStore.data.profil === 'bailleur_occupant' || formStore.data.profil === 'locataire'">Votre situation</h4>
+            <h4 class="fr-h6" v-else>La situation du foyer</h4>
           </div>
           <div class="fr-col-4 fr-text--right">
             <button @click="handleEdit('ecran_intermediaire_situation_occupant')" class="fr-btn fr-btn--tertiary fr-btn--icon-left fr-icon-edit-line">Editer</button>
           </div>
         </div>
         <section class="fr-accordion fr-mb-3w">
-          <h3 class="fr-accordion__title">
+          <h5 class="fr-accordion__title">
             <button class="fr-accordion__btn" aria-expanded="false" aria-controls="accordion-situation-occupant">Afficher les informations</button>
-          </h3>
+          </h5>
           <div class="fr-collapse" id="accordion-situation-occupant">
             <p v-html="getFormDataSituationOccupant()"></p>
           </div>
@@ -114,7 +114,7 @@
       <div>
         <div class="fr-grid-row fr-grid-row--gutters fr-grid-row--top">
           <div class="fr-col-8">
-            <h3 class="fr-h6">Les désordres</h3>
+            <h4 class="fr-h6">Les désordres</h4>
           </div>
           <div class="fr-col-4 fr-text--right">
             <button @click="handleEdit('ecran_intermediaire_les_desordres')" class="fr-btn fr-btn--tertiary fr-btn--icon-left fr-icon-edit-line">Editer</button>
@@ -128,6 +128,7 @@
         <SignalementFormDisorderOverview
           :id="idDisorderOverview"
           :icons="disorderIcons"
+          :isValidationScreen="true"
           />
       </div>
 
@@ -135,16 +136,16 @@
       <div v-if="formStore.data.profil === 'bailleur_occupant' || formStore.data.profil === 'locataire' || formStore.data.profil === 'bailleur'">
         <div class="fr-grid-row fr-grid-row--gutters fr-grid-row--top">
           <div class="fr-col-8">
-            <h3 class="fr-h6">La procédure</h3>
+            <h4 class="fr-h6">La procédure</h4>
           </div>
           <div class="fr-col-4 fr-text--right">
             <button @click="handleEdit('info_procedure')" class="fr-btn fr-btn--tertiary fr-btn--icon-left fr-icon-edit-line">Editer</button>
           </div>
         </div>
         <section class="fr-accordion fr-mb-3w">
-          <h3 class="fr-accordion__title">
+          <h5 class="fr-accordion__title">
             <button class="fr-accordion__btn" aria-expanded="false" aria-controls="accordion-procedure">Afficher les informations</button>
-          </h3>
+          </h5>
           <div class="fr-collapse" id="accordion-procedure">
             <p v-html="getFormDataProcedure()"></p>
           </div>
@@ -156,7 +157,7 @@
         <div v-if="hasInformationsComplementaires()">
           <div class="fr-grid-row fr-grid-row--gutters fr-grid-row--top">
             <div class="fr-col-8">
-              <h2 class="fr-h4">Informations complémentaires</h2>
+              <h3 class="fr-h4">Informations complémentaires</h3>
             </div>
             <div class="fr-col-4 fr-text--right">
               <button @click="handleEdit('informations_complementaires')" class="fr-btn fr-btn--tertiary fr-btn--icon-left fr-icon-edit-line">Editer</button>
@@ -165,7 +166,7 @@
           <p v-html="getFormDataInformationsComplementaires()"></p>
         </div>
         <div v-else>
-          <h2 class="fr-h4">Informations complémentaires</h2>
+          <h3 class="fr-h4">Informations complémentaires</h3>
           <p>
             Plus nous avons d'informations sur la situation,
             mieux nous pouvons vous accompagner.
