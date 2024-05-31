@@ -11,13 +11,13 @@ use App\Manager\SuiviManager;
 use App\Repository\BailleurRepository;
 use App\Repository\DesordreCritereRepository;
 use App\Repository\DesordrePrecisionRepository;
+use App\Service\DataGouv\AddressService;
 use App\Service\Signalement\CriticiteCalculator;
 use App\Service\Signalement\DesordreTraitement\DesordreCompositionLogementLoader;
 use App\Service\Signalement\PhotoHelper;
 use App\Service\Signalement\Qualification\QualificationStatusService;
 use App\Service\Signalement\Qualification\SignalementQualificationUpdater;
 use App\Specification\Signalement\SuroccupationSpecification;
-use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use Symfony\Bundle\SecurityBundle\Security;
@@ -27,7 +27,6 @@ use Symfony\Component\Security\Csrf\CsrfTokenManagerInterface;
 
 class PhotoHelperTest extends KernelTestCase
 {
-    private EntityManagerInterface $entityManager;
     private Security $security;
     private ManagerRegistry $managerRegistry;
     private SignalementFactory $signalementFactory;
@@ -46,10 +45,10 @@ class PhotoHelperTest extends KernelTestCase
     private DesordreCompositionLogementLoader $desordreCompositionLogementLoader;
     private SuiviManager $suiviManager;
     private BailleurRepository $bailleurRepository;
+    private AddressService $addressService;
 
     protected function setUp(): void
     {
-        $this->entityManager = static::getContainer()->get('doctrine')->getManager();
         $this->managerRegistry = static::getContainer()->get(ManagerRegistry::class);
         $this->security = static::getContainer()->get('security.helper');
         $this->signalementFactory = static::getContainer()->get(SignalementFactory::class);
@@ -70,6 +69,7 @@ class PhotoHelperTest extends KernelTestCase
         $this->desordreCompositionLogementLoader = static::getContainer()->get(DesordreCompositionLogementLoader::class);
         $this->suiviManager = static::getContainer()->get(SuiviManager::class);
         $this->bailleurRepository = static::getContainer()->get(BailleurRepository::class);
+        $this->addressService = static::getContainer()->get(AddressService::class);
 
         $this->signalementManager = new SignalementManager(
             $this->managerRegistry,
@@ -89,6 +89,7 @@ class PhotoHelperTest extends KernelTestCase
             $this->desordreCompositionLogementLoader,
             $this->suiviManager,
             $this->bailleurRepository,
+            $this->addressService,
         );
     }
 
