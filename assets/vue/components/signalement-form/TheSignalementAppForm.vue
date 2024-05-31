@@ -223,6 +223,8 @@ export default defineComponent({
           formStore.data.adresse_logement_adresse_detail_insee = suggestions[0].properties.citycode
           formStore.data.adresse_logement_adresse_detail_geoloc_lng = suggestions[0].geometry.coordinates[0]
           formStore.data.adresse_logement_adresse_detail_geoloc_lat = suggestions[0].geometry.coordinates[1]
+          formStore.data.adresse_logement_adresse = formStore.data.adresse_logement_adresse_detail_numero + ' ' + formStore.data.adresse_logement_adresse_detail_code_postal + ' ' + formStore.data.adresse_logement_adresse_detail_commune
+          formStore.data.adresse_logement_adresse_suggestion = formStore.data.adresse_logement_adresse_detail_numero + ' ' + formStore.data.adresse_logement_adresse_detail_code_postal + ' ' + formStore.data.adresse_logement_adresse_detail_commune
 
           this.checkTerritory(
             formStore.data.adresse_logement_adresse_detail_code_postal,
