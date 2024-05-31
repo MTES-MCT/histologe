@@ -19,7 +19,7 @@
       "command": "0 4 * * * php bin/console app:notify-and-archive-inactive-accounts"
     },
     {
-      "command": "30 4 * * php bin/console app:anonymize-expired-account"
+      "command": "30 4 * * * php bin/console app:anonymize-expired-account"
     },
     {
       "command": "0 1 * * * sh /app/scripts/sync-db.sh"
