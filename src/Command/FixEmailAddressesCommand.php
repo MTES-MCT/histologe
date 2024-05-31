@@ -20,12 +20,10 @@ class FixEmailAddressesCommand extends Command
     private SymfonyStyle $io;
 
     private const FIELDS = ['mailOccupant', 'mailDeclarant', 'mailProprio'];
-    private const EMAILS_TO_NULL = [
+    private const EMAILS_TO_INCONNU = [
         'Non communiqué',
         '?',
         '??',
-    ];
-    private const EMAILS_TO_INCONNU = [
         'inconnu@inconnu.com',
         'inconnu@inconnu',
         'email@inconnu',
@@ -42,6 +40,7 @@ class FixEmailAddressesCommand extends Command
         '?fr' => '.fr',
         '?net' => '.net',
     ];
+    public const EMAIL_HISTOLOGE_INCONNU = 'inconnu@histologe.fr';
 
     public function __construct(
         private SignalementRepository $signalementRepository,
@@ -62,13 +61,9 @@ class FixEmailAddressesCommand extends Command
         $listSearch = array_keys(self::STRINGS_TO_REPLACE);
         $listReplace = array_values(self::STRINGS_TO_REPLACE);
         foreach (self::FIELDS as $field) {
-            $listSignalementsToNull = $this->signalementRepository->findByEmailContainStrings(self::EMAILS_TO_NULL, $field, true);
-            $count += \count($listSignalementsToNull);
-            $this->fixEmailsWithValue($listSignalementsToNull, $field, null);
-
             $listSignalementsToInconnu = $this->signalementRepository->findByEmailContainStrings(self::EMAILS_TO_INCONNU, $field, true);
             $count += \count($listSignalementsToInconnu);
-            $this->fixEmailsWithValue($listSignalementsToInconnu, $field, 'inconnu@histologe.fr');
+            $this->fixEmailsWithValue($listSignalementsToInconnu, $field, self::EMAIL_HISTOLOGE_INCONNU);
 
             $listSignalementsToReplace = $this->signalementRepository->findByEmailContainStrings($listSearch, $field);
             $count += \count($listSignalementsToReplace);
@@ -96,7 +91,6 @@ class FixEmailAddressesCommand extends Command
                     $signalement->setMailProprio($newValue);
                     break;
             }
-            $this->signalementManager->persist($signalement);
         }
     }
 

@@ -2,6 +2,7 @@
 
 namespace App\Twig;
 
+use App\Command\FixEmailAddressesCommand;
 use App\Entity\Enum\OccupantLink;
 use App\Entity\Enum\QualificationStatus;
 use App\Entity\File;
@@ -117,6 +118,6 @@ class AppExtension extends AbstractExtension
 
     public function showEmailAlert(?string $emailAddress): bool
     {
-        return !EmailFormatValidator::validate($emailAddress);
+        return !EmailFormatValidator::validate($emailAddress) || FixEmailAddressesCommand::EMAIL_HISTOLOGE_INCONNU === $emailAddress;
     }
 }
