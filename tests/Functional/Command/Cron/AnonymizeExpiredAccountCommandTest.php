@@ -22,6 +22,13 @@ class AnonymizeExpiredAccountCommandTest extends KernelTestCase
         $commandTester->assertCommandIsSuccessful();
 
         $output = $commandTester->getDisplay();
+
+        $isActivated = $kernel->getContainer()->getParameter('feature_anonymize_expired_account');
+        if (!$isActivated) {
+            $this->assertStringContainsString('Feature "FEATURE_ANONYMIZE_EXPIRED_ACCOUNT" is disabled.', $output);
+
+            return;
+        }
         $this->assertStringContainsString('1 expired users anonymized.', $output);
         $this->assertEmailCount(1);
     }

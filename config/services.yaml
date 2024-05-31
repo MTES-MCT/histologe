@@ -39,6 +39,7 @@ parameters:
     maintenance_banner_enable: '%env(bool:MAINTENANCE_BANNER_ENABLE)%'
     maintenance_banner_message: '%env(resolve:MAINTENANCE_BANNER_MESSAGE)%'
     chatbot_enable: '%env(bool:CHATBOT_ENABLE)%'
+    feature_anonymize_expired_account: '%env(bool:FEATURE_ANONYMIZE_EXPIRED_ACCOUNT)%'
 
 services:
     # default configuration for services in *this* file
