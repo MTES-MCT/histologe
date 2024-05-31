@@ -9,7 +9,7 @@
               <li v-if="sharedState.user.isResponsableTerritoire">
                 <button class="fr-tag"
                         ref="myAffectationButton"
-                        aria-pressed="sharedState.input.filters.showMyAffectationOnly === 'oui'"
+                        aria-pressed="{{ sharedState.input.filters.showMyAffectationOnly === 'oui' }}"
                         @click="toggleCurrentPartnerAffectation">
                   Afficher mes affectations uniquement
                 </button>
@@ -19,7 +19,7 @@
                     v-if="sharedState.hasSignalementImported"
                     ref="isImportedButton"
                     class="fr-tag"
-                    aria-pressed="sharedState.input.filters.isImported === 'oui'"
+                    aria-pressed="{{ sharedState.input.filters.isImported === 'oui' }}"
                     @click="toggleIsImported"
                 >Afficher les signalements importés
                 </button>
@@ -30,8 +30,8 @@
             <div v-if="sharedState.user.isAdmin" class="fr-col-12 fr-col-lg-6 fr-col-xl-2 grey-background">
               <HistoSelect
                   v-if="sharedState.territories.length > 0"
-                  id="filter-territoires"
-                  v-model="sharedState.input.filters.territoires"
+                  id="filter-territoire"
+                  v-model="sharedState.input.filters.territoire"
                   @update:modelValue="updateTerritory"
                   inner-label="Territoire"
                   title="Rechercher par territoire"
@@ -93,12 +93,11 @@
             </div>
             <div class="fr-col-12 fr-col-lg-6 fr-col-xl-7">
               <ul class="fr-tags-group">
-                <li>
+                <li v-for="(value, key) in filtersSanitized"  :key="key">
                   <button
+                      v-if="value.length > 0"
                       class="fr-tag fr-tag--sm fr-tag--dismiss"
-                      v-for="(value, key) in filtersSanitized"
                       :aria-label="`Retirer ${key}`"
-                      :key="key"
                       @click="removeFilter(key)"
                   >
                     {{ getBadgeFilterLabel(key, value) }}
@@ -382,7 +381,7 @@ export default defineComponent({
     },
     resetFilters () {
       this.sharedState.input.filters = {
-        territoires: [],
+        territoire: null,
         etiquettes: [],
         partenaires: [],
         communes: [],
@@ -449,9 +448,6 @@ export default defineComponent({
 <style>
   .grey-background {
     .histo-select select {
-      background-color: var(--background-contrast-grey);
-    }
-    .histo-multi-select .selector {
       background-color: var(--background-contrast-grey);
     }
     .histo-date-picker input {

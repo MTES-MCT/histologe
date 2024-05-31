@@ -60,8 +60,8 @@ export default defineComponent({
         { Id: 'reference-ASC', Text: 'Ordre croissant' },
         { Id: 'nomOccupant-ASC', Text: 'Ordre alphabétique (A -> Z)' },
         { Id: 'nomOccupant-DESC', Text: 'Ordre alphabétique inversé (Z -> A)' },
-        { Id: 'createdAt-DESC', Text: 'Le plus récent' },
-        { Id: 'createdAt-ASC', Text: 'Le plus ancien' }
+        { Id: 'lastSuiviAt-DESC', Text: 'Suivi le plus récent' },
+        { Id: 'lastSuiviAt-ASC', Text: 'Suivi le plus ancien' }
       ]
     }
   }

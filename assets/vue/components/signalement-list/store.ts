@@ -12,7 +12,7 @@ export const store = {
       order: 'reference-DESC',
       queryParameters: [] as QueryParameter[],
       filters: {
-        territoires: new Array<string>(),
+        territoire: null,
         etiquettes: new Array<HistoInterfaceSelectOption>(),
         partenaires: new Array<HistoInterfaceSelectOption | string>(),
         communes: new Array<string>(),

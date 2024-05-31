@@ -95,7 +95,7 @@ export const requests = {
       // TODO : il y a sûrement plus élégant à faire pour construire l'url (cf controlleur et twig)
       const url = formStore.props.ajaxurlPutSignalementDraft.replace('uuid', formStore.data.uuidSignalementDraft)
       requests.doRequestPut(url, formStore.data, functionReturn)
-    } else if (formStore.currentScreen && formStore.currentScreen.slug !== 'adresse_logement' && formStore.currentScreen.slug !== 'signalement_concerne') {
+    } else if ((formStore.currentScreen != null) && formStore.currentScreen.slug !== 'adresse_logement' && formStore.currentScreen.slug !== 'signalement_concerne') {
       const url = formStore.props.ajaxurlPostSignalementDraft
       requests.doRequestPost(url, formStore.data, functionReturn, undefined)
     } else {
@@ -105,7 +105,7 @@ export const requests = {
 
   checkIfAlreadyExists (functionReturn: Function) {
     const url = formStore.props.ajaxurlCheckSignalementOrDraftAlreadyExists
-    if (formStore.currentScreen && formStore.currentScreen.slug !== 'adresse_logement' && formStore.currentScreen.slug !== 'signalement_concerne') {
+    if ((formStore.currentScreen != null) && formStore.currentScreen.slug !== 'adresse_logement' && formStore.currentScreen.slug !== 'signalement_concerne') {
       requests.doRequestPost(url, formStore.data, functionReturn, undefined)
     } else {
       functionReturn(undefined)

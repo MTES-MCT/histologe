@@ -11,7 +11,7 @@ class SignalementSearchQuery
     public const MAX_LIST_PAGINATION = 25;
 
     public function __construct(
-        private readonly ?array $territoires = null,
+        private readonly ?string $territoire = null,
         private readonly ?string $searchTerms = null,
         #[Assert\Choice(['nouveau', 'en_cours', 'ferme', 'refuse'])]
         private readonly ?string $status = null,
@@ -65,15 +65,15 @@ class SignalementSearchQuery
         private readonly ?int $page = 1,
         #[Assert\Choice(['oui'])]
         private readonly ?string $isImported = null,
-        #[Assert\Choice(['reference', 'nomOccupant', 'createdAt'])]
+        #[Assert\Choice(['reference', 'nomOccupant', 'lastSuiviAt'])]
         private readonly string $sortBy = 'reference',
         private readonly string $orderBy = 'DESC',
     ) {
     }
 
-    public function getTerritoires(): ?array
+    public function getTerritoire(): ?string
     {
-        return $this->territoires;
+        return $this->territoire;
     }
 
     public function getSearchTerms(): ?string
@@ -210,7 +210,7 @@ class SignalementSearchQuery
     {
         $filters = [];
         $filters['searchterms'] = $this->getSearchTerms() ?? null;
-        $filters['territories'] = $this->getTerritoires() ?? null;
+        $filters['territories'] = null !== $this->getTerritoire() ? [$this->getTerritoire()] : null;
         $filters['statuses'] = null !== $this->getStatus()
             ? [SignalementStatus::mapFilterStatus($this->getStatus())]
             : null;
@@ -275,7 +275,7 @@ class SignalementSearchQuery
 
         $filters['page'] = $this->getPage() ?? 1;
         $filters['maxItemsPerPage'] = self::MAX_LIST_PAGINATION;
-        $filters['sortBy'] = $this->getSortBy() ?? 'createdAt';
+        $filters['sortBy'] = $this->getSortBy() ?? 'reference';
         $filters['orderBy'] = $this->getOrderBy() ?? 'DESC';
 
         return array_filter($filters);

@@ -11,7 +11,7 @@ class SignalementSearchQueryTest extends TestCase
     public function testGetFilters(): void
     {
         $query = new SignalementSearchQuery(
-            ['13'],
+            '13',
             'John',
             'nouveau',
             ['Marseille'],

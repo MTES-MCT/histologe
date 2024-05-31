@@ -124,6 +124,7 @@ export default defineComponent({
       this.sharedState.user.canSeeScore = isAdminOrAdminTerritoire
       this.sharedState.user.partnerId = requestResponse.partnerId
       this.sharedState.hasSignalementImported = requestResponse.hasSignalementImported
+      this.sharedState.input.order = 'reference-DESC'
 
       this.sharedState.territories = []
       for (const id in requestResponse.territories) {
@@ -193,6 +194,8 @@ export default defineComponent({
       this.clearScreen()
       const [field, direction] = this.sharedState.input.order.split('-')
       this.removeQueryParameter('page')
+      this.removeQueryParameter('sortBy')
+      this.removeQueryParameter('orderBy')
 
       const url = new URL(window.location.toString())
       url.searchParams.delete('page')
@@ -219,35 +222,25 @@ export default defineComponent({
       this.sharedState.input.queryParameters = []
 
       for (const [key, value] of Object.entries(this.sharedState.input.filters)) {
-        if (value && value !== null) {
+        if (value) {
           if (key === 'dateDepot' || key === 'dateDernierSuivi') {
             const [dateDebut, dateFin] = this.handleDateParameter(key, value)
             url.searchParams.set(`${key}Debut`, dateDebut)
             url.searchParams.set(`${key}Fin`, dateFin)
             url.searchParams.delete(key)
-          } else if (
-            key === 'territoires' ||
-              key === 'partenaires' ||
-              key === 'communes' ||
-              key === 'etiquettes' ||
-              key === 'epcis'
-          ) {
-            if (typeof value === 'object') {
-              if (key === 'epcis') {
-                value.forEach((valueItem: any) => {
-                  const code = valueItem.split('|').shift()
-                  this.addQueryParameter(`${key}[]`, code)
-                  url.searchParams.append(`${key}[]`, code)
-                })
-              } else {
-                value.forEach((valueItem: any) => {
-                  this.addQueryParameter(`${key}[]`, valueItem)
-                  url.searchParams.append(`${key}[]`, valueItem)
-                })
-              }
+          } else if (typeof value === 'object' &&
+              (key === 'partenaires' || key === 'communes' || key === 'etiquettes' || key === 'epcis')) {
+            if (key === 'epcis') {
+              value.forEach((valueItem: any) => {
+                const code = valueItem.split('|').shift()
+                this.addQueryParameter(`${key}[]`, code)
+                url.searchParams.append(`${key}[]`, code)
+              })
             } else {
-              this.addQueryParameter(`${key}[]`, value)
-              url.searchParams.set(`${key}[]`, value)
+              value.forEach((valueItem: any) => {
+                this.addQueryParameter(`${key}[]`, valueItem)
+                url.searchParams.append(`${key}[]`, valueItem)
+              })
             }
           } else if (typeof value === 'string') {
             this.addQueryParameter(key, value)
@@ -258,6 +251,13 @@ export default defineComponent({
           url.searchParams.delete(key)
         }
       }
+
+      const [field, direction] = this.sharedState.input.order.split('-')
+      url.searchParams.set('sortBy', field)
+      url.searchParams.set('direction', direction)
+      this.addQueryParameter('sortBy', field)
+      this.addQueryParameter('orderBy', direction)
+
       window.history.pushState({}, '', decodeURIComponent(url.toString()))
       this.buildUrl()
       requests.getSignalements(this.handleSignalements, { signal: this.abortRequest?.signal })
