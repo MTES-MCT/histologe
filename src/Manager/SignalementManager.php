@@ -35,6 +35,7 @@ use App\Repository\DesordreCritereRepository;
 use App\Repository\DesordrePrecisionRepository;
 use App\Repository\PartnerRepository;
 use App\Repository\SignalementRepository;
+use App\Service\DataGouv\AddressService;
 use App\Service\DataGouv\Response\Address;
 use App\Service\Signalement\CriticiteCalculator;
 use App\Service\Signalement\DesordreTraitement\DesordreCompositionLogementLoader;
@@ -71,6 +72,7 @@ class SignalementManager extends AbstractManager
         private DesordreCompositionLogementLoader $desordreCompositionLogementLoader,
         private SuiviManager $suiviManager,
         private BailleurRepository $bailleurRepository,
+        private AddressService $addressService,
         string $entityName = Signalement::class
     ) {
         parent::__construct($managerRegistry, $entityName);
@@ -343,7 +345,7 @@ class SignalementManager extends AbstractManager
 
     public function updateFromAdresseOccupantRequest(
         Signalement $signalement,
-        AdresseOccupantRequest $adresseOccupantRequest
+        AdresseOccupantRequest $adresseOccupantRequest,
     ) {
         $signalement->setAdresseOccupant($adresseOccupantRequest->getAdresse())
             ->setCpOccupant($adresseOccupantRequest->getCodePostal())
@@ -359,6 +361,22 @@ class SignalementManager extends AbstractManager
             ->setNumAppartOccupant($adresseOccupantRequest->getNumAppart())
             ->setAdresseAutreOccupant($adresseOccupantRequest->getAutre())
             ->setManualAddressOccupant('1' === $adresseOccupantRequest->getManual());
+
+        if ('1' === $adresseOccupantRequest->getNeedResetInsee()) {
+            $resetAddress = $this->addressService->getAddress($adresseOccupantRequest->getCodePostal().' '.$adresseOccupantRequest->getVille());
+            if (!empty($resetAddress->getCity())) {
+                $signalement->setVilleOccupant($resetAddress->getCity());
+            }
+            if (!empty($resetAddress->getInseeCode())) {
+                $signalement->setInseeOccupant($resetAddress->getInseeCode());
+            }
+            if (!empty($resetAddress->getLatitude())) {
+                $signalement->setGeoloc([
+                    'lat' => $resetAddress->getLatitude(),
+                    'lng' => $resetAddress->getLongitude(),
+                ]);
+            }
+        }
 
         $this->save($signalement);
 

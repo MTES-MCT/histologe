@@ -18,6 +18,7 @@ use App\Manager\SuiviManager;
 use App\Repository\BailleurRepository;
 use App\Repository\DesordreCritereRepository;
 use App\Repository\DesordrePrecisionRepository;
+use App\Service\DataGouv\AddressService;
 use App\Service\Signalement\CriticiteCalculator;
 use App\Service\Signalement\DesordreTraitement\DesordreCompositionLogementLoader;
 use App\Service\Signalement\Qualification\QualificationStatusService;
@@ -57,6 +58,7 @@ class SignalementManagerTest extends WebTestCase
     private DesordreCompositionLogementLoader $desordreCompositionLogementLoader;
     private SuiviManager $suiviManager;
     private BailleurRepository $bailleurRepository;
+    private AddressService $addressService;
 
     protected function setUp(): void
     {
@@ -82,6 +84,7 @@ class SignalementManagerTest extends WebTestCase
         $this->desordreCompositionLogementLoader = static::getContainer()->get(DesordreCompositionLogementLoader::class);
         $this->suiviManager = static::getContainer()->get(SuiviManager::class);
         $this->bailleurRepository = static::getContainer()->get(BailleurRepository::class);
+        $this->addressService = static::getContainer()->get(AddressService::class);
 
         $this->signalementManager = new SignalementManager(
             $this->managerRegistry,
@@ -101,6 +104,7 @@ class SignalementManagerTest extends WebTestCase
             $this->desordreCompositionLogementLoader,
             $this->suiviManager,
             $this->bailleurRepository,
+            $this->addressService,
         );
         $user = $this->entityManager->getRepository(User::class)->findOneBy(['email' => 'admin-01@histologe.fr']);
         $client->loginUser($user);
