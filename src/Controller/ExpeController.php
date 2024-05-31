@@ -10,9 +10,15 @@ class ExpeController extends AbstractController
 {
 
     #[Route('/rnb-selecteur-batiment', name: 'expe_rnb_selecteur_batiment')]
-    public function rnbVectorTile()
+    public function rnbSelecteurBatminet()
     {
-        return $this->render('expe/rnb/selecteur-batiment.html.twig');
+        return $this->render('expe/selecteur-batiment.html.twig');
+    }
+
+    #[Route('/zone-signalement', name: 'expe_zone_signalement')]
+    public function zone()
+    {
+        return $this->render('expe/zone-signalement.html.twig');
     }
 
     
