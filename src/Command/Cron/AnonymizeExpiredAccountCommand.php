@@ -13,6 +13,7 @@ use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
+use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 
 #[AsCommand(
@@ -27,7 +28,9 @@ class AnonymizeExpiredAccountCommand extends AbstractCronCommand
         private readonly EntityManagerInterface $entityManager,
         private readonly UserRepository $userRepository,
         private readonly NotificationMailerRegistry $notificationMailerRegistry,
-        private readonly ParameterBagInterface $parameterBag
+        private readonly ParameterBagInterface $parameterBag,
+        #[Autowire(env: 'FEATURE_ANONYMIZE_EXPIRED_ACCOUNT')]
+        private bool $featureAnonymizeExpiredAccount,
     ) {
         parent::__construct($this->parameterBag);
     }
@@ -35,6 +38,12 @@ class AnonymizeExpiredAccountCommand extends AbstractCronCommand
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $this->io = new SymfonyStyle($input, $output);
+        if (!$this->featureAnonymizeExpiredAccount) {
+            $this->io->warning('Feature "FEATURE_ANONYMIZE_EXPIRED_ACCOUNT" is disabled.');
+
+            return Command::SUCCESS;
+        }
+
         $nbAgents = $this->anonymizeExpiredUsers();
 
         $this->entityManager->flush();
