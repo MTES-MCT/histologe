@@ -24,6 +24,6 @@ class BackExpiredAccountControllerTest extends WebTestCase
         $crawler = $client->request('GET', $route);
 
         $this->assertEquals(1, $crawler->filter('h2:contains("1 comptes usagers expirés")')->count());
-        $this->assertEquals(1, $crawler->filter('h2:contains("1 comptes agents expirés")')->count());
+        $this->assertEquals(1, $crawler->filter('h2:contains("2 comptes agents expirés")')->count());
     }
 }

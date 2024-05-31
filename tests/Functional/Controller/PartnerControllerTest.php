@@ -184,6 +184,31 @@ class PartnerControllerTest extends WebTestCase
         $this->assertEmailCount(1);
     }
 
+    public function testEditAnonymizedUser()
+    {
+        /** @var User $partnerUser */
+        $partnerUser = $this->userRepository->findAnonymizedUsers()[0];
+        $partner = $partnerUser->getPartner();
+
+        $route = $this->router->generate('back_partner_user_edit');
+        $this->client->request(
+            'POST',
+            $route,
+            [
+                'user_edit' => [
+                    'roles' => 'ROLE_USER_PARTNER',
+                    'prenom' => 'John',
+                    'nom' => 'Doe',
+                    'email' => 'ajout.partner@example.com',
+                    'isMailingActive' => false,
+                ],
+                'user_id' => $partnerUser->getId(),
+                '_token' => $this->generateCsrfToken($this->client, 'partner_user_edit'),
+            ]
+        );
+        $this->assertResponseStatusCodeSame(403);
+    }
+
     public function testTransferUserAccount(): void
     {
         $user = $this->userRepository->findOneBy(['email' => 'user-13-02@histologe.fr']);
@@ -260,6 +285,19 @@ class PartnerControllerTest extends WebTestCase
 
         $this->assertEquals(2, $user->getStatut());
         $this->assertStringContainsString(User::SUFFIXE_ARCHIVED, $user->getEmail());
+    }
+
+    public function testDeleteAnonymizedUserAccount(): void
+    {
+        $user = $this->userRepository->findAnonymizedUsers()[0];
+        $userId = $user->getId();
+
+        $this->client->request('POST', $this->router->generate('back_partner_user_delete'), [
+            'user_id' => $userId,
+            '_token' => $this->generateCsrfToken($this->client, 'partner_user_delete'),
+        ]);
+
+        $this->assertResponseStatusCodeSame(403);
     }
 
     public function testDeleteUserAccountWithCsrfUnvalid(): void

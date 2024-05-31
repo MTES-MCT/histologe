@@ -51,6 +51,24 @@ class UserTest extends KernelTestCase
         $this->assertCount(0, $errors);
     }
 
+    public function testUserAnonymization()
+    {
+        $user = $this->getUser([User::ROLE_ADMIN_TERRITORY]);
+        $user->anonymize();
+        $this->assertNull($user->getAnonymizedAt());
+
+        $user->setStatut(User::STATUS_ARCHIVE);
+        $user->anonymize();
+        $this->assertNotNull($user->getAnonymizedAt());
+        $this->assertEquals(User::ANONYMIZED_PRENOM, $user->getPrenom());
+        $this->assertEquals(User::ANONYMIZED_NOM, $user->getNom());
+        $this->assertStringStartsWith(User::ANONYMIZED_MAIL, $user->getEmail());
+
+        $tmp = $user->getAnonymizedAt();
+        $user->anonymize();
+        $this->assertEquals($tmp, $user->getAnonymizedAt());
+    }
+
     public function provideInvalidPassword(): \Generator
     {
         yield 'blank' => ['Cette valeur ne doit pas être vide', ''];

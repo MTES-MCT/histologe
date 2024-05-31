@@ -78,6 +78,10 @@ class LoadUserData extends Fixture implements OrderedFixtureInterface
             $user->setLastLoginAt($lastLoginAt);
         }
 
+        if (isset($row['anonymized']) && $row['anonymized']) {
+            $user->anonymize();
+        }
+
         if (isset($row['token'])) {
             $user
                 ->setToken($row['token'])
