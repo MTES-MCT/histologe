@@ -157,7 +157,7 @@ class SignalementFileProcessor
         )
             .$queryTokenUrl;
 
-        return '<li><a class="fr-link" target="_blank" href="'
+        return '<li><a class="fr-link" target="_blank" rel="noopener" href="'
             .$fileUrl
             .'">'
             .$title

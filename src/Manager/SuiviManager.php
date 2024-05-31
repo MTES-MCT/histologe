@@ -167,7 +167,7 @@ class SuiviManager extends Manager
                 UrlGeneratorInterface::ABSOLUTE_URL
             ).'?t=___TOKEN___';
 
-            $linkFile = '<li><a class="fr-link" target="_blank" href="'.$fileUrl.'">'.$file->getTitle().'</a>';
+            $linkFile = '<li><a class="fr-link" target="_blank" rel="noopener" href="'.$fileUrl.'">'.$file->getTitle().'</a>';
             if (DocumentType::PHOTO_SITUATION === $file->getDocumentType() && null !== $file->getDesordreSlug()) {
                 $desordreCritere = $this->desordreCritereRepository->findOneBy(
                     ['slugCritere' => $file->getDesordreSlug()]
