@@ -22,7 +22,7 @@ abstract class AbstractNotificationMailer implements NotificationMailerInterface
     protected ?string $tagHeader = null;
     protected array $mailerParams = [];
 
-    private const REPLY_TO_EMAIL = 'no-reply@histologe.fr';
+    private const REPLY_TO_EMAIL = 'no-reply@histologe.beta.gouv.fr';
 
     public function __construct(
         protected MailerInterface $mailer,
