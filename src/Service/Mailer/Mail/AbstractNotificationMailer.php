@@ -22,6 +22,8 @@ abstract class AbstractNotificationMailer implements NotificationMailerInterface
     protected ?string $tagHeader = null;
     protected array $mailerParams = [];
 
+    private const REPLY_TO_EMAIL = 'no-reply@histologe.fr';
+
     public function __construct(
         protected MailerInterface $mailer,
         protected ParameterBagInterface $parameterBag,
@@ -136,6 +138,7 @@ abstract class AbstractNotificationMailer implements NotificationMailerInterface
 
         return $notification->htmlTemplate('emails/'.$this->mailerTemplate.'.html.twig')
             ->context(array_merge($params, $config))
+            ->replyTo(self::REPLY_TO_EMAIL)
             ->subject(
                 mb_strtoupper($this->parameterBag->get('platform_name'))
                 .' '
