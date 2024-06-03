@@ -13,17 +13,12 @@ use App\Service\Signalement\Qualification\QualificationStatusService;
 use App\Service\UploadHandlerService;
 use App\Utils\AttributeParser;
 use App\Validator\EmailFormatValidator;
-use Symfony\Component\Validator\Validator\ValidatorInterface;
 use Twig\Extension\AbstractExtension;
 use Twig\TwigFilter;
 use Twig\TwigFunction;
 
 class AppExtension extends AbstractExtension
 {
-    public function __construct(private readonly ValidatorInterface $validator)
-    {
-    }
-
     public function getFilters(): array
     {
         return [
