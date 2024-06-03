@@ -2544,16 +2544,42 @@
               {
                 "type": "SignalementFormButton",
                 "label": "Je passe à la suite",
-                "slug": "desordres_renseignes_next",
+                "slug": "desordres_renseignes_next_no_disorder",
                 "action": "goto:ecran_intermediaire_procedure",
-                "customCss": "fr-mb-3v"
+                "customCss": "fr-mb-3v",
+                "conditional": {
+                  "show": "formStore.hasDesordre('desordres_') === false"
+                }
               },
               {
                 "type": "SignalementFormButton",
                 "label": "Je renseigne les désordres",
+                "slug": "desordres_renseignes_previous_no_disorder",
+                "action": "resolve:findPreviousScreen",
+                "customCss": "fr-btn--secondary fr-mb-3v",
+                "conditional": {
+                  "show": "formStore.hasDesordre('desordres_') === false"
+                }
+              },
+              {
+                "type": "SignalementFormButton",
+                "label": "Suivant",
+                "slug": "desordres_renseignes_next",
+                "action": "goto:ecran_intermediaire_procedure",
+                "customCss": "fr-mb-3v",
+                "conditional": {
+                  "show": "formStore.hasDesordre('desordres_') === true"
+                }
+              },
+              {
+                "type": "SignalementFormButton",
+                "label": "Précédent",
                 "slug": "desordres_renseignes_previous",
                 "action": "resolve:findPreviousScreen",
-                "customCss": "fr-btn--secondary fr-mb-3v"
+                "customCss": "fr-btn--secondary fr-mb-3v",
+                "conditional": {
+                  "show": "formStore.hasDesordre('desordres_') === true"
+                }
               }
             ]
           }
