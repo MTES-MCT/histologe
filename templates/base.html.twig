@@ -59,7 +59,7 @@
     {% endblock %}
     {% if matomo is defined and matomo.enable == 1 %}
         <!-- Matomo -->
-        <script>
+        <script nonce="matomo">
             var _paq = window._paq = window._paq || [];
             {% if platform.url starts with 'https' %}
                 _paq.push(['setSecureCookie', true]);
@@ -143,7 +143,7 @@
     <script src="https://cdn.jsdelivr.net/npm/tippy.js@6/dist/tippy-bundle.umd.js"></script>
 {% endif %}
 
-<script>
+<script nonce="tinyMCE">
     tinymce.init({
         selector: 'textarea.editor',
         browser_spellcheck: true,

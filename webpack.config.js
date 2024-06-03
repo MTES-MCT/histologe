@@ -79,7 +79,8 @@ Encore
     })
 
     .enableVueLoader(() => {}, {
-        version: 3
+        version: 3,
+        runtimeCompilerBuild: false
     })
 
     .configureDevServerOptions(options => {

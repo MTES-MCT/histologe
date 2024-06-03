@@ -137,7 +137,7 @@
                                         <label class="fr-label" for="signalement-edit-nde-conso-energie">
                                             Consommation énergétique
                                         </label>
-                                        <input class="fr-input fr-col-10" style="display: inline;" pattern="[0-9]*" inputmode="numeric" type="number" id="signalement-edit-nde-conso-energie" name="consommationEnergie" value="{{ signalementQualificationNDE.details.consommation_energie }}">
+                                        <input class="fr-input fr-col-10 fr-display-inline" pattern="[0-9]*" inputmode="numeric" type="number" id="signalement-edit-nde-conso-energie" name="consommationEnergie" value="{{ signalementQualificationNDE.details.consommation_energie }}">
                                         kWh<span class="{% if not isDPE2023 %}fr-hidden{% endif %} field-nde-conso-energie-unity">/m²</span>/an
                                     </div>
                                 </div>
@@ -146,7 +146,7 @@
                                         <label class="fr-label" for="signalement-edit-nde-superficie">
                                             Superficie du logement
                                         </label>
-                                        <input class="fr-input fr-col-10" style="display: inline;" pattern="[0-9]*" type="number" id="signalement-edit-nde-superficie" name="superficie" value="{{signalement.superficie}}"> m²
+                                        <input class="fr-input fr-col-10 fr-display-inline" pattern="[0-9]*" type="number" id="signalement-edit-nde-superficie" name="superficie" value="{{signalement.superficie}}"> m²
                                     </div>
                                 </div>
                             </div>                            
