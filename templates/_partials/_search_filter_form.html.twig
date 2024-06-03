@@ -54,7 +54,7 @@
                                 {% if is_granted('ROLE_ADMIN') %}
                                     <div class="fr-col-12 fr-col-md-6">
                                         <label class="fr-label" for="bo-filters-territories"><strong>Filtrer par territoire</strong></label>
-                                        <select id="bo-filters-territories" class="fr-select" onchange="setBadge(this)">
+                                        <select id="bo-filters-territories" class="fr-select" nonce="{{ app.request.attributes.get('csp_script_nonce') }}"  onchange="setBadge(this)">
                                             <option value="">TOUS</option>
                                             {% for territory in territories %}
                                                 <option value="{{ territory.id }}"
@@ -77,7 +77,7 @@
                                 {% endif %}
                                 <div class="fr-col-12 fr-col-md-6">
                                     <label class="fr-label" for="bo-filters-cities"><strong>Filtrer par ville</strong></label>
-                                    <select id="bo-filters-cities" class="fr-select" onchange="setBadge(this)">
+                                    <select id="bo-filters-cities" class="fr-select" nonce="{{ app.request.attributes.get('csp_script_nonce') }}"  onchange="setBadge(this)">
                                         <option value="">TOUTES</option>
                                         {% for city in cities %}
                                             <option value="{{ city.city }}"
@@ -99,7 +99,7 @@
                                 </div>
                                 <div class="fr-col-12 fr-col-md-6">
                                     <label class="fr-label" for="bo-filters-statuses"><strong>Filtrer par statut</strong></label>
-                                    <select id="bo-filters-statuses" class="fr-select" onchange="setBadge(this)">
+                                    <select id="bo-filters-statuses" class="fr-select" nonce="{{ app.request.attributes.get('csp_script_nonce') }}"  onchange="setBadge(this)">
                                         <option value="">TOUS</option>
                                         {% for status,wording in statuses %}
                                             <option value="{{ status }}"
@@ -124,7 +124,7 @@
                                         <label class="fr-label" for="bo-filters-partners">
                                             <strong>Filtrer par partenaire</strong>
                                         </label>
-                                        <select id="bo-filters-partners" class="fr-select" onchange="setBadge(this)">
+                                        <select id="bo-filters-partners" class="fr-select" nonce="{{ app.request.attributes.get('csp_script_nonce') }}"  onchange="setBadge(this)">
                                             <option value="">TOUS</option>
                                             <option value="AUCUN">AUCUN</option>
                                             <optgroup label="COMMUNES">
@@ -159,7 +159,7 @@
                                     <div class="fr-col-12 fr-col-md-6">
                                         <label class="fr-label" for="bo-filters-closed_affectation"><strong>Filtrer par
                                                 affectation</strong></label>
-                                        <select id="bo-filters-closed_affectation" class="fr-select" onchange="setBadge(this)">
+                                        <select id="bo-filters-closed_affectation" class="fr-select" nonce="{{ app.request.attributes.get('csp_script_nonce') }}"  onchange="setBadge(this)">
                                             <option value="">TOUS</option>
                                             {# TODO remettre les options quand on mettra en place une UI pour ne pas pouvoir cumuler ces filtres excluants #}
                                             {# <option value="ALL_OPEN">Ouvert chez tous les partenaires</option> #}
@@ -183,7 +183,7 @@
                                 <div class="fr-col-12 fr-col-md-6">
                                     <label class="fr-label" for="bo-filters-relances_usager"><strong>Filtrer par
                                             relance  usager</strong></label>
-                                    <select id="bo-filters-relances_usager" class="fr-select" onchange="setBadge(this)">
+                                    <select id="bo-filters-relances_usager" class="fr-select" nonce="{{ app.request.attributes.get('csp_script_nonce') }}"  onchange="setBadge(this)">
                                         <option value="">TOUS</option>
                                         <option value="NO_SUIVI_AFTER_3_RELANCES">3 relances sans réponse usager</option>
                                     </select>
@@ -202,7 +202,7 @@
                                 </div>
                                 <div class="fr-col-12 fr-col-md-6">
                                     <label class="fr-label" for="bo-filters-criteres"><strong>Critères</strong></label>
-                                    <select id="bo-filters-criteres" class="fr-select" onchange="setBadge(this)">
+                                    <select id="bo-filters-criteres" class="fr-select" nonce="{{ app.request.attributes.get('csp_script_nonce') }}"  onchange="setBadge(this)">
                                         <option value="">TOUS</option>
                                         {% for critere in criteres %}
                                             <option value="{{ critere.id }}"
@@ -224,7 +224,7 @@
                                 </div>
                                 <div class="fr-col-12 fr-col-md-6">
                                     <label class="fr-label" for="bo-filters-tags"><strong>Etiquettes</strong></label>
-                                    <select id="bo-filters-tags" class="fr-select" onchange="setBadge(this)">
+                                    <select id="bo-filters-tags" class="fr-select" nonce="{{ app.request.attributes.get('csp_script_nonce') }}"  onchange="setBadge(this)">
                                         <option value="">TOUS</option>
                                         {% for tag in tags %}
                                             <option value="{{ tag.id }}"
@@ -249,7 +249,7 @@
                                     <div class="fr-grid-row fr-grid-row--gutters">
                                         <div class="fr-col-6">
                                             <label class="fr-label" for="bo-filters-allocs"><strong>Bénéficiaire</strong></label>
-                                            <select id="bo-filters-allocs" class="fr-select" onchange="setBadge(this)">
+                                            <select id="bo-filters-allocs" class="fr-select" nonce="{{ app.request.attributes.get('csp_script_nonce') }}"  onchange="setBadge(this)">
                                                 <option value="">TOUS</option>
                                                 {% for v,allocation in allocations %}
                                                     <option value="{{ v }}"
@@ -272,7 +272,7 @@
                                         </div>
                                         <div class="fr-col-6">
                                             <label class="fr-label" for="bo-filters-housetypes"><strong>Logement</strong></label>
-                                            <select id="bo-filters-housetypes" class="fr-select" onchange="setBadge(this)">
+                                            <select id="bo-filters-housetypes" class="fr-select" nonce="{{ app.request.attributes.get('csp_script_nonce') }}"  onchange="setBadge(this)">
                                                 <option value="">TOUS</option>
                                                 <option value="0" class="{% if 0 in filters.housetypes %}fr-hidden{% endif %}">PRIVE
                                                 </option>
@@ -298,7 +298,7 @@
                                     <div class="fr-grid-row fr-grid-row--gutters">
                                         <div class="fr-col-6">
                                             <label class="fr-label" for="bo-filters-declarants"><strong>Déclarant</strong></label>
-                                            <select id="bo-filters-declarants" class="fr-select" onchange="setBadge(this)">
+                                            <select id="bo-filters-declarants" class="fr-select" nonce="{{ app.request.attributes.get('csp_script_nonce') }}"  onchange="setBadge(this)">
                                                 <option value="">TOUS</option>
                                                 <option value="0" class="{% if 0 in filters.declarants %}fr-hidden{% endif %}">OCCUPANT
                                                 </option>
@@ -321,7 +321,7 @@
                                         </div>
                                         <div class="fr-col-6">
                                             <label class="fr-label" for="bo-filters-proprios"><strong>Proprio. averti</strong></label>
-                                            <select id="bo-filters-proprios" class="fr-select" onchange="setBadge(this)">
+                                            <select id="bo-filters-proprios" class="fr-select" nonce="{{ app.request.attributes.get('csp_script_nonce') }}"  onchange="setBadge(this)">
                                                 <option value="">TOUS</option>
                                                 <option value="0" class="{% if 0 in filters.proprios %}fr-hidden{% endif %}">NON</option>
                                                 <option value="1" class="{% if 1 in filters.proprios %}fr-hidden{% endif %}">OUI</option>
@@ -344,7 +344,7 @@
                                 </div>
                                 <div class="fr-col-12 fr-col-md-6">
                                     <label class="fr-label" for="bo-filters-visites"><strong>Statut de la visite</strong></label>
-                                    <select id="bo-filters-visites" class="fr-select" onchange="setBadge(this)">
+                                    <select id="bo-filters-visites" class="fr-select" nonce="{{ app.request.attributes.get('csp_script_nonce') }}"  onchange="setBadge(this)">
                                         <option value="">TOUS</option>
                                         {% for visiteStatus in listVisiteStatus %}
                                             <option value="{{ visiteStatus }}">{{ visiteStatus }}</option>
@@ -368,7 +368,7 @@
                                     <div class="fr-grid-row fr-grid-row--gutters">
                                         <div class="fr-col-6">
                                             <label class="fr-label" for="bo-filters-enfantsM6"><strong>Enfants - de 6ans</strong></label>
-                                            <select id="bo-filters-enfantsM6" class="fr-select" onchange="setBadge(this)">
+                                            <select id="bo-filters-enfantsM6" class="fr-select" nonce="{{ app.request.attributes.get('csp_script_nonce') }}"  onchange="setBadge(this)">
                                                 <option value="">TOUS</option>
                                                 <option value="0" class="{% if 0 in filters.enfantsM6 %}fr-hidden{% endif %}">NON</option>
                                                 <option value="1" class="{% if 1 in filters.enfantsM6 %}fr-hidden{% endif %}">OUI</option>
@@ -406,7 +406,7 @@
                                         <div class="fr-col-6">
                                             <label class="fr-label" for="bo-filters-avant1949"><strong>Construction av.
                                                     1949</strong></label>
-                                            <select id="bo-filters-avant1949" class="fr-select" onchange="setBadge(this)">
+                                            <select id="bo-filters-avant1949" class="fr-select" nonce="{{ app.request.attributes.get('csp_script_nonce') }}"  onchange="setBadge(this)">
                                                 <option value="">TOUS</option>
                                                 <option value="1" class="{% if 0 in filters.avant1949 %}fr-hidden{% endif %}">OUI</option>
                                                 <option value="0" class="{% if 1 in filters.avant1949 %}fr-hidden{% endif %}">NON</option>
@@ -519,7 +519,7 @@
                                     <div class="fr-grid-row fr-grid-row--gutters">
                                         <div class="fr-col-6">
                                             <label class="fr-label" for="bo-filters-nde"><strong>Non décence énergétique</strong></label>
-                                            <select id="bo-filters-nde" class="fr-select" onchange="setBadge(this)">
+                                            <select id="bo-filters-nde" class="fr-select" nonce="{{ app.request.attributes.get('csp_script_nonce') }}"  onchange="setBadge(this)">
                                                 <option value="">Tous</option>
                                                 {% for qualificationName, qualificationValue in listQualificationStatus %}
                                                     <option value="{{ qualificationName }}" class="{% if qualificationName in filters.nde %}fr-hidden{% endif %}">{{ qualificationValue }}</option>

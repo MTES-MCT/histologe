@@ -59,7 +59,9 @@
     {% endblock %}
     {% if matomo is defined and matomo.enable == 1 %}
         <!-- Matomo -->
-        <script nonce="matomo">
+        {# {{ dump(app.request.attributes) }}
+        {{ dump(app.request.attributes.get('csp_script_nonce')) }} #}
+        <script nonce="{{ app.request.attributes.get('csp_script_nonce') }}">
             var _paq = window._paq = window._paq || [];
             {% if platform.url starts with 'https' %}
                 _paq.push(['setSecureCookie', true]);
@@ -143,7 +145,7 @@
     <script src="https://cdn.jsdelivr.net/npm/tippy.js@6/dist/tippy-bundle.umd.js"></script>
 {% endif %}
 
-<script nonce="tinyMCE">
+<script>
     tinymce.init({
         selector: 'textarea.editor',
         browser_spellcheck: true,

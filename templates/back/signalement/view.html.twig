@@ -61,7 +61,7 @@
 {% endblock %}
 {% block javascripts %}
     {{ encore_entry_script_tags('app') }}
-    <script nonce="tippy">
+    <script nonce="{{ app.request.attributes.get('csp_script_nonce') }}">
         tippy('.part-infos-hover', {
             content: (reference) => '<strong class="fr-ws-nowrap">' + reference.getAttribute('data-user') + '</strong>' + '<hr class="fr-pb-1v"><span class="fr-ws-nowrap">' + reference.getAttribute('data-mail') + '</span>',
             allowHTML: true,
