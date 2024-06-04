@@ -12,6 +12,7 @@ imports:
     - { resource: 'app/suivi_messages.yaml'}
     - { resource: 'app/cron_scheduler.yaml'}
     - { resource: 'app/export_pdf.yaml'}
+    - { resource: 'app/csp.yaml'}
 parameters:
     .container.dumper.inline_factories: true
     uploads_dir: '%kernel.project_dir%/uploaded_files/signalement/'

@@ -48,3 +48,4 @@ import './controllers/front_demande_lien_signalement/front_demande_lien_signalem
 import './controllers/back_signalement_view/input_autocomplete_bailleur';
 import './controllers/back_signalement_view/form_cloture_modal';
 import './controllers/front_suivi_signalement/front_suivi_signalement';
+import './controllers/search_filter_form'

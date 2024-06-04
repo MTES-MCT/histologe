@@ -145,7 +145,7 @@
     <script src="https://cdn.jsdelivr.net/npm/tippy.js@6/dist/tippy-bundle.umd.js"></script>
 {% endif %}
 
-<script>
+<script nonce="{{ app.request.attributes.get('csp_script_nonce') }}">
     tinymce.init({
         selector: 'textarea.editor',
         browser_spellcheck: true,
