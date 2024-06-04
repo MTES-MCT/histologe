@@ -50,7 +50,7 @@
     {% endif %}
 
     {% if 'back_signalement_view' in app.request.get('_route') %}
-        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/tippy.js@6/themes/light-border.css">
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/tippy.js@6/dist/tippy.css">
     {% endif %}
 
     {% block stylesheets %}{% endblock %}
@@ -59,8 +59,6 @@
     {% endblock %}
     {% if matomo is defined and matomo.enable == 1 %}
         <!-- Matomo -->
-        {# {{ dump(app.request.attributes) }}
-        {{ dump(app.request.attributes.get('csp_script_nonce')) }} #}
         <script nonce="{{ app.request.attributes.get('csp_script_nonce') }}">
             var _paq = window._paq = window._paq || [];
             {% if platform.url starts with 'https' %}
@@ -142,7 +140,7 @@
 {% endif %}
 {% if 'back_signalement_view' in app.request.get('_route') %}
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/tippy.js@6/dist/tippy-bundle.umd.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/tippy.js@6/dist/tippy.umd.min.js"></script>
 {% endif %}
 
 <script nonce="{{ app.request.attributes.get('csp_script_nonce') }}">
