@@ -236,14 +236,14 @@ desordre_critere:
     label_categorie: "Type et composition du logement"
     zone_categorie: "LOGEMENT"
     slug_critere: "desordres_type_composition_logement_piece_unique"
-    label_critere: "Le logement est une pièce unique"
+    label_critere: "Le logement est une pièce unique avec un problème de structure"
   -
     desordre_categorie_label: "Structure / équipements" 
     slug_categorie: "desordres_type_composition_logement"
     label_categorie: "Type et composition du logement"
     zone_categorie: "LOGEMENT"
     slug_critere: "desordres_type_composition_logement_plusieurs_pieces"
-    label_critere: "Le logement comporte plusieurs pièces"
+    label_critere: "Le logement comporte plusieurs pièces et a un problème de structure"
   -
     desordre_categorie_label: "Structure / équipements" 
     slug_categorie: "desordres_type_composition_logement"
@@ -264,7 +264,7 @@ desordre_critere:
     label_categorie: "Type et composition du logement"
     zone_categorie: "LOGEMENT"
     slug_critere: "desordres_type_composition_logement_wc"
-    label_critere: "Problème de structure / équipement"
+    label_critere: "Problème de structure des sanitaires"
   -
     desordre_categorie_label: "Suroccupation" 
     slug_categorie: "desordres_type_composition_logement"
