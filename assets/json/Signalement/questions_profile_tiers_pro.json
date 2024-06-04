@@ -553,6 +553,35 @@
       "body": [
         {
           "type": "SignalementFormIcon",
+          "slug": "type_logement_commodites_piece_a_vivre_icon",
+          "icons": [
+            {
+              "src": "/img/form/PIECES/Picto-salon.svg",
+              "alt": ""
+            }
+          ]
+        },
+        {
+          "type": "SignalementFormOnlyChoice",
+          "label": "Est-ce qu'au moins une des pièces à vivre (salon, chambre) fait 9m² ou plus ?",
+          "slug": "type_logement_commodites_piece_a_vivre_9m",
+          "values": [
+            {
+              "label": "Oui",
+              "value": "oui"
+            },
+            {
+              "label": "Non",
+              "value": "non"
+            },
+            {
+              "label": "Je ne sais pas",
+              "value": "nsp"
+            }
+          ]
+        },
+        {
+          "type": "SignalementFormIcon",
           "slug": "type_logement_commodites_cuisine_icon",
           "icons": [
             {
