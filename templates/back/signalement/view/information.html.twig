@@ -61,7 +61,12 @@
                     </div>
                     <div class="fr-col-12">
                         <strong>Courriel :</strong>
-                        <a href="mailto:{{ signalement.mailDeclarant }}">{{ signalement.mailDeclarant }}</a>
+                        {% if signalement.mailDeclarant %}
+                            <a href="mailto:{{ signalement.mailDeclarant }}">{{ signalement.mailDeclarant }}</a>
+                            {% if show_email_alert(signalement.mailDeclarant) %}
+                                <p class="fr-badge fr-badge--error">Format non valide</p>
+                            {% endif %}
+                        {% endif %}
                     </div>
                     <div class="fr-col-12">
                         <strong>Tél. :</strong> {{ signalement.telDeclarantDecoded }}
@@ -111,7 +116,12 @@
                     </div>
                     <div class="fr-col-12">
                         <strong>Courriel :</strong>
-                        <a href="mailto:{{ signalement.mailOccupant }}">{{ signalement.mailOccupant }}</a>
+                        {% if signalement.mailOccupant %}
+                            <a href="mailto:{{ signalement.mailOccupant }}">{{ signalement.mailOccupant }}</a>
+                            {% if show_email_alert(signalement.mailOccupant) %}
+                                <p class="fr-badge fr-badge--error">Format non valide</p>
+                            {% endif %}
+                        {% endif %}
                     </div>
                     <div class="fr-col-12 fr-col-md-6">
                         <strong>Tél. :</strong>
@@ -151,6 +161,9 @@
                             <strong>Courriel :</strong>
                             {% if signalement.mailProprio %}
                                 <a href="mailto:{{ signalement.mailProprio }}">{{ signalement.mailProprio }}</a>
+                                {% if show_email_alert(signalement.mailProprio) %}
+                                    <p class="fr-badge fr-badge--error">Format non valide</p>
+                                {% endif %}
                             {% endif %}
                         </div>
                         <div class="fr-col-12 fr-col-md-6">

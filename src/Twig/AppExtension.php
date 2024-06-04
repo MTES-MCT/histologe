@@ -2,6 +2,7 @@
 
 namespace App\Twig;
 
+use App\Command\FixEmailAddressesCommand;
 use App\Entity\Enum\OccupantLink;
 use App\Entity\Enum\QualificationStatus;
 use App\Entity\File;
@@ -11,6 +12,7 @@ use App\Service\Notification\NotificationCounter;
 use App\Service\Signalement\Qualification\QualificationStatusService;
 use App\Service\UploadHandlerService;
 use App\Utils\AttributeParser;
+use App\Validator\EmailFormatValidator;
 use Twig\Extension\AbstractExtension;
 use Twig\TwigFilter;
 use Twig\TwigFunction;
@@ -96,6 +98,7 @@ class AppExtension extends AbstractExtension
             new TwigFunction('show_label_facultatif', [AttributeParser::class, 'showLabelAsFacultatif']),
             new TwigFunction('get_accepted_mime_type', [$this, 'getAcceptedMimeTypes']),
             new TwigFunction('get_accepted_extensions', [UploadHandlerService::class, 'getAcceptedExtensions']),
+            new TwigFunction('show_email_alert', [$this, 'showEmailAlert']),
         ];
     }
 
@@ -106,5 +109,10 @@ class AppExtension extends AbstractExtension
         }
 
         return implode(',', File::IMAGE_MIME_TYPES);
+    }
+
+    public function showEmailAlert(?string $emailAddress): bool
+    {
+        return !EmailFormatValidator::validate($emailAddress) || FixEmailAddressesCommand::EMAIL_HISTOLOGE_INCONNU === $emailAddress;
     }
 }

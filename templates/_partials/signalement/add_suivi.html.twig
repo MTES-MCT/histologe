@@ -13,12 +13,17 @@
                         <form method="POST" name="signalement-add-suivi" id="signalement-add-suivi-form" class="tinyCheck"
                                 action="{{ path('back_signalement_add_suivi',{uuid:signalement.uuid}) }}">
                             <div class="fr-fieldset fr-fieldset--inline fr-mb-5v">
+                                {% if show_email_alert(signalement.mailDeclarant) and show_email_alert(signalement.mailOccupant) %}
+                                    <p class="fr-badge fr-badge--error">L'adresse e-mail de l'usager n'est pas valide. Vous ne pouvez pas lui envoyer le suivi.</p>
+                                    <input type="hidden" name="signalement-add-suivi[notifyUsager]" value="0">
+                                {% else %}
                                 <div class="fr-fieldset__content">
                                     <div class="fr-toggle fr-col-12">
                                         <input type="checkbox" class="fr-toggle__input" aria-describedby="toggle-698-hint-text" id="signalement-add-suivi-notify-usager" name="signalement-add-suivi[notifyUsager]" value="1">
                                         <label class="fr-toggle__label" for="signalement-add-suivi-notify-usager">En cochant cette case, le suivi sera envoyé à l'usager</label>
                                     </div>
                                 </div>
+                                {% endif %}
                             </div>
 
                             <div class="fr-input-group">

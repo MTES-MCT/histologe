@@ -21,6 +21,7 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Uid\Uuid;
 use Symfony\Component\Validator\Constraints as Assert;
+use Symfony\Component\Validator\Constraints\Email;
 use Symfony\Component\Validator\Context\ExecutionContextInterface;
 
 #[ORM\Entity(repositoryClass: SignalementRepository::class)]
@@ -161,7 +162,7 @@ class Signalement
     private ?string $telDeclarantSecondaire;
 
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
-    #[Assert\Email(message: 'L\'adresse e-mail du déclarant n\'est pas valide.')]
+    #[Assert\Email(mode: Email::VALIDATION_MODE_STRICT, message: 'L\'adresse e-mail du déclarant n\'est pas valide.')]
     private $mailDeclarant;
 
     #[ORM\Column(type: 'string', length: 200, nullable: true)]
@@ -185,7 +186,7 @@ class Signalement
     private $telOccupant;
 
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
-    #[Assert\Email(message: 'L\'adresse e-mail de l\'occupant n\'est pas valide.')]
+    #[Assert\Email(mode: Email::VALIDATION_MODE_STRICT, message: 'L\'adresse e-mail de l\'occupant n\'est pas valide.')]
     private $mailOccupant;
 
     #[ORM\Column(type: 'string', length: 100, nullable: true)]

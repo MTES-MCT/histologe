@@ -18,6 +18,9 @@
 {% if signalement.mailOccupant %}
 	<br>
 	{{ signalement.mailOccupant }}
+	{% if show_email_alert(signalement.mailOccupant) %}
+		<p class="fr-badge fr-badge--error">Format non valide, merci de nous le signaler.</p>
+	{% endif %}
 {% endif %}
 {% if signalement.telOccupant %}
 	<br>
@@ -48,6 +51,9 @@
 {% if signalement.mailProprio %}
 	<br>
 	{{ signalement.mailProprio }}
+	{% if show_email_alert(signalement.mailProprio) %}
+		<p class="fr-badge fr-badge--error">Format non valide, merci de nous le signaler.</p>
+	{% endif %}
 {% endif %}
 {% if signalement.telProprio %}
 	<br>
