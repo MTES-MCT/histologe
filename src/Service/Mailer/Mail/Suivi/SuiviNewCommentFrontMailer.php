@@ -37,7 +37,7 @@ class SuiviNewCommentFrontMailer extends AbstractNotificationMailer
                 'front_suivi_signalement',
                 ['code' => $signalement->getCodeSuivi(), 'from' => $notificationMail->getTo()],
                 UrlGeneratorInterface::ABSOLUTE_URL
-            ) . '#suivi-last',
+            ).'#suivi-last',
         ];
     }
 }
