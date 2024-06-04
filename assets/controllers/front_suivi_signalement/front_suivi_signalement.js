@@ -134,12 +134,13 @@ if (modalUploadFiles) {
         let uploadedFilesList = document.querySelector('#uploaded-files-list')
         let div = document.createElement('div')
         div.id = 'uploaded-file-' + response.response
+        div.classList.add('fr-mb-2v')
         div.innerHTML = file.name
         let deleteFileLink = document.createElement('a')
         deleteFileLink.href = deleteTmpFileRoute + '?file_id=' + response.response
-        deleteFileLink.classList.add('uploaded-file-delete', 'fr-ml-2v')
+        deleteFileLink.classList.add('uploaded-file-delete', 'fr-ml-2v', 'fr-btn', 'fr-btn--tertiary', 'fr-btn--icon-left', 'fr-icon-delete-line')
         deleteFileLink.title = 'Supprimer'
-        deleteFileLink.innerHTML = '<i class="fr-icon-delete-line"></i>'
+        deleteFileLink.innerHTML = 'Supprimer'
         div.appendChild(deleteFileLink)
         uploadedFilesList.appendChild(div)
         deleteFileLink.addEventListener('click', (e) => {
