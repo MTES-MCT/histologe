@@ -69,13 +69,15 @@ signalement.isProprioAverti is not same as true
 and signalement.profileDeclarant is not same as enum('App\\Entity\\Enum\\ProfileDeclarant').BAILLEUR_OCCUPANT
 and signalement.profileDeclarant is not same as enum('App\\Entity\\Enum\\ProfileDeclarant').BAILLEUR
 %}
-<h4 class="fr-mb-2v">Prévenez votre bailleur (propriétaire) !</h4>
-<div class="fr-mb-4v">
-	Il est recommandé d'informer le bailleur du logement des problèmes rencontrés dans le logement.
-	<br>
-	Nous vous mettons à disposition un modèle de courrier à remplir et envoyer à votre bailleur. 
-							Cliquez sur le bouton ci-dessous pour le télécharger.
-	<br>
+<div class="fr-callout fr-icon-information-line">
+    <h4 class="fr-mb-2v">Prévenez votre bailleur (propriétaire) !</h4>
+    <p class="fr-callout__text">
+		Il est recommandé d'informer le bailleur du logement des problèmes rencontrés dans le logement.
+		<br>
+		Nous vous mettons à disposition un modèle de courrier à remplir et envoyer à votre bailleur. 
+		Cliquez sur le bouton ci-dessous pour le télécharger.
+		<br>
+    </p>
 	<a class="fr-btn fr-btn--icon-left open-modal-upload-files-btn fr-icon-arrow-down-line fr-mt-2v" download href="{{ asset('build/files/Lettre-information-proprietaire-bailleur_A-COMPLETER.pdf') }}">
 		Télécharger le courrier
 	</a>

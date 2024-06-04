@@ -5,7 +5,7 @@
 </div>
 <div class="fr-mt-4v">
 	{% for suivi in signalement.suivis %}
-		<div class="message-box {% if (suivi.createdBy and suivi.createdBy.partner) or suivi.type is same as constant('App\\Entity\\Suivi::TYPE_TECHNICAL') %}message-box--partner{% else %}message-box--usager{% endif %}">
+		<div {% if loop.last %}id="suivi-last"{% endif %} class="message-box {% if (suivi.createdBy and suivi.createdBy.partner) or suivi.type is same as constant('App\\Entity\\Suivi::TYPE_TECHNICAL') %}message-box--partner{% else %}message-box--usager{% endif %}">
 			<div>
 				<strong>
 				
