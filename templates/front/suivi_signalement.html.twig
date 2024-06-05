@@ -19,8 +19,6 @@
 					{{signalement.prenomOccupant|capitalize}}
 					{{signalement.nomOccupant|capitalize}}
 				</h1>
-			</div>
-			<div class="fr-col-12 fr-col-lg-6 text-align-right--lg">
 				<div>Déposé le :
 					{{ signalement.createdAt|date('d/m/Y') }}</div>
 				{% if signalement.statut is same as constant('App\\Entity\\Signalement::STATUS_NEED_VALIDATION') %}

@@ -1,4 +1,4 @@
-<h2 class="fr-h3 fr-mb-2v">Mes infos</h2>
+<h2 class="fr-h3 fr-mb-5v">Mes infos</h2>
 <h4 class="fr-mb-2v">Adresse du logement</h4>
 <div class="fr-mb-4v">
 {{ signalement.adresseOccupant }}
@@ -91,74 +91,70 @@ and signalement.profileDeclarant is not same as enum('App\\Entity\\Enum\\Profile
 		<button class="fr-accordion__btn" aria-expanded="false" aria-controls="accordion-type-composition">Afficher les informations</button>
 	</h3>
 	<div class="fr-collapse" id="accordion-type-composition">
-		Nature du logement  :
-		{{ signalement.natureLogement|capitalize }}
-		{% if signalement.typeCompositionLogement %}
-			{% if signalement.typeCompositionLogement.typeLogementNatureAutrePrecision %}
-				({{signalement.typeCompositionLogement.typeLogementNatureAutrePrecision}})
+		<ul>
+			<li> Nature du logement  :
+				{{ signalement.natureLogement|capitalize }}
+				{% if signalement.typeCompositionLogement %}
+					{% if signalement.typeCompositionLogement.typeLogementNatureAutrePrecision %}
+						({{signalement.typeCompositionLogement.typeLogementNatureAutrePrecision}})
+					{% endif %}
+					{% if signalement.typeCompositionLogement.typeLogementRdc == 'oui' %}, RDC
+					{% endif %}
+					{% if signalement.typeCompositionLogement.typeLogementDernierEtage == 'oui' %}, Dernier étage
+					{% endif %}
+					{% if signalement.typeCompositionLogement.typeLogementSousCombleSansFenetre == 'oui' %}, Combles sans fenêtres
+					{% endif %}
+				{% endif %}
+			</li>
+			<li>Superficie en m² : {{ signalement.superficie }} m²</li>
+			{% if signalement.typeCompositionLogement %}
+				<li>La hauteur jusqu'au plafond est de 2m (200cm) ou plus ?
+					{{ signalement.typeCompositionLogement.compositionLogementHauteur(false)|capitalize }}
+				</li>
+				<li>Une seule ou plusieurs pièces ?
+					{{ signalement.typeCompositionLogement.compositionLogementPieceUnique(false) }}
+				</li>
+				<li>Nombre de pièces à vivre :
+					{{ signalement.typeCompositionLogement.compositionLogementNbPieces }}
+				</li>
+				<li>Est-ce qu'au moins une des pièces à vivre (salon, chambre) fait 9m² ou plus ?
+					{{ signalement.typeCompositionLogement.typeLogementCommoditesPieceAVivre9m(false)|capitalize }}
+				</li>
+				<li>Cuisine ou coin cuisine ?
+					{{ signalement.typeCompositionLogement.typeLogementCommoditesCuisine|capitalize }}
+				</li>
+				{% if signalement.typeCompositionLogement.typeLogementCommoditesCuisine == 'non' %}
+					<li>Accès à une cuisine collective ?
+						{{ signalement.typeCompositionLogement.typeLogementCommoditesCuisineCollective|capitalize }}
+					</li>
+				{% endif %}
+				<li>Salle de bain, salle d'eau avec douche ou baignoire ?
+					{{ signalement.typeCompositionLogement.typeLogementCommoditesSalleDeBain|capitalize }}
+				</li>
+				{% if signalement.typeCompositionLogement.typeLogementCommoditesSalleDeBain == 'non' %}
+					<li>Accès à une salle de bain ou des douches collectives ?
+						{{ signalement.typeCompositionLogement.typeLogementCommoditesSalleDeBainCollective|capitalize }}
+					</li>
+				{% endif %}
+				<li>Toilettes (WC) ?
+					{{ signalement.typeCompositionLogement.typeLogementCommoditesWc|capitalize }}
+				</li>
+				{% if signalement.typeCompositionLogement.typeLogementCommoditesWc == 'non' %}
+					<li>Accès à des toilettes (WC) collectives ?
+						{{ signalement.typeCompositionLogement.typeLogementCommoditesWcCollective|capitalize }}
+					</li>
+				{% endif %}
+				{% if signalement.typeCompositionLogement.typeLogementCommoditesWcCuisine == 'oui' %}
+					<li>Toilettes (WC) et cuisine dans la même pièce</li>
+				{% endif %}
 			{% endif %}
-			{% if signalement.typeCompositionLogement.typeLogementRdc == 'oui' %}, RDC
+			<li>Nombre de personnes : {{ signalement.nbOccupantsLogement }}</li>
+			{% if signalement.typeCompositionLogement %}
+				<li>Enfants de moins de 6 ans ?
+					{{signalement.typeCompositionLogement.compositionLogementEnfants|capitalize}}
+				</li>
 			{% endif %}
-			{% if signalement.typeCompositionLogement.typeLogementDernierEtage == 'oui' %}, Dernier étage
-			{% endif %}
-			{% if signalement.typeCompositionLogement.typeLogementSousCombleSansFenetre == 'oui' %}, Combles sans fenêtres
-			{% endif %}
-		{% endif %}
-		<br>
-		Superficie en m² :
-		{{ signalement.superficie }}
-		m²
-		<br>
-		{% if signalement.typeCompositionLogement %}
-			La hauteur jusqu'au plafond est de 2m (200cm) ou plus ?
-			{{ signalement.typeCompositionLogement.compositionLogementHauteur(false)|capitalize }}
-			<br>
-			Une seule ou plusieurs pièces ?
-			{{ signalement.typeCompositionLogement.compositionLogementPieceUnique(false) }}
-			<br>
-			Nombre de pièces à vivre :
-			{{ signalement.typeCompositionLogement.compositionLogementNbPieces }}
-			<br>
-			Est-ce qu'au moins une des pièces à vivre (salon, chambre) fait 9m² ou plus ?
-			{{ signalement.typeCompositionLogement.typeLogementCommoditesPieceAVivre9m(false)|capitalize }}
-			<br>
-			Cuisine ou coin cuisine ?
-			{{ signalement.typeCompositionLogement.typeLogementCommoditesCuisine|capitalize }}
-			<br>
-			{% if signalement.typeCompositionLogement.typeLogementCommoditesCuisine == 'non' %}
-				Accès à une cuisine collective ?
-				{{ signalement.typeCompositionLogement.typeLogementCommoditesCuisineCollective|capitalize }}
-				<br>
-			{% endif %}
-			Salle de bain, salle d'eau avec douche ou baignoire ?
-			{{ signalement.typeCompositionLogement.typeLogementCommoditesSalleDeBain|capitalize }}
-			<br>
-			{% if signalement.typeCompositionLogement.typeLogementCommoditesSalleDeBain == 'non' %}
-				Accès à une salle de bain ou des douches collectives ?
-				{{ signalement.typeCompositionLogement.typeLogementCommoditesSalleDeBainCollective|capitalize }}
-				<br>
-			{% endif %}
-			Toilettes (WC) ?
-			{{ signalement.typeCompositionLogement.typeLogementCommoditesWc|capitalize }}
-			<br>
-			{% if signalement.typeCompositionLogement.typeLogementCommoditesWc == 'non' %}
-				Accès à des toilettes (WC) collectives ?
-				{{ signalement.typeCompositionLogement.typeLogementCommoditesWcCollective|capitalize }}
-				<br>
-			{% endif %}
-			{% if signalement.typeCompositionLogement.typeLogementCommoditesWcCuisine == 'oui' %}
-				Toilettes (WC) et cuisine dans la même pièce
-				<br>
-			{% endif %}
-		{% endif %}
-		Nombre de personnes :
-		{{ signalement.nbOccupantsLogement }}
-		<br>
-		{% if signalement.typeCompositionLogement %}
-			Enfants de moins de 6 ans ?
-			{{signalement.typeCompositionLogement.compositionLogementEnfants|capitalize}}
-			<br>
-		{% endif %}
+		</ul>
 	</div>
 </section>
 </div>
@@ -170,76 +166,64 @@ and signalement.profileDeclarant is not same as enum('App\\Entity\\Enum\\Profile
 		<button class="fr-accordion__btn" aria-expanded="false" aria-controls="accordion-situation-foyer">Afficher les informations</button>
 	</h3>
 	<div class="fr-collapse" id="accordion-situation-foyer">
-		{% if signalement.isLogementSocial %}
-			Logement social : Oui
-			<br>
-		{% endif %}
-		{% if signalement.isRelogement is same as true %}
-			Demande de relogement : Oui
-			<br>
-		{% endif %}
-		{% if signalement.isAllocataire in [null, ''] %}
+		<ul>
+			{% if signalement.isLogementSocial %}
+				<li>Logement social : Oui</li>
+			{% endif %}
+			{% if signalement.isRelogement is same as true %}
+				<li>Demande de relogement : Oui</li>
+			{% endif %}
+			{% if signalement.isAllocataire in [null, ''] %}
 			{% elseif signalement.isAllocataire in ['oui', '1'] %}
-				Allocataire : Oui
-				<br>
+				<li>Allocataire : Oui</li>
 			{% elseif signalement.isAllocataire in ['non', '0'] %}
-				Allocataire : Non
-				<br>
+				<li>Allocataire : Non</li>
 			{% elseif signalement.isAllocataire %}
-				Allocataire :
-				{{ signalement.isAllocataire }}
-				<br>
-		{% endif %}
-		{% if (signalement.dateNaissanceOccupant) %}
-			Date de naissance :
-			{{ signalement.dateNaissanceOccupant.format('d/m/Y') }}
-			<br>
-		{% elseif signalement.naissanceOccupants %}
-			Date de naissance :
-			{{ signalement.naissanceOccupants}}
-			<br>
-		{% endif %}
-		{% if signalement.numAllocataire %}
-			N° allocataire :
-			{{ signalement.numAllocataire }}
-			<br>
-		{% endif %}
-		{% if signalement.situationFoyer %}
-			{% if signalement.situationFoyer.logementSocialMontantAllocation %}
-				Montant allocation :
-				{{ signalement.situationFoyer.logementSocialMontantAllocation }}
-				€
-				<br>
+				<li>Allocataire : {{ signalement.isAllocataire }}</li>
 			{% endif %}
-			{% if signalement.situationFoyer.travailleurSocialQuitteLogement(false) %}
-				Souhaite quitter le logement :
-				{{signalement.situationFoyer.travailleurSocialQuitteLogement(false)|capitalize}}
-				<br>
+			{% if (signalement.dateNaissanceOccupant) %}
+				<li>Date de naissance : {{ signalement.dateNaissanceOccupant.format('d/m/Y') }}</li>
+			{% elseif signalement.naissanceOccupants %}
+				<li>Date de naissance : {{ signalement.naissanceOccupants}}</li>
 			{% endif %}
-			{% if signalement.situationFoyer.travailleurSocialAccompagnement(false) %}
-				Accompagnement par un ou une travailleuse sociale :
-				{{signalement.situationFoyer.travailleurSocialAccompagnement(false)|capitalize}}
-				<br>
+			{% if signalement.numAllocataire %}
+				<li>N° allocataire : {{ signalement.numAllocataire }}</li>
 			{% endif %}
-		{% endif %}
-		{% if signalement.informationComplementaire %}
-			{% if signalement.informationComplementaire.informationsComplementairesSituationOccupantsBeneficiaireRsa %}
-				Bénéficiaire RSA :
-				{{signalement.informationComplementaire.informationsComplementairesSituationOccupantsBeneficiaireRsa|capitalize}}
-				<br>
+			{% if signalement.situationFoyer %}
+				{% if signalement.situationFoyer.logementSocialMontantAllocation %}
+					<li>Montant allocation :
+						{{ signalement.situationFoyer.logementSocialMontantAllocation }} €
+					</li>
+				{% endif %}
+				{% if signalement.situationFoyer.travailleurSocialQuitteLogement(false) %}
+					<li>Souhaite quitter le logement :
+						{{signalement.situationFoyer.travailleurSocialQuitteLogement(false)|capitalize}}
+					</li>
+				{% endif %}
+				{% if signalement.situationFoyer.travailleurSocialAccompagnement(false) %}
+					<li>Accompagnement par un ou une travailleuse sociale :
+						{{signalement.situationFoyer.travailleurSocialAccompagnement(false)|capitalize}}
+					</li>
+				{% endif %}
 			{% endif %}
-			{% if signalement.informationComplementaire.informationsComplementairesSituationOccupantsBeneficiaireFsl %}
-				Bénéficiaire FSL :
-				{{signalement.informationComplementaire.informationsComplementairesSituationOccupantsBeneficiaireFsl|capitalize}}
-				<br>
+			{% if signalement.informationComplementaire %}
+				{% if signalement.informationComplementaire.informationsComplementairesSituationOccupantsBeneficiaireRsa %}
+					<li>Bénéficiaire RSA :
+						{{signalement.informationComplementaire.informationsComplementairesSituationOccupantsBeneficiaireRsa|capitalize}}
+					</li>
+				{% endif %}
+				{% if signalement.informationComplementaire.informationsComplementairesSituationOccupantsBeneficiaireFsl %}
+					<li>Bénéficiaire FSL :
+						{{signalement.informationComplementaire.informationsComplementairesSituationOccupantsBeneficiaireFsl|capitalize}}
+					</li>
+				{% endif %}
+				{% if signalement.informationComplementaire.informationsComplementairesSituationOccupantsRevenuFiscal %}
+					<li>Revenu fiscal de référence :
+						{{signalement.informationComplementaire.informationsComplementairesSituationOccupantsRevenuFiscal}} €
+					</li>
+				{% endif %}
 			{% endif %}
-			{% if signalement.informationComplementaire.informationsComplementairesSituationOccupantsRevenuFiscal %}
-				Revenu fiscal de référence :
-				{{signalement.informationComplementaire.informationsComplementairesSituationOccupantsRevenuFiscal}}
-				€
-				<br>
-			{% endif %}
-		{% endif %}
+		</ul>
 	</div>
 </div>
 
@@ -323,7 +307,7 @@ and signalement.profileDeclarant is not same as enum('App\\Entity\\Enum\\Profile
 </div>
 
 <div class="fr-mb-4v">
-	<h4 class="fr-mb-2v">La procédure</h4>
+	<h4 class="fr-mb-2v">Procédures et démarches</h4>
 	<section class="fr-accordion fr-mb-4v">
 		<h3 class="fr-accordion__title">
 			<button class="fr-accordion__btn" aria-expanded="false" aria-controls="accordion-procedure-demarche">Afficher les informations</button>
