@@ -37,18 +37,13 @@ class UserAccountController extends AbstractController
                         user: $user,
                     )
                 );
+            }
 
-                return $this->render('security/login_link_sent.html.twig', [
-                    'title' => 'Lien d\'activation envoyé !',
-                    'message' => 'Vous allez recevoir un courriel contenant un lien vous pemettant de créer votre mot de passe afin d\'activer votre compte.',
-                    'email' => $email,
-                ]);
-            }
-            if ($user && User::STATUS_ACTIVE === $user->getStatut()) {
-                $this->addFlash('error', 'Votre compte est déjà activé, vous pouvez vous connecter');
-            } else {
-                $this->addFlash('error', 'Cette adresse ne correspond à aucun compte, vérifiez votre saisie');
-            }
+            return $this->render('security/login_link_sent.html.twig', [
+                'title' => 'Lien d\'activation',
+                'message' => 'Si un compte inactif existe pour le courriel indiqué vous allez recevoir un courriel contenant un lien vous pemettant de créer votre mot de passe afin d\'activer votre compte.',
+                'email' => $email,
+            ]);
         }
 
         return $this->render('security/login_activation.html.twig');
@@ -72,23 +67,12 @@ class UserAccountController extends AbstractController
                         user: $user
                     )
                 );
-
-                return $this->render('security/login_link_sent.html.twig', [
-                    'title' => 'Lien de récupération envoyé !',
-                    'message' => 'Vous allez recevoir un courriel contenant un lien vous permettant de réinitialiser votre mot de passe.',
-                    'email' => $email,
-                ]);
             }
 
-            $typeError = 'DEFAULT';
-            if ($user && User::STATUS_ACTIVE !== $user->getStatut()) {
-                $typeError = 'STATUS';
-            }
-
-            return $this->render('security/reset_password.html.twig', [
-                'title' => $title,
+            return $this->render('security/login_link_sent.html.twig', [
+                'title' => 'Lien de récupération',
+                'message' => 'Si un compte actif existe pour le courriel indiqué vous allez recevoir un courriel contenant un lien vous permettant de réinitialiser votre mot de passe.',
                 'email' => $email,
-                'typeError' => $typeError,
             ]);
         }
 
