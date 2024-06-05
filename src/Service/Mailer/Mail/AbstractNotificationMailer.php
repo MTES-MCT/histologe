@@ -136,6 +136,7 @@ abstract class AbstractNotificationMailer implements NotificationMailerInterface
 
         return $notification->htmlTemplate('emails/'.$this->mailerTemplate.'.html.twig')
             ->context(array_merge($params, $config))
+            ->replyTo($this->parameterBag->get('reply_to_email'))
             ->subject(
                 mb_strtoupper($this->parameterBag->get('platform_name'))
                 .' '
