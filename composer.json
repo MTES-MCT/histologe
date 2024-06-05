@@ -22,6 +22,8 @@
         "nelmio/cors-bundle": "^2.2",
         "phpdocumentor/reflection-docblock": "^5.3",
         "phpstan/phpdoc-parser": "^1.2",
+        "scheb/2fa-bundle": "^6.12",
+        "scheb/2fa-email": "^6.12",
         "scienta/doctrine-json-functions": "^5.0",
         "sentry/sentry-symfony": "^4.3",
         "symfony/apache-pack": "^1.0",
