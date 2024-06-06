@@ -1280,7 +1280,7 @@ class Signalement
         return $this;
     }
 
-    public function getComplementAdresseOccupant(): string
+    public function getComplementAdresseOccupant($autre = true): string
     {
         $complement = '';
         if ($this->etageOccupant) {
@@ -1292,7 +1292,7 @@ class Signalement
         if ($this->numAppartOccupant) {
             $complement .= 'appartement '.$this->numAppartOccupant.', ';
         }
-        if ($this->adresseAutreOccupant) {
+        if ($this->adresseAutreOccupant && $autre) {
             $complement .= $this->adresseAutreOccupant;
         }
 

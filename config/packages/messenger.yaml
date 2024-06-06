@@ -21,6 +21,7 @@ framework:
             App\Messenger\Message\Esabora\DossierMessageSCHS: async
             App\Messenger\Message\Esabora\DossierMessageSISH: async
             App\Messenger\Message\Oilhi\DossierMessage: async
+            App\Messenger\Message\Idoss\DossierMessage: async
             App\Messenger\Message\PdfExportMessage: async_priority_high
             App\Messenger\Message\SignalementDraftFileMessage: async_priority_high
 

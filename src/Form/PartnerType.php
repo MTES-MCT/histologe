@@ -155,24 +155,38 @@ class PartnerType extends AbstractType
                 ],
                 'required' => false,
                 'disabled' => !$this->isAdmin,
-            ])
-            ->add('territory', EntityType::class, [
-                'class' => Territory::class,
-                'query_builder' => function (TerritoryRepository $tr) {
-                    return $tr->createQueryBuilder('t')->andWhere('t.isActive = 1')->orderBy('t.id', 'ASC');
-                },
-                'data' => !empty($territory) ? $territory : null,
-                'disabled' => !$options['can_edit_territory'],
-                'choice_label' => 'name',
-                'attr' => [
-                    'class' => 'fr-select',
-                ],
-                'row_attr' => [
-                    'class' => !$options['can_edit_territory'] ? 'fr-input-group fr-hidden' : 'fr-input-group',
-                ],
-                'label' => 'Territoire',
-                'required' => true,
             ]);
+        if ($this->isAdmin) {
+            $builder->add('isIdossActive', CheckboxType::class, [
+                'attr' => [
+                    'class' => 'fr-toggle__input',
+                ],
+                'required' => false,
+            ])
+            ->add('idossUrl', UrlType::class, [
+                'attr' => [
+                    'class' => 'fr-input',
+                ],
+                'required' => false,
+            ]);
+        }
+        $builder->add('territory', EntityType::class, [
+            'class' => Territory::class,
+            'query_builder' => function (TerritoryRepository $tr) {
+                return $tr->createQueryBuilder('t')->andWhere('t.isActive = 1')->orderBy('t.id', 'ASC');
+            },
+            'data' => !empty($territory) ? $territory : null,
+            'disabled' => !$options['can_edit_territory'],
+            'choice_label' => 'name',
+            'attr' => [
+                'class' => 'fr-select',
+            ],
+            'row_attr' => [
+                'class' => !$options['can_edit_territory'] ? 'fr-input-group fr-hidden' : 'fr-input-group',
+            ],
+            'label' => 'Territoire',
+            'required' => true,
+        ]);
         $builder->get('insee')->addModelTransformer(new CallbackTransformer(
             function ($tagsAsArray) {
                 // transform the array to a string

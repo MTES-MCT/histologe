@@ -84,12 +84,26 @@ class Partner
     #[Ignore]
     private Collection $interventions;
 
+    #[ORM\Column]
+    private ?bool $isIdossActive = null;
+
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $idossUrl = null;
+
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $idossToken = null;
+
+    #[ORM\Column(type: Types::DATETIME_IMMUTABLE, nullable: true)]
+    private ?\DateTimeInterface $idossTokenExpirationDate = null;
+
     public function __construct()
     {
         $this->users = new ArrayCollection();
         $this->isArchive = false;
         $this->affectations = new ArrayCollection();
         $this->interventions = new ArrayCollection();
+        $this->isIdossActive = false;
+        $this->isIdossActive = false;
     }
 
     public function getId(): ?int
@@ -356,5 +370,58 @@ class Partner
                 $this->territory->getZip(),
                 self::TERRITORY_ZIP_ALLOWED
             );
+    }
+
+    public function canSyncWithIdoss(): bool
+    {
+        return $this->isIdossActive && $this->idossUrl;
+    }
+
+    public function isIdossActive(): ?bool
+    {
+        return $this->isIdossActive;
+    }
+
+    public function setIsIdossActive(bool $isIdossActive): self
+    {
+        $this->isIdossActive = $isIdossActive;
+
+        return $this;
+    }
+
+    public function getIdossUrl(): ?string
+    {
+        return $this->idossUrl;
+    }
+
+    public function setIdossUrl(?string $idossUrl): self
+    {
+        $this->idossUrl = $idossUrl;
+
+        return $this;
+    }
+
+    public function getIdossToken(): ?string
+    {
+        return $this->idossToken;
+    }
+
+    public function setIdossToken(?string $idossToken): self
+    {
+        $this->idossToken = $idossToken;
+
+        return $this;
+    }
+
+    public function getIdossTokenExpirationDate(): ?\DateTimeInterface
+    {
+        return $this->idossTokenExpirationDate;
+    }
+
+    public function setIdossTokenExpirationDate(?\DateTimeInterface $idossTokenExpirationDate): self
+    {
+        $this->idossTokenExpirationDate = $idossTokenExpirationDate;
+
+        return $this;
     }
 }

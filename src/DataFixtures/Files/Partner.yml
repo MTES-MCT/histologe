@@ -41,6 +41,8 @@ partners:
     is_esabora_active: 1
     type: "COMMUNE_SCHS"
     competence: "VISITES"
+    is_idoss_active: 1
+    idoss_url: "https://idoss-dev.portail-familles.com/"
   -
     nom: "Partenaire 13-06 ESABORA ARS"
     email: "partenaire-13-06@histologe.fr"

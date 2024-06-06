@@ -48,7 +48,7 @@ class SignalementControllerTest extends WebTestCase
         if (Signalement::STATUS_ARCHIVED === $status) {
             $this->assertResponseRedirects('/');
         } elseif (Signalement::STATUS_ACTIVE === $status) {
-            $this->assertEquals('Signalement #2022-1 '.$signalement->getPrenomOccupant().' '.$signalement->getNomOccupant(), $crawler->filter('h1')->eq(2)->text());
+            $this->assertEquals('Signalement #2022-1 '.ucwords($signalement->getPrenomOccupant().' '.$signalement->getNomOccupant()), $crawler->filter('h1')->eq(2)->text());
         } else {
             $this->assertResponseRedirects(
                 '/suivre-mon-signalement/'.$signalement->getCodeSuivi().'?from='.$signalement->getMailOccupant()

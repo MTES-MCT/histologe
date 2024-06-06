@@ -7,7 +7,7 @@ use App\Entity\Signalement;
 use App\Entity\Suivi;
 use App\Entity\User;
 use App\Event\AffectationAnsweredEvent;
-use App\Factory\Interconnection\Oilhi\DossierMessageFactory;
+use App\Factory\Interconnection\Idoss\DossierMessageFactory;
 use App\Manager\AffectationManager;
 use App\Manager\SignalementManager;
 use App\Manager\SuiviManager;
@@ -23,6 +23,7 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Routing\Annotation\Route;
 
 #[Route('/bo/signalements')]
@@ -34,7 +35,6 @@ class AffectationController extends AbstractController
         private PartnerRepository $partnerRepository,
         private InterconnectionBus $interconnectionBus,
         private EventDispatcherInterface $eventDispatcher,
-        private DossierMessageFactory $dossierMessageFactory
     ) {
     }
 
@@ -117,6 +117,8 @@ class AffectationController extends AbstractController
         User $user,
         Request $request,
         FirstAffectationAcceptedSpecification $firstAcceptedAffectationSpecification,
+        DossierMessageFactory $dossierMessageFactory,
+        MessageBusInterface $bus
     ): Response {
         $this->denyAccessUnlessGranted('ASSIGN_ANSWER', $affectation);
         if ($this->isCsrfTokenValid('signalement_affectation_response_'.$signalement->getId(), $request->get('_token'))
@@ -141,10 +143,13 @@ class AffectationController extends AbstractController
                 );
             }
 
-            $this->addFlash('success', 'Affectation mise à jour avec succès !');
             if (Affectation::STATUS_REFUSED == $status) {
                 $this->dispatchAffectationAnsweredEvent($affectation, $response);
             }
+            if ($dossierMessageFactory->supports($affectation)) {
+                $bus->dispatch($dossierMessageFactory->createInstance($affectation));
+            }
+            $this->addFlash('success', 'Affectation mise à jour avec succès !');
         } else {
             $this->addFlash('error', "Une erreur est survenu lors de l'affectation");
         }
