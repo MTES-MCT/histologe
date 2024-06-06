@@ -42,6 +42,7 @@ parameters:
     chatbot_enable: '%env(bool:CHATBOT_ENABLE)%'
     idoss_username: '%env(resolve:IDOSS_USERNAME)%'
     idoss_password: '%env(resolve:IDOSS_PASSWORD)%'
+    feature_archive_inactive_account: '%env(bool:FEATURE_ARCHIVE_INACTIVE_ACCOUNT)%'
     feature_anonymize_expired_account: '%env(bool:FEATURE_ANONYMIZE_EXPIRED_ACCOUNT)%'
 
 services:
