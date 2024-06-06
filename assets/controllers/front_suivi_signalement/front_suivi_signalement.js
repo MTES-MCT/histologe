@@ -288,3 +288,10 @@ if (modalUploadFiles) {
         modalUploadFiles.dataset.validated = true
     })
 }
+
+document.addEventListener("DOMContentLoaded", function() {
+    if(window.location.hash) {
+        elmnt = document.getElementById(window.location.hash.substring(1))
+        elmnt.scrollIntoView({behavior:'instant'})
+    }
+})
