@@ -22,6 +22,14 @@ class NotifyAndArchiveInactiveAccountCommandTest extends KernelTestCase
         $commandTester->assertCommandIsSuccessful();
 
         $output = $commandTester->getDisplay();
+
+        $isActivated = $kernel->getContainer()->getParameter('feature_archive_inactive_account');
+        if (!$isActivated) {
+            $this->assertStringContainsString('Feature "FEATURE_ARCHIVE_INACTIVE_ACCOUNT" is disabled.', $output);
+
+            return;
+        }
+
         $this->assertStringContainsString('2 first notifications sent to inactive users.', $output);
         $this->assertStringContainsString('0 second notifications sent to inactive users.', $output);
         $this->assertStringContainsString('0 accounts archived.', $output);
