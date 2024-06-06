@@ -577,7 +577,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, TwoFact
 
     public function isEmailAuthEnabled(): bool
     {
-        return \in_array('ROLE_ADMIN', $this->getRoles());
+        return $this->isSuperAdmin();
     }
 
     public function getEmailAuthRecipient(): string
