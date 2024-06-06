@@ -44,7 +44,7 @@
     <link rel="stylesheet" href="{{ asset('build/dsfr/utility/icons/icons-weather/icons-weather.min.css') }}">
     <link rel="stylesheet" href={{ asset('build/app.css') }}>
     {# <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/tinymce@7.1.2/skins/ui/oxide/content.min.css"> #}
-    <link rel="stylesheet"  href="https://cdn.jsdelivr.net/npm/quill@2.0.2/dist/quill.snow.css"/>
+    {# <link rel="stylesheet"  href="https://cdn.jsdelivr.net/npm/quill@2.0.2/dist/quill.snow.css"/> #}
     {% if 'back_cartographie' in app.request.get('_route') %}
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet@1.7.1/dist/leaflet.css">
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet.markercluster@1.5.3/dist/MarkerCluster.Default.css">
@@ -132,8 +132,8 @@
 <script type="module" src="{{ asset('build/dsfr/dsfr.module.min.js') }}"></script>
 <script nomodule src="{{ asset('build/dsfr/dsfr.nomodule.min.js') }}"></script>
 {# <script src="{{ asset('js/tinymce/tinymce.min.js') }}"></script> #}
-{# <script src="https://cdn.jsdelivr.net/npm/tinymce@7.1.2/tinymce.min.js"></script> #}
-<script src="https://cdn.jsdelivr.net/npm/quill@2.0.2/dist/quill.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/tinymce@7.1.2/tinymce.min.js"></script>
+{# <script src="https://cdn.jsdelivr.net/npm/quill@2.0.2/dist/quill.js"></script> #}
 <script src="{{ asset('js/const.min.js?v='~''|date('YmdH')) }}"></script>
 <script src="{{ asset('js/app.js?v='~''|date('YmdH')) }}"></script>
 
@@ -147,7 +147,7 @@
     <script src="https://cdn.jsdelivr.net/npm/tippy.js@6/dist/tippy.umd.min.js"></script>
 {% endif %}
 
-<script nonce="{{ app.request.attributes.get('csp_script_nonce') }}">
+{# <script nonce="{{ app.request.attributes.get('csp_script_nonce') }}">
   const quill = new Quill('#quillEditor', {
     theme: 'snow',
     modules: {
@@ -193,9 +193,9 @@
     });
 
 
-</script>
+</script> #}
 
-{# <script nonce="{{ app.request.attributes.get('csp_script_nonce') }}">
+<script nonce="{{ app.request.attributes.get('csp_script_nonce') }}">
     tinymce.init({
         selector: 'textarea.editor',
         browser_spellcheck: true,
@@ -255,7 +255,7 @@
         }
         {% endif %}
     });
-</script> #}
+</script>
 {% block javascripts %}{% endblock %}
 {% block chatbot %}{% endblock %}
 </body>
