@@ -9,7 +9,7 @@
               <li v-if="sharedState.user.isResponsableTerritoire">
                 <button class="fr-tag"
                         ref="myAffectationButton"
-                        aria-pressed="{{ sharedState.input.filters.showMyAffectationOnly === 'oui' }}"
+                        :aria-pressed="ariaPressed.showMyAffectationOnly.toString()"
                         @click="toggleCurrentPartnerAffectation">
                   Afficher mes affectations uniquement
                 </button>
@@ -19,7 +19,7 @@
                     v-if="sharedState.hasSignalementImported"
                     ref="isImportedButton"
                     class="fr-tag"
-                    aria-pressed="{{ sharedState.input.filters.isImported === 'oui' }}"
+                    :aria-pressed="ariaPressed.isImported.toString()"
                     @click="toggleIsImported"
                 >Afficher les signalements importés
                 </button>
@@ -431,6 +431,10 @@ export default defineComponent({
       showOptions: false,
       reset: false,
       sharedState: store.state,
+      ariaPressed: {
+        isImported: store.state.input.filters.isImported === 'oui',
+        showMyAffectationOnly: store.state.input.filters.showMyAffectationOnly === 'oui'
+      },
       statusSignalementList: store.state.statusSignalementList,
       statusAffectationList: store.state.statusAffectationList,
       statusVisiteList: store.state.statusVisiteList,

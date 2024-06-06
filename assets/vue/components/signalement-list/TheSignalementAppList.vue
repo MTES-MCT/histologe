@@ -175,11 +175,16 @@ export default defineComponent({
       this.init()
     },
     handleSignalements (requestResponse: any) {
-      this.sharedState.signalements.filters = requestResponse.filters
-      this.sharedState.signalements.list = requestResponse.list
-      this.sharedState.signalements.pagination = requestResponse.pagination
-      this.loadingList = false
-      window.scrollTo(0, 0)
+      if (typeof requestResponse === 'string' && requestResponse === 'error') {
+        this.hasErrorLoading = true
+      } else {
+        this.hasErrorLoading = false
+        this.sharedState.signalements.filters = requestResponse.filters
+        this.sharedState.signalements.list = requestResponse.list
+        this.sharedState.signalements.pagination = requestResponse.pagination
+        this.loadingList = false
+        window.scrollTo(0, 0)
+      }
     },
     handlePageChange (pageNumber: number) {
       this.clearScreen()
@@ -228,20 +233,17 @@ export default defineComponent({
             url.searchParams.set(`${key}Debut`, dateDebut)
             url.searchParams.set(`${key}Fin`, dateFin)
             url.searchParams.delete(key)
-          } else if (typeof value === 'object' &&
-              (key === 'partenaires' || key === 'communes' || key === 'etiquettes' || key === 'epcis')) {
-            if (key === 'epcis') {
-              value.forEach((valueItem: any) => {
-                const code = valueItem.split('|').shift()
-                this.addQueryParameter(`${key}[]`, code)
-                url.searchParams.append(`${key}[]`, code)
-              })
-            } else {
-              value.forEach((valueItem: any) => {
-                this.addQueryParameter(`${key}[]`, valueItem)
-                url.searchParams.append(`${key}[]`, valueItem)
-              })
-            }
+          } else if (typeof value === 'object' && (key === 'partenaires' || key === 'communes' || key === 'etiquettes')) {
+            value.forEach((valueItem: any) => {
+              this.addQueryParameter(`${key}[]`, valueItem)
+              url.searchParams.append(`${key}[]`, valueItem)
+            })
+          } else if (typeof value === 'object' && key === 'epcis') {
+            value.forEach((valueItem: any) => {
+              const code = valueItem.split('|').shift()
+              this.addQueryParameter(`${key}[]`, code)
+              url.searchParams.append(`${key}[]`, code)
+            })
           } else if (typeof value === 'string') {
             this.addQueryParameter(key, value)
             url.searchParams.set(key, value)

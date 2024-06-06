@@ -67,6 +67,7 @@ class SignalementSearchQuery
         private readonly ?string $isImported = null,
         #[Assert\Choice(['reference', 'nomOccupant', 'lastSuiviAt'])]
         private readonly string $sortBy = 'reference',
+        #[Assert\Choice(['ASC', 'DESC', 'asc', 'desc'])]
         private readonly string $orderBy = 'DESC',
     ) {
     }
