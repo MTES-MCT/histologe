@@ -41,7 +41,7 @@ class UserAccountController extends AbstractController
 
             return $this->render('security/login_link_sent.html.twig', [
                 'title' => 'Lien d\'activation',
-                'message' => 'Si un compte inactif existe pour le courriel indiqué vous allez recevoir un courriel contenant un lien vous pemettant de créer votre mot de passe afin d\'activer votre compte.',
+                'message' => 'Si un compte inactif existe pour le courriel indiqué, vous allez recevoir un courriel contenant un lien vous pemettant de créer votre mot de passe afin d\'activer votre compte.',
                 'email' => $email,
             ]);
         }
@@ -71,7 +71,7 @@ class UserAccountController extends AbstractController
 
             return $this->render('security/login_link_sent.html.twig', [
                 'title' => 'Lien de récupération',
-                'message' => 'Si un compte actif existe pour le courriel indiqué vous allez recevoir un courriel contenant un lien vous permettant de réinitialiser votre mot de passe.',
+                'message' => 'Si un compte actif existe pour le courriel indiqué, vous allez recevoir un courriel contenant un lien vous permettant de réinitialiser votre mot de passe.',
                 'email' => $email,
             ]);
         }
