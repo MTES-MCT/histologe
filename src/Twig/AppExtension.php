@@ -70,17 +70,6 @@ class AppExtension extends AbstractExtension
         return $fileName;
     }
 
-    public function getFunctions(): array
-    {
-        return [
-            new TwigFunction('count_notification', [NotificationCounter::class, 'countUnseenNotification']),
-            new TwigFunction('can_see_nde_edit_zone', [QualificationStatusService::class, 'canSeenNDEEditZone']),
-            new TwigFunction('show_label_facultatif', [AttributeParser::class, 'showLabelAsFacultatif']),
-            new TwigFunction('get_accepted_mime_type', [$this, 'getAcceptedMimeTypes']),
-            new TwigFunction('get_accepted_extensions', [UploadHandlerService::class, 'getAcceptedExtensions']),
-        ];
-    }
-
     public function cleanTaggedText(?string $taggedText, string $tag, string $direction): string
     {
         if (null === $taggedText) {
@@ -104,7 +93,6 @@ class AppExtension extends AbstractExtension
         return [
             new TwigFunction('count_notification', [NotificationCounter::class, 'countUnseenNotification']),
             new TwigFunction('can_see_nde_edit_zone', [QualificationStatusService::class, 'canSeenNDEEditZone']),
-            new TwigFunction('can_edit_esabora_credentials', [EsaboraPartnerTypeSubscription::class, 'isSubscribed']),
             new TwigFunction('show_label_facultatif', [AttributeParser::class, 'showLabelAsFacultatif']),
             new TwigFunction('get_accepted_mime_type', [$this, 'getAcceptedMimeTypes']),
             new TwigFunction('get_accepted_extensions', [UploadHandlerService::class, 'getAcceptedExtensions']),

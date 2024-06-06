@@ -48,7 +48,7 @@ final class DossierMessage implements DossierMessageInterface
         $this->tokenExpirationDate = $affectation->getPartner()->getIdossTokenExpirationDate();
         $this->partnerType = $affectation->getPartner()->getType();
         $this->signalementUuid = $affectation->getSignalement()->getUuid();
-        $this->dateDepotSignalement = $affectation->getSignalement()->getCreatedAt()->format('d-m-Y');
+        $this->dateDepotSignalement = $affectation->getSignalement()->getCreatedAt()->format('m-d-Y');
         $this->declarant = [
             'nomDeclarant' => $affectation->getSignalement()->getNomDeclarant(),
             'prenomDeclarant' => $affectation->getSignalement()->getPrenomDeclarant(),
@@ -97,7 +97,7 @@ final class DossierMessage implements DossierMessageInterface
             $this->bailEnCour = 'non';
         }
         if ($affectation->getSignalement()->getDateEntree()) {
-            $this->dateEntreeLogement = $affectation->getSignalement()->getDateEntree()->format('d-m-Y');
+            $this->dateEntreeLogement = $affectation->getSignalement()->getDateEntree()->format('m-d-Y');
         }
         $this->montantLoyer = $affectation->getSignalement()->getLoyer();
         if (true === $affectation->getSignalement()->getIsConstructionAvant1949()) {
