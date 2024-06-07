@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="fr">
+	<head>
+		<meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+		<title>Zone signalement</title>
+        <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
+        <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+        <script src='//api.tiles.mapbox.com/mapbox.js/plugins/leaflet-omnivore/v0.3.1/leaflet-omnivore.min.js'></script>
+	</head>
+	<body>
+		<div style="width:70%;float:left;">
+			<div id="map" style="height: 80vh;"></div>
+		</div>
+		<div id="infos" style="width:28%;float:right;" data-zone="{{zone.wkt}}">
+            Liste des points dans la Zone
+            <ul>
+                {% for location in locations %}
+                    <li class="location" data-lat="{{ location.lat }}" data-lng="{{location.lng}}">
+                        {{location.lat}} - {{location.lng}}
+                    </li>
+                {% endfor %}
+            </ul>
+		</div>
+        <script>
+			var map = L.map('map').setView([43.316667, 3.466667], 15);
+			L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    			maxZoom: 19,
+    			attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+			}).addTo(map);
+
+            var zoneWkt = document.getElementById('infos').getAttribute('data-zone');
+            omnivore.wkt.parse(zoneWkt).addTo(map);
+
+            var locations = document.getElementsByClassName('location');
+            for (var i = 0; i < locations.length; i++) {
+                var lat = locations[i].getAttribute('data-lat');
+                var lng = locations[i].getAttribute('data-lng');
+                L.marker([lat, lng]).addTo(map);
+            }
+
+
+		</script>
+	</body>
+</html>
