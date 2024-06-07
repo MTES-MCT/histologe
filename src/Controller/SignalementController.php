@@ -51,6 +51,10 @@ class SignalementController extends AbstractController
     public function edit(
         SignalementDraft $signalementDraft
     ): Response {
+        if (SignalementDraftStatus::EN_COURS !== $signalementDraft->getStatus()) {
+            throw $this->createNotFoundException();
+        }
+
         return $this->render('front/nouveau_formulaire.html.twig', [
             'uuid_signalement' => $signalementDraft->getUuid(),
         ]);
@@ -179,6 +183,9 @@ class SignalementController extends AbstractController
         ValidatorInterface $validator,
         SignalementDraft $signalementDraft,
     ): JsonResponse {
+        if (SignalementDraftStatus::ARCHIVE === $signalementDraft->getStatus()) {
+            throw $this->createNotFoundException();
+        }
         /** @var SignalementDraftRequest $signalementDraftRequest */
         $signalementDraftRequest = $serializer->deserialize(
             $payload = $request->getContent(),
