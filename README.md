@@ -144,7 +144,10 @@ Une activation de compte sera nécéssaire
 
 ## Documentation projet
 
-[Consulter la documentation](https://github.com/MTES-MCT/histologe/wiki)
+- [Documentation](https://github.com/MTES-MCT/histologe/wiki)
+- [Documentation usager](https://documentation.histologe.beta.gouv.fr/)
+- [Dossier d'architecture technique](./docs/ARCHITECTURE.md)
+- [Document d'exploitation](./docs/EXPLOITATION.md)
 
 ## Contribuer
 

@@ -2,73 +2,150 @@
 
 ## Introduction et Contexte
 
-### TODO - Objectif du document
-Définir le but et la portée du DAT.
+### Objectif du document
+Ce document décrit l'environnement technique dans lequel est exploitée la plateforme Histologe.
 
-### TODO - Contexte du projet
-Présenter le projet, ses enjeux, et les parties prenantes.
+### Contexte du projet
+Histologe est une solution numérique pour détecter et accélérer la prise en charge du mal-logement.
+
+Cette plateforme fournit 
+- un guichet unique de signalement à des usagers en situation de mal-logement,
+- un back-office pour permettre aux agents de communiquer plus facilement et résoudre plus rapidement les signalements qu'ils reçoivent.
 
 ## Description de l'Architecture Technique
 
 ### TODO - Architecture globale
-Vue d'ensemble du système, incluant les principaux composants et leur interaction.
+TODO : Insérer ici le schéma fourni lors de l'analyse de risques Histologe
 
 ### TODO - Diagrammes d'architecture
 Schémas tels que les diagrammes de déploiement, de composants, ou d'intégration pour visualiser les relations entre les éléments du système.
 
 ## Composants Techniques
 
-### TODO - Serveurs
-Description des serveurs physiques et virtuels, incluant leur rôle, configuration, et spécifications.
+### Serveurs
+Une instance Scalingo composée de trois conteneurs permet d'exploiter la plateforme :
+- une webapp
+- un worker
+- un conteneur gérant les tâches asynchrones
 
-### TODO - Réseau
-Détails sur l'infrastructure réseau, incluant les protocoles, les équipements (routeurs, switches), et les topologies.
+Voir aussi la partie Stockage.
 
-### TODO - Stockage
-Types de stockage utilisés (SAN, NAS, DAS), et leur configuration.
+### Réseau
+L'ensemble du système communique avec le protocole HTTPS.
+
+Les DNS sont gérés via le service Alwaysdata, qui redirige vers Scalingo.
+
+### Stockage
+Les documents sont stockés sur une infrastructure cloud OVH de type "Object Storage".
 
 ### TODO - Bases de données
-Description des bases de données, systèmes de gestion, schémas, et politiques de sauvegarde.
+Le système de gestion utilisé est MySQL.
 
-### TODO - Middleware
-Outils et logiciels intermédiaires utilisés pour la communication entre applications.
+Une seule base de données gère l'ensemble de la plateforme.
+
+TODO : schémas
+
+La base de données est sauvegardée automatiquement, chaque jour, par l'hébergeur.
+Elle est sauvegardée de manière déconnectée sur un disque dur externe, chaque semaine.
+
+### Middleware
+
+#### Brevo
+Les communications par e-mails sont envoyés à travers l'API de Brevo.
+
+#### Matomo
+L'analyse des visites et parcours sur le site est faite grâce à ce service.
+
+#### DGS - Esabora
+Nous communiquons avec 2 types d'instances Esabora (SI-SH et SCHS) pour leur faire parvenir des dossiers.
+
+#### Zapier
+Nous envoyons des requêtes vers Zapier pour communiquer avec OILHI, une autre start-up d'Etat.
+
+#### Sentry
+Sentry, hébergée par les services nationaux, nous permet de retrouver les erreurs listées par le service.
+
+#### BAN
+Nous faisons des appels à la Base d'Adresses Nationale pour faciliter la saisie et l'édition de signalements.
+
+#### Open Street Map
+Nous géolocalisons les signalements pour faciliter le travail des agents à travers une cartographie ou une simple carte.
+
+#### Koumoul Open Data
+Nous indique les informations de DPE des logements.
 
 ## Sécurité
 
 ### TODO - Mesures de sécurité
 Protocoles de sécurité, pare-feux, systèmes de détection d'intrusion, et politiques d'accès.
 
-### TODO - Conformité
-Adhésion aux normes et régulations (GDPR, ISO, etc.).
+### Conformité
+Voir notre [politique de confidentialité](https://histologe.beta.gouv.fr/politique-de-confidentialite).
 
 ## Environnements
 
-### TODO - Développement, Test, Production
-Description des différents environnements et de leur configuration spécifique.
+### Développement, Test, Production
+#### Environnement local
+Plateforme histologe| [localhost:8080](http://localhost:8080)
+phpMyAdmin | [localhost:8081](http://localhost:8081)
+MailCatcher  | [localhost:1080](http://localhost:1080)
+Wiremock  | [localhost:1082](http://localhost:1082)
+Metabase  | [localhost:3007](http://localhost:3007)
+Matomo  | [localhost:1083](http://localhost:1083)
 
-### TODO - Gestion des versions
-Stratégies de déploiement, versioning, et rollback.
+#### Test et démo
+- Staging : [histologe-staging.incubateur.net](https://histologe-staging.incubateur.net)
+- Demo : [histologe-demo.osc-fr1.scalingo.io](https://histologe-demo.osc-fr1.scalingo.io)
+
+#### Production
+[histologe.beta.gouv.fr](https://histologe.beta.gouv.fr)
+
+### Gestion des versions
+Nous utilisons Git pour la gestion de versions du code source. Chaque commit doit contenir l'identifiant d'un ticket correspondant à la fonctionnalité développée ou à la correction effectuée.
+
+Chaque fonctionnalité fait l'objet d'une branche particulière, puis d'une `Pull Request` relue par au moins un pair.
+
+Lorsqu'une PR est validée et fusionnée, elle rejoint la branche `develop` qui déploie automatiquement sur l'environnement `Staging`.
+
+Nous utilisons le gestionnaire de tags de Git afin de versionner notre code et les fonctionnalités qui sont déployées.
+
+Lorsque la branche `develop` fusionne avec la branche `main`, le déploiement se fait automatiquement sur l'environnement de `Production`.
+
+Un tunnel d'intégration continue fait des vérifications de qualité de code (SonarCloud) et de tests automatisés. Il est exécuté à chaque commit sur une PR et à chaque fusion de branche. Le déploiement n'est fait qu'une fois ces vérifications validées.
+
+Au niveau des bases de données, nous utilisons le système de migrations prévu par Symfony qui permet de faire des retours en arrière en cas de besoin.
+
+Le déploiement consiste à la copie des fichiers, à l'installation des composants nécessaires, à la transformation de la base de données via des migrations.
 
 ## Performance et Scalabilité
 
 ### TODO - Besoins en performance
 Exigences de performance et indicateurs clés (temps de réponse, débit).
 
-### TODO - Scalabilité
-Plans pour l'augmentation de la capacité (scalabilité horizontale et verticale).
+### Scalabilité
+L'utilisation de conteneurs au sein de Scalingo permet de faciliter la diminution ou l'augmentation des capacités de traitement au besoin.
+
+Nous utilisons Reddit pour le partage d'informations entre les différents conteneurs.
 
 ## Continuité et Reprise d'Activité
 
-### TODO - Plan de continuité
-Stratégies pour assurer la disponibilité continue du système.
-
-### TODO - Plan de reprise d'activité
-Procédures pour restaurer le système après un incident majeur.
+Voir le document de [Procédure de gestion des incidents de sécurité](https://github.com/MTES-MCT/histologe/wiki/Gestion-des-incidents-de-s%C3%A9curit%C3%A9)
 
 ## Gestion et Maintenance
 
-### TODO - Outils de gestion
+### Outils de gestion
 Logiciels et outils utilisés pour la surveillance, la gestion, et la maintenance du système.
 
-### TODO - Procédures de maintenance
-Plans de maintenance préventive et corrective.
+#### Sentry
+Reçoit les erreurs générées lors de l'utilisation de la plateforme par les usagers.
+
+#### Analyse du code à chaque commit
+PhpStan, php cs-fix, es-lint, php-unit
+
+#### SonarCloud
+Analyse la qualité du code lors de l'envoi de chaque commit sur GitHub.
+
+### Procédures de maintenance
+Il est possible d'activer un mode maintenance sur la plateforme.
+
+Il peut être activé sur une fonctionnalité cruciale est mise en ligne ou si un problème a été détecté est en cours d'investigation.
