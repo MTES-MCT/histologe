@@ -8,3 +8,11 @@ framework:
             policy: 'fixed_window'
             limit: '%env(int:CONTACT_FORM_LIMITER_LIMIT)%'
             interval: '%env(CONTACT_FORM_LIMITER_INTERVAL)%'
+        login_activation_form:
+            policy: 'fixed_window'
+            limit: '%env(int:CONTACT_FORM_LIMITER_LIMIT)%'
+            interval: '%env(CONTACT_FORM_LIMITER_INTERVAL)%'
+        login_password_form:
+            policy: 'fixed_window'
+            limit: '%env(int:CONTACT_FORM_LIMITER_LIMIT)%'
+            interval: '%env(CONTACT_FORM_LIMITER_INTERVAL)%'
