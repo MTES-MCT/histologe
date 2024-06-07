@@ -30,6 +30,9 @@ class FileVoter extends Voter
     {
         /** @var User $user */
         $user = $token->getUser();
+        if(!$user instanceof User) {
+            return false;
+        }
 
         if (!$subject instanceof Signalement && !$subject instanceof File) {
             return false;
