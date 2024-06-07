@@ -71,13 +71,21 @@ class HomepageController extends AbstractController
         Request $request,
         SignalementRepository $signalementRepository,
         NotificationMailerRegistry $notificationMailerRegistry,
-        ): JsonResponse {
+        RateLimiterFactory $askLinkFormLimiter
+    ): JsonResponse {
         $demandeLienSignalement = new DemandeLienSignalement();
         $form = $this->createForm(DemandeLienSignalementType::class, $demandeLienSignalement, [
             'action' => $this->generateUrl('front_demande_lien_signalement'),
         ]);
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
+            $limiter = $askLinkFormLimiter->create($request->getClientIp());
+            if (false === $limiter->consume(1)->isAccepted()) {
+                $view = $this->renderView('_partials/_demande-lien-signalement-rate-limit.html.twig', ['form' => $form]);
+
+                return new JsonResponse(['html' => $view]);
+            }
+
             $signalement = $signalementRepository->findOneForEmailAndAddress(
                 $demandeLienSignalement->getEmail(),
                 $demandeLienSignalement->getAdresse(),

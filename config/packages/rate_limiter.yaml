@@ -4,3 +4,7 @@ framework:
             policy: 'fixed_window'
             limit: '%env(int:CONTACT_FORM_LIMITER_LIMIT)%'
             interval: '%env(CONTACT_FORM_LIMITER_INTERVAL)%'
+        ask_link_form:
+            policy: 'fixed_window'
+            limit: '%env(int:CONTACT_FORM_LIMITER_LIMIT)%'
+            interval: '%env(CONTACT_FORM_LIMITER_INTERVAL)%'
