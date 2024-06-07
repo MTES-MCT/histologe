@@ -5,7 +5,7 @@ export function buildBadge (key: string, value: any): string | undefined {
     return undefined
   }
 
-  if (key === 'territoires') {
+  if (key === 'territoire') {
     return store.state.territories.find(territory => territory.Id.toString() === value)?.Text
   }
 
@@ -57,7 +57,7 @@ export function buildBadge (key: string, value: any): string | undefined {
     return buildRangeDateBadge(key, value)
   }
 
-  return buildStaticBadge(key, value)
+  return buildStaticBadge(value)
 }
 
 function buildRangeDateBadge (key: string, value: any): string | undefined {
@@ -79,7 +79,7 @@ function buildRangeDateBadge (key: string, value: any): string | undefined {
   return `${label} ${startDate} - ${endDate}`
 }
 
-function buildStaticBadge (key: string, value: any): string | undefined {
+function buildStaticBadge (value: any): string | undefined {
   const staticListsWithNoDuplicateId = [
     store.state.statusSignalementList,
     store.state.statusAffectationList,

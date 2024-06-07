@@ -6,7 +6,6 @@
         :name="id"
         :value="modelValue"
         @input="onInputEvent"
-        @search="onSearchEvent"
         :placeholder="placeholder"
         type="search"
     />
@@ -21,7 +20,6 @@ export default defineComponent({
   props: {
     id: { type: String, default: '' },
     modelValue: { type: String, default: '' },
-    onInput: { type: Function },
     placeholder: { type: String, default: '' },
     minLengthSearch: { type: Number, default: 0 }
   },
@@ -30,17 +28,8 @@ export default defineComponent({
     onInputEvent (e: any) {
       if (e.target.value.length >= this.minLengthSearch) {
         this.$emit('update:modelValue', e.target.value)
-        if (this.onInput !== undefined) {
-          this.onInput(e.target.value)
-        }
-      }
-    },
-    onSearchEvent (e: any) {
-      if (e.target.value === '') {
-        this.$emit('update:modelValue', null)
-        if (this.onInput !== undefined) {
-          this.onInput(null)
-        }
+      } else if (e.target.value.length === 0) {
+        this.$emit('update:modelValue', '')
       }
     }
   }

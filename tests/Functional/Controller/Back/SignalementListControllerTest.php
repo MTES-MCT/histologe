@@ -233,8 +233,7 @@ class SignalementListControllerTest extends WebTestCase
         yield 'Search Terms with Firstname Occupant' => [['searchTerms' => 'Mapaire'], 1];
         yield 'Search Terms with Lastname Occupant' => [['searchTerms' => 'Nawell'], 2];
         yield 'Search Terms with Email Occupant' => [['searchTerms' => 'nawell.mapaire@yopmail.com'], 1];
-        yield 'Search by Territory 13' => [['territoires' => ['13']], 25];
-        yield 'Search by Territory 01 and 69' => [['territoires' => ['01', '70']], 9];
+        yield 'Search by Territory 13' => [['territoire' => '13'], 25];
         yield 'Search by Commune' => [['communes' => ['gex', 'marseille']], 30];
         yield 'Search by Commune code postal' => [['communes' => ['13002']], 1];
         yield 'Search by EPCIS' => [['epcis' => ['244400503']], 1];

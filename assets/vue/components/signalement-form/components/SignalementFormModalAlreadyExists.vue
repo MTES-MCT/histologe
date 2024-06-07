@@ -172,9 +172,9 @@ export default defineComponent({
       }
     },
     makeNewSignalement () {
-      if (formStore.alreadyExists.uuidDraft !== null && (formStore.alreadyExists.type === 'draft' || formStore.alreadyExists.type === 'signalement')){
+      if (formStore.alreadyExists.uuidDraft !== null && (formStore.alreadyExists.type === 'draft' || formStore.alreadyExists.type === 'signalement')) {
         requests.archiveDraft(formStore.alreadyExists.uuidDraft, this.saveAndContinue)
-      } else if(formStore.alreadyExists.type === 'signalement'){
+      } else if (formStore.alreadyExists.type === 'signalement') {
         this.saveAndContinue()
       }
     },

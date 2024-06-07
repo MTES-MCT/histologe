@@ -15,12 +15,15 @@ use Symfony\Component\Yaml\Yaml;
 class LoadSuiviData extends Fixture implements OrderedFixtureInterface
 {
     public function __construct(
-        private SignalementRepository $signalementRepository,
-        private UserRepository $userRepository,
-        private ParameterBagInterface $parameterBag
+        private readonly SignalementRepository $signalementRepository,
+        private readonly UserRepository $userRepository,
+        private readonly ParameterBagInterface $parameterBag
     ) {
     }
 
+    /**
+     * @throws \Exception
+     */
     public function load(ObjectManager $manager): void
     {
         $signalements = $this->signalementRepository->findBy(['statut' => [
@@ -29,7 +32,9 @@ class LoadSuiviData extends Fixture implements OrderedFixtureInterface
             Signalement::STATUS_CLOSED,
         ]]);
 
+        $second = 1;
         foreach ($signalements as $signalement) {
+            $createdAtUpdated = $signalement->getCreatedAt()->modify('+'.$second.' second');
             $suivi = (new Suivi())
                 ->setSignalement($signalement)
                 ->setType(Suivi::TYPE_AUTO)
@@ -38,9 +43,10 @@ class LoadSuiviData extends Fixture implements OrderedFixtureInterface
                 ->setCreatedBy($this->userRepository->findOneBy(
                     ['email' => $this->parameterBag->get('user_system_email')]
                 ))
-                ->setCreatedAt($signalement->getCreatedAt());
+                ->setCreatedAt($createdAtUpdated);
 
             $manager->persist($suivi);
+            ++$second;
         }
         $manager->flush();
 
@@ -51,6 +57,9 @@ class LoadSuiviData extends Fixture implements OrderedFixtureInterface
         $manager->flush();
     }
 
+    /**
+     * @throws \Exception
+     */
     public function loadSuivi(ObjectManager $manager, array $row): void
     {
         $suivi = (new Suivi())
