@@ -43,8 +43,6 @@
     <link rel="stylesheet" href="{{ asset('build/dsfr/utility/icons/icons-user/icons-user.min.css') }}">
     <link rel="stylesheet" href="{{ asset('build/dsfr/utility/icons/icons-weather/icons-weather.min.css') }}">
     <link rel="stylesheet" href={{ asset('build/app.css') }}>
-    {# <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/tinymce@7.1.2/skins/ui/oxide/content.min.css"> #}
-    {# <link rel="stylesheet"  href="https://cdn.jsdelivr.net/npm/quill@2.0.2/dist/quill.snow.css"/> #}
     {% if 'back_cartographie' in app.request.get('_route') %}
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet@1.7.1/dist/leaflet.css">
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet.markercluster@1.5.3/dist/MarkerCluster.Default.css">
@@ -131,9 +129,7 @@
 
 <script type="module" src="{{ asset('build/dsfr/dsfr.module.min.js') }}"></script>
 <script nomodule src="{{ asset('build/dsfr/dsfr.nomodule.min.js') }}"></script>
-{# <script src="{{ asset('js/tinymce/tinymce.min.js') }}"></script> #}
 <script src="https://cdn.jsdelivr.net/npm/tinymce@7.1.2/tinymce.min.js"></script>
-{# <script src="https://cdn.jsdelivr.net/npm/quill@2.0.2/dist/quill.js"></script> #}
 <script src="{{ asset('js/const.min.js?v='~''|date('YmdH')) }}"></script>
 <script src="{{ asset('js/app.js?v='~''|date('YmdH')) }}"></script>
 
@@ -146,54 +142,6 @@
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/tippy.js@6/dist/tippy.umd.min.js"></script>
 {% endif %}
-
-{# <script nonce="{{ app.request.attributes.get('csp_script_nonce') }}">
-  const quill = new Quill('#quillEditor', {
-    theme: 'snow',
-    modules: {
-        toolbar: [
-            ['bold', 'italic'],  
-            [{ 'align': [] }],
-            [{ 'indent': '-1'}, { 'indent': '+1' }],       
-            [{ list: 'ordered'}, { list: 'bullet' }],
-            ['clean'] // ici mettre "Partager un document"
-        ]
-    }
-  });
-
-
-    var form = document.querySelector('form');
-    var textarea = document.getElementById('signalement-add-suivi-content');
-
-    form.onsubmit = function() {
-        console.log("validation du formulaire")
-        console.log(quill.root.innerHTML)
-        textarea.value = quill.root.innerHTML;
-    };
-
-    // Hide the textarea
-    textarea.style.display = 'none';
-
-    quill.on('text-change', function() {
-        let isOk = quill.getText().trim().length > 10; // Exemple de validation
-        let submitters = document.querySelectorAll('button[type="submit"]');
-        textarea.value = quill.getSemanticHTML();
-
-        submitters.forEach(sbmt => {
-            sbmt.disabled = !isOk;
-        });
-
-        if (!isOk) {
-            textarea.parentElement.classList.add('fr-input-group--error');
-            textarea.parentElement.querySelector('.fr-error-text').classList.remove('fr-hidden');
-        } else {
-            textarea.parentElement.classList.remove('fr-input-group--error');
-            textarea.parentElement.querySelector('.fr-error-text').classList.add('fr-hidden');
-        }
-    });
-
-
-</script> #}
 
 <script nonce="{{ app.request.attributes.get('csp_script_nonce') }}">
     tinymce.init({

@@ -7,3 +7,10 @@ document.querySelectorAll('.fr-disable-button-when-submit')?.forEach(element => 
         }
     })
 })
+
+const selects = document.querySelectorAll('.fr-select-submit');
+selects.forEach(select => {
+    select.addEventListener('change', function() {
+        this.form.submit();
+    });
+});

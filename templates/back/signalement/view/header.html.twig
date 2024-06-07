@@ -24,7 +24,7 @@
                 <form method="POST" action="{{ path('back_signalement_affectation_response',{signalement:signalement.id,user:app.user.id,affectation:isRefused.id}) }}">
                     <button class="fr-btn fr-btn--sm fr-btn--icon-left fr-icon-checkbox-circle-fill reaffect fr-mb-3v"
                             name="signalement-affectation-response[accept]" value="1"
-                            onclick="return confirm('Êtes-vous certain de vouloir acccepter ce signalement ?')">
+                            >
                         Annuler le refus
                     </button>
                     <input type="hidden" name="_token"
@@ -38,7 +38,7 @@
                             class="tinyCheck inline-form">
                         <button class="fr-btn fr-btn--sm fr-btn--icon-left fr-icon-checkbox-circle-fill fr-btn--success"
                                 name="signalement-validation-response[accept]" value="1"
-                                onclick="return confirm('Êtes-vous certain de vouloir valider ce signalement ?')">
+                                >
                             Valider ce signalement
                         </button>
                         <input type="hidden" name="_token"
