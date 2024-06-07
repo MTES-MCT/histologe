@@ -30,7 +30,7 @@ class FileVoter extends Voter
     {
         /** @var User $user */
         $user = $token->getUser();
-        if(!$user instanceof User) {
+        if (!$user instanceof User) {
             return false;
         }
 
