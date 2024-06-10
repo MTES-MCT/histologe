@@ -18,10 +18,8 @@ class ContentSecurityPolicyListener
         $request = $event->getRequest();
 
         $scriptNonce = bin2hex(random_bytes(16));
-        // $styleNonce = bin2hex(random_bytes(16));
 
         $request->attributes->set('csp_script_nonce', $scriptNonce);
-        // $request->attributes->set('csp_style_nonce', $styleNonce);
     }
 
     public function onKernelResponse(ResponseEvent $event)
@@ -30,14 +28,12 @@ class ContentSecurityPolicyListener
         $request = $event->getRequest();
 
         $scriptNonce = $request->attributes->get('csp_script_nonce');
-        // $styleNonce = $request->attributes->get('csp_style_nonce');
 
         $cspParameters = $this->parameterBag->get('csp_parameters');
 
         $csp = 'default-src '.$cspParameters['default-src'].'; '.
                 'script-src '.$cspParameters['script-src']." 'nonce-$scriptNonce'; ".
                 'style-src '.$cspParameters['style-src'].'; '.
-                // 'style-src '.$cspParameters['style-src']." 'nonce-$styleNonce'; ".
                 'style-src-attr '.$cspParameters['style-src-attr'].'; '.
                 'img-src '.$cspParameters['img-src'].'; '.
                 'connect-src '.$cspParameters['connect-src'].'; '.
@@ -47,8 +43,7 @@ class ContentSecurityPolicyListener
                 'base-uri '.$cspParameters['base-uri'].'; '.
                 'form-action '.$cspParameters['form-action'].'; '.
                 'frame-ancestors '.$cspParameters['frame-ancestors'].'; '.
-                'media-src '.$cspParameters['media-src'].'; '.
-                'require-trusted-types-for '.$cspParameters['require-trusted-types-for'];
+                'media-src '.$cspParameters['media-src'];
 
         $response->headers->set('Content-Security-Policy', $csp);
     }

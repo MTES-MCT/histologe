@@ -13,4 +13,3 @@ parameters:
     form-action: "'self'"
     frame-ancestors: "'none'"
     media-src: "'self'"
-    require-trusted-types-for: "'script'"
