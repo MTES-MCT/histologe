@@ -129,7 +129,10 @@
 
 <script type="module" src="{{ asset('build/dsfr/dsfr.module.min.js') }}"></script>
 <script nomodule src="{{ asset('build/dsfr/dsfr.nomodule.min.js') }}"></script>
-<script src="https://cdn.jsdelivr.net/npm/tinymce@7.1.2/tinymce.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/tinymce@7.1.2/tinymce.min.js" 
+        integrity="sha256-5otrbbqtAS5IUAoXLf399RoDftSWtzsS3CyCreLcOhs="
+        crossorigin="anonymous"
+></script>
 <script src="{{ asset('js/const.min.js?v='~''|date('YmdH')) }}"></script>
 <script src="{{ asset('js/app.js?v='~''|date('YmdH')) }}"></script>
 
