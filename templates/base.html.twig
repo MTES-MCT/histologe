@@ -142,8 +142,14 @@
 
 {% endif %}
 {% if 'back_signalement_view' in app.request.get('_route') %}
-    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/tippy.js@6/dist/tippy.umd.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"
+        integrity="sha256-whL0tQWoY1Ku1iskqPFvmZ+CHsvmRWx/PIoEvIeWh4I="
+        crossorigin="anonymous"
+    ></script>"
+    <script src="https://cdn.jsdelivr.net/npm/tippy.js@6/dist/tippy.umd.min.js"
+        integrity="sha256-qx7gQMlSzXvTJCl8PBcHyzDQLGvX7NaFbiFY44WpsW4="
+        crossorigin="anonymous"
+    ></script>    
 {% endif %}
 
 <script nonce="{{ app.request.attributes.get('csp_script_nonce') }}">
