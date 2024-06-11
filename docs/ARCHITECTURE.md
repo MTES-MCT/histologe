@@ -6,7 +6,7 @@
 Ce document décrit l'environnement technique dans lequel est exploitée la plateforme Histologe.
 
 ### Contexte du projet
-Histologe est une solution numérique pour détecter et accélérer la prise en charge du mal-logement.
+Histologe est un système d'information qui permet de détecter et accélérer la prise en charge du mal-logement.
 
 Cette plateforme fournit 
 - un guichet unique de signalement à des usagers en situation de mal-logement,
