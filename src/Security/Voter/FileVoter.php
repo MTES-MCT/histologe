@@ -91,8 +91,12 @@ class FileVoter extends Voter
         return null !== $file->getUploadedBy() && $file->getUploadedBy() === $user;
     }
 
-    private function isAdminOrRTonHisTerritory(File|Signalement $subject, User $user): bool
+    private function isAdminOrRTonHisTerritory(File|Signalement $subject, ?User $user = null): bool
     {
+        if (null === $user) {
+            return false;
+        }
+
         return $user->isSuperAdmin() ||
         ($user->isTerritoryAdmin() && $this->isOnUserTerritory($subject, $user));
     }
