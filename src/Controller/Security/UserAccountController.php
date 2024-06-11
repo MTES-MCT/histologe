@@ -35,6 +35,7 @@ class UserAccountController extends AbstractController
                     'title' => 'Lien d\'activation',
                     'message' => 'Vous avez déjà fait plusieurs demandes pour activer votre compte. Veuillez attendre quelques minutes.',
                     'email' => $email,
+                    'is_alert' => true,
                 ]);
             }
 
@@ -54,6 +55,7 @@ class UserAccountController extends AbstractController
                 'title' => 'Lien d\'activation',
                 'message' => 'Si un compte inactif existe pour le courriel indiqué, vous allez recevoir un courriel contenant un lien vous pemettant de créer votre mot de passe afin d\'activer votre compte.',
                 'email' => $email,
+                'is_alert' => false,
             ]);
         }
 
@@ -75,6 +77,7 @@ class UserAccountController extends AbstractController
                     'title' => 'Lien de récupération',
                     'message' => 'Vous avez déjà fait plusieurs demandes pour réinitialiser votre mot de passe. Veuillez attendre quelques minutes.',
                     'email' => $email,
+                    'is_alert' => true,
                 ]);
             }
 
@@ -94,6 +97,7 @@ class UserAccountController extends AbstractController
                 'title' => 'Lien de récupération',
                 'message' => 'Si un compte actif existe pour le courriel indiqué, vous allez recevoir un courriel contenant un lien vous permettant de réinitialiser votre mot de passe.',
                 'email' => $email,
+                'is_alert' => false,
             ]);
         }
 
