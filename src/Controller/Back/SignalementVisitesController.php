@@ -9,6 +9,7 @@ use App\Entity\User;
 use App\Event\InterventionCreatedEvent;
 use App\Event\InterventionEditedEvent;
 use App\Event\InterventionRescheduledEvent;
+use App\Exception\File\EmptyFileException;
 use App\Exception\File\MaxUploadSizeExceededException;
 use App\Exception\File\UnsupportedFileFormatException;
 use App\Manager\InterventionManager;
@@ -62,7 +63,7 @@ class SignalementVisitesController extends AbstractController
         $newFilename = $filenameGenerator->generate($file);
         try {
             return $uploadHandler->uploadFromFile($file, $newFilename);
-        } catch (MaxUploadSizeExceededException|UnsupportedFileFormatException $exception) {
+        } catch (MaxUploadSizeExceededException|UnsupportedFileFormatException|EmptyFileException $exception) {
             $this->addFlash('error', $exception->getMessage());
 
             return null;
