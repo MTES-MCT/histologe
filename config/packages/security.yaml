@@ -30,6 +30,9 @@ security:
             two_factor:
                 auth_form_path: 2fa_login
                 check_path: 2fa_login_check
+            login_throttling:
+                max_attempts: 10 # '%env(int:FORMS_SUBMIT_LIMITER_LIMIT)%' doesnt work here: fails to cast str to int
+                interval: '%env(FORMS_SUBMIT_LIMITER_INTERVAL)%'
             logout:
                 path: app_logout
                 # where to redirect after logout

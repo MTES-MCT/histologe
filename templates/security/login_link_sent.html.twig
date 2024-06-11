@@ -7,11 +7,18 @@
         <section class="fr-grid-row fr-grid-row--center">
             <header class="fr-callout bg-light fr-col-12">
                 <p class="fr-callout__title">{{title}}</p>
+                {% if not is_alert %}
                 <p class="fr-callout__text fr-mb-5v">
                     {{ message }}
                 </p>
+                {% endif %}
                 <em class="fr-fi-information-line fr-text--light fr-text-label--blue-france">Vérifiez vos courriels à l'adresse {{ email }}</em>
             </header>
         </section>
+        {% if is_alert %}
+            <div class="fr-alert fr-alert--error fr-alert--sm">
+                <p>{{ message }}</p>
+            </div>
+        {% endif %}
     </main>
 {% endblock %}

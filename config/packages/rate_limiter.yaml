@@ -2,5 +2,17 @@ framework:
     rate_limiter:
         contact_form:
             policy: 'fixed_window'
-            limit: '%env(int:CONTACT_FORM_LIMITER_LIMIT)%'
-            interval: '%env(CONTACT_FORM_LIMITER_INTERVAL)%'
+            limit: '%env(int:FORMS_SUBMIT_LIMITER_LIMIT)%'
+            interval: '%env(FORMS_SUBMIT_LIMITER_INTERVAL)%'
+        ask_link_form:
+            policy: 'fixed_window'
+            limit: '%env(int:FORMS_SUBMIT_LIMITER_LIMIT)%'
+            interval: '%env(FORMS_SUBMIT_LIMITER_INTERVAL)%'
+        login_activation_form:
+            policy: 'fixed_window'
+            limit: '%env(int:FORMS_SUBMIT_LIMITER_LIMIT)%'
+            interval: '%env(FORMS_SUBMIT_LIMITER_INTERVAL)%'
+        login_password_form:
+            policy: 'fixed_window'
+            limit: '%env(int:FORMS_SUBMIT_LIMITER_LIMIT)%'
+            interval: '%env(FORMS_SUBMIT_LIMITER_INTERVAL)%'

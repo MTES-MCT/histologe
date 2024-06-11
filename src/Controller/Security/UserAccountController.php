@@ -15,6 +15,7 @@ use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\RateLimiter\RateLimiterFactory;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
@@ -24,9 +25,20 @@ class UserAccountController extends AbstractController
     public function requestLoginLink(
         NotificationMailerRegistry $notificationMailerRegistry,
         UserRepository $userRepository,
-        Request $request
+        Request $request,
+        RateLimiterFactory $loginActivationFormLimiter,
     ): Response {
         if ($request->isMethod('POST') && $email = $request->request->get('email')) {
+            $limiter = $loginActivationFormLimiter->create($request->getClientIp());
+            if (false === $limiter->consume(1)->isAccepted()) {
+                return $this->render('security/login_link_sent.html.twig', [
+                    'title' => 'Lien d\'activation',
+                    'message' => 'Vous avez déjà fait plusieurs demandes pour activer votre compte. Veuillez attendre quelques minutes.',
+                    'email' => $email,
+                    'is_alert' => true,
+                ]);
+            }
+
             $user = $userRepository->findOneBy(['email' => $email]);
             if ($user && User::STATUS_INACTIVE === $user->getStatut() && !\in_array('ROLE_USAGER', $user->getRoles())) {
                 $notificationMailerRegistry->send(
@@ -43,6 +55,7 @@ class UserAccountController extends AbstractController
                 'title' => 'Lien d\'activation',
                 'message' => 'Si un compte inactif existe pour le courriel indiqué, vous allez recevoir un courriel contenant un lien vous pemettant de créer votre mot de passe afin d\'activer votre compte.',
                 'email' => $email,
+                'is_alert' => false,
             ]);
         }
 
@@ -53,10 +66,21 @@ class UserAccountController extends AbstractController
     public function requestNewPass(
         UserRepository $userRepository,
         Request $request,
-        NotificationMailerRegistry $notificationMailerRegistry
+        NotificationMailerRegistry $notificationMailerRegistry,
+        RateLimiterFactory $loginPasswordFormLimiter
     ): Response {
         $title = 'Récupération de votre mot de passe';
         if ($request->isMethod('POST') && $email = $request->request->get('email')) {
+            $limiter = $loginPasswordFormLimiter->create($request->getClientIp());
+            if (false === $limiter->consume(1)->isAccepted()) {
+                return $this->render('security/login_link_sent.html.twig', [
+                    'title' => 'Lien de récupération',
+                    'message' => 'Vous avez déjà fait plusieurs demandes pour réinitialiser votre mot de passe. Veuillez attendre quelques minutes.',
+                    'email' => $email,
+                    'is_alert' => true,
+                ]);
+            }
+
             $user = $userRepository->findOneBy(['email' => $email]);
             if ($user && User::STATUS_ACTIVE === $user->getStatut() && !\in_array('ROLE_USAGER', $user->getRoles())) {
                 $notificationMailerRegistry->send(
@@ -73,6 +97,7 @@ class UserAccountController extends AbstractController
                 'title' => 'Lien de récupération',
                 'message' => 'Si un compte actif existe pour le courriel indiqué, vous allez recevoir un courriel contenant un lien vous permettant de réinitialiser votre mot de passe.',
                 'email' => $email,
+                'is_alert' => false,
             ]);
         }
 
