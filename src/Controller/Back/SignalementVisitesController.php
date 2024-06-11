@@ -144,6 +144,12 @@ class SignalementVisitesController extends AbstractController
         }
         $this->denyAccessUnlessGranted('INTERVENTION_EDIT_VISITE', $intervention);
 
+        if ($intervention->hasScheduledDatePassed()) {
+            $this->addFlash('error', 'Cette visite est déja passée et ne peut pas être annulée, merci de la noter comme non-effectuée.');
+
+            return $this->redirectToRoute('back_signalement_view', ['uuid' => $signalement->getUuid()]);
+        }
+
         $errorRedirect = $this->getSecurityRedirect(
             $signalement,
             $request,
