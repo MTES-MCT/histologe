@@ -31,6 +31,12 @@ class SignalementFileController extends AbstractController
         Signalement $signalement,
         MessageBusInterface $messageBus
     ): Response {
+        $this->denyAccessUnlessGranted('SIGN_VIEW', $signalement);
+        if (Signalement::STATUS_ARCHIVED === $signalement->getStatut()) {
+            $this->addFlash('error', "Ce signalement a été archivé et n'est pas consultable.");
+
+            return $this->redirectToRoute('back_index');
+        }
         /** @var User $user */
         $user = $this->getUser();
 
