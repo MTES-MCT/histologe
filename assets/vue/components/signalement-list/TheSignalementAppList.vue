@@ -35,6 +35,7 @@ import { defineComponent } from 'vue'
 import { store } from './store'
 import { requests } from './requests'
 import { SignalementItem } from './interfaces/signalementItem'
+import { Filters } from './interfaces/filters'
 import SignalementListFilters from './components/SignalementListFilters.vue'
 import SignalementListHeader from './components/SignalementListHeader.vue'
 import SignalementListCards from './components/SignalementListCards.vue'
@@ -65,51 +66,218 @@ export default defineComponent({
     this.init()
   },
   methods: {
-    init () {
+    init (reset: boolean = false) {
       if (initElements !== null) {
         this.sharedProps.ajaxurlSignalement = initElements.dataset.ajaxurl
         this.sharedProps.ajaxurlRemoveSignalement = initElements.dataset.ajaxurlRemoveSignalement
         this.sharedProps.ajaxurlSettings = initElements.dataset.ajaxurlSettings
         this.sharedProps.ajaxurlExportCsv = initElements.dataset.ajaxurlExportCsv
         this.sharedProps.ajaxurlContact = initElements.dataset.ajaxurlContact
-
-        const url = new URL(window.location.toString())
-        const params = new URLSearchParams(url.search)
-        const page = params.get('page')
-        const sortBy = params.get('sortBy')
-        const direction = params.get('direction')
-        const status = params.get('status')
-        const searchTerms = params.get('searchTerms')
-
-        if (searchTerms) {
-          this.addQueryParameter('searchTerms', searchTerms)
-          this.buildUrl()
+        if (!reset) {
+          this.handleQueryParameter()
         }
 
-        if (status) {
-          this.addQueryParameter('status', status)
-          this.buildUrl()
-        }
-
-        if (page) {
-          this.addQueryParameter('page', page)
-          this.buildUrl()
-        }
-
-        if (sortBy) {
-          this.addQueryParameter('sortBy', sortBy)
-          if (direction) {
-            this.addQueryParameter('orderBy', direction)
-          } else {
-            this.addQueryParameter('orderBy', 'DESC')
-          }
-          this.buildUrl()
-        }
-
+        this.buildUrl()
         requests.getSettings(this.handleSettings)
         requests.getSignalements(this.handleSignalements)
       } else {
         this.hasErrorLoading = true
+      }
+    },
+    handleQueryParameter () {
+      const url = new URL(window.location.toString())
+      const params = new URLSearchParams(url.search)
+      const page = params.get('page')
+      const sortBy = params.get('sortBy')
+      const direction = params.get('direction')
+
+      const showMyAffectationOnly = params.get('showMyAffectationOnly')
+
+      const territoire = params.get('territoire')
+      const searchTerms = params.get('searchTerms')
+      const communes = params.getAll('communes[]')
+      const epcis = params.getAll('epcis[]')
+      const status = params.get('status')
+      const etiquettes = params.getAll('etiquettes[]')
+      const partenaires = params.getAll('partenaires[]')
+
+      const dateDepotDebut = params.get('dateDepotDebut')
+      const dateDepotFin = params.get('dateDepotFin')
+      const dateDernierSuiviDebut = params.get('dateDernierSuiviDebut')
+      const dateDernierSuiviFin = params.get('dateDernierSuiviFin')
+
+      const procedure = params.get('procedure')
+      const visiteStatus = params.get('visiteStatus')
+      const typeDernierSuivi = params.get('typeDernierSuivi')
+      const statusAffectation = params.get('statusAffectation')
+      const criticiteScoreMin = params.get('criticiteScoreMin')
+      const criticiteScoreMax = params.get('criticiteScoreMax')
+      const typeDeclarant = params.get('typeDeclarant')
+      const natureParc = params.get('natureParc')
+      const allocataire = params.get('allocataire')
+      const enfantsM6 = params.get('enfantsM6')
+      const situation = params.get('situation')
+      const relancesUsager = params.get('relancesUsager')
+      const sansSuiviPeriode = params.get('sansSuiviPeriode')
+      const nouveauSuivi = params.get('nouveauSuivi')
+
+      const filters = this.sharedState.input.filters as Filters
+
+      if (territoire) {
+        this.addQueryParameter('territoire', territoire)
+        filters.territoire = territoire
+      }
+
+      if (showMyAffectationOnly) {
+        this.addQueryParameter('showMyAffectationOnly', showMyAffectationOnly)
+        filters.showMyAffectationOnly = 'oui'
+      }
+
+      if (communes) {
+        communes.forEach(commune => {
+          this.addQueryParameter('communes[]', commune)
+          filters.communes.push(commune)
+        })
+      }
+
+      if (epcis) {
+        epcis.forEach(epci => {
+          this.addQueryParameter('epcis[]', epci)
+          filters.epcis.push(epci + '|' + epci)
+        })
+      }
+
+      if (etiquettes) {
+        etiquettes.forEach(etiquette => {
+          this.addQueryParameter('etiquettes[]', etiquette)
+          filters.etiquettes.push(etiquette)
+        })
+      }
+
+      if (partenaires) {
+        partenaires.forEach(partenaire => {
+          this.addQueryParameter('partenaires[]', partenaire)
+          filters.partenaires.push(partenaire)
+        })
+      }
+
+      if (searchTerms) {
+        this.addQueryParameter('searchTerms', searchTerms)
+        filters.searchTerms = searchTerms
+      }
+
+      if (status) {
+        this.addQueryParameter('status', status)
+        filters.status = status
+      }
+
+      if (dateDepotDebut && dateDepotFin) {
+        this.addQueryParameter('dateDepotDebut', dateDepotDebut)
+        const dateDepotDebutFormatted: Date = new Date(dateDepotDebut)
+        this.addQueryParameter('dateDepotFin', dateDepotFin)
+        const dateDepotFinFormatted: Date = new Date(dateDepotFin)
+
+        const datesDepots = []
+        datesDepots.push(dateDepotDebutFormatted)
+        datesDepots.push(dateDepotFinFormatted)
+
+        filters.dateDepot = datesDepots
+      }
+
+      if (dateDernierSuiviDebut && dateDernierSuiviFin) {
+        this.addQueryParameter('dateDernierSuiviDebut', dateDernierSuiviDebut)
+        const dateDernierSuiviDebutFormatted: Date = new Date(dateDernierSuiviDebut)
+        this.addQueryParameter('dateDernierSuiviFin', dateDernierSuiviFin)
+        const dateDernierSuiviFinFormatted: Date = new Date(dateDernierSuiviFin)
+
+        const datesDernierSuivi = []
+        datesDernierSuivi.push(dateDernierSuiviDebutFormatted)
+        datesDernierSuivi.push(dateDernierSuiviFinFormatted)
+
+        filters.dateDernierSuivi = datesDernierSuivi
+      }
+
+      if (procedure) {
+        this.addQueryParameter('procedure', procedure)
+        filters.procedure = procedure
+      }
+
+      if (visiteStatus) {
+        this.addQueryParameter('visiteStatus', visiteStatus)
+        filters.visiteStatus = visiteStatus
+      }
+
+      if (statusAffectation) {
+        this.addQueryParameter('statusAffectation', statusAffectation)
+        filters.statusAffectation = statusAffectation
+      }
+
+      if (typeDernierSuivi) {
+        this.addQueryParameter('typeDernierSuivi', typeDernierSuivi)
+        filters.typeDernierSuivi = typeDernierSuivi
+      }
+
+      if (criticiteScoreMin) {
+        this.addQueryParameter('criticiteScoreMin', criticiteScoreMin)
+        filters.criticiteScoreMin = criticiteScoreMin
+      }
+
+      if (criticiteScoreMax) {
+        this.addQueryParameter('criticiteScoreMax', criticiteScoreMax)
+        filters.criticiteScoreMax = criticiteScoreMax
+      }
+
+      if (typeDeclarant) {
+        this.addQueryParameter('typeDeclarant', typeDeclarant)
+        filters.typeDeclarant = typeDeclarant
+      }
+
+      if (natureParc) {
+        this.addQueryParameter('natureParc', natureParc)
+        filters.natureParc = natureParc
+      }
+
+      if (allocataire) {
+        this.addQueryParameter('allocataire', allocataire)
+        filters.status = allocataire
+      }
+
+      if (enfantsM6) {
+        this.addQueryParameter('enfantsM6', enfantsM6)
+        filters.enfantsM6 = enfantsM6
+      }
+
+      if (situation) {
+        this.addQueryParameter('enfantsM6', situation)
+        filters.situation = situation
+      }
+
+      if (relancesUsager) {
+        this.addQueryParameter('relancesUsager', relancesUsager)
+        filters.relanceUsager = 'Pas de suivi après 3 relances'
+      }
+
+      if (sansSuiviPeriode) {
+        this.addQueryParameter('sansSuiviPeriode', sansSuiviPeriode)
+        filters.sansSuiviPeriode = 'Sans suivi depuis au moins 30 jours'
+      }
+
+      if (nouveauSuivi) {
+        this.addQueryParameter('nouveauSuivi', nouveauSuivi)
+        filters.nouveauSuivi = 'Nouveaux suivis partenaires et usagers'
+      }
+
+      if (page) {
+        this.addQueryParameter('page', page)
+      }
+
+      if (sortBy) {
+        this.addQueryParameter('sortBy', sortBy)
+        if (direction) {
+          this.addQueryParameter('orderBy', direction)
+        } else {
+          this.addQueryParameter('orderBy', 'DESC')
+        }
       }
     },
     handleSettings (requestResponse: any) {
@@ -172,7 +340,7 @@ export default defineComponent({
       requests.getSettings(this.handleSettings)
     },
     handleClickReset () {
-      this.init()
+      this.init(true)
     },
     handleSignalements (requestResponse: any) {
       if (typeof requestResponse === 'string' && requestResponse === 'error') {

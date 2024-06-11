@@ -35,6 +35,9 @@ class SignalementSearchQueryTest extends TestCase
             'non_decence_energetique',
             1,
             'oui',
+            'NO_SUIVI_AFTER_3_RELANCES',
+            'oui',
+            30,
             'createdAt',
             'DESC',
         );
@@ -69,6 +72,11 @@ class SignalementSearchQueryTest extends TestCase
             ],
             'statusAffectation' => 'accepte',
             'isImported' => true,
+            'relances_usager' => [
+                'NO_SUIVI_AFTER_3_RELANCES',
+            ],
+            'delays' => 30,
+            'nouveau_suivi' => 'oui',
             'page' => 1,
             'maxItemsPerPage' => 25,
             'sortBy' => 'createdAt',

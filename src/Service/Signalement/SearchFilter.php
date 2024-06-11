@@ -96,10 +96,27 @@ class SearchFilter
         /** @var SignalementSearchQuery $signalementSearchQuery */
         $signalementSearchQuery = $this->request;
         $filters = $signalementSearchQuery->getFilters();
+        /** @var User $user */
+        $user = $this->security->getUser();
+        $partner = null;
         if (!$this->security->isGranted('ROLE_ADMIN')) {
-            /** @var User $user */
-            $user = $this->security->getUser();
             $filters['territories'][] = $user->getTerritory()->getId();
+            $territory = $user->getTerritory();
+            $partner = \in_array(User::ROLE_USER_PARTNER, $user->getRoles()) ? $user->getPartner() : null;
+        } else {
+            $territory = isset($filters['territories'][0])
+                ? $this->territoryRepository->find($filters['territories'][0])
+                : null;
+        }
+
+        if (isset($filters['delays'])) {
+            $filters['delays_partner'] = $partner;
+            $filters['delays_territory'] = $territory;
+        }
+
+        if (isset($filters['nouveau_suivi'])) {
+            $signalementIds = $this->notificationRepository->findSignalementNewSuivi($user, $territory);
+            $filters['signalement_ids'] = $signalementIds;
         }
 
         return $filters;
@@ -345,7 +362,6 @@ class SearchFilter
                 }
                 $sql = $this->suiviRepository->getSignalementsLastSuivisTechnicalsQuery(
                     excludeUsagerAbandonProcedure: false,
-                    dayPeriod: 0,
                     partner: $partner
                 );
 

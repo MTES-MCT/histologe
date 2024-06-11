@@ -1,0 +1,105 @@
+parameters:
+  data-kpi:
+    roles: [ROLE_ADMIN, ROLE_ADMIN_TERRITORY, ROLE_ADMIN_PARTNER, ROLE_USER_PARTNER]
+    data:
+      expired_after: '%env(int:WIDGET_DATA_KPI_CACHE_EXPIRED_AFTER)%' #second
+    widgetCards:
+      cardNouveauxSignalements:
+        label: "Nouveaux signalements"
+        roles: [ROLE_ADMIN, ROLE_ADMIN_TERRITORY]
+        link: 'v2_back_index'
+        params:
+          status: 'nouveau'
+      cardNouveauxSuivis:
+        label: "Nouveaux suivis"
+        roles: [ROLE_ADMIN, ROLE_ADMIN_TERRITORY, ROLE_USER_PARTNER, ROLE_ADMIN_PARTNER]
+        link: 'v2_back_index'
+        params:
+          nouveauSuivi: 'oui'
+          sortBy: 'lastSuiviAt'
+          direction: 'DESC'
+      cardSansSuivi:
+        label: "Sans suivi"
+        roles: [ROLE_ADMIN, ROLE_ADMIN_TERRITORY, ROLE_USER_PARTNER, ROLE_ADMIN_PARTNER]
+        link: 'v2_back_index'
+        params:
+          sansSuiviPeriode: 30
+          sortBy: 'lastSuiviAt'
+          direction: 'DESC'
+      cardCloturesGlobales:
+        label: "Clôtures globales"
+        roles: [ROLE_ADMIN]
+        link: 'v2_back_index'
+        params:
+          status: 'ferme'
+          sortBy: 'lastSuiviAt'
+          direction: 'DESC'
+      cardCloturesPartenaires:
+        label: "Clotures partenaires"
+        roles: [ROLE_ADMIN, ROLE_ADMIN_TERRITORY]
+        link: 'v2_back_index'
+        params:
+          statusAffectation: 'cloture_un_partenaire'
+          sortBy: 'lastSuiviAt'
+          direction: 'DESC'
+      cardMesAffectations:
+        label: "Mes affectations"
+        roles: [ROLE_ADMIN_TERRITORY]
+        link: 'v2_back_index'
+        params:
+          showMyAffectationOnly: 'oui'
+          sortBy: 'reference'
+          direction: 'DESC'
+      cardNouvellesAffectations:
+        label: "Nouvelles affectations"
+        roles: [ROLE_USER_PARTNER, ROLE_ADMIN_PARTNER]
+        link: 'v2_back_index'
+        params:
+          status: 'nouveau'
+      cardNoSuiviAfter3Relances:
+        label: "Suggestion de clôture"
+        roles: [ROLE_ADMIN, ROLE_ADMIN_TERRITORY, ROLE_ADMIN_PARTNER, ROLE_USER_PARTNER]
+        link: 'v2_back_index'
+        params:
+          relancesUsager: 'NO_SUIVI_AFTER_3_RELANCES'
+          sortBy: 'lastSuiviAt'
+          direction: 'DESC'
+      cardTousLesSignalements:
+        label: "Tous les signalements"
+        roles: [ROLE_USER_PARTNER, ROLE_ADMIN_PARTNER]
+        link: 'v2_back_index'
+      cardSignalementsNouveauxNonDecence:
+        label: "Affectations non décence énergétique"
+        roles: [ROLE_ADMIN, ROLE_ADMIN_TERRITORY, ROLE_ADMIN_PARTNER, ROLE_USER_PARTNER]
+        link: 'v2_back_index'
+        params:
+          procedure: 'non_decence_energetique'
+          status: 'nouveau'
+      cardSignalementsEnCoursNonDecence:
+        label: "Non décence énergétique en cours"
+        roles: [ROLE_ADMIN, ROLE_ADMIN_TERRITORY, ROLE_ADMIN_PARTNER, ROLE_USER_PARTNER]
+        link: 'v2_back_index'
+        params:
+          procedure: 'non_decence_energetique'
+          status: 'en_cours'
+
+  affectations-partenaires:
+    roles: [ ROLE_ADMIN, ROLE_ADMIN_TERRITORY ]
+    data:
+      expired_after: '%env(int:WIDGET_AFFECTATION_PARTNER_CACHE_EXPIRED_AFTER)%' #second
+
+  signalements-acceptes-sans-suivi:
+    roles: [ ROLE_ADMIN_TERRITORY ]
+    data:
+      expired_after: '%env(int:WIDGET_SIGNALEMENT_ACCEPTED_NO_SUIVI_CACHE_EXPIRED_AFTER)%' #second
+
+  signalements-territoires:
+    roles: [ ROLE_ADMIN ]
+    data:
+      expired_after: '%env(int:WIDGET_SIGNALEMENT_TERRITOIRE_CACHE_EXPIRED_AFTER)%' #second
+
+  esabora-evenements:
+    roles: [ ROLE_ADMIN ]
+    data:
+      expired_after: '%env(int:WIDGET_ESABORA_EVENTS_CACHE_EXPIRED_AFTER)%' #second
+      period: 21 #day
