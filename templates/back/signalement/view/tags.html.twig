@@ -28,7 +28,7 @@
                 étiquettes</strong>
             <span class="fr-hint-text">Ci-dessous la liste des étiquettes existantes.</span>
         </div>
-        {% if is_granted('ROLE_ADMIN_TERRITORY') %}
+        {% if is_granted('TAG_CREATE') %}
             <div class="fr-col-12">
                 <form action="{{ path('back_tag_create',{uuid:signalement.uuid}) }}" method="POST" name="new-tag-form">
                     <div class="fr-grid-row fr-grid-row--no-gutters">
