@@ -48,7 +48,7 @@ class UploadHandlerService
         $newFilename = $this->filenameGenerator->generate($file);
         $titre = $this->filenameGenerator->getTitle();
 
-        if (0 === $file->getSize() || 'application/x-empty' === $file->getMimeType()) {
+        if ($this->isFileEmpty($file)) {
             throw new EmptyFileException();
         }
         if ($file->getSize() > self::MAX_FILESIZE) {
@@ -223,7 +223,7 @@ class UploadHandlerService
         string $newFilename,
         ?string $fileType = File::INPUT_NAME_DOCUMENTS
     ): ?string {
-        if (0 === $file->getSize() || 'application/x-empty' === $file->getMimeType()) {
+        if ($this->isFileEmpty($file)) {
             throw new EmptyFileException();
         }
         if ($file->getSize() > self::MAX_FILESIZE) {
@@ -327,5 +327,14 @@ class UploadHandlerService
     public function getFile(): array
     {
         return $this->file;
+    }
+
+    private function isFileEmpty(UploadedFile $file): bool
+    {
+        if (0 === $file->getSize() || 'application/x-empty' === $file->getMimeType()) {
+            return true;
+        }
+
+        return false;
     }
 }
