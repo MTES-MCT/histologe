@@ -1032,6 +1032,7 @@ signalements:
     nb_enfants_m6: "1"
     nb_enfants_p6: "2"
     is_logement_social: 0
+    nb_pieces_logement: 4
     nature_logement: "Appartement"
     type_logement: "T2"
     superficie: 30
@@ -1068,6 +1069,7 @@ signalements:
   -
     uuid: "00000000-0000-0000-2023-000000000012"
     profile_declarant: "LOCATAIRE"
+    is_not_occupant: true
     details: "Malgré nos multiples tentatives pour résoudre les problèmes de cet appartement insalubre, les conditions de vie restent précaires pour les occupants. Les moisissures et les odeurs nauséabondes persistent, l'électricité est toujours défectueuse, et le manque de chauffage en hiver est inquiétant. Nous sollicitons votre aide pour trouver une solution rapide et efficace à cette situation difficile. Les locataires méritent un logement sûr et salubre, et nous sommes prêts à travailler avec vous pour y parvenir."
     is_proprio_averti: 1
     nb_adultes: "2"
@@ -1083,6 +1085,7 @@ signalements:
     adresse_occupant: "10 Imp. Madeleine Simon"
     cp_occupant: "13004"
     ville_occupant: "Marseille"
+    adresse_autre_occupant: "Résidence Soleiado"
     statut: 2
     reference: "2023-12"
     geoloc: "{\"lat\":\"43.3062255\", \"lng\":\"5.3898396\"}"
@@ -1092,6 +1095,7 @@ signalements:
     mode_contact_proprio: "[\"\",\"t\\u00e9l\\u00e9phone\"]"
     insee_occupant: "13204"
     is_rsa: 0
+    montant_allocation: 400
     type_energie_logement: "Electrique"
     origine_signalement: ""
     nb_occupants_logement: 2

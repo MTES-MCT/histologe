@@ -1292,6 +1292,9 @@ class Signalement
         if ($this->numAppartOccupant) {
             $complement .= 'appartement '.$this->numAppartOccupant.', ';
         }
+        if ($complement && (!$this->adresseAutreOccupant || !$autre)) {
+            $complement = mb_substr($complement, 0, -2);
+        }
         if ($this->adresseAutreOccupant && $autre) {
             $complement .= $this->adresseAutreOccupant;
         }
