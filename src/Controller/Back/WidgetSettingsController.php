@@ -31,7 +31,8 @@ class WidgetSettingsController extends AbstractController
         return $this->json(
             $widgetSettingsFactory->createInstanceFrom($user, $territory),
             Response::HTTP_OK,
-            ['content-type' => 'application/json']
+            ['content-type' => 'application/json'],
+            ['groups' => ['widget:read']]
         );
     }
 }

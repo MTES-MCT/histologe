@@ -6,7 +6,7 @@ use App\Repository\TerritoryRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
-use Symfony\Component\Serializer\Annotation\Ignore;
+use Symfony\Component\Serializer\Attribute\Groups;
 
 #[ORM\Entity(repositoryClass: TerritoryRepository::class)]
 class Territory
@@ -14,55 +14,48 @@ class Territory
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column(type: 'integer')]
+    #[Groups(['widget:read'])]
     private $id;
 
     #[ORM\Column(type: 'string', length: 3)]
+    #[Groups(['widget:read'])]
     private $zip;
 
     #[ORM\Column(type: 'string', length: 255)]
+    #[Groups(['widget:read'])]
     private $name;
 
     #[ORM\OneToMany(mappedBy: 'territory', targetEntity: User::class)]
-    #[Ignore]
     private $users;
 
     #[ORM\OneToMany(mappedBy: 'territory', targetEntity: Partner::class)]
-    #[Ignore]
     private $partners;
 
     #[ORM\OneToMany(mappedBy: 'territory', targetEntity: Commune::class)]
-    #[Ignore]
     private $communes;
 
     #[ORM\OneToMany(mappedBy: 'territory', targetEntity: Signalement::class)]
-    #[Ignore]
     private $signalements;
 
     #[ORM\Column(type: 'boolean')]
-    #[Ignore]
     private $isActive;
 
     #[ORM\OneToMany(mappedBy: 'territory', targetEntity: Affectation::class)]
-    #[Ignore]
     private $affectations;
 
     #[ORM\Column(type: 'json')]
-    #[Ignore]
     private $bbox = [];
 
     #[ORM\OneToMany(mappedBy: 'territory', targetEntity: Tag::class, orphanRemoval: true)]
-    #[Ignore]
     private $tags;
 
     #[ORM\Column(type: 'json', nullable: true)]
-    #[Ignore]
     private $authorizedCodesInsee = [];
 
     #[ORM\Column]
     private ?bool $isAutoAffectationEnabled = false;
 
     #[ORM\OneToMany(mappedBy: 'territory', targetEntity: BailleurTerritory::class)]
-    #[Ignore]
     private Collection $bailleurTerritories;
 
     public function __construct()

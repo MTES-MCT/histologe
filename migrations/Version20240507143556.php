@@ -21,6 +21,6 @@ final class Version20240507143556 extends AbstractMigration
 
     public function down(Schema $schema): void
     {
-        $this->addSql('ALTER TABLE signalement DROP manual_address_occupan');
+        $this->addSql('ALTER TABLE signalement DROP manual_address_occupant');
     }
 }
