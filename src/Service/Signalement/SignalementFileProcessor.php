@@ -49,7 +49,8 @@ class SignalementFileProcessor
                 Les fichiers de format {$fileExtension} ne sont pas pris en charge,
                 merci de choisir un fichier au format {$acceptedExtensions}.
                 ERROR;
-                $this->logger->error($message);
+                $fileInfo = '( Fichier : '.$file->__toString().' MimeType : '.$file->getMimeType().' )';
+                $this->logger->error($message.$fileInfo);
                 $this->errors[] = $message;
             } elseif (
                 $file instanceof UploadedFile
@@ -61,7 +62,8 @@ class SignalementFileProcessor
                 Les fichiers de format {$fileExtension} ne sont pas pris en charge,
                 merci de choisir un fichier au format {$acceptedExtensions}.
                 ERROR;
-                $this->logger->error($message);
+                $fileInfo = '( Fichier : '.$file->__toString().' MimeType : '.$file->getMimeType().' )';
+                $this->logger->error($message.$fileInfo);
                 $this->errors[] = $message;
             } else {
                 $inputTypeDetection = $inputName;

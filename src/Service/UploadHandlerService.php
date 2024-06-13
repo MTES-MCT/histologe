@@ -3,6 +3,7 @@
 namespace App\Service;
 
 use App\Entity\File;
+use App\Exception\File\EmptyFileException;
 use App\Exception\File\MaxUploadSizeExceededException;
 use App\Exception\File\UnsupportedFileFormatException;
 use App\Repository\FileRepository;
@@ -32,6 +33,7 @@ class UploadHandlerService
 
     /**
      * @throws MaxUploadSizeExceededException
+     * @throws EmptyFileException
      * @throws FilesystemException
      * @throws UnsupportedFileFormatException
      */
@@ -45,6 +47,10 @@ class UploadHandlerService
         }
         $newFilename = $this->filenameGenerator->generate($file);
         $titre = $this->filenameGenerator->getTitle();
+
+        if ($this->isFileEmpty($file)) {
+            throw new EmptyFileException();
+        }
         if ($file->getSize() > self::MAX_FILESIZE) {
             throw new MaxUploadSizeExceededException(self::MAX_FILESIZE);
         }
@@ -208,6 +214,7 @@ class UploadHandlerService
     }
 
     /**
+     * @throws EmptyFileException
      * @throws MaxUploadSizeExceededException
      * @throws UnsupportedFileFormatException
      */
@@ -216,6 +223,9 @@ class UploadHandlerService
         string $newFilename,
         ?string $fileType = File::INPUT_NAME_DOCUMENTS
     ): ?string {
+        if ($this->isFileEmpty($file)) {
+            throw new EmptyFileException();
+        }
         if ($file->getSize() > self::MAX_FILESIZE) {
             throw new MaxUploadSizeExceededException(self::MAX_FILESIZE);
         }
@@ -317,5 +327,14 @@ class UploadHandlerService
     public function getFile(): array
     {
         return $this->file;
+    }
+
+    private function isFileEmpty(UploadedFile $file): bool
+    {
+        if (0 === $file->getSize() || 'application/x-empty' === $file->getMimeType()) {
+            return true;
+        }
+
+        return false;
     }
 }

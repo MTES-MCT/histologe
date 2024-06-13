@@ -100,7 +100,7 @@ class UploadHandlerServiceTest extends KernelTestCase
 
         $uploadedFileMock = $this->createMock(UploadedFile::class);
         $uploadedFileMock
-            ->expects($this->once())
+            ->expects($this->exactly(2))
             ->method('getSize')
             ->willReturn(20 * 1024 * 1024);
 
