@@ -45,6 +45,8 @@ class ContentSecurityPolicyListener
                 'frame-ancestors '.$cspParameters['frame-ancestors'].'; '.
                 'media-src '.$cspParameters['media-src'];
 
-        $response->headers->set('Content-Security-Policy', $csp);
+        if ($this->parameterBag->get('csp_enable')) {
+            $response->headers->set('Content-Security-Policy', $csp);
+        }
     }
 }

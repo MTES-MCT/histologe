@@ -31,6 +31,7 @@ parameters:
     token_lifetime: '1 day'
     cron_enable: '%env(bool:CRON_ENABLE)%'
     mail_enable: '%env(bool:MAIL_ENABLE)%'
+    csp_enable: '%env(bool:CSP_ENABLE)%'
     feature_ask_visite: '%env(FEATURE_ASK_VISITE_ENABLE)%'
     feature_oilhi_enable: '%env(bool:FEATURE_OILHI_ENABLE)%'
     feature_signalement_liste_enable: '%env(bool:FEATURE_LIST_FILTER_ENABLE)%'
