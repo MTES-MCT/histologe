@@ -7,30 +7,31 @@ use Symfony\Component\Serializer\Attribute\Groups;
 
 class WidgetSettings
 {
-    #[Groups('widget:read')]
+    #[Groups('widget-settings:read')]
     private ?string $firstname = null;
-    #[Groups('widget:read')]
+    #[Groups('widget-settings:read')]
     private ?string $lastname = null;
-    #[Groups('widget:read')]
+    #[Groups('widget-settings:read')]
     private ?string $roleLabel = null;
-    #[Groups('widget:read')]
+    #[Groups('widget-settings:read')]
     private ?string $canSeeNDE = null;
-    #[Groups('widget:read')]
+    #[Groups('widget-settings:read')]
     private ?int $partnerId = null;
-    #[Groups('widget:read')]
+    #[Groups('widget-settings:read')]
     private ?string $partnerName = null;
-    #[Groups('widget:read')]
+    #[Groups('widget-settings:read')]
     private ?string $territoryName = null;
-    #[Groups('widget:read')]
+    #[Groups('widget-settings:read')]
     private array $territories = [];
-    #[Groups('widget:read')]
+    #[Groups('widget-settings:read')]
     private array $partners = [];
-    #[Groups('widget:read')]
+    #[Groups('widget-settings:read')]
     private array $communes = [];
-    #[Groups('widget:read')]
+    #[Groups('widget-settings:read')]
     private array $epcis = [];
-    #[Groups('widget:read')]
+    #[Groups('widget-settings:read')]
     private array $tags = [];
+    #[Groups('widget-settings:read')]
     private ?bool $hasSignalementImported = false;
 
     public function __construct(

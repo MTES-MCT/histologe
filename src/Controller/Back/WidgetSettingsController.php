@@ -32,7 +32,7 @@ class WidgetSettingsController extends AbstractController
             $widgetSettingsFactory->createInstanceFrom($user, $territory),
             Response::HTTP_OK,
             ['content-type' => 'application/json'],
-            ['groups' => ['widget:read']]
+            ['groups' => ['widget-settings:read']]
         );
     }
 }

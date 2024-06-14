@@ -27,12 +27,12 @@ class Partner
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column(type: 'integer')]
-    #[Groups('widget:read')]
+    #[Groups('widget-settings:read')]
     private ?int $id = null;
 
     #[ORM\Column(type: 'string', length: 255)]
     #[Assert\NotBlank]
-    #[Groups(['widget:read'])]
+    #[Groups(['widget-settings:read'])]
     private ?string $nom = null;
 
     #[ORM\OneToMany(mappedBy: 'partner', targetEntity: User::class, cascade: ['persist'])]

@@ -19,11 +19,11 @@ class Epci
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
-    #[Groups(['widget:read'])]
+    #[Groups(['widget-settings:read'])]
     private ?string $code = null;
 
     #[ORM\Column(length: 255)]
-    #[Groups(['widget:read'])]
+    #[Groups(['widget-settings:read'])]
     private ?string $nom = null;
 
     #[ORM\OneToMany(mappedBy: 'epci', targetEntity: Commune::class)]

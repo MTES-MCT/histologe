@@ -14,14 +14,14 @@ class Tag
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column(type: 'integer')]
-    #[Groups(['widget:read'])]
+    #[Groups(['widget-settings:read'])]
     private $id;
 
     #[ORM\ManyToMany(targetEntity: Signalement::class, inversedBy: 'tags', cascade: ['persist'])]
     private $signalement;
 
     #[ORM\Column(type: 'string', length: 255)]
-    #[Groups(['widget:read'])]
+    #[Groups(['widget-settings:read'])]
     private $label;
 
     #[ORM\Column(type: 'boolean')]

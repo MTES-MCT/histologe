@@ -14,15 +14,15 @@ class Territory
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column(type: 'integer')]
-    #[Groups(['widget:read'])]
+    #[Groups(['widget-settings:read', 'widget:read'])]
     private $id;
 
     #[ORM\Column(type: 'string', length: 3)]
-    #[Groups(['widget:read'])]
+    #[Groups(['widget-settings:read', 'widget:read'])]
     private $zip;
 
     #[ORM\Column(type: 'string', length: 255)]
-    #[Groups(['widget:read'])]
+    #[Groups(['widget-settings:read', 'widget:read'])]
     private $name;
 
     #[ORM\OneToMany(mappedBy: 'territory', targetEntity: User::class)]

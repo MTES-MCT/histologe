@@ -2,12 +2,17 @@
 
 namespace App\Service\DashboardWidget;
 
+use Symfony\Component\Serializer\Attribute\Groups;
+
 class WidgetCard
 {
     public function __construct(
-        private ?string $label = null,
-        private ?int $count = null,
-        private ?string $link = null
+        #[Groups(['widget:read'])]
+        private readonly ?string $label = null,
+        #[Groups(['widget:read'])]
+        private readonly ?int $count = null,
+        #[Groups(['widget:read'])]
+        private readonly ?string $link = null
     ) {
     }
 
