@@ -113,4 +113,25 @@ class SignalementVisitesControllerTest extends WebTestCase
         $this->assertResponseRedirects('/bo/signalements/'.$signalement->getUuid());
         $this->assertEmailCount(2);
     }
+
+    public function testcancelVisiteFromSignalement(): void
+    {
+        $signalement = $this->signalementRepository->findOneBy(['uuid' => '00000000-0000-0000-2022-000000000001']);
+
+        $route = $this->router->generate('back_signalement_visite_cancel', ['uuid' => $signalement->getUuid()]);
+        $this->client->request('POST', $route, ['visite-cancel' => ['intervention' => $signalement->getInterventions()->first()->getId(), 'details' => 'nanana']]);
+
+        $this->assertResponseStatusCodeSame(302);
+        $this->assertResponseRedirects('/bo/signalements/'.$signalement->getUuid());
+    }
+
+    public function testcancelVisiteFromSignalementDeny(): void
+    {
+        $signalement = $this->signalementRepository->findOneBy(['uuid' => '00000000-0000-0000-2023-000000000003']);
+
+        $route = $this->router->generate('back_signalement_visite_cancel', ['uuid' => $signalement->getUuid()]);
+        $this->client->request('POST', $route, ['visite-cancel' => ['intervention' => $signalement->getInterventions()->first()->getId(), 'details' => 'nanana']]);
+
+        $this->assertResponseStatusCodeSame(403);
+    }
 }
