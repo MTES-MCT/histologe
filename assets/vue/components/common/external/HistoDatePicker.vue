@@ -12,6 +12,8 @@
       cancelText="Annuler"
       :placeholder=placeholder
       :ref="id"
+      :name="id"
+      :id="id"
       />
   </div>
 </template>

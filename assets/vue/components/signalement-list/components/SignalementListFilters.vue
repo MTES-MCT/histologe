@@ -131,8 +131,8 @@
               </div>
               <div class="fr-col-12 fr-col-lg-6 fr-col-xl-3 grey-background">
                 <HistoDatePicker
-                    id="histofiltersdatepicker"
-                    ref="histofiltersdatepicker"
+                    id="filter-date-depot"
+                    ref="filter-date-depot"
                     v-model="sharedState.input.filters.dateDepot"
                     :placeholder="'Date de dépot'"
                     title="Rechercher par date de dépot"
@@ -234,7 +234,7 @@
               <div class="fr-col-12 fr-col-lg-4 grey-background"
                    :class="sharedState.user.isAgent ? 'fr-col-xl-3' : 'fr-col-xl-2'">
                 <HistoSelect
-                    id="filter-type-declarant"
+                    id="filter-nature-parc"
                     v-model="sharedState.input.filters.natureParc"
                     @update:modelValue="onChange(false)"
                     :option-items=natureParcList

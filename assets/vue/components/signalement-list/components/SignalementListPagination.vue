@@ -53,7 +53,7 @@ export default defineComponent({
   name: 'SignalementListPagination',
   props: {
     pagination: {
-      type: Object,
+      type: Object as () => {current_page: number, total_pages: number},
       required: true
     }
   },
@@ -79,7 +79,7 @@ export default defineComponent({
           if (offsetPage > 1) {
             pages.push('…')
           }
-          pages.push(this.pagination.total_pages)
+          pages.push(this.pagination.total_pages.toString())
         }
       } else if (currentPage >= limitPageToShow && currentPage <= offsetPage) {
         pages = [1, '…']

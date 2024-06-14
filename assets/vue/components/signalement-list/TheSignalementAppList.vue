@@ -35,7 +35,7 @@ import { defineComponent } from 'vue'
 import { store } from './store'
 import { requests } from './requests'
 import { SignalementItem } from './interfaces/signalementItem'
-import { Filters } from './interfaces/filters'
+import { Filters, SEARCH_FILTERS } from './interfaces/filters'
 import SignalementListFilters from './components/SignalementListFilters.vue'
 import SignalementListHeader from './components/SignalementListHeader.vue'
 import SignalementListCards from './components/SignalementListCards.vue'
@@ -84,208 +84,58 @@ export default defineComponent({
         this.hasErrorLoading = true
       }
     },
-    handleQueryParameter () {
+    handleQueryParameter: function () {
       const url = new URL(window.location.toString())
       const params = new URLSearchParams(url.search)
-      const page = params.get('page')
-      const sortBy = params.get('sortBy')
-      const direction = params.get('direction')
-
-      const showMyAffectationOnly = params.get('showMyAffectationOnly')
-
-      const territoire = params.get('territoire')
-      const searchTerms = params.get('searchTerms')
-      const communes = params.getAll('communes[]')
-      const epcis = params.getAll('epcis[]')
-      const status = params.get('status')
-      const etiquettes = params.getAll('etiquettes[]')
-      const partenaires = params.getAll('partenaires[]')
-
-      const dateDepotDebut = params.get('dateDepotDebut')
-      const dateDepotFin = params.get('dateDepotFin')
-      const dateDernierSuiviDebut = params.get('dateDernierSuiviDebut')
-      const dateDernierSuiviFin = params.get('dateDernierSuiviFin')
-
-      const procedure = params.get('procedure')
-      const visiteStatus = params.get('visiteStatus')
-      const typeDernierSuivi = params.get('typeDernierSuivi')
-      const statusAffectation = params.get('statusAffectation')
-      const criticiteScoreMin = params.get('criticiteScoreMin')
-      const criticiteScoreMax = params.get('criticiteScoreMax')
-      const typeDeclarant = params.get('typeDeclarant')
-      const natureParc = params.get('natureParc')
-      const allocataire = params.get('allocataire')
-      const enfantsM6 = params.get('enfantsM6')
-      const situation = params.get('situation')
-      const relancesUsager = params.get('relancesUsager')
-      const sansSuiviPeriode = params.get('sansSuiviPeriode')
-      const nouveauSuivi = params.get('nouveauSuivi')
-
       const filters = this.sharedState.input.filters as Filters
-
-      if (territoire) {
-        this.addQueryParameter('territoire', territoire)
-        filters.territoire = territoire
-      }
-
-      if (showMyAffectationOnly) {
-        this.addQueryParameter('showMyAffectationOnly', showMyAffectationOnly)
-        filters.showMyAffectationOnly = 'oui'
-      }
-
-      if (communes) {
-        communes.forEach(commune => {
-          this.addQueryParameter('communes[]', commune)
-          filters.communes.push(commune)
-        })
-      }
-
-      if (epcis) {
-        epcis.forEach(epci => {
-          this.addQueryParameter('epcis[]', epci)
-
-          const data = localStorage.getItem('epci')
-          if (data) {
-            const listEpci = JSON.parse(data)
-            const itemEpci = listEpci.filter((item: string) => item.includes(epci))
-            filters.epcis.push(itemEpci.shift())
+      for (const filter of SEARCH_FILTERS) {
+        const type = filter.type
+        const key = filter.name
+        const value: null | string = params.get(key)
+        const epciData = localStorage.getItem('epci')
+        let valueList: null | string[] = params.getAll(`${key}[]`)
+        if (value && value.length > 0) {
+          if (['sortBy', 'direction', 'page'].includes(key)) {
+            this.addQueryParameter(key, value)
+            continue
           }
-        })
-      }
-
-      if (etiquettes) {
-        etiquettes.forEach(etiquette => {
-          this.addQueryParameter('etiquettes[]', etiquette)
-          filters.etiquettes.push(etiquette)
-        })
-      }
-
-      if (partenaires) {
-        partenaires.forEach(partenaire => {
-          this.addQueryParameter('partenaires[]', partenaire)
-          filters.partenaires.push(partenaire)
-        })
-      }
-
-      if (searchTerms) {
-        this.addQueryParameter('searchTerms', searchTerms)
-        filters.searchTerms = searchTerms
-      }
-
-      if (status) {
-        this.addQueryParameter('status', status)
-        filters.status = status
-      }
-
-      if (dateDepotDebut && dateDepotFin) {
-        this.addQueryParameter('dateDepotDebut', dateDepotDebut)
-        const dateDepotDebutFormatted: Date = new Date(dateDepotDebut)
-        this.addQueryParameter('dateDepotFin', dateDepotFin)
-        const dateDepotFinFormatted: Date = new Date(dateDepotFin)
-
-        const datesDepots = []
-        datesDepots.push(dateDepotDebutFormatted)
-        datesDepots.push(dateDepotFinFormatted)
-
-        filters.dateDepot = datesDepots
-      }
-
-      if (dateDernierSuiviDebut && dateDernierSuiviFin) {
-        this.addQueryParameter('dateDernierSuiviDebut', dateDernierSuiviDebut)
-        const dateDernierSuiviDebutFormatted: Date = new Date(dateDernierSuiviDebut)
-        this.addQueryParameter('dateDernierSuiviFin', dateDernierSuiviFin)
-        const dateDernierSuiviFinFormatted: Date = new Date(dateDernierSuiviFin)
-
-        const datesDernierSuivi = []
-        datesDernierSuivi.push(dateDernierSuiviDebutFormatted)
-        datesDernierSuivi.push(dateDernierSuiviFinFormatted)
-
-        filters.dateDernierSuivi = datesDernierSuivi
-      }
-
-      if (procedure) {
-        this.addQueryParameter('procedure', procedure)
-        filters.procedure = procedure
-      }
-
-      if (visiteStatus) {
-        this.addQueryParameter('visiteStatus', visiteStatus)
-        filters.visiteStatus = visiteStatus
-      }
-
-      if (statusAffectation) {
-        this.addQueryParameter('statusAffectation', statusAffectation)
-        filters.statusAffectation = statusAffectation
-      }
-
-      if (typeDernierSuivi) {
-        this.addQueryParameter('typeDernierSuivi', typeDernierSuivi)
-        filters.typeDernierSuivi = typeDernierSuivi
-      }
-
-      if (criticiteScoreMin) {
-        this.addQueryParameter('criticiteScoreMin', criticiteScoreMin)
-        filters.criticiteScoreMin = criticiteScoreMin
-      }
-
-      if (criticiteScoreMax) {
-        this.addQueryParameter('criticiteScoreMax', criticiteScoreMax)
-        filters.criticiteScoreMax = criticiteScoreMax
-      }
-
-      if (typeDeclarant) {
-        this.addQueryParameter('typeDeclarant', typeDeclarant)
-        filters.typeDeclarant = typeDeclarant
-      }
-
-      if (natureParc) {
-        this.addQueryParameter('natureParc', natureParc)
-        filters.natureParc = natureParc
-      }
-
-      if (allocataire) {
-        this.addQueryParameter('allocataire', allocataire)
-        filters.allocataire = allocataire
-      }
-
-      if (enfantsM6) {
-        this.addQueryParameter('enfantsM6', enfantsM6)
-        filters.enfantsM6 = enfantsM6
-      }
-
-      if (situation) {
-        this.addQueryParameter('situation', situation)
-        filters.situation = situation
-      }
-
-      if (relancesUsager) {
-        this.addQueryParameter('relancesUsager', relancesUsager)
-        filters.relanceUsager = 'Pas de suivi après 3 relances'
-      }
-
-      if (sansSuiviPeriode) {
-        this.addQueryParameter('sansSuiviPeriode', sansSuiviPeriode)
-        filters.sansSuiviPeriode = 'Sans suivi depuis au moins 30 jours'
-      }
-
-      if (nouveauSuivi) {
-        this.addQueryParameter('nouveauSuivi', nouveauSuivi)
-        filters.nouveauSuivi = 'Nouveaux suivis partenaires et usagers'
-      }
-
-      if (page) {
-        this.addQueryParameter('page', page)
-      }
-
-      if (sortBy) {
-        this.addQueryParameter('sortBy', sortBy)
-        if (direction) {
-          this.addQueryParameter('orderBy', direction)
-        } else {
-          this.addQueryParameter('orderBy', 'DESC')
+          if (type === 'text') {
+            filters[key] = filter?.defaultValue || value
+            this.addQueryParameter(key, value)
+          } else if (type === 'date') {
+            const keyDebut = key
+            const keyFin = key.replace('Debut', 'Fin')
+            const newKey = key.replace('Debut', '')
+            const dateDebut = params.get(keyDebut)
+            const dateFin = params.get(keyFin)
+            if (dateDebut && dateFin) {
+              this.addQueryParameter(keyDebut, dateDebut)
+              const dateDebutFormatted: Date = new Date(dateDebut)
+              this.addQueryParameter(keyFin, dateFin)
+              const dateFinFormatted: Date = new Date(dateFin)
+              filters[newKey] = [dateDebutFormatted, dateFinFormatted]
+              this.sharedState.showOptions = true
+            }
+          }
+          this.sharedState.showOptions = filter.showOptions
+        } else if (valueList && valueList.length > 0) {
+          if (type === 'collection') {
+            valueList = params.getAll(`${key}[]`)
+            if (valueList && valueList.length > 0) {
+              valueList.forEach(valueItem => {
+                this.addQueryParameter(`${key}[]`, valueItem.trim())
+                if (key === 'epcis' && epciData) {
+                  const listEpci = JSON.parse(epciData)
+                  const itemEpci = listEpci.filter((itemEpci: string) => itemEpci.includes(valueItem))
+                  filters[key].push(itemEpci.shift())
+                } else {
+                  filters[key].push(valueItem)
+                }
+              })
+            }
+          }
         }
       }
-      this.sharedState.showOptions = true
     },
     handleSettings (requestResponse: any) {
       this.sharedState.user.isAdmin = requestResponse.roleLabel === 'Super Admin'
@@ -417,8 +267,8 @@ export default defineComponent({
           } else if (typeof value === 'object' && key === 'epcis') {
             value.forEach((valueItem: any) => {
               const code = valueItem.split('|').shift()
-              this.addQueryParameter(`${key}[]`, code)
-              url.searchParams.append(`${key}[]`, code)
+              this.addQueryParameter(`${key}[]`, code.trim())
+              url.searchParams.append(`${key}[]`, code.trim())
             })
           } else if (typeof value === 'string') {
             this.addQueryParameter(key, value)
@@ -475,13 +325,11 @@ export default defineComponent({
       requests.doRequest(url, functionReturn)
     },
     addQueryParameter (name: string, value: string) {
-      console.log(name, value)
       const param = this
         .sharedState
         .input
         .queryParameters
         .find(parameter => parameter.name === name && parameter.value === value)
-      console.log(param)
       if (param) {
         param.value = value
       } else {
