@@ -101,6 +101,7 @@ class LoadSignalementData extends Fixture implements OrderedFixtureInterface
             ->setIsProprioAverti($row['is_proprio_averti'])
             ->setModeContactProprio(json_decode($row['mode_contact_proprio'], true))
             ->setNomProprio($faker->company())
+            ->setPrenomProprio($faker->firstName())
             ->setMailProprio($faker->companyEmail)
             ->setTelProprio($phoneNumber)
             ->setAdresseProprio($faker->address())
@@ -158,6 +159,14 @@ class LoadSignalementData extends Fixture implements OrderedFixtureInterface
 
         if (isset($row['date_entree'])) {
             $signalement->setDateEntree(new \DateTimeImmutable($row['date_entree']));
+        }
+
+        if (isset($row['adresse_autre_occupant'])) {
+            $signalement->setAdresseAutreOccupant($row['adresse_autre_occupant']);
+        }
+
+        if (isset($row['montant_allocation'])) {
+            $signalement->setMontantAllocation($row['montant_allocation']);
         }
 
         if (Signalement::STATUS_CLOSED === $row['statut']) {

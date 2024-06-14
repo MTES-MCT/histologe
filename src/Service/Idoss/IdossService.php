@@ -32,7 +32,7 @@ class IdossService
         $payload = [
             'user' => $this->params->get('idoss_username'),
             'Dossier' => [
-                'UUIDDossier' => $dossierMessage->getSignalementUuid(),
+                'UUIDSignalement' => $dossierMessage->getSignalementUuid(),
                 'dateDepotSignalement' => $dossierMessage->getDateDepotSignalement(),
                 'declarant' => $dossierMessage->getDeclarant(),
                 'occupant' => $dossierMessage->getOccupant(),
