@@ -6,7 +6,7 @@ use App\Dto\Request\Signalement\QualificationNDERequest;
 use App\Entity\Signalement;
 use App\Entity\SignalementQualification;
 use App\Manager\SignalementManager;
-use App\Security\Voter\UserVoter;
+use App\Security\Voter\SignalementVoter;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -29,7 +29,7 @@ class BackSignalementQualificationController extends AbstractController
         SignalementManager $signalementManager,
         SerializerInterface $serializer
     ): RedirectResponse|JsonResponse {
-        $this->denyAccessUnlessGranted(UserVoter::SEE_NDE, $this->getUser());
+        $this->denyAccessUnlessGranted(SignalementVoter::EDIT_NDE, $signalement);
         $decodedRequest = json_decode($request->getContent());
         if ($this->isCsrfTokenValid('signalement_edit_nde_'.$signalement->getId(), $decodedRequest->_token)) {
             $qualificationNDERequest = $serializer->deserialize(
