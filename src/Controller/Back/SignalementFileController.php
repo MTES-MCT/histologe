@@ -32,11 +32,6 @@ class SignalementFileController extends AbstractController
         MessageBusInterface $messageBus
     ): Response {
         $this->denyAccessUnlessGranted('SIGN_VIEW', $signalement);
-        if (Signalement::STATUS_ARCHIVED === $signalement->getStatut()) {
-            $this->addFlash('error', "Ce signalement a été archivé et n'est pas consultable.");
-
-            return $this->redirectToRoute('back_index');
-        }
         /** @var User $user */
         $user = $this->getUser();
 
@@ -64,7 +59,7 @@ class SignalementFileController extends AbstractController
         EntityManagerInterface $entityManager,
         SignalementFileProcessor $signalementFileProcessor
     ): Response {
-        $this->denyAccessUnlessGranted('FILE_CREATE', $signalement);
+        $this->denyAccessUnlessGranted('SIGN_EDIT', $signalement);
         if (!$this->isCsrfTokenValid('signalement_add_file_'.$signalement->getId(), $request->get('_token')) || !$files = $request->files->get('signalement-add-file')) {
             if ($request->isXmlHttpRequest()) {
                 return $this->json(['response' => 'Token CSRF invalide ou paramètre manquant, veuillez rechargez la page'], Response::HTTP_BAD_REQUEST);
@@ -113,7 +108,7 @@ class SignalementFileController extends AbstractController
         EntityManagerInterface $entityManager,
         SuiviManager $suiviManager,
     ): JsonResponse {
-        $this->denyAccessUnlessGranted('FILE_CREATE', $signalement);
+        $this->denyAccessUnlessGranted('SIGN_EDIT', $signalement);
         $fileRepository = $entityManager->getRepository(File::class);
         $files = $fileRepository->findBy(['signalement' => $signalement, 'isWaitingSuivi' => true]);
         if (!\count($files)) {

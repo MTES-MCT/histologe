@@ -6,24 +6,17 @@ use App\Entity\Affectation;
 use App\Entity\File;
 use App\Entity\Signalement;
 use App\Entity\User;
-use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Authorization\Voter\Voter;
 
 class FileVoter extends Voter
 {
     public const DELETE = 'FILE_DELETE';
-    public const VIEW = 'FILE_VIEW';
-    public const CREATE = 'FILE_CREATE';
     public const EDIT = 'FILE_EDIT';
-
-    public function __construct(private ParameterBagInterface $parameterBag)
-    {
-    }
 
     protected function supports(string $attribute, $subject): bool
     {
-        return \in_array($attribute, [self::DELETE, self::VIEW, self::CREATE, self::EDIT]) && ($subject instanceof Signalement || $subject instanceof File);
+        return \in_array($attribute, [self::DELETE, self::EDIT]) && $subject instanceof File;
     }
 
     protected function voteOnAttribute(string $attribute, $subject, TokenInterface $token): bool
@@ -34,39 +27,32 @@ class FileVoter extends Voter
             return false;
         }
 
-        if (!$subject instanceof Signalement && !$subject instanceof File) {
-            return false;
-        }
-        if (self::DELETE !== $attribute &&
-            self::EDIT !== $attribute &&
-            $this->isAdminOrRTonHisTerritory($subject, $user)
-        ) {
-            return true;
-        }
-
         return match ($attribute) {
             self::DELETE => $this->canDelete($subject, $user),
-            self::VIEW => $this->canView($subject, $user),
-            self::CREATE => $this->canCreate($subject, $user),
             self::EDIT => $this->canEdit($subject, $user),
             default => false,
         };
     }
 
-    private function canCreate(Signalement $signalement, User $user): bool
+    private function canCreate(File $file, User $user): bool
     {
-        return Signalement::STATUS_ACTIVE === $signalement->getStatut()
-            && $this->checkSignalementPermission($signalement, $user);
-    }
+        if (Signalement::STATUS_ACTIVE !== $file->getSignalement()->getStatut()) {
+            return false;
+        }
+        if ($this->isAdminOrRTonHisTerritory($file, $user)) {
+            return true;
+        }
 
-    private function canView(Signalement $subject, User $user = null): bool
-    {
-        return $this->checkSignalementPermission($subject, $user);
+        return $file->getSignalement()->getAffectations()->filter(
+            function (Affectation $affectation) use ($user) {
+                return $affectation->getPartner()->getId() === $user->getPartner()->getId();
+            }
+        )->count() > 0;
     }
 
     private function canEdit(File $file, User $user): bool
     {
-        return $this->canCreate($file->getSignalement(), $user)
+        return $this->canCreate($file, $user)
             && (
                 $this->isFileUploadedByUser($file, $user)
                 ||
@@ -76,7 +62,7 @@ class FileVoter extends Voter
 
     private function canDelete(File $file, User $user): bool
     {
-        return $this->canCreate($file->getSignalement(), $user)
+        return $this->canCreate($file, $user)
             && (
                 $this->isFileUploadedByUser($file, $user)
                 ||
@@ -94,43 +80,12 @@ class FileVoter extends Voter
         return null !== $file->getUploadedBy() && $file->getUploadedBy() === $user;
     }
 
-    private function isAdminOrRTonHisTerritory(File|Signalement $subject, ?User $user = null): bool
+    private function isAdminOrRTonHisTerritory(File $subject, User $user): bool
     {
-        if (null === $user) {
-            return false;
-        }
-
-        return $user->isSuperAdmin() ||
-        ($user->isTerritoryAdmin() && $this->isOnUserTerritory($subject, $user));
-    }
-
-    private function checkSignalementPermission(Signalement $signalement, ?User $user = null): bool
-    {
-        if (null === $user) {
-            return false;
-        }
-        if ($this->isAdminOrRTonHisTerritory($signalement, $user)) {
+        if ($user->isSuperAdmin()) {
             return true;
         }
-
-        return $signalement->getAffectations()->filter(
-            function (Affectation $affectation) use ($user) {
-                return $affectation->getPartner()->getId() === $user->getPartner()->getId();
-            }
-        )->count() > 0;
-    }
-
-    private function isOnUserTerritory(File|Signalement $subject, User $user): bool
-    {
-        if (
-            (
-                $subject instanceof Signalement && $subject->getTerritory() === $user->getTerritory()
-            )
-            ||
-            (
-                $subject instanceof File && $subject->getSignalement()->getTerritory() === $user->getTerritory()
-            )
-        ) {
+        if ($user->isTerritoryAdmin() && $subject->getSignalement()->getTerritory() === $user->getTerritory()) {
             return true;
         }
 

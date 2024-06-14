@@ -42,7 +42,7 @@ class SecurityController extends AbstractController
     ): BinaryFileResponse|RedirectResponse {
         $request = Request::createFromGlobals();
 
-        if (!$this->isCsrfTokenValid('suivi_signalement_ext_file_view', $request->get('t')) && !$this->isGranted('FILE_VIEW', $signalement)) {
+        if (!$this->isCsrfTokenValid('suivi_signalement_ext_file_view', $request->get('t')) && !$this->isGranted('SIGN_VIEW', $signalement)) {
             throw $this->createNotFoundException();
         }
         try {
