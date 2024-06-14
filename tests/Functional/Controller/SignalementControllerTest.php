@@ -233,7 +233,8 @@ class SignalementControllerTest extends WebTestCase
         $urlSignalementEdit = $router->generate('front_nouveau_formulaire_edit', ['uuid' => '00000000-0000-0000-2024-locataire003']);
         $client->request('GET', $urlSignalementEdit);
 
-        $this->assertEquals(Response::HTTP_NOT_FOUND, $client->getResponse()->getStatusCode());
+        $this->assertEquals(Response::HTTP_FOUND, $client->getResponse()->getStatusCode());
+        $this->assertResponseRedirects('/signalement');
 
         $urlSignalementEdit = $router->generate('front_nouveau_formulaire_edit', ['uuid' => '00000000-0000-0000-2023-locataire001']);
         $client->request('GET', $urlSignalementEdit);

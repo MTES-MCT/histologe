@@ -52,7 +52,9 @@ class SignalementController extends AbstractController
         SignalementDraft $signalementDraft
     ): Response {
         if (SignalementDraftStatus::EN_COURS !== $signalementDraft->getStatus()) {
-            throw $this->createNotFoundException();
+            $this->addFlash('error', 'Le brouillon n\'est plus modifiable.');
+
+            return $this->redirectToRoute('front_signalement');
         }
 
         return $this->render('front/nouveau_formulaire.html.twig', [
