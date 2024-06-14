@@ -4,8 +4,10 @@ namespace App\Security\Voter;
 
 use App\Entity\Affectation;
 use App\Entity\Enum\Qualification;
+use App\Entity\Enum\QualificationStatus;
 use App\Entity\Signalement;
 use App\Entity\User;
+use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Authorization\Voter\Voter;
 use Symfony\Component\Security\Core\User\UserInterface;
@@ -20,10 +22,15 @@ class SignalementVoter extends Voter
     public const REOPEN = 'SIGN_REOPEN';
     public const ADD_VISITE = 'SIGN_ADD_VISITE';
     public const USAGER_EDIT = 'SIGN_USAGER_EDIT';
+    public const EDIT_NDE = 'SIGN_EDIT_NDE';
+
+    public function __construct(private Security $security)
+    {
+    }
 
     protected function supports(string $attribute, $subject): bool
     {
-        return \in_array($attribute, [self::EDIT, self::VIEW, self::DELETE, self::VALIDATE, self::REOPEN, self::CLOSE, self::ADD_VISITE, self::USAGER_EDIT])
+        return \in_array($attribute, [self::EDIT, self::VIEW, self::DELETE, self::VALIDATE, self::REOPEN, self::CLOSE, self::ADD_VISITE, self::USAGER_EDIT, self::EDIT_NDE])
             && ($subject instanceof Signalement);
     }
 
@@ -41,6 +48,10 @@ class SignalementVoter extends Voter
 
         if (self::ADD_VISITE == $attribute) {
             return $this->canAddVisite($subject, $user);
+        }
+
+        if (self::EDIT_NDE == $attribute) {
+            return $this->canEditNDE($subject, $user);
         }
 
         if ($user->isSuperAdmin()) {
@@ -82,7 +93,8 @@ class SignalementVoter extends Voter
     {
         return $signalement->getAffectations()->filter(function (Affectation $affectation) use ($user) {
             return $affectation->getPartner()->getId() === $user->getPartner()->getId();
-        })->count() > 0 || $user->isTerritoryAdmin() && $user->getTerritory() === $signalement->getTerritory();
+        })->count() > 0 || ($user->isTerritoryAdmin() && $user->getTerritory() === $signalement->getTerritory())
+        || $user->isSuperAdmin();
     }
 
     private function canView(Signalement $signalement, User $user): bool
@@ -108,5 +120,20 @@ class SignalementVoter extends Voter
         $isUserTerritoryAdminOfSignalementTerritory = $user->isTerritoryAdmin() && $user->getTerritory() === $signalement->getTerritory();
 
         return $user->isSuperAdmin() || $isUserInAffectedPartnerWithQualificationVisite || $isUserTerritoryAdminOfSignalementTerritory;
+    }
+
+    private function canEditNDE(Signalement $signalement, User $user): bool
+    {
+        $signalementQualificationNDE = $signalement->getSignalementQualifications()?->filter(function ($qualification) {
+            return Qualification::NON_DECENCE_ENERGETIQUE === $qualification->getQualification();
+        })->first();
+
+        $isSignalementNDEActif = false;
+        if (null !== $signalementQualificationNDE && false !== $signalementQualificationNDE) {
+            $isSignalementNDEActif = QualificationStatus::ARCHIVED != $signalementQualificationNDE->getStatus();
+        }
+
+        return $isSignalementNDEActif && $this->security->isGranted(UserVoter::SEE_NDE, $user)
+        && $this->canEdit($signalement, $user);
     }
 }

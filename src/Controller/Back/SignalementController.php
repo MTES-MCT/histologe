@@ -4,10 +4,8 @@ namespace App\Controller\Back;
 
 use App\Entity\Affectation;
 use App\Entity\Enum\Qualification;
-use App\Entity\Enum\QualificationStatus;
 use App\Entity\Intervention;
 use App\Entity\Signalement;
-use App\Entity\SignalementQualification;
 use App\Entity\User;
 use App\Event\SignalementClosedEvent;
 use App\Event\SignalementViewedEvent;
@@ -20,7 +18,6 @@ use App\Repository\DesordrePrecisionRepository;
 use App\Repository\InterventionRepository;
 use App\Repository\SignalementQualificationRepository;
 use App\Repository\TagRepository;
-use App\Security\Voter\UserVoter;
 use App\Service\Signalement\PhotoHelper;
 use App\Service\Signalement\SignalementDesordresProcessor;
 use Doctrine\Persistence\ManagerRegistry;
@@ -133,7 +130,6 @@ class SignalementController extends AbstractController
         $signalementQualificationNDE = $signalementQualificationRepository->findOneBy([
             'signalement' => $signalement,
             'qualification' => Qualification::NON_DECENCE_ENERGETIQUE, ]);
-        $isSignalementNDEActif = $this->isSignalementNDEActif($signalementQualificationNDE);
 
         if (null == $signalement->getCreatedFrom()) {
             $signalementQualificationNDECriticites = $signalementQualificationNDE
@@ -151,9 +147,7 @@ class SignalementController extends AbstractController
 
         $files = $parameterBag->get('files');
 
-        $canEditNDE = $isSignalementNDEActif && $this->isGranted(UserVoter::SEE_NDE, $this->getUser())
-        && $canEditSignalement;
-
+        $canEditNDE = $this->isGranted('SIGN_EDIT_NDE', $signalement);
         $listQualificationStatusesLabelsCheck = [];
         if (null !== $signalement->getSignalementQualifications()) {
             foreach ($signalement->getSignalementQualifications() as $qualification) {
@@ -211,15 +205,6 @@ class SignalementController extends AbstractController
             'pendingVisites' => $interventionRepository->getPendingVisitesForSignalement($signalement),
             'allPhotosOrdered' => $allPhotosOrdered,
         ]);
-    }
-
-    private function isSignalementNDEActif(?SignalementQualification $signalementQualification): bool
-    {
-        if (null !== $signalementQualification) {
-            return QualificationStatus::ARCHIVED != $signalementQualification->getStatus();
-        }
-
-        return false;
     }
 
     #[Route('/{uuid}/supprimer', name: 'back_signalement_delete', methods: 'POST')]
