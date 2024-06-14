@@ -454,6 +454,9 @@ export default defineComponent({
     .histo-select select {
       background-color: var(--background-contrast-grey);
     }
+    .histo-multi-select .selector {
+      background-color: var(--background-contrast-grey);
+    }
     .histo-date-picker input {
       background-color: var(--background-contrast-grey);
       box-shadow: inset 0 -2px 0 0 var(--border-plain-grey);
