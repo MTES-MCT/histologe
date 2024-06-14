@@ -12,6 +12,7 @@ imports:
     - { resource: 'app/suivi_messages.yaml'}
     - { resource: 'app/cron_scheduler.yaml'}
     - { resource: 'app/export_pdf.yaml'}
+    - { resource: 'app/csp.yaml'}
 parameters:
     .container.dumper.inline_factories: true
     uploads_dir: '%kernel.project_dir%/uploaded_files/signalement/'
@@ -30,6 +31,7 @@ parameters:
     token_lifetime: '1 day'
     cron_enable: '%env(bool:CRON_ENABLE)%'
     mail_enable: '%env(bool:MAIL_ENABLE)%'
+    csp_enable: '%env(bool:CSP_ENABLE)%'
     feature_ask_visite: '%env(FEATURE_ASK_VISITE_ENABLE)%'
     feature_oilhi_enable: '%env(bool:FEATURE_OILHI_ENABLE)%'
     feature_signalement_liste_enable: '%env(bool:FEATURE_LIST_FILTER_ENABLE)%'
@@ -61,6 +63,11 @@ services:
             - '../src/Entity/'
             - '../src/Kernel.php'
             - '../src/Tests/'
+
+    App\EventListener\ContentSecurityPolicyListener:
+        tags:
+            - { name: kernel.event_listener, event: kernel.request, method: onKernelRequest }
+            - { name: kernel.event_listener, event: kernel.response, method: onKernelResponse }
 
     App\EventListener\LoginListener:
         tags:

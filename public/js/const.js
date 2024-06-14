@@ -75,35 +75,6 @@ const persistRemoveTagEvent = (event) => {
 const forms = document.querySelectorAll('form.needs-validation:not([name="bug-report"])');
 const localStorage = window.localStorage;
 const uploadedFiles = [];
-const checkUserMail = (el) => {
-    let formData = new FormData();
-    formData.append('email', el.value)
-    formData.append('_token', el.getAttribute('data-token'))
-    fetch('/bo/partenaires/checkmail', {
-        method: 'POST',
-        body: formData
-    }).then(r => {
-        if (!r.ok) {
-            r.json().then((r) => {
-                el.classList.add('fr-input--error');
-                el.parentElement.classList.add('fr-input-group--error');
-                el.parentElement.querySelector('p.fr-error-text').innerText = r.error;
-                el.parentElement.querySelector('p.fr-error-text').classList.remove('fr-hidden');
-                document.querySelector('#user_create_form_submit').disabled = true;
-                document.querySelector('#user_edit_form_submit').disabled = true;
-            })
-        } else {
-            el.classList.remove('fr-input--error');
-            el.parentElement.classList.remove('fr-input-group--error');
-            el.parentElement.querySelector('p.fr-error-text').classList.add('fr-hidden');
-            document.querySelector('#user_create_form_submit').disabled = false;
-            document.querySelector('#user_edit_form_submit').disabled = false;            
-        }
-    })
-    .catch(function (err) {
-        console.warn('Something went wrong.', err);
-    });
-};
 const serializeArray = (form) => {
     return Array.from(new FormData(form)
         .entries())
@@ -205,46 +176,7 @@ const sortTextVal = (a, b) => {
 
     return 0;
 }
-const setBadge = (el) => {
-    let container = el.parentElement.querySelector('.selected__value');
-    if (el.value !== '') {
-        let badge = document.createElement('span');
-        badge.classList.add('fr-badge', 'fr-badge--success', 'fr-m-1v')
-        badge.innerText = el.selectedOptions[0].text;
-        let input = document.createElement('input');
-        input.type = "hidden";
-        input.name = `${el.id}[]`;
-        input.value = el.value;
-        container.append(input);
-        badge.setAttribute('data-value', el.value);
-        container.querySelector('.fr-badge:not([data-value])')?.classList?.add('fr-hidden');
-        container.append(badge)
-        el.selectedOptions[0].classList.add('fr-hidden')
-        badge.addEventListener('click', (event) => {
-            removeBadge(badge);
-        })
-    } else {
-        container.querySelectorAll('.fr-badge[data-value]').forEach(badge => {
-            removeBadge(badge);
-        })
-    }
-    return false;
-}
-const removeBadge = (badge) => {
-    let val = badge.getAttribute('data-value');
-    let input = badge.parentElement.querySelector(`input[value="${val}"]`);
-    let select = badge?.parentElement?.parentElement?.querySelector(`select`) ?? badge?.parentElement?.parentElement?.querySelector(`input[type="date"]`);
-    select.querySelector(`option[value="${val}"]`)?.classList?.remove('fr-hidden');
-    input?.remove();
-    let badges = badge.parentElement.querySelectorAll('.fr-badge[data-value]').length !== 1;
-    console.log(badge.parentElement.querySelectorAll('.fr-badge[data-value]').length)
-    if (!badges) {
-        badge?.parentElement?.querySelector('.fr-badge:not([data-value])')?.classList?.remove('fr-hidden');
-        if (select.tagName === 'SELECT')
-            select.options[0].selected = true;
-    }
-    badge.remove();
-}
+
 let idFetchTimeout;
 const searchAddress = (form, autocomplete) => {
     clearTimeout(idFetchTimeout);

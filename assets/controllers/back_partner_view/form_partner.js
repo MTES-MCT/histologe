@@ -108,3 +108,53 @@ if (document.querySelector('#partner_type')) {
     histoUpdateFieldsVisibility()
   })
 }
+
+const deletePartnerForm = document.querySelectorAll('form[name="deletePartner"]');
+deletePartnerForm.forEach(form => {
+  form.addEventListener('submit', function(event) {
+        if (!confirm('Êtes-vous sûr de vouloir supprimer ce partenaire ?')) {
+            event.preventDefault();
+        }
+    });
+});
+
+const checkUserMail = (el) => {
+  let formData = new FormData();
+  formData.append('email', el.value)
+  formData.append('_token', el.getAttribute('data-token'))
+  fetch('/bo/partenaires/checkmail', {
+      method: 'POST',
+      body: formData
+  }).then(r => {
+      if (!r.ok) {
+          r.json().then((r) => {
+              el.classList.add('fr-input--error');
+              el.parentElement.classList.add('fr-input-group--error');
+              el.parentElement.querySelector('p.fr-error-text').innerText = r.error;
+              el.parentElement.querySelector('p.fr-error-text').classList.remove('fr-hidden');
+              document.querySelector('#user_create_form_submit').disabled = true;
+              document.querySelector('#user_edit_form_submit').disabled = true;
+          })
+      } else {
+          el.classList.remove('fr-input--error');
+          el.parentElement.classList.remove('fr-input-group--error');
+          el.parentElement.querySelector('p.fr-error-text').classList.add('fr-hidden');
+          document.querySelector('#user_create_form_submit').disabled = false;
+          document.querySelector('#user_edit_form_submit').disabled = false;            
+      }
+  })
+  .catch(function (err) {
+      console.warn('Something went wrong.', err);
+  });
+};
+
+const emailInputs = document.querySelectorAll('.fr-input-email');
+emailInputs.forEach(emailInput => {
+  emailInput.addEventListener('change', function() {
+      checkUserMail(this);
+  });
+
+  emailInput.addEventListener('input', function() {
+      checkUserMail(this);
+  });
+});

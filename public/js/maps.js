@@ -121,3 +121,7 @@ async function getMarkers(offset) {
         }
     }))
 }
+
+window.onload = async () => {
+    await getMarkers(0);
+}

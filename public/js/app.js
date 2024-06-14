@@ -210,11 +210,6 @@ document?.querySelectorAll(".fr-pagination__link").forEach((e => {
         }))))
     }))
 }));
-document?.querySelectorAll('[data-removable="true"]')?.forEach(removale => {
-    removale.addEventListener('click', () => {
-        removeBadge(removale);
-    })
-})
 document?.querySelectorAll('[data-fr-select-target]')?.forEach(t => {
     let source = document?.querySelector('#' + t.getAttribute('data-fr-select-source'));
     let target = document?.querySelector('#' + t.getAttribute('data-fr-select-target'));

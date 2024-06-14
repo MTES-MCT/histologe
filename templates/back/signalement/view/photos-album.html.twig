@@ -46,7 +46,7 @@
             <button class="fr-btn photos-album-swipe" data-direction="1">&gt;</button>
         </div>
     </div>
-    <script type="text/javascript">
+    <script type="text/javascript" nonce="{{ app.request.attributes.get('csp_script_nonce') }}">
         const histoPhotoIds = []
         {% for index, photo in allPhotosOrdered %}
             histoPhotoIds.push({{ photo.id }})

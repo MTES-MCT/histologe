@@ -295,3 +295,11 @@ document.addEventListener("DOMContentLoaded", function() {
         elmnt.scrollIntoView({behavior:'instant'})
     }
 })
+const closeNoticeButtons = document.querySelectorAll('button[name="closeNotice"]');
+closeNoticeButtons.forEach(button => {
+    button.addEventListener('click', function() {
+        const notice = this.parentNode.parentNode.parentNode;
+        notice.parentNode.removeChild(notice);
+    });
+});
+

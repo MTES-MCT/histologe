@@ -164,6 +164,13 @@ legend.required::after, label.required::after {
     display: block;
 }
 
+.fr-display-inline {
+    display: inline;
+}
+
+.fr-display-none {
+    display: none;
+}
 
 .fr-display-inline-flex {
     display: inline-flex !important;
@@ -768,6 +775,12 @@ ul + p {
     a {
         border-radius: 50%;
     }
+}
+.logo-width {
+    width: 3.5rem;
+}
+.logo-height {
+    height: 5.625rem;
 }
 
 #tags_active_container, #tags_inactive_container{

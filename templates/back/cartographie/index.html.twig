@@ -16,9 +16,4 @@
     {{ encore_entry_script_tags('app') }}
     <script src="{{ asset('js/maps.js') }}" data-token="{{ csrf_token('load_markers_'~''|date('dmYhi')) }}"
             id="carto__js"></script>
-    <script>
-        window.onload = async () => {
-            await getMarkers(0);
-        }
-    </script>
 {% endblock %}

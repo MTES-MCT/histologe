@@ -50,7 +50,7 @@
     {% endif %}
 
     {% if 'back_signalement_view' in app.request.get('_route') %}
-        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/tippy.js@6/themes/light-border.css">
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/tippy.js@6/dist/tippy.css">
     {% endif %}
 
     {% block stylesheets %}{% endblock %}
@@ -59,7 +59,7 @@
     {% endblock %}
     {% if matomo is defined and matomo.enable == 1 %}
         <!-- Matomo -->
-        <script>
+        <script nonce="{{ app.request.attributes.get('csp_script_nonce') }}">
             var _paq = window._paq = window._paq || [];
             {% if platform.url starts with 'https' %}
                 _paq.push(['setSecureCookie', true]);
@@ -129,7 +129,10 @@
 
 <script type="module" src="{{ asset('build/dsfr/dsfr.module.min.js') }}"></script>
 <script nomodule src="{{ asset('build/dsfr/dsfr.nomodule.min.js') }}"></script>
-<script src="{{ asset('js/tinymce/tinymce.min.js') }}"></script>
+<script src="https://cdn.jsdelivr.net/npm/tinymce@7.1.2/tinymce.min.js" 
+        integrity="sha256-5otrbbqtAS5IUAoXLf399RoDftSWtzsS3CyCreLcOhs="
+        crossorigin="anonymous"
+></script>
 <script src="{{ asset('js/const.min.js?v='~''|date('YmdH')) }}"></script>
 <script src="{{ asset('js/app.js?v='~''|date('YmdH')) }}"></script>
 
@@ -139,16 +142,23 @@
 
 {% endif %}
 {% if 'back_signalement_view' in app.request.get('_route') %}
-    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/tippy.js@6/dist/tippy-bundle.umd.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"
+        integrity="sha256-whL0tQWoY1Ku1iskqPFvmZ+CHsvmRWx/PIoEvIeWh4I="
+        crossorigin="anonymous"
+    ></script>"
+    <script src="https://cdn.jsdelivr.net/npm/tippy.js@6/dist/tippy.umd.min.js"
+        integrity="sha256-qx7gQMlSzXvTJCl8PBcHyzDQLGvX7NaFbiFY44WpsW4="
+        crossorigin="anonymous"
+    ></script>    
 {% endif %}
 
-<script>
+<script nonce="{{ app.request.attributes.get('csp_script_nonce') }}">
     tinymce.init({
         selector: 'textarea.editor',
         browser_spellcheck: true,
+        license_key: 'gpl',
         plugins: 'lists',
-        toolbar: 'undo redo | styleselect | bold italic | alignleft aligncenter alignright alignjustify | outdent indent | numlist bullist | mybutton',
+        toolbar: 'undo redo | styleselect | bold italic | numlist bullist | mybutton',
         menubar: false,
         height: 320,
         {% if 'back_' in app.request.get('_route') %}

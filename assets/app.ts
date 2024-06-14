@@ -41,10 +41,12 @@ import './controllers/cookie_banner';
 import './controllers/maintenance_banner';
 import './controllers/activate_account/activate_account';
 import './controllers/back_signalement_view/form_edit_modal';
-import './controllers/back_signalement_edit_file/back_signalement_edit_file';
-import './controllers/back_signalement_delete_file/back_signalement_delete_file';
 import './controllers/back_signalement_view/form_upload_documents';
-import './controllers/front_demande_lien_signalement/front_demande_lien_signalement';
 import './controllers/back_signalement_view/input_autocomplete_bailleur';
 import './controllers/back_signalement_view/form_cloture_modal';
+import './controllers/back_signalement_view/form_acceptation_refus';
+import './controllers/back_signalement_edit_file/back_signalement_edit_file';
+import './controllers/back_signalement_delete_file/back_signalement_delete_file';
+import './controllers/front_demande_lien_signalement/front_demande_lien_signalement';
 import './controllers/front_suivi_signalement/front_suivi_signalement';
+import './controllers/search_filter_form'
