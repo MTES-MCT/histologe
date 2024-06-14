@@ -143,7 +143,13 @@ export default defineComponent({
       if (epcis) {
         epcis.forEach(epci => {
           this.addQueryParameter('epcis[]', epci)
-          filters.epcis.push(epci + '|' + epci)
+
+          const data = localStorage.getItem('epci')
+          if (data) {
+            const listEpci = JSON.parse(data)
+            const itemEpci = listEpci.filter((item: string) => item.includes(epci))
+            filters.epcis.push(itemEpci.shift())
+          }
         })
       }
 
@@ -239,7 +245,7 @@ export default defineComponent({
 
       if (allocataire) {
         this.addQueryParameter('allocataire', allocataire)
-        filters.status = allocataire
+        filters.allocataire = allocataire
       }
 
       if (enfantsM6) {
@@ -248,7 +254,7 @@ export default defineComponent({
       }
 
       if (situation) {
-        this.addQueryParameter('enfantsM6', situation)
+        this.addQueryParameter('situation', situation)
         filters.situation = situation
       }
 
@@ -279,12 +285,13 @@ export default defineComponent({
           this.addQueryParameter('orderBy', 'DESC')
         }
       }
+      this.sharedState.showOptions = true
     },
     handleSettings (requestResponse: any) {
       this.sharedState.user.isAdmin = requestResponse.roleLabel === 'Super Admin'
       this.sharedState.user.isResponsableTerritoire = requestResponse.roleLabel === 'Responsable Territoire'
       this.sharedState.user.isAdministrateurPartenaire = requestResponse.roleLabel === 'Administrateur'
-      this.sharedState.user.isAgent = requestResponse.roleLabel === 'Administrateur' || requestResponse.roleLabel === 'Utilisateur'
+      this.sharedState.user.isAgent = ['Administrateur', 'Utilisateur'].includes(requestResponse.roleLabel)
       this.sharedState.user.canSeeNonDecenceEnergetique = requestResponse.canSeeNDE === '1'
       const isAdminOrAdminTerritoire = this.sharedState.user.isAdmin || this.sharedState.user.isResponsableTerritoire
       this.sharedState.user.canSeeStatusAffectation = isAdminOrAdminTerritoire
@@ -334,6 +341,7 @@ export default defineComponent({
       for (const id in requestResponse.epcis) {
         this.sharedState.epcis.push(`${requestResponse.epcis[id].code} | ${requestResponse.epcis[id].nom}`)
       }
+      localStorage.setItem('epci', JSON.stringify(this.sharedState.epcis))
     },
     handleTerritoryChange (value: any) {
       this.sharedState.currentTerritoryId = value.toString()
@@ -467,11 +475,13 @@ export default defineComponent({
       requests.doRequest(url, functionReturn)
     },
     addQueryParameter (name: string, value: string) {
+      console.log(name, value)
       const param = this
         .sharedState
         .input
         .queryParameters
         .find(parameter => parameter.name === name && parameter.value === value)
+      console.log(param)
       if (param) {
         param.value = value
       } else {

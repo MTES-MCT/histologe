@@ -54,6 +54,7 @@
                   id="filter-communes"
                   v-model="sharedState.input.filters.communes"
                   :suggestions="sharedState.communes"
+                  :initSelectedSuggestions="sharedState.input.filters.communes"
                   :multiple="true"
                   :placeholder="'Commune ou code postal'"
                   @update:modelValue="onChange(false)"
@@ -66,6 +67,7 @@
                   id="filter-epci"
                   v-model="sharedState.input.filters.epcis"
                   :suggestions="sharedState.epcis"
+                  :initSelectedSuggestions="sharedState.input.filters.epcis"
                   :multiple="true"
                   :placeholder="'EPCI (Établissement public de coopération intercommunale)'"
                   @update:modelValue="onChange(false)"
@@ -87,8 +89,8 @@
           </div>
           <div class="fr-grid-row fr-grid-row--gutters">
             <div class="fr-col-12 fr-col-lg-6 fr-col-xl-3">
-              <button class="fr-btn fr-btn--secondary" @click="showOptions = !showOptions">
-                {{ showOptions ? 'Masquer les options' : 'Plus d\'options de recherche' }}
+              <button class="fr-btn fr-btn--secondary" @click="sharedState.showOptions = !sharedState.showOptions">
+                {{ sharedState.showOptions ? 'Masquer les options' : 'Plus d\'options de recherche' }}
               </button>
             </div>
             <div class="fr-col-12 fr-col-lg-6 fr-col-xl-7">
@@ -113,7 +115,7 @@
               </button>
             </div>
           </div>
-          <div v-if="showOptions">
+          <div v-if="sharedState.showOptions">
             <div class="fr-grid-row fr-grid-row--gutters">
               <div class="fr-col-12 fr-col-lg-6 fr-col-xl-3 grey-background"
                    v-if="sharedState.etiquettes.length > 0">
@@ -380,6 +382,7 @@ export default defineComponent({
       this.$emit('changeTerritory', value)
     },
     resetFilters () {
+      this.sharedState.showOptions = false
       this.sharedState.input.filters = {
         territoire: null,
         etiquettes: [],
@@ -428,7 +431,7 @@ export default defineComponent({
   data () {
     return {
       isVisible: true,
-      showOptions: false,
+      showOptions: store.state.showOptions,
       reset: false,
       sharedState: store.state,
       ariaPressed: {
