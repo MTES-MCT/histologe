@@ -114,10 +114,8 @@ export default defineComponent({
               this.addQueryParameter(keyFin, dateFin)
               const dateFinFormatted: Date = new Date(dateFin)
               filters[newKey] = [dateDebutFormatted, dateFinFormatted]
-              this.sharedState.showOptions = true
             }
           }
-          this.sharedState.showOptions = filter.showOptions
         } else if (valueList && valueList.length > 0) {
           if (type === 'collection') {
             valueList = params.getAll(`${key}[]`)
@@ -135,6 +133,9 @@ export default defineComponent({
             }
           }
         }
+        if (value && value.length > 0) {
+          this.sharedState.showOptions = filter.showOptions
+        }
       }
     },
     handleSettings (requestResponse: any) {
@@ -147,6 +148,7 @@ export default defineComponent({
       this.sharedState.user.canSeeStatusAffectation = isAdminOrAdminTerritoire
       this.sharedState.user.canDeleteSignalement = isAdminOrAdminTerritoire
       this.sharedState.user.canSeeScore = isAdminOrAdminTerritoire
+      this.sharedState.user.canSeeImportedButton = isAdminOrAdminTerritoire
       this.sharedState.user.partnerId = requestResponse.partnerId
       this.sharedState.hasSignalementImported = requestResponse.hasSignalementImported
       this.sharedState.input.order = 'reference-DESC'

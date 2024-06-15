@@ -79,7 +79,7 @@ function buildRangeDateBadge (key: string, value: any): string | undefined {
   return `${label} ${startDate} - ${endDate}`
 }
 
-function buildStaticBadge (value: any): string | undefined {
+export function buildStaticBadge (value: any): string | undefined {
   const staticListsWithNoDuplicateId = [
     store.state.statusSignalementList,
     store.state.statusAffectationList,

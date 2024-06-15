@@ -24,6 +24,7 @@ export const SEARCH_FILTERS = [
   { type: 'text', name: 'sansSuiviPeriode', showOptions: false, defaultValue: 'Sans suivi depuis au moins 30 jours' },
   { type: 'text', name: 'nouveauSuivi', showOptions: false, defaultValue: 'Nouveaux suivis partenaires et usagers' },
   { type: 'text', name: 'showMyAffectationOnly', showOptions: true, defaultValue: null },
+  { type: 'text', name: 'isImported', showOptions: false, defaultValue: null },
   { type: 'collection', name: 'communes', showOptions: false, defaultValue: null },
   { type: 'collection', name: 'epcis', showOptions: false, defaultValue: null },
   { type: 'collection', name: 'etiquettes', showOptions: true, defaultValue: null },

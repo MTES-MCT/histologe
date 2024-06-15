@@ -16,7 +16,7 @@
               </li>
               <li>
                 <button
-                    v-if="sharedState.hasSignalementImported"
+                    v-if="sharedState.hasSignalementImported && sharedState.user.canSeeImportedButton"
                     ref="isImportedButton"
                     class="fr-tag"
                     :aria-pressed="ariaPressed.isImported.toString()"

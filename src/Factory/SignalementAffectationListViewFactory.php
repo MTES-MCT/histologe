@@ -40,7 +40,8 @@ class SignalementAffectationListViewFactory
             profileDeclarant: $profileDeclarant?->label(),
             affectations: $affectations,
             qualifications: SignalementAffectationHelper::getQualificationFrom($data),
-            qualificationsStatuses: SignalementAffectationHelper::getQualificationStatusesFrom($data)
+            qualificationsStatuses: SignalementAffectationHelper::getQualificationStatusesFrom($data),
+            conclusionsProcedure: SignalementAffectationHelper::parseConclusionProcedure($data['conclusionsProcedure']),
         );
 
         /** @var User $user */

@@ -4,6 +4,7 @@ namespace App\Service\Signalement;
 
 use App\Dto\SignalementAffectationListView;
 use App\Entity\Enum\AffectationStatus;
+use App\Entity\Enum\ProcedureType;
 use App\Entity\Enum\SignalementStatus;
 use App\Entity\User;
 
@@ -69,5 +70,18 @@ class SignalementAffectationHelper
         }
 
         return $affectations;
+    }
+
+    public static function parseConclusionProcedure(?string $rawConclusionProcedure): ?array
+    {
+        if (empty($rawConclusionProcedure)) {
+            return null;
+        }
+
+        $procedures = explode(',', $rawConclusionProcedure);
+
+        return array_map(function ($procedure) {
+            return ProcedureType::from($procedure)->label();
+        }, $procedures);
     }
 }
