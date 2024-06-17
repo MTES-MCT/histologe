@@ -48,41 +48,37 @@ class BackStatistiquesController extends AbstractController
     #[Route('/filter', name: 'back_statistiques_filter')]
     public function filter(Request $request, TerritoryRepository $territoryRepository): Response
     {
-        if ($this->getUser()) {
-            $this->result = [];
+        $this->result = [];
 
-            $territory = $this->getSelectedTerritory($request, $territoryRepository);
-            $partner = $this->getSelectedPartner();
+        $territory = $this->getSelectedTerritory($request, $territoryRepository);
+        $partner = $this->getSelectedPartner();
 
-            $this->buildFilterLists($territory);
+        $this->buildFilterLists($territory);
 
-            $globalStatistics = $this->globalBackAnalyticsProvider->getData($territory, $partner);
-            $this->result['count_signalement'] = $globalStatistics['count_signalement'];
-            $this->result['average_criticite'] = $globalStatistics['average_criticite'];
-            $this->result['average_days_validation'] = $globalStatistics['average_days_validation'];
-            $this->result['average_days_closure'] = $globalStatistics['average_days_closure'];
-            $this->result['count_signalement_refuses'] = $globalStatistics['count_signalement_refuses'];
-            $this->result['count_signalement_archives'] = $globalStatistics['count_signalement_archives'];
+        $globalStatistics = $this->globalBackAnalyticsProvider->getData($territory, $partner);
+        $this->result['count_signalement'] = $globalStatistics['count_signalement'];
+        $this->result['average_criticite'] = $globalStatistics['average_criticite'];
+        $this->result['average_days_validation'] = $globalStatistics['average_days_validation'];
+        $this->result['average_days_closure'] = $globalStatistics['average_days_closure'];
+        $this->result['count_signalement_refuses'] = $globalStatistics['count_signalement_refuses'];
+        $this->result['count_signalement_archives'] = $globalStatistics['count_signalement_archives'];
 
-            $statisticsFilters = $this->createFilters($request, $territory, $partner);
-            $filteredStatistics = $this->filteredBackAnalyticsProvider->getData($statisticsFilters);
-            $this->result['count_signalement_filtered'] = $filteredStatistics['count_signalement_filtered'];
-            $this->result['average_criticite_filtered'] = $filteredStatistics['average_criticite_filtered'];
-            $this->result['countSignalementPerMonth'] = $filteredStatistics['count_signalement_per_month'];
-            $this->result['countSignalementPerPartenaire'] = $filteredStatistics['count_signalement_per_partenaire'];
-            $this->result['countSignalementPerSituation'] = $filteredStatistics['count_signalement_per_situation'];
-            $this->result['countSignalementPerCriticite'] = $filteredStatistics['count_signalement_per_criticite'];
-            $this->result['countSignalementPerStatut'] = $filteredStatistics['count_signalement_per_statut'];
-            $this->result['countSignalementPerCriticitePercent'] = $filteredStatistics['count_signalement_per_criticite_percent'];
-            $this->result['countSignalementPerVisite'] = $filteredStatistics['count_signalement_per_visite'];
-            $this->result['countSignalementPerMotifCloture'] = $filteredStatistics['count_signalement_per_motif_cloture'];
+        $statisticsFilters = $this->createFilters($request, $territory, $partner);
+        $filteredStatistics = $this->filteredBackAnalyticsProvider->getData($statisticsFilters);
+        $this->result['count_signalement_filtered'] = $filteredStatistics['count_signalement_filtered'];
+        $this->result['average_criticite_filtered'] = $filteredStatistics['average_criticite_filtered'];
+        $this->result['countSignalementPerMonth'] = $filteredStatistics['count_signalement_per_month'];
+        $this->result['countSignalementPerPartenaire'] = $filteredStatistics['count_signalement_per_partenaire'];
+        $this->result['countSignalementPerSituation'] = $filteredStatistics['count_signalement_per_situation'];
+        $this->result['countSignalementPerCriticite'] = $filteredStatistics['count_signalement_per_criticite'];
+        $this->result['countSignalementPerStatut'] = $filteredStatistics['count_signalement_per_statut'];
+        $this->result['countSignalementPerCriticitePercent'] = $filteredStatistics['count_signalement_per_criticite_percent'];
+        $this->result['countSignalementPerVisite'] = $filteredStatistics['count_signalement_per_visite'];
+        $this->result['countSignalementPerMotifCloture'] = $filteredStatistics['count_signalement_per_motif_cloture'];
 
-            $this->result['response'] = 'success';
+        $this->result['response'] = 'success';
 
-            return $this->json($this->result);
-        }
-
-        return $this->json(['response' => 'error'], 400);
+        return $this->json($this->result);
     }
 
     private function createFilters(Request $request, ?Territory $territory, ?Partner $partner): StatisticsFilters

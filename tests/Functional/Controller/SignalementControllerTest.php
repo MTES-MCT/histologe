@@ -183,6 +183,25 @@ class SignalementControllerTest extends WebTestCase
         $this->assertEquals(1, $signalementDraft->getSignalements()->count());
     }
 
+    public function testUpdateSignalementDraftArchived(): void
+    {
+        $client = static::createClient();
+
+        /** @var RouterInterface $router */
+        $router = $client->getContainer()->get(RouterInterface::class);
+        $urlPutSignalement = $router->generate('mise_a_jour_nouveau_signalement_draft', [
+            'uuid' => '00000000-0000-0000-2024-locataire003',
+        ]);
+
+        $payloadLocataireSignalement = file_get_contents(
+            __DIR__.'../../../files/post_signalement_draft_payload.json'
+        );
+
+        $client->request('PUT', $urlPutSignalement, [], [], [], $payloadLocataireSignalement);
+
+        $this->assertEquals(Response::HTTP_NOT_FOUND, $client->getResponse()->getStatusCode());
+    }
+
     /**
      * @dataProvider provideSignalementDraftUuid
      */
@@ -198,6 +217,29 @@ class SignalementControllerTest extends WebTestCase
         $this->assertEquals(Response::HTTP_OK, $client->getResponse()->getStatusCode());
         $response = json_decode($client->getResponse()->getContent(), true);
         $this->assertEquals($step, $response['signalement']['payload']['currentStep']);
+    }
+
+    public function testSignalementEdit(): void
+    {
+        $client = static::createClient();
+
+        /** @var RouterInterface $router */
+        $router = static::getContainer()->get(RouterInterface::class);
+        $urlSignalementEdit = $router->generate('front_nouveau_formulaire_edit', ['uuid' => 'test']);
+        $client->request('GET', $urlSignalementEdit);
+
+        $this->assertEquals(Response::HTTP_NOT_FOUND, $client->getResponse()->getStatusCode());
+
+        $urlSignalementEdit = $router->generate('front_nouveau_formulaire_edit', ['uuid' => '00000000-0000-0000-2024-locataire003']);
+        $client->request('GET', $urlSignalementEdit);
+
+        $this->assertEquals(Response::HTTP_FOUND, $client->getResponse()->getStatusCode());
+        $this->assertResponseRedirects('/signalement');
+
+        $urlSignalementEdit = $router->generate('front_nouveau_formulaire_edit', ['uuid' => '00000000-0000-0000-2023-locataire001']);
+        $client->request('GET', $urlSignalementEdit);
+
+        $this->assertEquals(Response::HTTP_OK, $client->getResponse()->getStatusCode());
     }
 
     public function provideSignalementRequestPayload(): \Generator

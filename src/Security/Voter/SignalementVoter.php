@@ -91,19 +91,21 @@ class SignalementVoter extends Voter
 
     private function canEdit(Signalement $signalement, User $user): bool
     {
+        if (!\in_array($signalement->getStatut(), [Signalement::STATUS_ACTIVE, Signalement::STATUS_NEED_PARTNER_RESPONSE])) {
+            return false;
+        }
+
         return $signalement->getAffectations()->filter(function (Affectation $affectation) use ($user) {
-            return $affectation->getPartner()->getId() === $user->getPartner()->getId();
+            return $affectation->getPartner()->getId() === $user->getPartner()->getId() && Affectation::STATUS_ACCEPTED === $affectation->getStatut();
         })->count() > 0 || ($user->isTerritoryAdmin() && $user->getTerritory() === $signalement->getTerritory())
         || $user->isSuperAdmin();
     }
 
     private function canView(Signalement $signalement, User $user): bool
     {
-        if ($this->canEdit($signalement, $user)) {
-            return true;
-        }
-
-        return false;
+        return $signalement->getAffectations()->filter(function (Affectation $affectation) use ($user) {
+            return $affectation->getPartner()->getId() === $user->getPartner()->getId();
+        })->count() > 0 || $user->isTerritoryAdmin() && $user->getTerritory() === $signalement->getTerritory();
     }
 
     public function canAddVisite(Signalement $signalement, User $user): bool

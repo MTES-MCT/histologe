@@ -123,9 +123,6 @@ class SignalementController extends AbstractController
                 || $this->isGranted('ROLE_ADMIN_TERRITORY')
                 || $isAccepted;
         }
-        $canExportSignalement = $this->isGranted('ROLE_ADMIN')
-            || $this->isGranted('ROLE_ADMIN_TERRITORY')
-            || $isAffected;
 
         $signalementQualificationNDE = $signalementQualificationRepository->findOneBy([
             'signalement' => $signalement,
@@ -184,7 +181,6 @@ class SignalementController extends AbstractController
             'criteres' => $infoDesordres['criteres'],
             'needValidation' => Signalement::STATUS_NEED_VALIDATION === $signalement->getStatut(),
             'canEditSignalement' => $canEditSignalement,
-            'canExportSignalement' => $canExportSignalement,
             'isAffected' => $isAffected,
             'isAccepted' => $isAccepted,
             'isClosed' => Signalement::STATUS_CLOSED === $signalement->getStatut(),

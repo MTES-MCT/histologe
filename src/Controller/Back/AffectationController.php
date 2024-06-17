@@ -86,16 +86,17 @@ class AffectationController extends AbstractController
         AffectationRepository $affectationRepository,
     ): RedirectResponse|JsonResponse {
         $this->denyAccessUnlessGranted('ASSIGN_TOGGLE', $signalement);
+        $idAffectation = $request->get('affectation');
+        $affectation = $affectationRepository->findOneBy(['id' => $idAffectation]);
+        if (!$affectation || $affectation->getSignalement()->getId() !== $signalement->getId()) {
+            return $this->json(['status' => 'denied'], 403);
+        }
         if ($this->isCsrfTokenValid('signalement_remove_partner_'.$signalement->getId(), $request->get('_token'))) {
-            $idAffectation = $request->get('affectation');
-            $affectation = $affectationRepository->findOneBy(['id' => $idAffectation]);
-            if ($affectation) {
-                $partnersIdToRemove = [];
-                $partnersIdToRemove[] = $affectation->getPartner()->getId();
-                $this->affectationManager->removeAffectationsFrom($signalement, [], $partnersIdToRemove);
-                $this->affectationManager->flush();
-                $this->addFlash('success', 'Le partenaire a été désaffecté.');
-            }
+            $partnersIdToRemove = [];
+            $partnersIdToRemove[] = $affectation->getPartner()->getId();
+            $this->affectationManager->removeAffectationsFrom($signalement, [], $partnersIdToRemove);
+            $this->affectationManager->flush();
+            $this->addFlash('success', 'Le partenaire a été désaffecté.');
 
             return $this->json(['status' => 'success']);
         }

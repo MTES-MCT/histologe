@@ -74,7 +74,7 @@
                 </a>
             {% endif %}
 
-            {% if canExportSignalement %}
+            {% if is_granted('SIGN_VIEW', signalement) %}
                     <a href="{{ path('back_signalement_gen_pdf',{uuid:signalement.uuid}) }}"
                        class="fr-btn fr-btn--sm fr-btn--icon-left fr-fi-file-pdf-fill ignore-blank-style"
                        title="Exporter le PDF">Exporter le PDF

@@ -348,6 +348,7 @@ class SignalementVisitesController extends AbstractController
         EntityManagerInterface $entityManager,
         UploadHandlerService $uploadHandlerService,
     ): Response {
+        $this->denyAccessUnlessGranted('INTERVENTION_EDIT_VISITE', $intervention);
         if (!$this->isCsrfTokenValid('delete_rapport', $request->get('_token')) || $intervention->getSignalement()->getId() !== $signalement->getId() || $intervention->getFiles()->isEmpty()) {
             return $this->redirectToRoute('back_signalement_view', ['uuid' => $signalement->getUuid()]);
         }
