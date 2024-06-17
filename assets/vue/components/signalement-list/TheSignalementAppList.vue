@@ -139,23 +139,27 @@ export default defineComponent({
       optionNoneItem.Id = 'AUCUN'
       optionNoneItem.Text = 'Aucun'
       this.sharedState.partenaires.push(optionNoneItem)
-      for (const id in requestResponse.partners) {
+      const partnersArray = Object.values(requestResponse.partners)
+      partnersArray.sort((a: any, b:any) => (a.nom > b.nom) ? 1 : ((b.nom > a.nom) ? -1 : 0))
+      partnersArray.forEach((partner: any) => {
         const optionItem = new HistoInterfaceSelectOption()
-        optionItem.Id = requestResponse.partners[id].id.toString()
-        optionItem.Text = requestResponse.partners[id].nom
+        optionItem.Id = partner.id.toString()
+        optionItem.Text = partner.nom
         this.sharedState.partenaires.push(optionItem)
-      }
+      })
 
       this.sharedState.etiquettes = []
       optionNoneItem.Id = ''
       optionNoneItem.Text = ''
       this.sharedState.etiquettes.push(optionNoneItem)
-      for (const id in requestResponse.tags) {
+      const tagsArray = Object.values(requestResponse.tags)
+      tagsArray.sort((a: any, b:any) => (a.label > b.label) ? 1 : ((b.label > a.label) ? -1 : 0))
+      tagsArray.forEach((tag: any) => {
         const optionItem = new HistoInterfaceSelectOption()
-        optionItem.Id = requestResponse.tags[id].id.toString()
-        optionItem.Text = requestResponse.tags[id].label
+        optionItem.Id = tag.id.toString()
+        optionItem.Text = tag.label
         this.sharedState.etiquettes.push(optionItem)
-      }
+      })
 
       this.sharedState.communes = []
       for (const id in requestResponse.communes) {
@@ -164,7 +168,7 @@ export default defineComponent({
 
       this.sharedState.epcis = []
       for (const id in requestResponse.epcis) {
-        this.sharedState.epcis.push(`${requestResponse.epcis[id].code} | ${requestResponse.epcis[id].nom}`)
+        this.sharedState.epcis.push(`${requestResponse.epcis[id].nom} (${requestResponse.epcis[id].code} )`)
       }
     },
     handleTerritoryChange (value: any) {
