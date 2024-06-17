@@ -35,6 +35,7 @@ import { defineComponent } from 'vue'
 import { store } from './store'
 import { requests } from './requests'
 import { SignalementItem } from './interfaces/signalementItem'
+import { Filters, SEARCH_FILTERS } from './interfaces/filters'
 import SignalementListFilters from './components/SignalementListFilters.vue'
 import SignalementListHeader from './components/SignalementListHeader.vue'
 import SignalementListCards from './components/SignalementListCards.vue'
@@ -65,58 +66,82 @@ export default defineComponent({
     this.init()
   },
   methods: {
-    init () {
+    init (reset: boolean = false) {
       if (initElements !== null) {
         this.sharedProps.ajaxurlSignalement = initElements.dataset.ajaxurl
         this.sharedProps.ajaxurlRemoveSignalement = initElements.dataset.ajaxurlRemoveSignalement
         this.sharedProps.ajaxurlSettings = initElements.dataset.ajaxurlSettings
         this.sharedProps.ajaxurlExportCsv = initElements.dataset.ajaxurlExportCsv
         this.sharedProps.ajaxurlContact = initElements.dataset.ajaxurlContact
-
-        const url = new URL(window.location.toString())
-        const params = new URLSearchParams(url.search)
-        const page = params.get('page')
-        const sortBy = params.get('sortBy')
-        const direction = params.get('direction')
-        const status = params.get('status')
-        const searchTerms = params.get('searchTerms')
-
-        if (searchTerms) {
-          this.addQueryParameter('searchTerms', searchTerms)
-          this.buildUrl()
+        if (!reset) {
+          this.handleQueryParameter()
         }
 
-        if (status) {
-          this.addQueryParameter('status', status)
-          this.buildUrl()
-        }
-
-        if (page) {
-          this.addQueryParameter('page', page)
-          this.buildUrl()
-        }
-
-        if (sortBy) {
-          this.addQueryParameter('sortBy', sortBy)
-          if (direction) {
-            this.addQueryParameter('orderBy', direction)
-          } else {
-            this.addQueryParameter('orderBy', 'DESC')
-          }
-          this.buildUrl()
-        }
-
+        this.buildUrl()
         requests.getSettings(this.handleSettings)
         requests.getSignalements(this.handleSignalements)
       } else {
         this.hasErrorLoading = true
       }
     },
+    handleQueryParameter: function () {
+      const url = new URL(window.location.toString())
+      const params = new URLSearchParams(url.search)
+      const filters = this.sharedState.input.filters as Filters
+      for (const filter of SEARCH_FILTERS) {
+        const type = filter.type
+        const key = filter.name
+        const value: null | string = params.get(key)
+        const epciData = localStorage.getItem('epci')
+        let valueList: null | string[] = params.getAll(`${key}[]`)
+        if (value && value.length > 0) {
+          if (['sortBy', 'direction', 'page'].includes(key)) {
+            this.addQueryParameter(key, value)
+            continue
+          }
+          if (type === 'text') {
+            filters[key] = filter?.defaultValue || value
+            this.addQueryParameter(key, value)
+          } else if (type === 'date') {
+            const keyDebut = key
+            const keyFin = key.replace('Debut', 'Fin')
+            const newKey = key.replace('Debut', '')
+            const dateDebut = params.get(keyDebut)
+            const dateFin = params.get(keyFin)
+            if (dateDebut && dateFin) {
+              this.addQueryParameter(keyDebut, dateDebut)
+              const dateDebutFormatted: Date = new Date(dateDebut)
+              this.addQueryParameter(keyFin, dateFin)
+              const dateFinFormatted: Date = new Date(dateFin)
+              filters[newKey] = [dateDebutFormatted, dateFinFormatted]
+              this.sharedState.showOptions = true
+            }
+          }
+          this.sharedState.showOptions = filter.showOptions
+        } else if (valueList && valueList.length > 0) {
+          if (type === 'collection') {
+            valueList = params.getAll(`${key}[]`)
+            if (valueList && valueList.length > 0) {
+              valueList.forEach(valueItem => {
+                this.addQueryParameter(`${key}[]`, valueItem.trim())
+                if (key === 'epcis' && epciData) {
+                  const listEpci = JSON.parse(epciData)
+                  const itemEpci = listEpci.filter((itemEpci: string) => itemEpci.includes(valueItem))
+                  filters[key].push(itemEpci.shift())
+                } else {
+                  filters[key].push(valueItem)
+                }
+              })
+            }
+          }
+        }
+      }
+    },
     handleSettings (requestResponse: any) {
       this.sharedState.user.isAdmin = requestResponse.roleLabel === 'Super Admin'
       this.sharedState.user.isResponsableTerritoire = requestResponse.roleLabel === 'Responsable Territoire'
       this.sharedState.user.isAdministrateurPartenaire = requestResponse.roleLabel === 'Administrateur'
-      this.sharedState.user.isAgent = requestResponse.roleLabel === 'Administrateur' || requestResponse.roleLabel === 'Utilisateur'
+      this.sharedState.user.isAgent = ['Administrateur', 'Utilisateur'].includes(requestResponse.roleLabel)
       this.sharedState.user.canSeeNonDecenceEnergetique = requestResponse.canSeeNDE === '1'
       const isAdminOrAdminTerritoire = this.sharedState.user.isAdmin || this.sharedState.user.isResponsableTerritoire
       this.sharedState.user.canSeeStatusAffectation = isAdminOrAdminTerritoire
@@ -170,13 +195,14 @@ export default defineComponent({
       for (const id in requestResponse.epcis) {
         this.sharedState.epcis.push(`${requestResponse.epcis[id].nom} (${requestResponse.epcis[id].code} )`)
       }
+      localStorage.setItem('epci', JSON.stringify(this.sharedState.epcis))
     },
     handleTerritoryChange (value: any) {
       this.sharedState.currentTerritoryId = value.toString()
       requests.getSettings(this.handleSettings)
     },
     handleClickReset () {
-      this.init()
+      this.init(true)
     },
     handleSignalements (requestResponse: any) {
       if (typeof requestResponse === 'string' && requestResponse === 'error') {
@@ -245,8 +271,8 @@ export default defineComponent({
           } else if (typeof value === 'object' && key === 'epcis') {
             value.forEach((valueItem: any) => {
               const code = valueItem.split('|').shift()
-              this.addQueryParameter(`${key}[]`, code)
-              url.searchParams.append(`${key}[]`, code)
+              this.addQueryParameter(`${key}[]`, code.trim())
+              url.searchParams.append(`${key}[]`, code.trim())
             })
           } else if (typeof value === 'string') {
             this.addQueryParameter(key, value)

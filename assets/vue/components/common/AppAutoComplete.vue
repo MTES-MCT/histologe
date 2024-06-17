@@ -45,6 +45,9 @@ export default defineComponent({
       type: Array,
       required: true
     },
+    initSelectedSuggestions: {
+      type: Array
+    },
     multiple: {
       type: Boolean,
       default: false
@@ -73,7 +76,7 @@ export default defineComponent({
   data () {
     return {
       searchText: '',
-      selectedSuggestions: [] as string[],
+      selectedSuggestions: this.initSelectedSuggestions || [] as string[],
       suggestionFilteredList: [] as string[],
       selectedSuggestion: '',
       selectedSuggestionIndex: -1

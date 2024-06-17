@@ -195,10 +195,14 @@ class WidgetDataKpiBuilder
 
     public function build(): WidgetDataKpi
     {
+        $partnerId = $this->parameterBag->get('feature_signalement_liste_enable')
+            ? [$this->user?->getPartner()?->getId()]
+            : $this->user?->getPartner()?->getId();
+
         $this
             ->addWidgetCard('cardNouveauxSignalements', $this->countSignalement->getNew())
             ->addWidgetCard('cardCloturesPartenaires', $this->countSignalement->getClosedByAtLeastOnePartner())
-            ->addWidgetCard('cardMesAffectations', null, ['partenaires' => $this->user?->getPartner()?->getId()])
+            ->addWidgetCard('cardMesAffectations', null, ['partenaires' => $partnerId])
             ->addWidgetCard('cardTousLesSignalements', $this->countSignalement->getTotal())
             ->addWidgetCard('cardCloturesGlobales', $this->countSignalement->getClosedAllPartnersRecently())
             ->addWidgetCard('cardNouvellesAffectations', $this->countSignalement->getNew())

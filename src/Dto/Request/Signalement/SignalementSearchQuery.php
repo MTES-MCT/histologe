@@ -65,6 +65,11 @@ class SignalementSearchQuery
         private readonly ?int $page = 1,
         #[Assert\Choice(['oui'])]
         private readonly ?string $isImported = null,
+        #[Assert\Choice(['NO_SUIVI_AFTER_3_RELANCES'])]
+        private readonly ?string $relancesUsager = null,
+        #[Assert\Choice(['oui'])]
+        private readonly ?string $nouveauSuivi = null,
+        private readonly ?int $sansSuiviPeriode = null,
         #[Assert\Choice(['reference', 'nomOccupant', 'lastSuiviAt'])]
         private readonly string $sortBy = 'reference',
         #[Assert\Choice(['ASC', 'DESC', 'asc', 'desc'])]
@@ -187,6 +192,21 @@ class SignalementSearchQuery
         return $this->isImported;
     }
 
+    public function getRelancesUsager(): ?string
+    {
+        return $this->relancesUsager;
+    }
+
+    public function getNouveauSuivi(): ?string
+    {
+        return $this->nouveauSuivi;
+    }
+
+    public function getSansSuiviPeriode(): ?int
+    {
+        return $this->sansSuiviPeriode;
+    }
+
     public function getPage(): ?int
     {
         return $this->page;
@@ -273,6 +293,10 @@ class SignalementSearchQuery
             'oui' => true,
             default => null
         };
+
+        $filters['relances_usager'] = [$this->getRelancesUsager()];
+        $filters['delays'] = $this->getSansSuiviPeriode();
+        $filters['nouveau_suivi'] = $this->getNouveauSuivi();
 
         $filters['page'] = $this->getPage() ?? 1;
         $filters['maxItemsPerPage'] = self::MAX_LIST_PAGINATION;

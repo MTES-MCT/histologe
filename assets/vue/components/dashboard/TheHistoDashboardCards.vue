@@ -283,7 +283,8 @@ export default defineComponent({
         return url
       }
       const sanitizeUrl = require('@braintree/sanitize-url').sanitizeUrl
-      return sanitizeUrl(url)
+
+      return sanitizeUrl(decodeURIComponent(url).replace(/\[\d+\]/g, '[]'))
     }
   }
 })

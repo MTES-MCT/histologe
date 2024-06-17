@@ -47,6 +47,7 @@ export const store = {
       canSeeScore: false,
       partnerId: null as number | null
     },
+    showOptions: false,
     territories: new Array<HistoInterfaceSelectOption>(),
     etiquettes: new Array<HistoInterfaceSelectOption>(),
     partenaires: new Array<HistoInterfaceSelectOption>(),
