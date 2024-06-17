@@ -3,14 +3,19 @@
 namespace App\Service\DashboardWidget;
 
 use App\Entity\Territory;
+use Symfony\Component\Serializer\Attribute\Groups;
 
 class Widget
 {
+    #[Groups(['widget:read'])]
     private mixed $data = null;
 
     public function __construct(
+        #[Groups(['widget:read'])]
         private ?string $type = null,
+        #[Groups(['widget:read'])]
         private ?Territory $territory = null,
+        #[Groups(['widget:read'])]
         private ?array $parameters = null,
     ) {
     }

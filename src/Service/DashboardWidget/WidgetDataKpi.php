@@ -5,13 +5,18 @@ namespace App\Service\DashboardWidget;
 use App\Dto\CountSignalement;
 use App\Dto\CountSuivi;
 use App\Dto\CountUser;
+use Symfony\Component\Serializer\Attribute\Groups;
 
 class WidgetDataKpi
 {
     public function __construct(
+        #[Groups(['widget:read'])]
         private readonly array $widgetCards,
+        #[Groups(['widget:read'])]
         private readonly CountSignalement $countSignalement,
+        #[Groups(['widget:read'])]
         private readonly CountSuivi $countSuivi,
+        #[Groups(['widget:read'])]
         private readonly CountUser $countUser
     ) {
     }

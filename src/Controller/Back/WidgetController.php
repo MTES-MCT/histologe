@@ -41,10 +41,11 @@ class WidgetController extends AbstractController
         $this->denyAccessUnlessGranted('VIEW_WIDGET', $widget);
         $widgetLoaderCollection->load($widget);
 
-        return new Response(
-            $serializer->serialize($widget, 'json'),
+        return $this->json(
+            $widget,
             Response::HTTP_OK,
-            ['content-type' => 'application/json']
+            ['content-type' => 'application/json'],
+            ['groups' => ['widget:read']]
         );
     }
 }

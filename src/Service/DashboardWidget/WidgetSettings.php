@@ -3,22 +3,35 @@
 namespace App\Service\DashboardWidget;
 
 use App\Entity\User;
+use Symfony\Component\Serializer\Attribute\Groups;
 
 class WidgetSettings
 {
+    #[Groups('widget-settings:read')]
     private ?string $firstname = null;
+    #[Groups('widget-settings:read')]
     private ?string $lastname = null;
+    #[Groups('widget-settings:read')]
     private ?string $roleLabel = null;
+    #[Groups('widget-settings:read')]
     private ?string $canSeeNDE = null;
+    #[Groups('widget-settings:read')]
     private ?int $partnerId = null;
+    #[Groups('widget-settings:read')]
     private ?string $partnerName = null;
+    #[Groups('widget-settings:read')]
     private ?string $territoryName = null;
-
+    #[Groups('widget-settings:read')]
     private array $territories = [];
+    #[Groups('widget-settings:read')]
     private array $partners = [];
+    #[Groups('widget-settings:read')]
     private array $communes = [];
+    #[Groups('widget-settings:read')]
     private array $epcis = [];
+    #[Groups('widget-settings:read')]
     private array $tags = [];
+    #[Groups('widget-settings:read')]
     private ?bool $hasSignalementImported = false;
 
     public function __construct(

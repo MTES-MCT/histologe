@@ -2,14 +2,22 @@
 
 namespace App\Dto;
 
+use Symfony\Component\Serializer\Attribute\Groups;
+
 class CountSuivi
 {
     public function __construct(
+        #[Groups(['widget:read'])]
         private ?float $average = null,
+        #[Groups(['widget:read'])]
         private ?int $partner = null,
+        #[Groups(['widget:read'])]
         private ?int $usager = null,
+        #[Groups(['widget:read'])]
         private ?int $signalementNewSuivi = null,
+        #[Groups(['widget:read'])]
         private ?int $signalementNoSuivi = null,
+        #[Groups(['widget:read'])]
         private ?int $noSuiviAfter3Relances = null,
     ) {
     }
