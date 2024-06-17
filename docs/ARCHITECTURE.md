@@ -14,8 +14,8 @@ Cette plateforme fournit
 
 ## Description de l'Architecture Technique
 
-### TODO - Architecture globale
-TODO : Insérer ici le schéma fourni lors de l'analyse de risques Histologe
+### Architecture globale
+![Schéma de l'architecture Histologe](/assets/archi-histologe.png "Architecture Histologe")
 
 ### TODO - Diagrammes d'architecture
 Schémas tels que les diagrammes de déploiement, de composants, ou d'intégration pour visualiser les relations entre les éléments du système.
