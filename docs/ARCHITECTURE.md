@@ -46,7 +46,7 @@ Une seule base de données gère l'ensemble de la plateforme.
 La base de données est sauvegardée automatiquement, chaque jour, par l'hébergeur.
 Elle est sauvegardée de manière déconnectée sur un disque dur externe, chaque semaine.
 
-![Schéma de la BDD Histologe](/assets/schema-bdd.svg "BDD Histologe")
+![Schéma de la BDD Histologe](/docs/assets/schema-bdd.svg "BDD Histologe")
 
 ### Middleware
 
