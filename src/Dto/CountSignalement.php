@@ -2,22 +2,34 @@
 
 namespace App\Dto;
 
+use Symfony\Component\Serializer\Attribute\Groups;
+
 class CountSignalement
 {
+    #[Groups(['widget:read'])]
     private ?array $percentage = null;
+    #[Groups(['widget:read'])]
     private ?int $closedByAtLeastOnePartner = null;
+    #[Groups(['widget:read'])]
     private ?int $closedAllPartnersRecently = null;
+    #[Groups(['widget:read'])]
     private ?int $newNDE = null;
+    #[Groups(['widget:read'])]
     private ?int $currentNDE = null;
-
+    #[Groups(['widget:read'])]
     private ?int $affected = null;
 
     public function __construct(
-        private ?int $total = 0,
-        private ?int $new = null,
-        private ?int $active = null,
-        private ?int $closed = null,
-        private ?int $refused = null,
+        #[Groups(['widget:read'])]
+        private readonly ?int $total = 0,
+        #[Groups(['widget:read'])]
+        private readonly ?int $new = null,
+        #[Groups(['widget:read'])]
+        private readonly ?int $active = null,
+        #[Groups(['widget:read'])]
+        private readonly ?int $closed = null,
+        #[Groups(['widget:read'])]
+        private readonly ?int $refused = null,
     ) {
         $this->percentage = [
             'new' => 0 !== $total ? round($new / $total * 100, 1) : 0,

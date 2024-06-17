@@ -3,16 +3,13 @@
 namespace App\Entity\Behaviour;
 
 use Doctrine\ORM\Mapping as ORM;
-use Symfony\Component\Serializer\Annotation\Ignore;
 
 trait TimestampableTrait
 {
     #[ORM\Column(nullable: true)]
-    #[Ignore]
     private ?\DateTimeImmutable $createdAt = null;
 
     #[ORM\Column(nullable: true)]
-    #[Ignore]
     private ?\DateTimeImmutable $updatedAt = null;
 
     public function getCreatedAt(): ?\DateTimeImmutable
@@ -21,7 +18,6 @@ trait TimestampableTrait
     }
 
     #[ORM\PrePersist()]
-    #[Ignore]
     public function setCreatedAtValue(): self
     {
         $this->createdAt = new \DateTimeImmutable();
@@ -35,7 +31,6 @@ trait TimestampableTrait
     }
 
     #[ORM\PreUpdate()]
-    #[Ignore]
     public function setUpdatedAtValue(): self
     {
         $this->updatedAt = new \DateTimeImmutable();

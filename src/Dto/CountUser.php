@@ -2,13 +2,18 @@
 
 namespace App\Dto;
 
+use Symfony\Component\Serializer\Attribute\Groups;
+
 class CountUser
 {
+    #[Groups(['widget:read'])]
     private ?array $percentage = [];
 
     public function __construct(
-        private ?int $active = null,
-        private ?int $inactive = null
+        #[Groups(['widget:read'])]
+        private readonly ?int $active = null,
+        #[Groups(['widget:read'])]
+        private readonly ?int $inactive = null
     ) {
         $total = $this->active + $this->inactive;
         $this->percentage = [
