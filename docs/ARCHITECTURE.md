@@ -38,13 +38,15 @@ Les DNS sont gérés via le service Alwaysdata, qui redirige vers Scalingo.
 ### Stockage
 Les documents sont stockés sur une infrastructure cloud OVH de type "Object Storage".
 
-### TODO - Bases de données
+### Bases de données
 Le système de gestion utilisé est MySQL.
 
 Une seule base de données gère l'ensemble de la plateforme.
 
 La base de données est sauvegardée automatiquement, chaque jour, par l'hébergeur.
 Elle est sauvegardée de manière déconnectée sur un disque dur externe, chaque semaine.
+
+TODO : Schéma lisible / Plusieurs schémas
 
 ![Schéma de la BDD Histologe](/docs/assets/schema-bdd.svg "BDD Histologe")
 
@@ -76,8 +78,16 @@ Nous indique les informations de DPE des logements.
 
 ## Sécurité
 
-### TODO - Mesures de sécurité
-Protocoles de sécurité, pare-feux, systèmes de détection d'intrusion, et politiques d'accès.
+### Mesures de sécurité
+L'ensemble du site utilise le protocole HTTPS.
+
+Notre hébergeur [Scalingo](https://scalingo.com/fr/certification-iso-27001) est certifié ISO 27001.
+
+Les accès à la plateforme sont individuels. Les droits d'accès sont progressifs selon les trois profils : Administrateur, Responsable territoire et Agent.
+
+Les accès aux services tiers sont individualisés aussi dès que possible : chaque personne de l'équipe possède son accès, pour permettre une traçabilité des actions.
+
+TODO : systèmes de détection d'intrusion.
 
 ### Conformité
 Voir notre [politique de confidentialité](https://histologe.beta.gouv.fr/politique-de-confidentialite).
@@ -86,12 +96,12 @@ Voir notre [politique de confidentialité](https://histologe.beta.gouv.fr/politi
 
 ### Développement, Test, Production
 #### Environnement local
-Plateforme histologe| [localhost:8080](http://localhost:8080)
-phpMyAdmin | [localhost:8081](http://localhost:8081)
-MailCatcher  | [localhost:1080](http://localhost:1080)
-Wiremock  | [localhost:1082](http://localhost:1082)
-Metabase  | [localhost:3007](http://localhost:3007)
-Matomo  | [localhost:1083](http://localhost:1083)
+- Plateforme histologe| [localhost:8080](http://localhost:8080)
+- phpMyAdmin | [localhost:8081](http://localhost:8081)
+- MailCatcher  | [localhost:1080](http://localhost:1080)
+- Wiremock  | [localhost:1082](http://localhost:1082)
+- Metabase  | [localhost:3007](http://localhost:3007)
+- Matomo  | [localhost:1083](http://localhost:1083)
 
 #### Test et démo
 - Staging : [histologe-staging.incubateur.net](https://histologe-staging.incubateur.net)
@@ -119,8 +129,10 @@ Le déploiement consiste à la copie des fichiers, à l'installation des composa
 
 ## Performance et Scalabilité
 
-### TODO - Besoins en performance
-Exigences de performance et indicateurs clés (temps de réponse, débit).
+### Performance
+Le suivi des performances est fait en temps réel grâce à [Dashlord](http://dashlord.mte.incubateur.net/url/histologe-beta-gouv-fr/) et au tableau de bord Scalingo.
+
+Nous assurons une disponibilité supérieure à 99,95 % et un temps de réponse inférieur à 400ms.
 
 ### Scalabilité
 L'utilisation de conteneurs au sein de Scalingo permet de faciliter la diminution ou l'augmentation des capacités de traitement au besoin.
