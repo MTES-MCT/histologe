@@ -15,7 +15,7 @@ Cette plateforme fournit
 ## Description de l'Architecture Technique
 
 ### Architecture globale
-![Schéma de l'architecture Histologe](/assets/archi-histologe.svg "Architecture Histologe")
+![Schéma de l'architecture Histologe](/docs/assets/archi-histologe.svg "Architecture Histologe")
 
 ### TODO - Diagrammes d'architecture
 Schémas tels que les diagrammes de déploiement, de composants, ou d'intégration pour visualiser les relations entre les éléments du système.
