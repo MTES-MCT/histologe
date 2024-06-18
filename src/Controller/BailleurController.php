@@ -26,6 +26,7 @@ class BailleurController extends AbstractController
 
         if ($sanitize) {
             $bailleurCollection = $this->sanitizeBailleurs($bailleurs, $name);
+            dump($bailleurCollection);
 
             return $this->json(array_values($bailleurCollection->toArray()));
         }
@@ -39,9 +40,10 @@ class BailleurController extends AbstractController
             /* @var Bailleur $bailleurItem */
             ->filter(function ($bailleurItem) use ($name) {
                 if (str_starts_with($bailleurItem->getName(), Bailleur::BAILLEUR_RADIE)) {
-                    $terms = explode(' ', $name);
+                    $name = strtolower($name);
+                    $name = iconv('UTF-8', 'ASCII//TRANSLIT//IGNORE', $name);
 
-                    return str_contains(strtolower($this->sanitizeName($bailleurItem->getName())), $terms[0]);
+                    return str_contains(strtolower($this->sanitizeName($bailleurItem->getName())), $name);
                 }
 
                 return true;
