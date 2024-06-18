@@ -32,7 +32,7 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue'
-import { store } from './store'
+import { PATTERN_BADGE_EPCI, store } from './store'
 import { requests } from './requests'
 import { SignalementItem } from './interfaces/signalementItem'
 import { Filters, SEARCH_FILTERS } from './interfaces/filters'
@@ -272,9 +272,11 @@ export default defineComponent({
             })
           } else if (typeof value === 'object' && key === 'epcis') {
             value.forEach((valueItem: any) => {
-              const code = valueItem.split('|').shift()
-              this.addQueryParameter(`${key}[]`, code.trim())
-              url.searchParams.append(`${key}[]`, code.trim())
+              const matches = valueItem.match(PATTERN_BADGE_EPCI)
+              if (matches) {
+                this.addQueryParameter(`${key}[]`, matches[1].trim())
+                url.searchParams.append(`${key}[]`, matches[1].trim())
+              }
             })
           } else if (typeof value === 'string') {
             this.addQueryParameter(key, value)
@@ -353,8 +355,9 @@ export default defineComponent({
         .sharedState
         .input
         .queryParameters
-        .map(parameter => `${parameter.name}=${parameter.value}`)
-      this.sharedProps.ajaxurlSignalement = initElements.dataset.ajaxurl + '?' + queryParams.join('&')
+        .map(parameter => `${parameter.name}=${parameter.value}`).join('&')
+      this.sharedProps.ajaxurlSignalement = initElements.dataset.ajaxurl + '?' + queryParams
+      localStorage.setItem('back_link_signalement_view', queryParams)
     },
     clearScreen () {
       this.messageDeleteConfirmation = ''

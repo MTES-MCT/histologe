@@ -1,4 +1,4 @@
-import { store } from '../store'
+import { PATTERN_BADGE_EPCI, store } from '../store'
 
 export function buildBadge (key: string, value: any): string | undefined {
   if (typeof value === 'undefined') {
@@ -28,7 +28,16 @@ export function buildBadge (key: string, value: any): string | undefined {
   }
 
   if (key === 'epcis' && value instanceof Array) {
-    return `EPCI : ${value.map((item: string) => item.split('|')[1]).join(', ')}`
+    const epciData = localStorage.getItem('epci')
+    if (epciData !== null) {
+      const listEpci = JSON.parse(epciData)
+      return `EPCI : ${value.map((item: string) => {
+        const matches = item.match(PATTERN_BADGE_EPCI)
+        return matches !== null
+            ? listEpci.filter((itemEpci: string) => itemEpci.includes(matches[0]))
+            : []
+      }).join(', ')}`
+    }
   }
 
   if (key === 'enfantsM6') {

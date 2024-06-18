@@ -85,7 +85,6 @@
 import { defineComponent } from 'vue'
 import { SignalementItem } from '../interfaces/signalementItem'
 import { store } from '../store'
-import { buildBadge, buildStaticBadge } from '../services/badgeFilterLabelBuilder'
 
 export default defineComponent({
   name: 'SignalementListCards',
@@ -101,8 +100,6 @@ export default defineComponent({
     }
   },
   methods: {
-    buildStaticBadge,
-    buildBadge,
     formatDate (dateString: string | null): string {
       if (!dateString) {
         return ''

@@ -70,9 +70,9 @@ class LoadInterventionData extends Fixture implements OrderedFixtureInterface
                     type: \in_array(pathinfo($document, \PATHINFO_EXTENSION), File::IMAGE_EXTENSION)
                         ? File::FILE_TYPE_DOCUMENT
                         : File::FILE_TYPE_PHOTO,
-                    intervention: $intervention,
                     signalement: $intervention->getSignalement(),
                     user: $user,
+                    intervention: $intervention,
                     documentType: DocumentType::PROCEDURE_RAPPORT_DE_VISITE
                 );
                 $manager->persist($file);

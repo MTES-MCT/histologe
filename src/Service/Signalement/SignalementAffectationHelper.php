@@ -78,10 +78,11 @@ class SignalementAffectationHelper
             return null;
         }
 
-        $procedures = explode(',', $rawConclusionProcedure);
+        $procedures = explode(';', $rawConclusionProcedure);
+        $lastProcedures = explode(',', $procedures[0]);
 
         return array_map(function ($procedure) {
             return ProcedureType::from($procedure)->label();
-        }, $procedures);
+        }, $lastProcedures);
     }
 }

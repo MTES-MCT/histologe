@@ -445,11 +445,11 @@ class SignalementRepository extends ServiceEntityRepository
             GROUP_CONCAT(DISTINCT p.id SEPARATOR :group_concat_separator) as affectationPartnerId,
             GROUP_CONCAT(DISTINCT sq.qualification SEPARATOR :group_concat_separator) as qualifications,
             GROUP_CONCAT(DISTINCT sq.status SEPARATOR :group_concat_separator) as qualificationsStatuses,
-            GROUP_CONCAT(DISTINCT i.concludeProcedure SEPARATOR :group_concat_separator) as conclusionsProcedure')
+            GROUP_CONCAT(DISTINCT i.concludeProcedure ORDER BY i.scheduledAt DESC SEPARATOR :group_concat_separator) as conclusionsProcedure')
             ->leftJoin('s.affectations', 'a')
             ->leftJoin('a.partner', 'p')
             ->leftJoin('s.signalementQualifications', 'sq', 'WITH', 'sq.status LIKE \'%AVEREE%\' OR sq.status LIKE \'%CHECK%\'')
-            ->leftJoin('s.interventions', 'i', 'WITH', 'i.status LIKE \'%DONE%\'')
+            ->leftJoin('s.interventions', 'i', 'WITH', 'i.type LIKE \'VISITE\'')
             ->where('s.statut != :status')
             ->groupBy('s.id')
             ->setParameter('concat_separator', SignalementAffectationListView::SEPARATOR_CONCAT)
