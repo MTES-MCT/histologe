@@ -786,6 +786,146 @@
           "type": "SignalementFormButton",
           "label": "Suivant",
           "slug": "composition_logement_personnes_next",
+          "action": "goto.save:bail_dpe",
+          "customCss": "fr-btn--icon-right fr-icon-arrow-right-line"
+        }
+      ]
+    }
+  },
+  {
+    "type": "SignalementFormScreen",
+    "label": "",
+    "slug": "bail_dpe",
+    "screenCategory": "Type et composition",
+    "components": {
+      "body": [
+        {
+          "type": "SignalementFormOnlyChoice",
+          "label": "Est-ce que le foyer a reçu un bail ?",
+          "slug": "bail_dpe_bail",
+          "values": [
+            {
+              "label": "Oui",
+              "value": "oui"
+            },
+            {
+              "label": "Non",
+              "value": "non"
+            },
+            {
+              "label": "Je ne sais pas",
+              "value": "nsp"
+            }
+          ]
+        },
+        {
+          "type": "SignalementFormInfo",
+          "slug": "bail_dpe_bail_info",
+          "label": "Avoir un bail écrit et signé pour son logement est fortement recommandé pour faire valoir vos droits ! Plus d'info sur <a href='https://www.service-public.fr/particuliers/vosdroits/N349' target='_blank' rel='noopener' title='Le site du Service Public - Ouvre une nouvelle fenêtre'>le site du Service Public</a>.",
+          "conditional": {
+            "show": "formStore.data.bail_dpe_bail === 'non' || formStore.data.bail_dpe_bail === 'nsp'"
+          }
+        },
+        {
+          "type": "SignalementFormUpload",
+          "slug": "bail_dpe_bail_upload",
+          "label": "Ajoutez le bail en cliquant sur le bouton ci-dessous (facultatif)",
+          "conditional": {
+            "show": "formStore.data.bail_dpe_bail === 'oui'"
+          },
+          "validate": {
+            "required": false
+          }
+        },
+        {
+          "type": "SignalementFormOnlyChoice",
+          "slug": "bail_dpe_etat_des_lieux",
+          "label": "Est-ce qu'un état des lieux a été réalisé à l'entrée du foyer dans le logement ?",
+          "values": [
+            {
+              "label": "Oui",
+              "value": "oui"
+            },
+            {
+              "label": "Non",
+              "value": "non"
+            },
+            {
+              "label": "Je ne sais pas",
+              "value": "nsp"
+            }
+          ]
+        },
+        {
+          "type": "SignalementFormWarning",
+          "slug": "bail_dpe_etat_des_lieux_warning",
+          "label": "D'après la loi, un état des lieux du logement doit être réalisé le jour de la remise des clés. Plus d'info sur <a href='https://www.service-public.fr/particuliers/vosdroits/F31270' target='_blank' rel='noopener' title='Le site du Service Public - Ouvre une nouvelle fenêtre'>le site du Service Public</a>.",
+          "conditional": {
+            "show": "formStore.data.bail_dpe_etat_des_lieux === 'non' || formStore.data.bail_dpe_etat_des_lieux === 'nsp'"
+          }
+        },
+        {
+          "type": "SignalementFormUpload",
+          "slug": "bail_dpe_etat_des_lieux_upload",
+          "label": "Ajoutez l'état des lieux en cliquant sur le bouton ci-dessous (facultatif)",
+          "conditional": {
+            "show": "formStore.data.bail_dpe_etat_des_lieux === 'oui'"
+          },
+          "validate": {
+            "required": false
+          }
+        },
+        {
+          "type": "SignalementFormOnlyChoice",
+          "slug": "bail_dpe_dpe",
+          "label": "Est-ce que le foyer a reçu DPE du logement ? (diagnostic performance énergie)",
+          "values": [
+            {
+              "label": "Oui",
+              "value": "oui"
+            },
+            {
+              "label": "Non",
+              "value": "non"
+            },
+            {
+              "label": "Je ne sais pas",
+              "value": "nsp"
+            }
+          ]
+        },
+        {
+          "type": "SignalementFormWarning",
+          "slug": "bail_dpe_dpe_warning",
+          "label": "Le DPE fait partie des documents que le bailleur (propriétaire) doit obligatoirement fournir. Plus d'info sur <a href='https://www.service-public.fr/particuliers/vosdroits/F16096' target='_blank' rel='noopener' title='Le site du Service Public - Ouvre une nouvelle fenêtre'>le site du Service Public</a>.",
+          "conditional": {
+            "show": "formStore.data.bail_dpe_dpe === 'non' || formStore.data.bail_dpe_dpe === 'nsp'"
+          }
+        },
+        {
+          "type": "SignalementFormUpload",
+          "slug": "bail_dpe_dpe_upload",
+          "label": "Ajoutez le DPE en cliquant sur le bouton ci-dessous (facultatif)",
+          "conditional": {
+            "show": "formStore.data.bail_dpe_dpe === 'oui'"
+          },
+          "validate": {
+            "required": false
+          }
+        }
+      ],
+      "footer": [
+        {
+          "type": "SignalementFormButton",
+          "label": "Précédent",
+          "slug": "bail_dpe_previous",
+          "action": "goto:composition_logement_personnes",
+          "customCss": "fr-btn--secondary fr-btn--icon-left fr-icon-arrow-left-line"
+        },
+        {
+          "type": "SignalementFormButton",
+          "label": "Suivant",
+          "slug": "bail_dpe_next",
           "action": "goto.save:ecran_intermediaire_situation_occupant",
           "customCss": "fr-btn--icon-right fr-icon-arrow-right-line"
         }
