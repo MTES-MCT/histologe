@@ -26,7 +26,6 @@ class BailleurController extends AbstractController
 
         if ($sanitize) {
             $bailleurCollection = $this->sanitizeBailleurs($bailleurs, $name);
-            dump($bailleurCollection);
 
             return $this->json(array_values($bailleurCollection->toArray()));
         }
