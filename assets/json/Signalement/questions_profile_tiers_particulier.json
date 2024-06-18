@@ -834,7 +834,7 @@
         {
           "type": "SignalementFormInfo",
           "slug": "bail_dpe_bail_info",
-          "label": "Avoir un bail écrit et signé pour son logement est fortement recommandé pour faire valoir vos droits ! Plus d'info sur <a href='https://www.service-public.fr/particuliers/vosdroits/N349' target='_blank' rel='noopener' title='Le site du Service Public - Ouvre une nouvelle fenêtre'>le site du Service Public</a>.",
+          "label": "Avoir un bail écrit et signé pour son logement est fortement recommandé pour faire valoir ses droits ! Plus d'info sur <a href='https://www.service-public.fr/particuliers/vosdroits/N349' target='_blank' rel='noopener' title='Le site du Service Public - Ouvre une nouvelle fenêtre'>le site du Service Public</a>.",
           "conditional": {
             "show": "formStore.data.bail_dpe_bail === 'non' || formStore.data.bail_dpe_bail === 'nsp'"
           }
@@ -842,7 +842,7 @@
         {
           "type": "SignalementFormUpload",
           "slug": "bail_dpe_bail_upload",
-          "label": "Ajoutez le bail en cliquant sur le bouton ci-dessous (facultatif)",
+          "label": "Ajouter le bail (facultatif)",
           "conditional": {
             "show": "formStore.data.bail_dpe_bail === 'oui'"
           },
@@ -880,7 +880,7 @@
         {
           "type": "SignalementFormUpload",
           "slug": "bail_dpe_etat_des_lieux_upload",
-          "label": "Ajoutez l'état des lieux en cliquant sur le bouton ci-dessous (facultatif)",
+          "label": "Ajouter l'état des lieux (facultatif)",
           "conditional": {
             "show": "formStore.data.bail_dpe_etat_des_lieux === 'oui'"
           },
@@ -918,7 +918,7 @@
         {
           "type": "SignalementFormUpload",
           "slug": "bail_dpe_dpe_upload",
-          "label": "Ajoutez le DPE en cliquant sur le bouton ci-dessous (facultatif)",
+          "label": "Ajouter le DPE (facultatif)",
           "conditional": {
             "show": "formStore.data.bail_dpe_dpe === 'oui'"
           },
@@ -1180,7 +1180,102 @@
           "type": "SignalementFormButton",
           "label": "J'y suis presque !",
           "slug": "ecran_intermediaire_procedure_next",
-          "action": "goto:utilisation_service"
+          "action": "goto:info_procedure"
+        }
+      ]
+    }
+  },
+  {
+    "type": "SignalementFormScreen",
+    "label": "",
+    "slug": "info_procedure",
+    "screenCategory": "Procédure",
+    "components": {
+      "body": [
+        {
+          "type": "SignalementFormOnlyChoice",
+          "label": "Le bailleur (propriétaire) du logement a-t-il été informé de la situation ?",
+          "slug": "info_procedure_bailleur_prevenu",
+          "values": [
+            {
+              "label": "Oui",
+              "value": "oui"
+            },
+            {
+              "label": "Non",
+              "value": "non"
+            },
+            {
+              "label": "Je ne sais pas",
+              "value": "nsp"
+            }
+          ]
+        },
+        {
+          "type": "SignalementFormOnlyChoice",
+          "label": "Le foyer a-t-il pris contact avec son assurance logement ?",
+          "slug": "info_procedure_assurance_contactee",
+          "values": [
+            {
+              "label": "Oui",
+              "value": "oui"
+            },
+            {
+              "label": "Non",
+              "value": "non"
+            },
+            {
+              "label": "Le foyer n'a pas d'assurance logement",
+              "value": "pas_assurance_logement"
+            },
+            {
+              "label": "Je ne sais pas",
+              "value": "nsp"
+            }
+          ]
+        },
+        {
+          "type": "SignalementFormTextarea",
+          "label": "Quelle a été la réponse de l'assurance ?",
+          "slug": "info_procedure_reponse_assurance",
+          "conditional": {
+            "show": "formStore.data.info_procedure_assurance_contactee === 'oui'"
+          }
+        },
+        {
+          "type": "SignalementFormOnlyChoice",
+          "label": "Si des travaux sont faits, le foyer souhaite-t-il rester dans le logement ?",
+          "slug": "info_procedure_depart_apres_travaux",
+          "values": [
+            {
+              "label": "Oui, le foyer souhaite rester dans le logement",
+              "value": "oui"
+            },
+            {
+              "label": "Non, le foyer veut déménager",
+              "value": "non"
+            },
+            {
+              "label": "Je ne sais pas",
+              "value": "nsp"
+            }
+          ]
+        }
+      ],
+      "footer": [
+        {
+          "type": "SignalementFormButton",
+          "label": "Précédent",
+          "slug": "info_procedure_utilisation_service_previous",
+          "action": "goto:ecran_intermediaire_procedure",
+          "customCss": "fr-btn--secondary fr-btn--icon-left fr-icon-arrow-left-line"
+        },
+        {
+          "type": "SignalementFormButton",
+          "label": "Suivant",
+          "slug": "info_procedure_utilisation_service_next",
+          "action": "goto.save:utilisation_service",
+          "customCss": "fr-btn--icon-right fr-icon-arrow-right-line"
         }
       ]
     }
@@ -1219,7 +1314,7 @@
           "type": "SignalementFormButton",
           "label": "Précédent",
           "slug": "utilisation_service_previous",
-          "action": "goto:ecran_intermediaire_procedure",
+          "action": "goto:info_procedure",
           "customCss": "fr-btn--secondary fr-btn--icon-left fr-icon-arrow-left-line"
         },
         {
