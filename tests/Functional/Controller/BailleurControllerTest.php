@@ -48,12 +48,12 @@ class BailleurControllerTest extends WebTestCase
 
     public function testSearchBailleursSanitized(): void
     {
-        $route = $this->router->generate('app_bailleur', ['name' => 'ra', 'postcode' => 13002, 'sanitize' => true]);
+        $route = $this->router->generate('app_bailleur', ['name' => 'IÉ', 'postcode' => 30100, 'sanitize' => true]);
 
         $this->client->request('GET', $route);
         $response = json_decode($this->client->getResponse()->getContent(), true);
         foreach ($response as $item) {
-            $this->assertStringContainsString('ra', strtolower($item['name']));
+            $this->assertStringContainsString('ie', strtolower($item['name']));
             $this->assertStringNotContainsString(Bailleur::BAILLEUR_RADIE, strtolower($item['name']));
         }
     }
