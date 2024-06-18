@@ -189,7 +189,7 @@ export default defineComponent({
         className += 'success'
       } else if (label === 'Responsabilité occupant / Assurantiel') {
         className += 'blue-ecume'
-      } else if (label === 'Non décence' || label === 'Infraction RSD') {
+      } else {
         className += 'info'
       }
 
