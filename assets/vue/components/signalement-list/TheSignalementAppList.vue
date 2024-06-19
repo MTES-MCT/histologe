@@ -200,6 +200,8 @@ export default defineComponent({
       localStorage.setItem('epci', JSON.stringify(this.sharedState.epcis))
     },
     handleTerritoryChange (value: any) {
+      delete (this.sharedState.input.filters as any).communes
+      delete (this.sharedState.input.filters as any).epcis
       this.sharedState.currentTerritoryId = value.toString()
       requests.getSettings(this.handleSettings)
     },
@@ -271,6 +273,9 @@ export default defineComponent({
               url.searchParams.append(`${key}[]`, valueItem)
             })
           } else if (typeof value === 'object' && key === 'epcis') {
+            if (!localStorage.getItem('epci')) {
+              requests.getSettings(this.handleSettings)
+            }
             value.forEach((valueItem: any) => {
               const matches = valueItem.match(PATTERN_BADGE_EPCI)
               if (matches) {

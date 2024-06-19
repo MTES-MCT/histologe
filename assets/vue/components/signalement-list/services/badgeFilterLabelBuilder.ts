@@ -1,6 +1,6 @@
 import { PATTERN_BADGE_EPCI, store } from '../store'
 
-export function buildBadge (key: string, value: any): string | undefined {
+export function buildBadge (key: string, value: any): string | undefined | null {
   if (typeof value === 'undefined') {
     return undefined
   }
@@ -31,12 +31,18 @@ export function buildBadge (key: string, value: any): string | undefined {
     const epciData = localStorage.getItem('epci')
     if (epciData !== null) {
       const listEpci = JSON.parse(epciData)
-      return `EPCI : ${value.map((item: string) => {
-        const matches = item.match(PATTERN_BADGE_EPCI)
-        return matches !== null
-            ? listEpci.filter((itemEpci: string) => itemEpci.includes(matches[0]))
-            : []
-      }).join(', ')}`
+      if (value.length > 0) {
+        const listEpciAsString = value
+          .map((item: string) => {
+            const matches = item?.match(PATTERN_BADGE_EPCI)
+            return matches !== null
+              ? listEpci.filter((itemEpci: string) => itemEpci.includes(matches[0]))
+              : ''
+          })
+          .join(', ')
+
+        return listEpciAsString.length > 0 ? `EPCI : ${listEpciAsString}` : null
+      }
     }
   }
 
