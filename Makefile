@@ -163,10 +163,10 @@ clear-pool: ## Clear cache pool: make clear-pool pool=[pool_name]
 console: ## Execute application command
 	@echo $(SYMFONY) app:$(app)
 	@$(DOCKER_COMP) exec -it histologe_phpfpm $(SYMFONY) app:$(app)
-	
-console-profile: ## Execute application command
-	@echo $(SYMFONY) app:$(app)
-	@$(DOCKER_COMP) exec -it histologe_phpfpm $(SYMFONY) --profile app:$(app)
+
+symfony: ## Execute symfony command: make symfony cmd="make:entity Signalement"
+	@echo $(SYMFONY) $(cmd)
+	@$(DOCKER_COMP) exec -it histologe_phpfpm $(SYMFONY) $(cmd)
 
 upload: ## Push objects to S3 Bucket
 	./scripts/upload-s3.sh $(action) $(zip) $(debug)

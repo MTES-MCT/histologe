@@ -3,14 +3,13 @@
 namespace App\Tests\Unit\Messenger\MessageHandler\Idoss;
 
 use App\Entity\Affectation;
+use App\Entity\JobEvent;
 use App\Entity\Partner;
-use App\Manager\JobEventManager;
 use App\Messenger\Message\Idoss\DossierMessage;
 use App\Messenger\MessageHandler\Idoss\DossierMessageHandler;
 use App\Service\Idoss\IdossService;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
-use Symfony\Component\Serializer\SerializerInterface;
 
 class DossierMessageHandlerTest extends KernelTestCase
 {
@@ -30,19 +29,17 @@ class DossierMessageHandlerTest extends KernelTestCase
         $affectation = $affectationRepository->findOneBy(['partner' => $partner]);
         $dossierMessage = new DossierMessage($affectation);
 
+        $jobEventMock = $this->createMock(JobEvent::class);
+        $jobEventMock->expects($this->once())->method('getStatus')->willReturn(JobEvent::STATUS_SUCCESS);
+
         $idossServiceMock = $this->createMock(IdossService::class);
+        $idossServiceMock->method('pushDossier')->willReturn($jobEventMock);
         $idossServiceMock->expects($this->once())->method('pushDossier');
-
-        $jobEventManagerMock = $this->createMock(JobEventManager::class);
-        $jobEventManagerMock->expects($this->once())->method('createJobEvent');
-
-        $serializerMock = $this->createMock(SerializerInterface::class);
-        $serializerMock->expects($this->once())->method('serialize')->with($dossierMessage, 'json');
+        $idossServiceMock->expects($this->once())->method('uploadFiles');
 
         $dossierMessageHandler = new DossierMessageHandler(
             $idossServiceMock,
-            $jobEventManagerMock,
-            $serializerMock,
+            $this->entityManager,
         );
 
         $dossierMessageHandler($dossierMessage);

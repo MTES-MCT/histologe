@@ -2,33 +2,127 @@
 
 namespace App\Service\Idoss;
 
+use App\Entity\JobEvent;
 use App\Entity\Partner;
+use App\Entity\Signalement;
+use App\Manager\JobEventManager;
 use App\Messenger\Message\Idoss\DossierMessage;
+use App\Service\ImageManipulationHandler;
 use Doctrine\ORM\EntityManagerInterface;
+use League\Flysystem\FilesystemOperator;
 use Symfony\Component\DependencyInjection\ParameterBag\ContainerBagInterface;
+use Symfony\Component\Serializer\SerializerInterface;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
 use Symfony\Contracts\HttpClient\ResponseInterface;
 
 class IdossService
 {
     public const TYPE_SERVICE = 'idoss';
-    public const ACTION_PUSH_DOSSIER = 'push_dossier';
-    public const CODE_INSEE_BASSIN_VIE_MARSEILLE = '13055';
+    private const ACTION_PUSH_DOSSIER = 'push_dossier';
+    private const ACTION_UPLOAD_FILES = 'upload_files';
     private const AUTHENTICATE_ENDPOINT = '/api/Utilisateur/authentification';
     private const CREATE_DOSSIER_ENDPOINT = '/api/EtatCivil/creatDossHistologe';
+    private const UPLOAD_FILES_ENDPOINT = '/api/EtatCivil/uploadFileRepoHistologe';
 
     public function __construct(
         private readonly HttpClientInterface $client,
         private readonly ContainerBagInterface $params,
         private readonly EntityManagerInterface $entityManager,
+        private readonly JobEventManager $jobEventManager,
+        private readonly SerializerInterface $serializer,
+        private readonly FilesystemOperator $fileStorage
     ) {
     }
 
-    public function pushDossier(DossierMessage $dossierMessage): ResponseInterface
+    public function pushDossier(DossierMessage $dossierMessage): JobEvent
     {
-        $token = $this->getToken($dossierMessage);
-        $url = $dossierMessage->getUrl().self::CREATE_DOSSIER_ENDPOINT;
+        $partner = $this->entityManager->getRepository(Partner::class)->find($dossierMessage->getPartnerId());
+        $url = $partner->getIdossUrl().self::CREATE_DOSSIER_ENDPOINT;
+        $payload = $this->getDossierPayload($dossierMessage);
+        $jobAction = self::ACTION_PUSH_DOSSIER;
+        $jobMessage = $this->serializer->serialize($dossierMessage, 'json');
+        $signalementId = $dossierMessage->getSignalementId();
 
+        $jobEvent = $this->callWsManager($partner, $url, $payload, $jobAction, $jobMessage, $signalementId);
+
+        if (JobEvent::STATUS_SUCCESS === $jobEvent->getStatus()) {
+            $signalement = $this->entityManager->getRepository(Signalement::class)->find($dossierMessage->getSignalementId());
+            $jsonResponse = json_decode($jobEvent->getResponse(), true);
+            $idossData = [
+                'id' => $jsonResponse['id'],
+                'created_at' => $jobEvent->getCreatedAt()->format('Y-m-d H:i:s'),
+                'created_job_event_id' => $jobEvent->getId(),
+            ];
+            $signalement->setSynchroData($idossData, self::TYPE_SERVICE);
+            $this->entityManager->flush();
+        }
+
+        return $jobEvent;
+    }
+
+    public function uploadFiles(Partner $partner, Signalement $signalement): JobEvent
+    {
+        $files = [];
+        $filesJson = [];
+        foreach ($signalement->getFiles() as $file) {
+            if ($file->getSynchroData(self::TYPE_SERVICE)) {
+                continue;
+            }
+            $files[] = $file;
+            $filesJson[] = ['id' => $file->getId(), 'filename' => $file->getFilename()];
+        }
+
+        $url = $partner->getIdossUrl().self::UPLOAD_FILES_ENDPOINT;
+        $payload = $this->getFilesPayload($signalement, $files);
+        $jobAction = self::ACTION_UPLOAD_FILES;
+        $jobMessage = json_encode($filesJson, true);
+        $signalementId = $signalement->getId();
+
+        $jobEvent = $this->callWsManager($partner, $url, $payload, $jobAction, $jobMessage, $signalementId);
+
+        if (JobEvent::STATUS_SUCCESS === $jobEvent->getStatus()) {
+            foreach ($files as $file) {
+                $idossData = [
+                    'uploaded_at' => $jobEvent->getCreatedAt()->format('Y-m-d H:i:s'),
+                    'uploaded_job_event_id' => $jobEvent->getId(),
+                ];
+                $file->setSynchroData($idossData, self::TYPE_SERVICE);
+                $this->entityManager->flush();
+            }
+        }
+
+        return $jobEvent;
+    }
+
+    private function callWsManager(Partner $partner, string $url, array $payload, string $jobAction, string $jobMessage, int $signalementId): JobEvent
+    {
+        try {
+            $token = $this->getToken($partner);
+            $response = $this->request($url, $payload, $token);
+            $statusCode = $response->getStatusCode();
+            $status = 200 === $statusCode ? JobEvent::STATUS_SUCCESS : JobEvent::STATUS_FAILED;
+            $responseContent = $response->getContent(throw: false);
+        } catch (\Exception $e) {
+            $responseContent = $e->getMessage();
+            $status = JobEvent::STATUS_FAILED;
+            $statusCode = 9999;
+        }
+
+        return $this->jobEventManager->createJobEvent(
+            service: self::TYPE_SERVICE,
+            action: $jobAction,
+            message: $jobMessage,
+            response: $responseContent,
+            status: $status,
+            codeStatus: $statusCode,
+            signalementId: $signalementId,
+            partnerId: $partner->getId(),
+            partnerType: $partner->getType(),
+        );
+    }
+
+    private function getDossierPayload(DossierMessage $dossierMessage): array
+    {
         $payload = [
             'user' => $this->params->get('idoss_username'),
             'Dossier' => [
@@ -51,9 +145,6 @@ class IdossService
         if ($dossierMessage->getDescriptionProblemes()) {
             $payload['Dossier']['descriptionProblemes'] = $dossierMessage->getDescriptionProblemes();
         }
-        if (\count($dossierMessage->getPj())) {
-            $payload['Dossier']['pj'] = $dossierMessage->getPj();
-        }
         if ($dossierMessage->getNumAllocataire()) {
             $payload['Dossier']['numAllocataire'] = $dossierMessage->getNumAllocataire();
         }
@@ -73,16 +164,40 @@ class IdossService
             $payload['Dossier']['nbrEtages'] = $dossierMessage->getNbrEtages();
         }
 
-        return $this->request($url, $payload, $token);
+        return $payload;
     }
 
-    private function getToken(DossierMessage $dossierMessage): string
+    public function getFilesPayload(Signalement $signalement, array $files): array
     {
-        if ($dossierMessage->getToken() && $dossierMessage->getTokenExpirationDate() && $dossierMessage->getTokenExpirationDate() > new \DateTime()) {
-            return $dossierMessage->getToken();
+        $filesData = [];
+        foreach ($files as $file) {
+            $variantNames = ImageManipulationHandler::getVariantNames($file->getFilename());
+            $filename = $variantNames[ImageManipulationHandler::SUFFIX_RESIZE];
+            if (!$this->fileStorage->fileExists($filename) && !$this->fileStorage->fileExists($file->getFilename())) {
+                throw new \Exception('File "'.$filename.'" not found');
+            }
+            if (!$this->fileStorage->fileExists($filename)) {
+                $filename = $file->getFilename();
+            }
+            $bucketFilepath = $this->params->get('url_bucket').'/'.$filename;
+            $fileHandle = base64_encode(file_get_contents($bucketFilepath));
+            $filesData[] = $fileHandle;
         }
 
-        $url = $dossierMessage->getUrl().self::AUTHENTICATE_ENDPOINT;
+        return [
+            'id' => $signalement->getSynchroData(self::TYPE_SERVICE)['id'],
+            'file' => $filesData,
+            'uuid' => $signalement->getUuid(),
+        ];
+    }
+
+    private function getToken(Partner $partner): string
+    {
+        if ($partner->getIdossToken() && $partner->getIdossTokenExpirationDate() && $partner->getIdossTokenExpirationDate() > new \DateTime()) {
+            return $partner->getIdossToken();
+        }
+
+        $url = $partner->getIdossUrl().self::AUTHENTICATE_ENDPOINT;
         $payload = [
             'username' => $this->params->get('idoss_username'),
             'password' => $this->params->get('idoss_password'),
@@ -94,7 +209,6 @@ class IdossService
         }
         $jsonResponse = json_decode($response->getContent());
         if (isset($jsonResponse->token) && isset($jsonResponse->expirationDate)) {
-            $partner = $this->entityManager->getRepository(Partner::class)->find($dossierMessage->getPartnerId());
             $partner->setIdossToken($jsonResponse->token);
             $partner->setIdossTokenExpirationDate(new \DateTimeImmutable($jsonResponse->expirationDate));
             $this->entityManager->flush();
