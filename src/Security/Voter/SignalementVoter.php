@@ -108,7 +108,7 @@ class SignalementVoter extends Voter
         }
 
         return $signalement->getAffectations()->filter(function (Affectation $affectation) use ($user) {
-            return $affectation->getPartner()->getId() === $user->getPartner()->getId() && Affectation::STATUS_ACCEPTED === $affectation->getStatut();
+            return $affectation->getPartner()->getId() === $user->getPartner()->getId();
         })->count() > 0 || $user->isTerritoryAdmin() && $user->getTerritory() === $signalement->getTerritory();
     }
 
