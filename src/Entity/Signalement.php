@@ -414,6 +414,9 @@ class Signalement
     #[ORM\Column(nullable: true)]
     private ?bool $lastSuiviIsPublic = null;
 
+    #[ORM\Column(nullable: true)]
+    private ?array $synchroData = null;
+
     public function __construct()
     {
         $this->situations = new ArrayCollection();
@@ -2400,9 +2403,25 @@ class Signalement
         return $this->lastSuiviIsPublic;
     }
 
-    public function setLastSuiviIsPublic(?bool $lastSuiviIsPublic): static
+    public function setLastSuiviIsPublic(?bool $lastSuiviIsPublic): self
     {
         $this->lastSuiviIsPublic = $lastSuiviIsPublic;
+
+        return $this;
+    }
+
+    public function getSynchroData(?string $key): ?array
+    {
+        if ($key) {
+            return $this->synchroData[$key] ?? null;
+        }
+
+        return $this->synchroData;
+    }
+
+    public function setSynchroData(array $data, string $key): self
+    {
+        $this->synchroData[$key] = $data;
 
         return $this;
     }

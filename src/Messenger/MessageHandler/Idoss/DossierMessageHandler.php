@@ -3,45 +3,29 @@
 namespace App\Messenger\MessageHandler\Idoss;
 
 use App\Entity\JobEvent;
-use App\Manager\JobEventManager;
+use App\Entity\Partner;
+use App\Entity\Signalement;
 use App\Messenger\Message\Idoss\DossierMessage;
 use App\Service\Idoss\IdossService;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
-use Symfony\Component\Serializer\SerializerInterface;
 
 #[AsMessageHandler]
 class DossierMessageHandler
 {
     public function __construct(
         private readonly IdossService $idossService,
-        private readonly JobEventManager $jobEventManager,
-        private readonly SerializerInterface $serializer,
+        private readonly EntityManagerInterface $entityManager,
     ) {
     }
 
     public function __invoke(DossierMessage $dossierMessage): void
     {
-        try {
-            $response = $this->idossService->pushDossier($dossierMessage);
-            $statusCode = $response->getStatusCode();
-            $status = 200 === $statusCode ? JobEvent::STATUS_SUCCESS : JobEvent::STATUS_FAILED;
-            $responseContent = $response->getContent(throw: false);
-        } catch (\Exception $e) {
-            $responseContent = $e->getMessage();
-            $status = JobEvent::STATUS_FAILED;
-            $statusCode = 9999;
+        $jobEvent = $this->idossService->pushDossier($dossierMessage);
+        if (JobEvent::STATUS_SUCCESS === $jobEvent->getStatus()) {
+            $signalement = $this->entityManager->getRepository(Signalement::class)->find($dossierMessage->getSignalementId());
+            $partner = $this->entityManager->getRepository(Partner::class)->find($dossierMessage->getPartnerId());
+            $this->idossService->uploadFiles($partner, $signalement);
         }
-
-        $this->jobEventManager->createJobEvent(
-            service: IdossService::TYPE_SERVICE,
-            action: IdossService::ACTION_PUSH_DOSSIER,
-            message: $this->serializer->serialize($dossierMessage, 'json'),
-            response: $responseContent,
-            status: $status,
-            codeStatus: $statusCode,
-            signalementId: $dossierMessage->getSignalementId(),
-            partnerId: $dossierMessage->getPartnerId(),
-            partnerType: $dossierMessage->getPartnerType(),
-        );
     }
 }
