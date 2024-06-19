@@ -131,4 +131,4 @@ export const store = {
   }
 }
 
-export const PATTERN_BADGE_EPCI = /\((.*?)\)/
+export const PATTERN_BADGE_EPCI = /\d+/

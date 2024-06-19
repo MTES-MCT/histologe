@@ -277,10 +277,10 @@ export default defineComponent({
               requests.getSettings(this.handleSettings)
             }
             value.forEach((valueItem: any) => {
-              const matches = valueItem.match(PATTERN_BADGE_EPCI)
+              const matches = PATTERN_BADGE_EPCI.exec(valueItem)
               if (matches) {
-                this.addQueryParameter(`${key}[]`, matches[1].trim())
-                url.searchParams.append(`${key}[]`, matches[1].trim())
+                this.addQueryParameter(`${key}[]`, matches[0].trim())
+                url.searchParams.append(`${key}[]`, matches[0].trim())
               }
             })
           } else if (typeof value === 'string') {

@@ -34,7 +34,7 @@ export function buildBadge (key: string, value: any): string | undefined | null 
       if (value.length > 0) {
         const listEpciAsString = value
           .map((item: string) => {
-            const matches = item?.match(PATTERN_BADGE_EPCI)
+            const matches = PATTERN_BADGE_EPCI.exec(item)
             return matches !== null
               ? listEpci.filter((itemEpci: string) => itemEpci.includes(matches[0]))
               : ''
