@@ -56,3 +56,13 @@ const displayPhotoAlbum = (photoId) => {
         element.classList?.remove('fr-hidden')
     })
 }
+
+document?.querySelector('.back-link')?.addEventListener('click', (event) => {
+    if (window.history.length > 1) {
+        event.preventDefault()
+        const backLinkQueryParams = localStorage.getItem('back_link_signalement_view')
+        window.location.href = backLinkQueryParams?.length > 0
+            ? `${event.target.href}?${backLinkQueryParams}`
+            : event.target.href
+    }
+})

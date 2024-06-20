@@ -25,6 +25,7 @@ use Doctrine\DBAL\Exception;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\QueryBuilder;
 use Symfony\Bundle\SecurityBundle\Security;
+use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\HttpFoundation\Request;
 
 class SearchFilter
@@ -69,6 +70,8 @@ class SearchFilter
         private SignalementQualificationRepository $signalementQualificationRepository,
         private CommuneRepository $communeRepository,
         private EpciRepository $epciRepository,
+        #[Autowire(env: 'FEATURE_LIST_FILTER_ENABLE')]
+        private string $featureListFilterEnable,
     ) {
     }
 
@@ -489,7 +492,10 @@ class SearchFilter
         }
 
         if (!empty($filters['nde'])) {
-            $subqueryResults = $this->signalementQualificationRepository->findSignalementsByQualification(Qualification::NON_DECENCE_ENERGETIQUE, $filters['nde']);
+            $subqueryResults = $this->signalementQualificationRepository->findSignalementsByQualification(
+                Qualification::NON_DECENCE_ENERGETIQUE,
+                $filters['nde']
+            );
             $qb->andWhere('s.id IN (:subqueryResults)')
                 ->setParameter('subqueryResults', $subqueryResults);
         }
@@ -529,8 +535,12 @@ class SearchFilter
             $qb = $this->addFilterStatusAffectation($qb, $filters['statusAffectation']);
         }
 
-        if (!empty($filters['isImported'])) {
-            $qb = $this->addFilterImported($qb);
+        if ($this->featureListFilterEnable) {
+            if (!empty($filters['isImported'])) {
+                $qb = $this->addFilterImported($qb);
+            } else {
+                $qb->andWhere('s.isImported = false');
+            }
         }
 
         return $qb;
@@ -656,7 +666,7 @@ class SearchFilter
 
     private function addFilterImported(QueryBuilder $qb): QueryBuilder
     {
-        $qb->andWhere('s.isImported = true');
+        $qb->andWhere('(s.isImported = true OR s.isImported = false)');
 
         return $qb;
     }

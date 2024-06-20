@@ -16,7 +16,7 @@
             </div>
             <div class="fr-grid-row fr-mt-1w">
               <div class="fr-col-xl-10 fr-col-12">
-                <p class="fr-my-1w"><span class="fr-icon-lightbulb-line" aria-hidden="true"></span>
+                <p class="fr-my-1w" v-if="item.conclusionsProcedure === null"><span class="fr-icon-lightbulb-line" aria-hidden="true"></span>
                   Procédure(s) suspectée(s) :
                   <span v-if="item.qualificationsStatusesLabels.length === 0" class="fr-text--sm">Aucune</span>
                   <span
@@ -26,6 +26,15 @@
                       class="fr-badge fr-badge--sm fr-badge--no-icon fr-mx-1v"
                       :class="getBadgeClassNameQualification(procedure)"
                       >{{ getBadgeLabelQualification(procedure) }}</span>
+                </p>
+                <p v-else class="fr-my-1w"><span class="fr-icon-lightbulb-line" aria-hidden="true"></span>
+                  Procédure(s) constatée(s) :
+                  <span
+                      v-for="(procedure, index) in item.conclusionsProcedure"
+                      :key="index"
+                      class="fr-badge fr-badge--sm fr-badge--no-icon fr-mx-1v"
+                      :class="getBadgeClassNameProcedure(procedure)"
+                  >{{ procedure }}</span>
                 </p>
                 <p class="fr-my-1w"><span class="fr-icon-briefcase-line" aria-hidden="true"></span>
                   Partenaire(s) affecté(s) :
@@ -168,6 +177,23 @@ export default defineComponent({
       labelText = labelText.replace(' à vérifier', '')
       labelText = labelText.replace(' avérée', '')
       return labelText
+    },
+    getBadgeClassNameProcedure (label: string): string {
+      let className = 'fr-badge--'
+
+      if (label === 'Mise en sécurité / Péril') {
+        className += 'error'
+      } else if (label === 'Insalubrité') {
+        className += 'warning'
+      } else if (label === 'Logement décent / Pas d\'infraction') {
+        className += 'success'
+      } else if (label === 'Responsabilité occupant / Assurantiel') {
+        className += 'blue-ecume'
+      } else {
+        className += 'info'
+      }
+
+      return className
     },
     getBadgeSuivi (label: string): string {
       let className = 'fr-badge fr-badge--sm fr-badge--no-icon'

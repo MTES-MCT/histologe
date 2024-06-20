@@ -2,6 +2,7 @@
 
 namespace App\Tests\Functional\Factory;
 
+use App\Entity\Enum\ProcedureType;
 use App\Entity\Enum\ProfileDeclarant;
 use App\Entity\Enum\SignalementStatus;
 use App\Entity\User;
@@ -22,6 +23,16 @@ class SignalementAffectationListViewFactoryTest extends KernelTestCase
 
     public function testCreateFactory(): void
     {
+        $procedures = implode(',', [
+            'NON_DECENCE',
+            'RSD',
+            'INSALUBRITE',
+            'MISE_EN_SECURITE_PERIL',
+            'LOGEMENT_DECENT',
+            'RESPONSABILITE_OCCUPANT_ASSURANTIEL',
+            'AUTRE',
+        ]);
+
         $faker = Factory::create();
         $dataSignalement = [
             'id' => 1,
@@ -43,6 +54,7 @@ class SignalementAffectationListViewFactoryTest extends KernelTestCase
             'rawAffectations' => 'Partenaire 13-02||1;Partenaire 13-03||1;Partenaire 13-04||1',
             'qualifications' => null,
             'qualificationsStatuses' => null,
+            'conclusionsProcedure' => $procedures,
         ];
 
         $expectedAffectations = [
@@ -64,7 +76,6 @@ class SignalementAffectationListViewFactoryTest extends KernelTestCase
 
         $signalementAffectationListViewFactory = new SignalementAffectationListViewFactory();
         $signalementAffectationListView = $signalementAffectationListViewFactory->createInstanceFrom($user, $dataSignalement);
-
         $this->assertEquals($dataSignalement['id'], $signalementAffectationListView->getId());
         $this->assertEquals($dataSignalement['uuid'], $signalementAffectationListView->getUuid());
         $this->assertEquals($dataSignalement['reference'], $signalementAffectationListView->getReference());
@@ -79,8 +90,13 @@ class SignalementAffectationListViewFactoryTest extends KernelTestCase
         $this->assertEquals($dataSignalement['cpOccupant'], $signalementAffectationListView->getCodepostalOccupant());
         $this->assertSame($dataSignalement['lastSuiviAt'], $signalementAffectationListView->getLastSuiviAt());
         $this->assertEquals($dataSignalement['lastSuiviBy'], $signalementAffectationListView->getLastSuiviBy());
-        $this->assertEquals($dataSignalement['lastSuiviIsPublic'], $signalementAffectationListView->getLastSuiviIsPublic());
         $this->assertEquals('Locataire', $signalementAffectationListView->getProfileDeclarant());
         $this->assertSame($expectedAffectations, $signalementAffectationListView->getAffectations());
+        $this->assertEquals(
+            $dataSignalement['lastSuiviIsPublic'],
+            $signalementAffectationListView->getLastSuiviIsPublic());
+        $this->assertSame(
+            array_values(ProcedureType::getLabelList()),
+            $signalementAffectationListView->getConclusionsProcedure());
     }
 }

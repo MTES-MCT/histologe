@@ -25,7 +25,14 @@ interventions:
     status: 'DONE'
     documents: [ 'blank-64969c273a28a.jpg' ]
     details: "<p>dossier envoyé au SCHS pour une suspicion d'insalubrité</p>"
-    conclude_procedure: [ 'INSALUBRITE', 'MISE_EN_SECURITE_PERIL' ]
+    conclude_procedure:
+      - 'INSALUBRITE'
+      - 'MISE_EN_SECURITE_PERIL'
+      - 'NON_DECENCE'
+      - 'RSD'
+      - 'LOGEMENT_DECENT'
+      - 'RESPONSABILITE_OCCUPANT_ASSURANTIEL'
+      - 'AUTRE'
     occupant_present: 1
     proprietaire_present: 1
   -

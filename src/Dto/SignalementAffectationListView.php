@@ -31,6 +31,7 @@ class SignalementAffectationListView
         private ?array $affectations = null,
         private ?array $qualifications = null,
         private ?array $qualificationsStatuses = null,
+        private ?array $conclusionsProcedure = null,
         private ?string $csrfToken = null,
     ) {
     }
@@ -167,5 +168,10 @@ class SignalementAffectationListView
         $this->csrfToken = $csrfToken;
 
         return $this;
+    }
+
+    public function getConclusionsProcedure(): ?array
+    {
+        return $this->conclusionsProcedure;
     }
 }

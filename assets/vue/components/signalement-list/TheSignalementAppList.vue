@@ -32,7 +32,7 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue'
-import { store } from './store'
+import { PATTERN_BADGE_EPCI, store } from './store'
 import { requests } from './requests'
 import { SignalementItem } from './interfaces/signalementItem'
 import { Filters, SEARCH_FILTERS } from './interfaces/filters'
@@ -114,10 +114,8 @@ export default defineComponent({
               this.addQueryParameter(keyFin, dateFin)
               const dateFinFormatted: Date = new Date(dateFin)
               filters[newKey] = [dateDebutFormatted, dateFinFormatted]
-              this.sharedState.showOptions = true
             }
           }
-          this.sharedState.showOptions = filter.showOptions
         } else if (valueList && valueList.length > 0) {
           if (type === 'collection') {
             valueList = params.getAll(`${key}[]`)
@@ -135,6 +133,9 @@ export default defineComponent({
             }
           }
         }
+        if (value && value.length > 0) {
+          this.sharedState.showOptions = filter.showOptions
+        }
       }
     },
     handleSettings (requestResponse: any) {
@@ -147,6 +148,7 @@ export default defineComponent({
       this.sharedState.user.canSeeStatusAffectation = isAdminOrAdminTerritoire
       this.sharedState.user.canDeleteSignalement = isAdminOrAdminTerritoire
       this.sharedState.user.canSeeScore = isAdminOrAdminTerritoire
+      this.sharedState.user.canSeeImportedButton = isAdminOrAdminTerritoire
       this.sharedState.user.partnerId = requestResponse.partnerId
       this.sharedState.hasSignalementImported = requestResponse.hasSignalementImported
       this.sharedState.input.order = 'reference-DESC'
@@ -198,6 +200,8 @@ export default defineComponent({
       localStorage.setItem('epci', JSON.stringify(this.sharedState.epcis))
     },
     handleTerritoryChange (value: any) {
+      delete (this.sharedState.input.filters as any).communes
+      delete (this.sharedState.input.filters as any).epcis
       this.sharedState.currentTerritoryId = value.toString()
       requests.getSettings(this.handleSettings)
     },
@@ -269,10 +273,16 @@ export default defineComponent({
               url.searchParams.append(`${key}[]`, valueItem)
             })
           } else if (typeof value === 'object' && key === 'epcis') {
+            if (!localStorage.getItem('epci')) {
+              requests.getSettings(this.handleSettings)
+            }
             value.forEach((valueItem: any) => {
-              const code = valueItem.split('|').shift()
-              this.addQueryParameter(`${key}[]`, code.trim())
-              url.searchParams.append(`${key}[]`, code.trim())
+              const matches = PATTERN_BADGE_EPCI.exec(valueItem)
+              if (matches) {
+                const valueQueryParameter = matches[0].trim()
+                this.addQueryParameter(`${key}[]`, valueQueryParameter)
+                url.searchParams.append(`${key}[]`, valueQueryParameter)
+              }
             })
           } else if (typeof value === 'string') {
             this.addQueryParameter(key, value)
@@ -351,8 +361,9 @@ export default defineComponent({
         .sharedState
         .input
         .queryParameters
-        .map(parameter => `${parameter.name}=${parameter.value}`)
-      this.sharedProps.ajaxurlSignalement = initElements.dataset.ajaxurl + '?' + queryParams.join('&')
+        .map(parameter => `${parameter.name}=${parameter.value}`).join('&')
+      this.sharedProps.ajaxurlSignalement = initElements.dataset.ajaxurl + '?' + queryParams
+      localStorage.setItem('back_link_signalement_view', queryParams)
     },
     clearScreen () {
       this.messageDeleteConfirmation = ''

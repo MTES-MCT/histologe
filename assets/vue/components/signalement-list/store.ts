@@ -42,6 +42,7 @@ export const store = {
       isAdministrateurPartenaire: false,
       isAgent: false,
       canSeeStatusAffectation: false,
+      canSeeImportedButton: false,
       canDeleteSignalement: false,
       canSeeNonDecenceEnergetique: false,
       canSeeScore: false,
@@ -129,3 +130,5 @@ export const store = {
     ajaxurlContact: ''
   }
 }
+
+export const PATTERN_BADGE_EPCI = /\d+/

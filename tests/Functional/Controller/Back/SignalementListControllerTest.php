@@ -187,6 +187,8 @@ class SignalementListControllerTest extends WebTestCase
 
     public function provideFilterSearch(): \Generator
     {
+        $_ENV['FEATURE_LIST_FILTER_ENABLE'] = '0';
+
         yield 'Search Terms with Reference' => ['bo-filters-searchterms', '2022-1', '1 signalement(s)'];
         yield 'Search Terms with cp Occupant' => ['bo-filters-searchterms', '13003', '12 signalement(s)'];
         yield 'Search Terms with cp Occupant 13005' => ['bo-filters-searchterms', '13005', '3 signalement(s)'];
@@ -197,6 +199,8 @@ class SignalementListControllerTest extends WebTestCase
         yield 'Search by Tags' => ['bo-filters-tags', ['3'], '4 signalement(s)'];
         yield 'Search by Parc public/prive' => ['bo-filters-housetypes', ['1'], '5 signalement(s)'];
         yield 'Search by Relances usagers' => ['bo-filters-relances_usager', ['NO_SUIVI_AFTER_3_RELANCES'], '1 signalement(s)'];
+
+        $_ENV['FEATURE_LIST_FILTER_ENABLE'] = '1';
     }
 
     /**
@@ -225,6 +229,8 @@ class SignalementListControllerTest extends WebTestCase
 
     public function provideNewFilterSearch(): \Generator
     {
+        $_ENV['FEATURE_LIST_FILTER_ENABLE'] = '1';
+
         yield 'Search Terms with Reference' => [['searchTerms' => '2022-1'], 1];
         yield 'Search Terms with cp Occupant' => [['searchTerms' => '13003'], 12];
         yield 'Search Terms with cp Occupant 13005' => [['searchTerms' => '13005'], 3];
@@ -261,7 +267,9 @@ class SignalementListControllerTest extends WebTestCase
         yield 'Search by Situation Bail en cours' => [['situation' => 'bail_en_cours'], 4];
         yield 'Search by Situation Prévis de départ' => [['situation' => 'preavis_de_depart'], 1];
         yield 'Search by Situation Attente de relogement' => [['situation' => 'attente_relogement'], 2];
-        yield 'Search by Signalement Imported' => [['isImported' => 'oui'], 6];
+        yield 'Search by Signalement Imported' => [['isImported' => 'oui'], 45];
+
+        $_ENV['FEATURE_LIST_FILTER_ENABLE'] = '0';
     }
 
     /**
