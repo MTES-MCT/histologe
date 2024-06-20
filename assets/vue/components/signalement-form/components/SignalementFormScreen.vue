@@ -249,7 +249,7 @@ export default defineComponent({
       } else if (type === 'toggle') {
         this.toggleComponentBySlug(param, param2)
       } else if (type === 'archive') {
-        requests.archiveDraft(formStore.data.uuidSignalementDraft, this.gotoHomepage)
+        requests.archiveDraft(this.gotoHomepage)
       } else if (type.includes('goto')) {
         await this.showScreenBySlug(param, param2, type.includes('save'), type.includes('checkloc'))
       } else if (type.includes('resolve')) {

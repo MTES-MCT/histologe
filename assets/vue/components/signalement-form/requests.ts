@@ -113,8 +113,8 @@ export const requests = {
   },
 
   sendMailContinueFromDraft (functionReturn: Function) {
-    const url = formStore.props.ajaxurlSendMailContinueFromDraft.replace('uuid', formStore.alreadyExists.uuidDraft)
-    requests.doRequestPost(url, '', functionReturn, undefined)
+    const url = formStore.props.ajaxurlSendMailContinueFromDraft
+    requests.doRequestPost(url, formStore.data, functionReturn, undefined)
   },
 
   sendMailGetLienSuivi (uuid: any, functionReturn: Function) {
@@ -122,9 +122,9 @@ export const requests = {
     requests.doRequestPost(url, '', functionReturn, undefined)
   },
 
-  archiveDraft (uuidDraft: string, functionReturn: Function) {
-    const url = formStore.props.ajaxurlArchiveDraft.replace('uuid', uuidDraft)
-    requests.doRequestPost(url, '', functionReturn, undefined)
+  archiveDraft (functionReturn: Function) {
+    const url = formStore.props.ajaxurlArchiveDraft
+    requests.doRequestPost(url, formStore.data, functionReturn, undefined)
   },
 
   validateAddress (valueAdress: string, functionReturn: Function) {

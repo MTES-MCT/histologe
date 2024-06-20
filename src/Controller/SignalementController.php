@@ -122,18 +122,10 @@ class SignalementController extends AbstractController
                 $isTiersDeclarant
             );
 
-            $dataToHash = SignalementDraftHelper::getEmailDeclarant($signalementDraftRequest);
-            $dataToHash .= $signalementDraftRequest->getAdresseLogementAdresse();
-            $hash = hash('sha256', $dataToHash);
-
-            $existingSignalementDraft = $signalementDraftRepository->findOneBy(
-                [
-                    'checksum' => $hash,
-                    'status' => SignalementDraftStatus::EN_COURS,
-                ],
-                [
-                    'id' => 'DESC',
-                ]
+            $existingSignalementDraft = $this->findSignalementDraft(
+                $signalementDraftRequest,
+                $signalementDraftRepository,
+                $signalementRepository
             );
 
             if (!empty($existingSignalements)) {
@@ -151,7 +143,7 @@ class SignalementController extends AbstractController
                     'already_exists' => true,
                     'type' => 'signalement',
                     'signalements' => $signalements,
-                    'uuid_draft' => $existingSignalementDraft?->getUuid() ?? null,
+                    'draft_exists' => $existingSignalementDraft ? true : false,
                 ]);
             }
 
@@ -159,7 +151,7 @@ class SignalementController extends AbstractController
                 return $this->json([
                     'already_exists' => true,
                     'type' => 'draft',
-                    'uuid_draft' => $existingSignalementDraft->getUuid(),
+                    'draft_exists' => true,
                     'created_at' => $existingSignalementDraft->getCreatedAt(),
                     'updated_at' => $existingSignalementDraft->getUpdatedAt(),
                 ]);
@@ -223,16 +215,29 @@ class SignalementController extends AbstractController
         ]);
     }
 
-    #[Route('/signalement-draft/{uuid}/send_mail', name: 'send_mail_continue_from_draft')]
+    #[Route('/signalement-draft/send_mail', name: 'send_mail_continue_from_draft', methods: 'POST')]
     public function sendMailContinueFromDraft(
         NotificationMailerRegistry $notificationMailerRegistry,
-        SignalementDraft $signalementDraft,
-        Request $request
+        SignalementDraftRequestSerializer $serializer,
+        Request $request,
+        SignalementDraftRepository $signalementDraftRepository,
+        SignalementRepository $signalementRepository
     ): JsonResponse {
+        /** @var SignalementDraftRequest $signalementDraftRequest */
+        $signalementDraftRequest = $serializer->deserialize(
+            $payload = $request->getContent(),
+            SignalementDraftRequest::class,
+            'json'
+        );
+
+        $signalementDraft = $this->findSignalementDraft(
+            $signalementDraftRequest,
+            $signalementDraftRepository,
+            $signalementRepository
+        );
+
         if (
-            $request->isMethod('POST')
-            && $signalementDraft
-            && SignalementDraftStatus::EN_COURS === $signalementDraft->getStatus()
+            $signalementDraft
         ) {
             $success = $notificationMailerRegistry->send(
                 new NotificationMail(
@@ -297,16 +302,29 @@ class SignalementController extends AbstractController
         return $this->json(['response' => 'error'], Response::HTTP_BAD_REQUEST);
     }
 
-    #[Route('/signalement-draft/{uuid}/archive', name: 'archive_draft')]
+    #[Route('/signalement-draft/archive', name: 'archive_draft', methods: 'POST')]
     public function archiveDraft(
-        SignalementDraft $signalementDraft,
         Request $request,
-        SignalementDraftManager $signalementDraftManager
+        SignalementDraftRequestSerializer $serializer,
+        SignalementDraftManager $signalementDraftManager,
+        SignalementDraftRepository $signalementDraftRepository,
+        SignalementRepository $signalementRepository
     ): JsonResponse {
+        /** @var SignalementDraftRequest $signalementDraftRequest */
+        $signalementDraftRequest = $serializer->deserialize(
+            $payload = $request->getContent(),
+            SignalementDraftRequest::class,
+            'json'
+        );
+
+        $signalementDraft = $this->findSignalementDraft(
+            $signalementDraftRequest,
+            $signalementDraftRepository,
+            $signalementRepository
+        );
+
         if (
-            $request->isMethod('POST')
-            && $signalementDraft
-            && SignalementDraftStatus::EN_COURS === $signalementDraft->getStatus()
+            $signalementDraft
         ) {
             $signalementDraft->setStatus(SignalementDraftStatus::ARCHIVE);
             $signalementDraftManager->save($signalementDraft);
@@ -315,6 +333,35 @@ class SignalementController extends AbstractController
         }
 
         return $this->json(['response' => 'error'], Response::HTTP_BAD_REQUEST);
+    }
+
+    private function findSignalementDraft(
+        SignalementDraftRequest $signalementDraftRequest,
+        SignalementDraftRepository $signalementDraftRepository,
+        SignalementRepository $signalementRepository
+    ): ?SignalementDraft {
+        $isTiersDeclarant = SignalementDraftHelper::isTiersDeclarant($signalementDraftRequest);
+        $existingSignalements = $signalementRepository->findAllForEmailAndAddress(
+            SignalementDraftHelper::getEmailDeclarant($signalementDraftRequest),
+            $signalementDraftRequest->getAdresseLogementAdresseDetailNumero(),
+            $signalementDraftRequest->getAdresseLogementAdresseDetailCodePostal(),
+            $signalementDraftRequest->getAdresseLogementAdresseDetailCommune(),
+            $isTiersDeclarant
+        );
+
+        $dataToHash = SignalementDraftHelper::getEmailDeclarant($signalementDraftRequest);
+        $dataToHash .= $signalementDraftRequest->getAdresseLogementAdresse();
+        $hash = hash('sha256', $dataToHash);
+
+        return $signalementDraftRepository->findOneBy(
+            [
+                'checksum' => $hash,
+                'status' => SignalementDraftStatus::EN_COURS,
+            ],
+            [
+                'id' => 'DESC',
+            ]
+        );
     }
 
     #[Route('/checkterritory', name: 'front_signalement_check_territory', methods: ['GET'])]
