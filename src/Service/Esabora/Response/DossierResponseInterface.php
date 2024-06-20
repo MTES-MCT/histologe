@@ -12,6 +12,8 @@ interface DossierResponseInterface
 
     public function getSasCauseRefus(): ?string;
 
+    public function getDossNum(): ?string;
+
     public function getEtat(): ?string;
 
     public function getNameSI(): ?string;

@@ -83,7 +83,7 @@ class EsaboraManager
             case EsaboraStatus::ESABORA_WAIT->value:
                 if (Affectation::STATUS_WAIT !== $currentStatus) {
                     $this->affectationManager->updateAffectation($affectation, $user, Affectation::STATUS_WAIT);
-                    $description = 'remis en attente via '.$dossierResponse->getNameSI();
+                    $description = 'remis en attente via '.$dossierResponse->getNameSI().' (Dossier '.$dossierResponse->getDossNum().')';
                 }
                 break;
             case EsaboraStatus::ESABORA_ACCEPTED->value:
@@ -112,6 +112,10 @@ class EsaboraManager
                     );
                 }
                 break;
+        }
+
+        if (!empty($dossierResponse->getDossNum())) {
+            $description .= ' (Dossier '.$dossierResponse->getDossNum().')';
         }
 
         return $description;
