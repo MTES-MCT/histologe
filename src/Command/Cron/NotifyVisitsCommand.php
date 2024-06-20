@@ -110,8 +110,8 @@ class NotifyVisitsCommand extends AbstractCronCommand
             $listAffectations = $this->affectationRepository->findAcceptedAffectationsFromVisitesPartner();
             foreach ($listAffectations as $affectation) {
                 if (0 == \count($affectation->getSignalement()->getInterventions())) {
-                    $description = 'Aucune information de visite n\'a été renseignée pour le logement.';
-                    $description .= ' Merci de programmer une visite dès que possible !';
+                    $description = 'La réalisation d\'une visite est nécessaire pour caractériser les désordres signalés.';
+                    $description .= ' Merci de renseigner la date ou les conclusions de la visite afin de poursuivre la prise en charge de ce signalement.';
                     $suivi = $this->suiviManager->createSuivi(
                         user: null,
                         signalement: $affectation->getSignalement(),
