@@ -172,7 +172,7 @@
             "maxLength": 255
           },
           "conditional": {
-            "show": "formStore.data.signalement_concerne_logement_social_service_secours === 'non'"
+            "show": "formStore.data.signalement_concerne_logement_social_service_secours === 'non' || formStore.data.signalement_concerne_logement_social_service_secours === 'nsp'"
           },
           "accessibility": {
             "name": "lastName",
@@ -780,7 +780,272 @@
           "type": "SignalementFormButton",
           "label": "Suivant",
           "slug": "composition_logement_personnes_next",
+          "action": "goto.save:bail_dpe",
+          "customCss": "fr-btn--icon-right fr-icon-arrow-right-line"
+        }
+      ]
+    }
+  },
+  {
+    "type": "SignalementFormScreen",
+    "label": "",
+    "slug": "bail_dpe",
+    "screenCategory": "Type et composition",
+    "components": {
+      "body": [
+        {
+          "type": "SignalementFormOnlyChoice",
+          "label": "Est-ce que le foyer a reçu un bail ?",
+          "slug": "bail_dpe_bail",
+          "values": [
+            {
+              "label": "Oui",
+              "value": "oui"
+            },
+            {
+              "label": "Non",
+              "value": "non"
+            },
+            {
+              "label": "Je ne sais pas",
+              "value": "nsp"
+            }
+          ]
+        },
+        {
+          "type": "SignalementFormInfo",
+          "slug": "bail_dpe_bail_info",
+          "label": "Avoir un bail écrit et signé pour son logement est fortement recommandé pour faire valoir ses droits ! Plus d'info sur <a href='https://www.service-public.fr/particuliers/vosdroits/N349' target='_blank' rel='noopener' title='Le site du Service Public - Ouvre une nouvelle fenêtre'>le site du Service Public</a>.",
+          "conditional": {
+            "show": "formStore.data.bail_dpe_bail === 'non' || formStore.data.bail_dpe_bail === 'nsp'"
+          }
+        },
+        {
+          "type": "SignalementFormUpload",
+          "slug": "bail_dpe_bail_upload",
+          "label": "Ajouter le bail (facultatif)",
+          "conditional": {
+            "show": "formStore.data.bail_dpe_bail === 'oui'"
+          },
+          "validate": {
+            "required": false
+          }
+        },
+        {
+          "type": "SignalementFormOnlyChoice",
+          "slug": "bail_dpe_etat_des_lieux",
+          "label": "Est-ce qu'un état des lieux a été réalisé à l'entrée du foyer dans le logement ?",
+          "values": [
+            {
+              "label": "Oui",
+              "value": "oui"
+            },
+            {
+              "label": "Non",
+              "value": "non"
+            },
+            {
+              "label": "Je ne sais pas",
+              "value": "nsp"
+            }
+          ]
+        },
+        {
+          "type": "SignalementFormWarning",
+          "slug": "bail_dpe_etat_des_lieux_warning",
+          "label": "D'après la loi, un état des lieux du logement doit être réalisé le jour de la remise des clés. Plus d'info sur <a href='https://www.service-public.fr/particuliers/vosdroits/F31270' target='_blank' rel='noopener' title='Le site du Service Public - Ouvre une nouvelle fenêtre'>le site du Service Public</a>.",
+          "conditional": {
+            "show": "formStore.data.bail_dpe_etat_des_lieux === 'non' || formStore.data.bail_dpe_etat_des_lieux === 'nsp'"
+          }
+        },
+        {
+          "type": "SignalementFormUpload",
+          "slug": "bail_dpe_etat_des_lieux_upload",
+          "label": "Ajouter l'état des lieux (facultatif)",
+          "conditional": {
+            "show": "formStore.data.bail_dpe_etat_des_lieux === 'oui'"
+          },
+          "validate": {
+            "required": false
+          }
+        },
+        {
+          "type": "SignalementFormOnlyChoice",
+          "slug": "bail_dpe_dpe",
+          "label": "Est-ce que le foyer a reçu DPE du logement ? (diagnostic performance énergie)",
+          "values": [
+            {
+              "label": "Oui",
+              "value": "oui"
+            },
+            {
+              "label": "Non",
+              "value": "non"
+            },
+            {
+              "label": "Je ne sais pas",
+              "value": "nsp"
+            }
+          ]
+        },
+        {
+          "type": "SignalementFormWarning",
+          "slug": "bail_dpe_dpe_warning",
+          "label": "Le DPE fait partie des documents que le bailleur (propriétaire) doit obligatoirement fournir. Plus d'info sur <a href='https://www.service-public.fr/particuliers/vosdroits/F16096' target='_blank' rel='noopener' title='Le site du Service Public - Ouvre une nouvelle fenêtre'>le site du Service Public</a>.",
+          "conditional": {
+            "show": "formStore.data.bail_dpe_dpe === 'non' || formStore.data.bail_dpe_dpe === 'nsp'"
+          }
+        },
+        {
+          "type": "SignalementFormUpload",
+          "slug": "bail_dpe_dpe_upload",
+          "label": "Ajouter le DPE (facultatif)",
+          "conditional": {
+            "show": "formStore.data.bail_dpe_dpe === 'oui'"
+          },
+          "validate": {
+            "required": false
+          }
+        }
+      ],
+      "footer": [
+        {
+          "type": "SignalementFormButton",
+          "label": "Précédent",
+          "slug": "bail_dpe_previous",
+          "action": "goto:composition_logement_personnes",
+          "customCss": "fr-btn--secondary fr-btn--icon-left fr-icon-arrow-left-line"
+        },
+        {
+          "type": "SignalementFormButton",
+          "label": "Suivant",
+          "slug": "bail_dpe_next",
           "action": "goto.save:ecran_intermediaire_les_desordres",
+          "customCss": "fr-btn--icon-right fr-icon-arrow-right-line"
+        }
+      ]
+    }
+  },
+  {
+    "type": "SignalementFormScreen",
+    "label": "La procédure",
+    "description": "<p>Vous avez presque terminé ! <br>Répondez aux dernières questions puis envoyez votre signalement.</p><p><b>Toutes les questions sont obligatoires, sauf mention contraire.</b></p>",
+    "slug": "ecran_intermediaire_procedure",
+    "screenCategory": "Procédure",
+    "icon": {
+      "src": "/img/form/screens/procedure.svg",
+      "alt": ""
+    },
+    "components": {
+      "body": [
+      ],
+      "footer": [
+        {
+          "type": "SignalementFormButton",
+          "label": "Précédent",
+          "slug": "ecran_intermediaire_procedure_previous",
+          "action": "goto:desordres_renseignes",
+          "customCss": "fr-btn--secondary fr-btn--icon-left fr-icon-arrow-left-line"
+        },
+        {
+          "type": "SignalementFormButton",
+          "label": "J'y suis presque !",
+          "slug": "ecran_intermediaire_procedure_next",
+          "action": "goto:info_procedure"
+        }
+      ]
+    }
+  },
+  {
+    "type": "SignalementFormScreen",
+    "label": "",
+    "slug": "info_procedure",
+    "screenCategory": "Procédure",
+    "components": {
+      "body": [
+        {
+          "type": "SignalementFormOnlyChoice",
+          "label": "Le bailleur (propriétaire) du logement a-t-il été informé de la situation ?",
+          "slug": "info_procedure_bailleur_prevenu",
+          "values": [
+            {
+              "label": "Oui",
+              "value": "oui"
+            },
+            {
+              "label": "Non",
+              "value": "non"
+            },
+            {
+              "label": "Je ne sais pas",
+              "value": "nsp"
+            }
+          ]
+        },
+        {
+          "type": "SignalementFormOnlyChoice",
+          "label": "Le foyer a-t-il pris contact avec son assurance logement ?",
+          "slug": "info_procedure_assurance_contactee",
+          "values": [
+            {
+              "label": "Oui",
+              "value": "oui"
+            },
+            {
+              "label": "Non",
+              "value": "non"
+            },
+            {
+              "label": "Le foyer n'a pas d'assurance logement",
+              "value": "pas_assurance_logement"
+            },
+            {
+              "label": "Je ne sais pas",
+              "value": "nsp"
+            }
+          ]
+        },
+        {
+          "type": "SignalementFormTextarea",
+          "label": "Quelle a été la réponse de l'assurance ?",
+          "slug": "info_procedure_reponse_assurance",
+          "conditional": {
+            "show": "formStore.data.info_procedure_assurance_contactee === 'oui'"
+          }
+        },
+        {
+          "type": "SignalementFormOnlyChoice",
+          "label": "Si des travaux sont faits, le foyer souhaite-t-il rester dans le logement ?",
+          "slug": "info_procedure_depart_apres_travaux",
+          "values": [
+            {
+              "label": "Oui, le foyer souhaite rester dans le logement",
+              "value": "oui"
+            },
+            {
+              "label": "Non, le foyer veut déménager",
+              "value": "non"
+            },
+            {
+              "label": "Je ne sais pas",
+              "value": "nsp"
+            }
+          ]
+        }
+      ],
+      "footer": [
+        {
+          "type": "SignalementFormButton",
+          "label": "Précédent",
+          "slug": "info_procedure_utilisation_service_previous",
+          "action": "goto:ecran_intermediaire_procedure",
+          "customCss": "fr-btn--secondary fr-btn--icon-left fr-icon-arrow-left-line"
+        },
+        {
+          "type": "SignalementFormButton",
+          "label": "Suivant",
+          "slug": "info_procedure_utilisation_service_next",
+          "action": "goto.save:utilisation_service",
           "customCss": "fr-btn--icon-right fr-icon-arrow-right-line"
         }
       ]
@@ -824,7 +1089,7 @@
           "type": "SignalementFormButton",
           "label": "Précédent",
           "slug": "utilisation_service_previous",
-          "action": "goto:desordres_renseignes",
+          "action": "goto:info_procedure",
           "customCss": "fr-btn--secondary fr-btn--icon-left fr-icon-arrow-left-line"
         },
         {

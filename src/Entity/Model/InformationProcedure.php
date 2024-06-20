@@ -30,7 +30,15 @@ class InformationProcedure
 
     public function getInfoProcedureAssuranceContactee(bool $raw = true): ?string
     {
-        return (!$raw && 'pas_assurance_logement' === $this->infoProcedureAssuranceContactee) ? 'Pas d\'assurance logement' : $this->infoProcedureAssuranceContactee;
+        if (!$raw) {
+            if ('pas_assurance_logement' === $this->infoProcedureAssuranceContactee) {
+                return 'Pas d\'assurance logement';
+            } elseif ('nsp' === $this->infoProcedureAssuranceContactee) {
+                return 'Ne sait pas';
+            }
+        }
+
+        return $this->infoProcedureAssuranceContactee;
     }
 
     public function setInfoProcedureAssuranceContactee(?string $infoProcedureAssuranceContactee): self
