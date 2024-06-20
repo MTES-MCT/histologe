@@ -60,6 +60,7 @@ trait FixturesHelper
             ->setVilleOccupant('Calais')
             ->setCpOccupant('62100')
             ->setNumAppartOccupant(2)
+            ->setCiviliteOccupant('mme')
             ->setNomOccupant($faker->lastName())
             ->setPrenomOccupant($faker->firstName())
             ->setTelOccupant($faker->phoneNumber())

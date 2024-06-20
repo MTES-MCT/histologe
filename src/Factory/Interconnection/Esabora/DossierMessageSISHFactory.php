@@ -4,11 +4,13 @@ namespace App\Factory\Interconnection\Esabora;
 
 use App\Entity\Affectation;
 use App\Entity\Enum\PartnerType;
+use App\Entity\Enum\ProprioType;
 use App\Entity\Signalement;
 use App\Entity\Suivi;
 use App\Messenger\Message\Esabora\DossierMessageSISH;
 use App\Repository\SuiviRepository;
 use App\Service\Esabora\AbstractEsaboraService;
+use App\Service\Esabora\Enum\PersonneQualite;
 use App\Service\Esabora\Enum\PersonneType;
 use App\Service\Esabora\Model\DossierMessageSISHPersonne;
 use App\Service\HtmlCleaner;
@@ -157,9 +159,11 @@ class DossierMessageSISHFactory extends AbstractDossierMessageFactory
             $tel = $signalement->getTelOccupantDecoded(true)
                 ? substr($signalement->getTelOccupantDecoded(true), 0, 20)
                 : null;
+            $qualite = 'mme' === $signalement->getCiviliteOccupant() ? PersonneQualite::MADAME->value : PersonneQualite::MONSIEUR->value;
 
             return (new DossierMessageSISHPersonne())
                 ->setType(PersonneType::OCCUPANT->value)
+                ->setQualite($qualite)
                 ->setNom($signalement->getNomOccupant())
                 ->setPrenom($prenom)
                 ->setEmail($signalement->getMailOccupant())
@@ -170,9 +174,11 @@ class DossierMessageSISHFactory extends AbstractDossierMessageFactory
             $tel = $signalement->getTelProprioDecoded(true)
                 ? substr($signalement->getTelProprioDecoded(true), 0, 20)
                 : null;
+            $qualite = ProprioType::PARTICULIER === $signalement->getTypeProprio() ? PersonneQualite::MADAME_MONSIEUR->value : PersonneQualite::SOCIETE->value;
 
             return (new DossierMessageSISHPersonne())
                 ->setType(PersonneType::PROPRIETAIRE->value)
+                ->setQualite($qualite)
                 ->setNom(substr($signalement->getNomProprio(), 0, 60))
                 ->setAdresse($signalement->getAdresseProprio())
                 ->setEmail($signalement->getMailProprio())
@@ -193,6 +199,7 @@ class DossierMessageSISHFactory extends AbstractDossierMessageFactory
 
             return (new DossierMessageSISHPersonne())
                 ->setType(PersonneType::DECLARANT->value)
+                ->setQualite(PersonneQualite::MADAME_MONSIEUR->value)
                 ->setNom($signalement->getNomDeclarant())
                 ->setPrenom($prenom)
                 ->setEmail($signalement->getMailDeclarant())
