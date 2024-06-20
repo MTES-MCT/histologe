@@ -37,7 +37,7 @@ class InformationProcedure
                 return 'Ne sait pas';
             }
         }
-        
+
         return $this->infoProcedureAssuranceContactee;
     }
 
