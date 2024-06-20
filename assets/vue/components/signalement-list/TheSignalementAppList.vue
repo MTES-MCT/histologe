@@ -279,8 +279,9 @@ export default defineComponent({
             value.forEach((valueItem: any) => {
               const matches = PATTERN_BADGE_EPCI.exec(valueItem)
               if (matches) {
-                this.addQueryParameter(`${key}[]`, matches[0].trim())
-                url.searchParams.append(`${key}[]`, matches[0].trim())
+                const valueQueryParameter = matches[0].trim()
+                this.addQueryParameter(`${key}[]`, valueQueryParameter)
+                url.searchParams.append(`${key}[]`, valueQueryParameter)
               }
             })
           } else if (typeof value === 'string') {

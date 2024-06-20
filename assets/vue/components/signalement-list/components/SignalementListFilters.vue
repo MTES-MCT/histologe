@@ -419,6 +419,7 @@ export default defineComponent({
 
       this.reset = !this.reset
       this.$emit('clickReset')
+      localStorage.removeItem('back_link_signalement_view')
 
       if (typeof this.onChange === 'function') {
         this.onChange(false)

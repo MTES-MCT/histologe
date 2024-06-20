@@ -59,8 +59,13 @@ const displayPhotoAlbum = (photoId) => {
 
 document?.querySelector('.back-link')?.addEventListener('click', (event) => {
     event.preventDefault()
+    if (window.history.length === 1) {
+        window.location.href =  event.target.href
+        return
+    }
+
     const backLinkQueryParams = localStorage.getItem('back_link_signalement_view')
     window.location.href = backLinkQueryParams?.length > 0
-        ? event.target.dataset.href + backLinkQueryParams
-        : event.target.dataset.href
+        ? `${event.target.href}?${backLinkQueryParams}`
+        : event.target.href
 })
