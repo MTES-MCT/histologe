@@ -58,14 +58,11 @@ const displayPhotoAlbum = (photoId) => {
 }
 
 document?.querySelector('.back-link')?.addEventListener('click', (event) => {
-    event.preventDefault()
-    if (window.history.length === 1) {
-        window.location.href =  event.target.href
-        return
+    if (window.history.length > 1) {
+        event.preventDefault()
+        const backLinkQueryParams = localStorage.getItem('back_link_signalement_view')
+        window.location.href = backLinkQueryParams?.length > 0
+            ? `${event.target.href}?${backLinkQueryParams}`
+            : event.target.href
     }
-
-    const backLinkQueryParams = localStorage.getItem('back_link_signalement_view')
-    window.location.href = backLinkQueryParams?.length > 0
-        ? `${event.target.href}?${backLinkQueryParams}`
-        : event.target.href
 })
