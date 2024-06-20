@@ -159,7 +159,11 @@ class DossierMessageSISHFactory extends AbstractDossierMessageFactory
             $tel = $signalement->getTelOccupantDecoded(true)
                 ? substr($signalement->getTelOccupantDecoded(true), 0, 20)
                 : null;
-            $qualite = 'mme' === $signalement->getCiviliteOccupant() ? PersonneQualite::MADAME->value : PersonneQualite::MONSIEUR->value;
+
+            $qualite = PersonneQualite::MADAME_MONSIEUR->value;
+            if (!empty($signalement->getCiviliteOccupant())) {
+                $qualite = 'mme' === $signalement->getCiviliteOccupant() ? PersonneQualite::MADAME->value : PersonneQualite::MONSIEUR->value;
+            }
 
             return (new DossierMessageSISHPersonne())
                 ->setType(PersonneType::OCCUPANT->value)
