@@ -53,6 +53,6 @@ class DossierPushSISHResponse implements DossierResponseInterface
 
     public function getNameSI(): ?string
     {
-        return 'SI-SH';
+        return 'SI-Santé Habitat (SI-SH)';
     }
 }

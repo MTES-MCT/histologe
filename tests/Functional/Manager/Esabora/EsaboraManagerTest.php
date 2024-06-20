@@ -144,7 +144,7 @@ class EsaboraManagerTest extends KernelTestCase
         yield EsaboraStatus::ESABORA_REJECTED->value => [
             '2022-2',
             '../../sish/ws_etat_dossier_sas/etat_rejete.json',
-            'refusé via SI-SH pour motif suivant:',
+            'refusé via SI-Santé Habitat (SI-SH) pour motif suivant:',
             Affectation::STATUS_REFUSED,
             Suivi::TYPE_AUTO,
             false, // suivi mail not sent cause signalement closed
