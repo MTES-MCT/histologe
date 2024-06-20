@@ -1,7 +1,7 @@
 add_header X-Frame-Options "deny";
 add_header X-Content-Type-Options nosniff;
 add_header X-XSS-Protection "1; mode=block";
-add_header Permissions-Policy "geolocation=(), camera=(), microphone=(), payment=(), accelerometer=(), ambient-light-sensor=(), gyroscope=(), magnetometer=(), usb=(), vibrate=()"
+add_header Permissions-Policy "geolocation=(), camera=(), microphone=(), payment=(), accelerometer=(), ambient-light-sensor=(), gyroscope=(), magnetometer=(), usb=(), vibrate=()";
 add_header X-Permitted-Cross-Domain-Policies "none";
 add_header Referrer-Policy "no-referrer";
 add_header Cross-Origin-Embedder-Policy "require-corp";
