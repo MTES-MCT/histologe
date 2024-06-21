@@ -178,15 +178,24 @@ class DossierMessageSISHFactory extends AbstractDossierMessageFactory
             $tel = $signalement->getTelProprioDecoded(true)
                 ? substr($signalement->getTelProprioDecoded(true), 0, 20)
                 : null;
-            $qualite = ProprioType::PARTICULIER === $signalement->getTypeProprio() ? PersonneQualite::MADAME_MONSIEUR->value : PersonneQualite::SOCIETE->value;
+            
+            $qualite = null;
+            if (ProprioType::ORGANISME_SOCIETE === $signalement->getTypeProprio()) {
+                $qualite = PersonneQualite::SOCIETE->value;
+            }
 
-            return (new DossierMessageSISHPersonne())
+            $dossierMessageSISHPersonne = new DossierMessageSISHPersonne();
+            $dossierMessageSISHPersonne
                 ->setType(PersonneType::PROPRIETAIRE->value)
-                ->setQualite($qualite)
                 ->setNom(substr($signalement->getNomProprio(), 0, 60))
                 ->setAdresse($signalement->getAdresseProprio())
                 ->setEmail($signalement->getMailProprio())
                 ->setTelephone($tel);
+            if (!empty($qualite)) {
+                $dossierMessageSISHPersonne->setQualite($qualite);
+            }
+            
+            return $dossierMessageSISHPersonne;
         }
 
         if (PersonneType::DECLARANT === $personneType && !empty($signalement->getLienDeclarantOccupant())) {
@@ -203,7 +212,6 @@ class DossierMessageSISHFactory extends AbstractDossierMessageFactory
 
             return (new DossierMessageSISHPersonne())
                 ->setType(PersonneType::DECLARANT->value)
-                ->setQualite(PersonneQualite::MADAME_MONSIEUR->value)
                 ->setNom($signalement->getNomDeclarant())
                 ->setPrenom($prenom)
                 ->setEmail($signalement->getMailDeclarant())
