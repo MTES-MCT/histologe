@@ -69,7 +69,7 @@ class EsaboraManagerTest extends KernelTestCase
 
         $basePath = __DIR__.'/../../../../tools/wiremock/src/Resources/Esabora/schs/ws_etat_dossier_sas/';
         $responseEsabora = file_get_contents($basePath.$filename);
-        $dossierResponse = str_contains($filename, 'etat_rejete')
+        $dossierResponse = str_contains($filename, 'sish')
                 ? new DossierStateSISHResponse(json_decode($responseEsabora, true), 200)
                 : new DossierStateSCHSResponse(json_decode($responseEsabora, true), 200);
 
@@ -141,11 +141,20 @@ class EsaboraManagerTest extends KernelTestCase
             false, // suivi mail not sent cause signalement closed
         ];
 
-        yield EsaboraStatus::ESABORA_REJECTED->value => [
+        yield EsaboraStatus::ESABORA_REJECTED->value.' SISH' => [
             '2022-2',
             '../../sish/ws_etat_dossier_sas/etat_rejete.json',
-            'refusé via SI-SH pour motif suivant:',
+            'refusé via SI-Santé Habitat (SI-SH) pour motif suivant:',
             Affectation::STATUS_REFUSED,
+            Suivi::TYPE_AUTO,
+            false, // suivi mail not sent cause signalement closed
+        ];
+
+        yield EsaboraStatus::ESABORA_ACCEPTED->value.' SISH' => [
+            '2022-2',
+            '../../sish/ws_etat_dossier_sas/etat_importe.json',
+            'accepté via SI-Santé Habitat (SI-SH) (Dossier 2023/SISH/0010)',
+            Affectation::STATUS_ACCEPTED,
             Suivi::TYPE_AUTO,
             false, // suivi mail not sent cause signalement closed
         ];

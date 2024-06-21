@@ -114,6 +114,10 @@ class EsaboraManager
                 break;
         }
 
+        if (!empty($dossierResponse->getDossNum())) {
+            $description .= ' (Dossier '.$dossierResponse->getDossNum().')';
+        }
+
         return $description;
     }
 

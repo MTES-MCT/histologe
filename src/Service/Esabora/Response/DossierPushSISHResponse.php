@@ -46,6 +46,11 @@ class DossierPushSISHResponse implements DossierResponseInterface
         return null;
     }
 
+    public function getDossNum(): ?string
+    {
+        return null;
+    }
+
     public function getEtat(): ?string
     {
         return null;
@@ -53,6 +58,6 @@ class DossierPushSISHResponse implements DossierResponseInterface
 
     public function getNameSI(): ?string
     {
-        return 'SI-SH';
+        return 'SI-Santé Habitat (SI-SH)';
     }
 }
