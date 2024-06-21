@@ -14,7 +14,6 @@ use App\Manager\SignalementDraftManager;
 use App\Manager\SuiviManager;
 use App\Manager\UserManager;
 use App\Repository\CommuneRepository;
-use App\Repository\SignalementDraftRepository;
 use App\Repository\SignalementRepository;
 use App\Serializer\SignalementDraftRequestSerializer;
 use App\Service\ImageManipulationHandler;
@@ -98,7 +97,6 @@ class SignalementController extends AbstractController
         SignalementDraftRequestSerializer $serializer,
         SignalementDraftManager $signalementDraftManager,
         ValidatorInterface $validator,
-        SignalementDraftRepository $signalementDraftRepository,
         SignalementRepository $signalementRepository,
     ): JsonResponse {
         /** @var SignalementDraftRequest $signalementDraftRequest */
@@ -122,10 +120,8 @@ class SignalementController extends AbstractController
                 $isTiersDeclarant
             );
 
-            $existingSignalementDraft = $this->findSignalementDraft(
+            $existingSignalementDraft = $signalementDraftManager->findSignalementDraftByAddressAndMail(
                 $signalementDraftRequest,
-                $signalementDraftRepository,
-                $signalementRepository
             );
 
             if (!empty($existingSignalements)) {
@@ -220,8 +216,7 @@ class SignalementController extends AbstractController
         NotificationMailerRegistry $notificationMailerRegistry,
         SignalementDraftRequestSerializer $serializer,
         Request $request,
-        SignalementDraftRepository $signalementDraftRepository,
-        SignalementRepository $signalementRepository
+        SignalementDraftManager $signalementDraftManager
     ): JsonResponse {
         /** @var SignalementDraftRequest $signalementDraftRequest */
         $signalementDraftRequest = $serializer->deserialize(
@@ -230,10 +225,8 @@ class SignalementController extends AbstractController
             'json'
         );
 
-        $signalementDraft = $this->findSignalementDraft(
+        $signalementDraft = $signalementDraftManager->findSignalementDraftByAddressAndMail(
             $signalementDraftRequest,
-            $signalementDraftRepository,
-            $signalementRepository
         );
 
         if (
@@ -307,8 +300,6 @@ class SignalementController extends AbstractController
         Request $request,
         SignalementDraftRequestSerializer $serializer,
         SignalementDraftManager $signalementDraftManager,
-        SignalementDraftRepository $signalementDraftRepository,
-        SignalementRepository $signalementRepository
     ): JsonResponse {
         /** @var SignalementDraftRequest $signalementDraftRequest */
         $signalementDraftRequest = $serializer->deserialize(
@@ -317,10 +308,8 @@ class SignalementController extends AbstractController
             'json'
         );
 
-        $signalementDraft = $this->findSignalementDraft(
+        $signalementDraft = $signalementDraftManager->findSignalementDraftByAddressAndMail(
             $signalementDraftRequest,
-            $signalementDraftRepository,
-            $signalementRepository
         );
 
         if (
@@ -333,35 +322,6 @@ class SignalementController extends AbstractController
         }
 
         return $this->json(['response' => 'error'], Response::HTTP_BAD_REQUEST);
-    }
-
-    private function findSignalementDraft(
-        SignalementDraftRequest $signalementDraftRequest,
-        SignalementDraftRepository $signalementDraftRepository,
-        SignalementRepository $signalementRepository
-    ): ?SignalementDraft {
-        $isTiersDeclarant = SignalementDraftHelper::isTiersDeclarant($signalementDraftRequest);
-        $existingSignalements = $signalementRepository->findAllForEmailAndAddress(
-            SignalementDraftHelper::getEmailDeclarant($signalementDraftRequest),
-            $signalementDraftRequest->getAdresseLogementAdresseDetailNumero(),
-            $signalementDraftRequest->getAdresseLogementAdresseDetailCodePostal(),
-            $signalementDraftRequest->getAdresseLogementAdresseDetailCommune(),
-            $isTiersDeclarant
-        );
-
-        $dataToHash = SignalementDraftHelper::getEmailDeclarant($signalementDraftRequest);
-        $dataToHash .= $signalementDraftRequest->getAdresseLogementAdresse();
-        $hash = hash('sha256', $dataToHash);
-
-        return $signalementDraftRepository->findOneBy(
-            [
-                'checksum' => $hash,
-                'status' => SignalementDraftStatus::EN_COURS,
-            ],
-            [
-                'id' => 'DESC',
-            ]
-        );
     }
 
     #[Route('/checkterritory', name: 'front_signalement_check_territory', methods: ['GET'])]

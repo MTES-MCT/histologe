@@ -10,6 +10,7 @@ use App\Entity\SignalementDraft;
 use App\Event\SignalementCreatedEvent;
 use App\Event\SignalementDraftCompletedEvent;
 use App\Factory\SignalementDraftFactory;
+use App\Repository\SignalementDraftRepository;
 use App\Serializer\SignalementDraftRequestSerializer;
 use App\Service\Signalement\SignalementDraftHelper;
 use Doctrine\Persistence\ManagerRegistry;
@@ -26,6 +27,7 @@ class SignalementDraftManager extends AbstractManager
         protected ManagerRegistry $managerRegistry,
         protected UrlGeneratorInterface $urlGenerator,
         protected SignalementDraftRequestSerializer $signalementDraftRequestSerializer,
+        protected SignalementDraftRepository $signalementDraftRepository,
         protected string $entityName = SignalementDraft::class,
     ) {
         parent::__construct($managerRegistry, $entityName);
@@ -99,5 +101,23 @@ class SignalementDraftManager extends AbstractManager
         }
 
         return null;
+    }
+
+    public function findSignalementDraftByAddressAndMail(
+        SignalementDraftRequest $signalementDraftRequest,
+    ): ?SignalementDraft {
+        $dataToHash = SignalementDraftHelper::getEmailDeclarant($signalementDraftRequest);
+        $dataToHash .= $signalementDraftRequest->getAdresseLogementAdresse();
+        $hash = hash('sha256', $dataToHash);
+
+        return $this->signalementDraftRepository->findOneBy(
+            [
+                'checksum' => $hash,
+                'status' => SignalementDraftStatus::EN_COURS,
+            ],
+            [
+                'id' => 'DESC',
+            ]
+        );
     }
 }
