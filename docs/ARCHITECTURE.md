@@ -54,9 +54,29 @@ Une seule base de données gère l'ensemble de la plateforme.
 La base de données est sauvegardée automatiquement, chaque jour, par l'hébergeur.
 Elle est sauvegardée de manière déconnectée sur un disque dur externe, chaque semaine.
 
-TODO : Schéma lisible / Plusieurs schémas
+#### Schéma des relations de la base utilisateurs
 
-![Schéma de la BDD Histologe](/docs/assets/schema-bdd.svg "BDD Histologe")
+![BDD Utilisateurs](/docs/assets/schema-bdd-user.png "BDD Utilisateurs")
+
+#### Schéma des relations des affectations de signalements
+
+![BDD Affectations](/docs/assets/schema-bdd-affectation.png "BDD Affectations")
+
+#### Schéma des relations des désordres de signalements (v1)
+
+![BDD Désordres v1](/docs/assets/schema-bdd-signalement-1-desordres.png "BDD Désordres v1")
+
+#### Schéma des relations des désordres de signalements (v2)
+
+![BDD Désordres v2](/docs/assets/schema-bdd-signalement-2-desordres.png "BDD Désordres v2")
+
+#### Schéma des relations autres des signalements
+
+![BDD Autres relations](/docs/assets/schema-bdd-signalement-autres.png "BDD Autres relations")
+
+#### Schéma des relations des notifications
+
+![BDD Notifications](/docs/assets/schema-bdd-signalement-notification.png "BDD Notifications")
 
 ### Middleware
 
