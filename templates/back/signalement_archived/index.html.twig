@@ -1,0 +1,122 @@
+{% extends 'back/base_bo.html.twig' %}
+
+{% block title %}Signalements archivés{% endblock %}
+
+{% block content %}
+    <section class="fr-p-5v">
+        <header>
+            <div class="fr-grid-row">
+                <div class="fr-col-6 fr-text--left">
+                    <h1 class="fr-h1 fr-mb-0">Signalements archivés</h1>
+                </div>
+            </div>
+        </header>
+    </section>
+    <section class="fr-container--fluid">
+        <form action="#" name="bo-filters-form" id="bo_filters_form" method="POST"
+              class="fr-background--grey fr-p-2v fr-grid-row fr-grid-row--bottom">
+              
+            <div class="fr-col-4 fr-p-2v">
+                <div class="fr-search-bar fr-mt-2v" id="header-search">
+                    <input class="fr-input" placeholder="Référence" type="search" id="header-search-input"
+                        name="bo-filters-referenceTerms" value="{{ referenceTerms ?? '' }}">
+                    <button class="fr-btn" title="Rechercher">
+                        {{referenceTerms is null ? 'Référence' : referenceTerms}}
+                    </button>&nbsp;
+                </div>
+            </div>
+            <div class="fr-col-3 fr-p-2v">
+                <select id="bo-filters-territories" class="fr-select fr-select-submit" name="territory">
+                    <option value="" {{ currentTerritory is null ? 'selected' : '' }}>Tous les territoires</option>
+                    {% for territory in territories %}
+                        <option value="{{ territory.id }}" {{ currentTerritory ? (territory.id == currentTerritory.id ? 'selected' : '') : ''  }}>{{ territory.name|upper }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="fr-col-2 fr-p-2v">
+                <a href="{{ path('back_account_index') }}" class="fr-link fr-link--icon-left fr-icon-close-circle-line">Réinitialiser</a>
+            </div>
+        </form>
+    </section>
+    <section class="fr-grid-row fr-grid-row--middle fr-p-5v">
+        <h2 class="fr-h2 fr-mb-0" id="desc-table">{{total}} signalements archivés</h2>
+    </section>
+    <section class="fr-col-12 fr-table fr-table--bordered fr-pt-0">
+        <table class="fr-display-inline-table sortable" aria-label="Liste des signalements archivés" aria-describedby="desc-table">
+            <thead>
+            <tr>
+                <th>#Ref.</th>
+                <th>Territoire</th>
+                <th>Date</th>
+                <th>Occupant</th>
+                <th>Adresse</th>
+                <th>Affectation</th>
+                <th>Dernier suivi</th>
+                <th class="fr-text--right ">Actions</th>
+            </tr>
+            </thead>
+            <tbody>
+                {% for index,signalement in signalements %}
+                    <tr class="{% if signalement.statut is same as(1) or signalement.statut is same as(3) %}fr-background-contrast--orange-terre-battue{% endif %} signalement-row"
+                        data-score="{{ signalement.score }}">
+                        <td>
+                            <a href="{{ path('back_signalement_view',{uuid:signalement.uuid}) }}"
+                            class="fr-ws-nowrap">{{ signalement.reference }}</a>
+                        </td>
+                        <td>{{ signalement.territory.name}} ({{ signalement.territory.zip}}) </td>
+                        <td>{{ signalement.createdAt|date('d/m/Y') }}</td>
+                        <td>
+                            {{ signalement.nomOccupant|upper }}<br>{{ signalement.prenomOccupant|capitalize }}
+                        </td>
+                        <td>{{ signalement.villeOccupant|upper }} <br><small>[{{ signalement.adresseOccupant }}]</small></td>
+                        <td>
+                            {% for affectation in signalement.affectations %}
+                                {% set classe = '' %}
+                                {% if affectation.statut is same as (0) %}
+                                    {% set classe = 'fr-badge fr-badge--info' %}
+                                {% elseif affectation.statut is same as (1) %}
+                                    {% set classe = 'fr-badge fr-badge--success' %}
+                                {% elseif affectation.statut is same as (2) %}
+                                    {% set classe = 'fr-badge fr-text-label--red-marianne fr-background-contrast--red-marianne fr-fi-close-line' %}
+                                {% elseif affectation.statut is same as (3) %}
+                                    {% set classe = 'fr-badge fr-fi-close-circle-fill' %}
+                                {% endif %}
+                                <small class="{{ classe }} fr-ws-nowrap fr-badge--sm fr-my-1v fr-text--bold fr-display-block fr-limit-chars"><span
+                                    > {{ affectation.partner.nom }}</span></small>
+                            {% else %}
+                                Aucune
+                            {% endfor %}
+                        </td>
+                        <td>
+                            {% if signalement.lastSuiviBy is not null %}
+                                <strong>{{ signalement.lastSuiviAt|date('d.m.Y') }}</strong> <br>{% set classe = '' %}
+                                {% if 'OCCUPANT' == signalement.lastSuiviBy or 'DECLARANT' == signalement.lastSuiviBy %}
+                                    {% set classe = 'fr-badge fr-badge--warning' %}
+                                {% endif %}
+                                <small class="{{ classe }}">                
+                                    {% if signalement.lastSuiviBy is same as 'Aucun' %}   
+                                        Occupant ou déclarant         
+                                    {% else %}
+                                        {{ signalement.lastSuiviBy }}
+                                    {% endif %}
+                                </small> <br>
+                            {% else %}
+                                Aucun
+                            {% endif %}
+                        </td>
+                        <td class="fr-text--right fr-ws-nowrap">
+                            <button data-reactive="{{ path('back_archived_signalements_reactiver',{uuid:signalement.uuid}) }}"
+                                data-token="{{ csrf_token('signalement_reactive_'~signalement.id) }}"
+                                class="fr-btn fr-icon-flashlight-fill fr-btn--sm signalement-row-reactive">
+                            </button>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        <div class="fr-grid-row fr-mt-2v fr-grid-row--center">
+            {% import '_partials/macros.html.twig' as macros %}
+            {{ macros.customPagination(pages, page, 'back_account_index', {territory: (currentTerritory ? currentTerritory.id :  null), referenceTerms: referenceTerms}) }}
+        </div>
+    </section>
+{% endblock %}

@@ -1254,4 +1254,34 @@ class SignalementRepository extends ServiceEntityRepository
 
         return $qb->getQuery()->getResult();
     }
+
+    public function findAllArchived(
+        Territory|null $territory,
+        ?string $referenceTerms,
+        $page
+    ): Paginator {
+        $maxResult = Partner::MAX_LIST_PAGINATION;
+        $firstResult = ($page - 1) * $maxResult;
+        $queryBuilder = $this->createQueryBuilder('s');
+
+        $queryBuilder->where('s.statut = :archived')
+        ->setParameter('archived', Signalement::STATUS_ARCHIVED);
+
+        if (!empty($territory)) {
+            $queryBuilder
+                ->andWhere('s.territory = :territory')
+                ->setParameter('territory', $territory);
+        }
+
+        if (!empty($referenceTerms)) {
+            $queryBuilder
+                ->andWhere('s.reference LIKE :referenceTerms');
+            $queryBuilder
+                ->setParameter('referenceTerms', $referenceTerms);
+        }
+
+        $queryBuilder->setFirstResult($firstResult)->setMaxResults($maxResult);
+
+        return new Paginator($queryBuilder->getQuery(), false);
+    }
 }

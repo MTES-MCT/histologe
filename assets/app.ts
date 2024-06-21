@@ -50,3 +50,4 @@ import './controllers/back_signalement_delete_file/back_signalement_delete_file'
 import './controllers/front_demande_lien_signalement/front_demande_lien_signalement';
 import './controllers/front_suivi_signalement/front_suivi_signalement';
 import './controllers/search_filter_form'
+import './controllers/back_archived_signalements/back_archived_signalements_reactiver'
