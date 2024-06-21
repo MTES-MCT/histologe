@@ -76,7 +76,7 @@ Elle est sauvegardée de manière déconnectée sur un disque dur externe, chaqu
 
 #### Schéma des relations des notifications
 
-![BDD Notifications](/docs/assets/schema-bdd-signalement-notification.png "BDD Notifications")
+![BDD Notifications](/docs/assets/schema-bdd-notification.png "BDD Notifications")
 
 ### Middleware
 
