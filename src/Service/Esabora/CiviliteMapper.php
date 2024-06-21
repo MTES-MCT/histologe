@@ -14,7 +14,6 @@ class CiviliteMapper
             return 'mme' === $signalement->getCiviliteOccupant() ? PersonneQualite::MADAME : PersonneQualite::MONSIEUR;
         }
 
-
         return PersonneQualite::MADAME_MONSIEUR;
     }
 

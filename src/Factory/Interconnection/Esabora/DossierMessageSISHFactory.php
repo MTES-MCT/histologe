@@ -4,14 +4,12 @@ namespace App\Factory\Interconnection\Esabora;
 
 use App\Entity\Affectation;
 use App\Entity\Enum\PartnerType;
-use App\Entity\Enum\ProprioType;
 use App\Entity\Signalement;
 use App\Entity\Suivi;
 use App\Messenger\Message\Esabora\DossierMessageSISH;
 use App\Repository\SuiviRepository;
 use App\Service\Esabora\AbstractEsaboraService;
 use App\Service\Esabora\CiviliteMapper;
-use App\Service\Esabora\Enum\PersonneQualite;
 use App\Service\Esabora\Enum\PersonneType;
 use App\Service\Esabora\Model\DossierMessageSISHPersonne;
 use App\Service\HtmlCleaner;
@@ -187,7 +185,7 @@ class DossierMessageSISHFactory extends AbstractDossierMessageFactory
             if (!empty($personneQualite)) {
                 $dossierMessageSISHPersonne->setQualite($personneQualite->value);
             }
-            
+
             return $dossierMessageSISHPersonne;
         }
 
