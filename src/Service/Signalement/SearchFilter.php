@@ -580,11 +580,7 @@ class SearchFilter
     private function addFilterProcedure(QueryBuilder $qb, string $procedure): QueryBuilder
     {
         $qualification = Qualification::tryFrom($procedure);
-        $subqueryResults = $this->signalementQualificationRepository->findSignalementsByQualification($qualification);
-
-        $qb
-            ->andWhere('s.id IN (:subqueryResults)')
-            ->setParameter('subqueryResults', $subqueryResults);
+        $qb->andWhere('sq.qualification = :qualification')->setParameter('qualification', $qualification);
 
         return $qb;
     }
