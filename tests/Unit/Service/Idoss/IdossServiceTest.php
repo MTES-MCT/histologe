@@ -7,6 +7,7 @@ use App\Entity\Partner;
 use App\Manager\JobEventManager;
 use App\Messenger\Message\Idoss\DossierMessage;
 use App\Service\Idoss\IdossService;
+use App\Service\ImageManipulationHandler;
 use Doctrine\ORM\EntityManagerInterface;
 use League\Flysystem\FilesystemOperator;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
@@ -31,8 +32,9 @@ class IdossServiceTest extends KernelTestCase
         $jobEventManager = $this->createMock(JobEventManager::class);
         $serializerMock = $this->createMock(SerializerInterface::class);
         $fileStorageMock = $this->createMock(FilesystemOperator::class);
+        $imageManipulationHandlerMock = $this->createMock(ImageManipulationHandler::class);
 
-        return new IdossService($mockHttpClient, $containerBagInterface, $this->entityManager, $jobEventManager, $serializerMock, $fileStorageMock);
+        return new IdossService($mockHttpClient, $containerBagInterface, $this->entityManager, $jobEventManager, $serializerMock, $fileStorageMock, $imageManipulationHandlerMock);
     }
 
     public function testWithoutToken(): void
