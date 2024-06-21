@@ -11,6 +11,7 @@ use App\Service\ImageManipulationHandler;
 use Doctrine\ORM\EntityManagerInterface;
 use League\Flysystem\FilesystemOperator;
 use Symfony\Component\DependencyInjection\ParameterBag\ContainerBagInterface;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Serializer\SerializerInterface;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
 use Symfony\Contracts\HttpClient\ResponseInterface;
@@ -30,7 +31,8 @@ class IdossService
         private readonly EntityManagerInterface $entityManager,
         private readonly JobEventManager $jobEventManager,
         private readonly SerializerInterface $serializer,
-        private readonly FilesystemOperator $fileStorage
+        private readonly FilesystemOperator $fileStorage,
+        private readonly ImageManipulationHandler $imageManipulationHandler,
     ) {
     }
 
@@ -43,7 +45,7 @@ class IdossService
         $jobMessage = $this->serializer->serialize($dossierMessage, 'json');
         $signalementId = $dossierMessage->getSignalementId();
 
-        $jobEvent = $this->callWsManager($partner, $url, $payload, $jobAction, $jobMessage, $signalementId);
+        $jobEvent = $this->processRequestAndSaveJobEvent($partner, $url, $payload, $jobAction, $jobMessage, $signalementId);
 
         if (JobEvent::STATUS_SUCCESS === $jobEvent->getStatus()) {
             $signalement = $this->entityManager->getRepository(Signalement::class)->find($dossierMessage->getSignalementId());
@@ -78,7 +80,7 @@ class IdossService
         $jobMessage = json_encode($filesJson, true);
         $signalementId = $signalement->getId();
 
-        $jobEvent = $this->callWsManager($partner, $url, $payload, $jobAction, $jobMessage, $signalementId);
+        $jobEvent = $this->processRequestAndSaveJobEvent($partner, $url, $payload, $jobAction, $jobMessage, $signalementId);
 
         if (JobEvent::STATUS_SUCCESS === $jobEvent->getStatus()) {
             foreach ($files as $file) {
@@ -94,13 +96,13 @@ class IdossService
         return $jobEvent;
     }
 
-    private function callWsManager(Partner $partner, string $url, array $payload, string $jobAction, string $jobMessage, int $signalementId): JobEvent
+    private function processRequestAndSaveJobEvent(Partner $partner, string $url, array $payload, string $jobAction, string $jobMessage, int $signalementId): JobEvent
     {
         try {
             $token = $this->getToken($partner);
             $response = $this->request($url, $payload, $token);
             $statusCode = $response->getStatusCode();
-            $status = 200 === $statusCode ? JobEvent::STATUS_SUCCESS : JobEvent::STATUS_FAILED;
+            $status = Response::HTTP_OK === $statusCode ? JobEvent::STATUS_SUCCESS : JobEvent::STATUS_FAILED;
             $responseContent = $response->getContent(throw: false);
         } catch (\Exception $e) {
             $responseContent = $e->getMessage();
@@ -167,21 +169,11 @@ class IdossService
         return $payload;
     }
 
-    public function getFilesPayload(Signalement $signalement, array $files): array
+    private function getFilesPayload(Signalement $signalement, array $files): array
     {
         $filesData = [];
         foreach ($files as $file) {
-            $variantNames = ImageManipulationHandler::getVariantNames($file->getFilename());
-            $filename = $variantNames[ImageManipulationHandler::SUFFIX_RESIZE];
-            if (!$this->fileStorage->fileExists($filename) && !$this->fileStorage->fileExists($file->getFilename())) {
-                throw new \Exception('File "'.$filename.'" not found');
-            }
-            if (!$this->fileStorage->fileExists($filename)) {
-                $filename = $file->getFilename();
-            }
-            $bucketFilepath = $this->params->get('url_bucket').'/'.$filename;
-            $fileHandle = base64_encode(file_get_contents($bucketFilepath));
-            $filesData[] = $fileHandle;
+            $filesData[] = $this->imageManipulationHandler->getFileBase64Encoded($file);
         }
 
         return [
@@ -204,7 +196,7 @@ class IdossService
         ];
 
         $response = $this->request($url, $payload);
-        if (200 !== $response->getStatusCode()) {
+        if (Response::HTTP_OK !== $response->getStatusCode()) {
             throw new \Exception('Token not found : '.$response->getContent(throw: false));
         }
         $jsonResponse = json_decode($response->getContent());

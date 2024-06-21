@@ -3,11 +3,10 @@
 namespace App\Messenger\MessageHandler\Idoss;
 
 use App\Entity\JobEvent;
-use App\Entity\Partner;
-use App\Entity\Signalement;
 use App\Messenger\Message\Idoss\DossierMessage;
+use App\Repository\PartnerRepository;
+use App\Repository\SignalementRepository;
 use App\Service\Idoss\IdossService;
-use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 
 #[AsMessageHandler]
@@ -15,7 +14,8 @@ class DossierMessageHandler
 {
     public function __construct(
         private readonly IdossService $idossService,
-        private readonly EntityManagerInterface $entityManager,
+        private readonly SignalementRepository $signalementRepository,
+        private readonly PartnerRepository $partnerRepository,
     ) {
     }
 
@@ -23,8 +23,8 @@ class DossierMessageHandler
     {
         $jobEvent = $this->idossService->pushDossier($dossierMessage);
         if (JobEvent::STATUS_SUCCESS === $jobEvent->getStatus()) {
-            $signalement = $this->entityManager->getRepository(Signalement::class)->find($dossierMessage->getSignalementId());
-            $partner = $this->entityManager->getRepository(Partner::class)->find($dossierMessage->getPartnerId());
+            $signalement = $this->signalementRepository->find($dossierMessage->getSignalementId());
+            $partner = $this->partnerRepository->find($dossierMessage->getPartnerId());
             $this->idossService->uploadFiles($partner, $signalement);
         }
     }

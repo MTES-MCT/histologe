@@ -5,8 +5,11 @@ namespace App\Tests\Unit\Messenger\MessageHandler\Idoss;
 use App\Entity\Affectation;
 use App\Entity\JobEvent;
 use App\Entity\Partner;
+use App\Entity\Signalement;
 use App\Messenger\Message\Idoss\DossierMessage;
 use App\Messenger\MessageHandler\Idoss\DossierMessageHandler;
+use App\Repository\PartnerRepository;
+use App\Repository\SignalementRepository;
 use App\Service\Idoss\IdossService;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
@@ -37,9 +40,15 @@ class DossierMessageHandlerTest extends KernelTestCase
         $idossServiceMock->expects($this->once())->method('pushDossier');
         $idossServiceMock->expects($this->once())->method('uploadFiles');
 
+        /** @var SignalementRepository $signalementRepository */
+        $signalementRepository = $this->entityManager->getRepository(Signalement::class);
+        /** @var PartnerRepository $partnerRepository */
+        $partnerRepository = $this->entityManager->getRepository(Partner::class);
+
         $dossierMessageHandler = new DossierMessageHandler(
             $idossServiceMock,
-            $this->entityManager,
+            $signalementRepository,
+            $partnerRepository
         );
 
         $dossierMessageHandler($dossierMessage);
