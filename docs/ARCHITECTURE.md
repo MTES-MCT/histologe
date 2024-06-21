@@ -17,8 +17,16 @@ Cette plateforme fournit
 ### Architecture globale
 ![Schéma de l'architecture Histologe](/docs/assets/archi-histologe.svg "Architecture Histologe")
 
-### TODO - Diagrammes d'architecture
-Schémas tels que les diagrammes de déploiement, de composants, ou d'intégration pour visualiser les relations entre les éléments du système.
+### Diagrammes de déploiement
+
+#### Diagramme de commit
+![Diagramme de commit](/docs/assets/diagramme-commit.svg "Diagramme de commit")
+
+#### Diagramme de déploiement
+![Diagramme de déploiement](/docs/assets/diagramme-deploiement.svg "Diagramme de déploiement")
+
+#### Diagramme de CI
+![Diagramme de CI](/docs/assets/diagramme-ci.svg "Diagramme de CI")
 
 ## Composants Techniques
 
