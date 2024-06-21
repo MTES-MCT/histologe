@@ -12,6 +12,7 @@ signalements:
     loyer: null
     date_entree: "2019-12-01"
     nom_proprio: "HabitatMarsien"
+    type_proprio: "ORGANISME_SOCIETE"
     is_logement_social: 0
     nom_occupant: "Mamère"
     prenom_occupant: "Noëlle"

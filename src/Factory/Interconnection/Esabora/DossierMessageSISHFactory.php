@@ -10,6 +10,7 @@ use App\Entity\Suivi;
 use App\Messenger\Message\Esabora\DossierMessageSISH;
 use App\Repository\SuiviRepository;
 use App\Service\Esabora\AbstractEsaboraService;
+use App\Service\Esabora\CiviliteMapper;
 use App\Service\Esabora\Enum\PersonneQualite;
 use App\Service\Esabora\Enum\PersonneType;
 use App\Service\Esabora\Model\DossierMessageSISHPersonne;
@@ -150,7 +151,7 @@ class DossierMessageSISHFactory extends AbstractDossierMessageFactory
             ->addPersonne($this->createDossierPersonne($signalement, PersonneType::PROPRIETAIRE));
     }
 
-    public function createDossierPersonne(
+    private function createDossierPersonne(
         Signalement $signalement,
         PersonneType $personneType
     ): ?DossierMessageSISHPersonne {
@@ -159,15 +160,11 @@ class DossierMessageSISHFactory extends AbstractDossierMessageFactory
             $tel = $signalement->getTelOccupantDecoded(true)
                 ? substr($signalement->getTelOccupantDecoded(true), 0, 20)
                 : null;
-
-            $qualite = PersonneQualite::MADAME_MONSIEUR->value;
-            if (!empty($signalement->getCiviliteOccupant())) {
-                $qualite = 'mme' === $signalement->getCiviliteOccupant() ? PersonneQualite::MADAME->value : PersonneQualite::MONSIEUR->value;
-            }
+            $personneQualite = CiviliteMapper::mapOccupant($signalement);
 
             return (new DossierMessageSISHPersonne())
                 ->setType(PersonneType::OCCUPANT->value)
-                ->setQualite($qualite)
+                ->setQualite($personneQualite->value)
                 ->setNom($signalement->getNomOccupant())
                 ->setPrenom($prenom)
                 ->setEmail($signalement->getMailOccupant())
@@ -178,11 +175,7 @@ class DossierMessageSISHFactory extends AbstractDossierMessageFactory
             $tel = $signalement->getTelProprioDecoded(true)
                 ? substr($signalement->getTelProprioDecoded(true), 0, 20)
                 : null;
-            
-            $qualite = null;
-            if (ProprioType::ORGANISME_SOCIETE === $signalement->getTypeProprio()) {
-                $qualite = PersonneQualite::SOCIETE->value;
-            }
+            $personneQualite = CiviliteMapper::mapProprio($signalement);
 
             $dossierMessageSISHPersonne = new DossierMessageSISHPersonne();
             $dossierMessageSISHPersonne
@@ -191,8 +184,8 @@ class DossierMessageSISHFactory extends AbstractDossierMessageFactory
                 ->setAdresse($signalement->getAdresseProprio())
                 ->setEmail($signalement->getMailProprio())
                 ->setTelephone($tel);
-            if (!empty($qualite)) {
-                $dossierMessageSISHPersonne->setQualite($qualite);
+            if (!empty($personneQualite)) {
+                $dossierMessageSISHPersonne->setQualite($personneQualite->value);
             }
             
             return $dossierMessageSISHPersonne;
@@ -209,8 +202,10 @@ class DossierMessageSISHFactory extends AbstractDossierMessageFactory
             $lienOccupant = $signalement->getLienDeclarantOccupant()
                 ? substr($signalement->getLienDeclarantOccupant(), 0, 150)
                 : null;
+            $personneQualite = CiviliteMapper::mapDeclarant($signalement);
 
-            return (new DossierMessageSISHPersonne())
+            $dossierMessageSISHPersonne = new DossierMessageSISHPersonne();
+            $dossierMessageSISHPersonne
                 ->setType(PersonneType::DECLARANT->value)
                 ->setNom($signalement->getNomDeclarant())
                 ->setPrenom($prenom)
@@ -218,6 +213,11 @@ class DossierMessageSISHFactory extends AbstractDossierMessageFactory
                 ->setTelephone($tel)
                 ->setStructure($structure)
                 ->setLienOccupant($lienOccupant);
+            if (!empty($personneQualite)) {
+                $dossierMessageSISHPersonne->setQualite($personneQualite->value);
+            }
+
+            return $dossierMessageSISHPersonne;
         }
 
         return null;

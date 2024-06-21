@@ -8,6 +8,7 @@ use App\Entity\Enum\MotifCloture;
 use App\Entity\Enum\MotifRefus;
 use App\Entity\Enum\OccupantLink;
 use App\Entity\Enum\ProfileDeclarant;
+use App\Entity\Enum\ProprioType;
 use App\Entity\Enum\Qualification;
 use App\Entity\Enum\QualificationStatus;
 use App\Entity\File;
@@ -404,6 +405,11 @@ class LoadSignalementData extends Fixture implements OrderedFixtureInterface
         if (Signalement::STATUS_REFUSED === $row['statut']) {
             $signalement
                 ->setMotifRefus(MotifRefus::tryFrom($row['motif_refus']));
+        }
+
+        if (isset($row['type_proprio'])) {
+            $signalement
+                ->setTypeProprio(ProprioType::tryFrom($row['type_proprio']));
         }
 
         if (isset($row['desordre_categorie'])) {
