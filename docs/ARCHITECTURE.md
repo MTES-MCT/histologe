@@ -46,7 +46,7 @@ Les DNS sont gérés via le service Alwaysdata, qui redirige vers Scalingo.
 ### Stockage
 Les documents sont stockés sur une infrastructure cloud OVH de type "Object Storage".
 
-### Bases de données
+### Base de données
 Le système de gestion utilisé est MySQL.
 
 Une seule base de données gère l'ensemble de la plateforme.
@@ -77,6 +77,11 @@ Elle est sauvegardée de manière déconnectée sur un disque dur externe, chaqu
 #### Schéma des relations des notifications
 
 ![BDD Notifications](/docs/assets/schema-bdd-notification.png "BDD Notifications")
+
+### Base de données de sessions
+Redis est le système utilisé pour la gestion des sessions et du cache du SI.
+
+Il permet notamment l'utilisation de plusieurs conteneurs Scalingo.
 
 ### Middleware
 
