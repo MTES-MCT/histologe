@@ -443,6 +443,10 @@ class EsaboraSISHService extends AbstractEsaboraService
                 'fieldValue' => $dossierMessageSISHPersonne->getType(),
             ],
             [
+                'fieldName' => 'Personne_Qualite',
+                'fieldValue' => $dossierMessageSISHPersonne->getQualite(),
+            ],
+            [
                 'fieldName' => 'Personne_Nom',
                 'fieldValue' => $dossierMessageSISHPersonne->getNom(),
             ],

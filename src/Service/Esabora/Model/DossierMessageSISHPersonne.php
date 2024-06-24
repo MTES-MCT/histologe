@@ -5,6 +5,7 @@ namespace App\Service\Esabora\Model;
 class DossierMessageSISHPersonne
 {
     private ?string $type = null;
+    private ?string $qualite = null;
     private ?string $nom = null;
     private ?string $prenom = null;
     private ?string $telephone = null;
@@ -22,6 +23,18 @@ class DossierMessageSISHPersonne
     public function setType(?string $type): self
     {
         $this->type = $type;
+
+        return $this;
+    }
+
+    public function getQualite(): ?string
+    {
+        return $this->qualite;
+    }
+
+    public function setQualite(?string $qualite): self
+    {
+        $this->qualite = $qualite;
 
         return $this;
     }
