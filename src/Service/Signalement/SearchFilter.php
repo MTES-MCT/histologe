@@ -569,7 +569,20 @@ class SearchFilter
     private function addFilterProcedure(QueryBuilder $qb, string $procedure): QueryBuilder
     {
         $qualification = Qualification::tryFrom($procedure);
-        $qb->andWhere('sq.qualification = :qualification')->setParameter('qualification', $qualification);
+        if (Qualification::NON_DECENCE_ENERGETIQUE === $qualification) {
+            $subqueryResults = $this->signalementQualificationRepository->findSignalementsByQualification(
+                $qualification,
+                [QualificationStatus::NDE_AVEREE, QualificationStatus::NDE_CHECK]
+            );
+        } else {
+            $subqueryResults = $this->signalementQualificationRepository->findSignalementsByQualification(
+                $qualification
+            );
+        }
+
+        $qb
+            ->andWhere('s.id IN (:subqueryResults)')
+            ->setParameter('subqueryResults', $subqueryResults);
 
         return $qb;
     }
