@@ -19,11 +19,19 @@ use Symfony\Contracts\HttpClient\ResponseInterface;
 class IdossService
 {
     public const TYPE_SERVICE = 'idoss';
+
+    public const MAPPING_STATUS = [
+        'accepte' => Signalement::STATUS_NEED_PARTNER_RESPONSE,
+        'en_cours' => Signalement::STATUS_ACTIVE,
+        'termine' => Signalement::STATUS_CLOSED,
+    ];
     private const ACTION_PUSH_DOSSIER = 'push_dossier';
     private const ACTION_UPLOAD_FILES = 'upload_files';
+    private const ACTION_LIST_STATUTS = 'list_statuts';
     private const AUTHENTICATE_ENDPOINT = '/api/Utilisateur/authentification';
     private const CREATE_DOSSIER_ENDPOINT = '/api/EtatCivil/creatDossHistologe';
     private const UPLOAD_FILES_ENDPOINT = '/api/EtatCivil/uploadFileRepoHistologe';
+    private const LIST_STATUTS_ENDPOINT = '/api/EtatCivil/listStatutsHistologe';
 
     public function __construct(
         private readonly HttpClientInterface $client,
@@ -45,7 +53,7 @@ class IdossService
         $jobMessage = $this->serializer->serialize($dossierMessage, 'json');
         $signalementId = $dossierMessage->getSignalementId();
 
-        $jobEvent = $this->processRequestAndSaveJobEvent($partner, $url, $payload, $jobAction, $jobMessage, $signalementId);
+        $jobEvent = $this->processRequestAndSaveJobEvent($partner, $url, $jobAction, $jobMessage, $signalementId, $payload);
 
         if (JobEvent::STATUS_SUCCESS === $jobEvent->getStatus()) {
             $signalement = $this->entityManager->getRepository(Signalement::class)->find($dossierMessage->getSignalementId());
@@ -80,7 +88,7 @@ class IdossService
         $jobMessage = json_encode($filesJson, true);
         $signalementId = $signalement->getId();
 
-        $jobEvent = $this->processRequestAndSaveJobEvent($partner, $url, $payload, $jobAction, $jobMessage, $signalementId);
+        $jobEvent = $this->processRequestAndSaveJobEvent($partner, $url, $jobAction, $jobMessage, $signalementId, $payload);
 
         if (JobEvent::STATUS_SUCCESS === $jobEvent->getStatus()) {
             foreach ($files as $file) {
@@ -96,11 +104,28 @@ class IdossService
         return $jobEvent;
     }
 
-    private function processRequestAndSaveJobEvent(Partner $partner, string $url, array $payload, string $jobAction, string $jobMessage, int $signalementId): JobEvent
+    public function listStatuts(Partner $partner): JobEvent
     {
+        $url = $partner->getIdossUrl().self::LIST_STATUTS_ENDPOINT;
+        $jobAction = self::ACTION_LIST_STATUTS;
+
+        $jobEvent = $this->processRequestAndSaveJobEvent(partner: $partner, url: $url, jobAction: $jobAction, requestMethod: 'GET');
+
+        return $jobEvent;
+    }
+
+    private function processRequestAndSaveJobEvent(
+        Partner $partner,
+        string $url,
+        string $jobAction,
+        string $jobMessage = '',
+        ?int $signalementId = null,
+        array $payload = [],
+        string $requestMethod = 'POST'
+        ): JobEvent {
         try {
             $token = $this->getToken($partner);
-            $response = $this->request($url, $payload, $token);
+            $response = $this->request($url, $payload, $token, $requestMethod);
             $statusCode = $response->getStatusCode();
             $status = Response::HTTP_OK === $statusCode ? JobEvent::STATUS_SUCCESS : JobEvent::STATUS_FAILED;
             $responseContent = $response->getContent(throw: false);
@@ -210,7 +235,7 @@ class IdossService
         throw new \Exception('Token not found : '.$response->getContent(throw: false));
     }
 
-    private function request(string $url, array $payload, ?string $token = null): ResponseInterface
+    private function request(string $url, array $payload, ?string $token = null, $requestMethod = 'POST'): ResponseInterface
     {
         $options = [
             'headers' => [
@@ -222,6 +247,6 @@ class IdossService
             $options['headers'][] = 'Authorization: Bearer '.$token;
         }
 
-        return $this->client->request('POST', $url, $options);
+        return $this->client->request($requestMethod, $url, $options);
     }
 }
