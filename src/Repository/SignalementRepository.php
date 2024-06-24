@@ -1264,8 +1264,9 @@ class SignalementRepository extends ServiceEntityRepository
         $firstResult = ($page - 1) * $maxResult;
         $queryBuilder = $this->createQueryBuilder('s');
 
-        $queryBuilder->where('s.statut = :archived')
-        ->setParameter('archived', Signalement::STATUS_ARCHIVED);
+        $queryBuilder
+            ->where('s.statut = :archived')
+            ->setParameter('archived', Signalement::STATUS_ARCHIVED);
 
         if (!empty($territory)) {
             $queryBuilder
@@ -1275,8 +1276,7 @@ class SignalementRepository extends ServiceEntityRepository
 
         if (!empty($referenceTerms)) {
             $queryBuilder
-                ->andWhere('s.reference LIKE :referenceTerms');
-            $queryBuilder
+                ->andWhere('s.reference LIKE :referenceTerms')
                 ->setParameter('referenceTerms', $referenceTerms);
         }
 
