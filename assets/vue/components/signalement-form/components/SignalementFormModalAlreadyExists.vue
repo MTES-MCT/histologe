@@ -77,12 +77,21 @@
             <div class="fr-modal__footer" v-if="formStore.alreadyExists.type==='signalement'">
               <ul class="fr-btns-group fr-btns-group--center fr-btns-group--inline-reverse fr-btns-group--inline-lg fr-btns-group--icon-left">
                 <li>
-                  <button class="fr-btn" @click="getLienSuivi">
+                  <button
+                    :class="[ 'fr-btn', isButtonClicked ? 'fr-btn--loading fr-btn--icon-right fr-icon-refresh-line' : '' ]"
+                    @click="getLienSuivi"
+                    :disabled="isButtonClicked"
+                    >
                     Recevoir mon lien de suivi
                   </button>
                 </li>
                 <li>
-                  <button class="fr-btn fr-btn--secondary" aria-controls="fr-modal-already-exists" @click="makeNewSignalement">
+                  <button
+                    :class="[ 'fr-btn fr-btn--secondary', isButtonClicked ? 'fr-btn--loading fr-btn--icon-right fr-icon-refresh-line' : '' ]"
+                    aria-controls="fr-modal-already-exists"
+                    @click="makeNewSignalement"
+                    :disabled="isButtonClicked"
+                    >
                     Créer un nouveau signalement
                   </button>
                 </li>
@@ -91,12 +100,22 @@
             <div class="fr-modal__footer" v-else>
               <ul class="fr-btns-group fr-btns-group--center fr-btns-group--inline-reverse fr-btns-group--inline-lg fr-btns-group--icon-left">
                 <li>
-                  <button class="fr-btn" aria-controls="fr-modal-already-exists" @click="continueFromDraft">
+                  <button
+                    :class="[ 'fr-btn', isButtonClicked ? 'fr-btn--loading fr-btn--icon-right fr-icon-refresh-line' : '' ]"
+                    aria-controls="fr-modal-already-exists"
+                    @click="continueFromDraft"
+                    :disabled="isButtonClicked"
+                    >
                     Oui, reprendre le signalement
                   </button>
                 </li>
                 <li>
-                  <button class="fr-btn fr-btn--secondary" aria-controls="fr-modal-already-exists" @click="makeNewSignalement">
+                  <button
+                    :class="[ 'fr-btn fr-btn--secondary', isButtonClicked ? 'fr-btn--loading fr-btn--icon-right fr-icon-refresh-line' : '' ]"
+                    aria-controls="fr-modal-already-exists"
+                    @click="makeNewSignalement"
+                    :disabled="isButtonClicked"
+                    >
                     Non, faire un nouveau signalement
                   </button>
                 </li>
@@ -129,14 +148,25 @@ export default defineComponent({
     return {
       formStore,
       errorMessage: '',
+      isButtonClicked: false,
       selectedSignalementUuid: null as string | null
     }
   },
   methods: {
+    desactiveNextbutton () {
+      if (formStore.data.profil === 'bailleur_occupant' || formStore.data.profil === 'locataire') {
+        formStore.lastButtonClicked = 'vos_coordonnees_occupant_next'
+      } else {
+        formStore.lastButtonClicked = 'vos_coordonnees_tiers_next'
+      }
+      this.isButtonClicked = true
+    },
     continueFromDraft () {
+      this.desactiveNextbutton()
       requests.sendMailContinueFromDraft(this.gotoValidationScreen)
     },
     getLienSuivi () {
+      this.desactiveNextbutton()
       this.errorMessage = ''
       if (this.selectedSignalementUuid === null) {
         if (this.formStore.alreadyExists.signalements && formStore.alreadyExists.signalements?.length === 1) {
@@ -172,6 +202,7 @@ export default defineComponent({
       }
     },
     makeNewSignalement () {
+      this.desactiveNextbutton()
       if (formStore.alreadyExists.draftExists && (formStore.alreadyExists.type === 'draft' || formStore.alreadyExists.type === 'signalement')) {
         requests.archiveDraft(this.saveAndContinue)
       } else if (formStore.alreadyExists.type === 'signalement') {
@@ -232,5 +263,19 @@ export default defineComponent({
     .signalement-form-modal-already-exists .fr-fieldset__element.item-divided {
       flex-basis: content;
     }
+  }
+  .fr-btn.fr-btn--loading {
+    opacity: 0.5;
+  }
+  .fr-btn.fr-btn--loading:disabled {
+    background-color: var(--background-action-high-blue-france);
+    color: var(--text-inverted-blue-france);
+  }
+  .fr-btn.fr-btn--secondary.fr-btn--loading:disabled {
+    background-color: transparent;
+    --hover: inherit;
+    --active: inherit;
+    color: var(--text-action-high-blue-france);
+    box-shadow: inset 0 0 0 1px var(--border-action-high-blue-france);
   }
 </style>
