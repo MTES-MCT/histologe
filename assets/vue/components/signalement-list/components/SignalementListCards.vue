@@ -173,7 +173,6 @@ export default defineComponent({
       return className
     },
     getBadgeLabelQualification (label: string) {
-      console.log(label)
       let labelText = label
       labelText = labelText.replace('Suspicion ', '')
       labelText = labelText.replace(' à vérifier', '')
