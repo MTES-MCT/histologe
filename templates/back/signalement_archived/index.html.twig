@@ -34,7 +34,7 @@
                 </select>
             </div>
             <div class="fr-col-2 fr-p-2v">
-                <a href="{{ path('back_account_index') }}" class="fr-link fr-link--icon-left fr-icon-close-circle-line">Réinitialiser</a>
+                <a href="{{ path('back_archived_signalements_index') }}" class="fr-link fr-link--icon-left fr-icon-close-circle-line">Réinitialiser</a>
             </div>
         </form>
     </section>
@@ -116,7 +116,7 @@
         </table>
         <div class="fr-grid-row fr-mt-2v fr-grid-row--center">
             {% import '_partials/macros.html.twig' as macros %}
-            {{ macros.customPagination(pages, page, 'back_account_index', {territory: (currentTerritory ? currentTerritory.id :  null), referenceTerms: referenceTerms}) }}
+            {{ macros.customPagination(pages, page, 'back_archived_signalements_index', {territory: (currentTerritory ? currentTerritory.id :  null), referenceTerms: referenceTerms}) }}
         </div>
     </section>
 {% endblock %}
