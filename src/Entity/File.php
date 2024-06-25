@@ -108,6 +108,9 @@ class File
     #[ORM\Column]
     private ?bool $isTemp = null;
 
+    #[ORM\Column(nullable: true)]
+    private ?array $synchroData = null;
+
     public function __construct()
     {
         $this->createdAt = new \DateTimeImmutable();
@@ -327,9 +330,25 @@ class File
         return $this->isTemp;
     }
 
-    public function setIsTemp(?bool $isTemp): static
+    public function setIsTemp(?bool $isTemp): self
     {
         $this->isTemp = $isTemp;
+
+        return $this;
+    }
+
+    public function getSynchroData(?string $key): ?array
+    {
+        if ($key) {
+            return $this->synchroData[$key] ?? null;
+        }
+
+        return $this->synchroData;
+    }
+
+    public function setSynchroData(array $data, string $key): self
+    {
+        $this->synchroData[$key] = $data;
 
         return $this;
     }

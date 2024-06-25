@@ -15,6 +15,7 @@ use App\Entity\Signalement;
 use App\Entity\Suivi;
 use App\Entity\Territory;
 use App\Entity\User;
+use App\Service\Idoss\IdossService;
 use App\Service\Signalement\SearchFilter;
 use App\Service\Statistics\CriticitePercentStatisticProvider;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
@@ -1251,6 +1252,20 @@ class SignalementRepository extends ServiceEntityRepository
             $qb->orWhere('s.'.$field.' LIKE :needle'.$index)
                 ->setParameter('needle'.$index, $needle);
         }
+
+        return $qb->getQuery()->getResult();
+    }
+
+    public function findSignalementsWithFilesToUploadOnIdoss(Partner $partner)
+    {
+        $qb = $this->createQueryBuilder('s')
+            ->select('s', 'f')
+            ->innerJoin('s.files', 'f')
+            ->innerJoin('s.affectations', 'a')
+            ->where("f.synchroData IS NULL OR (JSON_CONTAINS_PATH(f.synchroData, 'one', '$.".IdossService::TYPE_SERVICE."') = 0)")
+            ->andWhere('a.partner = :partner')
+            ->setParameter('partner', $partner)
+        ;
 
         return $qb->getQuery()->getResult();
     }
