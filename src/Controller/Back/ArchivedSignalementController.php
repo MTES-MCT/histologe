@@ -66,7 +66,8 @@ class ArchivedSignalementController extends AbstractController
         Request $request,
         ManagerRegistry $doctrine
     ): RedirectResponse {
-        if ($this->isCsrfTokenValid('signalement_reactive_'.$signalement->getId(), $request->get('_token'))) {
+        if ($this->isCsrfTokenValid('signalement_reactive_'.$signalement->getId(), $request->get('_token'))
+        && Signalement::STATUS_ARCHIVED === $signalement->getStatut()) {
             $signalement->setStatut(Signalement::STATUS_ACTIVE);
             $doctrine->getManager()->persist($signalement);
             $doctrine->getManager()->flush();
