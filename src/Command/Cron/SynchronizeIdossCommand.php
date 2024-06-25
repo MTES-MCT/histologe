@@ -26,6 +26,7 @@ class SynchronizeIdossCommand extends AbstractCronCommand
 {
     private SymfonyStyle $io;
     private array $errors = [];
+    private array $partners;
 
     public function __construct(
         private readonly EntityManagerInterface $entityManager,
@@ -37,6 +38,7 @@ class SynchronizeIdossCommand extends AbstractCronCommand
         private bool $featureIdossEnable,
     ) {
         parent::__construct($this->parameterBag);
+        $this->partners = $this->entityManager->getRepository(Partner::class)->findBy(['isIdossActive' => true]);
     }
 
     protected function execute(InputInterface $input, OutputInterface $output): int
@@ -48,7 +50,11 @@ class SynchronizeIdossCommand extends AbstractCronCommand
             return Command::SUCCESS;
         }
 
-        $nbStatusUpdated = $this->updateStatusFromIdoss();
+        $nbStatusUpdated = 0;
+        foreach ($this->partners as $partner) {
+            $jobEvent = $this->idossService->listStatuts($partner);
+            $nbStatusUpdated += $this->updateStatusFromJobEvent($jobEvent);
+        }
         $this->entityManager->flush();
 
         $nbFilesUploaded = $this->uploadFilesOnIdoss();
@@ -80,18 +86,6 @@ class SynchronizeIdossCommand extends AbstractCronCommand
         $this->io->success(sprintf('Status updated: %d, Files uploaded: %d', $nbStatusUpdated, $nbFilesUploaded));
 
         return Command::SUCCESS;
-    }
-
-    private function updateStatusFromIdoss(): int
-    {
-        $partners = $this->entityManager->getRepository(Partner::class)->findBy(['isIdossActive' => true]);
-        $nbStatusUpdated = 0;
-        foreach ($partners as $partner) {
-            $jobEvent = $this->idossService->listStatuts($partner);
-            $nbStatusUpdated += $this->updateStatusFromJobEvent($jobEvent);
-        }
-
-        return $nbStatusUpdated;
     }
 
     private function updateStatusFromJobEvent(JobEvent $jobEvent): int
@@ -127,7 +121,19 @@ class SynchronizeIdossCommand extends AbstractCronCommand
 
     private function uploadFilesOnIdoss(): int
     {
-        // TODO
-        return 0;
+        $nbFilesUploaded = 0;
+        foreach ($this->partners as $partner) {
+            $signalements = $this->signalementRepository->findSignalementsWithFilesToUploadOnIdoss($partner);
+            foreach ($signalements as $signalement) {
+                $jobEvent = $this->idossService->uploadFiles($partner, $signalement);
+                if (JobEvent::STATUS_FAILED === $jobEvent->getStatus()) {
+                    $this->errors[] = sprintf('Error while uploading files for signalement "%s"', $signalement->getUuid());
+                    continue;
+                }
+                $nbFilesUploaded += \count($signalement->getFiles());
+            }
+        }
+
+        return $nbFilesUploaded;
     }
 }

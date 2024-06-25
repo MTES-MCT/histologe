@@ -109,9 +109,7 @@ class IdossService
         $url = $partner->getIdossUrl().self::LIST_STATUTS_ENDPOINT;
         $jobAction = self::ACTION_LIST_STATUTS;
 
-        $jobEvent = $this->processRequestAndSaveJobEvent(partner: $partner, url: $url, jobAction: $jobAction, requestMethod: 'GET');
-
-        return $jobEvent;
+        return $this->processRequestAndSaveJobEvent(partner: $partner, url: $url, jobAction: $jobAction, requestMethod: 'GET');
     }
 
     private function processRequestAndSaveJobEvent(
