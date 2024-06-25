@@ -6,16 +6,14 @@
     </div>
     <div class="fr-col-3 fr-col-md-6 fr-text--right">
         {% if 
-                (is_granted('ROLE_ADMIN_PARTNER') or (isAffected and isAccepted))
-                and signalement.statut is not same as constant('App\\Entity\\Signalement::STATUS_NEED_VALIDATION')
-                and signalement.statut is not same as constant('App\\Entity\\Signalement::STATUS_CLOSED')
-                and not isClosedForMe
-                %}
-        <button class="fr-btn fr-btn--icon-left fr-icon-quote-line" data-fr-opened="false"
-                aria-controls="fr-modal-add-suivi">
-            Ajouter un suivi
-        </button>
-        {% include '_partials/signalement/add_suivi.html.twig' %}
+            is_granted('COMMENT_CREATE', signalement)
+            and not isClosedForMe
+            %}
+            <button class="fr-btn fr-btn--icon-left fr-icon-quote-line" data-fr-opened="false"
+                    aria-controls="fr-modal-add-suivi">
+                Ajouter un suivi
+            </button>
+            {% include '_partials/signalement/add_suivi.html.twig' %}
         {% endif %}
     </div>
 </div>

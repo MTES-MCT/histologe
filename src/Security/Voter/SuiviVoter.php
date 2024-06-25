@@ -32,9 +32,6 @@ class SuiviVoter extends Voter
         ) {
             return false;
         }
-        if ($user->isSuperAdmin()) {
-            return true;
-        }
 
         return match ($attribute) {
             self::CREATE => $this->canCreate($subject, $user),
@@ -45,14 +42,21 @@ class SuiviVoter extends Voter
 
     private function canCreate(Signalement $signalement, User $user): bool
     {
+        $isUserInAcceptedAffectation = $signalement->getAffectations()->filter(function (Affectation $affectation) use ($user) {
+            return $affectation->getPartner()->getId() === $user->getPartner()->getId()
+                && Affectation::STATUS_ACCEPTED == $affectation->getStatut();
+        })->count() > 0;
+
         return Signalement::STATUS_ACTIVE === $signalement->getStatut()
-            && $signalement->getAffectations()->filter(function (Affectation $affectation) use ($user) {
-                return $affectation->getPartner()->getId() === $user->getPartner()->getId();
-            })->count() > 0 || $user->isTerritoryAdmin();
+            && ($isUserInAcceptedAffectation || $user->isTerritoryAdmin() || $user->isSuperAdmin());
     }
 
     private function canView(mixed $comment, User $user): bool
     {
+        if ($user->isSuperAdmin()) {
+            return true;
+        }
+
         if ($this->canCreate($comment->getSignalement(), $user)) {
             return true;
         }
