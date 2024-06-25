@@ -13,11 +13,10 @@ use Symfony\Component\Security\Core\User\UserInterface;
 class SuiviVoter extends Voter
 {
     public const CREATE = 'COMMENT_CREATE';
-    public const VIEW = 'COMMENT_VIEW';
 
     protected function supports(string $attribute, $subject): bool
     {
-        return \in_array($attribute, [self::CREATE, self::VIEW])
+        return \in_array($attribute, [self::CREATE])
             && ($subject instanceof Suivi || $subject instanceof Signalement);
     }
 
@@ -35,7 +34,6 @@ class SuiviVoter extends Voter
 
         return match ($attribute) {
             self::CREATE => $this->canCreate($subject, $user),
-            self::VIEW => $this->canView($subject, $user),
             default => false,
         };
     }
@@ -49,18 +47,5 @@ class SuiviVoter extends Voter
 
         return Signalement::STATUS_ACTIVE === $signalement->getStatut()
             && ($isUserInAcceptedAffectation || $user->isTerritoryAdmin() || $user->isSuperAdmin());
-    }
-
-    private function canView(mixed $comment, User $user): bool
-    {
-        if ($user->isSuperAdmin()) {
-            return true;
-        }
-
-        if ($this->canCreate($comment->getSignalement(), $user)) {
-            return true;
-        }
-
-        return true;
     }
 }
