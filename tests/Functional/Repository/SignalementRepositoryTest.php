@@ -131,4 +131,34 @@ class SignalementRepositoryTest extends KernelTestCase
         $this->assertArrayHasKey('count', $desordreCriteres[0]);
         $this->assertArrayHasKey('labelCritere', $desordreCriteres[0]);
     }
+
+    public function testFindAllArchived(): void
+    {
+        /** @var SignalementRepository $signalementRepository */
+        $signalementRepository = $this->entityManager->getRepository(Signalement::class);
+        $signalementsArchived = $signalementRepository->findAllArchived(null, null, null);
+        $this->assertEquals(2, \count($signalementsArchived));
+    }
+
+    public function testFindAllArchivedTerritory(): void
+    {
+        /** @var SignalementRepository $signalementRepository */
+        $signalementRepository = $this->entityManager->getRepository(Signalement::class);
+        /** @var TerritoryRepository $territoryRepository */
+        $territoryRepository = $this->entityManager->getRepository(Territory::class);
+        $territory = $territoryRepository->findOneBy(['zip' => '13']);
+        $signalementsArchived = $signalementRepository->findAllArchived($territory, null, null);
+        $this->assertEquals(1, \count($signalementsArchived));
+    }
+
+    public function testFindAllArchivedReference(): void
+    {
+        /** @var SignalementRepository $signalementRepository */
+        $signalementRepository = $this->entityManager->getRepository(Signalement::class);
+        /** @var TerritoryRepository $territoryRepository */
+        $territoryRepository = $this->entityManager->getRepository(Territory::class);
+        $territory = $territoryRepository->findOneBy(['zip' => '13']);
+        $signalementsArchived = $signalementRepository->findAllArchived(null, '2024-04', null);
+        $this->assertEquals(1, \count($signalementsArchived));
+    }
 }
