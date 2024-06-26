@@ -18,14 +18,15 @@
               <div class="fr-col-xl-10 fr-col-12">
                 <p class="fr-my-1w" v-if="item.conclusionsProcedure === null"><span class="fr-icon-lightbulb-line" aria-hidden="true"></span>
                   Procédure(s) suspectée(s) :
-                  <span v-if="item.qualificationsStatusesLabels.length === 0" class="fr-text--sm">Aucune</span>
+                  <span v-if="item.qualificationsStatusesLabels.length === 0 && item.nDE === false" class="fr-text--sm">Aucune</span>
                   <span
                       v-else
                       v-for="(procedure, index) in item.qualificationsStatusesLabels"
                       :key="index"
                       class="fr-badge fr-badge--sm fr-badge--no-icon fr-mx-1v"
                       :class="getBadgeClassNameQualification(procedure)"
-                      >{{ getBadgeLabelQualification(procedure) }}</span>
+                      >{{ getBadgeLabelQualification(procedure) }} </span>
+                  <span v-if="item.nDE" class="fr-badge fr-badge--sm fr-badge--no-icon fr-mx-1v fr-badge--info">NON DÉCENCE ÉNERGÉTIQUE</span>
                 </p>
                 <p v-else class="fr-my-1w"><span class="fr-icon-lightbulb-line" aria-hidden="true"></span>
                   Procédure(s) constatée(s) :
