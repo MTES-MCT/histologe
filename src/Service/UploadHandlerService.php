@@ -9,6 +9,7 @@ use App\Exception\File\UnsupportedFileFormatException;
 use App\Repository\FileRepository;
 use App\Service\Files\FilenameGenerator;
 use App\Service\Files\HeicToJpegConverter;
+use Exception;
 use League\Flysystem\FilesystemException;
 use League\Flysystem\FilesystemOperator;
 use Psr\Log\LoggerInterface;
@@ -28,6 +29,7 @@ class UploadHandlerService
         private readonly LoggerInterface $logger,
         private readonly HeicToJpegConverter $heicToJpegConverter,
         private readonly FilenameGenerator $filenameGenerator,
+        private readonly FileRepository $fileRepository
     ) {
     }
 
@@ -169,10 +171,25 @@ class UploadHandlerService
         $this->moveFilePath($distantFolder.$variantNames[ImageManipulationHandler::SUFFIX_THUMB]);
     }
 
-    public function deleteSignalementFile(File $file, FileRepository $fileRepository): bool
+    public function deleteIfExpiredFile(File $file): bool
     {
-        $this->deleteFileInBucket($file);
-        $fileRepository->remove($file, true);
+        if ((new \DateTime())->getTimestamp() - $file->getCreatedAt()->getTimestamp() > 3600) {
+            $this->deleteFile($file);
+
+            return true;
+        }
+
+        return false;
+    }
+
+    public function deleteFile(File $file): bool
+    {
+        try {
+            $this->deleteFileInBucket($file);
+            $this->fileRepository->remove($file, true);
+        } catch (Exception $e) {
+            return false;
+        }
 
         return true;
     }

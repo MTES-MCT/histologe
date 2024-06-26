@@ -91,7 +91,7 @@ class SignalementFileController extends AbstractController
         if (!$file) {
             return $this->json(['success' => false], Response::HTTP_BAD_REQUEST);
         }
-        if (!$uploadHandlerService->deleteSignalementFile($file, $fileRepository)) {
+        if (!$uploadHandlerService->deleteFile($file)) {
             return $this->json(['success' => false], Response::HTTP_BAD_REQUEST);
         }
         $entityManager->remove($file);

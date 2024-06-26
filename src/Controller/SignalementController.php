@@ -556,7 +556,8 @@ class SignalementController extends AbstractController
         Request $request,
         EntityManagerInterface $entityManager,
         SuiviFactory $suiviFactory,
-        SignalementFileProcessor $signalementFileProcessor
+        SignalementFileProcessor $signalementFileProcessor,
+        UploadHandlerService $uploadHandlerService,
     ): RedirectResponse {
         $signalement = $signalementRepository->findOneByCodeForPublic($code);
         if (!$this->isGranted('SIGN_USAGER_EDIT', $signalement)) {
@@ -586,6 +587,9 @@ class SignalementController extends AbstractController
         if (\count($docs)) {
             $descriptionList = [];
             foreach ($docs as $doc) {
+                if ($uploadHandlerService->deleteIfExpiredFile($doc)) {
+                    continue;
+                }
                 $doc->setIsTemp(false);
                 $descriptionList[] = $signalementFileProcessor->generateListItemDescription($doc->getFilename(), $doc->getTitle(), true);
             }

@@ -1989,7 +1989,11 @@ class Signalement
     public function getFiles(): Collection
     {
         return $this->files->filter(function (File $file) {
-            return !$file->isTemp();
+            if ($file->isTemp() || $file->isIsWaitingSuivi()) {
+                return false;
+            }
+
+            return true;
         });
     }
 

@@ -2,6 +2,7 @@
 
 namespace App\Tests\Functional\Service;
 
+use App\Repository\FileRepository;
 use App\Service\Files\FilenameGenerator;
 use App\Service\Files\HeicToJpegConverter;
 use App\Service\UploadHandlerService;
@@ -21,6 +22,7 @@ class UploadHandlerServiceTest extends KernelTestCase
     private MockObject|LoggerInterface $logger;
     private MockObject|HeicToJpegConverter $heicToJpegConverter;
     private MockObject|FilenameGenerator $filenameGenerator;
+    private MockObject|FileRepository $fileRepository;
 
     private string $projectDir = '';
     private string $fixturesPath = '/src/DataFixtures/Images/';
@@ -44,6 +46,7 @@ class UploadHandlerServiceTest extends KernelTestCase
         $this->logger = $this->createMock(LoggerInterface::class);
         $this->heicToJpegConverter = $this->createMock(HeicToJpegConverter::class);
         $this->filenameGenerator = $this->createMock(FilenameGenerator::class);
+        $this->fileRepository = $this->createMock(FileRepository::class);
     }
 
     public function testTemporaryFileUploaded(): void
@@ -73,6 +76,7 @@ class UploadHandlerServiceTest extends KernelTestCase
             $this->logger,
             $this->heicToJpegConverter,
             $this->filenameGenerator,
+            $this->fileRepository
         );
 
         $uploadHandler = $uploadHandlerService->toTempFolder($uploadFile);
@@ -96,6 +100,7 @@ class UploadHandlerServiceTest extends KernelTestCase
             $this->createMock(LoggerInterface::class),
             $this->createMock(HeicToJpegConverter::class),
             $this->createMock(FilenameGenerator::class),
+            $this->fileRepository
         );
 
         $uploadedFileMock = $this->createMock(UploadedFile::class);
@@ -120,6 +125,7 @@ class UploadHandlerServiceTest extends KernelTestCase
             $this->createMock(LoggerInterface::class),
             $this->createMock(HeicToJpegConverter::class),
             $this->createMock(FilenameGenerator::class),
+            $this->fileRepository
         );
 
         $uploadedFileMock = $this->createMock(UploadedFile::class);
@@ -154,6 +160,7 @@ class UploadHandlerServiceTest extends KernelTestCase
             $this->logger,
             $this->heicToJpegConverter,
             $this->filenameGenerator,
+            $this->fileRepository
         );
 
         $uploadHandler = $uploadHandlerService->toTempFolder($uploadFile);
