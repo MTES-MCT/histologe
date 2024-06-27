@@ -1234,10 +1234,13 @@
         },
         {
           "type": "SignalementFormTextarea",
-          "label": "Quelle a été la réponse de l'assurance ?",
+          "label": "Quelle a été la réponse de l'assurance ? (facultatif)",
           "slug": "info_procedure_reponse_assurance",
           "conditional": {
             "show": "formStore.data.info_procedure_assurance_contactee === 'oui'"
+          },
+          "validate": {
+            "required": false
           }
         },
         {

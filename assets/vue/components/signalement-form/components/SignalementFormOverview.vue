@@ -133,7 +133,7 @@
       </div>
 
       <!-- LA PROCEDURE  -->
-      <div v-if="formStore.data.profil === 'bailleur_occupant' || formStore.data.profil === 'locataire' || formStore.data.profil === 'bailleur'">
+      <div>
         <div class="fr-grid-row fr-grid-row--gutters fr-grid-row--top">
           <div class="fr-col-8">
             <h4 class="fr-h6">La procédure</h4>
