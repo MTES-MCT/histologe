@@ -15,7 +15,7 @@ Cette plateforme fournit
 ## Description de l'Architecture Technique
 
 ### Architecture globale
-![Schéma de l'architecture Histologe](/docs/assets/archi-histologe.svg "Architecture Histologe")
+![Schéma de l'architecture Histologe](/docs/assets/archi-histologe.jpg "Architecture Histologe")
 
 ### Diagrammes de déploiement
 
@@ -98,7 +98,9 @@ Nous communiquons avec 2 types d'instances Esabora (SI-SH et SCHS) pour leur fai
 Nous envoyons des requêtes vers Zapier pour communiquer avec OILHI, une autre start-up d'Etat.
 
 #### Sentry
-Sentry, hébergée par les services nationaux, nous permet de retrouver les erreurs listées par le service.
+Sentry, hébergée par les services nationaux, nous permet :
+- de retrouver les erreurs listées par le service
+- d'analyser la performance du SI
 
 #### BAN
 Nous faisons des appels à la Base d'Adresses Nationale pour faciliter la saisie et l'édition de signalements.
@@ -120,7 +122,7 @@ Les accès à la plateforme sont individuels. Les droits d'accès sont progressi
 
 Les accès aux services tiers sont individualisés aussi dès que possible : chaque personne de l'équipe possède son accès, pour permettre une traçabilité des actions.
 
-TODO : systèmes de détection d'intrusion.
+TODO : décrire les systèmes de détection d'intrusion (Voir : https://doc.scalingo.com/platform/app/datadog ; https://doc.scalingo.com/platform/getting-started/getting-started-with-modsecurity#enabling-modsecurity ; https://en.wikipedia.org/wiki/OSSEC ; https://fr.wikipedia.org/wiki/Snort)
 
 ### Conformité
 Voir notre [politique de confidentialité](https://histologe.beta.gouv.fr/politique-de-confidentialite).
