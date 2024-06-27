@@ -112,10 +112,16 @@ class SignalementFileController extends AbstractController
         Signalement $signalement,
         EntityManagerInterface $entityManager,
         SuiviManager $suiviManager,
+        UploadHandlerService $uploadHandlerService,
     ): JsonResponse {
         $this->denyAccessUnlessGranted('FILE_CREATE', $signalement);
         $fileRepository = $entityManager->getRepository(File::class);
-        $files = $fileRepository->findBy(['signalement' => $signalement, 'isWaitingSuivi' => true]);
+        $files = $fileRepository->findBy(['signalement' => $signalement, 'isWaitingSuivi' => true, 'uploadedBy' => $this->getUser()]);
+        foreach ($files as $key => $file) {
+            if ($uploadHandlerService->deleteIfExpiredFile($file)) {
+                unset($files[$key]);
+            }
+        }
         if (!\count($files)) {
             return $this->json(['success' => true]);
         }
@@ -164,7 +170,7 @@ class SignalementFileController extends AbstractController
         ) {
             $filename = $file->getFilename();
             $type = $file->getFileType();
-            if ($uploadHandlerService->deleteSignalementFile($file, $fileRepository)) {
+            if ($uploadHandlerService->deleteFile($file)) {
                 $suivi = $suiviFactory->createInstanceFrom($this->getUser(), $signalement);
                 /** @var User $user */
                 $user = $this->getUser();
@@ -201,13 +207,12 @@ class SignalementFileController extends AbstractController
         File $file,
         EntityManagerInterface $entityManager,
         UploadHandlerService $uploadHandlerService,
-        FileRepository $fileRepository
     ): JsonResponse {
         $this->denyAccessUnlessGranted('FILE_DELETE', $file);
         if (!$file->isIsWaitingSuivi()) {
             return $this->json(['success' => false], Response::HTTP_BAD_REQUEST);
         }
-        if (!$uploadHandlerService->deleteSignalementFile($file, $fileRepository)) {
+        if (!$uploadHandlerService->deleteFile($file)) {
             return $this->json(['success' => false], Response::HTTP_BAD_REQUEST);
         }
         $entityManager->remove($file);
