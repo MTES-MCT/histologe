@@ -29,9 +29,6 @@ class HistoryEntry
     #[ORM\JoinColumn(nullable: true)]
     private ?User $user = null;
 
-    #[ORM\Column(length: 255, nullable: true)]
-    private ?string $service = null;
-
     public function getId(): ?int
     {
         return $this->id;
@@ -100,18 +97,6 @@ class HistoryEntry
     public function setUser(?User $user): static
     {
         $this->user = $user;
-
-        return $this;
-    }
-
-    public function getService(): ?string
-    {
-        return $this->service;
-    }
-
-    public function setService(?string $service): static
-    {
-        $this->service = $service;
 
         return $this;
     }
