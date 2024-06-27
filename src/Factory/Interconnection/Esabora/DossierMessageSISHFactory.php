@@ -136,7 +136,7 @@ class DossierMessageSISHFactory extends AbstractDossierMessageFactory
             ->setProprietaireAverti((int) $signalement->getIsProprioAverti())
             ->setProprietaireAvertiDate($signalement->getProprioAvertiAt()?->format($formatDate))
             ->setProprietaireAvertiMoyen($modeContactProprio)
-            ->setSignalementScore($signalement->getScore())
+            ->setSignalementScore(round($signalement->getScore(), 1))
             ->setSignalementOrigine(AbstractEsaboraService::SIGNALEMENT_ORIGINE)
             ->setSignalementNumero($signalement->getReference())
             ->setSignalementCommentaire($cleanedSuiviDescription)
