@@ -16,12 +16,12 @@ Cette application est déployé chez Scalingo, hébergé par Outscale.
 
 Requirements|Release
 ------------|--------
-Docker engine (minimum)| [20.10.17](https://www.docker.com/)
+Docker engine (minimum)| [25.0.*](https://www.docker.com/)
 Scalingo CLI (minimum) | [1.24](https://doc.scalingo.com/platform/cli/start)
 AWS CLI OVH Object storage (optionnel) | [1.25](https://docs.ovh.com/fr/storage/s3/debuter-avec-s3/#utilisation-de-aws-cli)
 PHP (optionnel)| [8.1.*](https://www.php.net/)
-Composer (optionnel) | [2.4.*](https://getcomposer.org/download/)
-Node (optionnel)| [16.*](https://nodejs.org/en/)
+Composer (optionnel) | [2.7.*](https://getcomposer.org/download/)
+Node (optionnel)| [18.*](https://nodejs.org/en/)
 
 ## Environnement technique
 ### Principaux outils utilisés
@@ -144,8 +144,12 @@ Une activation de compte sera nécéssaire
 
 ## Documentation projet
 
-[Consulter la documentation](https://github.com/MTES-MCT/histologe/wiki)
+- [Documentation](https://github.com/MTES-MCT/histologe/wiki)
+- [Documentation usager](https://documentation.histologe.beta.gouv.fr/)
+- [Dossier d'architecture technique](./docs/ARCHITECTURE.md)
+- [Document d'exploitation](./docs/EXPLOITATION.md)
+- [Veille sécurité](./docs/VEILLE.md)
 
 ## Contribuer
 
-[Consulter les instructions de contributions](./CONTRIBUTING.md).
+[Consulter les instructions de contributions](./docs/CONTRIBUTING.md).
