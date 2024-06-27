@@ -50,12 +50,12 @@ class SignalementController extends AbstractController
     ): Response {
         /** @var User $user */
         $user = $this->getUser();
-        $this->denyAccessUnlessGranted('SIGN_VIEW', $signalement);
         if (Signalement::STATUS_ARCHIVED === $signalement->getStatut()) {
             $this->addFlash('error', "Ce signalement a été archivé et n'est pas consultable.");
 
             return $this->redirectToRoute('back_index');
         }
+        $this->denyAccessUnlessGranted('SIGN_VIEW', $signalement);
 
         $eventDispatcher->dispatch(
             new SignalementViewedEvent($signalement, $user),

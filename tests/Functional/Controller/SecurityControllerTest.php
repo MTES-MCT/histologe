@@ -3,11 +3,14 @@
 namespace App\Tests\Functional\Controller;
 
 use App\Repository\UserRepository;
+use App\Tests\SessionHelper;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 
 class SecurityControllerTest extends WebTestCase
 {
+    use SessionHelper;
+
     public function testShowUploadedFileSucceed(): void
     {
         $client = static::createClient();
@@ -37,4 +40,23 @@ class SecurityControllerTest extends WebTestCase
         $this->assertTrue($response->isSuccessful());
         $this->assertInstanceOf(BinaryFileResponse::class, $response);
     }
+
+    public function testShowUploadedWithInvalidToken(): void
+    {
+        $client = static::createClient();
+        $client->request('GET', '/_up/check.png');
+
+        $this->assertResponseStatusCodeSame(404);
+    }
+
+    /*public function testShowUploadedWithValidToken(): void
+    {
+        $client = static::createClient();
+        $token = $this->generateCsrfToken($client, 'suivi_signalement_ext_file_view');
+        $client->request('GET', '/_up/check.png?t=' . $token);
+
+        $response = $client->getResponse();
+        $this->assertTrue($response->isSuccessful());
+        $this->assertInstanceOf(BinaryFileResponse::class, $response);
+    }*/
 }

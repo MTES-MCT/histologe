@@ -103,6 +103,10 @@ class SignalementVoter extends Voter
 
     private function canView(Signalement $signalement, User $user): bool
     {
+        if (Signalement::STATUS_ARCHIVED === $signalement->getStatut()) {
+            return false;
+        }
+
         return $signalement->getAffectations()->filter(function (Affectation $affectation) use ($user) {
             return $affectation->getPartner()->getId() === $user->getPartner()->getId();
         })->count() > 0 || $user->isTerritoryAdmin() && $user->getTerritory() === $signalement->getTerritory();
@@ -110,7 +114,7 @@ class SignalementVoter extends Voter
 
     public function canAddVisite(Signalement $signalement, User $user): bool
     {
-        if (Signalement::STATUS_ACTIVE !== $signalement->getStatut() && Signalement::STATUS_NEED_PARTNER_RESPONSE !== $signalement->getStatut()) {
+        if (!\in_array($signalement->getStatut(), [Signalement::STATUS_ACTIVE, Signalement::STATUS_NEED_PARTNER_RESPONSE])) {
             return false;
         }
 

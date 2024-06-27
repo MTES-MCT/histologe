@@ -12,7 +12,7 @@
     {% if canEditNDE %}
         {% include '_partials/_modal_edit_nde.html.twig' %}        
     {% endif %}
-    {% if is_granted('FILE_CREATE', signalement) %}
+    {% if is_granted('SIGN_EDIT', signalement) %}
         {% include '_partials/_modal_upload_files.html.twig' %}
     {% endif %}
     {% if is_granted('ROLE_ADMIN') %}
