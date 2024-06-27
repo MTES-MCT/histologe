@@ -2,12 +2,12 @@
 
 namespace App\Entity;
 
-use App\Repository\LogRepository;
+use App\Repository\HistoryEntryRepository;
 use DateTimeImmutable;
 use Doctrine\ORM\Mapping as ORM;
 
-#[ORM\Entity(repositoryClass: LogRepository::class)]
-class Log
+#[ORM\Entity(repositoryClass: HistoryEntryRepository::class)]
+class HistoryEntry
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
