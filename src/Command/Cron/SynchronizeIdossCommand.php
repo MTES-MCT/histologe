@@ -4,6 +4,7 @@ namespace App\Command\Cron;
 
 use App\Entity\JobEvent;
 use App\Entity\Partner;
+use App\Repository\AffectationRepository;
 use App\Repository\SignalementRepository;
 use App\Service\Idoss\IdossService;
 use App\Service\Mailer\NotificationMail;
@@ -31,6 +32,7 @@ class SynchronizeIdossCommand extends AbstractCronCommand
     public function __construct(
         private readonly EntityManagerInterface $entityManager,
         private readonly SignalementRepository $signalementRepository,
+        private readonly AffectationRepository $affectationRepository,
         private readonly NotificationMailerRegistry $notificationMailerRegistry,
         private readonly ParameterBagInterface $parameterBag,
         private readonly IdossService $idossService,
@@ -95,6 +97,7 @@ class SynchronizeIdossCommand extends AbstractCronCommand
             $items = json_decode($jobEvent->getResponse(), true);
             foreach ($items['statuts'] as $item) {
                 $signalement = $this->signalementRepository->findOneBy(['uuid' => $item['uuid']]);
+                $affectation = $this->affectationRepository->findOneBy(['signalement' => $signalement, 'partner' => $jobEvent->getPartnerId()]);
                 if (!$signalement) {
                     $this->errors[] = sprintf('Signalement "%s" not found', $item['uuid']);
                     continue;
@@ -106,11 +109,15 @@ class SynchronizeIdossCommand extends AbstractCronCommand
                 }
                 $idossData['updated_at'] = $jobEvent->getCreatedAt()->format('Y-m-d H:i:s');
                 $idossData['updated_job_event_id'] = $jobEvent->getId();
+                $idossData['updated_status'] = $item['statut'];
                 if ($item['motif']) {
                     $idossData['motif'] = $item['motif'];
                 }
                 $signalement->setSynchroData($idossData, IdossService::TYPE_SERVICE);
-                $signalement->setStatut(IdossService::MAPPING_STATUS[$item['statut']]);
+                //TODO : update statut de l'affectation
+                //TODO : creation d'un suivi avec le motif de cloture si nécéssaire
+
+                //$signalement->setStatut(IdossService::MAPPING_STATUS[$item['statut']]);
 
                 ++$nbStatusUpdated;
             }

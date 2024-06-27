@@ -88,7 +88,7 @@ class IdossService
         $jobMessage = json_encode($filesJson, true);
         $signalementId = $signalement->getId();
 
-        $jobEvent = $this->processRequestAndSaveJobEvent($partner, $url, $jobAction, $jobMessage, $signalementId, $payload);
+        $jobEvent = $this->processRequestAndSaveJobEvent($partner, $url, $jobAction, $jobMessage, $signalementId, $payload, 'POST', 'multipart/form-data');
 
         if (JobEvent::STATUS_SUCCESS === $jobEvent->getStatus()) {
             foreach ($files as $file) {
@@ -119,11 +119,12 @@ class IdossService
         string $jobMessage = '',
         ?int $signalementId = null,
         array $payload = [],
-        string $requestMethod = 'POST'
+        string $requestMethod = 'POST',
+        string $contentType = 'application/json',
         ): JobEvent {
         try {
             $token = $this->getToken($partner);
-            $response = $this->request($url, $payload, $token, $requestMethod);
+            $response = $this->request($url, $payload, $token, $requestMethod, $contentType);
             $statusCode = $response->getStatusCode();
             $status = Response::HTTP_OK === $statusCode ? JobEvent::STATUS_SUCCESS : JobEvent::STATUS_FAILED;
             $responseContent = $response->getContent(throw: false);
@@ -233,11 +234,11 @@ class IdossService
         throw new \Exception('Token not found : '.$response->getContent(throw: false));
     }
 
-    private function request(string $url, array $payload, ?string $token = null, $requestMethod = 'POST'): ResponseInterface
+    private function request(string $url, array $payload, ?string $token = null, $requestMethod = 'POST', $contentType = 'application/json'): ResponseInterface
     {
         $options = [
             'headers' => [
-                'Content-Type: application/json',
+                'Content-Type: '.$contentType,
             ],
             'body' => json_encode($payload),
         ];
