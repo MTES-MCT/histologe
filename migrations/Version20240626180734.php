@@ -11,7 +11,7 @@ final class Version20240626180734 extends AbstractMigration
 {
     public function getDescription(): string
     {
-        return 'Set is_waiting_suivi flag to true on File created since more than 1 hour';
+        return 'Set is_waiting_suivi flag to false on File created since more than 1 hour';
     }
 
     public function up(Schema $schema): void
