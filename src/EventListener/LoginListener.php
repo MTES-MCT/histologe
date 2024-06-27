@@ -2,7 +2,9 @@
 
 namespace App\EventListener;
 
+use App\Entity\Enum\HistoryEntryEvent;
 use App\Entity\User;
+use App\Manager\HistoryEntryManager;
 use DateTimeImmutable;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\RequestStack;
@@ -12,7 +14,8 @@ class LoginListener
 {
     public function __construct(
         private EntityManagerInterface $em,
-        private RequestStack $requestStack
+        private RequestStack $requestStack,
+        private HistoryEntryManager $historyEntryManager
     ) {
     }
 
@@ -21,6 +24,14 @@ class LoginListener
         /** @var User $user */
         $user = $event->getAuthenticationToken()->getUser();
         $user->setLastLoginAt(new DateTimeImmutable());
+
+        $this->historyEntryManager->create(
+            historyEntryEvent: HistoryEntryEvent::LOGIN,
+            entityId: $user->getId(),
+            entityName: User::class,
+            user: $user
+        );
+
         $this->requestStack->getSession()->set('_security.territory', $user->getTerritory());
         // Persist the data to database.
         $this->em->persist($user);
