@@ -2,6 +2,7 @@
 
 namespace App\Entity;
 
+use App\Entity\Enum\HistoryEntryEvent;
 use App\Repository\HistoryEntryRepository;
 use DateTimeImmutable;
 use Doctrine\ORM\Mapping as ORM;
@@ -14,8 +15,8 @@ class HistoryEntry
     #[ORM\Column]
     private ?int $id = null;
 
-    #[ORM\Column(length: 255)]
-    private ?string $event = null;
+    #[ORM\Column(type: 'string', enumType: HistoryEntryEvent::class, nullable: true)]
+    private ?HistoryEntryEvent $event = null;
 
     #[ORM\Column(nullable: true)]
     private ?int $entityId = null;
@@ -41,12 +42,12 @@ class HistoryEntry
         return $this;
     }
 
-    public function getEvent(): ?string
+    public function getEvent(): ?HistoryEntryEvent
     {
         return $this->event;
     }
 
-    public function setEvent(string $event): static
+    public function setEvent(HistoryEntryEvent $event): static
     {
         $this->event = $event;
 

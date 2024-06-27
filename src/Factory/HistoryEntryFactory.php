@@ -16,7 +16,7 @@ class HistoryEntryFactory
     ): HistoryEntry {
         return (new HistoryEntry())
             ->setCreatedAt(new \DateTimeImmutable())
-            ->setEvent($historyEntryEvent->value)
+            ->setEvent($historyEntryEvent)
             ->setEntityId($entityId)
             ->setEntityName($entityName)
             ->setUser($user);
