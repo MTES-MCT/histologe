@@ -59,7 +59,7 @@ class DossierMessageSISHFactoryTest extends TestCase
         $signalement->setInseeOccupant(null);
 
         $dossierMessage = $dossierMessageFactory->createInstance($affectation);
-
+        $this->assertEquals(1.5, $dossierMessage->getSignalementScore());
         $this->assertCount(2, $dossierMessage->getPiecesJointesDocuments());
         $this->assertEquals(PartnerType::ARS->value, $dossierMessage->getPartnerType());
         $this->assertStringContainsString('Etat', $dossierMessage->getSignalementProblemes());

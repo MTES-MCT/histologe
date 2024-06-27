@@ -74,6 +74,7 @@ trait FixturesHelper
             ->setInseeOccupant('62193')
             ->setProfileDeclarant(ProfileDeclarant::LOCATAIRE)
             ->setValidatedAt(new \DateTimeImmutable())
+            ->setScore(1.46265448)
             ->addSuivi($this->getSuiviPartner());
     }
 
