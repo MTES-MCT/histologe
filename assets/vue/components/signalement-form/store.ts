@@ -51,7 +51,7 @@ interface FormStore {
     type: string | null
     uuid: string | null
     signalements: any[] | null
-    uuidDraft: string | null
+    draftExists: boolean | null
     createdAt: string | null
     updatedAt: string | null
   }
@@ -93,7 +93,7 @@ const formStore: FormStore = reactive({
     uuid: null,
     type: null,
     signalements: null,
-    uuidDraft: null,
+    draftExists: null,
     createdAt: null,
     updatedAt: null
   },

@@ -188,7 +188,7 @@ export default defineComponent({
           formStore.alreadyExists.signalements = requestResponse.signalements
           formStore.alreadyExists.createdAt = requestResponse.created_at
           formStore.alreadyExists.updatedAt = requestResponse.updated_at
-          formStore.alreadyExists.uuidDraft = requestResponse.uuid_draft
+          formStore.alreadyExists.draftExists = requestResponse.draft_exists
           if (link) {
             formStore.lastButtonClicked = ''
             link.click()
