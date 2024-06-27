@@ -7,6 +7,7 @@ use App\Repository\UserRepository;
 use App\Service\Mailer\NotificationMail;
 use App\Service\Mailer\NotificationMailerRegistry;
 use App\Service\Mailer\NotificationMailerType;
+use App\Service\Sanitizer;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
@@ -103,6 +104,7 @@ class NotifyAndArchiveInactiveAccountCommand extends AbstractCronCommand
         $users = $this->userRepository->findUsersToArchive();
 
         foreach ($users as $user) {
+            $user->setEmail(Sanitizer::tagArchivedEmail($user->getEmail()));
             $user->setStatut(User::STATUS_ARCHIVE);
             $user->setArchivingScheduledAt(null);
         }
