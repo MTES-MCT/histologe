@@ -10,6 +10,6 @@ parameters:
     frame-src: "'none'"
     object-src: "'none'"
     base-uri: "'self'"
-    form-action: "'self' https://histologe-pr2755.osc-fr1.scalingo.io/connexion https://*.scalingo.io https://histologe.beta.gouv.fr/"
+    form-action: "'self' https://histologe-pr2755.osc-fr1.scalingo.io/ https://histologe-pr2755.osc-fr1.scalingo.io/connexion https://*.scalingo.io https://histologe.beta.gouv.fr/"
     frame-ancestors: "'none'"
     media-src: "'self'"
