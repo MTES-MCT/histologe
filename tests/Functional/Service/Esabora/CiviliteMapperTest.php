@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Tests\Unit\Service\Esabora;
+namespace App\Tests\Functional\Service\Esabora;
 
 use App\Entity\Signalement;
 use App\Repository\SignalementRepository;
