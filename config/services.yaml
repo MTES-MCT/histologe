@@ -73,6 +73,10 @@ services:
         tags:
             - { name: 'kernel.event_listener', event: 'security.interactive_login' }
 
+    App\EventListener\LoginTwoFactorSuccessListener:
+        tags:
+            - { name: 'kernel.event_listener', event: 'scheb_two_factor.authentication.success' }
+
     App\EventListener\ExceptionListener:
         tags:
             - { name: 'kernel.event_listener', event: 'kernel.exception' }
