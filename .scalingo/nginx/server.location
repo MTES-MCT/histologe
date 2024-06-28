@@ -8,7 +8,10 @@ add_header Cross-Origin-Embedder-Policy "require-corp";
 add_header Cross-Origin-Opener-Policy "same-origin";
 add_header Cross-Origin-Resource-Policy "cross-origin";
 add_header Upgrade-Insecure-Requests "1";
-add_header X-Powered-By "none";
+add_header X-Powered-By "none"
+add_header Access-Control-Allow-Origin "*";
+add_header Access-Control-Allow-Methods "GET, POST, OPTIONS";
+add_header Access-Control-Allow-Headers "Content-Type, Authorization";
 
 
 location ~* ^/bo/signalements/.*\/delete$ {
