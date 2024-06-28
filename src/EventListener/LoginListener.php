@@ -7,7 +7,6 @@ use App\Entity\User;
 use App\Manager\HistoryEntryManager;
 use DateTimeImmutable;
 use Doctrine\ORM\EntityManagerInterface;
-use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\Security\Http\Event\InteractiveLoginEvent;
 
 class LoginListener
@@ -16,7 +15,6 @@ class LoginListener
 
     public function __construct(
         private EntityManagerInterface $em,
-        private RequestStack $requestStack,
         private HistoryEntryManager $historyEntryManager
     ) {
     }
@@ -36,7 +34,7 @@ class LoginListener
             );
         }
 
-        $this->requestStack->getSession()->set('_security.territory', $user->getTerritory());
+        $event->getRequest()->getSession()->set('_security.territory', $user->getTerritory());
         // Persist the data to database.
         $this->em->persist($user);
         $this->em->flush();
