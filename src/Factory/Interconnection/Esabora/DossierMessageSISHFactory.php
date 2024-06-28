@@ -118,7 +118,7 @@ class DossierMessageSISHFactory extends AbstractDossierMessageFactory
             ->setSitLogementBailDateEntree($signalement->getDateEntree()?->format($formatDate))
             ->setSitLogementPreavisDepart((int) $signalement->getIsPreavisDepart())
             ->setSitLogementRelogement((int) $signalement->getIsRelogement())
-            ->setSitLogementSuperficie($signalement->getSuperficie())
+            ->setSitLogementSuperficie((int) $signalement->getSuperficie())
             ->setSitLogementMontantLoyer($signalement->getLoyer())
             ->setDeclarantNonOccupant($signalement->getIsNotOccupant())
             ->setLogementNature($signalement->getNatureLogement())

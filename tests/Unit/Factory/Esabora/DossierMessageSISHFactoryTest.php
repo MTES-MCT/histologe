@@ -69,6 +69,7 @@ class DossierMessageSISHFactoryTest extends TestCase
         $this->assertEquals(5, \strlen($dossierMessage->getLocalisationCodePostal()));
         $this->assertNotNull($dossierMessage->getLocalisationVille());
         $this->assertEquals('H', $dossierMessage->getSasLogicielProvenance());
+        $this->assertEquals(75, $dossierMessage->getSitLogementSuperficie());
         $this->assertEquals(
             AbstractEsaboraService::SIGNALEMENT_ORIGINE,
             $dossierMessage->getSignalementOrigine()
