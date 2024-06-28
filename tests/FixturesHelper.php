@@ -75,6 +75,7 @@ trait FixturesHelper
             ->setProfileDeclarant(ProfileDeclarant::LOCATAIRE)
             ->setValidatedAt(new \DateTimeImmutable())
             ->setScore(1.46265448)
+            ->setSuperficie('75.5')
             ->addSuivi($this->getSuiviPartner());
     }
 

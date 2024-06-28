@@ -43,7 +43,7 @@ final class DossierMessageSISH implements DossierMessageInterface
     private ?string $sitLogementBailDateEntree = null;
     private ?int $sitLogementPreavisDepart = null;
     private ?int $sitLogementRelogement = null;
-    private ?float $sitLogementSuperficie = null;
+    private ?int $sitLogementSuperficie = null;
     private ?float $sitLogementMontantLoyer = null;
     private ?int $declarantNonOccupant = null;
     private ?string $logementNature = null;
@@ -474,12 +474,12 @@ final class DossierMessageSISH implements DossierMessageInterface
         return $this;
     }
 
-    public function getSitLogementSuperficie(): ?float
+    public function getSitLogementSuperficie(): ?int
     {
         return $this->sitLogementSuperficie;
     }
 
-    public function setSitLogementSuperficie(?float $sitLogementSuperficie): self
+    public function setSitLogementSuperficie(?int $sitLogementSuperficie): self
     {
         $this->sitLogementSuperficie = $sitLogementSuperficie;
 
