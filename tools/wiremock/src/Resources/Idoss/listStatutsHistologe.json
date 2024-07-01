@@ -1,0 +1,23 @@
+{
+  "message": "Statuts récupérés avec succès !",
+  "statuts": [
+    {
+      "uuid": "00000000-0000-0000-2023-000000000013",
+      "id": "202313",
+      "statut": "termine",
+      "motif": "Attente retour questionnaire"
+    },
+    {
+      "uuid": "00000000-0000-0000-2023-000000000014",
+      "id": "202314",
+      "statut": "en_cours",
+      "motif": null
+    },
+    {
+      "uuid": "00000000-0000-0000-2023-000000000015",
+      "id": "202315",
+      "statut": "accepte",
+      "motif": null
+    }
+  ]
+}
