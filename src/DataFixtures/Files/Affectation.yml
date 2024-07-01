@@ -208,3 +208,27 @@ affectations:
     motif_cloture: ""
     territory: "Bouches-du-Rhône"
     is_synchronized: true
+  -
+    signalement: 2023-13
+    partner: "partenaire-13-05@histologe.fr"
+    statut: 1
+    answered_by: ""
+    affected_by: "admin-territoire-13-01@histologe.fr"
+    motif_cloture: ""
+    territory: "Bouches-du-Rhône"
+  -
+    signalement: 2023-14
+    partner: "partenaire-13-05@histologe.fr"
+    statut: 1
+    answered_by: ""
+    affected_by: "admin-territoire-13-01@histologe.fr"
+    motif_cloture: ""
+    territory: "Bouches-du-Rhône"
+  -
+    signalement: 2023-15
+    partner: "partenaire-13-05@histologe.fr"
+    statut: 1
+    answered_by: ""
+    affected_by: "admin-territoire-13-01@histologe.fr"
+    motif_cloture: ""
+    territory: "Bouches-du-Rhône"
