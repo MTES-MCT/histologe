@@ -114,7 +114,7 @@ class EsaboraManager
                 break;
         }
 
-        if (!empty($dossierResponse->getDossNum())) {
+        if (!empty($dossierResponse->getDossNum()) && !empty($description)) {
             $description .= ' (Dossier '.$dossierResponse->getDossNum().')';
         }
 

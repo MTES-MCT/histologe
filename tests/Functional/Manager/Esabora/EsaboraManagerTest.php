@@ -159,4 +159,60 @@ class EsaboraManagerTest extends KernelTestCase
             false, // suivi mail not sent cause signalement closed
         ];
     }
+
+    public function testAffectationSynchronizedTwoTimesWithoutChanges(
+    ): void {
+        $referenceSignalement = '2022-2';
+        $filename = '../../sish/ws_etat_dossier_sas/etat_importe.json';
+        $suiviDescription = 'accepté via SI-Santé Habitat (SI-SH) (Dossier 2023/SISH/0010)';
+        $expectedAffectationStatus = Affectation::STATUS_ACCEPTED;
+        $suiviStatus = Suivi::TYPE_AUTO;
+        /** @var Signalement $signalement */
+        $signalement = $this->entityManager->getRepository(Signalement::class)->findOneBy([
+            'reference' => $referenceSignalement,
+        ]);
+
+        $this->assertEquals(1, \count($signalement->getSuivis()));
+        /** @var Affectation $affectation */
+        $affectation = $signalement->getAffectations()->get(0);
+        $this->assertNotEquals($expectedAffectationStatus, $affectation->getStatut());
+
+        $basePath = __DIR__.'/../../../../tools/wiremock/src/Resources/Esabora/schs/ws_etat_dossier_sas/';
+        $responseEsabora = file_get_contents($basePath.$filename);
+        $dossierResponse = str_contains($filename, 'sish')
+                ? new DossierStateSISHResponse(json_decode($responseEsabora, true), 200)
+                : new DossierStateSCHSResponse(json_decode($responseEsabora, true), 200);
+
+        $esaboraManager = new EsaboraManager(
+            $this->affectationManager,
+            $this->suiviManager,
+            $this->interventionRepository,
+            new InterventionFactory(),
+            $this->eventDispatcher,
+            $this->userManager,
+            $this->logger,
+            $this->parameterBag,
+        );
+
+        $esaboraManager->synchronizeAffectationFrom($dossierResponse, $affectation);
+        $this->entityManager->refresh($signalement);
+
+        /** @var Suivi $suivi */
+        $suivi = $signalement->getSuivis()->last();
+        $this->assertEquals(2, \count($signalement->getSuivis()));
+        $this->assertStringContainsString($suiviDescription, $suivi->getDescription());
+        $this->assertFalse($suivi->getIsPublic());
+        $this->assertEquals($suiviStatus, $suivi->getType());
+
+        /** @var Affectation $affectationUpdated */
+        $affectationUpdated = $signalement->getAffectations()->get(0);
+        $this->assertEquals($expectedAffectationStatus, $affectationUpdated->getStatut());
+
+        // on appelle une deuxième fois la synchronisation sans changement
+        $esaboraManager->synchronizeAffectationFrom($dossierResponse, $affectation);
+        $this->entityManager->refresh($signalement);
+
+        // on vérifie qu'aucun suivi n'a été créé
+        $this->assertEquals(2, \count($signalement->getSuivis()));
+    }
 }
