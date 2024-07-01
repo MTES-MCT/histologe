@@ -31,8 +31,8 @@ class ContentSecurityPolicyListener
 
         $cspParameters = $this->parameterBag->get('csp_parameters');
 
-        $csp = 'upgrade-insecure-requests;'.
-                'default-src '.$cspParameters['default-src'].'; '.
+        // $csp = 'upgrade-insecure-requests;'.
+        $csp = 'default-src '.$cspParameters['default-src'].'; '.
                 'script-src '.$cspParameters['script-src']." 'nonce-$scriptNonce'; ".
                 'style-src '.$cspParameters['style-src'].'; '.
                 'style-src-attr '.$cspParameters['style-src-attr'].'; '.
