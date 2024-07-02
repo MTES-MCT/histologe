@@ -80,9 +80,9 @@
                 var d=document, g=d.createElement('script'), s=d.getElementsByTagName('script')[0];
                 g.async=true; g.src='{{ matomo.cdn }}'; s.parentNode.insertBefore(g,s);
             })();
-            /*window.HistologeMatomoSendData = function (slug) {
+            window.HistologeMatomoSendData = function (slug) {
                 _paq.push(['trackEvent', 'Formulaire', slug])
-            }*/
+            }
         </script>
         <!-- End Matomo Code -->
     {% endif %}
