@@ -1,0 +1,11 @@
+##############################################
+# in nginx.conf.erb file
+# This file is written in Nginx config language
+
+location / {
+    modsecurity on; # Enable ModSecurity on /
+    # modsecurity_rules_file /app/custom-rules.modsecurity; # load custom rules file
+    # https://github.com/Scalingo/nginx-buildpack
+    # (...)
+    # The rest of your NGINX config file
+}
