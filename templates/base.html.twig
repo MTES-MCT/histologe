@@ -60,8 +60,7 @@
     {% if matomo is defined and matomo.enable == 1 %}
         <!-- Matomo -->
         <script nonce="{{ app.request.attributes.get('csp_script_nonce') }}">
-            window.HistologeMatomoInit = function () {
-                console.log('ici')
+            window.HistologeMatomoSendData = function () {
                 var _paq = window._paq = window._paq || [];
                 {% if platform.url starts with 'https' %}
                     _paq.push(['setSecureCookie', true]);
@@ -77,14 +76,13 @@
                 _paq.push(['enableLinkTracking']);
                 (function() {
                     var u="{{ matomo.url }}";
-                    console.log(u)
                     _paq.push(['setTrackerUrl', u+'matomo.php']);
                     _paq.push(['setSiteId', '{{ matomo.site_id }}']);
                     var d=document, g=d.createElement('script'), s=d.getElementsByTagName('script')[0];
                     g.async=true; g.src='{{ matomo.cdn }}'; s.parentNode.insertBefore(g,s);
                 })();
             }
-            window.HistologeMatomoInit()
+            window.HistologeMatomoSendData()
         </script>
         <!-- End Matomo Code -->
     {% endif %}
