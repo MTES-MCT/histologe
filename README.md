@@ -148,7 +148,7 @@ Une activation de compte sera nécéssaire
 - [Documentation usager](https://documentation.histologe.beta.gouv.fr/)
 - [Dossier d'architecture technique](./docs/ARCHITECTURE.md)
 - [Document d'exploitation](./docs/EXPLOITATION.md)
-- [Veille sécurité](./docs/VEILLE.md)
+- [Veille sécurité](./docs/SECURITY.md)
 
 ## Contribuer
 
