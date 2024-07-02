@@ -191,6 +191,9 @@ export default defineComponent({
           formStore.alreadyExists.createdAt = requestResponse.created_at
           formStore.alreadyExists.updatedAt = requestResponse.updated_at
           formStore.alreadyExists.draftExists = requestResponse.draft_exists
+          if (formStore.alreadyExists.type === 'signalement') {
+            Object(window).HistologeMatomoSendData('Modale - Doublon signalement')
+          }
           if (link) {
             formStore.lastButtonClicked = ''
             link.click()
