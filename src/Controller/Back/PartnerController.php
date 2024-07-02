@@ -24,6 +24,8 @@ use App\Service\Sanitizer;
 use App\Service\Signalement\VisiteNotifier;
 use Doctrine\ORM\EntityManagerInterface;
 use Egulias\EmailValidator\EmailValidator;
+use Egulias\EmailValidator\Validation\DNSCheckValidation;
+use Egulias\EmailValidator\Validation\MultipleValidationWithAnd;
 use Egulias\EmailValidator\Validation\RFCValidation;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\FormError;
@@ -538,7 +540,11 @@ class PartnerController extends AbstractController
             }
 
             $validator = new EmailValidator();
-            $emailValid = $validator->isValid($request->get('email'), new RFCValidation());
+            $multipleValidations = new MultipleValidationWithAnd([
+                new RFCValidation(),
+                new DNSCheckValidation(),
+            ]);
+            $emailValid = $validator->isValid($request->get('email'), $multipleValidations);
 
             if (!$emailValid) {
                 return $this->json(['error' => 'L\'adresse e-mail est invalide'], Response::HTTP_BAD_REQUEST);
