@@ -291,8 +291,7 @@ export default defineComponent({
             // Prétraitement des composants avec repeat
             formStore.currentScreen.components.body = formStore.preprocessScreen(formStore.currentScreen.components.body)
           }
-          window.location.hash = formStore.data.currentStep
-          Object(window).HistologeMatomoSendData()
+          Object(window).HistologeMatomoSendData(formStore.data.currentStep)
         } else {
           if (this.slugCoordonnees.includes(this.nextSlug)) { // TODO à mettre à jour suivant le slug des différents profils
             // on fait un appel API pour charger la suite des questions avant de changer d'écran
