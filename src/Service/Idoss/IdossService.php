@@ -2,6 +2,7 @@
 
 namespace App\Service\Idoss;
 
+use App\Entity\Affectation;
 use App\Entity\JobEvent;
 use App\Entity\Partner;
 use App\Entity\Signalement;
@@ -20,10 +21,13 @@ class IdossService
 {
     public const TYPE_SERVICE = 'idoss';
 
+    public const STATUS_ACCEPTED = 'accepte';
+    public const STATUS_IN_PROGRESS = 'en_cours';
+    public const STATUS_CLOSED = 'termine';
     public const MAPPING_STATUS = [
-        'accepte' => Signalement::STATUS_NEED_PARTNER_RESPONSE,
-        'en_cours' => Signalement::STATUS_ACTIVE,
-        'termine' => Signalement::STATUS_CLOSED,
+        self::STATUS_ACCEPTED => Affectation::STATUS_ACCEPTED,
+        self::STATUS_IN_PROGRESS => Affectation::STATUS_ACCEPTED,
+        self::STATUS_CLOSED => Affectation::STATUS_CLOSED,
     ];
     private const ACTION_PUSH_DOSSIER = 'push_dossier';
     private const ACTION_UPLOAD_FILES = 'upload_files';
@@ -195,16 +199,15 @@ class IdossService
 
     private function getFilesPayload(Signalement $signalement, array $files): array
     {
-        $filesData = [];
-        foreach ($files as $file) {
-            $filesData[] = $this->imageManipulationHandler->getFileBase64Encoded($file);
-        }
-
-        return [
+        $payload = [
             'id' => $signalement->getSynchroData(self::TYPE_SERVICE)['id'],
-            'file' => $filesData,
             'uuid' => $signalement->getUuid(),
         ];
+        foreach ($files as $file) {
+            $payload['file'][] = $this->imageManipulationHandler->getFilePath($file);
+        }
+
+        return $payload;
     }
 
     private function getToken(Partner $partner): string
@@ -236,14 +239,15 @@ class IdossService
 
     private function request(string $url, array $payload, ?string $token = null, $requestMethod = 'POST', $contentType = 'application/json'): ResponseInterface
     {
-        $options = [
-            'headers' => [
-                'Content-Type: '.$contentType,
-            ],
-            'body' => json_encode($payload),
-        ];
+        $options = ['headers' => []];
         if ($token) {
-            $options['headers'][] = 'Authorization: Bearer '.$token;
+            $options['headers']['Authorization'] = 'Bearer '.$token;
+        }
+        if ('multipart/form-data' === $contentType) {
+            $options['body'] = $payload;
+        } else {
+            $options['headers']['Content-Type'] = $contentType;
+            $options['body'] = json_encode($payload);
         }
 
         return $this->client->request($requestMethod, $url, $options);
