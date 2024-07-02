@@ -90,7 +90,7 @@ class ImageManipulationHandler
         return $this;
     }
 
-    public function getFileBase64Encoded(File $file): string
+    public function getFilePath(File $file)
     {
         $variantNames = self::getVariantNames($file->getFilename());
         $filename = $variantNames[self::SUFFIX_RESIZE];
@@ -100,9 +100,8 @@ class ImageManipulationHandler
         if (!$this->fileStorage->fileExists($filename)) {
             $filename = $file->getFilename();
         }
-        $bucketFilepath = $this->parameterBag->get('url_bucket').'/'.$filename;
 
-        return base64_encode(file_get_contents($bucketFilepath));
+        return $this->parameterBag->get('url_bucket').'/'.$filename;
     }
 
     private function getNewPath(string $suffix): string
