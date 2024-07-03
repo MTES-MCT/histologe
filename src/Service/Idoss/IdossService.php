@@ -239,14 +239,15 @@ class IdossService
 
     private function request(string $url, array $payload, ?string $token = null, $requestMethod = 'POST', $contentType = 'application/json'): ResponseInterface
     {
-        $options = ['headers' => []];
+        $options = ['headers' => [
+            'Content-Type' => $contentType,
+        ]];
         if ($token) {
             $options['headers']['Authorization'] = 'Bearer '.$token;
         }
         if ('multipart/form-data' === $contentType) {
             $options['body'] = $payload;
         } else {
-            $options['headers']['Content-Type'] = $contentType;
             $options['body'] = json_encode($payload);
         }
 
