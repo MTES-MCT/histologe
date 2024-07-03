@@ -4,7 +4,9 @@ namespace App\Dto;
 
 use App\Entity\Enum\Qualification;
 use App\Entity\Enum\QualificationStatus;
+use Symfony\Component\Serializer\Attribute\Groups;
 
+#[Groups(['signalement:read'])]
 class SignalementAffectationListView
 {
     public const SEPARATOR_CONCAT = '||';
@@ -31,6 +33,8 @@ class SignalementAffectationListView
         private ?array $affectations = null,
         private ?array $qualifications = null,
         private ?array $qualificationsStatuses = null,
+        private ?array $qualificationsStatusesLabels = null,
+        private ?bool $nde = null,
         private ?array $conclusionsProcedure = null,
         private ?string $csrfToken = null,
     ) {
@@ -126,7 +130,7 @@ class SignalementAffectationListView
         return $this->qualifications;
     }
 
-    public function hasNDE(): bool
+    public function hasNde(): bool
     {
         if (null !== $this->qualifications) {
             foreach ($this->qualifications as $qualification) {
@@ -137,6 +141,11 @@ class SignalementAffectationListView
         }
 
         return false;
+    }
+
+    public function getQualificationsStatuses(): ?array
+    {
+        return $this->qualificationsStatuses;
     }
 
     public function getQualificationsStatusesLabels(): array

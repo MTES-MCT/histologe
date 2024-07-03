@@ -72,6 +72,18 @@ export function buildBadge (key: string, value: any): string | undefined | null 
     return buildRangeDateBadge(key, value)
   }
 
+  if (key === 'sansSuiviPeriode') {
+    return 'Sans suivi depuis au moins 30 jours'
+  }
+
+  if (key === 'relancesUsager') {
+    return 'Pas de suivi après 3 relances'
+  }
+
+  if (key === 'nouveauSuivi') {
+    return 'Nouveaux suivis partenaires et usagers'
+  }
+
   return buildStaticBadge(value)
 }
 
