@@ -102,9 +102,9 @@ class ImageManipulationHandler
         }
 
         $bucketPath = $this->parameterBag->get('url_bucket').'/'.$filename;
-        $fileHandle = fopen($bucketPath, 'r');
+        // $fileHandle = fopen($bucketPath, 'r');
 
-        return $fileHandle;
+        return $bucketPath;
     }
 
     private function getNewPath(string $suffix): string

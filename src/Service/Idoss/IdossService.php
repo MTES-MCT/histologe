@@ -12,7 +12,10 @@ use App\Service\ImageManipulationHandler;
 use Doctrine\ORM\EntityManagerInterface;
 use League\Flysystem\FilesystemOperator;
 use Symfony\Component\DependencyInjection\ParameterBag\ContainerBagInterface;
+use Symfony\Component\HttpClient\CurlHttpClient;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Mime\Part\DataPart;
+use Symfony\Component\Mime\Part\Multipart\FormDataPart;
 use Symfony\Component\Serializer\SerializerInterface;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
 use Symfony\Contracts\HttpClient\ResponseInterface;
@@ -203,10 +206,13 @@ class IdossService
             'id' => $signalement->getSynchroData(self::TYPE_SERVICE)['id'],
             'uuid' => $signalement->getUuid(),
         ];
+        $dataparts = [];
         foreach ($files as $file) {
             // $payload['file'] = $this->imageManipulationHandler->getFileRessource($file); //fonctionne
-            $payload['file'][] = $this->imageManipulationHandler->getFileRessource($file); // ne fonctionne pas
+            $dataparts[] = ['file' => DataPart::fromPath($this->imageManipulationHandler->getFileRessource($file))];
         }
+
+        $payload = array_merge($payload, $dataparts);
         // seconde version de test : ne fonctionne pas
         /*$payload = [
             ['name' => 'id', 'contents' => $signalement->getSynchroData(self::TYPE_SERVICE)['id']],
@@ -215,6 +221,7 @@ class IdossService
         foreach ($files as $file) {
             $payload[] = ['name' => 'file', 'contents' => $this->imageManipulationHandler->getFileRessource($file)];
         }*/
+
         return $payload;
     }
 
@@ -252,7 +259,10 @@ class IdossService
             $options['headers']['Authorization'] = 'Bearer '.$token;
         }
         if ('multipart/form-data' === $contentType) {
-            $options['body'] = $payload;
+            $formData = new FormDataPart($payload);
+            $options['body'] = $formData->bodyToIterable();
+            $options['headers'] = $formData->getPreparedHeaders()->toArray();
+            $options['headers'][] = 'Authorization: Bearer '.$token;
         } else {
             $options['headers']['Content-Type'] = $contentType;
             $options['body'] = json_encode($payload);
@@ -260,4 +270,31 @@ class IdossService
 
         return $this->client->request($requestMethod, $url, $options);
     }
+
+//    private function request(string $url, array $payload, ?string $token = null, $requestMethod = 'POST', $contentType = 'application/json'): ResponseInterface
+//    {
+//        $options = ['headers' => []];
+//        if ($token) {
+//            $options['headers']['Authorization'] = 'Bearer '.$token;
+//        }
+//        if ('multipart/form-data' === $contentType) {
+//            $client = new CurlHttpClient();
+//            $curlFile = [];
+//            if (isset($payload['file'])) {
+//                foreach ($payload['file'] as $file) {
+//                    $curlFile[] = new \CurlFile($file);
+//                }
+//            }
+//
+//            $payload['file'] = $curlFile;
+//            $options['body'] = $payload;
+//
+//            return $client->request($requestMethod, $url, $options);
+//        } else {
+//            $options['headers']['Content-Type'] = $contentType;
+//            $options['body'] = json_encode($payload);
+//        }
+//
+//        return $this->client->request($requestMethod, $url, $options);
+//    }
 }
