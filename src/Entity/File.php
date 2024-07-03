@@ -266,14 +266,14 @@ class File
 
             return $this;
         }
-        if (!$desordreSlug) {
-            $this->desordreSlug = null;
-        } elseif (
+        if (
             \in_array($desordreSlug, $this->getSignalement()->getDesordreCritereSlugs())
             || \in_array($desordreSlug, $this->getSignalement()->getDesordrePrecisionSlugs())
             || \in_array($desordreSlug, $this->getSignalement()->getDesordreCategorieSlugs())
         ) {
             $this->desordreSlug = $desordreSlug;
+        } else {
+            $this->desordreSlug = null;
         }
 
         return $this;

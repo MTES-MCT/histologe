@@ -72,6 +72,9 @@ class SignalementFileController extends AbstractController
         $file->setDocumentType($documentType);
         $desordreSlug = $request->get('desordreSlug');
         $file->setDesordreSlug($desordreSlug);
+        if ($desordreSlug && !$file->getDesordreSlug()) {
+            return $this->json(['response' => 'Type de désordre invalide'], Response::HTTP_BAD_REQUEST);
+        }
         $entityManager->persist($file);
         $entityManager->flush();
 
