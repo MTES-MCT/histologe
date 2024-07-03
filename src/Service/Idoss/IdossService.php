@@ -204,9 +204,17 @@ class IdossService
             'uuid' => $signalement->getUuid(),
         ];
         foreach ($files as $file) {
-            $payload['file'][] = $this->imageManipulationHandler->getFilePath($file);
+            // $payload['file'] = $this->imageManipulationHandler->getFileRessource($file); //fonctionne
+            $payload['file'][] = $this->imageManipulationHandler->getFileRessource($file); // ne fonctionne pas
         }
-
+        // seconde version de test : ne fonctionne pas
+        /*$payload = [
+            ['name' => 'id', 'contents' => $signalement->getSynchroData(self::TYPE_SERVICE)['id']],
+            ['name' => 'uuid', 'contents' => $signalement->getUuid()]
+        ];
+        foreach ($files as $file) {
+            $payload[] = ['name' => 'file', 'contents' => $this->imageManipulationHandler->getFileRessource($file)];
+        }*/
         return $payload;
     }
 
@@ -239,15 +247,14 @@ class IdossService
 
     private function request(string $url, array $payload, ?string $token = null, $requestMethod = 'POST', $contentType = 'application/json'): ResponseInterface
     {
-        $options = ['headers' => [
-            'Content-Type' => $contentType,
-        ]];
+        $options = ['headers' => []];
         if ($token) {
             $options['headers']['Authorization'] = 'Bearer '.$token;
         }
         if ('multipart/form-data' === $contentType) {
             $options['body'] = $payload;
         } else {
+            $options['headers']['Content-Type'] = $contentType;
             $options['body'] = json_encode($payload);
         }
 
