@@ -9,6 +9,7 @@ use Symfony\Component\Validator\Constraints\Email;
 class CoordonneesTiersRequest implements RequestInterface
 {
     public function __construct(
+        #[Assert\Choice(choices: ['ORGANISME_SOCIETE', 'PARTICULIER'], message: 'Le type de propriétaire est incorrect.')]
         private readonly ?string $typeProprio = null,
         #[Assert\NotBlank(message: 'Merci de saisir un nom.')]
         #[Assert\Length(max: 50, maxMessage: 'Le nom ne doit pas dépasser {{ limit }} caractères.')]
@@ -18,10 +19,12 @@ class CoordonneesTiersRequest implements RequestInterface
         private readonly ?string $prenom = null,
         #[Assert\NotBlank(message: 'Merci de saisir un courriel.')]
         #[Assert\Email(mode: Email::VALIDATION_MODE_STRICT)]
+        #[Assert\Length(max: 255, maxMessage: 'L\'email ne doit pas dépasser {{ limit }} caractères.')]
         private readonly ?string $mail = null,
         #[Assert\NotBlank(message: 'Merci de saisir un numéro de téléphone.')]
         #[AppAssert\TelephoneFormat]
         private readonly ?string $telephone = null,
+        #[Assert\Choice(choices: ['PROCHE', 'VOISIN', 'SECOURS', 'BAILLEUR', 'PRO', 'AUTRE'], message: 'Le lien avec l\'occupant est incorrect.')]
         private readonly ?string $lien = null,
         #[Assert\When(
             expression: 'this.getLien() == "PRO" || this.getLien() == "SECOURS"',
@@ -29,6 +32,7 @@ class CoordonneesTiersRequest implements RequestInterface
                 new Assert\NotBlank(message: 'Merci de saisir un nom de structure.'),
             ],
         )]
+        #[Assert\Length(max: 200, maxMessage: 'Le nom de la structure ne doit pas dépasser {{ limit }} caractères.')]
         private readonly ?string $structure = null,
     ) {
     }
