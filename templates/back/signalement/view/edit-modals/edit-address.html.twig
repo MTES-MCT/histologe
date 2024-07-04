@@ -34,17 +34,17 @@
 
                                     <div class="fr-input-group">
                                         <label class="fr-label" for="form-edit-address-adresse">Numéro et voie</label>
-                                        <input class="fr-input" id="form-edit-address-adresse" type="text" name="adresse" value="{{ signalement.adresseOccupant }}" data-autocomplete-addresse="true">
+                                        <input class="fr-input" id="form-edit-address-adresse" type="text" name="adresse" value="{{ signalement.adresseOccupant }}" data-autocomplete-addresse="true" maxlength="100">
                                     </div>
 
                                     <div class="fr-input-group">
                                         <label class="fr-label" for="form-edit-address-codepostal">Code postal</label>
-                                        <input class="fr-input" id="form-edit-address-codepostal" type="text" name="codePostal" value="{{ signalement.cpOccupant }}" data-autocomplete-codepostal="true">
+                                        <input class="fr-input" id="form-edit-address-codepostal" type="text" name="codePostal" value="{{ signalement.cpOccupant }}" data-autocomplete-codepostal="true" minlength="5" maxlength="5">
                                     </div>
 
                                     <div class="fr-input-group">
                                         <label class="fr-label" for="form-edit-address-ville">Commune</label>
-                                        <input class="fr-input" id="form-edit-address-ville" type="text" name="ville" value="{{ signalement.villeOccupant }}" data-autocomplete-ville="true">
+                                        <input class="fr-input" id="form-edit-address-ville" type="text" name="ville" value="{{ signalement.villeOccupant }}" data-autocomplete-ville="true" maxlength="100">
                                     </div>
 
                                     <input type="hidden" name="needResetInsee" value="0" data-autocomplete-need-reset-insee="true">
