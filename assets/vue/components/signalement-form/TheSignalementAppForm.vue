@@ -192,7 +192,7 @@ export default defineComponent({
           formStore.alreadyExists.updatedAt = requestResponse.updated_at
           formStore.alreadyExists.draftExists = requestResponse.draft_exists
           if (formStore.alreadyExists.type === 'signalement') {
-            Object(window).HistologeMatomoSendData('Modale - Doublon signalement')
+            matomo.pushEvent('showModal', 'Signalement existant')
           }
           if (link) {
             formStore.lastButtonClicked = ''
