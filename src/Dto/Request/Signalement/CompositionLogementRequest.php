@@ -9,12 +9,20 @@ class CompositionLogementRequest implements RequestInterface
 {
     public function __construct(
         #[Assert\NotBlank(message: 'Merci de définir le type de logement.')]
+        #[Assert\Choice(
+            choices: ['maison', 'appartement', 'autre'],
+            message: 'Le type de logement est incorrect.'
+        )]
         private readonly ?string $type = null,
         #[Assert\When(
             expression: 'this.getType() == "autre"',
             constraints: [
                 new Assert\NotBlank(message: 'Merci de préciser le type de logement autre.'),
             ],
+        )]
+        #[Assert\Length(
+            max: 100,
+            maxMessage: 'Le type de logement autre ne doit pas dépasser {{ limit }} caractères.',
         )]
         private readonly ?string $typeLogementNatureAutrePrecision = null,
         #[Assert\NotBlank(
@@ -29,20 +37,38 @@ class CompositionLogementRequest implements RequestInterface
             message: 'Merci de saisir la superficie du logement.',
             groups: ['LOCATAIRE', 'BAILLEUR_OCCUPANT'])]
         #[Assert\Positive(message: 'Merci de saisir une information numérique dans le champs de superficie.')]
+        #[Assert\Type(type: 'numeric', message: 'La superficie doit être un nombre.')]
+        #[Assert\Length(
+            max: 10,
+            maxMessage: 'La superficie ne doit pas dépasser {{ limit }} caractères.',
+        )]
         private readonly ?string $superficie = null,
         #[Assert\NotBlank(
             message: 'Merci de définir la hauteur du logement.',
             groups: [
                 'LOCATAIRE', 'BAILLEUR_OCCUPANT', 'BAILLEUR', 'TIERS_PARTICULIER', 'TIERS_PRO', 'SERVICE_SECOURS', ]
         )]
+        #[Assert\Choice(
+            choices: ['oui', 'non', 'nsp'],
+            message: 'Le champ "Hauteur > 2m" est incorrecte.'
+        )]
         private readonly ?string $compositionLogementHauteur = null,
         #[Assert\NotBlank(
             message: 'Merci de définir le nombre de pièces à vivre.',
             groups: ['LOCATAIRE', 'BAILLEUR_OCCUPANT', 'BAILLEUR', 'TIERS_PARTICULIER', 'TIERS_PRO', 'SERVICE_SECOURS']
         )]
-        #[Assert\Positive(
-            message: 'Merci de saisir une information numérique dans le champs nombre de pièces à vivre.')]
+        #[Assert\Positive(message: 'Merci de saisir une information numérique dans le champs nombre de pièces à vivre.')]
+        #[Assert\Type(type: 'numeric', message: 'Le nombre de pièces à vivre doit être un nombre.')]
+        #[Assert\Length(
+            max: 10,
+            maxMessage: 'Le nombre de pièces à vivre ne doit pas dépasser {{ limit }} caractères.',
+        )]
         private readonly ?string $compositionLogementNbPieces = null,
+        #[Assert\Type(type: 'numeric', message: 'Le nombre d\'étages doit être un nombre.')]
+        #[Assert\Length(
+            max: 10,
+            maxMessage: 'Le nombre d\'étages ne doit pas dépasser {{ limit }} caractères.',
+        )]
         private readonly ?string $nombreEtages = null,
         #[Assert\When(
             expression: 'this.getType() == "appartement"',
@@ -52,6 +78,10 @@ class CompositionLogementRequest implements RequestInterface
             constraints: [
                 new Assert\NotBlank(message: 'Merci de préciser si le logement est au rez-de-chaussée.'),
             ],
+        )]
+        #[Assert\Choice(
+            choices: ['oui', 'non', 'nsp'],
+            message: 'Le champ "Rez-de-chaussée" est incorrect.'
         )]
         private readonly ?string $typeLogementRdc = null,
         #[Assert\When(
@@ -63,12 +93,20 @@ class CompositionLogementRequest implements RequestInterface
                 new Assert\NotBlank(message: 'Merci de préciser si le logement est au dernier étage.'),
             ],
         )]
+        #[Assert\Choice(
+            choices: ['oui', 'non', 'nsp'],
+            message: 'Le champ "Dernier étage" est incorrect.'
+        )]
         private readonly ?string $typeLogementDernierEtage = null,
         #[Assert\When(
             expression: 'this.getType() == "appartement" && this.getTypeLogementDernierEtage() == "oui"',
             constraints: [
                 new Assert\NotBlank(message: 'Merci de préciser si le logement est sous comble et sans fenêtre.'),
             ],
+        )]
+        #[Assert\Choice(
+            choices: ['oui', 'non', 'nsp'],
+            message: 'Le champ "Sous comble et sans fenêtre" est incorrect.'
         )]
         private readonly ?string $typeLogementSousCombleSansFenetre = null,
         #[Assert\When(
@@ -77,14 +115,26 @@ class CompositionLogementRequest implements RequestInterface
                 new Assert\NotBlank(message: 'Merci de préciser si le logement est au sous-sol et sans fenêtre.'),
             ],
         )]
+        #[Assert\Choice(
+            choices: ['oui', 'non', 'nsp'],
+            message: 'Le champ "Sous-sol et sans fenêtre" est incorrect.'
+        )]
         private readonly ?string $typeLogementSousSolSansFenetre = null,
         #[Assert\NotBlank(
             message: 'Merci de définir si une pièce fait plus de 9m².',
             groups: ['LOCATAIRE', 'BAILLEUR_OCCUPANT', 'BAILLEUR', 'TIERS_PARTICULIER'])]
+        #[Assert\Choice(
+            choices: ['oui', 'non', 'nsp'],
+            message: 'Le champ "Pièce à vivre > 9m²" est incorrect.'
+        )]
         private readonly ?string $typeLogementCommoditesPieceAVivre9m = null,
         #[Assert\NotBlank(
             message: 'Merci de définir si il y a une cuisine.',
             groups: ['LOCATAIRE', 'BAILLEUR_OCCUPANT', 'BAILLEUR', 'TIERS_PARTICULIER', 'TIERS_PRO', 'SERVICE_SECOURS']
+        )]
+        #[Assert\Choice(
+            choices: ['oui', 'non', 'nsp'],
+            message: 'Le champ "Cuisine" est incorrect.'
         )]
         private readonly ?string $typeLogementCommoditesCuisine = null,
         #[Assert\When(
@@ -93,10 +143,18 @@ class CompositionLogementRequest implements RequestInterface
                 new Assert\NotBlank(message: 'Merci de préciser s\'il y a une cuisine collective.'),
             ],
         )]
+        #[Assert\Choice(
+            choices: ['oui', 'non'],
+            message: 'Le champ "Cuisine collective" est incorrect.'
+        )]
         private readonly ?string $typeLogementCommoditesCuisineCollective = null,
         #[Assert\NotBlank(
             message: 'Merci de définir si il y a une salle de bain.',
             groups: ['LOCATAIRE', 'BAILLEUR_OCCUPANT', 'BAILLEUR', 'TIERS_PARTICULIER', 'TIERS_PRO', 'SERVICE_SECOURS']
+        )]
+        #[Assert\Choice(
+            choices: ['oui', 'non', 'nsp'],
+            message: 'Le champ "Salle de bain" est incorrect.'
         )]
         private readonly ?string $typeLogementCommoditesSalleDeBain = null,
         #[Assert\When(
@@ -105,10 +163,18 @@ class CompositionLogementRequest implements RequestInterface
                 new Assert\NotBlank(message: 'Merci de préciser s\'il y a une salle de bain collective.'),
             ],
         )]
+        #[Assert\Choice(
+            choices: ['oui', 'non'],
+            message: 'Le champ "Salle de bain collective" est incorrect.'
+        )]
         private readonly ?string $typeLogementCommoditesSalleDeBainCollective = null,
         #[Assert\NotBlank(
             message: 'Merci de définir si il y a des WC.',
             groups: ['LOCATAIRE', 'BAILLEUR_OCCUPANT', 'BAILLEUR', 'TIERS_PARTICULIER', 'TIERS_PRO', 'SERVICE_SECOURS']
+        )]
+        #[Assert\Choice(
+            choices: ['oui', 'non', 'nsp'],
+            message: 'Le champ "WC" est incorrect.'
         )]
         private readonly ?string $typeLogementCommoditesWc = null,
         #[Assert\When(
@@ -117,13 +183,20 @@ class CompositionLogementRequest implements RequestInterface
                 new Assert\NotBlank(message: 'Merci de préciser s\'il y a des wc collectifs.'),
             ],
         )]
+        #[Assert\Choice(
+            choices: ['oui', 'non'],
+            message: 'Le champ "WC collectifs" est incorrect.'
+        )]
         private readonly ?string $typeLogementCommoditesWcCollective = null,
-
         #[Assert\When(
             expression: 'this.getTypeLogementCommoditesWc() == "oui" && this.getTypeLogementCommoditesCuisine() == "oui"',
             constraints: [
                 new Assert\NotBlank(message: 'Merci de préciser s\'il y a des wc dans la cuisine.'),
             ],
+        )]
+        #[Assert\Choice(
+            choices: ['oui', 'non'],
+            message: 'Le champ "WC dans la cuisine" est incorrect.'
         )]
         private readonly ?string $typeLogementCommoditesWcCuisine = null,
     ) {

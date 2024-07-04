@@ -31,6 +31,7 @@ class InformationsLogementRequest implements RequestInterface
         #[Assert\Choice(choices: ['oui', 'non', 'nsp'], message: 'Le champ "DPE" est incorrect.')]
         private readonly ?string $bailDpeDpe = null,
         #[Assert\Type(type: 'numeric', message: 'Le loyer doit être un nombre.')]
+        #[Assert\Length(max: 20, maxMessage: 'Le loyer ne doit pas dépasser {{ limit }} caractères.')]
         private readonly ?string $loyer = null,
         #[Assert\Choice(choices: ['oui', 'non'], message: 'Le champ "Paiement loyers à jour" est incorrect.')]
         private readonly ?string $loyersPayes = null,
