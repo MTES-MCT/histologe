@@ -57,7 +57,7 @@
                     </td>
                     <td>{{ notification.suivi.signalement.reference }}</td>
                     <td>{{ notification.suivi.createdAt|format_datetime(locale='fr') }}</td>
-                    <td>{{ notification.suivi.description
+                    <td class="word-wrap-anywhere">{{ notification.suivi.description
                         |replace({'&t=___TOKEN___':'/'~notification.signalement.uuid})
                         |replace({'?t=___TOKEN___':'/'~notification.signalement.uuid})
                         |replace({'?folder=_up':'/'~notification.signalement.uuid~'?variant=resize'})
