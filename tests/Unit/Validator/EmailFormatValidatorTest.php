@@ -18,9 +18,9 @@ class EmailFormatValidatorTest extends KernelTestCase
     public function provideEmail(): \Generator
     {
         yield 'joey.starr@supreme.fr' => ['joey.starr@supreme.fr', true];
-        yield 'lino@ärsenik.fr' => ['lino@ärsenik.fr', true];
-        yield 'gaëlino.m\'bani@ärsenik.fr' => ['gaëlino.m\'bani@ärsenik.fr', true]; // à améliorer
-        yield 'oxmo.puccino@time-bomb.f' => ['oxmo.puccino@time-bomb.f', true]; // à améliorer
+        yield 'linoä@orange.fr' => ['linoä@orange.fr', true];
+        yield 'gaëlino.m\'bani@orange.fr' => ['gaëlino.m\'bani@orange.fr', true]; // à améliorer
+        yield 'oxmo.puccino@orange.f' => ['oxmo.puccino@orange.f', false];
         yield 'ronaldinho@virgule,br' => ['ronaldinho@virgule,br', false];
         yield 'Non communiqué' => ['Non communiqué', false];
         yield 'x@x.com' => ['x@x.com', true]; // à améliorer

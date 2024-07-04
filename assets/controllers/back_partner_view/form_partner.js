@@ -74,13 +74,26 @@ document.querySelectorAll('.btn-delete-partner').forEach(swbtn => {
     })
   })
 })
+let userEditedId=null
 
+function clearErrors() {
+  const divErrorElements = document.querySelectorAll('.fr-input-group--error');
+  divErrorElements.forEach((divErrorElement) => {
+      divErrorElement.classList.remove('fr-input-group--error');
+      let pErrorElement = divErrorElement.querySelector('.fr-error-text');
+      if (pErrorElement) {
+          pErrorElement.classList.add('fr-hidden');
+      }
+  })
+}
 document.querySelectorAll('.btn-edit-partner-user').forEach(swbtn => {
   swbtn.addEventListener('click', evt => {
+    clearErrors() 
     const target = evt.target
     document.querySelectorAll('.fr-modal-user-edit_useremail').forEach(userItem => {
       userItem.innerHTML = target.getAttribute('data-useremail')
     })
+    userEditedId = target.getAttribute('data-userid')
     histoUpdateValueFromData('#user_edit_userid', 'data-userid', target)
     histoUpdateValueFromData('#user_edit_email', 'data-useremail', target)
     histoUpdateValueFromData('#user_edit_nom', 'data-usernom', target)
@@ -101,6 +114,12 @@ document.querySelectorAll('.btn-edit-partner-user').forEach(swbtn => {
     })
   })
 })
+if (document.querySelector('.fr-btn-add-user')) {
+  document.querySelector('.fr-btn-add-user').addEventListener('click', () => {
+    clearErrors() 
+    userEditedId = null
+  })
+}
 
 if (document.querySelector('#partner_type')) {
   histoUpdateFieldsVisibility()
@@ -121,6 +140,7 @@ deletePartnerForm.forEach(form => {
 const checkUserMail = (el) => {
   let formData = new FormData();
   formData.append('email', el.value)
+  formData.append('userEditedId', userEditedId)
   formData.append('_token', el.getAttribute('data-token'))
   fetch('/bo/partenaires/checkmail', {
       method: 'POST',
