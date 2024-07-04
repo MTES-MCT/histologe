@@ -9,6 +9,7 @@ use Symfony\Component\Validator\Constraints\Email;
 class CoordonneesFoyerRequest implements RequestInterface
 {
     public function __construct(
+        #[Assert\Choice(choices: ['ORGANISME_SOCIETE', 'PARTICULIER'], message: 'Le type de propriétaire est incorrect.')]
         private readonly ?string $typeProprio = null,
         #[Assert\When(
             expression: 'this.getTypeProprio() == "ORGANISME_SOCIETE"',
@@ -18,6 +19,7 @@ class CoordonneesFoyerRequest implements RequestInterface
         )]
         private readonly ?string $nomStructure = null,
         #[Assert\NotBlank(message: 'Merci de sélectionner une civilité.', groups: ['LOCATAIRE'])]
+        #[Assert\Choice(choices: ['mme', 'mr'], message: 'La civilité est incorrecte.')]
         private readonly ?string $civilite = null,
         #[Assert\NotBlank(
             message: 'Merci de saisir un nom.',
@@ -31,6 +33,7 @@ class CoordonneesFoyerRequest implements RequestInterface
         private readonly ?string $prenom = null,
         #[Assert\NotBlank(message: 'Merci de saisir un email.', groups: ['LOCATAIRE', 'BAILLEUR_OCCUPANT'])]
         #[Assert\Email(mode: Email::VALIDATION_MODE_STRICT)]
+        #[Assert\Length(max: 255, maxMessage: 'L\'email ne doit pas dépasser {{ limit }} caractères.')]
         private readonly ?string $mail = null,
         #[Assert\NotBlank(
             message: 'Merci de saisir un numéro de téléphone.',
