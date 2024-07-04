@@ -20,12 +20,16 @@ class PostalCodeSearchType extends AbstractType
                 'attr' => [
                     'class' => 'fr-input',
                     'placeholder' => 'Ex. : 59000',
-                    'minlength' => 2,
-                    'maxlength' => 5,
+                    'pattern' => '[0-9]{5}',
+                    'title' => 'Le code postal doit être composé de 5 chiffres.',
                 ],
                 'label' => 'Votre code postal',
                 'constraints' => [
                     new Assert\NotBlank(),
+                    new Assert\Regex([
+                        'pattern' => '/^[0-9]{5}$/',
+                        'message' => 'Le code postal doit être composé de 5 chiffres.',
+                    ]),
                 ],
             ])
         ;

@@ -565,6 +565,7 @@ class SignalementController extends AbstractController
         SuiviFactory $suiviFactory,
         SignalementFileProcessor $signalementFileProcessor,
         UploadHandlerService $uploadHandlerService,
+        ValidatorInterface $validator
     ): RedirectResponse {
         $signalement = $signalementRepository->findOneByCodeForPublic($code);
         if (!$this->isGranted('SIGN_USAGER_EDIT', $signalement)) {
@@ -583,6 +584,17 @@ class SignalementController extends AbstractController
             params: ['type' => Suivi::TYPE_USAGER],
             isPublic: true,
         );
+
+        $errors = $validator->validate($request->get('signalement_front_response')['content'], [
+            new \Symfony\Component\Validator\Constraints\NotBlank(),
+            new \Symfony\Component\Validator\Constraints\Length(['min' => 10]),
+        ]);
+        foreach ($errors as $error) {
+            $this->addFlash('error', $error->getMessage());
+        }
+        if (\count($errors)) {
+            return $this->redirectToRoute('front_suivi_signalement', ['code' => $signalement->getCodeSuivi(), 'from' => $email]);
+        }
 
         $description = nl2br(htmlspecialchars(
             $request->get('signalement_front_response')['content'],
