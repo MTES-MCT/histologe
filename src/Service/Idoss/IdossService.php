@@ -13,6 +13,8 @@ use Doctrine\ORM\EntityManagerInterface;
 use League\Flysystem\FilesystemOperator;
 use Symfony\Component\DependencyInjection\ParameterBag\ContainerBagInterface;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Mime\Part\DataPart;
+use Symfony\Component\Mime\Part\Multipart\FormDataPart;
 use Symfony\Component\Serializer\SerializerInterface;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
 use Symfony\Contracts\HttpClient\ResponseInterface;
@@ -203,18 +205,12 @@ class IdossService
             'id' => $signalement->getSynchroData(self::TYPE_SERVICE)['id'],
             'uuid' => $signalement->getUuid(),
         ];
+        $dataparts = [];
         foreach ($files as $file) {
-            // $payload['file'] = $this->imageManipulationHandler->getFileRessource($file); //fonctionne
-            $payload['file'][] = $this->imageManipulationHandler->getFileRessource($file); // ne fonctionne pas
+            $dataparts[] = ['file' => DataPart::fromPath($this->imageManipulationHandler->getFilePath($file))];
         }
-        // seconde version de test : ne fonctionne pas
-        /*$payload = [
-            ['name' => 'id', 'contents' => $signalement->getSynchroData(self::TYPE_SERVICE)['id']],
-            ['name' => 'uuid', 'contents' => $signalement->getUuid()]
-        ];
-        foreach ($files as $file) {
-            $payload[] = ['name' => 'file', 'contents' => $this->imageManipulationHandler->getFileRessource($file)];
-        }*/
+        $payload = array_merge($payload, $dataparts);
+
         return $payload;
     }
 
@@ -248,14 +244,16 @@ class IdossService
     private function request(string $url, array $payload, ?string $token = null, $requestMethod = 'POST', $contentType = 'application/json'): ResponseInterface
     {
         $options = ['headers' => []];
-        if ($token) {
-            $options['headers']['Authorization'] = 'Bearer '.$token;
-        }
         if ('multipart/form-data' === $contentType) {
-            $options['body'] = $payload;
+            $formData = new FormDataPart($payload);
+            $options['body'] = $formData->bodyToIterable();
+            $options['headers'] = $formData->getPreparedHeaders()->toArray();
         } else {
             $options['headers']['Content-Type'] = $contentType;
             $options['body'] = json_encode($payload);
+        }
+        if ($token) {
+            $options['headers']['Authorization'] = 'Bearer '.$token;
         }
 
         return $this->client->request($requestMethod, $url, $options);
