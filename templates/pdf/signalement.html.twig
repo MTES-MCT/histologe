@@ -15,6 +15,12 @@
             {% else %}
                 <h3 style="text-align: right">Signalement par l'occupant</h3>
             {% endif %}
+
+            <h3 style="text-align: left">Situation(s) suspectée(s) à la déclaration usager</h3>
+            {% for qualificationStatusLabel in listQualificationStatusesLabelsCheck %}
+                {% include '_partials/signalement/qualification.html.twig' with { 'inlist': false } %}
+            {% endfor %}
+
             <table style="width: 100%">
                 <tr>
                     <td style="width: 50%">
@@ -34,10 +40,22 @@
                                     {{signalement.complementAdresseOccupant}}
                                 {% endif %}
                             </li>
-                            <li><b>Occupant(s) :</b> {{ signalement.nbAdultes }}
-                                <b>Adulte(s)</b>{% if signalement.nbEnfantsM6 %} - {{ signalement.nbEnfantsM6 }} Enfant(s)
-                                <u><b>moins</b></u> 6 ans{% endif %}{% if signalement.nbEnfantsP6 %} - {{ signalement.nbEnfantsP6 }} Enfant(s)
-                                    <u><b>plus</b></u> 6 ans{% endif %}</li>
+                            <li>
+                                <b>Nb. personnes :</b>
+                                {% if signalement.typeCompositionLogement %}
+                                    {{ signalement.nbOccupantsLogement }}
+
+                                {% else %}
+                                    {{ signalement.nbPersonsDeprecated }} :
+                                    {{ signalement.nbAdultes }} {{ signalement.nbAdultes > 1 ? 'adultes' : 'adulte' }}
+                                    {% if signalement.nbEnfantsP6 %}
+                                        - {{ signalement.nbEnfantsP6 ?? '0' }} enfant(s) de plus de 6 ans
+                                    {% endif %}
+                                    {% if signalement.nbEnfantsM6 %}
+                                        - {{ signalement.nbEnfantsM6 ?? '0' }} enfant(s) de moins de 6 ans
+                                    {% endif %}
+                                {% endif %}
+                            </li>
                             <li><b>Date
                                     d'entrée :</b> {{ signalement.dateEntree ? signalement.dateEntree|date('d/m/Y') : 'N/R' }}
                             </li>
@@ -67,7 +85,7 @@
                     </td>
                     {% if signalement.isNotOccupant %}
                         <td>
-                            <h3 style="margin-bottom: 0"> Informations du déclarant</h3>
+                            <h3 style="margin-bottom: 0">Informations du déclarant</h3>
                             <ul style="list-style:none; margin-left:0px;padding-left:0px;">
                                 <li><b>Nom :</b> {{ signalement.nomDeclarant }} -
                                     <b>Prénom :</b> {{ signalement.prenomDeclarant }}</li>
@@ -84,6 +102,22 @@
                             </ul>
                         </td>
                     {% endif %}
+                </tr>
+                <tr>
+                    <td>
+                        <h3 style="margin-bottom: 0">Informations sur le bailleur</h3>
+                        <ul style="list-style:none; margin-left:0px;padding-left:0px;">
+                            <li>
+                                <b>Nom :</b> {{ signalement.nomProprio }}
+                                {% if signalement.prenomProprio %}
+                                - <b>Prénom :</b> {{ signalement.prenomProprio }}
+                                {% endif %}
+                            </li>
+                            <li><b>Adresse :</b>
+                                {{ signalement.adresseProprio ? signalement.adresseProprio ~ ', ' ~ signalement.codePostalProprio ~ ' ' ~ signalement.villeProprio}}
+                            </li>
+                        </ul>
+                    </td>
                 </tr>
             </table>
         </section>
@@ -150,7 +184,20 @@
                                     {{ picto_no|raw }}
                                 {% endif %}
                             </li>
-                            <li>&nbsp;</li>
+                            <li>
+                                <b>DPE :</b>
+                                {% if signalement.typeCompositionLogement %}
+                                    {% if signalement.typeCompositionLogement.bailDpeDpe is same as 'oui' %}
+                                        {{ picto_yes|raw }}
+                                    {% elseif signalement.typeCompositionLogement.bailDpeDpe is same as 'non' %}
+                                        {{ picto_no|raw }}
+                                    {% else %}
+                                        {{signalement.typeCompositionLogement.bailDpeDpe(false)}}
+                                    {% endif %}
+                                {% else %}
+                                    {{ picto_no|raw }}
+                                {% endif %}
+                            </li>
                         </ul>
                     </td>
                 </tr>
