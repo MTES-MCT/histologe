@@ -69,6 +69,7 @@
 import { defineComponent } from 'vue'
 import formStore from './store'
 import dictionaryStore from './dictionary-store'
+import { matomo } from './matomo'
 import { requests } from './requests'
 import * as Sentry from '@sentry/browser'
 import { profileUpdater } from './services/profileUpdater'
@@ -95,6 +96,7 @@ export default defineComponent({
       isLoadingInit: true,
       formStore,
       dictionaryStore,
+      matomo,
       sharedProps: formStore.props,
       isTerritoryModalOpen: false,
       territoryModalLabel: '',
@@ -291,6 +293,7 @@ export default defineComponent({
             // Prétraitement des composants avec repeat
             formStore.currentScreen.components.body = formStore.preprocessScreen(formStore.currentScreen.components.body)
           }
+          matomo.pushEvent('changeScreen', formStore.data.currentStep)
         } else {
           if (this.slugCoordonnees.includes(this.nextSlug)) { // TODO à mettre à jour suivant le slug des différents profils
             // on fait un appel API pour charger la suite des questions avant de changer d'écran
