@@ -90,7 +90,7 @@ class ImageManipulationHandler
         return $this;
     }
 
-    public function getFileRessource(File $file)
+    public function getFilePath(File $file)
     {
         $variantNames = self::getVariantNames($file->getFilename());
         $filename = $variantNames[self::SUFFIX_RESIZE];
@@ -101,10 +101,7 @@ class ImageManipulationHandler
             $filename = $file->getFilename();
         }
 
-        $bucketPath = $this->parameterBag->get('url_bucket').'/'.$filename;
-        $fileHandle = fopen($bucketPath, 'r');
-
-        return $fileHandle;
+        return $this->parameterBag->get('url_bucket').'/'.$filename;
     }
 
     private function getNewPath(string $suffix): string
