@@ -26,6 +26,7 @@ class SignalementExportPdfTest extends KernelTestCase
         $html = $twig->render('pdf/signalement.html.twig', [
             'signalement' => $signalement,
             'situations' => [],
+            'listQualificationStatusesLabelsCheck' => [],
         ]);
         $options = static::getContainer()->getParameter('export_options');
         $pdfContent = $signalementExportPdfGenerator->generate($html, $options);

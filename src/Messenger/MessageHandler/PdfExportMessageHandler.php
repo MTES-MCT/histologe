@@ -32,10 +32,19 @@ class PdfExportMessageHandler
     {
         $signalement = $this->signalementRepository->find($pdfExportMessage->getSignalementId());
         $infoDesordres = $this->signalementDesordresProcessor->process($signalement);
+        $listQualificationStatusesLabelsCheck = [];
+        if (null !== $signalement->getSignalementQualifications()) {
+            foreach ($signalement->getSignalementQualifications() as $qualification) {
+                if (!$qualification->isPostVisite()) {
+                    $listQualificationStatusesLabelsCheck[] = $qualification->getStatus()->label();
+                }
+            }
+        }
 
         $htmlContent = $this->twig->render('pdf/signalement.html.twig', [
             'signalement' => $signalement,
             'situations' => $infoDesordres['criticitesArranged'],
+            'listQualificationStatusesLabelsCheck' => $listQualificationStatusesLabelsCheck,
         ]);
 
         $tmpFilename = $this->signalementExportPdfGenerator->generateToTempFolder(
