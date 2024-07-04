@@ -25,7 +25,7 @@ class DesordreCategorie
     #[ORM\OneToMany(mappedBy: 'desordreCategorie', targetEntity: DesordreCritere::class, orphanRemoval: true)]
     private Collection $desordreCriteres;
 
-    #[ORM\ManyToMany(targetEntity: Signalement::class, inversedBy: 'desordreCategories')]
+    #[ORM\ManyToMany(targetEntity: Signalement::class, inversedBy: 'desordreCategories', cascade: ['persist'])]
     private Collection $signalement;
 
     public function __construct()
