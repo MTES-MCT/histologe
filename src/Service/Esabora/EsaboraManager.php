@@ -126,6 +126,10 @@ class EsaboraManager
         $intervention = $this->interventionRepository->findOneBy(['providerId' => $dossierVisiteSISH->getVisiteId()]);
         if (null !== $intervention) {
             $this->updateFromDossierVisite($intervention, $dossierVisiteSISH);
+            $this->eventDispatcher->dispatch(
+                new InterventionCreatedEvent($intervention, $this->userManager->getSystemUser()),
+                InterventionCreatedEvent::UPDATED_BY_ESABORA
+            );
         } else {
             if (null === InterventionType::tryFromLabel($dossierVisiteSISH->getVisiteType())) {
                 $this->logger->error(
@@ -170,6 +174,10 @@ class EsaboraManager
         if (null !== $intervention) {
             $intervention->setAdditionalInformation($additionalInformation);
             $this->updateFromDossierArrete($intervention, $dossierArreteSISH);
+            $this->eventDispatcher->dispatch(
+                new InterventionCreatedEvent($intervention, $this->userManager->getSystemUser()),
+                InterventionCreatedEvent::UPDATED_BY_ESABORA
+            );
         } else {
             $intervention = $this->interventionFactory->createInstanceFrom(
                 affectation: $affectation,

@@ -127,12 +127,12 @@ class EsaboraManagerTest extends TestCase
             $this->interventionFactory
                 ->expects($this->once())
                 ->method('createInstanceFrom');
-
-            $this->userManager
-                ->expects($this->once())
-                ->method('getSystemUser')
-                ->willReturn($this->getUser([User::ROLE_ADMIN]));
         }
+
+        $this->userManager
+            ->expects($this->once())
+            ->method('getSystemUser')
+            ->willReturn($this->getUser([User::ROLE_ADMIN]));
 
         return new EsaboraManager(
             $this->affectationManager,

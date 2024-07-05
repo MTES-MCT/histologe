@@ -50,7 +50,7 @@ class Suivi
 
     #[ORM\ManyToOne(targetEntity: Signalement::class, inversedBy: 'suivis')]
     #[ORM\JoinColumn(nullable: false)]
-    private $signalement;
+    private Signalement $signalement;
 
     #[ORM\Column(length: 100, nullable: true)]
     private ?string $context = null;
@@ -63,6 +63,9 @@ class Suivi
     #[ORM\ManyToOne(targetEntity: User::class)]
     #[ORM\JoinColumn(nullable: true)]
     private $deletedBy;
+
+    #[ORM\Column(type: 'string', length: 255, nullable: true)]
+    private ?string $checksum;
 
     public function __construct()
     {
@@ -199,6 +202,18 @@ class Suivi
     public function setDeletedBy(?User $deletedBy): self
     {
         $this->deletedBy = $deletedBy;
+
+        return $this;
+    }
+
+    public function getChecksum(): string
+    {
+        return $this->checksum;
+    }
+
+    public function calculateChecksum(): self
+    {
+        $this->checksum = hash('sha256', $this->signalement->getId().$this->description);
 
         return $this;
     }
