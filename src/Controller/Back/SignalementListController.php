@@ -20,42 +20,9 @@ use Symfony\Component\Routing\Annotation\Route;
 #[Route('/bo')]
 class SignalementListController extends AbstractController
 {
-    /**
-     * @throws InvalidArgumentException
-     */
     #[Route('/signalements/', name: 'back_index')]
-    public function show(
-        #[Autowire(env: 'FEATURE_LIST_FILTER_ENABLE')]
-        bool $featureListFilterEnable,
-        Request $request,
-        SearchFilter $searchFilter,
-        SearchFilterOptionDataProvider $searchFilterOptionDataProvider,
-        SignalementManager $signalementManager,
-    ): Response {
-        if ($featureListFilterEnable) {
-            return $this->render('back/signalement/list/index.html.twig');
-        }
-
-        $filters = $searchFilter->setRequest($request)->setFilters()->getFilters();
-        $request->getSession()->set('filters', $filters);
-        /** @var User $user */
-        $user = $this->getUser();
-        $signalements = $signalementManager->findSignalementAffectationList($user, $filters);
-
-        if ($request->get('pagination')) {
-            return $this->stream('back/table_result.html.twig', [
-                'filters' => $filters,
-                'signalements' => $signalements,
-            ]);
-        }
-
-        return $this->render('back/index.html.twig', [
-            'filters' => $filters,
-            'filtersOptionData' => $searchFilterOptionDataProvider->getData($user),
-            'countActiveFilters' => $searchFilter->getCountActive(),
-            'displayRefreshAll' => true,
-            'signalements' => $signalements,
-        ]);
+    public function show(): Response {
+        return $this->render('back/signalement/list/index.html.twig');
     }
 
     #[Route('/list/signalements/', name: 'back_signalement_list_json')]
