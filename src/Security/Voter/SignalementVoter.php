@@ -91,7 +91,7 @@ class SignalementVoter extends Voter
 
     private function canEdit(Signalement $signalement, User $user): bool
     {
-        if (!\in_array($signalement->getStatut(), [Signalement::STATUS_ACTIVE, Signalement::STATUS_NEED_PARTNER_RESPONSE])) {
+        if (Signalement::STATUS_ACTIVE !== $signalement->getStatut()) {
             return false;
         }
 
@@ -114,7 +114,7 @@ class SignalementVoter extends Voter
 
     public function canAddVisite(Signalement $signalement, User $user): bool
     {
-        if (!\in_array($signalement->getStatut(), [Signalement::STATUS_ACTIVE, Signalement::STATUS_NEED_PARTNER_RESPONSE])) {
+        if (Signalement::STATUS_ACTIVE !== $signalement->getStatut()) {
             return false;
         }
 

@@ -909,7 +909,6 @@ class SignalementRepository extends ServiceEntityRepository
                     $statutParameter[] = Signalement::STATUS_NEED_VALIDATION;
                     break;
                 case 'active':
-                    $statutParameter[] = Signalement::STATUS_NEED_PARTNER_RESPONSE;
                     $statutParameter[] = Signalement::STATUS_ACTIVE;
                     break;
                 case 'closed':
@@ -1067,10 +1066,10 @@ class SignalementRepository extends ServiceEntityRepository
             ->from(Suivi::class, 'su')
             ->innerJoin('su.signalement', 'sig')
             ->where('sig.territory = :territory_1')
-            ->andWhere('sig.statut IN (:statut)')
+            ->andWhere('sig.statut = :statut')
             ->andWhere('su.type IN (:suivi_type)')
             ->setParameter('suivi_type', [Suivi::TYPE_USAGER, Suivi::TYPE_PARTNER])
-            ->setParameter('statut', [Signalement::STATUS_ACTIVE, Signalement::STATUS_NEED_PARTNER_RESPONSE])
+            ->setParameter('statut', Signalement::STATUS_ACTIVE)
             ->setParameter('territory_1', $territory)
             ->distinct();
 
@@ -1078,10 +1077,10 @@ class SignalementRepository extends ServiceEntityRepository
             ->select('COUNT(s.id) as count_no_suivi, p.nom')
             ->innerJoin('s.affectations', 'a')
             ->innerJoin('a.partner', 'p')
-            ->where('s.statut IN (:statut)')
+            ->where('s.statut = :statut')
             ->andWhere('p.territory = :territory')
             ->andWhere('s.id NOT IN (:subquery)')
-            ->setParameter('statut', [Signalement::STATUS_ACTIVE, Signalement::STATUS_NEED_PARTNER_RESPONSE])
+            ->setParameter('statut', Signalement::STATUS_ACTIVE)
             ->setParameter('subquery', $subquery->getQuery()->getSingleColumnResult())
             ->setParameter('territory', $territory)
             ->groupBy('p.nom');
@@ -1102,7 +1101,7 @@ class SignalementRepository extends ServiceEntityRepository
                 'NEW %s(
                 COUNT(s.id),
                 SUM(CASE WHEN s.statut = :new     THEN 1 ELSE 0 END),
-                SUM(CASE WHEN s.statut = :active OR s.statut =:waiting THEN 1 ELSE 0 END),
+                SUM(CASE WHEN s.statut = :active  THEN 1 ELSE 0 END),
                 SUM(CASE WHEN s.statut = :closed  THEN 1 ELSE 0 END),
                 SUM(CASE WHEN s.statut = :refused THEN 1 ELSE 0 END))',
                 CountSignalement::class
@@ -1110,7 +1109,6 @@ class SignalementRepository extends ServiceEntityRepository
         )
             ->setParameter('new', Signalement::STATUS_NEED_VALIDATION)
             ->setParameter('active', Signalement::STATUS_ACTIVE)
-            ->setParameter('waiting', Signalement::STATUS_NEED_PARTNER_RESPONSE)
             ->setParameter('closed', Signalement::STATUS_CLOSED)
             ->setParameter('refused', Signalement::STATUS_REFUSED)
             ->where('s.statut != :archived')
@@ -1187,7 +1185,6 @@ class SignalementRepository extends ServiceEntityRepository
             ->getQuery()->getResult();
         $statutsList = [
             Signalement::STATUS_ACTIVE,
-            Signalement::STATUS_NEED_PARTNER_RESPONSE,
             Signalement::STATUS_NEED_VALIDATION,
             Signalement::STATUS_CLOSED,
             Signalement::STATUS_REFUSED,
@@ -1224,7 +1221,6 @@ class SignalementRepository extends ServiceEntityRepository
                 'statusSignalement',
                 [
                     Signalement::STATUS_ACTIVE,
-                    Signalement::STATUS_NEED_PARTNER_RESPONSE,
                     Signalement::STATUS_NEED_VALIDATION,
                 ]
             );

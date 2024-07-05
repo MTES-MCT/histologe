@@ -31,7 +31,6 @@ class Signalement
 {
     public const STATUS_NEED_VALIDATION = 1;
     public const STATUS_ACTIVE = 2;
-    public const STATUS_NEED_PARTNER_RESPONSE = 3; // statut pas utilisé, aucun signalement n'a ce statut
     public const STATUS_CLOSED = 6;
     public const STATUS_ARCHIVED = 7;
     public const STATUS_REFUSED = 8;
