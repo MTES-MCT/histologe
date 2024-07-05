@@ -16,7 +16,7 @@ help:
 
 ## Service management
 build: ## Install local environement
-	@bash -l -c 'make .check .env .destroy .setup run .sleep composer create-db npm-install npm-build mock'
+	@bash -l -c 'make .check .env .destroy .setup run .sleep composer create-db npm-install npm-build mock-stop mock-start'
 
 run: ## Start containers
 	@echo -e '\e[1;32mStart containers\032'
