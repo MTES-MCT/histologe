@@ -57,6 +57,11 @@ class SignalementActionController extends AbstractController
             } else {
                 $statut = Signalement::STATUS_REFUSED;
                 $motifRefus = MotifRefus::tryFrom($response['motifRefus']);
+                if (!$motifRefus || mb_strlen($response['suivi']) < 10) {
+                    $this->addFlash('error', 'Champs incorrects ou manquants !');
+
+                    return $this->redirectToRoute('back_signalement_view', ['uuid' => $signalement->getUuid()]);
+                }
                 $signalement->setMotifRefus($motifRefus);
                 $description = 'cloturé car non-valide avec le motif suivant : '.$motifRefus->label().'<br>Plus précisément :<br>'.$response['suivi'];
 
@@ -104,6 +109,11 @@ class SignalementActionController extends AbstractController
             $content = $form['content'];
             $content = preg_replace('/<p[^>]*>/', '', $content); // Remove the start <p> or <p attr="">
             $content = str_replace('</p>', '<br />', $content); // Replace the end
+            if (mb_strlen($content) < 10) {
+                $this->addFlash('error', 'Le contenu du suivi doit faire au moins 10 caractères !');
+
+                return $this->redirectToRoute('back_signalement_view', ['uuid' => $signalement->getUuid()]);
+            }
             $suivi->setDescription($content);
             $suivi->setIsPublic(!empty($form['notifyUsager']));
             $suivi->setSignalement($signalement);

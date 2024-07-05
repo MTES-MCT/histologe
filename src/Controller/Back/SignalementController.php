@@ -85,6 +85,11 @@ class SignalementController extends AbstractController
         if ($clotureForm->isSubmitted() && $clotureForm->isValid()) {
             $params['motif_cloture'] = $clotureForm->get('motif')->getData();
             $params['motif_suivi'] = $clotureForm->getExtraData()['suivi'];
+            if (mb_strlen($params['motif_suivi']) < 10) {
+                $this->addFlash('error', 'Le motif de suivi doit contenir au moins 10 caractères.');
+
+                return $this->redirectToRoute('back_signalement_view', ['uuid' => $signalement->getUuid()]);
+            }
             $params['suivi_public'] = false;
             if ($this->isGranted('ROLE_ADMIN_TERRITORY') && isset($clotureForm->getExtraData()['publicSuivi'])) {
                 $params['suivi_public'] = $clotureForm->getExtraData()['publicSuivi'];
@@ -93,7 +98,7 @@ class SignalementController extends AbstractController
             $params['closed_for'] = $clotureForm->get('type')->getData();
 
             $entity = null;
-            if ('all' === $params['closed_for']) {
+            if ('all' === $params['closed_for'] && $this->isGranted('ROLE_ADMIN_TERRITORY')) {
                 $params['subject'] = 'tous les partenaires';
                 $entity = $signalement = $signalementManager->closeSignalementForAllPartners(
                     $signalement,

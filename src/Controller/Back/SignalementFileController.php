@@ -270,6 +270,14 @@ class SignalementFileController extends AbstractController
             }
         }
         $description = $request->get('description');
+        if (mb_strlen($description) > 255) {
+            if ($request->isXmlHttpRequest()) {
+                return $this->json(['response' => 'La description ne doit pas dépasser 255 caractères'], Response::HTTP_BAD_REQUEST);
+            }
+            $this->addFlash('error', 'La description ne doit pas dépasser 255 caractères');
+
+            return $this->redirect($this->generateUrl('back_signalement_view', ['uuid' => $signalement->getUuid()]));
+        }
         if (null !== $description) {
             $file->setDescription($description);
         }
