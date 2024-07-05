@@ -65,7 +65,6 @@ class StatusStatisticProvider
                 break;
 
             case Signalement::STATUS_ACTIVE:
-            case Signalement::STATUS_NEED_PARTNER_RESPONSE:
                 return [
                     'label' => 'En cours',
                     'color' => '#000091',

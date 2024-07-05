@@ -149,8 +149,7 @@
             {% if is_granted('ROLE_ADMIN_TERRITORY') %}
                 {% if signalement.statut is same as constant('App\\Entity\\Signalement::STATUS_NEED_VALIDATION') %}
                     <span class="fr-badge fr-badge--warning">Nouveau signalement</span>
-                {% elseif signalement.statut is same as constant('App\\Entity\\Signalement::STATUS_ACTIVE')
-                    or signalement.statut is same as constant('App\\Entity\\Signalement::STATUS_NEED_PARTNER_RESPONSE') %}
+                {% elseif signalement.statut is same as constant('App\\Entity\\Signalement::STATUS_ACTIVE') %}
                     <span class="fr-badge fr-badge--success">Signalement en cours</span>
                 {% elseif signalement.statut is same as constant('App\\Entity\\Signalement::STATUS_CLOSED')
                     or signalement.statut is same as constant('App\\Entity\\Signalement::STATUS_ARCHIVED')

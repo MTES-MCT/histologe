@@ -28,7 +28,6 @@ class LoadSuiviData extends Fixture implements OrderedFixtureInterface
     {
         $signalements = $this->signalementRepository->findBy(['statut' => [
             Signalement::STATUS_ACTIVE,
-            Signalement::STATUS_NEED_PARTNER_RESPONSE,
             Signalement::STATUS_CLOSED,
         ]]);
 

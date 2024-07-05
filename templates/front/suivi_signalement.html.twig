@@ -23,8 +23,7 @@
 					{{ signalement.createdAt|date('d/m/Y') }}</div>
 				{% if signalement.statut is same as constant('App\\Entity\\Signalement::STATUS_NEED_VALIDATION') %}
 					<span class="fr-badge fr-badge--no-icon fr-badge--info">Nouveau</span>
-				{% elseif signalement.statut is same as constant('App\\Entity\\Signalement::STATUS_ACTIVE')
-						or signalement.statut is same as constant('App\\Entity\\Signalement::STATUS_NEED_PARTNER_RESPONSE') %}
+				{% elseif signalement.statut is same as constant('App\\Entity\\Signalement::STATUS_ACTIVE') %}
 					<span class="fr-badge fr-badge--no-icon fr-badge--success">En cours</span>
 				{% elseif signalement.statut is same as constant('App\\Entity\\Signalement::STATUS_CLOSED')
 						or signalement.statut is same as constant('App\\Entity\\Signalement::STATUS_ARCHIVED')
