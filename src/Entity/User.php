@@ -64,6 +64,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, TwoFact
     #[ORM\Column(type: 'string', length: 180, unique: false)]
     #[Assert\Email(mode: Email::VALIDATION_MODE_STRICT, groups: ['registration'])]
     #[Assert\NotBlank]
+    #[Assert\Length(max: 255)]
     private $email;
 
     #[ORM\Column(type: 'json')]
@@ -100,10 +101,12 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, TwoFact
 
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
     #[Assert\NotBlank]
+    #[Assert\Length(max: 255)]
     private $nom;
 
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
     #[Assert\NotBlank]
+    #[Assert\Length(max: 255)]
     private $prenom;
 
     #[ORM\Column(type: 'integer')]

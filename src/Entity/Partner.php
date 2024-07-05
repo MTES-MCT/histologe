@@ -32,6 +32,7 @@ class Partner
 
     #[ORM\Column(type: 'string', length: 255)]
     #[Assert\NotBlank]
+    #[Assert\Length(max: 255)]
     #[Groups(['widget-settings:read'])]
     private ?string $nom = null;
 
@@ -49,6 +50,7 @@ class Partner
 
     #[ORM\Column(type: 'string', length: 100, nullable: true)]
     #[Assert\Email]
+    #[Assert\Length(max: 255)]
     private ?string $email = null;
 
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
