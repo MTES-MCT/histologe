@@ -42,14 +42,6 @@
                             <a class="fr-sidemenu__link" href="{{ path('back_index') }}" target="_self"
                                {% if 'back_index' is same as(app.request.get('_route')) %}aria-current="page" {% endif %}>Liste</a>
                         </li>
-                        {% if feature is defined %}
-                            {% if feature.signalement_liste_enable  %}
-                                <li class="fr-sidemenu__item {% if 'v2_back_index' is same as(app.request.get('_route')) %}fr-sidemenu__item--active{% endif %}">
-                                    <a class="fr-sidemenu__link" href="{{ path('v2_back_index') }}" target="_self"
-                                       {% if 'v2_back_index' is same as(app.request.get('_route')) %}aria-current="page" {% endif %}>Liste&nbsp;<span class="fr-text--xs"> (nouvelle version)</span></a>
-                                </li>
-                            {% endif %}
-                        {% endif %}
                         <li class="fr-sidemenu__item">
                             <a class="fr-sidemenu__link" href="{{ path('front_signalement') }}" target="_self">Créer un
                                 signalement</a>

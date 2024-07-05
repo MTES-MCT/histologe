@@ -126,7 +126,7 @@ class SignalementAffectationListView
         return $this->qualifications;
     }
 
-    public function hasNDE(): bool
+    public function hasNde(): bool
     {
         if (null !== $this->qualifications) {
             foreach ($this->qualifications as $qualification) {
@@ -137,6 +137,11 @@ class SignalementAffectationListView
         }
 
         return false;
+    }
+
+    public function getQualificationsStatuses(): ?array
+    {
+        return $this->qualificationsStatuses;
     }
 
     public function getQualificationsStatusesLabels(): array
