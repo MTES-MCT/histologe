@@ -64,7 +64,7 @@ export const componentValidator = {
         formStore.validationErrors[componentSlug + '_detail_numero'] = validationError
       } else {
         const regexPattern = /^[0-9]*$/
-        if (regexPattern.test(addressDetailNumero) || addressDetailNumero.length < 6) {
+        if (regexPattern.test(addressDetailNumero) || addressDetailNumero.length < 6 || addressDetailNumero.length > 100) {
           formStore.validationErrors[componentSlug + '_detail_numero'] = 'Format invalide'
         }
       }
