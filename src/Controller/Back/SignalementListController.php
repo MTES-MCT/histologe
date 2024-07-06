@@ -6,12 +6,8 @@ use App\Dto\Request\Signalement\SignalementSearchQuery;
 use App\Entity\User;
 use App\Manager\SignalementManager;
 use App\Service\Signalement\SearchFilter;
-use App\Service\Signalement\SearchFilterOptionDataProvider;
-use Psr\Cache\InvalidArgumentException;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\HttpFoundation\JsonResponse;
-use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use Symfony\Component\HttpKernel\Attribute\MapQueryString;
@@ -21,7 +17,8 @@ use Symfony\Component\Routing\Annotation\Route;
 class SignalementListController extends AbstractController
 {
     #[Route('/signalements/', name: 'back_index')]
-    public function show(): Response {
+    public function show(): Response
+    {
         return $this->render('back/signalement/list/index.html.twig');
     }
 

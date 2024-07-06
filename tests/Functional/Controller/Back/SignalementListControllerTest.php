@@ -6,9 +6,7 @@ use App\Entity\Signalement;
 use App\Entity\Suivi;
 use App\Entity\User;
 use App\Repository\UserRepository;
-use Symfony\Bundle\FrameworkBundle\Console\Application;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
-use Symfony\Component\Console\Tester\CommandTester;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
@@ -81,12 +79,13 @@ class SignalementListControllerTest extends WebTestCase
 
         $user = $userRepository->findOneBy(['email' => 'admin-territoire-69-mdl@histologe.fr']);
         $client->loginUser($user);
-        $route = $generatorUrl->generate('back_index');
+        $route = $generatorUrl->generate('back_signalement_list_json');
         $client->request('GET', $route);
 
-        $this->assertSelectorTextContains('#signalements-result', '2023-3');
-        $this->assertSelectorTextContains('#signalements-result', '2023-4');
-        $this->assertSelectorTextContains('table', '2 signalement(s)');
+        $content = json_decode($client->getResponse()->getContent(), true);
+        $this->assertEquals('2023-4', $content['list'][0]['reference']);
+        $this->assertEquals('2023-3', $content['list'][1]['reference']);
+        $this->assertEquals(2, $content['pagination']['total_items']);
     }
 
     public function testDisplaySignalementCORRoleAdminTerritory()
@@ -99,12 +98,13 @@ class SignalementListControllerTest extends WebTestCase
 
         $user = $userRepository->findOneBy(['email' => 'admin-territoire-69-cor@histologe.fr']);
         $client->loginUser($user);
-        $route = $generatorUrl->generate('back_index');
+        $route = $generatorUrl->generate('back_signalement_list_json');
         $client->request('GET', $route);
 
-        $this->assertSelectorTextContains('#signalements-result', '2023-2');
-        $this->assertSelectorTextContains('#signalements-result', '2023-5');
-        $this->assertSelectorTextContains('table', '2 signalement(s)');
+        $content = json_decode($client->getResponse()->getContent(), true);
+        $this->assertEquals('2023-5', $content['list'][0]['reference']);
+        $this->assertEquals('2023-2', $content['list'][1]['reference']);
+        $this->assertEquals(2, $content['pagination']['total_items']);
     }
 
     /**
@@ -155,55 +155,6 @@ class SignalementListControllerTest extends WebTestCase
     }
 
     /**
-     * @dataProvider provideFilterSearch
-     */
-    public function testSearchSignalementByTerms(string $filter, string|array $terms, string $results)
-    {
-        if ('bo-filters-relances_usager' === $filter) {
-            $kernel = self::createKernel();
-            $application = new Application($kernel);
-            $command = $application->find('app:ask-feedback-usager');
-            $commandTester = new CommandTester($command);
-            $commandTester->execute([]);
-            $commandTester->assertCommandIsSuccessful();
-        }
-
-        $client = static::createClient();
-        /** @var UrlGeneratorInterface $generatorUrl */
-        $generatorUrl = static::getContainer()->get(UrlGeneratorInterface::class);
-
-        /** @var UserRepository $userRepository */
-        $userRepository = static::getContainer()->get(UserRepository::class);
-        $user = $userRepository->findOneBy(['email' => 'admin-01@histologe.fr']);
-        $client->loginUser($user);
-        $route = $generatorUrl->generate('back_index');
-        $client->request('POST', $route, [
-            $filter => $terms,
-        ]);
-
-        $this->assertSelectorTextContains('table', $results);
-        $this->assertResponseIsSuccessful();
-    }
-
-    public function provideFilterSearch(): \Generator
-    {
-        $_ENV['FEATURE_LIST_FILTER_ENABLE'] = '0';
-
-        yield 'Search Terms with Reference' => ['bo-filters-searchterms', '2022-1', '1 signalement(s)'];
-        yield 'Search Terms with cp Occupant' => ['bo-filters-searchterms', '13003', '12 signalement(s)'];
-        yield 'Search Terms with cp Occupant 13005' => ['bo-filters-searchterms', '13005', '3 signalement(s)'];
-        yield 'Search Terms with city Occupant' => ['bo-filters-searchterms', 'Gex', '5 signalement(s)'];
-        yield 'Search by Territory' => ['bo-filters-territories', ['1'], '5 signalement(s)'];
-        yield 'Search by Partner' => ['bo-filters-partners', ['5'], '2 signalement(s)'];
-        yield 'Search by Critere' => ['bo-filters-criteres', ['17'], '25 signalement(s)'];
-        yield 'Search by Tags' => ['bo-filters-tags', ['3'], '4 signalement(s)'];
-        yield 'Search by Parc public/prive' => ['bo-filters-housetypes', ['1'], '5 signalement(s)'];
-        yield 'Search by Relances usagers' => ['bo-filters-relances_usager', ['NO_SUIVI_AFTER_3_RELANCES'], '1 signalement(s)'];
-
-        $_ENV['FEATURE_LIST_FILTER_ENABLE'] = '1';
-    }
-
-    /**
      * @dataProvider provideUserEmail
      */
     public function testListSignalementAsJson(string $email): void
@@ -229,8 +180,6 @@ class SignalementListControllerTest extends WebTestCase
 
     public function provideNewFilterSearch(): \Generator
     {
-        $_ENV['FEATURE_LIST_FILTER_ENABLE'] = '1';
-
         yield 'Search Terms with Reference' => [['searchTerms' => '2022-1'], 1];
         yield 'Search Terms with cp Occupant' => [['searchTerms' => '13003'], 12];
         yield 'Search Terms with cp Occupant 13005' => [['searchTerms' => '13005'], 3];
@@ -268,8 +217,6 @@ class SignalementListControllerTest extends WebTestCase
         yield 'Search by Situation Prévis de départ' => [['situation' => 'preavis_de_depart'], 1];
         yield 'Search by Situation Attente de relogement' => [['situation' => 'attente_relogement'], 2];
         yield 'Search by Signalement Imported' => [['isImported' => 'oui'], 45];
-
-        $_ENV['FEATURE_LIST_FILTER_ENABLE'] = '0';
     }
 
     /**
