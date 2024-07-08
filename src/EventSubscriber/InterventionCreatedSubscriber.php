@@ -48,7 +48,10 @@ class InterventionCreatedSubscriber implements EventSubscriberInterface
             isPublic: true,
             context: Suivi::CONTEXT_INTERVENTION,
         );
-        $foundSuivi = $this->suiviManager->findOneBy(['checksum' => $suivi->getChecksum()]);
+        $foundSuivi = $this->suiviManager->findOneBy([
+            'signalement' => $suivi->getSignalement(),
+            'description' => $suivi->getDescription(),
+        ]);
 
         if (!$foundSuivi) {
             $this->suiviManager->save($suivi);

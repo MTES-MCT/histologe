@@ -23,8 +23,7 @@ class SuiviFactory
             ->setDescription($this->buildDescription($params))
             ->setType($this->buildType($user, $params))
             ->setIsPublic($isPublic)
-            ->setContext($context)
-            ->calculateChecksum();
+            ->setContext($context);
     }
 
     private function buildType(?User $user, array $params): int

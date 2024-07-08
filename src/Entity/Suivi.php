@@ -64,9 +64,6 @@ class Suivi
     #[ORM\JoinColumn(nullable: true)]
     private $deletedBy;
 
-    #[ORM\Column(type: 'string', length: 255, nullable: true)]
-    private ?string $checksum;
-
     public function __construct()
     {
         $this->createdAt = new DateTimeImmutable();
@@ -202,18 +199,6 @@ class Suivi
     public function setDeletedBy(?User $deletedBy): self
     {
         $this->deletedBy = $deletedBy;
-
-        return $this;
-    }
-
-    public function getChecksum(): string
-    {
-        return $this->checksum;
-    }
-
-    public function calculateChecksum(): self
-    {
-        $this->checksum = hash('sha256', $this->signalement->getId().$this->description);
 
         return $this;
     }
