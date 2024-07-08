@@ -50,7 +50,7 @@ class Suivi
 
     #[ORM\ManyToOne(targetEntity: Signalement::class, inversedBy: 'suivis')]
     #[ORM\JoinColumn(nullable: false)]
-    private $signalement;
+    private Signalement $signalement;
 
     #[ORM\Column(length: 100, nullable: true)]
     private ?string $context = null;

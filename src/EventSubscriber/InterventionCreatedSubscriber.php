@@ -24,10 +24,21 @@ class InterventionCreatedSubscriber implements EventSubscriberInterface
     {
         return [
             InterventionCreatedEvent::NAME => 'onInterventionCreated',
+            InterventionCreatedEvent::UPDATED_BY_ESABORA => 'onInterventionEdited',
         ];
     }
 
     public function onInterventionCreated(InterventionCreatedEvent $event): void
+    {
+        $this->createSuiviAndNotify($event);
+    }
+
+    public function onInterventionEdited(InterventionCreatedEvent $event): void
+    {
+        $this->createSuiviAndNotify($event);
+    }
+
+    private function createSuiviAndNotify(InterventionCreatedEvent $event): void
     {
         $intervention = $event->getIntervention();
         $suivi = $this->suiviManager->createSuivi(
@@ -37,22 +48,31 @@ class InterventionCreatedSubscriber implements EventSubscriberInterface
             isPublic: true,
             context: Suivi::CONTEXT_INTERVENTION,
         );
-        $this->suiviManager->save($suivi);
+        $foundSuivi = $this->suiviManager->findOneBy([
+            'signalement' => $suivi->getSignalement(),
+            'description' => $suivi->getDescription(),
+        ]);
 
-        if (InterventionType::VISITE === $intervention->getType() && $intervention->getScheduledAt() >= new \DateTimeImmutable()) {
-            $this->visiteNotifier->notifyUsagers(
-                $intervention,
-                NotificationMailerType::TYPE_VISITE_CREATED_TO_USAGER
+        if (!$foundSuivi) {
+            $this->suiviManager->save($suivi);
+
+            if (InterventionType::VISITE === $intervention->getType()
+                && $intervention->getScheduledAt() >= new \DateTimeImmutable()
+            ) {
+                $this->visiteNotifier->notifyUsagers(
+                    $intervention,
+                    NotificationMailerType::TYPE_VISITE_CREATED_TO_USAGER
+                );
+            }
+
+            $this->visiteNotifier->notifyAgents(
+                intervention: $intervention,
+                suivi: $suivi,
+                currentUser: $event->getUser(),
+                notificationMailerType: null,
+                notifyOtherAffectedPartners: true,
             );
         }
-
-        $this->visiteNotifier->notifyAgents(
-            intervention: $intervention,
-            suivi: $suivi,
-            currentUser: $event->getUser(),
-            notificationMailerType: null,
-            notifyOtherAffectedPartners: true,
-        );
     }
 
     private function getParams(Intervention $intervention): array
