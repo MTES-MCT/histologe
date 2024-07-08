@@ -464,8 +464,8 @@ partners:
     insee: "[\"93066\"]"
     territory: "Seine-Saint-Denis"
     type: "COMMUNE_SCHS"
-
-  - nom: "Partenaire 38-02"
+  - 
+    nom: "Partenaire 38-02"
     email: "partenaire-38-02@histologe.fr"
     is_archive: 0
     territory: "Isère"
@@ -476,3 +476,38 @@ partners:
       - 'FSL'
       - 'VISITES'
       - 'RSD'
+  -
+    nom: "Ville de Lunel"
+    email: "partenaire-34-01@histologe.fr"
+    is_archive: 0
+    insee: "[\"34145\"]"
+    territory: "Hérault"
+    type: "COMMUNE_SCHS"
+  -
+    nom: "CA Lunel Agglomération"
+    email: "partenaire-34-02@histologe.fr"
+    is_archive: 0
+    insee: "[\"34033\", \"34048\", \"34110\", \"34112\", \"34145\", \"34146\", \"34151\", \"34272\", \"34280\", \"34288\", \"34294\", \"34296\", \"34340\"]"
+    territory: "Hérault"
+    type: "EPCI"
+  -
+    nom: "Ville de Montpellier"
+    email: "partenaire-34-03@histologe.fr"
+    is_archive: 0
+    insee: "[\"34172\"]"
+    territory: "Hérault"
+    type: "COMMUNE_SCHS"
+  -
+    nom: "CAF 34"
+    email: "partenaire-34-04@histologe.fr"
+    is_archive: 0
+    insee: "[\"\"]"
+    territory: "Hérault"
+    type: "CAF_MSA"
+  -
+    nom: "CD 34"
+    email: "partenaire-34-05@histologe.fr"
+    is_archive: 0
+    insee: "[\"\"]"
+    territory: "Hérault"
+    type: "CONSEIL_DEPARTEMENTAL"
