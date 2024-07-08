@@ -136,12 +136,12 @@ class SignalementAffectationListView
         if (null !== $this->qualifications) {
             foreach ($this->qualifications as $qualification) {
                 if (Qualification::NON_DECENCE_ENERGETIQUE->name === $qualification) {
-                    return true;
+                    return $this->nde = true;
                 }
             }
         }
 
-        return false;
+        return $this->nde = false;
     }
 
     public function getQualificationsStatuses(): ?array
