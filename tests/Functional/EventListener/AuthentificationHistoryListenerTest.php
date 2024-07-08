@@ -19,7 +19,6 @@ class AuthentificationHistoryListenerTest extends WebTestCase
 {
     public const USER_ADMIN_TERRITORY_13 = 'admin-territoire-13-01@histologe.fr';
     private ?KernelBrowser $client = null;
-    private UserRepository $userRepository;
     private HistoryEntryRepository $historyEntryRepository;
     private UrlGeneratorInterface $urlGenerator;
     private MockObject|LoggerInterface $logger;
@@ -29,7 +28,6 @@ class AuthentificationHistoryListenerTest extends WebTestCase
     {
         $this->client = static::createClient();
         $this->urlGenerator = self::getContainer()->get(UrlGeneratorInterface::class);
-        $this->userRepository = static::getContainer()->get(UserRepository::class);
         $this->historyEntryRepository = static::getContainer()->get(HistoryEntryRepository::class);
         $this->logger = $this->createMock(LoggerInterface::class);
         $this->token = $this->createMock(TokenInterface::class);
