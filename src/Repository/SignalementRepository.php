@@ -1256,7 +1256,7 @@ class SignalementRepository extends ServiceEntityRepository
         return $qb->getQuery()->getResult();
     }
 
-    public function findSignalementsWithFilesToUploadOnIdoss(Partner $partner)
+    public function findSignalementsWithFilesToUploadOnIdoss(Partner $partner): array
     {
         $qb = $this->createQueryBuilder('s')
             ->select('s', 'f')

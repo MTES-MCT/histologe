@@ -6,6 +6,7 @@ use App\Entity\File;
 use Intervention\Image\ImageManager;
 use League\Flysystem\FilesystemOperator;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
+use Symfony\Component\HttpFoundation\File\Exception\FileNotFoundException;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 
 class ImageManipulationHandler
@@ -95,7 +96,7 @@ class ImageManipulationHandler
         $variantNames = self::getVariantNames($file->getFilename());
         $filename = $variantNames[self::SUFFIX_RESIZE];
         if (!$this->fileStorage->fileExists($filename) && !$this->fileStorage->fileExists($file->getFilename())) {
-            throw new \Exception('File "'.$filename.'" not found');
+            throw new FileNotFoundException('File "'.$filename.'" not found');
         }
         if (!$this->fileStorage->fileExists($filename)) {
             $filename = $file->getFilename();

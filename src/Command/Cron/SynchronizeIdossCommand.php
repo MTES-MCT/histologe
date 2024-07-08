@@ -131,7 +131,7 @@ class SynchronizeIdossCommand extends AbstractCronCommand
                     switch ($item['statut']) {
                         case IdossService::STATUS_ACCEPTED:
                         case IdossService::STATUS_IN_PROGRESS:
-                            $description = 'Le signalement a accepté par IDOSS';
+                            $description = 'Le signalement a été accepté par IDOSS';
                             break;
                         case IdossService::STATUS_CLOSED:
                             $description = 'Le signalement a été clôturé par IDOSS avec le motif suivant : "'.$item['motif'].'"';

@@ -35,7 +35,6 @@ final class DossierMessage implements DossierMessageInterface
     {
         $this->signalementId = $affectation->getSignalement()->getId();
         $this->signalementUuid = $affectation->getSignalement()->getUuid();
-        // $this->signalementUuid = uniqid(); // for testing purposes
         $this->partnerId = $affectation->getPartner()->getId();
         $this->dateDepotSignalement = $affectation->getSignalement()->getCreatedAt()->format('m-d-Y');
 
