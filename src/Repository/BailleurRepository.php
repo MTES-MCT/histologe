@@ -60,4 +60,20 @@ class BailleurRepository extends ServiceEntityRepository
 
         return $queryBuilder->getQuery()->getOneOrNullResult();
     }
+
+    public function findAllIndexedByNameSanitizedWithBailleurTerritories(): array
+    {
+        $list = $this->createQueryBuilder('b')
+            ->leftJoin('b.bailleurTerritories', 'bt')
+            ->addSelect('bt')
+            ->getQuery()
+            ->getResult();
+        $indexed = [];
+        foreach ($list as $bailleur) {
+            $name = iconv('UTF-8', 'ASCII//TRANSLIT//IGNORE', mb_strtoupper($bailleur->getName()));
+            $indexed[$name] = $bailleur;
+        }
+
+        return $indexed;
+    }
 }

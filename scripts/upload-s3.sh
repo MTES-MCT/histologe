@@ -31,7 +31,7 @@ else
   option=$1
   zip=$2
   debug=${3:null}
-  if [ -z "$zip" ] && [ "$option" != "desordres" ]; then
+  if [ -z "$zip" ] && [ "$option" != "desordres" ] && [ "$option" != "bailleurs" ]; then
     echo "zip argument is missing: ./scripts/upload-s3.sh [option] [zip]"
     exit 1
   fi

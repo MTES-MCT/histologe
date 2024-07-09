@@ -408,6 +408,7 @@ class Signalement
     private Collection $desordrePrecisions;
 
     #[ORM\ManyToOne(inversedBy: 'signalements')]
+    #[ORM\JoinColumn(onDelete: 'SET NULL')]
     private ?Bailleur $bailleur = null;
 
     #[ORM\Column(nullable: true)]

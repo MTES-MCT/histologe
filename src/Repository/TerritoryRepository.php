@@ -38,6 +38,15 @@ class TerritoryRepository extends ServiceEntityRepository
             ->getResult();
     }
 
+    public function findAllIndexedByZip(): array
+    {
+        $qb = $this->createQueryBuilder('t');
+
+        return $qb->indexBy('t', 't.zip')
+            ->getQuery()
+            ->getResult();
+    }
+
     /**
      * @throws NonUniqueResultException
      * @throws NoResultException

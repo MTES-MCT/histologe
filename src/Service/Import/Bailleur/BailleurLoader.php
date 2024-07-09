@@ -3,7 +3,6 @@
 namespace App\Service\Import\Bailleur;
 
 use App\Entity\Bailleur;
-use App\Entity\Territory;
 use App\Repository\BailleurRepository;
 use App\Repository\BailleurTerritoryRepository;
 use App\Repository\TerritoryRepository;
@@ -13,8 +12,13 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 class BailleurLoader
 {
+    private array $territories = [];
+    private array $bailleurs = [];
+
     private array $metadata = [
-        'count_bailleurs' => 0,
+        'new_bailleurs' => 0,
+        'updated_bailleurs' => 0,
+        'deleted_bailleurs' => 0,
         'errors' => [],
     ];
 
@@ -28,6 +32,8 @@ class BailleurLoader
 
     public function load(array $data, ?OutputInterface $output = null): void
     {
+        $this->initData();
+        $bailleursCreatedOrUpdated = [];
         if (null !== $output) {
             $progressBar = new ProgressBar($output, \count($data));
             $progressBar->start();
@@ -35,19 +41,45 @@ class BailleurLoader
 
         foreach ($data as $key => $item) {
             if (\count($item) > 1) {
-                if (null !== $territoryName = $item[BailleurHeader::DEPARTEMENT]) {
-                    $territory = $this->territoryRepository->findOneBy(['name' => $territoryName]);
-                    if ($this->hasErrors($territoryName, $key, $territory)) {
-                        continue;
-                    }
-
-                    if (!empty($item[BailleurHeader::ORGANISME_NOM])) {
-                        $bailleur = $this->createOrUpdateBailleur($item[BailleurHeader::ORGANISME_NOM], $territory);
-                        $this->entityManager->persist($bailleur);
+                $deptCode = str_pad($item[BailleurHeader::DEPARTEMENT], 2, '0', \STR_PAD_LEFT);
+                $bailleurNom = $item[BailleurHeader::ENSEIGNE];
+                $bailleurRaisonSociale = $item[BailleurHeader::RAISON_SOCIALE];
+                if (!isset($this->territories[$deptCode])) {
+                    $this->metadata['errors'][] = sprintf('[%s] ligne %d - Le territoire n\'existe pas.', $deptCode, $key + 2);
+                    continue;
+                }
+                if (empty($bailleurNom)) {
+                    $bailleurNom = $bailleurRaisonSociale;
+                }
+                if (empty($bailleurNom)) {
+                    $this->metadata['errors'][] = sprintf('ligne %d - Le nom bailleur est vide.', $key + 2);
+                    continue;
+                }
+                $isNew = false;
+                $baileurNomSanitized = iconv('UTF-8', 'ASCII//TRANSLIT//IGNORE', mb_strtoupper($bailleurNom));
+                $bailleurRaisonSocialeSanitized = iconv('UTF-8', 'ASCII//TRANSLIT//IGNORE', mb_strtoupper($bailleurRaisonSociale));
+                if (isset($this->bailleurs[$baileurNomSanitized])) {
+                    $bailleur = $this->bailleurs[$baileurNomSanitized];
+                } elseif ($bailleurRaisonSocialeSanitized && isset($this->bailleurs[$bailleurRaisonSocialeSanitized])) {
+                    $bailleur = $this->bailleurs[$bailleurRaisonSocialeSanitized];
+                } else {
+                    $bailleur = new Bailleur();
+                    $this->entityManager->persist($bailleur);
+                    $isNew = true;
+                }
+                if (!isset($bailleursCreatedOrUpdated[$bailleurRaisonSociale])) {
+                    $bailleursCreatedOrUpdated[$bailleurRaisonSociale] = true;
+                    if ($isNew) {
+                        ++$this->metadata['new_bailleurs'];
+                        $this->bailleurs[$baileurNomSanitized] = $bailleur;
                     } else {
-                        $this->entityManager->flush();
+                        ++$this->metadata['updated_bailleurs'];
                     }
                 }
+                $bailleur->setName($bailleurNom)
+                         ->setRaisonSociale($bailleurRaisonSociale)
+                         ->setSiret($item[BailleurHeader::SIRET])
+                         ->addTerritory($this->territories[$deptCode]);
                 if (null !== $output) {
                     $progressBar->advance();
                 }
@@ -57,6 +89,12 @@ class BailleurLoader
             $progressBar->finish();
             $progressBar->clear();
         }
+        foreach ($this->bailleurs as $bailleur) {
+            if (!$bailleur->getBailleurTerritories()->count()) {
+                $this->entityManager->remove($bailleur);
+                ++$this->metadata['deleted_bailleurs'];
+            }
+        }
         $this->entityManager->flush();
     }
 
@@ -65,36 +103,16 @@ class BailleurLoader
         return $this->metadata;
     }
 
-    private function createOrUpdateBailleur(string $bailleurName, Territory $territory): Bailleur
+    private function initData(): void
     {
-        $bailleur = $this->bailleurRepository->findOneBy(['name' => $bailleurName]);
-        $bailleurTerritory = $this->bailleurTerritoryRepository->findOneBy([
-            'bailleur' => $bailleur,
-            'territory' => $territory,
-        ]);
-        if (null === $bailleur) {
-            $bailleur = (new Bailleur())
-                ->addTerritory($territory)
-                ->setName($bailleurName);
-            ++$this->metadata['count_bailleurs'];
-        } elseif (null === $bailleurTerritory) {
-            $bailleur->addTerritory($territory);
+        $this->territories = $this->territoryRepository->findAllIndexedByZip();
+        $this->bailleurs = $this->bailleurRepository->findAllIndexedByNameSanitizedWithBailleurTerritories();
+        foreach ($this->bailleurs as $bailleur) {
+            foreach ($bailleur->getBailleurTerritories() as $bailleurTerritory) {
+                $bailleur->removeBailleurTerritory($bailleurTerritory);
+                $this->entityManager->remove($bailleurTerritory);
+            }
         }
-
-        return $bailleur;
-    }
-
-    private function hasErrors(string $territoryName, int $key, ?Territory $territory = null): bool
-    {
-        if (null === $territory) {
-            $this->metadata['errors'][] = sprintf(
-                '[%s] ligne %d - Le territoire n\'existe pas.',
-                $territoryName,
-                $key + 2);
-
-            return true;
-        }
-
-        return false;
+        $this->entityManager->flush();
     }
 }

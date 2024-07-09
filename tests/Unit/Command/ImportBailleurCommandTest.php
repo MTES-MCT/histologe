@@ -67,8 +67,10 @@ class ImportBailleurCommandTest extends KernelTestCase
             ->expects($this->once())
             ->method('getMetadata')
             ->willReturn([
-                'count_bailleurs' => 10,
-                'errors' => ['[Wallis-et-Futuna] ligne 2 - Le territoire n\'existe pas'],
+                'new_bailleurs' => 10,
+                'updated_bailleurs' => 0,
+                'deleted_bailleurs' => 0,
+                'errors' => ['[125] ligne 2 - Le territoire n\'existe pas'],
             ]);
 
         $command = $application->add(new ImportBailleurCommand(
@@ -84,7 +86,7 @@ class ImportBailleurCommandTest extends KernelTestCase
 
         $output = $commandTester->getDisplay();
         $this->assertStringContainsString('Le territoire n\'existe pas ', $output);
-        $this->assertStringContainsString('10 bailleur(s) have been imported', $output);
+        $this->assertStringContainsString('10 new bailleur(s) have been imported', $output);
         $commandTester->assertCommandIsSuccessful();
     }
 }
