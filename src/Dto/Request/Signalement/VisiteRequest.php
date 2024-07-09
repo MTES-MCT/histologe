@@ -10,6 +10,7 @@ class VisiteRequest
         private readonly ?int $idIntervention = null,
         #[Assert\DateTime('Y-m-d')]
         private readonly ?string $date = null,
+        #[Assert\DateTime('H:i')]
         private readonly ?string $time = null,
         private readonly ?int $idPartner = null,
         private readonly ?string $details = null,
