@@ -32,32 +32,13 @@ final class Version20240705124751 extends AbstractMigration
             DEFAULT CHARACTER SET utf8mb4 COLLATE `utf8mb4_unicode_ci` ENGINE = InnoDB'
         );
         $this->addSql('ALTER TABLE auto_affectation_rule ADD CONSTRAINT FK_1A302A1C73F74AD4 FOREIGN KEY (territory_id) REFERENCES territory (id)');
-
-        // $this->addSql('
-        //     INSERT INTO auto_affectation_rule (territory_id, status, profile_declarant, partner_type, insee_to_include, insee_to_exclude, parc, allocataire)
-        //     VALUES (94, "ACTIVE", "all", "COMMUNE_SCHS", "partner_list", null, "all", "all")
-        // ');
-        // $this->addSql('
-        //     INSERT INTO auto_affectation_rule (territory_id, status, profile_declarant, partner_type, insee_to_include, insee_to_exclude, parc, allocataire)
-        //     VALUES (35, "ACTIVE", "all", "COMMUNE_SCHS", "partner_list", JSON_ARRAY("34500", "34600"), "prive", "all")
-        // ');
-        // $this->addSql('
-        //     INSERT INTO auto_affectation_rule (territory_id, status, profile_declarant, partner_type, insee_to_include, insee_to_exclude, parc, allocataire)
-        //     VALUES (35, "ACTIVE", "all", "CAF_MSA", "all", JSON_ARRAY("34500", "34600"), "prive", "all")
-        // ');
-        // $this->addSql('
-        //     INSERT INTO auto_affectation_rule (territory_id, status, profile_declarant, partner_type, insee_to_include, insee_to_exclude, parc, allocataire)
-        //     VALUES (35, "ACTIVE", "all", "CONSEIL_DEPARTEMENTAL", "all", JSON_ARRAY("34500", "34600"), "prive", "all")
-        // ');
-        // $this->addSql('
-        //     INSERT INTO auto_affectation_rule (territory_id, status, profile_declarant, partner_type, insee_to_include, insee_to_exclude, parc, allocataire)
-        //     VALUES (35, "ACTIVE", "all", "EPCI", "partner_list", null, "prive", "all")
-        // ');
+        $this->addSql('ALTER TABLE territory DROP is_auto_affectation_enabled');
     }
 
     public function down(Schema $schema): void
     {
         $this->addSql('ALTER TABLE auto_affectation_rule DROP FOREIGN KEY FK_1A302A1C73F74AD4');
         $this->addSql('DROP TABLE auto_affectation_rule');
+        $this->addSql('ALTER TABLE territory ADD is_auto_affectation_enabled TINYINT(1) NOT NULL');
     }
 }

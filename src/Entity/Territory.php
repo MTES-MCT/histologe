@@ -52,9 +52,6 @@ class Territory
     #[ORM\Column(type: 'json', nullable: true)]
     private $authorizedCodesInsee = [];
 
-    #[ORM\Column]
-    private ?bool $isAutoAffectationEnabled = false;
-
     #[ORM\OneToMany(mappedBy: 'territory', targetEntity: BailleurTerritory::class)]
     private Collection $bailleurTerritories;
 
@@ -295,18 +292,6 @@ class Territory
     public function setAuthorizedCodesInsee(?array $authorizedCodesInsee): self
     {
         $this->authorizedCodesInsee = $authorizedCodesInsee;
-
-        return $this;
-    }
-
-    public function isAutoAffectationEnabled(): ?bool
-    {
-        return $this->isAutoAffectationEnabled;
-    }
-
-    public function setIsAutoAffectationEnabled(bool $isAutoAffectationEnabled): self
-    {
-        $this->isAutoAffectationEnabled = $isAutoAffectationEnabled;
 
         return $this;
     }
