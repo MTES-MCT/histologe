@@ -34,7 +34,7 @@ class BailleurRepository extends ServiceEntityRepository
         foreach ($terms as $index => $term) {
             $placeholder = 'term_'.$index;
             $queryBuilder
-                ->andWhere($queryBuilder->expr()->like('b.name', ':'.$placeholder))
+                ->andWhere('b.name LIKE :'.$placeholder.' OR b.raisonSociale LIKE :'.$placeholder)
                 ->setParameter($placeholder, '%'.$term.'%');
         }
 
