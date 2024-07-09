@@ -61,7 +61,7 @@ class BailleurRepository extends ServiceEntityRepository
         return $queryBuilder->getQuery()->getOneOrNullResult();
     }
 
-    public function findAllIndexedByNameSanitizedWithBailleurTerritories(): array
+    public function findAllIndexedByNameSanitizedWithBailleurTerritories(?bool $raisonSociale = false): array
     {
         $list = $this->createQueryBuilder('b')
             ->leftJoin('b.bailleurTerritories', 'bt')
@@ -70,7 +70,11 @@ class BailleurRepository extends ServiceEntityRepository
             ->getResult();
         $indexed = [];
         foreach ($list as $bailleur) {
-            $name = iconv('UTF-8', 'ASCII//TRANSLIT//IGNORE', mb_strtoupper($bailleur->getName()));
+            if ($raisonSociale) {
+                $name = iconv('UTF-8', 'ASCII//TRANSLIT//IGNORE', mb_strtoupper($bailleur->getRaisonSociale()));
+            } else {
+                $name = iconv('UTF-8', 'ASCII//TRANSLIT//IGNORE', mb_strtoupper($bailleur->getName()));
+            }
             $indexed[$name] = $bailleur;
         }
 
