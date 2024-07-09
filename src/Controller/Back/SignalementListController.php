@@ -78,6 +78,11 @@ class SignalementListController extends AbstractController
         $session->set('filters', $filters);
         $signalements = $signalementManager->findSignalementAffectationList($user, $filters);
 
-        return $this->json($signalements);
+        return $this->json(
+            $signalements,
+            Response::HTTP_OK,
+            ['content-type' => 'application/json'],
+            ['groups' => ['signalements:read']]
+        );
     }
 }

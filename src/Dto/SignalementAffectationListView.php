@@ -4,12 +4,17 @@ namespace App\Dto;
 
 use App\Entity\Enum\Qualification;
 use App\Entity\Enum\QualificationStatus;
+use Symfony\Component\Serializer\Attribute\Groups;
 
+#[Groups(['signalements:read'])]
 class SignalementAffectationListView
 {
     public const SEPARATOR_CONCAT = '||';
     public const SEPARATOR_GROUP_CONCAT = ';';
     public const MAX_LIST_PAGINATION = 30;
+
+    private ?bool $nde = null;
+    private ?array $qualificationsStatusesLabels = null;
 
     public function __construct(
         private ?int $id = null,
@@ -131,12 +136,12 @@ class SignalementAffectationListView
         if (null !== $this->qualifications) {
             foreach ($this->qualifications as $qualification) {
                 if (Qualification::NON_DECENCE_ENERGETIQUE->name === $qualification) {
-                    return true;
+                    return $this->nde = true;
                 }
             }
         }
 
-        return false;
+        return $this->nde = false;
     }
 
     public function getQualificationsStatuses(): ?array
@@ -146,7 +151,7 @@ class SignalementAffectationListView
 
     public function getQualificationsStatusesLabels(): array
     {
-        $listLabels = [];
+        $this->qualificationsStatusesLabels = [];
 
         if (null !== $this->qualificationsStatuses) {
             foreach ($this->qualificationsStatuses as $qualificationStatus) {
@@ -155,12 +160,12 @@ class SignalementAffectationListView
                         && false === strpos($qualificationStatusName, 'NDE')
                         && false !== strpos($qualificationStatusName, 'CHECK')
                 ) {
-                    $listLabels[] = QualificationStatus::tryFrom($qualificationStatus)?->label();
+                    $this->qualificationsStatusesLabels[] = QualificationStatus::tryFrom($qualificationStatus)?->label();
                 }
             }
         }
 
-        return $listLabels;
+        return $this->qualificationsStatusesLabels;
     }
 
     public function getCsrfToken(): ?string
