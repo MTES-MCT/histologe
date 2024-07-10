@@ -16,7 +16,7 @@
               </li>
               <li>
                 <button
-                    v-if="sharedState.hasSignalementImported && sharedState.user.canSeeImportedButton"
+                    v-if="sharedState.hasSignalementImported"
                     ref="isImportedButton"
                     class="fr-tag"
                     :aria-pressed="ariaPressed.isImported.toString()"
@@ -150,7 +150,7 @@
                 />
               </div>
               <div class="fr-col-12 fr-col-lg-4 fr-col-xl-3 grey-background"
-                   v-if="sharedState.partenaires.length > 0">
+                   v-if="sharedState.user.canSeeFilterPartner && sharedState.partenaires.length > 0">
                 <HistoMultiSelect
                     id="filter-partenaires"
                     v-model="sharedState.input.filters.partenaires"

@@ -103,16 +103,27 @@ class SignalementRepository extends ServiceEntityRepository
             ->getSingleScalarResult();
     }
 
-    public function countImported(?Territory $territory = null): int
+    /**
+     * @throws NonUniqueResultException
+     * @throws NoResultException
+     */
+    public function countImported(?Territory $territory = null, ?User $user = null): int
     {
-        $qb = $this->createQueryBuilder('s');
-        $qb->select('COUNT(s.id)');
-        $qb->andWhere('s.statut != :statutArchived')
-            ->setParameter('statutArchived', Signalement::STATUS_ARCHIVED);
-        $qb->andWhere('s.isImported = 1');
+        $qb = $this->createQueryBuilder('s')
+            ->select('COUNT(s.id)')
+            ->andWhere('s.statut != :statutArchived')
+            ->setParameter('statutArchived', Signalement::STATUS_ARCHIVED)
+            ->andWhere('s.isImported = 1');
 
         if (null !== $territory) {
             $qb->andWhere('s.territory = :territory')->setParameter('territory', $territory);
+        }
+
+        if ($user?->isUserPartner() || $user?->isPartnerAdmin()) {
+            $qb->innerJoin('s.affectations', 'affectations')
+                ->innerJoin('affectations.partner', 'partner')
+                ->andWhere('partner = :partner')
+                ->setParameter('partner', $user->getPartner());
         }
 
         return $qb->getQuery()->getSingleScalarResult();
