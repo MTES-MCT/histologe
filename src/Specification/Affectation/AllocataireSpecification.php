@@ -34,18 +34,20 @@ class AllocataireSpecification implements SpecificationInterface
             return true;
         } elseif ('oui' === $this->ruleAllocataire) {
             if ('oui' === $signalement->getIsAllocataire()
-            || 'caf' === $signalement->getIsAllocataire()
-            || 'msa' === $signalement->getIsAllocataire()
+            || 'CAF' === $signalement->getIsAllocataire()
+            || 'MSA' === $signalement->getIsAllocataire()
+            || '1' === $signalement->getIsAllocataire()
             ) {
                 return true;
             }
         } elseif ('non' === $this->ruleAllocataire) {
             if ('non' === $signalement->getIsAllocataire()
+            || '0' === $signalement->getIsAllocataire()
             ) {
                 return true;
             }
         } else {
-            return $signalement->getIsAllocataire() === $this->ruleAllocataire;
+            return strtolower($signalement->getIsAllocataire()) === $this->ruleAllocataire;
         }
 
         return false;

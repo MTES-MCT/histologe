@@ -25,7 +25,7 @@ class StatistiquesControllerTest extends WebTestCase
 
         $expectedResponses = [
             ['result' => 1, 'label' => 'count_signalement_resolus'],
-            ['result' => 39, 'label' => 'count_signalement'],
+            ['result' => 40, 'label' => 'count_signalement'],
         ];
 
         foreach ($expectedResponses as $expectedResponse) {

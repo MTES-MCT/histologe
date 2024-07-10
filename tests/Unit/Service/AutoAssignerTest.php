@@ -37,6 +37,11 @@ class AutoAssignerTest extends KernelTestCase
         $this->testHelper('2023-1', 0);
     }
 
+    public function testAutoAssignmentHerault(): void
+    {
+        $this->testHelper('2024-06', 4);
+    }
+
     private function testHelper($reference, $expectedCount)
     {
         $signalementRepository = $this->entityManager->getRepository(Signalement::class);

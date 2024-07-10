@@ -32,6 +32,10 @@ class CodeInseeSpecification implements SpecificationInterface
         /** @var Signalement $signalement */
         $signalement = $params['signalement'];
 
+        if (null === $signalement->getInseeOccupant()
+        || '' === $signalement->getInseeOccupant()) {
+            return false;
+        }
         if (!empty($this->inseeToExclude) && \in_array($signalement->getInseeOccupant(), $this->inseeToExclude)) {
             return false;
         }

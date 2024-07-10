@@ -37,19 +37,13 @@ class ProfilDeclarantSpecification implements SpecificationInterface
         if ('all' === $this->ruleProfilDeclarant) {
             return true;
         } elseif ('tiers' === $this->ruleProfilDeclarant) {
-            if (ProfileDeclarant::BAILLEUR === $signalementProfilDeclarant
-            || ProfileDeclarant::SERVICE_SECOURS === $signalementProfilDeclarant
-            || ProfileDeclarant::TIERS_PARTICULIER === $signalementProfilDeclarant
-            || ProfileDeclarant::TIERS_PRO === $signalementProfilDeclarant
-            ) {
+            if ($signalement->isTiersDeclarant()) {
                 return true;
             }
 
             return false;
         } elseif ('occupant' === $this->ruleProfilDeclarant) {
-            if (ProfileDeclarant::BAILLEUR_OCCUPANT === $signalementProfilDeclarant
-            || ProfileDeclarant::LOCATAIRE === $signalementProfilDeclarant
-            ) {
+            if (!$signalement->isTiersDeclarant()) {
                 return true;
             }
 
