@@ -464,3 +464,15 @@ partners:
     insee: "[\"93066\"]"
     territory: "Seine-Saint-Denis"
     type: "COMMUNE_SCHS"
+
+  - nom: "Partenaire 38-01"
+    email: "partenaire-38-01@histologe.fr"
+    is_archive: 0
+    territory: "Isère"
+    type: "COMMUNE_SCHS"
+    competence:
+      - 'ACCOMPAGNEMENT_SOCIAL'
+      - 'ACCOMPAGNEMENT_TRAVAUX'
+      - 'FSL'
+      - 'VISITES'
+      - 'RSD'

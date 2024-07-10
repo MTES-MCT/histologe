@@ -148,7 +148,6 @@ export default defineComponent({
       this.sharedState.user.canSeeStatusAffectation = isAdminOrAdminTerritoire
       this.sharedState.user.canDeleteSignalement = isAdminOrAdminTerritoire
       this.sharedState.user.canSeeScore = isAdminOrAdminTerritoire
-      this.sharedState.user.canSeeImportedButton = isAdminOrAdminTerritoire
       this.sharedState.user.partnerId = requestResponse.partnerId
       this.sharedState.hasSignalementImported = requestResponse.hasSignalementImported
       this.sharedState.input.order = 'reference-DESC'
