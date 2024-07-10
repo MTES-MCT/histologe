@@ -1,0 +1,260 @@
+{
+	"info": {
+		"_postman_id": "e987f68f-d942-4011-abc4-5de842703128",
+		"name": "idoss-histologe-collection",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "1569180"
+	},
+	"item": [
+		{
+			"name": "authenticate",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"var data = JSON.parse(responseBody);",
+							"",
+							"if (null !== data.data) {",
+							"    postman.setEnvironmentVariable(\"idoss_token\", data.token);",
+							"}",
+							"",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"username\": \"{{idoss_username}}\",\n    \"password\": \"{{idoss_password}}\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{idoss_url}}/api/Utilisateur/authentification",
+					"host": [
+						"{{idoss_url}}"
+					],
+					"path": [
+						"api",
+						"Utilisateur",
+						"authentification"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "createDossier",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"var data = JSON.parse(responseBody);",
+							"",
+							"if (null !== data.data) {",
+							"    postman.setEnvironmentVariable(\"idoss_dossier_uuid\", data.uuid);",
+							"    postman.setEnvironmentVariable(\"idoss_dossier_id\", data.id);",
+							"}",
+							"",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{idoss_token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"user\": \"HISTO\",\r\n    \"Dossier\": {\r\n        \"UUIDSignalement\": \"00000000-0000-0000-2023-000000000015\",\r\n        \"dateDepotSignalement\": \"01-05-2024\",\r\n        \"occupant\": {\r\n            \"nomOccupant\": \"{{$randomLastName}}\",\r\n            \"prenomOccupant\": \"{{$randomFirstName}}\",\r\n            \"telephoneOccupant\": \"+33621127286\",\r\n            \"mailOccupant\": \"{{$randomEmail}}\",\r\n            \"adresseLogement\": {\r\n                \"adresse\": \"10 Imp. Madeleine Simon 13004 Marseille\",\r\n                \"novoie\": \"10\",\r\n                \"codevoie\": null,\r\n                \"nomvoie\": \"\",\r\n                \"CP\": \"13004\",\r\n                \"nomCommune\": \"Marseille\",\r\n                \"codeInseeCommune\": \"13055\"\r\n            }\r\n        },\r\n        \"declarant\": {\r\n            \"nomDeclarant\": \"{{$randomFirstName}}\",\r\n            \"prenomDeclarant\": \"{{$randomLastName}}\",\r\n            \"telephoneDeclarant\": \"{{$randomPhoneNumber}}\",\r\n            \"mailDeclarant\": \"{{$randomEmail}}\"\r\n        },\r\n        \"proprietaire\": {\r\n            \"nomProprietaire\": \"{{$randomCompanyName}}\",\r\n            \"prenomProprietaire\": null,\r\n            \"adresseProprietaire\": \"424, rue Lagarde\\n64923 Rolland\",\r\n            \"telephoneProprietaire\": \"+33621127286\",\r\n            \"mailProprietaire\": \"{{randomEmail}}\"\r\n        },\r\n        \"bailEncours\": \"non\",\r\n        \"construitAv1949\": \"ne sait pas\",\r\n        \"adresse1\": \"Appartement 799, \",\r\n        \"descriptionProblemes\": \"Malgr\\u00e9 nos multiples tentatives pour r\\u00e9soudre les probl\\u00e8mes de cet appartement insalubre, les conditions de vie restent pr\\u00e9caires pour les occupants. Les moisissures et les odeurs naus\\u00e9abondes persistent, l'\\u00e9lectricit\\u00e9 est toujours d\\u00e9fectueuse, et le\",\r\n        \"numAllocataire\": \"910214\"\r\n    },\r\n    \"Etape\": {\r\n        \"nbrPersonne\": {{$randomInt}},\r\n        \"typeLogement\": \"Autre\",\r\n        \"superficie\": {{$randomInt}},\r\n        \"dateConstruction\": null,\r\n        \"observationBail\": null\r\n    }\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{idoss_url}}/api/EtatCivil/creatDossHistologe",
+					"host": [
+						"{{idoss_url}}"
+					],
+					"path": [
+						"api",
+						"EtatCivil",
+						"creatDossHistologe"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "uploadFileRepo",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{idoss_token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "id",
+							"value": "{{idoss_dossier_id}}",
+							"type": "text"
+						},
+						{
+							"key": "uuid",
+							"value": "{{idoss_dossier_uuid}}",
+							"type": "text"
+						},
+						{
+							"key": "file",
+							"type": "file",
+							"src": [
+								"postman-cloud:///1ef383da-7ee5-4670-be9f-eec133bea044",
+								"postman-cloud:///1ef383da-7fcd-4560-a106-e5a19c409ab7"
+							]
+						}
+					]
+				},
+				"url": {
+					"raw": "{{idoss_url}}/api/EtatCivil/uploadFileRepoHistologe",
+					"host": [
+						"{{idoss_url}}"
+					],
+					"path": [
+						"api",
+						"EtatCivil",
+						"uploadFileRepoHistologe"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "listStatuts",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{idoss_token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{idoss_url}}/api/EtatCivil/listStatutsHistologe",
+					"host": [
+						"{{idoss_url}}"
+					],
+					"path": [
+						"api",
+						"EtatCivil",
+						"listStatutsHistologe"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "listStatutsDate",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{idoss_token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"date\": \"06-27-2024\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{idoss_url}}/api/EtatCivil/listStatutsDateHistologe",
+					"host": [
+						"{{idoss_url}}"
+					],
+					"path": [
+						"api",
+						"EtatCivil",
+						"listStatutsDateHistologe"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"auth": {
+		"type": "bearer"
+	},
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		}
+	]
+}

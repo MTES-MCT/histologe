@@ -211,6 +211,10 @@ class LoadSignalementData extends Fixture implements OrderedFixtureInterface
             $signalement->setBailleur($this->bailleurRepository->findOneBailleurBy($row['bailleur'], $zip));
         }
 
+        if (isset($row['synchro_data'])) {
+            $signalement->setSynchroData($row['synchro_data'], 'idoss');
+        }
+
         $manager->persist($signalement);
 
         if (isset($row['qualifications'])) {

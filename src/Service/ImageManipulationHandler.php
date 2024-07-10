@@ -6,6 +6,7 @@ use App\Entity\File;
 use Intervention\Image\ImageManager;
 use League\Flysystem\FilesystemOperator;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
+use Symfony\Component\HttpFoundation\File\Exception\FileNotFoundException;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 
 class ImageManipulationHandler
@@ -88,6 +89,20 @@ class ImageManipulationHandler
         $this->fileStorage->writeStream($this->getNewPath(self::SUFFIX_THUMB), $resource);
 
         return $this;
+    }
+
+    public function getFilePath(File $file)
+    {
+        $variantNames = self::getVariantNames($file->getFilename());
+        $filename = $variantNames[self::SUFFIX_RESIZE];
+        if (!$this->fileStorage->fileExists($filename) && !$this->fileStorage->fileExists($file->getFilename())) {
+            throw new FileNotFoundException('File "'.$filename.'" not found');
+        }
+        if (!$this->fileStorage->fileExists($filename)) {
+            $filename = $file->getFilename();
+        }
+
+        return $this->parameterBag->get('url_bucket').'/'.$filename;
     }
 
     private function getNewPath(string $suffix): string

@@ -3,22 +3,16 @@
 namespace App\Messenger\Message\Idoss;
 
 use App\Entity\Affectation;
-use App\Entity\Enum\PartnerType;
 use App\Messenger\Message\DossierMessageInterface;
-use App\Service\Idoss\IdossService;
 use App\Utils\AddressParser;
 
 final class DossierMessage implements DossierMessageInterface
 {
-    private const CODE_VOIE = '1234';
     private const DEPT_BOUCHES_DU_RHONE = '13';
+    private const CODE_INSEE_BASSIN_VIE_MARSEILLE = '13055';
     private const DESCRIPTION_MAX_LENGTH = 250;
     private int $signalementId;
     private int $partnerId;
-    private string $url;
-    private ?string $token;
-    private ?\DateTimeInterface $tokenExpirationDate;
-    private ?PartnerType $partnerType;
     private ?string $signalementUuid;
     private string $dateDepotSignalement;
     private array $declarant;
@@ -27,7 +21,6 @@ final class DossierMessage implements DossierMessageInterface
     private ?string $adresse2;
     private array $proprietaire;
     private string $descriptionProblemes;
-    private array $pj = [];
     private ?string $numAllocataire;
     private ?float $montantAllocation;
     private string $bailEnCour = 'ne sait pas';
@@ -41,14 +34,10 @@ final class DossierMessage implements DossierMessageInterface
     public function __construct(Affectation $affectation)
     {
         $this->signalementId = $affectation->getSignalement()->getId();
-        $this->partnerId = $affectation->getPartner()->getId();
-
-        $this->url = $affectation->getPartner()->getIdossUrl();
-        $this->token = $affectation->getPartner()->getIdossToken();
-        $this->tokenExpirationDate = $affectation->getPartner()->getIdossTokenExpirationDate();
-        $this->partnerType = $affectation->getPartner()->getType();
         $this->signalementUuid = $affectation->getSignalement()->getUuid();
+        $this->partnerId = $affectation->getPartner()->getId();
         $this->dateDepotSignalement = $affectation->getSignalement()->getCreatedAt()->format('m-d-Y');
+
         $this->declarant = [
             'nomDeclarant' => $affectation->getSignalement()->getNomDeclarant(),
             'prenomDeclarant' => $affectation->getSignalement()->getPrenomDeclarant(),
@@ -64,7 +53,6 @@ final class DossierMessage implements DossierMessageInterface
             'adresseLogement' => [
                 'adresse' => $affectation->getSignalement()->getAddressCompleteOccupant(),
                 'novoie' => $addressParsed['number'],
-                'codevoie' => self::CODE_VOIE, // valeur obligatoire que nous ne ne possédons pas, utilisation d'une valeur par défaut qui fonctionne (teamnet ok) en attendant que le champ soit facultatif
                 'nomvoie' => $addressParsed['street'],
                 'CP' => $affectation->getSignalement()->getCpOccupant(),
                 'nomCommune' => $affectation->getSignalement()->getVilleOccupant(),
@@ -73,7 +61,7 @@ final class DossierMessage implements DossierMessageInterface
         ];
         // seul code insee accepté par IDOSS pour le service Habitat de Marseille, on force la valeur tant qu'on est dans le 13
         if (str_starts_with($affectation->getSignalement()->getInseeOccupant(), self::DEPT_BOUCHES_DU_RHONE)) {
-            $this->occupant['adresseLogement']['codeInseeCommune'] = IdossService::CODE_INSEE_BASSIN_VIE_MARSEILLE;
+            $this->occupant['adresseLogement']['codeInseeCommune'] = self::CODE_INSEE_BASSIN_VIE_MARSEILLE;
         }
 
         $this->adresse1 = $affectation->getSignalement()->getComplementAdresseOccupant(false);
@@ -86,9 +74,6 @@ final class DossierMessage implements DossierMessageInterface
             'mailProprietaire' => $affectation->getSignalement()->getMailProprio(),
         ];
         $this->descriptionProblemes = mb_strimwidth($affectation->getSignalement()->getDetails(), 0, self::DESCRIPTION_MAX_LENGTH);
-        foreach ($affectation->getSignalement()->getFiles() as $file) {
-            $this->pj[] = $file->getFilename();
-        }
         $this->numAllocataire = $affectation->getSignalement()->getNumAllocataire();
         $this->montantAllocation = $affectation->getSignalement()->getMontantAllocation();
         if (true === $affectation->getSignalement()->getIsBailEnCours()) {
@@ -111,6 +96,7 @@ final class DossierMessage implements DossierMessageInterface
             'nbrPersonne' => $affectation->getSignalement()->getTypeCompositionLogement()?->getCompositionLogementNombrePersonnes(),
             'typeLogement' => $affectation->getSignalement()->getNatureLogement(),
             'superficie' => $affectation->getSignalement()->getSuperficie(),
+            'dateConstruction' => $affectation->getSignalement()->getInformationComplementaire()?->getInformationsComplementairesLogementAnneeConstruction(),
         ];
     }
 
@@ -122,30 +108,6 @@ final class DossierMessage implements DossierMessageInterface
     public function getSignalementId(): ?int
     {
         return $this->signalementId;
-    }
-
-    public function getUrl(): ?string
-    {
-        if (str_ends_with($this->url, '/')) {
-            return substr($this->url, 0, -1);
-        }
-
-        return $this->url;
-    }
-
-    public function getToken(): ?string
-    {
-        return $this->token;
-    }
-
-    public function getTokenExpirationDate(): ?\DateTimeInterface
-    {
-        return $this->tokenExpirationDate;
-    }
-
-    public function getPartnerType(): ?PartnerType
-    {
-        return $this->partnerType;
     }
 
     public function getSignalementUuid(): ?string
@@ -186,11 +148,6 @@ final class DossierMessage implements DossierMessageInterface
     public function getDescriptionProblemes(): string
     {
         return $this->descriptionProblemes;
-    }
-
-    public function getPj(): array
-    {
-        return $this->pj;
     }
 
     public function getNumAllocataire(): ?string

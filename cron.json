@@ -22,6 +22,9 @@
       "command": "30 4 * * * php bin/console app:anonymize-expired-account"
     },
     {
+      "command": "0 22 * * * php bin/console app:synchronize-idoss"
+    },
+    {
       "command": "0 1 * * * sh /app/scripts/sync-db.sh"
     }
   ]

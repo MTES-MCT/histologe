@@ -4,6 +4,7 @@ namespace App\Factory\Interconnection\Idoss;
 
 use App\Entity\Affectation;
 use App\Messenger\Message\Idoss\DossierMessage;
+use App\Service\Idoss\IdossService;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 
 class DossierMessageFactory
@@ -23,6 +24,9 @@ class DossierMessageFactory
             return false;
         }
         if (!$affectation->getPartner()->canSyncWithIdoss()) {
+            return false;
+        }
+        if ($affectation->getSignalement()->getSynchroData(IdossService::TYPE_SERVICE)) {
             return false;
         }
 
