@@ -11,7 +11,6 @@ use App\Repository\TerritoryRepository;
 use App\Service\Signalement\Qualification\QualificationStatusService;
 use App\Service\Signalement\SearchFilterOptionDataProvider;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
-use Symfony\Contracts\Cache\CacheInterface;
 use Symfony\Contracts\Cache\TagAwareCacheInterface;
 
 class SearchFilterOptionDataProviderTest extends KernelTestCase
