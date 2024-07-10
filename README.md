@@ -120,28 +120,6 @@ Ain                    | Utilisateur Partenaire 01 | user-01-01@histologe.fr    
 
 > Pour les mails générique partenaire, la nomenclature est la suivante: partenaire-[zip]-[index]
 
-4. Vous pouvez ajouter vos e-mails:
-
-> En tant qu'administrateur
-
-```
-$ php bin/console app:add-user ROLE_ADMIN john.doe.1@histologe.fr John Doe
-```
-
-> En tant qu'administrateur territoire
-
-```
-$ php bin/console app:add-user ROLE_ADMIN_TERRITORY joe.doe.2@histologe.fr John Doe Marseille 13
-```
-
-> En tant que partenaire
-> 
-```
-$ php bin/console app:add-user ROLE_USER_PARTNER joe.doe.3@histologe.fr John Doe Marseille 13
-```
-
-Une activation de compte sera nécéssaire
-
 ## Documentation projet
 
 - [Documentation](https://github.com/MTES-MCT/histologe/wiki)
