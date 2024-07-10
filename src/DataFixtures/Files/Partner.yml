@@ -438,7 +438,7 @@ partners:
     territory: "Yonne"
     type: "COMMUNE_SCHS"
   -
-    nom: "DDT"
+    nom: "DDT 38"
     email: "partenaire-38-01@histologe.fr"
     is_archive: 0
     insee: "[\"\"]"
@@ -464,3 +464,15 @@ partners:
     insee: "[\"93066\"]"
     territory: "Seine-Saint-Denis"
     type: "COMMUNE_SCHS"
+
+  - nom: "Partenaire 38-02"
+    email: "partenaire-38-02@histologe.fr"
+    is_archive: 0
+    territory: "Isère"
+    type: "COMMUNE_SCHS"
+    competence:
+      - 'ACCOMPAGNEMENT_SOCIAL'
+      - 'ACCOMPAGNEMENT_TRAVAUX'
+      - 'FSL'
+      - 'VISITES'
+      - 'RSD'

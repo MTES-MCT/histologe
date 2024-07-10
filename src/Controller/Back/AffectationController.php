@@ -16,6 +16,7 @@ use App\Messenger\InterconnectionBus;
 use App\Repository\AffectationRepository;
 use App\Repository\PartnerRepository;
 use App\Specification\Signalement\FirstAffectationAcceptedSpecification;
+use Psr\Cache\InvalidArgumentException;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
@@ -25,6 +26,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Contracts\Cache\TagAwareCacheInterface;
 
 #[Route('/bo/signalements')]
 class AffectationController extends AbstractController
@@ -38,10 +40,14 @@ class AffectationController extends AbstractController
     ) {
     }
 
+    /**
+     * @throws InvalidArgumentException
+     */
     #[Route('/{uuid}/affectation/toggle', name: 'back_signalement_toggle_affectation')]
     public function toggleAffectationSignalement(
         Request $request,
         Signalement $signalement,
+        TagAwareCacheInterface $cache,
     ): RedirectResponse|JsonResponse {
         $this->denyAccessUnlessGranted('ASSIGN_TOGGLE', $signalement);
         if ($this->isCsrfTokenValid('signalement_affectation_'.$signalement->getId(), $request->get('_token'))) {
@@ -67,6 +73,7 @@ class AffectationController extends AbstractController
                     }
                 }
                 $this->affectationManager->removeAffectationsFrom($signalement, $postedPartner, $partnersIdToRemove);
+                $cache->invalidateTags([$signalement->getTerritory()?->getZip()]);
             } else {
                 $this->affectationManager->removeAffectationsFrom($signalement);
             }
