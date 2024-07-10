@@ -12,6 +12,7 @@ use App\Service\Signalement\Qualification\QualificationStatusService;
 use App\Service\Signalement\SearchFilterOptionDataProvider;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use Symfony\Contracts\Cache\CacheInterface;
+use Symfony\Contracts\Cache\TagAwareCacheInterface;
 
 class SearchFilterOptionDataProviderTest extends KernelTestCase
 {
@@ -22,7 +23,7 @@ class SearchFilterOptionDataProviderTest extends KernelTestCase
     private PartnerRepository $partnerRepository;
     private TagRepository $tagsRepository;
     private SignalementRepository $signalementRepository;
-    private CacheInterface $cache;
+    private TagAwareCacheInterface $cache;
     private QualificationStatusService $qualificationStatusService;
 
     protected function setUp(): void
@@ -35,7 +36,7 @@ class SearchFilterOptionDataProviderTest extends KernelTestCase
         $this->partnerRepository = self::getContainer()->get(PartnerRepository::class);
         $this->tagsRepository = self::getContainer()->get(TagRepository::class);
         $this->signalementRepository = self::getContainer()->get(SignalementRepository::class);
-        $this->cache = self::getContainer()->get(CacheInterface::class);
+        $this->cache = self::getContainer()->get(TagAwareCacheInterface::class);
         $this->qualificationStatusService = self::getContainer()->get(QualificationStatusService::class);
 
         $this->searchFilterOptionDataProvider = new SearchFilterOptionDataProvider(

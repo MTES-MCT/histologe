@@ -150,7 +150,7 @@
                 />
               </div>
               <div class="fr-col-12 fr-col-lg-4 fr-col-xl-3 grey-background"
-                   v-if="sharedState.partenaires.length > 0">
+                   v-if="sharedState.user.canSeeFilterPartner && sharedState.partenaires.length > 0">
                 <HistoMultiSelect
                     id="filter-partenaires"
                     v-model="sharedState.input.filters.partenaires"

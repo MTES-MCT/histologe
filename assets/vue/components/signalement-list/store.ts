@@ -45,6 +45,7 @@ export const store = {
       canDeleteSignalement: false,
       canSeeNonDecenceEnergetique: false,
       canSeeScore: false,
+      canSeeFilterPartner: false,
       partnerId: null as number | null
     },
     showOptions: false,

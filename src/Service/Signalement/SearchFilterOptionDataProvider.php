@@ -13,8 +13,8 @@ use App\Repository\TagRepository;
 use App\Repository\TerritoryRepository;
 use App\Service\Signalement\Qualification\QualificationStatusService;
 use Psr\Cache\InvalidArgumentException;
-use Symfony\Contracts\Cache\CacheInterface;
 use Symfony\Contracts\Cache\ItemInterface;
+use Symfony\Contracts\Cache\TagAwareCacheInterface;
 
 class SearchFilterOptionDataProvider
 {
@@ -25,7 +25,7 @@ class SearchFilterOptionDataProvider
         private readonly PartnerRepository $partnerRepository,
         private readonly TagRepository $tagsRepository,
         private readonly SignalementRepository $signalementRepository,
-        private readonly CacheInterface $cache,
+        private readonly TagAwareCacheInterface $cache,
         private readonly QualificationStatusService $qualificationStatusService,
     ) {
     }
@@ -43,6 +43,9 @@ class SearchFilterOptionDataProvider
             $this->getCacheKey($user, $territory),
             function (ItemInterface $item) use ($territory, $user) {
                 $item->expiresAfter(3600);
+                if ($territory) {
+                    $item->tag([$territory->getZip()]);
+                }
 
                 return [
                     'criteres' => $this->critereRepository->findAllList(),
