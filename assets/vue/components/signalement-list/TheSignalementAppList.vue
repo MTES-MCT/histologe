@@ -374,3 +374,9 @@ export default defineComponent({
 })
 
 </script>
+
+<style>
+#histo-app-signalement-list .fr-container--fluid {
+  overflow: visible;
+}
+</style>
