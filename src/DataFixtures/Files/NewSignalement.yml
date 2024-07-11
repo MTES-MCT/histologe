@@ -368,7 +368,7 @@ signalements:
     reference: "2024-06"
     details: "Signalement auto-assigné Lunel."
     is_proprio_averti: 1
-    is_allocataire: "0"
+    is_allocataire: "CAF"
     nature_logement: "maison"
     type_logement: "MAISON"
     superficie: 55

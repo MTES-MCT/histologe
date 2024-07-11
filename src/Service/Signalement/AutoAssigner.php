@@ -45,7 +45,6 @@ class AutoAssigner
             return AutoAffectationRule::STATUS_ACTIVE === $autoAffectationRule->getStatus();
         });
         if (!$autoAffectationRules->isEmpty()) {
-            $inseeOccupant = $signalement->getInseeOccupant();
             $adminEmail = $this->parameterBag->get('user_system_email');
             $adminUser = $this->userManager->findOneBy(['email' => $adminEmail]);
             $partners = $signalement->getTerritory()->getPartners();

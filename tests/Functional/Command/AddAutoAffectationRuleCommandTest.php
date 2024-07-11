@@ -18,6 +18,40 @@ class AddAutoAffectationRuleCommandTest extends KernelTestCase
         $commandTester = new CommandTester($command);
 
         $territory = 44;
+        $partnerType = 'ASSOCIATION';
+        $status = 'ACTIVE';
+        $profileDeclarant = 'occupant';
+        $inseeToInclude = 'partner_list';
+        $inseeToExclude = '44850,44600';
+        $parc = 'public';
+        $allocataire = 'caf';
+        $commandTester->execute([
+            'territory' => $territory,
+            'partnerType' => $partnerType,
+            'status' => $status,
+            'profileDeclarant' => $profileDeclarant,
+            'inseeToInclude' => $inseeToInclude,
+            'inseeToExclude' => $inseeToExclude,
+            'parc' => $parc,
+            'allocataire' => $allocataire,
+        ]);
+
+        $output = $commandTester->getDisplay();
+        $commandTester->assertCommandIsSuccessful();
+
+        $this->assertStringContainsString(ucfirst($partnerType), $output);
+    }
+
+    public function testDisplayMessageError(): void
+    {
+        $kernel = self::bootKernel();
+        $application = new Application($kernel);
+
+        $command = $application->find('app:add-auto-affectation-rule');
+
+        $commandTester = new CommandTester($command);
+
+        $territory = 44;
         $partnerType = 'EPCI';
         $status = 'ACTIVE';
         $profileDeclarant = 'occupant';
@@ -36,9 +70,7 @@ class AddAutoAffectationRuleCommandTest extends KernelTestCase
             'allocataire' => $allocataire,
         ]);
 
-        $commandTester->assertCommandIsSuccessful();
-
         $output = $commandTester->getDisplay();
-        $this->assertStringContainsString(ucfirst($partnerType), $output);
+        $this->assertStringContainsString('There is already a rule for this territory and this type of partner', $output);
     }
 }

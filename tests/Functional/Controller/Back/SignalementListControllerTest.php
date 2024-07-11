@@ -209,10 +209,10 @@ class SignalementListControllerTest extends WebTestCase
         yield 'Search by Score criticite' => [['criticiteScoreMin' => 5, 'criticiteScoreMax' => 6], 9];
         yield 'Search by Declarant' => [['typeDeclarant' => 'locataire'], 41];
         yield 'Search by Nature du parc' => [['natureParc' => 'public'], 5];
-        yield 'Search by Allocataire CAF' => [['allocataire' => 'caf'], 13];
+        yield 'Search by Allocataire CAF' => [['allocataire' => 'caf'], 14];
         yield 'Search by Allocataire MSA' => [['allocataire' => 'msa'], 1];
-        yield 'Search by Allocataire Oui (CAF+MSA+1)' => [['allocataire' => 'oui'], 14];
-        yield 'Search by Allocataire Non (null+empty)' => [['allocataire' => 'non'], 5];
+        yield 'Search by Allocataire Oui (CAF+MSA+1)' => [['allocataire' => 'oui'], 15];
+        yield 'Search by Allocataire Non (null+empty)' => [['allocataire' => 'non'], 4];
         yield 'Search by Situation Bail en cours' => [['situation' => 'bail_en_cours'], 5];
         yield 'Search by Situation Prévis de départ' => [['situation' => 'preavis_de_depart'], 1];
         yield 'Search by Situation Attente de relogement' => [['situation' => 'attente_relogement'], 2];

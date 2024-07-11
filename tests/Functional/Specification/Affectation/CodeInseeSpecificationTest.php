@@ -12,7 +12,7 @@ class CodeInseeSpecificationTest extends KernelTestCase
     /**
      * @dataProvider provideRulesAndSignalement
      */
-    public function testIsSatisfiedBy(?string $inseeSignalement, array $inseePartenaire, array|string $inseeToIncludeRule, ?array $inseeToExcludeRule, bool $isSatisfied): void
+    public function testIsSatisfiedBy(?string $inseeSignalement, array $inseePartenaire, string $inseeToIncludeRule, ?array $inseeToExcludeRule, bool $isSatisfied): void
     {
         $partner = new Partner();
         $partner->setInsee($inseePartenaire);
@@ -51,29 +51,29 @@ class CodeInseeSpecificationTest extends KernelTestCase
         yield 'partner_list - partner without insee - but excluded' => ['44179', [], 'partner_list', ['44179'], false];
         yield 'partner_list - partner without insee - another excluded' => ['44179', [], 'partner_list', ['44028'], false];
 
-        yield 'array of insee with this one - same insee as partner - no exclusion' => ['44179', ['44179'], ['44179'], null, true];
-        yield 'array of insee with this one - same insee as partner - but excluded' => ['44179', ['44179'], ['44179'], ['44179'], false];
-        yield 'array of insee with this one - same insee as partner - another excluded' => ['44179', ['44179'], ['44179'], ['44028'], true];
-        yield 'array of insee with this one - different insee than partner - no exclusion' => ['44179', ['44028'], ['44179'], null, true];
-        yield 'array of insee with this one - different insee than partner - but excluded' => ['44179', ['44028'], ['44179'], ['44179'], false];
-        yield 'array of insee with this one - different insee than partner - another excluded' => ['44179', ['44028'], ['44179'], ['44028'], true];
-        yield 'array of insee with this one - partner without insee - no exclusion' => ['44179', [], ['44179'], null, true];
-        yield 'array of insee with this one - partner without insee - but excluded' => ['44179', [], ['44179'], ['44179'], false];
-        yield 'array of insee with this one - partner without insee - another excluded' => ['44179', [], ['44179'], ['44028'], true];
+        yield 'array of insee with this one - same insee as partner - no exclusion' => ['44179', ['44179'], '44179', null, true];
+        yield 'array of insee with this one - same insee as partner - but excluded' => ['44179', ['44179'], '44179', ['44179'], false];
+        yield 'array of insee with this one - same insee as partner - another excluded' => ['44179', ['44179'], '44179', ['44028'], true];
+        yield 'array of insee with this one - different insee than partner - no exclusion' => ['44179', ['44028'], '44179', null, true];
+        yield 'array of insee with this one - different insee than partner - but excluded' => ['44179', ['44028'], '44179', ['44179'], false];
+        yield 'array of insee with this one - different insee than partner - another excluded' => ['44179', ['44028'], '44179', ['44028'], true];
+        yield 'array of insee with this one - partner without insee - no exclusion' => ['44179', [], '44179', null, true];
+        yield 'array of insee with this one - partner without insee - but excluded' => ['44179', [], '44179', ['44179'], false];
+        yield 'array of insee with this one - partner without insee - another excluded' => ['44179', [], '44179', ['44028'], true];
 
-        yield 'array of insee without this one - same insee as partner - no exclusion' => ['44179', ['44179'], ['44028'], null, false];
-        yield 'array of insee without this one - same insee as partner - but excluded' => ['44179', ['44179'], ['44028'], ['44179'], false];
-        yield 'array of insee without this one - same insee as partner - another excluded' => ['44179', ['44179'], ['44028'], ['44028'], false];
-        yield 'array of insee without this one - different insee than partner - no exclusion' => ['44179', ['44028'], ['44028'], null, false];
-        yield 'array of insee without this one - different insee than partner - but excluded' => ['44179', ['44028'], ['44028'], ['44179'], false];
-        yield 'array of insee without this one - different insee than partner - another excluded' => ['44179', ['44028'], ['44028'], ['44028'], false];
-        yield 'array of insee without this one - partner without insee - no exclusion' => ['44179', [], ['44028'], null, false];
-        yield 'array of insee without this one - partner without insee - but excluded' => ['44179', [], ['44028'], ['44179'], false];
-        yield 'array of insee without this one - partner without insee - another excluded' => ['44179', [], ['44028'], ['44028'], false];
+        yield 'array of insee without this one - same insee as partner - no exclusion' => ['44179', ['44179'], '44028', null, false];
+        yield 'array of insee without this one - same insee as partner - but excluded' => ['44179', ['44179'], '44028', ['44179'], false];
+        yield 'array of insee without this one - same insee as partner - another excluded' => ['44179', ['44179'], '44028', ['44028'], false];
+        yield 'array of insee without this one - different insee than partner - no exclusion' => ['44179', ['44028'], '44028', null, false];
+        yield 'array of insee without this one - different insee than partner - but excluded' => ['44179', ['44028'], '44028', ['44179'], false];
+        yield 'array of insee without this one - different insee than partner - another excluded' => ['44179', ['44028'], '44028', ['44028'], false];
+        yield 'array of insee without this one - partner without insee - no exclusion' => ['44179', [], '44028', null, false];
+        yield 'array of insee without this one - partner without insee - but excluded' => ['44179', [], '44028', ['44179'], false];
+        yield 'array of insee without this one - partner without insee - another excluded' => ['44179', [], '44028', ['44028'], false];
 
         // tous les cas ne sont pas testés en cas d'absence d'insee sur le signalement, car ça renvoie toujours false
         yield 'all - no insee signalement' => [null, ['44028'], 'all', ['44028'], false];
         yield 'partner_list - no insee signalement - another excluded' => [null, [], 'partner_list', ['44028'], false];
-        yield 'array of insee - no insee signalement - another excluded' => [null, [], ['44179'], ['44028'], false];
+        yield 'array of insee - no insee signalement - another excluded' => [null, [], '44179', ['44028'], false];
     }
 }

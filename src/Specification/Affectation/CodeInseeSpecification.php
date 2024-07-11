@@ -11,9 +11,13 @@ class CodeInseeSpecification implements SpecificationInterface
     private array|string $inseeToInclude;
     private ?array $inseeToExclude;
 
-    public function __construct(array|string $inseeToInclude, ?array $inseeToExclude)
+    public function __construct(string $inseeToInclude, ?array $inseeToExclude)
     {
-        $this->inseeToInclude = $inseeToInclude;
+        if ('all' !== $inseeToInclude && 'partner_list' !== $inseeToInclude) {
+            $this->inseeToInclude = explode(',', $inseeToInclude);
+        } else {
+            $this->inseeToInclude = $inseeToInclude;
+        }
         $this->inseeToExclude = $inseeToExclude;
     }
 

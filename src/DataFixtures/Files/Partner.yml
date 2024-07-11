@@ -511,3 +511,10 @@ partners:
     insee: "[\"\"]"
     territory: "Hérault"
     type: "CONSEIL_DEPARTEMENTAL"
+  -
+    nom: "Commune de Campagne"
+    email: "partenaire-34-06@histologe.fr"
+    is_archive: 0
+    insee: "[\"34048\"]"
+    territory: "Hérault"
+    type: "COMMUNE_SCHS"
