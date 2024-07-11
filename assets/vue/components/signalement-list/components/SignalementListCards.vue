@@ -115,9 +115,6 @@ export default defineComponent({
     },
     getBadgeStyleAffectation (affectation: any): string {
       let className = 'fr-badge'
-      if (!this.sharedState.user.canSeeStatusAffectation) {
-        return ''
-      }
       switch (affectation.statut) {
         case 0:
           className += ' fr-badge--info'
