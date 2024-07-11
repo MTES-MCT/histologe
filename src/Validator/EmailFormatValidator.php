@@ -3,8 +3,6 @@
 namespace App\Validator;
 
 use Egulias\EmailValidator\EmailValidator;
-use Egulias\EmailValidator\Validation\DNSCheckValidation;
-use Egulias\EmailValidator\Validation\MultipleValidationWithAnd;
 use Egulias\EmailValidator\Validation\RFCValidation;
 use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\Validator\Constraints\Email;
@@ -26,12 +24,14 @@ class EmailFormatValidator
         );
 
         $eguliasValidator = new EmailValidator();
-        $multipleValidations = new MultipleValidationWithAnd([
-                new RFCValidation(),
-                new DNSCheckValidation(),
-        ]);
-        $emailValid = $eguliasValidator->isValid($value, $multipleValidations);
-        if (0 == $errors->count() && $emailValid) {
+        $rfcValidation = new RFCValidation();
+        $emailValid = $eguliasValidator->isValid($value, $rfcValidation);
+
+        $domain = substr(strrchr($value, '@'), 1);
+        $domainParts = explode('.', $domain);
+        $extension = end($domainParts);
+
+        if (0 == $errors->count() && $emailValid && \strlen($extension) >= 2) {
             return true;
         }
 
