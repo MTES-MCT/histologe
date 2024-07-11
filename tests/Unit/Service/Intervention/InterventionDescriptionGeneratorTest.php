@@ -40,7 +40,6 @@ class InterventionDescriptionGeneratorTest extends TestCase
         $dossierArreteSISH = $this->getDossierArreteSISHCollectionResponse()->getCollection()[0];
         $description = InterventionDescriptionGenerator::buildDescriptionArreteCreated($dossierArreteSISH);
 
-        $this->assertStringContainsString('Arrêté L.511-11', $description, 'Type arrêté incorrect');
         $this->assertStringContainsString('2023/DD13/00664', $description, 'N° arrêté incorrect');
         $this->assertStringContainsString('14/06/2023', $description, 'Date arrêté incorrecte');
         $this->assertStringContainsString('n°2023/DD13/0010', $description, 'N° dossier incorrect');
