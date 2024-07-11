@@ -61,7 +61,10 @@ class AffectationController extends AbstractController
                 $partnersIdToRemove = array_diff($alreadyAffectedPartner, $postedPartner);
 
                 foreach ($partnersIdToAdd as $partnerIdToAdd) {
-                    $partner = $this->partnerRepository->find($partnerIdToAdd);
+                    $partner = $this->partnerRepository->findOneBy(['id' => $partnerIdToAdd, 'territory' => $signalement->getTerritory(), 'isArchive' => false]);
+                    if (!$partner) {
+                        continue;
+                    }
                     $affectation = $this->affectationManager->createAffectationFrom(
                         $signalement,
                         $partner,

@@ -33,6 +33,90 @@ class SignalementActionControllerTest extends WebTestCase
         $this->client->loginUser($user);
     }
 
+    public function testValidationResponseSignalementSuccess(): void
+    {
+        $signalement = $this->signalementRepository->findOneBy(['uuid' => '00000000-0000-0000-2023-000000000006']);
+        $route = $this->router->generate('back_signalement_validation_response', ['uuid' => $signalement->getUuid()]);
+        $this->client->request(
+            'GET',
+            $route,
+            [
+                'signalement-validation-response' => [
+                    'motifRefus' => 'DOUBLON',
+                    'suivi' => 'le signalement existe déja sous la référence 123-126',
+                ],
+                '_token' => $this->generateCsrfToken($this->client, 'signalement_validation_response_'.$signalement->getId()),
+            ]
+        );
+
+        $this->assertResponseRedirects('/bo/signalements/'.$signalement->getUuid());
+        $this->client->followRedirect();
+        $this->assertSelectorTextContains('.fr-alert--success p', 'Statut du signalement mis à jour avec succès !');
+    }
+
+    public function testValidationResponseSignalementError(): void
+    {
+        $signalement = $this->signalementRepository->findOneBy(['uuid' => '00000000-0000-0000-2023-000000000006']);
+        $route = $this->router->generate('back_signalement_validation_response', ['uuid' => $signalement->getUuid()]);
+        $this->client->request(
+            'GET',
+            $route,
+            [
+                'signalement-validation-response' => [
+                    'motifRefus' => 'DOUBLON',
+                    'suivi' => 'test',
+                ],
+                '_token' => $this->generateCsrfToken($this->client, 'signalement_validation_response_'.$signalement->getId()),
+            ]
+        );
+
+        $this->assertResponseRedirects('/bo/signalements/'.$signalement->getUuid());
+        $this->client->followRedirect();
+        $this->assertSelectorTextContains('.fr-alert--error p', 'Champs incorrects ou manquants !');
+    }
+
+    public function testAddSuiviSignalementSuccess(): void
+    {
+        $signalement = $this->signalementRepository->findOneBy(['uuid' => '00000000-0000-0000-2023-000000000006']);
+        $route = $this->router->generate('back_signalement_add_suivi', ['uuid' => $signalement->getUuid()]);
+        $this->client->request(
+            'POST',
+            $route,
+            [
+                'signalement-add-suivi' => [
+                    'content' => 'La procédure avance bien, nous vous tiendrons informé de la suite, bon courage !',
+                    'notifyUsager' => '1',
+                ],
+                '_token' => $this->generateCsrfToken($this->client, 'signalement_add_suivi_'.$signalement->getId()),
+            ]
+        );
+
+        $this->assertResponseRedirects('/bo/signalements/'.$signalement->getUuid().'#suivis');
+        $this->client->followRedirect();
+        $this->assertSelectorTextContains('.fr-alert--success p', 'Suivi publié avec succès !');
+    }
+
+    public function testAddSuiviSignalementError(): void
+    {
+        $signalement = $this->signalementRepository->findOneBy(['uuid' => '00000000-0000-0000-2023-000000000006']);
+        $route = $this->router->generate('back_signalement_add_suivi', ['uuid' => $signalement->getUuid()]);
+        $this->client->request(
+            'POST',
+            $route,
+            [
+                'signalement-add-suivi' => [
+                    'content' => 'Je v',
+                    'notifyUsager' => '1',
+                ],
+                '_token' => $this->generateCsrfToken($this->client, 'signalement_add_suivi_'.$signalement->getId()),
+            ]
+        );
+
+        $this->assertResponseRedirects('/bo/signalements/'.$signalement->getUuid());
+        $this->client->followRedirect();
+        $this->assertSelectorTextContains('.fr-alert--error p', 'Le contenu du suivi doit faire au moins 10 caractères !');
+    }
+
     public function testDeleteSuivi(): void
     {
         $signalement = $this->signalementRepository->findOneBy(['uuid' => '00000000-0000-0000-2023-000000000006']);

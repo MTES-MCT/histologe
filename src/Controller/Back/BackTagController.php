@@ -18,6 +18,9 @@ class BackTagController extends AbstractController
     {
         $this->denyAccessUnlessGranted('TAG_CREATE', null);
         $label = $request->get('new-tag-label');
+        if (mb_strlen($label) < 2) {
+            return $this->json(['response' => 'error', 'message' => 'Le tag doit contenir au moins 2 caractères']);
+        }
         $tag = new Tag();
         $tag->setTerritory($signalement->getTerritory());
         $tag->setLabel($label);
