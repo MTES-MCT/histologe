@@ -1,7 +1,7 @@
 <template>
   <div class="fr-grid-row fr-my-2w" v-for=" (item, index) in list" :key="index">
     <div class="fr-col-12">
-      <div class="fr-card">
+      <div class="fr-card" :class="{ 'card-signalement--new': item.statut === 1 }">
         <div class="fr-card__body">
           <div class="fr-card__content">
             <div class="fr-grid-row">
@@ -228,6 +228,10 @@ export default defineComponent({
 
   .fr-card__footer {
     margin: 0 -2.5rem;
+  }
+
+  .card-signalement--new {
+    border: 3px solid var(--red-marianne-425-625-active);
   }
 
   @media (max-width: 1250px) {
