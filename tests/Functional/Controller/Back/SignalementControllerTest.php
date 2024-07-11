@@ -246,6 +246,41 @@ class SignalementControllerTest extends WebTestCase
         $this->assertEmailSubjectContains($this->getMailerMessages()[1], 'a terminé son intervention');
     }
 
+    public function testUserPartnerSubmitClotureSignalementWithoutMotifSuivi(): void
+    {
+        $client = static::createClient();
+
+        /** @var SignalementRepository $signalementRepository */
+        $signalementRepository = self::getContainer()->get(SignalementRepository::class);
+        /** @var Signalement $signalement */
+        $signalement = $signalementRepository->findOneBy([
+            'reference' => '2022-10',
+            'statut' => Signalement::STATUS_ACTIVE,
+        ]);
+
+        /** @var UserRepository $userRepository */
+        $userRepository = self::getContainer()->get(UserRepository::class);
+        $user = $userRepository->findOneBy(['email' => 'user-13-01@histologe.fr']);
+        $client->loginUser($user);
+
+        /** @var RouterInterface $router */
+        $router = self::getContainer()->get(RouterInterface::class);
+        $route = $router->generate('back_signalement_view', ['uuid' => $signalement->getUuid()]);
+
+        $client->request('GET', $route);
+        $client->submitForm(
+            'Cloturer pour Partenaire 13-02',
+            [
+                'cloture[motif]' => 'RSD',
+                'cloture[type]' => 'partner',
+            ]
+        );
+
+        $this->assertResponseRedirects('/bo/signalements/'.$signalement->getUuid());
+        $client->followRedirect();
+        $this->assertSelectorTextContains('.fr-alert--error p', 'Le motif de suivi doit contenir au moins 10 caractères.');
+    }
+
     public function testNewDeleteSignalement(): void
     {
         $client = static::createClient();
