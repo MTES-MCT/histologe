@@ -128,22 +128,31 @@ class SignalementImportMapper
             return $dataMapped;
         }
         $situations = [];
+        $createdAt = $this->transformToDatetime($data['Date de creation signalement']);
         foreach ($this->getMapping() as $fileColumn => $fieldColumn) {
             if (\in_array($fileColumn, $columns)) {
                 $fieldValue = 'NSP' !== $data[$fileColumn] ? $data[$fileColumn] : '';
                 $fieldValue = trim($fieldValue, '"');
                 switch ($fieldColumn) {
                     case 'reference':
-                        if (preg_match('/20\d{2}-\d{4}/', $fieldValue)) {
+                        // TODO que fait-on si on n'a pas de date de création du signalement ?
+                        if (null === $createdAt) {
                             break;
                         }
-                        $result = preg_split('/[-|\/]/', $fieldValue);
-                        if (\count($result) > 1) {
-                            list($index, $year) = $result;
-                            $fieldValue = '20'.$year.'-'.$index;
-                        } else {
-                            $fieldValue = array_shift($result);
+                        $yearCreatedAt = $createdAt->format('Y');
+
+                        if (preg_match('/^20\d{2}-\d{4}$/', $fieldValue)) {
+                            list($year, $index) = explode('-', $fieldValue);
+                            if ($year == $yearCreatedAt) {
+                                break;
+                            }
                         }
+
+                        $digits = preg_replace('/\D/', '', $fieldValue);
+                        if ('' === $digits) {
+                            $digits = $fieldValue;
+                        }
+                        $fieldValue = $yearCreatedAt.'-'.$digits;
                         break;
                     case 'modeContactProprio':
                         $modes = array_filter(preg_split('(-|/)', $fieldValue));
