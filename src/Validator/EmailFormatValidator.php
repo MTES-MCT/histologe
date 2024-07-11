@@ -2,6 +2,8 @@
 
 namespace App\Validator;
 
+use Egulias\EmailValidator\EmailValidator;
+use Egulias\EmailValidator\Validation\RFCValidation;
 use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\Validator\Constraints\Email;
 use Symfony\Component\Validator\Validation;
@@ -21,7 +23,15 @@ class EmailFormatValidator
             $emailConstraint
         );
 
-        if (0 == $errors->count()) {
+        $eguliasValidator = new EmailValidator();
+        $rfcValidation = new RFCValidation();
+        $emailValid = $eguliasValidator->isValid($value, $rfcValidation);
+
+        $domain = substr(strrchr($value, '@'), 1);
+        $domainParts = explode('.', $domain);
+        $extension = end($domainParts);
+
+        if (0 == $errors->count() && $emailValid && \strlen($extension) >= 2) {
             return true;
         }
 

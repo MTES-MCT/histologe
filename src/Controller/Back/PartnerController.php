@@ -22,9 +22,8 @@ use App\Service\Mailer\NotificationMailerRegistry;
 use App\Service\Mailer\NotificationMailerType;
 use App\Service\Sanitizer;
 use App\Service\Signalement\VisiteNotifier;
+use App\Validator\EmailFormatValidator;
 use Doctrine\ORM\EntityManagerInterface;
-use Egulias\EmailValidator\EmailValidator;
-use Egulias\EmailValidator\Validation\RFCValidation;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\FormError;
 use Symfony\Component\Form\FormInterface;
@@ -348,6 +347,11 @@ class PartnerController extends AbstractController
         if (!$this->canAttributeRole($data['roles'])) {
             return $this->redirectToRoute('back_partner_view', ['id' => $partner->getId()], Response::HTTP_SEE_OTHER);
         }
+        if (!EmailFormatValidator::validate($data['email'])) {
+            $this->addFlash('error', 'L\'adresse e-mail n\'est pas valide.');
+
+            return $this->redirectToRoute('back_partner_view', ['id' => $partner->getId()], Response::HTTP_SEE_OTHER);
+        }
 
         /** @var User $user */
         $user = $userManager->findOneBy(['email' => $data['email']]);
@@ -399,6 +403,11 @@ class PartnerController extends AbstractController
         $this->denyAccessUnlessGranted('USER_EDIT', $user);
 
         $data = $request->get('user_edit');
+        if (!EmailFormatValidator::validate($data['email'])) {
+            $this->addFlash('error', 'L\'adresse e-mail n\'est pas valide.');
+
+            return $this->redirectToRoute('back_partner_view', ['id' => $user->getPartner()->getId()], Response::HTTP_SEE_OTHER);
+        }
         if ($data['email'] != $user->getEmail()) {
             $userExist = $userRepository->findOneBy(['email' => $data['email']]);
             if ($userExist && !\in_array('ROLE_USAGER', $userExist->getRoles())) {
@@ -533,14 +542,15 @@ class PartnerController extends AbstractController
     ): Response {
         if ($this->isCsrfTokenValid('partner_checkmail', $request->request->get('_token'))) {
             $userExist = $userRepository->findOneBy(['email' => $request->get('email')]);
-            if ($userExist && !\in_array('ROLE_USAGER', $userExist->getRoles())) {
+            if (
+                $userExist
+                && $userExist->getId() !== (int) $request->get('userEditedId')
+                && !\in_array('ROLE_USAGER', $userExist->getRoles())
+            ) {
                 return $this->json(['error' => 'Un utilisateur existe déjà avec cette adresse e-mail.'], Response::HTTP_BAD_REQUEST);
             }
 
-            $validator = new EmailValidator();
-            $emailValid = $validator->isValid($request->get('email'), new RFCValidation());
-
-            if (!$emailValid) {
+            if (!EmailFormatValidator::validate($request->get('email'))) {
                 return $this->json(['error' => 'L\'adresse e-mail est invalide'], Response::HTTP_BAD_REQUEST);
             }
 

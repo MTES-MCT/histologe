@@ -146,7 +146,7 @@ class PartnerControllerTest extends WebTestCase
                     'roles' => 'ROLE_USER_PARTNER',
                     'prenom' => 'John',
                     'nom' => 'Doe',
-                    'email' => 'ajout.partner@example.com',
+                    'email' => 'ajout.partner@histologe.fr',
                     'isMailingActive' => false,
                 ],
                 '_token' => $this->generateCsrfToken($this->client, 'partner_user_create'),
@@ -172,7 +172,7 @@ class PartnerControllerTest extends WebTestCase
                     'roles' => 'ROLE_USER_PARTNER',
                     'prenom' => 'John',
                     'nom' => 'Doe',
-                    'email' => 'ajout.partner@example.com',
+                    'email' => 'ajout.partner@histologe.fr',
                     'isMailingActive' => false,
                 ],
                 'user_id' => $partnerUser->getId(),
@@ -199,7 +199,7 @@ class PartnerControllerTest extends WebTestCase
                     'roles' => 'ROLE_USER_PARTNER',
                     'prenom' => 'John',
                     'nom' => 'Doe',
-                    'email' => 'ajout.partner@example.com',
+                    'email' => 'ajout.partner@histologe.fr',
                     'isMailingActive' => false,
                 ],
                 'user_id' => $partnerUser->getId(),
@@ -313,5 +313,53 @@ class PartnerControllerTest extends WebTestCase
         $this->assertNotEquals(2, $user->getStatut());
         $this->assertStringNotContainsString(User::SUFFIXE_ARCHIVED, $user->getEmail());
         $this->assertResponseRedirects('/bo/partenaires/');
+    }
+
+    public function testCheckMailOk()
+    {
+        $route = $this->router->generate('back_partner_check_user_email');
+        $this->client->request(
+            'POST',
+            $route,
+            [
+                'email' => 'paul@yopmail.com',
+                '_token' => $this->generateCsrfToken($this->client, 'partner_checkmail'),
+            ]
+        );
+
+        $this->assertResponseStatusCodeSame(200);
+        $this->assertSame('{"success":"email_ok"}', $this->client->getResponse()->getContent());
+    }
+
+    public function testCheckMailNotValid()
+    {
+        $route = $this->router->generate('back_partner_check_user_email');
+        $this->client->request(
+            'POST',
+            $route,
+            [
+                'email' => 'paul@yopmail.f',
+                '_token' => $this->generateCsrfToken($this->client, 'partner_checkmail'),
+            ]
+        );
+
+        $this->assertResponseStatusCodeSame(400);
+        $this->assertSame('{"error":"L\u0027adresse e-mail est invalide"}', $this->client->getResponse()->getContent());
+    }
+
+    public function testCheckMailAlreadyExists()
+    {
+        $route = $this->router->generate('back_partner_check_user_email');
+        $this->client->request(
+            'POST',
+            $route,
+            [
+                'email' => 'admin-01@histologe.fr',
+                '_token' => $this->generateCsrfToken($this->client, 'partner_checkmail'),
+            ]
+        );
+
+        $this->assertResponseStatusCodeSame(400);
+        $this->assertSame('{"error":"Un utilisateur existe d\u00e9j\u00e0 avec cette adresse e-mail."}', $this->client->getResponse()->getContent());
     }
 }
