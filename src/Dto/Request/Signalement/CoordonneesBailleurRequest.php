@@ -30,6 +30,7 @@ class CoordonneesBailleurRequest implements RequestInterface
         #[Assert\NotBlank(message: 'Merci de saisir l\'adresse du bailleur.', groups: ['BAILLEUR_OCCUPANT'])]
         private readonly ?string $adresse = null,
         #[Assert\NotBlank(message: 'Merci de saisir le code postal du bailleur.', groups: ['BAILLEUR_OCCUPANT'])]
+        #[Assert\Regex(pattern: '/^[0-9]{5}$/', message: 'Le code postal doit être composé de 5 chiffres.')]
         private readonly ?string $codePostal = null,
         #[Assert\NotBlank(message: 'Merci de saisir la ville du bailleur.', groups: ['BAILLEUR_OCCUPANT'])]
         private readonly ?string $ville = null,

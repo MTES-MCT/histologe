@@ -10,6 +10,7 @@ class AdresseOccupantRequest implements RequestInterface
         #[Assert\NotBlank(message: 'Merci de saisir une adresse.')]
         private readonly ?string $adresse = null,
         #[Assert\NotBlank(message: 'Merci de saisir un code postal.')]
+        #[Assert\Regex(pattern: '/^[0-9]{5}$/', message: 'Le code postal doit être composé de 5 chiffres.')]
         private readonly ?string $codePostal = null,
         #[Assert\NotBlank(message: 'Merci de saisir une ville.')]
         private readonly ?string $ville = null,
