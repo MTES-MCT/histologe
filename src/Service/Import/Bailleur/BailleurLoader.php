@@ -106,7 +106,7 @@ class BailleurLoader
     private function initData(): void
     {
         $this->territories = $this->territoryRepository->findAllIndexedByZip();
-        $this->bailleurs = $this->bailleurRepository->findAllIndexedByNameSanitizedWithBailleurTerritories();
+        $this->bailleurs = $this->bailleurRepository->findBailleursIndexedByName();
         foreach ($this->bailleurs as $bailleur) {
             foreach ($bailleur->getBailleurTerritories() as $bailleurTerritory) {
                 $bailleur->removeBailleurTerritory($bailleurTerritory);

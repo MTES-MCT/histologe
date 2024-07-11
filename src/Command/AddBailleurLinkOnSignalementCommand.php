@@ -32,10 +32,11 @@ class AddBailleurLinkOnSignalementCommand extends Command
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $io = new SymfonyStyle($input, $output);
-        $this->bailleursByNom = $this->bailleurRepository->findAllIndexedByNameSanitizedWithBailleurTerritories();
-        $this->bailleursByRaison = $this->bailleurRepository->findAllIndexedByNameSanitizedWithBailleurTerritories(true);
+        $this->bailleursByNom = $this->bailleurRepository->findBailleursIndexedByName();
+        $this->bailleursByRaison = $this->bailleurRepository->findBailleursIndexedByName(raisonSociale: true);
 
-        $signalements = $this->signalementRepository->findAllWithoutBailleurPublicLink();
+        $signalements = $this->signalementRepository->findLogementSocialWithoutBailleurLink();
+
         foreach ($signalements as $signalement) {
             $nomProprioSanitized = iconv('UTF-8', 'ASCII//TRANSLIT//IGNORE', mb_strtoupper($signalement->getNomProprio()));
             if (isset($this->bailleursByNom[$nomProprioSanitized])) {

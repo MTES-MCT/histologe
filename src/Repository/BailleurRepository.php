@@ -61,7 +61,7 @@ class BailleurRepository extends ServiceEntityRepository
         return $queryBuilder->getQuery()->getOneOrNullResult();
     }
 
-    public function findAllIndexedByNameSanitizedWithBailleurTerritories(?bool $raisonSociale = false): array
+    public function findBailleursIndexedByName(?bool $raisonSociale = false): array
     {
         $list = $this->createQueryBuilder('b')
             ->leftJoin('b.bailleurTerritories', 'bt')

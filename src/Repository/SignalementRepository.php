@@ -1281,7 +1281,7 @@ class SignalementRepository extends ServiceEntityRepository
         return new Paginator($queryBuilder->getQuery(), false);
     }
 
-    public function findAllWithoutBailleurPublicLink(): array
+    public function findLogementSocialWithoutBailleurLink(): array
     {
         return $this->createQueryBuilder('s')
             ->where('s.isLogementSocial = 1')
