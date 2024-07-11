@@ -309,12 +309,6 @@ export default defineComponent({
     onChange: { type: Function }
   },
   emits: ['changeTerritory', 'clickReset'],
-  mounted () {
-    const container = document.querySelector('.fr-container--fluid') as HTMLElement
-    if (container) {
-      container.style.overflow = 'visible'
-    }
-  },
   computed: {
     filtersSanitized () {
       const filters = Object.entries(this.sharedState.input.filters).filter(([key, value]) => {
