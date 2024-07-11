@@ -231,7 +231,7 @@ export default defineComponent({
   }
 
   .card-signalement--new {
-    border: 3px solid var(--red-marianne-425-625-active);
+    border: 2px solid #D64D00;
   }
 
   @media (max-width: 1250px) {
