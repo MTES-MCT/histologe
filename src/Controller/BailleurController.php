@@ -42,7 +42,7 @@ class BailleurController extends AbstractController
                     $name = strtolower($name);
                     $name = iconv('UTF-8', 'ASCII//TRANSLIT//IGNORE', $name);
 
-                    return str_contains(strtolower($this->sanitizeName($bailleurItem->getName())), $name);
+                    return str_contains(strtolower($this->sanitizeName($bailleurItem->getName())), $name) || str_contains(strtolower($bailleurItem->getRaisonSociale()), $name);
                 }
 
                 return true;

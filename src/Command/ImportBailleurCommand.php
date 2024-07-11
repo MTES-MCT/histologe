@@ -52,7 +52,9 @@ class ImportBailleurCommand extends Command
             $io->warning($error);
         }
 
-        $io->success(sprintf('%s bailleur(s) have been imported.', $metadata['count_bailleurs']));
+        $io->success(sprintf('%s new bailleur(s) have been imported.', $metadata['new_bailleurs']));
+        $io->success(sprintf('%s bailleur(s) have been updated.', $metadata['updated_bailleurs']));
+        $io->success(sprintf('%s bailleur(s) have been deleted.', $metadata['deleted_bailleurs']));
 
         return Command::SUCCESS;
     }

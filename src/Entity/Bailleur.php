@@ -9,7 +9,6 @@ use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Ignore;
 
 #[ORM\Entity(repositoryClass: BailleurRepository::class)]
-#[ORM\UniqueConstraint(columns: ['name'])]
 class Bailleur
 {
     public const BAILLEUR_RADIE = '[Radié(e)]';
@@ -20,7 +19,7 @@ class Bailleur
     #[Ignore]
     private ?int $id = null;
 
-    #[ORM\Column(length: 255)]
+    #[ORM\Column(length: 255, unique: true)]
     private ?string $name = null;
 
     #[ORM\OneToMany(mappedBy: 'bailleur', targetEntity: Signalement::class)]
@@ -30,6 +29,12 @@ class Bailleur
     #[ORM\OneToMany(mappedBy: 'bailleur', targetEntity: BailleurTerritory::class, cascade: ['persist'])]
     #[Ignore]
     private Collection $bailleurTerritories;
+
+    #[ORM\Column(length: 255, unique: true, nullable: true)]
+    private ?string $raisonSociale = null;
+
+    #[ORM\Column(length: 20, unique: true, nullable: true)]
+    private ?string $siret = null;
 
     public function __construct()
     {
@@ -88,6 +93,30 @@ class Bailleur
     {
         $bailleurTerritory = (new BailleurTerritory())->setTerritory($territory);
         $this->addBailleurTerritory($bailleurTerritory);
+
+        return $this;
+    }
+
+    public function getRaisonSociale(): ?string
+    {
+        return $this->raisonSociale;
+    }
+
+    public function setRaisonSociale(?string $raisonSociale): static
+    {
+        $this->raisonSociale = $raisonSociale;
+
+        return $this;
+    }
+
+    public function getSiret(): ?string
+    {
+        return $this->siret;
+    }
+
+    public function setSiret(?string $siret): static
+    {
+        $this->siret = $siret;
 
         return $this;
     }

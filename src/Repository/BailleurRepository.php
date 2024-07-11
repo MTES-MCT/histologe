@@ -34,7 +34,7 @@ class BailleurRepository extends ServiceEntityRepository
         foreach ($terms as $index => $term) {
             $placeholder = 'term_'.$index;
             $queryBuilder
-                ->andWhere($queryBuilder->expr()->like('b.name', ':'.$placeholder))
+                ->andWhere('b.name LIKE :'.$placeholder.' OR b.raisonSociale LIKE :'.$placeholder)
                 ->setParameter($placeholder, '%'.$term.'%');
         }
 
@@ -59,5 +59,25 @@ class BailleurRepository extends ServiceEntityRepository
         }
 
         return $queryBuilder->getQuery()->getOneOrNullResult();
+    }
+
+    public function findBailleursIndexedByName(?bool $raisonSociale = false): array
+    {
+        $list = $this->createQueryBuilder('b')
+            ->leftJoin('b.bailleurTerritories', 'bt')
+            ->addSelect('bt')
+            ->getQuery()
+            ->getResult();
+        $indexed = [];
+        foreach ($list as $bailleur) {
+            if ($raisonSociale) {
+                $name = iconv('UTF-8', 'ASCII//TRANSLIT//IGNORE', mb_strtoupper($bailleur->getRaisonSociale()));
+            } else {
+                $name = iconv('UTF-8', 'ASCII//TRANSLIT//IGNORE', mb_strtoupper($bailleur->getName()));
+            }
+            $indexed[$name] = $bailleur;
+        }
+
+        return $indexed;
     }
 }

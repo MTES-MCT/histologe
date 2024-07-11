@@ -12,8 +12,8 @@ use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 
 class BailleurLoaderTest extends KernelTestCase
 {
-    private const BOUCHE_DU_RHONE = 'Bouches-du-Rhône';
-    private const CHARENTE = 'Charente';
+    private const BOUCHE_DU_RHONE = '13';
+    private const CHARENTE = '16';
 
     public function testLoadValidBailleur(): void
     {
@@ -27,8 +27,10 @@ class BailleurLoaderTest extends KernelTestCase
         $bailleurLoader->load($this->getData());
 
         $metadata = $bailleurLoader->getMetadata();
-        $this->assertEquals(5, $metadata['count_bailleurs']);
-        $this->assertStringContainsString('Le territoire n\'existe pas.', $metadata['errors'][0]);
+        $this->assertEquals(4, $metadata['new_bailleurs']);
+        $this->assertEquals(1, $metadata['updated_bailleurs']);
+        $this->assertStringContainsString('Le nom bailleur est vide.', $metadata['errors'][0]);
+        $this->assertStringContainsString('Le territoire n\'existe pas.', $metadata['errors'][1]);
     }
 
     private function getData(): array
@@ -36,39 +38,51 @@ class BailleurLoaderTest extends KernelTestCase
         return [
             [
                 BailleurHeader::DEPARTEMENT => self::BOUCHE_DU_RHONE,
-                BailleurHeader::ORGANISME_NOM => 'MEDITERRANEE 1',
+                BailleurHeader::ENSEIGNE => '13 HABITAT',
+                BailleurHeader::RAISON_SOCIALE => 'OPH 13 HABITAT',
+                BailleurHeader::SIRET => '00000000000001',
             ],
             [
                 BailleurHeader::DEPARTEMENT => self::BOUCHE_DU_RHONE,
-                BailleurHeader::ORGANISME_NOM => 'MEDITERRANEE 2',
+                BailleurHeader::ENSEIGNE => 'MEDITERRANEE 2',
+                BailleurHeader::RAISON_SOCIALE => 'OPH MEDITERRANEE 2',
+                BailleurHeader::SIRET => '00000000000002',
             ],
             [
                 BailleurHeader::DEPARTEMENT => self::BOUCHE_DU_RHONE,
-                BailleurHeader::ORGANISME_NOM => 'MEDITERRANEE 3',
+                BailleurHeader::ENSEIGNE => 'MEDITERRANEE 3',
+                BailleurHeader::RAISON_SOCIALE => 'OPH MEDITERRANEE 3',
+                BailleurHeader::SIRET => '00000000000003',
             ],
             [
                 BailleurHeader::DEPARTEMENT => self::BOUCHE_DU_RHONE,
-                BailleurHeader::ORGANISME_NOM => '',
+                BailleurHeader::ENSEIGNE => '',
+                BailleurHeader::RAISON_SOCIALE => '',
+                BailleurHeader::SIRET => '',
             ],
             [
                 BailleurHeader::DEPARTEMENT => self::CHARENTE,
-                BailleurHeader::ORGANISME_NOM => 'DOMOFRANCE 1',
+                BailleurHeader::ENSEIGNE => 'DOMOFRANCE 1',
+                BailleurHeader::RAISON_SOCIALE => 'OPH DOMOFRANCE 1',
+                BailleurHeader::SIRET => '00000000000004',
             ],
             [
                 BailleurHeader::DEPARTEMENT => self::CHARENTE,
-                BailleurHeader::ORGANISME_NOM => 'DOMOFRANCE 2',
+                BailleurHeader::ENSEIGNE => 'DOMOFRANCE 2',
+                BailleurHeader::RAISON_SOCIALE => 'OPH DOMOFRANCE 2',
+                BailleurHeader::SIRET => '00000000000005',
             ],
             [
                 BailleurHeader::DEPARTEMENT => self::CHARENTE,
-                BailleurHeader::ORGANISME_NOM => 'MEDITERRANEE 3',
+                BailleurHeader::ENSEIGNE => 'MEDITERRANEE 3',
+                BailleurHeader::RAISON_SOCIALE => 'OPH MEDITERRANEE 3',
+                BailleurHeader::SIRET => '00000000000003',
             ],
             [
-                BailleurHeader::DEPARTEMENT => self::CHARENTE,
-                BailleurHeader::ORGANISME_NOM => '',
-            ],
-            [
-                BailleurHeader::DEPARTEMENT => 'Saint Martin',
-                BailleurHeader::ORGANISME_NOM => 'LOGEMENT HLS',
+                BailleurHeader::DEPARTEMENT => '458',
+                BailleurHeader::ENSEIGNE => 'LOGEMENT HLS',
+                BailleurHeader::RAISON_SOCIALE => '',
+                BailleurHeader::SIRET => '00000000000006',
             ],
         ];
     }
