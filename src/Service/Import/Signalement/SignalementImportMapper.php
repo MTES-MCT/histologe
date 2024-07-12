@@ -129,6 +129,7 @@ class SignalementImportMapper
         }
         $situations = [];
         $createdAt = $this->transformToDatetime($data['Date de creation signalement']);
+        $todayYear = (new \DateTime())->format('Y');
         foreach ($this->getMapping() as $fileColumn => $fieldColumn) {
             if (\in_array($fileColumn, $columns)) {
                 $fieldValue = 'NSP' !== $data[$fileColumn] ? $data[$fileColumn] : '';
@@ -141,7 +142,7 @@ class SignalementImportMapper
                         }
                         $yearCreatedAt = $createdAt->format('Y');
 
-                        if (preg_match('/^20\d{2}-\d{4}$/', $fieldValue)) {
+                        if (preg_match('/^20\d{2}-\d+$/', $fieldValue)) {
                             list($year, $index) = explode('-', $fieldValue);
                             if ($year == $yearCreatedAt) {
                                 break;
@@ -149,8 +150,15 @@ class SignalementImportMapper
                         }
 
                         $digits = preg_replace('/\D/', '', $fieldValue);
+                        $digits = str_replace($yearCreatedAt, '', $digits);
+                        if (!empty($year)) {
+                            $digits = str_replace($year, '', $digits);
+                        }
                         if ('' === $digits) {
                             $digits = $fieldValue;
+                        }
+                        if ($yearCreatedAt === $todayYear && \strlen($digits) > 4) {
+                            throw new \Exception(sprintf('La référence %s concerne une année en cours et risque de semer la confusion', $fieldValue));
                         }
                         $fieldValue = $yearCreatedAt.'-'.$digits;
                         break;
