@@ -110,6 +110,7 @@ class Signalement
     private $adresseProprio;
 
     #[ORM\Column(type: 'string', length: 5, nullable: true)]
+    #[Assert\Regex(pattern: '/^[0-9]{5}$/', message: 'Le code postal être composé de 5 chiffres.')]
     private ?string $codePostalProprio;
 
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
@@ -193,6 +194,7 @@ class Signalement
 
     #[ORM\Column(type: 'string', length: 5, nullable: true)]
     #[Assert\NotBlank]
+    #[Assert\Regex(pattern: '/^[0-9]{5}$/', message: 'Le code postal doit être composé de 5 chiffres.')]
     private $cpOccupant;
 
     #[ORM\Column(type: 'string', length: 100, nullable: true)]

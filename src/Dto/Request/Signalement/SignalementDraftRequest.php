@@ -26,6 +26,7 @@ class SignalementDraftRequest
     private ?string $adresseLogementAdresse = null;
     private ?string $adresseLogementAdresseDetailNumero = null;
     #[Assert\NotBlank(message: 'Merci de saisir un code postal.')]
+    #[Assert\Regex(pattern: '/^[0-9]{5}$/', message: 'Le code postal doit être composé de 5 chiffres.')]
     private ?string $adresseLogementAdresseDetailCodePostal = null;
     #[Assert\NotBlank(message: 'Merci de saisir une ville.')]
     private ?string $adresseLogementAdresseDetailCommune = null;
@@ -143,6 +144,7 @@ class SignalementDraftRequest
     private ?string $coordonneesBailleurTelSecondaire = null;
     private ?string $coordonneesBailleurAdresse = null;
     private ?string $coordonneesBailleurAdresseDetailNumero = null;
+    #[Assert\Regex(pattern: '/^[0-9]{5}$/', message: 'Le code postal du bailleur doit être composé de 5 chiffres.')]
     private ?string $coordonneesBailleurAdresseDetailCodePostal = null;
     private ?string $coordonneesBailleurAdresseDetailCommune = null;
     private ?string $zoneConcerneeZone = null;

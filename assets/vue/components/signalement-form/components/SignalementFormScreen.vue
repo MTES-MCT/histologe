@@ -197,14 +197,11 @@ export default defineComponent({
     validateComponents (components: any) {
       for (const component of components) {
         const value = formStore.data[component.slug]
-        if (this.isRequired(component)) {
-          // Cas particulier de validation de composant de type adresse SignalementFormAddress
-          if (component.type === 'SignalementFormAddress') {
-            this.validateComponentAddress(component.slug)
-          // Les autres composants requis doivent avoir une valeur correspondante dans le Store
-          } else if (!value) {
+        if (this.isRequired(component) && component.type !== 'SignalementFormAddress' && !value ) {
             formStore.validationErrors[component.slug] = 'Ce champ est requis'
-          }
+        }
+        if (component.type === 'SignalementFormAddress') {
+          this.validateComponentAddress(component.slug, this.isRequired(component))
         }
 
         componentValidator.validate(component)
@@ -215,28 +212,35 @@ export default defineComponent({
         }
       }
     },
-    validateComponentAddress (componentSlug: any) {
-      const validationError = 'Ce champ est requis'
-      // tous les champs sont vides, on affiche l'erreur sur le champs de recherche
-      if (!formStore.data[componentSlug] &&
-            !formStore.data[componentSlug + '_detail_numero'] &&
-            !formStore.data[componentSlug + '_detail_code_postal'] &&
-            !formStore.data[componentSlug + '_detail_commune']
-      ) {
-        formStore.validationErrors[componentSlug] = validationError
+    validateComponentAddress (componentSlug: any, required: boolean) {
+      if(required) {
+        const validationError = 'Ce champ est requis'
+        // tous les champs sont vides, on affiche l'erreur sur le champs de recherche
+        if (!formStore.data[componentSlug] &&
+              !formStore.data[componentSlug + '_detail_numero'] &&
+              !formStore.data[componentSlug + '_detail_code_postal'] &&
+              !formStore.data[componentSlug + '_detail_commune']
+        ) {
+          formStore.validationErrors[componentSlug] = validationError
 
-      // il y a eu une édition manuelle : on vérifie tous les sous-champs
-      } else if (formStore.data[componentSlug + '_detail_manual'] !== 0) {
-        if (!formStore.data[componentSlug + '_detail_numero']) {
-          formStore.validationErrors[componentSlug + '_detail_numero'] = validationError
-        }
-        if (!formStore.data[componentSlug + '_detail_code_postal']) {
-          formStore.validationErrors[componentSlug + '_detail_code_postal'] = validationError
-        }
-        if (!formStore.data[componentSlug + '_detail_commune']) {
-          formStore.validationErrors[componentSlug + '_detail_commune'] = validationError
+        // il y a eu une édition manuelle : on vérifie tous les sous-champs
+        } else if (formStore.data[componentSlug + '_detail_manual'] !== 0) {
+          if (!formStore.data[componentSlug + '_detail_numero']) {
+            formStore.validationErrors[componentSlug + '_detail_numero'] = validationError
+          }
+          if (!formStore.data[componentSlug + '_detail_code_postal']) {
+            formStore.validationErrors[componentSlug + '_detail_code_postal'] = validationError
+          }
+          if (!formStore.data[componentSlug + '_detail_commune']) {
+            formStore.validationErrors[componentSlug + '_detail_commune'] = validationError
+          }
         }
       }
+      // vérification du code postal
+      if (formStore.data[componentSlug + '_detail_code_postal'] && !/^\d{5}$/.test(formStore.data[componentSlug + '_detail_code_postal'])) {
+        formStore.validationErrors[componentSlug + '_detail_code_postal'] = 'Le code postal doit être composé de 5 chiffres'
+      }
+
     },
     updateFormData (slug: string, value: any) {
       this.formStore.data[slug] = value
