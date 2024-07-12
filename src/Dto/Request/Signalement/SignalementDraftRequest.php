@@ -202,9 +202,9 @@ class SignalementDraftRequest
     private ?string $coordonneesOccupantTel = null;
     #[AppAssert\TelephoneFormat]
     private ?string $coordonneesOccupantTelSecondaire = null;
-    #[Assert\Length(max: 255, maxMessage: 'Le nom du bailleur ne doit pas dépasser {{ limit }} caractères.')]
+    #[Assert\Length(max: 250, maxMessage: 'Le nom du bailleur ne doit pas dépasser {{ limit }} caractères.')]
     private ?string $coordonneesBailleurNom = null;
-    #[Assert\Length(max: 255, maxMessage: 'Le prénom du bailleur ne doit pas dépasser {{ limit }} caractères.')]
+    #[Assert\Length(max: 250, maxMessage: 'Le prénom du bailleur ne doit pas dépasser {{ limit }} caractères.')]
     private ?string $coordonneesBailleurPrenom = null;
     #[Assert\Email(mode: Email::VALIDATION_MODE_STRICT)]
     private ?string $coordonneesBailleurEmail = null;
