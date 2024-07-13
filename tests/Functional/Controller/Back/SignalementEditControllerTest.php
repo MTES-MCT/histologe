@@ -74,7 +74,7 @@ class SignalementEditControllerTest extends WebTestCase
     /**
      * @dataProvider provideEditSignalementRoutes
      */
-    public function testEditSignalement(string $routeName, array $payload, string $token): void
+    public function testEditSignalementSuccess(string $routeName, array $payload, string $token): void
     {
         $route = $this->router->generate(
             $routeName,
@@ -86,6 +86,38 @@ class SignalementEditControllerTest extends WebTestCase
         $this->client->request('POST', $route, [], [], [], json_encode($payload));
 
         $this->assertResponseIsSuccessful();
+    }
+
+    /**
+     * @dataProvider provideEditSignalementRoutes
+     */
+    public function testEditSignalementUnauthorization(string $routeName, array $payload, string $token): void
+    {
+        $route = $this->router->generate(
+            $routeName,
+            ['uuid' => $this->signalement->getUuid()]
+        );
+
+        $payload['_token'] = '1234';
+        $this->client->request('POST', $route, [], [], [], json_encode($payload));
+
+        $this->assertResponseStatusCodeSame(401, $this->client->getResponse()->getStatusCode());
+    }
+
+    /**
+     * @dataProvider provideEditSignalementRoutes
+     */
+    public function testEditSignalementError(string $routeName, array $payload, string $token): void
+    {
+        $route = $this->router->generate(
+            $routeName,
+            ['uuid' => $this->signalement->getUuid()]
+        );
+
+        $payload['_token'] = $this->getCsrfToken($token, $this->signalement->getId());
+        $payload[key($payload)] = str_repeat('x', 5000);
+        $this->client->request('POST', $route, [], [], [], json_encode($payload));
+        $this->assertResponseStatusCodeSame(400, $this->client->getResponse()->getStatusCode());
     }
 
     private function getPayloadCoordonneesBailleur(string $bailleurName, int $signalementId): array
@@ -202,6 +234,18 @@ class SignalementEditControllerTest extends WebTestCase
         ];
     }
 
+    private function getPayloadCoordonneesTiers(): array
+    {
+        return [
+            'nom' => 'Quatorze',
+            'prenom' => 'Louis',
+            'mail' => 'louis.quatorze@gmail.com',
+            'telephone' => '0711554845',
+            'lien' => 'PRO',
+            'structure' => 'SCPI La fourragère',
+        ];
+    }
+
     public function provideEditSignalementRoutes(): \Generator
     {
         yield 'Edition Adresse logement' => [
@@ -214,6 +258,12 @@ class SignalementEditControllerTest extends WebTestCase
             'back_signalement_edit_coordonnees_foyer',
             $this->getPayloadCoordonneesFoyer(),
             'signalement_edit_coordonnees_foyer_',
+        ];
+
+        yield 'Edition Coordonnées Tiers' => [
+            'back_signalement_edit_coordonnees_tiers',
+            $this->getPayloadCoordonneesTiers(),
+            'signalement_edit_coordonnees_tiers_',
         ];
 
         yield 'Edition Informations sur le logement' => [

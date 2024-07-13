@@ -308,13 +308,13 @@
         {
           "type": "SignalementFormTextfield",
           "label": "Précisez le type :",
-          "slug": "type_logement_nature_autre_precision",
+          "slug": "c",
           "conditional": {
             "show": "formStore.data.type_logement_nature === 'autre'"
           },
-          "description": "25 caractères maximum",
+          "description": "15 caractères maximum",
           "validate": {
-            "maxLength": 25,
+            "maxLength": 15,
             "required": false
           }
         },
