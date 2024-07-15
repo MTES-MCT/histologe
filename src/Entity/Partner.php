@@ -65,7 +65,7 @@ class Partner
     #[ORM\Column(type: 'string', nullable: true, enumType: PartnerType::class)]
     private ?PartnerType $type = null;
 
-    #[ORM\Column(type: Types::SIMPLE_ARRAY, length: 255, nullable: true, enumType: Qualification::class)]
+    #[ORM\Column(type: Types::SIMPLE_ARRAY, nullable: true, enumType: Qualification::class)]
     private array $competence = [];
 
     #[ORM\Column(nullable: true)]
