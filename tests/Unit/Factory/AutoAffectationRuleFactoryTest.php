@@ -65,7 +65,7 @@ class AutoAffectationRuleFactoryTest extends KernelTestCase
         $this->assertNotEmpty($errors, (string) $errors);
         $this->assertStringContainsString('Choisissez une option valide: ACTIVE or ARCHIVED', (string) $errors);
         $this->assertStringContainsString('La valeur "ERROR" n\'est pas un profil déclarant ou groupe de profils valide', (string) $errors);
-        $this->assertStringContainsString('Choisissez une option valide: all, prive ou public', (string) $errors);
+        $this->assertStringContainsString('Choisissez une option valide: all, non_renseigne, prive ou public', (string) $errors);
         $this->assertStringContainsString('Choisissez une option valide: all, non, oui, caf ou msa', (string) $errors);
     }
 }

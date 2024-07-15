@@ -9,7 +9,6 @@ use App\Entity\Territory;
 use App\Factory\AutoAffectationRuleFactory;
 use App\Manager\AutoAffectationRuleManager;
 use App\Manager\TerritoryManager;
-use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Helper\QuestionHelper;
@@ -42,7 +41,6 @@ class AddAutoAffectationRuleCommand extends Command
     ];
 
     public function __construct(
-        private EntityManagerInterface $entityManager,
         private ValidatorInterface $validator,
         private AutoAffectationRuleFactory $autoAffectationRulerFactory,
         private AutoAffectationRuleManager $autoAffectationRuleManager,

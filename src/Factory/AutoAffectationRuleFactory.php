@@ -8,10 +8,6 @@ use App\Entity\Territory;
 
 class AutoAffectationRuleFactory
 {
-    public function __construct(
-    ) {
-    }
-
     public function createInstanceFrom(
         Territory $territory,
         string $status = null,
@@ -27,13 +23,10 @@ class AutoAffectationRuleFactory
             ->setStatus($status)
             ->setPartnerType($partnerType)
             ->setProfileDeclarant($profileDeclarant)
+            ->setInseeToInclude($inseeToInclude)
             ->setParc($parc)
             ->setAllocataire($allocataire);
 
-        if (!empty($inseeToInclude)) {
-            // $autoAffectationRule->setInseeToInclude(array_map('trim', explode(',', $inseeToInclude)));
-            $autoAffectationRule->setInseeToInclude($inseeToInclude);
-        }
         if (!empty($inseeToExclude)) {
             $autoAffectationRule->setInseeToExclude(array_map('trim', explode(',', $inseeToExclude)));
         }

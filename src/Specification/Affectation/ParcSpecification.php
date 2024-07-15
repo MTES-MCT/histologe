@@ -2,45 +2,47 @@
 
 namespace App\Specification\Affectation;
 
-use App\Entity\Partner;
 use App\Entity\Signalement;
+use App\Specification\Context\PartnerSignalementContext;
+use App\Specification\Context\SpecificationContextInterface;
 use App\Specification\SpecificationInterface;
 
 class ParcSpecification implements SpecificationInterface
 {
-    private string $ruleParc;
-
-    public function __construct(string $ruleParc)
+    public function __construct(private string $ruleParc)
     {
         $this->ruleParc = $ruleParc;
     }
 
-    public function isSatisfiedBy(array $params): bool
+    public function isSatisfiedBy(SpecificationContextInterface $context): bool
     {
-        if (!isset($params['partner']) || !$params['partner'] instanceof Partner) {
+        if (!$context instanceof PartnerSignalementContext) {
             return false;
         }
-
-        if (!isset($params['signalement']) || !$params['signalement'] instanceof Signalement) {
-            return false;
-        }
-        /** @var Partner $partner */
-        $partner = $params['partner'];
 
         /** @var Signalement $signalement */
-        $signalement = $params['signalement'];
-        if ('all' === $this->ruleParc) {
-            return true;
-        } elseif ('public' === $this->ruleParc) {
-            if ($signalement->getIsLogementSocial()
-            ) {
+        $signalement = $context->getSignalement();
+
+        switch ($this->ruleParc) {
+            case 'all':
                 return true;
-            }
-        } elseif ('prive' === $this->ruleParc) {
-            if (!$signalement->getIsLogementSocial()
-            ) {
-                return true;
-            }
+            case 'public':
+                if ($signalement->getIsLogementSocial()) {
+                    return true;
+                }
+                break;
+            case 'prive':
+                if (false === $signalement->getIsLogementSocial()
+                ) {
+                    return true;
+                }
+                break;
+            case 'non_renseigne':
+                if (null === $signalement->getIsLogementSocial()
+                ) {
+                    return true;
+                }
+                break;
         }
 
         return false;

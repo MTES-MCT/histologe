@@ -45,7 +45,7 @@ class AutoAssignerTest extends KernelTestCase
         $this->suiviFactory->expects($this->once())
         ->method('createInstanceFrom');
         $this->suiviManager->expects($this->once())
-        ->method('save');
+        ->method('persist');
         $this->testHelper($signalement, 1);
         $this->assertEquals(Signalement::STATUS_ACTIVE, $signalement->getStatut());
     }
@@ -59,7 +59,7 @@ class AutoAssignerTest extends KernelTestCase
         $this->suiviFactory->expects($this->never())
         ->method('createInstanceFrom');
         $this->suiviManager->expects($this->never())
-        ->method('save');
+        ->method('persist');
         $this->testHelper($signalement, 0);
         $this->assertEquals(Signalement::STATUS_NEED_VALIDATION, $signalement->getStatut());
     }
@@ -73,7 +73,7 @@ class AutoAssignerTest extends KernelTestCase
         $this->suiviFactory->expects($this->never())
         ->method('createInstanceFrom');
         $this->suiviManager->expects($this->never())
-        ->method('save');
+        ->method('persist');
         $this->testHelper($signalement, 0);
         $this->assertEquals(Signalement::STATUS_NEED_VALIDATION, $signalement->getStatut());
     }
@@ -87,7 +87,7 @@ class AutoAssignerTest extends KernelTestCase
         $this->suiviFactory->expects($this->once())
         ->method('createInstanceFrom');
         $this->suiviManager->expects($this->once())
-        ->method('save');
+        ->method('persist');
         $this->testHelper($signalement, 4);
         $this->assertEquals(Signalement::STATUS_ACTIVE, $signalement->getStatut());
     }
@@ -102,7 +102,7 @@ class AutoAssignerTest extends KernelTestCase
         $this->suiviFactory->expects($this->never())
         ->method('createInstanceFrom');
         $this->suiviManager->expects($this->never())
-        ->method('save');
+        ->method('persist');
         $this->testHelper($signalement, 0);
         $this->assertEquals(Signalement::STATUS_NEED_VALIDATION, $signalement->getStatut());
     }
@@ -116,7 +116,7 @@ class AutoAssignerTest extends KernelTestCase
         $this->suiviFactory->expects($this->once())
         ->method('createInstanceFrom');
         $this->suiviManager->expects($this->once())
-        ->method('save');
+        ->method('persist');
         $this->testHelper($signalement, 3);
         $this->assertEquals(Signalement::STATUS_ACTIVE, $signalement->getStatut());
     }
@@ -130,7 +130,7 @@ class AutoAssignerTest extends KernelTestCase
         $this->suiviFactory->expects($this->once())
         ->method('createInstanceFrom');
         $this->suiviManager->expects($this->once())
-        ->method('save');
+        ->method('persist');
         $this->testHelper($signalement, 3);
         $this->assertEquals(Signalement::STATUS_ACTIVE, $signalement->getStatut());
     }
@@ -144,7 +144,7 @@ class AutoAssignerTest extends KernelTestCase
         $this->suiviFactory->expects($this->once())
         ->method('createInstanceFrom');
         $this->suiviManager->expects($this->once())
-        ->method('save');
+        ->method('persist');
         $this->testHelper($signalement, 3);
         $this->assertEquals(Signalement::STATUS_ACTIVE, $signalement->getStatut());
     }
@@ -158,7 +158,7 @@ class AutoAssignerTest extends KernelTestCase
         $this->suiviFactory->expects($this->once())
         ->method('createInstanceFrom');
         $this->suiviManager->expects($this->once())
-        ->method('save');
+        ->method('persist');
         $this->testHelper($signalement, 2);
         $this->assertEquals(Signalement::STATUS_ACTIVE, $signalement->getStatut());
     }

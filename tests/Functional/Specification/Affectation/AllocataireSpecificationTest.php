@@ -5,6 +5,7 @@ namespace App\Tests\Functional\Specification\Affectation;
 use App\Entity\Partner;
 use App\Entity\Signalement;
 use App\Specification\Affectation\AllocataireSpecification;
+use App\Specification\Context\PartnerSignalementContext;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 
 class AllocataireSpecificationTest extends KernelTestCase
@@ -20,10 +21,11 @@ class AllocataireSpecificationTest extends KernelTestCase
         $this->assertEquals($isAllocataire, $signalement->getIsAllocataire());
 
         $specification = new AllocataireSpecification($allocataireRule);
+        $context = new PartnerSignalementContext($partner, $signalement);
         if ($isSatisfied) {
-            $this->assertTrue($specification->isSatisfiedBy(['partner' => $partner, 'signalement' => $signalement]));
+            $this->assertTrue($specification->isSatisfiedBy($context));
         } else {
-            $this->assertFalse($specification->isSatisfiedBy(['partner' => $partner, 'signalement' => $signalement]));
+            $this->assertFalse($specification->isSatisfiedBy($context));
         }
     }
 

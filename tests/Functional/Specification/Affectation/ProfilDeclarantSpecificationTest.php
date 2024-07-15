@@ -7,6 +7,7 @@ use App\Entity\Partner;
 use App\Entity\Signalement;
 use App\Entity\SignalementDraft;
 use App\Specification\Affectation\ProfilDeclarantSpecification;
+use App\Specification\Context\PartnerSignalementContext;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 
 class ProfilDeclarantSpecificationTest extends KernelTestCase
@@ -22,13 +23,13 @@ class ProfilDeclarantSpecificationTest extends KernelTestCase
         $signalement->setProfileDeclarant($profilSignalement);
         $retrievedProfileDeclarant = $signalement->getProfileDeclarant();
 
-        // Vérifier que le profil a été correctement défini
         $this->assertEquals($profilSignalement, $retrievedProfileDeclarant);
         $specification = new ProfilDeclarantSpecification($profilRule);
+        $context = new PartnerSignalementContext($partner, $signalement);
         if ($isSatisfied) {
-            $this->assertTrue($specification->isSatisfiedBy(['partner' => $partner, 'signalement' => $signalement]));
+            $this->assertTrue($specification->isSatisfiedBy($context));
         } else {
-            $this->assertFalse($specification->isSatisfiedBy(['partner' => $partner, 'signalement' => $signalement]));
+            $this->assertFalse($specification->isSatisfiedBy($context));
         }
     }
 

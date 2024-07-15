@@ -7,6 +7,7 @@ use App\Entity\AutoAffectationRule;
 use App\Entity\Partner;
 use App\Entity\Signalement;
 use App\Entity\Suivi;
+use App\Entity\User;
 use App\Factory\SuiviFactory;
 use App\Manager\AffectationManager;
 use App\Manager\SignalementManager;
@@ -20,6 +21,7 @@ use App\Specification\Affectation\ParcSpecification;
 use App\Specification\Affectation\PartnerTypeSpecification;
 use App\Specification\Affectation\ProfilDeclarantSpecification;
 use App\Specification\AndSpecification;
+use App\Specification\Context\PartnerSignalementContext;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 
 class AutoAssigner
@@ -61,48 +63,60 @@ class AutoAssigner
                 );
 
                 foreach ($partners as $partner) {
-                    if ($specification->isSatisfiedBy(['partner' => $partner, 'signalement' => $signalement])) {
+                    $context = new PartnerSignalementContext($partner, $signalement);
+                    if ($specification->isSatisfiedBy($context)) {
+                        // if ($specification->isSatisfiedBy(['partner' => $partner, 'signalement' => $signalement])) {
                         $assignablePartners[] = $partner;
                     }
                 }
             }
 
             if (!empty($assignablePartners)) {
-                $signalement->setStatut(Signalement::STATUS_ACTIVE);
-                $signalement->setValidatedAt(new \DateTimeImmutable());
-                $this->signalementManager->save($signalement);
-
-                $params = [
-                    'type' => SUIVI::TYPE_AUTO,
-                    'description' => 'Signalement validé',
-                ];
-                $suivi = $this->suiviFactory->createInstanceFrom(
-                    user: $adminUser,
-                    signalement: $signalement,
-                    params: $params,
-                    isPublic: true,
-                );
-                $this->suiviManager->save($suivi);
-
-                /** @var Partner $partner */
-                foreach ($assignablePartners as $partner) {
-                    $affectation = $this->affectationManager->createAffectationFrom(
-                        $signalement,
-                        $partner,
-                        $adminUser
-                    );
-                    ++$this->countAffectations;
-                    if ($affectation instanceof Affectation) {
-                        $this->affectationManager->persist($affectation);
-                        if ($partner->canSyncWithEsabora()) {
-                            $this->interconnectionBus->dispatch($affectation);
-                        }
-                        $this->affectationManager->save($affectation, false);
-                    }
-                }
-                $this->affectationManager->flush();
+                $this->activateSignalement($signalement);
+                $this->createSuivi($signalement, $adminUser);
+                $this->assignPartners($signalement, $adminUser, $assignablePartners);
             }
         }
+    }
+
+    private function activateSignalement(Signalement $signalement): void
+    {
+        $signalement->setStatut(Signalement::STATUS_ACTIVE);
+        $signalement->setValidatedAt(new \DateTimeImmutable());
+        $this->signalementManager->persist($signalement);
+    }
+
+    private function createSuivi(Signalement $signalement, ?User $adminUser): void
+    {
+        $params = [
+            'type' => SUIVI::TYPE_AUTO,
+            'description' => 'Signalement validé',
+        ];
+        $suivi = $this->suiviFactory->createInstanceFrom(
+            user: $adminUser,
+            signalement: $signalement,
+            params: $params,
+            isPublic: true,
+        );
+        $this->suiviManager->persist($suivi);
+    }
+
+    private function assignPartners(Signalement $signalement, ?User $adminUser, array $assignablePartners): void
+    {
+        /** @var Partner $partner */
+        foreach ($assignablePartners as $partner) {
+            $affectation = $this->affectationManager->createAffectationFrom(
+                $signalement,
+                $partner,
+                $adminUser
+            );
+            ++$this->countAffectations;
+            if ($affectation instanceof Affectation) {
+                $this->affectationManager->persist($affectation);
+                $this->interconnectionBus->dispatch($affectation);
+            }
+        }
+        $this->affectationManager->flush();
     }
 
     public function getCountAffectations(): int

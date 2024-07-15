@@ -3,53 +3,47 @@
 namespace App\Specification\Affectation;
 
 use App\Entity\Enum\ProfileDeclarant;
-use App\Entity\Partner;
 use App\Entity\Signalement;
+use App\Specification\Context\PartnerSignalementContext;
+use App\Specification\Context\SpecificationContextInterface;
 use App\Specification\SpecificationInterface;
 
 class ProfilDeclarantSpecification implements SpecificationInterface
 {
-    private string $ruleProfilDeclarant;
-
-    public function __construct(string $ruleProfilDeclarant)
+    public function __construct(private string $ruleProfilDeclarant)
     {
         $this->ruleProfilDeclarant = $ruleProfilDeclarant;
     }
 
-    public function isSatisfiedBy(array $params): bool
+    public function isSatisfiedBy(SpecificationContextInterface $context): bool
     {
-        if (!isset($params['partner']) || !$params['partner'] instanceof Partner) {
+        if (!$context instanceof PartnerSignalementContext) {
             return false;
         }
-
-        if (!isset($params['signalement']) || !$params['signalement'] instanceof Signalement) {
-            return false;
-        }
-        /** @var Partner $partner */
-        $partner = $params['partner'];
 
         /** @var Signalement $signalement */
-        $signalement = $params['signalement'];
+        $signalement = $context->getSignalement();
 
         /** @var ProfileDeclarant $signalementProfilDeclarant */
         $signalementProfilDeclarant = $signalement->getProfileDeclarant();
 
-        if ('all' === $this->ruleProfilDeclarant) {
-            return true;
-        } elseif ('tiers' === $this->ruleProfilDeclarant) {
-            if ($signalement->isTiersDeclarant()) {
+        switch ($this->ruleProfilDeclarant) {
+            case 'all':
                 return true;
-            }
+            case 'tiers':
+                if ($signalement->isTiersDeclarant()) {
+                    return true;
+                }
 
-            return false;
-        } elseif ('occupant' === $this->ruleProfilDeclarant) {
-            if (!$signalement->isTiersDeclarant()) {
-                return true;
-            }
+                return false;
+            case 'occupant':
+                if (!$signalement->isTiersDeclarant()) {
+                    return true;
+                }
 
-            return false;
+                return false;
+            default:
+                return $signalementProfilDeclarant->value === $this->ruleProfilDeclarant;
         }
-
-        return $signalementProfilDeclarant->value === $this->ruleProfilDeclarant;
     }
 }

@@ -2,6 +2,8 @@
 
 namespace App\Specification;
 
+use App\Specification\Context\SpecificationContextInterface;
+
 class AndSpecification implements SpecificationInterface
 {
     private array $specifications;
@@ -11,10 +13,10 @@ class AndSpecification implements SpecificationInterface
         $this->specifications = $specifications;
     }
 
-    public function isSatisfiedBy(array $params): bool
+    public function isSatisfiedBy(SpecificationContextInterface $context): bool
     {
         foreach ($this->specifications as $specification) {
-            if (!$specification->isSatisfiedBy($params)) {
+            if (!$specification->isSatisfiedBy($context)) {
                 return false;
             }
         }

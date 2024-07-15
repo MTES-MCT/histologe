@@ -2,7 +2,9 @@
 
 namespace App\Specification;
 
+use App\Specification\Context\SpecificationContextInterface;
+
 interface SpecificationInterface
 {
-    public function isSatisfiedBy(array $params): bool;
+    public function isSatisfiedBy(SpecificationContextInterface $context): bool;
 }

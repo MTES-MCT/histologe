@@ -25,7 +25,7 @@ final class Version20240705124751 extends AbstractMigration
             profile_declarant VARCHAR(255) NOT NULL COMMENT \'Value possible enum ProfileDeclarant or all, tiers or occupant\',
             insee_to_include VARCHAR(255) NOT NULL COMMENT \'Value possible all, partner_list or an array of code insee\',
             insee_to_exclude JSON DEFAULT NULL COMMENT \'Value possible null or an array of code insee\',
-            parc VARCHAR(32) NOT NULL COMMENT \'Value possible all, prive or public\',
+            parc VARCHAR(32) NOT NULL COMMENT \'Value possible all, non_renseigne, prive or public\',
             allocataire VARCHAR(32) NOT NULL COMMENT \'Value possible all, non, oui, caf or msa\',
             INDEX IDX_1A302A1C73F74AD4 (territory_id),
             PRIMARY KEY(id))

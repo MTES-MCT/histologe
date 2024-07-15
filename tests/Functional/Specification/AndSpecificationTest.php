@@ -3,6 +3,7 @@
 namespace App\Tests\Functional\Specification;
 
 use App\Specification\AndSpecification;
+use App\Specification\Context\SpecificationContextInterface;
 use App\Specification\SpecificationInterface;
 use PHPUnit\Framework\TestCase;
 
@@ -24,7 +25,8 @@ class AndSpecificationTest extends TestCase
 
         $andSpec = new AndSpecification($spec1, $spec2, $spec3, $spec4);
 
-        $this->assertTrue($andSpec->isSatisfiedBy([]));
+        $context = $this->createMock(SpecificationContextInterface::class);
+        $this->assertTrue($andSpec->isSatisfiedBy($context));
     }
 
     public function testOneSpecificationNotSatisfied()
@@ -43,7 +45,8 @@ class AndSpecificationTest extends TestCase
 
         $andSpec = new AndSpecification($spec1, $spec2, $spec3, $spec4);
 
-        $this->assertFalse($andSpec->isSatisfiedBy([]));
+        $context = $this->createMock(SpecificationContextInterface::class);
+        $this->assertFalse($andSpec->isSatisfiedBy($context));
     }
 
     public function testBothSpecificationNotSatisfied()
@@ -56,13 +59,15 @@ class AndSpecificationTest extends TestCase
 
         $andSpec = new AndSpecification($spec1, $spec2);
 
-        $this->assertFalse($andSpec->isSatisfiedBy([]));
+        $context = $this->createMock(SpecificationContextInterface::class);
+        $this->assertFalse($andSpec->isSatisfiedBy($context));
     }
 
     public function testNoSpecifications()
     {
         $andSpec = new AndSpecification();
 
-        $this->assertTrue($andSpec->isSatisfiedBy([]));
+        $context = $this->createMock(SpecificationContextInterface::class);
+        $this->assertTrue($andSpec->isSatisfiedBy($context));
     }
 }

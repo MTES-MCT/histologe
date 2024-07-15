@@ -4,14 +4,13 @@ namespace App\Specification\Affectation;
 
 use App\Entity\Partner;
 use App\Entity\Signalement;
+use App\Specification\Context\PartnerSignalementContext;
+use App\Specification\Context\SpecificationContextInterface;
 use App\Specification\SpecificationInterface;
 
 class CodeInseeSpecification implements SpecificationInterface
 {
-    private array|string $inseeToInclude;
-    private ?array $inseeToExclude;
-
-    public function __construct(string $inseeToInclude, ?array $inseeToExclude)
+    public function __construct(private array|string $inseeToInclude, private ?array $inseeToExclude)
     {
         if ('all' !== $inseeToInclude && 'partner_list' !== $inseeToInclude) {
             $this->inseeToInclude = explode(',', $inseeToInclude);
@@ -21,20 +20,17 @@ class CodeInseeSpecification implements SpecificationInterface
         $this->inseeToExclude = $inseeToExclude;
     }
 
-    public function isSatisfiedBy(array $params): bool
+    public function isSatisfiedBy(SpecificationContextInterface $context): bool
     {
-        if (!isset($params['partner']) || !$params['partner'] instanceof Partner) {
+        if (!$context instanceof PartnerSignalementContext) {
             return false;
         }
-
-        if (!isset($params['signalement']) || !$params['signalement'] instanceof Signalement) {
-            return false;
-        }
-        /** @var Partner $partner */
-        $partner = $params['partner'];
 
         /** @var Signalement $signalement */
-        $signalement = $params['signalement'];
+        $signalement = $context->getSignalement();
+
+        /** @var Partner $partner */
+        $partner = $context->getPartner();
 
         if (null === $signalement->getInseeOccupant()
         || '' === $signalement->getInseeOccupant()) {
@@ -43,18 +39,21 @@ class CodeInseeSpecification implements SpecificationInterface
         if (!empty($this->inseeToExclude) && \in_array($signalement->getInseeOccupant(), $this->inseeToExclude)) {
             return false;
         }
-        if ('all' === $this->inseeToInclude) {
-            return true;
-        } elseif ('partner_list' === $this->inseeToInclude) {
-            if (!empty($partner->getInsee())
-                && \in_array($signalement->getInseeOccupant(), $partner->getInsee())) {
+
+        switch ($this->inseeToInclude) {
+            case 'all':
                 return true;
-            }
-        } elseif (\is_array($this->inseeToInclude)) {
-            if (!empty($this->inseeToInclude)
-                && \in_array($signalement->getInseeOccupant(), $this->inseeToInclude)) {
-                return true;
-            }
+            case 'partner_list':
+                if (!empty($partner->getInsee())
+                    && \in_array($signalement->getInseeOccupant(), $partner->getInsee())) {
+                    return true;
+                }
+                break;
+            default:
+                if (!empty($this->inseeToInclude)
+                    && \in_array($signalement->getInseeOccupant(), $this->inseeToInclude)) {
+                    return true;
+                }
         }
 
         return false;

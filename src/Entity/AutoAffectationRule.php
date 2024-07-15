@@ -19,7 +19,7 @@ class AutoAffectationRule
     #[ORM\Column]
     private ?int $id = null;
 
-    #[ORM\ManyToOne(targetEntity: Territory::class, inversedBy: 'autoaffectationrules')]
+    #[ORM\ManyToOne(targetEntity: Territory::class, inversedBy: 'autoAffectationRules')]
     #[ORM\JoinColumn()]
     #[Assert\NotBlank]
     private Territory $territory;
@@ -48,9 +48,9 @@ class AutoAffectationRule
     #[ORM\Column(nullable: true, options: ['comment' => 'Value possible null or an array of code insee'])]
     private ?array $inseeToExclude = null;
 
-    #[ORM\Column(length: 32, options: ['comment' => 'Value possible all, prive or public'])]
+    #[ORM\Column(length: 32, options: ['comment' => 'Value possible all, non_renseigne, prive or public'])]
     #[Assert\NotBlank]
-    #[Assert\Choice(choices: ['all', 'prive', 'public'], message: 'Choisissez une option valide: all, prive ou public')]
+    #[Assert\Choice(choices: ['all', 'prive', 'public', 'non_renseigne'], message: 'Choisissez une option valide: all, non_renseigne, prive ou public')]
     private string $parc;
 
     #[ORM\Column(length: 32, options: ['comment' => 'Value possible all, non, oui, caf or msa'])]

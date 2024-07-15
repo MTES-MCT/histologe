@@ -6,6 +6,7 @@ use App\Entity\Enum\PartnerType;
 use App\Entity\Partner;
 use App\Entity\Signalement;
 use App\Specification\Affectation\PartnerTypeSpecification;
+use App\Specification\Context\PartnerSignalementContext;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 
 class PartnerTypeSpecificationTest extends KernelTestCase
@@ -21,10 +22,11 @@ class PartnerTypeSpecificationTest extends KernelTestCase
         $signalement = new Signalement();
 
         $specification = new PartnerTypeSpecification($typeRule);
+        $context = new PartnerSignalementContext($partner, $signalement);
         if ($isSatisfied) {
-            $this->assertTrue($specification->isSatisfiedBy(['partner' => $partner, 'signalement' => $signalement]));
+            $this->assertTrue($specification->isSatisfiedBy($context));
         } else {
-            $this->assertFalse($specification->isSatisfiedBy(['partner' => $partner, 'signalement' => $signalement]));
+            $this->assertFalse($specification->isSatisfiedBy($context));
         }
     }
 

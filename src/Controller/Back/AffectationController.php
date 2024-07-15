@@ -182,9 +182,6 @@ class AffectationController extends AbstractController
 
     private function dispatchDossier(Affectation $affectation): void
     {
-        $partner = $affectation->getPartner();
-        if ($partner->canSyncWithEsabora() || $partner->canSyncWithOilhi()) {
-            $this->interconnectionBus->dispatch($affectation);
-        }
+        $this->interconnectionBus->dispatch($affectation);
     }
 }

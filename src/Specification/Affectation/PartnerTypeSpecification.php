@@ -4,29 +4,25 @@ namespace App\Specification\Affectation;
 
 use App\Entity\Enum\PartnerType;
 use App\Entity\Partner;
-use App\Entity\Signalement;
+use App\Specification\Context\PartnerSignalementContext;
+use App\Specification\Context\SpecificationContextInterface;
 use App\Specification\SpecificationInterface;
 
 class PartnerTypeSpecification implements SpecificationInterface
 {
-    private PartnerType $partnerType;
-
-    public function __construct(PartnerType $partnerType)
+    public function __construct(private PartnerType $partnerType)
     {
         $this->partnerType = $partnerType;
     }
 
-    public function isSatisfiedBy(array $params): bool
+    public function isSatisfiedBy(SpecificationContextInterface $context): bool
     {
-        if (!isset($params['partner']) || !$params['partner'] instanceof Partner) {
+        if (!$context instanceof PartnerSignalementContext) {
             return false;
         }
 
-        if (!isset($params['signalement']) || !$params['signalement'] instanceof Signalement) {
-            return false;
-        }
         /** @var Partner $partner */
-        $partner = $params['partner'];
+        $partner = $context->getPartner();
 
         return $partner->getType() === $this->partnerType;
     }

@@ -2,52 +2,37 @@
 
 namespace App\Specification\Affectation;
 
-use App\Entity\Partner;
 use App\Entity\Signalement;
+use App\Specification\Context\PartnerSignalementContext;
+use App\Specification\Context\SpecificationContextInterface;
 use App\Specification\SpecificationInterface;
 
 class AllocataireSpecification implements SpecificationInterface
 {
-    private string $ruleAllocataire;
-
-    public function __construct(string $ruleAllocataire)
-    {
-        $this->ruleAllocataire = $ruleAllocataire;
+    public function __construct(
+        private string $ruleAllocataire
+    ) {
     }
 
-    public function isSatisfiedBy(array $params): bool
+    public function isSatisfiedBy(SpecificationContextInterface $context): bool
     {
-        if (!isset($params['partner']) || !$params['partner'] instanceof Partner) {
+        if (!$context instanceof PartnerSignalementContext) {
             return false;
         }
-
-        if (!isset($params['signalement']) || !$params['signalement'] instanceof Signalement) {
-            return false;
-        }
-        /** @var Partner $partner */
-        $partner = $params['partner'];
 
         /** @var Signalement $signalement */
-        $signalement = $params['signalement'];
+        $signalement = $context->getSignalement();
 
-        if ('all' === $this->ruleAllocataire) {
-            return true;
-        } elseif ('oui' === $this->ruleAllocataire) {
-            if ('oui' === $signalement->getIsAllocataire()
-            || 'CAF' === $signalement->getIsAllocataire()
-            || 'MSA' === $signalement->getIsAllocataire()
-            || '1' === $signalement->getIsAllocataire()
-            ) {
+        $isAllocataire = strtolower($signalement->getIsAllocataire());
+        switch ($this->ruleAllocataire) {
+            case 'all':
                 return true;
-            }
-        } elseif ('non' === $this->ruleAllocataire) {
-            if ('non' === $signalement->getIsAllocataire()
-            || '0' === $signalement->getIsAllocataire()
-            ) {
-                return true;
-            }
-        } else {
-            return strtolower($signalement->getIsAllocataire()) === $this->ruleAllocataire;
+            case 'oui':
+                return \in_array($isAllocataire, ['oui', 'caf', 'msa', '1']);
+            case 'non':
+                return \in_array($isAllocataire, ['non', '0']);
+            default:
+                return $isAllocataire === $this->ruleAllocataire;
         }
 
         return false;
