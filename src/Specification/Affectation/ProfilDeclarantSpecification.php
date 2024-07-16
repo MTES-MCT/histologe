@@ -29,21 +29,19 @@ class ProfilDeclarantSpecification implements SpecificationInterface
 
         switch ($this->ruleProfilDeclarant) {
             case 'all':
-                return true;
+                $result = true;
+                break;
             case 'tiers':
-                if ($signalement->isTiersDeclarant()) {
-                    return true;
-                }
-
-                return false;
+                $result = $signalement->isTiersDeclarant();
+                break;
             case 'occupant':
-                if (!$signalement->isTiersDeclarant()) {
-                    return true;
-                }
-
-                return false;
+                $result = !$signalement->isTiersDeclarant();
+                break;
             default:
-                return $signalementProfilDeclarant->value === $this->ruleProfilDeclarant;
+                $result = $signalementProfilDeclarant->value === $this->ruleProfilDeclarant;
+                break;
         }
+
+        return $result;
     }
 }

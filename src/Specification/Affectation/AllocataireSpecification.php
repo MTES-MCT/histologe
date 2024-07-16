@@ -34,7 +34,5 @@ class AllocataireSpecification implements SpecificationInterface
             default:
                 return $isAllocataire === $this->ruleAllocataire;
         }
-
-        return false;
     }
 }

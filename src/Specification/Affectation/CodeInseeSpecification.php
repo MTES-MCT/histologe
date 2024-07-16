@@ -33,29 +33,27 @@ class CodeInseeSpecification implements SpecificationInterface
         $partner = $context->getPartner();
 
         if (null === $signalement->getInseeOccupant()
-        || '' === $signalement->getInseeOccupant()) {
+            || '' === $signalement->getInseeOccupant()
+            || !empty($this->inseeToExclude) && \in_array($signalement->getInseeOccupant(), $this->inseeToExclude)) {
             return false;
         }
-        if (!empty($this->inseeToExclude) && \in_array($signalement->getInseeOccupant(), $this->inseeToExclude)) {
-            return false;
-        }
+
+        $result = false;
 
         switch ($this->inseeToInclude) {
             case 'all':
-                return true;
+                $result = true;
+                break;
             case 'partner_list':
-                if (!empty($partner->getInsee())
-                    && \in_array($signalement->getInseeOccupant(), $partner->getInsee())) {
-                    return true;
-                }
+                $result = !empty($partner->getInsee())
+                    && \in_array($signalement->getInseeOccupant(), $partner->getInsee());
                 break;
             default:
-                if (!empty($this->inseeToInclude)
-                    && \in_array($signalement->getInseeOccupant(), $this->inseeToInclude)) {
-                    return true;
-                }
+                $result = !empty($this->inseeToInclude)
+                    && \in_array($signalement->getInseeOccupant(), $this->inseeToInclude);
+                break;
         }
 
-        return false;
+        return $result;
     }
 }

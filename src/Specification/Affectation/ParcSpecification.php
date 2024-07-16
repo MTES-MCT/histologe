@@ -23,28 +23,23 @@ class ParcSpecification implements SpecificationInterface
         /** @var Signalement $signalement */
         $signalement = $context->getSignalement();
 
+        $result = false;
+
         switch ($this->ruleParc) {
             case 'all':
-                return true;
+                $result = true;
+                break;
             case 'public':
-                if ($signalement->getIsLogementSocial()) {
-                    return true;
-                }
+                $result = true === $signalement->getIsLogementSocial();
                 break;
             case 'prive':
-                if (false === $signalement->getIsLogementSocial()
-                ) {
-                    return true;
-                }
+                $result = false === $signalement->getIsLogementSocial();
                 break;
             case 'non_renseigne':
-                if (null === $signalement->getIsLogementSocial()
-                ) {
-                    return true;
-                }
+                $result = null === $signalement->getIsLogementSocial();
                 break;
         }
 
-        return false;
+        return $result;
     }
 }
