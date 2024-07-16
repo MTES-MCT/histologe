@@ -69,14 +69,19 @@ class ImportSignalementCommand extends Command
 
         $this->uploadHandlerService->createTmpFileFromBucket($fromFile, $toFile);
 
-        $this->signalementImportLoader->load(
-            $territory,
-            $this->csvParser->parseAsDict($toFile),
-            $this->csvParser->getHeaders($toFile),
-            $output
-        );
+        try {
+            $this->signalementImportLoader->load(
+                $territory,
+                $this->csvParser->parseAsDict($toFile),
+                $this->csvParser->getHeaders($toFile),
+                $output
+            );
+        } catch (\Exception $e) {
+            $output->writeln('Erreur inattendue : '.$e->getMessage());
 
-        $metadata = $this->signalementImportLoader->getMetadata();
+            return Command::FAILURE;
+        }
+            $metadata = $this->signalementImportLoader->getMetadata();
         if (\count($metadata['files_not_found'])) {
             $msg = [];
             foreach ($metadata['files_not_found'] as $fileNotFound) {

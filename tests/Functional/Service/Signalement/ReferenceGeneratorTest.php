@@ -25,6 +25,7 @@ class ReferenceGeneratorTest extends KernelTestCase
         $territoryRepository = $this->entityManager->getRepository(Territory::class);
         $territory = $territoryRepository->findOneBy(['zip' => 13]);
 
+        $todayYear = (new \DateTime())->format('Y');
         $signalementRepository = $this->createMock(SignalementRepository::class);
         $signalementRepository
             ->expects($this->once())
@@ -35,8 +36,7 @@ class ReferenceGeneratorTest extends KernelTestCase
         $referenceGenerator = new ReferenceGenerator($signalementRepository);
 
         $referenceGenerated = $referenceGenerator->generate($territory);
-
-        $this->assertEquals('2022-12', $referenceGenerated);
+        $this->assertEquals($todayYear.'-12', $referenceGenerated);
     }
 
     public function testGenerateReferenceFromNoSignalement()
