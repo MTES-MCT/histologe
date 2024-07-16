@@ -461,6 +461,12 @@ class PartnerController extends AbstractController
 
     private function canAttributeRole(string $role): bool
     {
+        if (empty($role)) {
+            $this->addFlash('error', 'Merci de sélectionner un rôle.');
+
+            return false;
+        }
+
         $authorizedRoles = ['ROLE_USER_PARTNER', 'ROLE_ADMIN_PARTNER'];
         if ($this->isGranted('ROLE_ADMIN_TERRITORY')) {
             $authorizedRoles[] = 'ROLE_ADMIN_TERRITORY';
