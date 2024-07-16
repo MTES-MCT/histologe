@@ -63,7 +63,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, TwoFact
 
     #[ORM\Column(type: 'string', length: 180, unique: false)]
     #[Assert\Email(mode: Email::VALIDATION_MODE_STRICT, groups: ['registration'])]
-    #[Assert\NotBlank]
+    #[Assert\NotBlank(message: 'Merci de saisir une adresse e-mail.')]
     #[Assert\Length(max: 255)]
     private $email;
 
@@ -100,12 +100,12 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, TwoFact
     private $partner;
 
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
-    #[Assert\NotBlank]
+    #[Assert\NotBlank(message: 'Merci de saisir un nom.')]
     #[Assert\Length(max: 255)]
     private $nom;
 
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
-    #[Assert\NotBlank]
+    #[Assert\NotBlank(message: 'Merci de saisir un prénom.')]
     #[Assert\Length(max: 255)]
     private $prenom;
 
