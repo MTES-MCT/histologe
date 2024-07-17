@@ -21,6 +21,21 @@ class BailleurRepository extends ServiceEntityRepository
         parent::__construct($registry, Bailleur::class);
     }
 
+    public function findBailleursByTerritory(?string $zip = null): array
+    {
+        $queryBuilder = $this
+            ->createQueryBuilder('b');
+        if (null !== $zip) {
+            $queryBuilder->innerJoin('b.bailleurTerritories', 'bt')
+            ->innerJoin('bt.territory', 't')
+            ->where('t.zip = :zip')
+            ->setParameter('zip', $zip);
+        }
+        $queryBuilder->orderBy('b.name', 'ASC');
+
+        return $queryBuilder->getQuery()->getResult();
+    }
+
     public function findBailleursBy(string $name, string $zip): array
     {
         $terms = explode(' ', trim($name));

@@ -146,6 +146,7 @@ export default defineComponent({
       this.sharedState.user.canSeeNonDecenceEnergetique = requestResponse.canSeeNDE === '1'
       const isAdminOrAdminTerritoire = this.sharedState.user.isAdmin || this.sharedState.user.isResponsableTerritoire
       this.sharedState.user.canSeeStatusAffectation = isAdminOrAdminTerritoire
+      this.sharedState.user.canSeeBailleurSocial = isAdminOrAdminTerritoire
       this.sharedState.user.canSeeFilterPartner = isAdminOrAdminTerritoire
       this.sharedState.user.canDeleteSignalement = isAdminOrAdminTerritoire
       this.sharedState.user.canSeeScore = isAdminOrAdminTerritoire
@@ -187,6 +188,14 @@ export default defineComponent({
         optionItem.Text = tag.label
         this.sharedState.etiquettes.push(optionItem)
       })
+
+      this.sharedState.bailleursSociaux = []
+      for (const id in requestResponse.bailleursSociaux) {
+        const optionItem = new HistoInterfaceSelectOption()
+        optionItem.Id = requestResponse.bailleursSociaux[id].id.toString()
+        optionItem.Text = requestResponse.bailleursSociaux[id].name
+        this.sharedState.bailleursSociaux.push(optionItem)
+      }
 
       this.sharedState.communes = []
       for (const id in requestResponse.communes) {

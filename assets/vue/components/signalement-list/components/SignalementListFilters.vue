@@ -242,6 +242,17 @@
                     title="Rechercher par nature du parc"
                 />
               </div>
+              <div v-if="sharedState.user.canSeeBailleurSocial && sharedState.bailleursSociaux.length > 0"
+                class="fr-col-12 fr-col-lg-4 fr-col-xl-3 grey-background">
+                <HistoSelect
+                    id="filter-bailleur-social"
+                    v-model="sharedState.input.filters.bailleurSocial"
+                    @update:modelValue="onChange(false)"
+                    :option-items=sharedState.bailleursSociaux
+                    :placeholder="'Bailleur social'"
+                    title="Rechercher par bailleur social"
+                />
+              </div>
               <div class="fr-col-12 fr-col-lg-4 grey-background"
                    :class="sharedState.user.isAgent ? 'fr-col-xl-3' : 'fr-col-xl-2'">
                 <HistoSelect
@@ -381,6 +392,7 @@ export default defineComponent({
         territoire: null,
         etiquettes: [],
         partenaires: [],
+        bailleurSocial: [],
         communes: [],
         epcis: [],
         searchTerms: null,

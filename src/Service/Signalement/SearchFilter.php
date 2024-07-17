@@ -14,6 +14,7 @@ use App\Entity\Signalement;
 use App\Entity\Suivi;
 use App\Entity\Territory;
 use App\Entity\User;
+use App\Repository\BailleurRepository;
 use App\Repository\CommuneRepository;
 use App\Repository\EpciRepository;
 use App\Repository\NotificationRepository;
@@ -70,6 +71,7 @@ class SearchFilter
         private SignalementQualificationRepository $signalementQualificationRepository,
         private CommuneRepository $communeRepository,
         private EpciRepository $epciRepository,
+        private BailleurRepository $bailleurRepository,
         #[Autowire(env: 'FEATURE_LIST_FILTER_ENABLE')]
         private string $featureListFilterEnable,
     ) {
@@ -120,6 +122,10 @@ class SearchFilter
         if (isset($filters['nouveau_suivi'])) {
             $signalementIds = $this->notificationRepository->findSignalementNewSuivi($user, $territory);
             $filters['signalement_ids'] = $signalementIds;
+        }
+
+        if (isset($filters['bailleurSocial'])) {
+            $filters['bailleurSocial'] = $this->bailleurRepository->findOneBy(['id' => $filters['bailleurSocial']]);
         }
 
         return $filters;
@@ -696,7 +702,8 @@ class SearchFilter
                     $qb->expr()->eq(
                         'JSON_EXTRACT(s.typeCompositionLogement,
                             \'$.composition_logement_enfants\')',
-                        ':non')
+                        ':non'
+                    )
                 )
             );
             $qb->setParameter('non', 'non');
@@ -707,7 +714,8 @@ class SearchFilter
                     $qb->expr()->eq(
                         'JSON_EXTRACT(s.typeCompositionLogement,
                             \'$.composition_logement_enfants\')',
-                        ':oui')
+                        ':oui'
+                    )
                 )
             );
             $qb->setParameter('oui', 'oui');

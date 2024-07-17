@@ -23,6 +23,7 @@ class SignalementSearchQuery
         #[Assert\Date(message: 'La date de fin n\'est pas une date valide')]
         private readonly ?string $dateDepotFin = null,
         private readonly ?array $partenaires = null,
+        private readonly ?string $bailleurSocial = null,
         #[Assert\Choice(['Non planifiée', 'Planifiée', 'Conclusion à renseigner', 'Terminée'])]
         private readonly ?string $visiteStatus = null,
         #[Assert\Choice(['partenaire', 'usager', 'automatique'])]
@@ -120,6 +121,11 @@ class SignalementSearchQuery
     public function getPartenaires(): ?array
     {
         return $this->partenaires;
+    }
+
+    public function getBailleurSocial(): ?string
+    {
+        return $this->bailleurSocial;
     }
 
     public function getVisiteStatus(): ?string
@@ -297,6 +303,7 @@ class SignalementSearchQuery
         $filters['relances_usager'] = [$this->getRelancesUsager()];
         $filters['delays'] = $this->getSansSuiviPeriode();
         $filters['nouveau_suivi'] = $this->getNouveauSuivi();
+        $filters['bailleurSocial'] = $this->getBailleurSocial();
 
         $filters['page'] = $this->getPage() ?? 1;
         $filters['maxItemsPerPage'] = self::MAX_LIST_PAGINATION;

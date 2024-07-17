@@ -33,6 +33,8 @@ class WidgetSettings
     private array $tags = [];
     #[Groups('widget-settings:read')]
     private ?bool $hasSignalementImported = false;
+    #[Groups('widget-settings:read')]
+    private array $bailleursSociaux = [];
 
     public function __construct(
         User $user,
@@ -43,6 +45,7 @@ class WidgetSettings
         array $epcis = [],
         array $tags = [],
         bool $hasSignalementImported = false,
+        array $bailleursSociaux = [],
     ) {
         $this->firstname = $user->getPrenom();
         $this->lastname = $user->getNom();
@@ -57,6 +60,7 @@ class WidgetSettings
         $this->epcis = $epcis;
         $this->tags = $tags;
         $this->hasSignalementImported = $hasSignalementImported;
+        $this->bailleursSociaux = $bailleursSociaux;
     }
 
     public function getFirstname(): ?string
@@ -122,5 +126,10 @@ class WidgetSettings
     public function getHasSignalementImported(): bool
     {
         return $this->hasSignalementImported;
+    }
+
+    public function getBailleursSociaux(): array
+    {
+        return $this->bailleursSociaux;
     }
 }
