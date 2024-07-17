@@ -28,7 +28,7 @@
                       >{{ getBadgeLabelQualification(procedure) }} </span>
                   <span v-if="item.nde" class="fr-badge fr-badge--sm fr-badge--no-icon fr-mx-1v fr-badge--info">NON DÉCENCE ÉNERGÉTIQUE</span>
                 </p>
-                <p v-else class="fr-my-1w"><span class="fr-icon-lightbulb-line" aria-hidden="true"></span>
+                <p v-else class="fr-my-1w"><span class="fr-icon-success-line" aria-hidden="true"></span>
                   Procédure(s) constatée(s) :
                   <span
                       v-for="(procedure, index) in item.conclusionsProcedure"
