@@ -31,7 +31,7 @@
                     <option value="" {{ not isNoneTerritory and currentTerritory is null ? 'selected' : '' }}>Tous les territoires</option>
                     <option value="none" {{ isNoneTerritory ? 'selected' : '' }}>Aucun</option>
                     {% for territory in territories %}
-                        <option value="{{ territory.id }}" {{ currentTerritory ? (territory.id == currentTerritory.id ? 'selected' : '') : ''  }}>{{ territory.name|upper }}</option>
+                        <option value="{{ territory.id }}" {{ currentTerritory ? (territory.id == currentTerritory.id ? 'selected' : '') : ''  }}>{{ territory.zip ~ ' - ' ~ territory.name }}</option>
                     {% endfor %}
                 </select>
             </div>
@@ -40,7 +40,7 @@
                     <option value="" {{ not isNonePartner and currentPartner is null ? 'selected' : '' }}>Tous les partenaires</option>
                     <option value="none" {{ isNonePartner ? 'selected' : '' }}>Aucun</option>
                     {% for partner in partners %}
-                        <option value="{{ partner.id }}" {{ currentPartner ? (partner.id == currentPartner.id ? 'selected' : '') : '' }}>{{ partner.nom|upper }}</option>
+                        <option value="{{ partner.id }}" {{ currentPartner ? (partner.id == currentPartner.id ? 'selected' : '') : '' }}>{{ partner.nom }}</option>
                     {% endfor %}
                 </select>
             </div>
@@ -57,7 +57,7 @@
         <table class="fr-display-inline-table sortable" aria-label="Liste des comptes archivés ou sans territoires et/ou partenaires" aria-describedby="desc-table">
             <thead>
             <tr>
-                <th>Dpt.</th>
+                <th>Territoire</th>
                 <th>Partenaire</th>
                 <th>Statut part.</th>
                 <th>E-mail</th>
@@ -79,7 +79,7 @@
                     {% set statut = 'actif' %}
                 {% endif %}
                 <tr class="user-row">
-                    <td>{{ user.territory }}</td>
+                    <td>{{ user.territory ? user.territory.zip ~ ' - ' ~ user.territory.name : 'aucun' }}</td>
                     <td>{{ user.partner ? user.partner.nom : 'aucun' }}</td>
                     <td><span class="fr-badge {{ classe }} fr-badge--no-icon fr-ws-nowrap ">{{ statut|upper }}</span></td>
                     <td>{{ user.email|clean_tagged_text(constant('App\\Entity\\User::SUFFIXE_ARCHIVED'), 'left') }}</ail td>

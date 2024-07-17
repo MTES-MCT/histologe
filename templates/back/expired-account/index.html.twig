@@ -64,7 +64,7 @@
                     <th>Role</th>
 					<th>Statut</th>
 					<th>Date de connexion</th>
-					<th>Département</th>
+					<th>Territoire</th>
 					<th>Partenaire</th>
 				</tr>
 			</thead>
@@ -77,7 +77,7 @@
                         <td>{{ user.roles[0]}}</td>
 						<td>{{ user.statutLabel}}</td>
 						<td>{{ user.lastLoginAt ? user.lastLoginAt|date('d/m/Y H:i')}}</td>
-						<td>{{ user.territory }}</td>
+                    	<td>{{ user.territory ? user.territory.zip ~ ' - ' ~ user.territory.name : 'aucun' }}</td>
 						<td>{{ user.partner ? user.partner.nom : 'aucun' }}</td>
 					</tr>
 				{% endfor %}

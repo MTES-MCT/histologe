@@ -31,7 +31,7 @@
                     <option value="" {{ not isNoneTerritory and currentTerritory is null ? 'selected' : '' }}>Tous les territoires</option>
                     <option value="none" {{ isNoneTerritory ? 'selected' : '' }}>Aucun</option>
                     {% for territory in territories %}
-                        <option value="{{ territory.id }}" {{ currentTerritory ? (territory.id == currentTerritory.id ? 'selected' : '') : ''  }}>{{ territory.name|upper }}</option>
+                        <option value="{{ territory.id }}" {{ currentTerritory ? (territory.id == currentTerritory.id ? 'selected' : '') : ''  }}>{{ territory.zip ~ ' - ' ~ territory.name }}</option>
                     {% endfor %}
                 </select>
             </div>
@@ -48,7 +48,7 @@
         <table class="fr-display-inline-table sortable" aria-label="Liste des partenaires archivés ou sans territoires" aria-describedby="desc-table">
             <thead>
             <tr>
-                <th>Dpt.</th>
+                <th>Territoire</th>
                 <th>Statut</th>
                 <th>E-mail</th>
                 <th>Nom</th>
@@ -68,7 +68,7 @@
                     {% set statut = 'actif' %}
                 {% endif %}
                 <tr class="user-row">
-                    <td>{{ partner.territory }}</td>
+                    <td>{{ partner.territory ? partner.territory.zip ~ ' - ' ~ partner.territory.name : 'aucun' }}</td>
                     <td><span class="fr-badge {{ classe }} fr-badge--no-icon fr-ws-nowrap ">{{ statut|upper }}</span></td>
                     <td>{{ partner.email|clean_tagged_text(constant('App\\Entity\\User::SUFFIXE_ARCHIVED'), 'left') }}</ail td>
                     <td>{{ partner.nom}}</ail td>

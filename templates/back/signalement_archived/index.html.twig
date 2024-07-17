@@ -29,7 +29,7 @@
                 <select id="bo-filters-territories" class="fr-select fr-select-submit" name="territory">
                     <option value="" {{ currentTerritory is null ? 'selected' : '' }}>Tous les territoires</option>
                     {% for territory in territories %}
-                        <option value="{{ territory.id }}" {{ currentTerritory ? (territory.id == currentTerritory.id ? 'selected' : '') : ''  }}>{{ territory.name|upper }}</option>
+                        <option value="{{ territory.id }}" {{ currentTerritory ? (territory.id == currentTerritory.id ? 'selected' : '') : ''  }}>{{ territory.zip ~ ' - ' ~ territory.name }}</option>
                     {% endfor %}
                 </select>
             </div>
@@ -63,7 +63,7 @@
                             <a href="{{ path('back_signalement_view',{uuid:signalement.uuid}) }}"
                             class="fr-ws-nowrap">{{ signalement.reference }}</a>
                         </td>
-                        <td>{{ signalement.territory.name}} ({{ signalement.territory.zip}}) </td>
+                        <td>{{ signalement.territory.zip}} - {{ signalement.territory.name}} </td>
                         <td>{{ signalement.createdAt|date('d/m/Y') }}</td>
                         <td>
                             {{ signalement.nomOccupant|upper }}<br>{{ signalement.prenomOccupant|capitalize }}
