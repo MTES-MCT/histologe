@@ -29,11 +29,18 @@ class SignalementDraftRequest
         'service_secours', ],
         message: 'Le profil est incorrect.'
     )]
+    #[Assert\When(
+        expression: 'this.getCurrentStep() == "validation_signalement"',
+        constraints: [
+            new Assert\NotBlank(message: 'Le profil est obligatoire.'),
+        ],
+    )]
     private ?string $profil = null;
 
     #[Assert\Length(max: 128, maxMessage: 'Le nom d\'étape de formulaire ne peut pas dépasser {{ limit }} caractères.')]
     private ?string $currentStep = null;
     #[Assert\NotBlank(message: 'Merci de saisir une adresse.')]
+    #[Assert\Length(max: 255, maxMessage: 'L\'adresse ne peut pas dépasser {{ limit }} caractères.')]
     private ?string $adresseLogementAdresse = null;
 
     #[Assert\Length(max: 100, maxMessage: 'L\'adresse ne peut pas dépasser {{ limit }} caractères.')]
@@ -406,7 +413,7 @@ class SignalementDraftRequest
     )]
     private ?string $infoProcedureBailleurPrevenu = null;
     #[Assert\Choice(
-        choices: ['oui', 'non', 'pas_assurance_logement'],
+        choices: ['oui', 'non', 'pas_assurance_logement', 'nsp'],
         message: 'Le champ "infoProcedureAssuranceContactee" est incorrect.',
     )]
     private ?string $infoProcedureAssuranceContactee = null;
