@@ -9,6 +9,7 @@ use App\Entity\Enum\Qualification;
 use App\Entity\Intervention;
 use App\Entity\Partner;
 use App\Entity\User;
+use App\Factory\UserFactory;
 use App\Form\PartnerType;
 use App\Manager\InterventionManager;
 use App\Manager\PartnerManager;
@@ -31,6 +32,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
+use Symfony\Component\Validator\Validator\ValidatorInterface;
 use Symfony\Component\Workflow\WorkflowInterface;
 
 #[Route('/bo/partenaires')]
@@ -335,7 +337,9 @@ class PartnerController extends AbstractController
         Request $request,
         Partner $partner,
         UserManager $userManager,
+        UserFactory $userFactory,
         PartnerRepository $partnerRepository,
+        ValidatorInterface $validator,
     ): Response {
         $this->denyAccessUnlessGranted('USER_CREATE', $partner);
         $data = $request->get('user_create');
@@ -359,8 +363,6 @@ class PartnerController extends AbstractController
 
         if (null !== $partnerExist) {
             $this->addFlash('error', 'Un partenaire existe déjà avec cette adresse e-mail.');
-
-            return $this->redirectToRoute('back_partner_view', ['id' => $partner->getId()], Response::HTTP_SEE_OTHER);
         } elseif (null !== $user && \in_array('ROLE_USAGER', $user->getRoles())) {
             $data['territory'] = $partner->getTerritory();
             $data['partner'] = $partner;
@@ -368,14 +370,18 @@ class PartnerController extends AbstractController
             $userManager->updateUserFromData($user, $data);
         } elseif (null !== $user) {
             $this->addFlash('error', 'Un utilisateur existe déjà avec cette adresse e-mail.');
-
-            return $this->redirectToRoute('back_partner_view', ['id' => $partner->getId()], Response::HTTP_SEE_OTHER);
         } else {
-            $user = $userManager->createUserFromData($partner, $data);
+            $user = $userFactory->createInstanceFromArray($partner, $data);
+            $errors = $validator->validate($user);
+            foreach ($errors as $error) {
+                $this->addFlash('error', $error->getMessage());
+            }
+            if (0 === \count($errors)) {
+                $userManager->save($user);
+                $message = 'L\'utilisateur a bien été créé. Un e-mail de confirmation a été envoyé à '.$user->getEmail();
+                $this->addFlash('success', $message);
+            }
         }
-
-        $message = 'L\'utilisateur a bien été créé. Un e-mail de confirmation a été envoyé à '.$user->getEmail();
-        $this->addFlash('success', $message);
 
         return $this->redirectToRoute('back_partner_view', ['id' => $partner->getId()], Response::HTTP_SEE_OTHER);
     }
@@ -386,6 +392,7 @@ class PartnerController extends AbstractController
         UserManager $userManager,
         UserRepository $userRepository,
         PartnerRepository $partnerRepository,
+        ValidatorInterface $validator,
     ): Response {
         $userId = $request->request->get('user_id');
         $user = $userManager->find((int) $userId);
@@ -428,24 +435,38 @@ class PartnerController extends AbstractController
             }
         }
         $user = $userManager->updateUserFromData(
-            $user,
-            [
+            user: $user,
+            data: [
                 'nom' => $data['nom'],
                 'prenom' => $data['prenom'],
                 'roles' => $data['roles'],
                 'email' => $data['email'],
                 'isMailingActive' => $data['isMailingActive'],
-            ]
+            ],
+            save: false
         );
 
-        $message = 'L\'utilisateur a bien été modifié.';
-        $this->addFlash('success', $message);
+        $errors = $validator->validate($user);
+        foreach ($errors as $error) {
+            $this->addFlash('error', $error->getMessage());
+        }
+        if (0 === \count($errors)) {
+            $userManager->save($user);
+            $message = 'L\'utilisateur a bien été modifié.';
+            $this->addFlash('success', $message);
+        }
 
         return $this->redirectToRoute('back_partner_view', ['id' => $user->getPartner()->getId()], Response::HTTP_SEE_OTHER);
     }
 
     private function canAttributeRole(string $role): bool
     {
+        if (empty($role)) {
+            $this->addFlash('error', 'Merci de sélectionner un rôle.');
+
+            return false;
+        }
+
         $authorizedRoles = ['ROLE_USER_PARTNER', 'ROLE_ADMIN_PARTNER'];
         if ($this->isGranted('ROLE_ADMIN_TERRITORY')) {
             $authorizedRoles[] = 'ROLE_ADMIN_TERRITORY';

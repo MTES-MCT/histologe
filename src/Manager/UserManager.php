@@ -33,7 +33,7 @@ class UserManager extends AbstractManager
         parent::__construct($managerRegistry, $entityName);
     }
 
-    public function updateUserFromData(User $user, array $data): User
+    public function updateUserFromData(User $user, array $data, bool $save = true): User
     {
         $user
             ->setNom($data['nom'])
@@ -50,7 +50,10 @@ class UserManager extends AbstractManager
         if (\array_key_exists('statut', $data)) {
             $user->setStatut($data['statut']);
         }
-        $this->save($user);
+
+        if ($save) {
+            $this->save($user);
+        }
 
         return $user;
     }
