@@ -38,6 +38,7 @@ import './controllers/back_partner_view/form_partner';
 import './controllers/form_visite';
 import './controllers/cookie_banner';
 import './controllers/maintenance_banner';
+import './controllers/modale_cgu_bo';
 import './controllers/activate_account/activate_account';
 import './controllers/back_signalement_view/back_view_signalement';
 import './controllers/back_signalement_view/form_edit_modal';

@@ -90,10 +90,12 @@ class UserManager extends AbstractManager
     public function resetPassword(User $user, string $password): User
     {
         $password = $this->passwordHasherFactory->getPasswordHasher($user)->hash($password);
+        $currentCguVersion = $this->parameterBag->get('cgu_current_version');
         $user
             ->setPassword($password)
             ->setToken(null)
             ->setStatut(User::STATUS_ACTIVE)
+            ->setCguVersionChecked($currentCguVersion)
             ->setTokenExpiredAt(null);
 
         $this->save($user);

@@ -7,7 +7,6 @@ const acceptRadioButtonList = document.querySelectorAll('.accept input[type="rad
 const refuseRadioButtonList = document.querySelectorAll('.refuse input[type="radio"]');
 const consentButtons = document.querySelector('.fr-consent-banner__buttons');
 const consentConfirmationChoice = document.querySelector('.fr-consent-manager__buttons .fr-btn');
-const cookieManagementButton = document.querySelector('button.fr-footer__bottom-link ');
 const modalConsent = document.getElementById('fr-consent-modal');
 
 function initChoiceUserBasedOnConsent() {

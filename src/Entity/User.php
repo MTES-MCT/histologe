@@ -602,13 +602,15 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, TwoFact
         $this->authCode = $authCode;
     }
 
-    public function getCguVersionChecked(): string
+    public function getCguVersionChecked(): ?string
     {
         return $this->cguVersionChecked;
     }
 
-    public function setCguVersionChecked(string $cguVersionChecked): void
+    public function setCguVersionChecked(string $cguVersionChecked): self
     {
         $this->cguVersionChecked = $cguVersionChecked;
+
+        return $this;
     }
 }

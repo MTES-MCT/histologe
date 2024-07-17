@@ -21,10 +21,10 @@ final class Version20240717081056 extends AbstractMigration
 
         $this->addSql("
             UPDATE user
-            SET cgu_version_checked = '3'
+            SET cgu_version_checked = '05/06/2024'
             WHERE last_login_at IS NOT NULL
-              AND statut = " . User::STATUS_ACTIVE . "
-        ");
+              AND statut = ".User::STATUS_ACTIVE.'
+        ');
     }
 
     public function down(Schema $schema): void
