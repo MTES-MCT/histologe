@@ -65,7 +65,6 @@ class AutoAssigner
                 foreach ($partners as $partner) {
                     $context = new PartnerSignalementContext($partner, $signalement);
                     if ($specification->isSatisfiedBy($context)) {
-                        // if ($specification->isSatisfiedBy(['partner' => $partner, 'signalement' => $signalement])) {
                         $assignablePartners[] = $partner;
                     }
                 }

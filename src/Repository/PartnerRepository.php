@@ -143,23 +143,6 @@ class PartnerRepository extends ServiceEntityRepository
         return new Paginator($queryBuilder->getQuery(), false);
     }
 
-    public function findAutoAssignable(string $codeInsee, PartnerType $partnerType): ?array
-    {
-        if (empty($codeInsee)) {
-            return null;
-        }
-
-        return $this
-            ->createQueryBuilder('p')
-            ->innerJoin('p.users', 'u')
-            ->where('p.insee LIKE :codeInsee')
-            ->setParameter('codeInsee', '%'.$codeInsee.'%')
-            ->andWhere('p.type = :partnerType')
-            ->setParameter('partnerType', $partnerType)
-            ->getQuery()
-            ->getResult();
-    }
-
     /**
      * @throws Exception
      */
