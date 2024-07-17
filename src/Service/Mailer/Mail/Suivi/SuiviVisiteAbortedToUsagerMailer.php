@@ -14,7 +14,7 @@ class SuiviVisiteAbortedToUsagerMailer extends AbstractNotificationMailer
 {
     protected ?NotificationMailerType $mailerType = NotificationMailerType::TYPE_VISITE_ABORTED_TO_USAGER;
     protected ?string $mailerSubject = 'Visite du logement non effectuée';
-    protected ?string $mailerButtonText = 'Accéder à mon signalement';
+    protected ?string $mailerButtonText = 'Accéder à mon dossier';
     protected ?string $mailerTemplate = 'nouveau_suivi_visite_aborted_email';
     protected ?string $tagHeader = 'Usager Visite Non Effectuee';
 
