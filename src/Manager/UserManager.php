@@ -101,7 +101,6 @@ class UserManager extends AbstractManager
             ->setToken(null)
             ->setStatut(User::STATUS_ACTIVE)
             ->setTokenExpiredAt(null);
-        
 
         $this->save($user);
 
