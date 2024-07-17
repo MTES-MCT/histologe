@@ -36,9 +36,11 @@ class DemandeLienSignalement
         return $this->email;
     }
 
-    public function setEmail(string $email): void
+    public function setEmail(string $email): self
     {
         $this->email = $email;
+
+        return $this;
     }
 
     public function getAdresseHelper(): string
@@ -46,9 +48,11 @@ class DemandeLienSignalement
         return $this->adresseHelper;
     }
 
-    public function setAdresseHelper(string $adresseHelper): void
+    public function setAdresseHelper(string $adresseHelper): self
     {
         $this->adresseHelper = $adresseHelper;
+
+        return $this;
     }
 
     public function getAdresse(): string
@@ -56,9 +60,11 @@ class DemandeLienSignalement
         return $this->adresse;
     }
 
-    public function setAdresse(string $adresse): void
+    public function setAdresse(string $adresse): self
     {
         $this->adresse = $adresse;
+
+        return $this;
     }
 
     public function getCodePostal(): string
@@ -66,9 +72,11 @@ class DemandeLienSignalement
         return $this->codePostal;
     }
 
-    public function setCodePostal(string $codePostal): void
+    public function setCodePostal(string $codePostal): self
     {
         $this->codePostal = $codePostal;
+
+        return $this;
     }
 
     public function getVille(): string
@@ -76,8 +84,10 @@ class DemandeLienSignalement
         return $this->ville;
     }
 
-    public function setVille(string $ville): void
+    public function setVille(string $ville): self
     {
         $this->ville = $ville;
+
+        return $this;
     }
 }

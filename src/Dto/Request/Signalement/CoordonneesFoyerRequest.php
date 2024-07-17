@@ -17,6 +17,7 @@ class CoordonneesFoyerRequest implements RequestInterface
                 new Assert\NotBlank(message: 'Merci de saisir un nom de structure.'),
             ],
         )]
+        #[Assert\Length(max: 200, maxMessage: 'Le nom de la structure ne doit pas dépasser {{ limit }} caractères.')]
         private readonly ?string $nomStructure = null,
         #[Assert\NotBlank(message: 'Merci de sélectionner une civilité.', groups: ['LOCATAIRE'])]
         #[Assert\Choice(choices: ['mme', 'mr'], message: 'La civilité est incorrecte.')]

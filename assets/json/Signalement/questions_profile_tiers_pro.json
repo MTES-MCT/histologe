@@ -374,6 +374,10 @@
           "slug": "type_logement_nature_autre_precision",
           "conditional": {
             "show": "formStore.data.type_logement_nature === 'autre'"
+          },
+          "description": "15 caractères maximum",
+          "validate": {
+            "maxLength": 15
           }
         },
         {

@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "2aac4010-9337-4c75-8e39-0b9814fd8f41",
+		"_postman_id": "fcebc7ae-48dd-450b-ab57-469f347b4403",
 		"name": "histologe",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
 		"_exporter_id": "1569180"
@@ -216,7 +216,8 @@
 											"",
 											""
 										],
-										"type": "text/javascript"
+										"type": "text/javascript",
+										"packages": {}
 									}
 								}
 							],
@@ -225,7 +226,7 @@
 								"header": [],
 								"body": {
 									"mode": "raw",
-									"raw": "{\n    \"uuidSignalementDraft\": \"\",\n    \"signalementReference\": \"\",\n    \"lienSuivi\": \"\",\n    \"currentStep\": \"coordonnees_bailleur\",\n    \"adresse_logement_adresse_suggestion\": \"17 quai de la joliette\",\n    \"adresse_logement_adresse\": \"17 Boulevard saade - quai joliette 13002 Marseille\",\n    \"adresse_logement_adresse_detail_numero\": \"17 Boulevard saade - quai joliette\",\n    \"adresse_logement_adresse_detail_code_postal\": \"13002\",\n    \"adresse_logement_adresse_detail_commune\": \"Marseille\",\n    \"adresse_logement_adresse_detail_insee\": \"13202\",\n    \"adresse_logement_adresse_detail_geoloc_lng\": 5.364626,\n    \"adresse_logement_adresse_detail_geoloc_lat\": 43.301787,\n    \"adresse_logement_complement_adresse_etage\": \"5\",\n    \"adresse_logement_complement_adresse_escalier\": \"110\",\n    \"adresse_logement_complement_adresse_numero_appartement\": \"152\",\n    \"adresse_logement_complement_adresse_autre\": \"10\",\n    \"signalement_concerne_profil\": \"logement_occupez\",\n    \"signalement_concerne_profil_detail_occupant\": \"locataire\",\n    \"signalement_concerne_logement_social_autre_tiers\": \"oui\",\n    \"profil\": \"locataire\",\n    \"vos_coordonnees_occupant_tel_countrycode\": \"FR:33\",\n    \"vos_coordonnees_occupant_tel_secondaire_countrycode\": \"FR:33\",\n    \"vos_coordonnees_occupant_civilite\": \"mr\",\n    \"vos_coordonnees_occupant_nom\": \"Doe\",\n    \"vos_coordonnees_occupant_prenom\": \"John\",\n    \"vos_coordonnees_occupant_email\": \"john.doe@gmail.com\",\n    \"vos_coordonnees_occupant_tel\": \"0611457845\",\n    \"coordonnees_bailleur_tel_countrycode\": \"FR:33\",\n    \"coordonnees_bailleur_tel_secondaire_countrycode\": \"FR:33\",\n    \"coordonnees_bailleur_nom\": \"Minet\",\n    \"coordonnees_bailleur_prenom\": \"Bernard\",\n    \"coordonnees_bailleur_email\": \"bernard.minet@gmail.com\",\n    \"coordonnees_bailleur_tel\": \"0611571631\",\n    \"coordonnees_bailleur_adresse_suggestion\": \"118 rue de la république\",\n    \"coordonnees_bailleur_adresse\": \"118 Rue de la République 93700 Drancy\",\n    \"coordonnees_bailleur_adresse_detail_numero\": \"118 Rue de la République\",\n    \"coordonnees_bailleur_adresse_detail_code_postal\": \"93700\",\n    \"coordonnees_bailleur_adresse_detail_commune\": \"Drancy\",\n    \"coordonnees_bailleur_adresse_detail_insee\": \"93029\",\n    \"coordonnees_bailleur_adresse_detail_geoloc_lng\": 2.436248,\n    \"coordonnees_bailleur_adresse_detail_geoloc_lat\": 48.92517\n}",
+									"raw": "{\n    \"uuidSignalementDraft\": \"\",\n    \"signalementReference\": \"\",\n    \"lienSuivi\": \"\",\n    \"currentStep\": \"coordonnees_bailleur\",\n    \"adresse_logement_adresse_suggestion\": \"25 quai de la joliette\",\n    \"adresse_logement_adresse\": \"25 Boulevard saade - quai joliette 13002 Marseille\",\n    \"adresse_logement_adresse_detail_numero\": \"25 Boulevard saade - quai joliette\",\n    \"adresse_logement_adresse_detail_code_postal\": \"13002\",\n    \"adresse_logement_adresse_detail_commune\": \"Marseille\",\n    \"adresse_logement_adresse_detail_insee\": \"13202\",\n    \"adresse_logement_adresse_detail_geoloc_lng\": 5.364626,\n    \"adresse_logement_adresse_detail_geoloc_lat\": 43.301787,\n    \"adresse_logement_complement_adresse_etage\": \"5\",\n    \"adresse_logement_complement_adresse_escalier\": \"110\",\n    \"adresse_logement_complement_adresse_numero_appartement\": \"152\",\n    \"adresse_logement_complement_adresse_autre\": \"10\",\n    \"signalement_concerne_profil\": \"logement_occupez\",\n    \"signalement_concerne_profil_detail_occupant\": \"locataire\",\n    \"signalement_concerne_logement_social_autre_tiers\": \"oui\",\n    \"profil\": \"locataire\",\n    \"vos_coordonnees_occupant_tel_countrycode\": \"FR:33\",\n    \"vos_coordonnees_occupant_tel_secondaire_countrycode\": \"FR:33\",\n    \"vos_coordonnees_occupant_civilite\": \"mr\",\n    \"vos_coordonnees_occupant_nom\": \"Doe\",\n    \"vos_coordonnees_occupant_prenom\": \"John\",\n    \"vos_coordonnees_occupant_email\": \"john.doe@gmail.com\",\n    \"vos_coordonnees_occupant_tel\": \"0611457845\",\n    \"coordonnees_bailleur_tel_countrycode\": \"FR:33\",\n    \"coordonnees_bailleur_tel_secondaire_countrycode\": \"FR:33\",\n    \"coordonnees_bailleur_nom\": \"Minet\",\n    \"coordonnees_bailleur_prenom\": \"Bernard\",\n    \"coordonnees_bailleur_email\": \"bernard.minet@gmail.com\",\n    \"coordonnees_bailleur_tel\": \"0611571631\",\n    \"coordonnees_bailleur_adresse_suggestion\": \"118 rue de la république\",\n    \"coordonnees_bailleur_adresse\": \"118 Rue de la République 93700 Drancy\",\n    \"coordonnees_bailleur_adresse_detail_numero\": \"118 Rue de la République\",\n    \"coordonnees_bailleur_adresse_detail_code_postal\": \"93700\",\n    \"coordonnees_bailleur_adresse_detail_commune\": \"Drancy\",\n    \"coordonnees_bailleur_adresse_detail_insee\": \"93029\",\n    \"coordonnees_bailleur_adresse_detail_geoloc_lng\": 2.436248,\n    \"coordonnees_bailleur_adresse_detail_geoloc_lat\": 48.92517\n}",
 									"options": {
 										"raw": {
 											"language": "json"
@@ -494,7 +495,7 @@
 								"header": [],
 								"body": {
 									"mode": "raw",
-									"raw": "{\n    \"uuidSignalementDraft\": \"{{signalement_draft_uuid_locataire}}\",\n    \"signalementReference\": \"\",\n    \"lienSuivi\": \"\",\n    \"profil\": \"locataire\",\n    \"currentStep\": \"validation_signalement\",\n    \"adresse_logement_adresse\": \"17 Boulevard saade - quai joliette 13002 Marseille\",\n    \"coordonnees_bailleur_nom\": \"Minet\",\n    \"coordonnees_bailleur_tel\": \"0611571631\",\n    \"coordonnees_bailleur_email\": \"bernard.minet@gmail.com\",\n    \"coordonnees_bailleur_prenom\": \"Bernard\",\n    \"signalement_concerne_profil\": \"logement_occupez\",\n    \"coordonnees_bailleur_adresse\": \"118 Rue de la République 93700 Drancy\",\n    \"vos_coordonnees_occupant_nom\": \"Doe\",\n    \"vos_coordonnees_occupant_tel\": \"0611457845\",\n    \"vos_coordonnees_occupant_email\": \"john.doe@gmail.com\",\n    \"vos_coordonnees_occupant_prenom\": \"John\",\n    \"vos_coordonnees_occupant_civilite\": \"mr\",\n    \"adresse_logement_adresse_suggestion\": \"17 quai de la joliette\",\n    \"coordonnees_bailleur_tel_countrycode\": \"FR:33\",\n    \"adresse_logement_adresse_detail_insee\": \"13202\",\n    \"adresse_logement_adresse_detail_numero\": \"17 Boulevard saade - quai joliette\",\n    \"adresse_logement_adresse_detail_commune\": \"Marseille\",\n    \"coordonnees_bailleur_adresse_suggestion\": \"118 rue de la république\",\n    \"vos_coordonnees_occupant_tel_countrycode\": \"FR:33\",\n    \"adresse_logement_complement_adresse_autre\": \"10\",\n    \"adresse_logement_complement_adresse_etage\": \"5\",\n    \"coordonnees_bailleur_adresse_detail_insee\": \"93029\",\n    \"adresse_logement_adresse_detail_geoloc_lat\": 43.301787,\n    \"adresse_logement_adresse_detail_geoloc_lng\": 5.364626,\n    \"coordonnees_bailleur_adresse_detail_numero\": \"118 Rue de la République\",\n    \"adresse_logement_adresse_detail_code_postal\": \"13002\",\n    \"coordonnees_bailleur_adresse_detail_commune\": \"Drancy\",\n    \"signalement_concerne_profil_detail_occupant\": \"locataire\",\n    \"adresse_logement_complement_adresse_escalier\": \"110\",\n    \"coordonnees_bailleur_adresse_detail_geoloc_lat\": 48.92517,\n    \"coordonnees_bailleur_adresse_detail_geoloc_lng\": 2.436248,\n    \"coordonnees_bailleur_adresse_detail_code_postal\": \"93700\",\n    \"coordonnees_bailleur_tel_secondaire_countrycode\": \"FR:33\",\n    \"signalement_concerne_logement_social_autre_tiers\": \"oui\",\n    \"vos_coordonnees_occupant_tel_secondaire_countrycode\": \"FR:33\",\n    \"adresse_logement_complement_adresse_numero_appartement\": \"152\",\n    \"zone_concernee_zone\": \"logement\",\n    \"type_logement_nature\": \"appartement\",\n    \"type_logement_rdc\": \"non\",\n    \"type_logement_dernier_etage\": \"non\",\n    \"type_logement_sous_sol_sans_fenetre\": \"non\",\n    \"composition_logement_nb_pieces\": \"2\",\n    \"composition_logement_superficie\": \"31\",\n    \"composition_logement_piece_unique\": \"plusieurs_pieces\",\n    \"composition_logement_hauteur\": \"oui\",\n    \"type_logement_commodites_piece_a_vivre_9m\": \"oui\",\n    \"type_logement_commodites_cuisine\": \"oui\",\n    \"type_logement_commodites_salle_de_bain\": \"oui\",\n    \"type_logement_commodites_wc\": \"oui\",\n    \"type_logement_commodites_wc_cuisine\": \"non\",\n    \"composition_logement_nombre_personnes\": \"5\",\n    \"composition_logement_enfants\": \"oui\",\n    \"bail_dpe_date_emmenagement\": \"2020-10-10\",\n    \"bail_dpe_bail\": \"oui\",\n    \"bail_dpe_etat_des_lieux\": \"oui\",\n    \"bail_dpe_dpe\": \"oui\",\n    \"logement_social_montant_allocation\": null,\n    \"logement_social_demande_relogement\": \"oui\",\n    \"logement_social_allocation\": \"non\",\n    \"travailleur_social_quitte_logement\": \"oui\",\n    \"travailleur_social_accompagnement\": \"non\",\n    \"categorieDisorders\": {\n        \"batiment\": [],\n        \"logement\": [\n            \"desordres_logement_chauffage\"\n        ]\n    },\n    \"desordres_logement_chauffage_details_dpe_conso_finale\": null,\n    \"desordres_logement_chauffage_details_dpe_conso\": \"152\",\n    \"desordres_logement_chauffage_type\": \"electrique\",\n    \"desordres_logement_chauffage_details_fenetres_permeables\": 1,\n    \"desordres_logement_chauffage_details_fenetres_permeables_pieces_piece_a_vivre\": 1,\n    \"desordres_logement_chauffage_details_fenetres_permeables_pieces\": 1,\n    \"desordres_logement_chauffage_details_fenetres_permeables_pieces_cuisine\": 1,\n    \"desordres_logement_chauffage_details_fenetres_permeables_pieces_salle_de_bain\": 1,\n    \"desordres_logement_chauffage_details_difficultes_chauffage\": 1,\n    \"desordres_logement_chauffage_details_difficultes_chauffage_pieces_piece_a_vivre\": 1,\n    \"desordres_logement_chauffage_details_difficultes_chauffage_pieces\": 1,\n    \"desordres_logement_chauffage_details_difficultes_chauffage_pieces_cuisine\": 1,\n    \"desordres_logement_chauffage_details_difficultes_chauffage_pieces_salle_de_bain\": 1,\n    \"desordres_logement_chauffage_details_chauffage_KO\": 1,\n    \"desordres_logement_chauffage_details_chauffage_KO_pieces_piece_a_vivre\": 1,\n    \"desordres_logement_chauffage_details_chauffage_KO_pieces\": 1,\n    \"desordres_logement_chauffage_details_chauffage_KO_pieces_cuisine\": 1,\n    \"desordres_logement_chauffage_details_chauffage_KO_pieces_salle_de_bain\": 1,\n    \"desordres_logement_chauffage_details_dpe_annee\": \"before2023\",\n    \"desordres_logement_chauffage_details_dpe_conso_vide\": null,\n    \"info_procedure_bailleur_prevenu\": \"non\",\n    \"info_procedure_assurance_contactee\": \"non\",\n    \"info_procedure_depart_apres_travaux\": \"non\",\n    \"utilisation_service_ok_prevenir_bailleur\": 1,\n    \"utilisation_service_ok_visite\": 1,\n    \"utilisation_service_ok_demande_logement\": 1,\n    \"utilisation_service_ok_cgu\": 1,\n    \"informations_complementaires_logement_montant_loyer\": \"800\",\n    \"informations_complementaires_logement_nombre_etages\": \"4\",\n    \"informations_complementaires_situation_occupants_beneficiaire_rsa\": \"non\",\n    \"informations_complementaires_situation_occupants_beneficiaire_fsl\": \"non\",\n    \"informations_complementaires_situation_occupants_date_naissance\": \"1985-10-10\",\n    \"informations_complementaires_logement_annee_construction\": \"1990\"\n}",
+									"raw": "{\n    \"uuidSignalementDraft\": \"{{signalement_draft_uuid_locataire}}\",\n    \"signalementReference\": \"\",\n    \"lienSuivi\": \"\",\n    \"profil\": \"locataire\",\n    \"currentStep\": \"validation_signalement\",\n    \"adresse_logement_adresse\": \"17 Boulevard saade - quai joliette 13002 Marseille\",\n    \"coordonnees_bailleur_nom\": \"Minet\",\n    \"coordonnees_bailleur_tel\": \"0611571631\",\n    \"coordonnees_bailleur_email\": \"bernard.minet@gmail.com\",\n    \"coordonnees_bailleur_prenom\": \"Bernard\",\n    \"signalement_concerne_profil\": \"logement_occupez\",\n    \"coordonnees_bailleur_adresse\": \"118 Rue de la République 93700 Drancy\",\n    \"vos_coordonnees_occupant_nom\": \"Doe\",\n    \"vos_coordonnees_occupant_tel\": \"0611457845\",\n    \"vos_coordonnees_occupant_email\": \"john.doe@gmail.com\",\n    \"vos_coordonnees_occupant_prenom\": \"John\",\n    \"vos_coordonnees_occupant_civilite\": \"mr\",\n    \"adresse_logement_adresse_suggestion\": \"17 quai de la joliette\",\n    \"coordonnees_bailleur_tel_countrycode\": \"FR:33\",\n    \"adresse_logement_adresse_detail_insee\": \"13202\",\n    \"adresse_logement_adresse_detail_numero\": \"17 Boulevard saade - quai joliette\",\n    \"adresse_logement_adresse_detail_commune\": \"Marseille\",\n    \"coordonnees_bailleur_adresse_suggestion\": \"118 rue de la république\",\n    \"vos_coordonnees_occupant_tel_countrycode\": \"FR:33\",\n    \"adresse_logement_complement_adresse_autre\": \"10\",\n    \"adresse_logement_complement_adresse_etage\": \"5\",\n    \"coordonnees_bailleur_adresse_detail_insee\": \"93029\",\n    \"adresse_logement_adresse_detail_geoloc_lat\": 43.301787,\n    \"adresse_logement_adresse_detail_geoloc_lng\": 5.364626,\n    \"coordonnees_bailleur_adresse_detail_numero\": \"118 Rue de la République\",\n    \"adresse_logement_adresse_detail_code_postal\": \"13002\",\n    \"coordonnees_bailleur_adresse_detail_commune\": \"Drancy\",\n    \"signalement_concerne_profil_detail_occupant\": \"locataire\",\n    \"adresse_logement_complement_adresse_escalier\": \"110\",\n    \"coordonnees_bailleur_adresse_detail_geoloc_lat\": 48.92517,\n    \"coordonnees_bailleur_adresse_detail_geoloc_lng\": 2.436248,\n    \"coordonnees_bailleur_adresse_detail_code_postal\": \"93700\",\n    \"coordonnees_bailleur_tel_secondaire_countrycode\": \"FR:33\",\n    \"signalement_concerne_logement_social_autre_tiers\": \"oui\",\n    \"vos_coordonnees_occupant_tel_secondaire_countrycode\": \"FR:33\",\n    \"adresse_logement_complement_adresse_numero_appartement\": \"152\",\n    \"zone_concernee_zone\": \"logement\",\n    \"type_logement_nature\": \"appartement\",\n    \"type_logement_rdc\": \"non\",\n    \"type_logement_dernier_etage\": \"non\",\n    \"type_logement_sous_sol_sans_fenetre\": \"non\",\n    \"composition_logement_nb_pieces\": \"2\",\n    \"composition_logement_superficie\": \"31\",\n    \"composition_logement_piece_unique\": \"plusieurs_pieces\",\n    \"composition_logement_hauteur\": \"oui\",\n    \"type_logement_commodites_piece_a_vivre_9m\": \"oui\",\n    \"type_logement_commodites_cuisine\": \"oui\",\n    \"type_logement_commodites_salle_de_bain\": \"oui\",\n    \"type_logement_commodites_wc\": \"oui\",\n    \"type_logement_commodites_wc_cuisine\": \"non\",\n    \"composition_logement_nombre_personnes\": \"5\",\n    \"composition_logement_enfants\": \"oui\",\n    \"bail_dpe_date_emmenagement\": \"2020-10-10\",\n    \"bail_dpe_bail\": \"oui\",\n    \"bail_dpe_etat_des_lieux\": \"oui\",\n    \"bail_dpe_dpe\": \"oui\",\n    \"logement_social_montant_allocation\": null,\n    \"logement_social_demande_relogement\": \"oui\",\n    \"logement_social_allocation\": \"non\",\n    \"travailleur_social_quitte_logement\": \"oui\",\n    \"travailleur_social_accompagnement\": \"non\",\n    \"categorieDisorders\": {\n        \"batiment\": [],\n        \"logement\": [\n            \"desordres_logement_chauffage\"\n        ]\n    },\n    \"desordres_logement_chauffage_details_dpe_conso_finale\": null,\n    \"desordres_logement_chauffage_details_dpe_conso\": \"152\",\n    \"desordres_logement_chauffage_type\": \"electrique\",\n    \"desordres_logement_chauffage_details_fenetres_permeables\": 1,\n    \"desordres_logement_chauffage_details_fenetres_permeables_pieces_piece_a_vivre\": 1,\n    \"desordres_logement_chauffage_details_fenetres_permeables_pieces\": 1,\n    \"desordres_logement_chauffage_details_fenetres_permeables_pieces_cuisine\": 1,\n    \"desordres_logement_chauffage_details_fenetres_permeables_pieces_salle_de_bain\": 1,\n    \"desordres_logement_chauffage_details_difficultes_chauffage\": 1,\n    \"desordres_logement_chauffage_details_difficultes_chauffage_pieces_piece_a_vivre\": 1,\n    \"desordres_logement_chauffage_details_difficultes_chauffage_pieces\": 1,\n    \"desordres_logement_chauffage_details_difficultes_chauffage_pieces_cuisine\": 1,\n    \"desordres_logement_chauffage_details_difficultes_chauffage_pieces_salle_de_bain\": 1,\n    \"desordres_logement_chauffage_details_chauffage_KO\": 1,\n    \"desordres_logement_chauffage_details_chauffage_KO_pieces_piece_a_vivre\": 1,\n    \"desordres_logement_chauffage_details_chauffage_KO_pieces\": 1,\n    \"desordres_logement_chauffage_details_chauffage_KO_pieces_cuisine\": 1,\n    \"desordres_logement_chauffage_details_chauffage_KO_pieces_salle_de_bain\": 1,\n    \"desordres_logement_chauffage_details_dpe_annee\": \"before2023\",\n    \"desordres_logement_chauffage_details_dpe_conso_vide\": null,\n    \"info_procedure_bailleur_prevenu\": \"non\",\n    \"info_procedure_assurance_contactee\": \"non\",\n    \"info_procedure_depart_apres_travaux\": \"non\",\n    \"utilisation_service_ok_prevenir_bailleur\": 1,\n    \"utilisation_service_ok_visite\": 1,\n    \"utilisation_service_ok_demande_logement\": 1,\n    \"utilisation_service_ok_cgu\": 1,\n    \"informations_complementaires_logement_montant_loyer\": \"800\",\n    \"informations_complementaires_logement_nombre_etages\": \"4\",\n    \"informations_complementaires_situation_occupants_beneficiaire_rsa\": \"non\",\n    \"informations_complementaires_situation_occupants_beneficiaire_fsl\": \"non\",\n    \"informations_complementaires_situation_occupants_date_naissance\": \"1985-10-10\",\n    \"informations_complementaires_logement_annee_construction\": \"1990\",\n    \"travailleur_social_preavis_depart\": \"non\"\n}",
 									"options": {
 										"raw": {
 											"language": "json"
@@ -689,6 +690,35 @@
 						}
 					},
 					"response": []
+				},
+				{
+					"name": "signalement-draft/check",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"uuidSignalementDraft\": \"\",\n    \"signalementReference\": \"\",\n    \"lienSuivi\": \"\",\n    \"currentStep\": \"vos_coordonnees_occupant\",\n    \"adresse_logement_adresse_suggestion\": \"17 Boulevard saade - quai joliette 13002 Marseille 2e Arrondissement\",\n    \"adresse_logement_adresse_detail_need_refresh_insee\": true,\n    \"adresse_logement_adresse\": \"17 Boulevard saade - quai joliette 13002 Marseille 2e Arrondissement\",\n    \"adresse_logement_adresse_detail_numero\": \"17 Boulevard saade - quai joliette\",\n    \"adresse_logement_adresse_detail_code_postal\": \"13002\",\n    \"adresse_logement_adresse_detail_commune\": \"Marseille 2e Arrondissement\",\n    \"adresse_logement_adresse_detail_insee\": \"13202\",\n    \"adresse_logement_adresse_detail_geoloc_lng\": 5.367338,\n    \"adresse_logement_adresse_detail_geoloc_lat\": 43.315273,\n    \"adresse_logement_adresse_detail_manual\": 0,\n    \"adresse_logement_complement_adresse_etage\": \"5\",\n    \"adresse_logement_complement_adresse_numero_appartement\": \"115\",\n    \"signalement_concerne_profil\": \"logement_occupez\",\n    \"signalement_concerne_profil_detail_occupant\": \"locataire\",\n    \"signalement_concerne_logement_social_autre_tiers\": \"oui\",\n    \"profil\": \"locataire\",\n    \"vos_coordonnees_occupant_tel_countrycode\": \"FR:33\",\n    \"vos_coordonnees_occupant_tel_secondaire_countrycode\": \"FR:33\",\n    \"vos_coordonnees_occupant_civilite\": \"mme\",\n    \"vos_coordonnees_occupant_nom\": \"John\",\n    \"vos_coordonnees_occupant_prenom\": \"Doe\",\n    \"vos_coordonnees_occupant_email\": \"john.doe@gmail.com\",\n    \"vos_coordonnees_occupant_tel\": \"0611571631\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/signalement-draft/check",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"signalement-draft",
+								"check"
+							]
+						}
+					},
+					"response": []
 				}
 			]
 		},
@@ -723,423 +753,6 @@
 								"{{zapier_user_id}}",
 								"{{zapier_zap_id}}",
 								""
-							]
-						}
-					},
-					"response": []
-				}
-			]
-		},
-		{
-			"name": "ancien-formulaire",
-			"item": [
-				{
-					"name": "signalement/csrf-token",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"exec": [
-									"var data = JSON.parse(responseBody);",
-									"",
-									"if (null !== data.data) {",
-									"    postman.setEnvironmentVariable(\"csrf_token\", data.csrf_token.value);",
-									"}",
-									"",
-									""
-								],
-								"type": "text/javascript"
-							}
-						}
-					],
-					"request": {
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "http://localhost:8080/signalement/csrf-token",
-							"protocol": "http",
-							"host": [
-								"localhost"
-							],
-							"port": "8080",
-							"path": [
-								"signalement",
-								"csrf-token"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "signalement/envoi",
-					"request": {
-						"method": "POST",
-						"header": [],
-						"body": {
-							"mode": "urlencoded",
-							"urlencoded": [
-								{
-									"key": "signalement[isNotOccupant]",
-									"value": "0",
-									"type": "text"
-								},
-								{
-									"key": "signalement[nomDeclarant]",
-									"value": " ",
-									"type": "text"
-								},
-								{
-									"key": "signalement[prenomDeclarant]",
-									"value": " ",
-									"type": "text"
-								},
-								{
-									"key": "signalement[telDeclarant]",
-									"value": " ",
-									"type": "text"
-								},
-								{
-									"key": "signalement[mailDeclarant]",
-									"value": " ",
-									"type": "text"
-								},
-								{
-									"key": "signalement[structureDeclarant]",
-									"value": " ",
-									"type": "text"
-								},
-								{
-									"key": "signalement[nomOccupant]",
-									"value": "Doe",
-									"type": "text"
-								},
-								{
-									"key": "signalement[prenomOccupant]",
-									"value": "John",
-									"type": "text"
-								},
-								{
-									"key": "signalement[telOccupant]",
-									"value": "0611000000",
-									"type": "text"
-								},
-								{
-									"key": "signalement[telOccupantBis]",
-									"value": " ",
-									"type": "text"
-								},
-								{
-									"key": "signalement[mailOccupant]",
-									"value": "john.doe@gmail.com",
-									"type": "text"
-								},
-								{
-									"key": "signalement[adresseOccupant]",
-									"value": "25 Rue desiree clary",
-									"type": "text"
-								},
-								{
-									"key": "signalement[cpOccupant]",
-									"value": "13002",
-									"type": "text"
-								},
-								{
-									"key": "signalement[villeOccupant]",
-									"value": "Marseille",
-									"type": "text"
-								},
-								{
-									"key": "signalement[geoloc][lat]",
-									"value": "43.302034",
-									"type": "text"
-								},
-								{
-									"key": "signalement[geoloc][lng]",
-									"value": "5.364699",
-									"type": "text"
-								},
-								{
-									"key": "signalement[inseeOccupant]",
-									"value": "13202",
-									"type": "text"
-								},
-								{
-									"key": "signalement[etageOccupant]",
-									"value": " ",
-									"type": "text"
-								},
-								{
-									"key": "signalement[escalierOccupant]",
-									"value": " ",
-									"type": "text"
-								},
-								{
-									"key": "signalement[numAppartOccupant]",
-									"value": " ",
-									"type": "text"
-								},
-								{
-									"key": "signalement[adresseAutreOccupant]",
-									"value": "",
-									"type": "text"
-								},
-								{
-									"key": "signalement[nomProprio]",
-									"value": "13 Habitat",
-									"type": "text"
-								},
-								{
-									"key": "signalement[adresseProprio]",
-									"value": "",
-									"type": "text"
-								},
-								{
-									"key": "signalement[telProprio]",
-									"value": "",
-									"type": "text"
-								},
-								{
-									"key": "signalement[mailProprio]",
-									"value": "",
-									"type": "text"
-								},
-								{
-									"key": "signalement[situation][8][critere][7][criticite]",
-									"value": "6",
-									"type": "text"
-								},
-								{
-									"key": "signalement[situation][8][critere][10][criticite]",
-									"value": "12",
-									"type": "text"
-								},
-								{
-									"key": "signalement[situation][8][critere][13][criticite]",
-									"value": "21",
-									"type": "text"
-								},
-								{
-									"key": "signalement[situation][8][critere][14][criticite]",
-									"value": "134",
-									"type": "text"
-								},
-								{
-									"key": "signalement[situation][8][critere][15][criticite]",
-									"value": "24",
-									"type": "text"
-								},
-								{
-									"key": "signalement[situation][8][critere][56][criticite]",
-									"value": "48",
-									"type": "text"
-								},
-								{
-									"key": "signalement[situation][8][critere][73][criticite]",
-									"value": "54",
-									"type": "text"
-								},
-								{
-									"key": "signalement[situation][9][critere][54][criticite]",
-									"value": "42",
-									"type": "text"
-								},
-								{
-									"key": "signalement[situation][9][critere][58][criticite]",
-									"value": "69",
-									"type": "text"
-								},
-								{
-									"key": "signalement[situation][9][critere][61][criticite]",
-									"value": "135",
-									"type": "text"
-								},
-								{
-									"key": "signalement[situation][9][critere][67][criticite]",
-									"value": "122",
-									"type": "text"
-								},
-								{
-									"key": "signalement[situation][10][critere][64][criticite]",
-									"value": "3",
-									"type": "text"
-								},
-								{
-									"key": "signalement[situation][10][critere][66][criticite]",
-									"value": "60",
-									"type": "text"
-								},
-								{
-									"key": "signalement[situation][10][critere][72][criticite]",
-									"value": "63",
-									"type": "text"
-								},
-								{
-									"key": "signalement[situation][10][critere][76][criticite]",
-									"value": "131",
-									"type": "text"
-								},
-								{
-									"key": "signalement[situation][11][critere][9][criticite]",
-									"value": "109",
-									"type": "text"
-								},
-								{
-									"key": "signalement[situation][11][critere][11][criticite]",
-									"value": "15",
-									"type": "text"
-								},
-								{
-									"key": "signalement[situation][11][critere][77][criticite]",
-									"value": "138",
-									"type": "text"
-								},
-								{
-									"key": "signalement[situation][11][critere][78][criticite]",
-									"value": "141",
-									"type": "text"
-								},
-								{
-									"key": "signalement[situation][12][critere][47][criticite]",
-									"value": "86",
-									"type": "text"
-								},
-								{
-									"key": "signalement[situation][12][critere][51][criticite]",
-									"value": "98",
-									"type": "text"
-								},
-								{
-									"key": "signalement[situation][13][critere][18][criticite]",
-									"value": "33",
-									"type": "text"
-								},
-								{
-									"key": "signalement[situation][13][critere][68][criticite]",
-									"value": "101",
-									"type": "text"
-								},
-								{
-									"key": "signalement[situation][13][critere][69][criticite]",
-									"value": "104",
-									"type": "text"
-								},
-								{
-									"key": "signalement[details]",
-									"value": "Logement indigne, insalubre, et présentant des risques pour la sécurité des personnes. En dépit de plusieurs démarches auprès du propriétaire, nulle réaction. Un huissier a été mandaté par mes soins et j'attends son constat. Multiplication depuis les alertes d'intimidations de toutes sortes.",
-									"type": "text"
-								},
-								{
-									"key": "signalement[consoSizeYear]",
-									"value": "",
-									"type": "text"
-								},
-								{
-									"key": "signalement[consoSize]",
-									"value": "",
-									"type": "text"
-								},
-								{
-									"key": "signalement[consoYear]",
-									"value": "",
-									"type": "text"
-								},
-								{
-									"key": "signalement[isProprioAverti]",
-									"value": "1",
-									"type": "text"
-								},
-								{
-									"key": "signalement[nbAdultes]",
-									"value": "2",
-									"type": "text"
-								},
-								{
-									"key": "signalement[nbEnfantsM6]",
-									"value": "0",
-									"type": "text"
-								},
-								{
-									"key": "signalement[nbEnfantsP6]",
-									"value": "1",
-									"type": "text"
-								},
-								{
-									"key": "signalement[natureLogement]",
-									"value": "maison",
-									"type": "text"
-								},
-								{
-									"key": "signalement[superficie]",
-									"value": "100",
-									"type": "text"
-								},
-								{
-									"key": "signalement[isAllocataire]",
-									"value": "0",
-									"type": "text"
-								},
-								{
-									"key": "signalement[numAllocataire]",
-									"value": " ",
-									"type": "text"
-								},
-								{
-									"key": "signalement[dateNaissanceOccupant][day]",
-									"value": "",
-									"type": "text"
-								},
-								{
-									"key": "signalement[dateNaissanceOccupant][month]",
-									"value": "",
-									"type": "text"
-								},
-								{
-									"key": "signalement[dateNaissanceOccupant][year]",
-									"value": "",
-									"type": "text"
-								},
-								{
-									"key": "signalement[isLogementSocial]",
-									"value": "0",
-									"type": "text"
-								},
-								{
-									"key": "signalement[isPreavisDepart]",
-									"value": "0",
-									"type": "text"
-								},
-								{
-									"key": "signalement[isRelogement]",
-									"value": "0",
-									"type": "text"
-								},
-								{
-									"key": "signalement[isCguAccepted]",
-									"value": "on",
-									"type": "text"
-								},
-								{
-									"key": "is-visite-accepted",
-									"value": "on",
-									"type": "text"
-								},
-								{
-									"key": "_token",
-									"value": "{{csrf_token}}",
-									"type": "text"
-								}
-							]
-						},
-						"url": {
-							"raw": "http://localhost:8080/signalement/envoi",
-							"protocol": "http",
-							"host": [
-								"localhost"
-							],
-							"port": "8080",
-							"path": [
-								"signalement",
-								"envoi"
 							]
 						}
 					},

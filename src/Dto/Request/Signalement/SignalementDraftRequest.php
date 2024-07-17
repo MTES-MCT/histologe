@@ -20,42 +20,110 @@ class SignalementDraftRequest
     public const PATTERN_NOMBRE = '/_nb_|_nombre_/';
     public const FILE_UPLOAD_KEY = 'files';
 
+    #[Assert\Choice(choices: [
+        'locataire',
+        'bailleur_occupant',
+        'bailleur',
+        'tiers_pro',
+        'tiers_particulier',
+        'service_secours', ],
+        message: 'Le profil est incorrect.'
+    )]
+    #[Assert\When(
+        expression: 'this.getCurrentStep() == "validation_signalement"',
+        constraints: [
+            new Assert\NotBlank(message: 'Le profil est obligatoire.'),
+        ],
+    )]
     private ?string $profil = null;
+
+    #[Assert\Length(max: 128, maxMessage: 'Le nom d\'étape de formulaire ne peut pas dépasser {{ limit }} caractères.')]
     private ?string $currentStep = null;
     #[Assert\NotBlank(message: 'Merci de saisir une adresse.')]
+    #[Assert\Length(max: 255, maxMessage: 'L\'adresse ne peut pas dépasser {{ limit }} caractères.')]
     private ?string $adresseLogementAdresse = null;
+
+    #[Assert\Length(max: 100, maxMessage: 'L\'adresse ne peut pas dépasser {{ limit }} caractères.')]
     private ?string $adresseLogementAdresseDetailNumero = null;
     #[Assert\NotBlank(message: 'Merci de saisir un code postal.')]
     #[Assert\Regex(pattern: '/^[0-9]{5}$/', message: 'Le code postal doit être composé de 5 chiffres.')]
     private ?string $adresseLogementAdresseDetailCodePostal = null;
     #[Assert\NotBlank(message: 'Merci de saisir une ville.')]
+    #[Assert\Length(max: 100, maxMessage: 'La ville ne peut pas dépasser {{ limit }} caractères.')]
     private ?string $adresseLogementAdresseDetailCommune = null;
     #[Assert\NotBlank(message: 'Merci de saisir un code INSEE.')]
+    #[Assert\Regex(pattern: '/^[0-9]{5}$/', message: 'Le code insee doit être composé de 5 chiffres.')]
     private ?string $adresseLogementAdresseDetailInsee = null;
+    #[Assert\Length(max: 50, maxMessage: 'La latitude ne peut pas dépasser {{ limit }} caractères.')]
+    #[Assert\Regex(
+        pattern: '/^[-+]?([1-8]?\d(\.\d+)?|90(\.0+)?)$/',
+        message: 'La latitude doit être un nombre décimal.'
+    )]
     private ?float $adresseLogementAdresseDetailGeolocLat = null;
+    #[Assert\Length(max: 50, maxMessage: 'La longitude ne peut pas dépasser {{ limit }} caractères.')]
+    #[Assert\Regex(
+        pattern: '/^[-+]?([1-8]?\d(\.\d+)?|90(\.0+)?)$/',
+        message: 'La longitude doit être un nombre décimal.'
+    )]
     private ?float $adresseLogementAdresseDetailGeolocLng = null;
     private ?bool $adresseLogementAdresseDetailManual = null;
-    #[Assert\Length(max: 3)]
+    #[Assert\Length(max: 3, maxMessage: 'L\'escalier ne doit pas dépasser {{ limit }} caractères')]
     private ?string $adresseLogementComplementAdresseEscalier = null;
-    #[Assert\Length(max: 5)]
+    #[Assert\Length(max: 5, maxMessage: 'L\'étage ne doit pas dépasser {{ limit }} caractères')]
     private ?string $adresseLogementComplementAdresseEtage = null;
     #[Assert\Length(max: 5, maxMessage: 'Le numéro d\'appartement ne doit pas dépasser {{ limit }} caractères.')]
     private ?string $adresseLogementComplementAdresseNumeroAppartement = null;
     #[Assert\Length(max: 255)]
     private ?string $adresseLogementComplementAdresseAutre = null;
     #[Assert\NotBlank(message: 'Le profil du déclarant n\'est pas défini.')]
+    #[Assert\Choice(
+        choices: ['logement_occupez', 'autre_logement'],
+        message: 'Le champs "signalementConcerneProfil" est incorrect'
+    )]
     private ?string $signalementConcerneProfil = null;
+    #[Assert\Choice(
+        choices: ['locataire', 'bailleur_occupant'],
+        message: 'Le champs "signalementConcerneProfilDetailOccupant" est incorrect.'
+    )]
     private ?string $signalementConcerneProfilDetailOccupant = null;
+
+    #[Assert\Choice(
+        choices: ['tiers_particulier', 'tiers_pro', 'bailleur', 'service_secours'],
+        message: 'Le champs "signalementConcerneProfilDetailTiers" est incorrect.'
+    )]
     private ?string $signalementConcerneProfilDetailTiers = null;
+
+    #[Assert\Choice(
+        choices: ['particulier', 'organisme_societe'],
+        message: 'Le champs "signalementConcerneProfilDetailBailleurProprietaire" est incorrect.'
+    )]
     private ?string $signalementConcerneProfilDetailBailleurProprietaire = null;
+
+    #[Assert\Choice(
+        choices: ['particulier', 'organisme_societe'],
+        message: 'Le champs "signalementConcerneProfilDetailBailleurBailleur" est incorrect.'
+    )]
     private ?string $signalementConcerneProfilDetailBailleurBailleur = null;
+    #[Assert\Choice(
+        choices: ['oui', 'non', 'ne-sais-pas'],
+        message: 'Le champs "signalementConcerneLogementSocialServiceSecours" est incorrect.'
+    )]
     private ?string $signalementConcerneLogementSocialServiceSecours = null;
+    #[Assert\Choice(
+        choices: ['oui', 'non'],
+        message: 'Le champs "signalementConcerneLogementSocialAutreTiers" est incorrect.'
+    )]
     private ?string $signalementConcerneLogementSocialAutreTiers = null;
     #[Assert\NotBlank(
         message: 'Merci de renseigner le nom de l\'organisme.',
         groups: ['POST_TIERS_PRO', 'POST_SERVICE_SECOURS']
     )]
+    #[Assert\Length(max: 200, maxMessage: 'Le nom de la structure ne doit pas dépasser {{ limit }} caractères.')]
     private ?string $vosCoordonneesTiersNomOrganisme = null;
+    #[Assert\Choice(
+        choices: ['proche', 'voisin', 'autre'],
+        message: 'Le champs "vosCoordonneesTiersLien" est incorrect.'
+    )]
     private ?string $vosCoordonneesTiersLien = null;
     #[Assert\NotBlank(
         message: 'Merci de renseigner votre nom.',
@@ -74,6 +142,7 @@ class SignalementDraftRequest
         groups: ['POST_TIERS_PARTICULIER', 'POST_TIERS_PRO', 'POST_BAILLEUR', 'POST_SERVICE_SECOURS']
     )]
     #[Assert\Email(mode: Email::VALIDATION_MODE_STRICT)]
+    #[Assert\Length(max: 255, maxMessage: 'Votre email en tant que tiers ne doit pas dépasser {{ limit }} caractères.')]
     private ?string $vosCoordonneesTiersEmail = null;
     #[Assert\NotBlank(
         message: 'Merci de renseigner votre numéro de téléphone.',
@@ -87,7 +156,12 @@ class SignalementDraftRequest
         message: 'Merci de renseigner votre civilité.',
         groups: ['POST_LOCATAIRE', 'POST_BAILLEUR_OCCUPANT']
     )]
+    #[Assert\Choice(
+        choices: ['mr', 'mme'],
+        message: 'Le champs "vosCoordonneesOccupantCivilite" est incorrect.'
+    )]
     private ?string $vosCoordonneesOccupantCivilite = null;
+    #[Assert\Length(max: 200, maxMessage: 'Le nom de la structure ne doit pas dépasser {{ limit }} caractères.')]
     private ?string $vosCoordonneesOccupantNomOrganisme = null;
     #[Assert\NotBlank(
         message: 'Merci de renseigner votre nom.',
@@ -106,6 +180,7 @@ class SignalementDraftRequest
         groups: ['POST_LOCATAIRE', 'POST_BAILLEUR_OCCUPANT']
     )]
     #[Assert\Email(mode: Email::VALIDATION_MODE_STRICT)]
+    #[Assert\Length(max: 255, maxMessage: 'Votre email ne doit pas dépasser {{ limit }} caractères.')]
     private ?string $vosCoordonneesOccupantEmail = null;
     #[Assert\NotBlank(
         message: 'Merci de renseigner votre numéro de téléphone.',
@@ -127,14 +202,16 @@ class SignalementDraftRequest
     )]
     #[Assert\Length(max: 50, maxMessage: 'Le prénom de l\'occupant ne doit pas dépasser {{ limit }} caractères.')]
     private ?string $coordonneesOccupantPrenom = null;
+    #[Assert\Email(mode: Email::VALIDATION_MODE_STRICT)]
+    #[Assert\Length(max: 255, maxMessage: 'L\'email de l\'occupant ne doit pas dépasser {{ limit }} caractères.')]
     private ?string $coordonneesOccupantEmail = null;
     #[AppAssert\TelephoneFormat]
     private ?string $coordonneesOccupantTel = null;
     #[AppAssert\TelephoneFormat]
     private ?string $coordonneesOccupantTelSecondaire = null;
-    #[Assert\Length(max: 255, maxMessage: 'Le nom du bailleur ne doit pas dépasser {{ limit }} caractères.')]
+    #[Assert\Length(max: 250, maxMessage: 'Le nom du bailleur ne doit pas dépasser {{ limit }} caractères.')]
     private ?string $coordonneesBailleurNom = null;
-    #[Assert\Length(max: 255, maxMessage: 'Le prénom du bailleur ne doit pas dépasser {{ limit }} caractères.')]
+    #[Assert\Length(max: 250, maxMessage: 'Le prénom du bailleur ne doit pas dépasser {{ limit }} caractères.')]
     private ?string $coordonneesBailleurPrenom = null;
     #[Assert\Email(mode: Email::VALIDATION_MODE_STRICT)]
     private ?string $coordonneesBailleurEmail = null;
@@ -142,18 +219,53 @@ class SignalementDraftRequest
     private ?string $coordonneesBailleurTel = null;
     #[AppAssert\TelephoneFormat]
     private ?string $coordonneesBailleurTelSecondaire = null;
+    #[Assert\Length(max: 255, maxMessage: 'L\'adresse du bailleur ne doit pas dépasser {{ limit }} caractères.')]
     private ?string $coordonneesBailleurAdresse = null;
+    #[Assert\Length(max: 255, maxMessage: 'L\'adresse du bailleur ne doit pas dépasser {{ limit }} caractères.')]
     private ?string $coordonneesBailleurAdresseDetailNumero = null;
     #[Assert\Regex(pattern: '/^[0-9]{5}$/', message: 'Le code postal du bailleur doit être composé de 5 chiffres.')]
     private ?string $coordonneesBailleurAdresseDetailCodePostal = null;
+    #[Assert\Length(max: 255, maxMessage: 'La ville du bailleur ne doit pas dépasser {{ limit }} caractères.')]
     private ?string $coordonneesBailleurAdresseDetailCommune = null;
+    #[Assert\Choice(
+        choices: ['batiment', 'logement', 'batiment_logement'],
+        message: 'Le champs "zoneConcerneeZone" est incorrect.'
+    )]
     private ?string $zoneConcerneeZone = null;
+    #[Assert\Choice(
+        choices: ['appartement', 'maison', 'autre'],
+        message: 'Le champs "typeLogementNature" est incorrect.'
+    )]
     private ?string $typeLogementNature = null;
+    #[Assert\Length(
+        max: 15,
+        maxMessage: 'Le champs typeLogementNatureAutrePrecision ne doit pas dépasser {{ limit }} caractères.')
+    ]
     private ?string $typeLogementNatureAutrePrecision = null;
+    #[Assert\Choice(
+        choices: ['oui', 'non'],
+        message: 'Le champs "typeLogementRdc" est incorrect.'
+    )]
     private ?string $typeLogementRdc = null;
+    #[Assert\Choice(
+        choices: ['oui', 'non'],
+        message: 'Le champs "typeLogementDernierEtage" est incorrect.'
+    )]
     private ?string $typeLogementDernierEtage = null;
+    #[Assert\Choice(
+        choices: ['oui', 'non'],
+        message: 'Le champs "typeLogementSousSolSansFenetre" est incorrect.'
+    )]
     private ?string $typeLogementSousSolSansFenetre = null;
+    #[Assert\Choice(
+        choices: ['oui', 'non'],
+        message: 'Le champs "typeLogementSousCombleSansFenetre" est incorrect.'
+    )]
     private ?string $typeLogementSousCombleSansFenetre = null;
+    #[Assert\Choice(
+        choices: ['piece_unique', 'plusieurs_pieces'],
+        message: 'Le champs "compositionLogementPieceUnique" est incorrect.'
+    )]
     private ?string $compositionLogementPieceUnique = null;
     #[Assert\NotBlank(
         message: 'Merci de définir la superficie.',
@@ -163,7 +275,17 @@ class SignalementDraftRequest
         ]
     )]
     #[Assert\Positive(message: 'Merci de saisir une information numérique dans le champs superficie.')]
+    #[Assert\Type(type: 'numeric', message: 'Le nombre de pièces à vivre doit être un nombre.')]
+    #[Assert\Length(
+        max: 10,
+        maxMessage: 'La superficie ne doit pas dépasser {{ limit }} caractères.',
+    )]
     private ?string $compositionLogementSuperficie = null;
+
+    #[Assert\Choice(
+        choices: ['oui', 'non', 'nsp'],
+        message: 'Le champs "compositionLogementHauteur" est incorrect.'
+    )]
     private ?string $compositionLogementHauteur = null;
     #[Assert\NotBlank(
         message: 'Merci de définir le nombre de pièces à vivre.',
@@ -177,55 +299,178 @@ class SignalementDraftRequest
         ]
     )]
     #[Assert\Positive(message: 'Merci de saisir une information numérique dans le champs nombre de pièces à vivre.')]
+    #[Assert\Type(type: 'numeric', message: 'Le nombre de pièces à vivre doit être un nombre.')]
+    #[Assert\Length(
+        max: 10,
+        maxMessage: 'Le nombre de pièces à vivre ne doit pas dépasser {{ limit }} caractères.',
+    )]
     private ?string $compositionLogementNbPieces = null;
+
+    #[Assert\Positive(message: 'Le nombre de personnes doit être un nombre positif.')]
+    #[Assert\Type(type: 'numeric', message: 'Le nombre de personnes doit être un nombre.')]
+    #[Assert\Length(
+        max: 10,
+        maxMessage: 'Le nombre de personnes ne doit pas dépasser {{ limit }} caractères.',
+    )]
     private ?string $compositionLogementNombrePersonnes = null;
+
+    #[Assert\Choice(
+        choices: ['oui', 'non'],
+        message: 'Le champs "compositionLogementEnfants" est incorrect.'
+    )]
     private ?string $compositionLogementEnfants = null;
+    #[Assert\Choice(
+        choices: ['oui', 'non', 'nsp'],
+        message: 'Le champs "typeLogementCommoditesPieceAVivre9m" est incorrect.'
+    )]
     private ?string $typeLogementCommoditesPieceAVivre9m = null;
+    #[Assert\Choice(
+        choices: ['oui', 'non'],
+        message: 'Le champs "typeLogementCommoditesCuisine" est incorrect.'
+    )]
     private ?string $typeLogementCommoditesCuisine = null;
+    #[Assert\Choice(
+        choices: ['oui', 'non'],
+        message: 'Le champs "typeLogementCommoditesCuisineCollective" est incorrect.'
+    )]
     private ?string $typeLogementCommoditesCuisineCollective = null;
+    #[Assert\Choice(
+        choices: ['oui', 'non'],
+        message: 'Le champs "typeLogementCommoditesSalleDeBain" est incorrect.'
+    )]
     private ?string $typeLogementCommoditesSalleDeBain = null;
+    #[Assert\Choice(
+        choices: ['oui', 'non'],
+        message: 'Le champs "typeLogementCommoditesSalleDeBainCollective" est incorrect.'
+    )]
     private ?string $typeLogementCommoditesSalleDeBainCollective = null;
+    #[Assert\Choice(
+        choices: ['oui', 'non'],
+        message: 'Le champs "typeLogementCommoditesWc" est incorrect.'
+    )]
     private ?string $typeLogementCommoditesWc = null;
+    #[Assert\Choice(
+        choices: ['oui', 'non'],
+        message: 'Le champs "typeLogementCommoditesWcCollective" est incorrect.'
+    )]
     private ?string $typeLogementCommoditesWcCollective = null;
+    #[Assert\Choice(
+        choices: ['oui', 'non'],
+        message: 'Le champs "typeLogementCommoditesWcCuisine" est incorrect.'
+    )]
     private ?string $typeLogementCommoditesWcCuisine = null;
     #[Assert\DateTime('Y-m-d')]
     private ?string $bailDpeDateEmmenagement = null;
+    #[Assert\Choice(choices: ['oui', 'non', 'nsp'], message: 'Le champ "bailDpeBail" est incorrect.')]
     private ?string $bailDpeBail = null;
     private ?array $bailDpeBailUpload = null;
+
+    #[Assert\Choice(choices: ['oui', 'non', 'nsp'], message: 'Le champ "bailDpeEtatDesLieux" est incorrect.')]
     private ?string $bailDpeEtatDesLieux = null;
+    #[Assert\Choice(choices: ['oui', 'non', 'nsp'], message: 'Le champ "bailDpeDpe" est incorrect.')]
     private ?string $bailDpeDpe = null;
     private ?array $bailDpeDpeUpload = null;
+    #[Assert\Choice(choices: ['oui', 'non'], message: 'Le champ "logementSocialDemandeRelogement" est incorrect.')]
     private ?string $logementSocialDemandeRelogement = null;
+    #[Assert\Choice(choices: ['oui', 'non', 'nsp'], message: 'Le champ "logementSocialAllocation" est incorrect.')]
     private ?string $logementSocialAllocation = null;
+    #[Assert\Choice(choices: ['caf', 'msa'], message: 'Le champ "logementSocialAllocationCaisse" est incorrect.')]
     private ?string $logementSocialAllocationCaisse = null;
     #[Assert\DateTime('Y-m-d')]
     private ?string $logementSocialDateNaissance = null;
+    #[Assert\Length(max: 20, maxMessage: 'Le montant de l\'allocation ne doit pas dépasser {{ limit }} caractères.')]
     private ?string $logementSocialMontantAllocation = null;
+    #[Assert\Length(max: 50, maxMessage: 'Le numéro d\'allocataire ne doit pas dépasser {{ limit }} caractères.')]
     private ?string $logementSocialNumeroAllocataire = null;
+    #[Assert\Choice(
+        choices: ['oui', 'non', 'nsp'],
+        message: 'Le champ "travailleurSocialQuitteLogement" est incorrect.',
+    )]
     private ?string $travailleurSocialQuitteLogement = null;
+
+    #[Assert\When(
+        expression: 'this.getTravailleurSocialQuitteLogement() == "oui"',
+        constraints: [
+            new Assert\NotBlank(message: 'Merci de préciser s\'il y a un préavis de départ.'),
+        ],
+    )]
+    #[Assert\Choice(
+        choices: ['oui', 'non', 'nsp'],
+        message: 'Le champ "travailleurSocialPreavisDepart" est incorrect.',
+    )]
     private ?string $travailleurSocialPreavisDepart = null;
+    #[Assert\Choice(
+        choices: ['oui', 'non', 'nsp'],
+        message: 'Le champ "travailleurSocialAccompagnement" est incorrect.',
+    )]
     private ?string $travailleurSocialAccompagnement = null;
+    #[Assert\Length(max: 50)]
     private ?string $travailleurSocialAccompagnementDeclarant = null;
+
+    #[Assert\Choice(
+        choices: ['oui', 'non', 'nsp'],
+        message: 'Le champ "infoProcedureBailleurPrevenu" est incorrect.',
+    )]
     private ?string $infoProcedureBailleurPrevenu = null;
+    #[Assert\Choice(
+        choices: ['oui', 'non', 'pas_assurance_logement', 'nsp'],
+        message: 'Le champ "infoProcedureAssuranceContactee" est incorrect.',
+    )]
     private ?string $infoProcedureAssuranceContactee = null;
+    #[Assert\Length(
+        max: 255,
+        maxMessage: 'La réponse de l\'assurance ne doit pas dépasser {{ limit }} caractères.',
+    )]
     private ?string $infoProcedureReponseAssurance = null;
+    #[Assert\Choice(
+        choices: ['oui', 'non', 'nsp'],
+        message: 'Le champ "infoProcedureDepartApresTravaux" est incorrect.',
+    )]
     private ?string $infoProcedureDepartApresTravaux = null;
     private ?bool $utilisationServiceOkPrevenirBailleur = null;
     private ?bool $utilisationServiceOkVisite = null;
     private ?bool $utilisationServiceOkDemandeLogement = null;
+    #[Assert\Choice(
+        choices: ['oui', 'non'],
+        message: 'Le champ "informationsComplementairesSituationOccupantsBeneficiaireRsa" est incorrect.',
+    )]
     private ?string $informationsComplementairesSituationOccupantsBeneficiaireRsa = null;
+    #[Assert\Choice(
+        choices: ['oui', 'non'],
+        message: 'Le champ "informationsComplementairesSituationOccupantsBeneficiaireFsl" est incorrect.',
+    )]
     private ?string $informationsComplementairesSituationOccupantsBeneficiaireFsl = null;
     #[Assert\DateTime('Y-m-d')]
     private ?string $informationsComplementairesSituationOccupantsDateNaissance = null;
+    #[Assert\Choice(
+        choices: ['oui', 'non'],
+        message: 'Le champ "informationsComplementairesSituationOccupantsDemandeRelogement" est incorrect.',
+    )]
     private ?string $informationsComplementairesSituationOccupantsDemandeRelogement = null;
+    #[Assert\DateTime('Y-m-d')]
     private ?string $informationsComplementairesSituationOccupantsDateEmmenagement = null;
+    #[Assert\Choice(
+        choices: ['oui', 'non'],
+        message: 'Le champ "informationsComplementairesSituationOccupantsLoyersPayes" est incorrect.',
+    )]
     private ?string $informationsComplementairesSituationOccupantsLoyersPayes = null;
+    #[Assert\Choice(
+        choices: ['oui', 'non'],
+        message: 'Le champ "informationsComplementairesSituationBailleurBeneficiaireRsa" est incorrect.',
+    )]
     private ?string $informationsComplementairesSituationBailleurBeneficiaireRsa = null;
+    #[Assert\Choice(
+        choices: ['oui', 'non'],
+        message: 'Le champ "informationsComplementairesSituationBailleurBeneficiaireFsl" est incorrect.',
+    )]
     private ?string $informationsComplementairesSituationBailleurBeneficiaireFsl = null;
+    #[Assert\Length(max: 50, maxMessage: 'Le revenu fiscal ne doit pas dépasser {{ limit }} caractères.')]
     private ?string $informationsComplementairesSituationBailleurRevenuFiscal = null;
     #[Assert\DateTime('Y-m-d')]
     private ?string $informationsComplementairesSituationBailleurDateNaissance = null;
+    #[Assert\Length(max: 20, maxMessage: 'Le montant de l\'allocation ne doit pas dépasser {{ limit }} caractères.')]
     private ?string $informationsComplementairesLogementMontantLoyer = null;
+    #[Assert\Length(max: 5, maxMessage: 'L\'étage ne peut pas dépasser {{ limit }} caractères.')]
     private ?string $informationsComplementairesLogementNombreEtages = null;
     #[Assert\DateTime('Y')]
     private ?string $informationsComplementairesLogementAnneeConstruction = null;

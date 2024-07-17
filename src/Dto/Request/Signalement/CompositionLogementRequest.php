@@ -21,12 +21,12 @@ class CompositionLogementRequest implements RequestInterface
             ],
         )]
         #[Assert\Length(
-            max: 100,
+            max: 15,
             maxMessage: 'Le type de logement autre ne doit pas dépasser {{ limit }} caractères.',
         )]
         private readonly ?string $typeLogementNatureAutrePrecision = null,
         #[Assert\NotBlank(
-            message: 'Merci de sélectioner pièce unique ou plusieurs pièces.',
+            message: 'Merci de sélectionner pièce unique ou plusieurs pièces.',
             groups: ['LOCATAIRE', 'BAILLEUR_OCCUPANT', 'BAILLEUR', 'TIERS_PARTICULIER', 'TIERS_PRO', 'SERVICE_SECOURS']
         )]
         #[Assert\Choice(

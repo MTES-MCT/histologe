@@ -4,12 +4,16 @@ namespace App\Tests\Unit\Dto\Request\Signalement;
 
 use App\Dto\Request\Signalement\SignalementSearchQuery;
 use App\Entity\Enum\SignalementStatus;
-use PHPUnit\Framework\TestCase;
+use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
+use Symfony\Component\Validator\Validator\ValidatorInterface;
 
-class SignalementSearchQueryTest extends TestCase
+class SignalementSearchQueryTest extends KernelTestCase
 {
     public function testGetFilters(): void
     {
+        /** @var ValidatorInterface $validator */
+        $validator = self::getContainer()->get('validator');
+
         $query = new SignalementSearchQuery(
             '13',
             'John',
@@ -38,7 +42,7 @@ class SignalementSearchQueryTest extends TestCase
             'NO_SUIVI_AFTER_3_RELANCES',
             'oui',
             30,
-            'createdAt',
+            'reference',
             'DESC',
         );
 
@@ -79,10 +83,12 @@ class SignalementSearchQueryTest extends TestCase
             'nouveau_suivi' => 'oui',
             'page' => 1,
             'maxItemsPerPage' => 25,
-            'sortBy' => 'createdAt',
+            'sortBy' => 'reference',
             'orderBy' => 'DESC',
         ];
 
         static::assertSame($expectedFilters, $query->getFilters());
+        $errors = $validator->validate($query);
+        $this->assertCount(0, $errors);
     }
 }
