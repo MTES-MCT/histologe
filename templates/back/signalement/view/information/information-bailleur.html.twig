@@ -1,0 +1,80 @@
+{% if canEditSignalement %}
+    {% include 'back/signalement/view/edit-modals/edit-coordonnees-bailleur.html.twig' %}
+{% endif %}
+<div class="fr-grid-row">
+    <div class="fr-col-12 fr-col-md-8">
+        <h4 class="fr-h6">Informations sur le bailleur</h4>
+    </div>
+    <div class="fr-col-12 fr-col-md-4 fr-text--right">
+        {% if canEditSignalement %}
+        <button href="#" data-fr-opened="false" aria-controls="fr-modal-edit-coordonnees-bailleur"
+            class="fr-btn fr-btn--secondary fr-btn--icon-left fr-icon-edit-line">Modifier</button>
+        {% endif %}
+    </div>
+    <div class="fr-col-12 fr-col-md-6">
+        <strong>Nom :</strong> {{ signalement.nomProprio}}
+    </div>
+    <div class="fr-col-12 fr-col-md-6">
+        <strong>Prénom :</strong> {{ signalement.prenomProprio}}
+    </div>
+    <div class="fr-col-12">
+        <strong>Courriel :</strong>
+        {% if signalement.mailProprio %}
+            <a href="mailto:{{ signalement.mailProprio }}">{{ signalement.mailProprio }}</a>
+            {% if show_email_alert(signalement.mailProprio) %}
+                <p class="fr-badge fr-badge--error">Format non valide</p>
+            {% endif %}
+        {% endif %}
+    </div>
+    <div class="fr-col-12 fr-col-md-6">
+        <strong>Tél. :</strong>
+        {% if signalement.telProprio %}
+            <a href="mailto:{{ signalement.telProprioDecoded }}">{{ signalement.telProprioDecoded }}</a>
+        {% endif %}
+    </div>
+    <div class="fr-col-12 fr-col-md-6">
+        <strong>Tél. sec. :</strong>
+        {% if signalement.telProprioSecondaire %}
+            <a href="mailto:{{ signalement.telProprioSecondaireDecoded }}">{{ signalement.telProprioSecondaireDecoded }}</a>
+        {% endif %}
+    </div>
+    <div class="fr-col-12">
+        <strong>Adresse :</strong> {{ signalement.adresseProprio ? signalement.adresseProprio ~ ', ' ~ signalement.codePostalProprio ~ ' ' ~ signalement.villeProprio}}
+    </div>
+    <div class="fr-col-12 fr-col-md-6">
+        <strong>Bénéficiaire RSA :</strong>
+        {% if signalement.informationComplementaire %}
+            {% if signalement.informationComplementaire.informationsComplementairesSituationBailleurBeneficiaireRsa is same as 'oui' %}
+                {{ static_picto_yes|raw }}
+            {% elseif signalement.informationComplementaire.informationsComplementairesSituationBailleurBeneficiaireRsa is same as 'non' %}
+                {{ static_picto_no|raw }}
+            {% else %}
+                {{signalement.informationComplementaire.informationsComplementairesSituationBailleurBeneficiaireRsa}}
+            {% endif %}
+        {% endif %}
+    </div>
+    <div class="fr-col-12 fr-col-md-6">
+        <strong>Bénéficiaire FSL :</strong>
+        {% if signalement.informationComplementaire %}
+            {% if signalement.informationComplementaire.informationsComplementairesSituationBailleurBeneficiaireFsl is same as 'oui' %}
+                {{ static_picto_yes|raw }}
+            {% elseif signalement.informationComplementaire.informationsComplementairesSituationBailleurBeneficiaireFsl is same as 'non' %}
+                {{ static_picto_no|raw }}
+            {% else %}
+                {{signalement.informationComplementaire.informationsComplementairesSituationBailleurBeneficiaireFsl}}
+            {% endif %}
+        {% endif %}
+    </div>
+    <div class="fr-col-12 fr-col-md-6">
+        <strong>Revenu fiscal de référence :</strong>
+        {% if signalement.informationComplementaire %}
+            {{ signalement.informationComplementaire.informationsComplementairesSituationBailleurRevenuFiscal }} €
+        {% endif %}
+    </div>
+    <div class="fr-col-12 fr-col-md-6">
+        <strong>Date de naissance :</strong>
+        {% if signalement.informationComplementaire %}
+            {{ signalement.informationComplementaire.informationsComplementairesSituationBailleurDateNaissance}}
+        {% endif %}
+    </div>
+</div>

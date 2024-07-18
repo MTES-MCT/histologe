@@ -1,0 +1,56 @@
+{% if canEditSignalement %}
+    {% include 'back/signalement/view/edit-modals/edit-coordonnees-tiers.html.twig' %}
+{% endif %}
+<div class="fr-grid-row">
+    <div class="fr-col-12 fr-col-md-8">
+        <h4 class="fr-h6">Coordonnées du tiers déclarant</h4>
+    </div>
+    <div class="fr-col-12 fr-col-md-4 fr-text--right">
+        {% if canEditSignalement %}
+        <button href="#" data-fr-opened="false" aria-controls="fr-modal-edit-coordonnees-tiers"
+            class="fr-btn fr-btn--secondary fr-btn--icon-left fr-icon-edit-line">Modifier</button>
+        {% endif %}
+    </div>
+    
+    {% if signalement.profileDeclarant and signalement.profileDeclarant is same as enum('App\\Entity\\Enum\\ProfileDeclarant').BAILLEUR  %}
+        <div class="fr-col-12">
+            <strong>Type de déclarant :</strong> {{ signalement.profileDeclarant.label }}
+        </div>
+        <div class="fr-col-12">
+            <strong>Type de bailleur :</strong> {{ signalement.typeProprio ? signalement.typeProprio.label}}
+        </div>
+        {% if signalement.typeProprio and signalement.typeProprio is same as enum('App\\Entity\\Enum\\ProprioType').ORGANISME_SOCIETE %}
+        <div class="fr-col-12">
+            <strong>Nom de la structure :</strong> {{ signalement.structureDeclarant }}
+        </div>
+        {% endif %}
+        
+    {% elseif signalement.lienDeclarantOccupant %}
+        <div class="fr-col-12 fr-col-md-6">
+            <strong>Lien :</strong>
+            {{ signalement.lienDeclarantOccupant|signalement_lien_declarant_occupant }}
+            {% if signalement.situationFoyer and signalement.situationFoyer.travailleurSocialAccompagnementDeclarant %}
+                (travailleur social accompagnant)
+            {% endif %}
+        </div>
+    {% endif %}
+
+    <div class="fr-col-12 fr-col-md-6">
+        <strong>Nom :</strong> {{ signalement.nomDeclarant }}
+    </div>
+    <div class="fr-col-12 fr-col-md-6">
+        <strong>Prénom :</strong> {{ signalement.prenomDeclarant }}
+    </div>
+    <div class="fr-col-12">
+        <strong>Courriel :</strong>
+        {% if signalement.mailDeclarant %}
+            <a href="mailto:{{ signalement.mailDeclarant }}">{{ signalement.mailDeclarant }}</a>
+            {% if show_email_alert(signalement.mailDeclarant) %}
+                <p class="fr-badge fr-badge--error">Format non valide</p>
+            {% endif %}
+        {% endif %}
+    </div>
+    <div class="fr-col-12">
+        <strong>Tél. :</strong> {{ signalement.telDeclarantDecoded }}
+    </div>
+</div>

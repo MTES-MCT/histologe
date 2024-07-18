@@ -12,16 +12,19 @@
     {% include 'back/signalement/view/user-declaration-situations.html.twig' %}
 {% endif %}
 
+<hr class="fr-mt-3w">
+
 {% include 'back/signalement/view/photos-documents.html.twig' with {
     'zonetitle': "Photos de la situation",
     'filesFilter': 'situation',
-    'filesType': 'photo'
+    'filesType': 'photo',
+    'displayAddButton': true
 } %}
 
 <hr class="fr-mt-3w">
 
-<div class="fr-col-12">
-    {% include 'back/signalement/view/information-composition.html.twig' %}
+<div class="fr-col-12" data-ajax-form>>
+    {% include 'back/signalement/view/information/information-composition.html.twig' %}
 </div>
 
 {% include 'back/signalement/view/nde.html.twig' %}

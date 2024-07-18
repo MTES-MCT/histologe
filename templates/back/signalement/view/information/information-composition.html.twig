@@ -2,12 +2,13 @@
     {% include 'back/signalement/view/edit-modals/edit-composition-logement.html.twig' %}
 {% endif %}
 <div class="fr-grid-row">
-    <div class="fr-col-12 fr-col-md-9">
+    <div class="fr-col-12 fr-col-md-8">
         <h4 class="fr-h6">Description du logement</h4>
     </div>
-    <div class="fr-col-12 fr-col-md-3 fr-text--right">
+    <div class="fr-col-12 fr-col-md-4 fr-text--right">
         {% if canEditSignalement %}
-        <a href="#" data-fr-opened="false" aria-controls="fr-modal-edit-composition-logement" class="fr-btn--icon-left fr-icon-edit-line">Modifier</a>
+        <button href="#" data-fr-opened="false" aria-controls="fr-modal-edit-composition-logement"
+            class="fr-btn fr-btn--secondary fr-btn--icon-left fr-icon-edit-line">Modifier</button>
         {% endif %}
     </div>
     <div class="fr-col-12 fr-col-md-6">

@@ -32,45 +32,7 @@
         {% include 'back/signalement/view/header.html.twig' %}
     </section>
 
-    <div class="fr-tabs fr-background--white">
-        <ul class="fr-tabs__list" role="tablist" aria-label="Informations du signalement">
-            <li role="presentation">
-                <button id="tabpanel-activite" class="fr-tabs__tab fr-icon-checkbox-line fr-tabs__tab--icon-left"
-                    tabindex="0" role="tab" aria-selected="true" aria-controls="tabpanel-activite-panel"
-                    {% if signalement.statut is same as constant('App\\Entity\\Signalement::STATUS_NEED_VALIDATION') %}disabled{% endif %}
-                    >Activité PDLHI</button>
-            </li>
-            <li role="presentation">
-                <button id="tabpanel-situation" class="fr-tabs__tab fr-icon-checkbox-line fr-tabs__tab--icon-left" tabindex="-1" role="tab" aria-selected="false" aria-controls="tabpanel-situation-panel">Situation</button>
-            </li>
-            <li role="presentation">
-                <button id="tabpanel-foyer" class="fr-tabs__tab fr-icon-checkbox-line fr-tabs__tab--icon-left" tabindex="-1" role="tab" aria-selected="false" aria-controls="tabpanel-foyer-panel">Foyer</button>
-            </li>
-            <li role="presentation">
-                <button id="tabpanel-photos" class="fr-tabs__tab fr-icon-checkbox-line fr-tabs__tab--icon-left" tabindex="-1" role="tab" aria-selected="false" aria-controls="tabpanel-photos-panel">Photos</button>
-            </li>
-            <li role="presentation">
-                <button id="tabpanel-documents" class="fr-tabs__tab fr-icon-checkbox-line fr-tabs__tab--icon-left" tabindex="-1" role="tab" aria-selected="false" aria-controls="tabpanel-documents-panel">Documents</button>
-            </li>
-        </ul>
-        {% if signalement.statut is not same as constant('App\\Entity\\Signalement::STATUS_NEED_VALIDATION') %}
-        <div id="tabpanel-activite-panel" class="fr-tabs__panel fr-tabs__panel--selected" role="tabpanel" aria-labelledby="tabpanel-activite" tabindex="0">
-            <p>Contenu 1</p>
-        </div>
-        {% endif %}
-        <div id="tabpanel-situation-panel" class="fr-tabs__panel" role="tabpanel" aria-labelledby="tabpanel-situation" tabindex="0">
-            {% include 'back/signalement/view/tabs/tab-situation.html.twig' %}
-        </div>
-        <div id="tabpanel-foyer-panel" class="fr-tabs__panel" role="tabpanel" aria-labelledby="tabpanel-foyer" tabindex="0">
-            <p>Contenu 3</p>
-        </div>
-        <div id="tabpanel-photos-panel" class="fr-tabs__panel" role="tabpanel" aria-labelledby="tabpanel-photos" tabindex="0">
-            <p>Contenu 3</p>
-        </div>
-        <div id="tabpanel-documents-panel" class="fr-tabs__panel" role="tabpanel" aria-labelledby="tabpanel-documents" tabindex="0">
-            <p>Contenu 3</p>
-        </div>
-    </div>
+    {% include 'back/signalement/view/tabs.html.twig' %}
 {% endblock %}
 
 {% block javascripts %}
