@@ -152,6 +152,7 @@ export default defineComponent({
       this.sharedState.user.partnerId = requestResponse.partnerId
       this.sharedState.hasSignalementImported = requestResponse.hasSignalementImported
       this.sharedState.input.order = 'reference-DESC'
+      this.sharedState.input.filters.isImported = 'oui'
 
       this.sharedState.territories = []
       for (const id in requestResponse.territories) {
