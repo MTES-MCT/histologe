@@ -172,7 +172,7 @@ class EsaboraManagerTest extends KernelTestCase
             'reference' => $referenceSignalement,
         ]);
 
-        $this->assertEquals(1, \count($signalement->getSuivis()));
+        $this->assertEquals(2, \count($signalement->getSuivis()));
         /** @var Affectation $affectation */
         $affectation = $signalement->getAffectations()->get(0);
         $this->assertNotEquals($expectedAffectationStatus, $affectation->getStatut());
@@ -199,7 +199,7 @@ class EsaboraManagerTest extends KernelTestCase
 
         /** @var Suivi $suivi */
         $suivi = $signalement->getSuivis()->last();
-        $this->assertEquals(2, \count($signalement->getSuivis()));
+        $this->assertEquals(3, \count($signalement->getSuivis()));
         $this->assertStringContainsString($suiviDescription, $suivi->getDescription());
         $this->assertFalse($suivi->getIsPublic());
         $this->assertEquals($suiviStatus, $suivi->getType());
@@ -213,6 +213,6 @@ class EsaboraManagerTest extends KernelTestCase
         $this->entityManager->refresh($signalement);
 
         // on vérifie qu'aucun suivi n'a été créé
-        $this->assertEquals(2, \count($signalement->getSuivis()));
+        $this->assertEquals(3, \count($signalement->getSuivis()));
     }
 }

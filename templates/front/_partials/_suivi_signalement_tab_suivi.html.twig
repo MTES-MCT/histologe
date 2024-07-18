@@ -31,9 +31,15 @@
 		<div role="alert" class="fr-alert fr-alert--error fr-alert--sm">
 			<p>Votre signalement a été refusé, vous ne pouvez plus envoyer de messages.</p>
 		</div>
-	{% elseif signalement.statut is same as constant('App\\Entity\\Signalement::STATUS_CLOSED') %}
+	{% elseif signalement.statut is same as constant('App\\Entity\\Signalement::STATUS_CLOSED') 
+		and signalement.hasSuiviUsagePostCloture %}
 		<div role="alert" class="fr-alert fr-alert--error fr-alert--sm">
-			<p>Votre signalement a été clôturé, vous ne pouvez plus envoyer de messages.</p>
+			<p>Votre message suite à la clôture de votre dossier a bien été envoyé. Vous ne pouvez désormais plus envoyer de messages.</p>
+		</div>
+	{% elseif signalement.statut is same as constant('App\\Entity\\Signalement::STATUS_CLOSED') 
+		and date(signalement.closedAt) < date('-30days') %}
+		<div role="alert" class="fr-alert fr-alert--error fr-alert--sm">
+			<p>Votre dossier a été clôturé il y a plus de 30 jours, vous ne pouvez plus envoyer de messages.</p>
 		</div>
 	{% else %}
 		<form action="{{ path('front_suivi_signalement_user_response',{code:signalement.codeSuivi}) }}" class="needs-validation fr-disable-button-when-submit" novalidate method="POST">

@@ -13,6 +13,7 @@ class Suivi
     public const TYPE_USAGER = 2;
     public const TYPE_PARTNER = 3;
     public const TYPE_TECHNICAL = 4;
+    public const TYPE_USAGER_POST_CLOTURE = 5;
 
     public const CONTEXT_INTERVENTION = 'intervention';
 

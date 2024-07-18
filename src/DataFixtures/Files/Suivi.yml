@@ -69,3 +69,9 @@ suivis:
   is_public: 1
   signalement: "2023-21"
   type: 1
+-
+  created_by: null
+  description: "Ajout d'un signalement postcloture par l'usager"
+  is_public: 1
+  signalement: "2022-2"
+  type: 5

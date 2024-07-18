@@ -61,14 +61,17 @@ class LoadSuiviData extends Fixture implements OrderedFixtureInterface
      */
     public function loadSuivi(ObjectManager $manager, array $row): void
     {
+        $signalement = $this->signalementRepository->findOneBy(['reference' => $row['signalement']]);
         $suivi = (new Suivi())
-            ->setSignalement($this->signalementRepository->findOneBy(['reference' => $row['signalement']]))
+            ->setSignalement($signalement)
             ->setDescription($row['description'])
             ->setIsPublic($row['is_public'])
             ->setCreatedAt(
                 isset($row['created_at'])
                     ? new \DateTimeImmutable($row['created_at'])
-                    : new \DateTimeImmutable()
+                    : (Suivi::TYPE_USAGER_POST_CLOTURE === $row['type']
+                        ? $signalement->getClosedAt()->modify('+3 days')
+                        : new \DateTimeImmutable())
             )
             ->setType($row['type']);
         if (isset($row['created_by'])) {

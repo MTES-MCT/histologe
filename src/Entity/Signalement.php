@@ -2427,4 +2427,16 @@ class Signalement
 
         return $this;
     }
+
+    public function hasSuiviUsagePostCloture(): bool
+    {
+        $suiviPostCloture = $this->getSuivis()->filter(function (Suivi $suivi) {
+            return Suivi::TYPE_USAGER_POST_CLOTURE === $suivi->getType();
+        });
+        if ($suiviPostCloture->isEmpty()) {
+            return false;
+        }
+
+        return true;
+    }
 }

@@ -82,7 +82,7 @@ class SignalementControllerTest extends WebTestCase
             $this->assertEquals('Signalement #2022-1 '.$signalement->getPrenomOccupant().' '.$signalement->getNomOccupant(), $crawler->filter('h1')->eq(2)->text());
         } elseif (Signalement::STATUS_CLOSED === $status) {
             $this->assertEquals(
-                'Votre signalement a été clôturé, vous ne pouvez plus envoyer de messages.',
+                'Votre message suite à la clôture de votre dossier a bien été envoyé. Vous ne pouvez désormais plus envoyer de messages.',
                 $crawler->filter('.fr-alert--error p')->text()
             );
         } elseif (Signalement::STATUS_REFUSED === $status) {
