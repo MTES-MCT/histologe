@@ -148,6 +148,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, TwoFact
     #[ORM\Column(type: 'string', nullable: true)]
     private ?string $authCode;
 
+    #[ORM\Column(type: 'string', nullable: true)]
+    private ?string $cguVersionChecked;
+
     public function __construct()
     {
         $this->suivis = new ArrayCollection();
@@ -600,5 +603,17 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, TwoFact
     public function setEmailAuthCode(string $authCode): void
     {
         $this->authCode = $authCode;
+    }
+
+    public function getCguVersionChecked(): ?string
+    {
+        return $this->cguVersionChecked;
+    }
+
+    public function setCguVersionChecked(string $cguVersionChecked): self
+    {
+        $this->cguVersionChecked = $cguVersionChecked;
+
+        return $this;
     }
 }

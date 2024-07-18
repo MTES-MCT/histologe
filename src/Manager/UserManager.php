@@ -92,6 +92,12 @@ class UserManager extends AbstractManager
 
     public function resetPassword(User $user, string $password): User
     {
+        // if the user is not active yet, he is activating his account, so he just saw the cgu
+        $currentCguVersion = $this->parameterBag->get('cgu_current_version');
+        if (User::STATUS_ACTIVE !== $user->getStatut()) {
+            $user->setCguVersionChecked($currentCguVersion);
+        }
+
         $password = $this->passwordHasherFactory->getPasswordHasher($user)->hash($password);
         $user
             ->setPassword($password)
