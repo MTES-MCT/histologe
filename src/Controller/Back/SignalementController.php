@@ -22,6 +22,7 @@ use App\Service\Signalement\PhotoHelper;
 use App\Service\Signalement\SignalementDesordresProcessor;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\DependencyInjection\ParameterBag\ContainerBagInterface;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -47,6 +48,7 @@ class SignalementController extends AbstractController
         InterventionRepository $interventionRepository,
         DesordrePrecisionRepository $desordrePrecisionsRepository,
         SignalementDesordresProcessor $signalementDesordresProcessor,
+        ContainerBagInterface $params,
     ): Response {
         /** @var User $user */
         $user = $this->getUser();
@@ -81,37 +83,37 @@ class SignalementController extends AbstractController
         $isClosedForMe = $isClosedForMe ?? Signalement::STATUS_CLOSED === $signalement->getStatut();
         $clotureForm = $this->createForm(ClotureType::class);
         $clotureForm->handleRequest($request);
-        $params = [];
+        $eventParams = [];
         if ($clotureForm->isSubmitted() && $clotureForm->isValid()) {
-            $params['motif_cloture'] = $clotureForm->get('motif')->getData();
-            $params['motif_suivi'] = $clotureForm->getExtraData()['suivi'];
-            if (mb_strlen($params['motif_suivi']) < 10) {
+            $eventParams['motif_cloture'] = $clotureForm->get('motif')->getData();
+            $eventParams['motif_suivi'] = $clotureForm->getExtraData()['suivi'];
+            if (mb_strlen($eventParams['motif_suivi']) < 10) {
                 $this->addFlash('error', 'Le motif de suivi doit contenir au moins 10 caractères.');
 
                 return $this->redirectToRoute('back_signalement_view', ['uuid' => $signalement->getUuid()]);
             }
-            $params['suivi_public'] = false;
+            $eventParams['suivi_public'] = false;
             if ($this->isGranted('ROLE_ADMIN_TERRITORY') && isset($clotureForm->getExtraData()['publicSuivi'])) {
-                $params['suivi_public'] = $clotureForm->getExtraData()['publicSuivi'];
+                $eventParams['suivi_public'] = $clotureForm->getExtraData()['publicSuivi'];
             }
-            $params['subject'] = $user?->getPartner()?->getNom();
-            $params['closed_for'] = $clotureForm->get('type')->getData();
+            $eventParams['subject'] = $user?->getPartner()?->getNom();
+            $eventParams['closed_for'] = $clotureForm->get('type')->getData();
 
             $entity = null;
-            if ('all' === $params['closed_for'] && $this->isGranted('ROLE_ADMIN_TERRITORY')) {
-                $params['subject'] = 'tous les partenaires';
+            if ('all' === $eventParams['closed_for'] && $this->isGranted('ROLE_ADMIN_TERRITORY')) {
+                $eventParams['subject'] = 'tous les partenaires';
                 $entity = $signalement = $signalementManager->closeSignalementForAllPartners(
                     $signalement,
-                    $params['motif_cloture']
+                    $eventParams['motif_cloture']
                 );
 
                 /* @var Affectation $isAffected */
             } elseif ($isAffected) {
-                $entity = $affectationManager->closeAffectation($isAffected, $user, $params['motif_cloture'], true);
+                $entity = $affectationManager->closeAffectation($isAffected, $user, $eventParams['motif_cloture'], true);
             }
 
             if (!empty($entity)) {
-                $eventDispatcher->dispatch(new SignalementClosedEvent($entity, $params), SignalementClosedEvent::NAME);
+                $eventDispatcher->dispatch(new SignalementClosedEvent($entity, $eventParams), SignalementClosedEvent::NAME);
                 $this->addFlash('success', 'Signalement cloturé avec succès !');
             }
 
@@ -175,7 +177,38 @@ class SignalementController extends AbstractController
 
         $allPhotosOrdered = PhotoHelper::getSortedPhotos($signalement);
 
-        return $this->render('back/signalement/view.html.twig', [
+        if ($params->get('feature_signalement_view_enabled')) {
+            return $this->render('back/signalement/view.html.twig', [
+                'title' => 'Signalement',
+                'createdFromDraft' => $signalement->getCreatedFrom(),
+                'situations' => $infoDesordres['criticitesArranged'],
+                'photos' => $infoDesordres['photos'],
+                'criteres' => $infoDesordres['criteres'],
+                'needValidation' => Signalement::STATUS_NEED_VALIDATION === $signalement->getStatut(),
+                'canEditSignalement' => $canEditSignalement,
+                'isAffected' => $isAffected,
+                'isAccepted' => $isAccepted,
+                'isClosed' => Signalement::STATUS_CLOSED === $signalement->getStatut(),
+                'isClosedForMe' => $isClosedForMe,
+                'isRefused' => $isRefused,
+                'isDanger' => $infoDesordres['isDanger'],
+                'signalement' => $signalement,
+                'partners' => $partners,
+                'clotureForm' => $clotureForm->createView(),
+                'tags' => $tagsRepository->findAllActive($signalement->getTerritory()),
+                'signalementQualificationNDE' => $signalementQualificationNDE,
+                'signalementQualificationNDECriticite' => $signalementQualificationNDECriticites,
+                'files' => $files,
+                'canEditNDE' => $canEditNDE,
+                'listQualificationStatusesLabelsCheck' => $listQualificationStatusesLabelsCheck,
+                'listConcludeProcedures' => $listConcludeProcedures,
+                'partnersCanVisite' => $partnerVisite,
+                'pendingVisites' => $interventionRepository->getPendingVisitesForSignalement($signalement),
+                'allPhotosOrdered' => $allPhotosOrdered,
+            ]);
+        }
+
+        return $this->render('back/signalement/view-old.html.twig', [
             'title' => 'Signalement',
             'createdFromDraft' => $signalement->getCreatedFrom(),
             'situations' => $infoDesordres['criticitesArranged'],

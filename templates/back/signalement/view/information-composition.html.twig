@@ -1,0 +1,160 @@
+{% if canEditSignalement %}
+    {% include 'back/signalement/view/edit-modals/edit-composition-logement.html.twig' %}
+{% endif %}
+<div class="fr-grid-row">
+    <div class="fr-col-12 fr-col-md-9">
+        <h4 class="fr-h6">Description du logement</h4>
+    </div>
+    <div class="fr-col-12 fr-col-md-3 fr-text--right">
+        {% if canEditSignalement %}
+        <a href="#" data-fr-opened="false" aria-controls="fr-modal-edit-composition-logement" class="fr-btn--icon-left fr-icon-edit-line">Modifier</a>
+        {% endif %}
+    </div>
+    <div class="fr-col-12 fr-col-md-6">
+        <strong>Type :</strong> {{ signalement.natureLogement|capitalize }}
+    </div>
+    {% if signalement.natureLogement|capitalize is same as 'Autre' and signalement.typeCompositionLogement %}
+        <div class="fr-col-12">
+            <strong>Précisions :</strong> {{ signalement.typeCompositionLogement.typeLogementNatureAutrePrecision }}
+        </div>
+    {% endif %}
+    <div class="fr-col-12 fr-col-md-6">
+        <strong>Logement :</strong>
+        {% if signalement.typeCompositionLogement %}
+            {{ signalement.typeCompositionLogement.compositionLogementPieceUnique(false) }}
+        {% endif %}
+    </div>
+    
+    <div class="fr-col-12 fr-col-md-6">
+        <strong>Superficie totale :</strong>
+        {% if signalement.superficie %}
+            {{ signalement.superficie }} m²
+        {% endif %}
+    </div>
+
+    <div class="fr-col-12 fr-col-md-6">
+        <strong>Hauteur > 2m :</strong>
+        {% if signalement.typeCompositionLogement %}
+            {{ signalement.typeCompositionLogement.compositionLogementHauteur(false) }}
+            {% include '_partials/signalement/display_alert.html.twig' with { 'display': signalement.typeCompositionLogement.compositionLogementHauteur is same as 'non' } %}
+        {% endif %}
+    </div>
+
+    <div class="fr-col-12 fr-col-md-6">
+        <strong>Nombre de pièces à vivre :</strong>
+        {% if signalement.typeCompositionLogement %}
+            {{ signalement.typeCompositionLogement.compositionLogementNbPieces }}
+        {% endif %}
+    </div>
+
+    <div class="fr-col-12 fr-col-md-6">
+        <strong>Nombre d'étages :</strong>
+        {% if signalement.informationComplementaire %}
+            {{ signalement.informationComplementaire.informationsComplementairesLogementNombreEtages}}
+        {% endif %}
+    </div>
+
+    <div class="fr-col-12 fr-col-md-6">
+        <strong>RDC :</strong>
+        {% if signalement.typeCompositionLogement %}               
+            {{ signalement.typeCompositionLogement.typeLogementRdc }}
+        {% endif %}
+    </div>
+
+    <div class="fr-col-12 fr-col-md-6">
+        <strong>Dernier étage :</strong>
+        {% if signalement.typeCompositionLogement %}
+            {{ signalement.typeCompositionLogement.typeLogementDernierEtage }}
+        {% endif %}
+    </div>
+
+    {% if signalement.typeCompositionLogement and signalement.typeCompositionLogement.typeLogementDernierEtage is same as 'oui' %}
+        <div class="fr-col-12 fr-col-md-6">
+            <strong>Combles sans fenêtres :</strong>
+            {{ signalement.typeCompositionLogement.typeLogementSousCombleSansFenetre}}
+            {% include '_partials/signalement/display_alert.html.twig' with { 'display': signalement.typeCompositionLogement.typeLogementSousCombleSansFenetre is same as 'oui' } %}
+        </div>
+
+    {% elseif signalement.typeCompositionLogement and signalement.typeCompositionLogement.typeLogementRdc is not same as 'oui' and signalement.typeCompositionLogement.typeLogementDernierEtage is not same as 'oui' %}
+        <div class="fr-col-12 fr-col-md-6">
+            <strong>Sous-sol sans fenêtres :</strong>
+            {{ signalement.typeCompositionLogement.typeLogementSousSolSansFenetre}}
+            {% include '_partials/signalement/display_alert.html.twig' with { 'display': signalement.typeCompositionLogement.typeLogementSousSolSansFenetre is same as 'oui' } %}
+        </div>
+    
+    {% endif %}
+
+    {% if signalement.typeCompositionLogement %}
+        <div class="fr-col-12 fr-col-md-6">
+            <strong>Au moins une des pièces à vivre > 9m² :</strong>
+            {{ signalement.typeCompositionLogement.typeLogementCommoditesPieceAVivre9m(false)}}
+            {% include '_partials/signalement/display_alert.html.twig' with { 'display': signalement.typeCompositionLogement.typeLogementCommoditesPieceAVivre9m is same as 'non' } %}
+        </div>
+    {% endif %}
+
+    <div class="fr-col-12 fr-col-md-6">
+        <strong>Cuisine / coin cuisine :</strong>
+        {% if signalement.typeCompositionLogement %}
+            <br>
+            <ul>
+                <li>
+                    Dans le logement : {{ signalement.typeCompositionLogement.typeLogementCommoditesCuisine }}
+                    {% include '_partials/signalement/display_alert.html.twig' with { 'display': signalement.typeCompositionLogement.typeLogementCommoditesCuisine is same as 'non' } %}
+                </li>
+                {% if signalement.typeCompositionLogement.typeLogementCommoditesCuisine is same as 'non' %}
+                    <li>
+                        Collective : {{ signalement.typeCompositionLogement.typeLogementCommoditesCuisineCollective }}
+                        {% include '_partials/signalement/display_alert.html.twig' with { 'display': signalement.typeCompositionLogement.typeLogementCommoditesCuisineCollective is same as 'non' } %}
+                    </li>
+                {% endif %}
+            </ul>
+        {% endif %}
+    </div>
+    
+    <div class="fr-col-12 fr-col-md-6">
+        <strong>SDB (baignoire ou douche) :</strong>
+        {% if signalement.typeCompositionLogement %}
+            <br>
+            <ul>
+                <li>
+                    Dans le logement : {{ signalement.typeCompositionLogement.typeLogementCommoditesSalleDeBain}}
+                    {% include '_partials/signalement/display_alert.html.twig' with { 'display': signalement.typeCompositionLogement.typeLogementCommoditesSalleDeBain is same as 'non' } %}
+                </li>
+                {% if signalement.typeCompositionLogement.typeLogementCommoditesSalleDeBain is same as 'non' %}
+                    <li>
+                        Collective : {{ signalement.typeCompositionLogement.typeLogementCommoditesSalleDeBainCollective }}
+                        {% include '_partials/signalement/display_alert.html.twig' with { 'display': signalement.typeCompositionLogement.typeLogementCommoditesSalleDeBainCollective is same as 'non' } %}
+                    </li>
+                {% endif %}
+            </ul>
+        {% endif %}
+    </div>
+
+    <div class="fr-col-12 fr-col-md-6">
+        <strong>WC :</strong>
+        {% if signalement.typeCompositionLogement %}
+            <br>
+            <ul>
+                <li>
+                    Dans le logement : {{ signalement.typeCompositionLogement.typeLogementCommoditesWc }}
+                    {% include '_partials/signalement/display_alert.html.twig' with { 'display': signalement.typeCompositionLogement.typeLogementCommoditesWc is same as 'non' } %}
+                </li>
+                {% if signalement.typeCompositionLogement.typeLogementCommoditesWc is same as 'non' %}
+                    <li>
+                        Collectifs : {{ signalement.typeCompositionLogement.typeLogementCommoditesWcCollective }}
+                        {% include '_partials/signalement/display_alert.html.twig' with { 'display': signalement.typeCompositionLogement.typeLogementCommoditesWcCollective is same as 'non' } %}
+                    </li>
+                {% endif %}
+            </ul>
+        {% endif %}
+    </div>
+
+    {% if signalement.typeCompositionLogement and signalement.typeCompositionLogement.typeLogementCommoditesCuisine is same as 'oui' and signalement.typeCompositionLogement.typeLogementCommoditesWc is same as 'oui' %}
+    <div class="fr-col-12 fr-col-md-6">
+        <strong>WC et cuisine dans la même pièce :</strong>
+        {{ signalement.typeCompositionLogement.typeLogementCommoditesWcCuisine }}
+        {% include '_partials/signalement/display_alert.html.twig' with { 'display': signalement.typeCompositionLogement.typeLogementCommoditesWcCuisine is same as 'oui' } %}
+    </div>
+    {% endif %}
+
+</div>

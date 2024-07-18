@@ -1,169 +1,192 @@
 <header>
-    <div class="fr-grid-row">
-        <div class="fr-col-9 fr-col-md-6">
-            <a class="fr-link fr-fi-arrow-left-line fr-link--icon-left back-link"
-               href="{{ path('back_index') }}"
-               aria-label="Retour à la liste des signalements">Retour</a>
-            <h1 class="fr-h2 fr-text-label--blue-france">#{{ signalement.reference }} - {{ signalement.prenomOccupant }} {{ signalement.nomOccupant }}</h1>
+    <nav role="navigation" class="fr-breadcrumb fr-mt-0" aria-label="vous êtes ici :">
+        <button class="fr-breadcrumb__button" aria-expanded="false" aria-controls="breadcrumb-signalement">Voir le fil d’Ariane</button>
+        <div class="fr-collapse" id="breadcrumb-signalement">
+            <ol class="fr-breadcrumb__list">
+                <li>
+                    <a class="fr-breadcrumb__link" href="{{ path('back_dashboard') }}"
+                        aria-label="Retour au tableau de bord">Accueil</a>
+                </li>
+                <li>
+                    <a class="fr-breadcrumb__link" href="{{ path('back_index') }}"
+                        aria-label="Retour à la liste des signalements">Liste des signalements</a>
+                </li>
+                <li>
+                    <a class="fr-breadcrumb__link" aria-current="page">Signalement #{{ signalement.reference }}</a>
+                </li>
+            </ol>
         </div>
-        <div class="fr-col-3 fr-col-md-6 fr-text--right">
-            {% if isAffected and not isAccepted and not isRefused and not needValidation and not isClosed and not isClosedForMe %}
-                <form action="{{ path('back_signalement_affectation_response',{signalement:signalement.id,user:app.user.id,affectation:isAffected.id}) }}"
-                        class="tinyCheck fr-mb-3v" id="signalement-affectation-response-form"
-                        name="signalement-affectation-response-form" method="POST">
-                    <button class="fr-btn fr-btn--sm fr-btn--icon-left fr-icon-checkbox-circle-fill fr-btn--success"
-                            name="signalement-affectation-response[accept]" value="1">
-                        Accepter
-                    </button>
-                    <a href="#" class="fr-btn fr-btn--sm fr-btn--icon-left fr-icon-close-circle-fill fr-btn--danger"
-                        data-fr-opened="false" aria-controls="refus-affectation-modal">Refuser
+    </nav>
+
+
+    <div class="fr-grid-row">
+        <div class="fr-col-7">
+            <div class="fr-mb-4v">
+                {% if is_granted('ROLE_ADMIN_TERRITORY') %}
+                    {% if signalement.statut is same as constant('App\\Entity\\Signalement::STATUS_NEED_VALIDATION') %}
+                        <span class="fr-badge fr-badge--warning">Nouveau</span>
+                    {% elseif signalement.statut is same as constant('App\\Entity\\Signalement::STATUS_ACTIVE') %}
+                        <span class="fr-badge fr-badge--success fr-badge--no-icon"><span class="fr-icon-message-2-line" aria-hidden="true"></span> En cours</span>
+                    {% elseif signalement.statut is same as constant('App\\Entity\\Signalement::STATUS_CLOSED')
+                        or signalement.statut is same as constant('App\\Entity\\Signalement::STATUS_ARCHIVED')
+                        or signalement.statut is same as constant('App\\Entity\\Signalement::STATUS_REFUSED') %}
+                        <span class="fr-badge fr-badge--error">Signalement fermé</span>
+                    {% endif %}
+                {% else %}
+                    {% if isAffected and not isAccepted and not isRefused and not needValidation and not isClosed and not isClosedForMe %}
+                        <span class="fr-badge fr-badge--warning">Nouveau</span>
+                    {% elseif true or isAccepted %}
+                        <span class="fr-badge fr-badge--success fr-badge--no-icon"><span class="fr-icon-message-2-line" aria-hidden="true"></span> En cours</span>
+                    {% elseif isRefused or isClosedForMe %}
+                        <span class="fr-badge fr-badge--error">Signalement fermé</span>
+                    {% endif %}
+                {% endif %}
+            </div>
+
+            <div>
+                <h1 class="fr-h2">#{{ signalement.reference }} {{ signalement.nomOccupant|upper }} {{ signalement.prenomOccupant }}</h1>
+            </div>
+
+            <div data-ajax-form>
+                {% if canEditSignalement %}
+                    {% include 'back/signalement/view/edit-modals/edit-address.html.twig' %}
+                {% endif %}
+
+                <span class="fr-h5">
+                    {{ signalement.adresseOccupant }}
+                    {% if signalement.complementAdresseOccupant %}- {{signalement.complementAdresseOccupant}}{% endif %},
+                    {{ signalement.cpOccupant ~' '~ signalement.villeOccupant|capitalize }}
+                    {% if canEditSignalement %}
+                    <a href="#" data-fr-opened="false" aria-controls="fr-modal-edit-address" class="fr-ml-6v fr-btn--icon-left fr-icon-edit-line fr-a-edit">
+                        Modifier
                     </a>
-                    <input type="hidden" name="_token"
-                            value="{{ csrf_token('signalement_affectation_response_'~signalement.id) }}">
-                </form>
-                {% include '_partials/_modal_refus_affectation.html.twig' %}
+                    {% endif %}
+                </span>
 
-            {% elseif isRefused %}
-                <form method="POST" action="{{ path('back_signalement_affectation_response',{signalement:signalement.id,user:app.user.id,affectation:isRefused.id}) }}">
-                    <button class="fr-btn fr-btn--sm fr-btn--icon-left fr-icon-checkbox-circle-fill reaffect fr-mb-3v"
-                            name="signalement-affectation-response[accept]" value="1"
-                            >
-                        Annuler le refus
-                    </button>
-                    <input type="hidden" name="_token"
-                            value="{{ csrf_token('signalement_affectation_response_'~signalement.id) }}">
-                </form>
+                {% if signalement.manualAddressOccupant %}
+                    <div class="fr-alert fr-alert--info fr-alert--sm fr-mb-3v">
+                        Cette adresse a été éditée manuellement.
+                    </div>
+                {% endif %}
 
-            {% elseif needValidation and not isClosedForMe and is_granted('ROLE_ADMIN_TERRITORY') %}
-                <div class="admin-territory-validation">
-                    <form id="signalement-validation-response-form"
-                            action="{{ path('back_signalement_validation_response',{uuid:signalement.uuid}) }}"
-                            class="tinyCheck inline-form">
+                {% if signalement.geoloc.lat is defined and signalement.geoloc.lng is defined %}
+                    <div class="fr-mt-3v">
+                        <a target="_blank" rel="noreferrer noopener" class="force-link-color"
+                            href="http://www.openstreetmap.org/?mlat={{ signalement.geoloc.lat }}&mlon={{ signalement.geoloc.lng }}#map=18/{{ signalement.geoloc.lat }}/{{ signalement.geoloc.lng }}"
+                            title="Voir sur la carte - Ouvre une nouvelle fenêtre">
+                            Voir sur la carte
+                        </a>
+                    </div>
+                {% endif %}
+            </div>
+                
+            <div class="fr-mt-4v fr-p-4v fr-background-alt--grey">
+                <strong>Etiquettes</strong><br>
+                {% include 'back/signalement/view/tags.html.twig' %}
+            </div>
+        </div>
+
+        <div class="fr-col-5">
+            <div class="fr-mb-4v fr-text--right">
+                Dossier déposé le : {{ signalement.createdAt|date('d/m/Y') }}
+            </div>
+
+            <div class="fr-mb-4v fr-text--right">
+                {% if isAffected and not isAccepted and not isRefused and not needValidation and not isClosed and not isClosedForMe %}
+                    <form action="{{ path('back_signalement_affectation_response',{signalement:signalement.id,user:app.user.id,affectation:isAffected.id}) }}"
+                            class="tinyCheck" id="signalement-affectation-response-form"
+                            name="signalement-affectation-response-form" method="POST">
                         <button class="fr-btn fr-btn--sm fr-btn--icon-left fr-icon-checkbox-circle-fill fr-btn--success"
-                                name="signalement-validation-response[accept]" value="1"
+                                name="signalement-affectation-response[accept]" value="1">
+                            Accepter
+                        </button>
+                        <a href="#" class="fr-btn fr-btn--sm fr-btn--icon-left fr-icon-close-circle-fill fr-btn--danger"
+                            data-fr-opened="false" aria-controls="refus-affectation-modal">Refuser
+                        </a>
+                        <input type="hidden" name="_token"
+                                value="{{ csrf_token('signalement_affectation_response_'~signalement.id) }}">
+                    </form>
+                    {% include '_partials/_modal_refus_affectation.html.twig' %}
+
+                {% elseif isRefused %}
+                    <form method="POST" action="{{ path('back_signalement_affectation_response',{signalement:signalement.id,user:app.user.id,affectation:isRefused.id}) }}">
+                        <button class="fr-btn fr-btn--sm fr-btn--icon-left fr-icon-checkbox-circle-fill reaffect fr-mb-3v"
+                                name="signalement-affectation-response[accept]" value="1"
                                 >
-                            Valider ce signalement
+                            Annuler le refus
                         </button>
                         <input type="hidden" name="_token"
-                                value="{{ csrf_token('signalement_validation_response_'~signalement.id) }}">
+                                value="{{ csrf_token('signalement_affectation_response_'~signalement.id) }}">
                     </form>
-                    {% include '_partials/_modal_refus_signalement.html.twig' %}
-                    <a href="#" class="fr-btn fr-btn--sm fr-btn--icon-left fr-fi-close-line fr-btn--danger"
-                        aria-controls="refus-signalement-modal" data-fr-opened="false">
-                        Refuser ce signalement
+
+                {% elseif needValidation and not isClosedForMe and is_granted('ROLE_ADMIN_TERRITORY') %}
+                    <div class="admin-territory-validation">
+                        <form id="signalement-validation-response-form"
+                                action="{{ path('back_signalement_validation_response',{uuid:signalement.uuid}) }}"
+                                class="tinyCheck inline-form">
+                            <button class="fr-btn fr-btn--sm fr-btn--icon-left fr-icon-checkbox-circle-fill fr-btn--success"
+                                    name="signalement-validation-response[accept]" value="1"
+                                    >
+                                Valider le signalement
+                            </button>
+                            <input type="hidden" name="_token"
+                                    value="{{ csrf_token('signalement_validation_response_'~signalement.id) }}">
+                        </form>
+                        {% include '_partials/_modal_refus_signalement.html.twig' %}
+                        <a href="#" class="fr-btn fr-btn--sm fr-btn--icon-left fr-fi-close-line fr-btn--danger"
+                            aria-controls="refus-signalement-modal" data-fr-opened="false">
+                            Refuser le signalement
+                        </a>
+                    </div>
+
+                    <div class="fr-notice fr-notice--info fr-my-4v">
+                        <div class="fr-container">
+                            <div class="fr-notice__body">
+                                <p>
+                                    <span class="fr-notice__desc">En tant que responsable de territoire, vous devez valider ou refuser ce signalement.</span>
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+
+                {% elseif isClosedForMe or signalement.statut is same as constant('App\\Entity\\Signalement::STATUS_CLOSED') or signalement.statut is same as constant('App\\Entity\\Signalement::STATUS_REFUSED') %}
+                    {% if isClosed and is_granted('ROLE_ADMIN_TERRITORY') %}
+                        {% include '_partials/_modal_reopen_signalement.html.twig' with { 'all': '1' } %}
+                        <button class="fr-btn fr-btn--sm fr-btn--success fr-fi-lock-fill fr-btn--icon-left reopen"
+                                aria-controls="reopen-all-signalement-modal" data-fr-opened="false">
+                            Rouvrir pour tous
+                        </button>
+                    {% endif %}
+                    {% if signalement.statut is not same as constant('App\\Entity\\Signalement::STATUS_CLOSED') or is_granted('ROLE_ADMIN_TERRITORY') %}
+                        {% include '_partials/_modal_reopen_signalement.html.twig' with { 'all': '0' } %}
+                        <button class="fr-btn fr-btn--sm fr-btn--success fr-fi-lock-fill fr-btn--icon-left reopen"
+                                aria-controls="reopen-signalement-modal" data-fr-opened="false">
+                            Rouvrir pour {{ app.user.partner.nom }}
+                        </button>
+                    {% endif %}
+                
+                {% elseif (signalement.statut is not same as constant('App\\Entity\\Signalement::STATUS_NEED_VALIDATION') and not isClosed and not isClosedForMe and isAffected and isAccepted) or is_granted('ROLE_ADMIN_TERRITORY') %}
+                    <a href="#" aria-controls="cloture-modal" data-fr-opened="false"
+                        class="fr-btn fr-btn--sm fr-btn--secondary fr-icon-close-line fr-btn--icon-left">
+                        Clôturer
                     </a>
-                </div>
-
-            {% elseif isClosedForMe or signalement.statut is same as constant('App\\Entity\\Signalement::STATUS_CLOSED') or signalement.statut is same as constant('App\\Entity\\Signalement::STATUS_REFUSED') %}
-                {% if isClosed and is_granted('ROLE_ADMIN_TERRITORY') %}
-                    {% include '_partials/_modal_reopen_signalement.html.twig' with { 'all': '1' } %}
-                    <button class="fr-btn fr-btn--sm fr-btn--success fr-fi-lock-fill fr-btn--icon-left reopen"
-                            aria-controls="reopen-all-signalement-modal" data-fr-opened="false">
-                        Rouvrir pour tous
-                    </button>
                 {% endif %}
-                {% if signalement.statut is not same as constant('App\\Entity\\Signalement::STATUS_CLOSED') or is_granted('ROLE_ADMIN_TERRITORY') %}
-                    {% include '_partials/_modal_reopen_signalement.html.twig' with { 'all': '0' } %}
-                    <button class="fr-btn fr-btn--sm fr-btn--success fr-fi-lock-fill fr-btn--icon-left reopen"
-                            aria-controls="reopen-signalement-modal" data-fr-opened="false">
-                        Rouvrir pour {{ app.user.partner.nom }}
-                    </button>
-                {% endif %}
-            
-            {% elseif (signalement.statut is not same as constant('App\\Entity\\Signalement::STATUS_NEED_VALIDATION') and not isClosed and not isClosedForMe and isAffected and isAccepted) or is_granted('ROLE_ADMIN_TERRITORY') %}
-                <a href="#" aria-controls="cloture-modal" data-fr-opened="false"
-                    class="fr-btn fr-btn--sm fr-btn--secondary fr-icon-close-line fr-btn--icon-left fr-mb-3v">
-                    Clôturer
-                </a>
-            {% endif %}
 
-            {% if is_granted('SIGN_VIEW', signalement) %}
+                {% if is_granted('SIGN_VIEW', signalement) %}
                     <a href="{{ path('back_signalement_gen_pdf',{uuid:signalement.uuid}) }}"
-                       class="fr-btn fr-btn--sm fr-btn--icon-left fr-fi-file-pdf-fill ignore-blank-style"
-                       title="Exporter le PDF">Exporter le PDF
+                    class="fr-btn fr-btn--sm fr-btn--icon-left fr-fi-file-pdf-fill ignore-blank-style"
+                    title="Télécharger le PDF">Télécharger le PDF
                     </a>
-            {% endif %}
+                {% endif %}
+            </div>
 
             {% if is_granted('ROLE_ADMIN') %}
-                    <a href="#" aria-controls="send-lien-suivi-modal" data-fr-opened="false"
-                       class="fr-btn fr-btn--sm fr-btn--secondary fr-btn--icon-left fr-icon-send-plane-fill"
-                       title="Envoyer le lien de suivi">Envoyer le lien de suivi
-                    </a>
-            {% endif %}
-        </div>
-    </div>
-
-    <div class="fr-grid-row">
-        <div class="fr-col-12">
-            Déposé le : {{ signalement.createdAt|format_datetime(locale='fr') }} 
-            {% if signalement.profileDeclarant %}
-                {% if signalement.profileDeclarant is same as enum('App\\Entity\\Enum\\ProfileDeclarant').LOCATAIRE or 
-                signalement.profileDeclarant is same as enum('App\\Entity\\Enum\\ProfileDeclarant').BAILLEUR_OCCUPANT or
-                signalement.profileDeclarant is same as enum('App\\Entity\\Enum\\ProfileDeclarant').BAILLEUR %}
-                    par le
-                {% else %}
-                    par un
-                {% endif %}
-                
-                {% if signalement.profileDeclarant is same as enum('App\\Entity\\Enum\\ProfileDeclarant').BAILLEUR %}
-                    tiers bailleur
-                {% else %}
-                    {{ signalement.profileDeclarant.label|lower }}
-                {% endif %}
-            {% else %}
-                {% if signalement.isNotOccupant %}
-                    par un tiers déclarant
-                {% else %}
-                    par l'occupant
-                {% endif %}
-            {% endif %}
-
-            <br>
-
-            {% if isAffected and not isAccepted and not isRefused and not needValidation and not isClosed and not isClosedForMe %}
-                Vous a été attribué le {{ isAffected.createdAt|date('d/m/Y') }}
-            {% elseif isAccepted %}
-                {% if isAccepted.answeredBy is same as (app.user) %}
-                    Vous avez
-                {% else %}
-                    {{ isAccepted.answeredBy.nom|upper~'. '~isAccepted.answeredBy.prenom|capitalize }} a
-                {% endif %}
-                <u>pris connaissance</u> du signalement
-                le {{ isAccepted.answeredAt|date('d/m/Y') }}
-            {% elseif isRefused %}
-                {% if isRefused.answeredBy is same as (app.user) %}
-                    Vous avez
-                {% else %}
-                    {{ isRefused.answeredBy.nom|upper~'. '~isRefused.answeredBy.prenom|capitalize }} a
-                {% endif %}
-                <u>refusé</u> ce signalement
-                le {{ isRefused.answeredAt|date('d/m/Y') }}
-            {% elseif needValidation and not isClosedForMe and is_granted('ROLE_ADMIN_TERRITORY') %}
-                En tant qu'administrateur vous devez <u>valider/refuser</u> ce signalement
-            {% elseif isClosedForMe or signalement.statut is same as constant('App\\Entity\\Signalement::STATUS_CLOSED')  or signalement.statut is same as constant('App\\Entity\\Signalement::STATUS_REFUSED') %}
-                Vous pouvez <u>rouvrir</u> ce signalement
-            {% endif %}
-        </div>
-
-        <div class="fr-col-12 fr-mt-3v">
-            {% if is_granted('ROLE_ADMIN_TERRITORY') %}
-                {% if signalement.statut is same as constant('App\\Entity\\Signalement::STATUS_NEED_VALIDATION') %}
-                    <span class="fr-badge fr-badge--warning">Nouveau signalement</span>
-                {% elseif signalement.statut is same as constant('App\\Entity\\Signalement::STATUS_ACTIVE') %}
-                    <span class="fr-badge fr-badge--success">Signalement en cours</span>
-                {% elseif signalement.statut is same as constant('App\\Entity\\Signalement::STATUS_CLOSED')
-                    or signalement.statut is same as constant('App\\Entity\\Signalement::STATUS_ARCHIVED')
-                    or signalement.statut is same as constant('App\\Entity\\Signalement::STATUS_REFUSED') %}
-                    <span class="fr-badge fr-badge--error">Signalement fermé</span>
-                {% endif %}
-            {% else %}
-                {% if isAffected and not isAccepted and not isRefused and not needValidation and not isClosed and not isClosedForMe %}
-                    <span class="fr-badge fr-badge--warning">Nouveau signalement</span>
-                {% elseif true or isAccepted %}
-                    <span class="fr-badge fr-badge--success">Signalement en cours</span>
-                {% elseif isRefused or isClosedForMe %}
-                    <span class="fr-badge fr-badge--error">Signalement fermé</span>
-                {% endif %}
+            <div class="fr-mt-4v fr-text--right">
+                <a href="#" aria-controls="send-lien-suivi-modal" data-fr-opened="false"
+                class="fr-a-edit fr-btn--icon-left fr-icon-send-plane-fill"
+                title="Envoyer le lien de suivi">Envoyer le lien de suivi
+                </a>
+            </div>
             {% endif %}
         </div>
     </div>

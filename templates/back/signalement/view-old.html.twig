@@ -21,6 +21,7 @@
     <section id="signalement-{{ signalement.id }}-content"
         class="fr-p-5v fr-background--white
             {{ (isClosedForMe and not is_granted('ROLE_ADMIN_TERRITORY'))
+                or signalement.statut is same as constant('App\\Entity\\Signalement::STATUS_NEED_VALIDATION')
                 or signalement.statut is same as constant('App\\Entity\\Signalement::STATUS_CLOSED')
                 or signalement.statut is same as constant('App\\Entity\\Signalement::STATUS_REFUSED')
             ? 'signalement-invalid'
@@ -29,50 +30,37 @@
 
         {% include 'back/signalement/view/photos-album.html.twig' %}
         
-        {% include 'back/signalement/view/header.html.twig' %}
+        {% include 'back/signalement/view/header-old.html.twig' %}
+        
+        {% include 'back/signalement/view/tags.html.twig' %}
+        
+        {% include 'back/signalement/view/address-qualifications-old.html.twig' %}
+        
+        {% include 'back/signalement/view/user-declaration-old.html.twig' %}
+
+        {% include 'back/signalement/view/photos-documents.html.twig' with {
+            'zonetitle': "Photos et documents de la situation",
+            'filesFilter': 'situation',
+            'filesType': 'photo,document'
+        } %}
+    
+        {% include 'back/signalement/view/information.html.twig' %}
+        
+        {% include 'back/signalement/view/nde.html.twig' %}
+ 
+        {% include 'back/signalement/view/partners.html.twig' %}
+        
+        {% include 'back/signalement/view/suivis.html.twig' %}
+
+        {% include 'back/signalement/view/visites/visites-list.html.twig' %}
+
+        {% include 'back/signalement/view/photos-documents.html.twig' with {
+            'zonetitle': "Documents liés à la procédure",
+            'filesFilter': 'procedure',
+            'filesType': 'photo,document'
+        } %}
     </section>
-
-    <div class="fr-tabs fr-background--white">
-        <ul class="fr-tabs__list" role="tablist" aria-label="Informations du signalement">
-            <li role="presentation">
-                <button id="tabpanel-activite" class="fr-tabs__tab fr-icon-checkbox-line fr-tabs__tab--icon-left"
-                    tabindex="0" role="tab" aria-selected="true" aria-controls="tabpanel-activite-panel"
-                    {% if signalement.statut is same as constant('App\\Entity\\Signalement::STATUS_NEED_VALIDATION') %}disabled{% endif %}
-                    >Activité PDLHI</button>
-            </li>
-            <li role="presentation">
-                <button id="tabpanel-situation" class="fr-tabs__tab fr-icon-checkbox-line fr-tabs__tab--icon-left" tabindex="-1" role="tab" aria-selected="false" aria-controls="tabpanel-situation-panel">Situation</button>
-            </li>
-            <li role="presentation">
-                <button id="tabpanel-foyer" class="fr-tabs__tab fr-icon-checkbox-line fr-tabs__tab--icon-left" tabindex="-1" role="tab" aria-selected="false" aria-controls="tabpanel-foyer-panel">Foyer</button>
-            </li>
-            <li role="presentation">
-                <button id="tabpanel-photos" class="fr-tabs__tab fr-icon-checkbox-line fr-tabs__tab--icon-left" tabindex="-1" role="tab" aria-selected="false" aria-controls="tabpanel-photos-panel">Photos</button>
-            </li>
-            <li role="presentation">
-                <button id="tabpanel-documents" class="fr-tabs__tab fr-icon-checkbox-line fr-tabs__tab--icon-left" tabindex="-1" role="tab" aria-selected="false" aria-controls="tabpanel-documents-panel">Documents</button>
-            </li>
-        </ul>
-        {% if signalement.statut is not same as constant('App\\Entity\\Signalement::STATUS_NEED_VALIDATION') %}
-        <div id="tabpanel-activite-panel" class="fr-tabs__panel fr-tabs__panel--selected" role="tabpanel" aria-labelledby="tabpanel-activite" tabindex="0">
-            <p>Contenu 1</p>
-        </div>
-        {% endif %}
-        <div id="tabpanel-situation-panel" class="fr-tabs__panel" role="tabpanel" aria-labelledby="tabpanel-situation" tabindex="0">
-            {% include 'back/signalement/view/tabs/tab-situation.html.twig' %}
-        </div>
-        <div id="tabpanel-foyer-panel" class="fr-tabs__panel" role="tabpanel" aria-labelledby="tabpanel-foyer" tabindex="0">
-            <p>Contenu 3</p>
-        </div>
-        <div id="tabpanel-photos-panel" class="fr-tabs__panel" role="tabpanel" aria-labelledby="tabpanel-photos" tabindex="0">
-            <p>Contenu 3</p>
-        </div>
-        <div id="tabpanel-documents-panel" class="fr-tabs__panel" role="tabpanel" aria-labelledby="tabpanel-documents" tabindex="0">
-            <p>Contenu 3</p>
-        </div>
-    </div>
 {% endblock %}
-
 {% block javascripts %}
     {{ encore_entry_script_tags('app') }}
     <script nonce="{{ app.request.attributes.get('csp_script_nonce') }}">

@@ -7,20 +7,22 @@
     <div class="fr-col-3 fr-col-md-6 fr-text--right">
         {% if (is_granted('SIGN_EDIT', signalement)) %}
             <ul class="fr-btns-group fr-btns-group--inline fr-btns-group--sm fr-btns-group--right fr-btns-group--icon-left">
-                <li>
-                    <button 
-                    class="fr-btn fr-btn--secondary fr-icon-file-add-line open-modal-upload-files-btn" 
-                    data-fr-opened="false" 
-                    aria-controls="fr-modal-upload-files" 
-                    data-file-type="document"
-                    data-file-filter={{filesFilter}}
-                    data-accepted-type-mimes={{ get_accepted_mime_type('document')}}
-					data-accepted-extensions="{{ get_accepted_extensions('document')}}"
-                    >
-                        Ajouter des documents
-                    </button>
-                </li>
-                {% if filesFilter is same as 'situation' %}
+                {% if 'document' in filesType %}
+                    <li>
+                        <button
+                        class="fr-btn fr-btn--secondary fr-icon-file-add-line open-modal-upload-files-btn"
+                        data-fr-opened="false"
+                        aria-controls="fr-modal-upload-files"
+                        data-file-type="document"
+                        data-file-filter={{filesFilter}}
+                        data-accepted-type-mimes={{ get_accepted_mime_type('document')}}
+                        data-accepted-extensions="{{ get_accepted_extensions('document')}}"
+                        >
+                            Ajouter des documents
+                        </button>
+                    </li>
+                {% endif %}
+                {% if 'photo' in filesType and filesFilter is same as 'situation' %}
                     <li>
                         <button 
                         class="fr-btn fr-btn--secondary fr-icon-image-add-line open-modal-upload-files-btn" 
@@ -40,8 +42,12 @@
     </div>
     {% if filesFilter is same as 'situation' %}
         <p class="fr-text--sm fr-mt-n2w fr-mb-2w">
+            {% if 'document' in filesType %}
             Ajoutez ici des photos ou documents concernant la situation de l'usager (photos de désordres, bail, DPE, diagnostic et état des lieux). 
             Les fichiers ajoutés sont partagés à l'usager.
+            {% else %}
+            Vous ne pouvez pas supprimer les photos ajoutées par l'usager.
+            {% endif %}
         </p>
     {% endif %}
     {% if filesFilter is same as 'procedure' %}
@@ -61,7 +67,7 @@
 {% include 'back/signalement/view/edit-modals/edit-file.html.twig' %}
 
 {% set DocumentType = enum('\\App\\Entity\\Enum\\DocumentType') %}
-{% if filesFilter is same as 'situation' %}
+{% if 'photo' in filesType and filesFilter is same as 'situation' %}
     <div class="fr-grid-row fr-grid-row--middle fr-grid-row--gutters fr-mb-3v">
         {% for index, photo in signalement.files|filter(
             photo => photo.isSituationPhoto
@@ -115,6 +121,7 @@
     </div>
 {% endif %}
 
+{% if 'document' in filesType %}
 {% for index, doc in signalement.files|filter(
     doc => doc.fileType == 'document'
         and (
@@ -181,3 +188,4 @@
         </div>
     </div>
 {% endfor %}
+{% endif %}
