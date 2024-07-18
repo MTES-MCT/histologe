@@ -270,7 +270,7 @@ class SignalementFileController extends AbstractController
             }
         }
         $description = $request->get('description');
-        if (mb_strlen($description) > 255) {
+        if (isset($description) && mb_strlen($description) > 255) {
             if ($request->isXmlHttpRequest()) {
                 return $this->json(['response' => 'La description ne doit pas dépasser 255 caractères'], Response::HTTP_BAD_REQUEST);
             }
