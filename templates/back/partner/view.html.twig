@@ -31,7 +31,7 @@
                 <div><b>Nom :</b> {{ partner.nom }}</div>
             </div>
             <div class="fr-col-6">
-                <div><b>Territoire :</b> {{ partner.territory ? partner.territory.name : ''}}</div>
+                <div><b>Territoire :</b> {{ partner.territory ? partner.territory.zip ~ ' - ' ~ partner.territory.name : ''}}</div>
             </div>
         </div>
         <div class="fr-col-12 fr-grid-row fr-grid-row--gutters">
