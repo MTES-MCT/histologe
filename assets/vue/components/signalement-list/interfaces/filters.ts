@@ -17,6 +17,7 @@ export const SEARCH_FILTERS = [
   { type: 'text', name: 'criticiteScoreMax', showOptions: true, defaultValue: null },
   { type: 'text', name: 'typeDeclarant', showOptions: true, defaultValue: null },
   { type: 'text', name: 'natureParc', showOptions: true, defaultValue: null },
+  { type: 'text', name: 'bailleurSocial', showOptions: true, defaultValue: null },
   { type: 'text', name: 'allocataire', showOptions: true, defaultValue: null },
   { type: 'text', name: 'enfantsM6', showOptions: true, defaultValue: null },
   { type: 'text', name: 'situation', showOptions: true, defaultValue: null },
