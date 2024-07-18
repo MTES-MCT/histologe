@@ -72,7 +72,7 @@ class AffectationController extends AbstractController
                     );
                     if ($affectation instanceof Affectation) {
                         $this->affectationManager->persist($affectation);
-                        $this->dispatchDossier($affectation);
+                        $this->interconnectionBus->dispatch($affectation);
                     }
                 }
                 $this->affectationManager->removeAffectationsFrom($signalement, $postedPartner, $partnersIdToRemove);
@@ -178,10 +178,5 @@ class AffectationController extends AbstractController
                 AffectationAnsweredEvent::NAME
             );
         }
-    }
-
-    private function dispatchDossier(Affectation $affectation): void
-    {
-        $this->interconnectionBus->dispatch($affectation);
     }
 }

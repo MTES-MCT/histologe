@@ -184,6 +184,7 @@ class AddAutoAffectationRuleCommand extends Command
                     'all',
                     'prive',
                     'public',
+                    'non_renseigne',
                 ],
                 'all',
             );
