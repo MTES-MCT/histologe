@@ -30,6 +30,7 @@ class WidgetSettingsFactory
             epcis: $filterOptionData['epcis'],
             tags: $filterOptionData['tags'],
             hasSignalementImported: $filterOptionData['hasSignalementsImported'] > 0,
+            bailleursSociaux: $filterOptionData['bailleursSociaux'],
         );
     }
 

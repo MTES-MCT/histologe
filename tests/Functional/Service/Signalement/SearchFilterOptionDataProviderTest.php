@@ -2,6 +2,7 @@
 
 namespace App\Tests\Functional\Service\Signalement;
 
+use App\Repository\BailleurRepository;
 use App\Repository\CommuneRepository;
 use App\Repository\CritereRepository;
 use App\Repository\PartnerRepository;
@@ -22,6 +23,7 @@ class SearchFilterOptionDataProviderTest extends KernelTestCase
     private PartnerRepository $partnerRepository;
     private TagRepository $tagsRepository;
     private SignalementRepository $signalementRepository;
+    private BailleurRepository $bailleurRepository;
     private TagAwareCacheInterface $cache;
     private QualificationStatusService $qualificationStatusService;
 
@@ -35,6 +37,7 @@ class SearchFilterOptionDataProviderTest extends KernelTestCase
         $this->partnerRepository = self::getContainer()->get(PartnerRepository::class);
         $this->tagsRepository = self::getContainer()->get(TagRepository::class);
         $this->signalementRepository = self::getContainer()->get(SignalementRepository::class);
+        $this->bailleurRepository = self::getContainer()->get(BailleurRepository::class);
         $this->cache = self::getContainer()->get(TagAwareCacheInterface::class);
         $this->qualificationStatusService = self::getContainer()->get(QualificationStatusService::class);
 
@@ -46,7 +49,8 @@ class SearchFilterOptionDataProviderTest extends KernelTestCase
             $this->tagsRepository,
             $this->signalementRepository,
             $this->cache,
-            $this->qualificationStatusService
+            $this->qualificationStatusService,
+            $this->bailleurRepository
         );
     }
 

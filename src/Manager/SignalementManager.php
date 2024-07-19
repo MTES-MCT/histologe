@@ -803,7 +803,7 @@ class SignalementManager extends AbstractManager
         /** @var SignalementRepository $signalementRepository */
         $signalementRepository = $this->getRepository();
 
-        /** @var Paginator $paginator */
+        /* @var Paginator $paginator */
         $paginator = $signalementRepository->findSignalementAffectationListPaginator($user, $options);
         $total = $paginator->count();
         $dataResultList = $paginator->getQuery()->getResult();

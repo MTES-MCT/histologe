@@ -5,6 +5,7 @@ namespace App\Service\Signalement;
 use App\Entity\Enum\VisiteStatus;
 use App\Entity\Territory;
 use App\Entity\User;
+use App\Repository\BailleurRepository;
 use App\Repository\CommuneRepository;
 use App\Repository\CritereRepository;
 use App\Repository\PartnerRepository;
@@ -27,6 +28,7 @@ class SearchFilterOptionDataProvider
         private readonly SignalementRepository $signalementRepository,
         private readonly TagAwareCacheInterface $cache,
         private readonly QualificationStatusService $qualificationStatusService,
+        private readonly BailleurRepository $bailleurRepository,
     ) {
     }
 
@@ -58,6 +60,7 @@ class SearchFilterOptionDataProvider
                     'listQualificationStatus' => $this->qualificationStatusService->getList(),
                     'listVisiteStatus' => VisiteStatus::getLabelList(),
                     'hasSignalementsImported' => $this->signalementRepository->countImported($territory, $user),
+                    'bailleursSociaux' => $this->bailleurRepository->findBailleursByTerritory($territory?->getZip()),
                 ];
             }
         );
