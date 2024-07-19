@@ -31,9 +31,9 @@
         {% if is_granted('ROLE_ADMIN') %}
             <div class="fr-col-3 fr-p-2v">
                 <select id="bo-filters-territories" class="fr-select fr-select-submit" name="territory">
-                    <option value="" {{ currentTerritory is null ? 'selected' : '' }}>Territoires</option>
+                    <option value="" {{ currentTerritory is null ? 'selected' : '' }}>Tous les territoires</option>
                     {% for territory in territories %}
-                        <option value="{{ territory.id }}" {{ currentTerritory ? (territory.id == currentTerritory.id ? 'selected' : '') : ''  }}>{{ territory.name|upper }}</option>
+                        <option value="{{ territory.id }}" {{ currentTerritory ? (territory.id == currentTerritory.id ? 'selected' : '') : ''  }}>{{ territory.zip ~ ' - ' ~ territory.name }}</option>
                     {% endfor %}
                 </select>
             </div>
@@ -42,7 +42,7 @@
             <select id="bo-filters-types" class="fr-select fr-select-submit" name="type">
                 <option value="" {{ currentType is null ? 'selected' : '' }}>Type</option>
                 {% for key, type in types %}
-                    <option value="{{ key }}" {{ currentType ? (key == currentType ? 'selected' : '') : '' }}>{{ type|upper }}</option>
+                    <option value="{{ key }}" {{ currentType ? (key == currentType ? 'selected' : '') : '' }}>{{ type }}</option>
                 {% endfor %}
             </select>
         </div>
@@ -61,7 +61,7 @@
             <tr>
                 <th>Id</th>
                 {% if is_granted('ROLE_ADMIN') %}
-                    <th class="number">Dpt.</th>
+                    <th class="number">Territoire</th>
                 {% endif %}
                 <th>Nom</th>
                 <th>Type</th>
@@ -75,7 +75,7 @@
                 <tr class="partner-row">
                     <td>{{ partner.id }}</td>
                     {% if is_granted('ROLE_ADMIN') %}
-                        <td>{{ partner.territory ? partner.territory.zip : 0 }}</td>
+                        <td>{{ partner.territory ? partner.territory.zip ~ ' - ' ~ partner.territory.name : 'aucun' }}</td>
                     {% endif %}
                     <td>{{ partner.nom }}</td>
                     <td>{{ partner.type ? partner.type.label : (partner.isCommune ? 'Commune':'Partenaire') }}</td>

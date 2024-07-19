@@ -58,7 +58,7 @@
                                             <option value="">TOUS</option>
                                             {% for territory in territories %}
                                                 <option value="{{ territory.id }}"
-                                                        class="{% if territory.id in filters.territories %}fr-hidden{% endif %}">{{ territory.name|upper }}</option>
+                                                        class="{% if territory.id in filters.territories %}fr-hidden{% endif %}">{{ territory.zip ~ ' - ' ~ territory.name }}</option>
                                             {% endfor %}
                                         </select>
                                         <div class="selected__value">
@@ -67,7 +67,7 @@
                                             {% for territory in filters.territories %}
                                                 <input type="hidden" name="bo-filters-territories[]" value="{{ territory }}">
                                                 <span class="fr-badge fr-badge--success fr-m-1v" data-value="{{ territory }}"
-                                                      data-removable="true">{{ territories[territory] is defined ? territories[territory].name|upper : 'AUCUN' }}</span>
+                                                      data-removable="true">{{ territories[territory] is defined ? territories[territory].name : 'AUCUN' }}</span>
                                             {% else %}
                                                 {% set visible = 0 %}
                                             {% endfor %}
@@ -81,7 +81,7 @@
                                         <option value="">TOUTES</option>
                                         {% for city in cities %}
                                             <option value="{{ city.city }}"
-                                                    class="{% if city.city in filters.cities %}fr-hidden{% endif %}">{{ city.city|upper }}</option>
+                                                    class="{% if city.city in filters.cities %}fr-hidden{% endif %}">{{ city.city }}</option>
                                         {% endfor %}
                                     </select>
                                     <div class="selected__value">
@@ -103,7 +103,7 @@
                                         <option value="">TOUS</option>
                                         {% for status,wording in statuses %}
                                             <option value="{{ status }}"
-                                                    class="{% if status in  filters.statuses %}fr-hidden{% endif %}">{{ wording|upper }}</option>
+                                                    class="{% if status in  filters.statuses %}fr-hidden{% endif %}">{{ wording }}</option>
                                         {% endfor %}
                                     </select>
                                     <div class="selected__value">
@@ -130,13 +130,13 @@
                                             <optgroup label="COMMUNES">
                                                 {% for partner in partners|filter(v=> v.isCommune == 1) %}
                                                     <option value="{{ partner.id }}"
-                                                            class="{% if partner.id in filters.partners %}fr-hidden{% endif %}">{{ partner.nom|upper }}</option>
+                                                            class="{% if partner.id in filters.partners %}fr-hidden{% endif %}">{{ partner.nom }}</option>
                                                 {% endfor %}
                                             </optgroup>
                                             <optgroup label="PARTENAIRES">
                                                 {% for partner in partners|filter(v=> v.isCommune == 0) %}
                                                     <option value="{{ partner.id }}"
-                                                            class="{% if partner.id in filters.partners %}fr-hidden{% endif %}">{{ partner.nom|upper }}</option>
+                                                            class="{% if partner.id in filters.partners %}fr-hidden{% endif %}">{{ partner.nom }}</option>
                                                 {% endfor %}
                                             </optgroup>
 
@@ -206,7 +206,7 @@
                                         <option value="">TOUS</option>
                                         {% for critere in criteres %}
                                             <option value="{{ critere.id }}"
-                                                    class="{% if critere.id in filters.criteres %}fr-hidden{% endif %}">{{ critere.label|upper }}</option>
+                                                    class="{% if critere.id in filters.criteres %}fr-hidden{% endif %}">{{ critere.label }}</option>
                                         {% endfor %}
                                     </select>
                                     <div class="selected__value">
@@ -228,7 +228,7 @@
                                         <option value="">TOUS</option>
                                         {% for tag in tags %}
                                             <option value="{{ tag.id }}"
-                                                    class="{% if tag.id in filters.tags %}fr-hidden{% endif %}">{{ tag.label|upper }}</option>
+                                                    class="{% if tag.id in filters.tags %}fr-hidden{% endif %}">{{ tag.label }}</option>
                                         {% endfor %}
                                     </select>
                                     <div class="selected__value">

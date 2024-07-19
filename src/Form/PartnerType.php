@@ -177,7 +177,9 @@ class PartnerType extends AbstractType
             },
             'data' => !empty($territory) ? $territory : null,
             'disabled' => !$options['can_edit_territory'],
-            'choice_label' => 'name',
+            'choice_label' => function (Territory $territory) {
+                return $territory->getZip().' - '.$territory->getName();
+            },
             'attr' => [
                 'class' => 'fr-select',
             ],

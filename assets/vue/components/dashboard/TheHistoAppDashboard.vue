@@ -111,7 +111,7 @@ export default defineComponent({
       for (const id in requestResponse.territories) {
         const optionItem = new HistoInterfaceSelectOption()
         optionItem.Id = requestResponse.territories[id].id
-        optionItem.Text = requestResponse.territories[id].name
+        optionItem.Text = requestResponse.territories[id].zip + ' - ' + requestResponse.territories[id].name
         this.sharedState.territories.push(optionItem)
       }
     },

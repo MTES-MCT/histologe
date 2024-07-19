@@ -17,7 +17,7 @@ class ListTerritoryStatisticProvider
         $territories = $this->territoryRepository->findAllList();
         /** @var Territory $territory */
         foreach ($territories as $territory) {
-            $data[$territory->getId()] = $territory->getName();
+            $data[$territory->getId()] = $territory->getZip().' - '.$territory->getName();
         }
 
         return $data;
