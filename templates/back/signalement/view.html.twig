@@ -18,14 +18,15 @@
     {% if is_granted('ROLE_ADMIN') %}
         {% include '_partials/_modal_send_lien_suivi.html.twig' %}
     {% endif %}
-    <section id="signalement-{{ signalement.id }}-content"
-        class="fr-p-5v fr-background--white
+    <div class="fr-background--white
             {{ (isClosedForMe and not is_granted('ROLE_ADMIN_TERRITORY'))
                 or signalement.statut is same as constant('App\\Entity\\Signalement::STATUS_CLOSED')
                 or signalement.statut is same as constant('App\\Entity\\Signalement::STATUS_REFUSED')
             ? 'signalement-invalid'
             : ''
             }}">
+    <section id="signalement-{{ signalement.id }}-content"
+        class="fr-p-5v">
 
         {% include 'back/signalement/view/photos-album.html.twig' %}
         
@@ -33,6 +34,7 @@
     </section>
 
     {% include 'back/signalement/view/tabs.html.twig' %}
+    </div>
 {% endblock %}
 
 {% block javascripts %}

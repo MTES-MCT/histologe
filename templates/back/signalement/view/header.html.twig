@@ -24,21 +24,24 @@
             <div class="fr-mb-4v">
                 {% if is_granted('ROLE_ADMIN_TERRITORY') %}
                     {% if signalement.statut is same as constant('App\\Entity\\Signalement::STATUS_NEED_VALIDATION') %}
-                        <span class="fr-badge fr-badge--warning">Nouveau</span>
+                        <span class="fr-badge fr-badge--warning fr-badge--no-icon"><span class="fr-icon-warning-line" aria-hidden="true"></span> Nouveau</span>
                     {% elseif signalement.statut is same as constant('App\\Entity\\Signalement::STATUS_ACTIVE') %}
                         <span class="fr-badge fr-badge--success fr-badge--no-icon"><span class="fr-icon-message-2-line" aria-hidden="true"></span> En cours</span>
+                    {% elseif signalement.statut is same as constant('App\\Entity\\Signalement::STATUS_REFUSED') %}
+                        <span class="fr-badge fr-badge--new fr-badge--no-icon"><span class="fr-icon-close-line" aria-hidden="true"></span> Refusé</span>
                     {% elseif signalement.statut is same as constant('App\\Entity\\Signalement::STATUS_CLOSED')
-                        or signalement.statut is same as constant('App\\Entity\\Signalement::STATUS_ARCHIVED')
-                        or signalement.statut is same as constant('App\\Entity\\Signalement::STATUS_REFUSED') %}
-                        <span class="fr-badge fr-badge--error">Signalement fermé</span>
+                        or signalement.statut is same as constant('App\\Entity\\Signalement::STATUS_ARCHIVED') %}
+                        <span class="fr-badge fr-badge--error fr-badge--no-icon"><span class="fr-icon-checkbox-circle-line" aria-hidden="true"></span> Clôturé</span>
                     {% endif %}
                 {% else %}
                     {% if isAffected and not isAccepted and not isRefused and not needValidation and not isClosed and not isClosedForMe %}
-                        <span class="fr-badge fr-badge--warning">Nouveau</span>
-                    {% elseif true or isAccepted %}
+                        <span class="fr-badge fr-badge--warning fr-badge--no-icon"><span class="fr-icon-warning-line" aria-hidden="true"></span> Nouveau</span>
+                    {% elseif isAccepted %}
                         <span class="fr-badge fr-badge--success fr-badge--no-icon"><span class="fr-icon-message-2-line" aria-hidden="true"></span> En cours</span>
-                    {% elseif isRefused or isClosedForMe %}
-                        <span class="fr-badge fr-badge--error">Signalement fermé</span>
+                    {% elseif isRefused %}
+                        <span class="fr-badge fr-badge--new fr-badge--no-icon"><span class="fr-icon-close-line" aria-hidden="true"></span> Refusé</span>
+                    {% elseif isClosedForMe %}
+                        <span class="fr-badge fr-badge--error fr-badge--no-icon"><span class="fr-icon-checkbox-circle-line" aria-hidden="true"></span> Clôturé</span>
                     {% endif %}
                 {% endif %}
             </div>
@@ -107,6 +110,16 @@
                                 value="{{ csrf_token('signalement_affectation_response_'~signalement.id) }}">
                     </form>
                     {% include '_partials/_modal_refus_affectation.html.twig' %}
+
+                    <div class="fr-notice fr-notice--info fr-my-4v">
+                        <div class="fr-container">
+                            <div class="fr-notice__body">
+                                <p>
+                                    <span class="fr-notice__desc">Vous devez accepter l'affectation pour pouvoir traiter le dossier.</span>
+                                </p>
+                            </div>
+                        </div>
+                    </div>
 
                 {% elseif isRefused %}
                     <form method="POST" action="{{ path('back_signalement_affectation_response',{signalement:signalement.id,user:app.user.id,affectation:isRefused.id}) }}">
