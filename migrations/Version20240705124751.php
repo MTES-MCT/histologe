@@ -33,6 +33,27 @@ final class Version20240705124751 extends AbstractMigration
         );
         $this->addSql('ALTER TABLE auto_affectation_rule ADD CONSTRAINT FK_1A302A1C73F74AD4 FOREIGN KEY (territory_id) REFERENCES territory (id)');
         $this->addSql('ALTER TABLE territory DROP is_auto_affectation_enabled');
+
+        $territoryId = $this->connection->fetchOne('SELECT id FROM territory WHERE zip = 93');
+        if ($territoryId) {
+            $this->addSql(
+                'INSERT INTO auto_affectation_rule (
+                    territory_id, status, partner_type, profile_declarant, insee_to_include, insee_to_exclude, parc, allocataire
+                ) VALUES (
+                    :territory_id, :status, :partner_type, :profile_declarant, :insee_to_include, :insee_to_exclude, :parc, :allocataire
+                )',
+                [
+                    'territory_id' => $territoryId,
+                    'status' => 'ACTIVE',
+                    'partner_type' => 'COMMUNE_SCHS',
+                    'profile_declarant' => 'all',
+                    'insee_to_include' => 'partner_list',
+                    'insee_to_exclude' => null,
+                    'parc' => 'all',
+                    'allocataire' => 'all',
+                ]
+            );
+        }
     }
 
     public function down(Schema $schema): void
