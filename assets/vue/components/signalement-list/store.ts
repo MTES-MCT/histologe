@@ -29,7 +29,7 @@ export const store = {
         situation: null,
         dateDepot: null,
         dateDernierSuivi: null,
-        isImported: null as 'oui' | null,
+        isImported: 'oui' as 'oui' | null,
         showMyAffectationOnly: null as 'oui' | null,
         statusAffectation: null,
         criticiteScoreMin: null,

@@ -37,6 +37,7 @@ class SignalementListController extends AbstractController
                 'maxItemsPerPage' => SignalementSearchQuery::MAX_LIST_PAGINATION,
                 'orderBy' => 'DESC',
                 'sortBy' => 'reference',
+                'isImported' => 'oui',
             ];
 
         $session->set('filters', $filters);
