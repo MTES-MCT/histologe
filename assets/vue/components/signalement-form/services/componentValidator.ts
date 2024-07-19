@@ -34,10 +34,55 @@ export const componentValidator = {
       }
     }
 
+    if (component.type === 'SignalementFormAddress') {
+      this.validateAddress(componentSlug)
+    }
+
     if (value !== undefined && value !== '' && component.validate?.maxLength !== undefined) {
       if (value.length > component.validate?.maxLength) {
         const maxLength: string = component.validate?.maxLength.toString()
         formStore.validationErrors[componentSlug] = 'La valeur dépasse la longueur autorisée ' + maxLength
+      }
+    }
+  },
+
+  validateAddress (componentSlug: string) {
+    const validationError = 'Ce champ est requis'
+    // tous les champs sont vides, on affiche l'erreur sur le champs de recherche
+    if (
+      (formStore.data[componentSlug] === undefined || formStore.data[componentSlug] === '') &&
+      (formStore.data[componentSlug + '_detail_numero'] === undefined || formStore.data[componentSlug + '_detail_numero'] === '') &&
+      (formStore.data[componentSlug + '_detail_code_postal'] === undefined || formStore.data[componentSlug + '_detail_code_postal'] === '') &&
+      (formStore.data[componentSlug + '_detail_commune'] === undefined || formStore.data[componentSlug + '_detail_commune'] === '')
+    ) {
+      formStore.validationErrors[componentSlug] = validationError
+
+    // il y a eu une édition manuelle : on vérifie tous les sous-champs
+    } else if (formStore.data[componentSlug + '_detail_manual'] !== 0) {
+      const addressDetailNumero = formStore.data[componentSlug + '_detail_numero']
+      if (addressDetailNumero === undefined || addressDetailNumero === '') {
+        formStore.validationErrors[componentSlug + '_detail_numero'] = validationError
+      } else {
+        const regexPattern = /^[0-9]*$/
+        if (regexPattern.test(addressDetailNumero) || addressDetailNumero.length < 6 || addressDetailNumero.length > 100) {
+          formStore.validationErrors[componentSlug + '_detail_numero'] = 'Format invalide'
+        }
+      }
+
+      if (formStore.data[componentSlug + '_detail_code_postal'] === undefined ||
+        formStore.data[componentSlug + '_detail_code_postal'] === ''
+      ) {
+        formStore.validationErrors[componentSlug + '_detail_code_postal'] = validationError
+
+      // vérification du code postal
+      } else if (!/^\d{5}$/.test(formStore.data[componentSlug + '_detail_code_postal'])) {
+        formStore.validationErrors[componentSlug + '_detail_code_postal'] = 'Le code postal doit être composé de 5 chiffres'
+      }
+
+      if (formStore.data[componentSlug + '_detail_commune'] === undefined ||
+        formStore.data[componentSlug + '_detail_commune'] === ''
+      ) {
+        formStore.validationErrors[componentSlug + '_detail_commune'] = validationError
       }
     }
   }
