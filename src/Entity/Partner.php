@@ -348,7 +348,7 @@ class Partner
 
     public function getIdossUrl(): ?string
     {
-        if (str_ends_with($this->idossUrl, '/')) {
+        if (isset($this->idossUrl) && str_ends_with($this->idossUrl, '/')) {
             return substr($this->idossUrl, 0, -1);
         }
 
