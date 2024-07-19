@@ -55,6 +55,7 @@ class SignalementDraftFileMessageHandler
                     $file->setSize($this->uploadHandlerService->getFileSize($file->getFilename()));
                     $file->setIsVariantsGenerated($this->uploadHandlerService->hasVariants($file->getFilename()));
                     $file->setUploadedBy($uploadUser);
+                    $file->setScannedAt(new \DateTimeImmutable());
                     $signalement->addFile($file);
                 }
             }

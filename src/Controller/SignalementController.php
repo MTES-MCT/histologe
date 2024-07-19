@@ -20,6 +20,7 @@ use App\Service\ImageManipulationHandler;
 use App\Service\Mailer\NotificationMail;
 use App\Service\Mailer\NotificationMailerRegistry;
 use App\Service\Mailer\NotificationMailerType;
+use App\Service\Security\FileScanner;
 use App\Service\Signalement\PostalCodeHomeChecker;
 use App\Service\Signalement\SignalementDesordresProcessor;
 use App\Service\Signalement\SignalementDraftHelper;
@@ -375,11 +376,15 @@ class SignalementController extends AbstractController
         UploadHandlerService $uploadHandlerService,
         Request $request,
         LoggerInterface $logger,
-        ImageManipulationHandler $imageManipulationHandler
+        ImageManipulationHandler $imageManipulationHandler,
+        FileScanner $fileScanner
     ) {
         if (null !== ($files = $request->files->get('signalement'))) {
             try {
                 foreach ($files as $key => $file) {
+                    if (!$fileScanner->isClean($file->getPathname())) {
+                        return $this->json(['error' => 'Le fichier est infecté'], 400);
+                    }
                     $res = $uploadHandlerService->toTempFolder($file, $key);
                     if (\is_array($res) && isset($res['error'])) {
                         throw new \Exception($res['error']);

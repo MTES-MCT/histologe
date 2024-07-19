@@ -9,6 +9,7 @@ use App\Entity\Signalement;
 use App\Factory\FileFactory;
 use App\Service\Files\FilenameGenerator;
 use App\Service\ImageManipulationHandler;
+use App\Service\Security\FileScanner;
 use App\Service\UploadHandlerService;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
@@ -27,6 +28,7 @@ class SignalementFileProcessor
         private readonly UrlGeneratorInterface $urlGenerator,
         private readonly FileFactory $fileFactory,
         private readonly ImageManipulationHandler $imageManipulationHandler,
+        private readonly FileScanner $fileScanner
     ) {
     }
 
@@ -38,6 +40,20 @@ class SignalementFileProcessor
         $fileList = $descriptionList = [];
         $withTokenGenerated = false;
         foreach ($files[$inputName] as $key => $file) {
+            if ($file instanceof UploadedFile) {
+                try {
+                    if (!$this->fileScanner->isClean($file->getPathname())) {
+                        $message = 'Le fichier '.$file->getClientOriginalName().' est infecté par un virus.';
+                        $this->errors[] = $message;
+                        $this->logger->error($message);
+                        continue;
+                    }
+                } catch (\Exception $exception) {
+                    $this->errors[] = $exception->getMessage();
+                    $this->logger->error($exception->getMessage());
+                    continue;
+                }
+            }
             $fileExtension = $file instanceof UploadedFile ? $file->getExtension() : null;
             if (
                 $file instanceof UploadedFile
@@ -119,7 +135,8 @@ class SignalementFileProcessor
                 intervention: $intervention,
                 documentType: $fileItem['documentType'],
                 isWaitingSuivi: $isWaitingSuivi,
-                isTemp: $isTemp
+                isTemp: $isTemp,
+                scannedAt: new \DateTimeImmutable()
             );
             $file->setSize($this->uploadHandlerService->getFileSize($file->getFilename()));
             $file->setIsVariantsGenerated($this->uploadHandlerService->hasVariants($file->getFilename()));
