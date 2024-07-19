@@ -25,15 +25,15 @@
             ? 'signalement-invalid'
             : ''
             }}">
-    <section id="signalement-{{ signalement.id }}-content"
-        class="fr-p-5v">
+        <section id="signalement-{{ signalement.id }}-content"
+            class="fr-p-5v">
 
-        {% include 'back/signalement/view/photos-album.html.twig' %}
-        
-        {% include 'back/signalement/view/header.html.twig' %}
-    </section>
+            {% include 'back/signalement/view/photos-album.html.twig' %}
+            
+            {% include 'back/signalement/view/header.html.twig' %}
+        </section>
 
-    {% include 'back/signalement/view/tabs.html.twig' %}
+        {% include 'back/signalement/view/tabs.html.twig' %}
     </div>
 {% endblock %}
 
