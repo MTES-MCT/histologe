@@ -4,6 +4,8 @@ namespace App\Tests\Unit\Entity;
 
 use App\Entity\Enum\ProfileDeclarant;
 use App\Entity\Enum\Qualification;
+use App\Entity\Signalement;
+use App\Entity\SignalementDraft;
 use App\Entity\SignalementQualification;
 use App\Tests\FixturesHelper;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
@@ -17,11 +19,14 @@ class SignalementTest extends KernelTestCase
         $signalement = $this->getSignalement($this->getTerritory('Pas-de-calais', '62'));
         $signalement
             ->addSignalementQualification((new SignalementQualification())->setQualification(
-                Qualification::NON_DECENCE))
+                Qualification::NON_DECENCE
+            ))
             ->addSignalementQualification((new SignalementQualification())->setQualification(
-                Qualification::RSD))
+                Qualification::RSD
+            ))
             ->addSignalementQualification((new SignalementQualification())->setQualification(
-                Qualification::NON_DECENCE_ENERGETIQUE));
+                Qualification::NON_DECENCE_ENERGETIQUE
+            ));
 
         $this->assertTrue($signalement->hasQualificaton(Qualification::RSD));
     }
@@ -31,11 +36,14 @@ class SignalementTest extends KernelTestCase
         $signalement = $this->getSignalement($this->getTerritory('Pas-de-calais', '62'));
         $signalement
             ->addSignalementQualification((new SignalementQualification())->setQualification(
-                Qualification::NON_DECENCE))
+                Qualification::NON_DECENCE
+            ))
             ->addSignalementQualification((new SignalementQualification())->setQualification(
-                Qualification::NON_DECENCE))
+                Qualification::NON_DECENCE
+            ))
             ->addSignalementQualification((new SignalementQualification())->setQualification(
-                Qualification::NON_DECENCE_ENERGETIQUE));
+                Qualification::NON_DECENCE_ENERGETIQUE
+            ));
 
         $this->assertFalse($signalement->hasQualificaton(Qualification::RSD));
     }
@@ -67,5 +75,25 @@ class SignalementTest extends KernelTestCase
         yield 'isNotOccupant TIERS assistance sociale' => [true, ProfileDeclarant::TIERS_PRO, 'assistante sociale'];
         yield 'isNotOccupant TIERS curatrice' => [true, ProfileDeclarant::TIERS_PRO, 'curatrice'];
         yield 'isNotOccupant PARTICULIER' => [true, ProfileDeclarant::TIERS_PARTICULIER];
+    }
+
+    /** @dataProvider provideProfile */
+    public function testSetProfileDeclarantFromDraft(ProfileDeclarant $profileDeclarant)
+    {
+        $signalement = new Signalement();
+        $signalement->setCreatedFrom(new SignalementDraft());
+        $signalement->setProfileDeclarant($profileDeclarant);
+
+        $this->assertEquals($profileDeclarant, $signalement->getProfileDeclarant());
+    }
+
+    public function provideProfile(): \Generator
+    {
+        yield 'TIERS_PRO' => [ProfileDeclarant::TIERS_PRO];
+        yield 'BAILLEUR' => [ProfileDeclarant::BAILLEUR];
+        yield 'TIERS_PARTICULIER' => [ProfileDeclarant::TIERS_PARTICULIER];
+        yield 'BAILLEUR_OCCUPANT' => [ProfileDeclarant::BAILLEUR_OCCUPANT];
+        yield 'SERVICE_SECOURS' => [ProfileDeclarant::SERVICE_SECOURS];
+        yield 'LOCATAIRE' => [ProfileDeclarant::LOCATAIRE];
     }
 }

@@ -164,12 +164,12 @@ class Partner
         return $this;
     }
 
-    public function getInsee(): ?array
+    public function getInsee(): array
     {
         return $this->insee;
     }
 
-    public function setInsee(?array $insee): self
+    public function setInsee(array $insee): self
     {
         $this->insee = $insee;
 

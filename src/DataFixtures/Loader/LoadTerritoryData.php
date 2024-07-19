@@ -29,12 +29,7 @@ class LoadTerritoryData extends Fixture implements OrderedFixtureInterface
             ->setZip($row['zip'])
             ->setName($row['name'])
             ->setIsActive($row['is_active'])
-            ->setIsAutoAffectationEnabled(false)
             ->setBbox(json_decode($row['bbox'], true));
-
-        if (isset($row['is_auto_affectation_enabled']) && $row['is_auto_affectation_enabled']) {
-            $territory->setIsAutoAffectationEnabled(true);
-        }
 
         if (isset($row['authorized_codes_insee'])) {
             $territory->setAuthorizedCodesInsee($row['authorized_codes_insee']);

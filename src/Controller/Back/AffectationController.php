@@ -72,7 +72,7 @@ class AffectationController extends AbstractController
                     );
                     if ($affectation instanceof Affectation) {
                         $this->affectationManager->persist($affectation);
-                        $this->dispatchDossier($affectation);
+                        $this->interconnectionBus->dispatch($affectation);
                     }
                 }
                 $this->affectationManager->removeAffectationsFrom($signalement, $postedPartner, $partnersIdToRemove);
@@ -177,14 +177,6 @@ class AffectationController extends AbstractController
                 new AffectationAnsweredEvent($affectation, $this->getUser(), $response),
                 AffectationAnsweredEvent::NAME
             );
-        }
-    }
-
-    private function dispatchDossier(Affectation $affectation): void
-    {
-        $partner = $affectation->getPartner();
-        if ($partner->canSyncWithEsabora() || $partner->canSyncWithOilhi()) {
-            $this->interconnectionBus->dispatch($affectation);
         }
     }
 }

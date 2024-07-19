@@ -52,11 +52,11 @@ class Territory
     #[ORM\Column(type: 'json', nullable: true)]
     private $authorizedCodesInsee = [];
 
-    #[ORM\Column]
-    private ?bool $isAutoAffectationEnabled = false;
-
     #[ORM\OneToMany(mappedBy: 'territory', targetEntity: BailleurTerritory::class)]
     private Collection $bailleurTerritories;
+
+    #[ORM\OneToMany(mappedBy: 'territory', targetEntity: AutoAffectationRule::class, orphanRemoval: true)]
+    private Collection $autoAffectationRules;
 
     public function __construct()
     {
@@ -296,18 +296,6 @@ class Territory
         return $this;
     }
 
-    public function isAutoAffectationEnabled(): ?bool
-    {
-        return $this->isAutoAffectationEnabled;
-    }
-
-    public function setIsAutoAffectationEnabled(bool $isAutoAffectationEnabled): self
-    {
-        $this->isAutoAffectationEnabled = $isAutoAffectationEnabled;
-
-        return $this;
-    }
-
     /**
      * @return Collection<int, BailleurTerritory>
      */
@@ -316,7 +304,7 @@ class Territory
         return $this->bailleurTerritories;
     }
 
-    public function addBailleurTerritory(BailleurTerritory $bailleurTerritory): static
+    public function addBailleurTerritory(BailleurTerritory $bailleurTerritory): self
     {
         if (!$this->bailleurTerritories->contains($bailleurTerritory)) {
             $this->bailleurTerritories->add($bailleurTerritory);
@@ -326,12 +314,42 @@ class Territory
         return $this;
     }
 
-    public function removeBailleurTerritory(BailleurTerritory $bailleurTerritory): static
+    public function removeBailleurTerritory(BailleurTerritory $bailleurTerritory): self
     {
         if ($this->bailleurTerritories->removeElement($bailleurTerritory)) {
             // set the owning side to null (unless already changed)
             if ($bailleurTerritory->getTerritory() === $this) {
                 $bailleurTerritory->setTerritory(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, AutoAffectationRule>
+     */
+    public function getAutoAffectationRules()
+    {
+        return $this->autoAffectationRules;
+    }
+
+    public function addAutoAffectationRule(AutoAffectationRule $autoAffectationRule): self
+    {
+        if (!$this->autoAffectationRules->contains($autoAffectationRule)) {
+            $this->autoAffectationRules->add($autoAffectationRule);
+            $autoAffectationRule->setTerritory($this);
+        }
+
+        return $this;
+    }
+
+    public function removeAutoAffectationRule(AutoAffectationRule $autoAffectationRule): self
+    {
+        if ($this->autoAffectationRules->removeElement($autoAffectationRule)) {
+            // set the owning side to null (unless already changed)
+            if ($autoAffectationRule->getTerritory() === $this) {
+                $autoAffectationRule->setTerritory(null);
             }
         }
 

@@ -573,7 +573,6 @@ territories:
     name: "Seine-Saint-Denis"
     is_active: 1
     bbox: "{\"n\":\"49.012329\",\"s\":\"48.807248\",\"e\":\"2.603292\",\"w\":\"2.288311\"}"
-    is_auto_affectation_enabled: 1
   -
     zip: "94"
     name: "Val-de-Marne"

@@ -27,4 +27,9 @@ enum ProfileDeclarant: string
             'BAILLEUR' => 'Bailleur',
         ];
     }
+
+    public static function getListWithGroup(): array
+    {
+        return array_merge(array_column(self::cases(), 'name'), ['all', 'tiers', 'occupant']);
+    }
 }
