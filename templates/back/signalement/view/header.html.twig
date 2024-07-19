@@ -95,6 +95,24 @@
             </div>
 
             <div class="fr-mb-4v fr-text--right">
+                <p class="fr-badge fr-badge--new fr-badge--no-icon">{% 
+                    if signalement.profileDeclarant %}
+                        {% if signalement.profileDeclarant is same as enum('App\\Entity\\Enum\\ProfileDeclarant').BAILLEUR %}
+                            tiers bailleur
+                        {% else %}
+                            {{ signalement.profileDeclarant.label }}
+                        {% endif %}
+                    {% else %}
+                        {% if signalement.isNotOccupant %}
+                            tiers déclarant
+                        {% else %}
+                            occupant
+                        {% endif %}
+                    {% endif
+                %}</p>
+            </div>
+
+            <div class="fr-mb-4v fr-text--right">
                 {% if isAffected and not isAccepted and not isRefused and not needValidation and not isClosed and not isClosedForMe %}
                     <form action="{{ path('back_signalement_affectation_response',{signalement:signalement.id,user:app.user.id,affectation:isAffected.id}) }}"
                             class="tinyCheck" id="signalement-affectation-response-form"
