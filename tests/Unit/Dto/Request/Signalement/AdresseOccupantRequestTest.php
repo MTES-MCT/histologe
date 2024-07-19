@@ -68,6 +68,6 @@ class AdresseOccupantRequestTest extends KernelTestCase
         );
 
         $errors = $this->validator->validate($adresseOccupantRequestInvalide);
-        $this->assertCount(12, $errors);
+        $this->assertCount(13, $errors);
     }
 }
