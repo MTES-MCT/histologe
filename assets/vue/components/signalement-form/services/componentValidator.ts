@@ -35,7 +35,7 @@ export const componentValidator = {
     }
 
     if (component.type === 'SignalementFormAddress') {
-      this.validateAddress(componentSlug)
+      this.validateAddress(component)
     }
 
     if (value !== undefined && value !== '' && component.validate?.maxLength !== undefined) {
@@ -46,10 +46,12 @@ export const componentValidator = {
     }
   },
 
-  validateAddress (componentSlug: string) {
+  validateAddress (component: any) {
+    const componentSlug: string = component.slug
     const validationError = 'Ce champ est requis'
-    // tous les champs sont vides, on affiche l'erreur sur le champs de recherche
+    // si le composant est requis et que tous les champs sont vides, on affiche l'erreur sur le champ de recherche
     if (
+      (component.validate === undefined || component.validate.required !== false) &&
       (formStore.data[componentSlug] === undefined || formStore.data[componentSlug] === '') &&
       (formStore.data[componentSlug + '_detail_numero'] === undefined || formStore.data[componentSlug + '_detail_numero'] === '') &&
       (formStore.data[componentSlug + '_detail_code_postal'] === undefined || formStore.data[componentSlug + '_detail_code_postal'] === '') &&
@@ -58,7 +60,7 @@ export const componentValidator = {
       formStore.validationErrors[componentSlug] = validationError
 
     // il y a eu une édition manuelle : on vérifie tous les sous-champs
-    } else if (formStore.data[componentSlug + '_detail_manual'] !== 0) {
+    } else if (formStore.data[componentSlug + '_detail_manual'] !== 0 && formStore.data[componentSlug + '_detail_manual'] !== undefined) {
       const addressDetailNumero = formStore.data[componentSlug + '_detail_numero']
       if (addressDetailNumero === undefined || addressDetailNumero === '') {
         formStore.validationErrors[componentSlug + '_detail_numero'] = validationError
