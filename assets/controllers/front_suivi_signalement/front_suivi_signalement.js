@@ -294,6 +294,11 @@ document.addEventListener("DOMContentLoaded", function() {
         elmnt = document.getElementById(window.location.hash.substring(1))
         elmnt.scrollIntoView({behavior:'instant'})
     }
+
+    setInterval(function() {
+        fetch('/keep-session-alive')
+            .then(response => response.json());
+    }, 600000);
 })
 const closeNoticeButtons = document.querySelectorAll('button[name="closeNotice"]');
 closeNoticeButtons.forEach(button => {
