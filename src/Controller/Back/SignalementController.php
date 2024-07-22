@@ -177,38 +177,7 @@ class SignalementController extends AbstractController
 
         $allPhotosOrdered = PhotoHelper::getSortedPhotos($signalement);
 
-        if ($params->get('feature_signalement_view_enabled')) {
-            return $this->render('back/signalement/view.html.twig', [
-                'title' => 'Signalement',
-                'createdFromDraft' => $signalement->getCreatedFrom(),
-                'situations' => $infoDesordres['criticitesArranged'],
-                'photos' => $infoDesordres['photos'],
-                'criteres' => $infoDesordres['criteres'],
-                'needValidation' => Signalement::STATUS_NEED_VALIDATION === $signalement->getStatut(),
-                'canEditSignalement' => $canEditSignalement,
-                'isAffected' => $isAffected,
-                'isAccepted' => $isAccepted,
-                'isClosed' => Signalement::STATUS_CLOSED === $signalement->getStatut(),
-                'isClosedForMe' => $isClosedForMe,
-                'isRefused' => $isRefused,
-                'isDanger' => $infoDesordres['isDanger'],
-                'signalement' => $signalement,
-                'partners' => $partners,
-                'clotureForm' => $clotureForm->createView(),
-                'tags' => $tagsRepository->findAllActive($signalement->getTerritory()),
-                'signalementQualificationNDE' => $signalementQualificationNDE,
-                'signalementQualificationNDECriticite' => $signalementQualificationNDECriticites,
-                'files' => $files,
-                'canEditNDE' => $canEditNDE,
-                'listQualificationStatusesLabelsCheck' => $listQualificationStatusesLabelsCheck,
-                'listConcludeProcedures' => $listConcludeProcedures,
-                'partnersCanVisite' => $partnerVisite,
-                'pendingVisites' => $interventionRepository->getPendingVisitesForSignalement($signalement),
-                'allPhotosOrdered' => $allPhotosOrdered,
-            ]);
-        }
-
-        return $this->render('back/signalement/view-old.html.twig', [
+        $twigParams = [
             'title' => 'Signalement',
             'createdFromDraft' => $signalement->getCreatedFrom(),
             'situations' => $infoDesordres['criticitesArranged'],
@@ -235,7 +204,13 @@ class SignalementController extends AbstractController
             'partnersCanVisite' => $partnerVisite,
             'pendingVisites' => $interventionRepository->getPendingVisitesForSignalement($signalement),
             'allPhotosOrdered' => $allPhotosOrdered,
-        ]);
+        ];
+
+        if ($params->get('feature_signalement_view_enabled')) {
+            return $this->render('back/signalement/view.html.twig', $twigParams);
+        }
+
+        return $this->render('back/signalement/view-old.html.twig', $twigParams);
     }
 
     #[Route('/{uuid}/supprimer', name: 'back_signalement_delete', methods: 'POST')]

@@ -133,7 +133,7 @@
         })
         
         {% if isClosedForMe or signalement.statut is same as constant('App\\Entity\\Signalement::STATUS_CLOSED') %}
-        document?.querySelector('#signalement-{{ signalement.id }}-content').querySelectorAll('button:not(.reopen,.reaffect,.img-box,.fr-accordion__btn),.fr-btn:not(.reopen,.reaffect,.img-box,.fr-fi-file-pdf-fill)').forEach(input => {
+        document?.querySelector('#signalement-{{ signalement.id }}-content').querySelectorAll('button:not(.reopen,.reaffect,.img-box,.fr-accordion__btn,.keep-when-signalement-closed),.fr-btn:not(.reopen,.reaffect,.img-box,.fr-fi-file-pdf-fill)').forEach(input => {
             input.remove()
         })
         {% endif %}

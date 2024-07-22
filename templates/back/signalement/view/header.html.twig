@@ -19,7 +19,7 @@
     </nav>
 
 
-    <div class="fr-grid-row">
+    <div class="fr-grid-row fr-grid-row--gutters">
         <div class="fr-col-7">
             <div class="fr-mb-4v">
                 {% if is_granted('ROLE_ADMIN_TERRITORY') %}
@@ -82,11 +82,13 @@
                     </div>
                 {% endif %}
             </div>
-                
+            
+            {% if not needValidation %}
             <div class="fr-mt-4v fr-p-4v fr-background-alt--grey">
-                <strong>Etiquettes</strong><br>
+                <strong>Etiquettes</strong>
                 {% include 'back/signalement/view/tags.html.twig' %}
             </div>
+            {% endif %}
         </div>
 
         <div class="fr-col-5">
