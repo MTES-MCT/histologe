@@ -137,6 +137,7 @@
     </script>
 
     {{ encore_entry_script_tags('app') }}
+    {{ encore_entry_script_tags('app-back-bo') }}
     <script nonce="{{ app.request.attributes.get('csp_script_nonce') }}">
         tippy('.part-infos-hover', {
             content: (reference) => '<strong class="fr-ws-nowrap">' + reference.getAttribute('data-user') + '</strong>' + '<hr class="fr-pb-1v"><span class="fr-ws-nowrap">' + reference.getAttribute('data-mail') + '</span>',
