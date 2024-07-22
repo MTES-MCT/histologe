@@ -73,13 +73,11 @@ class SignalementVoter extends Voter
     {
         if (Signalement::STATUS_ARCHIVED !== $signalement->getStatut()
             && Signalement::STATUS_REFUSED !== $signalement->getStatut()
-            && !$signalement->hasSuiviUsagePostCloture()
         ) {
-            if (Signalement::STATUS_CLOSED === $signalement->getStatut()
-            || Signalement::STATUS_REFUSED === $signalement->getStatut()) {
+            if (Signalement::STATUS_CLOSED === $signalement->getStatut()) {
                 $datePostCloture = $signalement->getClosedAt()->modify('+ 30days');
                 $today = new \DateTimeImmutable();
-                if ($today < $datePostCloture) {
+                if ($today < $datePostCloture && !$signalement->hasSuiviUsagePostCloture()) {
                     return true;
                 }
             } else {
