@@ -291,8 +291,8 @@ if (modalUploadFiles) {
 
 document.addEventListener("DOMContentLoaded", function() {
     if(window.location.hash) {
-        elmnt = document.getElementById(window.location.hash.substring(1))
-        elmnt.scrollIntoView({behavior:'instant'})
+        const elmnt = document.getElementById(window.location.hash.substring(1))
+        elmnt?.scrollIntoView({behavior:'instant'})
     }
 
     setInterval(function() {

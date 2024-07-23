@@ -2,7 +2,7 @@
     <ul class="fr-tabs__list" role="tablist" aria-label="Informations du signalement">
         <li role="presentation">
             <button id="tabpanel-activite" class="fr-tabs__tab fr-icon-checkbox-line fr-tabs__tab--icon-left"
-                tabindex="0" role="tab" aria-selected="true" aria-controls="tabpanel-activite-panel"
+                tabindex="0" role="tab" aria-selected="false" aria-controls="tabpanel-activite-panel"
                 {% if signalement.statut is same as constant('App\\Entity\\Signalement::STATUS_NEED_VALIDATION') %}disabled{% endif %}
                 >Activité PDLHI</button>
         </li>
@@ -20,7 +20,7 @@
         </li>
     </ul>
     {% if signalement.statut is not same as constant('App\\Entity\\Signalement::STATUS_NEED_VALIDATION') %}
-    <div id="tabpanel-activite-panel" class="fr-tabs__panel fr-tabs__panel--selected" role="tabpanel" aria-labelledby="tabpanel-activite" tabindex="0">
+    <div id="tabpanel-activite-panel" class="fr-tabs__panel" role="tabpanel" aria-labelledby="tabpanel-activite" tabindex="0">
         {% include 'back/signalement/view/tabs/tab-activite.html.twig' %}
     </div>
     {% endif %}
@@ -37,3 +37,19 @@
         {% include 'back/signalement/view/tabs/tab-documents.html.twig' %}
     </div>
 </div>
+<script type="text/javascript" nonce="{{ app.request.attributes.get('csp_script_nonce') }}">
+    const currentHash = window.location.hash != '' ?
+        window.location.hash.substring(1) :
+        {% if signalement.statut is not same as constant('App\\Entity\\Signalement::STATUS_NEED_VALIDATION') %}'activite'{% else %}'situation'{% endif %};
+    const buttonElement = document.getElementById('tabpanel-'+currentHash);
+    buttonElement?.setAttribute('aria-selected', 'true');
+    const tabElement = document.getElementById('tabpanel-'+currentHash+'-panel');
+    tabElement?.classList.add('fr-tabs__panel--selected');
+
+    const btnElements = document.querySelectorAll(`.fr-tabs__tab`);
+    btnElements.forEach((btnElement) => {
+        btnElement.addEventListener('click', (e) => {
+            window.location.hash = btnElement.id.substring(9)
+        })
+    })
+</script>
