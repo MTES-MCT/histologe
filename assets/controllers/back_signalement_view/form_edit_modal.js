@@ -50,6 +50,7 @@ async function submitPayload(formElement) {
         const responseData = await response.json();
         if (response.ok) {
             location.reload();
+            window.scrollTo(0, 0);
         } else if (response.status === 400) {
             const errors = responseData.errors;
             const submitElement = document.querySelector(`.fr-modal--opened [type="submit"]`);

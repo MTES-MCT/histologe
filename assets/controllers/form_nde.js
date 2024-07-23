@@ -77,7 +77,7 @@ formBtn?.addEventListener('click', evt => {
             .then((response) => {
                 if (response.ok) {
                     window.location.reload();
-
+                    window.scrollTo(0, 0);
                 }
             })
             .catch((error) => {

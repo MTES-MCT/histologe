@@ -67,9 +67,6 @@
     </p>
 {% endif %}
 
-{% include '_partials/_modal_file_delete.html.twig' %}
-{% include 'back/signalement/view/edit-modals/edit-file.html.twig' %}
-
 {% set DocumentType = enum('\\App\\Entity\\Enum\\DocumentType') %}
 {% if 'photo' in filesType and (filesFilter is same as 'situation' or filesFilter is same as 'visite') %}
     <div class="fr-grid-row fr-grid-row--middle fr-grid-row--gutters fr-mb-3v">

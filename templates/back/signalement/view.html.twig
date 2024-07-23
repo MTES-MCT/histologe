@@ -18,6 +18,9 @@
     {% if is_granted('ROLE_ADMIN') %}
         {% include '_partials/_modal_send_lien_suivi.html.twig' %}
     {% endif %}
+    {% include '_partials/_modal_file_delete.html.twig' %}
+    {% include 'back/signalement/view/edit-modals/edit-file.html.twig' %}
+
     <div class="fr-background--white
             {{ (isClosedForMe and not is_granted('ROLE_ADMIN_TERRITORY'))
                 or signalement.statut is same as constant('App\\Entity\\Signalement::STATUS_CLOSED')
