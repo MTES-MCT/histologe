@@ -15,8 +15,6 @@
 {% block javascripts %}
     <script src="https://cdn.jsdelivr.net/npm/leaflet@1.7.1/dist/leaflet.js"></script> 
     <script src="https://cdn.jsdelivr.net/npm/leaflet.markercluster@1.5.3/dist/leaflet.markercluster.js"></script>
-    {{ encore_entry_script_tags('app') }}
-    {{ encore_entry_script_tags('app-back-bo') }}
     <script src="{{ asset('js/maps.js') }}" data-token="{{ csrf_token('load_markers_'~''|date('dmYhi')) }}"
             id="carto__js"></script>
 {% endblock %}
