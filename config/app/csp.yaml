@@ -10,6 +10,6 @@ parameters:
     frame-src: "'none'"
     object-src: "'none'"
     base-uri: "'self'"
-    form-action: "'self' https://*.scalingo.io http://*.scalingo.io https://histologe.beta.gouv.fr http://histologe.beta.gouv.fr"
+    form-action: "'self' https://*.scalingo.io https://histologe.beta.gouv.fr"
     frame-ancestors: "'none'"
     media-src: "'self'"
