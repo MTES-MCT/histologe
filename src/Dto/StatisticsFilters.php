@@ -11,8 +11,8 @@ class StatisticsFilters
     private ?string $statut;
     private array $etiquettes;
     private ?string $type;
-    private \DateTime $dateStart;
-    private \DateTime $dateEnd;
+    private ?\DateTime $dateStart;
+    private ?\DateTime $dateEnd;
     private bool $countRefused;
     private bool $countArchived;
     private ?Territory $territory;
@@ -23,8 +23,8 @@ class StatisticsFilters
         ?string $statut,
         array $etiquettes,
         ?string $type,
-        \DateTime $dateStart,
-        \DateTime $dateEnd,
+        ?\DateTime $dateStart,
+        ?\DateTime $dateEnd,
         bool $countRefused,
         bool $countArchived,
         ?Territory $territory,
@@ -95,7 +95,7 @@ class StatisticsFilters
         return $this->dateStart;
     }
 
-    public function setDateStart(\DateTime $dateStart): self
+    public function setDateStart(?\DateTime $dateStart): self
     {
         $this->dateStart = $dateStart;
 
@@ -107,7 +107,7 @@ class StatisticsFilters
         return $this->dateEnd;
     }
 
-    public function setDateEnd(\DateTime $dateEnd): self
+    public function setDateEnd(?\DateTime $dateEnd): self
     {
         $this->dateEnd = $dateEnd;
 

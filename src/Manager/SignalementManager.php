@@ -267,13 +267,13 @@ class SignalementManager extends AbstractManager
     public function findUsersAffectedToSignalement(
         Signalement $signalement,
         AffectationStatus $statusAffectation,
-        Partner $partnerToExclude
+        ?Partner $partnerToExclude
     ): array {
         $list = [];
         $affectations = $signalement->getAffectations();
         foreach ($affectations as $affectation) {
             $partner = $affectation->getPartner();
-            if ((!$partnerToExclude || $partnerToExclude != $partner) && $affectation->getStatut() === $statusAffectation->value) {
+            if ((null === $partnerToExclude || $partnerToExclude != $partner) && $affectation->getStatut() === $statusAffectation->value) {
                 $list = array_merge($list, $partner->getUsers()->toArray());
             }
         }
