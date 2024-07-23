@@ -34,7 +34,6 @@ class Signalement
     public const STATUS_CLOSED = 6;
     public const STATUS_ARCHIVED = 7;
     public const STATUS_REFUSED = 8;
-    public const DISABLED_STATUSES = [self::STATUS_CLOSED, self::STATUS_ARCHIVED, self::STATUS_REFUSED];
 
     #[ORM\Id]
     #[ORM\GeneratedValue]
