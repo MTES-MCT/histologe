@@ -1,70 +1,40 @@
 {% if canEditSignalement %}
-    <a class="fr-btn--icon-left fr-a-edit fr-icon-bookmark-line" id="tags_select_tooltip_btn" href="#">Gérer les étiquettes</a>
+    <a class="fr-btn--icon-left fr-a-edit fr-icon-bookmark-line fr-ml-2v" id="tags_select_tooltip_btn" href="#"
+        data-fr-opened="false" aria-controls="fr-modal-etiquettes">Gérer les étiquettes</a>
+</button>
     <div>
         <div id="tags_active_container" class="fr-my-3v">
-            {% set visible = 'fr-hidden' %}
             {% for tag in signalement.tags %}
-                <span class="fr-badge fr-badge--blue-ecume fr-badge--icon-close-line fr-icon-close-line fr-mr-1v" data-value="{{ tag.id }}"
-                    data-tag-delete="{{ path('back_signalement_switch_value',{uuid:signalement.uuid}) }}"
-                    data-token="{{ csrf_token('signalement_switch_value_'~signalement.uuid) }}"
-                    data-remove-url="{{ path('back_tag_delete',{id:tag.id}) }}?_token={{ csrf_token('signalement_delete_tag') }}">{{ tag.label }}&nbsp;&nbsp;<span
-                            class="fr-fi-delete-line fr-icon--sm fr-mt-2v fr-text-label--red-marianne tag--deleter fr-hidden"></span></span>
+                <span class="fr-badge fr-badge--blue-ecume fr-mr-1v">{{ tag.label }}</span>
             {% else %}
-                {% set visible = '' %}
+                <em class="fr-text-default--warning fr-fi-close-line fr-icon--xs">
+                    <small>Aucune étiquette attribuée à ce signalement.</small>
+                </em>
             {% endfor %}
-            <em class="fr-text-default--warning fr-fi-close-line fr-icon--xs {{ visible }}">
-                <small>Aucune étiquette attribuée à ce signalement.</small>
-            </em>
         </div>
     </div>
 {% endif %}
 
-<template id="tags_tooltip_template">
-    <div class="fr-grid-row fr-grid-row--middle fr-background-alt--grey fr-p-3v fr-rounded fr-text--left fr-my-1v">
-        <div class="fr-col-12">
-            <strong class="fr-fi-information-fill fr-icon--sm fr-text-label--blue-france"> Gestion des
-                étiquettes</strong>
-            <span class="fr-hint-text">Ci-dessous la liste des étiquettes existantes.</span>
-        </div>
-        {% if is_granted('TAG_CREATE') %}
-            <div class="fr-col-12">
-                <form action="{{ path('back_tag_create',{uuid:signalement.uuid}) }}" method="POST" name="new-tag-form">
-                    <div class="fr-grid-row fr-grid-row--no-gutters">
-                        <label class="fr-col-11">
-                            <input type="text" class="fr-input " name="new-tag-label" required minlength="2">
-                            <span class="fr-error-text fr-hidden">Veuillez saisir un label</span>
-                        </label>
-                        <button class="fr-btn fr-col-1 fr-fi-add-line" type="submit"></button>
+<dialog aria-labelledby="fr-modal-title-modal-etiquettes" role="dialog" id="fr-modal-etiquettes" class="fr-modal">
+    <div class="fr-container fr-container--fluid fr-container-md">
+        <div class="fr-grid-row fr-grid-row--center">
+            <div class="fr-col-12 fr-col-md-8 fr-col-lg-6">
+                <div class="fr-modal__body">
+                    <div class="fr-modal__header">
+                        <button class="fr-btn--close fr-btn" title="Fermer la fenêtre modale" aria-controls="fr-modal-etiquettes">Fermer</button>
                     </div>
-                    <input type="hidden" name="_token" value="{{ csrf_token('signalement_create_tag') }}">
-                </form>
+                    <div class="fr-modal__content">
+                        <h1 id="fr-modal-title-modal-etiquettes" class="fr-modal__title">
+                            <span class="fr-icon-arrow-right-line fr-icon--lg"></span>Gérer les étiquettes du signalement
+                        </h1>
+                        <p>
+                            Sélectionnez les étiquettes à attribuer au signalement dans la liste déroulante.
+                            <br>
+                            Cliquez sur une étiquette pour la retirer du signalement.
+                        </p>
+                    </div>
+                </div>
             </div>
-        {% endif %}
-        <div class="fr-col-12 fr-py-2v">
-            <strong>Etiquettes existantes</strong> <small>(Cliquez pour ajouter)</small>
-            <hr class="fr-pb-1v">
-        </div>
-        <div class="fr-col-12" id="tags_inactive_container">
-            <template id="tag_template">
-                <span class="fr-badge fr-badge--blue-ecume fr-fi-add-line fr-mr-1v"
-                        data-value="__ID__"
-                        data-tag-add="{{ path('back_signalement_switch_value',{uuid:signalement.uuid}) }}"
-                        data-token="{{ csrf_token('signalement_switch_value_'~signalement.uuid) }}"
-                        data-remove-url="{{ path('back_tag_delete') }}/__ID__?_token={{ csrf_token('signalement_delete_tag') }}">__LABEL__
-                </span>
-            </template>
-            {% for tag in tags|filter(t=>t not in signalement.tags) %}
-                <span class="fr-badge fr-badge--blue-ecume fr-fi-add-line fr-mr-1v"
-                        data-value="{{ tag.id }}"
-                        data-tag-add="{{ path('back_signalement_switch_value',{uuid:signalement.uuid}) }}"
-                        data-token="{{ csrf_token('signalement_switch_value_'~signalement.uuid) }}"
-                        data-remove-url="{{ path('back_tag_delete',{id:tag.id}) }}?_token={{ csrf_token('signalement_delete_tag') }}">{{ tag.label }}
-                    {% if is_granted('ROLE_ADMIN_TERRITORY') %}
-                        &nbsp;&nbsp;<span
-                            class="fr-fi-delete-line fr-icon--sm fr-mt-2v fr-text-label--red-marianne tag--deleter"></span>
-                    {% endif %}
-                </span>
-            {% endfor %}
         </div>
     </div>
-</template>
+</dialog>
