@@ -7,6 +7,7 @@ use App\Entity\Enum\Qualification;
 use App\Entity\Signalement;
 use App\Entity\SignalementDraft;
 use App\Entity\SignalementQualification;
+use App\Repository\SignalementRepository;
 use App\Tests\FixturesHelper;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 
@@ -95,5 +96,18 @@ class SignalementTest extends KernelTestCase
         yield 'BAILLEUR_OCCUPANT' => [ProfileDeclarant::BAILLEUR_OCCUPANT];
         yield 'SERVICE_SECOURS' => [ProfileDeclarant::SERVICE_SECOURS];
         yield 'LOCATAIRE' => [ProfileDeclarant::LOCATAIRE];
+    }
+
+    public function testHasNoSuiviUsagePostCloture(): void
+    {
+        $signalement = $this->getSignalement($this->getTerritory('Pas-de-calais', '62'));
+        $this->assertFalse($signalement->hasSuiviUsagePostCloture());
+    }
+
+    public function testHasSuiviUsagePostCloture(): void
+    {
+        $signalementRepository = static::getContainer()->get(SignalementRepository::class);
+        $signalement = $signalementRepository->findOneBy(['reference' => '2022-2']);
+        $this->assertTrue($signalement->hasSuiviUsagePostCloture());
     }
 }

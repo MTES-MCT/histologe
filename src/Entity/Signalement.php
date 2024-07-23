@@ -34,7 +34,6 @@ class Signalement
     public const STATUS_CLOSED = 6;
     public const STATUS_ARCHIVED = 7;
     public const STATUS_REFUSED = 8;
-    public const DISABLED_STATUSES = [self::STATUS_CLOSED, self::STATUS_ARCHIVED, self::STATUS_REFUSED];
 
     #[ORM\Id]
     #[ORM\GeneratedValue]
@@ -2426,5 +2425,17 @@ class Signalement
         $this->synchroData[$key] = $data;
 
         return $this;
+    }
+
+    public function hasSuiviUsagePostCloture(): bool
+    {
+        $suiviPostCloture = $this->getSuivis()->filter(function (Suivi $suivi) {
+            return Suivi::TYPE_USAGER_POST_CLOTURE === $suivi->getType();
+        });
+        if ($suiviPostCloture->isEmpty()) {
+            return false;
+        }
+
+        return true;
     }
 }

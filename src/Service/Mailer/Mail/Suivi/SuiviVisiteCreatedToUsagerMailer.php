@@ -14,7 +14,7 @@ class SuiviVisiteCreatedToUsagerMailer extends AbstractNotificationMailer
 {
     protected ?NotificationMailerType $mailerType = NotificationMailerType::TYPE_VISITE_CREATED_TO_USAGER;
     protected ?string $mailerSubject = 'Une visite de votre logement est prévue';
-    protected ?string $mailerButtonText = 'Accéder à mon signalement';
+    protected ?string $mailerButtonText = 'Accéder à mon dossier';
     protected ?string $mailerTemplate = 'nouveau_suivi_visite_created_to_usager_email';
     protected ?string $tagHeader = 'Usager Date Visite Prevue';
 

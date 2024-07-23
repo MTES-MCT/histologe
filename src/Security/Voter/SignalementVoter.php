@@ -39,7 +39,7 @@ class SignalementVoter extends Voter
         /** @var User $user */
         $user = $token->getUser();
         if (!$user instanceof UserInterface) {
-            if (self::USAGER_EDIT === $attribute && !\in_array($subject->getStatut(), Signalement::DISABLED_STATUSES)) {
+            if (self::USAGER_EDIT === $attribute && $this->canUsagerEdit($subject)) {
                 return true;
             }
 
@@ -67,6 +67,25 @@ class SignalementVoter extends Voter
             self::VIEW => $this->canView($subject, $user),
             default => false,
         };
+    }
+
+    private function canUsagerEdit(Signalement $signalement): bool
+    {
+        if (Signalement::STATUS_ARCHIVED !== $signalement->getStatut()
+            && Signalement::STATUS_REFUSED !== $signalement->getStatut()
+        ) {
+            if (Signalement::STATUS_CLOSED === $signalement->getStatut()) {
+                $datePostCloture = $signalement->getClosedAt()->modify('+ 30days');
+                $today = new \DateTimeImmutable();
+                if ($today < $datePostCloture && !$signalement->hasSuiviUsagePostCloture()) {
+                    return true;
+                }
+            } else {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     private function canValidate(Signalement $signalement, User $user): bool

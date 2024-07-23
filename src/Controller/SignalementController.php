@@ -578,10 +578,11 @@ class SignalementController extends AbstractController
         }
         $email = $request->get('signalement_front_response')['email'];
         $user = $userManager->getOrCreateUserForSignalementAndEmail($signalement, $email);
+        $typeSuivi = Signalement::STATUS_CLOSED === $signalement->getStatut() ? Suivi::TYPE_USAGER_POST_CLOTURE : Suivi::TYPE_USAGER;
         $suivi = $suiviFactory->createInstanceFrom(
             user: $user,
             signalement: $signalement,
-            params: ['type' => Suivi::TYPE_USAGER],
+            params: ['type' => $typeSuivi],
             isPublic: true,
         );
 
@@ -618,10 +619,12 @@ class SignalementController extends AbstractController
         $suivi->setDescription($description);
         $entityManager->persist($suivi);
         $entityManager->flush();
-        $this->addFlash('success', <<<SUCCESS
-                Votre message a bien été envoyé, vous recevrez un email lorsque votre dossier sera mis à jour.
-                N'hésitez pas à consulter votre page de suivi !
-                SUCCESS);
+
+        $messageRetour = Signalement::STATUS_CLOSED === $signalement->getStatut() ?
+        'Nos services vont prendre connaissance de votre message. Votre dossier est clôturé, vous ne pouvez désormais plus envoyer de message.' :
+        'Votre message a bien été envoyé, vous recevrez un email lorsque votre dossier sera mis à jour.
+                N\'hésitez pas à consulter votre page de suivi !';
+        $this->addFlash('success', $messageRetour);
 
         return $this->redirectToRoute(
             'front_suivi_signalement',
