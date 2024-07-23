@@ -1,0 +1,30 @@
+<h2 class="fr-h4">Évaluation de la situation</h2>
+
+{% include 'back/signalement/view/criticite-qualifications.html.twig' %}
+
+<hr class="fr-mt-3w">
+
+<h3 class="fr-h5">Déclaration usager</h3>
+
+{% if createdFromDraft %}
+    {% include 'back/signalement/view/user-declaration-desordre-list.html.twig' %}
+{% else %}
+    {% include 'back/signalement/view/user-declaration-situations.html.twig' %}
+{% endif %}
+
+<hr class="fr-mt-3w">
+
+{% include 'back/signalement/view/photos-documents.html.twig' with {
+    'zonetitle': "Photos de la situation",
+    'filesFilter': 'situation',
+    'filesType': 'photo',
+    'displayAddButton': true
+} %}
+
+<hr class="fr-mt-3w">
+
+<div class="fr-col-12" data-ajax-form>
+    {% include 'back/signalement/view/information/information-composition.html.twig' %}
+</div>
+
+{% include 'back/signalement/view/nde.html.twig' %}

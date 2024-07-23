@@ -1,0 +1,55 @@
+{% if canEditSignalement %}
+    {% include 'back/signalement/view/edit-modals/edit-coordonnees-foyer.html.twig' %}
+{% endif %}
+<div class="fr-grid-row">
+    <div class="fr-col-12 fr-col-md-8">
+        <h4 class="fr-h6">Coordonnées du foyer</h4>
+    </div>
+    <div class="fr-col-12 fr-col-md-4 fr-text--right">
+        {% if canEditSignalement %}
+        <button href="#" data-fr-opened="false" aria-controls="fr-modal-edit-coordonnees-foyer"
+            class="fr-btn fr-btn--secondary fr-btn--icon-left fr-icon-edit-line">Modifier</button>
+        {% endif %}
+    </div>
+    
+    {% if signalement.profileDeclarant and signalement.profileDeclarant is same as enum('App\\Entity\\Enum\\ProfileDeclarant').BAILLEUR_OCCUPANT %}
+        <div class="fr-col-12">
+            <strong>Type de déclarant :</strong> {{ signalement.profileDeclarant.label }}
+        </div>
+        <div class="fr-col-12">
+            <strong>Type de bailleur :</strong> {{ signalement.typeProprio ? signalement.typeProprio.label : 'N/C' }}
+        </div>
+        {% if signalement.typeProprio and signalement.typeProprio is same as enum('App\\Entity\\Enum\\ProprioType').ORGANISME_SOCIETE %}
+        <div class="fr-col-12">
+            <strong>Nom de la structure :</strong> {{ signalement.structureDeclarant }}
+        </div>
+        {% endif %}
+    {% endif %}
+
+    <div class="fr-col-12 fr-col-md-6">
+        <strong>Civilité :</strong> {{signalement.civiliteOccupant(false)}}
+    </div>
+    <div class="fr-col-12 fr-col-md-6">
+        <strong>Nom :</strong> {{ signalement.nomOccupant }}
+    </div>
+    <div class="fr-col-12 fr-col-md-6">
+        <strong>Prénom :</strong> {{ signalement.prenomOccupant }}
+    </div>
+    <div class="fr-col-12">
+        <strong>Courriel :</strong>
+        {% if signalement.mailOccupant %}
+            <a href="mailto:{{ signalement.mailOccupant }}">{{ signalement.mailOccupant }}</a>
+            {% if show_email_alert(signalement.mailOccupant) %}
+                <p class="fr-badge fr-badge--error">Format non valide</p>
+            {% endif %}
+        {% endif %}
+    </div>
+    <div class="fr-col-12 fr-col-md-6">
+        <strong>Tél. :</strong>
+        <a href="tel:{{ signalement.telOccupantDecoded }}">{{ signalement.telOccupantDecoded }}</a>
+    </div>
+    <div class="fr-col-12 fr-col-md-6">
+        <strong>Tél. sec. :</strong>
+        <a href="tel:{{ signalement.telOccupantBisDecoded }}">{{ signalement.telOccupantBisDecoded }}</a>
+    </div>
+</div>

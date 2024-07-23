@@ -1,0 +1,117 @@
+{% if canEditSignalement %}
+    {% include 'back/signalement/view/edit-modals/edit-informations-logement.html.twig' %}
+{% endif %}
+<div class="fr-grid-row">
+    <div class="fr-col-12 fr-col-md-8">
+        <h4 class="fr-h6">Informations sur le logement</h4>
+    </div>
+    <div class="fr-col-12 fr-col-md-4 fr-text--right">
+        {% if canEditSignalement %}
+        <button href="#" data-fr-opened="false" aria-controls="fr-modal-edit-informations-logement"
+            class="fr-btn fr-btn--secondary fr-btn--icon-left fr-icon-edit-line">Modifier</button>
+        {% endif %}
+    </div>
+    <div class="fr-col-12 fr-col-md-6">
+        <strong>Nb. personnes :</strong>
+        {% if signalement.typeCompositionLogement %}
+            {{ signalement.nbOccupantsLogement }}
+
+        {% else %}
+            {{ signalement.nbPersonsDeprecated }} :
+            {{ signalement.nbAdultes }} {{ signalement.nbAdultes > 1 ? 'adultes' : 'adulte' }}
+            {% if signalement.nbEnfantsP6 %}
+                - {{ signalement.nbEnfantsP6 ?? '0' }} enfant(s) de plus de 6 ans
+            {% endif %}
+            {% if signalement.nbEnfantsM6 %}
+                - {{ signalement.nbEnfantsM6 ?? '0' }} enfant(s) de moins de 6 ans
+            {% endif %}
+        {% endif %}
+    </div>
+    <div class="fr-col-12 fr-col-md-6">
+        <strong>Enfants -6 ans :</strong>
+        {% if signalement.typeCompositionLogement %}
+            {% if signalement.typeCompositionLogement.compositionLogementEnfants is same as 'oui' %}
+                {{ static_picto_yes|raw }}
+            {% elseif signalement.typeCompositionLogement.compositionLogementEnfants is same as 'non' %}
+                {{ static_picto_no|raw }}
+            {% else %}
+                {{signalement.typeCompositionLogement.compositionLogementEnfants}}
+            {% endif %}
+        {% else %}
+            {% if signalement.nbEnfantsM6 > 0 %}
+                {{ static_picto_yes|raw }}
+            {% else %}
+                {{ static_picto_no|raw }}
+            {% endif %}
+        {% endif %}
+    </div>
+    <div class="fr-col-12 fr-col-md-6">
+        <strong>Date arrivée :</strong>
+        {% if signalement.dateEntree %}
+            {{ signalement.dateEntree.format('d/m/Y')}}
+        {% endif %}
+    </div>
+    <div class="fr-col-12 fr-col-md-6">
+        <strong>Date d'effet du bail :</strong>
+        {% if signalement.informationComplementaire %}
+            {{ signalement.informationComplementaire.informationsComplementairesSituationBailleurDateEffetBail}}
+        {% endif %}
+    </div>
+    <div class="fr-col-12 fr-col-md-6">
+        <strong>Bail :</strong>
+        {% if signalement.typeCompositionLogement %}
+            {% if signalement.typeCompositionLogement.bailDpeBail is same as 'oui' %}
+                {{ static_picto_yes|raw }}
+            {% elseif signalement.typeCompositionLogement.bailDpeBail is same as 'non' %}
+                {{ static_picto_no|raw }}
+            {% else %}
+                {{signalement.typeCompositionLogement.bailDpeBail(false)}}
+            {% endif %}
+        {% endif %}
+    </div>
+    <div class="fr-col-12 fr-col-md-6">
+        <strong>Etat des lieux :</strong>
+        {% if signalement.typeCompositionLogement %}
+            {% if signalement.typeCompositionLogement.bailDpeEtatDesLieux is same as 'oui' %}
+                {{ static_picto_yes|raw }}
+            {% elseif signalement.typeCompositionLogement.bailDpeEtatDesLieux is same as 'non' %}
+                {{ static_picto_no|raw }}
+            {% else %}
+                {{signalement.typeCompositionLogement.bailDpeEtatDesLieux(false)}}
+            {% endif %}
+        {% endif %}
+    </div>
+    <div class="fr-col-12 fr-col-md-6">
+        <strong>DPE :</strong>
+        {% if signalement.typeCompositionLogement %}
+            {% if signalement.typeCompositionLogement.bailDpeDpe is same as 'oui' %}
+                {{ static_picto_yes|raw }}
+            {% elseif signalement.typeCompositionLogement.bailDpeDpe is same as 'non' %}
+                {{ static_picto_no|raw }}
+            {% else %}
+                {{signalement.typeCompositionLogement.bailDpeDpe(false)}}
+            {% endif %}
+        {% endif %}
+    </div>
+    <div class="fr-col-12 fr-col-md-6">
+        <strong>Montant du loyer :</strong> {{ signalement.loyer ? signalement.loyer ~ ' €'}}
+    </div>
+    <div class="fr-col-12 fr-col-md-6">
+        <strong>Paiement loyers à jour :</strong>
+        {% if signalement.informationComplementaire %}
+            {% if signalement.informationComplementaire.informationsComplementairesSituationOccupantsLoyersPayes is same as 'oui' %}
+                {{ static_picto_yes|raw }}
+            {% elseif signalement.informationComplementaire.informationsComplementairesSituationOccupantsLoyersPayes is same as 'non' %}
+                {{ static_picto_no|raw }}
+            {% else %}
+                {{signalement.informationComplementaire.informationsComplementairesSituationOccupantsLoyersPayes}}
+            {% endif %}
+        {% endif %}
+    </div>
+    <div class="fr-col-12 fr-col-md-6">
+        <strong>Année de construction :</strong>
+        {% if signalement.informationComplementaire %}
+            {{ signalement.informationComplementaire.informationsComplementairesLogementAnneeConstruction }}
+        {% endif %}
+    </div>
+</div>

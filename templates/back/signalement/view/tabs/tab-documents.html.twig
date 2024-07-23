@@ -1,0 +1,17 @@
+<h2 class="fr-h4">Documents</h2>
+
+{% include 'back/signalement/view/photos-documents.html.twig' with {
+    'zonetitle': "Documents concernant la procédure",
+    'filesFilter': 'procedure',
+    'filesType': 'document',
+    'displayAddButton': true
+} %}
+
+<div class="fr-mt-5v"></div>
+
+{% include 'back/signalement/view/photos-documents.html.twig' with {
+    'zonetitle': "Documents sur la situation",
+    'filesFilter': 'situation',
+    'filesType': 'document',
+    'displayAddButton': false
+} %}

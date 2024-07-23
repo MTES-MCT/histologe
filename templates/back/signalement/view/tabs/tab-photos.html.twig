@@ -1,0 +1,18 @@
+<h2 class="fr-h4">Photos</h2>
+
+{% include 'back/signalement/view/photos-documents.html.twig' with {
+    'zonetitle': "Photos de la situation",
+    'filesFilter': 'situation',
+    'filesType': 'photo',
+    'displayAddButton': true
+} %}
+
+{% for intervention in signalement.interventions | filter(intervention => intervention.type != enum('App\\Entity\\Enum\\InterventionType').ARRETE_PREFECTORAL) %}
+{% include 'back/signalement/view/photos-documents.html.twig' with {
+    'zonetitle': "Photos de la visite "~loop.index,
+    'filesFilter': 'visite',
+    'filesType': 'photo',
+    'displayAddButton': false,
+    'interventionId': intervention.id
+} %}
+{% endfor %}

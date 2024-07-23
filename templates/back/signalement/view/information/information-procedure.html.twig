@@ -1,0 +1,55 @@
+{% if canEditSignalement %}
+    {% include 'back/signalement/view/edit-modals/edit-procedure-demarches.html.twig' %}
+{% endif %}
+<div class="fr-grid-row">
+    <div class="fr-col-12 fr-col-md-8">
+        <h4 class="fr-h6">Procédure et démarches</h4>
+    </div>
+    <div class="fr-col-12 fr-col-md-4 fr-text--right">
+        {% if canEditSignalement %}
+        <button href="#" data-fr-opened="false" aria-controls="fr-modal-edit-procedure-demarches"
+            class="fr-btn fr-btn--secondary fr-btn--icon-left fr-icon-edit-line">Modifier</button>
+        {% endif %}
+    </div>
+    <div class="fr-col-12 fr-col-md-6">
+        <strong>Bailleur averti :</strong>
+        {% if signalement.isProprioAverti is null %}
+        {% elseif signalement.isProprioAverti %}
+            {{ static_picto_yes|raw }}
+        {% else %}
+            {{ static_picto_no|raw }}
+        {% endif %}
+    </div>
+    <div class="fr-col-12 fr-col-md-6">
+        <strong>Contact assurance :</strong>
+        {% if signalement.informationProcedure %}
+            {% if signalement.informationProcedure.infoProcedureAssuranceContactee is same as 'oui' %}
+                {{ static_picto_yes|raw }}
+            {% elseif signalement.informationProcedure.infoProcedureAssuranceContactee is same as 'non' %}
+                {{ static_picto_no|raw }}
+            {% else %}
+                {{signalement.informationProcedure.infoProcedureAssuranceContactee(false)}}
+            {% endif %}
+        {% endif %}
+    </div>
+    <div class="fr-col-12">
+        <strong>Réponse assurance :</strong>
+        {% if signalement.informationProcedure and signalement.informationProcedure.infoProcedureReponseAssurance %}
+            <br>
+            {{ signalement.informationProcedure.infoProcedureReponseAssurance | nl2br  }}
+        {% endif %}
+    </div>
+    <div class="fr-col-12">
+        <strong>Souhaite garder le logement après travaux :</strong>
+        {% if signalement.informationProcedure %}
+            {# Careful : reversed regarding the question in the form #}
+            {% if signalement.informationProcedure.infoProcedureDepartApresTravaux is same as 'oui' %}
+                {{ static_picto_no|raw }}
+            {% elseif signalement.informationProcedure.infoProcedureDepartApresTravaux is same as 'non' %}
+                {{ static_picto_yes|raw }}
+            {% else %}
+                {{signalement.informationProcedure.infoProcedureDepartApresTravaux(false)}}
+            {% endif %}
+        {% endif %}
+    </div>
+</div>

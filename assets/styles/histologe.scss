@@ -20,6 +20,12 @@ html, body {
     #signalement-toggle-situations {
         z-index: 1001;
     }
+
+    .fr-tabs__tab[aria-selected="true"]:not(:disabled),
+    .fr-tabs__tab:not([aria-selected="true"]) {
+        background: rgba(0, 0, 0, 0.1);
+        box-shadow: 0 0 0 0;
+    }
 }
 .fr-border--light {
     border: 1px solid rgba(0, 0, 0, 0.1);
