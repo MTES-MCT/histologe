@@ -29,55 +29,59 @@
             </div>
         </div>
     </section>
-    <section class="fr-col-12 fr-table fr-table--bordered fr-pt-0 fr-p-5v">
-        <table class="fr-display-inline-table">
-            <thead>
-            <tr>
-                <th scope="col"></th>
-                <th scope="col">Signalement</th>
-                <th scope="col">Date</th>
-                <td scope="col">Desc.</td>
-                <th scope="col">Par</th>
-                <th scope="col" class="fr-text--right">actions</th>
-            </tr>
-            </thead>
-            <tbody>
-            <tr style="background: white!important">
-                <td colspan="6" class="fr-text--bold">{{ count_notification(app.user) }}  Nouveau(x) suivi(s)</td>
-            </tr>
-            {% for notification in notifications %}
-                <tr class="partner-row">
-                    <td>
-                        <div class="fr-fieldset__element">
-                            <div class="fr-checkbox-group">
-                                <input name="check-notification-{{ notification.id }}" id="check-notification-{{ notification.id }}" type="checkbox" class="check-notification" data-notification-id="{{ notification.id }}">
-                                <label class="fr-label" for="check-notification-{{ notification.id }}">&nbsp;</label>
-                            </div>
-                        </div>
-                    </td>
-                    <td>{{ notification.suivi.signalement.reference }}</td>
-                    <td>{{ notification.suivi.createdAt|format_datetime(locale='fr') }}</td>
-                    <td class="word-wrap-anywhere">{{ notification.suivi.description
-                        |replace({'&t=___TOKEN___':'/'~notification.signalement.uuid})
-                        |replace({'?t=___TOKEN___':'/'~notification.signalement.uuid})
-                        |replace({'?folder=_up':'/'~notification.signalement.uuid~'?variant=resize'})
-                        |sanitize_html('app.message_sanitizer') }}
-                    </td>
-                    <td>{{ notification.suivi.createdBy ? notification.suivi.createdBy.nomComplet : notification.signalement.nomOccupant|upper~' '~notification.signalement.prenomOccupant|capitalize }}</td>
-                    <td class="fr-text--right">
-                        <a href="{{ path('back_signalement_view',{uuid:notification.suivi.signalement.uuid}) }}#suivis"
-                           class="fr-btn fr-btn--sm {{ notification.isSeen ? 'fr-fi-check-line fr-btn--success':'fr-fi-eye-fill' }}"></a>
-                        <a href="{{ path('back_notifications_delete_notification',{id:notification.id}) }}?_token={{ csrf_token('back_delete_notification_'~notification.id) }}"
-                           class="fr-btn fr-btn--sm fr-btn--danger fr-fi-delete-line"></a>
-                    </td>
-                </tr>
-            {% else %}
-                <tr>
-                    <td colspan="6" class="fr-text--center">Aucun suivi non lu</td>
-                </tr>
-            {% endfor %}
-            </tbody>
-        </table>
+    <section class="fr-col-12 fr-table fr-table--lg fr-table--no-scroll fr-pt-0 fr-px-5v">
+		<div class="fr-table__wrapper">
+			<div class="fr-table__container">
+				<div class="fr-table__content">
+                    <table class="fr-display-inline-table">
+                    	<caption>{{ count_notification(app.user) }}  Nouveau(x) suivi(s)</caption>
+                        <thead>
+                        <tr>
+                            <th scope="col"></th>
+                            <th scope="col">Signalement</th>
+                            <th scope="col">Date</th>
+                            <th scope="col">Description</th>
+                            <th scope="col">Par</th>
+                            <th scope="col" class="fr-text--right">actions</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {% for notification in notifications %}
+                            <tr class="partner-row">
+                                <td>
+                                    <div class="fr-fieldset__element">
+                                        <div class="fr-checkbox-group">
+                                            <input name="check-notification-{{ notification.id }}" id="check-notification-{{ notification.id }}" type="checkbox" class="check-notification" data-notification-id="{{ notification.id }}">
+                                            <label class="fr-label" for="check-notification-{{ notification.id }}">&nbsp;</label>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>{{ notification.suivi.signalement.reference }}</td>
+                                <td>{{ notification.suivi.createdAt|format_datetime(locale='fr') }}</td>
+                                <td class="word-wrap-anywhere">{{ notification.suivi.description
+                                    |replace({'&t=___TOKEN___':'/'~notification.signalement.uuid})
+                                    |replace({'?t=___TOKEN___':'/'~notification.signalement.uuid})
+                                    |replace({'?folder=_up':'/'~notification.signalement.uuid~'?variant=resize'})
+                                    |sanitize_html('app.message_sanitizer') }}
+                                </td>
+                                <td>{{ notification.suivi.createdBy ? notification.suivi.createdBy.nomComplet : notification.signalement.nomOccupant|upper~' '~notification.signalement.prenomOccupant|capitalize }}</td>
+                                <td class="fr-text--right">
+                                    <a href="{{ path('back_signalement_view',{uuid:notification.suivi.signalement.uuid}) }}#suivis"
+                                    class="fr-btn fr-btn--sm {{ notification.isSeen ? 'fr-fi-check-line fr-btn--success':'fr-fi-eye-fill' }}"></a>
+                                    <a href="{{ path('back_notifications_delete_notification',{id:notification.id}) }}?_token={{ csrf_token('back_delete_notification_'~notification.id) }}"
+                                    class="fr-btn fr-btn--sm fr-btn--danger fr-fi-delete-line"></a>
+                                </td>
+                            </tr>
+                        {% else %}
+                            <tr>
+                                <td colspan="6" class="fr-text--center">Aucun suivi non lu</td>
+                            </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+				</div>
+			</div>
+		</div>
         <div class="fr-grid-row fr-mt-2v fr-grid-row--center">    
             {% import '_partials/macros.html.twig' as macros %}
             {{ macros.customPagination(pages, page, 'back_notifications_list', {}) }}
