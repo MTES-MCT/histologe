@@ -6,7 +6,6 @@ use App\Repository\PartnerRepository;
 use App\Repository\SignalementRepository;
 use App\Repository\UserRepository;
 use App\Tests\SessionHelper;
-use Faker\Factory;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\Routing\RouterInterface;
@@ -20,13 +19,11 @@ class SignalementVisitesControllerTest extends WebTestCase
     private PartnerRepository $partnerRepository;
     private SignalementRepository $signalementRepository;
     private RouterInterface $router;
-    private $faker;
 
     protected function setUp(): void
     {
         $this->client = static::createClient();
         $this->router = self::getContainer()->get(RouterInterface::class);
-        $this->faker = Factory::create();
         $this->userRepository = static::getContainer()->get(UserRepository::class);
         $this->partnerRepository = static::getContainer()->get(PartnerRepository::class);
         $this->signalementRepository = static::getContainer()->get(SignalementRepository::class);

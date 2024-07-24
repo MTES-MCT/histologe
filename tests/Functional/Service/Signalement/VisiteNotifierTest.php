@@ -5,9 +5,7 @@ namespace App\Tests\Functional\Service\Signalement;
 use App\Entity\Intervention;
 use App\Entity\Signalement;
 use App\Factory\NotificationFactory;
-use App\Factory\SuiviFactory;
 use App\Manager\SignalementManager;
-use App\Manager\SuiviManager;
 use App\Repository\SignalementRepository;
 use App\Repository\UserRepository;
 use App\Service\Mailer\NotificationMailerRegistry;
@@ -24,8 +22,6 @@ class VisiteNotifierTest extends KernelTestCase
         $kernel = self::bootKernel();
         $entityManager = $kernel->getContainer()->get('doctrine')->getManager();
         $signalementManager = static::getContainer()->get(SignalementManager::class);
-        $suiviFactory = static::getContainer()->get(SuiviFactory::class);
-        $suiviManager = static::getContainer()->get(SuiviManager::class);
         $notificationFactory = static::getContainer()->get(NotificationFactory::class);
         $notificationMailerRegistry = static::getContainer()->get(NotificationMailerRegistry::class);
         $userRepository = static::getContainer()->get(UserRepository::class);
@@ -33,8 +29,6 @@ class VisiteNotifierTest extends KernelTestCase
         $this->visiteNotifier = new VisiteNotifier(
             $entityManager,
             $signalementManager,
-            $suiviFactory,
-            $suiviManager,
             $notificationFactory,
             $notificationMailerRegistry,
             $userRepository,

@@ -21,6 +21,7 @@ enum SignalementStatus: int
             self::NEED_VALIDATION => AffectationStatus::STATUS_WAIT->value,
             self::ACTIVE, self::NEED_PARTNER_RESPONSE => AffectationStatus::STATUS_ACCEPTED->value,
             self::CLOSED, self::REFUSED => AffectationStatus::STATUS_CLOSED->value,
+            self::ARCHIVED => AffectationStatus::STATUS_CLOSED->value
         };
     }
 
@@ -42,6 +43,7 @@ enum SignalementStatus: int
             self::ACTIVE, self::NEED_PARTNER_RESPONSE => 'en cours',
             self::CLOSED => 'fermé',
             self::REFUSED => 'refusé',
+            self::ARCHIVED => 'archivé'
         };
     }
 
@@ -52,6 +54,7 @@ enum SignalementStatus: int
             'en_cours' => SignalementStatus::ACTIVE->value,
             'ferme' => SignalementStatus::CLOSED->value,
             'refuse' => SignalementStatus::REFUSED->value,
+            default => throw new \UnexpectedValueException('Unexpected signalement status : '.$label)
         };
     }
 }

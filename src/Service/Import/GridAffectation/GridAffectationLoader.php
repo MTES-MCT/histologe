@@ -6,13 +6,11 @@ use App\Entity\Enum\PartnerType;
 use App\Entity\Partner;
 use App\Entity\Territory;
 use App\Entity\User;
-use App\EventListener\UserCreatedListener;
 use App\Factory\PartnerFactory;
 use App\Factory\UserFactory;
 use App\Manager\ManagerInterface;
 use App\Manager\PartnerManager;
 use App\Manager\UserManager;
-use App\Service\Import\CsvParser;
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Console\Helper\ProgressBar;
@@ -32,7 +30,6 @@ class GridAffectationLoader
     ];
 
     public function __construct(
-        private CsvParser $csvParser,
         private PartnerFactory $partnerFactory,
         private PartnerManager $partnerManager,
         private UserFactory $userFactory,
@@ -41,7 +38,6 @@ class GridAffectationLoader
         private ValidatorInterface $validator,
         private LoggerInterface $logger,
         private EntityManagerInterface $entityManager,
-        private UserCreatedListener $userAddedSubscriber,
     ) {
     }
 

@@ -3,13 +3,11 @@
 namespace App\Tests\Functional\Service\Import\GridAffectation;
 
 use App\Entity\Territory;
-use App\EventListener\UserCreatedListener;
 use App\Factory\PartnerFactory;
 use App\Factory\UserFactory;
 use App\Manager\ManagerInterface;
 use App\Manager\PartnerManager;
 use App\Manager\UserManager;
-use App\Service\Import\CsvParser;
 use App\Service\Import\GridAffectation\GridAffectationLoader;
 use App\Tests\FixturesHelper;
 use Doctrine\ORM\EntityManagerInterface;
@@ -44,7 +42,6 @@ class GridAffectationLoaderTest extends KernelTestCase
     {
         $this->entityManager = self::getContainer()->get('doctrine')->getManager();
         $this->gridAffectationLoader = new GridAffectationLoader(
-            new CsvParser(),
             self::getContainer()->get(PartnerFactory::class),
             self::getContainer()->get(PartnerManager::class),
             self::getContainer()->get(UserFactory::class),
@@ -52,8 +49,7 @@ class GridAffectationLoaderTest extends KernelTestCase
             self::getContainer()->get(ManagerInterface::class),
             self::getContainer()->get(ValidatorInterface::class),
             self::getContainer()->get(LoggerInterface::class),
-            $this->entityManager,
-            self::getContainer()->get(UserCreatedListener::class)
+            $this->entityManager
         );
     }
 

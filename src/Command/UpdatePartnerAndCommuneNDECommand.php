@@ -14,7 +14,6 @@ use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
-use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 
 #[AsCommand(
     name: 'app:update-partners-communes-nde',
@@ -26,7 +25,6 @@ class UpdatePartnerAndCommuneNDECommand extends Command
 
     public function __construct(
         private EntityManagerInterface $entityManager,
-        private ParameterBagInterface $parameterBag,
         private CommuneRepository $communeRepository,
         private PartnerRepository $partnerRepository,
         private TerritoryRepository $territoryRepository

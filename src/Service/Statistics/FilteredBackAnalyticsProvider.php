@@ -4,13 +4,11 @@ namespace App\Service\Statistics;
 
 use App\Dto\StatisticsFilters;
 use App\Repository\SignalementRepository;
-use App\Repository\TerritoryRepository;
 
 class FilteredBackAnalyticsProvider
 {
     public function __construct(
         private SignalementRepository $signalementRepository,
-        private TerritoryRepository $territoryRepository,
         private MonthStatisticProvider $monthStatisticProvider,
         private PartenaireStatisticProvider $partenaireStatisticProvider,
         private SituationStatisticProvider $situationStatisticProvider,

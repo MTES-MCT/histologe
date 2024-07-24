@@ -170,7 +170,6 @@ class SignalementEditController extends AbstractController
                 CoordonneesBailleurRequest::class,
                 'json'
             );
-
             $validationGroups = ['Default'];
             if ($signalement->getProfileDeclarant()) {
                 $validationGroups[] = $signalement->getProfileDeclarant()->value;

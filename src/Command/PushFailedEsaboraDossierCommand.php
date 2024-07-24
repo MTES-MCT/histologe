@@ -5,13 +5,9 @@ namespace App\Command;
 use App\Entity\Affectation;
 use App\Entity\Enum\PartnerType;
 use App\Entity\JobEvent;
-use App\Factory\Interconnection\Esabora\DossierMessageSISHFactory;
 use App\Messenger\InterconnectionBus;
-use App\Repository\AffectationRepository;
 use App\Repository\JobEventRepository;
 use App\Repository\SignalementRepository;
-use App\Service\Esabora\EsaboraSISHService;
-use App\Service\Esabora\Handler\DossierAdresseServiceHandler;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
@@ -30,11 +26,7 @@ class PushFailedEsaboraDossierCommand extends Command
 
     public function __construct(
         private readonly JobEventRepository $jobEventRepository,
-        private readonly DossierMessageSISHFactory $dossierMessageFactory,
-        private readonly AffectationRepository $affectationRepository,
         private readonly SignalementRepository $signalementRepository,
-        private readonly EsaboraSISHService $esaboraSISHService,
-        private readonly DossierAdresseServiceHandler $dossierAdresseServiceHandler,
         private readonly InterconnectionBus $esaboraBus,
     ) {
         parent::__construct();

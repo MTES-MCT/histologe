@@ -6,13 +6,11 @@ use App\Entity\Partner;
 use App\Entity\Signalement;
 use App\Entity\Territory;
 use App\Repository\SignalementRepository;
-use App\Repository\TerritoryRepository;
 
 class GlobalBackAnalyticsProvider
 {
     public function __construct(
         private SignalementRepository $signalementRepository,
-        private TerritoryRepository $territoryRepository
     ) {
     }
 

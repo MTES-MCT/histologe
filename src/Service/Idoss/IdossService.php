@@ -10,7 +10,6 @@ use App\Manager\JobEventManager;
 use App\Messenger\Message\Idoss\DossierMessage;
 use App\Service\ImageManipulationHandler;
 use Doctrine\ORM\EntityManagerInterface;
-use League\Flysystem\FilesystemOperator;
 use Symfony\Component\DependencyInjection\ParameterBag\ContainerBagInterface;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Mime\Part\DataPart;
@@ -45,7 +44,6 @@ class IdossService
         private readonly EntityManagerInterface $entityManager,
         private readonly JobEventManager $jobEventManager,
         private readonly SerializerInterface $serializer,
-        private readonly FilesystemOperator $fileStorage,
         private readonly ImageManipulationHandler $imageManipulationHandler,
     ) {
     }
@@ -127,7 +125,7 @@ class IdossService
         array $payload = [],
         string $requestMethod = 'POST',
         string $contentType = 'application/json',
-        ): JobEvent {
+    ): JobEvent {
         try {
             $token = $this->getToken($partner);
             $response = $this->request($url, $payload, $token, $requestMethod, $contentType);

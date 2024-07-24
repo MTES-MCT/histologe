@@ -13,7 +13,6 @@ use App\Repository\SignalementRepository;
 use App\Service\Mailer\NotificationMail;
 use App\Service\Mailer\NotificationMailerRegistry;
 use App\Service\Mailer\NotificationMailerType;
-use App\Service\Token\TokenGeneratorInterface;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
@@ -22,7 +21,6 @@ class SignalementClosedSubscriber implements EventSubscriberInterface
     public function __construct(
         private NotificationMailerRegistry $notificationMailerRegistry,
         private SignalementManager $signalementManager,
-        private TokenGeneratorInterface $tokenGenerator,
         private SuiviManager $suiviManager,
         private Security $security,
     ) {

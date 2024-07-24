@@ -26,7 +26,7 @@ class Bailleur
 
     #[ORM\OneToMany(mappedBy: 'bailleur', targetEntity: Signalement::class)]
     #[Ignore]
-    private Collection $signalements;
+    private Collection $signalements; // @phpstan-ignore-line
 
     #[ORM\OneToMany(mappedBy: 'bailleur', targetEntity: BailleurTerritory::class, cascade: ['persist'])]
     #[Ignore]

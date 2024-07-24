@@ -85,7 +85,6 @@ class SignalementClosedSubscriberTest extends KernelTestCase
         $signalementClosedSubscriber = new SignalementClosedSubscriber(
             $notificationMailerRegistryMock,
             $signalementManager,
-            $tokenGeneratorMock,
             $suiviManager,
             $securityMock
         );

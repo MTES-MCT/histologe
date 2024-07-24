@@ -54,7 +54,6 @@ class StatusStatisticProvider
                     'color' => '#CE0500',
                     'count' => $statusResult['count'],
                 ];
-                break;
 
             case Signalement::STATUS_CLOSED:
                 return [
@@ -62,7 +61,6 @@ class StatusStatisticProvider
                     'color' => '#21AB8E',
                     'count' => $statusResult['count'],
                 ];
-                break;
 
             case Signalement::STATUS_ACTIVE:
                 return [
@@ -70,7 +68,6 @@ class StatusStatisticProvider
                     'color' => '#000091',
                     'count' => $statusResult['count'],
                 ];
-                break;
 
             case Signalement::STATUS_NEED_VALIDATION:
                 return [
@@ -78,11 +75,9 @@ class StatusStatisticProvider
                     'color' => '#E4794A',
                     'count' => $statusResult['count'],
                 ];
-                break;
 
             default:
                 return false;
-                break;
         }
     }
 }

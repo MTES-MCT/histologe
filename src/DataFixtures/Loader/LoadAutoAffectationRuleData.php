@@ -4,10 +4,7 @@ namespace App\DataFixtures\Loader;
 
 use App\Entity\AutoAffectationRule;
 use App\Entity\Enum\PartnerType;
-use App\Repository\PartnerRepository;
-use App\Repository\SignalementRepository;
 use App\Repository\TerritoryRepository;
-use App\Repository\UserRepository;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Common\DataFixtures\OrderedFixtureInterface;
 use Doctrine\Persistence\ObjectManager;
@@ -16,10 +13,7 @@ use Symfony\Component\Yaml\Yaml;
 class LoadAutoAffectationRuleData extends Fixture implements OrderedFixtureInterface
 {
     public function __construct(
-        private SignalementRepository $signalementRepository,
-        private PartnerRepository $partnerRepository,
-        private TerritoryRepository $territoryRepository,
-        private UserRepository $userRepository
+        private TerritoryRepository $territoryRepository
     ) {
     }
 

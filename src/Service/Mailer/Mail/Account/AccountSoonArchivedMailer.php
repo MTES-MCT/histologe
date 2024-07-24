@@ -2,7 +2,6 @@
 
 namespace App\Service\Mailer\Mail\Account;
 
-use App\Manager\UserManager;
 use App\Service\Mailer\Mail\AbstractNotificationMailer;
 use App\Service\Mailer\NotificationMail;
 use App\Service\Mailer\NotificationMailerType;
@@ -23,7 +22,6 @@ class AccountSoonArchivedMailer extends AbstractNotificationMailer
         protected ParameterBagInterface $parameterBag,
         protected LoggerInterface $logger,
         protected UrlGeneratorInterface $urlGenerator,
-        private readonly UserManager $userManager
     ) {
         parent::__construct($this->mailer, $this->parameterBag, $this->logger, $this->urlGenerator);
     }

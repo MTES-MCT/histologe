@@ -307,8 +307,8 @@ class SignalementSearchQuery
 
         $filters['page'] = $this->getPage() ?? 1;
         $filters['maxItemsPerPage'] = self::MAX_LIST_PAGINATION;
-        $filters['sortBy'] = $this->getSortBy() ?? 'reference';
-        $filters['orderBy'] = $this->getOrderBy() ?? 'DESC';
+        $filters['sortBy'] = $this->getSortBy();
+        $filters['orderBy'] = $this->getOrderBy();
 
         return array_filter($filters);
     }

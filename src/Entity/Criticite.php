@@ -214,6 +214,7 @@ class Criticite
             1 => self::ETAT_MOYEN,
             2 => self::ETAT_GRAVE,
             3 => self::ETAT_TRES_GRAVE,
+            default => self::ETAT_MOYEN,
         };
     }
 

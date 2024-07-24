@@ -4,7 +4,6 @@ namespace App\Service\Import\Bailleur;
 
 use App\Entity\Bailleur;
 use App\Repository\BailleurRepository;
-use App\Repository\BailleurTerritoryRepository;
 use App\Repository\TerritoryRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Console\Helper\ProgressBar;
@@ -24,7 +23,6 @@ class BailleurLoader
 
     public function __construct(
         private BailleurRepository $bailleurRepository,
-        private BailleurTerritoryRepository $bailleurTerritoryRepository,
         private TerritoryRepository $territoryRepository,
         private EntityManagerInterface $entityManager,
     ) {

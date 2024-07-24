@@ -2,26 +2,16 @@
 
 namespace App\FormHandler;
 
-use App\Factory\SuiviFactory;
-use App\Manager\SuiviManager;
-use App\Manager\UserManager;
-use App\Repository\SignalementRepository;
 use App\Service\Mailer\NotificationMail;
 use App\Service\Mailer\NotificationMailerRegistry;
 use App\Service\Mailer\NotificationMailerType;
-use Psr\Log\LoggerInterface;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 
 class ContactFormHandler
 {
     public function __construct(
         private NotificationMailerRegistry $notificationMailerRegistry,
-        private ParameterBagInterface $parameterBag,
-        private SignalementRepository $signalementRepository,
-        private SuiviFactory $suiviFactory,
-        private SuiviManager $suiviManager,
-        private UserManager $userManager,
-        private LoggerInterface $logger,
+        private ParameterBagInterface $parameterBag
     ) {
     }
 

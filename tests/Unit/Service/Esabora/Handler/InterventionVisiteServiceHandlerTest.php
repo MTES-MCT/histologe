@@ -78,8 +78,10 @@ class InterventionVisiteServiceHandlerTest extends TestCase
                             $dossierVisiteSISHCollectionResponse->getCollection()[1],
                             $dossierVisiteSISH
                         ),
+                        default => throw new \UnexpectedValueException('Unexpected invocation count')
                     };
-                });
+                }
+            );
 
         $this->jobEventManager = $this->createMock(JobEventManager::class);
         $this->jobEventManager

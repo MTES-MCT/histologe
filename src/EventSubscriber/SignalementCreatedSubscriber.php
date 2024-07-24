@@ -3,7 +3,6 @@
 namespace App\EventSubscriber;
 
 use App\Event\SignalementCreatedEvent;
-use App\Manager\FileManager;
 use App\Manager\UserManager;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
@@ -11,7 +10,6 @@ class SignalementCreatedSubscriber implements EventSubscriberInterface
 {
     public function __construct(
         private UserManager $userManager,
-        private FileManager $fileManager,
     ) {
     }
 

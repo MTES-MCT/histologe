@@ -91,7 +91,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, TwoFact
     private $signalementsModified;
 
     #[ORM\OneToMany(mappedBy: 'closedBy', targetEntity: Signalement::class)]
-    private $signalementsClosed;
+    private $signalementsClosed; // @phpstan-ignore-line
 
     #[ORM\OneToMany(mappedBy: 'createdBy', targetEntity: Suivi::class, orphanRemoval: true)]
     private $suivis;
@@ -114,8 +114,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, TwoFact
 
     #[ORM\Column(type: 'datetime_immutable', nullable: true)]
     private $lastLoginAt;
-
-    private $newsActivitiesSinceLastLogin;
 
     #[ORM\Column(type: 'boolean')]
     private $isMailingActive;

@@ -5,7 +5,6 @@ namespace App\Command;
 use App\Entity\Epci;
 use App\Repository\CommuneRepository;
 use App\Repository\EpciRepository;
-use App\Repository\TerritoryRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
@@ -29,7 +28,6 @@ class LoadEpciCommand extends Command
 
     public function __construct(
         private HttpClientInterface $httpClient,
-        private TerritoryRepository $territoryRepository,
         private CommuneRepository $communeRepository,
         private EpciRepository $epciRepository,
         private EntityManagerInterface $entityManager,

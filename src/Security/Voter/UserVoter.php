@@ -5,7 +5,6 @@ namespace App\Security\Voter;
 use App\Entity\Enum\Qualification;
 use App\Entity\User;
 use Symfony\Bundle\SecurityBundle\Security;
-use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Authorization\Voter\Voter;
 use Symfony\Component\Security\Core\Role\RoleHierarchyInterface;
@@ -20,9 +19,8 @@ class UserVoter extends Voter
 
     public function __construct(
         private Security $security,
-        private RoleHierarchyInterface $roleHierarchy,
-        private ParameterBagInterface $parameterBag
-        ) {
+        private RoleHierarchyInterface $roleHierarchy
+    ) {
     }
 
     protected function supports(string $attribute, $subject): bool

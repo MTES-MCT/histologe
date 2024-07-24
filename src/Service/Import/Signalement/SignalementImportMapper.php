@@ -273,7 +273,7 @@ class SignalementImportMapper
                         $critere = explode(' - ', $situations[$fieldColumn]);
                         if (\count($critere) > 1) {
                             list($critereLabel, $etat) = $critere;
-                            $dataMapped[$fieldColumn][trim($critereLabel)] = trim($etat) ?? 'mauvais état';
+                            $dataMapped[$fieldColumn][trim($critereLabel)] = isset($etat) ? trim($etat) : 'mauvais état'; // @phpstan-ignore-line
                         } else {
                             $dataMapped[$fieldColumn][trim($critere[0])] = 'mauvais état';
                         }
