@@ -447,6 +447,11 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, TwoFact
         return \in_array(self::ROLE_USER_PARTNER, $this->getRoles());
     }
 
+    public function isUsager(): bool
+    {
+        return \in_array(self::ROLE_USAGER, $this->getRoles());
+    }
+
     public function getTerritory(): ?Territory
     {
         return $this->territory;
