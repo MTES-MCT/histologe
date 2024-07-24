@@ -14,6 +14,8 @@ use App\Manager\AffectationManager;
 use App\Manager\SignalementManager;
 use App\Repository\AffectationRepository;
 use App\Repository\CriticiteRepository;
+use App\Repository\DesordreCategorieRepository;
+use App\Repository\DesordreCritereRepository;
 use App\Repository\DesordrePrecisionRepository;
 use App\Repository\InterventionRepository;
 use App\Repository\SignalementQualificationRepository;
@@ -49,7 +51,12 @@ class SignalementController extends AbstractController
         DesordrePrecisionRepository $desordrePrecisionsRepository,
         SignalementDesordresProcessor $signalementDesordresProcessor,
         ContainerBagInterface $params,
+        DesordreCategorieRepository $desordreCategorieRepository,
+        DesordreCritereRepository $desordreCritereRepository,
     ): Response {
+        // load desordres data to prevent n+1 queries
+        $desordreCategorieRepository->findAll();
+        $desordreCritereRepository->findAll();
         /** @var User $user */
         $user = $this->getUser();
         if (Signalement::STATUS_ARCHIVED === $signalement->getStatut()) {
