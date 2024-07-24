@@ -1,8 +1,9 @@
 parameters:
-	level: 3
+	level: 4
 	paths:
 		- src
 		- tests
 	excludePaths:
 		- .php-cs-fixer.dist.php
 		- tools
+	treatPhpDocTypesAsCertain: false

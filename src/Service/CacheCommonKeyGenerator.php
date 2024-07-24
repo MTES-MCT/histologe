@@ -13,7 +13,7 @@ class CacheCommonKeyGenerator
 
     public function generate(): ?string
     {
-        /** @var User $user */
+        /** @var ?User $user */
         $user = $this->security->getUser();
         $role = $user?->getRoles();
 

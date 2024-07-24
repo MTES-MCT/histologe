@@ -112,7 +112,7 @@ class EsaboraManagerTest extends TestCase
         $esaboraManager->createOrUpdateArrete($this->getAffectation(PartnerType::ARS), $dossierArrete);
     }
 
-    private function provideEsaboraManagerForIntervention(string $action): EsaboraManager
+    public function provideEsaboraManagerForIntervention(string $action): EsaboraManager
     {
         $this->interventionRepository
             ->expects($this->once())

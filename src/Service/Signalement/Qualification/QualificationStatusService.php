@@ -53,18 +53,18 @@ class QualificationStatusService implements RuntimeExtensionInterface
             }
             if ($before2023
             && null !== $consoEnergie
-            && null !== $signalementQualification->getSignalement()?->getSuperficie()
-            && $signalementQualification->getSignalement()?->getSuperficie() > 0) {
-                $consoEnergie = $consoEnergie / $signalementQualification->getSignalement()?->getSuperficie();
+            && null !== $signalementQualification->getSignalement()->getSuperficie()
+            && $signalementQualification->getSignalement()->getSuperficie() > 0) {
+                $consoEnergie = $consoEnergie / $signalementQualification->getSignalement()->getSuperficie();
             }
         }
 
         // en fonction de la conso, on est soit en NDE, soit OK
-        if ($consoEnergie > 450) {
+        if (isset($consoEnergie) && $consoEnergie > 450) {
             return QualificationStatus::NDE_AVEREE;
         }
 
-        if ($consoEnergie <= 450) {
+        if (isset($consoEnergie) && $consoEnergie <= 450) {
             return QualificationStatus::NDE_OK;
         }
 

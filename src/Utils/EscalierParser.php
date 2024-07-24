@@ -32,15 +32,15 @@ class EscalierParser
 
             $pattern = '/\b('.$abbreviationsPattern.')\s+(.+?)\b/';
             if (preg_match($pattern, $escalier, $matches)) {
-                if (!$match || 'ETAGE' === $match['keyword'] || 'N°' === $match['keyword']) {
+                if (!$match) {
                     $match = ['keyword' => $keyword, 'value' => substr(trim($matches[2]), 0, 3)];
                 }
             }
         }
 
-        if (preg_match('/\bN°\s*(\d+|[A-Z]+)\b/', $escalier, $matches)) {
+        if (preg_match('/N°\s*([0-9A-Z]+)/', $escalier, $matches)) {
             $value = strtoupper(substr(trim($matches[1]), 0, 3));
-            if (!$match || 'ETAGE' === $match['keyword'] || 'N°' === $match['keyword']) {
+            if (!$match) {
                 $match = ['keyword' => 'N°', 'value' => $value];
             }
         }
@@ -48,13 +48,13 @@ class EscalierParser
         $inputWithoutOrdinals = preg_replace('/\b(ER|ÈRE|EME|èRE|èME|IèME)\b/i', '', $escalier);
         if (preg_match('/\d+/', $inputWithoutOrdinals, $matches) && \strlen($inputWithoutOrdinals) <= 3) {
             $value = $matches[0];
-            if (!$match || 'ETAGE' === $match['keyword'] || 'N°' === $match['keyword']) {
+            if (!$match) {
                 $match = ['keyword' => 'NUM', 'value' => $value];
             }
         }
 
         if ($match) {
-            return $match['value'];
+            return trim($match['value']);
         }
 
         $pattern = '/\b(\d+)\s*(?:ER|ÈRE|EME|èRE|èME|IèME|IèM)?\s*(?=ESCALIER)/i';

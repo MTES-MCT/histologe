@@ -16,7 +16,6 @@ use App\Factory\SignalementFactory;
 use App\Manager\SignalementManager;
 use App\Manager\SuiviManager;
 use App\Repository\BailleurRepository;
-use App\Repository\DesordreCritereRepository;
 use App\Repository\DesordrePrecisionRepository;
 use App\Service\DataGouv\AddressService;
 use App\Service\Signalement\CriticiteCalculator;
@@ -31,7 +30,6 @@ use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
-use Symfony\Component\Security\Csrf\CsrfTokenManagerInterface;
 use Symfony\Component\Validator\ConstraintViolationList;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
@@ -49,12 +47,10 @@ class SignalementManagerTest extends WebTestCase
     private SignalementExportFactory $signalementExportFactory;
     private ParameterBagInterface $parameterBag;
     private SignalementManager $signalementManager;
-    private CsrfTokenManagerInterface $csrfTokenManager;
     private SuroccupationSpecification $suroccupationSpecification;
     private CriticiteCalculator $criticiteCalculator;
     private SignalementQualificationUpdater $signalementQualificationUpdater;
     private DesordrePrecisionRepository $desordrePrecisionRepository;
-    private DesordreCritereRepository $desordreCritereRepository;
     private DesordreCompositionLogementLoader $desordreCompositionLogementLoader;
     private SuiviManager $suiviManager;
     private BailleurRepository $bailleurRepository;
@@ -75,12 +71,10 @@ class SignalementManagerTest extends WebTestCase
         );
         $this->signalementExportFactory = static::getContainer()->get(SignalementExportFactory::class);
         $this->parameterBag = static::getContainer()->get(ParameterBagInterface::class);
-        $this->csrfTokenManager = static::getContainer()->get(CsrfTokenManagerInterface::class);
         $this->suroccupationSpecification = static::getContainer()->get(SuroccupationSpecification::class);
         $this->criticiteCalculator = static::getContainer()->get(CriticiteCalculator::class);
         $this->signalementQualificationUpdater = static::getContainer()->get(SignalementQualificationUpdater::class);
         $this->desordrePrecisionRepository = static::getContainer()->get(DesordrePrecisionRepository::class);
-        $this->desordreCritereRepository = static::getContainer()->get(DesordreCritereRepository::class);
         $this->desordreCompositionLogementLoader = static::getContainer()->get(DesordreCompositionLogementLoader::class);
         $this->suiviManager = static::getContainer()->get(SuiviManager::class);
         $this->bailleurRepository = static::getContainer()->get(BailleurRepository::class);
@@ -95,12 +89,10 @@ class SignalementManagerTest extends WebTestCase
             $this->signalementAffectationListViewFactory,
             $this->signalementExportFactory,
             $this->parameterBag,
-            $this->csrfTokenManager,
             $this->suroccupationSpecification,
             $this->criticiteCalculator,
             $this->signalementQualificationUpdater,
             $this->desordrePrecisionRepository,
-            $this->desordreCritereRepository,
             $this->desordreCompositionLogementLoader,
             $this->suiviManager,
             $this->bailleurRepository,
@@ -199,8 +191,8 @@ class SignalementManagerTest extends WebTestCase
 
         $this->assertTrue($signalement->getIsImported());
         $this->assertNotEquals(
-            $signalementImported?->getModifiedAt()?->getTimestamp(),
-            $signalement?->getModifiedAt()?->getTimestamp()
+            $signalementImported->getModifiedAt()?->getTimestamp(),
+            $signalement->getModifiedAt()?->getTimestamp()
         );
     }
 

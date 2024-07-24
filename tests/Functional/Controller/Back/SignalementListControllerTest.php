@@ -126,7 +126,7 @@ class SignalementListControllerTest extends WebTestCase
         $this->assertResponseIsSuccessful();
     }
 
-    private function provideLinkFilterDashboard(): \Generator
+    public function provideLinkFilterDashboard(): \Generator
     {
         $adminUser = 'admin-01@histologe.fr';
         yield 'SUPER_ADMIN - Nouveaux signalements' => [$adminUser, '?statut='.Signalement::STATUS_NEED_VALIDATION];

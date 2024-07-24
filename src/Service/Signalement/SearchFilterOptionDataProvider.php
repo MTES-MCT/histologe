@@ -74,8 +74,8 @@ class SearchFilterOptionDataProvider
             return $className.User::ROLE_ADMIN;
         }
         $role = $user->getRoles();
-        $territory = !$user?->isSuperAdmin() ? $user?->getTerritory() : $territory;
-        $partner = !$user?->isSuperAdmin() ? $user?->getPartner() : null;
+        $territory = !$user->isSuperAdmin() ? $user->getTerritory() : $territory;
+        $partner = !$user->isSuperAdmin() ? $user->getPartner() : null;
 
         return $className.array_shift($role).'-partner-'.$partner?->getId().'-territory-'.$territory?->getZip();
     }

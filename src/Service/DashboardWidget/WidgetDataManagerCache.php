@@ -34,7 +34,7 @@ class WidgetDataManagerCache implements WidgetDataManagerInterface
     public function countSignalementAcceptedNoSuivi(Territory $territory, ?array $params = null): array
     {
         return $this->dashboardCache->get(
-            __FUNCTION__.'-'.$this->commonKey.$territory?->getZip(),
+            __FUNCTION__.'-'.$this->commonKey.$territory->getZip(),
             function (ItemInterface $item) use ($territory, $params) {
                 $item->expiresAfter($params['expired_after'] ?? null);
 
@@ -104,6 +104,7 @@ class WidgetDataManagerCache implements WidgetDataManagerInterface
                 $item->expiresAfter($params['expired_after'] ?? null);
 
                 return $this->widgetDataManager->countDataKpi($territory, $params);
-            });
+            }
+        );
     }
 }

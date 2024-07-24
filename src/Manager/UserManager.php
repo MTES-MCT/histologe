@@ -112,7 +112,7 @@ class UserManager extends AbstractManager
 
     public function loadUserToken(string $email, bool $flush = true): User
     {
-        /** @var User $user */
+        /** @var ?User $user */
         $user = $this->findOneBy(['email' => $email]);
         if (null === $user) {
             throw new UserEmailNotFoundException($email);
@@ -148,7 +148,7 @@ class UserManager extends AbstractManager
             : $signalement->getNomDeclarant();
 
         if (null !== $mail) {
-            /** @var User $user */
+            /** @var ?User $user */
             $user = $this->findOneBy(['email' => $mail]);
             if (null === $user) {
                 $user = $this->userFactory->createInstanceFrom(

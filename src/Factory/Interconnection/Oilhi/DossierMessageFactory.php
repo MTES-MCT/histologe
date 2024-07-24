@@ -57,7 +57,8 @@ class DossierMessageFactory implements DossierMessageFactoryInterface
             ->setSignalementUrl($this->urlGenerator->generate(
                 'back_signalement_view',
                 ['uuid' => $uuid],
-                UrlGeneratorInterface::ABSOLUTE_URL))
+                UrlGeneratorInterface::ABSOLUTE_URL
+            ))
             ->setDateDepotSignalement(
                 null !== $signalement->getValidatedAt()
                     ? $signalement->getValidatedAt()->format(self::FORMAT_DATE)
@@ -73,11 +74,13 @@ class DossierMessageFactory implements DossierMessageFactoryInterface
             ->setTelephoneDeclarant(
                 $signalement->getIsNotOccupant()
                     ? $signalement->getTelDeclarant()
-                    : $signalement->getTelOccupant())
+                    : $signalement->getTelOccupant()
+            )
             ->setCourrielDeclarant(
                 $signalement->getIsNotOccupant()
                     ? $signalement->getMailDeclarant()
-                    : $signalement->getMailOccupant())
+                    : $signalement->getMailOccupant()
+            )
             ->setNomOccupant($signalement->getNomOccupant())
             ->setPrenomOccupant($signalement->getPrenomOccupant())
             ->setTelephoneOccupant($signalement->getTelOccupant())
@@ -101,7 +104,7 @@ class DossierMessageFactory implements DossierMessageFactoryInterface
      */
     private function buildInterventionData(Signalement $signalement): ?array
     {
-        /** @var Intervention $intervention */
+        /** @var Intervention|false $intervention */
         $intervention = $signalement->getInterventions()->last();
         if (false === $intervention) {
             return null;

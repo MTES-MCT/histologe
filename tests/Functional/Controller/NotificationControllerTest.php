@@ -39,7 +39,7 @@ class NotificationControllerTest extends WebTestCase
         $this->assertResponseRedirects('/bo/notifications');
     }
 
-    private function provideAllNotificationOptions(): \Generator
+    public function provideAllNotificationOptions(): \Generator
     {
         $userRepository = static::getContainer()->get(UserRepository::class);
         $user = $userRepository->findOneBy(['email' => 'admin-01@histologe.fr']);
@@ -81,7 +81,7 @@ class NotificationControllerTest extends WebTestCase
         $this->assertResponseRedirects('/bo/notifications');
     }
 
-    private function provideSelectedNotificationOptions(): \Generator
+    public function provideSelectedNotificationOptions(): \Generator
     {
         $userRepository = static::getContainer()->get(UserRepository::class);
         $user = $userRepository->findOneBy(['email' => 'admin-01@histologe.fr']);

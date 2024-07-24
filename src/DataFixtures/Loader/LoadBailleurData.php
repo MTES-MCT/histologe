@@ -28,7 +28,7 @@ class LoadBailleurData extends Fixture implements OrderedFixtureInterface
     {
         /** @var Territory $territory */
         $territory = $this->territoryRepository->findOneBy(['name' => $row['territory']]);
-        /** @var Bailleur $bailleur */
+        /** @var ?Bailleur $bailleur */
         $bailleur = $manager->getRepository(Bailleur::class)->findOneBy(['name' => $row['name']]);
         if (null === $bailleur) {
             $bailleur = (new Bailleur())

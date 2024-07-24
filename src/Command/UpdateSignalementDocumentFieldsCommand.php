@@ -59,7 +59,7 @@ class UpdateSignalementDocumentFieldsCommand extends Command
     {
         $io = new SymfonyStyle($input, $output);
         $zip = $input->getArgument('zip');
-        /** @var Territory $territory */
+        /** @var ?Territory $territory */
         $territory = $this->territoryManager->findOneBy(['zip' => $zip]);
         if (null === $territory) {
             $io->error('Territory does not exist');
@@ -118,7 +118,8 @@ class UpdateSignalementDocumentFieldsCommand extends Command
                     .':(Reference:'
                     .$currentReference
                     .') '
-                    .$exception->getMessage());
+                    .$exception->getMessage()
+                );
             }
         }
 

@@ -48,7 +48,7 @@ class QualificationServiceTest extends KernelTestCase
         $this->assertEquals(\count($qualificationsToCheck), \count($signalementQualifications));
     }
 
-    private function provideScoreAndCriticite(): \Generator
+    public function provideScoreAndCriticite(): \Generator
     {
         yield 'RSD, NON_DECENCE' => [5, [], [Qualification::RSD, Qualification::NON_DECENCE]];
 
@@ -104,7 +104,8 @@ class QualificationServiceTest extends KernelTestCase
         array $listDesordrePrecision,
         array $qualificationsToCheck,
         array $qualificationsStatusToCheck,
-        string $isAssuranceContactee = 'non'
+        string $isAssuranceContactee = 'non',
+        ?int $consoFinale = null
     ): void {
         $signalementRepository = $this->entityManager->getRepository(Signalement::class);
         $desordrePrecisionRepository = $this->entityManager->getRepository(DesordrePrecision::class);
@@ -116,8 +117,8 @@ class QualificationServiceTest extends KernelTestCase
         foreach ($signalement->getDesordrePrecisions() as $desordrePrecision) {
             $signalement->removeDesordrePrecision($desordrePrecision);
         }
-        // set new DesordrePrecisions
         $signalement->setScore($score);
+        $signalement->getTypeCompositionLogement()->setDesordresLogementChauffageDetailsDpeConsoFinale($consoFinale);
 
         $signalement->getInformationProcedure()->setInfoProcedureAssuranceContactee($isAssuranceContactee);
 
@@ -139,7 +140,7 @@ class QualificationServiceTest extends KernelTestCase
         $this->assertEquals(\count($qualificationsToCheck), \count($signalementQualifications));
     }
 
-    private function provideScoreAndDesordresPrecisions(): \Generator
+    public function provideScoreAndDesordresPrecisions(): \Generator
     {
         yield 'nothing' => [
             5,
@@ -524,7 +525,7 @@ class QualificationServiceTest extends KernelTestCase
         $listSlugDesordrePrecision = [
             'desordres_logement_chauffage_details_chauffage_KO_pieces_salle_de_bain',
         ];
-        yield 'NON_DECENCE, RSD, NON_DECENCE_ENERGETIQUE' => [
+        yield 'NON_DECENCE, RSD, NON_DECENCE_ENERGETIQUE CHECK' => [
             1,
             $listSlugDesordrePrecision,
             [
@@ -537,6 +538,38 @@ class QualificationServiceTest extends KernelTestCase
                 QualificationStatus::NON_DECENCE_CHECK,
                 QualificationStatus::RSD_CHECK,
             ],
+        ];
+        yield 'NON_DECENCE, RSD, NON_DECENCE_ENERGETIQUE AVEREE' => [
+            1,
+            $listSlugDesordrePrecision,
+            [
+                Qualification::NON_DECENCE_ENERGETIQUE,
+                Qualification::NON_DECENCE,
+                Qualification::RSD,
+            ],
+            [
+                QualificationStatus::NDE_AVEREE,
+                QualificationStatus::NON_DECENCE_CHECK,
+                QualificationStatus::RSD_CHECK,
+            ],
+            'non',
+            800,
+        ];
+        yield 'NON_DECENCE, RSD, NON_DECENCE_ENERGETIQUE OK' => [
+            1,
+            $listSlugDesordrePrecision,
+            [
+                Qualification::NON_DECENCE_ENERGETIQUE,
+                Qualification::NON_DECENCE,
+                Qualification::RSD,
+            ],
+            [
+                QualificationStatus::NDE_OK,
+                QualificationStatus::NON_DECENCE_CHECK,
+                QualificationStatus::RSD_CHECK,
+            ],
+            'non',
+            150,
         ];
     }
 }

@@ -72,7 +72,7 @@ class InterventionManagerTest extends KernelTestCase
     public function testCreatePastVisiteFromRequest(): void
     {
         $signalement = $this->signalementRepository->findOneBy(['reference' => '2023-10']);
-        /** @var Affectation $affectation */
+        /** @var ?Affectation $affectation */
         $affectation = $signalement->getAffectations()->filter(function (Affectation $affectation) {
             return $affectation->getPartner()->hasCompetence(Qualification::VISITES);
         })->get(0);
@@ -104,7 +104,8 @@ class InterventionManagerTest extends KernelTestCase
             \in_array(
                 ProcedureType::MISE_EN_SECURITE_PERIL,
                 $intervention->getConcludeProcedure()
-            ));
+            )
+        );
 
         $this->assertEmailCount(2);
     }
@@ -115,7 +116,7 @@ class InterventionManagerTest extends KernelTestCase
     public function testCreateFutureVisiteFromRequest(): void
     {
         $signalement = $this->signalementRepository->findOneBy(['reference' => '2023-10']);
-        /** @var Affectation $affectation */
+        /** @var ?Affectation $affectation */
         $affectation = $signalement->getAffectations()->filter(function (Affectation $affectation) {
             return $affectation->getPartner()->hasCompetence(Qualification::VISITES);
         })->get(0);

@@ -26,7 +26,7 @@ class ListCommunesStatisticProviderTest extends KernelTestCase
         }
     }
 
-    private function provideCommunesWithArrondissements(): \Generator
+    public function provideCommunesWithArrondissements(): \Generator
     {
         yield 'Lyon' => ['69', 'Lyon'];
         yield 'Marseille' => ['13', 'Marseille'];

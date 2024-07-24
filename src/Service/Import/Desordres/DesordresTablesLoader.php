@@ -110,7 +110,7 @@ class DesordresTablesLoader
         $item[DesordresTablesHeader::PRECISION_SLUG] :
         $item[DesordresTablesHeader::CRITERE_SLUG];
 
-        /** @var DesordrePrecision $desordrePrecision */
+        /** @var ?DesordrePrecision $desordrePrecision */
         $desordrePrecision = $this->desordrePrecisionManager->findOneBy(
             ['desordrePrecisionSlug' => $slugPrecision]
         );

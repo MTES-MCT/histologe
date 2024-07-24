@@ -52,7 +52,7 @@ class EscalierParserTest extends TestCase
         yield 'La Pauline' => ['La Pauline', null];
         yield 'porte 27' => ['porte 27', '27'];
         yield 'Rdc' => ['Rdc', 'RDC'];
-        yield 'Immeuble de fond n°14A' => ['Immeuble de fond n° 14A', '14A'];
+        yield 'Immeuble de fond n° 14A' => ['Immeuble de fond n° 14A', '14A'];
         yield 'n°7' => ['n°7', '7'];
         yield 'dernier etage entree 58' => ['dernier etage entree 58', '58'];
         yield 'Bâtiment 4 escalier 2' => ['Bâtiment 4 escalier 2', '2'];
@@ -60,5 +60,7 @@ class EscalierParserTest extends TestCase
         yield '1 escalier ' => ['1 escalier ', '1'];
         yield '1ER escalier ' => ['1ER escalier ', '1'];
         yield '2ème escalier ' => ['2ème escalier ', '2'];
+        yield 'N° 5B' => ['N° 5B', '5B'];
+        yield 'N°5B' => ['N°5B', '5B'];
     }
 }

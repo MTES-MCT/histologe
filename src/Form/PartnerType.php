@@ -9,7 +9,6 @@ use App\Entity\Partner;
 use App\Entity\Territory;
 use App\Entity\User;
 use App\Manager\CommuneManager;
-use App\Repository\PartnerRepository;
 use App\Repository\TerritoryRepository;
 use App\Repository\UserRepository;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
@@ -40,7 +39,6 @@ class PartnerType extends AbstractType
         private readonly ParameterBagInterface $parameterBag,
         private readonly CommuneManager $communeManager,
         private readonly UserRepository $userRepository,
-        private readonly PartnerRepository $partnerRepository,
         private readonly Security $security
     ) {
         if ($this->security->isGranted('ROLE_ADMIN')) {
@@ -67,7 +65,7 @@ class PartnerType extends AbstractType
             ->add('nom', TextType::class, [
                 'attr' => [
                     'class' => 'fr-input',
-                    'readonly' => isset($insee[$partner?->getTerritory()?->getZip()][$partner->getNom()]),
+                    'readonly' => isset($insee[$partner->getTerritory()?->getZip()][$partner->getNom()]),
                 ],
             ])
             ->add('email', EmailType::class, [
@@ -123,14 +121,14 @@ class PartnerType extends AbstractType
             ->add('insee', TextType::class, [
                 'attr' => [
                     'class' => 'fr-input',
-                    'readonly' => isset($insee[$partner?->getTerritory()?->getZip()][$partner->getNom()]),
+                    'readonly' => isset($insee[$partner->getTerritory()?->getZip()][$partner->getNom()]),
                 ],
                 'required' => false,
             ])
             ->add('zones_pdl', TextType::class, [
                 'attr' => [
                     'class' => 'fr-input',
-                    'readonly' => isset($insee[$partner?->getTerritory()?->getZip()][$partner->getNom()]),
+                    'readonly' => isset($insee[$partner->getTerritory()?->getZip()][$partner->getNom()]),
                 ],
                 'required' => false,
                 'mapped' => false,
@@ -207,7 +205,7 @@ class PartnerType extends AbstractType
             $partner = $event->getData();
             $form = $event->getForm();
 
-            if ($form->get('zones_pdl')?->getData()) {
+            if ($form->get('zones_pdl')->getData()) {
                 if (null === $partner->getTerritory()) {
                     $options = $form->getConfig()->getOptions();
                     if ($options['territory']) {
@@ -219,7 +217,7 @@ class PartnerType extends AbstractType
                     $territory = $partner->getTerritory();
                 }
 
-                $zonesPdlList = explode(',', $form->get('zones_pdl')?->getData());
+                $zonesPdlList = explode(',', $form->get('zones_pdl')->getData());
                 foreach ($zonesPdlList as $zonePdl) {
                     $communes = $this->communeManager->findBy(['codeInsee' => trim($zonePdl)]);
                     if (!\count($communes)) {
@@ -297,7 +295,7 @@ class PartnerType extends AbstractType
         if ($value instanceof Partner) {
             $partner = $value;
             $codesInsee = $partner->getInsee();
-            if (null === $codesInsee) {
+            if (empty($codesInsee)) {
                 return;
             }
             if (null === $partner->getTerritory()) {
@@ -312,7 +310,7 @@ class PartnerType extends AbstractType
             }
 
             foreach ($codesInsee as $insee) {
-                /** @var Commune $commune */
+                /** @var ?Commune $commune */
                 $commune = $this->communeManager->findOneBy(['codeInsee' => trim($insee)]);
                 if (null === $commune) {
                     $context->addViolation('Il n\'existe pas de commune avec le code insee '.$insee);
