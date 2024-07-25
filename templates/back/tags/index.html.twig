@@ -1,0 +1,99 @@
+{% extends 'back/base_bo.html.twig' %}
+
+{% block title %}Etiquettes du territoire{% endblock %}
+
+{% block content %}
+    <section class="fr-p-5v">
+        {% include 'back/breadcrumb_bo.html.twig' with {
+            'level2Title': 'Outils admin',
+            'level2Link': '',
+            'level2Label': '',
+            'level3Title': 'Etiquettes',
+            'level3Link': '',
+        } %}
+
+        <header>
+            <div class="fr-grid-row">
+                <div class="fr-col-8 fr-text--left">
+                    <h1>Gérer les étiquettes du territoire</h1>
+                    <p>
+                        Les étiquettes peuvent être créées, éditées et supprimées par les responsables territoire uniquement.
+                        <br>
+                        Les agents peuvent ajouter ou retirer les étiquettes existantes aux signalements et les utiliser pour
+                        filtrer la liste des signalements.
+                    </p>
+                </div>
+                <div class="fr-col-4 fr-text--right">
+                    <button class="fr-btn fr-btn--icon-left fr-icon-add-line">Ajouter une étiquette</button>
+                </div>
+            </div>
+        </header>
+    </section>
+    <section class="fr-container--fluid">
+        <form action="#" name="bo-filters-form" id="bo_filters_form" method="POST"
+              class="fr-background--grey fr-p-2v fr-grid-row fr-grid-row--bottom">
+              
+            <div class="fr-col-4 fr-p-2v">
+                <div class="fr-search-bar fr-mt-2v" id="header-search">
+                    <input class="fr-input" placeholder="Taper le nom de l'étiquette" type="search"
+                        name="search" value="{{ search ?? '' }}">
+                    <button class="fr-btn" title="Rechercher">Rechercher</button>
+                </div>
+            </div>
+            <div class="fr-col-3 fr-p-2v">
+                <select id="bo-filters-territories" class="fr-select fr-select-submit" name="territory">
+                    <option value="" {{ currentTerritory is null ? 'selected' : '' }}>Tous les territoires</option>
+                    {% for territory in territories %}
+                        <option value="{{ territory.id }}" {{ currentTerritory ? (territory.id == currentTerritory.id ? 'selected' : '') : ''  }}>{{ territory.zip ~ ' - ' ~ territory.name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="fr-col-2 fr-p-2v">
+                <a href="{{ path('back_tags_index') }}" class="fr-link fr-link--icon-left fr-icon-close-circle-line">Réinitialiser les résultats</a>
+            </div>
+        </form>
+    </section>
+
+
+    <section class="fr-grid-row fr-grid-row--middle fr-p-5v">
+        <h2 class="fr-h2 fr-mb-0" id="desc-table">{{total}} étiquettes</h2>
+    </section>
+    <section class="fr-col-12 fr-table fr-table--lg fr-pt-0 fr-px-5v">
+		<div class="fr-table__wrapper">
+			<div class="fr-table__container">
+				<div class="fr-table__content">
+                    <table class="fr-display-inline-table sortable fr-cell--multiline" aria-label="Liste des étiquettes" aria-describedby="desc-table">
+                        <thead>
+                        <tr>
+                            <th scope="col">ID</th>
+                            <th scope="col">Etiquette</th>
+                            <th scope="col">Nombre d'utilisation</th>
+                            <th scope="col">Territoire</th>
+                            <th scope="col" class="fr-text--right">Actions</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                            {% for index,tag in tags %}
+                                <tr class="signalement-row">
+                                    <td>{{ tag.id }}</td>
+                                    <td>{{ tag.label }}</td>
+                                    <td>{{ tag.nb_tags }}</td>
+                                    <td>{{ tag.territory_label }}</td>
+                                    <td class="fr-text--right fr-ws-nowrap">
+                                        <button>TODO EDIT</button>
+                                        <button>TODO LIST</button>
+                                        <button>TODO DELETE</button>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+				</div>
+			</div>
+		</div>
+        <div class="fr-grid-row fr-mt-2v fr-grid-row--center">
+            {% import '_partials/macros.html.twig' as macros %}
+            {{ macros.customPagination(pages, page, 'back_tags_index', {territory: (currentTerritory ? currentTerritory.id :  null), search: search}) }}
+        </div>
+    </section>
+{% endblock %}

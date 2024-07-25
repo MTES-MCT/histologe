@@ -3,7 +3,7 @@
         data-fr-opened="false" aria-controls="fr-modal-etiquettes">Gérer les étiquettes</a>
 </button>
     <div>
-        <div id="tags_active_container" class="fr-my-3v">
+        <div class="fr-my-3v">
             {% for tag in signalement.tags %}
                 <span class="fr-badge fr-badge--blue-ecume fr-mr-1v">{{ tag.label }}</span>
             {% else %}
@@ -18,7 +18,7 @@
 <dialog aria-labelledby="fr-modal-title-modal-etiquettes" role="dialog" id="fr-modal-etiquettes" class="fr-modal">
     <div class="fr-container fr-container--fluid fr-container-md">
         <div class="fr-grid-row fr-grid-row--center">
-            <div class="fr-col-12 fr-col-md-8 fr-col-lg-6">
+            <div class="fr-col-12 fr-col-md-8">
                 <div class="fr-modal__body">
                     <div class="fr-modal__header">
                         <button class="fr-btn--close fr-btn" title="Fermer la fenêtre modale" aria-controls="fr-modal-etiquettes">Fermer</button>
@@ -32,6 +32,25 @@
                             <br>
                             Cliquez sur une étiquette pour la retirer du signalement.
                         </p>
+                        <div class="fr-grid-row fr-grid-row--gutters">
+                            <div class="fr-col-6">
+                                <h2 class="fr-h5">Sélectionner les étiquettes</h2>
+                                <div class="fr-my-3v">
+                                </div>
+                            </div>
+                            <div class="fr-col-6">
+                                <h2 class="fr-h5">Etiquettes du signalement</h2>
+                                <div class="fr-my-3v">
+                                    {% for tag in signalement.tags %}
+                                        <span class="fr-badge fr-badge--blue-ecume fr-mr-1v">{{ tag.label }}</span>
+                                    {% else %}
+                                        <em class="fr-text-default--warning fr-fi-close-line fr-icon--xs">
+                                            <small>Aucune étiquette attribuée à ce signalement.</small>
+                                        </em>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
