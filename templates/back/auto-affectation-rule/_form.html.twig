@@ -1,0 +1,57 @@
+{{ form_start(form,{attr:{'class':'needs-validation','novalidate':true}}) }}
+
+<div class="fr-grid-row fr-grid-row--gutters">
+	<div class="fr-col-6">
+		{{ form_row(form.territory,{}) }}
+	</div>
+	<div class="fr-col-6">
+		{{ form_row(form.partnerType,{}) }}
+	</div>
+</div>
+
+<div class="fr-grid-row fr-grid-row--gutters">
+	<div class="fr-col-6">
+		{{ form_row(form.status,{}) }}
+	</div>
+	<div class="fr-col-6">
+		{{ form_row(form.profileDeclarant,{}) }}
+	</div>
+</div>
+
+<div class="fr-grid-row fr-grid-row--gutters">
+	<div class="fr-col-6">
+		{{ form_row(form.parc,{}) }}
+	</div>
+	<div class="fr-col-6">
+		{{ form_row(form.allocataire,{}) }}
+	</div>
+</div>
+
+<div class="fr-grid-row fr-grid-row--gutters">
+	<div class="fr-col-6">
+		{{ form_row(form.inseeToInclude,{}) }}
+	</div>
+	<div class="fr-col-6">
+		{{ form_row(form.inseeToExclude,{}) }}
+	</div>
+</div>
+
+
+
+<div class="fr-grid-row">
+	<div class="fr-col-6">
+		{% if create %}
+			<a class="fr-btn fr-btn--danger fr-fi-close-line fr-btn--icon-left" href="{{ path('back_auto_affectation_rule_index') }}">Annuler</a>
+		{% else %}
+			<a class="fr-btn fr-btn--danger fr-fi-close-line fr-btn--icon-left" href="{{ path('back_auto_affectation_rule_index') }}">Annuler</a>
+		{% endif %}
+	</div>
+	<div class="fr-col-6 fr-text--right">
+		{% if create %}
+			<button class="fr-btn fr-btn--success fr-fi-check-line fr-btn--icon-left" id="submit_btn_autoaffectationrule">Créer la règle d'auto-affectation</button>
+		{% else %}
+			<button class="fr-btn fr-btn--success fr-fi-check-line fr-btn--icon-left" id="submit_btn_autoaffectationrule">Enregistrer</button>
+		{% endif %}
+	</div>
+</div>
+{{ form_end(form) }}

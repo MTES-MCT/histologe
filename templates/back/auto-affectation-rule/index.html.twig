@@ -1,0 +1,121 @@
+{% extends 'back/base_bo.html.twig' %}
+
+{% block title %}Règles d'auto-affectation{% endblock %}
+
+{% block content %}
+    {% if is_granted('ROLE_ADMIN') %}
+    {% include 'back/auto-affectation-rule/_modal_autoaffectationrule_delete.html.twig' %}
+    <section class="fr-p-5v">
+        <header>
+            <div class="fr-grid-row">
+                <div class="fr-col-6 fr-text--left">
+                    <h1 class="fr-h1 fr-mb-0">Règles d'auto-affectation</h1>
+                </div>
+                <div class="fr-col-6 fr-text--right">
+                    <a class="fr-btn fr-btn--success fr-btn--icon-left fr-btn--md fr-fi-add-circle-line" href="{{ path('back_auto_affectation_rule_new') }}"
+                        >Ajouter une règle d'auto-affection</a>
+                </div>
+            </div>
+        </header>
+    </section>
+    <section class="fr-container--fluid">
+        <form action="#" name="bo-filters-form" id="bo_filters_form" method="POST"
+              class="fr-background--grey fr-p-2v fr-grid-row fr-grid-row--bottom">
+              
+            <div class="fr-col-3 fr-p-2v">
+                <select id="bo-filters-territories" class="fr-select fr-select-submit" name="territory">
+                    <option value="" {{ currentTerritory is null ? 'selected' : '' }}>Tous les territoires</option>
+                    {% for territory in territories %}
+                        <option value="{{ territory.id }}" {{ currentTerritory ? (territory.id == currentTerritory.id ? 'selected' : '') : ''  }}>{{ territory.zip ~ ' - ' ~ territory.name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+        </form>
+    </section>
+    <section class="fr-grid-row fr-grid-row--middle fr-p-5v">
+        <h2 class="fr-h2 fr-mb-0" id="desc-table">{{total}} règles d'auto-affectation</h2>
+    </section>    
+    <section class="fr-col-12 fr-table fr-table--lg fr-pt-0 fr-px-5v">
+		<div class="fr-table__wrapper">
+			<div class="fr-table__container">
+				<div class="fr-table__content">
+                    <table class="fr-display-inline-table fr-cell--multiline sortable" aria-label="Liste des règles d'auto-affectation">
+                        <thead>
+                        <tr>
+                            <th scope="col">Territoire</th>
+                            <th scope="col">Statut</th>
+                            <th scope="col">Type de partenaire</th>
+                            <th scope="col">Profil déclarant</th>
+                            <th scope="col">Parc</th>
+                            <th scope="col">Allocataire</th>
+                            <th scope="col">Code insee inclus</th>
+                            <th scope="col">Code insee exclus</th>
+                            <th scope="col" class="fr-text--right">Actions</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                            {% for autoaffectationrule in autoaffectationrules %}
+                                <tr class="autoaffectationrule-row">
+                                    <td>{{ autoaffectationrule.territory.zip}} - {{ autoaffectationrule.territory.name}}</td>
+                                    <td>
+                                        {% if autoaffectationrule.status is same as constant('App\\Entity\\AutoAffectationRule::STATUS_ACTIVE') %}
+                                            {% set classe = 'fr-badge--green-emeraude' %}
+                                        {% else %}
+                                            {% set classe = 'fr-badge--blue-ecume' %}
+                                        {% endif %}
+                                        <span class="fr-badge {{ classe }} fr-mb-1v">{{ autoaffectationrule.status  }}</span></td>
+                                    </td>
+                                    <td>{{ autoaffectationrule.partnerType.label }}</td>
+                                    <td>{{ autoaffectationrule.profileDeclarant }}</td>
+                                    <td>{{ autoaffectationrule.parc }}</td>
+                                    <td>{{ autoaffectationrule.allocataire }}</td>
+                                    <td>
+                                        {% if autoaffectationrule.inseeToInclude is same as('all') or autoaffectationrule.inseeToInclude is same as('partner_list') %}
+                                            {{ autoaffectationrule.inseeToInclude }}
+                                        {% else %}
+                                            {% for insee in autoaffectationrule.inseeToInclude|split(',') %}
+                                                <div class="fr-badge fr-badge--blue-ecume fr-mb-1v">{{ insee }}</div>
+                                            {% endfor %}
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        {% if autoaffectationrule.inseeToExclude %}
+                                            {% for insee in autoaffectationrule.inseeToExclude %}
+                                                <div class="fr-badge fr-badge--blue-ecume fr-mb-1v">{{ insee }}</div>
+                                            {% endfor %}
+                                        {% else %}
+                                            /
+                                        {% endif %}
+                                    </td>
+                                    <td class="fr-text--right">
+                                        <a class="fr-btn fr-btn--icon-left fr-btn--sm fr-fi-edit-line" href="{{ path('back_auto_affectation_rule_edit', {'id': autoaffectationrule.id}) }}"></a>
+                                        {% if autoaffectationrule.status is same as constant('App\\Entity\\AutoAffectationRule::STATUS_ACTIVE') %}
+                                            <a href="#" class="fr-btn fr-btn--danger fr-btn--sm fr-fi-delete-line fr-mt-3v btn-delete-autoaffectationrule"
+                                            id="autoaffectationrule_delete_{{ autoaffectationrule.id }}" aria-controls="fr-modal-autoaffectationrule-delete"
+                                            data-fr-opened="false" data-autoaffectationrule-id="{{ autoaffectationrule.id }}" data-autoaffectationrule-description="{{ autoaffectationrule.description }}"></a>
+                                        {% else %}
+                                            <a href="{{ path('back_auto_affectation_rule_reactive', {'id': autoaffectationrule.id}) }}"
+                                                class="fr-btn fr-icon-flashlight-fill fr-btn--sm fr-mt-3v" title="Réactiver la règle {{autoaffectationrule.id}}"></a>
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                            {% else %}
+                                <tr>
+                                    <td colspan="3">Aucune règle d'auto-affectation trouvée</td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+				</div>
+			</div>
+		</div>
+        <div class="fr-grid-row fr-mt-2v fr-grid-row--center">
+            {% import '_partials/macros.html.twig' as macros %}
+            {{ macros.customPagination(pages, page, 'back_auto_affectation_rule_index', {territory: (currentTerritory ? currentTerritory.id :  null)}) }}
+        </div>
+    </section>
+    {% endif %}
+{% endblock %}
+{% block javascripts %}
+    {{ encore_entry_script_tags('app') }}
+{% endblock %}

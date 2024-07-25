@@ -27,7 +27,7 @@ class AutoAffectationRule
     #[ORM\Column(type: 'string', options: ['comment' => 'Value possible ACTIVE or ARCHIVED'])]
     #[Assert\NotBlank]
     #[Assert\Choice(choices: [self::STATUS_ACTIVE, self::STATUS_ARCHIVED], message: 'Choisissez une option valide: ACTIVE or ARCHIVED')]
-    private string $status;
+    private string $status = self::STATUS_ACTIVE;
 
     #[ORM\Column(type: 'string', enumType: PartnerType::class, options: ['comment' => 'Value possible enum PartnerType'])]
     #[Assert\NotBlank]
@@ -164,5 +164,22 @@ class AutoAffectationRule
         $this->allocataire = $allocataire;
 
         return $this;
+    }
+
+    public function getDescription(): string
+    {
+        $description = 'Règle d\'auto-affectation pour les partenaires '.$this->getPartnerType()->label();
+        $description .= ' du territoire '.$this->getTerritory()->getName().' concernant ';
+        if ('prive' === $this->getParc()) {
+            $description .= 'les logements du parc privé';
+        } elseif ('public' === $this->getParc()) {
+            $description .= 'les logements du parc public';
+        } else {
+            $description .= 'tous les logements.';
+        }
+        // TODO code insee
+        // TODO profil déclarant
+        // TODO allocataire
+        return $description;
     }
 }
