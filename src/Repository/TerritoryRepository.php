@@ -30,8 +30,7 @@ class TerritoryRepository extends ServiceEntityRepository
     public function findAllList()
     {
         $qb = $this->createQueryBuilder('t')
-            ->where('t.isActive = 1')
-            ->orderBy('t.name', 'ASC');
+            ->where('t.isActive = 1');
 
         return $qb->indexBy('t', 't.id')
             ->getQuery()
