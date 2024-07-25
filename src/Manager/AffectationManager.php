@@ -108,12 +108,14 @@ class AffectationManager extends Manager
 
     public function flagAsSynchronized(DossierMessageInterface $dossierMessage): void
     {
-        /** @var Affectation $affectation */
+        /** @var ?Affectation $affectation */
         $affectation = $this->getRepository()->findOneBy([
             'partner' => $dossierMessage->getPartnerId(),
             'signalement' => $dossierMessage->getSignalementId(),
         ]);
-        $affectation->setIsSynchronized(true);
-        $this->save($affectation);
+        if (isset($affectation)) {
+            $affectation->setIsSynchronized(true);
+            $this->save($affectation);
+        }
     }
 }

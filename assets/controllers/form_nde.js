@@ -61,8 +61,8 @@ formBtn?.addEventListener('click', evt => {
             dpe: stringToBoolean(document.querySelector('input[name=dpe]:checked')?.value),
             dateDernierBail: document.querySelector('input[name=dateDernierBail]:checked')?.value,
             dateDernierDPE: document.querySelector('input[name=dateDernierDPE]:checked')?.value,
-            consommationEnergie: Number(document.getElementById('signalement-edit-nde-conso-energie')?.value),
-            superficie: Number(document.getElementById('signalement-edit-nde-superficie')?.value),
+            consommationEnergie:Math.round( Number(document.getElementById('signalement-edit-nde-conso-energie')?.value)),
+            superficie: Math.round(Number(document.getElementById('signalement-edit-nde-superficie')?.value)),
         };
 
         const options = {
