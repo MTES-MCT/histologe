@@ -92,6 +92,7 @@ class PartnerType extends AbstractType
                 'help_attr' => [
                     'class' => 'fr-hint-text',
                 ],
+                'disabled' => !$this->isAdminTerritory,
             ])
             ->add('competence', EnumType::class, [
                 'class' => Qualification::class,
@@ -261,9 +262,10 @@ class PartnerType extends AbstractType
             if (empty($partner->getEmail())) {
                 return;
             }
+            /** @var ?User $user */
             $user = $this->userRepository->findOneBy(['email' => $partner->getEmail()]);
 
-            if (!empty($user)) {
+            if (!empty($user) && !$user->isUsager()) {
                 $context->addViolation('Un utilisateur existe déjà avec cette adresse e-mail.');
             }
         }
