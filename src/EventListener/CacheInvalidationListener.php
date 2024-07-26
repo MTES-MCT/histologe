@@ -53,7 +53,7 @@ class CacheInvalidationListener
     {
         $entity = $args->getObject();
         if ($this->supports($entity)) {
-            /** @var User $user */
+            /** @var ?User $user */
             $user = $this->security->getUser();
             $territory = $user?->getTerritory();
             try {

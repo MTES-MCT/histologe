@@ -9,7 +9,7 @@ use App\Messenger\Message\Idoss\DossierMessage;
 use App\Service\Idoss\IdossService;
 use App\Service\ImageManipulationHandler;
 use Doctrine\ORM\EntityManagerInterface;
-use League\Flysystem\FilesystemOperator;
+use PHPUnit\Framework\MockObject\MockObject;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use Symfony\Component\DependencyInjection\ParameterBag\ContainerBagInterface;
 use Symfony\Component\HttpClient\MockHttpClient;
@@ -28,13 +28,23 @@ class IdossServiceTest extends KernelTestCase
 
     protected function getIdossService(MockHttpClient $mockHttpClient): IdossService
     {
+        /** @var ContainerBagInterface|MockObject $containerBagInterface */
         $containerBagInterface = $this->createMock(ContainerBagInterface::class);
+        /** @var JobEventManager|MockObject $jobEventManager */
         $jobEventManager = $this->createMock(JobEventManager::class);
+        /** @var SerializerInterface|MockObject $serializerMock */
         $serializerMock = $this->createMock(SerializerInterface::class);
-        $fileStorageMock = $this->createMock(FilesystemOperator::class);
+        /** @var ImageManipulationHandler|MockObject $imageManipulationHandlerMock */
         $imageManipulationHandlerMock = $this->createMock(ImageManipulationHandler::class);
 
-        return new IdossService($mockHttpClient, $containerBagInterface, $this->entityManager, $jobEventManager, $serializerMock, $fileStorageMock, $imageManipulationHandlerMock);
+        return new IdossService(
+            $mockHttpClient,
+            $containerBagInterface,
+            $this->entityManager,
+            $jobEventManager,
+            $serializerMock,
+            $imageManipulationHandlerMock
+        );
     }
 
     public function testWithoutToken(): void

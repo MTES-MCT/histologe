@@ -3,7 +3,6 @@
 namespace App\Tests\Functional\Service\Import\Bailleur;
 
 use App\Repository\BailleurRepository;
-use App\Repository\BailleurTerritoryRepository;
 use App\Repository\TerritoryRepository;
 use App\Service\Import\Bailleur\BailleurHeader;
 use App\Service\Import\Bailleur\BailleurLoader;
@@ -19,7 +18,6 @@ class BailleurLoaderTest extends KernelTestCase
     {
         $bailleurLoader = new BailleurLoader(
             self::getContainer()->get(BailleurRepository::class),
-            self::getContainer()->get(BailleurTerritoryRepository::class),
             self::getContainer()->get(TerritoryRepository::class),
             self::getContainer()->get(EntityManagerInterface::class)
         );

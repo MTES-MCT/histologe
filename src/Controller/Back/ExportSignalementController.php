@@ -37,10 +37,8 @@ class ExportSignalementController extends AbstractController
 
             return $response;
         } catch (\ErrorException $e) {
+            $this->addFlash('error', 'Problème d\'identification de votre demande. Merci de réessayer.');
             throw new \Exception('Erreur lors de l\'export du fichier par l\'user "'.$user->getId().'" : '.$e->getMessage().' - '.print_r($filters, true));
         }
-        $this->addFlash('error', 'Problème d\'identification de votre demande. Merci de réessayer.');
-
-        return $this->redirectToRoute('back_index');
     }
 }

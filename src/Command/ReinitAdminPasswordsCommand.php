@@ -8,13 +8,11 @@ use App\Repository\UserRepository;
 use App\Service\Mailer\NotificationMail;
 use App\Service\Mailer\NotificationMailerRegistry;
 use App\Service\Mailer\NotificationMailerType;
-use App\Service\Token\TokenGeneratorInterface;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
-use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Validator\ConstraintViolationList;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
@@ -31,10 +29,8 @@ class ReinitAdminPasswordsCommand extends Command
     public function __construct(
         private UserManager $userManager,
         private ValidatorInterface $validator,
-        private UserPasswordHasherInterface $hasher,
         private UserRepository $userRepository,
-        private NotificationMailerRegistry $notificationMailerRegistry,
-        private TokenGeneratorInterface $tokenGenerator
+        private NotificationMailerRegistry $notificationMailerRegistry
     ) {
         parent::__construct();
     }

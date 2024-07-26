@@ -415,7 +415,7 @@ class SignalementQualificationUpdater
                 dataConsoSizeYear: $signalement->getTypeCompositionLogement()->getDesordresLogementChauffageDetailsDpeConsoFinale(),
                 dataConsoYear: $signalement->getTypeCompositionLogement()->getDesordresLogementChauffageDetailsDpeConso(),
                 dataConsoSize: $signalement->getTypeCompositionLogement()->getCompositionLogementSuperficie(),
-                dataHasDPE: 'oui' === $dataHasDPE,
+                dataHasDPE: $dataHasDPE,
                 dataDateDPE: $dataDateDPE,
             );
             $signalementQualification->setStatus(

@@ -31,7 +31,6 @@ use App\Factory\SignalementAffectationListViewFactory;
 use App\Factory\SignalementExportFactory;
 use App\Factory\SignalementFactory;
 use App\Repository\BailleurRepository;
-use App\Repository\DesordreCritereRepository;
 use App\Repository\DesordrePrecisionRepository;
 use App\Repository\PartnerRepository;
 use App\Repository\SignalementRepository;
@@ -44,13 +43,11 @@ use App\Service\Signalement\Qualification\SignalementQualificationUpdater;
 use App\Service\Signalement\SignalementInputValueMapper;
 use App\Service\Signalement\ZipcodeProvider;
 use App\Specification\Signalement\SuroccupationSpecification;
-use Doctrine\ORM\Tools\Pagination\Paginator;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
-use Symfony\Component\Security\Csrf\CsrfTokenManagerInterface;
 
 class SignalementManager extends AbstractManager
 {
@@ -63,12 +60,10 @@ class SignalementManager extends AbstractManager
         private SignalementAffectationListViewFactory $signalementAffectationListViewFactory,
         private SignalementExportFactory $signalementExportFactory,
         private ParameterBagInterface $parameterBag,
-        private CsrfTokenManagerInterface $csrfTokenManager,
         private SuroccupationSpecification $suroccupationSpecification,
         private CriticiteCalculator $criticiteCalculator,
         private SignalementQualificationUpdater $signalementQualificationUpdater,
         private DesordrePrecisionRepository $desordrePrecisionRepository,
-        private DesordreCritereRepository $desordreCritereRepository,
         private DesordreCompositionLogementLoader $desordreCompositionLogementLoader,
         private SuiviManager $suiviManager,
         private BailleurRepository $bailleurRepository,
@@ -313,7 +308,7 @@ class SignalementManager extends AbstractManager
             if (QualificationNDERequest::RADIO_VALUE_AFTER_2023 === $qualificationNDERequest->getDateDernierBail()
                 && (
                     null === $signalementQualification->getDernierBailAt()
-                    || $signalementQualification->getDernierBailAt()?->format('Y') < '2023'
+                    || $signalementQualification->getDernierBailAt()->format('Y') < '2023'
                 )
             ) {
                 $signalementQualification->setDernierBailAt(new \DateTimeImmutable(
@@ -323,7 +318,7 @@ class SignalementManager extends AbstractManager
             if (QualificationNDERequest::RADIO_VALUE_BEFORE_2023 === $qualificationNDERequest->getDateDernierBail()
                 && (
                     null === $signalementQualification->getDernierBailAt()
-                    || $signalementQualification->getDernierBailAt()?->format('Y') >= '2023'
+                    || $signalementQualification->getDernierBailAt()->format('Y') >= '2023'
                 )
             ) {
                 $signalementQualification->setDernierBailAt(
@@ -841,26 +836,5 @@ class SignalementManager extends AbstractManager
                 $row
             );
         }
-    }
-
-    /**
-     * @todo: Investigate Twig\Error\RuntimeError in ajax request
-     * Hack: generate csrf token in side server for ajav request
-     * Fix Twig\Error\RuntimeError in order to do not generate csrf token (session) after the headers have been sent.
-     */
-    private function generateCsrfToken(array $signalementList): array
-    {
-        $csrfTokens = [];
-        /* @var SignalementAffectationListView $signalement */
-        foreach ($signalementList as $signalementItem) {
-            if ($signalementItem instanceof SignalementAffectationListView) {
-                $csrfTokens[$signalementItem->getUuid()] =
-                    $this->csrfTokenManager->getToken(
-                        'signalement_delete_'.$signalementItem->getId()
-                    )->getValue();
-            }
-        }
-
-        return $csrfTokens;
     }
 }

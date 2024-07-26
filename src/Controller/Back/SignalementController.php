@@ -96,7 +96,7 @@ class SignalementController extends AbstractController
             if ($this->isGranted('ROLE_ADMIN_TERRITORY') && isset($clotureForm->getExtraData()['publicSuivi'])) {
                 $eventParams['suivi_public'] = $clotureForm->getExtraData()['publicSuivi'];
             }
-            $eventParams['subject'] = $user?->getPartner()?->getNom();
+            $eventParams['subject'] = $user->getPartner()?->getNom();
             $eventParams['closed_for'] = $clotureForm->get('type')->getData();
 
             $entity = null;

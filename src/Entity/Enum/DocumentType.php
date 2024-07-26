@@ -90,7 +90,7 @@ enum DocumentType: String
             self::PROCEDURE_SAISINE, self::BAILLEUR_DEVIS_POUR_TRAVAUX,
             self::BAILLEUR_REPONSE_BAILLEUR, => File::FILE_TYPE_DOCUMENT,
             self::PHOTO_SITUATION,self::PHOTO_VISITE => File::FILE_TYPE_PHOTO,
-            self::AUTRE => null,
+            self::AUTRE, self::AUTRE_PROCEDURE => null,
         };
     }
 }

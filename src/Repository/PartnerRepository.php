@@ -110,10 +110,8 @@ class PartnerRepository extends ServiceEntityRepository
         $queryBuilder = $this->createQueryBuilder('p');
 
         if ($isNoneTerritory) {
-            if ($isNoneTerritory) {
-                $queryBuilder
-                    ->where('p.territory IS NULL');
-            }
+            $queryBuilder
+                ->where('p.territory IS NULL');
         } else {
             $builtOrCondition = '';
             if (empty($territory)) {
@@ -183,10 +181,8 @@ class PartnerRepository extends ServiceEntityRepository
     public function findPartnersWithQualification(Qualification $qualification, ?Territory $territory)
     {
         $qb = $this->createQueryBuilder('p');
-        if ($qualification) {
-            $qb->andWhere('REGEXP(p.competence, :regexp) = true')
-                ->setParameter('regexp', '(^'.$qualification->name.',)|(,'.$qualification->name.',)|(,'.$qualification->name.'$)|(^'.$qualification->name.'$)');
-        }
+        $qb->andWhere('REGEXP(p.competence, :regexp) = true')
+            ->setParameter('regexp', '(^'.$qualification->name.',)|(,'.$qualification->name.',)|(,'.$qualification->name.'$)|(^'.$qualification->name.'$)');
         if ($territory) {
             $qb->andWhere('p.territory = :territory')
                 ->setParameter('territory', $territory);

@@ -253,7 +253,7 @@ class SlugifyDocumentSignalementCommand extends Command
         $fromFile = 'csv/'.$this->filename.$zip.'.csv';
         $toFile = $this->parameterBag->get('uploads_tmp_dir').$this->filename.$zip.'.csv';
 
-        /** @var Territory $territory */
+        /** @var ?Territory $territory */
         $territory = $this->territoryManager->findOneBy(['zip' => $zip]);
         if (null === $territory) {
             $this->errors[] = 'Territory does not exists';

@@ -5,7 +5,6 @@ namespace App\Tests\Functional\Command;
 use App\Command\LoadEpciCommand;
 use App\Repository\CommuneRepository;
 use App\Repository\EpciRepository;
-use App\Repository\TerritoryRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use Symfony\Component\Console\Tester\CommandTester;
@@ -29,7 +28,6 @@ class LoadEpciCommandTest extends KernelTestCase
 
         $command = new LoadEpciCommand(
             $mockHttpClient,
-            self::getContainer()->get(TerritoryRepository::class),
             self::getContainer()->get(CommuneRepository::class),
             self::getContainer()->get(EpciRepository::class),
             $entityManager
@@ -42,7 +40,8 @@ class LoadEpciCommandTest extends KernelTestCase
         $this->assertStringContainsString(
             '3990 communes code postal might be obsolete.',
             $output,
-            $output);
+            $output
+        );
     }
 
     private function getEpciAllResponse(): string

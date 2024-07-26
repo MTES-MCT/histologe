@@ -54,7 +54,7 @@ class ScheduledTaskCommand extends Command
         $table->render();
         // Based on sleepInterval, run the scheduler which will execute the tasks
         // which have to be started at the given minute.
-        while (true) {
+        while (true) {// @phpstan-ignore-line
             $this->logger->info('[CRON] Running tasks');
             /** @var CronReport $report */
             $report = $cron->run();
@@ -72,6 +72,6 @@ class ScheduledTaskCommand extends Command
             sleep($sleepInterval);
         }
 
-        return Command::SUCCESS;
+        return Command::SUCCESS; // @phpstan-ignore-line
     }
 }

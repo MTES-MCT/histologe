@@ -197,9 +197,7 @@ class DossierMessageSISHFactory extends AbstractDossierMessageFactory
             $structure = $signalement->getStructureDeclarant()
                 ? substr($signalement->getStructureDeclarant(), 0, 150)
                 : null;
-            $lienOccupant = $signalement->getLienDeclarantOccupant()
-                ? substr($signalement->getLienDeclarantOccupant(), 0, 150)
-                : null;
+            $lienOccupant = substr($signalement->getLienDeclarantOccupant(), 0, 150);
             $personneQualite = CiviliteMapper::mapDeclarant($signalement);
 
             $dossierMessageSISHPersonne = new DossierMessageSISHPersonne();

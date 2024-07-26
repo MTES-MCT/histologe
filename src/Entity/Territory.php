@@ -32,7 +32,7 @@ class Territory
     private $partners;
 
     #[ORM\OneToMany(mappedBy: 'territory', targetEntity: Commune::class)]
-    private $communes;
+    private $communes; // @phpstan-ignore-line
 
     #[ORM\OneToMany(mappedBy: 'territory', targetEntity: Signalement::class)]
     private $signalements;
@@ -66,6 +66,7 @@ class Territory
         $this->affectations = new ArrayCollection();
         $this->tags = new ArrayCollection();
         $this->bailleurTerritories = new ArrayCollection();
+        $this->autoAffectationRules = new ArrayCollection();
     }
 
     public function getId(): ?int

@@ -9,7 +9,6 @@ use App\Service\Import\CsvParser;
 use App\Utils\ImportCommune;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Common\DataFixtures\OrderedFixtureInterface;
-use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ObjectManager;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 
@@ -20,7 +19,6 @@ class LoadCommuneData extends Fixture implements OrderedFixtureInterface
 
     public function __construct(
         private readonly ParameterBagInterface $params,
-        private readonly EntityManagerInterface $entityManager,
         private readonly TerritoryManager $territoryManager,
         private readonly CommuneFactory $communeFactory,
         private readonly CommuneManager $communeManager,
@@ -65,7 +63,8 @@ class LoadCommuneData extends Fixture implements OrderedFixtureInterface
                     $territory,
                     $itemNomCommune,
                     $itemCodePostal,
-                    $itemCodeCommune);
+                    $itemCodeCommune
+                );
 
                 $existingCpAndInseeCode[$keyCommune] = 1;
 

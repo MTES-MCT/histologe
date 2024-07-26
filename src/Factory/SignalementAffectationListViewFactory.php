@@ -19,7 +19,7 @@ class SignalementAffectationListViewFactory
     {
         list($status, $affectations) = SignalementAffectationHelper::getStatusAndAffectationFrom($user, $data);
 
-        /** @var ProfileDeclarant $profileDeclarant */
+        /** @var ?ProfileDeclarant $profileDeclarant */
         $profileDeclarant = $data['profileDeclarant'];
         $signalementAffectationListView = new SignalementAffectationListView(
             id: $data['id'],

@@ -15,7 +15,6 @@ use App\Entity\Suivi;
 use App\Entity\Territory;
 use App\Entity\User;
 use App\Repository\BailleurRepository;
-use App\Repository\CommuneRepository;
 use App\Repository\EpciRepository;
 use App\Repository\NotificationRepository;
 use App\Repository\SignalementQualificationRepository;
@@ -69,7 +68,6 @@ class SearchFilter
         private TerritoryRepository $territoryRepository,
         private EntityManagerInterface $entityManager,
         private SignalementQualificationRepository $signalementQualificationRepository,
-        private CommuneRepository $communeRepository,
         private EpciRepository $epciRepository,
         private BailleurRepository $bailleurRepository,
         #[Autowire(env: 'FEATURE_LIST_FILTER_ENABLE')]

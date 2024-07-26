@@ -9,9 +9,7 @@ use App\Entity\Intervention;
 use App\Entity\Suivi;
 use App\Entity\User;
 use App\Factory\NotificationFactory;
-use App\Factory\SuiviFactory;
 use App\Manager\SignalementManager;
-use App\Manager\SuiviManager;
 use App\Repository\UserRepository;
 use App\Service\Mailer\NotificationMail;
 use App\Service\Mailer\NotificationMailerRegistry;
@@ -24,8 +22,6 @@ class VisiteNotifier
     public function __construct(
         private EntityManagerInterface $entityManager,
         private SignalementManager $signalementManager,
-        private SuiviFactory $suiviFactory,
-        private SuiviManager $suiviManager,
         private NotificationFactory $notificationFactory,
         private NotificationMailerRegistry $notificationMailerRegistry,
         private UserRepository $userRepository,

@@ -115,10 +115,6 @@ class UploadHandlerService
             $extensions = array_map('strtoupper', File::IMAGE_EXTENSION);
         }
 
-        if (1 === \count($extensions)) {
-            return $extensions[0];
-        }
-
         $allButLast = \array_slice($extensions, 0, -1);
         $last = end($extensions);
         $all = implode(', ', $allButLast).' ou '.$last;

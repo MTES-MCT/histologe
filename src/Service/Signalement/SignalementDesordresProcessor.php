@@ -3,12 +3,10 @@
 namespace App\Service\Signalement;
 
 use App\Entity\Signalement;
-use App\Manager\SignalementManager;
 
 class SignalementDesordresProcessor
 {
     public function __construct(
-        private readonly SignalementManager $signalementManager,
     ) {
     }
 

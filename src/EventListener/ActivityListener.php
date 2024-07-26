@@ -193,9 +193,11 @@ class ActivityListener
 
     private function removeCurrentUserEmailForNotification(): void
     {
-        /** @var User $user */
-        $user = $this->security?->getUser();
-        $this->tos->removeElement($user?->getEmail());
+        /** @var ?User $user */
+        $user = $this->security->getUser();
+        if ($user) {
+            $this->tos->removeElement($user->getEmail());
+        }
     }
 
     private function notifyPartner($partner, $entity, $inAppType)

@@ -169,13 +169,15 @@ class SignalementActionController extends AbstractController
         if ($this->isCsrfTokenValid('signalement_reopen_'.$signalement->getId(), $request->get('_token')) && $response = $request->get('signalement-action')) {
             if ($this->isGranted('ROLE_ADMIN_TERRITORY') && isset($response['reopenAll'])) {
                 $signalement->getAffectations()->filter(function (Affectation $affectation) use ($doctrine) {
-                    $affectation->setStatut(Affectation::STATUS_WAIT) && $doctrine->getManager()->persist($affectation);
+                    $affectation->setStatut(Affectation::STATUS_WAIT);
+                    $doctrine->getManager()->persist($affectation);
                 });
                 $reopenFor = 'tous les partenaires';
             } else {
                 $user->getPartner()->getAffectations()->filter(function (Affectation $affectation) use ($signalement, $doctrine) {
                     if ($affectation->getSignalement()->getId() === $signalement->getId()) {
-                        $affectation->setStatut(Affectation::STATUS_WAIT) && $doctrine->getManager()->persist($affectation);
+                        $affectation->setStatut(Affectation::STATUS_WAIT);
+                        $doctrine->getManager()->persist($affectation);
                     }
                 });
                 $reopenFor = mb_strtoupper($user->getPartner()->getNom());

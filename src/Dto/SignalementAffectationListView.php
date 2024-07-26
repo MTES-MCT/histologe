@@ -13,7 +13,6 @@ class SignalementAffectationListView
     public const SEPARATOR_GROUP_CONCAT = ';';
     public const MAX_LIST_PAGINATION = 30;
 
-    private ?bool $nde = null;
     private ?array $qualificationsStatusesLabels = null;
 
     public function __construct(
@@ -136,12 +135,12 @@ class SignalementAffectationListView
         if (null !== $this->qualifications) {
             foreach ($this->qualifications as $qualification) {
                 if (Qualification::NON_DECENCE_ENERGETIQUE->name === $qualification) {
-                    return $this->nde = true;
+                    return true;
                 }
             }
         }
 
-        return $this->nde = false;
+        return false;
     }
 
     public function getQualificationsStatuses(): ?array

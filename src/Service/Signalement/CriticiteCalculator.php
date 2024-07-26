@@ -40,7 +40,7 @@ class CriticiteCalculator
         if ($signalement->getNbEnfantsM6() || $signalement->getNbEnfantsP6()) {
             $score = $score * 1.1;
         }
-        if ($score > 100) {
+        if ($score > 100) {// @phpstan-ignore-line
             $score = 100;
         }
 

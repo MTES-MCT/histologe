@@ -3,7 +3,6 @@
 namespace App\Tests\Unit\Service;
 
 use App\Entity\Enum\ProfileDeclarant;
-use App\Entity\Partner;
 use App\Entity\Signalement;
 use App\Factory\SuiviFactory;
 use App\Manager\AffectationManager;
@@ -165,17 +164,19 @@ class AutoAssignerTest extends KernelTestCase
 
     private function testHelper($signalement, $expectedCount)
     {
+        /** @var SignalementManager|MockObject $signalementManager */
         $signalementManager = $this->createMock(SignalementManager::class);
-        $partnerRepository = $this->entityManager->getRepository(Partner::class);
+        /** @var UserManager|MockObject $userManager */
         $userManager = $this->createMock(UserManager::class);
+        /** @var ParameterBagInterface|MockObject $parameterBag */
         $parameterBag = $this->createMock(ParameterBagInterface::class);
+        /** @var InterconnectionBus|MockObject $esaboraBus */
         $esaboraBus = $this->createMock(InterconnectionBus::class);
         $autoAssigner = new AutoAssigner(
             $signalementManager,
             $this->affectationManager,
             $this->suiviManager,
             $this->suiviFactory,
-            $partnerRepository,
             $userManager,
             $parameterBag,
             $esaboraBus,

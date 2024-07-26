@@ -149,7 +149,7 @@ class SignalementVoter extends Voter
 
     private function canEditNDE(Signalement $signalement, User $user): bool
     {
-        $signalementQualificationNDE = $signalement->getSignalementQualifications()?->filter(function ($qualification) {
+        $signalementQualificationNDE = $signalement->getSignalementQualifications()->filter(function ($qualification) {
             return Qualification::NON_DECENCE_ENERGETIQUE === $qualification->getQualification();
         })->first();
 

@@ -14,7 +14,6 @@ use App\Manager\SignalementManager;
 use App\Manager\SuiviManager;
 use App\Manager\UserManager;
 use App\Messenger\InterconnectionBus;
-use App\Repository\PartnerRepository;
 use App\Specification\Affectation\AllocataireSpecification;
 use App\Specification\Affectation\CodeInseeSpecification;
 use App\Specification\Affectation\ParcSpecification;
@@ -33,7 +32,6 @@ class AutoAssigner
         private AffectationManager $affectationManager,
         private SuiviManager $suiviManager,
         private SuiviFactory $suiviFactory,
-        private PartnerRepository $partnerRepository,
         private UserManager $userManager,
         private ParameterBagInterface $parameterBag,
         private InterconnectionBus $interconnectionBus,

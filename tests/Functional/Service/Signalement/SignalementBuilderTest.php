@@ -5,14 +5,12 @@ namespace App\Tests\Functional\Service\Signalement;
 use App\Entity\Enum\ProfileDeclarant;
 use App\Entity\Enum\SignalementDraftStatus;
 use App\Entity\SignalementDraft;
-use App\Factory\FileFactory;
 use App\Factory\Signalement\InformationComplementaireFactory;
 use App\Factory\Signalement\InformationProcedureFactory;
 use App\Factory\Signalement\SituationFoyerFactory;
 use App\Factory\Signalement\TypeCompositionLogementFactory;
 use App\Manager\DesordreCritereManager;
 use App\Repository\BailleurRepository;
-use App\Repository\DesordreCategorieRepository;
 use App\Repository\DesordreCritereRepository;
 use App\Repository\DesordrePrecisionRepository;
 use App\Repository\TerritoryRepository;
@@ -23,11 +21,8 @@ use App\Service\Signalement\DesordreTraitement\DesordreTraitementProcessor;
 use App\Service\Signalement\Qualification\SignalementQualificationUpdater;
 use App\Service\Signalement\ReferenceGenerator;
 use App\Service\Signalement\SignalementBuilder;
-use App\Service\Token\TokenGeneratorInterface;
-use App\Service\UploadHandlerService;
 use App\Tests\FixturesHelper;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
-use Symfony\Bundle\SecurityBundle\Security;
 
 class SignalementBuilderTest extends KernelTestCase
 {
@@ -46,16 +41,11 @@ class SignalementBuilderTest extends KernelTestCase
         $territoryRepository = static::getContainer()->get(TerritoryRepository::class);
         $bailleurRepository = static::getContainer()->get(BailleurRepository::class);
         $referenceGenerator = static::getContainer()->get(ReferenceGenerator::class);
-        $tokenGenerator = static::getContainer()->get(TokenGeneratorInterface::class);
         $signalementDraftRequestSerializer = static::getContainer()->get(SignalementDraftRequestSerializer::class);
         $typeCompositionLogementFactory = static::getContainer()->get(TypeCompositionLogementFactory::class);
         $situationFoyerFactory = static::getContainer()->get(SituationFoyerFactory::class);
         $informationProcedureFactory = static::getContainer()->get(InformationProcedureFactory::class);
         $informationComplementaireFactory = static::getContainer()->get(InformationComplementaireFactory::class);
-        $fileFactory = static::getContainer()->get(FileFactory::class);
-        $uploadHandlerService = static::getContainer()->get(UploadHandlerService::class);
-        $security = static::getContainer()->get(Security::class);
-        $desordreCategorieRepository = static::getContainer()->get(DesordreCategorieRepository::class);
         $this->desordreCritereRepository = static::getContainer()->get(DesordreCritereRepository::class);
         $this->desordrePrecisionRepository = static::getContainer()->get(DesordrePrecisionRepository::class);
         $desordreTraitementProcessor = static::getContainer()->get(DesordreTraitementProcessor::class);
@@ -68,16 +58,11 @@ class SignalementBuilderTest extends KernelTestCase
             $territoryRepository,
             $bailleurRepository,
             $referenceGenerator,
-            $tokenGenerator,
             $signalementDraftRequestSerializer,
             $typeCompositionLogementFactory,
             $situationFoyerFactory,
             $informationProcedureFactory,
             $informationComplementaireFactory,
-            $fileFactory,
-            $uploadHandlerService,
-            $security,
-            $desordreCategorieRepository,
             $this->desordreCritereRepository,
             $this->desordrePrecisionRepository,
             $desordreTraitementProcessor,

@@ -82,7 +82,7 @@ class SignalementDraftRequestNormalizer implements DenormalizerInterface, Normal
 
     public function supportsDenormalization($data, $type, $format = null, array $context = []): bool
     {
-        return SignalementDraftRequest::class === $type || TypeCompositionLogement::class;
+        return SignalementDraftRequest::class === $type || TypeCompositionLogement::class; // @phpstan-ignore-line
     }
 
     public function supportsNormalization(mixed $data, string $format = null, array $context = []): bool

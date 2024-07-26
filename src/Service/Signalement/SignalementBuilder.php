@@ -14,14 +14,12 @@ use App\Entity\SignalementDraft;
 use App\Entity\Territory;
 use App\Exception\Signalement\DesordreTraitementProcessorNotFound;
 use App\Exception\Signalement\PrecisionNotFound;
-use App\Factory\FileFactory;
 use App\Factory\Signalement\InformationComplementaireFactory;
 use App\Factory\Signalement\InformationProcedureFactory;
 use App\Factory\Signalement\SituationFoyerFactory;
 use App\Factory\Signalement\TypeCompositionLogementFactory;
 use App\Manager\DesordreCritereManager;
 use App\Repository\BailleurRepository;
-use App\Repository\DesordreCategorieRepository;
 use App\Repository\DesordreCritereRepository;
 use App\Repository\DesordrePrecisionRepository;
 use App\Repository\TerritoryRepository;
@@ -29,11 +27,8 @@ use App\Serializer\SignalementDraftRequestSerializer;
 use App\Service\Signalement\DesordreTraitement\DesordreCompositionLogementLoader;
 use App\Service\Signalement\DesordreTraitement\DesordreTraitementProcessor;
 use App\Service\Signalement\Qualification\SignalementQualificationUpdater;
-use App\Service\Token\TokenGeneratorInterface;
-use App\Service\UploadHandlerService;
 use App\Specification\Signalement\SuroccupationSpecification;
 use App\Utils\DataPropertyArrayFilter;
-use Symfony\Bundle\SecurityBundle\Security;
 
 class SignalementBuilder
 {
@@ -47,16 +42,11 @@ class SignalementBuilder
         private TerritoryRepository $territoryRepository,
         private BailleurRepository $bailleurRepository,
         private ReferenceGenerator $referenceGenerator,
-        private TokenGeneratorInterface $tokenGenerator,
         private SignalementDraftRequestSerializer $signalementDraftRequestSerializer,
         private TypeCompositionLogementFactory $typeCompositionLogementFactory,
         private SituationFoyerFactory $situationFoyerFactory,
         private InformationProcedureFactory $informationProcedureFactory,
         private InformationComplementaireFactory $informationComplementaireFactory,
-        private FileFactory $fileFactory,
-        private UploadHandlerService $uploadHandlerService,
-        private Security $security,
-        private DesordreCategorieRepository $desordreCategorieRepository,
         private DesordreCritereRepository $desordreCritereRepository,
         private DesordrePrecisionRepository $desordrePrecisionRepository,
         private DesordreTraitementProcessor $desordreTraitementProcessor,

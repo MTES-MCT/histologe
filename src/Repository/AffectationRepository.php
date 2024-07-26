@@ -10,7 +10,6 @@ use App\Entity\Enum\Qualification;
 use App\Entity\Partner;
 use App\Entity\Signalement;
 use App\Entity\Territory;
-use App\Service\Signalement\SearchFilter;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\Persistence\ManagerRegistry;
@@ -25,7 +24,7 @@ class AffectationRepository extends ServiceEntityRepository
 {
     private const DELAY_VISITE_AFTER_AFFECTATION = 15;
 
-    public function __construct(ManagerRegistry $registry, private SearchFilter $searchFilter)
+    public function __construct(ManagerRegistry $registry)
     {
         parent::__construct($registry, Affectation::class);
     }

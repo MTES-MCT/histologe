@@ -14,8 +14,6 @@ use App\Repository\InterventionRepository;
 use App\Repository\SignalementRepository;
 use App\Service\Signalement\Qualification\SignalementQualificationUpdater;
 use Doctrine\Persistence\ManagerRegistry;
-use League\Flysystem\FilesystemOperator;
-use PHPUnit\Framework\MockObject\MockObject;
 use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use Symfony\Bundle\SecurityBundle\Security;
@@ -32,7 +30,6 @@ class InterventionManagerTest extends KernelTestCase
     private FileFactory $fileFactory;
     private Security $security;
     private LoggerInterface $logger;
-    private MockObject|FilesystemOperator $fileStorage;
 
     private ?InterventionManager $interventionManager = null;
 
@@ -51,7 +48,6 @@ class InterventionManagerTest extends KernelTestCase
         $this->managerRegistry = static::getContainer()->get(ManagerRegistry::class);
         $this->signalementRepository = static::getContainer()->get(SignalementRepository::class);
         $this->logger = static::getContainer()->get(LoggerInterface::class);
-        $this->fileStorage = $this->createMock(FilesystemOperator::class);
 
         $this->interventionManager = new InterventionManager(
             $this->managerRegistry,
@@ -61,8 +57,7 @@ class InterventionManagerTest extends KernelTestCase
             $this->signalementQualificationUpdater,
             $this->fileFactory,
             $this->security,
-            $this->logger,
-            $this->fileStorage
+            $this->logger
         );
     }
 
@@ -72,7 +67,7 @@ class InterventionManagerTest extends KernelTestCase
     public function testCreatePastVisiteFromRequest(): void
     {
         $signalement = $this->signalementRepository->findOneBy(['reference' => '2023-10']);
-        /** @var Affectation $affectation */
+        /** @var ?Affectation $affectation */
         $affectation = $signalement->getAffectations()->filter(function (Affectation $affectation) {
             return $affectation->getPartner()->hasCompetence(Qualification::VISITES);
         })->get(0);
@@ -104,7 +99,8 @@ class InterventionManagerTest extends KernelTestCase
             \in_array(
                 ProcedureType::MISE_EN_SECURITE_PERIL,
                 $intervention->getConcludeProcedure()
-            ));
+            )
+        );
 
         $this->assertEmailCount(2);
     }
@@ -115,7 +111,7 @@ class InterventionManagerTest extends KernelTestCase
     public function testCreateFutureVisiteFromRequest(): void
     {
         $signalement = $this->signalementRepository->findOneBy(['reference' => '2023-10']);
-        /** @var Affectation $affectation */
+        /** @var ?Affectation $affectation */
         $affectation = $signalement->getAffectations()->filter(function (Affectation $affectation) {
             return $affectation->getPartner()->hasCompetence(Qualification::VISITES);
         })->get(0);
