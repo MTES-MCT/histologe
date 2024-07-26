@@ -2,6 +2,7 @@
 
 namespace App\Controller\Back;
 
+use App\Entity\Tag;
 use App\Manager\TagManager;
 use App\Repository\TagRepository;
 use App\Repository\TerritoryRepository;
@@ -87,6 +88,47 @@ class TagController extends AbstractController
         }
 
         $this->addFlash('error', 'Une erreur est survenue lors de la suppression...');
+
+        return $this->redirectToRoute('back_tags_index', [], Response::HTTP_SEE_OTHER);
+    }
+
+    #[Route('/editer', name: 'back_tags_edit', methods: 'POST')]
+    public function editTag(
+        Request $request,
+        TagManager $tagManager,
+        EntityManagerInterface $entityManager,
+        TagRepository $tagRepository,
+    ): Response {
+        $tagId = $request->request->get('tag_id');
+        /** @var Tag $tag */
+        $tag = $tagManager->find($tagId);
+        $this->denyAccessUnlessGranted('TAG_EDIT', $tag);
+
+        if (
+            $tag
+            && $this->isCsrfTokenValid('tag_edit', $request->request->get('_token'))
+        ) {
+            $tagLabel = $request->request->get('tag_label');
+            $alreadyExistingTags = $tagRepository->findBy([
+                'isArchive' => 0,
+                'label' => $tagLabel,
+                'territory' => $tag->getTerritory(),
+            ]);
+            if (!empty($alreadyExistingTags)) {
+                $this->addFlash('error', 'Une étiquette avec le même nom existe déjà sur ce territoire...');
+
+                return $this->redirectToRoute('back_tags_index', [], Response::HTTP_SEE_OTHER);
+            }
+
+            $tag->setLabel($tagLabel);
+            $entityManager->flush();
+
+            $this->addFlash('success', 'L\'étiquette a bien été éditée.');
+
+            return $this->redirectToRoute('back_tags_index', [], Response::HTTP_SEE_OTHER);
+        }
+
+        $this->addFlash('error', 'Une erreur est survenue lors de l\'édition...');
 
         return $this->redirectToRoute('back_tags_index', [], Response::HTTP_SEE_OTHER);
     }

@@ -11,11 +11,12 @@ use Symfony\Component\Security\Core\User\UserInterface;
 class TagVoter extends Voter
 {
     public const CREATE = 'TAG_CREATE';
+    public const EDIT = 'TAG_EDIT';
     public const DELETE = 'TAG_DELETE';
 
     protected function supports(string $attribute, $subject): bool
     {
-        return \in_array($attribute, [self::CREATE, self::DELETE])
+        return \in_array($attribute, [self::CREATE, self::EDIT, self::DELETE])
             && ($subject instanceof Tag || !$subject);
     }
 
@@ -32,6 +33,7 @@ class TagVoter extends Voter
 
         return match ($attribute) {
             self::CREATE => $this->canCreate($subject, $user),
+            self::EDIT => $this->canEdit($subject, $user),
             self::DELETE => $this->canDelete($subject, $user),
             default => false,
         };
@@ -40,6 +42,11 @@ class TagVoter extends Voter
     private function canCreate($subject, User $user): bool
     {
         return $user->isTerritoryAdmin();
+    }
+
+    private function canEdit(Tag $tag, User $user): bool
+    {
+        return $this->canDelete($tag, $user);
     }
 
     private function canDelete(Tag $tag, User $user): bool
