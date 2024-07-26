@@ -83,7 +83,7 @@ class AutoAffectationRuleType extends AbstractType
                 ],
             ])
             ->add('status', ChoiceType::class, [
-                'label' => 'Status',
+                'label' => 'Statut',
                 'choices' => [
                     'Règle active' => 'ACTIVE',
                     'Règle archivée' => 'ARCHIVED',
@@ -98,7 +98,7 @@ class AutoAffectationRuleType extends AbstractType
                 'disabled' => true,
                 'data' => 'ACTIVE',
                 'constraints' => [
-                    new Assert\NotBlank(message: 'Merci de choisir un status.'),
+                    new Assert\NotBlank(message: 'Merci de choisir un statut.'),
                     new Assert\Choice(
                         choices: [AutoAffectationRule::STATUS_ACTIVE, AutoAffectationRule::STATUS_ARCHIVED],
                         message: 'Choisissez une option valide: ACTIVE or ARCHIVED'

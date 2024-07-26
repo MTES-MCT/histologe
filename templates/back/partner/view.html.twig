@@ -23,15 +23,13 @@
                         le partenaire</a>
                 </div>
             </div>
-        {% if is_granted('ROLE_ADMIN') %}
-            {% if partnerAutoAffectationRules|length > 0 %}
-                <span>Règles d'auto-affectation concernant ce partenaire</span>
-                <ul>
-                {% for partnerAutoAffectationRule in partnerAutoAffectationRules %}
-                    <li>{{ partnerAutoAffectationRule.description(false)}}</li>
-                {% endfor %}
-                </ul>
-            {% endif %}
+        {% if is_granted('ROLE_ADMIN') and partnerAutoAffectationRules|length > 0 %}
+            <span>Règles d'auto-affectation concernant ce partenaire</span>
+            <ul>
+            {% for partnerAutoAffectationRule in partnerAutoAffectationRules %}
+                <li>{{ partnerAutoAffectationRule.description(false)}}</li>
+            {% endfor %}
+            </ul>
         {% endif %}            
         </header>
     </section>

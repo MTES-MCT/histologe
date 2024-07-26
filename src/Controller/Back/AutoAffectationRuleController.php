@@ -75,7 +75,6 @@ class AutoAffectationRuleController extends AbstractController
             $this->addFlash('error', 'Cette règle est déjà archivée.');
         } else {
             $autoAffectationRule->setStatus(AutoAffectationRule::STATUS_ARCHIVED);
-            $entityManager->persist($autoAffectationRule);
             $entityManager->flush();
             $this->addFlash('success', 'La règle a bien été archivée.');
         }
@@ -98,7 +97,6 @@ class AutoAffectationRuleController extends AbstractController
             $this->addFlash('error', 'Cette règle est déjà active.');
         } else {
             $autoAffectationRule->setStatus(AutoAffectationRule::STATUS_ACTIVE);
-            $entityManager->persist($autoAffectationRule);
             $entityManager->flush();
             $this->addFlash('success', 'La règle a bien été réactivée.');
         }
