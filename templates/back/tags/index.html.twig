@@ -43,6 +43,7 @@
                     <button class="fr-btn" title="Rechercher">Rechercher</button>
                 </div>
             </div>
+            {% if is_granted('ROLE_ADMIN') %}
             <div class="fr-col-3 fr-p-2v">
                 <select id="bo-filters-territories" class="fr-select fr-select-submit" name="territory">
                     <option value="" {{ currentTerritory is null ? 'selected' : '' }}>Tous les territoires</option>
@@ -51,6 +52,7 @@
                     {% endfor %}
                 </select>
             </div>
+            {% endif %}
             <div class="fr-col-2 fr-p-2v">
                 <a href="{{ path('back_tags_index') }}" class="fr-link fr-link--icon-left fr-icon-close-circle-line">Réinitialiser les résultats</a>
             </div>
