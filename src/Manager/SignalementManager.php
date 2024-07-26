@@ -837,25 +837,4 @@ class SignalementManager extends AbstractManager
             );
         }
     }
-
-    /*
-     * @todo: Investigate Twig\Error\RuntimeError in ajax request
-     * Hack: generate csrf token in side server for ajav request
-     * Fix Twig\Error\RuntimeError in order to do not generate csrf token (session) after the headers have been sent.
-     */
-    // private function generateCsrfToken(array $signalementList): array
-    // {
-    //     $csrfTokens = [];
-    //     /* @var SignalementAffectationListView $signalement */
-    //     foreach ($signalementList as $signalementItem) {
-    //         if ($signalementItem instanceof SignalementAffectationListView) {
-    //             $csrfTokens[$signalementItem->getUuid()] =
-    //                 $this->csrfTokenManager->getToken(
-    //                     'signalement_delete_'.$signalementItem->getId()
-    //                 )->getValue();
-    //         }
-    //     }
-
-    //     return $csrfTokens;
-    // }
 }

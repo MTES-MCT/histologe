@@ -20,8 +20,7 @@ enum SignalementStatus: int
         return match ($this) {
             self::NEED_VALIDATION => AffectationStatus::STATUS_WAIT->value,
             self::ACTIVE, self::NEED_PARTNER_RESPONSE => AffectationStatus::STATUS_ACCEPTED->value,
-            self::CLOSED, self::REFUSED => AffectationStatus::STATUS_CLOSED->value,
-            self::ARCHIVED => AffectationStatus::STATUS_CLOSED->value
+            self::CLOSED, self::REFUSED, self::ARCHIVED => AffectationStatus::STATUS_CLOSED->value,
         };
     }
 
