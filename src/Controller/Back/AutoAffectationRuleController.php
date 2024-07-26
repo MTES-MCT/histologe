@@ -94,7 +94,6 @@ class AutoAffectationRuleController extends AbstractController
         AutoAffectationRule $autoAffectationRule,
         EntityManagerInterface $entityManager
     ): Response {
-        $ruleId = $request->request->get('autoaffectationrule_id');
         if (AutoAffectationRule::STATUS_ACTIVE === $autoAffectationRule->getStatus()) {
             $this->addFlash('error', 'Cette règle est déjà active.');
         } else {

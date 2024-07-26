@@ -9,6 +9,8 @@ use Symfony\Component\Validator\Test\ConstraintValidatorTestCase;
 
 class InseeToExcludeValidatorTest extends ConstraintValidatorTestCase
 {
+    private const ERROR = 'La valeur "{{ value }}" n\'est pas valide. Elle doit être une liste de codes INSEE séparés par des virgules ou vide.';
+
     protected function createValidator(): ConstraintValidatorInterface
     {
         return new InseeToExcludeValidator();
@@ -32,11 +34,11 @@ class InseeToExcludeValidatorTest extends ConstraintValidatorTestCase
 
     public function provideValues(): \Generator
     {
-        yield 'all' => [['all'], false, 'La valeur "{{ value }}" n\'est pas valide. Elle doit être une liste de codes INSEE séparés par des virgules ou vide.'];
+        yield 'all' => [['all'], false, self::ERROR];
         yield '[44058]' => [[44058], true];
         yield '[44058,44890]' => [[44058, 44890], true];
-        yield 'error' => [['error'], false, 'La valeur "{{ value }}" n\'est pas valide. Elle doit être une liste de codes INSEE séparés par des virgules ou vide.'];
-        yield 'on test des trucs, et des machins' => [['on test des trucs', 'et des machins'], false, 'La valeur "{{ value }}" n\'est pas valide. Elle doit être une liste de codes INSEE séparés par des virgules ou vide.'];
-        yield '[440589,44890]' => [[440589, 44890], false, 'La valeur "{{ value }}" n\'est pas valide. Elle doit être une liste de codes INSEE séparés par des virgules ou vide.'];
+        yield 'error' => [['error'], false, self::ERROR];
+        yield 'on test des trucs, et des machins' => [['on test des trucs', 'et des machins'], false, self::ERROR];
+        yield '[440589,44890]' => [[440589, 44890], false, self::ERROR];
     }
 }

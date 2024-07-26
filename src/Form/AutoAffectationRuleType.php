@@ -20,15 +20,8 @@ use Symfony\Component\Validator\Constraints as Assert;
 
 class AutoAffectationRuleType extends AbstractType
 {
-    public function __construct()
-    {
-    }
-
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
-        /** @var AutoAffectationRule $autoAffectationRule */
-        $autoAffectationRule = $builder->getData();
-
         $builder
             ->add('territory', EntityType::class, [
                 'class' => Territory::class,

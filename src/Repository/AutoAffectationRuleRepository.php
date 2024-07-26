@@ -34,8 +34,6 @@ class AutoAffectationRuleRepository extends ServiceEntityRepository
 
         $queryBuilder->setFirstResult($firstResult)->setMaxResults($maxResult);
 
-        $paginator = new Paginator($queryBuilder->getQuery(), false);
-
-        return $paginator;
+        return new Paginator($queryBuilder->getQuery(), false);
     }
 }
