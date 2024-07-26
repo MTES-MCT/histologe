@@ -3,6 +3,7 @@
 namespace App\Controller\Back;
 
 use App\Entity\Affectation;
+use App\Entity\AutoAffectationRule;
 use App\Entity\Enum\InterventionType;
 use App\Entity\Enum\PartnerType as EnumPartnerType;
 use App\Entity\Enum\Qualification;
@@ -14,6 +15,7 @@ use App\Form\PartnerType;
 use App\Manager\InterventionManager;
 use App\Manager\PartnerManager;
 use App\Manager\UserManager;
+use App\Repository\AutoAffectationRuleRepository;
 use App\Repository\JobEventRepository;
 use App\Repository\PartnerRepository;
 use App\Repository\TerritoryRepository;
@@ -131,6 +133,7 @@ class PartnerController extends AbstractController
         Partner $partner,
         PartnerRepository $partnerRepository,
         JobEventRepository $jobEventRepository,
+        AutoAffectationRuleRepository $autoAffectationRuleRepository,
     ): Response {
         $this->denyAccessUnlessGranted('PARTNER_EDIT', $partner);
         if ($partner->getIsArchive()) {
@@ -145,10 +148,20 @@ class PartnerController extends AbstractController
         $lastJobEvent = $jobEventRepository->findLastEsaboraJobByPartner($partner);
         $lastJobEventDate = $lastJobEvent && !empty($lastJobEvent['last_event']) ? new \DateTimeImmutable($lastJobEvent['last_event']) : null;
 
+        $partnerAutoAffectationRules = null;
+        if ($this->isGranted('ROLE_ADMIN')) {
+            $partnerAutoAffectationRules = $autoAffectationRuleRepository->findBy([
+                'territory' => $partner->getTerritory(),
+                'partnerType' => $partner->getType(),
+                'status' => AutoAffectationRule::STATUS_ACTIVE,
+                ]);
+        }
+
         return $this->renderForm('back/partner/view.html.twig', [
             'partner' => $partner,
             'partners' => $partnerRepository->findAllList($partner->getTerritory()),
             'last_job_date' => $lastJobEventDate,
+            'partnerAutoAffectationRules' => $partnerAutoAffectationRules,
         ]);
     }
 
@@ -250,7 +263,7 @@ class PartnerController extends AbstractController
         InterventionManager $interventionManager,
     ): Response {
         $partnerId = $request->request->get('partner_id');
-        /** @var Partner $partner */
+        /** @var ?Partner $partner */
         $partner = $partnerManager->find($partnerId);
         $this->denyAccessUnlessGranted('PARTNER_DELETE', $partner);
         if (
