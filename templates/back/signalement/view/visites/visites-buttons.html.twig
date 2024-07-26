@@ -20,7 +20,7 @@
             {% endif %}
         {% endif %}
     {% elseif intervention.status is same as constant('App\\Entity\\Intervention::STATUS_DONE') %}
-        {% if signalement.interventions is empty or intervention.files is empty or intervention.getRapportDeVisite is empty%}
+        {% if signalement.interventions is empty or intervention.files is empty or intervention.getRapportDeVisite is empty %}
             {% if is_granted('SIGN_ADD_VISITE', intervention.signalement) %}
                 <button 
                     class="fr-btn fr-fi-file-fill"
@@ -59,6 +59,16 @@
                 data-intervention-id="{{intervention.id}}">
                 Ajouter les photos de la visite
             </button>
+        {% endif %}
+    {% elseif intervention.status is same as constant('App\\Entity\\Intervention::STATUS_NOT_DONE') %}
+        {% if intervention.getRapportDeVisite is not empty %}
+            <a href="{{ asset('_up/'~intervention.getRapportDeVisite.first.filename)~'/' ~ signalement.uuid }}"
+                class="fr-btn"
+                title="Afficher le document"
+                rel="noopener"
+                target="_blank">
+                <span aria-hidden="true" class="fr-fi-file-line fr-icon--sm"></span> Voir le rapport de visite
+            </a>
         {% endif %}
     {% else %}
         &nbsp;
