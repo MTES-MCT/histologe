@@ -399,13 +399,16 @@ class Signalement
     #[ORM\Column(type: 'information_complementaire', nullable: true)]
     private ?InformationComplementaire $informationComplementaire;
 
-    #[ORM\ManyToMany(targetEntity: DesordreCategorie::class, mappedBy: 'signalement')]
+    #[ORM\ManyToMany(targetEntity: DesordreCategorie::class, inversedBy: 'signalement', cascade: ['persist'])]
+    #[ORM\JoinTable(name: 'desordre_categorie_signalement')]
     private Collection $desordreCategories;
 
-    #[ORM\ManyToMany(targetEntity: DesordreCritere::class, mappedBy: 'signalement')]
+    #[ORM\ManyToMany(targetEntity: DesordreCritere::class, inversedBy: 'signalement', cascade: ['persist'])]
+    #[ORM\JoinTable(name: 'desordre_critere_signalement')]
     private Collection $desordreCriteres;
 
-    #[ORM\ManyToMany(targetEntity: DesordrePrecision::class, mappedBy: 'signalement')]
+    #[ORM\ManyToMany(targetEntity: DesordrePrecision::class, inversedBy: 'signalement', cascade: ['persist'])]
+    #[ORM\JoinTable(name: 'desordre_precision_signalement')]
     private Collection $desordrePrecisions;
 
     #[ORM\ManyToOne(inversedBy: 'signalements')]
@@ -2224,7 +2227,6 @@ class Signalement
     {
         if (!$this->desordreCategories->contains($desordreCategory)) {
             $this->desordreCategories->add($desordreCategory);
-            $desordreCategory->addSignalement($this);
         }
 
         return $this;
@@ -2232,9 +2234,7 @@ class Signalement
 
     public function removeDesordreCategory(DesordreCategorie $desordreCategory): self
     {
-        if ($this->desordreCategories->removeElement($desordreCategory)) {
-            $desordreCategory->removeSignalement($this);
-        }
+        $this->desordreCategories->removeElement($desordreCategory);
 
         return $this;
     }
@@ -2251,7 +2251,6 @@ class Signalement
     {
         if (!$this->desordreCriteres->contains($desordreCritere)) {
             $this->desordreCriteres->add($desordreCritere);
-            $desordreCritere->addSignalement($this);
         }
 
         return $this;
@@ -2259,9 +2258,7 @@ class Signalement
 
     public function removeDesordreCritere(DesordreCritere $desordreCritere): self
     {
-        if ($this->desordreCriteres->removeElement($desordreCritere)) {
-            $desordreCritere->removeSignalement($this);
-        }
+        $this->desordreCriteres->removeElement($desordreCritere);
 
         return $this;
     }
@@ -2278,7 +2275,6 @@ class Signalement
     {
         if (!$this->desordrePrecisions->contains($desordrePrecision)) {
             $this->desordrePrecisions->add($desordrePrecision);
-            $desordrePrecision->addSignalement($this);
         }
 
         return $this;
@@ -2286,9 +2282,7 @@ class Signalement
 
     public function removeDesordrePrecision(DesordrePrecision $desordrePrecision): self
     {
-        if ($this->desordrePrecisions->removeElement($desordrePrecision)) {
-            $desordrePrecision->removeSignalement($this);
-        }
+        $this->desordrePrecisions->removeElement($desordrePrecision);
 
         return $this;
     }

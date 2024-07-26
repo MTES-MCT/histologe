@@ -43,13 +43,6 @@ class DesordreCritereManager extends AbstractManager
         return $desordreCritere;
     }
 
-    public function getCriteresSlugsByCategorie(string $categoryDisorderSlug): array
-    {
-        $criteres = $this->getRepository()->findBy(['slugCategorie' => $categoryDisorderSlug]);
-
-        return array_map(fn ($critere) => $critere->getSlugCritere(), $criteres);
-    }
-
     public function getCriteresSlugsInDraft(array $filteredDataOfDraft, array $availableCritereSlugs): array
     {
         $criteresSlugs = array_filter($filteredDataOfDraft, function ($value, $slug) use ($availableCritereSlugs) {
