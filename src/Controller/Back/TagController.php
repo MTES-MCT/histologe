@@ -2,11 +2,11 @@
 
 namespace App\Controller\Back;
 
+use App\Manager\TagManager;
 use App\Repository\TagRepository;
 use App\Repository\TerritoryRepository;
-use Doctrine\Persistence\ManagerRegistry;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -46,13 +46,12 @@ class TagController extends AbstractController
         }
         $search = $request->get('search');
 
-        $paginatedTagsResult = $tagRepository->findAllActivePaginated(
+        $paginatedTags = $tagRepository->findAllActivePaginated(
             territory: $currentTerritory,
             search: $search,
             page: (int) $page
         );
-        $totalTags = $paginatedTagsResult['total'];
-        $paginatedTags = $paginatedTagsResult['list'];
+        $totalTags = \count($paginatedTags);
 
         return $this->render('back/tags/index.html.twig', [
             'currentTerritory' => $currentTerritory,
@@ -61,7 +60,34 @@ class TagController extends AbstractController
             'search' => $search,
             'total' => $totalTags,
             'page' => $page,
-            'pages' => (int) ceil($totalTags / TagController::MAX_LIST_PAGINATION),
+            'pages' => (int) ceil($totalTags / self::MAX_LIST_PAGINATION),
         ]);
+    }
+
+    #[Route('/supprimer', name: 'back_tags_delete', methods: 'POST')]
+    public function deleteTag(
+        Request $request,
+        TagManager $tagManager,
+        EntityManagerInterface $entityManager,
+    ): Response {
+        $tagId = $request->request->get('tag_id');
+        /** @var Tag $tag */
+        $tag = $tagManager->find($tagId);
+        $this->denyAccessUnlessGranted('TAG_DELETE', $tag);
+
+        if (
+            $tag
+            && $this->isCsrfTokenValid('tag_delete', $request->request->get('_token'))
+        ) {
+            $tag->setIsArchive(true);
+            $entityManager->flush();
+            $this->addFlash('success', 'L\'étiquette a bien été supprimée.');
+
+            return $this->redirectToRoute('back_tags_index', [], Response::HTTP_SEE_OTHER);
+        }
+
+        $this->addFlash('error', 'Une erreur est survenue lors de la suppression...');
+
+        return $this->redirectToRoute('back_tags_index', [], Response::HTTP_SEE_OTHER);
     }
 }

@@ -54,6 +54,51 @@
         </form>
     </section>
 
+    
+    {% for index,tag in tags %}
+        <dialog aria-labelledby="fr-modal-title-etiquette-delete-{{ tag.id }}" id="fr-modal-etiquette-delete-{{ tag.id }}" class="fr-modal">
+            <div class="fr-container fr-container--fluid fr-container-md">
+                <div class="fr-grid-row fr-grid-row--center">
+                    <div class="fr-col-12 fr-col-md-8 fr-col-lg-6">
+                        <div class="fr-modal__body">
+                            <div class="fr-modal__header">
+                                <button class="fr-btn--close fr-btn" title="Fermer la fenêtre modale" aria-controls="fr-modal-etiquette-delete-{{ tag.id }}">Fermer</button>
+                            </div>
+                            <div class="fr-modal__content">
+                                <h1 id="fr-modal-title-modal-etiquette-delete-{{ tag.id }}" class="fr-modal__title"><span class="fr-icon-arrow-right-line fr-icon--lg"></span>Supprimer l'étiquette : {{ tag.label }}</h1>
+                                <p>Vous êtes sur le point de supprimer une étiquette.</p>
+                                <p>Une fois l'étiquette supprimée :</p>
+                                <ul>
+                                    <li>Elle sera retirée de tous les signalements où elle apparaît actuellement</li>
+                                    <li>Elle ne pourra plus être utilisée dans le filtre Etiquettes de la liste de signalements.</li>
+                                    <li>Les signalements associés ne seront <strong>pas</strong> supprimés.</li>
+                                </ul>
+                                <p>Si vous recréez une étiquette du même nom par la suite, la nouvelle étiquette ne sera pas automatiquement ajoutée sur les signalements.</p>
+                                <div class="fr-alert fr-alert--info">
+                                    <p>Voulez-vous vraiment supprimer l'étiquette ?</p>
+                                </div>
+                                <form method="POST" action="{{ path('back_tags_delete') }}" id="form-delete-tag-{{ tag.id }}">
+                                    <input type="hidden" name="tag_id" value="{{ tag.id }}">
+                                    <input type="hidden" name="_token" value="{{ csrf_token('tag_delete') }}">
+                                </form>
+                            </div>
+                            <div class="fr-modal__footer">
+                                <div class="fr-btns-group fr-btns-group--right fr-btns-group--inline-reverse fr-btns-group--inline-lg fr-btns-group--icon-left">
+                                    <button class="fr-btn" form="form-delete-tag-{{ tag.id }}" type="submit">
+                                        Oui, supprimer
+                                    </button>
+                                    <button class="fr-btn fr-btn--secondary" type="button" aria-controls="fr-modal-etiquette-delete-{{ tag.id }}">
+                                        Non, annuler
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </dialog>
+    {% endfor %}
+
 
     <section class="fr-grid-row fr-grid-row--middle fr-p-5v">
         <h2 class="fr-h2 fr-mb-0" id="desc-table">{{total}} étiquettes</h2>
@@ -77,12 +122,21 @@
                                 <tr class="signalement-row">
                                     <td>{{ tag.id }}</td>
                                     <td>{{ tag.label }}</td>
-                                    <td>{{ tag.nb_tags }}</td>
-                                    <td>{{ tag.territory_label }}</td>
+                                    <td>{{ tag.signalement|length }}</td>
+                                    <td>{{ tag.territory.name }}</td>
                                     <td class="fr-text--right fr-ws-nowrap">
                                         <button>TODO EDIT</button>
-                                        <button>TODO LIST</button>
-                                        <button>TODO DELETE</button>
+                                        <a class="fr-btn fr-icon-list-unordered"
+                                            title="Voir la liste des signalements avec l'étiquette {{ tag.label }}"
+                                            href="{{ path('back_index', { 'etiquettes[]': tag.id }) }}">
+                                            Voir la liste des signalements avec l'étiquette {{ tag.label }}
+                                        </a>
+                                        <button class="fr-btn fr-icon-delete-line"
+                                            title="Supprimer l'étiquette {{ tag.label }}"
+                                            data-fr-opened="false" aria-controls="fr-modal-etiquette-delete-{{ tag.id }}"
+                                            >
+                                            Supprimer l'étiquette {{ tag.label }}
+                                        </button>
                                     </td>
                                 </tr>
                             {% endfor %}
