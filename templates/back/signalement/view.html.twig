@@ -41,7 +41,81 @@
 {% endblock %}
 
 {% block javascripts %}
-    {{ encore_entry_script_tags('app') }}
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"
+        integrity="sha256-whL0tQWoY1Ku1iskqPFvmZ+CHsvmRWx/PIoEvIeWh4I="
+        crossorigin="anonymous"
+    ></script>"
+    <script src="https://cdn.jsdelivr.net/npm/tippy.js@6/dist/tippy.umd.min.js"
+        integrity="sha256-qx7gQMlSzXvTJCl8PBcHyzDQLGvX7NaFbiFY44WpsW4="
+        crossorigin="anonymous"
+    ></script>
+    <script src="https://cdn.jsdelivr.net/npm/tinymce@7.1.2/tinymce.min.js" 
+        integrity="sha256-5otrbbqtAS5IUAoXLf399RoDftSWtzsS3CyCreLcOhs="
+        crossorigin="anonymous"
+    ></script>
+
+    <script nonce="{{ app.request.attributes.get('csp_script_nonce') }}">
+        tinymce.init({
+            selector: 'textarea.editor',
+            browser_spellcheck: true,
+            license_key: 'gpl',
+            plugins: 'lists',
+            toolbar: 'undo redo | styleselect | bold italic | numlist bullist | mybutton',
+            menubar: false,
+            height: 320,
+            {% if 'back_' in app.request.get('_route') %}
+            setup: function (editor) {
+                editor.on('input', function (e) {
+                    if (editor.formElement.classList.contains('tinyCheck')) {
+                        let isOk = true,
+                            submitters = document.querySelectorAll('button[form="' + editor.formElement.id + '"]')
+                        isOk = editor.getContent().length <= 17;
+                        !isOk && document.querySelector('#' + editor.id).parentElement.classList.add('fr-input-group--error'), document.querySelector('#' + editor.id).parentElement.querySelector('.fr-error-text').classList.remove('fr-hidden');
+                        submitters.forEach(sbmt => {
+                            sbmt.disabled = isOk;
+                        })
+                        if (isOk !== true)
+                            document.querySelector('#' + editor.id).parentElement.classList.remove('fr-input-group--error'), document.querySelector('#' + editor.id).parentElement.querySelector('.fr-error-text').classList.add('fr-hidden');
+                    }
+                });
+                {% if 'back_signalement_view' in app.request.get('_route') %}
+                editor.ui.registry.addMenuButton('mybutton', {
+                    text: 'Partager un document',
+                    fetch: function (callback) {
+                        let items = [
+                            {% for doc in signalement.files|filter(doc => doc.fileType == 'document') %}
+                            {
+                                type: 'menuitem',
+                                text: '{{ doc.title }}',
+                                onAction: function () {
+                                    editor.insertContent('&nbsp;<a href="{{ asset('_up/'~doc.filename) }}?t=___TOKEN___" class="fr-btn fr-fi-eye-fill fr-btn--icon-left" title="Afficher le document" target="_blank" rel="noopener">Consulter "{{ doc.title }}"</a>');
+                                }
+                            },
+                            {% endfor %}
+                        ];
+                
+                        {% if can_see_nde_edit_zone(signalementQualificationNDE) and is_granted('USER_SEE_NDE', app.user) and files is defined and files.documents is defined %}  
+                        {% for doc in files.documents %}
+                                {% if enum('App\\Entity\\Enum\\Qualification').NON_DECENCE_ENERGETIQUE.name in doc.params.qualification|joinEnumKeys(',') %}
+                                    items.push({
+                                        type: 'menuitem',
+                                        text: "{{ doc.title|raw }}",
+                                        onAction: function () {
+                                            editor.insertContent('&nbsp;<a href="{{ asset(files.path~doc.file) }}" class="fr-link" title="Afficher le document" target="_blank" rel="noopener">Consulter "{{ doc.title }}"</a></br>');
+                                        }
+                                    })     
+                                {% endif %}   
+                            {% endfor %}
+                        {% endif %}
+                        callback(items);
+                    }
+                });
+                {% endif %}
+            }
+            {% endif %}
+        });
+    </script>
+
     <script nonce="{{ app.request.attributes.get('csp_script_nonce') }}">
         tippy('.part-infos-hover', {
             content: (reference) => '<strong class="fr-ws-nowrap">' + reference.getAttribute('data-user') + '</strong>' + '<hr class="fr-pb-1v"><span class="fr-ws-nowrap">' + reference.getAttribute('data-mail') + '</span>',

@@ -4,8 +4,10 @@
 {% block title %}Signaler un problème de logement{% endblock %}
 
 {% block customscripts %}
-    {{ encore_entry_script_tags('app') }}
+  {{ encore_entry_script_tags('app') }}
     {{ encore_entry_link_tags('app') }}
+  {{ encore_entry_script_tags('app-front-signalement-form') }}
+  {{ encore_entry_link_tags('app-front-signalement-form') }}
 {% endblock %}
 
 {% block body %}

@@ -124,9 +124,4 @@
             {{ macros.customPagination(pages, page, 'back_partner_index', {territory: (currentTerritory ? currentTerritory.id : null), type: (currentType ? currentType : null), userTerms: userTerms}) }}
         </div>
     </section>
-
-
-{% endblock %}
-{% block javascripts %}
-    {{ encore_entry_script_tags('app') }}
 {% endblock %}
