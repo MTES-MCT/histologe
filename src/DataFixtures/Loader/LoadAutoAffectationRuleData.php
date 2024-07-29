@@ -35,6 +35,7 @@ class LoadAutoAffectationRuleData extends Fixture implements OrderedFixtureInter
             ->setPartnerType(PartnerType::tryFrom($row['partner_type']))
             ->setInseeToInclude($row['insee_to_include'])
             ->setInseeToExclude($row['insee_to_exclude'])
+            ->setPartnerToExclude($row['partner_to_exclude'] ?? [])
             ->setParc($row['parc'])
             ->setAllocataire($row['allocataire'])
         ;

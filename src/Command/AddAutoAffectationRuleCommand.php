@@ -36,6 +36,7 @@ class AddAutoAffectationRuleCommand extends Command
         'PROFILE_DECLARANT' => 'profileDeclarant',
         'INSEE_TO_INCLUDE' => 'inseeToInclude',
         'INSEE_TO_EXCLUDE' => 'inseeToExclude',
+        'PARTNER_TO_EXCLUDE' => 'partnerToExclude',
         'PARC' => 'parc',
         'ALLOCATAIRE' => 'allocataire',
     ];
@@ -58,6 +59,7 @@ class AddAutoAffectationRuleCommand extends Command
             ->addArgument(self::FIELDS['PROFILE_DECLARANT'], InputArgument::OPTIONAL, 'The profile_declarant concerned, "all" if not specified')
             ->addArgument(self::FIELDS['INSEE_TO_INCLUDE'], InputArgument::OPTIONAL, '"partner_list" if not specified')
             ->addArgument(self::FIELDS['INSEE_TO_EXCLUDE'], InputArgument::OPTIONAL, 'null if not specified')
+            ->addArgument(self::FIELDS['PARTNER_TO_EXCLUDE'], InputArgument::OPTIONAL, 'null if not specified')
             ->addArgument(self::FIELDS['PARC'], InputArgument::OPTIONAL, 'Parc concerned, "all" if not specified')
             ->addArgument(self::FIELDS['ALLOCATAIRE'], InputArgument::OPTIONAL, 'allocataire concerned, "all" if not specified');
     }
@@ -81,7 +83,7 @@ class AddAutoAffectationRuleCommand extends Command
             'If you prefer to not use this interactive wizard, provide the',
             'arguments required by this command as follows:',
             '',
-            ' $ php bin/console app:add-auto-affectation-rule territory partnerType status profileDeclarant inseeToInclude inseeToExclude parc allocataire',
+            ' $ php bin/console app:add-auto-affectation-rule territory partnerType status profileDeclarant inseeToInclude inseeToExclude partnerToExclude parc allocataire',
             '',
             'Now we\'ll ask you for the value of all the missing command arguments.',
         ]);
@@ -172,6 +174,17 @@ class AddAutoAffectationRuleCommand extends Command
             $input->setArgument(self::FIELDS['INSEE_TO_EXCLUDE'], $inseeToExclude);
         }
 
+        $partnerToExclude = $input->getArgument(self::FIELDS['PARTNER_TO_EXCLUDE']);
+        if (!empty($partnerToExclude)) {
+            $this->io->table([self::FIELDS['PARTNER_TO_EXCLUDE']], $partnerToExclude);
+        } else {
+            /** @var QuestionHelper $helper */
+            $helper = $this->getHelper('question');
+            $question = new Question('Enter code'.self::FIELDS['PARTNER_TO_EXCLUDE'].' separated by comma ');
+            $partnerToExclude = $helper->ask($input, $output, $question);
+            $input->setArgument(self::FIELDS['PARTNER_TO_EXCLUDE'], $partnerToExclude);
+        }
+
         $parc = $input->getArgument(self::FIELDS['PARC']);
         if (null !== $parc) {
             $this->io->text(' > <info>'.ucfirst(self::FIELDS['PARC']).'</info>: '.$parc);
@@ -226,6 +239,7 @@ class AddAutoAffectationRuleCommand extends Command
         $profileDeclarant = $input->getArgument('profileDeclarant');
         $inseeToInclude = $input->getArgument('inseeToInclude');
         $inseeToExclude = $input->getArgument('inseeToExclude');
+        $partnerToExclude = $input->getArgument('partnerToExclude');
         $parc = $input->getArgument('parc');
         $allocataire = $input->getArgument('allocataire');
 
@@ -251,6 +265,7 @@ class AddAutoAffectationRuleCommand extends Command
             profileDeclarant : $profileDeclarant,
             inseeToInclude : $inseeToInclude,
             inseeToExclude : $inseeToExclude,
+            partnerToExclude : $partnerToExclude,
             parc : $parc,
             allocataire : $allocataire
         );

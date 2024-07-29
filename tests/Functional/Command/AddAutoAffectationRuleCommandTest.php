@@ -23,6 +23,7 @@ class AddAutoAffectationRuleCommandTest extends KernelTestCase
         $profileDeclarant = 'occupant';
         $inseeToInclude = 'partner_list';
         $inseeToExclude = '44850,44600';
+        $partnerToExclude = '';
         $parc = 'public';
         $allocataire = 'caf';
         $commandTester->execute([
@@ -32,6 +33,7 @@ class AddAutoAffectationRuleCommandTest extends KernelTestCase
             'profileDeclarant' => $profileDeclarant,
             'inseeToInclude' => $inseeToInclude,
             'inseeToExclude' => $inseeToExclude,
+            'partnerToExclude' => $partnerToExclude,
             'parc' => $parc,
             'allocataire' => $allocataire,
         ]);
@@ -57,6 +59,7 @@ class AddAutoAffectationRuleCommandTest extends KernelTestCase
         $profileDeclarant = 'occupant';
         $inseeToInclude = 'partner_list';
         $inseeToExclude = '44850,44600';
+        $partnerToExclude = '';
         $parc = 'public';
         $allocataire = 'caf';
         $commandTester->execute([
@@ -66,6 +69,7 @@ class AddAutoAffectationRuleCommandTest extends KernelTestCase
             'profileDeclarant' => $profileDeclarant,
             'inseeToInclude' => $inseeToInclude,
             'inseeToExclude' => $inseeToExclude,
+            'partnerToExclude' => $partnerToExclude,
             'parc' => $parc,
             'allocataire' => $allocataire,
         ]);

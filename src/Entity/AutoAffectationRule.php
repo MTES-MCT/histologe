@@ -51,6 +51,10 @@ class AutoAffectationRule
     #[AppAssert\InseeToExclude()]
     private ?array $inseeToExclude = null;
 
+    #[ORM\Column(nullable: true, options: ['comment' => 'Value possible null or an array of partner ids'])]
+    #[AppAssert\PartnerToExclude()]
+    private ?array $partnerToExclude = null;
+
     #[ORM\Column(length: 32, options: ['comment' => 'Value possible all, non_renseigne, prive or public'])]
     #[Assert\NotBlank]
     #[Assert\Choice(choices: ['all', 'prive', 'public', 'non_renseigne'], message: 'Choisissez une option valide: all, non_renseigne, prive ou public')]
@@ -141,6 +145,18 @@ class AutoAffectationRule
     public function setInseeToExclude(?array $inseeToExclude): self
     {
         $this->inseeToExclude = $inseeToExclude;
+
+        return $this;
+    }
+
+    public function getPartnerToExclude(): ?array
+    {
+        return $this->partnerToExclude;
+    }
+
+    public function setPartnerToExclude(?array $partnerToExclude): self
+    {
+        $this->partnerToExclude = $partnerToExclude;
 
         return $this;
     }

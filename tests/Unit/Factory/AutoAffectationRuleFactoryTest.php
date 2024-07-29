@@ -32,6 +32,7 @@ class AutoAffectationRuleFactoryTest extends KernelTestCase
             profileDeclarant : 'all',
             inseeToInclude : 'all',
             inseeToExclude : null,
+            partnerToExclude : null,
             parc : 'all',
             allocataire : 'all'
         );
@@ -43,6 +44,7 @@ class AutoAffectationRuleFactoryTest extends KernelTestCase
         $this->assertInstanceOf(AutoAffectationRule::class, $autoAffectationRule);
         $this->assertEquals($autoAffectationRule->getPartnerType(), PartnerType::CAF_MSA);
         $this->assertEmpty($autoAffectationRule->getInseeToExclude());
+        $this->assertEmpty($autoAffectationRule->getPartnerToExclude());
     }
 
     public function testCreateAutoAffectationRuleKO(): void
@@ -56,6 +58,7 @@ class AutoAffectationRuleFactoryTest extends KernelTestCase
             profileDeclarant : 'ERROR',
             inseeToInclude : 'all',
             inseeToExclude : null,
+            partnerToExclude : null,
             parc : 'ERROR',
             allocataire : 'ERROR'
         );

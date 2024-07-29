@@ -29,6 +29,7 @@ class AutoAffectationRuleTest extends KernelTestCase
         $this->assertEquals('oui', $autoAffectationRule->getAllocataire());
         $this->assertEquals('partner_list', $autoAffectationRule->getInseeToInclude());
         $this->assertNull($autoAffectationRule->getInseeToExclude());
+        $this->assertEmpty($autoAffectationRule->getPartnerToExclude());
         $this->assertEquals(AutoAffectationRule::STATUS_ACTIVE, $autoAffectationRule->getStatus());
         $this->assertEquals('Règle d\'auto-affectation pour les partenaires CAF / MSA du territoire Ain concernant les logements du parc privé. Cette règle concerne les signalements faits par tous profils de déclarant. Elle concerne les foyers allocataires. Elle s\'applique aux logements situés dans le périmètre du partenaire (codes insee). (Règle active)', $autoAffectationRule->getDescription(false));
     }

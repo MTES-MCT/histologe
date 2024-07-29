@@ -498,6 +498,7 @@ trait FixturesHelper
             ->setAllocataire('oui')
             ->setInseeToInclude('partner_list')
             ->setInseeToExclude(null)
+            ->setPartnerToExclude([])
             ->setStatus(AutoAffectationRule::STATUS_ACTIVE);
     }
 }

@@ -15,6 +15,7 @@ class AutoAffectationRuleFactory
         string $profileDeclarant = null,
         string $inseeToInclude = null,
         ?string $inseeToExclude = null,
+        ?string $partnerToExclude = null,
         string $parc = null,
         string $allocataire = null
     ): AutoAffectationRule {
@@ -29,6 +30,9 @@ class AutoAffectationRuleFactory
 
         if (!empty($inseeToExclude)) {
             $autoAffectationRule->setInseeToExclude(array_map('trim', explode(',', $inseeToExclude)));
+        }
+        if (!empty($partnerToExclude)) {
+            $autoAffectationRule->setPartnerToExclude(array_map('trim', explode(',', $partnerToExclude)));
         }
 
         return $autoAffectationRule;

@@ -184,8 +184,34 @@ class AutoAffectationRuleType extends AbstractType
                     new AppAssert\InseeToExclude(),
                 ],
             ])
+            ->add('partnerToExclude', TextType::class, [
+                'label' => 'IDs partenaire à exclure (facultatif)',
+                'attr' => [
+                    'class' => 'fr-input',
+                ],
+                'required' => false,
+                'help' => 'Une liste d\'id de partenaires séparés par des virgules.',
+                'help_attr' => [
+                    'class' => 'fr-hint-text',
+                ],
+                'constraints' => [
+                    new AppAssert\PartnerToExclude(),
+                ],
+            ])
         ;
         $builder->get('inseeToExclude')->addModelTransformer(new CallbackTransformer(
+            function ($tagsAsArray) {
+                // transform the array to a string
+                return null !== $tagsAsArray ? implode(',', $tagsAsArray) : null;
+            },
+            function ($tagsAsString) {
+                // transform the string back to an array
+                $pattern = '/(\s*,*\s*)*,+(\s*,*\s*)*/';
+
+                return null !== $tagsAsString ? preg_split($pattern, $tagsAsString, -1, \PREG_SPLIT_NO_EMPTY) : [];
+            }
+        ));
+        $builder->get('partnerToExclude')->addModelTransformer(new CallbackTransformer(
             function ($tagsAsArray) {
                 // transform the array to a string
                 return null !== $tagsAsArray ? implode(',', $tagsAsArray) : null;
