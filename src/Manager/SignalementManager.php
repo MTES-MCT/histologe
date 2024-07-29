@@ -443,7 +443,7 @@ class SignalementManager extends AbstractManager
         if ($signalement->getIsLogementSocial() && $coordonneesBailleurRequest->getNom()) {
             $bailleur = $this->bailleurRepository->findOneBailleurBy(
                 $coordonneesBailleurRequest->getNom(),
-                ZipcodeProvider::getZipCode($signalement->getCpOccupant())
+                ZipcodeProvider::getZipCode($signalement->getInseeOccupant())
             );
         }
 
