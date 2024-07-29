@@ -198,4 +198,15 @@ class NotificationRepository extends ServiceEntityRepository
 
         return $qb->getQuery()->getResult();
     }
+
+    public function markUserNotificationAsRead(User $user): void
+    {
+        $qb = $this->createQueryBuilder('n');
+        $qb->update()
+            ->set('n.isSeen', 1)
+            ->andWhere('n.isSeen = 0')
+            ->andWhere('n.user = :user')
+            ->setParameter('user', $user);
+        $qb->getQuery()->execute();
+    }
 }

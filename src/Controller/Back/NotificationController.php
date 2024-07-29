@@ -45,7 +45,7 @@ class NotificationController extends AbstractController
             }
         } else {
             if ($this->isCsrfTokenValid('mark_as_read_'.$user->getId(), $request->get('mark_as_read'))) {
-                $this->markAllAsRead($entityManager);
+                $notificationRepository->markUserNotificationAsRead($user);
                 $this->addFlash('success', 'Toutes les notifications ont été marquées comme lues.');
             }
         }
@@ -88,21 +88,7 @@ class NotificationController extends AbstractController
         foreach ($notifications as $notification) {
             $this->denyAccessUnlessGranted('NOTIF_MARK_AS_READ', $notification);
             $notification->setIsSeen(true);
-            $em->persist($notification);
         }
-        $em->flush();
-    }
-
-    private function markAllAsRead($em)
-    {
-        /** @var User $user */
-        $user = $this->getUser();
-        $notifications = $user->getNotifications();
-        $notifications->filter(function (Notification $notification) use ($em) {
-            $this->denyAccessUnlessGranted('NOTIF_MARK_AS_READ', $notification);
-            $notification->setIsSeen(true);
-            $em->persist($notification);
-        });
         $em->flush();
     }
 
