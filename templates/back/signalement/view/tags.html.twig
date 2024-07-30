@@ -28,26 +28,44 @@
                             <span class="fr-icon-arrow-right-line fr-icon--lg"></span>Gérer les étiquettes du signalement
                         </h1>
                         <p>
-                            Sélectionnez les étiquettes à attribuer au signalement dans la liste déroulante.
+                            Sélectionnez les étiquettes à attribuer au signalement en cliquant dessus.
                             <br>
-                            Cliquez sur une étiquette pour la retirer du signalement.
+                            Une fois sélectionnées, elles apparaîtront dans la colonne "Etiquettes sélectionnées".
                         </p>
                         <div class="fr-grid-row fr-grid-row--gutters">
                             <div class="fr-col-6">
                                 <h2 class="fr-h5">Sélectionner les étiquettes</h2>
+                                <p>
+                                    Recherchez les étiquettes à attribuer au signalement puis cliquez dessus.
+                                </p>
                                 <div class="fr-my-3v">
+                                    {% for tag in tags %}
+                                        <span
+                                            class="fr-badge fr-mr-1v signalement-tag-add {% if tag in signalement.tags %}fr-hidden{% endif %}"
+                                            data-tagid="{{ tag.id }}" data-taglabel="{{ tag.label }}"
+                                            >{{ tag.label }} <span class="fr-icon-add-line" aria-hidden="true"></span></span>
+                                    {% else %}
+                                        <em class="fr-text-default--warning fr-fi-close-line fr-icon--xs">
+                                            <small>Aucune étiquette n'existe sur votre territoire.</small>
+                                        </em>
+                                    {% endfor %}
                                 </div>
                             </div>
                             <div class="fr-col-6">
-                                <h2 class="fr-h5">Etiquettes du signalement</h2>
+                                <h2 class="fr-h5">Etiquettes sélectionnées</h2>
+                                <p>
+                                    Cliquez sur une étiquette pour la retirer du signalement.
+                                </p>
                                 <div class="fr-my-3v">
                                     {% for tag in signalement.tags %}
-                                        <span class="fr-badge fr-badge--blue-ecume fr-mr-1v">{{ tag.label }}</span>
-                                    {% else %}
-                                        <em class="fr-text-default--warning fr-fi-close-line fr-icon--xs">
-                                            <small>Aucune étiquette attribuée à ce signalement.</small>
-                                        </em>
+                                        <span
+                                            class="fr-badge fr-badge--blue-ecume fr-mr-1v signalement-tag-remove"
+                                            data-tagid="{{ tag.id }}"
+                                            >{{ tag.label }} <span class="fr-icon-close-line" aria-hidden="true"></span></span>
                                     {% endfor %}
+                                    <em id="no-tag-on-this-signalement" class="fr-text-default--warning fr-fi-close-line fr-icon--xs {% if not signalement.tags %}fr-hidden{% endif %}">
+                                        <small>Aucune étiquette attribuée à ce signalement.</small>
+                                    </em>
                                 </div>
                             </div>
                         </div>

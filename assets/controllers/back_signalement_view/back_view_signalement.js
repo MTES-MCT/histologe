@@ -66,3 +66,15 @@ document?.querySelector('.back-link')?.addEventListener('click', (event) => {
             : event.target.href
     }
 })
+
+document?.querySelectorAll('.signalement-tag-add')?.forEach(element => {
+    element.addEventListener('click', (event) => {
+        // console.log(event)
+    })
+})
+
+document?.querySelectorAll('.signalement-tag-remove')?.forEach(element => {
+    element.addEventListener('click', (event) => {
+        // console.log(event)
+    })
+})
