@@ -94,6 +94,18 @@ document?.querySelectorAll('.signalement-tag-add')?.forEach(element => {
     })
 })
 
+const inputEtiquetteFilter = document?.querySelector('#etiquette-filter-input')
+inputEtiquetteFilter.addEventListener('input', (event) => {
+    const inputValue = event.target.value.toLowerCase()
+    document?.querySelectorAll('.signalement-tag-add')?.forEach(element => {
+        if (element.getAttribute('data-taglabel').toLowerCase().indexOf(inputValue) > -1) {
+            element.classList?.remove('fr-hidden')
+        } else {
+            element.classList?.add('fr-hidden')
+        }
+    })
+})
+
 document?.querySelectorAll('.signalement-tag-remove')?.forEach(element => {
     element.addEventListener('click', (event) => {
         removeEtiquette(element)

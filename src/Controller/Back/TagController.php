@@ -3,6 +3,7 @@
 namespace App\Controller\Back;
 
 use App\Entity\Tag;
+use App\Entity\User;
 use App\Manager\TagManager;
 use App\Repository\TagRepository;
 use App\Repository\TerritoryRepository;

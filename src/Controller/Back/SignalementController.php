@@ -276,13 +276,12 @@ class SignalementController extends AbstractController
         $this->denyAccessUnlessGranted('SIGN_EDIT', $signalement);
 
         if (
-            $signalement
-            && $this->isCsrfTokenValid('signalement_save_tags', $request->request->get('_token'))
+            $this->isCsrfTokenValid('signalement_save_tags', $request->request->get('_token'))
         ) {
             $tagIds = $request->request->get('tag-ids');
-            $tagList = \explode(',', $tagIds);
+            $tagList = explode(',', $tagIds);
             foreach ($signalement->getTags() as $existingTag) {
-                if (!in_array($existingTag->getId(), $tagList)) {
+                if (!\in_array($existingTag->getId(), $tagList)) {
                     $signalement->removeTag($existingTag);
                 }
             }
@@ -298,13 +297,12 @@ class SignalementController extends AbstractController
             $entityManager->flush();
 
             $this->addFlash('success', 'Les étiquettes ont bien été enregistrées.');
-
         } else {
             $this->addFlash('error', 'Erreur lors de la modification des étiquettes !');
         }
 
         return $this->redirect($this->generateUrl('back_signalement_view', [
-            'uuid' => $signalement->getUuid()
+            'uuid' => $signalement->getUuid(),
         ]));
     }
 }
