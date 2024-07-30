@@ -2,20 +2,6 @@
     <div
       id="app-signalement-form"
       class="signalement-form"
-      :data-ajaxurl="sharedProps.ajaxurl"
-      :data-ajaxurl-dictionary="sharedProps.ajaxurlDictionary"
-      :data-ajaxurl-questions="sharedProps.ajaxurlQuestions"
-      :data-ajaxurl-desordres="sharedProps.ajaxurlDesordres"
-      :data-ajaxurl-post-signalement-draft="sharedProps.ajaxurlPostSignalementDraft"
-      :data-ajaxurl-put-signalement-draft="sharedProps.ajaxurlPutSignalementDraft"
-      :data-ajaxurl-handle-upload="sharedProps.ajaxurlHandleUpload"
-      :data-ajaxurl-get-signalement-draft="sharedProps.ajaxurlGetSignalementDraft"
-      :data-ajaxurl-platform-name="sharedProps.platformName"
-      :data-ajaxurl-check-territory="sharedProps.ajaxurlCheckTerritory"
-      :data-ajaxurl-check-signalement-or-draft-already-exists="sharedProps.ajaxurlCheckSignalementOrDraftAlreadyExists"
-      :data-ajaxurl-send-mail-continue-from-draft="sharedProps.ajaxurlSendMailContinueFromDraft"
-      :data-ajaxurl-send-mail-get-lien-suivi="sharedProps.ajaxurlSendMailGetLienSuivi"
-      :data-ajaxurl-archive-draft="sharedProps.ajaxurlArchiveDraft"
       >
       <div v-if="isLoadingInit" class="loading fr-m-10w fr-grid-row fr-grid-row--center">
         Initialisation du formulaire...
@@ -77,7 +63,7 @@ import SignalementFormScreen from './components/SignalementFormScreen.vue'
 import SignalementFormBreadCrumbs from './components/SignalementFormBreadCrumbs.vue'
 import SignalementFormModal from './components/SignalementFormModal.vue'
 import SignalementFormModalAlreadyExists from './components/SignalementFormModalAlreadyExists.vue'
-const initElements:any = document.querySelector('#app-signalement-form')
+const initElements:any = document.querySelector('#app-signalement-form-container')
 
 export default defineComponent({
   name: 'TheSignalementAppForm',
