@@ -22,6 +22,7 @@ use App\Repository\SignalementQualificationRepository;
 use App\Repository\TagRepository;
 use App\Service\Signalement\PhotoHelper;
 use App\Service\Signalement\SignalementDesordresProcessor;
+use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\DependencyInjection\ParameterBag\ContainerBagInterface;
@@ -263,5 +264,47 @@ class SignalementController extends AbstractController
         }
 
         return $this->json($response, $response['status']);
+    }
+
+    #[Route('/{uuid}/save-tags', name: 'back_signalement_save_tags', methods: 'POST')]
+    public function saveSignalementTags(
+        Signalement $signalement,
+        Request $request,
+        TagRepository $tagRepository,
+        EntityManagerInterface $entityManager
+    ): Response {
+        $this->denyAccessUnlessGranted('SIGN_EDIT', $signalement);
+
+        if (
+            $signalement
+            && $this->isCsrfTokenValid('signalement_save_tags', $request->request->get('_token'))
+        ) {
+            $tagIds = $request->request->get('tag-ids');
+            $tagList = \explode(',', $tagIds);
+            foreach ($signalement->getTags() as $existingTag) {
+                if (!in_array($existingTag->getId(), $tagList)) {
+                    $signalement->removeTag($existingTag);
+                }
+            }
+            if (!empty($tagIds)) {
+                foreach ($tagList as $tagId) {
+                    $tag = $tagRepository->find($tagId);
+                    if ($tag->getTerritory() == $signalement->getTerritory() && !$tag->getIsArchive()) {
+                        $signalement->addTag($tag);
+                    }
+                }
+            }
+
+            $entityManager->flush();
+
+            $this->addFlash('success', 'Les étiquettes ont bien été enregistrées.');
+
+        } else {
+            $this->addFlash('error', 'Erreur lors de la modification des étiquettes !');
+        }
+
+        return $this->redirect($this->generateUrl('back_signalement_view', [
+            'uuid' => $signalement->getUuid()
+        ]));
     }
 }

@@ -69,12 +69,54 @@ document?.querySelector('.back-link')?.addEventListener('click', (event) => {
 
 document?.querySelectorAll('.signalement-tag-add')?.forEach(element => {
     element.addEventListener('click', (event) => {
-        // console.log(event)
+        element.classList?.add('fr-hidden')
+
+        const etiquette = document.createElement('span');
+        etiquette.classList.add('fr-badge', 'fr-badge--blue-ecume', 'fr-m-1v', 'signalement-tag-remove')
+        etiquette.setAttribute('data-tagid', element.getAttribute('data-tagid'))
+        etiquette.innerText = element.getAttribute('data-taglabel') + ' ';
+        etiquette.addEventListener('click', (event) => {
+            removeEtiquette(etiquette);
+        })
+
+        const container = document.querySelector('#etiquette-selected-list');
+        container.append(etiquette);
+
+        const etiquetteIcon = document.createElement('span');
+        etiquetteIcon.classList.add('fr-icon-close-line')
+        etiquetteIcon.setAttribute('aria-hidden', true)
+        etiquette.append(etiquetteIcon);
+
+        const containerNoTag = document.querySelector('#no-tag-on-this-signalement');
+        containerNoTag.classList?.add('fr-hidden')
+
+        refreshHiddenInput();
     })
 })
 
 document?.querySelectorAll('.signalement-tag-remove')?.forEach(element => {
     element.addEventListener('click', (event) => {
-        // console.log(event)
+        removeEtiquette(element)
     })
 })
+
+const removeEtiquette = (element) => {
+    const tagId = element.getAttribute('data-tagid')
+    const etiquetteBadgeAdd = document.querySelector('#etiquette-badge-add-' + tagId);
+    etiquetteBadgeAdd.classList?.remove('fr-hidden')
+
+    element.remove();
+
+    refreshHiddenInput();
+}
+const refreshHiddenInput = () => {
+    const inputHidden = document.querySelector('#input-tag-ids');
+    inputHidden.setAttribute('value', '')
+    document?.querySelectorAll('.signalement-tag-remove').forEach(element => {
+        if (inputHidden.getAttribute('value') !== '') {
+            inputHidden.setAttribute('value', inputHidden.getAttribute('value')+','+element.getAttribute('data-tagid'))
+        } else {
+            inputHidden.setAttribute('value', element.getAttribute('data-tagid'))
+        }
+    })
+}
