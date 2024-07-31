@@ -49,6 +49,7 @@ class SignalementQualificationFactory
         ?string $dataDateDPE = '',
     ): SignalementQualification {
         $signalementQualification = new SignalementQualification();
+        $signalementQualification->setSignalement($signalement);
         $signalementQualification->setQualification(Qualification::NON_DECENCE_ENERGETIQUE);
 
         $dataHasDPEToSave = null;
