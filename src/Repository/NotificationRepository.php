@@ -187,4 +187,33 @@ class NotificationRepository extends ServiceEntityRepository
 
         return $qb->getQuery()->getSingleScalarResult();
     }
+
+    public function markUserNotificationsAsSeen(User $user, array $ids = []): void
+    {
+        $qb = $this->createQueryBuilder('n')
+            ->update()
+            ->set('n.isSeen', 1)
+            ->where('n.user = :user')
+            ->setParameter('user', $user);
+        if (\count($ids)) {
+            $qb->andWhere('n.id IN (:ids)')
+                ->setParameter('ids', $ids);
+        }
+
+        $qb->getQuery()->execute();
+    }
+
+    public function deleteUserNotifications(User $user, array $ids = []): void
+    {
+        $qb = $this->createQueryBuilder('n')
+            ->delete()
+            ->where('n.user = :user')
+            ->setParameter('user', $user);
+        if (\count($ids)) {
+            $qb->andWhere('n.id IN (:ids)')
+                ->setParameter('ids', $ids);
+        }
+
+        $qb->getQuery()->execute();
+    }
 }

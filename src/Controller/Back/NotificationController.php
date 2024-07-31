@@ -33,20 +33,18 @@ class NotificationController extends AbstractController
     #[Route('/notifications/lue', name: 'back_notifications_list_read')]
     public function read(
         Request $request,
-        EntityManagerInterface $entityManager,
+        NotificationRepository $notificationRepository,
     ) {
         /** @var User $user */
         $user = $this->getUser();
         if ($request->get('selected_notifications')) {
             if ($this->isCsrfTokenValid('mark_as_read_'.$user->getId(), $request->get('csrf_token'))) {
-                $q = $entityManager->createQuery('UPDATE '.Notification::class.' n SET n.isSeen = true WHERE n.user = :user AND n.id IN (:ids)');
-                $q->execute(['user' => $user, 'ids' => explode(',', $request->get('selected_notifications'))]);
+                $notificationRepository->markUserNotificationsAsSeen($user, explode(',', $request->get('selected_notifications')));
                 $this->addFlash('success', 'Les notifications sélectionnées ont été marquées comme lues.');
             }
         } else {
             if ($this->isCsrfTokenValid('mark_as_read_'.$user->getId(), $request->get('mark_as_read'))) {
-                $q = $entityManager->createQuery('UPDATE '.Notification::class.' n SET n.isSeen = true WHERE n.user = :user');
-                $q->execute(['user' => $user]);
+                $notificationRepository->markUserNotificationsAsSeen($user);
                 $this->addFlash('success', 'Toutes les notifications ont été marquées comme lues.');
             }
         }
@@ -57,14 +55,13 @@ class NotificationController extends AbstractController
     #[Route('/notifications/supprimer', name: 'back_notifications_list_delete')]
     public function delete(
         Request $request,
-        EntityManagerInterface $entityManager,
+        NotificationRepository $notificationRepository,
     ) {
         /** @var User $user */
         $user = $this->getUser();
         if ($request->get('selected_notifications')) {
             if ($this->isCsrfTokenValid('delete_notifications_'.$user->getId(), $request->get('csrf_token'))) {
-                $q = $entityManager->createQuery('DELETE FROM '.Notification::class.' n WHERE n.user = :user AND n.id IN (:ids)');
-                $q->execute(['user' => $user, 'ids' => explode(',', $request->get('selected_notifications'))]);
+                $notificationRepository->deleteUserNotifications($user, explode(',', $request->get('selected_notifications')));
                 $this->addFlash('success', 'Les notifications sélectionnées ont été supprimées.');
             }
         } else {
@@ -72,8 +69,7 @@ class NotificationController extends AbstractController
                 'delete_all_notifications_'.$user->getId(),
                 $request->get('delete_all_notifications')
             )) {
-                $q = $entityManager->createQuery('DELETE FROM '.Notification::class.' n WHERE n.user = :user');
-                $q->execute(['user' => $user]);
+                $notificationRepository->deleteUserNotifications($user);
                 $this->addFlash('success', 'Toutes les notifications ont été supprimées.');
             }
         }
