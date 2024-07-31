@@ -1,11 +1,5 @@
 
-{% if signalement.interventions is empty %}
-    <div class="signalement-visites-buttons fr-text--right fr-btns-group fr-btns-group--inline fr-btns-group--right fr-btns-group--icon-left">
-        <button class="fr-btn fr-fi-calendar-line" aria-controls="add-visite-modal" data-fr-opened="false">
-            Ajouter une visite
-        </button>
-    </div>
-{% else %}
+{% if signalement.interventions is not empty %}
     <div class="signalement-visites-buttons fr-text--right fr-btns-group fr-btns-group--sm fr-btns-group--inline fr-btns-group--right fr-btns-group--icon-left">
         {% if intervention.status is same as constant('App\\Entity\\Intervention::STATUS_PLANNED') %}    
             {% if is_granted('SIGN_ADD_VISITE', intervention.signalement) %}
@@ -27,7 +21,7 @@
             {% if signalement.interventions is empty or intervention.files is empty or intervention.getRapportDeVisite is empty %}
                 {% if is_granted('SIGN_ADD_VISITE', intervention.signalement) %}
                     <button 
-                        class="fr-btn fr-btn--sm fr-fi-file-fill"
+                        class="fr-btn fr-btn--secondary fr-fi-file-fill"
                         aria-controls="edit-visite-modal-{{intervention.id}}"  
                         data-fr-opened="false"
                         >
@@ -37,15 +31,15 @@
             {% else %}
                 {% if is_granted('SIGN_ADD_VISITE', intervention.signalement) %}
                     <button 
-                        class="fr-btn fr-btn--sm fr-btn--secondary fr-fi-edit-line" 
+                        class="fr-btn fr-btn--secondary fr-fi-edit-line" 
                         aria-controls="edit-visite-modal-{{intervention.id}}" 
                         data-fr-opened="false">
                         Editer le rapport
                     </button>
                 {% endif %}
                 <a href="{{ asset('_up/'~intervention.getRapportDeVisite.first.filename)~'/' ~ signalement.uuid }}"
-                    class="fr-btn fr-btn--sm"
-                    title="Afficher le document"
+                    class="fr-btn fr-btn--secondary"
+                    title="Voir le rapport de visite"
                     rel="noopener"
                     target="_blank">
                     <span aria-hidden="true" class="fr-fi-file-line fr-icon--sm"></span> Voir le rapport de visite
@@ -53,7 +47,7 @@
             {% endif %}
             {% if is_granted('SIGN_ADD_VISITE', intervention.signalement)%}
                 <button 
-                    class="fr-btn fr-btn--sm fr-btn--secondary fr-icon-camera-fill open-modal-upload-files-btn" 
+                    class="fr-btn fr-btn--secondary fr-icon-camera-fill open-modal-upload-files-btn" 
                     data-fr-opened="false" 
                     aria-controls="visites-upload-files-{{intervention.id}}"
                     data-file-type="photo"
@@ -67,8 +61,8 @@
         {% elseif intervention.status is same as constant('App\\Entity\\Intervention::STATUS_NOT_DONE') %}
             {% if intervention.getRapportDeVisite is not empty %}
                 <a href="{{ asset('_up/'~intervention.getRapportDeVisite.first.filename)~'/' ~ signalement.uuid }}"
-                    class="fr-btn fr-btn--sm"
-                    title="Afficher le document"
+                    class="fr-btn fr-btn--secondary"
+                    title="Voir le rapport de visite"
                     rel="noopener"
                     target="_blank">
                     <span aria-hidden="true" class="fr-fi-file-line fr-icon--sm"></span> Voir le rapport de visite
