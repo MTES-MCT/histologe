@@ -12,6 +12,7 @@ use App\Service\ImageManipulationHandler;
 use App\Service\Security\FileScanner;
 use App\Service\UploadHandlerService;
 use Psr\Log\LoggerInterface;
+use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
@@ -28,7 +29,9 @@ class SignalementFileProcessor
         private readonly UrlGeneratorInterface $urlGenerator,
         private readonly FileFactory $fileFactory,
         private readonly ImageManipulationHandler $imageManipulationHandler,
-        private readonly FileScanner $fileScanner
+        private readonly FileScanner $fileScanner,
+        #[Autowire(env: 'CLAMAV_SCAN_ENABLE')]
+        private bool $clamavScanEnable,
     ) {
     }
 
@@ -136,7 +139,7 @@ class SignalementFileProcessor
                 documentType: $fileItem['documentType'],
                 isWaitingSuivi: $isWaitingSuivi,
                 isTemp: $isTemp,
-                scannedAt: new \DateTimeImmutable()
+                scannedAt: $this->clamavScanEnable ? new \DateTimeImmutable() : null
             );
             $file->setSize($this->uploadHandlerService->getFileSize($file->getFilename()));
             $file->setIsVariantsGenerated($this->uploadHandlerService->hasVariants($file->getFilename()));

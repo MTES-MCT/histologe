@@ -11,6 +11,7 @@ use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
+use Symfony\Component\DependencyInjection\Attribute\Autowire;
 
 #[AsCommand(
     name: 'app:scan-files',
@@ -23,6 +24,8 @@ class ScanFilesCommand extends Command
         private readonly EntityManagerInterface $entityManager,
         private readonly FileScanner $fileScanner,
         private readonly UploadHandlerService $uploadHandlerService,
+        #[Autowire(env: 'CLAMAV_SCAN_ENABLE')]
+        private bool $clamavScanEnable,
     ) {
         parent::__construct();
     }
@@ -30,6 +33,12 @@ class ScanFilesCommand extends Command
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $io = new SymfonyStyle($input, $output);
+        if (!$this->clamavScanEnable) {
+            $io->error('ClamAV scan is disabled');
+
+            return Command::FAILURE;
+        }
+
         $files = $this->fileRepository->findBy(['scannedAt' => null], ['createdAt' => 'DESC'], 500);
         $i = 0;
         $total = \count($files);

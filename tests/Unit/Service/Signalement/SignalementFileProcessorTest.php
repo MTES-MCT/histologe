@@ -63,7 +63,8 @@ class SignalementFileProcessorTest extends TestCase
             $this->urlGenerator,
             $this->fileFactory,
             $this->imageManipulationHandler,
-            $this->fileScanner
+            $this->fileScanner,
+            false
         );
 
         [$fileList, $descriptionList] = $signalementFileProcessor->process(self::FILE_LIST, 'documents');
@@ -117,7 +118,8 @@ class SignalementFileProcessorTest extends TestCase
             $this->urlGenerator,
             $this->fileFactory,
             $this->imageManipulationHandler,
-            $this->fileScanner
+            $this->fileScanner,
+            false
         );
         $signalement = $this->getSignalement();
         [$fileList, $descriptionList] = $signalementFileProcessor->process(self::FILE_LIST, 'photos');

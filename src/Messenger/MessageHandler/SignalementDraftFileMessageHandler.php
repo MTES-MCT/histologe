@@ -11,6 +11,7 @@ use App\Repository\SignalementRepository;
 use App\Serializer\SignalementDraftRequestSerializer;
 use App\Service\UploadHandlerService;
 use Psr\Log\LoggerInterface;
+use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 
 #[AsMessageHandler]
@@ -24,6 +25,8 @@ class SignalementDraftFileMessageHandler
         private UploadHandlerService $uploadHandlerService,
         private LoggerInterface $logger,
         private UserManager $userManager,
+        #[Autowire(env: 'CLAMAV_SCAN_ENABLE')]
+        private bool $clamavScanEnable,
     ) {
     }
 
@@ -55,7 +58,9 @@ class SignalementDraftFileMessageHandler
                     $file->setSize($this->uploadHandlerService->getFileSize($file->getFilename()));
                     $file->setIsVariantsGenerated($this->uploadHandlerService->hasVariants($file->getFilename()));
                     $file->setUploadedBy($uploadUser);
-                    $file->setScannedAt(new \DateTimeImmutable());
+                    if ($this->clamavScanEnable) {
+                        $file->setScannedAt(new \DateTimeImmutable());
+                    }
                     $signalement->addFile($file);
                 }
             }

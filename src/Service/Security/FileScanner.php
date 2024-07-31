@@ -2,18 +2,19 @@
 
 namespace App\Service\Security;
 
-use App\Service\UploadHandlerService;
 use Sineflow\ClamAV\Exception\FileScanException;
 use Sineflow\ClamAV\Exception\SocketException;
 use Sineflow\ClamAV\Scanner;
+use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 
 class FileScanner
 {
     public function __construct(
         private readonly Scanner $scanner,
-        private readonly UploadHandlerService $uploadHandlerService,
-        private readonly ParameterBagInterface $parameterBag
+        private readonly ParameterBagInterface $parameterBag,
+        #[Autowire(env: 'CLAMAV_SCAN_ENABLE')]
+        private bool $clamavScanEnable,
     ) {
     }
 
@@ -23,6 +24,9 @@ class FileScanner
      */
     public function isClean(string $filePath, ?bool $copy = true): bool
     {
+        if (!$this->clamavScanEnable) {
+            return true;
+        }
         if ($copy) {
             $copiedFilepath = $this->parameterBag->get('uploads_tmp_dir').'clamav_'.uniqid();
             file_put_contents($copiedFilepath, file_get_contents($filePath));
