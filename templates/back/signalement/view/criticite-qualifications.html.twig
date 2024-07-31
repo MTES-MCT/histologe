@@ -1,14 +1,14 @@
 <div class="fr-grid-row fr-grid-row--gutters">
     <div class="fr-col-12 fr-col-md-6">
-        <h3 class="fr-h5">Criticité</h3>
+        <h3 class="fr-h5">Criticité du signalement</h3>
+        <div class="fr-text--lg">{{ signalement.score|round(2) }} %</div>
+        {% if createdFromDraft %}
+            <div>(Score bâtiment : {{ signalement.scoreBatiment|round(2) }} % - Score logement : {{ signalement.scoreLogement|round(2) }} %)</div>
+        {% endif %}
         <a
             href="https://documentation.histologe.beta.gouv.fr/partenaires/premiers-pas-sur-histologe/presentation-de-linterface#score-de-criticite-et-prequalification-comment-ca-marche"
             target="_blank" rel="noreferrer noopener"
             title="En savoir plus - Ouvre une nouvelle fenêtre">En savoir plus</a>
-        <div>Criticité du signalement : {{ signalement.score|round(2) }} %</div>
-        {% if createdFromDraft %}
-            <div>(Score bâtiment : {{ signalement.scoreBatiment|round(2) }} % - Score logement : {{ signalement.scoreLogement|round(2) }} %)</div>
-        {% endif %}
     </div>
 
     <div class="fr-col-12 fr-col-md-6">
