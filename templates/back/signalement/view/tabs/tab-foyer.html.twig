@@ -16,16 +16,4 @@
 <hr class="fr-mt-3w fr-hr">
 
 {% include 'back/signalement/view/information/information-logement.html.twig' %}
-
-<hr class="fr-mt-3w fr-hr">
-
-{% if not signalement.profileDeclarant or 
-    (signalement.profileDeclarant is not same as enum('App\\Entity\\Enum\\ProfileDeclarant').BAILLEUR_OCCUPANT and
-    signalement.profileDeclarant is not same as enum('App\\Entity\\Enum\\ProfileDeclarant').BAILLEUR) %}
-{% include 'back/signalement/view/information/information-bailleur.html.twig' %}
-
-<hr class="fr-mt-3w fr-hr">
-{% endif %}
-
-{% include 'back/signalement/view/information/information-procedure.html.twig' %}
 </div>
