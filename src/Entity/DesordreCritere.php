@@ -42,7 +42,7 @@ class DesordreCritere
     #[ORM\OneToMany(mappedBy: 'desordreCritere', targetEntity: DesordrePrecision::class, orphanRemoval: true)]
     private Collection $desordrePrecisions;
 
-    #[ORM\ManyToMany(targetEntity: Signalement::class, inversedBy: 'desordreCriteres')]
+    #[ORM\ManyToMany(targetEntity: Signalement::class, mappedBy: 'desordreCriteres')]
     private Collection $signalement;
 
     public function __construct()
@@ -164,21 +164,5 @@ class DesordreCritere
     public function getSignalement(): Collection
     {
         return $this->signalement;
-    }
-
-    public function addSignalement(Signalement $signalement): self
-    {
-        if (!$this->signalement->contains($signalement)) {
-            $this->signalement->add($signalement);
-        }
-
-        return $this;
-    }
-
-    public function removeSignalement(Signalement $signalement): self
-    {
-        $this->signalement->removeElement($signalement);
-
-        return $this;
     }
 }

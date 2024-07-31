@@ -20,4 +20,16 @@ class DesordreCritereRepository extends ServiceEntityRepository
     {
         parent::__construct($registry, DesordreCritere::class);
     }
+
+    public function findAllByZoneIndexedBySlug(string $zone): array
+    {
+        $qb = $this->createQueryBuilder('d')
+            ->select('d', 'c', 'p')
+            ->leftJoin('d.desordreCategorie', 'c')
+            ->leftJoin('d.desordrePrecisions', 'p')
+            ->where('d.zoneCategorie = :zone')
+            ->setParameter('zone', $zone);
+
+        return $qb->indexBy('d', 'd.slugCritere')->getQuery()->getResult();
+    }
 }

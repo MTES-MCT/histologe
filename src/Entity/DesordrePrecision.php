@@ -44,7 +44,7 @@ class DesordrePrecision
     #[ORM\Column(length: 255)]
     private ?string $desordrePrecisionSlug = null;
 
-    #[ORM\ManyToMany(targetEntity: Signalement::class, inversedBy: 'desordrePrecisions')]
+    #[ORM\ManyToMany(targetEntity: Signalement::class, mappedBy: 'desordrePrecisions')]
     private Collection $signalement;
 
     public function __construct()
@@ -159,21 +159,5 @@ class DesordrePrecision
     public function getSignalement(): Collection
     {
         return $this->signalement;
-    }
-
-    public function addSignalement(Signalement $signalement): self
-    {
-        if (!$this->signalement->contains($signalement)) {
-            $this->signalement->add($signalement);
-        }
-
-        return $this;
-    }
-
-    public function removeSignalement(Signalement $signalement): self
-    {
-        $this->signalement->removeElement($signalement);
-
-        return $this;
     }
 }

@@ -165,6 +165,7 @@ class SignalementBuilder
     private function processDesordresByZone(string $zone)
     {
         $categoryDisorders = $this->signalementDraftRequest->getCategorieDisorders();
+        $desordreCriteresBySlug = $this->desordreCritereRepository->findAllByZoneIndexedBySlug($zone);
         if (isset($categoryDisorders[$zone])
         && \is_array($categoryDisorders[$zone])
         && !empty($categoryDisorders[$zone])) {
@@ -176,8 +177,9 @@ class SignalementBuilder
                 );
 
                 // on récupère tous les slugs des critères de cette catégorie de désordres
-                $availableCritereSlugs = $this->desordreCritereManager->getCriteresSlugsByCategorie(
-                    $categoryDisorderSlug
+                $availableCritereSlugs = array_filter(
+                    array_keys($desordreCriteresBySlug),
+                    fn ($slug) => $categoryDisorderSlug === $desordreCriteresBySlug[$slug]->getSlugCategorie()
                 );
 
                 $critereSlugDraft = $this->desordreCritereManager->getCriteresSlugsInDraft(
@@ -187,7 +189,7 @@ class SignalementBuilder
 
                 $critereToLink = null;
                 foreach ($critereSlugDraft as $slugCritere => $value) {
-                    $critereToLink = $this->desordreCritereRepository->findOneBy(['slugCritere' => $slugCritere]);
+                    $critereToLink = $desordreCriteresBySlug[$slugCritere];
                     $this->signalement->addDesordreCritere($critereToLink);
                     // on chercher les précisions qu'on peut lier
                     $precisions = $critereToLink->getDesordrePrecisions();
@@ -216,8 +218,7 @@ class SignalementBuilder
                     }
                 }
 
-                if (null !== $critereToLink
-                    && !$this->signalement->hasDesordreCategorie($critereToLink->getDesordreCategorie())) {
+                if (null !== $critereToLink) {
                     // lier la catégorie BO idoine
                     $this->signalement->addDesordreCategory($critereToLink->getDesordreCategorie());
                 }
