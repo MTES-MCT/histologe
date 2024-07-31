@@ -48,7 +48,7 @@ class AutoAffectationRuleController extends AbstractController
 
         return $this->render('back/auto-affectation-rule/index.html.twig', [
             'currentTerritory' => $currentTerritory,
-            'territories' => $territoryRepository->findAllList(),
+            'territories' => $territoryRepository->findAllWithAutoAffectationRules(),
             'autoaffectationrules' => $paginatedAutoAffectationRule,
             'total' => $totalAutoAffectationRule,
             'page' => $page,
@@ -89,7 +89,6 @@ class AutoAffectationRuleController extends AbstractController
     #[Route('/{id}/reactiverregle', name: 'back_auto_affectation_rule_reactive', methods: ['GET', 'POST'])]
     #[IsGranted('ROLE_ADMIN')]
     public function reactiveAutoAffectationRule(
-        Request $request,
         AutoAffectationRule $autoAffectationRule,
         EntityManagerInterface $entityManager
     ): Response {

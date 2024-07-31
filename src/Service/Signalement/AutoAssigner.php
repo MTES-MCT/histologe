@@ -63,6 +63,9 @@ class AutoAssigner
                 );
 
                 foreach ($partners as $partner) {
+                    if ($partner->getIsArchive()) {
+                        continue;
+                    }
                     $context = new PartnerSignalementContext($partner, $signalement);
                     if ($specification->isSatisfiedBy($context)) {
                         $assignablePartners[] = $partner;

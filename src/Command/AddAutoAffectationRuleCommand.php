@@ -251,13 +251,6 @@ class AddAutoAffectationRuleCommand extends Command
             return Command::FAILURE;
         }
 
-        $autoAffectationRule = $this->autoAffectationRuleManager->findOneBy(['territory' => $territory, 'partnerType' => $partnerType]);
-        if ($autoAffectationRule) {
-            $this->io->error('There is already a rule for this territory and this type of partner');
-
-            return Command::FAILURE;
-        }
-
         $autoAffectationRule = $this->autoAffectationRulerFactory->createInstanceFrom(
             territory : $territory,
             status : $status,

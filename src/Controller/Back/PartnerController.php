@@ -3,7 +3,6 @@
 namespace App\Controller\Back;
 
 use App\Entity\Affectation;
-use App\Entity\AutoAffectationRule;
 use App\Entity\Enum\InterventionType;
 use App\Entity\Enum\PartnerType as EnumPartnerType;
 use App\Entity\Enum\Qualification;
@@ -150,14 +149,10 @@ class PartnerController extends AbstractController
 
         $partnerAutoAffectationRules = null;
         if ($this->isGranted('ROLE_ADMIN')) {
-            $partnerAutoAffectationRules = $autoAffectationRuleRepository->findBy([
-                'territory' => $partner->getTerritory(),
-                'partnerType' => $partner->getType(),
-                'status' => AutoAffectationRule::STATUS_ACTIVE,
-                ]);
+            $partnerAutoAffectationRules = $autoAffectationRuleRepository->findForPartner($partner);
         }
 
-        return $this->renderForm('back/partner/view.html.twig', [
+        return $this->render('back/partner/view.html.twig', [
             'partner' => $partner,
             'partners' => $partnerRepository->findAllList($partner->getTerritory()),
             'last_job_date' => $lastJobEventDate,

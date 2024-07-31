@@ -36,4 +36,24 @@ class AutoAffectationRuleRepository extends ServiceEntityRepository
 
         return new Paginator($queryBuilder->getQuery(), false);
     }
+
+    public function findForPartner(Partner $partner): array
+    {
+        $territory = $partner->getTerritory();
+        $partnerType = $partner->getType();
+        $status = AutoAffectationRule::STATUS_ACTIVE;
+        $partnerToExclude = $partner->getId();
+
+        return $this->createQueryBuilder('aar')
+            ->andWhere('aar.territory = :territory')
+            ->andWhere('aar.partnerType = :partnerType')
+            ->andWhere('aar.status = :status')
+            ->andWhere('JSON_CONTAINS(aar.partnerToExclude, :partnerToExclude) = 0')
+            ->setParameter('territory', $territory)
+            ->setParameter('partnerType', $partnerType)
+            ->setParameter('status', $status)
+            ->setParameter('partnerToExclude', json_encode((string) $partnerToExclude))
+            ->getQuery()
+            ->getResult();
+    }
 }

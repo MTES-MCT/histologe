@@ -3,7 +3,6 @@
 namespace App\Specification\Affectation;
 
 use App\Entity\Partner;
-use App\Entity\Signalement;
 use App\Specification\Context\PartnerSignalementContext;
 use App\Specification\Context\SpecificationContextInterface;
 use App\Specification\SpecificationInterface;

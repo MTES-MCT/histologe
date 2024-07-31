@@ -53,7 +53,7 @@ class AddAutoAffectationRuleCommandTest extends KernelTestCase
 
         $commandTester = new CommandTester($command);
 
-        $territory = 44;
+        $territory = 440;
         $partnerType = 'EPCI';
         $status = 'ACTIVE';
         $profileDeclarant = 'occupant';
@@ -75,6 +75,6 @@ class AddAutoAffectationRuleCommandTest extends KernelTestCase
         ]);
 
         $output = $commandTester->getDisplay();
-        $this->assertStringContainsString('There is already a rule for this territory and this type of partner', $output);
+        $this->assertStringContainsString('Territory does not exists', $output);
     }
 }
