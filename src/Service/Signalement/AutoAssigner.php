@@ -45,39 +45,40 @@ class AutoAssigner
         $autoAffectationRules = $signalement->getTerritory()->getAutoAffectationRules()->filter(function (AutoAffectationRule $autoAffectationRule) {
             return AutoAffectationRule::STATUS_ACTIVE === $autoAffectationRule->getStatus();
         });
-        if (!$autoAffectationRules->isEmpty()) {
-            $adminEmail = $this->parameterBag->get('user_system_email');
-            $adminUser = $this->userManager->findOneBy(['email' => $adminEmail]);
-            $partners = $signalement->getTerritory()->getPartners();
-            $assignablePartners = [];
+        if ($autoAffectationRules->isEmpty()) {
+            return;
+        }
+        $adminEmail = $this->parameterBag->get('user_system_email');
+        $adminUser = $this->userManager->findOneBy(['email' => $adminEmail]);
+        $partners = $signalement->getTerritory()->getPartners();
+        $assignablePartners = [];
 
-            /** @var AutoAffectationRule $rule */
-            foreach ($autoAffectationRules as $rule) {
-                $specification = new AndSpecification(
-                    new ProfilDeclarantSpecification($rule->getProfileDeclarant()),
-                    new PartnerTypeSpecification($rule->getPartnerType()),
-                    new CodeInseeSpecification($rule->getInseeToInclude(), $rule->getInseeToExclude()),
-                    new PartnerExcludeSpecification($rule->getPartnerToExclude()),
-                    new ParcSpecification($rule->getParc()),
-                    new AllocataireSpecification($rule->getAllocataire()),
-                );
+        /** @var AutoAffectationRule $rule */
+        foreach ($autoAffectationRules as $rule) {
+            $specification = new AndSpecification(
+                new ProfilDeclarantSpecification($rule->getProfileDeclarant()),
+                new PartnerTypeSpecification($rule->getPartnerType()),
+                new CodeInseeSpecification($rule->getInseeToInclude(), $rule->getInseeToExclude()),
+                new PartnerExcludeSpecification($rule->getPartnerToExclude()),
+                new ParcSpecification($rule->getParc()),
+                new AllocataireSpecification($rule->getAllocataire()),
+            );
 
-                foreach ($partners as $partner) {
-                    if ($partner->getIsArchive()) {
-                        continue;
-                    }
-                    $context = new PartnerSignalementContext($partner, $signalement);
-                    if ($specification->isSatisfiedBy($context)) {
-                        $assignablePartners[] = $partner;
-                    }
+            foreach ($partners as $partner) {
+                if ($partner->getIsArchive()) {
+                    continue;
+                }
+                $context = new PartnerSignalementContext($partner, $signalement);
+                if ($specification->isSatisfiedBy($context)) {
+                    $assignablePartners[] = $partner;
                 }
             }
+        }
 
-            if (!empty($assignablePartners)) {
-                $this->activateSignalement($signalement);
-                $this->createSuivi($signalement, $adminUser);
-                $this->assignPartners($signalement, $adminUser, $assignablePartners);
-            }
+        if (!empty($assignablePartners)) {
+            $this->activateSignalement($signalement);
+            $this->createSuivi($signalement, $adminUser);
+            $this->assignPartners($signalement, $adminUser, $assignablePartners);
         }
     }
 
