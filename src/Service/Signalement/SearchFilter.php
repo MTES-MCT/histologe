@@ -270,12 +270,13 @@ class SearchFilter
                 ->setParameter('affectations', $filters['affectations']);
         }
         if (!empty($filters['partners'])) {
+            $qb->leftJoin('s.affectations', 'afilt');
             if (\in_array('AUCUN', $filters['partners'])) {
-                $qb->andWhere('a.partner IS NULL');
+                $qb->andWhere('afilt.partner IS NULL');
             } else {
-                $qb->andWhere('a.partner IN (:partners)');
+                $qb->andWhere('afilt.partner IN (:partners)');
                 if (!empty($filters['affectations'])) {
-                    $qb->andWhere('a.statut IN (:affectations)')
+                    $qb->andWhere('afilt.statut IN (:affectations)')
                     ->setParameter('affectations', $filters['affectations']);
                 }
                 $qb->setParameter('partners', $filters['partners']);
