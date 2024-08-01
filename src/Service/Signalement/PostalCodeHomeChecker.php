@@ -14,8 +14,10 @@ class PostalCodeHomeChecker
 
     public function isActive(string $postalCode, ?string $inseeCode = null): bool
     {
+        // Si on a un code Insee, on vérifie en priorité celui-ci car il indique le vrai territoire
+        $codeToCheck = $inseeCode ?? $postalCode;
         $territoryItem = $this->territoryRepository->findOneBy([
-            'zip' => ZipcodeProvider::getZipCode($postalCode),
+            'zip' => ZipcodeProvider::getZipCode($codeToCheck),
             'isActive' => 1,
         ]);
 
