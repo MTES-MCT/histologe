@@ -125,6 +125,7 @@ class AutoAffectationRuleType extends AbstractType
                 'help_attr' => [
                     'class' => 'fr-hint-text',
                 ],
+                'empty_data' => '',
             ])
             ->add('inseeToExclude', TextType::class, [
                 'label' => 'Codes insee à exclure (facultatif)',
@@ -156,7 +157,7 @@ class AutoAffectationRuleType extends AbstractType
             },
             function ($tagsAsString) {
                 // transform the string back to an array
-                $pattern = '/(\s*,*\s*)*,+(\s*,*\s*)*/';
+                $pattern = '/\s*,\s*/';
 
                 return null !== $tagsAsString ? preg_split($pattern, $tagsAsString, -1, \PREG_SPLIT_NO_EMPTY) : [];
             }
@@ -168,7 +169,7 @@ class AutoAffectationRuleType extends AbstractType
             },
             function ($tagsAsString) {
                 // transform the string back to an array
-                $pattern = '/(\s*,*\s*)*,+(\s*,*\s*)*/';
+                $pattern = '/\s*,\s*/';
 
                 return null !== $tagsAsString ? preg_split($pattern, $tagsAsString, -1, \PREG_SPLIT_NO_EMPTY) : [];
             }
