@@ -257,11 +257,27 @@ small {
 
 /*COLOR*/
 .fr-background--white {
-    background: white;
+    background-color: white;
 }
 
 .fr-background--blue-france {
     background-color: var(--border-plain-blue-france);
+}
+
+.fr-background-contrast--blue-france {
+    background-color: var(--background-contrast-blue-france);
+}
+
+.fr-background-alt--grey {
+    background-color: var(--background-alt-grey);
+}
+
+.fr-background-alt--blue-france {
+    background-color: var(--background-alt-blue-france);
+}
+
+.fr-background-contrast--orange-terre-battue, .fr-table--bordered tbody tr.fr-background-contrast--orange-terre-battue {
+    background-color: var(--background-contrast-orange-terre-battue);
 }
 
 a[href].fr-btn--orange {
@@ -290,22 +306,6 @@ button.fr-btn--success,a[href].fr-btn--success {
     &:hover {
         background-color: var(--success-425-625-hover);
     }
-}
-
-.fr-background-contrast--blue-france {
-    background-color: var(--background-contrast-blue-france);
-}
-
-.fr-background-alt--grey {
-    background-color: var(--background-alt-grey);
-}
-
-.fr-background-alt--blue-france {
-    background-color: var(--background-alt-blue-france);
-}
-
-.fr-background-contrast--orange-terre-battue, .fr-table--bordered tbody tr.fr-background-contrast--orange-terre-battue {
-    background-color: var(--background-contrast-orange-terre-battue);
 }
 
 .fr-text-label--red-marianne {
@@ -839,4 +839,8 @@ a.photo-preview {
         mask-image: none;
         width: 0;
     }
+}
+
+.fr-modal__content .tox .tox-editor-header {
+    z-index: 1;
 }
