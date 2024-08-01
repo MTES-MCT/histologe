@@ -10,6 +10,7 @@ use App\Entity\Affectation;
 use App\Entity\Enum\DesordreCritereZone;
 use App\Entity\Enum\Qualification;
 use App\Entity\Enum\SignalementStatus;
+use App\Entity\JobEvent;
 use App\Entity\Partner;
 use App\Entity\Signalement;
 use App\Entity\Suivi;
@@ -1319,6 +1320,30 @@ class SignalementRepository extends ServiceEntityRepository
             ->where('s.isLogementSocial = 1')
             ->andWhere('s.bailleur IS NULL')
             ->andWhere('s.nomProprio IS NOT NULL')
+            ->getQuery()
+            ->getResult();
+    }
+
+    public function findSynchroIdossErrors(): array
+    {
+        $subQuery = $this->getEntityManager()->createQueryBuilder()
+        ->select('MAX(j2.createdAt)')
+        ->from(JobEvent::class, 'j2')
+        ->where('j2.signalementId = s.id')
+        ->andWhere('j2.service = :service')
+        ->andWhere('j2.action = :action')
+        ->andWhere('j2.status = :status')
+        ->getDQL();
+
+        return $this->createQueryBuilder('s')
+            ->select('s.id', 's.uuid', 's.reference', 'j.response', 'j.createdAt', 'j.codeStatus', 'j.partnerId')
+            ->innerJoin(JobEvent::class, 'j', 'WITH', 's.id = j.signalementId AND j.createdAt = ('.$subQuery.')')
+            ->andWhere("s.synchroData IS NULL OR (JSON_CONTAINS_PATH(s.synchroData, 'one', '$.".IdossService::TYPE_SERVICE."') = 0)")
+            ->setParameter('service', IdossService::TYPE_SERVICE)
+            ->setParameter('action', IdossService::ACTION_PUSH_DOSSIER)
+            ->setParameter('status', JobEvent::STATUS_FAILED)
+            ->addOrderBy('j.createdAt', 'DESC')
+            ->indexBy('s', 's.id')
             ->getQuery()
             ->getResult();
     }

@@ -14,6 +14,7 @@ final class DossierMessage implements DossierMessageInterface
     private int $signalementId;
     private int $partnerId;
     private ?string $signalementUuid;
+    private string $reference;
     private string $dateDepotSignalement;
     private array $declarant;
     private array $occupant;
@@ -35,6 +36,7 @@ final class DossierMessage implements DossierMessageInterface
     {
         $this->signalementId = $affectation->getSignalement()->getId();
         $this->signalementUuid = $affectation->getSignalement()->getUuid();
+        $this->reference = $affectation->getSignalement()->getReference();
         $this->partnerId = $affectation->getPartner()->getId();
         $this->dateDepotSignalement = $affectation->getSignalement()->getCreatedAt()->format('m-d-Y');
 
@@ -113,6 +115,11 @@ final class DossierMessage implements DossierMessageInterface
     public function getSignalementUuid(): ?string
     {
         return $this->signalementUuid;
+    }
+
+    public function getReference(): string
+    {
+        return $this->reference;
     }
 
     public function getDateDepotSignalement(): string

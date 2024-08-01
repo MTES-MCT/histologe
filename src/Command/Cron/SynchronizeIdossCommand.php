@@ -63,7 +63,7 @@ class SynchronizeIdossCommand extends AbstractCronCommand
         $nbStatusUpdated = 0;
         foreach ($this->partners as $partner) {
             $jobEvent = $this->idossService->listStatuts($partner);
-            $nbStatusUpdated += $this->updateStatusFromJobEvent($jobEvent);
+            $nbStatusUpdated += $this->updateStatusFromJobEvent($jobEvent, $partner);
         }
         $this->entityManager->flush();
 
@@ -98,24 +98,24 @@ class SynchronizeIdossCommand extends AbstractCronCommand
         return Command::SUCCESS;
     }
 
-    private function updateStatusFromJobEvent(JobEvent $jobEvent): int
+    private function updateStatusFromJobEvent(JobEvent $jobEvent, Partner $partner): int
     {
         $nbStatusUpdated = 0;
         if (JobEvent::STATUS_SUCCESS === $jobEvent->getStatus()) {
             $items = json_decode($jobEvent->getResponse(), true);
             foreach ($items['statuts'] as $item) {
-                $signalement = $this->signalementRepository->findOneBy(['uuid' => $item['uuid']]);
+                $signalement = $this->signalementRepository->findOneBy(['reference' => $item['uuid'], 'territory' => $partner->getTerritory()]);
                 if (!$signalement) {
-                    $this->errors[] = sprintf('Signalement "%s" not found', $item['uuid']);
+                    $this->errors[] = sprintf('Signalement "%s" not found on territory "%s"', $item['uuid'], $partner->getTerritory()->getZip());
                     continue;
                 }
                 $idossData = $signalement->getSynchroData(IdossService::TYPE_SERVICE);
                 if (!$idossData) {
-                    $this->errors[] = sprintf('Signalement "%s" has no synchro idoss data', $item['uuid']);
+                    $this->errors[] = sprintf('Signalement "%s" has no synchro idoss data on territory "%s"', $item['uuid'], $partner->getTerritory()->getZip());
                     continue;
                 }
                 if ($idossData['id'] != $item['id']) {
-                    $this->errors[] = sprintf('Signalement "%s" has not the expected idoss id "%s"', $item['uuid'], $item['id']);
+                    $this->errors[] = sprintf('Signalement "%s" has not the expected idoss id "%s" on territory "%s"', $item['uuid'], $item['id'], $partner->getTerritory()->getZip());
                     continue;
                 }
                 $idossData['updated_at'] = $jobEvent->getCreatedAt()->format('Y-m-d H:i:s');

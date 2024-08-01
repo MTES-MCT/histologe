@@ -30,7 +30,7 @@ class IdossService
         self::STATUS_IN_PROGRESS => Affectation::STATUS_ACCEPTED,
         self::STATUS_CLOSED => Affectation::STATUS_CLOSED,
     ];
-    private const ACTION_PUSH_DOSSIER = 'push_dossier';
+    public const ACTION_PUSH_DOSSIER = 'push_dossier';
     private const ACTION_UPLOAD_FILES = 'upload_files';
     private const ACTION_LIST_STATUTS = 'list_statuts';
     private const AUTHENTICATE_ENDPOINT = '/api/Utilisateur/authentification';
@@ -156,7 +156,7 @@ class IdossService
         $payload = [
             'user' => $this->params->get('idoss_username'),
             'Dossier' => [
-                'UUIDSignalement' => $dossierMessage->getSignalementUuid(),
+                'UUIDSignalement' => $dossierMessage->getReference(),
                 'dateDepotSignalement' => $dossierMessage->getDateDepotSignalement(),
                 'declarant' => $dossierMessage->getDeclarant(),
                 'occupant' => $dossierMessage->getOccupant(),
@@ -201,7 +201,7 @@ class IdossService
     {
         $payload = [
             'id' => $signalement->getSynchroData(self::TYPE_SERVICE)['id'],
-            'uuid' => $signalement->getUuid(),
+            'uuid' => $signalement->getReference(),
         ];
         $dataparts = [];
         foreach ($files as $file) {
