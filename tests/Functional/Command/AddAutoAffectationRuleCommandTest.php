@@ -23,6 +23,7 @@ class AddAutoAffectationRuleCommandTest extends KernelTestCase
         $profileDeclarant = 'occupant';
         $inseeToInclude = 'partner_list';
         $inseeToExclude = '44850,44600';
+        $partnerToExclude = '';
         $parc = 'public';
         $allocataire = 'caf';
         $commandTester->execute([
@@ -32,6 +33,7 @@ class AddAutoAffectationRuleCommandTest extends KernelTestCase
             'profileDeclarant' => $profileDeclarant,
             'inseeToInclude' => $inseeToInclude,
             'inseeToExclude' => $inseeToExclude,
+            'partnerToExclude' => $partnerToExclude,
             'parc' => $parc,
             'allocataire' => $allocataire,
         ]);
@@ -51,12 +53,13 @@ class AddAutoAffectationRuleCommandTest extends KernelTestCase
 
         $commandTester = new CommandTester($command);
 
-        $territory = 44;
+        $territory = 440;
         $partnerType = 'EPCI';
         $status = 'ACTIVE';
         $profileDeclarant = 'occupant';
         $inseeToInclude = 'partner_list';
         $inseeToExclude = '44850,44600';
+        $partnerToExclude = '';
         $parc = 'public';
         $allocataire = 'caf';
         $commandTester->execute([
@@ -66,11 +69,12 @@ class AddAutoAffectationRuleCommandTest extends KernelTestCase
             'profileDeclarant' => $profileDeclarant,
             'inseeToInclude' => $inseeToInclude,
             'inseeToExclude' => $inseeToExclude,
+            'partnerToExclude' => $partnerToExclude,
             'parc' => $parc,
             'allocataire' => $allocataire,
         ]);
 
         $output = $commandTester->getDisplay();
-        $this->assertStringContainsString('There is already a rule for this territory and this type of partner', $output);
+        $this->assertStringContainsString('Territory does not exists', $output);
     }
 }

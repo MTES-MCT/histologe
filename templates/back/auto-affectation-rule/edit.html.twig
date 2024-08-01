@@ -1,0 +1,22 @@
+{% extends 'back/base_bo.html.twig' %}
+
+{% block title %}Règle d'auto-affectation{% endblock %}
+
+{% block content %}
+    <section class="fr-col-12 fr-p-5v">
+        {% if create %}
+            <h2 class="fr-h2 fr-mb-0"> Ajouter une règle d'auto-affectation </h2>
+            <span>Remplissez le formulaire ci-dessous pour créer une règle d'auto-affectation.</span><br>                
+        {% else %}
+            <h2 class="fr-h2 fr-mb-0"> Modifier la règle d'auto-affectation : {{ autoAffectationRule.description }} </h2>
+        {% endif %}
+        <span>Tous les champs sont obligatoires, sauf mention contraire.</span>
+        <div class="fr-pt-5v">
+            {{ include('back/auto-affectation-rule/_form.html.twig') }}
+        </div>
+    </section>
+{% endblock %}
+{% block javascripts %}
+    {{ encore_entry_script_tags('app') }}
+{% endblock %}
+

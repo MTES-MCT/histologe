@@ -3,6 +3,7 @@
 namespace App\Entity;
 
 use App\Entity\Enum\PartnerType;
+use App\Entity\Enum\ProfileDeclarant;
 use App\Repository\AutoAffectationRuleRepository;
 use App\Validator as AppAssert;
 use Doctrine\ORM\Mapping as ORM;
@@ -21,40 +22,46 @@ class AutoAffectationRule
 
     #[ORM\ManyToOne(targetEntity: Territory::class, inversedBy: 'autoAffectationRules')]
     #[ORM\JoinColumn()]
-    #[Assert\NotBlank]
+    #[Assert\NotBlank(message: 'Merci de choisir un territoire.')]
     private Territory $territory;
 
     #[ORM\Column(type: 'string', options: ['comment' => 'Value possible ACTIVE or ARCHIVED'])]
-    #[Assert\NotBlank]
+    #[Assert\NotBlank(message: 'Merci de choisir un statut.')]
     #[Assert\Choice(choices: [self::STATUS_ACTIVE, self::STATUS_ARCHIVED], message: 'Choisissez une option valide: ACTIVE or ARCHIVED')]
-    private string $status;
+    private string $status = self::STATUS_ACTIVE;
 
     #[ORM\Column(type: 'string', enumType: PartnerType::class, options: ['comment' => 'Value possible enum PartnerType'])]
-    #[Assert\NotBlank]
+    #[Assert\NotBlank(message: 'Merci de choisir un type de partenaire.')]
     #[AppAssert\ValidPartnerType]
     private PartnerType $partnerType;
 
     #[ORM\Column(length: 255, type: 'string', options: ['comment' => 'Value possible enum ProfileDeclarant or all, tiers or occupant'])]
-    #[Assert\NotBlank]
+    #[Assert\NotBlank(message: 'Merci de choisir un profil déclarant.')]
     #[Assert\Length(max: 255)]
     #[AppAssert\ValidProfileDeclarant()]
     private string $profileDeclarant;
 
     #[ORM\Column(length: 255, options: ['comment' => 'Value possible all, partner_list or an array of code insee'])]
-    #[Assert\NotBlank]
+    #[Assert\NotBlank(message: 'Merci de renseigner les code insee des communes concernées.')]
     #[Assert\Length(max: 255)]
+    #[AppAssert\InseeToInclude()]
     private string $inseeToInclude;
 
     #[ORM\Column(nullable: true, options: ['comment' => 'Value possible null or an array of code insee'])]
+    #[AppAssert\InseeToExclude()]
     private ?array $inseeToExclude = null;
 
+    #[ORM\Column(nullable: true, options: ['comment' => 'Value possible null or an array of partner ids'])]
+    #[AppAssert\PartnerToExclude()]
+    private ?array $partnerToExclude = null;
+
     #[ORM\Column(length: 32, options: ['comment' => 'Value possible all, non_renseigne, prive or public'])]
-    #[Assert\NotBlank]
+    #[Assert\NotBlank(message: 'Merci de renseigner le type de parc.')]
     #[Assert\Choice(choices: ['all', 'prive', 'public', 'non_renseigne'], message: 'Choisissez une option valide: all, non_renseigne, prive ou public')]
     private string $parc;
 
     #[ORM\Column(length: 32, options: ['comment' => 'Value possible all, non, oui, caf or msa'])]
-    #[Assert\NotBlank]
+    #[Assert\NotBlank(message: 'Merci de renseigner le profil d\'allocataire.')]
     #[Assert\Choice(choices: ['all', 'non', 'oui', 'caf', 'msa'], message: 'Choisissez une option valide: all, non, oui, caf ou msa')]
     private string $allocataire;
 
@@ -142,6 +149,18 @@ class AutoAffectationRule
         return $this;
     }
 
+    public function getPartnerToExclude(): ?array
+    {
+        return $this->partnerToExclude;
+    }
+
+    public function setPartnerToExclude(?array $partnerToExclude): self
+    {
+        $this->partnerToExclude = $partnerToExclude;
+
+        return $this;
+    }
+
     public function getParc(): string
     {
         return $this->parc;
@@ -164,5 +183,88 @@ class AutoAffectationRule
         $this->allocataire = $allocataire;
 
         return $this;
+    }
+
+    public function getDescription(bool $isShort = true): string
+    {
+        $description = 'Règle d\'auto-affectation pour les partenaires '.$this->getPartnerType()->label();
+        if (!$isShort && $this->getPartnerToExclude()) {
+            $description .= ' (à l\'exclusion des partenaires '.implode(',', $this->getPartnerToExclude()).')';
+        }
+        $description .= ' du territoire '.$this->getTerritory()->getName();
+        if ($isShort) {
+            return $description;
+        }
+
+        $description .= ' concernant ';
+        switch ($this->getParc()) {
+            case 'prive':
+                $description .= 'les logements du parc privé.';
+                break;
+            case 'public':
+                $description .= 'les logements du parc public.';
+                break;
+            case 'non_renseigne':
+                $description .= 'les logements de parc inconnu.';
+                break;
+            default:
+                $description .= 'tous les logements.';
+                break;
+        }
+        $description .= ' Cette règle concerne les signalements faits par ';
+        switch ($this->getProfileDeclarant()) {
+            case 'all':
+                $description .= 'tous profils de déclarant.';
+                break;
+            case 'tiers':
+                $description .= 'un tiers.';
+                break;
+            case 'occupant':
+                $description .= 'un occupant.';
+                break;
+            default:
+                $description .= ProfileDeclarant::tryFrom($this->getProfileDeclarant())?->label().'.';
+                break;
+        }
+        $description .= ' Elle concerne les foyers ';
+        switch ($this->getAllocataire()) {
+            case 'oui':
+                $description .= 'allocataires.';
+                break;
+            case 'non':
+                $description .= 'non-allocataires.';
+                break;
+            case 'caf':
+                $description .= 'allocataires à la CAF.';
+                break;
+            case 'msa':
+                $description .= 'allocataires à la MSA.';
+                break;
+            default:
+                $description .= 'allocataires et non-allocataires.';
+                break;
+        }
+
+        $description .= ' Elle s\'applique ';
+        switch ($this->getInseeToInclude()) {
+            case 'all':
+                $description .= 'à tous les logements du territoire';
+                break;
+            case 'partner_list':
+                $description .= 'aux logements situés dans le périmètre du partenaire (codes insee)';
+                break;
+            default:
+                $description .= 'aux logements situés dans les communes aux codes insee suivants : '.$this->getInseeToInclude();
+                break;
+        }
+        if ($this->getInseeToExclude()) {
+            $description .= ' à l\'exclusion des logements situés dans les communes aux codes insee suivants : '
+            .implode(',', $this->getInseeToExclude());
+        } else {
+            $description .= '.';
+        }
+        $description .= ' (Règle '.strtolower($this->getStatus()).')';
+
+        return $description;
     }
 }

@@ -3,6 +3,7 @@
 namespace App\Tests;
 
 use App\Entity\Affectation;
+use App\Entity\AutoAffectationRule;
 use App\Entity\Critere;
 use App\Entity\Criticite;
 use App\Entity\Enum\InterventionType;
@@ -485,5 +486,19 @@ trait FixturesHelper
             'informations_complementaires_situation_occupants_beneficiaire_fsl' => 'non',
             'informations_complementaires_situation_occupants_beneficiaire_rsa' => 'non',
         ];
+    }
+
+    public function getAutoAffectationRule(
+    ): AutoAffectationRule {
+        return (new AutoAffectationRule())
+            ->setTerritory($this->getTerritory())
+            ->setPartnerType(PartnerType::CAF_MSA)
+            ->setProfileDeclarant('all')
+            ->setParc('prive')
+            ->setAllocataire('oui')
+            ->setInseeToInclude('partner_list')
+            ->setInseeToExclude(null)
+            ->setPartnerToExclude([])
+            ->setStatus(AutoAffectationRule::STATUS_ACTIVE);
     }
 }

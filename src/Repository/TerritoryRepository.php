@@ -58,4 +58,14 @@ class TerritoryRepository extends ServiceEntityRepository
 
         return $qb->getQuery()->getSingleScalarResult();
     }
+
+    public function findAllWithAutoAffectationRules(): array
+    {
+        $qb = $this->createQueryBuilder('t')
+            ->innerJoin('t.autoAffectationRules', 'aar')
+            ->addSelect('aar')
+            ->orderBy('t.zip', 'ASC');
+
+        return $qb->getQuery()->getResult();
+    }
 }
