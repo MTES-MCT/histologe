@@ -88,7 +88,7 @@ document?.querySelectorAll('.signalement-tag-add')?.forEach(element => {
         etiquette.append(etiquetteIcon);
 
         const containerNoTag = document.querySelector('#no-tag-on-this-signalement');
-        containerNoTag.classList?.add('fr-hidden')
+        containerNoTag?.classList?.add('fr-hidden')
 
         refreshHiddenInput();
     })

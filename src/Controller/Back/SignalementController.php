@@ -287,9 +287,13 @@ class SignalementController extends AbstractController
             }
             if (!empty($tagIds)) {
                 foreach ($tagList as $tagId) {
-                    $tag = $tagRepository->find($tagId);
-                    if ($tag->getTerritory() == $signalement->getTerritory() && !$tag->getIsArchive()) {
-                        $signalement->addTag($tag);
+                    $tag = $tagRepository->findBy([
+                        'id' => $tagId,
+                        'territory' => $signalement->getTerritory(),
+                        'isArchive' => 0,
+                    ]);
+                    if (!empty($tag)) {
+                        $signalement->addTag($tag[0]);
                     }
                 }
             }

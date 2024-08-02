@@ -44,7 +44,9 @@ class TagRepository extends ServiceEntityRepository
         ?int $page = 1,
     ): Paginator {
         $qb = $this->createQueryBuilder('t');
-        $qb->andWhere('t.isArchive != 1')
+        $qb->select('t', 's')
+            ->leftJoin('t.signalement', 's')
+            ->andWhere('t.isArchive != 1')
             ->orderBy('t.label', 'ASC')
             ->indexBy('t', 't.id');
         if ($territory) {
@@ -60,6 +62,6 @@ class TagRepository extends ServiceEntityRepository
         $firstResult = ($page - 1) * $maxResult;
         $qb->setFirstResult($firstResult)->setMaxResults($maxResult);
 
-        return new Paginator($qb->getQuery(), false);
+        return new Paginator($qb->getQuery(), true);
     }
 }

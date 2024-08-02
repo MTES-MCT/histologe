@@ -69,7 +69,6 @@ class TagController extends AbstractController
     #[Route('/ajouter', name: 'back_tags_add', methods: 'POST')]
     public function addTag(
         Request $request,
-        TagManager $tagManager,
         EntityManagerInterface $entityManager,
         TagRepository $tagRepository,
         TerritoryRepository $territoryRepository,
