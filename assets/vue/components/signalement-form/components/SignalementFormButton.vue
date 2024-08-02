@@ -36,8 +36,14 @@ export default defineComponent({
     },
     type: { type: String as PropType<'button' | 'submit' | 'reset' | undefined>, default: 'button' },
     customCss: { type: String, default: '' },
-    ariaControls: { type: String, default: '' },
-    clickEvent: Function
+    ariaControls: { type: String, default: undefined },
+    clickEvent: Function,
+    // les propriétés suivantes ne sont pas utilisées,
+    // mais si on ne les met pas, elles apparaissent dans le DOM
+    // et ça soulève des erreurs W3C
+    hasError: { type: Boolean, default: undefined },
+    access_name: { type: String, default: undefined },
+    access_autocomplete: { type: String, default: undefined }
   },
   data () {
     return {
