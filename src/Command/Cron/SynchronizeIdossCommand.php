@@ -167,7 +167,7 @@ class SynchronizeIdossCommand extends AbstractCronCommand
             $signalements = $this->signalementRepository->findSignalementsWithFilesToUploadOnIdoss($partner);
             foreach ($signalements as $signalement) {
                 $jobEvent = $this->idossService->uploadFiles($partner, $signalement);
-                if (JobEvent::STATUS_FAILED === $jobEvent->getStatus()) {
+                if ($jobEvent && JobEvent::STATUS_FAILED === $jobEvent->getStatus()) {
                     $this->errors[] = sprintf('Error while uploading files for signalement "%s"', $signalement->getUuid());
                     continue;
                 }

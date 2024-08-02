@@ -74,7 +74,7 @@ class IdossService
         return $jobEvent;
     }
 
-    public function uploadFiles(Partner $partner, Signalement $signalement): JobEvent
+    public function uploadFiles(Partner $partner, Signalement $signalement): JobEvent|false
     {
         $files = [];
         $filesJson = [];
@@ -84,6 +84,9 @@ class IdossService
             }
             $files[] = $file;
             $filesJson[] = ['id' => $file->getId(), 'filename' => $file->getFilename()];
+        }
+        if (!\count($files)) {
+            return false;
         }
 
         $url = $partner->getIdossUrl().self::UPLOAD_FILES_ENDPOINT;
