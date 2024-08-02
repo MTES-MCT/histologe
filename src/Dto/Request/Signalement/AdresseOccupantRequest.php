@@ -31,7 +31,7 @@ class AdresseOccupantRequest implements RequestInterface
         #[Assert\Length(max: 50, maxMessage: 'La latitude ne peut pas dépasser {{ limit }} caractères.')]
         #[Assert\Regex(pattern: '/^[-+]?([1-8]?\d(\.\d+)?|90(\.0+)?)$/', message: 'La latitude doit être un nombre décimal.')]
         private readonly ?string $geolocLat = null,
-        #[Assert\Regex(pattern: '/^[0-9]{5}$/', message: 'Le code insee doit être composé de 5 chiffres.')]
+        #[Assert\Regex(pattern: '/^[0-9][0-9A-Za-z][0-9]{3}$/', message: 'Le code insee doit être composé de 5 caractères.')]
         private readonly ?string $insee = null,
         #[Assert\Choice(choices: ['1'], message: 'Le champ "manual" est incorrect.')]
         private readonly ?string $manual = null,

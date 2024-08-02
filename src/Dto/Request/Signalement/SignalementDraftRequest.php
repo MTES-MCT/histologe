@@ -52,7 +52,7 @@ class SignalementDraftRequest
     #[Assert\Length(max: 100, maxMessage: 'La ville ne peut pas dépasser {{ limit }} caractères.')]
     private ?string $adresseLogementAdresseDetailCommune = null;
     #[Assert\NotBlank(message: 'Merci de saisir un code INSEE.')]
-    #[Assert\Regex(pattern: '/^[0-9]{5}$/', message: 'Le code insee doit être composé de 5 chiffres.')]
+    #[Assert\Regex(pattern: '/^[0-9][0-9A-Za-z][0-9]{3}$/', message: 'Le code insee doit être composé de 5 caractères.')]
     private ?string $adresseLogementAdresseDetailInsee = null;
     #[Assert\Length(max: 50, maxMessage: 'La latitude ne peut pas dépasser {{ limit }} caractères.')]
     #[Assert\Regex(
