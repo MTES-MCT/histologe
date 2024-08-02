@@ -98,9 +98,9 @@ export default defineComponent({
     // les propriétés suivantes ne sont pas utilisées,
     // mais si on ne les met pas, elles apparaissent dans le DOM
     // et ça soulève des erreurs W3C
-    hasError: { type: Boolean, default: false },
-    access_name: { type: String, default: '' },
-    access_autocomplete: { type: String, default: '' },
+    hasError: { type: Boolean, default: undefined },
+    access_name: { type: String, default: undefined },
+    access_autocomplete: { type: String, default: undefined },
     clickEvent: Function
   },
   data () {
