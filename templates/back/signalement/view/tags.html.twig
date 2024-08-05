@@ -82,7 +82,7 @@
                         </div>
                         <form method="POST" action="{{ path('back_signalement_save_tags', {uuid: signalement.uuid}) }}" id="form-signalement-save-tags">
                             <input type="hidden" id="input-tag-ids" name="tag-ids"
-                                value="{% for tag in signalement.tags %}{{ tag.id }}{% endfor %}"
+                                value="{% for tag in signalement.tags %}{{ tag.id }},{% endfor %}"
                                 > 
                             <input type="hidden" name="_token" value="{{ csrf_token('signalement_save_tags') }}">
                         </form>
