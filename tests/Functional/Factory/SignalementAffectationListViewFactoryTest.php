@@ -52,8 +52,8 @@ class SignalementAffectationListViewFactoryTest extends KernelTestCase
             'lastSuiviIsPublic' => false,
             'profileDeclarant' => ProfileDeclarant::LOCATAIRE,
             'rawAffectations' => 'Partenaire 13-02||1;Partenaire 13-03||1;Partenaire 13-04||1',
-            'qualifications' => null,
-            'qualificationsStatuses' => null,
+            'qualifications' => 'NON_DECENCE_ENERGETIQUE',
+            'qualificationsStatuses' => 'NDE_AVEREE',
             'conclusionsProcedure' => $procedures,
         ];
 
@@ -92,6 +92,7 @@ class SignalementAffectationListViewFactoryTest extends KernelTestCase
         $this->assertEquals($dataSignalement['lastSuiviBy'], $signalementAffectationListView->getLastSuiviBy());
         $this->assertEquals('Locataire', $signalementAffectationListView->getProfileDeclarant());
         $this->assertSame($expectedAffectations, $signalementAffectationListView->getAffectations());
+        $this->assertTrue($signalementAffectationListView->hasNde());
         $this->assertEquals(
             $dataSignalement['lastSuiviIsPublic'],
             $signalementAffectationListView->getLastSuiviIsPublic());
