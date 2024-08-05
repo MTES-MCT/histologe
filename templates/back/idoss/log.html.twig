@@ -1,0 +1,49 @@
+{% extends 'back/base_bo.html.twig' %}
+
+{% block title %}Logs IDOSS{% endblock %}
+
+{% block content %}
+<section class="fr-p-5v">
+	<header>
+		<div class="fr-grid-row">
+			<div class="fr-col-12 fr-text--left">
+				<h1 class="fr-mb-0">Logs IDOSS</h1>
+			</div>
+		</div>
+	</header>
+</section>
+
+<section class="fr-grid-row fr-grid-row--middle fr-px-5v">
+	<div class="fr-col-12 fr-table fr-table--lg fr-table--no-caption">
+		<div class="fr-table__wrapper">
+			<div class="fr-table__container">
+				<div class="fr-table__content">
+					<table class="fr-display-inline-table fr-cell--multiline"  aria-label="Liste des comptes inactifs" aria-describedby="desc-table-inactive">
+					<caption>Erreurs</caption>
+						<thead>
+							<tr>
+								<th scope="col">Signalement</th>
+								<th scope="col">Date</th>
+								<th scope="col">Réponse</th>
+								<th scope="col">Code</th>
+								<th scope="col">Action</th>
+							</tr>
+						</thead>
+						<tbody>
+							{% for error in errors %}
+								<tr class="user-row">
+									<td><a href="{{path('back_signalement_view', {'uuid': error.uuid})}}">{{error.reference}}</a></td>
+									<td>{{error.createdAt|date('d/m/Y H:i:s')}}</td>
+									<td>{{error.response}}</td>
+									<td>{{error.codeStatus}}</td>
+									<td><a href="{{path('back_idoss_retry', {'signalement':error.id, 'partner':error.partnerId})}}" class="fr-btn fr-btn--sm fr-btn--secondary">Relancer</a></td>
+								</tr>
+							{% endfor %}
+						</tbody>
+					</table>
+				</div>
+			</div>
+		</div>
+	</div>
+</section>
+{% endblock %}
