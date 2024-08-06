@@ -2,8 +2,16 @@
 
 namespace App\Serializer;
 
+use App\Dto\Request\Signalement\AdresseOccupantRequest;
+use App\Dto\Request\Signalement\CompositionLogementRequest;
+use App\Dto\Request\Signalement\CoordonneesBailleurRequest;
+use App\Dto\Request\Signalement\CoordonneesFoyerRequest;
+use App\Dto\Request\Signalement\CoordonneesTiersRequest;
+use App\Dto\Request\Signalement\InformationsLogementRequest;
+use App\Dto\Request\Signalement\ProcedureDemarchesRequest;
 use App\Dto\Request\Signalement\RequestInterface;
 use App\Dto\Request\Signalement\SignalementDraftRequest;
+use App\Dto\Request\Signalement\SituationFoyerRequest;
 use App\Entity\Model\InformationComplementaire;
 use App\Entity\Model\TypeCompositionLogement;
 use App\Entity\SignalementDraft;
@@ -17,7 +25,7 @@ class SignalementDraftRequestNormalizer implements DenormalizerInterface, Normal
     public function __construct(
         /** @var ObjectNormalizer $objectNormalizer */
         #[Autowire(service: 'serializer.normalizer.object')]
-        private NormalizerInterface $objectNormalizer
+        private readonly NormalizerInterface $objectNormalizer
     ) {
     }
 
@@ -82,7 +90,18 @@ class SignalementDraftRequestNormalizer implements DenormalizerInterface, Normal
 
     public function supportsDenormalization($data, $type, $format = null, array $context = []): bool
     {
-        return SignalementDraftRequest::class === $type || TypeCompositionLogement::class; // @phpstan-ignore-line
+        return \in_array($type, [
+            SignalementDraftRequest::class,
+            CompositionLogementRequest::class,
+            CoordonneesBailleurRequest::class,
+            CoordonneesTiersRequest::class,
+            AdresseOccupantRequest::class,
+            SituationFoyerRequest::class,
+            CoordonneesFoyerRequest::class,
+            ProcedureDemarchesRequest::class,
+            InformationsLogementRequest::class,
+            TypeCompositionLogement::class,
+        ]);
     }
 
     public function supportsNormalization(mixed $data, string $format = null, array $context = []): bool
