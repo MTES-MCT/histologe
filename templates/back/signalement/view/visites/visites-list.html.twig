@@ -36,7 +36,7 @@
     {% include 'back/signalement/view/visites/visite-item.html.twig' %}
 {% else %}
     {% for intervention in signalement.interventions | filter(intervention => intervention.type != enum('App\\Entity\\Enum\\InterventionType').ARRETE_PREFECTORAL) %}
-        <div class="fr-background-alt--grey fr-p-5v">
+        <div class="fr-background-alt--grey fr-p-5v fr-mb-5v">
             <div class="fr-grid-row">
                 <div class="fr-col-12 fr-col-md-6 fr-h6 fr-mb-3v">
                     Visite #{{loop.index}}
