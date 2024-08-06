@@ -6,7 +6,10 @@ use App\Dto\SignalementAffectationListView;
 use App\Entity\Enum\AffectationStatus;
 use App\Entity\Enum\ProcedureType;
 use App\Entity\Enum\SignalementStatus;
+use App\Entity\Signalement;
+use App\Entity\Territory;
 use App\Entity\User;
+use ReflectionClass;
 
 class SignalementAffectationHelper
 {
@@ -85,4 +88,22 @@ class SignalementAffectationHelper
             return ProcedureType::from($procedure)->label();
         }, $lastProcedures);
     }
+
+    public static function getSignalementFromDataForVoter(array $data): Signalement
+    {
+        $signalement = new Signalement();
+        $territory = new Territory();
+
+        $reflectionClass = new ReflectionClass($territory);
+        $property = $reflectionClass->getProperty('id');
+        $property->setAccessible(true);
+        $property->setValue($territory, $data['territoryId']);
+
+        $signalement->setTerritory($territory);
+        $signalement->setStatut($data['statut']);
+
+        return $signalement;
+    }
+
+
 }

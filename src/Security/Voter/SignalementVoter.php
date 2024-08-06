@@ -54,7 +54,7 @@ class SignalementVoter extends Voter
             return $this->canEditNDE($subject, $user);
         }
 
-        if ($user->isSuperAdmin()) {
+        if ($this->security->isGranted('ROLE_ADMIN') && $attribute !== self::DELETE) {
             return true;
         }
 
@@ -100,7 +100,16 @@ class SignalementVoter extends Voter
 
     private function canDelete(Signalement $signalement, User $user): bool
     {
-        return $user->isTerritoryAdmin() && $user->getTerritory() === $signalement->getTerritory();
+        if(!in_array($signalement->getStatut(), [Signalement::STATUS_CLOSED, Signalement::STATUS_REFUSED])) {
+            return false;
+        }
+        if ($this->security->isGranted('ROLE_ADMIN')) {
+            return true;
+        }
+        if($this->security->isGranted('ROLE_ADMIN_TERRITORY') && $user->getTerritory()->getId() === $signalement->getTerritory()->getId()){
+            return true;
+        }
+        return false;
     }
 
     private function canReopen(Signalement $signalement, User $user): bool

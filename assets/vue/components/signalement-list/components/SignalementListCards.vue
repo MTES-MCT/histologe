@@ -65,7 +65,7 @@
             <div class="fr-grid-row">
               <div class="fr-col-12 fr-text--right">
                 <div class="fr-display-inline-flex">
-                  <button v-if="sharedState.user.canDeleteSignalement" @click="deleteSignalementItem(item)"
+                  <button v-if="item.canDeleteSignalement" @click="deleteSignalementItem(item)"
                           class="fr-btn fr-btn--icon-left fr-btn--secondary fr-mx-1w fr-icon-delete-line">
                     Supprimer le signalement
                   </button>
