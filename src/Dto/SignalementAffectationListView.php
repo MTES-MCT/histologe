@@ -130,6 +130,7 @@ class SignalementAffectationListView
         return $this->qualifications;
     }
 
+    #[Groups(['signalements:read'])]
     public function hasNde(): bool
     {
         if (null !== $this->qualifications) {
@@ -156,8 +157,8 @@ class SignalementAffectationListView
             foreach ($this->qualificationsStatuses as $qualificationStatus) {
                 $qualificationStatusName = QualificationStatus::tryFrom($qualificationStatus)?->name;
                 if ($qualificationStatusName
-                        && false === strpos($qualificationStatusName, 'NDE')
-                        && false !== strpos($qualificationStatusName, 'CHECK')
+                        && !str_contains($qualificationStatusName, 'NDE')
+                        && str_contains($qualificationStatusName, 'CHECK')
                 ) {
                     $this->qualificationsStatusesLabels[] = QualificationStatus::tryFrom($qualificationStatus)?->label();
                 }
