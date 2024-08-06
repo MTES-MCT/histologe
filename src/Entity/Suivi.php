@@ -7,6 +7,8 @@ use DateTimeImmutable;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: SuiviRepository::class)]
+#[ORM\Index(columns: ['type'], name: 'idx_suivi_type')]
+#[ORM\Index(columns: ['created_at'], name: 'idx_suivi_created_at')]
 class Suivi
 {
     public const TYPE_AUTO = 1;

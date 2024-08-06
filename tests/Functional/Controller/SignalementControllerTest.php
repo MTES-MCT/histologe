@@ -17,6 +17,11 @@ class SignalementControllerTest extends WebTestCase
 {
     use SessionHelper;
 
+    protected function setUp(): void
+    {
+        self::ensureKernelShutdown();
+    }
+
     public function provideStatusSignalement(): \Generator
     {
         yield 'Actif' => [Signalement::STATUS_ACTIVE];
