@@ -27,6 +27,8 @@ use Symfony\Component\Validator\Context\ExecutionContextInterface;
 #[ORM\Entity(repositoryClass: SignalementRepository::class)]
 #[ORM\Index(columns: ['statut'], name: 'idx_signalement_statut')]
 #[ORM\Index(columns: ['created_at'], name: 'idx_signalement_created_at')]
+#[ORM\Index(columns: ['is_imported'], name: 'idx_signalement_is_imported')]
+#[ORM\Index(columns: ['uuid'], name: 'idx_signalement_uuid')]
 class Signalement
 {
     public const STATUS_NEED_VALIDATION = 1;
