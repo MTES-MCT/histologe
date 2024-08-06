@@ -111,6 +111,9 @@ class File
     #[ORM\Column(nullable: true)]
     private ?array $synchroData = null;
 
+    #[ORM\Column(nullable: true)]
+    private ?\DateTimeImmutable $scannedAt = null;
+
     public function __construct()
     {
         $this->createdAt = new \DateTimeImmutable();
@@ -349,6 +352,18 @@ class File
     public function setSynchroData(array $data, string $key): self
     {
         $this->synchroData[$key] = $data;
+
+        return $this;
+    }
+
+    public function getScannedAt(): ?\DateTimeImmutable
+    {
+        return $this->scannedAt;
+    }
+
+    public function setScannedAt(?\DateTimeImmutable $scannedAt): static
+    {
+        $this->scannedAt = $scannedAt;
 
         return $this;
     }

@@ -1978,7 +1978,7 @@ class Signalement
     public function getPhotos(): Collection
     {
         return $this->files->filter(function (File $file) {
-            return 'photo' === $file->getFiletype() && !$file->isTemp();
+            return 'photo' === $file->getFiletype() && !$file->isTemp() && !$file->isIsWaitingSuivi();
         });
     }
 
@@ -1988,7 +1988,7 @@ class Signalement
     public function getDocuments(): Collection
     {
         return $this->files->filter(function (File $file) {
-            return 'document' === $file->getFiletype() && !$file->isTemp();
+            return 'document' === $file->getFiletype() && !$file->isTemp() && !$file->isIsWaitingSuivi();
         });
     }
 

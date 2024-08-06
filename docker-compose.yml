@@ -1,6 +1,4 @@
 # docker-compose.yml
-version: "3.8"
-
 services:
   histologe_mysql:
     image: 'mysql:8.0.35'
@@ -38,6 +36,7 @@ services:
     container_name: histologe_phpfpm
     depends_on:
       - histologe_wiremock
+      - histologe_clamav
     working_dir: /app
     environment:
       DATABASE_URL: ${DATABASE_URL}
@@ -91,6 +90,14 @@ services:
   histologe_redis:
     image: redis:7.0-alpine
     container_name: histologe_redis
+
+  histologe_clamav:
+    image: clamav/clamav
+    container_name: histologe_clamav
+    ports:
+      - 3310:3310
+    volumes:
+      - .:/app/
 
 volumes:
   dbdata:

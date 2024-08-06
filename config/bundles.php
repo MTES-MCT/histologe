@@ -18,4 +18,5 @@ return [
     Sentry\SentryBundle\SentryBundle::class => ['prod' => true],
     DAMA\DoctrineTestBundle\DAMADoctrineTestBundle::class => ['test' => true],
     Scheb\TwoFactorBundle\SchebTwoFactorBundle::class => ['all' => true],
+    Sineflow\ClamAV\Bundle\SineflowClamAVBundle::class => ['all' => true],
 ];

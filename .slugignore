@@ -12,3 +12,4 @@ Makefile
 phpstan.neon
 phpunit.xml.dist
 tools
+/node_modules

@@ -6,6 +6,7 @@ use App\Entity\File;
 use App\Factory\FileFactory;
 use App\Service\Files\FilenameGenerator;
 use App\Service\ImageManipulationHandler;
+use App\Service\Security\FileScanner;
 use App\Service\Signalement\SignalementFileProcessor;
 use App\Service\UploadHandlerService;
 use App\Tests\FixturesHelper;
@@ -35,6 +36,7 @@ class SignalementFileProcessorTest extends TestCase
     private MockObject|UrlGeneratorInterface $urlGenerator;
     private MockObject|FileFactory $fileFactory;
     private MockObject|ImageManipulationHandler $imageManipulationHandler;
+    private MockObject|FileScanner $fileScanner;
 
     protected function setUp(): void
     {
@@ -44,6 +46,7 @@ class SignalementFileProcessorTest extends TestCase
         $this->urlGenerator = $this->createMock(UrlGeneratorInterface::class);
         $this->fileFactory = $this->createMock(FileFactory::class);
         $this->imageManipulationHandler = $this->createMock(ImageManipulationHandler::class);
+        $this->fileScanner = $this->createMock(FileScanner::class);
     }
 
     public function testProcessUsagerDocument(): void
@@ -59,7 +62,9 @@ class SignalementFileProcessorTest extends TestCase
             $this->filenameGenerator,
             $this->urlGenerator,
             $this->fileFactory,
-            $this->imageManipulationHandler
+            $this->imageManipulationHandler,
+            $this->fileScanner,
+            false
         );
 
         [$fileList, $descriptionList] = $signalementFileProcessor->process(self::FILE_LIST, 'documents');
@@ -112,7 +117,9 @@ class SignalementFileProcessorTest extends TestCase
             $this->filenameGenerator,
             $this->urlGenerator,
             $this->fileFactory,
-            $this->imageManipulationHandler
+            $this->imageManipulationHandler,
+            $this->fileScanner,
+            false
         );
         $signalement = $this->getSignalement();
         [$fileList, $descriptionList] = $signalementFileProcessor->process(self::FILE_LIST, 'photos');

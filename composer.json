@@ -26,6 +26,7 @@
         "scheb/2fa-email": "^6.12",
         "scienta/doctrine-json-functions": "^5.0",
         "sentry/sentry-symfony": "^4.3",
+        "sineflow/clamav": "^1.1",
         "symfony/apache-pack": "^1.0",
         "symfony/asset": "6.4.*",
         "symfony/brevo-mailer": "6.4.*",

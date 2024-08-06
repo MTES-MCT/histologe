@@ -14,6 +14,9 @@ on:
 
 env:
   HISTOLOGE_URL: http://localhost:8080
+  CLAMAV_SOCKET: '/tmp/clamd.socket'
+  CLAMAV_HOST: 127.0.0.1
+  CLAMAV_PORT: 3310
 
 jobs:
   code-quality:
@@ -37,6 +40,20 @@ jobs:
       matrix:
         php-versions: ['8.1']
     steps:
+      - name: 'Start ClamAV daemon (clamd)'
+        uses: toblux/start-clamd-github-action@v0.2
+        with:
+            unix_socket: $CLAMAV_SOCKET
+            tcp_port: $CLAMAV_PORT
+            stream_max_length: 1M
+            db_main: true
+            db_daily: true      
+
+      - name: 'Ping clamd on TCP port $CLAMAV_PORT'
+        run: echo PING | nc $CLAMAV_HOST $CLAMAV_PORT
+
+      - name: 'Ping clamd using the Unix socket'
+        run: echo PING | nc -U $CLAMAV_SOCKET
       # https://github.com/actions/checkout (official)
       - name: Checkout
         uses: actions/checkout@v2
@@ -46,7 +63,7 @@ jobs:
         uses: shivammathur/setup-php@v2
         with:
           php-version: ${{ matrix.php-versions }}
-          extensions: mbstring, xml, ctype, iconv, intl, pdo, pdo_mysql, dom, filter, gd, iconv, json, mbstring
+          extensions: mbstring, xml, ctype, iconv, intl, pdo, pdo_mysql, dom, filter, gd, iconv, json, mbstring, sockets
         env:
           update: true
       - name: Cache wkthtmltopdf
@@ -81,7 +98,10 @@ jobs:
         uses: actions/setup-node@v2
         with:
           node-version: '18'
-      - run: npm install
+      - run: npm install --omit=dev
+
+      - name: Install Symfony Encore
+        run: npm install @symfony/webpack-encore --save-dev
 
       - name: NPM build
         run: npm run build
@@ -120,7 +140,7 @@ jobs:
 
       - name: Load Doctrine fixtures
         run: |
-          composer require --dev symfony/orm-pack
+          composer require symfony/orm-pack
           php bin/console --env=test doctrine:database:create --no-interaction
           php bin/console --env=test doctrine:migrations:migrate --no-interaction
           php bin/console --env=test doctrine:fixtures:load --no-interaction
@@ -136,7 +156,7 @@ jobs:
 
       - name: Run tests
         run: |
-          composer require --dev dama/doctrine-test-bundle:7.3
+          composer require dama/doctrine-test-bundle:7.3
           ./vendor/bin/phpunit --stop-on-failure --testdox -d memory_limit=-1
         env:
           APP_SECRET: ${{ secrets.APP_SECRET }}
@@ -151,3 +171,5 @@ jobs:
           MAIL_ENABLE: 1
           FEATURE_ASK_VISITE_ENABLE: 1
           MAINTENANCE_ENABLE: 0
+          CLAMAV_STRATEGY: 'clamd_network'
+          CLAMAV_HOST: 127.0.0.1

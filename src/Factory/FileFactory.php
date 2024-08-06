@@ -23,6 +23,7 @@ class FileFactory
         ?string $description = null,
         ?bool $isWaitingSuivi = false,
         ?bool $isTemp = false,
+        ?\DateTimeImmutable $scannedAt = null,
     ): ?File {
         $file = (new File())
             ->setFilename($filename)
@@ -54,6 +55,10 @@ class FileFactory
 
         if (null !== $description) {
             $file->setDescription($description);
+        }
+
+        if (null !== $scannedAt) {
+            $file->setScannedAt($scannedAt);
         }
 
         return $file;
