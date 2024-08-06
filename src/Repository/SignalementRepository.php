@@ -454,6 +454,7 @@ class SignalementRepository extends ServiceEntityRepository
             s.lastSuiviBy,
             s.lastSuiviIsPublic,
             s.profileDeclarant,
+            territory.id as territoryId,
             GROUP_CONCAT(DISTINCT CONCAT(p.nom, :concat_separator, a.statut) SEPARATOR :group_concat_separator) as rawAffectations,
             GROUP_CONCAT(DISTINCT p.nom SEPARATOR :group_concat_separator) as affectationPartnerName,
             GROUP_CONCAT(DISTINCT a.statut SEPARATOR :group_concat_separator) as affectationStatus,
@@ -465,6 +466,7 @@ class SignalementRepository extends ServiceEntityRepository
             ->leftJoin('a.partner', 'p')
             ->leftJoin('s.signalementQualifications', 'sq', 'WITH', 'sq.status LIKE \'%AVEREE%\' OR sq.status LIKE \'%CHECK%\'')
             ->leftJoin('s.interventions', 'i', 'WITH', 'i.type LIKE \'VISITE\'')
+            ->leftJoin('s.territory', 'territory')
             ->where('s.statut != :status')
             ->groupBy('s.id')
             ->setParameter('concat_separator', SignalementAffectationListView::SEPARATOR_CONCAT)

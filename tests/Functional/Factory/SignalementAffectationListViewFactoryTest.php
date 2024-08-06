@@ -10,15 +10,22 @@ use App\Factory\SignalementAffectationListViewFactory;
 use Doctrine\Persistence\ManagerRegistry;
 use Faker\Factory;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
+use Symfony\Bundle\SecurityBundle\Security;
+use Symfony\Component\Security\Csrf\CsrfTokenManagerInterface;
 
 class SignalementAffectationListViewFactoryTest extends KernelTestCase
 {
     private ManagerRegistry $entityManager;
+    private CsrfTokenManagerInterface $csrfTokenManager;
+    private Security $security;
+
 
     protected function setUp(): void
     {
         self::bootKernel();
         $this->entityManager = self::getContainer()->get('doctrine');
+        $this->csrfTokenManager = self::getContainer()->get(CsrfTokenManagerInterface::class);
+        $this->security = self::getContainer()->get(Security::class);
     }
 
     public function testCreateFactory(): void
@@ -55,6 +62,7 @@ class SignalementAffectationListViewFactoryTest extends KernelTestCase
             'qualifications' => 'NON_DECENCE_ENERGETIQUE',
             'qualificationsStatuses' => 'NDE_AVEREE',
             'conclusionsProcedure' => $procedures,
+            'territoryId' => 13,
         ];
 
         $expectedAffectations = [
@@ -74,7 +82,7 @@ class SignalementAffectationListViewFactoryTest extends KernelTestCase
 
         $user = $this->entityManager->getRepository(User::class)->findOneBy(['email' => 'admin-01@histologe.fr']);
 
-        $signalementAffectationListViewFactory = new SignalementAffectationListViewFactory();
+        $signalementAffectationListViewFactory = new SignalementAffectationListViewFactory($this->csrfTokenManager, $this->security);
         $signalementAffectationListView = $signalementAffectationListViewFactory->createInstanceFrom($user, $dataSignalement);
         $this->assertEquals($dataSignalement['id'], $signalementAffectationListView->getId());
         $this->assertEquals($dataSignalement['uuid'], $signalementAffectationListView->getUuid());
@@ -99,5 +107,6 @@ class SignalementAffectationListViewFactoryTest extends KernelTestCase
         $this->assertSame(
             array_values(ProcedureType::getLabelList()),
             $signalementAffectationListView->getConclusionsProcedure());
+        $this->assertFalse($signalementAffectationListView->getCanDeleteSignalement());
     }
 }

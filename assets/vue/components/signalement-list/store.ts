@@ -44,7 +44,6 @@ export const store = {
       isAgent: false,
       canSeeStatusAffectation: false,
       canSeeBailleurSocial: false,
-      canDeleteSignalement: false,
       canSeeNonDecenceEnergetique: false,
       canSeeScore: false,
       canSeeFilterPartner: false,
