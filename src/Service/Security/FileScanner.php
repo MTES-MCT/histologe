@@ -7,6 +7,7 @@ use Sineflow\ClamAV\Exception\SocketException;
 use Sineflow\ClamAV\Scanner;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
+use Symfony\Component\Uid\Uuid;
 
 class FileScanner
 {
@@ -28,7 +29,7 @@ class FileScanner
             return true;
         }
         if ($copy) {
-            $copiedFilepath = $this->parameterBag->get('uploads_tmp_dir').'clamav_'.uniqid();
+            $copiedFilepath = $this->parameterBag->get('uploads_tmp_dir').'clamav_'.Uuid::v4();
             file_put_contents($copiedFilepath, file_get_contents($filePath));
         } else {
             $copiedFilepath = $filePath;

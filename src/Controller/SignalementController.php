@@ -378,7 +378,7 @@ class SignalementController extends AbstractController
         LoggerInterface $logger,
         ImageManipulationHandler $imageManipulationHandler,
         FileScanner $fileScanner
-    ) {
+    ): JsonResponse {
         if (null !== ($files = $request->files->get('signalement'))) {
             try {
                 foreach ($files as $key => $file) {
