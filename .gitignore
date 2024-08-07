@@ -11,6 +11,7 @@
 !/uploaded_files/signalement/file.txt
 /var/
 **/vendor/
+**/node_modules/
 ###< symfony/framework-bundle ###
 /.idea/
 ###> symfony/phpunit-bridge ###

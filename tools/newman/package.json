@@ -1,0 +1,16 @@
+{
+  "name": "newman",
+  "version": "1.0.0",
+  "description": "",
+  "main": "run_newman.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "async": "^3.2.5",
+    "newman": "^6.1.3"
+  }
+}
