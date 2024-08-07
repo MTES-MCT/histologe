@@ -155,6 +155,9 @@ npm-watch: ## Watch files for changes
 clear-cache: ## Clear cache prod: make-clear-cache env=[dev|prod|test]
 	@$(DOCKER_COMP) exec -it histologe_phpfpm $(SYMFONY) c:c --env=$(env)
 
+npm-newman-install: ## Install newman CLI
+	@bash -l -c 'cd tools/newman && npm install'
+
 cc: clear-cache
 
 clear-pool: ## Clear cache pool: make clear-pool pool=[pool_name]
@@ -219,8 +222,8 @@ matomo-disable-ssl: ## Disable ssl use for matomo local instance
 scalingo-update-cli: ## Install/Update Scalingo CLI
 	@bash -l -c 'curl -O https://cli-dl.scalingo.com/install && bash install && scalingo --version'
 
-run-newman: ## Run concurrency request based postman collection
-	@bash -l -c 'node ./tools/newman/run_newman.js'
+run-concurrency-request: ## Run concurrency request based postman collection
+	@bash -l -c 'node ./tools/newman/run_concurrency_request.js nb=$(nb)'
 
 .tools-destroy:
 	@echo "\033[33mRemoving tools containers ...\033[0m"

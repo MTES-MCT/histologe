@@ -21,12 +21,14 @@ use App\Service\Signalement\SearchFilter;
 use App\Service\Statistics\CriticitePercentStatisticProvider;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\DBAL\Exception;
+use Doctrine\DBAL\LockMode;
 use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\ORM\NoResultException;
 use Doctrine\ORM\Query\Expr\Join;
 use Doctrine\ORM\Query\QueryException;
 use Doctrine\ORM\QueryBuilder;
 use Doctrine\ORM\Tools\Pagination\Paginator;
+use Doctrine\ORM\TransactionRequiredException;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
@@ -655,6 +657,10 @@ class SignalementRepository extends ServiceEntityRepository
             ->getOneOrNullResult();
     }
 
+    /**
+     * @throws TransactionRequiredException
+     * @throws NonUniqueResultException
+     */
     public function findLastReferenceByTerritory(Territory $territory): ?array
     {
         $year = (new \DateTime())->format('Y');
@@ -669,7 +675,10 @@ class SignalementRepository extends ServiceEntityRepository
             ->orderBy('reference_index', 'DESC')
             ->setMaxResults(1);
 
-        return $queryBuilder->getQuery()->getOneOrNullResult();
+        return $queryBuilder
+            ->getQuery()
+            ->setLockMode(LockMode::PESSIMISTIC_WRITE)
+            ->getOneOrNullResult();
     }
 
     public function findUsersPartnerEmailAffectedToSignalement(int $signalementId, ?Partner $partnerToExclude = null): array
