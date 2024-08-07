@@ -95,7 +95,7 @@ document?.querySelectorAll('.signalement-tag-add')?.forEach(element => {
 })
 
 const inputEtiquetteFilter = document?.querySelector('#etiquette-filter-input')
-inputEtiquetteFilter.addEventListener('input', (event) => {
+inputEtiquetteFilter?.addEventListener('input', (event) => {
     const inputValue = event.target.value.toLowerCase()
     document?.querySelectorAll('.signalement-tag-add')?.forEach(element => {
         if (element.getAttribute('data-taglabel').toLowerCase().indexOf(inputValue) > -1) {

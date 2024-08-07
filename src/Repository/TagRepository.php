@@ -45,9 +45,8 @@ class TagRepository extends ServiceEntityRepository
     ): Paginator {
         $qb = $this->createQueryBuilder('t');
         $qb->select('t', 's')
-            ->leftJoin('t.signalement', 's')
+            ->leftJoin('t.signalement', 's', 'WITH', 's.statut != 7')
             ->andWhere('t.isArchive != 1')
-            ->andWhere('s.statut != 7')
             ->orderBy('t.label', 'ASC')
             ->indexBy('t', 't.id');
         if ($territory) {
