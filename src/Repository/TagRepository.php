@@ -47,6 +47,7 @@ class TagRepository extends ServiceEntityRepository
         $qb->select('t', 's')
             ->leftJoin('t.signalement', 's')
             ->andWhere('t.isArchive != 1')
+            ->andWhere('s.statut != 7')
             ->orderBy('t.label', 'ASC')
             ->indexBy('t', 't.id');
         if ($territory) {
