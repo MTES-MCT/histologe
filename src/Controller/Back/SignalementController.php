@@ -231,7 +231,7 @@ class SignalementController extends AbstractController
             $doctrine->getManager()->flush();
             $this->addFlash('success', 'Signalement supprimé avec succès !');
         } else {
-            $this->addFlash('error', 'Une erreur est survenu lors de la suppression');
+            $this->addFlash('error', 'Une erreur est survenue lors de la suppression');
         }
 
         return $this->redirectToRoute('back_index');

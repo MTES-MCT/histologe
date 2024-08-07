@@ -3,7 +3,9 @@
 namespace App\Tests\Functional\Controller\Back;
 
 use App\Entity\Signalement;
+use App\Entity\Tag;
 use App\Repository\SignalementRepository;
+use App\Repository\TagRepository;
 use App\Repository\UserRepository;
 use App\Tests\SessionHelper;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
@@ -313,5 +315,52 @@ class SignalementControllerTest extends WebTestCase
         $response = json_decode($client->getResponse()->getContent(), true);
         $this->assertArrayHasKey('message', $response);
         $this->assertStringContainsString('a bien été supprimé.', $response['message']);
+    }
+
+    public function testSaveNewTagSignalement(): void
+    {
+        $client = static::createClient();
+        /** @var UserRepository $userRepository */
+        $userRepository = self::getContainer()->get(UserRepository::class);
+        $user = $userRepository->findOneBy(['email' => 'admin-01@histologe.fr']);
+        $client->loginUser($user);
+
+        /** @var SignalementRepository $signalementRepository */
+        $signalementRepository = self::getContainer()->get(SignalementRepository::class);
+        /** @var TagRepository $tagRepository */
+        $tagRepository = self::getContainer()->get(TagRepository::class);
+        $tag = $tagRepository->findOneBy(['label' => 'Péril', 'territory' => 13]);
+        /** @var Signalement $signalement */
+        $signalement = $signalementRepository->findOneBy(['reference' => '2023-12']);
+
+        $tagIds = array_map(
+            function (Tag $tag) {
+                return $tag->getId();
+            },
+            $signalement->getTags()->toArray());
+
+        $tagIds[] = $tag->getId();
+        /** @var RouterInterface $router */
+        $router = self::getContainer()->get(RouterInterface::class);
+        $route = $router->generate('back_signalement_save_tags', ['uuid' => $signalement->getUuid()]);
+
+        $client->request(
+            'POST',
+            $route,
+            [
+                'tag-ids' => implode(',', $tagIds),
+                '_token' => $this->generateCsrfToken($client, 'signalement_save_tags'),
+            ]
+        );
+
+        $client->followRedirect();
+        $this->assertResponseIsSuccessful();
+        $this->assertSelectorTextContains(
+            '.fr-alert--success',
+            'Les étiquettes ont bien été enregistrées.'
+        );
+
+        $signalement = $signalementRepository->findOneBy(['reference' => '2023-12']);
+        $this->assertCount(2, $signalement->getTags());
     }
 }
