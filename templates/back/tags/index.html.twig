@@ -217,7 +217,7 @@
                                             >Editer l'étiquette {{ tag.label }}</button>
                                         <a class="fr-btn fr-icon-list-unordered"
                                             title="Voir la liste des signalements avec l'étiquette {{ tag.label }}"
-                                            href="{{ path('back_index', { 'etiquettes[]': tag.id }) }}"
+                                            href="{{ path('back_index', { 'etiquettes[]': tag.id, 'isImported': 'oui' }) }}"
                                             >Voir la liste des signalements avec l'étiquette {{ tag.label }}</a>
                                         <button class="fr-btn fr-icon-delete-line"
                                             title="Supprimer l'étiquette {{ tag.label }}"
