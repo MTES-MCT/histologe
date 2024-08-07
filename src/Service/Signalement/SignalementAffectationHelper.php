@@ -104,6 +104,4 @@ class SignalementAffectationHelper
 
         return $signalement;
     }
-
-
 }

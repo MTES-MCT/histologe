@@ -19,7 +19,6 @@ class SignalementAffectationListViewFactoryTest extends KernelTestCase
     private CsrfTokenManagerInterface $csrfTokenManager;
     private Security $security;
 
-
     protected function setUp(): void
     {
         self::bootKernel();

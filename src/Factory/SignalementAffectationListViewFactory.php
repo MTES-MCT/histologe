@@ -15,8 +15,7 @@ class SignalementAffectationListViewFactory
     public function __construct(
         private CsrfTokenManagerInterface $csrfTokenManager,
         private Security $security,
-        )
-    {
+        ) {
     }
 
     public function createInstanceFrom(UserInterface|User $user, array $data): SignalementAffectationListView

@@ -302,7 +302,7 @@ class SignalementControllerTest extends WebTestCase
 
         $client->request(
             'POST',
-            '/bo/signalements/v2/'.$uuid.'/supprimer',
+            '/bo/signalements/'.$uuid.'/supprimer',
             [],
             [],
             ['Content-Type' => 'application/json'],

@@ -8,6 +8,7 @@ use App\Factory\SignalementExportFactory;
 use App\Factory\SignalementFactory;
 use App\Manager\SignalementManager;
 use App\Manager\SuiviManager;
+use App\Repository\AffectationRepository;
 use App\Repository\BailleurRepository;
 use App\Repository\DesordrePrecisionRepository;
 use App\Service\DataGouv\AddressService;
@@ -42,6 +43,7 @@ class PhotoHelperTest extends KernelTestCase
     private SuiviManager $suiviManager;
     private BailleurRepository $bailleurRepository;
     private AddressService $addressService;
+    private AffectationRepository $affectationRepository;
 
     protected function setUp(): void
     {
@@ -64,6 +66,7 @@ class PhotoHelperTest extends KernelTestCase
         $this->suiviManager = static::getContainer()->get(SuiviManager::class);
         $this->bailleurRepository = static::getContainer()->get(BailleurRepository::class);
         $this->addressService = static::getContainer()->get(AddressService::class);
+        $this->affectationRepository = static::getContainer()->get(AffectationRepository::class);
 
         $this->signalementManager = new SignalementManager(
             $this->managerRegistry,
@@ -82,6 +85,7 @@ class PhotoHelperTest extends KernelTestCase
             $this->suiviManager,
             $this->bailleurRepository,
             $this->addressService,
+            $this->affectationRepository
         );
     }
 
