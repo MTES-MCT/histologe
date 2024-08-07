@@ -2,9 +2,11 @@
 
 namespace App\Repository;
 
+use App\Controller\Back\TagController;
 use App\Entity\Tag;
 use App\Entity\Territory;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\ORM\Tools\Pagination\Paginator;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
@@ -20,33 +22,46 @@ class TagRepository extends ServiceEntityRepository
         parent::__construct($registry, Tag::class);
     }
 
-    // /**
-    //  * @return Tags[] Returns an array of Tags objects
-    //  */
-    /*
-    public function findByExampleField($value)
-    {
-        return $this->createQueryBuilder('t')
-            ->andWhere('t.exampleField = :val')
-            ->setParameter('val', $value)
-            ->orderBy('t.id', 'ASC')
-            ->setMaxResults(10)
-            ->getQuery()
-            ->getResult()
-        ;
-    }
-    */
-
-    public function findAllActive(Territory|null $territory = null)
-    {
-        $qb = $this->createQueryBuilder('t')
-            ->andWhere('t.isArchive != 1')
+    public function findAllActive(
+        Territory|null $territory = null,
+    ): mixed {
+        $qb = $this->createQueryBuilder('t');
+        $qb->andWhere('t.isArchive != 1')
+            ->orderBy('t.label', 'ASC')
             ->indexBy('t', 't.id');
         if ($territory) {
-            $qb->andWhere('t.territory = :territory')->setParameter('territory', $territory);
+            $qb->andWhere('t.territory = :territory')
+                ->setParameter('territory', $territory);
         }
 
         return $qb->getQuery()
             ->getResult();
+    }
+
+    public function findAllActivePaginated(
+        Territory|null $territory = null,
+        ?string $search = null,
+        ?int $page = 1,
+    ): Paginator {
+        $qb = $this->createQueryBuilder('t');
+        $qb->select('t', 's')
+            ->leftJoin('t.signalement', 's', 'WITH', 's.statut != 7')
+            ->andWhere('t.isArchive != 1')
+            ->orderBy('t.label', 'ASC')
+            ->indexBy('t', 't.id');
+        if ($territory) {
+            $qb->andWhere('t.territory = :territory')
+                ->setParameter('territory', $territory);
+        }
+        if ($search) {
+            $qb->andWhere('t.label LIKE :search')
+                ->setParameter('search', '%'.$search.'%');
+        }
+
+        $maxResult = TagController::MAX_LIST_PAGINATION;
+        $firstResult = ($page - 1) * $maxResult;
+        $qb->setFirstResult($firstResult)->setMaxResults($maxResult);
+
+        return new Paginator($qb->getQuery(), true);
     }
 }

@@ -370,7 +370,9 @@ class SearchFilter
         }
         if (!empty($filters['tags'])) {
             $qb->leftJoin('s.tags', 't');
-            $qb->andWhere('t.id IN (:tag)')->setParameter('tag', $filters['tags']);
+            $qb->andWhere('t.id IN (:tag)')
+                ->setParameter('tag', $filters['tags'])
+                ->andWhere('t.isArchive = 0');
         }
         if (!empty($filters['statuses'])) {
             /** @var User $user */
