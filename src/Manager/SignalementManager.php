@@ -30,6 +30,7 @@ use App\Event\SignalementCreatedEvent;
 use App\Factory\SignalementAffectationListViewFactory;
 use App\Factory\SignalementExportFactory;
 use App\Factory\SignalementFactory;
+use App\Repository\AffectationRepository;
 use App\Repository\BailleurRepository;
 use App\Repository\DesordrePrecisionRepository;
 use App\Repository\PartnerRepository;
@@ -68,6 +69,7 @@ class SignalementManager extends AbstractManager
         private SuiviManager $suiviManager,
         private BailleurRepository $bailleurRepository,
         private AddressService $addressService,
+        private AffectationRepository $affectationRepository,
         string $entityName = Signalement::class
     ) {
         parent::__construct($managerRegistry, $entityName);
@@ -228,15 +230,8 @@ class SignalementManager extends AbstractManager
             ->setMotifCloture($motif)
             ->setClosedAt(new \DateTimeImmutable());
 
-        foreach ($signalement->getAffectations() as $affectation) {
-            $affectation
-                ->setStatut(Affectation::STATUS_CLOSED)
-                ->setMotifCloture($motif)
-                ->setAnsweredBy($this->security->getUser());
-            $this->managerRegistry->getManager()->persist($affectation);
-        }
+        $this->affectationRepository->closeBySignalement($signalement, $motif, $this->security->getUser());
         $this->managerRegistry->getManager()->flush();
-        $this->save($signalement);
 
         return $signalement;
     }

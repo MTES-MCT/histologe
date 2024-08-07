@@ -148,7 +148,6 @@ export default defineComponent({
       this.sharedState.user.canSeeStatusAffectation = isAdminOrAdminTerritoire
       this.sharedState.user.canSeeBailleurSocial = isAdminOrAdminTerritoire
       this.sharedState.user.canSeeFilterPartner = isAdminOrAdminTerritoire
-      this.sharedState.user.canDeleteSignalement = isAdminOrAdminTerritoire
       this.sharedState.user.canSeeScore = isAdminOrAdminTerritoire
       this.sharedState.user.partnerId = requestResponse.partnerId
       this.sharedState.hasSignalementImported = requestResponse.hasSignalementImported
@@ -336,8 +335,11 @@ export default defineComponent({
       this.buildUrl()
       requests.getSignalements(this.handleSignalements)
     },
-    async deleteItem (item: SignalementItem) {
+    async deleteItem (item: SignalementItem|null) {
       this.clearScreen()
+      if (!item) {
+        return
+      }
       await requests.deleteSignalement(
         item.uuid,
         item.csrfToken,

@@ -37,6 +37,7 @@ class SignalementAffectationListView
         private ?array $qualificationsStatuses = null,
         private ?array $conclusionsProcedure = null,
         private ?string $csrfToken = null,
+        private ?bool $canDeleteSignalement = false,
     ) {
     }
 
@@ -183,5 +184,10 @@ class SignalementAffectationListView
     public function getConclusionsProcedure(): ?array
     {
         return $this->conclusionsProcedure;
+    }
+
+    public function getCanDeleteSignalement(): bool
+    {
+        return $this->canDeleteSignalement;
     }
 }

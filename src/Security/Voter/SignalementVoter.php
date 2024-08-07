@@ -19,7 +19,6 @@ class SignalementVoter extends Voter
     public const DELETE = 'SIGN_DELETE';
     public const EDIT = 'SIGN_EDIT';
     public const VIEW = 'SIGN_VIEW';
-    public const REOPEN = 'SIGN_REOPEN';
     public const ADD_VISITE = 'SIGN_ADD_VISITE';
     public const USAGER_EDIT = 'SIGN_USAGER_EDIT';
     public const EDIT_NDE = 'SIGN_EDIT_NDE';
@@ -30,7 +29,7 @@ class SignalementVoter extends Voter
 
     protected function supports(string $attribute, $subject): bool
     {
-        return \in_array($attribute, [self::EDIT, self::VIEW, self::DELETE, self::VALIDATE, self::REOPEN, self::CLOSE, self::ADD_VISITE, self::USAGER_EDIT, self::EDIT_NDE])
+        return \in_array($attribute, [self::EDIT, self::VIEW, self::DELETE, self::VALIDATE, self::CLOSE, self::ADD_VISITE, self::USAGER_EDIT, self::EDIT_NDE])
             && ($subject instanceof Signalement);
     }
 
@@ -54,7 +53,7 @@ class SignalementVoter extends Voter
             return $this->canEditNDE($subject, $user);
         }
 
-        if ($user->isSuperAdmin()) {
+        if ($this->security->isGranted('ROLE_ADMIN') && self::DELETE !== $attribute) {
             return true;
         }
 
@@ -62,7 +61,6 @@ class SignalementVoter extends Voter
             self::VALIDATE => $this->canValidate($subject, $user),
             self::CLOSE => $this->canClose($subject, $user),
             self::DELETE => $this->canDelete($subject, $user),
-            self::REOPEN => $this->canReopen($subject, $user),
             self::EDIT => $this->canEdit($subject, $user),
             self::VIEW => $this->canView($subject, $user),
             default => false,
@@ -100,12 +98,17 @@ class SignalementVoter extends Voter
 
     private function canDelete(Signalement $signalement, User $user): bool
     {
-        return $user->isTerritoryAdmin() && $user->getTerritory() === $signalement->getTerritory();
-    }
+        if (!\in_array($signalement->getStatut(), [Signalement::STATUS_CLOSED, Signalement::STATUS_REFUSED])) {
+            return false;
+        }
+        if ($this->security->isGranted('ROLE_ADMIN')) {
+            return true;
+        }
+        if ($this->security->isGranted('ROLE_ADMIN_TERRITORY') && $user->getTerritory()->getId() === $signalement->getTerritory()->getId()) {
+            return true;
+        }
 
-    private function canReopen(Signalement $signalement, User $user): bool
-    {
-        return Signalement::STATUS_CLOSED === $signalement->getStatut() && $user->isTerritoryAdmin() && $user->getTerritory() === $signalement->getTerritory();
+        return false;
     }
 
     private function canEdit(Signalement $signalement, User $user): bool

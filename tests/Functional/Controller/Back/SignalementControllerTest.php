@@ -288,7 +288,7 @@ class SignalementControllerTest extends WebTestCase
         /** @var SignalementRepository $signalementRepository */
         $signalementRepository = self::getContainer()->get(SignalementRepository::class);
         /** @var Signalement $signalement */
-        $signalement = $signalementRepository->findOneBy(['reference' => '2022-10']);
+        $signalement = $signalementRepository->findOneBy(['reference' => '2022-13']);
 
         /** @var UserRepository $userRepository */
         $userRepository = self::getContainer()->get(UserRepository::class);
@@ -302,7 +302,7 @@ class SignalementControllerTest extends WebTestCase
 
         $client->request(
             'POST',
-            '/bo/signalements/v2/'.$uuid.'/supprimer',
+            '/bo/signalements/'.$uuid.'/supprimer',
             [],
             [],
             ['Content-Type' => 'application/json'],

@@ -82,7 +82,10 @@ class SignalementControllerTest extends WebTestCase
 
         $crawler = $client->request('GET', $urlSuiviSignalementUser);
         if (Signalement::STATUS_ARCHIVED === $status) {
-            $this->assertResponseRedirects('/');
+            $this->assertEquals(
+                'Votre signalement a été archivé, vous ne pouvez plus envoyer de messages.',
+                $crawler->filter('.fr-alert--error p')->text()
+            );
         } elseif (Signalement::STATUS_ACTIVE === $status) {
             $this->assertEquals('Signalement #2022-1 '.$signalement->getPrenomOccupant().' '.$signalement->getNomOccupant(), $crawler->filter('h1')->eq(2)->text());
         } elseif (Signalement::STATUS_CLOSED === $status) {
