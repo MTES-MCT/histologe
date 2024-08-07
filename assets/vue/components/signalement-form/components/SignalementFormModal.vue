@@ -1,8 +1,7 @@
 <template>
   <dialog
     :class="{ 'fr-modal--opened': modelValue }"
-    aria-labelledby="fr-modal-title"
-    role="dialog"
+    :aria-labelledby="label !== '' ? 'fr-modal-title' : undefined"
     :id="id"
     class="fr-modal"
     ref="modalDialog"
@@ -22,7 +21,7 @@
               </button>
             </div>
             <div class="fr-modal__content">
-              <h1 id="fr-modal-title">{{ label }}</h1>
+              <h1 id="fr-modal-title" v-if="label !== ''">{{ label }}</h1>
               <p v-html="description"></p>
             </div>
           </div>

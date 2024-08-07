@@ -25,11 +25,17 @@ export default defineComponent({
     id: { type: String, default: null },
     label: { type: String, default: '' },
     link: { type: String, default: '' },
-    linktarget: { type: String, default: '' },
+    linktarget: { type: String, default: undefined },
     description: { type: String, default: null },
     customCss: { type: String, default: '' },
-    ariaControls: { type: String, default: '' },
-    clickEvent: Function
+    ariaControls: { type: String, default: undefined },
+    clickEvent: Function,
+    // les propriétés suivantes ne sont pas utilisées,
+    // mais si on ne les met pas, elles apparaissent dans le DOM
+    // et ça soulève des erreurs W3C
+    hasError: { type: Boolean, default: undefined },
+    access_name: { type: String, default: undefined },
+    access_autocomplete: { type: String, default: undefined }
   },
   methods: {
     handleClick () {

@@ -1,5 +1,5 @@
 <template>
-  <dialog aria-labelledby="fr-modal-title-modal-back-home" role="dialog" id="fr-modal-back-home" class="fr-modal">
+  <dialog aria-labelledby="fr-modal-title-modal-back-home" id="fr-modal-back-home" class="fr-modal">
     <div class="fr-container fr-container--fluid fr-container-md">
       <div class="fr-grid-row fr-grid-row--center">
         <div class="fr-col-12 fr-col-md-8 fr-col-lg-6">
