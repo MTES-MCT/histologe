@@ -646,17 +646,20 @@ class SignalementRepository extends ServiceEntityRepository
             ->getResult();
     }
 
-    public function findOneByCodeForPublic($code): ?Signalement
+    public function findOneByCodeForPublic($code, ?bool $excludeArchived = true): ?Signalement
     {
-        return $this->createQueryBuilder('s')
+        $qb = $this->createQueryBuilder('s')
             ->andWhere('s.codeSuivi = :code')
             ->setParameter('code', $code)
-            ->andWhere('s.statut != :status')
-            ->setParameter('status', Signalement::STATUS_ARCHIVED)
             ->leftJoin('s.suivis', 'suivis', Join::WITH, 'suivis.isPublic = 1')
-            ->addSelect('suivis')
-            ->getQuery()
-            ->getOneOrNullResult();
+            ->addSelect('suivis');
+
+        if ($excludeArchived) {
+            $qb->andWhere('s.statut != :status')
+            ->setParameter('status', Signalement::STATUS_ARCHIVED);
+        }
+
+        return $qb->getQuery()->getOneOrNullResult();
     }
 
     /**

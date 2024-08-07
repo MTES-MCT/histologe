@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Dto\DemandeLienSignalement;
 use App\Dto\Request\Signalement\SignalementDraftRequest;
 use App\Entity\Enum\SignalementDraftStatus;
 use App\Entity\File;
@@ -10,6 +11,7 @@ use App\Entity\SignalementDraft;
 use App\Entity\Suivi;
 use App\Entity\User;
 use App\Factory\SuiviFactory;
+use App\Form\DemandeLienSignalementType;
 use App\Manager\SignalementDraftManager;
 use App\Manager\SuiviManager;
 use App\Manager\UserManager;
@@ -539,7 +541,7 @@ class SignalementController extends AbstractController
         UserManager $userManager,
         SignalementDesordresProcessor $signalementDesordresProcessor
     ) {
-        if ($signalement = $signalementRepository->findOneByCodeForPublic($code)) {
+        if ($signalement = $signalementRepository->findOneByCodeForPublic($code, false)) {
             $requestEmail = $request->get('from');
             $fromEmail = \is_array($requestEmail) ? array_pop($requestEmail) : $requestEmail;
 
@@ -548,11 +550,17 @@ class SignalementController extends AbstractController
 
             $infoDesordres = $signalementDesordresProcessor->process($signalement);
 
+            $demandeLienSignalement = new DemandeLienSignalement();
+            $formDemandeLienSignalement = $this->createForm(DemandeLienSignalementType::class, $demandeLienSignalement, [
+                'action' => $this->generateUrl('front_demande_lien_signalement'),
+            ]);
+
             return $this->render('front/suivi_signalement.html.twig', [
                 'signalement' => $signalement,
                 'email' => $fromEmail,
                 'type' => $type,
                 'infoDesordres' => $infoDesordres,
+                'formDemandeLienSignalement' => $formDemandeLienSignalement,
             ]);
         }
         $this->addFlash('error', 'Le lien utilisé est invalide, vérifiez votre saisie.');
