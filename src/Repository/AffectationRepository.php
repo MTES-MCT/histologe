@@ -5,11 +5,13 @@ namespace App\Repository;
 use App\Dto\CountSignalement;
 use App\Dto\StatisticsFilters;
 use App\Entity\Affectation;
+use App\Entity\Enum\MotifCloture;
 use App\Entity\Enum\PartnerType;
 use App\Entity\Enum\Qualification;
 use App\Entity\Partner;
 use App\Entity\Signalement;
 use App\Entity\Territory;
+use App\Entity\User;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\Persistence\ManagerRegistry;
@@ -220,5 +222,45 @@ class AffectationRepository extends ServiceEntityRepository
             ->setParameter('day_delay', self::DELAY_VISITE_AFTER_AFFECTATION);
 
         return $qb->getQuery()->getResult();
+    }
+
+    public function deleteByStatusAndSignalement(int $status, Signalement $signalement): void
+    {
+        $qb = $this->createQueryBuilder('a');
+        $qb->delete()
+            ->where('a.statut = :status')
+            ->andWhere('a.signalement = :signalement')
+            ->setParameter('status', $status)
+            ->setParameter('signalement', $signalement)
+            ->getQuery()
+            ->execute();
+    }
+
+    public function updateStatusBySignalement(int $status, Signalement $signalement): void
+    {
+        $qb = $this->createQueryBuilder('a');
+        $qb->update()
+            ->set('a.statut', ':status')
+            ->where('a.signalement = :signalement')
+            ->setParameter('status', $status)
+            ->setParameter('signalement', $signalement)
+            ->getQuery()
+            ->execute();
+    }
+
+    public function closeBySignalement(Signalement $signalement, MotifCloture $motif, User $user): void
+    {
+        $qb = $this->createQueryBuilder('a');
+        $qb->update()
+            ->set('a.statut', ':status')
+            ->set('a.answeredBy', ':answeredBy')
+            ->set('a.motifCloture', ':motif')
+            ->where('a.signalement = :signalement')
+            ->setParameter('status', Affectation::STATUS_CLOSED)
+            ->setParameter('answeredBy', $user)
+            ->setParameter('motif', $motif)
+            ->setParameter('signalement', $signalement)
+            ->getQuery()
+            ->execute();
     }
 }

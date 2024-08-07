@@ -335,8 +335,11 @@ export default defineComponent({
       this.buildUrl()
       requests.getSignalements(this.handleSignalements)
     },
-    async deleteItem (item: SignalementItem) {
+    async deleteItem (item: SignalementItem|null) {
       this.clearScreen()
+      if (!item) {
+        return
+      }
       await requests.deleteSignalement(
         item.uuid,
         item.csrfToken,

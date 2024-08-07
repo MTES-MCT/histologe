@@ -18,6 +18,7 @@ use App\Repository\DesordreCategorieRepository;
 use App\Repository\DesordreCritereRepository;
 use App\Repository\DesordrePrecisionRepository;
 use App\Repository\InterventionRepository;
+use App\Repository\NotificationRepository;
 use App\Repository\SignalementQualificationRepository;
 use App\Repository\TagRepository;
 use App\Service\Signalement\PhotoHelper;
@@ -222,26 +223,12 @@ class SignalementController extends AbstractController
     }
 
     #[Route('/{uuid}/supprimer', name: 'back_signalement_delete', methods: 'POST')]
-    public function deleteSignalement(Signalement $signalement, Request $request, ManagerRegistry $doctrine): Response
-    {
-        $this->denyAccessUnlessGranted('SIGN_DELETE', $signalement);
-        if ($this->isCsrfTokenValid('signalement_delete_'.$signalement->getId(), $request->get('_token'))) {
-            $signalement->setStatut(Signalement::STATUS_ARCHIVED);
-            $doctrine->getManager()->persist($signalement);
-            $doctrine->getManager()->flush();
-            $this->addFlash('success', 'Signalement supprimé avec succès !');
-        } else {
-            $this->addFlash('error', 'Une erreur est survenue lors de la suppression');
-        }
-
-        return $this->redirectToRoute('back_index');
-    }
-
-    #[Route('/v2/{uuid}/supprimer', name: 'back_v2_signalement_delete', methods: 'POST')]
     public function newDeleteSignalement(
         Signalement $signalement,
         Request $request,
-        ManagerRegistry $doctrine
+        ManagerRegistry $doctrine,
+        AffectationRepository $affectationRepository,
+        NotificationRepository $notificationRepository
     ): JsonResponse {
         $this->denyAccessUnlessGranted('SIGN_DELETE', $signalement);
         if ($this->isCsrfTokenValid(
@@ -250,7 +237,8 @@ class SignalementController extends AbstractController
         )
         ) {
             $signalement->setStatut(Signalement::STATUS_ARCHIVED);
-            $doctrine->getManager()->persist($signalement);
+            $notificationRepository->deleteBySignalement($signalement);
+            $affectationRepository->deleteByStatusAndSignalement(Affectation::STATUS_WAIT, $signalement);
             $doctrine->getManager()->flush();
             $response = [
                 'status' => Response::HTTP_OK,

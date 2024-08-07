@@ -15,6 +15,7 @@ use App\Factory\SignalementExportFactory;
 use App\Factory\SignalementFactory;
 use App\Manager\SignalementManager;
 use App\Manager\SuiviManager;
+use App\Repository\AffectationRepository;
 use App\Repository\BailleurRepository;
 use App\Repository\DesordrePrecisionRepository;
 use App\Service\DataGouv\AddressService;
@@ -55,6 +56,7 @@ class SignalementManagerTest extends WebTestCase
     private SuiviManager $suiviManager;
     private BailleurRepository $bailleurRepository;
     private AddressService $addressService;
+    private AffectationRepository $affectationRepository;
 
     protected function setUp(): void
     {
@@ -79,6 +81,7 @@ class SignalementManagerTest extends WebTestCase
         $this->suiviManager = static::getContainer()->get(SuiviManager::class);
         $this->bailleurRepository = static::getContainer()->get(BailleurRepository::class);
         $this->addressService = static::getContainer()->get(AddressService::class);
+        $this->affectationRepository = static::getContainer()->get(AffectationRepository::class);
 
         $this->signalementManager = new SignalementManager(
             $this->managerRegistry,
@@ -97,6 +100,7 @@ class SignalementManagerTest extends WebTestCase
             $this->suiviManager,
             $this->bailleurRepository,
             $this->addressService,
+            $this->affectationRepository
         );
         $user = $this->entityManager->getRepository(User::class)->findOneBy(['email' => 'admin-01@histologe.fr']);
         $client->loginUser($user);
