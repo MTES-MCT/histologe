@@ -23,7 +23,7 @@ class ContactType extends AbstractType
                 'attr' => ['autocomplete' => 'email'],
                 'constraints' => [
                     new Assert\NotBlank(message: 'Merci de renseigner votre e-mail.'),
-                    new Assert\Email(mode: Email::VALIDATION_MODE_STRICT),
+                    new Email(mode: Email::VALIDATION_MODE_STRICT),
                 ],
             ])
             ->add('nom', TextType::class, [

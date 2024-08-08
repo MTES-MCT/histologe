@@ -46,7 +46,7 @@ class AuthentificationHistoryListener
                 user: $user
             );
         } catch (\Throwable $exception) {
-            $this->logger->error(sprintf(
+            $this->logger->error(\sprintf(
                 'Failed to create login history entry (%s) on user : %d',
                 $exception->getMessage(),
                 $user->getId()

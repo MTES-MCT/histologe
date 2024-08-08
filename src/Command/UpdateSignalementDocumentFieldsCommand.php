@@ -124,7 +124,7 @@ class UpdateSignalementDocumentFieldsCommand extends Command
         }
 
         $this->fileManager->flush();
-        $io->success(sprintf('%s files signalement(s) updated', $countFile));
+        $io->success(\sprintf('%s files signalement(s) updated', $countFile));
 
         return Command::SUCCESS;
     }

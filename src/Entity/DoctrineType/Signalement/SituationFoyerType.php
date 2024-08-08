@@ -23,7 +23,7 @@ class SituationFoyerType extends Type
         }
 
         if (!$value instanceof SituationFoyer) {
-            throw new \Exception(sprintf('Only %s object is supported', SituationFoyer::class));
+            throw new \Exception(\sprintf('Only %s object is supported', SituationFoyer::class));
         }
 
         return json_encode($value->toArray());

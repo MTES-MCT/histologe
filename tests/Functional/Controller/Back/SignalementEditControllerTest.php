@@ -219,18 +219,18 @@ class SignalementEditControllerTest extends WebTestCase
     private function getPayloadAddress(): array
     {
         return [
-                'adresse' => '17 Boulevard saade - quai joliette',
-                'codePostal' => '13002',
-                'ville' => 'Marseille',
-                'needResetInsee' => '0',
-                'manual' => '0',
-                'insee' => '13202',
-                'geolocLat' => '43.301787',
-                'geolocLng' => '5.364626',
-                'etage' => '8',
-                'escalier' => '5',
-                'numAppart' => '369',
-                'autre' => 'Les essentielles',
+            'adresse' => '17 Boulevard saade - quai joliette',
+            'codePostal' => '13002',
+            'ville' => 'Marseille',
+            'needResetInsee' => '0',
+            'manual' => '0',
+            'insee' => '13202',
+            'geolocLat' => '43.301787',
+            'geolocLng' => '5.364626',
+            'etage' => '8',
+            'escalier' => '5',
+            'numAppart' => '369',
+            'autre' => 'Les essentielles',
         ];
     }
 

@@ -61,7 +61,7 @@ class AskFeedbackUsagerCommand extends AbstractCronCommand
             $nbSignalementsForDebug = ($nbSignalementsLastSuiviPublic - $nbSignalementsLastSuiviTechnical)
             + ($nbSignalementsLastSuiviTechnical - $nbSignalementsThirdRelance)
             + $nbSignalementsThirdRelance;
-            $this->io->info(sprintf(
+            $this->io->info(\sprintf(
                 '%s signalement(s) for which a request for feedback will be sent to the user',
                 $nbSignalementsForDebug
             ));
@@ -73,7 +73,7 @@ class AskFeedbackUsagerCommand extends AbstractCronCommand
             new NotificationMail(
                 type: NotificationMailerType::TYPE_CRON,
                 to: $this->parameterBag->get('admin_email'),
-                message: sprintf(
+                message: \sprintf(
                     '%s signalement(s) pour lesquels une demande de feedback a été envoyée à l\'usager répartis comme suit :
                     %s dont les deux derniers suivis sont des suivis techniques demande de feedback et le dernier a plus de '.Suivi::DEFAULT_PERIOD_INACTIVITY.' jours,
                     %s dont le dernier suivi est un suivi technique demande de feedback et date de plus de '.Suivi::DEFAULT_PERIOD_INACTIVITY.' jours,
@@ -100,7 +100,7 @@ class AskFeedbackUsagerCommand extends AbstractCronCommand
             NotificationMailerType::TYPE_SIGNALEMENT_FEEDBACK_USAGER_THIRD
         );
         if (!$input->getOption('debug')) {
-            $this->io->success(sprintf(
+            $this->io->success(\sprintf(
                 '%s signalement(s) for which the two last suivis are technicals and the last one is older than '
                 .Suivi::DEFAULT_PERIOD_INACTIVITY.' days',
                 $nbSignalements
@@ -120,7 +120,7 @@ class AskFeedbackUsagerCommand extends AbstractCronCommand
             NotificationMailerType::TYPE_SIGNALEMENT_FEEDBACK_USAGER_WITHOUT_RESPONSE
         );
         if (!$input->getOption('debug')) {
-            $this->io->success(sprintf(
+            $this->io->success(\sprintf(
                 '%s signalement(s) for which the last suivi is technical and is older than '
                 .Suivi::DEFAULT_PERIOD_INACTIVITY.' days',
                 $nbSignalements
@@ -140,7 +140,7 @@ class AskFeedbackUsagerCommand extends AbstractCronCommand
             NotificationMailerType::TYPE_SIGNALEMENT_FEEDBACK_USAGER_WITH_RESPONSE
         );
         if (!$input->getOption('debug')) {
-            $this->io->success(sprintf(
+            $this->io->success(\sprintf(
                 '%s signalement(s) without suivi public from more than '.Suivi::DEFAULT_PERIOD_RELANCE.' days',
                 $nbSignalements
             ));
@@ -178,7 +178,7 @@ class AskFeedbackUsagerCommand extends AbstractCronCommand
             }
 
             $params = [
-                'type' => SUIVI::TYPE_TECHNICAL,
+                'type' => Suivi::TYPE_TECHNICAL,
                 'description' => "Un message automatique a été envoyé à l'usager pour lui demander de mettre à jour sa situation.",
             ];
 

@@ -26,7 +26,7 @@ class CountSignalementTest extends TestCase
             'active' => 35.0,
             'closed' => 30.0,
             'refused' => 20.0,
-            ],
+        ],
             $countSignalement->getPercentage()
         );
     }
@@ -43,7 +43,7 @@ class CountSignalementTest extends TestCase
             'active' => 0,
             'closed' => 0,
             'refused' => 0,
-            ],
+        ],
             $countSignalement->getPercentage()
         );
     }

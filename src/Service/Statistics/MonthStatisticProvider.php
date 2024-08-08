@@ -5,7 +5,6 @@ namespace App\Service\Statistics;
 use App\Dto\StatisticsFilters;
 use App\Entity\Territory;
 use App\Repository\SignalementRepository;
-use DateTime;
 
 class MonthStatisticProvider
 {
@@ -22,7 +21,7 @@ class MonthStatisticProvider
         return $this->createFullArray($countPerMonths);
     }
 
-    public function getData(Territory|null $territory, int|null $year): array
+    public function getData(?Territory $territory, ?int $year): array
     {
         $countPerMonths = $this->signalementRepository->countByMonth($territory, $year, true);
 
@@ -40,7 +39,7 @@ class MonthStatisticProvider
         $data = [];
         $previousMonth = null; // This is used to avoid blank months
         foreach ($monthsWithResults as $month => $count) {
-            $dateMonth = new DateTime($month);
+            $dateMonth = new \DateTime($month);
             $this->fillBlankMonths($data, $previousMonth, $dateMonth);
             $strMonth = self::MONTH_NAMES[$dateMonth->format('m') - 1].' '.$dateMonth->format('Y');
             $data[$strMonth] = $count;

@@ -36,8 +36,8 @@ class DemandeLienSignalementType extends AbstractType
             ])
             ->add(
                 'ville', HiddenType::class, [
-                'attr' => ['data-autocomplete-ville' => 'true'],
-            ])
+                    'attr' => ['data-autocomplete-ville' => 'true'],
+                ])
             ->add('save', SubmitType::class, [
                 'label' => 'Recevoir mon lien de suivi',
                 'attr' => ['class' => 'fr-btn--icon-left fr-icon-check-line'],

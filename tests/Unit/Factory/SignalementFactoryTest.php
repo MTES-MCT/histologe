@@ -88,7 +88,7 @@ class SignalementFactoryTest extends KernelTestCase
             'nbPiecesLogement' => $faker->randomDigit(),
             'nbChambresLogement' => $faker->randomDigit(),
             'nbNiveauxLogement' => $faker->randomDigit(),
-            ];
+        ];
 
         $territory = (new Territory())
             ->setName('Ain')

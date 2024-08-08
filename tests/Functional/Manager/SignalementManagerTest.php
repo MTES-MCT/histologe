@@ -301,7 +301,7 @@ class SignalementManagerTest extends WebTestCase
         $this->assertEquals('2023-01-08', $signalementQualification->getDernierBailAt()->format('Y-m-d'));
     }
 
-    private function getSignalementData(string $reference = null): array
+    private function getSignalementData(?string $reference = null): array
     {
         $faker = Factory::create('fr_FR');
 

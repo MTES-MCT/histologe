@@ -11,7 +11,7 @@ class TwoFactorCondition implements TwoFactorConditionInterface
     public function __construct(
         #[Autowire(env: 'FEATURE_2FA_EMAIL_ENABLED')]
         private bool $feature2faEmailEnabled,
-        ) {
+    ) {
     }
 
     public function shouldPerformTwoFactorAuthentication(AuthenticationContextInterface $context): bool

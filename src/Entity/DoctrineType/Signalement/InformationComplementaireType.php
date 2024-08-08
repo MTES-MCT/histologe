@@ -23,7 +23,7 @@ class InformationComplementaireType extends Type
         }
 
         if (!$value instanceof InformationComplementaire) {
-            throw new \Exception(sprintf('Only %s object is supported', InformationComplementaire::class));
+            throw new \Exception(\sprintf('Only %s object is supported', InformationComplementaire::class));
         }
 
         return json_encode($value->toArray());

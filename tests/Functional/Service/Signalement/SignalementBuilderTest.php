@@ -107,7 +107,7 @@ class SignalementBuilderTest extends KernelTestCase
             $signalement->getTelOccupant()
         );
         $this->assertEquals(
-            '+269'.'3621161',
+            '+2693621161',
             $signalement->getTelOccupantBis()
         );
         $this->assertEquals(
@@ -115,7 +115,7 @@ class SignalementBuilderTest extends KernelTestCase
             $signalement->getTelDeclarant()
         );
         $this->assertEquals(
-            '+269'.'3621161',
+            '+2693621161',
             $signalement->getTelDeclarantSecondaire()
         );
         $this->assertEquals(
@@ -256,7 +256,7 @@ class SignalementBuilderTest extends KernelTestCase
 
     private function invokeMethod(&$object, $methodName, array $parameters = [])
     {
-        $reflection = new \ReflectionClass(\get_class($object));
+        $reflection = new \ReflectionClass($object::class);
         $method = $reflection->getMethod($methodName);
         $method->setAccessible(true);
 

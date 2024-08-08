@@ -136,7 +136,7 @@ class SuiviManager extends Manager
         if (DocumentType::PROCEDURE_RAPPORT_DE_VISITE === $documentType && null !== $intervention) {
             $isVisibleUsager = true;
             if ($nbDocs > 0) {
-                $description .= sprintf(
+                $description .= \sprintf(
                     '%s a ajouté %s %s de la visite du %s :',
                     $user->getPartner()->getNom(),
                     $nbDocs,
@@ -149,7 +149,7 @@ class SuiviManager extends Manager
         if (DocumentType::PHOTO_VISITE === $documentType) {
             $isVisibleUsager = true;
             if ($nbPhotos > 0) {
-                $description .= sprintf(
+                $description .= \sprintf(
                     '%s a ajouté %s %s de la visite du %s :',
                     $user->getPartner()->getNom(),
                     $nbPhotos,
@@ -190,7 +190,7 @@ class SuiviManager extends Manager
 
         $suivi->setIsPublic($isVisibleUsager);
 
-        $suivi->setType(SUIVI::TYPE_AUTO);
+        $suivi->setType(Suivi::TYPE_AUTO);
 
         return $suivi;
     }

@@ -501,7 +501,7 @@ class SignalementController extends AbstractController
             }
 
             $params = [
-                'type' => SUIVI::TYPE_USAGER,
+                'type' => Suivi::TYPE_USAGER,
                 'description' => $description,
             ];
 

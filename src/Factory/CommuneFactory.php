@@ -13,9 +13,9 @@ class CommuneFactory
 
     public function createInstanceFrom(
         Territory $territory,
-        string $nom = null,
-        string $codePostal = null,
-        string $codeInsee = null,
+        ?string $nom = null,
+        ?string $codePostal = null,
+        ?string $codeInsee = null,
         bool $isZonePermisLouer = false
     ) {
         return (new Commune())

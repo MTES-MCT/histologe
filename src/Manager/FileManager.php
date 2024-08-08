@@ -21,9 +21,9 @@ class FileManager extends AbstractManager
     }
 
     public function createOrUpdate(
-        string $filename = null,
-        string $title = null,
-        string $type = null,
+        ?string $filename = null,
+        ?string $title = null,
+        ?string $type = null,
         ?Signalement $signalement = null,
         ?User $user = null,
         bool $flush = false,

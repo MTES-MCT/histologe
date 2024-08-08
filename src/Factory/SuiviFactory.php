@@ -33,16 +33,16 @@ class SuiviFactory
         }
 
         if ($user && \in_array('ROLE_USAGER', $user->getRoles())) {
-            return SUIVI::TYPE_USAGER;
+            return Suivi::TYPE_USAGER;
         }
 
         if (isset($params['accept'])
         || isset($params['suivi'])
         || (isset($params['domain']) && 'esabora' === $params['domain'])) {
-            return SUIVI::TYPE_AUTO;
+            return Suivi::TYPE_AUTO;
         }
 
-        return SUIVI::TYPE_PARTNER;
+        return Suivi::TYPE_PARTNER;
     }
 
     private function buildDescription($params): string
@@ -75,7 +75,7 @@ class SuiviFactory
     {
         $motifSuivi = Sanitizer::sanitize($params['motif_suivi']);
 
-        return sprintf(
+        return \sprintf(
             'Le signalement a été cloturé pour %s avec le motif suivant <br><strong>%s</strong><br><strong>Desc. : </strong>%s',
             $params['subject'],
             $params['motif_cloture']->label(),

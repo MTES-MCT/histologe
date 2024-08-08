@@ -141,7 +141,7 @@ class SignalementDraftRequest
         message: 'Merci de renseigner votre adresse e-mail.',
         groups: ['POST_TIERS_PARTICULIER', 'POST_TIERS_PRO', 'POST_BAILLEUR', 'POST_SERVICE_SECOURS']
     )]
-    #[Assert\Email(mode: Email::VALIDATION_MODE_STRICT)]
+    #[Email(mode: Email::VALIDATION_MODE_STRICT)]
     #[Assert\Length(max: 255, maxMessage: 'Votre email en tant que tiers ne doit pas dépasser {{ limit }} caractères.')]
     private ?string $vosCoordonneesTiersEmail = null;
     #[Assert\NotBlank(
@@ -179,7 +179,7 @@ class SignalementDraftRequest
         message: 'Merci de renseigner votre adresse e-mail.',
         groups: ['POST_LOCATAIRE', 'POST_BAILLEUR_OCCUPANT']
     )]
-    #[Assert\Email(mode: Email::VALIDATION_MODE_STRICT)]
+    #[Email(mode: Email::VALIDATION_MODE_STRICT)]
     #[Assert\Length(max: 255, maxMessage: 'Votre email ne doit pas dépasser {{ limit }} caractères.')]
     private ?string $vosCoordonneesOccupantEmail = null;
     #[Assert\NotBlank(
@@ -202,7 +202,7 @@ class SignalementDraftRequest
     )]
     #[Assert\Length(max: 50, maxMessage: 'Le prénom de l\'occupant ne doit pas dépasser {{ limit }} caractères.')]
     private ?string $coordonneesOccupantPrenom = null;
-    #[Assert\Email(mode: Email::VALIDATION_MODE_STRICT)]
+    #[Email(mode: Email::VALIDATION_MODE_STRICT)]
     #[Assert\Length(max: 255, maxMessage: 'L\'email de l\'occupant ne doit pas dépasser {{ limit }} caractères.')]
     private ?string $coordonneesOccupantEmail = null;
     #[AppAssert\TelephoneFormat]
@@ -213,7 +213,7 @@ class SignalementDraftRequest
     private ?string $coordonneesBailleurNom = null;
     #[Assert\Length(max: 250, maxMessage: 'Le prénom du bailleur ne doit pas dépasser {{ limit }} caractères.')]
     private ?string $coordonneesBailleurPrenom = null;
-    #[Assert\Email(mode: Email::VALIDATION_MODE_STRICT)]
+    #[Email(mode: Email::VALIDATION_MODE_STRICT)]
     private ?string $coordonneesBailleurEmail = null;
     #[AppAssert\TelephoneFormat]
     private ?string $coordonneesBailleurTel = null;

@@ -44,11 +44,11 @@ class ImageManipulationHandler
         UploadedFile $file,
         string $fileType
     ): bool {
-        if (File::INPUT_NAME_PHOTOS === $fileType &&
-            \in_array($file->getMimeType(), File::IMAGE_MIME_TYPES) &&
-            (\in_array($file->getClientOriginalExtension(), File::IMAGE_EXTENSION) ||
-            \in_array($file->getExtension(), File::IMAGE_EXTENSION) ||
-            \in_array($file->guessExtension(), File::IMAGE_EXTENSION))
+        if (File::INPUT_NAME_PHOTOS === $fileType
+            && \in_array($file->getMimeType(), File::IMAGE_MIME_TYPES)
+            && (\in_array($file->getClientOriginalExtension(), File::IMAGE_EXTENSION)
+            || \in_array($file->getExtension(), File::IMAGE_EXTENSION)
+            || \in_array($file->guessExtension(), File::IMAGE_EXTENSION))
         ) {
             return true;
         }

@@ -94,7 +94,7 @@ class CreateSignalementUsagerCommand extends Command
                 $question .= ' ?';
                 $answers[] = 'no';
 
-                foreach ($unaffectedSuivis  as $unaffectedSuivi) {
+                foreach ($unaffectedSuivis as $unaffectedSuivi) {
                     $this->io->text('Unaffected suivi created at '.$unaffectedSuivi->getCreatedAt()->format('d/m/Y H:m'));
                     $this->io->text('"'.$unaffectedSuivi->getDescription().'"');
 

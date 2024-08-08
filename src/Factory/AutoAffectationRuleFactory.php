@@ -10,14 +10,14 @@ class AutoAffectationRuleFactory
 {
     public function createInstanceFrom(
         Territory $territory,
-        string $status = null,
-        PartnerType $partnerType = null,
-        string $profileDeclarant = null,
-        string $inseeToInclude = null,
+        ?string $status = null,
+        ?PartnerType $partnerType = null,
+        ?string $profileDeclarant = null,
+        ?string $inseeToInclude = null,
         ?string $inseeToExclude = null,
         ?string $partnerToExclude = null,
-        string $parc = null,
-        string $allocataire = null
+        ?string $parc = null,
+        ?string $allocataire = null
     ): AutoAffectationRule {
         $autoAffectationRule = (new AutoAffectationRule())
             ->setTerritory($territory)
