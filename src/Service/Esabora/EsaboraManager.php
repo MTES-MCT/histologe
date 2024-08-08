@@ -106,7 +106,7 @@ class EsaboraManager
             case EsaboraStatus::ESABORA_REJECTED->value:
                 if (Affectation::STATUS_REFUSED !== $currentStatus) {
                     $this->affectationManager->updateAffectation($affectation, $user, Affectation::STATUS_REFUSED);
-                    $description = sprintf(
+                    $description = \sprintf(
                         'refusé via '.$dossierResponse->getNameSI().' pour motif suivant: %s',
                         $dossierResponse->getSasCauseRefus()
                     );
@@ -133,7 +133,7 @@ class EsaboraManager
         } else {
             if (null === InterventionType::tryFromLabel($dossierVisiteSISH->getVisiteType())) {
                 $this->logger->error(
-                    sprintf(
+                    \sprintf(
                         '#%s - Le dossier SISH %s a un type de visite invalide `%s`. Types valides : (%s)',
                         $dossierVisiteSISH->getReferenceDossier(),
                         $dossierVisiteSISH->getDossNum(),

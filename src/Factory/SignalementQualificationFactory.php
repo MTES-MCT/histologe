@@ -8,7 +8,6 @@ use App\Entity\Enum\QualificationStatus;
 use App\Entity\Signalement;
 use App\Entity\SignalementQualification;
 use App\Service\Signalement\Qualification\QualificationStatusService;
-use DateTimeImmutable;
 
 class SignalementQualificationFactory
 {
@@ -57,9 +56,9 @@ class SignalementQualificationFactory
         $dataDateBailToSave = null;
         if ('Je ne sais pas' !== $dataDateBail) {
             if (null !== $signalement->getDateEntree() && $signalement->getDateEntree()->format('Y') >= 2023) {
-                $signalementQualification->setDernierBailAt(new DateTimeImmutable($signalement->getDateEntree()->format('Y-m-d')));
+                $signalementQualification->setDernierBailAt(new \DateTimeImmutable($signalement->getDateEntree()->format('Y-m-d')));
             } elseif (!empty($dataDateBail)) {
-                $signalementQualification->setDernierBailAt(new DateTimeImmutable($dataDateBail));
+                $signalementQualification->setDernierBailAt(new \DateTimeImmutable($dataDateBail));
             }
             $dataDateBailToSave = $signalementQualification->getDernierBailAt()?->format('Y-m-d');
             if (

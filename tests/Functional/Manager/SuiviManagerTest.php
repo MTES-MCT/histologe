@@ -61,10 +61,10 @@ class SuiviManagerTest extends KernelTestCase
 
         $countSuivisBeforeCreate = $signalement->getSuivis()->count();
         $suivi = $suiviManager->createSuivi($user, $signalement, [
-                    'motif_suivi' => 'Lorem ipsum suivi sit amet, consectetur adipiscing elit.',
-                    'motif_cloture' => MotifCloture::tryFrom('NON_DECENCE'),
-                    'subject' => 'test',
-                ], true);
+            'motif_suivi' => 'Lorem ipsum suivi sit amet, consectetur adipiscing elit.',
+            'motif_cloture' => MotifCloture::tryFrom('NON_DECENCE'),
+            'subject' => 'test',
+        ], true);
 
         $suiviManager->save($suivi);
         $signalement->addSuivi($suivi);

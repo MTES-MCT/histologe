@@ -33,7 +33,7 @@ class CoordonneesFoyerRequest implements RequestInterface
         #[Assert\Length(max: 50, maxMessage: 'Le prénom ne doit pas dépasser {{ limit }} caractères.')]
         private readonly ?string $prenom = null,
         #[Assert\NotBlank(message: 'Merci de saisir un email.', groups: ['LOCATAIRE', 'BAILLEUR_OCCUPANT'])]
-        #[Assert\Email(mode: Email::VALIDATION_MODE_STRICT)]
+        #[Email(mode: Email::VALIDATION_MODE_STRICT)]
         #[Assert\Length(max: 255, maxMessage: 'L\'email ne doit pas dépasser {{ limit }} caractères.')]
         private readonly ?string $mail = null,
         #[Assert\NotBlank(

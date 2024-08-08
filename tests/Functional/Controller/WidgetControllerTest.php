@@ -53,8 +53,8 @@ class WidgetControllerTest extends WebTestCase
         $router = self::getContainer()->get(RouterInterface::class);
         $client->request('GET', $router->generate(
             'back_dashboard_widget', [
-            'widgetType' => WidgetType::WIDGET_TYPE_ESABORA_EVENTS,
-        ])
+                'widgetType' => WidgetType::WIDGET_TYPE_ESABORA_EVENTS,
+            ])
         );
         $response = json_decode($client->getResponse()->getContent(), true);
 
@@ -178,7 +178,7 @@ class WidgetControllerTest extends WebTestCase
         $this->assertEquals(
             $statusCode,
             $client->getResponse()->getStatusCode(),
-            sprintf('Result value: %d', $client->getResponse()->getStatusCode())
+            \sprintf('Result value: %d', $client->getResponse()->getStatusCode())
         );
     }
 
@@ -200,7 +200,7 @@ class WidgetControllerTest extends WebTestCase
         $this->assertEquals(
             $statusCode,
             $client->getResponse()->getStatusCode(),
-            sprintf('Result value: %d', $client->getResponse()->getStatusCode())
+            \sprintf('Result value: %d', $client->getResponse()->getStatusCode())
         );
     }
 
@@ -222,7 +222,7 @@ class WidgetControllerTest extends WebTestCase
         $this->assertEquals(
             $statusCode,
             $client->getResponse()->getStatusCode(),
-            sprintf('Result value: %d', $client->getResponse()->getStatusCode())
+            \sprintf('Result value: %d', $client->getResponse()->getStatusCode())
         );
     }
 

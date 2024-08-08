@@ -12,7 +12,6 @@ use App\Service\Statistics\GlobalBackAnalyticsProvider;
 use App\Service\Statistics\ListCommunesStatisticProvider;
 use App\Service\Statistics\ListTagsStatisticProvider;
 use App\Service\Statistics\ListTerritoryStatisticProvider;
-use DateTime;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -89,9 +88,9 @@ class BackStatistiquesController extends AbstractController
         $etiquettes = array_map(fn ($value): int => $value * 1, $strEtiquettes);
         $type = $request->get('type');
         $dateStartInput = $request->get('dateStart');
-        $dateStart = new DateTime($dateStartInput);
+        $dateStart = new \DateTime($dateStartInput);
         $dateEndInput = $request->get('dateEnd');
-        $dateEnd = new DateTime($dateEndInput);
+        $dateEnd = new \DateTime($dateEndInput);
         $hasCountRefused = '1' == $request->get('countRefused');
         $hasCountArchived = '1' == $request->get('countArchived');
 

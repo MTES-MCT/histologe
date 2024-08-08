@@ -42,6 +42,6 @@ class SignalementNewMailer extends AbstractNotificationMailer
 
     public function updateMailerSubjectFromNotification(NotificationMail $notificationMail): void
     {
-        $this->mailerSubject = sprintf(self::MAILER_SUBJECT, $notificationMail->getSignalement()->getCpOccupant());
+        $this->mailerSubject = \sprintf(self::MAILER_SUBJECT, $notificationMail->getSignalement()->getCpOccupant());
     }
 }

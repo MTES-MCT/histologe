@@ -16,10 +16,10 @@ class PartnerFactory
 
     public function createInstanceFrom(
         Territory $territory,
-        string $name = null,
-        string $email = null,
-        PartnerType $type = null,
-        string $insee = null
+        ?string $name = null,
+        ?string $email = null,
+        ?PartnerType $type = null,
+        ?string $insee = null
     ): Partner {
         $partner = (new Partner())
             ->setTerritory($territory)

@@ -62,7 +62,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, TwoFact
     private $uuid;
 
     #[ORM\Column(type: 'string', length: 180, unique: false)]
-    #[Assert\Email(mode: Email::VALIDATION_MODE_STRICT, groups: ['registration'])]
+    #[Email(mode: Email::VALIDATION_MODE_STRICT, groups: ['registration'])]
     #[Assert\NotBlank(message: 'Merci de saisir une adresse e-mail.')]
     #[Assert\Length(max: 255)]
     private $email;
@@ -195,7 +195,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, TwoFact
     /**
      * @see PasswordAuthenticatedUserInterface
      */
-    public function getPassword(): string|null
+    public function getPassword(): ?string
     {
         return $this->password;
     }

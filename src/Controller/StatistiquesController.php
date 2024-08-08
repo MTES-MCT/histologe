@@ -12,7 +12,6 @@ use App\Service\Statistics\MonthStatisticProvider;
 use App\Service\Statistics\MotifClotureStatisticProvider;
 use App\Service\Statistics\StatusStatisticProvider;
 use App\Service\Statistics\TerritoryStatisticProvider;
-use DateTime;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -64,7 +63,7 @@ class StatistiquesController extends AbstractController
         if ('' !== $requestTerritory && 'all' !== $requestTerritory) {
             $territory = $territoryRepository->findOneBy(['id' => $requestTerritory]);
         }
-        $currentDate = new DateTime();
+        $currentDate = new \DateTime();
         $currentYear = $currentDate->format('Y');
 
         $this->ajaxResult['signalement_per_month'] = $this->monthStatisticProvider->getData($territory, null);

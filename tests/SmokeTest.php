@@ -21,7 +21,7 @@ class SmokeTest extends WebTestCase
         $this->assertLessThan(
             $statusCode,
             $client->getResponse()->getStatusCode(),
-            sprintf('Result value: %d', $client->getResponse()->getStatusCode())
+            \sprintf('Result value: %d', $client->getResponse()->getStatusCode())
         );
     }
 
@@ -41,7 +41,7 @@ class SmokeTest extends WebTestCase
         $this->assertLessThan(
             $statusCode,
             $client->getResponse()->getStatusCode(),
-            sprintf('Result value: %d', $client->getResponse()->getStatusCode())
+            \sprintf('Result value: %d', $client->getResponse()->getStatusCode())
         );
     }
 
@@ -61,7 +61,7 @@ class SmokeTest extends WebTestCase
         $this->assertLessThan(
             $statusCode,
             $client->getResponse()->getStatusCode(),
-            sprintf('Result value: %d', $client->getResponse()->getStatusCode())
+            \sprintf('Result value: %d', $client->getResponse()->getStatusCode())
         );
     }
 
@@ -81,7 +81,7 @@ class SmokeTest extends WebTestCase
         $this->assertLessThan(
             $statusCode,
             $client->getResponse()->getStatusCode(),
-            sprintf('Result value: %d', $client->getResponse()->getStatusCode())
+            \sprintf('Result value: %d', $client->getResponse()->getStatusCode())
         );
     }
 
@@ -93,8 +93,8 @@ class SmokeTest extends WebTestCase
 
         /** @var Route $route */
         foreach ($routes as $route) {
-            if ([] === $route->getMethods() ||
-                \count($route->getMethods()) >= 1 && \in_array('GET', $route->getMethods())
+            if ([] === $route->getMethods()
+                || \count($route->getMethods()) >= 1 && \in_array('GET', $route->getMethods())
             ) {
                 $path = $route->getPath();
                 yield $path => [$path, 500];

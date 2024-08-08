@@ -95,7 +95,7 @@ class EsaboraSISHMock extends AbstractEsaboraMock
     }
 
     protected static function createMockIntervention(
-        Wiremock $wiremock,
+        WireMock $wiremock,
         string $service,
         string $response,
         string $uuidSignalement = self::SIGNALEMENT_SUBCRIBED_SISH_SCHS

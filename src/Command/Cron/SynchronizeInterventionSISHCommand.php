@@ -70,7 +70,7 @@ class SynchronizeInterventionSISHCommand extends AbstractSynchronizeEsaboraComma
                     $interventionHandler->handle($affectation);
                     $countSuccess += $interventionHandler->getCountSuccess();
                     $countFailed += $interventionHandler->getCountFailed();
-                    $io->writeln(sprintf('#%s: %s was executed', $key, $interventionHandler->getServiceName()));
+                    $io->writeln(\sprintf('#%s: %s was executed', $key, $interventionHandler->getServiceName()));
                 } catch (\Throwable $e) {
                     $signalement = $affectation->getSignalement();
                     $message = $interventionHandler->getServiceName().' - Signalement '.$signalement->getUuid().' ('.$signalement->getId().') : '.$e->getMessage();

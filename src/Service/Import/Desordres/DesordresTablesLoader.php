@@ -58,7 +58,7 @@ class DesordresTablesLoader
                 $this->createDesordrePrecision($item, $desordreCritere);
             }
             if (0 === $countRow % self::FLUSH_COUNT) {
-                $this->logger->info(sprintf('in progress - %s rows treated', $countRow));
+                $this->logger->info(\sprintf('in progress - %s rows treated', $countRow));
                 $this->manager->flush();
             }
         }

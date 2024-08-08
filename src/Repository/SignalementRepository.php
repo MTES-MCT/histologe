@@ -131,7 +131,7 @@ class SignalementRepository extends ServiceEntityRepository
         return $qb->getQuery()->getSingleScalarResult();
     }
 
-    public function countByStatus(?Territory $territory, ?Partner $partner, ?int $year = null, bool $removeImported = false, Qualification $qualification = null, array $qualificationStatuses = null): array
+    public function countByStatus(?Territory $territory, ?Partner $partner, ?int $year = null, bool $removeImported = false, ?Qualification $qualification = null, ?array $qualificationStatuses = null): array
     {
         $qb = $this->createQueryBuilder('s');
         $qb->select('COUNT(s.id) as count')
@@ -415,7 +415,7 @@ class SignalementRepository extends ServiceEntityRepository
     }
 
     public function findSignalementAffectationListPaginator(
-        User|null $user,
+        ?User $user,
         array $options,
     ): Paginator {
         $maxResult = $options['maxItemsPerPage'] ?? SignalementAffectationListView::MAX_LIST_PAGINATION;
@@ -431,7 +431,7 @@ class SignalementRepository extends ServiceEntityRepository
     }
 
     public function findSignalementAffectationQuery(
-        User|null $user,
+        ?User $user,
         array $options
     ): QueryBuilder {
         $qb = $this->createQueryBuilder('s');
@@ -545,7 +545,7 @@ class SignalementRepository extends ServiceEntityRepository
         return $qb;
     }
 
-    public function findSignalementAffectationIterable(User|null $user, array $options): \Generator
+    public function findSignalementAffectationIterable(?User $user, array $options): \Generator
     {
         $qb = $this->findSignalementAffectationQuery($user, $options);
 
@@ -602,12 +602,12 @@ class SignalementRepository extends ServiceEntityRepository
         return $qb->getQuery()->toIterable();
     }
 
-    public function findCities(User|null $user = null, Territory|null $territory = null): array|int|string
+    public function findCities(?User $user = null, ?Territory $territory = null): array|int|string
     {
         return $this->findCommunes($user, $territory, 's.villeOccupant', 'city');
     }
 
-    public function findZipcodes(User|null $user = null, Territory|null $territory = null): array|int|string
+    public function findZipcodes(?User $user = null, ?Territory $territory = null): array|int|string
     {
         return $this->findCommunes($user, $territory, 's.cpOccupant', 'zipcode');
     }
@@ -1116,7 +1116,7 @@ class SignalementRepository extends ServiceEntityRepository
     {
         $qb = $this->createQueryBuilder('s');
         $qb->select(
-            sprintf(
+            \sprintf(
                 'NEW %s(
                 COUNT(s.id),
                 SUM(CASE WHEN s.statut = :new     THEN 1 ELSE 0 END),
@@ -1285,7 +1285,7 @@ class SignalementRepository extends ServiceEntityRepository
     }
 
     public function findAllArchived(
-        Territory|null $territory,
+        ?Territory $territory,
         ?string $referenceTerms,
         $page
     ): Paginator {

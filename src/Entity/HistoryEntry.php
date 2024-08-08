@@ -4,7 +4,6 @@ namespace App\Entity;
 
 use App\Entity\Enum\HistoryEntryEvent;
 use App\Repository\HistoryEntryRepository;
-use DateTimeImmutable;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: HistoryEntryRepository::class)]
@@ -84,12 +83,12 @@ class HistoryEntry
         return $this;
     }
 
-    public function getCreatedAt(): ?DateTimeImmutable
+    public function getCreatedAt(): ?\DateTimeImmutable
     {
         return $this->createdAt;
     }
 
-    public function setCreatedAt(?DateTimeImmutable $createdAt): self
+    public function setCreatedAt(?\DateTimeImmutable $createdAt): self
     {
         $this->createdAt = $createdAt;
 

@@ -43,7 +43,7 @@ class SignalementFileController extends AbstractController
 
         $this->addFlash(
             'success',
-            sprintf(
+            \sprintf(
                 'L\'export pdf vous sera envoyé par e-mail à l\'adresse suivante : %s. N\'oubliez pas de regarder vos courriers indésirables (spam) !',
                 $user->getEmail()
             )
@@ -177,7 +177,7 @@ class SignalementFileController extends AbstractController
                     .$filename
                     .'</li></ul>'
                 );
-                $suivi->setType(SUIVI::TYPE_AUTO);
+                $suivi->setType(Suivi::TYPE_AUTO);
 
                 $entityManager->persist($suivi);
                 $entityManager->flush();

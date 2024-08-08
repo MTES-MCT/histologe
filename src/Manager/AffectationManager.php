@@ -46,7 +46,7 @@ class AffectationManager extends Manager
             ->exists(
                 function (int $key, Affectation $affectation) use ($signalement, $partner) {
                     $this->logger->info(
-                        sprintf(
+                        \sprintf(
                             'Signalement %s - Partner already affected %s - %s',
                             $signalement->getReference(),
                             $key,

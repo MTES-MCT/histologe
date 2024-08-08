@@ -7,7 +7,6 @@ use App\Entity\Signalement;
 use App\Entity\SignalementQualification;
 use App\Factory\SignalementQualificationFactory;
 use App\Service\Signalement\Qualification\QualificationStatusService;
-use DateTimeImmutable;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 
 class SignalementQualificationFactoryTest extends KernelTestCase
@@ -21,7 +20,7 @@ class SignalementQualificationFactoryTest extends KernelTestCase
             ->willReturn(QualificationStatus::NDE_AVEREE);
 
         $signalement = new Signalement();
-        $signalement->setDateEntree(new DateTimeImmutable('2023-01-02'));
+        $signalement->setDateEntree(new \DateTimeImmutable('2023-01-02'));
         $listNDECriticites = [1];
         $dataDateBail = '2023-01-02';
         $dataConsoSizeYear = '1400';

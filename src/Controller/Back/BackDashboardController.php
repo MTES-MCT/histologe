@@ -10,7 +10,7 @@ use Symfony\Component\Routing\Annotation\Route;
 class BackDashboardController extends AbstractController
 {
     public function __construct(
-        ) {
+    ) {
     }
 
     #[Route('/', name: 'back_dashboard')]

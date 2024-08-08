@@ -59,7 +59,7 @@ class LoadEpciCommand extends Command
             }
             $response = $this->httpClient->request(
                 'GET',
-                $epciCommunesUrl = sprintf(self::API_EPCI_COMMUNE_URL, $epciItem['code'])
+                $epciCommunesUrl = \sprintf(self::API_EPCI_COMMUNE_URL, $epciItem['code'])
             );
 
             if (Response::HTTP_OK === $response->getStatusCode()) {
@@ -72,7 +72,7 @@ class LoadEpciCommand extends Command
                     }
                 }
             } else {
-                $io->error(sprintf('API failed for: %s', $epciCommunesUrl));
+                $io->error(\sprintf('API failed for: %s', $epciCommunesUrl));
             }
             $this->entityManager->persist($epci);
             $progressBar->advance();
@@ -82,12 +82,12 @@ class LoadEpciCommand extends Command
         $this->entityManager->flush();
         $nbCommunesWithECPI = $this->communeRepository->count([]);
         $nbCommunesWithoutECPI = $this->communeRepository->count(['epci' => null]);
-        $io->success(sprintf(
+        $io->success(\sprintf(
             'EPCI loaded with %d communes that belong to EPCI',
             $nbCommunesWithECPI - $nbCommunesWithoutECPI
         ));
         if ($nbCommunesWithoutECPI > 0) {
-            $io->warning(sprintf(
+            $io->warning(\sprintf(
                 '%d communes code postal might be obsolete.',
                 $nbCommunesWithoutECPI
             ));

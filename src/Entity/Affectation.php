@@ -5,7 +5,6 @@ namespace App\Entity;
 use App\Entity\Enum\MotifCloture;
 use App\Entity\Enum\MotifRefus;
 use App\Repository\AffectationRepository;
-use DateTimeImmutable;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
@@ -31,10 +30,10 @@ class Affectation
     private ?Partner $partner;
 
     #[ORM\Column(type: 'datetime_immutable', nullable: true)]
-    private ?DateTimeImmutable $answeredAt;
+    private ?\DateTimeImmutable $answeredAt;
 
     #[ORM\Column(type: 'datetime_immutable')]
-    private DateTimeImmutable $createdAt;
+    private \DateTimeImmutable $createdAt;
 
     #[ORM\Column(type: 'integer')]
     private int $statut;
@@ -64,7 +63,7 @@ class Affectation
     public function __construct()
     {
         $this->statut = self::STATUS_WAIT;
-        $this->createdAt = new DateTimeImmutable();
+        $this->createdAt = new \DateTimeImmutable();
         $this->notifications = new ArrayCollection();
     }
 
@@ -97,24 +96,24 @@ class Affectation
         return $this;
     }
 
-    public function getAnsweredAt(): ?DateTimeImmutable
+    public function getAnsweredAt(): ?\DateTimeImmutable
     {
         return $this->answeredAt;
     }
 
-    public function setAnsweredAt(DateTimeImmutable $answeredAt): self
+    public function setAnsweredAt(\DateTimeImmutable $answeredAt): self
     {
         $this->answeredAt = $answeredAt;
 
         return $this;
     }
 
-    public function getCreatedAt(): ?DateTimeImmutable
+    public function getCreatedAt(): ?\DateTimeImmutable
     {
         return $this->createdAt;
     }
 
-    public function setCreatedAt(DateTimeImmutable $createdAt): self
+    public function setCreatedAt(\DateTimeImmutable $createdAt): self
     {
         $this->createdAt = $createdAt;
 

@@ -50,10 +50,10 @@ class ImportDesordresTablesCommand extends Command
 
         $metadata = $this->desordresTablesLoader->getMetadata();
 
-        $io->success(sprintf('%s desordre_categorie have been created', $metadata['count_desordre_categorie_created']));
-        $io->success(sprintf('%s desordre_critere have been created', $metadata['count_desordre_critere_created']));
-        $io->success(sprintf('%s desordre_precision have been created', $metadata['count_desordre_precision_created']));
-        $io->success(sprintf('%s desordre_precision have been updated', $metadata['count_desordre_precision_updated']));
+        $io->success(\sprintf('%s desordre_categorie have been created', $metadata['count_desordre_categorie_created']));
+        $io->success(\sprintf('%s desordre_critere have been created', $metadata['count_desordre_critere_created']));
+        $io->success(\sprintf('%s desordre_precision have been created', $metadata['count_desordre_precision_created']));
+        $io->success(\sprintf('%s desordre_precision have been updated', $metadata['count_desordre_precision_updated']));
 
         return Command::SUCCESS;
     }

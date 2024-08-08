@@ -43,14 +43,14 @@ class BailleurLoader
                 $bailleurNom = $item[BailleurHeader::ENSEIGNE];
                 $bailleurRaisonSociale = $item[BailleurHeader::RAISON_SOCIALE];
                 if (!isset($this->territories[$deptCode])) {
-                    $this->metadata['errors'][] = sprintf('[%s] ligne %d - Le territoire n\'existe pas.', $deptCode, $key + 2);
+                    $this->metadata['errors'][] = \sprintf('[%s] ligne %d - Le territoire n\'existe pas.', $deptCode, $key + 2);
                     continue;
                 }
                 if (empty($bailleurNom)) {
                     $bailleurNom = $bailleurRaisonSociale;
                 }
                 if (empty($bailleurNom)) {
-                    $this->metadata['errors'][] = sprintf('ligne %d - Le nom bailleur est vide.', $key + 2);
+                    $this->metadata['errors'][] = \sprintf('ligne %d - Le nom bailleur est vide.', $key + 2);
                     continue;
                 }
                 $isNew = false;

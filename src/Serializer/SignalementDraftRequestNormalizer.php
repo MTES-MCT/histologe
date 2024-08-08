@@ -74,7 +74,7 @@ class SignalementDraftRequestNormalizer implements DenormalizerInterface, Normal
      *
      * @throws \Symfony\Component\Serializer\Exception\ExceptionInterface
      */
-    public function normalize(mixed $object, string $format = null, array $context = []): mixed
+    public function normalize(mixed $object, ?string $format = null, array $context = []): mixed
     {
         $normalizedPayload = [];
         /** @var SignalementDraft $signalementDraft */
@@ -104,7 +104,7 @@ class SignalementDraftRequestNormalizer implements DenormalizerInterface, Normal
         ]);
     }
 
-    public function supportsNormalization(mixed $data, string $format = null, array $context = []): bool
+    public function supportsNormalization(mixed $data, ?string $format = null, array $context = []): bool
     {
         return $data instanceof SignalementDraft;
     }

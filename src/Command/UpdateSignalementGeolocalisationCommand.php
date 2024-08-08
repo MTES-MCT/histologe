@@ -63,7 +63,7 @@ class UpdateSignalementGeolocalisationCommand extends Command
             $this->signalementManager->updateAddressOccupantFromAddress($signalement, $address);
             $this->signalementManager->persist($signalement);
 
-            $io->success(sprintf('Signalement %s updated.%sAddress : %sCode insee : %sGPS : [%s, %s]',
+            $io->success(\sprintf('Signalement %s updated.%sAddress : %sCode insee : %sGPS : [%s, %s]',
                 $signalement->getUuid(),
                 \PHP_EOL,
                 $address->getLabel().\PHP_EOL,

@@ -41,11 +41,11 @@ class CartographieController extends AbstractController
 
             return $this->json(
                 [
-                'signalements' => $signalementRepository->findAllWithGeoData(
-                    $user,
-                    $filters,
-                    (int) $request->get('offset')
-                ), ]
+                    'signalements' => $signalementRepository->findAllWithGeoData(
+                        $user,
+                        $filters,
+                        (int) $request->get('offset')
+                    ), ]
             );
         }
 

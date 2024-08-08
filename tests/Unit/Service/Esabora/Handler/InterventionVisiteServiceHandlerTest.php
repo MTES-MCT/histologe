@@ -24,7 +24,7 @@ class InterventionVisiteServiceHandlerTest extends TestCase
     protected EsaboraManager $esaboraManager;
     protected JobEventManager $jobEventManager;
     protected InterventionVisiteServiceHandler $handler;
-    protected ?Affectation  $affectation = null;
+    protected ?Affectation $affectation = null;
 
     protected function setUp(): void
     {

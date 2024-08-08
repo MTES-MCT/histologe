@@ -12,7 +12,7 @@ class BatimentDesordresStatisticProvider
     {
     }
 
-    public function getData(Territory|null $territory, int|null $year): array
+    public function getData(?Territory $territory, ?int $year): array
     {
         $countPerBatimentDesordres = $this->signalementRepository->countByDesordresCriteres(
             $territory,

@@ -103,7 +103,7 @@ class SignalementVisitesController extends AbstractController
 
         $errorMessage = $this->validateRequest($visiteRequest, $validator);
         if ($errorMessage) {
-            $this->addFlash('error', sprintf("Erreurs lors de l'enregistrement de la visite : %s", $errorMessage));
+            $this->addFlash('error', \sprintf("Erreurs lors de l'enregistrement de la visite : %s", $errorMessage));
         } elseif ($intervention = $interventionManager->createVisiteFromRequest($signalement, $visiteRequest)) {
             $todayDate = new \DateTimeImmutable();
             if ($intervention->getScheduledAt() <= $todayDate) {
@@ -216,7 +216,7 @@ class SignalementVisitesController extends AbstractController
 
         $errorMessage = $this->validateRequest($visiteRequest, $validator);
         if ($errorMessage) {
-            $this->addFlash('error', sprintf('Erreurs lors de la modification de la visite : %s', $errorMessage));
+            $this->addFlash('error', \sprintf('Erreurs lors de la modification de la visite : %s', $errorMessage));
         } elseif ($intervention = $interventionManager->rescheduleVisiteFromRequest($signalement, $visiteRequest)) {
             if ($intervention->getScheduledAt() <= new \DateTimeImmutable()) {
                 $this->addFlash('success', self::SUCCESS_MSG_CONFIRM);

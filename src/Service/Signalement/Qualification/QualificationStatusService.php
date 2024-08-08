@@ -5,7 +5,6 @@ namespace App\Service\Signalement\Qualification;
 use App\Entity\Enum\Qualification;
 use App\Entity\Enum\QualificationStatus;
 use App\Entity\SignalementQualification;
-use DateTimeImmutable;
 use Twig\Extension\RuntimeExtensionInterface;
 
 class QualificationStatusService implements RuntimeExtensionInterface
@@ -46,7 +45,7 @@ class QualificationStatusService implements RuntimeExtensionInterface
             } elseif ('post2023' === $signalementQualification->getDetails()['date_dernier_dpe']) {
                 $before2023 = false;
             } else {
-                $dataDateDPEFormatted = new DateTimeImmutable($signalementQualification->getDetails()['date_dernier_dpe']);
+                $dataDateDPEFormatted = new \DateTimeImmutable($signalementQualification->getDetails()['date_dernier_dpe']);
                 if ($dataDateDPEFormatted->format('Y') < '2023') {
                     $before2023 = true;
                 }
@@ -55,7 +54,7 @@ class QualificationStatusService implements RuntimeExtensionInterface
             && null !== $consoEnergie
             && null !== $signalementQualification->getSignalement()->getSuperficie()
             && $signalementQualification->getSignalement()->getSuperficie() > 0) {
-                $consoEnergie = $consoEnergie / $signalementQualification->getSignalement()->getSuperficie();
+                $consoEnergie /= $signalementQualification->getSignalement()->getSuperficie();
             }
         }
 
