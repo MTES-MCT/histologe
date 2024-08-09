@@ -1760,7 +1760,9 @@ class Signalement
      */
     public function getTags(): Collection
     {
-        return $this->tags;
+        return $this->tags->filter(function (Tag $tag) {
+            return !$tag->getIsArchive();
+        });
     }
 
     public function addTag(Tag $tag): self
