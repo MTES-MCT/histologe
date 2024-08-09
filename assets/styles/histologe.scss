@@ -126,7 +126,8 @@ pre {
     margin-top: -0.75rem !important;
 }
 
-.fr-ws-nowrap {
+.fr-ws-nowrap,
+.fr-table__content .fr-cell--multiline .fr-ws-nowrap {
     white-space: nowrap;
 }
 

@@ -65,7 +65,7 @@
                                     |sanitize_html('app.message_sanitizer') }}
                                 </td>
                                 <td>{{ notification.suivi.createdBy ? notification.suivi.createdBy.nomComplet : notification.signalement.nomOccupant|upper~' '~notification.signalement.prenomOccupant|capitalize }}</td>
-                                <td class="fr-text--right">
+                                <td class="fr-text--right fr-ws-nowrap">
                                     <a href="{{ path('back_signalement_view',{uuid:notification.suivi.signalement.uuid}) }}#suivis"
                                     class="fr-btn fr-btn--sm {{ notification.isSeen ? 'fr-fi-check-line fr-btn--success':'fr-fi-eye-fill' }}"></a>
                                     <a href="{{ path('back_notifications_delete_notification',{id:notification.id}) }}?_token={{ csrf_token('back_delete_notification_'~notification.id) }}"
