@@ -1,11 +1,12 @@
 {% if canEditSignalement %}
-    <a class="fr-btn--icon-left fr-a-edit fr-icon-bookmark-line fr-ml-2v" id="tags_select_tooltip_btn" href="#"
+    <button>
+        <a class="fr-btn--icon-left fr-a-edit fr-icon-bookmark-line fr-ml-2v" id="tags_select_tooltip_btn" href="#"
         data-fr-opened="false" aria-controls="fr-modal-etiquettes">Gérer les étiquettes</a>
-</button>
+    </button>
     <div>
         <div class="fr-my-3v">
             {% for tag in signalement.tags %}
-                <span class="fr-badge fr-badge--blue-ecume fr-mr-1v">{{ tag.label }}</span>
+                <span class="fr-badge fr-badge--blue-ecume fr-m-1v">{{ tag.label }}</span>
             {% else %}
                 <em class="fr-text-default--warning fr-fi-close-line fr-icon--xs">
                     <small>Aucune étiquette attribuée à ce signalement.</small>
