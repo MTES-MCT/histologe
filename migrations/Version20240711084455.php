@@ -61,9 +61,9 @@ final class Version20240711084455 extends AbstractMigration
         if ($isImported) {
             $reference = $signalement['reference'];
             if (61 === $territoryId && preg_match('/^\d{6}[a-z]?-(\d{3})$/', $reference, $matches)) {
-                $newReference = sprintf('%s-%s', $year, substr($reference, 2, 4));
+                $newReference = \sprintf('%s-%s', $year, substr($reference, 2, 4));
             } elseif (77 === $territoryId && preg_match('/^\d{5}\s*-\s*\d{4}$/', $reference, $matches)) {
-                $newReference = sprintf('%s-%s', $year, substr($reference, 2, 3));
+                $newReference = \sprintf('%s-%s', $year, substr($reference, 2, 3));
             } else {
                 $newReference = null;
             }
@@ -71,7 +71,7 @@ final class Version20240711084455 extends AbstractMigration
             $reference = $signalement['reference'];
             if (!preg_match('/^\d{4}-\d+$/', $reference)) {
                 $lastReferenceNumber = $this->getLastReferenceNumberForYear($connection, $year, $territoryId);
-                $newReference = sprintf('%s-%s', $year, $lastReferenceNumber + 1);
+                $newReference = \sprintf('%s-%s', $year, $lastReferenceNumber + 1);
             } else {
                 $newReference = null;
             }

@@ -48,7 +48,7 @@ class RemindInactiveUserCommand extends AbstractCronCommand
         $userList = $userRepository->findInactiveWithNbAffectationPending();
         $nbUsers = \count($userList);
         if ($input->getOption('debug')) {
-            $io->info(sprintf('%s users will be notified', $nbUsers));
+            $io->info(\sprintf('%s users will be notified', $nbUsers));
 
             return Command::SUCCESS;
         }
@@ -72,7 +72,7 @@ class RemindInactiveUserCommand extends AbstractCronCommand
         }
 
         $nbUsers = \count($userList);
-        $io->success(sprintf('%s users has been notified', $nbUsers));
+        $io->success(\sprintf('%s users has been notified', $nbUsers));
 
         $this->notificationMailerRegistry->send(
             new NotificationMail(

@@ -14,7 +14,6 @@ use App\Repository\UserRepository;
 use App\Service\Mailer\NotificationMail;
 use App\Service\Mailer\NotificationMailerRegistry;
 use App\Service\Mailer\NotificationMailerType;
-use DateTimeInterface;
 use Doctrine\ORM\EntityManagerInterface;
 
 class VisiteNotifier
@@ -28,7 +27,7 @@ class VisiteNotifier
     ) {
     }
 
-    public function notifyUsagers(Intervention $intervention, NotificationMailerType $notificationMailerType, ?DateTimeInterface $previousDate = null): void
+    public function notifyUsagers(Intervention $intervention, NotificationMailerType $notificationMailerType, ?\DateTimeInterface $previousDate = null): void
     {
         $toRecipients = $intervention->getSignalement()->getMailUsagers();
         foreach ($toRecipients as $toRecipient) {

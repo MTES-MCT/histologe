@@ -12,9 +12,9 @@ use App\Service\Signalement\SignalementDocumentTypeMapper;
 class FileFactory
 {
     public function createInstanceFrom(
-        string $filename = null,
-        string $title = null,
-        string $type = null,
+        ?string $filename = null,
+        ?string $title = null,
+        ?string $type = null,
         ?Signalement $signalement = null,
         ?User $user = null,
         ?Intervention $intervention = null,

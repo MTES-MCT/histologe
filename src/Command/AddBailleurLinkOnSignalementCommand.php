@@ -52,7 +52,7 @@ class AddBailleurLinkOnSignalementCommand extends Command
 
         $this->entityManager->flush();
 
-        $io->success(sprintf('%s bailleur(s) have been linked to signalements.', $this->nbLinkAdded));
+        $io->success(\sprintf('%s bailleur(s) have been linked to signalements.', $this->nbLinkAdded));
 
         return Command::SUCCESS;
     }

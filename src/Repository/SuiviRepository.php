@@ -26,7 +26,7 @@ class SuiviRepository extends ServiceEntityRepository
         ManagerRegistry $registry,
         #[Autowire(env: 'LIMIT_DAILY_RELANCES_BY_REQUEST')]
         private int $limitDailyRelancesByRequest
-        ) {
+    ) {
         parent::__construct($registry, Suivi::class);
     }
 

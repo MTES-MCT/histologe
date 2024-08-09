@@ -125,8 +125,8 @@ class UserAccountController extends AbstractController
         if ($security->getUser()) {
             $security->logout(false);
         }
-        if ($request->isMethod('POST') &&
-            $this->isCsrfTokenValid('create_password_'.$user->getUuid(), $request->get('_csrf_token'))
+        if ($request->isMethod('POST')
+            && $this->isCsrfTokenValid('create_password_'.$user->getUuid(), $request->get('_csrf_token'))
         ) {
             if ($request->get('password') !== $request->get('password-repeat')) {
                 $this->addFlash('error', 'Les mots de passe ne correspondent pas.');

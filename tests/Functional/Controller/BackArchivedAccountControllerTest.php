@@ -33,7 +33,7 @@ class BackArchivedAccountControllerTest extends WebTestCase
         $this->assertLessThan(
             Response::HTTP_INTERNAL_SERVER_ERROR,
             $client->getResponse()->getStatusCode(),
-            sprintf('Result value: %d', $client->getResponse()->getStatusCode())
+            \sprintf('Result value: %d', $client->getResponse()->getStatusCode())
         );
         $this->assertEquals(1, $crawler->filter('h1:contains("9 comptes archivés ou sans territoires et/ou partenaires trouvés")')->count());
     }
@@ -61,7 +61,7 @@ class BackArchivedAccountControllerTest extends WebTestCase
         $this->assertLessThan(
             Response::HTTP_INTERNAL_SERVER_ERROR,
             $client->getResponse()->getStatusCode(),
-            sprintf('Result value: %d', $client->getResponse()->getStatusCode())
+            \sprintf('Result value: %d', $client->getResponse()->getStatusCode())
         );
     }
 
@@ -87,7 +87,7 @@ class BackArchivedAccountControllerTest extends WebTestCase
         $this->assertLessThan(
             Response::HTTP_INTERNAL_SERVER_ERROR,
             $client->getResponse()->getStatusCode(),
-            sprintf('Result value: %d', $client->getResponse()->getStatusCode())
+            \sprintf('Result value: %d', $client->getResponse()->getStatusCode())
         );
         $this->assertResponseRedirects('/bo/comptes-archives/');
     }
@@ -138,7 +138,7 @@ class BackArchivedAccountControllerTest extends WebTestCase
 
         /** @var User $account */
         $account = $userRepository->findOneBy(['email' => $accountEmail]);
-        $this->assertEquals(USER::STATUS_ACTIVE, $account->getStatut());
+        $this->assertEquals(User::STATUS_ACTIVE, $account->getStatut());
         $this->assertResponseRedirects('/bo/comptes-archives/');
     }
 
@@ -188,7 +188,7 @@ class BackArchivedAccountControllerTest extends WebTestCase
 
         /** @var User $account */
         $account = $userRepository->findArchivedUserByEmail($accountEmail);
-        $this->assertEquals(USER::STATUS_ARCHIVE, $account->getStatut());
+        $this->assertEquals(User::STATUS_ARCHIVE, $account->getStatut());
     }
 
     public function testAccountReactivateError(): void
@@ -226,7 +226,7 @@ class BackArchivedAccountControllerTest extends WebTestCase
 
         /** @var User $account */
         $account = $userRepository->findArchivedUserByEmail($accountEmail);
-        $this->assertEquals(USER::STATUS_ARCHIVE, $account->getStatut());
+        $this->assertEquals(User::STATUS_ARCHIVE, $account->getStatut());
     }
 
     public function testAccountReactivateAnonymizedUser(): void
@@ -296,7 +296,7 @@ class BackArchivedAccountControllerTest extends WebTestCase
 
         /** @var User $account */
         $account = $userRepository->findOneBy(['email' => $accountEmail]);
-        $this->assertEquals(USER::STATUS_ACTIVE, $account->getStatut());
+        $this->assertEquals(User::STATUS_ACTIVE, $account->getStatut());
         $this->assertResponseRedirects('/bo/comptes-archives/');
     }
 }

@@ -68,7 +68,7 @@ class CacheInvalidationListener
                     $this->dashboardCache->delete($key);
                 }
             } catch (InvalidArgumentException $exception) {
-                $this->logger->error(sprintf('Invalidate cache failed %s', $exception->getMessage()));
+                $this->logger->error(\sprintf('Invalidate cache failed %s', $exception->getMessage()));
             }
         }
     }

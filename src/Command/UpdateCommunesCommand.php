@@ -91,9 +91,9 @@ class UpdateCommunesCommand extends Command
 
         $this->entityManager->flush();
 
-        $this->io->success(sprintf('Inserted %d communes', $nbInsert));
-        $this->io->success(sprintf('Updated %d communes', $nbUpdate));
-        $this->io->success(sprintf('Deleted %d communes', $nbDelete));
+        $this->io->success(\sprintf('Inserted %d communes', $nbInsert));
+        $this->io->success(\sprintf('Updated %d communes', $nbUpdate));
+        $this->io->success(\sprintf('Deleted %d communes', $nbDelete));
 
         return Command::SUCCESS;
     }

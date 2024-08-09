@@ -55,8 +55,7 @@ class FileVoter extends Voter
         return $this->canCreate($file, $user)
             && (
                 $this->isFileUploadedByUser($file, $user)
-                ||
-                $this->isAdminOrRTonHisTerritory($file, $user)
+                || $this->isAdminOrRTonHisTerritory($file, $user)
             );
     }
 
@@ -65,8 +64,7 @@ class FileVoter extends Voter
         return $this->canCreate($file, $user)
             && (
                 $this->isFileUploadedByUser($file, $user)
-                ||
-                $this->isPartnerFileDeletableByAdmin($file, $user)
+                || $this->isPartnerFileDeletableByAdmin($file, $user)
             );
     }
 

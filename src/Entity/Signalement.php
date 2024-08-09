@@ -14,8 +14,6 @@ use App\Entity\Model\TypeCompositionLogement;
 use App\Repository\SignalementRepository;
 use App\Utils\Phone;
 use App\Validator as AppAssert;
-use DateTimeImmutable;
-use DateTimeInterface;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
@@ -163,7 +161,7 @@ class Signalement
     private ?string $telDeclarantSecondaire;
 
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
-    #[Assert\Email(mode: Email::VALIDATION_MODE_STRICT, message: 'L\'adresse e-mail du déclarant n\'est pas valide.')]
+    #[Email(mode: Email::VALIDATION_MODE_STRICT, message: 'L\'adresse e-mail du déclarant n\'est pas valide.')]
     private $mailDeclarant;
 
     #[ORM\Column(type: 'string', length: 200, nullable: true)]
@@ -187,7 +185,7 @@ class Signalement
     private $telOccupant;
 
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
-    #[Assert\Email(mode: Email::VALIDATION_MODE_STRICT, message: 'L\'adresse e-mail de l\'occupant n\'est pas valide.')]
+    #[Email(mode: Email::VALIDATION_MODE_STRICT, message: 'L\'adresse e-mail de l\'occupant n\'est pas valide.')]
     private $mailOccupant;
 
     #[ORM\Column(type: 'string', length: 100, nullable: true)]
@@ -428,7 +426,7 @@ class Signalement
         $this->situations = new ArrayCollection();
         $this->criteres = new ArrayCollection();
         $this->criticites = new ArrayCollection();
-        $this->createdAt = new DateTimeImmutable();
+        $this->createdAt = new \DateTimeImmutable();
         $this->statut = self::STATUS_NEED_VALIDATION;
         $this->uuid = Uuid::v4();
         $this->codeSuivi = Uuid::v4();
@@ -559,7 +557,7 @@ class Signalement
         return $this->isProprioAverti;
     }
 
-    public function setIsProprioAverti(bool|null $isProprioAverti): self
+    public function setIsProprioAverti(?bool $isProprioAverti): self
     {
         $this->isProprioAverti = $isProprioAverti;
 
@@ -727,12 +725,12 @@ class Signalement
         return $this;
     }
 
-    public function getDateEntree(): ?DateTimeInterface
+    public function getDateEntree(): ?\DateTimeInterface
     {
         return $this->dateEntree;
     }
 
-    public function setDateEntree(?DateTimeInterface $dateEntree): self
+    public function setDateEntree(?\DateTimeInterface $dateEntree): self
     {
         $this->dateEntree = $dateEntree;
 
@@ -1058,7 +1056,7 @@ class Signalement
 
     public function getAddressCompleteOccupant(): ?string
     {
-        return sprintf(
+        return \sprintf(
             '%s %s %s',
             $this->adresseOccupant,
             $this->cpOccupant,
@@ -1078,24 +1076,24 @@ class Signalement
         return $this;
     }
 
-    public function getCreatedAt(): ?DateTimeImmutable
+    public function getCreatedAt(): ?\DateTimeImmutable
     {
         return $this->createdAt;
     }
 
-    public function setCreatedAt(DateTimeImmutable $createdAt): self
+    public function setCreatedAt(\DateTimeImmutable $createdAt): self
     {
         $this->createdAt = $createdAt;
 
         return $this;
     }
 
-    public function getModifiedAt(): ?DateTimeImmutable
+    public function getModifiedAt(): ?\DateTimeImmutable
     {
         return $this->modifiedAt;
     }
 
-    public function setModifiedAt(?DateTimeImmutable $modifiedAt): self
+    public function setModifiedAt(?\DateTimeImmutable $modifiedAt): self
     {
         $this->modifiedAt = $modifiedAt;
 
@@ -1383,12 +1381,12 @@ class Signalement
         return $this;
     }
 
-    public function getValidatedAt(): ?DateTimeImmutable
+    public function getValidatedAt(): ?\DateTimeImmutable
     {
         return $this->validatedAt;
     }
 
-    public function setValidatedAt(DateTimeImmutable|null $validatedAt): self
+    public function setValidatedAt(?\DateTimeImmutable $validatedAt): self
     {
         $this->validatedAt = $validatedAt;
 
@@ -1562,12 +1560,12 @@ class Signalement
         return $this;
     }
 
-    public function getProprioAvertiAt(): ?DateTimeImmutable
+    public function getProprioAvertiAt(): ?\DateTimeImmutable
     {
         return $this->proprioAvertiAt;
     }
 
-    public function setProprioAvertiAt(?DateTimeImmutable $proprioAvertiAt): self
+    public function setProprioAvertiAt(?\DateTimeImmutable $proprioAvertiAt): self
     {
         $this->proprioAvertiAt = $proprioAvertiAt;
 
@@ -1718,12 +1716,12 @@ class Signalement
         return $this;
     }
 
-    public function getClosedAt(): ?DateTimeImmutable
+    public function getClosedAt(): ?\DateTimeImmutable
     {
         return $this->closedAt;
     }
 
-    public function setClosedAt(?DateTimeImmutable $closedAt): self
+    public function setClosedAt(?\DateTimeImmutable $closedAt): self
     {
         $this->closedAt = $closedAt;
 
@@ -1818,12 +1816,12 @@ class Signalement
         return $this;
     }
 
-    public function getLastSuiviAt(): ?DateTimeImmutable
+    public function getLastSuiviAt(): ?\DateTimeImmutable
     {
         return $this->lastSuiviAt;
     }
 
-    public function setLastSuiviAt(?DateTimeImmutable $lastSuiviAt): self
+    public function setLastSuiviAt(?\DateTimeImmutable $lastSuiviAt): self
     {
         $this->lastSuiviAt = $lastSuiviAt;
 
@@ -1960,12 +1958,12 @@ class Signalement
         return $this;
     }
 
-    public function getDateNaissanceOccupant(): ?DateTimeImmutable
+    public function getDateNaissanceOccupant(): ?\DateTimeImmutable
     {
         return $this->dateNaissanceOccupant;
     }
 
-    public function setDateNaissanceOccupant(?DateTimeImmutable $dateNaissanceOccupant): self
+    public function setDateNaissanceOccupant(?\DateTimeImmutable $dateNaissanceOccupant): self
     {
         $this->dateNaissanceOccupant = $dateNaissanceOccupant;
 

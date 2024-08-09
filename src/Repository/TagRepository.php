@@ -23,7 +23,7 @@ class TagRepository extends ServiceEntityRepository
     }
 
     public function findAllActive(
-        Territory|null $territory = null,
+        ?Territory $territory = null,
     ): mixed {
         $qb = $this->createQueryBuilder('t');
         $qb->andWhere('t.isArchive != 1')
@@ -39,7 +39,7 @@ class TagRepository extends ServiceEntityRepository
     }
 
     public function findAllActivePaginated(
-        Territory|null $territory = null,
+        ?Territory $territory = null,
         ?string $search = null,
         ?int $page = 1,
     ): Paginator {

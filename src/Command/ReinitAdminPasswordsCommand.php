@@ -70,7 +70,7 @@ class ReinitAdminPasswordsCommand extends Command
             );
         }
 
-        $this->io->success(sprintf(
+        $this->io->success(\sprintf(
             '%s admin users were successfully reinitialized',
             \count($users)
         ));

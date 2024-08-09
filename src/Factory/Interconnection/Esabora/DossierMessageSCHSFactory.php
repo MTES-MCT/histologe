@@ -94,8 +94,8 @@ class DossierMessageSCHSFactory extends AbstractDossierMessageFactory
     private function buildNbEnfants(Signalement $signalement)
     {
         $suffix = '';
-        if (null !== $signalement->getNbEnfantsM6() && str_ends_with($signalement->getNbEnfantsM6(), '+') ||
-            null !== $signalement->getNbEnfantsP6() && str_ends_with($signalement->getNbEnfantsP6(), '+')
+        if (null !== $signalement->getNbEnfantsM6() && str_ends_with($signalement->getNbEnfantsM6(), '+')
+            || null !== $signalement->getNbEnfantsP6() && str_ends_with($signalement->getNbEnfantsP6(), '+')
         ) {
             $suffix = '+';
         }

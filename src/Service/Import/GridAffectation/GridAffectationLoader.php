@@ -54,10 +54,10 @@ class GridAffectationLoader
             ++$numLine;
             if (\count($item) > 1) {
                 if (empty($item[GridAffectationHeader::PARTNER_NAME_INSTITUTION])) {
-                    $errors[] = sprintf('line %d : Nom de partenaire manquant', $numLine);
+                    $errors[] = \sprintf('line %d : Nom de partenaire manquant', $numLine);
                 }
                 if (!\in_array($item[GridAffectationHeader::PARTNER_TYPE], PartnerType::getLabelList())) {
-                    $errors[] = sprintf(
+                    $errors[] = \sprintf(
                         'line %d : Type incorrect pour %s --> %s',
                         $numLine,
                         $item[GridAffectationHeader::PARTNER_NAME_INSTITUTION],
@@ -69,7 +69,7 @@ class GridAffectationLoader
                 if (!empty($emailPartner)) {
                     $violations = $this->validator->validate($emailPartner, $emailConstraint);
                     if (\count($violations) > 0) {
-                        $errors[] = sprintf(
+                        $errors[] = \sprintf(
                             'line %d : E-mail incorrect pour un partenaire : %s',
                             $numLine,
                             $emailPartner
@@ -80,7 +80,7 @@ class GridAffectationLoader
                         /** @var Partner $partnerToCreate */
                         $partnerToCreate = $this->partnerManager->findOneBy(['email' => $emailPartner]);
                         if (null !== $partnerToCreate) {
-                            $errors[] = sprintf(
+                            $errors[] = \sprintf(
                                 'line %d : Partenaire déjà existant avec (%s) dans %s, nom : %s',
                                 $numLine,
                                 $emailPartner,
@@ -99,7 +99,7 @@ class GridAffectationLoader
 
                 $emailUser = trim($item[GridAffectationHeader::USER_EMAIL]);
                 if (empty($emailUser) && !empty($item[GridAffectationHeader::USER_ROLE])) {
-                    $errors[] = sprintf(
+                    $errors[] = \sprintf(
                         'line %d : E-mail manquant pour %s %s, partenaire %s',
                         $numLine,
                         $item[GridAffectationHeader::USER_FIRSTNAME],
@@ -110,7 +110,7 @@ class GridAffectationLoader
                     // email must be valid and not used by another user of another partner
                     $violations = $this->validator->validate($emailUser, $emailConstraint);
                     if (\count($violations) > 0) {
-                        $errors[] = sprintf('line %d : E-mail incorrect pour un utilisateur : %s', $numLine, $emailUser);
+                        $errors[] = \sprintf('line %d : E-mail incorrect pour un utilisateur : %s', $numLine, $emailUser);
                     }
 
                     /** @var User $userToCreate */
@@ -119,7 +119,7 @@ class GridAffectationLoader
                         && null !== $userToCreate
                         && !\in_array('ROLE_USAGER', $userToCreate->getRoles())
                     ) {
-                        $errors[] = sprintf(
+                        $errors[] = \sprintf(
                             'line %d : Utilisateur déjà existant avec (%s) dans %s, partenaire : %s, rôle : %s',
                             $numLine,
                             $emailUser,
@@ -135,7 +135,7 @@ class GridAffectationLoader
                 }
                 if (!empty($item[GridAffectationHeader::USER_ROLE])
                     && !\in_array($item[GridAffectationHeader::USER_ROLE], array_keys(User::ROLES))) {
-                    $errors[] = sprintf(
+                    $errors[] = \sprintf(
                         'line %d : Rôle incorrect pour %s --> %s',
                         $numLine,
                         $item[GridAffectationHeader::USER_EMAIL],
@@ -203,7 +203,7 @@ class GridAffectationLoader
                         ++$this->metadata['nb_partners'];
                         $newPartnerNames[] = $partnerName;
                     } elseif ($errors->count() > 0) {
-                        $this->metadata['errors'][] = sprintf('%s', (string) $errors);
+                        $this->metadata['errors'][] = \sprintf('%s', (string) $errors);
                         continue;
                     }
                 }
@@ -228,12 +228,12 @@ class GridAffectationLoader
                         $this->userManager->save($user, false);
                         ++$this->metadata['nb_users_created'];
                     } else {
-                        $this->metadata['errors'][] = sprintf('line : %s', (string) $errors);
+                        $this->metadata['errors'][] = \sprintf('line : %s', (string) $errors);
                     }
                 }
 
                 if (0 === $countUsers % self::FLUSH_COUNT) {
-                    $this->logger->info(sprintf('in progress - %s users created or updated', $countUsers));
+                    $this->logger->info(\sprintf('in progress - %s users created or updated', $countUsers));
                     $this->manager->flush();
                 }
             }

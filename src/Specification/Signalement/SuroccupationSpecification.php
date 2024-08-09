@@ -62,8 +62,8 @@ class SuroccupationSpecification
         return $suroccupation;
     }
 
-        public function getSlug(): ?string
-        {
-            return $this->slug;
-        }
+    public function getSlug(): ?string
+    {
+        return $this->slug;
+    }
 }

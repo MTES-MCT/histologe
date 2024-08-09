@@ -18,7 +18,7 @@ class CoordonneesBailleurRequest implements RequestInterface
         #[Assert\Length(max: 255, maxMessage: 'Le prénom du bailleur ne doit pas dépasser {{ limit }} caractères.')]
         private readonly ?string $prenom = null,
         #[Assert\NotBlank(message: 'Merci de saisir l\'email du bailleur.', groups: ['BAILLEUR_OCCUPANT', 'BAILLEUR'])]
-        #[Assert\Email(mode: Email::VALIDATION_MODE_STRICT)]
+        #[Email(mode: Email::VALIDATION_MODE_STRICT)]
         #[Assert\Length(max: 255, maxMessage: 'L\'email du bailleur ne doit pas dépasser {{ limit }} caractères.')]
         private readonly ?string $mail = null,
         #[Assert\NotBlank(

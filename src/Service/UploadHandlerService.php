@@ -9,7 +9,6 @@ use App\Exception\File\UnsupportedFileFormatException;
 use App\Repository\FileRepository;
 use App\Service\Files\FilenameGenerator;
 use App\Service\Files\HeicToJpegConverter;
-use Exception;
 use League\Flysystem\FilesystemException;
 use League\Flysystem\FilesystemOperator;
 use Psr\Log\LoggerInterface;
@@ -95,11 +94,11 @@ class UploadHandlerService
         UploadedFile $file,
         string $fileType
     ): bool {
-        if (File::INPUT_NAME_DOCUMENTS === $fileType &&
-            \in_array($file->getMimeType(), File::DOCUMENT_MIME_TYPES) &&
-            (\in_array($file->getClientOriginalExtension(), File::DOCUMENT_EXTENSION) ||
-            \in_array($file->getExtension(), File::DOCUMENT_EXTENSION) ||
-            \in_array($file->guessExtension(), File::DOCUMENT_EXTENSION))
+        if (File::INPUT_NAME_DOCUMENTS === $fileType
+            && \in_array($file->getMimeType(), File::DOCUMENT_MIME_TYPES)
+            && (\in_array($file->getClientOriginalExtension(), File::DOCUMENT_EXTENSION)
+            || \in_array($file->getExtension(), File::DOCUMENT_EXTENSION)
+            || \in_array($file->guessExtension(), File::DOCUMENT_EXTENSION))
         ) {
             return true;
         }
@@ -183,7 +182,7 @@ class UploadHandlerService
         try {
             $this->deleteFileInBucket($file);
             $this->fileRepository->remove($file, true);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             return false;
         }
 

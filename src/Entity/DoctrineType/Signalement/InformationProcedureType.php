@@ -23,7 +23,7 @@ class InformationProcedureType extends Type
         }
 
         if (!$value instanceof InformationProcedure) {
-            throw new \Exception(sprintf('Only %s object is supported', InformationProcedure::class));
+            throw new \Exception(\sprintf('Only %s object is supported', InformationProcedure::class));
         }
 
         return json_encode($value->toArray());

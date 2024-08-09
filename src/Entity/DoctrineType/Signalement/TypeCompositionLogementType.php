@@ -23,7 +23,7 @@ class TypeCompositionLogementType extends Type
         }
 
         if (!$value instanceof TypeCompositionLogement) {
-            throw new \Exception(sprintf('Only %s object is supported', TypeCompositionLogement::class));
+            throw new \Exception(\sprintf('Only %s object is supported', TypeCompositionLogement::class));
         }
 
         return json_encode($value->toArray());

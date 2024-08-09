@@ -7,7 +7,6 @@ use App\Entity\Enum\QualificationStatus;
 use App\Entity\Signalement;
 use App\Entity\SignalementQualification;
 use App\Service\Signalement\Qualification\QualificationStatusService;
-use DateTimeImmutable;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
@@ -36,7 +35,7 @@ class QualificationStatusServiceTest extends KernelTestCase
         /** @var SignalementQualification $signalementQualification */
         $signalementQualification = $signalement->getSignalementQualifications()[0];
 
-        $signalementQualification->setDernierBailAt(new DateTimeImmutable($qualificationNDERequest->getDateDernierBail()));
+        $signalementQualification->setDernierBailAt(new \DateTimeImmutable($qualificationNDERequest->getDateDernierBail()));
         $signalementQualification->setDetails($qualificationNDERequest->getDetails());
         $signalement->setSuperficie($qualificationNDERequest->getSuperficie());
 

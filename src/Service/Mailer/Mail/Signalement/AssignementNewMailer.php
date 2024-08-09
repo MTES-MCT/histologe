@@ -44,7 +44,7 @@ class AssignementNewMailer extends AbstractNotificationMailer
 
     public function updateMailerSubjectFromNotification(NotificationMail $notificationMail): void
     {
-        $this->mailerSubject = sprintf(
+        $this->mailerSubject = \sprintf(
             self::MAILER_SUBJECT,
             $notificationMail->getSignalement()->getCpOccupant()
         );

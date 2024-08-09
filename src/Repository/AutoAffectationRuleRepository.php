@@ -20,7 +20,7 @@ class AutoAffectationRuleRepository extends ServiceEntityRepository
     }
 
     public function getAutoAffectationRules(
-        Territory|null $territory,
+        ?Territory $territory,
         $page
     ): Paginator {
         $maxResult = Partner::MAX_LIST_PAGINATION;

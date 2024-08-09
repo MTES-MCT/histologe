@@ -126,7 +126,7 @@ class ImportGridAffectationCommand extends Command
             $io->warning($error);
         }
 
-        $io->success(sprintf('%d partner(s) created, %d user(s) created',
+        $io->success(\sprintf('%d partner(s) created, %d user(s) created',
             $metadata['nb_partners'],
             $metadata['nb_users_created']
         ));
@@ -151,7 +151,7 @@ class ImportGridAffectationCommand extends Command
             new NotificationMail(
                 type: NotificationMailerType::TYPE_CRON,
                 to: $this->parameterBag->get('admin_email'),
-                message: sprintf(
+                message: \sprintf(
                     $message,
                     $territory->getName(),
                     $metadata['nb_partners'],
@@ -168,7 +168,7 @@ class ImportGridAffectationCommand extends Command
         );
 
         $io->warning(
-            sprintf('[Esabora] Merci de saisir les identifiants des nouveaux partenaires %s en cliquant sur le lien %s',
+            \sprintf('[Esabora] Merci de saisir les identifiants des nouveaux partenaires %s en cliquant sur le lien %s',
                 PartnerType::ARS->value,
                 \PHP_EOL.$partnerLink
             )

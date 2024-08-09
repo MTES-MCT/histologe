@@ -47,7 +47,7 @@ class AffectationRepository extends ServiceEntityRepository
         }
     }
 
-    public function countByStatusForUser($user, Territory|null $territory, Qualification $qualification = null, array $qualificationStatuses = null)
+    public function countByStatusForUser($user, ?Territory $territory, ?Qualification $qualification = null, ?array $qualificationStatuses = null)
     {
         $qb = $this->createQueryBuilder('a')
             ->select('COUNT(a.signalement) as count')
@@ -168,7 +168,7 @@ class AffectationRepository extends ServiceEntityRepository
     {
         $qb = $this->createQueryBuilder('a');
         $qb->select(
-            sprintf(
+            \sprintf(
                 'NEW %s(COUNT(a.id),
                     SUM(CASE WHEN a.statut = :statut_wait THEN 1 ELSE 0 END),
                     SUM(CASE WHEN a.statut = :statut_accepted THEN 1 ELSE 0 END),
