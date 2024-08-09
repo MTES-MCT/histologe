@@ -1,0 +1,15 @@
+{
+  "name": "newman",
+  "version": "1.0.0",
+  "description": "Run and test collections from the command line using Newman CLI",
+  "main": "run_concurrency_request.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "newman": "^6.1.3"
+  }
+}

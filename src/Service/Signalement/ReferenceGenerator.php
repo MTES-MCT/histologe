@@ -4,13 +4,19 @@ namespace App\Service\Signalement;
 
 use App\Entity\Territory;
 use App\Repository\SignalementRepository;
+use Doctrine\ORM\NonUniqueResultException;
+use Doctrine\ORM\TransactionRequiredException;
 
 class ReferenceGenerator
 {
-    public function __construct(private SignalementRepository $signalementRepository)
+    public function __construct(private readonly SignalementRepository $signalementRepository)
     {
     }
 
+    /**
+     * @throws TransactionRequiredException
+     * @throws NonUniqueResultException
+     */
     public function generate(Territory $territory): string
     {
         $result = $this->signalementRepository->findLastReferenceByTerritory($territory);

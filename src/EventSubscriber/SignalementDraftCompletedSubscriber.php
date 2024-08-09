@@ -13,18 +13,22 @@ use App\Service\Mailer\NotificationMailerRegistry;
 use App\Service\Mailer\NotificationMailerType;
 use App\Service\Signalement\AutoAssigner;
 use App\Service\Signalement\SignalementBuilder;
+use Doctrine\ORM\EntityManagerInterface;
+use Psr\Log\LoggerInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\Messenger\MessageBusInterface;
 
 class SignalementDraftCompletedSubscriber implements EventSubscriberInterface
 {
     public function __construct(
-        private SignalementBuilder $signalementBuilder,
-        private SignalementManager $signalementManager,
-        private NotificationMailerRegistry $notificationMailerRegistry,
-        private DocumentProvider $documentProvider,
-        private AutoAssigner $autoAssigner,
-        private MessageBusInterface $messageBus,
+        private readonly SignalementBuilder $signalementBuilder,
+        private readonly SignalementManager $signalementManager,
+        private readonly NotificationMailerRegistry $notificationMailerRegistry,
+        private readonly DocumentProvider $documentProvider,
+        private readonly AutoAssigner $autoAssigner,
+        private readonly MessageBusInterface $messageBus,
+        private readonly EntityManagerInterface $entityManager,
+        private readonly LoggerInterface $logger,
     ) {
     }
 
@@ -37,23 +41,37 @@ class SignalementDraftCompletedSubscriber implements EventSubscriberInterface
 
     public function onSignalementDraftCompleted(SignalementDraftCompletedEvent $event): void
     {
-        $signalementDraft = $event->getSignalementDraft();
+        try {
+            $this->entityManager->beginTransaction();
+            $signalementDraft = $event->getSignalementDraft();
 
-        $signalement = $this->signalementBuilder
-            ->createSignalementBuilderFrom($signalementDraft)
-            ->withAdressesCoordonnees()
-            ->withTypeCompositionLogement()
-            ->withSituationFoyer()
-            ->withProcedure()
-            ->withInformationComplementaire()
-            ->withDesordres()
-            ->build();
+            $signalement = $this->signalementBuilder
+                ->createSignalementBuilderFrom($signalementDraft)
+                ->withAdressesCoordonnees()
+                ->withTypeCompositionLogement()
+                ->withSituationFoyer()
+                ->withProcedure()
+                ->withInformationComplementaire()
+                ->withDesordres()
+                ->build();
 
-        if (null !== $signalement) {
-            $this->signalementManager->save($signalement);
-            $this->sendNotifications($signalement);
-            $this->processFiles($signalementDraft, $signalement);
-            $this->autoAssigner->assign($signalement);
+            if (null !== $signalement) {
+                $this->signalementManager->save($signalement);
+                $this->entityManager->commit();
+                $this->logger->info(sprintf(
+                    'Signalement saved with reference #%s in territory %s',
+                    $signalement->getReference(),
+                    $signalement->getTerritory()->getName()
+                ));
+                $this->sendNotifications($signalement);
+                $this->processFiles($signalementDraft, $signalement);
+                $this->autoAssigner->assign($signalement);
+            } else {
+                $this->entityManager->rollback();
+            }
+        } catch (\Throwable $exception) {
+            $this->logger->critical($exception->getMessage());
+            $this->entityManager->rollback();
         }
     }
 
