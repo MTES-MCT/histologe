@@ -219,7 +219,7 @@
                                             title="Voir la liste des signalements avec l'étiquette {{ tag.label }}"
                                             href="{{ path('back_index', { 'etiquettes[]': tag.id, 'isImported': 'oui' }) }}"
                                             >Voir la liste des signalements avec l'étiquette {{ tag.label }}</a>
-                                        <button class="fr-btn fr-icon-delete-line"
+                                        <button class="fr-btn fr-btn--secondary fr-icon-delete-line"
                                             title="Supprimer l'étiquette {{ tag.label }}"
                                             data-fr-opened="false" aria-controls="fr-modal-etiquette-delete-{{ tag.id }}"
                                             >Supprimer l'étiquette {{ tag.label }}</button>
