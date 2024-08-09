@@ -52,7 +52,7 @@
                                     {% for tag in tags %}
                                         <span
                                             id="etiquette-badge-add-{{ tag.id }}"
-                                            class="fr-badge fr-m-1v signalement-tag-add {% if tag in signalement.tags %}fr-hidden{% endif %}"
+                                            class="fr-badge fr-m-1v signalement-tag-add {% if tag in signalement.tags %}fr-hidden disabled{% endif %}"
                                             data-tagid="{{ tag.id }}" data-taglabel="{{ tag.label }}"
                                             >{{ tag.label }} <span class="fr-icon-add-line" aria-hidden="true"></span></span>
                                     {% else %}
