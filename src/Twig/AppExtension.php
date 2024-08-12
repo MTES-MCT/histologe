@@ -9,15 +9,26 @@ use App\Entity\File;
 use App\Service\Files\ImageBase64Encoder;
 use App\Service\Notification\NotificationCounter;
 use App\Service\Signalement\Qualification\QualificationStatusService;
+use App\Service\TimezoneProvider;
 use App\Service\UploadHandlerService;
 use App\Utils\AttributeParser;
 use App\Validator\EmailFormatValidator;
 use Twig\Extension\AbstractExtension;
+use Twig\Extension\GlobalsInterface;
 use Twig\TwigFilter;
 use Twig\TwigFunction;
 
-class AppExtension extends AbstractExtension
+class AppExtension extends AbstractExtension implements GlobalsInterface
 {
+    public function __construct(private readonly TimezoneProvider $timezoneProvider)
+    {
+    }
+
+    public function getGlobals(): array
+    {
+        return ['territory_timezone' => $this->timezoneProvider->getTimezone()];
+    }
+
     public function getFilters(): array
     {
         return [

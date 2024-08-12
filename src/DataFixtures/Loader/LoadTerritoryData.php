@@ -29,7 +29,8 @@ class LoadTerritoryData extends Fixture implements OrderedFixtureInterface
             ->setZip($row['zip'])
             ->setName($row['name'])
             ->setIsActive($row['is_active'])
-            ->setBbox(json_decode($row['bbox'], true));
+            ->setBbox(json_decode($row['bbox'], true))
+            ->setTimezone($row['timezone'] ?? 'Europe/Paris');
 
         if (isset($row['authorized_codes_insee'])) {
             $territory->setAuthorizedCodesInsee($row['authorized_codes_insee']);

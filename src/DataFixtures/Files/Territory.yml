@@ -588,27 +588,31 @@ territories:
     name: "Guadeloupe"
     is_active: 0
     bbox: "[]"
+    timezone: "America/Guadeloupe"
   -
     zip: "972"
     name: "Martinique"
     is_active: 1
     bbox: "[]"
+    timezone: "America/Martinique"
   -
     zip: "973"
     name: "Guyane"
     is_active: 1
     bbox: "[]"
+    timezone: "America/Cayenne"
   -
     zip: "974"
     name: "La Réunion"
     is_active: 0
     bbox: "[]"
+    timezone: "Indian/Reunion"
   -
     zip: "976"
     name: "Mayotte"
     is_active: 0
     bbox: "[]"
-
+    timezone: "Indian/Mayotte"
   -
     zip: "64"
     name: "Agglo de Pau"

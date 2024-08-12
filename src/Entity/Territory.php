@@ -15,48 +15,51 @@ class Territory
     #[ORM\GeneratedValue]
     #[ORM\Column(type: 'integer')]
     #[Groups(['widget-settings:read', 'widget:read'])]
-    private $id;
+    private ?int $id = null;
 
     #[ORM\Column(type: 'string', length: 3)]
     #[Groups(['widget-settings:read', 'widget:read'])]
-    private $zip;
+    private ?string $zip = null;
 
     #[ORM\Column(type: 'string', length: 255)]
     #[Groups(['widget-settings:read', 'widget:read'])]
-    private $name;
+    private ?string $name = null;
 
     #[ORM\OneToMany(mappedBy: 'territory', targetEntity: User::class)]
-    private $users;
+    private Collection $users;
 
     #[ORM\OneToMany(mappedBy: 'territory', targetEntity: Partner::class)]
-    private $partners;
+    private Collection $partners;
 
     #[ORM\OneToMany(mappedBy: 'territory', targetEntity: Commune::class)]
-    private $communes; // @phpstan-ignore-line
+    private Collection $communes;
 
     #[ORM\OneToMany(mappedBy: 'territory', targetEntity: Signalement::class)]
-    private $signalements;
+    private Collection $signalements;
 
     #[ORM\Column(type: 'boolean')]
-    private $isActive;
+    private bool $isActive;
 
     #[ORM\OneToMany(mappedBy: 'territory', targetEntity: Affectation::class)]
-    private $affectations;
+    private Collection $affectations;
 
     #[ORM\Column(type: 'json')]
-    private $bbox = [];
+    private array $bbox = [];
 
     #[ORM\OneToMany(mappedBy: 'territory', targetEntity: Tag::class, orphanRemoval: true)]
-    private $tags;
+    private Collection $tags;
 
     #[ORM\Column(type: 'json', nullable: true)]
-    private $authorizedCodesInsee = [];
+    private array $authorizedCodesInsee = [];
 
     #[ORM\OneToMany(mappedBy: 'territory', targetEntity: BailleurTerritory::class)]
     private Collection $bailleurTerritories;
 
     #[ORM\OneToMany(mappedBy: 'territory', targetEntity: AutoAffectationRule::class, orphanRemoval: true)]
     private Collection $autoAffectationRules;
+
+    #[ORM\Column(length: 128)]
+    private string $timezone;
 
     public function __construct()
     {
@@ -67,6 +70,7 @@ class Territory
         $this->tags = new ArrayCollection();
         $this->bailleurTerritories = new ArrayCollection();
         $this->autoAffectationRules = new ArrayCollection();
+        $this->communes = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -353,6 +357,18 @@ class Territory
                 $autoAffectationRule->setTerritory(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getTimezone(): string
+    {
+        return $this->timezone;
+    }
+
+    public function setTimezone(string $timezone): static
+    {
+        $this->timezone = $timezone;
 
         return $this;
     }
