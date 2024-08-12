@@ -193,7 +193,7 @@ class SignalementListControllerTest extends WebTestCase
         yield 'Search by Commune code postal' => [['communes' => ['13002']], 1];
         yield 'Search by EPCIS' => [['epcis' => ['244400503']], 1];
         yield 'Search by Partner' => [['partenaires' => ['5']], 2];
-        yield 'Search by Etiquettes' => [['etiquettes' => ['3']], 4];
+        yield 'Search by Etiquettes' => [['etiquettes' => ['5']], 4];
         yield 'Search by Parc public' => [['natureParc' => 'public'], 5];
         yield 'Search by Parc public/prive non renseigné' => [['natureParc' => 'non_renseigne'], 1];
         yield 'Search by Enfant moins de 6ans (non)' => [['enfantsM6' => 'non'], 1];
