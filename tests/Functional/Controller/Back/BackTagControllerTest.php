@@ -7,6 +7,7 @@ use App\Repository\UserRepository;
 use App\Tests\SessionHelper;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\RouterInterface;
 
 class BackTagControllerTest extends WebTestCase
@@ -133,29 +134,28 @@ class BackTagControllerTest extends WebTestCase
         string $tagId,
         string $tagLabel,
         bool $withCsrfToken,
-        string $selector,
+        int $codeResponse,
         string $message
     ): void {
         /** @var TagRepository $tagRepository */
         $tagRepository = self::getContainer()->get(TagRepository::class);
-        $route = $this->router->generate('back_tags_edit');
+        $route = $this->router->generate('back_tags_edit', ['tag' => $tagId]);
         $this->client->request(
             'POST',
             $route,
             [
-                'tag_id' => $tagId,
-                'tag_label' => $tagLabel,
-                '_token' => $withCsrfToken ? $this->generateCsrfToken($this->client, 'tag_edit') : 'invalid-token',
+                'label' => $tagLabel,
+                '_token' => $withCsrfToken ? $this->generateCsrfToken($this->client, 'edit_tag') : 'invalid-token',
             ]
         );
 
-        if ('.fr-alert--success' === $selector) {
+        $this->assertEquals($codeResponse, $this->client->getResponse()->getStatusCode());
+        if (Response::HTTP_OK === $codeResponse) {
             $tag = $tagRepository->find($tagId);
             $this->assertEquals('Urgent MAJ', $tag->getLabel());
+        }else{
+            $this->assertStringContainsString($message, $this->client->getResponse()->getContent());
         }
-
-        $this->client->followRedirect();
-        $this->assertSelectorTextContains($selector, $message);
     }
 
     public function provideTagDataForCreateForm(): \Generator
@@ -199,32 +199,32 @@ class BackTagControllerTest extends WebTestCase
             '1',
             'Urgent MAJ',
             true,
-            '.fr-alert--success',
-            'L\'étiquette a bien été éditée.',
+            Response::HTTP_OK,
+            '',
         ];
 
         yield 'Failed with empty tag label' => [
             '1',
             '',
             true,
-            '.fr-alert--error',
-            'Merci de saisir un nom pour l\'étiquette.',
+            Response::HTTP_BAD_REQUEST,
+            'Merci de saisir un nom pour l\u0027\u00e9tiquette.',
         ];
 
         yield 'Failed with existing tag label' => [
             '1',
             'Péril',
             true,
-            '.fr-alert--error',
-            'Une étiquette avec le même nom existe déjà sur ce territoire...',
+            Response::HTTP_BAD_REQUEST,
+            'Ce nom d\u0027\u00e9tiquette est d\u00e9j\u00e0 utilis\u00e9. Veuillez saisir une autre nom.',
         ];
 
         yield 'Failed with csrf token missing' => [
             '1',
             'Urgent Nouveau',
             false,
-            '.fr-alert--error',
-            'Une erreur est survenue lors de l\'édition...',
+            Response::HTTP_BAD_REQUEST,
+            'Le jeton CSRF est invalide. Veuillez renvoyer le formulaire.',
         ];
     }
 }

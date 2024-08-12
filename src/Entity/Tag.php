@@ -6,9 +6,16 @@ use App\Repository\TagRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Serializer\Attribute\Groups;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: TagRepository::class)]
+#[UniqueEntity(
+    fields: ['label', 'territory', 'isArchive'],
+    message: 'Ce nom d\'étiquette est déjà utilisé. Veuillez saisir une autre nom.',
+    errorPath: 'label',
+)]
 class Tag
 {
     #[ORM\Id]
@@ -22,6 +29,7 @@ class Tag
 
     #[ORM\Column(type: 'string', length: 255)]
     #[Groups(['widget-settings:read'])]
+    #[Assert\NotBlank(message: 'Merci de saisir un nom pour l\'étiquette.')]
     private $label;
 
     #[ORM\Column(type: 'boolean')]

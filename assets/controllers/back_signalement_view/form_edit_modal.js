@@ -12,11 +12,10 @@ modalElements.forEach((modalElement) => {
 function clearErrors() {
     const divErrorElements = document.querySelectorAll('.fr-input-group--error');
     divErrorElements.forEach((divErrorElement) => {
-        divErrorElement.classList.remove('fr-input-group--error');
-        let pErrorElement = divErrorElement.querySelector('.fr-error-text');
-        if (pErrorElement) {
+        divErrorElement.querySelectorAll('.fr-error-text').forEach((pErrorElement) => {
             pErrorElement.remove();
-        }
+        })
+        divErrorElement.classList.remove('fr-input-group--error');
     })
 }
 
@@ -56,7 +55,7 @@ async function submitPayload(formElement) {
             const submitElement = document.querySelector(`.fr-modal--opened [type="submit"]`);
             let firstErrorElement = true;
             for (const property in errors) {
-                const inputElement = document.querySelector(`.fr-modal--opened [name="${property}"]`);
+                const inputElement = document.querySelector(`.fr-modal--opened [name="${property}"]`) || document.querySelector('.fr-modal--opened input');
                 inputElement.setAttribute('aria-describedby', `${property}-desc-error`);
                 inputElement.parentElement.classList.add('fr-input-group--error');
 

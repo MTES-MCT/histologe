@@ -4,11 +4,14 @@ namespace App\Controller\Back;
 
 use App\Entity\Tag;
 use App\Entity\User;
+use App\Form\EditTagType;
 use App\Manager\TagManager;
 use App\Repository\TagRepository;
 use App\Repository\TerritoryRepository;
+use App\Service\FormHelper;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -120,51 +123,28 @@ class TagController extends AbstractController
         return $this->redirectToRoute('back_tags_index', [], Response::HTTP_SEE_OTHER);
     }
 
-    #[Route('/editer', name: 'back_tags_edit', methods: 'POST')]
+    #[Route('/editer/{tag}', name: 'back_tags_edit', methods: 'POST')]
     public function editTag(
+        Tag $tag,
         Request $request,
-        TagManager $tagManager,
         EntityManagerInterface $entityManager,
-        TagRepository $tagRepository,
-    ): Response {
-        $tagId = $request->request->get('tag_id');
-        /** @var Tag $tag */
-        $tag = $tagManager->find($tagId);
+    ): JsonResponse {
         $this->denyAccessUnlessGranted('TAG_EDIT', $tag);
+        $form = $this->createForm(EditTagType::class, $tag);
 
-        if (
-            $tag
-            && $this->isCsrfTokenValid('tag_edit', $request->request->get('_token'))
-        ) {
-            $tagLabel = $request->request->get('tag_label');
-            if (empty($tagLabel)) {
-                $this->addFlash('error', 'Merci de saisir un nom pour l\'étiquette.');
-
-                return $this->redirectToRoute('back_tags_index', [], Response::HTTP_SEE_OTHER);
-            }
-
-            $alreadyExistingTags = $tagRepository->findBy([
-                'isArchive' => 0,
-                'label' => $tagLabel,
-                'territory' => $tag->getTerritory(),
-            ]);
-            if (!empty($alreadyExistingTags)) {
-                $this->addFlash('error', 'Une étiquette avec le même nom existe déjà sur ce territoire...');
-
-                return $this->redirectToRoute('back_tags_index', [], Response::HTTP_SEE_OTHER);
-            }
-
-            $tag->setLabel($tagLabel);
+        $form->submit($request->getPayload()->all());
+        if ($form->isSubmitted() && $form->isValid()) {
             $entityManager->flush();
-
             $this->addFlash('success', 'L\'étiquette a bien été éditée.');
+        }
+        if ($form->isSubmitted() && !$form->isValid()) {
+            $errors = FormHelper::getErrorsFromForm($form);
+            $response = ['code' => Response::HTTP_BAD_REQUEST, 'errors' => $errors];
 
-            return $this->redirectToRoute('back_tags_index', [], Response::HTTP_SEE_OTHER);
+            return $this->json($response, $response['code']);
         }
 
-        $this->addFlash('error', 'Une erreur est survenue lors de l\'édition...');
-
-        return $this->redirectToRoute('back_tags_index', [], Response::HTTP_SEE_OTHER);
+        return $this->json(['code' => Response::HTTP_OK]);
     }
 
     #[Route('/supprimer', name: 'back_tags_delete', methods: 'POST')]
