@@ -16,7 +16,7 @@
                         data-accepted-type-mimes={{ get_accepted_mime_type('document')}}
                         data-accepted-extensions="{{ get_accepted_extensions('document')}}"
                         >
-                            Ajouter des documents
+                            {% if buttonTitle is defined %}{{buttonTitle}}{% else %}Ajouter des documents{% endif %}
                         </button>
                     </li>
                 {% endif %}
@@ -31,7 +31,7 @@
                         data-accepted-type-mimes={{ get_accepted_mime_type('photo')}}
 						data-accepted-extensions="{{ get_accepted_extensions('photo')}}"
                         >
-                            Ajouter des photos
+                            {% if buttonTitle is defined %}{{buttonTitle}}{% else %}Ajouter des photos{% endif %}
                         </button>
                     </li>
                 {% endif %}
