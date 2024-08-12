@@ -80,6 +80,12 @@ class TagController extends AbstractController
     ): Response {
         $this->denyAccessUnlessGranted('TAG_CREATE');
         $tag = new Tag();
+        if (!$this->isGranted('ROLE_ADMIN')) {
+            /** @var User $user */
+            $user = $this->getUser();
+            $territory = $user->getTerritory() ?? $user->getPartner()?->getTerritory();
+            $tag->setTerritory($territory);
+        }
         $form = $this->createForm(AddTagType::class, $tag);
 
         $form->submit($request->getPayload()->all());

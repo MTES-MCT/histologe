@@ -122,7 +122,7 @@ class BackTagControllerTest extends WebTestCase
         if (Response::HTTP_OK === $codeResponse) {
             $tag = $tagRepository->findOneBy(['label' => 'Moisissure', 'isArchive' => 0, 'territory' => '13']);
             $this->assertNotNull($tag);
-        }else {
+        } else {
             $this->assertStringContainsString($message, $this->client->getResponse()->getContent());
         }
     }
