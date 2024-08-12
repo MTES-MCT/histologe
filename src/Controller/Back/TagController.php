@@ -4,6 +4,7 @@ namespace App\Controller\Back;
 
 use App\Entity\Tag;
 use App\Entity\User;
+use App\Form\AddTagType;
 use App\Form\EditTagType;
 use App\Manager\TagManager;
 use App\Repository\TagRepository;
@@ -58,6 +59,8 @@ class TagController extends AbstractController
         );
         $totalTags = \count($paginatedTags);
 
+        $addForm = $this->createForm(AddTagType::class, null, ['action' => $this->generateUrl('back_tags_add')]);
+
         return $this->render('back/tags/index.html.twig', [
             'currentTerritory' => $currentTerritory,
             'territories' => $territoryRepository->findAllList(),
@@ -66,6 +69,7 @@ class TagController extends AbstractController
             'total' => $totalTags,
             'page' => $page,
             'pages' => (int) ceil($totalTags / self::MAX_LIST_PAGINATION),
+            'addForm' => $addForm,
         ]);
     }
 
@@ -73,54 +77,25 @@ class TagController extends AbstractController
     public function addTag(
         Request $request,
         EntityManagerInterface $entityManager,
-        TagRepository $tagRepository,
-        TerritoryRepository $territoryRepository,
     ): Response {
         $this->denyAccessUnlessGranted('TAG_CREATE');
+        $tag = new Tag();
+        $form = $this->createForm(AddTagType::class, $tag);
 
-        if (
-            $this->isCsrfTokenValid('tag_add', $request->request->get('_token'))
-        ) {
-            if ($this->isGranted('ROLE_ADMIN')) {
-                $territory = $territoryRepository->find((int) $request->request->get('tag_territory'));
-            } else {
-                /** @var User $user */
-                $user = $this->getUser();
-                $territory = $user->getTerritory() ?? $user->getPartner()?->getTerritory();
-            }
-
-            $tagLabel = $request->request->get('tag_label');
-            if (empty($tagLabel) || empty($territory)) {
-                $this->addFlash('error', 'Merci de saisir un nom pour l\'étiquette.');
-
-                return $this->redirectToRoute('back_tags_index', [], Response::HTTP_SEE_OTHER);
-            }
-
-            $alreadyExistingTags = $tagRepository->findBy([
-                'isArchive' => 0,
-                'label' => $tagLabel,
-                'territory' => $territory,
-            ]);
-            if (!empty($alreadyExistingTags)) {
-                $this->addFlash('error', 'Une étiquette avec le même nom existe déjà sur ce territoire...');
-
-                return $this->redirectToRoute('back_tags_index', [], Response::HTTP_SEE_OTHER);
-            }
-
-            $tag = new Tag();
-            $tag->setTerritory($territory);
-            $tag->setLabel($tagLabel);
+        $form->submit($request->getPayload()->all());
+        if ($form->isSubmitted() && $form->isValid()) {
             $entityManager->persist($tag);
             $entityManager->flush();
-
             $this->addFlash('success', 'L\'étiquette a bien été ajoutée.');
+        }
+        if ($form->isSubmitted() && !$form->isValid()) {
+            $errors = FormHelper::getErrorsFromForm($form);
+            $response = ['code' => Response::HTTP_BAD_REQUEST, 'errors' => $errors];
 
-            return $this->redirectToRoute('back_tags_index', [], Response::HTTP_SEE_OTHER);
+            return $this->json($response, $response['code']);
         }
 
-        $this->addFlash('error', 'Une erreur est survenue lors de l\'ajout...');
-
-        return $this->redirectToRoute('back_tags_index', [], Response::HTTP_SEE_OTHER);
+        return $this->json(['code' => Response::HTTP_OK]);
     }
 
     #[Route('/editer/{tag}', name: 'back_tags_edit', methods: 'POST')]

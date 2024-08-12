@@ -37,6 +37,7 @@ class Tag
 
     #[ORM\ManyToOne(targetEntity: Territory::class, inversedBy: 'tags')]
     #[ORM\JoinColumn(nullable: false)]
+    #[Assert\NotBlank()]
     private $territory;
 
     public function __construct()
