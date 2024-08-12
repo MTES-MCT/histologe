@@ -2,7 +2,6 @@
   <div
     :class="['histo-multi-select', active ? 'active' : 'inactive']"
     @focusout="isExpanded = false"
-    tabindex="0"
     >
     <div
       class="selector fr-select"
