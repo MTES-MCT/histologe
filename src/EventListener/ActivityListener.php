@@ -100,7 +100,7 @@ class ActivityListener
         }
     }
 
-    private function getPartnerFromSignalementInsee(mixed $entity, Territory|null $territory): ?Partner
+    private function getPartnerFromSignalementInsee(mixed $entity, ?Territory $territory): ?Partner
     {
         if ($entity instanceof Signalement) {
             $signalement = $entity;
@@ -122,7 +122,7 @@ class ActivityListener
         return null;
     }
 
-    private function notifyAdmins($entity, $inAppType, Territory|null $territory)
+    private function notifyAdmins($entity, $inAppType, ?Territory $territory)
     {
         /** @var QueryBuilder $qb */
         $qb = $this->em->getRepository(User::class)->createQueryBuilder('u')

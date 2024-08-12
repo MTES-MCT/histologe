@@ -67,13 +67,11 @@ class DesordreCritereManager extends AbstractManager
                 isset($filteredDataOfDraft['desordres_logement_proprete_pieces_piece_a_vivre'])
                 && 1 === $filteredDataOfDraft['desordres_logement_proprete_pieces_piece_a_vivre']
             )
-                ||
-            (
+            || (
                 isset($filteredDataOfDraft['desordres_logement_proprete_pieces_cuisine'])
                 && 1 === $filteredDataOfDraft['desordres_logement_proprete_pieces_cuisine']
             )
-                ||
-            (
+            || (
                 isset($filteredDataOfDraft['desordres_logement_proprete_pieces_salle_de_bain'])
                 && 1 === $filteredDataOfDraft['desordres_logement_proprete_pieces_salle_de_bain']
             )

@@ -18,7 +18,7 @@ class CoordonneesTiersRequest implements RequestInterface
         #[Assert\Length(max: 50, maxMessage: 'Le prénom ne doit pas dépasser {{ limit }} caractères.')]
         private readonly ?string $prenom = null,
         #[Assert\NotBlank(message: 'Merci de saisir un courriel.')]
-        #[Assert\Email(mode: Email::VALIDATION_MODE_STRICT)]
+        #[Email(mode: Email::VALIDATION_MODE_STRICT)]
         #[Assert\Length(max: 255, maxMessage: 'L\'email ne doit pas dépasser {{ limit }} caractères.')]
         private readonly ?string $mail = null,
         #[Assert\NotBlank(message: 'Merci de saisir un numéro de téléphone.')]

@@ -35,8 +35,8 @@ class WorkerMessageEventSubscriber implements EventSubscriberInterface
             $dossierMessage = $event->getEnvelope()->getMessage();
             if ($dossierMessage instanceof DossierMessageInterface) {
                 $error = [
-                  'message' => $event->getThrowable()->getMessage(),
-                  'stack_trace' => $event->getThrowable()->getTraceAsString(),
+                    'message' => $event->getThrowable()->getMessage(),
+                    'stack_trace' => $event->getThrowable()->getTraceAsString(),
                 ];
                 $partner = $this->partnerRepository->find($partnerId = $dossierMessage->getPartnerId());
                 $this->jobEventManager->createJobEvent(

@@ -12,7 +12,6 @@ use App\Repository\SuiviRepository;
 use App\Service\Mailer\NotificationMail;
 use App\Service\Mailer\NotificationMailerRegistry;
 use App\Service\Mailer\NotificationMailerType;
-use DateTimeImmutable;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -39,7 +38,7 @@ class SignalementActionController extends AbstractController
             if (isset($response['accept'])) {
                 $statut = Signalement::STATUS_ACTIVE;
                 $description = 'validé';
-                $signalement->setValidatedAt(new DateTimeImmutable());
+                $signalement->setValidatedAt(new \DateTimeImmutable());
                 $toRecipients = $signalement->getMailUsagers();
 
                 foreach ($toRecipients as $toRecipient) {
@@ -81,7 +80,7 @@ class SignalementActionController extends AbstractController
                 ->setDescription('Signalement '.$description)
                 ->setCreatedBy($this->getUser())
                 ->setIsPublic(true)
-                ->setType(SUIVI::TYPE_AUTO)
+                ->setType(Suivi::TYPE_AUTO)
                 ->setSendMail(false);
             $signalement->setStatut($statut);
             $doctrine->getManager()->persist($signalement);
@@ -118,7 +117,7 @@ class SignalementActionController extends AbstractController
             $suivi->setIsPublic(!empty($form['notifyUsager']));
             $suivi->setSignalement($signalement);
             $suivi->setCreatedBy($this->getUser());
-            $suivi->setType(SUIVI::TYPE_PARTNER);
+            $suivi->setType(Suivi::TYPE_PARTNER);
             $doctrine->getManager()->persist($suivi);
             $doctrine->getManager()->flush();
             $this->addFlash('success', 'Suivi publié avec succès !');
@@ -144,7 +143,7 @@ class SignalementActionController extends AbstractController
         ) {
             $suivi = $suiviRepository->findOneBy(['id' => $idSuivi]);
             if ($suivi) {
-                $suivi->setDeletedAt(new DateTimeImmutable());
+                $suivi->setDeletedAt(new \DateTimeImmutable());
                 $suivi->setDeletedBy($this->getUser());
                 $doctrine->getManager()->persist($suivi);
                 $doctrine->getManager()->flush();
@@ -163,7 +162,7 @@ class SignalementActionController extends AbstractController
     #[Route('/{uuid}/reopen', name: 'back_signalement_reopen')]
     public function reopenSignalement(Signalement $signalement, Request $request, ManagerRegistry $doctrine): RedirectResponse|JsonResponse
     {
-//        $this->denyAccessUnlessGranted('SIGN_REOPEN', $signalement);
+        //        $this->denyAccessUnlessGranted('SIGN_REOPEN', $signalement);
         /** @var User $user */
         $user = $this->getUser();
         if ($this->isCsrfTokenValid('signalement_reopen_'.$signalement->getId(), $request->get('_token')) && $response = $request->get('signalement-action')) {
@@ -190,7 +189,7 @@ class SignalementActionController extends AbstractController
                 ->setDescription('Signalement rouvert pour '.$reopenFor)
                 ->setCreatedBy($user)
                 ->setIsPublic('1' === $request->get('publicSuivi'))
-                ->setType(SUIVI::TYPE_AUTO);
+                ->setType(Suivi::TYPE_AUTO);
             $doctrine->getManager()->persist($suivi);
             $doctrine->getManager()->flush();
             $this->addFlash('success', 'Signalement rouvert avec succès !');

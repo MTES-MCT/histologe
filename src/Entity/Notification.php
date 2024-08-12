@@ -3,7 +3,6 @@
 namespace App\Entity;
 
 use App\Repository\NotificationRepository;
-use DateTimeImmutable;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: NotificationRepository::class)]
@@ -36,7 +35,7 @@ class Notification
     private ?Suivi $suivi;
 
     #[ORM\Column(type: 'datetime_immutable')]
-    private ?DateTimeImmutable $createdAt;
+    private ?\DateTimeImmutable $createdAt;
 
     #[ORM\ManyToOne(targetEntity: Affectation::class, inversedBy: 'notifications')]
     private $affectation;
@@ -44,7 +43,7 @@ class Notification
     public function __construct()
     {
         $this->isSeen = false;
-        $this->createdAt = new DateTimeImmutable();
+        $this->createdAt = new \DateTimeImmutable();
     }
 
     public function getId(): ?int
@@ -100,12 +99,12 @@ class Notification
         return $this;
     }
 
-    public function getCreatedAt(): ?DateTimeImmutable
+    public function getCreatedAt(): ?\DateTimeImmutable
     {
         return $this->createdAt;
     }
 
-    public function setCreatedAt(DateTimeImmutable $createdAt): self
+    public function setCreatedAt(\DateTimeImmutable $createdAt): self
     {
         $this->createdAt = $createdAt;
 

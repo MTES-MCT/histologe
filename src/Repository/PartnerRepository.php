@@ -28,7 +28,7 @@ class PartnerRepository extends ServiceEntityRepository
         parent::__construct($registry, Partner::class);
     }
 
-    public function getPartnersQueryBuilder(Territory|null $territory): QueryBuilder
+    public function getPartnersQueryBuilder(?Territory $territory): QueryBuilder
     {
         $queryBuilder = $this->createQueryBuilder('p')->where('p.isArchive != 1');
 
@@ -40,8 +40,8 @@ class PartnerRepository extends ServiceEntityRepository
     }
 
     public function getPartners(
-        Territory|null $territory,
-        PartnerType|null $type,
+        ?Territory $territory,
+        ?PartnerType $type,
         ?string $filterTerms,
         $page
     ): Paginator {
@@ -74,7 +74,7 @@ class PartnerRepository extends ServiceEntityRepository
     /**
      * @throws QueryException
      */
-    public function findAllList(Territory|null $territory = null)
+    public function findAllList(?Territory $territory = null)
     {
         $qb = $this->createQueryBuilder('p')
             ->where('p.isArchive != 1')
@@ -100,7 +100,7 @@ class PartnerRepository extends ServiceEntityRepository
     }
 
     public function findAllArchivedOrWithoutTerritory(
-        Territory|null $territory,
+        ?Territory $territory,
         bool $isNoneTerritory,
         ?string $filterTerms,
         $page

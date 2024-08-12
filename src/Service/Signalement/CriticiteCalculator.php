@@ -38,7 +38,7 @@ class CriticiteCalculator
         $score = ($scoreBatiment + $scoreLogement) / 2;
 
         if ($signalement->getNbEnfantsM6() || $signalement->getNbEnfantsP6()) {
-            $score = $score * 1.1;
+            $score *= 1.1;
         }
         if ($score > 100) {// @phpstan-ignore-line
             $score = 100;
@@ -69,7 +69,7 @@ class CriticiteCalculator
         $score = ($scoreBatiment + $scoreLogement) / 2;
 
         if ('oui' === $signalement->getTypeCompositionLogement()->getCompositionLogementEnfants()) {
-            $score = $score * 1.1;
+            $score *= 1.1;
         }
         if ($score > 100) {
             $score = 100;

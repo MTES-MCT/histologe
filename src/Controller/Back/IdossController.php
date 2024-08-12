@@ -37,7 +37,7 @@ class IdossController extends AbstractController
         AffectationRepository $affectationRepository,
         DossierMessageFactory $dossierMessageFactory,
         MessageBusInterface $bus
-        ): Response {
+    ): Response {
         $errors = $signalementRepository->findSynchroIdossErrors();
         $affectation = $affectationRepository->findOneBy(['signalement' => $signalement, 'partner' => $partner, 'statut' => Affectation::STATUS_ACCEPTED]);
         if (isset($errors[$signalement->getId()]) && $affectation && $dossierMessageFactory->supports($affectation)) {

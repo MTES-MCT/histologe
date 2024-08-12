@@ -65,7 +65,7 @@ abstract class AbstractNotificationMailer implements NotificationMailerInterface
             try {
                 $email && $message->addTo($email);
             } catch (\Exception $e) {
-                $this->logger->error(sprintf('[%s] %s', $notificationMail->getType()->name, $e->getMessage()));
+                $this->logger->error(\sprintf('[%s] %s', $notificationMail->getType()->name, $e->getMessage()));
             }
         }
 
@@ -87,7 +87,7 @@ abstract class AbstractNotificationMailer implements NotificationMailerInterface
 
             return true;
         } catch (\Exception $exception) {
-            $this->logger->error(sprintf('[%s] %s', $notificationMail->getType()->name, $exception->getMessage()));
+            $this->logger->error(\sprintf('[%s] %s', $notificationMail->getType()->name, $exception->getMessage()));
         }
 
         return false;
@@ -128,7 +128,7 @@ abstract class AbstractNotificationMailer implements NotificationMailerInterface
 
     private function renderMailContentWithParams(
         array $params,
-        Territory|null $territory
+        ?Territory $territory
     ): NotificationEmail {
         $config['territory'] = $territory;
         $notification = new NotificationEmail();

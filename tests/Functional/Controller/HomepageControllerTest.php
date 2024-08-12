@@ -16,8 +16,8 @@ class HomepageControllerTest extends WebTestCase
         $client->request('GET', $generatorUrl->generate('home'));
 
         $client->submitForm('Signaler mon problème', [
-                'postal_code_search[postalcode]' => '13002',
-            ]
+            'postal_code_search[postalcode]' => '13002',
+        ]
         );
 
         $this->assertResponseRedirects('/signalement?cp=13002');
@@ -31,8 +31,8 @@ class HomepageControllerTest extends WebTestCase
         $client->request('GET', $generatorUrl->generate('home'));
 
         $client->submitForm('Signaler mon problème', [
-                'postal_code_search[postalcode]' => '',
-            ]
+            'postal_code_search[postalcode]' => '',
+        ]
         );
 
         $this->assertResponseIsSuccessful('Empty postal code must not be submitted');
@@ -60,12 +60,12 @@ class HomepageControllerTest extends WebTestCase
         $crawler = $client->request('GET', $generatorUrl->generate('front_contact'));
 
         $client->submitForm('Envoyer le message', [
-                'contact[nom]' => 'John Doe',
-                'contact[email]' => 'john.doe@yopmail.com',
-                'contact[message]' => $faker->text(),
-                'contact[organisme]' => '',
-                'contact[objet]' => 'Autre',
-            ]
+            'contact[nom]' => 'John Doe',
+            'contact[email]' => 'john.doe@yopmail.com',
+            'contact[message]' => $faker->text(),
+            'contact[organisme]' => '',
+            'contact[objet]' => 'Autre',
+        ]
         );
 
         $client->enableProfiler();
@@ -84,12 +84,12 @@ class HomepageControllerTest extends WebTestCase
         $client->request('GET', $generatorUrl->generate('front_contact'));
 
         $client->submitForm('Envoyer le message', [
-                'contact[nom]' => 'John Doe',
-                'contact[email]' => 'john.doe@y@opmail.com',
-                'contact[message]' => '',
-                'contact[organisme]' => '',
-                'contact[objet]' => 'Autre',
-            ]
+            'contact[nom]' => 'John Doe',
+            'contact[email]' => 'john.doe@y@opmail.com',
+            'contact[message]' => '',
+            'contact[organisme]' => '',
+            'contact[objet]' => 'Autre',
+        ]
         );
 
         $this->assertSelectorTextContains(
@@ -107,11 +107,11 @@ class HomepageControllerTest extends WebTestCase
         $client->request('GET', $generatorUrl->generate('home'));
 
         $client->submitForm('demande_lien_signalement_save', [
-                'demande_lien_signalement[email]' => 'francis.cabrel@astaffort.com',
-                'demande_lien_signalement[adresseHelper]' => '3 rue Mars 13015 Marseille',
-                'demande_lien_signalement[adresse]' => '3 rue Mars',
-                'demande_lien_signalement[codePostal]' => '13015',
-                'demande_lien_signalement[ville]' => 'Marseille',
+            'demande_lien_signalement[email]' => 'francis.cabrel@astaffort.com',
+            'demande_lien_signalement[adresseHelper]' => '3 rue Mars 13015 Marseille',
+            'demande_lien_signalement[adresse]' => '3 rue Mars',
+            'demande_lien_signalement[codePostal]' => '13015',
+            'demande_lien_signalement[ville]' => 'Marseille',
         ]);
 
         $this->assertEmailCount(1);

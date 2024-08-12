@@ -35,10 +35,10 @@ class ImportDesordresTablesCommandTest extends KernelTestCase
             ->method('getMetaData')
             ->willReturn(
                 ['count_desordre_categorie_created' => 13,
-                'count_desordre_critere_created' => 63,
-                'count_desordre_precision_created' => 137,
-                'count_desordre_precision_updated' => 27,
-            ]
+                    'count_desordre_critere_created' => 63,
+                    'count_desordre_precision_created' => 137,
+                    'count_desordre_precision_updated' => 27,
+                ]
             );
 
         $uploadHandlerServiceMock = $this->createMock(UploadHandlerService::class);

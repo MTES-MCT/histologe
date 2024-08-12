@@ -4,7 +4,6 @@ namespace App\Service\Statistics;
 
 use App\Entity\Commune;
 use App\Entity\Territory;
-use Collator;
 
 class ListCommunesStatisticProvider
 {
@@ -19,7 +18,7 @@ class ListCommunesStatisticProvider
                 $data[$nomCommune] = $nomCommune;
             }
         }
-        $collator = new Collator('fr_FR');
+        $collator = new \Collator('fr_FR');
         $collator->asort($data);
 
         return $data;

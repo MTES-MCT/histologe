@@ -72,8 +72,8 @@ class AddAutoAffectationRuleCommand extends Command
 
     protected function interact(InputInterface $input, OutputInterface $output): void
     {
-        if (null !== $input->getArgument(self::FIELDS['TERRITORY']) &&
-            null !== $input->getArgument(self::FIELDS['PARTNER_TYPE'])
+        if (null !== $input->getArgument(self::FIELDS['TERRITORY'])
+            && null !== $input->getArgument(self::FIELDS['PARTNER_TYPE'])
         ) {
             return;
         }
@@ -273,7 +273,7 @@ class AddAutoAffectationRuleCommand extends Command
 
         $this->autoAffectationRuleManager->save($autoAffectationRule);
 
-        $this->io->success(sprintf(
+        $this->io->success(\sprintf(
             'New rule was successfully created for territory %s and partner %s',
             $autoAffectationRule->getTerritory()?->getName(),
             $autoAffectationRule->getPartnerType()->value
@@ -290,7 +290,7 @@ class AddAutoAffectationRuleCommand extends Command
             $errorMessages[$property][] = $constraint->getMessage();
         }
         foreach ($errorMessages as $key => $errorMessage) {
-            $this->io->error(sprintf('%s : %s', $key, implode(',', $errorMessage)));
+            $this->io->error(\sprintf('%s : %s', $key, implode(',', $errorMessage)));
         }
     }
 }

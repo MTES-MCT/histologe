@@ -30,7 +30,7 @@ class InterventionDescriptionGenerator
         $isInPast = $today > $intervention->getScheduledAt()
             && Intervention::STATUS_DONE === $intervention->getStatus();
 
-        return sprintf(
+        return \sprintf(
             '%s %s : une %s du logement situé %s %s le %s.<br>La %s %s par %s.',
             ucfirst($labelVisite),
             $isInPast ? 'réalisée' : 'programmée',
@@ -46,17 +46,17 @@ class InterventionDescriptionGenerator
 
     public static function buildDescriptionArreteCreated(DossierArreteSISH $dossierArreteSISH): string
     {
-        $description = sprintf(
+        $description = \sprintf(
             'L\'arrêté %s du %s a été pris dans le dossier de n°%s.<br>',
             $dossierArreteSISH->getArreteNumero(),
             $dossierArreteSISH->getArreteDate(),
             $dossierArreteSISH->getDossNum(),
         );
 
-        $description .= sprintf('Type arrêté: %s<br>', $dossierArreteSISH->getArreteType());
+        $description .= \sprintf('Type arrêté: %s<br>', $dossierArreteSISH->getArreteType());
 
         if ($dossierArreteSISH->getArreteMLDate()) {
-            $description = sprintf(
+            $description = \sprintf(
                 'Un arrêté de mainlevée %s du %s a été pris pour l\'arrêté %s du %s dans le dossier de n°%s.',
                 $dossierArreteSISH->getArreteMLNumero(),
                 $dossierArreteSISH->getArreteMLDate(),

@@ -16,7 +16,7 @@ class DesordreTraitementProcessor
         $this->desordreTraitements = $desordreTraitements;
     }
 
-    public function findDesordresPrecisionsBy(DesordreCritere $critere, array $payload): array|null
+    public function findDesordresPrecisionsBy(DesordreCritere $critere, array $payload): ?array
     {
         $slug = $critere->getSlugCritere();
         $desordreTraitementsHandlers = $this->desordreTraitements instanceof \Traversable ?

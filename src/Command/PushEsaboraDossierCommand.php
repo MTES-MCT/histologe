@@ -88,7 +88,7 @@ class PushEsaboraDossierCommand extends Command
 
         foreach ($affectations as $affectation) {
             $this->esaboraBus->dispatch($affectation);
-            $io->success(sprintf(
+            $io->success(\sprintf(
                 '[%s] Dossier %s pushed to esabora',
                 $affectation->getPartner()->getType()->value,
                 $affectation->getSignalement()->getUuid()

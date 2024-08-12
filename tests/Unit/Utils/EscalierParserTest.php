@@ -10,7 +10,7 @@ class EscalierParserTest extends TestCase
     /**
      * @dataProvider provideEscalier
      */
-    public function testEscalierParser(?string $currentEscalierValue, string|null $EscalierParsed): void
+    public function testEscalierParser(?string $currentEscalierValue, ?string $EscalierParsed): void
     {
         $this->assertEquals($EscalierParsed, EscalierParser::parse($currentEscalierValue));
     }

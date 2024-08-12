@@ -8,7 +8,6 @@ use App\Entity\Signalement;
 use App\Entity\Suivi;
 use App\Entity\Territory;
 use App\Entity\User;
-use DateTime;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\AbstractQuery;
 use Doctrine\ORM\NonUniqueResultException;
@@ -72,7 +71,7 @@ class NotificationRepository extends ServiceEntityRepository
     {
         return $this->createQueryBuilder('n')
             ->andWhere('n.createdAt <= :date')
-            ->setParameter('date', new DateTime('-'.$diff.' days'))
+            ->setParameter('date', new \DateTime('-'.$diff.' days'))
             ->getQuery()
             ->getResult();
     }

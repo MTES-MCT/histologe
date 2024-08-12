@@ -20,8 +20,8 @@ class ExceptionListener
 
     public function onKernelException(ExceptionEvent $event): void
     {
-        if (!$event->getThrowable() instanceof MethodNotAllowedException &&
-            null !== $event->getRequest()->get('signalement')) {
+        if (!$event->getThrowable() instanceof MethodNotAllowedException
+            && null !== $event->getRequest()->get('signalement')) {
             $attachment = ['documents' => 0, 'photos' => 0];
             if ($files = $event->getRequest()->files->get('signalement')) {
                 foreach ($files as $k => $file) {

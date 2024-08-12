@@ -115,7 +115,7 @@ class SignalementController extends AbstractController
                     $eventParams['motif_cloture']
                 );
 
-                /* @var Affectation $isAffected */
+            /* @var Affectation $isAffected */
             } elseif ($isAffected) {
                 $entity = $affectationManager->closeAffectation($isAffected, $user, $eventParams['motif_cloture'], true);
             }
@@ -254,7 +254,7 @@ class SignalementController extends AbstractController
             $doctrine->getManager()->flush();
             $response = [
                 'status' => Response::HTTP_OK,
-                'message' => sprintf('Le signalement %s a bien été supprimé.', $signalement->getReference()),
+                'message' => \sprintf('Le signalement %s a bien été supprimé.', $signalement->getReference()),
             ];
         } else {
             $response = [

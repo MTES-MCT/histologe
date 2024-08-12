@@ -123,7 +123,7 @@ class SlugifyDocumentSignalementCommand extends Command
                 try {
                     $csvWriter->writeRow($row);
                 } catch (\Throwable $exception) {
-                    $this->logger->error(sprintf('CSV Write - row %s - error: %s', $index, $exception->getMessage()));
+                    $this->logger->error(\sprintf('CSV Write - row %s - error: %s', $index, $exception->getMessage()));
                 }
             }
         }
@@ -135,18 +135,18 @@ class SlugifyDocumentSignalementCommand extends Command
         $command = 'make upload action=image zip='.$this->territory->getZip();
         if (\count($file) > 1) {
             $this->uploadHandlerService->moveFromBucketTempFolder($filename, self::BASE_DIRECTORY_CSV);
-            $io->success(sprintf('%s files have been slugified', $countFileSlugged));
+            $io->success(\sprintf('%s files have been slugified', $countFileSlugged));
             $io->success(
-                sprintf(
+                \sprintf(
                     '%s has been pushed to S3 bucket storage, please send your images to S3 Bucket `%s`',
                     $filename,
                     $command
                 )
             );
         } else {
-            $io->warning(sprintf('%s files have been slugified', $countFileSlugged));
-            $io->warning(sprintf('%s is empty, please check if your images have been already slugged', $filename));
-            $io->warning(sprintf('You should send your images to S3 Bucket with`%s`', $command));
+            $io->warning(\sprintf('%s files have been slugified', $countFileSlugged));
+            $io->warning(\sprintf('%s is empty, please check if your images have been already slugged', $filename));
+            $io->warning(\sprintf('You should send your images to S3 Bucket with`%s`', $command));
 
             return Command::FAILURE;
         }
@@ -169,7 +169,7 @@ class SlugifyDocumentSignalementCommand extends Command
 
                 return 1;
             } catch (\Throwable $exception) {
-                $this->logger->error(sprintf('CSV Write - N° %s ligne avec %s', $index, $exception->getMessage()));
+                $this->logger->error(\sprintf('CSV Write - N° %s ligne avec %s', $index, $exception->getMessage()));
             }
         }
 
@@ -190,7 +190,7 @@ class SlugifyDocumentSignalementCommand extends Command
         $countFileList = \count($fileList);
         $countFileSlugged = \count($fileListSlugged);
         if ($countFileList != $countFileSlugged) {
-            $this->logger->error(sprintf('Different count - row %s col %s - %s // %s', $index, $colName, $countFileSlugged, $countFileList));
+            $this->logger->error(\sprintf('Different count - row %s col %s - %s // %s', $index, $colName, $countFileSlugged, $countFileList));
 
             return null;
         }
@@ -220,7 +220,7 @@ class SlugifyDocumentSignalementCommand extends Command
 
             return $filenameSlugged;
         } catch (\Throwable $exception) {
-            $this->logger->error(sprintf('File rename - row %s - error: %s', $index, $exception->getMessage()));
+            $this->logger->error(\sprintf('File rename - row %s - error: %s', $index, $exception->getMessage()));
         }
 
         return null;
@@ -263,14 +263,14 @@ class SlugifyDocumentSignalementCommand extends Command
         if ($this->filesystem->exists($directoryPath)) {
             $countFile = \count(scandir($directoryPath)) - 2; // ignore single dot (.) and double dots (..)
             $question = new ConfirmationQuestion(
-                sprintf('Do you want to slugify %s files from your directory %s?', $countFile, $directoryPath),
+                \sprintf('Do you want to slugify %s files from your directory %s?', $countFile, $directoryPath),
                 false
             );
             if (!$helper->ask($input, $output, $question)) {
                 return false;
             }
         } else {
-            $this->errors[] = sprintf('%s path directory does not exists', $directoryPath);
+            $this->errors[] = \sprintf('%s path directory does not exists', $directoryPath);
         }
 
         if (!$this->fileStorage->fileExists($fromFile)) {

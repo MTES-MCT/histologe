@@ -43,7 +43,7 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
     public function upgradePassword(PasswordAuthenticatedUserInterface $user, string $newHashedPassword): void
     {
         if (!$user instanceof User) {
-            throw new UnsupportedUserException(sprintf('Instances of "%s" are not supported.', \get_class($user)));
+            throw new UnsupportedUserException(\sprintf('Instances of "%s" are not supported.', $user::class));
         }
 
         $user->setPassword($newHashedPassword);
@@ -157,9 +157,9 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
     }
 
     public function findAllArchived(
-        Territory|null $territory,
+        ?Territory $territory,
         bool $isNoneTerritory,
-        Partner|null $partner,
+        ?Partner $partner,
         bool $isNonePartner,
         ?string $filterTerms,
         bool $includeUsagers,
@@ -241,7 +241,7 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
     public function countUserByStatus(?Territory $territory = null, ?User $user = null): CountUser
     {
         $qb = $this->createQueryBuilder('u');
-        $qb->select(sprintf(
+        $qb->select(\sprintf(
             'NEW %s(
             SUM(CASE WHEN u.statut = :active THEN 1 ELSE 0 END),
             SUM(CASE WHEN u.statut = :inactive THEN 1 ELSE 0 END))',

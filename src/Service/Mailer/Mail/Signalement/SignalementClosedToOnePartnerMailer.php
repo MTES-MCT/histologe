@@ -48,7 +48,7 @@ class SignalementClosedToOnePartnerMailer extends AbstractNotificationMailer
         /** @var User $user */
         $user = $this->security->getUser();
         $signalement = $notificationMail->getSignalement();
-        $this->mailerSubject = sprintf(
+        $this->mailerSubject = \sprintf(
             self::MAILER_SUBJECT,
             $signalement->getReference(),
             $signalement->getNomOccupantOrDeclarant(),

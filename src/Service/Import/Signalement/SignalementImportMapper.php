@@ -158,7 +158,7 @@ class SignalementImportMapper
                             $digits = $fieldValue;
                         }
                         if ($yearCreatedAt === $todayYear && \strlen($digits) > 4) {
-                            throw new \Exception(sprintf('La référence %s concerne une année en cours et risque de semer la confusion', $fieldValue));
+                            throw new \Exception(\sprintf('La référence %s concerne une année en cours et risque de semer la confusion', $fieldValue));
                         }
                         $fieldValue = $yearCreatedAt.'-'.$digits;
                         break;

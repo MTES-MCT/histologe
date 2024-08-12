@@ -81,7 +81,7 @@ class AbstractSynchronizeEsaboraCommand extends AbstractCronCommand
                 $io->success($this->printInfo($dossierResponse));
                 ++$countSyncSuccess;
             } else {
-                $io->error(sprintf('%s', $this->serializer->serialize($dossierResponse, 'json')));
+                $io->error(\sprintf('%s', $this->serializer->serialize($dossierResponse, 'json')));
                 ++$countSyncFailed;
             }
             $this->jobEventManager->createJobEvent(
@@ -123,7 +123,7 @@ class AbstractSynchronizeEsaboraCommand extends AbstractCronCommand
 
     protected function printInfoSISH(DossierStateSISHResponse $dossierStateSISHResponse): string
     {
-        return sprintf(
+        return \sprintf(
             'Référence Dossier: %s, SAS Etat: %s, Date décision: %s,Cause refus: %s, ID technique: %s,
             N°dossier: %s, Objet: %s, Date Cloture: %s, DossStatutAbr: %s, DossStatut: %s, DossEtat: %s,
             DossTypeCode: %s, DossTypeLib: %s',
@@ -145,7 +145,7 @@ class AbstractSynchronizeEsaboraCommand extends AbstractCronCommand
 
     protected function printInfoSCHS(DossierStateSCHSResponse $dossierStateSCHSResponse): string
     {
-        return sprintf(
+        return \sprintf(
             'SAS Référence: %s, SAS Etat: %s, ID: %s, Numéro: %s, Statut: %s, Etat: %s, Date Cloture: %s',
             $dossierStateSCHSResponse->getSasReference(),
             $dossierStateSCHSResponse->getSasEtat(),

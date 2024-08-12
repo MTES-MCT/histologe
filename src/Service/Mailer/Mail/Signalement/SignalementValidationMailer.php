@@ -19,10 +19,10 @@ class SignalementValidationMailer extends AbstractNotificationMailer
     protected ?string $tagHeader = 'Usager Validation Signalement';
 
     public function __construct(
-    protected MailerInterface $mailer,
-    protected ParameterBagInterface $parameterBag,
-    protected LoggerInterface $logger,
-    protected UrlGeneratorInterface $urlGenerator,
+        protected MailerInterface $mailer,
+        protected ParameterBagInterface $parameterBag,
+        protected LoggerInterface $logger,
+        protected UrlGeneratorInterface $urlGenerator,
     ) {
         parent::__construct($this->mailer, $this->parameterBag, $this->logger, $this->urlGenerator);
     }

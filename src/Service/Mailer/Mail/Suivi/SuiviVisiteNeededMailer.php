@@ -40,7 +40,7 @@ class SuiviVisiteNeededMailer extends AbstractNotificationMailer
     public function updateMailerSubjectFromNotification(NotificationMail $notificationMail): void
     {
         $signalement = $notificationMail->getSignalement();
-        $this->mailerSubject = sprintf(
+        $this->mailerSubject = \sprintf(
             self::MAILER_SUBJECT,
             $signalement->getReference(),
             $signalement->getNomOccupantOrDeclarant()

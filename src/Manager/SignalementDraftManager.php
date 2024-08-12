@@ -71,9 +71,9 @@ class SignalementDraftManager extends AbstractManager
                 'lienSuivi' => $this->urlGenerator->generate(
                     'front_suivi_signalement',
                     [
-                    'code' => $signalement->getCodeSuivi(),
-                    'from' => $signalement->getMailDeclarant(),
-                ],
+                        'code' => $signalement->getCodeSuivi(),
+                        'from' => $signalement->getMailDeclarant(),
+                    ],
                     UrlGeneratorInterface::ABSOLUTE_URL
                 ),
             ];

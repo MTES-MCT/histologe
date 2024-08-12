@@ -35,7 +35,7 @@ class SignalementListControllerTest extends WebTestCase
         $this->assertLessThan(
             Response::HTTP_INTERNAL_SERVER_ERROR,
             $client->getResponse()->getStatusCode(),
-            sprintf('Result value: %d', $client->getResponse()->getStatusCode())
+            \sprintf('Result value: %d', $client->getResponse()->getStatusCode())
         );
     }
 

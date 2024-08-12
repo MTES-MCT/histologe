@@ -73,8 +73,8 @@ class LoadEpciCommandTest extends KernelTestCase
     private function getEpciPaysAncenis(): string
     {
         return json_encode([
-                ['nom' => 'Le Cellier', 'codesPostaux' => ['44850'], 'code' => '44028'],
-                ['nom' => 'Ligné', 'codesPostaux' => ['44850'], 'code' => '44082'],
+            ['nom' => 'Le Cellier', 'codesPostaux' => ['44850'], 'code' => '44028'],
+            ['nom' => 'Ligné', 'codesPostaux' => ['44850'], 'code' => '44082'],
         ]);
     }
 

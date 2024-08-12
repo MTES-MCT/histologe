@@ -77,7 +77,7 @@ class UserType extends AbstractType
             'required' => false,
         ]);
 
-        $formModifier = function (FormInterface $form, Territory $territory = null) {
+        $formModifier = function (FormInterface $form, ?Territory $territory = null) {
             $partners = null === $territory ?
             $this->partnerRepository->findAllWithoutTerritory()
             : $this->partnerRepository->findAllList($territory);
@@ -138,8 +138,8 @@ class UserType extends AbstractType
         if ($value instanceof User) {
             $user = $value;
 
-            if ((null === $user->getTerritory()) &&
-            (\in_array('ROLE_USER_PARTNER', $user->getRoles())
+            if ((null === $user->getTerritory())
+            && (\in_array('ROLE_USER_PARTNER', $user->getRoles())
             || \in_array('ROLE_ADMIN_PARTNER', $user->getRoles())
             || \in_array('ROLE_ADMIN_TERRITORY', $user->getRoles()))) {
                 $context->addViolation('Le territoire doit être renseigné');

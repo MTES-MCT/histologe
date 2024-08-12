@@ -71,7 +71,7 @@ class FixEmailAddressesCommand extends Command
         }
         $this->signalementManager->flush();
 
-        $this->io->success(sprintf('%s e-mail addresses were successfully fixed.', $count));
+        $this->io->success(\sprintf('%s e-mail addresses were successfully fixed.', $count));
 
         return Command::SUCCESS;
     }

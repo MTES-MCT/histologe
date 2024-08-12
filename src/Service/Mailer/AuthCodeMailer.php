@@ -18,7 +18,7 @@ class AuthCodeMailer implements AuthCodeMailerInterface
         MailerInterface $mailer,
         #[Autowire(env: 'REPLY_TO_EMAIL')]
         private string $fromEmail,
-        ) {
+    ) {
         $this->mailer = $mailer;
     }
 

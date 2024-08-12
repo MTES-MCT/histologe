@@ -32,7 +32,7 @@ class WidgetController extends AbstractController
             $user = $this->getUser();
             $territory = $user->getTerritory() ?? $user->getPartner()?->getTerritory();
             if (null === $territory) {
-                $logger->critical(sprintf('%s has no territory', $user->getEmail()));
+                $logger->critical(\sprintf('%s has no territory', $user->getEmail()));
 
                 return $this->json([], Response::HTTP_BAD_REQUEST);
             }

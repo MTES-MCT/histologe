@@ -93,7 +93,7 @@ class SynchronizeIdossCommand extends AbstractCronCommand
             );
         }
 
-        $this->io->success(sprintf('Status updated: %d, Files uploaded: %d', $nbStatusUpdated, $nbFilesUploaded));
+        $this->io->success(\sprintf('Status updated: %d, Files uploaded: %d', $nbStatusUpdated, $nbFilesUploaded));
 
         return Command::SUCCESS;
     }
@@ -106,16 +106,16 @@ class SynchronizeIdossCommand extends AbstractCronCommand
             foreach ($items['statuts'] as $item) {
                 $signalement = $this->signalementRepository->findOneBy(['reference' => $item['uuid'], 'territory' => $partner->getTerritory()]);
                 if (!$signalement) {
-                    $this->errors[] = sprintf('Signalement "%s" not found on territory "%s"', $item['uuid'], $partner->getTerritory()->getZip());
+                    $this->errors[] = \sprintf('Signalement "%s" not found on territory "%s"', $item['uuid'], $partner->getTerritory()->getZip());
                     continue;
                 }
                 $idossData = $signalement->getSynchroData(IdossService::TYPE_SERVICE);
                 if (!$idossData) {
-                    $this->errors[] = sprintf('Signalement "%s" has no synchro idoss data on territory "%s"', $item['uuid'], $partner->getTerritory()->getZip());
+                    $this->errors[] = \sprintf('Signalement "%s" has no synchro idoss data on territory "%s"', $item['uuid'], $partner->getTerritory()->getZip());
                     continue;
                 }
                 if ($idossData['id'] != $item['id']) {
-                    $this->errors[] = sprintf('Signalement "%s" has not the expected idoss id "%s" on territory "%s"', $item['uuid'], $item['id'], $partner->getTerritory()->getZip());
+                    $this->errors[] = \sprintf('Signalement "%s" has not the expected idoss id "%s" on territory "%s"', $item['uuid'], $item['id'], $partner->getTerritory()->getZip());
                     continue;
                 }
                 $idossData['updated_at'] = $jobEvent->getCreatedAt()->format('Y-m-d H:i:s');
@@ -168,7 +168,7 @@ class SynchronizeIdossCommand extends AbstractCronCommand
             foreach ($signalements as $signalement) {
                 $jobEvent = $this->idossService->uploadFiles($partner, $signalement);
                 if ($jobEvent && JobEvent::STATUS_FAILED === $jobEvent->getStatus()) {
-                    $this->errors[] = sprintf('Error while uploading files for signalement "%s"', $signalement->getUuid());
+                    $this->errors[] = \sprintf('Error while uploading files for signalement "%s"', $signalement->getUuid());
                     continue;
                 }
                 $nbFilesUploaded += \count($signalement->getFiles());
