@@ -17,10 +17,10 @@ class WidgetDataManager implements WidgetDataManagerInterface
     public const FORMAT_DATE_TIME = 'Y-m-d H:i';
 
     public function __construct(
-        private SignalementRepository $signalementRepository,
-        private JobEventRepository $jobEventRepository,
-        private AffectationRepository $affectationRepository,
-        private WidgetDataKpiBuilder $widgetDataKpiBuilder,
+        private readonly SignalementRepository $signalementRepository,
+        private readonly JobEventRepository $jobEventRepository,
+        private readonly AffectationRepository $affectationRepository,
+        private readonly WidgetDataKpiBuilder $widgetDataKpiBuilder,
     ) {
     }
 
@@ -60,9 +60,13 @@ class WidgetDataManager implements WidgetDataManagerInterface
     {
         $jobEvents = $this->jobEventRepository->findLastJobEventByInterfacageType($type, $params['period'], $territory);
 
-        return array_map(function ($jobEvent) {
+        return array_map(/**
+         * @throws \Exception
+         */ function ($jobEvent) use ($territory) {
             $jobEvent['last_event'] = (new \DateTimeImmutable($jobEvent['last_event']))
-                ->setTimezone(new \DateTimeZone(self::DEFAULT_TIMEZONE))
+                ->setTimezone(
+                    new \DateTimeZone($territory ? $territory->getTimezone() : self::DEFAULT_TIMEZONE)
+                )
                 ->format(self::FORMAT_DATE_TIME);
 
             return $jobEvent;

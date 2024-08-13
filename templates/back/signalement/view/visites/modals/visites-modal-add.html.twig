@@ -31,7 +31,10 @@
                                         <p id="signalement-add-visite-date-error" class="fr-error-text fr-hidden fr-my-3v">
                                             Veuillez préciser la date de la visite.
                                         </p>
-                                        <input type="date" class="fr-input add-fields-if-past-date" data-fields="visite-add-past-date-complementary-fields" name="visite-add[date]" required>
+                                        <input type="date"
+                                               class="fr-input add-fields-if-past-date"
+                                               data-fields="visite-add-past-date-complementary-fields"
+                                               name="visite-add[date]" required>
                                     </fieldset>
 
                                     <fieldset class="fr-fieldset fr-fieldset--inline fr-mb-5v">
@@ -41,7 +44,11 @@
                                         <p id="signalement-add-visite-date-error" class="fr-error-text fr-hidden fr-my-3v">
                                             Veuillez préciser l'heure de la visite.
                                         </p>
-                                        <input type="time" class="fr-input" data-fields="visite-add-past-date-complementary-fields" name="visite-add[time]">
+                                        <input type="time"
+                                               class="fr-input"
+                                               data-territory-timezone="{{ territory_timezone }}"
+                                               data-fields="visite-add-past-date-complementary-fields"
+                                               name="visite-add[time]">
                                     </fieldset>
                                     
                                     {% if is_granted('ROLE_ADMIN_TERRITORY') %}

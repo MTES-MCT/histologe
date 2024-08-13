@@ -32,12 +32,25 @@ class AppExtension extends AbstractExtension implements GlobalsInterface
     public function getFilters(): array
     {
         return [
+            new TwigFilter('date', [$this, 'customDateFilter'], ['is_safe' => ['html']]),
             new TwigFilter('status_to_css', [$this, 'getCssFromStatus']),
             new TwigFilter('signalement_lien_declarant_occupant', [$this, 'getLabelLienDeclarantOccupant']),
             new TwigFilter('image64', [ImageBase64Encoder::class, 'encode']),
             new TwigFilter('truncate_filename', [$this, 'getTruncatedFilename']),
             new TwigFilter('clean_tagged_text', [$this, 'cleanTaggedText']),
         ];
+    }
+
+    /**
+     * @throws \Exception
+     */
+    public function customDateFilter(string|\DateTimeImmutable|\DateTime $dateTime, string $format = 'F j, Y'): string
+    {
+        if ($dateTime instanceof \DateTimeInterface) {
+            return $dateTime->setTimezone($this->timezoneProvider->getDateTimezone())->format($format);
+        }
+
+        return (new \DateTimeImmutable($dateTime))->setTimezone($this->timezoneProvider->getDateTimezone())->format($format);
     }
 
     public function getCssFromStatus(QualificationStatus $qualificationStatus): string

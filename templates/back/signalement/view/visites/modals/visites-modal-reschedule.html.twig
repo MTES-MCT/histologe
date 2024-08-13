@@ -11,7 +11,7 @@
                         <div class="fr-modal__content">
                             <h1 id="fr-modal-reschedule-visite-modal-{{intervention.id}}" class="fr-modal__title">
                                 Modifier la date du
-                                {{ (intervention.scheduledAt.format('H')) > 0 ? intervention.scheduledAt.format('d/m/Y à H:i') : intervention.scheduledAt.format('d/m/Y') }}
+                                {{ (intervention.scheduledAt.format('H')) > 0 ? intervention.scheduledAt|date('d/m/Y à H:i') : intervention.scheduledAt.format('d/m/Y') }}
                             </h1>
 
                             <div class="fr-alert fr-alert--info">
@@ -41,7 +41,7 @@
                                         <p id="signalement-reschedule-visite-date-error" class="fr-error-text fr-hidden fr-my-3v">
                                             Veuillez préciser l'heure de la visite.
                                         </p>
-                                        <input type="time" class="fr-input" data-fields="visite-reschedule-past-date-complementary-fields" name="visite-reschedule[time]" value="{{ intervention.scheduledAt.format('H:i') }}">
+                                        <input type="time" class="fr-input" data-fields="visite-reschedule-past-date-complementary-fields" name="visite-reschedule[time]" value="{{ intervention.scheduledAt|date('H:i') }}">
                                     </fieldset>
                                     
                                     {% if is_granted('ROLE_ADMIN_TERRITORY') %}

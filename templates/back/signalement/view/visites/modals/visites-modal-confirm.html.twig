@@ -10,7 +10,7 @@
                         </div>
                         <div class="fr-modal__content">
                             <h1 id="fr-modal-confirm-visite-modal-{{intervention.id}}" class="fr-modal__title">
-                                Conclusion de la visite du {{ (intervention.scheduledAt.format('H')) > 0 ? intervention.scheduledAt.format('d/m/Y à H:i') : intervention.scheduledAt.format('d/m/Y') }}
+                                Conclusion de la visite du {{ (intervention.scheduledAt.format('H')) > 0 ? intervention.scheduledAt|date('d/m/Y à H:i') : intervention.scheduledAt.format('d/m/Y') }}
                             </h1>
 
                             <div class="fr-alert fr-alert--info">

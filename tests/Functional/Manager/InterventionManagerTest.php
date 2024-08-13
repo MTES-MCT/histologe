@@ -76,7 +76,7 @@ class InterventionManagerTest extends KernelTestCase
             date: '2023-01-10',
             time: '10:00',
             idPartner: $affectation?->getPartner()->getId(),
-            details: 'Tranmission du dossier effectué',
+            details: 'Transmission du dossier effectué',
             concludeProcedure: ['MISE_EN_SECURITE_PERIL'],
             isVisiteDone: true,
             isOccupantPresent: true,
@@ -93,8 +93,8 @@ class InterventionManagerTest extends KernelTestCase
         $this->assertFalse($intervention->isProprietairePresent());
         $this->assertEquals($intervention::STATUS_DONE, $intervention->getStatus());
         $this->assertCount(1, $intervention->getFiles());
-        $this->assertEquals('Tranmission du dossier effectué', $intervention->getDetails());
-        $this->assertEquals(new \DateTimeImmutable('2023-01-10 10:00'), $intervention->getScheduledAt());
+        $this->assertEquals('Transmission du dossier effectué', $intervention->getDetails());
+        $this->assertEquals(new \DateTimeImmutable('2023-01-10 09:00'), $intervention->getScheduledAt());
         $this->assertTrue(
             \in_array(
                 ProcedureType::MISE_EN_SECURITE_PERIL,

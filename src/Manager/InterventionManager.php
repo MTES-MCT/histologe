@@ -56,7 +56,7 @@ class InterventionManager extends AbstractManager
         $intervention = new Intervention();
         $intervention->setSignalement($signalement)
             ->setPartner($partnerFound)
-            ->setScheduledAt(new \DateTimeImmutable($visiteRequest->getDateTime()))
+            ->setScheduledAt(new \DateTimeImmutable($visiteRequest->getDateTimeUTC()))
             ->setType(InterventionType::VISITE)
             ->setStatus(Intervention::STATUS_PLANNED);
 
@@ -118,7 +118,7 @@ class InterventionManager extends AbstractManager
 
         $intervention
             ->setPartner($partnerFound)
-            ->setScheduledAt(new \DateTimeImmutable($visiteRequest->getDateTime()));
+            ->setScheduledAt(new \DateTimeImmutable($visiteRequest->getDateTimeUTC()));
         $this->save($intervention);
 
         if ($intervention->getScheduledAt() <= new \DateTimeImmutable()) {

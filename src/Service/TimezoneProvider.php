@@ -21,4 +21,12 @@ readonly class TimezoneProvider
 
         return 'Europe/Paris';
     }
+
+    /**
+     * @throws \Exception
+     */
+    public function getDateTimezone(): \DateTimeZone
+    {
+        return new \DateTimeZone($this->getTimezone());
+    }
 }

@@ -36,16 +36,19 @@ class DossierMessageSISHFactory extends AbstractDossierMessageFactory
 
     public function supports(Affectation $affectation): bool
     {
-        return $this->isEsaboraPartnerActive($affectation) && PartnerType::ARS === $affectation->getPartner()->getType();
+        return $this->isEsaboraPartnerActive($affectation)
+            && PartnerType::ARS === $affectation->getPartner()->getType();
     }
 
     /**
      * @throws NonUniqueResultException
+     * @throws \Exception
      */
     public function createInstance(Affectation $affectation): DossierMessageSISH
     {
         $signalement = $affectation->getSignalement();
         $partner = $affectation->getPartner();
+        $timezone = $partner->getTerritory()?->getTimezone() ?? self::DEFAULT_TIMEZONE;
 
         $address = AddressParser::parse($signalement->getAdresseOccupant());
         $firstSuivi = $this->suiviRepository->findFirstSuiviBy($signalement, Suivi::TYPE_PARTNER);
@@ -72,7 +75,9 @@ class DossierMessageSISHFactory extends AbstractDossierMessageFactory
         $numPorte = $signalement->getNumAppartOccupant()
             ? substr($signalement->getNumAppartOccupant(), 0, 30)
             : null;
-        $villeOccupant = $signalement->getVilleOccupant() ? substr($signalement->getVilleOccupant(), 0, 60) : null;
+        $villeOccupant = $signalement->getVilleOccupant()
+            ? substr($signalement->getVilleOccupant(), 0, 60)
+            : null;
         $numeroInvariant = $signalement->getNumeroInvariant()
             ? substr($signalement->getNumeroInvariant(), 0, 12)
             : null;
@@ -80,7 +85,9 @@ class DossierMessageSISHFactory extends AbstractDossierMessageFactory
             ? substr($signalement->getTypeEnergieLogement(), 0, 30)
             : null;
 
-        $codeInsee = $signalement->getInseeOccupant() ? substr($signalement->getInseeOccupant(), 0, 5) : null;
+        $codeInsee = $signalement->getInseeOccupant()
+            ? substr($signalement->getInseeOccupant(), 0, 5)
+            : null;
 
         return (new DossierMessageSISH())
             ->setUrl($partner->getEsaboraUrl())
@@ -92,7 +99,11 @@ class DossierMessageSISHFactory extends AbstractDossierMessageFactory
             ->setReferenceAdresse($signalement->getUuid())
             ->setLocalisationNumero($address['number'] ?? null)
             ->setLocalisationNumeroExt($address['suffix'] ?? null)
-            ->setLocalisationAdresse1($address['street'] ? substr($address['street'], 0, 100) : null)
+            ->setLocalisationAdresse1(
+                $address['street']
+                ? substr($address['street'], 0, 100)
+                    : null
+            )
             ->setLocalisationAdresse2($signalement->getAdresseAutreOccupant())
             ->setLocalisationCodePostal($signalement->getCpOccupant())
             ->setLocalisationVille($villeOccupant)
@@ -102,7 +113,7 @@ class DossierMessageSISHFactory extends AbstractDossierMessageFactory
             ->setSasDateAffectation(
                 $affectation
                     ->getCreatedAt()
-                    ?->setTimezone(new \DateTimeZone(self::DEFAULT_TIMEZONE))
+                    ?->setTimezone(new \DateTimeZone($timezone))
                     ->format($formatDateTime)
             )
             ->setLocalisationEtage($etage)
@@ -154,7 +165,9 @@ class DossierMessageSISHFactory extends AbstractDossierMessageFactory
         PersonneType $personneType
     ): ?DossierMessageSISHPersonne {
         if (PersonneType::OCCUPANT === $personneType) {
-            $prenom = $signalement->getPrenomOccupant() ? substr($signalement->getPrenomOccupant(), 0, 30) : null;
+            $prenom = $signalement->getPrenomOccupant()
+                ? substr($signalement->getPrenomOccupant(), 0, 30)
+                : null;
             $tel = $signalement->getTelOccupantDecoded(true)
                 ? substr($signalement->getTelOccupantDecoded(true), 0, 20)
                 : null;
@@ -190,7 +203,9 @@ class DossierMessageSISHFactory extends AbstractDossierMessageFactory
         }
 
         if (PersonneType::DECLARANT === $personneType && !empty($signalement->getLienDeclarantOccupant())) {
-            $prenom = $signalement->getPrenomDeclarant() ? substr($signalement->getPrenomDeclarant(), 0, 30) : null;
+            $prenom = $signalement->getPrenomDeclarant()
+                ? substr($signalement->getPrenomDeclarant(), 0, 30)
+                : null;
             $tel = $signalement->getTelDeclarantDecoded(true)
                 ? substr($signalement->getTelDeclarantDecoded(true), 0, 20)
                 : null;

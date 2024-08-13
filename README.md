@@ -19,7 +19,7 @@ Requirements|Release
 Docker engine (minimum)| [25.0.*](https://www.docker.com/)
 Scalingo CLI (minimum) | [1.24](https://doc.scalingo.com/platform/cli/start)
 AWS CLI OVH Object storage (optionnel) | [1.25](https://docs.ovh.com/fr/storage/s3/debuter-avec-s3/#utilisation-de-aws-cli)
-PHP (optionnel)| [8.1.*](https://www.php.net/)
+PHP (optionnel)| [8.3.*](https://www.php.net/)
 Composer (optionnel) | [2.7.*](https://getcomposer.org/download/)
 Node (optionnel)| [18.*](https://nodejs.org/en/)
 
@@ -35,10 +35,10 @@ Node (optionnel)| [18.*](https://nodejs.org/en/)
 
 Service|Version
 -------|-------
-Nginx | 1.20.2
-PHP | 8.1.x (latest)
+Nginx | 1.26.x (latest)
+PHP | 8.3.x (latest)
 Node.js | 18.16.x
-MySQL | 8.0
+MySQL | 8.0.x
 Redis | 7.0.x (latest)
 
 ### URL(s)
@@ -68,6 +68,7 @@ Wiremock| histologe_wiremock   | **8082**
 Metabase| histologe_metabase   | **3007**
 Matomo | histologe_matomo     | **1083**
 Redis| histologe_redis      | /
+ClamAV| histologe_clamav     | /
 
 ## Installation
 

@@ -15,6 +15,7 @@ use App\Exception\File\UnsupportedFileFormatException;
 use App\Manager\InterventionManager;
 use App\Repository\InterventionRepository;
 use App\Service\Files\FilenameGenerator;
+use App\Service\TimezoneProvider;
 use App\Service\UploadHandlerService;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -63,6 +64,9 @@ class SignalementVisitesController extends AbstractController
         }
     }
 
+    /**
+     * @throws \Exception
+     */
     #[Route('/{uuid}/visites/ajouter', name: 'back_signalement_visite_add', methods: 'POST')]
     public function addVisiteToSignalement(
         Signalement $signalement,
@@ -72,6 +76,7 @@ class SignalementVisitesController extends AbstractController
         EventDispatcherInterface $eventDispatcher,
         FilenameGenerator $filenameGenerator,
         ValidatorInterface $validator,
+        TimezoneProvider $timezoneProvider,
     ): Response {
         $this->denyAccessUnlessGranted('SIGN_ADD_VISITE', $signalement);
 
@@ -91,6 +96,7 @@ class SignalementVisitesController extends AbstractController
             idIntervention: $requestAddData['intervention'] ?? null,
             date: $requestAddData['date'],
             time: $requestAddData['time'],
+            timezone: $timezoneProvider->getTimezone(),
             idPartner: $requestAddData['partner'],
             details: $requestAddData['details'] ?? null,
             concludeProcedure: $requestAddData['concludeProcedure'] ?? null,
