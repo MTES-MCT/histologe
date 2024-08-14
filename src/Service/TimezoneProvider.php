@@ -15,8 +15,8 @@ readonly class TimezoneProvider
     {
         /** @var User $user */
         $user = $this->security->getUser();
-        if ($user && $user->getPartner()->getTerritory()) {
-            return $user->getPartner()->getTerritory()->getTimezone();
+        if ($user && $user->getTerritory()) {
+            return $user->getTerritory()->getTimezone();
         }
 
         return 'Europe/Paris';

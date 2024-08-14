@@ -50,7 +50,7 @@ class Territory
     private Collection $tags;
 
     #[ORM\Column(type: 'json', nullable: true)]
-    private array $authorizedCodesInsee = [];
+    private ?array $authorizedCodesInsee = [];
 
     #[ORM\OneToMany(mappedBy: 'territory', targetEntity: BailleurTerritory::class)]
     private Collection $bailleurTerritories;
