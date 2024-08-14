@@ -78,3 +78,4 @@ signalements_draft:
     profile_declarant: 'SERVICE_SECOURS'
     email_declarant: 'service_secours-02@histologe.fr'
     payload: 'step/validation_signalement/service_secours.json'
+    created_at_period: '-7 months'
