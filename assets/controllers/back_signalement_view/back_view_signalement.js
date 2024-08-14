@@ -69,7 +69,7 @@ document?.querySelector('.back-link')?.addEventListener('click', (event) => {
 
 document?.querySelectorAll('.signalement-tag-add')?.forEach(element => {
     element.addEventListener('click', (event) => {
-        element.classList?.add('fr-hidden')
+        element.classList?.add('fr-hidden', 'disabled')
 
         const etiquette = document.createElement('span');
         etiquette.classList.add('fr-badge', 'fr-badge--blue-ecume', 'fr-m-1v', 'signalement-tag-remove')
@@ -96,9 +96,10 @@ document?.querySelectorAll('.signalement-tag-add')?.forEach(element => {
 
 const inputEtiquetteFilter = document?.querySelector('#etiquette-filter-input')
 inputEtiquetteFilter?.addEventListener('input', (event) => {
-    const inputValue = event.target.value.toLowerCase()
+    const inputValue = event.target.value.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase()
     document?.querySelectorAll('.signalement-tag-add')?.forEach(element => {
-        if (element.getAttribute('data-taglabel').toLowerCase().indexOf(inputValue) > -1) {
+        const normalizedTagLabel = element.getAttribute('data-taglabel').normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
+        if (normalizedTagLabel.indexOf(inputValue) > -1 && !element.classList.contains('disabled')) {
             element.classList?.remove('fr-hidden')
         } else {
             element.classList?.add('fr-hidden')
@@ -115,7 +116,7 @@ document?.querySelectorAll('.signalement-tag-remove')?.forEach(element => {
 const removeEtiquette = (element) => {
     const tagId = element.getAttribute('data-tagid')
     const etiquetteBadgeAdd = document.querySelector('#etiquette-badge-add-' + tagId);
-    etiquetteBadgeAdd.classList?.remove('fr-hidden')
+    etiquetteBadgeAdd.classList?.remove('fr-hidden', 'disabled');
 
     element.remove();
 
