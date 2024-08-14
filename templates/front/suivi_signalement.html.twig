@@ -101,6 +101,18 @@
 			{% include 'front/_partials/_suivi_signalement_tab_infos.html.twig' %}
 		</div>
 	</div>
+
+	{% if 
+		(signalement.statut is same as constant('App\\Entity\\Signalement::STATUS_REFUSED') or signalement.statut is same as constant('App\\Entity\\Signalement::STATUS_ARCHIVED')) 
+		and signalement.motifRefus is same as constant('App\\Entity\\Enum\\MotifRefus::DOUBLON') %}
+			<div class="fr-mb-1w">
+			{{ include ('_partials/_demande-lien-signalement.html.twig', {motifRefusDoublon: true}) }}
+			</div>
+	{% endif %}
+
+
+
+
 </main>
 {% endblock %}
 {% block javascripts %}

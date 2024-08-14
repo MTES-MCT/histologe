@@ -8,6 +8,7 @@ use App\Entity\Signalement;
 use App\Entity\Suivi;
 use App\Entity\Tag;
 use App\Entity\User;
+use App\Repository\AffectationRepository;
 use App\Repository\SuiviRepository;
 use App\Service\Mailer\NotificationMail;
 use App\Service\Mailer\NotificationMailerRegistry;
@@ -160,30 +161,23 @@ class SignalementActionController extends AbstractController
     }
 
     #[Route('/{uuid}/reopen', name: 'back_signalement_reopen')]
-    public function reopenSignalement(Signalement $signalement, Request $request, ManagerRegistry $doctrine): RedirectResponse|JsonResponse
+    public function reopenSignalement(Signalement $signalement, Request $request, ManagerRegistry $doctrine, AffectationRepository $affectationRepository): RedirectResponse|JsonResponse
     {
-        //        $this->denyAccessUnlessGranted('SIGN_REOPEN', $signalement);
         /** @var User $user */
         $user = $this->getUser();
         if ($this->isCsrfTokenValid('signalement_reopen_'.$signalement->getId(), $request->get('_token')) && $response = $request->get('signalement-action')) {
             if ($this->isGranted('ROLE_ADMIN_TERRITORY') && isset($response['reopenAll'])) {
-                $signalement->getAffectations()->filter(function (Affectation $affectation) use ($doctrine) {
-                    $affectation->setStatut(Affectation::STATUS_WAIT);
-                    $doctrine->getManager()->persist($affectation);
-                });
+                $affectationRepository->updateStatusBySignalement(Affectation::STATUS_WAIT, $signalement);
                 $reopenFor = 'tous les partenaires';
             } else {
-                $user->getPartner()->getAffectations()->filter(function (Affectation $affectation) use ($signalement, $doctrine) {
+                $user->getPartner()->getAffectations()->filter(function (Affectation $affectation) use ($signalement) {
                     if ($affectation->getSignalement()->getId() === $signalement->getId()) {
                         $affectation->setStatut(Affectation::STATUS_WAIT);
-                        $doctrine->getManager()->persist($affectation);
                     }
                 });
                 $reopenFor = mb_strtoupper($user->getPartner()->getNom());
             }
             $signalement->setStatut(Signalement::STATUS_ACTIVE);
-            $currentCodeSuivi = $signalement->getCodeSuivi();
-            $doctrine->getManager()->persist($signalement);
             $suivi = new Suivi();
             $suivi->setSignalement($signalement)
                 ->setDescription('Signalement rouvert pour '.$reopenFor)

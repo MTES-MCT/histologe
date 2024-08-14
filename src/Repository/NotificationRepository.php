@@ -215,4 +215,14 @@ class NotificationRepository extends ServiceEntityRepository
 
         $qb->getQuery()->execute();
     }
+
+    public function deleteBySignalement(Signalement $signalement): void
+    {
+        $qb = $this->createQueryBuilder('n')
+            ->delete()
+            ->where('n.signalement = :signalement')
+            ->setParameter('signalement', $signalement);
+
+        $qb->getQuery()->execute();
+    }
 }

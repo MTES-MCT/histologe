@@ -65,7 +65,9 @@
             <div class="fr-grid-row">
               <div class="fr-col-12 fr-text--right">
                 <div class="fr-display-inline-flex">
-                  <button v-if="sharedState.user.canDeleteSignalement" @click="deleteSignalementItem(item)"
+                  <button v-if="item.canDeleteSignalement" data-fr-opened="false" 
+                          aria-controls="modal-delete-signalement" 
+                          @click="selectItem(item)"
                           class="fr-btn fr-btn--icon-left fr-btn--secondary fr-mx-1w fr-icon-delete-line">
                     Supprimer le signalement
                   </button>
@@ -80,6 +82,49 @@
       </div>
     </div>
   </div>
+  <dialog aria-labelledby="modal-delete-signalement-title" id="modal-delete-signalement" class="fr-modal" role="dialog" >
+    <div class="fr-container fr-container--fluid fr-container-lg">
+        <div class="fr-grid-row fr-grid-row--center">
+            <div class="fr-col-12 fr-col-md-8 fr-col-lg-6">
+                <div class="fr-modal__body">
+                    <div class="fr-modal__header">
+                        <button class="fr-btn--close fr-btn" aria-controls="modal-delete-signalement">Fermer</button>
+                    </div>
+                    <div class="fr-modal__content">
+                        <h1 id="modal-delete-signalement-title" class="fr-modal__title">
+                            <span class="fr-icon-arrow-right-line fr-icon--lg"></span>
+                            Supprimer le signalement {{ selectedItem?.reference }}
+                        </h1>
+                        <div class="fr-alert fr-alert--warning fr-mb-1w">
+                          <h3 class="fr-alert__title">Attention</h3>
+                          <p>La suppression d'un signalement est définitive. Assurez-vous de la nécessité de supprimer le signalement avant de le faire !</p>
+                        </div>
+                        <p>Vous êtes sur le point de supprimer le signalement <strong>{{selectedItem?.reference}}</strong> 
+                          de <strong>{{ selectedItem?.nomOccupant && selectedItem?.nomOccupant.toUpperCase()  + ' ' + selectedItem?.prenomOccupant }}</strong>. 
+                          Une fois le signalement supprimé :</p>
+                        <ul>
+                            <li>Le signalement sera supprimé, <strong>il ne sera plus accessible dans Histologe.</strong></li>
+                            <li>Vous ne pourrez plus assurer le suivi du dossier.</li>
+                            <li>Les partenaires ne pourront plus être affectés et les affectations en cours seront supprimées.</li>
+                            <li>L'usager ne pourra plus accéder au suivi de son signalement.</li>
+                        </ul>
+                        <p>Voulez-vous vraiment supprimer ce signalement ?</p>
+                    </div>
+                    <div class="fr-modal__footer">
+                        <div class="fr-btns-group fr-btns-group--right fr-btns-group--inline-reverse fr-btns-group--inline-lg fr-btns-group--icon-left">
+                            <button class="fr-btn fr-btn--secondary fr-icon-close-line" @click="emitDeleteSignalementItem(selectedItem)">
+                              Oui, supprimer
+                            </button>
+                            <button class="fr-btn fr-icon-check-line" aria-controls="modal-delete-signalement">
+                              Non, annuler
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+  </dialog>
 </template>
 
 <script lang="ts">
@@ -97,7 +142,8 @@ export default defineComponent({
   emits: ['deleteSignalementItem'],
   data () {
     return {
-      sharedState: store.state
+      sharedState: store.state,
+      selectedItem: null as SignalementItem | null
     }
   },
   methods: {
@@ -212,11 +258,11 @@ export default defineComponent({
     getSuiviVisibility (label: boolean): string {
       return label ? 'Visible par l\'usager' : 'Suivi interne'
     },
-    deleteSignalementItem (item: SignalementItem) {
-      const confirmation = confirm('Êtes-vous sûr de vouloir supprimer ce signalement ?')
-      if (confirmation) {
-        this.$emit('deleteSignalementItem', item)
-      }
+    selectItem (item: SignalementItem) {
+      this.selectedItem = item
+    },
+    emitDeleteSignalementItem(item: SignalementItem|null) {
+      this.$emit('deleteSignalementItem', item);
     }
   }
 })
