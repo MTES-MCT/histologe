@@ -75,24 +75,6 @@
                                     <span class="fr-icon-arrow-right-line fr-icon--lg"></span>Ajouter une étiquette
                                 </h1>
                                 <p>Une fois créée, les agents pourront ajouter ou retirer l'étiquette aux signalements et l'utiliser pour filtrer la liste des signalements.</p>
-                                {# <form method="POST" action="{{ path('back_tags_add') }}" id="form-add-tag">
-                                    <input type="hidden" name="_token" value="{{ csrf_token('tag_add') }}">
-                                    <label class="fr-label" for="label-etiquette-add">Etiquette</label>
-                                    <input class="fr-input" type="text" id="label-etiquette-add" name="tag_label">
-                                    {% if is_granted('ROLE_ADMIN') %}
-                                    <div class="fr-select-group fr-mt-3v">
-                                        <label class="fr-label" for="territory-etiquette-add">
-                                            Territoire
-                                        </label>
-                                        <select class="fr-select" id="territory-etiquette-add" name="tag_territory">
-                                            <option value="" selected disabled hidden>Sélectionner une option</option>
-                                            {% for territory in territories %}
-                                                <option value="{{ territory.id }}">{{ territory.zip ~ ' - ' ~ territory.name }}</option>
-                                            {% endfor %}
-                                        </select>
-                                    </div>
-                                    {% endif %}
-                                </form> #}
                                 {% form_theme addForm 'form/dsfr_theme.html.twig' %}
                                 {{form(addForm, {'attr': {'id': 'form-add-tag'}} )}}
                             </div>
