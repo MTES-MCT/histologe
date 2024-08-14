@@ -97,7 +97,7 @@
                         </h1>
                         <div class="fr-alert fr-alert--warning fr-mb-1w">
                           <h3 class="fr-alert__title">Attention</h3>
-                          <p>la suppression d'un signalement est définitive. Assurez-vous de la nécessité de supprimer le signalement avant de le faire !</p>
+                          <p>La suppression d'un signalement est définitive. Assurez-vous de la nécessité de supprimer le signalement avant de le faire !</p>
                         </div>
                         <p>Vous êtes sur le point de supprimer le signalement <strong>{{selectedItem?.reference}}</strong> 
                           de <strong>{{ selectedItem?.nomOccupant && selectedItem?.nomOccupant.toUpperCase()  + ' ' + selectedItem?.prenomOccupant }}</strong>. 

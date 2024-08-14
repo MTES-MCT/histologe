@@ -9,7 +9,6 @@ use App\Entity\Enum\SignalementStatus;
 use App\Entity\Signalement;
 use App\Entity\Territory;
 use App\Entity\User;
-use ReflectionClass;
 
 class SignalementAffectationHelper
 {
@@ -94,7 +93,7 @@ class SignalementAffectationHelper
         $signalement = new Signalement();
         $territory = new Territory();
 
-        $reflectionClass = new ReflectionClass($territory);
+        $reflectionClass = new \ReflectionClass($territory);
         $property = $reflectionClass->getProperty('id');
         $property->setAccessible(true);
         $property->setValue($territory, $data['territoryId']);
