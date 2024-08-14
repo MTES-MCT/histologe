@@ -96,9 +96,10 @@ document?.querySelectorAll('.signalement-tag-add')?.forEach(element => {
 
 const inputEtiquetteFilter = document?.querySelector('#etiquette-filter-input')
 inputEtiquetteFilter?.addEventListener('input', (event) => {
-    const inputValue = event.target.value.toLowerCase()
+    const inputValue = event.target.value.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase()
     document?.querySelectorAll('.signalement-tag-add')?.forEach(element => {
-        if (element.getAttribute('data-taglabel').toLowerCase().indexOf(inputValue) > -1 && !element.classList.contains('disabled')) {
+        const normalizedTagLabel = element.getAttribute('data-taglabel').normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
+        if (normalizedTagLabel.indexOf(inputValue) > -1 && !element.classList.contains('disabled')) {
             element.classList?.remove('fr-hidden')
         } else {
             element.classList?.add('fr-hidden')
