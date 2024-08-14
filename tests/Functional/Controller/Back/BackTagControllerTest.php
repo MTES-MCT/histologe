@@ -26,6 +26,10 @@ class BackTagControllerTest extends WebTestCase
 
         $user = $this->userRepository->findOneBy(['email' => 'admin-01@histologe.fr']);
         $this->client->loginUser($user);
+        $featureSignalementViewEnabled = static::getContainer()->getParameter('feature_signalement_view_enabled');
+        if (!$featureSignalementViewEnabled) {
+            $this->markTestSkipped('La fonctionnalité "feature_signalement_view_enabled" est désactivée.');
+        }
     }
 
     public function testCreateTagSuccess(): void
