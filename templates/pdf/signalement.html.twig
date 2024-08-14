@@ -8,7 +8,7 @@
     <div class="page">
         <section>
             <h1 style="text-align: right">Signalement #{{ signalement.reference }}</h1>
-            <h3 style="text-align: right">Déposé le {{ signalement.createdAt|format_datetime(timezone=territory_timezone) }}</h3>
+            <h3 style="text-align: right">Déposé le {{ signalement.createdAt|format_datetime(locale='fr', timezone=territory_timezone) }}</h3>
             {% if signalement.isNotOccupant %}
                 <h3 style="text-align: right">Signalement par un tiers</h3>
 

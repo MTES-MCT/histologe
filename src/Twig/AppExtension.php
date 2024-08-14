@@ -44,7 +44,7 @@ class AppExtension extends AbstractExtension implements GlobalsInterface
     /**
      * @throws \Exception
      */
-    public function customDateFilter(string|\DateTimeImmutable|\DateTime $dateTime, string $format = 'F j, Y'): string
+    public function customDateFilter(string|\DateTimeImmutable|\DateTime $dateTime, string $format = 'F j, Y H:i'): string
     {
         if ($dateTime instanceof \DateTimeInterface) {
             return $dateTime->setTimezone($this->timezoneProvider->getDateTimezone())->format($format);
