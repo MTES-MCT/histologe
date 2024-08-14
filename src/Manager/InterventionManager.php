@@ -62,7 +62,7 @@ class InterventionManager extends AbstractManager
 
         $this->save($intervention);
 
-        if ($intervention->getScheduledAt() <= new \DateTimeImmutable()) {
+        if ($intervention->getScheduledAt()->format('Y-m-d') <= (new \DateTimeImmutable())->format('Y-m-d')) {
             $this->confirmVisiteFromRequest($visiteRequest, $intervention);
         }
 
@@ -121,7 +121,7 @@ class InterventionManager extends AbstractManager
             ->setScheduledAt(new \DateTimeImmutable($visiteRequest->getDateTimeUTC()));
         $this->save($intervention);
 
-        if ($intervention->getScheduledAt() <= new \DateTimeImmutable()) {
+        if ($intervention->getScheduledAt()->format('Y-m-d') <= (new \DateTimeImmutable())->format('Y-m-d')) {
             $this->confirmVisiteFromRequest($visiteRequest, $intervention);
         }
 

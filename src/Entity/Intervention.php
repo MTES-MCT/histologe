@@ -116,7 +116,7 @@ class Intervention
 
     public function hasScheduledDatePassed(): bool
     {
-        return $this->getScheduledAt() <= new \DateTimeImmutable();
+        return $this->getScheduledAt()->format('Y-m-d') <= (new \DateTimeImmutable())->format('Y-m-d');
     }
 
     public function getSignalement(): ?Signalement
