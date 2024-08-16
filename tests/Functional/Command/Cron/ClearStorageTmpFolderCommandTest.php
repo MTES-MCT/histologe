@@ -3,9 +3,11 @@
 namespace App\Tests\Functional\Command\Cron;
 
 use App\Command\Cron\ClearStorageTmpFolderCommand;
+use App\Service\Mailer\NotificationMailerRegistry;
 use League\Flysystem\DirectoryListing;
 use League\Flysystem\FilesystemException;
 use League\Flysystem\FilesystemOperator;
+use League\Flysystem\StorageAttributes;
 use PHPUnit\Framework\MockObject\MockObject;
 use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
@@ -17,12 +19,14 @@ class ClearStorageTmpFolderCommandTest extends KernelTestCase
 {
     private MockObject|FilesystemOperator $fileStorage;
     private MockObject|ParameterBagInterface $parameterBag;
+    private MockObject|NotificationMailerRegistry $mailerRegistry;
     private MockObject|LoggerInterface $logger;
 
     protected function setUp(): void
     {
         $this->fileStorage = $this->createMock(FilesystemOperator::class);
         $this->parameterBag = self::getContainer()->getParameterBag();
+        $this->mailerRegistry = self::getContainer()->get(NotificationMailerRegistry::class);
         $this->logger = $this->createMock(LoggerInterface::class);
     }
 
@@ -31,32 +35,31 @@ class ClearStorageTmpFolderCommandTest extends KernelTestCase
      */
     public function testExecuteWithFilesToDelete(): void
     {
-        $files = [
-            ['type' => 'file', 'path' => 'tmp/file1.txt'],
-            ['type' => 'file', 'path' => 'tmp/file2.txt'],
-        ];
+        $storageAttributeMock = $this->createMock(StorageAttributes::class);
+        $storageAttributeMock->method('type')->willReturn('file');
+        $storageAttributeMock->method('path')->willReturn('tmp/file1.txt');
+        $storageAttributeMock->method('lastModified')->willReturn(strtotime('- 7 months'));
 
         $this->fileStorage->expects($this->once())
             ->method('listContents')
             ->with('tmp/')
-            ->willReturn(new DirectoryListing($files));
-
-        $this->fileStorage->method('lastModified')
-            ->willReturnOnConsecutiveCalls(
-                (new \DateTimeImmutable('- 180 days'))->getTimestamp(),
-                (new \DateTimeImmutable('- 170 days'))->getTimestamp()
-            );
+            ->willReturn(new DirectoryListing([$storageAttributeMock]));
 
         $this->fileStorage->expects($this->once())
             ->method('delete')
             ->with('tmp/file1.txt');
 
-        $command = new ClearStorageTmpFolderCommand($this->fileStorage, $this->parameterBag, $this->logger);
+        $command = new ClearStorageTmpFolderCommand(
+            $this->fileStorage,
+            $this->parameterBag,
+            $this->mailerRegistry,
+            $this->logger,
+        );
         $commandTester = new CommandTester($command);
         $commandTester->execute([]);
 
         $output = $commandTester->getDisplay();
-        $this->assertStringContainsString('1 documents delete in tmp folder', $output);
+        $this->assertStringContainsString('1 document(s) ont été supprimé(s) du repertoire /tmp', $output);
         $this->assertEquals(Command::SUCCESS, $commandTester->getStatusCode());
     }
 }
