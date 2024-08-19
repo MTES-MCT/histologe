@@ -28,9 +28,7 @@ function histoUpdateDesordreSelect(target, selectedDocumentType) {
 
 function histoCreateMiniatureImage(target) {
   histoDeleteMiniatureImage()
-  const filename = target.getAttribute('data-filename')
-  const uuidSignalement = target.getAttribute('data-signalement-uuid')
-  const url = window.location.origin + '/_up/' + filename +'/'  + uuidSignalement + '?variant=thumb'
+  const url = target.getAttribute('data-file-path');
   const modalFileEditType = document.querySelector('#fr-modal-edit-file-miniature');
   const newDiv = '<div id="fr-modal-edit-file-miniature-image" class="fr-col-6 fr-col-offset-3 fr-col-md-2 fr-col-offset-md-5 fr-px-5w fr-py-8w fr-rounded fr-border fr-text--center" style="background: url(\'' + url + '\') no-repeat center center/cover;"></div>';
   modalFileEditType.insertAdjacentHTML('afterbegin', newDiv);

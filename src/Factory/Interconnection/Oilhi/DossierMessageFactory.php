@@ -18,7 +18,6 @@ use App\Messenger\Message\Oilhi\DossierMessage;
 use App\Service\HtmlCleaner;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
-use Symfony\Component\Security\Csrf\CsrfTokenManagerInterface;
 
 class DossierMessageFactory implements DossierMessageFactoryInterface
 {
@@ -26,7 +25,6 @@ class DossierMessageFactory implements DossierMessageFactoryInterface
 
     public function __construct(
         private UrlGeneratorInterface $urlGenerator,
-        private CsrfTokenManagerInterface $csrfTokenManager,
         #[Autowire(env: 'FEATURE_OILHI_ENABLE')]
         private bool $featureEnable,
     ) {
@@ -225,9 +223,9 @@ class DossierMessageFactory implements DossierMessageFactoryInterface
         }
 
         return $this->urlGenerator->generate(
-            'show_uploaded_file',
-            ['filename' => $intervention->getFiles()->first()->getFilename()],
+            'show_file',
+            ['uuid' => $intervention->getFiles()->first()->getUuid()],
             UrlGeneratorInterface::ABSOLUTE_URL
-        ).'?t='.$this->csrfTokenManager->getToken('suivi_signalement_ext_file_view');
+        );
     }
 }

@@ -67,35 +67,16 @@ class SignalementFileProcessorTest extends TestCase
             false
         );
 
-        [$fileList, $descriptionList] = $signalementFileProcessor->process(self::FILE_LIST, 'documents');
+        $fileList = $signalementFileProcessor->process(self::FILE_LIST, 'documents');
         $this->assertTrue($signalementFileProcessor->isValid());
         $this->assertEmpty($signalementFileProcessor->getErrors());
         $this->assertCount(2, $fileList);
-        $this->assertCount(2, $descriptionList);
 
         foreach ($fileList as $fileItem) {
             $this->assertArrayHasKey('title', $fileItem);
             $this->assertArrayHasKey('date', $fileItem);
             $this->assertArrayHasKey('type', $fileItem);
             $this->assertEquals(File::FILE_TYPE_DOCUMENT, $fileItem['type']);
-        }
-
-        foreach ($descriptionList as $descriptionItem) {
-            $dom = new \DOMDocument();
-            libxml_use_internal_errors(true);
-            $dom->loadHTML($descriptionItem);
-            libxml_use_internal_errors(false);
-            $liTags = $dom->getElementsByTagName('li');
-            $this->assertCount(1, $liTags);
-
-            $liTag = $liTags->item(0);
-            $aTags = $liTag->getElementsByTagName('a');
-            $this->assertCount(1, $aTags);
-
-            $aTag = $aTags->item(0);
-            $this->assertEquals('fr-link', $aTag->getAttribute('class'));
-            $this->assertEquals('_blank', $aTag->getAttribute('target'));
-            $this->assertEquals('&t=___TOKEN___', $aTag->getAttribute('href'));
         }
     }
 
@@ -122,8 +103,7 @@ class SignalementFileProcessorTest extends TestCase
             false
         );
         $signalement = $this->getSignalement();
-        [$fileList, $descriptionList] = $signalementFileProcessor->process(self::FILE_LIST, 'photos');
-        $this->assertNotEmpty($descriptionList);
+        $fileList = $signalementFileProcessor->process(self::FILE_LIST, 'photos');
         $signalementFileProcessor->addFilesToSignalement($fileList, $signalement); // TODO
         $this->assertNotNull($signalement->getFiles());
     }

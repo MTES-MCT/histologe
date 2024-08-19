@@ -110,7 +110,7 @@
 <fieldset class="fr-fieldset fr-fieldset--inline fr-mb-5v">
 	<ul class="fr-btns-group fr-btns-group--inline-sm fr-btns-group--sm">
 		<li>
-			<a href="{{ asset('_up/'~intervention.files[0].filename)~'/' ~ intervention.signalement.uuid }}" class="fr-btn" title="Afficher le document" rel="noopener" target="_blank">Voir le rapport de visite
+			<a href="{{ path('show_file', {uuid: intervention.files[0].uuid}) }}" class="fr-btn" title="Afficher le document" rel="noopener" target="_blank">Voir le rapport de visite
 			</a>
 		</li>
 		<li>

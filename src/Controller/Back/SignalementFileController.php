@@ -75,7 +75,7 @@ class SignalementFileController extends AbstractController
         if ($request->get('documentType') && $request->get('documentType') === DocumentType::AUTRE_PROCEDURE->name) {
             $documentType = DocumentType::AUTRE_PROCEDURE;
         }
-        list($fileList) = $signalementFileProcessor->process($files, $inputName, $documentType);
+        $fileList = $signalementFileProcessor->process($files, $inputName, $documentType);
 
         if (!$signalementFileProcessor->isValid()) {
             $errorMessages = $signalementFileProcessor->getErrorMessages();

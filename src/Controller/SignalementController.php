@@ -624,7 +624,7 @@ class SignalementController extends AbstractController
                     continue;
                 }
                 $doc->setIsTemp(false);
-                $descriptionList[] = $signalementFileProcessor->generateListItemDescription($doc->getFilename(), $doc->getTitle(), true);
+                $descriptionList[] = $signalementFileProcessor->generateListItemDescription($doc);
             }
             $description .= '<br>Ajout de pièces au signalement<ul>'.implode('', $descriptionList).'</ul>';
         }

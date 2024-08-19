@@ -41,10 +41,10 @@ class InterventionEditedSubscriber implements EventSubscriberInterface
                 $description .= '<br>Rapport de visite : ';
 
                 $urlDocument = $this->urlGenerator->generate(
-                    'show_uploaded_file',
-                    ['filename' => $intervention->getFiles()->first()->getFilename()],
+                    'show_file',
+                    ['uuid' => $intervention->getFiles()->first()->getUuid()],
                     UrlGeneratorInterface::ABSOLUTE_URL
-                ).'?t=___TOKEN___';
+                );
 
                 $description .= '<a href="'.$urlDocument.'" title="Afficher le document" rel="noopener" target="_blank">Afficher le document</a>';
             }

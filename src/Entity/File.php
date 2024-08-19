@@ -7,6 +7,7 @@ use App\Repository\FileRepository;
 use App\Service\ImageManipulationHandler;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Uid\Uuid;
 use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: FileRepository::class)]
@@ -114,8 +115,12 @@ class File
     #[ORM\Column(nullable: true)]
     private ?\DateTimeImmutable $scannedAt = null;
 
+    #[ORM\Column(length: 255, unique: true)]
+    private ?string $uuid = null;
+
     public function __construct()
     {
+        $this->uuid = Uuid::v4();
         $this->createdAt = new \DateTimeImmutable();
         $this->isVariantsGenerated = false;
         $this->isWaitingSuivi = false;
@@ -364,6 +369,18 @@ class File
     public function setScannedAt(?\DateTimeImmutable $scannedAt): static
     {
         $this->scannedAt = $scannedAt;
+
+        return $this;
+    }
+
+    public function getUuid(): ?string
+    {
+        return $this->uuid;
+    }
+
+    public function setUuid(string $uuid): static
+    {
+        $this->uuid = $uuid;
 
         return $this;
     }
