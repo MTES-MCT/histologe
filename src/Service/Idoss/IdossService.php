@@ -159,7 +159,7 @@ class IdossService
         $payload = [
             'user' => $this->params->get('idoss_username'),
             'Dossier' => [
-                'UUIDSignalement' => $dossierMessage->getReference(),
+                'UUIDSignalement' => $dossierMessage->getSignalementUuid(),
                 'dateDepotSignalement' => $dossierMessage->getDateDepotSignalement(),
                 'declarant' => $dossierMessage->getDeclarant(),
                 'occupant' => $dossierMessage->getOccupant(),
@@ -204,7 +204,7 @@ class IdossService
     {
         $payload = [
             'id' => $signalement->getSynchroData(self::TYPE_SERVICE)['id'],
-            'uuid' => $signalement->getReference(),
+            'uuid' => $signalement->getUuid(),
         ];
         $dataparts = [];
         foreach ($files as $file) {
