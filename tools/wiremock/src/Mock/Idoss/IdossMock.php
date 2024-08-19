@@ -35,31 +35,31 @@ class IdossMock
 
         self::pushDossier(
             $wireMock,
-            '2023-9',
+            '00000000-0000-0000-2023-000000000009',
             'creatDossHistologe-2023-9.json'
         );
 
         self::pushDossier(
             $wireMock,
-            '2023-12',
+            '00000000-0000-0000-2023-000000000012',
             'creatDossHistologe-2023-12.json'
         );
 
         self::pushDossier(
             $wireMock,
-            '2023-13',
+            '00000000-0000-0000-2023-000000000013',
             'creatDossHistologe-2023-13.json'
         );
 
         self::pushDossier(
             $wireMock,
-            '2023-14',
+            '00000000-0000-0000-2023-000000000014',
             'creatDossHistologe-2023-14.json'
         );
 
         self::pushDossier(
             $wireMock,
-            '2023-15',
+            '00000000-0000-0000-2023-000000000015',
             'creatDossHistologe-2023-15.json'
         );
 
