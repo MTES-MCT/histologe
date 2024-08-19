@@ -8,6 +8,7 @@ use App\Entity\Signalement;
 use App\Entity\Suivi;
 use App\Entity\Territory;
 use App\Entity\User;
+use App\Repository\Behaviour\EntityCleanerRepositoryInterface;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\AbstractQuery;
 use Doctrine\ORM\NonUniqueResultException;
@@ -22,7 +23,7 @@ use Doctrine\Persistence\ManagerRegistry;
  * @method Notification[]    findAll()
  * @method Notification[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
  */
-class NotificationRepository extends ServiceEntityRepository
+class NotificationRepository extends ServiceEntityRepository implements EntityCleanerRepositoryInterface
 {
     public function __construct(ManagerRegistry $registry, private array $params)
     {
@@ -67,13 +68,17 @@ class NotificationRepository extends ServiceEntityRepository
         return new Paginator($queryBuilder->getQuery(), true);
     }
 
-    public function findOlderThan(int $diff)
+    /**
+     * @throws \Exception
+     */
+    public function cleanOlderThan(string $period = Notification::EXPIRATION_PERIOD): int
     {
         return $this->createQueryBuilder('n')
-            ->andWhere('n.createdAt <= :date')
-            ->setParameter('date', new \DateTime('-'.$diff.' days'))
+            ->delete()
+            ->andWhere('DATE(n.createdAt) <= :created_at')
+            ->setParameter('created_at', (new \DateTimeImmutable($period))->format('Y-m-d'))
             ->getQuery()
-            ->getResult();
+            ->execute();
     }
 
     /**

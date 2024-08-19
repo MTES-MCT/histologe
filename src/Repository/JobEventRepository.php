@@ -8,6 +8,7 @@ use App\Entity\JobEvent;
 use App\Entity\Partner;
 use App\Entity\Signalement;
 use App\Entity\Territory;
+use App\Repository\Behaviour\EntityCleanerRepositoryInterface;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
@@ -19,7 +20,7 @@ use Doctrine\Persistence\ManagerRegistry;
  * @method JobEvent[]    findAll()
  * @method JobEvent[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
  */
-class JobEventRepository extends ServiceEntityRepository
+class JobEventRepository extends ServiceEntityRepository implements EntityCleanerRepositoryInterface
 {
     public function __construct(ManagerRegistry $registry)
     {
@@ -93,5 +94,18 @@ class JobEventRepository extends ServiceEntityRepository
             ));
 
         return $qb->getQuery()->getResult();
+    }
+
+    /**
+     * @throws \Exception
+     */
+    public function cleanOlderThan(string $period = JobEvent::EXPIRATION_PERIOD): int
+    {
+        $queryBuilder = $this->createQueryBuilder('j');
+        $queryBuilder->delete()
+            ->andWhere('DATE(j.createdAt) <= :created_at')
+            ->setParameter('created_at', (new \DateTimeImmutable($period))->format('Y-m-d'));
+
+        return $queryBuilder->getQuery()->execute();
     }
 }

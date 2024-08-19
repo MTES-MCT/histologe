@@ -12,6 +12,7 @@ class Notification
     public const TYPE_SUIVI = 1;
     public const TYPE_NEW_SIGNALEMENT = 2;
     public const MAX_LIST_PAGINATION = 100;
+    public const string EXPIRATION_PERIOD = '- 30 days';
 
     #[ORM\Id]
     #[ORM\GeneratedValue]

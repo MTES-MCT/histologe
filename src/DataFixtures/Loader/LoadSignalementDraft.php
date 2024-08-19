@@ -7,11 +7,19 @@ use App\Entity\Enum\SignalementDraftStatus;
 use App\Entity\SignalementDraft;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Common\DataFixtures\OrderedFixtureInterface;
+use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ObjectManager;
 use Symfony\Component\Yaml\Yaml;
 
 class LoadSignalementDraft extends Fixture implements OrderedFixtureInterface
 {
+    public function __construct(private readonly EntityManagerInterface $entityManager)
+    {
+    }
+
+    /**
+     * @throws \Exception
+     */
     public function load(ObjectManager $manager): void
     {
         $signalementRows = Yaml::parseFile(__DIR__.'/../Files/SignalementDraft.yml');
@@ -20,12 +28,16 @@ class LoadSignalementDraft extends Fixture implements OrderedFixtureInterface
         }
 
         $manager->flush();
+
+        $connection = $this->entityManager->getConnection();
+        $sql = 'UPDATE signalement_draft SET created_at = DATE(created_at) - INTERVAL 7 MONTH WHERE status LIKE :status';
+        $connection->prepare($sql)->executeQuery(['status' => SignalementDraftStatus::EN_COURS->value]);
     }
 
     /**
      * @throws \Exception
      */
-    private function loadSignalementsDraft(ObjectManager $manager, array $row)
+    private function loadSignalementsDraft(ObjectManager $manager, array $row): void
     {
         $payload = json_decode(file_get_contents(__DIR__.'/../Files/signalement_draft_payload/'.$row['payload']), true);
         $signalementDraft = (new SignalementDraft())

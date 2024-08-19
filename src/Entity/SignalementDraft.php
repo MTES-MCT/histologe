@@ -17,6 +17,7 @@ use Symfony\Component\Uid\Uuid;
 class SignalementDraft
 {
     use TimestampableTrait;
+    public const string EXPIRATION_PERIOD = '- 6 months';
 
     #[ORM\Id]
     #[ORM\GeneratedValue]
