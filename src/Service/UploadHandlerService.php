@@ -8,7 +8,6 @@ use App\Exception\File\MaxUploadSizeExceededException;
 use App\Exception\File\UnsupportedFileFormatException;
 use App\Repository\FileRepository;
 use App\Service\Files\FilenameGenerator;
-use App\Service\Files\HeicToJpegConverter;
 use League\Flysystem\FilesystemException;
 use League\Flysystem\FilesystemOperator;
 use Psr\Log\LoggerInterface;
@@ -26,7 +25,6 @@ class UploadHandlerService
         private readonly FilesystemOperator $fileStorage,
         private readonly ParameterBagInterface $parameterBag,
         private readonly LoggerInterface $logger,
-        private readonly HeicToJpegConverter $heicToJpegConverter,
         private readonly FilenameGenerator $filenameGenerator,
         private readonly FileRepository $fileRepository
     ) {
@@ -138,8 +136,6 @@ class UploadHandlerService
                 return $newFilename;
             }
         } catch (FilesystemException $exception) {
-            $this->logger->error($exception->getMessage());
-        } catch (\ImagickException $exception) {
             $this->logger->error($exception->getMessage());
         }
 
@@ -255,22 +251,12 @@ class UploadHandlerService
         try {
             $tmpFilepath = $file->getPathname();
 
-            $newTmpFilepath = $this->heicToJpegConverter->convert($tmpFilepath, $newFilename);
-            if ($newTmpFilepath !== $tmpFilepath) {
-                $tmpFilepath = $newTmpFilepath;
-                $pathInfo = pathinfo($tmpFilepath);
-                $ext = \array_key_exists('extension', $pathInfo) ? '.'.$pathInfo['extension'] : '';
-                $newFilename = $pathInfo['filename'].$ext;
-            }
-
             $fileResource = fopen($tmpFilepath, 'r');
             $this->fileStorage->writeStream($newFilename, $fileResource);
             fclose($fileResource);
 
             return $newFilename;
         } catch (FilesystemException $exception) {
-            $this->logger->error($exception->getMessage());
-        } catch (\ImagickException $exception) {
             $this->logger->error($exception->getMessage());
         }
 

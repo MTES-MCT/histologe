@@ -4,7 +4,6 @@ namespace App\Tests\Functional\Service;
 
 use App\Repository\FileRepository;
 use App\Service\Files\FilenameGenerator;
-use App\Service\Files\HeicToJpegConverter;
 use App\Service\UploadHandlerService;
 use League\Flysystem\FilesystemOperator;
 use PHPUnit\Framework\MockObject\MockObject;
@@ -20,7 +19,6 @@ class UploadHandlerServiceTest extends KernelTestCase
     private MockObject|FilesystemOperator $filesystemOperator;
     private MockObject|ParameterBagInterface $parameterBag;
     private MockObject|LoggerInterface $logger;
-    private MockObject|HeicToJpegConverter $heicToJpegConverter;
     private MockObject|FilenameGenerator $filenameGenerator;
     private MockObject|FileRepository $fileRepository;
 
@@ -44,7 +42,6 @@ class UploadHandlerServiceTest extends KernelTestCase
         $this->filesystemOperator = $this->createMock(FilesystemOperator::class);
         $this->parameterBag = static::getContainer()->get(ParameterBagInterface::class);
         $this->logger = $this->createMock(LoggerInterface::class);
-        $this->heicToJpegConverter = $this->createMock(HeicToJpegConverter::class);
         $this->filenameGenerator = $this->createMock(FilenameGenerator::class);
         $this->fileRepository = $this->createMock(FileRepository::class);
     }
@@ -74,7 +71,6 @@ class UploadHandlerServiceTest extends KernelTestCase
             $this->filesystemOperator,
             $this->parameterBag,
             $this->logger,
-            $this->heicToJpegConverter,
             $this->filenameGenerator,
             $this->fileRepository
         );
@@ -98,7 +94,6 @@ class UploadHandlerServiceTest extends KernelTestCase
             $this->createMock(FilesystemOperator::class),
             $parameterBag,
             $this->createMock(LoggerInterface::class),
-            $this->createMock(HeicToJpegConverter::class),
             $this->createMock(FilenameGenerator::class),
             $this->fileRepository
         );
@@ -123,7 +118,6 @@ class UploadHandlerServiceTest extends KernelTestCase
             $this->createMock(FilesystemOperator::class),
             $parameterBag,
             $this->createMock(LoggerInterface::class),
-            $this->createMock(HeicToJpegConverter::class),
             $this->createMock(FilenameGenerator::class),
             $this->fileRepository
         );
@@ -158,7 +152,6 @@ class UploadHandlerServiceTest extends KernelTestCase
             $this->filesystemOperator,
             $this->parameterBag,
             $this->logger,
-            $this->heicToJpegConverter,
             $this->filenameGenerator,
             $this->fileRepository
         );
@@ -167,23 +160,4 @@ class UploadHandlerServiceTest extends KernelTestCase
         $this->assertIsArray($uploadHandler);
         $this->assertArrayHasKey('error', $uploadHandler);
     }
-
-    /*public function testUploadFromFilename(): void
-    {
-        $this->heicToJpegConverter
-            ->expects($this->once())
-            ->method('convert')
-            ->willReturn('sample.txt');
-
-        $uploadHandlerService = new UploadHandlerService(
-            $this->filesystemOperator,
-            $this->parameterBag,
-            $this->logger,
-            $this->heicToJpegConverter,
-            $this->filenameGenerator,
-        );
-
-        $filename = $uploadHandlerService->moveFromBucketTempFolder('sample.txt');
-        $this->assertEquals('sample.txt', $filename);
-    }*/
 }
