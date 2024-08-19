@@ -2560,7 +2560,6 @@
             },
             "suggest": {
                 "ext-gd": "to use GD library based image processing.",
-                "ext-imagick": "to use Imagick based image processing.",
                 "intervention/imagecache": "Caching extension for the Intervention Image library"
             },
             "type": "library",
@@ -14304,8 +14303,7 @@
     "prefer-stable": true,
     "prefer-lowest": false,
     "platform": {
-        "php": "~8.3",
-        "ext-imagick": "*"
+        "php": "~8.3"
     },
     "platform-dev": [],
     "plugin-api-version": "2.6.0"

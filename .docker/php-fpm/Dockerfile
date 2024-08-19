@@ -24,9 +24,6 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
         # Install Xdebug
         && pecl bundle -d /usr/src/php/ext xdebug-3.4 \
         && docker-php-ext-install xdebug \
-        # Install Imagick
-        && pecl install imagick \
-        && docker-php-ext-enable imagick \
         # Install Redis
         && pecl install redis \
         && docker-php-ext-enable redis \
