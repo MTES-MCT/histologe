@@ -13,7 +13,6 @@ use App\Tests\FixturesHelper;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\LoggerInterface;
-use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 class SignalementFileProcessorTest extends TestCase
 {
@@ -33,7 +32,6 @@ class SignalementFileProcessorTest extends TestCase
     private MockObject|UploadHandlerService $uploadHandlerService;
     private MockObject|LoggerInterface $logger;
     private MockObject|FilenameGenerator $filenameGenerator;
-    private MockObject|UrlGeneratorInterface $urlGenerator;
     private MockObject|FileFactory $fileFactory;
     private MockObject|ImageManipulationHandler $imageManipulationHandler;
     private MockObject|FileScanner $fileScanner;
@@ -43,7 +41,6 @@ class SignalementFileProcessorTest extends TestCase
         $this->uploadHandlerService = $this->createMock(UploadHandlerService::class);
         $this->logger = $this->createMock(LoggerInterface::class);
         $this->filenameGenerator = $this->createMock(FilenameGenerator::class);
-        $this->urlGenerator = $this->createMock(UrlGeneratorInterface::class);
         $this->fileFactory = $this->createMock(FileFactory::class);
         $this->imageManipulationHandler = $this->createMock(ImageManipulationHandler::class);
         $this->fileScanner = $this->createMock(FileScanner::class);
@@ -60,7 +57,6 @@ class SignalementFileProcessorTest extends TestCase
             $this->uploadHandlerService,
             $this->logger,
             $this->filenameGenerator,
-            $this->urlGenerator,
             $this->fileFactory,
             $this->imageManipulationHandler,
             $this->fileScanner,
@@ -96,7 +92,6 @@ class SignalementFileProcessorTest extends TestCase
             $this->uploadHandlerService,
             $this->logger,
             $this->filenameGenerator,
-            $this->urlGenerator,
             $this->fileFactory,
             $this->imageManipulationHandler,
             $this->fileScanner,

@@ -14,7 +14,6 @@ use App\Service\UploadHandlerService;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
-use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 
 class SignalementFileProcessor
@@ -26,7 +25,6 @@ class SignalementFileProcessor
         private readonly UploadHandlerService $uploadHandlerService,
         private readonly LoggerInterface $logger,
         private readonly FilenameGenerator $filenameGenerator,
-        private readonly UrlGeneratorInterface $urlGenerator,
         private readonly FileFactory $fileFactory,
         private readonly ImageManipulationHandler $imageManipulationHandler,
         private readonly FileScanner $fileScanner,
@@ -161,13 +159,6 @@ class SignalementFileProcessor
     public function getErrorMessages(): string
     {
         return implode('<br>', $this->errors);
-    }
-
-    public function generateListItemDescription(File $file): string
-    {
-        $fileUrl = $this->urlGenerator->generate('show_file', ['uuid' => $file->getUuid()]);
-
-        return '<li><a class="fr-link" target="_blank" rel="noopener" href="'.$fileUrl.'">'.$file->getTitle().'</a></li>';
     }
 
     private function createFileItem(
