@@ -41,6 +41,7 @@ export default defineComponent({
     // les propriétés suivantes ne sont pas utilisées,
     // mais si on ne les met pas, elles apparaissent dans le DOM
     // et ça soulève des erreurs W3C
+    handleClickComponent: Function,
     hasError: { type: Boolean, default: undefined },
     access_name: { type: String, default: undefined },
     access_autocomplete: { type: String, default: undefined }

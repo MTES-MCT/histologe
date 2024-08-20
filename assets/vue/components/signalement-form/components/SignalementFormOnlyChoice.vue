@@ -1,6 +1,6 @@
 <template>
-  <fieldset :id="id" :class="[customCss, 'signalement-form-only-choice fr-fieldset']" aria-labelledby="radio-hint-legend radio-hint-messages">
-      <legend :class="['fr-fieldset__legend--regular', 'fr-fieldset__legend', customLegendCss]" id="radio-hint-legend">
+  <fieldset :id="id" :class="[customCss, 'signalement-form-only-choice fr-fieldset']" :aria-labelledby="id + '-radio-hint-legend'">
+      <legend :class="['fr-fieldset__legend--regular', 'fr-fieldset__legend', customLegendCss]" :id="id + '-radio-hint-legend'">
         {{ variablesReplacer.replace(label) }}
       </legend>
       <div v-for="radioValue in values" :class="['fr-fieldset__element', (radioValue.value === 'oui' || radioValue.value === 'non') ? 'item-divided' : '']" :key="radioValue.value">
@@ -14,14 +14,14 @@
               class="fr-input"
               @input="updateValue($event)"
               :checked="radioValue.value === modelValue"
-              aria-describedby="radio-error-messages"
+              :aria-describedby="id + '-radio-hint-messages'"
               >
             <label class="fr-label" :for="id + '_' + radioValue.value">
                 {{ variablesReplacer.replace(radioValue.label) }}
             </label>
           </div>
       </div>
-      <div class="fr-messages-group" :id="id + '-messages'" aria-live="assertive">
+      <div class="fr-messages-group" :id="id + '-radio-hint-messages'" aria-live="assertive">
           <p class="fr-message fr-message--error fr-error-text" :id="id + '-messages-error'" v-if="hasError">{{ error }}</p>
       </div>
   </fieldset>
@@ -41,7 +41,14 @@ export default defineComponent({
     customCss: { type: String, default: '' },
     validate: { type: Object, default: null },
     hasError: { type: Boolean, default: false },
-    error: { type: String, default: '' }
+    error: { type: String, default: '' },
+    // les propriétés suivantes ne sont pas utilisées,
+    // mais si on ne les met pas, elles apparaissent dans le DOM
+    // et ça soulève des erreurs W3C
+    clickEvent: Function,
+    handleClickComponent: Function,
+    access_name: { type: String, default: undefined },
+    access_autocomplete: { type: String, default: undefined }
   },
   data () {
     return {

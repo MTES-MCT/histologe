@@ -1,7 +1,7 @@
 <template>
   <dialog
     :class="{ 'fr-modal--opened': modelValue }"
-    :aria-labelledby="label !== '' ? 'fr-modal-title' : undefined"
+    :aria-labelledby="label !== '' ? id + '-fr-modal-title' : undefined"
     :id="id"
     class="fr-modal"
     ref="modalDialog"
@@ -21,8 +21,8 @@
               </button>
             </div>
             <div class="fr-modal__content">
-              <h1 id="fr-modal-title" v-if="label !== ''">{{ label }}</h1>
-              <p v-html="description"></p>
+              <h1 :id="id + '-fr-modal-title'" v-if="label !== ''">{{ label }}</h1>
+              <div v-html="description"></div>
             </div>
           </div>
         </div>
@@ -40,7 +40,15 @@ export default defineComponent({
     id: String,
     label: String,
     description: String,
-    modelValue: Boolean
+    modelValue: Boolean,
+    // les propriétés suivantes ne sont pas utilisées,
+    // mais si on ne les met pas, elles apparaissent dans le DOM
+    // et ça soulève des erreurs W3C
+    handleClickComponent: Function,
+    clickEvent: Function,
+    hasError: { type: Boolean, default: undefined },
+    access_name: { type: String, default: undefined },
+    access_autocomplete: { type: String, default: undefined }
   },
   methods: {
     closeModal () {

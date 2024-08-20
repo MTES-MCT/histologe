@@ -14,13 +14,13 @@
         :placeholder="placeholder"
         :class="[ customCss, 'fr-input' ]"
         @input="updateValue($event)"
-        aria-describedby="text-input-error-desc-error"
+        :aria-describedby="hasError ? id + '-text-input-error-desc-error' : undefined"
         :disabled="disabled"
         :maxlength="validate?.maxLength"
         >
     </div>
     <div
-      id="text-input-error-desc-error"
+      :id="id + '-text-input-error-desc-error'"
       class="fr-error-text"
       v-if="hasError"
       >
@@ -49,7 +49,12 @@ export default defineComponent({
     error: { type: String, default: '' },
     tagWhenEdit: { type: String, default: '' },
     access_name: { type: String, default: '' },
-    access_autocomplete: { type: String, default: '' }
+    access_autocomplete: { type: String, default: '' },
+    // les propriétés suivantes ne sont pas utilisées,
+    // mais si on ne les met pas, elles apparaissent dans le DOM
+    // et ça soulève des erreurs W3C
+    clickEvent: Function,
+    handleClickComponent: Function
   },
   data () {
     return {
