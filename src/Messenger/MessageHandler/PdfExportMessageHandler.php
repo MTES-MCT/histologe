@@ -10,6 +10,7 @@ use App\Service\Mailer\NotificationMailerType;
 use App\Service\Signalement\Export\SignalementExportPdfGenerator;
 use App\Service\Signalement\SignalementDesordresProcessor;
 use App\Service\UploadHandlerService;
+use Psr\Log\LoggerInterface;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 use Twig\Environment;
@@ -25,45 +26,56 @@ class PdfExportMessageHandler
         private readonly ParameterBagInterface $parameterBag,
         private readonly UploadHandlerService $uploadHandlerService,
         private readonly SignalementDesordresProcessor $signalementDesordresProcessor,
+        private readonly LoggerInterface $logger,
     ) {
     }
 
     public function __invoke(PdfExportMessage $pdfExportMessage): void
     {
-        $signalement = $this->signalementRepository->find($pdfExportMessage->getSignalementId());
-        $infoDesordres = $this->signalementDesordresProcessor->process($signalement);
-        $listQualificationStatusesLabelsCheck = [];
-        if (null !== $signalement->getSignalementQualifications()) {
-            foreach ($signalement->getSignalementQualifications() as $qualification) {
-                if (!$qualification->isPostVisite()) {
-                    $listQualificationStatusesLabelsCheck[] = $qualification->getStatus()->label();
+        try {
+            $signalement = $this->signalementRepository->find($pdfExportMessage->getSignalementId());
+            $infoDesordres = $this->signalementDesordresProcessor->process($signalement);
+            $listQualificationStatusesLabelsCheck = [];
+            if (null !== $signalement->getSignalementQualifications()) {
+                foreach ($signalement->getSignalementQualifications() as $qualification) {
+                    if (!$qualification->isPostVisite()) {
+                        $listQualificationStatusesLabelsCheck[] = $qualification->getStatus()->label();
+                    }
                 }
             }
+
+            $htmlContent = $this->twig->render('pdf/signalement.html.twig', [
+                'signalement' => $signalement,
+                'situations' => $infoDesordres['criticitesArranged'],
+                'listQualificationStatusesLabelsCheck' => $listQualificationStatusesLabelsCheck,
+            ]);
+
+            $tmpFilename = $this->signalementExportPdfGenerator->generateToTempFolder(
+                $signalement,
+                $htmlContent,
+                $this->parameterBag->get('export_options')
+            );
+
+            $filename = $this->uploadHandlerService->uploadFromFilename($tmpFilename);
+
+            $this->notificationMailerRegistry->send(
+                new NotificationMail(
+                    type: NotificationMailerType::TYPE_PDF_EXPORT,
+                    to: $pdfExportMessage->getUserEmail(),
+                    signalement: $signalement,
+                    params: [
+                        'filename' => $filename,
+                    ]
+                )
+            );
+        } catch (\Throwable $exception) {
+            $this->logger->error(
+                sprintf(
+                    'The PDF generation of the signalement (%s) failed for the following reason : %s',
+                    $pdfExportMessage->getSignalementId(),
+                    $exception->getMessage()
+                )
+            );
         }
-
-        $htmlContent = $this->twig->render('pdf/signalement.html.twig', [
-            'signalement' => $signalement,
-            'situations' => $infoDesordres['criticitesArranged'],
-            'listQualificationStatusesLabelsCheck' => $listQualificationStatusesLabelsCheck,
-        ]);
-
-        $tmpFilename = $this->signalementExportPdfGenerator->generateToTempFolder(
-            $signalement,
-            $htmlContent,
-            $this->parameterBag->get('export_options')
-        );
-
-        $filename = $this->uploadHandlerService->uploadFromFilename($tmpFilename);
-
-        $this->notificationMailerRegistry->send(
-            new NotificationMail(
-                type: NotificationMailerType::TYPE_PDF_EXPORT,
-                to: $pdfExportMessage->getUserEmail(),
-                signalement: $signalement,
-                params: [
-                    'filename' => $filename,
-                ]
-            )
-        );
     }
 }
