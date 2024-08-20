@@ -2,16 +2,21 @@
 
 namespace App\Dto\Request\Signalement;
 
+use App\Service\TimezoneProvider;
 use Symfony\Component\Validator\Constraints as Assert;
 
 class VisiteRequest
 {
+    /**
+     * @throws \Exception
+     */
     public function __construct(
         private readonly ?int $idIntervention = null,
         #[Assert\DateTime('Y-m-d')]
         private readonly ?string $date = null,
         #[Assert\DateTime('H:i')]
         private readonly ?string $time = null,
+        private readonly ?string $timezone = TimezoneProvider::TIMEZONE_EUROPE_PARIS,
         private readonly ?int $idPartner = null,
         private readonly ?string $details = null,
         private readonly ?array $concludeProcedure = [],
@@ -38,10 +43,27 @@ class VisiteRequest
         return $this->time;
     }
 
-    public function getDateTime(): ?string
+    public function getDateTimeLocale(): ?string
     {
         if ($this->getTime()) {
             return $this->getDate().' '.$this->getTime();
+        }
+
+        return $this->getDate();
+    }
+
+    /**
+     * @throws \Exception
+     */
+    public function getDateTimeUTC(): ?string
+    {
+        if ($this->getTime()) {
+            $localDateTime = new \DateTimeImmutable(
+                $this->getDate().' '.$this->getTime(),
+                new \DateTimeZone($this->getTimezone())
+            );
+
+            return $localDateTime->setTimezone(new \DateTimeZone('UTC'))->format('Y-m-d H:i:s');
         }
 
         return $this->getDate();
@@ -85,5 +107,10 @@ class VisiteRequest
     public function getDocument(): ?string
     {
         return $this->document;
+    }
+
+    public function getTimezone(): ?string
+    {
+        return $this->timezone;
     }
 }

@@ -57,7 +57,7 @@ class InterventionCreatedSubscriber implements EventSubscriberInterface
             $this->suiviManager->save($suivi);
 
             if (InterventionType::VISITE === $intervention->getType()
-                && $intervention->getScheduledAt() >= new \DateTimeImmutable()
+                && $intervention->getScheduledAt()->format('Y-m-d') >= (new \DateTimeImmutable())->format('Y-m-d')
             ) {
                 $this->visiteNotifier->notifyUsagers(
                     $intervention,

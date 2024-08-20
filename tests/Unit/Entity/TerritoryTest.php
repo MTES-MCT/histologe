@@ -12,6 +12,7 @@ class TerritoryTest extends TestCase
         $territory = (new Territory())
             ->setName('Ain')
             ->setZip('01')
+            ->setTimezone('Europe/Paris')
             ->setBbox([])
             ->setIsActive(false);
 

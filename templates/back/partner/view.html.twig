@@ -91,7 +91,7 @@
                     <div><b>Token ESABORA :</b> {{ partner.esaboraToken }}</div>
                 </div>
                 <div class="fr-col-6">
-                    <div><b>Dernière synchro : </b>{{ last_job_date ? last_job_date.format('d/m/Y à H:i') : '-' }}</div>
+                    <div><b>Dernière synchro : </b>{{ last_job_date ? last_job_date|date('d/m/Y à H:i') : '-' }}</div>
                 </div>
             </div>
         {% endif %}

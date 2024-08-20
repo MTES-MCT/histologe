@@ -1,6 +1,6 @@
 <hr class="fr-mt-3w">
 
-<div class="fr-grid-row">
+<div class="fr-grid-row" data-territory-timezone="{{ territory_timezone }}">
     <div class="fr-col-12 fr-col-md-6">
         <h3 class="fr-h5 fr-mb-3v">Visites du logement</h3>
 
@@ -41,7 +41,7 @@
                 <div class="fr-col-12 fr-col-md-6 fr-h6 fr-mb-3v">
                     Visite #{{loop.index}}
                     {% if signalement.interventions is not empty or intervention.scheduledAt is not empty %}
-                        du {{ intervention.scheduledAt.format('d/m/Y') }}
+                        du {{ intervention.scheduledAt|date('d/m/Y') }}
                     {% endif %}
                 </div>
                 <div class="fr-col-12 fr-col-md-6">

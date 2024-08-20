@@ -2,6 +2,8 @@
 
 namespace App\Tests\Functional\Controller\Back;
 
+use App\Entity\Intervention;
+use App\Repository\InterventionRepository;
 use App\Repository\PartnerRepository;
 use App\Repository\SignalementRepository;
 use App\Repository\UserRepository;
@@ -18,6 +20,7 @@ class SignalementVisitesControllerTest extends WebTestCase
     private UserRepository $userRepository;
     private PartnerRepository $partnerRepository;
     private SignalementRepository $signalementRepository;
+    private InterventionRepository $interventionRepository;
     private RouterInterface $router;
 
     protected function setUp(): void
@@ -27,6 +30,7 @@ class SignalementVisitesControllerTest extends WebTestCase
         $this->userRepository = static::getContainer()->get(UserRepository::class);
         $this->partnerRepository = static::getContainer()->get(PartnerRepository::class);
         $this->signalementRepository = static::getContainer()->get(SignalementRepository::class);
+        $this->interventionRepository = static::getContainer()->get(InterventionRepository::class);
 
         $user = $this->userRepository->findOneBy(['email' => 'admin-territoire-13-01@histologe.fr']);
         $this->client->loginUser($user);
@@ -103,11 +107,20 @@ class SignalementVisitesControllerTest extends WebTestCase
                     'notifyUsager' => '0',
                     'details' => 'Lorem Ipsum',
                 ],
-                '_token' => $this->generateCsrfToken($this->client, 'signalement_add_visit_'.$signalement->getId()),
+                '_token' => $this->generateCsrfToken(
+                    $this->client,
+                    'signalement_add_visit_'.$signalement->getId()
+                ),
             ]
         );
 
+        $intervention = $this->interventionRepository->findOneBy([
+            'signalement' => $signalement,
+            'status' => Intervention::STATUS_NOT_DONE]
+        );
         $this->assertResponseRedirects('/bo/signalements/'.$signalement->getUuid());
+        $this->assertEquals('2023-01-01 09:00', $intervention->getScheduledAt()->format('Y-m-d H:i'));
+
         $this->assertEmailCount(2);
     }
 
@@ -116,7 +129,9 @@ class SignalementVisitesControllerTest extends WebTestCase
         $signalement = $this->signalementRepository->findOneBy(['uuid' => '00000000-0000-0000-2022-000000000001']);
 
         $route = $this->router->generate('back_signalement_visite_cancel', ['uuid' => $signalement->getUuid()]);
-        $this->client->request('POST', $route, ['visite-cancel' => ['intervention' => $signalement->getInterventions()->first()->getId(), 'details' => 'nanana']]);
+        $this->client->request('POST', $route, ['visite-cancel' => [
+            'intervention' => $signalement->getInterventions()->first()->getId(), 'details' => 'nanana',
+        ]]);
 
         $this->assertResponseStatusCodeSame(302);
         $this->assertResponseRedirects('/bo/signalements/'.$signalement->getUuid());
@@ -127,7 +142,12 @@ class SignalementVisitesControllerTest extends WebTestCase
         $signalement = $this->signalementRepository->findOneBy(['uuid' => '00000000-0000-0000-2023-000000000003']);
 
         $route = $this->router->generate('back_signalement_visite_cancel', ['uuid' => $signalement->getUuid()]);
-        $this->client->request('POST', $route, ['visite-cancel' => ['intervention' => $signalement->getInterventions()->first()->getId(), 'details' => 'nanana']]);
+        $this->client->request(
+            'POST',
+            $route,
+            ['visite-cancel' => [
+                'intervention' => $signalement->getInterventions()->first()->getId(), 'details' => 'nanana'],
+            ]);
 
         $this->assertResponseStatusCodeSame(403);
     }

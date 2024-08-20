@@ -15,6 +15,7 @@ use App\Exception\File\UnsupportedFileFormatException;
 use App\Manager\InterventionManager;
 use App\Repository\InterventionRepository;
 use App\Service\Files\FilenameGenerator;
+use App\Service\TimezoneProvider;
 use App\Service\UploadHandlerService;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -63,6 +64,9 @@ class SignalementVisitesController extends AbstractController
         }
     }
 
+    /**
+     * @throws \Exception
+     */
     #[Route('/{uuid}/visites/ajouter', name: 'back_signalement_visite_add', methods: 'POST')]
     public function addVisiteToSignalement(
         Signalement $signalement,
@@ -72,6 +76,7 @@ class SignalementVisitesController extends AbstractController
         EventDispatcherInterface $eventDispatcher,
         FilenameGenerator $filenameGenerator,
         ValidatorInterface $validator,
+        TimezoneProvider $timezoneProvider,
     ): Response {
         $this->denyAccessUnlessGranted('SIGN_ADD_VISITE', $signalement);
 
@@ -91,6 +96,7 @@ class SignalementVisitesController extends AbstractController
             idIntervention: $requestAddData['intervention'] ?? null,
             date: $requestAddData['date'],
             time: $requestAddData['time'],
+            timezone: $timezoneProvider->getTimezone(),
             idPartner: $requestAddData['partner'],
             details: $requestAddData['details'] ?? null,
             concludeProcedure: $requestAddData['concludeProcedure'] ?? null,
@@ -106,7 +112,7 @@ class SignalementVisitesController extends AbstractController
             $this->addFlash('error', \sprintf("Erreurs lors de l'enregistrement de la visite : %s", $errorMessage));
         } elseif ($intervention = $interventionManager->createVisiteFromRequest($signalement, $visiteRequest)) {
             $todayDate = new \DateTimeImmutable();
-            if ($intervention->getScheduledAt() <= $todayDate) {
+            if ($intervention->getScheduledAt()->format('Y-m-d') <= $todayDate->format('Y-m-d')) {
                 $this->addFlash('success', self::SUCCESS_MSG_CONFIRM);
             } else {
                 $this->addFlash('success', self::SUCCESS_MSG_ADD);
@@ -167,6 +173,9 @@ class SignalementVisitesController extends AbstractController
         return $this->redirectToRoute('back_signalement_view', ['uuid' => $signalement->getUuid()]);
     }
 
+    /**
+     * @throws \Exception
+     */
     #[Route('/{uuid}/visites/reprogrammer', name: 'back_signalement_visite_reschedule', methods: 'POST')]
     public function rescheduleVisiteFromSignalement(
         Signalement $signalement,
@@ -177,6 +186,7 @@ class SignalementVisitesController extends AbstractController
         EventDispatcherInterface $eventDispatcher,
         FilenameGenerator $filenameGenerator,
         ValidatorInterface $validator,
+        TimezoneProvider $timezoneProvider
     ): Response {
         $requestRescheduleData = $request->get('visite-reschedule');
 
@@ -204,6 +214,7 @@ class SignalementVisitesController extends AbstractController
             idIntervention: $requestRescheduleData['intervention'],
             date: $requestRescheduleData['date'],
             time: $requestRescheduleData['time'],
+            timezone: $timezoneProvider->getTimezone(),
             idPartner: $requestRescheduleData['partner'] ?? $intervention->getPartner()?->getId(),
             details: $requestRescheduleData['details'] ?? null,
             concludeProcedure: $requestRescheduleData['concludeProcedure'] ?? null,
@@ -218,7 +229,7 @@ class SignalementVisitesController extends AbstractController
         if ($errorMessage) {
             $this->addFlash('error', \sprintf('Erreurs lors de la modification de la visite : %s', $errorMessage));
         } elseif ($intervention = $interventionManager->rescheduleVisiteFromRequest($signalement, $visiteRequest)) {
-            if ($intervention->getScheduledAt() <= new \DateTimeImmutable()) {
+            if ($intervention->getScheduledAt()->format('Y-m-d') <= (new \DateTimeImmutable())->format('Y-m-d')) {
                 $this->addFlash('success', self::SUCCESS_MSG_CONFIRM);
             } else {
                 $this->addFlash('success', self::SUCCESS_MSG_ADD);
@@ -233,6 +244,9 @@ class SignalementVisitesController extends AbstractController
         return $this->redirectToRoute('back_signalement_view', ['uuid' => $signalement->getUuid()]);
     }
 
+    /**
+     * @throws \Exception
+     */
     #[Route('/{uuid}/visites/confirmer', name: 'back_signalement_visite_confirm', methods: 'POST')]
     public function confirmVisiteFromSignalement(
         Signalement $signalement,
@@ -282,6 +296,9 @@ class SignalementVisitesController extends AbstractController
         return $this->redirectToRoute('back_signalement_view', ['uuid' => $signalement->getUuid()]);
     }
 
+    /**
+     * @throws \Exception
+     */
     #[Route('/{uuid}/visites/editer', name: 'back_signalement_visite_edit', methods: 'POST')]
     public function editVisiteFromSignalement(
         Signalement $signalement,

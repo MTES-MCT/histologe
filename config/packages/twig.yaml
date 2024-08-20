@@ -19,8 +19,6 @@ twig:
             enable: '%maintenance_enable%'
         feature:
             signalement_liste_enable: '%feature_signalement_liste_enable%'
-    date:
-        timezone: 'Europe/Paris'
     paths:
         # point this wherever your images live
         '%kernel.project_dir%/public/img': images

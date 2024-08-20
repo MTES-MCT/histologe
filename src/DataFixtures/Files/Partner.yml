@@ -518,3 +518,17 @@ partners:
     insee: "[\"34048\"]"
     territory: "Hérault"
     type: "COMMUNE_SCHS"
+  -
+    nom: "DDT_M 972"
+    email: "partenaire-972-01@histologe.fr"
+    is_archive: 0
+    territory: "Martinique"
+    type: "DDT_M"
+  -
+    nom: "ARS 972"
+    email: "partenaire-972-02@histologe.fr"
+    is_archive: 0
+    territory: "Martinique"
+    type: "ARS"
+    competence: "VISITES"
+

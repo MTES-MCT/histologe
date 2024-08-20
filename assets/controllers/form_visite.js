@@ -1,9 +1,17 @@
 const dateFields = document.querySelectorAll('.add-fields-if-past-date')
+const timezoneElement = document.querySelector('[data-territory-timezone]')
+const timezone = timezoneElement?.dataset.territoryTimezone
+let todayDate = new Date()
+let options = { timeZone: timezone, year: 'numeric', month: '2-digit', day: '2-digit' };
+let formatter = new Intl.DateTimeFormat('en-CA', options);
+let localDateString = formatter.format(todayDate);
+
+
 dateFields.forEach(dateField => {
     dateField.addEventListener('change', evt => {
         let fieldToToggle = dateField.dataset.fields
-        let todayDate = new Date()
-        if (dateField.value <= todayDate.toISOString().split('T')[0]) {
+
+        if (dateField.value <= localDateString) {
             document.querySelector('#' + fieldToToggle).classList.remove('fr-hidden')
         } else {
             document.querySelector('#' + fieldToToggle).classList.add('fr-hidden')
@@ -47,8 +55,7 @@ function histoCheckVisiteForms(formType) {
             }
         
             const dateField = visiteForm.querySelector('.add-fields-if-past-date')
-            let todayDate = new Date()
-            if (!dateField || dateField.value <= todayDate.toISOString().split('T')[0]) {
+            if (!dateField || dateField.value <= localDateString) {
         
                 let isVisiteDone = false
                 let hasCheckedVisiteDone = false

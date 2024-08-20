@@ -9,24 +9,60 @@ use App\Entity\File;
 use App\Service\Files\ImageBase64Encoder;
 use App\Service\Notification\NotificationCounter;
 use App\Service\Signalement\Qualification\QualificationStatusService;
+use App\Service\TimezoneProvider;
 use App\Service\UploadHandlerService;
 use App\Utils\AttributeParser;
 use App\Validator\EmailFormatValidator;
 use Twig\Extension\AbstractExtension;
+use Twig\Extension\GlobalsInterface;
 use Twig\TwigFilter;
 use Twig\TwigFunction;
 
-class AppExtension extends AbstractExtension
+class AppExtension extends AbstractExtension implements GlobalsInterface
 {
+    public function __construct(private readonly TimezoneProvider $timezoneProvider)
+    {
+    }
+
+    public function getGlobals(): array
+    {
+        return ['territory_timezone' => $this->timezoneProvider->getTimezone()];
+    }
+
     public function getFilters(): array
     {
         return [
+            new TwigFilter('date', [$this, 'customDateFilter'], ['is_safe' => ['html']]),
             new TwigFilter('status_to_css', [$this, 'getCssFromStatus']),
             new TwigFilter('signalement_lien_declarant_occupant', [$this, 'getLabelLienDeclarantOccupant']),
             new TwigFilter('image64', [ImageBase64Encoder::class, 'encode']),
             new TwigFilter('truncate_filename', [$this, 'getTruncatedFilename']),
             new TwigFilter('clean_tagged_text', [$this, 'cleanTaggedText']),
         ];
+    }
+
+    /**
+     * @throws \Exception
+     */
+    public function customDateFilter(
+        string|\DateTimeImmutable|\DateTime $dateTime,
+        string $format = 'F j, Y H:i',
+        ?string $timezone = null
+    ): string {
+        $dateTimeZone = null !== $timezone ? new \DateTimeZone($timezone) : $this->timezoneProvider->getDateTimezone();
+        if ($dateTime instanceof \DateTimeInterface) {
+            return $dateTime->setTimezone($dateTimeZone)->format($format);
+        }
+
+        if (is_numeric($dateTime)) { // is a timestamp
+            $dateTime = (new \DateTimeImmutable())
+                ->setTimestamp((int) $dateTime)
+                ->setTimezone($dateTimeZone);
+        } else { // is string date
+            $dateTime = (new \DateTimeImmutable($dateTime))->setTimezone($dateTimeZone);
+        }
+
+        return $dateTime->format($format);
     }
 
     public function getCssFromStatus(QualificationStatus $qualificationStatus): string

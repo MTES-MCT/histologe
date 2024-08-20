@@ -4,13 +4,19 @@ namespace App\Service\Esabora;
 
 class DateParser
 {
-    public static function parse(string $date): \DateTimeImmutable
+    /**
+     * @throws \Exception
+     */
+    public static function parse(string $date, string $timezone = 'UTC'): \DateTimeImmutable
     {
-        if (false !== $dateParsed = \DateTimeImmutable::createFromFormat(
+        $fromTimezone = new \DateTimeZone($timezone);
+        $toTimezone = new \DateTimeZone('UTC');
+        if (false !== $dateLocaleParsed = \DateTimeImmutable::createFromFormat(
             AbstractEsaboraService::FORMAT_DATE_TIME,
-            $date)
+            $date,
+            $fromTimezone)
         ) {
-            return $dateParsed;
+            return $dateLocaleParsed->setTimezone($toTimezone);
         }
 
         return \DateTimeImmutable::createFromFormat(AbstractEsaboraService::FORMAT_DATE, $date);
