@@ -12,8 +12,6 @@ use App\Tests\FixturesHelper;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
-use Symfony\Component\Security\Csrf\CsrfToken;
-use Symfony\Component\Security\Csrf\CsrfTokenManagerInterface;
 
 class DossierMessageFactoryTest extends KernelTestCase
 {
@@ -49,13 +47,8 @@ class DossierMessageFactoryTest extends KernelTestCase
         }
 
         $urlGenerator = static::getContainer()->get(UrlGeneratorInterface::class);
-        $csrfTokenManager = $this->createMock(CsrfTokenManagerInterface::class);
-        $csrfTokenManager
-            ->expects($this->atMost(1))
-            ->method('getToken')
-            ->willReturn(new CsrfToken('suivi_signalement_ext_file_view', 'random_value'));
 
-        $dossierMessageFactory = new DossierMessageFactory($urlGenerator, $csrfTokenManager, true);
+        $dossierMessageFactory = new DossierMessageFactory($urlGenerator, true);
 
         $this->assertTrue($dossierMessageFactory->supports($affectation));
 

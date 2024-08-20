@@ -15,7 +15,7 @@
                 </div>
                 <div>
                     <img
-                        src="{{ asset('_up/'~photo.filename~'/'~signalement.uuid~'?variant=resize') }}"
+                        src="{{ path('show_file', {uuid: photo.uuid}) }}?variant=resize"
                         alt="Photo ajoutée par : {{ photo.uploadedBy.nomComplet ?? 'N/R' }}"
                         >
                 </div>

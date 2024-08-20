@@ -162,10 +162,10 @@ class SuiviManager extends Manager
         $descriptionList = [];
         foreach ($files as $file) {
             $fileUrl = $this->urlGenerator->generate(
-                'show_uploaded_file',
-                ['filename' => $file->getFilename()],
+                'show_file',
+                ['uuid' => $file->getUuid()],
                 UrlGeneratorInterface::ABSOLUTE_URL
-            ).'?t=___TOKEN___';
+            );
 
             $linkFile = '<li><a class="fr-link" target="_blank" rel="noopener" href="'.$fileUrl.'">'.$file->getTitle().'</a>';
             if (DocumentType::PHOTO_SITUATION === $file->getDocumentType() && null !== $file->getDesordreSlug()) {

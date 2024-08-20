@@ -35,7 +35,7 @@ class SignalementFileController extends AbstractController
             return $this->json(['response' => 'Token CSRF invalide ou paramètre manquant, veuillez rechargez la page'], Response::HTTP_BAD_REQUEST);
         }
         $inputName = isset($files[File::INPUT_NAME_DOCUMENTS]) ? File::INPUT_NAME_DOCUMENTS : File::INPUT_NAME_PHOTOS;
-        list($fileList) = $signalementFileProcessor->process($files, $inputName);
+        $fileList = $signalementFileProcessor->process($files, $inputName);
         if (!$signalementFileProcessor->isValid()) {
             return $this->json(['response' => $signalementFileProcessor->getErrorMessages()], Response::HTTP_BAD_REQUEST);
         }

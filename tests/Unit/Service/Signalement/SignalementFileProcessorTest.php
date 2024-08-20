@@ -13,7 +13,6 @@ use App\Tests\FixturesHelper;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\LoggerInterface;
-use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 class SignalementFileProcessorTest extends TestCase
 {
@@ -33,7 +32,6 @@ class SignalementFileProcessorTest extends TestCase
     private MockObject|UploadHandlerService $uploadHandlerService;
     private MockObject|LoggerInterface $logger;
     private MockObject|FilenameGenerator $filenameGenerator;
-    private MockObject|UrlGeneratorInterface $urlGenerator;
     private MockObject|FileFactory $fileFactory;
     private MockObject|ImageManipulationHandler $imageManipulationHandler;
     private MockObject|FileScanner $fileScanner;
@@ -43,7 +41,6 @@ class SignalementFileProcessorTest extends TestCase
         $this->uploadHandlerService = $this->createMock(UploadHandlerService::class);
         $this->logger = $this->createMock(LoggerInterface::class);
         $this->filenameGenerator = $this->createMock(FilenameGenerator::class);
-        $this->urlGenerator = $this->createMock(UrlGeneratorInterface::class);
         $this->fileFactory = $this->createMock(FileFactory::class);
         $this->imageManipulationHandler = $this->createMock(ImageManipulationHandler::class);
         $this->fileScanner = $this->createMock(FileScanner::class);
@@ -60,42 +57,22 @@ class SignalementFileProcessorTest extends TestCase
             $this->uploadHandlerService,
             $this->logger,
             $this->filenameGenerator,
-            $this->urlGenerator,
             $this->fileFactory,
             $this->imageManipulationHandler,
             $this->fileScanner,
             false
         );
 
-        [$fileList, $descriptionList] = $signalementFileProcessor->process(self::FILE_LIST, 'documents');
+        $fileList = $signalementFileProcessor->process(self::FILE_LIST, 'documents');
         $this->assertTrue($signalementFileProcessor->isValid());
         $this->assertEmpty($signalementFileProcessor->getErrors());
         $this->assertCount(2, $fileList);
-        $this->assertCount(2, $descriptionList);
 
         foreach ($fileList as $fileItem) {
             $this->assertArrayHasKey('title', $fileItem);
             $this->assertArrayHasKey('date', $fileItem);
             $this->assertArrayHasKey('type', $fileItem);
             $this->assertEquals(File::FILE_TYPE_DOCUMENT, $fileItem['type']);
-        }
-
-        foreach ($descriptionList as $descriptionItem) {
-            $dom = new \DOMDocument();
-            libxml_use_internal_errors(true);
-            $dom->loadHTML($descriptionItem);
-            libxml_use_internal_errors(false);
-            $liTags = $dom->getElementsByTagName('li');
-            $this->assertCount(1, $liTags);
-
-            $liTag = $liTags->item(0);
-            $aTags = $liTag->getElementsByTagName('a');
-            $this->assertCount(1, $aTags);
-
-            $aTag = $aTags->item(0);
-            $this->assertEquals('fr-link', $aTag->getAttribute('class'));
-            $this->assertEquals('_blank', $aTag->getAttribute('target'));
-            $this->assertEquals('&t=___TOKEN___', $aTag->getAttribute('href'));
         }
     }
 
@@ -115,15 +92,13 @@ class SignalementFileProcessorTest extends TestCase
             $this->uploadHandlerService,
             $this->logger,
             $this->filenameGenerator,
-            $this->urlGenerator,
             $this->fileFactory,
             $this->imageManipulationHandler,
             $this->fileScanner,
             false
         );
         $signalement = $this->getSignalement();
-        [$fileList, $descriptionList] = $signalementFileProcessor->process(self::FILE_LIST, 'photos');
-        $this->assertNotEmpty($descriptionList);
+        $fileList = $signalementFileProcessor->process(self::FILE_LIST, 'photos');
         $signalementFileProcessor->addFilesToSignalement($fileList, $signalement); // TODO
         $this->assertNotNull($signalement->getFiles());
     }

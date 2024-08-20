@@ -14,7 +14,6 @@ use App\Service\UploadHandlerService;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
-use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 
 class SignalementFileProcessor
@@ -26,7 +25,6 @@ class SignalementFileProcessor
         private readonly UploadHandlerService $uploadHandlerService,
         private readonly LoggerInterface $logger,
         private readonly FilenameGenerator $filenameGenerator,
-        private readonly UrlGeneratorInterface $urlGenerator,
         private readonly FileFactory $fileFactory,
         private readonly ImageManipulationHandler $imageManipulationHandler,
         private readonly FileScanner $fileScanner,
@@ -40,8 +38,7 @@ class SignalementFileProcessor
         string $inputName,
         ?DocumentType $documentType = DocumentType::AUTRE
     ): array {
-        $fileList = $descriptionList = [];
-        $withTokenGenerated = false;
+        $fileList = [];
         foreach ($files[$inputName] as $key => $file) {
             if ($file instanceof UploadedFile) {
                 try {
@@ -103,7 +100,6 @@ class SignalementFileProcessor
                     } else {
                         $filename = $this->uploadHandlerService->moveFromBucketTempFolder($file);
                         $title = $key;
-                        $withTokenGenerated = true;
                     }
                 } catch (\Exception $exception) {
                     $this->logger->error($exception->getMessage());
@@ -111,13 +107,12 @@ class SignalementFileProcessor
                     continue;
                 }
                 if (!empty($filename)) {
-                    $descriptionList[] = $this->generateListItemDescription($filename, $title, $withTokenGenerated);
                     $fileList[] = $this->createFileItem($filename, $title, $inputTypeDetection, $documentType);
                 }
             }
         }
 
-        return [$fileList, $descriptionList];
+        return $fileList;
     }
 
     public function addFilesToSignalement(
@@ -164,26 +159,6 @@ class SignalementFileProcessor
     public function getErrorMessages(): string
     {
         return implode('<br>', $this->errors);
-    }
-
-    public function generateListItemDescription(
-        string $filename,
-        string $title,
-        bool $withTokenGenerated = false,
-    ): string {
-        $queryTokenUrl = $withTokenGenerated ? '&t=___TOKEN___' : '';
-
-        $fileUrl = $this->urlGenerator->generate(
-            'show_uploaded_file',
-            ['folder' => '_up', 'filename' => $filename]
-        )
-            .$queryTokenUrl;
-
-        return '<li><a class="fr-link" target="_blank" rel="noopener" href="'
-            .$fileUrl
-            .'">'
-            .$title
-            .'</a></li>';
     }
 
     private function createFileItem(

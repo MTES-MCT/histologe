@@ -48,15 +48,4 @@ class SecurityControllerTest extends WebTestCase
 
         $this->assertResponseStatusCodeSame(404);
     }
-
-    /*public function testShowUploadedWithValidToken(): void
-    {
-        $client = static::createClient();
-        $token = $this->generateCsrfToken($client, 'suivi_signalement_ext_file_view');
-        $client->request('GET', '/_up/check.png?t=' . $token);
-
-        $response = $client->getResponse();
-        $this->assertTrue($response->isSuccessful());
-        $this->assertInstanceOf(BinaryFileResponse::class, $response);
-    }*/
 }

@@ -297,8 +297,8 @@ and signalement.profileDeclarant is not same as enum('App\\Entity\\Enum\\Profile
 		Cliquez sur la photo pour l'ouvrir dans un nouvel onglet.
 		<br>
 		{% for photo in signalement.files|filter(photo => photo.fileType == 'photo') %}
-			<a href="{{ asset('_up/'~photo.filename~'?variant=resize') }}&t={{ csrf_token('suivi_signalement_ext_file_view') }}" class="photo-preview" target="_blank" rel="noopener">
-				<img src="{{ asset('_up/'~photo.filename~'?variant=thumb') }}&t={{ csrf_token('suivi_signalement_ext_file_view') }}" alt="{{photo.title}}">
+			<a href="{{ path('show_file', {uuid: photo.uuid}) }}?variant=resize" class="photo-preview" target="_blank" rel="noopener">
+				<img src="{{ path('show_file', {uuid: photo.uuid}) }}?variant=thumb" alt="{{photo.title}}">
 			</a>
 		{% endfor %}
 	{% else %}
