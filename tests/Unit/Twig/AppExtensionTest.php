@@ -9,6 +9,9 @@ use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 
 class AppExtensionTest extends WebTestCase
 {
+    private const string TWIG_DATE_FORMAT_DEFAULT = 'F j, Y H:i';
+    private const string EUROPE_PARIS_TIMEZONE = 'Europe/Paris';
+
     /**
      * @dataProvider provideData
      */
@@ -36,55 +39,55 @@ class AppExtensionTest extends WebTestCase
         yield 'DateTimeImmutable,  no timezone with America Cayenne' => [
             new \DateTimeImmutable('2024-07-08 09:00:00'),
             'July 8, 2024 06:00',
-            'F j, Y H:i',
+            self::TWIG_DATE_FORMAT_DEFAULT,
             'America/Cayenne',
         ];
 
         yield 'DateTime, specific timezone' => [
-            new \DateTime('2024-07-08 09:00:00', new \DateTimeZone('Europe/Paris')),
+            new \DateTime('2024-07-08 09:00:00', new \DateTimeZone(self::EUROPE_PARIS_TIMEZONE)),
             'July 8, 2024 09:00',
-            'F j, Y H:i',
-            'Europe/Paris',
+            self::TWIG_DATE_FORMAT_DEFAULT,
+            self::EUROPE_PARIS_TIMEZONE,
         ];
 
         yield 'DateTime, no timezone so Europe/Paris by default' => [
             new \DateTime('2024-07-08 09:00:00'),
             'July 8, 2024 11:00',
-            'F j, Y H:i',
-            'Europe/Paris',
+            self::TWIG_DATE_FORMAT_DEFAULT,
+            self::EUROPE_PARIS_TIMEZONE,
         ];
 
         yield 'String date, paris timezone' => [
             '2024-07-08 09:00:00',
             'July 8, 2024 11:00', // expected output in Europe/Paris
-            'F j, Y H:i',
-            'Europe/Paris',
+            self::TWIG_DATE_FORMAT_DEFAULT,
+            self::EUROPE_PARIS_TIMEZONE,
         ];
 
         yield 'String date, cayenne timezone' => [
             '2024-07-08 09:00:00',
             'July 8, 2024 06:00', // expected output in America/Cayenne
-            'F j, Y H:i',
+            self::TWIG_DATE_FORMAT_DEFAULT,
             'America/Cayenne',
         ];
 
         yield 'String date, default timezone (UTC)' => [
             '2024-07-08 09:00:00',
             'July 8, 2024 11:00',
-            'F j, Y H:i',
+            self::TWIG_DATE_FORMAT_DEFAULT,
         ];
 
         yield 'Timestamp, specific timezone' => [
             '1719926400', // timestamp for July 2, 2024 13:20
             'July 2, 2024 15:20', // expected output in Europe/Paris
-            'F j, Y H:i',
-            'Europe/Paris',
+            self::TWIG_DATE_FORMAT_DEFAULT,
+            self::EUROPE_PARIS_TIMEZONE,
         ];
 
         yield 'Timestamp, default timezone (UTC)' => [
             '1719926400', // timestamp for July 2, 2024 09:00:00 UTC
             'July 2, 2024 13:20', // expected output in UTC
-            'F j, Y H:i',
+            self::TWIG_DATE_FORMAT_DEFAULT,
             'UTC',
         ];
     }
