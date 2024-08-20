@@ -27,7 +27,7 @@
           "type": "SignalementFormSubscreen",
           "slug": "ecran_intermediaire_les_desordres_text",
           "customCss": "fr-mt-5v",
-          "description": "<p>Vous avez indiqué que votre signalement concerne {{dictionaryStore::formStore.data.zone_concernee_zone}}.</p><p>Sélectionnez le ou les problèmes rencontrés parmi les catégories et répondez aux questions.</p> <p>Vous pourrez aussi ajouter des photos des problèmes.<p><p><b>Toutes les questions sont obligatoires, sauf mention contraire.</b></p>"
+          "description": "<p>Vous avez indiqué que votre signalement concerne {{dictionaryStore::formStore.data.zone_concernee_zone}}.</p><p>Sélectionnez le ou les problèmes rencontrés parmi les catégories et répondez aux questions.</p><p>Vous pourrez aussi ajouter des photos des problèmes.</p><p><b>Toutes les questions sont obligatoires, sauf mention contraire.</b></p>"
         }
       ],
       "footer": [

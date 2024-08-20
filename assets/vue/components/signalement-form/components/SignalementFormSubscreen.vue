@@ -1,7 +1,7 @@
 <template>
   <div :class="[ customCss ]" :id="id">
     <h3 v-if="label">{{ variablesReplacer.replace(label) }}</h3>
-    <p v-if="description" v-html="variablesReplacer.replace(description)"></p>
+    <div v-if="description" v-html="variablesReplacer.replace(description)"></div>
     <div
       v-if="components != undefined"
       >

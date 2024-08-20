@@ -10,7 +10,7 @@
       :id="id + '_input'"
       :name="id"
       class="custom-file-input"
-      aria-describedby="text-upload-error-desc-error"
+      :aria-describedby="hasError ? id + '-text-upload-error-desc-error' : undefined"
       :disabled="disabled"
       :multiple="multiple"
       @change="uploadFile($event)"
@@ -39,7 +39,7 @@
     </div>
   </div>
   <div
-    id="text-upload-error-desc-error"
+    :id="id + '-text-upload-error-desc-error'"
     class="fr-error-text"
     v-if="hasError"
     >
@@ -78,7 +78,15 @@ export default defineComponent({
     validate: { type: Object, default: null },
     disabled: { type: Boolean, default: false },
     multiple: { type: Boolean, default: false },
-    type: { type: String, default: 'documents' }
+    type: { type: String, default: 'documents' },
+    // les propriétés suivantes ne sont pas utilisées,
+    // mais si on ne les met pas, elles apparaissent dans le DOM
+    // et ça soulève des erreurs W3C
+    hasError: { type: Boolean, default: false },
+    handleClickComponent: Function,
+    clickEvent: Function,
+    access_name: { type: String, default: undefined },
+    access_autocomplete: { type: String, default: undefined }
   },
   data () {
     return {

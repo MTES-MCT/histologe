@@ -32,7 +32,14 @@ export default defineComponent({
     id: { type: String, default: null },
     action: { type: String, default: '' },
     components: Object,
-    clickEvent: Function
+    clickEvent: Function,
+    // les propriétés suivantes ne sont pas utilisées,
+    // mais si on ne les met pas, elles apparaissent dans le DOM
+    // et ça soulève des erreurs W3C
+    hasError: { type: Boolean, default: false },
+    handleClickComponent: Function,
+    access_name: { type: String, default: '' },
+    access_autocomplete: { type: String, default: '' }
   },
   data () {
     return {

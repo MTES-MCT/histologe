@@ -6,20 +6,19 @@
   </label>
     <div :class="[ customCss, 'fr-input-wrap' ]">
       <textarea
-        type="text"
         :id="id + '_input'"
         :name="id"
         :value="internalValue"
         :placeholder="placeholder"
         :class="[ customCss, 'fr-input' ]"
         @input="updateValue($event)"
-        aria-describedby="text-input-error-desc-error"
+        :aria-describedby="hasError ? id + '-text-input-error-desc-error' : undefined"
         :disabled="disabled"
       >
       </textarea>
     </div>
     <div
-      id="text-input-error-desc-error"
+      :id="id + '-text-input-error-desc-error'"
       class="fr-error-text"
       v-if="hasError"
       >
@@ -43,7 +42,14 @@ export default defineComponent({
     validate: { type: Object, default: null },
     hasError: { type: Boolean, default: false },
     disabled: { type: Boolean, default: false },
-    error: { type: String, default: '' }
+    error: { type: String, default: '' },
+    // les propriétés suivantes ne sont pas utilisées,
+    // mais si on ne les met pas, elles apparaissent dans le DOM
+    // et ça soulève des erreurs W3C
+    clickEvent: Function,
+    handleClickComponent: Function,
+    access_name: { type: String, default: '' },
+    access_autocomplete: { type: String, default: '' }
   },
   computed: {
     internalValue: {
