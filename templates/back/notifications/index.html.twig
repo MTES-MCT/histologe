@@ -57,7 +57,7 @@
                                     </div>
                                 </td>
                                 <td>{{ notification.suivi.signalement.reference }}</td>
-                                <td>{{ notification.suivi.createdAt|format_datetime(locale='fr', timezone=territory_timezone) }}</td>
+                                <td>{{ notification.suivi.createdAt|format_datetime(locale='fr', timezone=territory_timezone, pattern='d MMMM yyyy à HH:mm:ss') }}</td>
                                 <td class="word-wrap-anywhere">{{ notification.suivi.description
                                     |replace({'&t=___TOKEN___':'/'~notification.signalement.uuid})
                                     |replace({'?t=___TOKEN___':'/'~notification.signalement.uuid})

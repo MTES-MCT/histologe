@@ -44,13 +44,25 @@ class AppExtension extends AbstractExtension implements GlobalsInterface
     /**
      * @throws \Exception
      */
-    public function customDateFilter(string|\DateTimeImmutable|\DateTime $dateTime, string $format = 'F j, Y H:i'): string
-    {
+    public function customDateFilter(
+        string|\DateTimeImmutable|\DateTime $dateTime,
+        string $format = 'F j, Y H:i',
+        ?string $timezone = null
+    ): string {
+        $dateTimeZone = null !== $timezone ? new \DateTimeZone($timezone) : $this->timezoneProvider->getDateTimezone();
         if ($dateTime instanceof \DateTimeInterface) {
-            return $dateTime->setTimezone($this->timezoneProvider->getDateTimezone())->format($format);
+            return $dateTime->setTimezone($dateTimeZone)->format($format);
         }
 
-        return (new \DateTimeImmutable($dateTime))->setTimezone($this->timezoneProvider->getDateTimezone())->format($format);
+        if (is_numeric($dateTime)) { // is a timestamp
+            $dateTime = (new \DateTimeImmutable())
+                ->setTimestamp((int) $dateTime)
+                ->setTimezone($dateTimeZone);
+        } else { // is string date
+            $dateTime = (new \DateTimeImmutable($dateTime))->setTimezone($dateTimeZone);
+        }
+
+        return $dateTime->format($format);
     }
 
     public function getCssFromStatus(QualificationStatus $qualificationStatus): string

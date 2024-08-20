@@ -55,7 +55,6 @@ function histoCheckVisiteForms(formType) {
             }
         
             const dateField = visiteForm.querySelector('.add-fields-if-past-date')
-            let todayDate = new Date()
             if (!dateField || dateField.value <= localDateString) {
         
                 let isVisiteDone = false

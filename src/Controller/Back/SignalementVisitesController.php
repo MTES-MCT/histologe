@@ -186,6 +186,7 @@ class SignalementVisitesController extends AbstractController
         EventDispatcherInterface $eventDispatcher,
         FilenameGenerator $filenameGenerator,
         ValidatorInterface $validator,
+        TimezoneProvider $timezoneProvider
     ): Response {
         $requestRescheduleData = $request->get('visite-reschedule');
 
@@ -213,6 +214,7 @@ class SignalementVisitesController extends AbstractController
             idIntervention: $requestRescheduleData['intervention'],
             date: $requestRescheduleData['date'],
             time: $requestRescheduleData['time'],
+            timezone: $timezoneProvider->getTimezone(),
             idPartner: $requestRescheduleData['partner'] ?? $intervention->getPartner()?->getId(),
             details: $requestRescheduleData['details'] ?? null,
             concludeProcedure: $requestRescheduleData['concludeProcedure'] ?? null,

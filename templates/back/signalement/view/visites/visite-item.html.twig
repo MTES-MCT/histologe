@@ -14,7 +14,9 @@
             {% if signalement.interventions is empty or intervention.scheduledAt is empty %}
                 Non renseignée
             {% else %}
-                {{ (intervention.scheduledAt|date('H')) > 0 ? intervention.scheduledAt|date('d/m/Y à H:i') : intervention.scheduledAt|date('d/m/Y') }}
+                {{ (intervention.scheduledAt|date('H')) > 0
+                ? intervention.scheduledAt|date('d/m/Y à H:i', signalement.getTimezone)
+                : intervention.scheduledAt|date('d/m/Y') }}
             {% endif %}
         </div>
         <div class="fr-mb-3v">

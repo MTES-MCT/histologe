@@ -7,6 +7,8 @@ use Symfony\Bundle\SecurityBundle\Security;
 
 readonly class TimezoneProvider
 {
+    public const string TIMEZONE_EUROPE_PARIS = 'Europe/Paris';
+
     public function __construct(private Security $security)
     {
     }
@@ -19,7 +21,7 @@ readonly class TimezoneProvider
             return $user->getTerritory()->getTimezone();
         }
 
-        return 'Europe/Paris';
+        return self::TIMEZONE_EUROPE_PARIS;
     }
 
     /**

@@ -6,6 +6,7 @@ use App\Entity\Territory;
 use App\Repository\AffectationRepository;
 use App\Repository\JobEventRepository;
 use App\Repository\SignalementRepository;
+use App\Service\TimezoneProvider;
 use Doctrine\DBAL\Exception;
 use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\ORM\NoResultException;
@@ -13,7 +14,6 @@ use Doctrine\ORM\Query\QueryException;
 
 class WidgetDataManager implements WidgetDataManagerInterface
 {
-    public const DEFAULT_TIMEZONE = 'Europe/Paris';
     public const FORMAT_DATE_TIME = 'Y-m-d H:i';
 
     public function __construct(
@@ -65,7 +65,7 @@ class WidgetDataManager implements WidgetDataManagerInterface
          */ function ($jobEvent) use ($territory) {
             $jobEvent['last_event'] = (new \DateTimeImmutable($jobEvent['last_event']))
                 ->setTimezone(
-                    new \DateTimeZone($territory ? $territory->getTimezone() : self::DEFAULT_TIMEZONE)
+                    new \DateTimeZone($territory ? $territory->getTimezone() : TimezoneProvider::TIMEZONE_EUROPE_PARIS)
                 )
                 ->format(self::FORMAT_DATE_TIME);
 

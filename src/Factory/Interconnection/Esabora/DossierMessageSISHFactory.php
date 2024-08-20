@@ -13,6 +13,7 @@ use App\Service\Esabora\CiviliteMapper;
 use App\Service\Esabora\Enum\PersonneType;
 use App\Service\Esabora\Model\DossierMessageSISHPersonne;
 use App\Service\HtmlCleaner;
+use App\Service\TimezoneProvider;
 use App\Service\UploadHandlerService;
 use App\Utils\AddressParser;
 use App\Utils\EscalierParser;
@@ -23,8 +24,6 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 class DossierMessageSISHFactory extends AbstractDossierMessageFactory
 {
-    public const DEFAULT_TIMEZONE = 'Europe/Paris';
-
     public function __construct(
         private readonly SuiviRepository $suiviRepository,
         private readonly UploadHandlerService $uploadHandlerService,
@@ -48,7 +47,7 @@ class DossierMessageSISHFactory extends AbstractDossierMessageFactory
     {
         $signalement = $affectation->getSignalement();
         $partner = $affectation->getPartner();
-        $timezone = $partner->getTerritory()?->getTimezone() ?? self::DEFAULT_TIMEZONE;
+        $timezone = $partner->getTerritory()?->getTimezone() ?? TimezoneProvider::TIMEZONE_EUROPE_PARIS;
 
         $address = AddressParser::parse($signalement->getAdresseOccupant());
         $firstSuivi = $this->suiviRepository->findFirstSuiviBy($signalement, Suivi::TYPE_PARTNER);

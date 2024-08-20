@@ -121,6 +121,9 @@ class EsaboraManager
         return $description;
     }
 
+    /**
+     * @throws \Exception
+     */
     public function createOrUpdateVisite(Affectation $affectation, DossierVisiteSISH $dossierVisiteSISH): void
     {
         $intervention = $this->interventionRepository->findOneBy(['providerId' => $dossierVisiteSISH->getVisiteId()]);
@@ -145,7 +148,10 @@ class EsaboraManager
                 $newIntervention = $this->interventionFactory->createInstanceFrom(
                     affectation: $affectation,
                     type: InterventionType::tryFromLabel($dossierVisiteSISH->getVisiteType()),
-                    scheduledAt: DateParser::parse($dossierVisiteSISH->getVisiteDate()),
+                    scheduledAt: DateParser::parse(
+                        $dossierVisiteSISH->getVisiteDate(),
+                        $affectation->getSignalement()->getTimezone()
+                    ),
                     registeredAt: new \DateTimeImmutable(),
                     status: Intervention::STATUS_DONE,
                     providerName: InterfacageType::ESABORA->value,

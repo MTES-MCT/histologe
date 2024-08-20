@@ -2,6 +2,7 @@
 
 namespace App\Dto\Request\Signalement;
 
+use App\Service\TimezoneProvider;
 use Symfony\Component\Validator\Constraints as Assert;
 
 class VisiteRequest
@@ -15,7 +16,7 @@ class VisiteRequest
         private readonly ?string $date = null,
         #[Assert\DateTime('H:i')]
         private readonly ?string $time = null,
-        private readonly ?string $timezone = 'Europe/Paris',
+        private readonly ?string $timezone = TimezoneProvider::TIMEZONE_EUROPE_PARIS,
         private readonly ?int $idPartner = null,
         private readonly ?string $details = null,
         private readonly ?array $concludeProcedure = [],
