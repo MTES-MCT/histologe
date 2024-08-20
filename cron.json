@@ -7,6 +7,9 @@
       "command": "0 0 * * 0 php bin/console app:clear-entities"
     },
     {
+      "command": "0 0 * * * php bin/console app:clear-storage-tmp-folder"
+    },
+    {
       "command": "0 6,18 * * * php bin/console app:sync-esabora-schs"
     },
     {
