@@ -50,30 +50,9 @@
 					Administrations, départements, associations, bailleurs… Histologe rassemble les acteurs de la lutte contre l'habitat indigne. 
 					Si vous souhaitez en savoir plus sur notre service, n'hésitez pas à nous contacter.
 				</p>
-				{% form_theme form 'form/dsfr_theme.html.twig' %}
-				{{ form_start(form) }}
-				{{ form_errors(form) }}
-				<div class="fr-grid-row fr-grid-row--gutters">
-					<div class="fr-col-12 fr-col-md-4">
-						{{ form_row(form.nom) }}
-					</div>
-					<div class="fr-col-12 fr-col-md-4">
-						{{ form_row(form.email) }}
-					</div>
-					<div class="fr-col-12 fr-col-md-4">
-						{{ form_row(form.organisme) }}
-					</div>
-					<div class="fr-col-12">
-						{{ form_row(form.objet) }}
-					</div>
-					<div class="fr-col-12">
-						{{ form_row(form.message) }}
-					</div>
+				<div id="container-form-contact">
+					{% include '_partials/_form-contact.html.twig' with {'form': form} only %}
 				</div>
-				{{ form_end(form) }}
-				<button class="fr-btn fr-fi-mail-fill fr-btn--icon-left fr-mt-3w" form="front_contact">
-					Envoyer le message
-				</button>
 			</div>
 		</section>
 	</main>
