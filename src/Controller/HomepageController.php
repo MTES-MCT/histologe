@@ -106,7 +106,7 @@ class HomepageController extends AbstractController
             return new JsonResponse(['html' => $view]);
         }
 
-        $view = $this->renderView('_partials/_form-demande-lien-signalement.html.twig', ['form' => $form]);
+        $view = $this->renderView('form/form-demande-lien-signalement.html.twig', ['form' => $form]);
 
         return new JsonResponse(['html' => $view]);
     }
@@ -166,7 +166,7 @@ class HomepageController extends AbstractController
             $limiter = $contactFormLimiter->create($request->getClientIp());
             if (false === $limiter->consume(1)->isAccepted()) {
                 $message = 'Vous avez atteint le nombre maximum de messages que vous pouvez envoyer. Veuillez réessayer plus tard.';
-                $view = $this->renderView('_partials/_form-contact.html.twig', ['form' => $form, 'type' => $type, 'message' => $message]);
+                $view = $this->renderView('form/form-contact.html.twig', ['form' => $form, 'type' => $type, 'message' => $message]);
 
                 return new JsonResponse(['html' => $view]);
             }
@@ -180,7 +180,7 @@ class HomepageController extends AbstractController
             $type = 'success';
             $message = 'Votre message à bien été envoyé !';
         }
-        $view = $this->renderView('_partials/_form-contact.html.twig', ['form' => $form, 'type' => $type, 'message' => $message]);
+        $view = $this->renderView('form/form-contact.html.twig', ['form' => $form, 'type' => $type, 'message' => $message]);
 
         return new JsonResponse(['html' => $view]);
     }
