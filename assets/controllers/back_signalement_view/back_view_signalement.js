@@ -57,7 +57,7 @@ const displayPhotoAlbum = (photoId) => {
     })
 }
 
-document?.querySelector('.back-link')?.addEventListener('click', (event) => {
+document?.querySelector('[data-filter-list-signalement]')?.addEventListener('click', (event) => {
     if (window.history.length > 1) {
         event.preventDefault()
         const backLinkQueryParams = localStorage.getItem('back_link_signalement_view')
