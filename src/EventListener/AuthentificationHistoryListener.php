@@ -41,10 +41,10 @@ class AuthentificationHistoryListener
         try {
             $this->historyEntryManager->create(
                 historyEntryEvent: $historyEntryEvent,
-                entityId: $user->getId(),
-                entityName: User::class,
-                user: $user
+                entityHistory: $user
             );
+
+            return;
         } catch (\Throwable $exception) {
             $this->logger->error(\sprintf(
                 'Failed to create login history entry (%s) on user : %d',

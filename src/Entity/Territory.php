@@ -2,6 +2,8 @@
 
 namespace App\Entity;
 
+use App\Entity\Behaviour\EntityHistoryInterface;
+use App\Entity\Enum\HistoryEntryEvent;
 use App\Repository\TerritoryRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -9,7 +11,7 @@ use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Attribute\Groups;
 
 #[ORM\Entity(repositoryClass: TerritoryRepository::class)]
-class Territory
+class Territory implements EntityHistoryInterface
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
@@ -18,11 +20,11 @@ class Territory
     private ?int $id = null;
 
     #[ORM\Column(type: 'string', length: 3)]
-    #[Groups(['widget-settings:read', 'widget:read'])]
+    #[Groups(['widget-settings:read', 'widget:read', 'history_entry:read'])]
     private ?string $zip = null;
 
     #[ORM\Column(type: 'string', length: 255)]
-    #[Groups(['widget-settings:read', 'widget:read'])]
+    #[Groups(['widget-settings:read', 'widget:read', 'history_entry:read'])]
     private ?string $name = null;
 
     #[ORM\OneToMany(mappedBy: 'territory', targetEntity: User::class)]
@@ -371,5 +373,10 @@ class Territory
         $this->timezone = $timezone;
 
         return $this;
+    }
+
+    public function getHistoryRegisteredEvent(): array
+    {
+        return [HistoryEntryEvent::UPDATE, HistoryEntryEvent::DELETE];
     }
 }

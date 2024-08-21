@@ -2,6 +2,8 @@
 
 namespace App\Entity;
 
+use App\Entity\Behaviour\EntityHistoryInterface;
+use App\Entity\Enum\HistoryEntryEvent;
 use App\Repository\TagRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -16,29 +18,30 @@ use Symfony\Component\Validator\Constraints as Assert;
     message: 'Ce nom d\'étiquette est déjà utilisé. Veuillez saisir une autre nom.',
     errorPath: 'label',
 )]
-class Tag
+class Tag implements EntityHistoryInterface
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column(type: 'integer')]
     #[Groups(['widget-settings:read'])]
-    private $id;
+    private ?int $id = null;
 
     #[ORM\ManyToMany(targetEntity: Signalement::class, inversedBy: 'tags', cascade: ['persist'])]
-    private $signalement;
+    private Collection $signalement;
 
     #[ORM\Column(type: 'string', length: 255)]
-    #[Groups(['widget-settings:read'])]
+    #[Groups(['widget-settings:read', 'history_entry:read'])]
     #[Assert\NotBlank(message: 'Merci de saisir un nom pour l\'étiquette.')]
-    private $label;
+    private ?string $label = null;
 
     #[ORM\Column(type: 'boolean')]
-    private $isArchive;
+    private bool $isArchive = false;
 
     #[ORM\ManyToOne(targetEntity: Territory::class, inversedBy: 'tags')]
     #[ORM\JoinColumn(nullable: false)]
     #[Assert\NotBlank()]
-    private $territory;
+    #[Groups(['history_entry:read'])]
+    private ?Territory $territory = null;
 
     public function __construct()
     {
@@ -109,5 +112,10 @@ class Tag
         $this->territory = $territory;
 
         return $this;
+    }
+
+    public function getHistoryRegisteredEvent(): array
+    {
+        return [HistoryEntryEvent::CREATE, HistoryEntryEvent::UPDATE, HistoryEntryEvent::DELETE];
     }
 }

@@ -14,7 +14,7 @@ class HistoryEntry
     #[ORM\Column]
     private ?int $id = null;
 
-    #[ORM\Column(type: 'string', enumType: HistoryEntryEvent::class, nullable: true)]
+    #[ORM\Column(type: 'string', nullable: true, enumType: HistoryEntryEvent::class)]
     private ?HistoryEntryEvent $event = null;
 
     #[ORM\Column(nullable: true)]
@@ -22,6 +22,12 @@ class HistoryEntry
 
     #[ORM\Column(length: 255)]
     private ?string $entityName = null;
+
+    #[ORM\Column(nullable: true)]
+    private ?array $changes = null;
+
+    #[ORM\Column(nullable: true)]
+    private ?string $source = null;
 
     #[ORM\Column]
     private ?\DateTimeImmutable $createdAt = null;
@@ -103,6 +109,30 @@ class HistoryEntry
     public function setUser(?User $user): static
     {
         $this->user = $user;
+
+        return $this;
+    }
+
+    public function getChanges(): ?array
+    {
+        return $this->changes;
+    }
+
+    public function setChanges(?array $changes): self
+    {
+        $this->changes = $changes;
+
+        return $this;
+    }
+
+    public function getSource(): ?string
+    {
+        return $this->source;
+    }
+
+    public function setSource(?string $source): self
+    {
+        $this->source = $source;
 
         return $this;
     }

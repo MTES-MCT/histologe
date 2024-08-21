@@ -2,15 +2,18 @@
 
 namespace App\Entity;
 
+use App\Entity\Behaviour\EntityHistoryInterface;
+use App\Entity\Enum\HistoryEntryEvent;
 use App\Entity\Enum\MotifCloture;
 use App\Entity\Enum\MotifRefus;
 use App\Repository\AffectationRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Attribute\Groups;
 
 #[ORM\Entity(repositoryClass: AffectationRepository::class)]
-class Affectation
+class Affectation implements EntityHistoryInterface
 {
     public const STATUS_WAIT = 0;
     public const STATUS_ACCEPTED = 1;
@@ -23,34 +26,44 @@ class Affectation
 
     #[ORM\ManyToOne(targetEntity: Signalement::class, inversedBy: 'affectations')]
     #[ORM\JoinColumn(nullable: false)]
+    #[Groups(['history_entry:read'])]
     private ?Signalement $signalement;
 
     #[ORM\ManyToOne(targetEntity: Partner::class, inversedBy: 'affectations')]
     #[ORM\JoinColumn(nullable: false)]
+    #[Groups(['history_entry:read'])]
     private ?Partner $partner;
 
     #[ORM\Column(type: 'datetime_immutable', nullable: true)]
+    #[Groups(['history_entry:read'])]
     private ?\DateTimeImmutable $answeredAt;
 
     #[ORM\Column(type: 'datetime_immutable')]
+    #[Groups(['history_entry:read'])]
     private \DateTimeImmutable $createdAt;
 
     #[ORM\Column(type: 'integer')]
+    #[Groups(['history_entry:read'])]
     private int $statut;
 
     #[ORM\Column(type: 'boolean')]
+    #[Groups(['history_entry:read'])]
     private bool $isSynchronized = false;
 
     #[ORM\ManyToOne(targetEntity: User::class)]
+    #[Groups(['history_entry:read'])]
     private ?User $answeredBy;
 
     #[ORM\ManyToOne(targetEntity: User::class)]
+    #[Groups(['history_entry:read'])]
     private ?User $affectedBy;
 
-    #[ORM\Column(type: 'string', enumType: MotifRefus::class, nullable: true)]
+    #[ORM\Column(type: 'string', nullable: true, enumType: MotifRefus::class)]
+    #[Groups(['history_entry:read'])]
     private ?MotifRefus $motifRefus;
 
-    #[ORM\Column(type: 'string', enumType: MotifCloture::class, nullable: true)]
+    #[ORM\Column(type: 'string', nullable: true, enumType: MotifCloture::class)]
+    #[Groups(['history_entry:read'])]
     private ?MotifCloture $motifCloture;
 
     #[ORM\OneToMany(mappedBy: 'affectation', targetEntity: Notification::class)]
@@ -243,5 +256,10 @@ class Affectation
             self::STATUS_CLOSED => 'Cloturé',
             default => 'Unexpected affectation status : '.$this->getStatut()
         };
+    }
+
+    public function getHistoryRegisteredEvent(): array
+    {
+        return [HistoryEntryEvent::CREATE, HistoryEntryEvent::UPDATE, HistoryEntryEvent::DELETE];
     }
 }

@@ -11,6 +11,7 @@ use App\Entity\Partner;
 use App\Entity\User;
 use App\Factory\UserFactory;
 use App\Form\PartnerType;
+use App\Manager\AffectationManager;
 use App\Manager\InterventionManager;
 use App\Manager\PartnerManager;
 use App\Manager\UserManager;
@@ -33,13 +34,16 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
+use Symfony\Component\Serializer\Exception\ExceptionInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 use Symfony\Component\Workflow\WorkflowInterface;
 
 #[Route('/bo/partenaires')]
 class PartnerController extends AbstractController
 {
-    public const DEFAULT_TERRITORY_AIN = 1;
+    public function __construct(private readonly AffectationManager $affectationManager)
+    {
+    }
 
     #[Route('/', name: 'back_partner_index', methods: ['GET', 'POST'])]
     #[IsGranted('ROLE_ADMIN_TERRITORY')]
@@ -247,6 +251,9 @@ class PartnerController extends AbstractController
         ]);
     }
 
+    /**
+     * @throws ExceptionInterface
+     */
     #[Route('/supprimer', name: 'back_partner_delete', methods: ['POST'])]
     public function delete(
         Request $request,
@@ -256,6 +263,7 @@ class PartnerController extends AbstractController
         VisiteNotifier $visiteNotifier,
         WorkflowInterface $interventionPlanningStateMachine,
         InterventionManager $interventionManager,
+        AffectationManager $affectationManager,
     ): Response {
         $partnerId = $request->request->get('partner_id');
         /** @var ?Partner $partner */
@@ -283,15 +291,7 @@ class PartnerController extends AbstractController
             }
 
             // delete affectations "en attente" et "acceptées"
-            $affectations = $partner->getAffectations();
-            foreach ($affectations as $affectation) {
-                if (
-                    Affectation::STATUS_ACCEPTED === $affectation->getStatut()
-                    || Affectation::STATUS_WAIT === $affectation->getStatut()
-                ) {
-                    $partner->removeAffectation($affectation);
-                }
-            }
+            $this->affectationManager->deleteAffectationsByPartner($partner);
 
             $this->cancelOrReplanVisites(
                 partner: $partner,

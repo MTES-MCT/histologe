@@ -3,14 +3,17 @@
 namespace App\Manager;
 
 use App\Entity\Affectation;
+use App\Entity\Enum\HistoryEntryEvent;
 use App\Entity\Enum\MotifCloture;
 use App\Entity\Enum\MotifRefus;
 use App\Entity\Partner;
 use App\Entity\Signalement;
 use App\Entity\User;
 use App\Messenger\Message\DossierMessageInterface;
+use App\Repository\AffectationRepository;
 use Doctrine\Persistence\ManagerRegistry;
 use Psr\Log\LoggerInterface;
+use Symfony\Component\Serializer\Exception\ExceptionInterface;
 
 class AffectationManager extends Manager
 {
@@ -18,6 +21,7 @@ class AffectationManager extends Manager
         protected ManagerRegistry $managerRegistry,
         protected SuiviManager $suiviManager,
         protected LoggerInterface $logger,
+        protected HistoryEntryManager $historyEntryManager,
         string $entityName = Affectation::class
     ) {
         parent::__construct($this->managerRegistry, $entityName);
@@ -117,5 +121,25 @@ class AffectationManager extends Manager
             $affectation->setIsSynchronized(true);
             $this->save($affectation);
         }
+    }
+
+    /**
+     * @throws ExceptionInterface
+     */
+    public function deleteAffectationsByPartner(Partner $partner): void
+    {
+        foreach ($partner->getAffectations() as $affectation) {
+            $historyEntry = $this->historyEntryManager->create(HistoryEntryEvent::DELETE, $affectation);
+            [$changes, $source] = $this->historyEntryManager->getChangesAndSource(
+                HistoryEntryEvent::DELETE,
+                $affectation
+            );
+            $historyEntry->setChanges($changes)->setSource($source);
+            $this->historyEntryManager->save($historyEntry);
+        }
+
+        /** @var AffectationRepository $affectationRepository */
+        $affectationRepository = $this->getRepository();
+        $affectationRepository->deleteAffectationsByPartner($partner);
     }
 }

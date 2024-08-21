@@ -7,6 +7,7 @@ use App\Entity\Enum\MotifCloture;
 use App\Entity\Signalement;
 use App\Entity\User;
 use App\Manager\AffectationManager;
+use App\Manager\HistoryEntryManager;
 use App\Manager\SuiviManager;
 use Doctrine\Persistence\ManagerRegistry;
 use Psr\Log\LoggerInterface;
@@ -18,6 +19,7 @@ class AffectationManagerTest extends KernelTestCase
     private ManagerRegistry $managerRegistry;
     private SuiviManager $suiviManager;
     private LoggerInterface $logger;
+    private HistoryEntryManager $historyEntryManager;
     private AffectationManager $affectationManager;
 
     protected function setUp(): void
@@ -26,10 +28,12 @@ class AffectationManagerTest extends KernelTestCase
         $this->managerRegistry = self::getContainer()->get(ManagerRegistry::class);
         $this->suiviManager = self::getContainer()->get(SuiviManager::class);
         $this->logger = self::getContainer()->get(LoggerInterface::class);
+        $this->historyEntryManager = self::getContainer()->get(HistoryEntryManager::class);
         $this->affectationManager = new AffectationManager(
             $this->managerRegistry,
             $this->suiviManager,
             $this->logger,
+            $this->historyEntryManager,
             Affectation::class,
         );
     }

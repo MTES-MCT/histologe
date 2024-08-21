@@ -263,4 +263,16 @@ class AffectationRepository extends ServiceEntityRepository
             ->getQuery()
             ->execute();
     }
+
+    public function deleteAffectationsByPartner(Partner $partner): void
+    {
+        $qb = $this->createQueryBuilder('a')
+            ->delete()
+            ->andWhere('a.statut IN (:statuses)')
+            ->andWhere('a.partner = :partner')
+            ->setParameter('statuses', [Affectation::STATUS_ACCEPTED, Affectation::STATUS_WAIT])
+            ->setParameter('partner', $partner);
+
+        $qb->getQuery()->execute();
+    }
 }

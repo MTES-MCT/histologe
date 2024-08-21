@@ -2,6 +2,8 @@
 
 namespace App\Entity;
 
+use App\Entity\Behaviour\EntityHistoryInterface;
+use App\Entity\Enum\HistoryEntryEvent;
 use App\Entity\Enum\MotifCloture;
 use App\Entity\Enum\MotifRefus;
 use App\Entity\Enum\ProfileDeclarant;
@@ -18,6 +20,7 @@ use App\Validator as AppAssert;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Attribute\Groups;
 use Symfony\Component\Uid\Uuid;
 use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\Validator\Constraints\Email;
@@ -28,7 +31,7 @@ use Symfony\Component\Validator\Context\ExecutionContextInterface;
 #[ORM\Index(columns: ['created_at'], name: 'idx_signalement_created_at')]
 #[ORM\Index(columns: ['is_imported'], name: 'idx_signalement_is_imported')]
 #[ORM\Index(columns: ['uuid'], name: 'idx_signalement_uuid')]
-class Signalement
+class Signalement implements EntityHistoryInterface
 {
     public const STATUS_NEED_VALIDATION = 1;
     public const STATUS_ACTIVE = 2;
@@ -39,6 +42,7 @@ class Signalement
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column(type: 'integer')]
+    #[Groups(['history_entry:read'])]
     private $id;
 
     #[ORM\Column(type: 'string', length: 255)]
@@ -2443,5 +2447,10 @@ class Signalement
         }
 
         return $this->getTerritory()->getTimezone();
+    }
+
+    public function getHistoryRegisteredEvent(): array
+    {
+        return [HistoryEntryEvent::CREATE, HistoryEntryEvent::UPDATE, HistoryEntryEvent::DELETE];
     }
 }
