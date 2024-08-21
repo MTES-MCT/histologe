@@ -2,6 +2,8 @@
 
 namespace App\Entity;
 
+use App\Entity\Behaviour\EntityHistoryInterface;
+use App\Entity\Enum\HistoryEntryEvent;
 use App\Entity\Enum\PartnerType;
 use App\Entity\Enum\ProfileDeclarant;
 use App\Repository\AutoAffectationRuleRepository;
@@ -10,7 +12,7 @@ use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: AutoAffectationRuleRepository::class)]
-class AutoAffectationRule
+class AutoAffectationRule implements EntityHistoryInterface
 {
     public const STATUS_ACTIVE = 'ACTIVE';
     public const STATUS_ARCHIVED = 'ARCHIVED';
@@ -266,5 +268,10 @@ class AutoAffectationRule
         $description .= ' (Règle '.strtolower($this->getStatus()).')';
 
         return $description;
+    }
+
+    public function getHistoryRegisteredEvent(): array
+    {
+        return [HistoryEntryEvent::CREATE, HistoryEntryEvent::UPDATE, HistoryEntryEvent::DELETE];
     }
 }

@@ -2,8 +2,10 @@
 
 namespace App\Entity;
 
+use App\Entity\Behaviour\EntityHistoryInterface;
 use App\Entity\Behaviour\TimestampableTrait;
 use App\Entity\Enum\DocumentType;
+use App\Entity\Enum\HistoryEntryEvent;
 use App\Entity\Enum\InterventionType;
 use App\Entity\Enum\ProcedureType;
 use App\Repository\InterventionRepository;
@@ -14,7 +16,7 @@ use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: InterventionRepository::class)]
 #[ORM\HasLifecycleCallbacks()]
-class Intervention
+class Intervention implements EntityHistoryInterface
 {
     use TimestampableTrait;
 
@@ -325,5 +327,10 @@ class Intervention
         return $this->files->filter(function (File $file) {
             return DocumentType::PROCEDURE_RAPPORT_DE_VISITE === $file->getDocumentType();
         });
+    }
+
+    public function getHistoryRegisteredEvent(): array
+    {
+        return [HistoryEntryEvent::CREATE, HistoryEntryEvent::UPDATE, HistoryEntryEvent::DELETE];
     }
 }

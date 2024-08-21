@@ -2,7 +2,9 @@
 
 namespace App\Entity;
 
+use App\Entity\Behaviour\EntityHistoryInterface;
 use App\Entity\Enum\DocumentType;
+use App\Entity\Enum\HistoryEntryEvent;
 use App\Repository\FileRepository;
 use App\Service\ImageManipulationHandler;
 use Doctrine\DBAL\Types\Types;
@@ -11,7 +13,7 @@ use Symfony\Component\Uid\Uuid;
 use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: FileRepository::class)]
-class File
+class File implements EntityHistoryInterface
 {
     public const FILE_TYPE_DOCUMENT = 'document';
     public const FILE_TYPE_PHOTO = 'photo';
@@ -399,5 +401,10 @@ class File
         $this->isOriginalDeleted = $isOriginalDeleted;
 
         return $this;
+    }
+
+    public function getHistoryRegisteredEvent(): array
+    {
+        return [HistoryEntryEvent::CREATE, HistoryEntryEvent::UPDATE, HistoryEntryEvent::DELETE];
     }
 }

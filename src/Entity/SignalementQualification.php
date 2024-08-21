@@ -2,6 +2,8 @@
 
 namespace App\Entity;
 
+use App\Entity\Behaviour\EntityHistoryInterface;
+use App\Entity\Enum\HistoryEntryEvent;
 use App\Entity\Enum\Qualification;
 use App\Entity\Enum\QualificationStatus;
 use App\Repository\SignalementQualificationRepository;
@@ -9,7 +11,7 @@ use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: SignalementQualificationRepository::class)]
-class SignalementQualification
+class SignalementQualification implements EntityHistoryInterface
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
@@ -35,7 +37,7 @@ class SignalementQualification
     #[ORM\Column(nullable: true)]
     private array $details = [];
 
-    #[ORM\Column(type: 'string', enumType: QualificationStatus::class, nullable: true)]
+    #[ORM\Column(type: 'string', nullable: true, enumType: QualificationStatus::class)]
     private ?QualificationStatus $status = null;
 
     #[ORM\Column(nullable: true)]
@@ -146,5 +148,10 @@ class SignalementQualification
         $this->isPostVisite = $isPostVisite;
 
         return $this;
+    }
+
+    public function getHistoryRegisteredEvent(): array
+    {
+        return [HistoryEntryEvent::CREATE, HistoryEntryEvent::UPDATE, HistoryEntryEvent::DELETE];
     }
 }
