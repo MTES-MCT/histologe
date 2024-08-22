@@ -106,7 +106,7 @@ class HomepageController extends AbstractController
             return new JsonResponse(['html' => $view]);
         }
 
-        $view = $this->renderView('_partials/_form-demande-lien-signalement.html.twig', ['form' => $form]);
+        $view = $this->renderView('form/form-demande-lien-signalement.html.twig', ['form' => $form]);
 
         return new JsonResponse(['html' => $view]);
     }
@@ -131,34 +131,13 @@ class HomepageController extends AbstractController
         return $this->render('front/aides_travaux.html.twig');
     }
 
-    #[Route('/contact', name: 'front_contact')]
+    #[Route('/contact', name: 'front_contact', methods: ['GET'])]
     public function contact(
-        Request $request,
-        ContactFormHandler $contactFormHandler,
         ParameterBagInterface $parameterBag,
-        RateLimiterFactory $contactFormLimiter
     ): Response {
-        $form = $this->createForm(ContactType::class, []);
-        $form->handleRequest($request);
-        if ($form->isSubmitted() && $form->isValid()) {
-            $limiter = $contactFormLimiter->create($request->getClientIp());
-            if (false === $limiter->consume(1)->isAccepted()) {
-                $this->addFlash('error', 'Vous avez atteint le nombre maximum de messages que vous pouvez envoyer. Veuillez réessayer plus tard.');
-
-                return $this->redirectToRoute('home');
-            }
-            $contactFormHandler->handle(
-                $form->get('nom')->getData(),
-                $form->get('email')->getData(),
-                $form->get('message')->getData(),
-                (string) $form->get('organisme')->getData(),
-                $form->get('objet')->getData()
-            );
-            $this->addFlash('success', 'Votre message à bien été envoyé !');
-
-            return $this->redirectToRoute('front_contact');
-        }
-
+        $form = $this->createForm(ContactType::class, null, [
+            'action' => $this->generateUrl('front_contact_form'),
+        ]);
         $demandeLienSignalement = new DemandeLienSignalement();
         $formDemandeLienSignalement = $this->createForm(DemandeLienSignalementType::class, $demandeLienSignalement, [
             'action' => $this->generateUrl('front_demande_lien_signalement'),
@@ -169,6 +148,41 @@ class HomepageController extends AbstractController
             'contactEmail' => $parameterBag->get('contact_email'),
             'formDemandeLienSignalement' => $formDemandeLienSignalement,
         ]);
+    }
+
+    #[Route('/contact', name: 'front_contact_form', methods: ['POST'])]
+    public function contactForm(
+        Request $request,
+        ContactFormHandler $contactFormHandler,
+        RateLimiterFactory $contactFormLimiter
+    ): JsonResponse {
+        $type = 'error';
+        $message = null;
+        $form = $this->createForm(ContactType::class, null, [
+            'action' => $this->generateUrl('front_contact_form'),
+        ]);
+        $form->handleRequest($request);
+        if ($form->isSubmitted() && $form->isValid()) {
+            $limiter = $contactFormLimiter->create($request->getClientIp());
+            if (false === $limiter->consume(1)->isAccepted()) {
+                $message = 'Vous avez atteint le nombre maximum de messages que vous pouvez envoyer. Veuillez réessayer plus tard.';
+                $view = $this->renderView('form/form-contact.html.twig', ['form' => $form, 'type' => $type, 'message' => $message]);
+
+                return new JsonResponse(['html' => $view]);
+            }
+            $contactFormHandler->handle(
+                $form->get('nom')->getData(),
+                $form->get('email')->getData(),
+                $form->get('message')->getData(),
+                (string) $form->get('organisme')->getData(),
+                $form->get('objet')->getData()
+            );
+            $type = 'success';
+            $message = 'Votre message à bien été envoyé !';
+        }
+        $view = $this->renderView('form/form-contact.html.twig', ['form' => $form, 'type' => $type, 'message' => $message]);
+
+        return new JsonResponse(['html' => $view]);
     }
 
     #[Route('/cgu', name: 'front_cgu')]

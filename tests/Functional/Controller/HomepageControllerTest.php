@@ -92,11 +92,12 @@ class HomepageControllerTest extends WebTestCase
         ]
         );
 
-        $this->assertSelectorTextContains(
-            '#contact_message + p.fr-error-text',
-            'Merci de renseigner votre message',
-            $client->getResponse()->getContent()
-        );
+        $response = $client->getResponse();
+        $this->assertTrue($response->headers->contains('Content-Type', 'application/json'));
+
+        $data = json_decode($response->getContent(), true);
+        $this->assertArrayHasKey('html', $data);
+        $this->assertStringContainsString('Merci de renseigner votre message', $data['html']);
     }
 
     public function testSubmitDemandeLienSignalement(): void

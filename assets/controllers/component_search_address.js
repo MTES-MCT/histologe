@@ -21,6 +21,9 @@ function attachAutocompleteClickOutsideEvent() {
 }
 
 export function attacheAutocompleteAddressEvent(inputAdresse) {
+    if (!inputAdresse) {
+        return false
+    }
     const apiAdresse = 'https://api-adresse.data.gouv.fr/search/?q='
     const addressGroup = document?.querySelector(inputAdresse.dataset.autocompleteQuerySelector)
     inputAdresse.addEventListener('input', (e) => {

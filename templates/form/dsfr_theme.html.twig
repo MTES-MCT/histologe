@@ -11,7 +11,11 @@
         {% set row_attr = row_attr|merge({'class': (row_attr.class|default('') ~ ' fr-input-group')|trim}) %}
     {% endif %}
     {% if errors|length > 0 %}
-        {% set row_attr = row_attr|merge({'class': (row_attr.class ~ ' fr-input-group--error')|trim}) %}
+        {% if 'choice' in block_prefixes %}
+            {% set row_attr = row_attr|merge({'class': (row_attr.class ~ ' fr-select-group--error')|trim}) %}
+        {% else %}
+            {% set row_attr = row_attr|merge({'class': (row_attr.class ~ ' fr-input-group--error')|trim}) %}
+        {% endif %}
     {% endif %}
     <div{% with {attr: row_attr} %}{{ block('attributes') }}{% endwith %}>
         {{form_label(form)}}

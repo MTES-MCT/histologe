@@ -10,3 +10,4 @@ import './controllers/maintenance_banner';
 import './controllers/activate_account/activate_account';
 import './controllers/front_demande_lien_signalement/front_demande_lien_signalement';
 import './controllers/front_suivi_signalement/front_suivi_signalement';
+import './controllers/front_contact/front_contact';

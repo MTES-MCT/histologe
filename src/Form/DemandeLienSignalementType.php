@@ -6,6 +6,7 @@ use App\Dto\DemandeLienSignalement;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
@@ -14,10 +15,11 @@ class DemandeLienSignalementType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
-            ->add('email', null, [
+            ->add('email', TextType::class, [
                 'label' => 'Adresse e-mail',
                 'help' => 'Renseignez l\'adresse e-mail utilisée pour déposer le signalement',
-                'attr' => ['autocomplete' => 'email'],
+                'attr' => ['autocomplete' => 'email', 'aria-required' => 'true'],
+                'required' => false,
             ])
             ->add('adresseHelper', null, [
                 'label' => 'Adresse du logement',
@@ -26,7 +28,9 @@ class DemandeLienSignalementType extends AbstractType
                     'autocomplete' => 'off',
                     'data-fr-adresse-autocomplete' => 'true',
                     'data-autocomplete-query-selector' => '#form-demande-lien-signalement .fr-address-group',
+                    'aria-required' => 'true',
                 ],
+                'required' => false,
             ])
             ->add('adresse', HiddenType::class, [
                 'attr' => ['data-autocomplete-addresse' => 'true'],

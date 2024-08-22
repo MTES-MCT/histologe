@@ -7,6 +7,9 @@ if (containerFormDemandeLienSignalement) {
 
 function attachSubmitFormDemandeLienSignalementEvent() {
     const fomDemandeLienSignalement = document?.querySelector('#form-demande-lien-signalement')
+    if(!fomDemandeLienSignalement){
+        return false;
+    }
     fomDemandeLienSignalement.addEventListener('submit', (e) => {
         e.preventDefault();
         fomDemandeLienSignalement.querySelector('button[type="submit"]').disabled = true;
