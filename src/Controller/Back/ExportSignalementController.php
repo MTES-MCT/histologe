@@ -8,13 +8,27 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\HeaderUtils;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 use Symfony\Component\Routing\Annotation\Route;
 
-#[Route('/bo')]
+#[Route('/bo/export/signalement')]
 class ExportSignalementController extends AbstractController
 {
-    #[Route('/export/signalement', name: 'back_signalement_list_export')]
+    #[Route('/', name: 'back_signalement_list_export', methods: ['GET'])]
+    public function index(
+        Request $request,
+    ): Response {
+        /** @var User $user */
+        $user = $this->getUser();
+        $filters = $request->getSession()->get('filters');
+
+        return $this->render('back/signalement_export/index.html.twig', [
+            'filters' => $filters
+        ]);
+    }
+
+    #[Route('/', name: 'back_signalement_list_export')]
     public function exportCsv(
         Request $request,
         SignalementExportLoader $signalementExportLoader

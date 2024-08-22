@@ -1,0 +1,79 @@
+{% extends 'back/base_bo.html.twig' %}
+
+{% block title %}Exporter les signalements{% endblock %}
+
+{% block content %}
+    <section class="fr-p-5v">
+        <header>
+            <div class="fr-grid-row">
+                <div class="fr-col-6 fr-text--left">
+                    <h1 class="fr-h1 fr-mb-0">Exporter la liste des XXX signalements</h1>
+                </div>
+            </div>
+        </header>
+    </section>
+    <section class="fr-container--fluid">
+        <p>
+            Vous êtes sur le point d'exporter la liste des signalements de votre choix.
+            <br>
+            Vous pouvez choisir le format et les informations à exporter. Certaines informations sont présentes par défaut dans le fichier.
+        </p>
+    </section>
+
+    <section class="fr-container--fluid">
+        <h2>Filtres actifs</h2>
+        <p>
+            Votre liste contient 956 signalements. Les filtres suivants sont actifs :
+        </p>
+        <p class="fr-badge">Label badge</p>
+    </section>
+
+    <section class="fr-container--fluid">
+        <h2>Format</h2>
+
+        <fieldset class="fr-fieldset" id="radio-rich-hint-inline" aria-labelledby="radio-rich-hint-inline-legend radio-rich-hint-inline-messages">
+            <legend class="fr-fieldset__legend--regular fr-fieldset__legend" id="radio-rich-hint-inline-legend">
+                Sélectionnez le format du fichier qui vous sera envoyé par mail.
+            </legend>
+            <div class="fr-fieldset__element fr-fieldset__element--inline">
+                <div class="fr-radio-group fr-radio-rich">
+                    <input value="1" type="radio" id="radio-rich-hint-inline-1" name="radio-rich-hint-inline">
+                    <label class="fr-label" for="radio-rich-hint-inline-1">
+                        Ficher Excel (.xls)
+                    </label>
+                    <div class="fr-radio-rich__pictogram">
+                        <svg aria-hidden="true" class="fr-artwork" viewBox="0 0 80 80" width="80px" height="80px">
+                            <image class="fr-artwork-decorative" href="/build/dsfr/artwork/pictograms/document/document-download.svg#artwork-decorative"></image>
+                            <image class="fr-artwork-minor" href="/build/dsfr/artwork/pictograms/document/document-download.svg#artwork-minor"></image>
+                            <image class="fr-artwork-major" href="/build/dsfr/artwork/pictograms/document/document-download.svg#artwork-major"></image>
+                        </svg>
+                    </div>
+                </div>
+            </div>
+            <div class="fr-fieldset__element fr-fieldset__element--inline">
+                <div class="fr-radio-group fr-radio-rich">
+                    <input value="2" type="radio" id="radio-rich-hint-inline-2" name="radio-rich-hint-inline">
+                    <label class="fr-label" for="radio-rich-hint-inline-2">
+                        Ficher CSV
+                    </label>
+                    <div class="fr-radio-rich__pictogram">
+                        <svg aria-hidden="true" class="fr-artwork" viewBox="0 0 80 80" width="80px" height="80px">
+                            <image class="fr-artwork-decorative" href="/build/dsfr/artwork/pictograms/document/document-download.svg#artwork-decorative"></image>
+                            <image class="fr-artwork-minor" href="/build/dsfr/artwork/pictograms/document/document-download.svg#artwork-minor"></image>
+                            <image class="fr-artwork-major" href="/build/dsfr/artwork/pictograms/document/document-download.svg#artwork-major"></image>
+                        </svg>
+                    </div>
+                </div>
+            </div>
+            <div class="fr-messages-group" id="radio-rich-hint-inline-messages" aria-live="polite">
+            </div>
+        </fieldset>
+    </section>
+
+    <section class="fr-container--fluid">
+        <h2>Informations du fichier</h2>
+        <p>
+            Les informations contenues dans ce fichier ne doivent en aucun cas être partagées en dehors des services compétents à traiter le dossier.
+        </p>
+    </section>
+{% endblock %}
