@@ -1,16 +1,16 @@
 <template>
-    <div class="fr-input-group" :id="id">
+  <div class="fr-input-group" :id="id">
     <label :class="[ customCss, 'fr-label' ]" :for="id + '_input'">{{ label }}</label>
     <span v-if="hint !== ''" class="fr-hint-text">{{ hint }}</span>
     <input
-        type="date"
-        :id="id + '_input'"
-        :name="id"
-        :value="internalValue"
-        :class="[ customCss, 'fr-input' ]"
-        @input="updateValue($event)"
-        :aria-describedby="hasError ? id + '-text-input-error-desc-error' : undefined"
-        >
+      type="date"
+      :id="id + '_input'"
+      :name="id"
+      :value="internalValue"
+      :class="[ customCss, 'fr-input' ]"
+      @input="updateValue($event)"
+      :aria-describedby="hasError ? id + '-text-input-error-desc-error' : undefined"
+      >
     <div
       :id="id + '-text-input-error-desc-error'"
       class="fr-error-text"
@@ -18,7 +18,7 @@
       >
       {{ error }}
     </div>
-    </div>
+  </div>
 </template>
 
 <script lang="ts">
@@ -37,6 +37,7 @@ export default defineComponent({
     // les propriétés suivantes ne sont pas utilisées,
     // mais si on ne les met pas, elles apparaissent dans le DOM
     // et ça soulève des erreurs W3C
+    validate: { type: Object, default: null },
     handleClickComponent: Function,
     clickEvent: Function,
     access_name: { type: String, default: undefined },

@@ -29,7 +29,6 @@
       </div>
       <div class="fr-col-4 fr-signalement-form-upload-delete-button">
         <button
-          id="signalement_uploadedfile_delete"
           class="fr-link fr-icon-close-circle-line fr-link--icon-left fr-link--error"
           @click="deleteFile(file)"
           >
