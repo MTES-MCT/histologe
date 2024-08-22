@@ -3,6 +3,7 @@
 namespace App\Controller\Back;
 
 use App\Entity\User;
+use App\Manager\SignalementManager;
 use App\Service\Signalement\Export\SignalementExportLoader;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\HeaderUtils;
@@ -54,15 +55,111 @@ class ExportSignalementController extends AbstractController
     #[Route('/', name: 'back_signalement_list_export', methods: ['GET'])]
     public function index(
         Request $request,
+        SignalementManager $signalementManager,
     ): Response {
         /** @var User $user */
         $user = $this->getUser();
-        $filters = $request->getSession()->get('filters');
+        $filters = $options = $request->getSession()->get('filters') ?? ['isImported' => '1'];
+        $signalements = $signalementManager->findSignalementAffectationList($user, $options);
+        $count_signalements = $signalements['pagination']['total_items'];
+
+        $textFilters = $this->filtersToText($filters);
 
         return $this->render('back/signalement_export/index.html.twig', [
-            'filters' => $filters,
-            'selectable_cols' => self::SELECTABLE_COLS
+            'filters' => $textFilters,
+            'selectable_cols' => self::SELECTABLE_COLS,
+            'count_signalements' => $count_signalements,
         ]);
+    }
+
+    private function filtersToText (array $filters): array {
+        unset($filters['page']);
+        unset($filters['maxItemsPerPage']);
+        unset($filters['sortBy']);
+        unset($filters['orderBy']);
+
+        $result = [];
+
+        foreach ($filters as $filterName => $filterValue) {
+            switch ($filterName) {
+                case 'isImported':
+                    $filterName = 'Signalement importés';
+                    break;
+                case 'territories':
+                    $filterName = 'Territoires';
+                    break;
+                case 'partners':
+                    $filterName = 'Partenaires';
+                    break;
+                case 'searchterms':
+                    $filterName = 'Recherche';
+                    break;
+                case 'cities':
+                    $filterName = 'Ville ou code postal';
+                    break;
+                case 'statuses':
+                    $filterName = 'Statut';
+                    break;
+                case 'epcis':
+                    $filterName = 'EPCI';
+                    break;
+                case 'procedure':
+                    $filterName = 'Procédure suspectée';
+                    break;
+                case 'dates':
+                    $filterName = 'Date de dépôt';
+                    break;
+                case 'visites':
+                    $filterName = 'Visite';
+                    break;
+                case 'typeDernierSuivi':
+                    $filterName = 'Type dernier suivi';
+                    break;
+                case 'datesDernierSuivi':
+                    $filterName = 'Date dernier suivi';
+                    break;
+                case 'statusAffectation':
+                    $filterName = 'Statut Affectation';
+                    break;
+                case 'closed_affectation':
+                    $filterName = 'Affectation fermée';
+                    break;
+                case 'enfantsM6':
+                    $filterName = 'Enfants de moins de 6 ans';
+                    break;
+                case 'scores':
+                    $filterName = 'Criticité';
+                    break;
+                case 'typeDeclarant':
+                    $filterName = 'Type de déclarant';
+                    break;
+                case 'situation':
+                    $filterName = 'Situation';
+                    break;
+                case 'bailleurSocial':
+                    $filterName = 'Bailleur';
+                    break;
+            }
+
+            if (is_array($filterValue)) {
+                $filterValue = implode(', ', $filterValue);
+            } elseif (is_a($filterValue, 'App\Entity\Bailleur')) {
+                $filterValue = $filterValue->getName();
+            } else {
+                if ($filterValue == '1') {
+                    $filterValue = 'Oui';
+                }
+                if ($filterValue == '0') {
+                    $filterValue = 'Non';
+                }
+            }
+
+            if (!empty($filterValue)) {
+                $result[$filterName] = $filterValue;
+            }
+        }
+
+        return $result;
     }
 
     #[Route('/csv', name: 'back_signalement_list_export_file', methods: ['POST'])]
@@ -70,13 +167,21 @@ class ExportSignalementController extends AbstractController
         Request $request,
         SignalementExportLoader $signalementExportLoader
     ): RedirectResponse|StreamedResponse {
+        $format = $request->get('file-format');
+        if (!in_array($format, ['csv', 'xls'])) {
+            $this->addFlash('error', "Merci de sélectionner le format de l'export.");
+            return $this->redirectToRoute('back_signalement_list_export');
+        }
+
+        $selectedColumns = $request->get('cols');
+
         /** @var User $user */
         $user = $this->getUser();
         $filters = $request->getSession()->get('filters');
         try {
             $response = new StreamedResponse();
-            $response->setCallback(function () use ($signalementExportLoader, $filters, $user) {
-                $signalementExportLoader->load($user, $filters);
+            $response->setCallback(function () use ($signalementExportLoader, $filters, $user, $selectedColumns) {
+                $signalementExportLoader->load($user, $filters, $selectedColumns);
             });
 
             $disposition = HeaderUtils::makeDisposition(

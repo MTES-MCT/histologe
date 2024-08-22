@@ -13,7 +13,7 @@
             'level3Link': '',
         } %}
 
-        <h1 class="fr-h1 fr-mb-0">Exporter la liste des XXX signalements</h1>
+        <h1 class="fr-h1 fr-mb-0">Exporter la liste des {{ count_signalements }} signalements</h1>
     </header>
 
     <section class="fr-mt-3v">
@@ -27,9 +27,11 @@
     <section>
         <h2>Filtres actifs</h2>
         <div class="fr-mb-3v">
-            Votre liste contient 956 signalements. Les filtres suivants sont actifs :
+            Votre liste contient {{ count_signalements }} signalements. Les filtres suivants sont actifs :
         </div>
-        <p class="fr-badge">Label badge</p>
+        {% for filterName, filterValue in filters %}
+            <p class="fr-badge">{{ filterName }} : {{ filterValue }}</p>
+        {% endfor %}
     </section>
 
     <form action="{{ path('back_signalement_list_export_file') }}" method="POST" class="fr-mt-5v">
@@ -37,12 +39,12 @@
 
         <fieldset class="fr-fieldset" id="radio-rich-hint-inline" aria-labelledby="radio-rich-hint-inline-legend radio-rich-hint-inline-messages">
             <legend class="fr-fieldset__legend--regular fr-fieldset__legend" id="radio-rich-hint-inline-legend">
-                Sélectionnez le format du fichier qui vous sera envoyé par mail.
+                Sélectionnez le format du fichier qui vous sera envoyé par e-mail.
             </legend>
             <div class="fr-fieldset__element fr-fieldset__element--inline">
                 <div class="fr-radio-group fr-radio-rich">
-                    <input value="1" type="radio" id="radio-rich-hint-inline-1" name="radio-rich-hint-inline">
-                    <label class="fr-label" for="radio-rich-hint-inline-1">
+                    <input value="xls" type="radio" id="radio-rich-hint-inline-xls" name="file-format">
+                    <label class="fr-label" for="radio-rich-hint-inline-xls">
                         Ficher Excel (.xls)
                     </label>
                     <div class="fr-radio-rich__pictogram">
@@ -52,8 +54,8 @@
             </div>
             <div class="fr-fieldset__element fr-fieldset__element--inline">
                 <div class="fr-radio-group fr-radio-rich">
-                    <input value="2" type="radio" id="radio-rich-hint-inline-2" name="radio-rich-hint-inline">
-                    <label class="fr-label" for="radio-rich-hint-inline-2">
+                    <input value="csv" type="radio" id="radio-rich-hint-inline-csv" name="file-format">
+                    <label class="fr-label" for="radio-rich-hint-inline-csv">
                         Ficher CSV
                     </label>
                     <div class="fr-radio-rich__pictogram">
@@ -83,7 +85,7 @@
             <li><strong>Nom occupant :</strong> le nom de l'occupant du logement</li>
             <li><strong>Prénom occupant :</strong> le prénom de l'occupant du logement</li>
             <li><strong>Téléphone occupant :</strong> le numéro de téléphone de l'occupant</li>
-            <li><strong>Email occupant :</strong> l'adresse e-mail de l'occupant</li>
+            <li><strong>E-mail occupant :</strong> l'adresse e-mail de l'occupant</li>
             <li><strong>Adresse :</strong> l'adresse postale du logement</li>
             <li><strong>Code postal :</strong> le code postal du logement</li>
             <li><strong>Commune :</strong> la commune du logement</li>
@@ -128,7 +130,7 @@
                                 <tr data-row-key="{{ loop.index }}">
                                     <th class="fr-cell--fixed" scope="row">
                                         <div class="fr-checkbox-group fr-checkbox-group--sm">
-                                            <input name="row-select" id="table-select-checkbox-{{ colId }}" type="checkbox" class="checkbox-column">
+                                            <input name="cols[]" value="{{ colId }}" id="table-select-checkbox-{{ colId }}" type="checkbox" class="checkbox-column">
                                             <label class="fr-label" for="table-select-checkbox-{{ colId }}">
                                                 {{ col.name }}
                                             </label>

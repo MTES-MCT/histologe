@@ -11,11 +11,11 @@ class SignalementExportLoader
     {
     }
 
-    public function load(User $user, ?array $filters): void
+    public function load(User $user, ?array $filters, array $selectedColumns): void
     {
         $handle = fopen('php://output', 'w');
         fputcsv($handle, SignalementExportHeader::getHeaders(), SignalementExportHeader::SEPARATOR);
-        foreach ($this->signalementManager->findSignalementAffectationIterable($user, $filters) as $signalementExportItem) {
+        foreach ($this->signalementManager->findSignalementAffectationIterable($user, $filters, $selectedColumns) as $signalementExportItem) {
             fputcsv($handle, get_object_vars($signalementExportItem), SignalementExportHeader::SEPARATOR);
         }
         fclose($handle);

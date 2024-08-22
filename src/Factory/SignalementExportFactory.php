@@ -18,7 +18,7 @@ class SignalementExportFactory
     public const ALLOCATAIRE = ['CAF', 'MSA', 'Oui', 1];
     public const DATE_FORMAT = 'd/m/Y';
 
-    public function createInstanceFrom(User $user, array $data): SignalementExport
+    public function createInstanceFrom(User $user, array $data, array $selectedColumns): SignalementExport
     {
         $createdAt = $data['createdAt'] instanceof \DateTimeImmutable
             ? $data['createdAt']->format(self::DATE_FORMAT)
