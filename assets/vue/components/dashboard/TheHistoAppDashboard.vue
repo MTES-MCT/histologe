@@ -24,6 +24,7 @@
       <div class="fr-px-3w">
         <div class="fr-grid-row fr-grid-row--gutters fr-mb-1w">
           <div class="fr-col fr-col-md-9">
+            <!-- // TODO : ajouter avatar -->
             <h1>Bonjour {{ sharedState.user.prenom }}</h1>
             <p>Bienvenue sur votre tableau de bord !</p>
           </div>

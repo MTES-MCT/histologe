@@ -32,25 +32,33 @@ function handleEditSignalementModalForm(element) {
 }
 
 async function submitPayload(formElement) {
+    let response;
     try {
         const formData = new FormData(formElement);
-        const payload = {};
-        formData.forEach((value, key) => {
-            payload[key] = value;
-        });
 
-        const response = await fetch(formElement.action, {
-            method: 'POST',
-            body: JSON.stringify(payload),
-            headers: {
-                'Content-Type': 'application/json'
-            }
-        });
-        const responseData = await response.json();
+        if (formElement.enctype === 'multipart/form-data') {
+            response = await fetch(formElement.action, {
+                method: 'POST',
+                body: formData
+            });
+        } else {
+            let payload = {};
+            formData.forEach((value, key) => {
+                payload[key] = value;
+            });
+            response = await fetch(formElement.action, {
+                method: 'POST',
+                body: JSON.stringify(payload),
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            });
+        }
         if (response.ok) {
             location.reload();
             window.scrollTo(0, 0);
         } else if (response.status === 400) {
+            const responseData = await response.json();
             const errors = responseData.errors;
             const submitElement = document.querySelector(`.fr-modal--opened [type="submit"]`);
             let firstErrorElement = true;
@@ -80,6 +88,7 @@ async function submitPayload(formElement) {
             submitElement.disabled = false;
             submitElement.classList.remove('fr-btn--loading', 'fr-btn--icon-left', 'fr-icon-refresh-line');
         } else {
+            const responseData = await response.json();
             alert(responseData.message);
         }
     } catch (error) {

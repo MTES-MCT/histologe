@@ -149,6 +149,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, TwoFact
     #[ORM\Column(type: 'string', nullable: true)]
     private ?string $cguVersionChecked;
 
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $avatarFilename = null;
+
     public function __construct()
     {
         $this->suivis = new ArrayCollection();
@@ -616,6 +619,18 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, TwoFact
     public function setCguVersionChecked(string $cguVersionChecked): self
     {
         $this->cguVersionChecked = $cguVersionChecked;
+
+        return $this;
+    }
+
+    public function getAvatarFilename(): ?string
+    {
+        return $this->avatarFilename;
+    }
+
+    public function setAvatarFilename(?string $avatarFilename): self
+    {
+        $this->avatarFilename = $avatarFilename;
 
         return $this;
     }

@@ -119,7 +119,7 @@ class UploadHandlerService
         return $all;
     }
 
-    private function moveFilePath(string $filePath): ?string
+    public function moveFilePath(string $filePath): ?string
     {
         try {
             $pathInfo = pathinfo($filePath);
