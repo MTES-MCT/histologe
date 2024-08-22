@@ -91,15 +91,10 @@ class ProfilController extends AbstractController
                             $uploadHandlerService->moveFilePath($res['filePath']);
                         }
 
-                        // Suppression de l'ancien avatar si existant
-                        // if ($user->getAvatarFilename()) {
-                        //     $oldAvatarPath = $uploadDir.'/'.$user->getAvatarFilename();
-                        //     if (file_exists($oldAvatarPath)) {
-                        //         unlink($oldAvatarPath);
-                        //     }
-                        // }
+                        if ($user->getAvatarFilename()) {
+                            $uploadHandlerService->deleteSingleFile($user->getAvatarFilename());
+                        }
 
-                        // Mise à jour du nom de fichier de l'utilisateur
                         $user->setAvatarFilename($res['file']);
                     } catch (FileException $e) {
                         $logger->error($e->getMessage());
@@ -129,7 +124,80 @@ class ProfilController extends AbstractController
         return $this->json($response, $response['code']);
     }
 
+    #[Route('/delete-avatar', name: 'back_profil_delete_avatar', methods: ['GET', 'POST'])]
+    #[IsGranted('ROLE_USER_PARTNER')]
+    public function deleteAvatar(
+        Request $request,
+        ManagerRegistry $doctrine,
+        UploadHandlerService $uploadHandlerService,
+    ): Response {
+        /** @var User $user */
+        $user = $this->getUser();
+        // && $this->isCsrfTokenValid('tag_delete', $request->request->get('_token'))
+        if ($user->getAvatarFilename()) {
+            $uploadHandlerService->deleteSingleFile($user->getAvatarFilename());
+            $user->setAvatarFilename(null);
+            $doctrine->getManager()->persist($user);
+            $doctrine->getManager()->flush();
+            $this->addFlash('success', 'L\'avatar a bien été supprimé.');
+
+            return $this->redirectToRoute('back_profil', [], Response::HTTP_SEE_OTHER);
+        }
+
+        $this->addFlash('error', 'Une erreur est survenue lors de la suppression...');
+
+        return $this->redirectToRoute('back_profil', [], Response::HTTP_SEE_OTHER);
+    }
+
     // TODO : modifier adresse e-mail
+    #[Route('/edit-email', name: 'back_profil_edit_email', methods: ['POST'])]
+    #[IsGranted('ROLE_USER_PARTNER')]
+    public function editEmail(
+        Request $request,
+        ManagerRegistry $doctrine,
+        UploadHandlerService $uploadHandlerService,
+    ): Response {
+        /** @var User $user */
+        $user = $this->getUser();
+        // // && $this->isCsrfTokenValid('tag_delete', $request->request->get('_token'))
+        // if ($user->getAvatarFilename()) {
+        //     $uploadHandlerService->deleteSingleFile($user->getAvatarFilename());
+        //     $user->setAvatarFilename(null);
+        //     $doctrine->getManager()->persist($user);
+        //     $doctrine->getManager()->flush();
+        //     $this->addFlash('success', 'L\'avatar a bien été supprimé.');
+
+        //     return $this->redirectToRoute('back_profil', [], Response::HTTP_SEE_OTHER);
+        // }
+
+        // $this->addFlash('error', 'Une erreur est survenue lors de la suppression...');
+
+        return $this->redirectToRoute('back_profil', [], Response::HTTP_SEE_OTHER);
+    }
 
     // TODO : modifier mot de passe
+    #[Route('/edit-password', name: 'back_profil_edit_password', methods: ['POST'])]
+    #[IsGranted('ROLE_USER_PARTNER')]
+    public function editPassword(
+        Request $request,
+        ManagerRegistry $doctrine,
+        UploadHandlerService $uploadHandlerService,
+    ): Response {
+        /** @var User $user */
+        $user = $this->getUser();
+        // // && $this->isCsrfTokenValid('tag_delete', $request->request->get('_token'))
+        // if ($user->getAvatarFilename()) {
+        //     $uploadHandlerService->deleteSingleFile($user->getAvatarFilename());
+        //     $user->setAvatarFilename(null);
+        //     $doctrine->getManager()->persist($user);
+        //     $doctrine->getManager()->flush();
+        //     $this->addFlash('success', 'L\'avatar a bien été supprimé.');
+
+        //     return $this->redirectToRoute('back_profil', [], Response::HTTP_SEE_OTHER);
+        // }
+
+        // $this->addFlash('error', 'Une erreur est survenue lors de la suppression...');
+
+        return $this->redirectToRoute('back_profil', [], Response::HTTP_SEE_OTHER);
+    }
 }

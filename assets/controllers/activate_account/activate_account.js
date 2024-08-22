@@ -18,6 +18,11 @@ document?.querySelector('form[name="login-creation-mdp-form"]')?.addEventListene
         event.target.submit();
     }
 })
+// console.log("cherche le form")
+// document?.querySelector('form[name="profil_edit_password"]')?.querySelectorAll('[name^="password"]').forEach(pwd => {
+//     console.log("jjjjj")
+//     pwd.addEventListener('input', canSubmitFormReinitPassword)
+// })
 
 function canSubmitFormReinitPassword() {
     const pass = document?.querySelector('form[name="login-creation-mdp-form"] #login-password').value;

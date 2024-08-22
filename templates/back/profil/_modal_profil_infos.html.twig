@@ -1,4 +1,4 @@
-<dialog aria-labelledby="fr-profil-infos-title" id="fr-modal-profil-edit-infos" class="fr-modal">
+<dialog aria-labelledby="fr-profil-edit-infos-title" id="fr-modal-profil-edit-infos" class="fr-modal">
     <div class="fr-container fr-container--fluid fr-container-md">
         <div class="fr-grid-row fr-grid-row--center">
             <div class="fr-col-12 fr-col-md-8">
@@ -13,11 +13,11 @@
                         <form action="{{ path('back_profil_edit_infos') }}" name="profil_edit_infos"
                               id="profil_edit_infos_form" method="POST" enctype="multipart/form-data">
                             <div class="fr-display-inline-flex fr-align-items-center">
-                                <div>
+                                <div class="fr-display-flex-column fr-align-items-center">
                                     {{ user_avatar_or_placeholder(app.user, 124) }}
-                                    {% if app.user.avatarFilename %}
-                                        {# {{ dump(app.user.avatarFilename) }} #}
-                                        Supprimer l'avatar
+                                    {% if app.user.avatarFilename %}                                        
+                                        <a href="{{ path('back_profil_delete_avatar') }}"
+                                        class="fr-link fr-fi-delete-line fr-link--icon-left">Supprimer l'avatar</a>
                                     {% endif %}
                                 </div>
                                 <div class="fr-ml-3v">
@@ -29,7 +29,7 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="fr-input-group fr-col-12 fr-pl-0 fr-pl-md-0">
+                            <div class="fr-input-group fr-col-12 fr-pl-0 fr-pl-md-0 fr-mt-2v">
                                 <label for="profil_edit_infos_prenom" class="fr-label">Prénom</label>
                                 <input type="text" id="profil_edit_infos_prenom" name="profil_edit_infos[prenom]"
                                     class="fr-input" value={{ app.user.prenom }} maxlength="255">

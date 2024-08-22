@@ -53,10 +53,11 @@
     </section>
     <hr>
     <section class="fr-px-5v fr-my-5v">
-        <div class="fr-grid-row fr-grid-row--middle">
+        <div class="fr-grid-row fr-grid-row--middle" data-ajax-form>         
+            {% include 'back/profil/_modal_profil_email.html.twig' %}
             <div class="fr-col-8 fr-text--left">
                 <h2>
-                Adresse email
+                Adresse e-mail
                 </h2>
             </div>
             <div class="fr-col-4 fr-text--right">
@@ -64,7 +65,7 @@
                     href="#"
                     title="Modifier mon adresse e-mail"
                     data-fr-opened="false" 
-                    {# aria-controls="fr-modal-etiquette-add" #}
+                    aria-controls="fr-modal-profil-edit-email"
                     >
                     Modifier mon adresse e-mail
                 </a>
@@ -76,7 +77,8 @@
     </section>
     <hr>
     <section class="fr-px-5v fr-my-5v">
-        <div class="fr-grid-row fr-grid-row--middle">
+        <div class="fr-grid-row fr-grid-row--middle" data-ajax-form>  
+            {% include 'back/profil/_modal_profil_password.html.twig' %}
             <div class="fr-col-8 fr-text--left">
                 <h2>
                 Mot de passe
@@ -87,7 +89,7 @@
                     href="#"
                     title="Modifier mon mot de passe"
                     data-fr-opened="false" 
-                    {# aria-controls="fr-modal-etiquette-add" #}
+                    aria-controls="fr-modal-profil-edit-password"
                     >
                     Modifier mon mot de passe
                 </a>

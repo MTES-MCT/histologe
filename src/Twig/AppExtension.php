@@ -26,7 +26,7 @@ class AppExtension extends AbstractExtension implements GlobalsInterface
         private readonly TimezoneProvider $timezoneProvider,
         private readonly ParameterBagInterface $parameterBag,
         private readonly FilesystemOperator $fileStorage,
-    ){
+    ) {
     }
 
     public function getGlobals(): array
