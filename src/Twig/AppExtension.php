@@ -45,10 +45,13 @@ class AppExtension extends AbstractExtension implements GlobalsInterface
      * @throws \Exception
      */
     public function customDateFilter(
-        string|\DateTimeImmutable|\DateTime $dateTime,
+        string|\DateTimeImmutable|\DateTime|null $dateTime,
         string $format = 'F j, Y H:i',
         ?string $timezone = null
-    ): string {
+    ): ?string {
+        if (null === $dateTime) {
+            return null;
+        }
         $dateTimeZone = null !== $timezone ? new \DateTimeZone($timezone) : $this->timezoneProvider->getDateTimezone();
         if ($dateTime instanceof \DateTimeInterface) {
             return $dateTime->setTimezone($dateTimeZone)->format($format);

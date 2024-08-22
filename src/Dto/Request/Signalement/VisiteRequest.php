@@ -12,11 +12,13 @@ class VisiteRequest
      */
     public function __construct(
         private readonly ?int $idIntervention = null,
+        #[Assert\NotBlank]
         #[Assert\DateTime('Y-m-d')]
         private readonly ?string $date = null,
         #[Assert\DateTime('H:i')]
         private readonly ?string $time = null,
         private readonly ?string $timezone = TimezoneProvider::TIMEZONE_EUROPE_PARIS,
+        #[Assert\NotBlank]
         private readonly ?int $idPartner = null,
         private readonly ?string $details = null,
         private readonly ?array $concludeProcedure = [],
@@ -63,7 +65,7 @@ class VisiteRequest
                 new \DateTimeZone($this->getTimezone())
             );
 
-            return $localDateTime->setTimezone(new \DateTimeZone('UTC'))->format('Y-m-d H:i:s');
+            return $localDateTime->setTimezone(new \DateTimeZone('UTC'))->format('Y-m-d H:i');
         }
 
         return $this->getDate();

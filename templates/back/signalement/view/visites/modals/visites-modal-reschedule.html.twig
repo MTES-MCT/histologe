@@ -41,7 +41,7 @@
                                         <p id="signalement-reschedule-visite-date-error" class="fr-error-text fr-hidden fr-my-3v">
                                             Veuillez préciser l'heure de la visite.
                                         </p>
-                                        <input type="time" class="fr-input" data-fields="visite-reschedule-past-date-complementary-fields" name="visite-reschedule[time]" value="{{ intervention.scheduledAt|date('H:i') }}">
+                                        <input type="time" class="fr-input" data-fields="visite-reschedule-past-date-complementary-fields" name="visite-reschedule[time]" value="{{ (intervention.scheduledAt.format('H')) > 0 ? intervention.scheduledAt|date('H:i')  : '' }}">
                                     </fieldset>
                                     
                                     {% if is_granted('ROLE_ADMIN_TERRITORY') %}
