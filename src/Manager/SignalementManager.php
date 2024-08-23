@@ -820,13 +820,13 @@ class SignalementManager extends AbstractManager
     public function findSignalementAffectationIterable(
         User|UserInterface|null $user,
         ?array $options = null,
-        array $selectedColumns
+        ?array $selectedColumns = null
     ): \Generator {
         $options['authorized_codes_insee'] = $this->parameterBag->get('authorized_codes_insee');
 
         /** @var SignalementRepository $signalementRepository */
         $signalementRepository = $this->getRepository();
-        foreach ($signalementRepository->findSignalementAffectationIterable($user, $options, $selectedColumns) as $row) {
+        foreach ($signalementRepository->findSignalementAffectationIterable($user, $options) as $row) {
             yield $this->signalementExportFactory->createInstanceFrom(
                 $user,
                 $row,

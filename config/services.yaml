@@ -45,6 +45,7 @@ parameters:
     feature_archive_inactive_account: '%env(bool:FEATURE_ARCHIVE_INACTIVE_ACCOUNT)%'
     feature_anonymize_expired_account: '%env(bool:FEATURE_ANONYMIZE_EXPIRED_ACCOUNT)%'
     cgu_current_version: '05/06/2024'
+    feature_export_custom: '%env(bool:FEATURE_EXPORT_CUSTOM)%'
 
 services:
     # default configuration for services in *this* file

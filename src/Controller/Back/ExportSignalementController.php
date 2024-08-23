@@ -162,8 +162,8 @@ class ExportSignalementController extends AbstractController
         return $result;
     }
 
-    #[Route('/csv', name: 'back_signalement_list_export_file', methods: ['POST'])]
-    public function exportCsv(
+    #[Route('/file', name: 'back_signalement_list_export_file', methods: ['POST'])]
+    public function exportFile(
         Request $request,
         SignalementExportLoader $signalementExportLoader
     ): RedirectResponse|StreamedResponse {
@@ -182,6 +182,35 @@ class ExportSignalementController extends AbstractController
             $response = new StreamedResponse();
             $response->setCallback(function () use ($signalementExportLoader, $filters, $user, $selectedColumns) {
                 $signalementExportLoader->load($user, $filters, $selectedColumns);
+            });
+
+            $disposition = HeaderUtils::makeDisposition(
+                HeaderUtils::DISPOSITION_ATTACHMENT,
+                'export-histologe-'.date('dmY').'.csv'
+            );
+            $response->headers->set('Content-Type', 'text/csv');
+            $response->headers->set('Content-Disposition', $disposition);
+
+            return $response;
+        } catch (\ErrorException $e) {
+            $this->addFlash('error', 'Problème d\'identification de votre demande. Merci de réessayer.');
+            throw new \Exception('Erreur lors de l\'export du fichier par l\'user "'.$user->getId().'" : '.$e->getMessage().' - '.print_r($filters, true));
+        }
+    }
+
+    #[Route('/csv', name: 'back_signalement_list_export_old_csv')]
+    public function exportCsv(
+        Request $request,
+        SignalementExportLoader $signalementExportLoader
+    ): RedirectResponse|StreamedResponse {
+
+        /** @var User $user */
+        $user = $this->getUser();
+        $filters = $request->getSession()->get('filters');
+        try {
+            $response = new StreamedResponse();
+            $response->setCallback(function () use ($signalementExportLoader, $filters, $user) {
+                $signalementExportLoader->load($user, $filters);
             });
 
             $disposition = HeaderUtils::makeDisposition(
