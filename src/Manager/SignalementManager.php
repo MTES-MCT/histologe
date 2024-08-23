@@ -820,7 +820,6 @@ class SignalementManager extends AbstractManager
     public function findSignalementAffectationIterable(
         User|UserInterface|null $user,
         ?array $options = null,
-        ?array $selectedColumns = null
     ): \Generator {
         $options['authorized_codes_insee'] = $this->parameterBag->get('authorized_codes_insee');
 
@@ -830,7 +829,6 @@ class SignalementManager extends AbstractManager
             yield $this->signalementExportFactory->createInstanceFrom(
                 $user,
                 $row,
-                $selectedColumns
             );
         }
     }
