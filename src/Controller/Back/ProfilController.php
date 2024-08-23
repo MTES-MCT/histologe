@@ -4,9 +4,14 @@ namespace App\Controller\Back;
 
 use App\Entity\File;
 use App\Entity\User;
+use App\Manager\UserManager;
 use App\Service\ImageManipulationHandler;
+use App\Service\Mailer\NotificationMail;
+use App\Service\Mailer\NotificationMailerRegistry;
+use App\Service\Mailer\NotificationMailerType;
 use App\Service\Security\FileScanner;
 use App\Service\UploadHandlerService;
+use App\Validator\EmailFormatValidator;
 use Doctrine\Persistence\ManagerRegistry;
 use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -155,48 +160,118 @@ class ProfilController extends AbstractController
     public function editEmail(
         Request $request,
         ManagerRegistry $doctrine,
-        UploadHandlerService $uploadHandlerService,
+        NotificationMailerRegistry $notificationMailerRegistry,
     ): Response {
+        $payload = $request->getPayload()->all();
         /** @var User $user */
         $user = $this->getUser();
-        // // && $this->isCsrfTokenValid('tag_delete', $request->request->get('_token'))
-        // if ($user->getAvatarFilename()) {
-        //     $uploadHandlerService->deleteSingleFile($user->getAvatarFilename());
-        //     $user->setAvatarFilename(null);
-        //     $doctrine->getManager()->persist($user);
-        //     $doctrine->getManager()->flush();
-        //     $this->addFlash('success', 'L\'avatar a bien été supprimé.');
+        if ($this->isCsrfTokenValid(
+            'profil_edit_email',
+            $payload['_token']
+        )) {
+            $errorMessage = [];
+            $email = $payload['profil_edit_email[email]'];
 
-        //     return $this->redirectToRoute('back_profil', [], Response::HTTP_SEE_OTHER);
-        // }
+            if ('' === $email) {
+                $errorMessage['errors']['profil_edit_email[email]']['errors'][] = 'Ce champ est obligatoire.';
+            } elseif (!EmailFormatValidator::validate($email)) {
+                $errorMessage['errors']['profil_edit_email[email]']['errors'][] = 'Veuillez saisir une adresse email au format adresse@email.fr.';
+            }
 
-        // $this->addFlash('error', 'Une erreur est survenue lors de la suppression...');
+            if (empty($errorMessage)) {
+                // $response = ['code' => Response::HTTP_OK];
+                // $doctrine->getManager()->persist($user);
+                // $doctrine->getManager()->flush();
+                // $this->addFlash('success', 'Votre adresse e-mail a bien été confirmée !');
+                $user->setEmailAuthCode(bin2hex(random_bytes(3)));
+                $doctrine->getManager()->persist($user);
+                $doctrine->getManager()->flush();
+                $notificationMailerRegistry->send(
+                    new NotificationMail(
+                        type: NotificationMailerType::TYPE_PROFIL_EDIT_EMAIL,
+                        to: $email,
+                        territory: $user->getTerritory(),
+                        user: $user
+                    )
+                );
 
-        return $this->redirectToRoute('back_profil', [], Response::HTTP_SEE_OTHER);
+                $response = [
+                    'code' => Response::HTTP_UNAUTHORIZED,
+                    'message' => 'on doit ouvrir une autre modale maintenant',
+                ];
+            } else {
+                $response = ['code' => Response::HTTP_BAD_REQUEST];
+                $response = [...$response, ...$errorMessage];
+            }
+        } else {
+            $response = [
+                'code' => Response::HTTP_UNAUTHORIZED,
+                'message' => self::ERROR_MSG,
+            ];
+        }
+
+        return $this->json($response, $response['code']);
     }
 
-    // TODO : modifier mot de passe
     #[Route('/edit-password', name: 'back_profil_edit_password', methods: ['POST'])]
     #[IsGranted('ROLE_USER_PARTNER')]
     public function editPassword(
         Request $request,
-        ManagerRegistry $doctrine,
-        UploadHandlerService $uploadHandlerService,
+        UserManager $userManager,
+        ValidatorInterface $validator,
+        NotificationMailerRegistry $notificationMailerRegistry,
     ): Response {
         /** @var User $user */
         $user = $this->getUser();
-        // // && $this->isCsrfTokenValid('tag_delete', $request->request->get('_token'))
-        // if ($user->getAvatarFilename()) {
-        //     $uploadHandlerService->deleteSingleFile($user->getAvatarFilename());
-        //     $user->setAvatarFilename(null);
-        //     $doctrine->getManager()->persist($user);
-        //     $doctrine->getManager()->flush();
-        //     $this->addFlash('success', 'L\'avatar a bien été supprimé.');
+        $payload = $request->getPayload()->all();
 
-        //     return $this->redirectToRoute('back_profil', [], Response::HTTP_SEE_OTHER);
-        // }
+        if ($request->isMethod('POST')
+            && $this->isCsrfTokenValid('profil_edit_password', $payload['_token'])
+        ) {
+            $password = $payload['password'];
+            $passwordRepeat = $payload['password-repeat'];
+            if ($password !== $passwordRepeat) {
+                $this->addFlash('error', 'Les mots de passes renseignés doivent être identiques.');
 
-        // $this->addFlash('error', 'Une erreur est survenue lors de la suppression...');
+                return $this->redirectToRoute('back_profil', [], Response::HTTP_SEE_OTHER);
+            }
+            $user->setPassword($password);
+            $errors = $validator->validate($user, null, ['password']);
+            if (\count($errors) > 0) {
+                $errorMessage = '<ul>';
+                foreach ($errors as $error) {
+                    $errorMessage .= '<li>'.$error->getMessage().'</li>';
+                }
+                $errorMessage .= '</ul>';
+                $this->addFlash('error error-raw', $errorMessage);
+
+                return $this->redirectToRoute('back_profil', [], Response::HTTP_SEE_OTHER);
+            }
+
+            // Erreurs possibles
+
+            // Champ vide : Ce champ est obligatoire.
+            // Mot de passe identique à l'actuel : Vous utilisez déjà ce mot de passe. Veuillez saisir un nouveau mot de passe.
+            // Pas de correspondance : Les mots de passes renseignés doivent être identiques.
+            // Mauvais format : Le mot de passe doit contenir : 12 caractères, 1 majuscule, 1 minuscule, 1 chiffre, 1 caractère spécial.
+
+            $user = $userManager->resetPassword($user, $password);
+
+            $notificationMailerRegistry->send(
+                new NotificationMail(
+                    type: NotificationMailerType::TYPE_PROFIL_EDIT_PASSWORD,
+                    to: $user->getEmail(),
+                    territory: $user->getTerritory(),
+                    user: $user
+                )
+            );
+
+            $this->addFlash('success', 'Votre mot de passe a bien été modifié.');
+
+            return $this->redirectToRoute('back_profil', [], Response::HTTP_SEE_OTHER);
+        }
+
+        $this->addFlash('error', self::ERROR_MSG);
 
         return $this->redirectToRoute('back_profil', [], Response::HTTP_SEE_OTHER);
     }

@@ -13,16 +13,13 @@ document?.querySelector('form[name="login-creation-mdp-form"]')?.querySelectorAl
 document?.querySelector('form[name="login-creation-mdp-form"]')?.addEventListener('submit', (event) => {
     event.preventDefault();
     const modalCgu = document.getElementById("fr-modal-cgu-bo");
-    dsfr(modalCgu).modal.conceal();
+    if (modalCgu) {
+        dsfr(modalCgu).modal.conceal();
+    }
     if(canSubmitFormReinitPassword()){
         event.target.submit();
     }
 })
-// console.log("cherche le form")
-// document?.querySelector('form[name="profil_edit_password"]')?.querySelectorAll('[name^="password"]').forEach(pwd => {
-//     console.log("jjjjj")
-//     pwd.addEventListener('input', canSubmitFormReinitPassword)
-// })
 
 function canSubmitFormReinitPassword() {
     const pass = document?.querySelector('form[name="login-creation-mdp-form"] #login-password').value;

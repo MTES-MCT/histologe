@@ -16,8 +16,8 @@
                         <form action="{{ path('back_profil_edit_email') }}" name="profil_edit_email"
                               id="profil_edit_email_form" method="POST" {# enctype="multipart/form-data" #}>
                             <div class="fr-input-group fr-col-12 fr-pl-0 fr-pl-md-0 fr-mt-2v">
-                                <label for="profil_edit_email_prenom" class="fr-label">Adresse e-mail</label>
-                                <input type="text" id="profil_edit_email_prenom" name="profil_edit_email[email]"
+                                <label for="profil_edit_email_email" class="fr-label">Adresse e-mail</label>
+                                <input type="text" id="profil_edit_email_email" name="profil_edit_email[email]"
                                     class="fr-input" value={{ app.user.email }} maxlength="255">
                             </div>  
                             <input type="hidden" name="_token" value="{{ csrf_token('profil_edit_email') }}">
