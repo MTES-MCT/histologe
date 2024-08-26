@@ -1,7 +1,7 @@
 <template>
   <div :class="[ customCss ]" :id="id">
     <h3 v-if="label">{{ variablesReplacer.replace(label) }}</h3>
-    <p v-if="description" v-html="variablesReplacer.replace(description)"></p>
+    <div v-if="description" v-html="variablesReplacer.replace(description)"></div>
     <div
       v-if="components != undefined"
       >
@@ -94,7 +94,14 @@ export default defineComponent({
     description: String,
     components: Object,
     customCss: { type: String, default: '' },
-    handleClickComponent: Function
+    handleClickComponent: Function,
+    // les propriétés suivantes ne sont pas utilisées,
+    // mais si on ne les met pas, elles apparaissent dans le DOM
+    // et ça soulève des erreurs W3C
+    hasError: { type: Boolean, default: undefined },
+    access_name: { type: String, default: undefined },
+    access_autocomplete: { type: String, default: undefined },
+    clickEvent: Function
   },
   data () {
     return {

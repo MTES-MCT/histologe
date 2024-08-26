@@ -8,7 +8,8 @@
         :description="description"
         :placeholder="placeholder"
         :validate="validate"
-        :autocomplete="autocomplete"
+        :access_name="access_name"
+        :access_autocomplete="access_autocomplete"
         :hasError="hasError"
         :error="error"
         @keydown.down.prevent="handleDownSuggestion"
@@ -52,7 +53,14 @@ export default defineComponent({
     hasError: { type: Boolean, default: false },
     error: { type: String, default: '' },
     autocomplete: { type: Object, default: null },
-    disabled: { type: Boolean, default: false }
+    disabled: { type: Boolean, default: false },
+    access_name: { type: String, default: '' },
+    access_autocomplete: { type: String, default: '' },
+    // les propriétés suivantes ne sont pas utilisées,
+    // mais si on ne les met pas, elles apparaissent dans le DOM
+    // et ça soulève des erreurs W3C
+    clickEvent: Function,
+    handleClickComponent: Function
   },
   data () {
     return {

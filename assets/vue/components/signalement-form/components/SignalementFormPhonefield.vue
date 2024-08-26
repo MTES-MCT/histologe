@@ -12,7 +12,7 @@
             :name="idCountryCode"
             v-model="formStore.data[idCountryCode]"
             title="Indicatif national"
-            :aria-describedby="'text-input-error-desc-error-'+id"
+            :aria-describedby="formStore.validationErrors[id] !== undefined ? id + '-text-input-error-desc-error' : undefined"
             >
             <option
               v-for="countryItem in countryList"
@@ -32,13 +32,13 @@
               :autocomplete="access_autocomplete"
               v-model="formStore.data[id]"
               class="fr-input"
-              :aria-describedby="'text-input-error-desc-error-'+id"
+              :aria-describedby="formStore.validationErrors[id] !== undefined ? id + '-text-input-error-desc-error' : undefined"
               >
           </div>
         </div>
       </div>
       <div
-        :id="'text-input-error-desc-error-'+id"
+        :id="id + '-text-input-error-desc-error'"
         class="fr-error-text"
         v-if="formStore.validationErrors[id] !== undefined"
         >
@@ -69,7 +69,7 @@
             :name="idCountryCodeSecond"
             v-model="formStore.data[idCountryCodeSecond]"
             title="Indicatif national"
-            :aria-describedby="'text-input-error-desc-error-'+idSecond"
+            :aria-describedby="formStore.validationErrors[idSecond] !== undefined ? idSecond + '-text-input-error-desc-error' : undefined"
             >
             <option
               v-for="countryItem in countryList"
@@ -88,14 +88,14 @@
               :name="idSecond"
               v-model="formStore.data[idSecond]"
               class="fr-input"
-              :aria-describedby="'text-input-error-desc-error-'+idSecond"
+              :aria-describedby="formStore.validationErrors[idSecond] !== undefined ? idSecond + '-text-input-error-desc-error' : undefined"
               :autocomplete="access_autocomplete"
               >
           </div>
         </div>
       </div>
       <div
-        :id="'text-input-error-desc-error-'+idSecond"
+        :id="idSecond + '-text-input-error-desc-error'"
         class="fr-error-text"
         v-if="formStore.validationErrors[idSecond] !== undefined"
         >
@@ -128,7 +128,12 @@ export default defineComponent({
     error: { type: String, default: '' },
     access_name: { type: String, default: '' },
     access_autocomplete: { type: String, default: '' },
-    clickEvent: Function
+    clickEvent: Function,
+    // les propriétés suivantes ne sont pas utilisées,
+    // mais si on ne les met pas, elles apparaissent dans le DOM
+    // et ça soulève des erreurs W3C
+    modelValue: { type: String, default: null },
+    handleClickComponent: Function
   },
   data () {
     if (formStore.data[this.id + '_countrycode'] === '' || formStore.data[this.id + '_countrycode'] === undefined) {

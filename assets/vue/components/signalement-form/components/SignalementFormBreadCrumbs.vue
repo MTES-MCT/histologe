@@ -13,7 +13,7 @@
 
       <!-- Fil d'ariane -->
       <div class="fr-px-5w">
-        <nav role="navigation" class="fr-breadcrumb" aria-label="vous êtes ici :">
+        <nav class="fr-breadcrumb" aria-label="vous êtes ici :">
           <button class="fr-breadcrumb__button" aria-expanded="false" aria-controls="breadcrumb-1">Voir le fil d’Ariane</button>
           <div class="fr-collapse" id="breadcrumb-1">
             <ol class="fr-breadcrumb__list">
@@ -34,7 +34,7 @@
       <SignalementFormModalBackHome />
     </div>
 
-    <nav class="fr-sidemenu fr-hidden fr-unhidden-md force-height-max" aria-labelledby="fr-sidemenu-title">
+    <nav class="fr-sidemenu fr-hidden fr-unhidden-md force-height-max">
       <div class="fr-sidemenu__inner force-height-max">
         <div class="fr-collapse" id="fr-sidemenu-wrapper">
           <ul class="fr-sidemenu__list">

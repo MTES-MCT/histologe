@@ -106,7 +106,15 @@ export default defineComponent({
   props: {
     id: { type: String, default: null },
     icons: { type: Object },
-    isValidationScreen: { type: Boolean, default: false }
+    isValidationScreen: { type: Boolean, default: false },
+    // les propriétés suivantes ne sont pas utilisées,
+    // mais si on ne les met pas, elles apparaissent dans le DOM
+    // et ça soulève des erreurs W3C
+    hasError: { type: Boolean, default: false },
+    clickEvent: Function,
+    handleClickComponent: Function,
+    access_name: { type: String, default: '' },
+    access_autocomplete: { type: String, default: '' }
   },
   data () {
     return {

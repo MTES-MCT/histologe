@@ -1,5 +1,5 @@
 <template>
-  <dialog aria-labelledby="fr-modal-title-modal-already-exists" role="dialog" id="fr-modal-already-exists" class="fr-modal signalement-form-modal-already-exists">
+  <dialog aria-labelledby="fr-modal-title-modal-already-exists" id="fr-modal-already-exists" class="fr-modal signalement-form-modal-already-exists">
     <div class="fr-container fr-container--fluid fr-container-md">
       <div class="fr-grid-row fr-grid-row--center">
         <div class="fr-col-12 fr-col-md-8 fr-col-lg-6">

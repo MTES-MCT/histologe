@@ -30,7 +30,6 @@
       :id="idShow"
       label="Saisir une adresse manuellement"
       :customCss="buttonCss + ' btn-link fr-btn--icon-left fr-icon-edit-line'"
-      :validate="validate"
       :action="actionShow"
       :clickEvent="handleClickButton"
     />
@@ -41,7 +40,6 @@
       label=""
       :customCss="subscreenCss + ' fr-mt-3v'"
       :components="screens"
-      :validate="validate"
       v-model="formStore.data[idSubscreen]"
       :hasError="formStore.validationErrors[idSubscreen] !== undefined"
       :error="formStore.validationErrors[idSubscreen]"
@@ -76,7 +74,14 @@ export default defineComponent({
     validate: { type: Object, default: null },
     hasError: { type: Boolean, default: false },
     error: { type: String, default: '' },
-    clickEvent: Function
+    clickEvent: Function,
+    // les propriétés suivantes ne sont pas utilisées,
+    // mais si on ne les met pas, elles apparaissent dans le DOM
+    // et ça soulève des erreurs W3C
+    components: Object,
+    handleClickComponent: Function,
+    access_name: { type: String, default: undefined },
+    access_autocomplete: { type: String, default: undefined }
   },
   data () {
     const updatedSubscreenData = subscreenManager.generateSubscreenData(this.id, subscreenData.body, this.validate)

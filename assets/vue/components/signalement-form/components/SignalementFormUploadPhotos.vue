@@ -37,7 +37,15 @@ export default defineComponent({
       default: () => []
     },
     labelInfo: { type: String, default: null },
-    labelUpload: { type: String, default: null }
+    labelUpload: { type: String, default: null },
+    // les propriétés suivantes ne sont pas utilisées,
+    // mais si on ne les met pas, elles apparaissent dans le DOM
+    // et ça soulève des erreurs W3C
+    hasError: { type: Boolean, default: false },
+    handleClickComponent: Function,
+    clickEvent: Function,
+    access_name: { type: String, default: undefined },
+    access_autocomplete: { type: String, default: undefined }
   },
   data () {
     return {

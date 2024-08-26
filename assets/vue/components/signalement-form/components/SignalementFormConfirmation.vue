@@ -21,7 +21,15 @@ export default defineComponent({
   name: 'SignalementFormConfirmation',
   props: {
     id: { type: String, default: null },
-    customCss: { type: String, default: '' }
+    customCss: { type: String, default: '' },
+    // les propriétés suivantes ne sont pas utilisées,
+    // mais si on ne les met pas, elles apparaissent dans le DOM
+    // et ça soulève des erreurs W3C
+    hasError: { type: Boolean, default: false },
+    clickEvent: Function,
+    handleClickComponent: Function,
+    access_name: { type: String, default: '' },
+    access_autocomplete: { type: String, default: '' }
   }
 })
 </script>

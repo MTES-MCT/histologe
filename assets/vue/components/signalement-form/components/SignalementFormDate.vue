@@ -1,24 +1,24 @@
 <template>
-    <div class="fr-input-group" :id="id">
+  <div class="fr-input-group" :id="id">
     <label :class="[ customCss, 'fr-label' ]" :for="id + '_input'">{{ label }}</label>
     <span v-if="hint !== ''" class="fr-hint-text">{{ hint }}</span>
     <input
-        type="date"
-        :id="id + '_input'"
-        :name="id"
-        :value="internalValue"
-        :class="[ customCss, 'fr-input' ]"
-        @input="updateValue($event)"
-        aria-describedby="text-input-error-desc-error"
-        >
+      type="date"
+      :id="id + '_input'"
+      :name="id"
+      :value="internalValue"
+      :class="[ customCss, 'fr-input' ]"
+      @input="updateValue($event)"
+      :aria-describedby="hasError ? id + '-text-input-error-desc-error' : undefined"
+      >
     <div
-      id="text-input-error-desc-error"
+      :id="id + '-text-input-error-desc-error'"
       class="fr-error-text"
       v-if="hasError"
       >
       {{ error }}
     </div>
-    </div>
+  </div>
 </template>
 
 <script lang="ts">
@@ -33,7 +33,15 @@ export default defineComponent({
     modelValue: { type: String, default: null },
     customCss: { type: String, default: '' },
     hasError: { type: Boolean, default: false },
-    error: { type: String, default: '' }
+    error: { type: String, default: '' },
+    // les propriétés suivantes ne sont pas utilisées,
+    // mais si on ne les met pas, elles apparaissent dans le DOM
+    // et ça soulève des erreurs W3C
+    validate: { type: Object, default: null },
+    handleClickComponent: Function,
+    clickEvent: Function,
+    access_name: { type: String, default: undefined },
+    access_autocomplete: { type: String, default: undefined }
   },
   computed: {
     internalValue: {

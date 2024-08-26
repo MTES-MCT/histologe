@@ -8,13 +8,13 @@
           :value="modelValue"
           :class="[ customCss ]"
           @input="updateValue($event)"
-          aria-describedby="checkbox-error-messages"
+          :aria-describedby="hasError ? idCheckbox + '-checkbox-error-messages' : undefined"
           :checked="Boolean(modelValue)"
           >
       <label :class="[ customCss, 'fr-label' ]" :for="idCheckbox" v-html="variablesReplacer.replace(label)"></label>
-      <div class="fr-messages-group" id="checkbox-error-messages" aria-live="assertive">
+      <div class="fr-messages-group" aria-live="assertive">
         <p
-          id="checkbox-error-messages"
+          :id="idCheckbox + '-checkbox-error-messages'"
           class="fr-message fr-message--error"
           v-if="hasError"
           >
@@ -40,7 +40,14 @@ export default defineComponent({
     customCss: { type: String, default: '' },
     validate: { type: Object, default: null },
     hasError: { type: Boolean, default: false },
-    error: { type: String, default: '' }
+    error: { type: String, default: '' },
+    // les propriétés suivantes ne sont pas utilisées,
+    // mais si on ne les met pas, elles apparaissent dans le DOM
+    // et ça soulève des erreurs W3C
+    clickEvent: Function,
+    handleClickComponent: Function,
+    access_name: { type: String, default: '' },
+    access_autocomplete: { type: String, default: '' }
   },
   data () {
     return {
