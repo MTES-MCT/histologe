@@ -9,16 +9,25 @@
                     <div class="fr-modal__content">
                         <h1 id="fr-modal-profil-edit-email-title" class="fr-modal__title">
                             Modifier mon adresse e-mail
+                            {# Confirmer mon adresse e-mail #}
                         </h1>                                   
-                        <div class="fr-alert fr-alert--info">
+                        <div id="fr-modal-profil-edit-email-alert" class="fr-alert fr-alert--info">
                             <p>Un e-mail avec un code de confirmation sera envoyé à l'adresse e-mail renseignée.</p>
                         </div>
+                        <div id="fr-modal-profil-edit-email-code-text" class="fr-hidden">
+                            <p>Veuillez renseigner le code de confirmation reçu sur votre adresse e-mail.</p>
+                        </div>
                         <form action="{{ path('back_profil_edit_email') }}" name="profil_edit_email"
-                              id="profil_edit_email_form" method="POST" {# enctype="multipart/form-data" #}>
-                            <div class="fr-input-group fr-col-12 fr-pl-0 fr-pl-md-0 fr-mt-2v">
+                            id="profil_edit_email_form" method="POST">
+                            <div id="fr-modal-profil-edit-email-email-input" class="fr-input-group fr-col-12 fr-pl-0 fr-pl-md-0 fr-mt-2v">
                                 <label for="profil_edit_email_email" class="fr-label">Adresse e-mail</label>
                                 <input type="text" id="profil_edit_email_email" name="profil_edit_email[email]"
                                     class="fr-input" value={{ app.user.email }} maxlength="255">
+                            </div>  
+                            <div id="fr-modal-profil-edit-email-code-input" class="fr-input-group fr-col-12 fr-pl-0 fr-pl-md-0 fr-mt-2v fr-hidden">
+                                <label for="profil_edit_email_code" class="fr-label">Code de confirmation</label>
+                                <input type="text" id="profil_edit_email_code" name="profil_edit_email[code]"
+                                    class="fr-input" maxlength="6">
                             </div>  
                             <input type="hidden" name="_token" value="{{ csrf_token('profil_edit_email') }}">
                         </form>

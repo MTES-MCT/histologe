@@ -27,3 +27,4 @@ import './controllers/back_signalement_view/form_acceptation_refus';
 import './controllers/back_signalement_edit_file/back_signalement_edit_file';
 import './controllers/back_signalement_delete_file/back_signalement_delete_file';
 import './controllers/back_signalement_list_export/back_signalement_list_export';
+import './controllers/back_profil_edit_email/back_profil_edit_email';

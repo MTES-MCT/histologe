@@ -154,7 +154,6 @@ class ProfilController extends AbstractController
         return $this->redirectToRoute('back_profil', [], Response::HTTP_SEE_OTHER);
     }
 
-    // TODO : modifier adresse e-mail
     #[Route('/edit-email', name: 'back_profil_edit_email', methods: ['POST'])]
     #[IsGranted('ROLE_USER_PARTNER')]
     public function editEmail(
@@ -171,37 +170,55 @@ class ProfilController extends AbstractController
         )) {
             $errorMessage = [];
             $email = $payload['profil_edit_email[email]'];
+            if (isset($payload['profil_edit_email[code]'])) {
+                // Étape 2: Validation du code
+                $authCode = $payload['profil_edit_email[code]'];
+                if ('' === $authCode) {
+                    $errorMessage['errors']['profil_edit_email[code]']['errors'][] = 'Le code est obligatoire.';
+                } elseif ($authCode !== $user->getEmailAuthCode()) {
+                    $errorMessage['errors']['profil_edit_email[code]']['errors'][] = 'Le code est incorrect.';
+                }
 
-            if ('' === $email) {
-                $errorMessage['errors']['profil_edit_email[email]']['errors'][] = 'Ce champ est obligatoire.';
-            } elseif (!EmailFormatValidator::validate($email)) {
-                $errorMessage['errors']['profil_edit_email[email]']['errors'][] = 'Veuillez saisir une adresse email au format adresse@email.fr.';
-            }
+                if (empty($errorMessage)) {
+                    $user->setEmail($email);
+                    $doctrine->getManager()->persist($user);
+                    $doctrine->getManager()->flush();
 
-            if (empty($errorMessage)) {
-                // $response = ['code' => Response::HTTP_OK];
-                // $doctrine->getManager()->persist($user);
-                // $doctrine->getManager()->flush();
-                // $this->addFlash('success', 'Votre adresse e-mail a bien été confirmée !');
-                $user->setEmailAuthCode(bin2hex(random_bytes(3)));
-                $doctrine->getManager()->persist($user);
-                $doctrine->getManager()->flush();
-                $notificationMailerRegistry->send(
-                    new NotificationMail(
-                        type: NotificationMailerType::TYPE_PROFIL_EDIT_EMAIL,
-                        to: $email,
-                        territory: $user->getTerritory(),
-                        user: $user
-                    )
-                );
-
-                $response = [
-                    'code' => Response::HTTP_UNAUTHORIZED,
-                    'message' => 'on doit ouvrir une autre modale maintenant',
-                ];
+                    $this->addFlash('success', 'Votre adresse e-mail a bien été confirmée !');
+                    $response = ['code' => Response::HTTP_OK];
+                } else {
+                    $response = ['code' => Response::HTTP_BAD_REQUEST];
+                    $response = [...$response, ...$errorMessage];
+                }
             } else {
-                $response = ['code' => Response::HTTP_BAD_REQUEST];
-                $response = [...$response, ...$errorMessage];
+                // Étape 1: Envoi du code de confirmation par email
+                if ('' === $email) {
+                    $errorMessage['errors']['profil_edit_email[email]']['errors'][] = 'Ce champ est obligatoire.';
+                } elseif (!EmailFormatValidator::validate($email)) {
+                    $errorMessage['errors']['profil_edit_email[email]']['errors'][] = 'Veuillez saisir une adresse email au format adresse@email.fr.';
+                }
+
+                if (empty($errorMessage)) {
+                    $user->setEmailAuthCode(bin2hex(random_bytes(3)));
+                    $doctrine->getManager()->persist($user);
+                    $doctrine->getManager()->flush();
+                    $notificationMailerRegistry->send(
+                        new NotificationMail(
+                            type: NotificationMailerType::TYPE_PROFIL_EDIT_EMAIL,
+                            to: $email,
+                            territory: $user->getTerritory(),
+                            user: $user
+                        )
+                    );
+
+                    $response = [
+                        'code' => Response::HTTP_NO_CONTENT,
+                        'message' => 'on doit ouvrir une autre modale maintenant',
+                    ];
+                } else {
+                    $response = ['code' => Response::HTTP_BAD_REQUEST];
+                    $response = [...$response, ...$errorMessage];
+                }
             }
         } else {
             $response = [
