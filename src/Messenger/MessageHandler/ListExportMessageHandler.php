@@ -41,18 +41,20 @@ class ListExportMessageHandler
                 $writer = new Xlsx($spreadsheet);
             }
 
-            $datetimeStr = (new \DateTimeImmutable())->format('Ymd-Hi');
-            $filename = 'export-histologe-'.$listExportMessage->getUserId().'-'.$datetimeStr.'.'.$format;
-            $tmpFilepath = $this->parameterBag->get('uploads_tmp_dir').$filename;
-            $writer->save($tmpFilepath);
-
-            $this->notificationMailerRegistry->send(
-                new NotificationMail(
-                    type: NotificationMailerType::TYPE_LIST_EXPORT,
-                    to: $user->getEmail(),
-                    attachment: $this->parameterBag->get('file_dir').'Lettre-information-proprietaire-bailleur_A-COMPLETER.pdf'// $tmpFilepath
-                )
-            );
+            if ($writer) {
+                $datetimeStr = (new \DateTimeImmutable())->format('Ymd-Hi');
+                $filename = 'export-histologe-'.$listExportMessage->getUserId().'-'.$datetimeStr.'.'.$format;
+                $tmpFilepath = $this->parameterBag->get('uploads_tmp_dir').$filename;
+                $writer->save($tmpFilepath);
+    
+                $this->notificationMailerRegistry->send(
+                    new NotificationMail(
+                        type: NotificationMailerType::TYPE_LIST_EXPORT,
+                        to: $user->getEmail(),
+                        attachment: $this->parameterBag->get('file_dir').'Lettre-information-proprietaire-bailleur_A-COMPLETER.pdf'// $tmpFilepath
+                    )
+                );
+            }
         } catch (\Throwable $exception) {
             $this->logger->error(
                 sprintf(
