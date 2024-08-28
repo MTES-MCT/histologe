@@ -5,6 +5,8 @@ namespace App\Controller\Back;
 use App\Entity\User;
 use App\Manager\SignalementManager;
 use App\Service\Signalement\Export\SignalementExportLoader;
+use PhpOffice\PhpSpreadsheet\Writer\Csv;
+use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\HeaderUtils;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -178,18 +180,29 @@ class ExportSignalementController extends AbstractController
         /** @var User $user */
         $user = $this->getUser();
         $filters = $request->getSession()->get('filters');
-        try {
-            $response = new StreamedResponse();
-            $response->setCallback(function () use ($signalementExportLoader, $filters, $user, $selectedColumns) {
-                $signalementExportLoader->load($user, $filters, $selectedColumns);
-            });
 
-            $disposition = HeaderUtils::makeDisposition(
-                HeaderUtils::DISPOSITION_ATTACHMENT,
-                'export-histologe-'.date('dmY').'.csv'
-            );
-            $response->headers->set('Content-Type', 'text/csv');
-            $response->headers->set('Content-Disposition', $disposition);
+        try {
+            $spreadsheet = $signalementExportLoader->load($user, $filters, $selectedColumns);
+            if ('csv' === $format) {
+                $contentType = 'text/csv';
+                $writer = new Csv($spreadsheet);
+                $filename = 'export-histologe.csv';
+            } elseif ('xls' === $format) {
+                $contentType = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet';
+                $writer = new Xlsx($spreadsheet);
+                $filename = 'export-histologe.xlsx';
+            }
+
+            $response = new StreamedResponse();
+            $response->headers->set('Content-Type', $contentType);
+            $response->headers->set('Content-Disposition', 'attachment;filename="'.$filename.'"');
+            $response->setPrivate();
+            $response->headers->addCacheControlDirective('no-cache', true);
+            $response->headers->addCacheControlDirective('must-revalidate', true);
+
+            $response->setCallback(function () use ($writer) {
+                $writer->save('php://output');
+            });
 
             return $response;
         } catch (\ErrorException $e) {

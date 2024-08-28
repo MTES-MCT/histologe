@@ -5,17 +5,23 @@ namespace App\Service\Signalement\Export;
 use App\Controller\Back\ExportSignalementController;
 use App\Entity\User;
 use App\Manager\SignalementManager;
+use PhpOffice\PhpSpreadsheet\Spreadsheet;
+use PhpOffice\PhpSpreadsheet\Writer\Csv;
+use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 
 class SignalementExportLoader
 {
-    public function __construct(private readonly SignalementManager $signalementManager)
-    {
+    public function __construct(
+        private readonly SignalementManager $signalementManager,
+    ) {
     }
 
-    public function load(User $user, ?array $filters, ?array $selectedColumns = null): void
+    public function load(User $user, ?array $filters, ?array $selectedColumns = null): Spreadsheet
     {
-        $handle = fopen('php://output', 'w');
+        $spreadsheet = new Spreadsheet();
+        $sheet = $spreadsheet->getActiveSheet();
 
+        $sheetData = [];
         $keysToRemove = [];
         $headers = SignalementExportHeader::getHeaders();
         foreach (ExportSignalementController::SELECTABLE_COLS as $columnIndex => $selectableColumn) {
@@ -26,15 +32,18 @@ class SignalementExportLoader
                 unset($headers[$indexToUnset]);
             }
         }
-        fputcsv($handle, $headers, SignalementExportHeader::SEPARATOR);
+        array_push($sheetData, $headers);
 
         foreach ($this->signalementManager->findSignalementAffectationIterable($user, $filters) as $signalementExportItem) {
             $rowArray = get_object_vars($signalementExportItem);
             foreach ($keysToRemove as $index) {
                 unset($rowArray[$index]);
             }
-            fputcsv($handle, $rowArray, SignalementExportHeader::SEPARATOR);
+            array_push($sheetData, $rowArray);
         }
-        fclose($handle);
+
+        $sheet->fromArray($sheetData);
+
+        return $spreadsheet;
     }
 }
