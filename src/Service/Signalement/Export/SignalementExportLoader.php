@@ -6,8 +6,6 @@ use App\Controller\Back\ExportSignalementController;
 use App\Entity\User;
 use App\Manager\SignalementManager;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
-use PhpOffice\PhpSpreadsheet\Writer\Csv;
-use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 
 class SignalementExportLoader
 {
@@ -26,20 +24,20 @@ class SignalementExportLoader
         $headers = SignalementExportHeader::getHeaders();
         foreach (ExportSignalementController::SELECTABLE_COLS as $columnIndex => $selectableColumn) {
             $searchSelectedCol = array_search($columnIndex, $selectedColumns);
-            if ($searchSelectedCol === false) {
+            if (false === $searchSelectedCol) {
                 $indexToUnset = array_search($selectableColumn['name'], $headers);
-                array_push($keysToRemove, $selectableColumn['export']);
+                $keysToRemove[] = $selectableColumn['export'];
                 unset($headers[$indexToUnset]);
             }
         }
-        array_push($sheetData, $headers);
+        $sheetData[] = $headers;
 
         foreach ($this->signalementManager->findSignalementAffectationIterable($user, $filters) as $signalementExportItem) {
             $rowArray = get_object_vars($signalementExportItem);
             foreach ($keysToRemove as $index) {
                 unset($rowArray[$index]);
             }
-            array_push($sheetData, $rowArray);
+            $sheetData[] = $rowArray;
         }
 
         $sheet->fromArray($sheetData);

@@ -1,0 +1,66 @@
+<?php
+
+namespace App\Messenger\MessageHandler;
+
+use App\Messenger\Message\ListExportMessage;
+use App\Repository\UserRepository;
+use App\Service\Mailer\NotificationMail;
+use App\Service\Mailer\NotificationMailerRegistry;
+use App\Service\Mailer\NotificationMailerType;
+use App\Service\Signalement\Export\SignalementExportLoader;
+use PhpOffice\PhpSpreadsheet\Writer\Csv;
+use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
+use Psr\Log\LoggerInterface;
+use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
+use Symfony\Component\Messenger\Attribute\AsMessageHandler;
+
+#[AsMessageHandler]
+class ListExportMessageHandler
+{
+    public function __construct(
+        private readonly NotificationMailerRegistry $notificationMailerRegistry,
+        private readonly LoggerInterface $logger,
+        private readonly SignalementExportLoader $signalementExportLoader,
+        private readonly UserRepository $userRepository,
+        private ParameterBagInterface $parameterBag,
+    ) {
+    }
+
+    public function __invoke(ListExportMessage $listExportMessage): void
+    {
+        try {
+            $user = $this->userRepository->find($listExportMessage->getUserId());
+            $filters = $listExportMessage->getFilters();
+            $selectedColumns = $listExportMessage->getSelectedColumns();
+            $format = $listExportMessage->getFormat();
+
+            $spreadsheet = $this->signalementExportLoader->load($user, $filters, $selectedColumns);
+            if ('csv' === $format) {
+                $writer = new Csv($spreadsheet);
+            } elseif ('xlsx' === $format) {
+                $writer = new Xlsx($spreadsheet);
+            }
+
+            $datetimeStr = (new \DateTimeImmutable())->format('Ymd-Hi');
+            $filename = 'export-histologe-'.$listExportMessage->getUserId().'-'.$datetimeStr.'.'.$format;
+            $tmpFilepath = $this->parameterBag->get('uploads_tmp_dir').$filename;
+            $writer->save($tmpFilepath);
+
+            $this->notificationMailerRegistry->send(
+                new NotificationMail(
+                    type: NotificationMailerType::TYPE_LIST_EXPORT,
+                    to: $user->getEmail(),
+                    attachment: $this->parameterBag->get('file_dir').'Lettre-information-proprietaire-bailleur_A-COMPLETER.pdf'// $tmpFilepath
+                )
+            );
+        } catch (\Throwable $exception) {
+            $this->logger->error(
+                sprintf(
+                    'The export of list failed (%s) for the following reason : %s',
+                    $listExportMessage->getUserId(),
+                    $exception->getMessage()
+                )
+            );
+        }
+    }
+}

@@ -7,8 +7,8 @@ use App\Dto\SignalementExport;
 use App\Entity\Enum\MotifCloture;
 use App\Entity\Enum\ProfileDeclarant;
 use App\Entity\Enum\VisiteStatus;
-use App\Entity\Model\TypeCompositionLogement;
 use App\Entity\Intervention;
+use App\Entity\Model\TypeCompositionLogement;
 use App\Entity\User;
 use App\Service\Signalement\SignalementAffectationHelper;
 
