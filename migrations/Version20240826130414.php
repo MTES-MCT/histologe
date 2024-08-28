@@ -23,7 +23,7 @@ final class Version20240826130414 extends AbstractMigration
         );
 
         if (!$territory) {
-            throw new \RuntimeException('Territory with zip 62 not found.');
+            return;
         }
 
         $territoryId = $territory['id'];
