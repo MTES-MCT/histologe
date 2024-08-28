@@ -46,6 +46,7 @@ class SignalementExportFactory
         );
         $statusVisite = $interventionExploded[0];
         $dateVisite = !empty($interventionExploded[1]) ? $interventionExploded[1] : '';
+        $dateVisite = !empty($dateVisite) ? (new \DateTime($dateVisite))->format(self::DATE_FORMAT) : '';
         $isOccupantPresentVisite = !empty($interventionExploded[2]) ? $interventionExploded[2] : '';
 
         $enfantsM6 = null;

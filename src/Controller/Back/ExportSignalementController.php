@@ -183,14 +183,15 @@ class ExportSignalementController extends AbstractController
 
         try {
             $spreadsheet = $signalementExportLoader->load($user, $filters, $selectedColumns);
+            $datetimeStr = (new \DateTimeImmutable())->format('Ymd-Hi');
             if ('csv' === $format) {
                 $contentType = 'text/csv';
                 $writer = new Csv($spreadsheet);
-                $filename = 'export-histologe.csv';
+                $filename = 'export-histologe-'.$datetimeStr.'.csv';
             } elseif ('xls' === $format) {
                 $contentType = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet';
                 $writer = new Xlsx($spreadsheet);
-                $filename = 'export-histologe.xlsx';
+                $filename = 'export-histologe-'.$datetimeStr.'.xlsx';
             }
 
             $response = new StreamedResponse();

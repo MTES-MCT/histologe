@@ -31,6 +31,8 @@
         </div>
         {% for filterName, filterValue in filters %}
             <p class="fr-badge">{{ filterName }} : {{ filterValue }}</p>
+        {% else %}
+            Aucun filtre actif.
         {% endfor %}
     </section>
 
