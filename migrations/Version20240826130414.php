@@ -65,7 +65,7 @@ final class Version20240826130414 extends AbstractMigration
                         );
                         // Récupérer l'ID du tag inséré directement
                         $newTagId = $this->connection->fetchOne(
-                            'SELECT id FROM tag WHERE label = :label AND territory_id = :territory_id',
+                            'SELECT id FROM tag WHERE label = :label AND territory_id = :territory_id AND is_archive = 0',
                             ['label' => $label, 'territory_id' => $territoryId]
                         );
 
