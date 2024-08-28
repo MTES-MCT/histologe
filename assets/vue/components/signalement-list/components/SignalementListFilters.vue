@@ -404,6 +404,7 @@ export default defineComponent({
     },
     selectPartnerInList () {
       this.sharedState.input.filters.partenaires = this.sharedState.input.filters.partenaires.filter(partenaire => partenaire !== 'AUCUN')
+      this.deactiveWithoutAffectationsOnly()
       if (typeof this.onChange === 'function') {
         this.onChange(false)
       }
