@@ -25,6 +25,7 @@ export const SEARCH_FILTERS = [
   { type: 'text', name: 'sansSuiviPeriode', showOptions: false, defaultValue: '30' },
   { type: 'text', name: 'nouveauSuivi', showOptions: false, defaultValue: 'oui' },
   { type: 'text', name: 'showMyAffectationOnly', showOptions: true, defaultValue: null },
+  { type: 'text', name: 'showWithoutAffectationOnly', showOptions: true, defaultValue: null },
   { type: 'text', name: 'isImported', showOptions: false, defaultValue: null },
   { type: 'collection', name: 'communes', showOptions: false, defaultValue: null },
   { type: 'collection', name: 'epcis', showOptions: false, defaultValue: null },
