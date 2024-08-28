@@ -14,7 +14,6 @@ class ProfilEditPasswordMailer extends AbstractNotificationMailer
 {
     protected ?NotificationMailerType $mailerType = NotificationMailerType::TYPE_PROFIL_EDIT_PASSWORD;
     protected ?string $mailerSubject = 'Mot de passe mis à jour !';
-    protected ?string $mailerButtonText = 'Me connecter à %param.platform_name%';
     protected ?string $mailerTemplate = 'profil_edit_password';
 
     public function __construct(
@@ -30,6 +29,9 @@ class ProfilEditPasswordMailer extends AbstractNotificationMailer
     {
         $link = $this->generateLink('back_dashboard', []);
 
-        return ['link' => $link];
+        return [
+            'btntext' => 'Me connecter à '.$this->parameterBag->get('platform_name'),
+            'link' => $link,
+        ];
     }
 }

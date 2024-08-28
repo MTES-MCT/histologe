@@ -15,6 +15,7 @@ use App\Validator\EmailFormatValidator;
 use Doctrine\Persistence\ManagerRegistry;
 use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\HttpFoundation\File\Exception\FileException;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\Request;
@@ -28,6 +29,15 @@ use Symfony\Component\Validator\Validator\ValidatorInterface;
 class ProfilController extends AbstractController
 {
     private const ERROR_MSG = 'Une erreur s\'est produite. Veuillez actualiser la page.';
+
+    public function __construct(
+        #[Autowire(env: 'FEATURE_PROFIL_EDITION_ENABLED')]
+        bool $featureProfilEditionEnable,
+    ) {
+        if (!$featureProfilEditionEnable) {
+            throw $this->createNotFoundException();
+        }
+    }
 
     #[Route('/', name: 'back_profil', methods: ['GET', 'POST'])]
     #[IsGranted('ROLE_USER_PARTNER')]
@@ -83,7 +93,6 @@ class ProfilController extends AbstractController
                     $errorMessage['errors']['profil_edit_infos[avatar]']['errors'][] = 'Le fichier est infecté';
                 } else {
                     try {
-                        // TODO : vérifier que c'est un fichier différent
                         $res = $uploadHandlerService->toTempFolder($avatarFile, 'avatar');
 
                         if (\is_array($res) && isset($res['error'])) {
@@ -138,7 +147,6 @@ class ProfilController extends AbstractController
     ): Response {
         /** @var User $user */
         $user = $this->getUser();
-        // && $this->isCsrfTokenValid('tag_delete', $request->request->get('_token'))
         if ($user->getAvatarFilename()) {
             $uploadHandlerService->deleteSingleFile($user->getAvatarFilename());
             $user->setAvatarFilename(null);
@@ -247,13 +255,26 @@ class ProfilController extends AbstractController
         ) {
             $password = $payload['password'];
             $passwordRepeat = $payload['password-repeat'];
+            if ('' === $password) {
+                $this->addFlash('error', 'Ce champ est obligatoire.');
+
+                return $this->redirectToRoute('back_profil', [], Response::HTTP_SEE_OTHER);
+            }
             if ($password !== $passwordRepeat) {
                 $this->addFlash('error', 'Les mots de passes renseignés doivent être identiques.');
 
                 return $this->redirectToRoute('back_profil', [], Response::HTTP_SEE_OTHER);
             }
+            if ($password === $user->getEmail()) {
+                $this->addFlash('error', 'Le mot de passe ne doit pas être votre e-mail.');
+
+                return $this->redirectToRoute('back_profil', [], Response::HTTP_SEE_OTHER);
+            }
+
+            $oldPassword = $user->getPassword();
             $user->setPassword($password);
             $errors = $validator->validate($user, null, ['password']);
+            $user->setPassword($oldPassword);
             if (\count($errors) > 0) {
                 $errorMessage = '<ul>';
                 foreach ($errors as $error) {
@@ -264,14 +285,6 @@ class ProfilController extends AbstractController
 
                 return $this->redirectToRoute('back_profil', [], Response::HTTP_SEE_OTHER);
             }
-
-            // Erreurs possibles
-
-            // Champ vide : Ce champ est obligatoire.
-            // Mot de passe identique à l'actuel : Vous utilisez déjà ce mot de passe. Veuillez saisir un nouveau mot de passe.
-            // Pas de correspondance : Les mots de passes renseignés doivent être identiques.
-            // Mauvais format : Le mot de passe doit contenir : 12 caractères, 1 majuscule, 1 minuscule, 1 chiffre, 1 caractère spécial.
-
             $user = $userManager->resetPassword($user, $password);
 
             $notificationMailerRegistry->send(

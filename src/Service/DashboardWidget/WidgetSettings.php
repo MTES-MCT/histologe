@@ -12,6 +12,8 @@ class WidgetSettings
     #[Groups('widget-settings:read')]
     private ?string $lastname = null;
     #[Groups('widget-settings:read')]
+    private ?string $avatarOrPlaceHolder = null;
+    #[Groups('widget-settings:read')]
     private ?string $roleLabel = null;
     #[Groups('widget-settings:read')]
     private ?string $canSeeNDE = null;
@@ -46,9 +48,11 @@ class WidgetSettings
         array $tags = [],
         bool $hasSignalementImported = false,
         array $bailleursSociaux = [],
+        string $avatarOrPlaceHolder = '',
     ) {
         $this->firstname = $user->getPrenom();
         $this->lastname = $user->getNom();
+        $this->avatarOrPlaceHolder = $avatarOrPlaceHolder;
         $this->roleLabel = $user->getRoleLabel();
         $this->canSeeNDE = (string) $canSeeNDE;
         $this->partnerId = $user->getPartner()->getId();
@@ -71,6 +75,11 @@ class WidgetSettings
     public function getLastname(): ?string
     {
         return $this->lastname;
+    }
+
+    public function getAvatarOrPlaceHolder(): string
+    {
+        return $this->avatarOrPlaceHolder;
     }
 
     public function getRoleLabel(): ?string

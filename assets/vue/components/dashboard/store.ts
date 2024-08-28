@@ -4,6 +4,7 @@ export const store = {
   state: {
     user: {
       prenom: '',
+      avatarOrPlaceHolder: '',
       isAdmin: false,
       isResponsableTerritoire: false,
       isAdministrateurPartenaire: false,

@@ -859,10 +859,6 @@ a.photo-preview {
     cursor: pointer;
 }
 
-.avatar-image {
-    // border-radius: 50%;
-}
-
 .avatar-placeholder {
     display: flex;
     align-items: center;
@@ -877,6 +873,12 @@ a.photo-preview {
 .avatar-124 {
     width: 124px;
     height: 124px;
+    font-size: 62px;
+}
+
+.avatar-80 {
+    width: 80px;
+    height: 80px;
     font-size: 62px;
 }
 

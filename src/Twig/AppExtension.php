@@ -168,17 +168,13 @@ class AppExtension extends AbstractExtension implements GlobalsInterface
 
             $type = pathinfo($bucketFilepath, \PATHINFO_EXTENSION);
 
-            // try {
             $data = file_get_contents($bucketFilepath);
             $data64 = base64_encode($data);
 
             $src = "data:image/$type;base64,$data64";
-            // } catch (\Throwable $exception) {
-            //     $this->logger->error($exception->getMessage());
-            // }
 
             return sprintf(
-                '<img src="%s" alt="Avatar de l\'utilisateur" class="avatar-image avatar-%s">',
+                '<img src="%s" alt="Avatar de l\'utilisateur" class="avatar-%s">',
                 $src,
                 $size
             );

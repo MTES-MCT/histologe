@@ -9,12 +9,14 @@ use App\Service\Mailer\NotificationMailerType;
 use Doctrine\Bundle\DoctrineBundle\Attribute\AsEntityListener;
 use Doctrine\ORM\Event\PostUpdateEventArgs;
 use Doctrine\ORM\Events;
+use Symfony\Bundle\SecurityBundle\Security;
 
 #[AsEntityListener(event: Events::postUpdate, method: 'postUpdate', entity: User::class)]
 class UserUpdatedListener
 {
     public function __construct(
-        private NotificationMailerRegistry $notificationMailerRegistry
+        private readonly NotificationMailerRegistry $notificationMailerRegistry,
+        private readonly Security $security,
     ) {
     }
 
@@ -23,7 +25,7 @@ class UserUpdatedListener
         $unitOfWork = $event->getObjectManager()->getUnitOfWork();
         $changes = $unitOfWork->getEntityChangeSet($user);
 
-        if ($this->shouldChangePassword($changes)) {
+        if ($this->shouldChangePassword($changes, $user)) {
             $user->setPassword('');
             $this->sendNotification($user);
         }
@@ -45,13 +47,19 @@ class UserUpdatedListener
         }
     }
 
-    private function shouldChangePassword(array $changes): bool
+    private function shouldChangePassword(array $changes, User $changedUser): bool
     {
-        if (\array_key_exists('email', $changes) // if email has changed
-            || (
+        /** @var ?User $currentUser */
+        $currentUser = $this->security->getUser();
+        if (
+            (// if email has changed
+                \array_key_exists('email', $changes)
+                && $changedUser->getId() !== $currentUser?->getId()
+            )
+            || (// if usager becomes user
                 \array_key_exists('roles', $changes)
                 && \in_array('ROLE_USAGER', $changes['roles'][0])
-            ) // if usager becomes user
+            )
         ) {
             return true;
         }

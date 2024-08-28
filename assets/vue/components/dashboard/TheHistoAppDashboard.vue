@@ -24,9 +24,13 @@
       <div class="fr-px-3w">
         <div class="fr-grid-row fr-grid-row--gutters fr-mb-1w">
           <div class="fr-col fr-col-md-9">
-            <!-- // TODO : ajouter avatar -->
-            <h1>Bonjour {{ sharedState.user.prenom }}</h1>
-            <p>Bienvenue sur votre tableau de bord !</p>
+            <div class="fr-display-inline-flex fr-align-items-center">
+                <div v-html="sharedState.user.avatarOrPlaceHolder"></div>
+                <div class="fr-ml-3v">
+                    <span class="fr-display-block"><h1 class="fr-h2">Bonjour {{ sharedState.user.prenom }}</h1></span>
+                    <span class="fr-display-block">Bienvenue sur votre tableau de bord !</span>
+                </div>
+            </div>
           </div>
           <div v-if="sharedState.user.isAdmin" class="fr-col fr-col-md-3">
             <HistoSelect
@@ -104,6 +108,7 @@ export default defineComponent({
       this.sharedState.user.isAdministrateurPartenaire = requestResponse.roleLabel === 'Administrateur'
       this.sharedState.user.canSeeNonDecenceEnergetique = requestResponse.canSeeNDE === '1'
       this.sharedState.user.prenom = requestResponse.firstname
+      this.sharedState.user.avatarOrPlaceHolder = requestResponse.avatarOrPlaceHolder
       this.sharedState.territories = []
       const optionAllItem = new HistoInterfaceSelectOption()
       optionAllItem.Id = 'all'

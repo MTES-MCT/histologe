@@ -106,7 +106,7 @@ class UserAccountControllerTest extends WebTestCase
     public function provideInvalidPassword(): \Generator
     {
         yield 'blank' => ['Cette valeur ne doit pas être vide', ''];
-        yield 'short' => ['Le mot de passe doit contenir au moins 12 caratères', 'short'];
+        yield 'short' => ['Le mot de passe doit contenir au moins 12 caractères', 'short'];
         yield 'no_uppercase' => ['Le mot de passe doit contenir au moins une lettre majuscule', 'nouppercase'];
         yield 'no_lowercase' => ['Le mot de passe doit contenir au moins une lettre minuscule', 'NOLOWERCASE'];
         yield 'no_digit' => ['Le mot de passe doit contenir au moins un chiffre', 'NoDigitNoDigit'];
