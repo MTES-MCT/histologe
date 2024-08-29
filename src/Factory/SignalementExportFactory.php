@@ -38,7 +38,7 @@ class SignalementExportFactory
         $typeDeclarant = $data['profileDeclarant'] instanceof ProfileDeclarant ? $data['profileDeclarant']->label() : null;
         $status = SignalementAffectationHelper::getStatusLabelFrom($user, $data);
 
-        $geoloc = json_encode($data['geoloc']);
+        $geoloc = $data['geoloc'];
 
         $interventionExploded = explode(
             SignalementExport::SEPARATOR_GROUP_CONCAT,
@@ -109,7 +109,8 @@ class SignalementExportFactory
             modifiedAt: $modifiedAt,
             closedAt: $closedAt,
             motifCloture: $motifCloture,
-            geoloc: $geoloc,
+            longitude: $geoloc['lng'],
+            latitude: $geoloc['lat'],
         );
     }
 

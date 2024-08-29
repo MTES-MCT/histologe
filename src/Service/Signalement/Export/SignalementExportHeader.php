@@ -57,7 +57,8 @@ class SignalementExportHeader
             'Dernière MAJ le',
             'Clôturé le',
             'Motif de clôture',
-            'Géolocalisation',
+            'Longitude',
+            'Latitude',
         ];
     }
 }

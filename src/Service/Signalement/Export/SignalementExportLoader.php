@@ -25,9 +25,24 @@ class SignalementExportLoader
         foreach (ExportSignalementController::SELECTABLE_COLS as $columnIndex => $selectableColumn) {
             $searchSelectedCol = array_search($columnIndex, $selectedColumns);
             if (false === $searchSelectedCol) {
-                $indexToUnset = array_search($selectableColumn['name'], $headers);
-                $keysToRemove[] = $selectableColumn['export'];
-                unset($headers[$indexToUnset]);
+                if ('geoloc' === $selectableColumn['export']) {
+                    $indexToUnset = array_search('Longitude', $headers);
+                    $keysToRemove[] = 'longitude';
+                    if (isset($headers[$indexToUnset])) {
+                        unset($headers[$indexToUnset]);
+                    }
+                    $indexToUnset = array_search('Latitude', $headers);
+                    $keysToRemove[] = 'latitude';
+                    if (isset($headers[$indexToUnset])) {
+                        unset($headers[$indexToUnset]);
+                    }
+                } else {
+                    $indexToUnset = array_search($selectableColumn['name'], $headers);
+                    $keysToRemove[] = $selectableColumn['export'];
+                    if (isset($headers[$indexToUnset])) {
+                        unset($headers[$indexToUnset]);
+                    }
+                }
             }
         }
         $sheetData[] = $headers;
