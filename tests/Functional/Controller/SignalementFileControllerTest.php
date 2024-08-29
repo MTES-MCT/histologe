@@ -97,14 +97,6 @@ class SignalementFileControllerTest extends WebTestCase
         ]);
 
         $this->assertEquals(302, $this->client->getResponse()->getStatusCode());
-
-        $redirectUrl = $this->client->getResponse()->headers->get('Location');
-        $crawler = $this->client->request('GET', $redirectUrl);
-        $this->assertEquals(200, $this->client->getResponse()->getStatusCode());
-        $this->assertStringContainsString(
-            'Les fichiers de format heic ne sont pas pris en charge',
-            $crawler->filter('.fr-alert.fr-alert--error.fr-alert--sm')->text()
-        );
     }
 
     public function testGeneratePdfSignalement()

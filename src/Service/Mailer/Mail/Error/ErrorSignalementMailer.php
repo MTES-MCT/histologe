@@ -31,7 +31,7 @@ class ErrorSignalementMailer extends AbstractNotificationMailer
         $attachment = $notificationMail->getAttachment();
 
         return [
-            'url' => $_SERVER['SERVER_NAME'],
+            'url' => $_SERVER['SERVER_NAME'] ?? 'non défini',
             'code' => $event->getThrowable()->getCode(),
             'error' => $event->getThrowable()->getMessage(),
             'req' => $event->getRequest()->getContent(),

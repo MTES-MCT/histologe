@@ -41,7 +41,7 @@ class ListExportMessageHandler
                 $writer = new Xlsx($spreadsheet);
             }
 
-            if ($writer) {
+            if (isset($writer)) {
                 $datetimeStr = (new \DateTimeImmutable())->format('Ymd-Hi');
                 $filename = 'export-histologe-'.$listExportMessage->getUserId().'-'.$datetimeStr.'.'.$format;
                 $tmpFilepath = $this->parameterBag->get('uploads_tmp_dir').$filename;

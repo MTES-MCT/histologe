@@ -50,7 +50,7 @@ class SignalementExportFactory
         $isOccupantPresentVisite = !empty($interventionExploded[2]) ? $interventionExploded[2] : '';
 
         $enfantsM6 = null;
-        if ($data['typeCompositionLogement'] instanceof TypeCompositionLogement) {
+        if (isset($data['typeCompositionLogement']) && $data['typeCompositionLogement'] instanceof TypeCompositionLogement) {
             $enfantsM6 = $data['typeCompositionLogement']->getCompositionLogementEnfants();
         } elseif (isset($data['nbEnfantsM6'])) {
             if ($data['nbEnfantsM6'] > 0) {
