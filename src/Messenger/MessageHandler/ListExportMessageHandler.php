@@ -51,7 +51,7 @@ class ListExportMessageHandler
                     new NotificationMail(
                         type: NotificationMailerType::TYPE_LIST_EXPORT,
                         to: $user->getEmail(),
-                        attachment: $this->parameterBag->get('file_dir').'Lettre-information-proprietaire-bailleur_A-COMPLETER.pdf'// $tmpFilepath
+                        attachment: $tmpFilepath
                     )
                 );
             }
