@@ -5,9 +5,9 @@ namespace App\Tests\Unit\Service\Signalement\Export;
 use App\Dto\SignalementExport;
 use App\Entity\User;
 use App\Manager\SignalementManager;
-use App\Service\Signalement\Export\SignalementExportHeader;
 use App\Service\Signalement\Export\SignalementExportLoader;
 use App\Tests\UserHelper;
+use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PHPUnit\Framework\TestCase;
 
 class SignalementExportLoaderTest extends TestCase
@@ -17,7 +17,7 @@ class SignalementExportLoaderTest extends TestCase
     public function testLoad()
     {
         $signalementManager = $this->createMock(SignalementManager::class);
-        $filters = ['territories' => ['1']];
+        $filters = [];
         $user = $this->getUserFromRole(User::ROLE_ADMIN);
 
         $signalementExports = [
@@ -30,13 +30,11 @@ class SignalementExportLoaderTest extends TestCase
             ->with($user, $filters)
             ->willReturn($this->getSignalementExportGenerator($signalementExports));
 
-        $expectedOutput = $this->getHeaderAsString()."2023-01;31-03-2023;nouveau;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;\n2023-02;31-03-2023;nouveau;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;\n";
-
         $loader = new SignalementExportLoader($signalementManager);
-        ob_start();
-        $loader->load($user, $filters);
-        $output = ob_get_clean();
-        $this->assertEquals($expectedOutput, $output);
+        $spreadsheet = $loader->load($user, $filters);
+        $this->assertInstanceOf(Spreadsheet::class, $spreadsheet);
+        $this->assertEquals('Référence', $spreadsheet->getActiveSheet()->getCell('A1')->getValue());
+        $this->assertEquals('2023-01', $spreadsheet->getActiveSheet()->getCell('A2')->getValue());
     }
 
     private function getSignalementExportGenerator(array $signalements): \Generator
@@ -44,20 +42,5 @@ class SignalementExportLoaderTest extends TestCase
         foreach ($signalements as $signalement) {
             yield $signalement;
         }
-    }
-
-    private function getHeaderAsString(): string
-    {
-        $headers = SignalementExportHeader::getHeaders();
-        $headers = array_map(function ($header) {
-            if (str_contains($header, ' ')) {
-                $header = str_replace('"', '""', $header);
-                $header = '"'.$header.'"';
-            }
-
-            return $header;
-        }, $headers);
-
-        return implode(SignalementExportHeader::SEPARATOR, $headers)."\n";
     }
 }

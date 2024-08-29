@@ -86,7 +86,7 @@ class SignalementExportFactoryTest extends TestCase
         $this->assertEquals($dateFormatted, $signalementExportFactory->createdAt);
         $this->assertEquals($dateFormatted, $signalementExportFactory->modifiedAt);
         $this->assertEquals($dateFormatted, $signalementExportFactory->closedAt);
-        $this->assertEquals('2023-07-13 13:41:15', $signalementExportFactory->dateVisite);
+        $this->assertEquals('13/07/2023', $signalementExportFactory->dateVisite);
         $this->assertEquals('Oui', $signalementExportFactory->isOccupantPresentVisite);
 
         $this->assertEquals(SignalementExportFactory::NON_RENSEIGNE, $signalementExportFactory->telephoneOccupantBis);
