@@ -32,6 +32,33 @@
                         <span class="fr-badge fr-badge--error fr-badge--no-icon"><span class="fr-icon-checkbox-circle-line" aria-hidden="true"></span> Clôturé</span>
                     {% endif %}
                 {% endif %}
+                
+                {% if signalement.isLogementSocial is null %}
+                    <span class="fr-badge fr-badge--new fr-badge--no-icon">Parc non renseigné</span>
+                {% elseif signalement.isLogementSocial %}
+                    <span class="fr-badge fr-badge--no-icon">Parc public</span>
+                {% else %}
+                    <span class="fr-badge fr-badge--no-icon">Parc privé</span>
+                {% endif %}
+
+                {% if signalement.isAllocataire in [null, ''] %}
+                    <span class="fr-badge fr-badge--new fr-badge--no-icon">Allocataire non renseigné</span>
+                {% elseif signalement.isAllocataire in ['oui', '1'] %}
+                    <span class="fr-badge fr-badge--success fr-badge--no-icon">Allocataire</span>
+                {% elseif signalement.isAllocataire in ['non', '0'] %}
+                    <span class="fr-badge fr-badge--error fr-badge--no-icon">Non allocataire</span>
+                {% elseif signalement.isAllocataire %}
+                    <span class="fr-badge fr-badge--success fr-badge--no-icon">Allocataire {{ signalement.isAllocataire }}</span>
+                {% endif %}
+
+                {% if signalement.isProprioAverti is null %}
+                    <span class="fr-badge fr-badge--new fr-badge--no-icon">Bailleur averti : NSP</span>
+                {% elseif signalement.isProprioAverti %}
+                    <span class="fr-badge fr-badge--success fr-badge--no-icon">Bailleur averti</span>
+                {% else %}
+                    <span class="fr-badge fr-badge--error fr-badge--no-icon">Bailleur non-averti</span>
+                {% endif %}
+
             </div>
 
             <div>
