@@ -38,7 +38,7 @@ class SignalementControllerTest extends WebTestCase
         if (Signalement::STATUS_ARCHIVED !== $signalement->getStatut()) {
             $this->assertResponseIsSuccessful($signalement->getId());
             $this->assertSelectorTextContains(
-                'h1.fr-h2.fr-text-label--blue-france',
+                'h1.fr-h2',
                 '#'.$signalement->getReference().' -',
                 $signalement->getReference()
             );
