@@ -22,29 +22,7 @@ class SignalementExportLoader
         $keysToRemove = [];
         $headers = SignalementExportHeader::getHeaders();
         if (!empty($selectedColumns)) {
-            foreach (ExportSignalementController::SELECTABLE_COLS as $columnIndex => $selectableColumn) {
-                $searchSelectedCol = array_search($columnIndex, $selectedColumns);
-                if (false === $searchSelectedCol) {
-                    if ('geoloc' === $selectableColumn['export']) {
-                        $indexToUnset = array_search('Longitude', $headers);
-                        $keysToRemove[] = 'longitude';
-                        if (isset($headers[$indexToUnset])) {
-                            unset($headers[$indexToUnset]);
-                        }
-                        $indexToUnset = array_search('Latitude', $headers);
-                        $keysToRemove[] = 'latitude';
-                        if (isset($headers[$indexToUnset])) {
-                            unset($headers[$indexToUnset]);
-                        }
-                    } else {
-                        $indexToUnset = array_search($selectableColumn['name'], $headers);
-                        $keysToRemove[] = $selectableColumn['export'];
-                        if (isset($headers[$indexToUnset])) {
-                            unset($headers[$indexToUnset]);
-                        }
-                    }
-                }
-            }
+            $headers = $this->getHeadersWithSelectedColumns($headers, $keysToRemove, $selectedColumns);
         }
         $sheetData = [$headers];
 
@@ -59,5 +37,32 @@ class SignalementExportLoader
         $sheet->fromArray($sheetData);
 
         return $spreadsheet;
+    }
+
+    private function getHeadersWithSelectedColumns(array $headers, array &$keysToRemove, array $selectedColumns): array {
+        foreach (ExportSignalementController::SELECTABLE_COLS as $columnIndex => $selectableColumn) {
+            $searchSelectedCol = array_search($columnIndex, $selectedColumns);
+            // Unchecked col: delete from list
+            if (false === $searchSelectedCol) {
+                if ('geoloc' === $selectableColumn['export']) {
+                    $this->removeColFromHeaders('Longitude', $headers);
+                    $keysToRemove[] = 'longitude';
+                    $this->removeColFromHeaders('Latitude', $headers);
+                    $keysToRemove[] = 'latitude';
+                } else {
+                    $this->removeColFromHeaders($selectableColumn['name'], $headers);
+                    $keysToRemove[] = $selectableColumn['export'];
+                }
+            }
+        }
+
+        return $headers;
+    }
+
+    private function removeColFromHeaders(string $colName, array &$headers): void {
+        $indexToUnset = array_search($colName, $headers);
+        if (isset($headers[$indexToUnset])) {
+            unset($headers[$indexToUnset]);
+        }
     }
 }

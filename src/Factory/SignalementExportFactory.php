@@ -53,11 +53,7 @@ class SignalementExportFactory
         if (isset($data['typeCompositionLogement']) && $data['typeCompositionLogement'] instanceof TypeCompositionLogement) {
             $enfantsM6 = $data['typeCompositionLogement']->getCompositionLogementEnfants();
         } elseif (isset($data['nbEnfantsM6'])) {
-            if ($data['nbEnfantsM6'] > 0) {
-                $enfantsM6 = 'oui';
-            } else {
-                $enfantsM6 = 'non';
-            }
+            $enfantsM6 = ($data['nbEnfantsM6'] > 0) ? 'oui' : 'non';
         }
 
         return new SignalementExport(

@@ -142,6 +142,8 @@ class ExportSignalementController extends AbstractController
                 case 'bailleurSocial':
                     $filterName = 'Bailleur';
                     break;
+                default:
+                    break;
             }
 
             if (is_array($filterValue)) {
