@@ -39,7 +39,8 @@ class SignalementExportLoader
         return $spreadsheet;
     }
 
-    private function getHeadersWithSelectedColumns(array $headers, array &$keysToRemove, array $selectedColumns): array {
+    private function getHeadersWithSelectedColumns(array $headers, array &$keysToRemove, array $selectedColumns): array
+    {
         foreach (ExportSignalementController::SELECTABLE_COLS as $columnIndex => $selectableColumn) {
             $searchSelectedCol = array_search($columnIndex, $selectedColumns);
             // Unchecked col: delete from list
@@ -59,7 +60,8 @@ class SignalementExportLoader
         return $headers;
     }
 
-    private function removeColFromHeaders(string $colName, array &$headers): void {
+    private function removeColFromHeaders(string $colName, array &$headers): void
+    {
         $indexToUnset = array_search($colName, $headers);
         if (isset($headers[$indexToUnset])) {
             unset($headers[$indexToUnset]);
