@@ -195,9 +195,7 @@ class WidgetDataKpiBuilder
 
     public function build(): WidgetDataKpi
     {
-        $partnerId = $this->parameterBag->get('feature_signalement_liste_enable')
-            ? [$this->user?->getPartner()?->getId()]
-            : $this->user?->getPartner()?->getId();
+        $partnerId = [$this->user?->getPartner()?->getId()];
 
         $this
             ->addWidgetCard('cardNouveauxSignalements', $this->countSignalement->getNew())
