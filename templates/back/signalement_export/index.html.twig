@@ -116,11 +116,14 @@
                                 <tr>
                                     <th class="fr-cell--fixed" role="columnheader">
                                         <div class="fr-checkbox-group fr-checkbox-group--sm">
-                                            <input name="row-select" id="table-select-checkbox-all" type="checkbox">
+                                            <input id="table-select-checkbox-all" type="checkbox">
                                             <label class="fr-label" for="table-select-checkbox-all">
                                                 Nom de la colonne
                                             </label>
                                         </div>
+                                    </th>
+                                    <th scope="col">
+                                        Nom de la colonne
                                     </th>
                                     <th scope="col">
                                         Détails
@@ -138,6 +141,9 @@
                                             </label>
                                         </div>
                                     </th>
+                                    <td>
+                                        {{ col.name }}
+                                    </td>
                                     <td>
                                         {{ col.description }}
                                     </td>
