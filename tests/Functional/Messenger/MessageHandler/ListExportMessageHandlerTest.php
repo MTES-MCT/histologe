@@ -2,7 +2,7 @@
 
 namespace App\Tests\Functional\Messenger\MessageHandler;
 
-use App\Entity\Signalement;
+use App\Entity\User;
 use App\Messenger\Message\ListExportMessage;
 use App\Messenger\MessageHandler\ListExportMessageHandler;
 use App\Repository\UserRepository;
