@@ -41,7 +41,6 @@ parameters:
     maintenance_enable: '%env(bool:MAINTENANCE_ENABLE)%'
     maintenance_banner_enable: '%env(bool:MAINTENANCE_BANNER_ENABLE)%'
     maintenance_banner_message: '%env(resolve:MAINTENANCE_BANNER_MESSAGE)%'
-    chatbot_enable: '%env(bool:CHATBOT_ENABLE)%'
     idoss_username: '%env(resolve:IDOSS_USERNAME)%'
     idoss_password: '%env(resolve:IDOSS_PASSWORD)%'
     feature_archive_inactive_account: '%env(bool:FEATURE_ARCHIVE_INACTIVE_ACCOUNT)%'
