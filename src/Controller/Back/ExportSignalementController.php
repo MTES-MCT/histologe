@@ -6,7 +6,6 @@ use App\Entity\User;
 use App\Manager\SignalementManager;
 use App\Messenger\Message\ListExportMessage;
 use App\Service\Signalement\Export\SignalementExportLoader;
-use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\HeaderUtils;
 use Symfony\Component\HttpFoundation\RedirectResponse;

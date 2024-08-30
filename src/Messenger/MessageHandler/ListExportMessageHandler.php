@@ -46,7 +46,7 @@ class ListExportMessageHandler
                 $filename = 'export-histologe-'.$listExportMessage->getUserId().'-'.$datetimeStr.'.'.$format;
                 $tmpFilepath = $this->parameterBag->get('uploads_tmp_dir').$filename;
                 $writer->save($tmpFilepath);
-    
+
                 $this->notificationMailerRegistry->send(
                     new NotificationMail(
                         type: NotificationMailerType::TYPE_LIST_EXPORT,
