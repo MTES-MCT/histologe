@@ -69,6 +69,12 @@
                 <section class="fr-py-6v">
                     <h2>Tableau de bord utilisateur</h2>
                     <ul>
+                        {% if platform.feature_profil_edition_enabled %}
+                            <li>
+                                <span class="fr-icon-account-line" title="Page réservée aux utilisateurs connectés" aria-hidden="true"></span>
+                                <a href="{{ path('back_profil') }}">Profil utilisateur (connexion nécessaire)</a>
+                            </li>
+                        {% endif %}
                         <li>
                             <span class="fr-icon-account-line" title="Page réservée aux utilisateurs connectés" aria-hidden="true"></span>
                             <a href="{{ path('back_dashboard') }}">Tableau de bord utilisateur (connexion nécessaire)</a>

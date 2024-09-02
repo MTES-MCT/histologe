@@ -7,7 +7,7 @@ use App\Entity\User;
 use App\Security\Voter\UserVoter;
 use App\Service\DashboardWidget\WidgetSettings;
 use App\Service\Signalement\SearchFilterOptionDataProvider;
-use App\Twig\AppExtension;
+use App\Service\UserAvatar;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 
@@ -16,7 +16,7 @@ class WidgetSettingsFactory
     public function __construct(
         private readonly SearchFilterOptionDataProvider $searchFilterOptionDataProvider,
         private readonly Security $security,
-        private readonly AppExtension $appExtension,
+        private readonly UserAvatar $userAvatar,
         private readonly ParameterBagInterface $parameterBag,
     ) {
     }
@@ -36,7 +36,7 @@ class WidgetSettingsFactory
             hasSignalementImported: $filterOptionData['hasSignalementsImported'] > 0,
             bailleursSociaux: $filterOptionData['bailleursSociaux'],
             avatarOrPlaceHolder: $this->parameterBag->get('feature_profil_edition_enabled')
-                ? $this->appExtension->userAvatarOrPlaceHolder($user, 80)
+                ? $this->userAvatar->userAvatarOrPlaceHolder($user, 80)
                 : ''
         );
     }

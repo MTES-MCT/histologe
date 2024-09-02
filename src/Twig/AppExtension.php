@@ -11,10 +11,9 @@ use App\Service\Notification\NotificationCounter;
 use App\Service\Signalement\Qualification\QualificationStatusService;
 use App\Service\TimezoneProvider;
 use App\Service\UploadHandlerService;
+use App\Service\UserAvatar;
 use App\Utils\AttributeParser;
 use App\Validator\EmailFormatValidator;
-use League\Flysystem\FilesystemOperator;
-use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Twig\Extension\AbstractExtension;
 use Twig\Extension\GlobalsInterface;
 use Twig\TwigFilter;
@@ -24,8 +23,6 @@ class AppExtension extends AbstractExtension implements GlobalsInterface
 {
     public function __construct(
         private readonly TimezoneProvider $timezoneProvider,
-        private readonly ParameterBagInterface $parameterBag,
-        private readonly FilesystemOperator $fileStorage,
     ) {
     }
 
@@ -141,7 +138,7 @@ class AppExtension extends AbstractExtension implements GlobalsInterface
             new TwigFunction('get_accepted_mime_type', [$this, 'getAcceptedMimeTypes']),
             new TwigFunction('get_accepted_extensions', [UploadHandlerService::class, 'getAcceptedExtensions']),
             new TwigFunction('show_email_alert', [$this, 'showEmailAlert']),
-            new TwigFunction('user_avatar_or_placeholder', [$this, 'userAvatarOrPlaceholder'], ['is_safe' => ['html']]),
+            new TwigFunction('user_avatar_or_placeholder', [UserAvatar::class, 'userAvatarOrPlaceholder'], ['is_safe' => ['html']]),
         ];
     }
 
@@ -157,33 +154,5 @@ class AppExtension extends AbstractExtension implements GlobalsInterface
     public function showEmailAlert(?string $emailAddress): bool
     {
         return !EmailFormatValidator::validate($emailAddress) || FixEmailAddressesCommand::EMAIL_HISTOLOGE_INCONNU === $emailAddress;
-    }
-
-    public function userAvatarOrPlaceholder($user, $size = 74): string
-    {
-        $zipCode = $user->getTerritory() ? substr($user->getTerritory()->getZip(), 0, 2) : 'SA';
-
-        if ($user->getAvatarFilename() && $this->fileStorage->fileExists($user->getAvatarFilename())) {
-            $bucketFilepath = $this->parameterBag->get('url_bucket').'/'.$user->getAvatarFilename();
-
-            $type = pathinfo($bucketFilepath, \PATHINFO_EXTENSION);
-
-            $data = file_get_contents($bucketFilepath);
-            $data64 = base64_encode($data);
-
-            $src = "data:image/$type;base64,$data64";
-
-            return sprintf(
-                '<img src="%s" alt="Avatar de l\'utilisateur" class="avatar-%s">',
-                $src,
-                $size
-            );
-        }
-
-        return sprintf(
-            '<span class="avatar-placeholder avatar-%s">%s</span>',
-            $size,
-            $zipCode
-        );
     }
 }

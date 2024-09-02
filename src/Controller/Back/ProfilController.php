@@ -150,7 +150,6 @@ class ProfilController extends AbstractController
         if ($user->getAvatarFilename()) {
             $uploadHandlerService->deleteSingleFile($user->getAvatarFilename());
             $user->setAvatarFilename(null);
-            $doctrine->getManager()->persist($user);
             $doctrine->getManager()->flush();
             $this->addFlash('success', 'L\'avatar a bien été supprimé.');
 
@@ -208,7 +207,6 @@ class ProfilController extends AbstractController
 
                 if (empty($errorMessage)) {
                     $user->setEmailAuthCode(bin2hex(random_bytes(3)));
-                    $doctrine->getManager()->persist($user);
                     $doctrine->getManager()->flush();
                     $notificationMailerRegistry->send(
                         new NotificationMail(
@@ -221,7 +219,6 @@ class ProfilController extends AbstractController
 
                     $response = [
                         'code' => Response::HTTP_NO_CONTENT,
-                        'message' => 'on doit ouvrir une autre modale maintenant',
                     ];
                 } else {
                     $response = ['code' => Response::HTTP_BAD_REQUEST];
