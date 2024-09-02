@@ -72,7 +72,7 @@ final class Version20240902085930 extends AbstractMigration
                 ['id' => $tag['archive']]
             );
 
-            if (!$keepTag || !$archiveTag || $archiveTag['is_archive'] == '1' || $keepTag['territory_id'] !== $archiveTag['territory_id']) {
+            if (!$keepTag || !$archiveTag || '1' == $archiveTag['is_archive'] || $keepTag['territory_id'] !== $archiveTag['territory_id']) {
                 continue;
             }
 
