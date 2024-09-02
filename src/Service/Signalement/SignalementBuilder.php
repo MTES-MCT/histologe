@@ -550,8 +550,10 @@ class SignalementBuilder
 
     private function convertStringToNumber(?string $value, $returnInt = true): float|int
     {
-        $pattern = $returnInt ? '/[^0-9]+/' : '/[^0-9.]+/';
-
-        return preg_replace($pattern, '', $value);
+        if ($returnInt) {
+            return (int) preg_replace('/[^0-9]+/', '', $value);
+        } else {
+            return (float) preg_replace('/[^0-9.]+/', '', $value);
+        }
     }
 }
