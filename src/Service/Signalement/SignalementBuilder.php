@@ -552,8 +552,8 @@ class SignalementBuilder
     {
         if ($returnInt) {
             return (int) preg_replace('/[^0-9]+/', '', $value);
-        } else {
-            return (float) preg_replace('/[^0-9.]+/', '', $value);
         }
+
+        return (float) preg_replace('/[^0-9.]+/', '', $value);
     }
 }
