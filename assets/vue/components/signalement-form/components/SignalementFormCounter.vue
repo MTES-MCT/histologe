@@ -1,6 +1,9 @@
 <template>
   <div class="fr-input-group" :id="id">
-    <label :class="[ customCss, 'fr-label' ]" :for="id + '_input'" v-html="variablesReplacer.replace(label)"></label>
+    <label :class="[ customCss, 'fr-label' ]" :for="id + '_input'">
+      {{ variablesReplacer.replace(label) }}
+      <span class="fr-hint-text">{{ description }}</span>
+    </label>
     <input
         type="text"
         pattern="[0-9]*"
@@ -64,7 +67,6 @@ export default defineComponent({
   methods: {
     updateValue (event: Event) {
       let value = (event.target as HTMLInputElement).value
-      value = value.replace(',', '.').replace(/[^\d.-]/g, '')
       this.$emit('update:modelValue', value)
     }
   },

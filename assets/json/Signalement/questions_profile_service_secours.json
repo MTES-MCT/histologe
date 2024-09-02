@@ -505,8 +505,10 @@
         {
           "type": "SignalementFormCounter",
           "label": "Quelle est la superficie du logement (taille en m²) (facultatif)",
+          "description": "Saisir un nombre entier",
           "slug": "composition_logement_superficie",
           "validate": {
+            "pattern": "^[0-9]*$",
             "required": false
           }
         },
@@ -532,10 +534,14 @@
         {
           "type": "SignalementFormCounter",
           "label": "Quel est le nombre de pièces à vivre (salon, chambre) dans votre logement ?",
+          "description": "Saisir un nombre entier",
           "slug": "composition_logement_nb_pieces",
           "defaultValue": 1,
           "conditional": {
             "show": "formStore.data.composition_logement_piece_unique === 'plusieurs_pieces'"
+          },
+          "validate": {
+            "pattern": "^[0-9]*$"
           }
         }
       ],
@@ -769,7 +775,11 @@
         {
           "type": "SignalementFormCounter",
           "label": "Combien de personnes vivent dans le logement ?",
-          "slug": "composition_logement_nombre_personnes"
+          "description": "Saisir un nombre entier",
+          "slug": "composition_logement_nombre_personnes",
+          "validate": {
+            "pattern": "^[0-9]*$"
+          }
         }
       ],
       "footer": [
