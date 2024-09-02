@@ -214,4 +214,10 @@ class HomepageController extends AbstractController
     {
         return $this->render('front/accessibilite.html.twig');
     }
+
+    #[Route('/plan-du-site', name: 'plan_du_site')]
+    public function planDuSite(): Response
+    {
+        return $this->render('front/plan_du_site.html.twig');
+    }
 }
