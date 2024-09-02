@@ -63,7 +63,8 @@ export default defineComponent({
   },
   methods: {
     updateValue (event: Event) {
-      const value = (event.target as HTMLInputElement).value
+      let value = (event.target as HTMLInputElement).value
+      value = value.replace(',', '.').replace(/[^\d.-]/g, '')
       this.$emit('update:modelValue', value)
     }
   },
