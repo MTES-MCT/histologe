@@ -54,4 +54,19 @@ class FileRepository extends ServiceEntityRepository
 
         return $qb->getQuery()->getResult();
     }
+
+    public function findWithOriginalAndVariants($count = false)
+    {
+        $limit = (new \DateTime())->modify('-1 month');
+        $qb = $this->createQueryBuilder('f')
+            ->andWhere('f.isVariantsGenerated = true')
+            ->andWhere('f.isOriginalDeleted = false')
+            ->andWhere('f.createdAt < :limit')
+            ->setParameter('limit', $limit);
+        if ($count) {
+            return $qb->select('count(f)')->getQuery()->getSingleScalarResult();
+        }
+
+        return $qb->select('f')->setMaxResults(2500)->getQuery()->getResult();
+    }
 }

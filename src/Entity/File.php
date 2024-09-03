@@ -118,11 +118,15 @@ class File
     #[ORM\Column(length: 255, unique: true)]
     private ?string $uuid = null;
 
+    #[ORM\Column]
+    private ?bool $isOriginalDeleted = null;
+
     public function __construct()
     {
         $this->uuid = Uuid::v4();
         $this->createdAt = new \DateTimeImmutable();
         $this->isVariantsGenerated = false;
+        $this->isOriginalDeleted = false;
         $this->isWaitingSuivi = false;
         $this->isTemp = false;
     }
@@ -381,6 +385,18 @@ class File
     public function setUuid(string $uuid): static
     {
         $this->uuid = $uuid;
+
+        return $this;
+    }
+
+    public function getIsOriginalDeleted(): ?bool
+    {
+        return $this->isOriginalDeleted;
+    }
+
+    public function setIsOriginalDeleted(bool $isOriginalDeleted): static
+    {
+        $this->isOriginalDeleted = $isOriginalDeleted;
 
         return $this;
     }
