@@ -5,9 +5,31 @@
 {% block content %}
     <section class="fr-col-12 fr-p-5v">
         {% if create %}
+            {% include 'back/breadcrumb_bo.html.twig' with {
+                'level2Title': 'Outils admin',
+                'level2Link': '',
+                'level2Label': '',
+                'level3Title': 'Règles d\'auto-affectation',
+                'level3Link': path('back_auto_affectation_rule_index'),
+                'level3Label': 'Retour à la liste des règles d\'auto-affectation',
+                'level4Title': 'Ajouter une règle d\'auto-affectation',
+                'level4Link': '',
+                'level4Label': '',
+            } %}
             <h2 class="fr-h2 fr-mb-0"> Ajouter une règle d'auto-affectation </h2>
             <span>Remplissez le formulaire ci-dessous pour créer une règle d'auto-affectation.</span><br>                
         {% else %}
+            {% include 'back/breadcrumb_bo.html.twig' with {
+                'level2Title': 'Outils admin',
+                'level2Link': '',
+                'level2Label': '',
+                'level3Title': 'Règles d\'auto-affectation',
+                'level3Link': path('back_auto_affectation_rule_index'),
+                'level3Label': 'Retour à la liste des règles d\'auto-affectation',
+                'level4Title': 'Modifier une règle d\'auto-affectation',
+                'level4Link': '',
+                'level4Label': '',
+            } %}
             <h2 class="fr-h2 fr-mb-0"> Modifier la règle d'auto-affectation : {{ autoAffectationRule.description }} </h2>
         {% endif %}
         <span>Tous les champs sont obligatoires, sauf mention contraire.</span>

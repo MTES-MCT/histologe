@@ -4,6 +4,13 @@
 
 {% block content %}
     <section class="fr-p-5v">
+        {% include 'back/breadcrumb_bo.html.twig' with {
+            'level2Title': 'Outils admin',
+            'level2Link': '',
+            'level2Label': '',
+            'level3Title': 'Comptes archivés',
+            'level3Link': '',
+        } %}
         <header>
             <div class="fr-grid-row">
                 <div class="fr-col-6 fr-text--left">
@@ -20,7 +27,7 @@
             <div class="fr-col-4 fr-p-2v">
                 <div class="fr-search-bar fr-mt-2v" id="header-search">
                     <input class="fr-input" placeholder="Utilisateur" type="search" id="header-search-input"
-                        name="bo-filters-usersterms" value="{{ userTerms ?? '' }}">
+                        name="userTerms" value="{{ userTerms ?? '' }}">
                     <button class="fr-btn" title="Rechercher">
                         {{userTerms is null ? 'Utilisateur' : userTerms}}
                     </button>&nbsp;

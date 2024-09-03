@@ -3,6 +3,13 @@
 {% block title %} Administration - Nouveauté(s) {% endblock %}
 
 {% block content %}
+    <section class="fr-p-5v">
+        {% include 'back/breadcrumb_bo.html.twig' with {
+            'level2Title': 'Notifications',
+            'level2Link': '',
+            'level2Label': '',
+        } %}
+    </section>
     <section class="fr-grid-row fr-grid-row--middle fr-p-5v ">
         <div class="fr-col-6">
             <h1 class="fr-h2 fr-mb-0">Notification(s)</h1>

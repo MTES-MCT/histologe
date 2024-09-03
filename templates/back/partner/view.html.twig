@@ -10,10 +10,20 @@
     {% include '_partials/_modal_user_delete.html.twig' %}
     {% include '_partials/_modal_user_edit.html.twig' %}
     <section class="fr-p-5v">
-        <header>
         {% if is_granted('ROLE_ADMIN_TERRITORY') %}
-            <a class="fr-link fr-fi-arrow-left-line fr-link--icon-left" href="{{ path('back_partner_index') }}">Retour</a>
+            {% include 'back/breadcrumb_bo.html.twig' with {
+                'level2Title': 'Outils admin',
+                'level2Link': '',
+                'level2Label': '',
+                'level3Title': 'Partenaires',
+                'level3Link': path('back_partner_index'),
+                'level3Label': 'Retour à la liste des partenaires',
+                'level4Title': 'Voir le partenaire '~partner.nom,
+                'level4Link': '',
+                'level4Label': '',
+            } %}
         {% endif %}            
+        <header>         
             <div class="fr-grid-row"> 
                 <div class="fr-col-6 fr-text--left">
                     <h1 class="fr-h1 fr-mb-0">{{ partner.nom }}</h1>

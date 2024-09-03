@@ -6,6 +6,13 @@
     {% if is_granted('ROLE_ADMIN') %}
     {% include 'back/auto-affectation-rule/_modal_autoaffectationrule_delete.html.twig' %}
     <section class="fr-p-5v">
+        {% include 'back/breadcrumb_bo.html.twig' with {
+            'level2Title': 'Outils admin',
+            'level2Link': '',
+            'level2Label': '',
+            'level3Title': 'Règles d\'auto-affectation',
+            'level3Link': '',
+        } %}
         <header>
             <div class="fr-grid-row">
                 <div class="fr-col-6 fr-text--left">

@@ -5,11 +5,36 @@
 {% block content %}
     <section class="fr-col-12 fr-p-5v">
         {% if create %}
+            {% include 'back/breadcrumb_bo.html.twig' with {
+                'level2Title': 'Outils admin',
+                'level2Link': '',
+                'level2Label': '',
+                'level3Title': 'Partenaires',
+                'level3Link': path('back_partner_index'),
+                'level3Label': 'Retour à la liste des partenaires',
+                'level4Title': 'Ajouter un partenaire',
+                'level4Link': '',
+                'level4Label': '',
+            } %}
             <h2 class="fr-h2 fr-mb-0"> Ajouter un partenaire </h2>
             <span>Remplissez le formulaire ci-dessous pour créer un partenaire.</span><br>
             <span>Tous les champs sont obligatoires, sauf mention contraire.</span>
                 
         {% else %}
+            {% include 'back/breadcrumb_bo.html.twig' with {
+                'level2Title': 'Outils admin',
+                'level2Link': '',
+                'level2Label': '',
+                'level3Title': 'Partenaires',
+                'level3Link': path('back_partner_index'),
+                'level3Label': 'Retour à la liste des partenaires',
+                'level4Title': 'Partenaire '~partner.nom,
+                'level4Link': path('back_partner_view', {id:partner.id}),
+                'level4Label': 'Retour au partenaire',
+                'level5Title': 'Modifier le partenaire ',
+                'level5Link': '',
+                'level5Label': '',
+            } %}
             <h2 class="fr-h2 fr-mb-0"> Modifier le partenaire : {{ partner.nom }} </h2>
             <span>Tous les champs sont obligatoires, sauf mention contraire.</span>
         {% endif %}

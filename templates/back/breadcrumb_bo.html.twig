@@ -1,4 +1,4 @@
-<nav role="navigation" class="fr-breadcrumb fr-mt-0" aria-label="vous êtes ici :">
+<nav role="navigation" class="fr-breadcrumb fr-my-0" aria-label="vous êtes ici :">
     <button class="fr-breadcrumb__button" aria-expanded="false" aria-controls="breadcrumb">Voir le fil d’Ariane</button>
     <div class="fr-collapse" id="breadcrumb">
         <ol class="fr-breadcrumb__list">
@@ -14,9 +14,29 @@
                     >{{ level2Title }}</a>
             </li>
             {% if level3Title is defined %}
-                <li>
-                    <a class="fr-breadcrumb__link" aria-current="page">{{ level3Title }}</a>
-                </li>
+            <li>
+                <a class="fr-breadcrumb__link"
+                    {% if level3Link %}  href="{{ level3Link }}"{% else %}aria-current="page"{% endif %}                  
+                    
+                    {% if level3Link == path('back_partner_index') %} data-filter-list-partner {% endif %}
+                    {% if level3Link == path('back_account_index') %} data-filter-list-comptes-archives {% endif %}
+                    {% if level3Link == path('back_auto_affectation_rule_index') %} data-filter-list-auto-affectation-rule {% endif %}
+                    {% if level3Label is defined %}aria-label="{{ level3Label }}"{% endif %}
+                    >{{ level3Title }}</a>
+            </li>
+            {% endif %}
+            {% if level4Title is defined %}
+            <li>
+                <a class="fr-breadcrumb__link"
+                    {% if level4Link %}  href="{{ level4Link }}"{% else %}aria-current="page"{% endif %}
+                    {% if level4Label is defined %}aria-label="{{ level4Label }}"{% endif %}
+                    >{{ level4Title }}</a>
+            </li>
+            {% endif %}
+            {% if level5Title is defined %}
+            <li>
+                <a class="fr-breadcrumb__link" aria-current="page">{{ level5Title }}</a>
+            </li>
             {% endif %}
         </ol>
     </div>
