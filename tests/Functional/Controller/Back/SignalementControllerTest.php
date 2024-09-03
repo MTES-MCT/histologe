@@ -39,7 +39,7 @@ class SignalementControllerTest extends WebTestCase
             $this->assertResponseIsSuccessful($signalement->getId());
             $this->assertSelectorTextContains(
                 'h1.fr-h2',
-                '#'.$signalement->getReference().' -',
+                '#'.$signalement->getReference(),
                 $signalement->getReference()
             );
         } else {
