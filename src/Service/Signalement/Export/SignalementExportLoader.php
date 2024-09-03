@@ -21,9 +21,10 @@ class SignalementExportLoader
 
         $keysToRemove = [];
         $headers = SignalementExportHeader::getHeaders();
-        if (!empty($selectedColumns)) {
-            $headers = $this->getHeadersWithSelectedColumns($headers, $keysToRemove, $selectedColumns);
+        if (empty($selectedColumns)) {
+            $selectedColumns = [];
         }
+        $headers = $this->getHeadersWithSelectedColumns($headers, $keysToRemove, $selectedColumns);
         $sheetData = [$headers];
 
         foreach ($this->signalementManager->findSignalementAffectationIterable($user, $filters) as $signalementExportItem) {
@@ -63,7 +64,7 @@ class SignalementExportLoader
     private function removeColFromHeaders(string $colName, array &$headers): void
     {
         $indexToUnset = array_search($colName, $headers);
-        if (isset($headers[$indexToUnset])) {
+        if ($indexToUnset > 0 && isset($headers[$indexToUnset])) {
             unset($headers[$indexToUnset]);
         }
     }

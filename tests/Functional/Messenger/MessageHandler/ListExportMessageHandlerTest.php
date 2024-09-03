@@ -33,13 +33,13 @@ class ListExportMessageHandlerTest extends WebTestCase
 
         $messageBus->dispatch($message);
 
-        $transport = $container->get('messenger.transport.async_priority_high');
+        $transport = $container->get('messenger.transport.async');
         $envelopes = $transport->get();
-        // $this->assertCount(1, $envelopes);
+        $this->assertCount(1, $envelopes);
 
         $handler = $container->get(ListExportMessageHandler::class);
         $handler($message);
-        // $this->assertEmailCount(1);
+        $this->assertEmailCount(1);
         /** @var NotificationEmail $email */
         $email = $this->getMailerMessage();
         $this->assertEmailHtmlBodyContains($email, 'export de la liste des signalements');
@@ -67,13 +67,13 @@ class ListExportMessageHandlerTest extends WebTestCase
 
         $messageBus->dispatch($message);
 
-        $transport = $container->get('messenger.transport.async_priority_high');
+        $transport = $container->get('messenger.transport.async');
         $envelopes = $transport->get();
-        // $this->assertCount(1, $envelopes);
+        $this->assertCount(1, $envelopes);
 
         $handler = $container->get(ListExportMessageHandler::class);
         $handler($message);
-        // $this->assertEmailCount(1);
+        $this->assertEmailCount(1);
         /** @var NotificationEmail $email */
         $email = $this->getMailerMessage();
         $this->assertEmailHtmlBodyContains($email, 'export de la liste des signalements');

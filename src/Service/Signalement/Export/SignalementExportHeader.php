@@ -48,7 +48,7 @@ class SignalementExportHeader
             'Nom tiers',
             'E-mail tiers',
             'Structure tiers',
-            'Lien avec occupant',
+            'Lien tiers occupant',
             'Date de visite',
             'Occupant présent visite',
             'Statut de la visite',

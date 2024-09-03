@@ -6,6 +6,7 @@ use App\Entity\User;
 use App\Manager\SignalementManager;
 use App\Messenger\Message\ListExportMessage;
 use App\Service\Signalement\Export\SignalementExportLoader;
+use PhpOffice\PhpSpreadsheet\Writer\Csv;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\HeaderUtils;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -62,14 +63,13 @@ class ExportSignalementController extends AbstractController
         /** @var User $user */
         $user = $this->getUser();
         $filters = $options = $request->getSession()->get('filters') ?? ['isImported' => '1'];
-        $signalements = $signalementManager->findSignalementAffectationList($user, $options);
-        $count_signalements = $signalements['pagination']['total_items'];
-
+        $count_signalements = $signalementManager->findSignalementAffectationList($user, $options, true);
         $textFilters = $this->filtersToText($filters);
 
         return $this->render('back/signalement_export/index.html.twig', [
             'filters' => $textFilters,
             'selectable_cols' => self::SELECTABLE_COLS,
+            'selected_cols' => $request->getSession()->get('selectedCols'),
             'count_signalements' => $count_signalements,
         ]);
     }
@@ -172,8 +172,11 @@ class ExportSignalementController extends AbstractController
         Request $request,
         MessageBusInterface $messageBus
     ): RedirectResponse {
+        $selectedColumns = $request->get('cols') ?? [];
         $format = $request->get('file-format');
+
         if (!in_array($format, ['csv', 'xlsx'])) {
+            $request->getSession()->set('selectedCols', $selectedColumns);
             $this->addFlash('error', "Merci de sélectionner le format de l'export.");
 
             return $this->redirectToRoute('back_signalement_list_export');
@@ -182,7 +185,6 @@ class ExportSignalementController extends AbstractController
         /** @var User $user */
         $user = $this->getUser();
         $filters = $request->getSession()->get('filters') ?? [];
-        $selectedColumns = $request->get('cols') ?? [];
 
         $message = (new ListExportMessage())
             ->setUserId($user->getId())
@@ -214,7 +216,9 @@ class ExportSignalementController extends AbstractController
         try {
             $response = new StreamedResponse();
             $response->setCallback(function () use ($signalementExportLoader, $filters, $user) {
-                $signalementExportLoader->load($user, $filters);
+                $spreadsheet = $signalementExportLoader->load($user, $filters);
+                $writer = new Csv($spreadsheet);
+                $writer->save('php://output');
             });
 
             $disposition = HeaderUtils::makeDisposition(

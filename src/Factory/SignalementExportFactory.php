@@ -65,7 +65,7 @@ class SignalementExportFactory
             typeDeclarant: $typeDeclarant,
             nomOccupant: $data['nomOccupant'],
             prenomOccupant: $data['prenomOccupant'],
-            telephoneOccupant: $data['telOccupant'],
+            telephoneOccupant: '\''.$data['telOccupant'].'\'',
             telephoneOccupantBis: $data['telOccupantBis'] ?? self::NON_RENSEIGNE,
             emailOccupant: $data['mailOccupant'],
             adresseOccupant: $data['adresseOccupant'],

@@ -135,7 +135,8 @@
                                 <tr data-row-key="{{ loop.index }}">
                                     <th class="fr-cell--fixed" scope="row">
                                         <div class="fr-checkbox-group fr-checkbox-group--sm">
-                                            <input name="cols[]" value="{{ colId }}" id="table-select-checkbox-{{ colId }}" type="checkbox" class="checkbox-column">
+                                            <input name="cols[]" value="{{ colId }}" id="table-select-checkbox-{{ colId }}" type="checkbox" class="checkbox-column"
+                                                {% if colId in selected_cols %}checked="checked"{% endif %}>
                                             <label class="fr-label" for="table-select-checkbox-{{ colId }}">
                                                 {{ col.name }}
                                             </label>
