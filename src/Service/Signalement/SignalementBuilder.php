@@ -94,15 +94,17 @@ class SignalementBuilder
 
     public function withTypeCompositionLogement(): self
     {
+        $nbOccupantsLogement = $this->convertStringToNumber($this->signalementDraftRequest->getCompositionLogementNombrePersonnes());
+        $nbPiecesLogement = $this->convertStringToNumber($this->signalementDraftRequest->getCompositionLogementNbPieces());
         $this->signalement
             ->setTypeCompositionLogement(
                 $this->typeCompositionLogementFactory->createFromSignalementDraftPayload($this->payload)
             )
-            ->setNbOccupantsLogement($this->signalementDraftRequest->getCompositionLogementNombrePersonnes())
+            ->setNbOccupantsLogement($nbOccupantsLogement)
             ->setNatureLogement($this->signalementDraftRequest->getTypeLogementNature())
             ->setTypeLogement($this->signalementDraftRequest->getTypeLogementNature())
             ->setSuperficie($this->signalementDraftRequest->getCompositionLogementSuperficie())
-            ->setNbPiecesLogement($this->signalementDraftRequest->getCompositionLogementNbPieces())
+            ->setNbPiecesLogement($nbPiecesLogement)
             ->setIsBailEnCours($this->evalBoolean($this->signalementDraftRequest->getBailDpeBail()))
             ->setDateEntree($this->resolveDateEmmenagement());
 
@@ -111,6 +113,7 @@ class SignalementBuilder
 
     public function withSituationFoyer(): self
     {
+        $montantAllocation = $this->convertStringToNumber($this->signalementDraftRequest->getLogementSocialMontantAllocation(), false);
         $this->signalement
             ->setSituationFoyer($this->situationFoyerFactory->createFromSignalementDraftPayload($this->payload))
             ->setIsPreavisDepart(
@@ -118,7 +121,7 @@ class SignalementBuilder
             )
             ->setIsAllocataire($this->resolveIsAllocataire())
             ->setNumAllocataire($this->signalementDraftRequest->getLogementSocialNumeroAllocataire())
-            ->setMontantAllocation($this->signalementDraftRequest->getLogementSocialMontantAllocation())
+            ->setMontantAllocation($montantAllocation)
             ->setDateNaissanceOccupant($this->resolveDateNaissanceOccupant());
 
         return $this;
@@ -256,15 +259,15 @@ class SignalementBuilder
 
     public function withProcedure(): self
     {
+        $loyer = $this->convertStringToNumber($this->signalementDraftRequest->getInformationsComplementairesLogementMontantLoyer(), false);
+        $nbEtages = $this->convertStringToNumber($this->signalementDraftRequest->getInformationsComplementairesLogementNombreEtages());
         $this->signalement
             ->setInformationProcedure(
                 $this->informationProcedureFactory->createFromSignalementDraftPayload($this->payload)
             )
             ->setIsProprioAverti($this->evalBoolean($this->signalementDraftRequest->getInfoProcedureBailleurPrevenu()))
-            ->setLoyer($this->signalementDraftRequest->getInformationsComplementairesLogementMontantLoyer())
-            ->setNbNiveauxLogement(
-                (int) $this->signalementDraftRequest->getInformationsComplementairesLogementNombreEtages()
-            )
+            ->setLoyer($loyer)
+            ->setNbNiveauxLogement($nbEtages)
             ->setIsFondSolidariteLogement(
                 $this->evalBoolean(
                     $this->signalementDraftRequest->getInformationsComplementairesSituationOccupantsBeneficiaireFsl()
@@ -543,5 +546,14 @@ class SignalementBuilder
         return $this->isServiceSecours()
             ? $this->evalBoolean($this->signalementDraftRequest->getSignalementConcerneLogementSocialServiceSecours())
             : $this->evalBoolean($this->signalementDraftRequest->getSignalementConcerneLogementSocialAutreTiers());
+    }
+
+    private function convertStringToNumber(?string $value, $returnInt = true): float|int
+    {
+        if ($returnInt) {
+            return (int) preg_replace('/[^0-9]+/', '', $value);
+        }
+
+        return (float) preg_replace('/[^0-9.]+/', '', $value);
     }
 }

@@ -1545,11 +1545,13 @@
               {
                 "type": "SignalementFormCounter",
                 "label": "{{dictionaryStore::desordres_logement_chauffage_details_dpe_conso_finale}}",
+                "description": "Saisir un nombre entier",
                 "slug": "desordres_logement_chauffage_details_dpe_conso_finale",
                 "conditional": {
                   "show": "formStore.data.desordres_logement_chauffage_details_dpe_annee === 'post2023'"
                 },
                 "validate": {
+                  "pattern": "^[0-9]*$",
                   "required": false
                 },
                 "defaultValue": 1
@@ -1557,23 +1559,27 @@
               {
                 "type": "SignalementFormCounter",
                 "label": "{{dictionaryStore::composition_logement_superficie}}",
+                "description": "Saisir un nombre entier",
                 "slug": "composition_logement_superficie",
                 "conditional": {
                   "show": "formStore.data.desordres_logement_chauffage_details_dpe_annee === 'before2023'"
                 },
                 "validate": {
+                  "pattern": "^[0-9]*$",
                   "required": false
                 }
               },
               {
                 "type": "SignalementFormCounter",
                 "label": "{{dictionaryStore::desordres_logement_chauffage_details_dpe_conso}}",
+                "description": "Saisir un nombre entier",
                 "slug": "desordres_logement_chauffage_details_dpe_conso",
                 "conditional": {
                   "show": "formStore.data.desordres_logement_chauffage_details_dpe_annee === 'before2023'"
                 },
                 "defaultValue": 1,
                 "validate": {
+                  "pattern": "^[0-9]*$",
                   "required": false
                 }
               },

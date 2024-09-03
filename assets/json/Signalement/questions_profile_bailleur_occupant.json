@@ -340,7 +340,11 @@
         {
           "type": "SignalementFormCounter",
           "label": "Quelle est la superficie de votre logement (taille en m²)",
-          "slug": "composition_logement_superficie"
+          "description": "Saisir un nombre entier",
+          "slug": "composition_logement_superficie",
+          "validate": {
+            "pattern": "^[0-9]*$"
+          }
         },
         {
           "type": "SignalementFormOnlyChoice",
@@ -364,10 +368,14 @@
         {
           "type": "SignalementFormCounter",
           "label": "Quel est le nombre de pièces à vivre (salon, chambre) dans votre logement ?",
+          "description": "Saisir un nombre entier",
           "slug": "composition_logement_nb_pieces",
           "defaultValue": 1,
           "conditional": {
             "show": "formStore.data.composition_logement_piece_unique === 'plusieurs_pieces'"
+          },
+          "validate": {
+            "pattern": "^[0-9]*$"
           }
         }
       ],
@@ -601,7 +609,11 @@
         {
           "type": "SignalementFormCounter",
           "label": "Combien de personnes vivent dans votre logement ?",
-          "slug": "composition_logement_nombre_personnes"
+          "description": "Saisir un nombre entier",
+          "slug": "composition_logement_nombre_personnes",
+          "validate": {
+            "pattern": "^[0-9]*$"
+          }
         },
         {
           "type": "SignalementFormOnlyChoice",
@@ -820,11 +832,13 @@
         {
           "type": "SignalementFormCounter",
           "label": "Quel est le montant de votre allocation ? (facultatif)",
+          "description": "Saisir un nombre entier",
           "slug": "logement_social_montant_allocation",
           "conditional": {
             "show": "formStore.data.logement_social_allocation === 'oui'"
           },
           "validate": {
+            "pattern": "^[0-9]*$",
             "required": false
           }
         }
@@ -1121,9 +1135,11 @@
               },
               {
                 "type": "SignalementFormCounter",
-                "label": "Quel est votre revenu fiscal de référence ?",
+                "label": "Quel est votre revenu fiscal de référence ? (facultatif)",
+                "description": "Saisir un nombre entier",
                 "slug": "informations_complementaires_situation_occupants_revenu_fiscal",
                 "validate": {
+                  "pattern": "^[0-9]*$",
                   "required": false
                 }
               }
@@ -1139,18 +1155,20 @@
             "body": [
               {
                 "type": "SignalementFormCounter",
-                "label": "Votre logement est sur combien d'étages ?",
+                "label": "Votre logement est sur combien d'étages ? (facultatif)",
+                "description": "Saisir un nombre entier",
                 "slug": "informations_complementaires_logement_nombre_etages",
                 "conditional": {
                   "show": "formStore.data.composition_logement_piece_unique === 'plusieurs_pieces'"
                 },
                 "validate": {
+                  "pattern": "^[0-9]*$",
                   "required": false
                 }
               },
               {
                 "type": "SignalementFormTextfield",
-                "label": "En quelle année votre logement a-t-il été construit ?",
+                "label": "En quelle année votre logement a-t-il été construit ? (facultatif)",
                 "slug": "informations_complementaires_logement_annee_construction",
                 "placeholder": "1970",
                 "validate": {
