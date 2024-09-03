@@ -25,7 +25,6 @@ use Doctrine\DBAL\Exception;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\QueryBuilder;
 use Symfony\Bundle\SecurityBundle\Security;
-use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\HttpFoundation\Request;
 
 class SearchFilter
@@ -70,8 +69,6 @@ class SearchFilter
         private SignalementQualificationRepository $signalementQualificationRepository,
         private EpciRepository $epciRepository,
         private BailleurRepository $bailleurRepository,
-        #[Autowire(env: 'FEATURE_LIST_FILTER_ENABLE')]
-        private string $featureListFilterEnable,
     ) {
     }
 
@@ -531,12 +528,10 @@ class SearchFilter
             $qb = $this->addFilterStatusAffectation($qb, $filters['statusAffectation']);
         }
 
-        if ($this->featureListFilterEnable) {
-            if (!empty($filters['isImported'])) {
-                $qb = $this->addFilterImported($qb);
-            } else {
-                $qb->andWhere('s.isImported = false');
-            }
+        if (!empty($filters['isImported'])) {
+            $qb = $this->addFilterImported($qb);
+        } else {
+            $qb->andWhere('s.isImported = false');
         }
 
         return $qb;

@@ -34,20 +34,17 @@ parameters:
     csp_enable: '%env(bool:CSP_ENABLE)%'
     feature_ask_visite: '%env(FEATURE_ASK_VISITE_ENABLE)%'
     feature_oilhi_enable: '%env(bool:FEATURE_OILHI_ENABLE)%'
-    feature_signalement_liste_enable: '%env(bool:FEATURE_LIST_FILTER_ENABLE)%'
     platform_name: 'Histologe'
     matomo_enable: '%env(bool:MATOMO_ENABLE)%'
     matomo_site_id: '%env(resolve:MATOMO_SITE_ID)%'
     maintenance_enable: '%env(bool:MAINTENANCE_ENABLE)%'
     maintenance_banner_enable: '%env(bool:MAINTENANCE_BANNER_ENABLE)%'
     maintenance_banner_message: '%env(resolve:MAINTENANCE_BANNER_MESSAGE)%'
-    chatbot_enable: '%env(bool:CHATBOT_ENABLE)%'
     idoss_username: '%env(resolve:IDOSS_USERNAME)%'
     idoss_password: '%env(resolve:IDOSS_PASSWORD)%'
     feature_archive_inactive_account: '%env(bool:FEATURE_ARCHIVE_INACTIVE_ACCOUNT)%'
     feature_anonymize_expired_account: '%env(bool:FEATURE_ANONYMIZE_EXPIRED_ACCOUNT)%'
     cgu_current_version: '05/06/2024'
-    feature_signalement_view_enabled: '%env(bool:FEATURE_SIGNALEMENT_VIEW_ENABLED)%'
 
 services:
     # default configuration for services in *this* file
