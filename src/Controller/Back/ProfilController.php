@@ -68,9 +68,13 @@ class ProfilController extends AbstractController
             $errorMessage = [];
             if (empty($payload['profil_edit_infos']['prenom'])) {
                 $errorMessage['errors']['profil_edit_infos[prenom]']['errors'][] = 'Le prénom ne peut pas être vide';
+            } elseif (strlen($payload['profil_edit_infos']['prenom']) > 255) {
+                $errorMessage['errors']['profil_edit_infos[prenom]']['errors'][] = 'Le prénom ne doit pas dépasser 255 caractères';
             }
             if (empty($payload['profil_edit_infos']['nom'])) {
                 $errorMessage['errors']['profil_edit_infos[nom]']['errors'][] = 'Le nom ne peut pas être vide';
+            } elseif (strlen($payload['profil_edit_infos']['nom']) > 255) {
+                $errorMessage['errors']['profil_edit_infos[nom]']['errors'][] = 'Le nom ne doit pas dépasser 255 caractères';
             }
             // Validation du fichier avatar
             if (empty($errorMessage) && $avatarFile instanceof UploadedFile) {
@@ -141,7 +145,6 @@ class ProfilController extends AbstractController
     #[Route('/delete-avatar', name: 'back_profil_delete_avatar', methods: ['GET', 'POST'])]
     #[IsGranted('ROLE_USER_PARTNER')]
     public function deleteAvatar(
-        Request $request,
         ManagerRegistry $doctrine,
         UploadHandlerService $uploadHandlerService,
     ): Response {
@@ -176,7 +179,14 @@ class ProfilController extends AbstractController
             $payload['_token']
         )) {
             $errorMessage = [];
+            // Dans tous les cas on vérifie l'email
             $email = $payload['profil_edit_email[email]'];
+            if ('' === $email) {
+                $errorMessage['errors']['profil_edit_email[email]']['errors'][] = 'Ce champ est obligatoire.';
+            } elseif (!EmailFormatValidator::validate($email)) {
+                $errorMessage['errors']['profil_edit_email[email]']['errors'][] = 'Veuillez saisir une adresse email au format adresse@email.fr.';
+            }
+
             if (isset($payload['profil_edit_email[code]'])) {
                 // Étape 2: Validation du code
                 $authCode = $payload['profil_edit_email[code]'];
@@ -199,12 +209,6 @@ class ProfilController extends AbstractController
                 }
             } else {
                 // Étape 1: Envoi du code de confirmation par email
-                if ('' === $email) {
-                    $errorMessage['errors']['profil_edit_email[email]']['errors'][] = 'Ce champ est obligatoire.';
-                } elseif (!EmailFormatValidator::validate($email)) {
-                    $errorMessage['errors']['profil_edit_email[email]']['errors'][] = 'Veuillez saisir une adresse email au format adresse@email.fr.';
-                }
-
                 if (empty($errorMessage)) {
                     $user->setEmailAuthCode(bin2hex(random_bytes(3)));
                     $doctrine->getManager()->flush();
