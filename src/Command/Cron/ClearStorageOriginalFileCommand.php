@@ -22,6 +22,7 @@ use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 )]
 class ClearStorageOriginalFileCommand extends AbstractCronCommand
 {
+    private const int MAX_FILES_PROCESSED = 2500;
     private SymfonyStyle $io;
 
     public function __construct(
@@ -41,12 +42,12 @@ class ClearStorageOriginalFileCommand extends AbstractCronCommand
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
-        $count = $this->fileRepository->findWithOriginalAndVariants(count : true);
-        $files = $this->fileRepository->findWithOriginalAndVariants();
+        $count = $this->fileRepository->countWithOriginalAndVariants();
+        $files = $this->fileRepository->findWithOriginalAndVariants(self::MAX_FILES_PROCESSED);
         $nbFilesToProcess = count($files);
+        $this->io->info('Found '.$count.' files with original and variants, process '.$nbFilesToProcess.' files');
         $progressBar = new ProgressBar($output, $nbFilesToProcess);
         $progressBar->start();
-        $this->io->info('Found '.$count.' files with original and variants, process '.$nbFilesToProcess.' files');
         $nbErrors = 0;
         $nbTmp = 0;
         foreach ($files as $file) {
