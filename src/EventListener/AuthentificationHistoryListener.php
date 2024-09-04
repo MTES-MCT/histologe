@@ -7,15 +7,18 @@ use App\Entity\User;
 use App\Manager\HistoryEntryManager;
 use Psr\Log\LoggerInterface;
 use Scheb\TwoFactorBundle\Security\TwoFactor\Event\TwoFactorAuthenticationEvent;
+use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\Security\Http\Event\InteractiveLoginEvent;
 
 class AuthentificationHistoryListener
 {
-    private const CHECK_2FA_PATH = '/2fa_check';
+    private const string CHECK_2FA_PATH = '/2fa_check';
 
     public function __construct(
         private readonly HistoryEntryManager $historyEntryManager,
         private readonly LoggerInterface $logger,
+        #[Autowire(env: 'HISTORY_TRACKING_ENABLE')]
+        private readonly string $historyTrackingEnable,
     ) {
     }
 
@@ -38,11 +41,19 @@ class AuthentificationHistoryListener
 
     private function createAuthentificationHistory(HistoryEntryEvent $historyEntryEvent, User $user): void
     {
+        if (!$this->historyTrackingEnable) {
+            return;
+        }
         try {
-            $this->historyEntryManager->create(
+            $historyEntry = $this->historyEntryManager->create(
                 historyEntryEvent: $historyEntryEvent,
-                entityHistory: $user
+                entityHistory: $user,
+                flush: false
             );
+
+            [, $source] = $this->historyEntryManager->getChangesAndSource($historyEntryEvent, $user);
+            $historyEntry->setSource($source);
+            $this->historyEntryManager->save($historyEntry);
 
             return;
         } catch (\Throwable $exception) {
