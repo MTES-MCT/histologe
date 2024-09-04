@@ -265,6 +265,7 @@ class LoadSignalementData extends Fixture implements OrderedFixtureInterface
             ],
         ];
 
+        $dateMinusTwoMonth = (new \DateTimeImmutable())->modify('-2 months');
         foreach ($documentsAndPhotos as $document) {
             $user = $this->userRepository->findOneBy(['id' => $document['user']]);
             $file = $this->fileFactory->createInstanceFrom(
@@ -277,6 +278,10 @@ class LoadSignalementData extends Fixture implements OrderedFixtureInterface
                 user: $user,
                 documentType: DocumentType::AUTRE
             );
+            if (in_array(pathinfo($document['file'], \PATHINFO_EXTENSION), File::IMAGE_EXTENSION)) {
+                $file->setIsVariantsGenerated(true);
+                $file->setCreatedAt($dateMinusTwoMonth);
+            }
             $manager->persist($file);
         }
 

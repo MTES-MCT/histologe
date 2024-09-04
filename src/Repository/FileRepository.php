@@ -56,12 +56,12 @@ class FileRepository extends ServiceEntityRepository
         return $qb->getQuery()->getResult();
     }
 
-    public function findWithOriginalAndVariants(int $max)
+    public function findWithOriginalAndVariants(int $max): array
     {
         return $this->initQueryWithOriginalAndVariants()->select('f')->setMaxResults($max)->getQuery()->getResult();
     }
 
-    public function countWithOriginalAndVariants()
+    public function countWithOriginalAndVariants(): int
     {
         return $this->initQueryWithOriginalAndVariants()->select('count(f)')->getQuery()->getSingleScalarResult();
     }
