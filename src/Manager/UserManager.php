@@ -35,6 +35,11 @@ class UserManager extends AbstractManager
 
     public function updateUserFromData(User $user, array $data, bool $save = true): User
     {
+        $emailUpdated = false;
+        if ($user->getEmail() !== $data['email']) {
+            $emailUpdated = true;
+            $user->setPassword('');
+        }
         $user
             ->setNom($data['nom'])
             ->setPrenom($data['prenom'])
@@ -53,6 +58,10 @@ class UserManager extends AbstractManager
 
         if ($save) {
             $this->save($user);
+        }
+
+        if ($emailUpdated) {
+            $this->sendAccountActivationNotification($user);
         }
 
         return $user;
@@ -209,5 +218,21 @@ class UserManager extends AbstractManager
     public function getSystemUser(): ?User
     {
         return $this->getRepository()->findOneBy(['email' => $this->parameterBag->get('user_system_email')]);
+    }
+
+    public function sendAccountActivationNotification(User $user): void
+    {
+        if (!\in_array('ROLE_USAGER', $user->getRoles())
+            && User::STATUS_ARCHIVE !== $user->getStatut()
+        ) {
+            $this->notificationMailerRegistry->send(
+                new NotificationMail(
+                    type: NotificationMailerType::TYPE_ACCOUNT_ACTIVATION_FROM_BO,
+                    to: $user->getEmail(),
+                    territory: $user->getTerritory(),
+                    user: $user,
+                )
+            );
+        }
     }
 }

@@ -9,17 +9,18 @@ use App\Repository\FileRepository;
 use App\Service\ImageManipulationHandler;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Attribute\Groups;
 use Symfony\Component\Uid\Uuid;
 use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: FileRepository::class)]
 class File implements EntityHistoryInterface
 {
-    public const FILE_TYPE_DOCUMENT = 'document';
-    public const FILE_TYPE_PHOTO = 'photo';
-    public const INPUT_NAME_PHOTOS = 'photos';
-    public const INPUT_NAME_DOCUMENTS = 'documents';
-    public const DOCUMENT_MIME_TYPES = [
+    public const string FILE_TYPE_DOCUMENT = 'document';
+    public const string FILE_TYPE_PHOTO = 'photo';
+    public const string INPUT_NAME_PHOTOS = 'photos';
+    public const string INPUT_NAME_DOCUMENTS = 'documents';
+    public const array DOCUMENT_MIME_TYPES = [
         'image/jpeg',
         'image/png',
         'image/gif',
@@ -71,31 +72,38 @@ class File implements EntityHistoryInterface
 
     #[ORM\ManyToOne(inversedBy: 'files')]
     #[ORM\JoinColumn(nullable: false)]
+    #[Groups(['history_entry:read'])]
     private ?Signalement $signalement = null;
 
     #[ORM\Column(length: 255)]
+    #[Groups(['history_entry:read'])]
     private ?string $filename = null;
 
     #[ORM\Column(length: 255)]
+    #[Groups(['history_entry:read'])]
     private ?string $title = null;
 
     #[ORM\Column(length: 32, options: ['comment' => 'Value possible photo or document'])]
+    #[Groups(['history_entry:read'])]
     private ?string $fileType = null;
 
     #[ORM\Column(nullable: true)]
+    #[Groups(['history_entry:read'])]
     private ?\DateTimeImmutable $createdAt = null;
 
     #[ORM\ManyToOne(inversedBy: 'files')]
     #[ORM\JoinColumn(nullable: true)]
+    #[Groups(['history_entry:read'])]
     private ?Intervention $intervention = null;
 
     #[ORM\Column(type: Types::BIGINT, nullable: true)]
     private ?string $size = null;
 
-    #[ORM\Column(type: 'string', enumType: DocumentType::class, nullable: true)]
+    #[ORM\Column(type: 'string', nullable: true, enumType: DocumentType::class)]
     private ?DocumentType $documentType = null;
 
     #[ORM\Column(nullable: true)]
+    #[Groups(['history_entry:read'])]
     private ?string $desordreSlug = null;
 
     #[ORM\Column]
@@ -103,6 +111,7 @@ class File implements EntityHistoryInterface
 
     #[ORM\Column(type: 'text', nullable: true, length: 250)]
     #[Assert\Length(max: 250)]
+    #[Groups(['history_entry:read'])]
     private ?string $description;
 
     #[ORM\Column]

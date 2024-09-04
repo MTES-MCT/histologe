@@ -3,7 +3,6 @@
 namespace App\Manager;
 
 use App\Entity\Affectation;
-use App\Entity\Enum\HistoryEntryEvent;
 use App\Entity\Enum\MotifCloture;
 use App\Entity\Enum\MotifRefus;
 use App\Entity\Partner;
@@ -128,16 +127,6 @@ class AffectationManager extends Manager
      */
     public function deleteAffectationsByPartner(Partner $partner): void
     {
-        foreach ($partner->getAffectations() as $affectation) {
-            $historyEntry = $this->historyEntryManager->create(HistoryEntryEvent::DELETE, $affectation);
-            [$changes, $source] = $this->historyEntryManager->getChangesAndSource(
-                HistoryEntryEvent::DELETE,
-                $affectation
-            );
-            $historyEntry->setChanges($changes)->setSource($source);
-            $this->historyEntryManager->save($historyEntry);
-        }
-
         /** @var AffectationRepository $affectationRepository */
         $affectationRepository = $this->getRepository();
         $affectationRepository->deleteAffectationsByPartner($partner);

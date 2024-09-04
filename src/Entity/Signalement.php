@@ -2,6 +2,7 @@
 
 namespace App\Entity;
 
+use App\Entity\Behaviour\EntityHistoryCollectionInterface;
 use App\Entity\Behaviour\EntityHistoryInterface;
 use App\Entity\Enum\HistoryEntryEvent;
 use App\Entity\Enum\MotifCloture;
@@ -31,7 +32,7 @@ use Symfony\Component\Validator\Context\ExecutionContextInterface;
 #[ORM\Index(columns: ['created_at'], name: 'idx_signalement_created_at')]
 #[ORM\Index(columns: ['is_imported'], name: 'idx_signalement_is_imported')]
 #[ORM\Index(columns: ['uuid'], name: 'idx_signalement_uuid')]
-class Signalement implements EntityHistoryInterface
+class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInterface
 {
     public const STATUS_NEED_VALIDATION = 1;
     public const STATUS_ACTIVE = 2;
@@ -46,6 +47,7 @@ class Signalement implements EntityHistoryInterface
     private $id;
 
     #[ORM\Column(type: 'string', length: 255)]
+    #[Groups(['history_entry:read'])]
     private $uuid;
 
     #[ORM\Column(type: 'string', nullable: true, enumType: ProfileDeclarant::class)]
@@ -2452,5 +2454,10 @@ class Signalement implements EntityHistoryInterface
     public function getHistoryRegisteredEvent(): array
     {
         return [HistoryEntryEvent::CREATE, HistoryEntryEvent::UPDATE, HistoryEntryEvent::DELETE];
+    }
+
+    public function getManyToManyFieldsToTrack(): array
+    {
+        return ['tags'];
     }
 }

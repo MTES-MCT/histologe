@@ -2,7 +2,6 @@
 
 namespace App\Entity;
 
-use App\Entity\Behaviour\EntityHistoryInterface;
 use App\Entity\Enum\HistoryEntryEvent;
 use App\Entity\Enum\Qualification;
 use App\Entity\Enum\QualificationStatus;
@@ -11,7 +10,7 @@ use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: SignalementQualificationRepository::class)]
-class SignalementQualification implements EntityHistoryInterface
+class SignalementQualification
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]

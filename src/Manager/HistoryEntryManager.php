@@ -7,6 +7,7 @@ use App\Entity\Behaviour\EntityHistoryInterface;
 use App\Entity\Enum\HistoryEntryEvent;
 use App\Entity\HistoryEntry;
 use App\Factory\HistoryEntryFactory;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\Serializer\Exception\ExceptionInterface;
@@ -20,20 +21,29 @@ class HistoryEntryManager extends AbstractManager
         private readonly RequestStack $requestStack,
         private readonly CommandContext $commandContext,
         ManagerRegistry $managerRegistry,
-        string $entityName = self::class
+        string $entityName = HistoryEntry::class
     ) {
         parent::__construct($managerRegistry, $entityName);
     }
 
+    /**
+     * @throws ExceptionInterface
+     */
     public function create(
         HistoryEntryEvent $historyEntryEvent,
-        EntityHistoryInterface $entityHistory,
+        EntityHistoryInterface|Collection $entityHistory,
+        array $changes = [],
         bool $flush = true,
-    ): HistoryEntry {
+    ): ?HistoryEntry {
         $historyEntry = $this->historyEntryFactory->createInstanceFrom(
             historyEntryEvent: $historyEntryEvent,
             entityHistory: $entityHistory,
         );
+
+        [$changesFromDelete, $source] = $this->getChangesAndSource($historyEntryEvent, $entityHistory);
+        $historyEntry
+            ->setChanges(HistoryEntryEvent::DELETE === $historyEntryEvent ? $changesFromDelete : $changes)
+            ->setSource($source);
 
         $this->save($historyEntry, $flush);
 

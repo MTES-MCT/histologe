@@ -51,7 +51,8 @@ class AuthentificationHistoryListenerTest extends WebTestCase
         $historyEntryManager = self::getContainer()->get(HistoryEntryManager::class);
         $authentificationHistoryListener = new AuthentificationHistoryListener(
             $historyEntryManager,
-            $this->logger
+            $this->logger,
+            1
         );
 
         $userRepository = static::getContainer()->get(UserRepository::class);

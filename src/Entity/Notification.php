@@ -2,14 +2,12 @@
 
 namespace App\Entity;
 
-use App\Entity\Behaviour\EntityHistoryInterface;
-use App\Entity\Enum\HistoryEntryEvent;
 use App\Repository\NotificationRepository;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Attribute\Groups;
 
 #[ORM\Entity(repositoryClass: NotificationRepository::class)]
-class Notification implements EntityHistoryInterface
+class Notification
 {
     public const TYPE_AFFECTATION = 0;
     public const TYPE_SUIVI = 1;
@@ -144,10 +142,5 @@ class Notification implements EntityHistoryInterface
         $this->affectation = $affectation;
 
         return $this;
-    }
-
-    public function getHistoryRegisteredEvent(): array
-    {
-        return [HistoryEntryEvent::DELETE];
     }
 }
