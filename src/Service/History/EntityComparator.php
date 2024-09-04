@@ -4,7 +4,7 @@ namespace App\Service\History;
 
 class EntityComparator
 {
-    private const array FIELDS_TO_IGNORE = [
+    private const array FIELDS_TO_TRUNCATE = [
         'password',
         'token',
         'idossToken',
@@ -27,6 +27,10 @@ class EntityComparator
             if ($value instanceof \DateTimeInterface) {
                 return $value->format('Y-m-d H:i:s');
             }
+        }
+
+        if (is_array($value)) {
+            return json_encode($value);
         }
 
         return $value;
@@ -58,7 +62,7 @@ class EntityComparator
             return $changes;
         }
 
-        if (in_array($field, self::FIELDS_TO_IGNORE)) {
+        if (in_array($field, self::FIELDS_TO_TRUNCATE)) {
             return [
                 'old' => substr((string) $oldValue, 0, 4).str_repeat('.', 10),
                 'new' => substr((string) $newValue, 0, 4).str_repeat('.', 10),

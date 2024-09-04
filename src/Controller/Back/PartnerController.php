@@ -263,7 +263,6 @@ class PartnerController extends AbstractController
         VisiteNotifier $visiteNotifier,
         WorkflowInterface $interventionPlanningStateMachine,
         InterventionManager $interventionManager,
-        AffectationManager $affectationManager,
     ): Response {
         $partnerId = $request->request->get('partner_id');
         /** @var ?Partner $partner */

@@ -14,8 +14,8 @@ use Symfony\Component\Validator\Constraints as Assert;
 #[ORM\Entity(repositoryClass: AutoAffectationRuleRepository::class)]
 class AutoAffectationRule implements EntityHistoryInterface
 {
-    public const STATUS_ACTIVE = 'ACTIVE';
-    public const STATUS_ARCHIVED = 'ARCHIVED';
+    public const string STATUS_ACTIVE = 'ACTIVE';
+    public const string STATUS_ARCHIVED = 'ARCHIVED';
 
     #[ORM\Id]
     #[ORM\GeneratedValue]
@@ -29,15 +29,23 @@ class AutoAffectationRule implements EntityHistoryInterface
 
     #[ORM\Column(type: 'string', options: ['comment' => 'Value possible ACTIVE or ARCHIVED'])]
     #[Assert\NotBlank(message: 'Merci de choisir un statut.')]
-    #[Assert\Choice(choices: [self::STATUS_ACTIVE, self::STATUS_ARCHIVED], message: 'Choisissez une option valide: ACTIVE or ARCHIVED')]
+    #[Assert\Choice(
+        choices: [self::STATUS_ACTIVE, self::STATUS_ARCHIVED],
+        message: 'Choisissez une option valide: ACTIVE or ARCHIVED')]
     private string $status = self::STATUS_ACTIVE;
 
-    #[ORM\Column(type: 'string', enumType: PartnerType::class, options: ['comment' => 'Value possible enum PartnerType'])]
+    #[ORM\Column(
+        type: 'string',
+        enumType: PartnerType::class,
+        options: ['comment' => 'Value possible enum PartnerType'])]
     #[Assert\NotBlank(message: 'Merci de choisir un type de partenaire.')]
     #[AppAssert\ValidPartnerType]
     private PartnerType $partnerType;
 
-    #[ORM\Column(length: 255, type: 'string', options: ['comment' => 'Value possible enum ProfileDeclarant or all, tiers or occupant'])]
+    #[ORM\Column(
+        type: 'string',
+        length: 255,
+        options: ['comment' => 'Value possible enum ProfileDeclarant or all, tiers or occupant'])]
     #[Assert\NotBlank(message: 'Merci de choisir un profil déclarant.')]
     #[Assert\Length(max: 255)]
     #[AppAssert\ValidProfileDeclarant()]
@@ -59,12 +67,16 @@ class AutoAffectationRule implements EntityHistoryInterface
 
     #[ORM\Column(length: 32, options: ['comment' => 'Value possible all, non_renseigne, prive or public'])]
     #[Assert\NotBlank(message: 'Merci de renseigner le type de parc.')]
-    #[Assert\Choice(choices: ['all', 'prive', 'public', 'non_renseigne'], message: 'Choisissez une option valide: all, non_renseigne, prive ou public')]
+    #[Assert\Choice(
+        choices: ['all', 'prive', 'public', 'non_renseigne'],
+        message: 'Choisissez une option valide: all, non_renseigne, prive ou public')]
     private string $parc;
 
     #[ORM\Column(length: 32, options: ['comment' => 'Value possible all, non, oui, caf or msa'])]
     #[Assert\NotBlank(message: 'Merci de renseigner le profil d\'allocataire.')]
-    #[Assert\Choice(choices: ['all', 'non', 'oui', 'caf', 'msa'], message: 'Choisissez une option valide: all, non, oui, caf ou msa')]
+    #[Assert\Choice(
+        choices: ['all', 'non', 'oui', 'caf', 'msa'],
+        message: 'Choisissez une option valide: all, non, oui, caf ou msa')]
     private string $allocataire;
 
     public function getId(): ?int

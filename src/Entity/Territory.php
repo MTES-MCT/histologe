@@ -20,11 +20,11 @@ class Territory implements EntityHistoryInterface
     private ?int $id = null;
 
     #[ORM\Column(type: 'string', length: 3)]
-    #[Groups(['widget-settings:read', 'widget:read', 'history_entry:read'])]
+    #[Groups(['widget-settings:read', 'widget:read'])]
     private ?string $zip = null;
 
     #[ORM\Column(type: 'string', length: 255)]
-    #[Groups(['widget-settings:read', 'widget:read', 'history_entry:read'])]
+    #[Groups(['widget-settings:read', 'widget:read'])]
     private ?string $name = null;
 
     #[ORM\OneToMany(mappedBy: 'territory', targetEntity: User::class)]

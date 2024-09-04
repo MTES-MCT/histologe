@@ -2,13 +2,12 @@
 
 namespace App\Entity;
 
-use App\Entity\Behaviour\EntityHistoryInterface;
 use App\Entity\Enum\HistoryEntryEvent;
 use App\Repository\SignalementUsagerRepository;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: SignalementUsagerRepository::class)]
-class SignalementUsager implements EntityHistoryInterface
+class SignalementUsager
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
