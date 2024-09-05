@@ -341,12 +341,35 @@ class ProfilControllerTest extends WebTestCase
         $this->assertEmailCount(0);
     }
 
+    public function testEditEmailStep1SameEmail(): void
+    {
+        $csrfToken = $this->generateCsrfToken($this->client, 'profil_edit_email');
+
+        $route = $this->router->generate('back_profil_edit_email');
+        $this->client->request('POST', $route, [
+            '_token' => $csrfToken,
+            'profil_edit_email[email]' => 'admin-01@histologe.fr',
+        ]);
+
+        $this->assertResponseStatusCodeSame(Response::HTTP_BAD_REQUEST);
+        $this->assertJson(json_encode([
+            'code' => Response::HTTP_BAD_REQUEST,
+            'errors' => [
+                'profil_edit_email[email]' => [
+                    'errors' => ['Veuillez saisir une adresse e-mail différente de l\'actuelle'],
+                ],
+            ],
+        ]));
+        $this->assertEmailCount(0);
+    }
+
     public function testEditEmailStep2Success(): void
     {
         $csrfToken = $this->generateCsrfToken($this->client, 'profil_edit_email');
 
         $route = $this->router->generate('back_profil_edit_email');
         $this->user->setEmailAuthCode('123456');
+        $this->user->setTempEmail('new-email@example.com');
         $response = $this->client->request('POST', $route, [
             '_token' => $csrfToken,
             'profil_edit_email[email]' => 'new-email@example.com',
@@ -397,6 +420,29 @@ class ProfilControllerTest extends WebTestCase
             'errors' => [
                 'profil_edit_email[code]' => [
                     'errors' => ['Le code est obligatoire.'],
+                ],
+            ],
+        ]));
+    }
+
+    public function testEditEmailStep2NoTempEmail(): void
+    {
+        $csrfToken = $this->generateCsrfToken($this->client, 'profil_edit_email');
+
+        $route = $this->router->generate('back_profil_edit_email');
+        $this->user->setEmailAuthCode('123456');
+        $this->user->setTempEmail(null);
+        $response = $this->client->request('POST', $route, [
+            '_token' => $csrfToken,
+            'profil_edit_email[email]' => 'new-email@example.com',
+            'profil_edit_email[code]' => '123456',
+        ]);
+        $this->assertResponseStatusCodeSame(Response::HTTP_BAD_REQUEST);
+        $this->assertJson(json_encode([
+            'code' => Response::HTTP_BAD_REQUEST,
+            'errors' => [
+                'profil_edit_email[code]' => [
+                    'errors' => ['Il n\'y a pas d\'adresse e-mail enregistrée à modifier'],
                 ],
             ],
         ]));

@@ -152,6 +152,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, TwoFact
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $avatarFilename = null;
 
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $tempEmail = null;
+
     public function __construct()
     {
         $this->suivis = new ArrayCollection();
@@ -606,7 +609,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, TwoFact
         return $this->authCode;
     }
 
-    public function setEmailAuthCode(string $authCode): void
+    public function setEmailAuthCode(?string $authCode): void
     {
         $this->authCode = $authCode;
     }
@@ -631,6 +634,18 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, TwoFact
     public function setAvatarFilename(?string $avatarFilename): self
     {
         $this->avatarFilename = $avatarFilename;
+
+        return $this;
+    }
+
+    public function getTempEmail(): ?string
+    {
+        return $this->tempEmail;
+    }
+
+    public function setTempEmail(?string $tempEmail): self
+    {
+        $this->tempEmail = $tempEmail;
 
         return $this;
     }

@@ -179,13 +179,6 @@ class ProfilController extends AbstractController
             $payload['_token']
         )) {
             $errorMessage = [];
-            // Dans tous les cas on vérifie l'email
-            $email = $payload['profil_edit_email[email]'];
-            if ('' === $email) {
-                $errorMessage['errors']['profil_edit_email[email]']['errors'][] = 'Ce champ est obligatoire.';
-            } elseif (!EmailFormatValidator::validate($email)) {
-                $errorMessage['errors']['profil_edit_email[email]']['errors'][] = 'Veuillez saisir une adresse email au format adresse@email.fr.';
-            }
 
             if (isset($payload['profil_edit_email[code]'])) {
                 // Étape 2: Validation du code
@@ -195,9 +188,15 @@ class ProfilController extends AbstractController
                 } elseif ($authCode !== $user->getEmailAuthCode()) {
                     $errorMessage['errors']['profil_edit_email[code]']['errors'][] = 'Le code est incorrect.';
                 }
+                if (null === $user->getTempEmail()) {
+                    // ne doit pas arriver
+                    $errorMessage['errors']['profil_edit_email[code]']['errors'][] = 'Il n\'y a pas d\'adresse e-mail enregistrée à modifier';
+                }
 
                 if (empty($errorMessage)) {
-                    $user->setEmail($email);
+                    $user->setEmail($user->getTempEmail());
+                    $user->setEmailAuthCode(null);
+                    $user->setTempEmail(null);
                     $doctrine->getManager()->persist($user);
                     $doctrine->getManager()->flush();
 
@@ -209,8 +208,17 @@ class ProfilController extends AbstractController
                 }
             } else {
                 // Étape 1: Envoi du code de confirmation par email
+                $email = $payload['profil_edit_email[email]'];
+                if ('' === $email) {
+                    $errorMessage['errors']['profil_edit_email[email]']['errors'][] = 'Ce champ est obligatoire.';
+                } elseif (!EmailFormatValidator::validate($email)) {
+                    $errorMessage['errors']['profil_edit_email[email]']['errors'][] = 'Veuillez saisir une adresse e-mail au format adresse@email.fr.';
+                } elseif ($email === $user->getEmail()) {
+                    $errorMessage['errors']['profil_edit_email[email]']['errors'][] = 'Veuillez saisir une adresse e-mail différente de l\'actuelle';
+                }
                 if (empty($errorMessage)) {
                     $user->setEmailAuthCode(bin2hex(random_bytes(3)));
+                    $user->setTempEmail($email);
                     $doctrine->getManager()->flush();
                     $notificationMailerRegistry->send(
                         new NotificationMail(

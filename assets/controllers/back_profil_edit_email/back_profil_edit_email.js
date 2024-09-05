@@ -6,9 +6,11 @@ const modalAlert = document?.querySelector('#fr-modal-profil-edit-email-alert');
 const modalEmailInput = document?.querySelector('#fr-modal-profil-edit-email-email-input');
 const modalCodeText = document?.querySelector('#fr-modal-profil-edit-email-code-text');
 const modalCodeInput = document?.querySelector('#fr-modal-profil-edit-email-code-input');
+const modalCodeInputInput = document?.querySelector('#profil_edit_email_code');
 modalEditEmail.addEventListener('dsfr.conceal', (event) => {
     event.preventDefault();
     clearErrors();
+    showStepOne()
 })
 
 function clearErrors() {
@@ -19,6 +21,24 @@ function clearErrors() {
         })
         divErrorElement.classList.remove('fr-input-group--error');
     })
+}
+
+function showStepOne() {
+    modalCodeInputInput.value = ''; // Vider le champ du code de confirmation
+    modalAlert.classList.remove('fr-hidden');
+    modalEmailInput.classList.remove('fr-hidden');
+    modalCodeText.classList.add('fr-hidden');
+    modalCodeInput.classList.add('fr-hidden');
+    modalEditEmailTitle.innerText = 'Modifier mon adresse e-mail';
+}
+
+function showStepTwo() {
+    modalCodeInputInput.value = ''; // Vider le champ du code de confirmation
+    modalAlert.classList.add('fr-hidden');
+    modalEmailInput.classList.add('fr-hidden');
+    modalCodeText.classList.remove('fr-hidden');
+    modalCodeInput.classList.remove('fr-hidden');
+    modalEditEmailTitle.innerText = 'Confirmer mon adresse e-mail';
 }
 
 modalEditEmail.addEventListener('submit', (event) => {
@@ -50,7 +70,6 @@ async function submitEditEmail(formElement) {
                 'Content-Type': 'application/json'
             }
         });
-        modalCodeInput.value = ''; // Vider le champ du code de confirmation
         if (response.ok && response.status === 200) {
             location.reload();
             window.scrollTo(0, 0);
@@ -58,11 +77,7 @@ async function submitEditEmail(formElement) {
             const submitElement = document.querySelector(`.fr-modal--opened [type="submit"]`);
             submitElement.disabled = false;
             submitElement.classList.remove('fr-btn--loading', 'fr-btn--icon-left', 'fr-icon-refresh-line');
-            modalAlert.classList.add('fr-hidden');
-            modalEmailInput.classList.add('fr-hidden');
-            modalCodeText.classList.remove('fr-hidden');
-            modalCodeInput.classList.remove('fr-hidden');
-            modalEditEmailTitle.innerText = 'Confirmer mon adresse e-mail';
+            showStepTwo()
         } else if (response.status === 400) {
             const responseData = await response.json();
             const errors = responseData.errors;
