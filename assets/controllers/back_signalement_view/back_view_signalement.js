@@ -133,3 +133,34 @@ const refreshHiddenInput = () => {
         }
     })
 }
+
+document?.querySelectorAll('[data-fr-select-target]')?.forEach(t => {
+    let source = document?.querySelector('#' + t.getAttribute('data-fr-select-source'));
+    let target = document?.querySelector('#' + t.getAttribute('data-fr-select-target'));
+    t.addEventListeners('click touchdown', () => {
+        [...source.selectedOptions].map(s => {
+            target.append(s)
+        })
+    })
+})
+
+document?.querySelector('#signalement-affectation-form-submit')?.addEventListeners('click touchdown', (e) => {
+    e.preventDefault();
+    e.target.disabled = true;
+    e.target?.form?.querySelectorAll('option').forEach(o => {
+        o.selected = true;
+    })
+    document?.querySelectorAll('#signalement-affectation-form-row,#signalement-affectation-loader-row').forEach(el => {
+        el.classList.toggle('fr-hidden')
+    })
+    
+    let formData = new FormData(e.target.form);
+    fetch(e.target.getAttribute('formaction'), {
+        method: 'POST',
+        body: formData
+    }).then(r => {
+        if (r.ok) {
+            window.location.reload(true)
+        }
+    })
+})

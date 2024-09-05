@@ -4,8 +4,12 @@ import './vue/index';
 import './vue/signalement-list.ts';
 import './vue/dashboard';
 
+import './services/data_delete'
+import './services/pagination'
+import './services/search_filter_form'
+import './services/table_sortable'
+
 import './controllers/modale_cgu_bo';
-import './controllers/search_filter_form'
 
 import './controllers/form_account';
 import './controllers/form_nde';
