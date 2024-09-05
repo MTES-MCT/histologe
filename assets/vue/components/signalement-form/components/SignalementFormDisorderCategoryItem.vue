@@ -3,19 +3,19 @@
     :class="['signalement-form-disorder-category-item fr-container--fluid fr-p-3v', isSelected || isAlreadySelected ? categoryZoneCss : '']"
     @click="handleClick"
     >
+      <input
+      type="checkbox"
+      :id="id + '_input'"
+      :name="id"
+      v-model="isSelected"
+      @change="handleChange"
+      @click.stop
+      >
       <div class="fr-grid-row fr-grid-row--gutters fr-grid-row--middle">
         <div class="fr-col-12 fr-col-md-4">
           <img :src="iconSrc" alt="">
         </div>
         <div class="fr-col-12 fr-col-md-8">
-          <input
-            type="checkbox"
-            :id="id + '_input'"
-            :name="id"
-            v-model="isSelected"
-            @change="handleChange"
-            @click.stop
-            >
           <label :for="id + '_input'" class="fr-label" @click.stop>{{ label }}</label>
         </div>
       </div>
@@ -77,6 +77,12 @@ export default defineComponent({
 <style>
 .signalement-form-disorder-category-item {
   border: 1px solid var(--border-default-grey);
+}
+.signalement-form-disorder-category-item:has(:focus){
+  outline-color: #0a76f6;
+  outline-offset: -4px;
+  outline-style: solid;
+  outline-width: 2px;
 }
 .signalement-form-disorder-category-item.is-selected-batiment {
   border: 1px solid var(--border-default-orange-terre-battue);
