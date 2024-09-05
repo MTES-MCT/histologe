@@ -130,7 +130,6 @@
 
 <script type="module" src="{{ asset('build/dsfr/dsfr.module.min.js') }}"></script>
 <script nomodule src="{{ asset('build/dsfr/dsfr.nomodule.min.js') }}"></script>
-<script src="{{ asset('js/const.min.js?v='~''|date('YmdH')) }}"></script>
 <script src="{{ asset('js/app.js?v='~''|date('YmdH')) }}"></script>
 
 {% if 'back_cartographie' in app.request.get('_route') %}
@@ -225,55 +224,6 @@
             placement: "bottom",
             maxWidth: "100%"
         });
-        if (document.querySelector('template#tags_tooltip_template')) {
-            tippy('#tags_select_tooltip_btn', {
-                content: (reference) => {
-                    let template = document.querySelector('template#tags_tooltip_template');
-                    let newEl = document.importNode(template.content, true);
-                    newEl.querySelectorAll('[data-tag-add]').forEach(el => {
-                        el.addEventListener('click', addTagEvent)
-                    });
-                    newEl.querySelector('form[name="new-tag-form"]')?.addEventListener('submit', (event) => {
-                        event.preventDefault();
-                        let form = event.target;
-                        let data = new FormData(form);
-                        fetch(form.getAttribute('action'), {
-                            method: 'POST',
-                            body: data
-                        }).then(r => {
-                            r.json().then(res => {
-                                form.reset();
-                                let container = document.querySelector(`#tags_inactive_container`);
-                                let template = document.querySelector(`template#tag_template`).content;
-                                let tag = template.querySelector('span:first-child').cloneNode(true);
-                                tag.setAttribute('data-value', res.tag.id);
-                                tag.innerHTML = res.tag.label + '&nbsp;&nbsp;';
-                                let deleter = document.createElement('span');
-
-                                deleter.classList.add('fr-fi-delete-line', 'fr-mt-2v', 'fr-text-label--red-marianne', 'fr-icon--sm')
-                                deleter.addEventListener('click', persistRemoveTagEvent);
-                                tag.appendChild(deleter);
-                                tag.addEventListener('click', addTagEvent);
-                                container.appendChild(tag);
-                            });
-                        }).catch(e => {
-                        });
-                    });
-                    newEl?.querySelectorAll('span.tag--deleter')?.forEach(tagDeleter => {
-                        tagDeleter.addEventListener('click', persistRemoveTagEvent);
-                    });
-                    return newEl;
-                },
-                trigger: 'click',
-                hideOnClick: 'toggle',
-                allowHTML: true,
-                interactive: true,
-                theme: 'light-border',
-                placement: "left",
-                maxWidth: "500px",
-                arrow: false,
-            })
-        }
         
         {% if isClosedForMe or signalement.statut is same as constant('App\\Entity\\Signalement::STATUS_CLOSED') %}
         document?.querySelector('#signalement-{{ signalement.id }}-content').querySelectorAll('button:not(.reopen,.reaffect,.img-box,.fr-accordion__btn,.keep-when-signalement-closed),.fr-btn:not(.reopen,.reaffect,.img-box,.fr-fi-file-pdf-fill,.keep-when-signalement-closed)').forEach(input => {

@@ -1,3 +1,110 @@
+Node.prototype.addEventListeners = function (eventNames, eventFunction) {
+    for (let eventName of eventNames.split(' '))
+        this.addEventListener(eventName, eventFunction);
+}
+
+const forms = document.querySelectorAll('form.needs-validation:not([name="bug-report"])');
+const localStorage = window.localStorage;
+const uploadedFiles = [];
+const sortTableFunction = (table) => {
+    return function (ev) {
+        if (ev.target.tagName.toLowerCase() === 'A') {
+            sortRows(table, siblingIndex(ev.target.parentNode));
+            ev.preventDefault();
+        }
+    };
+}
+
+const siblingIndex = (node) => {
+    let count = 0;
+
+    while (node === node.previousElementSibling) {
+        count++;
+    }
+
+    return count;
+}
+
+const sortRows = (table, columnIndex) => {
+    let rows = table.querySelectorAll("tbody tr"),
+        sel = "thead th:nth-child(" + (columnIndex + 1) + ")",
+        sel2 = "td:nth-child(" + (columnIndex + 1) + ")",
+        classList = table.querySelector(sel).classList,
+        values = [],
+        cls = "",
+        allNum = true,
+        val,
+        index,
+        node;
+
+    if (classList) {
+        if (classList.contains("date")) {
+            cls = "date";
+        } else if (classList.contains("number")) {
+            cls = "number";
+        }
+    }
+
+    for (index = 0; index < rows.length; index++) {
+        node = rows[index].querySelector(sel2);
+        val = node.innerText;
+
+        if (isNaN(val)) {
+            allNum = false;
+        } else {
+            val = parseFloat(val);
+        }
+
+        values.push({value: val, row: rows[index]});
+    }
+
+    if (cls == "" && allNum) {
+        cls = "number";
+    }
+
+    if (cls == "number") {
+        values.sort(sortNumberVal);
+        values = values.reverse();
+    } else if (cls == "date") {
+        values.sort(sortDateVal);
+    } else {
+        values.sort(sortTextVal);
+    }
+
+    for (let idx = 0; idx < values.length; idx++) {
+        table.querySelector("tbody").appendChild(values[idx].row);
+    }
+}
+
+const sortNumberVal = (a, b) => {
+    return sortNumber(a.value, b.value);
+}
+const sortNumber = (a, b) => {
+    return a - b;
+}
+const sortDateVal = (a, b) => {
+    let dateA = Date.parse(a.value),
+        dateB = Date.parse(b.value);
+
+    return sortNumber(dateA, dateB);
+}
+const sortTextVal = (a, b) => {
+    let textA = (a.value + "").toUpperCase();
+    let textB = (b.value + "").toUpperCase();
+
+    if (textA < textB) {
+        return -1;
+    }
+
+    if (textA > textB) {
+        return 1;
+    }
+
+    return 0;
+}
+
+const checkFieldset=e=>{let t=e.querySelector('fieldset[aria-required="true"]');return!t||(null===t.querySelector('[type="checkbox"]:checked')?(t.classList.add("fr-fieldset--error"),t?.querySelector(".fr-error-text")?.classList.remove("fr-hidden"),invalid=t.parentElement,!1):(t.classList.remove("fr-fieldset--error"),t?.querySelector(".fr-error-text")?.classList.add("fr-hidden"),!0))}
+
 let invalid, tables = document.querySelectorAll("table.sortable"),
     table,
     thead,
@@ -303,9 +410,6 @@ document?.querySelector('#partner_add_user,#situation_add_critere')?.addEventLis
     container.appendChild(row);
 })
 
-document?.querySelectorAll('[data-tag-delete]')?.forEach(delBtn => {
-    delBtn.addEventListener('click', deleteTagEvent)
-});
 document?.querySelectorAll('[data-delete]')?.forEach(actionBtn => {
     actionBtn.addEventListeners('click touchdown', event => {
         event.preventDefault();
