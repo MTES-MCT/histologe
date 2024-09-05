@@ -19,7 +19,7 @@
                         ref="withoutAffectationButton"
                         :aria-pressed="ariaPressed.showWithoutAffectationOnly.toString()"
                         @click="toggleWithoutAffectation">
-                  Afficher les signalements sans affectations
+                  Afficher les signalements sans affectations uniquement
                 </button>
               </li>
               <li>
