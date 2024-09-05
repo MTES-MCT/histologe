@@ -30,7 +30,7 @@ class Tag implements EntityHistoryInterface
     private Collection $signalement;
 
     #[ORM\Column(type: 'string', length: 255)]
-    #[Groups(['widget-settings:read', 'history_entry:read'])]
+    #[Groups(['widget-settings:read'])]
     #[Assert\NotBlank(message: 'Merci de saisir un nom pour l\'étiquette.')]
     private ?string $label = null;
 
@@ -40,7 +40,6 @@ class Tag implements EntityHistoryInterface
     #[ORM\ManyToOne(targetEntity: Territory::class, inversedBy: 'tags')]
     #[ORM\JoinColumn(nullable: false)]
     #[Assert\NotBlank()]
-    #[Groups(['history_entry:read'])]
     private ?Territory $territory = null;
 
     public function __construct()
