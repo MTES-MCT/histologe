@@ -28,7 +28,7 @@
               class="fr-background--grey fr-p-2v fr-grid-row fr-grid-row--bottom">
         <div class="fr-col-4 fr-p-2v">
             <div class="fr-search-bar fr-mt-2v" id="header-search">
-                <input class="fr-input" placeholder="Rechercher un partenaire" type="search" id="header-search-input"
+                <input class="fr-input" placeholder="Rechercher un partenaire" type="search" id="partner-input"
                     name="userTerms" value="{{ userTerms ?? '' }}">
                 <button class="fr-btn" title="Rechercher">
                     {{userTerms is null ? 'Rechercher un partenaire' : userTerms}}
@@ -37,7 +37,7 @@
         </div>
         {% if is_granted('ROLE_ADMIN') %}
             <div class="fr-col-3 fr-p-2v">
-                <select id="bo-filters-territories" class="fr-select fr-select-submit" name="territory">
+                <select id="partner-filters-territories" class="fr-select fr-select-submit" name="territory">
                     <option value="" {{ currentTerritory is null ? 'selected' : '' }}>Tous les territoires</option>
                     {% for territory in territories %}
                         <option value="{{ territory.id }}" {{ currentTerritory ? (territory.id == currentTerritory.id ? 'selected' : '') : ''  }}>{{ territory.zip ~ ' - ' ~ territory.name }}</option>
@@ -46,7 +46,7 @@
             </div>
         {% endif %}
         <div class="fr-col-3 fr-p-2v">
-            <select id="bo-filters-types" class="fr-select fr-select-submit" name="type">
+            <select id="partner-filters-types" class="fr-select fr-select-submit" name="type">
                 <option value="" {{ currentType is null ? 'selected' : '' }}>Type</option>
                 {% for key, type in types %}
                     <option value="{{ key }}" {{ currentType ? (key == currentType ? 'selected' : '') : '' }}>{{ type }}</option>
@@ -126,7 +126,7 @@
 				</div>
 			</div>
 		</div>
-        <div class="fr-grid-row fr-mt-2v fr-grid-row--center">
+        <div class="fr-grid-row fr-mt-2v fr-grid-row--center" id="partner-pagination">
             {% import '_partials/macros.html.twig' as macros %}
             {{ macros.customPagination(pages, page, 'back_partner_index', {territory: (currentTerritory ? currentTerritory.id : null), type: (currentType ? currentType : null), userTerms: userTerms}) }}
         </div>

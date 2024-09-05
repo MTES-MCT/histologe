@@ -30,7 +30,7 @@
               class="fr-background--grey fr-p-2v fr-grid-row fr-grid-row--bottom">
               
             <div class="fr-col-3 fr-p-2v">
-                <select id="bo-filters-territories" class="fr-select fr-select-submit" name="territory">
+                <select id="autoaffectation-rule-filters-territories" class="fr-select fr-select-submit" name="territory">
                     <option value="" {{ currentTerritory is null ? 'selected' : '' }}>Tous les territoires</option>
                     {% for territory in territories %}
                         <option value="{{ territory.id }}" {{ currentTerritory ? (territory.id == currentTerritory.id ? 'selected' : '') : ''  }}>{{ territory.zip ~ ' - ' ~ territory.name }}</option>
@@ -126,7 +126,7 @@
 				</div>
 			</div>
 		</div>
-        <div class="fr-grid-row fr-mt-2v fr-grid-row--center">
+        <div class="fr-grid-row fr-mt-2v fr-grid-row--center" id="autoaffectation-rule-pagination">
             {% import '_partials/macros.html.twig' as macros %}
             {{ macros.customPagination(pages, page, 'back_auto_affectation_rule_index', {territory: (currentTerritory ? currentTerritory.id :  null)}) }}
         </div>

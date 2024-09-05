@@ -1,3 +1,5 @@
+import { loadWindowWithLocalStorage} from '../list_filter_helper'
+
 document?.querySelector('#btn-display-all-suivis')?.addEventListeners('click touchdown', (e) => {
     e.preventDefault()
     document.querySelectorAll('.suivi-item').forEach(item => {
@@ -57,15 +59,7 @@ const displayPhotoAlbum = (photoId) => {
     })
 }
 
-document?.querySelector('[data-filter-list-signalement]')?.addEventListener('click', (event) => {
-    if (window.history.length > 1) {
-        event.preventDefault()
-        const backLinkQueryParams = localStorage.getItem('back_link_signalement_view')
-        window.location.href = backLinkQueryParams?.length > 0
-            ? `${event.target.href}?${backLinkQueryParams}`
-            : event.target.href
-    }
-})
+document?.querySelector('[data-filter-list-signalement]')?.addEventListener('click', (event) => loadWindowWithLocalStorage(event, 'back_link_signalement_view'));
 
 document?.querySelectorAll('.signalement-tag-add')?.forEach(element => {
     element.addEventListener('click', (event) => {

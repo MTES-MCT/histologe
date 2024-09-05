@@ -26,7 +26,7 @@
               
             <div class="fr-col-4 fr-p-2v">
                 <div class="fr-search-bar fr-mt-2v" id="header-search">
-                    <input class="fr-input" placeholder="Utilisateur" type="search" id="header-search-input"
+                    <input class="fr-input" placeholder="Utilisateur" type="search" id="comptes-archives-input"
                         name="userTerms" value="{{ userTerms ?? '' }}">
                     <button class="fr-btn" title="Rechercher">
                         {{userTerms is null ? 'Utilisateur' : userTerms}}
@@ -34,7 +34,7 @@
                 </div>
             </div>
             <div class="fr-col-3 fr-p-2v">
-                <select id="bo-filters-territories" class="fr-select fr-select-submit" name="territory">
+                <select id="comptes-archives-filters-territories" class="fr-select fr-select-submit" name="territory">
                     <option value="" {{ not isNoneTerritory and currentTerritory is null ? 'selected' : '' }}>Tous les territoires</option>
                     <option value="none" {{ isNoneTerritory ? 'selected' : '' }}>Aucun</option>
                     {% for territory in territories %}
@@ -43,7 +43,7 @@
                 </select>
             </div>
             <div class="fr-col-3 fr-p-2v">
-                <select id="bo-filters-partners" class="fr-select fr-select-submit" name="partner">
+                <select id="comptes-archives-filters-partners" class="fr-select fr-select-submit" name="partner">
                     <option value="" {{ not isNonePartner and currentPartner is null ? 'selected' : '' }}>Tous les partenaires</option>
                     <option value="none" {{ isNonePartner ? 'selected' : '' }}>Aucun</option>
                     {% for partner in partners %}
