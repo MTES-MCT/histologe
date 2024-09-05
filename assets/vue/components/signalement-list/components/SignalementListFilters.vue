@@ -14,6 +14,14 @@
                   Afficher mes affectations uniquement
                 </button>
               </li>
+              <li v-if="sharedState.user.canSeeFilterPartner">
+                <button class="fr-tag"
+                        ref="withoutAffectationButton"
+                        :aria-pressed="ariaPressed.showWithoutAffectationOnly.toString()"
+                        @click="toggleWithoutAffectation">
+                  Afficher les signalements sans affectations uniquement
+                </button>
+              </li>
               <li>
                 <button
                     v-if="sharedState.hasSignalementImported"
@@ -154,7 +162,7 @@
                 <HistoMultiSelect
                     id="filter-partenaires"
                     v-model="sharedState.input.filters.partenaires"
-                    @update:modelValue="onChange(false)"
+                    @update:modelValue="selectPartnerInList()"
                     inner-label="Partenaires"
                     :option-items=sharedState.partenaires
                     :isInnerLabelFemale="false"
@@ -323,7 +331,7 @@ export default defineComponent({
   computed: {
     filtersSanitized () {
       const filters = Object.entries(this.sharedState.input.filters).filter(([key, value]) => {
-        if (key === 'isImported' || key === 'showMyAffectationOnly') {
+        if (key === 'isImported' || key === 'showMyAffectationOnly' || key === 'showWithoutAffectationOnly') {
           return false
         }
         if (value !== null) {
@@ -353,6 +361,7 @@ export default defineComponent({
           this.sharedState.input.filters.showMyAffectationOnly !== 'oui' ? 'oui' : null
 
       if (this.sharedState.input.filters.showMyAffectationOnly === 'oui') {
+        this.deactiveWithoutAffectationsOnly()
         const currentPartner = this.sharedState.partenaires.filter((partner: HistoInterfaceSelectOption) => {
           return partner.Id === this.sharedState.user.partnerId?.toString() || ''
         })
@@ -365,14 +374,49 @@ export default defineComponent({
         this.onChange(false)
       }
     },
+    toggleWithoutAffectation () {
+      this.sharedState.input.filters.partenaires = []
+      this.sharedState.input.filters.showWithoutAffectationOnly =
+          this.sharedState.input.filters.showWithoutAffectationOnly !== 'oui' ? 'oui' : null
+
+      if (this.sharedState.input.filters.showWithoutAffectationOnly === 'oui') {
+        this.deactiveMyAffectationsOnly()
+        this.sharedState.input.filters.partenaires = ['AUCUN']
+      } else {
+        delete this.sharedState.input.filters.partenaires[0]
+      }
+
+      if (typeof this.onChange === 'function') {
+        this.onChange(false)
+      }
+    },
+    deactiveMyAffectationsOnly () {
+      this.sharedState.input.filters.showMyAffectationOnly = null
+      if (this.$refs.myAffectationButton) {
+        (this.$refs.myAffectationButton as HTMLElement).setAttribute('aria-pressed', 'false')
+      }
+    },
+    deactiveWithoutAffectationsOnly () {
+      this.sharedState.input.filters.showWithoutAffectationOnly = null
+      if (this.$refs.withoutAffectationButton) {
+        (this.$refs.withoutAffectationButton as HTMLElement).setAttribute('aria-pressed', 'false')
+      }
+    },
+    selectPartnerInList () {
+      this.sharedState.input.filters.partenaires = this.sharedState.input.filters.partenaires.filter(partenaire => partenaire !== 'AUCUN')
+      this.deactiveWithoutAffectationsOnly()
+      if (typeof this.onChange === 'function') {
+        this.onChange(false)
+      }
+    },
     removeFilter (key: string) {
       const currentMyAffectationOnly = (this.sharedState.input.filters as any)[key][0]
       const showMyAffectationOnly = this.sharedState.input.filters.showMyAffectationOnly
       if (showMyAffectationOnly === 'oui' && currentMyAffectationOnly === this.sharedState.user.partnerId?.toString()) {
-        this.sharedState.input.filters.showMyAffectationOnly = null
-        if (this.$refs.myAffectationButton) {
-          (this.$refs.myAffectationButton as HTMLElement).setAttribute('aria-pressed', 'false')
-        }
+        this.deactiveMyAffectationsOnly()
+      }
+      if (this.sharedState.input.filters.showWithoutAffectationOnly === 'oui') {
+        this.deactiveWithoutAffectationsOnly()
       }
 
       delete (this.sharedState.input.filters as any)[key]
@@ -409,6 +453,7 @@ export default defineComponent({
         dateDernierSuivi: null,
         isImported: null,
         showMyAffectationOnly: null,
+        showWithoutAffectationOnly: null,
         statusAffectation: null,
         criticiteScoreMin: null,
         criticiteScoreMax: null
@@ -417,6 +462,10 @@ export default defineComponent({
 
       if (this.$refs.myAffectationButton) {
         (this.$refs.myAffectationButton as HTMLElement).setAttribute('aria-pressed', 'false')
+      }
+
+      if (this.$refs.withoutAffectationButton) {
+        (this.$refs.withoutAffectationButton as HTMLElement).setAttribute('aria-pressed', 'false')
       }
 
       if (this.$refs.isImportedButton) {
@@ -443,7 +492,8 @@ export default defineComponent({
       sharedState: store.state,
       ariaPressed: {
         isImported: store.state.input.filters.isImported === 'oui',
-        showMyAffectationOnly: store.state.input.filters.showMyAffectationOnly === 'oui'
+        showMyAffectationOnly: store.state.input.filters.showMyAffectationOnly === 'oui',
+        showWithoutAffectationOnly: store.state.input.filters.showWithoutAffectationOnly === 'oui'
       },
       statusSignalementList: store.state.statusSignalementList,
       statusAffectationList: store.state.statusAffectationList,

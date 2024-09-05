@@ -115,10 +115,16 @@ export default defineComponent({
   computed: {
     strCountSelectedItems () {
       const selectLabel:string = this.isInnerLabelFemale ? 'sélectionnée' : 'sélectionné'
-      if (this.modelValue.length > 1) {
-        return this.modelValue.length + ' ' + selectLabel + 's'
+
+      const validSelectedItems = this.modelValue.filter(item =>
+        this.optionItems.some(option => option.Id === item)
+      )
+
+      if (validSelectedItems.length > 1) {
+        return validSelectedItems.length + ' ' + selectLabel + 's'
       }
-      return this.modelValue.length + ' ' + selectLabel
+
+      return validSelectedItems.length + ' ' + selectLabel
     }
   }
 })

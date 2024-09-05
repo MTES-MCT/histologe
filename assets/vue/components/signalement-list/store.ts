@@ -32,6 +32,7 @@ export const store = {
         dateDernierSuivi: null,
         isImported: 'oui' as 'oui' | null,
         showMyAffectationOnly: null as 'oui' | null,
+        showWithoutAffectationOnly: null as 'oui' | null,
         statusAffectation: null,
         criticiteScoreMin: null,
         criticiteScoreMax: null
