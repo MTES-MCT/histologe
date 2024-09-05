@@ -5,6 +5,7 @@ namespace App\Repository;
 use App\Entity\File;
 use App\Entity\Territory;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\ORM\QueryBuilder;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
@@ -53,5 +54,26 @@ class FileRepository extends ServiceEntityRepository
         }
 
         return $qb->getQuery()->getResult();
+    }
+
+    public function findWithOriginalAndVariants(int $max): array
+    {
+        return $this->initQueryWithOriginalAndVariants()->select('f')->setMaxResults($max)->getQuery()->getResult();
+    }
+
+    public function countWithOriginalAndVariants(): int
+    {
+        return $this->initQueryWithOriginalAndVariants()->select('count(f)')->getQuery()->getSingleScalarResult();
+    }
+
+    private function initQueryWithOriginalAndVariants(): QueryBuilder
+    {
+        $limit = (new \DateTime())->modify('-1 month');
+
+        return $this->createQueryBuilder('f')
+            ->andWhere('f.isVariantsGenerated = true')
+            ->andWhere('f.isOriginalDeleted = false')
+            ->andWhere('f.createdAt < :limit')
+            ->setParameter('limit', $limit);
     }
 }

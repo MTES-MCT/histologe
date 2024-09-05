@@ -50,7 +50,7 @@ class SecurityController extends AbstractController
 
             if ('thumb' == $variant && $fileStorage->fileExists($variantNames[ImageManipulationHandler::SUFFIX_THUMB])) {
                 $filename = $variantNames[ImageManipulationHandler::SUFFIX_THUMB];
-            } elseif ('resize' == $variant && $fileStorage->fileExists($variantNames[ImageManipulationHandler::SUFFIX_RESIZE])) {
+            } elseif ($fileStorage->fileExists($variantNames[ImageManipulationHandler::SUFFIX_RESIZE])) {
                 $filename = $variantNames[ImageManipulationHandler::SUFFIX_RESIZE];
             }
             if (!$fileStorage->fileExists($filename)) {
