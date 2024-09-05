@@ -4,7 +4,6 @@ namespace App\Entity;
 
 use App\Repository\NotificationRepository;
 use Doctrine\ORM\Mapping as ORM;
-use Symfony\Component\Serializer\Attribute\Groups;
 
 #[ORM\Entity(repositoryClass: NotificationRepository::class)]
 class Notification
@@ -22,31 +21,24 @@ class Notification
 
     #[ORM\ManyToOne(targetEntity: User::class, inversedBy: 'notifications')]
     #[ORM\JoinColumn(nullable: false)]
-    #[Groups(['history_entry:read'])]
     private ?User $user;
 
     #[ORM\Column(type: 'boolean')]
-    #[Groups(['history_entry:read'])]
     private ?bool $isSeen;
 
     #[ORM\Column(type: 'integer')]
-    #[Groups(['history_entry:read'])]
     private ?int $type;
 
     #[ORM\ManyToOne(targetEntity: Signalement::class)]
-    #[Groups(['history_entry:read'])]
     private ?Signalement $signalement;
 
     #[ORM\ManyToOne(targetEntity: Suivi::class)]
-    #[Groups(['history_entry:read'])]
     private ?Suivi $suivi;
 
     #[ORM\Column(type: 'datetime_immutable')]
-    #[Groups(['history_entry:read'])]
     private ?\DateTimeImmutable $createdAt;
 
     #[ORM\ManyToOne(targetEntity: Affectation::class, inversedBy: 'notifications')]
-    #[Groups(['history_entry:read'])]
     private $affectation;
 
     public function __construct()

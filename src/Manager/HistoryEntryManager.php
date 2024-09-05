@@ -11,13 +11,11 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\Serializer\Exception\ExceptionInterface;
-use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
 
 class HistoryEntryManager extends AbstractManager
 {
     public function __construct(
         private readonly HistoryEntryFactory $historyEntryFactory,
-        private readonly NormalizerInterface $normalizer,
         private readonly RequestStack $requestStack,
         private readonly CommandContext $commandContext,
         ManagerRegistry $managerRegistry,
@@ -40,9 +38,9 @@ class HistoryEntryManager extends AbstractManager
             entityHistory: $entityHistory,
         );
 
-        [$changesFromDelete, $source] = $this->getChangesAndSource($historyEntryEvent, $entityHistory);
+        $source = $this->getSource();
         $historyEntry
-            ->setChanges(HistoryEntryEvent::DELETE === $historyEntryEvent ? $changesFromDelete : $changes)
+            ->setChanges($changes)
             ->setSource($source);
 
         $this->save($historyEntry, $flush);
@@ -53,24 +51,8 @@ class HistoryEntryManager extends AbstractManager
     /**
      * @throws ExceptionInterface
      */
-    public function getChangesAndSource(
-        HistoryEntryEvent $historyEntryEvent,
-        EntityHistoryInterface $entityHistory,
-    ): array {
-        $changesFromDelete = [];
-        if (HistoryEntryEvent::DELETE === $historyEntryEvent) {
-            $changesFromDelete = $this->normalizer->normalize(
-                $entityHistory,
-                null,
-                ['groups' => ['history_entry:read']]
-            );
-        }
-
-        $source = $this->requestStack->getCurrentRequest()?->getPathInfo() ?? $this->commandContext->getCommandName();
-
-        return [
-            $changesFromDelete,
-            $source,
-        ];
+    public function getSource(
+    ): ?string {
+        return $this->requestStack->getCurrentRequest()?->getPathInfo() ?? $this->commandContext->getCommandName();
     }
 }
