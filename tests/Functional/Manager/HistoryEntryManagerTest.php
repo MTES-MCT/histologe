@@ -13,12 +13,10 @@ use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use Symfony\Component\HttpFoundation\RequestStack;
-use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
 
 class HistoryEntryManagerTest extends KernelTestCase
 {
     private EntityManagerInterface $entityManager;
-    private NormalizerInterface $normalizer;
     private RequestStack $requestStack;
     private CommandContext $commandContext;
     private HistoryEntryFactory $historyEntryFactory;
@@ -32,13 +30,11 @@ class HistoryEntryManagerTest extends KernelTestCase
 
         $this->managerRegistry = static::getContainer()->get(ManagerRegistry::class);
         $this->historyEntryFactory = static::getContainer()->get(HistoryEntryFactory::class);
-        $this->normalizer = static::getContainer()->get(NormalizerInterface::class);
         $this->requestStack = static::getContainer()->get(RequestStack::class);
         $this->commandContext = static::getContainer()->get(CommandContext::class);
         $this->entityManager = $kernel->getContainer()->get('doctrine')->getManager();
         $this->historyEntryManager = new HistoryEntryManager(
             $this->historyEntryFactory,
-            $this->normalizer,
             $this->requestStack,
             $this->commandContext,
             $this->managerRegistry,

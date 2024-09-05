@@ -9,7 +9,6 @@ use App\Repository\FileRepository;
 use App\Service\ImageManipulationHandler;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
-use Symfony\Component\Serializer\Attribute\Groups;
 use Symfony\Component\Uid\Uuid;
 use Symfony\Component\Validator\Constraints as Assert;
 
@@ -72,28 +71,22 @@ class File implements EntityHistoryInterface
 
     #[ORM\ManyToOne(inversedBy: 'files')]
     #[ORM\JoinColumn(nullable: false)]
-    #[Groups(['history_entry:read'])]
     private ?Signalement $signalement = null;
 
     #[ORM\Column(length: 255)]
-    #[Groups(['history_entry:read'])]
     private ?string $filename = null;
 
     #[ORM\Column(length: 255)]
-    #[Groups(['history_entry:read'])]
     private ?string $title = null;
 
     #[ORM\Column(length: 32, options: ['comment' => 'Value possible photo or document'])]
-    #[Groups(['history_entry:read'])]
     private ?string $fileType = null;
 
     #[ORM\Column(nullable: true)]
-    #[Groups(['history_entry:read'])]
     private ?\DateTimeImmutable $createdAt = null;
 
     #[ORM\ManyToOne(inversedBy: 'files')]
     #[ORM\JoinColumn(nullable: true)]
-    #[Groups(['history_entry:read'])]
     private ?Intervention $intervention = null;
 
     #[ORM\Column(type: Types::BIGINT, nullable: true)]
@@ -103,7 +96,6 @@ class File implements EntityHistoryInterface
     private ?DocumentType $documentType = null;
 
     #[ORM\Column(nullable: true)]
-    #[Groups(['history_entry:read'])]
     private ?string $desordreSlug = null;
 
     #[ORM\Column]
@@ -111,7 +103,6 @@ class File implements EntityHistoryInterface
 
     #[ORM\Column(type: 'text', nullable: true, length: 250)]
     #[Assert\Length(max: 250)]
-    #[Groups(['history_entry:read'])]
     private ?string $description;
 
     #[ORM\Column]

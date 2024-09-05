@@ -6,7 +6,6 @@ use App\Entity\Behaviour\EntityHistoryInterface;
 use App\Entity\Enum\HistoryEntryEvent;
 use App\Repository\SuiviRepository;
 use Doctrine\ORM\Mapping as ORM;
-use Symfony\Component\Serializer\Attribute\Groups;
 
 #[ORM\Entity(repositoryClass: SuiviRepository::class)]
 #[ORM\Index(columns: ['type'], name: 'idx_suivi_type')]
@@ -51,7 +50,6 @@ class Suivi implements EntityHistoryInterface
     private $isPublic;
 
     #[ORM\Column(type: 'integer')]
-    #[Groups(['history_entry:read'])]
     private $type;
 
     #[ORM\ManyToOne(targetEntity: Signalement::class, inversedBy: 'suivis')]

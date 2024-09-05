@@ -51,7 +51,7 @@ class AuthentificationHistoryListener
                 flush: false
             );
 
-            [, $source] = $this->historyEntryManager->getChangesAndSource($historyEntryEvent, $user);
+            $source = $this->historyEntryManager->getSource();
             $historyEntry->setSource($source);
             $this->historyEntryManager->save($historyEntry);
 
