@@ -96,10 +96,14 @@ readonly class EntityHistoryListener
                 }
             }
         }
+        if (HistoryEntryEvent::DELETE === $event) {
+            $changes = $this->entityComparator->getEntityPropertiesAndValueNormalized($entity);
+        }
 
-        if (HistoryEntryEvent::UPDATE === $event && empty($changes)) {
+        if (in_array($event, [HistoryEntryEvent::UPDATE, HistoryEntryEvent::DELETE]) && empty($changes)) {
             return;
         }
+
         $this->saveEntityHistory($event, $entity, $changes);
     }
 
@@ -133,13 +137,11 @@ readonly class EntityHistoryListener
         array $changes
     ): void {
         try {
-            $historyEntry = $this->historyEntryManager->create(
+            $this->historyEntryManager->create(
                 historyEntryEvent: $event,
                 entityHistory: $entity,
-                changes: $changes,
-                flush: false
+                changes: $changes
             );
-            $this->historyEntryManager->save($historyEntry);
         } catch (\Throwable $exception) {
             $this->logger->error($exception->getMessage());
         }

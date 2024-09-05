@@ -74,4 +74,24 @@ class EntityComparator
             'new' => $newValue,
         ];
     }
+
+    /**
+     * @throws \ReflectionException
+     */
+    public function getEntityPropertiesAndValueNormalized($entity): array
+    {
+        $reflection = new \ReflectionClass($entity);
+        $properties = $reflection->getProperties();
+        $propertyValues = [];
+
+        foreach ($properties as $property) {
+            $property->setAccessible(true);
+            $value = $this->processValue($property->getValue($entity));
+            if ($value) {
+                $propertyValues[$property->getName()] = $value;
+            }
+        }
+
+        return $propertyValues;
+    }
 }

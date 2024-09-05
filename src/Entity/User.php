@@ -14,7 +14,6 @@ use Scheb\TwoFactorBundle\Model\Email\TwoFactorInterface;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
-use Symfony\Component\Serializer\Attribute\Groups;
 use Symfony\Component\Serializer\Attribute\Ignore;
 use Symfony\Component\Uid\Uuid;
 use Symfony\Component\Validator\Constraints as Assert;
@@ -60,7 +59,6 @@ class User implements UserInterface, EntityHistoryInterface, PasswordAuthenticat
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column(type: 'integer')]
-    #[Groups(['history_entry:read'])]
     private $id;
 
     #[ORM\Column(type: Types::GUID)]
@@ -70,7 +68,6 @@ class User implements UserInterface, EntityHistoryInterface, PasswordAuthenticat
     #[Email(mode: Email::VALIDATION_MODE_STRICT, groups: ['registration'])]
     #[Assert\NotBlank(message: 'Merci de saisir une adresse e-mail.')]
     #[Assert\Length(max: 255)]
-    #[Groups(['history_entry:read'])]
     private $email;
 
     #[ORM\Column(type: 'json')]

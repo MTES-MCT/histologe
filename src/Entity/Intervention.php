@@ -13,7 +13,6 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
-use Symfony\Component\Serializer\Attribute\Groups;
 
 #[ORM\Entity(repositoryClass: InterventionRepository::class)]
 #[ORM\HasLifecycleCallbacks()]
@@ -29,7 +28,6 @@ class Intervention implements EntityHistoryInterface
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
-    #[Groups(['history_entry:read'])]
     private ?int $id = null;
 
     #[ORM\Column(nullable: true)]

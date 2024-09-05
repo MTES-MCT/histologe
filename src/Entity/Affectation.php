@@ -10,7 +10,6 @@ use App\Repository\AffectationRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
-use Symfony\Component\Serializer\Attribute\Groups;
 
 #[ORM\Entity(repositoryClass: AffectationRepository::class)]
 class Affectation implements EntityHistoryInterface
@@ -26,44 +25,34 @@ class Affectation implements EntityHistoryInterface
 
     #[ORM\ManyToOne(targetEntity: Signalement::class, inversedBy: 'affectations')]
     #[ORM\JoinColumn(nullable: false)]
-    #[Groups(['history_entry:read'])]
     private ?Signalement $signalement;
 
     #[ORM\ManyToOne(targetEntity: Partner::class, inversedBy: 'affectations')]
     #[ORM\JoinColumn(nullable: false)]
-    #[Groups(['history_entry:read'])]
     private ?Partner $partner;
 
     #[ORM\Column(type: 'datetime_immutable', nullable: true)]
-    #[Groups(['history_entry:read'])]
     private ?\DateTimeImmutable $answeredAt;
 
     #[ORM\Column(type: 'datetime_immutable')]
-    #[Groups(['history_entry:read'])]
     private \DateTimeImmutable $createdAt;
 
     #[ORM\Column(type: 'integer')]
-    #[Groups(['history_entry:read'])]
     private int $statut;
 
     #[ORM\Column(type: 'boolean')]
-    #[Groups(['history_entry:read'])]
     private bool $isSynchronized = false;
 
     #[ORM\ManyToOne(targetEntity: User::class)]
-    #[Groups(['history_entry:read'])]
     private ?User $answeredBy;
 
     #[ORM\ManyToOne(targetEntity: User::class)]
-    #[Groups(['history_entry:read'])]
     private ?User $affectedBy;
 
     #[ORM\Column(type: 'string', nullable: true, enumType: MotifRefus::class)]
-    #[Groups(['history_entry:read'])]
     private ?MotifRefus $motifRefus;
 
     #[ORM\Column(type: 'string', nullable: true, enumType: MotifCloture::class)]
-    #[Groups(['history_entry:read'])]
     private ?MotifCloture $motifCloture;
 
     #[ORM\OneToMany(mappedBy: 'affectation', targetEntity: Notification::class)]

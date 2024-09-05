@@ -29,13 +29,13 @@ class Partner implements EntityHistoryInterface
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column(type: 'integer')]
-    #[Groups(['widget-settings:read', 'history_entry:read'])]
+    #[Groups(['widget-settings:read'])]
     private ?int $id = null;
 
     #[ORM\Column(type: 'string', length: 255)]
     #[Assert\NotBlank]
     #[Assert\Length(max: 255)]
-    #[Groups(['widget-settings:read', 'history_entry:read'])]
+    #[Groups(['widget-settings:read'])]
     private ?string $nom = null;
 
     #[ORM\OneToMany(mappedBy: 'partner', targetEntity: User::class, cascade: ['persist'])]
@@ -67,22 +67,18 @@ class Partner implements EntityHistoryInterface
     private ?Territory $territory = null;
 
     #[ORM\Column(type: 'string', nullable: true, enumType: PartnerType::class)]
-    #[Groups(['history_entry:read'])]
     private ?PartnerType $type = null;
 
     #[ORM\Column(type: Types::SIMPLE_ARRAY, nullable: true, enumType: Qualification::class)]
-    #[Groups(['history_entry:read'])]
     private array $competence = [];
 
     #[ORM\Column(nullable: true)]
-    #[Groups(['history_entry:read'])]
     private ?bool $isEsaboraActive = null;
 
     #[ORM\OneToMany(mappedBy: 'partner', targetEntity: Intervention::class)]
     private Collection $interventions;
 
     #[ORM\Column]
-    #[Groups(['history_entry:read'])]
     private ?bool $isIdossActive = null;
 
     #[ORM\Column(length: 255, nullable: true)]
