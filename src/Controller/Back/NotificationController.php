@@ -5,6 +5,7 @@ namespace App\Controller\Back;
 use App\Entity\Notification;
 use App\Entity\User;
 use App\Repository\NotificationRepository;
+use App\Service\DashboardWidget\WidgetDataManagerCache;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -34,17 +35,20 @@ class NotificationController extends AbstractController
     public function read(
         Request $request,
         NotificationRepository $notificationRepository,
+        WidgetDataManagerCache $widgetDataManagerCache,
     ) {
         /** @var User $user */
         $user = $this->getUser();
         if ($request->get('selected_notifications')) {
             if ($this->isCsrfTokenValid('mark_as_read_'.$user->getId(), $request->get('csrf_token'))) {
                 $notificationRepository->markUserNotificationsAsSeen($user, explode(',', $request->get('selected_notifications')));
+                $widgetDataManagerCache->invalidateCacheForUser();
                 $this->addFlash('success', 'Les notifications sélectionnées ont été marquées comme lues.');
             }
         } else {
             if ($this->isCsrfTokenValid('mark_as_read_'.$user->getId(), $request->get('mark_as_read'))) {
                 $notificationRepository->markUserNotificationsAsSeen($user);
+                $widgetDataManagerCache->invalidateCacheForUser();
                 $this->addFlash('success', 'Toutes les notifications ont été marquées comme lues.');
             }
         }
@@ -56,12 +60,14 @@ class NotificationController extends AbstractController
     public function delete(
         Request $request,
         NotificationRepository $notificationRepository,
+        WidgetDataManagerCache $widgetDataManagerCache,
     ) {
         /** @var User $user */
         $user = $this->getUser();
         if ($request->get('selected_notifications')) {
             if ($this->isCsrfTokenValid('delete_notifications_'.$user->getId(), $request->get('csrf_token'))) {
                 $notificationRepository->deleteUserNotifications($user, explode(',', $request->get('selected_notifications')));
+                $widgetDataManagerCache->invalidateCacheForUser();
                 $this->addFlash('success', 'Les notifications sélectionnées ont été supprimées.');
             }
         } else {
@@ -70,6 +76,7 @@ class NotificationController extends AbstractController
                 $request->get('delete_all_notifications')
             )) {
                 $notificationRepository->deleteUserNotifications($user);
+                $widgetDataManagerCache->invalidateCacheForUser();
                 $this->addFlash('success', 'Toutes les notifications ont été supprimées.');
             }
         }
@@ -81,7 +88,8 @@ class NotificationController extends AbstractController
     public function deleteNotification(
         NotificationRepository $notificationRepository,
         EntityManagerInterface $em,
-        Request $request
+        Request $request,
+        WidgetDataManagerCache $widgetDataManagerCache,
     ): Response {
         $notification = $notificationRepository->find($request->get('id'));
         if (!$notification) {
@@ -92,6 +100,7 @@ class NotificationController extends AbstractController
         if ($notification->getUser()->getId() === $user->getId() && $this->isCsrfTokenValid('back_delete_notification_'.$notification->getId(), $request->get('_token'))) {
             $em->remove($notification);
             $em->flush();
+            $widgetDataManagerCache->invalidateCacheForUser();
             $this->addFlash('success', 'Notification supprimée avec succès');
         } else {
             $this->addFlash('error', 'Erreur lors de la suppression de la notification.');
