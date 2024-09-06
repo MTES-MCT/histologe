@@ -22,12 +22,6 @@
       "command": "0 5 * * * php bin/console app:notify-visits"
     },
     {
-      "command": "0 4 * * * php bin/console app:notify-and-archive-inactive-accounts"
-    },
-    {
-      "command": "30 4 * * * php bin/console app:anonymize-expired-account"
-    },
-    {
       "command": "0 22 * * * php bin/console app:synchronize-idoss"
     },
     {
