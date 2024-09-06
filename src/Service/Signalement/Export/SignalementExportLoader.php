@@ -2,7 +2,6 @@
 
 namespace App\Service\Signalement\Export;
 
-use App\Controller\Back\ExportSignalementController;
 use App\Entity\User;
 use App\Manager\SignalementManager;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
@@ -42,7 +41,8 @@ class SignalementExportLoader
 
     private function getHeadersWithSelectedColumns(array $headers, array &$keysToRemove, array $selectedColumns): array
     {
-        foreach (ExportSignalementController::SELECTABLE_COLS as $columnIndex => $selectableColumn) {
+        $selectableColumns = SignalementExportSelectableColumns::getColumns();
+        foreach ($selectableColumns as $columnIndex => $selectableColumn) {
             $searchSelectedCol = array_search($columnIndex, $selectedColumns);
             // Unchecked col: delete from list
             if (false === $searchSelectedCol) {

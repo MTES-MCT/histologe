@@ -33,7 +33,7 @@ class ListExportMessageHandlerTest extends WebTestCase
 
         $messageBus->dispatch($message);
 
-        $transport = $container->get('messenger.transport.async');
+        $transport = $container->get('messenger.transport.async_priority_high');
         $envelopes = $transport->get();
         $this->assertCount(1, $envelopes);
 
@@ -67,7 +67,7 @@ class ListExportMessageHandlerTest extends WebTestCase
 
         $messageBus->dispatch($message);
 
-        $transport = $container->get('messenger.transport.async');
+        $transport = $container->get('messenger.transport.async_priority_high');
         $envelopes = $transport->get();
         $this->assertCount(1, $envelopes);
 
