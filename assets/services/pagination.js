@@ -1,3 +1,4 @@
+// This function was taken from an old minified file
 document?.querySelectorAll(".fr-pagination__link").forEach((e => {
     let t, r, a, n = document.querySelector(".fr-pagination__link--prev"),
         i = document.querySelector(".fr-pagination__link--next"),

@@ -23,7 +23,11 @@ selects.forEach(select => {
     });
 });
 
-const checkFieldset=e=>{let t=e.querySelector('fieldset[aria-required="true"]');return!t||(null===t.querySelector('[type="checkbox"]:checked')?(t.classList.add("fr-fieldset--error"),t?.querySelector(".fr-error-text")?.classList.remove("fr-hidden"),invalid=t.parentElement,!1):(t.classList.remove("fr-fieldset--error"),t?.querySelector(".fr-error-text")?.classList.add("fr-hidden"),!0))}
+// This function was taken from an old minified file
+const checkFieldset=e=>{
+    let t=e.querySelector('fieldset[aria-required="true"]');
+    return!t||(null===t.querySelector('[type="checkbox"]:checked')?(t.classList.add("fr-fieldset--error"),t?.querySelector(".fr-error-text")?.classList.remove("fr-hidden"),invalid=t.parentElement,!1):(t.classList.remove("fr-fieldset--error"),t?.querySelector(".fr-error-text")?.classList.add("fr-hidden"),!0))
+}
 
 const forms = document.querySelectorAll('form.needs-validation:not([name="bug-report"])');
 forms.forEach((form) => {
@@ -33,7 +37,6 @@ forms.forEach((form) => {
                 let resTextEl = event.target.parentElement.nextElementSibling;
                 let fileData = new FormData();
                 let deleter = event.target.parentElement.parentElement.querySelector('.signalement-uploadedfile-delete'),
-                    /*src = URL.createObjectURL(event.target.files[0]),*/
                     preview = event.target?.parentElement?.querySelector('img'),
                     fileIsOk = false, file = event.target.files[0];
                 let id = event.target.id;

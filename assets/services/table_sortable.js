@@ -1,6 +1,11 @@
-const siblingIndex=e=>{let t=0;for(;e=e.previousElementSibling;)t++;return t}
+// These functions were taken from an old minified file
+const siblingIndex=e=>{
+    let t=0;for(;e=e.previousElementSibling;)t++;return t
+}
 
-const sortTableFunction=e=>function(t){"a"==t.target.tagName.toLowerCase()&&(sortRows(e,siblingIndex(t.target.parentNode)),t.preventDefault())}
+const sortTableFunction=e=>function(t){
+    "a"==t.target.tagName.toLowerCase()&&(sortRows(e,siblingIndex(t.target.parentNode)),t.preventDefault())
+}
 const sortRows=(e,t)=>{
     let r,a,l,n=e.querySelectorAll("tbody tr"),o="thead th:nth-child("+(t+1)+")",d="td:nth-child("+(t+1)+")",s=e.querySelector(o).classList,i=[],c="",u=!0;
     for(s&&(s.contains("date")?c="date":s.contains("number")&&(c="number")),a=0;a<n.length;a++)

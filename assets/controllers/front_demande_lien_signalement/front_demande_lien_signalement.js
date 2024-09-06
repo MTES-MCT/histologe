@@ -1,4 +1,4 @@
-import { attacheAutocompleteAddressEvent } from '../component_search_address';
+import { attacheAutocompleteAddressEvent } from '../../services/component_search_address';
 
 const containerFormDemandeLienSignalement = document?.querySelector('#container-form-demande-lien-signalement')
 if (containerFormDemandeLienSignalement) {
