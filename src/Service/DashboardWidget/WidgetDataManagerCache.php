@@ -6,6 +6,7 @@ use App\Entity\Territory;
 use App\Entity\User;
 use App\Service\CacheCommonKeyGenerator;
 use Psr\Cache\InvalidArgumentException;
+use Psr\Log\LoggerInterface;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Contracts\Cache\ItemInterface;
 use Symfony\Contracts\Cache\TagAwareCacheInterface;
@@ -18,7 +19,8 @@ class WidgetDataManagerCache implements WidgetDataManagerInterface
         private readonly WidgetDataManager $widgetDataManager,
         private readonly TagAwareCacheInterface $dashboardCache,
         private readonly Security $security,
-        private readonly CacheCommonKeyGenerator $cacheCommonKeyGenerator
+        private readonly CacheCommonKeyGenerator $cacheCommonKeyGenerator,
+        readonly private LoggerInterface $logger,
     ) {
         $this->initKeyCache();
     }
@@ -106,5 +108,25 @@ class WidgetDataManagerCache implements WidgetDataManagerInterface
                 return $this->widgetDataManager->countDataKpi($territory, $params);
             }
         );
+    }
+
+    /**
+     * @throws InvalidArgumentException
+     */
+    public function invalidateCacheForUser(): void
+    {
+        /** @var User $user */
+        $user = $this->security->getUser();
+        $territory = $user->getTerritory();
+        $key = 'countDataKpi'
+            .'-'.$this->commonKey
+            .$territory?->getZip()
+            .'-id-'.$user->getId();
+
+        try {
+            $this->dashboardCache->delete($key);
+        } catch (InvalidArgumentException $exception) {
+            $this->logger->error(\sprintf('Invalidate cache failed %s', $exception->getMessage()));
+        }
     }
 }
