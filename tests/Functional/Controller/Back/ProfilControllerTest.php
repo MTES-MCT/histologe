@@ -363,6 +363,50 @@ class ProfilControllerTest extends WebTestCase
         $this->assertEmailCount(0);
     }
 
+    public function testEditEmailStep1EmailExistingUser(): void
+    {
+        $csrfToken = $this->generateCsrfToken($this->client, 'profil_edit_email');
+
+        $route = $this->router->generate('back_profil_edit_email');
+        $this->client->request('POST', $route, [
+            '_token' => $csrfToken,
+            'profil_edit_email[email]' => 'admin-03@histologe.fr',
+        ]);
+
+        $this->assertResponseStatusCodeSame(Response::HTTP_BAD_REQUEST);
+        $this->assertJson(json_encode([
+            'code' => Response::HTTP_BAD_REQUEST,
+            'errors' => [
+                'profil_edit_email[email]' => [
+                    'errors' => ['Un utilisateur existe déjà avec cette adresse e-mail.'],
+                ],
+            ],
+        ]));
+        $this->assertEmailCount(0);
+    }
+
+    public function testEditEmailStep1EmailExistingPartner(): void
+    {
+        $csrfToken = $this->generateCsrfToken($this->client, 'profil_edit_email');
+
+        $route = $this->router->generate('back_profil_edit_email');
+        $this->client->request('POST', $route, [
+            '_token' => $csrfToken,
+            'profil_edit_email[email]' => 'admin@histologe.fr',
+        ]);
+
+        $this->assertResponseStatusCodeSame(Response::HTTP_BAD_REQUEST);
+        $this->assertJson(json_encode([
+            'code' => Response::HTTP_BAD_REQUEST,
+            'errors' => [
+                'profil_edit_email[email]' => [
+                    'errors' => ['Un partenaire existe déjà avec cette adresse e-mail.'],
+                ],
+            ],
+        ]));
+        $this->assertEmailCount(0);
+    }
+
     public function testEditEmailStep2Success(): void
     {
         $csrfToken = $this->generateCsrfToken($this->client, 'profil_edit_email');
@@ -372,7 +416,6 @@ class ProfilControllerTest extends WebTestCase
         $this->user->setTempEmail('new-email@example.com');
         $response = $this->client->request('POST', $route, [
             '_token' => $csrfToken,
-            'profil_edit_email[email]' => 'new-email@example.com',
             'profil_edit_email[code]' => '123456',
         ]);
         $this->assertResponseStatusCodeSame(Response::HTTP_OK);
@@ -389,7 +432,6 @@ class ProfilControllerTest extends WebTestCase
         $this->user->setEmailAuthCode('123456');
         $response = $this->client->request('POST', $route, [
             '_token' => $csrfToken,
-            'profil_edit_email[email]' => 'new-email@example.com',
             'profil_edit_email[code]' => 'wrong_code',
         ]);
         $this->assertResponseStatusCodeSame(Response::HTTP_BAD_REQUEST);
@@ -411,7 +453,6 @@ class ProfilControllerTest extends WebTestCase
         $this->user->setEmailAuthCode('123456');
         $response = $this->client->request('POST', $route, [
             '_token' => $csrfToken,
-            'profil_edit_email[email]' => 'new-email@example.com',
             'profil_edit_email[code]' => '',
         ]);
         $this->assertResponseStatusCodeSame(Response::HTTP_BAD_REQUEST);
@@ -434,7 +475,6 @@ class ProfilControllerTest extends WebTestCase
         $this->user->setTempEmail(null);
         $response = $this->client->request('POST', $route, [
             '_token' => $csrfToken,
-            'profil_edit_email[email]' => 'new-email@example.com',
             'profil_edit_email[code]' => '123456',
         ]);
         $this->assertResponseStatusCodeSame(Response::HTTP_BAD_REQUEST);
@@ -446,6 +486,54 @@ class ProfilControllerTest extends WebTestCase
                 ],
             ],
         ]));
+    }
+
+    public function testEditEmailStep2EmailExistingUser(): void
+    {
+        $csrfToken = $this->generateCsrfToken($this->client, 'profil_edit_email');
+
+        $route = $this->router->generate('back_profil_edit_email');
+        $this->user->setEmailAuthCode('123456');
+        $this->user->setTempEmail('admin-03@histologe.fr');
+        $this->client->request('POST', $route, [
+            '_token' => $csrfToken,
+            'profil_edit_email[code]' => '123456',
+        ]);
+
+        $this->assertResponseStatusCodeSame(Response::HTTP_BAD_REQUEST);
+        $this->assertJson(json_encode([
+            'code' => Response::HTTP_BAD_REQUEST,
+            'errors' => [
+                'profil_edit_email[code]' => [
+                    'errors' => ['Un utilisateur existe déjà avec cette adresse e-mail.'],
+                ],
+            ],
+        ]));
+        $this->assertEmailCount(0);
+    }
+
+    public function testEditEmailStep2EmailExistingPartner(): void
+    {
+        $csrfToken = $this->generateCsrfToken($this->client, 'profil_edit_email');
+
+        $route = $this->router->generate('back_profil_edit_email');
+        $this->user->setEmailAuthCode('123456');
+        $this->user->setTempEmail('admin@histologe.fr');
+        $this->client->request('POST', $route, [
+            '_token' => $csrfToken,
+            'profil_edit_email[code]' => '123456',
+        ]);
+
+        $this->assertResponseStatusCodeSame(Response::HTTP_BAD_REQUEST);
+        $this->assertJson(json_encode([
+            'code' => Response::HTTP_BAD_REQUEST,
+            'errors' => [
+                'profil_edit_email[code]' => [
+                    'errors' => ['Un partenaire existe déjà avec cette adresse e-mail.'],
+                ],
+            ],
+        ]));
+        $this->assertEmailCount(0);
     }
 
     public function testEditEmailBadToken(): void

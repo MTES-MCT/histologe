@@ -5,6 +5,8 @@ namespace App\Controller\Back;
 use App\Entity\File;
 use App\Entity\User;
 use App\Manager\UserManager;
+use App\Repository\PartnerRepository;
+use App\Repository\UserRepository;
 use App\Service\ImageManipulationHandler;
 use App\Service\Mailer\NotificationMail;
 use App\Service\Mailer\NotificationMailerRegistry;
@@ -170,6 +172,8 @@ class ProfilController extends AbstractController
         Request $request,
         ManagerRegistry $doctrine,
         NotificationMailerRegistry $notificationMailerRegistry,
+        UserRepository $userRepository,
+        PartnerRepository $partnerRepository,
     ): Response {
         $payload = $request->getPayload()->all();
         /** @var User $user */
@@ -183,6 +187,14 @@ class ProfilController extends AbstractController
             if (isset($payload['profil_edit_email[code]'])) {
                 // Étape 2: Validation du code
                 $authCode = $payload['profil_edit_email[code]'];
+                $userExist = $userRepository->findOneBy(['email' => $user->getTempEmail()]);
+                if ($userExist) {
+                    $errorMessage['errors']['profil_edit_email[code]']['errors'][] = 'Un utilisateur existe déjà avec cette adresse e-mail.';
+                }
+                $partnerExist = $partnerRepository->findOneBy(['email' => $user->getTempEmail()]);
+                if ($partnerExist) {
+                    $errorMessage['errors']['profil_edit_email[code]']['errors'][] = 'Un partenaire existe déjà avec cette adresse e-mail.';
+                }
                 if ('' === $authCode) {
                     $errorMessage['errors']['profil_edit_email[code]']['errors'][] = 'Le code est obligatoire.';
                 } elseif ($authCode !== $user->getEmailAuthCode()) {
@@ -209,6 +221,15 @@ class ProfilController extends AbstractController
             } else {
                 // Étape 1: Envoi du code de confirmation par email
                 $email = $payload['profil_edit_email[email]'];
+
+                $userExist = $userRepository->findOneBy(['email' => $email]);
+                if ($userExist) {
+                    $errorMessage['errors']['profil_edit_email[email]']['errors'][] = 'Un utilisateur existe déjà avec cette adresse e-mail.';
+                }
+                $partnerExist = $partnerRepository->findOneBy(['email' => $email]);
+                if ($partnerExist) {
+                    $errorMessage['errors']['profil_edit_email[email]']['errors'][] = 'Un partenaire existe déjà avec cette adresse e-mail.';
+                }
                 if ('' === $email) {
                     $errorMessage['errors']['profil_edit_email[email]']['errors'][] = 'Ce champ est obligatoire.';
                 } elseif (!EmailFormatValidator::validate($email)) {
