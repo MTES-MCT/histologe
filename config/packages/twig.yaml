@@ -9,6 +9,7 @@ twig:
             url: '%host_url%'
             demo: 'https://app.livestorm.co/mte/demonstration-histologe'
             cgu_current_version: '%cgu_current_version%'
+            feature_export_custom: '%feature_export_custom%'
         gitbook:
             documentation: https://documentation.histologe.beta.gouv.fr
             faq: https://faq.histologe.beta.gouv.fr

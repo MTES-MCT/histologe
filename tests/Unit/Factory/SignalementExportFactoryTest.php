@@ -4,6 +4,7 @@ namespace App\Tests\Unit\Factory;
 
 use App\Dto\SignalementExport;
 use App\Entity\Enum\MotifCloture;
+use App\Entity\Enum\ProfileDeclarant;
 use App\Entity\Enum\VisiteStatus;
 use App\Entity\User;
 use App\Factory\SignalementExportFactory;
@@ -27,6 +28,7 @@ class SignalementExportFactoryTest extends TestCase
             'statut' => 2,
             'score' => 100.0,
             'isNotOccupant' => false,
+            'profileDeclarant' => ProfileDeclarant::LOCATAIRE,
             'nomOccupant' => $faker->lastName(),
             'prenomOccupant' => $faker->firstName(),
             'adresseOccupant' => $faker->streetAddress(),
@@ -48,9 +50,8 @@ class SignalementExportFactoryTest extends TestCase
             'photos' => [],
             'documents' => [],
             'isProprioAverti' => true,
-            'nbAdultes' => '2',
-            'nbEnfantsM6' => null,
-            'nbEnfantsP6' => null,
+            'nbEnfantsM6' => 1,
+            'nbOccupantsLogement' => 1,
             'isAllocataire' => 'CAF',
             'numAllocataire' => null,
             'natureLogement' => null,
@@ -79,12 +80,13 @@ class SignalementExportFactoryTest extends TestCase
         $this->assertInstanceOf(SignalementExport::class, $signalementExportFactory);
         $this->assertEquals('en cours', $signalementExportFactory->statut);
         $this->assertEquals(MotifCloture::INSALUBRITE->label(), $signalementExportFactory->motifCloture);
+        $this->assertEquals(ProfileDeclarant::LOCATAIRE->label(), $signalementExportFactory->typeDeclarant);
 
         $dateFormatted = (new \DateTimeImmutable())->format(SignalementExportFactory::DATE_FORMAT);
         $this->assertEquals($dateFormatted, $signalementExportFactory->createdAt);
         $this->assertEquals($dateFormatted, $signalementExportFactory->modifiedAt);
         $this->assertEquals($dateFormatted, $signalementExportFactory->closedAt);
-        $this->assertEquals('2023-07-13 13:41:15', $signalementExportFactory->dateVisite);
+        $this->assertEquals('13/07/2023', $signalementExportFactory->dateVisite);
         $this->assertEquals('Oui', $signalementExportFactory->isOccupantPresentVisite);
 
         $this->assertEquals(SignalementExportFactory::NON_RENSEIGNE, $signalementExportFactory->telephoneOccupantBis);
@@ -92,8 +94,6 @@ class SignalementExportFactoryTest extends TestCase
         $this->assertEquals(SignalementExportFactory::NON_RENSEIGNE, $signalementExportFactory->escalierOccupant);
         $this->assertEquals(SignalementExportFactory::NON_RENSEIGNE, $signalementExportFactory->numAppartOccupant);
         $this->assertEquals(SignalementExportFactory::NON_RENSEIGNE, $signalementExportFactory->adresseAutreOccupant);
-        $this->assertEquals(SignalementExportFactory::NON_RENSEIGNE, $signalementExportFactory->nbEnfantsM6);
-        $this->assertEquals(SignalementExportFactory::NON_RENSEIGNE, $signalementExportFactory->nbEnfantsP6);
         $this->assertEquals(SignalementExportFactory::NON_RENSEIGNE, $signalementExportFactory->numAllocataire);
         $this->assertEquals(SignalementExportFactory::NON_RENSEIGNE, $signalementExportFactory->natureLogement);
         $this->assertEquals(SignalementExportFactory::NON_RENSEIGNE, $signalementExportFactory->superficie);

@@ -43,6 +43,7 @@ enum NotificationMailerType
     case TYPE_ERROR_SIGNALEMENT;
     case TYPE_CRON;
     case TYPE_PDF_EXPORT;
+    case TYPE_LIST_EXPORT;
     case TYPE_CONTINUE_FROM_DRAFT;
     case TYPE_SIGNALEMENT_LIEN_SUIVI;
 }

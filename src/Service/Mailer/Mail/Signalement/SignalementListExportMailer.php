@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Service\Mailer\Mail\Error;
+namespace App\Service\Mailer\Mail\Signalement;
 
 use App\Service\Mailer\Mail\AbstractNotificationMailer;
 use App\Service\Mailer\NotificationMail;
@@ -10,11 +10,11 @@ use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Symfony\Component\Mailer\MailerInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
-class ErrorSignalementMailer extends AbstractNotificationMailer
+class SignalementListExportMailer extends AbstractNotificationMailer
 {
-    protected ?NotificationMailerType $mailerType = NotificationMailerType::TYPE_ERROR_SIGNALEMENT;
-    protected ?string $mailerSubject = 'Une erreur est survenue lors de la création d\'un signalement !';
-    protected ?string $mailerTemplate = 'erreur_signalement_email';
+    protected ?NotificationMailerType $mailerType = NotificationMailerType::TYPE_LIST_EXPORT;
+    protected ?string $mailerSubject = 'Votre export de la liste des signalements';
+    protected ?string $mailerTemplate = 'signalement_list_export';
 
     public function __construct(
         protected MailerInterface $mailer,
@@ -27,16 +27,10 @@ class ErrorSignalementMailer extends AbstractNotificationMailer
 
     public function getMailerParamsFromNotification(NotificationMail $notificationMail): array
     {
-        $event = $notificationMail->getEvent();
         $attachment = $notificationMail->getAttachment();
 
         return [
-            'url' => $_SERVER['SERVER_NAME'] ?? 'non défini',
-            'code' => $event->getThrowable()->getCode(),
-            'error' => $event->getThrowable()->getMessage(),
-            'req' => $event->getRequest()->getContent(),
-            'signalement' => $event->getRequest()->get('signalement'),
-            'attachment' => $attachment,
+            'attach' => $attachment,
         ];
     }
 }

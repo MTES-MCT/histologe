@@ -12,6 +12,7 @@ class SignalementExport
         public ?string $statut = null,
         public ?string $score = null,
         public ?string $description = null,
+        public ?string $typeDeclarant = null,
         public ?string $nomOccupant = null,
         public ?string $prenomOccupant = null,
         public ?string $telephoneOccupant = null,
@@ -31,9 +32,8 @@ class SignalementExport
         public ?string $photos = null,
         public ?string $documents = null,
         public ?string $isProprioAverti = null,
-        public ?string $nbAdultes = null,
-        public ?string $nbEnfantsM6 = null,
-        public ?string $nbEnfantsP6 = null,
+        public ?string $nbPersonnes = null,
+        public ?string $enfantsM6 = null,
         public ?string $isAllocataire = null,
         public ?string $numAllocataire = null,
         public ?string $natureLogement = null,
@@ -44,6 +44,7 @@ class SignalementExport
         public ?string $isRelogement = null,
         public ?string $isNotOccupant = null,
         public ?string $nomDeclarant = null,
+        public ?string $emailDeclarant = null,
         public ?string $structureDeclarant = null,
         public ?string $lienDeclarantOccupant = null,
         public ?string $dateVisite = null,
@@ -54,7 +55,8 @@ class SignalementExport
         public ?string $modifiedAt = null,
         public ?string $closedAt = null,
         public ?string $motifCloture = null,
-        public ?string $geoloc = null,
+        public ?string $longitude = null,
+        public ?string $latitude = null,
     ) {
     }
 }

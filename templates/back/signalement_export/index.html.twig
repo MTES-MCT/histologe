@@ -1,0 +1,174 @@
+{% extends 'back/base_bo.html.twig' %}
+
+{% block title %}Exporter les signalements{% endblock %}
+
+{% block content %}
+<div class="fr-background--white fr-p-3w">
+    <header>
+        {% include 'back/breadcrumb_bo.html.twig' with {
+            'level2Title': 'Liste des signalements',
+            'level2Link': path('back_index'),
+            'level2Label': 'Retour à la liste des signalements',
+            'level3Title': 'Export',
+            'level3Link': '',
+        } %}
+
+        <h1 class="fr-h1 fr-mb-0">Exporter la liste des {{ count_signalements }} signalements</h1>
+    </header>
+
+    <section class="fr-mt-3v">
+        <p>
+            Vous êtes sur le point d'exporter la liste des signalements de votre choix.
+            <br>
+            Vous pouvez choisir le format et les informations à exporter. Certaines informations sont présentes par défaut dans le fichier.
+        </p>
+    </section>
+
+    <section>
+        <h2>Filtres actifs</h2>
+        <div class="fr-mb-3v">
+            Votre liste contient {{ count_signalements }} signalements. Les filtres suivants sont actifs :
+        </div>
+        {% for filterName, filterValue in filters %}
+            <p class="fr-badge">{{ filterName }} : {{ filterValue }}</p>
+        {% else %}
+            Aucun filtre actif.
+        {% endfor %}
+    </section>
+
+    <form action="{{ path('back_signalement_list_export_file') }}" method="POST" class="fr-mt-5v">
+        <h2>Format</h2>
+
+        <fieldset class="fr-fieldset" id="radio-rich-hint-inline" aria-labelledby="radio-rich-hint-inline-legend radio-rich-hint-inline-messages">
+            <legend class="fr-fieldset__legend--regular fr-fieldset__legend" id="radio-rich-hint-inline-legend">
+                Sélectionnez le format du fichier qui vous sera envoyé par e-mail.
+            </legend>
+            <div class="fr-fieldset__element fr-fieldset__element--inline">
+                <div class="fr-radio-group fr-radio-rich">
+                    <input value="xlsx" type="radio" id="radio-rich-hint-inline-xls" name="file-format">
+                    <label class="fr-label" for="radio-rich-hint-inline-xls">
+                        Ficher Excel (.xls)
+                    </label>
+                    <div class="fr-radio-rich__pictogram">
+                        <img src="{{ asset('img/picto-dsfr/file-xls.svg') }}" class="img-mw-100" alt="Fichier Excel">
+                    </div>
+                </div>
+            </div>
+            <div class="fr-fieldset__element fr-fieldset__element--inline">
+                <div class="fr-radio-group fr-radio-rich">
+                    <input value="csv" type="radio" id="radio-rich-hint-inline-csv" name="file-format">
+                    <label class="fr-label" for="radio-rich-hint-inline-csv">
+                        Ficher CSV
+                    </label>
+                    <div class="fr-radio-rich__pictogram">
+                        <img src="{{ asset('img/picto-dsfr/file-csv.svg') }}" class="img-mw-100" alt="Fichier CSV">
+                    </div>
+                </div>
+            </div>
+            <div class="fr-messages-group" id="radio-rich-hint-inline-messages" aria-live="polite">
+            </div>
+        </fieldset>
+        
+        <h2 class="fr-mt-5v">Informations du fichier</h2>
+        <div class="fr-alert fr-alert--warning fr-alert--sm">
+            <p>Les informations contenues dans ce fichier ne doivent en aucun cas être partagées en dehors des services compétents à traiter le dossier.</p>
+        </div>
+
+        <h3 class="fr-mt-5v">Infos obligatoires</h3>
+        <p>
+            Par défaut, votre fichier contient les informations suivantes :
+        </p>
+        <ul>
+            <li><strong>Référence :</strong> la référence du signalement</li>
+            <li><strong>Déposé le :</strong> la date de dépôt du signalement</li>
+            <li><strong>Statut :</strong> le statut du signalement (nouveau, en cours, fermé)</li>
+            <li><strong>Description :</strong> le message laissé par l'usager au dépôt du signalement, décrivant la situation</li>
+            <li><strong>Type déclarant :</strong> le type de déclarant (occupant, tiers, propriétaire occupant, services de secours...)</li>
+            <li><strong>Nom occupant :</strong> le nom de l'occupant du logement</li>
+            <li><strong>Prénom occupant :</strong> le prénom de l'occupant du logement</li>
+            <li><strong>Téléphone occupant :</strong> le numéro de téléphone de l'occupant</li>
+            <li><strong>E-mail occupant :</strong> l'adresse e-mail de l'occupant</li>
+            <li><strong>Adresse :</strong> l'adresse postale du logement</li>
+            <li><strong>Code postal :</strong> le code postal du logement</li>
+            <li><strong>Commune :</strong> la commune du logement</li>
+            <li><strong>Situation :</strong> les catégories de désordres présents dans le logement</li>
+            <li><strong>Désordres :</strong> le détail des désordres présents dans le logement</li>
+            <li><strong>Allocataire :</strong> si l'usager est allocataire ou non</li>
+            <li><strong>Logement social :</strong> s'il s'agit d'un logement social ou non</li>
+        </ul>
+
+        <div class="fr-table fr-table--bordered" id="table-select-export-col">
+            <div class="fr-table__wrapper">
+                <div class="fr-table__container">
+                    <div class="fr-table__content">
+                        <table id="table-selectable">
+                            <caption>
+                                Infos à sélectionner
+                                <div class="fr-table__caption__desc">
+                                    Dans le tableau ci-dessous, sélectionnez les colonnes à ajouter à votre fichier.
+                                    <br>
+                                    Cliquez sur la case dans l'en-tête pour tout sélectionner.
+                                    <br>
+                                    Si vous ne cochez aucune case, seule les informations obligatoires vous seront transmises.
+                                </div>
+                            </caption>
+                            <thead>
+                                <tr>
+                                    <th class="fr-cell--fixed" role="columnheader">
+                                        <div class="fr-checkbox-group fr-checkbox-group--sm">
+                                            <input id="table-select-checkbox-all" type="checkbox">
+                                            <label class="fr-label" for="table-select-checkbox-all">
+                                                Nom de la colonne
+                                            </label>
+                                        </div>
+                                    </th>
+                                    <th scope="col">
+                                        Nom de la colonne
+                                    </th>
+                                    <th scope="col">
+                                        Détails
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for colId, col in selectable_cols %}
+                                <tr data-row-key="{{ loop.index }}">
+                                    <th class="fr-cell--fixed" scope="row">
+                                        <div class="fr-checkbox-group fr-checkbox-group--sm">
+                                            <input name="cols[]" value="{{ colId }}" id="table-select-checkbox-{{ colId }}" type="checkbox" class="checkbox-column"
+                                                {% if colId in selected_cols %}checked="checked"{% endif %}>
+                                            <label class="fr-label" for="table-select-checkbox-{{ colId }}">
+                                                {{ col.name }}
+                                            </label>
+                                        </div>
+                                    </th>
+                                    <td>
+                                        {{ col.name }}
+                                    </td>
+                                    <td>
+                                        {{ col.description }}
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <ul class="fr-btns-group fr-btns-group--inline-lg fr-btns-group--right fr-btns-group--icon-left">
+            <li>
+                <a href="{{ path('back_index') }}" class="fr-btn fr-w-100 fr-btn--secondary fr-btn--icon-left fr-icon-close-line">
+                    Annuler
+                </a>
+            </li>
+            <li>
+                <button class="fr-btn fr-w-100 fr-btn--icon-left fr-icon-check-line">
+                    Exporter le fichier
+                </button>
+            </li>
+        </ul>
+    </form>
+</div>
+{% endblock %}

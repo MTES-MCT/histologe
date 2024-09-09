@@ -5,8 +5,10 @@ namespace App\Factory;
 use App\Dto\SignalementAffectationListView;
 use App\Dto\SignalementExport;
 use App\Entity\Enum\MotifCloture;
+use App\Entity\Enum\ProfileDeclarant;
 use App\Entity\Enum\VisiteStatus;
 use App\Entity\Intervention;
+use App\Entity\Model\TypeCompositionLogement;
 use App\Entity\User;
 use App\Service\Signalement\SignalementAffectationHelper;
 
@@ -33,9 +35,10 @@ class SignalementExportFactory
             : null;
 
         $motifCloture = $data['motifCloture'] instanceof MotifCloture ? $data['motifCloture']->label() : null;
+        $typeDeclarant = $data['profileDeclarant'] instanceof ProfileDeclarant ? $data['profileDeclarant']->label() : null;
         $status = SignalementAffectationHelper::getStatusLabelFrom($user, $data);
 
-        $geoloc = json_encode($data['geoloc']);
+        $geoloc = $data['geoloc'];
 
         $interventionExploded = explode(
             SignalementExport::SEPARATOR_GROUP_CONCAT,
@@ -43,7 +46,15 @@ class SignalementExportFactory
         );
         $statusVisite = $interventionExploded[0];
         $dateVisite = !empty($interventionExploded[1]) ? $interventionExploded[1] : '';
+        $dateVisite = !empty($dateVisite) ? (new \DateTime($dateVisite))->format(self::DATE_FORMAT) : '';
         $isOccupantPresentVisite = !empty($interventionExploded[2]) ? $interventionExploded[2] : '';
+
+        $enfantsM6 = null;
+        if (isset($data['typeCompositionLogement']) && $data['typeCompositionLogement'] instanceof TypeCompositionLogement) {
+            $enfantsM6 = $data['typeCompositionLogement']->getCompositionLogementEnfants();
+        } elseif (isset($data['nbEnfantsM6'])) {
+            $enfantsM6 = ($data['nbEnfantsM6'] > 0) ? 'oui' : 'non';
+        }
 
         return new SignalementExport(
             reference: $data['reference'],
@@ -51,9 +62,10 @@ class SignalementExportFactory
             statut: $status,
             score: $data['score'],
             description: $data['details'],
+            typeDeclarant: $typeDeclarant,
             nomOccupant: $data['nomOccupant'],
             prenomOccupant: $data['prenomOccupant'],
-            telephoneOccupant: $data['telOccupant'],
+            telephoneOccupant: '\''.$data['telOccupant'].'\'',
             telephoneOccupantBis: $data['telOccupantBis'] ?? self::NON_RENSEIGNE,
             emailOccupant: $data['mailOccupant'],
             adresseOccupant: $data['adresseOccupant'],
@@ -70,9 +82,8 @@ class SignalementExportFactory
             photos: '-',
             documents: '-',
             isProprioAverti: $this->mapData($data, 'isProprioAverti'),
-            nbAdultes: $data['nbAdultes'],
-            nbEnfantsM6: $data['nbEnfantsM6'] ?? self::NON_RENSEIGNE,
-            nbEnfantsP6: $data['nbEnfantsP6'] ?? self::NON_RENSEIGNE,
+            nbPersonnes: $data['nbOccupantsLogement'],
+            enfantsM6: $enfantsM6,
             isAllocataire: $this->mapData($data, 'isAllocataire'),
             numAllocataire: $data['numAllocataire'] ?? self::NON_RENSEIGNE,
             natureLogement: $data['natureLogement'] ?? self::NON_RENSEIGNE,
@@ -83,6 +94,7 @@ class SignalementExportFactory
             isRelogement: $this->mapData($data, 'isRelogement'),
             isNotOccupant: 1 == $data['isNotOccupant'] ? self::OUI : self::NON,
             nomDeclarant: $data['nomDeclarant'] ?? '-',
+            emailDeclarant: $data['mailDeclarant'] ?? '-',
             structureDeclarant: $data['structureDeclarant'] ?? '-',
             lienDeclarantOccupant: $data['lienDeclarantOccupant'] ?? '-',
             dateVisite: $dateVisite,
@@ -93,7 +105,8 @@ class SignalementExportFactory
             modifiedAt: $modifiedAt,
             closedAt: $closedAt,
             motifCloture: $motifCloture,
-            geoloc: $geoloc,
+            longitude: is_array($geoloc) ? $geoloc['lng'] : '',
+            latitude: is_array($geoloc) ? $geoloc['lat'] : '',
         );
     }
 
