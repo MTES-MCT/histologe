@@ -17,14 +17,12 @@ final class Version20240820200418 extends AbstractMigration
     public function up(Schema $schema): void
     {
         $this->addSql('ALTER TABLE history_entry ADD changes JSON DEFAULT NULL, ADD source VARCHAR(255) DEFAULT NULL');
-        $this->addSql('DROP INDEX `primary` ON tag_signalement');
-        $this->addSql('ALTER TABLE tag_signalement ADD PRIMARY KEY (signalement_id, tag_id)');
+        $this->addSql('ALTER TABLE tag_signalement DROP PRIMARY KEY, ADD PRIMARY KEY (signalement_id, tag_id)');
     }
 
     public function down(Schema $schema): void
     {
         $this->addSql('ALTER TABLE history_entry DROP changes, DROP source');
-        $this->addSql('DROP INDEX `PRIMARY` ON tag_signalement');
-        $this->addSql('ALTER TABLE tag_signalement ADD PRIMARY KEY (tag_id, signalement_id)');
+        $this->addSql('ALTER TABLE tag_signalement DROP PRIMARY KEY, ADD PRIMARY KEY (tag_id, signalement_id)');
     }
 }
