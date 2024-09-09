@@ -70,6 +70,29 @@ class EsaboraSCHSService extends AbstractEsaboraService
         );
     }
 
+    public function getEventsDossier(Affectation $affectation): ResponseInterface
+    {
+        list($url, $token) = $affectation->getPartner()->getEsaboraCredential();
+        $payload = [
+            'searchName' => 'WS_EVT_DOSSIER_SAS',
+            'criterionList' => [
+                [
+                    'criterionName' => 'SAS_Référence',
+                    'criterionValueList' => [
+                        $affectation->getSignalement()->getUuid(),
+                    ],
+                ],
+            ],
+        ];
+
+        $response = $this->request($url, $token, $payload);
+        if ($response instanceof JsonResponse) {
+            throw new \Exception(json_decode($response->getContent())['message']);
+        }
+
+        return $response;
+    }
+
     public function preparePayloadPushDossier(DossierMessageSCHS $dossierMessage, bool $encodeDocuments = true): array
     {
         $piecesJointes = [];
