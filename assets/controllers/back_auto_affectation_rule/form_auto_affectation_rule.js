@@ -1,4 +1,4 @@
-import { loadWindowWithLocalStorage, updateLocalStorageWithFormParams, updateLocalStorageWithPaginationParams} from '../list_filter_helper'
+import { loadWindowWithLocalStorage, updateLocalStorageWithPaginationParams, updateLocalStorageOnEvent} from '../../services/list_filter_helper'
 
 document.querySelectorAll('.btn-delete-autoaffectationrule').forEach(swbtn => {
     swbtn.addEventListener('click', evt => {
@@ -12,16 +12,6 @@ document.querySelectorAll('.btn-delete-autoaffectationrule').forEach(swbtn => {
     })
 })
 
-document?.querySelectorAll('[data-filter-list-auto-affectation-rule]').forEach(link => {
-    link.addEventListener('click', (event) => loadWindowWithLocalStorage(event, 'back_link_autoaffectation_rule'));
-  })
-  
-const territorySelect = document?.querySelector('#autoaffectation-rule-filters-territories');
-if (territorySelect) {
-    territorySelect.addEventListener('change', () => updateLocalStorageWithFormParams('back_link_autoaffectation_rule'));
-}
-
-const paginationLinks = document.querySelectorAll('#autoaffectation-rule-pagination a');
-paginationLinks.forEach(link => {
-    link.addEventListener('click', (event) => updateLocalStorageWithPaginationParams(event, 'back_link_autoaffectation_rule'));
-});
+loadWindowWithLocalStorage('click', '[data-filter-list-auto-affectation-rule]', 'back_link_autoaffectation_rule');
+updateLocalStorageOnEvent('change', '#autoaffectation-rule-filters-territories', 'back_link_autoaffectation_rule');
+updateLocalStorageWithPaginationParams('click', '#autoaffectation-rule-pagination a', 'back_link_autoaffectation_rule');

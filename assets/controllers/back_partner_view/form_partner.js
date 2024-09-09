@@ -1,4 +1,4 @@
-import { loadWindowWithLocalStorage, updateLocalStorageWithFormParams, updateLocalStorageWithPaginationParams} from '../list_filter_helper'
+import { loadWindowWithLocalStorage, updateLocalStorageWithPaginationParams, updateLocalStorageOnEvent} from '../../services/list_filter_helper'
 function histoUpdateSubmitButton(elementName, elementLabel) {
   document.querySelector(elementName).innerHTML = elementLabel
   document.querySelector(elementName).disabled = true
@@ -181,20 +181,8 @@ emailInputs.forEach(emailInput => {
   });
 });
 
-document?.querySelectorAll('[data-filter-list-partner]').forEach(link => {
-  link.addEventListener('click', (event) => loadWindowWithLocalStorage(event, 'back_link_partners'));
-})
-
-const partnerSearchInput = document?.querySelector('#partner-input');
-partnerSearchInput?.addEventListener('input', () => updateLocalStorageWithFormParams('back_link_partners'));
-
-const territorySelect = document?.querySelector('#partner-filters-territories');
-territorySelect?.addEventListener('change', () => updateLocalStorageWithFormParams('back_link_partners'));
-
-const typeSelect = document?.querySelector('#partner-filters-types');
-typeSelect?.addEventListener('change', () => updateLocalStorageWithFormParams('back_link_partners'));
-
-const paginationLinks = document.querySelectorAll('#partner-pagination a');
-paginationLinks.forEach(link => {
-  link.addEventListener('click', (event) => updateLocalStorageWithPaginationParams(event, 'back_link_partners'));
-});
+loadWindowWithLocalStorage('click', '[data-filter-list-partner]', 'back_link_partners');
+updateLocalStorageOnEvent('input', '#partner-input', 'back_link_partners');
+updateLocalStorageOnEvent('change', '#partner-filters-territories', 'back_link_partners');
+updateLocalStorageOnEvent('change', '#partner-filters-types', 'back_link_partners');
+updateLocalStorageWithPaginationParams('click', '#partner-pagination a', 'back_link_partners');

@@ -1,4 +1,4 @@
-import { loadWindowWithLocalStorage} from '../list_filter_helper'
+import { loadWindowWithLocalStorage} from '../../services/list_filter_helper'
 
 document?.querySelector('#btn-display-all-suivis')?.addEventListeners('click touchdown', (e) => {
     e.preventDefault()
@@ -59,7 +59,7 @@ const displayPhotoAlbum = (photoId) => {
     })
 }
 
-document?.querySelector('[data-filter-list-signalement]')?.addEventListener('click', (event) => loadWindowWithLocalStorage(event, 'back_link_signalement_view'));
+loadWindowWithLocalStorage('click', '[data-filter-list-signalement]', 'back_link_signalement_view');
 
 document?.querySelectorAll('.signalement-tag-add')?.forEach(element => {
     element.addEventListener('click', (event) => {

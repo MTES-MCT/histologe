@@ -34,7 +34,7 @@
                 </div>
             </div>
             <div class="fr-col-3 fr-p-2v">
-                <select id="" class="fr-select fr-select-submit" name="territory">
+                <select id="partner-archives-filters-territories" class="fr-select fr-select-submit" name="territory">
                     <option value="" {{ not isNoneTerritory and currentTerritory is null ? 'selected' : '' }}>Tous les territoires</option>
                     <option value="none" {{ isNoneTerritory ? 'selected' : '' }}>Aucun</option>
                     {% for territory in territories %}

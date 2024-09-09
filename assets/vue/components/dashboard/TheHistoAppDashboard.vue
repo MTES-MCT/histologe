@@ -246,7 +246,8 @@ export default defineComponent({
 </script>
 
 <style>
-  div.fr-col-12.fr-col-md-9.fr-col-lg-10 {
+  #app-dashboard {
     background-color: #F6F6F6;
+    height: 100%;
   }
 </style>
