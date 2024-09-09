@@ -7,6 +7,7 @@ use App\Service\Mailer\NotificationMail;
 use App\Service\Mailer\NotificationMailerRegistry;
 use App\Service\Mailer\NotificationMailerType;
 use Doctrine\ORM\EntityManagerInterface;
+use League\Flysystem\FilesystemException;
 use League\Flysystem\FilesystemOperator;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
@@ -40,6 +41,9 @@ class ClearStorageOriginalFileCommand extends AbstractCronCommand
         $this->io = new SymfonyStyle($input, $output);
     }
 
+    /**
+     * @throws FilesystemException
+     */
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $count = $this->fileRepository->countWithOriginalAndVariants();
@@ -54,16 +58,16 @@ class ClearStorageOriginalFileCommand extends AbstractCronCommand
             $filename = $file->getFilename();
             if ($this->fileStorage->fileExists($filename)) {
                 $this->fileStorage->delete($filename);
-                ++$nbTmp;
             } else {
                 ++$nbErrors;
             }
             $file->setIsOriginalDeleted(true);
-            if ($nbTmp > 50) {
+            if ($nbTmp > 40) {
                 $this->entityManager->flush();
                 $nbTmp = 0;
             }
             $progressBar->advance();
+            ++$nbTmp;
         }
         $this->entityManager->flush();
         $progressBar->finish();
