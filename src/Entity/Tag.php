@@ -26,8 +26,8 @@ class Tag implements EntityHistoryInterface
     #[Groups(['widget-settings:read'])]
     private ?int $id = null;
 
-    #[ORM\ManyToMany(targetEntity: Signalement::class, inversedBy: 'tags', cascade: ['persist'])]
-    private Collection $signalement;
+    #[ORM\ManyToMany(targetEntity: Signalement::class, mappedBy: 'tags')]
+    private Collection $signalements;
 
     #[ORM\Column(type: 'string', length: 255)]
     #[Groups(['widget-settings:read'])]
@@ -44,7 +44,7 @@ class Tag implements EntityHistoryInterface
 
     public function __construct()
     {
-        $this->signalement = new ArrayCollection();
+        $this->signalements = new ArrayCollection();
         $this->isArchive = false;
     }
 
@@ -56,15 +56,15 @@ class Tag implements EntityHistoryInterface
     /**
      * @return Collection|Signalement[]
      */
-    public function getSignalement(): Collection
+    public function getSignalements(): Collection
     {
-        return $this->signalement;
+        return $this->signalements;
     }
 
     public function addSignalement(Signalement $signalement): self
     {
-        if (!$this->signalement->contains($signalement)) {
-            $this->signalement[] = $signalement;
+        if (!$this->signalements->contains($signalement)) {
+            $this->signalements[] = $signalement;
         }
 
         return $this;
@@ -72,7 +72,7 @@ class Tag implements EntityHistoryInterface
 
     public function removeSignalement(Signalement $signalement): self
     {
-        $this->signalement->removeElement($signalement);
+        $this->signalements->removeElement($signalement);
 
         return $this;
     }

@@ -2,7 +2,6 @@
 
 namespace App\Entity;
 
-use App\Entity\Enum\HistoryEntryEvent;
 use App\Repository\SignalementUsagerRepository;
 use Doctrine\ORM\Mapping as ORM;
 
@@ -63,10 +62,5 @@ class SignalementUsager
         $this->occupant = $occupant;
 
         return $this;
-    }
-
-    public function getHistoryRegisteredEvent(): array
-    {
-        return [HistoryEntryEvent::CREATE, HistoryEntryEvent::UPDATE, HistoryEntryEvent::DELETE];
     }
 }

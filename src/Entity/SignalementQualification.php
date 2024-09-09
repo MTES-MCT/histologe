@@ -2,7 +2,6 @@
 
 namespace App\Entity;
 
-use App\Entity\Enum\HistoryEntryEvent;
 use App\Entity\Enum\Qualification;
 use App\Entity\Enum\QualificationStatus;
 use App\Repository\SignalementQualificationRepository;
@@ -147,10 +146,5 @@ class SignalementQualification
         $this->isPostVisite = $isPostVisite;
 
         return $this;
-    }
-
-    public function getHistoryRegisteredEvent(): array
-    {
-        return [HistoryEntryEvent::CREATE, HistoryEntryEvent::UPDATE, HistoryEntryEvent::DELETE];
     }
 }
