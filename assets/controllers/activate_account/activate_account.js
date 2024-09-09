@@ -13,7 +13,9 @@ document?.querySelector('form[name="login-creation-mdp-form"]')?.querySelectorAl
 document?.querySelector('form[name="login-creation-mdp-form"]')?.addEventListener('submit', (event) => {
     event.preventDefault();
     const modalCgu = document.getElementById("fr-modal-cgu-bo");
-    dsfr(modalCgu).modal.conceal();
+    if (modalCgu) {
+        dsfr(modalCgu).modal.conceal();
+    }
     if(canSubmitFormReinitPassword()){
         event.target.submit();
     }

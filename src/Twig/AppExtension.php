@@ -11,6 +11,7 @@ use App\Service\Notification\NotificationCounter;
 use App\Service\Signalement\Qualification\QualificationStatusService;
 use App\Service\TimezoneProvider;
 use App\Service\UploadHandlerService;
+use App\Service\UserAvatar;
 use App\Utils\AttributeParser;
 use App\Validator\EmailFormatValidator;
 use Twig\Extension\AbstractExtension;
@@ -20,8 +21,9 @@ use Twig\TwigFunction;
 
 class AppExtension extends AbstractExtension implements GlobalsInterface
 {
-    public function __construct(private readonly TimezoneProvider $timezoneProvider)
-    {
+    public function __construct(
+        private readonly TimezoneProvider $timezoneProvider,
+    ) {
     }
 
     public function getGlobals(): array
@@ -136,6 +138,7 @@ class AppExtension extends AbstractExtension implements GlobalsInterface
             new TwigFunction('get_accepted_mime_type', [$this, 'getAcceptedMimeTypes']),
             new TwigFunction('get_accepted_extensions', [UploadHandlerService::class, 'getAcceptedExtensions']),
             new TwigFunction('show_email_alert', [$this, 'showEmailAlert']),
+            new TwigFunction('user_avatar_or_placeholder', [UserAvatar::class, 'userAvatarOrPlaceholder'], ['is_safe' => ['html']]),
         ];
     }
 

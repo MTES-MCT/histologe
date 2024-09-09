@@ -8,17 +8,39 @@
             <div class="fr-pb-5v">
                 <img src="{{ asset('img/' ~ platform.logo145) }}" alt="{{ platform.name }}" width="145px">
             </div>
-            <div class="fr-sidemenu__title">
-                {% if is_granted('ROLE_ADMIN') %}
-                    Super Admin
-                {% elseif is_granted('ROLE_ADMIN_TERRITORY') %}
-                    {{ app.user.territory.name }}
-                {% else %}
-                    {{ app.user.partner ? app.user.partner.nom : '' }}
-                {% endif %}
-                <br>
-                <small class="fr-text-label--blue-france">{{ app.user.prenom ~' '~app.user.nom[:1]|capitalize~'.' }}</small>
-            </div>
+            {% if platform.feature_profil_edition_enabled %}
+                <div>
+                    <div class="fr-display-inline-flex fr-align-items-center">
+                        {{ user_avatar_or_placeholder(app.user, 26) }}
+                        <div class="fr-ml-3v">
+                            <span class="fr-display-block">
+                                <a class="fr-link fr-link--lg" href="{{ path('back_profil') }}" target="_self">{{ app.user.prenom ~' '~app.user.nom[:1]|capitalize~'.' }}</a>
+                            </span>
+                        </div>
+                    </div>
+                    <div>
+                        {% if is_granted('ROLE_ADMIN') %}
+                            Super Admin
+                        {% elseif is_granted('ROLE_ADMIN_TERRITORY') %}
+                            {{ app.user.territory.name }}
+                        {% else %}
+                            {{ app.user.partner ? app.user.partner.nom : '' }}
+                        {% endif %}
+                    </div>
+                </div>
+            {% else %}         
+                <div class="fr-sidemenu__title">
+                    {% if is_granted('ROLE_ADMIN') %}
+                        Super Admin
+                    {% elseif is_granted('ROLE_ADMIN_TERRITORY') %}
+                        {{ app.user.territory.name }}
+                    {% else %}
+                        {{ app.user.partner ? app.user.partner.nom : '' }}
+                    {% endif %}
+                    <br>
+                    <small class="fr-text-label--blue-france">{{ app.user.prenom ~' '~app.user.nom[:1]|capitalize~'.' }}</small>
+                </div>
+            {% endif %}
             <ul class="fr-sidemenu__list">
                 <li class="fr-sidemenu__item" {% if 'back_dashboard' is same as(app.request.get('_route')) %}fr-sidemenu__item--active{% endif %}>
                     <a class="fr-sidemenu__link" href="{{ path('back_dashboard') }}" 

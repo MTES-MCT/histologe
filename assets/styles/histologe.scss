@@ -182,8 +182,17 @@ legend.required::after, label.required::after {
     display: inline;
 }
 
+.fr-display-flex-column {
+    display: flex;
+    flex-direction: column;
+}
+
 .fr-display-none {
     display: none;
+}
+
+.fr-align-items-center {
+    align-items: center;
 }
 
 .fr-display-inline-flex {
@@ -848,4 +857,39 @@ a.photo-preview {
 
 .signalement-tag-add, .signalement-tag-remove {
     cursor: pointer;
+}
+
+.avatar-placeholder {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #ececfe;
+    color: #e4794a;
+    text-align: center;
+    font-family: 'Marianne', sans-serif;
+    font-weight: bold;
+}
+
+.avatar-124 {
+    width: 124px;
+    height: 124px;
+    font-size: 62px;
+}
+
+.avatar-80 {
+    width: 80px;
+    height: 80px;
+    font-size: 62px;
+}
+
+.avatar-74 {
+    width: 74px;
+    height: 74px;
+    font-size: 37px;
+}
+
+.avatar-26 {
+    width: 26px;
+    height: 26px;
+    font-size: 13px;
 }

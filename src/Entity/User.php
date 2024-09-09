@@ -72,7 +72,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, TwoFact
 
     #[ORM\Column(type: 'string', nullable: true)]
     #[Assert\NotBlank(groups: ['password'])]
-    #[Assert\Length(min: 12, max: 200, minMessage: 'Le mot de passe doit contenir au moins {{ limit }} caratères.', groups: ['password'])]
+    #[Assert\Length(min: 12, max: 200, minMessage: 'Le mot de passe doit contenir au moins {{ limit }} caractères.', groups: ['password'])]
     #[Assert\Regex(pattern: '/[A-Z]/', message: 'Le mot de passe doit contenir au moins une lettre majuscule.', groups: ['password'])]
     #[Assert\Regex(pattern: '/[a-z]/', message: 'Le mot de passe doit contenir au moins une lettre minuscule.', groups: ['password'])]
     #[Assert\Regex(pattern: '/[0-9]/', message: 'Le mot de passe doit contenir au moins un chiffre.', groups: ['password'])]
@@ -148,6 +148,12 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, TwoFact
 
     #[ORM\Column(type: 'string', nullable: true)]
     private ?string $cguVersionChecked;
+
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $avatarFilename = null;
+
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $tempEmail = null;
 
     public function __construct()
     {
@@ -603,7 +609,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, TwoFact
         return $this->authCode;
     }
 
-    public function setEmailAuthCode(string $authCode): void
+    public function setEmailAuthCode(?string $authCode): void
     {
         $this->authCode = $authCode;
     }
@@ -616,6 +622,30 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, TwoFact
     public function setCguVersionChecked(string $cguVersionChecked): self
     {
         $this->cguVersionChecked = $cguVersionChecked;
+
+        return $this;
+    }
+
+    public function getAvatarFilename(): ?string
+    {
+        return $this->avatarFilename;
+    }
+
+    public function setAvatarFilename(?string $avatarFilename): self
+    {
+        $this->avatarFilename = $avatarFilename;
+
+        return $this;
+    }
+
+    public function getTempEmail(): ?string
+    {
+        return $this->tempEmail;
+    }
+
+    public function setTempEmail(?string $tempEmail): self
+    {
+        $this->tempEmail = $tempEmail;
 
         return $this;
     }

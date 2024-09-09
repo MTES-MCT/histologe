@@ -16,6 +16,7 @@ class ImageManipulationHandler
 
     private const DEFAULT_SIZE_RESIZE = 1000;
     private const DEFAULT_SIZE_THUMB = 400;
+    private const DEFAULT_SIZE_AVATAR = 150;
     private bool $useTmpDir = true;
     private string $imagePath;
 
@@ -87,6 +88,22 @@ class ImageManipulationHandler
         $image->fit($size, $size);
         $resource = $image->stream()->detach();
         $this->fileStorage->writeStream($this->getNewPath(self::SUFFIX_THUMB), $resource);
+
+        return $this;
+    }
+
+    /**
+     * @throws \Throwable
+     */
+    public function avatar(?string $path = null, ?int $size = self::DEFAULT_SIZE_AVATAR): self
+    {
+        if ($path) {
+            $this->imagePath = $path;
+        }
+        $image = $this->imageManager->make($this->fileStorage->readStream($this->imagePath));
+        $image->fit($size, $size);
+        $resource = $image->stream()->detach();
+        $this->fileStorage->writeStream($path, $resource);
 
         return $this;
     }

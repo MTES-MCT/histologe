@@ -9,12 +9,17 @@ use App\Service\Mailer\NotificationMailerType;
 use Doctrine\Bundle\DoctrineBundle\Attribute\AsEntityListener;
 use Doctrine\ORM\Event\PostUpdateEventArgs;
 use Doctrine\ORM\Events;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\RequestStack;
+use Symfony\Component\HttpFoundation\UrlHelper;
 
 #[AsEntityListener(event: Events::postUpdate, method: 'postUpdate', entity: User::class)]
 class UserUpdatedListener
 {
     public function __construct(
-        private NotificationMailerRegistry $notificationMailerRegistry
+        private readonly NotificationMailerRegistry $notificationMailerRegistry,
+        private readonly RequestStack $requestStack,
+        private readonly UrlHelper $urlHelper,
     ) {
     }
 
@@ -47,11 +52,23 @@ class UserUpdatedListener
 
     private function shouldChangePassword(array $changes): bool
     {
-        if (\array_key_exists('email', $changes) // if email has changed
-            || (
+        $request = $this->requestStack->getCurrentRequest();
+
+        if ($request instanceof Request) {
+            $currentUrl = $this->urlHelper->getAbsoluteUrl($request->getRequestUri());
+
+            if (str_contains($currentUrl, '/profil')) {
+                // Ne rien faire si l'URL contient "profil"
+                return false;
+            }
+        }
+
+        if (// if email has changed
+            \array_key_exists('email', $changes)
+            || (// if usager becomes user
                 \array_key_exists('roles', $changes)
                 && \in_array('ROLE_USAGER', $changes['roles'][0])
-            ) // if usager becomes user
+            )
         ) {
             return true;
         }

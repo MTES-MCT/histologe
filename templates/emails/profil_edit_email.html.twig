@@ -1,0 +1,8 @@
+{% extends 'emails/base_email.html.twig' %}
+
+{% block body %}
+    <p>Bonjour,</p>
+    <p>Voici le code de confirmation à renseigner pour confirmer votre adresse mail :</p>
+    <p>{{ authCode }}</p>
+    <p>A bientôt sur {{ platform.name }} !</p>
+{% endblock %}

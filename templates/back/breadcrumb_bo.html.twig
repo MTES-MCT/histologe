@@ -13,9 +13,11 @@
                     {% if level2Label %}aria-label="{{ level2Label }}"{% endif %}
                     >{{ level2Title }}</a>
             </li>
-            <li>
-                <a class="fr-breadcrumb__link" aria-current="page">{{ level3Title }}</a>
-            </li>
+            {% if level3Title is defined %}
+                <li>
+                    <a class="fr-breadcrumb__link" aria-current="page">{{ level3Title }}</a>
+                </li>
+            {% endif %}
         </ol>
     </div>
 </nav>
