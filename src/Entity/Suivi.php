@@ -2,13 +2,15 @@
 
 namespace App\Entity;
 
+use App\Entity\Behaviour\EntityHistoryInterface;
+use App\Entity\Enum\HistoryEntryEvent;
 use App\Repository\SuiviRepository;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: SuiviRepository::class)]
 #[ORM\Index(columns: ['type'], name: 'idx_suivi_type')]
 #[ORM\Index(columns: ['created_at'], name: 'idx_suivi_created_at')]
-class Suivi
+class Suivi implements EntityHistoryInterface
 {
     public const TYPE_AUTO = 1;
     public const TYPE_USAGER = 2;
@@ -203,5 +205,10 @@ class Suivi
         $this->deletedBy = $deletedBy;
 
         return $this;
+    }
+
+    public function getHistoryRegisteredEvent(): array
+    {
+        return [HistoryEntryEvent::CREATE, HistoryEntryEvent::UPDATE, HistoryEntryEvent::DELETE];
     }
 }

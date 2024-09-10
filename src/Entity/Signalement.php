@@ -2,6 +2,9 @@
 
 namespace App\Entity;
 
+use App\Entity\Behaviour\EntityHistoryCollectionInterface;
+use App\Entity\Behaviour\EntityHistoryInterface;
+use App\Entity\Enum\HistoryEntryEvent;
 use App\Entity\Enum\MotifCloture;
 use App\Entity\Enum\MotifRefus;
 use App\Entity\Enum\ProfileDeclarant;
@@ -28,7 +31,7 @@ use Symfony\Component\Validator\Context\ExecutionContextInterface;
 #[ORM\Index(columns: ['created_at'], name: 'idx_signalement_created_at')]
 #[ORM\Index(columns: ['is_imported'], name: 'idx_signalement_is_imported')]
 #[ORM\Index(columns: ['uuid'], name: 'idx_signalement_uuid')]
-class Signalement
+class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInterface
 {
     public const STATUS_NEED_VALIDATION = 1;
     public const STATUS_ACTIVE = 2;
@@ -351,8 +354,9 @@ class Signalement
     #[AppAssert\TelephoneFormat]
     private $telOccupantBis;
 
-    #[ORM\ManyToMany(targetEntity: Tag::class, mappedBy: 'signalement', cascade: ['persist'])]
-    private $tags;
+    #[ORM\ManyToMany(targetEntity: Tag::class, inversedBy: 'signalements', cascade: ['persist'])]
+    #[ORM\JoinTable(name: 'tag_signalement')]
+    private Collection $tags;
 
     #[ORM\ManyToOne(targetEntity: Territory::class, inversedBy: 'signalements')]
     #[ORM\JoinColumn(nullable: true)]
@@ -2443,5 +2447,15 @@ class Signalement
         }
 
         return $this->getTerritory()->getTimezone();
+    }
+
+    public function getHistoryRegisteredEvent(): array
+    {
+        return [HistoryEntryEvent::CREATE, HistoryEntryEvent::UPDATE, HistoryEntryEvent::DELETE];
+    }
+
+    public function getManyToManyFieldsToTrack(): array
+    {
+        return ['tags'];
     }
 }

@@ -2,6 +2,8 @@
 
 namespace App\Entity;
 
+use App\Entity\Behaviour\EntityHistoryInterface;
+use App\Entity\Enum\HistoryEntryEvent;
 use App\Entity\Enum\MotifCloture;
 use App\Entity\Enum\MotifRefus;
 use App\Repository\AffectationRepository;
@@ -10,7 +12,7 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: AffectationRepository::class)]
-class Affectation
+class Affectation implements EntityHistoryInterface
 {
     public const STATUS_WAIT = 0;
     public const STATUS_ACCEPTED = 1;
@@ -47,10 +49,10 @@ class Affectation
     #[ORM\ManyToOne(targetEntity: User::class)]
     private ?User $affectedBy;
 
-    #[ORM\Column(type: 'string', enumType: MotifRefus::class, nullable: true)]
+    #[ORM\Column(type: 'string', nullable: true, enumType: MotifRefus::class)]
     private ?MotifRefus $motifRefus;
 
-    #[ORM\Column(type: 'string', enumType: MotifCloture::class, nullable: true)]
+    #[ORM\Column(type: 'string', nullable: true, enumType: MotifCloture::class)]
     private ?MotifCloture $motifCloture;
 
     #[ORM\OneToMany(mappedBy: 'affectation', targetEntity: Notification::class)]
@@ -243,5 +245,10 @@ class Affectation
             self::STATUS_CLOSED => 'Cloturé',
             default => 'Unexpected affectation status : '.$this->getStatut()
         };
+    }
+
+    public function getHistoryRegisteredEvent(): array
+    {
+        return [HistoryEntryEvent::CREATE, HistoryEntryEvent::UPDATE, HistoryEntryEvent::DELETE];
     }
 }

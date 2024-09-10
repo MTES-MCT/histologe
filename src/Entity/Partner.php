@@ -2,7 +2,9 @@
 
 namespace App\Entity;
 
+use App\Entity\Behaviour\EntityHistoryInterface;
 use App\Entity\Behaviour\TimestampableTrait;
+use App\Entity\Enum\HistoryEntryEvent;
 use App\Entity\Enum\PartnerType;
 use App\Entity\Enum\Qualification;
 use App\Repository\PartnerRepository;
@@ -16,7 +18,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: PartnerRepository::class)]
 #[UniqueEntity('email', ignoreNull: true)]
-class Partner
+class Partner implements EntityHistoryInterface
 {
     use TimestampableTrait;
 
@@ -27,7 +29,7 @@ class Partner
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column(type: 'integer')]
-    #[Groups('widget-settings:read')]
+    #[Groups(['widget-settings:read'])]
     private ?int $id = null;
 
     #[ORM\Column(type: 'string', length: 255)]
@@ -384,5 +386,10 @@ class Partner
         $this->idossTokenExpirationDate = $idossTokenExpirationDate;
 
         return $this;
+    }
+
+    public function getHistoryRegisteredEvent(): array
+    {
+        return [HistoryEntryEvent::CREATE, HistoryEntryEvent::UPDATE, HistoryEntryEvent::DELETE];
     }
 }

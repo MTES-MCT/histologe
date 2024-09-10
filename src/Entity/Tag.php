@@ -2,6 +2,8 @@
 
 namespace App\Entity;
 
+use App\Entity\Behaviour\EntityHistoryInterface;
+use App\Entity\Enum\HistoryEntryEvent;
 use App\Repository\TagRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -16,33 +18,33 @@ use Symfony\Component\Validator\Constraints as Assert;
     message: 'Ce nom d\'étiquette est déjà utilisé. Veuillez saisir une autre nom.',
     errorPath: 'label',
 )]
-class Tag
+class Tag implements EntityHistoryInterface
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column(type: 'integer')]
     #[Groups(['widget-settings:read'])]
-    private $id;
+    private ?int $id = null;
 
-    #[ORM\ManyToMany(targetEntity: Signalement::class, inversedBy: 'tags', cascade: ['persist'])]
-    private $signalement;
+    #[ORM\ManyToMany(targetEntity: Signalement::class, mappedBy: 'tags')]
+    private Collection $signalements;
 
     #[ORM\Column(type: 'string', length: 255)]
     #[Groups(['widget-settings:read'])]
     #[Assert\NotBlank(message: 'Merci de saisir un nom pour l\'étiquette.')]
-    private $label;
+    private ?string $label = null;
 
     #[ORM\Column(type: 'boolean')]
-    private $isArchive;
+    private bool $isArchive = false;
 
     #[ORM\ManyToOne(targetEntity: Territory::class, inversedBy: 'tags')]
     #[ORM\JoinColumn(nullable: false)]
     #[Assert\NotBlank()]
-    private $territory;
+    private ?Territory $territory = null;
 
     public function __construct()
     {
-        $this->signalement = new ArrayCollection();
+        $this->signalements = new ArrayCollection();
         $this->isArchive = false;
     }
 
@@ -54,15 +56,15 @@ class Tag
     /**
      * @return Collection|Signalement[]
      */
-    public function getSignalement(): Collection
+    public function getSignalements(): Collection
     {
-        return $this->signalement;
+        return $this->signalements;
     }
 
     public function addSignalement(Signalement $signalement): self
     {
-        if (!$this->signalement->contains($signalement)) {
-            $this->signalement[] = $signalement;
+        if (!$this->signalements->contains($signalement)) {
+            $this->signalements[] = $signalement;
         }
 
         return $this;
@@ -70,7 +72,7 @@ class Tag
 
     public function removeSignalement(Signalement $signalement): self
     {
-        $this->signalement->removeElement($signalement);
+        $this->signalements->removeElement($signalement);
 
         return $this;
     }
@@ -109,5 +111,10 @@ class Tag
         $this->territory = $territory;
 
         return $this;
+    }
+
+    public function getHistoryRegisteredEvent(): array
+    {
+        return [HistoryEntryEvent::CREATE, HistoryEntryEvent::UPDATE, HistoryEntryEvent::DELETE];
     }
 }

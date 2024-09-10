@@ -2,7 +2,9 @@
 
 namespace App\Entity;
 
+use App\Entity\Behaviour\EntityHistoryInterface;
 use App\Entity\Behaviour\TimestampableTrait;
+use App\Entity\Enum\HistoryEntryEvent;
 use App\Repository\UserRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -12,6 +14,7 @@ use Scheb\TwoFactorBundle\Model\Email\TwoFactorInterface;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
+use Symfony\Component\Serializer\Attribute\Ignore;
 use Symfony\Component\Uid\Uuid;
 use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\Validator\Constraints\Email;
@@ -19,7 +22,7 @@ use Symfony\Component\Validator\Constraints\Email;
 #[ORM\Entity(repositoryClass: UserRepository::class)]
 #[UniqueEntity('email', message: '{{ value }} existe déja, merci de saisir un nouvel e-mail')]
 #[ORM\HasLifecycleCallbacks()]
-class User implements UserInterface, PasswordAuthenticatedUserInterface, TwoFactorInterface
+class User implements UserInterface, EntityHistoryInterface, PasswordAuthenticatedUserInterface, TwoFactorInterface
 {
     use TimestampableTrait;
 
@@ -144,6 +147,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, TwoFact
     private ?\DateTimeImmutable $anonymizedAt = null;
 
     #[ORM\Column(type: 'string', nullable: true)]
+    #[Ignore]
     private ?string $authCode;
 
     #[ORM\Column(type: 'string', nullable: true)]
@@ -648,5 +652,10 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, TwoFact
         $this->tempEmail = $tempEmail;
 
         return $this;
+    }
+
+    public function getHistoryRegisteredEvent(): array
+    {
+        return [HistoryEntryEvent::CREATE, HistoryEntryEvent::UPDATE, HistoryEntryEvent::DELETE];
     }
 }

@@ -35,7 +35,7 @@ class SignalementQualification
     #[ORM\Column(nullable: true)]
     private array $details = [];
 
-    #[ORM\Column(type: 'string', enumType: QualificationStatus::class, nullable: true)]
+    #[ORM\Column(type: 'string', nullable: true, enumType: QualificationStatus::class)]
     private ?QualificationStatus $status = null;
 
     #[ORM\Column(nullable: true)]

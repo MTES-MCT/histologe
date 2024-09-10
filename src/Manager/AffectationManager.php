@@ -9,8 +9,10 @@ use App\Entity\Partner;
 use App\Entity\Signalement;
 use App\Entity\User;
 use App\Messenger\Message\DossierMessageInterface;
+use App\Repository\AffectationRepository;
 use Doctrine\Persistence\ManagerRegistry;
 use Psr\Log\LoggerInterface;
+use Symfony\Component\Serializer\Exception\ExceptionInterface;
 
 class AffectationManager extends Manager
 {
@@ -18,6 +20,7 @@ class AffectationManager extends Manager
         protected ManagerRegistry $managerRegistry,
         protected SuiviManager $suiviManager,
         protected LoggerInterface $logger,
+        protected HistoryEntryManager $historyEntryManager,
         string $entityName = Affectation::class
     ) {
         parent::__construct($this->managerRegistry, $entityName);
@@ -117,5 +120,15 @@ class AffectationManager extends Manager
             $affectation->setIsSynchronized(true);
             $this->save($affectation);
         }
+    }
+
+    /**
+     * @throws ExceptionInterface
+     */
+    public function deleteAffectationsByPartner(Partner $partner): void
+    {
+        /** @var AffectationRepository $affectationRepository */
+        $affectationRepository = $this->getRepository();
+        $affectationRepository->deleteAffectationsByPartner($partner);
     }
 }
