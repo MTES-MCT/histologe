@@ -3,11 +3,12 @@
 namespace App\Service\Esabora;
 
 use App\Entity\Affectation;
-use App\Entity\Partner;
+use App\Entity\JobEvent;
 use App\Entity\Suivi;
 use App\Messenger\Message\Esabora\DossierMessageSCHS;
 use App\Service\Esabora\Response\DossierStateSCHSResponse;
 use App\Service\UploadHandlerService;
+use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
@@ -16,10 +17,14 @@ use Symfony\Contracts\HttpClient\ResponseInterface;
 
 class EsaboraSCHSService extends AbstractEsaboraService
 {
+    private const ACTION_SYNC_EVENTS = 'sync_events';
+    private const ACTION_SYNC_EVENTFILES = 'sync_eventfiles';
+
     public function __construct(
         private readonly HttpClientInterface $client,
         private readonly LoggerInterface $logger,
         private readonly UploadHandlerService $uploadHandlerService,
+        private readonly EntityManagerInterface $entityManager,
     ) {
         parent::__construct($this->client, $this->logger);
     }
@@ -86,8 +91,8 @@ class EsaboraSCHSService extends AbstractEsaboraService
                 ],
             ],
         ];
-
         $response = $this->request($url, $token, $payload);
+        $this->saveJobEvent(self::ACTION_SYNC_EVENTS, json_encode($payload), $response, $affectation);
         if ($response instanceof JsonResponse) {
             throw new \Exception(json_decode($response->getContent())['message']);
         }
@@ -95,20 +100,46 @@ class EsaboraSCHSService extends AbstractEsaboraService
         return $response;
     }
 
-    public function getEventFiles(Suivi $suivi, Partner $partner, int $searchId, string $documentTypeName): ResponseInterface
+    public function getEventFiles(Suivi $suivi, Affectation $affectation, int $searchId, string $documentTypeName): ResponseInterface
     {
-        https:// serveurweb/esabora/ashyg/ws/rest/mult/?task=getDocuments&searchId=27085&documentTypeName=e6_t1.evt_nomdoc&keyDataListList[1][0]=30414
-        list($url, $token) = $partner->getEsaboraCredential();
+        list($url, $token) = $affectation->getPartner()->getEsaboraCredential();
         $url .= '/mult/?task=getDocuments';
         $url .= "&searchId=$searchId";
         $url .= "&documentTypeName=$documentTypeName";
         $url .= '&keyDataListList[1][0]='.$suivi->getOriginalData()['keyDataList'][1];
         $response = $this->request($url, $token, []);
+        $this->saveJobEvent(self::ACTION_SYNC_EVENTFILES, $url, $response, $affectation);
         if ($response instanceof JsonResponse) {
             throw new \Exception(json_decode($response->getContent())['message']);
         }
 
         return $response;
+    }
+
+    private function saveJobEvent(string $action, string $message, ResponseInterface|JsonResponse $response, Affectation $affectation): void
+    {
+        $responseEncoded = null;
+        if ($response instanceof JsonResponse) {
+            $responseEncoded = $response->getContent();
+        } elseif (Response::HTTP_OK === $response->getStatusCode()) {
+            $responseEncoded = $response->toArray();
+            if (isset($responseEncoded['rowList']) && isset($responseEncoded['rowList'][0]) && isset($responseEncoded['rowList'][0]['documentZipContent'])) {
+                unset($responseEncoded['rowList'][0]['documentZipContent']);
+            }
+            $responseEncoded = json_encode($responseEncoded);
+        }
+        $jobEvent = new JobEvent();
+        $jobEvent->setService(AbstractEsaboraService::TYPE_SERVICE)
+                 ->setAction($action)
+                 ->setMessage($message)
+                 ->setResponse($responseEncoded)
+                 ->setStatus(Response::HTTP_OK === $response->getStatusCode() ? JobEvent::STATUS_SUCCESS : JobEvent::STATUS_FAILED)
+                 ->setCodeStatus($response->getStatusCode())
+                 ->setSignalementId($affectation->getSignalement()->getId())
+                 ->setPartnerId($affectation->getPartner()->getId())
+                 ->setPartnerType($affectation->getPartner()->getType());
+
+        $this->entityManager->persist($jobEvent);
     }
 
     public function preparePayloadPushDossier(DossierMessageSCHS $dossierMessage, bool $encodeDocuments = true): array

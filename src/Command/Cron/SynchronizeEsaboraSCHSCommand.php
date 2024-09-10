@@ -14,7 +14,9 @@ use App\Service\Esabora\EsaboraManager;
 use App\Service\Esabora\EsaboraSCHSService;
 use App\Service\Files\ZipHelper;
 use App\Service\ImageManipulationHandler;
+use App\Service\Mailer\NotificationMail;
 use App\Service\Mailer\NotificationMailerRegistry;
+use App\Service\Mailer\NotificationMailerType;
 use App\Service\Security\FileScanner;
 use App\Service\UploadHandlerService;
 use Doctrine\ORM\EntityManagerInterface;
@@ -114,7 +116,17 @@ class SynchronizeEsaboraSCHSCommand extends AbstractSynchronizeEsaboraCommand
                 $this->logger->error($msg);
             }
         }
-        $this->io->success(sprintf('Synchronized %d new events with %d files', $this->nbEventsAdded, $this->nbEventFilesAdded));
+        $this->entityManager->flush();
+        $msg = sprintf('Synchronized %d new events with %d files', $this->nbEventsAdded, $this->nbEventFilesAdded);
+        $this->io->success($msg);
+        $this->notificationMailerRegistry->send(
+            new NotificationMail(
+                type: NotificationMailerType::TYPE_CRON,
+                to: $this->parameterBag->get('admin_email'),
+                message: $msg,
+                cronLabel: '[SCSH] Synchronisation des évènements depuis Esabora',
+            )
+        );
     }
 
     protected function synchronizeEvent(array $event, Affectation $affectation): void
@@ -147,7 +159,7 @@ class SynchronizeEsaboraSCHSCommand extends AbstractSynchronizeEsaboraCommand
     protected function SynchronizeEventFiles(Suivi $suivi, Affectation $affectation): bool
     {
         try {
-            $response = $this->esaboraService->getEventFiles($suivi, $affectation->getPartner(), $this->searchId, $this->documentTypeName);
+            $response = $this->esaboraService->getEventFiles($suivi, $affectation, $this->searchId, $this->documentTypeName);
             $statusCode = $response->getStatusCode();
             if (Response::HTTP_OK !== $statusCode) {
                 throw new \Exception('status code : '.$statusCode);
@@ -159,8 +171,8 @@ class SynchronizeEsaboraSCHSCommand extends AbstractSynchronizeEsaboraCommand
             $documentZipContent = $dataResponse['rowList'][0]['documentZipContent'];
             $zipFilePath = $this->zipHelper->getZipFromBase64($documentZipContent);
             $files = $this->zipHelper->extractZipFiles($zipFilePath);
-            foreach ($files as $file) {
-                $this->addEventFile($file, $suivi);
+            foreach ($files as $filepath => $filename) {
+                $this->addEventFile($filepath, $filename, $suivi);
             }
         } catch (\Throwable $exception) {
             $msg = sprintf('Error while synchronizing events files on signalement %s: %s', $affectation->getSignalement()->getUuid(), $exception->getMessage());
@@ -171,10 +183,10 @@ class SynchronizeEsaboraSCHSCommand extends AbstractSynchronizeEsaboraCommand
         return true;
     }
 
-    protected function addEventFile(string $filePath, Suivi $suivi): bool
+    protected function addEventFile(string $filePath, string $originalName, Suivi $suivi): bool
     {
         if (!$this->fileScanner->isClean($filePath, false)) {
-            $msg = "'File '.$filePath.' from SCHS is infected'";
+            $msg = "'File '.$originalName.' from SCHS is infected'";
             $this->io->error($msg);
             $this->logger->error($msg);
 
@@ -191,7 +203,7 @@ class SynchronizeEsaboraSCHSCommand extends AbstractSynchronizeEsaboraCommand
         $file = new File();
         $file->setSignalement($suivi->getSignalement());
         $file->setFilename($fileName);
-        $file->setTitle($fileName);
+        $file->setTitle($originalName);
         $file->setFileType(File::FILE_TYPE_DOCUMENT);
         $file->setDocumentType(DocumentType::AUTRE);
         $file->setIsVariantsGenerated($variantsGenerated);

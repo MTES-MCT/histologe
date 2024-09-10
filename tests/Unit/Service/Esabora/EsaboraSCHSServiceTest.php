@@ -3,11 +3,13 @@
 namespace App\Tests\Unit\Service\Esabora;
 
 use App\Entity\Enum\PartnerType;
+use App\Entity\Suivi;
 use App\Service\Esabora\EsaboraSCHSService;
 use App\Service\Esabora\Response\DossierStateSCHSResponse;
 use App\Service\UploadHandlerService;
 use App\Tests\FileHelper;
 use App\Tests\FixturesHelper;
+use Doctrine\ORM\EntityManagerInterface;
 use PHPUnit\Framework\MockObject\MockObject;
 use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
@@ -26,12 +28,14 @@ class EsaboraSCHSServiceTest extends KernelTestCase
     private MockObject|UploadHandlerService $uploadHandlerService;
     private LoggerInterface $logger;
     private ?string $tempFilepath;
+    private EntityManagerInterface $entityManager;
 
     protected function setUp(): void
     {
         $this->tempFilepath = $this->getTempFilepath();
         $this->uploadHandlerService = $this->createMock(UploadHandlerService::class);
         $this->logger = $this->createMock(LoggerInterface::class);
+        $this->entityManager = self::getContainer()->get(EntityManagerInterface::class);
     }
 
     public function testPushDossierToEsaboraSasSuccess(): void
@@ -45,7 +49,7 @@ class EsaboraSCHSServiceTest extends KernelTestCase
             ->method('getTmpFilepath')
             ->willReturn($this->tempFilepath);
 
-        $esaboraService = new EsaboraSCHSService($mockHttpClient, $this->logger, $this->uploadHandlerService);
+        $esaboraService = new EsaboraSCHSService($mockHttpClient, $this->logger, $this->uploadHandlerService, $this->entityManager);
         $response = $esaboraService->pushDossier($this->getDossierMessageSCHS());
 
         $this->assertEquals(Response::HTTP_OK, $response->getStatusCode());
@@ -60,7 +64,7 @@ class EsaboraSCHSServiceTest extends KernelTestCase
             ->expects($this->atLeast(1))
             ->method('getTmpFilepath')
             ->willReturn($this->tempFilepath);
-        $esaboraService = new EsaboraSCHSService($mockHttpClient, $this->logger, $this->uploadHandlerService);
+        $esaboraService = new EsaboraSCHSService($mockHttpClient, $this->logger, $this->uploadHandlerService, $this->entityManager);
         $response = $esaboraService->pushDossier($this->getDossierMessageSCHS());
 
         $this->assertEquals(Response::HTTP_INTERNAL_SERVER_ERROR, $response->getStatusCode());
@@ -72,7 +76,7 @@ class EsaboraSCHSServiceTest extends KernelTestCase
         $mockResponse = new MockResponse(file_get_contents($filepath));
 
         $mockHttpClient = new MockHttpClient($mockResponse);
-        $esaboraService = new EsaboraSCHSService($mockHttpClient, $this->logger, $this->uploadHandlerService);
+        $esaboraService = new EsaboraSCHSService($mockHttpClient, $this->logger, $this->uploadHandlerService, $this->entityManager);
         $dossierResponse = $esaboraService->getStateDossier(
             $this->getAffectation(PartnerType::COMMUNE_SCHS)
         );
@@ -90,7 +94,7 @@ class EsaboraSCHSServiceTest extends KernelTestCase
             throw new TransportException();
         });
 
-        $esaboraService = new EsaboraSCHSService($mockHttpClient, $this->logger, $this->uploadHandlerService);
+        $esaboraService = new EsaboraSCHSService($mockHttpClient, $this->logger, $this->uploadHandlerService, $this->entityManager);
         $dossierResponse = $esaboraService->getStateDossier(
             $this->getAffectation(PartnerType::COMMUNE_SCHS)
         );
@@ -107,9 +111,40 @@ class EsaboraSCHSServiceTest extends KernelTestCase
             ->expects($this->atLeast(1))
             ->method('getTmpFilepath')
             ->willReturn($this->tempFilepath);
-        $esaboraService = new EsaboraSCHSService($mockHttpClient, $this->logger, $this->uploadHandlerService);
+        $esaboraService = new EsaboraSCHSService($mockHttpClient, $this->logger, $this->uploadHandlerService, $this->entityManager);
         $response = $esaboraService->pushDossier($this->getDossierMessageSCHS());
         $this->assertEquals(Response::HTTP_SERVICE_UNAVAILABLE, $response->getStatusCode());
+    }
+
+    public function testGetEventsDossierEsaboraSas(): void
+    {
+        $filepath = __DIR__.self::PATH_RESOURCE_JSON.'ws_get_events_dossier.json';
+        $mockResponse = new MockResponse(file_get_contents($filepath));
+
+        $mockHttpClient = new MockHttpClient($mockResponse);
+        $esaboraService = new EsaboraSCHSService($mockHttpClient, $this->logger, $this->uploadHandlerService, $this->entityManager);
+        $response = $esaboraService->getEventsDossier(
+            $this->getAffectation(PartnerType::COMMUNE_SCHS)
+        );
+
+        $this->assertEquals($response->getStatusCode(), Response::HTTP_OK);
+    }
+
+    public function testGetEventFileEsaboraSas(): void
+    {
+        $filepath = __DIR__.self::PATH_RESOURCE_JSON.'ws_get_eventfiles.json';
+        $mockResponse = new MockResponse(file_get_contents($filepath));
+
+        $mockHttpClient = new MockHttpClient($mockResponse);
+        $esaboraService = new EsaboraSCHSService($mockHttpClient, $this->logger, $this->uploadHandlerService, $this->entityManager);
+        $response = $esaboraService->getEventFiles(
+            (new Suivi())->setOriginalData(['keyDataList' => ['28', '30411']]),
+            $this->getAffectation(PartnerType::COMMUNE_SCHS),
+            '27207',
+            'e6_t1.evt_nomdoc'
+        );
+
+        $this->assertEquals($response->getStatusCode(), Response::HTTP_OK);
     }
 
     protected function tearDown(): void

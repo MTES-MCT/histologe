@@ -3,11 +3,14 @@
 namespace App\Service\Files;
 
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
+use Symfony\Component\String\Slugger\SluggerInterface;
 
 class ZipHelper
 {
-    public function __construct(private ParameterBagInterface $parameterBag)
-    {
+    public function __construct(
+        private readonly ParameterBagInterface $parameterBag,
+        private readonly SluggerInterface $slugger
+    ) {
     }
 
     public function getZipFromBase64(string $base64): string
@@ -36,9 +39,9 @@ class ZipHelper
             if (!isset($fileinfo['extension'])) {
                 continue;
             }
-            $newFilePath = $this->parameterBag->get('uploads_tmp_dir').$fileinfo['filename'].'-'.uniqid().'.'.$fileinfo['extension'];
+            $newFilePath = $this->parameterBag->get('uploads_tmp_dir').$this->slugger->slug($fileinfo['filename'].'-'.uniqid().'.'.$fileinfo['extension']);
             copy('zip://'.$zipPath.'#'.$filename, $newFilePath);
-            $extractedFiles[] = $newFilePath;
+            $extractedFiles[$newFilePath] = $fileinfo['filename'].'.'.$fileinfo['extension'];
         }
         $zip->close();
 
