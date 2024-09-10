@@ -19,7 +19,9 @@
         v-for="(suggestion, index) in suggestions"
         :key="index"
         class="fr-col-12 fr-p-3v fr-text-label--blue-france fr-address-suggestion"
+        tabindex="0"
         @click="handleClickSuggestion(index)"
+        @keyup="handleKeyboardSuggestion($event, index)"
         >
         {{ suggestion.properties.label }}
       </div>
@@ -187,6 +189,24 @@ export default defineComponent({
         setTimeout(() => {
           this.isSearchSkipped = false
         }, 200)
+      }
+    },
+    handleKeyboardSuggestion (event: any, index: number) {
+      if (event.key === 'Enter') {
+        this.handleClickSuggestion(index)
+      } else if (event.key === 'ArrowUp' || event.key === 'ArrowDown') {
+        event.preventDefault()
+        const suggestionElements = document.querySelectorAll('.fr-address-suggestion')
+        if (suggestionElements.length > 0) {
+          let newIndex = index
+          if (event.key === 'ArrowUp') {
+            newIndex = (index === 0) ? suggestionElements.length - 1 : index - 1
+          } else if (event.key === 'ArrowDown') {
+            newIndex = (index === suggestionElements.length - 1) ? 0 : index + 1
+          }
+          const nextElement = suggestionElements[newIndex] as HTMLElement
+          nextElement.focus()
+        }
       }
     },
     handleAddressFound (requestResponse: any) {
