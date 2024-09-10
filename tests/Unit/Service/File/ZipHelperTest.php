@@ -24,5 +24,4 @@ class ZipHelperTest extends KernelTestCase
         $this->assertFileExists($zipPath);
         unlink($zipPath);
     }
-
 }
