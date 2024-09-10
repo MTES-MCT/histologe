@@ -95,8 +95,11 @@ abstract class AbstractEsaboraService implements EsaboraServiceInterface
             && null === $dossierResponse->getErrorReason();
     }
 
-    protected function getTaskPath(array $payload): string
+    protected function getTaskPath(array $payload): ?string
     {
+        if (empty($payload)) {
+            return null;
+        }
         if (\array_key_exists('searchName', $payload)) {
             return self::TASK_SEARCH_PATH;
         }

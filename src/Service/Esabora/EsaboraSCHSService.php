@@ -3,6 +3,8 @@
 namespace App\Service\Esabora;
 
 use App\Entity\Affectation;
+use App\Entity\Partner;
+use App\Entity\Suivi;
 use App\Messenger\Message\Esabora\DossierMessageSCHS;
 use App\Service\Esabora\Response\DossierStateSCHSResponse;
 use App\Service\UploadHandlerService;
@@ -86,6 +88,22 @@ class EsaboraSCHSService extends AbstractEsaboraService
         ];
 
         $response = $this->request($url, $token, $payload);
+        if ($response instanceof JsonResponse) {
+            throw new \Exception(json_decode($response->getContent())['message']);
+        }
+
+        return $response;
+    }
+
+    public function getEventFiles(Suivi $suivi, Partner $partner, int $searchId, string $documentTypeName): ResponseInterface
+    {
+        https:// serveurweb/esabora/ashyg/ws/rest/mult/?task=getDocuments&searchId=27085&documentTypeName=e6_t1.evt_nomdoc&keyDataListList[1][0]=30414
+        list($url, $token) = $partner->getEsaboraCredential();
+        $url .= '/mult/?task=getDocuments';
+        $url .= "&searchId=$searchId";
+        $url .= "&documentTypeName=$documentTypeName";
+        $url .= '&keyDataListList[1][0]='.$suivi->getOriginalData()['keyDataList'][1];
+        $response = $this->request($url, $token, []);
         if ($response instanceof JsonResponse) {
             throw new \Exception(json_decode($response->getContent())['message']);
         }
