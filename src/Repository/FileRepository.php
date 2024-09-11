@@ -56,20 +56,27 @@ class FileRepository extends ServiceEntityRepository
         return $qb->getQuery()->getResult();
     }
 
-    public function findWithOriginalAndVariants(int $max): array
+    public function findWithOriginalAndVariants(\DateTimeInterface $limit, int $max): array
     {
-        return $this->initQueryWithOriginalAndVariants()->select('f')->setMaxResults($max)->getQuery()->getResult();
+        return $this->initQueryWithOriginalAndVariants($limit)->select('f')->setMaxResults($max)->getQuery()->getResult();
     }
 
-    public function countWithOriginalAndVariants(): int
+    public function countWithOriginalAndVariants(\DateTimeInterface $limit): int
     {
-        return $this->initQueryWithOriginalAndVariants()->select('count(f)')->getQuery()->getSingleScalarResult();
+        return $this->initQueryWithOriginalAndVariants($limit)->select('count(f)')->getQuery()->getSingleScalarResult();
     }
 
-    private function initQueryWithOriginalAndVariants(): QueryBuilder
+    public function updateWithOriginalAndVariants(\DateTimeInterface $limit): void
     {
-        $limit = (new \DateTime())->modify('-1 month');
+        $this->initQueryWithOriginalAndVariants($limit)
+            ->update()
+            ->set('f.isOriginalDeleted', true)
+            ->getQuery()
+            ->execute();
+    }
 
+    private function initQueryWithOriginalAndVariants(\DateTimeInterface $limit): QueryBuilder
+    {
         return $this->createQueryBuilder('f')
             ->andWhere('f.isVariantsGenerated = true')
             ->andWhere('f.isOriginalDeleted = false')
