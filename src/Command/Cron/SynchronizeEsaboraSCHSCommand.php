@@ -124,7 +124,7 @@ class SynchronizeEsaboraSCHSCommand extends AbstractSynchronizeEsaboraCommand
                 type: NotificationMailerType::TYPE_CRON,
                 to: $this->parameterBag->get('admin_email'),
                 message: $msg,
-                cronLabel: '[SCSH] Synchronisation des évènements depuis Esabora',
+                cronLabel: '[SCHS] Synchronisation des évènements depuis Esabora',
             )
         );
     }
@@ -211,8 +211,8 @@ class SynchronizeEsaboraSCHSCommand extends AbstractSynchronizeEsaboraCommand
         $this->entityManager->persist($file);
 
         $urlDocument = $this->urlGenerator->generate('show_file', ['uuid' => $file->getUuid()], UrlGeneratorInterface::ABSOLUTE_URL);
-        $linkToFile = '<a class="fr-link" target="_blank" rel="noopener" href="'.$urlDocument.'">'.$file->getTitle().'</a>';
-        $suivi->setDescription($suivi->getDescription().' '.$linkToFile);
+        $linkToFile = '<br /><a class="fr-link" target="_blank" rel="noopener" href="'.$urlDocument.'">'.$file->getTitle().'</a>';
+        $suivi->setDescription($suivi->getDescription().$linkToFile);
 
         ++$this->nbEventFilesAdded;
 
