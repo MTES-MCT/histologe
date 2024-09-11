@@ -5,6 +5,13 @@
 
 {% block content %}
 <section class="fr-p-5v">
+	{% include 'back/breadcrumb_bo.html.twig' with {
+		'level2Title': 'Outils admin',
+		'level2Link': '',
+		'level2Label': '',
+		'level3Title': 'Comptes expirés',
+		'level3Link': '',
+	} %}
 	<header>
 		<div class="fr-grid-row">
 			<div class="fr-col-12 fr-text--left">
@@ -25,7 +32,7 @@
 			<div class="fr-table__wrapper">
 				<div class="fr-table__container">
 					<div class="fr-table__content">
-						<table class="fr-display-inline-table fr-cell--multiline" aria-label="Liste des comptes expirés" aria-describedby="desc-table-expired">
+						<table class="fr-cell--multiline" aria-label="Liste des comptes expirés" aria-describedby="desc-table-expired">
 						<caption>Liste des comptes usagers expirés</caption>
 							<thead>
 								<tr>
@@ -63,7 +70,7 @@
 		<div class="fr-table__wrapper">
 			<div class="fr-table__container">
 				<div class="fr-table__content">
-					<table class="fr-display-inline-table fr-cell--multiline" aria-label="Liste des comptes inactifs" aria-describedby="desc-table-inactive">
+					<table class="fr-cell--multiline" aria-label="Liste des comptes inactifs" aria-describedby="desc-table-inactive">
 					<caption>Liste des comptes agents expirés</caption>
 						<thead>
 							<tr>

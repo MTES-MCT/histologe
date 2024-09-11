@@ -119,7 +119,7 @@
 <div class="fr-grid-row">
 	<div class="fr-col-6">
 		{% if create %}
-			<a class="fr-btn fr-btn--danger fr-fi-close-line fr-btn--icon-left" href="{{ path('back_partner_index') }}">Annuler</a>
+			<a class="fr-btn fr-btn--danger fr-fi-close-line fr-btn--icon-left" href="{{ path('back_partner_index') }}"  data-filter-list-partner>Annuler</a>
 		{% else %}
 			<a class="fr-btn fr-btn--danger fr-fi-close-line fr-btn--icon-left" href="{{ path('back_partner_view', {'id': partner.id}) }}">Annuler</a>
 		{% endif %}

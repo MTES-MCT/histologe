@@ -71,7 +71,7 @@ class PartnerController extends AbstractController
         if (Request::METHOD_POST === $request->getMethod()) {
             $currentTerritory = $territoryRepository->find((int) $request->request->get('territory'));
             $currentType = $request->request->get('type');
-            $userTerms = $request->request->get('bo-filters-usersterms');
+            $userTerms = $request->request->get('userTerms');
 
             return $this->redirect($this->generateUrl('back_partner_index', [
                 'page' => 1,

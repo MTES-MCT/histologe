@@ -7,11 +7,6 @@ const modalEmailInput = document?.querySelector('#fr-modal-profil-edit-email-ema
 const modalCodeText = document?.querySelector('#fr-modal-profil-edit-email-code-text');
 const modalCodeInput = document?.querySelector('#fr-modal-profil-edit-email-code-input');
 const modalCodeInputInput = document?.querySelector('#profil_edit_email_code');
-modalEditEmail.addEventListener('dsfr.conceal', (event) => {
-    event.preventDefault();
-    clearErrors();
-    showStepOne()
-})
 
 function clearErrors() {
     const divErrorElements = document.querySelectorAll('.fr-input-group--error');
@@ -40,16 +35,6 @@ function showStepTwo() {
     modalCodeInput.classList.remove('fr-hidden');
     modalEditEmailTitle.innerText = 'Confirmer mon adresse e-mail';
 }
-
-modalEditEmail.addEventListener('submit', (event) => {
-    event.preventDefault();
-    const formElement = document.getElementById(event.target.id);
-    const submitElement = document.querySelector(`.fr-modal--opened [type="submit"]`);
-    submitElement.disabled = true;
-    submitElement.classList.add('fr-btn--loading', 'fr-btn--icon-left', 'fr-icon-refresh-line');
-    clearErrors();
-    submitEditEmail(formElement);
-});
 
 async function submitEditEmail(formElement) {
     let response;
@@ -117,4 +102,20 @@ async function submitEditEmail(formElement) {
         Sentry.captureException(new Error(error));
     }
 }
+
+modalEditEmail?.addEventListener('dsfr.conceal', (event) => {
+    event.preventDefault();
+    clearErrors();
+    showStepOne()
+})
+
+modalEditEmail?.addEventListener('submit', (event) => {
+    event.preventDefault();
+    const formElement = document.getElementById(event.target.id);
+    const submitElement = document.querySelector(`.fr-modal--opened [type="submit"]`);
+    submitElement.disabled = true;
+    submitElement.classList.add('fr-btn--loading', 'fr-btn--icon-left', 'fr-icon-refresh-line');
+    clearErrors();
+    submitEditEmail(formElement);
+});
 

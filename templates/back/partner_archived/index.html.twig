@@ -4,6 +4,13 @@
 
 {% block content %}
     <section class="fr-p-5v">
+        {% include 'back/breadcrumb_bo.html.twig' with {
+            'level2Title': 'Outils admin',
+            'level2Link': '',
+            'level2Label': '',
+            'level3Title': 'Partenaires archivés',
+            'level3Link': '',
+        } %}
         <header>
             <div class="fr-grid-row">
                 <div class="fr-col-6 fr-text--left">
@@ -27,7 +34,7 @@
                 </div>
             </div>
             <div class="fr-col-3 fr-p-2v">
-                <select id="bo-filters-territories" class="fr-select fr-select-submit" name="territory">
+                <select id="partner-archives-filters-territories" class="fr-select fr-select-submit" name="territory">
                     <option value="" {{ not isNoneTerritory and currentTerritory is null ? 'selected' : '' }}>Tous les territoires</option>
                     <option value="none" {{ isNoneTerritory ? 'selected' : '' }}>Aucun</option>
                     {% for territory in territories %}
@@ -48,7 +55,7 @@
 		<div class="fr-table__wrapper">
 			<div class="fr-table__container">
 				<div class="fr-table__content">
-                    <table class="fr-display-inline-table sortable" aria-label="Liste des partenaires archivés ou sans territoires" aria-describedby="desc-table">
+                    <table class="sortable" aria-label="Liste des partenaires archivés ou sans territoires" aria-describedby="desc-table">
                         <thead>
                         <tr>
                             <th scope="col">Territoire</th>

@@ -6,6 +6,13 @@
     {% if is_granted('ROLE_ADMIN') %}
     {% include 'back/auto-affectation-rule/_modal_autoaffectationrule_delete.html.twig' %}
     <section class="fr-p-5v">
+        {% include 'back/breadcrumb_bo.html.twig' with {
+            'level2Title': 'Outils admin',
+            'level2Link': '',
+            'level2Label': '',
+            'level3Title': 'Règles d\'auto-affectation',
+            'level3Link': '',
+        } %}
         <header>
             <div class="fr-grid-row">
                 <div class="fr-col-6 fr-text--left">
@@ -23,7 +30,7 @@
               class="fr-background--grey fr-p-2v fr-grid-row fr-grid-row--bottom">
               
             <div class="fr-col-3 fr-p-2v">
-                <select id="bo-filters-territories" class="fr-select fr-select-submit" name="territory">
+                <select id="autoaffectation-rule-filters-territories" class="fr-select fr-select-submit" name="territory">
                     <option value="" {{ currentTerritory is null ? 'selected' : '' }}>Tous les territoires</option>
                     {% for territory in territories %}
                         <option value="{{ territory.id }}" {{ currentTerritory ? (territory.id == currentTerritory.id ? 'selected' : '') : ''  }}>{{ territory.zip ~ ' - ' ~ territory.name }}</option>
@@ -39,7 +46,7 @@
 		<div class="fr-table__wrapper">
 			<div class="fr-table__container">
 				<div class="fr-table__content">
-                    <table class="fr-display-inline-table fr-cell--multiline sortable" aria-label="Liste des règles d'auto-affectation">
+                    <table class="fr-cell--multiline sortable" aria-label="Liste des règles d'auto-affectation">
                         <thead>
                         <tr>
                             <th scope="col">Territoire</th>
@@ -119,7 +126,7 @@
 				</div>
 			</div>
 		</div>
-        <div class="fr-grid-row fr-mt-2v fr-grid-row--center">
+        <div class="fr-grid-row fr-mt-2v fr-grid-row--center" id="autoaffectation-rule-pagination">
             {% import '_partials/macros.html.twig' as macros %}
             {{ macros.customPagination(pages, page, 'back_auto_affectation_rule_index', {territory: (currentTerritory ? currentTerritory.id :  null)}) }}
         </div>

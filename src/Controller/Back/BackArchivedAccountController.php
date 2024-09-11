@@ -53,7 +53,7 @@ class BackArchivedAccountController extends AbstractController
             $currentTerritory = $territoryRepository->find((int) $request->request->get('territory'));
             $isNonePartner = 'none' == $request->request->get('partner');
             $currentPartner = $partnerRepository->find((int) $request->request->get('partner'));
-            $userTerms = $request->request->get('bo-filters-usersterms');
+            $userTerms = $request->request->get('userTerms');
 
             return $this->redirect($this->generateUrl('back_account_index', [
                 'page' => 1,

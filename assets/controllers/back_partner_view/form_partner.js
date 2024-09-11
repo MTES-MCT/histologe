@@ -1,3 +1,4 @@
+import { loadWindowWithLocalStorage, updateLocalStorageWithPaginationParams, updateLocalStorageOnEvent} from '../../services/list_filter_helper'
 function histoUpdateSubmitButton(elementName, elementLabel) {
   document.querySelector(elementName).innerHTML = elementLabel
   document.querySelector(elementName).disabled = true
@@ -6,7 +7,8 @@ function histoUpdateFieldsVisibility() {
   const partner_type = document.getElementById("partner_type");
   partner_type.value = partner_type.value.toUpperCase();
 
-  let showZonePDL = showEsabora = showIdoss = false;
+  let showZonePDL, showEsabora, showIdoss
+  showZonePDL = showEsabora = showIdoss = false;
   if (partner_type.value === 'COMMUNE_SCHS') {
     showZonePDL = true
     showEsabora = true
@@ -178,3 +180,9 @@ emailInputs.forEach(emailInput => {
       checkUserMail(this);
   });
 });
+
+loadWindowWithLocalStorage('click', '[data-filter-list-partner]', 'back_link_partners');
+updateLocalStorageOnEvent('input', '#partner-input', 'back_link_partners');
+updateLocalStorageOnEvent('change', '#partner-filters-territories', 'back_link_partners');
+updateLocalStorageOnEvent('change', '#partner-filters-types', 'back_link_partners');
+updateLocalStorageWithPaginationParams('click', '#partner-pagination a', 'back_link_partners');

@@ -3,5 +3,14 @@
 {% block title %}{{ title }}{% endblock %}
 
 {% block content %}
+    <div class="fr-p-5v">
+        {% include 'back/breadcrumb_bo.html.twig' with {
+            'level2Title': 'Données chiffrées',
+            'level2Link': '',
+            'level2Label': '',
+            'level3Title': 'Statistiques',
+            'level3Link': '',
+        } %}
+    </div>
     <div id="app-stats" data-ajaxurl="{{ path('back_statistiques_filter') }}"></div>
 {% endblock %}

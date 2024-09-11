@@ -4,6 +4,15 @@
 
 {% block content %}
     <div style="position: absolute;z-index: 10000;overflow: hidden" class="fr-rounded fr-background--white fr-m-2v">
+        <div class="fr-pt-5v fr-pl-5v">
+            {% include 'back/breadcrumb_bo.html.twig' with {
+                'level2Title': 'Données chiffrées',
+                'level2Link': '',
+                'level2Label': '',
+                'level3Title': 'Cartographie',
+                'level3Link': '',
+            } %}
+        </div>
         {% include '_partials/_search_filter_form.html.twig' %}
     </div>
     <section class="fr-grid-row fr-pt-0 fr-h-100">

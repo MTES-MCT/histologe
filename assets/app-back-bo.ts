@@ -9,6 +9,7 @@ import './services/modale_cgu_bo';
 import './services/pagination'
 import './services/search_filter_form'
 import './services/table_sortable'
+import './services/list_filter_helper';
 
 import './controllers/form_account';
 import './controllers/form_nde';
@@ -16,6 +17,7 @@ import './controllers/form_notification';
 import './controllers/form_visite';
 import './controllers/form_modal_handler';
 
+import './controllers/back_account/back_account'
 import './controllers/back_archived_signalements/back_archived_signalements_reactiver'
 import './controllers/back_auto_affectation_rule/form_auto_affectation_rule'
 import './controllers/back_partner_view/form_partner';
