@@ -63,10 +63,6 @@ class DossierMessageSISHFactory extends AbstractDossierMessageFactory
             ['uuid' => $signalement->getUuid()]
         );
 
-        $modeContactProprio = \is_array($signalement->getModeContactProprio())
-            ? substr(implode(',', $signalement->getModeContactProprio()), 0, 50)
-            : null;
-
         $etage = $signalement->getEtageOccupant() ? EtageParser::parse($signalement->getEtageOccupant()) : null;
         $escalier = $signalement->getEscalierOccupant()
             ? EscalierParser::parse($signalement->getEscalierOccupant())
@@ -145,7 +141,6 @@ class DossierMessageSISHFactory extends AbstractDossierMessageFactory
             ->setLogementNbNiveaux($signalement->getNbNiveauxLogement())
             ->setProprietaireAverti((int) $signalement->getIsProprioAverti())
             ->setProprietaireAvertiDate($signalement->getProprioAvertiAt()?->format($formatDate))
-            ->setProprietaireAvertiMoyen($modeContactProprio)
             ->setSignalementScore(round($signalement->getScore(), 1))
             ->setSignalementOrigine(AbstractEsaboraService::SIGNALEMENT_ORIGINE)
             ->setSignalementNumero($signalement->getReference())

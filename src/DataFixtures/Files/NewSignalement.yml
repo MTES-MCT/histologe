@@ -24,7 +24,6 @@ signalements:
     ville_occupant: "Saint-Mars-du-Désert"
     statut: 1
     geoloc: "{\"lat\": 47.360679, \"lng\": -1.410753}"
-    mode_contact_proprio: "[]"
     insee_occupant: "44179"
     code_suivi: "2db341e0d1fd76a6221666f2155328b8e16783d1619ab1343fae7c87b2bc5886"
     nb_pieces_logement: 5
@@ -121,7 +120,6 @@ signalements:
     ville_occupant: "Calais"
     statut: 1
     geoloc: "{\"lat\": 50.94877, \"lng\": 1.85867}"
-    mode_contact_proprio: "[]"
     insee_occupant: "62193"
     nb_pieces_logement: 5
     nb_occupants_logement: 4
@@ -210,7 +208,6 @@ signalements:
     ville_occupant: "Calais"
     statut: 1
     geoloc: "{\"lat\": 50.94877, \"lng\": 1.85867}"
-    mode_contact_proprio: "[]"
     insee_occupant: "62193"
     nb_pieces_logement: 5
     nb_occupants_logement: 4
@@ -298,7 +295,6 @@ signalements:
     ville_occupant: "Alès"
     statut: 1
     geoloc: "{\"lat\": 44.13945, \"lng\": 4.08469}"
-    mode_contact_proprio: "[]"
     insee_occupant: "30007"
     nb_pieces_logement: 5
     nb_occupants_logement: 4
@@ -386,7 +382,6 @@ signalements:
     ville_occupant: "LUNEL"
     statut: 1
     geoloc: "{\"lat\": 43.682153, \"lng\": 4.134681}"
-    mode_contact_proprio: "[]"
     insee_occupant: "34145"
     nb_pieces_logement: 5
     nb_occupants_logement: 4
@@ -473,7 +468,6 @@ signalements:
     ville_occupant: "Le Diamant"
     statut: 1
     geoloc: "{\"lat\": 14.478662, \"lng\": -61.030641}"
-    mode_contact_proprio: "[]"
     insee_occupant: "97206"
     nb_pieces_logement: 5
     nb_occupants_logement: 4

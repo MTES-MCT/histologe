@@ -352,7 +352,6 @@ class SignalementManagerTest extends WebTestCase
             'etageOccupant' => $faker->randomDigit(),
             'escalierOccupant' => $faker->randomDigit(),
             'numAppartOccupant' => $faker->randomDigit(),
-            'modeContactProprio' => ['sms'],
             'isRsa' => false,
             'isConstructionAvant1949' => false,
             'isFondSolidariteLogement' => false,

@@ -383,7 +383,7 @@ class EsaboraSISHService extends AbstractEsaboraService
             ],
             [
                 'fieldName' => 'Proprietaire_AvertiMoyen',
-                'fieldValue' => $dossierMessageSISH->getProprietaireAvertiMoyen(),
+                'fieldValue' => null,
             ],
             [
                 'fieldName' => 'Signalement_Score',
