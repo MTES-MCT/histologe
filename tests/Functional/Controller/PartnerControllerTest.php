@@ -50,7 +50,7 @@ class PartnerControllerTest extends WebTestCase
 
         $this->assertResponseIsSuccessful();
         $this->assertSelectorTextContains(
-            '.fr-display-inline-table',
+            '.fr-table__wrapper',
             'Compétences',
         );
     }
