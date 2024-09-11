@@ -13,9 +13,6 @@
       "command": "15 1-5 * * * php bin/console app:clear-storage-original-file"
     },
     {
-      "command": "0 6,18 * * * php bin/console app:sync-esabora-schs"
-    },
-    {
       "command": "0 6 * * * php bin/console app:ask-feedback-usager"
     },
     {
