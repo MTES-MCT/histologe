@@ -5,7 +5,6 @@ namespace App\Tests\Functional\Command\Cron;
 use App\Command\Cron\ClearStorageOriginalFileCommand;
 use App\Repository\FileRepository;
 use App\Service\Mailer\NotificationMailerRegistry;
-use Doctrine\ORM\EntityManagerInterface;
 use League\Flysystem\FilesystemOperator;
 use PHPUnit\Framework\MockObject\MockObject;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
@@ -18,8 +17,6 @@ class ClearStorageOriginalFileCommandTest extends KernelTestCase
     private ParameterBagInterface $parameterBag;
     private FileRepository $fileRepository;
     private MockObject|FilesystemOperator $fileStorage;
-
-    private EntityManagerInterface $entityManager;
     private NotificationMailerRegistry $mailerRegistry;
 
     protected function setUp(): void
@@ -27,7 +24,6 @@ class ClearStorageOriginalFileCommandTest extends KernelTestCase
         $this->parameterBag = self::getContainer()->getParameterBag();
         $this->fileRepository = self::getContainer()->get(FileRepository::class);
         $this->fileStorage = $this->createMock(FilesystemOperator::class);
-        $this->entityManager = self::getContainer()->get('doctrine')->getManager();
         $this->mailerRegistry = self::getContainer()->get(NotificationMailerRegistry::class);
     }
 
@@ -37,7 +33,6 @@ class ClearStorageOriginalFileCommandTest extends KernelTestCase
             $this->parameterBag,
             $this->fileRepository,
             $this->fileStorage,
-            $this->entityManager,
             $this->mailerRegistry,
         );
         $commandTester = new CommandTester($command);

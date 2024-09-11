@@ -6,7 +6,6 @@ use App\Repository\FileRepository;
 use App\Service\Mailer\NotificationMail;
 use App\Service\Mailer\NotificationMailerRegistry;
 use App\Service\Mailer\NotificationMailerType;
-use Doctrine\ORM\EntityManagerInterface;
 use League\Flysystem\FilesystemException;
 use League\Flysystem\FilesystemOperator;
 use Symfony\Component\Console\Attribute\AsCommand;
@@ -30,7 +29,6 @@ class ClearStorageOriginalFileCommand extends AbstractCronCommand
         private readonly ParameterBagInterface $parameterBag,
         private readonly FileRepository $fileRepository,
         private readonly FilesystemOperator $fileStorage,
-        private readonly EntityManagerInterface $entityManager,
         private readonly NotificationMailerRegistry $notificationMailerRegistry,
     ) {
         parent::__construct($this->parameterBag);
@@ -46,8 +44,9 @@ class ClearStorageOriginalFileCommand extends AbstractCronCommand
      */
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
-        $count = $this->fileRepository->countWithOriginalAndVariants();
-        $files = $this->fileRepository->findWithOriginalAndVariants(self::MAX_FILES_PROCESSED);
+        $limit = new \DateTimeImmutable('- 1 month');
+        $count = $this->fileRepository->countWithOriginalAndVariants($limit);
+        $files = $this->fileRepository->findWithOriginalAndVariants($limit, self::MAX_FILES_PROCESSED);
         $nbFilesToProcess = count($files);
         $this->io->info('Found '.$count.' files with original and variants, process '.$nbFilesToProcess.' files');
         $progressBar = new ProgressBar($output, $nbFilesToProcess);
@@ -61,15 +60,10 @@ class ClearStorageOriginalFileCommand extends AbstractCronCommand
             } else {
                 ++$nbErrors;
             }
-            $file->setIsOriginalDeleted(true);
-            if ($nbTmp > 40) {
-                $this->entityManager->flush();
-                $nbTmp = 0;
-            }
             $progressBar->advance();
             ++$nbTmp;
         }
-        $this->entityManager->flush();
+        $this->fileRepository->updateWithOriginalAndVariants($limit);
         $progressBar->finish();
         $this->io->newLine();
         $this->io->success($nbFilesToProcess.' files processed with '.$nbErrors.' files not found');
