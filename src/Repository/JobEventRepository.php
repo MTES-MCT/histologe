@@ -10,6 +10,8 @@ use App\Entity\Signalement;
 use App\Entity\Territory;
 use App\Repository\Behaviour\EntityCleanerRepositoryInterface;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\ORM\NonUniqueResultException;
+use Doctrine\ORM\NoResultException;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
@@ -107,5 +109,26 @@ class JobEventRepository extends ServiceEntityRepository implements EntityCleane
             ->setParameter('created_at', (new \DateTimeImmutable($period))->format('Y-m-d'));
 
         return $queryBuilder->getQuery()->execute();
+    }
+
+    /**
+     * @throws NonUniqueResultException
+     * @throws NoResultException
+     */
+    public function getReportEsaboraAction(string ...$actions): array
+    {
+        $qb = $this->createQueryBuilder('j');
+        $qb->select([
+            'SUM(CASE WHEN j.status = :status_success THEN 1 ELSE 0 END) AS success_count',
+            'SUM(CASE WHEN j.status = :status_failed THEN 1 ELSE 0 END) AS failed_count',
+        ])
+            ->andWhere('j.action IN (:actions)')
+            ->andWhere('DATE(j.createdAt) = :today')
+            ->setParameter('actions', $actions)
+            ->setParameter('today', (new \DateTimeImmutable())->format('Y-m-d'))
+            ->setParameter('status_success', JobEvent::STATUS_SUCCESS)
+            ->setParameter('status_failed', JobEvent::STATUS_FAILED);
+
+        return $qb->getQuery()->getSingleResult();
     }
 }

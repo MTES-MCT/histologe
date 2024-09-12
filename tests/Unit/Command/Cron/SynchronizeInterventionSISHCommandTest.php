@@ -6,6 +6,7 @@ use App\Command\Cron\SynchronizeInterventionSISHCommand;
 use App\Entity\Enum\PartnerType;
 use App\Manager\JobEventManager;
 use App\Repository\AffectationRepository;
+use App\Repository\JobEventRepository;
 use App\Service\Esabora\EsaboraManager;
 use App\Service\Esabora\Handler\InterventionArreteServiceHandler;
 use App\Service\Esabora\Handler\InterventionVisiteServiceHandler;
@@ -29,8 +30,15 @@ class SynchronizeInterventionSISHCommandTest extends KernelTestCase
 
         $esaboraManagerMock = $this->createMock(EsaboraManager::class);
         $serializerMock = $this->createMock(SerializerInterface::class);
-        $jobEventManagerMock = $this->createMock(JobEventManager::class);
         $affectationRepositoryMock = $this->createMock(AffectationRepository::class);
+        $jobEventRepositoryMock = $this->createMock(JobEventRepository::class);
+        $jobEventRepositoryMock
+            ->expects($this->once())
+            ->method('getReportEsaboraAction')
+            ->willReturn(['success_count' => 4, 'failed_count' => 2]);
+
+        $jobEventManagerMock = $this->createMock(JobEventManager::class);
+        $jobEventManagerMock->expects($this->once())->method('getRepository')->willReturn($jobEventRepositoryMock);
 
         $collection = (new ArrayCollection([$this->getAffectation(PartnerType::ARS)]));
         $affectationRepositoryMock
