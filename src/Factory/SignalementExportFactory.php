@@ -47,7 +47,6 @@ class SignalementExportFactory
         );
         $statusVisite = $interventionExploded[0];
         $dateVisite = !empty($interventionExploded[1]) ? $interventionExploded[1] : '';
-        dump($dateVisite);
         if (DateHelper::isValidDate($dateVisite)) {
             $dateVisite = !empty($dateVisite) ? (new \DateTime($dateVisite))->format(self::DATE_FORMAT) : '';
         }
