@@ -45,6 +45,7 @@
         :handleClickComponent="handleClickComponent"
         :access_name="component.accessibility?.name ?? component.slug"
         :access_autocomplete="component.accessibility?.autocomplete ?? 'off'"
+        :access_focus="component.accessibility?.focus ?? false"
       />
     </div>
   </div>

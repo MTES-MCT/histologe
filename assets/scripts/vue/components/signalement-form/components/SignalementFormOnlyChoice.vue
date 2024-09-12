@@ -42,6 +42,7 @@ export default defineComponent({
     validate: { type: Object, default: null },
     hasError: { type: Boolean, default: false },
     error: { type: String, default: '' },
+    access_focus: { type: Boolean, default: false },
     // les propriétés suivantes ne sont pas utilisées,
     // mais si on ne les met pas, elles apparaissent dans le DOM
     // et ça soulève des erreurs W3C
@@ -53,6 +54,16 @@ export default defineComponent({
   data () {
     return {
       variablesReplacer
+    }
+  },
+  mounted () {
+    if (this.access_focus) {
+      this.$nextTick(() => {
+        const element = document.querySelector('#' + this.id + '_' + this.values[0].value) as HTMLElement
+        if (element) {
+          element.focus()
+        }
+      })
     }
   },
   methods: {

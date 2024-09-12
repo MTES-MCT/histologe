@@ -1,6 +1,7 @@
 <template>
     <div class="signalement-form-button" :id="id">
       <button
+        id="button"
         :type="type"
         :class="[ 'fr-btn', customCss, formStore.lastButtonClicked === id ? 'fr-btn--loading fr-btn--icon-right fr-icon-refresh-line' : '' ]"
         :disabled="formStore.lastButtonClicked !== ''"
@@ -38,6 +39,7 @@ export default defineComponent({
     customCss: { type: String, default: '' },
     ariaControls: { type: String, default: undefined },
     clickEvent: Function,
+    access_focus: { type: Boolean, default: false },
     // les propriétés suivantes ne sont pas utilisées,
     // mais si on ne les met pas, elles apparaissent dans le DOM
     // et ça soulève des erreurs W3C
@@ -49,6 +51,16 @@ export default defineComponent({
   data () {
     return {
       formStore
+    }
+  },
+  mounted () {
+    if (this.access_focus) {
+      this.$nextTick(() => {
+        const element = document.querySelector('#button') as HTMLElement
+        if (element) {
+          element.focus()
+        }
+      })
     }
   },
   computed: {

@@ -47,7 +47,8 @@ export default defineComponent({
     handleClickComponent: Function,
     clickEvent: Function,
     access_name: { type: String, default: undefined },
-    access_autocomplete: { type: String, default: undefined }
+    access_autocomplete: { type: String, default: undefined },
+    access_focus: { type: Boolean, default: false }
   },
   data () {
     return {
@@ -66,7 +67,7 @@ export default defineComponent({
   },
   methods: {
     updateValue (event: Event) {
-      let value = (event.target as HTMLInputElement).value
+      const value = (event.target as HTMLInputElement).value
       this.$emit('update:modelValue', value)
     }
   },

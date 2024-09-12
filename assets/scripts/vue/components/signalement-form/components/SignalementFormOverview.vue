@@ -208,7 +208,8 @@ export default defineComponent({
     hasError: { type: Boolean, default: false },
     handleClickComponent: Function,
     access_name: { type: String, default: '' },
-    access_autocomplete: { type: String, default: '' }
+    access_autocomplete: { type: String, default: '' },
+    access_focus: { type: Boolean, default: false }
   },
   data () {
     return {

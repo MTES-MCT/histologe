@@ -44,6 +44,7 @@ export default defineComponent({
     error: { type: String, default: '' },
     access_name: { type: String, default: '' },
     access_autocomplete: { type: String, default: '' },
+    access_focus: { type: Boolean, default: false },
     // les propriétés suivantes ne sont pas utilisées,
     // mais si on ne les met pas, elles apparaissent dans le DOM
     // et ça soulève des erreurs W3C

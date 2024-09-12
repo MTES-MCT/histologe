@@ -56,6 +56,7 @@ export default defineComponent({
     disabled: { type: Boolean, default: false },
     access_name: { type: String, default: '' },
     access_autocomplete: { type: String, default: '' },
+    access_focus: { type: Boolean, default: false },
     // les propriétés suivantes ne sont pas utilisées,
     // mais si on ne les met pas, elles apparaissent dans le DOM
     // et ça soulève des erreurs W3C
@@ -70,6 +71,16 @@ export default defineComponent({
       formStore,
       selectedSuggestion: '',
       selectedSuggestionIndex: -1
+    }
+  },
+  mounted () {
+    if (this.access_focus) {
+      this.$nextTick(() => {
+        const element = document.querySelector('#' + this.idAutocomplete + '_input') as HTMLElement
+        if (element) {
+          element.focus()
+        }
+      })
     }
   },
   created () {

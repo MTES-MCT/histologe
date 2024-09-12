@@ -83,7 +83,8 @@ export default defineComponent({
     components: Object,
     handleClickComponent: Function,
     access_name: { type: String, default: undefined },
-    access_autocomplete: { type: String, default: undefined }
+    access_autocomplete: { type: String, default: undefined },
+    access_focus: { type: Boolean, default: false }
   },
   data () {
     const updatedSubscreenData = subscreenManager.generateSubscreenData(this.id, subscreenData.body, this.validate)

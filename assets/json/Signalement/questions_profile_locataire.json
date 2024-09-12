@@ -19,7 +19,10 @@
               "label": "Monsieur",
               "value": "mr"
             }
-          ]
+          ],
+          "accessibility": {
+            "focus": true
+          }
         },
         {
           "type": "SignalementFormTextfield",
@@ -124,6 +127,9 @@
           "autocomplete": {
             "isAbsoluteLink": false,
             "route": "/bailleurs?postcode={{formStore.data.adresse_logement_adresse_detail_code_postal}}&name={{formStore.data.coordonnees_bailleur_nom_autocomplete_textfield}}&sanitize=true"
+          },
+          "accessibility": {
+            "focus": true
           }
         },
         {
