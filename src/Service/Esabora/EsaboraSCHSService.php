@@ -4,9 +4,11 @@ namespace App\Service\Esabora;
 
 use App\Entity\Affectation;
 use App\Entity\JobEvent;
-use App\Entity\Suivi;
 use App\Messenger\Message\Esabora\DossierMessageSCHS;
 use App\Service\Esabora\Response\DossierStateSCHSResponse;
+use App\Service\Esabora\Response\Model\DossierEventFilesSCHS;
+use App\Service\Esabora\Response\Model\DossierEventSCHS;
+use App\Service\Esabora\Response\Model\DossierEventsSCHS;
 use App\Service\UploadHandlerService;
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
@@ -77,7 +79,7 @@ class EsaboraSCHSService extends AbstractEsaboraService
         );
     }
 
-    public function getEventsDossier(Affectation $affectation): ResponseInterface
+    public function getDossierEvents(Affectation $affectation): DossierEventsSCHS
     {
         list($url, $token) = $affectation->getPartner()->getEsaboraCredential();
         $payload = [
@@ -94,26 +96,29 @@ class EsaboraSCHSService extends AbstractEsaboraService
         $response = $this->request($url, $token, $payload);
         $this->saveJobEvent(self::ACTION_SYNC_EVENTS, json_encode($payload), $response, $affectation);
         if ($response instanceof JsonResponse) {
-            throw new \Exception(json_decode($response->getContent())['message']);
+            dump($response->getContent());
+            throw new \Exception(json_decode($response->getContent())->message);
         }
 
-        return $response;
+        return new DossierEventsSCHS($response, $affectation);
     }
 
-    public function getEventFiles(Suivi $suivi, Affectation $affectation, int $searchId, string $documentTypeName): ResponseInterface
+    public function getDossierEventFiles(DossierEventSCHS $event): DossierEventFilesSCHS
     {
-        list($url, $token) = $affectation->getPartner()->getEsaboraCredential();
-        $url .= '/mult/?task=getDocuments';
-        $url .= "&searchId=$searchId";
-        $url .= "&documentTypeName=$documentTypeName";
-        $url .= '&keyDataListList[1][0]='.$suivi->getOriginalData()['keyDataList'][1];
-        $response = $this->request($url, $token, []);
-        $this->saveJobEvent(self::ACTION_SYNC_EVENTFILES, $url, $response, $affectation);
+        list($url, $token) = $event->getDossierEvents()->getAffectation()->getPartner()->getEsaboraCredential();
+        $url .= self::TASK_GET_DOCUMENTS;
+        $queryParameters = [
+            'searchId' => $event->getDossierEvents()->getSearchId(),
+            'documentTypeName' => $event->getDossierEvents()->getDocumentTypeName(),
+            'keyDataListList[1][0]' => $event->getEventId(),
+        ];
+        $response = $this->request($url, $token, [], ['query' => $queryParameters]);
+        $this->saveJobEvent(self::ACTION_SYNC_EVENTFILES, json_encode($queryParameters), $response, $event->getDossierEvents()->getAffectation());
         if ($response instanceof JsonResponse) {
-            throw new \Exception(json_decode($response->getContent())['message']);
+            throw new \Exception(json_decode($response->getContent())->message);
         }
 
-        return $response;
+        return new DossierEventFilesSCHS($response);
     }
 
     private function saveJobEvent(string $action, string $message, ResponseInterface|JsonResponse $response, Affectation $affectation): void

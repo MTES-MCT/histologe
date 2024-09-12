@@ -2,6 +2,7 @@
 
 namespace Mock\Esabora;
 
+use Mock\AppMock;
 use WireMock\Client\WireMock;
 
 class EsaboraSCHSMock extends AbstractEsaboraMock
@@ -70,6 +71,21 @@ class EsaboraSCHSMock extends AbstractEsaboraMock
             'ws_etat_dossier_sas/etat_non_trouve.json',
             self::BASE_PATH,
             self::RESOURCES_DIR,
+        );
+        // doesn't work
+        $wiremock->stubFor(
+            WireMock::post(WireMock::urlMatching(self::BASE_PATH.'/mult/?task=doSearch'))
+                ->withHeader('Authorization', WireMock::containing(self::REQUEST_AUTHORIZATION))
+                ->withRequestBody(WireMock::matchingJsonPath(
+                    '$.searchName',
+                    WireMock::equalTo('WS_EVT_DOSSIER_SAS'))
+                )
+                ->willReturn(
+                    WireMock::aResponse()
+                        ->withStatus(200)
+                        ->withHeader('Content-Type', 'application/json')
+                        ->withBody(AppMock::getMockContent(self::RESOURCES_DIR.'ws_get_dossier_events.json'))
+                )
         );
     }
 

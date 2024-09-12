@@ -14,12 +14,17 @@ use App\Service\Esabora\Enum\EsaboraStatus;
 use App\Service\Esabora\EsaboraManager;
 use App\Service\Esabora\Response\DossierStateSCHSResponse;
 use App\Service\Esabora\Response\DossierStateSISHResponse;
+use App\Service\Files\ZipHelper;
+use App\Service\ImageManipulationHandler;
+use App\Service\Security\FileScanner;
+use App\Service\UploadHandlerService;
 use App\Tests\FixturesHelper;
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\EventDispatcher\EventDispatcherInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 class EsaboraManagerTest extends KernelTestCase
 {
@@ -33,6 +38,11 @@ class EsaboraManagerTest extends KernelTestCase
     private UserManager $userManager;
     private LoggerInterface $logger;
     private ParameterBagInterface $parameterBag;
+    private ZipHelper $zipHelper;
+    private FileScanner $fileScanner;
+    private UploadHandlerService $uploadHander;
+    private ImageManipulationHandler $imageManipulationHandler;
+    private UrlGeneratorInterface $UrlGeneratorInterface;
 
     protected function setUp(): void
     {
@@ -45,6 +55,11 @@ class EsaboraManagerTest extends KernelTestCase
         $this->userManager = self::getContainer()->get(UserManager::class);
         $this->logger = self::getContainer()->get(LoggerInterface::class);
         $this->parameterBag = self::getContainer()->get(ParameterBagInterface::class);
+        $this->zipHelper = self::getContainer()->get(ZipHelper::class);
+        $this->fileScanner = self::getContainer()->get(FileScanner::class);
+        $this->uploadHander = self::getContainer()->get(UploadHandlerService::class);
+        $this->imageManipulationHandler = self::getContainer()->get(ImageManipulationHandler::class);
+        $this->UrlGeneratorInterface = self::getContainer()->get('router');
     }
 
     /**
@@ -82,6 +97,12 @@ class EsaboraManagerTest extends KernelTestCase
             $this->userManager,
             $this->logger,
             $this->parameterBag,
+            $this->entityManager,
+            $this->zipHelper,
+            $this->fileScanner,
+            $this->uploadHander,
+            $this->imageManipulationHandler,
+            $this->UrlGeneratorInterface,
         );
 
         $esaboraManager->synchronizeAffectationFrom($dossierResponse, $affectation);
@@ -192,6 +213,12 @@ class EsaboraManagerTest extends KernelTestCase
             $this->userManager,
             $this->logger,
             $this->parameterBag,
+            $this->entityManager,
+            $this->zipHelper,
+            $this->fileScanner,
+            $this->uploadHander,
+            $this->imageManipulationHandler,
+            $this->UrlGeneratorInterface,
         );
 
         $esaboraManager->synchronizeAffectationFrom($dossierResponse, $affectation);

@@ -583,6 +583,53 @@
 						}
 					},
 					"response": []
+				},
+				{
+					"name": "dossier_events",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "test",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"searchName\": \"WS_EVT_DOSSIER_SAS\",\n    \"criterionList\": [\n        {\n            \"criterionName\": \"SAS_Référence\",\n            \"criterionValueList\": [\n                \"00000000-0000-0000-2023-000000000012\"\n            ]\n        }\n    ]\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8082/ws/rest/mult/?task=doSearch",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8082",
+							"path": [
+								"ws",
+								"rest",
+								"mult",
+								""
+							],
+							"query": [
+								{
+									"key": "task",
+									"value": "doSearch"
+								}
+							]
+						}
+					},
+					"response": []
 				}
 			]
 		}

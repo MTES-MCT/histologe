@@ -12,11 +12,7 @@ use App\Repository\AffectationRepository;
 use App\Service\Esabora\EsaboraManager;
 use App\Service\Esabora\EsaboraSCHSService;
 use App\Service\Esabora\Response\DossierStateSCHSResponse;
-use App\Service\Files\ZipHelper;
-use App\Service\ImageManipulationHandler;
 use App\Service\Mailer\NotificationMailerRegistry;
-use App\Service\Security\FileScanner;
-use App\Service\UploadHandlerService;
 use Doctrine\Common\Collections\ArrayCollection;
 use Symfony\Bundle\FrameworkBundle\Console\Application;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
@@ -77,11 +73,6 @@ class SynchronizeEsaboraSCHSCommandTest extends KernelTestCase
             self::getContainer()->get('logger'),
             self::getContainer()->get('doctrine')->getRepository(Suivi::class),
             self::getContainer()->get('doctrine')->getManager(),
-            self::getContainer()->get(ZipHelper::class),
-            self::getContainer()->get(FileScanner::class),
-            self::getContainer()->get(UploadHandlerService::class),
-            self::getContainer()->get(ImageManipulationHandler::class),
-            self::getContainer()->get('router'),
         ));
 
         $commandTester = new CommandTester($command);

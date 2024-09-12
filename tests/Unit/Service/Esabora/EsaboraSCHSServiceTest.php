@@ -3,7 +3,6 @@
 namespace App\Tests\Unit\Service\Esabora;
 
 use App\Entity\Enum\PartnerType;
-use App\Entity\Suivi;
 use App\Service\Esabora\EsaboraSCHSService;
 use App\Service\Esabora\Response\DossierStateSCHSResponse;
 use App\Service\UploadHandlerService;
@@ -116,35 +115,21 @@ class EsaboraSCHSServiceTest extends KernelTestCase
         $this->assertEquals(Response::HTTP_SERVICE_UNAVAILABLE, $response->getStatusCode());
     }
 
-    public function testGetEventsDossierEsaboraSas(): void
+    public function testGetDossierEventsEsaboraSas(): void
     {
-        $filepath = __DIR__.self::PATH_RESOURCE_JSON.'ws_get_events_dossier.json';
-        $mockResponse = new MockResponse(file_get_contents($filepath));
+        $filepathEvents = __DIR__.self::PATH_RESOURCE_JSON.'ws_get_dossier_events.json';
+        $mockResponse = new MockResponse(file_get_contents($filepathEvents));
+        $filepathEventFiles = __DIR__.self::PATH_RESOURCE_JSON.'ws_get_dossier_eventfiles.json';
+        $mockResponseEventFiles = new MockResponse(file_get_contents($filepathEventFiles));
 
-        $mockHttpClient = new MockHttpClient($mockResponse);
+        $mockHttpClient = new MockHttpClient([$mockResponse, $mockResponseEventFiles]);
         $esaboraService = new EsaboraSCHSService($mockHttpClient, $this->logger, $this->uploadHandlerService, $this->entityManager);
-        $response = $esaboraService->getEventsDossier(
+        $dossierEvents = $esaboraService->getDossierEvents(
             $this->getAffectation(PartnerType::COMMUNE_SCHS)
         );
-
-        $this->assertEquals($response->getStatusCode(), Response::HTTP_OK);
-    }
-
-    public function testGetEventFileEsaboraSas(): void
-    {
-        $filepath = __DIR__.self::PATH_RESOURCE_JSON.'ws_get_eventfiles.json';
-        $mockResponse = new MockResponse(file_get_contents($filepath));
-
-        $mockHttpClient = new MockHttpClient($mockResponse);
-        $esaboraService = new EsaboraSCHSService($mockHttpClient, $this->logger, $this->uploadHandlerService, $this->entityManager);
-        $response = $esaboraService->getEventFiles(
-            (new Suivi())->setOriginalData(['keyDataList' => ['28', '30411']]),
-            $this->getAffectation(PartnerType::COMMUNE_SCHS),
-            '27207',
-            'e6_t1.evt_nomdoc'
-        );
-
-        $this->assertEquals($response->getStatusCode(), Response::HTTP_OK);
+        $this->assertEquals($dossierEvents->getSearchId(), '27207');
+        $dossierEventFiles = $esaboraService->getDossierEventFiles($dossierEvents->getEvents()[0]);
+        $this->assertNotEmpty($dossierEventFiles->getDocumentZipContent());
     }
 
     protected function tearDown(): void

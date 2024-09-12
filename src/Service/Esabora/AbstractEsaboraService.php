@@ -24,6 +24,7 @@ abstract class AbstractEsaboraService implements EsaboraServiceInterface
     public const ACTION_SYNC_DOSSIER_ARRETE = 'sync_dossier_arrete';
     public const TASK_INSERT_PATH = '/modbdd/?task=doTreatment';
     public const TASK_SEARCH_PATH = '/mult/?task=doSearch';
+    public const TASK_GET_DOCUMENTS = '/mult/?task=getDocuments';
     public const SIGNALEMENT_ORIGINE = 'interfaçage';
     public const FORMAT_DATE = 'd/m/Y';
     public const FORMAT_DATE_TIME = 'd/m/Y H:i';
