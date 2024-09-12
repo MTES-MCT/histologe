@@ -30,7 +30,7 @@ class SignalementExportLoaderTest extends TestCase
             ->with($user, $filters)
             ->willReturn($this->getSignalementExportGenerator($signalementExports));
 
-        $loader = new SignalementExportLoader($signalementManager);
+        $loader = new SignalementExportLoader($signalementManager, 0);
         $spreadsheet = $loader->load($user, $filters);
         $this->assertInstanceOf(Spreadsheet::class, $spreadsheet);
         $this->assertEquals('Référence', $spreadsheet->getActiveSheet()->getCell('A1')->getValue());

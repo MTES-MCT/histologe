@@ -11,6 +11,7 @@ use App\Entity\Intervention;
 use App\Entity\Model\TypeCompositionLogement;
 use App\Entity\User;
 use App\Service\Signalement\SignalementAffectationHelper;
+use App\Utils\DateHelper;
 
 class SignalementExportFactory
 {
@@ -46,7 +47,10 @@ class SignalementExportFactory
         );
         $statusVisite = $interventionExploded[0];
         $dateVisite = !empty($interventionExploded[1]) ? $interventionExploded[1] : '';
-        $dateVisite = !empty($dateVisite) ? (new \DateTime($dateVisite))->format(self::DATE_FORMAT) : '';
+        dump($dateVisite);
+        if (DateHelper::isValidDate($dateVisite)) {
+            $dateVisite = !empty($dateVisite) ? (new \DateTime($dateVisite))->format(self::DATE_FORMAT) : '';
+        }
         $isOccupantPresentVisite = !empty($interventionExploded[2]) ? $interventionExploded[2] : '';
 
         $enfantsM6 = null;
@@ -105,8 +109,8 @@ class SignalementExportFactory
             modifiedAt: $modifiedAt,
             closedAt: $closedAt,
             motifCloture: $motifCloture,
-            longitude: is_array($geoloc) ? $geoloc['lng'] : '',
-            latitude: is_array($geoloc) ? $geoloc['lat'] : '',
+            longitude: is_array($geoloc) ? $geoloc['lng'] ?? '' : '',
+            latitude: is_array($geoloc) ? $geoloc['lat'] ?? '' : '',
         );
     }
 
