@@ -4,7 +4,7 @@ import {
     SENTRY_DSN_FRONT,
     SENTRY_ENVIRONMENT,
     SENTRY_TRACES_SAMPLE_RATE
-} from'./controllers/environment'
+} from'./vanilla/controllers/environment'
 
 Sentry.init({
     dsn: SENTRY_DSN_FRONT,

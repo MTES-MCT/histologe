@@ -1,7 +1,7 @@
 import axios from 'axios'
 import formStore from './store'
 import * as Sentry from '@sentry/browser'
-import { AXIOS_TIMEOUT } from '../../../controllers/environment'
+import { AXIOS_TIMEOUT } from '../../../vanilla/controllers/environment'
 
 export const requests = {
   doRequestGet (ajaxUrl: string, functionReturn: Function) {
