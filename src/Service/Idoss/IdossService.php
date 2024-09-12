@@ -161,6 +161,7 @@ class IdossService
             'Dossier' => [
                 'UUIDSignalement' => $dossierMessage->getSignalementUuid(),
                 'dateDepotSignalement' => $dossierMessage->getDateDepotSignalement(),
+                'referenceHistologe' => $dossierMessage->getReference(),
                 'declarant' => $dossierMessage->getDeclarant(),
                 'occupant' => $dossierMessage->getOccupant(),
                 'proprietaire' => $dossierMessage->getProprietaire(),
