@@ -81,7 +81,6 @@ export default defineComponent({
     // les propriétés suivantes ne sont pas utilisées,
     // mais si on ne les met pas, elles apparaissent dans le DOM
     // et ça soulève des erreurs W3C
-    hasError: { type: Boolean, default: false },
     handleClickComponent: Function,
     clickEvent: Function,
     access_name: { type: String, default: undefined },
