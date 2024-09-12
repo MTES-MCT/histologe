@@ -5,11 +5,15 @@ namespace App\Command\Cron;
 use App\Entity\Enum\PartnerType;
 use App\Manager\JobEventManager;
 use App\Repository\AffectationRepository;
+use App\Repository\JobEventRepository;
+use App\Service\Esabora\AbstractEsaboraService;
 use App\Service\Esabora\EsaboraManager;
 use App\Service\Esabora\Handler\InterventionSISHHandlerInterface;
 use App\Service\Mailer\NotificationMail;
 use App\Service\Mailer\NotificationMailerRegistry;
 use App\Service\Mailer\NotificationMailerType;
+use Doctrine\ORM\NonUniqueResultException;
+use Doctrine\ORM\NoResultException;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
@@ -50,6 +54,10 @@ class SynchronizeInterventionSISHCommand extends AbstractSynchronizeEsaboraComma
         $this->interventionHandlers = $interventionHandlers;
     }
 
+    /**
+     * @throws NonUniqueResultException
+     * @throws NoResultException
+     */
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $countSuccess = $countFailed = 0;
@@ -59,7 +67,6 @@ class SynchronizeInterventionSISHCommand extends AbstractSynchronizeEsaboraComma
         $uuidSignalement = $input->getArgument('uuid_signalement') ?? null;
         $affectations = $this->affectationRepository->findAffectationSubscribedToEsabora(
             partnerType: PartnerType::ARS,
-            isSynchronized: true,
             uuidSignalement: $uuidSignalement
         );
 
@@ -68,12 +75,13 @@ class SynchronizeInterventionSISHCommand extends AbstractSynchronizeEsaboraComma
             foreach ($this->interventionHandlers as $key => $interventionHandler) {
                 try {
                     $interventionHandler->handle($affectation);
-                    $countSuccess += $interventionHandler->getCountSuccess();
-                    $countFailed += $interventionHandler->getCountFailed();
                     $io->writeln(\sprintf('#%s: %s was executed', $key, $interventionHandler->getServiceName()));
                 } catch (\Throwable $e) {
                     $signalement = $affectation->getSignalement();
-                    $message = $interventionHandler->getServiceName().' - Signalement '.$signalement->getUuid().' ('.$signalement->getId().') : '.$e->getMessage();
+                    $message = $interventionHandler->getServiceName()
+                        .' - Signalement '.$signalement->getUuid()
+                        .' ('.$signalement->getId().') : '
+                        .$e->getMessage();
                     if (!($e instanceof \Exception)) {
                         $message .= ' - '.$e->getFile().' ('.$e->getLine().')';
                     }
@@ -82,6 +90,15 @@ class SynchronizeInterventionSISHCommand extends AbstractSynchronizeEsaboraComma
                 }
             }
         }
+
+        /** @var JobEventRepository $jobEventRepository */
+        $jobEventRepository = $this->jobEventManager->getRepository();
+        ['success_count' => $countSuccess, 'failed_count' => $countFailed] =
+             $jobEventRepository->getReportEsaboraAction(
+                 AbstractEsaboraService::ACTION_SYNC_DOSSIER_ARRETE,
+                 AbstractEsaboraService::ACTION_SYNC_DOSSIER_VISITE
+             );
+
         $io->table(['Count success', 'Count Failed'], [[$countSuccess, $countFailed]]);
         $this->notificationMailerRegistry->send(
             new NotificationMail(
@@ -95,8 +112,8 @@ class SynchronizeInterventionSISHCommand extends AbstractSynchronizeEsaboraComma
                         ? 'synchronisations ont été effectuées'
                         : 'synchronisation effectuée',
                     'message_failed' => $countFailed > 1
-                        ? 'synchronisations n\'ont été effectuées'
-                        : 'synchronisation effectuée',
+                        ? 'synchronisations en échec'
+                        : 'synchronisation en échec',
                     'error_messages' => $errorMessages,
                 ],
             )
