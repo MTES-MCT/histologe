@@ -5,11 +5,14 @@ namespace App\Service\Signalement\Export;
 use App\Entity\User;
 use App\Manager\SignalementManager;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
+use Symfony\Component\DependencyInjection\Attribute\Autowire;
 
-class SignalementExportLoader
+readonly class SignalementExportLoader
 {
     public function __construct(
-        private readonly SignalementManager $signalementManager,
+        private SignalementManager $signalementManager,
+        #[Autowire(env: 'FEATURE_EXPORT_CUSTOM')]
+        private string $featureExportCustom
     ) {
     }
 
@@ -23,7 +26,9 @@ class SignalementExportLoader
         if (empty($selectedColumns)) {
             $selectedColumns = [];
         }
-        $headers = $this->getHeadersWithSelectedColumns($headers, $keysToRemove, $selectedColumns);
+        if ($this->featureExportCustom) {
+            $headers = $this->getHeadersWithSelectedColumns($headers, $keysToRemove, $selectedColumns);
+        }
         $sheetData = [$headers];
 
         foreach ($this->signalementManager->findSignalementAffectationIterable($user, $filters) as $signalementExportItem) {

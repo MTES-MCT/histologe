@@ -548,8 +548,12 @@ class SignalementBuilder
             : $this->evalBoolean($this->signalementDraftRequest->getSignalementConcerneLogementSocialAutreTiers());
     }
 
-    private function convertStringToNumber(?string $value, $returnInt = true): float|int
+    private function convertStringToNumber(?string $value, $returnInt = true): float|int|null
     {
+        if (null === $value || '' === $value) {
+            return null;
+        }
+
         if ($returnInt) {
             return (int) preg_replace('/[^0-9]+/', '', $value);
         }
