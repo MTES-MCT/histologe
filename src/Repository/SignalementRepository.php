@@ -591,7 +591,7 @@ class SignalementRepository extends ServiceEntityRepository
             GROUP_CONCAT(DISTINCT tags.label SEPARATOR :group_concat_separator_1) as etiquettes,
             GROUP_CONCAT(DISTINCT
                 CONCAT(i.status, :group_concat_separator_1, i.scheduledAt, :group_concat_separator_1, IFNULL(i.occupantPresent, \'\'))
-                SEPARATOR :concat_separator
+                SEPARATOR :group_concat_separator_1
             ) as interventionsStatus,
             GROUP_CONCAT(DISTINCT i.concludeProcedure SEPARATOR :group_concat_separator_1) as interventionConcludeProcedure,
             GROUP_CONCAT(DISTINCT i.details SEPARATOR :group_concat_separator_1) as interventionDetails
