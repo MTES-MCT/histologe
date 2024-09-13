@@ -88,9 +88,9 @@ class BackStatistiquesController extends AbstractController
         $etiquettes = array_map(fn ($value): int => $value * 1, $strEtiquettes);
         $type = $request->get('type');
         $dateStartInput = $request->get('dateStart');
-        $dateStart = new \DateTime($dateStartInput);
+        $dateStart = (null !== $dateStartInput) ? new \DateTime($dateStartInput) : null;
         $dateEndInput = $request->get('dateEnd');
-        $dateEnd = new \DateTime($dateEndInput);
+        $dateEnd = (null !== $dateEndInput) ? new \DateTime($dateEndInput) : null;
         $hasCountRefused = '1' == $request->get('countRefused');
         $hasCountArchived = '1' == $request->get('countArchived');
 
