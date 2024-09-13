@@ -138,14 +138,14 @@
                 />
               </div>
               <div class="fr-col-12 fr-col-lg-6 fr-col-xl-3 grey-background">
-                <HistoDatePicker
+                <!--HistoDatePicker
                     id="filter-date-depot"
                     ref="filter-date-depot"
                     v-model="sharedState.input.filters.dateDepot"
                     :placeholder="'Date de dépot'"
                     title="Rechercher par date de dépot"
                     @update:modelValue="onChange(false)"
-                />
+                /-->
               </div>
               <div class="fr-col-12 fr-col-lg-6 fr-col-xl-3 grey-background">
                 <HistoSelect
@@ -191,14 +191,14 @@
                 />
               </div>
               <div class="fr-col-12 fr-col-lg-6 fr-col-xl-3 grey-background">
-                <HistoDatePicker
+                <!--HistoDatePicker
                     id="filter-date-dernier-suivi"
                     ref="filter-date-dernier-suivi"
                     v-model="sharedState.input.filters.dateDernierSuivi"
                     :placeholder="'Date de dernier suivi'"
                     title="Rechercher par date de dernier suivi"
                     @update:modelValue="onChange(false)"
-                />
+                /-->
               </div>
               <div v-if="sharedState.user.canSeeStatusAffectation" class="fr-col-12 fr-col-lg-4 fr-col-xl-3 grey-background">
                 <HistoSelect
@@ -308,7 +308,7 @@ import AppAutoComplete from '../../common/AppAutoComplete.vue'
 import AppNumber from '../../common/AppNumber.vue'
 import AppSearch from '../../common/AppSearch.vue'
 import HistoSelect from '../../common/HistoSelect.vue'
-import HistoDatePicker from '../../common/external/HistoDatePicker.vue'
+//import HistoDatePicker from '../../common/external/HistoDatePicker.vue'
 import HistoMultiSelect from '../../common/HistoMultiSelect.vue'
 import { store } from '../store'
 import { buildBadge } from '../services/badgeFilterLabelBuilder'
@@ -321,7 +321,7 @@ export default defineComponent({
     AppAutoComplete,
     AppSearch,
     HistoMultiSelect,
-    HistoDatePicker,
+    //HistoDatePicker,
     HistoSelect
   },
   props: {
@@ -329,8 +329,8 @@ export default defineComponent({
   },
   emits: ['changeTerritory', 'clickReset'],
   computed: {
-    filtersSanitized () {
-      const filters = Object.entries(this.sharedState.input.filters).filter(([key, value]) => {
+    filtersSanitized (): any {
+      const filters: any = Object.entries(this.sharedState.input.filters).filter(([key, value]) => {
         if (key === 'isImported' || key === 'showMyAffectationOnly' || key === 'showWithoutAffectationOnly') {
           return false
         }
