@@ -60,6 +60,7 @@ final class DossierMessageSISH implements DossierMessageInterface
     private ?int $logementNbNiveaux = null;
     private ?int $proprietaireAverti = null;
     private ?string $proprietaireAvertiDate = null;
+    private ?string $proprietaireAvertiMoyen = null;
     private ?float $signalementScore = null;
     private ?string $signalementOrigine = null;
     private ?string $signalementNumero = null;
@@ -675,6 +676,11 @@ final class DossierMessageSISH implements DossierMessageInterface
         $this->proprietaireAvertiDate = $proprietaireAvertiDate;
 
         return $this;
+    }
+
+    public function getProprietaireAvertiMoyen(): ?string
+    {
+        return $this->proprietaireAvertiMoyen;
     }
 
     public function getSignalementScore(): ?float
