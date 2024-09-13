@@ -1,7 +1,7 @@
 import { test, expect } from '@playwright/test';
 
 test('Histologe - Home', async ({ page }) => {
-  await page.goto('http://localhost:8080/');
+  await page.goto('/');
   await expect(page.getByRole('heading', { name: 'Sortez du mal-logement' })).toBeVisible();
   await expect(page.getByRole('button', { name: 'Aide' })).toBeVisible();
   await expect(page.getByRole('button', { name: 'Infos utiles' })).toBeVisible();
@@ -10,14 +10,14 @@ test('Histologe - Home', async ({ page }) => {
 });
 
 test('Histologe - Qui sommes-nous ?', async ({ page }) => {
-  await page.goto('http://localhost:8080/qui-sommes-nous');
+  await page.goto('/qui-sommes-nous');
   await expect(page.getByRole('heading', { name: 'Qui sommes-nous ?' })).toBeVisible();
   await expect(page.getByRole('heading', { name: 'Une solution reconnue' })).toBeVisible();
   await expect(page.locator('div').filter({ hasText: 'Voir le fil d’Ariane Accueil' })).toBeVisible();
 });
 
 test('Histologe - Contact', async ({ page }) => {
-  await page.goto('http://localhost:8080/contact');
+  await page.goto('/contact');
 
   await page.getByLabel('Adresse e-mail Renseignez l\'').click();
   await page.getByLabel('Adresse e-mail Renseignez l\'').fill('coucou@adresse.fr');
