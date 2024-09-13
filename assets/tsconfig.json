@@ -14,9 +14,9 @@
     "resolveJsonModule": true
   },
   "files": [
-    "vue/index.ts",
+    "scripts/vue/index.ts",
     "shims-vue.d.ts",
     "shims-tsx.d.ts"
   ],
-  "include": ["vue/**/*.ts", "vue/**/*.vue","vue/**/*.json"]
+  "include": ["scripts/vue/**/*.ts", "scripts/vue/**/*.vue","scripts/vue/**/*.json"]
 }
