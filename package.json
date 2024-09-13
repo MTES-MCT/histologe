@@ -17,8 +17,10 @@
   },
   "devDependencies": {
     "@hotwired/stimulus": "^3.0.0",
+    "@playwright/test": "^1.47.0",
     "@symfony/stimulus-bridge": "^3.0.0",
     "@symfony/webpack-encore": "^3.0.0",
+    "@types/node": "^22.5.4",
     "@typescript-eslint/eslint-plugin": "^5.33.1",
     "core-js": "^3.0.0",
     "dotenv-webpack": "^8.0.1",
