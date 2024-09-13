@@ -10,6 +10,10 @@ PHPUNIT       = ./vendor/bin/phpunit
 SYMFONY       = php bin/console
 NPX           = npx
 NPM           = npm
+#CI tests
+DOCKER_EXEC_PHP = ${DOCKER_COMP} exec php
+BIN_CONSOLE = ${_DOCKER_EXEC_PHP} symfony console
+BIN_COMPOSER = ${_DOCKER_EXEC_PHP} symfony composer
 
 help:
 	@grep -E '(^[a-zA-Z0-9_-]+:.*?##.*$$)|(^##)' $(MAKEFILE_LIST) | awk 'BEGIN {FS = ":.*?## "}{printf "\033[32m%-30s\033[0m %s\n", $$1, $$2}' | sed -e 's/\[32m##/[33m/'
@@ -244,3 +248,25 @@ run-concurrency-request: ## Run concurrency request based postman collection
 
 .sleep:
 	@sleep 30
+
+test_e2e_ci:
+	make test_e2e_ci_install_deps
+	make test_e2e_ci_dbinstall
+	make test_e2e_ci_assets
+	make test_e2e_ci_test
+
+test_e2e_ci_install_deps:
+	$(BIN_COMPOSER) install -n --prefer-dist
+	${_DOCKER_EXEC_PHP} npm ci
+	${_DOCKER_EXEC_PHP} npx playwright install --with-deps firefox
+
+test_e2e_ci_assets:
+	${_DOCKER_EXEC_PHP} npm run build
+
+test_e2e_ci_dbinstall:
+	$(BIN_CONSOLE) doctrine:database:create --env=test --if-not-exists
+	$(BIN_CONSOLE) doctrine:migrations:migrate -n --all-or-nothing --env=test
+	$(BIN_CONSOLE) doctrine:fixtures:load --env=test -n
+
+test_e2e_ci_test:
+	${_DOCKER_EXEC_PHP} npx playwright test --project firefox
