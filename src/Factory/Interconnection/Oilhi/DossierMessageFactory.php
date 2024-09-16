@@ -3,19 +3,14 @@
 namespace App\Factory\Interconnection\Oilhi;
 
 use App\Entity\Affectation;
-use App\Entity\Critere;
-use App\Entity\Criticite;
-use App\Entity\DesordreCategorie;
-use App\Entity\DesordreCritere;
-use App\Entity\DesordrePrecision;
 use App\Entity\Enum\OccupantLink;
 use App\Entity\Enum\Qualification;
 use App\Entity\Intervention;
 use App\Entity\Signalement;
-use App\Entity\Situation;
 use App\Factory\Interconnection\DossierMessageFactoryInterface;
 use App\Messenger\Message\Oilhi\DossierMessage;
 use App\Service\HtmlCleaner;
+use App\Service\Oilhi\Model\Desordre;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
@@ -24,9 +19,9 @@ class DossierMessageFactory implements DossierMessageFactoryInterface
     public const FORMAT_DATE = 'Y-m-d';
 
     public function __construct(
-        private UrlGeneratorInterface $urlGenerator,
+        private readonly UrlGeneratorInterface $urlGenerator,
         #[Autowire(env: 'FEATURE_OILHI_ENABLE')]
-        private bool $featureEnable,
+        private readonly bool $featureEnable,
     ) {
     }
 
@@ -45,7 +40,6 @@ class DossierMessageFactory implements DossierMessageFactoryInterface
         $signalement = $affectation->getSignalement();
         $partner = $affectation->getPartner();
         $interventionData = $this->buildInterventionData($signalement);
-        $desordresData = $this->buildDesordresData($signalement);
         $typeDeclarant = $this->getTypeDeclarant($signalement);
 
         return (new DossierMessage())
@@ -89,9 +83,7 @@ class DossierMessageFactory implements DossierMessageFactoryInterface
             ->setRapportVisite($interventionData['rapport_visite'] ?? null)
             ->setDateVisite($interventionData['date_visite'] ?? null)
             ->setOperateurVisite($interventionData['operateur_visite'] ?? null)
-            ->setDesordresCategorie($desordresData['categories'] ?? null)
-            ->setDesordresCritere($desordresData['criteres'] ?? null)
-            ->setDesordresPrecision($desordresData['precisions'] ?? null);
+            ->setDesordres($this->buildDesordre($signalement));
     }
 
     /**
@@ -116,85 +108,23 @@ class DossierMessageFactory implements DossierMessageFactoryInterface
     }
 
     /**
-     * @return array Un tableau associatif contenant les libéllés des désordres pour ancien et nouveau formulaire
-     *               - 'categories': Les catégories de désordres/les situations.
-     *               - 'criteres': Les critères de désordres.
-     *               - 'precisions': Les précisions sur les désordres/les criticités.
+     * @return array|Desordre[]
      */
-    private function buildDesordresData(Signalement $signalement): array
+    private function buildDesordre(Signalement $signalement): array
     {
+        /** @var Desordre[] $desordres */
         $desordres = [];
-        if ($signalement->getCreatedFrom()) {
-            if (!$signalement->getDesordreCategories()->isEmpty()) {
-                $desordres['categories'] = implode(
-                    ',',
-                    $signalement
-                        ->getDesordreCategories()
-                        ->map(function (DesordreCategorie $desordreCategorie) {
-                            return $desordreCategorie->getLabel();
-                        })->toArray()
-                );
-            }
-
-            if (!$signalement->getDesordreCriteres()->isEmpty()) {
-                $desordres['criteres'] = implode(
-                    ',',
-                    $signalement
-                        ->getDesordreCriteres()
-                        ->map(function (DesordreCritere $desordreCritere) {
-                            return $desordreCritere->getLabelCritere();
-                        })->toArray()
-                );
-            }
-
-            if (!$signalement->getDesordrePrecisions()->isEmpty()) {
-                $precisionsList = $signalement
-                    ->getDesordrePrecisions()
-                    ->filter(function (DesordrePrecision $desordrePrecision) {
-                        return ' - ' !== $desordrePrecision->getLabel();
-                    })
-                    ->map(function (DesordrePrecision $desordrePrecision) {
-                        if (!empty($desordrePrecision->getLabel())) {
-                            return HtmlCleaner::clean($desordrePrecision->getLabel());
-                        }
-                    })->toArray();
-                $desordres['precisions'] = implode(',', array_filter($precisionsList));
-            }
-
-            return $desordres;
-        }
-
-        if (!$signalement->getSituations()->isEmpty()) {
-            $desordres['categories'] = implode(
-                ',',
-                $signalement
-                    ->getSituations()
-                    ->map(function (Situation $situation) {
-                        return $situation->getLabel();
-                    })->toArray()
+        foreach ($signalement->getDesordrePrecisions() as $desordrePrecision) {
+            $desordre = new Desordre(
+                desordre: $desordrePrecision->getDesordreCritere()->getDesordreCategorie()->getLabel(),
+                equipement: $desordrePrecision->getDesordreCritere()->getLabelCritere(),
+                risque: HtmlCleaner::clean($desordrePrecision->getLabel()),
+                isDanger: $desordrePrecision->getIsDanger(),
+                isSurrocupation: $desordrePrecision->getIsSuroccupation(),
+                isInsalubrite: $desordrePrecision->getIsInsalubrite()
             );
-        }
 
-        if (!$signalement->getCriteres()->isEmpty()) {
-            $desordres['criteres'] = implode(
-                ',',
-                $signalement
-                    ->getCriteres()
-                    ->map(function (Critere $critere) {
-                        return $critere->getLabel();
-                    })->toArray()
-            );
-        }
-
-        if (!$signalement->getCriticites()->isEmpty()) {
-            $desordres['precisions'] = implode(
-                ',',
-                $signalement
-                    ->getCriticites()
-                    ->map(function (Criticite $criticite) {
-                        return $criticite->getLabel();
-                    })->toArray()
-            );
+            $desordres[] = $desordre;
         }
 
         return $desordres;

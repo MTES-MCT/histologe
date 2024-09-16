@@ -34,6 +34,7 @@ final class DossierMessage implements DossierMessageInterface
     private ?string $rapportVisite = null;
     private ?string $dateVisite = null;
     private ?string $operateurVisite = null;
+    private array $desordres = [];
 
     public function __construct()
     {
@@ -372,6 +373,18 @@ final class DossierMessage implements DossierMessageInterface
     public function setOperateurVisite(?string $operateurVisite): self
     {
         $this->operateurVisite = $operateurVisite;
+
+        return $this;
+    }
+
+    public function getDesordres(): array
+    {
+        return $this->desordres;
+    }
+
+    public function setDesordres(array $desordres): self
+    {
+        $this->desordres = $desordres;
 
         return $this;
     }
