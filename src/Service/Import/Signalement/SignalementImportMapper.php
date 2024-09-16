@@ -36,7 +36,6 @@ class SignalementImportMapper
             'nb occupants logement' => 'nbOccupantsLogement',
             'Allocataire' => 'isAllocataire',
             'numéro Allocataire' => 'numAllocataire',
-            'type logement' => 'typeLogement',
             'superficie' => 'superficie',
             'Nom propriétaire' => 'nomProprio',
             'Adresse Propriétaire' => 'adresseProprio',

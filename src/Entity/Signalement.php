@@ -83,9 +83,6 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
     #[ORM\Column(type: 'string', length: 15, nullable: true)]
     private $natureLogement;
 
-    #[ORM\Column(type: 'string', length: 15, nullable: true)]
-    private $typeLogement;
-
     #[ORM\Column(type: 'float', nullable: true)]
     private $superficie;
 
@@ -674,18 +671,6 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
     public function setNatureLogement(?string $natureLogement): self
     {
         $this->natureLogement = null !== $natureLogement ? mb_strtolower($natureLogement) : null;
-
-        return $this;
-    }
-
-    public function getTypeLogement(): ?string
-    {
-        return $this->typeLogement;
-    }
-
-    public function setTypeLogement(?string $typeLogement): self
-    {
-        $this->typeLogement = mb_strtoupper($typeLogement);
 
         return $this;
     }
