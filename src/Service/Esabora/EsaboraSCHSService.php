@@ -4,13 +4,13 @@ namespace App\Service\Esabora;
 
 use App\Entity\Affectation;
 use App\Entity\JobEvent;
+use App\Manager\JobEventManager;
 use App\Messenger\Message\Esabora\DossierMessageSCHS;
+use App\Service\Esabora\Response\DossierEventFilesSCHSResponse;
+use App\Service\Esabora\Response\DossierEventsSCHSResponse;
 use App\Service\Esabora\Response\DossierStateSCHSResponse;
-use App\Service\Esabora\Response\Model\DossierEventFilesSCHS;
 use App\Service\Esabora\Response\Model\DossierEventSCHS;
-use App\Service\Esabora\Response\Model\DossierEventsSCHS;
 use App\Service\UploadHandlerService;
-use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
@@ -26,7 +26,7 @@ class EsaboraSCHSService extends AbstractEsaboraService
         private readonly HttpClientInterface $client,
         private readonly LoggerInterface $logger,
         private readonly UploadHandlerService $uploadHandlerService,
-        private readonly EntityManagerInterface $entityManager,
+        private readonly JobEventManager $jobEventManager,
     ) {
         parent::__construct($this->client, $this->logger);
     }
@@ -79,7 +79,7 @@ class EsaboraSCHSService extends AbstractEsaboraService
         );
     }
 
-    public function getDossierEvents(Affectation $affectation): DossierEventsSCHS
+    public function getDossierEvents(Affectation $affectation): DossierEventsSCHSResponse
     {
         list($url, $token) = $affectation->getPartner()->getEsaboraCredential();
         $payload = [
@@ -96,14 +96,13 @@ class EsaboraSCHSService extends AbstractEsaboraService
         $response = $this->request($url, $token, $payload);
         $this->saveJobEvent(self::ACTION_SYNC_EVENTS, json_encode($payload), $response, $affectation);
         if ($response instanceof JsonResponse) {
-            dump($response->getContent());
             throw new \Exception(json_decode($response->getContent())->message);
         }
 
-        return new DossierEventsSCHS($response, $affectation);
+        return new DossierEventsSCHSResponse($response, $affectation);
     }
 
-    public function getDossierEventFiles(DossierEventSCHS $event): DossierEventFilesSCHS
+    public function getDossierEventFiles(DossierEventSCHS $event): DossierEventFilesSCHSResponse
     {
         list($url, $token) = $event->getDossierEvents()->getAffectation()->getPartner()->getEsaboraCredential();
         $url .= self::TASK_GET_DOCUMENTS;
@@ -118,7 +117,7 @@ class EsaboraSCHSService extends AbstractEsaboraService
             throw new \Exception(json_decode($response->getContent())->message);
         }
 
-        return new DossierEventFilesSCHS($response);
+        return new DossierEventFilesSCHSResponse($response);
     }
 
     private function saveJobEvent(string $action, string $message, ResponseInterface|JsonResponse $response, Affectation $affectation): void
@@ -133,18 +132,17 @@ class EsaboraSCHSService extends AbstractEsaboraService
             }
             $responseEncoded = json_encode($responseEncoded);
         }
-        $jobEvent = new JobEvent();
-        $jobEvent->setService(AbstractEsaboraService::TYPE_SERVICE)
-                 ->setAction($action)
-                 ->setMessage($message)
-                 ->setResponse($responseEncoded)
-                 ->setStatus(Response::HTTP_OK === $response->getStatusCode() ? JobEvent::STATUS_SUCCESS : JobEvent::STATUS_FAILED)
-                 ->setCodeStatus($response->getStatusCode())
-                 ->setSignalementId($affectation->getSignalement()->getId())
-                 ->setPartnerId($affectation->getPartner()->getId())
-                 ->setPartnerType($affectation->getPartner()->getType());
-
-        $this->entityManager->persist($jobEvent);
+        $this->jobEventManager->createJobEvent(
+            AbstractEsaboraService::TYPE_SERVICE,
+            $action,
+            $message,
+            $responseEncoded,
+            Response::HTTP_OK === $response->getStatusCode() ? JobEvent::STATUS_SUCCESS : JobEvent::STATUS_FAILED,
+            $response->getStatusCode(),
+            $affectation->getSignalement()->getId(),
+            $affectation->getPartner()->getId(),
+            $affectation->getPartner()->getType(),
+        );
     }
 
     public function preparePayloadPushDossier(DossierMessageSCHS $dossierMessage, bool $encodeDocuments = true): array

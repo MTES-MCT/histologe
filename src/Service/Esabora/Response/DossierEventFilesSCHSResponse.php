@@ -1,11 +1,11 @@
 <?php
 
-namespace App\Service\Esabora\Response\Model;
+namespace App\Service\Esabora\Response;
 
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Contracts\HttpClient\ResponseInterface;
 
-class DossierEventFilesSCHS
+class DossierEventFilesSCHSResponse
 {
     private string $documentZipContent;
 

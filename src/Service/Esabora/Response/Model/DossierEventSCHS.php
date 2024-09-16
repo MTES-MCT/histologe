@@ -2,16 +2,18 @@
 
 namespace App\Service\Esabora\Response\Model;
 
+use App\Service\Esabora\Response\DossierEventsSCHSResponse;
+
 class DossierEventSCHS
 {
-    private DossierEventsSCHS $dossierEvents;
+    private DossierEventsSCHSResponse $dossierEvents;
     private array $originalData;
     private string $date;
     private string $description;
     private ?string $piecesJointes;
     private int $eventId;
 
-    public function __construct(array $event, DossierEventsSCHS $dossierEvents)
+    public function __construct(array $event, DossierEventsSCHSResponse $dossierEvents)
     {
         $this->dossierEvents = $dossierEvents;
         $this->originalData = $event;
@@ -21,7 +23,7 @@ class DossierEventSCHS
         $this->eventId = $event['keyDataList'][1];
     }
 
-    public function getDossierEvents(): DossierEventsSCHS
+    public function getDossierEvents(): DossierEventsSCHSResponse
     {
         return $this->dossierEvents;
     }

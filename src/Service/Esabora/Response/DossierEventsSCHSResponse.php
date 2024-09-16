@@ -1,12 +1,13 @@
 <?php
 
-namespace App\Service\Esabora\Response\Model;
+namespace App\Service\Esabora\Response;
 
 use App\Entity\Affectation;
+use App\Service\Esabora\Response\Model\DossierEventSCHS;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Contracts\HttpClient\ResponseInterface;
 
-class DossierEventsSCHS
+class DossierEventsSCHSResponse
 {
     private Affectation $affectation;
     private int $searchId;

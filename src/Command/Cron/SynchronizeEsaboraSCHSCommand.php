@@ -90,7 +90,6 @@ class SynchronizeEsaboraSCHSCommand extends AbstractSynchronizeEsaboraCommand
                 $this->logger->error($msg);
             }
         }
-        $this->entityManager->flush();
         $msg = sprintf('Synchronized %d new events with %d files', $this->nbEventsAdded, $this->nbEventFilesAdded);
         $this->io->success($msg);
         $this->notificationMailerRegistry->send(

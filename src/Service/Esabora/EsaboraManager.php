@@ -17,9 +17,9 @@ use App\Manager\SuiviManager;
 use App\Manager\UserManager;
 use App\Repository\InterventionRepository;
 use App\Service\Esabora\Enum\EsaboraStatus;
+use App\Service\Esabora\Response\DossierEventFilesSCHSResponse;
 use App\Service\Esabora\Response\DossierResponseInterface;
 use App\Service\Esabora\Response\Model\DossierArreteSISH;
-use App\Service\Esabora\Response\Model\DossierEventFilesSCHS;
 use App\Service\Esabora\Response\Model\DossierEventSCHS;
 use App\Service\Esabora\Response\Model\DossierVisiteSISH;
 use App\Service\Files\ZipHelper;
@@ -236,7 +236,7 @@ class EsaboraManager
         return $suivi;
     }
 
-    public function addFilesToSuiviFromDossierEventFiles(DossierEventFilesSCHS $eventFiles, Suivi $suivi): int
+    public function addFilesToSuiviFromDossierEventFiles(DossierEventFilesSCHSResponse $eventFiles, Suivi $suivi): int
     {
         $nbFilesAdded = 0;
         $zipFilePath = $this->zipHelper->getZipFromBase64($eventFiles->getDocumentZipContent());
