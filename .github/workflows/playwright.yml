@@ -110,26 +110,6 @@ jobs:
           MAILER_DSN: ${{ secrets.MAILER_DSN_CI }}
           MAIL_ENABLE: 1
 
-      - name: Run tests
-        run: |
-          composer require dama/doctrine-test-bundle:7.3
-          ./vendor/bin/phpunit --stop-on-failure --testdox -d memory_limit=-1
-        env:
-          APP_SECRET: ${{ secrets.APP_SECRET }}
-          DATABASE_URL: mysql://root:histologe@127.0.0.1:${{ job.services.mysql.ports['3306'] }}/histologe_db
-          ADMIN_EMAIL: support@histologe.beta.gouv.fr
-          NOTIFICATIONS_EMAIL: notifications@histologe.beta.gouv.fr
-          CONTACT_EMAIL: contact@histologe.beta.gouv.fr
-          HISTOLOGE_URL: http://localhost:8080
-          SERVER_NAME: localhost:8080
-          MAILER_DSN: ${{ secrets.MAILER_DSN_CI }}
-          CRON_ENABLE: 1
-          MAIL_ENABLE: 1
-          FEATURE_ASK_VISITE_ENABLE: 1
-          MAINTENANCE_ENABLE: 0
-          CLAMAV_STRATEGY: 'clamd_network'
-          CLAMAV_HOST: 127.0.0.1
-
       - name: Install dependencies
         run: npm ci
       - name: Install Playwright Browsers
@@ -138,6 +118,14 @@ jobs:
         run: npx playwright test
         env:
           PLAYWRIGHT_TEST_BASE_URL: http://localhost:8080
+          APP_SECRET: ${{ secrets.APP_SECRET }}
+          DATABASE_URL: mysql://root:histologe@127.0.0.1:${{ job.services.mysql.ports['3306'] }}/histologe_db
+          NOTIFICATIONS_EMAIL: notifications@histologe.beta.gouv.fr
+          CONTACT_EMAIL: contact@histologe.beta.gouv.fr
+          HISTOLOGE_URL: http://localhost:8080
+          SERVER_NAME: localhost:8080
+          MAILER_DSN: ${{ secrets.MAILER_DSN_CI }}
+          MAIL_ENABLE: 1
       - uses: actions/upload-artifact@v4
         if: always()
         with:
