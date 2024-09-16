@@ -52,8 +52,9 @@ class ClearStorageOriginalFileCommand extends AbstractCronCommand
         $progressBar = new ProgressBar($output, $nbFilesToProcess);
         $progressBar->start();
         $nbErrors = 0;
-        $nbTmp = 0;
+        $ids = [];
         foreach ($files as $file) {
+            $ids[] = $file->getId();
             $filename = $file->getFilename();
             if ($this->fileStorage->fileExists($filename)) {
                 $this->fileStorage->delete($filename);
@@ -61,9 +62,8 @@ class ClearStorageOriginalFileCommand extends AbstractCronCommand
                 ++$nbErrors;
             }
             $progressBar->advance();
-            ++$nbTmp;
         }
-        $this->fileRepository->updateWithOriginalAndVariants($limit);
+        $this->fileRepository->updateWithOriginalAndVariants($ids);
         $progressBar->finish();
         $this->io->newLine();
         $this->io->success($nbFilesToProcess.' files processed with '.$nbErrors.' files not found');
