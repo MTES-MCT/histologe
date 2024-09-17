@@ -8,6 +8,7 @@ use App\Service\Mailer\NotificationMail;
 use App\Service\Mailer\NotificationMailerRegistry;
 use App\Service\Mailer\NotificationMailerType;
 use App\Service\Signalement\Export\SignalementExportLoader;
+use App\Service\TimezoneProvider;
 use PhpOffice\PhpSpreadsheet\Writer\Csv;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 use Psr\Log\LoggerInterface;
@@ -42,7 +43,8 @@ class ListExportMessageHandler
             }
 
             if (isset($writer)) {
-                $datetimeStr = (new \DateTimeImmutable())->format('Ymd-Hi');
+                $timezone = $user->getTerritory()?->getTimezone() ?? TimezoneProvider::TIMEZONE_EUROPE_PARIS;
+                $datetimeStr = (new \DateTimeImmutable())->setTimezone(new \DateTimeZone($timezone))->format('Ymd-Hi');
                 $filename = 'export-histologe-'.$listExportMessage->getUserId().'-'.$datetimeStr.'.'.$format;
                 $tmpFilepath = $this->parameterBag->get('uploads_tmp_dir').$filename;
                 $writer->save($tmpFilepath);
