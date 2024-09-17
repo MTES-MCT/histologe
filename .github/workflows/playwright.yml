@@ -16,6 +16,11 @@ jobs:
     steps:
     - uses: actions/checkout@v4
 
+    - name: Install Symfony CLI
+      run: |
+        curl -1sLf 'https://dl.cloudsmith.io/public/symfony/stable/setup.deb.sh' | sudo -E bash
+        sudo apt install symfony-cli
+
     - name: Start containers
       run: docker compose -f "docker-compose.yml" up -d --build
 
