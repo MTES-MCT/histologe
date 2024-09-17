@@ -41,9 +41,9 @@ jobs:
       - uses: actions/checkout@v4
 
       - name: NPM install
-        uses: actions/setup-node@v2 #v4 ?
+        uses: actions/setup-node@v4
         with:
-          node-version: '18' #lts/* ?
+          node-version: lts/*
       - run: npm install --omit=dev
 
       - name: Install Symfony Encore
@@ -85,14 +85,15 @@ jobs:
           MAILER_DSN: ${{ secrets.MAILER_DSN_CI }}
           MAIL_ENABLE: 1
 
-      - name: Curl tests
-        run: |
-          curl -i http://localhost:80
-
       - name: Install dependencies
         run: npm ci
       - name: Install Playwright Browsers
         run: npx playwright install --with-deps
+
+      - name: Curl tests
+        run: |
+          curl -i http://localhost:80
+          
       - name: Run Playwright tests
         run: npx playwright test
         env:
