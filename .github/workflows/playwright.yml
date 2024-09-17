@@ -87,8 +87,7 @@ jobs:
 
       - name: Curl tests
         run: |
-          curl -i http://localhost:8080
-          curl -i https://localhost:8080
+          curl -i http://localhost:80
 
       - name: Install dependencies
         run: npm ci
@@ -97,7 +96,7 @@ jobs:
       - name: Run Playwright tests
         run: npx playwright test
         env:
-          PLAYWRIGHT_TEST_BASE_URL: http://localhost:8080
+          PLAYWRIGHT_TEST_BASE_URL: http://localhost:80
           APP_SECRET: ${{ secrets.APP_SECRET }}
           DATABASE_URL: mysql://root:histologe@127.0.0.1:${{ job.services.mysql.ports['3306'] }}/histologe_db
           NOTIFICATIONS_EMAIL: notifications@histologe.beta.gouv.fr
