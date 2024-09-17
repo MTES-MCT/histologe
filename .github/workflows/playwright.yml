@@ -10,7 +10,7 @@ on:
       - develop
 
 jobs:
-  test:
+  playwright:
     timeout-minutes: 60
     runs-on: ubuntu-latest
     steps:
@@ -23,7 +23,8 @@ jobs:
       run: netstat -lt
 
     - name: Curl test
-      run: curl -i http://127.0.0.1:80
+      run: |
+        curl -i http://playwright:8080
 
     - uses: actions/setup-node@v4
       with:
@@ -34,6 +35,8 @@ jobs:
       run: npx playwright install --with-deps
     - name: Run Playwright tests
       run: npx playwright test
+      env:
+        PLAYWRIGHT_TEST_BASE_URL: http://playwright:8080
     - uses: actions/upload-artifact@v4
       if: always()
       with:
