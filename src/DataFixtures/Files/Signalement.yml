@@ -31,7 +31,6 @@ signalements:
     situation_occupant: "1"
     origine_signalement: "Guichet Unique"
     type_energie_logement: "Electrique"
-    mode_contact_proprio: "[\"\",\"t\\u00e9l\\u00e9phone\"]"
     tags:
       - "Urgent"
     situations:
@@ -79,7 +78,6 @@ signalements:
     nb_niveaux_logement: 0
     nb_occupants_logement: 2
     territory: "Ain"
-    mode_contact_proprio: "[\"\",\"t\\u00e9l\\u00e9phone\"]"
     tags:
       - "Peril"
     situations:
@@ -119,7 +117,6 @@ signalements:
     score: 100
     etage_occupant: "rdc"
     escalier_occupant: ""
-    mode_contact_proprio: "[\"\",\"t\\u00e9l\\u00e9phone\"]"
     insee_occupant: "13203"
     is_rsa: 0
     type_energie_logement: "Electrique"
@@ -166,7 +163,6 @@ signalements:
     score: 100
     etage_occupant: "Etage 1"
     escalier_occupant: ""
-    mode_contact_proprio: "[\"\",\"t\\u00e9l\\u00e9phone\"]"
     insee_occupant: "13203"
     is_rsa: 0
     type_energie_logement: "Electrique"
@@ -212,7 +208,6 @@ signalements:
     score: 100
     etage_occupant: "0"
     escalier_occupant: ""
-    mode_contact_proprio: "[\"\",\"t\\u00e9l\\u00e9phone\"]"
     insee_occupant: "13203"
     is_rsa: 0
     type_energie_logement: "Electrique"
@@ -258,7 +253,6 @@ signalements:
     score: 100
     etage_occupant: "0"
     escalier_occupant: ""
-    mode_contact_proprio: "[\"\",\"t\\u00e9l\\u00e9phone\"]"
     insee_occupant: "13203"
     is_rsa: 0
     type_energie_logement: "Electrique"
@@ -303,7 +297,6 @@ signalements:
     score: 100
     etage_occupant: "0"
     escalier_occupant: ""
-    mode_contact_proprio: "[\"\",\"t\\u00e9l\\u00e9phone\"]"
     insee_occupant: "13203"
     is_rsa: 0
     type_energie_logement: "Electrique"
@@ -350,7 +343,6 @@ signalements:
     score: 100
     etage_occupant: "0"
     escalier_occupant: ""
-    mode_contact_proprio: "[\"\",\"t\\u00e9l\\u00e9phone\"]"
     insee_occupant: "13203"
     is_rsa: 0
     type_energie_logement: "Electrique"
@@ -396,7 +388,6 @@ signalements:
     score: 100
     etage_occupant: "0"
     escalier_occupant: ""
-    mode_contact_proprio: "[\"\",\"t\\u00e9l\\u00e9phone\"]"
     insee_occupant: "13203"
     is_rsa: 0
     type_energie_logement: "Electrique"
@@ -442,7 +433,6 @@ signalements:
     score: 100
     etage_occupant: "0"
     escalier_occupant: ""
-    mode_contact_proprio: "[\"\",\"t\\u00e9l\\u00e9phone\"]"
     insee_occupant: "13203"
     is_rsa: 0
     type_energie_logement: "Electrique"
@@ -488,7 +478,6 @@ signalements:
     score: 100
     etage_occupant: "0"
     escalier_occupant: ""
-    mode_contact_proprio: "[\"\",\"t\\u00e9l\\u00e9phone\"]"
     insee_occupant: "13203"
     is_rsa: 0
     type_energie_logement: "Electrique"
@@ -543,7 +532,6 @@ signalements:
     nb_niveaux_logement: 0
     nb_occupants_logement: 2
     territory: "Ain"
-    mode_contact_proprio: "[\"\",\"t\\u00e9l\\u00e9phone\"]"
     tags:
       - "Peril"
     situations:
@@ -591,7 +579,6 @@ signalements:
     nb_niveaux_logement: 0
     nb_occupants_logement: 2
     territory: "Ain"
-    mode_contact_proprio: "[\"\",\"t\\u00e9l\\u00e9phone\"]"
     tags:
       - "Peril"
     situations:
@@ -640,7 +627,6 @@ signalements:
     nb_niveaux_logement: 0
     nb_occupants_logement: 2
     territory: "Ain"
-    mode_contact_proprio: "[\"\",\"t\\u00e9l\\u00e9phone\"]"
     tags:
       - "Peril"
     situations:
@@ -688,7 +674,6 @@ signalements:
     nb_niveaux_logement: 0
     nb_occupants_logement: 2
     territory: "Ain"
-    mode_contact_proprio: "[\"\",\"t\\u00e9l\\u00e9phone\"]"
     is_imported: true
     tags: []
     situations: []
@@ -726,7 +711,6 @@ signalements:
     nb_niveaux_logement: 0
     nb_occupants_logement: 2
     territory: "Rhône"
-    mode_contact_proprio: "[\"\",\"t\\u00e9l\\u00e9phone\"]"
     tags: []
     situations: []
     criteres: []
@@ -763,7 +747,6 @@ signalements:
     nb_niveaux_logement: 0
     nb_occupants_logement: 2
     territory: "Rhône"
-    mode_contact_proprio: "[\"\",\"t\\u00e9l\\u00e9phone\"]"
     tags: []
     situations: []
     criteres: []
@@ -800,7 +783,6 @@ signalements:
     nb_niveaux_logement: 0
     nb_occupants_logement: 2
     territory: "Rhône"
-    mode_contact_proprio: "[\"\",\"t\\u00e9l\\u00e9phone\"]"
     tags: []
     situations: []
     criteres: []
@@ -837,7 +819,6 @@ signalements:
     nb_niveaux_logement: 0
     nb_occupants_logement: 2
     territory: "Rhône"
-    mode_contact_proprio: "[\"\",\"t\\u00e9l\\u00e9phone\"]"
     tags: []
     situations: []
     criteres: []
@@ -866,7 +847,6 @@ signalements:
     score: 100
     etage_occupant: "0"
     escalier_occupant: ""
-    mode_contact_proprio: "[\"\",\"t\\u00e9l\\u00e9phone\"]"
     insee_occupant: "13203"
     is_rsa: 0
     type_energie_logement: "Electrique"
@@ -920,7 +900,6 @@ signalements:
     nb_niveaux_logement: 0
     nb_occupants_logement: 2
     territory: "Yonne"
-    mode_contact_proprio: "[\"\",\"t\\u00e9l\\u00e9phone\"]"
     tags: []
     situations:
       - "le confort du logement"
@@ -966,7 +945,6 @@ signalements:
     nb_niveaux_logement: 0
     nb_occupants_logement: 2
     territory: "Puy-de-Dôme"
-    mode_contact_proprio: "[\"\",\"t\\u00e9l\\u00e9phone\"]"
     tags: []
     situations:
       - "le confort du logement"
@@ -1004,7 +982,6 @@ signalements:
     score: 100
     etage_occupant: "0"
     escalier_occupant: ""
-    mode_contact_proprio: "[\"\",\"t\\u00e9l\\u00e9phone\"]"
     insee_occupant: "13205"
     is_rsa: 0
     type_energie_logement: "Electrique"
@@ -1047,7 +1024,6 @@ signalements:
     score: 80
     etage_occupant: "0"
     escalier_occupant: ""
-    mode_contact_proprio: "[\"\",\"t\\u00e9l\\u00e9phone\"]"
     insee_occupant: "13204"
     is_rsa: 0
     type_energie_logement: "Electrique"
@@ -1092,7 +1068,6 @@ signalements:
     score: 80
     etage_occupant: "Annexe du bâtiment"
     escalier_occupant: ""
-    mode_contact_proprio: "[\"\",\"t\\u00e9l\\u00e9phone\"]"
     insee_occupant: "13204"
     is_rsa: 0
     montant_allocation: 400
@@ -1140,7 +1115,6 @@ signalements:
     score: 100
     etage_occupant: "0"
     escalier_occupant: ""
-    mode_contact_proprio: "[\"\",\"t\\u00e9l\\u00e9phone\"]"
     insee_occupant: "13203"
     is_rsa: 0
     type_energie_logement: "Electrique"
@@ -1190,7 +1164,6 @@ signalements:
     score: 100
     etage_occupant: "0"
     escalier_occupant: ""
-    mode_contact_proprio: "[\"\",\"t\\u00e9l\\u00e9phone\"]"
     insee_occupant: "13203"
     is_rsa: 0
     type_energie_logement: "Electrique"
@@ -1240,7 +1213,6 @@ signalements:
     score: 100
     etage_occupant: "0"
     escalier_occupant: ""
-    mode_contact_proprio: "[\"\",\"t\\u00e9l\\u00e9phone\"]"
     insee_occupant: "13203"
     is_rsa: 0
     type_energie_logement: "Electrique"
@@ -1287,7 +1259,6 @@ signalements:
     score: 100
     etage_occupant: "0"
     escalier_occupant: ""
-    mode_contact_proprio: "[\"\",\"t\\u00e9l\\u00e9phone\"]"
     insee_occupant: "13203"
     is_rsa: 0
     type_energie_logement: "Electrique"
@@ -1334,7 +1305,6 @@ signalements:
     score: 100
     etage_occupant: "0"
     escalier_occupant: ""
-    mode_contact_proprio: "[\"\",\"t\\u00e9l\\u00e9phone\"]"
     insee_occupant: "13203"
     is_rsa: 0
     type_energie_logement: "Electrique"
@@ -1382,7 +1352,6 @@ signalements:
     score: 100
     etage_occupant: "0"
     escalier_occupant: ""
-    mode_contact_proprio: "[\"\",\"t\\u00e9l\\u00e9phone\"]"
     insee_occupant: "13203"
     is_rsa: 0
     type_energie_logement: "Electrique"
@@ -1429,7 +1398,6 @@ signalements:
     score: 100
     etage_occupant: "0"
     escalier_occupant: ""
-    mode_contact_proprio: "[\"\",\"t\\u00e9l\\u00e9phone\"]"
     insee_occupant: "13203"
     is_rsa: 0
     type_energie_logement: "Electrique"
@@ -1477,7 +1445,6 @@ signalements:
     score: 100
     etage_occupant: "0"
     escalier_occupant: ""
-    mode_contact_proprio: "[\"\",\"t\\u00e9l\\u00e9phone\"]"
     insee_occupant: "13203"
     is_rsa: 0
     type_energie_logement: "Electrique"
@@ -1526,7 +1493,6 @@ signalements:
     score: 100
     etage_occupant: "0"
     escalier_occupant: ""
-    mode_contact_proprio: "[\"\",\"t\\u00e9l\\u00e9phone\"]"
     insee_occupant: "13203"
     is_rsa: 0
     type_energie_logement: "Electrique"
@@ -1575,7 +1541,6 @@ signalements:
     score: 4
     etage_occupant: "0"
     escalier_occupant: ""
-    mode_contact_proprio: "[\"\",\"t\\u00e9l\\u00e9phone\"]"
     insee_occupant: "13203"
     is_rsa: 0
     type_energie_logement: "Electrique"
@@ -1616,7 +1581,6 @@ signalements:
     score: 4
     etage_occupant: "0"
     escalier_occupant: ""
-    mode_contact_proprio: "[\"\",\"t\\u00e9l\\u00e9phone\"]"
     insee_occupant: "38185"
     is_rsa: 0
     type_energie_logement: "Electrique"
@@ -1650,7 +1614,6 @@ signalements:
     score: 4
     etage_occupant: "0"
     escalier_occupant: ""
-    mode_contact_proprio: "[\"\",\"t\\u00e9l\\u00e9phone\"]"
     insee_occupant: "38185"
     is_rsa: 0
     type_energie_logement: "Electrique"
@@ -1684,7 +1647,6 @@ signalements:
     score: 4
     etage_occupant: "0"
     escalier_occupant: ""
-    mode_contact_proprio: "[\"\",\"t\\u00e9l\\u00e9phone\"]"
     insee_occupant: "29232"
     is_rsa: 0
     type_energie_logement: "Electrique"
@@ -1718,7 +1680,6 @@ signalements:
     score: 4
     etage_occupant: "0"
     escalier_occupant: ""
-    mode_contact_proprio: "[\"\",\"t\\u00e9l\\u00e9phone\"]"
     insee_occupant: "29046"
     is_rsa: 0
     type_energie_logement: "Electrique"
@@ -1758,7 +1719,6 @@ signalements:
     situation_occupant: "1"
     origine_signalement: "Guichet Unique"
     type_energie_logement: "Electrique"
-    mode_contact_proprio: "[\"\",\"t\\u00e9l\\u00e9phone\"]"
     is_imported: true
   -
     uuid: "00000000-0000-0000-2024-000000000001"
@@ -1786,7 +1746,6 @@ signalements:
     is_rsa: 0
     nb_occupants_logement: 4
     territory: "Pas-de-Calais"
-    mode_contact_proprio: "[\"\",\"t\\u00e9l\\u00e9phone\"]"
     situations:
       - "le confort du logement"
     criteres:
@@ -1827,7 +1786,6 @@ signalements:
     is_rsa: 0
     nb_occupants_logement: 4
     territory: "Bouches-du-Rhône"
-    mode_contact_proprio: "[\"\",\"t\\u00e9l\\u00e9phone\"]"
     situations:
       - "le confort du logement"
     criteres:
@@ -1867,7 +1825,6 @@ signalements:
     is_rsa: 0
     nb_occupants_logement: 4
     territory: "Seine-Saint-Denis"
-    mode_contact_proprio: "[\"\",\"t\\u00e9l\\u00e9phone\"]"
     situations:
       - "le confort du logement"
     criteres:

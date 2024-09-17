@@ -154,7 +154,6 @@ class SignalementManager extends AbstractManager
             ->setEscalierOccupant($data['escalierOccupant'])
             ->setNumAppartOccupant($data['numAppartOccupant'])
             ->setAdresseAutreOccupant($data['adresseAutreOccupant'])
-            ->setModeContactProprio($data['modeContactProprio'])
             ->setInseeOccupant($data['inseeOccupant'])
             ->setLienDeclarantOccupant($data['lienDeclarantOccupant'])
             ->setIsConsentementTiers((bool) $data['isConsentementTiers'])
