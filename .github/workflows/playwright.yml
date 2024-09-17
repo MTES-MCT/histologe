@@ -19,9 +19,6 @@ jobs:
     - name: Start containers
       run: docker compose -f "docker-compose.yml" up -d --build
 
-    - name: Netstat test
-      run: netstat -lt
-
     - name: Curl test
       run: |
         curl -i http://localhost:8080

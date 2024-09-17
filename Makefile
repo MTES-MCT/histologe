@@ -187,12 +187,6 @@ test-coverage: ## Generate phpunit coverage report in html
 e2e: ## Run E2E tests
 	@$(NPX) cypress open
 
-ci-e2e-install: ## Run Playwright CI tests
-	$(NPX) playwright install --with-deps firefox
-
-ci-e2e-test: ## Run Playwright CI tests
-	$(NPX) playwright test --project desktop-firefox ${ARGS}
-
 stan: ## Run PHPStan
 	@$(DOCKER_COMP) exec -it histologe_phpfpm composer stan
 
