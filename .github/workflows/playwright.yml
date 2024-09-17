@@ -24,7 +24,7 @@ jobs:
 
     - name: Curl test
       run: |
-        curl -i http://playwright:8080
+        curl -i http://localhost:8080
 
     - uses: actions/setup-node@v4
       with:
@@ -36,7 +36,7 @@ jobs:
     - name: Run Playwright tests
       run: npx playwright test
       env:
-        PLAYWRIGHT_TEST_BASE_URL: http://playwright:8080
+        PLAYWRIGHT_TEST_BASE_URL: http://localhost:8080
     - uses: actions/upload-artifact@v4
       if: always()
       with:
