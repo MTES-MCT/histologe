@@ -11,7 +11,6 @@ signalements:
     nb_enfants_p6: "2"
     is_allocataire: "CAF"
     nature_logement: "Appartement"
-    type_logement: "T2"
     superficie: 40
     loyer: 500
     phone_number: 0621127284
@@ -56,7 +55,6 @@ signalements:
     is_allocataire: "CAF"
     is_logement_social: 1
     nature_logement: "Appartement"
-    type_logement: "T5"
     superficie: 100
     loyer: 1000
     phone_number: 0621127285
@@ -103,7 +101,6 @@ signalements:
     is_allocataire: ""
     is_logement_social: 1
     nature_logement: "Appartement"
-    type_logement: "T2"
     superficie: 30
     loyer: 300
     phone_number: 0621127286
@@ -150,7 +147,6 @@ signalements:
     nb_enfants_p6: "2"
     is_allocataire: ""
     nature_logement: "Appartement"
-    type_logement: "T2"
     superficie: 30
     loyer: 300
     phone_number: 0621127286
@@ -195,7 +191,6 @@ signalements:
     is_logement_social: 0
     is_allocataire: ""
     nature_logement: "Appartement"
-    type_logement: "T2"
     superficie: 30
     loyer: 300
     phone_number: 0621127286
@@ -240,7 +235,6 @@ signalements:
     is_allocataire: ""
     is_logement_social: 0
     nature_logement: "Appartement"
-    type_logement: "T2"
     superficie: 30
     loyer: 300
     phone_number: 0621127286
@@ -284,7 +278,6 @@ signalements:
     nb_enfants_p6: "2"
     is_allocataire: ""
     nature_logement: "Appartement"
-    type_logement: "T2"
     superficie: 30
     loyer: 300
     phone_number: 0621127286
@@ -329,7 +322,6 @@ signalements:
     nb_enfants_p6: "2"
     is_allocataire: ""
     nature_logement: "Appartement"
-    type_logement: "T2"
     superficie: 30
     loyer: 300
     phone_number: 0621127286
@@ -375,7 +367,6 @@ signalements:
     nb_enfants_p6: "2"
     is_allocataire: ""
     nature_logement: "Appartement"
-    type_logement: "T2"
     superficie: 30
     loyer: 300
     phone_number: 0621127286
@@ -420,7 +411,6 @@ signalements:
     nb_enfants_p6: "2"
     is_allocataire: ""
     nature_logement: "Appartement"
-    type_logement: "T2"
     superficie: 30
     loyer: 300
     phone_number: 0621127286
@@ -465,7 +455,6 @@ signalements:
     nb_enfants_p6: "2"
     is_allocataire: ""
     nature_logement: "Appartement"
-    type_logement: "T2"
     superficie: 30
     loyer: 300
     phone_number: 0621127286
@@ -510,7 +499,6 @@ signalements:
     nb_enfants_p6: "2"
     is_allocataire: "CAF"
     nature_logement: "Appartement"
-    type_logement: "T5"
     superficie: 100
     loyer: 1000
     phone_number: 0621127285
@@ -557,7 +545,6 @@ signalements:
     nb_enfants_p6: "2"
     is_allocataire: "CAF"
     nature_logement: "Appartement"
-    type_logement: "T5"
     superficie: 100
     loyer: 1000
     phone_number: 0621127285
@@ -605,7 +592,6 @@ signalements:
     nb_enfants_p6: "2"
     is_allocataire: "CAF"
     nature_logement: "Appartement"
-    type_logement: "T5"
     superficie: 100
     loyer: 1000
     phone_number: 0621127285
@@ -652,7 +638,6 @@ signalements:
     nb_enfants_p6: "2"
     is_allocataire: "CAF"
     nature_logement: "Appartement"
-    type_logement: "T5"
     superficie: 100
     loyer: 1000
     phone_number: 0621127285
@@ -690,7 +675,6 @@ signalements:
     nb_enfants_p6: "2"
     is_allocataire: "CAF"
     nature_logement: "Appartement"
-    type_logement: "T5"
     superficie: 100
     loyer: 1000
     phone_number: 0621127285
@@ -726,7 +710,6 @@ signalements:
     nb_enfants_p6: "2"
     is_allocataire: "CAF"
     nature_logement: "Appartement"
-    type_logement: "T5"
     superficie: 100
     loyer: 1000
     phone_number: 0621127285
@@ -762,7 +745,6 @@ signalements:
     nb_enfants_p6: "2"
     is_allocataire: "CAF"
     nature_logement: "Appartement"
-    type_logement: "T5"
     superficie: 100
     loyer: 1000
     phone_number: 0621127285
@@ -798,7 +780,6 @@ signalements:
     nb_enfants_p6: "2"
     is_allocataire: "CAF"
     nature_logement: "Appartement"
-    type_logement: "T5"
     superficie: 100
     loyer: 1000
     phone_number: 0621127285
@@ -834,7 +815,6 @@ signalements:
     nb_enfants_p6: "2"
     is_allocataire: ""
     nature_logement: "Appartement"
-    type_logement: "T2"
     superficie: 30
     loyer: 300
     phone_number: 0621127286
@@ -879,7 +859,6 @@ signalements:
     nb_enfants_p6: "2"
     is_allocataire: "CAF"
     nature_logement: "Appartement"
-    type_logement: "T5"
     superficie: 100
     loyer: 1000
     phone_number: 0621127285
@@ -924,7 +903,6 @@ signalements:
     nb_enfants_p6: "2"
     is_allocataire: "CAF"
     nature_logement: "Appartement"
-    type_logement: "T5"
     superficie: 100
     loyer: 1000
     phone_number: 0621127285
@@ -969,7 +947,6 @@ signalements:
     is_allocataire: "MSA"
     is_logement_social: 0
     nature_logement: "Appartement"
-    type_logement: "T2"
     superficie: 30
     loyer: 300
     phone_number: 0621127286
@@ -1011,7 +988,6 @@ signalements:
     is_logement_social: 0
     nb_pieces_logement: 4
     nature_logement: "Appartement"
-    type_logement: "T2"
     superficie: 30
     loyer: 300
     phone_number: 0621127286
@@ -1054,7 +1030,6 @@ signalements:
     is_allocataire: ""
     is_logement_social: 0
     nature_logement: "Appartement"
-    type_logement: "T2"
     superficie: 30
     loyer: 300
     phone_number: 0621127286
@@ -1098,7 +1073,6 @@ signalements:
     nb_enfants_p6: "2"
     is_allocataire: ""
     nature_logement: "Appartement"
-    type_logement: "T2"
     superficie: 30
     loyer: 300
     phone_number: 0621127286
@@ -1147,7 +1121,6 @@ signalements:
     nb_enfants_p6: "2"
     is_allocataire: ""
     nature_logement: "Appartement"
-    type_logement: "T2"
     superficie: 30
     loyer: 300
     phone_number: 0621127286
@@ -1196,7 +1169,6 @@ signalements:
     nb_enfants_p6: "2"
     is_allocataire: ""
     nature_logement: "Appartement"
-    type_logement: "T2"
     superficie: 30
     loyer: 300
     phone_number: 0621127286
@@ -1245,7 +1217,6 @@ signalements:
     nb_enfants_p6: "2"
     is_allocataire: ""
     nature_logement: "Appartement"
-    type_logement: "T2"
     superficie: 30
     loyer: 300
     phone_number: 0621127286
@@ -1291,7 +1262,6 @@ signalements:
     nb_enfants_p6: "2"
     is_allocataire: ""
     nature_logement: "Appartement"
-    type_logement: "T2"
     superficie: 30
     loyer: 300
     phone_number: 0621127286
@@ -1337,7 +1307,6 @@ signalements:
     nb_enfants_p6: "2"
     is_allocataire: ""
     nature_logement: "Appartement"
-    type_logement: "T2"
     superficie: 30
     loyer: 300
     phone_number: 0621127286
@@ -1384,7 +1353,6 @@ signalements:
     nb_enfants_p6: "2"
     is_allocataire: ""
     nature_logement: "Appartement"
-    type_logement: "T2"
     superficie: 30
     loyer: 300
     phone_number: 0621127286
@@ -1431,7 +1399,6 @@ signalements:
     nb_enfants_p6: "2"
     is_allocataire: ""
     nature_logement: "Appartement"
-    type_logement: "T2"
     superficie: 30
     loyer: 300
     phone_number: 0621127286
@@ -1479,7 +1446,6 @@ signalements:
     is_allocataire: ""
     nature_logement: "Autre"
     nature_logement_autre_precision: "Roulotte"
-    type_logement: ""
     superficie: 15
     loyer: 200
     phone_number: 0821127286
@@ -1525,7 +1491,6 @@ signalements:
     nb_enfants_p6: "2"
     is_allocataire: ""
     nature_logement: "Appartement"
-    type_logement: "T2"
     superficie: 30
     loyer: 300
     phone_number: 0621127286
@@ -1567,7 +1532,6 @@ signalements:
     nb_enfants_p6: "2"
     is_allocataire: ""
     nature_logement: "Appartement"
-    type_logement: "T2"
     superficie: 30
     loyer: 300
     phone_number: 0621127286
@@ -1600,7 +1564,6 @@ signalements:
     nb_enfants_p6: "2"
     is_allocataire: ""
     nature_logement: "Appartement"
-    type_logement: "T2"
     superficie: 30
     loyer: 300
     phone_number: 0621127286
@@ -1633,7 +1596,6 @@ signalements:
     nb_enfants_p6: "2"
     is_allocataire: ""
     nature_logement: "Appartement"
-    type_logement: "T2"
     superficie: 30
     loyer: 300
     phone_number: 0621127286
@@ -1666,7 +1628,6 @@ signalements:
     nb_enfants_p6: "2"
     is_allocataire: ""
     nature_logement: "Appartement"
-    type_logement: "T2"
     superficie: 30
     loyer: 300
     phone_number: 0621127286
@@ -1700,7 +1661,6 @@ signalements:
     nb_enfants_p6: "2"
     is_allocataire: "CAF"
     nature_logement: "Appartement"
-    type_logement: "T2"
     superficie: 40
     loyer: 500
     phone_number: 0621127284

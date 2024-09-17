@@ -7,7 +7,6 @@ signalements:
     is_proprio_averti: 1
     is_allocataire: "0"
     nature_logement: "maison"
-    type_logement: "MAISON"
     superficie: 67
     loyer: null
     date_entree: "2019-12-01"
@@ -104,7 +103,6 @@ signalements:
     is_proprio_averti: 1
     is_allocataire: "0"
     nature_logement: "maison"
-    type_logement: "MAISON"
     superficie: 67
     loyer: null
     date_entree: "2020-12-01"
@@ -192,7 +190,6 @@ signalements:
     is_proprio_averti: 1
     is_allocataire: "0"
     nature_logement: "maison"
-    type_logement: "MAISON"
     superficie: 67
     loyer: null
     date_entree: "2020-12-01"
@@ -279,7 +276,6 @@ signalements:
     is_proprio_averti: 1
     is_allocataire: "0"
     nature_logement: "maison"
-    type_logement: "MAISON"
     superficie: 55
     loyer: null
     date_entree: "2020-12-01"
@@ -366,7 +362,6 @@ signalements:
     is_proprio_averti: 1
     is_allocataire: "CAF"
     nature_logement: "maison"
-    type_logement: "MAISON"
     superficie: 55
     loyer: null
     date_entree: "2020-12-01"
@@ -452,7 +447,6 @@ signalements:
     is_proprio_averti: 1
     is_allocataire: "CAF"
     nature_logement: "maison"
-    type_logement: "MAISON"
     superficie: 55
     loyer: null
     date_entree: "2024-12-01"

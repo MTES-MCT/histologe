@@ -102,7 +102,6 @@ class SignalementBuilder
             )
             ->setNbOccupantsLogement($nbOccupantsLogement)
             ->setNatureLogement($this->signalementDraftRequest->getTypeLogementNature())
-            ->setTypeLogement($this->signalementDraftRequest->getTypeLogementNature())
             ->setSuperficie($this->signalementDraftRequest->getCompositionLogementSuperficie())
             ->setNbPiecesLogement($nbPiecesLogement)
             ->setIsBailEnCours($this->evalBoolean($this->signalementDraftRequest->getBailDpeBail()))

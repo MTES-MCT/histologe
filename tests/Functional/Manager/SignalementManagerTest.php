@@ -325,7 +325,6 @@ class SignalementManagerTest extends WebTestCase
             'nbOccupantsLogement' => $faker->randomDigit(),
             'isAllocataire' => true,
             'numAllocataire' => $faker->randomNumber(7),
-            'typeLogement' => 'maison',
             'superficie' => $faker->numberBetween(30, 100),
             'nomProprio' => $faker->lastName(),
             'adresseProprio' => $faker->streetAddress(),

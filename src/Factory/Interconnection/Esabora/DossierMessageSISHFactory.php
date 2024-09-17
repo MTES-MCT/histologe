@@ -128,7 +128,7 @@ class DossierMessageSISHFactory extends AbstractDossierMessageFactory
             ->setSitLogementMontantLoyer($signalement->getLoyer())
             ->setDeclarantNonOccupant($signalement->getIsNotOccupant())
             ->setLogementNature($signalement->getNatureLogement())
-            ->setLogementType($signalement->getTypeLogement())
+            ->setLogementType($signalement->getNatureLogement())
             ->setLogementSocial($signalement->getIsLogementSocial())
             ->setLogementAnneeConstruction($signalement->getAnneeConstruction())
             ->setLogementTypeEnergie($typeEnergieLogement)

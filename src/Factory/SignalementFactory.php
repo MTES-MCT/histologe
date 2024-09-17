@@ -28,7 +28,6 @@ class SignalementFactory
             ->setIsAllocataire($data['isAllocataire'])
             ->setNumAllocataire($data['numAllocataire'])
             ->setNatureLogement($data['natureLogement'])
-            ->setTypeLogement($data['typeLogement'])
             ->setSuperficie($data['superficie'])
             ->setLoyer($data['loyer'])
             ->setIsBailEnCours((bool) $data['isBailEnCours'])
