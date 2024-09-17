@@ -157,10 +157,16 @@ class SignalementExportFiltersDisplay
 
     private function getPartnersFilterValue(string $filterValue): string
     {
+        if ('AUCUN' === $filterValue) {
+            return 'AUCUN';
+        }
         $listPartners = explode(', ', $filterValue);
         $filterValue = '';
         foreach ($listPartners as $idPartner) {
             $partner = $this->partnerRepository->find($idPartner);
+            if (!$partner) {
+                continue;
+            }
             if (!empty($filterValue)) {
                 $filterValue .= ', ';
             }
