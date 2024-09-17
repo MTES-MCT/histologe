@@ -22,23 +22,29 @@ jobs:
         sudo apt install symfony-cli
 
     - name: Start containers
-      run: docker compose -f "docker-compose.yml" up -d --build
+      run: make build
 
     - name: Curl test
       run: curl -i http://localhost:8080
 
-    - uses: actions/setup-node@v4
-      with:
-        node-version: lts/*
-    - name: Install dependencies
-      run: npm ci
-    - name: Install Playwright Browsers
-      run: npx playwright install --with-deps
-    - name: Run Playwright tests
-      run: npx playwright test
-    - uses: actions/upload-artifact@v4
-      if: always()
-      with:
-        name: playwright-report
-        path: playwright-report/
-        retention-days: 30
+    - name: Install E2E
+      run: make ci-e2e-install
+
+    - name: Test E2E
+      run: make ci-e2e-test
+
+##    - uses: actions/setup-node@v4
+##      with:
+##        node-version: lts/*
+##    - name: Install dependencies
+##      run: npm ci
+##    - name: Install Playwright Browsers
+##      run: npx playwright install --with-deps
+##    - name: Run Playwright tests
+##      run: npx playwright test
+##    - uses: actions/upload-artifact@v4
+##      if: always()
+##      with:
+##        name: playwright-report
+##        path: playwright-report/
+##        retention-days: 30
