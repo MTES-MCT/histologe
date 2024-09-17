@@ -5,6 +5,7 @@ namespace App\Tests\Unit\Service\Esabora;
 use App\Entity\Enum\PartnerType;
 use App\Entity\Intervention;
 use App\Entity\User;
+use App\Factory\FileFactory;
 use App\Factory\InterventionFactory;
 use App\Manager\AffectationManager;
 use App\Manager\SuiviManager;
@@ -45,6 +46,7 @@ class EsaboraManagerTest extends TestCase
     private MockObject|UploadHandlerService $uploadHander;
     private MockObject|ImageManipulationHandler $imageManipulationHandler;
     private MockObject|UrlGeneratorInterface $UrlGeneratorInterface;
+    private MockObject|FileFactory $fileFactory;
 
     protected function setUp(): void
     {
@@ -62,6 +64,7 @@ class EsaboraManagerTest extends TestCase
         $this->uploadHander = $this->createMock(UploadHandlerService::class);
         $this->imageManipulationHandler = $this->createMock(ImageManipulationHandler::class);
         $this->UrlGeneratorInterface = $this->createMock(UrlGeneratorInterface::class);
+        $this->fileFactory = $this->createMock(FileFactory::class);
     }
 
     public function testCreateVisite(): void
@@ -108,6 +111,7 @@ class EsaboraManagerTest extends TestCase
             $this->uploadHander,
             $this->imageManipulationHandler,
             $this->UrlGeneratorInterface,
+            $this->fileFactory
         );
         $esaboraManager->createOrUpdateVisite($this->getAffectation(PartnerType::ARS), $dossierVisite);
     }
@@ -173,6 +177,7 @@ class EsaboraManagerTest extends TestCase
             $this->uploadHander,
             $this->imageManipulationHandler,
             $this->UrlGeneratorInterface,
+            $this->fileFactory
         );
     }
 }

@@ -3,7 +3,6 @@
 namespace App\Service\Esabora;
 
 use App\Entity\Affectation;
-use App\Entity\Enum\DocumentType;
 use App\Entity\Enum\InterfacageType;
 use App\Entity\Enum\InterventionType;
 use App\Entity\File;
@@ -11,6 +10,7 @@ use App\Entity\Intervention;
 use App\Entity\Suivi;
 use App\Entity\User;
 use App\Event\InterventionCreatedEvent;
+use App\Factory\FileFactory;
 use App\Factory\InterventionFactory;
 use App\Manager\AffectationManager;
 use App\Manager\SuiviManager;
@@ -51,6 +51,7 @@ class EsaboraManager
         private readonly UploadHandlerService $uploadHandlerService,
         private readonly ImageManipulationHandler $imageManipulationHandler,
         private readonly UrlGeneratorInterface $urlGenerator,
+        private readonly FileFactory $fileFactory,
     ) {
     }
 
@@ -265,16 +266,15 @@ class EsaboraManager
             $this->imageManipulationHandler->resize($file->getPath())->thumbnail();
             $variantsGenerated = true;
         }
-        $file = new File();
-        $file->setSignalement($suivi->getSignalement());
-        $file->setFilename($fileName);
-        $file->setTitle($originalName);
-        $file->setFileType(File::FILE_TYPE_DOCUMENT);
-        $file->setDocumentType(DocumentType::AUTRE);
-        $file->setIsVariantsGenerated($variantsGenerated);
-        $file->setScannedAt(new \DateTimeImmutable());
+        $file = $this->fileFactory->createInstanceFrom(
+            signalement: $suivi->getSignalement(),
+            filename: $fileName,
+            title: $originalName,
+            type: File::FILE_TYPE_DOCUMENT,
+            isVariantsGenerated: $variantsGenerated,
+            scannedAt: new \DateTimeImmutable(),
+        );
         $this->entityManager->persist($file);
-
         $urlDocument = $this->urlGenerator->generate('show_file', ['uuid' => $file->getUuid()], UrlGeneratorInterface::ABSOLUTE_URL);
         $linkToFile = '<br /><a class="fr-link" target="_blank" rel="noopener" href="'.$urlDocument.'">'.$file->getTitle().'</a>';
         $suivi->setDescription($suivi->getDescription().$linkToFile);

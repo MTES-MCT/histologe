@@ -5,6 +5,7 @@ namespace App\Tests\Functional\Manager\Esabora;
 use App\Entity\Affectation;
 use App\Entity\Signalement;
 use App\Entity\Suivi;
+use App\Factory\FileFactory;
 use App\Factory\InterventionFactory;
 use App\Manager\AffectationManager;
 use App\Manager\SuiviManager;
@@ -43,6 +44,7 @@ class EsaboraManagerTest extends KernelTestCase
     private UploadHandlerService $uploadHander;
     private ImageManipulationHandler $imageManipulationHandler;
     private UrlGeneratorInterface $UrlGeneratorInterface;
+    private FileFactory $fileFactory;
 
     protected function setUp(): void
     {
@@ -60,6 +62,7 @@ class EsaboraManagerTest extends KernelTestCase
         $this->uploadHander = self::getContainer()->get(UploadHandlerService::class);
         $this->imageManipulationHandler = self::getContainer()->get(ImageManipulationHandler::class);
         $this->UrlGeneratorInterface = self::getContainer()->get('router');
+        $this->fileFactory = self::getContainer()->get(FileFactory::class);
     }
 
     /**
@@ -103,6 +106,7 @@ class EsaboraManagerTest extends KernelTestCase
             $this->uploadHander,
             $this->imageManipulationHandler,
             $this->UrlGeneratorInterface,
+            $this->fileFactory,
         );
 
         $esaboraManager->synchronizeAffectationFrom($dossierResponse, $affectation);
@@ -219,6 +223,7 @@ class EsaboraManagerTest extends KernelTestCase
             $this->uploadHander,
             $this->imageManipulationHandler,
             $this->UrlGeneratorInterface,
+            $this->fileFactory,
         );
 
         $esaboraManager->synchronizeAffectationFrom($dossierResponse, $affectation);
