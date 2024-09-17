@@ -71,7 +71,9 @@ class SignalementExportFactoryTest extends TestCase
                 Les murs ont des fissures.|De l'eau s’infiltre dans mon logement.|Il y a des trace ",
             'etiquettes' => null,
             'geoloc' => '{"lat": "43.3426152", "lng": "5.3711848"}',
-            'interventionsStatus' => 'PLANNED|2023-07-13 13:41:15|1',
+            'interventionsStatus' => 'PLANNED|2023-07-13 13:41:15||DONE|2024-06-09 10:00:00|1',
+            'interventionConcludeProcedure' => '|RSD,INSALUBRITE',
+            'interventionDetails' => '|dossier envoyé pour manquement sanitaire',
         ];
 
         $user = $this->getUserFromRole(User::ROLE_ADMIN);
@@ -86,7 +88,7 @@ class SignalementExportFactoryTest extends TestCase
         $this->assertEquals($dateFormatted, $signalementExportFactory->createdAt);
         $this->assertEquals($dateFormatted, $signalementExportFactory->modifiedAt);
         $this->assertEquals($dateFormatted, $signalementExportFactory->closedAt);
-        $this->assertEquals('13/07/2023', $signalementExportFactory->dateVisite);
+        $this->assertEquals('09/06/2024', $signalementExportFactory->dateVisite);
         $this->assertEquals('Oui', $signalementExportFactory->isOccupantPresentVisite);
 
         $this->assertEquals(SignalementExportFactory::NON_RENSEIGNE, $signalementExportFactory->telephoneOccupantBis);
@@ -107,6 +109,8 @@ class SignalementExportFactoryTest extends TestCase
         $this->assertEquals(SignalementExportFactory::NON, $signalementExportFactory->isPreavisDepart);
         $this->assertEquals(SignalementExportFactory::NON_RENSEIGNE, $signalementExportFactory->isRelogement);
         $this->assertEquals(SignalementExportFactory::NON, $signalementExportFactory->isNotOccupant);
-        $this->assertEquals(VisiteStatus::CONCLUSION_A_RENSEIGNER->value, $signalementExportFactory->interventionStatus);
+        $this->assertEquals(VisiteStatus::TERMINEE->value, $signalementExportFactory->interventionStatus);
+        $this->assertEquals('RSD,INSALUBRITE', $signalementExportFactory->interventionConcludeProcedure);
+        $this->assertEquals('dossier envoyé pour manquement sanitaire', $signalementExportFactory->interventionDetails);
     }
 }
