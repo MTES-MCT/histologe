@@ -3,6 +3,7 @@
 namespace App\Factory\Interconnection\Oilhi;
 
 use App\Entity\Affectation;
+use App\Entity\Criticite;
 use App\Entity\Enum\OccupantLink;
 use App\Entity\Enum\Qualification;
 use App\Entity\Intervention;
@@ -83,7 +84,7 @@ class DossierMessageFactory implements DossierMessageFactoryInterface
             ->setRapportVisite($interventionData['rapport_visite'] ?? null)
             ->setDateVisite($interventionData['date_visite'] ?? null)
             ->setOperateurVisite($interventionData['operateur_visite'] ?? null)
-            ->setDesordres($this->buildDesordre($signalement));
+            ->setDesordres($this->buildDesordres($signalement));
     }
 
     /**
@@ -110,20 +111,35 @@ class DossierMessageFactory implements DossierMessageFactoryInterface
     /**
      * @return array|Desordre[]
      */
-    private function buildDesordre(Signalement $signalement): array
+    private function buildDesordres(Signalement $signalement): array
     {
         /** @var Desordre[] $desordres */
         $desordres = [];
-        foreach ($signalement->getDesordrePrecisions() as $desordrePrecision) {
-            $desordre = new Desordre(
-                desordre: $desordrePrecision->getDesordreCritere()->getDesordreCategorie()->getLabel(),
-                equipement: $desordrePrecision->getDesordreCritere()->getLabelCritere(),
-                risque: HtmlCleaner::clean($desordrePrecision->getLabel()),
-                isDanger: $desordrePrecision->getIsDanger(),
-                isSurrocupation: $desordrePrecision->getIsSuroccupation(),
-                isInsalubrite: $desordrePrecision->getIsInsalubrite()
-            );
+        if ($signalement->getCreatedFrom()) {
+            foreach ($signalement->getDesordrePrecisions() as $desordrePrecision) {
+                $desordre = new Desordre(
+                    desordre: $desordrePrecision->getDesordreCritere()->getDesordreCategorie()->getLabel(),
+                    equipement: $desordrePrecision->getDesordreCritere()->getLabelCritere(),
+                    risque: HtmlCleaner::clean($desordrePrecision->getLabel()),
+                    isDanger: $desordrePrecision->getIsDanger(),
+                    isSurrocupation: $desordrePrecision->getIsSuroccupation(),
+                    isInsalubrite: $desordrePrecision->getIsInsalubrite()
+                );
+                $desordres[] = $desordre;
+            }
 
+            return $desordres;
+        }
+
+        $criticites = $signalement->getCriticites();
+        /** @var Criticite $criticite */
+        foreach ($criticites as $criticite) {
+            $desordre = new Desordre(
+                desordre: $criticite->getCritere()->getSituation()->getLabel(),
+                equipement: $criticite->getCritere()->getLabel(),
+                risque: $criticite->getLabel(),
+                isDanger: $criticite->getIsDanger(),
+            );
             $desordres[] = $desordre;
         }
 
