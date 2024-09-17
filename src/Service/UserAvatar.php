@@ -29,14 +29,14 @@ class UserAvatar implements RuntimeExtensionInterface
             $src = "data:image/$type;base64,$data64";
 
             return sprintf(
-                '<img src="%s" alt="Avatar de l\'utilisateur" class="avatar-%s">',
+                '<img src="%s" alt="Avatar de l\'utilisateur" class="avatar-histologe avatar-%s">',
                 $src,
                 $size
             );
         }
 
         return sprintf(
-            '<span class="avatar-placeholder avatar-%s">%s</span>',
+            '<span class="avatar-histologe avatar-placeholder avatar-%s">%s</span>',
             $size,
             $zipCode
         );
