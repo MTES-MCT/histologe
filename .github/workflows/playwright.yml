@@ -35,35 +35,10 @@ jobs:
         env:
           update: true
 
-      - uses: actions/checkout@v4
-          
-      - name: Cache wkthtmltopdf
-        uses: actions/cache@v2
-        id: cache-wkhtmltopdf
-        with:
-          path: "~/wkhtmltox/"
-          key: ${{ runner.os }}-wkhtmltopdf-${{ hashFiles('**/*.deb') }}
-
-      - name: Download wkthtmltopdf & dependencies
-        if: steps.cache-wkhtmltopdf.outputs.cache-hit != 'true'
-        run: |
-          mkdir ~/wkhtmltox
-          wget -O ~/wkhtmltox/wkhtmltox.deb https://github.com/wkhtmltopdf/packaging/releases/download/0.12.6-1/wkhtmltox_0.12.6-1.bionic_amd64.deb
-          wget -O ~/wkhtmltox/xfonts-encodings.deb http://archive.ubuntu.com/ubuntu/pool/main/x/xfonts-encodings/xfonts-encodings_1.0.4-2_all.deb
-          wget -O ~/wkhtmltox/xfonts-utils.deb http://archive.ubuntu.com/ubuntu/pool/main/x/xfonts-utils/xfonts-utils_7.7+6_amd64.deb
-          wget -O ~/wkhtmltox/xfonts-75dpi.deb http://archive.ubuntu.com/ubuntu/pool/universe/x/xfonts-75dpi/xfonts-75dpi_1.0.4+nmu1_all.deb
-          wget -O ~/wkhtmltox/xfonts-base.deb http://archive.ubuntu.com/ubuntu/pool/main/x/xfonts-base/xfonts-base_1.0.4+nmu1_all.deb
-
-      - name: Install wkhtmltopdf
-        run: |
-          sudo dpkg -i ~/wkhtmltox/xfonts-encodings.deb
-          sudo dpkg -i ~/wkhtmltox/xfonts-utils.deb
-          sudo dpkg -i ~/wkhtmltox/xfonts-75dpi.deb
-          sudo dpkg -i ~/wkhtmltox/xfonts-base.deb
-          sudo dpkg -i ~/wkhtmltox/wkhtmltox.deb
-
       - name: Check PHP Version
         run: php -v
+
+      - uses: actions/checkout@v4
 
       - name: NPM install
         uses: actions/setup-node@v2 #v4 ?
@@ -109,6 +84,11 @@ jobs:
           SERVER_NAME: localhost:8080
           MAILER_DSN: ${{ secrets.MAILER_DSN_CI }}
           MAIL_ENABLE: 1
+
+      - name: Curl tests
+        run: |
+          curl -i http://localhost:8080
+          curl -i https://localhost:8080
 
       - name: Install dependencies
         run: npm ci
