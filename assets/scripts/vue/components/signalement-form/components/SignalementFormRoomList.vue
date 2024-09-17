@@ -18,6 +18,7 @@
         :hasError="formStore.validationErrors[idPieceAVivre]  !== undefined"
         :error="formStore.validationErrors[idPieceAVivre]"
         @update:modelValue="handleCheckBox(idPieceAVivre)"
+        :access_focus="access_focus"
       />
       <SignalementFormCheckbox
         v-if="formStore.data.type_logement_commodites_cuisine === 'oui'"
@@ -64,13 +65,13 @@ export default defineComponent({
     hasError: { type: Boolean, default: false },
     error: { type: String, default: '' },
     clickEvent: Function,
+    access_focus: { type: Boolean, default: false },
     // les propriétés suivantes ne sont pas utilisées,
     // mais si on ne les met pas, elles apparaissent dans le DOM
     // et ça soulève des erreurs W3C
     handleClickComponent: Function,
     access_name: { type: String, default: '' },
-    access_autocomplete: { type: String, default: '' },
-    access_focus: { type: Boolean, default: false }
+    access_autocomplete: { type: String, default: '' }
   },
   data () {
     return {

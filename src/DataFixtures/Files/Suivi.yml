@@ -71,7 +71,7 @@ suivis:
   type: 1
 -
   created_by: null
-  description: "Ajout d'un signalement postcloture par l'usager"
+  description: "Je ne comprends pas pourquoi mon signalement a été cloturé, j'ai toujours des soucis ! (suivi de type 5 post-cloture)"
   is_public: 1
   signalement: "2022-2"
   type: 5

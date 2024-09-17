@@ -19,6 +19,7 @@
         v-for="(suggestion, index) in suggestions"
         :key="index"
         class="fr-col-12 fr-p-3v fr-text-label--blue-france fr-address-suggestion"
+        ref="addressSuggestions"
         tabindex="0"
         @click="handleClickSuggestion(index)"
         @keyup="handleKeyboardSuggestion($event, index)"
@@ -193,12 +194,12 @@ export default defineComponent({
       }
     },
     handleKeyboardSuggestion (event: any, index: number) {
-      if (event.key === 'Enter') {
+      if (event.key === ' ' || event.key === 'Spacebar') {
         this.handleClickSuggestion(index)
       } else if (event.key === 'ArrowUp' || event.key === 'ArrowDown') {
         event.preventDefault()
-        const suggestionElements = document.querySelectorAll('.fr-address-suggestion')
-        if (suggestionElements.length > 0) {
+        const suggestionElements = this.$refs.addressSuggestions as HTMLElement[]
+        if (suggestionElements && suggestionElements.length > 0) {
           let newIndex = index
           if (event.key === 'ArrowUp') {
             newIndex = (index === 0) ? suggestionElements.length - 1 : index - 1

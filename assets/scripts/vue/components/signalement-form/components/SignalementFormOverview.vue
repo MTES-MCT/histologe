@@ -11,7 +11,7 @@
             <h4 class="fr-h6">Adresse du logement</h4>
           </div>
           <div class="fr-col-4 fr-text--right">
-            <button @click="handleEdit('adresse_logement')" class="fr-btn fr-btn--tertiary fr-btn--icon-left fr-icon-edit-line">Editer</button>
+            <button @click="handleEdit('adresse_logement')" class="fr-btn fr-btn--tertiary fr-btn--icon-left fr-icon-edit-line" ref="firstbutton">Editer</button>
           </div>
         </div>
         <p v-html="getFormDataAdresse()"></p>
@@ -219,6 +219,9 @@ export default defineComponent({
       disorderIcons: [{ src: '/img/form/BATIMENT/Picto-batiment.svg', alt: '' }, { src: '/img/form/LOGEMENT/Picto-logement.svg', alt: '' }]
     }
   },
+  mounted () {
+    this.focusInput()
+  },
   methods: {
     getFormDataAdresse (): string {
       let result = ''
@@ -398,6 +401,12 @@ export default defineComponent({
     handleEdit (screenSlug: string) {
       if (this.clickEvent !== undefined) {
         this.clickEvent('goto', screenSlug, '')
+      }
+    },
+    focusInput () {
+      const focusableElement = (this.$refs.firstbutton) as HTMLElement
+      if (focusableElement) {
+        focusableElement.focus()
       }
     }
   }

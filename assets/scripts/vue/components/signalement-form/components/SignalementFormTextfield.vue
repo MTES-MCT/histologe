@@ -1,5 +1,5 @@
 <template>
-<div :class="['fr-input-group', { 'fr-input-group--disabled': disabled }]" :id="id">
+<div :class="['fr-input-group', { 'fr-input-group--disabled': disabled }]" :id="id" ref="textfield">
   <label class='fr-label' :for="id + '_input'">
     {{ variablesReplacer.replace(label) }}
     <span class="fr-hint-text">{{ description }}</span>
@@ -8,6 +8,7 @@
       <input
         type="text"
         :id="id + '_input'"
+        :ref="id + '_ref'"
         :name="access_name"
         :autocomplete="access_autocomplete"
         :value="internalValue"
@@ -63,6 +64,12 @@ export default defineComponent({
       variablesReplacer
     }
   },
+  mounted () {
+    const element = this.$refs.textfield as HTMLElement
+    if (this.access_focus && element && !element.classList.contains('fr-hidden')) {
+      this.focusInput()
+    }
+  },
   computed: {
     internalValue: {
       get () {
@@ -79,6 +86,16 @@ export default defineComponent({
       this.$emit('update:modelValue', value)
       if (this.tagWhenEdit !== '') {
         formStore.data[this.tagWhenEdit] = 1
+      }
+    },
+    focusInput () {
+      // console.log('focusInput textfield')
+      // console.log(this.id + '_ref')
+      // console.log(this.$refs)
+      const focusableElement = (this.$refs[this.id + '_ref']) as HTMLElement
+      // console.log(focusableElement)
+      if (focusableElement) {
+        focusableElement.focus()
       }
     }
   },

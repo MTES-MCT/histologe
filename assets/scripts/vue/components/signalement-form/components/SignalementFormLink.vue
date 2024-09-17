@@ -1,7 +1,8 @@
 <template>
-  <div class="signalement-form-link">
+  <div class="signalement-form-link" ref="link">
     <a
       :id="id"
+      :ref="id + '_ref'"
       :class="[ customCss ]"
       :href="variablesReplacer.replace(link)"
       :target="linktarget"
@@ -30,24 +31,36 @@ export default defineComponent({
     customCss: { type: String, default: '' },
     ariaControls: { type: String, default: undefined },
     clickEvent: Function,
+    access_focus: { type: Boolean, default: false },
     // les propriétés suivantes ne sont pas utilisées,
     // mais si on ne les met pas, elles apparaissent dans le DOM
     // et ça soulève des erreurs W3C
     hasError: { type: Boolean, default: undefined },
     access_name: { type: String, default: undefined },
-    access_autocomplete: { type: String, default: undefined },
-    access_focus: { type: Boolean, default: false }
+    access_autocomplete: { type: String, default: undefined }
+  },
+  data () {
+    return {
+      variablesReplacer
+    }
+  },
+  mounted () {
+    const element = this.$refs.link as HTMLElement
+    if (this.access_focus && element && !element.classList.contains('fr-hidden')) {
+      this.focusInput()
+    }
   },
   methods: {
     handleClick () {
       if (this.clickEvent !== undefined) {
         this.clickEvent(this.id)
       }
-    }
-  },
-  data () {
-    return {
-      variablesReplacer
+    },
+    focusInput () {
+      const focusableElement = (this.$refs[this.id + '_ref']) as HTMLElement
+      if (focusableElement) {
+        focusableElement.focus()
+      }
     }
   }
 })

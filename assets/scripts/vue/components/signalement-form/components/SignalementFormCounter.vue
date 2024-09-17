@@ -1,5 +1,5 @@
 <template>
-  <div class="fr-input-group" :id="id">
+  <div class="fr-input-group" :id="id" ref="counter">
     <label :class="[ customCss, 'fr-label' ]" :for="id + '_input'">
       {{ variablesReplacer.replace(label) }}
       <span class="fr-hint-text">{{ description }}</span>
@@ -9,6 +9,7 @@
         pattern="[0-9]*"
         inputmode="numeric"
         :id="id + '_input'"
+        :ref="id + '_ref'"
         :name="id"
         :value="internalValue"
         :class="[ customCss, 'fr-input' ]"
@@ -41,14 +42,14 @@ export default defineComponent({
     hasError: { type: Boolean, default: false },
     error: { type: String, default: '' },
     defaultValue: { type: Number, default: null },
+    access_focus: { type: Boolean, default: false },
     // les propriétés suivantes ne sont pas utilisées,
     // mais si on ne les met pas, elles apparaissent dans le DOM
     // et ça soulève des erreurs W3C
     handleClickComponent: Function,
     clickEvent: Function,
     access_name: { type: String, default: undefined },
-    access_autocomplete: { type: String, default: undefined },
-    access_focus: { type: Boolean, default: false }
+    access_autocomplete: { type: String, default: undefined }
   },
   data () {
     return {
@@ -69,12 +70,22 @@ export default defineComponent({
     updateValue (event: Event) {
       const value = (event.target as HTMLInputElement).value
       this.$emit('update:modelValue', value)
+    },
+    focusInput () {
+      const focusableElement = (this.$refs[this.id + '_ref']) as HTMLElement
+      if (focusableElement) {
+        focusableElement.focus()
+      }
     }
   },
   emits: ['update:modelValue'],
   mounted () {
     if (this.modelValue === null) {
       this.$emit('update:modelValue', this.internalValue)
+    }
+    const element = this.$refs.counter as HTMLElement
+    if (this.access_focus && element && !element.classList.contains('fr-hidden')) {
+      this.focusInput()
     }
   }
 })

@@ -1,7 +1,8 @@
 <template>
-    <div class="signalement-form-button" :id="id">
+    <div class="signalement-form-button" :id="id" ref="button">
       <button
-        id="button"
+        :id="id + '_button'"
+        :ref="id + '_ref'"
         :type="type"
         :class="[ 'fr-btn', customCss, formStore.lastButtonClicked === id ? 'fr-btn--loading fr-btn--icon-right fr-icon-refresh-line' : '' ]"
         :disabled="formStore.lastButtonClicked !== ''"
@@ -40,6 +41,7 @@ export default defineComponent({
     ariaControls: { type: String, default: undefined },
     clickEvent: Function,
     access_focus: { type: Boolean, default: false },
+    validOnEnter: { type: Boolean, default: false },
     // les propriétés suivantes ne sont pas utilisées,
     // mais si on ne les met pas, elles apparaissent dans le DOM
     // et ça soulève des erreurs W3C
@@ -54,13 +56,9 @@ export default defineComponent({
     }
   },
   mounted () {
-    if (this.access_focus) {
-      this.$nextTick(() => {
-        const element = document.querySelector('#button') as HTMLElement
-        if (element) {
-          element.focus()
-        }
-      })
+    const element = this.$refs.button as HTMLElement
+    if (this.access_focus && element && !element.classList.contains('fr-hidden')) {
+      this.focusInput()
     }
   },
   computed: {
@@ -81,6 +79,12 @@ export default defineComponent({
     handleClick () {
       if (this.clickEvent !== undefined) {
         this.clickEvent(this.actionType, this.actionParam, this.id)
+      }
+    },
+    focusInput () {
+      const focusableElement = this.$refs[this.id + '_ref'] as HTMLElement
+      if (focusableElement) {
+        focusableElement.focus()
       }
     }
   }

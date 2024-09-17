@@ -11,6 +11,7 @@
             :id="component.slug"
             :label="component.label"
             :iconSrc="component.icon.src"
+            :access_focus="component.accessibility?.focus"
             :clickEvent="handleUpdateSelected"
             />
       </div>

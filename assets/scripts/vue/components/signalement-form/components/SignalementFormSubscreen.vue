@@ -12,6 +12,8 @@
         :id="component.slug"
         :access_name="component.accessibility?.name ?? component.slug"
         :access_autocomplete="component.accessibility?.autocomplete ?? 'off'"
+        :access_focus="component.accessibility?.focus ?? false"
+        :validOnEnter="component.validOnEnter ?? false"
         :label="component.label"
         :hint="component.hint"
         :labelInfo="component.labelInfo"

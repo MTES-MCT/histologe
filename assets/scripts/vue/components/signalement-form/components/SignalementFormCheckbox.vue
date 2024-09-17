@@ -1,9 +1,10 @@
 <template>
-  <div class="fr-fieldset__element signalement-form-checkbox">
+  <div class="fr-fieldset__element signalement-form-checkbox" ref="checkbox">
     <div :class="['fr-checkbox-group', { 'fr-checkbox-group--error': hasError }]" :id="id">
       <input
           type="checkbox"
           :id="idCheckbox"
+          :ref="id + '_ref'"
           :name="idCheckbox"
           :value="modelValue"
           :class="[ customCss ]"
@@ -41,20 +42,26 @@ export default defineComponent({
     validate: { type: Object, default: null },
     hasError: { type: Boolean, default: false },
     error: { type: String, default: '' },
+    access_focus: { type: Boolean, default: false },
     // les propriétés suivantes ne sont pas utilisées,
     // mais si on ne les met pas, elles apparaissent dans le DOM
     // et ça soulève des erreurs W3C
     clickEvent: Function,
     handleClickComponent: Function,
     access_name: { type: String, default: '' },
-    access_autocomplete: { type: String, default: '' },
-    access_focus: { type: Boolean, default: false }
+    access_autocomplete: { type: String, default: '' }
   },
   data () {
     return {
       formStore,
       variablesReplacer,
       idCheckbox: this.id + '_check'
+    }
+  },
+  mounted () {
+    const element = this.$refs.checkbox as HTMLElement
+    if (this.access_focus && element && !element.classList.contains('fr-hidden')) {
+      this.focusInput()
     }
   },
   methods: {
@@ -67,6 +74,12 @@ export default defineComponent({
             formStore.data[dataname] = null
           }
         }
+      }
+    },
+    focusInput () {
+      const focusableElement = (this.$refs[this.id + '_ref']) as HTMLElement
+      if (focusableElement) {
+        focusableElement.focus()
       }
     }
   },

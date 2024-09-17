@@ -10,6 +10,7 @@
         :validate="validate"
         :access_name="access_name"
         :access_autocomplete="access_autocomplete"
+        :access_focus="access_focus"
         :hasError="hasError"
         :error="error"
         @keydown.down.prevent="handleDownSuggestion"
@@ -71,16 +72,6 @@ export default defineComponent({
       formStore,
       selectedSuggestion: '',
       selectedSuggestionIndex: -1
-    }
-  },
-  mounted () {
-    if (this.access_focus) {
-      this.$nextTick(() => {
-        const element = document.querySelector('#' + this.idAutocomplete + '_input') as HTMLElement
-        if (element) {
-          element.focus()
-        }
-      })
     }
   },
   created () {

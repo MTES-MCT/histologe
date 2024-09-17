@@ -1,13 +1,26 @@
 <template>
-  <fieldset :id="id" :class="[customCss, 'signalement-form-only-choice fr-fieldset']" :aria-labelledby="id + '-radio-hint-legend'">
-      <legend :class="['fr-fieldset__legend--regular', 'fr-fieldset__legend', customLegendCss]" :id="id + '-radio-hint-legend'">
+  <fieldset
+    :id="id"
+    :class="[customCss, 'signalement-form-only-choice fr-fieldset']"
+    :aria-labelledby="id + '-radio-hint-legend'"
+    ref="onlychoice"
+    >
+      <legend
+        :class="['fr-fieldset__legend--regular', 'fr-fieldset__legend', customLegendCss]"
+        :id="id + '-radio-hint-legend'"
+        >
         {{ variablesReplacer.replace(label) }}
       </legend>
-      <div v-for="radioValue in values" :class="['fr-fieldset__element', (radioValue.value === 'oui' || radioValue.value === 'non') ? 'item-divided' : '']" :key="radioValue.value">
+      <div
+        v-for="radioValue in values"
+        :class="['fr-fieldset__element', (radioValue.value === 'oui' || radioValue.value === 'non') ? 'item-divided' : '']"
+        :key="radioValue.value"
+        >
           <div :class="['fr-radio-group', modelValue == radioValue.value ? 'is-checked' : '']">
             <input
               type="radio"
               :id="id + '_' + radioValue.value"
+              :ref="id + '_' + radioValue.value + '_ref'"
               :name="id"
               v-bind:key="radioValue.value"
               :value="radioValue.value"
@@ -57,19 +70,21 @@ export default defineComponent({
     }
   },
   mounted () {
-    if (this.access_focus) {
-      this.$nextTick(() => {
-        const element = document.querySelector('#' + this.id + '_' + this.values[0].value) as HTMLElement
-        if (element) {
-          element.focus()
-        }
-      })
+    const element = this.$refs.onlychoice as HTMLElement
+    if (this.access_focus && element && !element.classList.contains('fr-hidden')) {
+      this.focusInput()
     }
   },
   methods: {
     updateValue (event: Event) {
       const value = (event.target as HTMLInputElement).getAttribute('value')
       this.$emit('update:modelValue', value)
+    },
+    focusInput () {
+      const focusableElement = (this.$refs[this.id + '_' + this.values[0].value + '_ref']) as Array<HTMLElement>
+      if (focusableElement[0]) {
+        focusableElement[0].focus()
+      }
     }
   },
   computed: {
