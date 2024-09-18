@@ -191,6 +191,6 @@ class SignalementFactoryTest extends KernelTestCase
         $this->assertEmpty($signalement->getModifiedBy());
         $this->assertEmpty($signalement->getAffectationStatusByPartner());
 
-        $this->assertCount(73, $data, 'Array $data should have 73 keys');
+        $this->assertCount(72, $data, 'Array $data should have 72 keys');
     }
 }
