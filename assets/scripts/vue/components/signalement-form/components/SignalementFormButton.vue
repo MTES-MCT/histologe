@@ -57,9 +57,17 @@ export default defineComponent({
   },
   mounted () {
     const element = this.$refs.button as HTMLElement
-    if (this.access_focus && element && !element.classList.contains('fr-hidden')) {
-      this.focusInput()
+    if (element && !element.classList.contains('fr-hidden')) {
+      if (this.access_focus) {
+        this.focusInput()
+      }
+      if (this.validOnEnter) {
+        window.addEventListener('keyup', this.handleGlobalEnter)
+      }
     }
+  },
+  beforeUnmount () {
+    window.removeEventListener('keyup', this.handleGlobalEnter)
   },
   computed: {
     actionType (): string {
@@ -85,6 +93,11 @@ export default defineComponent({
       const focusableElement = this.$refs[this.id + '_ref'] as HTMLElement
       if (focusableElement) {
         focusableElement.focus()
+      }
+    },
+    handleGlobalEnter (event: KeyboardEvent) {
+      if (event.key === 'Enter') {
+        this.handleClick()
       }
     }
   }

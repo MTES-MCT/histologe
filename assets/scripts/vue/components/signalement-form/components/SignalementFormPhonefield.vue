@@ -131,7 +131,8 @@ export default defineComponent({
     // mais si on ne les met pas, elles apparaissent dans le DOM
     // et ça soulève des erreurs W3C
     modelValue: { type: String, default: null },
-    handleClickComponent: Function
+    handleClickComponent: Function,
+    validOnEnter: { type: Boolean, default: false }
   },
   data () {
     if (formStore.data[this.id + '_countrycode'] === '' || formStore.data[this.id + '_countrycode'] === undefined) {

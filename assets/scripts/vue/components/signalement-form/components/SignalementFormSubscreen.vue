@@ -104,7 +104,8 @@ export default defineComponent({
     access_name: { type: String, default: undefined },
     access_autocomplete: { type: String, default: undefined },
     access_focus: { type: Boolean, default: false },
-    clickEvent: Function
+    clickEvent: Function,
+    validOnEnter: { type: Boolean, default: false }
   },
   data () {
     return {

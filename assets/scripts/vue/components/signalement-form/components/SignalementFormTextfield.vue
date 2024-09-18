@@ -56,7 +56,8 @@ export default defineComponent({
     // mais si on ne les met pas, elles apparaissent dans le DOM
     // et ça soulève des erreurs W3C
     clickEvent: Function,
-    handleClickComponent: Function
+    handleClickComponent: Function,
+    validOnEnter: { type: Boolean, default: false }
   },
   data () {
     return {
@@ -89,11 +90,7 @@ export default defineComponent({
       }
     },
     focusInput () {
-      // console.log('focusInput textfield')
-      // console.log(this.id + '_ref')
-      // console.log(this.$refs)
       const focusableElement = (this.$refs[this.id + '_ref']) as HTMLElement
-      // console.log(focusableElement)
       if (focusableElement) {
         focusableElement.focus()
       }

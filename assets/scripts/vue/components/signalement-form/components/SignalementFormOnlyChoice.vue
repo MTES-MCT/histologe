@@ -62,7 +62,8 @@ export default defineComponent({
     clickEvent: Function,
     handleClickComponent: Function,
     access_name: { type: String, default: undefined },
-    access_autocomplete: { type: String, default: undefined }
+    access_autocomplete: { type: String, default: undefined },
+    validOnEnter: { type: Boolean, default: false }
   },
   data () {
     return {

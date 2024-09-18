@@ -37,7 +37,8 @@ export default defineComponent({
     // et ça soulève des erreurs W3C
     hasError: { type: Boolean, default: undefined },
     access_name: { type: String, default: undefined },
-    access_autocomplete: { type: String, default: undefined }
+    access_autocomplete: { type: String, default: undefined },
+    validOnEnter: { type: Boolean, default: false }
   },
   data () {
     return {

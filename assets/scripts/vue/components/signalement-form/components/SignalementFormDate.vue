@@ -43,7 +43,8 @@ export default defineComponent({
     handleClickComponent: Function,
     clickEvent: Function,
     access_name: { type: String, default: undefined },
-    access_autocomplete: { type: String, default: undefined }
+    access_autocomplete: { type: String, default: undefined },
+    validOnEnter: { type: Boolean, default: false }
   },
   mounted () {
     const element = this.$refs.date as HTMLElement

@@ -94,7 +94,8 @@
                 "label": "Suivant",
                 "slug": "vos_coordonnees_occupant_next",
                 "action": "goto.save:zone_concernee",
-                "customCss": "fr-btn--icon-right fr-icon-arrow-right-line"
+                "customCss": "fr-btn--icon-right fr-icon-arrow-right-line",
+                "validOnEnter": true
               },
               {
                 "type": "SignalementFormButton",
@@ -164,7 +165,8 @@
                 "label": "Suivant",
                 "slug": "zone_concernee_zone_next",
                 "action": "goto.save:ecran_intermediaire_type_composition",
-                "customCss": "fr-btn--icon-right fr-icon-arrow-right-line"
+                "customCss": "fr-btn--icon-right fr-icon-arrow-right-line",
+                "validOnEnter": true
               },
               {
                 "type": "SignalementFormButton",
@@ -345,7 +347,8 @@
                 "label": "Suivant",
                 "slug": "type_logement_next",
                 "action": "goto.save:composition_logement",
-                "customCss": "fr-btn--icon-right fr-icon-arrow-right-line"
+                "customCss": "fr-btn--icon-right fr-icon-arrow-right-line",
+                "validOnEnter": true
               },
               {
                 "type": "SignalementFormButton",
@@ -439,7 +442,8 @@
                 "label": "Suivant",
                 "slug": "composition_logement_next",
                 "action": "goto.save:type_logement_commodites",
-                "customCss": "fr-btn--icon-right fr-icon-arrow-right-line"
+                "customCss": "fr-btn--icon-right fr-icon-arrow-right-line",
+                "validOnEnter": true
               },
               {
                 "type": "SignalementFormButton",
@@ -653,7 +657,8 @@
                 "label": "Suivant",
                 "slug": "type_logement_commodites_next",
                 "action": "goto.save:composition_logement_personnes",
-                "customCss": "fr-btn--icon-right fr-icon-arrow-right-line"
+                "customCss": "fr-btn--icon-right fr-icon-arrow-right-line",
+                "validOnEnter": true
               },
               {
                 "type": "SignalementFormButton",
@@ -715,7 +720,8 @@
                 "label": "Suivant",
                 "slug": "composition_logement_personnes_next",
                 "action": "goto.save:bail_dpe",
-                "customCss": "fr-btn--icon-right fr-icon-arrow-right-line"
+                "customCss": "fr-btn--icon-right fr-icon-arrow-right-line",
+                "validOnEnter": true
               },
               {
                 "type": "SignalementFormButton",
@@ -797,7 +803,8 @@
                 "label": "Suivant",
                 "slug": "bail_dpe_next",
                 "action": "goto.save:ecran_intermediaire_situation_occupant",
-                "customCss": "fr-btn--icon-right fr-icon-arrow-right-line"
+                "customCss": "fr-btn--icon-right fr-icon-arrow-right-line",
+                "validOnEnter": true
               },
               {
                 "type": "SignalementFormButton",
@@ -835,7 +842,8 @@
                 "label": "Suivant",
                 "slug": "ecran_intermediaire_situation_occupant_next",
                 "action": "goto.save:logement_social",
-                "customCss": "fr-btn--icon-right fr-icon-arrow-right-line"
+                "customCss": "fr-btn--icon-right fr-icon-arrow-right-line",
+                "validOnEnter": true
               },
               {
                 "type": "SignalementFormButton",
@@ -960,7 +968,8 @@
                 "label": "Suivant",
                 "slug": "logement_social_next",
                 "action": "goto.save:travailleur_social",
-                "customCss": "fr-btn--icon-right fr-icon-arrow-right-line"
+                "customCss": "fr-btn--icon-right fr-icon-arrow-right-line",
+                "validOnEnter": true
               },
               {
                 "type": "SignalementFormButton",
@@ -1032,7 +1041,8 @@
                 "label": "Suivant",
                 "slug": "travailleur_social_next",
                 "action": "goto.save:ecran_intermediaire_les_desordres",
-                "customCss": "fr-btn--icon-right fr-icon-arrow-right-line"
+                "customCss": "fr-btn--icon-right fr-icon-arrow-right-line",
+                "validOnEnter": true
               },
               {
                 "type": "SignalementFormButton",
@@ -1172,7 +1182,8 @@
                 "label": "Suivant",
                 "slug": "info_procedure_utilisation_service_next",
                 "action": "goto.save:utilisation_service",
-                "customCss": "fr-btn--icon-right fr-icon-arrow-right-line"
+                "customCss": "fr-btn--icon-right fr-icon-arrow-right-line",
+                "validOnEnter": true
               },
               {
                 "type": "SignalementFormButton",
@@ -1226,7 +1237,8 @@
                 "label": "Suivant",
                 "slug": "utilisation_service_next",
                 "action": "goto.save:validation_signalement",
-                "customCss": "fr-btn--icon-right fr-icon-arrow-right-line"
+                "customCss": "fr-btn--icon-right fr-icon-arrow-right-line",
+                "validOnEnter": true
               },
               {
                 "type": "SignalementFormButton",
@@ -1354,7 +1366,8 @@
                 "label": "Enregistrer",
                 "slug": "informations_complementaires_next",
                 "action": "goto.save:validation_signalement",
-                "customCss": "fr-btn--icon-left fr-icon-check-line"
+                "customCss": "fr-btn--icon-left fr-icon-check-line",
+                "validOnEnter": true
               },
               {
                 "type": "SignalementFormButton",
@@ -1394,7 +1407,8 @@
                 "label": "Valider mon signalement",
                 "slug": "validation_signalement_next",
                 "action": "goto.save:confirmation_signalement",
-                "customCss": "fr-btn--icon-left fr-icon-check-line"
+                "customCss": "fr-btn--icon-left fr-icon-check-line",
+                "validOnEnter": true
               },
               {
                 "type": "SignalementFormButton",
