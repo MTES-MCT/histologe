@@ -835,6 +835,10 @@ a.photo-preview {
     cursor: pointer;
 }
 
+.avatar-histologe{
+    border-radius: 50%;
+    border: 1px solid var(--blue-france-main-525);
+}
 .avatar-placeholder {
     display: flex;
     align-items: center;
@@ -868,4 +872,8 @@ a.photo-preview {
     width: 26px;
     height: 26px;
     font-size: 13px;
+}
+
+.text-decoration-underline{
+    text-decoration: underline;
 }

@@ -14,7 +14,7 @@
                         {{ user_avatar_or_placeholder(app.user, 26) }}
                         <div class="fr-ml-3v">
                             <span class="fr-display-block">
-                                <a class="fr-link fr-link--lg" href="{{ path('back_profil') }}" target="_self">{{ app.user.prenom ~' '~app.user.nom[:1]|capitalize~'.' }}</a>
+                                <a class="fr-link fr-link--lg text-decoration-underline" href="{{ path('back_profil') }}" target="_self">{{ app.user.prenom ~' '~app.user.nom[:1]|capitalize~'.' }}</a>
                             </span>
                         </div>
                     </div>
