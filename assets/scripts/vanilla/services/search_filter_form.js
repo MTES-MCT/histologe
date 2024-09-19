@@ -14,7 +14,6 @@ const setBadge = (el) => {
         container.append(badge)
         el.selectedOptions[0].classList.add('fr-hidden')
         badge.addEventListener('click', (event) => {
-            console.log(badge)
             removeBadge(badge);
         })
     } else {
