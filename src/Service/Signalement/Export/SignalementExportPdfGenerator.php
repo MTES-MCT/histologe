@@ -10,6 +10,7 @@ class SignalementExportPdfGenerator
 {
     public function __construct(private readonly Pdf $pdf, private readonly ParameterBagInterface $parameterBag)
     {
+        $this->pdf->setTimeout(300);
     }
 
     public function generate(string $content, ?array $options = null): string
