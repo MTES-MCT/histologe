@@ -32,7 +32,7 @@ class SignalementExportSelectableColumns
         'NB_VISITES' => ['name' => 'Nombre de visites', 'description' => 'Le nombre de visites enregistrée sur le logement', 'export' => 'nbVisites'],
         'STATUT_VISITE' => ['name' => 'Statut de la dernière visite', 'description' => 'Le statut de la dernière visite (planifiée, terminée, à planifier...)', 'export' => 'interventionStatus'],
         'DATE_VISITE' => ['name' => 'Date de la dernière visite', 'description' => 'La date de la dernière visite du logement', 'export' => 'dateVisite'],
-        'OCCUPANT_PRESENT_VISITE' => ['name' => 'Occupant présent visite', 'description' => 'Si l\'occupant était présent ou non pendant la dernière visite', 'export' => 'isOccupantPresentVisite'],
+        'OCCUPANT_PRESENT_VISITE' => ['name' => 'Occupant présent dernière visite', 'description' => 'Si l\'occupant était présent ou non pendant la dernière visite', 'export' => 'isOccupantPresentVisite'],
         'CONCLUSION_VISITE' => ['name' => 'Ccl. de la dernière visite', 'description' => 'La conclusion de la dernière visite (procédures constatées)', 'export' => 'interventionConcludeProcedure'],
         'COMMENTAIRE_VISITE' => ['name' => 'Comm. de la dernière visite', 'description' => 'Le commentaire laissé par l\'opérateur suite à la dernière visite', 'export' => 'interventionDetails'],
         'DERNIERE_MAJ' => ['name' => 'Dernière MAJ le', 'description' => 'La date de la dernière mise à jour du signalement', 'export' => 'modifiedAt'],

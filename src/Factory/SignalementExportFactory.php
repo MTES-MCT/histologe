@@ -39,8 +39,7 @@ class SignalementExportFactory
         $status = SignalementAffectationHelper::getStatusLabelFrom($user, $data);
 
         $geoloc = $data['geoloc'];
-
-        $lastIntervention = $this->getLastVisiteData($data['interventionsStatus'], $data['interventionConcludeProcedure'], $data['interventionDetails']);
+        $lastIntervention = $this->getLastVisiteData($data['interventionsData']);
         $dateVisite = $lastIntervention['scheduledAt'];
         $dateVisite = (!empty($dateVisite) && DateHelper::isValidDate($dateVisite)) ? (new \DateTime($dateVisite))->format(self::DATE_FORMAT) : '';
         $isOccupantPresentVisite = $lastIntervention['occupantPresent'];
@@ -131,29 +130,26 @@ class SignalementExportFactory
         return $value;
     }
 
-    private function getLastVisiteData(?string $interventionStatus, ?string $conclude, ?string $details): array
+    private function getLastVisiteData(?string $interventionData): array
     {
-        $concludeExploded = explode(SignalementExport::SEPARATOR_GROUP_CONCAT, $conclude);
-        $detailsExploded = explode(SignalementExport::SEPARATOR_GROUP_CONCAT, $details);
-        $conclude = $concludeExploded[count($concludeExploded) - 1];
-        $details = $detailsExploded[count($detailsExploded) - 1];
         $lastIntervention = [
-            'conclude' => $conclude ? $conclude : '-',
-            'details' => $details ? $details : '-',
+            'status' => VisiteStatus::NON_PLANIFIEE->value,
+            'conclude' => '-',
+            'details' => '-',
             'scheduledAt' => '',
             'occupantPresent' => '',
             'nbVisites' => 0,
         ];
-        if (null === $interventionStatus) {
-            $lastIntervention['status'] = VisiteStatus::NON_PLANIFIEE->value;
-
+        if (null === $interventionData) {
             return $lastIntervention;
         }
-        $interventionsExploded = explode(SignalementExport::SEPARATOR_GROUP_CONCAT, $interventionStatus);
-        $status = $interventionsExploded[count($interventionsExploded) - 3];
-        $lastIntervention['scheduledAt'] = $interventionsExploded[count($interventionsExploded) - 2];
-        $lastIntervention['occupantPresent'] = $interventionsExploded[count($interventionsExploded) - 1];
-        $lastIntervention['nbVisites'] = count($interventionsExploded) / 3;
+        $interventionsExploded = explode(SignalementExport::SEPARATOR_GROUP_CONCAT, $interventionData);
+        $status = $interventionsExploded[count($interventionsExploded) - 5];
+        $lastIntervention['scheduledAt'] = $interventionsExploded[count($interventionsExploded) - 4];
+        $lastIntervention['occupantPresent'] = $interventionsExploded[count($interventionsExploded) - 3];
+        $lastIntervention['conclude'] = $interventionsExploded[count($interventionsExploded) - 2] ?? '-';
+        $lastIntervention['details'] = $interventionsExploded[count($interventionsExploded) - 1] ?? '-';
+        $lastIntervention['nbVisites'] = count($interventionsExploded) / 5;
         if (Intervention::STATUS_PLANNED === $status) {
             $todayDatetime = new \DateTime();
             if ($lastIntervention['scheduledAt'] > $todayDatetime->format('Y-m-d')) {

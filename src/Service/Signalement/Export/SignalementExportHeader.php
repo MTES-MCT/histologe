@@ -51,7 +51,7 @@ class SignalementExportHeader
             'Lien tiers occupant',
             'Nombre de visites',
             'Date de la dernière visite',
-            'Occupant présent visite',
+            'Occupant présent dernière visite',
             'Statut de la dernière visite',
             'Ccl. de la dernière visite',
             'Comm. de la dernière visite',
