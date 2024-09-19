@@ -10,7 +10,7 @@
           <template #title>Criticité moyenne</template>
         </TheHistoStatsDetailsItem>
 
-        <div class="fr-col-12">
+        <div class="fr-col-12 histo-chart-line">
           <HistoChartLine :items=sharedState.stats.countSignalementPerMonth>
             <template #title>Nombre total de signalements</template>
           </HistoChartLine>
@@ -145,5 +145,9 @@ export default defineComponent({
   .histo-data-table .histo-data-table-description {
     font-style: italic;
     font-size: 0.8rem;
+  }
+
+  .histo-chart-line {
+    border: 1px solid var(--blue-france-sun-113-625);
   }
 </style>

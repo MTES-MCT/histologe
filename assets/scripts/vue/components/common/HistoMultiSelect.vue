@@ -140,7 +140,7 @@ export default defineComponent({
   }
 
   .histo-multi-select .selector {
-    background-color: #FFF;
+    background-color: var(--background-contrast-grey);
     cursor: pointer;
   }
   .histo-multi-select.inactive .selector {
@@ -153,7 +153,7 @@ export default defineComponent({
     width: 100%;
     font-size: 1rem;
     line-height: 1.5rem;
-    background-color: #FFF;
+    background-color: var(--background-contrast-grey);
     border-radius: 4px;
   }
 

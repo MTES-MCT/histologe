@@ -54,8 +54,14 @@ export default defineComponent({
 <style>
   @import 'datatables.net-dt';
 
+  .histo-data-table table {
+    border: 1px solid var(--border-contrast-grey);
+  }
+
   .histo-data-table table thead {
-    color: var(--blue-france-sun-113-625);
+    color: var(--text-default-grey);
+    background-color: var(--background-alt-grey);
+    text-decoration: underline;
   }
 
   .histo-data-table table.dataTable.display tbody td {
@@ -63,9 +69,7 @@ export default defineComponent({
     background-color: #FFF;
     text-align: left;
   }
-  .histo-data-table table.dataTable.display > tbody > tr.odd > td {
-    background-color: #CACAFBA6;
-  }
+
   .histo-data-table table.dataTable.display > tbody > tr.even > td.sorting_1, .histo-data-table table.dataTable.display > tbody > tr.odd > td.sorting_1 {
     box-shadow: none;
   }
@@ -78,11 +82,12 @@ export default defineComponent({
   }
   .histo-data-table .dataTables_wrapper .dataTables_paginate .paginate_button.current {
     border: 0px;
-    background: var(--blue-france-850-200);
+    background-color: var(--background-active-blue-france);
+    color: var(--text-inverted-blue-france) !important;
   }
   .histo-data-table .dataTables_wrapper .dataTables_paginate .paginate_button:hover {
     color: #161616 !important;
     background-color: #E5E5E5;
-
+    --hover-tint: var(--hover);
   }
 </style>

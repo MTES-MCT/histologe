@@ -194,7 +194,7 @@ export default defineComponent({
 
 <style>
   .histo-app-stats {
-    background-color: var(--background-alt-grey);
+    background-color: #FFF;
   }
 
   .histo-app-stats a {

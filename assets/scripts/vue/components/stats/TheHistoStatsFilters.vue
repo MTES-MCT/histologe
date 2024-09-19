@@ -172,4 +172,9 @@ export default defineComponent({
     color: var(--blue-france-sun-113-625);
     --icon-size: 1.1rem;
   }
+  .histo-date-picker input {
+    background-color: var(--background-contrast-grey);
+    box-shadow: inset 0 -2px 0 0 var(--border-plain-grey);
+    border-radius: .25rem .25rem 0 0;
+  }
 </style>
