@@ -6,6 +6,7 @@ use App\Command\Cron\SynchronizeEsaboraSCHSCommand;
 use App\Entity\Affectation;
 use App\Entity\Partner;
 use App\Entity\Signalement;
+use App\Entity\Suivi;
 use App\Manager\JobEventManager;
 use App\Repository\AffectationRepository;
 use App\Service\Esabora\EsaboraManager;
@@ -46,7 +47,7 @@ class SynchronizeEsaboraSCHSCommandTest extends KernelTestCase
         $collection->add($affectation);
 
         $affectationRepositoryMock
-            ->expects($this->once())
+            ->expects($this->exactly(2))
             ->method('findAffectationSubscribedToEsabora')
             ->willReturn($collection->toArray());
 
@@ -69,6 +70,9 @@ class SynchronizeEsaboraSCHSCommandTest extends KernelTestCase
             $serializerMock,
             $notificationMailerRegistry,
             $parameterBag,
+            self::getContainer()->get('logger'),
+            self::getContainer()->get('doctrine')->getRepository(Suivi::class),
+            self::getContainer()->get('doctrine')->getManager(),
         ));
 
         $commandTester = new CommandTester($command);

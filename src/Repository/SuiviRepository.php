@@ -434,4 +434,20 @@ class SuiviRepository extends ServiceEntityRepository
 
         return $qb->getQuery()->getOneOrNullResult();
     }
+
+    public function findExistingEventsForSCHS(): array
+    {
+        $qb = $this->createQueryBuilder('s')
+            ->where('s.originalData IS NOT NULL')
+            ->andWhere('s.context = :context')
+            ->setParameter('context', Suivi::CONTEXT_SCHS);
+
+        $list = $qb->getQuery()->getResult();
+        $indexed = [];
+        foreach ($list as $suivi) {
+            $indexed[$suivi->getOriginalData()['keyDataList'][1]] = $suivi;
+        }
+
+        return $indexed;
+    }
 }

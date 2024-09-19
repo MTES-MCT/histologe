@@ -24,6 +24,7 @@ class FileFactory
         ?bool $isWaitingSuivi = false,
         ?bool $isTemp = false,
         ?\DateTimeImmutable $scannedAt = null,
+        ?bool $isVariantsGenerated = false,
     ): ?File {
         $file = (new File())
             ->setFilename($filename)
@@ -59,6 +60,10 @@ class FileFactory
 
         if (null !== $scannedAt) {
             $file->setScannedAt($scannedAt);
+        }
+
+        if (null !== $isVariantsGenerated) {
+            $file->setIsVariantsGenerated($isVariantsGenerated);
         }
 
         return $file;

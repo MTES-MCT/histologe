@@ -19,6 +19,7 @@ class Suivi implements EntityHistoryInterface
     public const TYPE_USAGER_POST_CLOTURE = 5;
 
     public const CONTEXT_INTERVENTION = 'intervention';
+    public const CONTEXT_SCHS = 'schs';
 
     public const DEFAULT_PERIOD_INACTIVITY = 30;
     public const DEFAULT_PERIOD_RELANCE = 45;
@@ -67,6 +68,9 @@ class Suivi implements EntityHistoryInterface
     #[ORM\ManyToOne(targetEntity: User::class)]
     #[ORM\JoinColumn(nullable: true)]
     private $deletedBy;
+
+    #[ORM\Column(nullable: true)]
+    private ?array $originalData = null;
 
     public function __construct()
     {
@@ -203,6 +207,18 @@ class Suivi implements EntityHistoryInterface
     public function setDeletedBy(?User $deletedBy): self
     {
         $this->deletedBy = $deletedBy;
+
+        return $this;
+    }
+
+    public function getOriginalData(): ?array
+    {
+        return $this->originalData;
+    }
+
+    public function setOriginalData(?array $originalData): static
+    {
+        $this->originalData = $originalData;
 
         return $this;
     }

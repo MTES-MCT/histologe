@@ -24,6 +24,7 @@ abstract class AbstractEsaboraService implements EsaboraServiceInterface
     public const ACTION_SYNC_DOSSIER_ARRETE = 'sync_dossier_arrete';
     public const TASK_INSERT_PATH = '/modbdd/?task=doTreatment';
     public const TASK_SEARCH_PATH = '/mult/?task=doSearch';
+    public const TASK_GET_DOCUMENTS = '/mult/?task=getDocuments';
     public const SIGNALEMENT_ORIGINE = 'interfaçage';
     public const FORMAT_DATE = 'd/m/Y';
     public const FORMAT_DATE_TIME = 'd/m/Y H:i';
@@ -95,8 +96,11 @@ abstract class AbstractEsaboraService implements EsaboraServiceInterface
             && null === $dossierResponse->getErrorReason();
     }
 
-    protected function getTaskPath(array $payload): string
+    protected function getTaskPath(array $payload): ?string
     {
+        if (empty($payload)) {
+            return null;
+        }
         if (\array_key_exists('searchName', $payload)) {
             return self::TASK_SEARCH_PATH;
         }

@@ -5,23 +5,34 @@ namespace App\Service\Esabora;
 use App\Entity\Affectation;
 use App\Entity\Enum\InterfacageType;
 use App\Entity\Enum\InterventionType;
+use App\Entity\File;
 use App\Entity\Intervention;
 use App\Entity\Suivi;
 use App\Entity\User;
 use App\Event\InterventionCreatedEvent;
+use App\Factory\FileFactory;
 use App\Factory\InterventionFactory;
 use App\Manager\AffectationManager;
 use App\Manager\SuiviManager;
 use App\Manager\UserManager;
 use App\Repository\InterventionRepository;
 use App\Service\Esabora\Enum\EsaboraStatus;
+use App\Service\Esabora\Response\DossierEventFilesSCHSResponse;
 use App\Service\Esabora\Response\DossierResponseInterface;
 use App\Service\Esabora\Response\Model\DossierArreteSISH;
+use App\Service\Esabora\Response\Model\DossierEventSCHS;
 use App\Service\Esabora\Response\Model\DossierVisiteSISH;
+use App\Service\Files\ZipHelper;
+use App\Service\ImageManipulationHandler;
 use App\Service\Intervention\InterventionDescriptionGenerator;
+use App\Service\Security\FileScanner;
+use App\Service\UploadHandlerService;
+use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use Symfony\Component\HttpFoundation\File\File as SymfonyFile;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 class EsaboraManager
 {
@@ -34,6 +45,13 @@ class EsaboraManager
         private readonly UserManager $userManager,
         private readonly LoggerInterface $logger,
         private readonly ParameterBagInterface $parameterBag,
+        private readonly EntityManagerInterface $entityManager,
+        private readonly ZipHelper $zipHelper,
+        private readonly FileScanner $fileScanner,
+        private readonly UploadHandlerService $uploadHandlerService,
+        private readonly ImageManipulationHandler $imageManipulationHandler,
+        private readonly UrlGeneratorInterface $urlGenerator,
+        private readonly FileFactory $fileFactory,
     ) {
     }
 
@@ -203,6 +221,65 @@ class EsaboraManager
                 InterventionCreatedEvent::NAME
             );
         }
+    }
+
+    public function createSuiviFromDossierEvent(DossierEventSCHS $event): Suivi
+    {
+        $suivi = new Suivi();
+        $suivi->setSignalement($event->getDossierEvents()->getAffectation()->getSignalement());
+        $suivi->setType(Suivi::TYPE_PARTNER);
+        $suivi->setContext(Suivi::CONTEXT_SCHS);
+        $suivi->setDescription(nl2br($event->getDescription()));
+        $suivi->setCreatedAt(\DateTimeImmutable::createFromFormat('d/m/Y', $event->getDate()));
+        $suivi->setOriginalData($event->getOriginalData());
+        $this->entityManager->persist($suivi);
+
+        return $suivi;
+    }
+
+    public function addFilesToSuiviFromDossierEventFiles(DossierEventFilesSCHSResponse $eventFiles, Suivi $suivi): int
+    {
+        $nbFilesAdded = 0;
+        $zipFilePath = $this->zipHelper->getZipFromBase64($eventFiles->getDocumentZipContent());
+        $files = $this->zipHelper->extractZipFiles($zipFilePath);
+        foreach ($files as $filepath => $filename) {
+            if ($this->addFileToSuivi($filepath, $filename, $suivi)) {
+                ++$nbFilesAdded;
+            }
+        }
+
+        return $nbFilesAdded;
+    }
+
+    private function addFileToSuivi(string $filePath, string $originalName, Suivi $suivi): bool
+    {
+        if (!$this->fileScanner->isClean($filePath, false)) {
+            $this->logger->error("'File '.$originalName.' from SCHS is infected'");
+
+            return false;
+        }
+        $variantsGenerated = false;
+        $fileName = pathinfo($filePath, \PATHINFO_BASENAME);
+        $this->uploadHandlerService->uploadFromFilename($fileName);
+        $file = new SymfonyFile($filePath);
+        if (\in_array($file->getMimeType(), File::IMAGE_MIME_TYPES)) {
+            $this->imageManipulationHandler->resize($file->getPath())->thumbnail();
+            $variantsGenerated = true;
+        }
+        $file = $this->fileFactory->createInstanceFrom(
+            signalement: $suivi->getSignalement(),
+            filename: $fileName,
+            title: $originalName,
+            type: File::FILE_TYPE_DOCUMENT,
+            isVariantsGenerated: $variantsGenerated,
+            scannedAt: new \DateTimeImmutable(),
+        );
+        $this->entityManager->persist($file);
+        $urlDocument = $this->urlGenerator->generate('show_file', ['uuid' => $file->getUuid()], UrlGeneratorInterface::ABSOLUTE_URL);
+        $linkToFile = '<br /><a class="fr-link" target="_blank" rel="noopener" href="'.$urlDocument.'">'.$file->getTitle().'</a>';
+        $suivi->setDescription($suivi->getDescription().$linkToFile);
+
+        return true;
     }
 
     private function updateFromDossierVisite(Intervention $intervention, DossierVisiteSISH $dossierVisiteSISH): void

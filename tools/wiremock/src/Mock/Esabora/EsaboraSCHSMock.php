@@ -2,6 +2,7 @@
 
 namespace Mock\Esabora;
 
+use Mock\AppMock;
 use WireMock\Client\WireMock;
 
 class EsaboraSCHSMock extends AbstractEsaboraMock
@@ -9,6 +10,7 @@ class EsaboraSCHSMock extends AbstractEsaboraMock
     protected const BASE_PATH = '/ws/rest';
     protected const RESOURCES_DIR = 'Esabora/schs/';
     protected const WS_ETAT_DOSSIER_SAS = 'WS_ETAT_DOSSIER_SAS';
+    protected const WS_EVT_DOSSIER_SAS = 'WS_EVT_DOSSIER_SAS';
 
     public static function prepareMockForEsabora(WireMock $wiremock): void
     {
@@ -71,6 +73,28 @@ class EsaboraSCHSMock extends AbstractEsaboraMock
             self::BASE_PATH,
             self::RESOURCES_DIR,
         );
+
+        self::createSearchDossierMock(
+            $wiremock,
+            'doSearch',
+            self::WS_EVT_DOSSIER_SAS,
+            WireMock::matchingJsonPath(
+                '$.searchName',
+                WireMock::equalTo('WS_EVT_DOSSIER_SAS')
+            ),
+            'ws_get_dossier_events.json',
+            self::BASE_PATH,
+            self::RESOURCES_DIR,
+        );
+
+        self::createGetDocumentsMock(
+            $wiremock,
+            'getDocuments',
+            '&searchId=\d+&documentTypeName=[a-zA-Z0-9._-]+&keyDataListList\[\d+\]\[\d+\]=\d+',
+            'ws_get_dossier_event_files.json',
+            self::BASE_PATH,
+            self::RESOURCES_DIR,
+        );
     }
 
     private static function createCustomStateDossierMock(WireMock $wiremock, string $uuid, string $jsonFilename): void
@@ -86,6 +110,30 @@ class EsaboraSCHSMock extends AbstractEsaboraMock
             'ws_etat_dossier_sas/'.$jsonFilename,
             self::BASE_PATH,
             self::RESOURCES_DIR,
+        );
+    }
+
+    protected static function createGetDocumentsMock(
+        WireMock $wiremock,
+        string $task,
+        string $queryParameterRegex,
+        string $response,
+        ?string $basePath,
+        ?string $resourcesDir,
+    ): void {
+        $url = $basePath
+            .'/mult/\?task='
+            .$task
+            .$queryParameterRegex;
+        $wiremock->stubFor(
+            WireMock::post(WireMock::urlMatching($url))
+                ->withHeader('Authorization', WireMock::containing(self::REQUEST_AUTHORIZATION))
+                ->willReturn(
+                    WireMock::aResponse()
+                        ->withStatus(200)
+                        ->withHeader('Content-Type', self::RESPONSE_CONTENT_TYPE)
+                        ->withBody(AppMock::getMockContent($resourcesDir.$response))
+                )
         );
     }
 }

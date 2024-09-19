@@ -1,0 +1,72 @@
+{
+  "searchId": "27207",
+  "nbResults": 4,
+  "columnList": [
+    "SAS_R\u00e9f\u00e9rence",
+    "Evt_Date",
+    "Evt_Pr\u00e9sentation",
+    "Evt_Documents",
+    "Evty_Libell\u00e9"
+  ],
+  "documentTypeList": {
+    "3": "e6_t1.evt_nomdoc"
+  },
+  "keyList": [
+    "i1.iaff_id",
+    "e6_t1.evt_id"
+  ],
+  "rowList": [
+    {
+      "columnDataList": [
+        "HISTOO0013",
+        "01\/08\/2024",
+        "document 1\r\nEt document 2",
+        "hello World.pdf",
+        "Pi\u00e8ce jointe au dossier"
+      ],
+      "keyDataList": [
+        "28",
+        "30411"
+      ]
+    },
+    {
+      "columnDataList": [
+        "HISTOO0013",
+        "02\/08\/2024",
+        "DUPONT Jean bla bla et allo",
+        null,
+        "Appel t\u00e9l\u00e9phonique"
+      ],
+      "keyDataList": [
+        "28",
+        "30412"
+      ]
+    },
+    {
+      "columnDataList": [
+        "HISTOO0013",
+        "12\/08\/2024",
+        "Prendre photos de ....... bla bla bla\r\nbla bla blabla bla bla\r\nautre ligne de commentaire\r\n\r\nfin du bla bla",
+        null,
+        "RV pour visite"
+      ],
+      "keyDataList": [
+        "28",
+        "30413"
+      ]
+    },
+    {
+      "columnDataList": [
+        "HISTOO0013",
+        "30\/08\/2024",
+        "2 pi\u00e8ces importantes",
+        "aix2.pdf,budget2004.pdf",
+        "Pi\u00e8ce jointe au dossier"
+      ],
+      "keyDataList": [
+        "28",
+        "30414"
+      ]
+    }
+  ]
+}
