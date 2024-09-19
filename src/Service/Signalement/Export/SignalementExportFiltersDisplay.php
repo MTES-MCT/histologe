@@ -89,7 +89,7 @@ class SignalementExportFiltersDisplay
 
         if (!\in_array('ROLE_ADMIN', $user->getRoles())) {
             unset($filters['territories']);
-            
+
             if (!\in_array('ROLE_ADMIN_TERRITORY', $user->getRoles())) {
                 unset($filters['isImported']);
             }
