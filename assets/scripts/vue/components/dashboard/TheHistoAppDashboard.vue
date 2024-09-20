@@ -247,7 +247,6 @@ export default defineComponent({
 
 <style>
   #app-dashboard {
-    background-color: #F6F6F6;
     height: 100%;
   }
 </style>

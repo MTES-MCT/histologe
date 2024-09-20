@@ -72,6 +72,6 @@ export default defineComponent({
 
 <style>
   .histo-select select {
-    background-color: #FFF;
+    background-color: var(--background-contrast-grey);
   }
 </style>

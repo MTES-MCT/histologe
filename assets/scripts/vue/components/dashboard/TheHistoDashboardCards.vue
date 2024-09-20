@@ -293,6 +293,7 @@ export default defineComponent({
 <style>
   .histo-dashboard-cards .fr-card .fr-card__body {
     padding: 1.5rem;
+    box-shadow: 0px 3px 6px #16161633;
   }
   .histo-dashboard-cards .fr-card .fr-card__content {
     padding: 0px;

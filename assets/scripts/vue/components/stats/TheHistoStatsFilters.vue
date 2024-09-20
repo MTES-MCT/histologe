@@ -75,7 +75,7 @@
           </HistoCheckbox>
         </div>
         <div class="fr-col-12 fr-col-lg-12 fr-col-xl-3 align-right">
-          <a href="#" @click="onReinitLocalEvent"><span class="fr-fi-refresh-line"></span>Tout réinitialiser</a>
+          <a href="#" @click="onReinitLocalEvent" class="fr-link"><span class="fr-fi-refresh-line"></span>Tout réinitialiser</a>
         </div>
       </div>
     </div>
@@ -171,5 +171,10 @@ export default defineComponent({
     font-size: 1rem;
     color: var(--blue-france-sun-113-625);
     --icon-size: 1.1rem;
+  }
+  .histo-date-picker input {
+    background-color: var(--background-contrast-grey);
+    box-shadow: inset 0 -2px 0 0 var(--border-plain-grey);
+    border-radius: .25rem .25rem 0 0;
   }
 </style>

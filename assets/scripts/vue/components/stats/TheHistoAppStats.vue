@@ -193,14 +193,6 @@ export default defineComponent({
 </script>
 
 <style>
-  .histo-app-stats {
-    background-color: var(--background-alt-grey);
-  }
-
-  .histo-app-stats a {
-    color: var(--blue-france-sun-113-625);
-  }
-
   .loading {
     font-size: 2rem;
   }

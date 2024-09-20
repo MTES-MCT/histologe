@@ -25,6 +25,7 @@ export default defineComponent({
     font-weight: bold;
     background: #FFF;
     padding: 1rem 0.5rem;
+    border: 1px solid var(--border-default-grey);
   }
   .histo-stats-details-item div p:first-child {
     font-size: 0.8rem;
