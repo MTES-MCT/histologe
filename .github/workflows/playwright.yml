@@ -13,12 +13,11 @@ jobs:
   playwright:
     timeout-minutes: 60
     runs-on: ubuntu-latest
-    container: ubuntu
     steps:
     - uses: actions/checkout@v4
 
     - name: Start containers
-      run: docker compose -f "docker-compose.yml" up -d --build
+      run: docker compose -f "docker-compose.yml" up -d --build -p 8080:8080
 
     - name: Curl test
       run: |
