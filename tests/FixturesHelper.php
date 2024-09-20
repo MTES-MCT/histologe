@@ -253,7 +253,6 @@ trait FixturesHelper
             ->setLogementNbNiveaux(1)
             ->setProprietaireAverti(0)
             ->setProprietaireAvertiDate('21/04/2023')
-            ->setProprietaireAvertiMoyen('sms')
             ->setSignalementScore(50.2)
             ->setSignalementOrigine(AbstractEsaboraService::SIGNALEMENT_ORIGINE)
             ->setSignalementNumero('2023-52')

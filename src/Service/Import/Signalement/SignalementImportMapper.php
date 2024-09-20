@@ -36,7 +36,6 @@ class SignalementImportMapper
             'nb occupants logement' => 'nbOccupantsLogement',
             'Allocataire' => 'isAllocataire',
             'numéro Allocataire' => 'numAllocataire',
-            'type logement' => 'typeLogement',
             'superficie' => 'superficie',
             'Nom propriétaire' => 'nomProprio',
             'Adresse Propriétaire' => 'adresseProprio',
@@ -65,7 +64,6 @@ class SignalementImportMapper
             'etage occupant' => 'etageOccupant',
             'escalier occupant' => 'escalierOccupant',
             'numéro appartement  occupant' => 'numAppartOccupant',
-            'mode contact propriétaire  ?' => 'modeContactProprio',
             'RSA' => 'isRsa',
             'Logement < 1948' => 'isConstructionAvant1949',
             'Fond solidarite logement' => 'isFondSolidariteLogement',
@@ -161,10 +159,6 @@ class SignalementImportMapper
                             throw new \Exception(\sprintf('La référence %s concerne une année en cours et risque de semer la confusion', $fieldValue));
                         }
                         $fieldValue = $yearCreatedAt.'-'.$digits;
-                        break;
-                    case 'modeContactProprio':
-                        $modes = array_filter(preg_split('(-|/)', $fieldValue));
-                        $fieldValue = empty($modes) ? null : $modes;
                         break;
                     case 'isProprioAverti':
                     case 'isAllocataire':

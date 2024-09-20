@@ -115,12 +115,10 @@ class SignalementImportLoader
                 $this->loadFiles($signalement, File::INPUT_NAME_DOCUMENTS, $dataMapped);
 
                 $this->metadata['count_signalement'] = $countSignalement;
+                $this->signalementManager->persist($signalement);
                 if (0 === $countSignalement % self::FLUSH_COUNT) {
                     $this->logger->info(\sprintf('in progress - %s signalements saved', $countSignalement));
                     $this->signalementManager->flush();
-                } else {
-                    $this->signalementManager->persist($signalement);
-                    unset($signalement);
                 }
                 if ($dataMapped['motifCloture'] && !MotifCloture::tryFrom($dataMapped['motifCloture'])) {
                     if (!isset($this->metadata['motif_cloture_not_found'][$dataMapped['motifCloture']])) {

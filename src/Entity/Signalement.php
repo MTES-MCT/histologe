@@ -83,9 +83,6 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
     #[ORM\Column(type: 'string', length: 15, nullable: true)]
     private $natureLogement;
 
-    #[ORM\Column(type: 'string', length: 15, nullable: true)]
-    private $typeLogement;
-
     #[ORM\Column(type: 'float', nullable: true)]
     private $superficie;
 
@@ -253,9 +250,6 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
 
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
     private $adresseAutreOccupant;
-
-    #[ORM\Column(type: 'json', nullable: true)]
-    private $modeContactProprio = [];
 
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
     private $inseeOccupant;
@@ -674,18 +668,6 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
     public function setNatureLogement(?string $natureLogement): self
     {
         $this->natureLogement = null !== $natureLogement ? mb_strtolower($natureLogement) : null;
-
-        return $this;
-    }
-
-    public function getTypeLogement(): ?string
-    {
-        return $this->typeLogement;
-    }
-
-    public function setTypeLogement(?string $typeLogement): self
-    {
-        $this->typeLogement = mb_strtoupper($typeLogement);
 
         return $this;
     }
@@ -1312,18 +1294,6 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
         }
 
         return mb_strtoupper(mb_substr($complement, 0, 1)).mb_substr($complement, 1);
-    }
-
-    public function getModeContactProprio(): ?array
-    {
-        return $this->modeContactProprio;
-    }
-
-    public function setModeContactProprio(?array $modeContactProprio): self
-    {
-        $this->modeContactProprio = $modeContactProprio;
-
-        return $this;
     }
 
     public function getInseeOccupant(): ?string

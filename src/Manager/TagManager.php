@@ -15,7 +15,7 @@ class TagManager extends AbstractManager
 
     public function createOrGet(Territory $territory, string $label): Tag
     {
-        $tag = $this->findOneBy(['territory' => $territory, 'label' => $label]);
+        $tag = $this->findOneBy(['territory' => $territory, 'label' => $label, 'isArchive' => false]);
         if (null === $tag) {
             $tag = (new Tag())
                 ->setLabel($label)

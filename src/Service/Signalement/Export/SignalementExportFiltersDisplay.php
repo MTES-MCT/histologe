@@ -7,6 +7,7 @@ use App\Entity\Enum\SignalementStatus;
 use App\Repository\PartnerRepository;
 use App\Repository\TagRepository;
 use App\Repository\TerritoryRepository;
+use Symfony\Bundle\SecurityBundle\Security;
 
 class SignalementExportFiltersDisplay
 {
@@ -74,16 +75,24 @@ class SignalementExportFiltersDisplay
         private readonly TerritoryRepository $territoryRepository,
         private readonly PartnerRepository $partnerRepository,
         private readonly TagRepository $tagRepository,
+        private readonly Security $security,
     ) {
     }
 
-    public function filtersToText(
-        array $filters,
-    ): array {
+    public function filtersToText(array $filters): array
+    {
         unset($filters['page']);
         unset($filters['maxItemsPerPage']);
         unset($filters['sortBy']);
         unset($filters['orderBy']);
+
+        if (!$this->security->isGranted('ROLE_ADMIN')) {
+            unset($filters['territories']);
+
+            if (!$this->security->isGranted('ROLE_ADMIN_TERRITORY')) {
+                unset($filters['isImported']);
+            }
+        }
 
         $result = [];
         foreach ($filters as $filterName => $filterValue) {
@@ -157,10 +166,16 @@ class SignalementExportFiltersDisplay
 
     private function getPartnersFilterValue(string $filterValue): string
     {
+        if ('AUCUN' === $filterValue) {
+            return 'AUCUN';
+        }
         $listPartners = explode(', ', $filterValue);
         $filterValue = '';
         foreach ($listPartners as $idPartner) {
             $partner = $this->partnerRepository->find($idPartner);
+            if (!$partner) {
+                continue;
+            }
             if (!empty($filterValue)) {
                 $filterValue .= ', ';
             }

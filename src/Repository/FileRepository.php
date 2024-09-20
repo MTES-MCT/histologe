@@ -66,13 +66,18 @@ class FileRepository extends ServiceEntityRepository
         return $this->initQueryWithOriginalAndVariants($limit)->select('count(f)')->getQuery()->getSingleScalarResult();
     }
 
-    public function updateWithOriginalAndVariants(\DateTimeInterface $limit): void
+    public function updateWithOriginalAndVariants(array $ids): void
     {
-        $this->initQueryWithOriginalAndVariants($limit)
-            ->update()
-            ->set('f.isOriginalDeleted', true)
-            ->getQuery()
-            ->execute();
+        if (!empty($ids)) {
+            // Étape 2 : Mettre à jour les enregistrements sélectionnés
+            $this->createQueryBuilder('f')
+                ->update()
+                ->set('f.isOriginalDeleted', true)
+                ->where('f.id IN (:ids)')
+                ->setParameter('ids', $ids)
+                ->getQuery()
+                ->execute();
+        }
     }
 
     private function initQueryWithOriginalAndVariants(\DateTimeInterface $limit): QueryBuilder

@@ -11,7 +11,6 @@ signalements:
     nb_enfants_p6: "2"
     is_allocataire: "CAF"
     nature_logement: "Appartement"
-    type_logement: "T2"
     superficie: 40
     loyer: 500
     phone_number: 0621127284
@@ -31,7 +30,6 @@ signalements:
     situation_occupant: "1"
     origine_signalement: "Guichet Unique"
     type_energie_logement: "Electrique"
-    mode_contact_proprio: "[\"\",\"t\\u00e9l\\u00e9phone\"]"
     tags:
       - "Urgent"
     situations:
@@ -57,7 +55,6 @@ signalements:
     is_allocataire: "CAF"
     is_logement_social: 1
     nature_logement: "Appartement"
-    type_logement: "T5"
     superficie: 100
     loyer: 1000
     phone_number: 0621127285
@@ -79,7 +76,6 @@ signalements:
     nb_niveaux_logement: 0
     nb_occupants_logement: 2
     territory: "Ain"
-    mode_contact_proprio: "[\"\",\"t\\u00e9l\\u00e9phone\"]"
     tags:
       - "Peril"
     situations:
@@ -105,7 +101,6 @@ signalements:
     is_allocataire: ""
     is_logement_social: 1
     nature_logement: "Appartement"
-    type_logement: "T2"
     superficie: 30
     loyer: 300
     phone_number: 0621127286
@@ -119,7 +114,6 @@ signalements:
     score: 100
     etage_occupant: "rdc"
     escalier_occupant: ""
-    mode_contact_proprio: "[\"\",\"t\\u00e9l\\u00e9phone\"]"
     insee_occupant: "13203"
     is_rsa: 0
     type_energie_logement: "Electrique"
@@ -153,7 +147,6 @@ signalements:
     nb_enfants_p6: "2"
     is_allocataire: ""
     nature_logement: "Appartement"
-    type_logement: "T2"
     superficie: 30
     loyer: 300
     phone_number: 0621127286
@@ -166,7 +159,6 @@ signalements:
     score: 100
     etage_occupant: "Etage 1"
     escalier_occupant: ""
-    mode_contact_proprio: "[\"\",\"t\\u00e9l\\u00e9phone\"]"
     insee_occupant: "13203"
     is_rsa: 0
     type_energie_logement: "Electrique"
@@ -199,7 +191,6 @@ signalements:
     is_logement_social: 0
     is_allocataire: ""
     nature_logement: "Appartement"
-    type_logement: "T2"
     superficie: 30
     loyer: 300
     phone_number: 0621127286
@@ -212,7 +203,6 @@ signalements:
     score: 100
     etage_occupant: "0"
     escalier_occupant: ""
-    mode_contact_proprio: "[\"\",\"t\\u00e9l\\u00e9phone\"]"
     insee_occupant: "13203"
     is_rsa: 0
     type_energie_logement: "Electrique"
@@ -245,7 +235,6 @@ signalements:
     is_allocataire: ""
     is_logement_social: 0
     nature_logement: "Appartement"
-    type_logement: "T2"
     superficie: 30
     loyer: 300
     phone_number: 0621127286
@@ -258,7 +247,6 @@ signalements:
     score: 100
     etage_occupant: "0"
     escalier_occupant: ""
-    mode_contact_proprio: "[\"\",\"t\\u00e9l\\u00e9phone\"]"
     insee_occupant: "13203"
     is_rsa: 0
     type_energie_logement: "Electrique"
@@ -290,7 +278,6 @@ signalements:
     nb_enfants_p6: "2"
     is_allocataire: ""
     nature_logement: "Appartement"
-    type_logement: "T2"
     superficie: 30
     loyer: 300
     phone_number: 0621127286
@@ -303,7 +290,6 @@ signalements:
     score: 100
     etage_occupant: "0"
     escalier_occupant: ""
-    mode_contact_proprio: "[\"\",\"t\\u00e9l\\u00e9phone\"]"
     insee_occupant: "13203"
     is_rsa: 0
     type_energie_logement: "Electrique"
@@ -336,7 +322,6 @@ signalements:
     nb_enfants_p6: "2"
     is_allocataire: ""
     nature_logement: "Appartement"
-    type_logement: "T2"
     superficie: 30
     loyer: 300
     phone_number: 0621127286
@@ -350,7 +335,6 @@ signalements:
     score: 100
     etage_occupant: "0"
     escalier_occupant: ""
-    mode_contact_proprio: "[\"\",\"t\\u00e9l\\u00e9phone\"]"
     insee_occupant: "13203"
     is_rsa: 0
     type_energie_logement: "Electrique"
@@ -383,7 +367,6 @@ signalements:
     nb_enfants_p6: "2"
     is_allocataire: ""
     nature_logement: "Appartement"
-    type_logement: "T2"
     superficie: 30
     loyer: 300
     phone_number: 0621127286
@@ -396,7 +379,6 @@ signalements:
     score: 100
     etage_occupant: "0"
     escalier_occupant: ""
-    mode_contact_proprio: "[\"\",\"t\\u00e9l\\u00e9phone\"]"
     insee_occupant: "13203"
     is_rsa: 0
     type_energie_logement: "Electrique"
@@ -429,7 +411,6 @@ signalements:
     nb_enfants_p6: "2"
     is_allocataire: ""
     nature_logement: "Appartement"
-    type_logement: "T2"
     superficie: 30
     loyer: 300
     phone_number: 0621127286
@@ -442,7 +423,6 @@ signalements:
     score: 100
     etage_occupant: "0"
     escalier_occupant: ""
-    mode_contact_proprio: "[\"\",\"t\\u00e9l\\u00e9phone\"]"
     insee_occupant: "13203"
     is_rsa: 0
     type_energie_logement: "Electrique"
@@ -475,7 +455,6 @@ signalements:
     nb_enfants_p6: "2"
     is_allocataire: ""
     nature_logement: "Appartement"
-    type_logement: "T2"
     superficie: 30
     loyer: 300
     phone_number: 0621127286
@@ -488,7 +467,6 @@ signalements:
     score: 100
     etage_occupant: "0"
     escalier_occupant: ""
-    mode_contact_proprio: "[\"\",\"t\\u00e9l\\u00e9phone\"]"
     insee_occupant: "13203"
     is_rsa: 0
     type_energie_logement: "Electrique"
@@ -521,7 +499,6 @@ signalements:
     nb_enfants_p6: "2"
     is_allocataire: "CAF"
     nature_logement: "Appartement"
-    type_logement: "T5"
     superficie: 100
     loyer: 1000
     phone_number: 0621127285
@@ -543,7 +520,6 @@ signalements:
     nb_niveaux_logement: 0
     nb_occupants_logement: 2
     territory: "Ain"
-    mode_contact_proprio: "[\"\",\"t\\u00e9l\\u00e9phone\"]"
     tags:
       - "Peril"
     situations:
@@ -569,7 +545,6 @@ signalements:
     nb_enfants_p6: "2"
     is_allocataire: "CAF"
     nature_logement: "Appartement"
-    type_logement: "T5"
     superficie: 100
     loyer: 1000
     phone_number: 0621127285
@@ -591,7 +566,6 @@ signalements:
     nb_niveaux_logement: 0
     nb_occupants_logement: 2
     territory: "Ain"
-    mode_contact_proprio: "[\"\",\"t\\u00e9l\\u00e9phone\"]"
     tags:
       - "Peril"
     situations:
@@ -618,7 +592,6 @@ signalements:
     nb_enfants_p6: "2"
     is_allocataire: "CAF"
     nature_logement: "Appartement"
-    type_logement: "T5"
     superficie: 100
     loyer: 1000
     phone_number: 0621127285
@@ -640,7 +613,6 @@ signalements:
     nb_niveaux_logement: 0
     nb_occupants_logement: 2
     territory: "Ain"
-    mode_contact_proprio: "[\"\",\"t\\u00e9l\\u00e9phone\"]"
     tags:
       - "Peril"
     situations:
@@ -666,7 +638,6 @@ signalements:
     nb_enfants_p6: "2"
     is_allocataire: "CAF"
     nature_logement: "Appartement"
-    type_logement: "T5"
     superficie: 100
     loyer: 1000
     phone_number: 0621127285
@@ -688,7 +659,6 @@ signalements:
     nb_niveaux_logement: 0
     nb_occupants_logement: 2
     territory: "Ain"
-    mode_contact_proprio: "[\"\",\"t\\u00e9l\\u00e9phone\"]"
     is_imported: true
     tags: []
     situations: []
@@ -705,7 +675,6 @@ signalements:
     nb_enfants_p6: "2"
     is_allocataire: "CAF"
     nature_logement: "Appartement"
-    type_logement: "T5"
     superficie: 100
     loyer: 1000
     phone_number: 0621127285
@@ -726,7 +695,6 @@ signalements:
     nb_niveaux_logement: 0
     nb_occupants_logement: 2
     territory: "Rhône"
-    mode_contact_proprio: "[\"\",\"t\\u00e9l\\u00e9phone\"]"
     tags: []
     situations: []
     criteres: []
@@ -742,7 +710,6 @@ signalements:
     nb_enfants_p6: "2"
     is_allocataire: "CAF"
     nature_logement: "Appartement"
-    type_logement: "T5"
     superficie: 100
     loyer: 1000
     phone_number: 0621127285
@@ -763,7 +730,6 @@ signalements:
     nb_niveaux_logement: 0
     nb_occupants_logement: 2
     territory: "Rhône"
-    mode_contact_proprio: "[\"\",\"t\\u00e9l\\u00e9phone\"]"
     tags: []
     situations: []
     criteres: []
@@ -779,7 +745,6 @@ signalements:
     nb_enfants_p6: "2"
     is_allocataire: "CAF"
     nature_logement: "Appartement"
-    type_logement: "T5"
     superficie: 100
     loyer: 1000
     phone_number: 0621127285
@@ -800,7 +765,6 @@ signalements:
     nb_niveaux_logement: 0
     nb_occupants_logement: 2
     territory: "Rhône"
-    mode_contact_proprio: "[\"\",\"t\\u00e9l\\u00e9phone\"]"
     tags: []
     situations: []
     criteres: []
@@ -816,7 +780,6 @@ signalements:
     nb_enfants_p6: "2"
     is_allocataire: "CAF"
     nature_logement: "Appartement"
-    type_logement: "T5"
     superficie: 100
     loyer: 1000
     phone_number: 0621127285
@@ -837,7 +800,6 @@ signalements:
     nb_niveaux_logement: 0
     nb_occupants_logement: 2
     territory: "Rhône"
-    mode_contact_proprio: "[\"\",\"t\\u00e9l\\u00e9phone\"]"
     tags: []
     situations: []
     criteres: []
@@ -853,7 +815,6 @@ signalements:
     nb_enfants_p6: "2"
     is_allocataire: ""
     nature_logement: "Appartement"
-    type_logement: "T2"
     superficie: 30
     loyer: 300
     phone_number: 0621127286
@@ -866,7 +827,6 @@ signalements:
     score: 100
     etage_occupant: "0"
     escalier_occupant: ""
-    mode_contact_proprio: "[\"\",\"t\\u00e9l\\u00e9phone\"]"
     insee_occupant: "13203"
     is_rsa: 0
     type_energie_logement: "Electrique"
@@ -899,7 +859,6 @@ signalements:
     nb_enfants_p6: "2"
     is_allocataire: "CAF"
     nature_logement: "Appartement"
-    type_logement: "T5"
     superficie: 100
     loyer: 1000
     phone_number: 0621127285
@@ -920,7 +879,6 @@ signalements:
     nb_niveaux_logement: 0
     nb_occupants_logement: 2
     territory: "Yonne"
-    mode_contact_proprio: "[\"\",\"t\\u00e9l\\u00e9phone\"]"
     tags: []
     situations:
       - "le confort du logement"
@@ -945,7 +903,6 @@ signalements:
     nb_enfants_p6: "2"
     is_allocataire: "CAF"
     nature_logement: "Appartement"
-    type_logement: "T5"
     superficie: 100
     loyer: 1000
     phone_number: 0621127285
@@ -966,7 +923,6 @@ signalements:
     nb_niveaux_logement: 0
     nb_occupants_logement: 2
     territory: "Puy-de-Dôme"
-    mode_contact_proprio: "[\"\",\"t\\u00e9l\\u00e9phone\"]"
     tags: []
     situations:
       - "le confort du logement"
@@ -991,7 +947,6 @@ signalements:
     is_allocataire: "MSA"
     is_logement_social: 0
     nature_logement: "Appartement"
-    type_logement: "T2"
     superficie: 30
     loyer: 300
     phone_number: 0621127286
@@ -1004,7 +959,6 @@ signalements:
     score: 100
     etage_occupant: "0"
     escalier_occupant: ""
-    mode_contact_proprio: "[\"\",\"t\\u00e9l\\u00e9phone\"]"
     insee_occupant: "13205"
     is_rsa: 0
     type_energie_logement: "Electrique"
@@ -1034,7 +988,6 @@ signalements:
     is_logement_social: 0
     nb_pieces_logement: 4
     nature_logement: "Appartement"
-    type_logement: "T2"
     superficie: 30
     loyer: 300
     phone_number: 0621127286
@@ -1047,7 +1000,6 @@ signalements:
     score: 80
     etage_occupant: "0"
     escalier_occupant: ""
-    mode_contact_proprio: "[\"\",\"t\\u00e9l\\u00e9phone\"]"
     insee_occupant: "13204"
     is_rsa: 0
     type_energie_logement: "Electrique"
@@ -1078,7 +1030,6 @@ signalements:
     is_allocataire: ""
     is_logement_social: 0
     nature_logement: "Appartement"
-    type_logement: "T2"
     superficie: 30
     loyer: 300
     phone_number: 0621127286
@@ -1092,7 +1043,6 @@ signalements:
     score: 80
     etage_occupant: "Annexe du bâtiment"
     escalier_occupant: ""
-    mode_contact_proprio: "[\"\",\"t\\u00e9l\\u00e9phone\"]"
     insee_occupant: "13204"
     is_rsa: 0
     montant_allocation: 400
@@ -1123,7 +1073,6 @@ signalements:
     nb_enfants_p6: "2"
     is_allocataire: ""
     nature_logement: "Appartement"
-    type_logement: "T2"
     superficie: 30
     loyer: 300
     phone_number: 0621127286
@@ -1140,7 +1089,6 @@ signalements:
     score: 100
     etage_occupant: "0"
     escalier_occupant: ""
-    mode_contact_proprio: "[\"\",\"t\\u00e9l\\u00e9phone\"]"
     insee_occupant: "13203"
     is_rsa: 0
     type_energie_logement: "Electrique"
@@ -1173,7 +1121,6 @@ signalements:
     nb_enfants_p6: "2"
     is_allocataire: ""
     nature_logement: "Appartement"
-    type_logement: "T2"
     superficie: 30
     loyer: 300
     phone_number: 0621127286
@@ -1190,7 +1137,6 @@ signalements:
     score: 100
     etage_occupant: "0"
     escalier_occupant: ""
-    mode_contact_proprio: "[\"\",\"t\\u00e9l\\u00e9phone\"]"
     insee_occupant: "13203"
     is_rsa: 0
     type_energie_logement: "Electrique"
@@ -1223,7 +1169,6 @@ signalements:
     nb_enfants_p6: "2"
     is_allocataire: ""
     nature_logement: "Appartement"
-    type_logement: "T2"
     superficie: 30
     loyer: 300
     phone_number: 0621127286
@@ -1240,7 +1185,6 @@ signalements:
     score: 100
     etage_occupant: "0"
     escalier_occupant: ""
-    mode_contact_proprio: "[\"\",\"t\\u00e9l\\u00e9phone\"]"
     insee_occupant: "13203"
     is_rsa: 0
     type_energie_logement: "Electrique"
@@ -1273,7 +1217,6 @@ signalements:
     nb_enfants_p6: "2"
     is_allocataire: ""
     nature_logement: "Appartement"
-    type_logement: "T2"
     superficie: 30
     loyer: 300
     phone_number: 0621127286
@@ -1287,7 +1230,6 @@ signalements:
     score: 100
     etage_occupant: "0"
     escalier_occupant: ""
-    mode_contact_proprio: "[\"\",\"t\\u00e9l\\u00e9phone\"]"
     insee_occupant: "13203"
     is_rsa: 0
     type_energie_logement: "Electrique"
@@ -1320,7 +1262,6 @@ signalements:
     nb_enfants_p6: "2"
     is_allocataire: ""
     nature_logement: "Appartement"
-    type_logement: "T2"
     superficie: 30
     loyer: 300
     phone_number: 0621127286
@@ -1334,7 +1275,6 @@ signalements:
     score: 100
     etage_occupant: "0"
     escalier_occupant: ""
-    mode_contact_proprio: "[\"\",\"t\\u00e9l\\u00e9phone\"]"
     insee_occupant: "13203"
     is_rsa: 0
     type_energie_logement: "Electrique"
@@ -1367,7 +1307,6 @@ signalements:
     nb_enfants_p6: "2"
     is_allocataire: ""
     nature_logement: "Appartement"
-    type_logement: "T2"
     superficie: 30
     loyer: 300
     phone_number: 0621127286
@@ -1382,7 +1321,6 @@ signalements:
     score: 100
     etage_occupant: "0"
     escalier_occupant: ""
-    mode_contact_proprio: "[\"\",\"t\\u00e9l\\u00e9phone\"]"
     insee_occupant: "13203"
     is_rsa: 0
     type_energie_logement: "Electrique"
@@ -1415,7 +1353,6 @@ signalements:
     nb_enfants_p6: "2"
     is_allocataire: ""
     nature_logement: "Appartement"
-    type_logement: "T2"
     superficie: 30
     loyer: 300
     phone_number: 0621127286
@@ -1429,7 +1366,6 @@ signalements:
     score: 100
     etage_occupant: "0"
     escalier_occupant: ""
-    mode_contact_proprio: "[\"\",\"t\\u00e9l\\u00e9phone\"]"
     insee_occupant: "13203"
     is_rsa: 0
     type_energie_logement: "Electrique"
@@ -1463,7 +1399,6 @@ signalements:
     nb_enfants_p6: "2"
     is_allocataire: ""
     nature_logement: "Appartement"
-    type_logement: "T2"
     superficie: 30
     loyer: 300
     phone_number: 0621127286
@@ -1477,7 +1412,6 @@ signalements:
     score: 100
     etage_occupant: "0"
     escalier_occupant: ""
-    mode_contact_proprio: "[\"\",\"t\\u00e9l\\u00e9phone\"]"
     insee_occupant: "13203"
     is_rsa: 0
     type_energie_logement: "Electrique"
@@ -1512,7 +1446,6 @@ signalements:
     is_allocataire: ""
     nature_logement: "Autre"
     nature_logement_autre_precision: "Roulotte"
-    type_logement: ""
     superficie: 15
     loyer: 200
     phone_number: 0821127286
@@ -1526,7 +1459,6 @@ signalements:
     score: 100
     etage_occupant: "0"
     escalier_occupant: ""
-    mode_contact_proprio: "[\"\",\"t\\u00e9l\\u00e9phone\"]"
     insee_occupant: "13203"
     is_rsa: 0
     type_energie_logement: "Electrique"
@@ -1559,7 +1491,6 @@ signalements:
     nb_enfants_p6: "2"
     is_allocataire: ""
     nature_logement: "Appartement"
-    type_logement: "T2"
     superficie: 30
     loyer: 300
     phone_number: 0621127286
@@ -1570,12 +1501,11 @@ signalements:
     motif_refus: "DOUBLON"
     code_suivi: '0123456784569'
     reference: "2023-21"
-    geoloc: "{\"lng\":\"43.3117791\", \"lat\":\"5.3755551\"}"
+    geoloc: "{\"lat\":\"43.3117791\", \"lng\":\"5.3755551\"}"
     created_at: "2023-06-16 16:06:33"
     score: 4
     etage_occupant: "0"
     escalier_occupant: ""
-    mode_contact_proprio: "[\"\",\"t\\u00e9l\\u00e9phone\"]"
     insee_occupant: "13203"
     is_rsa: 0
     type_energie_logement: "Electrique"
@@ -1602,7 +1532,6 @@ signalements:
     nb_enfants_p6: "2"
     is_allocataire: ""
     nature_logement: "Appartement"
-    type_logement: "T2"
     superficie: 30
     loyer: 300
     phone_number: 0621127286
@@ -1616,7 +1545,6 @@ signalements:
     score: 4
     etage_occupant: "0"
     escalier_occupant: ""
-    mode_contact_proprio: "[\"\",\"t\\u00e9l\\u00e9phone\"]"
     insee_occupant: "38185"
     is_rsa: 0
     type_energie_logement: "Electrique"
@@ -1636,7 +1564,6 @@ signalements:
     nb_enfants_p6: "2"
     is_allocataire: ""
     nature_logement: "Appartement"
-    type_logement: "T2"
     superficie: 30
     loyer: 300
     phone_number: 0621127286
@@ -1650,7 +1577,6 @@ signalements:
     score: 4
     etage_occupant: "0"
     escalier_occupant: ""
-    mode_contact_proprio: "[\"\",\"t\\u00e9l\\u00e9phone\"]"
     insee_occupant: "38185"
     is_rsa: 0
     type_energie_logement: "Electrique"
@@ -1670,7 +1596,6 @@ signalements:
     nb_enfants_p6: "2"
     is_allocataire: ""
     nature_logement: "Appartement"
-    type_logement: "T2"
     superficie: 30
     loyer: 300
     phone_number: 0621127286
@@ -1684,7 +1609,6 @@ signalements:
     score: 4
     etage_occupant: "0"
     escalier_occupant: ""
-    mode_contact_proprio: "[\"\",\"t\\u00e9l\\u00e9phone\"]"
     insee_occupant: "29232"
     is_rsa: 0
     type_energie_logement: "Electrique"
@@ -1704,7 +1628,6 @@ signalements:
     nb_enfants_p6: "2"
     is_allocataire: ""
     nature_logement: "Appartement"
-    type_logement: "T2"
     superficie: 30
     loyer: 300
     phone_number: 0621127286
@@ -1718,7 +1641,6 @@ signalements:
     score: 4
     etage_occupant: "0"
     escalier_occupant: ""
-    mode_contact_proprio: "[\"\",\"t\\u00e9l\\u00e9phone\"]"
     insee_occupant: "29046"
     is_rsa: 0
     type_energie_logement: "Electrique"
@@ -1739,7 +1661,6 @@ signalements:
     nb_enfants_p6: "2"
     is_allocataire: "CAF"
     nature_logement: "Appartement"
-    type_logement: "T2"
     superficie: 40
     loyer: 500
     phone_number: 0621127284
@@ -1758,7 +1679,6 @@ signalements:
     situation_occupant: "1"
     origine_signalement: "Guichet Unique"
     type_energie_logement: "Electrique"
-    mode_contact_proprio: "[\"\",\"t\\u00e9l\\u00e9phone\"]"
     is_imported: true
   -
     uuid: "00000000-0000-0000-2024-000000000001"
@@ -1786,7 +1706,6 @@ signalements:
     is_rsa: 0
     nb_occupants_logement: 4
     territory: "Pas-de-Calais"
-    mode_contact_proprio: "[\"\",\"t\\u00e9l\\u00e9phone\"]"
     situations:
       - "le confort du logement"
     criteres:
@@ -1827,7 +1746,6 @@ signalements:
     is_rsa: 0
     nb_occupants_logement: 4
     territory: "Bouches-du-Rhône"
-    mode_contact_proprio: "[\"\",\"t\\u00e9l\\u00e9phone\"]"
     situations:
       - "le confort du logement"
     criteres:
@@ -1867,7 +1785,6 @@ signalements:
     is_rsa: 0
     nb_occupants_logement: 4
     territory: "Seine-Saint-Denis"
-    mode_contact_proprio: "[\"\",\"t\\u00e9l\\u00e9phone\"]"
     situations:
       - "le confort du logement"
     criteres:

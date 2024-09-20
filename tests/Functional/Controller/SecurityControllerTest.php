@@ -46,6 +46,6 @@ class SecurityControllerTest extends WebTestCase
         $client = static::createClient();
         $client->request('GET', '/_up/check.png');
 
-        $this->assertResponseStatusCodeSame(404);
+        $this->assertResponseRedirects('/connexion');
     }
 }

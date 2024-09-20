@@ -23,15 +23,15 @@ class UserAvatarTest extends WebTestCase
         $user = (new User())
         ->setRoles([User::ROLES['Super Admin']]);
         $outputSpan = $userAvatar->userAvatarOrPlaceHolder($user);
-        $this->assertEquals('<span class="avatar-placeholder avatar-74">SA</span>', $outputSpan);
+        $this->assertEquals('<span class="avatar-histologe avatar-placeholder avatar-74">SA</span>', $outputSpan);
 
         $outputSpan = $userAvatar->userAvatarOrPlaceHolder($user, 80);
-        $this->assertEquals('<span class="avatar-placeholder avatar-80">SA</span>', $outputSpan);
+        $this->assertEquals('<span class="avatar-histologe avatar-placeholder avatar-80">SA</span>', $outputSpan);
 
         $user->setRoles([User::ROLES['Administrateur']]);
         $user->setTerritory((new Territory())->setZip('44'));
         $outputSpan = $userAvatar->userAvatarOrPlaceHolder($user);
-        $this->assertEquals('<span class="avatar-placeholder avatar-74">44</span>', $outputSpan);
+        $this->assertEquals('<span class="avatar-histologe avatar-placeholder avatar-74">44</span>', $outputSpan);
 
         /** @var ParameterBagInterface $parameterBag */
         $parameterBag = $this->createMock(ParameterBagInterface::class);
@@ -50,11 +50,11 @@ class UserAvatarTest extends WebTestCase
         $outputSpan = $userAvatar->userAvatarOrPlaceHolder($user);
 
         $this->assertStringContainsString('<img src="data:image/jpg;base64,', $outputSpan);
-        $this->assertStringContainsString('alt="Avatar de l\'utilisateur" class="avatar-74">', $outputSpan);
+        $this->assertStringContainsString('alt="Avatar de l\'utilisateur" class="avatar-histologe avatar-74">', $outputSpan);
 
         $outputSpan = $userAvatar->userAvatarOrPlaceHolder($user, 100);
 
         $this->assertStringContainsString('<img src="data:image/jpg;base64,', $outputSpan);
-        $this->assertStringContainsString('alt="Avatar de l\'utilisateur" class="avatar-100">', $outputSpan);
+        $this->assertStringContainsString('alt="Avatar de l\'utilisateur" class="avatar-histologe avatar-100">', $outputSpan);
     }
 }

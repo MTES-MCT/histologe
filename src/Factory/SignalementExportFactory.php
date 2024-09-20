@@ -2,7 +2,6 @@
 
 namespace App\Factory;
 
-use App\Dto\SignalementAffectationListView;
 use App\Dto\SignalementExport;
 use App\Entity\Enum\MotifCloture;
 use App\Entity\Enum\ProfileDeclarant;
@@ -40,17 +39,10 @@ class SignalementExportFactory
         $status = SignalementAffectationHelper::getStatusLabelFrom($user, $data);
 
         $geoloc = $data['geoloc'];
-
-        $interventionExploded = explode(
-            SignalementExport::SEPARATOR_GROUP_CONCAT,
-            $this->getVisiteStatut($data['interventionsStatus'])
-        );
-        $statusVisite = $interventionExploded[0];
-        $dateVisite = !empty($interventionExploded[1]) ? $interventionExploded[1] : '';
-        if (DateHelper::isValidDate($dateVisite)) {
-            $dateVisite = !empty($dateVisite) ? (new \DateTime($dateVisite))->format(self::DATE_FORMAT) : '';
-        }
-        $isOccupantPresentVisite = !empty($interventionExploded[2]) ? $interventionExploded[2] : '';
+        $lastIntervention = $this->getLastVisiteData($data['interventionsData']);
+        $dateVisite = $lastIntervention['scheduledAt'];
+        $dateVisite = (!empty($dateVisite) && DateHelper::isValidDate($dateVisite)) ? (new \DateTime($dateVisite))->format(self::DATE_FORMAT) : '';
+        $isOccupantPresentVisite = $lastIntervention['occupantPresent'];
 
         $enfantsM6 = null;
         if (isset($data['typeCompositionLogement']) && $data['typeCompositionLogement'] instanceof TypeCompositionLogement) {
@@ -100,11 +92,12 @@ class SignalementExportFactory
             emailDeclarant: $data['mailDeclarant'] ?? '-',
             structureDeclarant: $data['structureDeclarant'] ?? '-',
             lienDeclarantOccupant: $data['lienDeclarantOccupant'] ?? '-',
+            nbVisites: $lastIntervention['nbVisites'],
             dateVisite: $dateVisite,
             isOccupantPresentVisite: $isOccupantPresentVisite ? self::OUI : ('0' === $isOccupantPresentVisite ? self::NON : ''),
-            interventionStatus: $statusVisite,
-            interventionConcludeProcedure: $data['interventionConcludeProcedure'] ?? '-',
-            interventionDetails: !empty($data['interventionDetails']) ? strip_tags($data['interventionDetails']) : '-',
+            interventionStatus: $lastIntervention['status'],
+            interventionConcludeProcedure: $lastIntervention['conclude'],
+            interventionDetails: strip_tags($lastIntervention['details']),
             modifiedAt: $modifiedAt,
             closedAt: $closedAt,
             motifCloture: $motifCloture,
@@ -137,43 +130,43 @@ class SignalementExportFactory
         return $value;
     }
 
-    private function getVisiteStatut(?string $interventionStatus): string
+    private function getLastVisiteData(?string $interventionData): array
     {
-        if (null === $interventionStatus) {
-            $statusVisite = VisiteStatus::NON_PLANIFIEE->value.SignalementExport::SEPARATOR_GROUP_CONCAT.''.SignalementExport::SEPARATOR_GROUP_CONCAT;
-        } else {
-            $interventions = explode(SignalementAffectationListView::SEPARATOR_CONCAT, $interventionStatus);
-            foreach ($interventions as $intervention) {
-                $interventionExploded = explode(SignalementExport::SEPARATOR_GROUP_CONCAT, $intervention);
-                if (Intervention::STATUS_PLANNED === $interventionExploded[0]) {
-                    $todayDatetime = new \DateTime();
-                    if ($interventionExploded[1] > $todayDatetime->format('Y-m-d')) {
-                        $statusVisite = VisiteStatus::PLANIFIEE->value;
-                    } else {
-                        $statusVisite = VisiteStatus::CONCLUSION_A_RENSEIGNER->value;
-                    }
-                } elseif (Intervention::STATUS_CANCELED === $interventionExploded[0]) {
-                    $statusVisite = 'Annulée';
-                } elseif (Intervention::STATUS_NOT_DONE === $interventionExploded[0]) {
-                    $statusVisite = 'Non effectuée';
-                } else {
-                    $statusVisite = VisiteStatus::TERMINEE->value;
-                }
-
-                if (!empty($interventionExploded[1])) {
-                    $statusVisite .= SignalementExport::SEPARATOR_GROUP_CONCAT.$interventionExploded[1];
-                } else {
-                    $statusVisite .= SignalementExport::SEPARATOR_GROUP_CONCAT;
-                }
-
-                if (!empty($interventionExploded[2])) {
-                    $statusVisite .= SignalementExport::SEPARATOR_GROUP_CONCAT.$interventionExploded[2];
-                } else {
-                    $statusVisite .= SignalementExport::SEPARATOR_GROUP_CONCAT;
-                }
+        $lastIntervention = [
+            'status' => VisiteStatus::NON_PLANIFIEE->value,
+            'conclude' => '-',
+            'details' => '-',
+            'scheduledAt' => '',
+            'occupantPresent' => '',
+            'nbVisites' => 0,
+        ];
+        if (null === $interventionData) {
+            return $lastIntervention;
+        }
+        $interventionsExploded = explode(SignalementExport::SEPARATOR_GROUP_CONCAT, $interventionData);
+        $status = $interventionsExploded[count($interventionsExploded) - 5];
+        $lastIntervention['scheduledAt'] = $interventionsExploded[count($interventionsExploded) - 4];
+        $lastIntervention['occupantPresent'] = $interventionsExploded[count($interventionsExploded) - 3];
+        $lastIntervention['conclude'] = $interventionsExploded[count($interventionsExploded) - 2] ?? '-';
+        $lastIntervention['details'] = $interventionsExploded[count($interventionsExploded) - 1] ?? '-';
+        $lastIntervention['nbVisites'] = count($interventionsExploded) / 5;
+        if (Intervention::STATUS_PLANNED === $status) {
+            $todayDatetime = new \DateTime();
+            if ($lastIntervention['scheduledAt'] > $todayDatetime->format('Y-m-d')) {
+                $statusVisite = VisiteStatus::PLANIFIEE->value;
+            } else {
+                $statusVisite = VisiteStatus::CONCLUSION_A_RENSEIGNER->value;
             }
+        } elseif (Intervention::STATUS_CANCELED === $status) {
+            $statusVisite = 'Annulée';
+        } elseif (Intervention::STATUS_NOT_DONE === $status) {
+            $statusVisite = 'Non effectuée';
+        } else {
+            $statusVisite = VisiteStatus::TERMINEE->value;
         }
 
-        return $statusVisite;
+        $lastIntervention['status'] = $statusVisite;
+
+        return $lastIntervention;
     }
 }

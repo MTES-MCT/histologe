@@ -5,19 +5,26 @@ namespace App\Tests\Unit\Service\Esabora;
 use App\Entity\Enum\PartnerType;
 use App\Entity\Intervention;
 use App\Entity\User;
+use App\Factory\FileFactory;
 use App\Factory\InterventionFactory;
 use App\Manager\AffectationManager;
 use App\Manager\SuiviManager;
 use App\Manager\UserManager;
 use App\Repository\InterventionRepository;
 use App\Service\Esabora\EsaboraManager;
+use App\Service\Files\ZipHelper;
+use App\Service\ImageManipulationHandler;
+use App\Service\Security\FileScanner;
+use App\Service\UploadHandlerService;
 use App\Tests\FixturesHelper;
+use Doctrine\ORM\EntityManager;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Psr\EventDispatcher\EventDispatcherInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Symfony\Component\EventDispatcher\EventDispatcher;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 class EsaboraManagerTest extends TestCase
 {
@@ -33,6 +40,13 @@ class EsaboraManagerTest extends TestCase
     protected MockObject|UserManager $userManager;
     private MockObject|LoggerInterface $logger;
     private MockObject|ParameterBagInterface $parameterBag;
+    private MockObject|EntityManager $entityManager;
+    private MockObject|ZipHelper $zipHelper;
+    private MockObject|FileScanner $fileScanner;
+    private MockObject|UploadHandlerService $uploadHander;
+    private MockObject|ImageManipulationHandler $imageManipulationHandler;
+    private MockObject|UrlGeneratorInterface $UrlGeneratorInterface;
+    private MockObject|FileFactory $fileFactory;
 
     protected function setUp(): void
     {
@@ -44,6 +58,13 @@ class EsaboraManagerTest extends TestCase
         $this->eventDispatcher = new EventDispatcher();
         $this->logger = $this->createMock(LoggerInterface::class);
         $this->parameterBag = $this->createMock(ParameterBagInterface::class);
+        $this->entityManager = $this->createMock(EntityManager::class);
+        $this->zipHelper = $this->createMock(ZipHelper::class);
+        $this->fileScanner = $this->createMock(FileScanner::class);
+        $this->uploadHander = $this->createMock(UploadHandlerService::class);
+        $this->imageManipulationHandler = $this->createMock(ImageManipulationHandler::class);
+        $this->UrlGeneratorInterface = $this->createMock(UrlGeneratorInterface::class);
+        $this->fileFactory = $this->createMock(FileFactory::class);
     }
 
     public function testCreateVisite(): void
@@ -84,6 +105,13 @@ class EsaboraManagerTest extends TestCase
             $this->userManager,
             $this->logger,
             $this->parameterBag,
+            $this->entityManager,
+            $this->zipHelper,
+            $this->fileScanner,
+            $this->uploadHander,
+            $this->imageManipulationHandler,
+            $this->UrlGeneratorInterface,
+            $this->fileFactory
         );
         $esaboraManager->createOrUpdateVisite($this->getAffectation(PartnerType::ARS), $dossierVisite);
     }
@@ -143,6 +171,13 @@ class EsaboraManagerTest extends TestCase
             $this->userManager,
             $this->logger,
             $this->parameterBag,
+            $this->entityManager,
+            $this->zipHelper,
+            $this->fileScanner,
+            $this->uploadHander,
+            $this->imageManipulationHandler,
+            $this->UrlGeneratorInterface,
+            $this->fileFactory
         );
     }
 }
