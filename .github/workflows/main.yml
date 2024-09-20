@@ -66,10 +66,6 @@ jobs:
           extensions: mbstring, xml, ctype, iconv, intl, pdo, pdo_mysql, dom, filter, gd, iconv, json, mbstring, sockets
         env:
           update: true
-
-      - name: Curl test
-        run: curl -i http://localhost:80
-
       - name: Cache wkthtmltopdf
         uses: actions/cache@v2
         id: cache-wkhtmltopdf
