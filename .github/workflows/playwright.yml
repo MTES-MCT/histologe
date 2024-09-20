@@ -16,8 +16,8 @@ jobs:
     steps:
     - uses: actions/checkout@v4
 
-    - name: Start containers
-      run: docker compose -f "docker-compose.yml" up -d --build
+    # - name: Start containers
+    #   run: docker compose -f "docker-compose.yml" up -d --build
 
     - name: Curl test
       run: |
