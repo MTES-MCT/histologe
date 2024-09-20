@@ -31,7 +31,7 @@ class ExportSignalementController extends AbstractController
         $user = $this->getUser();
         $filters = $options = $request->getSession()->get('filters') ?? ['isImported' => '1'];
         $count_signalements = $signalementManager->findSignalementAffectationList($user, $options, true);
-        $textFilters = $signalementExportFiltersDisplay->filtersToText($filters, $user);
+        $textFilters = $signalementExportFiltersDisplay->filtersToText($filters);
 
         return $this->render('back/signalement_export/index.html.twig', [
             'filters' => $textFilters,

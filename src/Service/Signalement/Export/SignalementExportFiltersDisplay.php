@@ -8,6 +8,7 @@ use App\Entity\User;
 use App\Repository\PartnerRepository;
 use App\Repository\TagRepository;
 use App\Repository\TerritoryRepository;
+use Symfony\Bundle\SecurityBundle\Security;
 
 class SignalementExportFiltersDisplay
 {
@@ -75,22 +76,20 @@ class SignalementExportFiltersDisplay
         private readonly TerritoryRepository $territoryRepository,
         private readonly PartnerRepository $partnerRepository,
         private readonly TagRepository $tagRepository,
+        private readonly Security $security,
     ) {
     }
 
-    public function filtersToText(
-        array $filters,
-        User $user
-    ): array {
+    public function filtersToText(array $filters): array {
         unset($filters['page']);
         unset($filters['maxItemsPerPage']);
         unset($filters['sortBy']);
         unset($filters['orderBy']);
 
-        if (!\in_array('ROLE_ADMIN', $user->getRoles())) {
+        if (!$this->security->isGranted('ROLE_ADMIN')) {
             unset($filters['territories']);
 
-            if (!\in_array('ROLE_ADMIN_TERRITORY', $user->getRoles())) {
+            if (!$this->security->isGranted('ROLE_ADMIN_TERRITORY')) {
                 unset($filters['isImported']);
             }
         }
