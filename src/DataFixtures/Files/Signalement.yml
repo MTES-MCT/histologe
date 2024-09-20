@@ -1501,7 +1501,7 @@ signalements:
     motif_refus: "DOUBLON"
     code_suivi: '0123456784569'
     reference: "2023-21"
-    geoloc: "{\"lng\":\"43.3117791\", \"lat\":\"5.3755551\"}"
+    geoloc: "{\"lat\":\"43.3117791\", \"lng\":\"5.3755551\"}"
     created_at: "2023-06-16 16:06:33"
     score: 4
     etage_occupant: "0"

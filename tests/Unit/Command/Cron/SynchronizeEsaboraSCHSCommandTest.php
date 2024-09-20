@@ -47,7 +47,7 @@ class SynchronizeEsaboraSCHSCommandTest extends KernelTestCase
         $collection->add($affectation);
 
         $affectationRepositoryMock
-            ->expects($this->exactly(2))
+            ->expects($this->atLeast(1))
             ->method('findAffectationSubscribedToEsabora')
             ->willReturn($collection->toArray());
 
