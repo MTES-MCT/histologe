@@ -4,7 +4,6 @@ namespace App\Service\Signalement\Export;
 
 use App\Entity\Enum\Qualification;
 use App\Entity\Enum\SignalementStatus;
-use App\Entity\User;
 use App\Repository\PartnerRepository;
 use App\Repository\TagRepository;
 use App\Repository\TerritoryRepository;
@@ -80,7 +79,8 @@ class SignalementExportFiltersDisplay
     ) {
     }
 
-    public function filtersToText(array $filters): array {
+    public function filtersToText(array $filters): array
+    {
         unset($filters['page']);
         unset($filters['maxItemsPerPage']);
         unset($filters['sortBy']);
