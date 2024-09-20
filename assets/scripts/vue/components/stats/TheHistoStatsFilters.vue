@@ -75,7 +75,7 @@
           </HistoCheckbox>
         </div>
         <div class="fr-col-12 fr-col-lg-12 fr-col-xl-3 align-right">
-          <a href="#" @click="onReinitLocalEvent"><span class="fr-fi-refresh-line"></span>Tout réinitialiser</a>
+          <a href="#" @click="onReinitLocalEvent" class="fr-link"><span class="fr-fi-refresh-line"></span>Tout réinitialiser</a>
         </div>
       </div>
     </div>
