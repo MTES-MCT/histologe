@@ -4,6 +4,7 @@ namespace App\Tests\Unit\Service\Oilhi;
 
 use App\Messenger\Message\Oilhi\DossierMessage;
 use App\Service\Oilhi\HookZapierService;
+use App\Service\Oilhi\Model\Desordre;
 use Faker\Factory;
 use Monolog\Test\TestCase;
 use PHPUnit\Framework\MockObject\MockObject;
@@ -11,6 +12,8 @@ use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpClient\MockHttpClient;
 use Symfony\Component\HttpClient\Response\MockResponse;
 use Symfony\Component\Serializer\Normalizer\ObjectNormalizer;
+use Symfony\Component\Serializer\Serializer;
+use Symfony\Contracts\HttpClient\Exception\TransportExceptionInterface;
 
 class HookZapierServiceTest extends TestCase
 {
@@ -21,6 +24,9 @@ class HookZapierServiceTest extends TestCase
         $this->logger = $this->createMock(LoggerInterface::class);
     }
 
+    /**
+     * @throws TransportExceptionInterface
+     */
     public function testPushDossierWithSuccess()
     {
         $faker = Factory::create();
@@ -32,12 +38,12 @@ class HookZapierServiceTest extends TestCase
         ];
         $mockResponse = new MockResponse($response);
 
-        $normalizer = new ObjectNormalizer();
+        $serializer = new Serializer([new ObjectNormalizer()]);
         $mockHttpClient = new MockHttpClient($mockResponse);
         $hookZapierService = new HookZapierService(
             $mockHttpClient,
             $this->logger,
-            $normalizer,
+            $serializer,
             'ZAPIER_OILHI_TOKEN',
             'USER_ID',
             'ZAP_ID',
@@ -46,6 +52,15 @@ class HookZapierServiceTest extends TestCase
         $dossierMessage = (new DossierMessage())
             ->setPartnerId(1)
             ->setSignalementId(1)
+            ->setDesordres([
+                new Desordre(
+                    'categorie',
+                    'equipement',
+                    'risque',
+                    true,
+                    false,
+                    true)]
+            )
             ->setSignalementUrl($faker->url());
 
         $response = $hookZapierService->pushDossier($dossierMessage);
