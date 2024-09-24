@@ -24,7 +24,6 @@ use App\Utils\ImportCommune;
 use Doctrine\DBAL\Exception;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\QueryBuilder;
-use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\HttpFoundation\Request;
 
 class SearchFilter
@@ -61,7 +60,6 @@ class SearchFilter
     ];
 
     public function __construct(
-        private Security $security,
         private NotificationRepository $notificationRepository,
         private SuiviRepository $suiviRepository,
         private TerritoryRepository $territoryRepository,
@@ -91,15 +89,13 @@ class SearchFilter
         return $this->filters ?? null;
     }
 
-    public function buildFilters(): array
+    public function buildFilters(User $user): array
     {
         /** @var SignalementSearchQuery $signalementSearchQuery */
         $signalementSearchQuery = $this->request;
         $filters = $signalementSearchQuery->getFilters();
-        /** @var User $user */
-        $user = $this->security->getUser();
         $partner = null;
-        if (!$this->security->isGranted('ROLE_ADMIN')) {
+        if (!$user->isSuperAdmin()) {
             $filters['territories'][] = $user->getTerritory()->getId();
             $territory = $user->getTerritory();
             $partner = \in_array(User::ROLE_USER_PARTNER, $user->getRoles()) ? $user->getPartner() : null;
@@ -130,12 +126,10 @@ class SearchFilter
      * @deprecated  cette méthode est obsolete et ne doit plus être utilisé dans le cadre de la nouvelle liste.
      * Utilisez @see buildFilters() qui s'appuie sur la clsse @see SignalementSearchQuery
      */
-    public function setFilters(): self
+    public function setFilters(User $user): self
     {
         $this->countActive = 0;
         $request = $this->getRequest();
-        /** @var User $user */
-        $user = $this->security->getUser();
         $filters = self::REQUESTS;
         $this->filters = [];
 
@@ -187,7 +181,7 @@ class SearchFilter
                 $this->filters['signalement_ids'] = $signalementIds;
             }
 
-            if ($this->security->isGranted('ROLE_ADMIN') && $request->query->get('territoire_id')) {
+            if ($user->isSuperAdmin() && $request->query->get('territoire_id')) {
                 ++$this->countActive;
                 $this->filters['territories'] = [$request->query->get('territoire_id')];
             }
@@ -242,7 +236,7 @@ class SearchFilter
     /**
      * @throws Exception
      */
-    public function applyFilters(QueryBuilder $qb, array $filters): QueryBuilder
+    public function applyFilters(QueryBuilder $qb, array $filters, User $user): QueryBuilder
     {
         if (!empty($filters['searchterms'])) {
             if (preg_match('/([0-9]{4})-[0-9]{0,6}/', $filters['searchterms'])) {
@@ -347,8 +341,6 @@ class SearchFilter
                     'nb_suivi_technical' => 3,
                 ];
 
-                /** @var User $user */
-                $user = $this->security->getUser();
                 $partner = ($user->isPartnerAdmin() || $user->isUserPartner()) ? $user->getPartner() : null;
                 if (null !== $partner) {
                     $parameters['partner_id'] = $partner->getId();
@@ -372,8 +364,6 @@ class SearchFilter
                 ->andWhere('t.isArchive = 0');
         }
         if (!empty($filters['statuses'])) {
-            /** @var User $user */
-            $user = $this->security->getUser();
             if ($user->isSuperAdmin() || $user->isTerritoryAdmin()) {
                 $qb->andWhere('s.statut IN (:statuses)')
                     ->setParameter('statuses', $filters['statuses']);

@@ -29,12 +29,13 @@ class CartographieController extends AbstractController
         Request $request,
         CritereRepository $critereRepository,
     ): Response {
-        $title = 'Cartographie';
-        $filters = $this->searchFilter->setRequest($request)->setFilters()->getFilters();
-        $countActiveFilters = $this->searchFilter->getCountActive();
-
         /** @var User $user */
         $user = $this->getUser();
+
+        $title = 'Cartographie';
+        $filters = $this->searchFilter->setRequest($request)->setFilters($user)->getFilters();
+        $countActiveFilters = $this->searchFilter->getCountActive();
+
         if ($request->get('load_markers')) {
             $filters['authorized_codes_insee'] = $this->getParameter('authorized_codes_insee');
             $filters['partner_name'] = $user->getPartner()->getNom();
