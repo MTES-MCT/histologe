@@ -8,14 +8,14 @@ use PHPUnit\Framework\TestCase;
 class UrlHelperTest extends TestCase
 {
     /**
-     * @dataProvider providePartnerType
+     * @dataProvider provideDataToQueryString
      */
     public function testArrayToQueryString(array $origin, string $result): void
     {
         $this->assertEquals(UrlHelper::arrayToQueryString($origin), $result);
     }
 
-    public function providePartnerType(): \Generator
+    public function provideDataToQueryString(): \Generator
     {
         yield 'empty' => [[], ''];
         yield 'single' => [['searchTerms' => 'saint médard'], '?searchTerms=saint+m%C3%A9dard'];
