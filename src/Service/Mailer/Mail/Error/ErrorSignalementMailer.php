@@ -35,7 +35,6 @@ class ErrorSignalementMailer extends AbstractNotificationMailer
             'code' => $event->getThrowable()->getCode(),
             'error' => $event->getThrowable()->getMessage(),
             'req' => $event->getRequest()->getContent(),
-            'signalement' => $event->getRequest()->get('signalement'),
             'attachment' => $attachment,
         ];
     }

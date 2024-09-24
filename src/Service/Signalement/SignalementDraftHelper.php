@@ -24,6 +24,10 @@ class SignalementDraftHelper
 
     public static function getEmailDeclarant(SignalementDraftRequest $signalementDraftRequest): ?string
     {
+        if (empty($signalementDraftRequest->getProfil())) {
+            return null;
+        }
+
         switch (strtoupper($signalementDraftRequest->getProfil())) {
             case ProfileDeclarant::SERVICE_SECOURS->name:
             case ProfileDeclarant::BAILLEUR->name:

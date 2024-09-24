@@ -16,7 +16,4 @@
     {% if req is defined %}
         <p>{{ req|json_encode() }}</p>
     {% endif %}
-    {% if signalement is defined %}
-        <p>{{ signalement|json_encode()|replace({',':',<br>'})|raw }}</p>
-    {% endif %}
 {% endblock %}

@@ -28,6 +28,11 @@ class FileScanner
         if (!$this->clamavScanEnable) {
             return true;
         }
+
+        if (empty($filePath)) {
+            return false;
+        }
+
         if ($copy) {
             $copiedFilepath = $this->parameterBag->get('uploads_tmp_dir').'clamav_'.Uuid::v4();
             file_put_contents($copiedFilepath, file_get_contents($filePath));
