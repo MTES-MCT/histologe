@@ -71,7 +71,7 @@ class SignalementSearchQuery
         #[Assert\Choice(['oui'])]
         private readonly ?string $nouveauSuivi = null,
         private readonly ?int $sansSuiviPeriode = null,
-        #[Assert\Choice(['reference', 'nomOccupant', 'lastSuiviAt'])]
+        #[Assert\Choice(['reference', 'nomOccupant', 'lastSuiviAt', 'villeOccupant'])]
         private readonly string $sortBy = 'reference',
         #[Assert\Choice(['ASC', 'DESC', 'asc', 'desc'])]
         private readonly string $orderBy = 'DESC',
