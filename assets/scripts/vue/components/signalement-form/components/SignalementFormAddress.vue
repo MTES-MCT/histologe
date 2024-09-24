@@ -22,7 +22,6 @@
         v-for="(suggestion, index) in suggestions"
         :key="index"
         :class="['fr-col-12 fr-p-3v fr-text-label--blue-france fr-address-suggestion', { 'fr-autocomplete-suggestion-highlighted': index === selectedSuggestionIndex }]"
-        ref="addressSuggestions"
         tabindex="0"
         @click="handleClickSuggestion(index)"
         >
