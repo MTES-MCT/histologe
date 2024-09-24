@@ -34,6 +34,8 @@ class SignalementExportFiltersDisplay
         'tags' => 'Etiquettes',
         'housetypes' => 'Nature du parc',
         'allocs' => 'Allocataire',
+        'delays' => 'Nb jours sans suivi',
+        'nouveau_suivi' => 'Avec nouveau suivi',
     ];
 
     private const STATUS_AFFECTATION = [
@@ -85,6 +87,7 @@ class SignalementExportFiltersDisplay
         unset($filters['maxItemsPerPage']);
         unset($filters['sortBy']);
         unset($filters['orderBy']);
+        unset($filters['signalement_ids']);
 
         if (!$this->security->isGranted('ROLE_ADMIN')) {
             unset($filters['territories']);
