@@ -49,8 +49,7 @@ export default defineComponent({
     hasError: { type: Boolean, default: undefined },
     access_name: { type: String, default: undefined },
     access_autocomplete: { type: String, default: undefined },
-    access_focus: { type: Boolean, default: false },
-    validOnEnter: { type: Boolean, default: false }
+    access_focus: { type: Boolean, default: false }
   },
   methods: {
     closeModal () {

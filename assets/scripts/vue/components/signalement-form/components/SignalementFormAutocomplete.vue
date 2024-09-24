@@ -62,8 +62,7 @@ export default defineComponent({
     // mais si on ne les met pas, elles apparaissent dans le DOM
     // et ça soulève des erreurs W3C
     clickEvent: Function,
-    handleClickComponent: Function,
-    validOnEnter: { type: Boolean, default: false }
+    handleClickComponent: Function
   },
   data () {
     return {

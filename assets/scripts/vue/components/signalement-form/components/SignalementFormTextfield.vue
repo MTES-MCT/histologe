@@ -1,5 +1,5 @@
 <template>
-<div :class="['fr-input-group', { 'fr-input-group--disabled': disabled }]" :id="id" ref="textfield">
+<div :class="['fr-input-group', { 'fr-input-group--disabled': disabled }]" :id="id" :ref="id">
   <label class='fr-label' :for="id + '_input'">
     {{ variablesReplacer.replace(label) }}
     <span class="fr-hint-text">{{ description }}</span>
@@ -8,7 +8,7 @@
       <input
         type="text"
         :id="id + '_input'"
-        :ref="id + '_ref'"
+        :ref="idRef"
         :name="access_name"
         :autocomplete="access_autocomplete"
         :value="internalValue"
@@ -56,17 +56,17 @@ export default defineComponent({
     // mais si on ne les met pas, elles apparaissent dans le DOM
     // et ça soulève des erreurs W3C
     clickEvent: Function,
-    handleClickComponent: Function,
-    validOnEnter: { type: Boolean, default: false }
+    handleClickComponent: Function
   },
   data () {
     return {
       idFetchTimeout: 0 as unknown as ReturnType<typeof setTimeout>,
-      variablesReplacer
+      variablesReplacer,
+      idRef: this.id + '_ref'
     }
   },
   mounted () {
-    const element = this.$refs.textfield as HTMLElement
+    const element = this.$refs[this.id] as HTMLElement
     if (this.access_focus && element && !element.classList.contains('fr-hidden')) {
       this.focusInput()
     }
@@ -90,7 +90,7 @@ export default defineComponent({
       }
     },
     focusInput () {
-      const focusableElement = (this.$refs[this.id + '_ref']) as HTMLElement
+      const focusableElement = (this.$refs[this.idRef]) as HTMLElement
       if (focusableElement) {
         focusableElement.focus()
       }

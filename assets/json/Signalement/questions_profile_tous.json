@@ -18,8 +18,7 @@
                 "label": "Je démarre",
                 "slug": "introduction_go",
                 "action": "goto:adresse_logement_intro",
-                "customCss": "fr-btn--icon-left fr-icon-check-line",
-                "validOnEnter": true
+                "customCss": "fr-btn--icon-left fr-icon-check-line"
               },
               {
                 "type": "SignalementFormLink",
@@ -58,8 +57,7 @@
                 "label": "C'est parti",
                 "slug": "adresse_logement_intro_go",
                 "action": "goto:adresse_logement",
-                "customCss": "fr-btn--icon-right fr-icon-arrow-right-line",
-                "validOnEnter": true
+                "customCss": "fr-btn--icon-right fr-icon-arrow-right-line"
               },
               {
                 "type": "SignalementFormLink",
@@ -152,8 +150,7 @@
                 "label": "Suivant",
                 "slug": "adresse_logement_next",
                 "action": "goto.checkloc:signalement_concerne",
-                "customCss": "fr-btn--icon-right fr-icon-arrow-right-line",
-                "validOnEnter": true
+                "customCss": "fr-btn--icon-right fr-icon-arrow-right-line"
               },
               {
                 "type": "SignalementFormButton",
@@ -342,8 +339,7 @@
                 "action": "goto.save:vos_coordonnees_occupant",
                 "conditional": {
                   "show": "formStore.data.signalement_concerne_profil === 'logement_occupez'"
-                },
-                "validOnEnter": true
+                }
               },
               {
                 "type": "SignalementFormButton",
@@ -353,8 +349,7 @@
                 "action": "goto.save:vos_coordonnees_tiers",
                 "conditional": {
                   "show": "formStore.data.signalement_concerne_profil === 'autre_logement'"
-                },
-                "validOnEnter": true
+                }
               },
               {
                 "type": "SignalementFormButton",

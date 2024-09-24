@@ -3,7 +3,7 @@
     :id="id"
     :class="[customCss, 'signalement-form-only-choice fr-fieldset']"
     :aria-labelledby="id + '-radio-hint-legend'"
-    ref="onlychoice"
+    :ref="id"
     >
       <legend
         :class="['fr-fieldset__legend--regular', 'fr-fieldset__legend', customLegendCss]"
@@ -62,16 +62,16 @@ export default defineComponent({
     clickEvent: Function,
     handleClickComponent: Function,
     access_name: { type: String, default: undefined },
-    access_autocomplete: { type: String, default: undefined },
-    validOnEnter: { type: Boolean, default: false }
+    access_autocomplete: { type: String, default: undefined }
   },
   data () {
     return {
-      variablesReplacer
+      variablesReplacer,
+      idRef: this.id + '_ref'
     }
   },
   mounted () {
-    const element = this.$refs.onlychoice as HTMLElement
+    const element = this.$refs[this.id] as HTMLElement
     if (this.access_focus && element && !element.classList.contains('fr-hidden')) {
       this.focusInput()
     }

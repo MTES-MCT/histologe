@@ -1,5 +1,5 @@
 <template>
-  <div class="fr-input-group" :id="id" ref="counter">
+  <div class="fr-input-group" :id="id" :ref="id">
     <label :class="[ customCss, 'fr-label' ]" :for="id + '_input'">
       {{ variablesReplacer.replace(label) }}
       <span class="fr-hint-text">{{ description }}</span>
@@ -9,7 +9,7 @@
         pattern="[0-9]*"
         inputmode="numeric"
         :id="id + '_input'"
-        :ref="id + '_ref'"
+        :ref="idRef"
         :name="id"
         :value="internalValue"
         :class="[ customCss, 'fr-input' ]"
@@ -49,12 +49,12 @@ export default defineComponent({
     handleClickComponent: Function,
     clickEvent: Function,
     access_name: { type: String, default: undefined },
-    access_autocomplete: { type: String, default: undefined },
-    validOnEnter: { type: Boolean, default: false }
+    access_autocomplete: { type: String, default: undefined }
   },
   data () {
     return {
-      variablesReplacer
+      variablesReplacer,
+      idRef: this.id + '_ref'
     }
   },
   computed: {
@@ -73,7 +73,7 @@ export default defineComponent({
       this.$emit('update:modelValue', value)
     },
     focusInput () {
-      const focusableElement = (this.$refs[this.id + '_ref']) as HTMLElement
+      const focusableElement = (this.$refs[this.idRef]) as HTMLElement
       if (focusableElement) {
         focusableElement.focus()
       }
@@ -84,7 +84,7 @@ export default defineComponent({
     if (this.modelValue === null) {
       this.$emit('update:modelValue', this.internalValue)
     }
-    const element = this.$refs.counter as HTMLElement
+    const element = this.$refs[this.id] as HTMLElement
     if (this.access_focus && element && !element.classList.contains('fr-hidden')) {
       this.focusInput()
     }

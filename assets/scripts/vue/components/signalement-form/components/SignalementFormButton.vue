@@ -1,8 +1,8 @@
 <template>
-    <div class="signalement-form-button" :id="id" ref="button">
+    <div class="signalement-form-button" :id="id" :ref="id">
       <button
         :id="id + '_button'"
-        :ref="id + '_ref'"
+        :ref="idRef"
         :type="type"
         :class="[ 'fr-btn', customCss, formStore.lastButtonClicked === id ? 'fr-btn--loading fr-btn--icon-right fr-icon-refresh-line' : '' ]"
         :disabled="formStore.lastButtonClicked !== ''"
@@ -41,7 +41,6 @@ export default defineComponent({
     ariaControls: { type: String, default: undefined },
     clickEvent: Function,
     access_focus: { type: Boolean, default: false },
-    validOnEnter: { type: Boolean, default: false },
     // les propriétés suivantes ne sont pas utilisées,
     // mais si on ne les met pas, elles apparaissent dans le DOM
     // et ça soulève des erreurs W3C
@@ -52,22 +51,17 @@ export default defineComponent({
   },
   data () {
     return {
-      formStore
+      formStore,
+      idRef: this.id + '_ref'
     }
   },
   mounted () {
-    const element = this.$refs.button as HTMLElement
+    const element = this.$refs[this.id] as HTMLElement
     if (element && !element.classList.contains('fr-hidden')) {
       if (this.access_focus) {
         this.focusInput()
       }
-      if (this.validOnEnter) {
-        window.addEventListener('keyup', this.handleGlobalEnter)
-      }
     }
-  },
-  beforeUnmount () {
-    window.removeEventListener('keyup', this.handleGlobalEnter)
   },
   computed: {
     actionType (): string {
@@ -84,20 +78,16 @@ export default defineComponent({
     }
   },
   methods: {
-    handleClick () {
+    handleClick (event: any) {
       if (this.clickEvent !== undefined) {
+        event.preventDefault()
         this.clickEvent(this.actionType, this.actionParam, this.id)
       }
     },
     focusInput () {
-      const focusableElement = this.$refs[this.id + '_ref'] as HTMLElement
+      const focusableElement = this.$refs[this.idRef] as HTMLElement
       if (focusableElement) {
         focusableElement.focus()
-      }
-    },
-    handleGlobalEnter (event: KeyboardEvent) {
-      if (event.key === 'Enter') {
-        this.handleClick()
       }
     }
   }

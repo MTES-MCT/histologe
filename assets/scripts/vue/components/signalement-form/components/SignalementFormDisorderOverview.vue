@@ -1,5 +1,5 @@
 <template>
-  <div :id="id" class="signalement-form-disorder-overview fr-container--fluid fr-my-3v" ref="disorderoverview">
+  <div :id="id" class="signalement-form-disorder-overview fr-container--fluid fr-my-3v" :ref="id">
     <div v-if="formStore.data.categorieDisorders.batiment.length > 0">
       <div class="fr-grid-row fr-grid-row--gutters fr-grid-row--middle">
         <div class="fr-col-2 fr-col-md-1"><img :src="icons ? icons[0].src : ''" :alt="icons ? icons[0].alt : ''" class="fr-disorder-overview-image"></div>
@@ -20,7 +20,7 @@
                 class="fr-accordion__btn"
                 aria-expanded="false"
                 :aria-controls="'accordion-disorder-batiment-' + index"
-                :ref="id + '_ref'"
+                :ref="idRef"
                 >
                 {{ dictionaryStore[disorder].default }}
               </button>
@@ -30,7 +30,7 @@
                 class="fr-accordion__btn"
                 aria-expanded="false"
                 :aria-controls="'accordion-disorder-batiment-' + index"
-                :ref="id + '_ref'"
+                :ref="idRef"
                 >
                 {{ dictionaryStore[disorder].default }}
               </button>
@@ -68,7 +68,7 @@
                 class="fr-accordion__btn"
                 aria-expanded="false"
                 :aria-controls="'accordion-disorder-logement-' + index"
-                :ref="id + '_ref'"
+                :ref="idRef"
                 >
                 {{ dictionaryStore[disorder].default }}
               </button>
@@ -78,7 +78,7 @@
                 class="fr-accordion__btn"
                 aria-expanded="false"
                 :aria-controls="'accordion-disorder-logement-' + index"
-                :ref="id + '_ref'"
+                :ref="idRef"
                 >
                 {{ dictionaryStore[disorder].default }}
               </button>
@@ -143,18 +143,18 @@ export default defineComponent({
     clickEvent: Function,
     handleClickComponent: Function,
     access_name: { type: String, default: '' },
-    access_autocomplete: { type: String, default: '' },
-    validOnEnter: { type: Boolean, default: false }
+    access_autocomplete: { type: String, default: '' }
   },
   data () {
     return {
       formStore,
       dictionaryStore,
-      idMessageAdministration: 'message_administration'
+      idMessageAdministration: 'message_administration',
+      idRef: this.id + '_ref'
     }
   },
   mounted () {
-    const element = this.$refs.disorderoverview as HTMLElement
+    const element = this.$refs[this.id] as HTMLElement
     if (this.access_focus && element && !element.classList.contains('fr-hidden')) {
       this.focusInput()
     }
@@ -253,7 +253,7 @@ export default defineComponent({
       this.formStore.data[this.idMessageAdministration] = value
     },
     focusInput () {
-      const focusableElement = (this.$refs[this.id + '_ref']) as Array<HTMLElement>
+      const focusableElement = (this.$refs[this.idRef]) as Array<HTMLElement>
       if (focusableElement[0]) {
         focusableElement[0].focus()
       }

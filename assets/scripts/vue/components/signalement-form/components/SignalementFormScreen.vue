@@ -46,8 +46,7 @@
         :access_name="component.accessibility?.name ?? component.slug"
         :access_autocomplete="component.accessibility?.autocomplete ?? 'off'"
         :access_focus="component.accessibility?.focus ?? false"
-        :validOnEnter="component.validOnEnter ?? false"
-      />
+        />
     </div>
   </div>
   <div
@@ -83,7 +82,6 @@
         :clickEvent="handleClickComponent"
         :handleClickComponent="handleClickComponent"
         :access_focus="component.accessibility?.focus ?? false"
-        :validOnEnter="component.validOnEnter ?? false"
       />
     </div>
   </div>

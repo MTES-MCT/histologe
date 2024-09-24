@@ -45,8 +45,7 @@
                 "label": "Suivant",
                 "slug": "ecran_intermediaire_les_desordres_next",
                 "action": "resolve.save:findNextScreen",
-                "customCss": "fr-btn--icon-right fr-icon-arrow-right-line",
-                "validOnEnter": true
+                "customCss": "fr-btn--icon-right fr-icon-arrow-right-line"
               },
               {
                 "type": "SignalementFormButton",
@@ -297,8 +296,7 @@
                 "label": "Suivant",
                 "slug": "desordres_batiment_proprete_next",
                 "action": "resolve.save:findNextScreen",
-                "customCss": "fr-btn--icon-right fr-icon-arrow-right-line",
-                "validOnEnter": true
+                "customCss": "fr-btn--icon-right fr-icon-arrow-right-line"
               },
               {
                 "type": "SignalementFormButton",
@@ -373,8 +371,7 @@
                 "label": "Suivant",
                 "slug": "desordres_batiment_eau_next",
                 "action": "resolve.save:findNextScreen",
-                "customCss": "fr-btn--icon-right fr-icon-arrow-right-line",
-                "validOnEnter": true
+                "customCss": "fr-btn--icon-right fr-icon-arrow-right-line"
               },
               {
                 "type": "SignalementFormButton",
@@ -460,8 +457,7 @@
                 "label": "Suivant",
                 "slug": "desordres_batiment_isolation_next",
                 "action": "resolve.save:findNextScreen",
-                "customCss": "fr-btn--icon-right fr-icon-arrow-right-line",
-                "validOnEnter": true
+                "customCss": "fr-btn--icon-right fr-icon-arrow-right-line"
               },
               {
                 "type": "SignalementFormButton",
@@ -531,8 +527,7 @@
                 "label": "Suivant",
                 "slug": "desordres_batiment_maintenance_next",
                 "action": "resolve.save:findNextScreen",
-                "customCss": "fr-btn--icon-right fr-icon-arrow-right-line",
-                "validOnEnter": true
+                "customCss": "fr-btn--icon-right fr-icon-arrow-right-line"
               },
               {
                 "type": "SignalementFormButton",
@@ -651,8 +646,7 @@
                 "label": "Suivant",
                 "slug": "desordres_batiment_nuisibles_next",
                 "action": "resolve.save:findNextScreen",
-                "customCss": "fr-btn--icon-right fr-icon-arrow-right-line",
-                "validOnEnter": true
+                "customCss": "fr-btn--icon-right fr-icon-arrow-right-line"
               },
               {
                 "type": "SignalementFormButton",
@@ -875,8 +869,7 @@
                 "label": "Suivant",
                 "slug": "desordres_batiment_securite_next",
                 "action": "resolve.save:findNextScreen",
-                "customCss": "fr-btn--icon-right fr-icon-arrow-right-line",
-                "validOnEnter": true
+                "customCss": "fr-btn--icon-right fr-icon-arrow-right-line"
               },
               {
                 "type": "SignalementFormButton",
@@ -935,8 +928,7 @@
                 "label": "Suivant",
                 "slug": "desordres_batiment_incendie_next",
                 "action": "resolve.save:findNextScreen",
-                "customCss": "fr-btn--icon-right fr-icon-arrow-right-line",
-                "validOnEnter": true
+                "customCss": "fr-btn--icon-right fr-icon-arrow-right-line"
               },
               {
                 "type": "SignalementFormButton",
@@ -1045,8 +1037,7 @@
                 "label": "Suivant",
                 "slug": "desordres_batiment_accessibilite_next",
                 "action": "resolve.save:findNextScreen",
-                "customCss": "fr-btn--icon-right fr-icon-arrow-right-line",
-                "validOnEnter": true
+                "customCss": "fr-btn--icon-right fr-icon-arrow-right-line"
               },
               {
                 "type": "SignalementFormButton",
@@ -1105,8 +1096,7 @@
                 "label": "Suivant",
                 "slug": "desordres_batiment_bruit_next",
                 "action": "resolve.save:findNextScreen",
-                "customCss": "fr-btn--icon-right fr-icon-arrow-right-line",
-                "validOnEnter": true
+                "customCss": "fr-btn--icon-right fr-icon-arrow-right-line"
               },
               {
                 "type": "SignalementFormButton",
@@ -1403,8 +1393,7 @@
                 "label": "Suivant",
                 "slug": "desordres_logement_eau_next",
                 "action": "resolve.save:findNextScreen",
-                "customCss": "fr-btn--icon-right fr-icon-arrow-right-line",
-                "validOnEnter": true
+                "customCss": "fr-btn--icon-right fr-icon-arrow-right-line"
               },
               {
                 "type": "SignalementFormButton",
@@ -1517,8 +1506,7 @@
                 "label": "Suivant",
                 "slug": "desordres_logement_aeration_next",
                 "action": "resolve.save:findNextScreen",
-                "customCss": "fr-btn--icon-right fr-icon-arrow-right-line",
-                "validOnEnter": true
+                "customCss": "fr-btn--icon-right fr-icon-arrow-right-line"
               },
               {
                 "type": "SignalementFormButton",
@@ -1749,8 +1737,7 @@
                 "label": "Suivant",
                 "slug": "desordres_logement_chauffage_next",
                 "action": "resolve.save:findNextScreen",
-                "customCss": "fr-btn--icon-right fr-icon-arrow-right-line",
-                "validOnEnter": true
+                "customCss": "fr-btn--icon-right fr-icon-arrow-right-line"
               },
               {
                 "type": "SignalementFormButton",
@@ -2089,8 +2076,7 @@
                 "label": "Suivant",
                 "slug": "desordres_logement_humidite_next",
                 "action": "resolve.save:findNextScreen",
-                "customCss": "fr-btn--icon-right fr-icon-arrow-right-line",
-                "validOnEnter": true
+                "customCss": "fr-btn--icon-right fr-icon-arrow-right-line"
               },
               {
                 "type": "SignalementFormButton",
@@ -2264,8 +2250,7 @@
                 "label": "Suivant",
                 "slug": "desordres_logement_securite_next",
                 "action": "resolve.save:findNextScreen",
-                "customCss": "fr-btn--icon-right fr-icon-arrow-right-line",
-                "validOnEnter": true
+                "customCss": "fr-btn--icon-right fr-icon-arrow-right-line"
               },
               {
                 "type": "SignalementFormButton",
@@ -2389,8 +2374,7 @@
                 "label": "Suivant",
                 "slug": "desordres_logement_electricite_next",
                 "action": "resolve.save:findNextScreen",
-                "customCss": "fr-btn--icon-right fr-icon-arrow-right-line",
-                "validOnEnter": true
+                "customCss": "fr-btn--icon-right fr-icon-arrow-right-line"
               },
               {
                 "type": "SignalementFormButton",
@@ -2595,8 +2579,7 @@
                 "label": "Suivant",
                 "slug": "desordres_logement_nuisibles_next",
                 "action": "resolve.save:findNextScreen",
-                "customCss": "fr-btn--icon-right fr-icon-arrow-right-line",
-                "validOnEnter": true
+                "customCss": "fr-btn--icon-right fr-icon-arrow-right-line"
               },
               {
                 "type": "SignalementFormButton",
@@ -2673,8 +2656,7 @@
                 "label": "Suivant",
                 "slug": "desordres_logement_bruit_next",
                 "action": "resolve.save:findNextScreen",
-                "customCss": "fr-btn--icon-right fr-icon-arrow-right-line",
-                "validOnEnter": true
+                "customCss": "fr-btn--icon-right fr-icon-arrow-right-line"
               },
               {
                 "type": "SignalementFormButton",
@@ -2751,8 +2733,7 @@
                 "label": "Suivant",
                 "slug": "desordres_logement_lumiere_next",
                 "action": "resolve.save:findNextScreen",
-                "customCss": "fr-btn--icon-right fr-icon-arrow-right-line",
-                "validOnEnter": true
+                "customCss": "fr-btn--icon-right fr-icon-arrow-right-line"
               },
               {
                 "type": "SignalementFormButton",
@@ -2814,8 +2795,7 @@
                 "customCss": "fr-mb-3v",
                 "conditional": {
                   "show": "formStore.hasDesordre('desordres_') === false"
-                },
-                "validOnEnter": true
+                }
               },
               {
                 "type": "SignalementFormButton",
@@ -2835,8 +2815,7 @@
                 "customCss": "fr-mb-3v",
                 "conditional": {
                   "show": "formStore.hasDesordre('desordres_') === true"
-                },
-                "validOnEnter": true
+                }
               },
               {
                 "type": "SignalementFormButton",

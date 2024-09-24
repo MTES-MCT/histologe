@@ -2,12 +2,12 @@
   <div
     :class="['signalement-form-disorder-category-item fr-container--fluid fr-p-3v', isSelected || isAlreadySelected ? categoryZoneCss : '']"
     @click="handleClick"
-    ref="disordercategoryitem"
+    :ref="id"
     >
       <input
       type="checkbox"
       :id="id + '_input'"
-      :ref="id + '_ref'"
+      :ref="idRef"
       :name="id"
       v-model="isSelected"
       @change="handleChange"
@@ -36,17 +36,17 @@ export default defineComponent({
     iconSrc: { type: String, default: '' },
     modelValue: { type: Boolean, default: false },
     clickEvent: Function,
-    access_focus: { type: Boolean, default: false },
-    validOnEnter: { type: Boolean, default: false }
+    access_focus: { type: Boolean, default: false }
   },
   data () {
     return {
       isSelected: this.modelValue,
-      formStore
+      formStore,
+      idRef: this.id + '_ref'
     }
   },
   mounted () {
-    const element = this.$refs.disordercategoryitem as HTMLElement
+    const element = this.$refs[this.id] as HTMLElement
     if (this.access_focus && element && !element.classList.contains('fr-hidden')) {
       this.focusInput()
     }
@@ -80,7 +80,7 @@ export default defineComponent({
       this.$emit('update:modelValue', this.isSelected)
     },
     focusInput () {
-      const focusableElement = this.$refs[this.id + '_ref'] as HTMLElement
+      const focusableElement = this.$refs[this.idRef] as HTMLElement
       if (focusableElement) {
         focusableElement.focus()
       }

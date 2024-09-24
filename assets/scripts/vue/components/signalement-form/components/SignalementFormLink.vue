@@ -1,8 +1,8 @@
 <template>
-  <div class="signalement-form-link" ref="link">
+  <div class="signalement-form-link" :ref="id">
     <a
       :id="id"
-      :ref="id + '_ref'"
+      :ref="idRef"
       :class="[ customCss ]"
       :href="variablesReplacer.replace(link)"
       :target="linktarget"
@@ -37,16 +37,16 @@ export default defineComponent({
     // et ça soulève des erreurs W3C
     hasError: { type: Boolean, default: undefined },
     access_name: { type: String, default: undefined },
-    access_autocomplete: { type: String, default: undefined },
-    validOnEnter: { type: Boolean, default: false }
+    access_autocomplete: { type: String, default: undefined }
   },
   data () {
     return {
-      variablesReplacer
+      variablesReplacer,
+      idRef: this.id + '_ref'
     }
   },
   mounted () {
-    const element = this.$refs.link as HTMLElement
+    const element = this.$refs[this.id] as HTMLElement
     if (this.access_focus && element && !element.classList.contains('fr-hidden')) {
       this.focusInput()
     }
@@ -58,7 +58,7 @@ export default defineComponent({
       }
     },
     focusInput () {
-      const focusableElement = (this.$refs[this.id + '_ref']) as HTMLElement
+      const focusableElement = (this.$refs[this.idRef]) as HTMLElement
       if (focusableElement) {
         focusableElement.focus()
       }

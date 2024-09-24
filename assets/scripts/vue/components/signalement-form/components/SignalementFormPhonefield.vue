@@ -33,6 +33,28 @@
             class="fr-input"
             :aria-describedby="formStore.validationErrors[id] !== undefined ? id + '-text-input-error-desc-error' : undefined"
             >
+            <option
+              v-for="countryItem in countryList"
+              v-bind:key="countryItem.code"
+              :value="countryItem.code"
+              >
+              {{ countryItem.label }}
+            </option>
+          </select>
+        </div>
+        <div class="fr-col-12 fr-col-md-8">
+          <div class="fr-input-wrap fr-icon-phone-line">
+            <input
+              type="text"
+              :id="id"
+              :ref="idRef"
+              :name="access_name"
+              :autocomplete="access_autocomplete"
+              v-model="formStore.data[id]"
+              class="fr-input"
+              :aria-describedby="formStore.validationErrors[id] !== undefined ? id + '-text-input-error-desc-error' : undefined"
+              >
+          </div>
         </div>
       </div>
       <div
@@ -131,8 +153,7 @@ export default defineComponent({
     // mais si on ne les met pas, elles apparaissent dans le DOM
     // et ça soulève des erreurs W3C
     modelValue: { type: String, default: null },
-    handleClickComponent: Function,
-    validOnEnter: { type: Boolean, default: false }
+    handleClickComponent: Function
   },
   data () {
     if (formStore.data[this.id + '_countrycode'] === '' || formStore.data[this.id + '_countrycode'] === undefined) {
@@ -149,7 +170,8 @@ export default defineComponent({
       idCountryCodeSecond: this.id + '_secondaire_countrycode',
       idShow: this.id + '_ajouter_numero',
       actionShow: 'show:' + this.id + '_secondaire_group',
-      formStore
+      formStore,
+      idRef: this.id + '_ref'
     }
   },
   methods: {

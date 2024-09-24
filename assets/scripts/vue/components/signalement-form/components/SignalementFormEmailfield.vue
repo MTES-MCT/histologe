@@ -8,6 +8,7 @@
       <input
         type="email"
         :id="id + '_input'"
+        :ref="idRef"
         :name="access_name"
         :autocomplete="access_autocomplete"
         :value="internalValue"
@@ -49,8 +50,12 @@ export default defineComponent({
     // mais si on ne les met pas, elles apparaissent dans le DOM
     // et ça soulève des erreurs W3C
     clickEvent: Function,
-    handleClickComponent: Function,
-    validOnEnter: { type: Boolean, default: false }
+    handleClickComponent: Function
+  },
+  data () {
+    return {
+      idRef: this.id + '_ref'
+    }
   },
   computed: {
     internalValue: {
