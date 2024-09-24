@@ -12,17 +12,19 @@
       :error="error"
       access_name="address"
       access_autocomplete="address-line1"
+      @keydown.down.prevent="handleDownSuggestion"
+      @keydown.up.prevent="handleUpSuggestion"
+      @keydown.enter.prevent="handleEnterSuggestion"
     />
 
     <div class="fr-grid-row fr-background-alt--blue-france fr-text-label--blue-france fr-address-group">
       <div
         v-for="(suggestion, index) in suggestions"
         :key="index"
-        class="fr-col-12 fr-p-3v fr-text-label--blue-france fr-address-suggestion"
+        :class="['fr-col-12 fr-p-3v fr-text-label--blue-france fr-address-suggestion', { 'fr-autocomplete-suggestion-highlighted': index === selectedSuggestionIndex }]"
         ref="addressSuggestions"
         tabindex="0"
         @click="handleClickSuggestion(index)"
-        @keyup="handleKeyboardSuggestion($event, index)"
         >
         {{ suggestion.properties.label }}
       </div>
@@ -102,7 +104,8 @@ export default defineComponent({
       suggestions: [] as any[],
       formStore,
       // Avoids searching when an option is selected in the list
-      isSearchSkipped: false
+      isSearchSkipped: false,
+      selectedSuggestionIndex: -1
     }
   },
   created () {
@@ -116,6 +119,7 @@ export default defineComponent({
         this.isTyping = true
         this.idFetchTimeout = setTimeout(() => {
           this.isTyping = false
+          this.selectedSuggestionIndex = -1
           if (newValue.length > 10) {
             const codePostal = this.idAddress === 'adresse_logement_adresse_suggestion'
               ? ' ' + this.getCodePostalFromQueryParam()
@@ -177,6 +181,7 @@ export default defineComponent({
     handleClickSuggestion (index: number) {
       this.isSearchSkipped = true
       if (this.suggestions) {
+        this.selectedSuggestionIndex = index
         this.formStore.data[this.id + '_detail_need_refresh_insee'] = false
         this.formStore.data[this.idAddress] = this.suggestions[index].properties.label
         this.formStore.data[this.id] = this.suggestions[index].properties.label
@@ -193,22 +198,20 @@ export default defineComponent({
         }, 200)
       }
     },
-    handleKeyboardSuggestion (event: any, index: number) {
-      if (event.key === ' ' || event.key === 'Spacebar') {
-        this.handleClickSuggestion(index)
-      } else if (event.key === 'ArrowUp' || event.key === 'ArrowDown') {
-        event.preventDefault()
-        const suggestionElements = this.$refs.addressSuggestions as HTMLElement[]
-        if (suggestionElements && suggestionElements.length > 0) {
-          let newIndex = index
-          if (event.key === 'ArrowUp') {
-            newIndex = (index === 0) ? suggestionElements.length - 1 : index - 1
-          } else if (event.key === 'ArrowDown') {
-            newIndex = (index === suggestionElements.length - 1) ? 0 : index + 1
-          }
-          const nextElement = suggestionElements[newIndex] as HTMLElement
-          nextElement.focus()
-        }
+    handleDownSuggestion () {
+      if (this.selectedSuggestionIndex < this.suggestions.length - 1) {
+        this.selectedSuggestionIndex++
+      }
+    },
+    handleUpSuggestion () {
+      if (this.selectedSuggestionIndex > 0) {
+        this.selectedSuggestionIndex--
+      }
+    },
+    handleEnterSuggestion () {
+      if (this.selectedSuggestionIndex !== -1) {
+        this.handleClickSuggestion(this.selectedSuggestionIndex)
+        this.selectedSuggestionIndex = -1
       }
     },
     handleAddressFound (requestResponse: any) {
