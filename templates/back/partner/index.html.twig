@@ -1,6 +1,6 @@
 {% extends 'back/base_bo.html.twig' %}
 
-{% block title %}Partenaire index{% endblock %}
+{% block title %}Partenaires du territoire{% endblock %}
 
 {% block content %}
     {% include '_partials/_modal_partner_delete.html.twig' %}
@@ -69,9 +69,9 @@
                     <table class="sortable fr-cell--multiline">
                         <thead>
                         <tr>
-                            <th scope="col">Id</th>
+                            <th scope="col" class="number">Id</th>
                             {% if is_granted('ROLE_ADMIN') %}
-                                <th scope="col" class="number">Territoire</th>
+                                <th scope="col">Territoire</th>
                             {% endif %}
                             <th scope="col">Nom</th>
                             <th scope="col">Type</th>
