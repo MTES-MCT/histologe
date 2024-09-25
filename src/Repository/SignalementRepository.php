@@ -60,7 +60,7 @@ class SignalementRepository extends ServiceEntityRepository
         }
     }
 
-    public function findAllWithGeoData(?User $user, array $options, int $offset): array
+    public function findAllWithGeoData(User $user, array $options, int $offset): array
     {
         $firstResult = $offset;
 
@@ -417,7 +417,7 @@ class SignalementRepository extends ServiceEntityRepository
     }
 
     public function findSignalementAffectationListPaginator(
-        ?User $user,
+        User $user,
         array $options,
     ): Paginator {
         $maxResult = $options['maxItemsPerPage'] ?? SignalementAffectationListView::MAX_LIST_PAGINATION;
@@ -433,7 +433,7 @@ class SignalementRepository extends ServiceEntityRepository
     }
 
     public function findSignalementAffectationQuery(
-        ?User $user,
+        User $user,
         array $options
     ): QueryBuilder {
         $qb = $this->createQueryBuilder('s');
@@ -521,7 +521,7 @@ class SignalementRepository extends ServiceEntityRepository
             }
         }
         $qb->setParameter('status', Signalement::STATUS_ARCHIVED);
-        $qb = $this->searchFilter->applyFilters($qb, $options);
+        $qb = $this->searchFilter->applyFilters($qb, $options, $user);
 
         if (isset($options['sortBy'])) {
             switch ($options['sortBy']) {
@@ -552,7 +552,7 @@ class SignalementRepository extends ServiceEntityRepository
         return $qb;
     }
 
-    public function findSignalementAffectationIterable(?User $user, array $options): \Generator
+    public function findSignalementAffectationIterable(User $user, array $options): \Generator
     {
         $qb = $this->findSignalementAffectationQuery($user, $options);
 

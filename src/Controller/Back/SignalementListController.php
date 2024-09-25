@@ -32,7 +32,7 @@ class SignalementListController extends AbstractController
         /** @var User $user */
         $user = $this->getUser();
         $filters = null !== $signalementQuery
-            ? $searchFilter->setRequest($signalementQuery)->buildFilters()
+            ? $searchFilter->setRequest($signalementQuery)->buildFilters($user)
             : [
                 'maxItemsPerPage' => SignalementSearchQuery::MAX_LIST_PAGINATION,
                 'orderBy' => 'DESC',

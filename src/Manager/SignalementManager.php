@@ -782,7 +782,7 @@ class SignalementManager extends AbstractManager
         );
     }
 
-    public function findSignalementAffectationList(User|UserInterface|null $user, array $options, bool $count = false): array|int
+    public function findSignalementAffectationList(User|UserInterface $user, array $options, bool $count = false): array|int
     {
         $maxListPagination = $options['maxItemsPerPage'] ?? SignalementAffectationListView::MAX_LIST_PAGINATION;
         $options['authorized_codes_insee'] = $this->parameterBag->get('authorized_codes_insee');
@@ -819,7 +819,7 @@ class SignalementManager extends AbstractManager
     }
 
     public function findSignalementAffectationIterable(
-        User|UserInterface|null $user,
+        User|UserInterface $user,
         ?array $options = null,
     ): \Generator {
         $options['authorized_codes_insee'] = $this->parameterBag->get('authorized_codes_insee');
