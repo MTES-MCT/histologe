@@ -2,46 +2,47 @@
 
 namespace App\EventListener;
 
-use App\Entity\Signalement;
 use App\Service\Mailer\NotificationMail;
 use App\Service\Mailer\NotificationMailerRegistry;
 use App\Service\Mailer\NotificationMailerType;
+use Psr\Log\LoggerInterface;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
+use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Event\ExceptionEvent;
 use Symfony\Component\Routing\Exception\MethodNotAllowedException;
+use Symfony\Component\Serializer\Exception\NotEncodableValueException;
 
-class ExceptionListener
+readonly class ExceptionListener
 {
     public function __construct(
-        private readonly NotificationMailerRegistry $notificationMailerRegistry,
-        private readonly ParameterBagInterface $params,
+        private NotificationMailerRegistry $notificationMailerRegistry,
+        private ParameterBagInterface $params,
+        private LoggerInterface $logger,
     ) {
     }
 
     public function onKernelException(ExceptionEvent $event): void
     {
-        if (!$event->getThrowable() instanceof MethodNotAllowedException
-            && null !== $event->getRequest()->get('signalement')) {
-            $attachment = ['documents' => 0, 'photos' => 0];
-            if ($files = $event->getRequest()->files->get('signalement')) {
-                foreach ($files as $k => $file) {
-                    foreach ($file as $file_) {
-                        ++$attachment[$k];
-                    }
-                }
-            }
+        $exception = $event->getThrowable();
+        if ($exception instanceof NotEncodableValueException) {
+            $this->logger->error(sprintf('Format json incorrect : %s', $exception->getMessage()));
 
-            $territory = null;
-            if ($event->getRequest()->get('signalement') instanceof Signalement) {
-                $territory = $event->getRequest()->get('signalement')->getTerritory();
-            }
+            $response = new JsonResponse([
+                'success' => false,
+                'label' => 'Erreur',
+                'message' => 'Le format JSON est incorrect',
+            ], Response::HTTP_BAD_REQUEST);
+
+            $event->setResponse($response);
+        }
+
+        if (!$exception instanceof MethodNotAllowedException) {
             $this->notificationMailerRegistry->send(
                 new NotificationMail(
                     type: NotificationMailerType::TYPE_ERROR_SIGNALEMENT,
                     to: $this->params->get('admin_email'),
-                    territory: $territory,
                     event: $event,
-                    attachment: $attachment,
                 )
             );
         }
