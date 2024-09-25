@@ -61,6 +61,7 @@ export default defineComponent({
         { Id: 'nomOccupant-ASC', Text: 'Ordre alphabétique (A -> Z)' },
         { Id: 'nomOccupant-DESC', Text: 'Ordre alphabétique inversé (Z -> A)' },
         { Id: 'lastSuiviAt-DESC', Text: 'Suivi le plus récent' },
+        { Id: 'lastSuiviAt-ASC', Text: 'Suivi le plus ancien' },
         { Id: 'villeOccupant-ASC', Text: 'Nom de commune (A -> Z)' },
         { Id: 'villeOccupant-DESC', Text: 'Nom de commune (Z -> A)' }
       ]
