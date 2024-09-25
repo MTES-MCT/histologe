@@ -26,7 +26,6 @@ use App\Service\Signalement\SignalementDesordresProcessor;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\DependencyInjection\ParameterBag\ContainerBagInterface;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -52,7 +51,6 @@ class SignalementController extends AbstractController
         InterventionRepository $interventionRepository,
         DesordrePrecisionRepository $desordrePrecisionsRepository,
         SignalementDesordresProcessor $signalementDesordresProcessor,
-        ContainerBagInterface $params,
         DesordreCategorieRepository $desordreCategorieRepository,
         DesordreCritereRepository $desordreCritereRepository,
     ): Response {
@@ -127,8 +125,10 @@ class SignalementController extends AbstractController
                 $eventDispatcher->dispatch(new SignalementClosedEvent($entity, $eventParams), SignalementClosedEvent::NAME);
                 $this->addFlash('success', sprintf('Signalement #%s cloturé avec succès !', $reference));
             }
+            $signalementSearchQuery = $request->getSession()->get('signalementSearchQuery');
+            $url = $signalementSearchQuery ? $this->generateUrl('back_index').$signalementSearchQuery->getQueryStringForUrl() : $this->generateUrl('back_index');
 
-            return $this->redirectToRoute('back_index');
+            return $this->redirect($url);
         }
         $infoDesordres = $signalementDesordresProcessor->process($signalement);
 
