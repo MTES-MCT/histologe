@@ -113,7 +113,7 @@ class BackStatistiquesController extends AbstractController
         /** @var User $user */
         $user = $this->getUser();
         $partner = null;
-        if ($user->isUserPartner()) {
+        if ($user->isUserPartner() || $user->isPartnerAdmin()) {
             $partner = $user->getPartner();
         }
 
