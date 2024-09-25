@@ -539,6 +539,9 @@ class SignalementRepository extends ServiceEntityRepository
                 case 'lastSuiviAt':
                     $qb->orderBy('s.lastSuiviAt', $options['orderBy']);
                     break;
+                case 'villeOccupant':
+                    $qb->orderBy('s.villeOccupant', $options['orderBy']);
+                    break;
                 default:
                     $qb->orderBy('s.createdAt', 'DESC');
             }
