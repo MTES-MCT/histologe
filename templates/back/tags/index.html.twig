@@ -197,7 +197,7 @@
                             {% for index,tag in tags %}
                                 <tr class="signalement-row">
                                     <td>{{ tag.id }}</td>
-                                    <td>{{ tag.label }}</td>
+                                    <td><span class="fr-badge fr-badge--blue-ecume fr-badge--no-icon">{{ tag.label }}</span></td>
                                     <td>{{ tag.signalements|length }}</td>
                                     <td>{{ tag.territory.name }}</td>
                                     <td class="fr-text--right fr-ws-nowrap">
