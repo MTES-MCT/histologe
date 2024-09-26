@@ -9,14 +9,7 @@
     {% if error is defined %}
         <p>Message erreur: {{ error }}</p>
     {% endif %}
-    {% if attachment is defined %}
-        <p>Documents: {{ attachment.documents }}</p>
-        <p>Photos: {{ attachment.photos }}</p>
-    {% endif %}
     {% if req is defined %}
         <p>{{ req|json_encode() }}</p>
-    {% endif %}
-    {% if signalement is defined %}
-        <p>{{ signalement|json_encode()|replace({',':',<br>'})|raw }}</p>
     {% endif %}
 {% endblock %}

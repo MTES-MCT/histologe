@@ -68,6 +68,11 @@ export default defineComponent({
   methods: {
     init (reset: boolean = false) {
       if (initElements !== null) {
+        if (this.abortRequest) {
+          this.abortRequest?.abort()
+        }
+        this.abortRequest = new AbortController()
+
         this.sharedProps.ajaxurlSignalement = initElements.dataset.ajaxurl
         this.sharedProps.ajaxurlRemoveSignalement = initElements.dataset.ajaxurlRemoveSignalement
         this.sharedProps.ajaxurlSettings = initElements.dataset.ajaxurlSettings
@@ -79,7 +84,7 @@ export default defineComponent({
 
         this.buildUrl()
         requests.getSettings(this.handleSettings)
-        requests.getSignalements(this.handleSignalements)
+        requests.getSignalements(this.handleSignalements, { signal: this.abortRequest?.signal })
       } else {
         this.hasErrorLoading = true
       }

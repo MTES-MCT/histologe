@@ -250,6 +250,19 @@ class SignalementControllerTest extends WebTestCase
         $this->assertEquals(Response::HTTP_OK, $client->getResponse()->getStatusCode());
     }
 
+    public function testSendMailContinueFromNotValidDraft(): void
+    {
+        $client = static::createClient();
+
+        /** @var RouterInterface $router */
+        $router = $client->getContainer()->get(RouterInterface::class);
+        $url = $router->generate('send_mail_continue_from_draft');
+
+        $client->request('POST', $url, [], [], [], '');
+
+        $this->assertEquals(Response::HTTP_BAD_REQUEST, $client->getResponse()->getStatusCode());
+    }
+
     public function provideSignalementRequestPayload(): \Generator
     {
         yield 'Post signalement as locataire (Mails sent: Occupant + RT)' => [

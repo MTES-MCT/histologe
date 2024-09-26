@@ -35,7 +35,7 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
@@ -143,7 +143,7 @@ class SignalementController extends AbstractController
                     'already_exists' => true,
                     'type' => 'signalement',
                     'signalements' => $signalements,
-                    'draft_exists' => $existingSignalementDraft ? true : false,
+                    'draft_exists' => (bool) $existingSignalementDraft,
                 ]);
             }
 
@@ -233,9 +233,7 @@ class SignalementController extends AbstractController
             $signalementDraftRequest,
         );
 
-        if (
-            $signalementDraft
-        ) {
+        if ($signalementDraft) {
             $success = $notificationMailerRegistry->send(
                 new NotificationMail(
                     type: NotificationMailerType::TYPE_CONTINUE_FROM_DRAFT,
@@ -251,7 +249,7 @@ class SignalementController extends AbstractController
                 'success' => false,
                 'label' => 'Erreur',
                 'message' => 'L\'envoi du mail n\'a pas fonctionné, veuillez réessayer ou faire un nouveau signalement.',
-            ]);
+            ], Response::HTTP_BAD_REQUEST);
         }
 
         return $this->json(['response' => 'error'], Response::HTTP_BAD_REQUEST);
@@ -420,7 +418,7 @@ class SignalementController extends AbstractController
         EntityManagerInterface $entityManager,
         SuiviFactory $suiviFactory,
         SignalementDesordresProcessor $signalementDesordresProcessor
-    ) {
+    ): RedirectResponse|Response {
         $signalement = $signalementRepository->findOneByCodeForPublic($code);
         if (!$signalement) {
             $this->addFlash('error', 'Le lien utilisé est expiré ou invalide.');
@@ -541,7 +539,7 @@ class SignalementController extends AbstractController
         Request $request,
         UserManager $userManager,
         SignalementDesordresProcessor $signalementDesordresProcessor
-    ) {
+    ): RedirectResponse|Response {
         if ($signalement = $signalementRepository->findOneByCodeForPublic($code, false)) {
             $requestEmail = $request->get('from');
             $fromEmail = \is_array($requestEmail) ? array_pop($requestEmail) : $requestEmail;
