@@ -7,18 +7,17 @@ use App\Entity\JobEvent;
 use App\Manager\JobEventManager;
 use App\Messenger\Message\DossierMessageInterface;
 use App\Repository\PartnerRepository;
-use App\Service\Esabora\AbstractEsaboraService;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Messenger\Event\WorkerMessageFailedEvent;
 use Symfony\Component\Serializer\SerializerInterface;
 
-class WorkerMessageEventSubscriber implements EventSubscriberInterface
+readonly class WorkerMessageEventSubscriber implements EventSubscriberInterface
 {
     public function __construct(
-        private readonly JobEventManager $jobEventManager,
-        private readonly SerializerInterface $serializer,
-        private readonly PartnerRepository $partnerRepository,
+        private JobEventManager $jobEventManager,
+        private SerializerInterface $serializer,
+        private PartnerRepository $partnerRepository,
     ) {
     }
 
@@ -41,7 +40,7 @@ class WorkerMessageEventSubscriber implements EventSubscriberInterface
                 $partner = $this->partnerRepository->find($partnerId = $dossierMessage->getPartnerId());
                 $this->jobEventManager->createJobEvent(
                     service: InterfacageType::ESABORA->value,
-                    action: AbstractEsaboraService::ACTION_PUSH_DOSSIER,
+                    action: $dossierMessage->getAction(),
                     message: $this->serializer->serialize($dossierMessage, 'json'),
                     response: json_encode($error),
                     status: JobEvent::STATUS_FAILED,

@@ -4,7 +4,7 @@ namespace App\Messenger\MessageHandler\Esabora;
 
 use App\Manager\AffectationManager;
 use App\Messenger\Message\Esabora\DossierMessageSISH;
-use App\Service\Esabora\Handler\DossierSISHHandlerInterface;
+use App\Service\Interconnection\Esabora\Handler\DossierSISHHandlerInterface;
 use Symfony\Component\DependencyInjection\Attribute\TaggedIterator;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 
@@ -18,7 +18,7 @@ final class DossierMessageSISHHandler
             'app.dossier_sish_handler',
             defaultPriorityMethod: 'getPriority'
         )] iterable $dossierSISHHandlers,
-        private AffectationManager $affectationManager
+        private readonly AffectationManager $affectationManager
     ) {
         $this->dossierSISHHandlers = $dossierSISHHandlers;
     }

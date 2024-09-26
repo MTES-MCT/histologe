@@ -16,7 +16,7 @@ use App\Entity\Signalement;
 use App\Entity\Suivi;
 use App\Entity\Territory;
 use App\Entity\User;
-use App\Service\Idoss\IdossService;
+use App\Service\Interconnection\Idoss\IdossService;
 use App\Service\Signalement\SearchFilter;
 use App\Service\Statistics\CriticitePercentStatisticProvider;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;

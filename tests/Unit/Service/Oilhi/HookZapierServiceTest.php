@@ -3,14 +3,15 @@
 namespace App\Tests\Unit\Service\Oilhi;
 
 use App\Messenger\Message\Oilhi\DossierMessage;
-use App\Service\Oilhi\HookZapierService;
-use App\Service\Oilhi\Model\Desordre;
+use App\Service\Interconnection\Oilhi\HookZapierService;
+use App\Service\Interconnection\Oilhi\Model\Desordre;
 use Faker\Factory;
 use Monolog\Test\TestCase;
 use PHPUnit\Framework\MockObject\MockObject;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpClient\MockHttpClient;
 use Symfony\Component\HttpClient\Response\MockResponse;
+use Symfony\Component\Serializer\Exception\ExceptionInterface;
 use Symfony\Component\Serializer\Normalizer\ObjectNormalizer;
 use Symfony\Component\Serializer\Serializer;
 use Symfony\Contracts\HttpClient\Exception\TransportExceptionInterface;
@@ -26,6 +27,7 @@ class HookZapierServiceTest extends TestCase
 
     /**
      * @throws TransportExceptionInterface
+     * @throws ExceptionInterface
      */
     public function testPushDossierWithSuccess()
     {
@@ -50,6 +52,7 @@ class HookZapierServiceTest extends TestCase
         );
 
         $dossierMessage = (new DossierMessage())
+            ->setAction('push_dossier')
             ->setPartnerId(1)
             ->setSignalementId(1)
             ->setDesordres([

@@ -5,7 +5,7 @@ namespace App\Service\Intervention;
 use App\Entity\Enum\InterventionType;
 use App\Entity\Intervention;
 use App\Event\InterventionCreatedEvent;
-use App\Service\Esabora\Response\Model\DossierArreteSISH;
+use App\Service\Interconnection\Esabora\Response\Model\DossierArreteSISH;
 
 class InterventionDescriptionGenerator
 {

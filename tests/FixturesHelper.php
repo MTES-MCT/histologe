@@ -19,12 +19,12 @@ use App\Entity\Territory;
 use App\Entity\User;
 use App\Messenger\Message\Esabora\DossierMessageSCHS;
 use App\Messenger\Message\Esabora\DossierMessageSISH;
-use App\Service\Esabora\AbstractEsaboraService;
-use App\Service\Esabora\Enum\PersonneType;
-use App\Service\Esabora\Model\DossierMessageSISHPersonne;
-use App\Service\Esabora\Response\DossierArreteSISHCollectionResponse;
-use App\Service\Esabora\Response\DossierPushSISHResponse;
-use App\Service\Esabora\Response\DossierVisiteSISHCollectionResponse;
+use App\Service\Interconnection\Esabora\AbstractEsaboraService;
+use App\Service\Interconnection\Esabora\Enum\PersonneType;
+use App\Service\Interconnection\Esabora\Model\DossierMessageSISHPersonne;
+use App\Service\Interconnection\Esabora\Response\DossierArreteSISHCollectionResponse;
+use App\Service\Interconnection\Esabora\Response\DossierPushSISHResponse;
+use App\Service\Interconnection\Esabora\Response\DossierVisiteSISHCollectionResponse;
 use App\Utils\Enum\ExtensionAdresse;
 use Faker\Factory;
 
@@ -165,6 +165,7 @@ trait FixturesHelper
         $faker = Factory::create();
 
         return (new DossierMessageSCHS())
+            ->setAction('push_dossier')
             ->setUrl($faker->url())
             ->setToken($faker->password(20))
             ->setPartnerId($faker->randomDigit())
@@ -201,16 +202,16 @@ trait FixturesHelper
             );
     }
 
-    protected function getDossierMessageSISH(): DossierMessageSISH
+    protected function getDossierMessageSISH(?string $action = null): DossierMessageSISH
     {
         $faker = Factory::create('fr_FR');
         $uuid = $faker->uuid();
 
-        return (new DossierMessageSISH())
+        $dossierMessageSISH = (new DossierMessageSISH())
             ->setUrl($faker->url())
             ->setToken($faker->password(20))
             ->setPartnerId($faker->randomDigit())
-            ->setPartnerType(PartnerType::ARS->name)
+            ->setPartnerType(PartnerType::ARS)
             ->setSignalementId($faker->randomDigit())
             ->setReferenceAdresse($uuid)
             ->setLocalisationNumero($faker->randomDigit())
@@ -276,6 +277,12 @@ trait FixturesHelper
             ->addPersonne($this->getDossierMessageSISHPersonneOccupant())
             ->addPersonne($this->getDossierMessageSISHPersonneDeclarant())
             ->addPersonne($this->getDossierMessageSISHPersonneProprietaire());
+
+        if ($action) {
+            $dossierMessageSISH->setAction($action);
+        }
+
+        return $dossierMessageSISH;
     }
 
     protected function getDossierMessageSISHPersonneOccupant(): DossierMessageSISHPersonne

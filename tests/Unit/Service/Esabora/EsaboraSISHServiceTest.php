@@ -3,7 +3,8 @@
 namespace App\Tests\Unit\Service\Esabora;
 
 use App\Entity\Enum\PartnerType;
-use App\Service\Esabora\EsaboraSISHService;
+use App\Service\Interconnection\Esabora\AbstractEsaboraService;
+use App\Service\Interconnection\Esabora\EsaboraSISHService;
 use App\Service\UploadHandlerService;
 use App\Tests\FileHelper;
 use App\Tests\FixturesHelper;
@@ -32,11 +33,13 @@ class EsaboraSISHServiceTest extends KernelTestCase
         $this->logger = $this->createMock(LoggerInterface::class);
     }
 
-    public function testPushDossierAdressToEsaboraSasSuccess(): void
+    public function testPushDossierAddressToEsaboraSasSuccess(): void
     {
         $filepath = __DIR__.self::PATH_RESOURCE_JSON.'ws_dossier_adresse.json';
         $esaboraService = $this->getEsaboraSISHService($filepath);
-        $response = $esaboraService->pushAdresse($this->getDossierMessageSISH());
+        $response = $esaboraService->pushAdresse($this->getDossierMessageSISH(
+            AbstractEsaboraService::ACTION_PUSH_DOSSIER_ADRESSE
+        ));
         $this->assertEquals(Response::HTTP_OK, $response->getStatusCode());
         $this->assertEquals(3, $response->getSasId());
     }
@@ -45,7 +48,7 @@ class EsaboraSISHServiceTest extends KernelTestCase
     {
         $filepath = __DIR__.self::PATH_RESOURCE_JSON.'ws_dossier.json';
         $esaboraService = $this->getEsaboraSISHService($filepath);
-        $response = $esaboraService->pushDossier($this->getDossierMessageSISH());
+        $response = $esaboraService->pushDossier($this->getDossierMessageSISH(AbstractEsaboraService::ACTION_PUSH_DOSSIER));
         $this->assertEquals(Response::HTTP_OK, $response->getStatusCode());
         $this->assertEquals(14, $response->getSasId());
     }
@@ -55,7 +58,7 @@ class EsaboraSISHServiceTest extends KernelTestCase
         $filepath = __DIR__.self::PATH_RESOURCE_JSON.'ws_dossier_personne.json';
         $esaboraService = $this->getEsaboraSISHService($filepath);
         $response = $esaboraService->pushPersonne(
-            $this->getDossierMessageSISH(),
+            $this->getDossierMessageSISH(AbstractEsaboraService::ACTION_PUSH_DOSSIER_PERSONNE),
             $this->getDossierMessageSISHPersonneOccupant()
         );
         $this->assertEquals(Response::HTTP_OK, $response->getStatusCode());

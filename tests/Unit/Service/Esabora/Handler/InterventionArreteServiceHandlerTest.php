@@ -5,11 +5,11 @@ namespace App\Tests\Unit\Service\Esabora\Handler;
 use App\Entity\Affectation;
 use App\Entity\Enum\PartnerType;
 use App\Manager\JobEventManager;
-use App\Service\Esabora\AbstractEsaboraService;
-use App\Service\Esabora\EsaboraManager;
-use App\Service\Esabora\EsaboraSISHService;
-use App\Service\Esabora\Handler\InterventionArreteServiceHandler;
-use App\Service\Esabora\Response\DossierArreteSISHCollectionResponse;
+use App\Service\Interconnection\Esabora\AbstractEsaboraService;
+use App\Service\Interconnection\Esabora\EsaboraManager;
+use App\Service\Interconnection\Esabora\EsaboraSISHService;
+use App\Service\Interconnection\Esabora\Handler\InterventionArreteServiceHandler;
+use App\Service\Interconnection\Esabora\Response\DossierArreteSISHCollectionResponse;
 use App\Tests\FixturesHelper;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Serializer\SerializerInterface;
@@ -27,16 +27,12 @@ class InterventionArreteServiceHandlerTest extends TestCase
 
     protected function setUp(): void
     {
-        $this->serializer = $this->createMock(SerializerInterface::class);
         $this->esaboraSISHService = $this->createMock(EsaboraSISHService::class);
         $this->esaboraManager = $this->createMock(EsaboraManager::class);
-        $this->jobEventManager = $this->createMock(JobEventManager::class);
 
         $this->handler = new InterventionArreteServiceHandler(
-            $this->serializer,
             $this->esaboraSISHService,
             $this->esaboraManager,
-            $this->jobEventManager,
         );
     }
 
@@ -61,16 +57,9 @@ class InterventionArreteServiceHandlerTest extends TestCase
             ->method('createOrUpdateArrete')
             ->with($this->affectation, $dossierArreteCollection->getCollection()[0]);
 
-        $this->jobEventManager = $this->createMock(JobEventManager::class);
-        $this->jobEventManager
-            ->expects($this->once())
-            ->method('createJobEvent');
-
         $this->handler = new InterventionArreteServiceHandler(
-            $this->serializer,
             $this->esaboraSISHService,
             $this->esaboraManager,
-            $this->jobEventManager,
         );
 
         $this->handler->handle($this->affectation);

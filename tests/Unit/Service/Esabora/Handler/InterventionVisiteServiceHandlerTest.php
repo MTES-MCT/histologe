@@ -5,12 +5,12 @@ namespace App\Tests\Unit\Service\Esabora\Handler;
 use App\Entity\Affectation;
 use App\Entity\Enum\PartnerType;
 use App\Manager\JobEventManager;
-use App\Service\Esabora\AbstractEsaboraService;
-use App\Service\Esabora\EsaboraManager;
-use App\Service\Esabora\EsaboraSISHService;
-use App\Service\Esabora\Handler\InterventionVisiteServiceHandler;
-use App\Service\Esabora\Response\DossierVisiteSISHCollectionResponse;
-use App\Service\Esabora\Response\Model\DossierVisiteSISH;
+use App\Service\Interconnection\Esabora\AbstractEsaboraService;
+use App\Service\Interconnection\Esabora\EsaboraManager;
+use App\Service\Interconnection\Esabora\EsaboraSISHService;
+use App\Service\Interconnection\Esabora\Handler\InterventionVisiteServiceHandler;
+use App\Service\Interconnection\Esabora\Response\DossierVisiteSISHCollectionResponse;
+use App\Service\Interconnection\Esabora\Response\Model\DossierVisiteSISH;
 use App\Tests\FixturesHelper;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Serializer\SerializerInterface;
@@ -28,19 +28,18 @@ class InterventionVisiteServiceHandlerTest extends TestCase
 
     protected function setUp(): void
     {
-        $this->serializer = $this->createMock(SerializerInterface::class);
         $this->esaboraSISHService = $this->createMock(EsaboraSISHService::class);
         $this->esaboraManager = $this->createMock(EsaboraManager::class);
-        $this->jobEventManager = $this->createMock(JobEventManager::class);
 
         $this->handler = new InterventionVisiteServiceHandler(
-            $this->serializer,
             $this->esaboraSISHService,
             $this->esaboraManager,
-            $this->jobEventManager,
         );
     }
 
+    /**
+     * @throws \Exception
+     */
     public function testHandle(): void
     {
         $filepath = __DIR__.'/../../../../../tools/wiremock/src/Resources/Esabora/sish/ws_visites_dossier_sas.json';
@@ -83,16 +82,9 @@ class InterventionVisiteServiceHandlerTest extends TestCase
                 }
             );
 
-        $this->jobEventManager = $this->createMock(JobEventManager::class);
-        $this->jobEventManager
-            ->expects($this->atLeastOnce())
-            ->method('createJobEvent');
-
         $this->handler = new InterventionVisiteServiceHandler(
-            $this->serializer,
             $this->esaboraSISHService,
             $this->esaboraManager,
-            $this->jobEventManager,
         );
 
         $this->handler->handle($this->affectation);

@@ -6,7 +6,7 @@ namespace App\Tests\Functional\Repository;
 
 use App\Entity\Enum\PartnerType;
 use App\Repository\JobEventRepository;
-use App\Service\Esabora\AbstractEsaboraService;
+use App\Service\Interconnection\Esabora\AbstractEsaboraService;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 
 class JobEventRepositoryTest extends KernelTestCase

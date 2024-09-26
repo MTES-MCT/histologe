@@ -20,10 +20,12 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 )]
 class UpdateSignalementGeolocalisationCommand extends Command
 {
+    public const int BATCH_SIZE = 20;
+
     public function __construct(
-        private AddressService $addressService,
-        private TerritoryRepository $territoryRepository,
-        private SignalementManager $signalementManager
+        private readonly AddressService $addressService,
+        private readonly TerritoryRepository $territoryRepository,
+        private readonly SignalementManager $signalementManager
     ) {
         parent::__construct();
     }
@@ -57,11 +59,11 @@ class UpdateSignalementGeolocalisationCommand extends Command
             return Command::SUCCESS;
         }
 
+        $i = 0;
         /** @var Signalement $signalement */
         foreach ($signalements as $signalement) {
             $address = $this->addressService->getAddress($signalement->getAddressCompleteOccupant());
             $this->signalementManager->updateAddressOccupantFromAddress($signalement, $address);
-            $this->signalementManager->persist($signalement);
 
             $io->success(\sprintf('Signalement %s updated.%sAddress : %sCode insee : %sGPS : [%s, %s]',
                 $signalement->getUuid(),
@@ -70,6 +72,11 @@ class UpdateSignalementGeolocalisationCommand extends Command
                 $address->getInseeCode().\PHP_EOL,
                 $address->getLongitude(),
                 $address->getLatitude()));
+
+            if (0 === $i % self::BATCH_SIZE) {
+                $this->signalementManager->flush();
+            }
+            ++$i;
         }
 
         $this->signalementManager->flush();

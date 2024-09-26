@@ -2,6 +2,7 @@
 
 namespace App\Messenger\Message\Oilhi;
 
+use App\Entity\Enum\PartnerType;
 use App\Messenger\Message\DossierMessageInterface;
 
 final class DossierMessage implements DossierMessageInterface
@@ -9,6 +10,8 @@ final class DossierMessage implements DossierMessageInterface
     private ?string $signalementUrl = null;
     private ?int $signalementId = null;
     private ?int $partnerId = null;
+    private ?PartnerType $partnerType = null;
+    private ?string $action = null;
     private ?string $uuidSignalement = null;
     private ?string $dateDepotSignalement = null;
     private ?string $dateAffectationSignalement = null;
@@ -73,6 +76,30 @@ final class DossierMessage implements DossierMessageInterface
     public function setPartnerId(?int $partnerId): self
     {
         $this->partnerId = $partnerId;
+
+        return $this;
+    }
+
+    public function getPartnerType(): ?PartnerType
+    {
+        return $this->partnerType;
+    }
+
+    public function setPartnerType(?PartnerType $partnerType): self
+    {
+        $this->partnerType = $partnerType;
+
+        return $this;
+    }
+
+    public function getAction(): ?string
+    {
+        return $this->action;
+    }
+
+    public function setAction(?string $action): self
+    {
+        $this->action = $action;
 
         return $this;
     }

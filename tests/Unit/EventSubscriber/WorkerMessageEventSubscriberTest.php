@@ -8,7 +8,7 @@ use App\EventSubscriber\WorkerMessageEventSubscriber;
 use App\Manager\JobEventManager;
 use App\Messenger\Message\Esabora\DossierMessageSCHS;
 use App\Repository\PartnerRepository;
-use App\Service\Esabora\AbstractEsaboraService;
+use App\Service\Interconnection\Esabora\AbstractEsaboraService;
 use App\Tests\FixturesHelper;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\EventDispatcher\EventDispatcher;
@@ -39,6 +39,7 @@ class WorkerMessageEventSubscriberTest extends TestCase
         $subscriber = new WorkerMessageEventSubscriber($jobEventManagerMock, $serializerMock, $partnerRepositoryMock);
 
         $dossierMessage = new DossierMessageSCHS();
+        $dossierMessage->setAction('push_dossier');
         $envelope = new Envelope($dossierMessage, [
             new DelayStamp(0),
             new ReceivedStamp('async'),

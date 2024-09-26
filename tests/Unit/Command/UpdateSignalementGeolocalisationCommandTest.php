@@ -62,11 +62,7 @@ class UpdateSignalementGeolocalisationCommandTest extends TestCase
             ->method('updateAddressOccupantFromAddress');
 
         $this->signalementManager
-            ->expects($this->once())
-            ->method('persist');
-
-        $this->signalementManager
-            ->expects($this->once())
+            ->expects($this->exactly(2))
             ->method('flush');
 
         $result = json_decode(
@@ -108,7 +104,7 @@ class UpdateSignalementGeolocalisationCommandTest extends TestCase
             ->method('persist');
 
         $this->signalementManager
-            ->expects($this->once())
+            ->expects($this->exactly(2))
             ->method('flush');
 
         $result = json_decode(

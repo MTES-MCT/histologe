@@ -4,11 +4,10 @@ namespace App\Tests\Unit\Command\Cron;
 
 use App\Command\Cron\SynchronizeEsaboraSISHCommand;
 use App\Entity\Enum\PartnerType;
-use App\Manager\JobEventManager;
 use App\Repository\AffectationRepository;
-use App\Service\Esabora\EsaboraManager;
-use App\Service\Esabora\EsaboraSISHService;
-use App\Service\Esabora\Response\DossierStateSISHResponse;
+use App\Service\Interconnection\Esabora\EsaboraManager;
+use App\Service\Interconnection\Esabora\EsaboraSISHService;
+use App\Service\Interconnection\Esabora\Response\DossierStateSISHResponse;
 use App\Service\Mailer\NotificationMailerRegistry;
 use App\Tests\FixturesHelper;
 use Doctrine\Common\Collections\ArrayCollection;
@@ -49,11 +48,6 @@ class SynchronizeEsaboraSISHCommandTest extends KernelTestCase
             ->method('findAffectationSubscribedToEsabora')
             ->willReturn($collection->toArray());
 
-        $jobEventManagerMock = $this->createMock(JobEventManager::class);
-        $jobEventManagerMock
-            ->expects($this->once())
-            ->method('createJobEvent');
-
         $serializerMock = $this->createMock(SerializerInterface::class);
         $notificationMailerRegistry = self::getContainer()->get(NotificationMailerRegistry::class);
         $parameterBag = self::getContainer()->get(ParameterBagInterface::class);
@@ -63,7 +57,6 @@ class SynchronizeEsaboraSISHCommandTest extends KernelTestCase
         $command = $application->add(new SynchronizeEsaboraSISHCommand(
             $esaboraServiceMock,
             $esaboraManagerMock,
-            $jobEventManagerMock,
             $affectationRepositoryMock,
             $serializerMock,
             $notificationMailerRegistry,

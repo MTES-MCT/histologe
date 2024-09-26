@@ -4,8 +4,8 @@ namespace App\Tests\Functional\Service\Esabora;
 
 use App\Entity\Signalement;
 use App\Repository\SignalementRepository;
-use App\Service\Esabora\CiviliteMapper;
-use App\Service\Esabora\Enum\PersonneQualite;
+use App\Service\Interconnection\Esabora\CiviliteMapper;
+use App\Service\Interconnection\Esabora\Enum\PersonneQualite;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 

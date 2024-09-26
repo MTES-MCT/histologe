@@ -2,7 +2,7 @@
 
 namespace App\Tests\Unit\Service\Esabora;
 
-use App\Service\Esabora\DateParser;
+use App\Service\Interconnection\Esabora\DateParser;
 use PHPUnit\Framework\TestCase;
 
 class DateParserTest extends TestCase

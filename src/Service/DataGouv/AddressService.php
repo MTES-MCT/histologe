@@ -8,7 +8,7 @@ use Symfony\Contracts\HttpClient\HttpClientInterface;
 
 class AddressService
 {
-    private const API_URL = 'https://api-adresse.data.gouv.fr/search/?q=';
+    private const string API_URL = 'https://api-adresse.data.gouv.fr/search/?q=';
 
     public function __construct(
         private readonly HttpClientInterface $httpClient,
@@ -26,19 +26,6 @@ class AddressService
             }
         } catch (\Throwable $exception) {
             $this->logger->error($exception->getMessage());
-        }
-
-        return null;
-    }
-
-    public function getCodeInsee(string $address): ?string
-    {
-        $response = $this->searchAddress($address);
-
-        if (null !== $response && !empty($response['features'])) {
-            $codeInsee = $response['features'][0]['properties']['citycode'];
-
-            return $codeInsee;
         }
 
         return null;

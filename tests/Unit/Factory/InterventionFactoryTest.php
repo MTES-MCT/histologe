@@ -6,7 +6,7 @@ use App\Entity\Enum\InterventionType;
 use App\Entity\Enum\PartnerType;
 use App\Entity\Intervention;
 use App\Factory\InterventionFactory;
-use App\Service\Esabora\AbstractEsaboraService;
+use App\Service\Interconnection\Esabora\AbstractEsaboraService;
 use App\Tests\FixturesHelper;
 use PHPUnit\Framework\TestCase;
 

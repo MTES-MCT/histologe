@@ -10,7 +10,7 @@ use App\Manager\SuiviManager;
 use App\Repository\AffectationRepository;
 use App\Repository\SignalementRepository;
 use App\Repository\UserRepository;
-use App\Service\Idoss\IdossService;
+use App\Service\Interconnection\Idoss\IdossService;
 use App\Service\Mailer\NotificationMail;
 use App\Service\Mailer\NotificationMailerRegistry;
 use App\Service\Mailer\NotificationMailerType;

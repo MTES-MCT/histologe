@@ -13,6 +13,10 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Contracts\HttpClient\Exception\ClientExceptionInterface;
+use Symfony\Contracts\HttpClient\Exception\RedirectionExceptionInterface;
+use Symfony\Contracts\HttpClient\Exception\ServerExceptionInterface;
+use Symfony\Contracts\HttpClient\Exception\TransportExceptionInterface;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
 
 #[AsCommand(
@@ -21,20 +25,26 @@ use Symfony\Contracts\HttpClient\HttpClientInterface;
 )]
 class LoadEpciCommand extends Command
 {
-    public const API_EPCI_ALL_URL = 'https://geo.api.gouv.fr/epcis?fields=nom';
-    public const API_EPCI_COMMUNE_URL = 'https://geo.api.gouv.fr/epcis/%d/communes?fields=nom,codesPostaux';
+    public const string API_EPCI_ALL_URL = 'https://geo.api.gouv.fr/epcis?fields=nom';
+    public const string API_EPCI_COMMUNE_URL = 'https://geo.api.gouv.fr/epcis/%d/communes?fields=nom,codesPostaux';
     private array $epcis = [];
     private array $communes = [];
 
     public function __construct(
-        private HttpClientInterface $httpClient,
-        private CommuneRepository $communeRepository,
-        private EpciRepository $epciRepository,
-        private EntityManagerInterface $entityManager,
+        private readonly HttpClientInterface $httpClient,
+        private readonly CommuneRepository $communeRepository,
+        private readonly EpciRepository $epciRepository,
+        private readonly EntityManagerInterface $entityManager,
     ) {
         parent::__construct();
     }
 
+    /**
+     * @throws RedirectionExceptionInterface
+     * @throws ClientExceptionInterface
+     * @throws TransportExceptionInterface
+     * @throws ServerExceptionInterface
+     */
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $io = new SymfonyStyle($input, $output);

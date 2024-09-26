@@ -8,11 +8,11 @@ use App\Entity\Signalement;
 use App\Entity\Suivi;
 use App\Messenger\Message\Esabora\DossierMessageSISH;
 use App\Repository\SuiviRepository;
-use App\Service\Esabora\AbstractEsaboraService;
-use App\Service\Esabora\CiviliteMapper;
-use App\Service\Esabora\Enum\PersonneType;
-use App\Service\Esabora\Model\DossierMessageSISHPersonne;
 use App\Service\HtmlCleaner;
+use App\Service\Interconnection\Esabora\AbstractEsaboraService;
+use App\Service\Interconnection\Esabora\CiviliteMapper;
+use App\Service\Interconnection\Esabora\Enum\PersonneType;
+use App\Service\Interconnection\Esabora\Model\DossierMessageSISHPersonne;
 use App\Service\TimezoneProvider;
 use App\Service\UploadHandlerService;
 use App\Utils\AddressParser;
@@ -88,7 +88,7 @@ class DossierMessageSISHFactory extends AbstractDossierMessageFactory
             ->setUrl($partner->getEsaboraUrl())
             ->setToken($partner->getEsaboraToken())
             ->setPartnerId($partner->getId())
-            ->setPartnerType($partner->getType()->value)
+            ->setPartnerType($partner->getType())
             ->setSignalementId($signalement->getId())
             ->setSignalementUrl($this->parameterBag->get('host_url').$routeSignalement)
             ->setReferenceAdresse($signalement->getUuid())

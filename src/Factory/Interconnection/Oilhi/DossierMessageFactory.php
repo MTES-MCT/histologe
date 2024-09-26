@@ -11,13 +11,14 @@ use App\Entity\Signalement;
 use App\Factory\Interconnection\DossierMessageFactoryInterface;
 use App\Messenger\Message\Oilhi\DossierMessage;
 use App\Service\HtmlCleaner;
-use App\Service\Oilhi\Model\Desordre;
+use App\Service\Interconnection\Oilhi\HookZapierService;
+use App\Service\Interconnection\Oilhi\Model\Desordre;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 class DossierMessageFactory implements DossierMessageFactoryInterface
 {
-    public const FORMAT_DATE = 'Y-m-d';
+    public const string FORMAT_DATE = 'Y-m-d';
 
     public function __construct(
         private readonly UrlGeneratorInterface $urlGenerator,
@@ -44,8 +45,10 @@ class DossierMessageFactory implements DossierMessageFactoryInterface
         $typeDeclarant = $this->getTypeDeclarant($signalement);
 
         return (new DossierMessage())
+            ->setAction(HookZapierService::ACTION_PUSH_DOSSIER)
             ->setUuidSignalement($uuid = $signalement->getUuid())
             ->setPartnerId($partner->getId())
+            ->setPartnerType($partner->getType())
             ->setSignalementId($signalement->getId())
             ->setSignalementUrl($this->urlGenerator->generate(
                 'back_signalement_view',

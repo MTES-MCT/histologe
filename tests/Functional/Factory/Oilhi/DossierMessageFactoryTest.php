@@ -9,7 +9,7 @@ use App\Factory\Interconnection\Oilhi\DossierMessageFactory;
 use App\Messenger\Message\Oilhi\DossierMessage;
 use App\Repository\PartnerRepository;
 use App\Repository\SignalementRepository;
-use App\Service\Oilhi\HookZapierService;
+use App\Service\Interconnection\Oilhi\HookZapierService;
 use App\Tests\FixturesHelper;
 use Doctrine\ORM\EntityManagerInterface;
 use Faker\Factory;
@@ -17,6 +17,7 @@ use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use Symfony\Component\HttpClient\Exception\TransportException;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
+use Symfony\Component\Serializer\Exception\ExceptionInterface;
 use Symfony\Component\Serializer\SerializerInterface;
 use Symfony\Contracts\HttpClient\Exception\ClientExceptionInterface;
 use Symfony\Contracts\HttpClient\Exception\RedirectionExceptionInterface;
@@ -32,7 +33,7 @@ class DossierMessageFactoryTest extends KernelTestCase
     private LoggerInterface $logger;
     private SerializerInterface $serializer;
 
-    private const PATTERN_EXPECTED_DATE_FORMAT = '/^\d{4}-\d{2}-\d{2}$/';
+    private const string PATTERN_EXPECTED_DATE_FORMAT = '/^\d{4}-\d{2}-\d{2}$/';
 
     protected function setUp(): void
     {
@@ -101,6 +102,7 @@ class DossierMessageFactoryTest extends KernelTestCase
      * @throws ServerExceptionInterface
      * @throws RedirectionExceptionInterface
      * @throws ClientExceptionInterface
+     * @throws ExceptionInterface
      */
     public function testPushDossierWithException()
     {
@@ -123,6 +125,7 @@ class DossierMessageFactoryTest extends KernelTestCase
         $dossierMessage = (new DossierMessage())
             ->setPartnerId(1)
             ->setSignalementId(1)
+            ->setAction('push_dossier')
             ->setSignalementUrl($faker->url());
 
         $response = $hookZapierService->pushDossier($dossierMessage);

@@ -88,11 +88,6 @@ services:
         tags:
             - { name: 'kernel.event_listener', event: 'kernel.request' }
 
-    App\Command\GetGeolocCommand:
-        arguments:
-            - '@doctrine.orm.entity_manager'
-            - '@Symfony\Contracts\HttpClient\HttpClientInterface'
-
     Aws\S3\S3Client:
         arguments:
             - endpoint: '%env(resolve:S3_ENDPOINT)%'
@@ -122,6 +117,24 @@ services:
 
     App\Service\DashboardWidget\WidgetDataManagerCache:
         decorates: App\Service\DashboardWidget\WidgetDataManager
+
+    App\Service\Interconnection\JobEventHttpClient:
+        decorates: http_client
+
+    http_client.default:
+        alias: 'App\Service\Interconnection\JobEventHttpClient.inner'
+
+    App\Service\DataGouv\AddressService:
+        arguments:
+            - '@http_client.default'
+
+    App\Command\LoadEpciCommand:
+        arguments:
+            - '@http_client.default'
+
+    App\Service\Interconnection\Idoss\IdossService:
+        arguments:
+            - '@http_client.default'
 
     App\Serializer\SignalementDraftRequestNormalizer:
         tags: [ 'serializer.normalizer' ]

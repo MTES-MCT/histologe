@@ -68,7 +68,7 @@ class SignalementFileControllerTest extends WebTestCase
 
         $this->assertResponseRedirects('/bo/signalements/'.$signalement->getUuid());
         $this->client->followRedirect();
-        $this->assertSelectorTextContains('.fr-alert--success p', 'La photo a bien été modifiée.');
+        $this->assertSelectorTextContains('.fr-alert--success p', 'Le document a bien été modifié.');
     }
 
     public function testEditFileSignalementError(): void
