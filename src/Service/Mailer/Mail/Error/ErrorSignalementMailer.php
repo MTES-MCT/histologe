@@ -13,7 +13,7 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 class ErrorSignalementMailer extends AbstractNotificationMailer
 {
     protected ?NotificationMailerType $mailerType = NotificationMailerType::TYPE_ERROR_SIGNALEMENT;
-    protected ?string $mailerSubject = 'Une erreur est survenue lors de la création d\'un signalement !';
+    protected ?string $mailerSubject = 'Une erreur est survenue !';
     protected ?string $mailerTemplate = 'erreur_signalement_email';
 
     public function __construct(
