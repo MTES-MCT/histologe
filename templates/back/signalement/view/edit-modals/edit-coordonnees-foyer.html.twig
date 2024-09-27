@@ -1,12 +1,12 @@
-<dialog aria-labelledby="fr-modal-title-modal-edit-coordonnees-foyer" role="dialog" id="fr-modal-edit-coordonnees-foyer" class="fr-modal">
+<dialog aria-labelledby="fr-modal-title-modal-edit-coordonnees-foyer" id="fr-modal-edit-coordonnees-foyer" class="fr-modal">
     <div class="fr-container fr-container--fluid fr-container-md">
         <div class="fr-grid-row fr-grid-row--center">
-            <div class="fr-col-12 fr-col-md-8">
-                <form method="POST"
-                      id="form-edit-coordonnees-foyer"
-                      enctype="application/json"
-                      action="{{ path('back_signalement_edit_coordonnees_foyer',{uuid:signalement.uuid}) }}">
-                    <div class="fr-modal__body">
+            <div class="fr-col-12 fr-col-md-8 fr-col-lg-6">
+                <div class="fr-modal__body">
+                    <form method="POST"
+                        id="form-edit-coordonnees-foyer"
+                        enctype="application/json"
+                        action="{{ path('back_signalement_edit_coordonnees_foyer',{uuid:signalement.uuid}) }}">
                         <div class="fr-modal__header">
                             <button type="button" class="fr-btn--close fr-btn" aria-controls="fr-modal-edit-coordonnees-foyer">Fermer</button>
                         </div>
@@ -86,26 +86,26 @@
                                 <label class="fr-label" for="coordonneesFoyerTelephoneBis">Téléphone sec. (facultatif)</label>
                                 <input class="fr-input" type="text" id="coordonneesFoyerTelephoneBis" name="telephoneBis" value="{{ signalement.telOccupantBisDecoded }}">
                             </div>
+                            <input type="hidden" name="_token" value="{{ csrf_token('signalement_edit_coordonnees_foyer_'~signalement.id) }}">
                         </div>
                         
                         <div class="fr-modal__footer">
-                            <ul class="fr-btns-group fr-btns-group--right fr-btns-group--inline-lg fr-btns-group--icon-left">
+                            <ul class="fr-btns-group fr-btns-group--right fr-btns-group--inline-reverse fr-btns-group--inline-lg fr-btns-group--icon-left">
+                                <li>
+                                    <button class="fr-btn fr-icon-check-line" type="submit">
+                                        Valider
+                                    </button>
+                                </li>
                                 <li>
                                     <button type="button" class="fr-btn fr-btn--secondary fr-icon-close-line"
                                             aria-controls="fr-modal-edit-coordonnees-foyer">
                                         Annuler
                                     </button>
                                 </li>
-                                <li>
-                                    <button class="fr-btn  fr-icon-checkbox-line" type="submit">
-                                        Valider
-                                    </button>
-                                </li>
                             </ul>
                         </div>
-                    </div>
-                    <input type="hidden" name="_token" value="{{ csrf_token('signalement_edit_coordonnees_foyer_'~signalement.id) }}">
-                </form>
+                    </form>
+                </div>
             </div>
         </div>
     </div>

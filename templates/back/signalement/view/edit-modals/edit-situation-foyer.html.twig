@@ -1,9 +1,10 @@
-<dialog aria-labelledby="fr-modal-title-modal-edit-situation-foyer" role="dialog" id="fr-modal-edit-situation-foyer" class="fr-modal">
+<dialog aria-labelledby="fr-modal-title-modal-edit-situation-foyer" id="fr-modal-edit-situation-foyer" class="fr-modal">
     <div class="fr-container fr-container--fluid fr-container-md">
         <div class="fr-grid-row fr-grid-row--center">
             <div class="fr-col-12 fr-col-md-8">
-                <form method="POST" id="form-edit-situation-foyer" enctype="application/json" action="{{ path('back_signalement_edit_situation_foyer',{uuid:signalement.uuid}) }}">
-                    <div class="fr-modal__body">
+                <div class="fr-modal__body">
+                    <form method="POST" id="form-edit-situation-foyer" enctype="application/json" action="{{ path('back_signalement_edit_situation_foyer',{uuid:signalement.uuid}) }}">
+
                         <div class="fr-modal__header">
                             <button type="button" class="fr-btn--close fr-btn" aria-controls="fr-modal-edit-situation-foyer">Fermer</button>
                         </div>
@@ -157,26 +158,26 @@
                                 <input class="fr-input" type="text" id="situationFoyerRevenuFiscal" name="revenuFiscal" value="{{ signalement.informationComplementaire.informationsComplementairesSituationOccupantsRevenuFiscal ?? '0' }}">
                             </div>
                             {% endif %}
+                            <input type="hidden" name="_token" value="{{ csrf_token('signalement_edit_situation_foyer_'~signalement.id) }}">
                         </div>
                         
                         <div class="fr-modal__footer">
-                            <ul class="fr-btns-group fr-btns-group--right fr-btns-group--inline-lg fr-btns-group--icon-left">
+                            <ul class="fr-btns-group fr-btns-group--right fr-btns-group--inline-reverse fr-btns-group--inline-lg fr-btns-group--icon-left">
+                                <li>
+                                    <button class="fr-btn fr-icon-check-line" type="submit">
+                                        Valider
+                                    </button>
+                                </li>
                                 <li>
                                     <button type="button" class="fr-btn fr-btn--secondary fr-icon-close-line"
                                             aria-controls="fr-modal-edit-situation-foyer">
                                         Annuler
                                     </button>
                                 </li>
-                                <li>
-                                    <button class="fr-btn fr-icon-checkbox-line" type="submit">
-                                        Valider
-                                    </button>
-                                </li>
                             </ul>
                         </div>
-                    </div>
-                    <input type="hidden" name="_token" value="{{ csrf_token('signalement_edit_situation_foyer_'~signalement.id) }}">
-                </form>
+                    </form>
+                </div>
             </div>
         </div>
     </div>

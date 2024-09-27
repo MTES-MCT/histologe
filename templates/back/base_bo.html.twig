@@ -44,18 +44,17 @@
 {% block cgumodale %}
     {% if platform.cgu_current_version is not same as app.user.cguVersionChecked %}
         <button class="fr-hidden" data-fr-opened="true" aria-controls="fr-modal-cgu-bo"></button>
-        <dialog aria-labelledby="fr-modal-cgu-bo-title" id="fr-modal-cgu-bo" class="fr-modal" role="dialog" open="true">
+        <dialog aria-labelledby="fr-modal-cgu-bo-title" id="fr-modal-cgu-bo" class="fr-modal" open="true">
             <div class="fr-container fr-container--fluid fr-container-md">
                 <div class="fr-grid-row fr-grid-row--center">
                     <div class="fr-col-12 fr-col-md-8 fr-col-lg-6">
                         <div class="fr-modal__body">
                             <div class="fr-modal__header">
-                                <h1 id="fr-modal-cgu-bo-title" class="fr-modal__title">
-                                    <span class="fr-icon-arrow-right-line fr-icon--lg"></span>
-                                    Mise à jour des conditions d'utilisation
-                                </h1>
                             </div>
                             <div class="fr-modal__content">
+                                <h1 id="fr-modal-cgu-bo-title" class="fr-modal__title">
+                                    Mise à jour des conditions d'utilisation
+                                </h1>
                                 <div>
                                     <p>
                                         Les conditions générales d'utilisation du service ont été mises à jour le {{platform.cgu_current_version}}.

@@ -5,7 +5,7 @@
         <div class="fr-col-12 fr-col-md-8 fr-col-lg-6">
           <div class="fr-modal__body">
             <div class="fr-modal__header">
-              <button class="fr-btn--close fr-btn" title="Fermer la fenêtre modale" aria-controls="fr-modal-already-exists" id="fr-modal-already-exists-close">Fermer</button>
+              <button type="button" class="fr-btn--close fr-btn" title="Fermer la fenêtre modale" aria-controls="fr-modal-already-exists" id="fr-modal-already-exists-close">Fermer</button>
             </div>
             <div class="fr-modal__content" v-if="formStore.alreadyExists.type==='signalement'">
               <h1 id="fr-modal-title-modal-already-exists" class="fr-modal__title"><span v-if="formStore.alreadyExists.signalements?.length === 1">Ce signalement existe déjà</span><span v-else>Ces signalements existent déjà</span></h1>

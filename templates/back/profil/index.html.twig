@@ -101,19 +101,18 @@
     </section>
     <hr>
     <section class="fr-px-5v fr-my-5v">
-        <dialog aria-labelledby="fr-modal-cgu-bo-title" id="fr-modal-profil-cgu-bo" class="fr-modal" role="dialog">
+        <dialog aria-labelledby="fr-modal-cgu-bo-title" id="fr-modal-profil-cgu-bo" class="fr-modal">
             <div class="fr-container fr-container--fluid fr-container-md">
                 <div class="fr-grid-row fr-grid-row--center">
-                    <div class="fr-col-12 fr-col-md-8">
+                    <div class="fr-col-12 fr-col-md-8 fr-col-lg-6">
                         <div class="fr-modal__body">
                             <div class="fr-modal__header">
+                                <button type="button" class="fr-btn--close fr-btn" aria-controls="fr-modal-profil-cgu-bo">Fermer</button>
+                            </div>
+                            <div class="fr-modal__content">
                                 <h1 id="fr-modal-cgu-bo-title" class="fr-modal__title">
                                     Conditions Générales d'Utilisation
                                 </h1>
-                                <button class="fr-link--close fr-link" aria-controls="fr-modal-profil-cgu-bo">Fermer
-                                </button>
-                            </div>
-                            <div class="fr-modal__content">
                                 {{ include('back/cgu_bo.html.twig') }}
                             </div>
                         </div>

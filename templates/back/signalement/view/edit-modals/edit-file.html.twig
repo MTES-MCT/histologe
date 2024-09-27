@@ -1,9 +1,9 @@
-<dialog aria-labelledby="fr-modal-title-modal-edit-file" role="dialog" id="fr-modal-edit-file" class="fr-modal">
+<dialog aria-labelledby="fr-modal-title-modal-edit-file" id="fr-modal-edit-file" class="fr-modal">
     <div class="fr-container fr-container--fluid fr-container-md  fr-text--left">
         <div class="fr-grid-row fr-grid-row--center">
-            <div class="fr-col-12 fr-col-md-8">
-                <form method="POST" id="form-edit-file" enctype="application/json" action="{{ path('back_signalement_edit_file',{uuid:signalement.uuid}) }}">
-                    <div class="fr-modal__body">
+            <div class="fr-col-12 fr-col-md-8 fr-col-lg-6">
+                <div class="fr-modal__body">
+                    <form method="POST" id="form-edit-file" enctype="application/json" action="{{ path('back_signalement_edit_file',{uuid:signalement.uuid}) }}">
                         <div class="fr-modal__header">
                             <button type="button" class="fr-btn--close fr-btn" aria-controls="fr-modal-edit-file">Fermer</button>
                         </div>
@@ -37,28 +37,28 @@
                                 <textarea class="fr-input" type="text" id="fileDescription" name="description" maxlength=250>
                                 </textarea>
                             </div>    
+                            <input type="hidden" name="_token" value="{{ csrf_token('signalement_edit_file_'~signalement.id) }}">
+                            <input type="hidden" name="file_id" id="file-edit-fileid">
                         </div>
                         
                         <div class="fr-modal__footer">
-                            <ul class="fr-btns-group fr-btns-group--right fr-btns-group--inline-lg fr-btns-group--icon-left">
+                            <ul class="fr-btns-group fr-btns-group--right fr-btns-group--inline-reverse fr-btns-group--inline-lg fr-btns-group--icon-left">
+                                <li>
+                                    <button class="fr-btn  fr-icon-check-line" type="submit" form="form-edit-file"
+                                        id="form-edit-file-submit">
+                                        Valider
+                                    </button>
+                                </li>
                                 <li>
                                     <button type="button" class="fr-btn fr-btn--secondary fr-icon-close-line"
                                             aria-controls="fr-modal-edit-file">
                                         Annuler
                                     </button>
                                 </li>
-                                <li>
-                                    <button class="fr-btn  fr-icon-checkbox-line" type="submit" form="form-edit-file"
-                                        id="form-edit-file-submit">
-                                        Valider
-                                    </button>
-                                </li>
                             </ul>
                         </div>
-                    </div>
-                    <input type="hidden" name="_token" value="{{ csrf_token('signalement_edit_file_'~signalement.id) }}">
-                    <input type="hidden" name="file_id" id="file-edit-fileid">
-                </form>
+                    </form>
+                </div>
             </div>
         </div>
     </div>

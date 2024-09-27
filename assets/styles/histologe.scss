@@ -835,6 +835,10 @@ a.photo-preview {
     z-index: 1;
 }
 
+.fr-modal__footer-shadow {
+    filter: drop-shadow(var(--raised-shadow));
+}
+
 .signalement-tag-add, .signalement-tag-remove {
     cursor: pointer;
 }
