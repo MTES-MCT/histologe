@@ -73,6 +73,8 @@ jobs:
 
     - name: Call Make
       run: make test_e2e_ci BIN_CONSOLE="php bin/console" BIN_COMPOSER="composer"
+      env:
+        HISTOLOGE_URL: http://localhost:8080
 
     #- name: Install dependencies
     #  run: npm ci
