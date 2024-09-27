@@ -2,13 +2,18 @@ document.querySelectorAll('.search-checkbox-container')?.forEach(element => {
     searchCheckboxCompleteInputValue(element)
     let input = element.querySelector('input[type="text"]')
     let checkboxesContainer = element.querySelector('.search-checkbox')
+    //init values
+    let initialValues = [];
+    checkboxesContainer.querySelectorAll('input[type="checkbox"]:checked').forEach((checkbox) => {
+        initialValues.push(checkbox.value)
+    })
     //init order
     checkboxesContainer.querySelectorAll('.fr-fieldset__element').forEach((checkbox, index) => {
         checkbox.setAttribute('data-order', index)
     })
     //show choices on focus
     input.addEventListener('focus', function() {
-        checkboxesContainer.querySelectorAll('.fr-fieldset__element').forEach((checkbox, index) => {
+        checkboxesContainer.querySelectorAll('.fr-fieldset__element').forEach((checkbox) => {
             checkbox.style.display = '';
         })
         checkboxesContainer.style.display = 'block';
@@ -33,6 +38,7 @@ document.querySelectorAll('.search-checkbox-container')?.forEach(element => {
         if (!input.contains(event.target) && !checkboxesContainer.contains(event.target)) {
             checkboxesContainer.style.display = 'none';
             searchCheckboxCompleteInputValue(element)
+            searchCheckboxTriggerChange(element, initialValues)
         }
     });
     //reorder on uncheck
@@ -81,4 +87,15 @@ function searchCheckboxOrderCheckboxes(element) {
         parent.classList.add('topped');
         checkboxesContainer.prepend(parent)
     })
+}
+
+function searchCheckboxTriggerChange(element, initialValues) {
+    let checkboxesContainer = element.querySelector('.search-checkbox')
+    let currentValues = [];
+    checkboxesContainer.querySelectorAll('input[type="checkbox"]:checked').forEach((checkbox) => {
+        currentValues.push(checkbox.value)
+    })
+    if(JSON.stringify(currentValues) !== JSON.stringify(initialValues)){
+        element.dispatchEvent(new CustomEvent('searchCheckboxChange'));
+    }
 }

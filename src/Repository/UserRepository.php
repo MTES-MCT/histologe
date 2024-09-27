@@ -381,7 +381,7 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
             $qb->andWhere('u.statut = :statut')->setParameter('statut', $searchUser->getStatut());
         }
         if ($searchUser->getRole()) {
-            $qb->andWhere('u.roles LIKE :role')->setParameter('role', '%'.$searchUser->getRole().'%');
+            $qb->andWhere('JSON_CONTAINS(u.roles, :role) = 1 ')->setParameter('role', '"'.$searchUser->getRole().'"');
         }
 
         $firstResult = ($searchUser->getPage() - 1) * $maxResult;

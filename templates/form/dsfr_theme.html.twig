@@ -37,6 +37,14 @@
     {% endif %}
 {% endblock form_errors %}
 
+{%- block search_widget -%}
+    {% set type = type|default('search') %}
+    <div class="fr-search-bar">
+        {{ block('form_widget_simple') }}
+        <button class="fr-btn" title="Rechercher">Rechercher</button>
+    </div>
+{%- endblock search_widget %}
+
 {% block form_widget_simple %}
     {% set attr = attr|merge({'class': (attr.class|default('') ~ ' fr-input')|trim}) %}
     {{parent()}}
@@ -101,8 +109,8 @@
 {% endblock choice_widget_expanded %}
 
 {# custom type #}
-{% block search_checkbox_row %} 
-    <div class="search-checkbox-container">    
+{% block search_checkbox_row %}
+    <div class="search-checkbox-container">   
         <div class="fr-input-group fr-mb-0">
             <input type="text" placeholder="{{noselection}}" class="fr-input">
         </div>

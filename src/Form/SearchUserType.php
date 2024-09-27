@@ -13,7 +13,7 @@ use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
-use Symfony\Component\Form\Extension\Core\Type\SubmitType;
+use Symfony\Component\Form\Extension\Core\Type\SearchType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
@@ -26,7 +26,7 @@ class SearchUserType extends AbstractType
     public function __construct(
         private readonly Security $security
     ) {
-        /** @var ?User $user */
+        /** @var User $user */
         $user = $this->security->getUser();
         $this->user = $user;
         $this->roleChoices = User::ROLESV2;
@@ -40,7 +40,8 @@ class SearchUserType extends AbstractType
 
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
-        $builder->add('queryUser', null, [
+        $builder->add('queryUser', SearchType::class, [
+            'required' => false,
             'label' => false,
             'attr' => ['placeholder' => 'Taper le nom ou l\'email d\'un utilisateur'],
         ]);
@@ -96,10 +97,6 @@ class SearchUserType extends AbstractType
             'label' => false,
         ]);
         $builder->add('page', HiddenType::class);
-        $builder->add('submit', SubmitType::class, [
-            'label' => 'Rechercher',
-            'attr' => ['class' => 'btn btn-primary'],
-        ]);
     }
 
     public function configureOptions(OptionsResolver $resolver): void

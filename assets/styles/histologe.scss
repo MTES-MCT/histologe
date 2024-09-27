@@ -879,6 +879,7 @@ a.photo-preview {
 }
 
 .search-checkbox-container {
+    //position: relative;
     .search-checkbox{
         display: none;
         overflow: auto;
@@ -887,6 +888,8 @@ a.photo-preview {
         border-top: 0;
         padding: 0.5rem;
         padding-top: 1rem;
-        position: relative;
+        //position: absolute;
+        //width: 100%;
+        //z-index: 1000;
     }
 }

@@ -45,6 +45,9 @@
             <div class="fr-col-12 {% if is_granted('ROLE_ADMIN') %}fr-col-lg-2{% else %}fr-col-lg-3{% endif %}">
                 {{ form_row(form.role) }}
             </div>
+            <div class="fr-col-12">
+                <a href="{{ path('back_user_index') }}" class="fr-link fr-link--icon-left fr-icon-close-circle-line">Réinitialiser les résultats</a>
+            </div>
         </div>
         {{ form_end(form) }}
     </section>

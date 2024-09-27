@@ -12,7 +12,7 @@ class SearchUser
 {
     private User $user;
     #[Assert\Positive(message: 'La page doit être un nombre positif')]
-    private int $page = 1;
+    private ?int $page = 1;
     private ?string $queryUser = null;
     private ?Territory $territory = null;
     private Collection $partners;
@@ -35,10 +35,14 @@ class SearchUser
 
     public function getPage(): int
     {
+        if ($this->page < 1) {
+            return 1;
+        }
+
         return $this->page;
     }
 
-    public function setPage(int $page): void
+    public function setPage(?int $page): void
     {
         $this->page = $page;
     }

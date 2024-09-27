@@ -48,6 +48,7 @@ parameters:
     feature_export_custom: '%env(bool:FEATURE_EXPORT_CUSTOM)%'
     feature_profil_edition_enabled: '%env(bool:FEATURE_PROFIL_EDITION_ENABLED)%'
     feature_schs_sync_event_enable: '%env(bool:FEATURE_SCHS_SYNC_EVENT_ENABLE)%'
+    feature_export_users: '%env(bool:FEATURE_EXPORT_USERS)%'
 
 services:
     # default configuration for services in *this* file
