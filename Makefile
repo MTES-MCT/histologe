@@ -262,7 +262,5 @@ test_e2e_ci_dbinstall:
 	$(BIN_CONSOLE) doctrine:fixtures:load --env=test -n
 
 test_e2e_ci_test:
-	$(BIN_CONSOLE) doctrine:fixtures:load --env=test -n --purge-with-truncate
 	${_DOCKER_EXEC_PHP} npx playwright test --project desktop-firefox
-	$(BIN_CONSOLE) doctrine:fixtures:load --env=test -n --purge-with-truncate
 	${_DOCKER_EXEC_PHP} npx playwright test --project desktop-chromium
