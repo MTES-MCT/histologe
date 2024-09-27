@@ -55,6 +55,13 @@ class User implements UserInterface, EntityHistoryInterface, PasswordAuthenticat
         'Responsable Territoire' => 'ROLE_ADMIN_TERRITORY',
         'Super Admin' => 'ROLE_ADMIN',
     ];
+    public const ROLESV2 = [
+        'Usager' => 'ROLE_USAGER',
+        'Agent' => 'ROLE_USER_PARTNER',
+        'Admin partenaire' => 'ROLE_ADMIN_PARTNER',
+        'Resp. Territoire' => 'ROLE_ADMIN_TERRITORY',
+        'Super Admin' => 'ROLE_ADMIN',
+    ];
 
     #[ORM\Id]
     #[ORM\GeneratedValue]
@@ -420,9 +427,13 @@ class User implements UserInterface, EntityHistoryInterface, PasswordAuthenticat
         return array_unique($roles);
     }
 
-    public function getRoleLabel(): string
+    public function getRoleLabel($v2 = false): string
     {
-        $roleLabel = array_flip(self::ROLES);
+        if ($v2) {
+            $roleLabel = array_flip(self::ROLESV2);
+        } else {
+            $roleLabel = array_flip(self::ROLES);
+        }
         $role = array_shift($this->roles);
 
         return $roleLabel[$role];

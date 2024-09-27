@@ -93,7 +93,7 @@
                     </ul>
                 </div>
                 {% if is_granted('ROLE_ADMIN_PARTNER') %}
-                    {% set routesAdmin = ['back_user_report_index', 'back_situation_', 'back_partner_', 'back_tags', 'back_account_', 'back_inactive_account_', 'back_expired_account_', 'back_archived_partner', 'back_archived_signalements_index', 'back_auto_affectation'] %}
+                    {% set routesAdmin = ['back_user_', 'back_partner_', 'back_tags', 'back_account_', 'back_archived_partner', 'back_archived_signalements_index', 'back_auto_affectation'] %}
                     <button class="fr-sidemenu__btn"
                             aria-expanded="{% if routesAdmin|filter(route => app.request.get('_route') starts with route)|length > 0  %}true{% else %}false{% endif %}"
                             aria-controls="fr-sidemenu-outils-admin">Outils Admin
@@ -114,6 +114,13 @@
                                        target="_self"
                                        {% if 'back_partner' in app.request.get('_route') %}aria-current="page"{% endif %}>Partenaires</a>
                                 </li>
+                                {% if platform.feature_export_users %}
+                                    <li class="fr-sidemenu__item {% if 'back_user_' in app.request.get('_route') %}fr-sidemenu__item--active{% endif %}">
+                                        <a class="fr-sidemenu__link" href="{{ path('back_user_index') }}"
+                                        target="_self"
+                                        {% if 'back_user_' in app.request.get('_route') %}aria-current="page"{% endif %}>Utilisateurs</a>
+                                    </li>
+                                {% endif %}    
                                 <li class="fr-sidemenu__item {% if 'back_tags' in app.request.get('_route') %}fr-sidemenu__item--active{% endif %}">
                                     <a class="fr-sidemenu__link" href="{{ path('back_tags_index') }}"
                                     target="_self"
@@ -129,16 +136,6 @@
                                         <a class="fr-sidemenu__link" href="{{ path('back_account_index') }}"
                                         target="_self"
                                         {% if 'back_account_' in app.request.get('_route') %}aria-current="page"{% endif %}>Comptes archivés</a>
-                                    </li>
-                                    <li class="fr-sidemenu__item {% if 'back_inactive_account_' in app.request.get('_route') %}fr-sidemenu__item--active{% endif %}">
-                                        <a class="fr-sidemenu__link" href="{{ path('back_inactive_account_index') }}"
-                                        target="_self"
-                                        {% if 'back_inactive_account_' in app.request.get('_route') %}aria-current="page"{% endif %}>Comptes inactifs</a>
-                                    </li>
-                                    <li class="fr-sidemenu__item {% if 'back_expired_account_' in app.request.get('_route') %}fr-sidemenu__item--active{% endif %}">
-                                        <a class="fr-sidemenu__link" href="{{ path('back_expired_account_index') }}"
-                                        target="_self"
-                                        {% if 'back_expired_account_' in app.request.get('_route') %}aria-current="page"{% endif %}>Comptes expirés</a>
                                     </li>
                                     <li class="fr-sidemenu__item {% if 'back_archived_signalements' in app.request.get('_route') %}fr-sidemenu__item--active{% endif %}">
                                         <a class="fr-sidemenu__link" href="{{ path('back_archived_signalements_index') }}"
