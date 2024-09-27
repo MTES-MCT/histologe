@@ -1,8 +1,8 @@
 
 {% if signalement.interventions is not empty %}
     <div class="signalement-visites-buttons fr-text--right fr-btns-group fr-btns-group--sm fr-btns-group--inline fr-btns-group--right fr-btns-group--icon-left">
-        {% if intervention.status is same as constant('App\\Entity\\Intervention::STATUS_PLANNED') %}    
-            {% if is_granted('SIGN_ADD_VISITE', intervention.signalement) %}
+        {% if intervention.status is same as constant('App\\Entity\\Intervention::STATUS_PLANNED') %}
+            {% if is_granted('SIGN_EDIT_VISITE', intervention) %}
                 {% if workflow_can(intervention, 'cancel') %}
                     <button class="fr-btn fr-btn--danger fr-fi-close-line" aria-controls="cancel-visite-modal-{{intervention.id}}" data-fr-opened="false">
                         Annuler la visite
@@ -19,20 +19,20 @@
             {% endif %}
         {% elseif intervention.status is same as constant('App\\Entity\\Intervention::STATUS_DONE') %}
             {% if signalement.interventions is empty or intervention.files is empty or intervention.getRapportDeVisite is empty %}
-                {% if is_granted('SIGN_ADD_VISITE', intervention.signalement) %}
-                    <button 
+                {% if is_granted('SIGN_EDIT_VISITE', intervention) %}
+                    <button
                         class="fr-btn fr-btn--secondary fr-fi-file-fill"
-                        aria-controls="edit-visite-modal-{{intervention.id}}"  
+                        aria-controls="edit-visite-modal-{{intervention.id}}"
                         data-fr-opened="false"
                         >
                         Ajouter un rapport de visite
                     </button>
                 {% endif %}
             {% else %}
-                {% if is_granted('SIGN_ADD_VISITE', intervention.signalement) %}
-                    <button 
-                        class="fr-btn fr-btn--secondary fr-fi-edit-line" 
-                        aria-controls="edit-visite-modal-{{intervention.id}}" 
+                {% if is_granted('SIGN_EDIT_VISITE', intervention) %}
+                    <button
+                        class="fr-btn fr-btn--secondary fr-fi-edit-line"
+                        aria-controls="edit-visite-modal-{{intervention.id}}"
                         data-fr-opened="false">
                         Editer le rapport
                     </button>
@@ -45,10 +45,10 @@
                     <span aria-hidden="true" class="fr-fi-file-line fr-icon--sm"></span> Voir le rapport de visite
                 </a>
             {% endif %}
-            {% if is_granted('SIGN_ADD_VISITE', intervention.signalement)%}
-                <button 
-                    class="fr-btn fr-btn--secondary fr-icon-camera-fill open-modal-upload-files-btn" 
-                    data-fr-opened="false" 
+            {% if is_granted('SIGN_EDIT_VISITE', intervention) %}
+                <button
+                    class="fr-btn fr-btn--secondary fr-icon-camera-fill open-modal-upload-files-btn"
+                    data-fr-opened="false"
                     aria-controls="visites-upload-files-{{intervention.id}}"
                     data-file-type="photo"
                     data-document-type="PHOTO_VISITE"

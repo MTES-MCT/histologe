@@ -5,6 +5,7 @@ namespace App\Security\Voter;
 use App\Entity\Affectation;
 use App\Entity\Enum\Qualification;
 use App\Entity\Enum\QualificationStatus;
+use App\Entity\Intervention;
 use App\Entity\Signalement;
 use App\Entity\User;
 use Symfony\Bundle\SecurityBundle\Security;
@@ -20,6 +21,7 @@ class SignalementVoter extends Voter
     public const EDIT = 'SIGN_EDIT';
     public const VIEW = 'SIGN_VIEW';
     public const ADD_VISITE = 'SIGN_ADD_VISITE';
+    public const EDIT_VISITE = 'SIGN_EDIT_VISITE';
     public const USAGER_EDIT = 'SIGN_USAGER_EDIT';
     public const EDIT_NDE = 'SIGN_EDIT_NDE';
 
@@ -29,8 +31,9 @@ class SignalementVoter extends Voter
 
     protected function supports(string $attribute, $subject): bool
     {
-        return \in_array($attribute, [self::EDIT, self::VIEW, self::DELETE, self::VALIDATE, self::CLOSE, self::ADD_VISITE, self::USAGER_EDIT, self::EDIT_NDE])
-            && ($subject instanceof Signalement);
+        return (\in_array($attribute, [self::EDIT, self::VIEW, self::DELETE, self::VALIDATE, self::CLOSE, self::ADD_VISITE, self::USAGER_EDIT, self::EDIT_NDE])
+            && ($subject instanceof Signalement))
+            || (\in_array($attribute, [self::EDIT_VISITE]) && ($subject instanceof Intervention));
     }
 
     protected function voteOnAttribute(string $attribute, $subject, TokenInterface $token): bool
@@ -47,6 +50,10 @@ class SignalementVoter extends Voter
 
         if (self::ADD_VISITE == $attribute) {
             return $this->canAddVisite($subject, $user);
+        }
+
+        if (self::EDIT_VISITE == $attribute) {
+            return $this->canEditVisite($subject, $user);
         }
 
         if (self::EDIT_NDE == $attribute) {
@@ -148,6 +155,19 @@ class SignalementVoter extends Voter
         $isUserTerritoryAdminOfSignalementTerritory = $user->isTerritoryAdmin() && $user->getTerritory() === $signalement->getTerritory();
 
         return $user->isSuperAdmin() || $isUserInAffectedPartnerWithQualificationVisite || $isUserTerritoryAdminOfSignalementTerritory;
+    }
+
+    public function canEditVisite(Intervention $intervention, User $user): bool
+    {
+        $signalement = $intervention->getSignalement();
+        if (Signalement::STATUS_ACTIVE !== $signalement->getStatut()) {
+            return false;
+        }
+
+        $isUserInPartnerAffectedToVisite = $user->getPartner() === $intervention->getPartner();
+        $isUserTerritoryAdminOfSignalementTerritory = $user->isTerritoryAdmin() && $user->getTerritory() === $signalement->getTerritory();
+
+        return $user->isSuperAdmin() || $isUserInPartnerAffectedToVisite || $isUserTerritoryAdminOfSignalementTerritory;
     }
 
     private function canEditNDE(Signalement $signalement, User $user): bool
