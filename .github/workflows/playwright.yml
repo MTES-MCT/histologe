@@ -13,27 +13,49 @@ jobs:
   playwright:
     timeout-minutes: 60
     runs-on: ubuntu-latest
+    
+    services:
+      # https://docs.docker.com/samples/library/mysql/
+      mysql:
+        image: mysql:8.0
+        env:
+          MYSQL_ALLOW_EMPTY_PASSWORD: false
+          MYSQL_ROOT_PASSWORD: histologe
+          MYSQL_DATABASE: histologe_db
+        ports:
+          - 3306:3306
+        options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
+
     steps:
     - uses: actions/checkout@v4
-
-    - name: Start containers
-      run: docker compose -f "docker-compose.yml" up -d --build
-
-    - name: Curl test
-      run: |
-        curl -i http://localhost:8080
 
     - uses: actions/setup-node@v4
       with:
         node-version: lts/*
+
+    - name: Install Symfony CLI
+      run: |
+        curl -1sLf 'https://dl.cloudsmith.io/public/symfony/stable/setup.deb.sh' | sudo -E bash
+        sudo apt install symfony-cli
+
+    - name: Call Make
+      run: make test_e2e_ci
+
     - name: Install dependencies
       run: npm ci
+
     - name: Install Playwright Browsers
       run: npx playwright install --with-deps
+
     - name: Run Playwright tests
       run: npx playwright test
       env:
+        APP_SECRET: ${{ secrets.APP_SECRET }}
         PLAYWRIGHT_TEST_BASE_URL: http://localhost:8080
+        DATABASE_URL: mysql://root:histologe@127.0.0.1:${{ job.services.mysql.ports['3306'] }}/histologe_db
+        HISTOLOGE_URL: http://localhost:8080
+        SERVER_NAME: localhost:8080
+
     - uses: actions/upload-artifact@v4
       if: always()
       with:

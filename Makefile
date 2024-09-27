@@ -237,3 +237,17 @@ run-concurrency-request: ## Run concurrency request based postman collection
 
 .sleep:
 	@sleep 30
+
+test_e2e_ci:
+	make test_e2e_ci_install_deps
+	make test_e2e_ci_assets
+	make test_e2e_ci_dbinstall
+
+test_e2e_ci_install_deps:
+	make composer
+
+test_e2e_ci_assets:
+	make npm-build
+
+test_e2e_ci_dbinstall:
+	make create-db
