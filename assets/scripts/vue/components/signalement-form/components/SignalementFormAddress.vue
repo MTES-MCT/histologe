@@ -15,6 +15,7 @@
       @keydown.down.prevent="handleDownSuggestion"
       @keydown.up.prevent="handleUpSuggestion"
       @keydown.enter.prevent="handleEnterSuggestion"
+      @keydown.tab="handleTabSuggestion"
     />
 
     <div class="fr-grid-row fr-background-alt--blue-france fr-text-label--blue-france fr-address-group">
@@ -212,6 +213,9 @@ export default defineComponent({
         this.handleClickSuggestion(this.selectedSuggestionIndex)
         this.selectedSuggestionIndex = -1
       }
+    },
+    handleTabSuggestion () {
+      this.suggestions.length = 0
     },
     handleAddressFound (requestResponse: any) {
       this.suggestions = requestResponse.features
