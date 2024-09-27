@@ -1,50 +1,48 @@
 <template>
   <div>
-    <div class="fr-input-group">
-      <label class='fr-label' :for="id">
+    <fieldset class="fr-fieldset" :aria-labelledby="id + '-legend'">
+      <legend class="fr-fieldset__legend--regular fr-fieldset__legend fr-col-12" :id="id + '-legend'">
         {{ variablesReplacer.replace(label) }}
-      </label>
-      <div class="fr-grid-row fr-grid-row--gutters">
-        <div class="fr-col-12 fr-col-md-4">
-          <select
-            class="fr-select"
-            :id="idCountryCode"
-            :name="idCountryCode"
-            v-model="formStore.data[idCountryCode]"
-            title="Indicatif national"
+      </legend>
+      <div class="fr-fieldset__element fr-col-12 fr-col-md-4">
+        <select
+          class="fr-select"
+          :id="idCountryCode"
+          :name="idCountryCode"
+          v-model="formStore.data[idCountryCode]"
+          title="Indicatif national"
+          :aria-describedby="formStore.validationErrors[id] !== undefined ? id + '-text-input-error-desc-error' : undefined"
+          >
+          <option
+            v-for="countryItem in countryList"
+            v-bind:key="countryItem.code"
+            :value="countryItem.code"
+            >
+            {{ countryItem.label }}
+          </option>
+        </select>
+      </div>
+      <div class="fr-fieldset__element fr-col-12 fr-col-md-8">
+        <div class="fr-input-wrap fr-icon-phone-line">
+          <input
+            type="text"
+            :id="id"
+            :name="access_name"
+            :autocomplete="access_autocomplete"
+            v-model="formStore.data[id]"
+            class="fr-input"
             :aria-describedby="formStore.validationErrors[id] !== undefined ? id + '-text-input-error-desc-error' : undefined"
             >
-            <option
-              v-for="countryItem in countryList"
-              v-bind:key="countryItem.code"
-              :value="countryItem.code"
-              >
-              {{ countryItem.label }}
-            </option>
-          </select>
-        </div>
-        <div class="fr-col-12 fr-col-md-8">
-          <div class="fr-input-wrap fr-icon-phone-line">
-            <input
-              type="text"
-              :id="id"
-              :name="access_name"
-              :autocomplete="access_autocomplete"
-              v-model="formStore.data[id]"
-              class="fr-input"
-              :aria-describedby="formStore.validationErrors[id] !== undefined ? id + '-text-input-error-desc-error' : undefined"
-              >
-          </div>
         </div>
       </div>
       <div
         :id="id + '-text-input-error-desc-error'"
-        class="fr-error-text"
+        class="fr-error-text fr-mt-0 fr-mb-3v fr-ml-2v"
         v-if="formStore.validationErrors[id] !== undefined"
         >
         {{ formStore.validationErrors[id] }}
       </div>
-    </div>
+    </fieldset>
 
     <SignalementFormButton
       :id="idShow"
@@ -54,54 +52,53 @@
       :clickEvent="handleClickButton"
       />
 
-    <div
-      :id="idSecondGroup"
-      :class="[ 'fr-input-group', formStore.data[idSecond] === undefined ? 'fr-hidden' : '' ]"
+    <fieldset
+      :id=idSecondGroup
+      :class="[ 'fr-fieldset', formStore.data[idSecond] === undefined ? 'fr-hidden' : '' ]"
+      :aria-labelledby="id + '-legend-second'"
       >
-      <label class='fr-label' :for="idSecond">
+      <legend class="fr-fieldset__legend--regular fr-fieldset__legend fr-col-12" :id="id + '-legend-second'">
         Téléphone secondaire (facultatif)
-      </label>
-      <div class="fr-grid-row fr-grid-row--gutters">
-        <div class="fr-col-12 fr-col-md-4">
-          <select
-            class="fr-select"
-            :id="idCountryCodeSecond"
-            :name="idCountryCodeSecond"
-            v-model="formStore.data[idCountryCodeSecond]"
-            title="Indicatif national"
-            :aria-describedby="formStore.validationErrors[idSecond] !== undefined ? idSecond + '-text-input-error-desc-error' : undefined"
+      </legend>
+      <div class="fr-fieldset__element fr-col-12 fr-col-md-4">
+        <select
+          class="fr-select"
+          :id="idCountryCodeSecond"
+          :name="idCountryCodeSecond"
+          v-model="formStore.data[idCountryCodeSecond]"
+          title="Indicatif national"
+          :aria-describedby="formStore.validationErrors[idSecond] !== undefined ? idSecond + '-text-input-error-desc-error' : undefined"
+          >
+          <option
+            v-for="countryItem in countryList"
+            v-bind:key="countryItem.code"
+            :value="countryItem.code"
             >
-            <option
-              v-for="countryItem in countryList"
-              v-bind:key="countryItem.code"
-              :value="countryItem.code"
-              >
-              {{ countryItem.label }}
-            </option>
-          </select>
-        </div>
-        <div class="fr-col-12 fr-col-md-8">
-          <div class="fr-input-wrap fr-icon-phone-line">
-            <input
-              type="text"
-              :id="idSecond"
-              :name="idSecond"
-              v-model="formStore.data[idSecond]"
-              class="fr-input"
-              :aria-describedby="formStore.validationErrors[idSecond] !== undefined ? idSecond + '-text-input-error-desc-error' : undefined"
-              :autocomplete="access_autocomplete"
-              >
-          </div>
+            {{ countryItem.label }}
+          </option>
+        </select>
+      </div>
+      <div class="fr-fieldset__element fr-col-12 fr-col-md-8">
+        <div class="fr-input-wrap fr-icon-phone-line">
+          <input
+            type="text"
+            :id="idSecond"
+            :name="idSecond"
+            v-model="formStore.data[idSecond]"
+            class="fr-input"
+            :aria-describedby="formStore.validationErrors[idSecond] !== undefined ? idSecond + '-text-input-error-desc-error' : undefined"
+            :autocomplete="access_autocomplete"
+            >
         </div>
       </div>
       <div
         :id="idSecond + '-text-input-error-desc-error'"
-        class="fr-error-text"
+        class="fr-error-text fr-mt-0 fr-mb-3v fr-ml-2v"
         v-if="formStore.validationErrors[idSecond] !== undefined"
         >
         {{ formStore.validationErrors[idSecond] }}
       </div>
-    </div>
+    </fieldset>
   </div>
 </template>
 

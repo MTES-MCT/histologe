@@ -173,12 +173,12 @@
           "type": "SignalementFormButton",
           "label": "En savoir plus",
           "slug": "signalement_concerne_savoir_plus",
-          "customCss": "fr-btn--sm fr-badge fr-badge--info",
+          "customCss": "fr-btn--sm fr-badge fr-badge--info fr-mb-3v",
           "ariaControls": "signalement_concerne_modal"
         },
         {
           "type": "SignalementFormOnlyChoice",
-          "label": "",
+          "label": "Qui est concerné par votre signalement ?",
           "slug": "signalement_concerne_profil",
           "values": [
             {
