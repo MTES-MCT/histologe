@@ -259,7 +259,7 @@ test_e2e_ci_assets:
 test_e2e_ci_dbinstall:
 	$(BIN_CONSOLE) doctrine:database:create --env=test --if-not-exists
 	$(BIN_CONSOLE) doctrine:migrations:migrate -n --all-or-nothing --env=test
-	$(BIN_CONSOLE) doctrine:fixtures:load --env=test -n --purge-with-truncate
+	$(BIN_CONSOLE) doctrine:fixtures:load --env=test -n
 
 test_e2e_ci_test:
 	$(BIN_CONSOLE) doctrine:fixtures:load --env=test -n --purge-with-truncate
