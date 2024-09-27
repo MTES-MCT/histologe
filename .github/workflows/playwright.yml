@@ -66,6 +66,12 @@ jobs:
         restore-keys:
           ${{ runner.os }}-node-
 
+    - name: Init CI environment variables
+      # HACK: Symfony won't read from 'env: { DATABASE_URL: ... }', so we need to edit
+      # .env directly.
+      run: |
+        echo "DATABASE_URL=mysql://root:histologe@127.0.0.1:${{ job.services.mysql.ports['3306'] }}/histologe_db" >> .env
+
     - name: Install Symfony CLI
       run: |
         curl -1sLf 'https://dl.cloudsmith.io/public/symfony/stable/setup.deb.sh' | sudo -E bash
@@ -75,6 +81,7 @@ jobs:
       run: make test_e2e_ci BIN_CONSOLE="php bin/console" BIN_COMPOSER="composer"
       env:
         HISTOLOGE_URL: http://localhost:8080
+        DATABASE_URL: mysql://root:histologe@127.0.0.1:${{ job.services.mysql.ports['3306'] }}/histologe_db
 
     #- name: Install dependencies
     #  run: npm ci
@@ -82,14 +89,14 @@ jobs:
     #- name: Install Playwright Browsers
     #  run: npx playwright install --with-deps
 
-    - name: Run Playwright tests
-      run: npx playwright test
-      env:
-        APP_SECRET: ${{ secrets.APP_SECRET }}
-        PLAYWRIGHT_TEST_BASE_URL: http://localhost:8080
-        DATABASE_URL: mysql://root:histologe@127.0.0.1:${{ job.services.mysql.ports['3306'] }}/histologe_db
-        HISTOLOGE_URL: http://localhost:8080
-        SERVER_NAME: localhost:8080
+    #- name: Run Playwright tests
+    #  run: npx playwright test
+    #  env:
+    #    APP_SECRET: ${{ secrets.APP_SECRET }}
+    #    PLAYWRIGHT_TEST_BASE_URL: http://localhost:8080
+    #    DATABASE_URL: mysql://root:histologe@127.0.0.1:${{ job.services.mysql.ports['3306'] }}/histologe_db
+    #    HISTOLOGE_URL: http://localhost:8080
+    #    SERVER_NAME: localhost:8080
 
     - uses: actions/upload-artifact@v4
       if: always()

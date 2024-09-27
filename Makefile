@@ -244,19 +244,25 @@ run-concurrency-request: ## Run concurrency request based postman collection
 
 test_e2e_ci:
 	make test_e2e_ci_install_deps
-	make test_e2e_ci_assets
 	make test_e2e_ci_dbinstall
+	make test_e2e_ci_assets
+	make test_e2e_ci_test
 
 test_e2e_ci_install_deps:
 	$(BIN_COMPOSER) install -n --prefer-dist
 	${_DOCKER_EXEC_PHP} npm ci
-	${_DOCKER_EXEC_PHP} npx playwright install --with-deps
+	${_DOCKER_EXEC_PHP} npx playwright install --with-deps firefox chromium
 
 test_e2e_ci_assets:
 	${_DOCKER_EXEC_PHP} npm run build
 
 test_e2e_ci_dbinstall:
-	$(BIN_CONSOLE) doctrine:migrations:migrate -n --all-or-nothing
 	$(BIN_CONSOLE) doctrine:database:create --env=test --if-not-exists
 	$(BIN_CONSOLE) doctrine:migrations:migrate -n --all-or-nothing --env=test
 	$(BIN_CONSOLE) doctrine:fixtures:load --env=test -n --purge-with-truncate
+
+test_e2e_ci_test:
+	$(BIN_CONSOLE) doctrine:fixtures:load --env=test -n --purge-with-truncate
+	${_DOCKER_EXEC_PHP} npx playwright test --project desktop-firefox
+	$(BIN_CONSOLE) doctrine:fixtures:load --env=test -n --purge-with-truncate
+	${_DOCKER_EXEC_PHP} npx playwright test --project desktop-chromium
