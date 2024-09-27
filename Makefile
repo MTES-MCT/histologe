@@ -262,5 +262,5 @@ test_e2e_ci_dbinstall:
 	$(BIN_CONSOLE) doctrine:fixtures:load --env=test -n
 
 test_e2e_ci_test:
-	${_DOCKER_EXEC_PHP} npx playwright test --project desktop-firefox
-	${_DOCKER_EXEC_PHP} npx playwright test --project desktop-chromium
+	${_DOCKER_EXEC_PHP} npx playwright test --project firefox
+	${_DOCKER_EXEC_PHP} npx playwright test --project chromium
