@@ -5,7 +5,7 @@ import * as Sentry from '@sentry/browser'
 export const requests = {
   doRequest (ajaxUrl: string, functionReturn: Function) {
     axios
-      .get(ajaxUrl, { timeout: 15000 })
+      .get(ajaxUrl, { timeout: 30000 })
       .then(response => {
         const responseData = response.data
         functionReturn(responseData)

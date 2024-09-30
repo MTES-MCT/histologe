@@ -87,7 +87,7 @@ export default defineComponent({
       isLoadingRefresh: false
     }
   },
-  created () {
+  async created () {
     if (initElements !== null) {
       this.sharedProps.ajaxurlSettings = initElements.dataset.ajaxurlSettings
       this.sharedProps.ajaxurlKpi = initElements.dataset.ajaxurlKpi
@@ -95,8 +95,13 @@ export default defineComponent({
       this.sharedProps.ajaxurlSignalementsNosuivi = initElements.dataset.ajaxurlSignalementsNosuivi
       this.sharedProps.ajaxurlSignalementsPerTerritoire = initElements.dataset.ajaxurlSignalementsPerTerritoire
       this.sharedProps.ajaxurlConnectionsEsabora = initElements.dataset.ajaxurlConnectionsEsabora
-      requests.initSettings(this.handleInitSettings)
-      requests.initKPI(this.handleInitKPI)
+      try {
+        await this.initSettingsWithPromise()
+        await this.initKPIWithPromise()
+      } catch (error) {
+        console.error('Error during initialization', error)
+        this.isErrorInit = true
+      }
     } else {
       this.isErrorInit = true
     }
@@ -127,24 +132,25 @@ export default defineComponent({
       } else {
         this.isLoadingInit = false
         this.isLoadingRefresh = false
-        this.processResponseInit(requestResponse)
-        if (this.sharedState.user.isAdmin || this.sharedState.user.isResponsableTerritoire) {
-          this.countTablesToLoad++
-          requests.initAffectationPartner(this.handleAffectationPartner)
-        }
-        if (this.sharedState.user.isResponsableTerritoire) {
-          this.countTablesToLoad++
-          requests.initSignalementsNoSuivi(this.handleSignalementsNoSuivi)
-        }
-        if (this.sharedState.user.isAdmin) {
-          this.countTablesToLoad++
-          requests.initSignalementsPerTerritoire(this.handleSignalementsPerTerritoire)
-          this.countTablesToLoad++
-          requests.initEsaboraEvents(this.handleEsaboraEvents)
-        }
+        this.processResponseInit(requestResponse, () => {
+          if (this.sharedState.user.isAdmin || this.sharedState.user.isResponsableTerritoire) {
+            this.countTablesToLoad++
+            requests.initAffectationPartner(this.handleAffectationPartner)
+          }
+          if (this.sharedState.user.isResponsableTerritoire) {
+            this.countTablesToLoad++
+            requests.initSignalementsNoSuivi(this.handleSignalementsNoSuivi)
+          }
+          if (this.sharedState.user.isAdmin) {
+            this.countTablesToLoad++
+            requests.initSignalementsPerTerritoire(this.handleSignalementsPerTerritoire)
+            this.countTablesToLoad++
+            requests.initEsaboraEvents(this.handleEsaboraEvents)
+          }
+        })
       }
     },
-    processResponseInit (requestResponse: any) {
+    processResponseInit (requestResponse: any, callback: () => void) {
       this.sharedState.signalements.count = requestResponse.data.countSignalement.active
       this.sharedState.signalements.percent = requestResponse.data.countSignalement.percentage.active
       this.sharedState.closedSignalements.count = requestResponse.data.countSignalement.closed
@@ -182,6 +188,8 @@ export default defineComponent({
       this.sharedState.nonDecenceSignalements.linkActive = dataWidget.cardSignalementsEnCoursNonDecence?.link
       this.sharedState.noSuiviAfter3Relances.count = dataWidget.cardNoSuiviAfter3Relances?.count
       this.sharedState.noSuiviAfter3Relances.link = dataWidget.cardNoSuiviAfter3Relances?.link
+
+      if (callback) callback()
     },
     handleAffectationPartner (requestResponse: any) {
       this.countTablesLoaded++
@@ -240,6 +248,30 @@ export default defineComponent({
     handleChangeTerritoire () {
       this.isLoadingRefresh = true
       requests.initKPI(this.handleInitKPI)
+    },
+    initSettingsWithPromise (): Promise<void> {
+      return new Promise((resolve, reject) => {
+        requests.initSettings((response: any) => {
+          try {
+            this.handleInitSettings(response)
+            resolve()
+          } catch (error) {
+            reject(error)
+          }
+        })
+      })
+    },
+    initKPIWithPromise (): Promise<void> {
+      return new Promise((resolve, reject) => {
+        requests.initKPI((response: any) => {
+          try {
+            this.handleInitKPI(response)
+            resolve()
+          } catch (error) {
+            reject(error)
+          }
+        })
+      })
     }
   }
 })
