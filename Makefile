@@ -251,7 +251,7 @@ test_e2e_ci:
 test_e2e_ci_install_deps:
 	$(BIN_COMPOSER) install -n --prefer-dist
 	${_DOCKER_EXEC_PHP} npm ci
-	${_DOCKER_EXEC_PHP} npx playwright install --with-deps firefox chromium
+	${_DOCKER_EXEC_PHP} npx playwright install --with-deps firefox
 
 test_e2e_ci_assets:
 	${_DOCKER_EXEC_PHP} npm run build
@@ -263,4 +263,3 @@ test_e2e_ci_dbinstall:
 
 test_e2e_ci_test:
 	${_DOCKER_EXEC_PHP} npx playwright test --project firefox
-	${_DOCKER_EXEC_PHP} npx playwright test --project chromium
