@@ -43,7 +43,7 @@ class SearchUserType extends AbstractType
         $builder->add('queryUser', SearchType::class, [
             'required' => false,
             'label' => false,
-            'attr' => ['placeholder' => 'Taper le nom ou l\'email d\'un utilisateur'],
+            'attr' => ['placeholder' => 'Taper le nom ou l\'e-mail d\'un utilisateur'],
         ]);
         if ($this->isAdmin) {
             $builder->add('territory', EntityType::class, [

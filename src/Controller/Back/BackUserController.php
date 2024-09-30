@@ -35,10 +35,8 @@ class BackUserController extends AbstractController
         $searchUser = new SearchUser($this->getUser());
         $form = $this->createForm(SearchUserType::class, $searchUser);
         $form->handleRequest($request);
-        if ($form->isSubmitted()) {
-            if (!$form->isValid()) {
-                $searchUser = new SearchUser($this->getUser());
-            }
+        if ($form->isSubmitted() && !$form->isValid()) {
+            $searchUser = new SearchUser($this->getUser());
         }
         $paginatedUsers = $userRepository->findFilteredPaginated($searchUser, self::MAX_LIST_PAGINATION);
 
