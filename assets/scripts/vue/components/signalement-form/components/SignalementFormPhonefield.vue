@@ -27,34 +27,13 @@
           <input
             type="text"
             :id="id"
+            :ref="idRef"
             :name="access_name"
             :autocomplete="access_autocomplete"
             v-model="formStore.data[id]"
             class="fr-input"
             :aria-describedby="formStore.validationErrors[id] !== undefined ? id + '-text-input-error-desc-error' : undefined"
             >
-            <option
-              v-for="countryItem in countryList"
-              v-bind:key="countryItem.code"
-              :value="countryItem.code"
-              >
-              {{ countryItem.label }}
-            </option>
-          </select>
-        </div>
-        <div class="fr-col-12 fr-col-md-8">
-          <div class="fr-input-wrap fr-icon-phone-line">
-            <input
-              type="text"
-              :id="id"
-              :ref="idRef"
-              :name="access_name"
-              :autocomplete="access_autocomplete"
-              v-model="formStore.data[id]"
-              class="fr-input"
-              :aria-describedby="formStore.validationErrors[id] !== undefined ? id + '-text-input-error-desc-error' : undefined"
-              >
-          </div>
         </div>
       </div>
       <div
