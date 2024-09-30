@@ -12,6 +12,7 @@
         :id="component.slug"
         :access_name="component.accessibility?.name ?? component.slug"
         :access_autocomplete="component.accessibility?.autocomplete ?? 'off'"
+        :access_focus="component.accessibility?.focus ?? false"
         :label="component.label"
         :hint="component.hint"
         :labelInfo="component.labelInfo"
@@ -101,6 +102,7 @@ export default defineComponent({
     hasError: { type: Boolean, default: undefined },
     access_name: { type: String, default: undefined },
     access_autocomplete: { type: String, default: undefined },
+    access_focus: { type: Boolean, default: false },
     clickEvent: Function
   },
   data () {

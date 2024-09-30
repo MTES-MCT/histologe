@@ -10,6 +10,7 @@
         :validate="validate"
         :access_name="access_name"
         :access_autocomplete="access_autocomplete"
+        :access_focus="access_focus"
         :hasError="hasError"
         :error="error"
         @keydown.down.prevent="handleDownSuggestion"
@@ -56,6 +57,7 @@ export default defineComponent({
     disabled: { type: Boolean, default: false },
     access_name: { type: String, default: '' },
     access_autocomplete: { type: String, default: '' },
+    access_focus: { type: Boolean, default: false },
     // les propriétés suivantes ne sont pas utilisées,
     // mais si on ne les met pas, elles apparaissent dans le DOM
     // et ça soulève des erreurs W3C

@@ -1,13 +1,26 @@
 <template>
-  <fieldset :id="id" :class="[customCss, 'signalement-form-only-choice fr-fieldset']" :aria-labelledby="id + '-radio-hint-legend'">
-      <legend :class="['fr-fieldset__legend--regular', 'fr-fieldset__legend', customLegendCss]" :id="id + '-radio-hint-legend'">
+  <fieldset
+    :id="id"
+    :class="[customCss, 'signalement-form-only-choice fr-fieldset']"
+    :aria-labelledby="id + '-radio-hint-legend'"
+    :ref="id"
+    >
+      <legend
+        :class="['fr-fieldset__legend--regular', 'fr-fieldset__legend', customLegendCss]"
+        :id="id + '-radio-hint-legend'"
+        >
         {{ variablesReplacer.replace(label) }}
       </legend>
-      <div v-for="radioValue in values" :class="['fr-fieldset__element', (radioValue.value === 'oui' || radioValue.value === 'non') ? 'item-divided' : '']" :key="radioValue.value">
+      <div
+        v-for="radioValue in values"
+        :class="['fr-fieldset__element', (radioValue.value === 'oui' || radioValue.value === 'non') ? 'item-divided' : '']"
+        :key="radioValue.value"
+        >
           <div :class="['fr-radio-group', modelValue == radioValue.value ? 'is-checked' : '']">
             <input
               type="radio"
               :id="id + '_' + radioValue.value"
+              :ref="id + '_' + radioValue.value + '_ref'"
               :name="id"
               v-bind:key="radioValue.value"
               :value="radioValue.value"
@@ -42,6 +55,7 @@ export default defineComponent({
     validate: { type: Object, default: null },
     hasError: { type: Boolean, default: false },
     error: { type: String, default: '' },
+    access_focus: { type: Boolean, default: false },
     // les propriétés suivantes ne sont pas utilisées,
     // mais si on ne les met pas, elles apparaissent dans le DOM
     // et ça soulève des erreurs W3C
@@ -52,13 +66,26 @@ export default defineComponent({
   },
   data () {
     return {
-      variablesReplacer
+      variablesReplacer,
+      idRef: this.id + '_ref'
+    }
+  },
+  mounted () {
+    const element = this.$refs[this.id] as HTMLElement
+    if (this.access_focus && element && !element.classList.contains('fr-hidden')) {
+      this.focusInput()
     }
   },
   methods: {
     updateValue (event: Event) {
       const value = (event.target as HTMLInputElement).getAttribute('value')
       this.$emit('update:modelValue', value)
+    },
+    focusInput () {
+      const focusableElement = (this.$refs[this.id + '_' + this.values[0].value + '_ref']) as Array<HTMLElement>
+      if (focusableElement[0]) {
+        focusableElement[0].focus()
+      }
     }
   },
   computed: {

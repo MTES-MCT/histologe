@@ -140,18 +140,27 @@
       ],
       "footer": [
         {
-          "type": "SignalementFormButton",
-          "label": "Précédent",
-          "slug": "adresse_logement_previous",
-          "action": "goto:adresse_logement_intro",
-          "customCss": "fr-btn--secondary fr-btn--icon-left fr-icon-arrow-left-line"
-        },
-        {
-          "type": "SignalementFormButton",
-          "label": "Suivant",
-          "slug": "adresse_logement_next",
-          "action": "goto.checkloc:signalement_concerne",
-          "customCss": "fr-btn--icon-right fr-icon-arrow-right-line"
+          "type": "SignalementFormSubscreen",
+          "slug": "adresse_logement_footer",
+          "customCss": "button-group-responsive-inverted",
+          "components": {
+            "body": [
+              {
+                "type": "SignalementFormButton",
+                "label": "Suivant",
+                "slug": "adresse_logement_next",
+                "action": "goto.checkloc:signalement_concerne",
+                "customCss": "fr-btn--icon-right fr-icon-arrow-right-line"
+              },
+              {
+                "type": "SignalementFormButton",
+                "label": "Précédent",
+                "slug": "adresse_logement_previous",
+                "action": "goto:adresse_logement_intro",
+                "customCss": "fr-btn--secondary fr-btn--icon-left fr-icon-arrow-left-line"
+              }
+            ]
+          }
         }
       ]
     }
@@ -174,7 +183,10 @@
           "label": "En savoir plus",
           "slug": "signalement_concerne_savoir_plus",
           "customCss": "fr-btn--sm fr-badge fr-badge--info fr-mb-3v",
-          "ariaControls": "signalement_concerne_modal"
+          "ariaControls": "signalement_concerne_modal",
+          "accessibility": {
+            "focus": true
+          }
         },
         {
           "type": "SignalementFormOnlyChoice",
@@ -314,30 +326,39 @@
       ],
       "footer": [
         {
-          "type": "SignalementFormButton",
-          "label": "Précédent",
-          "slug": "signalement_concerne_previous",
-          "action": "goto:adresse_logement",
-          "customCss": "fr-btn--secondary fr-btn--icon-left fr-icon-arrow-left-line"
-        },
-        {
-          "type": "SignalementFormButton",
-          "label": "Suivant",
-          "slug": "signalement_concerne_next_occupant",
-          "customCss": "fr-btn--icon-right fr-icon-arrow-right-line",
-          "action": "goto.save:vos_coordonnees_occupant",
-          "conditional": {
-            "show": "formStore.data.signalement_concerne_profil === 'logement_occupez'"
-          }
-        },
-        {
-          "type": "SignalementFormButton",
-          "label": "Suivant",
-          "slug": "signalement_concerne_next_tiers",
-          "customCss": "fr-btn--icon-right fr-icon-arrow-right-line",
-          "action": "goto.save:vos_coordonnees_tiers",
-          "conditional": {
-            "show": "formStore.data.signalement_concerne_profil === 'autre_logement'"
+          "type": "SignalementFormSubscreen",
+          "slug": "signalement_concerne_footer",
+          "customCss": "button-group-responsive-inverted",
+          "components": {
+            "body": [
+              {
+                "type": "SignalementFormButton",
+                "label": "Suivant",
+                "slug": "signalement_concerne_next_occupant",
+                "customCss": "fr-btn--icon-right fr-icon-arrow-right-line",
+                "action": "goto.save:vos_coordonnees_occupant",
+                "conditional": {
+                  "show": "formStore.data.signalement_concerne_profil === 'logement_occupez'"
+                }
+              },
+              {
+                "type": "SignalementFormButton",
+                "label": "Suivant",
+                "slug": "signalement_concerne_next_tiers",
+                "customCss": "fr-btn--icon-right fr-icon-arrow-right-line",
+                "action": "goto.save:vos_coordonnees_tiers",
+                "conditional": {
+                  "show": "formStore.data.signalement_concerne_profil === 'autre_logement'"
+                }
+              },
+              {
+                "type": "SignalementFormButton",
+                "label": "Précédent",
+                "slug": "signalement_concerne_previous",
+                "action": "goto:adresse_logement",
+                "customCss": "fr-btn--secondary fr-btn--icon-left fr-icon-arrow-left-line"
+              }
+            ]
           }
         }
       ]

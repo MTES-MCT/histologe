@@ -11,6 +11,7 @@
             :id="component.slug"
             :label="component.label"
             :iconSrc="component.icon.src"
+            :access_focus="component.accessibility?.focus"
             :clickEvent="handleUpdateSelected"
             />
       </div>
@@ -39,7 +40,8 @@ export default defineComponent({
     hasError: { type: Boolean, default: false },
     handleClickComponent: Function,
     access_name: { type: String, default: '' },
-    access_autocomplete: { type: String, default: '' }
+    access_autocomplete: { type: String, default: '' },
+    access_focus: { type: Boolean, default: false }
   },
   data () {
     return {

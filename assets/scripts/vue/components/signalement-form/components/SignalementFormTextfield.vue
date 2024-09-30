@@ -1,5 +1,5 @@
 <template>
-<div :class="['fr-input-group', { 'fr-input-group--disabled': disabled }]" :id="id">
+<div :class="['fr-input-group', { 'fr-input-group--disabled': disabled }]" :id="id" :ref="id">
   <label class='fr-label' :for="id + '_input'">
     {{ variablesReplacer.replace(label) }}
     <span class="fr-hint-text">{{ description }}</span>
@@ -8,6 +8,7 @@
       <input
         type="text"
         :id="id + '_input'"
+        :ref="idRef"
         :name="access_name"
         :autocomplete="access_autocomplete"
         :value="internalValue"
@@ -50,6 +51,7 @@ export default defineComponent({
     tagWhenEdit: { type: String, default: '' },
     access_name: { type: String, default: '' },
     access_autocomplete: { type: String, default: '' },
+    access_focus: { type: Boolean, default: false },
     // les propriétés suivantes ne sont pas utilisées,
     // mais si on ne les met pas, elles apparaissent dans le DOM
     // et ça soulève des erreurs W3C
@@ -59,7 +61,14 @@ export default defineComponent({
   data () {
     return {
       idFetchTimeout: 0 as unknown as ReturnType<typeof setTimeout>,
-      variablesReplacer
+      variablesReplacer,
+      idRef: this.id + '_ref'
+    }
+  },
+  mounted () {
+    const element = this.$refs[this.id] as HTMLElement
+    if (this.access_focus && element && !element.classList.contains('fr-hidden')) {
+      this.focusInput()
     }
   },
   computed: {
@@ -78,6 +87,12 @@ export default defineComponent({
       this.$emit('update:modelValue', value)
       if (this.tagWhenEdit !== '') {
         formStore.data[this.tagWhenEdit] = 1
+      }
+    },
+    focusInput () {
+      const focusableElement = (this.$refs[this.idRef]) as HTMLElement
+      if (focusableElement) {
+        focusableElement.focus()
       }
     }
   },

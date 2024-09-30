@@ -1,5 +1,5 @@
 <template>
-  <div :id="id" class="signalement-form-disorder-overview fr-container--fluid fr-my-3v">
+  <div :id="id" class="signalement-form-disorder-overview fr-container--fluid fr-my-3v" :ref="id">
     <div v-if="formStore.data.categorieDisorders.batiment.length > 0">
       <div class="fr-grid-row fr-grid-row--gutters fr-grid-row--middle">
         <div class="fr-col-2 fr-col-md-1"><img :src="icons ? icons[0].src : ''" :alt="icons ? icons[0].alt : ''" class="fr-disorder-overview-image"></div>
@@ -16,10 +16,24 @@
             v-if="hasCategoryFields(disorder)"
             >
             <h6 v-if="isValidationScreen" class="fr-accordion__title">
-              <button class="fr-accordion__btn" aria-expanded="false" :aria-controls="'accordion-disorder-batiment-' + index">{{ dictionaryStore[disorder].default }}</button>
+              <button
+                class="fr-accordion__btn"
+                aria-expanded="false"
+                :aria-controls="'accordion-disorder-batiment-' + index"
+                :ref="idRef"
+                >
+                {{ dictionaryStore[disorder].default }}
+              </button>
             </h6>
             <h4 v-else  class="fr-accordion__title">
-              <button class="fr-accordion__btn" aria-expanded="false" :aria-controls="'accordion-disorder-batiment-' + index">{{ dictionaryStore[disorder].default }}</button>
+              <button
+                class="fr-accordion__btn"
+                aria-expanded="false"
+                :aria-controls="'accordion-disorder-batiment-' + index"
+                :ref="idRef"
+                >
+                {{ dictionaryStore[disorder].default }}
+              </button>
             </h4>
             <div class="fr-collapse" :id="'accordion-disorder-batiment-' + index">
               <div
@@ -50,10 +64,24 @@
             v-if="hasCategoryFields(disorder)"
             >
             <h6 v-if="isValidationScreen" class="fr-accordion__title">
-              <button class="fr-accordion__btn" aria-expanded="false" :aria-controls="'accordion-disorder-logement-' + index">{{ dictionaryStore[disorder].default }}</button>
+              <button
+                class="fr-accordion__btn"
+                aria-expanded="false"
+                :aria-controls="'accordion-disorder-logement-' + index"
+                :ref="idRef"
+                >
+                {{ dictionaryStore[disorder].default }}
+              </button>
             </h6>
             <h4 v-else class="fr-accordion__title">
-              <button class="fr-accordion__btn" aria-expanded="false" :aria-controls="'accordion-disorder-logement-' + index">{{ dictionaryStore[disorder].default }}</button>
+              <button
+                class="fr-accordion__btn"
+                aria-expanded="false"
+                :aria-controls="'accordion-disorder-logement-' + index"
+                :ref="idRef"
+                >
+                {{ dictionaryStore[disorder].default }}
+              </button>
             </h4>
             <div class="fr-collapse" :id="'accordion-disorder-logement-' + index">
               <div
@@ -107,6 +135,7 @@ export default defineComponent({
     id: { type: String, default: null },
     icons: { type: Object },
     isValidationScreen: { type: Boolean, default: false },
+    access_focus: { type: Boolean, default: false },
     // les propriétés suivantes ne sont pas utilisées,
     // mais si on ne les met pas, elles apparaissent dans le DOM
     // et ça soulève des erreurs W3C
@@ -120,7 +149,14 @@ export default defineComponent({
     return {
       formStore,
       dictionaryStore,
-      idMessageAdministration: 'message_administration'
+      idMessageAdministration: 'message_administration',
+      idRef: this.id + '_ref'
+    }
+  },
+  mounted () {
+    const element = this.$refs[this.id] as HTMLElement
+    if (this.access_focus && element && !element.classList.contains('fr-hidden')) {
+      this.focusInput()
     }
   },
   methods: {
@@ -215,6 +251,12 @@ export default defineComponent({
     updateValue (event: Event) {
       const value = (event.target as HTMLInputElement).value
       this.formStore.data[this.idMessageAdministration] = value
+    },
+    focusInput () {
+      const focusableElement = (this.$refs[this.idRef]) as Array<HTMLElement>
+      if (focusableElement[0]) {
+        focusableElement[0].focus()
+      }
     }
   }
 })

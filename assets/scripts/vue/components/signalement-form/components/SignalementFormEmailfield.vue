@@ -8,6 +8,7 @@
       <input
         type="email"
         :id="id + '_input'"
+        :ref="idRef"
         :name="access_name"
         :autocomplete="access_autocomplete"
         :value="internalValue"
@@ -44,11 +45,17 @@ export default defineComponent({
     error: { type: String, default: '' },
     access_name: { type: String, default: '' },
     access_autocomplete: { type: String, default: '' },
+    access_focus: { type: Boolean, default: false },
     // les propriétés suivantes ne sont pas utilisées,
     // mais si on ne les met pas, elles apparaissent dans le DOM
     // et ça soulève des erreurs W3C
     clickEvent: Function,
     handleClickComponent: Function
+  },
+  data () {
+    return {
+      idRef: this.id + '_ref'
+    }
   },
   computed: {
     internalValue: {

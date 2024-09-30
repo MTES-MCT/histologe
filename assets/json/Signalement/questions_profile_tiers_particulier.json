@@ -26,6 +26,9 @@
           ],
           "validate": {
             "required": false
+          },
+          "accessibility": {
+            "focus": true
           }
         },
         {
@@ -73,18 +76,27 @@
       ],
       "footer": [
         {
-          "type": "SignalementFormButton",
-          "label": "Précédent",
-          "slug": "vos_coordonnees_tiers_previous",
-          "action": "goto:signalement_concerne",
-          "customCss": "fr-btn--secondary fr-btn--icon-left fr-icon-arrow-left-line"
-        },
-        {
-          "type": "SignalementFormButton",
-          "label": "Suivant",
-          "slug": "vos_coordonnees_tiers_next",
-          "action": "goto.save:coordonnees_occupant",
-          "customCss": "fr-btn--icon-right fr-icon-arrow-right-line"
+          "type": "SignalementFormSubscreen",
+          "slug": "vos_coordonnees_tiers_footer",
+          "customCss": "button-group-responsive-inverted",
+          "components": {
+            "body": [
+              {
+                "type": "SignalementFormButton",
+                "label": "Suivant",
+                "slug": "vos_coordonnees_tiers_next",
+                "action": "goto.save:coordonnees_occupant",
+                "customCss": "fr-btn--icon-right fr-icon-arrow-right-line"
+              },
+              {
+                "type": "SignalementFormButton",
+                "label": "Précédent",
+                "slug": "vos_coordonnees_tiers_previous",
+                "action": "goto:signalement_concerne",
+                "customCss": "fr-btn--secondary fr-btn--icon-left fr-icon-arrow-left-line"
+              }
+            ]
+          }
         }
       ]
     }
@@ -105,7 +117,8 @@
           },
           "accessibility": {
             "name": "lastName",
-            "autocomplete": "family-name"
+            "autocomplete": "family-name",
+            "focus": "true"
           }
         },
         {
@@ -147,18 +160,27 @@
       ],
       "footer": [
         {
-          "type": "SignalementFormButton",
-          "label": "Précédent",
-          "slug": "coordonnees_occupant_previous",
-          "action": "goto:vos_coordonnees_tiers",
-          "customCss": "fr-btn--secondary fr-btn--icon-left fr-icon-arrow-left-line"
-        },
-        {
-          "type": "SignalementFormButton",
-          "label": "Suivant",
-          "slug": "coordonnees_occupant_next",
-          "action": "goto.save:coordonnees_bailleur",
-          "customCss": "fr-btn--icon-right fr-icon-arrow-right-line"
+          "type": "SignalementFormSubscreen",
+          "slug": "coordonnees_occupant_footer",
+          "customCss": "button-group-responsive-inverted",
+          "components": {
+            "body": [
+              {
+                "type": "SignalementFormButton",
+                "label": "Suivant",
+                "slug": "coordonnees_occupant_next",
+                "action": "goto.save:coordonnees_bailleur",
+                "customCss": "fr-btn--icon-right fr-icon-arrow-right-line"
+              },
+              {
+                "type": "SignalementFormButton",
+                "label": "Précédent",
+                "slug": "coordonnees_occupant_previous",
+                "action": "goto:vos_coordonnees_tiers",
+                "customCss": "fr-btn--secondary fr-btn--icon-left fr-icon-arrow-left-line"
+              }
+            ]
+          }
         }
       ]
     }
@@ -182,7 +204,8 @@
           },
           "accessibility": {
             "name": "lastName",
-            "autocomplete": "family-name"
+            "autocomplete": "family-name",
+            "focus": true
           }
         },
         {
@@ -200,6 +223,9 @@
           "autocomplete": {
             "isAbsoluteLink": false,
             "route": "/bailleurs?postcode={{formStore.data.adresse_logement_adresse_detail_code_postal}}&name={{formStore.data.coordonnees_bailleur_nom_autocomplete_textfield}}&sanitize=true"
+          },
+          "accessibility": {
+            "focus": true
           }
         },
         {
@@ -250,18 +276,27 @@
       ],
       "footer": [
         {
-          "type": "SignalementFormButton",
-          "label": "Précédent",
-          "slug": "coordonnees_bailleur_previous",
-          "action": "goto:coordonnees_occupant",
-          "customCss": "fr-btn--secondary fr-btn--icon-left fr-icon-arrow-left-line"
-        },
-        {
-          "type": "SignalementFormButton",
-          "label": "Suivant",
-          "slug": "coordonnees_bailleur_next",
-          "action": "goto.save:zone_concernee",
-          "customCss": "fr-btn--icon-right fr-icon-arrow-right-line"
+          "type": "SignalementFormSubscreen",
+          "slug": "coordonnees_bailleur_footer",
+          "customCss": "button-group-responsive-inverted",
+          "components": {
+            "body": [
+              {
+                "type": "SignalementFormButton",
+                "label": "Suivant",
+                "slug": "coordonnees_bailleur_next",
+                "action": "goto.save:zone_concernee",
+                "customCss": "fr-btn--icon-right fr-icon-arrow-right-line"
+              },
+              {
+                "type": "SignalementFormButton",
+                "label": "Précédent",
+                "slug": "coordonnees_bailleur_previous",
+                "action": "goto:coordonnees_occupant",
+                "customCss": "fr-btn--secondary fr-btn--icon-left fr-icon-arrow-left-line"
+              }
+            ]
+          }
         }
       ]
     }
@@ -284,7 +319,10 @@
           "label": "En savoir plus",
           "slug": "zone_concernee_savoir_plus",
           "customCss": "fr-btn--sm fr-badge fr-badge--info fr-mb-3v",
-          "ariaControls": "zone_concernee_modal"
+          "ariaControls": "zone_concernee_modal",
+          "accessibility": {
+            "focus": true
+          }
         },
         {
           "type": "SignalementFormOnlyChoice",
@@ -308,18 +346,27 @@
       ],
       "footer": [
         {
-          "type": "SignalementFormButton",
-          "label": "Précédent",
-          "slug": "zone_concernee_zone_previous",
-          "action": "goto:coordonnees_bailleur",
-          "customCss": "fr-btn--secondary fr-btn--icon-left fr-icon-arrow-left-line"
-        },
-        {
-          "type": "SignalementFormButton",
-          "label": "Suivant",
-          "slug": "zone_concernee_zone_next",
-          "action": "goto.save:ecran_intermediaire_type_composition",
-          "customCss": "fr-btn--icon-right fr-icon-arrow-right-line"
+          "type": "SignalementFormSubscreen",
+          "slug": "zone_concernee_footer",
+          "customCss": "button-group-responsive-inverted",
+          "components": {
+            "body": [
+              {
+                "type": "SignalementFormButton",
+                "label": "Suivant",
+                "slug": "zone_concernee_zone_next",
+                "action": "goto.save:ecran_intermediaire_type_composition",
+                "customCss": "fr-btn--icon-right fr-icon-arrow-right-line"
+              },
+              {
+                "type": "SignalementFormButton",
+                "label": "Précédent",
+                "slug": "zone_concernee_zone_previous",
+                "action": "goto:coordonnees_bailleur",
+                "customCss": "fr-btn--secondary fr-btn--icon-left fr-icon-arrow-left-line"
+              }
+            ]
+          }
         }
       ]
     }
@@ -339,18 +386,27 @@
       ],
       "footer": [
         {
-          "type": "SignalementFormButton",
-          "label": "Précédent",
-          "slug": "ecran_intermediaire_type_composition_previous",
-          "action": "goto:zone_concernee",
-          "customCss": "fr-btn--secondary fr-btn--icon-left fr-icon-arrow-left-line"
-        },
-        {
-          "type": "SignalementFormButton",
-          "label": "C'est parti",
-          "slug": "ecran_intermediaire_type_composition_next",
-          "action": "goto:type_logement",
-          "customCss": "fr-btn--icon-right fr-icon-arrow-right-line"
+          "type": "SignalementFormSubscreen",
+          "slug": "ecran_intermediaire_type_composition_footer",
+          "customCss": "button-group-responsive-inverted",
+          "components": {
+            "body": [
+              {
+                "type": "SignalementFormButton",
+                "label": "C'est parti",
+                "slug": "ecran_intermediaire_type_composition_next",
+                "action": "goto:type_logement",
+                "customCss": "fr-btn--icon-right fr-icon-arrow-right-line"
+              },
+              {
+                "type": "SignalementFormButton",
+                "label": "Précédent",
+                "slug": "ecran_intermediaire_type_composition_previous",
+                "action": "goto:zone_concernee",
+                "customCss": "fr-btn--secondary fr-btn--icon-left fr-icon-arrow-left-line"
+              }
+            ]
+          }
         }
       ]
     }
@@ -379,7 +435,10 @@
               "label": "Autre",
               "value": "autre"
             }
-          ]
+          ],
+          "accessibility": {
+            "focus": true
+          }
         },
         {
           "type": "SignalementFormTextfield",
@@ -468,18 +527,27 @@
       ],
       "footer": [
         {
-          "type": "SignalementFormButton",
-          "label": "Précédent",
-          "slug": "type_logement_previous",
-          "action": "goto:ecran_intermediaire_type_composition",
-          "customCss": "fr-btn--secondary fr-btn--icon-left fr-icon-arrow-left-line"
-        },
-        {
-          "type": "SignalementFormButton",
-          "label": "Suivant",
-          "slug": "type_logement_next",
-          "action": "goto.save:composition_logement",
-          "customCss": "fr-btn--icon-right fr-icon-arrow-right-line"
+          "type": "SignalementFormSubscreen",
+          "slug": "type_logement_footer",
+          "customCss": "button-group-responsive-inverted",
+          "components": {
+            "body": [
+              {
+                "type": "SignalementFormButton",
+                "label": "Suivant",
+                "slug": "type_logement_next",
+                "action": "goto.save:composition_logement",
+                "customCss": "fr-btn--icon-right fr-icon-arrow-right-line"
+              },
+              {
+                "type": "SignalementFormButton",
+                "label": "Précédent",
+                "slug": "type_logement_previous",
+                "action": "goto:ecran_intermediaire_type_composition",
+                "customCss": "fr-btn--secondary fr-btn--icon-left fr-icon-arrow-left-line"
+              }
+            ]
+          }
         }
       ]
     }
@@ -504,7 +572,10 @@
               "label": "Plusieurs pièces",
               "value": "plusieurs_pieces"
             }
-          ]
+          ],
+          "accessibility": {
+            "focus": true
+          }
         },
         {
           "type": "SignalementFormCounter",
@@ -551,18 +622,27 @@
       ],
       "footer": [
         {
-          "type": "SignalementFormButton",
-          "label": "Précédent",
-          "slug": "composition_logement_previous",
-          "action": "goto:type_logement",
-          "customCss": "fr-btn--secondary fr-btn--icon-left fr-icon-arrow-left-line"
-        },
-        {
-          "type": "SignalementFormButton",
-          "label": "Suivant",
-          "slug": "composition_logement_next",
-          "action": "goto.save:type_logement_commodites",
-          "customCss": "fr-btn--icon-right fr-icon-arrow-right-line"
+          "type": "SignalementFormSubscreen",
+          "slug": "composition_logement_footer",
+          "customCss": "button-group-responsive-inverted",
+          "components": {
+            "body": [
+              {
+                "type": "SignalementFormButton",
+                "label": "Suivant",
+                "slug": "composition_logement_next",
+                "action": "goto.save:type_logement_commodites",
+                "customCss": "fr-btn--icon-right fr-icon-arrow-right-line"
+              },
+              {
+                "type": "SignalementFormButton",
+                "label": "Précédent",
+                "slug": "composition_logement_previous",
+                "action": "goto:type_logement",
+                "customCss": "fr-btn--secondary fr-btn--icon-left fr-icon-arrow-left-line"
+              }
+            ]
+          }
         }
       ]
     }
@@ -601,7 +681,10 @@
               "label": "Je ne sais pas",
               "value": "nsp"
             }
-          ]
+          ],
+          "accessibility": {
+            "focus": true
+          }
         },
         {
           "type": "SignalementFormIcon",
@@ -753,18 +836,27 @@
       ],
       "footer": [
         {
-          "type": "SignalementFormButton",
-          "label": "Précédent",
-          "slug": "type_logement_commodites_previous",
-          "action": "goto:composition_logement",
-          "customCss": "fr-btn--secondary fr-btn--icon-left fr-icon-arrow-left-line"
-        },
-        {
-          "type": "SignalementFormButton",
-          "label": "Suivant",
-          "slug": "type_logement_commodites_next",
-          "action": "goto.save:composition_logement_personnes",
-          "customCss": "fr-btn--icon-right fr-icon-arrow-right-line"
+          "type": "SignalementFormSubscreen",
+          "slug": "type_logement_commodites_footer",
+          "customCss": "button-group-responsive-inverted",
+          "components": {
+            "body": [
+              {
+                "type": "SignalementFormButton",
+                "label": "Suivant",
+                "slug": "type_logement_commodites_next",
+                "action": "goto.save:composition_logement_personnes",
+                "customCss": "fr-btn--icon-right fr-icon-arrow-right-line"
+              },
+              {
+                "type": "SignalementFormButton",
+                "label": "Précédent",
+                "slug": "type_logement_commodites_previous",
+                "action": "goto:composition_logement",
+                "customCss": "fr-btn--secondary fr-btn--icon-left fr-icon-arrow-left-line"
+              }
+            ]
+          }
         }
       ]
     }
@@ -783,6 +875,9 @@
           "slug": "composition_logement_nombre_personnes",
           "validate": {
             "pattern": "^[0-9]*$"
+          },
+          "accessibility": {
+            "focus": true
           }
         },
         {
@@ -803,18 +898,27 @@
       ],
       "footer": [
         {
-          "type": "SignalementFormButton",
-          "label": "Précédent",
-          "slug": "composition_logement_personnes_previous",
-          "action": "goto:type_logement_commodites",
-          "customCss": "fr-btn--secondary fr-btn--icon-left fr-icon-arrow-left-line"
-        },
-        {
-          "type": "SignalementFormButton",
-          "label": "Suivant",
-          "slug": "composition_logement_personnes_next",
-          "action": "goto.save:bail_dpe",
-          "customCss": "fr-btn--icon-right fr-icon-arrow-right-line"
+          "type": "SignalementFormSubscreen",
+          "slug": "composition_logement_personnes_footer",
+          "customCss": "button-group-responsive-inverted",
+          "components": {
+            "body": [
+              {
+                "type": "SignalementFormButton",
+                "label": "Suivant",
+                "slug": "composition_logement_personnes_next",
+                "action": "goto.save:bail_dpe",
+                "customCss": "fr-btn--icon-right fr-icon-arrow-right-line"
+              },
+              {
+                "type": "SignalementFormButton",
+                "label": "Précédent",
+                "slug": "composition_logement_personnes_previous",
+                "action": "goto:type_logement_commodites",
+                "customCss": "fr-btn--secondary fr-btn--icon-left fr-icon-arrow-left-line"
+              }
+            ]
+          }
         }
       ]
     }
@@ -843,7 +947,10 @@
               "label": "Je ne sais pas",
               "value": "nsp"
             }
-          ]
+          ],
+          "accessibility": {
+            "focus": true
+          }
         },
         {
           "type": "SignalementFormInfo",
@@ -943,18 +1050,27 @@
       ],
       "footer": [
         {
-          "type": "SignalementFormButton",
-          "label": "Précédent",
-          "slug": "bail_dpe_previous",
-          "action": "goto:composition_logement_personnes",
-          "customCss": "fr-btn--secondary fr-btn--icon-left fr-icon-arrow-left-line"
-        },
-        {
-          "type": "SignalementFormButton",
-          "label": "Suivant",
-          "slug": "bail_dpe_next",
-          "action": "goto.save:ecran_intermediaire_situation_occupant",
-          "customCss": "fr-btn--icon-right fr-icon-arrow-right-line"
+          "type": "SignalementFormSubscreen",
+          "slug": "bail_dpe_footer",
+          "customCss": "button-group-responsive-inverted",
+          "components": {
+            "body": [
+              {
+                "type": "SignalementFormButton",
+                "label": "Suivant",
+                "slug": "bail_dpe_next",
+                "action": "goto.save:ecran_intermediaire_situation_occupant",
+                "customCss": "fr-btn--icon-right fr-icon-arrow-right-line"
+              },
+              {
+                "type": "SignalementFormButton",
+                "label": "Précédent",
+                "slug": "bail_dpe_previous",
+                "action": "goto:composition_logement_personnes",
+                "customCss": "fr-btn--secondary fr-btn--icon-left fr-icon-arrow-left-line"
+              }
+            ]
+          }
         }
       ]
     }
@@ -972,18 +1088,27 @@
     "components": {
       "footer": [
         {
-          "type": "SignalementFormButton",
-          "label": "Précédent",
-          "slug": "ecran_intermediaire_situation_occupant_previous",
-          "action": "goto:composition_logement_personnes",
-          "customCss": "fr-btn--secondary fr-btn--icon-left fr-icon-arrow-left-line"
-        },
-        {
-          "type": "SignalementFormButton",
-          "label": "Suivant",
-          "slug": "ecran_intermediaire_situation_occupant_next",
-          "action": "goto.save:logement_social",
-          "customCss": "fr-btn--icon-right fr-icon-arrow-right-line"
+          "type": "SignalementFormSubscreen",
+          "slug": "ecran_intermediaire_situation_occupant_footer",
+          "customCss": "button-group-responsive-inverted",
+          "components": {
+            "body": [
+              {
+                "type": "SignalementFormButton",
+                "label": "Suivant",
+                "slug": "ecran_intermediaire_situation_occupant_next",
+                "action": "goto.save:logement_social",
+                "customCss": "fr-btn--icon-right fr-icon-arrow-right-line"
+              },
+              {
+                "type": "SignalementFormButton",
+                "label": "Précédent",
+                "slug": "ecran_intermediaire_situation_occupant_previous",
+                "action": "goto:composition_logement_personnes",
+                "customCss": "fr-btn--secondary fr-btn--icon-left fr-icon-arrow-left-line"
+              }
+            ]
+          }
         }
       ]
     }
@@ -1012,7 +1137,10 @@
               "label": "Je ne sais pas",
               "value": "nsp"
             }
-          ]
+          ],
+          "accessibility": {
+            "focus": true
+          }
         },
         {
           "type": "SignalementFormOnlyChoice",
@@ -1069,18 +1197,27 @@
       ],
       "footer": [
         {
-          "type": "SignalementFormButton",
-          "label": "Précédent",
-          "slug": "logement_social_previous",
-          "action": "goto:ecran_intermediaire_situation_occupant",
-          "customCss": "fr-btn--secondary fr-btn--icon-left fr-icon-arrow-left-line"
-        },
-        {
-          "type": "SignalementFormButton",
-          "label": "Suivant",
-          "slug": "logement_social_next",
-          "action": "goto.save:travailleur_social",
-          "customCss": "fr-btn--icon-right fr-icon-arrow-right-line"
+          "type": "SignalementFormSubscreen",
+          "slug": "logement_social_footer",
+          "customCss": "button-group-responsive-inverted",
+          "components": {
+            "body": [
+              {
+                "type": "SignalementFormButton",
+                "label": "Suivant",
+                "slug": "logement_social_next",
+                "action": "goto.save:travailleur_social",
+                "customCss": "fr-btn--icon-right fr-icon-arrow-right-line"
+              },
+              {
+                "type": "SignalementFormButton",
+                "label": "Précédent",
+                "slug": "logement_social_previous",
+                "action": "goto:ecran_intermediaire_situation_occupant",
+                "customCss": "fr-btn--secondary fr-btn--icon-left fr-icon-arrow-left-line"
+              }
+            ]
+          }
         }
       ]
     }
@@ -1109,7 +1246,10 @@
               "label": "Je ne sais pas",
               "value": "nsp"
             }
-          ]
+          ],
+          "accessibility": {
+            "focus": true
+          }
         },
         {
           "type": "SignalementFormOnlyChoice",
@@ -1155,18 +1295,27 @@
       ],
       "footer": [
         {
-          "type": "SignalementFormButton",
-          "label": "Précédent",
-          "slug": "travailleur_social_previous",
-          "action": "goto:logement_social",
-          "customCss": "fr-btn--secondary fr-btn--icon-left fr-icon-arrow-left-line"
-        },
-        {
-          "type": "SignalementFormButton",
-          "label": "Suivant",
-          "slug": "travailleur_social_next",
-          "action": "goto.save:ecran_intermediaire_les_desordres",
-          "customCss": "fr-btn--icon-right fr-icon-arrow-right-line"
+          "type": "SignalementFormSubscreen",
+          "slug": "travailleur_social_footer",
+          "customCss": "button-group-responsive-inverted",
+          "components": {
+            "body": [
+              {
+                "type": "SignalementFormButton",
+                "label": "Suivant",
+                "slug": "travailleur_social_next",
+                "action": "goto.save:ecran_intermediaire_les_desordres",
+                "customCss": "fr-btn--icon-right fr-icon-arrow-right-line"
+              },
+              {
+                "type": "SignalementFormButton",
+                "label": "Précédent",
+                "slug": "travailleur_social_previous",
+                "action": "goto:logement_social",
+                "customCss": "fr-btn--secondary fr-btn--icon-left fr-icon-arrow-left-line"
+              }
+            ]
+          }
         }
       ]
     }
@@ -1186,17 +1335,26 @@
       ],
       "footer": [
         {
-          "type": "SignalementFormButton",
-          "label": "Précédent",
-          "slug": "ecran_intermediaire_procedure_previous",
-          "action": "goto:desordres_renseignes",
-          "customCss": "fr-btn--secondary fr-btn--icon-left fr-icon-arrow-left-line"
-        },
-        {
-          "type": "SignalementFormButton",
-          "label": "J'y suis presque !",
-          "slug": "ecran_intermediaire_procedure_next",
-          "action": "goto:info_procedure"
+          "type": "SignalementFormSubscreen",
+          "slug": "ecran_intermediaire_procedure_footer",
+          "customCss": "button-group-responsive-inverted",
+          "components": {
+            "body": [
+              {
+                "type": "SignalementFormButton",
+                "label": "J'y suis presque !",
+                "slug": "ecran_intermediaire_procedure_next",
+                "action": "goto:info_procedure"
+              },
+              {
+                "type": "SignalementFormButton",
+                "label": "Précédent",
+                "slug": "ecran_intermediaire_procedure_previous",
+                "action": "goto:desordres_renseignes",
+                "customCss": "fr-btn--secondary fr-btn--icon-left fr-icon-arrow-left-line"
+              }
+            ]
+          }
         }
       ]
     }
@@ -1225,7 +1383,10 @@
               "label": "Je ne sais pas",
               "value": "nsp"
             }
-          ]
+          ],
+          "accessibility": {
+            "focus": true
+          }
         },
         {
           "type": "SignalementFormOnlyChoice",
@@ -1283,18 +1444,27 @@
       ],
       "footer": [
         {
-          "type": "SignalementFormButton",
-          "label": "Précédent",
-          "slug": "info_procedure_utilisation_service_previous",
-          "action": "goto:ecran_intermediaire_procedure",
-          "customCss": "fr-btn--secondary fr-btn--icon-left fr-icon-arrow-left-line"
-        },
-        {
-          "type": "SignalementFormButton",
-          "label": "Suivant",
-          "slug": "info_procedure_utilisation_service_next",
-          "action": "goto.save:utilisation_service",
-          "customCss": "fr-btn--icon-right fr-icon-arrow-right-line"
+          "type": "SignalementFormSubscreen",
+          "slug": "info_procedure_footer",
+          "customCss": "button-group-responsive-inverted",
+          "components": {
+            "body": [
+              {
+                "type": "SignalementFormButton",
+                "label": "Suivant",
+                "slug": "info_procedure_utilisation_service_next",
+                "action": "goto.save:utilisation_service",
+                "customCss": "fr-btn--icon-right fr-icon-arrow-right-line"
+              },
+              {
+                "type": "SignalementFormButton",
+                "label": "Précédent",
+                "slug": "info_procedure_utilisation_service_previous",
+                "action": "goto:ecran_intermediaire_procedure",
+                "customCss": "fr-btn--secondary fr-btn--icon-left fr-icon-arrow-left-line"
+              }
+            ]
+          }
         }
       ]
     }
@@ -1310,7 +1480,10 @@
         {
           "type": "SignalementFormCheckbox",
           "slug": "utilisation_service_ok_prevenir_bailleur",
-          "label": "Je comprends que {{formStore.props.platformName}} va prévenir le bailleur (propriétaire) du logement."
+          "label": "Je comprends que {{formStore.props.platformName}} va prévenir le bailleur (propriétaire) du logement.",
+          "accessibility": {
+            "focus": true
+          }
         },
         {
           "type": "SignalementFormCheckbox",
@@ -1330,18 +1503,27 @@
       ],
       "footer": [
         {
-          "type": "SignalementFormButton",
-          "label": "Précédent",
-          "slug": "utilisation_service_previous",
-          "action": "goto:info_procedure",
-          "customCss": "fr-btn--secondary fr-btn--icon-left fr-icon-arrow-left-line"
-        },
-        {
-          "type": "SignalementFormButton",
-          "label": "Suivant",
-          "slug": "utilisation_service_next",
-          "action": "goto.save:validation_signalement",
-          "customCss": "fr-btn--icon-right fr-icon-arrow-right-line"
+          "type": "SignalementFormSubscreen",
+          "slug": "utilisation_service_footer",
+          "customCss": "button-group-responsive-inverted",
+          "components": {
+            "body": [
+              {
+                "type": "SignalementFormButton",
+                "label": "Suivant",
+                "slug": "utilisation_service_next",
+                "action": "goto.save:validation_signalement",
+                "customCss": "fr-btn--icon-right fr-icon-arrow-right-line"
+              },
+              {
+                "type": "SignalementFormButton",
+                "label": "Précédent",
+                "slug": "utilisation_service_previous",
+                "action": "goto:info_procedure",
+                "customCss": "fr-btn--secondary fr-btn--icon-left fr-icon-arrow-left-line"
+              }
+            ]
+          }
         }
       ]
     }
@@ -1377,7 +1559,10 @@
                     "label": "Non",
                     "value": "non"
                   }
-                ]
+                ],
+                "accessibility": {
+                  "focus": true
+                }
               },
               {
                 "type": "SignalementFormOnlyChoice",
@@ -1472,18 +1657,27 @@
       ],
       "footer": [
         {
-          "type": "SignalementFormButton",
-          "label": "Précédent",
-          "slug": "informations_complementaires_previous",
-          "action": "goto:utilisation_service",
-          "customCss": "fr-btn--secondary fr-btn--icon-left fr-icon-arrow-left-line"
-        },
-        {
-          "type": "SignalementFormButton",
-          "label": "Enregistrer",
-          "slug": "informations_complementaires_next",
-          "action": "goto.save:validation_signalement",
-          "customCss": "fr-btn--icon-left fr-icon-check-line"
+          "type": "SignalementFormSubscreen",
+          "slug": "informations_complementaires_footer",
+          "customCss": "button-group-responsive-inverted",
+          "components": {
+            "body": [
+              {
+                "type": "SignalementFormButton",
+                "label": "Enregistrer",
+                "slug": "informations_complementaires_next",
+                "action": "goto.save:validation_signalement",
+                "customCss": "fr-btn--icon-left fr-icon-check-line"
+              },
+              {
+                "type": "SignalementFormButton",
+                "label": "Précédent",
+                "slug": "informations_complementaires_previous",
+                "action": "goto:utilisation_service",
+                "customCss": "fr-btn--secondary fr-btn--icon-left fr-icon-arrow-left-line"
+              }
+            ]
+          }
         }
       ]
     }
@@ -1503,18 +1697,27 @@
       ],
       "footer": [
         {
-          "type": "SignalementFormButton",
-          "label": "Précédent",
-          "slug": "validation_signalement_previous",
-          "action": "goto:utilisation_service",
-          "customCss": "fr-btn--secondary fr-btn--icon-left fr-icon-arrow-left-line"
-        },
-        {
-          "type": "SignalementFormButton",
-          "label": "Valider mon signalement",
-          "slug": "validation_signalement_next",
-          "action": "goto.save:confirmation_signalement",
-          "customCss": "fr-btn--icon-left fr-icon-check-line"
+          "type": "SignalementFormSubscreen",
+          "slug": "validation_signalement_footer",
+          "customCss": "button-group-responsive-inverted",
+          "components": {
+            "body": [
+              {
+                "type": "SignalementFormButton",
+                "label": "Valider mon signalement",
+                "slug": "validation_signalement_next",
+                "action": "goto.save:confirmation_signalement",
+                "customCss": "fr-btn--icon-left fr-icon-check-line"
+              },
+              {
+                "type": "SignalementFormButton",
+                "label": "Précédent",
+                "slug": "validation_signalement_previous",
+                "action": "goto:utilisation_service",
+                "customCss": "fr-btn--secondary fr-btn--icon-left fr-icon-arrow-left-line"
+              }
+            ]
+          }
         }
       ]
     }
@@ -1543,7 +1746,10 @@
                 "label": "Accéder à ma page de suivi",
                 "slug": "confirmation_signalement_suivi",
                 "customCss": "fr-btn",
-                "link": "{{formStore.data.lienSuivi}}"
+                "link": "{{formStore.data.lienSuivi}}",
+                "accessibility": {
+                  "focus": true
+                }
               },
               {
                 "type": "SignalementFormLink",
@@ -1582,7 +1788,10 @@
                 "label": "Compléter mon signalement",
                 "slug": "signalement_incomplet_complete",
                 "action": "goto:ecran_intermediaire_type_composition",
-                "customCss": "fr-mb-3v"
+                "customCss": "fr-mb-3v",
+                "accessibility": {
+                  "focus": true
+                }
               },
               {
                 "type": "SignalementFormButton",

@@ -27,6 +27,7 @@
           <input
             type="text"
             :id="id"
+            :ref="idRef"
             :name="access_name"
             :autocomplete="access_autocomplete"
             v-model="formStore.data[id]"
@@ -125,6 +126,7 @@ export default defineComponent({
     error: { type: String, default: '' },
     access_name: { type: String, default: '' },
     access_autocomplete: { type: String, default: '' },
+    access_focus: { type: Boolean, default: false },
     clickEvent: Function,
     // les propriétés suivantes ne sont pas utilisées,
     // mais si on ne les met pas, elles apparaissent dans le DOM
@@ -147,7 +149,8 @@ export default defineComponent({
       idCountryCodeSecond: this.id + '_secondaire_countrycode',
       idShow: this.id + '_ajouter_numero',
       actionShow: 'show:' + this.id + '_secondaire_group',
-      formStore
+      formStore,
+      idRef: this.id + '_ref'
     }
   },
   methods: {

@@ -12,13 +12,18 @@
       :error="error"
       access_name="address"
       access_autocomplete="address-line1"
+      @keydown.down.prevent="handleDownSuggestion"
+      @keydown.up.prevent="handleUpSuggestion"
+      @keydown.enter.prevent="handleEnterSuggestion"
+      @keydown.tab="handleTabSuggestion"
     />
 
     <div class="fr-grid-row fr-background-alt--blue-france fr-text-label--blue-france fr-address-group">
       <div
         v-for="(suggestion, index) in suggestions"
         :key="index"
-        class="fr-col-12 fr-p-3v fr-text-label--blue-france fr-address-suggestion"
+        :class="['fr-col-12 fr-p-3v fr-text-label--blue-france fr-address-suggestion', { 'fr-autocomplete-suggestion-highlighted': index === selectedSuggestionIndex }]"
+        tabindex="0"
         @click="handleClickSuggestion(index)"
         >
         {{ suggestion.properties.label }}
@@ -81,7 +86,8 @@ export default defineComponent({
     components: Object,
     handleClickComponent: Function,
     access_name: { type: String, default: undefined },
-    access_autocomplete: { type: String, default: undefined }
+    access_autocomplete: { type: String, default: undefined },
+    access_focus: { type: Boolean, default: false }
   },
   data () {
     const updatedSubscreenData = subscreenManager.generateSubscreenData(this.id, subscreenData.body, this.validate)
@@ -98,7 +104,8 @@ export default defineComponent({
       suggestions: [] as any[],
       formStore,
       // Avoids searching when an option is selected in the list
-      isSearchSkipped: false
+      isSearchSkipped: false,
+      selectedSuggestionIndex: -1
     }
   },
   created () {
@@ -112,6 +119,7 @@ export default defineComponent({
         this.isTyping = true
         this.idFetchTimeout = setTimeout(() => {
           this.isTyping = false
+          this.selectedSuggestionIndex = -1
           if (newValue.length > 10) {
             const codePostal = this.idAddress === 'adresse_logement_adresse_suggestion'
               ? ' ' + this.getCodePostalFromQueryParam()
@@ -173,6 +181,7 @@ export default defineComponent({
     handleClickSuggestion (index: number) {
       this.isSearchSkipped = true
       if (this.suggestions) {
+        this.selectedSuggestionIndex = index
         this.formStore.data[this.id + '_detail_need_refresh_insee'] = false
         this.formStore.data[this.idAddress] = this.suggestions[index].properties.label
         this.formStore.data[this.id] = this.suggestions[index].properties.label
@@ -188,6 +197,25 @@ export default defineComponent({
           this.isSearchSkipped = false
         }, 200)
       }
+    },
+    handleDownSuggestion () {
+      if (this.selectedSuggestionIndex < this.suggestions.length - 1) {
+        this.selectedSuggestionIndex++
+      }
+    },
+    handleUpSuggestion () {
+      if (this.selectedSuggestionIndex > 0) {
+        this.selectedSuggestionIndex--
+      }
+    },
+    handleEnterSuggestion () {
+      if (this.selectedSuggestionIndex !== -1) {
+        this.handleClickSuggestion(this.selectedSuggestionIndex)
+        this.selectedSuggestionIndex = -1
+      }
+    },
+    handleTabSuggestion () {
+      this.suggestions.length = 0
     },
     handleAddressFound (requestResponse: any) {
       this.suggestions = requestResponse.features

@@ -29,7 +29,8 @@ export default defineComponent({
     clickEvent: Function,
     handleClickComponent: Function,
     access_name: { type: String, default: '' },
-    access_autocomplete: { type: String, default: '' }
+    access_autocomplete: { type: String, default: '' },
+    access_focus: { type: Boolean, default: false }
   }
 })
 </script>
