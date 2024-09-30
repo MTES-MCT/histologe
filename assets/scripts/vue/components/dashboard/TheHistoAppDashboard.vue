@@ -189,7 +189,9 @@ export default defineComponent({
       this.sharedState.noSuiviAfter3Relances.count = dataWidget.cardNoSuiviAfter3Relances?.count
       this.sharedState.noSuiviAfter3Relances.link = dataWidget.cardNoSuiviAfter3Relances?.link
 
-      if (callback) callback()
+      if (callback) {
+        callback()
+      }
     },
     handleAffectationPartner (requestResponse: any) {
       this.countTablesLoaded++
