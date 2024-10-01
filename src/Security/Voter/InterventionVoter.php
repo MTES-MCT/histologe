@@ -26,9 +26,10 @@ class InterventionVoter extends Voter
             return false;
         }
 
-        if (self::EDIT_VISITE == $attribute) {
-            return $this->canEditVisite($subject, $user);
-        }
+        return match ($attribute) {
+            self::EDIT_VISITE => $this->canEditVisite($subject, $user),
+            default => false,
+        };
     }
 
     private function canEditVisite(Intervention $intervention, User $user): bool
