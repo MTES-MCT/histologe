@@ -2,6 +2,8 @@
 
 namespace App\Security\Voter;
 
+use App\Entity\Affectation;
+use App\Entity\Enum\Qualification;
 use App\Entity\Intervention;
 use App\Entity\Signalement;
 use App\Entity\User;
@@ -39,7 +41,12 @@ class InterventionVoter extends Voter
             return false;
         }
 
-        $isUserInPartnerAffectedToVisite = $user->getPartner() === $intervention->getPartner();
+        $isUserInAffectedPartnerWithQualificationVisite = $signalement->getAffectations()->filter(function (Affectation $affectation) use ($user) {
+            return $affectation->getPartner()->getId() === $user->getPartner()->getId()
+                && \in_array(Qualification::VISITES, $user->getPartner()->getCompetence())
+                && Affectation::STATUS_ACCEPTED == $affectation->getStatut();
+        })->count() > 0;
+        $isUserInPartnerAffectedToVisite = $user->getPartner() === $intervention->getPartner() && $isUserInAffectedPartnerWithQualificationVisite;
         $isUserTerritoryAdminOfSignalementTerritory = $user->isTerritoryAdmin() && $user->getTerritory() === $signalement->getTerritory();
 
         return $user->isSuperAdmin() || $isUserInPartnerAffectedToVisite || $isUserTerritoryAdminOfSignalementTerritory;
