@@ -30,9 +30,6 @@
 </div>
 
 {% if signalement.interventions is empty %}
-    {% if is_granted('SIGN_ADD_VISITE', signalement) %}
-        {% include 'back/signalement/view/visites/visites-buttons.html.twig' %}
-    {% endif %}
     {% include 'back/signalement/view/visites/visite-item.html.twig' %}
 {% else %}
     {% for intervention in signalement.interventions | filter(intervention => intervention.type != enum('App\\Entity\\Enum\\InterventionType').ARRETE_PREFECTORAL) %}

@@ -142,7 +142,7 @@ class SignalementVisitesController extends AbstractController
 
             return $this->redirectToRoute('back_index');
         }
-        $this->denyAccessUnlessGranted('SIGN_ADD_VISITE', $signalement);
+        $this->denyAccessUnlessGranted('INTERVENTION_EDIT_VISITE', $intervention);
 
         if ($intervention->hasScheduledDatePassed()) {
             $this->addFlash('error', 'Cette visite est déja passée et ne peut pas être annulée, merci de la noter comme non-effectuée.');
@@ -196,7 +196,7 @@ class SignalementVisitesController extends AbstractController
 
             return $this->redirectToRoute('back_index');
         }
-        $this->denyAccessUnlessGranted('SIGN_ADD_VISITE', $signalement);
+        $this->denyAccessUnlessGranted('INTERVENTION_EDIT_VISITE', $intervention);
 
         $errorRedirect = $this->getSecurityRedirect(
             $signalement,
@@ -264,7 +264,7 @@ class SignalementVisitesController extends AbstractController
 
             return $this->redirectToRoute('back_index');
         }
-        $this->denyAccessUnlessGranted('SIGN_ADD_VISITE', $signalement);
+        $this->denyAccessUnlessGranted('INTERVENTION_EDIT_VISITE', $intervention);
 
         $errorRedirect = $this->getSecurityRedirect(
             $signalement,
@@ -317,7 +317,7 @@ class SignalementVisitesController extends AbstractController
 
             return $this->redirectToRoute('back_index');
         }
-        $this->denyAccessUnlessGranted('SIGN_ADD_VISITE', $signalement);
+        $this->denyAccessUnlessGranted('INTERVENTION_EDIT_VISITE', $intervention);
 
         $errorRedirect = $this->getSecurityRedirect(
             $signalement,
@@ -358,7 +358,7 @@ class SignalementVisitesController extends AbstractController
         EntityManagerInterface $entityManager,
         UploadHandlerService $uploadHandlerService,
     ): Response {
-        $this->denyAccessUnlessGranted('SIGN_ADD_VISITE', $intervention->getSignalement());
+        $this->denyAccessUnlessGranted('INTERVENTION_EDIT_VISITE', $intervention);
         if (!$this->isCsrfTokenValid('delete_rapport', $request->get('_token')) || $intervention->getSignalement()->getId() !== $signalement->getId() || $intervention->getFiles()->isEmpty()) {
             return $this->redirectToRoute('back_signalement_view', ['uuid' => $signalement->getUuid()]);
         }
