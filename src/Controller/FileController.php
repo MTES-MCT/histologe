@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Entity\Enum\DocumentType;
 use App\Entity\File;
 use App\Service\ImageManipulationHandler;
 use League\Flysystem\FilesystemOperator;
@@ -10,6 +11,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\File\File as SymfonyFile;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\ResponseHeaderBag;
 use Symfony\Component\Routing\Attribute\Route;
 
 class FileController extends AbstractController
@@ -24,6 +26,7 @@ class FileController extends AbstractController
         try {
             $variant = $request->query->get('variant');
             $filename = $file->getFilename();
+            $documentType = $file->getDocumentType();
             $variantNames = ImageManipulationHandler::getVariantNames($filename);
 
             if ('thumb' == $variant && $fileStorage->fileExists($variantNames[ImageManipulationHandler::SUFFIX_THUMB])) {
@@ -39,6 +42,13 @@ class FileController extends AbstractController
             $content = file_get_contents($bucketFilepath);
             file_put_contents($tmpFilepath, $content);
             $file = new SymfonyFile($tmpFilepath);
+
+            if (DocumentType::EXPORT === $documentType) {
+                return (new BinaryFileResponse($file))->setContentDisposition(
+                    ResponseHeaderBag::DISPOSITION_INLINE,
+                    $file->getFilename()
+                );
+            }
 
             return new BinaryFileResponse($file);
         } catch (\Throwable $exception) {

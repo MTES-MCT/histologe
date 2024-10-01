@@ -14,6 +14,7 @@ class SignalementListExportMailer extends AbstractNotificationMailer
 {
     protected ?NotificationMailerType $mailerType = NotificationMailerType::TYPE_LIST_EXPORT;
     protected ?string $mailerSubject = 'Votre export de la liste des signalements';
+    protected ?string $mailerButtonText = 'Afficher l\'export';
     protected ?string $mailerTemplate = 'signalement_list_export';
 
     public function __construct(
@@ -27,10 +28,12 @@ class SignalementListExportMailer extends AbstractNotificationMailer
 
     public function getMailerParamsFromNotification(NotificationMail $notificationMail): array
     {
-        $attachment = $notificationMail->getAttachment();
-
         return [
-            'attach' => $attachment,
+            'link' => $this->generateLink(
+                'show_file', [
+                    'uuid' => $notificationMail->getParams()['file_uuid'],
+                ]
+            ),
         ];
     }
 }
