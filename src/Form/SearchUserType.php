@@ -30,10 +30,10 @@ class SearchUserType extends AbstractType
         $user = $this->security->getUser();
         $this->user = $user;
         $this->roleChoices = User::ROLESV2;
+        unset($this->roleChoices['Usager']);
         if ($this->security->isGranted('ROLE_ADMIN')) {
             $this->isAdmin = true;
         } else {
-            unset($this->roleChoices['Usager']);
             unset($this->roleChoices['Super Admin']);
         }
     }
