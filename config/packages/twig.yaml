@@ -11,6 +11,7 @@ twig:
             cgu_current_version: '%cgu_current_version%'
             feature_export_custom: '%feature_export_custom%'
             feature_profil_edition_enabled: '%feature_profil_edition_enabled%'
+            feature_export_users: '%feature_export_users%'
         gitbook:
             documentation: https://documentation.histologe.beta.gouv.fr
             faq: https://faq.histologe.beta.gouv.fr

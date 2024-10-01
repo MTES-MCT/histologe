@@ -3,6 +3,7 @@
 namespace App\Repository;
 
 use App\Dto\CountUser;
+use App\Dto\SearchUser;
 use App\Entity\Partner;
 use App\Entity\Territory;
 use App\Entity\User;
@@ -348,5 +349,43 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
             ->setParameter('date', new \DateTimeImmutable());
 
         return $qb->getQuery()->execute();
+    }
+
+    public function findFilteredPaginated(SearchUser $searchUser, int $maxResult): Paginator
+    {
+        $qb = $this->createQueryBuilder('u');
+        $qb->select('u', 'p', 't')
+            ->leftJoin('u.partner', 'p')
+            ->leftJoin('u.territory', 't')
+            ->orderBy('u.nom', 'ASC');
+        $qb->andWhere('u.statut != :statutArchive')->setParameter('statutArchive', User::STATUS_ARCHIVE);
+
+        $qb->andWhere('JSON_CONTAINS(u.roles, :roleUsager) = 0')->setParameter('roleUsager', '"ROLE_USAGER"');
+        if (!$searchUser->getUser()->isSuperAdmin()) {
+            $qb->andWhere('JSON_CONTAINS(u.roles, :roleAdmin) = 0')->setParameter('roleAdmin', '"ROLE_ADMIN"');
+        }
+        if ($searchUser->getQueryUser()) {
+            $qb->andWhere('LOWER(u.nom) LIKE :queryUser
+                OR LOWER(u.prenom) LIKE :queryUser
+                OR LOWER(u.email) LIKE :queryUser');
+            $qb->setParameter('queryUser', '%'.strtolower($searchUser->getQueryUser()).'%');
+        }
+        if ($searchUser->getTerritory()) {
+            $qb->andWhere('u.territory = :territory')->setParameter('territory', $searchUser->getTerritory());
+        }
+        if ($searchUser->getPartners()->count() > 0) {
+            $qb->andWhere('u.partner IN (:partners)')->setParameter('partners', $searchUser->getPartners());
+        }
+        if (null !== $searchUser->getStatut()) {
+            $qb->andWhere('u.statut = :statut')->setParameter('statut', $searchUser->getStatut());
+        }
+        if ($searchUser->getRole()) {
+            $qb->andWhere('JSON_CONTAINS(u.roles, :role) = 1 ')->setParameter('role', '"'.$searchUser->getRole().'"');
+        }
+
+        $firstResult = ($searchUser->getPage() - 1) * $maxResult;
+        $qb->setFirstResult($firstResult)->setMaxResults($maxResult);
+
+        return new Paginator($qb->getQuery());
     }
 }

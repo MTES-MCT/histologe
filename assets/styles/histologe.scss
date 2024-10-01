@@ -617,6 +617,10 @@ a.force-link-color {
     white-space: pre-line;
 }
 
+.overflow-visible {
+    overflow: visible;
+}
+
 .bloc-list .fr-grid-row .fr-grid-row .fr-col-12 {
     padding: 0 0.75rem;
 }
@@ -876,4 +880,21 @@ a.photo-preview {
 
 .text-decoration-underline{
     text-decoration: underline;
+}
+
+.search-checkbox-container {
+    position: relative;
+    .search-checkbox{
+        display: none;
+        overflow: auto;
+        height: 190px;
+        border: 1px solid var(--border-default-grey);
+        border-top: 0;
+        padding: 0.5rem;
+        padding-top: 1rem;
+        position: absolute;
+        width: 100%;
+        z-index: 10;
+        background: white;
+    }
 }

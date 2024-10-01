@@ -34,15 +34,17 @@
             </li>
         {% endif %}
 
-        {% for i in max(1, currentPage - 2)..min(pages, currentPage + 2) %}
-            <li>
-                <a class="fr-pagination__link" {{ currentPage == i ? 'aria-current="page"' : '' }}
-                   href="{{ path(routeName, queryParams | merge({page: i})) }}"
-                   title="Page {{ i }}"
-                   data-page="{{ i }}">
-                    {{ i }}
-                </a>
-            </li>
+        {% for i in max(1, currentPage - 2)..min(pages, currentPage + 2)%}
+            {% if i > 0 %}
+                <li>
+                    <a class="fr-pagination__link" {{ currentPage == i ? 'aria-current="page"' : '' }}
+                    href="{{ path(routeName, queryParams | merge({page: i})) }}"
+                    title="Page {{ i }}"
+                    data-page="{{ i }}">
+                        {{ i }}
+                    </a>
+                </li>
+            {% endif %}
         {% endfor %}
 
         {% if currentPage < pages - 3 %}

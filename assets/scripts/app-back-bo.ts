@@ -10,6 +10,7 @@ import './vanilla/services/pagination.js'
 import './vanilla/services/search_filter_form.js'
 import './vanilla/services/table_sortable.js'
 import './vanilla/services/list_filter_helper.js';
+import './vanilla/services/component_search_checkbox.js';
 
 import './vanilla/controllers/form_account.js';
 import './vanilla/controllers/form_nde.js';
@@ -30,3 +31,4 @@ import './vanilla/controllers/back_signalement_edit_file/back_signalement_edit_f
 import './vanilla/controllers/back_signalement_delete_file/back_signalement_delete_file.js';
 import './vanilla/controllers/back_signalement_list_export/back_signalement_list_export.js';
 import './vanilla/controllers/back_profil_edit_email/back_profil_edit_email.js';
+import './vanilla/controllers/back_user_index/back_user_index.js';

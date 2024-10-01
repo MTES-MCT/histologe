@@ -1,0 +1,114 @@
+{% extends 'back/base_bo.html.twig' %}
+
+{% block title %}Liste des utilisateurs{% endblock %}
+
+{% block content %}
+    <section class="fr-p-5v">
+        {% include 'back/breadcrumb_bo.html.twig' with {
+            'level2Title': 'Outils admin',
+            'level2Link': '',
+            'level2Label': '',
+            'level3Title': 'Utilisateurs',
+            'level3Link': '',
+        } %}
+
+        <header>
+            <div class="fr-grid-row">
+                <div class="fr-col-12 fr-text--left">
+                    <h1>Liste des utilisateurs</h1>
+                    <p>
+                        La liste des agents ayant un compte sur Histologe. Vous pouvez filtrer les utilisateurs et exporter la liste.
+                    </p>
+                </div>
+            </div>
+        </header>
+    </section>
+    <section class="fr-container--fluid overflow-visible">
+        {% form_theme form 'form/dsfr_theme.html.twig' %}
+        {{ form_start(form) }}
+        {{ form_errors(form) }}
+        <div class="fr-grid-row fr-grid-row--gutters">
+            <div class="fr-col-12 fr-col-lg-3">
+                {{ form_row(form.queryUser) }}
+            </div>
+            {% if is_granted('ROLE_ADMIN') %}
+                <div class="fr-col-12 fr-col-lg-2">
+                    {{ form_row(form.territory) }}
+                </div>
+            {% endif %}
+            <div class="fr-col-12 fr-col-lg-3">
+                {{ form_row(form.partners) }}
+            </div>
+            <div class="fr-col-12 {% if is_granted('ROLE_ADMIN') %}fr-col-lg-2{% else %}fr-col-lg-3{% endif %}">
+                {{ form_row(form.statut) }}
+            </div>
+            <div class="fr-col-12 {% if is_granted('ROLE_ADMIN') %}fr-col-lg-2{% else %}fr-col-lg-3{% endif %}">
+                {{ form_row(form.role) }}
+            </div>
+            <div class="fr-col-12">
+                <a href="{{ path('back_user_index') }}" class="fr-link fr-link--icon-left fr-icon-close-circle-line">Réinitialiser les résultats</a>
+            </div>
+        </div>
+        {{ form_end(form) }}
+    </section>
+
+    <section class="fr-grid-row fr-grid-row--middle fr-p-5v">
+        <h2 class="fr-h2 fr-mb-0" id="desc-table">{{users|length}} utilisateur{% if users|length > 1%}s{% endif %}</h2>
+    </section>
+
+    <section class="fr-col-12 fr-table fr-table--lg fr-pt-0 fr-px-5v">
+		<div class="fr-table__wrapper">
+			<div class="fr-table__container">
+				<div class="fr-table__content">
+                    <table class="sortable fr-cell--multiline" aria-label="Liste des utilisateurs" aria-describedby="desc-table">
+                        <thead>
+                            <tr>
+                                {% if is_granted('ROLE_ADMIN') %}
+                                    <th scope="col">Territoire</th>
+                                {% endif %}
+                                <th scope="col">Utilisateur</th>
+                                <th scope="col">E-mail</th>
+                                <th scope="col">Partenaire</th>
+                                <th scope="col">Statut du compte</th>
+                                <th scope="col">Dernière connexion</th>
+                                <th scope="col">Rôle</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for user in users %}
+                                <tr class="signalement-row">
+                                    {% if is_granted('ROLE_ADMIN') %}
+                                        <td>
+                                            {% if user.territory %}
+                                                {{ user.territory.zip }} - {{ user.territory.name }}
+                                            {% endif %}
+                                        </td>
+                                    {% endif %}
+                                    <td>{{ user.prenom }} {{ user.nom }}</td>
+                                    <td>{{ user.email }}</td>
+                                    <td>{{ user.partner ? user.partner.nom }}</td>
+                                    <td>
+                                        {% if user.statut is same as constant('App\\Entity\\User::STATUS_INACTIVE') %}
+                                            <span class="fr-badge fr-badge--no-icon fr-badge--error">Non activé</span>
+                                        {% elseif user.statut is same as constant('App\\Entity\\User::STATUS_ACTIVE') %}
+                                            <span class="fr-badge fr-badge--no-icon fr-badge--success">Activé</span>
+                                        {% else %}
+                                            {{ user.statutLabel }}
+                                        {% endif %}
+                                    </td>
+                                    <td>{{ user.lastLoginAt ? user.lastLoginAt|date('d/m/Y') : '-'}}</td>
+                                    <td>{{ user.roleLabel(true) }}</td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+				</div>
+			</div>
+		</div>
+        <div class="fr-grid-row fr-mt-2v fr-grid-row--center">
+            {% import '_partials/macros.html.twig' as macros %}
+            {{ macros.customPagination(pages, searchUser.page, 'back_user_index', searchUser.queryStringForUrl) }}
+        </div>
+    </section>
+
+{% endblock %}
