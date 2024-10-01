@@ -20,16 +20,16 @@ use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 use Symfony\Component\Uid\Uuid;
 
 #[AsMessageHandler]
-class ListExportMessageHandler
+readonly class ListExportMessageHandler
 {
     public function __construct(
-        private readonly NotificationMailerRegistry $notificationMailerRegistry,
-        private readonly LoggerInterface $logger,
-        private readonly SignalementExportLoader $signalementExportLoader,
-        private readonly UserRepository $userRepository,
-        private readonly ParameterBagInterface $parameterBag,
-        private readonly UploadHandlerService $uploadHandlerService,
-        private readonly FileManager $fileManager
+        private NotificationMailerRegistry $notificationMailerRegistry,
+        private LoggerInterface $logger,
+        private SignalementExportLoader $signalementExportLoader,
+        private UserRepository $userRepository,
+        private ParameterBagInterface $parameterBag,
+        private UploadHandlerService $uploadHandlerService,
+        private FileManager $fileManager
     ) {
     }
 
@@ -57,25 +57,29 @@ class ListExportMessageHandler
                 $writer->save($tmpFilepath);
 
                 $filename = $this->uploadHandlerService->uploadFromFilename($filename);
-                $file = $this->fileManager->createOrUpdate(
-                    filename: $filename,
-                    title: $filename,
-                    type: 'document',
-                    user: $user,
-                    flush: true,
-                    documentType: DocumentType::EXPORT
-                );
+                if ($filename) {
+                    $file = $this->fileManager->createOrUpdate(
+                        filename: $filename,
+                        title: $filename,
+                        type: 'document',
+                        user: $user,
+                        flush: true,
+                        documentType: DocumentType::EXPORT
+                    );
 
-                $this->notificationMailerRegistry->send(
-                    new NotificationMail(
-                        type: NotificationMailerType::TYPE_LIST_EXPORT,
-                        to: $user->getEmail(),
-                        params: [
-                            'filename' => $filename,
-                            'file_uuid' => $file->getUuid(),
-                        ]
-                    )
-                );
+                    $this->notificationMailerRegistry->send(
+                        new NotificationMail(
+                            type: NotificationMailerType::TYPE_LIST_EXPORT,
+                            to: $user->getEmail(),
+                            params: [
+                                'filename' => $filename,
+                                'file_uuid' => $file->getUuid(),
+                            ]
+                        )
+                    );
+                } else {
+                    $this->logger->error('There was an issue generating your export');
+                }
             }
         } catch (\Throwable $exception) {
             $this->logger->error(
