@@ -1,17 +1,17 @@
 <template>
   <div>
-    <fieldset class="fr-fieldset" :aria-labelledby="id + '-legend'">
+    <fieldset :class="['fr-fieldset', hasErrorFirst ? 'fr-fieldset--error' : '']" :aria-labelledby="id + '-legend'">
       <legend class="fr-fieldset__legend--regular fr-fieldset__legend fr-col-12" :id="id + '-legend'">
         {{ variablesReplacer.replace(label) }}
       </legend>
       <div class="fr-fieldset__element fr-col-12 fr-col-md-4">
         <select
-          class="fr-select"
+          :class="['fr-select', hasErrorFirst ? 'fr-select--error' : '']"
           :id="idCountryCode"
           :name="idCountryCode"
           v-model="formStore.data[idCountryCode]"
           title="Indicatif national"
-          :aria-describedby="formStore.validationErrors[id] !== undefined ? id + '-text-input-error-desc-error' : undefined"
+          :aria-describedby="hasErrorFirst ? id + '-text-input-error-desc-error' : undefined"
           >
           <option
             v-for="countryItem in countryList"
@@ -31,15 +31,15 @@
             :name="access_name"
             :autocomplete="access_autocomplete"
             v-model="formStore.data[id]"
-            class="fr-input"
-            :aria-describedby="formStore.validationErrors[id] !== undefined ? id + '-text-input-error-desc-error' : undefined"
+            :class="[ 'fr-input', hasErrorFirst ? 'fr-input--error' : '' ]"
+            :aria-describedby="hasErrorFirst ? id + '-text-input-error-desc-error' : undefined"
             >
         </div>
       </div>
       <div
         :id="id + '-text-input-error-desc-error'"
         class="fr-error-text fr-mt-0 fr-mb-3v fr-ml-2v"
-        v-if="formStore.validationErrors[id] !== undefined"
+        v-if="hasErrorFirst"
         >
         {{ formStore.validationErrors[id] }}
       </div>
@@ -55,7 +55,7 @@
 
     <fieldset
       :id=idSecondGroup
-      :class="[ 'fr-fieldset', formStore.data[idSecond] === undefined ? 'fr-hidden' : '' ]"
+      :class="[ 'fr-fieldset', formStore.data[idSecond] === undefined ? 'fr-hidden' : '' , hasErrorSecond ? 'fr-fieldset--error' : '']"
       :aria-labelledby="id + '-legend-second'"
       >
       <legend class="fr-fieldset__legend--regular fr-fieldset__legend fr-col-12" :id="id + '-legend-second'">
@@ -63,12 +63,12 @@
       </legend>
       <div class="fr-fieldset__element fr-col-12 fr-col-md-4">
         <select
-          class="fr-select"
+          :class="['fr-select', hasErrorSecond ? 'fr-select--error' : '']"
           :id="idCountryCodeSecond"
           :name="idCountryCodeSecond"
           v-model="formStore.data[idCountryCodeSecond]"
           title="Indicatif national"
-          :aria-describedby="formStore.validationErrors[idSecond] !== undefined ? idSecond + '-text-input-error-desc-error' : undefined"
+          :aria-describedby="hasErrorSecond ? idSecond + '-text-input-error-desc-error' : undefined"
           >
           <option
             v-for="countryItem in countryList"
@@ -86,8 +86,8 @@
             :id="idSecond"
             :name="idSecond"
             v-model="formStore.data[idSecond]"
-            class="fr-input"
-            :aria-describedby="formStore.validationErrors[idSecond] !== undefined ? idSecond + '-text-input-error-desc-error' : undefined"
+            :class="[ 'fr-input', hasErrorSecond ? 'fr-input--error' : '' ]"
+            :aria-describedby="hasErrorSecond ? idSecond + '-text-input-error-desc-error' : undefined"
             :autocomplete="access_autocomplete"
             >
         </div>
@@ -95,7 +95,7 @@
       <div
         :id="idSecond + '-text-input-error-desc-error'"
         class="fr-error-text fr-mt-0 fr-mb-3v fr-ml-2v"
-        v-if="formStore.validationErrors[idSecond] !== undefined"
+        v-if="hasErrorSecond"
         >
         {{ formStore.validationErrors[idSecond] }}
       </div>
@@ -186,6 +186,12 @@ export default defineComponent({
       countryList.unshift({ code: 'FR' + ':' + getCountryCallingCode('FR'), label: this.getSelectOptionLabel('FR') })
 
       return countryList
+    },
+    hasErrorFirst () {
+      return formStore.validationErrors[this.id] !== undefined
+    },
+    hasErrorSecond () {
+      return formStore.validationErrors[this.idSecond] !== undefined
     }
   }
 })

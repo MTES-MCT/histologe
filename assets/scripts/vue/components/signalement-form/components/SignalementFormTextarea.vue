@@ -1,5 +1,5 @@
 <template>
-<div :class="['fr-input-group', { 'fr-input-group--disabled': disabled }]" :id="id">
+<div :class="['fr-input-group', { 'fr-input-group--disabled': disabled }, {'fr-input-group--error' : hasError}]" :id="id">
   <label class='fr-label' :for="id + '_input'">
     {{ label }}
     <span class="fr-hint-text">{{ description }}</span>
@@ -10,7 +10,7 @@
         :name="id"
         :value="internalValue"
         :placeholder="placeholder"
-        :class="[ customCss, 'fr-input' ]"
+        :class="[ customCss, 'fr-input', {'fr-input--error' : hasError} ]"
         @input="updateValue($event)"
         :aria-describedby="hasError ? id + '-text-input-error-desc-error' : undefined"
         :disabled="disabled"

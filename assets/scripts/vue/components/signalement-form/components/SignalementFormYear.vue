@@ -1,5 +1,5 @@
 <template>
-  <div class="fr-input-group" :id="id">
+  <div :class="['fr-input-group', {'fr-input-group--error' : hasError}]" :id="id">
     <label :class="[ customCss, 'fr-label' ]" :for="id + '_input'">{{ label }}</label>
     <input
       :id="id + '_input'"
@@ -10,7 +10,7 @@
       max="2099"
       step="1"
       :value="internalValue"
-      :class="[ customCss, 'fr-input' ]"
+      :class="[ customCss, 'fr-input', {'fr-input--error' : hasError} ]"
       @input="updateValue($event)"
       />
     <div

@@ -1,7 +1,7 @@
 <template>
   <fieldset
     :id="id"
-    :class="[customCss, 'signalement-form-only-choice fr-fieldset']"
+    :class="[customCss, 'signalement-form-only-choice fr-fieldset', {'fr-fieldset--error' : hasError} ]"
     :aria-labelledby="id + '-radio-hint-legend'"
     :ref="id"
     >

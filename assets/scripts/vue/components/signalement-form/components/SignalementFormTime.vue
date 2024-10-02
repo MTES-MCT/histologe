@@ -1,12 +1,12 @@
 <template>
-  <div class="fr-input-group" :id="id">
+  <div :class="['fr-input-group', {'fr-input-group--error' : hasError}]" :id="id">
   <label :class="[ customCss, 'fr-label' ]" :for="id + '_input'">{{ label }}</label>
   <input
       type="time"
       :id="id + '_input'"
       :name="id"
       :value="internalValue"
-      :class="[ customCss, 'fr-input' ]"
+      :class="[ customCss, 'fr-input', {'fr-input--error' : hasError} ]"
       @input="updateValue($event)"
       aria-describedby="text-input-error-desc-error"
       >
