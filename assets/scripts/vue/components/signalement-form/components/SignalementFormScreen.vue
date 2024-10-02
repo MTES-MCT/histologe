@@ -253,7 +253,33 @@ export default defineComponent({
         if (this.components && this.components.body) {
           this.validateComponents(this.components.body)
           if (Object.keys(formStore.validationErrors).length > 0) {
-            window.scrollTo(0, 0)
+            this.$nextTick(() => {
+              // Tableau contenant toutes les classes d'erreur possibles
+              const errorClasses = [
+                'signalement-form-roomlist-error',
+                'fr-fieldset--error',
+                'fr-input--error',
+                'fr-select--error',
+                'fr-checkbox-group--error',
+                'fr-input-group--error',
+                'custom-file-input-error'
+              ]
+              // Construire dynamiquement le sélecteur pour toutes les classes d'erreur
+              const selectors = errorClasses.map(errorClass => `.${errorClass}`).join(', ')
+
+              // Sélectionner tous les éléments correspondant aux classes d'erreur pour tester
+              const ancestorsWithError = document.querySelectorAll(selectors)
+              if (ancestorsWithError.length > 0) {
+                // Sélectionner le premier input ou textarea dans le premier élément trouvé
+                const firstAncestorWithError = ancestorsWithError[0]
+                const inputElement = firstAncestorWithError.querySelector('input, textarea') as HTMLElement
+                // Si un élément input/textarea est trouvé, mettre le focus dessus
+                if (inputElement) {
+                  inputElement.focus()
+                  inputElement.scrollIntoView({ behavior: 'smooth', block: 'center' })
+                }
+              }
+            })
             return
           }
         }
