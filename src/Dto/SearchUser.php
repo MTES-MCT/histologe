@@ -97,10 +97,13 @@ class SearchUser
         $this->role = $role;
     }
 
-    public function getQueryStringForUrl(): array
+    public function getUrlParams(): array
     {
         $params = [];
         foreach (get_object_vars($this) as $key => $value) {
+            if (in_array($key, ['user', 'page'])) {
+                continue;
+            }
             if ($value instanceof Collection) {
                 if ($value->isEmpty()) {
                     continue;
@@ -112,9 +115,37 @@ class SearchUser
                 $params[$key] = $value;
             }
         }
-        unset($params['user']);
-        unset($params['page']);
+        if (isset($params['territory']) && !$this->getUser()->isSuperAdmin()) {
+            unset($params['territory']);
+        }
 
         return $params;
+    }
+
+    public function getFilters(): array
+    {
+        $filters = [];
+        if ($this->queryUser) {
+            $filters['Recherche'] = $this->queryUser;
+        }
+        if ($this->territory && $this->user->isSuperAdmin()) {
+            $filters['Territoire'] = $this->territory->getZip().' - '.$this->territory->getName();
+        }
+        if ($this->partners->count()) {
+            $parters = '';
+            foreach ($this->partners as $partner) {
+                $parters .= $partner->getNom().', ';
+            }
+            $parters = substr($parters, 0, -2);
+            $filters['Partenaires'] = $parters;
+        }
+        if ($this->statut) {
+            $filters['Statut'] = User::STATUS_LABELS[$this->statut];
+        }
+        if ($this->role) {
+            $filters['Rôle'] = array_search($this->role, User::ROLESV2);
+        }
+
+        return $filters;
     }
 }

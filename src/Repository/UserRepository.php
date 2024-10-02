@@ -353,6 +353,16 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
 
     public function findFilteredPaginated(SearchUser $searchUser, int $maxResult): Paginator
     {
+        $qb = $this->findFiltered($searchUser, false);
+
+        $firstResult = ($searchUser->getPage() - 1) * $maxResult;
+        $qb->setFirstResult($firstResult)->setMaxResults($maxResult);
+
+        return new Paginator($qb->getQuery());
+    }
+
+    public function findFiltered(SearchUser $searchUser, $execute = true): QueryBuilder|array
+    {
         $qb = $this->createQueryBuilder('u');
         $qb->select('u', 'p', 't')
             ->leftJoin('u.partner', 'p')
@@ -382,10 +392,10 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
         if ($searchUser->getRole()) {
             $qb->andWhere('JSON_CONTAINS(u.roles, :role) = 1 ')->setParameter('role', '"'.$searchUser->getRole().'"');
         }
+        if ($execute) {
+            return $qb->getQuery()->execute();
+        }
 
-        $firstResult = ($searchUser->getPage() - 1) * $maxResult;
-        $qb->setFirstResult($firstResult)->setMaxResults($maxResult);
-
-        return new Paginator($qb->getQuery());
+        return $qb;
     }
 }
