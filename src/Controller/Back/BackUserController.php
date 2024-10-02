@@ -65,7 +65,7 @@ class BackUserController extends AbstractController
                 )
             );
 
-            // return $this->redirectToRoute('back_user_index', $searchUser->getUrlParams());
+            return $this->redirectToRoute('back_user_index', $searchUser->getUrlParams());
         }
 
         return $this->render('back/user/export.html.twig', [
