@@ -16,7 +16,8 @@ class SearchCheckboxType extends AbstractType
             'expanded' => true,
             'multiple' => true,
             'attr' => ['class' => 'search-checkbox'],
-            'noselection' => '',
+            'noselectionlabel' => '',
+            'nochoiceslabel' => '',
         ]);
     }
 
@@ -27,6 +28,7 @@ class SearchCheckboxType extends AbstractType
 
     public function buildView(FormView $view, FormInterface $form, array $options): void
     {
-        $view->vars['noselection'] = $options['noselection'];
+        $view->vars['noselectionlabel'] = $options['noselectionlabel'];
+        $view->vars['nochoiceslabel'] = $options['nochoiceslabel'];
     }
 }

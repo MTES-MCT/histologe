@@ -3,6 +3,11 @@ const searchUserForm = document.getElementById('search-user-form')
 if(searchUserForm){
     searchUserForm.querySelectorAll('select').forEach((select) => {
         select.addEventListener('change', function(){
+            if(select.name === 'territory'){
+                searchUserForm.querySelectorAll('input[name="partner[]"]').forEach((input) => {
+                    input.checked = false;
+                });
+            }
             searchUserForm.submit();
         });
     });
