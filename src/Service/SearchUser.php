@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Dto;
+namespace App\Service;
 
 use App\Entity\Territory;
 use App\Entity\User;
@@ -122,7 +122,7 @@ class SearchUser
         return $params;
     }
 
-    public function getFilters(): array
+    public function getFiltersToText(): array
     {
         $filters = [];
         if ($this->queryUser) {

@@ -2,12 +2,12 @@
 
 namespace App\Form;
 
-use App\Dto\SearchUser;
 use App\Entity\Partner;
 use App\Entity\Territory;
 use App\Entity\User;
 use App\Form\Type\SearchCheckboxType;
 use App\Repository\PartnerRepository;
+use App\Service\SearchUser;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\Form\AbstractType;

@@ -34,7 +34,7 @@
         <div class="fr-mb-3v">
             Votre liste contient {{ nbResults }} utilisateurs. Les filtres suivants sont actifs :
         </div>
-        {% for filterName, filterValue in searchUser.filters %}
+        {% for filterName, filterValue in searchUser.filtersToText %}
             <p class="fr-badge">{{ filterName }} : {{ filterValue }}</p>
         {% else %}
             Aucun filtre actif.

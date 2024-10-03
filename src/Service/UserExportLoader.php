@@ -2,7 +2,6 @@
 
 namespace App\Service;
 
-use App\Dto\SearchUser;
 use App\Entity\User;
 use App\Repository\UserRepository;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
