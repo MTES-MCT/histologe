@@ -2,7 +2,6 @@
     aria-labelledby="fr-modal-visites-upload-files-{{intervention.id}}" 
     id="visites-upload-files-{{intervention.id}}" 
     class="fr-modal fr-modal-visites-upload-files" 
-    role="dialog" 
     data-file-type="document"
     data-intervention-id="{{intervention.id}}"
     data-has-changes="false"
@@ -19,11 +18,11 @@
             <div class="fr-col-12 fr-col-md-8">
                 <div class="fr-modal__body">
                     <div class="fr-modal__header">
-                        <button class="fr-btn--close fr-btn" aria-controls="visites-upload-files-{{intervention.id}}">Fermer</button>
+                        <button type="button" class="fr-btn--close fr-btn" aria-controls="visites-upload-files-{{intervention.id}}">Fermer</button>
                     </div>
                     <div class="fr-modal__content">
                         <div class="type-conditional type-photo">
-                            <h1 class="fr-modal__title">
+                            <h1 class="fr-modal__title" id="fr-modal-visites-upload-files-{{intervention.id}}">
                                 Ajout des photos de la visite
                             </h1>
                             <div>
@@ -49,12 +48,12 @@
                         </div>
                     </div>
                     <div class="fr-modal__footer">
-                        <div class="fr-btns-group fr-btns-group--right fr-btns-group--inline-lg fr-btns-group--icon-left">
-                            <button class="fr-btn fr-btn--secondary fr-icon-close-line" aria-controls="visites-upload-files-{{intervention.id}}">
-                                Annuler
-                            </button>
+                        <div class="fr-btns-group fr-btns-group--right fr-btns-group--inline-reverse fr-btns-group--inline-lg fr-btns-group--icon-left">
                             <button class="fr-btn fr-icon-check-line" aria-controls="visites-upload-files-{{intervention.id}}" id="btn-validate-modal-upload-files">
                                 Valider
+                            </button>
+                            <button class="fr-btn fr-btn--secondary fr-icon-close-line" aria-controls="visites-upload-files-{{intervention.id}}" type="button">
+                                Annuler
                             </button>
                         </div>
                     </div>

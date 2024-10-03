@@ -82,17 +82,16 @@
       </div>
     </div>
   </div>
-  <dialog aria-labelledby="modal-delete-signalement-title" id="modal-delete-signalement" class="fr-modal" role="dialog" >
+  <dialog aria-labelledby="modal-delete-signalement-title" id="modal-delete-signalement" class="fr-modal">
     <div class="fr-container fr-container--fluid fr-container-lg">
         <div class="fr-grid-row fr-grid-row--center">
             <div class="fr-col-12 fr-col-md-8 fr-col-lg-6">
                 <div class="fr-modal__body">
                     <div class="fr-modal__header">
-                        <button class="fr-btn--close fr-btn" aria-controls="modal-delete-signalement">Fermer</button>
+                        <button type="button" class="fr-btn--close fr-btn" aria-controls="modal-delete-signalement">Fermer</button>
                     </div>
                     <div class="fr-modal__content">
                         <h1 id="modal-delete-signalement-title" class="fr-modal__title">
-                            <span class="fr-icon-arrow-right-line fr-icon--lg"></span>
                             Supprimer le signalement {{ selectedItem?.reference }}
                         </h1>
                         <div class="fr-alert fr-alert--warning fr-mb-1w">
@@ -112,10 +111,10 @@
                     </div>
                     <div class="fr-modal__footer">
                         <div class="fr-btns-group fr-btns-group--right fr-btns-group--inline-reverse fr-btns-group--inline-lg fr-btns-group--icon-left">
-                            <button class="fr-btn fr-btn--secondary fr-icon-close-line" @click="emitDeleteSignalementItem(selectedItem)">
+                            <button class="fr-btn fr-btn--secondary fr-icon-check-line" @click="emitDeleteSignalementItem(selectedItem)">
                               Oui, supprimer
                             </button>
-                            <button class="fr-btn fr-icon-check-line" aria-controls="modal-delete-signalement">
+                            <button class="fr-btn fr-icon-close-line" aria-controls="modal-delete-signalement">
                               Non, annuler
                             </button>
                         </div>

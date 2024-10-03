@@ -4,18 +4,18 @@
     <div class="fr-col-9 fr-col-md-6">
         <h3 class="fr-h5">Suivis</h3>
     </div>
-    <div class="fr-col-3 fr-col-md-6 fr-text--right">
-        {% if 
-            is_granted('COMMENT_CREATE', signalement)
-            and not isClosedForMe
-            %}
+    {% if 
+        is_granted('COMMENT_CREATE', signalement)
+        and not isClosedForMe
+        %}
+        {% include '_partials/signalement/add_suivi.html.twig' %}
+        <div class="fr-col-3 fr-col-md-6 fr-text--right">
             <button class="fr-btn fr-btn--icon-left fr-icon-quote-line" data-fr-opened="false"
                     aria-controls="fr-modal-add-suivi">
                 Ajouter un suivi
             </button>
-            {% include '_partials/signalement/add_suivi.html.twig' %}
-        {% endif %}
-    </div>
+        </div>
+    {% endif %}
 </div>
 
 {% for suivi in signalement.suivis|reverse %}

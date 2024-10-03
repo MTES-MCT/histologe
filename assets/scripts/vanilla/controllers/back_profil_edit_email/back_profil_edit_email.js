@@ -1,7 +1,7 @@
 import * as Sentry from '@sentry/browser'
 
 const modalEditEmail = document?.querySelector('#fr-modal-profil-edit-email');
-const modalEditEmailTitle = document?.querySelector('#fr-modal-profil-edit-email-title');
+const modalEditEmailTitle = document?.querySelector('#fr-profil-edit-email-title');
 const modalAlert = document?.querySelector('#fr-modal-profil-edit-email-alert');
 const modalEmailInput = document?.querySelector('#fr-modal-profil-edit-email-email-input');
 const modalCodeText = document?.querySelector('#fr-modal-profil-edit-email-code-text');

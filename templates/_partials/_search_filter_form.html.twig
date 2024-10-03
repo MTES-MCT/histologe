@@ -38,18 +38,18 @@
             </div>
         </div>
     </div>
-    <dialog aria-labelledby="fr-modal-2-title" id="bo-modal-filters" class="fr-modal" role="dialog" >
+    <dialog aria-labelledby="fr-modal-2-title" id="bo-modal-filters" class="fr-modal">
         <div class="fr-container fr-container--fluid fr-container-md">
             <div class="fr-grid-row fr-grid-row--center">
-                <div class="fr-col-12 fr-col-md-8">
+                <div class="fr-col-12 fr-col-md-8 fr-col-lg-6">
                     <div class="fr-modal__body">
                         <div class="fr-modal__header">
-                            <h1 id="fr-modal-2-title" class="fr-modal__title">
-                                <span class="fr-fi-search-line fr-fi--sm" aria-hidden="true"></span>
-                                Filtres
-                            </h1>
+                            <button type="button" class="fr-btn--close fr-btn" aria-controls="bo-modal-filters">Fermer</button>
                         </div>
                         <div class="fr-modal__content">
+                            <h1 id="fr-modal-2-title" class="fr-modal__title">
+                                Filtres
+                            </h1>
                             <div class="fr-grid-row fr-grid-row--gutters fr-p-3v">
                                 {% if is_granted('ROLE_ADMIN') %}
                                     <div class="fr-col-12 fr-col-md-6">
@@ -546,14 +546,14 @@
 
                         </div>
                         <div class="fr-modal__footer">
-                            <ul class="fr-btns-group fr-btns-group--right fr-btns-group--inline-reverse fr-btns-group--inline-sm">
+                            <ul class="fr-btns-group fr-btns-group--right fr-btns-group--inline-reverse fr-btns-group--inline-lg fr-btns-group--icon-left">
                                 <li>
-                                    <button class="fr-btn" >
+                                    <button class="fr-btn fr-icon-check-line">
                                         Rechercher
                                     </button>
                                 </li>
                                 <li>
-                                    <button class="fr-btn fr-btn--secondary " aria-controls="bo-modal-filters">
+                                    <button class="fr-btn fr-btn--secondary fr-icon-close-line " aria-controls="bo-modal-filters" type="button">
                                         Annuler
                                     </button>
                                 </li>

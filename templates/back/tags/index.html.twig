@@ -71,8 +71,8 @@
                                 <button class="fr-btn--close fr-btn" title="Fermer la fenêtre modale" aria-controls="fr-modal-etiquette-add">Fermer</button>
                             </div>
                             <div class="fr-modal__content">
-                                <h1 id="fr-modal-title-modal-etiquette-add" class="fr-modal__title">
-                                    <span class="fr-icon-arrow-right-line fr-icon--lg"></span>Ajouter une étiquette
+                                <h1 id="fr-modal-title-etiquette-add" class="fr-modal__title">
+                                    Ajouter une étiquette
                                 </h1>
                                 <p>Une fois créée, les agents pourront ajouter ou retirer l'étiquette aux signalements et l'utiliser pour filtrer la liste des signalements.</p>
                                 {% form_theme addForm 'form/dsfr_theme.html.twig' %}
@@ -80,9 +80,9 @@
                             </div>
                             <div class="fr-modal__footer">
                                 <div class="fr-btns-group fr-btns-group--right fr-btns-group--inline-reverse fr-btns-group--inline-lg fr-btns-group--icon-left">
-                                    <button class="fr-btn" form="form-add-tag" type="submit"
+                                    <button class="fr-btn fr-icon-check-line" form="form-add-tag" type="submit"
                                         >Valider</button>
-                                    <button class="fr-btn fr-btn--secondary" type="button" aria-controls="fr-modal-etiquette-add"
+                                    <button class="fr-btn fr-btn--secondary fr-icon-close-line" type="button" aria-controls="fr-modal-etiquette-add"
                                         >Annuler</button>
                                 </div>
                             </div>
@@ -105,8 +105,8 @@
                                     <button class="fr-btn--close fr-btn" title="Fermer la fenêtre modale" aria-controls="fr-modal-etiquette-edit-{{ tag.id }}">Fermer</button>
                                 </div>
                                 <div class="fr-modal__content">
-                                    <h1 id="fr-modal-title-modal-etiquette-edit-{{ tag.id }}" class="fr-modal__title">
-                                        <span class="fr-icon-arrow-right-line fr-icon--lg"></span>Modifier l'étiquette : {{ tag.label }}
+                                    <h1 id="fr-modal-title-etiquette-edit-{{ tag.id }}" class="fr-modal__title">
+                                        Modifier l'étiquette : {{ tag.label }}
                                     </h1>
                                     <p>L'étiquette sera mise à jour sur tous les signalements dans lesquelles elle est utilisée.</p>
                                     <form method="POST" action="{{ path('back_tags_edit', {tag:tag.id}) }}" id="form-edit-tag-{{ tag.id }}">
@@ -119,9 +119,9 @@
                                 </div>
                                 <div class="fr-modal__footer">
                                     <div class="fr-btns-group fr-btns-group--right fr-btns-group--inline-reverse fr-btns-group--inline-lg fr-btns-group--icon-left">
-                                        <button class="fr-btn" form="form-edit-tag-{{ tag.id }}" type="submit"
+                                        <button class="fr-btn fr-icon-check-line" form="form-edit-tag-{{ tag.id }}" type="submit"
                                             >Modifier</button>
-                                        <button class="fr-btn fr-btn--secondary" type="button" aria-controls="fr-modal-etiquette-edit-{{ tag.id }}"
+                                        <button class="fr-btn fr-btn--secondary fr-icon-close-line" type="button" aria-controls="fr-modal-etiquette-edit-{{ tag.id }}"
                                             >Annuler</button>
                                     </div>
                                 </div>
@@ -141,8 +141,8 @@
                                 <button class="fr-btn--close fr-btn" title="Fermer la fenêtre modale" aria-controls="fr-modal-etiquette-delete-{{ tag.id }}">Fermer</button>
                             </div>
                             <div class="fr-modal__content">
-                                <h1 id="fr-modal-title-modal-etiquette-delete-{{ tag.id }}" class="fr-modal__title">
-                                    <span class="fr-icon-arrow-right-line fr-icon--lg"></span>Supprimer l'étiquette : {{ tag.label }}
+                                <h1 id="fr-modal-title-etiquette-delete-{{ tag.id }}" class="fr-modal__title">
+                                    Supprimer l'étiquette : {{ tag.label }}
                                 </h1>
                                 <p>Vous êtes sur le point de supprimer une étiquette.</p>
                                 <p>Une fois l'étiquette supprimée :</p>
@@ -162,9 +162,9 @@
                             </div>
                             <div class="fr-modal__footer">
                                 <div class="fr-btns-group fr-btns-group--right fr-btns-group--inline-reverse fr-btns-group--inline-lg fr-btns-group--icon-left">
-                                    <button class="fr-btn" form="form-delete-tag-{{ tag.id }}" type="submit"
+                                    <button class="fr-btn fr-icon-check-line" form="form-delete-tag-{{ tag.id }}" type="submit"
                                         >Oui, supprimer</button>
-                                    <button class="fr-btn fr-btn--secondary" type="button" aria-controls="fr-modal-etiquette-delete-{{ tag.id }}"
+                                    <button class="fr-btn fr-btn--secondary fr-icon-close-line" type="button" aria-controls="fr-modal-etiquette-delete-{{ tag.id }}"
                                         >Non, annuler</button>
                                 </div>
                             </div>
