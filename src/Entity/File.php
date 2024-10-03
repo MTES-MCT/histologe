@@ -70,7 +70,7 @@ class File implements EntityHistoryInterface
     private ?User $uploadedBy = null;
 
     #[ORM\ManyToOne(inversedBy: 'files')]
-    #[ORM\JoinColumn(nullable: false)]
+    #[ORM\JoinColumn(nullable: true)]
     private ?Signalement $signalement = null;
 
     #[ORM\Column(length: 255)]
