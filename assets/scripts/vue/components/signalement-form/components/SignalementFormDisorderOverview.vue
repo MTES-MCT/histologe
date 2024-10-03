@@ -254,7 +254,7 @@ export default defineComponent({
     },
     focusInput () {
       const focusableElement = (this.$refs[this.idRef]) as Array<HTMLElement>
-      if (focusableElement[0]) {
+      if (focusableElement && focusableElement[0]) {
         focusableElement[0].focus()
       }
     }
