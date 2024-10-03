@@ -3,6 +3,7 @@
 namespace App\Messenger\MessageHandler;
 
 use App\Messenger\Message\UserExportMessage;
+use App\Repository\UserRepository;
 use App\Service\Mailer\NotificationMail;
 use App\Service\Mailer\NotificationMailerRegistry;
 use App\Service\Mailer\NotificationMailerType;
@@ -21,6 +22,7 @@ class UserExportMessageHandler
         private readonly NotificationMailerRegistry $notificationMailerRegistry,
         private readonly LoggerInterface $logger,
         private readonly UserExportLoader $userExportLoader,
+        private readonly UserRepository $userRepository,
         private ParameterBagInterface $parameterBag,
     ) {
     }
@@ -28,7 +30,7 @@ class UserExportMessageHandler
     public function __invoke(UserExportMessage $listExportMessage): void
     {
         try {
-            $user = $listExportMessage->getSearchUser()->getUser();
+            $user = $this->userRepository->find($listExportMessage->getSearchUser()->getUser()->getId());
             $format = $listExportMessage->getFormat();
             $spreadsheet = $this->userExportLoader->load($listExportMessage->getSearchUser());
             if ('csv' === $format) {

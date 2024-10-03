@@ -13,7 +13,7 @@ use Symfony\Component\Messenger\MessageBusInterface;
 
 class UserExportMessageHandlerTest extends WebTestCase
 {
-    public function testHandleGenerateListCsv()
+    public function testHandleGenerateListCsvForSA()
     {
         self::bootKernel();
         $container = static::getContainer();
@@ -24,6 +24,33 @@ class UserExportMessageHandlerTest extends WebTestCase
         $user = $userRepository->findOneBy(['email' => $userEmail]);
         $searchUser = new SearchUser($user);
         $message = new UserExportMessage($searchUser, 'csv');
+        $messageBus->dispatch($message);
+        $transport = $container->get('messenger.transport.async_priority_high');
+        $envelopes = $transport->get();
+
+        $this->assertCount(1, $envelopes);
+        $handler = $container->get(UserExportMessageHandler::class);
+        $handler($message);
+
+        $this->assertEmailCount(1);
+        /** @var NotificationEmail $email */
+        $email = $this->getMailerMessage();
+
+        $this->assertEmailHtmlBodyContains($email, 'export de la liste des utilisateurs');
+        $this->assertEmailAddressContains($email, 'To', $userEmail);
+    }
+
+    public function testHandleGenerateListXlsxForRT()
+    {
+        self::bootKernel();
+        $container = static::getContainer();
+        $messageBus = $container->get(MessageBusInterface::class);
+        $userEmail = 'admin-territoire-13-01@histologe.fr';
+        $userRepository = static::getContainer()->get(UserRepository::class);
+        /** @var User $user */
+        $user = $userRepository->findOneBy(['email' => $userEmail]);
+        $searchUser = new SearchUser($user);
+        $message = new UserExportMessage($searchUser, 'xlsx');
         $messageBus->dispatch($message);
         $transport = $container->get('messenger.transport.async_priority_high');
         $envelopes = $transport->get();
