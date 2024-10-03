@@ -59,7 +59,7 @@ class SearchUserType extends AbstractType
             $this->addPartnersField($event->getForm(), $builder->getData()->getTerritory());
         });
         $builder->addEventListener(FormEvents::PRE_SUBMIT, function (FormEvent $event) {
-            if($this->isAdmin && isset($event->getData()['territory'])) {
+            if ($this->isAdmin && isset($event->getData()['territory'])) {
                 $this->addPartnersField($event->getForm(), $event->getData()['territory']);
             }
         });
