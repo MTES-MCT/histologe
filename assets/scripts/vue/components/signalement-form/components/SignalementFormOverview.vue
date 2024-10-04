@@ -7,10 +7,10 @@
       <!-- ADRESSE DU LOGEMENT -->
       <div>
         <div class="fr-grid-row fr-grid-row--gutters fr-grid-row--top">
-          <div class="fr-col-8">
-            <h4 class="fr-h6">Adresse du logement</h4>
+          <div class="fr-col-12 fr-col-md-8">
+            <h4 class="fr-h6 fr-mb-0 fr-mb-md-8v">Adresse du logement</h4>
           </div>
-          <div class="fr-col-4 fr-text--right">
+          <div class="fr-col-12 fr-col-md-4 fr-text--right">
             <button @click="handleEdit('adresse_logement')" class="fr-btn fr-btn--tertiary fr-btn--icon-left fr-icon-edit-line" ref="firstbutton">Editer</button>
           </div>
         </div>
@@ -20,10 +20,10 @@
       <!-- VOS COORDONNES SI OCCUPANT -->
       <div v-if="formStore.data.profil === 'bailleur_occupant' || formStore.data.profil === 'locataire'">
         <div class="fr-grid-row fr-grid-row--gutters fr-grid-row--top">
-          <div class="fr-col-8">
-            <h4 class="fr-h6">Vos coordonnées</h4>
+          <div class="fr-col-12 fr-col-md-8">
+            <h4 class="fr-h6 fr-mb-0 fr-mb-md-8v">Vos coordonnées</h4>
           </div>
-          <div class="fr-col-4 fr-text--right">
+          <div class="fr-col-12 fr-col-md-4 fr-text--right">
             <button @click="handleEdit('vos_coordonnees_occupant')" class="fr-btn fr-btn--tertiary fr-btn--icon-left fr-icon-edit-line">Editer</button>
           </div>
         </div>
@@ -33,10 +33,10 @@
       <!-- VOS COORDONNEES SI TIERS -->
       <div v-else>
         <div class="fr-grid-row fr-grid-row--gutters fr-grid-row--top">
-          <div class="fr-col-8">
-            <h4 class="fr-h6">Vos coordonnées</h4>
+          <div class="fr-col-12 fr-col-md-8">
+            <h4 class="fr-h6 fr-mb-0 fr-mb-md-8v">Vos coordonnées</h4>
           </div>
-          <div class="fr-col-4 fr-text--right">
+          <div class="fr-col-12 fr-col-md-4 fr-text--right">
             <button @click="handleEdit('vos_coordonnees_tiers')"  class="fr-btn fr-btn--tertiary fr-btn--icon-left fr-icon-edit-line">Editer</button>
           </div>
         </div>
@@ -46,10 +46,10 @@
       <!-- LES COORDONNEES DU BAILLEUR -->
       <div v-if="formStore.data.profil !== 'bailleur_occupant' && formStore.data.profil !== 'bailleur'">
         <div class="fr-grid-row fr-grid-row--gutters fr-grid-row--top">
-          <div class="fr-col-8">
-            <h4 class="fr-h6">Les coordonnées du bailleur</h4>
+          <div class="fr-col-12 fr-col-md-8">
+            <h4 class="fr-h6 fr-mb-0 fr-mb-md-8v">Les coordonnées du bailleur</h4>
           </div>
-          <div class="fr-col-4 fr-text--right">
+          <div class="fr-col-12 fr-col-md-4 fr-text--right">
             <button @click="handleEdit('coordonnees_bailleur')" class="fr-btn fr-btn--tertiary fr-btn--icon-left fr-icon-edit-line">Editer</button>
           </div>
         </div>
@@ -59,10 +59,10 @@
       <!-- LES COORDONNEES DU FOYER -->
       <div v-if="formStore.data.profil !== 'bailleur_occupant' && formStore.data.profil !== 'locataire' && formStore.data.profil !== 'service_secours'">
         <div class="fr-grid-row fr-grid-row--gutters fr-grid-row--top">
-          <div class="fr-col-8">
-            <h4 class="fr-h6">Les coordonnées du foyer</h4>
+          <div class="fr-col-12 fr-col-md-8">
+            <h4 class="fr-h6 fr-mb-0 fr-mb-md-8v">Les coordonnées du foyer</h4>
           </div>
-          <div class="fr-col-4 fr-text--right">
+          <div class="fr-col-12 fr-col-md-4 fr-text--right">
             <button @click="handleEdit('coordonnees_occupant')" class="fr-btn fr-btn--tertiary fr-btn--icon-left fr-icon-edit-line" >Editer</button>
           </div>
         </div>
@@ -72,10 +72,10 @@
       <!-- TYPE ET COMPOSITION DU LOGEMENT -->
       <div>
         <div class="fr-grid-row fr-grid-row--gutters fr-grid-row--top">
-          <div class="fr-col-8">
-            <h4 class="fr-h6">Type et composition du logement</h4>
+          <div class="fr-col-12 fr-col-md-8">
+            <h4 class="fr-h6 fr-mb-0 fr-mb-md-8v">Type et composition du logement</h4>
           </div>
-          <div class="fr-col-4 fr-text--right">
+          <div class="fr-col-12 fr-col-md-4 fr-text--right">
             <button @click="handleEdit('ecran_intermediaire_type_composition')" class="fr-btn fr-btn--tertiary fr-btn--icon-left fr-icon-edit-line">Editer</button>
           </div>
         </div>
@@ -92,11 +92,11 @@
       <!-- SITUATION OCCUPANT -->
       <div v-if="formStore.data.profil !== 'service_secours'">
         <div class="fr-grid-row fr-grid-row--gutters fr-grid-row--top">
-          <div class="fr-col-8">
-            <h4 class="fr-h6" v-if="formStore.data.profil === 'bailleur_occupant' || formStore.data.profil === 'locataire'">Votre situation</h4>
-            <h4 class="fr-h6" v-else>La situation du foyer</h4>
+          <div class="fr-col-12 fr-col-md-8">
+            <h4 class="fr-h6 fr-mb-0 fr-mb-md-8v" v-if="formStore.data.profil === 'bailleur_occupant' || formStore.data.profil === 'locataire'">Votre situation</h4>
+            <h4 class="fr-h6 fr-mb-0 fr-mb-md-8v" v-else>La situation du foyer</h4>
           </div>
-          <div class="fr-col-4 fr-text--right">
+          <div class="fr-col-12 fr-col-md-4 fr-text--right">
             <button @click="handleEdit('ecran_intermediaire_situation_occupant')" class="fr-btn fr-btn--tertiary fr-btn--icon-left fr-icon-edit-line">Editer</button>
           </div>
         </div>
@@ -113,10 +113,10 @@
       <!-- LES DESORDRES -->
       <div>
         <div class="fr-grid-row fr-grid-row--gutters fr-grid-row--top">
-          <div class="fr-col-8">
-            <h4 class="fr-h6">Les désordres</h4>
+          <div class="fr-col-12 fr-col-md-8">
+            <h4 class="fr-h6 fr-mb-0 fr-mb-md-8v">Les désordres</h4>
           </div>
-          <div class="fr-col-4 fr-text--right">
+          <div class="fr-col-12 fr-col-md-4 fr-text--right">
             <button @click="handleEdit('ecran_intermediaire_les_desordres')" class="fr-btn fr-btn--tertiary fr-btn--icon-left fr-icon-edit-line">Editer</button>
           </div>
         </div>
@@ -135,10 +135,10 @@
       <!-- LA PROCEDURE  -->
       <div>
         <div class="fr-grid-row fr-grid-row--gutters fr-grid-row--top">
-          <div class="fr-col-8">
-            <h4 class="fr-h6">La procédure</h4>
+          <div class="fr-col-12 fr-col-md-8">
+            <h4 class="fr-h6 fr-mb-0 fr-mb-md-8v">La procédure</h4>
           </div>
-          <div class="fr-col-4 fr-text--right">
+          <div class="fr-col-12 fr-col-md-4 fr-text--right">
             <button @click="handleEdit('info_procedure')" class="fr-btn fr-btn--tertiary fr-btn--icon-left fr-icon-edit-line">Editer</button>
           </div>
         </div>
@@ -156,10 +156,10 @@
       <div v-if="formStore.data.profil !== 'service_secours'">
         <div v-if="hasInformationsComplementaires()">
           <div class="fr-grid-row fr-grid-row--gutters fr-grid-row--top">
-            <div class="fr-col-8">
-              <h3 class="fr-h4">Informations complémentaires</h3>
+            <div class="fr-col-12 fr-col-md-8">
+              <h3 class="fr-h6 fr-mb-0 fr-mb-md-8v">Informations complémentaires</h3>
             </div>
-            <div class="fr-col-4 fr-text--right">
+            <div class="fr-col-12 fr-col-md-4 fr-text--right">
               <button @click="handleEdit('informations_complementaires')" class="fr-btn fr-btn--tertiary fr-btn--icon-left fr-icon-edit-line">Editer</button>
             </div>
           </div>
