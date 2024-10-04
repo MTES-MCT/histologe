@@ -132,14 +132,14 @@ class SearchUser
             $filters['Territoire'] = $this->territory->getZip().' - '.$this->territory->getName();
         }
         if ($this->partners->count()) {
-            $parters = '';
+            $label = '';
             foreach ($this->partners as $partner) {
-                $parters .= $partner->getNom().', ';
+                $label .= $partner->getNom().', ';
             }
-            $parters = substr($parters, 0, -2);
-            $filters['Partenaires'] = $parters;
+            $label = substr($label, 0, -2);
+            $filters['Partenaires'] = $label;
         }
-        if ($this->statut) {
+        if (null !== $this->statut) {
             $filters['Statut'] = User::STATUS_LABELS[$this->statut];
         }
         if ($this->role) {
