@@ -4,6 +4,7 @@ namespace App\Service\DataGouv;
 
 use App\Service\DataGouv\Response\Address;
 use Psr\Log\LoggerInterface;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
 
 class AddressService
@@ -21,7 +22,7 @@ class AddressService
         try {
             $response = $this->httpClient->request('GET', self::API_URL.urlencode($query));
 
-            if (200 === $response->getStatusCode()) {
+            if (Response::HTTP_OK === $response->getStatusCode()) {
                 return $response->toArray();
             }
         } catch (\Throwable $exception) {

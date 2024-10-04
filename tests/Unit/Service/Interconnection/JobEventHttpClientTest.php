@@ -9,6 +9,7 @@ use PHPUnit\Framework\TestCase;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpClient\MockHttpClient;
 use Symfony\Component\HttpClient\Response\MockResponse;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Contracts\HttpClient\Exception\ClientExceptionInterface;
 use Symfony\Contracts\HttpClient\Exception\RedirectionExceptionInterface;
 use Symfony\Contracts\HttpClient\Exception\ServerExceptionInterface;
@@ -50,7 +51,7 @@ class JobEventHttpClientTest extends TestCase
                 ]],
         ]);
         $mockResponse = new MockResponse($mockResponseBody, [
-            'http_code' => 200,
+            'http_code' => Response::HTTP_OK,
         ]);
         $mockHttpClient = new MockHttpClient($mockResponse);
 
@@ -94,5 +95,31 @@ class JobEventHttpClientTest extends TestCase
         );
 
         $jobEventHttpClient->request('GET', 'https://example.com');
+    }
+
+    /**
+     * @throws RedirectionExceptionInterface
+     * @throws TransportExceptionInterface
+     * @throws ClientExceptionInterface
+     * @throws ServerExceptionInterface
+     */
+    public function testRequestWithInternalServerError(): void
+    {
+        $mockResponse = new MockResponse('Internal server error', [
+            'http_code' => Response::HTTP_INTERNAL_SERVER_ERROR,
+        ]
+        );
+        $mockHttpClient = new MockHttpClient($mockResponse);
+        $jobEventManagerMock = $this->createMock(JobEventManager::class);
+        $loggerMock = $this->createMock(LoggerInterface::class);
+
+        $jobEventHttpClient = new JobEventHttpClient(
+            $mockHttpClient,
+            $jobEventManagerMock,
+            $loggerMock
+        );
+        $options['extra']['job_event_metadata'] = new JobEventMetaData('esabora', 'push_dossier');
+        $response = $jobEventHttpClient->request('GET', 'https://example.com', $options);
+        $this->assertSame('Internal server error', $response->getContent(throw: false));
     }
 }

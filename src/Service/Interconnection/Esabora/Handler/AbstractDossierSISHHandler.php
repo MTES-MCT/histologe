@@ -6,6 +6,7 @@ use App\Entity\JobEvent;
 use App\Entity\Partner;
 use App\Messenger\Message\Esabora\DossierMessageSISH;
 use App\Service\Interconnection\Esabora\AbstractEsaboraService;
+use Symfony\Component\HttpFoundation\Response;
 
 abstract class AbstractDossierSISHHandler implements DossierSISHHandlerInterface
 {
@@ -24,7 +25,7 @@ abstract class AbstractDossierSISHHandler implements DossierSISHHandlerInterface
     {
         $this->sasAdresseId = $dossierMessageSISH->getSasAdresse();
         $this->sasDossierId = $dossierMessageSISH->getSasDossierId();
-        $this->status = 200 === $this->response->getStatusCode() ? JobEvent::STATUS_SUCCESS : JobEvent::STATUS_FAILED;
+        $this->status = Response::HTTP_OK === $this->response->getStatusCode() ? JobEvent::STATUS_SUCCESS : JobEvent::STATUS_FAILED;
     }
 
     public function canFlagAsSynchronized(): bool

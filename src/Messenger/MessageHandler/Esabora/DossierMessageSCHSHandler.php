@@ -5,6 +5,7 @@ namespace App\Messenger\MessageHandler\Esabora;
 use App\Manager\AffectationManager;
 use App\Messenger\Message\Esabora\DossierMessageSCHS;
 use App\Service\Interconnection\Esabora\EsaboraSCHSService;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 use Symfony\Contracts\HttpClient\Exception\ClientExceptionInterface;
 use Symfony\Contracts\HttpClient\Exception\RedirectionExceptionInterface;
@@ -29,7 +30,7 @@ final readonly class DossierMessageSCHSHandler
     public function __invoke(DossierMessageSCHS $schsDossierMessage): void
     {
         $response = $this->esaboraService->pushDossier($schsDossierMessage);
-        if (200 === $response->getStatusCode()) {
+        if (Response::HTTP_OK === $response->getStatusCode()) {
             $this->affectationManager->flagAsSynchronized($schsDossierMessage);
         }
     }
