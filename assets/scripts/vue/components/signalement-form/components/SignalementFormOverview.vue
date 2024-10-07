@@ -222,6 +222,7 @@
             type="button"
             class="fr-btn fr-btn--secondary fr-btn--icon-left fr-icon-edit-line"
             @click="handleEdit('informations_complementaires')"
+            aria-label="Ajouter des informations complémentaires"
             >
             Ajouter des informations
           </button>
