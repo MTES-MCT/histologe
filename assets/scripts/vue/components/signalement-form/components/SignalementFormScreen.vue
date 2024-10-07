@@ -39,9 +39,9 @@
         v-model="formStore.data[component.slug]"
         :hasError="formStore.validationErrors[component.slug] !== undefined"
         :error="formStore.validationErrors[component.slug]"
-        :class="{ 'fr-hidden': component.conditional && !formStore.shouldShowField(component.conditional.show) }"
-        :aria-hidden="component.conditional && !formStore.shouldShowField(component.conditional.show) ? true : undefined"
-        :hidden="component.conditional && !formStore.shouldShowField(component.conditional.show) ? true : undefined"
+        :class="{ 'fr-hidden': isComponentHidden(component) }"
+        :aria-hidden="isComponentHidden(component) ? true : undefined"
+        :hidden="isComponentHidden(component) ? true : undefined"
         :autocomplete="component.autocomplete"
         :clickEvent="handleClickComponent"
         :handleClickComponent="handleClickComponent"
@@ -315,6 +315,9 @@ export default defineComponent({
     },
     gotoHomepage () {
       window.location.href = '/'
+    },
+    isComponentHidden (component:any) {
+      return component.conditional && !formStore.shouldShowField(component.conditional.show)
     }
   }
 })
