@@ -152,7 +152,7 @@ class NotificationRepository extends ServiceEntityRepository implements EntityCl
             ->setParameter('is_seen', 0)
             ->setParameter('type_notification', Notification::TYPE_SUIVI)
             ->setParameter('statut', Signalement::STATUS_CLOSED)
-            ->setParameter('description', '%'.Suivi::DESCRIPTION_MOTIF_CLOTURE_ALL.'%')
+            ->setParameter('description', Suivi::DESCRIPTION_MOTIF_CLOTURE_ALL.'%')
             ->setParameter('user', $user);
 
         if (null !== $territory) {
@@ -180,8 +180,8 @@ class NotificationRepository extends ServiceEntityRepository implements EntityCl
             ->andWhere('su.description NOT LIKE :description_all AND su.description LIKE :description_partner')
             ->setParameter('is_seen', 0)
             ->setParameter('type_notification', Notification::TYPE_SUIVI)
-            ->setParameter('description_all', '%'.Suivi::DESCRIPTION_MOTIF_CLOTURE_ALL.'%')
-            ->setParameter('description_partner', '%'.Suivi::DESCRIPTION_MOTIF_CLOTURE_PARTNER.'%')
+            ->setParameter('description_all', Suivi::DESCRIPTION_MOTIF_CLOTURE_ALL.'%')
+            ->setParameter('description_partner', Suivi::DESCRIPTION_MOTIF_CLOTURE_PARTNER.'%')
             ->setParameter('status_closed', SignalementStatus::CLOSED)
             ->setParameter('user', $user);
 
