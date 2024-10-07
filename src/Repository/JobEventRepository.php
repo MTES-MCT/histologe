@@ -29,6 +29,9 @@ class JobEventRepository extends ServiceEntityRepository implements EntityCleane
         parent::__construct($registry, JobEvent::class);
     }
 
+    /**
+     * @throws \DateMalformedStringException
+     */
     public function findLastJobEventByInterfacageType(
         string $type,
         int $dayPeriod,
@@ -38,15 +41,15 @@ class JobEventRepository extends ServiceEntityRepository implements EntityCleane
             ->select('MAX(j.createdAt) AS last_event, p.id, p.nom, s.reference, j.status, j.action, j.codeStatus, j.response')
             ->innerJoin(Signalement::class, 's', 'WITH', 's.id = j.signalementId')
             ->innerJoin(Partner::class, 'p', 'WITH', 'p.id = j.partnerId')
-            ->where('j.service LIKE :service')
-            ->andWhere('DATEDIFF(NOW(),j.createdAt) <= :day_period');
+            ->where('j.service = :service')
+            ->andWhere('j.createdAt >= :date_limit');
 
         if (null !== $territory) {
             $qb->andWhere('p.territory = :territory')->setParameter('territory', $territory);
         }
 
-        $qb->setParameter('service', '%'.$type.'%')
-            ->setParameter('day_period', $dayPeriod)
+        $qb->setParameter('service', $type)
+            ->setParameter('date_limit', new \DateTimeImmutable('-'.$dayPeriod.' days'))
             ->groupBy('p.id, p.nom, s.reference, j.action, j.status, j.codeStatus, j.response')
             ->orderBy('last_event', 'DESC');
 
@@ -62,8 +65,8 @@ class JobEventRepository extends ServiceEntityRepository implements EntityCleane
             ->select('MAX(j.createdAt) AS last_event')
             ->innerJoin(Partner::class, 'p', 'WITH', 'p.id = j.partnerId')
             ->where('p.id = :partner')->setParameter('partner', $partner->getId())
-            ->andWhere('j.service LIKE :service')
-            ->setParameter('service', '%'.InterfacageType::ESABORA->value.'%')
+            ->andWhere('j.service = :service')
+            ->setParameter('service', InterfacageType::ESABORA->value)
             ->getQuery()
             ->getOneOrNullResult();
     }
@@ -84,8 +87,8 @@ class JobEventRepository extends ServiceEntityRepository implements EntityCleane
 
         $qb->where('j.status = :statusFailed')
             ->setParameter('statusFailed', JobEvent::STATUS_FAILED)
-            ->andWhere('j.service LIKE :service')
-            ->setParameter('service', '%'.InterfacageType::ESABORA->value.'%')
+            ->andWhere('j.service = :service')
+            ->setParameter('service', InterfacageType::ESABORA->value)
             ->andWhere('j.partnerType LIKE :partnerType')
             ->setParameter('partnerType', $partnerType->value)
             ->andWhere('j.action = :action')
