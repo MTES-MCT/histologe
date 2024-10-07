@@ -11,7 +11,7 @@ class DossierEventsSCHSCollectionResponse
     private ?string $documentTypeName = null;
     private ?string $errorReason = null;
 
-    /** @var DossierEventSCHS[] */
+    /** @var DossierEventSCHS[] $collection */
     private array $collection = [];
 
     public function __construct(array $response, int $statusCode)
