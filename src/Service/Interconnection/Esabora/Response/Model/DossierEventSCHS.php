@@ -2,30 +2,45 @@
 
 namespace App\Service\Interconnection\Esabora\Response\Model;
 
-use App\Service\Interconnection\Esabora\Response\DossierEventsSCHSResponse;
-
 class DossierEventSCHS
 {
-    private DossierEventsSCHSResponse $dossierEvents;
-    private array $originalData;
-    private string $date;
-    private string $description;
-    private ?string $piecesJointes;
-    private int $eventId;
+    public const int SAS_REFERENCE_DOSSIER = 0;
+    public const int EVT_DATE = 1;
+    public const int EVT_PRESENTATION = 2;
+    public const int EVT_DOCUMENTS = 3;
+    public const int EVT_LIBELLE = 4;
 
-    public function __construct(array $event, DossierEventsSCHSResponse $dossierEvents)
+    private ?int $searchId = null;
+    private ?string $documentTypeName = null;
+    private ?int $eventId = null;
+    private ?string $sasReference = null;
+    private array $originalData = [];
+    private ?string $date = null;
+    private ?string $presentation = null;
+    private ?string $documents = null;
+    private ?string $libelle = null;
+
+    public function __construct(array $event)
     {
-        $this->dossierEvents = $dossierEvents;
-        $this->originalData = $event;
-        $this->date = $event['columnDataList'][1];
-        $this->description = $event['columnDataList'][2];
-        $this->piecesJointes = $event['columnDataList'][3];
-        $this->eventId = $event['keyDataList'][1];
+        if (!empty($event)) {
+            $this->originalData = $event;
+            $this->eventId = $event['keyDataList'][1];
+            $this->searchId = $event['searchId'];
+            $this->documentTypeName = $event['documentTypeName'];
+            $data = $event['columnDataList'] ?? null;
+            if (null !== $data) {
+                $this->sasReference = $data[self::SAS_REFERENCE_DOSSIER];
+                $this->date = $data[self::EVT_DATE];
+                $this->presentation = $data[self::EVT_PRESENTATION];
+                $this->documents = $data[self::EVT_DOCUMENTS];
+                $this->libelle = $data[self::EVT_LIBELLE];
+            }
+        }
     }
 
-    public function getDossierEvents(): DossierEventsSCHSResponse
+    public function getSasReference(): ?string
     {
-        return $this->dossierEvents;
+        return $this->sasReference;
     }
 
     public function getOriginalData(): array
@@ -38,18 +53,33 @@ class DossierEventSCHS
         return $this->date;
     }
 
-    public function getDescription(): string
+    public function getPresentation(): string
     {
-        return $this->description;
+        return $this->presentation;
     }
 
-    public function getPiecesJointes(): ?string
+    public function getDocuments(): ?string
     {
-        return $this->piecesJointes;
+        return $this->documents;
     }
 
     public function getEventId(): int
     {
         return $this->eventId;
+    }
+
+    public function getLibelle(): ?string
+    {
+        return $this->libelle;
+    }
+
+    public function getSearchId(): ?int
+    {
+        return $this->searchId;
+    }
+
+    public function getDocumentTypeName(): ?string
+    {
+        return $this->documentTypeName;
     }
 }

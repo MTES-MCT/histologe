@@ -5,7 +5,7 @@ namespace App\Service\Interconnection\Esabora;
 use App\Entity\Affectation;
 use App\Messenger\Message\Esabora\DossierMessageSCHS;
 use App\Service\Interconnection\Esabora\Response\DossierEventFilesSCHSResponse;
-use App\Service\Interconnection\Esabora\Response\DossierEventsSCHSResponse;
+use App\Service\Interconnection\Esabora\Response\DossierEventsSCHSCollectionResponse;
 use App\Service\Interconnection\Esabora\Response\DossierStateSCHSResponse;
 use App\Service\Interconnection\Esabora\Response\Model\DossierEventSCHS;
 use App\Service\Interconnection\JobEventMetaData;
@@ -95,12 +95,10 @@ class EsaboraSCHSService extends AbstractEsaboraService
         );
     }
 
-    /**
-     * @throws \Exception
-     */
-    public function getDossierEvents(Affectation $affectation): DossierEventsSCHSResponse
+    public function getDossierEvents(Affectation $affectation): DossierEventsSCHSCollectionResponse
     {
         list($url, $token) = $affectation->getPartner()->getEsaboraCredential();
+        $statusCode = Response::HTTP_SERVICE_UNAVAILABLE;
         $payload = [
             'searchName' => 'WS_EVT_DOSSIER_SAS',
             'criterionList' => [
@@ -122,27 +120,38 @@ class EsaboraSCHSService extends AbstractEsaboraService
             partnerType: $affectation->getPartner()->getType(),
         );
 
-        $response = $this->request($url, $token, $payload, $options);
+        try {
+            $response = $this->request($url, $token, $payload, $options);
 
-        if ($response instanceof JsonResponse) {
-            throw new \Exception(json_decode($response->getContent())->message);
+            $statusCode = $response->getStatusCode();
+
+            return new DossierEventsSCHSCollectionResponse(
+                Response::HTTP_INTERNAL_SERVER_ERROR !== $statusCode
+                    ? $response->toArray(throw: false)
+                    : [],
+                $statusCode
+            );
+        } catch (\Throwable $exception) {
+            return new DossierEventsSCHSCollectionResponse(
+                ['message' => $exception->getMessage(), 'status_code' => $statusCode],
+                $statusCode
+            );
         }
-
-        return new DossierEventsSCHSResponse($response, $affectation);
     }
 
     /**
      * @throws \Exception
      */
-    public function getDossierEventFiles(DossierEventSCHS $event): DossierEventFilesSCHSResponse
-    {
-        $affectation = $event->getDossierEvents()->getAffectation();
+    public function getDossierEventFiles(
+        Affectation $affectation,
+        DossierEventSCHS $dossierEventSCHS
+    ): DossierEventFilesSCHSResponse {
         list($url, $token) = $affectation->getPartner()->getEsaboraCredential();
         $url .= self::TASK_GET_DOCUMENTS;
         $options['query'] = [
-            'searchId' => $event->getDossierEvents()->getSearchId(),
-            'documentTypeName' => $event->getDossierEvents()->getDocumentTypeName(),
-            'keyDataListList[1][0]' => $event->getEventId(),
+            'searchId' => $dossierEventSCHS->getSearchId(),
+            'documentTypeName' => $dossierEventSCHS->getDocumentTypeName(),
+            'keyDataListList[1][0]' => $dossierEventSCHS->getEventId(),
         ];
 
         $options['extra']['job_event_metadata'] = new JobEventMetaData(

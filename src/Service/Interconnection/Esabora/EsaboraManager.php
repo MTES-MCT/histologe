@@ -185,6 +185,9 @@ class EsaboraManager
         }
     }
 
+    /**
+     * @throws \Exception
+     */
     public function createOrUpdateArrete(Affectation $affectation, DossierArreteSISH $dossierArreteSISH): void
     {
         $intervention = $this->interventionRepository->findOneBy(['providerId' => $dossierArreteSISH->getArreteId()]);
@@ -223,13 +226,16 @@ class EsaboraManager
         }
     }
 
-    public function createSuiviFromDossierEvent(DossierEventSCHS $event): Suivi
+    public function createSuiviFromDossierEvent(DossierEventSCHS $event, Affectation $affectation): Suivi
     {
+        $description = "Message provenant d\'esabora SCHS :\n".$event->getPresentation();
+
         $suivi = new Suivi();
-        $suivi->setSignalement($event->getDossierEvents()->getAffectation()->getSignalement());
+        $suivi->setCreatedBy($this->userManager->getSystemUser());
+        $suivi->setSignalement($affectation->getSignalement());
         $suivi->setType(Suivi::TYPE_PARTNER);
         $suivi->setContext(Suivi::CONTEXT_SCHS);
-        $suivi->setDescription(nl2br($event->getDescription()));
+        $suivi->setDescription(nl2br($description));
         $suivi->setCreatedAt(\DateTimeImmutable::createFromFormat('d/m/Y', $event->getDate()));
         $suivi->setOriginalData($event->getOriginalData());
         $this->entityManager->persist($suivi);
@@ -237,6 +243,10 @@ class EsaboraManager
         return $suivi;
     }
 
+    /**
+     * @throws \Exception
+     * @throws \Throwable
+     */
     public function addFilesToSuiviFromDossierEventFiles(DossierEventFilesSCHSResponse $eventFiles, Suivi $suivi): int
     {
         $nbFilesAdded = 0;
@@ -251,6 +261,9 @@ class EsaboraManager
         return $nbFilesAdded;
     }
 
+    /**
+     * @throws \Throwable
+     */
     private function addFileToSuivi(string $filePath, string $originalName, Suivi $suivi): bool
     {
         if (!$this->fileScanner->isClean($filePath, false)) {
@@ -267,21 +280,31 @@ class EsaboraManager
             $variantsGenerated = true;
         }
         $file = $this->fileFactory->createInstanceFrom(
-            signalement: $suivi->getSignalement(),
             filename: $fileName,
             title: $originalName,
             type: File::FILE_TYPE_DOCUMENT,
-            isVariantsGenerated: $variantsGenerated,
+            signalement: $suivi->getSignalement(),
             scannedAt: new \DateTimeImmutable(),
+            isVariantsGenerated: $variantsGenerated,
         );
         $this->entityManager->persist($file);
-        $urlDocument = $this->urlGenerator->generate('show_file', ['uuid' => $file->getUuid()], UrlGeneratorInterface::ABSOLUTE_URL);
-        $linkToFile = '<br /><a class="fr-link" target="_blank" rel="noopener" href="'.$urlDocument.'">'.$file->getTitle().'</a>';
+        $urlDocument = $this->urlGenerator->generate(
+            'show_file',
+            ['uuid' => $file->getUuid()],
+            UrlGeneratorInterface::ABSOLUTE_URL
+        );
+        $linkToFile = '<br /><a class="fr-link" target="_blank" rel="noopener" href="'
+            .$urlDocument.'">'
+            .$file->getTitle()
+            .'</a>';
         $suivi->setDescription($suivi->getDescription().$linkToFile);
 
         return true;
     }
 
+    /**
+     * @throws \Exception
+     */
     private function updateFromDossierVisite(Intervention $intervention, DossierVisiteSISH $dossierVisiteSISH): void
     {
         $intervention
@@ -291,6 +314,9 @@ class EsaboraManager
         $this->interventionRepository->save($intervention, true);
     }
 
+    /**
+     * @throws \Exception
+     */
     private function updateFromDossierArrete(Intervention $intervention, DossierArreteSISH $dossierArreteSISH): void
     {
         $intervention
