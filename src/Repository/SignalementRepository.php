@@ -592,15 +592,15 @@ class SignalementRepository extends ServiceEntityRepository
             GROUP_CONCAT(DISTINCT desordreCategories.label SEPARATOR :group_concat_separator_1) as listDesordreCategories,
             GROUP_CONCAT(DISTINCT desordreCriteres.labelCritere SEPARATOR :group_concat_separator_1) as listDesordreCriteres,
             GROUP_CONCAT(DISTINCT tags.label SEPARATOR :group_concat_separator_1) as etiquettes,
+            GROUP_CONCAT(DISTINCT IFNULL(i.occupantPresent, \'\') SEPARATOR :concat_separator) as interventionOccupantPresent,
+            GROUP_CONCAT(DISTINCT IFNULL(i.concludeProcedure, \'\') SEPARATOR :concat_separator) as interventionConcludeProcedure,
+            GROUP_CONCAT(DISTINCT IFNULL(i.details, \'\') SEPARATOR :concat_separator) as interventionDetails,
             GROUP_CONCAT(DISTINCT
                 CONCAT(
                     i.status, :group_concat_separator_1,
-                    i.scheduledAt, :group_concat_separator_1,
-                    IFNULL(i.occupantPresent, \'\'), :group_concat_separator_1,
-                    IFNULL(i.concludeProcedure, \'\'), :group_concat_separator_1,
-                    IFNULL(i.details, \'\')
+                    i.scheduledAt, :group_concat_separator_1
                 )
-                SEPARATOR :group_concat_separator_1
+                SEPARATOR :concat_separator
             ) as interventionsData
             '
         )->leftJoin('s.situations', 'situations')
