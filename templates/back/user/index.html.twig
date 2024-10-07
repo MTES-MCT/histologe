@@ -53,7 +53,12 @@
     </section>
 
     <section class="fr-grid-row fr-grid-row--middle fr-p-5v">
-        <h2 class="fr-h2 fr-mb-0" id="desc-table">{{users|length}} utilisateur{% if users|length > 1%}s{% endif %}</h2>
+        <div class="fr-col">
+            <h2 class="fr-h2 fr-mb-0" id="desc-table">{{users|length}} utilisateur{% if users|length > 1%}s{% endif %}</h2>
+        </div>
+        <div class="fr-col fr-text--right">
+            <a href="{{path('back_user_export', searchUser.urlParams)}}" class="fr-btn fr-btn--secondary fr-btn--icon-left fr-icon-download-fill"> Exporter les résultats </a>
+        </div>
     </section>
 
     <section class="fr-col-12 fr-table fr-table--lg fr-pt-0 fr-px-5v">
@@ -107,7 +112,7 @@
 		</div>
         <div class="fr-grid-row fr-mt-2v fr-grid-row--center">
             {% import '_partials/macros.html.twig' as macros %}
-            {{ macros.customPagination(pages, searchUser.page, 'back_user_index', searchUser.queryStringForUrl) }}
+            {{ macros.customPagination(pages, searchUser.page, 'back_user_index', searchUser.urlParams) }}
         </div>
     </section>
 

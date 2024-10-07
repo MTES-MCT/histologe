@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Dto;
+namespace App\Service;
 
 use App\Entity\Territory;
 use App\Entity\User;
@@ -97,10 +97,13 @@ class SearchUser
         $this->role = $role;
     }
 
-    public function getQueryStringForUrl(): array
+    public function getUrlParams(): array
     {
         $params = [];
         foreach (get_object_vars($this) as $key => $value) {
+            if (in_array($key, ['user', 'page'])) {
+                continue;
+            }
             if ($value instanceof Collection) {
                 if ($value->isEmpty()) {
                     continue;
@@ -112,9 +115,37 @@ class SearchUser
                 $params[$key] = $value;
             }
         }
-        unset($params['user']);
-        unset($params['page']);
+        if (isset($params['territory']) && !$this->getUser()->isSuperAdmin()) {
+            unset($params['territory']);
+        }
 
         return $params;
+    }
+
+    public function getFiltersToText(): array
+    {
+        $filters = [];
+        if ($this->queryUser) {
+            $filters['Recherche'] = $this->queryUser;
+        }
+        if ($this->territory && $this->user->isSuperAdmin()) {
+            $filters['Territoire'] = $this->territory->getZip().' - '.$this->territory->getName();
+        }
+        if ($this->partners->count()) {
+            $label = '';
+            foreach ($this->partners as $partner) {
+                $label .= $partner->getNom().', ';
+            }
+            $label = substr($label, 0, -2);
+            $filters['Partenaires'] = $label;
+        }
+        if (null !== $this->statut) {
+            $filters['Statut'] = User::STATUS_LABELS[$this->statut];
+        }
+        if ($this->role) {
+            $filters['Rôle'] = array_search($this->role, User::ROLESV2);
+        }
+
+        return $filters;
     }
 }

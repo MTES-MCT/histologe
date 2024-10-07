@@ -97,14 +97,18 @@
 
 {% block choice_widget_expanded %}
     <div {{ block('widget_container_attributes') }}>
-    {% for child in form %}
-    <div class="fr-fieldset__element">
-        <div class="fr-checkbox-group">
-            {{form_widget(child)}}
-            {{form_label(child, null, {translation_domain: choice_translation_domain})}}
-        </div>
-    </div>
-    {% endfor %}
+    {% if not form|length and nochoiceslabel is defined %}
+        {{ nochoiceslabel }}
+    {% else %}
+        {% for child in form %}
+            <div class="fr-fieldset__element">
+                <div class="fr-checkbox-group">
+                    {{form_widget(child)}}
+                    {{form_label(child, null, {translation_domain: choice_translation_domain})}}
+                </div>
+            </div>
+        {% endfor %}
+    {% endif %}
     </div>
 {% endblock choice_widget_expanded %}
 
@@ -112,7 +116,7 @@
 {% block search_checkbox_row %}
     <div class="search-checkbox-container">   
         <div class="fr-input-group fr-mb-0">
-            <input type="text" placeholder="{{noselection}}" class="fr-input">
+            <input type="text" placeholder="{{noselectionlabel}}" class="fr-input">
         </div>
         {{ block('choice_widget_expanded') }}
     </div>

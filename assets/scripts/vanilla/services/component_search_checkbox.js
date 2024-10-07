@@ -13,7 +13,12 @@ document.querySelectorAll('.search-checkbox-container')?.forEach(element => {
     })
     //show choices on focus
     input.addEventListener('focus', function() {
-        checkboxesContainer.querySelectorAll('.fr-fieldset__element').forEach((checkbox) => {
+        let elements = checkboxesContainer.querySelectorAll('.fr-fieldset__element');
+        if(!elements.length){
+            checkboxesContainer.style.display = 'block';
+            return;
+        }
+        elements.forEach((checkbox) => {
             checkbox.style.display = '';
         })
         checkboxesContainer.style.display = 'block';

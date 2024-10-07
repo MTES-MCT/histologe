@@ -2,12 +2,12 @@
 
 namespace App\Form;
 
-use App\Dto\SearchUser;
 use App\Entity\Partner;
 use App\Entity\Territory;
 use App\Entity\User;
 use App\Form\Type\SearchCheckboxType;
 use App\Repository\PartnerRepository;
+use App\Service\SearchUser;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\Form\AbstractType;
@@ -15,20 +15,19 @@ use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\Extension\Core\Type\SearchType;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\Form\FormEvent;
+use Symfony\Component\Form\FormEvents;
+use Symfony\Component\Form\FormInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class SearchUserType extends AbstractType
 {
-    private User $user;
     private bool $isAdmin = false;
     private array $roleChoices = [];
 
     public function __construct(
         private readonly Security $security
     ) {
-        /** @var User $user */
-        $user = $this->security->getUser();
-        $this->user = $user;
         $this->roleChoices = User::ROLESV2;
         unset($this->roleChoices['Usager']);
         if ($this->security->isGranted('ROLE_ADMIN')) {
@@ -56,31 +55,14 @@ class SearchUserType extends AbstractType
                 'label' => false,
             ]);
         }
-        $builder->add('partners', SearchCheckboxType::class, [
-            'class' => Partner::class,
-            'query_builder' => function (PartnerRepository $partnerRepository) {
-                if ($this->isAdmin) {
-                    return $partnerRepository->createQueryBuilder('p')
-                        ->select('p', 't')
-                        ->leftJoin('p.territory', 't')
-                        ->orderBy('p.nom', 'ASC');
-                }
-
-                return $partnerRepository->createQueryBuilder('p')
-                    ->where('p.territory = :territory')
-                    ->setParameter('territory', $this->user->getTerritory())
-                    ->orderBy('p.nom', 'ASC');
-            },
-            'choice_label' => function (Partner $partner) {
-                if ($this->isAdmin) {
-                    return $partner->getNom().'  ('.$partner->getTerritory()?->getZip().')';
-                }
-
-                return $partner->getNom();
-            },
-            'label' => false,
-            'noselection' => 'Tous les partenaires',
-        ]);
+        $builder->addEventListener(FormEvents::PRE_SET_DATA, function (FormEvent $event) use ($builder) {
+            $this->addPartnersField($event->getForm(), $builder->getData()->getTerritory());
+        });
+        $builder->addEventListener(FormEvents::PRE_SUBMIT, function (FormEvent $event) {
+            if ($this->isAdmin && isset($event->getData()['territory'])) {
+                $this->addPartnersField($event->getForm(), $event->getData()['territory']);
+            }
+        });
         $builder->add('statut', ChoiceType::class, [
             'choices' => [
                 'Activé' => 1,
@@ -97,6 +79,23 @@ class SearchUserType extends AbstractType
             'label' => false,
         ]);
         $builder->add('page', HiddenType::class);
+    }
+
+    private function addPartnersField(FormInterface $builder, $territory): void
+    {
+        $builder->add('partners', SearchCheckboxType::class, [
+            'class' => Partner::class,
+            'query_builder' => function (PartnerRepository $partnerRepository) use ($territory) {
+                return $partnerRepository->createQueryBuilder('p')
+                    ->where('p.territory = :territory')
+                    ->setParameter('territory', $territory)
+                    ->orderBy('p.nom', 'ASC');
+            },
+            'choice_label' => 'nom',
+            'label' => false,
+            'noselectionlabel' => 'Tous les partenaires',
+            'nochoiceslabel' => !$territory ? 'Sélectionner un territoire pour afficher les partenaires disponibles' : 'Aucun partenaire disponible',
+        ]);
     }
 
     public function configureOptions(OptionsResolver $resolver): void
