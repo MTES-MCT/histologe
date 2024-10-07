@@ -147,7 +147,18 @@ export default defineComponent({
       }
     }
   },
+  created () {
+    this.initializeUploadedFiles()
+  },
   methods: {
+    initializeUploadedFiles () {
+      const files = this.formStore.data[this.id]
+      if (files && Array.isArray(files)) {
+        this.uploadedFiles = files
+      } else {
+        this.uploadedFiles = []
+      }
+    },
     getFileTitle (file: any) {
       if (typeof file === 'string') {
         return file
