@@ -4,15 +4,13 @@ namespace App\Command\Cron;
 
 use App\Entity\Affectation;
 use App\Entity\Enum\PartnerType;
-use App\Entity\JobEvent;
-use App\Manager\JobEventManager;
 use App\Repository\AffectationRepository;
-use App\Service\Esabora\AbstractEsaboraService;
-use App\Service\Esabora\EsaboraManager;
-use App\Service\Esabora\EsaboraServiceInterface;
-use App\Service\Esabora\Response\DossierResponseInterface;
-use App\Service\Esabora\Response\DossierStateSCHSResponse;
-use App\Service\Esabora\Response\DossierStateSISHResponse;
+use App\Service\Interconnection\Esabora\AbstractEsaboraService;
+use App\Service\Interconnection\Esabora\EsaboraManager;
+use App\Service\Interconnection\Esabora\EsaboraServiceInterface;
+use App\Service\Interconnection\Esabora\Response\DossierResponseInterface;
+use App\Service\Interconnection\Esabora\Response\DossierStateSCHSResponse;
+use App\Service\Interconnection\Esabora\Response\DossierStateSISHResponse;
 use App\Service\Mailer\NotificationMail;
 use App\Service\Mailer\NotificationMailerRegistry;
 use App\Service\Mailer\NotificationMailerType;
@@ -33,7 +31,6 @@ class AbstractSynchronizeEsaboraCommand extends AbstractCronCommand
 {
     public function __construct(
         private readonly EsaboraManager $esaboraManager,
-        private readonly JobEventManager $jobEventManager,
         private readonly AffectationRepository $affectationRepository,
         private readonly SerializerInterface $serializer,
         private readonly NotificationMailerRegistry $notificationMailerRegistry,
@@ -69,7 +66,6 @@ class AbstractSynchronizeEsaboraCommand extends AbstractCronCommand
         $uuidSignalement = $input->getArgument('uuid_signalement') ?? null;
         $affectations = $this->affectationRepository->findAffectationSubscribedToEsabora(
             partnerType: $partnerType,
-            isSynchronized: true,
             uuidSignalement: $uuidSignalement
         );
         $countSyncSuccess = 0;
@@ -84,19 +80,6 @@ class AbstractSynchronizeEsaboraCommand extends AbstractCronCommand
                 $io->error(\sprintf('%s', $this->serializer->serialize($dossierResponse, 'json')));
                 ++$countSyncFailed;
             }
-            $this->jobEventManager->createJobEvent(
-                service: AbstractEsaboraService::TYPE_SERVICE,
-                action: AbstractEsaboraService::ACTION_SYNC_DOSSIER,
-                message: json_encode($this->getMessage($affectation, $criterionName)),
-                response: $this->serializer->serialize($dossierResponse, 'json'),
-                status: AbstractEsaboraService::hasSuccess($dossierResponse)
-                    ? JobEvent::STATUS_SUCCESS
-                    : JobEvent::STATUS_FAILED,
-                codeStatus: $dossierResponse->getStatusCode(),
-                signalementId: $affectation->getSignalement()->getId(),
-                partnerId: $affectation->getPartner()->getId(),
-                partnerType: $affectation->getPartner()->getType(),
-            );
         }
         $io->table(['Count success', 'Count Failed'], [[$countSyncSuccess, $countSyncFailed]]);
         $this->notify($partnerType, $countSyncSuccess, $countSyncFailed);

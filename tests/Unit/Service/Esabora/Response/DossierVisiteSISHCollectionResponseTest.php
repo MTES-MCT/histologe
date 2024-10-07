@@ -2,7 +2,7 @@
 
 namespace App\Tests\Unit\Service\Esabora\Response;
 
-use App\Service\Esabora\Response\DossierVisiteSISHCollectionResponse;
+use App\Service\Interconnection\Esabora\Response\DossierVisiteSISHCollectionResponse;
 use PHPUnit\Framework\TestCase;
 
 class DossierVisiteSISHCollectionResponseTest extends TestCase

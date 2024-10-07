@@ -10,7 +10,7 @@ use App\Messenger\Message\Idoss\DossierMessage;
 use App\Messenger\MessageHandler\Idoss\DossierMessageHandler;
 use App\Repository\PartnerRepository;
 use App\Repository\SignalementRepository;
-use App\Service\Idoss\IdossService;
+use App\Service\Interconnection\Idoss\IdossService;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 

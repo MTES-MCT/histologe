@@ -4,12 +4,11 @@ namespace App\Command\Cron;
 
 use App\Entity\Enum\PartnerType;
 use App\Entity\Suivi;
-use App\Manager\JobEventManager;
 use App\Repository\AffectationRepository;
 use App\Repository\SuiviRepository;
-use App\Service\Esabora\EsaboraManager;
-use App\Service\Esabora\EsaboraSCHSService;
-use App\Service\Esabora\Response\Model\DossierEventSCHS;
+use App\Service\Interconnection\Esabora\EsaboraManager;
+use App\Service\Interconnection\Esabora\EsaboraSCHSService;
+use App\Service\Interconnection\Esabora\Response\Model\DossierEventSCHS;
 use App\Service\Mailer\NotificationMail;
 use App\Service\Mailer\NotificationMailerRegistry;
 use App\Service\Mailer\NotificationMailerType;
@@ -37,7 +36,6 @@ class SynchronizeEsaboraSCHSCommand extends AbstractSynchronizeEsaboraCommand
     public function __construct(
         private readonly EsaboraSCHSService $esaboraService,
         private readonly EsaboraManager $esaboraManager,
-        private readonly JobEventManager $jobEventManager,
         private readonly AffectationRepository $affectationRepository,
         private readonly SerializerInterface $serializer,
         private readonly NotificationMailerRegistry $notificationMailerRegistry,
@@ -48,7 +46,6 @@ class SynchronizeEsaboraSCHSCommand extends AbstractSynchronizeEsaboraCommand
     ) {
         parent::__construct(
             $this->esaboraManager,
-            $this->jobEventManager,
             $this->affectationRepository,
             $this->serializer,
             $this->notificationMailerRegistry,

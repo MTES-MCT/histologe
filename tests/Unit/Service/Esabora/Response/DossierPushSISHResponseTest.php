@@ -2,7 +2,7 @@
 
 namespace App\Tests\Unit\Service\Esabora\Response;
 
-use App\Service\Esabora\Response\DossierPushSISHResponse;
+use App\Service\Interconnection\Esabora\Response\DossierPushSISHResponse;
 use PHPUnit\Framework\TestCase;
 
 class DossierPushSISHResponseTest extends TestCase

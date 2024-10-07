@@ -2,6 +2,7 @@
 
 namespace App\Messenger\Message\Esabora;
 
+use App\Entity\Enum\PartnerType;
 use App\Entity\File;
 use App\Messenger\Message\DossierMessageInterface;
 
@@ -14,6 +15,10 @@ final class DossierMessageSCHS implements DossierMessageInterface
     private ?int $signalementId = null;
 
     private ?int $partnerId = null;
+
+    private ?string $action = null;
+
+    private ?PartnerType $partnerType = null;
 
     private ?string $reference = null;
 
@@ -57,6 +62,30 @@ final class DossierMessageSCHS implements DossierMessageInterface
     public function setPartnerId(?int $partnerId): self
     {
         $this->partnerId = $partnerId;
+
+        return $this;
+    }
+
+    public function getPartnerType(): ?PartnerType
+    {
+        return $this->partnerType;
+    }
+
+    public function setPartnerType(?PartnerType $partnerType): self
+    {
+        $this->partnerType = $partnerType;
+
+        return $this;
+    }
+
+    public function getAction(): ?string
+    {
+        return $this->action;
+    }
+
+    public function setAction(?string $action): self
+    {
+        $this->action = $action;
 
         return $this;
     }

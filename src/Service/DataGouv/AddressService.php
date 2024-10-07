@@ -4,11 +4,12 @@ namespace App\Service\DataGouv;
 
 use App\Service\DataGouv\Response\Address;
 use Psr\Log\LoggerInterface;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
 
 class AddressService
 {
-    private const API_URL = 'https://api-adresse.data.gouv.fr/search/?q=';
+    private const string API_URL = 'https://api-adresse.data.gouv.fr/search/?q=';
 
     public function __construct(
         private readonly HttpClientInterface $httpClient,
@@ -21,24 +22,11 @@ class AddressService
         try {
             $response = $this->httpClient->request('GET', self::API_URL.urlencode($query));
 
-            if (200 === $response->getStatusCode()) {
+            if (Response::HTTP_OK === $response->getStatusCode()) {
                 return $response->toArray();
             }
         } catch (\Throwable $exception) {
             $this->logger->error($exception->getMessage());
-        }
-
-        return null;
-    }
-
-    public function getCodeInsee(string $address): ?string
-    {
-        $response = $this->searchAddress($address);
-
-        if (null !== $response && !empty($response['features'])) {
-            $codeInsee = $response['features'][0]['properties']['citycode'];
-
-            return $codeInsee;
         }
 
         return null;

@@ -2,7 +2,7 @@
 
 namespace App\Tests\Unit\Service\Esabora\Response;
 
-use App\Service\Esabora\Response\DossierStateSCHSResponse;
+use App\Service\Interconnection\Esabora\Response\DossierStateSCHSResponse;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\HttpFoundation\Response;
 

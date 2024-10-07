@@ -4,8 +4,8 @@ namespace App\Tests\Unit\Service\Esabora\Handler;
 
 use App\Manager\JobEventManager;
 use App\Repository\PartnerRepository;
-use App\Service\Esabora\EsaboraSISHService;
-use App\Service\Esabora\Handler\DossierServiceHandler;
+use App\Service\Interconnection\Esabora\EsaboraSISHService;
+use App\Service\Interconnection\Esabora\Handler\DossierServiceHandler;
 use App\Tests\FixturesHelper;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
@@ -35,29 +35,14 @@ class DossierServiceHandlerTest extends TestCase
             ->method('pushDossier')
             ->willReturn($this->getDossierSISHResponse('ws_dossier.json'));
 
-        $this->jobEventManager
-            ->expects($this->atLeast(1))
-            ->method('createJobEvent');
-
-        $handler = new DossierServiceHandler(
-            $this->esaboraSISHService,
-            $this->serializer,
-            $this->jobEventManager,
-            $this->partnerRepository
-        );
+        $handler = new DossierServiceHandler($this->esaboraSISHService);
 
         $handler->handle($this->getDossierMessageSISH());
     }
 
     public function testGetPriority(): void
     {
-        $handler = new DossierServiceHandler(
-            $this->esaboraSISHService,
-            $this->serializer,
-            $this->jobEventManager,
-            $this->partnerRepository
-        );
-
+        $handler = new DossierServiceHandler($this->esaboraSISHService);
         $this->assertSame(2, $handler::getPriority());
     }
 }

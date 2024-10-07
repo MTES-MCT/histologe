@@ -6,7 +6,7 @@ use App\Entity\JobEvent;
 use App\Messenger\Message\Idoss\DossierMessage;
 use App\Repository\PartnerRepository;
 use App\Repository\SignalementRepository;
-use App\Service\Idoss\IdossService;
+use App\Service\Interconnection\Idoss\IdossService;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 
 #[AsMessageHandler]

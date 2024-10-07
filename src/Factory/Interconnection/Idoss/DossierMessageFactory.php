@@ -4,7 +4,7 @@ namespace App\Factory\Interconnection\Idoss;
 
 use App\Entity\Affectation;
 use App\Messenger\Message\Idoss\DossierMessage;
-use App\Service\Idoss\IdossService;
+use App\Service\Interconnection\Idoss\IdossService;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 
 class DossierMessageFactory

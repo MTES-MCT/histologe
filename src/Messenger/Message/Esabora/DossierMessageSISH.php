@@ -2,11 +2,12 @@
 
 namespace App\Messenger\Message\Esabora;
 
+use App\Entity\Enum\PartnerType;
 use App\Entity\Enum\SISHDossierType;
 use App\Entity\File;
 use App\Messenger\Message\DossierMessageInterface;
-use App\Service\Esabora\Enum\PersonneType;
-use App\Service\Esabora\Model\DossierMessageSISHPersonne;
+use App\Service\Interconnection\Esabora\Enum\PersonneType;
+use App\Service\Interconnection\Esabora\Model\DossierMessageSISHPersonne;
 
 final class DossierMessageSISH implements DossierMessageInterface
 {
@@ -15,7 +16,8 @@ final class DossierMessageSISH implements DossierMessageInterface
     private ?string $signalementUrl = null;
     private ?int $signalementId = null;
     private ?int $partnerId = null;
-    private ?string $partnerType = null;
+    private ?PartnerType $partnerType = null;
+    private ?string $action = null;
     private ?string $referenceAdresse = null;
     private ?string $localisationNumero = null;
     private ?string $localisationNumeroExt = null;
@@ -138,14 +140,26 @@ final class DossierMessageSISH implements DossierMessageInterface
         return $this;
     }
 
-    public function getPartnerType(): ?string
+    public function getPartnerType(): ?PartnerType
     {
         return $this->partnerType;
     }
 
-    public function setPartnerType(?string $partnerType): self
+    public function setPartnerType(?PartnerType $partnerType): self
     {
         $this->partnerType = $partnerType;
+
+        return $this;
+    }
+
+    public function getAction(): ?string
+    {
+        return $this->action;
+    }
+
+    public function setAction(?string $action): self
+    {
+        $this->action = $action;
 
         return $this;
     }

@@ -3,10 +3,9 @@
 namespace App\Command\Cron;
 
 use App\Entity\Enum\PartnerType;
-use App\Manager\JobEventManager;
 use App\Repository\AffectationRepository;
-use App\Service\Esabora\EsaboraManager;
-use App\Service\Esabora\EsaboraSISHService;
+use App\Service\Interconnection\Esabora\EsaboraManager;
+use App\Service\Interconnection\Esabora\EsaboraSISHService;
 use App\Service\Mailer\NotificationMailerRegistry;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
@@ -24,7 +23,6 @@ class SynchronizeEsaboraSISHCommand extends AbstractSynchronizeEsaboraCommand
     public function __construct(
         private readonly EsaboraSISHService $esaboraService,
         private readonly EsaboraManager $esaboraManager,
-        private readonly JobEventManager $jobEventManager,
         private readonly AffectationRepository $affectationRepository,
         private readonly SerializerInterface $serializer,
         private readonly NotificationMailerRegistry $notificationMailerRegistry,
@@ -32,7 +30,6 @@ class SynchronizeEsaboraSISHCommand extends AbstractSynchronizeEsaboraCommand
     ) {
         parent::__construct(
             $this->esaboraManager,
-            $this->jobEventManager,
             $this->affectationRepository,
             $this->serializer,
             $this->notificationMailerRegistry,

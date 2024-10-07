@@ -5,9 +5,10 @@ namespace App\Tests\Unit\Factory\Esabora;
 use App\Entity\Enum\PartnerType;
 use App\Factory\Interconnection\Esabora\DossierMessageSISHFactory;
 use App\Repository\SuiviRepository;
-use App\Service\Esabora\AbstractEsaboraService;
+use App\Service\Interconnection\Esabora\AbstractEsaboraService;
 use App\Service\UploadHandlerService;
 use App\Tests\FixturesHelper;
+use Doctrine\ORM\NonUniqueResultException;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
@@ -15,8 +16,11 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 class DossierMessageSISHFactoryTest extends TestCase
 {
     use FixturesHelper;
-    private const FILE = __DIR__.'/../../../../src/DataFixtures/Images/sample.png';
+    private const string FILE = __DIR__.'/../../../../src/DataFixtures/Images/sample.png';
 
+    /**
+     * @throws NonUniqueResultException
+     */
     public function testDossierMessageFactoryIsFullyCreated()
     {
         $affectation = $this->getSignalementAffectation(PartnerType::ARS);
@@ -61,7 +65,7 @@ class DossierMessageSISHFactoryTest extends TestCase
         $dossierMessage = $dossierMessageFactory->createInstance($affectation);
         $this->assertEquals(1.5, $dossierMessage->getSignalementScore());
         $this->assertCount(2, $dossierMessage->getPiecesJointesDocuments());
-        $this->assertEquals(PartnerType::ARS->value, $dossierMessage->getPartnerType());
+        $this->assertEquals(PartnerType::ARS, $dossierMessage->getPartnerType());
         $this->assertStringContainsString('Etat', $dossierMessage->getSignalementProblemes());
         $this->assertCount(2, $dossierMessage->getPersonnes());
         $this->assertEquals('Rue du test', $dossierMessage->getLocalisationAdresse1());

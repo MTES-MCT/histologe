@@ -270,8 +270,8 @@ class LoadSignalementData extends Fixture implements OrderedFixtureInterface
                 filename: $document['file'],
                 title: $document['titre'],
                 type: \in_array(pathinfo($document['file'], \PATHINFO_EXTENSION), File::IMAGE_EXTENSION)
-                    ? File::FILE_TYPE_DOCUMENT
-                    : File::FILE_TYPE_PHOTO,
+                    ? File::FILE_TYPE_PHOTO
+                    : File::FILE_TYPE_DOCUMENT,
                 signalement: $signalement,
                 user: $user,
                 documentType: DocumentType::AUTRE

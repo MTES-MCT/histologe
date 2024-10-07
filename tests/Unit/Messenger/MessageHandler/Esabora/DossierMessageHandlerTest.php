@@ -2,18 +2,20 @@
 
 namespace App\Tests\Unit\Messenger\MessageHandler\Esabora;
 
-use App\Entity\Partner;
 use App\Manager\AffectationManager;
-use App\Manager\JobEventManager;
+use App\Messenger\Message\Esabora\DossierMessageSISH;
 use App\Messenger\MessageHandler\Esabora\DossierMessageSCHSHandler;
-use App\Repository\PartnerRepository;
-use App\Service\Esabora\EsaboraSCHSService;
+use App\Messenger\MessageHandler\Esabora\DossierMessageSISHHandler;
+use App\Service\Interconnection\Esabora\EsaboraSCHSService;
+use App\Service\Interconnection\Esabora\Handler\DossierSISHHandlerInterface;
 use App\Tests\FixturesHelper;
 use Faker\Factory;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\HttpClient\MockHttpClient;
 use Symfony\Component\HttpClient\Response\MockResponse;
-use Symfony\Component\Serializer\SerializerInterface;
+use Symfony\Contracts\HttpClient\Exception\ClientExceptionInterface;
+use Symfony\Contracts\HttpClient\Exception\RedirectionExceptionInterface;
+use Symfony\Contracts\HttpClient\Exception\ServerExceptionInterface;
 use Symfony\Contracts\HttpClient\Exception\TransportExceptionInterface;
 
 class DossierMessageHandlerTest extends TestCase
@@ -22,8 +24,11 @@ class DossierMessageHandlerTest extends TestCase
 
     /**
      * @throws TransportExceptionInterface
+     * @throws ServerExceptionInterface
+     * @throws RedirectionExceptionInterface
+     * @throws ClientExceptionInterface
      */
-    public function testProcessDossierMessage(): void
+    public function testProcessDossierMessageSCHS(): void
     {
         $faker = Factory::create();
         $dossierMessage = $this->getDossierMessageSCHS();
@@ -38,22 +43,6 @@ class DossierMessageHandlerTest extends TestCase
             ->method('pushDossier')
             ->willReturn($response);
 
-        $jobEventManagerMock = $this->createMock(JobEventManager::class);
-
-        $serializerMock = $this->createMock(SerializerInterface::class);
-        $serializerMock
-            ->expects($this->once())
-            ->method('serialize')
-            ->with($dossierMessage, 'json')
-            ->willReturn(json_encode([]));
-
-        $partnerRepositoryMock = $this->createMock(PartnerRepository::class);
-        $partnerRepositoryMock
-            ->expects($this->once())
-            ->method('find')
-            ->with($dossierMessage->getPartnerId())
-            ->willReturn(new Partner());
-
         $affectationManagerMock = $this->createMock(AffectationManager::class);
         $affectationManagerMock
             ->expects($this->once())
@@ -62,12 +51,30 @@ class DossierMessageHandlerTest extends TestCase
 
         $dossierMessageHandler = new DossierMessageSCHSHandler(
             $esaboraServiceMock,
-            $jobEventManagerMock,
-            $serializerMock,
-            $partnerRepositoryMock,
             $affectationManagerMock
         );
 
         $dossierMessageHandler($dossierMessage);
+    }
+
+    public function testProcessDossierMessageSISH()
+    {
+        $dossierMessageSISH = new DossierMessageSISH();
+
+        $dossierSISHHandlerMock = $this->createMock(DossierSISHHandlerInterface::class);
+        $dossierSISHHandlerMock->expects($this->once())
+            ->method('handle')
+            ->with($dossierMessageSISH);
+        $dossierSISHHandlerMock->expects($this->once())
+            ->method('canFlagAsSynchronized')
+            ->willReturn(true);
+
+        $affectationManagerMock = $this->createMock(AffectationManager::class);
+        $affectationManagerMock->expects($this->once())
+            ->method('flagAsSynchronized')
+            ->with($dossierMessageSISH);
+
+        $handler = new DossierMessageSISHHandler([$dossierSISHHandlerMock], $affectationManagerMock);
+        $handler($dossierMessageSISH);
     }
 }

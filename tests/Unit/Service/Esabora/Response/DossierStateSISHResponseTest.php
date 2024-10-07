@@ -2,8 +2,8 @@
 
 namespace App\Tests\Unit\Service\Esabora\Response;
 
-use App\Service\Esabora\Enum\EsaboraStatus;
-use App\Service\Esabora\Response\DossierStateSISHResponse;
+use App\Service\Interconnection\Esabora\Enum\EsaboraStatus;
+use App\Service\Interconnection\Esabora\Response\DossierStateSISHResponse;
 use PHPUnit\Framework\TestCase;
 
 class DossierStateSISHResponseTest extends TestCase

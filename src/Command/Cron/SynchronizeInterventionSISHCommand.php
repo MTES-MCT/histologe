@@ -6,9 +6,9 @@ use App\Entity\Enum\PartnerType;
 use App\Manager\JobEventManager;
 use App\Repository\AffectationRepository;
 use App\Repository\JobEventRepository;
-use App\Service\Esabora\AbstractEsaboraService;
-use App\Service\Esabora\EsaboraManager;
-use App\Service\Esabora\Handler\InterventionSISHHandlerInterface;
+use App\Service\Interconnection\Esabora\AbstractEsaboraService;
+use App\Service\Interconnection\Esabora\EsaboraManager;
+use App\Service\Interconnection\Esabora\Handler\InterventionSISHHandlerInterface;
 use App\Service\Mailer\NotificationMail;
 use App\Service\Mailer\NotificationMailerRegistry;
 use App\Service\Mailer\NotificationMailerType;
@@ -45,7 +45,6 @@ class SynchronizeInterventionSISHCommand extends AbstractSynchronizeEsaboraComma
     ) {
         parent::__construct(
             $this->esaboraManager,
-            $this->jobEventManager,
             $this->affectationRepository,
             $this->serializer,
             $this->notificationMailerRegistry,

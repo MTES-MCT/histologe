@@ -6,6 +6,7 @@ use App\Entity\Affectation;
 use App\Entity\Enum\PartnerType;
 use App\Entity\Signalement;
 use App\Messenger\Message\Esabora\DossierMessageSCHS;
+use App\Service\Interconnection\Esabora\AbstractEsaboraService;
 use App\Service\UploadHandlerService;
 use App\Utils\AddressParser;
 use App\Utils\EtageParser;
@@ -20,7 +21,8 @@ class DossierMessageSCHSFactory extends AbstractDossierMessageFactory
 
     public function supports(Affectation $affectation): bool
     {
-        return $this->isEsaboraPartnerActive($affectation) && PartnerType::COMMUNE_SCHS === $affectation->getPartner()->getType();
+        return $this->isEsaboraPartnerActive($affectation)
+            && PartnerType::COMMUNE_SCHS === $affectation->getPartner()->getType();
     }
 
     public function createInstance(Affectation $affectation): DossierMessageSCHS
@@ -38,9 +40,11 @@ class DossierMessageSCHSFactory extends AbstractDossierMessageFactory
             : null;
 
         return (new DossierMessageSCHS())
+            ->setAction(AbstractEsaboraService::ACTION_PUSH_DOSSIER)
             ->setUrl($partner->getEsaboraUrl())
             ->setToken($partner->getEsaboraToken())
             ->setPartnerId($partner->getId())
+            ->setPartnerType($partner->getType())
             ->setSignalementId($signalement->getId())
             ->setReference($signalement->getUuid())
             ->setNomUsager($nomUsager)
@@ -77,8 +81,10 @@ class DossierMessageSCHSFactory extends AbstractDossierMessageFactory
         $commentaire .= $signalement->getIsProprioAverti() ? 'OUI' : 'NON';
 
         if ($signalement->getCreatedFrom()) {
-            $commentaire .= \PHP_EOL.'Nb personnes : '.$signalement->getTypeCompositionLogement()->getCompositionLogementNombrePersonnes();
-            $commentaire .= \PHP_EOL.'Enfants moins de 6 ans : '.$signalement->getTypeCompositionLogement()->getCompositionLogementEnfants();
+            $commentaire .= \PHP_EOL.'Nb personnes : '
+                .$signalement->getTypeCompositionLogement()->getCompositionLogementNombrePersonnes();
+            $commentaire .= \PHP_EOL.'Enfants moins de 6 ans : '
+                .$signalement->getTypeCompositionLogement()->getCompositionLogementEnfants();
         } else {
             $commentaire .= \PHP_EOL.'Adultes : '.$signalement->getNbAdultes().' Adulte(s)';
             $commentaire .= $this->buildNbEnfants($signalement);
@@ -91,7 +97,7 @@ class DossierMessageSCHSFactory extends AbstractDossierMessageFactory
         return $commentaire;
     }
 
-    private function buildNbEnfants(Signalement $signalement)
+    private function buildNbEnfants(Signalement $signalement): string
     {
         $suffix = '';
         if (null !== $signalement->getNbEnfantsM6() && str_ends_with($signalement->getNbEnfantsM6(), '+')
