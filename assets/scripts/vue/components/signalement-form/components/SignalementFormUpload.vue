@@ -31,6 +31,7 @@
         <button
           class="fr-link fr-icon-close-circle-line fr-link--icon-left fr-link--error"
           @click="deleteFile(file)"
+          :aria-label="'Supprimer le fichier ' + getFileTitle(file)"
           >
           Supprimer
         </button>
