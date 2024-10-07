@@ -306,6 +306,22 @@ and signalement.profileDeclarant is not same as enum('App\\Entity\\Enum\\Profile
 	{% endif %}
 </div>
 
+<h4 class="fr-mb-2v">Documents</h4>
+<div class="fr-mb-4v">
+	{% if signalement.files|filter(photo => photo.fileType == 'document')|length %}
+		Cliquez sur le document pour l'ouvrir dans un nouvel onglet.
+		<br>
+		{% for doc in signalement.files|filter(doc => doc.fileType == 'document' and doc.isUsagerFile) %}
+			<a href="{{ path('show_file', {uuid: doc.uuid}) }}" target="_blank" class="fr-link" rel="noopener">
+				{{doc.title}}
+			</a>
+			<br>
+		{% endfor %}
+	{% else %}
+		Aucune photo à afficher, si vous avez ajouté des photos dans votre signalement, rafraîchissez la page pour les voir apparaître.
+	{% endif %}
+</div>
+
 <div class="fr-mb-4v">
 	<h4 class="fr-mb-2v">Procédures et démarches</h4>
 	<section class="fr-accordion fr-mb-4v">
