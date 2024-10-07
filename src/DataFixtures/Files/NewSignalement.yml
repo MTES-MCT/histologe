@@ -122,7 +122,7 @@ signalements:
     nb_pieces_logement: 5
     nb_occupants_logement: 4
     score: 35.194711538462
-    created_from_uuid: '00000000-0000-0000-2023-locataire003'
+    created_from_uuid: '00000000-0000-0000-2024-locataire001'
     profile_declarant: "LOCATAIRE"
     civilite_occupant: "mme"
     type_composition_logement: "{\"bail_dpe_dpe\": \"oui\", \"bail_dpe_bail\": \"oui\", \"type_logement_rdc\": null, \"type_logement_nature\": \"maison\", \"bail_dpe_etat_des_lieux\": \"oui\", \"bail_dpe_date_emmenagement\": \"2019-12-01\", \"type_logement_commodites_wc\": \"oui\", \"type_logement_dernier_etage\": null, \"composition_logement_enfants\": \"oui\", \"composition_logement_hauteur\": \"oui\", \"composition_logement_nb_pieces\": \"5\", \"composition_logement_superficie\": \"67\", \"type_logement_commodites_cuisine\": \"oui\", \"composition_logement_piece_unique\": \"plusieurs_pieces\", \"type_logement_commodites_wc_cuisine\": \"non\", \"type_logement_sous_sol_sans_fenetre\": null, \"composition_logement_nombre_personnes\": \"4\", \"type_logement_commodites_salle_de_bain\": \"oui\", \"type_logement_commodites_wc_collective\": null, \"type_logement_sous_comble_sans_fenetre\": null, \"type_logement_commodites_piece_a_vivre_9m\": \"oui\", \"type_logement_commodites_cuisine_collective\": null, \"type_logement_commodites_salle_de_bain_collective\": null}"
@@ -295,7 +295,7 @@ signalements:
     nb_pieces_logement: 5
     nb_occupants_logement: 4
     score: 35.194711538462
-    created_from_uuid: '00000000-0000-0000-2024-locataire002'
+    created_from_uuid: '00000000-0000-0000-2023-locataire004'
     profile_declarant: "LOCATAIRE"
     civilite_occupant: "mme"
     type_composition_logement: "{\"bail_dpe_dpe\": \"oui\", \"bail_dpe_bail\": \"oui\", \"type_logement_rdc\": null, \"type_logement_nature\": \"maison\", \"bail_dpe_etat_des_lieux\": \"oui\", \"bail_dpe_date_emmenagement\": \"2019-12-01\", \"type_logement_commodites_wc\": \"oui\", \"type_logement_dernier_etage\": null, \"composition_logement_enfants\": \"oui\", \"composition_logement_hauteur\": \"oui\", \"composition_logement_nb_pieces\": \"5\", \"composition_logement_superficie\": \"67\", \"type_logement_commodites_cuisine\": \"oui\", \"composition_logement_piece_unique\": \"plusieurs_pieces\", \"type_logement_commodites_wc_cuisine\": \"non\", \"type_logement_sous_sol_sans_fenetre\": null, \"composition_logement_nombre_personnes\": \"4\", \"type_logement_commodites_salle_de_bain\": \"oui\", \"type_logement_commodites_wc_collective\": null, \"type_logement_sous_comble_sans_fenetre\": null, \"type_logement_commodites_piece_a_vivre_9m\": \"oui\", \"type_logement_commodites_cuisine_collective\": null, \"type_logement_commodites_salle_de_bain_collective\": null}"
@@ -381,7 +381,7 @@ signalements:
     nb_pieces_logement: 5
     nb_occupants_logement: 4
     score: 35.194711538462
-    created_from_uuid: '00000000-0000-0000-2024-locataire002'
+    created_from_uuid: '00000000-0000-0000-2024-bailleuroc01'
     profile_declarant: "LOCATAIRE"
     civilite_occupant: "mme"
     type_composition_logement: "{\"bail_dpe_dpe\": \"oui\", \"bail_dpe_bail\": \"oui\", \"type_logement_rdc\": null, \"type_logement_nature\": \"maison\", \"bail_dpe_etat_des_lieux\": \"oui\", \"bail_dpe_date_emmenagement\": \"2019-12-01\", \"type_logement_commodites_wc\": \"oui\", \"type_logement_dernier_etage\": null, \"composition_logement_enfants\": \"oui\", \"composition_logement_hauteur\": \"oui\", \"composition_logement_nb_pieces\": \"5\", \"composition_logement_superficie\": \"67\", \"type_logement_commodites_cuisine\": \"oui\", \"composition_logement_piece_unique\": \"plusieurs_pieces\", \"type_logement_commodites_wc_cuisine\": \"non\", \"type_logement_sous_sol_sans_fenetre\": null, \"composition_logement_nombre_personnes\": \"4\", \"type_logement_commodites_salle_de_bain\": \"oui\", \"type_logement_commodites_wc_collective\": null, \"type_logement_sous_comble_sans_fenetre\": null, \"type_logement_commodites_piece_a_vivre_9m\": \"oui\", \"type_logement_commodites_cuisine_collective\": null, \"type_logement_commodites_salle_de_bain_collective\": null}"
@@ -466,7 +466,7 @@ signalements:
     nb_pieces_logement: 5
     nb_occupants_logement: 4
     score: 35.194711538462
-    created_from_uuid: '00000000-0000-0000-2024-locataire002'
+    created_from_uuid: '00000000-0000-0000-2024-bailleuroc02'
     profile_declarant: "LOCATAIRE"
     civilite_occupant: "mme"
     type_composition_logement: "{\"bail_dpe_dpe\": \"oui\", \"bail_dpe_bail\": \"oui\", \"type_logement_rdc\": null, \"type_logement_nature\": \"maison\", \"bail_dpe_etat_des_lieux\": \"oui\", \"bail_dpe_date_emmenagement\": \"2019-12-01\", \"type_logement_commodites_wc\": \"oui\", \"type_logement_dernier_etage\": null, \"composition_logement_enfants\": \"non\", \"composition_logement_hauteur\": \"oui\", \"composition_logement_nb_pieces\": \"5\", \"composition_logement_superficie\": \"67\", \"type_logement_commodites_cuisine\": \"oui\", \"composition_logement_piece_unique\": \"plusieurs_pieces\", \"type_logement_commodites_wc_cuisine\": \"non\", \"type_logement_sous_sol_sans_fenetre\": null, \"composition_logement_nombre_personnes\": \"4\", \"type_logement_commodites_salle_de_bain\": \"oui\", \"type_logement_commodites_wc_collective\": null, \"type_logement_sous_comble_sans_fenetre\": null, \"type_logement_commodites_piece_a_vivre_9m\": \"oui\", \"type_logement_commodites_cuisine_collective\": null, \"type_logement_commodites_salle_de_bain_collective\": null}"
