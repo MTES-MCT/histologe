@@ -450,6 +450,7 @@ class SuiviRepository extends ServiceEntityRepository
         $list = $qb->getQuery()->getResult();
         $indexed = [];
         foreach ($list as $suivi) {
+            /* @var Suivi $suivi */
             $indexed[$suivi->getOriginalData()['keyDataList'][1]] = $suivi;
         }
 

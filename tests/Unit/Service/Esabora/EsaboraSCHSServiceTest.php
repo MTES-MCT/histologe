@@ -134,8 +134,10 @@ class EsaboraSCHSServiceTest extends KernelTestCase
         $dossierEvents = $esaboraService->getDossierEvents(
             $this->getAffectation(PartnerType::COMMUNE_SCHS)
         );
-        $this->assertEquals($dossierEvents->getSearchId(), '27207');
-        $dossierEventFiles = $esaboraService->getDossierEventFiles($dossierEvents->getEvents()[0]);
+        $this->assertEquals('27207', $dossierEvents->getSearchId());
+        $affectation = $this->getAffectation(PartnerType::COMMUNE_SCHS);
+
+        $dossierEventFiles = $esaboraService->getDossierEventFiles($affectation, $dossierEvents->getCollection()[0]);
         $this->assertNotEmpty($dossierEventFiles->getDocumentZipContent());
     }
 

@@ -2,6 +2,7 @@
 
 namespace App\Command\Cron;
 
+use App\Entity\Affectation;
 use App\Entity\Enum\PartnerType;
 use App\Entity\Suivi;
 use App\Repository\AffectationRepository;
@@ -76,17 +77,22 @@ class SynchronizeEsaboraSCHSCommand extends AbstractSynchronizeEsaboraCommand
 
     protected function synchronizeEvents(): void
     {
-        $affectations = $this->affectationRepository->findAffectationSubscribedToEsabora(partnerType: PartnerType::COMMUNE_SCHS, isSynchronized: true);
+        $affectations = $this->affectationRepository->findAffectationSubscribedToEsabora(
+            partnerType: PartnerType::COMMUNE_SCHS
+        );
         $this->existingEvents = $this->suiviRepository->findExistingEventsForSCHS();
         foreach ($affectations as $affectation) {
             try {
                 $dossierEvents = $this->esaboraService->getDossierEvents($affectation);
-                foreach ($dossierEvents->getEvents() as $event) {
-                    $this->synchronizeEvent($event);
+                foreach ($dossierEvents->getCollection() as $eventItem) {
+                    $this->synchronizeEvent($eventItem, $affectation);
                 }
                 $this->entityManager->flush();
             } catch (\Throwable $exception) {
-                $msg = sprintf('Error while synchronizing events on signalement %s: %s', $affectation->getSignalement()->getUuid(), $exception->getMessage());
+                $msg = sprintf('Error while synchronizing events on signalement %s: %s',
+                    $affectation->getSignalement()->getUuid(),
+                    $exception->getMessage()
+                );
                 $this->io->error($msg);
                 $this->logger->error($msg);
             }
@@ -103,27 +109,36 @@ class SynchronizeEsaboraSCHSCommand extends AbstractSynchronizeEsaboraCommand
         );
     }
 
-    protected function synchronizeEvent(DossierEventSCHS $event): bool
+    protected function synchronizeEvent(DossierEventSCHS $event, Affectation $affectation): bool
     {
         if (isset($this->existingEvents[$event->getEventId()])) {
             return false;
         }
-        $suivi = $this->esaboraManager->createSuiviFromDossierEvent($event);
+        $suivi = $this->esaboraManager->createSuiviFromDossierEvent($event, $affectation);
         ++$this->nbEventsAdded;
-        if (!empty($event->getPiecesJointes())) {
-            $this->synchronizeEventFiles($suivi, $event);
+        if (!empty($event->getDocuments())) {
+            $this->synchronizeEventFiles($suivi, $affectation, $event);
         }
 
         return true;
     }
 
-    protected function synchronizeEventFiles(Suivi $suivi, DossierEventSCHS $event): bool
-    {
+    protected function synchronizeEventFiles(
+        Suivi $suivi,
+        Affectation $affectation,
+        DossierEventSCHS $dossierEventSCHS
+    ): bool {
         try {
-            $dossierEventFiles = $this->esaboraService->getDossierEventFiles($event);
-            $this->nbEventFilesAdded += $this->esaboraManager->addFilesToSuiviFromDossierEventFiles($dossierEventFiles, $suivi);
+            $dossierEventFiles = $this->esaboraService->getDossierEventFiles($affectation, $dossierEventSCHS);
+            $this->nbEventFilesAdded += $this->esaboraManager->addFilesToSuiviFromDossierEventFiles(
+                $dossierEventFiles,
+                $suivi
+            );
         } catch (\Throwable $exception) {
-            $msg = sprintf('Error while synchronizing events files on signalement %s: %s', $event->getDossierEvents()->getAffectation()->getSignalement()->getUuid(), $exception->getMessage());
+            $msg = sprintf('Error while synchronizing events files on signalement %s: %s',
+                $affectation->getSignalement()->getUuid(),
+                $exception->getMessage()
+            );
             $this->io->error($msg);
             $this->logger->error($msg);
         }
