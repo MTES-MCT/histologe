@@ -102,9 +102,11 @@ export default defineComponent({
 }
 .signalement-form-disorder-category-item.is-selected-batiment {
   border: 1px solid var(--border-default-orange-terre-battue);
+  background-color: rgb(228, 121, 74, 0.25);
 }
 .signalement-form-disorder-category-item.is-selected-logement {
   border: 1px solid var(--border-default-blue-france);
+  background-color: var(--blue-france-850-200);
 }
 .signalement-form-disorder-category-item input[type=checkbox] {
   position: absolute;

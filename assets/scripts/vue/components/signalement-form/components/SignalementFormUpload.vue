@@ -1,11 +1,11 @@
 <template>
-<div :class="['fr-mb-6w fr-upload-group', { 'fr-upload-group--disabled': disabled }]" :id="id">
+<div :class="['fr-mb-6w fr-upload-group', { 'fr-upload-group--disabled': disabled }, {'custom-file-input-error' : hasError}]" :id="id">
   <div :class="[ customCss, 'fr-upload-wrap', 'fr-py-3v' ]">
     <input
       type="file"
       :id="id + '_input'"
       :name="id"
-      class="custom-file-input"
+      :class="['custom-file-input']"
       :aria-describedby="hasError ? id + '-text-upload-error-desc-error' : undefined"
       :disabled="disabled"
       :multiple="multiple"
@@ -242,6 +242,11 @@ export default defineComponent({
   outline-offset: 2px;
   outline-style: solid;
   outline-width: 2px;
+}
+.custom-file-input-error{
+  border-left: 3px solid var(--text-default-error);
+  margin-left: 10px;
+  padding-left: 18px;
 }
 .fr-link--error {
   color: var(--text-default-error);

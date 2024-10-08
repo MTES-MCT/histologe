@@ -1,13 +1,6 @@
 <template>
-  <div :class="[ customCss, 'signalement-form-roomlist' ]" :id="id">
+  <div :class="[ customCss, 'signalement-form-roomlist', { 'signalement-form-roomlist-error': hasError } ]" :id="id">
     <label class="fr-label" :for="idPieceAVivre+'_check'">{{ label }}</label>
-    <div
-      id="text-input-error-desc-error"
-      class="fr-error-text"
-      v-if="hasError"
-      >
-      {{ error }}
-    </div>
     <div class="signalement-form-roomlist-rooms">
       <SignalementFormCheckbox
         :key="idPieceAVivre"
@@ -42,6 +35,13 @@
         :error="formStore.validationErrors[idSalleDeBain]"
         @update:modelValue="handleCheckBox(idSalleDeBain)"
       />
+    </div>
+    <div
+      id="text-input-error-desc-error"
+      class="fr-error-text"
+      v-if="hasError"
+      >
+      {{ error }}
     </div>
   </div>
 </template>
@@ -101,6 +101,17 @@ export default defineComponent({
   border-left: 3px solid var(--border-action-high-blue-france);
   margin-left: 10px;
   padding-left: 18px;
+}
+.signalement-form-roomlist-error {
+  border-left: 3px solid var(--text-default-error);
+  margin-left: 10px;
+  padding-left: 18px;
+}
+.signalement-form-roomlist-error .fr-label {
+  color: var(--text-default-error);
+}
+.signalement-form-roomlist-error .fr-checkbox-group input[type="checkbox"] + label::before {
+  background-image: radial-gradient(at 5px 4px,transparent 4px,var(--border-plain-error) 4px,var(--border-plain-error) 5px,transparent 6px),linear-gradient(var(--border-plain-error),var(--border-plain-error)),radial-gradient(at calc(100% - 5px) 4px,transparent 4px,var(--border-plain-error) 4px,var(--border-plain-error) 5px,transparent 6px),linear-gradient(var(--border-plain-error),var(--border-plain-error)),radial-gradient(at calc(100% - 5px) calc(100% - 4px),transparent 4px,var(--border-plain-error) 4px,var(--border-plain-error) 5px,transparent 6px),linear-gradient(var(--border-plain-error),var(--border-plain-error)),radial-gradient(at 5px calc(100% - 4px),transparent 4px,var(--border-plain-error) 4px,var(--border-plain-error) 5px,transparent 6px),linear-gradient(var(--border-plain-error),var(--border-plain-error)),var(--data-uri-svg);
 }
 .signalement-form-roomlist-rooms {
   margin-left: 20px;

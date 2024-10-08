@@ -1,7 +1,7 @@
 <template>
   <fieldset
     :id="id"
-    :class="[customCss, 'signalement-form-only-choice fr-fieldset']"
+    :class="[customCss, 'signalement-form-only-choice fr-fieldset', {'fr-fieldset--error' : hasError} ]"
     :aria-labelledby="id + '-radio-hint-legend'"
     :ref="id"
     >
@@ -101,17 +101,17 @@ export default defineComponent({
 </script>
 
 <style>
-  .signalement-form-only-choice .fr-radio-group {
+  .signalement-form-only-choice .fr-fieldset__element {
     width: 100%;
     max-width: 500px;
     padding: 1rem;
     border: 1px solid var(--border-disabled-grey);
     background-color: var(--grey-1000-50);
   }
-  .signalement-form-only-choice .fr-radio-group:hover {
+  .signalement-form-only-choice .fr-fieldset__element:hover {
     background-color: var(--grey-1000-50-hover);
   }
-  .signalement-form-only-choice .fr-radio-group.is-checked {
+  .signalement-form-only-choice .fr-fieldset__element.is-checked {
     border: 1px solid rgb(0, 0, 145);
   }
 
