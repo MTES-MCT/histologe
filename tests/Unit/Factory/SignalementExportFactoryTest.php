@@ -71,7 +71,7 @@ class SignalementExportFactoryTest extends TestCase
                 Les murs ont des fissures.|De l'eau s’infiltre dans mon logement.|Il y a des trace ",
             'etiquettes' => null,
             'geoloc' => '{"lat": "43.3426152", "lng": "5.3711848"}',
-            'interventionsData' => 'PLANNED|2023-07-13 13:41:15||DONE|2024-06-09 10:00:00',
+            'interventionsData' => 'PLANNED||2023-07-13 13:41:15||DONE||2024-06-09 10:00:00',
             'interventionOccupantPresent' => '||1',
             'interventionConcludeProcedure' => '||RSD,INSALUBRITE',
             'interventionDetails' => '||dossier envoyé pour manquement sanitaire',
