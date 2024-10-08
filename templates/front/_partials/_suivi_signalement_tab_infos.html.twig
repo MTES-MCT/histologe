@@ -294,29 +294,31 @@ and signalement.profileDeclarant is not same as enum('App\\Entity\\Enum\\Profile
 <h4 class="fr-mb-2v">Vos photos</h4>
 <div class="fr-mb-4v">
 	{% if signalement.files|filter(photo => photo.fileType == 'photo' and photo.isUsagerFile)|length %}
-		Les photos que vous avez ajoutées
+		Les photos que vous avez ajoutées.
 	<br>
 		Cliquez sur la photo pour l'ouvrir dans un nouvel onglet.
 		<br>
 		{% for photo in signalement.files|filter(photo => photo.fileType == 'photo' and photo.isUsagerFile) %}
-			<a href="{{ path('show_file', {uuid: photo.uuid}) }}?variant=resize" class="photo-preview" target="_blank" rel="noopener">
+			<a href="{{ path('show_file', {uuid: photo.uuid}) }}?variant=resize" class="photo-preview" target="_blank" rel="noopener"
+				title="Voir la photo {{photo.title}} - ouvre une nouvelle fenêtre">
 				<img src="{{ path('show_file', {uuid: photo.uuid}) }}?variant=thumb" alt="{{photo.title}}">
 			</a>
 		{% endfor %}
 	{% else %}
-		Aucune photo à afficher, si vous avez ajouté des photos dans votre signalement, rafraîchissez la page pour les voir apparaître.
+		Aucune photo à afficher. Si vous avez ajouté des photos dans votre signalement, rafraîchissez la page pour les voir apparaître.
 	{% endif %}
 </div>
 
 {% if signalement.files|filter(photo => photo.fileType == 'photo' and photo.isUsagerFile is same as(false))|length %}
 	<h4 class="fr-mb-2v">Photos supplémentaires</h4>
 	<div class="fr-mb-4v">
-		Les photos ajoutées à votre dossier par l'administration
+		Les photos ajoutées à votre dossier par l'administration.
 		<br>
 		Cliquez sur la photo pour l'ouvrir dans un nouvel onglet.
 		<br>
 		{% for photo in signalement.files|filter(photo => photo.fileType == 'photo' and photo.isUsagerFile is same as(false)) %}
-			<a href="{{ path('show_file', {uuid: photo.uuid}) }}?variant=resize" class="photo-preview" target="_blank" rel="noopener">
+			<a href="{{ path('show_file', {uuid: photo.uuid}) }}?variant=resize" class="photo-preview" target="_blank" rel="noopener" 
+               title="Voir la photo {{photo.title}} - ouvre une nouvelle fenêtre">
 				<img src="{{ path('show_file', {uuid: photo.uuid}) }}?variant=thumb" alt="{{photo.title}}">
 			</a>
 		{% endfor %}
@@ -329,7 +331,8 @@ and signalement.profileDeclarant is not same as enum('App\\Entity\\Enum\\Profile
 		Cliquez sur le document pour l'ouvrir dans un nouvel onglet.
 		<br>
 		{% for doc in signalement.files|filter(doc => doc.fileType == 'document' and doc.isUsagerFile) %}
-			<a href="{{ path('show_file', {uuid: doc.uuid}) }}" target="_blank" class="fr-link" rel="noopener">
+			<a href="{{ path('show_file', {uuid: doc.uuid}) }}" target="_blank" class="fr-link" rel="noopener"
+				title="Voir le document {{doc.title}} - ouvre une nouvelle fenêtre">
 				{{doc.title}}
 			</a>
 			<br>
