@@ -45,7 +45,7 @@ class SuiviRepository extends ServiceEntityRepository
 
         $sql = 'SELECT AVG(nb_suivi) as average_nb_suivi
                 FROM (
-                    SELECT su.signalement_id, s.uuid, count(*) as nb_suivi
+                    SELECT count(*) as nb_suivi
                     FROM suivi su
                     INNER JOIN signalement s on s.id = su.signalement_id
                     WHERE s.statut != :statut
@@ -335,7 +335,7 @@ class SuiviRepository extends ServiceEntityRepository
         ?Partner $partner = null,
         ?Territory $territory = null,
     ): string {
-        $whereTerritory = $wherePartner = $innerPartnerJoin = $whereExcludeUsagerAbandonProcedure
+        $joinMaxDateSuivi = $whereTerritory = $wherePartner = $innerPartnerJoin = $whereExcludeUsagerAbandonProcedure
         = $whereLastSuiviDelay = '';
 
         if (null !== $territory) {
@@ -354,14 +354,18 @@ class SuiviRepository extends ServiceEntityRepository
         if ($dayPeriod > 0) {
             $whereLastSuiviDelay = 'AND su.max_date_suivi < DATE_SUB(NOW(), INTERVAL '.$dayPeriod.' DAY) ';
         }
+        if ($dayPeriod > 0 || null != $partner) {
+            $joinMaxDateSuivi = '
+            INNER JOIN (
+                SELECT signalement_id, MAX(created_at) AS max_date_suivi
+                FROM suivi
+                GROUP BY signalement_id
+            ) su ON s.id = su.signalement_id ';
+        }
 
         return 'SELECT s.id
                 FROM signalement s
-                INNER JOIN (
-                    SELECT signalement_id, MAX(created_at) AS max_date_suivi
-                    FROM suivi
-                    GROUP BY signalement_id
-                ) su ON s.id = su.signalement_id
+                '.$joinMaxDateSuivi.'
                 INNER JOIN (
                     SELECT su.signalement_id
                     FROM suivi su
@@ -372,13 +376,14 @@ class SuiviRepository extends ServiceEntityRepository
                 LEFT JOIN (
                     SELECT su.signalement_id
                     FROM suivi su
+                    INNER JOIN (
+                        SELECT signalement_id, MIN(created_at) AS min_date
+                        FROM suivi
+                        WHERE type = :type_suivi_technical
+                        GROUP BY signalement_id
+                    ) min_suivi ON su.signalement_id = min_suivi.signalement_id
                     WHERE su.type <> :type_suivi_technical
-                    AND su.created_at > (
-                        SELECT MIN(su2.created_at)
-                        FROM suivi su2
-                        WHERE su2.signalement_id = su.signalement_id
-                        AND su2.type = :type_suivi_technical
-                    )
+                    AND su.created_at > min_suivi.min_date
                 ) t2 ON s.id = t2.signalement_id
                         '.$innerPartnerJoin.'
                 WHERE t2.signalement_id IS NULL
