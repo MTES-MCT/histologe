@@ -31,9 +31,11 @@
         :ariaControls="component.ariaControls"
         :tagWhenEdit="component.tagWhenEdit"
         v-model="formStore.data[component.slug]"
-        :hasError="formStore.validationErrors[component.slug]  !== undefined"
+        :hasError="formStore.validationErrors[component.slug] !== undefined"
         :error="formStore.validationErrors[component.slug]"
-        :class="{ 'fr-hidden': component.conditional && !formStore.shouldShowField(component.conditional.show) }"
+        :class="{ 'fr-hidden': !formStore.shouldShowField(component) }"
+        :aria-hidden="!formStore.shouldShowField(component) ? true : undefined"
+        :hidden="!formStore.shouldShowField(component) ? true : undefined"
         :clickEvent="handleClickComponent"
       />
     </div>

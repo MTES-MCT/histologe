@@ -39,9 +39,9 @@
         v-model="formStore.data[component.slug]"
         :hasError="formStore.validationErrors[component.slug] !== undefined"
         :error="formStore.validationErrors[component.slug]"
-        :class="{ 'fr-hidden': isComponentHidden(component) }"
-        :aria-hidden="isComponentHidden(component) ? true : undefined"
-        :hidden="isComponentHidden(component) ? true : undefined"
+        :class="{ 'fr-hidden': !formStore.shouldShowField(component) }"
+        :aria-hidden="!formStore.shouldShowField(component) ? true : undefined"
+        :hidden="!formStore.shouldShowField(component) ? true : undefined"
         :autocomplete="component.autocomplete"
         :clickEvent="handleClickComponent"
         :handleClickComponent="handleClickComponent"
@@ -78,11 +78,11 @@
         :disabled="component.disabled"
         :multiple="component.multiple"
         v-model="formStore.data[component.slug]"
-        :hasError="formStore.validationErrors[component.slug]  !== undefined"
+        :hasError="formStore.validationErrors[component.slug] !== undefined"
         :error="formStore.validationErrors[component.slug]"
-        :class="{ 'fr-hidden': component.conditional && !formStore.shouldShowField(component.conditional.show) }"
-        :aria-hidden="component.conditional && !formStore.shouldShowField(component.conditional.show) ? true : undefined"
-        :hidden="component.conditional && !formStore.shouldShowField(component.conditional.show) ? true : undefined"
+        :class="{ 'fr-hidden': !formStore.shouldShowField(component) }"
+        :aria-hidden="!formStore.shouldShowField(component) ? true : undefined"
+        :hidden="!formStore.shouldShowField(component) ? true : undefined"
         :clickEvent="handleClickComponent"
         :handleClickComponent="handleClickComponent"
         :access_focus="component.accessibility?.focus ?? false"
@@ -238,10 +238,14 @@ export default defineComponent({
       const componentToShow = document.querySelector('#' + slug)
       if (componentToShow) {
         componentToShow.classList.remove('fr-hidden')
+        componentToShow.removeAttribute('aria-hidden')
+        componentToShow.removeAttribute('hidden')
       }
       const buttonToHide = document.querySelector('#' + slugButton)
       if (buttonToHide) {
         buttonToHide.classList.add('fr-hidden')
+        buttonToHide.setAttribute('aria-hidden', 'true')
+        buttonToHide.setAttribute('hidden', 'true')
       }
     },
     toggleComponentBySlug (slug:string, isVisible:string) {
@@ -315,9 +319,6 @@ export default defineComponent({
     },
     gotoHomepage () {
       window.location.href = '/'
-    },
-    isComponentHidden (component:any) {
-      return component.conditional && !formStore.shouldShowField(component.conditional.show)
     }
   }
 })
