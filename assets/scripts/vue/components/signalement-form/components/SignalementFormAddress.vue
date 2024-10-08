@@ -35,6 +35,8 @@
       :id="idShow"
       label="Saisir une adresse manuellement"
       :customCss="buttonCss + ' btn-link fr-btn--icon-left fr-icon-edit-line'"
+      :aria-hidden="buttonCss == 'fr-hidden' ? true : undefined"
+      :hidden="buttonCss == 'fr-hidden' ? true : undefined"
       :action="actionShow"
       :clickEvent="handleClickButton"
     />
@@ -44,6 +46,8 @@
       :id="idSubscreen"
       label=""
       :customCss="subscreenCss + ' fr-mt-3v'"
+      :aria-hidden="subscreenCss == 'fr-hidden' ? true : undefined"
+      :hidden="subscreenCss == 'fr-hidden' ? true : undefined"
       :components="screens"
       v-model="formStore.data[idSubscreen]"
       :hasError="formStore.validationErrors[idSubscreen] !== undefined"

@@ -48,14 +48,18 @@
     <SignalementFormButton
       :id="idShow"
       label="Ajouter un numéro"
-      :customCss="formStore.data[idSecond] === '' || formStore.data[idSecond] === undefined ? 'btn-link fr-btn--icon-left fr-icon-add-line' : 'btn-link fr-btn--icon-left fr-icon-add-line fr-hidden'"
+      :customCss="isHiddenSecond ? 'btn-link fr-btn--icon-left fr-icon-add-line' : 'btn-link fr-btn--icon-left fr-icon-add-line fr-hidden'"
+      :aria-hidden="isHiddenSecond ? undefined : true"
+      :hidden="isHiddenSecond ? undefined : true"
       :action="actionShow"
       :clickEvent="handleClickButton"
       />
 
     <fieldset
       :id=idSecondGroup
-      :class="[ 'fr-fieldset', formStore.data[idSecond] === undefined ? 'fr-hidden' : '' , hasErrorSecond ? 'fr-fieldset--error' : '']"
+      :class="[ 'fr-fieldset', isHiddenSecond ? 'fr-hidden' : '', hasErrorSecond ? 'fr-fieldset--error' : '']"
+      :aria-hidden="isHiddenSecond ? true : undefined"
+      :hidden="isHiddenSecond ? true : undefined"
       :aria-labelledby="id + '-legend-second'"
       >
       <legend class="fr-fieldset__legend--regular fr-fieldset__legend fr-col-12" :id="id + '-legend-second'">
@@ -161,6 +165,9 @@ export default defineComponent({
     },
     getSelectOptionLabel (countryCode:CountryCode) {
       return getCountryNameByCode(countryCode) + ' : +' + getCountryCallingCode(countryCode)
+    },
+    isHiddenSecond () {
+      return formStore.data[this.idSecond] === '' || formStore.data[this.idSecond] === undefined
     }
   },
   computed: {

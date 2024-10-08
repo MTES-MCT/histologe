@@ -116,8 +116,11 @@ const formStore: FormStore = reactive({
   updateData (key: string, value: any) {
     formStore.data[key] = value
   },
-  shouldShowField (conditional: string) {
-    return computed(() => eval(conditional)).value
+  shouldShowField (component: any) {
+    if (!component.conditional) {
+      return true
+    }
+    return computed(() => eval(component.conditional.show)).value
   },
   preprocessScreen (screenBodyComponents: any): Component[] {
     const repeatedComponents: Component[] = []
