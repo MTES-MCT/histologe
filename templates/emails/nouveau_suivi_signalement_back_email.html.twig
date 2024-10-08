@@ -1,14 +1,17 @@
 {% extends 'emails/base_email.html.twig' %}
 
 {% block body %}
-    <p>Bonjour, <br>un nouveau suivi est disponible pour le signalement
-        <strong>#{{ entity.signalement.reference }}</strong> sur votre plateforme
-        {{ platform.name }} par
+    <p>Bonjour,
+        <br>
+        Un nouveau suivi de
         <strong>{{
             entity.createdBy
-            ? entity.createdBy.nomComplet
-            : entity.signalement.prenomDeclarant ~ ' ' ~ entity.signalement.nomDeclarant }}
-        </strong>
+            ? entity.createdBy.nomComplet ~ ' (' ~ entity.createdBy.partner.nom ~ ')'
+            : entity.signalement.prenomDeclarant ~ ' ' ~ entity.signalement.nomDeclarant
+        }}</strong>
+        est disponible pour le signalement <strong>#{{ entity.signalement.reference }}</strong>.
+        <br>
+        Rendez-vous sur votre plateforme {{ platform.name }} pour le découvrir.
     </p>
 
     <table role="presentation" border="0" cellpadding="0" cellspacing="0" class="btn btn-primary"

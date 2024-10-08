@@ -11,7 +11,7 @@
 		<section class="fr-container">
 			<h2>Je souhaite signaler un problème de logement</h2>
 			<p>
-				Vous êtes au bon endroit ! Histologe vous accompagne dans le signalement de vos problèmes de logement. 
+				Vous êtes au bon endroit ! {{ platform.name }} vous accompagne dans le signalement de vos problèmes de logement. 
 				Cliquez sur le bouton ci-dessous pour déposer votre signalement.
 			</p>
 			<a href="{{ path('front_signalement') }}" class="fr-btn fr-btn--icon-left fr-arrow-up-line">Je dépose un signalement</a>
@@ -20,20 +20,20 @@
 			{% include '_partials/_demande-lien-signalement.html.twig' %}
 		</section>
 		<section class="fr-container">
-			<h2 class="fr-mt-5w">J'ai une question sur Histologe</h2>
+			<h2 class="fr-mt-5w">J'ai une question sur {{ platform.name }}</h2>
 			<p>
 				Vous trouverez peut-être une réponse dans les ressources suivantes :
 			</p>
 			<ul>
-				<li><a href="{{ gitbook.faq }}" target="_blank" rel="noopener" title="La documentation Histologe - ouvre une nouvelle fenêtre">La documentation Histologe</a></li>
-				<li><a href="{{ gitbook.faq }}/usager/signalement/jai-depose-un-signalement-et-maintenant" target="_blank" rel="noopener" title="documentation Histologe : J'ai déposé un signalement, et maintenant ? - ouvre une nouvelle fenêtre">J'ai déposé un signalement, et maintenant ?</a></li>
+				<li><a href="{{ gitbook.faq }}" target="_blank" rel="noopener" title="La documentation {{ platform.name }} - ouvre une nouvelle fenêtre">La documentation {{ platform.name }}</a></li>
+				<li><a href="{{ gitbook.faq }}/usager/signalement/jai-depose-un-signalement-et-maintenant" target="_blank" rel="noopener" title="documentation {{ platform.name }} : J'ai déposé un signalement, et maintenant ? - ouvre une nouvelle fenêtre">J'ai déposé un signalement, et maintenant ?</a></li>
 				<li><a href="{{path('front_cgu')}}">Conditions générales d'utilisation</a></li>
 				<li><a href="{{path('politique_de_confidentialite')}}">Politique de confidentialité</a></li>
 			</ul>
 		</section>
 		<section class="fr-container">
 			<h2 class="fr-mt-5w">Vous avez une autre question ?</h2>
-			<p>Vous ne trouvez pas la réponse à votre question ? Vous souhaitez signaler un problème technique ? Contactez l'équipe Histologe.</p>
+			<p>Vous ne trouvez pas la réponse à votre question ? Vous souhaitez signaler un problème technique ? Contactez l'équipe {{ platform.name }}.</p>
 			<div class="fr-alert fr-alert--warning fr-my-3w">
 				<h3 class="fr-alert__title">N'envoyez pas votre signalement par e-mail !</h3>
 				<p>
@@ -45,9 +45,9 @@
 		</section>
 		<section class="fr-py-5w fr-mt-5w fr-background-contrast--blue-france">
 			<div class="fr-container">
-				<h2>Vous êtes acteur de la lutte contre l'habitat indigne et souhaitez en savoir plus sur Histologe ?</h2>
+				<h2>Vous êtes acteur de la lutte contre l'habitat indigne et souhaitez en savoir plus sur {{ platform.name }} ?</h2>
 				<p>
-					Administrations, départements, associations, bailleurs… Histologe rassemble les acteurs de la lutte contre l'habitat indigne. 
+					Administrations, départements, associations, bailleurs… {{ platform.name }} rassemble les acteurs de la lutte contre l'habitat indigne. 
 					Si vous souhaitez en savoir plus sur notre service, n'hésitez pas à nous contacter.
 				</p>
 				<div id="container-form-contact">
