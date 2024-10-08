@@ -228,7 +228,7 @@ class EsaboraManager
 
     public function createSuiviFromDossierEvent(DossierEventSCHS $event, Affectation $affectation): Suivi
     {
-        $description = "Message provenant d\'esabora SCHS :\n".$event->getPresentation();
+        $description = "Message provenant d'esabora SCHS :\n".$event->getPresentation();
 
         $suivi = new Suivi();
         $suivi->setCreatedBy($this->userManager->getSystemUser());
