@@ -162,11 +162,9 @@ class SignalementExportFactory
         $lastIntervention['details'] = $interventionDetailsExploded[count($interventionDetailsExploded) - 1];
 
         $interventionsExploded = explode(SignalementAffectationListView::SEPARATOR_CONCAT, $interventionData);
-        $lastIntervention['nbVisites'] = count($interventionsExploded);
-        $lastInterventionItem = $interventionsExploded[count($interventionsExploded) - 1];
-        $lastInterventionItemExploded = explode(SignalementExport::SEPARATOR_GROUP_CONCAT, $lastInterventionItem);
-        $lastIntervention['scheduledAt'] = $lastInterventionItemExploded[count($lastInterventionItemExploded) - 1];
-        $status = $lastInterventionItemExploded[count($lastInterventionItemExploded) - 2];
+        $lastIntervention['nbVisites'] = count($interventionsExploded) / 2;
+        $lastIntervention['scheduledAt'] = $interventionsExploded[count($interventionsExploded) - 1];
+        $status = $interventionsExploded[count($interventionsExploded) - 2];
         if (Intervention::STATUS_PLANNED === $status) {
             $todayDatetime = new \DateTime();
             if ($lastIntervention['scheduledAt'] > $todayDatetime->format('Y-m-d')) {
