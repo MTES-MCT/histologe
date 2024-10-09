@@ -119,23 +119,17 @@ services:
     App\Service\DashboardWidget\WidgetDataManagerCache:
         decorates: App\Service\DashboardWidget\WidgetDataManager
 
-    App\Service\Interconnection\JobEventHttpClient:
-        decorates: http_client
-
-    http_client.default:
-        alias: 'App\Service\Interconnection\JobEventHttpClient.inner'
-
-    App\Service\DataGouv\AddressService:
+    App\Service\Interconnection\Esabora\EsaboraSCHSService:
         arguments:
-            - '@http_client.default'
+            - '@App\Service\Interconnection\JobEventHttpClient'
 
-    App\Command\LoadEpciCommand:
+    App\Service\Interconnection\Esabora\EsaboraSISHService:
         arguments:
-            - '@http_client.default'
+            - '@App\Service\Interconnection\JobEventHttpClient'
 
-    App\Service\Interconnection\Idoss\IdossService:
+    App\Service\Interconnection\Oilhi\HookZapierService:
         arguments:
-            - '@http_client.default'
+            - '@App\Service\Interconnection\JobEventHttpClient'
 
     App\Serializer\SignalementDraftRequestNormalizer:
         tags: [ 'serializer.normalizer' ]
