@@ -11,7 +11,6 @@ use Doctrine\ORM\Mapping as ORM;
 #[ORM\Entity(repositoryClass: JobEventRepository::class)]
 #[ORM\HasLifecycleCallbacks()]
 #[ORM\Index(columns: ['created_at'], name: 'idx_job_event_created_at')]
-#[ORM\Index(columns: ['service'], name: 'idx_job_event_service')]
 #[ORM\Index(columns: ['partner_id'], name: 'idx_job_event_partner_id')]
 class JobEvent
 {

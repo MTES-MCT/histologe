@@ -38,7 +38,7 @@ class JobEventRepository extends ServiceEntityRepository implements EntityCleane
         ?Territory $territory,
     ): array {
         $qb = $this->createQueryBuilder('j')
-            ->select('MAX(j.createdAt) AS last_event, p.id, p.nom, s.reference, j.status, j.action, j.codeStatus, j.response')
+            ->select('j.createdAt, p.id, p.nom, s.reference, j.status, j.action, j.codeStatus, j.response')
             ->innerJoin(Signalement::class, 's', 'WITH', 's.id = j.signalementId')
             ->innerJoin(Partner::class, 'p', 'WITH', 'p.id = j.partnerId')
             ->where('j.service = :service')
@@ -50,8 +50,7 @@ class JobEventRepository extends ServiceEntityRepository implements EntityCleane
 
         $qb->setParameter('service', $type)
             ->setParameter('date_limit', new \DateTimeImmutable('-'.$dayPeriod.' days'))
-            ->groupBy('p.id, p.nom, s.reference, j.action, j.status, j.codeStatus, j.response')
-            ->orderBy('last_event', 'DESC');
+            ->orderBy('j.createdAt', 'DESC');
 
         $qb->setMaxResults(1000);
 

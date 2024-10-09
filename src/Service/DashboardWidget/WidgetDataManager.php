@@ -56,6 +56,10 @@ class WidgetDataManager implements WidgetDataManagerInterface
         }, $countAffectationPartnerList);
     }
 
+    /**
+     * @throws \DateMalformedStringException
+     * @throws \DateInvalidTimeZoneException
+     */
     public function findLastJobEventByInterfacageType(string $type, array $params, ?Territory $territory = null): array
     {
         $jobEvents = $this->jobEventRepository->findLastJobEventByInterfacageType($type, $params['period'], $territory);
@@ -63,7 +67,9 @@ class WidgetDataManager implements WidgetDataManagerInterface
         return array_map(/**
          * @throws \Exception
          */ function ($jobEvent) use ($territory) {
-            $jobEvent['last_event'] = (new \DateTimeImmutable($jobEvent['last_event']))
+            /** @var \DateTimeImmutable $createdAt */
+            $createdAt = $jobEvent['createdAt'];
+            $jobEvent['last_event'] = $createdAt
                 ->setTimezone(
                     new \DateTimeZone($territory ? $territory->getTimezone() : TimezoneProvider::TIMEZONE_EUROPE_PARIS)
                 )
