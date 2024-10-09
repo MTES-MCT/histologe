@@ -2,9 +2,7 @@
 services:
   histologe_mysql:
     image: 'mysql:8.0.35'
-    command:
-      --max_allowed_packet=32505856
-      --group_concat_max_len=32505856
+    command: --max_allowed_packet=32505856
     container_name: histologe_mysql
     restart: always
     environment:

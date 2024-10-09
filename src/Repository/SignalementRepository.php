@@ -554,6 +554,11 @@ class SignalementRepository extends ServiceEntityRepository
 
     public function findSignalementAffectationIterable(User $user, array $options): \Generator
     {
+        // temporary increase the group_concat_max_len to a higher value, for texts in GROUP_CONCAT
+        $connection = $this->getEntityManager()->getConnection();
+        $sql = 'SET SESSION group_concat_max_len=32505856';
+        $connection->prepare($sql)->executeQuery();
+
         $qb = $this->findSignalementAffectationQuery($user, $options);
 
         $qb->addSelect(
