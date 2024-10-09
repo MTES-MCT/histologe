@@ -41,7 +41,7 @@ class JobEventRepositoryTest extends KernelTestCase
             null
         );
 
-        $this->assertCount(2, $jobEvents);
+        $this->assertCount(7, $jobEvents);
     }
 
     public function testFindFailedEsaboraDossierByPartnerTypeByAction(): void
