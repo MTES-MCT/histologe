@@ -16,7 +16,7 @@ final class Version20241004142515 extends AbstractMigration
 
     public function up(Schema $schema): void
     {
-        $req_doublon = '
+        $queryDuplicates = '
             SELECT id, created_from_id, statut
             FROM signalement
             WHERE created_from_id IN (
@@ -27,7 +27,7 @@ final class Version20241004142515 extends AbstractMigration
             )
             ORDER BY created_from_id ASC, statut desc
         ';
-        $list = $this->connection->fetchAllAssociative($req_doublon);
+        $list = $this->connection->fetchAllAssociative($queryDuplicates);
         $createdFrom = 0;
         $lastId = 0;
         foreach ($list as $item) {
