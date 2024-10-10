@@ -22,9 +22,10 @@ class Partner implements EntityHistoryInterface
 {
     use TimestampableTrait;
 
-    public const DEFAULT_PARTNER = 'Administrateurs Histologe ALL';
-    public const MAX_LIST_PAGINATION = 50;
-    public const TERRITORY_ZIP_ALLOWED = [62]; // Should be replaced by CODE_INSEE_ALLOWED
+    public const string DEFAULT_PARTNER = 'Administrateurs Histologe ALL';
+    public const int MAX_LIST_PAGINATION = 50;
+    public const array TERRITORY_ZIP_ALLOWED = [62]; // Should be replaced by CODE_INSEE_ALLOWED
+    public const array CODE_INSEE_ZIP_ALLOWED = [62091]; // for testing production
 
     #[ORM\Id]
     #[ORM\GeneratedValue]
@@ -321,14 +322,18 @@ class Partner implements EntityHistoryInterface
             && $this->isEsaboraActive;
     }
 
-    public function canSyncWithOilhi(): bool
+    public function canSyncWithOilhi(Signalement $signalement): bool
     {
+        $inseeAllowed = !empty(array_intersect($this->getInsee(), self::CODE_INSEE_ZIP_ALLOWED));
+
         return $this->hasCompetence(Qualification::RSD)
             && PartnerType::COMMUNE_SCHS === $this->type
             && \in_array(
                 $this->territory->getZip(),
                 self::TERRITORY_ZIP_ALLOWED
-            );
+            )
+            && $inseeAllowed
+            && in_array($signalement->getInseeOccupant(), self::CODE_INSEE_ZIP_ALLOWED);
     }
 
     public function canSyncWithIdoss(): bool

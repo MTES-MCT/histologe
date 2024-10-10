@@ -458,6 +458,20 @@ partners:
       - 'VISITES'
       - 'RSD'
   -
+    nom: "Partenaire 62-02 (BEAUDRICOURT)"
+    email: "partenaire-62-02@histologe.fr"
+    is_archive: 0
+    insee: "[\"62091\"]"
+    territory: "Pas-de-Calais"
+    type: "COMMUNE_SCHS"
+    competence:
+      - 'ACCOMPAGNEMENT_SOCIAL'
+      - 'ACCOMPAGNEMENT_TRAVAUX'
+      - 'FSL'
+      - 'VISITES'
+      - 'RSD'
+
+  -
     nom: "Mairie de Saint-Denis"
     email: "partenaire-93-01@histologe.fr"
     is_archive: 0

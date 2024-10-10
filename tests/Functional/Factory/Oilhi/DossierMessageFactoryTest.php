@@ -66,7 +66,7 @@ class DossierMessageFactoryTest extends KernelTestCase
 
         $dossierMessageFactory = new DossierMessageFactory($urlGenerator, true);
 
-        $this->assertTrue($dossierMessageFactory->supports($affectation));
+        $this->assertFalse($dossierMessageFactory->supports($affectation));
 
         $dossierMessage = $dossierMessageFactory->createInstance($affectation);
 

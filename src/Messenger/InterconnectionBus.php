@@ -20,7 +20,9 @@ class InterconnectionBus
 
     public function dispatch(Affectation $affectation): void
     {
-        if (!$affectation->getPartner()->canSyncWithEsabora() && !$affectation->getPartner()->canSyncWithOilhi()) {
+        if (!$affectation->getPartner()->canSyncWithEsabora()
+            && !$affectation->getPartner()->canSyncWithOilhi($affectation->getSignalement())
+        ) {
             return;
         }
         /** @var DossierMessageFactoryInterface $dossierMessageFactory */
