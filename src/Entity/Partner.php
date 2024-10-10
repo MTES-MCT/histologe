@@ -24,8 +24,8 @@ class Partner implements EntityHistoryInterface
 
     public const string DEFAULT_PARTNER = 'Administrateurs Histologe ALL';
     public const int MAX_LIST_PAGINATION = 50;
-    public const array TERRITORY_ZIP_ALLOWED = [62]; // Should be replaced by CODE_INSEE_ALLOWED
-    public const array CODE_INSEE_ALLOWED = [62091]; // for testing production
+    public const array OILHI_TERRITORY_ZIP_ALLOWED = [62]; // Should be replaced by CODE_INSEE_ALLOWED
+    public const array OILHI_CODE_INSEE_ALLOWED = [62091]; // for testing production
 
     #[ORM\Id]
     #[ORM\GeneratedValue]
@@ -324,16 +324,16 @@ class Partner implements EntityHistoryInterface
 
     public function canSyncWithOilhi(Signalement $signalement): bool
     {
-        $inseeAllowed = !empty(array_intersect($this->getInsee(), self::CODE_INSEE_ALLOWED));
+        $inseeAllowed = !empty(array_intersect($this->getInsee(), self::OILHI_CODE_INSEE_ALLOWED));
 
         return $this->hasCompetence(Qualification::RSD)
             && PartnerType::COMMUNE_SCHS === $this->type
             && \in_array(
                 $this->territory->getZip(),
-                self::TERRITORY_ZIP_ALLOWED
+                self::OILHI_TERRITORY_ZIP_ALLOWED
             )
             && $inseeAllowed
-            && in_array($signalement->getInseeOccupant(), self::CODE_INSEE_ALLOWED);
+            && in_array($signalement->getInseeOccupant(), self::OILHI_CODE_INSEE_ALLOWED);
     }
 
     public function canSyncWithIdoss(): bool
