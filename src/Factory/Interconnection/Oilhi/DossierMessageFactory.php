@@ -34,7 +34,7 @@ class DossierMessageFactory implements DossierMessageFactoryInterface
 
         return $this->featureEnable
         && $signalement->hasQualificaton(Qualification::RSD)
-        && $partner->canSyncWithOilhi();
+        && $partner->canSyncWithOilhi($signalement);
     }
 
     public function createInstance(Affectation $affectation): DossierMessage
