@@ -71,7 +71,10 @@ class SignalementExportFactoryTest extends TestCase
                 Les murs ont des fissures.|De l'eau s’infiltre dans mon logement.|Il y a des trace ",
             'etiquettes' => null,
             'geoloc' => '{"lat": "43.3426152", "lng": "5.3711848"}',
-            'interventionsData' => 'PLANNED|2023-07-13 13:41:15||||DONE|2024-06-09 10:00:00|1|RSD,INSALUBRITE|dossier envoyé pour manquement sanitaire',
+            'interventionsData' => 'PLANNED||2023-07-13 13:41:15||DONE||2024-06-09 10:00:00',
+            'interventionOccupantPresent' => '||1',
+            'interventionConcludeProcedure' => '||RSD,INSALUBRITE',
+            'interventionDetails' => '||dossier envoyé pour manquement sanitaire',
         ];
 
         $user = $this->getUserFromRole(User::ROLE_ADMIN);
@@ -88,6 +91,7 @@ class SignalementExportFactoryTest extends TestCase
         $this->assertEquals($dateFormatted, $signalementExportFactory->closedAt);
         $this->assertEquals('09/06/2024', $signalementExportFactory->dateVisite);
         $this->assertEquals('Oui', $signalementExportFactory->isOccupantPresentVisite);
+        $this->assertEquals(2, $signalementExportFactory->nbVisites);
 
         $this->assertEquals(SignalementExportFactory::NON_RENSEIGNE, $signalementExportFactory->telephoneOccupantBis);
         $this->assertEquals(SignalementExportFactory::NON_RENSEIGNE, $signalementExportFactory->etageOccupant);
