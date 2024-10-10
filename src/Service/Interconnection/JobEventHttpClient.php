@@ -2,6 +2,7 @@
 
 namespace App\Service\Interconnection;
 
+use App\Entity\JobEvent;
 use App\Manager\JobEventManager;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpClient\HttpClientTrait;
@@ -92,7 +93,7 @@ class JobEventHttpClient implements HttpClientInterface
             action: $jobEventMetaData->getAction(),
             message: json_encode($payload),
             response: $responseContent,
-            status: Response::HTTP_OK === $statusCode ? 'success' : 'failure',
+            status: Response::HTTP_OK === $statusCode ? JobEvent::STATUS_SUCCESS : JobEvent::STATUS_FAILED,
             codeStatus: $statusCode,
             signalementId: $jobEventMetaData->getSignalementId(),
             partnerId: $jobEventMetaData->getPartnerId(),

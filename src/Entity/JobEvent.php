@@ -11,14 +11,13 @@ use Doctrine\ORM\Mapping as ORM;
 #[ORM\Entity(repositoryClass: JobEventRepository::class)]
 #[ORM\HasLifecycleCallbacks()]
 #[ORM\Index(columns: ['created_at'], name: 'idx_job_event_created_at')]
-#[ORM\Index(columns: ['service'], name: 'idx_job_event_service')]
 #[ORM\Index(columns: ['partner_id'], name: 'idx_job_event_partner_id')]
 class JobEvent
 {
     use TimestampableTrait;
 
-    public const STATUS_SUCCESS = 'success';
-    public const STATUS_FAILED = 'failed';
+    public const string STATUS_SUCCESS = 'success';
+    public const string STATUS_FAILED = 'failed';
     public const string EXPIRATION_PERIOD = '- 6 months';
 
     #[ORM\Id]
