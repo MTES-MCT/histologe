@@ -61,6 +61,10 @@ class FileVoter extends Voter
 
     private function canDelete(File $file, User $user): bool
     {
+        if ($user->isSuperAdmin()) {
+            return true;
+        }
+
         return $this->canCreate($file, $user)
             && (
                 $this->isFileUploadedByUser($file, $user)
