@@ -100,7 +100,7 @@ class SignalementExportFactory
             lienDeclarantOccupant: $data['lienDeclarantOccupant'] ?? '-',
             nbVisites: $lastIntervention['nbVisites'],
             dateVisite: $dateVisite,
-            isOccupantPresentVisite: $isOccupantPresentVisite ? self::OUI : ('0' === $isOccupantPresentVisite ? self::NON : ''),
+            isOccupantPresentVisite: ($isOccupantPresentVisite && '-' !== $isOccupantPresentVisite) ? self::OUI : ('0' === $isOccupantPresentVisite ? self::NON : ''),
             interventionStatus: $lastIntervention['status'],
             interventionConcludeProcedure: $lastIntervention['conclude'],
             interventionDetails: strip_tags($lastIntervention['details']),
