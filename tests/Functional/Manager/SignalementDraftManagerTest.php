@@ -8,6 +8,7 @@ use App\Entity\User;
 use App\Factory\SignalementDraftFactory;
 use App\Manager\SignalementDraftManager;
 use App\Repository\SignalementDraftRepository;
+use App\Repository\SignalementRepository;
 use App\Serializer\SignalementDraftRequestSerializer;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ManagerRegistry;
@@ -27,6 +28,7 @@ class SignalementDraftManagerTest extends WebTestCase
     private UrlGeneratorInterface $urlGenerator;
     private SignalementDraftRequestSerializer $signalementDraftRequestSerializer;
     private SignalementDraftRepository $signalementDraftRepository;
+    private SignalementRepository $signalementRepository;
 
     protected function setUp(): void
     {
@@ -38,6 +40,7 @@ class SignalementDraftManagerTest extends WebTestCase
         $this->urlGenerator = static::getContainer()->get(UrlGeneratorInterface::class);
         $this->signalementDraftRequestSerializer = static::getContainer()->get(SignalementDraftRequestSerializer::class);
         $this->signalementDraftRepository = static::getContainer()->get(SignalementDraftRepository::class);
+        $this->signalementRepository = static::getContainer()->get(SignalementRepository::class);
 
         $this->signalementDraftManager = new SignalementDraftManager(
             $this->signalementDraftFactory,
@@ -46,6 +49,7 @@ class SignalementDraftManagerTest extends WebTestCase
             $this->urlGenerator,
             $this->signalementDraftRequestSerializer,
             $this->signalementDraftRepository,
+            $this->signalementRepository,
         );
 
         $user = $this->entityManager->getRepository(User::class)->findOneBy(['email' => 'admin-01@histologe.fr']);
