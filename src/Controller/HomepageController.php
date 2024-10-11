@@ -95,7 +95,7 @@ class HomepageController extends AbstractController
             if ($signalement) {
                 $notificationMailerRegistry->send(
                     new NotificationMail(
-                        type: NotificationMailerType::TYPE_SIGNALEMENT_LIEN_SUIVI,
+                        type: NotificationMailerType::TYPE_SIGNALEMENT_LIEN_SUIVI_TO_USAGER,
                         to: $demandeLienSignalement->getEmail(),
                         signalement: $signalement,
                     )

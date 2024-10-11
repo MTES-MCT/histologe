@@ -2,10 +2,12 @@
 
 namespace App\Service\Mailer\Mail;
 
+use App\Entity\Suivi;
 use App\Entity\Territory;
 use App\Service\Mailer\NotificationMail;
 use App\Service\Mailer\NotificationMailerType;
 use Psr\Log\LoggerInterface;
+use Sentry\State\Scope;
 use Symfony\Bridge\Twig\Mime\NotificationEmail;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Symfony\Component\Mailer\Header\TagHeader;
@@ -86,8 +88,23 @@ abstract class AbstractNotificationMailer implements NotificationMailerInterface
             $this->mailer->send($message);
 
             return true;
-        } catch (\Exception $exception) {
-            $this->logger->error(\sprintf('[%s] %s', $notificationMail->getType()->name, $exception->getMessage()));
+        } catch (\Throwable $exception) {
+            $object = $params['entity'] ?? null;
+            \Sentry\configureScope(function (Scope $scope) use ($object): void {
+                $scope->setTag('mailer_type', $this->mailerType->name);
+                if ($object instanceof Suivi) {
+                    $scope->setTag('notify_usager', $object->getIsPublic() ? 'yes' : 'no');
+                } elseif (str_contains($this->mailerType->name, 'USAGER')) {
+                    $scope->setTag('notify_usager', 'yes');
+                }
+            });
+            if ($object instanceof Suivi) {
+                \Sentry\captureException($exception);
+            }
+            $this->logger->error(\sprintf(
+                '[%s] %s',
+                $notificationMail->getType()->name, $exception->getMessage()
+            ));
         }
 
         return false;

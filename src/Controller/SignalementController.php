@@ -236,7 +236,7 @@ class SignalementController extends AbstractController
         if ($signalementDraft) {
             $success = $notificationMailerRegistry->send(
                 new NotificationMail(
-                    type: NotificationMailerType::TYPE_CONTINUE_FROM_DRAFT,
+                    type: NotificationMailerType::TYPE_CONTINUE_FROM_DRAFT_TO_USAGER,
                     to: $signalementDraft->getEmailDeclarant(),
                     signalementDraft: $signalementDraft,
                 )
@@ -265,7 +265,7 @@ class SignalementController extends AbstractController
             $profil = $request->get('profil');
             $success = $notificationMailerRegistry->send(
                 new NotificationMail(
-                    type: NotificationMailerType::TYPE_SIGNALEMENT_LIEN_SUIVI,
+                    type: NotificationMailerType::TYPE_SIGNALEMENT_LIEN_SUIVI_TO_USAGER,
                     to: 'locataire' === $profil || 'bailleur_occupant' === $profil
                         ? $signalement->getMailOccupant()
                         : $signalement->getMailDeclarant(),

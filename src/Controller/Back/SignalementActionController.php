@@ -47,7 +47,7 @@ class SignalementActionController extends AbstractController
                         new NotificationMail(
                             type: $signalement->hasNDE() ?
                                 NotificationMailerType::TYPE_SIGNALEMENT_ASK_BAIL_DPE :
-                                NotificationMailerType::TYPE_SIGNALEMENT_VALIDATION,
+                                NotificationMailerType::TYPE_SIGNALEMENT_VALIDATION_USAGER,
                             to: $toRecipient,
                             territory: $signalement->getTerritory(),
                             signalement: $signalement,

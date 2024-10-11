@@ -81,7 +81,7 @@ class SignalementDraftCompletedSubscriber implements EventSubscriberInterface
         foreach ($toRecipients as $toRecipient) {
             $this->notificationMailerRegistry->send(
                 new NotificationMail(
-                    type: NotificationMailerType::TYPE_CONFIRM_RECEPTION,
+                    type: NotificationMailerType::TYPE_CONFIRM_RECEPTION_TO_USAGER,
                     to: $toRecipient,
                     territory: $signalement->getTerritory(),
                     signalement: $signalement,
