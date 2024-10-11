@@ -8,5 +8,6 @@ parameters:
         -
           command: 'php bin/console app:sync-esabora-sish-intervention'
           schedule: '%env(ESABORA_CRON_SCHEDULE_SYNC_SISH_INTERVENTION)%'
-        - command: 'php bin/console app:sync-esabora-schs'
+        -
+          command: 'php bin/console app:sync-esabora-schs'
           schedule: '%env(ESABORA_CRON_SCHEDULE_SYNC_SCHS)%'
