@@ -145,9 +145,9 @@ export default defineComponent({
     },
     handleSettings (requestResponse: any) {
       this.sharedState.user.isAdmin = requestResponse.roleLabel === 'Super Admin'
-      this.sharedState.user.isResponsableTerritoire = requestResponse.roleLabel === 'Responsable Territoire'
-      this.sharedState.user.isAdministrateurPartenaire = requestResponse.roleLabel === 'Administrateur'
-      this.sharedState.user.isAgent = ['Administrateur', 'Utilisateur'].includes(requestResponse.roleLabel)
+      this.sharedState.user.isResponsableTerritoire = requestResponse.roleLabel === 'Resp. Territoire'
+      this.sharedState.user.isAdministrateurPartenaire = requestResponse.roleLabel === 'Admin partenaire'
+      this.sharedState.user.isAgent = ['Administrateur', 'Admin partenaire', 'Utilisateur', 'Agent'].includes(requestResponse.roleLabel)
       this.sharedState.user.canSeeNonDecenceEnergetique = requestResponse.canSeeNDE === '1'
       const isAdminOrAdminTerritoire = this.sharedState.user.isAdmin || this.sharedState.user.isResponsableTerritoire
       this.sharedState.user.canSeeStatusAffectation = isAdminOrAdminTerritoire

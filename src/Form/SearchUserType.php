@@ -28,7 +28,7 @@ class SearchUserType extends AbstractType
     public function __construct(
         private readonly Security $security
     ) {
-        $this->roleChoices = User::ROLESV2;
+        $this->roleChoices = User::ROLES;
         unset($this->roleChoices['Usager']);
         if ($this->security->isGranted('ROLE_ADMIN')) {
             $this->isAdmin = true;

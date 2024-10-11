@@ -102,7 +102,7 @@
                                         {% endif %}
                                     </td>
                                     <td>{{ user.lastLoginAt ? user.lastLoginAt|date('d/m/Y') : '-'}}</td>
-                                    <td>{{ user.roleLabel(true) }}</td>
+                                    <td>{{ user.roleLabel() }}</td>
                                 </tr>
                             {% endfor %}
                         </tbody>

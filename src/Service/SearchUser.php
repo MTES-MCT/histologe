@@ -143,7 +143,7 @@ class SearchUser
             $filters['Statut'] = User::STATUS_LABELS[$this->statut];
         }
         if ($this->role) {
-            $filters['Rôle'] = array_search($this->role, User::ROLESV2);
+            $filters['Rôle'] = array_search($this->role, User::ROLES);
         }
 
         return $filters;

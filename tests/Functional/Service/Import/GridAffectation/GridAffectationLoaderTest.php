@@ -31,9 +31,9 @@ class GridAffectationLoaderTest extends KernelTestCase
     public const FIXTURE_PARTNER_ARS_EMAIL = 'ars@histologe.fr';
 
     public const FIXTURE_USER_EMAIL_DUPLICATE = 'user-ddt@histologe.fr';
-    public const FIXTURE_ROLE_RT = 'Responsable Territoire';
-    public const FIXTURE_ROLE_PARTNER = 'Administrateur';
-    public const FIXTURE_ROLE_USER = 'Utilisateur';
+    public const FIXTURE_ROLE_RT = 'Resp. Territoire';
+    public const FIXTURE_ROLE_PARTNER = 'Admin partenaire';
+    public const FIXTURE_ROLE_USER = 'Agent';
 
     private GridAffectationLoader $gridAffectationLoader;
     private EntityManagerInterface $entityManager;
@@ -129,7 +129,7 @@ class GridAffectationLoaderTest extends KernelTestCase
             'line 7 : Partenaire déjà existant avec (partenaire-13-01@histologe.fr) dans Bouches-du-Rhône, nom : Partenaire 13-01',
             'line 8 : E-mail manquant pour Margaretta Borer, partenaire ADIL',
             'line 9 : Nom de partenaire manquant',
-            'line 10 : Utilisateur déjà existant avec (user-13-06@histologe.fr) dans Bouches-du-Rhône, partenaire : Partenaire 13-06 ESABORA ARS, rôle : Utilisateur',
+            'line 10 : Utilisateur déjà existant avec (user-13-06@histologe.fr) dans Bouches-du-Rhône, partenaire : Partenaire 13-06 ESABORA ARS, rôle : Agent',
             'Certains partenaires ont un e-mail en commun ddt-m@histologe.fr',
             'Certains utilisateurs ont un e-mail en commun user-ddt@histologe.fr',
             'Certains utilisateurs ont un e-mail en commun avec un partenaire ddt-m@histologe.fr,user-ddt@histologe.fr',

@@ -28,7 +28,7 @@ class UserAvatarTest extends WebTestCase
         $outputSpan = $userAvatar->userAvatarOrPlaceHolder($user, 80);
         $this->assertEquals('<span class="avatar-histologe avatar-placeholder avatar-80">SA</span>', $outputSpan);
 
-        $user->setRoles([User::ROLES['Administrateur']]);
+        $user->setRoles([User::ROLES['Admin partenaire']]);
         $user->setTerritory((new Territory())->setZip('44'));
         $outputSpan = $userAvatar->userAvatarOrPlaceHolder($user);
         $this->assertEquals('<span class="avatar-histologe avatar-placeholder avatar-74">44</span>', $outputSpan);

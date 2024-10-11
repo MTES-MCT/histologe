@@ -29,6 +29,14 @@ class GridAffectationLoader
         'errors' => [],
     ];
 
+    public const OLD_ROLES = [
+        'Usager' => 'ROLE_USAGER',
+        'Utilisateur' => 'ROLE_USER_PARTNER',
+        'Administrateur' => 'ROLE_ADMIN_PARTNER',
+        'Responsable Territoire' => 'ROLE_ADMIN_TERRITORY',
+        'Super Admin' => 'ROLE_ADMIN',
+    ];
+
     public function __construct(
         private PartnerFactory $partnerFactory,
         private PartnerManager $partnerManager,
@@ -134,7 +142,9 @@ class GridAffectationLoader
                     }
                 }
                 if (!empty($item[GridAffectationHeader::USER_ROLE])
-                    && !\in_array($item[GridAffectationHeader::USER_ROLE], array_keys(User::ROLES))) {
+                    && !\in_array($item[GridAffectationHeader::USER_ROLE], array_keys(User::ROLES))
+                    && !\in_array($item[GridAffectationHeader::USER_ROLE], array_keys(self::OLD_ROLES))
+                ) {
                     $errors[] = \sprintf(
                         'line %d : Rôle incorrect pour %s --> %s',
                         $numLine,
@@ -209,6 +219,14 @@ class GridAffectationLoader
                 }
 
                 $roleLabel = $item[GridAffectationHeader::USER_ROLE];
+                if ('Utilisateur' === $roleLabel) {
+                    $roleLabel = 'Agent';
+                } elseif ('Administrateur' === $roleLabel) {
+                    $roleLabel = 'Admin partenaire';
+                } elseif ('Responsable Territoire' === $roleLabel) {
+                    $roleLabel = 'Resp. Territoire';
+                }
+
                 $email = trim($item[GridAffectationHeader::USER_EMAIL]);
                 if (!empty($roleLabel) && !empty($email)) {
                     ++$countUsers;

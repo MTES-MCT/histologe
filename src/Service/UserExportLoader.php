@@ -46,7 +46,7 @@ readonly class UserExportLoader
                     'createdAt' => $user->getCreatedAt()->format('d/m/Y'),
                     'statut' => User::STATUS_ACTIVE === $user->getStatut() ? 'Activé' : 'Non activé',
                     'lastLoginAt' => $user->getLastLoginAt() ? $user->getLastLoginAt()->format('d/m/Y') : '',
-                    'role' => $user->getRoleLabel(true),
+                    'role' => $user->getRoleLabel(),
                     default => '',
                 };
             }
