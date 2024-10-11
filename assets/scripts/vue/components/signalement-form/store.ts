@@ -59,7 +59,7 @@ interface FormStore {
   validationErrors: FormData
   inputComponents: string[]
   updateData: (key: string, value: any) => void
-  shouldShowField: (conditional: string) => boolean
+  shouldShowField: (component: any) => boolean
   preprocessScreen: (screenBodyComponents: any) => Component[]
   hasDesordre: (categorieSlug: string) => boolean
 }
@@ -117,7 +117,7 @@ const formStore: FormStore = reactive({
     formStore.data[key] = value
   },
   shouldShowField (component: any) {
-    if (!component.conditional) {
+    if (component.conditional === undefined || component.conditional === '') {
       return true
     }
     return computed(() => eval(component.conditional.show)).value

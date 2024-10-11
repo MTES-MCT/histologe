@@ -9,46 +9,21 @@
     <h1 v-if="formStore.currentScreen?.slug === 'introduction'" >{{ label }}</h1>
     <h2 v-else-if="label !== ''">{{ label }}</h2>
     <div v-html="variablesReplacer.replace(description)"></div>
-    <div
-      v-if="components != undefined"
-      >
-      <component
-        v-for="component in components.body"
-        :is="component.type"
-        v-bind:key="component.slug"
-        :id="component.slug"
-        :label="component.label"
-        :hint="component.hint"
-        :labelInfo="component.labelInfo"
-        :labelUpload="component.labelUpload"
-        :description="component.description"
-        :placeholder="component.placeholder"
-        :components="component.components"
-        :icons="component.icons"
-        :action="component.action"
-        :link="component.link"
-        :linktarget="component.linktarget"
-        :values="component.values"
-        :defaultValue="component.defaultValue"
-        :customCss="component.customCss"
-        :validate="component.validate"
-        :disabled="component.disabled"
-        :multiple="component.multiple"
-        :ariaControls="component.ariaControls"
-        :tagWhenEdit="component.tagWhenEdit"
-        v-model="formStore.data[component.slug]"
-        :hasError="formStore.validationErrors[component.slug] !== undefined"
-        :error="formStore.validationErrors[component.slug]"
-        :class="{ 'fr-hidden': !formStore.shouldShowField(component) }"
-        :aria-hidden="!formStore.shouldShowField(component) ? true : undefined"
-        :hidden="!formStore.shouldShowField(component) ? true : undefined"
-        :autocomplete="component.autocomplete"
-        :clickEvent="handleClickComponent"
-        :handleClickComponent="handleClickComponent"
-        :access_name="component.accessibility?.name ?? component.slug"
-        :access_autocomplete="component.accessibility?.autocomplete ?? 'off'"
-        :access_focus="component.accessibility?.focus ?? false"
+    <div v-if="components != undefined">
+      <template v-if="shouldAddFieldset()">
+        <fieldset class="fr-fieldset" id="checkboxes">
+          <SignalementFormComponentGenerator
+            :componentList="components.body"
+            :handleClickComponent="handleClickComponent"
+          />
+        </fieldset>
+      </template>
+      <template v-else>
+        <SignalementFormComponentGenerator
+          :componentList="components.body"
+          :handleClickComponent="handleClickComponent"
         />
+      </template>
     </div>
   </div>
   <div
@@ -56,36 +31,9 @@
     class="fr-container form-screen-footer"
     >
     <div>
-      <component
-        v-for="component in components.footer"
-        :is="component.type"
-        v-bind:key="component.slug"
-        :id="component.slug"
-        :label="component.label"
-        :labelInfo="component.labelInfo"
-        :labelUpload="component.labelUpload"
-        :description="component.description"
-        :placeholder="component.placeholder"
-        :components="component.components"
-        :icons="component.icons"
-        :action="component.action"
-        :link="component.link"
-        :linktarget="component.linktarget"
-        :values="component.values"
-        :defaultValue="component.defaultValue"
-        :customCss="component.customCss"
-        :validate="component.validate"
-        :disabled="component.disabled"
-        :multiple="component.multiple"
-        v-model="formStore.data[component.slug]"
-        :hasError="formStore.validationErrors[component.slug] !== undefined"
-        :error="formStore.validationErrors[component.slug]"
-        :class="{ 'fr-hidden': !formStore.shouldShowField(component) }"
-        :aria-hidden="!formStore.shouldShowField(component) ? true : undefined"
-        :hidden="!formStore.shouldShowField(component) ? true : undefined"
-        :clickEvent="handleClickComponent"
+      <SignalementFormComponentGenerator
+        :componentList="components.footer"
         :handleClickComponent="handleClickComponent"
-        :access_focus="component.accessibility?.focus ?? false"
       />
     </div>
   </div>
@@ -95,67 +43,15 @@
 import { defineComponent } from 'vue'
 import formStore from './../store'
 import { requests } from '../requests'
-import SignalementFormAddress from './SignalementFormAddress.vue'
-import SignalementFormButton from './SignalementFormButton.vue'
-import SignalementFormCheckbox from './SignalementFormCheckbox.vue'
-import SignalementFormConfirmation from './SignalementFormConfirmation.vue'
-import SignalementFormCounter from './SignalementFormCounter.vue'
-import SignalementFormDate from './SignalementFormDate.vue'
-import SignalementFormDisorderCategoryItem from './SignalementFormDisorderCategoryItem.vue'
-import SignalementFormDisorderCategoryList from './SignalementFormDisorderCategoryList.vue'
-import SignalementFormDisorderOverview from './SignalementFormDisorderOverview.vue'
-import SignalementFormEmailfield from './SignalementFormEmailfield.vue'
-import SignalementFormIcon from './SignalementFormIcon.vue'
-import SignalementFormInfo from './SignalementFormInfo.vue'
-import SignalementFormLink from './SignalementFormLink.vue'
-import SignalementFormOnlyChoice from './SignalementFormOnlyChoice.vue'
-import SignalementFormOverview from './SignalementFormOverview.vue'
-import SignalementFormPhonefield from './SignalementFormPhonefield.vue'
-import SignalementFormRoomList from './SignalementFormRoomList.vue'
-import SignalementFormSubscreen from './SignalementFormSubscreen.vue'
-import SignalementFormTextfield from './SignalementFormTextfield.vue'
-import SignalementFormTextarea from './SignalementFormTextarea.vue'
-import SignalementFormTime from './SignalementFormTime.vue'
-import SignalementFormUpload from './SignalementFormUpload.vue'
-import SignalementFormUploadPhotos from './SignalementFormUploadPhotos.vue'
-import SignalementFormWarning from './SignalementFormWarning.vue'
-import SignalementFormYear from './SignalementFormYear.vue'
-import SignalementFormModal from './SignalementFormModal.vue'
-import SignalementFormAutocomplete from './SignalementFormAutocomplete.vue'
 import { variablesReplacer } from './../services/variableReplacer'
 import { componentValidator } from './../services/componentValidator'
 import { findPreviousScreen, findNextScreen } from '../services/disorderScreenNavigator'
+import SignalementFormComponentGenerator from './SignalementFormComponentGenerator.vue'
 
 export default defineComponent({
   name: 'SignalementFormScreen',
   components: {
-    SignalementFormTextfield,
-    SignalementFormTextarea,
-    SignalementFormButton,
-    SignalementFormLink,
-    SignalementFormOnlyChoice,
-    SignalementFormSubscreen,
-    SignalementFormAddress,
-    SignalementFormDate,
-    SignalementFormYear,
-    SignalementFormTime,
-    SignalementFormCounter,
-    SignalementFormWarning,
-    SignalementFormInfo,
-    SignalementFormIcon,
-    SignalementFormCheckbox,
-    SignalementFormPhonefield,
-    SignalementFormUpload,
-    SignalementFormUploadPhotos,
-    SignalementFormEmailfield,
-    SignalementFormOverview,
-    SignalementFormConfirmation,
-    SignalementFormDisorderCategoryItem,
-    SignalementFormDisorderCategoryList,
-    SignalementFormDisorderOverview,
-    SignalementFormRoomList,
-    SignalementFormModal,
-    SignalementFormAutocomplete
+    SignalementFormComponentGenerator
   },
   props: {
     label: String,
@@ -319,6 +215,21 @@ export default defineComponent({
     },
     gotoHomepage () {
       window.location.href = '/'
+    },
+    shouldAddFieldset () {
+      if (formStore.currentScreen &&
+          formStore.currentScreen.components &&
+          formStore.currentScreen.components.body &&
+          formStore.currentScreen.components?.body?.length > 0
+      ) {
+        if (formStore.currentScreen.slug.startsWith('desordres_batiment_') ||
+            formStore.currentScreen.slug.startsWith('desordres_logement_') ||
+            formStore.currentScreen.slug === 'utilisation_service'
+        ) {
+          return true
+        }
+      }
+      return false
     }
   }
 })
