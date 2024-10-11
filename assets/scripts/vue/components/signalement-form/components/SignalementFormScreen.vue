@@ -11,7 +11,7 @@
     <div v-html="variablesReplacer.replace(description)"></div>
     <div v-if="components != undefined">
       <template v-if="shouldAddFieldset()">
-        <fieldset class="fr-fieldset" id="checkboxes">
+        <fieldset class="fr-fieldset" id="screen_fieldset">
           <SignalementFormComponentGenerator
             :componentList="components.body"
             :handleClickComponent="handleClickComponent"
