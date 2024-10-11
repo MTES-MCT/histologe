@@ -98,9 +98,7 @@ abstract class AbstractNotificationMailer implements NotificationMailerInterface
                     $scope->setTag('notify_usager', 'yes');
                 }
             });
-            if ($object instanceof Suivi) {
-                \Sentry\captureException($exception);
-            }
+            \Sentry\captureException($exception);
             $this->logger->error(\sprintf(
                 '[%s] %s',
                 $notificationMail->getType()->name, $exception->getMessage()
