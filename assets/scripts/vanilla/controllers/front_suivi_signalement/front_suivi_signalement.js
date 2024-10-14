@@ -70,7 +70,8 @@ if (modalUploadFiles) {
         let div = document.createElement('div')
         div.classList.add('fr-alert', 'fr-alert--error', 'fr-alert--sm')
 
-        div.innerHTML = 'Impossible d\'ajouter le fichier ' +file.name +' car le format n\'est pas pris en charge. Veuillez sélectionner un fichier au format ' +modalUploadFiles.dataset.acceptedExtensions+'.';
+        const message = document.createTextNode('Impossible d\'ajouter le fichier ' +file.name +' car le format n\'est pas pris en charge. Veuillez sélectionner un fichier au format ' +modalUploadFiles.dataset.acceptedExtensions+'.');
+        div.appendChild(message);
         listContainer.prepend(div)
         return false;
     }
@@ -78,7 +79,7 @@ if (modalUploadFiles) {
     function uploadFile(file) {
         let div = document.createElement('div')
         div.classList.add('fr-grid-row', 'fr-grid-row--gutters', 'fr-grid-row--middle', 'fr-mb-2w', 'modal-upload-list-item')
-        div.innerHTML = initInnerHtml(file)
+        div.innerHTML = DOMPurify.sanitize(initInnerHtml(file))
         let btnDeleteTmpFile = div.querySelector('a.delete-tmp-file')
         addEventListenerDeleteTmpFile(btnDeleteTmpFile)
         listContainer.prepend(div)
@@ -135,7 +136,8 @@ if (modalUploadFiles) {
         let div = document.createElement('div')
         div.id = 'uploaded-file-' + response.response
         div.classList.add('fr-mb-2v')
-        div.innerHTML = file.name
+        let textNode = document.createTextNode(file.name)
+        div.appendChild(textNode)
         let deleteFileLink = document.createElement('a')
         deleteFileLink.href = deleteTmpFileRoute + '?file_id=' + response.response
         deleteFileLink.classList.add('uploaded-file-delete', 'fr-ml-2v', 'fr-btn', 'fr-btn--tertiary', 'fr-btn--icon-left', 'fr-icon-delete-line')

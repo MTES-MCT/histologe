@@ -1,3 +1,5 @@
+import DOMPurify from 'dompurify';
+
 initializeUploadModal(
     '#fr-modal-upload-files',
     '#select-type-situation-to-clone',
@@ -95,7 +97,8 @@ function initializeUploadModal(
         }
         let div = document.createElement('div')
         div.classList.add('fr-alert', 'fr-alert--error', 'fr-alert--sm')
-        div.innerHTML = 'Impossible d\'ajouter le fichier ' +file.name +' car le format n\'est pas pris en charge. Veuillez sélectionner un fichier au format ' +modal.dataset.acceptedExtensions+'.';
+        const message = document.createTextNode('Impossible d\'ajouter le fichier ' +file.name +' car le format n\'est pas pris en charge. Veuillez sélectionner un fichier au format ' +modal.dataset.acceptedExtensions+'.');
+        div.appendChild(message);
         listContainer.prepend(div)
         return false;
     }
@@ -103,7 +106,7 @@ function initializeUploadModal(
     function uploadFile(file) {
         let div = document.createElement('div')
         div.classList.add('fr-grid-row', 'fr-grid-row--gutters', 'fr-grid-row--middle', 'fr-mb-2w', 'modal-upload-list-item')
-        div.innerHTML = initInnerHtml(file)
+        div.innerHTML = DOMPurify.sanitize(initInnerHtml(file))
         let btnDeleteTmpFile = div.querySelector('a.delete-tmp-file')
         addEventListenerDeleteTmpFile(btnDeleteTmpFile)
         listContainer.prepend(div)

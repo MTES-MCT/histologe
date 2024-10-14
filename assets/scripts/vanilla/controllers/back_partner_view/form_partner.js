@@ -41,7 +41,7 @@ function histoUpdateValueFromData(elementName, elementData, target) {
 document.querySelectorAll('.btn-transfer-partner-user').forEach(swbtn => {
   swbtn.addEventListener('click', evt => {
     const target = evt.target
-    document.querySelector('#fr-modal-user-transfer_username').innerHTML = target.getAttribute('data-username')
+    document.querySelector('#fr-modal-user-transfer_username').textContent = target.getAttribute('data-username')
     histoUpdateValueFromData('#fr-modal-user-transfer_userid', 'data-userid', target)
     document.querySelector('#user_transfer_form').addEventListener('submit', (e) => {
       histoUpdateSubmitButton('#user_transfer_form_submit', 'Transfert en cours...')
@@ -52,10 +52,10 @@ document.querySelectorAll('.btn-delete-partner-user').forEach(swbtn => {
   swbtn.addEventListener('click', evt => {
     const target = evt.target
     document.querySelectorAll('.fr-modal-user-delete_username').forEach(userItem => {
-      userItem.innerHTML = target.getAttribute('data-username')
+      userItem.textContent = target.getAttribute('data-username')
     })
     document.querySelectorAll('.fr-modal-user-delete_useremail').forEach(userItem => {
-      userItem.innerHTML = target.getAttribute('data-useremail')
+      userItem.textContent = target.getAttribute('data-useremail')
     })
     histoUpdateValueFromData('#fr-modal-user-delete_userid', 'data-userid', target)
     document.querySelector('#user_delete_form').addEventListener('submit', (e) => {
@@ -68,7 +68,7 @@ document.querySelectorAll('.btn-delete-partner').forEach(swbtn => {
   swbtn.addEventListener('click', evt => {
     const target = evt.target
     document.querySelectorAll('.fr-modal-partner-delete_name').forEach(userItem => {
-      userItem.innerHTML = target.getAttribute('data-partnername')
+      userItem.textContent = target.getAttribute('data-partnername')
     })
     histoUpdateValueFromData('#fr-modal-partner-delete_partnerid', 'data-partnerid', target)
     document.querySelector('#partner_delete_form').addEventListener('submit', (e) => {
@@ -93,7 +93,7 @@ document.querySelectorAll('.btn-edit-partner-user').forEach(swbtn => {
     clearErrors() 
     const target = evt.target
     document.querySelectorAll('.fr-modal-user-edit_useremail').forEach(userItem => {
-      userItem.innerHTML = target.getAttribute('data-useremail')
+      userItem.textContent = target.getAttribute('data-useremail')
     })
     userEditedId = target.getAttribute('data-userid')
     histoUpdateValueFromData('#user_edit_userid', 'data-userid', target)
