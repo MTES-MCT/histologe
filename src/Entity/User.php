@@ -39,7 +39,7 @@ class User implements UserInterface, EntityHistoryInterface, PasswordAuthenticat
 
     public const ROLE_USAGER = self::ROLES['Usager'];
     public const ROLE_USER_PARTNER = self::ROLES['Agent'];
-    public const ROLE_ADMIN_PARTNER = self::ROLES['Admin partenaire'];
+    public const ROLE_ADMIN_PARTNER = self::ROLES['Admin. partenaire'];
     public const ROLE_ADMIN_TERRITORY = self::ROLES['Resp. Territoire'];
     public const ROLE_ADMIN = self::ROLES['Super Admin'];
 
@@ -51,7 +51,7 @@ class User implements UserInterface, EntityHistoryInterface, PasswordAuthenticat
     public const ROLES = [
         'Usager' => 'ROLE_USAGER',
         'Agent' => 'ROLE_USER_PARTNER',
-        'Admin partenaire' => 'ROLE_ADMIN_PARTNER',
+        'Admin. partenaire' => 'ROLE_ADMIN_PARTNER',
         'Resp. Territoire' => 'ROLE_ADMIN_TERRITORY',
         'Super Admin' => 'ROLE_ADMIN',
     ];

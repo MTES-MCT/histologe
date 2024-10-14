@@ -32,7 +32,7 @@ class GridAffectationLoaderTest extends KernelTestCase
 
     public const FIXTURE_USER_EMAIL_DUPLICATE = 'user-ddt@histologe.fr';
     public const FIXTURE_ROLE_RT = 'Resp. Territoire';
-    public const FIXTURE_ROLE_PARTNER = 'Admin partenaire';
+    public const FIXTURE_ROLE_PARTNER = 'Admin. partenaire';
     public const FIXTURE_ROLE_USER = 'Agent';
 
     private GridAffectationLoader $gridAffectationLoader;

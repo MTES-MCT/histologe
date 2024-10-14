@@ -18,7 +18,7 @@ readonly class UserExportLoader
         'createdAt' => ['label' => 'Date de création', 'desc' => 'la date de création du compte'],
         'statut' => ['label' => 'Statut', 'desc' => 'le statut du compte (s\'il est activé ou non)'],
         'lastLoginAt' => ['label' => 'Dernière connexion', 'desc' => 'la date de dernière connexion au compte'],
-        'role' => ['label' => 'Rôle', 'desc' => 's\'il s\'agit d\'un compte agent, admin partenaire ou responsable de territoire'],
+        'role' => ['label' => 'Rôle', 'desc' => 's\'il s\'agit d\'un compte agent, Admin. partenaire ou responsable de territoire'],
     ];
 
     public function __construct(

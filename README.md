@@ -112,12 +112,12 @@ S3_URL_BUCKET=
 Territoire             | Partenaire                | Email                               | Rôle       
 -----------------------|---------------------------|-------------------------------------|----------------------
 N/A                    | Admin Histologe           | admin-01@histologe.fr               | ROLE_ADMIN 
-Bouches-du-Rhône       | Admin Territoire 13       | admin-territoire-13-01@histologe.fr | ROLE_ADMIN_TERRITORY
-Ain                    | Admin Territoire 01       | admin-territoire-01-01@histologe.fr | ROLE_ADMIN_TERRITORY
-Bouches-du-Rhône       | Admin Partenaire 13       | admin-partenaire-13-01@histologe.fr | ROLE_ADMIN_PARTNER
-Ain                    | Admin Partenaire 01       | admin-partenaire-01-01@histologe.fr | ROLE_ADMIN_PARTNER
-Bouches-du-Rhône       | Utilisateur Partenaire 13 | user-13-01@histologe.fr             | ROLE_USER_PARTNER
-Ain                    | Utilisateur Partenaire 01 | user-01-01@histologe.fr             | ROLE_USER_PARTNER
+Bouches-du-Rhône       | Resp. Territoire 13       | admin-territoire-13-01@histologe.fr | ROLE_ADMIN_TERRITORY
+Ain                    | Resp. Territoire 01       | admin-territoire-01-01@histologe.fr | ROLE_ADMIN_TERRITORY
+Bouches-du-Rhône       | Admin. partenaire 13       | admin-partenaire-13-01@histologe.fr | ROLE_ADMIN_PARTNER
+Ain                    | Admin. partenaire 01       | admin-partenaire-01-01@histologe.fr | ROLE_ADMIN_PARTNER
+Bouches-du-Rhône       | Agent Partenaire 13 | user-13-01@histologe.fr             | ROLE_USER_PARTNER
+Ain                    | Agent Partenaire 01 | user-01-01@histologe.fr             | ROLE_USER_PARTNER
 
 > Pour les mails générique partenaire, la nomenclature est la suivante: partenaire-[zip]-[index]
 

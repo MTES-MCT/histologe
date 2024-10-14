@@ -109,8 +109,8 @@ export default defineComponent({
   methods: {
     handleInitSettings (requestResponse: any) {
       this.sharedState.user.isAdmin = requestResponse.roleLabel === 'Super Admin'
-      this.sharedState.user.isResponsableTerritoire = requestResponse.roleLabel === 'Resp. Territoire'
-      this.sharedState.user.isAdministrateurPartenaire = requestResponse.roleLabel === 'Admin partenaire'
+      this.sharedState.user.isResponsableTerritoire = ['Responsable Territoire', 'Resp. Territoire'].includes(requestResponse.roleLabel)
+      this.sharedState.user.isAdministrateurPartenaire = ['Administrateur', 'Admin. partenaire'].includes(requestResponse.roleLabel)
       this.sharedState.user.canSeeNonDecenceEnergetique = requestResponse.canSeeNDE === '1'
       this.sharedState.user.prenom = requestResponse.firstname
       this.sharedState.user.avatarOrPlaceHolder = requestResponse.avatarOrPlaceHolder

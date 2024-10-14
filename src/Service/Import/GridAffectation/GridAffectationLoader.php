@@ -222,7 +222,7 @@ class GridAffectationLoader
                 if ('Utilisateur' === $roleLabel) {
                     $roleLabel = 'Agent';
                 } elseif ('Administrateur' === $roleLabel) {
-                    $roleLabel = 'Admin partenaire';
+                    $roleLabel = 'Admin. partenaire';
                 } elseif ('Responsable Territoire' === $roleLabel) {
                     $roleLabel = 'Resp. Territoire';
                 }
