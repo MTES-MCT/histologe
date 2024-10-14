@@ -601,6 +601,7 @@ class SignalementRepository extends ServiceEntityRepository
             GROUP_CONCAT(IFNULL(i.concludeProcedure, \'-\') ORDER BY i.scheduledAt ASC SEPARATOR :concat_separator) as interventionConcludeProcedure,
             GROUP_CONCAT(IFNULL(i.details, \'-\') ORDER BY i.scheduledAt ASC SEPARATOR :concat_separator) as interventionDetails,
             GROUP_CONCAT(
+                DISTINCT
                 CONCAT(
                     i.status,
                     :concat_separator,
