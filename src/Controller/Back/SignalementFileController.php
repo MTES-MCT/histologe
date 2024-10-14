@@ -167,21 +167,22 @@ class SignalementFileController extends AbstractController
             $type = $file->getFileType();
             if ($uploadHandlerService->deleteFile($file)) {
                 $suivi = $suiviFactory->createInstanceFrom($this->getUser(), $signalement);
-                /** @var User $user */
-                $user = $this->getUser();
-                $description = $user->getNomComplet().' a supprimé ';
-                $description .= File::FILE_TYPE_DOCUMENT === $type ? 'le document suivant :' : 'la photo suivante :';
-                $suivi->setDescription(
-                    $description
-                    .'<ul><li>'
-                    .$filename
-                    .'</li></ul>'
-                );
-                $suivi->setType(Suivi::TYPE_AUTO);
+                if (!$this->isGranted('ROLE_ADMIN')) {
+                    /** @var User $user */
+                    $user = $this->getUser();
+                    $description = $user->getNomComplet().' a supprimé ';
+                    $description .= File::FILE_TYPE_DOCUMENT === $type ? 'le document suivant :' : 'la photo suivante :';
+                    $suivi->setDescription(
+                        $description
+                        .'<ul><li>'
+                        .$filename
+                        .'</li></ul>'
+                    );
+                    $suivi->setType(Suivi::TYPE_AUTO);
 
-                $entityManager->persist($suivi);
-                $entityManager->flush();
-
+                    $entityManager->persist($suivi);
+                    $entityManager->flush();
+                }
                 if (File::FILE_TYPE_DOCUMENT === $type) {
                     $this->addFlash('success', 'Le document a bien été supprimé.');
                 } else {

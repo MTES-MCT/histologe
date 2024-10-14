@@ -11,8 +11,10 @@ use App\Event\SignalementCreatedEvent;
 use App\Event\SignalementDraftCompletedEvent;
 use App\Factory\SignalementDraftFactory;
 use App\Repository\SignalementDraftRepository;
+use App\Repository\SignalementRepository;
 use App\Serializer\SignalementDraftRequestSerializer;
 use App\Service\Signalement\SignalementDraftHelper;
+use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
@@ -28,6 +30,7 @@ class SignalementDraftManager extends AbstractManager
         protected UrlGeneratorInterface $urlGenerator,
         protected SignalementDraftRequestSerializer $signalementDraftRequestSerializer,
         protected SignalementDraftRepository $signalementDraftRepository,
+        protected SignalementRepository $signalementRepository,
         protected string $entityName = SignalementDraft::class,
     ) {
         parent::__construct($managerRegistry, $entityName);
@@ -59,7 +62,12 @@ class SignalementDraftManager extends AbstractManager
             if (SignalementDraftStatus::EN_SIGNALEMENT === $signalementDraft->getStatus()) {
                 $signalement = $signalementDraft->getSignalements()->first();
             } else {
-                $signalement = $this->dispatchSignalementDraftCompleted($signalementDraft);
+                try {
+                    $signalement = $this->dispatchSignalementDraftCompleted($signalementDraft);
+                } catch (UniqueConstraintViolationException $exception) {
+                    $signalement = $this->signalementRepository->findOneBy(['createdFrom' => $signalementDraft]);
+                    $this->managerRegistry->resetManager();
+                }
             }
         }
         $this->save($signalementDraft);
