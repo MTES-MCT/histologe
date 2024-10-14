@@ -10,8 +10,8 @@
     <h2 v-else-if="label !== ''">{{ label }}</h2>
     <div v-html="variablesReplacer.replace(description)"></div>
     <div v-if="components != undefined">
-      <template v-if="shouldAddFieldset()">
-        <fieldset class="fr-fieldset" id="screen_fieldset">
+      <template v-if="formStore.shouldAddFieldset(formStore.currentScreen?.components?.body)">
+        <fieldset :id="formStore.currentScreen?.slug+'_screen_fieldset'" class="fr-fieldset form-screen-fieldset">
           <SignalementFormComponentGenerator
             :componentList="components.body"
             :handleClickComponent="handleClickComponent"
@@ -215,21 +215,6 @@ export default defineComponent({
     },
     gotoHomepage () {
       window.location.href = '/'
-    },
-    shouldAddFieldset () {
-      if (formStore.currentScreen &&
-          formStore.currentScreen.components &&
-          formStore.currentScreen.components.body &&
-          formStore.currentScreen.components?.body?.length > 0
-      ) {
-        if (formStore.currentScreen.slug.startsWith('desordres_batiment_') ||
-            formStore.currentScreen.slug.startsWith('desordres_logement_') ||
-            formStore.currentScreen.slug === 'utilisation_service'
-        ) {
-          return true
-        }
-      }
-      return false
     }
   }
 })
@@ -287,5 +272,8 @@ export default defineComponent({
   .fr-span-highlight-logement {
     /* équivalent de --blue-france-main-525 en rgb */
     background-color: rgb(106, 106, 244, 0.25);
+  }
+  .form-screen-fieldset {
+    display: inherit
   }
 </style>

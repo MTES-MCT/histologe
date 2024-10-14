@@ -5,39 +5,78 @@
     <div
       v-if="components != undefined"
       >
-      <component
-        v-for="component in components.body"
-        :is="component.type"
-        v-bind:key="component.slug"
-        :id="component.slug"
-        :access_name="component.accessibility?.name ?? component.slug"
-        :access_autocomplete="component.accessibility?.autocomplete ?? 'off'"
-        :access_focus="component.accessibility?.focus ?? false"
-        :label="component.label"
-        :hint="component.hint"
-        :labelInfo="component.labelInfo"
-        :labelUpload="component.labelUpload"
-        :description="component.description"
-        :placeholder="component.placeholder"
-        :action="component.action"
-        :link="component.link"
-        :linktarget="component.linktarget"
-        :components="component.components"
-        :values="component.values"
-        :customCss="component.customCss"
-        :validate="component.validate"
-        :disabled="component.disabled"
-        :multiple="component.multiple"
-        :ariaControls="component.ariaControls"
-        :tagWhenEdit="component.tagWhenEdit"
-        v-model="formStore.data[component.slug]"
-        :hasError="formStore.validationErrors[component.slug] !== undefined"
-        :error="formStore.validationErrors[component.slug]"
-        :class="{ 'fr-hidden': !formStore.shouldShowField(component) }"
-        :aria-hidden="!formStore.shouldShowField(component) ? true : undefined"
-        :hidden="!formStore.shouldShowField(component) ? true : undefined"
-        :clickEvent="handleClickComponent"
-      />
+      <template v-if="formStore.shouldAddFieldset(components.body)">
+        <fieldset :id="id+'_subscreen_fieldset'" class="fr-fieldset form-subscreen-fieldset">
+          <component
+            v-for="component in components.body"
+            :is="component.type"
+            v-bind:key="component.slug"
+            :id="component.slug"
+            :access_name="component.accessibility?.name ?? component.slug"
+            :access_autocomplete="component.accessibility?.autocomplete ?? 'off'"
+            :access_focus="component.accessibility?.focus ?? false"
+            :label="component.label"
+            :hint="component.hint"
+            :labelInfo="component.labelInfo"
+            :labelUpload="component.labelUpload"
+            :description="component.description"
+            :placeholder="component.placeholder"
+            :action="component.action"
+            :link="component.link"
+            :linktarget="component.linktarget"
+            :components="component.components"
+            :values="component.values"
+            :customCss="component.customCss"
+            :validate="component.validate"
+            :disabled="component.disabled"
+            :multiple="component.multiple"
+            :ariaControls="component.ariaControls"
+            :tagWhenEdit="component.tagWhenEdit"
+            v-model="formStore.data[component.slug]"
+            :hasError="formStore.validationErrors[component.slug] !== undefined"
+            :error="formStore.validationErrors[component.slug]"
+            :class="{ 'fr-hidden': !formStore.shouldShowField(component) }"
+            :aria-hidden="!formStore.shouldShowField(component) ? true : undefined"
+            :hidden="!formStore.shouldShowField(component) ? true : undefined"
+            :clickEvent="handleClickComponent"
+          />
+        </fieldset>
+      </template>
+      <template v-else>
+        <component
+          v-for="component in components.body"
+          :is="component.type"
+          v-bind:key="component.slug"
+          :id="component.slug"
+          :access_name="component.accessibility?.name ?? component.slug"
+          :access_autocomplete="component.accessibility?.autocomplete ?? 'off'"
+          :access_focus="component.accessibility?.focus ?? false"
+          :label="component.label"
+          :hint="component.hint"
+          :labelInfo="component.labelInfo"
+          :labelUpload="component.labelUpload"
+          :description="component.description"
+          :placeholder="component.placeholder"
+          :action="component.action"
+          :link="component.link"
+          :linktarget="component.linktarget"
+          :components="component.components"
+          :values="component.values"
+          :customCss="component.customCss"
+          :validate="component.validate"
+          :disabled="component.disabled"
+          :multiple="component.multiple"
+          :ariaControls="component.ariaControls"
+          :tagWhenEdit="component.tagWhenEdit"
+          v-model="formStore.data[component.slug]"
+          :hasError="formStore.validationErrors[component.slug] !== undefined"
+          :error="formStore.validationErrors[component.slug]"
+          :class="{ 'fr-hidden': !formStore.shouldShowField(component) }"
+          :aria-hidden="!formStore.shouldShowField(component) ? true : undefined"
+          :hidden="!formStore.shouldShowField(component) ? true : undefined"
+          :clickEvent="handleClickComponent"
+        />
+      </template>
     </div>
   </div>
 </template>
@@ -126,5 +165,8 @@ export default defineComponent({
   border-left: 3px solid var(--border-action-high-blue-france);
   margin-left: 10px;
   padding-left: 18px;
+}
+.form-subscreen-fieldset {
+  display: inherit
 }
 </style>

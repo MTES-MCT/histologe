@@ -62,6 +62,8 @@ interface FormStore {
   shouldShowField: (component: any) => boolean
   preprocessScreen: (screenBodyComponents: any) => Component[]
   hasDesordre: (categorieSlug: string) => boolean
+  shouldAddFieldset: (components: any) => boolean
+  countInputComponentsByScreen: (components: any) => number
 }
 
 const formStore: FormStore = reactive({
@@ -196,6 +198,26 @@ const formStore: FormStore = reactive({
     }
 
     return hasDesordre
+  },
+  shouldAddFieldset (components: any): boolean {
+    if (((components) != null) &&
+        this.countInputComponentsByScreen(components) > 1
+    ) {
+      return true
+    }
+    return false
+  },
+  countInputComponentsByScreen (components: any): number {
+    let inputComponentsByScreen = 0
+    for (const component of components) {
+      if (formStore.inputComponents.includes(component.type)) {
+        inputComponentsByScreen++
+      } else if ((component.type === 'SignalementFormSubscreen') &&
+        component.components !== null) {
+        inputComponentsByScreen += this.countInputComponentsByScreen(component.components.body)
+      }
+    }
+    return inputComponentsByScreen
   }
 })
 
