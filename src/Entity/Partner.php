@@ -8,16 +8,16 @@ use App\Entity\Enum\HistoryEntryEvent;
 use App\Entity\Enum\PartnerType;
 use App\Entity\Enum\Qualification;
 use App\Repository\PartnerRepository;
+use App\Validator as AppAssert;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
-use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Serializer\Attribute\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: PartnerRepository::class)]
-#[UniqueEntity('email', ignoreNull: true)]
+#[AppAssert\UniqueEmailPartnerByTerritory]
 class Partner implements EntityHistoryInterface
 {
     use TimestampableTrait;

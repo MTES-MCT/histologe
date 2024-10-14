@@ -56,7 +56,7 @@ class GridAffectationLoaderTest extends KernelTestCase
     public function testLoadValidPartnersAndUserInCreateMode(): void
     {
         $territory = $this->entityManager->getRepository(Territory::class)->findOneBy(['isActive' => 0]);
-        $errors = $this->gridAffectationLoader->validate($this->provideValidData());
+        $errors = $this->gridAffectationLoader->validate($this->provideValidData(), $territory);
         $this->assertCount(0, $errors);
 
         $this->gridAffectationLoader->load($territory, $this->provideValidData(), []);
@@ -104,7 +104,7 @@ class GridAffectationLoaderTest extends KernelTestCase
             'Rôle' => self::FIXTURE_ROLE_USER,
         ];
 
-        $errors = $this->gridAffectationLoader->validate($data, true);
+        $errors = $this->gridAffectationLoader->validate($data, $territory, true);
         $this->assertCount(0, $errors);
         $this->gridAffectationLoader->load($territory, $data, []);
         $metaData = $this->gridAffectationLoader->getMetadata();
@@ -120,6 +120,8 @@ class GridAffectationLoaderTest extends KernelTestCase
 
     public function testValidateWithErrors(): void
     {
+        $territory = $this->entityManager->getRepository(Territory::class)->findOneBy(['zip' => 13]);
+
         $errors = [
             'line 3 : E-mail incorrect pour un partenaire : arshistologe.fr',
             'line 5 : Type incorrect pour Random Type --> Random Type',
@@ -137,7 +139,7 @@ class GridAffectationLoaderTest extends KernelTestCase
 
         $this->assertEquals(
             $errors,
-            $this->gridAffectationLoader->validate($this->provideInvalidDataWithDuplicatePartnersAndUsers())
+            $this->gridAffectationLoader->validate($this->provideInvalidDataWithDuplicatePartnersAndUsers(), $territory)
         );
     }
 
