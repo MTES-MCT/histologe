@@ -50,16 +50,16 @@
   "desordres_batiment_proprete_local_poubelles": { "default": "Il n'y a pas de local poubelles ni d'endroit où stocker les déchets" },
   "desordres_batiment_eau_pas_eau_potable": { "default": "Il n'y a pas d'eau potable dans le bâtiment" },
   "desordres_batiment_eau_pas_eau_chaude": { "default": "Il n'y a pas d'eau chaude dans le bâtiment" },
-  "desordres_batiment_eau_evacuation_KO": { "default": "L'évacuation des eaux ne marche pas (mauvaises odeurs, eau stagnante, fuites...)" },
-  "desordres_batiment_eau_pas_evacuation_eaux_pluie": { "default": "Quand il pleut, l'eau n'est pas évacuée (pas de gouttière, pas de système d'évacuation...)" },
+  "desordres_batiment_eau_evacuation_KO": { "default": "L'évacuation des eaux ne marche pas (mauvaises odeurs, eau stagnante, fuites…)" },
+  "desordres_batiment_eau_pas_evacuation_eaux_pluie": { "default": "Quand il pleut, l'eau n'est pas évacuée (pas de gouttière, pas de système d'évacuation…)" },
   "desordres_batiment_isolation_porte_fenetres": { "default": "Il manque des portes ou des fenêtres, ou elles sont mal isolées" },
   "desordres_batiment_isolation_murs": { "default": "Les murs ne sont pas ou peu isolés" },
   "desordres_batiment_isolation_dernier_etage_toit": { "default": "Le dernier étage n'est pas isolé, le toit n'est pas étanche" },
   "desordres_batiment_isolation_infiltration_eau": { "default": "De l'eau s'infiltre par le sol ou les murs" },
-  "desordres_batiment_maintenance_ascenseur": { "default": "L'ascenseur est dangereux (les portes s'ouvrent ou se ferment toutes seules, on risque de tomber, il s'arrête entre les étages...)" },
-  "desordres_batiment_maintenance_petites_reparations": { "default": "Les petites réparations ne sont pas faites (changement d'ampoule...)" },
+  "desordres_batiment_maintenance_ascenseur": { "default": "L'ascenseur est dangereux (les portes s'ouvrent ou se ferment toutes seules, on risque de tomber, il s'arrête entre les étages…)" },
+  "desordres_batiment_maintenance_petites_reparations": { "default": "Les petites réparations ne sont pas faites (changement d'ampoule…)" },
   "desordres_batiment_nuisibles_cafards": { "default": "Il y a des cafards ou blattes dans le bâtiment" },
-  "desordres_batiment_nuisibles_rongeurs": { "default": "Il y a des rongeurs dans le bâtiment (rats, souris...)" },
+  "desordres_batiment_nuisibles_rongeurs": { "default": "Il y a des rongeurs dans le bâtiment (rats, souris…)" },
   "desordres_batiment_nuisibles_punaises": { "default": "Il y a des punaises de lit dans le bâtiment" },
   "desordres_batiment_nuisibles_autres": { "default": "Il y a un autre type de nuisible dans le bâtiment" },
   "desordres_batiment_nuisibles_autres_details_type_nuisibles": {
@@ -81,7 +81,7 @@
       "default": "Le plancher menace de s'effondrer : {{dictionaryStore::formStore.data.desordres_batiment_securite_sol_details_plancher_effondre}}"
     }
   },
-  "desordres_batiment_securite_elements_toit": { "default": "Des éléments du toit risquent de tomber (tuyau, tuiles, pierres...)" },
+  "desordres_batiment_securite_elements_toit": { "default": "Des éléments du toit risquent de tomber (tuyau, tuiles, pierres…)" },
   "desordres_batiment_securite_toit": { "default": "Le plafond ou le toit risque de s'effondrer et il a de très grosses fissures" },
   "desordres_batiment_securite_escalier": { "default": "Les escaliers et / ou les rambardes sont dangereuses" },
   "desordres_batiment_securite_escalier_details_dangereux": {
@@ -113,8 +113,8 @@
   "desordres_batiment_bruit_interieur": { "default": "Il y a beaucoup de bruit à l'intérieur, on entend tout même en fermant les portes et les fenêtres" },
   "desordres_logement_eau_eau_potable": { "default": "Il n'y a pas d'eau potable dans le logement" },
   "desordres_logement_eau_eau_chaude": { "default": "Il n'y a pas d'eau chaude dans le logement" },
-  "desordres_logement_eau_evacuation": { "default": "L'évacuation des eaux ne marche pas (mauvaises odeurs, pas d'évacuation, fuites...)" },
-  "desordres_logement_aeration_aucune_aeration": { "default": "Il n'y a pas de fenêtre ni de système de ventilation (VMC...)" },
+  "desordres_logement_eau_evacuation": { "default": "L'évacuation des eaux ne marche pas (mauvaises odeurs, pas d'évacuation, fuites…)" },
+  "desordres_logement_aeration_aucune_aeration": { "default": "Il n'y a pas de fenêtre ni de système de ventilation (VMC…)" },
   "desordres_logement_aeration_ventilation_defectueuse": { "default": "Le système de ventilation ne fonctionne pas" },
   "desordres_logement_aeration_ventilation_defectueuse_details_nettoyage": {
     "default": "La ventilation a-t-elle été nettoyée ?",
@@ -131,7 +131,7 @@
   "desordres_logement_chauffage_details_fenetres_permeables": { "default": "Les fenêtres laissent passer beaucoup d'air ou laissent passer l'eau quand il pleut" },
   "desordres_logement_chauffage_details_difficultes_chauffage": { "default": "Il est difficile de chauffer le logement" },
   "desordres_logement_chauffage_details_chauffage_KO": { "default": "Le chauffage ne fonctionne pas, un chauffage d'appoint est utilisé." },
-  "desordres_logement_chauffage_details_chauffage_dangereux": { "default": "Les dispositifs de chauffages (chauffe eau, poêle, cheminée, radiateur...) sont dangereux (très mauvais état, tuyaux mal fixés, etc.)" },
+  "desordres_logement_chauffage_details_chauffage_dangereux": { "default": "Les dispositifs de chauffages (chauffe eau, poêle, cheminée, radiateur…) sont dangereux (très mauvais état, tuyaux mal fixés, etc.)" },
   "desordres_logement_chauffage_details_dpe_annee": {
     "default": "Quand le DPE du logement a-t-il été réalisé ?",
     "disorderOverview": {
@@ -246,7 +246,7 @@
   "desordres_logement_electricite_manque_prises": { "default": "Il n'y a pas de prises, ou il en manque" },
   "desordres_logement_electricite_manque_prises_details_multiprises": { "default": "Des multi-prises sont branchées les unes sur les autres : {{dictionaryStore::formStore.data.desordres_logement_electricite_manque_prises_details_multiprises}}" },
   "desordres_logement_nuisibles_cafards": { "default": "Il y a des cafards ou blattes" },
-  "desordres_logement_nuisibles_rongeurs": { "default": "Il y a des rongeurs (rats, souris...)" },
+  "desordres_logement_nuisibles_rongeurs": { "default": "Il y a des rongeurs (rats, souris…)" },
   "desordres_logement_nuisibles_punaises": { "default": "Il y a des punaises de lit" },
   "desordres_logement_nuisibles_autres": { "default": "Il y a un autre type de nuisible" },
   "desordres_logement_nuisibles_autres_details_type_nuisibles": {

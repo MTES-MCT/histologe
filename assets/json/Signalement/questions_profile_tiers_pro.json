@@ -44,6 +44,7 @@
           "type": "SignalementFormEmailfield",
           "label": "Adresse e-mail",
           "slug": "vos_coordonnees_tiers_email",
+          "description": "Format attendu : nom@domaine.fr",
           "accessibility": {
             "name": "mail",
             "autocomplete": "email"
@@ -53,6 +54,7 @@
           "type": "SignalementFormPhonefield",
           "label": "Téléphone",
           "slug": "vos_coordonnees_tiers_tel",
+          "description": "Format attendu : Veuillez sélectionner votre pays pour obtenir l'indicatif téléphonique, puis saisir votre numéro de téléphone au format national (sans l'indicatif). Exemple pour la France : 0702030405.",
           "accessibility": {
             "name": "telephone",
             "autocomplete": "tel-national"
@@ -122,6 +124,7 @@
           "type": "SignalementFormEmailfield",
           "label": "Adresse e-mail (facultatif)",
           "slug": "coordonnees_occupant_email",
+          "description": "Format attendu : nom@domaine.fr",
           "validate": {
             "required": false
           },
@@ -134,6 +137,7 @@
           "type": "SignalementFormPhonefield",
           "label": "Téléphone (facultatif)",
           "slug": "coordonnees_occupant_tel",
+          "description": "Format attendu : Veuillez sélectionner votre pays pour obtenir l'indicatif téléphonique, puis saisir votre numéro de téléphone au format national (sans l'indicatif). Exemple pour la France : 0702030405.",
           "validate": {
             "required": false
           },
@@ -198,7 +202,7 @@
           "label": "Nom de l'organisme",
           "slug": "coordonnees_bailleur_nom_autocomplete",
           "placeholder": "Taper le nom de l'organisme ici",
-          "description": "Tapez le nom de votre bailleur et sélectionnez-le dans la liste.",
+          "description": "Format attendu : Tapez le nom de votre bailleur et sélectionnez-le dans la liste.",
           "validate": {
             "maxLength": 255
           },
@@ -227,6 +231,7 @@
           "type": "SignalementFormEmailfield",
           "label": "Adresse e-mail (facultatif)",
           "slug": "coordonnees_bailleur_email",
+          "description": "Format attendu : nom@domaine.fr",
           "validate": {
             "required": false
           },
@@ -239,6 +244,7 @@
           "type": "SignalementFormPhonefield",
           "label": "Téléphone (facultatif)",
           "slug": "coordonnees_bailleur_tel",
+          "description": "Format attendu : Veuillez sélectionner votre pays pour obtenir l'indicatif téléphonique, puis saisir votre numéro de téléphone au format national (sans l'indicatif). Exemple pour la France : 0702030405.",
           "validate": {
             "required": false
           },
@@ -251,6 +257,7 @@
           "type": "SignalementFormAddress",
           "label": "Adresse postale (facultatif)",
           "slug": "coordonnees_bailleur_adresse",
+          "description": "Format attendu : Tapez l'adresse puis sélectionnez-la dans la liste. Si elle n'apparait pas, cliquez sur Saisir une adresse manuellement.",
           "validate": {
             "required": false
           }
@@ -402,7 +409,7 @@
       "body": [
         {
           "type": "SignalementFormOnlyChoice",
-          "label": "Le logement est...",
+          "label": "Le logement est…",
           "slug": "type_logement_nature",
           "values": [
             {
@@ -429,7 +436,7 @@
           "conditional": {
             "show": "formStore.data.type_logement_nature === 'autre'"
           },
-          "description": "15 caractères maximum",
+          "description": "Format attendu : 15 caractères maximum",
           "validate": {
             "maxLength": 15
           }
@@ -562,7 +569,7 @@
         {
           "type": "SignalementFormCounter",
           "label": "Quelle est la superficie du logement (taille en m²) (facultatif)",
-          "description": "Saisir un nombre entier",
+          "description": "Format attendu : Saisir un nombre entier",
           "slug": "composition_logement_superficie",
           "validate": {
             "pattern": "^[0-9]*$",
@@ -591,7 +598,7 @@
         {
           "type": "SignalementFormCounter",
           "label": "Quel est le nombre de pièces à vivre (salon, chambre) dans votre logement ?",
-          "description": "Saisir un nombre entier",
+          "description": "Format attendu : Saisir un nombre entier",
           "slug": "composition_logement_nb_pieces",
           "defaultValue": 1,
           "conditional": {
@@ -853,7 +860,7 @@
         {
           "type": "SignalementFormCounter",
           "label": "Combien de personnes vivent dans le logement ?",
-          "description": "Saisir un nombre entier",
+          "description": "Format attendu : Saisir un nombre entier",
           "slug": "composition_logement_nombre_personnes",
           "validate": {
             "pattern": "^[0-9]*$"
@@ -1146,6 +1153,7 @@
           "type": "SignalementFormDate",
           "label": "Quelle est la date de naissance de l'allocataire ?",
           "slug": "logement_social_date_naissance",
+          "description": "Format attendu : JJ/MM/AAAA",
           "conditional": {
             "show": "formStore.data.logement_social_allocation === 'oui'"
           }
@@ -1157,7 +1165,7 @@
           "conditional": {
             "show": "formStore.data.logement_social_allocation === 'oui'"
           },
-          "description": "25 caractères maximum",
+          "description": "Format attendu : 25 caractères maximum",
           "validate": {
             "maxLength": 25,
             "required": false
@@ -1166,7 +1174,7 @@
         {
           "type": "SignalementFormCounter",
           "label": "Quel est le montant de l'allocation ? (facultatif)",
-          "description": "Saisir un nombre entier",
+          "description": "Format attendu : Saisir un nombre entier",
           "slug": "logement_social_montant_allocation",
           "conditional": {
             "show": "formStore.data.logement_social_allocation === 'oui'"
@@ -1578,7 +1586,7 @@
               {
                 "type": "SignalementFormCounter",
                 "label": "Quel est le montant du loyer, sans les charges ?",
-                "description": "Saisir un nombre entier",
+                "description": "Format attendu : Saisir un nombre entier",
                 "slug": "informations_complementaires_logement_montant_loyer",
                 "validate": {
                   "pattern": "^[0-9]*$",
@@ -1607,6 +1615,7 @@
                 "type": "SignalementFormDate",
                 "label": "Quand le foyer a-t-il emménagé dans le logement ?",
                 "slug": "informations_complementaires_situation_occupants_date_emmenagement",
+                "description": "Format attendu : JJ/MM/AAAA",
                 "validate": {
                   "required": false
                 }
@@ -1624,7 +1633,7 @@
               {
                 "type": "SignalementFormCounter",
                 "label": "Le logement est sur combien d'étages ?",
-                "description": "Saisir un nombre entier",
+                "description": "Format attendu : Saisir un nombre entier",
                 "slug": "informations_complementaires_logement_nombre_etages",
                 "conditional": {
                   "show": "formStore.data.composition_logement_piece_unique === 'plusieurs_pieces'"

@@ -67,6 +67,7 @@
           "type": "SignalementFormEmailfield",
           "label": "Adresse e-mail",
           "slug": "vos_coordonnees_occupant_email",
+          "description": "Format attendu : nom@domaine.fr",
           "accessibility": {
             "name": "mail",
             "autocomplete": "email"
@@ -76,6 +77,7 @@
           "type": "SignalementFormPhonefield",
           "label": "Téléphone",
           "slug": "vos_coordonnees_occupant_tel",
+          "description": "Format attendu : Veuillez sélectionner votre pays pour obtenir l'indicatif téléphonique, puis saisir votre numéro de téléphone au format national (sans l'indicatif). Exemple pour la France : 0702030405.",
           "accessibility": {
             "name": "telephone",
             "autocomplete": "tel-national"
@@ -228,7 +230,7 @@
       "body": [
         {
           "type": "SignalementFormOnlyChoice",
-          "label": "Votre logement est...",
+          "label": "Votre logement est…",
           "slug": "type_logement_nature",
           "values": [
             {
@@ -255,7 +257,7 @@
           "conditional": {
             "show": "formStore.data.type_logement_nature === 'autre'"
           },
-          "description": "15 caractères maximum",
+          "description": "Format attendu : 15 caractères maximum",
           "validate": {
             "maxLength": 15
           }
@@ -388,7 +390,7 @@
         {
           "type": "SignalementFormCounter",
           "label": "Quelle est la superficie de votre logement (taille en m²)",
-          "description": "Saisir un nombre entier",
+          "description": "Format attendu : Saisir un nombre entier",
           "slug": "composition_logement_superficie",
           "validate": {
             "pattern": "^[0-9]*$"
@@ -416,7 +418,7 @@
         {
           "type": "SignalementFormCounter",
           "label": "Quel est le nombre de pièces à vivre (salon, chambre) dans votre logement ?",
-          "description": "Saisir un nombre entier",
+          "description": "Format attendu : Saisir un nombre entier",
           "slug": "composition_logement_nb_pieces",
           "defaultValue": 1,
           "conditional": {
@@ -678,7 +680,7 @@
         {
           "type": "SignalementFormCounter",
           "label": "Combien de personnes vivent dans votre logement ?",
-          "description": "Saisir un nombre entier",
+          "description": "Format attendu : Saisir un nombre entier",
           "slug": "composition_logement_nombre_personnes",
           "validate": {
             "pattern": "^[0-9]*$"
@@ -740,7 +742,7 @@
         {
           "type": "SignalementFormDate",
           "label": "A quelle date avez-vous emménagé dans le logement ?",
-          "hint": "Si vous ne connaissez pas la date exacte, sélectionnez un jour du mois d'emménagement",
+          "hint": "Format attendu : JJ/MM/AAAA. Si vous ne connaissez pas la date exacte, sélectionnez un jour du mois d'emménagement",
           "slug": "bail_dpe_date_emmenagement",
           "accessibility": {
             "focus": true
@@ -917,6 +919,7 @@
           "type": "SignalementFormDate",
           "label": "Quelle est votre date de naissance ?",
           "slug": "logement_social_date_naissance",
+          "hint": "Format attendu : JJ/MM/AAAA",
           "conditional": {
             "show": "formStore.data.logement_social_allocation === 'oui'"
           }
@@ -928,7 +931,7 @@
           "conditional": {
             "show": "formStore.data.logement_social_allocation === 'oui'"
           },
-          "description": "25 caractères maximum",
+          "description": "Format attendu : Le numéro d'allocataire est un identifiant unique attribué par la CAF (Caisse d'Allocations Familiales). Il comporte généralement 7 à 10 chiffres. Exemple : 1234567 ou 1234567890.",
           "validate": {
             "maxLength": 25,
             "required": false
@@ -937,7 +940,7 @@
         {
           "type": "SignalementFormCounter",
           "label": "Quel est le montant de votre allocation ? (facultatif)",
-          "description": "Saisir un nombre entier",
+          "description": "Format attendu : Saisir un nombre entier",
           "slug": "logement_social_montant_allocation",
           "conditional": {
             "show": "formStore.data.logement_social_allocation === 'oui'"
@@ -1298,7 +1301,7 @@
               {
                 "type": "SignalementFormCounter",
                 "label": "Quel est votre revenu fiscal de référence ? (facultatif)",
-                "description": "Saisir un nombre entier",
+                "description": "Format attendu : Saisir un nombre entier",
                 "slug": "informations_complementaires_situation_occupants_revenu_fiscal",
                 "validate": {
                   "pattern": "^[0-9]*$",
@@ -1318,7 +1321,7 @@
               {
                 "type": "SignalementFormCounter",
                 "label": "Votre logement est sur combien d'étages ? (facultatif)",
-                "description": "Saisir un nombre entier",
+                "description": "Format attendu : Saisir un nombre entier",
                 "slug": "informations_complementaires_logement_nombre_etages",
                 "conditional": {
                   "show": "formStore.data.composition_logement_piece_unique === 'plusieurs_pieces'"
