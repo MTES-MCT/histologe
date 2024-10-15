@@ -12,7 +12,7 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 class SignalementLienSuiviMailer extends AbstractNotificationMailer
 {
-    protected ?NotificationMailerType $mailerType = NotificationMailerType::TYPE_SIGNALEMENT_LIEN_SUIVI;
+    protected ?NotificationMailerType $mailerType = NotificationMailerType::TYPE_SIGNALEMENT_LIEN_SUIVI_TO_USAGER;
     protected ?string $mailerSubject = 'Lien vers votre page de suivi';
     protected ?string $mailerTemplate = 'lien_suivi_signalement_email';
     protected ?string $tagHeader = 'Lien de suivi du signalement';

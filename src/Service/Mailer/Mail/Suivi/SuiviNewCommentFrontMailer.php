@@ -12,7 +12,7 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 class SuiviNewCommentFrontMailer extends AbstractNotificationMailer
 {
-    protected ?NotificationMailerType $mailerType = NotificationMailerType::TYPE_NEW_COMMENT_FRONT;
+    protected ?NotificationMailerType $mailerType = NotificationMailerType::TYPE_NEW_COMMENT_FRONT_TO_USAGER;
     protected ?string $mailerSubject = 'Nouvelle mise à jour de votre signalement !';
     protected ?string $mailerButtonText = 'Accéder à mon dossier et répondre';
     protected ?string $mailerTemplate = 'nouveau_suivi_signalement_email';
