@@ -366,27 +366,18 @@ class SuiviRepository extends ServiceEntityRepository
         return 'SELECT s.id
                 FROM signalement s
                 '.$joinMaxDateSuivi.'
+                '.$innerPartnerJoin.'
                 INNER JOIN (
-                    SELECT su.signalement_id
+                    SELECT su.signalement_id, MIN(su.created_at) AS min_date
                     FROM suivi su
                     WHERE su.type = :type_suivi_technical
                     GROUP BY su.signalement_id
                     HAVING COUNT(*) >= :nb_suivi_technical
                 ) t1 ON s.id = t1.signalement_id
-                LEFT JOIN (
-                    SELECT su.signalement_id
-                    FROM suivi su
-                    INNER JOIN (
-                        SELECT signalement_id, MIN(created_at) AS min_date
-                        FROM suivi
-                        WHERE type = :type_suivi_technical
-                        GROUP BY signalement_id
-                    ) min_suivi ON su.signalement_id = min_suivi.signalement_id
-                    WHERE su.type <> :type_suivi_technical
-                    AND su.created_at > min_suivi.min_date
-                ) t2 ON s.id = t2.signalement_id
-                        '.$innerPartnerJoin.'
-                WHERE t2.signalement_id IS NULL
+                LEFT JOIN suivi su2 ON s.id = su2.signalement_id
+                AND su2.created_at > t1.min_date
+                AND su2.type <> :type_suivi_technical
+                WHERE su2.signalement_id IS NULL
                 AND s.statut NOT IN (:status_need_validation, :status_closed, :status_archived, :status_refused)
                 AND s.is_imported != 1 '
                 .$whereLastSuiviDelay
