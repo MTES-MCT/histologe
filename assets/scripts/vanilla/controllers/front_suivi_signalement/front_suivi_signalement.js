@@ -1,3 +1,5 @@
+import DOMPurify from 'dompurify';
+
 const modalUploadFiles = document?.querySelector('#fr-modal-upload-files-usager')
 if (modalUploadFiles) {
 
