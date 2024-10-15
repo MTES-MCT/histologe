@@ -126,7 +126,7 @@
       </div>
     </div>
   </dialog>
-  <button class="fr-btn fr-hidden" id="fr-modal-already-exists-button" data-fr-opened="false" aria-controls="fr-modal-already-exists"></button>
+  <button class="fr-btn fr-hidden" id="fr-modal-already-exists-button" data-fr-opened="false" aria-controls="fr-modal-already-exists" hidden aria-hidden="true"></button>
 </template>
 
 <script lang="ts">

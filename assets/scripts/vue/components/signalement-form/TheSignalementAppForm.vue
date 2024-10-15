@@ -33,7 +33,7 @@
                 :customCss="formStore.currentScreen.customCss"
                 :changeEvent="saveAndChangeScreenBySlug"
                 />
-              <button type="submit" class="hidden-submit">Submit</button>
+              <button type="submit" class="fr-hidden" hidden aria-hidden="true">Submit</button>
             </form>
           </div>
           <SignalementFormModal
@@ -320,8 +320,5 @@ export default defineComponent({
   }
   .signalement-form {
     background-color: white;
-  }
-  .hidden-submit {
-    display: none;
   }
 </style>
