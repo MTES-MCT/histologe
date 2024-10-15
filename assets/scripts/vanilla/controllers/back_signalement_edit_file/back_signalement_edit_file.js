@@ -1,5 +1,3 @@
-import DOMPurify from 'dompurify';
-
 function histoUpdateDesordreSelect(target, selectedDocumentType) {
   let desordreSelectBox = document.querySelector('#desordre-slug-select');
   let desordres = JSON.parse(target.getAttribute('data-signalement-desordres'))
@@ -31,9 +29,8 @@ function histoUpdateDesordreSelect(target, selectedDocumentType) {
 function histoCreateMiniatureImage(target) {
   histoDeleteMiniatureImage()
   const url = target.getAttribute('data-file-path');
-  const sanitizedUrl = DOMPurify.sanitize(url);
   const modalFileEditType = document.querySelector('#fr-modal-edit-file-miniature');
-  const newDiv = '<div id="fr-modal-edit-file-miniature-image" class="fr-col-6 fr-col-offset-3 fr-col-md-2 fr-col-offset-md-5 fr-px-5w fr-py-8w fr-rounded fr-border fr-text--center" style="background: url(\'' + sanitizedUrl + '\') no-repeat center center/cover;"></div>';
+  const newDiv = '<div id="fr-modal-edit-file-miniature-image" class="fr-col-6 fr-col-offset-3 fr-col-md-2 fr-col-offset-md-5 fr-px-5w fr-py-8w fr-rounded fr-border fr-text--center" style="background: url(\'' + url + '\') no-repeat center center/cover;"></div>';
   modalFileEditType.insertAdjacentHTML('afterbegin', newDiv);
 }
 function histoDeleteMiniatureImage() {
