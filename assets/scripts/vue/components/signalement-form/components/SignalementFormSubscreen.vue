@@ -167,6 +167,8 @@ export default defineComponent({
   padding-left: 18px;
 }
 .form-subscreen-fieldset {
-  display: inherit
+  display: inherit ;
+  margin: 0 -0.25rem 1rem;
+  padding: 0 0rem;
 }
 </style>

@@ -274,6 +274,8 @@ export default defineComponent({
     background-color: rgb(106, 106, 244, 0.25);
   }
   .form-screen-fieldset {
-    display: inherit
+    display: inherit;
+    margin: 0 0rem 1rem;
+    padding: 0 0rem;
   }
 </style>

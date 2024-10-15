@@ -213,10 +213,13 @@ const formStore: FormStore = reactive({
       if (formStore.inputComponents.includes(component.type)) {
         inputComponentsByScreen++
       } else if ((component.type === 'SignalementFormSubscreen') &&
-        component.components !== null) {
+        component.components !== null &&
+        component.components !== undefined) {
         inputComponentsByScreen += this.countInputComponentsByScreen(component.components.body)
       }
     }
+    console.log('inputComponentsByScreen  = ')
+    console.log( inputComponentsByScreen)
     return inputComponentsByScreen
   }
 })
