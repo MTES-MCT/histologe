@@ -158,3 +158,7 @@ document?.querySelector('#signalement-affectation-form-submit')?.addEventListene
         }
     })
 })
+
+document?.getElementById('signalement-add-suivi-notify-usager')?.addEventListeners('change', (e) => {
+    document.getElementById('signalement-add-suivi-submit').textContent = (e.target.checked) ? 'Envoyer le suivi à l\'usager' : 'Enregistrer le suivi interne';
+})
