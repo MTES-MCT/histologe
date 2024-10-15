@@ -31,7 +31,7 @@ class UserFactoryTest extends KernelTestCase
         $partner = new Partner();
 
         $user = (new UserFactory())->createInstanceFrom(
-            roleLabel: 'Utilisateur',
+            roleLabel: 'Agent',
             territory: $territory,
             partner: $partner,
             firstname: 'John',

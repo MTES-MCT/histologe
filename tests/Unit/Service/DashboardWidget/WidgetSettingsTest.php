@@ -26,7 +26,7 @@ class WidgetSettingsTest extends TestCase
 
         $this->assertEquals('John', $widgetSettings->getFirstname());
         $this->assertEquals('Doe', $widgetSettings->getLastname());
-        $this->assertEquals('Utilisateur', $widgetSettings->getRoleLabel());
+        $this->assertEquals('Agent', $widgetSettings->getRoleLabel());
         $this->assertEquals('Partner', $widgetSettings->getPartnerName());
         $this->assertEquals('01-Ain', $widgetSettings->getTerritoryName());
         $this->assertCount(2, $widgetSettings->getTerritories());

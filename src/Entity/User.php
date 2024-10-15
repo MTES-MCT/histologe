@@ -38,9 +38,9 @@ class User implements UserInterface, EntityHistoryInterface, PasswordAuthenticat
     public const MAX_LIST_PAGINATION = 20;
 
     public const ROLE_USAGER = self::ROLES['Usager'];
-    public const ROLE_USER_PARTNER = self::ROLES['Utilisateur'];
-    public const ROLE_ADMIN_PARTNER = self::ROLES['Administrateur'];
-    public const ROLE_ADMIN_TERRITORY = self::ROLES['Responsable Territoire'];
+    public const ROLE_USER_PARTNER = self::ROLES['Agent'];
+    public const ROLE_ADMIN_PARTNER = self::ROLES['Admin. partenaire'];
+    public const ROLE_ADMIN_TERRITORY = self::ROLES['Resp. Territoire'];
     public const ROLE_ADMIN = self::ROLES['Super Admin'];
 
     public const SUFFIXE_ARCHIVED = '.archived@';
@@ -50,15 +50,8 @@ class User implements UserInterface, EntityHistoryInterface, PasswordAuthenticat
 
     public const ROLES = [
         'Usager' => 'ROLE_USAGER',
-        'Utilisateur' => 'ROLE_USER_PARTNER',
-        'Administrateur' => 'ROLE_ADMIN_PARTNER',
-        'Responsable Territoire' => 'ROLE_ADMIN_TERRITORY',
-        'Super Admin' => 'ROLE_ADMIN',
-    ];
-    public const ROLESV2 = [
-        'Usager' => 'ROLE_USAGER',
         'Agent' => 'ROLE_USER_PARTNER',
-        'Admin partenaire' => 'ROLE_ADMIN_PARTNER',
+        'Admin. partenaire' => 'ROLE_ADMIN_PARTNER',
         'Resp. Territoire' => 'ROLE_ADMIN_TERRITORY',
         'Super Admin' => 'ROLE_ADMIN',
     ];
@@ -427,13 +420,9 @@ class User implements UserInterface, EntityHistoryInterface, PasswordAuthenticat
         return array_unique($roles);
     }
 
-    public function getRoleLabel($v2 = false): string
+    public function getRoleLabel(): string
     {
-        if ($v2) {
-            $roleLabel = array_flip(self::ROLESV2);
-        } else {
-            $roleLabel = array_flip(self::ROLES);
-        }
+        $roleLabel = array_flip(self::ROLES);
         $role = array_shift($this->roles);
 
         return $roleLabel[$role];
