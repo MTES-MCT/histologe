@@ -14,7 +14,6 @@ use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Helper\Table;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
-use Symfony\Component\Console\Style\SymfonyStyle;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 
 #[AsCommand(
@@ -24,8 +23,8 @@ use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 class ScheduledTaskCommand extends Command
 {
     public function __construct(
-        private ParameterBagInterface $parameterBag,
-        private LoggerInterface $logger,
+        private readonly ParameterBagInterface $parameterBag,
+        private readonly LoggerInterface $logger,
     ) {
         parent::__construct();
     }
@@ -35,7 +34,6 @@ class ScheduledTaskCommand extends Command
         $sleepInterval = $this->parameterBag->get('clock_process')['sleep_interval'];
         $tasks = $this->parameterBag->get('clock_process')['tasks'];
 
-        $io = new SymfonyStyle($input, $output);
         $table = (new Table($output))->setHeaders(['Command', 'Schedule']);
 
         $resolver = new ArrayResolver();
@@ -45,6 +43,7 @@ class ScheduledTaskCommand extends Command
             $job->setSchedule(new CrontabSchedule($task['schedule']));
             $resolver->addJob($job);
             $table->addRow([$task['command'], $task['schedule']]);
+            $this->logger->info(\sprintf('[CRON] %s %s added', $task['command'], $task['schedule']));
         }
 
         $cron = new Cron();
@@ -60,12 +59,12 @@ class ScheduledTaskCommand extends Command
             $report = $cron->run();
 
             while ($cron->isRunning()) {
-                $io->success(\sprintf('[CRON] %d tasks has been executed', \count($report->getReports())));
+                $this->logger->info(\sprintf('[CRON] %d tasks has been executed', \count($report->getReports())));
 
                 foreach ($report->getReports() as $jobReport) {
                     $output = $jobReport->getOutput();
                     foreach ($output as $line) {
-                        $io->success(\sprintf('[CRON] %s', $line));
+                        $this->logger->info(\sprintf('[CRON] %s', $line));
                     }
                 }
             }
