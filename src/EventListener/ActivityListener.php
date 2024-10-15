@@ -87,7 +87,7 @@ class ActivityListener
                         foreach ($toRecipients as $toRecipient) {
                             $this->notificationMailerRegistry->send(
                                 new NotificationMail(
-                                    type: NotificationMailerType::TYPE_NEW_COMMENT_FRONT,
+                                    type: NotificationMailerType::TYPE_NEW_COMMENT_FRONT_TO_USAGER,
                                     to: $toRecipient,
                                     territory: $entity->getSignalement()->getTerritory(),
                                     signalement: $entity->getSignalement(),

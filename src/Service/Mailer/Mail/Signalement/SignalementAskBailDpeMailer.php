@@ -12,7 +12,7 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 class SignalementAskBailDpeMailer extends AbstractNotificationMailer
 {
-    protected ?NotificationMailerType $mailerType = NotificationMailerType::TYPE_SIGNALEMENT_ASK_BAIL_DPE;
+    protected ?NotificationMailerType $mailerType = NotificationMailerType::TYPE_SIGNALEMENT_ASK_BAIL_DPE_TO_USAGER;
     protected ?string $mailerSubject = 'Votre signalement a été validé : documents à fournir';
     protected ?string $mailerButtonText = 'Accéder à mon dossier';
     protected ?string $mailerTemplate = 'ask_bail_dpe_signalement_email';
