@@ -554,6 +554,11 @@ class SignalementRepository extends ServiceEntityRepository
 
     public function findSignalementAffectationIterable(User $user, array $options): \Generator
     {
+        // temporary increase the group_concat_max_len to a higher value, for texts in GROUP_CONCAT
+        $connection = $this->getEntityManager()->getConnection();
+        $sql = 'SET SESSION group_concat_max_len=32505856';
+        $connection->prepare($sql)->executeQuery();
+
         $qb = $this->findSignalementAffectationQuery($user, $options);
 
         $qb->addSelect(
@@ -592,15 +597,18 @@ class SignalementRepository extends ServiceEntityRepository
             GROUP_CONCAT(DISTINCT desordreCategories.label SEPARATOR :group_concat_separator_1) as listDesordreCategories,
             GROUP_CONCAT(DISTINCT desordreCriteres.labelCritere SEPARATOR :group_concat_separator_1) as listDesordreCriteres,
             GROUP_CONCAT(DISTINCT tags.label SEPARATOR :group_concat_separator_1) as etiquettes,
-            GROUP_CONCAT(DISTINCT
+            GROUP_CONCAT(IFNULL(i.occupantPresent, \'-\') ORDER BY i.scheduledAt ASC SEPARATOR :concat_separator) as interventionOccupantPresent,
+            GROUP_CONCAT(IFNULL(i.concludeProcedure, \'-\') ORDER BY i.scheduledAt ASC SEPARATOR :concat_separator) as interventionConcludeProcedure,
+            GROUP_CONCAT(IFNULL(i.details, \'-\') ORDER BY i.scheduledAt ASC SEPARATOR :concat_separator) as interventionDetails,
+            GROUP_CONCAT(
+                DISTINCT
                 CONCAT(
-                    i.status, :group_concat_separator_1,
-                    i.scheduledAt, :group_concat_separator_1,
-                    IFNULL(i.occupantPresent, \'\'), :group_concat_separator_1,
-                    IFNULL(i.concludeProcedure, \'\'), :group_concat_separator_1,
-                    IFNULL(i.details, \'\')
+                    i.status,
+                    :concat_separator,
+                    i.scheduledAt
                 )
-                SEPARATOR :group_concat_separator_1
+                ORDER BY i.scheduledAt ASC
+                SEPARATOR :concat_separator
             ) as interventionsData
             '
         )->leftJoin('s.situations', 'situations')
