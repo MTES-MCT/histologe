@@ -73,10 +73,13 @@ class PartnerTest extends KernelTestCase
         $this->assertTrue($partner->canSyncWithOilhi($signalement));
     }
 
-    public function testCreatePartnerNoValidWithEmailExistInTerritory(): void
+    /**
+     * @dataProvider provideDataForTestPartnerWithEmail
+     */
+    public function testCreatePartnerNoValidWithEmailExistInTerritory(int $zip, int $countErrors): void
     {
         $entityManager = self::getContainer()->get('doctrine')->getManager();
-        $territory = $entityManager->getRepository(Territory::class)->find(13);
+        $territory = $entityManager->getRepository(Territory::class)->find($zip);
         $partner = (new Partner())
             ->setNom('Random partner')
             ->setEmail('partenaire-13-01@histologe.fr')
@@ -86,22 +89,13 @@ class PartnerTest extends KernelTestCase
 
         $validator = self::getContainer()->get('validator');
         $errors = $validator->validate($partner);
-        $this->assertEquals(1, $errors->count());
+        $this->assertEquals($countErrors, $errors->count());
     }
 
-    public function testCreatePartnerValidWithEmailExistInTerritory(): void
+    public function provideDataForTestPartnerWithEmail(): \Generator
     {
-        $entityManager = self::getContainer()->get('doctrine')->getManager();
-        $territory = $entityManager->getRepository(Territory::class)->find(1);
-        $partner = (new Partner())
-            ->setNom('Random partner')
-            ->setEmail('partenaire-13-01@histologe.fr')
-            ->setType(PartnerType::COMMUNE_SCHS)
-            ->setCompetence([Qualification::VISITES])
-            ->setTerritory($territory);
+        yield 'Create partner not valid with email exists in territory' => [13, 1];
 
-        $validator = self::getContainer()->get('validator');
-        $errors = $validator->validate($partner);
-        $this->assertEquals(0, $errors->count());
+        yield 'Create partner valid with email exists in territory' => [1, 0];
     }
 }
