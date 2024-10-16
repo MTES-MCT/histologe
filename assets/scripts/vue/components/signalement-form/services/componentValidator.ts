@@ -16,21 +16,21 @@ export const componentValidator = {
     }
     if (regexPattern !== undefined) {
       if (!regexPattern.test(value)) {
-        formStore.validationErrors[componentSlug] = 'Format invalide'
+        formStore.validationErrors[componentSlug] = component.validate?.patternMessage ?? 'Format invalide'
       }
     }
 
     if (variableTester.isNotEmpty(value) && component.type === 'SignalementFormPhonefield') {
       const countryCode = formStore.data[componentSlug + '_countrycode'].split(':')[0]
       if (!isValidPhoneNumber(value, countryCode)) {
-        formStore.validationErrors[componentSlug] = 'Format invalide'
+        formStore.validationErrors[componentSlug] = 'Veuillez renseigner un numéro de téléphone valide.'
       }
 
       const valueTelSecond = formStore.data[componentSlug + '_secondaire']
       if (variableTester.isNotEmpty(valueTelSecond)) {
         const countryCodeSecond = formStore.data[componentSlug + '_secondaire_countrycode'].split(':')[0]
         if (!isValidPhoneNumber(valueTelSecond, countryCodeSecond)) {
-          formStore.validationErrors[componentSlug + '_secondaire'] = 'Format invalide'
+          formStore.validationErrors[componentSlug + '_secondaire'] = 'Veuillez renseigner un numéro de téléphone valide.'
         }
       }
     }
@@ -49,7 +49,7 @@ export const componentValidator = {
 
   validateAddress (component: any) {
     const componentSlug: string = component.slug
-    const validationError = 'Ce champ est requis'
+    const validationError = 'Veuillez renseigner et sélectionner l\'adresse de votre logement.'
     // si le composant est requis et que tous les champs sont vides, on affiche l'erreur sur le champ de recherche
     if (
       (component.validate === undefined || component.validate.required !== false) &&

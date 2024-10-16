@@ -219,6 +219,9 @@
           ],
           "conditional": {
             "show": "formStore.data.signalement_concerne_profil === 'logement_occupez'"
+          },
+          "validate": {
+            "message": "Veuillez indiquer si vous êtes un locataire ou propriétaire du logement."
           }
         },
         {
@@ -245,6 +248,9 @@
           ],
           "conditional": {
             "show": "formStore.data.signalement_concerne_profil === 'autre_logement'"
+          },
+          "validate": {
+            "message": "Veuillez sélectionner votre profil"
           }
         },
         {
@@ -263,6 +269,9 @@
           ],
           "conditional": {
             "show": "formStore.data.signalement_concerne_profil === 'logement_occupez' && formStore.data.signalement_concerne_profil_detail_occupant === 'bailleur_occupant'"
+          },
+          "validate": {
+            "message": "Veuillez indiquer si vous êtes un particulier ou un organisme ou société."
           }
         },
         {
@@ -281,6 +290,9 @@
           ],
           "conditional": {
             "show": "formStore.data.signalement_concerne_profil === 'autre_logement' && formStore.data.signalement_concerne_profil_detail_tiers === 'bailleur'"
+          },
+          "validate": {
+            "message": "Veuillez sélectionner votre profil"
           }
         },
         {
@@ -303,6 +315,9 @@
           ],
           "conditional": {
             "show": "formStore.data.signalement_concerne_profil === 'autre_logement' && formStore.data.signalement_concerne_profil_detail_tiers === 'service_secours'"
+          },
+          "validate": {
+            "message": "Veuillez indiquer si le logement est social"
           }
         },
         {
@@ -321,6 +336,9 @@
           ],
           "conditional": {
             "show": "formStore.data.signalement_concerne_profil?.length > 0  && formStore.data.signalement_concerne_profil_detail_tiers !== 'service_secours'"
+          },
+          "validate": {
+            "message": "Veuillez indiquer si le logement est social"
           }
         }
       ],
