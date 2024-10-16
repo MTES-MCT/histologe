@@ -105,6 +105,7 @@
 } %}
 <body {% if bodyClass is defined %}class="{{ bodyClass }}"{% endif %}
       data-mode-maintenance="{{ maintenance.enable }}">
+{% include "skiplink.html.twig" %}
 {% include 'maintenance/banner.html.twig' %}
 {% if 'back_' not in app.request.get('_route') %}
     {% include "header.html.twig" %}
@@ -125,7 +126,10 @@
 {% else %}
     {% include "consent_banner/banner.html.twig" %}
 {% endif %}
-{% block body %}{% endblock %}
+
+{# <div id="contenu"> #}
+    {% block body %}{% endblock %}
+{# </div> #}
 {% include "footer.html.twig" %}
 
 <script type="module" src="{{ asset('build/dsfr/dsfr.module.min.js') }}"></script>
