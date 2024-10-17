@@ -17,6 +17,7 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 #[Route('/bo/idoss')]
 #[When('dev')]
+#[When('test')]
 class IdossController extends AbstractController
 {
     #[Route('/log', name: 'back_idoss_log')]
