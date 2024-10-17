@@ -217,9 +217,10 @@ const formStore: FormStore = reactive({
         component.components !== undefined) {
         inputComponentsByScreen += this.countInputComponentsByScreen(component.components.body)
       }
+      if (inputComponentsByScreen > 1) {
+        return inputComponentsByScreen
+      }
     }
-    console.log('inputComponentsByScreen  = ')
-    console.log( inputComponentsByScreen)
     return inputComponentsByScreen
   }
 })
