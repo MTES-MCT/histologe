@@ -9,12 +9,15 @@ use App\Factory\Interconnection\Idoss\DossierMessageFactory;
 use App\Repository\AffectationRepository;
 use App\Repository\SignalementRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\DependencyInjection\Attribute\When;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 #[Route('/bo/idoss')]
+#[When('dev')]
+#[When('test')]
 class IdossController extends AbstractController
 {
     #[Route('/log', name: 'back_idoss_log')]
