@@ -79,7 +79,11 @@
                     </ul>
                 </div>
                 {% if is_granted('ROLE_ADMIN_PARTNER') %}
-                    {% set routesAdmin = ['back_user_', 'back_partner_', 'back_tags', 'back_account_', 'back_archived_partner', 'back_archived_signalements_index', 'back_auto_affectation'] %}
+                    {% set routesAdmin = [
+                        'back_user_', 'back_partner_', 'back_tags', 'back_zone_',
+                        'back_account_', 'back_archived_partner', 'back_archived_signalements_index', 'back_auto_affectation'
+                        ] 
+                    %}
                     <button class="fr-sidemenu__btn"
                             aria-expanded="{% if routesAdmin|filter(route => app.request.get('_route') starts with route)|length > 0  %}true{% else %}false{% endif %}"
                             aria-controls="fr-sidemenu-outils-admin">Outils Admin
@@ -106,12 +110,19 @@
                                         target="_self"
                                         {% if 'back_user_' in app.request.get('_route') %}aria-current="page"{% endif %}>Utilisateurs</a>
                                     </li>
-                                {% endif %}    
+                                {% endif %}
                                 <li class="fr-sidemenu__item {% if 'back_tags' in app.request.get('_route') %}fr-sidemenu__item--active{% endif %}">
                                     <a class="fr-sidemenu__link" href="{{ path('back_tags_index') }}"
                                     target="_self"
                                     {% if 'back_tags' in app.request.get('_route') %}aria-current="page"{% endif %}>Etiquettes</a>
                                 </li>
+                                {% if platform.feature_zonage %}
+                                    <li class="fr-sidemenu__item {% if 'back_zone_' in app.request.get('_route') %}fr-sidemenu__item--active{% endif %}">
+                                        <a class="fr-sidemenu__link" href="{{ path('back_zone_index') }}"
+                                        target="_self"
+                                        {% if 'back_zone' in app.request.get('_route') %}aria-current="page"{% endif %}>Zones</a>
+                                    </li>
+                                {% endif %}
                                 {% if is_granted('ROLE_ADMIN') %}
                                     <li class="fr-sidemenu__item {% if 'back_archived_partner' in app.request.get('_route') %}fr-sidemenu__item--active{% endif %}">
                                         <a class="fr-sidemenu__link" href="{{ path('back_archived_partner_index') }}"

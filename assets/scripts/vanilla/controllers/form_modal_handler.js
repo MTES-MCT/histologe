@@ -36,65 +36,67 @@ async function submitPayload (formElement) {
   try {
     const formData = new FormData(formElement)
 
-    if (formElement.enctype === 'multipart/form-data') {
-      response = await fetch(formElement.action, {
-        method: 'POST',
-        body: formData
-      })
-    } else {
-      const payload = {}
-      formData.forEach((value, key) => {
-        payload[key] = value
-      })
-      response = await fetch(formElement.action, {
-        method: 'POST',
-        body: JSON.stringify(payload),
-        headers: {
-          'Content-Type': 'application/json'
+        if (formElement.enctype === 'multipart/form-data') {
+            response = await fetch(formElement.action, {
+                method: 'POST',
+                body: formData
+            });
+        } else {
+            let payload = {};
+            formData.forEach((value, key) => {
+                payload[key] = value;
+            });
+            response = await fetch(formElement.action, {
+                method: 'POST',
+                body: JSON.stringify(payload),
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            });
         }
-      })
-    }
-    if (response.ok) {
-      location.reload()
-      window.scrollTo(0, 0)
-    } else if (response.status === 400) {
-      const responseData = await response.json()
-      const errors = responseData.errors
-      const submitElement = document.querySelector('.fr-modal--opened [type="submit"]')
-      let firstErrorElement = true
-      for (const property in errors) {
-        const inputElement = document.querySelector(`.fr-modal--opened [name="${property}"]`) || document.querySelector('.fr-modal--opened input')
-        inputElement.setAttribute('aria-describedby', `${property}-desc-error`)
-        inputElement.parentElement.classList.add('fr-input-group--error')
+        if (response.redirected) {
+            window.location.href = response.url;
+        } else if (response.ok) {
+            location.reload();
+            window.scrollTo(0, 0);
+        } else if (response.status === 400) {
+            const responseData = await response.json();
+            const errors = responseData.errors;
+            const submitElement = document.querySelector(`.fr-modal--opened [type="submit"]`);
+            let firstErrorElement = true;
+            for (const property in errors) {
+                const inputElement = document.querySelector(`.fr-modal--opened [name="${property}"]`) || document.querySelector('.fr-modal--opened input');
+                inputElement.setAttribute('aria-describedby', `${property}-desc-error`);
+                inputElement.parentElement.classList.add('fr-input-group--error');
 
-        const existingErrorElement = document.getElementById(`${property}-desc-error`)
-        if (!existingErrorElement) {
-          const pElement = document.createElement('p')
-          pElement.classList.add('fr-error-text')
-          pElement.id = `${property}-desc-error`
+                const existingErrorElement = document.getElementById(`${property}-desc-error`);
+                if (!existingErrorElement) {
+                    let pElement = document.createElement('p');
+                    pElement.classList.add('fr-error-text');
+                    pElement.id = `${property}-desc-error`;
 
-          let messageError = ''
-          errors[property].errors.forEach((error) => {
-            messageError = messageError + error
-          })
-          pElement.innerHTML = messageError
-          inputElement.insertAdjacentElement('afterend', pElement)
+                    let messageError = '';
+                    errors[property].errors.forEach((error) => {
+                        messageError = messageError + error;
+                    })
+                    pElement.innerHTML = messageError;
+                    inputElement.insertAdjacentElement('afterend', pElement);
+                }
+                if (firstErrorElement) {
+                    inputElement.focus();
+                    firstErrorElement = false;
+                }
+            }
+            submitElement.disabled = false;
+            submitElement.classList.remove('fr-btn--loading', 'fr-btn--icon-left', 'fr-icon-refresh-line');
+        } else {
+            const responseData = await response.json();
+            alert(responseData.message);
         }
-        if (firstErrorElement) {
-          inputElement.focus()
-          firstErrorElement = false
-        }
-      }
-      submitElement.disabled = false
-      submitElement.classList.remove('fr-btn--loading', 'fr-btn--icon-left', 'fr-icon-refresh-line')
-    } else {
-      const responseData = await response.json()
-      alert(responseData.message)
+    } catch (error) {
+        alert('Une erreur s\'est produite. Veuillez actualiser la page.');
+        Sentry.captureException(new Error(error));
     }
-  } catch (error) {
-    alert('Une erreur s\'est produite. Veuillez actualiser la page.')
-    Sentry.captureException(new Error(error))
-  }
 }
 
 modalElements.forEach(modalElement => handleEditSignalementModalForm(modalElement))
