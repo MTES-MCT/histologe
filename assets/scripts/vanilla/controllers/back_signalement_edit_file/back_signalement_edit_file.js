@@ -47,14 +47,14 @@ document.querySelectorAll('.btn-signalement-file-edit').forEach(swbtn => {
     const target = evt.target
 
     if ( target.getAttribute('data-type') === 'photo') {
-      document.querySelector('.fr-modal-file-edit-type').innerHTML = ' la photo'
+      document.querySelector('.fr-modal-file-edit-type').textContent = ' la photo'
       histoCreateMiniatureImage(target)
     } else {
-      document.querySelector('.fr-modal-file-edit-type').innerHTML = ' le document'
+      document.querySelector('.fr-modal-file-edit-type').textContent = ' le document'
       histoDeleteMiniatureImage()
     }
-    document.querySelector('.fr-modal-file-edit-filename').innerHTML = target.getAttribute('data-filename')
-    document.querySelector('.fr-modal-file-edit-infos').innerHTML = 'Ajouté le '+target.getAttribute('data-createdAt')
+    document.querySelector('.fr-modal-file-edit-filename').textContent = target.getAttribute('data-filename')
+    document.querySelector('.fr-modal-file-edit-infos').textContent = 'Ajouté le '+target.getAttribute('data-createdAt')
     + ' par '+ target.getAttribute('data-partner-name')+target.getAttribute('data-user-name')
     document.querySelector('#file-edit-fileid').value = target.getAttribute('data-file-id')
 
