@@ -156,7 +156,7 @@
           "type": "SignalementFormPhonefield",
           "label": "Téléphone (facultatif)",
           "slug": "coordonnees_occupant_tel",
-          "description": "Format attendu : Veuillez sélectionner votre pays pour obtenir l'indicatif téléphonique, puis saisir votre numéro de téléphone au format national (sans l'indicatif). Exemple pour la France : 0702030405.",
+          "description": "Format attendu : Veuillez sélectionner le pays pour obtenir l'indicatif téléphonique, puis saisir le numéro de téléphone au format national (sans l'indicatif). Exemple pour la France : 0702030405.",
           "validate": {
             "required": false
           },
@@ -817,7 +817,7 @@
           "description": "Format attendu : Saisir un nombre entier",
           "slug": "composition_logement_nombre_personnes",
           "validate": {
-            "message": "Veuillez renseigner le nombre de personnes vivant dans votre logement.",
+            "message": "Veuillez renseigner le nombre de personnes vivant dans le logement.",
             "pattern": "^[0-9]*$",
             "patternMessage": "Veuillez renseigner un nombre de personnes valide."
           },
@@ -982,7 +982,7 @@
             }
           ],
           "validate": {
-            "message": "Veuillez indiquer si vous avez réalisé le DPE du logement."
+            "message": "Veuillez indiquer si vous avez réalisé le DPE (diagnostic performance énergie) du logement."
           }
         },
         {
@@ -1132,7 +1132,7 @@
             "show": "formStore.data.logement_social_allocation === 'oui'"
           },
           "validate": {
-            "message": "Veuillez renseigner une date de naissance valide."
+            "message": "Veuillez renseigner une date de naissance."
           }
         },
         {
@@ -1158,7 +1158,7 @@
           },
           "validate": {
             "pattern": "^[0-9]*$",
-            "message": "Veuillez renseigner un montant d'allocation valide.",
+            "patternMessage": "Veuillez renseigner un montant d'allocation valide.",
             "required": false
           }
         }
@@ -1433,6 +1433,9 @@
           "type": "SignalementFormCheckbox",
           "slug": "utilisation_service_ok_visite",
           "label": "Je comprends qu'une visite du logement pourra être faite pour évaluer l'état du logement.",
+          "validate": {
+            "message": "Veuillez confirmer que vous comprenez qu'une visite du logement pourra être faite."
+          },
           "accessibility": {
             "focus": true
           }
@@ -1440,12 +1443,18 @@
         {
           "type": "SignalementFormCheckbox",
           "slug": "utilisation_service_ok_signalement_tiers",
-          "label": "Je comprends que je dépose un signalement pour le compte d'un tiers. Je certifie avoir le droit de déposer un signalement pour le compte d'un tiers."
+          "label": "Je comprends que je dépose un signalement pour le compte d'un tiers. Je certifie avoir le droit de déposer un signalement pour le compte d'un tiers.",
+          "validate": {
+            "message": "Veuillez confirmer que vous comprenez que vous déposez un signalement pour le compte d'un tiers et certifiez avoir le droit de le faire."
+          }
         },
         {
           "type": "SignalementFormCheckbox",
           "slug": "utilisation_service_ok_cgu",
-          "label": "Je certifie avoir pris connaissance et accepter les&nbsp;<a href='/cgu' target='_blank' rel='noopener' title='conditions générales d&apos;utilisation - ouvre une nouvelle fenêtre'>conditions générales d'utilisation</a>&nbsp;et la&nbsp;<a href='/politique-de-confidentialite' target='_blank' rel='noopener' title='politique de confidentialité - ouvre une nouvelle fenêtre'>politique de confidentialité</a>&nbsp;du service {{formStore.props.platformName}}."
+          "label": "Je certifie avoir pris connaissance et accepter les&nbsp;<a href='/cgu' target='_blank' rel='noopener' title='conditions générales d&apos;utilisation - ouvre une nouvelle fenêtre'>conditions générales d'utilisation</a>&nbsp;et la&nbsp;<a href='/politique-de-confidentialite' target='_blank' rel='noopener' title='politique de confidentialité - ouvre une nouvelle fenêtre'>politique de confidentialité</a>&nbsp;du service {{formStore.props.platformName}}.",
+          "validate": {
+            "message": "Veuillez certifier que vous avez pris connaissance et acceptez les conditions générales d'utilisation et la politique de confidentialité."
+          }
         }
       ],
       "footer": [
@@ -1496,8 +1505,7 @@
                 "slug": "informations_complementaires_situation_bailleur_date_effet_bail",
                 "description": "Format attendu : JJ/MM/AAAA",
                 "validate": {
-                  "required": false,
-                  "patternMessage": "Veuillez renseigner une date d'effet du bail valide."
+                  "required": false
                 },
                 "accessibility": {
                   "focus": true
@@ -1528,7 +1536,7 @@
                 "slug": "informations_complementaires_logement_montant_loyer",
                 "validate": {
                   "pattern": "^[0-9]*$",
-                  "patternMessage": "Veuillez renseigner un montant valide de votre loyer.",
+                  "patternMessage": "Veuillez renseigner un montant valide du loyer.",
                   "required": false
                 }
               }
@@ -1634,8 +1642,7 @@
                 "slug": "informations_complementaires_situation_bailleur_date_naissance",
                 "hint": "Format attendu : JJ/MM/AAAA",
                 "validate": {
-                  "required": false,
-                  "patternMessage": "Veuillez renseigner une date de naissance valide."
+                  "required": false
                 }
               }
             ]
