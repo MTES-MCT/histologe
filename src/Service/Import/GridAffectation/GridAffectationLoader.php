@@ -30,18 +30,18 @@ class GridAffectationLoader
     ];
 
     public function __construct(
-        private PartnerFactory $partnerFactory,
-        private PartnerManager $partnerManager,
-        private UserFactory $userFactory,
-        private UserManager $userManager,
-        private ManagerInterface $manager,
-        private ValidatorInterface $validator,
-        private LoggerInterface $logger,
-        private EntityManagerInterface $entityManager,
+        private readonly PartnerFactory $partnerFactory,
+        private readonly PartnerManager $partnerManager,
+        private readonly UserFactory $userFactory,
+        private readonly UserManager $userManager,
+        private readonly ManagerInterface $manager,
+        private readonly ValidatorInterface $validator,
+        private readonly LoggerInterface $logger,
+        private readonly EntityManagerInterface $entityManager,
     ) {
     }
 
-    public function validate(array $data, bool $isModeUpdate = false): array
+    public function validate(array $data, Territory $territory, bool $isModeUpdate = false): array
     {
         $errors = [];
         $mailPartners = [];
@@ -64,7 +64,7 @@ class GridAffectationLoader
                         $item[GridAffectationHeader::PARTNER_TYPE]
                     );
                 }
-                // if partner has an email, it should be valid and not existing for another partner
+                // if partner has an email, it should be valid and not existing for another territory partner
                 $emailPartner = trim($item[GridAffectationHeader::PARTNER_EMAIL]);
                 if (!empty($emailPartner)) {
                     $violations = $this->validator->validate($emailPartner, $emailConstraint);
@@ -78,10 +78,13 @@ class GridAffectationLoader
 
                     if (!$isModeUpdate) {
                         /** @var Partner $partnerToCreate */
-                        $partnerToCreate = $this->partnerManager->findOneBy(['email' => $emailPartner]);
+                        $partnerToCreate = $this->partnerManager->findOneBy([
+                            'email' => $emailPartner,
+                            'territory' => $territory]
+                        );
                         if (null !== $partnerToCreate) {
                             $errors[] = \sprintf(
-                                'line %d : Partenaire déjà existant avec (%s) dans %s, nom : %s',
+                                'line %d : E-mail partenaire déjà existant dans le territoire avec (%s) dans %s, nom : %s',
                                 $numLine,
                                 $emailPartner,
                                 $partnerToCreate->getTerritory()->getName(),

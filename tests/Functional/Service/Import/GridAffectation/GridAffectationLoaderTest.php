@@ -56,7 +56,7 @@ class GridAffectationLoaderTest extends KernelTestCase
     public function testLoadValidPartnersAndUserInCreateMode(): void
     {
         $territory = $this->entityManager->getRepository(Territory::class)->findOneBy(['isActive' => 0]);
-        $errors = $this->gridAffectationLoader->validate($this->provideValidData());
+        $errors = $this->gridAffectationLoader->validate($this->provideValidData(), $territory);
         $this->assertCount(0, $errors);
 
         $this->gridAffectationLoader->load($territory, $this->provideValidData(), []);
@@ -104,7 +104,7 @@ class GridAffectationLoaderTest extends KernelTestCase
             'Rôle' => self::FIXTURE_ROLE_USER,
         ];
 
-        $errors = $this->gridAffectationLoader->validate($data, true);
+        $errors = $this->gridAffectationLoader->validate($data, $territory, true);
         $this->assertCount(0, $errors);
         $this->gridAffectationLoader->load($territory, $data, []);
         $metaData = $this->gridAffectationLoader->getMetadata();
@@ -120,13 +120,15 @@ class GridAffectationLoaderTest extends KernelTestCase
 
     public function testValidateWithErrors(): void
     {
+        $territory = $this->entityManager->getRepository(Territory::class)->findOneBy(['zip' => 13]);
+
         $errors = [
             'line 3 : E-mail incorrect pour un partenaire : arshistologe.fr',
             'line 5 : Type incorrect pour Random Type --> Random Type',
             'line 5 : Rôle incorrect pour jon.conor@histologe.fr --> Fake role',
             'line 6 : Type incorrect pour Random Type --> Random Type',
             'line 6 : E-mail incorrect pour un utilisateur : john.doe@',
-            'line 7 : Partenaire déjà existant avec (partenaire-13-01@histologe.fr) dans Bouches-du-Rhône, nom : Partenaire 13-01',
+            'line 7 : E-mail partenaire déjà existant dans le territoire avec (partenaire-13-01@histologe.fr) dans Bouches-du-Rhône, nom : Partenaire 13-01',
             'line 8 : E-mail manquant pour Margaretta Borer, partenaire ADIL',
             'line 9 : Nom de partenaire manquant',
             'line 10 : Utilisateur déjà existant avec (user-13-06@histologe.fr) dans Bouches-du-Rhône, partenaire : Partenaire 13-06 ESABORA ARS, rôle : Utilisateur',
@@ -137,7 +139,7 @@ class GridAffectationLoaderTest extends KernelTestCase
 
         $this->assertEquals(
             $errors,
-            $this->gridAffectationLoader->validate($this->provideInvalidDataWithDuplicatePartnersAndUsers())
+            $this->gridAffectationLoader->validate($this->provideInvalidDataWithDuplicatePartnersAndUsers(), $territory)
         );
     }
 

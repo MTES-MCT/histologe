@@ -95,7 +95,8 @@ class ImportGridAffectationCommand extends Command
         $csvData = $this->csvParser->parseAsDict($toFile);
         $checkErrors = $this->gridAffectationLoader->validate(
             $csvData,
-            $isModeUpdate
+            $territory,
+            $isModeUpdate,
         );
 
         if (\count($checkErrors) > 0) {

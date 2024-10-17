@@ -17,7 +17,12 @@ use Symfony\Component\Serializer\Attribute\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: PartnerRepository::class)]
-#[UniqueEntity('email', ignoreNull: true)]
+#[UniqueEntity(
+    fields: ['email', 'territory', 'isArchive'],
+    message: 'L\'e-mail générique existe déjà pour ce territoire. Veuillez saisir un autre e-mail partenaire.',
+    errorPath: 'email',
+    ignoreNull: true)
+]
 class Partner implements EntityHistoryInterface
 {
     use TimestampableTrait;
