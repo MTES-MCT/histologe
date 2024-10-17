@@ -3,6 +3,9 @@
     <fieldset :class="['fr-fieldset', hasErrorFirst ? 'fr-fieldset--error' : '']" :aria-labelledby="id + '-legend'">
       <legend class="fr-fieldset__legend--regular fr-fieldset__legend fr-col-12" :id="id + '-legend'">
         {{ variablesReplacer.replace(label) }}
+        <span class="fr-hint-text">
+          {{ description }}
+        </span>
       </legend>
       <div class="fr-fieldset__element fr-col-12 fr-col-md-4">
         <select
@@ -64,6 +67,9 @@
       >
       <legend class="fr-fieldset__legend--regular fr-fieldset__legend fr-col-12" :id="id + '-legend-second'">
         Téléphone secondaire (facultatif)
+        <span class="fr-hint-text">
+          {{ description }}
+        </span>
       </legend>
       <div class="fr-fieldset__element fr-col-12 fr-col-md-4">
         <select
@@ -124,6 +130,7 @@ export default defineComponent({
   props: {
     id: { type: String, default: null },
     label: { type: String, default: null },
+    description: { type: String, default: null },
     customCss: { type: String, default: '' },
     validate: { type: Object, default: null },
     hasError: { type: Boolean, default: false },
