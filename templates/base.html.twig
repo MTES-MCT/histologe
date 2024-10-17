@@ -127,9 +127,7 @@
     {% include "consent_banner/banner.html.twig" %}
 {% endif %}
 
-{# <div id="contenu"> #}
-    {% block body %}{% endblock %}
-{# </div> #}
+{% block body %}{% endblock %}
 {% include "footer.html.twig" %}
 
 <script type="module" src="{{ asset('build/dsfr/dsfr.module.min.js') }}"></script>
