@@ -38,6 +38,7 @@ final class DossierMessage implements DossierMessageInterface
     private ?string $dateVisite = null;
     private ?string $operateurVisite = null;
     private array $desordres = [];
+    private ?int $nbOccupants = null;
 
     public function __construct()
     {
@@ -412,6 +413,18 @@ final class DossierMessage implements DossierMessageInterface
     public function setDesordres(array $desordres): self
     {
         $this->desordres = $desordres;
+
+        return $this;
+    }
+
+    public function getNbOccupants(): ?int
+    {
+        return $this->nbOccupants;
+    }
+
+    public function setNbOccupants(?int $nbOccupants): self
+    {
+        $this->nbOccupants = $nbOccupants;
 
         return $this;
     }
