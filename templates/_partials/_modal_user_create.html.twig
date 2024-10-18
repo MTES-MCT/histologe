@@ -92,6 +92,16 @@
                                         <span class="fr-hint-text fr-mt-inf-3v">Si vous cochez oui, des e-mails concernant les signalements seront envoyés à cette adresse.</span>
                                     </fieldset>
                                 </div>
+                                {% if is_granted('GIVE_RIGHT_AFFECTATION', partner) %}
+                                <div class="fr-grid-row fr-grid-row--gutters">
+                                    <div class="fr-col-12">
+                                        <div class="fr-toggle">
+                                            <input type="checkbox" class="fr-toggle__input" id="user_create_rights_affectation" name="user_create[rights][]" value="Affectation">
+                                            <label class="fr-toggle__label" for="user_create_rights_affectation">Cet utilisateur peut affecter d'autres partenaires à ses signalements</label>
+                                        </div>
+                                    </div>
+                                </div>
+                                {% endif %}
                             </div>
                             <input type="hidden" name="_token" value="{{ csrf_token('partner_user_create') }}">
                         </form>
