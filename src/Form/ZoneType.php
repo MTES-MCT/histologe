@@ -2,12 +2,16 @@
 
 namespace App\Form;
 
+use App\Entity\Partner;
 use App\Entity\Territory;
 use App\Entity\Zone;
+use App\Form\Type\SearchCheckboxType;
+use App\Repository\PartnerRepository;
 use App\Repository\TerritoryRepository;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\FileType;
+use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Constraints as Assert;
@@ -47,33 +51,59 @@ class ZoneType extends AbstractType
                     },
                     'empty_data' => '',
                 ]);
-        }else{
-            //TODO partenaires ?
+        } else {
+            $territory = $zone->getTerritory();
+            $builder->add('partners', SearchCheckboxType::class, [
+                'class' => Partner::class,
+                'query_builder' => function (PartnerRepository $partnerRepository) use ($territory) {
+                    return $partnerRepository->createQueryBuilder('p')
+                        ->where('p.territory = :territory')
+                        ->setParameter('territory', $territory)
+                        ->orderBy('p.nom', 'ASC');
+                },
+                'choice_label' => 'nom',
+                'label' => 'Partenaires',
+                'noselectionlabel' => 'Sélectionnez les partenaires',
+                'nochoiceslabel' => 'Aucun partenaire disponible',
+                'by_reference' => false,
+            ]);
         }
         $docUrl = 'https://data.sigea.educagri.fr/download/sigea/supports/QGIS/distance/initiation/M08_Import_Export/co/10_N1_Export_CSV_geo.html';
+        $fileLabel = 'Fichier';
+        $fileConstraints = [
+            new Assert\File([
+                'mimeTypes' => ['text/csv', 'text/plain'],
+                'mimeTypesMessage' => 'Le fichier doit être au format CSV',
+            ]),
+        ];
+        if (!$zone->getId()) {
+            $fileLabel = 'Fichier (en cas de modification des coordonnées de la zone uniquement)';
+            $fileConstraints[] = new Assert\NotBlank([
+                'message' => 'Merci de sélectionner un fichier',
+            ]);
+        }
         $builder->add('file', FileType::class, [
-            'label' => 'Fichier',
+            'label' => $fileLabel,
             'required' => false,
             'mapped' => false,
             'help' => 'Le fichier doit être au format CSV et contenir une colonnne "WKT" <a href="'.$docUrl.'">doc</a>',
             'help_html' => true,
-            'constraints' => [
-                new Assert\NotBlank([
-                    'message' => 'Merci de sélectionner un fichier',
-                ]),
-                new Assert\File([
-                    'mimeTypes' => ['text/csv', 'text/plain'],
-                    'mimeTypesMessage' => 'Le fichier doit être au format CSV',
-                ]),
-            ],
+            'constraints' => $fileConstraints,
         ]);
+        if ($zone->getId()) {
+            $builder->add('save', SubmitType::class, [
+                'label' => 'Modifier',
+                'attr' => ['class' => 'fr-btn fr-icon-check-line fr-btn--icon-left'],
+                'row_attr' => ['class' => 'fr-text--right'],
+            ]);
+        }
     }
 
     public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
             'data_class' => Zone::class,
-            'csrf_token_id' => 'add_zone',
+            'csrf_token_id' => 'zone_type',
         ]);
     }
 

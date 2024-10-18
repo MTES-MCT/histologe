@@ -49,6 +49,8 @@ class PartnerRepository extends ServiceEntityRepository
         $firstResult = ($page - 1) * $maxResult;
 
         $queryBuilder = $this->getPartnersQueryBuilder($territory);
+        $queryBuilder->addSelect('z')
+            ->leftJoin('p.zones', 'z');
 
         if (!empty($type)) {
             $queryBuilder

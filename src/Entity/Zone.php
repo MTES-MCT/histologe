@@ -137,5 +137,4 @@ class Zone implements EntityHistoryInterface
 
         return $this;
     }
-
 }

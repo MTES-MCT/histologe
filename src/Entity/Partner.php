@@ -93,7 +93,7 @@ class Partner implements EntityHistoryInterface
     /**
      * @var Collection<int, Zone>
      */
-    #[ORM\ManyToMany(targetEntity: Zone::class, inversedBy: 'partners')]
+    #[ORM\ManyToMany(targetEntity: Zone::class, inversedBy: 'partners', cascade: ['persist'])]
     private Collection $zones;
 
     public function __construct()

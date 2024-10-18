@@ -22,6 +22,7 @@ final class Version20241015103054 extends AbstractMigration
         $this->addSql('ALTER TABLE partner_zone ADD CONSTRAINT FK_F0DFF31F9F2C3FAB FOREIGN KEY (zone_id) REFERENCES zone (id) ON DELETE CASCADE');
         $this->addSql('ALTER TABLE zone ADD CONSTRAINT FK_A0EBC00773F74AD4 FOREIGN KEY (territory_id) REFERENCES territory (id)');
         $this->addSql('ALTER TABLE zone ADD CONSTRAINT FK_A0EBC007B03A8386 FOREIGN KEY (created_by_id) REFERENCES user (id)');
+        $this->addSql('ALTER TABLE signalement CHANGE geoloc geoloc JSON NOT NULL');
     }
 
     public function down(Schema $schema): void
@@ -32,5 +33,6 @@ final class Version20241015103054 extends AbstractMigration
         $this->addSql('ALTER TABLE zone DROP FOREIGN KEY FK_A0EBC007B03A8386');
         $this->addSql('DROP TABLE partner_zone');
         $this->addSql('DROP TABLE zone');
+        $this->addSql('ALTER TABLE signalement CHANGE geoloc geoloc LONGTEXT NOT NULL COLLATE `utf8mb4_bin`');
     }
 }

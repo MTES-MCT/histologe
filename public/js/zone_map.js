@@ -1,13 +1,23 @@
-var map = L.map('zone_map').setView([43.316667, 3.466667], 15);
+var map = L.map('zone_map').setView([47, 2], 6);
 L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
     maxZoom: 19,
     attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
 }).addTo(map);
-var zoneWkt = document.getElementById('infos').getAttribute('data-zone');
-omnivore.wkt.parse(zoneWkt).addTo(map);
-/*var locations = document.getElementsByClassName('location');
+var zoneWkt = document.getElementById('info_zone_map').getAttribute('data-zone');
+const zoneGeoJson = omnivore.wkt.parse(zoneWkt);
+map.fitBounds(zoneGeoJson.getBounds());
+zoneGeoJson.addTo(map);
+
+var locations = document.getElementsByClassName('location');
 for (var i = 0; i < locations.length; i++) {
-    var lat = locations[i].getAttribute('data-lat');
-    var lng = locations[i].getAttribute('data-lng');
-    L.marker([lat, lng]).addTo(map);
-}*/
+    (function(locationElement) {
+        var lat = locationElement.getAttribute('data-lat');
+        var lng = locationElement.getAttribute('data-lng');
+        var ref = locationElement.getAttribute('data-ref');
+        var link = locationElement.getAttribute('data-link');
+        var address = locationElement.getAttribute('data-address');
+        var marker = L.marker([lat, lng]);
+        marker.bindPopup('<a href="' + link + '">' + ref + '</a> : ' + address);
+        marker.addTo(map);
+    })(locations[i]);
+}
