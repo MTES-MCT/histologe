@@ -80,6 +80,17 @@
                 {% endif %}
             </div>
         </div>
+        <div class="fr-col-12 fr-grid-row fr-grid-row--gutters">
+            <div class="fr-col-6"><b>Zone(s) :</b>
+                {% if partner.zones %}
+                    {% for zone in partner.zones %}
+                        <span class="fr-badge fr-badge--blue-ecume fr-mb-1v">{{ zone.name }}</span>
+                    {% endfor %}
+                {% else %}
+                    /
+                {% endif %}
+            </div>
+        </div>
         {% if partner.esaboraUrl %}
             <div class="fr-col-12 fr-grid-row fr-grid-row--gutters">
                 <div class="fr-col-6">

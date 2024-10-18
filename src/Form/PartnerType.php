@@ -8,9 +8,12 @@ use App\Entity\Enum\Qualification;
 use App\Entity\Partner;
 use App\Entity\Territory;
 use App\Entity\User;
+use App\Entity\Zone;
+use App\Form\Type\SearchCheckboxType;
 use App\Manager\CommuneManager;
 use App\Repository\TerritoryRepository;
 use App\Repository\UserRepository;
+use App\Repository\ZoneRepository;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
@@ -26,6 +29,7 @@ use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormError;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
+use Symfony\Component\Form\FormInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\Validator\Context\ExecutionContextInterface;
@@ -188,6 +192,16 @@ class PartnerType extends AbstractType
             'label' => 'Territoire',
             'required' => true,
         ]);
+        if ($partner->getTerritory()) {
+            $builder->addEventListener(FormEvents::PRE_SET_DATA, function (FormEvent $event) use ($builder) {
+                $this->addZonesField($event->getForm(), $builder->getData()->getTerritory());
+            });
+            $builder->addEventListener(FormEvents::PRE_SUBMIT, function (FormEvent $event) {
+                if (isset($event->getData()['territory'])) {
+                    $this->addZonesField($event->getForm(), $event->getData()['territory']);
+                }
+            });
+        }
         $builder->get('insee')->addModelTransformer(new CallbackTransformer(
             function ($tagsAsArray) {
                 // transform the array to a string
@@ -234,6 +248,24 @@ class PartnerType extends AbstractType
                 }
             }
         });
+    }
+
+    private function addZonesField(FormInterface $builder, $territory): void
+    {
+        $builder->add('zones', SearchCheckboxType::class, [
+            'class' => Zone::class,
+            'query_builder' => function (ZoneRepository $zoneRepository) use ($territory) {
+                return $zoneRepository->createQueryBuilder('z')
+                    ->where('z.territory = :territory')
+                    ->setParameter('territory', $territory)
+                    ->orderBy('z.name', 'ASC');
+            },
+            'choice_label' => 'name',
+            'label' => 'Zones',
+            'noselectionlabel' => 'Sélectionnez les zones',
+            'nochoiceslabel' => 'Aucune zone disponible',
+            'by_reference' => false,
+        ]);
     }
 
     public function configureOptions(OptionsResolver $resolver): void

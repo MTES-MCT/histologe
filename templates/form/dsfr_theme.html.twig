@@ -120,10 +120,9 @@
 
 {# custom type #}
 {% block search_checkbox_row %}
-    <div class="search-checkbox-container">   
-        <div class="fr-input-group fr-mb-0">
-            <input type="text" placeholder="{{noselectionlabel}}" class="fr-input">
-        </div>
+    <div class="search-checkbox-container fr-input-group"> 
+        {{block('form_label')}}  
+        <input type="text" placeholder="{{noselectionlabel}}" class="fr-input">
         {{ block('choice_widget_expanded') }}
     </div>
 {% endblock %}
