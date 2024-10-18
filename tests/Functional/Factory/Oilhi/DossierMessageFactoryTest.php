@@ -80,6 +80,7 @@ class DossierMessageFactoryTest extends KernelTestCase
         $this->assertNotEmpty($dossierMessage->getTypeDeclarant());
         $this->assertNotEmpty($dossierMessage->getTelephoneDeclarant());
         $this->assertNotEmpty($dossierMessage->getCourrielDeclarant());
+        $this->assertNotEmpty($dossierMessage->getNbOccupants());
 
         $this->assertEquals('⌛️ Procédure en cours', $dossierMessage->getStatut());
 
