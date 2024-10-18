@@ -43,6 +43,8 @@ class User implements UserInterface, EntityHistoryInterface, PasswordAuthenticat
     public const ROLE_ADMIN_TERRITORY = self::ROLES['Resp. Territoire'];
     public const ROLE_ADMIN = self::ROLES['Super Admin'];
 
+    public const RIGHT_AFFECTATION = self::RIGHTS['Affectation'];
+
     public const SUFFIXE_ARCHIVED = '.archived@';
     public const ANONYMIZED_MAIL = 'anonyme@';
     public const ANONYMIZED_PRENOM = 'Utilisateur';
@@ -54,6 +56,10 @@ class User implements UserInterface, EntityHistoryInterface, PasswordAuthenticat
         'Admin. partenaire' => 'ROLE_ADMIN_PARTNER',
         'Resp. Territoire' => 'ROLE_ADMIN_TERRITORY',
         'Super Admin' => 'ROLE_ADMIN',
+    ];
+
+    public const RIGHTS = [
+        'Affectation' => 'RIGHT_AFFECTATION',
     ];
 
     #[ORM\Id]
@@ -72,6 +78,9 @@ class User implements UserInterface, EntityHistoryInterface, PasswordAuthenticat
 
     #[ORM\Column(type: 'json')]
     private $roles = [];
+
+    #[ORM\Column(type: 'json')]
+    private $rights = [];
 
     #[ORM\Column(type: 'string', nullable: true)]
     #[Assert\NotBlank(groups: ['password'])]
@@ -458,6 +467,33 @@ class User implements UserInterface, EntityHistoryInterface, PasswordAuthenticat
     public function isUsager(): bool
     {
         return \in_array(self::ROLE_USAGER, $this->getRoles());
+    }
+
+    public function getRights(): ?array
+    {
+        $rights = $this->rights;
+
+        if (empty($rights)) {
+            return null;
+        }
+
+        return array_unique($rights);
+    }
+
+    public function getRightLabels(): string
+    {
+        if (empty($this->rights)) {
+            return '';
+        }
+
+        return implode(', ', $this->rights);
+    }
+
+    public function setRights(array $rights): self
+    {
+        $this->rights = $rights;
+
+        return $this;
     }
 
     public function getTerritory(): ?Territory

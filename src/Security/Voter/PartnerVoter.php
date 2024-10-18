@@ -15,6 +15,7 @@ class PartnerVoter extends Voter
     public const EDIT = 'PARTNER_EDIT';
     public const DELETE = 'PARTNER_DELETE';
     public const USER_CREATE = 'USER_CREATE';
+    public const GIVE_RIGHT_AFFECTATION = 'GIVE_RIGHT_AFFECTATION';
 
     public function __construct(private Security $security)
     {
@@ -22,7 +23,7 @@ class PartnerVoter extends Voter
 
     protected function supports(string $attribute, $subject): bool
     {
-        return \in_array($attribute, [self::CREATE, self::EDIT, self::DELETE, self::USER_CREATE]) && ($subject instanceof Partner);
+        return \in_array($attribute, [self::CREATE, self::EDIT, self::DELETE, self::USER_CREATE, self::GIVE_RIGHT_AFFECTATION]) && ($subject instanceof Partner);
     }
 
     protected function voteOnAttribute(string $attribute, $subject, TokenInterface $token): bool
@@ -40,6 +41,7 @@ class PartnerVoter extends Voter
             self::EDIT => $this->canEdit($subject, $user),
             self::DELETE => $this->canDelete($subject, $user),
             self::USER_CREATE => $this->canCreateUser($subject, $user),
+            self::GIVE_RIGHT_AFFECTATION => $this->canGiveRightAffectation($subject, $user),
             default => false,
         };
     }
@@ -61,6 +63,18 @@ class PartnerVoter extends Voter
     private function canCreateUser(Partner $partner, User $user): bool
     {
         return $this->canManage($partner, $user);
+    }
+
+    private function canGiveRightAffectation(Partner $partner, User $user): bool
+    {
+        if (!$user->getTerritory()) {
+            return false;
+        }
+        if ($this->security->isGranted('ROLE_ADMIN_TERRITORY') && $user->getTerritory() === $partner->getTerritory()) {
+            return true;
+        }
+
+        return false;
     }
 
     private function canManage(Partner $partner, User $user): bool

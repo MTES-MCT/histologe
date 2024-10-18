@@ -20,6 +20,7 @@ use App\Repository\JobEventRepository;
 use App\Repository\PartnerRepository;
 use App\Repository\TerritoryRepository;
 use App\Repository\UserRepository;
+use App\Security\Voter\PartnerVoter;
 use App\Service\Mailer\NotificationMail;
 use App\Service\Mailer\NotificationMailerRegistry;
 use App\Service\Mailer\NotificationMailerType;
@@ -356,6 +357,9 @@ class PartnerController extends AbstractController
         if (!$this->canAttributeRole($data['roles'])) {
             return $this->redirectToRoute('back_partner_view', ['id' => $partner->getId()], Response::HTTP_SEE_OTHER);
         }
+        if (!$this->isGranted(PartnerVoter::GIVE_RIGHT_AFFECTATION, $partner) || !isset($data['rights'])) {
+            $data['rights'] = [];
+        }
         if (!EmailFormatValidator::validate($data['email'])) {
             $this->addFlash('error', 'L\'adresse e-mail n\'est pas valide.');
 
@@ -439,15 +443,22 @@ class PartnerController extends AbstractController
                 return $this->redirectToRoute('back_partner_view', ['id' => $user->getPartner()->getId()], Response::HTTP_SEE_OTHER);
             }
         }
+
+        $updateData = [
+            'nom' => $data['nom'],
+            'prenom' => $data['prenom'],
+            'roles' => $data['roles'],
+            'email' => $data['email'],
+            'isMailingActive' => $data['isMailingActive'],
+            'rights' => $data['rights'] ?? [],
+        ];
+        if (!$this->isGranted(PartnerVoter::GIVE_RIGHT_AFFECTATION, $user->getPartner())) {
+            unset($updateData['rights']);
+        }
+
         $user = $userManager->updateUserFromData(
             user: $user,
-            data: [
-                'nom' => $data['nom'],
-                'prenom' => $data['prenom'],
-                'roles' => $data['roles'],
-                'email' => $data['email'],
-                'isMailingActive' => $data['isMailingActive'],
-            ],
+            data: $updateData,
             save: false
         );
 

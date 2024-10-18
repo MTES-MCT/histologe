@@ -106,6 +106,11 @@ document.querySelectorAll('.btn-edit-partner-user').forEach(swbtn => {
     } else {
       document.querySelector('#user_edit_is_mailing_active-2').checked = true
     }
+    
+    const elementRightsAffectation = document.querySelector('#user_edit_rights_affectation')
+    if (elementRightsAffectation) {
+      elementRightsAffectation.checked = target.getAttribute('data-userrights').indexOf('affectation') > -1
+    }
 
     const userRole = target.getAttribute('data-userrole')
     const rolesSelect = document.querySelector('#user_edit_roles')
