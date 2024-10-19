@@ -22,6 +22,12 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class SearchUserType extends AbstractType
 {
+    private const RIGHTS_CHOICES = [
+        'Tous' => 'Tous',
+        'Oui' => 'Oui',
+        'Non' => 'Non',
+    ];
+
     private bool $isAdmin = false;
     private array $roleChoices = [];
 
@@ -76,6 +82,12 @@ class SearchUserType extends AbstractType
             'choices' => $this->roleChoices,
             'required' => false,
             'placeholder' => 'Rôle',
+            'label' => false,
+        ]);
+        $builder->add('rightsAffectation', ChoiceType::class, [
+            'choices' => self::RIGHTS_CHOICES,
+            'required' => false,
+            'placeholder' => 'Droit d\'affectation',
             'label' => false,
         ]);
         $builder->add('page', HiddenType::class);

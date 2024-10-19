@@ -3,6 +3,7 @@
 {% block title %}Liste des utilisateurs{% endblock %}
 
 {% block content %}
+    {% include '_partials/_modal_user_edit.html.twig' %}
     <section class="fr-p-5v">
         {% include 'back/breadcrumb_bo.html.twig' with {
             'level2Title': 'Outils admin',
@@ -32,18 +33,21 @@
                 {{ form_row(form.queryUser) }}
             </div>
             {% if is_granted('ROLE_ADMIN') %}
-                <div class="fr-col-12 fr-col-lg-2">
+                <div class="fr-col-12 fr-col-lg-3">
                     {{ form_row(form.territory) }}
                 </div>
             {% endif %}
             <div class="fr-col-12 fr-col-lg-3">
                 {{ form_row(form.partners) }}
             </div>
-            <div class="fr-col-12 {% if is_granted('ROLE_ADMIN') %}fr-col-lg-2{% else %}fr-col-lg-3{% endif %}">
+            <div class="fr-col-12 fr-col-lg-3">
                 {{ form_row(form.statut) }}
             </div>
-            <div class="fr-col-12 {% if is_granted('ROLE_ADMIN') %}fr-col-lg-2{% else %}fr-col-lg-3{% endif %}">
+            <div class="fr-col-12 fr-col-lg-3">
                 {{ form_row(form.role) }}
+            </div>
+            <div class="fr-col-12 fr-col-lg-3">
+                {{ form_row(form.rightsAffectation) }}
             </div>
             <div class="fr-col-12">
                 <a href="{{ path('back_user_index') }}" class="fr-link fr-link--icon-left fr-icon-close-circle-line">Réinitialiser les résultats</a>
@@ -77,6 +81,8 @@
                                 <th scope="col">Statut du compte</th>
                                 <th scope="col">Dernière connexion</th>
                                 <th scope="col">Rôle</th>
+                                <th scope="col">Droits</th>
+                                <th scope="col" class="fr-text--right">Actions</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -103,6 +109,20 @@
                                     </td>
                                     <td>{{ user.lastLoginAt ? user.lastLoginAt|date('d/m/Y') : '-'}}</td>
                                     <td>{{ user.roleLabel() }}</td>
+                                    <td>{{ user.rightLabels() }}</td>
+                                    <td class="fr-text--right">
+                                        <a href="#" class="fr-btn fr-fi-edit-line fr-mt-3v btn-edit-partner-user"
+                                            id="partner_users_edit_{{ user.id }}" aria-controls="fr-modal-user-edit"
+                                            data-fr-opened="false"
+                                            data-usernom="{{ user.nom }}"
+                                            data-userprenom="{{ user.prenom }}"
+                                            data-userrole="{{ user.roles[0] }}"
+                                            data-userrights="{% for right in user.rights %}{{ right }},{% endfor %}"
+                                            data-userismailingactive="{{ user.isMailingActive }}"
+                                            data-userid="{{ user.id }}"
+                                            data-useremail="{{ user.email }}">
+                                        </a>
+                                    </td>
                                 </tr>
                             {% endfor %}
                         </tbody>

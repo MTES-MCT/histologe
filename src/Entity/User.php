@@ -432,7 +432,7 @@ class User implements UserInterface, EntityHistoryInterface, PasswordAuthenticat
     public function getRoleLabel(): string
     {
         $roleLabel = array_flip(self::ROLES);
-        $role = array_shift($this->roles);
+        $role = $this->roles[0];
 
         return $roleLabel[$role];
     }
