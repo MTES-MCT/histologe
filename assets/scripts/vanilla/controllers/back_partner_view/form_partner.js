@@ -109,7 +109,7 @@ document.querySelectorAll('.btn-edit-partner-user').forEach(swbtn => {
     
     const elementRightsAffectation = document.querySelector('#user_edit_rights_affectation')
     if (elementRightsAffectation) {
-      elementRightsAffectation.checked = target.getAttribute('data-userrights').indexOf('affectation') > -1
+      elementRightsAffectation.checked = target.getAttribute('data-userrights').indexOf('Affectation') > -1
     }
 
     const userRole = target.getAttribute('data-userrole')
