@@ -3,7 +3,7 @@ const searchZoneForm = document.getElementById('search-zone-form')
 if(searchZoneForm){
     searchZoneForm.querySelectorAll('select').forEach((select) => {
         select.addEventListener('change', function(){
-            searchUserForm.submit();
+            searchZoneForm.submit();
         });
     });
     searchZoneForm.addEventListener('submit', function(){

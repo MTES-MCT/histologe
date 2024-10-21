@@ -545,4 +545,10 @@ partners:
     territory: "Martinique"
     type: "ARS"
     competence: "VISITES"
+  -
+    nom: "Partenaire Zone Agde"
+    email: "partenaire-34-07@histologe.fr"
+    is_archive: 0
+    territory: "Hérault"
+    type: "AUTRE"
 

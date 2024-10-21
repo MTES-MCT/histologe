@@ -68,8 +68,8 @@ class ZoneType extends AbstractType
                 'by_reference' => false,
             ]);
         }
-        $docUrl = 'https://data.sigea.educagri.fr/download/sigea/supports/QGIS/distance/initiation/M08_Import_Export/co/10_N1_Export_CSV_geo.html';
-        $fileLabel = 'Fichier';
+        // $docUrl = 'https://data.sigea.educagri.fr/download/sigea/supports/QGIS/distance/initiation/M08_Import_Export/co/10_N1_Export_CSV_geo.html';
+        $fileLabel = 'Fichier (en cas de modification des coordonnées de la zone uniquement)';
         $fileConstraints = [
             new Assert\File([
                 'mimeTypes' => ['text/csv', 'text/plain'],
@@ -77,7 +77,7 @@ class ZoneType extends AbstractType
             ]),
         ];
         if (!$zone->getId()) {
-            $fileLabel = 'Fichier (en cas de modification des coordonnées de la zone uniquement)';
+            $fileLabel = 'Fichier';
             $fileConstraints[] = new Assert\NotBlank([
                 'message' => 'Merci de sélectionner un fichier',
             ]);
@@ -86,8 +86,9 @@ class ZoneType extends AbstractType
             'label' => $fileLabel,
             'required' => false,
             'mapped' => false,
-            'help' => 'Le fichier doit être au format CSV et contenir une colonnne "WKT" <a href="'.$docUrl.'">doc</a>',
-            'help_html' => true,
+            'help' => 'Le fichier doit être au format CSV et contenir une colonnne "WKT"',
+            // 'help' => 'Le fichier doit être au format CSV et contenir une colonnne "WKT" <a href="'.$docUrl.'">doc</a>',
+            // 'help_html' => true,
             'constraints' => $fileConstraints,
         ]);
         if ($zone->getId()) {

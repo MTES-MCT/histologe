@@ -47,7 +47,7 @@ class ZoneRepository extends ServiceEntityRepository
             SELECT s.uuid, s.reference, s.geoloc, s.adresse_occupant, s.cp_occupant, s.ville_occupant
             FROM signalement s
             JOIN zone z ON ST_Contains(ST_GeomFromText(z.area),
-            Point(JSON_UNQUOTE(JSON_EXTRACT(s.geoloc, "$.lng")), JSON_UNQUOTE(JSON_EXTRACT(s.geoloc, "$.lat"))))
+            Point(JSON_EXTRACT(s.geoloc, "$.lng"), JSON_EXTRACT(s.geoloc, "$.lat")))
             WHERE z.id = :zone AND s.territory_id = z.territory_id
             ORDER BY s.created_at DESC
             ';
