@@ -489,6 +489,15 @@ class User implements UserInterface, EntityHistoryInterface, PasswordAuthenticat
         return implode(', ', $this->rights);
     }
 
+    public function hasRightAffectation(): bool
+    {
+        if (empty($this->getRights())) {
+            return false;
+        }
+
+        return in_array('Affectation', $this->getRights());
+    }
+
     public function setRights(array $rights): self
     {
         $this->rights = $rights;

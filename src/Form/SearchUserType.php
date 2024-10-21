@@ -10,6 +10,7 @@ use App\Repository\PartnerRepository;
 use App\Service\SearchUser;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Bundle\SecurityBundle\Security;
+use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
@@ -32,7 +33,8 @@ class SearchUserType extends AbstractType
     private array $roleChoices = [];
 
     public function __construct(
-        private readonly Security $security
+        private readonly Security $security,
+        private readonly ParameterBagInterface $parameterBag,
     ) {
         $this->roleChoices = User::ROLES;
         unset($this->roleChoices['Usager']);
@@ -84,12 +86,14 @@ class SearchUserType extends AbstractType
             'placeholder' => 'Rôle',
             'label' => false,
         ]);
-        $builder->add('rightsAffectation', ChoiceType::class, [
-            'choices' => self::RIGHTS_CHOICES,
-            'required' => false,
-            'placeholder' => 'Droit d\'affectation',
-            'label' => false,
-        ]);
+        if ($this->parameterBag->get('feature_right_affectation')) {
+            $builder->add('rightsAffectation', ChoiceType::class, [
+                'choices' => self::RIGHTS_CHOICES,
+                'required' => false,
+                'placeholder' => 'Droit d\'affectation',
+                'label' => false,
+            ]);
+        }
         $builder->add('page', HiddenType::class);
     }
 
