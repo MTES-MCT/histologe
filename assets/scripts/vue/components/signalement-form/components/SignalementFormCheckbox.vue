@@ -91,5 +91,6 @@ export default defineComponent({
 <style>
 .signalement-form-checkbox {
   margin-top: 1rem;
+  margin-left: -.5rem;
 }
 </style>
