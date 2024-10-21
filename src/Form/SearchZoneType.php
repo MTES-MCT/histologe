@@ -14,14 +14,9 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class SearchZoneType extends AbstractType
 {
-    private bool $isAdmin = false;
-
     public function __construct(
         private readonly Security $security
     ) {
-        if ($this->security->isGranted('ROLE_ADMIN')) {
-            $this->isAdmin = true;
-        }
     }
 
     public function buildForm(FormBuilderInterface $builder, array $options): void
@@ -31,7 +26,7 @@ class SearchZoneType extends AbstractType
             'label' => false,
             'attr' => ['placeholder' => 'Taper le nom d\'une zone'],
         ]);
-        if ($this->isAdmin) {
+        if ($this->security->isGranted('ROLE_ADMIN')) {
             $builder->add('territory', EntityType::class, [
                 'class' => Territory::class,
                 'choice_label' => function (Territory $territory) {

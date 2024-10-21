@@ -6,7 +6,7 @@
         {% set widget_attr = {attr: {'aria-describedby': id ~"_help"}} %}
     {% endif %}
     {% if type is defined and type == 'file' %}
-        {% set row_attr = row_attr|merge({'class': (row_attr.class|default('') ~ ' fr-upload-group')|trim}) %}
+        {% set row_attr = row_attr|merge({'class': (row_attr.class|default('') ~ ' fr-upload-group fr-mb-6v')|trim}) %}
     {% elseif 'choice' in block_prefixes %}
         {% set row_attr = row_attr|merge({'class': (row_attr.class|default('') ~ ' fr-select-group')|trim}) %}
     {% else %} 

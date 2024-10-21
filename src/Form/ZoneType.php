@@ -18,14 +18,9 @@ use Symfony\Component\Validator\Constraints as Assert;
 
 class ZoneType extends AbstractType
 {
-    private $isAdmin = false;
-
     public function __construct(
         private readonly Security $security
     ) {
-        if ($this->security->isGranted('ROLE_ADMIN')) {
-            $this->isAdmin = true;
-        }
     }
 
     public function buildForm(FormBuilderInterface $builder, array $options): void
@@ -37,7 +32,7 @@ class ZoneType extends AbstractType
                 'required' => false,
                 'empty_data' => '',
             ]);
-        if ($this->isAdmin && !$zone->getId()) {
+        if ($this->security->isGranted('ROLE_ADMIN') && !$zone->getId()) {
             $builder
                 ->add('territory', null, [
                     'label' => 'Territoire',
