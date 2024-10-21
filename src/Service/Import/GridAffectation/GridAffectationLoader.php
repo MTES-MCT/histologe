@@ -64,7 +64,7 @@ class GridAffectationLoader
                         $item[GridAffectationHeader::PARTNER_TYPE]
                     );
                 }
-                // if partner has an email, it should be valid and not existing for another territory partner
+                // if partner has an email, it should be valid and not existing in the same territory
                 $emailPartner = trim($item[GridAffectationHeader::PARTNER_EMAIL]);
                 if (!empty($emailPartner)) {
                     $violations = $this->validator->validate($emailPartner, $emailConstraint);
