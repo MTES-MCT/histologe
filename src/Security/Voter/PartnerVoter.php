@@ -5,6 +5,7 @@ namespace App\Security\Voter;
 use App\Entity\Partner;
 use App\Entity\User;
 use Symfony\Bundle\SecurityBundle\Security;
+use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Authorization\Voter\Voter;
 use Symfony\Component\Security\Core\User\UserInterface;
@@ -17,8 +18,10 @@ class PartnerVoter extends Voter
     public const USER_CREATE = 'USER_CREATE';
     public const GIVE_RIGHT_AFFECTATION = 'GIVE_RIGHT_AFFECTATION';
 
-    public function __construct(private Security $security)
-    {
+    public function __construct(
+        private Security $security,
+        private readonly ParameterBagInterface $parameterBag,
+    ) {
     }
 
     protected function supports(string $attribute, $subject): bool
@@ -67,7 +70,7 @@ class PartnerVoter extends Voter
 
     private function canGiveRightAffectation(Partner $partner, User $user): bool
     {
-        if (!$user->getTerritory()) {
+        if (!$this->parameterBag->get('feature_right_affectation') || !$user->getTerritory()) {
             return false;
         }
         if ($this->security->isGranted('ROLE_ADMIN_TERRITORY') && $user->getTerritory() === $partner->getTerritory()) {

@@ -163,7 +163,7 @@
                             <th scope="col">Statut</th>
                             <th scope="col">Rôle</th>
                             {% if is_granted('GIVE_RIGHT_AFFECTATION', partner) %}
-                            <th scope="col">Droits</th>
+                            <th scope="col">Droits d'affectation</th>
                             {% endif %}
                             <th scope="col" class="fr-text--right">Actions</th>
                         </tr>
@@ -198,7 +198,7 @@
                                         {% endif %}
                                     </td>
                                     {% if is_granted('GIVE_RIGHT_AFFECTATION', partner) %}
-                                    <td>{{ user.rightLabels }}</td>
+                                    <td>{{ user.hasRightAffectation() ? 'Oui' : 'Non' }}</td>
                                     {% endif %}
                                     <td class="fr-text--right">
                                         {% if is_granted('USER_EDIT', user) %}

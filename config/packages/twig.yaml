@@ -13,6 +13,7 @@ twig:
             feature_historique_affectations: '%feature_historique_affectations%'
             feature_zonage: '%feature_zonage%'
             feature_grille_visite: '%feature_grille_visite%'
+            feature_right_affectation: '%feature_right_affectation%'
         gitbook:
             documentation: https://documentation.histologe.beta.gouv.fr
             faq: https://faq.histologe.beta.gouv.fr

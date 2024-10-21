@@ -91,7 +91,7 @@
                                         <span class="fr-hint-text fr-mt-inf-3v">Si vous cochez oui, des e-mails concernant les signalements seront envoyés à cette adresse.</span>
                                     </fieldset>
                                 </div>
-                                {% if is_granted('ROLE_ADMIN') or is_granted('ROLE_ADMIN_TERRITORY') %}
+                                {% if platform.feature_right_affectation and is_granted('ROLE_ADMIN_TERRITORY') %}
                                 <div class="fr-grid-row fr-grid-row--gutters">
                                     <div class="fr-col-12">
                                         <div class="fr-toggle">
