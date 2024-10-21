@@ -1,0 +1,38 @@
+<dialog aria-labelledby="fr-modal-historique-affectation-title" id="fr-modal-historique-affectation" class="fr-modal">
+    <div class="fr-container fr-container--fluid fr-container-md">
+        <div class="fr-grid-row fr-grid-row--center">
+            <div class="fr-col-12 fr-col-md-10 fr-col-lg-10">
+                <div class="fr-modal__body">
+                    <div class="fr-modal__header">
+                        <button type="button" class="fr-btn--close fr-btn" aria-controls="fr-modal-historique-affectation">Fermer</button>
+                    </div>
+                    <div class="fr-modal__content">
+                        <h1 id="fr-modal-historique-affectation-title" class="fr-modal__title">
+                            Historique des affectations
+                        </h1>
+                        <div id="fr-modal-historique-affectation-avertissement">L'historique n'est disponible que depuis le 12 septembre 2024</div>
+                        <div id="fr-modal-historique-affectation-loading-message">Chargement en cours de l'historique des affectations pour le signalement...</div>
+                        <div id="fr-modal-historique-affectation-content"></div>
+                    </div>
+                    <div class="fr-modal__footer">
+                        <ul class="fr-btns-group fr-btns-group--right fr-btns-group--inline-reverse fr-btns-group--inline-lg fr-btns-group--icon-left">
+                            {# <li>
+                                <button class="fr-btn fr-icon-check-line" type="submit"
+                                        form="signalement-affectation-form" id="signalement-affectation-form-submit"
+                                        formaction="{{ path('back_signalement_toggle_affectation',{uuid:signalement.uuid}) }}">
+                                    Affecter partenaire(s)
+                                </button>
+                            </li>
+                            <li>
+                                <button class="fr-btn fr-btn--secondary fr-icon-close-line"
+                                        aria-controls="fr-modal-historique-affectation" type="button">
+                                    Annuler
+                                </button>
+                            </li> #}
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</dialog>
