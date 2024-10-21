@@ -44,6 +44,7 @@ parameters:
     feature_archive_inactive_account: '%env(bool:FEATURE_ARCHIVE_INACTIVE_ACCOUNT)%'
     feature_anonymize_expired_account: '%env(bool:FEATURE_ANONYMIZE_EXPIRED_ACCOUNT)%'
     cgu_current_version: '05/06/2024'
+    feature_historique_affectations: '%env(bool:FEATURE_HISTORIQUE_AFFECTATIONS)%'
     feature_schs_sync_event_enable: '%env(bool:FEATURE_SCHS_SYNC_EVENT_ENABLE)%'
     feature_export_users: '%env(bool:FEATURE_EXPORT_USERS)%'
 

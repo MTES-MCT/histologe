@@ -162,3 +162,107 @@ document?.querySelector('#signalement-affectation-form-submit')?.addEventListene
 document?.getElementById('signalement-add-suivi-notify-usager')?.addEventListeners('change', (e) => {
     document.getElementById('signalement-add-suivi-submit').textContent = (e.target.checked) ? 'Envoyer le suivi à l\'usager' : 'Enregistrer le suivi interne';
 })
+
+document?.getElementById('fr-modal-historique-affectation')?.addEventListener('dsfr.disclose', (event) => {
+    console.log("ouverture modale historique")
+    console.log(event)
+    let signalementId = event.explicitOriginalTarget.dataset.signalementId;
+    
+    if (!signalementId) {
+        console.warn('Aucun signalementId trouvé');
+        return;
+    }
+
+    let formData = new FormData();
+    formData.append('signalementId', signalementId);
+    
+    fetch('/bo/history/affectation', {
+        method: 'POST',
+        body: formData
+    }).then(response => response.json())
+        .then(data => {
+            if (data.historyEntries) {
+                if (data.historyEntries.length === 0 ){
+                    const loadingMessage = document.getElementById('fr-modal-historique-affectation-loading-message');
+                    loadingMessage.textContent = 'Il n\'y a pas d\'historique pour ce signalement';
+                    loadingMessage.classList.remove('fr-hidden')
+                }else{
+                    const historyEntries = data.historyEntries;
+                    const loadingMessage = document.getElementById('fr-modal-historique-affectation-loading-message');
+                    loadingMessage.classList.add('fr-hidden')
+                    const modalContent = document.getElementById('fr-modal-historique-affectation-content');
+                    modalContent.innerHTML = ''; 
+    
+                    for (const [partner, events] of Object.entries(historyEntries)) {
+                        const table = document.createElement('div');
+                        table.classList.add('fr-table--sm'); 
+                        table.classList.add('fr-table'); 
+                        // TODO : ajouter un id
+    
+                        const wrapper = document.createElement('div');
+                        wrapper.classList.add('fr-table__wrapper'); 
+                        table.appendChild(wrapper);
+    
+                        const container = document.createElement('div');
+                        container.classList.add('fr-table__container'); 
+                        wrapper.appendChild(container);
+    
+                        const tableContent = document.createElement('div');
+                        tableContent.classList.add('fr-table__content'); 
+                        container.appendChild(tableContent);
+    
+                        const tableContentTable = document.createElement('table');
+                        tableContentTable.classList.add('fr-table__content'); 
+                        tableContent.appendChild(tableContentTable);
+    
+                        const tableContentTitle = document.createElement('caption');
+                        tableContentTitle.textContent = partner; 
+                        tableContentTable.appendChild(tableContentTitle);
+    
+                        // Create the table header
+                        const tableHeader = document.createElement('thead');
+                        tableHeader.innerHTML = `
+                            <tr>
+                                <th>Date</th>
+                                <th>Action</th>
+                                <th>Id</th>
+                            </tr>
+                        `;
+                        tableContentTable.appendChild(tableHeader);
+    
+                        const tableBody = document.createElement('tbody');
+    
+                        events.forEach(event => {
+                            const row = document.createElement('tr');
+    
+                            const dateCell = document.createElement('td');
+                            const dateObj = new Date(event.Date);
+                            const formattedDate = dateObj.toLocaleDateString('fr-FR', { year: 'numeric', month: '2-digit', day: '2-digit' }) +
+                                                ' à ' + dateObj.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' });
+                            // TODO : 2 heures d'écart, à vérifier
+                            dateCell.textContent = formattedDate;
+                            row.appendChild(dateCell);
+    
+                            const actionCell = document.createElement('td');
+                            actionCell.textContent = event.Action;
+                            row.appendChild(actionCell);
+    
+                            const idCell = document.createElement('td');
+                            idCell.textContent = event.Id;
+                            row.appendChild(idCell);
+    
+                            tableBody.appendChild(row);
+                        });
+    
+                        tableContentTable.appendChild(tableBody);
+                        modalContent.appendChild(table);
+                    }
+                }
+            } else {
+                console.warn('Erreur de récupération des données :', data.response);
+            }
+        })
+    .catch(function (err) {
+        console.warn('Something went wrong.', err);
+    });
+});

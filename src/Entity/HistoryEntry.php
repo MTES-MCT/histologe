@@ -29,6 +29,9 @@ class HistoryEntry
     #[ORM\Column(nullable: true)]
     private ?string $source = null;
 
+    #[ORM\Column(nullable: true)]
+    private ?int $signalementId = null;
+
     #[ORM\Column]
     private ?\DateTimeImmutable $createdAt = null;
 
@@ -133,6 +136,18 @@ class HistoryEntry
     public function setSource(?string $source): self
     {
         $this->source = $source;
+
+        return $this;
+    }
+
+    public function getSignalementId(): ?int
+    {
+        return $this->signalementId;
+    }
+
+    public function setSignalementId(?int $signalementId): static
+    {
+        $this->signalementId = $signalementId;
 
         return $this;
     }
