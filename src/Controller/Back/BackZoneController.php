@@ -32,9 +32,9 @@ class BackZoneController extends AbstractController
 
     public function __construct(
         #[Autowire(env: 'FEATURE_ZONAGE')]
-        bool $featureExportUsers,
+        bool $featureZonage,
     ) {
-        if (!$featureExportUsers) {
+        if (!$featureZonage) {
             throw $this->createNotFoundException();
         }
     }

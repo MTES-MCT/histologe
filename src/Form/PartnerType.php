@@ -16,6 +16,7 @@ use App\Repository\UserRepository;
 use App\Repository\ZoneRepository;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Bundle\SecurityBundle\Security;
+use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\CallbackTransformer;
@@ -43,7 +44,9 @@ class PartnerType extends AbstractType
         private readonly ParameterBagInterface $parameterBag,
         private readonly CommuneManager $communeManager,
         private readonly UserRepository $userRepository,
-        private readonly Security $security
+        private readonly Security $security,
+        #[Autowire(env: 'FEATURE_ZONAGE')]
+        private readonly bool $featureZonage,
     ) {
         if ($this->security->isGranted('ROLE_ADMIN')) {
             $this->isAdmin = true;
@@ -192,7 +195,7 @@ class PartnerType extends AbstractType
             'label' => 'Territoire',
             'required' => true,
         ]);
-        if ($partner->getTerritory()) {
+        if ($this->featureZonage && $partner->getTerritory()) {
             $builder->addEventListener(FormEvents::PRE_SET_DATA, function (FormEvent $event) use ($builder) {
                 $this->addZonesField($event->getForm(), $builder->getData()->getTerritory());
             });

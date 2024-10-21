@@ -14,6 +14,7 @@ use Doctrine\ORM\Query\QueryException;
 use Doctrine\ORM\QueryBuilder;
 use Doctrine\ORM\Tools\Pagination\Paginator;
 use Doctrine\Persistence\ManagerRegistry;
+use Symfony\Component\DependencyInjection\Attribute\Autowire;
 
 /**
  * @method Partner|null find($id, $lockMode = null, $lockVersion = null)
@@ -23,8 +24,11 @@ use Doctrine\Persistence\ManagerRegistry;
  */
 class PartnerRepository extends ServiceEntityRepository
 {
-    public function __construct(ManagerRegistry $registry)
-    {
+    public function __construct(
+        ManagerRegistry $registry,
+        #[Autowire(env: 'FEATURE_ZONAGE')]
+        private readonly bool $featureZonage,
+    ) {
         parent::__construct($registry, Partner::class);
     }
 
@@ -156,7 +160,43 @@ class PartnerRepository extends ServiceEntityRepository
         ->setParameter('signalement', $signalement);
 
         $affectedPartners = $subquery->getQuery()->getSingleColumnResult();
+        if ($this->featureZonage) {
+            $conn = $this->getEntityManager()->getConnection();
+            $params = [
+                'territory' => $signalement->getTerritory()->getId(),
+                'insee' => '%'.$signalement->getInseeOccupant().'%',
+                'lng' => $signalement->getGeoloc()['lng'],
+                'lat' => $signalement->getGeoloc()['lat'],
+            ];
+            $clauseSubquery = '';
+            if (\count($affectedPartners) || 'IN' == $operator) {
+                if (0 === \count($affectedPartners)) {
+                    $clauseSubquery = 'AND p.id '.$operator.' (null)';
+                } else {
+                    $partnersParams = [];
+                    foreach ($affectedPartners as $key => $partner) {
+                        $partnersParams[] = ':partner_'.$key;
+                        $params['partner_'.$key] = $partner;
+                    }
+                    $clauseSubquery = 'AND p.id '.$operator.' ('.implode(',', $partnersParams).')';
+                }
+            }
+            $sql = '
+                SELECT p.id, p.nom as name
+                FROM partner p
+                LEFT JOIN partner_zone pz ON p.id = pz.partner_id
+                LEFT JOIN zone z ON pz.zone_id = z.id
+                WHERE p.is_archive = 0
+                AND p.territory_id = :territory
+                AND (p.insee LIKE :insee OR p.insee LIKE \'%[]%\' OR p.insee LIKE \'%[""]%\')
+                AND (z.id IS NULL OR ST_Contains(ST_GeomFromText(z.area), Point(:lng, :lat)))
+                '.$clauseSubquery.'
+                ORDER BY p.nom ASC';
 
+            $resultSet = $conn->executeQuery($sql, $params);
+
+            return $resultSet->fetchAllAssociative();
+        }
         $queryBuilder = $this->createQueryBuilder('p');
         $queryBuilder->select('p.id, p.nom as name')
             ->where('p.isArchive = 0')
@@ -170,6 +210,7 @@ class PartnerRepository extends ServiceEntityRepository
                 )
             )
             ->setParameter('insee', '%'.$signalement->getInseeOccupant().'%')
+            ->leftJoin('p.zones', 'z')
         ;
         if (\count($affectedPartners) > 0 || 'IN' == $operator) {
             $queryBuilder->andWhere('p.id '.$operator.' (:subquery)')

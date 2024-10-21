@@ -77,7 +77,9 @@
                             <th scope="col">Type</th>
                             <th scope="col">Compétences</th>
                             <th scope="col">Codes INSEE</th>
-                            <th scope="col">Zones</th>
+                            {% if platform.feature_zonage %}
+                                <th scope="col">Zones</th>
+                            {% endif %}
                             <th scope="col" class="fr-text--right">Actions</th>
                         </tr>
                         </thead>
@@ -109,18 +111,20 @@
                                         /
                                     {% endif %}
                                 </td>
-                                <td>
-                                    {% if partner.zones %}
-                                        {% for zone in partner.zones|slice(0, 4) %}
-                                            <div class="fr-badge fr-badge--blue-ecume fr-mb-1v">{{ zone.name }}</div>
-                                        {% endfor %}
-                                        {% if partner.zones|length > 4 %}
-                                            + {{partner.zones|length - 4}}
+                                {% if platform.feature_zonage %}
+                                    <td>
+                                        {% if partner.zones %}
+                                            {% for zone in partner.zones|slice(0, 4) %}
+                                                <div class="fr-badge fr-badge--blue-ecume fr-mb-1v">{{ zone.name }}</div>
+                                            {% endfor %}
+                                            {% if partner.zones|length > 4 %}
+                                                + {{partner.zones|length - 4}}
+                                            {% endif %}
+                                        {% else %}
+                                            /
                                         {% endif %}
-                                    {% else %}
-                                        /
-                                    {% endif %}
-                                </td>
+                                    </td>
+                                {% endif %}
                                 <td class="fr-text--right fr-ws-nowrap">
                                     <a href="{{ path('back_partner_view', {'id': partner.id}) }}"
                                     class="fr-btn fr-fi-arrow-right-line fr-btn--sm"></a>
