@@ -94,9 +94,12 @@
                                 {% if platform.feature_permission_affectation and is_granted('ROLE_ADMIN_TERRITORY') %}
                                 <div class="fr-grid-row fr-grid-row--gutters">
                                     <div class="fr-col-12">
-                                        <div class="fr-toggle">
+                                        <div id="user_edit_permission_affectation_toggle" class="fr-toggle">
                                             <input type="checkbox" class="fr-toggle__input" id="user_edit_permission_affectation" name="user_edit[permissions][]" value="Affectation">
                                             <label class="fr-toggle__label" for="user_edit_permission_affectation">Cet utilisateur peut affecter d'autres partenaires à ses signalements</label>
+                                        </div>
+                                        <div id="user_edit_permission_affectation_text">
+                                            Un administrateur de territoire peut affecter d'autres partenaires à ses signalements.
                                         </div>
                                     </div>
                                 </div>

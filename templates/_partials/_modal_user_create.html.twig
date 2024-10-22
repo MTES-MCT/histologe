@@ -92,12 +92,15 @@
                                         <span class="fr-hint-text fr-mt-inf-3v">Si vous cochez oui, des e-mails concernant les signalements seront envoyés à cette adresse.</span>
                                     </fieldset>
                                 </div>
-                                {% if platform.feature_permission_affectation and is_granted('GIVE_PERMISSION_AFFECTATION', partner) %}
+                                {% if platform.feature_permission_affectation and is_granted('ASSIGN_PERMISSION_AFFECTATION', partner) %}
                                 <div class="fr-grid-row fr-grid-row--gutters">
                                     <div class="fr-col-12">
-                                        <div class="fr-toggle">
+                                        <div id="user_create_permission_affectation_toggle" class="fr-toggle">
                                             <input type="checkbox" class="fr-toggle__input" id="user_create_permission_affectation" name="user_create[permissions][]" value="Affectation">
                                             <label class="fr-toggle__label" for="user_create_permission_affectation">Cet utilisateur peut affecter d'autres partenaires à ses signalements</label>
+                                        </div>
+                                        <div id="user_create_permission_affectation_text" class="fr-hidden">
+                                            Un administrateur de territoire peut affecter d'autres partenaires à ses signalements.
                                         </div>
                                     </div>
                                 </div>
