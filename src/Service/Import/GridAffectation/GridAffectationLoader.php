@@ -77,18 +77,19 @@ class GridAffectationLoader
                     }
 
                     if (!$isModeUpdate) {
-                        /** @var Partner $partnerToCreate */
-                        $partnerToCreate = $this->partnerManager->findOneBy([
+                        /** @var Partner $partnerToCheck */
+                        $partnerToCheck = $this->partnerManager->findOneBy([
                             'email' => $emailPartner,
+                            'isArchive' => false,
                             'territory' => $territory]
                         );
-                        if (null !== $partnerToCreate) {
+                        if (null !== $partnerToCheck) {
                             $errors[] = \sprintf(
                                 'line %d : E-mail partenaire déjà existant dans le territoire avec (%s) dans %s, nom : %s',
                                 $numLine,
                                 $emailPartner,
-                                $partnerToCreate->getTerritory()->getName(),
-                                $partnerToCreate->getNom()
+                                $partnerToCheck->getTerritory()->getName(),
+                                $partnerToCheck->getNom()
                             );
                         }
                     }
@@ -116,19 +117,19 @@ class GridAffectationLoader
                         $errors[] = \sprintf('line %d : E-mail incorrect pour un utilisateur : %s', $numLine, $emailUser);
                     }
 
-                    /** @var User $userToCreate */
-                    $userToCreate = $this->userManager->findOneBy(['email' => $emailUser]);
+                    /** @var User $userToCheck */
+                    $userToCheck = $this->userManager->findOneBy(['email' => $emailUser]);
                     if (!$isModeUpdate
-                        && null !== $userToCreate
-                        && !\in_array('ROLE_USAGER', $userToCreate->getRoles())
+                        && null !== $userToCheck
+                        && !\in_array('ROLE_USAGER', $userToCheck->getRoles())
                     ) {
                         $errors[] = \sprintf(
                             'line %d : Utilisateur déjà existant avec (%s) dans %s, partenaire : %s, rôle : %s',
                             $numLine,
                             $emailUser,
-                            $userToCreate->getTerritory()->getName(),
-                            $userToCreate->getPartner()->getNom(),
-                            $userToCreate->getRoleLabel()
+                            $userToCheck->getTerritory()->getName(),
+                            $userToCheck->getPartner()->getNom(),
+                            $userToCheck->getRoleLabel()
                         );
                     }
                     // store user mail to check duplicates
