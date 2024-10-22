@@ -9,6 +9,8 @@ use Random\RandomException;
 #[ORM\Entity(repositoryClass: ApiUserTokenRepository::class)]
 class ApiUserToken
 {
+    public const string EXPIRATION_TIME = '+30 seconds'; // for testing to update later
+
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
@@ -78,7 +80,7 @@ class ApiUserToken
      */
     public function generate(): static
     {
-        $this->expiresAt = new \DateTimeImmutable('+10 seconds');
+        $this->expiresAt = new \DateTimeImmutable(self::EXPIRATION_TIME);
         $this->token = bin2hex(random_bytes(32));
 
         return $this;
