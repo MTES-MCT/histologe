@@ -72,4 +72,30 @@ class PartnerTest extends KernelTestCase
 
         $this->assertTrue($partner->canSyncWithOilhi($signalement));
     }
+
+    /**
+     * @dataProvider provideDataForTestPartnerWithEmail
+     */
+    public function testCreatePartnerNoValidWithEmailExistInTerritory(int $zip, int $countErrors): void
+    {
+        $entityManager = self::getContainer()->get('doctrine')->getManager();
+        $territory = $entityManager->getRepository(Territory::class)->find($zip);
+        $partner = (new Partner())
+            ->setNom('Random partner')
+            ->setEmail('partenaire-13-01@histologe.fr')
+            ->setType(PartnerType::COMMUNE_SCHS)
+            ->setCompetence([Qualification::VISITES])
+            ->setTerritory($territory);
+
+        $validator = self::getContainer()->get('validator');
+        $errors = $validator->validate($partner);
+        $this->assertEquals($countErrors, $errors->count());
+    }
+
+    public function provideDataForTestPartnerWithEmail(): \Generator
+    {
+        yield 'Create partner not valid with email exists in territory' => [13, 1];
+
+        yield 'Create partner valid with email exists in territory' => [1, 0];
+    }
 }
