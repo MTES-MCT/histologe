@@ -58,10 +58,6 @@ class HistoryEntryManager extends AbstractManager
             ->setChanges($changes)
             ->setSource($source);
 
-        if ($entityHistory instanceof Affectation) {
-            $historyEntry->setSignalementId($entityHistory->getSignalement()?->getId());
-        }
-
         $this->save($historyEntry, $flush);
 
         return $historyEntry;
