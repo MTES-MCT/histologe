@@ -15,6 +15,7 @@ use App\Factory\HistoryEntryFactory;
 use App\Repository\AffectationRepository;
 use App\Repository\HistoryEntryRepository;
 use App\Repository\PartnerRepository;
+use App\Service\TimezoneProvider;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Component\HttpFoundation\RequestStack;
@@ -22,6 +23,9 @@ use Symfony\Component\Serializer\Exception\ExceptionInterface;
 
 class HistoryEntryManager extends AbstractManager
 {
+    private const ENTITY_PROXY_PREFIX = 'Proxies\\__CG__\\';
+    public const FORMAT_DATE_TIME = 'Y-m-d H:i';
+
     public function __construct(
         private readonly HistoryEntryFactory $historyEntryFactory,
         private readonly HistoryEntryRepository $historyEntryRepository,
@@ -73,70 +77,20 @@ class HistoryEntryManager extends AbstractManager
 
     public function getAffectationHistory(int $signalementId): array
     {
-        $affectationHistoryEntries = $this->historyEntryRepository->findBy(
-            [
-                'signalementId' => $signalementId,
-                'entityName' => str_replace('Proxies\\__CG__\\', '', Affectation::class),
-            ],
-            ['entityId' => 'ASC', 'createdAt' => 'ASC']
+        $affectationHistoryEntries = $this->getHistoryEntries(
+            $signalementId,
+            Affectation::class
         );
 
-        $signalementHistoryEntries = $this->historyEntryRepository->findBy(
-            [
-                'entityId' => $signalementId,
-                'event' => HistoryEntryEvent::UPDATE,
-                'entityName' => str_replace('Proxies\\__CG__\\', '', Signalement::class),
-            ],
-            ['entityId' => 'ASC', 'createdAt' => 'ASC']
+        $signalementHistoryEntries = $this->getHistoryEntries(
+            $signalementId,
+            Signalement::class,
+            HistoryEntryEvent::UPDATE
         );
 
         $formattedHistory = [];
-
-        foreach ($affectationHistoryEntries as $entry) {
-            // Récupérer les informations nécessaires
-            $date = $entry->getCreatedAt()->format('Y-m-d H:i:s');
-            $partnerTarget = $this->getPartnerByEntityId($entry->getEntityId()) ?? $this->getPartnerByDeleteHistoryEntry($entry->getEntityId());
-            $partnerTargetName = $partnerTarget?->getNom() ?? 'N/A';
-            $userName = $entry->getUser() ? $entry->getUser()->getFullName() : 'Système'; // TODO
-            $action = $this->getAffectationActionSummary($entry, $userName, $partnerTargetName);
-            $id = $entry->getEntityId();
-
-            $partner = $entry->getUser()?->getPartner(); // TODO : quoi sinon ?
-            $partnerName = $partner->getNom();
-            // Initialiser le tableau pour ce partenaire s'il n'existe pas
-            if (!isset($formattedHistory[$partnerName])) {
-                $formattedHistory[$partnerName] = [];
-            }
-
-            // Ajouter l'événement à ce partenaire
-            $formattedHistory[$partnerName][] = [
-                'Date' => $date,
-                'Action' => $action,
-                'Id' => $id,
-            ];
-        }
-
-        foreach ($signalementHistoryEntries as $entry) {
-            $date = $entry->getCreatedAt()->format('Y-m-d H:i:s');
-            $partner = $entry->getUser()?->getPartner(); // TODO : quoi sinon ?
-            $partnerName = $partner->getNom();
-            $userName = $entry->getUser() ? $entry->getUser()->getFullName() : 'Système'; // TODO
-            $action = $this->getSignalementActionSummary($entry, $userName);
-            $id = $entry->getEntityId();
-
-            if (!isset($formattedHistory[$partnerName])) {
-                $formattedHistory[$partnerName] = [];
-            }
-
-            if (null !== $action) {
-                // Ajouter l'événement à ce partenaire
-                $formattedHistory[$partnerName][] = [
-                    'Date' => $date,
-                    'Action' => $action,
-                    'Id' => '-',
-                ];
-            }
-        }
+        $this->formatEntries($formattedHistory, $affectationHistoryEntries, 'affectation');
+        $this->formatEntries($formattedHistory, $signalementHistoryEntries, 'signalement');
 
         ksort($formattedHistory);
         foreach ($formattedHistory as &$partnerEvents) {
@@ -144,6 +98,55 @@ class HistoryEntryManager extends AbstractManager
         }
 
         return $formattedHistory;
+    }
+
+    private function getHistoryEntries(int $signalementId, string $entityClass, ?HistoryEntryEvent $event = null): array
+    {
+        $criteria = ['entityName' => str_replace(self::ENTITY_PROXY_PREFIX, '', $entityClass)];
+        if (Signalement::class === $entityClass) {
+            $criteria['entityId'] = $signalementId;
+            $criteria['event'] = $event;
+        } else {
+            $criteria['signalementId'] = $signalementId;
+        }
+
+        return $this->historyEntryRepository->findBy($criteria, ['entityId' => 'ASC', 'createdAt' => 'ASC']);
+    }
+
+    private function formatEntries(array &$formattedHistory, array $entries, string $type): void
+    {
+        foreach ($entries as $entry) {
+            $userName = $entry->getUser() ? $entry->getUser()->getFullName() : 'Système';
+            /** @var ?Partner */
+            $partner = $entry->getUser()?->getPartner();
+            $partnerName = $partner ? $partner->getNom() : 'N/A';
+            $date = $entry->getCreatedAt()
+                ->setTimezone(
+                    new \DateTimeZone($partner?->getTerritory() ? $partner->getTerritory()->getTimezone() : TimezoneProvider::TIMEZONE_EUROPE_PARIS)
+                )
+                ->format(self::FORMAT_DATE_TIME);
+
+            if (!isset($formattedHistory[$partnerName])) {
+                $formattedHistory[$partnerName] = [];
+            }
+
+            if ('affectation' === $type) {
+                $partnerTarget = $this->getPartnerByEntityId($entry->getEntityId()) ?? $this->getPartnerByDeleteHistoryEntry($entry->getEntityId());
+            }
+
+            $id = $entry->getEntityId();
+            $action = 'affectation' === $type ?
+                $this->getAffectationActionSummary($entry, $userName, $partnerTarget?->getNom() ?? 'N/A') :
+                $this->getSignalementActionSummary($entry, $userName);
+
+            if (null !== $action) {
+                $formattedHistory[$partnerName][] = [
+                    'Date' => $date,
+                    'Action' => $action,
+                    'Id' => 'affectation' === $type ? $id : '-',
+                ];
+            }
+        }
     }
 
     private function getSignalementActionSummary(HistoryEntry $entry, string $userName): ?string
@@ -238,13 +241,8 @@ class HistoryEntryManager extends AbstractManager
     private function getPartnerByEntityId(int $affectationId): ?Partner
     {
         $affectation = $this->affectationRepository->find($affectationId);
-        if (null !== $affectation) {
-            $partner = $affectation->getPartner();
 
-            return $partner;
-        }
-
-        return null;
+        return $affectation ? $affectation->getPartner() : null;
     }
 
     private function getPartnerByDeleteHistoryEntry(int $affectationId): ?Partner
@@ -253,17 +251,15 @@ class HistoryEntryManager extends AbstractManager
             [
                 'entityId' => $affectationId,
                 'event' => HistoryEntryEvent::DELETE,
-                'entityName' => str_replace('Proxies\\__CG__\\', '', Affectation::class),
+                'entityName' => str_replace(self::ENTITY_PROXY_PREFIX, '', Affectation::class),
             ],
             ['entityId' => 'ASC', 'createdAt' => 'ASC']
         );
 
-        if (null !== $deleteAffectationHistoryEntry) {
-            $changes = $deleteAffectationHistoryEntry->getChanges();
-            $partnerId = $changes['partner'];
-            $partner = $this->partnerRepository->find($partnerId);
+        if ($deleteAffectationHistoryEntry) {
+            $partnerId = $deleteAffectationHistoryEntry->getChanges()['partner'];
 
-            return $partner;
+            return $this->partnerRepository->find($partnerId);
         }
 
         return null;
