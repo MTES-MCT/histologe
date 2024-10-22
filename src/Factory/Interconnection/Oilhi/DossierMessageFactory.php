@@ -87,7 +87,8 @@ class DossierMessageFactory implements DossierMessageFactoryInterface
             ->setRapportVisite($interventionData['rapport_visite'] ?? null)
             ->setDateVisite($interventionData['date_visite'] ?? null)
             ->setOperateurVisite($interventionData['operateur_visite'] ?? null)
-            ->setDesordres($this->buildDesordres($signalement));
+            ->setDesordres($this->buildDesordres($signalement))
+            ->setNbOccupants($signalement->getNbOccupantsLogement());
     }
 
     /**
