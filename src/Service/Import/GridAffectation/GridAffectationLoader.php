@@ -38,18 +38,18 @@ class GridAffectationLoader
     ];
 
     public function __construct(
-        private PartnerFactory $partnerFactory,
-        private PartnerManager $partnerManager,
-        private UserFactory $userFactory,
-        private UserManager $userManager,
-        private ManagerInterface $manager,
-        private ValidatorInterface $validator,
-        private LoggerInterface $logger,
-        private EntityManagerInterface $entityManager,
+        private readonly PartnerFactory $partnerFactory,
+        private readonly PartnerManager $partnerManager,
+        private readonly UserFactory $userFactory,
+        private readonly UserManager $userManager,
+        private readonly ManagerInterface $manager,
+        private readonly ValidatorInterface $validator,
+        private readonly LoggerInterface $logger,
+        private readonly EntityManagerInterface $entityManager,
     ) {
     }
 
-    public function validate(array $data, bool $isModeUpdate = false): array
+    public function validate(array $data, Territory $territory, bool $isModeUpdate = false): array
     {
         $errors = [];
         $mailPartners = [];
@@ -72,7 +72,7 @@ class GridAffectationLoader
                         $item[GridAffectationHeader::PARTNER_TYPE]
                     );
                 }
-                // if partner has an email, it should be valid and not existing for another partner
+                // if partner has an email, it should be valid and not existing in the same territory
                 $emailPartner = trim($item[GridAffectationHeader::PARTNER_EMAIL]);
                 if (!empty($emailPartner)) {
                     $violations = $this->validator->validate($emailPartner, $emailConstraint);
@@ -85,15 +85,19 @@ class GridAffectationLoader
                     }
 
                     if (!$isModeUpdate) {
-                        /** @var Partner $partnerToCreate */
-                        $partnerToCreate = $this->partnerManager->findOneBy(['email' => $emailPartner]);
-                        if (null !== $partnerToCreate) {
+                        /** @var Partner $partnerToCheck */
+                        $partnerToCheck = $this->partnerManager->findOneBy([
+                            'email' => $emailPartner,
+                            'isArchive' => false,
+                            'territory' => $territory]
+                        );
+                        if (null !== $partnerToCheck) {
                             $errors[] = \sprintf(
-                                'line %d : Partenaire déjà existant avec (%s) dans %s, nom : %s',
+                                'line %d : E-mail partenaire déjà existant dans le territoire avec (%s) dans %s, nom : %s',
                                 $numLine,
                                 $emailPartner,
-                                $partnerToCreate->getTerritory()->getName(),
-                                $partnerToCreate->getNom()
+                                $partnerToCheck->getTerritory()->getName(),
+                                $partnerToCheck->getNom()
                             );
                         }
                     }
@@ -121,19 +125,19 @@ class GridAffectationLoader
                         $errors[] = \sprintf('line %d : E-mail incorrect pour un utilisateur : %s', $numLine, $emailUser);
                     }
 
-                    /** @var User $userToCreate */
-                    $userToCreate = $this->userManager->findOneBy(['email' => $emailUser]);
+                    /** @var User $userToCheck */
+                    $userToCheck = $this->userManager->findOneBy(['email' => $emailUser]);
                     if (!$isModeUpdate
-                        && null !== $userToCreate
-                        && !\in_array('ROLE_USAGER', $userToCreate->getRoles())
+                        && null !== $userToCheck
+                        && !\in_array('ROLE_USAGER', $userToCheck->getRoles())
                     ) {
                         $errors[] = \sprintf(
                             'line %d : Utilisateur déjà existant avec (%s) dans %s, partenaire : %s, rôle : %s',
                             $numLine,
                             $emailUser,
-                            $userToCreate->getTerritory()->getName(),
-                            $userToCreate->getPartner()->getNom(),
-                            $userToCreate->getRoleLabel()
+                            $userToCheck->getTerritory()->getName(),
+                            $userToCheck->getPartner()->getNom(),
+                            $userToCheck->getRoleLabel()
                         );
                     }
                     // store user mail to check duplicates
