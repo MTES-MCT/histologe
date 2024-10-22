@@ -23,7 +23,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class SearchUserType extends AbstractType
 {
-    private const RIGHTS_CHOICES = [
+    private const PERMISSION_CHOICES = [
         'Oui' => 'Oui',
         'Non' => 'Non',
     ];
@@ -85,9 +85,9 @@ class SearchUserType extends AbstractType
             'placeholder' => 'Rôle',
             'label' => false,
         ]);
-        if ($this->parameterBag->get('feature_right_affectation')) {
-            $builder->add('rightsAffectation', ChoiceType::class, [
-                'choices' => self::RIGHTS_CHOICES,
+        if ($this->parameterBag->get('feature_permission_affectation')) {
+            $builder->add('permissionAffectation', ChoiceType::class, [
+                'choices' => self::PERMISSION_CHOICES,
                 'required' => false,
                 'placeholder' => 'Droit d\'affectation',
                 'label' => false,

@@ -17,7 +17,7 @@ class UserFactory
         ?string $email,
         ?bool $isMailActive = true,
         ?bool $isActivateAccountNotificationEnabled = true,
-        ?array $rights = [],
+        ?array $permissions = [],
     ): User {
         return (new User())
             ->setRoles(\in_array($roleLabel, User::ROLES) ? [$roleLabel] : [User::ROLES[$roleLabel]])
@@ -29,7 +29,7 @@ class UserFactory
             ->setStatut(User::STATUS_INACTIVE)
             ->setIsMailingActive($isMailActive)
             ->setIsActivateAccountNotificationEnabled($isActivateAccountNotificationEnabled)
-            ->setRights($rights);
+            ->setPermissions($permissions);
     }
 
     public function createInstanceFromArray(Partner $partner, array $data): User
@@ -42,7 +42,7 @@ class UserFactory
             lastname: $data['nom'],
             firstname: $data['prenom'],
             isMailActive: $data['isMailingActive'],
-            rights: $data['rights'] ?? []
+            permissions: $data['permissions'] ?? []
         );
     }
 }

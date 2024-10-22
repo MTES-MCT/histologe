@@ -43,7 +43,7 @@ class User implements UserInterface, EntityHistoryInterface, PasswordAuthenticat
     public const ROLE_ADMIN_TERRITORY = self::ROLES['Resp. Territoire'];
     public const ROLE_ADMIN = self::ROLES['Super Admin'];
 
-    public const RIGHT_AFFECTATION = self::RIGHTS['Affectation'];
+    public const PERMISSION_AFFECTATION = self::PERMISSIONS['Affectation'];
 
     public const SUFFIXE_ARCHIVED = '.archived@';
     public const ANONYMIZED_MAIL = 'anonyme@';
@@ -58,8 +58,8 @@ class User implements UserInterface, EntityHistoryInterface, PasswordAuthenticat
         'Super Admin' => 'ROLE_ADMIN',
     ];
 
-    public const RIGHTS = [
-        'Affectation' => 'RIGHT_AFFECTATION',
+    public const PERMISSIONS = [
+        'Affectation' => 'PERMISSION_AFFECTATION',
     ];
 
     #[ORM\Id]
@@ -80,7 +80,7 @@ class User implements UserInterface, EntityHistoryInterface, PasswordAuthenticat
     private $roles = [];
 
     #[ORM\Column(type: 'json')]
-    private $rights = [];
+    private $permissions = [];
 
     #[ORM\Column(type: 'string', nullable: true)]
     #[Assert\NotBlank(groups: ['password'])]
@@ -469,38 +469,38 @@ class User implements UserInterface, EntityHistoryInterface, PasswordAuthenticat
         return \in_array(self::ROLE_USAGER, $this->getRoles());
     }
 
-    public function getRights(): ?array
+    public function getPermissions(): ?array
     {
-        $rights = $this->rights;
+        $permissions = $this->permissions;
 
-        if (empty($rights)) {
+        if (empty($permissions)) {
             return null;
         }
 
-        return array_unique($rights);
+        return array_unique($permissions);
     }
 
-    public function getRightLabels(): string
+    public function getPermissionLabels(): string
     {
-        if (empty($this->rights)) {
+        if (empty($this->permissions)) {
             return '';
         }
 
-        return implode(', ', $this->rights);
+        return implode(', ', $this->permissions);
     }
 
-    public function hasRightAffectation(): bool
+    public function hasPermissionAffectation(): bool
     {
-        if (empty($this->getRights())) {
+        if (empty($this->getPermissions())) {
             return false;
         }
 
-        return in_array('Affectation', $this->getRights());
+        return in_array('Affectation', $this->getPermissions());
     }
 
-    public function setRights(array $rights): self
+    public function setPermissions(array $permissions): self
     {
-        $this->rights = $rights;
+        $this->permissions = $permissions;
 
         return $this;
     }

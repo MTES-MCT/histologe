@@ -359,11 +359,12 @@ class PartnerController extends AbstractController
         if (!$this->canAttributeRole($data['roles'])) {
             return $this->redirectToRoute('back_partner_view', ['id' => $partner->getId()], Response::HTTP_SEE_OTHER);
         }
-        if (!$parameterBag->get('feature_right_affectation') || !$this->isGranted(PartnerVoter::GIVE_RIGHT_AFFECTATION, $partner) || !isset($data['rights'])) {
-            $data['rights'] = [];
+        if (!$parameterBag->get('feature_permission_affectation') || !$this->isGranted(PartnerVoter::ASSIGN_PERMISSION_AFFECTATION, $partner) || !isset($data['permissions'])) {
+            $data['permissions'] = [];
+        } else {
+            // Only take accepted posted values (controlled with concat of '' and PERMISSIONS in User entity)
+            $data['permissions'] = array_intersect($data['permissions'] ?? [], array_merge([''], array_keys(User::PERMISSIONS)));
         }
-        // Only take accepted posted values (controlled with concat of '' and RIGHTS in User entity)
-        $updateData['rights'] = array_intersect($data['rights'], array_merge([''], array_keys(User::RIGHTS)));
 
         if (!EmailFormatValidator::validate($data['email'])) {
             $this->addFlash('error', 'L\'adresse e-mail n\'est pas valide.');
@@ -456,13 +457,14 @@ class PartnerController extends AbstractController
             'roles' => $data['roles'],
             'email' => $data['email'],
             'isMailingActive' => $data['isMailingActive'],
-            'rights' => $data['rights'] ?? [],
+            'permissions' => $data['permissions'] ?? [],
         ];
-        if (!$parameterBag->get('feature_right_affectation') || !$this->isGranted(PartnerVoter::GIVE_RIGHT_AFFECTATION, $user->getPartner())) {
-            unset($updateData['rights']);
+        if (!$parameterBag->get('feature_permission_affectation') || !$this->isGranted(PartnerVoter::ASSIGN_PERMISSION_AFFECTATION, $user->getPartner())) {
+            unset($updateData['permissions']);
+        } else {
+            // Only take accepted posted values (controlled with concat of '' and PERMISSIONS in User entity)
+            $updateData['permissions'] = array_intersect($updateData['permissions'], array_merge([''], array_keys(User::PERMISSIONS)));
         }
-        // Only take accepted posted values (controlled with concat of '' and RIGHTS in User entity)
-        $updateData['rights'] = array_intersect($updateData['rights'], array_merge([''], array_keys(User::RIGHTS)));
 
         $user = $userManager->updateUserFromData(
             user: $user,

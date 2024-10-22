@@ -49,7 +49,7 @@ parameters:
     feature_export_users: '%env(bool:FEATURE_EXPORT_USERS)%'
     feature_zonage: '%env(bool:FEATURE_ZONAGE)%'
     feature_grille_visite: '%env(bool:FEATURE_GRILLE_VISITE)%'
-    feature_right_affectation: '%env(bool:FEATURE_RIGHT_AFFECTATION)%'
+    feature_permission_affectation: '%env(bool:FEATURE_PERMISSION_AFFECTATION)%'
 
 services:
     # default configuration for services in *this* file

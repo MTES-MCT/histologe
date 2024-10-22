@@ -5,7 +5,6 @@ namespace App\Security\Voter;
 use App\Entity\Partner;
 use App\Entity\User;
 use Symfony\Bundle\SecurityBundle\Security;
-use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Authorization\Voter\Voter;
 use Symfony\Component\Security\Core\User\UserInterface;
@@ -16,17 +15,16 @@ class PartnerVoter extends Voter
     public const EDIT = 'PARTNER_EDIT';
     public const DELETE = 'PARTNER_DELETE';
     public const USER_CREATE = 'USER_CREATE';
-    public const GIVE_RIGHT_AFFECTATION = 'GIVE_RIGHT_AFFECTATION';
+    public const ASSIGN_PERMISSION_AFFECTATION = 'ASSIGN_PERMISSION_AFFECTATION';
 
     public function __construct(
         private Security $security,
-        private readonly ParameterBagInterface $parameterBag,
     ) {
     }
 
     protected function supports(string $attribute, $subject): bool
     {
-        return \in_array($attribute, [self::CREATE, self::EDIT, self::DELETE, self::USER_CREATE, self::GIVE_RIGHT_AFFECTATION]) && ($subject instanceof Partner);
+        return \in_array($attribute, [self::CREATE, self::EDIT, self::DELETE, self::USER_CREATE, self::ASSIGN_PERMISSION_AFFECTATION]) && ($subject instanceof Partner);
     }
 
     protected function voteOnAttribute(string $attribute, $subject, TokenInterface $token): bool
@@ -44,7 +42,7 @@ class PartnerVoter extends Voter
             self::EDIT => $this->canEdit($subject, $user),
             self::DELETE => $this->canDelete($subject, $user),
             self::USER_CREATE => $this->canCreateUser($subject, $user),
-            self::GIVE_RIGHT_AFFECTATION => $this->canGiveRightAffectation($subject, $user),
+            self::ASSIGN_PERMISSION_AFFECTATION => $this->canAssignPermissionAffectation($subject, $user),
             default => false,
         };
     }
@@ -68,7 +66,7 @@ class PartnerVoter extends Voter
         return $this->canManage($partner, $user);
     }
 
-    private function canGiveRightAffectation(Partner $partner, User $user): bool
+    private function canAssignPermissionAffectation(Partner $partner, User $user): bool
     {
         if (!$user->getTerritory()) {
             return false;

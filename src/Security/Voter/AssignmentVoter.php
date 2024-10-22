@@ -41,7 +41,7 @@ class AssignmentVoter extends Voter
 
     private function canToggle(Signalement $signalement, User $user)
     {
-        return ($user->isSuperAdmin() || $user->isTerritoryAdmin() || $user->hasRightAffectation()) && Signalement::STATUS_ACTIVE === $signalement->getStatut();
+        return ($user->isSuperAdmin() || $user->isTerritoryAdmin() || $user->hasPermissionAffectation()) && Signalement::STATUS_ACTIVE === $signalement->getStatut();
     }
 
     private function canAnswer(Affectation $assignment, User $user): bool

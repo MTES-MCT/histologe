@@ -46,9 +46,9 @@
             <div class="fr-col-12 fr-col-lg-3">
                 {{ form_row(form.role) }}
             </div>
-            {% if platform.feature_right_affectation %}
+            {% if platform.feature_permission_affectation %}
             <div class="fr-col-12 fr-col-lg-3">
-                {{ form_row(form.rightsAffectation) }}
+                {{ form_row(form.permissionAffectation) }}
             </div>
             {% endif %}
             <div class="fr-col-12">
@@ -83,7 +83,7 @@
                                 <th scope="col">Statut du compte</th>
                                 <th scope="col">Dernière connexion</th>
                                 <th scope="col">Rôle</th>
-                                {% if platform.feature_right_affectation %}
+                                {% if platform.feature_permission_affectation %}
                                 <th scope="col">Droits d'affectation</th>
                                 {% endif %}
                                 <th scope="col" class="fr-text--right">Actions</th>
@@ -113,8 +113,8 @@
                                     </td>
                                     <td>{{ user.lastLoginAt ? user.lastLoginAt|date('d/m/Y') : '-'}}</td>
                                     <td>{{ user.roleLabel() }}</td>
-                                    {% if platform.feature_right_affectation %}
-                                    <td>{{ user.isSuperAdmin() or user.isTerritoryAdmin() or user.hasRightAffectation() ? 'Oui' : 'Non' }}</td>
+                                    {% if platform.feature_permission_affectation %}
+                                    <td>{{ user.isSuperAdmin() or user.isTerritoryAdmin() or user.hasPermissionAffectation() ? 'Oui' : 'Non' }}</td>
                                     {% endif %}
                                     <td class="fr-text--right">
                                         <a href="#" class="fr-btn fr-fi-edit-line fr-mt-3v btn-edit-partner-user"
@@ -123,7 +123,7 @@
                                             data-usernom="{{ user.nom }}"
                                             data-userprenom="{{ user.prenom }}"
                                             data-userrole="{{ user.roles[0] }}"
-                                            data-userrights="{% for right in user.rights %}{{ right }},{% endfor %}"
+                                            data-userpermissions="{% for permission in user.permissions %}{{ permission }},{% endfor %}"
                                             data-userismailingactive="{{ user.isMailingActive }}"
                                             data-userid="{{ user.id }}"
                                             data-useremail="{{ user.email }}">
