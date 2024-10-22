@@ -17,7 +17,6 @@ env:
   CLAMAV_SOCKET: '/tmp/clamd.socket'
   CLAMAV_HOST: 127.0.0.1
   CLAMAV_PORT: 3310
-  HISTORY_TRACKING_ENABLE: 1
 jobs:
   code-quality:
     name: Histologe (PHP ${{ matrix.php-versions }})
@@ -169,7 +168,6 @@ jobs:
           MAILER_DSN: ${{ secrets.MAILER_DSN_CI }}
           CRON_ENABLE: 1
           MAIL_ENABLE: 1
-          FEATURE_ASK_VISITE_ENABLE: 1
           MAINTENANCE_ENABLE: 0
           CLAMAV_STRATEGY: 'clamd_network'
           CLAMAV_HOST: 127.0.0.1

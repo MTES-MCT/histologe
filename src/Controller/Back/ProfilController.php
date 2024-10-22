@@ -17,7 +17,6 @@ use App\Validator\EmailFormatValidator;
 use Doctrine\Persistence\ManagerRegistry;
 use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\HttpFoundation\File\Exception\FileException;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\Request;
@@ -31,15 +30,6 @@ use Symfony\Component\Validator\Validator\ValidatorInterface;
 class ProfilController extends AbstractController
 {
     private const ERROR_MSG = 'Une erreur s\'est produite. Veuillez actualiser la page.';
-
-    public function __construct(
-        #[Autowire(env: 'FEATURE_PROFIL_EDITION_ENABLED')]
-        bool $featureProfilEditionEnable,
-    ) {
-        if (!$featureProfilEditionEnable) {
-            throw $this->createNotFoundException();
-        }
-    }
 
     #[Route('/', name: 'back_profil', methods: ['GET', 'POST'])]
     #[IsGranted('ROLE_USER_PARTNER')]

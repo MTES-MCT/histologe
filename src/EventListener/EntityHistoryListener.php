@@ -12,7 +12,6 @@ use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Events;
 use Doctrine\Persistence\Event\LifecycleEventArgs;
 use Psr\Log\LoggerInterface;
-use Symfony\Component\DependencyInjection\Attribute\Autowire;
 
 #[AsDoctrineListener(event: Events::postPersist)]
 #[AsDoctrineListener(event: Events::postUpdate)]
@@ -32,8 +31,6 @@ readonly class EntityHistoryListener
         private EntityManagerInterface $entityManager,
         private EntityComparator $entityComparator,
         private LoggerInterface $logger,
-        #[Autowire(env: 'HISTORY_TRACKING_ENABLE')]
-        private string $historyTrackingEnable,
     ) {
     }
 
@@ -71,8 +68,7 @@ readonly class EntityHistoryListener
     protected function processEntity(LifecycleEventArgs $eventArgs, HistoryEntryEvent $event): void
     {
         $entity = $eventArgs->getObject();
-        if (!$this->historyTrackingEnable
-            || !$entity instanceof EntityHistoryInterface
+        if (!$entity instanceof EntityHistoryInterface
             || !in_array($event, $entity->getHistoryRegisteredEvent())) {
             return;
         }
