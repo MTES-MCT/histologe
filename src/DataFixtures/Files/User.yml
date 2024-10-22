@@ -1,7 +1,7 @@
 users:
   -
     email: admin-01@histologe.fr
-    roles: "[\"ROLE_ADMIN\"]"
+    roles: "[\"ROLE_ADMIN\", \"ROLE_API_USER\"]"
     partner: "Administrateurs Histologe ALL"
     statut: 1
     is_generique: 0
