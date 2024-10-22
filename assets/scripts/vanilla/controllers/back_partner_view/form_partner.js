@@ -37,6 +37,18 @@ function histoUpdateFieldsVisibility () {
 function histoUpdateValueFromData (elementName, elementData, target) {
   document.querySelector(elementName).value = target.getAttribute(elementData)
 }
+function histoUpdatePermissionsFromRole(editOrCreate) {
+  const elementTogglePermissionAffectation = document.querySelector('#user_'+editOrCreate+'_permission_affectation_toggle')
+  const elementTextPermissionAffectation = document.querySelector('#user_'+editOrCreate+'_permission_affectation_text')
+  const rolesSelect = document.querySelector('#user_'+editOrCreate+'_roles')
+  if (rolesSelect.value === 'ROLE_ADMIN' || rolesSelect.value === 'ROLE_ADMIN_TERRITORY') {
+    elementTogglePermissionAffectation.classList.add('fr-hidden')
+    elementTextPermissionAffectation.classList.remove('fr-hidden')
+  } else {
+    elementTogglePermissionAffectation.classList.remove('fr-hidden')
+    elementTextPermissionAffectation.classList.add('fr-hidden')
+  }
+}
 
 document.querySelectorAll('.btn-transfer-partner-user').forEach(swbtn => {
   swbtn.addEventListener('click', evt => {
@@ -115,6 +127,7 @@ document.querySelectorAll('.btn-edit-partner-user').forEach(swbtn => {
     const userRole = target.getAttribute('data-userrole')
     const rolesSelect = document.querySelector('#user_edit_roles')
     rolesSelect.value = userRole
+    histoUpdatePermissionsFromRole('edit')
 
     document.querySelector('#user_edit_form').addEventListener('submit', (e) => {
       histoUpdateSubmitButton('#user_edit_form_submit', 'Edition en cours...')
@@ -135,7 +148,14 @@ if (document.querySelector('#partner_type')) {
   })
 }
 
-const deletePartnerForm = document.querySelectorAll('form[name="deletePartner"]')
+document.querySelector('#user_edit_roles').addEventListener('change', () => {
+  histoUpdatePermissionsFromRole('edit')
+})
+document.querySelector('#user_create_roles').addEventListener('change', () => {
+  histoUpdatePermissionsFromRole('create')
+})
+
+const deletePartnerForm = document.querySelectorAll('form[name="deletePartner"]');
 deletePartnerForm.forEach(form => {
   form.addEventListener('submit', function (event) {
     if (!confirm('Êtes-vous sûr de vouloir supprimer ce partenaire ?')) {
