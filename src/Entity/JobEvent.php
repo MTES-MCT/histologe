@@ -12,6 +12,7 @@ use Doctrine\ORM\Mapping as ORM;
 #[ORM\HasLifecycleCallbacks()]
 #[ORM\Index(columns: ['created_at'], name: 'idx_job_event_created_at')]
 #[ORM\Index(columns: ['partner_id'], name: 'idx_job_event_partner_id')]
+#[ORM\Index(columns: ['service'], name: 'idx_job_event_service')]
 class JobEvent
 {
     use TimestampableTrait;

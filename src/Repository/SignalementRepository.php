@@ -1307,6 +1307,7 @@ class SignalementRepository extends ServiceEntityRepository
             ->innerJoin('s.files', 'f')
             ->innerJoin('s.affectations', 'a')
             ->where("f.synchroData IS NULL OR (JSON_CONTAINS_PATH(f.synchroData, 'one', '$.".IdossService::TYPE_SERVICE."') = 0)")
+            ->andWhere("JSON_CONTAINS_PATH(s.synchroData, 'one', '$.".IdossService::TYPE_SERVICE."') = 1")
             ->andWhere('a.partner = :partner')
             ->setParameter('partner', $partner)
         ;
@@ -1354,26 +1355,19 @@ class SignalementRepository extends ServiceEntityRepository
             ->getResult();
     }
 
-    public function findSynchroIdossErrors(): array
+    public function findSynchroIdoss($status): array
     {
-        $subQuery = $this->getEntityManager()->createQueryBuilder()
-        ->select('MAX(j2.createdAt)')
-        ->from(JobEvent::class, 'j2')
-        ->where('j2.signalementId = s.id')
-        ->andWhere('j2.service = :service')
-        ->andWhere('j2.action = :action')
-        ->andWhere('j2.status = :status')
-        ->getDQL();
-
         return $this->createQueryBuilder('s')
-            ->select('s.id', 's.uuid', 's.reference', 'j.response', 'j.createdAt', 'j.codeStatus', 'j.partnerId')
-            ->innerJoin(JobEvent::class, 'j', 'WITH', 's.id = j.signalementId AND j.createdAt = ('.$subQuery.')')
-            ->andWhere("s.synchroData IS NULL OR (JSON_CONTAINS_PATH(s.synchroData, 'one', '$.".IdossService::TYPE_SERVICE."') = 0)")
+            ->select('s.id', 's.uuid', 's.reference', 'j.action', 'j.response', 'j.createdAt', 'j.codeStatus', 'j.partnerId')
+            ->innerJoin(JobEvent::class, 'j', 'WITH', 's.id = j.signalementId')
+            ->where('j.signalementId = s.id')
+            ->andWhere('j.service = :service')
+            ->andWhere('j.status = :status')
             ->setParameter('service', IdossService::TYPE_SERVICE)
-            ->setParameter('action', IdossService::ACTION_PUSH_DOSSIER)
-            ->setParameter('status', JobEvent::STATUS_FAILED)
+            ->setParameter('status', $status)
             ->addOrderBy('j.createdAt', 'DESC')
             ->indexBy('s', 's.id')
+            ->setMaxResults(100)
             ->getQuery()
             ->getResult();
     }
