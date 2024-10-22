@@ -24,7 +24,8 @@ class ResourceController extends AbstractController
         path: '/api/resources',
         description: 'Fetches an array of resources with their details',
         summary: 'Retrieve a list of resources',
-        tags: ['Resources']
+        security: [["bearerAuth" => []]],
+        tags: ['Resources'],
     )]
     #[OA\Parameter(
         name: 'limit',
@@ -58,6 +59,7 @@ class ResourceController extends AbstractController
         path: '/api/resources/{uuid}',
         description: 'Fetches a single resource by UUID',
         summary: 'Retrieve a single resource',
+        security: [["bearerAuth" => []]],
         tags: ['Resources']
     )]
     #[OA\Response(
@@ -78,6 +80,7 @@ class ResourceController extends AbstractController
         path: '/api/resources',
         description: 'Create a new resource',
         summary: 'Create a resource',
+        security: [["bearerAuth" => []]],
         tags: ['Resources']
     )]
     #[OA\RequestBody(
