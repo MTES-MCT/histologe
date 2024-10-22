@@ -164,10 +164,12 @@ document?.getElementById('signalement-add-suivi-notify-usager')?.addEventListene
 })
 
 document?.getElementById('fr-modal-historique-affectation')?.addEventListener('dsfr.disclose', (event) => {
-    console.log("ouverture modale historique")
-    console.log(event)
     let signalementId = event.explicitOriginalTarget.dataset.signalementId;
     
+    document?.querySelectorAll('#signalement-historique-affectation-loader-row').forEach(el => {
+        el.classList.toggle('fr-hidden')
+    })
+
     if (!signalementId) {
         console.warn('Aucun signalementId trouvé');
         return;
@@ -197,7 +199,6 @@ document?.getElementById('fr-modal-historique-affectation')?.addEventListener('d
                         const table = document.createElement('div');
                         table.classList.add('fr-table--sm'); 
                         table.classList.add('fr-table'); 
-                        // TODO : ajouter un id
     
                         const wrapper = document.createElement('div');
                         wrapper.classList.add('fr-table__wrapper'); 
@@ -219,7 +220,6 @@ document?.getElementById('fr-modal-historique-affectation')?.addEventListener('d
                         tableContentTitle.textContent = partner; 
                         tableContentTable.appendChild(tableContentTitle);
     
-                        // Create the table header
                         const tableHeader = document.createElement('thead');
                         tableHeader.innerHTML = `
                             <tr>
@@ -230,16 +230,13 @@ document?.getElementById('fr-modal-historique-affectation')?.addEventListener('d
                         `;
                         tableContentTable.appendChild(tableHeader);
     
-                        const tableBody = document.createElement('tbody');
-    
+                        const tableBody = document.createElement('tbody');    
                         events.forEach(event => {
-                            const row = document.createElement('tr');
-    
+                            const row = document.createElement('tr');    
                             const dateCell = document.createElement('td');
                             const dateObj = new Date(event.Date);
                             const formattedDate = dateObj.toLocaleDateString('fr-FR', { year: 'numeric', month: '2-digit', day: '2-digit' }) +
                                                 ' à ' + dateObj.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' });
-                            // TODO : 2 heures d'écart, à vérifier
                             dateCell.textContent = formattedDate;
                             row.appendChild(dateCell);
     
