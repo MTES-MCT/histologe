@@ -91,12 +91,12 @@
                                         <span class="fr-hint-text fr-mt-inf-3v">Si vous cochez oui, des e-mails concernant les signalements seront envoyés à cette adresse.</span>
                                     </fieldset>
                                 </div>
-                                {% if platform.feature_right_affectation and is_granted('ROLE_ADMIN_TERRITORY') %}
+                                {% if platform.feature_permission_affectation and is_granted('ROLE_ADMIN_TERRITORY') %}
                                 <div class="fr-grid-row fr-grid-row--gutters">
                                     <div class="fr-col-12">
                                         <div class="fr-toggle">
-                                            <input type="checkbox" class="fr-toggle__input" id="user_edit_rights_affectation" name="user_edit[rights][]" value="Affectation">
-                                            <label class="fr-toggle__label" for="user_edit_rights_affectation">Cet utilisateur peut affecter d'autres partenaires à ses signalements</label>
+                                            <input type="checkbox" class="fr-toggle__input" id="user_edit_permission_affectation" name="user_edit[permissions][]" value="Affectation">
+                                            <label class="fr-toggle__label" for="user_edit_permission_affectation">Cet utilisateur peut affecter d'autres partenaires à ses signalements</label>
                                         </div>
                                     </div>
                                 </div>

@@ -392,14 +392,14 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
         if ($searchUser->getRole()) {
             $qb->andWhere('JSON_CONTAINS(u.roles, :role) = 1 ')->setParameter('role', '"'.$searchUser->getRole().'"');
         }
-        if ('Oui' == $searchUser->getRightsAffectation()) {
-            $qb->andWhere('JSON_CONTAINS(u.rights, :right) = 1 OR JSON_CONTAINS(u.roles, :roleAdmin) = 1 OR JSON_CONTAINS(u.roles, :roleAdminTerritory) = 1')
-                ->setParameter('right', '"Affectation"')
+        if ('Oui' == $searchUser->getPermissionAffectation()) {
+            $qb->andWhere('JSON_CONTAINS(u.permissions, :permission) = 1 OR JSON_CONTAINS(u.roles, :roleAdmin) = 1 OR JSON_CONTAINS(u.roles, :roleAdminTerritory) = 1')
+                ->setParameter('permission', '"Affectation"')
                 ->setParameter('roleAdmin', '"ROLE_ADMIN"')
                 ->setParameter('roleAdminTerritory', '"ROLE_ADMIN_TERRITORY"');
-        } elseif ('Non' == $searchUser->getRightsAffectation()) {
-            $qb->andWhere('JSON_CONTAINS(u.rights, :right) = 0 AND JSON_CONTAINS(u.roles, :roleAdmin) = 0 AND JSON_CONTAINS(u.roles, :roleAdminTerritory) = 0')
-                ->setParameter('right', '"Affectation"')
+        } elseif ('Non' == $searchUser->getPermissionAffectation()) {
+            $qb->andWhere('JSON_CONTAINS(u.permissions, :permission) = 0 AND JSON_CONTAINS(u.roles, :roleAdmin) = 0 AND JSON_CONTAINS(u.roles, :roleAdminTerritory) = 0')
+                ->setParameter('permission', '"Affectation"')
                 ->setParameter('roleAdmin', '"ROLE_ADMIN"')
                 ->setParameter('roleAdminTerritory', '"ROLE_ADMIN_TERRITORY"');
         }
