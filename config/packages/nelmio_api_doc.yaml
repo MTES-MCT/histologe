@@ -9,6 +9,7 @@ nelmio_api_doc:
                 Bearer:
                     type: http
                     scheme: bearer
+                    bearerFormat: "Token"
         server:
             - url: '%host_url%'
               description: 'Production Server'
