@@ -44,11 +44,6 @@ class JsonLoginAuthenticatorTest extends TestCase
         $user->setRoles([User::ROLE_API_USER]);
         $user->setStatut(User::STATUS_ACTIVE);
 
-        //        $this->userRepository->expects($this->once())
-        //            ->method('findOneBy')
-        //            ->with(['email' => 'user@example.com', 'statut' => User::STATUS_ACTIVE])
-        //            ->willReturn($user);
-
         $request = Request::create('/api/login', 'POST', [], [], [], [], json_encode(['email' => 'user@example.com', 'password' => 'password']));
         $passport = $this->authenticator->authenticate($request);
 
