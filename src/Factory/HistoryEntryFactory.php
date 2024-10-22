@@ -2,6 +2,7 @@
 
 namespace App\Factory;
 
+use App\Entity\Affectation;
 use App\Entity\Behaviour\EntityHistoryInterface;
 use App\Entity\Enum\HistoryEntryEvent;
 use App\Entity\HistoryEntry;
@@ -17,10 +18,16 @@ readonly class HistoryEntryFactory
         HistoryEntryEvent $historyEntryEvent,
         EntityHistoryInterface $entityHistory,
     ): HistoryEntry {
-        return (new HistoryEntry())
+        $historyEntry = (new HistoryEntry())
             ->setEvent($historyEntryEvent)
             ->setEntityId($entityHistory->getId())
             ->setEntityName(str_replace('Proxies\\__CG__\\', '', $entityHistory::class))
             ->setUser($this->security->getUser());
+
+        if ($entityHistory instanceof Affectation) {
+            $historyEntry->setSignalementId($entityHistory->getSignalement()?->getId());
+        }
+
+        return $historyEntry;
     }
 }
