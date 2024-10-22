@@ -37,6 +37,7 @@ class User implements UserInterface, EntityHistoryInterface, PasswordAuthenticat
 
     public const MAX_LIST_PAGINATION = 20;
 
+    public const ROLE_API_USER = 'ROLE_API_USER';
     public const ROLE_USAGER = self::ROLES['Usager'];
     public const ROLE_USER_PARTNER = self::ROLES['Agent'];
     public const ROLE_ADMIN_PARTNER = self::ROLES['Admin. partenaire'];
@@ -161,6 +162,9 @@ class User implements UserInterface, EntityHistoryInterface, PasswordAuthenticat
 
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $tempEmail = null;
+
+    #[ORM\OneToOne(mappedBy: 'ownedBy', targetEntity: ApiUserToken::class, cascade: ['persist'])]
+    private ?ApiUserToken $apiUserToken = null;
 
     public function __construct()
     {
@@ -672,5 +676,20 @@ class User implements UserInterface, EntityHistoryInterface, PasswordAuthenticat
     public function getHistoryRegisteredEvent(): array
     {
         return [HistoryEntryEvent::CREATE, HistoryEntryEvent::UPDATE, HistoryEntryEvent::DELETE];
+    }
+
+    public function getApiUserToken(): ?ApiUserToken
+    {
+        return $this->apiUserToken;
+    }
+
+    public function setApiUserToken(?ApiUserToken $apiUserToken): self
+    {
+        if ($this->apiUserToken) {
+            $apiUserToken->setOwnedBy($this);
+        }
+        $this->apiUserToken = $apiUserToken;
+
+        return $this;
     }
 }

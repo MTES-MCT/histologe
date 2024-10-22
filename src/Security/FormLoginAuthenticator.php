@@ -18,11 +18,11 @@ use Symfony\Component\Security\Http\Authenticator\Passport\Passport;
 use Symfony\Component\Security\Http\SecurityRequestAttributes;
 use Symfony\Component\Security\Http\Util\TargetPathTrait;
 
-class BackOfficeAuthenticator extends AbstractLoginFormAuthenticator
+class FormLoginAuthenticator extends AbstractLoginFormAuthenticator
 {
     use TargetPathTrait;
 
-    public const LOGIN_ROUTE = 'app_login';
+    public const string LOGIN_ROUTE = 'app_login';
 
     public function __construct(
         private readonly UrlGeneratorInterface $urlGenerator,
@@ -32,7 +32,9 @@ class BackOfficeAuthenticator extends AbstractLoginFormAuthenticator
 
     public function supports(Request $request): bool
     {
-        if ($request->isMethod('POST') && $request->get('email') && $request->get('password')) {
+        if ($request->isMethod('POST')
+            && $request->get('email')
+            && $request->get('password')) {
             return true;
         }
 
