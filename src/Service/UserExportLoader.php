@@ -19,6 +19,7 @@ readonly class UserExportLoader
         'statut' => ['label' => 'Statut', 'desc' => 'le statut du compte (s\'il est activé ou non)'],
         'lastLoginAt' => ['label' => 'Dernière connexion', 'desc' => 'la date de dernière connexion au compte'],
         'role' => ['label' => 'Rôle', 'desc' => 's\'il s\'agit d\'un compte agent, Admin. partenaire ou responsable de territoire'],
+        'rightAffectation' => ['label' => 'Droit d\'affectation', 'desc' => 'si ce compte peut affecter des partenaires à un signalement'],
     ];
 
     public function __construct(
@@ -47,6 +48,7 @@ readonly class UserExportLoader
                     'statut' => User::STATUS_ACTIVE === $user->getStatut() ? 'Activé' : 'Non activé',
                     'lastLoginAt' => $user->getLastLoginAt() ? $user->getLastLoginAt()->format('d/m/Y') : '',
                     'role' => $user->getRoleLabel(),
+                    'rightAffectation' => $user->isSuperAdmin() || $user->isTerritoryAdmin() || $user->hasRightAffectation() ? 'oui' : 'non',
                     default => '',
                 };
             }

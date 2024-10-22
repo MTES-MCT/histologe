@@ -214,7 +214,7 @@ class SignalementController extends AbstractController
             'partnersCanVisite' => $partnerVisite,
             'pendingVisites' => $interventionRepository->getPendingVisitesForSignalement($signalement),
             'allPhotosOrdered' => $allPhotosOrdered,
-            'canPartnerAffectation' => ($user->hasRightAffectation() || $this->isGranted('ROLE_ADMIN_TERRITORY')) && Signalement::STATUS_NEED_VALIDATION !== $signalement->getStatut(),
+            'canPartnerAffectation' => $this->isGranted('ASSIGN_TOGGLE', $signalement),
         ];
 
         return $this->render('back/signalement/view.html.twig', $twigParams);

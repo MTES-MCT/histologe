@@ -70,7 +70,7 @@ class PartnerVoter extends Voter
 
     private function canGiveRightAffectation(Partner $partner, User $user): bool
     {
-        if (!$this->parameterBag->get('feature_right_affectation') || !$user->getTerritory()) {
+        if (!$user->getTerritory()) {
             return false;
         }
         if ($this->security->isGranted('ROLE_ADMIN_TERRITORY') && $user->getTerritory() === $partner->getTerritory()) {
