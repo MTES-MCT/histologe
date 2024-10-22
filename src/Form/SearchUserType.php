@@ -24,7 +24,6 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 class SearchUserType extends AbstractType
 {
     private const RIGHTS_CHOICES = [
-        'Tous' => 'Tous',
         'Oui' => 'Oui',
         'Non' => 'Non',
     ];

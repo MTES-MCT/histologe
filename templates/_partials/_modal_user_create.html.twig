@@ -92,7 +92,7 @@
                                         <span class="fr-hint-text fr-mt-inf-3v">Si vous cochez oui, des e-mails concernant les signalements seront envoyés à cette adresse.</span>
                                     </fieldset>
                                 </div>
-                                {% if is_granted('GIVE_RIGHT_AFFECTATION', partner) %}
+                                {% if platform.feature_right_affectation and is_granted('GIVE_RIGHT_AFFECTATION', partner) %}
                                 <div class="fr-grid-row fr-grid-row--gutters">
                                     <div class="fr-col-12">
                                         <div class="fr-toggle">

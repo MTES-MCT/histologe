@@ -46,9 +46,11 @@
             <div class="fr-col-12 fr-col-lg-3">
                 {{ form_row(form.role) }}
             </div>
+            {% if platform.feature_right_affectation %}
             <div class="fr-col-12 fr-col-lg-3">
                 {{ form_row(form.rightsAffectation) }}
             </div>
+            {% endif %}
             <div class="fr-col-12">
                 <a href="{{ path('back_user_index') }}" class="fr-link fr-link--icon-left fr-icon-close-circle-line">Réinitialiser les résultats</a>
             </div>
@@ -112,7 +114,7 @@
                                     <td>{{ user.lastLoginAt ? user.lastLoginAt|date('d/m/Y') : '-'}}</td>
                                     <td>{{ user.roleLabel() }}</td>
                                     {% if platform.feature_right_affectation %}
-                                    <td>{{ user.hasRightAffectation() ? 'Oui' : 'Non' }}</td>
+                                    <td>{{ user.isSuperAdmin() or user.isTerritoryAdmin() or user.hasRightAffectation() ? 'Oui' : 'Non' }}</td>
                                     {% endif %}
                                     <td class="fr-text--right">
                                         <a href="#" class="fr-btn fr-fi-edit-line fr-mt-3v btn-edit-partner-user"

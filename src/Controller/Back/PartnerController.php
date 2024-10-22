@@ -29,6 +29,7 @@ use App\Service\Signalement\VisiteNotifier;
 use App\Validator\EmailFormatValidator;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Symfony\Component\Form\FormError;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\Request;
@@ -346,6 +347,7 @@ class PartnerController extends AbstractController
         UserFactory $userFactory,
         PartnerRepository $partnerRepository,
         ValidatorInterface $validator,
+        ParameterBagInterface $parameterBag,
     ): Response {
         $this->denyAccessUnlessGranted('USER_CREATE', $partner);
         $data = $request->get('user_create');
@@ -357,9 +359,12 @@ class PartnerController extends AbstractController
         if (!$this->canAttributeRole($data['roles'])) {
             return $this->redirectToRoute('back_partner_view', ['id' => $partner->getId()], Response::HTTP_SEE_OTHER);
         }
-        if (!$this->isGranted(PartnerVoter::GIVE_RIGHT_AFFECTATION, $partner) || !isset($data['rights'])) {
+        if (!$parameterBag->get('feature_right_affectation') || !$this->isGranted(PartnerVoter::GIVE_RIGHT_AFFECTATION, $partner) || !isset($data['rights'])) {
             $data['rights'] = [];
         }
+        // Only take accepted posted values (controlled with concat of '' and RIGHTS in User entity)
+        $updateData['rights'] = array_intersect($data['rights'], array_merge([''], array_keys(User::RIGHTS)));
+
         if (!EmailFormatValidator::validate($data['email'])) {
             $this->addFlash('error', 'L\'adresse e-mail n\'est pas valide.');
 
@@ -402,6 +407,7 @@ class PartnerController extends AbstractController
         UserRepository $userRepository,
         PartnerRepository $partnerRepository,
         ValidatorInterface $validator,
+        ParameterBagInterface $parameterBag,
     ): Response {
         $userId = $request->request->get('user_id');
         $user = $userManager->find((int) $userId);
@@ -452,9 +458,11 @@ class PartnerController extends AbstractController
             'isMailingActive' => $data['isMailingActive'],
             'rights' => $data['rights'] ?? [],
         ];
-        if (!$this->isGranted(PartnerVoter::GIVE_RIGHT_AFFECTATION, $user->getPartner())) {
+        if (!$parameterBag->get('feature_right_affectation') || !$this->isGranted(PartnerVoter::GIVE_RIGHT_AFFECTATION, $user->getPartner())) {
             unset($updateData['rights']);
         }
+        // Only take accepted posted values (controlled with concat of '' and RIGHTS in User entity)
+        $updateData['rights'] = array_intersect($updateData['rights'], array_merge([''], array_keys(User::RIGHTS)));
 
         $user = $userManager->updateUserFromData(
             user: $user,

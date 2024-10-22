@@ -162,7 +162,7 @@
                             <th scope="col">Notif. e-mails</th>
                             <th scope="col">Statut</th>
                             <th scope="col">Rôle</th>
-                            {% if is_granted('GIVE_RIGHT_AFFECTATION', partner) %}
+                            {% if platform.feature_right_affectation and is_granted('GIVE_RIGHT_AFFECTATION', partner) %}
                             <th scope="col">Droits d'affectation</th>
                             {% endif %}
                             <th scope="col" class="fr-text--right">Actions</th>
@@ -197,8 +197,8 @@
                                             Agent
                                         {% endif %}
                                     </td>
-                                    {% if is_granted('GIVE_RIGHT_AFFECTATION', partner) %}
-                                    <td>{{ user.hasRightAffectation() ? 'Oui' : 'Non' }}</td>
+                                    {% if platform.feature_right_affectation and is_granted('GIVE_RIGHT_AFFECTATION', partner) %}
+                                    <td>{{ user.isSuperAdmin() or user.isTerritoryAdmin() or user.hasRightAffectation() ? 'Oui' : 'Non' }}</td>
                                     {% endif %}
                                     <td class="fr-text--right">
                                         {% if is_granted('USER_EDIT', user) %}
@@ -208,7 +208,7 @@
                                                 data-usernom="{{ user.nom }}"
                                                 data-userprenom="{{ user.prenom }}"
                                                 data-userrole="{{ user.roles[0] }}"
-                                                {% if is_granted('GIVE_RIGHT_AFFECTATION', partner) %}
+                                                {% if platform.feature_right_affectation and is_granted('GIVE_RIGHT_AFFECTATION', partner) %}
                                                 data-userrights="{% for right in user.rights %}{{ right }},{% endfor %}"
                                                 {% endif %}
                                                 data-userismailingactive="{{ user.isMailingActive }}"
