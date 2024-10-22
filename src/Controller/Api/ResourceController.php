@@ -53,9 +53,9 @@ class ResourceController extends AbstractController
         return new JsonResponse($resources, Response::HTTP_OK);
     }
 
-    #[Route('/resource/{uuid}', name: 'api_resource', methods: ['GET'])]
+    #[Route('/resources/{uuid}', name: 'api_resource', methods: ['GET'])]
     #[OA\Get(
-        path: '/api/resource/{uuid}',
+        path: '/api/resources/{uuid}',
         description: 'Fetches a single resource by UUID',
         summary: 'Retrieve a single resource',
         tags: ['Resources']
