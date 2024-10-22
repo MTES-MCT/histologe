@@ -204,7 +204,7 @@ class IdossService
     private function getFilesPayload(Signalement $signalement, array $files): array
     {
         $payload = [
-            'id' => $signalement->getSynchroData(self::TYPE_SERVICE)['id'] ?? null,
+            'id' => (string) $signalement->getSynchroData(self::TYPE_SERVICE)['id'],
             'uuid' => $signalement->getUuid(),
         ];
         $dataparts = [];
