@@ -148,12 +148,16 @@ if (document.querySelector('#partner_type')) {
   })
 }
 
-document.querySelector('#user_edit_roles').addEventListener('change', () => {
-  histoUpdatePermissionsFromRole('edit')
-})
-document.querySelector('#user_create_roles').addEventListener('change', () => {
-  histoUpdatePermissionsFromRole('create')
-})
+if (document.querySelector('#user_create_roles')) {
+  document.querySelector('#user_create_roles').addEventListener('change', () => {
+    histoUpdatePermissionsFromRole('create')
+  })
+}
+if (document.querySelector('#user_edit_roles')) {
+  document.querySelector('#user_edit_roles').addEventListener('change', () => {
+    histoUpdatePermissionsFromRole('edit')
+  })
+}
 
 const deletePartnerForm = document.querySelectorAll('form[name="deletePartner"]');
 deletePartnerForm.forEach(form => {
