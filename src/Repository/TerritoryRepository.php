@@ -3,10 +3,12 @@
 namespace App\Repository;
 
 use App\Entity\Territory;
+use App\Service\SearchTerritory;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\ORM\NoResultException;
 use Doctrine\ORM\Query\QueryException;
+use Doctrine\ORM\Tools\Pagination\Paginator;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
@@ -67,5 +69,26 @@ class TerritoryRepository extends ServiceEntityRepository
             ->orderBy('t.zip', 'ASC');
 
         return $qb->getQuery()->getResult();
+    }
+
+    public function findFilteredPaginated(SearchTerritory $searchTerritory, int $maxResult): Paginator
+    {
+        $qb = $this->createQueryBuilder('t');
+        $qb->select('t')
+            ->orderBy('t.zip', 'ASC');
+
+        if ($searchTerritory->getQueryName()) {
+            $qb->andWhere('LOWER(t.name) LIKE :queryName OR t.zip LIKE :queryName');
+            $qb->setParameter('queryName', '%'.strtolower($searchTerritory->getQueryName()).'%');
+        }
+        if (null !== $searchTerritory->getIsActive()) {
+            $qb->andWhere('t.isActive = :isActive');
+            $qb->setParameter('isActive', $searchTerritory->getIsActive());
+        }
+
+        $firstResult = ($searchTerritory->getPage() - 1) * $maxResult;
+        $qb->setFirstResult($firstResult)->setMaxResults($maxResult);
+
+        return new Paginator($qb->getQuery());
     }
 }
