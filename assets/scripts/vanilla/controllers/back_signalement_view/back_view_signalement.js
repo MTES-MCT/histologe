@@ -164,7 +164,7 @@ document?.getElementById('signalement-add-suivi-notify-usager')?.addEventListene
 })
 
 document?.getElementById('fr-modal-historique-affectation')?.addEventListener('dsfr.disclose', (event) => {
-    let signalementId = event.explicitOriginalTarget.dataset.signalementId;
+    let signalementId = event.target.dataset.signalementId;
     
     document?.querySelectorAll('#signalement-historique-affectation-loader-row').forEach(el => {
         el.classList.toggle('fr-hidden')
@@ -195,7 +195,7 @@ document?.getElementById('fr-modal-historique-affectation')?.addEventListener('d
                         const table = document.createElement('div');
                         table.classList.add('fr-table--sm'); 
                         table.classList.add('fr-table'); 
-    
+
                         const wrapper = document.createElement('div');
                         wrapper.classList.add('fr-table__wrapper'); 
                         table.appendChild(wrapper);
