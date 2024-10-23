@@ -79,11 +79,7 @@
                     </ul>
                 </div>
                 {% if is_granted('ROLE_ADMIN_PARTNER') %}
-                    {% set routesAdmin = [
-                        'back_user_', 'back_partner_', 'back_tags', 'back_zone_',
-                        'back_account_', 'back_archived_partner', 'back_archived_signalements_index', 'back_auto_affectation'
-                        ] 
-                    %}
+                    {% set routesAdmin = ['back_user_', 'back_partner_', 'back_tags', 'back_zone_'] %}
                     <button class="fr-sidemenu__btn"
                             aria-expanded="{% if routesAdmin|filter(route => app.request.get('_route') starts with route)|length > 0  %}true{% else %}false{% endif %}"
                             aria-controls="fr-sidemenu-outils-admin">Outils Admin
@@ -123,28 +119,44 @@
                                         {% if 'back_zone' in app.request.get('_route') %}aria-current="page"{% endif %}>Zones</a>
                                     </li>
                                 {% endif %}
-                                {% if is_granted('ROLE_ADMIN') %}
-                                    <li class="fr-sidemenu__item {% if 'back_archived_partner' in app.request.get('_route') %}fr-sidemenu__item--active{% endif %}">
-                                        <a class="fr-sidemenu__link" href="{{ path('back_archived_partner_index') }}"
-                                        target="_self"
-                                        {% if 'back_archived_partner' in app.request.get('_route') %}aria-current="page"{% endif %}>Partenaires archivés</a>
-                                    </li>
-                                    <li class="fr-sidemenu__item {% if 'back_account_' in app.request.get('_route') %}fr-sidemenu__item--active{% endif %}">
-                                        <a class="fr-sidemenu__link" href="{{ path('back_account_index') }}"
-                                        target="_self"
-                                        {% if 'back_account_' in app.request.get('_route') %}aria-current="page"{% endif %}>Comptes archivés</a>
-                                    </li>
-                                    <li class="fr-sidemenu__item {% if 'back_archived_signalements' in app.request.get('_route') %}fr-sidemenu__item--active{% endif %}">
-                                        <a class="fr-sidemenu__link" href="{{ path('back_archived_signalements_index') }}"
-                                        target="_self"
-                                        {% if 'back_archived_signalements' in app.request.get('_route') %}aria-current="page"{% endif %}>Signalements archivés</a>
-                                    </li>
-                                    <li class="fr-sidemenu__item {% if 'back_auto_affectation' in app.request.get('_route') %}fr-sidemenu__item--active{% endif %}">
-                                        <a class="fr-sidemenu__link" href="{{ path('back_auto_affectation_rule_index') }}"
-                                        target="_self"
-                                        {% if 'back_auto_affectation' in app.request.get('_route') %}aria-current="page"{% endif %}>Règles d'auto-affectation</a>
-                                    </li>
-                                {% endif %}
+                            {% endif %}
+                        </ul>
+                    </div>
+                {% endif %}
+                {% if is_granted('ROLE_ADMIN') %}
+                    {% set routesSA = ['back_account_', 'back_archived_partner', 'back_archived_signalements_index', 'back_auto_affectation', 'back_territory_'] %}
+                    <button class="fr-sidemenu__btn"
+                            aria-expanded="{% if routesSA|filter(route => app.request.get('_route') starts with route)|length > 0  %}true{% else %}false{% endif %}"
+                            aria-controls="fr-sidemenu-outils-sa">Outils SA
+                    </button>
+                    <div class="fr-collapse" id="fr-sidemenu-outils-sa">
+                        <ul class="fr-sidemenu__list">
+                            <li class="fr-sidemenu__item {% if 'back_archived_partner' in app.request.get('_route') %}fr-sidemenu__item--active{% endif %}">
+                                <a class="fr-sidemenu__link" href="{{ path('back_archived_partner_index') }}"
+                                target="_self"
+                                {% if 'back_archived_partner' in app.request.get('_route') %}aria-current="page"{% endif %}>Partenaires archivés</a>
+                            </li>
+                            <li class="fr-sidemenu__item {% if 'back_account_' in app.request.get('_route') %}fr-sidemenu__item--active{% endif %}">
+                                <a class="fr-sidemenu__link" href="{{ path('back_account_index') }}"
+                                target="_self"
+                                {% if 'back_account_' in app.request.get('_route') %}aria-current="page"{% endif %}>Comptes archivés</a>
+                            </li>
+                            <li class="fr-sidemenu__item {% if 'back_archived_signalements' in app.request.get('_route') %}fr-sidemenu__item--active{% endif %}">
+                                <a class="fr-sidemenu__link" href="{{ path('back_archived_signalements_index') }}"
+                                target="_self"
+                                {% if 'back_archived_signalements' in app.request.get('_route') %}aria-current="page"{% endif %}>Signalements archivés</a>
+                            </li>
+                            <li class="fr-sidemenu__item {% if 'back_auto_affectation' in app.request.get('_route') %}fr-sidemenu__item--active{% endif %}">
+                                <a class="fr-sidemenu__link" href="{{ path('back_auto_affectation_rule_index') }}"
+                                target="_self"
+                                {% if 'back_auto_affectation' in app.request.get('_route') %}aria-current="page"{% endif %}>Règles d'auto-affectation</a>
+                            </li>
+                            {% if platform.feature_grille_visite %}
+                                <li class="fr-sidemenu__item {% if 'back_territory_' in app.request.get('_route') %}fr-sidemenu__item--active{% endif %}">
+                                    <a class="fr-sidemenu__link" href="{{ path('back_territory_index') }}"
+                                    target="_self"
+                                    {% if 'back_territory_' in app.request.get('_route') %}aria-current="page"{% endif %}>Territoires</a>
+                                </li>
                             {% endif %}
                         </ul>
                     </div>

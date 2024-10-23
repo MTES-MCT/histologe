@@ -9,8 +9,9 @@ use Symfony\Component\Validator\Constraints as Assert;
 
 class SearchZone
 {
-    use SearchQueryTrait;
-
+    use SearchQueryTrait {
+        getUrlParams as getUrlParamsBase;
+    }
     private User $user;
     #[Assert\Positive(message: 'La page doit être un nombre positif')]
     private ?int $page = 1;
@@ -62,5 +63,15 @@ class SearchZone
     public function setTerritory(?Territory $territory): void
     {
         $this->territory = $territory;
+    }
+
+    public function getUrlParams(): array
+    {
+        $params = $this->getUrlParamsBase();
+        if (isset($params['territory']) && !$this->getUser()->isSuperAdmin()) {
+            unset($params['territory']);
+        }
+
+        return $params;
     }
 }

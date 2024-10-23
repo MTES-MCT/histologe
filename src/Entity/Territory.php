@@ -69,6 +69,9 @@ class Territory implements EntityHistoryInterface
     #[ORM\OneToMany(mappedBy: 'territory', targetEntity: Zone::class, orphanRemoval: true)]
     private Collection $zones;
 
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $grilleVisiteFilename = null;
+
     public function __construct()
     {
         $this->users = new ArrayCollection();
@@ -413,6 +416,18 @@ class Territory implements EntityHistoryInterface
                 $zone->setTerritory(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getGrilleVisiteFilename(): ?string
+    {
+        return $this->grilleVisiteFilename;
+    }
+
+    public function setGrilleVisiteFilename(?string $grilleVisiteFilename): static
+    {
+        $this->grilleVisiteFilename = $grilleVisiteFilename;
 
         return $this;
     }

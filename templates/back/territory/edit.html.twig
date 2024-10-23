@@ -1,0 +1,32 @@
+{% extends 'back/base_bo.html.twig' %}
+
+{% block title %}Modifier le territoire {{territory.zip}} - {{territory.name}}{% endblock %}
+
+{% block content %}
+    <section class="fr-p-5v">
+        {% include 'back/breadcrumb_bo.html.twig' with {
+            'level2Title': 'Outils SA',
+            'level2Link': '',
+            'level2Label': '',
+            'level3Title': 'Territoires',
+            'level3Link': path('back_territory_index'),
+            'level4Title': 'Modifier le territoire '~ territory.zip ~ ' - ' ~ territory.name,
+            'level4Link': '',
+        } %}
+        <header>
+            <div class="fr-grid-row">
+                <div class="fr-col-12 fr-text--left">
+                    <h1>Territoire {{territory.zip}} - {{territory.name}}</h1>
+                </div>
+            </div>
+        </header>
+    </section>
+
+    <section class="fr-grid-row fr-p-5v">
+        <div class="fr-col-12 fr-col-lg-6">
+            {% form_theme form 'form/dsfr_theme.html.twig' %}
+            {{form(form, {'attr': {'id': 'form-edit-territory'}} )}}
+        </div>
+    </section>
+
+{% endblock %}
