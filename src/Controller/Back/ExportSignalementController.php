@@ -6,15 +6,11 @@ use App\Entity\User;
 use App\Manager\SignalementManager;
 use App\Messenger\Message\ListExportMessage;
 use App\Service\Signalement\Export\SignalementExportFiltersDisplay;
-use App\Service\Signalement\Export\SignalementExportLoader;
 use App\Service\Signalement\Export\SignalementExportSelectableColumns;
-use PhpOffice\PhpSpreadsheet\Writer\Csv;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\HttpFoundation\HeaderUtils;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpFoundation\StreamedResponse;
 use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Routing\Attribute\Route;
 
