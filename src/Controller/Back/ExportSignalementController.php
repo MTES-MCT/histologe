@@ -78,34 +78,4 @@ class ExportSignalementController extends AbstractController
 
         return $this->redirectToRoute('back_signalement_list_export');
     }
-
-    #[Route('/csv', name: 'back_signalement_list_export_old_csv')]
-    public function exportCsv(
-        Request $request,
-        SignalementExportLoader $signalementExportLoader
-    ): RedirectResponse|StreamedResponse {
-        /** @var User $user */
-        $user = $this->getUser();
-        $filters = $request->getSession()->get('filters');
-        try {
-            $response = new StreamedResponse();
-            $response->setCallback(function () use ($signalementExportLoader, $filters, $user) {
-                $spreadsheet = $signalementExportLoader->load($user, $filters);
-                $writer = new Csv($spreadsheet);
-                $writer->save('php://output');
-            });
-
-            $disposition = HeaderUtils::makeDisposition(
-                HeaderUtils::DISPOSITION_ATTACHMENT,
-                'export-histologe-'.date('dmY').'.csv'
-            );
-            $response->headers->set('Content-Type', 'text/csv');
-            $response->headers->set('Content-Disposition', $disposition);
-
-            return $response;
-        } catch (\ErrorException $e) {
-            $this->addFlash('error', 'Problème d\'identification de votre demande. Merci de réessayer.');
-            throw new \Exception('Erreur lors de l\'export du fichier par l\'user "'.$user->getId().'" : '.$e->getMessage().' - '.print_r($filters, true));
-        }
-    }
 }
