@@ -128,6 +128,8 @@ class HistoryEntryManager extends AbstractManager
 
             if ('affectation' === $type) {
                 $partnerTarget = $this->getPartnerByEntityId($entry->getEntityId()) ?? $this->getPartnerByDeleteHistoryEntry($entry->getEntityId());
+            } else {
+                $partnerTarget = null;
             }
 
             $id = $entry->getEntityId();
@@ -136,11 +138,15 @@ class HistoryEntryManager extends AbstractManager
                 $this->getSignalementActionSummary($entry, $userName);
 
             if (null !== $action) {
-                $formattedHistory[$partnerName][] = [
+                $formattedEntry = [
                     'Date' => $date,
                     'Action' => $action,
                     'Id' => 'affectation' === $type ? $id : '-',
                 ];
+                $formattedHistory[$partnerName][] = $formattedEntry;
+                if (null !== $partnerTarget && null !== $partnerTarget->getNom()) {
+                    $formattedHistory[$partnerTarget->getNom()][] = $formattedEntry;
+                }
             }
         }
     }
