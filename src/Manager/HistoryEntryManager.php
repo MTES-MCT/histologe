@@ -23,7 +23,6 @@ use Symfony\Component\Serializer\Exception\ExceptionInterface;
 
 class HistoryEntryManager extends AbstractManager
 {
-    private const ENTITY_PROXY_PREFIX = 'Proxies\\__CG__\\';
     public const FORMAT_DATE_TIME = 'Y-m-d H:i:s';
 
     public function __construct(
@@ -98,12 +97,12 @@ class HistoryEntryManager extends AbstractManager
 
     private function getHistoryEntries(int $signalementId, string $entityClass, ?HistoryEntryEvent $event = null): array
     {
-        $criteria = ['entityName' => str_replace(self::ENTITY_PROXY_PREFIX, '', $entityClass)];
+        $criteria = ['entityName' => str_replace($this->historyEntryFactory::ENTITY_PROXY_PREFIX, '', $entityClass)];
         if (Signalement::class === $entityClass) {
             $criteria['entityId'] = $signalementId;
             $criteria['event'] = $event;
         } else {
-            $criteria['signalementId'] = $signalementId;
+            $criteria['signalement'] = $signalementId;
         }
 
         return $this->historyEntryRepository->findBy($criteria, ['entityId' => 'ASC', 'createdAt' => 'ASC']);
@@ -144,7 +143,7 @@ class HistoryEntryManager extends AbstractManager
                     'Id' => 'affectation' === $type ? $id : '-',
                 ];
                 $formattedHistory[$partnerName][] = $formattedEntry;
-                if (null !== $partnerTarget && null !== $partnerTarget->getNom()) {
+                if (null !== $partnerTarget && null !== $partnerTarget->getNom() && $partnerTarget->getNom() !== $partnerName) {
                     $formattedHistory[$partnerTarget->getNom()][] = $formattedEntry;
                 }
             }
@@ -253,7 +252,7 @@ class HistoryEntryManager extends AbstractManager
             [
                 'entityId' => $affectationId,
                 'event' => HistoryEntryEvent::DELETE,
-                'entityName' => str_replace(self::ENTITY_PROXY_PREFIX, '', Affectation::class),
+                'entityName' => str_replace($this->historyEntryFactory::ENTITY_PROXY_PREFIX, '', Affectation::class),
             ],
             ['entityId' => 'ASC', 'createdAt' => 'ASC']
         );

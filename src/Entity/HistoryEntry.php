@@ -29,8 +29,9 @@ class HistoryEntry
     #[ORM\Column(nullable: true)]
     private ?string $source = null;
 
-    #[ORM\Column(nullable: true)]
-    private ?int $signalementId = null;
+    #[ORM\ManyToOne(targetEntity: Signalement::class)]
+    #[ORM\JoinColumn(nullable: true)]
+    private ?Signalement $signalement = null;
 
     #[ORM\Column]
     private ?\DateTimeImmutable $createdAt = null;
@@ -140,14 +141,14 @@ class HistoryEntry
         return $this;
     }
 
-    public function getSignalementId(): ?int
+    public function getSignalement(): ?Signalement
     {
-        return $this->signalementId;
+        return $this->signalement;
     }
 
-    public function setSignalementId(?int $signalementId): static
+    public function setSignalement(?Signalement $signalement): self
     {
-        $this->signalementId = $signalementId;
+        $this->signalement = $signalement;
 
         return $this;
     }
