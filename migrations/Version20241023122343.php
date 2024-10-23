@@ -860,7 +860,7 @@ final class Version20241023122343 extends AbstractMigration
             '2023-30',
             '2023-23',
             '2023-21',
-            '2023-15'
+            '2023-15',
         ];
 
         $listToAssignTo7131 = [
@@ -1411,7 +1411,7 @@ final class Version20241023122343 extends AbstractMigration
             '2023-523',
             '2023-413',
             '2023-266',
-            '2023-213'
+            '2023-213',
         ];
 
         $this->connection->beginTransaction();
