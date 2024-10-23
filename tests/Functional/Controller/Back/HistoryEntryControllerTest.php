@@ -29,8 +29,10 @@ class HistoryEntryControllerTest extends WebTestCase
         $user = $this->userRepository->findOneBy(['email' => 'user-13-01@histologe.fr']);
         $this->client->loginUser($user);
 
-        $route = $this->router->generate('history_affectation');
-        $this->client->request('GET', $route, ['signalementId' => 1]);
+        $route = $this->router->generate('history_affectation', [
+            'id' => 1,
+        ]);
+        $this->client->request('GET', $route);
         $this->assertResponseStatusCodeSame(403);
     }
 
@@ -43,8 +45,10 @@ class HistoryEntryControllerTest extends WebTestCase
         $user = $this->userRepository->findOneBy(['email' => 'admin-territoire-13-01@histologe.fr']);
         $this->client->loginUser($user);
 
-        $route = $this->router->generate('history_affectation');
-        $this->client->request('GET', $route, ['signalementId' => 1]);
+        $route = $this->router->generate('history_affectation', [
+            'id' => 1,
+        ]);
+        $this->client->request('GET', $route);
 
         $this->assertResponseIsSuccessful();
         $this->assertResponseStatusCodeSame(200);
@@ -65,7 +69,9 @@ class HistoryEntryControllerTest extends WebTestCase
         $user = $this->userRepository->findOneBy(['email' => 'admin-territoire-13-01@histologe.fr']);
         $this->client->loginUser($user);
 
-        $route = $this->router->generate('history_affectation');
+        $route = $this->router->generate('history_affectation', [
+            'id' => 999,
+        ]);
         $this->client->request('GET', $route);
 
         $this->assertResponseStatusCodeSame(400);

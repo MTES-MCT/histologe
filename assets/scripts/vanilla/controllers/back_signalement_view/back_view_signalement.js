@@ -174,13 +174,9 @@ document?.getElementById('fr-modal-historique-affectation')?.addEventListener('d
         console.warn('Aucun signalementId trouvé');
         return;
     }
-
-    let formData = new FormData();
-    formData.append('signalementId', signalementId);
     
-    fetch('/bo/history/affectation', {
-        method: 'POST',
-        body: formData
+    fetch('/bo/history/signalement/'+signalementId+'/affectations', {
+        method: 'GET',
     }).then(response => response.json())
         .then(data => {
             if (data.historyEntries) {
