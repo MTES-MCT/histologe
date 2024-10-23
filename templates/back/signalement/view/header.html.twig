@@ -218,7 +218,7 @@
                             </button>
                         {% endif %}
                     {% endif %}
-                    {% if signalement.statut is not same as constant('App\\Entity\\Signalement::STATUS_CLOSED') or is_granted('ROLE_ADMIN_TERRITORY') %}
+                    {% if signalement.statut is not same as constant('App\\Entity\\Signalement::STATUS_CLOSED') or (is_granted('ROLE_ADMIN_TERRITORY') and isAffected) %}
                         <button class="fr-btn fr-btn--sm fr-btn--success fr-fi-lock-fill fr-btn--icon-left fr-mt-1v reopen"
                                 aria-controls="reopen-signalement-modal" data-fr-opened="false">
                             Rouvrir pour {{ app.user.partner.nom }}
