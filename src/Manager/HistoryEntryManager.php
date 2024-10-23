@@ -24,7 +24,7 @@ use Symfony\Component\Serializer\Exception\ExceptionInterface;
 class HistoryEntryManager extends AbstractManager
 {
     private const ENTITY_PROXY_PREFIX = 'Proxies\\__CG__\\';
-    public const FORMAT_DATE_TIME = 'Y-m-d H:i';
+    public const FORMAT_DATE_TIME = 'Y-m-d H:i:s';
 
     public function __construct(
         private readonly HistoryEntryFactory $historyEntryFactory,

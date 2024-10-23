@@ -3,6 +3,7 @@
 namespace App\Controller\Back;
 
 use App\Manager\HistoryEntryManager;
+use App\Repository\SignalementRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\HttpFoundation\Request;
@@ -22,15 +23,16 @@ class HistoryEntryController extends AbstractController
         }
     }
 
-    #[Route('/affectation', name: 'history_affectation', methods: ['GET', 'POST'])]
+    #[Route('/signalement/{id}/affectations', name: 'history_affectation', methods: ['GET'])]
     #[IsGranted('ROLE_ADMIN_TERRITORY')]
     public function listHistoryAffectation(
         Request $request,
-        HistoryEntryManager $historyEntryManager
+        HistoryEntryManager $historyEntryManager,
+        SignalementRepository $signalementRepository,
     ): Response {
-        $signalementId = $request->get('signalementId');
-        if ($signalementId) {
-            $historyEntries = $historyEntryManager->getAffectationHistory($signalementId);
+        $signalement = $signalementRepository->find($request->get('id'));
+        if ($signalement) {
+            $historyEntries = $historyEntryManager->getAffectationHistory($signalement->getId());
 
             return $this->json(['historyEntries' => $historyEntries]);
         }
