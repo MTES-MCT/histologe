@@ -83,6 +83,44 @@ class PartnerRepositoryTest extends KernelTestCase
         $this->assertCount(1, $partnerMDL);
     }
 
+    public function testFindPartnersAffectableZone(): void
+    {
+        /** @var SignalementRepository $signalementRepository */
+        $signalementRepository = $this->entityManager->getRepository(Signalement::class);
+
+        /** @var Signalement $signalement */
+        $signalement = $signalementRepository->findOneBy(['reference' => '2024-08']);
+
+        $partners = $this->partnerRepository->findByLocalization($signalement, false);
+        $this->assertCount(5, $partners);
+
+        $partnerZone = array_filter($partners, function ($partner) {
+            return 'Partenaire Zone Agde' === $partner['name'];
+        });
+        $this->assertCount(1, $partnerZone);
+    }
+
+    public function testFindPartnersNotAffectableZone(): void
+    {
+        $feature_zonage = static::getContainer()->getParameter('feature_zonage');
+        if (!$feature_zonage) {
+            $this->markTestSkipped('La fonctionnalité "feature_zonage" est désactivée.');
+        }
+        /** @var SignalementRepository $signalementRepository */
+        $signalementRepository = $this->entityManager->getRepository(Signalement::class);
+
+        /** @var Signalement $signalement */
+        $signalement = $signalementRepository->findOneBy(['reference' => '2024-06']);
+
+        $partners = $this->partnerRepository->findByLocalization($signalement, false);
+        $this->assertCount(4, $partners);
+
+        $partnerZone = array_filter($partners, function ($partner) {
+            return 'Partenaire Zone Agde' === $partner['name'];
+        });
+        $this->assertCount(0, $partnerZone);
+    }
+
     public function testGetPartnerPaginator(): void
     {
         $territory = $this->entityManager->getRepository(Territory::class)->findOneBy(['zip' => '69']);

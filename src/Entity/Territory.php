@@ -63,6 +63,12 @@ class Territory implements EntityHistoryInterface
     #[ORM\Column(length: 128)]
     private string $timezone;
 
+    /**
+     * @var Collection<int, Zone>
+     */
+    #[ORM\OneToMany(mappedBy: 'territory', targetEntity: Zone::class, orphanRemoval: true)]
+    private Collection $zones;
+
     public function __construct()
     {
         $this->users = new ArrayCollection();
@@ -73,6 +79,7 @@ class Territory implements EntityHistoryInterface
         $this->bailleurTerritories = new ArrayCollection();
         $this->autoAffectationRules = new ArrayCollection();
         $this->communes = new ArrayCollection();
+        $this->zones = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -378,5 +385,35 @@ class Territory implements EntityHistoryInterface
     public function getHistoryRegisteredEvent(): array
     {
         return [HistoryEntryEvent::UPDATE, HistoryEntryEvent::DELETE];
+    }
+
+    /**
+     * @return Collection<int, Zone>
+     */
+    public function getZones(): Collection
+    {
+        return $this->zones;
+    }
+
+    public function addZone(Zone $zone): static
+    {
+        if (!$this->zones->contains($zone)) {
+            $this->zones->add($zone);
+            $zone->setTerritory($this);
+        }
+
+        return $this;
+    }
+
+    public function removeZone(Zone $zone): static
+    {
+        if ($this->zones->removeElement($zone)) {
+            // set the owning side to null (unless already changed)
+            if ($zone->getTerritory() === $this) {
+                $zone->setTerritory(null);
+            }
+        }
+
+        return $this;
     }
 }

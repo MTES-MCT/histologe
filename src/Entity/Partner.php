@@ -96,6 +96,12 @@ class Partner implements EntityHistoryInterface
     #[ORM\Column(type: Types::DATETIME_IMMUTABLE, nullable: true)]
     private ?\DateTimeInterface $idossTokenExpirationDate = null;
 
+    /**
+     * @var Collection<int, Zone>
+     */
+    #[ORM\ManyToMany(targetEntity: Zone::class, inversedBy: 'partners', cascade: ['persist'])]
+    private Collection $zones;
+
     public function __construct()
     {
         $this->users = new ArrayCollection();
@@ -103,6 +109,7 @@ class Partner implements EntityHistoryInterface
         $this->affectations = new ArrayCollection();
         $this->interventions = new ArrayCollection();
         $this->isIdossActive = false;
+        $this->zones = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -401,5 +408,29 @@ class Partner implements EntityHistoryInterface
     public function getHistoryRegisteredEvent(): array
     {
         return [HistoryEntryEvent::CREATE, HistoryEntryEvent::UPDATE, HistoryEntryEvent::DELETE];
+    }
+
+    /**
+     * @return Collection<int, Zone>
+     */
+    public function getZones(): Collection
+    {
+        return $this->zones;
+    }
+
+    public function addZone(Zone $zone): static
+    {
+        if (!$this->zones->contains($zone)) {
+            $this->zones->add($zone);
+        }
+
+        return $this;
+    }
+
+    public function removeZone(Zone $zone): static
+    {
+        $this->zones->removeElement($zone);
+
+        return $this;
     }
 }

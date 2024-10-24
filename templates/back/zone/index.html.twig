@@ -1,0 +1,182 @@
+{% extends 'back/base_bo.html.twig' %}
+
+{% block title %}Zones du territoire{% endblock %}
+
+{% block content %}
+    <section class="fr-p-5v">
+        {% include 'back/breadcrumb_bo.html.twig' with {
+            'level2Title': 'Outils admin',
+            'level2Link': '',
+            'level2Label': '',
+            'level3Title': 'Zones',
+            'level3Link': '',
+        } %}
+
+        <header>
+            <div class="fr-grid-row">
+                <div class="fr-col-8 fr-text--left">
+                    <h1>Gérer les zones du territoires</h1>
+                    <p>
+                        Les zones peuvent être créées, éditées et supprimées par les responsables territoire uniquement. 
+                    </p>
+                </div>
+                <div class="fr-col-4 fr-text--right">
+                    <button class="fr-btn fr-btn--icon-left fr-icon-add-line"
+                        title="Ajouter une zone"
+                        data-fr-opened="false" aria-controls="fr-modal-zone-add"
+                        >Ajouter une zone</button>
+                </div>
+            </div>
+        </header>
+    </section>
+
+    <section class="fr-container--fluid">
+        {% form_theme form 'form/dsfr_theme.html.twig' %}
+        {{ form_start(form) }}
+        {{ form_errors(form) }}
+        <div class="fr-grid-row fr-grid-row--bottom fr-grid-row--gutters">
+            <div class="fr-col-12 fr-col-lg-4">
+                {{ form_row(form.queryName) }}
+            </div>
+            {% if is_granted('ROLE_ADMIN') %}
+                <div class="fr-col-12 fr-col-lg-3">
+                    {{ form_row(form.territory) }}
+                </div>
+            {% endif %}
+            <div class="fr-col-12 fr-col-lg-4">
+                <a href="{{ path('back_zone_index') }}" class="fr-link fr-link--icon-left fr-icon-close-circle-line">Réinitialiser les résultats</a>
+            </div>
+        </div>
+        {{ form_end(form) }}
+    </section>
+
+    <section class="fr-grid-row fr-grid-row--middle fr-p-5v">
+        <div class="fr-col">
+            <h2 class="fr-h2 fr-mb-0" id="desc-table">{{zones|length}} zone{% if zones|length > 1%}s{% endif %}</h2>
+        </div>
+    </section>
+
+    <section class="fr-col-12 fr-table fr-table--lg fr-pt-0 fr-px-5v">
+		<div class="fr-table__wrapper">
+			<div class="fr-table__container">
+				<div class="fr-table__content">
+                    <table class="sortable fr-cell--multiline" aria-label="Liste des utilisateurs" aria-describedby="desc-table">
+                        <thead>
+                            <tr>
+                                <th scope="col" class="number">ID</th>
+                                <th scope="col">Nom</th>
+                                <th scope="col">Partenaires</th>
+                                <th scope="col">Territoire</th>
+                                <th scope="col" class="fr-text--right">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for item in zones %}
+                                <tr class="signalement-row">
+                                    <td>{{ item.id }}</td>
+                                    <td>{{ item.name }}</td>
+                                    <td>
+                                        {% for partner in item.partners %}
+                                            <span class="fr-badge fr-badge--blue-ecume fr-badge--no-icon">{{ partner.nom }}</span>
+                                        {% endfor %}
+                                    </td>
+                                    <td>
+                                        {% if item.territory %}
+                                            {{ item.territory.zip }} - {{ item.territory.name }}
+                                        {% endif %}
+                                    </td>
+                                    <td class="fr-text--right fr-ws-nowrap">
+                                        <a href="{{path('back_zone_show', {zone: item.id})}}" class="fr-btn fr-icon-arrow-right-line" title="Visualiser la zone {{item.name}}">
+                                            Visualiser la zone {{ item.name }}
+                                        </a>
+                                        <a href="{{path('back_zone_edit', {zone: item.id})}}" class="fr-btn fr-icon-edit-line" title="Editer la zone {{item.name}}">
+                                            Editer la zone {{ item.name }}
+                                        </a>
+                                        <button 
+                                            class="fr-btn fr-btn--secondary fr-icon-delete-line open-modal-zone-delete" 
+                                            title="Supprimer la zone {{item.name}}" 
+                                            data-fr-opened="false" 
+                                            aria-controls="fr-modal-zone-delete"
+                                            data-url="{{path('back_zone_delete', {zone: item.id})}}?_token={{ csrf_token('zone_delete') }}"
+                                            data-name="{{item.name}}" >
+                                            Supprimer la zone {{ item.name }}</button>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+				</div>
+			</div>
+		</div>
+        <div class="fr-grid-row fr-mt-2v fr-grid-row--center">
+            {% import '_partials/macros.html.twig' as macros %}
+            {{ macros.customPagination(pages, searchZone.page, 'back_zone_index', searchZone.urlParams) }}
+        </div>
+    </section>
+
+    {# Modale d'ajout #}
+    <div data-ajax-form>
+        <dialog aria-labelledby="fr-modal-title-zone-add" id="fr-modal-zone-add" class="fr-modal">
+            <div class="fr-container fr-container--fluid fr-container-md">
+                <div class="fr-grid-row fr-grid-row--center">
+                    <div class="fr-col-12 fr-col-md-8 fr-col-lg-6">
+                        <div class="fr-modal__body">
+                            <div class="fr-modal__header">
+                                <button class="fr-btn--close fr-btn" title="Fermer la fenêtre modale" aria-controls="fr-modal-zone-add">Fermer</button>
+                            </div>
+                            <div class="fr-modal__content">
+                                <h1 id="fr-modal-title-zone-add" class="fr-modal__title">
+                                    Ajouter une zone
+                                </h1>
+                                {% form_theme addForm 'form/dsfr_theme.html.twig' %}
+                                {{form(addForm, {'attr': {'id': 'form-add-zone'}} )}}
+                            </div>
+                            <div class="fr-modal__footer">
+                                <div class="fr-btns-group fr-btns-group--right fr-btns-group--inline-reverse fr-btns-group--inline-lg fr-btns-group--icon-left">
+                                    <button class="fr-btn fr-icon-check-line" form="form-add-zone" type="submit"
+                                        >Valider</button>
+                                    <button class="fr-btn fr-btn--secondary fr-icon-close-line" type="button" aria-controls="fr-modal-zone-add"
+                                        >Annuler</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </dialog>
+    </div>
+    {# Modale de suppression #}
+    <dialog aria-labelledby="fr-modal-title-zone-delete" id="fr-modal-zone-delete" class="fr-modal">
+        <div class="fr-container fr-container--fluid fr-container-md">
+            <div class="fr-grid-row fr-grid-row--center">
+                <div class="fr-col-12 fr-col-md-8 fr-col-lg-6">
+                    <div class="fr-modal__body">
+                        <div class="fr-modal__header">
+                            <button class="fr-btn--close fr-btn" title="Fermer la fenêtre modale" aria-controls="fr-modal-zone-delete">Fermer</button>
+                        </div>
+                        <div class="fr-modal__content">
+                            <h1 id="fr-modal-title-zone-delete" class="fr-modal__title">
+                                Supprimer la zone : <span id="fr-modal-zone-delete-zone-name"></span>
+                            </h1>
+                            <p>Vous êtes sur le point de supprimer une zone.</p>
+                            <p>Une fois la zone supprimée :</p>
+                            <ul>
+                                <li>Elle sera retirée de tous les partenaires sur lesquels elle est positionnées</li>
+                            </ul>
+                        </div>
+                        <div class="fr-modal__footer">
+                            <div class="fr-btns-group fr-btns-group--right fr-btns-group--inline-reverse fr-btns-group--inline-lg fr-btns-group--icon-left">
+                                <a href="#" class="fr-btn fr-icon-check-line" id="fr-modal-zone-delete-btn-submit">Oui, supprimer</a>
+                                <button class="fr-btn fr-btn--secondary fr-icon-close-line" type="button" aria-controls="fr-modal-zone-delete">Non, annuler</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </dialog>
+
+
+{% endblock %}
+
+

@@ -907,3 +907,19 @@ a.photo-preview {
         background: white;
     }
 }
+#zone_map, #info_zone_map {
+    height: 70vh;
+}
+#info_zone_map {
+    overflow: auto;
+    ul{
+        padding-inline-start:0;
+        margin-block-end:0;
+        margin-block-start:0;
+        li{
+            list-style-type: none;
+            padding: 0.5rem;
+            background: var(--background-alt-grey);
+        }
+    }
+}

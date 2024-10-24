@@ -348,7 +348,7 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
     #[AppAssert\TelephoneFormat]
     private $telOccupantBis;
 
-    #[ORM\ManyToMany(targetEntity: Tag::class, inversedBy: 'signalements', cascade: ['persist'])]
+    #[ORM\ManyToMany(targetEntity: Tag::class, inversedBy: 'signalements')]
     #[ORM\JoinTable(name: 'tag_signalement')]
     private Collection $tags;
 
