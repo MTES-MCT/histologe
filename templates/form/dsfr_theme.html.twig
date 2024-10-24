@@ -6,9 +6,11 @@
         {% set widget_attr = {attr: {'aria-describedby': id ~"_help"}} %}
     {% endif %}
     {% if type is defined and type == 'file' %}
-        {% set row_attr = row_attr|merge({'class': (row_attr.class|default('') ~ ' fr-upload-group fr-mb-6v')|trim}) %}
+        {% set row_attr = row_attr|merge({'class': (row_attr.class|default('') ~ ' fr-upload-group fr-input-group')|trim}) %}
     {% elseif 'choice' in block_prefixes %}
         {% set row_attr = row_attr|merge({'class': (row_attr.class|default('') ~ ' fr-select-group')|trim}) %}
+    {% elseif 'checkbox' in block_prefixes %}
+        {% set row_attr = row_attr|merge({'class': (row_attr.class|default('') ~ ' fr-checkbox-group fr-mb-6v')|trim}) %}
     {% else %} 
         {% set row_attr = row_attr|merge({'class': (row_attr.class|default('') ~ ' fr-input-group')|trim}) %}
     {% endif %}
@@ -20,8 +22,13 @@
         {% endif %}
     {% endif %}
     <div{% with {attr: row_attr} %}{{ block('attributes') }}{% endwith %}>
-        {{form_label(form)}}
-        {{form_widget(form, widget_attr)}}
+        {% if 'checkbox' in block_prefixes %}
+            {{form_widget(form, widget_attr)}}
+            {{form_label(form)}}
+        {% else %}
+            {{form_label(form)}}
+            {{form_widget(form, widget_attr)}}
+        {% endif %}
         {{form_errors(form)}}
     </div>
 {% endblock form_row %}
