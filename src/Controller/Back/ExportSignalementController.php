@@ -6,15 +6,11 @@ use App\Entity\User;
 use App\Manager\SignalementManager;
 use App\Messenger\Message\ListExportMessage;
 use App\Service\Signalement\Export\SignalementExportFiltersDisplay;
-use App\Service\Signalement\Export\SignalementExportLoader;
 use App\Service\Signalement\Export\SignalementExportSelectableColumns;
-use PhpOffice\PhpSpreadsheet\Writer\Csv;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\HttpFoundation\HeaderUtils;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpFoundation\StreamedResponse;
 use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Routing\Attribute\Route;
 
@@ -77,35 +73,5 @@ class ExportSignalementController extends AbstractController
         );
 
         return $this->redirectToRoute('back_signalement_list_export');
-    }
-
-    #[Route('/csv', name: 'back_signalement_list_export_old_csv')]
-    public function exportCsv(
-        Request $request,
-        SignalementExportLoader $signalementExportLoader
-    ): RedirectResponse|StreamedResponse {
-        /** @var User $user */
-        $user = $this->getUser();
-        $filters = $request->getSession()->get('filters');
-        try {
-            $response = new StreamedResponse();
-            $response->setCallback(function () use ($signalementExportLoader, $filters, $user) {
-                $spreadsheet = $signalementExportLoader->load($user, $filters);
-                $writer = new Csv($spreadsheet);
-                $writer->save('php://output');
-            });
-
-            $disposition = HeaderUtils::makeDisposition(
-                HeaderUtils::DISPOSITION_ATTACHMENT,
-                'export-histologe-'.date('dmY').'.csv'
-            );
-            $response->headers->set('Content-Type', 'text/csv');
-            $response->headers->set('Content-Disposition', $disposition);
-
-            return $response;
-        } catch (\ErrorException $e) {
-            $this->addFlash('error', 'Problème d\'identification de votre demande. Merci de réessayer.');
-            throw new \Exception('Erreur lors de l\'export du fichier par l\'user "'.$user->getId().'" : '.$e->getMessage().' - '.print_r($filters, true));
-        }
     }
 }

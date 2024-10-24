@@ -12,7 +12,7 @@
     </section>
     <div id="app-signalement-list"
          data-ajaxurl="{{ path('back_signalement_list_json') }}"
-         data-ajaxurl-export-csv="{% if platform.feature_export_custom %}{{ path('back_signalement_list_export') }}{% else %}{{ path('back_signalement_list_export_old_csv') }}{% endif %}"
+         data-ajaxurl-export-csv="{{ path('back_signalement_list_export') }}"
          data-ajaxurl-settings="{{ path('back_widget_settings') }}"
          data-ajaxurl-contact="{{ path('front_contact') }}"
          data-ajaxurl-remove-signalement="{{ path('back_signalement_delete', {'uuid' : '<uuid>'}) }}"

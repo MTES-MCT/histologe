@@ -169,7 +169,6 @@ jobs:
           MAILER_DSN: ${{ secrets.MAILER_DSN_CI }}
           CRON_ENABLE: 1
           MAIL_ENABLE: 1
-          FEATURE_ASK_VISITE_ENABLE: 1
           MAINTENANCE_ENABLE: 0
           CLAMAV_STRATEGY: 'clamd_network'
           CLAMAV_HOST: 127.0.0.1

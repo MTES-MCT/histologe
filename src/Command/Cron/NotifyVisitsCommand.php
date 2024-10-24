@@ -106,35 +106,33 @@ class NotifyVisitsCommand extends AbstractCronCommand
         }
 
         // Notifs for visits that should be planned
-        if (!empty($this->parameterBag->get('feature_ask_visite'))) {
-            $listAffectations = $this->affectationRepository->findAcceptedAffectationsFromVisitesPartner();
-            foreach ($listAffectations as $affectation) {
-                if (0 == \count($affectation->getSignalement()->getInterventions())) {
-                    $description = 'La réalisation d\'une visite est nécessaire pour caractériser les désordres signalés.';
-                    $description .= ' Merci de renseigner la date ou les conclusions de la visite afin de poursuivre la prise en charge de ce signalement.';
-                    $suivi = $this->suiviManager->createSuivi(
-                        user: null,
-                        signalement: $affectation->getSignalement(),
-                        isPublic: false,
-                        context: Suivi::CONTEXT_INTERVENTION,
-                        params: [
-                            'description' => $description,
-                            'type' => Suivi::TYPE_TECHNICAL,
-                        ],
-                    );
-                    $this->suiviManager->save($suivi);
+        $listAffectations = $this->affectationRepository->findAcceptedAffectationsFromVisitesPartner();
+        foreach ($listAffectations as $affectation) {
+            if (0 == \count($affectation->getSignalement()->getInterventions())) {
+                $description = 'La réalisation d\'une visite est nécessaire pour caractériser les désordres signalés.';
+                $description .= ' Merci de renseigner la date ou les conclusions de la visite afin de poursuivre la prise en charge de ce signalement.';
+                $suivi = $this->suiviManager->createSuivi(
+                    user: null,
+                    signalement: $affectation->getSignalement(),
+                    isPublic: false,
+                    context: Suivi::CONTEXT_INTERVENTION,
+                    params: [
+                        'description' => $description,
+                        'type' => Suivi::TYPE_TECHNICAL,
+                    ],
+                );
+                $this->suiviManager->save($suivi);
 
-                    $this->visiteNotifier->notifyAgents(
-                        intervention: null,
-                        suivi: $suivi,
-                        currentUser: null,
-                        notificationMailerType: NotificationMailerType::TYPE_VISITE_NEEDED,
-                        notifyAdminTerritory: false,
-                        affectation: $affectation,
-                    );
+                $this->visiteNotifier->notifyAgents(
+                    intervention: null,
+                    suivi: $suivi,
+                    currentUser: null,
+                    notificationMailerType: NotificationMailerType::TYPE_VISITE_NEEDED,
+                    notifyAdminTerritory: false,
+                    affectation: $affectation,
+                );
 
-                    ++$countVisitsToPlan;
-                }
+                ++$countVisitsToPlan;
             }
         }
 
