@@ -20,6 +20,7 @@ use App\Repository\NotificationRepository;
 use App\Repository\SignalementQualificationRepository;
 use App\Repository\SuiviRepository;
 use App\Repository\TerritoryRepository;
+use App\Utils\CommuneHelper;
 use App\Utils\ImportCommune;
 use Doctrine\DBAL\Exception;
 use Doctrine\ORM\EntityManagerInterface;
@@ -379,6 +380,11 @@ class SearchFilter
         }
 
         if (!empty($filters['cities'])) {
+            foreach ($filters['cities'] as $city) {
+                if (isset(CommuneHelper::COMMUNES_ARRONDISSEMENTS[$city])) {
+                    $filters['cities'] = array_merge($filters['cities'], CommuneHelper::COMMUNES_ARRONDISSEMENTS[$city]);
+                }
+            }
             $qb->andWhere('s.villeOccupant IN (:cities) OR s.cpOccupant IN (:cities)')
                 ->setParameter('cities', $filters['cities']);
         }
