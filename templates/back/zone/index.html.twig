@@ -98,7 +98,7 @@
                                             data-fr-opened="false" 
                                             aria-controls="fr-modal-zone-delete"
                                             data-url="{{path('back_zone_delete', {zone: item.id})}}?_token={{ csrf_token('zone_delete') }}"
-                                            data-name={{item.name}} >
+                                            data-name="{{item.name}}" >
                                             Supprimer la zone {{ item.name }}</button>
                                     </td>
                                 </tr>
@@ -152,10 +152,10 @@
                 <div class="fr-col-12 fr-col-md-8 fr-col-lg-6">
                     <div class="fr-modal__body">
                         <div class="fr-modal__header">
-                            <button class="fr-btn--close fr-btn" title="Fermer la fenêtre modale" aria-controls="fr-modal-etiquette-delete">Fermer</button>
+                            <button class="fr-btn--close fr-btn" title="Fermer la fenêtre modale" aria-controls="fr-modal-zone-delete">Fermer</button>
                         </div>
                         <div class="fr-modal__content">
-                            <h1 id="fr-modal-title-etiquette-delete" class="fr-modal__title">
+                            <h1 id="fr-modal-title-zone-delete" class="fr-modal__title">
                                 Supprimer la zone : <span id="fr-modal-zone-delete-zone-name"></span>
                             </h1>
                             <p>Vous êtes sur le point de supprimer une zone.</p>
@@ -167,7 +167,7 @@
                         <div class="fr-modal__footer">
                             <div class="fr-btns-group fr-btns-group--right fr-btns-group--inline-reverse fr-btns-group--inline-lg fr-btns-group--icon-left">
                                 <a href="#" class="fr-btn fr-icon-check-line" id="fr-modal-zone-delete-btn-submit">Oui, supprimer</a>
-                                <button class="fr-btn fr-btn--secondary fr-icon-close-line" type="button" aria-controls="fr-modal-etiquette-delete">Non, annuler</button>
+                                <button class="fr-btn fr-btn--secondary fr-icon-close-line" type="button" aria-controls="fr-modal-zone-delete">Non, annuler</button>
                             </div>
                         </div>
                     </div>
