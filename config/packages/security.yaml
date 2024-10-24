@@ -24,7 +24,7 @@ security:
             pattern: ^/(_(profiler|wdt)|css|images|js)/
             security: false
         api:
-            pattern: ^/(api|login)
+            pattern: ^/api
             stateless: true
             provider: app_user_provider
             custom_authenticators:
@@ -65,7 +65,6 @@ security:
         - { path: ^/2fa, role: IS_AUTHENTICATED_2FA_IN_PROGRESS }
         # Other rules may follow here...
         - { path: ^/api/doc, roles: PUBLIC_ACCESS }
-        - { path: ^/api/doc.json, roles: PUBLIC_ACCESS }
         - { path: ^/api/login, roles: PUBLIC_ACCESS }
         - { path: ^/api, roles: ROLE_API_USER }
         - { path: ^/bo, roles: ROLE_USER_PARTNER }

@@ -7,3 +7,16 @@
         <img src="{{ asset('img/logo_145.png') }}" alt="NelmioApiDocBundle">
     </a>
 {% endblock header %}
+
+
+{% block swagger_initialization %}
+    <script type="text/javascript" nonce="{{ app.request.attributes.get('csp_script_nonce') }}">
+        window.onload = () => {
+            loadSwaggerUI({
+                defaultModelsExpandDepth: -1,
+                deepLinking: true,
+            });
+        };
+    </script>
+{% endblock %}
+
