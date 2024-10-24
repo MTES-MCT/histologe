@@ -7,12 +7,12 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 
-#[Route('/api')]
+#[Route('/public/api')]
 class QuestionController extends AbstractController
 {
-    public const JSON_BASE_PATH = '/../../public/build/json/Signalement/';
+    public const string JSON_BASE_PATH = '/../../public/build/json/Signalement/';
 
-    #[Route('/dictionary', name: 'api_dictionary')]
+    #[Route('/dictionary', name: 'public_api_dictionary')]
     public function getDictionary(): Response
     {
         $filepath = self::JSON_BASE_PATH.'dictionary.json';
@@ -20,7 +20,7 @@ class QuestionController extends AbstractController
         return $this->json(json_decode(file_get_contents(__DIR__.$filepath), true));
     }
 
-    #[Route('/questions', name: 'api_question_profile')]
+    #[Route('/questions', name: 'public_api_question_profile')]
     public function getQuestion(Request $request): Response
     {
         switch ($request->query->get('profil')) {
@@ -52,7 +52,7 @@ class QuestionController extends AbstractController
         return $this->json(json_decode(file_get_contents(__DIR__.$filepath), true));
     }
 
-    #[Route('/desordres', name: 'api_desordres_profile')]
+    #[Route('/desordres', name: 'public_api_desordres_profile')]
     public function getDesordres(Request $request): Response
     {
         switch ($request->query->get('profil')) {

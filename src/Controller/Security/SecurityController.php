@@ -3,20 +3,84 @@
 namespace App\Controller\Security;
 
 use App\Entity\Signalement;
+use App\Entity\User;
 use App\Service\ImageManipulationHandler;
 use League\Flysystem\FilesystemOperator;
+use Nelmio\ApiDocBundle\Annotation\Security;
+use OpenApi\Attributes as OA;
 use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\DependencyInjection\Attribute\When;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\File\File;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Security\Http\Attribute\CurrentUser;
 use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
 
 class SecurityController extends AbstractController
 {
+    #[When('dev')]
+    #[When('test')]
+    #[Route('/api/login', name: 'api_login', methods: ['POST'])]
+    #[Security(name: null)]
+    #[OA\Post(
+        path: '/api/login',
+        summary: 'Login using email and password',
+        security: null,
+        requestBody: new OA\RequestBody(
+            description: 'Credentials for logging in',
+            required: true,
+            content: new OA\JsonContent(
+                required: ['email', 'password'],
+                properties: [
+                    new OA\Property(property: 'email', type: 'string', format: 'email', example: 'api-01@histologe.fr'),
+                    new OA\Property(property: 'password', type: 'string', format: 'password', example: 'histologe'),
+                ]
+            )
+        ),
+        tags: ['Authentication'],
+        responses: [
+            new OA\Response(
+                response: 200,
+                description: 'Successful login',
+                content: new OA\JsonContent(
+                    properties: [
+                        new OA\Property(property: 'token', type: 'string', example: 'abcd1234'),
+                        new OA\Property(property: 'expires_at', type: 'string', example: '2024-12-31T23:59:59Z'),
+                    ],
+                    type: 'object'
+                )
+            ),
+            new OA\Response(
+                response: 401,
+                description: 'Invalid credentials',
+                content: new OA\JsonContent(
+                    properties: [
+                        new OA\Property(property: 'error', type: 'string', example: 'Invalid credentials.'),
+                        new OA\Property(property: 'message', type: 'string', example: 'The credentials are invalid.'),
+                    ],
+                    type: 'object'
+                )
+            ),
+        ]
+    )]
+    public function loginApi(
+        #[CurrentUser] ?User $user = null
+    ): JsonResponse {
+        if (!$user) {
+            return $this->json([
+                'error' => 'Invalid credentials.',
+                'message' => 'The credentials are invalid.',
+            ], Response::HTTP_UNAUTHORIZED);
+        }
+
+        return $this->json(['success']);
+    }
+
     #[Route('/connexion', name: 'app_login')]
     public function login(AuthenticationUtils $authenticationUtils): Response
     {

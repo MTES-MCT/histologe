@@ -14,9 +14,9 @@
   <main class="fr-my-5v" id="content">
     <div id="app-signalement-form-container"
         data-ajaxurl="{{ path('front_signalement') }}"
-        data-ajaxurl-dictionary="{{ path('api_dictionary') }}"
-        data-ajaxurl-questions="{{ path('api_question_profile') }}?profil="
-        data-ajaxurl-desordres="{{ path('api_desordres_profile') }}?profil="
+        data-ajaxurl-dictionary="{{ path('public_api_dictionary') }}"
+        data-ajaxurl-questions="{{ path('public_api_question_profile') }}?profil="
+        data-ajaxurl-desordres="{{ path('public_api_desordres_profile') }}?profil="
         data-ajaxurl-post-signalement-draft="{{ path('envoi_nouveau_signalement_draft') }}"
         data-ajaxurl-put-signalement-draft="{{ path('mise_a_jour_nouveau_signalement_draft', {uuid: 'uuid'}) }}"
         data-ajaxurl-handle-upload="{{ path('handle_upload') }}"

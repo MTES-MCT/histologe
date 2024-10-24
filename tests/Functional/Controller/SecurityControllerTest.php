@@ -6,10 +6,48 @@ use App\Repository\UserRepository;
 use App\Tests\SessionHelper;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
+use Symfony\Component\HttpFoundation\Response;
 
 class SecurityControllerTest extends WebTestCase
 {
     use SessionHelper;
+
+    /** @dataProvider provideJsonLogin  */
+    public function testJsonLogin(?int $status = null, ?string $email = null, ?string $password = null): void
+    {
+        $client = static::createClient();
+        $payload = [
+            'email' => $email,
+            'password' => $password,
+        ];
+        $client->request('POST', '/api/login', [], [], [], json_encode($payload));
+        $this->assertResponseStatusCodeSame($status);
+    }
+
+    public function provideJsonLogin(): \Generator
+    {
+        yield 'Success login with ROLE_API_USER' => [
+            'status' => Response::HTTP_OK,
+            'email' => 'api-01@histologe.fr',
+            'password' => 'histologe',
+        ];
+
+        yield 'Failed login without ROLE_API_USER' => [
+            'status' => Response::HTTP_UNAUTHORIZED,
+            'email' => 'admin-territory-13@histologe.fr',
+            'password' => 'histologe',
+        ];
+
+        yield 'Failed login with credentials empty' => [
+            'status' => Response::HTTP_UNAUTHORIZED,
+            'email' => '',
+            'password' => '',
+        ];
+
+        yield 'Failed login without payload' => [
+            'status' => Response::HTTP_UNAUTHORIZED,
+        ];
+    }
 
     public function testShowUploadedFileSucceed(): void
     {

@@ -1,0 +1,29 @@
+{# templates/bundles/NelmioApiDocBundle/SwaggerUi/index.html.twig #}
+
+{% extends '@!NelmioApiDoc/SwaggerUi/index.html.twig' %}
+
+{% block header %}
+    <a id="logo" href="{{ path('home') }}">
+        <img src="{{ asset('img/logo_145.png') }}" alt="NelmioApiDocBundle">
+    </a>
+{% endblock header %}
+
+
+{% block swagger_initialization %}
+    <script type="text/javascript" nonce="{{ app.request.attributes.get('csp_script_nonce') }}">
+        window.onload = () => {
+            loadSwaggerUI({
+                defaultModelsExpandDepth: -1,
+                deepLinking: true,
+                supportedSubmitMethods: []
+            });
+            const authorizeButton = document.querySelector('.swagger-ui .auth-wrapper .authorize');
+            if (authorizeButton instanceof HTMLElement) {
+                authorizeButton.style.pointerEvents = 'none';
+                authorizeButton.style.opacity = '0.5';
+                authorizeButton.style.cursor = 'not-allowed';
+            }
+        };
+    </script>
+{% endblock %}
+
