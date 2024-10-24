@@ -31,7 +31,7 @@ class HistoryEntryController extends AbstractController
         SignalementRepository $signalementRepository,
     ): Response {
         $signalement = $signalementRepository->find($request->get('id'));
-        if ($signalement) {
+        if ($signalement && $this->isGranted('SIGN_VIEW', $signalement)) {
             $historyEntries = $historyEntryManager->getAffectationHistory($signalement->getId());
 
             return $this->json(['historyEntries' => $historyEntries]);
