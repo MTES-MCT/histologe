@@ -15,7 +15,14 @@
             loadSwaggerUI({
                 defaultModelsExpandDepth: -1,
                 deepLinking: true,
+                supportedSubmitMethods: []
             });
+            const authorizeButton = document.querySelector('.swagger-ui .auth-wrapper .authorize');
+            if (authorizeButton instanceof HTMLElement) {
+                authorizeButton.style.pointerEvents = 'none';
+                authorizeButton.style.opacity = '0.5';
+                authorizeButton.style.cursor = 'not-allowed';
+            }
         };
     </script>
 {% endblock %}

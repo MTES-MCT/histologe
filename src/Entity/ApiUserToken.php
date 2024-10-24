@@ -9,7 +9,7 @@ use Random\RandomException;
 #[ORM\Entity(repositoryClass: ApiUserTokenRepository::class)]
 class ApiUserToken
 {
-    public const string EXPIRATION_TIME = '+30 seconds'; // for testing to update later
+    public const string EXPIRATION_TIME = '+2 minutes'; // for testing to update later
 
     #[ORM\Id]
     #[ORM\GeneratedValue]
