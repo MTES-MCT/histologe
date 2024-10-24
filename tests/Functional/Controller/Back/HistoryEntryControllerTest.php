@@ -1,0 +1,85 @@
+<?php
+
+namespace App\Tests\Functional\Controller\Back;
+
+use App\Repository\UserRepository;
+use Symfony\Bundle\FrameworkBundle\KernelBrowser;
+use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
+use Symfony\Component\Routing\RouterInterface;
+
+class HistoryEntryControllerTest extends WebTestCase
+{
+    private KernelBrowser $client;
+    private UserRepository $userRepository;
+    private RouterInterface $router;
+
+    protected function setUp(): void
+    {
+        $this->client = static::createClient();
+        $this->userRepository = static::getContainer()->get(UserRepository::class);
+        $this->router = self::getContainer()->get(RouterInterface::class);
+    }
+
+    public function testAccessDeniedForNonAdminTerritoryRole()
+    {
+        $featureHistoriqueAffectations = static::getContainer()->getParameter('feature_historique_affectations');
+        if (!$featureHistoriqueAffectations) {
+            $this->markTestSkipped('La fonctionnalité "feature_historique_affectations" est désactivée.');
+        }
+        $user = $this->userRepository->findOneBy(['email' => 'user-13-01@histologe.fr']);
+        $this->client->loginUser($user);
+
+        $route = $this->router->generate('history_affectation', [
+            'id' => 1,
+        ]);
+        $this->client->request('GET', $route);
+        $this->assertResponseStatusCodeSame(403);
+    }
+
+    public function testListHistoryAffectationWithValidSignalementId()
+    {
+        $featureHistoriqueAffectations = static::getContainer()->getParameter('feature_historique_affectations');
+        if (!$featureHistoriqueAffectations) {
+            $this->markTestSkipped('La fonctionnalité "feature_historique_affectations" est désactivée.');
+        }
+        $user = $this->userRepository->findOneBy(['email' => 'admin-territoire-13-01@histologe.fr']);
+        $this->client->loginUser($user);
+
+        $route = $this->router->generate('history_affectation', [
+            'id' => 1,
+        ]);
+        $this->client->request('GET', $route);
+
+        $this->assertResponseIsSuccessful();
+        $this->assertResponseStatusCodeSame(200);
+
+        $this->assertJson($this->client->getResponse()->getContent());
+        $response = json_decode($this->client->getResponse()->getContent(), true);
+
+        $this->assertArrayHasKey('historyEntries', $response);
+        $this->assertNotEmpty($response['historyEntries']);
+    }
+
+    public function testListHistoryAffectationWithoutSignalementId()
+    {
+        $featureHistoriqueAffectations = static::getContainer()->getParameter('feature_historique_affectations');
+        if (!$featureHistoriqueAffectations) {
+            $this->markTestSkipped('La fonctionnalité "feature_historique_affectations" est désactivée.');
+        }
+        $user = $this->userRepository->findOneBy(['email' => 'admin-territoire-13-01@histologe.fr']);
+        $this->client->loginUser($user);
+
+        $route = $this->router->generate('history_affectation', [
+            'id' => 999,
+        ]);
+        $this->client->request('GET', $route);
+
+        $this->assertResponseStatusCodeSame(400);
+
+        $this->assertJson($this->client->getResponse()->getContent());
+        $response = json_decode($this->client->getResponse()->getContent(), true);
+
+        $this->assertArrayHasKey('response', $response);
+        $this->assertEquals('error', $response['response']);
+    }
+}

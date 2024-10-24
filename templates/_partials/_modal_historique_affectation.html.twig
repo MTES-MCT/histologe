@@ -1,0 +1,35 @@
+<dialog aria-labelledby="fr-modal-historique-affectation-title" id="fr-modal-historique-affectation" class="fr-modal" data-signalement-id="{{ signalement.id }}">
+    <div class="fr-container fr-container--fluid fr-container-md">
+        <div class="fr-grid-row fr-grid-row--center">
+            <div class="fr-col-12 fr-col-md-10 fr-col-lg-10">
+                <div class="fr-modal__body">
+                    <div class="fr-modal__header">
+                        <button type="button" class="fr-btn--close fr-btn" aria-controls="fr-modal-historique-affectation">Fermer</button>
+                    </div>
+                    <div class="fr-modal__content">
+                        <h1 id="fr-modal-historique-affectation-title" class="fr-modal__title">
+                            Historique des affectations
+                        </h1>
+                        <div id="fr-modal-historique-affectation-avertissement" class="fr-mt-3v fr-alert fr-alert--warning">
+                            L'historique n'est disponible que depuis le 12 septembre 2024
+                        </div>
+                        <div id="fr-modal-historique-affectation-loading-message">
+                            Chargement en cours de l'historique des affectations pour le signalement {{signalement.reference}}...
+                            <div class="fr-grid-row fr-grid-row--center fr-grid-row--middle fr-h-100 fr-hidden fr-mt-5w"
+                                id="signalement-historique-affectation-loader-row">
+                                <div class="fr-col-12 fr-text--center">
+                                    <div class="lds-histologe">
+                                        <div></div>
+                                        <div></div>
+                                        <div></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div id="fr-modal-historique-affectation-content"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</dialog>
