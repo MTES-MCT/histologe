@@ -10,6 +10,7 @@ use App\Manager\TagManager;
 use App\Repository\TagRepository;
 use App\Repository\TerritoryRepository;
 use App\Service\FormHelper;
+use App\Service\Signalement\SearchFilterOptionDataProvider;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -17,6 +18,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
+use Symfony\Contracts\Cache\TagAwareCacheInterface;
 
 #[Route('/bo/etiquettes')]
 class TagController extends AbstractController
@@ -77,6 +79,7 @@ class TagController extends AbstractController
     public function addTag(
         Request $request,
         EntityManagerInterface $entityManager,
+        TagAwareCacheInterface $cache
     ): Response {
         $this->denyAccessUnlessGranted('TAG_CREATE');
         $tag = new Tag();
@@ -92,6 +95,7 @@ class TagController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
             $entityManager->persist($tag);
             $entityManager->flush();
+            $cache->invalidateTags([SearchFilterOptionDataProvider::CACHE_TAG, SearchFilterOptionDataProvider::CACHE_TAG.$tag->getTerritory()->getZip()]);
             $this->addFlash('success', 'L\'étiquette a bien été ajoutée.');
         }
         if ($form->isSubmitted() && !$form->isValid()) {
@@ -109,6 +113,7 @@ class TagController extends AbstractController
         Tag $tag,
         Request $request,
         EntityManagerInterface $entityManager,
+        TagAwareCacheInterface $cache
     ): JsonResponse {
         $this->denyAccessUnlessGranted('TAG_EDIT', $tag);
         $form = $this->createForm(EditTagType::class, $tag);
@@ -116,6 +121,7 @@ class TagController extends AbstractController
         $form->submit($request->getPayload()->all());
         if ($form->isSubmitted() && $form->isValid()) {
             $entityManager->flush();
+            $cache->invalidateTags([SearchFilterOptionDataProvider::CACHE_TAG, SearchFilterOptionDataProvider::CACHE_TAG.$tag->getTerritory()->getZip()]);
             $this->addFlash('success', 'L\'étiquette a bien été éditée.');
         }
         if ($form->isSubmitted() && !$form->isValid()) {
@@ -133,6 +139,7 @@ class TagController extends AbstractController
         Request $request,
         TagManager $tagManager,
         EntityManagerInterface $entityManager,
+        TagAwareCacheInterface $cache
     ): Response {
         $tagId = $request->request->get('tag_id');
         /** @var Tag $tag */
@@ -145,6 +152,7 @@ class TagController extends AbstractController
         ) {
             $tag->setIsArchive(true);
             $entityManager->flush();
+            $cache->invalidateTags([SearchFilterOptionDataProvider::CACHE_TAG, SearchFilterOptionDataProvider::CACHE_TAG.$tag->getTerritory()->getZip()]);
             $this->addFlash('success', 'L\'étiquette a bien été supprimée.');
 
             return $this->redirectToRoute('back_tags_index', [], Response::HTTP_SEE_OTHER);

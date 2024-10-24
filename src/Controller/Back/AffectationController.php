@@ -15,6 +15,7 @@ use App\Manager\UserManager;
 use App\Messenger\InterconnectionBus;
 use App\Repository\AffectationRepository;
 use App\Repository\PartnerRepository;
+use App\Service\Signalement\SearchFilterOptionDataProvider;
 use App\Specification\Signalement\FirstAffectationAcceptedSpecification;
 use Psr\Cache\InvalidArgumentException;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -76,7 +77,7 @@ class AffectationController extends AbstractController
                     }
                 }
                 $this->affectationManager->removeAffectationsFrom($signalement, $postedPartner, $partnersIdToRemove);
-                $cache->invalidateTags([$signalement->getTerritory()?->getZip()]);
+                $cache->invalidateTags([SearchFilterOptionDataProvider::CACHE_TAG, SearchFilterOptionDataProvider::CACHE_TAG.$signalement->getTerritory()->getZip()]);
             } else {
                 $this->affectationManager->removeAffectationsFrom($signalement);
             }

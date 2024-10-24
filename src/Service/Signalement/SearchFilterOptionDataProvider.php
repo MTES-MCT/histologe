@@ -19,6 +19,8 @@ use Symfony\Contracts\Cache\TagAwareCacheInterface;
 
 class SearchFilterOptionDataProvider
 {
+    public const CACHE_TAG = 'search-filters';
+
     public function __construct(
         private readonly CritereRepository $critereRepository,
         private readonly TerritoryRepository $territoryRepository,
@@ -45,8 +47,11 @@ class SearchFilterOptionDataProvider
             $this->getCacheKey($user, $territory),
             function (ItemInterface $item) use ($territory, $user) {
                 $item->expiresAfter(3600);
+
                 if ($territory) {
-                    $item->tag([$territory->getZip()]);
+                    $item->tag([self::CACHE_TAG.$territory->getZip()]);
+                } else {
+                    $item->tag([self::CACHE_TAG]);
                 }
 
                 return [
