@@ -1672,7 +1672,7 @@
               {
                 "type": "SignalementFormCounter",
                 "label": "{{dictionaryStore::desordres_logement_chauffage_details_dpe_conso_finale}}",
-                "description": "Saisir un nombre entier",
+                "description": "Format attendu : Saisir un nombre entier",
                 "slug": "desordres_logement_chauffage_details_dpe_conso_finale",
                 "conditional": {
                   "show": "formStore.data.desordres_logement_chauffage_details_dpe_annee === 'post2023'"
@@ -1686,7 +1686,7 @@
               {
                 "type": "SignalementFormCounter",
                 "label": "Quelle est la superficie de votre logement ? (m²)",
-                "description": "Saisir un nombre entier",
+                "description": "Format attendu : Saisir un nombre entier",
                 "slug": "composition_logement_superficie",
                 "conditional": {
                   "show": "formStore.data.desordres_logement_chauffage_details_dpe_annee === 'before2023'"
@@ -1699,7 +1699,7 @@
               {
                 "type": "SignalementFormCounter",
                 "label": "Quelle est la consommation en énergie indiquée sur le DPE ? (kWh/an)",
-                "description": "Saisir un nombre entier",
+                "description": "Format attendu : Saisir un nombre entier",
                 "slug": "desordres_logement_chauffage_details_dpe_conso",
                 "conditional": {
                   "show": "formStore.data.desordres_logement_chauffage_details_dpe_annee === 'before2023'"

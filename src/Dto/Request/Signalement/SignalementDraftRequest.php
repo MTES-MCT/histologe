@@ -154,7 +154,7 @@ class SignalementDraftRequest
     private ?string $vosCoordonneesTiersTelSecondaire = null;
     #[Assert\NotBlank(
         message: 'Merci de renseigner votre civilité.',
-        groups: ['POST_LOCATAIRE', 'POST_BAILLEUR_OCCUPANT']
+        groups: ['POST_LOCATAIRE']
     )]
     #[Assert\Choice(
         choices: ['mr', 'mme'],

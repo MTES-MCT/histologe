@@ -101,7 +101,7 @@ export default defineComponent({
         const value = formStore.data[component.slug]
         // Les autres composants requis doivent avoir une valeur correspondante dans le Store
         if (this.isRequired(component) && !value && component.type !== 'SignalementFormAddress') {
-          formStore.validationErrors[component.slug] = 'Ce champ est requis'
+          formStore.validationErrors[component.slug] = component.validate?.message ?? 'Ce champ est requis'
         }
 
         componentValidator.validate(component)
