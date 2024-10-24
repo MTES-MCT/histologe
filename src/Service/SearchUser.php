@@ -18,6 +18,7 @@ class SearchUser
     private Collection $partners;
     private ?int $statut = null;
     private ?string $role = null;
+    private ?string $permissionAffectation = null;
 
     public function __construct(User $user)
     {
@@ -97,6 +98,16 @@ class SearchUser
         $this->role = $role;
     }
 
+    public function getPermissionAffectation(): ?string
+    {
+        return $this->permissionAffectation;
+    }
+
+    public function setPermissionAffectation(?string $permissionAffectation): void
+    {
+        $this->permissionAffectation = $permissionAffectation;
+    }
+
     public function getUrlParams(): array
     {
         $params = [];
@@ -144,6 +155,9 @@ class SearchUser
         }
         if ($this->role) {
             $filters['Rôle'] = array_search($this->role, User::ROLES);
+        }
+        if ($this->permissionAffectation) {
+            $filters['Droits d\'affectation'] = $this->permissionAffectation;
         }
 
         return $filters;

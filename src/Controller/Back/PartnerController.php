@@ -20,6 +20,7 @@ use App\Repository\JobEventRepository;
 use App\Repository\PartnerRepository;
 use App\Repository\TerritoryRepository;
 use App\Repository\UserRepository;
+use App\Security\Voter\PartnerVoter;
 use App\Service\Mailer\NotificationMail;
 use App\Service\Mailer\NotificationMailerRegistry;
 use App\Service\Mailer\NotificationMailerType;
@@ -28,6 +29,7 @@ use App\Service\Signalement\VisiteNotifier;
 use App\Validator\EmailFormatValidator;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Symfony\Component\Form\FormError;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\Request;
@@ -347,6 +349,7 @@ class PartnerController extends AbstractController
         UserFactory $userFactory,
         PartnerRepository $partnerRepository,
         ValidatorInterface $validator,
+        ParameterBagInterface $parameterBag,
     ): Response {
         $this->denyAccessUnlessGranted('USER_CREATE', $partner);
         $data = $request->get('user_create');
@@ -358,6 +361,13 @@ class PartnerController extends AbstractController
         if (!$this->canAttributeRole($data['roles'])) {
             return $this->redirectToRoute('back_partner_view', ['id' => $partner->getId()], Response::HTTP_SEE_OTHER);
         }
+        if (!$parameterBag->get('feature_permission_affectation') || !$this->isGranted(PartnerVoter::ASSIGN_PERMISSION_AFFECTATION, $partner) || !isset($data['permissions'])) {
+            $data['permissions'] = [];
+        } else {
+            // Only take accepted posted values (controlled with concat of '' and PERMISSIONS in User entity)
+            $data['permissions'] = array_intersect($data['permissions'] ?? [], array_merge([''], array_keys(User::PERMISSIONS)));
+        }
+
         if (!EmailFormatValidator::validate($data['email'])) {
             $this->addFlash('error', 'L\'adresse e-mail n\'est pas valide.');
 
@@ -400,6 +410,7 @@ class PartnerController extends AbstractController
         UserRepository $userRepository,
         PartnerRepository $partnerRepository,
         ValidatorInterface $validator,
+        ParameterBagInterface $parameterBag,
     ): Response {
         $userId = $request->request->get('user_id');
         $user = $userManager->find((int) $userId);
@@ -441,15 +452,25 @@ class PartnerController extends AbstractController
                 return $this->redirectToRoute('back_partner_view', ['id' => $user->getPartner()->getId()], Response::HTTP_SEE_OTHER);
             }
         }
+
+        $updateData = [
+            'nom' => $data['nom'],
+            'prenom' => $data['prenom'],
+            'roles' => $data['roles'],
+            'email' => $data['email'],
+            'isMailingActive' => $data['isMailingActive'],
+            'permissions' => $data['permissions'] ?? [],
+        ];
+        if (!$parameterBag->get('feature_permission_affectation') || !$this->isGranted(PartnerVoter::ASSIGN_PERMISSION_AFFECTATION, $user->getPartner())) {
+            unset($updateData['permissions']);
+        } else {
+            // Only take accepted posted values (controlled with concat of '' and PERMISSIONS in User entity)
+            $updateData['permissions'] = array_intersect($updateData['permissions'], array_merge([''], array_keys(User::PERMISSIONS)));
+        }
+
         $user = $userManager->updateUserFromData(
             user: $user,
-            data: [
-                'nom' => $data['nom'],
-                'prenom' => $data['prenom'],
-                'roles' => $data['roles'],
-                'email' => $data['email'],
-                'isMailingActive' => $data['isMailingActive'],
-            ],
+            data: $updateData,
             save: false
         );
 
@@ -461,6 +482,11 @@ class PartnerController extends AbstractController
             $userManager->save($user);
             $message = 'L\'utilisateur a bien été modifié.';
             $this->addFlash('success', $message);
+        }
+
+        $redirect_to = $request->request->get('redirect_to');
+        if (!empty($redirect_to)) {
+            return $this->redirect($redirect_to, Response::HTTP_SEE_OTHER);
         }
 
         return $this->redirectToRoute('back_partner_view', ['id' => $user->getPartner()->getId()], Response::HTTP_SEE_OTHER);

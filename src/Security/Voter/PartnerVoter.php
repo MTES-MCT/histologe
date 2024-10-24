@@ -5,6 +5,7 @@ namespace App\Security\Voter;
 use App\Entity\Partner;
 use App\Entity\User;
 use Symfony\Bundle\SecurityBundle\Security;
+use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Authorization\Voter\Voter;
 use Symfony\Component\Security\Core\User\UserInterface;
@@ -15,14 +16,17 @@ class PartnerVoter extends Voter
     public const EDIT = 'PARTNER_EDIT';
     public const DELETE = 'PARTNER_DELETE';
     public const USER_CREATE = 'USER_CREATE';
+    public const ASSIGN_PERMISSION_AFFECTATION = 'ASSIGN_PERMISSION_AFFECTATION';
 
-    public function __construct(private Security $security)
-    {
+    public function __construct(
+        private Security $security,
+        private ParameterBagInterface $parameterBag,
+    ) {
     }
 
     protected function supports(string $attribute, $subject): bool
     {
-        return \in_array($attribute, [self::CREATE, self::EDIT, self::DELETE, self::USER_CREATE]) && ($subject instanceof Partner);
+        return \in_array($attribute, [self::CREATE, self::EDIT, self::DELETE, self::USER_CREATE, self::ASSIGN_PERMISSION_AFFECTATION]) && ($subject instanceof Partner);
     }
 
     protected function voteOnAttribute(string $attribute, $subject, TokenInterface $token): bool
@@ -40,6 +44,7 @@ class PartnerVoter extends Voter
             self::EDIT => $this->canEdit($subject, $user),
             self::DELETE => $this->canDelete($subject, $user),
             self::USER_CREATE => $this->canCreateUser($subject, $user),
+            self::ASSIGN_PERMISSION_AFFECTATION => $this->canAssignPermissionAffectation($subject, $user),
             default => false,
         };
     }
@@ -61,6 +66,18 @@ class PartnerVoter extends Voter
     private function canCreateUser(Partner $partner, User $user): bool
     {
         return $this->canManage($partner, $user);
+    }
+
+    private function canAssignPermissionAffectation(Partner $partner, User $user): bool
+    {
+        if (!$this->parameterBag->get('feature_permission_affectation') || !$user->getTerritory()) {
+            return false;
+        }
+        if ($this->security->isGranted('ROLE_ADMIN_TERRITORY') && $user->getTerritory() === $partner->getTerritory()) {
+            return true;
+        }
+
+        return false;
     }
 
     private function canManage(Partner $partner, User $user): bool

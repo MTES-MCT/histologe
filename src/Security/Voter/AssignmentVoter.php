@@ -5,6 +5,7 @@ namespace App\Security\Voter;
 use App\Entity\Affectation;
 use App\Entity\Signalement;
 use App\Entity\User;
+use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Authorization\Voter\Voter;
 use Symfony\Component\Security\Core\User\UserInterface;
@@ -15,6 +16,11 @@ class AssignmentVoter extends Voter
     public const ANSWER = 'ASSIGN_ANSWER';
     public const CLOSE = 'ASSIGN_CLOSE';
     public const REOPEN = 'ASSIGN_REOPEN';
+
+    public function __construct(
+        private ParameterBagInterface $parameterBag,
+    ) {
+    }
 
     protected function supports(string $attribute, $subject): bool
     {
@@ -41,7 +47,12 @@ class AssignmentVoter extends Voter
 
     private function canToggle(Signalement $signalement, User $user)
     {
-        return ($user->isSuperAdmin() || $user->isTerritoryAdmin()) && Signalement::STATUS_ACTIVE === $signalement->getStatut();
+        return (
+            $user->isSuperAdmin()
+            || $user->isTerritoryAdmin()
+            || ($this->parameterBag->get('feature_permission_affectation') && $user->hasPermissionAffectation())
+        )
+            && Signalement::STATUS_ACTIVE === $signalement->getStatut();
     }
 
     private function canAnswer(Affectation $assignment, User $user): bool

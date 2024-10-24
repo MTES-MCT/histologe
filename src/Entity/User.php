@@ -43,6 +43,8 @@ class User implements UserInterface, EntityHistoryInterface, PasswordAuthenticat
     public const ROLE_ADMIN_TERRITORY = self::ROLES['Resp. Territoire'];
     public const ROLE_ADMIN = self::ROLES['Super Admin'];
 
+    public const PERMISSION_AFFECTATION = self::PERMISSIONS['Affectation'];
+
     public const SUFFIXE_ARCHIVED = '.archived@';
     public const ANONYMIZED_MAIL = 'anonyme@';
     public const ANONYMIZED_PRENOM = 'Utilisateur';
@@ -54,6 +56,10 @@ class User implements UserInterface, EntityHistoryInterface, PasswordAuthenticat
         'Admin. partenaire' => 'ROLE_ADMIN_PARTNER',
         'Resp. Territoire' => 'ROLE_ADMIN_TERRITORY',
         'Super Admin' => 'ROLE_ADMIN',
+    ];
+
+    public const PERMISSIONS = [
+        'Affectation' => 'PERMISSION_AFFECTATION',
     ];
 
     #[ORM\Id]
@@ -72,6 +78,9 @@ class User implements UserInterface, EntityHistoryInterface, PasswordAuthenticat
 
     #[ORM\Column(type: 'json')]
     private $roles = [];
+
+    #[ORM\Column(type: 'json')]
+    private $permissions = [];
 
     #[ORM\Column(type: 'string', nullable: true)]
     #[Assert\NotBlank(groups: ['password'])]
@@ -423,7 +432,7 @@ class User implements UserInterface, EntityHistoryInterface, PasswordAuthenticat
     public function getRoleLabel(): string
     {
         $roleLabel = array_flip(self::ROLES);
-        $role = array_shift($this->roles);
+        $role = $this->roles[0];
 
         return $roleLabel[$role];
     }
@@ -458,6 +467,42 @@ class User implements UserInterface, EntityHistoryInterface, PasswordAuthenticat
     public function isUsager(): bool
     {
         return \in_array(self::ROLE_USAGER, $this->getRoles());
+    }
+
+    public function getPermissions(): ?array
+    {
+        $permissions = $this->permissions;
+
+        if (empty($permissions)) {
+            return null;
+        }
+
+        return array_unique($permissions);
+    }
+
+    public function getPermissionLabels(): string
+    {
+        if (empty($this->permissions)) {
+            return '';
+        }
+
+        return implode(', ', $this->permissions);
+    }
+
+    public function hasPermissionAffectation(): bool
+    {
+        if (empty($this->getPermissions())) {
+            return false;
+        }
+
+        return in_array('Affectation', $this->getPermissions());
+    }
+
+    public function setPermissions(array $permissions): self
+    {
+        $this->permissions = $permissions;
+
+        return $this;
     }
 
     public function getTerritory(): ?Territory
