@@ -66,8 +66,7 @@ final class Version20241018122213 extends AbstractMigration
 
     public function down(Schema $schema): void
     {
-        $this->addSql('ALTER TABLE history_entry DROP signalement_id');
         $this->addSql('ALTER TABLE history_entry DROP FOREIGN KEY FK_7299951765C5E57E');
-        $this->addSql('DROP INDEX IDX_7299951765C5E57E ON history_entry');
+        $this->addSql('ALTER TABLE history_entry DROP signalement_id');
     }
 }
