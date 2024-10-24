@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Tests\Security;
+namespace App\Tests\Unit\Security;
 
 use App\Entity\ApiUserToken;
 use App\Entity\User;

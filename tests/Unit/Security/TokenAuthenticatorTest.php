@@ -2,8 +2,6 @@
 
 namespace App\Tests\Unit\Security;
 
-namespace App\Tests\Security;
-
 use App\Entity\ApiUserToken;
 use App\Entity\User;
 use App\Repository\ApiUserTokenRepository;
@@ -19,13 +17,12 @@ use Symfony\Component\Security\Http\Authenticator\Passport\SelfValidatingPasspor
 
 class TokenAuthenticatorTest extends TestCase
 {
-    private ApiUserTokenRepository $apiUserTokenRepository;
     private AuthenticatorInterface $authenticator;
 
     protected function setUp(): void
     {
-        $this->apiUserTokenRepository = $this->createMock(ApiUserTokenRepository::class);
-        $this->authenticator = new TokenAuthenticator($this->apiUserTokenRepository);
+        $apiUserTokenRepository = $this->createMock(ApiUserTokenRepository::class);
+        $this->authenticator = new TokenAuthenticator($apiUserTokenRepository);
     }
 
     public function testSupports(): void

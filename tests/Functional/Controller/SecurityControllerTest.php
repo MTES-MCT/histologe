@@ -28,7 +28,7 @@ class SecurityControllerTest extends WebTestCase
     {
         yield 'Success login with ROLE_API_USER' => [
             'status' => Response::HTTP_OK,
-            'email' => 'admin-01@histologe.fr',
+            'email' => 'api-01@histologe.fr',
             'password' => 'histologe',
         ];
 

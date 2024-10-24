@@ -11,7 +11,7 @@ class ResourceControllerTest extends WebTestCase
     {
         $client = static::createClient();
         $user = self::getContainer()->get('doctrine')->getRepository(User::class)->findOneBy([
-            'email' => 'admin-01@histologe.fr',
+            'email' => 'api-01@histologe.fr',
         ]);
         $client->loginUser($user, 'api');
         $client->request('GET', '/api/resources');
