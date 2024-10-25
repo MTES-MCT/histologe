@@ -73,17 +73,8 @@ class JsonLoginAuthenticator extends AbstractAuthenticator
     {
         /** @var User $user */
         $user = $token->getUser();
-        $apiUserToken = $user->getApiUserToken();
-
-        if (null === $apiUserToken) {
-            $apiUserToken = (new ApiUserToken())->setOwnedBy($user);
-            $user->setApiUserToken($apiUserToken);
-        }
-
-        if (!$apiUserToken->isValid()) {
-            $user->setApiUserToken($apiUserToken->generate());
-        }
-
+        $apiUserToken = new ApiUserToken();
+        $user->addApiUserToken($apiUserToken);
         $user->setLastLoginAt(new \DateTimeImmutable());
         $this->userRepository->save($user, true);
 

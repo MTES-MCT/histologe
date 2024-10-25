@@ -9,14 +9,16 @@ use Random\RandomException;
 #[ORM\Entity(repositoryClass: ApiUserTokenRepository::class)]
 class ApiUserToken
 {
-    public const string EXPIRATION_TIME = '+2 minutes'; // for testing to update later
+    // Constant values to update later
+    public const string EXPIRATION_TIME = '+2 minutes';
+    public const string CLEAN_EXPIRATION_PERIOD = '-3 minutes';
 
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
     private ?int $id = null;
 
-    #[ORM\OneToOne(inversedBy: 'apiUserToken', targetEntity: User::class, cascade: ['persist'])]
+    #[ORM\ManyToOne(targetEntity: User::class, inversedBy: 'apiUserTokens')]
     #[ORM\JoinColumn(nullable: false)]
     private ?User $ownedBy = null;
 
@@ -44,7 +46,7 @@ class ApiUserToken
         return $this->ownedBy;
     }
 
-    public function setOwnedBy(User $ownedBy): static
+    public function setOwnedBy(?User $ownedBy): static
     {
         $this->ownedBy = $ownedBy;
 

@@ -163,8 +163,8 @@ class User implements UserInterface, EntityHistoryInterface, PasswordAuthenticat
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $tempEmail = null;
 
-    #[ORM\OneToOne(mappedBy: 'ownedBy', targetEntity: ApiUserToken::class, cascade: ['persist'])]
-    private ?ApiUserToken $apiUserToken = null;
+    #[ORM\OneToMany(mappedBy: 'ownedBy', targetEntity: ApiUserToken::class, cascade: ['persist'])]
+    private Collection $apiUserTokens;
 
     public function __construct()
     {
@@ -175,6 +175,7 @@ class User implements UserInterface, EntityHistoryInterface, PasswordAuthenticat
         $this->files = new ArrayCollection();
         $this->signalementUsagerDeclarants = new ArrayCollection();
         $this->signalementUsagerOccupants = new ArrayCollection();
+        $this->apiUserTokens = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -678,17 +679,29 @@ class User implements UserInterface, EntityHistoryInterface, PasswordAuthenticat
         return [HistoryEntryEvent::CREATE, HistoryEntryEvent::UPDATE, HistoryEntryEvent::DELETE];
     }
 
-    public function getApiUserToken(): ?ApiUserToken
+    public function getApiUserTokens(): Collection
     {
-        return $this->apiUserToken;
+        return $this->apiUserTokens;
     }
 
-    public function setApiUserToken(?ApiUserToken $apiUserToken): self
+    public function addApiUserToken(ApiUserToken $apiUserToken): self
     {
-        if ($this->apiUserToken) {
+        if (!$this->apiUserTokens->contains($apiUserToken)) {
+            $this->apiUserTokens[] = $apiUserToken;
             $apiUserToken->setOwnedBy($this);
         }
-        $this->apiUserToken = $apiUserToken;
+
+        return $this;
+    }
+
+    public function removeApiUserToken(ApiUserToken $apiUserToken): self
+    {
+        if ($this->apiUserTokens->removeElement($apiUserToken)) {
+            // set the owning side to null (unless already changed)
+            if ($apiUserToken->getOwnedBy() === $this) {
+                $apiUserToken->setOwnedBy(null);
+            }
+        }
 
         return $this;
     }

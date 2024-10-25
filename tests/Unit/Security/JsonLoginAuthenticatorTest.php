@@ -6,8 +6,8 @@ use App\Entity\ApiUserToken;
 use App\Entity\User;
 use App\Repository\UserRepository;
 use App\Security\JsonLoginAuthenticator;
-use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
+use Random\RandomException;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
@@ -19,13 +19,12 @@ use Symfony\Component\Security\Http\Authenticator\Passport\Passport;
 
 class JsonLoginAuthenticatorTest extends TestCase
 {
-    private UserRepository|MockObject $userRepository;
     private AuthenticatorInterface $authenticator;
 
     protected function setUp(): void
     {
-        $this->userRepository = $this->createMock(UserRepository::class);
-        $this->authenticator = new JsonLoginAuthenticator($this->userRepository);
+        $userRepository = $this->createMock(UserRepository::class);
+        $this->authenticator = new JsonLoginAuthenticator($userRepository);
     }
 
     public function testSupports()
@@ -52,6 +51,9 @@ class JsonLoginAuthenticatorTest extends TestCase
         $this->assertInstanceOf(PasswordCredentials::class, $passport->getBadge(PasswordCredentials::class));
     }
 
+    /**
+     * @throws RandomException
+     */
     public function testOnAuthenticationSuccess()
     {
         $user = new User();
@@ -60,10 +62,7 @@ class JsonLoginAuthenticatorTest extends TestCase
         $user->setStatut(User::STATUS_ACTIVE);
 
         $apiUserToken = new ApiUserToken();
-        $apiUserToken->setToken('valid_token');
-        $apiUserToken->setExpiresAt((new \DateTimeImmutable())->modify('+1 day'));
-        $user->setApiUserToken($apiUserToken);
-
+        $user->addApiUserToken($apiUserToken);
         $token = $this->createMock(TokenInterface::class);
         $token->method('getUser')
             ->willReturn($user);
@@ -73,7 +72,7 @@ class JsonLoginAuthenticatorTest extends TestCase
         $response = $this->authenticator->onAuthenticationSuccess($request, $token, 'api');
         $data = json_decode($response->getContent(), true);
 
-        $this->assertSame('valid_token', $data['token']);
+        $this->assertEquals(64, strlen($data['token']));
         $this->assertSame($apiUserToken->getExpiresAt()->format(\DATE_ATOM), $data['expires_at']);
     }
 
