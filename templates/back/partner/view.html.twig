@@ -209,7 +209,7 @@
                                                 data-userprenom="{{ user.prenom }}"
                                                 data-userrole="{{ user.roles[0] }}"
                                                 {% if platform.feature_permission_affectation and is_granted('ASSIGN_PERMISSION_AFFECTATION', partner) %}
-                                                data-userpermissions="{% for permission in user.permissions %}{{ permission }},{% endfor %}"
+                                                data-userpermissionaffectation="{{ user.hasPermissionAffectation() ? '1' : '0' }}"
                                                 {% endif %}
                                                 data-userismailingactive="{{ user.isMailingActive }}"
                                                 data-userid="{{ user.id }}"

@@ -123,7 +123,9 @@
                                             data-usernom="{{ user.nom }}"
                                             data-userprenom="{{ user.prenom }}"
                                             data-userrole="{{ user.roles[0] }}"
-                                            data-userpermissions="{% for permission in user.permissions %}{{ permission }},{% endfor %}"
+                                            {% if platform.feature_permission_affectation %}
+                                            data-userpermissionaffectation="{{ user.hasPermissionAffectation() ? '1' : '0' }}"
+                                            {% endif %}
                                             data-userismailingactive="{{ user.isMailingActive }}"
                                             data-userid="{{ user.id }}"
                                             data-useremail="{{ user.email }}">

@@ -55,8 +55,8 @@ class UserManager extends AbstractManager
         if (\array_key_exists('statut', $data)) {
             $user->setStatut($data['statut']);
         }
-        if (\array_key_exists('permissions', $data)) {
-            $user->setPermissions($data['permissions']);
+        if (\array_key_exists('hasPermissionAffectation', $data)) {
+            $user->setHasPermissionAffectation($data['hasPermissionAffectation']);
         }
 
         if ($save) {

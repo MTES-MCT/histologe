@@ -40,6 +40,9 @@ function histoUpdateValueFromData (elementName, elementData, target) {
 function histoUpdatePermissionsFromRole(editOrCreate) {
   const elementTogglePermissionAffectation = document.querySelector('#user_'+editOrCreate+'_permission_affectation_toggle')
   const elementTextPermissionAffectation = document.querySelector('#user_'+editOrCreate+'_permission_affectation_text')
+  if (!elementTogglePermissionAffectation || !elementTextPermissionAffectation) {
+    return
+  }
   const rolesSelect = document.querySelector('#user_'+editOrCreate+'_roles')
   if (rolesSelect.value === 'ROLE_ADMIN' || rolesSelect.value === 'ROLE_ADMIN_TERRITORY') {
     elementTogglePermissionAffectation.classList.add('fr-hidden')
@@ -121,7 +124,7 @@ document.querySelectorAll('.btn-edit-partner-user').forEach(swbtn => {
     
     const elementPermissionAffectation = document.querySelector('#user_edit_permission_affectation')
     if (elementPermissionAffectation) {
-      elementPermissionAffectation.checked = target.getAttribute('data-userpermissions').indexOf('Affectation') > -1
+      elementPermissionAffectation.checked = target.getAttribute('data-userpermissionaffectation') === '1'
     }
 
     const userRole = target.getAttribute('data-userrole')

@@ -71,7 +71,7 @@ class UserManagerTest extends KernelTestCase
                 'nom' => 'Doe',
                 'email' => 'john.doe@example.com',
                 'isMailingActive' => false,
-                'permissions' => [],
+                'hasPermissionAffectation' => false,
             ]
         );
 
@@ -80,8 +80,7 @@ class UserManagerTest extends KernelTestCase
         $this->assertEquals($user->getIsMailingActive(), false);
         $this->assertEquals($user->getPrenom(), 'John');
         $this->assertEquals($user->getStatut(), User::STATUS_INACTIVE);
-        $this->assertNull($user->getPermissions());
-        $this->assertEquals($user->getPermissionLabels(), '');
+        $this->assertFalse($user->hasPermissionAffectation());
         $this->assertEmailCount(1);
     }
 
@@ -99,14 +98,13 @@ class UserManagerTest extends KernelTestCase
                 'nom' => 'Pantani',
                 'email' => $user->getEmail(),
                 'isMailingActive' => $user->getIsMailingActive(),
-                'permissions' => ['Affectation'],
+                'hasPermissionAffectation' => true,
             ]
         );
 
         $this->assertInstanceOf(User::class, $user);
         $this->assertEquals($user->getNom(), 'Pantani');
-        $this->assertEquals($user->getPermissions(), ['Affectation']);
-        $this->assertEquals($user->getPermissionLabels(), 'Affectation');
+        $this->assertTrue($user->hasPermissionAffectation());
         $this->assertEmailCount(0);
     }
 
@@ -130,6 +128,7 @@ class UserManagerTest extends KernelTestCase
         $this->assertInstanceOf(User::class, $user);
         $this->assertEquals($user->getNom(), 'Lennon');
         $this->assertEquals($user->getEmail(), 'john.lennon@example.com');
+        $this->assertFalse($user->hasPermissionAffectation());
         $this->assertEmailCount(1);
     }
 

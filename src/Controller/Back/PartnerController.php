@@ -360,10 +360,10 @@ class PartnerController extends AbstractController
             return $this->redirectToRoute('back_partner_view', ['id' => $partner->getId()], Response::HTTP_SEE_OTHER);
         }
         if (!$parameterBag->get('feature_permission_affectation') || !$this->isGranted(PartnerVoter::ASSIGN_PERMISSION_AFFECTATION, $partner) || !isset($data['permissions'])) {
-            $data['permissions'] = [];
+            $data['hasPermissionAffectation'] = false;
         } else {
             // Only take accepted posted values (controlled with concat of '' and PERMISSIONS in User entity)
-            $data['permissions'] = array_intersect($data['permissions'] ?? [], array_merge([''], array_keys(User::PERMISSIONS)));
+            $data['hasPermissionAffectation'] = $data['hasPermissionAffectation'] ?? false;
         }
 
         if (!EmailFormatValidator::validate($data['email'])) {
@@ -457,13 +457,13 @@ class PartnerController extends AbstractController
             'roles' => $data['roles'],
             'email' => $data['email'],
             'isMailingActive' => $data['isMailingActive'],
-            'permissions' => $data['permissions'] ?? [],
+            'hasPermissionAffectation' => $data['hasPermissionAffectation'] ?? false,
         ];
         if (!$parameterBag->get('feature_permission_affectation') || !$this->isGranted(PartnerVoter::ASSIGN_PERMISSION_AFFECTATION, $user->getPartner())) {
-            unset($updateData['permissions']);
+            unset($updateData['hasPermissionAffectation']);
         } else {
             // Only take accepted posted values (controlled with concat of '' and PERMISSIONS in User entity)
-            $updateData['permissions'] = array_intersect($updateData['permissions'], array_merge([''], array_keys(User::PERMISSIONS)));
+            $updateData['hasPermissionAffectation'] = $updateData['hasPermissionAffectation'] ?? false;
         }
 
         $user = $userManager->updateUserFromData(
