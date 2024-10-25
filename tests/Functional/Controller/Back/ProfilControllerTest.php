@@ -44,10 +44,6 @@ class ProfilControllerTest extends WebTestCase
 
         $this->user = $this->userRepository->findOneBy(['email' => 'admin-01@histologe.fr']);
         $this->client->loginUser($this->user);
-        $featureProfilEditionEnable = static::getContainer()->getParameter('feature_profil_edition_enabled');
-        if (!$featureProfilEditionEnable) {
-            $this->markTestSkipped('La fonctionnalité "feature_profil_edition_enabled" est désactivée.');
-        }
     }
 
     public function testIndex(): void

@@ -8,6 +8,7 @@ use App\Manager\SignalementManager;
 use App\Service\Signalement\Export\SignalementExportLoader;
 use App\Tests\UserHelper;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
 class SignalementExportLoaderTest extends TestCase
@@ -16,6 +17,7 @@ class SignalementExportLoaderTest extends TestCase
 
     public function testLoad()
     {
+        /** @var MockObject|SignalementManager */
         $signalementManager = $this->createMock(SignalementManager::class);
         $filters = [];
         $user = $this->getUserFromRole(User::ROLE_ADMIN);
@@ -30,7 +32,7 @@ class SignalementExportLoaderTest extends TestCase
             ->with($user, $filters)
             ->willReturn($this->getSignalementExportGenerator($signalementExports));
 
-        $loader = new SignalementExportLoader($signalementManager, 0);
+        $loader = new SignalementExportLoader($signalementManager);
         $spreadsheet = $loader->load($user, $filters);
         $this->assertInstanceOf(Spreadsheet::class, $spreadsheet);
         $this->assertEquals('Référence', $spreadsheet->getActiveSheet()->getCell('A1')->getValue());
