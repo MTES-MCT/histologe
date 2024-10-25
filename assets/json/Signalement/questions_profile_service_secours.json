@@ -14,7 +14,7 @@
             "show": "formStore.data.signalement_concerne_profil_detail_tiers === 'service_secours'"
           },
           "validate": {
-            "message": "Veuillez renseigner le nom de l'organisme."
+            "message": "Veuillez renseigner le nom de votre organisme."
           },
           "accessibility": {
             "name": "organizationName",
@@ -27,7 +27,7 @@
           "label": "Nom de famille",
           "slug": "vos_coordonnees_tiers_nom",
           "validate": {
-            "message": "Veuillez renseigner le nom de famille.",
+            "message": "Veuillez renseigner votre nom de famille.",
             "maxLength": 50
           },
           "accessibility": {
@@ -41,7 +41,7 @@
           "label": "Prénom",
           "slug": "vos_coordonnees_tiers_prenom",
           "validate": {
-            "message": "Veuillez renseigner le prénom.",
+            "message": "Veuillez renseigner votre prénom.",
             "maxLength": 50
           },
           "accessibility": {
@@ -55,7 +55,7 @@
           "slug": "vos_coordonnees_tiers_email",
           "description": "Format attendu : nom@domaine.fr",
           "validate": {
-            "message": "Veuillez renseigner une adresse e-mail.",
+            "message": "Veuillez renseigner votre adresse e-mail.",
             "patternMessage": "Veuillez renseigner une adresse e-mail valide."
           },
           "accessibility": {
@@ -468,7 +468,7 @@
           },
           "description": "Format attendu : 15 caractères maximum",
           "validate": {
-            "message": "Veuillez renseigner un autre type de logement.",
+            "message": "Veuillez préciser le type de logement.",
             "maxLength": 15
           }
         },

@@ -620,7 +620,10 @@
                 {
                   "type": "SignalementFormTextfield",
                   "label": "{{dictionaryStore::desordres_batiment_nuisibles_autres_details_type_nuisibles}}",
-                  "slug": "desordres_batiment_nuisibles_autres_details_type_nuisibles"
+                  "slug": "desordres_batiment_nuisibles_autres_details_type_nuisibles",
+                  "validate": {
+                    "message": "Veuillez préciser le type de nuisible."
+                  }
                 }
             ]
           }
@@ -707,7 +710,10 @@
                       "label": "Non",
                       "value": "non"
                     }
-                  ]
+                  ],
+                  "validate": {
+                    "message": "Veuillez indiquer si le plancher menace de s'effondrer quand on marche dessus."
+                  }
                 },
                 {
                   "type": "SignalementFormOnlyChoice",
@@ -725,7 +731,10 @@
                       "label": "Non",
                       "value": "non"
                     }
-                  ]
+                  ],
+                  "validate": {
+                    "message": "Veuillez indiquer si le plancher est abîmé et bouge par endroit."
+                  }
                 }
             ]
           }
@@ -777,7 +786,10 @@
                       "label": "Non",
                       "value": "non"
                     }
-                  ]
+                  ],
+                  "validate": {
+                    "message": "Veuillez indiquer si l'escalier menace de s'effondrer."
+                  }
                 },
                 {
                   "type": "SignalementFormOnlyChoice",
@@ -795,7 +807,10 @@
                       "label": "Non",
                       "value": "non"
                     }
-                  ]
+                  ],
+                  "validate": {
+                    "message": "Veuillez indiquer si l'escalier ou les rambardes bougent mais peuvent encore être utilisées sans danger."
+                  }
                 }
             ]
           }
@@ -835,7 +850,10 @@
                       "label": "Je  ne sais pas",
                       "value": "nsp"
                     }
-                  ]
+                  ],
+                  "validate": {
+                    "message": "Veuillez indiquer si le mur fissuré a l'air d'être un mur porteur."
+                  }
                 }
             ]
           }
@@ -1438,6 +1456,9 @@
           "customCss": "signalement-form-roomlist-under-checkbox",
           "conditional": {
             "show": "formStore.data.desordres_logement_aeration_aucune_aeration === 1 && formStore.data.composition_logement_piece_unique === 'plusieurs_pieces'" 
+          },
+          "validate": {
+            "message": "Veuillez sélectionner la pièce."
           }
         },
         {
@@ -1471,7 +1492,10 @@
                     "label": "Non",
                     "value": "non"
                   }
-                ]
+                ],
+                "validate": {
+                  "message": "Veuillez indiquer si la ventilation a été nettoyée."
+                }
               },
               {
                 "type": "SignalementFormInfo",
@@ -1488,6 +1512,9 @@
                 "customCss": "signalement-form-roomlist-under-checkbox",
                 "conditional": {
                   "show": "formStore.data.desordres_logement_aeration_ventilation_defectueuse_details_nettoyage === 'oui' && formStore.data.composition_logement_piece_unique === 'plusieurs_pieces'" 
+                },
+                "validate": {
+                  "message": "Veuillez sélectionner la pièce."
                 }
               }
             ]
@@ -1555,6 +1582,9 @@
               "value": "nsp"
             }
           ],
+          "validate": {
+            "message": "Veuillez indiquer le type de chauffage."
+          },
           "accessibility": {
             "focus": true
           }
@@ -1566,6 +1596,9 @@
           "customCss": "signalement-form-roomlist-under-checkbox",
           "conditional": {
             "show": "formStore.data.desordres_logement_chauffage_type === 'aucun' && formStore.data.composition_logement_piece_unique === 'plusieurs_pieces'" 
+          },
+          "validate": {
+            "message": "Veuillez sélectionner la pièce."
           }
         },
         {
@@ -1593,6 +1626,9 @@
                 "customCss": "signalement-form-roomlist-under-checkbox",
                 "conditional": {
                   "show": "formStore.data.desordres_logement_chauffage_details_fenetres_permeables === 1 && formStore.data.composition_logement_piece_unique === 'plusieurs_pieces'" 
+                },
+                "validate": {
+                  "message": "Veuillez sélectionner la pièce."
                 }
               },
               {
@@ -1610,6 +1646,9 @@
                 "customCss": "signalement-form-roomlist-under-checkbox",
                 "conditional": {
                   "show": "formStore.data.desordres_logement_chauffage_details_difficultes_chauffage === 1 && formStore.data.composition_logement_piece_unique === 'plusieurs_pieces'" 
+                },
+                "validate": {
+                  "message": "Veuillez sélectionner la pièce."
                 }
               },
               {
@@ -1627,6 +1666,9 @@
                 "customCss": "signalement-form-roomlist-under-checkbox",
                 "conditional": {
                   "show": "formStore.data.desordres_logement_chauffage_details_chauffage_KO === 1 && formStore.data.composition_logement_piece_unique === 'plusieurs_pieces'" 
+                },
+                "validate": {
+                  "message": "Veuillez sélectionner la pièce."
                 }
               },
               {
@@ -1667,7 +1709,10 @@
                     "label": "{{dictionaryStore::before2023}}",
                     "value": "before2023"
                   }
-                ]
+                ],
+                "validate": {
+                  "message": "Veuillez indiquer quand le DPE a été réalisé."
+                }
               },
               {
                 "type": "SignalementFormCounter",
@@ -1679,6 +1724,7 @@
                 },
                 "validate": {
                   "pattern": "^[0-9]*$",
+                  "patternMessage": "Veuillez saisir une consommation en énergie valide.",
                   "required": false
                 },
                 "defaultValue": 1
@@ -1693,6 +1739,7 @@
                 },
                 "validate": {
                   "pattern": "^[0-9]*$",
+                  "patternMessage": "Veuillez renseigner une superficie valide.",
                   "required": false
                 }
               },
@@ -1707,6 +1754,7 @@
                 "defaultValue": 1,
                 "validate": {
                   "pattern": "^[0-9]*$",
+                  "patternMessage": "Veuillez renseigner une consommation en énergie valide.",
                   "required": false
                 }
               },
@@ -1798,7 +1846,10 @@
                     "label": "Non",
                     "value": "non"
                   }
-                ]
+                ],
+                "validate": {
+                  "message": "Veuillez indiquer s'il y a eu une fuite ou un dégât des eaux dans la pièce."
+                }
               },
               {
                 "type": "SignalementFormInfo",
@@ -1821,7 +1872,10 @@
                     "label": "Non",
                     "value": "non"
                   }
-                ]
+                ],
+                "validate": {
+                  "message": "Veuillez indiquer s'il y a une machine à laver, un sèche-linge ou un lave vaisselle dans cette pièce."
+                }
               },
               {
                 "type": "SignalementFormInfo",
@@ -1848,7 +1902,10 @@
                     "label": "Je ne sais pas, je n'ai pas nettoyé",
                     "value": "nsp"
                   }
-                ]
+                ],
+                "validate": {
+                  "message": "Veuillez indiquer si la moisissure revient-elle après nettoyage."
+                }
               },
               {
                 "type": "SignalementFormInfo",
@@ -1895,7 +1952,10 @@
                     "label": "Non",
                     "value": "non"
                   }
-                ]
+                ],
+                "validate": {
+                  "message": "Veuillez indiquer s'il y a eu une fuite ou un dégât des eaux dans la pièce."
+                }
               },
               {
                 "type": "SignalementFormInfo",
@@ -1918,7 +1978,10 @@
                     "label": "Non",
                     "value": "non"
                   }
-                ]
+                ],
+                "validate": {
+                  "message": "Veuillez indiquer s'il y a une machine à laver, un sèche-linge ou un lave vaisselle dans cette pièce."
+                }
               },
               {
                 "type": "SignalementFormInfo",
@@ -1945,7 +2008,10 @@
                     "label": "Je ne sais pas, je n'ai pas nettoyé",
                     "value": "nsp"
                   }
-                ]
+                ],
+                "validate": {
+                  "message": "Veuillez indiquer si la moisissure revient-elle après nettoyage."
+                }
               },
               {
                 "type": "SignalementFormInfo",
@@ -1992,7 +2058,10 @@
                     "label": "Non",
                     "value": "non"
                   }
-                ]
+                ],
+                "validate": {
+                  "message": "Veuillez indiquer s'il y a eu une fuite ou un dégât des eaux dans la pièce."
+                }
               },
               {
                 "type": "SignalementFormInfo",
@@ -2015,7 +2084,10 @@
                     "label": "Non",
                     "value": "non"
                   }
-                ]
+                ],
+                "validate": {
+                  "message": "Veuillez indiquer s'il y a une machine à laver, un sèche-linge ou un lave vaisselle dans cette pièce."
+                }
               },
               {
                 "type": "SignalementFormInfo",
@@ -2042,7 +2114,10 @@
                     "label": "Je ne sais pas, je n'ai pas nettoyé",
                     "value": "nsp"
                   }
-                ]
+                ],
+                "validate": {
+                  "message": "Veuillez indiquer si la moisissure revient après nettoyage."
+                }
               },
               {
                 "type": "SignalementFormInfo",
@@ -2121,6 +2196,9 @@
           "customCss": "signalement-form-roomlist-under-checkbox",
           "conditional": {
             "show": "formStore.data.desordres_logement_securite_sol_glissant === 1 && formStore.data.composition_logement_piece_unique === 'plusieurs_pieces'" 
+          },
+          "validate": {
+            "message": "Veuillez sélectionner la pièce."
           }
         },
         {
@@ -2138,6 +2216,9 @@
           "customCss": "signalement-form-roomlist-under-checkbox",
           "conditional": {
             "show": "formStore.data.desordres_logement_securite_sol_dangereux === 1 && formStore.data.composition_logement_piece_unique === 'plusieurs_pieces'" 
+          },
+          "validate": {
+            "message": "Veuillez sélectionner la pièce."
           }
         },
         {
@@ -2155,6 +2236,9 @@
           "customCss": "signalement-form-roomlist-under-checkbox",
           "conditional": {
             "show": "formStore.data.desordres_logement_securite_balcons === 1 && formStore.data.composition_logement_piece_unique === 'plusieurs_pieces'" 
+          },
+          "validate": {
+            "message": "Veuillez sélectionner la pièce."
           }
         },
         {
@@ -2180,6 +2264,9 @@
           "customCss": "signalement-form-roomlist-under-checkbox",
           "conditional": {
             "show": "formStore.data.desordres_logement_securite_plomb === 1 && formStore.data.composition_logement_piece_unique === 'plusieurs_pieces'" 
+          },
+          "validate": {
+            "message": "Veuillez sélectionner la pièce."
           }
         },
         {
@@ -2209,7 +2296,10 @@
                     "label": "Je ne sais pas",
                     "value": "nsp"
                   }
-                ]
+                ],
+                "validate": {
+                  "message": "Veuillez indiquer si vous avez reçu un diagnostic plomb / amiante."
+                }
               },
               {
                 "type": "SignalementFormUpload",
@@ -2356,7 +2446,10 @@
                     "label": "Non",
                     "value": "non"
                   }
-                ]
+                ],
+                "validate": {
+                  "message": "Veuillez indiquer si vous devez brancher des multi-prises les unes sur les autres."
+                }
               }
             ]
           }
@@ -2435,7 +2528,10 @@
                       "label": "Après mon emménagement",
                       "value": "after_movein"
                     }
-                  ]
+                  ],
+                  "validate": {
+                    "message": "Veuillez indiquer depuis quand les cafards ou blattes sont présents dans le logement."
+                  }
                 }
             ]
           }
@@ -2471,7 +2567,10 @@
                       "label": "Après mon emménagement",
                       "value": "after_movein"
                     }
-                  ]
+                  ],
+                  "validate": {
+                    "message": "Veuillez indiquer depuis quand les rongeurs sont présents dans le logement."
+                  }
                 }
             ]
           }
@@ -2507,7 +2606,10 @@
                     "label": "Après mon emménagement",
                     "value": "after_movein"
                   }
-                ]
+                ],
+                "validate": {
+                  "message": "Veuillez indiquer depuis quand les punaises de lit sont présentes dans le logement."
+                }
               },
               {
                 "type": "SignalementFormInfo",
@@ -2538,7 +2640,10 @@
                 {
                   "type": "SignalementFormTextfield",
                   "label": "{{dictionaryStore::desordres_logement_nuisibles_autres_details_type_nuisibles}}",
-                  "slug": "desordres_logement_nuisibles_autres_details_type_nuisibles"
+                  "slug": "desordres_logement_nuisibles_autres_details_type_nuisibles",
+                  "validate": {
+                    "message": "Veuillez préciser le type de nuisible."
+                  }
                 },
                 {
                   "type": "SignalementFormOnlyChoice",
@@ -2553,7 +2658,10 @@
                       "label": "Après mon emménagement",
                       "value": "after_movein"
                     }
-                  ]
+                  ],
+                  "validate": {
+                    "message": "Veuillez indiquer depuis quand ces nuisibles sont présents dans le logement."
+                  }
                 }
             ]
           }
@@ -2701,6 +2809,9 @@
           "customCss": "signalement-form-roomlist-under-checkbox",
           "conditional": {
             "show": "formStore.data.desordres_logement_lumiere_pas_lumiere === 1 && formStore.data.composition_logement_piece_unique === 'plusieurs_pieces'" 
+          },
+          "validate": {
+            "message": "Veuillez sélectionner la pièce."
           }
         },
         {
@@ -2718,6 +2829,9 @@
           "customCss": "signalement-form-roomlist-under-checkbox",
           "conditional": {
             "show": "formStore.data.desordres_logement_lumiere_pas_volets === 1 && formStore.data.composition_logement_piece_unique === 'plusieurs_pieces'" 
+          },
+          "validate": {
+            "message": "Veuillez sélectionner la pièce."
           }
         }
       ],

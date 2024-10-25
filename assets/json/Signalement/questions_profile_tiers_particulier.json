@@ -36,7 +36,7 @@
           "label": "Nom de famille",
           "slug": "vos_coordonnees_tiers_nom",
           "validate": {
-            "message": "Veuillez renseigner le nom de famille.",
+            "message": "Veuillez renseigner votre nom de famille.",
             "maxLength": 50
           },
           "accessibility": {
@@ -49,7 +49,7 @@
           "label": "Prénom",
           "slug": "vos_coordonnees_tiers_prenom",
           "validate": {
-            "message": "Veuillez renseigner le prénom.",
+            "message": "Veuillez renseigner votre prénom.",
             "maxLength": 50
           },
           "accessibility": {
@@ -124,7 +124,7 @@
           "label": "Nom de famille",
           "slug": "coordonnees_occupant_nom",
           "validate": {
-            "message": "Veuillez renseigner le nom de famille.",
+            "message": "Veuillez renseigner le nom de famille des occupants.",
             "maxLength": 50
           },
           "accessibility": {
@@ -138,7 +138,7 @@
           "label": "Prénom",
           "slug": "coordonnees_occupant_prenom",
           "validate": {
-            "message": "Veuillez renseigner le prénom.",
+            "message": "Veuillez renseigner le prénom des occupants.",
             "maxLength": 50
           },
           "accessibility": {
@@ -232,6 +232,7 @@
           "placeholder": "Taper le nom de l'organisme ici",
           "description": "Format attendu : Tapez le nom de votre bailleur et sélectionnez-le dans la liste.",
           "validate": {
+            "message": "Veuillez saisir et sélectionner le nom de l'organisme.",
             "maxLength": 255
           },
           "conditional": {
@@ -476,7 +477,7 @@
           },
           "description": "Format attendu : 15 caractères maximum",
           "validate": {
-            "message": "Veuillez renseigner un autre type de logement",
+            "message": "Veuillez préciser le type de logement.",
             "maxLength": 15
           }
         },
@@ -1260,6 +1261,9 @@
           "description": "Format attendu : JJ/MM/AAAA",
           "conditional": {
             "show": "formStore.data.logement_social_allocation === 'oui'"
+          },
+          "validate": {
+            "message": "Veuillez indiquer la date de naissance de l'allocataire."
           }
         },
         {
@@ -1773,6 +1777,7 @@
                 "type": "SignalementFormTextfield",
                 "label": "En quelle année le logement a-t-il été construit ?",
                 "slug": "informations_complementaires_logement_annee_construction",
+                "description": "Format attendu : Saisir l'année de construction avec 4 chiffres",
                 "placeholder": "1970",
                 "validate": {
                   "pattern": "^[0-9]{4}$",

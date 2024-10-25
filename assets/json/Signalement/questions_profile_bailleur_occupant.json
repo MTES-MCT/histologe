@@ -278,7 +278,7 @@
           },
           "description": "Format attendu : 15 caractères maximum",
           "validate": {
-            "message": "Veuillez renseigner un autre type de logement",
+            "message": "Veuillez préciser le type de votre logement.",
             "maxLength": 15
           }
         },
@@ -1010,7 +1010,7 @@
             "show": "formStore.data.logement_social_allocation === 'oui'"
           },
           "validate": {
-            "message": "Veuillez renseigner une date de naissance."
+            "message": "Veuillez renseigner votre date de naissance."
           }
         },
         {
@@ -1448,6 +1448,7 @@
                 "type": "SignalementFormTextfield",
                 "label": "En quelle année votre logement a-t-il été construit ? (facultatif)",
                 "slug": "informations_complementaires_logement_annee_construction",
+                "description": "Format attendu : Saisir l'année de construction avec 4 chiffres",
                 "placeholder": "1970",
                 "validate": {
                   "pattern": "^[0-9]{4}$",

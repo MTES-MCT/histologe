@@ -317,7 +317,7 @@
             "show": "formStore.data.signalement_concerne_profil === 'autre_logement' && formStore.data.signalement_concerne_profil_detail_tiers === 'service_secours'"
           },
           "validate": {
-            "message": "Veuillez indiquer si le logement est social"
+            "message": "Veuillez indiquer s'il s'agit d'un logement social."
           }
         },
         {
@@ -338,7 +338,7 @@
             "show": "formStore.data.signalement_concerne_profil?.length > 0  && formStore.data.signalement_concerne_profil_detail_tiers !== 'service_secours'"
           },
           "validate": {
-            "message": "Veuillez indiquer si le logement est social"
+            "message": "Veuillez indiquer s'il s'agit d'un logement social."
           }
         }
       ],
