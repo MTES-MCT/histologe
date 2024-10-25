@@ -60,9 +60,9 @@
 
     <fieldset
       :id=idSecondGroup
-      :class="[ 'fr-fieldset', isHiddenSecond ? 'fr-hidden' : '', hasErrorSecond ? 'fr-fieldset--error' : '']"
-      :aria-hidden="isHiddenSecond ? true : undefined"
-      :hidden="isHiddenSecond ? true : undefined"
+      :class="[ 'fr-fieldset', isHiddenSecond && !hasErrorSecond ? 'fr-hidden' : '', hasErrorSecond ? 'fr-fieldset--error' : '']"
+      :aria-hidden="isHiddenSecond && !hasErrorSecond ? true : undefined"
+      :hidden="isHiddenSecond && !hasErrorSecond ? true : undefined"
       :aria-labelledby="id + '-legend-second'"
       >
       <legend class="fr-fieldset__legend--regular fr-fieldset__legend fr-col-12" :id="id + '-legend-second'">
