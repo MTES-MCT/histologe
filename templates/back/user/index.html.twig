@@ -3,7 +3,7 @@
 {% block title %}Liste des utilisateurs{% endblock %}
 
 {% block content %}
-    {% include '_partials/_modal_user_edit.html.twig' %}
+    {% include '_partials/_modal_user_edit.html.twig' with { 'currentPage': 'userList' } %}
     <section class="fr-p-5v">
         {% include 'back/breadcrumb_bo.html.twig' with {
             'level2Title': 'Outils admin',

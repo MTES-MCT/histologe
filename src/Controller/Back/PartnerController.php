@@ -483,8 +483,8 @@ class PartnerController extends AbstractController
         }
 
         $redirect_to = $request->request->get('redirect_to');
-        if (!empty($redirect_to)) {
-            return $this->redirect($redirect_to, Response::HTTP_SEE_OTHER);
+        if ('userList' === $redirect_to) {
+            return $this->redirectToRoute('back_user_index', [], Response::HTTP_SEE_OTHER);
         }
 
         return $this->redirectToRoute('back_partner_view', ['id' => $user->getPartner()->getId()], Response::HTTP_SEE_OTHER);

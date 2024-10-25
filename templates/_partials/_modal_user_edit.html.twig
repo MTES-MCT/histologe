@@ -106,7 +106,7 @@
                                 {% endif %}
                             </div>
                             <input type="hidden" name="user_id" id="user_edit_userid">
-                            <input type="hidden" name="redirect_to" value="{{ app.request.requesturi }}">
+                            <input type="hidden" name="redirect_to" value="{{ currentPage }}">
                             <input type="hidden" name="_token" value="{{ csrf_token('partner_user_edit') }}">
                         </form>
                     </div>

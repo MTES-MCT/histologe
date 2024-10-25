@@ -8,7 +8,7 @@
     {% endif %}
     {% include '_partials/_modal_user_create.html.twig' %}
     {% include '_partials/_modal_user_delete.html.twig' %}
-    {% include '_partials/_modal_user_edit.html.twig' %}
+    {% include '_partials/_modal_user_edit.html.twig' with { 'currentPage': 'partnerEdit' } %}
     <section class="fr-p-5v">
         {% if is_granted('ROLE_ADMIN_TERRITORY') %}
             {% include 'back/breadcrumb_bo.html.twig' with {
