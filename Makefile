@@ -203,6 +203,9 @@ cs-fix: ## Fix source code with PHP-CS-Fixer
 es-vue-fix: ## Fix vue source code with es-lint --fix
 	@$(DOCKER_COMP) exec -it histologe_phpfpm npm run es-vue-fix
 
+es-js-fix: ## Fix vanilla js source code with es-lint --fix
+	@$(DOCKER_COMP) exec -it histologe_phpfpm npm run es-js-fix
+
 ## Tools
 tools-build: ## [Tools] Install tools (Matomo, ...) local environement
 	@bash -l -c 'make .check .tools-destroy .tools-setup tools-run'

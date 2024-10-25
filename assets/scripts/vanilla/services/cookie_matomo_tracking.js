@@ -12,10 +12,13 @@
  * en fonction de ces caractéristiques spécifiques.
  *
  */
-export function enableMatomoTracking() {
-    _paq.push(['rememberConsentGiven']);
+
+/* global _paq */
+
+export function enableMatomoTracking () {
+  _paq.push(['rememberConsentGiven'])
 }
 
-export function disableMatomoTracking() {
-    _paq.push(['forgetConsentGiven']);
+export function disableMatomoTracking () {
+  _paq.push(['forgetConsentGiven'])
 }
