@@ -46,6 +46,8 @@ class BackUserControllerTest extends WebTestCase
         yield 'Search with status 0' => [['statut' => 0], 8];
         yield 'Search with role ROLE_ADMIN' => [['role' => 'ROLE_ADMIN'], 3];
         yield 'Search with role ROLE_ADMIN and territory 13' => [['role' => 'ROLE_ADMIN', 'territory' => 13], 0];
+        yield 'Search with territory 13 and partnerType Autre' => [['territory' => 13, 'partnerType' => 'AUTRE'], 7];
+        yield 'Search with territory 13 and partnerType Ars' => [['territory' => 13, 'partnerType' => 'ARS'], 1];
     }
 
     /**
@@ -80,5 +82,7 @@ class BackUserControllerTest extends WebTestCase
         yield 'Search with status 1' => [['statut' => 1], 7];
         yield 'Search with role ROLE_USER_PARTNER' => [['role' => 'ROLE_USER_PARTNER'], 6];
         yield 'Search with role ROLE_USER_PARTNER and status 1' => [['role' => 'ROLE_USER_PARTNER', 'statut' => 1], 4];
+        yield 'Search with territory 13 and partnerType Autre' => [['territory' => 13, 'partnerType' => 'AUTRE'], 9];
+        yield 'Search with partnerType Ars' => [['partnerType' => 'ARS'], 1];
     }
 }

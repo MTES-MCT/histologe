@@ -2,24 +2,22 @@
 
 namespace App\Service;
 
+use App\Entity\Enum\PartnerType;
 use App\Entity\Territory;
 use App\Entity\User;
-use App\Service\Behaviour\SearchQueryTrait;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Symfony\Component\Validator\Constraints as Assert;
 
 class SearchUser
 {
-    use SearchQueryTrait {
-        getUrlParams as getUrlParamsBase;
-    }
     private User $user;
     #[Assert\Positive(message: 'La page doit être un nombre positif')]
     private ?int $page = 1;
     private ?string $queryUser = null;
     private ?Territory $territory = null;
     private Collection $partners;
+    private ?PartnerType $partnerType = null;
     private ?int $statut = null;
     private ?string $role = null;
     private ?string $permissionAffectation = null;
@@ -82,6 +80,16 @@ class SearchUser
         $this->partners = $partners;
     }
 
+    public function getPartnerType(): ?PartnerType
+    {
+        return $this->partnerType;
+    }
+
+    public function setPartnerType(PartnerType $partnerType): void
+    {
+        $this->partnerType = $partnerType;
+    }
+
     public function getStatut(): ?int
     {
         return $this->statut;
@@ -114,7 +122,24 @@ class SearchUser
 
     public function getUrlParams(): array
     {
-        $params = $this->getUrlParamsBase();
+        $params = [];
+        foreach (get_object_vars($this) as $key => $value) {
+            if (in_array($key, ['user', 'page'])) {
+                continue;
+            }
+            if ($value instanceof Collection) {
+                if ($value->isEmpty()) {
+                    continue;
+                }
+                $params[$key] = $value->map(fn ($partner) => $partner->getId())->toArray();
+            } elseif ('partnerType' === $key && null !== $value) {
+                $params[$key] = $value->name;
+            } elseif (is_object($value)) {
+                $params[$key] = $value->getId();
+            } elseif (null !== $value) {
+                $params[$key] = $value;
+            }
+        }
         if (isset($params['territory']) && !$this->getUser()->isSuperAdmin()) {
             unset($params['territory']);
         }
@@ -138,6 +163,9 @@ class SearchUser
             }
             $label = substr($label, 0, -2);
             $filters['Partenaires'] = $label;
+        }
+        if (null !== $this->partnerType) {
+            $filters['Type de partenaire'] = $this->partnerType->label();
         }
         if (null !== $this->statut) {
             $filters['Statut'] = User::STATUS_LABELS[$this->statut];

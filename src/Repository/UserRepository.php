@@ -386,6 +386,9 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
         if ($searchUser->getPartners()->count() > 0) {
             $qb->andWhere('u.partner IN (:partners)')->setParameter('partners', $searchUser->getPartners());
         }
+        if (null !== $searchUser->getPartnerType()) {
+            $qb->andWhere('p.type = :partnerType')->setParameter('partnerType', $searchUser->getPartnerType());
+        }
         if (null !== $searchUser->getStatut()) {
             $qb->andWhere('u.statut = :statut')->setParameter('statut', $searchUser->getStatut());
         }

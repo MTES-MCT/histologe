@@ -2,6 +2,7 @@
 
 namespace App\Form;
 
+use App\Entity\Enum\PartnerType;
 use App\Entity\Partner;
 use App\Entity\Territory;
 use App\Entity\User;
@@ -13,6 +14,7 @@ use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
+use Symfony\Component\Form\Extension\Core\Type\EnumType;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\Extension\Core\Type\SearchType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -63,12 +65,25 @@ class SearchUserType extends AbstractType
             ]);
         }
         $builder->addEventListener(FormEvents::PRE_SET_DATA, function (FormEvent $event) use ($builder) {
-            $this->addPartnersField($event->getForm(), $builder->getData()->getTerritory());
+            $this->addPartnersField(
+                $event->getForm(),
+                $builder->getData()->getTerritory(),
+                $builder->getData()->getPartnerType()
+            );
+            $this->desactivePartnerType($event->getForm(), $builder->getData()->getPartners());
         });
         $builder->addEventListener(FormEvents::PRE_SUBMIT, function (FormEvent $event) {
             if ($this->isAdmin && isset($event->getData()['territory'])) {
-                $this->addPartnersField($event->getForm(), $event->getData()['territory']);
+                $this->addPartnersField(
+                    $event->getForm(),
+                    $event->getData()['territory'],
+                    isset($event->getData()['partnerType']) ? $event->getData()['partnerType'] : null
+                );
             }
+            $this->desactivePartnerType(
+                $event->getForm(),
+                isset($event->getData()['partners']) ? $event->getData()['partners'] : null
+            );
         });
         $builder->add('statut', ChoiceType::class, [
             'choices' => [
@@ -96,21 +111,48 @@ class SearchUserType extends AbstractType
         $builder->add('page', HiddenType::class);
     }
 
-    private function addPartnersField(FormInterface $builder, $territory): void
+    private function addPartnersField(FormInterface $builder, $territory, $partnerType): void
     {
         $builder->add('partners', SearchCheckboxType::class, [
             'class' => Partner::class,
-            'query_builder' => function (PartnerRepository $partnerRepository) use ($territory) {
-                return $partnerRepository->createQueryBuilder('p')
+            'query_builder' => function (PartnerRepository $partnerRepository) use ($territory, $partnerType) {
+                $query = $partnerRepository->createQueryBuilder('p')
                     ->where('p.territory = :territory')
-                    ->setParameter('territory', $territory)
-                    ->orderBy('p.nom', 'ASC');
+                    ->setParameter('territory', $territory);
+                if (null !== $partnerType && '' !== $partnerType) {
+                    $query->andWhere('p.type = :partnerType')
+                    ->setParameter('partnerType', $partnerType);
+                }
+                $query->orderBy('p.nom', 'ASC');
+
+                return $query;
             },
             'choice_label' => 'nom',
             'label' => false,
             'noselectionlabel' => 'Tous les partenaires',
             'nochoiceslabel' => !$territory ? 'Sélectionner un territoire pour afficher les partenaires disponibles' : 'Aucun partenaire disponible',
         ]);
+    }
+
+    private function desactivePartnerType(FormInterface $builder, $partners): void
+    {
+        $options = [
+            'class' => PartnerType::class,
+            'choice_label' => function ($choice) {
+                return $choice->label();
+            },
+            'row_attr' => [
+                'class' => 'fr-select-group',
+            ],
+            'placeholder' => 'Type de partenaire',
+            'attr' => [
+                'class' => 'fr-select',
+                'disabled' => isset($partners) && !empty($partners) && \count($partners) > 0,
+            ],
+            'label' => false,
+        ];
+
+        $builder->add('partnerType', EnumType::class, $options);
     }
 
     public function configureOptions(OptionsResolver $resolver): void
