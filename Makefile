@@ -70,7 +70,7 @@ worker-exec-failed: ## Consume failed queue
 
 worker-consume: ## Consume local queue for debug
 	@echo -e '\e[1;32mConsume queue\032'
-	@bash -l -c '$(DOCKER_COMP) exec -it histologe_phpworker php bin/console messenger:consume async_priority_high -vvv'
+	@bash -l -c '$(DOCKER_COMP) exec -it histologe_phpworker php bin/console messenger:consume async_priority_high async -vvv'
 
 mock-start: ## Start Mock server
 	@${DOCKER_COMP} start histologe_wiremock && sleep 5
