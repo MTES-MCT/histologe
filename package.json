@@ -40,7 +40,8 @@
     "dev": "encore dev",
     "watch": "encore dev --watch",
     "build": "encore production --progress",
-    "es-vue-fix": "node_modules/.bin/eslint --config=.eslintrc.js assets/scripts/vue --fix"
+    "es-vue-fix": "node_modules/.bin/eslint --config=.eslintrc.js assets/scripts/vue --fix",
+    "es-js-fix": "node_modules/.bin/eslint --parser espree --fix assets/scripts/vanilla/*"
   },
   "engines": {
     "node": "18.14.2"

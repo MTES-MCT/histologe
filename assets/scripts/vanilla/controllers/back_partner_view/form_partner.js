@@ -1,21 +1,21 @@
-import { loadWindowWithLocalStorage, updateLocalStorageWithPaginationParams, updateLocalStorageOnEvent} from '../../services/list_filter_helper'
-function histoUpdateSubmitButton(elementName, elementLabel) {
+import { loadWindowWithLocalStorage, updateLocalStorageWithPaginationParams, updateLocalStorageOnEvent } from '../../services/list_filter_helper'
+function histoUpdateSubmitButton (elementName, elementLabel) {
   document.querySelector(elementName).innerHTML = elementLabel
   document.querySelector(elementName).disabled = true
 }
-function histoUpdateFieldsVisibility() {
-  const partner_type = document.getElementById("partner_type");
-  partner_type.value = partner_type.value.toUpperCase();
+function histoUpdateFieldsVisibility () {
+  const partnerType = document.getElementById('partner_type')
+  partnerType.value = partnerType.value.toUpperCase()
 
   let showZonePDL, showEsabora, showIdoss
-  showZonePDL = showEsabora = showIdoss = false;
-  if (partner_type.value === 'COMMUNE_SCHS') {
+  showZonePDL = showEsabora = showIdoss = false
+  if (partnerType.value === 'COMMUNE_SCHS') {
     showZonePDL = true
     showEsabora = true
     showIdoss = true
-  } else if (partner_type.value === 'ARS') {
+  } else if (partnerType.value === 'ARS') {
     showEsabora = true
-  } else if (partner_type.value === 'EPCI') {
+  } else if (partnerType.value === 'EPCI') {
     showZonePDL = true
   }
   if (showZonePDL) {
@@ -34,7 +34,7 @@ function histoUpdateFieldsVisibility() {
     document.querySelector('#partner_idoss').classList.add('fr-hidden')
   }
 }
-function histoUpdateValueFromData(elementName, elementData, target) {
+function histoUpdateValueFromData (elementName, elementData, target) {
   document.querySelector(elementName).value = target.getAttribute(elementData)
 }
 
@@ -76,21 +76,21 @@ document.querySelectorAll('.btn-delete-partner').forEach(swbtn => {
     })
   })
 })
-let userEditedId=null
+let userEditedId = null
 
-function clearErrors() {
-  const divErrorElements = document.querySelectorAll('.fr-input-group--error');
+function clearErrors () {
+  const divErrorElements = document.querySelectorAll('.fr-input-group--error')
   divErrorElements.forEach((divErrorElement) => {
-      divErrorElement.classList.remove('fr-input-group--error');
-      let pErrorElement = divErrorElement.querySelector('.fr-error-text');
-      if (pErrorElement) {
-          pErrorElement.classList.add('fr-hidden');
-      }
+    divErrorElement.classList.remove('fr-input-group--error')
+    const pErrorElement = divErrorElement.querySelector('.fr-error-text')
+    if (pErrorElement) {
+      pErrorElement.classList.add('fr-hidden')
+    }
   })
 }
 document.querySelectorAll('.btn-edit-partner-user').forEach(swbtn => {
   swbtn.addEventListener('click', evt => {
-    clearErrors() 
+    clearErrors()
     const target = evt.target
     document.querySelectorAll('.fr-modal-user-edit_useremail').forEach(userItem => {
       userItem.textContent = target.getAttribute('data-useremail')
@@ -101,15 +101,15 @@ document.querySelectorAll('.btn-edit-partner-user').forEach(swbtn => {
     histoUpdateValueFromData('#user_edit_nom', 'data-usernom', target)
     histoUpdateValueFromData('#user_edit_prenom', 'data-userprenom', target)
     const isMailingActive = target.getAttribute('data-userismailingactive')
-    if ( '1' === isMailingActive ) {
+    if (isMailingActive === '1') {
       document.querySelector('#user_edit_is_mailing_active-1').checked = true
     } else {
       document.querySelector('#user_edit_is_mailing_active-2').checked = true
     }
 
     const userRole = target.getAttribute('data-userrole')
-    const rolesSelect = document.querySelector('#user_edit_roles');
-    rolesSelect.value = userRole;
+    const rolesSelect = document.querySelector('#user_edit_roles')
+    rolesSelect.value = userRole
 
     document.querySelector('#user_edit_form').addEventListener('submit', (e) => {
       histoUpdateSubmitButton('#user_edit_form_submit', 'Edition en cours...')
@@ -118,7 +118,7 @@ document.querySelectorAll('.btn-edit-partner-user').forEach(swbtn => {
 })
 if (document.querySelector('.fr-btn-add-user')) {
   document.querySelector('.fr-btn-add-user').addEventListener('click', () => {
-    clearErrors() 
+    clearErrors()
     userEditedId = null
   })
 }
@@ -130,59 +130,59 @@ if (document.querySelector('#partner_type')) {
   })
 }
 
-const deletePartnerForm = document.querySelectorAll('form[name="deletePartner"]');
+const deletePartnerForm = document.querySelectorAll('form[name="deletePartner"]')
 deletePartnerForm.forEach(form => {
-  form.addEventListener('submit', function(event) {
-        if (!confirm('Êtes-vous sûr de vouloir supprimer ce partenaire ?')) {
-            event.preventDefault();
-        }
-    });
-});
+  form.addEventListener('submit', function (event) {
+    if (!confirm('Êtes-vous sûr de vouloir supprimer ce partenaire ?')) {
+      event.preventDefault()
+    }
+  })
+})
 
 const checkUserMail = (el) => {
-  let formData = new FormData();
+  const formData = new FormData()
   formData.append('email', el.value)
   formData.append('userEditedId', userEditedId)
   formData.append('_token', el.getAttribute('data-token'))
   fetch('/bo/partenaires/checkmail', {
-      method: 'POST',
-      body: formData
+    method: 'POST',
+    body: formData
   }).then(r => {
-      if (!r.ok) {
-          r.json().then((r) => {
-              el.classList.add('fr-input--error');
-              el.parentElement.classList.add('fr-input-group--error');
-              el.parentElement.querySelector('p.fr-error-text').innerText = r.error;
-              el.parentElement.querySelector('p.fr-error-text').classList.remove('fr-hidden');
-              document.querySelector('#user_create_form_submit').disabled = true;
-              document.querySelector('#user_edit_form_submit').disabled = true;
-          })
-      } else {
-          el.classList.remove('fr-input--error');
-          el.parentElement.classList.remove('fr-input-group--error');
-          el.parentElement.querySelector('p.fr-error-text').classList.add('fr-hidden');
-          document.querySelector('#user_create_form_submit').disabled = false;
-          document.querySelector('#user_edit_form_submit').disabled = false;            
-      }
+    if (!r.ok) {
+      r.json().then((r) => {
+        el.classList.add('fr-input--error')
+        el.parentElement.classList.add('fr-input-group--error')
+        el.parentElement.querySelector('p.fr-error-text').innerText = r.error
+        el.parentElement.querySelector('p.fr-error-text').classList.remove('fr-hidden')
+        document.querySelector('#user_create_form_submit').disabled = true
+        document.querySelector('#user_edit_form_submit').disabled = true
+      })
+    } else {
+      el.classList.remove('fr-input--error')
+      el.parentElement.classList.remove('fr-input-group--error')
+      el.parentElement.querySelector('p.fr-error-text').classList.add('fr-hidden')
+      document.querySelector('#user_create_form_submit').disabled = false
+      document.querySelector('#user_edit_form_submit').disabled = false
+    }
   })
-  .catch(function (err) {
-      console.warn('Something went wrong.', err);
-  });
-};
+    .catch(function (err) {
+      console.warn('Something went wrong.', err)
+    })
+}
 
-const emailInputs = document.querySelectorAll('.fr-input-email');
+const emailInputs = document.querySelectorAll('.fr-input-email')
 emailInputs.forEach(emailInput => {
-  emailInput.addEventListener('change', function() {
-      checkUserMail(this);
-  });
+  emailInput.addEventListener('change', function () {
+    checkUserMail(this)
+  })
 
-  emailInput.addEventListener('input', function() {
-      checkUserMail(this);
-  });
-});
+  emailInput.addEventListener('input', function () {
+    checkUserMail(this)
+  })
+})
 
-loadWindowWithLocalStorage('click', '[data-filter-list-partner]', 'back_link_partners');
-updateLocalStorageOnEvent('input', '#partner-input', 'back_link_partners');
-updateLocalStorageOnEvent('change', '#partner-filters-territories', 'back_link_partners');
-updateLocalStorageOnEvent('change', '#partner-filters-types', 'back_link_partners');
-updateLocalStorageWithPaginationParams('click', '#partner-pagination a', 'back_link_partners');
+loadWindowWithLocalStorage('click', '[data-filter-list-partner]', 'back_link_partners')
+updateLocalStorageOnEvent('input', '#partner-input', 'back_link_partners')
+updateLocalStorageOnEvent('change', '#partner-filters-territories', 'back_link_partners')
+updateLocalStorageOnEvent('change', '#partner-filters-types', 'back_link_partners')
+updateLocalStorageWithPaginationParams('click', '#partner-pagination a', 'back_link_partners')

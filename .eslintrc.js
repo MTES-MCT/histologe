@@ -31,6 +31,10 @@ module.exports = {
     'no-array-constructor': 'off',
     'no-eval': 'off',
     'vue/no-mutating-props': 'off',
-    'vue/no-reserved-component-names': 'off'
+    'vue/no-reserved-component-names': 'off',
+    'no-prototype-builtins': 'off',
+    'no-cond-assign': 'off',
+    'no-unused-expressions': 'off',
+    'no-sequences': 'off',
   }
 }
