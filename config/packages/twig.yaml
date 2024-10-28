@@ -10,6 +10,7 @@ twig:
             demo: 'https://app.livestorm.co/mte/demonstration-histologe'
             cgu_current_version: '%cgu_current_version%'
             feature_export_users: '%feature_export_users%'
+            feature_historique_affectations: '%feature_historique_affectations%'
         gitbook:
             documentation: https://documentation.histologe.beta.gouv.fr
             faq: https://faq.histologe.beta.gouv.fr

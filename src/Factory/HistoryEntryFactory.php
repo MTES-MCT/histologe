@@ -2,6 +2,7 @@
 
 namespace App\Factory;
 
+use App\Entity\Affectation;
 use App\Entity\Behaviour\EntityHistoryInterface;
 use App\Entity\Enum\HistoryEntryEvent;
 use App\Entity\HistoryEntry;
@@ -9,6 +10,8 @@ use Symfony\Bundle\SecurityBundle\Security;
 
 readonly class HistoryEntryFactory
 {
+    public const string ENTITY_PROXY_PREFIX = 'Proxies\\__CG__\\';
+
     public function __construct(private Security $security)
     {
     }
@@ -17,10 +20,16 @@ readonly class HistoryEntryFactory
         HistoryEntryEvent $historyEntryEvent,
         EntityHistoryInterface $entityHistory,
     ): HistoryEntry {
-        return (new HistoryEntry())
+        $historyEntry = (new HistoryEntry())
             ->setEvent($historyEntryEvent)
             ->setEntityId($entityHistory->getId())
-            ->setEntityName(str_replace('Proxies\\__CG__\\', '', $entityHistory::class))
+            ->setEntityName(str_replace(self::ENTITY_PROXY_PREFIX, '', $entityHistory::class))
             ->setUser($this->security->getUser());
+
+        if ($entityHistory instanceof Affectation) {
+            $historyEntry->setSignalement($entityHistory->getSignalement());
+        }
+
+        return $historyEntry;
     }
 }

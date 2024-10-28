@@ -3,13 +3,24 @@
         <div class="fr-col-9 fr-col-md-6">
             <h3 class="fr-h5">Partenaires affectés</h3>
         </div>
-        {% if signalement.statut is not same as constant('App\\Entity\\Signalement::STATUS_CLOSED') %}
-            <div class="fr-col-3 fr-col-md-6 fr-text--right">
-                <button class="fr-btn fr-btn--secondary fr-fi-add-line fr-btn--icon-left" data-fr-opened="false" aria-controls="fr-modal-affectation">
-                    Affecter des partenaires
-                </button>
+        <div class="fr-col-3 fr-col-md-6">
+            <div class="fr-text--right fr-btns-group fr-btns-group--sm fr-btns-group--inline fr-btns-group--right fr-btns-group--icon-left">
+                {% if signalement.statut is not same as constant('App\\Entity\\Signalement::STATUS_CLOSED') %}
+                    <button class="fr-btn fr-fi-add-line fr-btn--icon-left" data-fr-opened="false" aria-controls="fr-modal-affectation">
+                        Affecter des partenaires
+                    </button>
+                {% endif %}
+                {% if platform.feature_historique_affectations %}
+                    <button 
+                        class="fr-btn fr-btn--secondary fr-btn--icon-left"
+                        data-fr-opened="false"
+                        aria-controls="fr-modal-historique-affectation"
+                    >
+                        Voir l'historique des affectations
+                    </button>
+                {% endif %}
             </div>
-        {% endif %}
+        </div>
     </div>
 
     <div class="fr-container--fluid">
