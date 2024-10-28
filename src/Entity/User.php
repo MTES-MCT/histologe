@@ -74,7 +74,7 @@ class User implements UserInterface, EntityHistoryInterface, PasswordAuthenticat
     private $roles = [];
 
     #[ORM\Column]
-    private bool $hasPermissionAffectation = true;
+    private bool $hasPermissionAffectation = false;
 
     #[ORM\Column(type: 'string', nullable: true)]
     #[Assert\NotBlank(groups: ['password'])]

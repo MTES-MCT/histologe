@@ -57,8 +57,6 @@ class UserManager extends AbstractManager
         }
         if (\array_key_exists('hasPermissionAffectation', $data)) {
             $user->setHasPermissionAffectation($data['hasPermissionAffectation']);
-        } else {
-            $user->setHasPermissionAffectation(false);
         }
 
         if ($save) {

@@ -359,13 +359,11 @@ class PartnerController extends AbstractController
         if (!$this->canAttributeRole($data['roles'])) {
             return $this->redirectToRoute('back_partner_view', ['id' => $partner->getId()], Response::HTTP_SEE_OTHER);
         }
-        if (!$parameterBag->get('feature_permission_affectation') || !$this->isGranted(PartnerVoter::ASSIGN_PERMISSION_AFFECTATION, $partner) || !isset($data['permissions'])) {
+        if (!$parameterBag->get('feature_permission_affectation') || !$this->isGranted(PartnerVoter::ASSIGN_PERMISSION_AFFECTATION, $partner)) {
             $data['hasPermissionAffectation'] = false;
         } else {
-            // Only take accepted posted values (controlled with concat of '' and PERMISSIONS in User entity)
             $data['hasPermissionAffectation'] = $data['hasPermissionAffectation'] ?? false;
         }
-
         if (!EmailFormatValidator::validate($data['email'])) {
             $this->addFlash('error', 'L\'adresse e-mail n\'est pas valide.');
 
@@ -462,7 +460,6 @@ class PartnerController extends AbstractController
         if (!$parameterBag->get('feature_permission_affectation') || !$this->isGranted(PartnerVoter::ASSIGN_PERMISSION_AFFECTATION, $user->getPartner())) {
             unset($updateData['hasPermissionAffectation']);
         } else {
-            // Only take accepted posted values (controlled with concat of '' and PERMISSIONS in User entity)
             $updateData['hasPermissionAffectation'] = $updateData['hasPermissionAffectation'] ?? false;
         }
 
