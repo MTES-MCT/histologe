@@ -64,11 +64,11 @@ export const componentValidator = {
     } else if (formStore.data[componentSlug + '_detail_manual'] !== 0 && formStore.data[componentSlug + '_detail_manual'] !== undefined) {
       const addressDetailNumero = formStore.data[componentSlug + '_detail_numero']
       if (addressDetailNumero === undefined || addressDetailNumero === '') {
-        formStore.validationErrors[componentSlug + '_detail_numero'] = 'Veuillez renseigner le numéro du logement.'
+        formStore.validationErrors[componentSlug + '_detail_numero'] = 'Veuillez renseigner l\'adresse du logement.'
       } else {
         const regexPattern = /^[0-9]*$/
         if (regexPattern.test(addressDetailNumero) || addressDetailNumero.length < 6 || addressDetailNumero.length > 100) {
-          formStore.validationErrors[componentSlug + '_detail_numero'] = 'Format invalide'
+          formStore.validationErrors[componentSlug + '_detail_numero'] = 'Veuillez renseigner une adresse valide.'
         }
       }
 
