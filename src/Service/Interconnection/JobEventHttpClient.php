@@ -6,12 +6,10 @@ use App\Entity\JobEvent;
 use App\Manager\JobEventManager;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpClient\HttpClientTrait;
-use Symfony\Component\HttpClient\Response\MockResponse;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Contracts\HttpClient\Exception\ClientExceptionInterface;
 use Symfony\Contracts\HttpClient\Exception\RedirectionExceptionInterface;
 use Symfony\Contracts\HttpClient\Exception\ServerExceptionInterface;
-use Symfony\Contracts\HttpClient\Exception\TransportExceptionInterface;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
 use Symfony\Contracts\HttpClient\ResponseInterface;
 use Symfony\Contracts\HttpClient\ResponseStreamInterface;
@@ -28,7 +26,6 @@ class JobEventHttpClient implements HttpClientInterface
     }
 
     /**
-     * @throws TransportExceptionInterface
      * @throws ServerExceptionInterface
      * @throws RedirectionExceptionInterface
      * @throws ClientExceptionInterface
@@ -57,7 +54,7 @@ class JobEventHttpClient implements HttpClientInterface
             'url' => $url,
             'options' => $options,
         ]);
-
+        $response = null;
         try {
             $response = $this->httpClient->request($method, $url, $options);
             if ($response->getStatusCode() >= Response::HTTP_BAD_REQUEST) {
@@ -76,9 +73,6 @@ class JobEventHttpClient implements HttpClientInterface
             $this->logger->error('HTTP error occurred', [
                 'status_code' => $statusCode = Response::HTTP_INTERNAL_SERVER_ERROR,
                 'response_content' => $responseContent = $exception->getMessage(),
-            ]);
-            $response = new MockResponse($responseContent, [
-                'http_code' => $statusCode,
             ]);
         }
 
