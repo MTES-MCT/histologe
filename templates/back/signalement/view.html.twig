@@ -4,9 +4,9 @@
 {% set static_picto_no = '<p class="fr-badge fr-badge--error">Non</p>' %}
 
 {% block content %}
-    {% if is_granted('ROLE_ADMIN_TERRITORY') and not needValidation %}
+    {% if not needValidation and (is_granted('ROLE_ADMIN_TERRITORY') or canPartnerAffectation) %}
         {% include '_partials/_modal_affectation.html.twig' %}
-        {% if platform.feature_historique_affectations %}
+        {% if platform.feature_historique_affectations and is_granted('ROLE_ADMIN_TERRITORY') %}
             {% include '_partials/_modal_historique_affectation.html.twig' %}
         {% endif %}
     {% endif %}

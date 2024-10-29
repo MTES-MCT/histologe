@@ -91,8 +91,22 @@
                                         <span class="fr-hint-text fr-mt-inf-3v">Si vous cochez oui, des e-mails concernant les signalements seront envoyés à cette adresse.</span>
                                     </fieldset>
                                 </div>
+                                {% if platform.feature_permission_affectation and is_granted('ROLE_ADMIN_TERRITORY') %}
+                                <div class="fr-grid-row fr-grid-row--gutters">
+                                    <div class="fr-col-12">
+                                        <div id="user_edit_permission_affectation_toggle" class="fr-toggle">
+                                            <input type="checkbox" class="fr-toggle__input" id="user_edit_permission_affectation" name="user_edit[hasPermissionAffectation]" value="1">
+                                            <label class="fr-toggle__label" for="user_edit_permission_affectation">Cet utilisateur peut affecter d'autres partenaires à ses signalements</label>
+                                        </div>
+                                        <div id="user_edit_permission_affectation_text">
+                                            Un administrateur de territoire peut affecter d'autres partenaires à ses signalements.
+                                        </div>
+                                    </div>
+                                </div>
+                                {% endif %}
                             </div>
                             <input type="hidden" name="user_id" id="user_edit_userid">
+                            <input type="hidden" name="redirect_to" value="{{ currentPage }}">
                             <input type="hidden" name="_token" value="{{ csrf_token('partner_user_edit') }}">
                         </form>
                     </div>

@@ -1,4 +1,4 @@
-{% if is_granted('ROLE_ADMIN_TERRITORY') and not needValidation %}
+{% if canPartnerAffectation %}
     <div class="fr-grid-row">
         <div class="fr-col-9 fr-col-md-6">
             <h3 class="fr-h5">Partenaires affectés</h3>
@@ -10,7 +10,7 @@
                         Affecter des partenaires
                     </button>
                 {% endif %}
-                {% if platform.feature_historique_affectations %}
+                {% if platform.feature_historique_affectations and is_granted('ROLE_ADMIN_TERRITORY') %}
                     <button 
                         class="fr-btn fr-btn--secondary fr-btn--icon-left"
                         data-fr-opened="false"

@@ -10,6 +10,7 @@ use App\Repository\PartnerRepository;
 use App\Service\SearchUser;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Bundle\SecurityBundle\Security;
+use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
@@ -22,11 +23,17 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class SearchUserType extends AbstractType
 {
+    private const PERMISSION_CHOICES = [
+        'Oui' => 'Oui',
+        'Non' => 'Non',
+    ];
+
     private bool $isAdmin = false;
     private array $roleChoices = [];
 
     public function __construct(
-        private readonly Security $security
+        private readonly Security $security,
+        private readonly ParameterBagInterface $parameterBag,
     ) {
         $this->roleChoices = User::ROLES;
         unset($this->roleChoices['Usager']);
@@ -78,6 +85,14 @@ class SearchUserType extends AbstractType
             'placeholder' => 'Rôle',
             'label' => false,
         ]);
+        if ($this->parameterBag->get('feature_permission_affectation')) {
+            $builder->add('permissionAffectation', ChoiceType::class, [
+                'choices' => self::PERMISSION_CHOICES,
+                'required' => false,
+                'placeholder' => 'Droit d\'affectation',
+                'label' => false,
+            ]);
+        }
         $builder->add('page', HiddenType::class);
     }
 

@@ -73,6 +73,9 @@ class User implements UserInterface, EntityHistoryInterface, PasswordAuthenticat
     #[ORM\Column(type: 'json')]
     private $roles = [];
 
+    #[ORM\Column]
+    private bool $hasPermissionAffectation = false;
+
     #[ORM\Column(type: 'string', nullable: true)]
     #[Assert\NotBlank(groups: ['password'])]
     #[Assert\Length(min: 12, max: 200, minMessage: 'Le mot de passe doit contenir au moins {{ limit }} caractères.', groups: ['password'])]
@@ -423,7 +426,7 @@ class User implements UserInterface, EntityHistoryInterface, PasswordAuthenticat
     public function getRoleLabel(): string
     {
         $roleLabel = array_flip(self::ROLES);
-        $role = array_shift($this->roles);
+        $role = $this->roles[0];
 
         return $roleLabel[$role];
     }
@@ -458,6 +461,18 @@ class User implements UserInterface, EntityHistoryInterface, PasswordAuthenticat
     public function isUsager(): bool
     {
         return \in_array(self::ROLE_USAGER, $this->getRoles());
+    }
+
+    public function hasPermissionAffectation(): bool
+    {
+        return $this->hasPermissionAffectation;
+    }
+
+    public function setHasPermissionAffectation(bool $hasPermissionAffectation): self
+    {
+        $this->hasPermissionAffectation = $hasPermissionAffectation;
+
+        return $this;
     }
 
     public function getTerritory(): ?Territory

@@ -5,6 +5,7 @@ namespace App\Service;
 use App\Entity\User;
 use App\Repository\UserRepository;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
+use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 
 readonly class UserExportLoader
 {
@@ -19,10 +20,12 @@ readonly class UserExportLoader
         'statut' => ['label' => 'Statut', 'desc' => 'le statut du compte (s\'il est activé ou non)'],
         'lastLoginAt' => ['label' => 'Dernière connexion', 'desc' => 'la date de dernière connexion au compte'],
         'role' => ['label' => 'Rôle', 'desc' => 's\'il s\'agit d\'un compte agent, Admin. partenaire ou responsable de territoire'],
+        'permissionAffectation' => ['label' => 'Droit d\'affectation', 'desc' => 'si ce compte peut affecter des partenaires à un signalement'],
     ];
 
     public function __construct(
         private UserRepository $userRepository,
+        private ParameterBagInterface $parameterBag,
     ) {
     }
 
@@ -30,7 +33,7 @@ readonly class UserExportLoader
     {
         $spreadsheet = new Spreadsheet();
         $sheet = $spreadsheet->getActiveSheet();
-        $headers = array_map(fn ($column) => $column['label'], self::getColumnForUser($searchUser->getUser()));
+        $headers = array_map(fn ($column) => $column['label'], self::getColumnForUser($searchUser->getUser(), $this->parameterBag->get('feature_permission_affectation')));
         $sheetData = [$headers];
         $list = $this->userRepository->findFiltered($searchUser);
         foreach ($list as $user) {
@@ -47,6 +50,7 @@ readonly class UserExportLoader
                     'statut' => User::STATUS_ACTIVE === $user->getStatut() ? 'Activé' : 'Non activé',
                     'lastLoginAt' => $user->getLastLoginAt() ? $user->getLastLoginAt()->format('d/m/Y') : '',
                     'role' => $user->getRoleLabel(),
+                    'permissionAffectation' => $user->isSuperAdmin() || $user->isTerritoryAdmin() || $user->hasPermissionAffectation() ? 'oui' : 'non',
                     default => '',
                 };
             }
@@ -58,11 +62,14 @@ readonly class UserExportLoader
         return $spreadsheet;
     }
 
-    public static function getColumnForUser(User $user): array
+    public static function getColumnForUser(User $user, bool $isFeaturePermissionAffectation): array
     {
         $columnsList = self::COLUMNS_LIST;
         if (!$user->isSuperAdmin()) {
             unset($columnsList['territory']);
+        }
+        if (!$isFeaturePermissionAffectation) {
+            unset($columnsList['permissionAffectation']);
         }
 
         return $columnsList;
