@@ -41,7 +41,7 @@ class BackTerritoryControllerTest extends WebTestCase
     {
         yield 'Search without params' => [[], 102];
         yield 'Search with queryName 34' => [['queryName' => '34'], 1];
-        yield 'Search with isActive false' => [['isActive' => 0], 36];
+        yield 'Search with isActive false' => [['isActive' => 0], 35];
     }
 
     public function testgrilleVisite(): void
