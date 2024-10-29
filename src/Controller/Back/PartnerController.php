@@ -103,6 +103,9 @@ class PartnerController extends AbstractController
         $partner = new Partner();
         /** @var User $user */
         $user = $this->getUser();
+        if (!$this->isGranted('ROLE_ADMIN')) {
+            $partner->setTerritory($user->getTerritory());
+        }
         $form = $this->createForm(PartnerType::class, $partner, [
             'can_edit_territory' => $this->isGranted('ROLE_ADMIN'),
             'territory' => $user->getTerritory(),
@@ -110,11 +113,6 @@ class PartnerController extends AbstractController
         ]);
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
-            // Si la personne identifiée n'est pas super admin (donc qu'elle ne peut pas éditer),
-            // on redéfinit le territoire avec celui de l'utilisateur en cours
-            if (!$this->isGranted('ROLE_ADMIN')) {
-                $partner->setTerritory($user->getTerritory());
-            }
             $entityManager->persist($partner);
             $entityManager->flush();
             $this->addFlash('success', 'Le partenaire a bien été créé.');

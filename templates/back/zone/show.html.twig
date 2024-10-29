@@ -1,0 +1,78 @@
+{% extends 'back/base_bo.html.twig' %}
+
+{% block title %}Modifier la zone {{zone.name}}{% endblock %}
+
+{% block content %}
+    <section class="fr-p-5v">
+        {% include 'back/breadcrumb_bo.html.twig' with {
+            'level2Title': 'Outils admin',
+            'level2Link': '',
+            'level2Label': '',
+            'level3Title': 'Zones',
+            'level3Link': path('back_zone_index'),
+            'level4Title': 'Zone '~ zone.name,
+            'level4Link': '',
+        } %}
+        <header>
+            <div class="fr-grid-row">
+                <div class="fr-col-8 fr-text--left">
+                    <h1>Zone {{zone.name}}</h1>
+                </div>
+                <div class="fr-col-4 fr-text--right">
+                    <a class="fr-btn fr-btn--icon-left fr-btn--md fr-fi-edit-line" href="{{path('back_zone_edit', {zone: zone.id})}}">Modifier la zone</a>
+                </div>
+            </div>
+            <div class="fr-grid-row">
+                {% if is_granted('ROLE_ADMIN') %}
+                    <div class="fr-col-12">
+                        <b>Territoire :</b>
+                        {{ zone.territory.zip }} - {{ zone.territory.name }}
+                    </div>
+                {% endif %}
+                <div class="fr-col-12">
+                    <b>Partenaires :</b>
+                    {% for partner in zone.partners %}
+                        <span class="fr-badge fr-badge--blue-ecume fr-badge--no-icon">{{ partner.nom }}</span>
+                    {% endfor %}
+                </div>
+            </div>
+        </header>
+    </section>
+
+    <section class="fr-grid-row fr-p-5v">
+        <div class="fr-col-12 fr-col-lg-8">
+            <div id="zone_map"></div>
+        </div>
+        <div class="fr-col-12 fr-col-lg-4">
+            <div id="info_zone_map" data-zone="{{zone.area}}">
+                <h2 class="fr-pl-1w">{{signalements|length}} signalement{% if signalements|length > 1%}s{% endif %} dans la zone</h2>
+                <ul>
+                    {% for signalement in signalements %}
+                        <li class="location" 
+                        data-lat="{{ signalement.geoloc.lat }}" 
+                        data-lng="{{ signalement.geoloc.lng }}" 
+                        data-ref="{{signalement.reference}}" 
+                        data-link="{{path('back_signalement_view', {uuid: signalement.uuid})}}"
+                        data-address="{{signalement.adresse_occupant}} {{signalement.cp_occupant}} {{signalement.ville_occupant}}"
+                        >
+                            <a href="{{path('back_signalement_view', {uuid: signalement.uuid})}}">{{signalement.reference}}</a>
+                            <small>{{signalement.adresse_occupant}} {{signalement.cp_occupant}} {{signalement.ville_occupant}}</small>
+                        </li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+    </section>
+
+{% endblock %}
+
+
+{% block stylesheets %}
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.css">
+{% endblock %}
+
+{% block javascripts %}
+	<script src="https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.js" ></script> 
+    <script src="https://cdn.jsdelivr.net/npm/@mapbox/leaflet-omnivore@0.3.4/leaflet-omnivore.min.js"></script>
+    <script src="{{ asset('js/zone_map.js') }}" ></script>
+{% endblock %}

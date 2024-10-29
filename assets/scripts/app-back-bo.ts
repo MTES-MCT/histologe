@@ -32,3 +32,4 @@ import './vanilla/controllers/back_signalement_delete_file/back_signalement_dele
 import './vanilla/controllers/back_signalement_list_export/back_signalement_list_export.js';
 import './vanilla/controllers/back_profil_edit_email/back_profil_edit_email.js';
 import './vanilla/controllers/back_user_index/back_user_index.js';
+import './vanilla/controllers/back_zone_view/back_zone_index.js';

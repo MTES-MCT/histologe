@@ -5,7 +5,9 @@
     {% if help is not empty %}
         {% set widget_attr = {attr: {'aria-describedby': id ~"_help"}} %}
     {% endif %}
-    {% if 'choice' in block_prefixes %}
+    {% if type is defined and type == 'file' %}
+        {% set row_attr = row_attr|merge({'class': (row_attr.class|default('') ~ ' fr-upload-group fr-mb-6v')|trim}) %}
+    {% elseif 'choice' in block_prefixes %}
         {% set row_attr = row_attr|merge({'class': (row_attr.class|default('') ~ ' fr-select-group')|trim}) %}
     {% else %} 
         {% set row_attr = row_attr|merge({'class': (row_attr.class|default('') ~ ' fr-input-group')|trim}) %}
@@ -46,7 +48,11 @@
 {%- endblock search_widget %}
 
 {% block form_widget_simple %}
-    {% set attr = attr|merge({'class': (attr.class|default('') ~ ' fr-input')|trim}) %}
+    {% if type is defined and type == 'file' %}
+        {% set attr = attr|merge({'class': (attr.class|default('') ~ ' fr-upload')|trim}) %}
+    {% else %}
+        {% set attr = attr|merge({'class': (attr.class|default('') ~ ' fr-input')|trim}) %}
+    {% endif %}
     {{parent()}}
 {% endblock form_widget_simple %}
 
@@ -114,10 +120,9 @@
 
 {# custom type #}
 {% block search_checkbox_row %}
-    <div class="search-checkbox-container">   
-        <div class="fr-input-group fr-mb-0">
-            <input type="text" placeholder="{{noselectionlabel}}" class="fr-input">
-        </div>
+    <div class="search-checkbox-container fr-input-group"> 
+        {{block('form_label')}}  
+        <input type="text" placeholder="{{noselectionlabel}}" class="fr-input">
         {{ block('choice_widget_expanded') }}
     </div>
 {% endblock %}

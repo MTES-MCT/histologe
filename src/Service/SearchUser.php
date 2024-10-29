@@ -4,12 +4,14 @@ namespace App\Service;
 
 use App\Entity\Territory;
 use App\Entity\User;
+use App\Service\Behaviour\SearchQueryTrait;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Symfony\Component\Validator\Constraints as Assert;
 
 class SearchUser
 {
+    use SearchQueryTrait;
     private User $user;
     #[Assert\Positive(message: 'La page doit être un nombre positif')]
     private ?int $page = 1;
@@ -95,31 +97,6 @@ class SearchUser
     public function setRole(?string $role): void
     {
         $this->role = $role;
-    }
-
-    public function getUrlParams(): array
-    {
-        $params = [];
-        foreach (get_object_vars($this) as $key => $value) {
-            if (in_array($key, ['user', 'page'])) {
-                continue;
-            }
-            if ($value instanceof Collection) {
-                if ($value->isEmpty()) {
-                    continue;
-                }
-                $params[$key] = $value->map(fn ($partner) => $partner->getId())->toArray();
-            } elseif (is_object($value)) {
-                $params[$key] = $value->getId();
-            } elseif (null !== $value) {
-                $params[$key] = $value;
-            }
-        }
-        if (isset($params['territory']) && !$this->getUser()->isSuperAdmin()) {
-            unset($params['territory']);
-        }
-
-        return $params;
     }
 
     public function getFiltersToText(): array

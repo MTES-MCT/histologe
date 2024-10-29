@@ -9,6 +9,7 @@ class EntityComparator
         'token',
         'idossToken',
         'esaboraToken',
+        'area',
     ];
 
     /**
