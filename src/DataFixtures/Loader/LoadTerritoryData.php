@@ -35,6 +35,9 @@ class LoadTerritoryData extends Fixture implements OrderedFixtureInterface
         if (isset($row['authorized_codes_insee'])) {
             $territory->setAuthorizedCodesInsee($row['authorized_codes_insee']);
         }
+        if (isset($row['is_grille_visite_disabled'])) {
+            $territory->setIsGrilleVisiteDisabled($row['is_grille_visite_disabled']);
+        }
 
         $manager->persist($territory);
     }

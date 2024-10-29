@@ -65,4 +65,23 @@ class BackTerritoryControllerTest extends WebTestCase
         $client->request('GET', $router->generate('back_territory_grille_visite', ['territory' => $user->getPartner()->getTerritory()->getId() + 1]));
         $this->assertResponseStatusCodeSame(Response::HTTP_FORBIDDEN);
     }
+
+    public function testgrilleVisiteDisabled(): void
+    {
+        $client = static::createClient();
+        $feature_grille_visite = static::getContainer()->getParameter('feature_grille_visite');
+        if (!$feature_grille_visite) {
+            $this->markTestSkipped('La fonctionnalité "feature_grille_visite" est désactivée.');
+        }
+        /** @var UserRepository $userRepository */
+        $userRepository = static::getContainer()->get(UserRepository::class);
+        $user = $userRepository->findOneBy(['email' => 'admin-territoire-01-01@histologe.fr']);
+        $client->loginUser($user);
+
+        /** @var RouterInterface $router */
+        $router = self::getContainer()->get(RouterInterface::class);
+
+        $client->request('GET', $router->generate('back_territory_grille_visite', ['territory' => $user->getPartner()->getTerritory()->getId()]));
+        $this->assertResponseStatusCodeSame(Response::HTTP_NOT_FOUND);
+    }
 }

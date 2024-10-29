@@ -72,6 +72,9 @@ class Territory implements EntityHistoryInterface
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $grilleVisiteFilename = null;
 
+    #[ORM\Column]
+    private ?bool $isGrilleVisiteDisabled = false;
+
     public function __construct()
     {
         $this->users = new ArrayCollection();
@@ -428,6 +431,18 @@ class Territory implements EntityHistoryInterface
     public function setGrilleVisiteFilename(?string $grilleVisiteFilename): static
     {
         $this->grilleVisiteFilename = $grilleVisiteFilename;
+
+        return $this;
+    }
+
+    public function getIsGrilleVisiteDisabled(): ?bool
+    {
+        return $this->isGrilleVisiteDisabled;
+    }
+
+    public function setIsGrilleVisiteDisabled(bool $isGrilleVisiteDisabled): static
+    {
+        $this->isGrilleVisiteDisabled = $isGrilleVisiteDisabled;
 
         return $this;
     }

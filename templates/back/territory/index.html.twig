@@ -81,7 +81,9 @@
                                     </td>
                                     <td>{{ territory.timezone}}</td>
                                     <td>
-                                        {% if territory.grilleVisiteFilename is not null %}
+                                        {% if territory.isGrilleVisiteDisabled %}
+                                            <span class="fr-badge fr-badge--error">Désactivée</span>
+                                        {% elseif territory.grilleVisiteFilename is not null %}
                                             <a class="fr-link" target="_blank" rel="noreferrer noopener" href="{{ path('back_territory_grille_visite', {territory:territory.id}) }}">
                                                 Grille spécifique
                                             </a>

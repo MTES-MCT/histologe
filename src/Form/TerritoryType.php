@@ -69,6 +69,10 @@ class TerritoryType extends AbstractType
                 'required' => false,
             ]);
         }
+        $builder->add('isGrilleVisiteDisabled', CheckboxType::class, [
+            'label' => 'Désactiver la fonctionnalitée grille de visite sur ce territoire',
+            'required' => false,
+        ]);
         $builder->add('submit', SubmitType::class, [
             'label' => 'Modifier',
             'attr' => ['class' => 'fr-btn fr-icon-check-line fr-btn--icon-left'],

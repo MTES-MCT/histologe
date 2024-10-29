@@ -103,6 +103,9 @@ class BackTerritoryController extends AbstractController
     public function grilleVisite(Territory $territory): BinaryFileResponse
     {
         $this->denyAccessUnlessGranted(TerritoryVoter::GET_DOCUMENT, $territory);
+        if ($territory->getIsGrilleVisiteDisabled()) {
+            throw $this->createNotFoundException();
+        }
         $filename = $territory->getGrilleVisiteFilename();
         if ($filename) {
             $tmpFilepath = $this->getParameter('uploads_tmp_dir').$filename;
