@@ -116,7 +116,7 @@ partners:
   -
     nom: "Partenaire 974-01"
     email: "partenaire-01-974@histologe.fr"
-    is_archive: 1
+    is_archive: 0
     insee: "[\"\"]"
     territory: "La Réunion"
     type: "AUTRE"

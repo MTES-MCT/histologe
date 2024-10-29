@@ -2,12 +2,14 @@
 
 namespace App\Entity;
 
+use App\Entity\Behaviour\EntityHistoryInterface;
+use App\Entity\Enum\HistoryEntryEvent;
 use App\Repository\ApiUserTokenRepository;
 use Doctrine\ORM\Mapping as ORM;
 use Random\RandomException;
 
 #[ORM\Entity(repositoryClass: ApiUserTokenRepository::class)]
-class ApiUserToken
+class ApiUserToken implements EntityHistoryInterface
 {
     // Constant values to update later
     public const string EXPIRATION_TIME = '+2 minutes';
@@ -91,5 +93,10 @@ class ApiUserToken
     public function isValid(): bool
     {
         return $this->getExpiresAt() > new \DateTimeImmutable();
+    }
+
+    public function getHistoryRegisteredEvent(): array
+    {
+        return [HistoryEntryEvent::CREATE];
     }
 }

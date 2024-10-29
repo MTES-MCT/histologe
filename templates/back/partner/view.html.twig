@@ -187,15 +187,8 @@
                                             {% set label = 'ARCHIVE' %}
                                         {% endif %}
                                         <span class="fr-badge {{ classe }} fr-mb-1v">{{ label }}</span></td>
-                                    <td>{% if 'ROLE_ADMIN' in user.roles %}
-                                            Super Admin
-                                        {% elseif 'ROLE_ADMIN_TERRITORY' in user.roles %}
-                                            Resp. Territoire
-                                        {% elseif 'ROLE_ADMIN_PARTNER' in user.roles %}
-                                            Admin. partenaire
-                                        {% elseif 'ROLE_USER_PARTNER' in user.roles %}
-                                            Agent
-                                        {% endif %}
+                                    <td>
+                                        {{ user.roleLabel() }}
                                     </td>
                                     {% if platform.feature_permission_affectation and is_granted('ASSIGN_PERMISSION_AFFECTATION', partner) %}
                                     <td>{{ user.isSuperAdmin() or user.isTerritoryAdmin() or user.hasPermissionAffectation() ? 'Oui' : 'Non' }}</td>

@@ -3,6 +3,7 @@
 namespace App\Repository;
 
 use App\Entity\ApiUserToken;
+use App\Entity\User;
 use App\Repository\Behaviour\EntityCleanerRepositoryInterface;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\NonUniqueResultException;
@@ -24,8 +25,13 @@ class ApiUserTokenRepository extends ServiceEntityRepository implements EntityCl
     public function findValidUserToken(string $token): ?ApiUserToken
     {
         $qb = $this->createQueryBuilder('a');
-        $qb->andWhere('a.token = :token')
+        $qb->innerJoin('a.ownedBy', 'u')
+            ->andWhere('u.roles LIKE :role_api')
+            ->andWhere('u.statut = :statut_active')
+            ->andWhere('a.token = :token')
             ->andWhere('a.expiresAt > :now')
+            ->setParameter('role_api', '%'.User::ROLE_API_USER.'%')
+            ->setParameter('statut_active', User::STATUS_ACTIVE)
             ->setParameter('token', $token)
             ->setParameter('now', new \DateTimeImmutable())
             ->setMaxResults(1);
