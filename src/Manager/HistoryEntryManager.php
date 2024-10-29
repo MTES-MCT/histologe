@@ -104,7 +104,6 @@ class HistoryEntryManager extends AbstractManager
         } else {
             $criteria['signalement'] = $signalementId;
         }
-
         return $this->historyEntryRepository->findBy($criteria, ['entityId' => 'ASC', 'createdAt' => 'ASC']);
     }
 
@@ -114,37 +113,39 @@ class HistoryEntryManager extends AbstractManager
             $userName = $entry->getUser() ? $entry->getUser()->getFullName() : 'Système';
             /** @var ?Partner */
             $partner = $entry->getUser()?->getPartner();
-            $partnerName = $partner ? $partner->getNom() : 'N/A';
-            $date = $entry->getCreatedAt()
-                ->setTimezone(
-                    new \DateTimeZone($partner?->getTerritory() ? $partner->getTerritory()->getTimezone() : TimezoneProvider::TIMEZONE_EUROPE_PARIS)
-                )
-                ->format(self::FORMAT_DATE_TIME);
+            if ($partner) {
+                $partnerName = $partner->getNom();
+                $date = $entry->getCreatedAt()
+                    ->setTimezone(
+                        new \DateTimeZone($partner->getTerritory() ? $partner->getTerritory()->getTimezone() : TimezoneProvider::TIMEZONE_EUROPE_PARIS)
+                    )
+                    ->format(self::FORMAT_DATE_TIME);
 
-            if (!isset($formattedHistory[$partnerName])) {
-                $formattedHistory[$partnerName] = [];
-            }
+                if (!isset($formattedHistory[$partnerName])) {
+                    $formattedHistory[$partnerName] = [];
+                }
 
-            if ('affectation' === $type) {
-                $partnerTarget = $this->getPartnerByEntityId($entry->getEntityId()) ?? $this->getPartnerByDeleteHistoryEntry($entry->getEntityId());
-            } else {
-                $partnerTarget = null;
-            }
+                if ('affectation' === $type) {
+                    $partnerTarget = $this->getPartnerByEntityId($entry->getEntityId()) ?? $this->getPartnerByDeleteHistoryEntry($entry->getEntityId());
+                } else {
+                    $partnerTarget = null;
+                }
 
-            $id = $entry->getEntityId();
-            $action = 'affectation' === $type ?
-                $this->getAffectationActionSummary($entry, $userName, $partnerTarget?->getNom() ?? 'N/A') :
-                $this->getSignalementActionSummary($entry, $userName);
+                $id = $entry->getEntityId();
+                $action = 'affectation' === $type ?
+                    $this->getAffectationActionSummary($entry, $userName, $partnerTarget?->getNom() ?? 'N/A') :
+                    $this->getSignalementActionSummary($entry, $userName);
 
-            if (null !== $action) {
-                $formattedEntry = [
-                    'Date' => $date,
-                    'Action' => $action,
-                    'Id' => 'affectation' === $type ? $id : '-',
-                ];
-                $formattedHistory[$partnerName][] = $formattedEntry;
-                if (null !== $partnerTarget && null !== $partnerTarget->getNom() && $partnerTarget->getNom() !== $partnerName) {
-                    $formattedHistory[$partnerTarget->getNom()][] = $formattedEntry;
+                if (null !== $action) {
+                    $formattedEntry = [
+                        'Date' => $date,
+                        'Action' => $action,
+                        'Id' => 'affectation' === $type ? $id : '-',
+                    ];
+                    $formattedHistory[$partnerName][] = $formattedEntry;
+                    if (null !== $partnerTarget && null !== $partnerTarget->getNom() && $partnerTarget->getNom() !== $partnerName) {
+                        $formattedHistory[$partnerTarget->getNom()][] = $formattedEntry;
+                    }
                 }
             }
         }
@@ -192,7 +193,7 @@ class HistoryEntryManager extends AbstractManager
         return null;
     }
 
-    private function getAffectationActionSummary(HistoryEntry $entry, string $userName, string $partnerName = ''): string
+    private function getAffectationActionSummary(HistoryEntry $entry, string $userName, string $partnerName = ''): ?string
     {
         $event = $entry->getEvent();
         $changes = $entry->getChanges();
@@ -223,19 +224,21 @@ class HistoryEntryManager extends AbstractManager
                             $description .= " a modifié son affectation du statut {$changes['statut']['old']} au statut {$changes['statut']['new']}";
                             break;
                     }
-                }
-                if (array_key_exists('motifCloture', $changes) && null !== $changes['motifCloture']['new']) {
-                    $description .= '(Motif de clôture : '.MotifCloture::tryFrom($changes['motifCloture']['new'])->label().')';
-                }
-                if (array_key_exists('motifRefus', $changes) && null !== $changes['motifRefus']['new']) {
-                    $description .= '(Motif de refus : '.MotifRefus::tryFrom($changes['motifRefus']['new'])->label().')';
+                    if (array_key_exists('motifCloture', $changes) && null !== $changes['motifCloture']['new']) {
+                        $description .= '(Motif de clôture : '.MotifCloture::tryFrom($changes['motifCloture']['new'])->label().')';
+                    }
+                    if (array_key_exists('motifRefus', $changes) && null !== $changes['motifRefus']['new']) {
+                        $description .= '(Motif de refus : '.MotifRefus::tryFrom($changes['motifRefus']['new'])->label().')';
+                    }
+
+                    return $description;
                 }
 
-                return $description;
+                return null;
             case HistoryEntryEvent::DELETE:
                 return $userName." a supprimé l'affectation du partenaire ".$partnerName;
             default:
-                return 'Changement non spécifié.';
+                return null;
         }
     }
 

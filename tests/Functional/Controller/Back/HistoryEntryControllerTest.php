@@ -57,7 +57,7 @@ class HistoryEntryControllerTest extends WebTestCase
         $response = json_decode($this->client->getResponse()->getContent(), true);
 
         $this->assertArrayHasKey('historyEntries', $response);
-        $this->assertNotEmpty($response['historyEntries']);
+        $this->assertEmpty($response['historyEntries']);
     }
 
     public function testListHistoryAffectationWithoutSignalementId()
