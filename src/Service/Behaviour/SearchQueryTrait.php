@@ -24,9 +24,6 @@ trait SearchQueryTrait
                 $params[$key] = $value;
             }
         }
-        if (isset($params['territory']) && !$this->getUser()->isSuperAdmin()) {
-            unset($params['territory']);
-        }
 
         return $params;
     }

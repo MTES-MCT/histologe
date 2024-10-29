@@ -8,11 +8,13 @@ if (searchUserForm) {
           input.checked = false
         })
       }
+      document.getElementById('page').value = 1
       searchUserForm.submit()
     })
   })
   searchUserForm.querySelectorAll('.search-checkbox-container').forEach((select) => {
     select.addEventListener('searchCheckboxChange', function () {
+      document.getElementById('page').value = 1
       searchUserForm.submit()
     })
   })

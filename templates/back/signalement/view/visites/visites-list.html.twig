@@ -18,13 +18,20 @@
                 {% endif %}
             {% endfor %}
 
-            {% if displayAddVisiteButton %}
             <div class="fr-my-5v fr-text--right">
-                <button class="fr-btn fr-fi-calendar-line fr-btn--icon-left" aria-controls="add-visite-modal" data-fr-opened="false">
-                    Ajouter une visite
-                </button>
+                {% if platform.feature_grille_visite and not signalement.territory.isGrilleVisiteDisabled %}
+                    <a class="fr-btn fr-btn--secondary fr-icon-article-line fr-btn--icon-left matomo_download" 
+                    title="Télécharger la grille de visite {% if signalement.territory.grilleVisiteFilename %}du territoire{% endif %}"
+                    target="_blank" rel="noreferrer noopener" href="{{ path('back_territory_grille_visite', {territory:signalement.territory.id}) }}">
+                        Grille de visite
+                    </a>
+                {% endif %}
+                {% if displayAddVisiteButton %}
+                    <button class="fr-btn fr-fi-calendar-line fr-btn--icon-left" aria-controls="add-visite-modal" data-fr-opened="false">
+                        Ajouter une visite
+                    </button>
+                {% endif %}
             </div>
-            {% endif %}
         {% endif %}
     </div>
 </div>

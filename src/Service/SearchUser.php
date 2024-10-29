@@ -11,7 +11,9 @@ use Symfony\Component\Validator\Constraints as Assert;
 
 class SearchUser
 {
-    use SearchQueryTrait;
+    use SearchQueryTrait {
+        getUrlParams as getUrlParamsBase;
+    }
     private User $user;
     #[Assert\Positive(message: 'La page doit être un nombre positif')]
     private ?int $page = 1;
@@ -97,6 +99,16 @@ class SearchUser
     public function setRole(?string $role): void
     {
         $this->role = $role;
+    }
+
+    public function getUrlParams(): array
+    {
+        $params = $this->getUrlParamsBase();
+        if (isset($params['territory']) && !$this->getUser()->isSuperAdmin()) {
+            unset($params['territory']);
+        }
+
+        return $params;
     }
 
     public function getFiltersToText(): array

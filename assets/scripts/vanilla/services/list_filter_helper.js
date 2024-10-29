@@ -1,5 +1,8 @@
 export const updateLocalStorageWithFormParams = (localStorageName) => {
-  const form = document.querySelector('#bo_filters_form')
+  let form = document.querySelector('#bo_filters_form')
+  if (document.querySelector('#bo_filters_form') === null) {
+    form = document.querySelector('#' + localStorageName)
+  }
   const params = new URLSearchParams(new FormData(form))
   const currentPage = new URLSearchParams(window.location.search).get('page') || 1
   params.set('page', currentPage)

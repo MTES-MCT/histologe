@@ -1,0 +1,111 @@
+{% extends 'back/base_bo.html.twig' %}
+
+{% block title %}Liste des territoires{% endblock %}
+
+{% block content %}
+    <section class="fr-p-5v">
+        {% include 'back/breadcrumb_bo.html.twig' with {
+            'level2Title': 'Outils SA',
+            'level2Link': '',
+            'level2Label': '',
+            'level3Title': 'Territoires',
+            'level3Link': '',
+        } %}
+
+        <header>
+            <div class="fr-grid-row">
+                <div class="fr-col-12 fr-text--left">
+                    <h1>Liste des territoires</h1>
+                </div>
+            </div>
+        </header>
+    </section>
+    <section class="fr-container--fluid overflow-visible">
+        {% form_theme form 'form/dsfr_theme.html.twig' %}
+        {{ form_start(form) }}
+        {{ form_errors(form) }}
+        <div class="fr-grid-row fr-grid-row--gutters">
+            <div class="fr-col-12 fr-col-lg-3">
+                {{ form_row(form.queryName) }}
+            </div>
+            <div class="fr-col-12 fr-col-lg-3">
+                {{ form_row(form.isActive) }}
+            </div>
+            <div class="fr-col-12">
+                <a href="{{ path('back_territory_index') }}" class="fr-link fr-link--icon-left fr-icon-close-circle-line">Réinitialiser les résultats</a>
+            </div>
+        </div>
+        {{ form_end(form) }}
+    </section>
+
+    <section class="fr-grid-row fr-grid-row--middle fr-p-5v">
+        <div class="fr-col">
+            <h2 class="fr-h2 fr-mb-0" id="desc-table">{{territories|length}} territoire{% if territories|length > 1%}s{% endif %}</h2>
+        </div>
+    </section>
+
+    <section class="fr-col-12 fr-table fr-table--lg fr-pt-0 fr-px-5v">
+		<div class="fr-table__wrapper">
+			<div class="fr-table__container">
+				<div class="fr-table__content">
+                    <table class="sortable fr-cell--multiline" aria-label="Liste des territoires" aria-describedby="desc-table">
+                        <thead>
+                            <tr>
+                                <th scope="col">ID</th>
+                                <th scope="col">Code</th>
+                                <th scope="col">Nom</th>
+                                <th scope="col">Statut</th>
+                                <th scope="col">Codes Insee ouverts</th>
+                                <th scope="col">Timezone</th>
+                                <th scope="col">Grille de visite</th>
+                                <th scope="col">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for territory in territories %}
+                                <tr class="signalement-row">
+                                    <td>{{ territory.id }}</td>
+                                    <td>{{ territory.zip }}</td>
+                                    <td>{{ territory.name }}</td>
+                                    <td>
+                                        {% if territory.isActive %}
+                                            <span class="fr-badge fr-badge--no-icon fr-badge--success">Activé</span>
+                                        {% else %}
+                                            <span class="fr-badge fr-badge--no-icon fr-badge--error">Non activé</span>
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        {% for code in territory.authorizedCodesInsee %}
+                                            <span class="fr-badge fr-badge--blue-ecume fr-mb-1v">{{ code }}</span>
+                                        {% endfor %}
+                                    </td>
+                                    <td>{{ territory.timezone}}</td>
+                                    <td>
+                                        {% if territory.isGrilleVisiteDisabled %}
+                                            <span class="fr-badge fr-badge--error">Désactivée</span>
+                                        {% elseif territory.grilleVisiteFilename is not null %}
+                                            <a class="fr-link" target="_blank" rel="noreferrer noopener" href="{{ path('back_territory_grille_visite', {territory:territory.id}) }}">
+                                                Grille spécifique
+                                            </a>
+                                        {% else %}
+                                            <a target="_blank" rel="noreferrer noopener" href="{{ path('back_territory_grille_visite', {territory:territory.id}) }}">
+                                                Grille par défaut
+                                            </a>
+                                        {% endif %}
+                                    <td>
+                                        <a class="fr-btn fr-btn--sm fr-fi-edit-line" href="{{path('back_territory_edit', {territory:territory.id})}}"></a>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+				</div>
+			</div>
+		</div>
+        <div id="territory-pagination" class="fr-grid-row fr-mt-2v fr-grid-row--center">
+            {% import '_partials/macros.html.twig' as macros %}
+            {{ macros.customPagination(pages, searchTerritory.page, 'back_territory_index', searchTerritory.urlParams) }}
+        </div>
+    </section>
+
+{% endblock %}
