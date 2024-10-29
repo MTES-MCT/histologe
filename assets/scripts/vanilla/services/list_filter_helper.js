@@ -1,12 +1,12 @@
 export const updateLocalStorageWithFormParams = (localStorageName) => {
-    let form = document.querySelector('#bo_filters_form');
-    if(document.querySelector('#bo_filters_form') === null){
-        form = document.querySelector('#'+localStorageName);
-    }
-    const params = new URLSearchParams(new FormData(form));    
-    const currentPage = new URLSearchParams(window.location.search).get('page') || 1;
-    params.set('page', currentPage);
-    localStorage.setItem(localStorageName, params.toString());
+  let form = document.querySelector('#bo_filters_form')
+  if (document.querySelector('#bo_filters_form') === null) {
+    form = document.querySelector('#' + localStorageName)
+  }
+  const params = new URLSearchParams(new FormData(form))
+  const currentPage = new URLSearchParams(window.location.search).get('page') || 1
+  params.set('page', currentPage)
+  localStorage.setItem(localStorageName, params.toString())
 }
 
 export const updateLocalStorageWithPaginationParams = (eventType, idItem, localStorageName) => {
