@@ -94,7 +94,7 @@ export default defineComponent({
     access_focus: { type: Boolean, default: false }
   },
   data () {
-    const updatedSubscreenData = subscreenManager.generateSubscreenData(this.id, subscreenData.body, this.validate)
+    const updatedSubscreenData = subscreenManager.generateSubscreenData(this.id, subscreenData.body)
     // on met à jour formStore en ajoutant les sous-composants du composant Address
     subscreenManager.addSubscreenData(this.id, updatedSubscreenData)
     return {
