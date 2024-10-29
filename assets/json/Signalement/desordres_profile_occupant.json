@@ -1458,7 +1458,7 @@
             "show": "formStore.data.desordres_logement_aeration_aucune_aeration === 1 && formStore.data.composition_logement_piece_unique === 'plusieurs_pieces'" 
           },
           "validate": {
-            "message": "Veuillez sélectionner la pièce."
+            "message": "Veuillez sélectionner la ou les pièces."
           }
         },
         {
@@ -1514,7 +1514,7 @@
                   "show": "formStore.data.desordres_logement_aeration_ventilation_defectueuse_details_nettoyage === 'oui' && formStore.data.composition_logement_piece_unique === 'plusieurs_pieces'" 
                 },
                 "validate": {
-                  "message": "Veuillez sélectionner la pièce."
+                  "message": "Veuillez sélectionner la ou les pièces."
                 }
               }
             ]
@@ -1598,7 +1598,7 @@
             "show": "formStore.data.desordres_logement_chauffage_type === 'aucun' && formStore.data.composition_logement_piece_unique === 'plusieurs_pieces'" 
           },
           "validate": {
-            "message": "Veuillez sélectionner la pièce."
+            "message": "Veuillez sélectionner la ou les pièces."
           }
         },
         {
@@ -1628,7 +1628,7 @@
                   "show": "formStore.data.desordres_logement_chauffage_details_fenetres_permeables === 1 && formStore.data.composition_logement_piece_unique === 'plusieurs_pieces'" 
                 },
                 "validate": {
-                  "message": "Veuillez sélectionner la pièce."
+                  "message": "Veuillez sélectionner la ou les pièces."
                 }
               },
               {
@@ -1648,7 +1648,7 @@
                   "show": "formStore.data.desordres_logement_chauffage_details_difficultes_chauffage === 1 && formStore.data.composition_logement_piece_unique === 'plusieurs_pieces'" 
                 },
                 "validate": {
-                  "message": "Veuillez sélectionner la pièce."
+                  "message": "Veuillez sélectionner la ou les pièces."
                 }
               },
               {
@@ -1668,7 +1668,7 @@
                   "show": "formStore.data.desordres_logement_chauffage_details_chauffage_KO === 1 && formStore.data.composition_logement_piece_unique === 'plusieurs_pieces'" 
                 },
                 "validate": {
-                  "message": "Veuillez sélectionner la pièce."
+                  "message": "Veuillez sélectionner la ou les pièces."
                 }
               },
               {
@@ -1716,7 +1716,7 @@
               },
               {
                 "type": "SignalementFormCounter",
-                "label": "{{dictionaryStore::desordres_logement_chauffage_details_dpe_conso_finale}}",
+                "label": "{{dictionaryStore::desordres_logement_chauffage_details_dpe_conso_finale}} (facultatif)",
                 "description": "Format attendu : Saisir un nombre entier",
                 "slug": "desordres_logement_chauffage_details_dpe_conso_finale",
                 "conditional": {
@@ -1731,7 +1731,7 @@
               },
               {
                 "type": "SignalementFormCounter",
-                "label": "Quelle est la superficie de votre logement ? (m²)",
+                "label": "Quelle est la superficie de votre logement ? (m²) (facultatif)",
                 "description": "Format attendu : Saisir un nombre entier",
                 "slug": "composition_logement_superficie",
                 "conditional": {
@@ -1745,7 +1745,7 @@
               },
               {
                 "type": "SignalementFormCounter",
-                "label": "Quelle est la consommation en énergie indiquée sur le DPE ? (kWh/an)",
+                "label": "Quelle est la consommation en énergie indiquée sur le DPE ? (kWh/an) (facultatif)",
                 "description": "Format attendu : Saisir un nombre entier",
                 "slug": "desordres_logement_chauffage_details_dpe_conso",
                 "conditional": {
@@ -2198,7 +2198,7 @@
             "show": "formStore.data.desordres_logement_securite_sol_glissant === 1 && formStore.data.composition_logement_piece_unique === 'plusieurs_pieces'" 
           },
           "validate": {
-            "message": "Veuillez sélectionner la pièce."
+            "message": "Veuillez sélectionner la ou les pièces."
           }
         },
         {
@@ -2218,7 +2218,7 @@
             "show": "formStore.data.desordres_logement_securite_sol_dangereux === 1 && formStore.data.composition_logement_piece_unique === 'plusieurs_pieces'" 
           },
           "validate": {
-            "message": "Veuillez sélectionner la pièce."
+            "message": "Veuillez sélectionner la ou les pièces."
           }
         },
         {
@@ -2238,7 +2238,7 @@
             "show": "formStore.data.desordres_logement_securite_balcons === 1 && formStore.data.composition_logement_piece_unique === 'plusieurs_pieces'" 
           },
           "validate": {
-            "message": "Veuillez sélectionner la pièce."
+            "message": "Veuillez sélectionner la ou les pièces."
           }
         },
         {
@@ -2266,7 +2266,7 @@
             "show": "formStore.data.desordres_logement_securite_plomb === 1 && formStore.data.composition_logement_piece_unique === 'plusieurs_pieces'" 
           },
           "validate": {
-            "message": "Veuillez sélectionner la pièce."
+            "message": "Veuillez sélectionner la ou les pièces."
           }
         },
         {
@@ -2811,7 +2811,7 @@
             "show": "formStore.data.desordres_logement_lumiere_pas_lumiere === 1 && formStore.data.composition_logement_piece_unique === 'plusieurs_pieces'" 
           },
           "validate": {
-            "message": "Veuillez sélectionner la pièce."
+            "message": "Veuillez sélectionner la ou les pièces."
           }
         },
         {
@@ -2831,7 +2831,7 @@
             "show": "formStore.data.desordres_logement_lumiere_pas_volets === 1 && formStore.data.composition_logement_piece_unique === 'plusieurs_pieces'" 
           },
           "validate": {
-            "message": "Veuillez sélectionner la pièce."
+            "message": "Veuillez sélectionner la ou les pièces."
           }
         }
       ],

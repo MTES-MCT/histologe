@@ -4,29 +4,18 @@
             "type": "SignalementFormTextfield",
             "label": "Numéro et voie",
             "slug": "detail_numero",
-            "validate": {
-                "message": "Veuillez renseigner l'adresse du logement."
-            },
             "tagWhenEdit": "detail_manual"
         },
         {
             "type": "SignalementFormTextfield",
             "label": "Code postal",
             "slug": "detail_code_postal",
-            "validate": {
-                "maxLength": 5,
-                "message": "Veuillez renseigner le code postal du logement."
-            },
             "tagWhenEdit": "detail_manual"
         },
         {
             "type": "SignalementFormTextfield",
             "label": "Commune",
             "slug": "detail_commune",
-            "validate": {
-                "maxLength": 100,
-                "message": "Veuillez renseigner la commune du logement."
-            },
             "tagWhenEdit": "detail_manual"
         }
     ]

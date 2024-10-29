@@ -1,13 +1,13 @@
 import formStore from '../store'
 
 export const subscreenManager = {
-  generateSubscreenData (id: string, data: any[]) {
+  generateSubscreenData (id: string, data: any[], validateParent: any) {
     return data.map((component) => {
       return {
         ...component,
         slug: id + '_' + (component.slug as string),
         tagWhenEdit: id + '_' + (component.tagWhenEdit as string),
-        validate: component.validate
+        validate: validateParent
       }
     })
   },

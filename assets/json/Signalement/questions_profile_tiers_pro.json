@@ -220,6 +220,7 @@
           "placeholder": "Taper le nom de l'organisme ici",
           "description": "Format attendu : Tapez le nom du bailleur et sélectionnez-le dans la liste.",
           "validate": {
+            "message": "Veuillez renseigner le nom de famille ou le nom de l'organisme.",
             "maxLength": 255
           },
           "conditional": {

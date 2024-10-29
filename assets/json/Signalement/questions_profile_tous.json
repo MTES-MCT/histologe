@@ -292,7 +292,7 @@
             "show": "formStore.data.signalement_concerne_profil === 'autre_logement' && formStore.data.signalement_concerne_profil_detail_tiers === 'bailleur'"
           },
           "validate": {
-            "message": "Veuillez sélectionner votre profil"
+            "message": "Veuillez indiquer si vous êtes un particulier ou un organisme ou société."
           }
         },
         {
