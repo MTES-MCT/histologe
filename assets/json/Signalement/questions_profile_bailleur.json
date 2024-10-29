@@ -1375,6 +1375,9 @@
           "slug": "info_procedure_reponse_assurance",
           "conditional": {
             "show": "formStore.data.info_procedure_assurance_contactee === 'oui'"
+          },
+          "validate": {
+            "message": "Veuillez renseigner la réponse de l'assurance."
           }
         },
         {
