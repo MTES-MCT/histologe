@@ -10,7 +10,7 @@
                         Affecter des partenaires
                     </button>
                 {% endif %}
-                {% if platform.feature_historique_affectations %}
+                {% if platform.feature_historique_affectations and is_granted('ROLE_ADMIN_TERRITORY') %}
                     <button 
                         class="fr-btn fr-btn--secondary fr-btn--icon-left"
                         data-fr-opened="false"
