@@ -1258,7 +1258,7 @@
           "type": "SignalementFormDate",
           "label": "Quelle est la date de naissance de l'allocataire ?",
           "slug": "logement_social_date_naissance",
-          "description": "Format attendu : JJ/MM/AAAA",
+          "hint": "Format attendu : JJ/MM/AAAA",
           "conditional": {
             "show": "formStore.data.logement_social_allocation === 'oui'"
           },

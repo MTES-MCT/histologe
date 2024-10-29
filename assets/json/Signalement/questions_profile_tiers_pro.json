@@ -218,7 +218,7 @@
           "label": "Nom de l'organisme",
           "slug": "coordonnees_bailleur_nom_autocomplete",
           "placeholder": "Taper le nom de l'organisme ici",
-          "description": "Format attendu : Tapez le nom de votre bailleur et sélectionnez-le dans la liste.",
+          "description": "Format attendu : Tapez le nom du bailleur et sélectionnez-le dans la liste.",
           "validate": {
             "maxLength": 255
           },
@@ -1241,7 +1241,7 @@
           "type": "SignalementFormDate",
           "label": "Quelle est la date de naissance de l'allocataire ?",
           "slug": "logement_social_date_naissance",
-          "description": "Format attendu : JJ/MM/AAAA",
+          "hint": "Format attendu : JJ/MM/AAAA",
           "conditional": {
             "show": "formStore.data.logement_social_allocation === 'oui'"
           },

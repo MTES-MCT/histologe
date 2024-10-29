@@ -2848,6 +2848,9 @@
           "slug": "desordres_logement_proprete_pieces",
           "accessibility": {
             "focus": true
+          },
+          "validate": {
+            "message": "Veuillez sélectionner la pièce."
           }
         }
       ],

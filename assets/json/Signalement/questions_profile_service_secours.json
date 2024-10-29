@@ -69,7 +69,7 @@
           "slug": "vos_coordonnees_tiers_tel",
           "description": "Format attendu : Veuillez sélectionner le pays pour obtenir l'indicatif téléphonique, puis saisir le numéro de téléphone au format national (sans l'indicatif). Exemple pour la France : 0702030405.",
           "validate": {
-            "message": "Veuillez renseigner un numéro de téléphone."
+            "message": "Veuillez renseigner votre numéro de téléphone."
           },
           "accessibility": {
             "name": "telephone",

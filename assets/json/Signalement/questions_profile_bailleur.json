@@ -14,7 +14,7 @@
             "show": "formStore.data.signalement_concerne_profil_detail_bailleur_bailleur === 'organisme_societe'"
           },
           "validate": {
-            "message": "Veuillez renseigner le nom de l'organisme."
+            "message": "Veuillez renseigner le nom de votre organisme."
           },
           "accessibility": {
             "name": "organizationName",
@@ -27,7 +27,7 @@
           "label": "Nom de famille",
           "slug": "vos_coordonnees_tiers_nom",
           "validate": {
-            "message": "Veuillez renseigner le nom de famille.",
+            "message": "Veuillez renseigner votre nom de famille.",
             "maxLength": 50
           },
           "accessibility": {
@@ -41,7 +41,7 @@
           "label": "Prénom",
           "slug": "vos_coordonnees_tiers_prenom",
           "validate": {
-            "message": "Veuillez renseigner le prénom.",
+            "message": "Veuillez renseigner votre prénom.",
             "maxLength": 50
           },
           "accessibility": {
@@ -56,7 +56,7 @@
           "description": "Format attendu : nom@domaine.fr",
           "validate": {
             "message": "Veuillez renseigner une adresse e-mail.",
-            "patternMessage": "Veuillez renseigner une adresse e-mail valide."
+            "patternMessage": "Veuillez renseigner votre adresse e-mail valide."
           },
           "accessibility": {
             "name": "mail",
@@ -69,7 +69,7 @@
           "slug": "vos_coordonnees_tiers_tel",
           "description": "Format attendu : Veuillez sélectionner votre pays pour obtenir l'indicatif téléphonique, puis saisir votre numéro de téléphone au format national (sans l'indicatif). Exemple pour la France : 0702030405.",
           "validate": {
-            "message": "Veuillez renseigner un téléphone."
+            "message": "Veuillez renseigner votre numéro de téléphone."
           },
           "accessibility": {
             "name": "telephone",
@@ -347,7 +347,7 @@
           },
           "description": "Format attendu : texte (15 caractères maximum)",
           "validate": {
-            "message": "Veuillez renseigner un autre type de logement.",
+            "message": "Veuillez préciser le type de logement.",
             "maxLength": 15
           }
         },
@@ -1127,7 +1127,7 @@
           "type": "SignalementFormDate",
           "label": "Quelle est la date de naissance de l'allocataire ?",
           "slug": "logement_social_date_naissance",
-          "description": "Format attendu : JJ/MM/AAAA",
+          "hint": "Format attendu : JJ/MM/AAAA",
           "conditional": {
             "show": "formStore.data.logement_social_allocation === 'oui'"
           },
