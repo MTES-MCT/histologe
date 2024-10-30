@@ -165,8 +165,8 @@ class PartnerRepository extends ServiceEntityRepository
             $params = [
                 'territory' => $signalement->getTerritory()->getId(),
                 'insee' => '%'.$signalement->getInseeOccupant().'%',
-                'lng' => $signalement->getGeoloc()['lng'],
-                'lat' => $signalement->getGeoloc()['lat'],
+                'lng' => $signalement->getGeoloc()['lng'] ?? 'notInZone',
+                'lat' => $signalement->getGeoloc()['lat'] ?? 'notInZone',
             ];
             $clauseSubquery = '';
             if (\count($affectedPartners) || 'IN' == $operator) {
