@@ -60,7 +60,7 @@
     <section class="fr-grid-row fr-grid-row--middle fr-p-5v">
         <h1 class="fr-h2 fr-mb-0" id="desc-table">{{total}} comptes archivés ou sans territoires et/ou partenaires trouvés</h1>
     </section>
-    <section class="fr-col-12 fr-table fr-table--lg fr-pt-0 fr-px-5v">    
+    <section class="fr-col-12 fr-table {{ not platform.feature_enable_menu_horizontale ? 'fr-table--lg' : '' }} fr-pt-0 fr-px-5v">
         <div class="fr-table__wrapper">
             <div class="fr-table__container">
                 <div class="fr-table__content">

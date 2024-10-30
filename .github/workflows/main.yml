@@ -22,6 +22,7 @@ env:
   FEATURE_GRILLE_VISITE: 1
   FEATURE_ZONAGE: 1
   FEATURE_HISTORIQUE_AFFECTATIONS: 1
+  FEATURE_ENABLE_MENU_HORIZONTALE: 1
 jobs:
   code-quality:
     name: Histologe (PHP ${{ matrix.php-versions }})

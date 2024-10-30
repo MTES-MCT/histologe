@@ -89,6 +89,7 @@ export const store = {
     ajaxurlPartners: '',
     ajaxurlSignalementsNosuivi: '',
     ajaxurlSignalementsPerTerritoire: '',
-    ajaxurlConnectionsEsabora: ''
+    ajaxurlConnectionsEsabora: '',
+    featureEnableMenuHorizontale: ''
   }
 }
