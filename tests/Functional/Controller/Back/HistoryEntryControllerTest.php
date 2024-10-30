@@ -74,7 +74,7 @@ class HistoryEntryControllerTest extends WebTestCase
         ]);
         $this->client->request('GET', $route);
 
-        $this->assertResponseStatusCodeSame(400);
+        $this->assertResponseStatusCodeSame(403);
 
         $this->assertJson($this->client->getResponse()->getContent());
         $response = json_decode($this->client->getResponse()->getContent(), true);

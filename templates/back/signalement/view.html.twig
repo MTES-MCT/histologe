@@ -6,7 +6,7 @@
 {% block content %}
     {% if not needValidation and (is_granted('ROLE_ADMIN_TERRITORY') or canPartnerAffectation) %}
         {% include '_partials/_modal_affectation.html.twig' %}
-        {% if platform.feature_historique_affectations and is_granted('ROLE_ADMIN_TERRITORY') %}
+        {% if (platform.feature_historique_affectations and is_granted('ROLE_ADMIN_TERRITORY')) or canPartnerAffectation %}
             {% include '_partials/_modal_historique_affectation.html.twig' %}
         {% endif %}
     {% endif %}
