@@ -3,7 +3,7 @@
     "type": "SignalementFormScreen",
     "label": "Signaler un problème de logement avec Histologe",
     "slug": "introduction",
-    "description": "<h2>Avant de démarrer...</h2><p>Lisez bien les conseils ci-dessous.<br>Après cette page, cela vous prendra <b>environ 25 minutes</b> pour signaler vos problèmes de logement.</p><h2>Comment déposer un signalement ?</h2><p>Pour déposer votre signalement, il faut remplir toutes les étapes du formulaire et répondre à des questions sur :<ul><li>L'état du logement</li><li>L'adresse du logement</li><li>Le logement en général (taille en m², nombre de personnes vivant dans le logement, etc.)</li></ul></p><p>Si possible, préparez les documents suivants :<ul><li>Des photos des problèmes dans le logement</li><li>Les coordonnées du bailleur (propriétaire)</li><li>Si vous les avez : le bail, l'état des lieux et le DPE du logement</li><li>Si concerné : le numéro d’allocataire</li></ul></p><div class=\"fr-notice fr-notice--info\"><div class=\"fr-container\"><div class=\"fr-notice__body\"><p class=\"fr-notice__title\">Un signalement complet permet une meilleure prise en charge du dossier !</p></div></div></div><br><h2>Qui aura accès à mon signalement ?</h2><p>Les informations demandées sont nécessaires au bon traitement du signalement.<br>Elles seront <b>uniquement partagées avec les administrations compétentes</b> pour traiter votre dossier.</p><h2>Est-ce que je peux déposer un signalement pour quelqu'un d'autre ?</h2><p>Oui. Vous pouvez déposer un signalement pour une autre personne.<br>Assurez-vous d'avoir sa permission et préparez les informations sur son logement.</p>",    
+    "description": "<h2>Avant de démarrer…</h2><p>Lisez bien les conseils ci-dessous.<br>Après cette page, cela vous prendra <b>environ 25 minutes</b> pour signaler vos problèmes de logement.</p><h2>Comment déposer un signalement ?</h2><p>Pour déposer votre signalement, il faut remplir toutes les étapes du formulaire et répondre à des questions sur :<ul><li>L'état du logement</li><li>L'adresse du logement</li><li>Le logement en général (taille en m², nombre de personnes vivant dans le logement, etc.)</li></ul></p><p>Si possible, préparez les documents suivants :<ul><li>Des photos des problèmes dans le logement</li><li>Les coordonnées du bailleur (propriétaire)</li><li>Si vous les avez : le bail, l'état des lieux et le DPE du logement</li><li>Si concerné : le numéro d’allocataire</li></ul></p><div class=\"fr-notice fr-notice--info\"><div class=\"fr-container\"><div class=\"fr-notice__body\"><p class=\"fr-notice__title\">Un signalement complet permet une meilleure prise en charge du dossier !</p></div></div></div><br><h2>Qui aura accès à mon signalement ?</h2><p>Les informations demandées sont nécessaires au bon traitement du signalement.<br>Elles seront <b>uniquement partagées avec les administrations compétentes</b> pour traiter votre dossier.</p><h2>Est-ce que je peux déposer un signalement pour quelqu'un d'autre ?</h2><p>Oui. Vous pouvez déposer un signalement pour une autre personne.<br>Assurez-vous d'avoir sa permission et préparez les informations sur son logement.</p>",
     "customCss": "fr-my-md-10w",
     "components": {
       "body": [
@@ -84,7 +84,7 @@
           "type": "SignalementFormAddress",
           "label": "Adresse du logement",
           "slug": "adresse_logement_adresse",
-          "description": "Tapez l'adresse puis sélectionnez-la dans la liste. Si elle n'apparait pas, cliquez sur Saisir une adresse manuellement."
+          "description": "Format attendu : Tapez l'adresse puis sélectionnez-la dans la liste. Si elle n'apparait pas, cliquez sur Saisir une adresse manuellement."
         },
         {
           "type": "SignalementFormSubscreen",
@@ -97,7 +97,7 @@
                 "type": "SignalementFormTextfield",
                 "label": "Etage",
                 "slug": "adresse_logement_complement_adresse_etage",
-                "description": "5 caractères maximum",
+                "description": "Format attendu : 5 caractères maximum",
                 "validate": {
                   "required": false,
                   "maxLength": 5
@@ -107,7 +107,7 @@
                 "type": "SignalementFormTextfield",
                 "label": "Escalier",
                 "slug": "adresse_logement_complement_adresse_escalier",
-                "description": "3 caractères maximum",
+                "description": "Format attendu : 3 caractères maximum",
                 "validate": {
                   "required": false,
                   "maxLength": 3
@@ -117,7 +117,7 @@
                 "type": "SignalementFormTextfield",
                 "label": "Numéro d'appartement",
                 "slug": "adresse_logement_complement_adresse_numero_appartement",
-                "description": "5 caractères maximum",
+                "description": "Format attendu : 5 caractères maximum",
                 "validate": {
                   "required": false,
                   "maxLength": 5
@@ -126,9 +126,9 @@
               {
                 "type": "SignalementFormTextfield",
                 "label": "Autre",
-                "placeholder": "résidence, lieu-dit...",
+                "placeholder": "résidence, lieu-dit…",
                 "slug": "adresse_logement_complement_adresse_autre",
-                "description": "255 caractères maximum",
+                "description": "Format attendu : 255 caractères maximum",
                 "validate": {
                   "required": false,
                   "maxLength": 255
@@ -168,7 +168,7 @@
   {
     "type": "SignalementFormScreen",
     "slug": "signalement_concerne",
-    "label": "Vous déposez un signalement...",
+    "label": "Vous déposez un signalement…",
     "screenCategory": "Adresse et coordonnées",
     "components": {
       "body": [
@@ -205,7 +205,7 @@
         },
         {
           "type": "SignalementFormOnlyChoice",
-          "label": "Vous êtes...",
+          "label": "Vous êtes…",
           "slug": "signalement_concerne_profil_detail_occupant",
           "values": [
             {
@@ -219,11 +219,14 @@
           ],
           "conditional": {
             "show": "formStore.data.signalement_concerne_profil === 'logement_occupez'"
+          },
+          "validate": {
+            "message": "Veuillez indiquer si vous êtes un locataire ou propriétaire du logement."
           }
         },
         {
           "type": "SignalementFormOnlyChoice",
-          "label": "Vous êtes...",
+          "label": "Vous êtes…",
           "slug": "signalement_concerne_profil_detail_tiers",
           "values": [
             {
@@ -245,11 +248,14 @@
           ],
           "conditional": {
             "show": "formStore.data.signalement_concerne_profil === 'autre_logement'"
+          },
+          "validate": {
+            "message": "Veuillez sélectionner votre profil"
           }
         },
         {
           "type": "SignalementFormOnlyChoice",
-          "label": "Plus précisément...",
+          "label": "Plus précisément…",
           "slug": "signalement_concerne_profil_detail_bailleur_proprietaire",
           "values": [
             {
@@ -263,11 +269,14 @@
           ],
           "conditional": {
             "show": "formStore.data.signalement_concerne_profil === 'logement_occupez' && formStore.data.signalement_concerne_profil_detail_occupant === 'bailleur_occupant'"
+          },
+          "validate": {
+            "message": "Veuillez indiquer si vous êtes un particulier ou un organisme ou société."
           }
         },
         {
           "type": "SignalementFormOnlyChoice",
-          "label": "Plus précisément...",
+          "label": "Plus précisément…",
           "slug": "signalement_concerne_profil_detail_bailleur_bailleur",
           "values": [
             {
@@ -281,6 +290,9 @@
           ],
           "conditional": {
             "show": "formStore.data.signalement_concerne_profil === 'autre_logement' && formStore.data.signalement_concerne_profil_detail_tiers === 'bailleur'"
+          },
+          "validate": {
+            "message": "Veuillez indiquer si vous êtes un particulier ou un organisme ou société."
           }
         },
         {
@@ -303,6 +315,9 @@
           ],
           "conditional": {
             "show": "formStore.data.signalement_concerne_profil === 'autre_logement' && formStore.data.signalement_concerne_profil_detail_tiers === 'service_secours'"
+          },
+          "validate": {
+            "message": "Veuillez indiquer s'il s'agit d'un logement social."
           }
         },
         {
@@ -321,6 +336,9 @@
           ],
           "conditional": {
             "show": "formStore.data.signalement_concerne_profil?.length > 0  && formStore.data.signalement_concerne_profil_detail_tiers !== 'service_secours'"
+          },
+          "validate": {
+            "message": "Veuillez indiquer s'il s'agit d'un logement social."
           }
         }
       ],

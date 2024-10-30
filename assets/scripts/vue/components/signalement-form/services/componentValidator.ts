@@ -16,21 +16,21 @@ export const componentValidator = {
     }
     if (regexPattern !== undefined) {
       if (!regexPattern.test(value)) {
-        formStore.validationErrors[componentSlug] = 'Format invalide'
+        formStore.validationErrors[componentSlug] = component.validate?.patternMessage ?? 'Format invalide'
       }
     }
 
     if (variableTester.isNotEmpty(value) && component.type === 'SignalementFormPhonefield') {
       const countryCode = formStore.data[componentSlug + '_countrycode'].split(':')[0]
       if (!isValidPhoneNumber(value, countryCode)) {
-        formStore.validationErrors[componentSlug] = 'Format invalide'
+        formStore.validationErrors[componentSlug] = 'Veuillez renseigner un numéro de téléphone valide.'
       }
 
       const valueTelSecond = formStore.data[componentSlug + '_secondaire']
       if (variableTester.isNotEmpty(valueTelSecond)) {
         const countryCodeSecond = formStore.data[componentSlug + '_secondaire_countrycode'].split(':')[0]
         if (!isValidPhoneNumber(valueTelSecond, countryCodeSecond)) {
-          formStore.validationErrors[componentSlug + '_secondaire'] = 'Format invalide'
+          formStore.validationErrors[componentSlug + '_secondaire'] = 'Veuillez renseigner un numéro de téléphone valide.'
         }
       }
     }
@@ -49,7 +49,7 @@ export const componentValidator = {
 
   validateAddress (component: any) {
     const componentSlug: string = component.slug
-    const validationError = 'Ce champ est requis'
+    const validationError = 'Veuillez renseigner et sélectionner l\'adresse du logement.'
     // si le composant est requis et que tous les champs sont vides, on affiche l'erreur sur le champ de recherche
     if (
       (component.validate === undefined || component.validate.required !== false) &&
@@ -64,18 +64,18 @@ export const componentValidator = {
     } else if (formStore.data[componentSlug + '_detail_manual'] !== 0 && formStore.data[componentSlug + '_detail_manual'] !== undefined) {
       const addressDetailNumero = formStore.data[componentSlug + '_detail_numero']
       if (addressDetailNumero === undefined || addressDetailNumero === '') {
-        formStore.validationErrors[componentSlug + '_detail_numero'] = validationError
+        formStore.validationErrors[componentSlug + '_detail_numero'] = 'Veuillez renseigner l\'adresse du logement.'
       } else {
         const regexPattern = /^[0-9]*$/
         if (regexPattern.test(addressDetailNumero) || addressDetailNumero.length < 6 || addressDetailNumero.length > 100) {
-          formStore.validationErrors[componentSlug + '_detail_numero'] = 'Format invalide'
+          formStore.validationErrors[componentSlug + '_detail_numero'] = 'Veuillez renseigner une adresse valide.'
         }
       }
 
       if (formStore.data[componentSlug + '_detail_code_postal'] === undefined ||
         formStore.data[componentSlug + '_detail_code_postal'] === ''
       ) {
-        formStore.validationErrors[componentSlug + '_detail_code_postal'] = validationError
+        formStore.validationErrors[componentSlug + '_detail_code_postal'] = 'Veuillez renseigner le code postal du logement.'
 
       // vérification du code postal
       } else if (!/^\d{5}$/.test(formStore.data[componentSlug + '_detail_code_postal'])) {
@@ -85,7 +85,7 @@ export const componentValidator = {
       if (formStore.data[componentSlug + '_detail_commune'] === undefined ||
         formStore.data[componentSlug + '_detail_commune'] === ''
       ) {
-        formStore.validationErrors[componentSlug + '_detail_commune'] = validationError
+        formStore.validationErrors[componentSlug + '_detail_commune'] = 'Veuillez renseigner la commune du logement.'
       }
     }
   }

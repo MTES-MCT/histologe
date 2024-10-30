@@ -13,6 +13,9 @@
           "conditional": {
             "show": "formStore.data.signalement_concerne_profil_detail_tiers === 'service_secours'"
           },
+          "validate": {
+            "message": "Veuillez renseigner le nom de votre organisme."
+          },
           "accessibility": {
             "name": "organizationName",
             "autocomplete": "organization",
@@ -24,6 +27,7 @@
           "label": "Nom de famille",
           "slug": "vos_coordonnees_tiers_nom",
           "validate": {
+            "message": "Veuillez renseigner votre nom de famille.",
             "maxLength": 50
           },
           "accessibility": {
@@ -37,6 +41,7 @@
           "label": "Prénom",
           "slug": "vos_coordonnees_tiers_prenom",
           "validate": {
+            "message": "Veuillez renseigner votre prénom.",
             "maxLength": 50
           },
           "accessibility": {
@@ -48,6 +53,11 @@
           "type": "SignalementFormEmailfield",
           "label": "Adresse e-mail",
           "slug": "vos_coordonnees_tiers_email",
+          "description": "Format attendu : nom@domaine.fr",
+          "validate": {
+            "message": "Veuillez renseigner votre adresse e-mail.",
+            "patternMessage": "Veuillez renseigner une adresse e-mail valide."
+          },
           "accessibility": {
             "name": "mail",
             "autocomplete": "email"
@@ -57,6 +67,10 @@
           "type": "SignalementFormPhonefield",
           "label": "Téléphone",
           "slug": "vos_coordonnees_tiers_tel",
+          "description": "Format attendu : Veuillez sélectionner le pays pour obtenir l'indicatif téléphonique, puis saisir le numéro de téléphone au format national (sans l'indicatif). Exemple pour la France : 0702030405.",
+          "validate": {
+            "message": "Veuillez renseigner votre numéro de téléphone."
+          },
           "accessibility": {
             "name": "telephone",
             "autocomplete": "tel-national"
@@ -128,8 +142,10 @@
           "type": "SignalementFormEmailfield",
           "label": "Adresse e-mail (facultatif)",
           "slug": "coordonnees_occupant_email",
+          "description": "Format attendu : nom@domaine.fr",
           "validate": {
             "required": false,
+            "patternMessage": "Veuillez renseigner une adresse e-mail valide.",
             "maxLength": 255
           },
           "accessibility": {
@@ -141,6 +157,7 @@
           "type": "SignalementFormPhonefield",
           "label": "Téléphone (facultatif)",
           "slug": "coordonnees_occupant_tel",
+          "description": "Format attendu : Veuillez sélectionner le pays pour obtenir l'indicatif téléphonique, puis saisir le numéro de téléphone au format national (sans l'indicatif). Exemple pour la France : 0702030405.",
           "validate": {
             "required": false
           },
@@ -206,7 +223,7 @@
           "label": "Nom de l'organisme (facultatif)",
           "slug": "coordonnees_bailleur_nom_autocomplete",
           "placeholder": "Taper le nom de l'organisme ici",
-          "description": "Tapez le nom de votre bailleur et sélectionnez-le dans la liste.",
+          "description": "Format attendu : Tapez le nom du bailleur et sélectionnez-le dans la liste.",
           "validate": {
             "required": false,
             "maxLength": 255
@@ -236,8 +253,10 @@
           "type": "SignalementFormEmailfield",
           "label": "Adresse e-mail (facultatif)",
           "slug": "coordonnees_bailleur_email",
+          "description": "Format attendu : nom@domaine.fr",
           "validate": {
             "required": false,
+            "patternMessage": "Veuillez renseigner une adresse e-mail valide.",
             "maxLength": 255
           },
           "accessibility": {
@@ -249,6 +268,7 @@
           "type": "SignalementFormPhonefield",
           "label": "Téléphone (facultatif)",
           "slug": "coordonnees_bailleur_tel",
+          "description": "Format attendu : Veuillez sélectionner le pays pour obtenir l'indicatif téléphonique, puis saisir le numéro de téléphone au format national (sans l'indicatif). Exemple pour la France : 0702030405.",
           "validate": {
             "required": false
           },
@@ -261,6 +281,7 @@
           "type": "SignalementFormAddress",
           "label": "Adresse postale (facultatif)",
           "slug": "coordonnees_bailleur_adresse",
+          "description": "Format attendu : Tapez l'adresse puis sélectionnez-la dans la liste. Si elle n'apparait pas, cliquez sur Saisir une adresse manuellement.",
           "validate": {
             "required": false
           }
@@ -333,7 +354,10 @@
               "label": "Les deux",
               "value": "batiment_logement"
             }
-          ]
+          ],
+          "validate": {
+            "message": "Veuillez sélectionner la zone concernée."
+          }
         }
       ],
       "footer": [
@@ -412,7 +436,7 @@
       "body": [
         {
           "type": "SignalementFormOnlyChoice",
-          "label": "Le logement est...",
+          "label": "Le logement est…",
           "slug": "type_logement_nature",
           "values": [
             {
@@ -428,6 +452,9 @@
               "value": "autre"
             }
           ],
+          "validate": {
+            "message": "Veuillez sélectionner le type du logement."
+          },
           "accessibility": {
             "focus": true
           }
@@ -439,8 +466,9 @@
           "conditional": {
             "show": "formStore.data.type_logement_nature === 'autre'"
           },
-          "description": "15 caractères maximum",
+          "description": "Format attendu : 15 caractères maximum",
           "validate": {
+            "message": "Veuillez préciser le type de logement.",
             "maxLength": 15
           }
         },
@@ -460,7 +488,10 @@
               "label": "Non",
               "value": "non"
             }
-          ]
+          ],
+          "validate": {
+            "message": "Veuillez indiquer si le logement se situe au RDC (rez-de-chaussée)."
+          }
         },
         {
           "type": "SignalementFormOnlyChoice",
@@ -478,7 +509,10 @@
               "label": "Non",
               "value": "non"
             }
-          ]
+          ],
+          "validate": {
+            "message": "Veuillez indiquer si le logement est situé au dernier étage."
+          }
         },
         {
           "type": "SignalementFormOnlyChoice",
@@ -496,7 +530,10 @@
               "label": "Non",
               "value": "non"
             }
-          ]
+          ],
+          "validate": {
+            "message": "Veuillez indiquer si le logement est sous les combles, sans fenêtre."
+          }
         },
         {
           "type": "SignalementFormOnlyChoice",
@@ -514,7 +551,10 @@
               "label": "Non",
               "value": "non"
             }
-          ]
+          ],
+          "validate": {
+            "message": "Veuillez indiquer si le logement est en sous-sol, sans fenêtre."
+          }
         }
       ],
       "footer": [
@@ -565,6 +605,9 @@
               "value": "plusieurs_pieces"
             }
           ],
+          "validate": {
+            "message": "Veuillez indiquer si le logement est composé d'une pièce unique ou de plusieurs pièces."
+          },
           "accessibility": {
             "focus": true
           }
@@ -572,10 +615,11 @@
         {
           "type": "SignalementFormCounter",
           "label": "Quelle est la superficie du logement (taille en m²) (facultatif)",
-          "description": "Saisir un nombre entier",
+          "description": "Format attendu : Saisir un nombre entier",
           "slug": "composition_logement_superficie",
           "validate": {
             "pattern": "^[0-9]*$",
+            "patternMessage": "Veuillez renseigner une superficie valide.",
             "required": false
           }
         },
@@ -596,19 +640,24 @@
               "label": "Je ne sais pas",
               "value": "nsp"
             }
-          ]
+          ],
+          "validate": {
+            "message": "Veuillez indiquer si la hauteur jusqu'au plafond est de 2m ou plus."
+          }
         },
         {
           "type": "SignalementFormCounter",
-          "label": "Quel est le nombre de pièces à vivre (salon, chambre) dans votre logement ?",
-          "description": "Saisir un nombre entier",
+          "label": "Quel est le nombre de pièces à vivre (salon, chambre) dans le logement ?",
+          "description": "Format attendu : Saisir un nombre entier",
           "slug": "composition_logement_nb_pieces",
           "defaultValue": 1,
           "conditional": {
             "show": "formStore.data.composition_logement_piece_unique === 'plusieurs_pieces'"
           },
           "validate": {
-            "pattern": "^[0-9]*$"
+            "message": "Veuillez renseigner le nombre de pièces à vivre.",
+            "pattern": "^[0-9]*$",
+            "patternMessage": "Veuillez renseigner un nombre de pièces valide."
           }
         }
       ],
@@ -674,6 +723,9 @@
               "value": "nsp"
             }
           ],
+          "validate": {
+            "message": "Veuillez indiquer si au moins une des pièces à vivre fait 9m² ou plus."
+          },
           "accessibility": {
             "focus": true
           }
@@ -701,7 +753,10 @@
               "label": "Non",
               "value": "non"
             }
-          ]
+          ],
+          "validate": {
+            "message": "Veuillez indiquer si le foyer a une cuisine ou un coin cuisine."
+          }
         },
         {
           "type": "SignalementFormOnlyChoice",
@@ -719,6 +774,9 @@
           ],
           "conditional": {
             "show": "formStore.data.type_logement_commodites_cuisine === 'non'"
+          },
+          "validate": {
+            "message": "Veuillez indiquer si le foyer a accès à une cuisine collective."
           }
         },
         {
@@ -744,7 +802,10 @@
               "label": "Non",
               "value": "non"
             }
-          ]
+          ],
+          "validate": {
+            "message": "Veuillez indiquer si le foyer a une salle de bain, salle d'eau avec douche ou baignoire."
+          }
         },
         {
           "type": "SignalementFormOnlyChoice",
@@ -762,6 +823,9 @@
           ],
           "conditional": {
             "show": "formStore.data.type_logement_commodites_salle_de_bain === 'non'"
+          },
+          "validate": {
+            "message": "Veuillez indiquer si le foyer a accès à une salle de bain ou des douches collectives."
           }
         },
         {
@@ -787,7 +851,10 @@
               "label": "Non",
               "value": "non"
             }
-          ]
+          ],
+          "validate": {
+            "message": "Veuillez indiquer si le foyer a des toilettes (WC)."
+          }
         },
         {
           "type": "SignalementFormOnlyChoice",
@@ -805,6 +872,9 @@
           ],
           "conditional": {
             "show": "formStore.data.type_logement_commodites_wc === 'non'"
+          },
+          "validate": {
+            "message": "Veuillez indiquer si le foyer a accès à des toilettes (WC) collectives."
           }
         },
         {
@@ -821,6 +891,9 @@
               "value": "non"
             }
           ],
+          "validate": {
+            "message": "Veuillez indiquer si les toilettes (WC) et la cuisine sont dans la même pièce."
+          },
           "conditional": {
             "show": "formStore.data.type_logement_commodites_cuisine === 'oui' && formStore.data.type_logement_commodites_wc === 'oui'"
           }
@@ -863,10 +936,12 @@
         {
           "type": "SignalementFormCounter",
           "label": "Combien de personnes vivent dans le logement ?",
-          "description": "Saisir un nombre entier",
+          "description": "Format attendu : Saisir un nombre entier",
           "slug": "composition_logement_nombre_personnes",
           "validate": {
-            "pattern": "^[0-9]*$"
+            "message": "Veuillez renseigner le nombre de personnes vivant dans le logement.",
+            "pattern": "^[0-9]*$",
+            "patternMessage": "Veuillez renseigner un nombre de personnes valide."
           },
           "accessibility": {
             "focus": true
@@ -925,6 +1000,9 @@
               "value": "nsp"
             }
           ],
+          "validate": {
+            "message": "Veuillez indiquer si le foyer a reçu un bail."
+          },
           "accessibility": {
             "focus": true
           }
@@ -965,7 +1043,10 @@
               "label": "Je ne sais pas",
               "value": "nsp"
             }
-          ]
+          ],
+          "validate": {
+            "message": "Veuillez indiquer si un état des lieux a été réalisé à l'entrée du foyer dans le logement."
+          }
         },
         {
           "type": "SignalementFormWarning",
@@ -1003,7 +1084,10 @@
               "label": "Je ne sais pas",
               "value": "nsp"
             }
-          ]
+          ],
+          "validate": {
+            "message": "Veuillez indiquer si le foyer a reçu le DPE (diagnostic performance énergie) du logement."
+          }
         },
         {
           "type": "SignalementFormWarning",
@@ -1116,6 +1200,9 @@
               "value": "nsp"
             }
           ],
+          "validate": {
+            "message": "Veuillez indiquer si le bailleur (propriétaire) du logement a été informé de la situation."
+          },
           "accessibility": {
             "focus": true
           }
@@ -1141,7 +1228,10 @@
               "label": "Je ne sais pas",
               "value": "nsp"
             }
-          ]
+          ],
+          "validate": {
+            "message": "Veuillez indiquer si le foyer a pris contact avec son assurance logement."
+          }
         },
         {
           "type": "SignalementFormTextarea",
@@ -1171,7 +1261,10 @@
               "label": "Je ne sais pas",
               "value": "nsp"
             }
-          ]
+          ],
+          "validate": {
+            "message": "Veuillez indiquer si le foyer souhaite rester dans le logement si des travaux sont faits."
+          }
         }
       ],
       "footer": [
@@ -1217,6 +1310,9 @@
           "type": "SignalementFormCheckbox",
           "slug": "utilisation_service_ok_prevenir_bailleur",
           "label": "Je comprends que {{formStore.props.platformName}} va prévenir le bailleur (propriétaire) du logement.",
+          "validate": {
+            "message": "Veuillez confirmer que vous comprenez que la plateforme va prévenir le bailleur (propriétaire) de votre logement."
+          },
           "accessibility": {
             "focus": true
           }
@@ -1224,17 +1320,26 @@
         {
           "type": "SignalementFormCheckbox",
           "slug": "utilisation_service_ok_visite",
-          "label": "Je comprends qu'une visite du logement pourra être faite pour évaluer l'état du logement."
+          "label": "Je comprends qu'une visite du logement pourra être faite pour évaluer l'état du logement.",
+          "validate": {
+            "message": "Veuillez confirmer que vous comprenez qu'une visite du logement pourra être faite."
+          }
         },
         {
           "type": "SignalementFormCheckbox",
           "slug": "utilisation_service_ok_signalement_tiers",
-          "label": "Je comprends que je dépose un signalement pour le compte d'un tiers. Je certifie avoir le droit de déposer un signalement pour le compte d'un tiers."
+          "label": "Je comprends que je dépose un signalement pour le compte d'un tiers. Je certifie avoir le droit de déposer un signalement pour le compte d'un tiers.",
+          "validate": {
+            "message": "Veuillez confirmer que vous comprenez que vous déposez un signalement pour le compte d'un tiers et certifiez avoir le droit de le faire."
+          }
         },
         {
           "type": "SignalementFormCheckbox",
           "slug": "utilisation_service_ok_cgu",
-          "label": "Je certifie avoir pris connaissance et accepter les&nbsp;<a href='/cgu' target='_blank' rel='noopener' title='conditions générales d&apos;utilisation - ouvre une nouvelle fenêtre'>conditions générales d'utilisation</a>&nbsp;et la&nbsp;<a href='/politique-de-confidentialite' target='_blank' rel='noopener' title='politique de confidentialité - ouvre une nouvelle fenêtre'>politique de confidentialité</a>&nbsp;du service {{formStore.props.platformName}}."
+          "label": "Je certifie avoir pris connaissance et accepter les&nbsp;<a href='/cgu' target='_blank' rel='noopener' title='conditions générales d&apos;utilisation - ouvre une nouvelle fenêtre'>conditions générales d'utilisation</a>&nbsp;et la&nbsp;<a href='/politique-de-confidentialite' target='_blank' rel='noopener' title='politique de confidentialité - ouvre une nouvelle fenêtre'>politique de confidentialité</a>&nbsp;du service {{formStore.props.platformName}}.",
+          "validate": {
+            "message": "Veuillez certifier que vous avez pris connaissance et acceptez les conditions générales d'utilisation et la politique de confidentialité."
+          }
         }
       ],
       "footer": [
