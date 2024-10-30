@@ -1,0 +1,16 @@
+{# templates/bundles/NelmioApiDocBundle/Redocly/index.html.twig #}
+
+{% extends '@!NelmioApiDoc/Redocly/index.html.twig' %}
+
+
+{% block swagger_initialization %}
+    <script type="text/javascript" nonce="{{ app.request.attributes.get('csp_script_nonce') }}">
+        window.onload = () => {
+            loadRedocly({
+                expandResponses: '200,201',
+                hideDownloadButton: false,
+            });
+        };
+    </script>
+{% endblock %}
+

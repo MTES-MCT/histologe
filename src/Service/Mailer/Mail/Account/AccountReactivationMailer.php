@@ -2,7 +2,7 @@
 
 namespace App\Service\Mailer\Mail\Account;
 
-use App\Security\BackOfficeAuthenticator;
+use App\Security\FormLoginAuthenticator;
 use App\Service\Mailer\Mail\AbstractNotificationMailer;
 use App\Service\Mailer\NotificationMail;
 use App\Service\Mailer\NotificationMailerType;
@@ -32,7 +32,7 @@ class AccountReactivationMailer extends AbstractNotificationMailer
         $user = $notificationMail->getUser();
 
         return [
-            'link' => $this->generateLink(BackOfficeAuthenticator::LOGIN_ROUTE, ['token' => $user->getToken()]),
+            'link' => $this->generateLink(FormLoginAuthenticator::LOGIN_ROUTE, ['token' => $user->getToken()]),
             'territoire_name' => $user->getTerritory()?->getName(),
             'partner_name' => $user->getPartner()->getNom(),
         ];

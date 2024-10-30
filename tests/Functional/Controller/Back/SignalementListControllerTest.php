@@ -44,6 +44,9 @@ class SignalementListControllerTest extends WebTestCase
         /** @var UserRepository $userRepository */
         $userRepository = static::getContainer()->get(UserRepository::class);
         $users = $userRepository->findBy(['statut' => User::STATUS_ACTIVE]);
+        $users = array_filter($users, function (User $user) {
+            return !in_array('ROLE_API_USER', $user->getRoles(), true);
+        });
         /** @var User $user */
         foreach ($users as $user) {
             if ($user->getTerritory()) {

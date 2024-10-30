@@ -2,18 +2,22 @@
 
 namespace App\EventListener;
 
+use Random\RandomException;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Symfony\Component\HttpKernel\Event\RequestEvent;
 use Symfony\Component\HttpKernel\Event\ResponseEvent;
 
-class ContentSecurityPolicyListener
+readonly class ContentSecurityPolicyListener
 {
     public function __construct(
         private ParameterBagInterface $parameterBag
     ) {
     }
 
-    public function onKernelRequest(RequestEvent $event)
+    /**
+     * @throws RandomException
+     */
+    public function onKernelRequest(RequestEvent $event): void
     {
         $request = $event->getRequest();
 
@@ -22,7 +26,7 @@ class ContentSecurityPolicyListener
         $request->attributes->set('csp_script_nonce', $scriptNonce);
     }
 
-    public function onKernelResponse(ResponseEvent $event)
+    public function onKernelResponse(ResponseEvent $event): void
     {
         $response = $event->getResponse();
         $request = $event->getRequest();
@@ -31,22 +35,45 @@ class ContentSecurityPolicyListener
 
         $cspParameters = $this->parameterBag->get('csp_parameters');
 
-        $csp = 'default-src '.$cspParameters['default-src'].'; '.
-                'script-src '.$cspParameters['script-src']." 'nonce-$scriptNonce'; ".
-                'style-src '.$cspParameters['style-src'].'; '.
-                'style-src-attr '.$cspParameters['style-src-attr'].'; '.
-                'img-src '.$cspParameters['img-src'].'; '.
-                'connect-src '.$cspParameters['connect-src'].'; '.
-                'font-src '.$cspParameters['font-src'].'; '.
-                'frame-src '.$cspParameters['frame-src'].'; '.
-                'object-src '.$cspParameters['object-src'].'; '.
-                'base-uri '.$cspParameters['base-uri'].'; '.
-                'form-action '.$cspParameters['form-action'].'; '.
-                'frame-ancestors '.$cspParameters['frame-ancestors'].'; '.
-                'media-src '.$cspParameters['media-src'];
+        $cspDirectives = [
+            'default-src' => $this->formatCspDirective($cspParameters['default-src'] ?? []),
+            'script-src' => $this->formatCspDirective([...($cspParameters['script-src'] ?? []), "'nonce-$scriptNonce'"]),
+            'style-src' => $this->formatCspDirective($cspParameters['style-src'] ?? []),
+            'style-src-attr' => $this->formatCspDirective($cspParameters['style-src-attr'] ?? []),
+            'img-src' => $this->formatCspDirective($cspParameters['img-src'] ?? []),
+            'worker-src' => $this->formatCspDirective($cspParameters['worker-src'] ?? []),
+            'connect-src' => $this->formatCspDirective($cspParameters['connect-src'] ?? []),
+            'font-src' => $this->formatCspDirective($cspParameters['font-src'] ?? []),
+            'frame-src' => $this->formatCspDirective($cspParameters['frame-src'] ?? []),
+            'object-src' => $this->formatCspDirective($cspParameters['object-src'] ?? []),
+            'base-uri' => $this->formatCspDirective($cspParameters['base-uri'] ?? []),
+            'form-action' => $this->formatCspDirective($cspParameters['form-action'] ?? []),
+            'frame-ancestors' => $this->formatCspDirective($cspParameters['frame-ancestors'] ?? []),
+            'media-src' => $this->formatCspDirective($cspParameters['media-src'] ?? []),
+        ];
+
+        $csp = $this->buildCspHeader($cspDirectives);
 
         if ($this->parameterBag->get('csp_enable')) {
             $response->headers->set('Content-Security-Policy', $csp);
         }
+    }
+
+    private function formatCspDirective(array $directive): string
+    {
+        return implode(' ', $directive);
+    }
+
+    private function buildCspHeader(array $directives): string
+    {
+        $csp = '';
+
+        foreach ($directives as $directive => $values) {
+            if (!empty($values)) {
+                $csp .= "$directive $values; ";
+            }
+        }
+
+        return rtrim($csp, ' ');
     }
 }

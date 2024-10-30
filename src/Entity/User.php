@@ -26,34 +26,36 @@ class User implements UserInterface, EntityHistoryInterface, PasswordAuthenticat
 {
     use TimestampableTrait;
 
-    public const STATUS_INACTIVE = 0;
-    public const STATUS_ACTIVE = 1;
-    public const STATUS_ARCHIVE = 2;
-    public const STATUS_LABELS = [
+    public const int STATUS_INACTIVE = 0;
+    public const int STATUS_ACTIVE = 1;
+    public const int STATUS_ARCHIVE = 2;
+    public const array STATUS_LABELS = [
         self::STATUS_INACTIVE => 'Inactif',
         self::STATUS_ACTIVE => 'Actif',
         self::STATUS_ARCHIVE => 'Archivé',
     ];
 
-    public const MAX_LIST_PAGINATION = 20;
+    public const int MAX_LIST_PAGINATION = 20;
 
-    public const ROLE_USAGER = self::ROLES['Usager'];
-    public const ROLE_USER_PARTNER = self::ROLES['Agent'];
-    public const ROLE_ADMIN_PARTNER = self::ROLES['Admin. partenaire'];
-    public const ROLE_ADMIN_TERRITORY = self::ROLES['Resp. Territoire'];
-    public const ROLE_ADMIN = self::ROLES['Super Admin'];
+    public const string ROLE_API_USER = 'ROLE_API_USER';
+    public const string ROLE_USAGER = self::ROLES['Usager'];
+    public const string ROLE_USER_PARTNER = self::ROLES['Agent'];
+    public const string ROLE_ADMIN_PARTNER = self::ROLES['Admin. partenaire'];
+    public const string ROLE_ADMIN_TERRITORY = self::ROLES['Resp. Territoire'];
+    public const string ROLE_ADMIN = self::ROLES['Super Admin'];
 
-    public const SUFFIXE_ARCHIVED = '.archived@';
-    public const ANONYMIZED_MAIL = 'anonyme@';
-    public const ANONYMIZED_PRENOM = 'Utilisateur';
-    public const ANONYMIZED_NOM = 'Anonymisé';
+    public const string SUFFIXE_ARCHIVED = '.archived@';
+    public const string ANONYMIZED_MAIL = 'anonyme@';
+    public const string ANONYMIZED_PRENOM = 'Utilisateur';
+    public const string ANONYMIZED_NOM = 'Anonymisé';
 
-    public const ROLES = [
+    public const array ROLES = [
         'Usager' => 'ROLE_USAGER',
         'Agent' => 'ROLE_USER_PARTNER',
         'Admin. partenaire' => 'ROLE_ADMIN_PARTNER',
         'Resp. Territoire' => 'ROLE_ADMIN_TERRITORY',
         'Super Admin' => 'ROLE_ADMIN',
+        'API' => 'ROLE_API_USER',
     ];
 
     #[ORM\Id]
@@ -162,6 +164,9 @@ class User implements UserInterface, EntityHistoryInterface, PasswordAuthenticat
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $tempEmail = null;
 
+    #[ORM\OneToMany(mappedBy: 'ownedBy', targetEntity: ApiUserToken::class, cascade: ['persist'])]
+    private Collection $apiUserTokens;
+
     public function __construct()
     {
         $this->suivis = new ArrayCollection();
@@ -171,16 +176,12 @@ class User implements UserInterface, EntityHistoryInterface, PasswordAuthenticat
         $this->files = new ArrayCollection();
         $this->signalementUsagerDeclarants = new ArrayCollection();
         $this->signalementUsagerOccupants = new ArrayCollection();
+        $this->apiUserTokens = new ArrayCollection();
     }
 
     public function getId(): ?int
     {
         return $this->id;
-    }
-
-    public function setId(mixed $id_userbo)
-    {
-        $this->id = $id_userbo;
     }
 
     public function getEmail(): ?string
@@ -426,9 +427,14 @@ class User implements UserInterface, EntityHistoryInterface, PasswordAuthenticat
     public function getRoleLabel(): string
     {
         $roleLabel = array_flip(self::ROLES);
-        $role = $this->roles[0];
 
-        return $roleLabel[$role];
+        if (isset($this->roles[0])) {
+            $role = $this->roles[0];
+
+            return $roleLabel[$role] ?? '';
+        }
+
+        return '';
     }
 
     public function setRoles(array $roles): self
@@ -672,5 +678,32 @@ class User implements UserInterface, EntityHistoryInterface, PasswordAuthenticat
     public function getHistoryRegisteredEvent(): array
     {
         return [HistoryEntryEvent::CREATE, HistoryEntryEvent::UPDATE, HistoryEntryEvent::DELETE];
+    }
+
+    public function getApiUserTokens(): Collection
+    {
+        return $this->apiUserTokens;
+    }
+
+    public function addApiUserToken(ApiUserToken $apiUserToken): self
+    {
+        if (!$this->apiUserTokens->contains($apiUserToken)) {
+            $this->apiUserTokens[] = $apiUserToken;
+            $apiUserToken->setOwnedBy($this);
+        }
+
+        return $this;
+    }
+
+    public function removeApiUserToken(ApiUserToken $apiUserToken): self
+    {
+        if ($this->apiUserTokens->removeElement($apiUserToken)) {
+            // set the owning side to null (unless already changed)
+            if ($apiUserToken->getOwnedBy() === $this) {
+                $apiUserToken->setOwnedBy(null);
+            }
+        }
+
+        return $this;
     }
 }
