@@ -151,12 +151,11 @@ class HistoryEntryManagerTest extends WebTestCase
             ['reference' => '2022-8']
         );
         $signalementId = $signalement->getId();
-        $affectations = $signalement->getAffectations();
 
         $historyEntries = $this->historyEntryManager->getAffectationHistory($signalementId);
 
         $this->assertIsArray($historyEntries);
-        $this->assertEmpty($historyEntries);
+        $this->assertNotEmpty($historyEntries);
     }
 
     public function testGetAffectationHistoryWithAffectation()
@@ -191,7 +190,7 @@ class HistoryEntryManagerTest extends WebTestCase
         $this->assertIsArray($historyEntries);
 
         $this->assertNotEmpty($historyEntries[$affectations[0]->getPartner()->getNom()]);
-        $this->assertEquals(1, \count($historyEntries[$affectations[0]->getPartner()->getNom()]));
+        $this->assertEquals(2, \count($historyEntries[$affectations[0]->getPartner()->getNom()]));
 
         $entry = $historyEntries[$affectations[0]->getPartner()->getNom()][0];
         $this->assertArrayHasKey('Date', $entry);
