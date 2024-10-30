@@ -221,8 +221,8 @@ document?.getElementById('fr-modal-historique-affectation')?.addEventListener('d
             const tableHeader = document.createElement('thead')
             tableHeader.innerHTML = `
                             <tr>
-                                <th>Date</th>
-                                <th>Action</th>
+                                <th class="fr-w-15">Date</th>
+                                <th class="fr-w-80">Action</th>
                                 <th>Id</th>
                             </tr>
                         `
