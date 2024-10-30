@@ -43,6 +43,7 @@ class User implements UserInterface, EntityHistoryInterface, PasswordAuthenticat
     public const string ROLE_ADMIN_PARTNER = self::ROLES['Admin. partenaire'];
     public const string ROLE_ADMIN_TERRITORY = self::ROLES['Resp. Territoire'];
     public const string ROLE_ADMIN = self::ROLES['Super Admin'];
+    public const string ROLE_USER = 'ROLE_USER';
 
     public const string SUFFIXE_ARCHIVED = '.archived@';
     public const string ANONYMIZED_MAIL = 'anonyme@';

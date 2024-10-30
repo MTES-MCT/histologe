@@ -14,6 +14,7 @@ twig:
             feature_zonage: '%feature_zonage%'
             feature_grille_visite: '%feature_grille_visite%'
             feature_permission_affectation: '%feature_permission_affectation%'
+            feature_enable_menu_horizontale: '%feature_enable_menu_horizontale%'
         gitbook:
             documentation: https://documentation.histologe.beta.gouv.fr
             faq: https://faq.histologe.beta.gouv.fr

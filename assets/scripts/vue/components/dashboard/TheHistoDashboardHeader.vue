@@ -1,6 +1,6 @@
 <template>
-  <div class="histo-dashboard-header fr-p-3w fr-mb-3w">
-    <div :class="['header-list', classExpanded]" @click=handleClick>
+  <div class="histo-dashboard-header fr-py-3w fr-px-1w fr-mb-3w">
+    <div :class="['header-list', classExpanded, { 'header-list-horizontale': sharedProps.featureEnableMenuHorizontale }]" @click=handleClick>
       <div class="label-clickzone">
         Cliquez sur cette zone pour afficher quelques statistiques.
       </div>
@@ -69,6 +69,7 @@ export default defineComponent({
   data () {
     return {
       sharedState: store.state,
+      sharedProps: store.props,
       classExpanded: ''
     }
   },
@@ -92,7 +93,13 @@ export default defineComponent({
   .histo-dashboard-header div.header-list {
     display: table;
     margin-left: -10px;
-    border-spacing: 10px 0px;
+    border-spacing: 10px 0;
+  }
+
+  .histo-dashboard-header div.header-list-horizontale {
+    display: table;
+    margin: 0 auto;
+    border-spacing: 10px 0;
   }
   .histo-dashboard-header div.header-list div.label-clickzone {
     display: none;

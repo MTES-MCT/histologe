@@ -1,0 +1,72 @@
+<?php
+
+namespace App\Service\Menu;
+
+class MenuItem
+{
+    private array $children = [];
+
+    public function __construct(
+        private readonly string $label,
+        private readonly string $route = '',
+        private readonly array $routeParameters = [],
+        private readonly string $icon = '',
+        private readonly bool $expanded = false,
+        private readonly string $roleGranted = '',
+        private readonly string $roleNotGranted = '',
+        private readonly bool $featureEnable = true
+    ) {
+    }
+
+    public function addChild(self $child): static
+    {
+        $this->children[] = $child;
+
+        return $this;
+    }
+
+    public function getChildren(): array
+    {
+        return $this->children;
+    }
+
+    public function getLabel(): string
+    {
+        return $this->label;
+    }
+
+    public function getIcon(): string
+    {
+        return $this->icon;
+    }
+
+    public function getRoute(): string
+    {
+        return $this->route;
+    }
+
+    public function getRouteParameters(): array
+    {
+        return $this->routeParameters;
+    }
+
+    public function isExpanded(): bool
+    {
+        return $this->expanded;
+    }
+
+    public function getRoleGranted(): string
+    {
+        return $this->roleGranted;
+    }
+
+    public function getRoleNotGranted(): string
+    {
+        return $this->roleNotGranted;
+    }
+
+    public function isFeatureEnable(): bool
+    {
+        return $this->featureEnable;
+    }
+}
