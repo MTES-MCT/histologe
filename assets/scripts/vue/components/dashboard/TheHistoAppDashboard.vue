@@ -97,7 +97,6 @@ export default defineComponent({
       this.sharedProps.ajaxurlSignalementsPerTerritoire = initElements.dataset.ajaxurlSignalementsPerTerritoire
       this.sharedProps.ajaxurlConnectionsEsabora = initElements.dataset.ajaxurlConnectionsEsabora
       this.sharedProps.featureEnableMenuHorizontale = initElements.dataset.featureEnableMenuHorizontale
-      console.log('initElements', initElements.dataset)
       try {
         await this.initSettingsWithPromise()
         await this.initKPIWithPromise()
