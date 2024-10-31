@@ -80,9 +80,11 @@ class TerritoryType extends AbstractType
         ]);
         $builder->get('authorizedCodesInsee')->addModelTransformer(new CallbackTransformer(
             function ($tagsAsArray) {
+                $tagsAsArray = $tagsAsArray ?? [];
+
                 return implode(',', $tagsAsArray);
             },
-            function ($tagsAsString) {
+            function ($tagsAsString): array {
                 return explode(',', $tagsAsString);
             }
         ));

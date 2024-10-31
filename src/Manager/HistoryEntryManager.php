@@ -86,6 +86,12 @@ class HistoryEntryManager extends AbstractManager
         $formattedHistory = [];
         $this->formatEntries($formattedHistory, $affectationHistoryEntries, 'affectation');
         $this->formatEntries($formattedHistory, $signalementHistoryEntries, 'signalement');
+        if (isset($formattedHistory['N/A'])) {
+            unset($formattedHistory['N/A']);
+        }
+        $formattedHistory = array_filter($formattedHistory, function ($entry) {
+            return !empty($entry);
+        });
 
         ksort($formattedHistory);
         foreach ($formattedHistory as &$partnerEvents) {
@@ -111,7 +117,7 @@ class HistoryEntryManager extends AbstractManager
     private function formatEntries(array &$formattedHistory, array $entries, string $type): void
     {
         foreach ($entries as $entry) {
-            $userName = $entry->getUser() ? $entry->getUser()->getFullName() : 'Système';
+            $userName = $entry->getUser() ? $entry->getUser()->getFullName() : 'Système (automatique)';
             /** @var ?Partner */
             $partner = $entry->getUser()?->getPartner();
             $partnerName = $partner ? $partner->getNom() : 'N/A';
@@ -192,7 +198,7 @@ class HistoryEntryManager extends AbstractManager
         return null;
     }
 
-    private function getAffectationActionSummary(HistoryEntry $entry, string $userName, string $partnerName = ''): string
+    private function getAffectationActionSummary(HistoryEntry $entry, string $userName, string $partnerName = ''): ?string
     {
         $event = $entry->getEvent();
         $changes = $entry->getChanges();
@@ -223,19 +229,21 @@ class HistoryEntryManager extends AbstractManager
                             $description .= " a modifié son affectation du statut {$changes['statut']['old']} au statut {$changes['statut']['new']}";
                             break;
                     }
-                }
-                if (array_key_exists('motifCloture', $changes) && null !== $changes['motifCloture']['new']) {
-                    $description .= '(Motif de clôture : '.MotifCloture::tryFrom($changes['motifCloture']['new'])->label().')';
-                }
-                if (array_key_exists('motifRefus', $changes) && null !== $changes['motifRefus']['new']) {
-                    $description .= '(Motif de refus : '.MotifRefus::tryFrom($changes['motifRefus']['new'])->label().')';
+                    if (array_key_exists('motifCloture', $changes) && null !== $changes['motifCloture']['new']) {
+                        $description .= '(Motif de clôture : '.MotifCloture::tryFrom($changes['motifCloture']['new'])->label().')';
+                    }
+                    if (array_key_exists('motifRefus', $changes) && null !== $changes['motifRefus']['new']) {
+                        $description .= '(Motif de refus : '.MotifRefus::tryFrom($changes['motifRefus']['new'])->label().')';
+                    }
+
+                    return $description;
                 }
 
-                return $description;
+                return null;
             case HistoryEntryEvent::DELETE:
                 return $userName." a supprimé l'affectation du partenaire ".$partnerName;
             default:
-                return 'Changement non spécifié.';
+                return null;
         }
     }
 

@@ -151,20 +151,51 @@ class HistoryEntryManagerTest extends WebTestCase
             ['reference' => '2022-8']
         );
         $signalementId = $signalement->getId();
-        $affectations = $signalement->getAffectations();
 
         $historyEntries = $this->historyEntryManager->getAffectationHistory($signalementId);
 
         $this->assertIsArray($historyEntries);
-        $this->assertArrayHasKey('N/A', $historyEntries); // on est sur les fixtures, on ne sait donc pas qui a créé l'entrée
+        $this->assertNotEmpty($historyEntries);
+    }
 
-        $this->assertNotEmpty($historyEntries['N/A']);
-        $this->assertEquals(3, \count($historyEntries['N/A']));
+    public function testGetAffectationHistoryWithAffectation()
+    {
+        $featureHistoriqueAffectations = static::getContainer()->getParameter('feature_historique_affectations');
+        if (!$featureHistoriqueAffectations) {
+            $this->markTestSkipped('La fonctionnalité "feature_historique_affectations" est désactivée.');
+        }
+        /** @var UserRepository $userRepository */
+        $userRepository = $this->entityManager->getRepository(User::class);
+        $user = $userRepository->findOneBy(['email' => 'user-01-01@histologe.fr']);
+        $this->client->loginUser($user);
 
-        $entry = $historyEntries['N/A'][0];
+        /** @var Signalement $signalement */
+        $signalement = $this->managerRegistry->getRepository(Signalement::class)->findOneBy(
+            ['reference' => '2022-8']
+        );
+        $signalementId = $signalement->getId();
+        $affectations = $signalement->getAffectations();
+        $changes = [];
+        $changes['statut'] = [];
+        $changes['statut']['new'] = Affectation::STATUS_ACCEPTED;
+        $changes['statut']['old'] = $affectations[0]->getStatut();
+        $historyEntry = $this->historyEntryManager->create(HistoryEntryEvent::UPDATE, $affectations[0], $changes, true);
+        $source = $this->historyEntryManager->getSource();
+        $historyEntry->setSource($source);
+        $this->historyEntryManager->save($historyEntry);
+        $this->entityManager->persist($historyEntry);
+
+        $historyEntries = $this->historyEntryManager->getAffectationHistory($signalementId);
+
+        $this->assertIsArray($historyEntries);
+
+        $this->assertNotEmpty($historyEntries[$affectations[0]->getPartner()->getNom()]);
+        $this->assertEquals(2, \count($historyEntries[$affectations[0]->getPartner()->getNom()]));
+
+        $entry = $historyEntries[$affectations[0]->getPartner()->getNom()][0];
         $this->assertArrayHasKey('Date', $entry);
         $this->assertArrayHasKey('Action', $entry);
-        $this->assertEquals('Système a affecté le signalement au partenaire Partenaire 13-02', $entry['Action']);
+        $this->assertStringContainsString('réouvert son affectation', $entry['Action']);
         $this->assertArrayHasKey('Id', $entry);
         $this->assertEquals($affectations[0]->getId(), $entry['Id']);
     }

@@ -222,8 +222,7 @@ document?.getElementById('fr-modal-historique-affectation')?.addEventListener('d
             tableHeader.innerHTML = `
                             <tr>
                                 <th class="fr-w-15">Date</th>
-                                <th class="fr-w-80">Action</th>
-                                <th>Id</th>
+                                <th>Action</th>
                             </tr>
                         `
             tableContentTable.appendChild(tableHeader)
@@ -241,10 +240,6 @@ document?.getElementById('fr-modal-historique-affectation')?.addEventListener('d
               const actionCell = document.createElement('td')
               actionCell.textContent = event.Action
               row.appendChild(actionCell)
-
-              const idCell = document.createElement('td')
-              idCell.textContent = event.Id
-              row.appendChild(idCell)
 
               tableBody.appendChild(row)
             })
