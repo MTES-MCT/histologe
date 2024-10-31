@@ -1134,6 +1134,9 @@
           "type": "SignalementFormOnlyChoice",
           "label": "Avez-vous fait une demande de logement social ou de relogement ?",
           "slug": "logement_social_demande_relogement",
+          "conditional": {
+            "show": "formStore.data.signalement_concerne_logement_social_autre_tiers === 'non'"
+          },
           "values": [
             {
               "label": "Oui",
@@ -1146,6 +1149,30 @@
           ],
           "validate": {
             "message": "Veuillez indiquer si vous avez fait une demande de logement social ou de relogement."
+          },
+          "accessibility": {
+            "focus": true
+          }
+        },
+        {
+          "type": "SignalementFormOnlyChoice",
+          "label": "Avez vous fait une demande de mutation/relogement?",
+          "slug": "logement_social_demande_relogement",
+          "conditional": {
+            "show": "formStore.data.signalement_concerne_logement_social_autre_tiers === 'oui'"
+          },
+          "values": [
+            {
+              "label": "Oui",
+              "value": "oui"
+            },
+            {
+              "label": "Non",
+              "value": "non"
+            }
+          ],
+          "validate": {
+            "message": "Veuillez indiquer si vous avez fait une demande de mutation ou de relogement."
           },
           "accessibility": {
             "focus": true
