@@ -7,7 +7,7 @@
       "command": "0 0 * * * sh /app/scripts/clean.sh"
     },
     {
-      "command": "15 1-5 * * * php bin/console app:clear-storage-original-file"
+      "command": "0 2 */5 * * php bin/console app:clear-storage-original-file"
     },
     {
       "command": "0 6 * * * php bin/console app:ask-feedback-usager"
