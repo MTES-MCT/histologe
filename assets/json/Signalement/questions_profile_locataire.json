@@ -1156,7 +1156,7 @@
         },
         {
           "type": "SignalementFormOnlyChoice",
-          "label": "Avez vous fait une demande de mutation/relogement?",
+          "label": "Avez-vous fait une demande de mutation/relogement ?",
           "slug": "logement_social_demande_relogement",
           "conditional": {
             "show": "formStore.data.signalement_concerne_logement_social_autre_tiers === 'oui'"
