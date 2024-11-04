@@ -1,7 +1,7 @@
 <template>
   <div :id="id" :class="[ customCss ]">
     <h3>
-      Qu'avez vous pensé de ce formulaire ?
+      Qu'avez-vous pensé de ce formulaire ?
     </h3>
     <p>
       Cliquez sur le bouton ci-dessous pour donner votre avis.
