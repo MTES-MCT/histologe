@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Tests\Unit\Service;
 
+use App\Entity\Partner;
 use App\Entity\Territory;
 use App\Entity\User;
 use App\Service\UserAvatar;
@@ -29,7 +30,8 @@ class UserAvatarTest extends WebTestCase
         $this->assertEquals('<span class="avatar-histologe avatar-placeholder avatar-80">SA</span>', $outputSpan);
 
         $user->setRoles([User::ROLES['Admin. partenaire']]);
-        $user->setTerritory((new Territory())->setZip('44'));
+        $territory = (new Territory())->setZip('44');
+        $user->setPartner((new Partner())->setTerritory($territory));
         $outputSpan = $userAvatar->userAvatarOrPlaceHolder($user);
         $this->assertEquals('<span class="avatar-histologe avatar-placeholder avatar-74">44</span>', $outputSpan);
 

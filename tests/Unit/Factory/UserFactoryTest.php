@@ -3,7 +3,6 @@
 namespace App\Tests\Unit\Factory;
 
 use App\Entity\Partner;
-use App\Entity\Territory;
 use App\Entity\User;
 use App\Factory\UserFactory;
 use App\Manager\PartnerManager;
@@ -27,12 +26,10 @@ class UserFactoryTest extends KernelTestCase
 
     public function testCreateUserInstance(): void
     {
-        $territory = new Territory();
         $partner = new Partner();
 
         $user = (new UserFactory())->createInstanceFrom(
             roleLabel: 'Agent',
-            territory: $territory,
             partner: $partner,
             firstname: 'John',
             lastname: 'Doe',
@@ -51,12 +48,8 @@ class UserFactoryTest extends KernelTestCase
 
     public function testCreateUserAdminInstanceWithoutPartnerAndTerritory(): void
     {
-        $territory = new Territory();
-        $partner = new Partner();
-
         $user = (new UserFactory())->createInstanceFrom(
             partner: null,
-            territory: null,
             roleLabel: 'Super Admin',
             firstname: 'John',
             lastname: 'Doe',
@@ -71,7 +64,7 @@ class UserFactoryTest extends KernelTestCase
 
         $this->assertEquals($user->getIsMailingActive(), true);
         $this->assertEquals($user->getStatut(), User::STATUS_INACTIVE);
-        $this->assertEquals($user->getTerritory(), null);
+        $this->assertEquals($user->getPartner()?->getTerritory(), null);
         $this->assertEquals($user->getPartner(), null);
     }
 
@@ -97,7 +90,7 @@ class UserFactoryTest extends KernelTestCase
 
         $this->assertEquals($user->getIsMailingActive(), true);
         $this->assertEquals($user->getStatut(), User::STATUS_INACTIVE);
-        $this->assertEquals($user->getTerritory(), $partner->getTerritory());
+        $this->assertEquals($user->getPartner()?->getTerritory(), $partner->getTerritory());
         $this->assertEquals($user->getPartner(), $partner);
     }
 }

@@ -170,6 +170,7 @@ class BackArchivedAccountControllerTest extends WebTestCase
         $accountEmail = 'user-01-06@histologe.fr'.User::SUFFIXE_ARCHIVED;
         /** @var User $account */
         $account = $userRepository->findArchivedUserByEmail($accountEmail);
+        $account->setPartner($partner);
         $route = $router->generate('back_account_reactiver', [
             'id' => $account->getId(),
         ]);
@@ -277,7 +278,6 @@ class BackArchivedAccountControllerTest extends WebTestCase
         $accountEmail = 'user-unlinked@histologe.fr';
         /** @var User $account */
         $account = $userRepository->findOneBy(['email' => $accountEmail]);
-        $account->setTerritory($territory);
         $route = $router->generate('back_account_reactiver', [
             'id' => $account->getId(),
         ]);
@@ -291,6 +291,12 @@ class BackArchivedAccountControllerTest extends WebTestCase
         $form['user[nom]'] = (string) $account->getNom();
         $form['user[email]'] = (string) $account->getEmail();
         $form['user[territory]'] = (string) $territory->getId();
+        $client->submit($form);
+
+        $crawler = $client->getCrawler();
+        $buttonCrawlerNode = $crawler->selectButton('submit_btn_account');
+        $form = $buttonCrawlerNode->form();
+
         $form['user[partner]'] = (string) $partner->getId();
         $client->submit($form);
 

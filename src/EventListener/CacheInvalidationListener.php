@@ -55,7 +55,7 @@ class CacheInvalidationListener
         if ($this->supports($entity)) {
             /** @var ?User $user */
             $user = $this->security->getUser();
-            $territory = $user?->getTerritory();
+            $territory = $user?->getPartner()?->getTerritory();
             try {
                 if ($entity instanceof Signalement) {
                     $this->dashboardCache->invalidateTags(['data-kpi-'.$territory?->getZip()]);

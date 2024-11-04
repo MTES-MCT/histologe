@@ -32,7 +32,7 @@ class FirstAffectationAcceptedSpecificationTest extends KernelTestCase
 
         $affectation = (new Affectation())
             ->setPartner($user->getPartner())
-            ->setTerritory($user->getTerritory())
+            ->setTerritory($user->getPartner()->getTerritory())
             ->setAnsweredAt(new \DateTimeImmutable())
             ->setAnsweredBy($user)
             ->setStatut(Affectation::STATUS_ACCEPTED);
@@ -61,7 +61,7 @@ class FirstAffectationAcceptedSpecificationTest extends KernelTestCase
 
         $affectation = (new Affectation())
             ->setPartner($user->getPartner())
-            ->setTerritory($user->getTerritory())
+            ->setTerritory($user->getPartner()->getTerritory())
             ->setAnsweredAt(new \DateTimeImmutable())
             ->setAnsweredBy($user)
             ->setStatut(Affectation::STATUS_ACCEPTED);

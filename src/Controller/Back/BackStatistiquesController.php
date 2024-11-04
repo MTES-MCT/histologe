@@ -132,7 +132,7 @@ class BackStatistiquesController extends AbstractController
         } else {
             /** @var User $user */
             $user = $this->getUser();
-            $territory = $user->getTerritory();
+            $territory = $user->getPartner()?->getTerritory();
         }
 
         return $territory;

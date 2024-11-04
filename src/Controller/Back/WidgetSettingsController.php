@@ -26,7 +26,7 @@ class WidgetSettingsController extends AbstractController
         $user = $this->getUser();
         $territory = ($security->isGranted('ROLE_ADMIN') && null !== $territoryId)
             ? $territoryRepository->find($territoryId)
-            : $user->getTerritory();
+            : $user->getPartner()?->getTerritory();
 
         return $this->json(
             $widgetSettingsFactory->createInstanceFrom($user, $territory),

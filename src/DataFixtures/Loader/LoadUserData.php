@@ -6,7 +6,6 @@ use App\Entity\User;
 use App\EventListener\UserCreatedListener;
 use App\Factory\UserFactory;
 use App\Repository\PartnerRepository;
-use App\Repository\TerritoryRepository;
 use App\Service\Sanitizer;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Common\DataFixtures\OrderedFixtureInterface;
@@ -23,7 +22,6 @@ class LoadUserData extends Fixture implements OrderedFixtureInterface
     private const PLAIN_HISTOLOGE = 'histologe';
 
     public function __construct(
-        private TerritoryRepository $territoryRepository,
         private PartnerRepository $partnerRepository,
         private UserPasswordHasherInterface $hasher,
         private EntityManagerInterface $entityManager,
@@ -65,10 +63,6 @@ class LoadUserData extends Fixture implements OrderedFixtureInterface
             $user->setEmail($row['email']);
         }
 
-        if (isset($row['territory'])) {
-            $user->setTerritory($this->territoryRepository->findOneBy(['name' => $row['territory']]));
-        }
-
         if (isset($row['partner'])) {
             $user->setPartner($this->partnerRepository->findOneBy(['nom' => $row['partner']]));
         }
@@ -102,7 +96,6 @@ class LoadUserData extends Fixture implements OrderedFixtureInterface
         $user = $this->userFactory->createInstanceFrom(
             roleLabel: 'Super Admin',
             partner: $partner,
-            territory: null,
             firstname: 'Histologe',
             lastname: 'Admin',
             email: $this->parameterBag->get('user_system_email'),

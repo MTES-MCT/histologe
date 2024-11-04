@@ -97,8 +97,8 @@ class SearchFilter
         $filters = $signalementSearchQuery->getFilters();
         $partner = null;
         if (!$user->isSuperAdmin()) {
-            $filters['territories'][] = $user->getTerritory()->getId();
-            $territory = $user->getTerritory();
+            $filters['territories'][] = $user->getPartner()?->getTerritory()?->getId();
+            $territory = $user->getPartner()?->getTerritory();
             $partner = \in_array(User::ROLE_USER_PARTNER, $user->getRoles()) ? $user->getPartner() : null;
         } else {
             $territory = isset($filters['territories'][0])
@@ -541,7 +541,7 @@ class SearchFilter
                 $territory = $this->territoryRepository->find($request->query->get('territoire_id'));
             }
         } elseif (!$user->isSuperAdmin()) {
-            $territory = $user->getTerritory();
+            $territory = $user->getPartner()?->getTerritory();
         }
 
         return $territory;

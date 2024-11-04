@@ -21,15 +21,17 @@ use Symfony\Component\Validator\Context\ExecutionContextInterface;
 
 class UserType extends AbstractType
 {
-    public function __construct(private PartnerRepository $partnerRepository)
-    {
+    public function __construct(
+        private PartnerRepository $partnerRepository,
+        private TerritoryRepository $territoryRepository
+    ) {
     }
 
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         /** @var User $user */
         $user = $options['data'];
-        $territory = $user->getTerritory();
+        $territory = $user->getPartner()?->getTerritory();
 
         $builder
             ->add('email', EmailType::class, [
@@ -64,6 +66,7 @@ class UserType extends AbstractType
             'query_builder' => function (TerritoryRepository $tr) {
                 return $tr->createQueryBuilder('t')->where('t.isActive = 1')->orderBy('t.id', 'ASC');
             },
+            'mapped' => false,
             'data' => !empty($territory) ? $territory : null,
             'choice_label' => 'name',
             'placeholder' => 'Aucun territoire',
@@ -98,15 +101,14 @@ class UserType extends AbstractType
             ]);
         };
 
-        $builder->addEventListener(
-            FormEvents::PRE_SET_DATA,
-            function (FormEvent $event) use ($formModifier) {
-                $data = $event->getData();
-
-                $formModifier($event->getForm(), $data->getTerritory());
-            }
+        $builder->addEventListener(FormEvents::PRE_SET_DATA, function (FormEvent $event) use ($formModifier) {
+            $data = $event->getData();
+            $formModifier($event->getForm(), $data->getPartner()?->getTerritory());
+        }
         );
-
+        $builder->addEventListener(FormEvents::PRE_SUBMIT, function (FormEvent $event) use ($formModifier) {
+            $formModifier($event->getForm(), $this->territoryRepository->find($event->getData()['territory']));
+        });
         $builder->get('territory')->addEventListener(
             FormEvents::POST_SUBMIT,
             function (FormEvent $event) use ($formModifier) {
@@ -138,7 +140,7 @@ class UserType extends AbstractType
         if ($value instanceof User) {
             $user = $value;
 
-            if ((null === $user->getTerritory())
+            if ((null === $user->getPartner()?->getTerritory())
             && (\in_array('ROLE_USER_PARTNER', $user->getRoles())
             || \in_array('ROLE_ADMIN_PARTNER', $user->getRoles())
             || \in_array('ROLE_ADMIN_TERRITORY', $user->getRoles()))) {

@@ -33,7 +33,7 @@ class AssignmentVoter extends Voter
     {
         /** @var User $user */
         $user = $token->getUser();
-        if (!$user instanceof UserInterface || !$user->isSuperAdmin() && $subject->getTerritory() !== $user->getTerritory()) {
+        if (!$user instanceof UserInterface || !$user->isSuperAdmin() && $subject->getTerritory() !== $user->getPartner()?->getTerritory()) {
             return false;
         }
 

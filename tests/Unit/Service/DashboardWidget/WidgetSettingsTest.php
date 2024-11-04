@@ -12,12 +12,13 @@ class WidgetSettingsTest extends TestCase
 {
     public function testValidWidgetSetting(): void
     {
+        $territory = (new Territory())->setName('Ain')->setZip('01');
+        $partner = (new Partner())->setNom('Partner')->setTerritory($territory);
         $user = (new User())
             ->setPrenom('John')
             ->setNom('Doe')
             ->setRoles([User::ROLE_USER_PARTNER])
-            ->setPartner((new Partner())->setNom('Partner'))
-            ->setTerritory((new Territory())->setName('Ain')->setZip('01'));
+            ->setPartner($partner);
 
         $widgetSettings = new WidgetSettings($user, [
             (new Territory())->setName('Ain')->setZip('01'),

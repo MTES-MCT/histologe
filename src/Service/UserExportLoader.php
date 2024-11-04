@@ -42,7 +42,7 @@ readonly class UserExportLoader
             foreach ($headers as $key => $unused) {
                 $rowArray[] = match ($key) {
                     'id' => $user->getId(),
-                    'territory' => $user->getTerritory() ? $user->getTerritory()->getZip().' - '.$user->getTerritory()->getName() : '',
+                    'territory' => $user->getPartner()?->getTerritory() ? $user->getPartner()->getTerritory()->getZip().' - '.$user->getPartner()->getTerritory()->getName() : '',
                     'email' => $user->getEmail(),
                     'nom' => $user->getNom(),
                     'prenom' => $user->getPrenom(),

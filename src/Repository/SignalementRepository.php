@@ -474,17 +474,17 @@ class SignalementRepository extends ServiceEntityRepository
             ->setParameter('group_concat_separator', SignalementAffectationListView::SEPARATOR_GROUP_CONCAT);
 
         if ($user->isTerritoryAdmin()) {
-            $qb->andWhere('s.territory = :territory')->setParameter('territory', $user->getTerritory());
-            if (\array_key_exists($user->getTerritory()->getZip(), $options['authorized_codes_insee'])) {
+            $qb->andWhere('s.territory = :territory')->setParameter('territory', $user->getPartner()?->getTerritory());
+            if (\array_key_exists($user->getPartner()?->getTerritory()?->getZip(), $options['authorized_codes_insee'])) {
                 $qb = $this->filterForSpecificAgglomeration(
                     $qb,
-                    $user->getTerritory()->getZip(),
+                    $user->getPartner()?->getTerritory()->getZip(),
                     $user->getPartner()->getNom(),
                     $options['authorized_codes_insee']
                 );
             }
         } elseif ($user->isUserPartner() || $user->isPartnerAdmin()) {
-            $qb->andWhere('s.territory = :territory')->setParameter('territory', $user->getTerritory());
+            $qb->andWhere('s.territory = :territory')->setParameter('territory', $user->getPartner()?->getTerritory());
             $statuses = [];
             if (!empty($options['statuses'])) {
                 $statuses = array_map(function ($status) {

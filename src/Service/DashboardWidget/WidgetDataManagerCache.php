@@ -117,7 +117,7 @@ class WidgetDataManagerCache implements WidgetDataManagerInterface
     {
         /** @var User $user */
         $user = $this->security->getUser();
-        $territory = $user->getTerritory();
+        $territory = $user->getPartner()?->getTerritory();
         $key = 'countDataKpi'
             .'-'.$this->commonKey
             .$territory?->getZip()

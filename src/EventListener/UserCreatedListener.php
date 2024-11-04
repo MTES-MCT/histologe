@@ -34,7 +34,6 @@ class UserCreatedListener
                 new NotificationMail(
                     type: NotificationMailerType::TYPE_ACCOUNT_ACTIVATION_FROM_BO,
                     to: $user->getEmail(),
-                    territory: $user->getTerritory(),
                     user: $user,
                 )
             );

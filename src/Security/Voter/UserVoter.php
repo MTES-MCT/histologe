@@ -68,14 +68,11 @@ class UserVoter extends Voter
         if (\count($subjectRoles) > \count($userRoles)) {
             return false;
         }
-        if (!$user->getTerritory()) {
-            return false;
-        }
-        if (!$user->getPartner()) {
+        if (!$user->getPartner()?->getTerritory()) {
             return false;
         }
 
-        return $this->security->isGranted('ROLE_ADMIN_PARTNER') && $user->getTerritory() === $subject->getPartner()->getTerritory();
+        return $this->security->isGranted('ROLE_ADMIN_PARTNER') && $user->getPartner()->getTerritory() === $subject->getPartner()->getTerritory();
     }
 
     private function canFullManage(User $subject, User $user): bool
@@ -84,7 +81,7 @@ class UserVoter extends Voter
             return false;
         }
 
-        return $this->security->isGranted('ROLE_ADMIN_TERRITORY') && $user->getTerritory() === $subject->getPartner()->getTerritory();
+        return $this->security->isGranted('ROLE_ADMIN_TERRITORY') && $user->getPartner()?->getTerritory() === $subject->getPartner()->getTerritory();
     }
 
     private function canTransfer(User $subject, User $user): bool

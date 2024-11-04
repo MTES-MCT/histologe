@@ -49,7 +49,7 @@ readonly class ListExportMessageHandler
             }
 
             if (isset($writer)) {
-                $timezone = $user->getTerritory()?->getTimezone() ?? TimezoneProvider::TIMEZONE_EUROPE_PARIS;
+                $timezone = $user->getPartner()?->getTerritory()?->getTimezone() ?? TimezoneProvider::TIMEZONE_EUROPE_PARIS;
                 $datetimeStr = (new \DateTimeImmutable())->setTimezone(new \DateTimeZone($timezone))->format('Ymd-His');
                 $uuid = Uuid::v4();
                 $filename = 'export-histologe-'.$listExportMessage->getUserId().'-'.$datetimeStr.'-'.$uuid.'.'.$format;
