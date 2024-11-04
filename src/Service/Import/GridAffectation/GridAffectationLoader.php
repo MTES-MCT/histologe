@@ -135,7 +135,7 @@ class GridAffectationLoader
                             'line %d : Utilisateur déjà existant avec (%s) dans %s, partenaire : %s, rôle : %s',
                             $numLine,
                             $emailUser,
-                            $userToCheck->getTerritory()->getName(),
+                            $userToCheck->getPartner()->getTerritory()->getName(),
                             $userToCheck->getPartner()->getNom(),
                             $userToCheck->getRoleLabel()
                         );
@@ -236,7 +236,6 @@ class GridAffectationLoader
                     ++$countUsers;
                     $user = $this->userFactory->createInstanceFrom(
                         roleLabel: $roleLabel,
-                        territory: $territory,
                         partner: $partner,
                         firstname: trim($item[GridAffectationHeader::USER_FIRSTNAME]),
                         lastname: trim($item[GridAffectationHeader::USER_LASTNAME]),

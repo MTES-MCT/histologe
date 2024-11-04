@@ -361,7 +361,6 @@ trait FixturesHelper
             ->setPrenom('John')
             ->setRoles($roles)
             ->setPartner($this->getPartner())
-            ->setTerritory($this->getTerritory())
             ->setStatut(User::STATUS_ACTIVE);
     }
 

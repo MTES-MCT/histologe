@@ -3,7 +3,6 @@
 namespace App\Factory;
 
 use App\Entity\Partner;
-use App\Entity\Territory;
 use App\Entity\User;
 
 class UserFactory
@@ -11,7 +10,6 @@ class UserFactory
     public function createInstanceFrom(
         string $roleLabel,
         ?Partner $partner,
-        ?Territory $territory,
         ?string $firstname,
         ?string $lastname,
         ?string $email,
@@ -22,7 +20,6 @@ class UserFactory
         return (new User())
             ->setRoles(\in_array($roleLabel, User::ROLES) ? [$roleLabel] : [User::ROLES[$roleLabel]])
             ->setPartner($partner)
-            ->setTerritory($territory)
             ->setPrenom($firstname)
             ->setNom($lastname)
             ->setEmail($email)
@@ -37,7 +34,6 @@ class UserFactory
         return $this->createInstanceFrom(
             roleLabel: $data['roles'],
             partner: $partner,
-            territory: $partner->getTerritory(),
             email: $data['email'],
             lastname: $data['nom'],
             firstname: $data['prenom'],

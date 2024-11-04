@@ -47,7 +47,7 @@ class InterventionVoter extends Voter
                 && Affectation::STATUS_ACCEPTED == $affectation->getStatut();
         })->count() > 0;
         $isUserInPartnerAffectedToVisite = $user->getPartner() === $intervention->getPartner() && $isUserInAffectedPartnerWithQualificationVisite;
-        $isUserTerritoryAdminOfSignalementTerritory = $user->isTerritoryAdmin() && $user->getTerritory() === $signalement->getTerritory();
+        $isUserTerritoryAdminOfSignalementTerritory = $user->isTerritoryAdmin() && $user->getPartner()?->getTerritory() === $signalement->getTerritory();
 
         return $user->isSuperAdmin() || $isUserInPartnerAffectedToVisite || $isUserTerritoryAdminOfSignalementTerritory;
     }

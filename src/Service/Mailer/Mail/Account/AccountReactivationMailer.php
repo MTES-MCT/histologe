@@ -33,7 +33,7 @@ class AccountReactivationMailer extends AbstractNotificationMailer
 
         return [
             'link' => $this->generateLink(FormLoginAuthenticator::LOGIN_ROUTE, ['token' => $user->getToken()]),
-            'territoire_name' => $user->getTerritory()?->getName(),
+            'territoire_name' => $user->getPartner()?->getTerritory()?->getName(),
             'partner_name' => $user->getPartner()->getNom(),
         ];
     }

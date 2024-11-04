@@ -54,7 +54,7 @@ class BackZoneController extends AbstractController
         if (!$this->isGranted('ROLE_ADMIN')) {
             /** @var User $user */
             $user = $this->getUser();
-            $zone->setTerritory($user->getTerritory());
+            $zone->setTerritory($user->getPartner()?->getTerritory());
         }
         $addForm = $this->createForm(ZoneType::class, $zone, ['action' => $this->generateUrl('back_zone_add')]);
 
@@ -74,7 +74,7 @@ class BackZoneController extends AbstractController
         if (!$this->isGranted('ROLE_ADMIN')) {
             /** @var User $user */
             $user = $this->getUser();
-            $zone->setTerritory($user->getTerritory());
+            $zone->setTerritory($user->getPartner()?->getTerritory());
         }
         $form = $this->createForm(ZoneType::class, $zone, ['action' => $this->generateUrl('back_zone_add')]);
         $form->handleRequest($request);

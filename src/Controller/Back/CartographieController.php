@@ -63,7 +63,7 @@ class CartographieController extends AbstractController
             'displayRefreshAll' => false,
             'signalements' => [/* $signalements */],
             'criteres' => $critereRepository->findAllList(),
-            'tags' => $tagsRepository->findAllActive($user->getTerritory() ?? null),
+            'tags' => $tagsRepository->findAllActive($user->getPartner()?->getTerritory() ?? null),
         ]);
     }
 }

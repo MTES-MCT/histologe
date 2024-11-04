@@ -40,7 +40,7 @@ class SearchFilterOptionDataProvider
     public function getData(?User $user = null, ?Territory $territory = null): array
     {
         if (null === $territory) {
-            $territory = !$user?->isSuperAdmin() ? $user?->getTerritory() : null;
+            $territory = !$user?->isSuperAdmin() ? $user?->getPartner()?->getTerritory() : null;
         }
 
         return $this->cache->get(
@@ -79,7 +79,7 @@ class SearchFilterOptionDataProvider
             return $className.User::ROLE_ADMIN;
         }
         $role = $user->getRoles();
-        $territory = !$user->isSuperAdmin() ? $user->getTerritory() : $territory;
+        $territory = !$user->isSuperAdmin() ? $user->getPartner()?->getTerritory() : $territory;
         $partner = !$user->isSuperAdmin() ? $user->getPartner() : null;
 
         return $className.array_shift($role).'-partner-'.$partner?->getId().'-territory-'.$territory?->getZip();

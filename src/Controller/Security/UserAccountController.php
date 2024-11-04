@@ -49,7 +49,7 @@ class UserAccountController extends AbstractController
                     new NotificationMail(
                         type: NotificationMailerType::TYPE_ACCOUNT_ACTIVATION_FROM_FO,
                         to: $email,
-                        territory: $user->getTerritory(),
+                        territory: $user->getPartner()?->getTerritory(),
                         user: $user,
                     )
                 );
@@ -95,7 +95,7 @@ class UserAccountController extends AbstractController
                     new NotificationMail(
                         type: NotificationMailerType::TYPE_LOST_PASSWORD,
                         to: $email,
-                        territory: $user->getTerritory(),
+                        territory: $user->getPartner()?->getTerritory(),
                         user: $user
                     )
                 );

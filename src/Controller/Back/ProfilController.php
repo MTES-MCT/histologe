@@ -235,7 +235,7 @@ class ProfilController extends AbstractController
                         new NotificationMail(
                             type: NotificationMailerType::TYPE_PROFIL_EDIT_EMAIL,
                             to: $email,
-                            territory: $user->getTerritory(),
+                            territory: $user->getPartner()->getTerritory(),
                             user: $user
                         )
                     );
@@ -311,7 +311,7 @@ class ProfilController extends AbstractController
                 new NotificationMail(
                     type: NotificationMailerType::TYPE_PROFIL_EDIT_PASSWORD,
                     to: $user->getEmail(),
-                    territory: $user->getTerritory(),
+                    territory: $user->getPartner()?->getTerritory(),
                     user: $user
                 )
             );

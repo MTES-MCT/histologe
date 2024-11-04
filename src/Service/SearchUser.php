@@ -31,7 +31,7 @@ class SearchUser
     {
         $this->user = $user;
         if (!$user->isSuperAdmin()) {
-            $this->territory = $user->getTerritory();
+            $this->territory = $user->getPartner()?->getTerritory();
         }
         $this->partners = new ArrayCollection();
     }

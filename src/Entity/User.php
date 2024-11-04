@@ -130,9 +130,9 @@ class User implements UserInterface, EntityHistoryInterface, PasswordAuthenticat
     #[ORM\OneToMany(mappedBy: 'user', targetEntity: Notification::class)]
     private $notifications;
 
-    #[ORM\ManyToOne(targetEntity: Territory::class, inversedBy: 'users')]
+    #[ORM\ManyToOne(targetEntity: Territory::class)]
     #[ORM\JoinColumn(nullable: true)]
-    private $territory;
+    private $territory; // @phpstan-ignore-line
 
     #[ORM\OneToMany(mappedBy: 'uploadedBy', targetEntity: File::class)]
     private Collection $files;
@@ -478,18 +478,6 @@ class User implements UserInterface, EntityHistoryInterface, PasswordAuthenticat
     public function setHasPermissionAffectation(bool $hasPermissionAffectation): self
     {
         $this->hasPermissionAffectation = $hasPermissionAffectation;
-
-        return $this;
-    }
-
-    public function getTerritory(): ?Territory
-    {
-        return $this->territory;
-    }
-
-    public function setTerritory(?Territory $territory): self
-    {
-        $this->territory = $territory;
 
         return $this;
     }

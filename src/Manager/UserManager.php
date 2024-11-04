@@ -46,9 +46,6 @@ class UserManager extends AbstractManager
             ->setRoles([$data['roles']])
             ->setEmail($data['email'])
             ->setIsMailingActive($data['isMailingActive']);
-        if (\array_key_exists('territory', $data)) {
-            $user->setTerritory($data['territory']);
-        }
         if (\array_key_exists('partner', $data)) {
             $user->setPartner($data['partner']);
         }
@@ -96,7 +93,7 @@ class UserManager extends AbstractManager
             new NotificationMail(
                 type: NotificationMailerType::TYPE_ACCOUNT_TRANSFER,
                 to: $user->getEmail(),
-                territory: $user->getTerritory(),
+                territory: $user->getPartner()?->getTerritory(),
                 user: $user
             )
         );
@@ -166,7 +163,6 @@ class UserManager extends AbstractManager
                 $user = $this->userFactory->createInstanceFrom(
                     roleLabel: User::ROLES['Usager'],
                     partner: null,
-                    territory: null,
                     firstname: $prenom,
                     lastname: $nom,
                     email: $mail
@@ -232,7 +228,7 @@ class UserManager extends AbstractManager
                 new NotificationMail(
                     type: NotificationMailerType::TYPE_ACCOUNT_ACTIVATION_FROM_BO,
                     to: $user->getEmail(),
-                    territory: $user->getTerritory(),
+                    territory: $user->getPartner()?->getTerritory(),
                     user: $user,
                 )
             );

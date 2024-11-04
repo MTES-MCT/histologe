@@ -88,12 +88,12 @@ class SignalementVoter extends Voter
 
     private function canValidate(Signalement $signalement, User $user): bool
     {
-        return Signalement::STATUS_NEED_VALIDATION === $signalement->getStatut() && $user->isTerritoryAdmin() && $user->getTerritory() === $signalement->getTerritory();
+        return Signalement::STATUS_NEED_VALIDATION === $signalement->getStatut() && $user->isTerritoryAdmin() && $user->getPartner()?->getTerritory() === $signalement->getTerritory();
     }
 
     private function canClose(Signalement $signalement, User $user): bool
     {
-        return $signalement->getStatut() >= Signalement::STATUS_ACTIVE && $user->isTerritoryAdmin() && $user->getTerritory() === $signalement->getTerritory();
+        return $signalement->getStatut() >= Signalement::STATUS_ACTIVE && $user->isTerritoryAdmin() && $user->getPartner()?->getTerritory() === $signalement->getTerritory();
     }
 
     private function canDelete(Signalement $signalement, User $user): bool
@@ -104,7 +104,7 @@ class SignalementVoter extends Voter
         if ($this->security->isGranted('ROLE_ADMIN')) {
             return true;
         }
-        if ($this->security->isGranted('ROLE_ADMIN_TERRITORY') && $user->getTerritory()->getId() === $signalement->getTerritory()->getId()) {
+        if ($this->security->isGranted('ROLE_ADMIN_TERRITORY') && $user->getPartner()?->getTerritory()->getId() === $signalement->getTerritory()->getId()) {
             return true;
         }
 
@@ -119,7 +119,7 @@ class SignalementVoter extends Voter
 
         return $signalement->getAffectations()->filter(function (Affectation $affectation) use ($user) {
             return $affectation->getPartner()->getId() === $user->getPartner()->getId() && Affectation::STATUS_ACCEPTED === $affectation->getStatut();
-        })->count() > 0 || ($user->isTerritoryAdmin() && $user->getTerritory() === $signalement->getTerritory())
+        })->count() > 0 || ($user->isTerritoryAdmin() && $user->getPartner()?->getTerritory() === $signalement->getTerritory())
         || $user->isSuperAdmin();
     }
 
@@ -131,7 +131,7 @@ class SignalementVoter extends Voter
 
         return $signalement->getAffectations()->filter(function (Affectation $affectation) use ($user) {
             return $affectation->getPartner()->getId() === $user->getPartner()->getId();
-        })->count() > 0 || $user->isTerritoryAdmin() && $user->getTerritory() === $signalement->getTerritory();
+        })->count() > 0 || $user->isTerritoryAdmin() && $user->getPartner()?->getTerritory() === $signalement->getTerritory();
     }
 
     public function canAddVisite(Signalement $signalement, User $user): bool
@@ -145,7 +145,7 @@ class SignalementVoter extends Voter
                 && \in_array(Qualification::VISITES, $user->getPartner()->getCompetence())
                 && Affectation::STATUS_ACCEPTED == $affectation->getStatut();
         })->count() > 0;
-        $isUserTerritoryAdminOfSignalementTerritory = $user->isTerritoryAdmin() && $user->getTerritory() === $signalement->getTerritory();
+        $isUserTerritoryAdminOfSignalementTerritory = $user->isTerritoryAdmin() && $user->getPartner()?->getTerritory() === $signalement->getTerritory();
 
         return $user->isSuperAdmin() || $isUserInAffectedPartnerWithQualificationVisite || $isUserTerritoryAdminOfSignalementTerritory;
     }

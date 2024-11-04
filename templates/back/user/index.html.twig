@@ -98,8 +98,8 @@
                                 <tr class="signalement-row">
                                     {% if is_granted('ROLE_ADMIN') %}
                                         <td>
-                                            {% if user.territory %}
-                                                {{ user.territory.zip }} - {{ user.territory.name }}
+                                            {% if user.partner and user.partner.territory %}
+                                                {{ user.partner.territory.zip }} - {{ user.partner.territory.name }}
                                             {% endif %}
                                         </td>
                                     {% endif %}

@@ -27,7 +27,7 @@ class SuiviVoter extends Voter
         if (
             !$user instanceof UserInterface
             || !$user->isSuperAdmin()
-            && $subject->getTerritory() !== $user->getTerritory()
+            && $subject->getTerritory() !== $user->getPartner()?->getTerritory()
         ) {
             return false;
         }

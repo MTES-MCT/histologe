@@ -24,6 +24,6 @@ trait UserHelper
             ->setNom('Doe')
             ->setPrenom('John')
             ->setRoles([$role])
-            ->setPartner($partner)->setTerritory($territory);
+            ->setPartner($partner);
     }
 }

@@ -70,10 +70,10 @@ class PartnerVoter extends Voter
 
     private function canAssignPermissionAffectation(Partner $partner, User $user): bool
     {
-        if (!$this->parameterBag->get('feature_permission_affectation') || !$user->getTerritory()) {
+        if (!$this->parameterBag->get('feature_permission_affectation') || !$user->getPartner()?->getTerritory()) {
             return false;
         }
-        if ($this->security->isGranted('ROLE_ADMIN_TERRITORY') && $user->getTerritory() === $partner->getTerritory()) {
+        if ($this->security->isGranted('ROLE_ADMIN_TERRITORY') && $user->getPartner()->getTerritory() === $partner->getTerritory()) {
             return true;
         }
 
@@ -82,16 +82,13 @@ class PartnerVoter extends Voter
 
     private function canManage(Partner $partner, User $user): bool
     {
-        if (!$user->getTerritory()) {
-            return false;
-        }
-        if (!$user->getPartner()) {
+        if (!$user->getPartner()?->getTerritory()) {
             return false;
         }
         if ($this->security->isGranted('ROLE_ADMIN_PARTNER') && $user->getPartner() === $partner) {
             return true;
         }
-        if ($this->security->isGranted('ROLE_ADMIN_TERRITORY') && $user->getTerritory() === $partner->getTerritory()) {
+        if ($this->security->isGranted('ROLE_ADMIN_TERRITORY') && $user->getPartner()->getTerritory() === $partner->getTerritory()) {
             return true;
         }
 

@@ -66,7 +66,7 @@ class PartnerController extends AbstractController
         if ($this->isGranted('ROLE_ADMIN')) {
             $currentTerritory = $territoryRepository->find((int) $request->get('territory'));
         } else {
-            $currentTerritory = $user->getTerritory();
+            $currentTerritory = $user->getPartner()?->getTerritory();
         }
         $currentType = $request->get('type');
         $enumType = $request->get('type') ? EnumPartnerType::tryFrom($request->get('type')) : null;
@@ -112,7 +112,7 @@ class PartnerController extends AbstractController
         /** @var User $user */
         $user = $this->getUser();
         if (!$this->isGranted('ROLE_ADMIN')) {
-            $partner->setTerritory($user->getTerritory());
+            $partner->setTerritory($user->getPartner()?->getTerritory());
         }
         if ($this->featureZonage) {
             $form = $this->createForm(PartnerType::class, $partner);
@@ -223,8 +223,6 @@ class PartnerController extends AbstractController
             if ($partner->getTerritory() != $previousTerritory) {
                 /** @var User $partnerUser */
                 foreach ($partner->getUsers() as $partnerUser) {
-                    $partnerUser->setTerritory($partner->getTerritory());
-                    $entityManager->persist($partnerUser);
                     $notificationMailerRegistry->send(
                         new NotificationMail(
                             type: NotificationMailerType::TYPE_ACCOUNT_TRANSFER,
@@ -333,7 +331,7 @@ class PartnerController extends AbstractController
                     new NotificationMail(
                         type: NotificationMailerType::TYPE_ACCOUNT_DELETE,
                         to: $user->getEmail(),
-                        territory: $user->getTerritory()
+                        territory: $partner->getTerritory()
                     )
                 );
             }
@@ -426,7 +424,6 @@ class PartnerController extends AbstractController
         if (null !== $partnerExist) {
             $this->addFlash('error', 'Un partenaire existe déjà avec cette adresse e-mail.');
         } elseif (null !== $user && \in_array('ROLE_USAGER', $user->getRoles())) {
-            $data['territory'] = $partner->getTerritory();
             $data['partner'] = $partner;
             $data['statut'] = User::STATUS_INACTIVE;
             $userManager->updateUserFromData($user, $data);
@@ -580,7 +577,7 @@ class PartnerController extends AbstractController
         if (!$this->isGranted('ROLE_ADMIN')) {
             /** @var User $currentUser */
             $currentUser = $this->getUser();
-            $partnersAuthorized = $partnerRepository->findAllList($currentUser->getTerritory());
+            $partnersAuthorized = $partnerRepository->findAllList($currentUser->getPartner()?->getTerritory());
             if (!isset($partnersAuthorized[$partner->getId()])) {
                 $this->addFlash('error', 'Vous n\'avez pas les droits pour transférer sur ce partenaire.');
 
@@ -613,7 +610,7 @@ class PartnerController extends AbstractController
             new NotificationMail(
                 type: NotificationMailerType::TYPE_ACCOUNT_DELETE,
                 to: $user->getEmail(),
-                territory: $user->getTerritory()
+                territory: $user->getPartner()?->getTerritory()
             )
         );
         if (User::STATUS_ARCHIVE === $user->getStatut()) {

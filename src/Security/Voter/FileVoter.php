@@ -87,7 +87,7 @@ class FileVoter extends Voter
         if ($user->isSuperAdmin()) {
             return true;
         }
-        if ($user->isTerritoryAdmin() && $subject->getSignalement()->getTerritory() === $user->getTerritory()) {
+        if ($user->isTerritoryAdmin() && $subject->getSignalement()->getTerritory() === $user->getPartner()?->getTerritory()) {
             return true;
         }
 

@@ -57,7 +57,7 @@ class WidgetSettings
         $this->canSeeNDE = (string) $canSeeNDE;
         $this->partnerId = $user->getPartner()->getId();
         $this->partnerName = $user->getPartner()->getNom();
-        $this->territoryName = $user->getTerritory()?->getZip().'-'.$user->getTerritory()?->getName();
+        $this->territoryName = $user->getPartner()?->getTerritory()?->getZip().'-'.$user->getPartner()?->getTerritory()?->getName();
         $this->territories = $territories;
         $this->partners = $partners;
         $this->communes = $communes;

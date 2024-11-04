@@ -91,7 +91,7 @@ class BackArchivedAccountController extends AbstractController
         EntityManagerInterface $entityManager,
         NotificationMailerRegistry $notificationMailerRegistry,
     ): Response {
-        $isUserUnlinked = (!$user->getTerritory() || !$user->getPartner());
+        $isUserUnlinked = !$user->getPartner();
 
         if ((User::STATUS_ARCHIVE !== $user->getStatut() && !$isUserUnlinked) || $user->getAnonymizedAt()) {
             $this->addFlash('error', 'Ce compte ne peut pas être réactivé.');
@@ -129,7 +129,6 @@ class BackArchivedAccountController extends AbstractController
                 new NotificationMail(
                     type: NotificationMailerType::TYPE_ACCOUNT_REACTIVATION,
                     to: $user->getEmail(),
-                    territory: $user->getTerritory(),
                     user: $user,
                 )
             );

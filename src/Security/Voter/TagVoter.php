@@ -51,6 +51,6 @@ class TagVoter extends Voter
 
     private function canDelete(Tag $tag, User $user): bool
     {
-        return $this->canCreate($tag, $user) && $tag->getTerritory() === $user->getTerritory();
+        return $this->canCreate($tag, $user) && $tag->getTerritory() === $user->getPartner()?->getTerritory();
     }
 }

@@ -89,7 +89,7 @@
                                 {% set statut = 'actif' %}
                             {% endif %}
                             <tr class="user-row">
-                                <td>{{ user.territory ? user.territory.zip ~ ' - ' ~ user.territory.name : 'aucun' }}</td>
+                                <td>{{ (user.partner and user.partner.territory) ? user.partner.territory.zip ~ ' - ' ~ user.partner.territory.name : 'aucun' }}</td>
                                 <td>{{ user.partner ? user.partner.nom : 'aucun' }}</td>
                                 <td><span class="fr-badge {{ classe }} fr-badge--no-icon fr-ws-nowrap ">{{ statut|upper }}</span></td>
                                 <td>{{ user.email|clean_tagged_text(constant('App\\Entity\\User::SUFFIXE_ARCHIVED'), 'left') }}</ail td>

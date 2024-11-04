@@ -38,7 +38,7 @@ class TerritoryVoter extends Voter
 
     private function isInTerritory(Territory $territory, User $user): bool
     {
-        if ($this->security->isGranted('ROLE_ADMIN') || $user->getTerritory() && $user->getTerritory()->getId() === $territory->getId()) {
+        if ($this->security->isGranted('ROLE_ADMIN') || $user->getPartner()?->getTerritory()?->getId() === $territory->getId()) {
             return true;
         }
 

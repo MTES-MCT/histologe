@@ -45,7 +45,7 @@ class NotificationRepository extends ServiceEntityRepository implements EntityCl
             ->leftJoin('n.affectation', 'affectation')
             ->addSelect('suivi', 'signalement', 'affectation', 'user', 'createdBy');
 
-        $zip = $user->getTerritory()?->getZip();
+        $zip = $user->getPartner()?->getTerritory()?->getZip();
         if ($user->isTerritoryAdmin() && isset($this->params[$zip])) {
             $partnerName = $this->params[$zip][$user->getPartner()?->getNom()] ?? null;
             if (null !== $partnerName) {

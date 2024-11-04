@@ -16,7 +16,7 @@ class UserAvatar implements RuntimeExtensionInterface
 
     public function userAvatarOrPlaceholder($user, $size = 74): string
     {
-        $zipCode = $user->getTerritory() ? substr($user->getTerritory()->getZip(), 0, 2) : 'SA';
+        $zipCode = ($user->getPartner() && $user->getPartner()->getTerritory()) ? substr($user->getPartner()->getTerritory()->getZip(), 0, 2) : 'SA';
 
         if ($user->getAvatarFilename() && $this->fileStorage->fileExists($user->getAvatarFilename())) {
             $bucketFilepath = $this->parameterBag->get('url_bucket').'/'.$user->getAvatarFilename();

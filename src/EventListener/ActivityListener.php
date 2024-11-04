@@ -134,8 +134,9 @@ class ActivityListener
     {
         /** @var QueryBuilder $qb */
         $qb = $this->em->getRepository(User::class)->createQueryBuilder('u')
+            ->leftJoin('u.partner', 'p')
             ->andWhere('u.statut = 1')
-            ->andWhere('JSON_CONTAINS(u.roles, :role) = 1 OR (JSON_CONTAINS(u.roles, :role2) = 1 AND u.territory = :territory)')
+            ->andWhere('JSON_CONTAINS(u.roles, :role) = 1 OR (JSON_CONTAINS(u.roles, :role2) = 1 AND p.territory = :territory)')
             ->setParameter('role', '"ROLE_ADMIN"')
             ->setParameter('role2', '"ROLE_ADMIN_TERRITORY"')
             ->setParameter('territory', $territory);
