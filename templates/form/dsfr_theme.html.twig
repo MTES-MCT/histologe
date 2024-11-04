@@ -127,11 +127,12 @@
 
 {# custom type #}
 {% block search_checkbox_row %}
-    <div class="search-checkbox-container {% if errors|length > 0 %}fr-select-group--error{% endif %}">   
+    <div class="search-checkbox-container fr-input-group {% if errors|length > 0 %}fr-select-group--error{% endif %}">   
         <div class="fr-input-group fr-mb-0">
-            <input type="text" placeholder="{{noselectionlabel}}" class="fr-input">
+            <label for="{{ id }}" class="fr-label">{{ label }}</label>
+            <input id="{{ id }}" type="text" placeholder="{{ noselectionlabel }}" class="fr-input">
         </div>
         {{ block('choice_widget_expanded') }}
-        {{block('form_errors')}}
+        {{ block('form_errors') }}
     </div>
 {% endblock %}

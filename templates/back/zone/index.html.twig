@@ -67,6 +67,7 @@
                                 <th scope="col">Nom</th>
                                 <th scope="col">Partenaires</th>
                                 <th scope="col">Territoire</th>
+                                <th scope="col">Type</th>
                                 <th scope="col" class="fr-text--right">Actions</th>
                             </tr>
                         </thead>
@@ -85,6 +86,7 @@
                                             {{ item.territory.zip }} - {{ item.territory.name }}
                                         {% endif %}
                                     </td>
+                                    <td>{{ item.type.label }}</td>
                                     <td class="fr-text--right fr-ws-nowrap">
                                         <a href="{{path('back_zone_show', {zone: item.id})}}" class="fr-btn fr-icon-arrow-right-line" title="Visualiser la zone {{item.name}}">
                                             Visualiser la zone {{ item.name }}

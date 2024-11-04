@@ -16,6 +16,7 @@ class SearchCheckboxType extends AbstractType
             'expanded' => true,
             'multiple' => true,
             'attr' => ['class' => 'search-checkbox'],
+            'label' => '',
             'noselectionlabel' => '',
             'nochoiceslabel' => '',
         ]);
