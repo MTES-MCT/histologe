@@ -1629,7 +1629,7 @@
         },
         {
           "type": "SignalementFormSubscreen",
-          "label": "Le type de chauffage est : {{formStore.data.desordres_logement_chauffage_type}}",
+          "label": "Le type de chauffage est : {{dictionaryStore::formStore.data.desordres_logement_chauffage_type}}",
           "slug": "desordres_logement_chauffage_details",
           "description": "Sélectionnez le ou les problèmes rencontrés",
           "conditional": {
@@ -2872,6 +2872,54 @@
                 "type": "SignalementFormButton",
                 "label": "Précédent",
                 "slug": "desordres_logement_proprete_previous",
+                "action": "resolve:findPreviousScreen",
+                "customCss": "fr-btn--secondary fr-btn--icon-left fr-icon-arrow-left-line"
+              }
+            ]
+          }
+        }
+      ]
+    }
+  },
+  {
+    "type": "SignalementFormScreen",
+    "label": "Précisions sur la situation",
+    "description": "Détaillez ici la situation, les démarches déjà engagées et toutes les informations que vous jugez utiles au traitement de votre dossier.",
+    "slug": "desordres_precisions",
+    "screenCategory": "Désordres",
+    "components": {
+      "body": [
+        {
+          "type": "SignalementFormTextarea",
+          "slug": "message_administration",
+          "customCss": "fr-mt-5v",
+          "label": "Votre message ici",
+          "accessibility": {
+            "focus": true
+          },
+          "validate": {
+            "message": "Veuillez détailler la situation."
+          }
+        }
+      ],
+      "footer": [
+        {
+          "type": "SignalementFormSubscreen",
+          "slug": "desordres_precisions_footer",
+          "customCss": "button-group-responsive-inverted",
+          "components": {
+            "body": [
+              {
+                "type": "SignalementFormButton",
+                "label": "Suivant",
+                "slug": "desordres_precisions_next",
+                "action": "goto:desordres_renseignes",
+                "customCss": "fr-btn--icon-right fr-icon-arrow-right-line"
+              },
+              {
+                "type": "SignalementFormButton",
+                "label": "Précédent",
+                "slug": "desordres_precisions_previous",
                 "action": "resolve:findPreviousScreen",
                 "customCss": "fr-btn--secondary fr-btn--icon-left fr-icon-arrow-left-line"
               }

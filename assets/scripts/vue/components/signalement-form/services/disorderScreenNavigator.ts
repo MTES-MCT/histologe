@@ -19,8 +19,11 @@ export function findPreviousScreen (
       case 'desordres_batiment':
         previousScreenSlug = (formStore.data.zone_concernee_zone === 'batiment_logement') ? 'ecran_intermediaire_les_desordres' : 'desordres_logement'
         break
-      case 'desordres_renseignes':
+      case 'desordres_precisions':
         previousScreenSlug = (formStore.data.zone_concernee_zone === 'batiment') ? 'desordres_batiment' : 'desordres_logement'
+        break
+      case 'desordres_renseignes':
+        previousScreenSlug = 'desordres_precisions'
         break
       default:
         previousScreenSlug = (['logement', 'batiment_logement'].includes(formStore.data.zone_concernee_zone) && currentStep.includes('logement'))
@@ -58,7 +61,7 @@ export function findNextScreen (
         if (formStore.data.zone_concernee_zone === 'batiment_logement') {
           nextScreenSlug = 'desordres_renseignes_batiment'
         } else if (formStore.data.zone_concernee_zone === 'batiment') {
-          nextScreenSlug = 'desordres_renseignes'
+          nextScreenSlug = 'desordres_precisions'
         }
       } else {
         nextScreenSlug = formStore.data.categorieDisorders.batiment[0]
@@ -66,7 +69,7 @@ export function findNextScreen (
       break
     case 'desordres_logement':
       if (slugButton === 'desordres_logement_ras') {
-        nextScreenSlug = 'desordres_renseignes'
+        nextScreenSlug = 'desordres_precisions'
       } else {
         nextScreenSlug = formStore.data.categorieDisorders.logement[0]
       }
@@ -89,10 +92,10 @@ export function findNextScreen (
       switch (formStore.data.zone_concernee_zone) {
         case 'batiment':
         case 'logement':
-          nextScreenSlug = 'desordres_renseignes'
+          nextScreenSlug = 'desordres_precisions'
           break
         case 'batiment_logement':
-          nextScreenSlug = slugButton.includes('batiment') ? 'desordres_renseignes_batiment' : 'desordres_renseignes'
+          nextScreenSlug = slugButton.includes('batiment') ? 'desordres_renseignes_batiment' : 'desordres_precisions'
           break
       }
       incrementIndex = 0

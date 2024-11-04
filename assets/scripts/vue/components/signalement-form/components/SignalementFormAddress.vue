@@ -145,6 +145,14 @@ export default defineComponent({
         this.handleAddressFieldsEdited()
       }
     )
+    watch(
+      () => this.subscreenCss,
+      (newValue, oldValue) => {
+        if (newValue === 'fr-hidden') {
+          this.formStore.data[this.id + '_detail_manual'] = 0
+        }
+      }
+    )
   },
   computed: {
     buttonCss () {

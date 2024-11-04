@@ -100,20 +100,9 @@
       Aucun désordre sélectionné
     </div>
     <!-- MESSAGE A L'ADMINISTRATION -->
-    <div v-if="formStore.currentScreen?.slug === 'desordres_renseignes'">
+    <div v-if="formStore.currentScreen?.slug !== 'desordres_renseignes_batiment'">
       <br>
-      <h3>Précisions sur les désordres (facultatif)</h3>
-      <p>Vous pouvez apporter des précisions sur votre situation.</p>
-      <SignalementFormTextarea
-        :id="idMessageAdministration"
-        description="Votre message ici"
-        @input="updateValue($event)"
-        :modelValue="formStore.data[idMessageAdministration]"
-        />
-    </div>
-    <div v-else-if="formStore.currentScreen?.slug === 'validation_signalement' && formStore.data[idMessageAdministration] !== undefined">
-      <br>
-      <h5 class="fr-h6">Précisions sur les désordres</h5>
+      <h5 class="fr-h6">Précisions sur la situation</h5>
       <p class="white-space-pre-line">{{ formStore.data[idMessageAdministration] }}</p>
     </div>
   </div>
@@ -124,13 +113,9 @@ import { defineComponent } from 'vue'
 import formStore from './../store'
 import dictionaryStore from './../dictionary-store'
 import { dictionaryManager } from './../services/dictionaryManager'
-import SignalementFormTextarea from './SignalementFormTextarea.vue'
 
 export default defineComponent({
   name: 'SignalementFormDisorderOverview',
-  components: {
-    SignalementFormTextarea
-  },
   props: {
     id: { type: String, default: null },
     icons: { type: Object },

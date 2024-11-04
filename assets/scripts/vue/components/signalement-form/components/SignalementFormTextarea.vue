@@ -1,10 +1,10 @@
 <template>
-<div :class="['fr-input-group', { 'fr-input-group--disabled': disabled }, {'fr-input-group--error' : hasError}]" :id="id">
+<div :class="[customCss, 'fr-input-group', { 'fr-input-group--disabled': disabled }, {'fr-input-group--error' : hasError}]" :id="id">
   <label class='fr-label' :for="id + '_input'">
     {{ label }}
     <span class="fr-hint-text">{{ description }}</span>
   </label>
-    <div :class="[ customCss, 'fr-input-wrap' ]">
+    <div class="fr-input-wrap">
       <textarea
         :id="id + '_input'"
         :name="id"

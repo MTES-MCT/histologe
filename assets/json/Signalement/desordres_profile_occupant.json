@@ -2864,6 +2864,54 @@
   },
   {
     "type": "SignalementFormScreen",
+    "label": "Précisions sur votre situation",
+    "description": "Détaillez ici votre situation, les démarches déjà engagées et toutes les informations que vous jugez utiles au traitement de votre dossier.",
+    "slug": "desordres_precisions",
+    "screenCategory": "Désordres",
+    "components": {
+      "body": [
+        {
+          "type": "SignalementFormTextarea",
+          "slug": "message_administration",
+          "customCss": "fr-mt-5v",
+          "label": "Votre message ici",
+          "accessibility": {
+            "focus": true
+          },
+          "validate": {
+            "message": "Veuillez détailler votre situation."
+          }
+        }
+      ],
+      "footer": [
+        {
+          "type": "SignalementFormSubscreen",
+          "slug": "desordres_precisions_footer",
+          "customCss": "button-group-responsive-inverted",
+          "components": {
+            "body": [
+              {
+                "type": "SignalementFormButton",
+                "label": "Suivant",
+                "slug": "desordres_precisions_next",
+                "action": "goto:desordres_renseignes",
+                "customCss": "fr-btn--icon-right fr-icon-arrow-right-line"
+              },
+              {
+                "type": "SignalementFormButton",
+                "label": "Précédent",
+                "slug": "desordres_precisions_previous",
+                "action": "resolve:findPreviousScreen",
+                "customCss": "fr-btn--secondary fr-btn--icon-left fr-icon-arrow-left-line"
+              }
+            ]
+          }
+        }
+      ]
+    }
+  },
+  {
+    "type": "SignalementFormScreen",
     "label": "Les désordres renseignés",
     "slug": "desordres_renseignes",
     "screenCategory": "Désordres",
