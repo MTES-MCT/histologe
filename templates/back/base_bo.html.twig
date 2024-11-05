@@ -5,7 +5,7 @@
 {% block body %}
     {% if platform.feature_enable_menu_horizontale %}
         {% include 'back/nav_bo.html.twig' %}
-        <main class=" {{ app.request.get('_route') == 'back_cartographie' ? 'fr-container-fluid' : 'fr-container' }}">
+        <main class="fr-container-fluid">
             <div class="fr-grid-row">
                 <div class="fr-col-12" id="content">
     {% else %}
