@@ -2874,7 +2874,7 @@
           "type": "SignalementFormTextarea",
           "slug": "message_administration",
           "customCss": "fr-mt-5v",
-          "label": "Votre message ici",
+          "label": "Votre message ici :",
           "accessibility": {
             "focus": true
           },
@@ -2894,7 +2894,7 @@
                 "type": "SignalementFormButton",
                 "label": "Suivant",
                 "slug": "desordres_precisions_next",
-                "action": "goto:desordres_renseignes",
+                "action": "goto.save:desordres_renseignes",
                 "customCss": "fr-btn--icon-right fr-icon-arrow-right-line"
               },
               {
