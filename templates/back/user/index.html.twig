@@ -106,7 +106,7 @@
                                     <td>{{ user.prenom }} {{ user.nom }}</td>
                                     <td>{{ user.email }}</td>
                                     <td>{{ user.partner ? user.partner.nom }}</td>
-                                    <td>{{ user.partner ? user.partner.type.label }}</td>
+                                    <td>{{ user.partner and user.partner.type ? user.partner.type.label }}</td>
                                     <td>
                                         {% if user.statut is same as constant('App\\Entity\\User::STATUS_INACTIVE') %}
                                             <span class="fr-badge fr-badge--no-icon fr-badge--error">Non activé</span>

@@ -47,7 +47,7 @@ readonly class UserExportLoader
                     'nom' => $user->getNom(),
                     'prenom' => $user->getPrenom(),
                     'partner' => $user->getPartner() ? $user->getPartner()->getNom() : '',
-                    'partnerType' => $user->getPartner() ? $user->getPartner()->getType()->label() : '',
+                    'partnerType' => $user->getPartner() && $user->getPartner()->getType() ? $user->getPartner()->getType()->label() : '',
                     'createdAt' => $user->getCreatedAt()->format('d/m/Y'),
                     'statut' => User::STATUS_ACTIVE === $user->getStatut() ? 'Activé' : 'Non activé',
                     'lastLoginAt' => $user->getLastLoginAt() ? $user->getLastLoginAt()->format('d/m/Y') : '',
