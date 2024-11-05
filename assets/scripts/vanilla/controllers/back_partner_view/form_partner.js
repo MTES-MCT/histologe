@@ -37,18 +37,27 @@ function histoUpdateFieldsVisibility () {
 function histoUpdateValueFromData (elementName, elementData, target) {
   document.querySelector(elementName).value = target.getAttribute(elementData)
 }
-function histoUpdatePermissionsFromRole(editOrCreate) {
-  const elementTogglePermissionAffectation = document.querySelector('#user_'+editOrCreate+'_permission_affectation_toggle')
-  const elementTextPermissionAffectation = document.querySelector('#user_'+editOrCreate+'_permission_affectation_text')
+function histoUpdatePermissionsFromRole (editOrCreate, toggleValue) {
+  const elementTogglePermissionAffectation = document.querySelector('#user_' + editOrCreate + '_permission_affectation_toggle input')
+  const elementTextPermissionAffectation = document.querySelector('#user_' + editOrCreate + '_permission_affectation_text')
   if (!elementTogglePermissionAffectation || !elementTextPermissionAffectation) {
     return
   }
-  const rolesSelect = document.querySelector('#user_'+editOrCreate+'_roles')
+  const rolesSelect = document.querySelector('#user_' + editOrCreate + '_roles')
   if (rolesSelect.value === 'ROLE_ADMIN' || rolesSelect.value === 'ROLE_ADMIN_TERRITORY') {
-    elementTogglePermissionAffectation.classList.add('fr-hidden')
+    if (!elementTogglePermissionAffectation.checked) {
+      elementTogglePermissionAffectation.click()
+    }
+    elementTogglePermissionAffectation.setAttribute('disabled', 'disabled')
     elementTextPermissionAffectation.classList.remove('fr-hidden')
   } else {
-    elementTogglePermissionAffectation.classList.remove('fr-hidden')
+    elementTogglePermissionAffectation.removeAttribute('disabled')
+    if (toggleValue === false && elementTogglePermissionAffectation.checked) {
+      elementTogglePermissionAffectation.click()
+    }
+    if (editOrCreate === 'edit' && toggleValue === true && !elementTogglePermissionAffectation.checked) {
+      elementTogglePermissionAffectation.click()
+    }
     elementTextPermissionAffectation.classList.add('fr-hidden')
   }
 }
@@ -121,16 +130,16 @@ document.querySelectorAll('.btn-edit-partner-user').forEach(swbtn => {
     } else {
       document.querySelector('#user_edit_is_mailing_active-2').checked = true
     }
-    
+
     const elementPermissionAffectation = document.querySelector('#user_edit_permission_affectation')
     if (elementPermissionAffectation) {
-      elementPermissionAffectation.checked = target.getAttribute('data-userpermissionaffectation') === '1'
+      elementPermissionAffectation.removeAttribute('disabled')
     }
 
     const userRole = target.getAttribute('data-userrole')
     const rolesSelect = document.querySelector('#user_edit_roles')
     rolesSelect.value = userRole
-    histoUpdatePermissionsFromRole('edit')
+    histoUpdatePermissionsFromRole('edit', target.getAttribute('data-userpermissionaffectation') === '1')
 
     document.querySelector('#user_edit_form').addEventListener('submit', (e) => {
       histoUpdateSubmitButton('#user_edit_form_submit', 'Edition en cours...')
@@ -153,16 +162,18 @@ if (document.querySelector('#partner_type')) {
 
 if (document.querySelector('#user_create_roles')) {
   document.querySelector('#user_create_roles').addEventListener('change', () => {
-    histoUpdatePermissionsFromRole('create')
+    histoUpdatePermissionsFromRole('create', null)
   })
+  histoUpdatePermissionsFromRole('create', null)
 }
 if (document.querySelector('#user_edit_roles')) {
   document.querySelector('#user_edit_roles').addEventListener('change', () => {
-    histoUpdatePermissionsFromRole('edit')
+    histoUpdatePermissionsFromRole('edit', null)
   })
+  histoUpdatePermissionsFromRole('edit', null)
 }
 
-const deletePartnerForm = document.querySelectorAll('form[name="deletePartner"]');
+const deletePartnerForm = document.querySelectorAll('form[name="deletePartner"]')
 deletePartnerForm.forEach(form => {
   form.addEventListener('submit', function (event) {
     if (!confirm('Êtes-vous sûr de vouloir supprimer ce partenaire ?')) {
