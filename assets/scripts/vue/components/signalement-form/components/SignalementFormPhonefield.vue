@@ -172,9 +172,6 @@ export default defineComponent({
     },
     getSelectOptionLabel (countryCode:CountryCode) {
       return getCountryNameByCode(countryCode) + ' : +' + getCountryCallingCode(countryCode)
-    },
-    isHiddenSecond () {
-      return formStore.data[this.idSecond] === '' || formStore.data[this.idSecond] === undefined
     }
   },
   computed: {
@@ -206,6 +203,9 @@ export default defineComponent({
     },
     hasErrorSecond () {
       return formStore.validationErrors[this.idSecond] !== undefined
+    },
+    isHiddenSecond () {
+      return formStore.data[this.idSecond] === '' || formStore.data[this.idSecond] === undefined
     }
   }
 })
