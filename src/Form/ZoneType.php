@@ -71,13 +71,7 @@ class ZoneType extends AbstractType
             'choice_label' => function ($choice) {
                 return $choice->label();
             },
-            'row_attr' => [
-                'class' => 'fr-select-group',
-            ],
             'placeholder' => 'Sélectionner le type de zone',
-            'attr' => [
-                'class' => 'fr-select',
-            ],
             'label' => 'Type de zone',
         ]);
 

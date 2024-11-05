@@ -6,7 +6,6 @@ use App\Entity\Behaviour\EntityHistoryInterface;
 use App\Entity\Enum\HistoryEntryEvent;
 use App\Entity\Enum\ZoneType;
 use App\Repository\ZoneRepository;
-use App\Validator as AppAssert;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
@@ -45,7 +44,6 @@ class Zone implements EntityHistoryInterface
         enumType: ZoneType::class,
         options: ['comment' => 'Value possible enum ZoneType'])]
     #[Assert\NotBlank(message: 'Merci de choisir un type de zone.')]
-    #[AppAssert\ValidZoneType]
     private ZoneType $type;
 
     #[ORM\ManyToOne]

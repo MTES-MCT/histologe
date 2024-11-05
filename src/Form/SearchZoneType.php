@@ -2,11 +2,13 @@
 
 namespace App\Form;
 
+use App\Entity\Enum\ZoneType;
 use App\Entity\Territory;
 use App\Service\SearchZone;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\EnumType;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\Extension\Core\Type\SearchType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -23,7 +25,7 @@ class SearchZoneType extends AbstractType
     {
         $builder->add('queryName', SearchType::class, [
             'required' => false,
-            'label' => false,
+            'label' => 'Nom',
             'attr' => ['placeholder' => 'Taper le nom d\'une zone'],
         ]);
         if ($this->security->isGranted('ROLE_ADMIN')) {
@@ -34,9 +36,25 @@ class SearchZoneType extends AbstractType
                 },
                 'required' => false,
                 'placeholder' => 'Tous les territoires',
-                'label' => false,
+                'label' => 'Territoire',
             ]);
         }
+
+        $builder->add('type', EnumType::class, [
+            'class' => ZoneType::class,
+            'choice_label' => function ($choice) {
+                return $choice->label();
+            },
+            'row_attr' => [
+                'class' => 'fr-select-group',
+            ],
+            'placeholder' => 'Sélectionner le type de zone',
+            'attr' => [
+                'class' => 'fr-select',
+            ],
+            'label' => 'Type de zone',
+        ]);
+
         $builder->add('page', HiddenType::class);
     }
 
