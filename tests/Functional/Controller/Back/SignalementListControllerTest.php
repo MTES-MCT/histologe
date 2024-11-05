@@ -30,7 +30,7 @@ class SignalementListControllerTest extends WebTestCase
         $userRepository = static::getContainer()->get(UserRepository::class);
         $user = $userRepository->findOneBy(['email' => $email]);
         $client->loginUser($user);
-        $route = $generatorUrl->generate('back_index');
+        $route = $generatorUrl->generate('back_signalement_index');
         $client->request('GET', $route);
         $this->assertLessThan(
             Response::HTTP_INTERNAL_SERVER_ERROR,
@@ -106,7 +106,7 @@ class SignalementListControllerTest extends WebTestCase
 
         $user = $userRepository->findOneBy(['email' => $emailUser]);
         $client->loginUser($user);
-        $route = $generatorUrl->generate('back_index').$filter;
+        $route = $generatorUrl->generate('back_signalement_index').$filter;
         $client->request('GET', $route);
 
         $this->assertResponseIsSuccessful();

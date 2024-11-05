@@ -7,11 +7,10 @@ class MenuItem
     private array $children = [];
 
     public function __construct(
-        private readonly string $label,
+        private readonly string $label = '',
         private readonly string $route = '',
         private readonly array $routeParameters = [],
         private readonly string $icon = '',
-        private readonly bool $expanded = false,
         private readonly string $roleGranted = '',
         private readonly string $roleNotGranted = '',
         private readonly bool $featureEnable = true
@@ -50,11 +49,6 @@ class MenuItem
         return $this->routeParameters;
     }
 
-    public function isExpanded(): bool
-    {
-        return $this->expanded;
-    }
-
     public function getRoleGranted(): string
     {
         return $this->roleGranted;
@@ -68,5 +62,10 @@ class MenuItem
     public function isFeatureEnable(): bool
     {
         return $this->featureEnable;
+    }
+
+    public function getBaseRoute(): string
+    {
+        return str_replace(['_index', '_new', '_view', '_edit', '_reactiver'], '', $this->route);
     }
 }

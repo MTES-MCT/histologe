@@ -7,7 +7,7 @@
     <header>
         {% include 'back/breadcrumb_bo.html.twig' with {
             'level2Title': 'Liste des signalements',
-            'level2Link': path('back_index'),
+            'level2Link': path('back_signalement_index'),
             'level2Label': 'Retour à la liste des signalements',
             'level3Title': 'Export',
             'level3Link': '',
@@ -130,7 +130,7 @@
 
         <ul class="fr-btns-group fr-btns-group--inline-lg fr-btns-group--right fr-btns-group--icon-left">
             <li>
-                <a href="{{ path('back_index') }}" class="fr-btn fr-w-100 fr-btn--secondary fr-btn--icon-left fr-icon-close-line">
+                <a href="{{ path('back_signalement_index') }}" class="fr-btn fr-w-100 fr-btn--secondary fr-btn--icon-left fr-icon-close-line">
                     Annuler
                 </a>
             </li>

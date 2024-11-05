@@ -208,9 +208,9 @@
                                         <a class="fr-btn fr-icon-list-unordered"
                                             title="Voir la liste des signalements avec l'étiquette {{ tag.label }}"
                                             {% if is_granted('ROLE_ADMIN') %}
-                                                href="{{ path('back_index', { 'etiquettes[]': tag.id, 'isImported': 'oui', 'territoire': tag.territory.id }) }}"
+                                                href="{{ path('back_signalement_index', { 'etiquettes[]': tag.id, 'isImported': 'oui', 'territoire': tag.territory.id }) }}"
                                             {% else %}
-                                                href="{{ path('back_index', { 'etiquettes[]': tag.id, 'isImported': 'oui' }) }}"
+                                                href="{{ path('back_signalement_index', { 'etiquettes[]': tag.id, 'isImported': 'oui' }) }}"
                                             {% endif %}
                                             >Voir la liste des signalements avec l'étiquette {{ tag.label }}</a>
                                         <button class="fr-btn fr-btn--secondary fr-icon-delete-line"

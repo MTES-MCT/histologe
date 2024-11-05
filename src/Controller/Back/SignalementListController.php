@@ -16,7 +16,7 @@ use Symfony\Component\Routing\Attribute\Route;
 #[Route('/bo')]
 class SignalementListController extends AbstractController
 {
-    #[Route('/signalements/', name: 'back_index')]
+    #[Route('/signalements/', name: 'back_signalement_index')]
     public function show(): Response
     {
         return $this->render('back/signalement/list/index.html.twig');
