@@ -15,6 +15,7 @@
       @keydown.down.prevent="handleDownSuggestion"
       @keydown.up.prevent="handleUpSuggestion"
       @keydown.enter.prevent="handleEnterSuggestion"
+      @keydown.escape.prevent="handleTabSuggestion"
       @keydown.tab="handleTabSuggestion"
     />
 
