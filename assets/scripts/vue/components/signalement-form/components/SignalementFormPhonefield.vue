@@ -42,6 +42,7 @@
       <div
         :id="id + '-text-input-error-desc-error'"
         class="fr-error-text fr-mt-0 fr-mb-3v fr-ml-2v"
+        role="alert"
         v-if="hasErrorFirst"
         >
         {{ formStore.validationErrors[id] }}
@@ -105,6 +106,7 @@
       <div
         :id="idSecond + '-text-input-error-desc-error'"
         class="fr-error-text fr-mt-0 fr-mb-3v fr-ml-2v"
+        role="alert"
         v-if="hasErrorSecond"
         >
         {{ formStore.validationErrors[idSecond] }}

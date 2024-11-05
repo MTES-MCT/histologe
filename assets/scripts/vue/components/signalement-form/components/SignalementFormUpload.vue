@@ -41,6 +41,7 @@
   <div
     :id="id + '-text-upload-error-desc-error'"
     class="fr-error-text"
+    role="alert"
     v-if="hasError"
     >
     {{ error }}

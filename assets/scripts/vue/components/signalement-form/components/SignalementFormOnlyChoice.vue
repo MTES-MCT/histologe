@@ -35,7 +35,12 @@
           </div>
       </div>
       <div class="fr-messages-group" :id="id + '-radio-hint-messages'" aria-live="assertive">
-          <p class="fr-message fr-message--error fr-error-text" :id="id + '-messages-error'" v-if="hasError">{{ error }}</p>
+          <p
+            class="fr-message fr-message--error fr-error-text"
+            role="alert"
+            :id="id + '-messages-error'"
+            v-if="hasError"
+            >{{ error }}</p>
       </div>
   </fieldset>
 </template>
