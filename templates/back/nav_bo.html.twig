@@ -107,14 +107,14 @@
                         </a>
                     </li>
                     <button class="fr-sidemenu__btn"
-                            aria-expanded="{% if 'back_index' in app.request.get('_route') or 'back_signalement' in app.request.get('_route') %}true{% else %}false{% endif %}"
+                            aria-expanded="{% if 'back_signalement_index' in app.request.get('_route') or 'back_signalement' in app.request.get('_route') %}true{% else %}false{% endif %}"
                             aria-controls="fr-sidemenu-signalement">Signalements
                     </button>
                     <div class="fr-collapse" id="fr-sidemenu-signalement">
                         <ul class="fr-sidemenu__list">
-                            <li class="fr-sidemenu__item {% if 'back_index' is same as(app.request.get('_route')) %}fr-sidemenu__item--active{% endif %}">
-                                <a class="fr-sidemenu__link" href="{{ path('back_index') }}" target="_self"
-                                   {% if 'back_index' is same as(app.request.get('_route')) %}aria-current="page" {% endif %}>Liste</a>
+                            <li class="fr-sidemenu__item {% if 'back_signalement_index' is same as(app.request.get('_route')) %}fr-sidemenu__item--active{% endif %}">
+                                <a class="fr-sidemenu__link" href="{{ path('back_signalement_index') }}" target="_self"
+                                   {% if 'back_signalement_index' is same as(app.request.get('_route')) %}aria-current="page" {% endif %}>Liste</a>
                             </li>
                             <li class="fr-sidemenu__item">
                                 <a class="fr-sidemenu__link" href="{{ path('front_signalement') }}" target="_self">Créer un
