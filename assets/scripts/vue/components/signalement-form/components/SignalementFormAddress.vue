@@ -185,8 +185,8 @@ export default defineComponent({
         formStore.data[this.id + '_detail_need_refresh_insee'] = true
       }
       if (
-        variableTester.isEmpty(this.formStore.data[this.id + '_detail_numero']) ||
-        variableTester.isEmpty(this.formStore.data[this.id + '_detail_code_postal']) ||
+        variableTester.isEmpty(this.formStore.data[this.id + '_detail_numero']) &&
+        variableTester.isEmpty(this.formStore.data[this.id + '_detail_code_postal']) &&
         variableTester.isEmpty(this.formStore.data[this.id + '_detail_commune'])
       ) {
         if (this.validate !== null && this.validate.required === false) {
