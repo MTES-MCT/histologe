@@ -24,8 +24,10 @@ export function attacheAutocompleteAddressEvent (inputAdresse) {
   if (!inputAdresse) {
     return false
   }
-  const apiAdresse = 'https://api-adresse.data.gouv.fr/search/?q='
+
+  let selectionIndex = -1
   const addressGroup = document?.querySelector(inputAdresse.dataset.autocompleteQuerySelector)
+  const apiAdresse = 'https://api-adresse.data.gouv.fr/search/?q='
   inputAdresse.addEventListener('input', (e) => {
     const adresse = e.target.value
     if (adresse.length > 8) {
@@ -78,6 +80,43 @@ export function attacheAutocompleteAddressEvent (inputAdresse) {
       if (document?.querySelector('#' + idForm + ' [data-autocomplete-geoloclat]')) {
         document.querySelector('#' + idForm + ' [data-autocomplete-geoloclat]').value = ''
       }
+    }
+  })
+
+  inputAdresse.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' || e.key === 'Tab') {
+      addressGroup.innerHTML = ''
+      selectionIndex = -1
+    }
+    
+    if (e.key === 'ArrowDown') {
+      if (addressGroup.children.length > 0) {
+        selectionIndex = Math.min(selectionIndex + 1, addressGroup.children.length - 1)
+      } else {
+        selectionIndex = -1
+      }
+    }
+    if (e.key === 'ArrowUp') {
+      if (addressGroup.children.length > 0) {
+        selectionIndex = Math.max(selectionIndex - 1, 0)
+      } else {
+        selectionIndex = -1
+      }
+    }
+    if (e.key === 'Enter') {
+      e.preventDefault() // avoids form submit
+      if (selectionIndex > -1) {
+        addressGroup.children[selectionIndex].click()
+      }
+      addressGroup.innerHTML = ''
+      selectionIndex = -1
+    }
+
+    document.querySelectorAll('.fr-adresse-suggestion').forEach((element) => {
+      element.classList.remove('fr-autocomplete-suggestion-highlighted')
+    })
+    if (selectionIndex > -1) {
+      addressGroup.children[selectionIndex].classList.add('fr-autocomplete-suggestion-highlighted')
     }
   })
 }

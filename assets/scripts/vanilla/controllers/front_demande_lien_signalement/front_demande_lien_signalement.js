@@ -24,6 +24,4 @@ function attachSubmitFormDemandeLienSignalementEvent () {
       })
     return true
   })
-  const inputAdresse = document?.querySelector('#demande_lien_signalement_adresseHelper')
-  attacheAutocompleteAddressEvent(inputAdresse)
 }
