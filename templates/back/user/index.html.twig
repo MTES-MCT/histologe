@@ -77,9 +77,9 @@
                     <table class="sortable fr-cell--multiline" aria-label="Liste des utilisateurs" aria-describedby="desc-table">
                         <thead>
                             <tr>
-                                {% if is_granted('ROLE_ADMIN') %}
-                                    <th scope="col">Territoire</th>
-                                {% endif %}
+{#                                {% if is_granted('ROLE_ADMIN') %}#}
+{#                                    <th scope="col">Territoire</th>#}
+{#                                {% endif %}#}
                                 <th scope="col">Utilisateur</th>
                                 <th scope="col">E-mail</th>
                                 <th scope="col">Partenaire</th>
@@ -96,13 +96,13 @@
                         <tbody>
                             {% for user in users %}
                                 <tr class="signalement-row">
-                                    {% if is_granted('ROLE_ADMIN') %}
-                                        <td>
-                                            {% if user.territory %}
-                                                {{ user.territory.zip }} - {{ user.territory.name }}
-                                            {% endif %}
-                                        </td>
-                                    {% endif %}
+{#                                    {% if is_granted('ROLE_ADMIN') %}#}
+{#                                        <td>#}
+{#                                            {% if user.territory %}#}
+{#                                                {{ user.territory.zip }} - {{ user.territory.name }}#}
+{#                                            {% endif %}#}
+{#                                        </td>#}
+{#                                    {% endif %}#}
                                     <td>{{ user.prenom }} {{ user.nom }}</td>
                                     <td>{{ user.email }}</td>
                                     <td>{{ user.partner ? user.partner.nom }}</td>

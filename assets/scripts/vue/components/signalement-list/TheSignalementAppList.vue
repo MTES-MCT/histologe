@@ -5,6 +5,7 @@
   </div>
   <div id="histo-app-signalement-list">
     <SignalementListFilters
+        :shared-props="sharedProps"
         @change="handleFilters"
         @changeTerritory="handleTerritoryChange"
         @clickReset="handleClickReset"
@@ -15,7 +16,7 @@
       <p v-if="hasErrorLoading">Veuillez recharger la page ou nous prévenir <a :href="sharedProps.ajaxurlContact">via le formulaire de contact</a>.</p>
     </section>
     <section v-else class="fr-col-12 fr-background-alt--blue-france fr-mt-0">
-        <div class="fr-p-3w">
+        <div class="fr-p-3w" :class="{'fr-container': sharedProps.featureEnableMenuHorizontale}">
           <SignalementListHeader
               :total="sharedState.signalements.pagination.total_items"
               @change="handleOrderChange"/>
@@ -78,6 +79,7 @@ export default defineComponent({
         this.sharedProps.ajaxurlSettings = initElements.dataset.ajaxurlSettings
         this.sharedProps.ajaxurlExportCsv = initElements.dataset.ajaxurlExportCsv
         this.sharedProps.ajaxurlContact = initElements.dataset.ajaxurlContact
+        this.sharedProps.featureEnableMenuHorizontale = initElements.dataset.featureEnableMenuHorizontale
         if (!reset) {
           this.handleQueryParameter()
         }

@@ -3,7 +3,7 @@
 {% block title %}Administration - Tous mes signalements{% endblock %}
 
 {% block content %}
-    <section class="fr-pt-5v fr-pl-5v">
+    <section class="fr-pt-5v {{ app.request.get('_route') == 'back_signalement_index' ? 'fr-container' : 'fr-pl-5v' }}">
         {% include 'back/breadcrumb_bo.html.twig' with {
             'level2Title': 'Liste des signalements',
             'level2Link': '',
@@ -16,6 +16,7 @@
          data-ajaxurl-settings="{{ path('back_widget_settings') }}"
          data-ajaxurl-contact="{{ path('front_contact') }}"
          data-ajaxurl-remove-signalement="{{ path('back_signalement_delete', {'uuid' : '<uuid>'}) }}"
+         data-feature-enable-menu-horizontale="{{ platform.feature_enable_menu_horizontale }}"
     >
 
     </div>
