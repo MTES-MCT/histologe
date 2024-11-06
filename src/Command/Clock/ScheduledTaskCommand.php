@@ -38,6 +38,9 @@ class ScheduledTaskCommand extends Command
 
         $resolver = new ArrayResolver();
         foreach ($tasks as $task) {
+            if ($task['schedule'] === 'false') {
+                continue;
+            }
             $job = new ShellJob();
             $job->setCommand($task['command']);
             $job->setSchedule(new CrontabSchedule($task['schedule']));
