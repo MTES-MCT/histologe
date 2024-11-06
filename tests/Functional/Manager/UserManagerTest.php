@@ -57,33 +57,6 @@ class UserManagerTest extends KernelTestCase
         );
     }
 
-    public function testCreateUserFromData()
-    {
-        /** @var PartnerRepository $partnerRepository */
-        $partnerRepository = $this->entityManager->getRepository(Partner::class);
-        $partner = $partnerRepository->findOneBy(['nom' => 'Partenaire 01-02']);
-
-        $user = $this->userManager->createUserFromData(
-            $partner,
-            [
-                'roles' => 'ROLE_USER_PARTNER',
-                'prenom' => 'John',
-                'nom' => 'Doe',
-                'email' => 'john.doe@example.com',
-                'isMailingActive' => false,
-                'hasPermissionAffectation' => false,
-            ]
-        );
-
-        $this->assertInstanceOf(User::class, $user);
-
-        $this->assertEquals($user->getIsMailingActive(), false);
-        $this->assertEquals($user->getPrenom(), 'John');
-        $this->assertEquals($user->getStatut(), User::STATUS_INACTIVE);
-        $this->assertFalse($user->hasPermissionAffectation());
-        $this->assertEmailCount(1);
-    }
-
     public function testUpdateUserFromDataNameChanged()
     {
         /** @var UserRepository $userRepository */
@@ -137,7 +110,7 @@ class UserManagerTest extends KernelTestCase
         /** @var User $userNewPartner */
         $userNewPartner = $this->getTransferedUserToPartner('user-01-01@histologe.fr', 'Partenaire 01-02');
 
-        $this->assertEquals('Partenaire 01-02', $userNewPartner->getPartner()->getNom());
+        $this->assertEquals('Partenaire 01-02', $userNewPartner->getPartners()->first()->getNom());
         $this->assertEmailCount(1);
         $email = $this->getMailerMessage();
         $this->assertEmailHtmlBodyContains($email, ' Cliquez ci-dessous pour vous connecter à votre compte');
@@ -148,7 +121,7 @@ class UserManagerTest extends KernelTestCase
         /** @var User $userNewPartner */
         $userNewPartner = $this->getTransferedUserToPartner('user-13-03@histologe.fr', 'Partenaire 13-03');
 
-        $this->assertEquals('Partenaire 13-03', $userNewPartner->getPartner()->getNom());
+        $this->assertEquals('Partenaire 13-03', $userNewPartner->getPartners()->first()->getNom());
         $this->assertEmailCount(1);
         $email = $this->getMailerMessage();
         $this->assertEmailHtmlBodyContains($email, 'Cliquez ci-dessous pour activer votre compte et définir votre mot de passe');
@@ -163,7 +136,7 @@ class UserManagerTest extends KernelTestCase
         $userRepository = $this->entityManager->getRepository(User::class);
         $user = $userRepository->findOneBy(['email' => $userEmail]);
 
-        $this->userManager->transferUserToPartner($user, $partner);
+        $this->userManager->transferUserToPartner($user, $user->getPartners()->first(), $partner);
 
         return $userRepository->findOneBy(['email' => $userEmail]);
     }

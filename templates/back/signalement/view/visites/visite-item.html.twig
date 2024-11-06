@@ -96,6 +96,7 @@
                 {% if is_granted('FILE_EDIT', photo) %}
                     {% set DocumentType = enum('\\App\\Entity\\Enum\\DocumentType') %}
                     {% include 'back/signalement/view/edit-modals/edit-file.html.twig' %}
+                    {% set partner = photo.uploadedBy ? photo.uploadedBy.partnerInTerritory(signalement.territory) ?? photo.uploadedBy.partners.first : null %}       
                     <button 
                         class="fr-btn fr-btn--sm fr-btn--secondary fr-background--white fr-fi-edit-line btn-signalement-file-edit"
                         id="file_edit_{{ photo.id }}" 
@@ -109,7 +110,7 @@
                         data-description="{{ photo.description }}" 
                         data-documentType="{{ photo.documentType.name }}" 
                         data-createdAt="{{ photo.createdAt is defined ? photo.createdAt|date('d.m.Y') : 'N/R' }}"
-                        data-partner-name="{{ photo.uploadedBy and photo.uploadedBy.partner ? photo.uploadedBy.partner.nom ~ ' - ' : '' }}"
+                        data-partner-name="{{ partner ? partner.nom ~ ' - ' : '' }}"
                         data-user-name="{{ photo.uploadedBy.nomComplet ?? 'N/R' }}"
                         data-desordreSlug="{{ photo.desordreSlug }}"
                         data-signalement-desordres="{{ criteres | json_encode }}"

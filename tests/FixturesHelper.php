@@ -17,6 +17,7 @@ use App\Entity\Situation;
 use App\Entity\Suivi;
 use App\Entity\Territory;
 use App\Entity\User;
+use App\Entity\UserPartner;
 use App\Messenger\Message\Esabora\DossierMessageSCHS;
 use App\Messenger\Message\Esabora\DossierMessageSISH;
 use App\Service\Interconnection\Esabora\AbstractEsaboraService;
@@ -356,12 +357,15 @@ trait FixturesHelper
 
     public function getUser(array $roles): User
     {
-        return (new User())
+        $user = (new User())
             ->setNom('Doe')
             ->setPrenom('John')
             ->setRoles($roles)
-            ->setPartner($this->getPartner())
             ->setStatut(User::STATUS_ACTIVE);
+        $userPartner = (new UserPartner())->setPartner($this->getPartner())->setUser($user);
+        $user->addUserPartner($userPartner);
+
+        return $user;
     }
 
     public function getPartner(): Partner

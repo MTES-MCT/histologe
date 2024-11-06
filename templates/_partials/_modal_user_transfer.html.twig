@@ -10,7 +10,7 @@
                         <h1 id="fr-user-transfer-title" class="fr-modal__title">
                             Transférer <span id="fr-modal-user-transfer_username"></span>
                         </h1>
-                        <form action="{{ path('back_partner_user_transfer') }}" name="user_transfer"
+                        <form action="{{ path('back_partner_user_transfer', {id:partner.id}) }}" name="user_transfer"
                               id="user_transfer_form" method="POST">
                             <div class="fr-select-group">
                                 <label for="user_transfer_partner_select" class="fr-label">Transférer vers le

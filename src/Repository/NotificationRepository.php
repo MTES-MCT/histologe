@@ -45,12 +45,25 @@ class NotificationRepository extends ServiceEntityRepository implements EntityCl
             ->leftJoin('n.affectation', 'affectation')
             ->addSelect('suivi', 'signalement', 'affectation', 'user', 'createdBy');
 
-        $zip = $user->getPartner()?->getTerritory()?->getZip();
-        if ($user->isTerritoryAdmin() && isset($this->params[$zip])) {
-            $partnerName = $this->params[$zip][$user->getPartner()?->getNom()] ?? null;
-            if (null !== $partnerName) {
-                $qb->andWhere('signalement.inseeOccupant IN (:authorized_codes_insee)')
-                    ->setParameter('authorized_codes_insee', $options[$zip][$partnerName]);
+        if ($user->isTerritoryAdmin()) {
+            $authorized_codes_insee = [];
+            $otherTerritories = [];
+            foreach ($user->getPartners() as $partner) {
+                if (isset($this->params[$partner->getTerritory()->getZip()][$partner->getNom()])) {
+                    $authorized_codes_insee = array_merge($options[$partner->getTerritory()->getZip()][$partner->getNom()], $authorized_codes_insee);
+                } else {
+                    $otherTerritories[] = $partner->getTerritory();
+                }
+            }
+            if (count($authorized_codes_insee)) {
+                if (count($otherTerritories)) {
+                    $qb->andWhere('signalement.inseeOccupant IN (:authorized_codes_insee) OR signalement.territory IN (:territories)')
+                    ->setParameter('authorized_codes_insee', $authorized_codes_insee)
+                    ->setParameter('territories', $otherTerritories);
+                } else {
+                    $qb->andWhere('signalement.inseeOccupant IN (:authorized_codes_insee)')
+                        ->setParameter('authorized_codes_insee', $authorized_codes_insee);
+                }
             }
         }
 
@@ -128,6 +141,10 @@ class NotificationRepository extends ServiceEntityRepository implements EntityCl
             $qb->innerJoin('n.signalement', 's')
                 ->andWhere('s.territory = :territory')
                 ->setParameter('territory', $territory);
+        } elseif (!$user->isSuperAdmin()) {
+            $qb->innerJoin('n.signalement', 's')
+            ->andWhere('s.territory IN (:territories)')
+            ->setParameter('territories', $user->getPartnersTerritories());
         }
 
         return $qb->getQuery()->getResult(AbstractQuery::HYDRATE_SCALAR_COLUMN);

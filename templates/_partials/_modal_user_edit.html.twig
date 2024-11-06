@@ -12,7 +12,7 @@
                         </h1>   
                         <span class="fr-mb-3v">Tous les champs sont obligatoires</span>
                         <br>
-                        <form action="{{ path('back_partner_user_edit') }}" name="user_edit"
+                        <form action="{% if partner is defined %}{{ path('back_partner_user_edit', {id:partner.id}) }}{% else %}#{% endif %}" name="user_edit"
                                 id="user_edit_form" method="POST" class='needs-validation' novalidate="novalidate">
                             <div class="fr-grid-row fr-grid-row--gutters">
                                 <div class="fr-input-group fr-col-12 fr-col-md-6">

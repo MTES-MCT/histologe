@@ -109,7 +109,8 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
         }
 
         $queryBuilder = $this->createQueryBuilder('u')
-            ->leftJoin('u.partner', 'p')
+            ->leftJoin('u.userPartners', 'up')
+            ->leftJoin('up.partner', 'p')
             ->andWhere('p.territory = :territory')
             ->setParameter('territory', $territory)
             ->andWhere('u.roles LIKE :role')
@@ -138,7 +139,8 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
 
         $sql = 'SELECT u.email, count(*) as nb_signalements, u.created_at, GROUP_CONCAT(a.signalement_id) as signalements
                 FROM user u
-                LEFT JOIN affectation a  on a.partner_id = u.partner_id and a.statut = 0
+                LEFT JOIN user_partner up ON up.user_id = u.id
+                LEFT JOIN affectation a ON a.partner_id = up.partner_id AND a.statut = 0
                 WHERE u.statut = 0 AND DATE(u.created_at) <= (DATE(NOW()) - INTERVAL 10 DAY)
                 AND u.roles NOT LIKE "%ROLE_USAGER%"
                 GROUP BY u.email, u.created_at
@@ -170,7 +172,9 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
         $firstResult = ($page - 1) * $maxResult;
 
         $queryBuilder = $this->createQueryBuilder('u');
-        $queryBuilder->select('u', 'p')->leftJoin('u.partner', 'p');
+        $queryBuilder->select('u', 'up', 'p')
+            ->leftJoin('u.userPartners', 'up')
+            ->leftJoin('up.partner', 'p');
         $queryBuilder->andWhere('u.anonymizedAt IS NULL');
 
         if ($isNoneTerritory || $isNonePartner) {
@@ -180,7 +184,7 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
             }
             if ($isNonePartner) {
                 $queryBuilder
-                    ->andWhere('u.partner IS NULL');
+                    ->andWhere('up.id IS NULL');
             }
         } else {
             $builtOrCondition = '';
@@ -188,7 +192,7 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
                 $builtOrCondition .= ' OR p.territory IS NULL';
             }
             if (empty($partner)) {
-                $builtOrCondition .= ' OR u.partner IS NULL';
+                $builtOrCondition .= ' OR up.id IS NULL';
             }
 
             $queryBuilder
@@ -203,7 +207,7 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
 
             if (!empty($partner)) {
                 $queryBuilder
-                    ->andWhere('u.partner = :partner')
+                    ->andWhere('up.partner = :partner')
                     ->setParameter('partner', $partner);
             }
         }
@@ -243,7 +247,6 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
     public function countUserByStatus(?Territory $territory = null, ?User $user = null): CountUser
     {
         $qb = $this->createQueryBuilder('u');
-        $qb->leftJoin('u.partner', 'p');
         $qb->select(\sprintf(
             'NEW %s(
             SUM(CASE WHEN u.statut = :active THEN 1 ELSE 0 END),
@@ -255,14 +258,17 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
             ->where('u.statut != :statut')
             ->andWhere('u.roles not like :role')
             ->setParameter('statut', User::STATUS_ARCHIVE)
-            ->setParameter('role', '%'.User::ROLE_USAGER.'%');
+            ->setParameter('role', '%'.User::ROLE_USAGER.'%')
+            ->leftJoin('u.userPartners', 'up')
+            ->leftJoin('up.partner', 'p');
 
         if (null !== $territory) {
-            $qb->andWhere('p.territory = :territory')->setParameter('territory', $territory);
+            $qb->andWhere('p.territory = :territory')
+            ->setParameter('territory', $territory);
         }
 
         if ($user?->isUserPartner() || $user?->isPartnerAdmin()) {
-            $qb->andWhere('u.partner = :partner')->setParameter('partner', $user->getPartner());
+            $qb->andWhere('up.partner IN (:partners)')->setParameter('partners', $user->getPartners());
         }
 
         return $qb->getQuery()->getOneOrNullResult();
@@ -330,8 +336,9 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
     {
         $dateLimit = new \DateTimeImmutable('-'.$limitConservation);
         $qb = $this->createQueryBuilder('u')
-            ->select('u', 'p', 't')
-            ->leftJoin('u.partner', 'p')
+            ->select('u', 'up', 'p', 't')
+            ->leftJoin('u.userPartners', 'up')
+            ->leftJoin('up.partner', 'p')
             ->leftJoin('p.territory', 't')
 
             ->where('(u.lastLoginAt IS NOT NULL AND u.lastLoginAt < :dateLimit) OR (u.lastLoginAt IS NULL AND u.createdAt < :dateLimit)')
@@ -366,8 +373,9 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
     public function findFiltered(SearchUser $searchUser, $execute = true): QueryBuilder|array
     {
         $qb = $this->createQueryBuilder('u');
-        $qb->select('u', 'p', 't')
-            ->leftJoin('u.partner', 'p')
+        $qb->select('u', 'up', 'p', 't')
+            ->leftJoin('u.userPartners', 'up')
+            ->leftJoin('up.partner', 'p')
             ->leftJoin('p.territory', 't')
             ->orderBy('u.nom', 'ASC');
         $qb->andWhere('u.statut != :statutArchive')->setParameter('statutArchive', User::STATUS_ARCHIVE);
@@ -386,7 +394,7 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
             $qb->andWhere('p.territory = :territory')->setParameter('territory', $searchUser->getTerritory());
         }
         if ($searchUser->getPartners()->count() > 0) {
-            $qb->andWhere('u.partner IN (:partners)')->setParameter('partners', $searchUser->getPartners());
+            $qb->andWhere('up.partner IN (:partners)')->setParameter('partners', $searchUser->getPartners());
         }
         if (null !== $searchUser->getPartnerType()) {
             $qb->andWhere('p.type = :partnerType')->setParameter('partnerType', $searchUser->getPartnerType());

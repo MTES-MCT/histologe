@@ -133,7 +133,7 @@ class BackArchivedAccountControllerTest extends WebTestCase
         $form['user[nom]'] = $faker->lastName();
         $form['user[email]'] = (string) $account->getEmail();
         $form['user[territory]'] = (string) $territory->getId();
-        $form['user[partner]'] = (string) $partner->getId();
+        $form['user[tempPartner]'] = (string) $partner->getId();
         $client->submit($form);
 
         /** @var User $account */
@@ -170,7 +170,6 @@ class BackArchivedAccountControllerTest extends WebTestCase
         $accountEmail = 'user-01-06@histologe.fr'.User::SUFFIXE_ARCHIVED;
         /** @var User $account */
         $account = $userRepository->findArchivedUserByEmail($accountEmail);
-        $account->setPartner($partner);
         $route = $router->generate('back_account_reactiver', [
             'id' => $account->getId(),
         ]);
@@ -184,7 +183,7 @@ class BackArchivedAccountControllerTest extends WebTestCase
         $form['user[nom]'] = $faker->lastName();
         $form['user[email]'] = (string) $account->getEmail();
         $form['user[territory]'] = (string) $territory->getId();
-        $form['user[partner]'] = (string) $partner->getId();
+        $form['user[tempPartner]'] = '';
         $client->submit($form);
 
         /** @var User $account */
@@ -222,7 +221,7 @@ class BackArchivedAccountControllerTest extends WebTestCase
         $form['user[nom]'] = $faker->lastName();
         $form['user[email]'] = (string) $account->getEmail();
         $form['user[territory]'] = '';
-        $form['user[partner]'] = '';
+        $form['user[tempPartner]'] = '';
         $client->submit($form);
 
         /** @var User $account */
@@ -297,7 +296,7 @@ class BackArchivedAccountControllerTest extends WebTestCase
         $buttonCrawlerNode = $crawler->selectButton('submit_btn_account');
         $form = $buttonCrawlerNode->form();
 
-        $form['user[partner]'] = (string) $partner->getId();
+        $form['user[tempPartner]'] = (string) $partner->getId();
         $client->submit($form);
 
         /** @var User $account */

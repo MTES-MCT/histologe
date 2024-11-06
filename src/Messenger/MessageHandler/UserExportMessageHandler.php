@@ -40,7 +40,7 @@ class UserExportMessageHandler
             } else {
                 throw new \Exception('Invalid format "'.$format.'"');
             }
-            $timezone = $user->getPartner()?->getTerritory()?->getTimezone() ?? TimezoneProvider::TIMEZONE_EUROPE_PARIS;
+            $timezone = $user->getFirstTerritory()?->getTimezone() ?? TimezoneProvider::TIMEZONE_EUROPE_PARIS;
             $datetimeStr = (new \DateTimeImmutable())->setTimezone(new \DateTimeZone($timezone))->format('dmY-Hi');
             $filename = 'utilisateurs-histologe-'.$user->getId().'-'.$datetimeStr.'.'.$format;
             $tmpFilepath = $this->parameterBag->get('uploads_tmp_dir').$filename;

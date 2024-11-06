@@ -67,8 +67,8 @@
                     <table class="sortable" aria-label="Liste des comptes archivés ou sans territoires et/ou partenaires" aria-describedby="desc-table">
                         <thead>
                         <tr>
-                            <th scope="col">Territoire</th>
                             <th scope="col">Partenaire</th>
+                            <th scope="col">Territoire</th>
                             <th scope="col">Statut part.</th>
                             <th scope="col">E-mail</th>
                             <th scope="col">Nom</th>
@@ -78,20 +78,47 @@
                         </thead>
                         <tbody>
                         {% for user in users %}
-                            {% if user.partner is null %}
-                                {% set classe = 'fr-badge--info' %}
-                                {% set statut = 'aucun' %}
-                            {% elseif user.partner and user.partner.isArchive  %}
-                                {% set classe = 'fr-badge--error' %}
-                                {% set statut = 'archivé' %}
-                            {% else %}
-                                {% set classe = 'fr-badge--success' %}
-                                {% set statut = 'actif' %}
-                            {% endif %}
                             <tr class="user-row">
-                                <td>{{ (user.partner and user.partner.territory) ? user.partner.territory.zip ~ ' - ' ~ user.partner.territory.name : 'aucun' }}</td>
-                                <td>{{ user.partner ? user.partner.nom : 'aucun' }}</td>
-                                <td><span class="fr-badge {{ classe }} fr-badge--no-icon fr-ws-nowrap ">{{ statut|upper }}</span></td>
+                                <td>
+                                    {% if user.partners.isEmpty%}
+                                        aucun
+                                    {% else %}
+                                        {% for partner in user.partners %}
+                                            {{ partner.nom }}
+                                            {% if not loop.last %}<br>{% endif %}
+                                        {% endfor %}
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    {% if user.partners.isEmpty %}
+                                        aucun
+                                    {% else %}
+                                        {% for partner in user.partners %}
+                                            {% if partner.territory %}
+                                                {{ partner.territory.zip ~ ' - ' ~ partner.territory.name }}
+                                            {% else %}
+                                                aucun
+                                            {% endif %}
+                                            {% if not loop.last %}<br>{% endif %}
+                                        {% endfor %}
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    {% if user.partners.isEmpty %}
+                                        <span class="fr-badge fr-badge--info fr-badge--no-icon fr-ws-nowrap ">AUCUN</span>
+                                    {% else %}
+                                        {% for partner in user.partners %}
+                                            {% set classe = 'fr-badge--success' %}
+                                            {% set statut = 'actif' %}
+                                            {% if partner.isArchive %}
+                                                {% set classe = 'fr-badge--error' %}
+                                                {% set statut = 'archivé' %}
+                                            {% endif %}
+                                            <span class="fr-badge {{ classe }} fr-badge--no-icon fr-ws-nowrap ">{{ statut|upper }}</span>
+                                            {% if not loop.last %}<br>{% endif %}
+                                        {% endfor %}
+                                    {% endif %}
+                                </td>
                                 <td>{{ user.email|clean_tagged_text(constant('App\\Entity\\User::SUFFIXE_ARCHIVED'), 'left') }}</ail td>
                                 <td>{{ user.nom}}</ail td>
                                 <td>{{ user.prenom}}</ail td>

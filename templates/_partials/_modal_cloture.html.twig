@@ -81,7 +81,7 @@
                                                 type="submit"
                                                 data-cloture-type="partner"
                                                 disabled>
-                                            Clôturer pour {{ app.user.partner ? app.user.partner.nom }}
+                                            Clôturer pour {{ app.user.partnerInTerritory(signalement.territory) ? app.user.partnerInTerritory(signalement.territory).nom : app.user.partners.first.nom }}
                                         </button>
                                     </li>
                                 {% endif %}
@@ -92,7 +92,7 @@
                                             data-cloture-type="partner"
                                             type="submit"
                                             disabled>
-                                        Clôturer pour {{ app.user.partner ? app.user.partner.nom }}
+                                        Clôturer pour {{ app.user.partnerInTerritory(signalement.territory) ? app.user.partnerInTerritory(signalement.territory).nom : app.user.partners.first.nom }}
                                     </button>
                                 </li>
                             {% endif %}

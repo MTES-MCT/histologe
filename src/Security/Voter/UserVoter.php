@@ -68,11 +68,12 @@ class UserVoter extends Voter
         if (\count($subjectRoles) > \count($userRoles)) {
             return false;
         }
-        if (!$user->getPartner()?->getTerritory()) {
+        if (!$user->getFirstTerritory()) {
             return false;
         }
+        $commonTerritoriesKeys = array_intersect_key($subject->getPartnersTerritories(), $user->getPartnersTerritories());
 
-        return $this->security->isGranted('ROLE_ADMIN_PARTNER') && $user->getPartner()->getTerritory() === $subject->getPartner()->getTerritory();
+        return $this->security->isGranted('ROLE_ADMIN_PARTNER') && \count($commonTerritoriesKeys);
     }
 
     private function canFullManage(User $subject, User $user): bool
@@ -80,8 +81,9 @@ class UserVoter extends Voter
         if (!$this->canEdit($subject, $user)) {
             return false;
         }
+        $commonTerritoriesKeys = array_intersect_key($subject->getPartnersTerritories(), $user->getPartnersTerritories());
 
-        return $this->security->isGranted('ROLE_ADMIN_TERRITORY') && $user->getPartner()?->getTerritory() === $subject->getPartner()->getTerritory();
+        return $this->security->isGranted('ROLE_ADMIN_TERRITORY') && \count($commonTerritoriesKeys);
     }
 
     private function canTransfer(User $subject, User $user): bool
@@ -91,7 +93,15 @@ class UserVoter extends Voter
 
     public function canSeeNde(User $user): bool
     {
-        return $user->isTerritoryAdmin()
-            || \in_array(Qualification::NON_DECENCE_ENERGETIQUE, $user->getPartner()->getCompetence());
+        if ($user->isTerritoryAdmin()) {
+            return true;
+        }
+        foreach ($user->getPartners() as $partner) {
+            if (\in_array(Qualification::NON_DECENCE_ENERGETIQUE, $partner->getCompetence())) {
+                return true;
+            }
+        }
+
+        return false;
     }
 }

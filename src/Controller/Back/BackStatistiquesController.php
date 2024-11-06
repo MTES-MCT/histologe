@@ -3,7 +3,6 @@
 namespace App\Controller\Back;
 
 use App\Dto\StatisticsFilters;
-use App\Entity\Partner;
 use App\Entity\Territory;
 use App\Entity\User;
 use App\Repository\TerritoryRepository;
@@ -12,6 +11,8 @@ use App\Service\Statistics\GlobalBackAnalyticsProvider;
 use App\Service\Statistics\ListCommunesStatisticProvider;
 use App\Service\Statistics\ListTagsStatisticProvider;
 use App\Service\Statistics\ListTerritoryStatisticProvider;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -50,11 +51,11 @@ class BackStatistiquesController extends AbstractController
         $this->result = [];
 
         $territory = $this->getSelectedTerritory($request, $territoryRepository);
-        $partner = $this->getSelectedPartner();
+        $partners = $this->getSelectedPartners();
 
         $this->buildFilterLists($territory);
 
-        $globalStatistics = $this->globalBackAnalyticsProvider->getData($territory, $partner);
+        $globalStatistics = $this->globalBackAnalyticsProvider->getData($territory, $partners);
         $this->result['count_signalement'] = $globalStatistics['count_signalement'];
         $this->result['average_criticite'] = $globalStatistics['average_criticite'];
         $this->result['average_days_validation'] = $globalStatistics['average_days_validation'];
@@ -62,7 +63,7 @@ class BackStatistiquesController extends AbstractController
         $this->result['count_signalement_refuses'] = $globalStatistics['count_signalement_refuses'];
         $this->result['count_signalement_archives'] = $globalStatistics['count_signalement_archives'];
 
-        $statisticsFilters = $this->createFilters($request, $territory, $partner);
+        $statisticsFilters = $this->createFilters($request, $territory, $partners);
         $filteredStatistics = $this->filteredBackAnalyticsProvider->getData($statisticsFilters);
         $this->result['count_signalement_filtered'] = $filteredStatistics['count_signalement_filtered'];
         $this->result['average_criticite_filtered'] = $filteredStatistics['average_criticite_filtered'];
@@ -80,7 +81,7 @@ class BackStatistiquesController extends AbstractController
         return $this->json($this->result);
     }
 
-    private function createFilters(Request $request, ?Territory $territory, ?Partner $partner): StatisticsFilters
+    private function createFilters(Request $request, ?Territory $territory, ArrayCollection $partners): StatisticsFilters
     {
         $communes = json_decode($request->get('communes'));
         $statut = $request->get('statut');
@@ -104,35 +105,36 @@ class BackStatistiquesController extends AbstractController
             $hasCountRefused,
             $hasCountArchived,
             $territory,
-            $partner
+            $partners
         );
     }
 
-    private function getSelectedPartner(): ?Partner
+    private function getSelectedPartners(): Collection
     {
         /** @var User $user */
         $user = $this->getUser();
-        $partner = null;
         if ($user->isUserPartner() || $user->isPartnerAdmin()) {
-            $partner = $user->getPartner();
+            return $user->getPartners();
         }
 
-        return $partner;
+        return new ArrayCollection();
     }
 
     private function getSelectedTerritory(Request $request, TerritoryRepository $territoryRepository): ?Territory
     {
-        // If Super Admin, we should be able to filter on Territoire
+        /** @var User $user */
+        $user = $this->getUser();
+        $enabledTerritories = $user->getPartnersTerritories();
+        $territoryId = $request->get('territoire');
+        if (!$territoryId || 'all' === $territoryId) {
+            $territoryId = null;
+        }
         $territory = null;
-        if ($this->isGranted('ROLE_ADMIN')) {
-            $requestTerritoire = $request->get('territoire');
-            if ('' !== $requestTerritoire && 'all' !== $requestTerritoire) {
-                $territory = $territoryRepository->findOneBy(['id' => $requestTerritoire]);
-            }
-        } else {
-            /** @var User $user */
-            $user = $this->getUser();
-            $territory = $user->getPartner()?->getTerritory();
+        if ($territoryId && ($this->isGranted('ROLE_ADMIN') || isset($enabledTerritories[$territoryId]))) {
+            $territory = $territoryRepository->find($territoryId);
+        }
+        if (!$territory && !$this->isGranted('ROLE_ADMIN')) {
+            $territory = $user->getFirstTerritory();
         }
 
         return $territory;

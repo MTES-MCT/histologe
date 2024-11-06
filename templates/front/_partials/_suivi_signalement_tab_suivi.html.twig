@@ -5,14 +5,17 @@
 </div>
 <div class="fr-mt-4v">
 	{% for suivi in signalement.suivis %}
-		<div {% if loop.last %}id="suivi-last"{% endif %} class="message-box {% if (suivi.createdBy and suivi.createdBy.partner) or suivi.type is same as constant('App\\Entity\\Suivi::TYPE_TECHNICAL') %}message-box--partner{% else %}message-box--usager{% endif %}">
+		<div {% if loop.last %}id="suivi-last"{% endif %} class="message-box {% if (suivi.createdBy and suivi.createdBy.partners|length) or suivi.type is same as constant('App\\Entity\\Suivi::TYPE_TECHNICAL') %}message-box--partner{% else %}message-box--usager{% endif %}">
 			<div>
 				<strong>
-				
 					{% if suivi.type is same as constant('App\\Entity\\Suivi::TYPE_TECHNICAL') %}
 						Suivi automatique
 					{% elseif suivi.createdBy is not null %}
-						{{ suivi.createdBy.partner ? suivi.createdBy.partner.nom : (suivi.createdBy.email ? (suivi.createdBy.email is same as signalement.mailOccupant ? 'OCCUPANT' : 'DECLARANT') : 'Aucun')}}					
+						{% if suivi.createdBy.partners|length %}
+							{{suivi.createdBy.partnerInTerritory(signalement.territory) ? suivi.createdBy.partnerInTerritory(signalement.territory).nom : suivi.createdBy.partners.first.nom}}
+						{% else %}
+							{{(suivi.createdBy.email ? (suivi.createdBy.email is same as signalement.mailOccupant ? 'OCCUPANT' : 'DECLARANT') : 'Aucun')}}
+						{% endif %}					
             		{% else %}
 						{{(suivi.createdAt|date('Y') >= 2024) ? 'Occupant ou déclarant' : 'Vous' }}					
                 	{% endif %}

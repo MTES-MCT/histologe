@@ -93,8 +93,24 @@
 									<td>{{ user.roles[0]}}</td>
 									<td>{{ user.statutLabel}}</td>
 									<td>{{ user.lastLoginAt ? user.lastLoginAt|date('d/m/Y H:i')}}</td>
-									<td>{{ (user.partner and user.partner.territory) ? user.partner.territory.zip ~ ' - ' ~ user.partner.territory.name : 'aucun' }}</td>
-									<td>{{ user.partner ? user.partner.nom : 'aucun' }}</td>
+									<td>
+										{% if  user.partnersTerritories|length > 0 %}
+											{% for territory in user.partnersTerritories %}
+												{{ territory.zip ~ ' - ' ~ territory.name }}
+											{% endfor %}
+										{% else %}
+											aucun
+										{% endif %}
+									</td>
+									<td>
+										{% if user.partners|length > 0 %}
+											{% for partner in user.partners %}
+												{{ partner.nom }}
+											{% endfor %}
+										{% else %}
+											aucun
+										{% endif %}
+									</td>
 								</tr>
 							{% endfor %}
 						</tbody>

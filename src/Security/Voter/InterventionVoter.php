@@ -40,15 +40,22 @@ class InterventionVoter extends Voter
         if (Signalement::STATUS_ACTIVE !== $signalement->getStatut()) {
             return false;
         }
+        if ($user->isSuperAdmin()) {
+            return true;
+        }
 
-        $isUserInAffectedPartnerWithQualificationVisite = $signalement->getAffectations()->filter(function (Affectation $affectation) use ($user) {
-            return $affectation->getPartner()->getId() === $user->getPartner()->getId()
-                && \in_array(Qualification::VISITES, $user->getPartner()->getCompetence())
+        $partner = $user->getPartnerInTerritory($signalement->getTerritory());
+        if (!$partner) {
+            return false;
+        }
+        $isUserInAffectedPartnerWithQualificationVisite = $signalement->getAffectations()->filter(function (Affectation $affectation) use ($partner) {
+            return $affectation->getPartner()->getId() === $partner->getId()
+                && \in_array(Qualification::VISITES, $partner->getCompetence())
                 && Affectation::STATUS_ACCEPTED == $affectation->getStatut();
         })->count() > 0;
-        $isUserInPartnerAffectedToVisite = $user->getPartner() === $intervention->getPartner() && $isUserInAffectedPartnerWithQualificationVisite;
-        $isUserTerritoryAdminOfSignalementTerritory = $user->isTerritoryAdmin() && $user->getPartner()?->getTerritory() === $signalement->getTerritory();
+        $isUserInPartnerAffectedToVisite = $partner === $intervention->getPartner() && $isUserInAffectedPartnerWithQualificationVisite;
+        $isUserTerritoryAdminOfSignalementTerritory = $user->isTerritoryAdmin();
 
-        return $user->isSuperAdmin() || $isUserInPartnerAffectedToVisite || $isUserTerritoryAdminOfSignalementTerritory;
+        return $isUserInPartnerAffectedToVisite || $isUserTerritoryAdminOfSignalementTerritory;
     }
 }
