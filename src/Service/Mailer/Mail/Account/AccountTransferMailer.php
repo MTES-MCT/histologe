@@ -43,7 +43,7 @@ class AccountTransferMailer extends AbstractNotificationMailer
             'btntext' => User::STATUS_ACTIVE === $user->getStatut() ? 'Accéder à mon compte' : 'Activer mon compte',
             'link' => $link,
             'user_status' => $user->getStatut(),
-            'partner_name' => $user->getPartner()->getNom(),
+            'partner_name' => $notificationMail->getParams()['partner_name'],
             'territory_name' => $notificationMail->getTerritory()->getName(),
         ];
     }

@@ -72,8 +72,9 @@ class SignalementController extends AbstractController
         );
 
         $isRefused = $isAccepted = $isClosedForMe = null;
-        if ($isAffected = $signalement->getAffectations()->filter(function (Affectation $affectation) use ($user) {
-            return $affectation->getPartner() === $user->getPartner();
+        $partner = $user->getPartnerInTerritory($signalement->getTerritory()) ?? $user->getPartners()->first();
+        if ($isAffected = $signalement->getAffectations()->filter(function (Affectation $affectation) use ($partner) {
+            return $affectation->getPartner() === $partner;
         })->first()) {
             switch ($isAffected->getStatut()) {
                 case Affectation::STATUS_ACCEPTED:
@@ -103,7 +104,7 @@ class SignalementController extends AbstractController
             if ($this->isGranted('ROLE_ADMIN_TERRITORY') && isset($clotureForm->getExtraData()['publicSuivi'])) {
                 $eventParams['suivi_public'] = $clotureForm->getExtraData()['publicSuivi'];
             }
-            $eventParams['subject'] = $user->getPartner()?->getNom();
+            $eventParams['subject'] = $partner->getNom();
             $eventParams['closed_for'] = $clotureForm->get('type')->getData();
 
             $entity = $reference = null;

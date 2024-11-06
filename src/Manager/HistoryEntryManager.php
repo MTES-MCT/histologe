@@ -137,7 +137,7 @@ class HistoryEntryManager extends AbstractManager
         foreach ($entries as $entry) {
             $userName = $entry->getUser() ? $entry->getUser()->getFullName() : 'Système (automatique)';
             /** @var ?Partner */
-            $partner = $entry->getUser()?->getPartner();
+            $partner = $entry->getUser()?->getPartnerInTerritory($entry->getSignalement()->getTerritory()) ?? $entry->getUser()?->getPartners()->first();
             $partnerName = $partner ? $partner->getNom() : 'N/A';
             $date = $entry->getCreatedAt()
                 ->setTimezone(

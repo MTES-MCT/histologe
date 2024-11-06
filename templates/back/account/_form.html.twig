@@ -29,8 +29,8 @@
         </div>
         {% if 'ROLE_USAGER' not in user.roles %}
             <div class="fr-col-lg-6">
-                <label for="{{ form.partner.vars.id }}" class="fr-label">Partenaire</label>
-                {{ form_widget(form.partner) }}
+                <label for="{{ form.tempPartner.vars.id }}" class="fr-label">Partenaire</label>
+                {{ form_widget(form.tempPartner) }}
                 </br>
                 <div class="fr-alert fr-alert--warning">
                     Si le partenaire n'apparaît pas dans la liste des partenaires, c'est qu'il n'existe pas. Veillez à bien créer le partenaire avant de vouloir y ajouter un compte.

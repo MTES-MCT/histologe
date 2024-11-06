@@ -18,8 +18,14 @@ class SignalementAffectationHelper
         if (empty($affectations) || ($user->isSuperAdmin() || $user->isTerritoryAdmin())) {
             return SignalementStatus::tryFrom($data['statut'])->label();
         }
-
-        $statusAffectation = $affectations[$user->getPartner()->getNom()]['statut'];
+        $statusAffectation = null;
+        foreach ($user->getPartners() as $partner) {
+            // use id rather than name to be cleaner
+            if (isset($affectations[$partner->getNom()])) {
+                $statusAffectation = $affectations[$partner->getNom()]['statut'];
+                break;
+            }
+        }
 
         return AffectationStatus::tryFrom($statusAffectation)?->label();
     }
@@ -30,8 +36,14 @@ class SignalementAffectationHelper
         if (empty($affectations) || ($user->isSuperAdmin() || $user->isTerritoryAdmin())) {
             return [$data['statut'], $affectations];
         }
-
-        $statusAffectation = $affectations[$user->getPartner()->getNom()]['statut'];
+        $statusAffectation = null;
+        foreach ($user->getPartners() as $partner) {
+            // use id rather than name to be cleaner
+            if (isset($affectations[$partner->getNom()])) {
+                $statusAffectation = $affectations[$partner->getNom()]['statut'];
+                break;
+            }
+        }
 
         return [AffectationStatus::tryFrom($statusAffectation)?->mapSignalementStatus(), $affectations];
     }
@@ -59,7 +71,6 @@ class SignalementAffectationHelper
         if (empty($rawAffectations)) {
             return [];
         }
-
         $affectations = [];
         $affectationsList = explode(SignalementAffectationListView::SEPARATOR_GROUP_CONCAT, $rawAffectations);
         foreach ($affectationsList as $affectationItem) {

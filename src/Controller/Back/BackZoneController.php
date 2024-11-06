@@ -51,10 +51,10 @@ class BackZoneController extends AbstractController
         $paginatedZones = $zoneRepository->findFilteredPaginated($searchZone, self::MAX_LIST_PAGINATION);
 
         $zone = new Zone();
-        if (!$this->isGranted('ROLE_ADMIN')) {
-            /** @var User $user */
-            $user = $this->getUser();
-            $zone->setTerritory($user->getPartner()?->getTerritory());
+        /** @var User $user */
+        $user = $this->getUser();
+        if (!$this->isGranted('ROLE_ADMIN') && 1 === count($user->getPartnersTerritories())) {
+            $zone->setTerritory($user->getFirstTerritory());
         }
         $addForm = $this->createForm(ZoneType::class, $zone, ['action' => $this->generateUrl('back_zone_add')]);
 
@@ -71,10 +71,10 @@ class BackZoneController extends AbstractController
     public function add(Request $request, EntityManagerInterface $em, CsvParser $csvParser): JsonResponse|RedirectResponse
     {
         $zone = new Zone();
-        if (!$this->isGranted('ROLE_ADMIN')) {
-            /** @var User $user */
-            $user = $this->getUser();
-            $zone->setTerritory($user->getPartner()?->getTerritory());
+        /** @var User $user */
+        $user = $this->getUser();
+        if (!$this->isGranted('ROLE_ADMIN') && 1 === count($user->getPartnersTerritories())) {
+            $zone->setTerritory($user->getFirstTerritory());
         }
         $form = $this->createForm(ZoneType::class, $zone, ['action' => $this->generateUrl('back_zone_add')]);
         $form->handleRequest($request);

@@ -41,7 +41,7 @@ class ZoneVoter extends Voter
         if ($this->security->isGranted('ROLE_ADMIN')) {
             return true;
         }
-        if ($this->security->isGranted('ROLE_ADMIN_TERRITORY') && $user->getPartner()->getTerritory()->getId() === $zone->getTerritory()->getId()) {
+        if ($this->security->isGranted('ROLE_ADMIN_TERRITORY') && $user->hasPartnerInTerritory($zone->getTerritory())) {
             return true;
         }
 

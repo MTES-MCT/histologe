@@ -2,10 +2,10 @@
 
 namespace App\Service\Statistics;
 
-use App\Entity\Partner;
 use App\Entity\Signalement;
 use App\Entity\Territory;
 use App\Repository\SignalementRepository;
+use Doctrine\Common\Collections\ArrayCollection;
 
 class GlobalBackAnalyticsProvider
 {
@@ -14,17 +14,17 @@ class GlobalBackAnalyticsProvider
     ) {
     }
 
-    public function getData(?Territory $territory, ?Partner $partner): array
+    public function getData(?Territory $territory, ArrayCollection $partners): array
     {
         $data = [];
-        $data['count_signalement'] = $this->getCountSignalementData($territory, $partner);
-        $data['average_criticite'] = $this->getAverageCriticiteData($territory, $partner);
-        $data['average_days_validation'] = $this->getAverageDaysValidationData($territory, $partner);
-        $data['average_days_closure'] = $this->getAverageDaysClosureData($territory, $partner);
+        $data['count_signalement'] = $this->getCountSignalementData($territory, $partners);
+        $data['average_criticite'] = $this->getAverageCriticiteData($territory, $partners);
+        $data['average_days_validation'] = $this->getAverageDaysValidationData($territory, $partners);
+        $data['average_days_closure'] = $this->getAverageDaysClosureData($territory, $partners);
 
         $data['count_signalement_archives'] = 0;
         $data['count_signalement_refuses'] = 0;
-        $countByStatus = $this->signalementRepository->countByStatus($territory, $partner, null, true);
+        $countByStatus = $this->signalementRepository->countByStatus($territory, $partners, null, true);
         foreach ($countByStatus as $countByStatusItem) {
             switch ($countByStatusItem['statut']) {
                 case Signalement::STATUS_ARCHIVED:
@@ -41,27 +41,27 @@ class GlobalBackAnalyticsProvider
         return $data;
     }
 
-    private function getCountSignalementData(?Territory $territory, ?Partner $partner): int
+    private function getCountSignalementData(?Territory $territory, ArrayCollection $partners): int
     {
         return $this->signalementRepository->countAll(
             territory: $territory,
-            partner: $partner,
+            partners: $partners,
             removeImported: true
         );
     }
 
-    private function getAverageCriticiteData(?Territory $territory, ?Partner $partner): float
+    private function getAverageCriticiteData(?Territory $territory, ArrayCollection $partners): float
     {
-        return round($this->signalementRepository->getAverageCriticite($territory, $partner, true) * 10) / 10;
+        return round($this->signalementRepository->getAverageCriticite($territory, $partners, true) * 10) / 10;
     }
 
-    private function getAverageDaysValidationData(?Territory $territory, ?Partner $partner): float
+    private function getAverageDaysValidationData(?Territory $territory, ArrayCollection $partners): float
     {
-        return round($this->signalementRepository->getAverageDaysValidation($territory, $partner, true) * 10) / 10;
+        return round($this->signalementRepository->getAverageDaysValidation($territory, $partners, true) * 10) / 10;
     }
 
-    private function getAverageDaysClosureData(?Territory $territory, ?Partner $partner): float
+    private function getAverageDaysClosureData(?Territory $territory, ArrayCollection $partners): float
     {
-        return round($this->signalementRepository->getAverageDaysClosure($territory, $partner, true) * 10) / 10;
+        return round($this->signalementRepository->getAverageDaysClosure($territory, $partners, true) * 10) / 10;
     }
 }

@@ -112,6 +112,9 @@ document.querySelectorAll('.btn-edit-partner-user').forEach(swbtn => {
       userItem.textContent = target.getAttribute('data-useremail')
     })
     userEditedId = target.getAttribute('data-userid')
+    if (target.getAttribute('data-submit-url')) {
+      document.querySelector('#fr-modal-user-edit form').action = target.getAttribute('data-submit-url')
+    }
     histoUpdateValueFromData('#user_edit_userid', 'data-userid', target)
     histoUpdateValueFromData('#user_edit_email', 'data-useremail', target)
     histoUpdateValueFromData('#user_edit_nom', 'data-usernom', target)

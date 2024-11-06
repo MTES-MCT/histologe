@@ -134,7 +134,8 @@ class ActivityListener
     {
         /** @var QueryBuilder $qb */
         $qb = $this->em->getRepository(User::class)->createQueryBuilder('u')
-            ->leftJoin('u.partner', 'p')
+            ->innerJoin('u.userPartners', 'up')
+            ->innerJoin('up.partner', 'p')
             ->andWhere('u.statut = 1')
             ->andWhere('JSON_CONTAINS(u.roles, :role) = 1 OR (JSON_CONTAINS(u.roles, :role2) = 1 AND p.territory = :territory)')
             ->setParameter('role', '"ROLE_ADMIN"')
@@ -142,7 +143,7 @@ class ActivityListener
             ->setParameter('territory', $territory);
 
         if (null !== $partner = $this->getPartnerFromSignalementInsee($entity, $territory)) {
-            $qb->andWhere('u.partner = :partner')->setParameter('partner', $partner);
+            $qb->andWhere('up.partner = :partner')->setParameter('partner', $partner);
         }
 
         foreach ($qb->getQuery()->getResult() as $admin) {
@@ -212,13 +213,13 @@ class ActivityListener
         }
     }
 
-    private function notifyPartner($partner, $entity, $inAppType)
+    private function notifyPartner(Partner $partner, Affectation|Suivi $entity, $inAppType)
     {
         if ($partner->getEmail()) {
             $this->tos->add($partner->getEmail());
         }
-        $partner->getUsers()->filter(function (User $user) use ($inAppType, $entity) {
-            if ($this->isUserNotified($user, $entity)) {
+        $partner->getUsers()->filter(function (User $user) use ($inAppType, $entity, $partner) {
+            if ($this->isUserNotified($partner, $user, $entity)) {
                 $this->createInAppNotification($user, $entity, $inAppType);
                 if ($user->getIsMailingActive()) {
                     $this->tos->add($user->getEmail());
@@ -227,15 +228,19 @@ class ActivityListener
         });
     }
 
-    private function isUserNotified($user, $entity): bool
+    private function isUserNotified(Partner $partner, User $user, Affectation|Suivi $entity): bool
     {
         // To be notified
         // - the user must be active and not an admin
         // - if entity is Affectation
         // - if entity is Suivi: we check that the partner of the user is different from the partner of the user who created the suivi
+        if ($entity instanceof Suivi) {
+            $suiviPartner = $entity->getCreatedBy()?->getPartnerInTerritory($entity->getSignalement()->getTerritory());
+        }
+
         return User::STATUS_ACTIVE === $user->getStatut()
             && !$user->isSuperAdmin() && !$user->isTerritoryAdmin()
-            && ($entity instanceof Affectation || ($entity->getCreatedBy() && $user->getPartner() !== $entity->getCreatedBy()->getPartner()));
+            && ($entity instanceof Affectation || ($entity->getCreatedBy() && $partner !== $suiviPartner));
     }
 
     public function preRemove(LifecycleEventArgs $args)

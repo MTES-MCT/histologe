@@ -171,7 +171,7 @@ class SignalementControllerTest extends WebTestCase
         $this->assertEmailCount(3);
     }
 
-    public function testAdminPartnerSubmitClotureSignalementWithEmailSentToPartners(): void
+    public function testAdminPartnerSubmitClotureSignalementWithEmailSentToRT(): void
     {
         $client = static::createClient();
 
@@ -208,7 +208,7 @@ class SignalementControllerTest extends WebTestCase
         $this->assertEmailCount(1);
     }
 
-    public function testUserPartnerSubmitClotureSignalementWithEmailSentToPartners(): void
+    public function testUserPartnerSubmitClotureSignalementWithEmailSentToPartnersAndRT(): void
     {
         $client = static::createClient();
 

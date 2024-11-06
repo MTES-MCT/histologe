@@ -8,7 +8,6 @@ use App\Dto\CountUser;
 use App\Entity\Affectation;
 use App\Entity\Enum\Qualification;
 use App\Entity\Enum\QualificationStatus;
-use App\Entity\Partner;
 use App\Entity\Signalement;
 use App\Entity\Suivi;
 use App\Entity\Territory;
@@ -19,6 +18,7 @@ use App\Repository\SignalementRepository;
 use App\Repository\SuiviRepository;
 use App\Repository\UserRepository;
 use App\Security\Voter\UserVoter;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Exception;
 use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\ORM\NoResultException;
@@ -75,18 +75,18 @@ class WidgetDataKpiBuilder
     public function withCountSignalement(): self
     {
         $this->countSignalement = $this->user->isPartnerAdmin() || $this->user->isUserPartner()
-            ? $this->affectationRepository->countSignalementByPartner($this->user->getPartner())
+            ? $this->affectationRepository->countSignalementForUser($this->user)
             : $this->signalementRepository->countSignalementByStatus($this->territory);
 
         $this->countSignalement
             ->setClosedByAtLeastOnePartner($this->notificationRepository->countAffectationClosedNotSeen($this->user, $this->territory))
-            ->setAffected($this->affectationRepository->countAffectationByPartner($this->user->getPartner()))
+            ->setAffected($this->affectationRepository->countAffectationForUser($this->user))
             ->setClosedAllPartnersRecently($this->notificationRepository->countSignalementClosedNotSeen($this->user, $this->territory));
 
         if ($this->user->isSuperAdmin() || $this->user->isTerritoryAdmin()) {
             $countSignalementByStatus = $this->signalementRepository->countByStatus(
                 territory: $this->territory,
-                partner: null,
+                partners: null,
                 qualification: Qualification::NON_DECENCE_ENERGETIQUE,
                 qualificationStatuses: [QualificationStatus::NDE_AVEREE, QualificationStatus::NDE_CHECK]
             );
@@ -195,12 +195,17 @@ class WidgetDataKpiBuilder
 
     public function build(): WidgetDataKpi
     {
-        $partnerId = [$this->user?->getPartner()?->getId()];
+        $partnerIds = [];
+        if ($this->user) {
+            foreach ($this->user->getPartners() as $partner) {
+                $partnerIds[] = $partner->getId();
+            }
+        }
 
         $this
             ->addWidgetCard('cardNouveauxSignalements', $this->countSignalement->getNew())
             ->addWidgetCard('cardCloturesPartenaires', $this->countSignalement->getClosedByAtLeastOnePartner())
-            ->addWidgetCard('cardMesAffectations', null, ['partenaires' => $partnerId])
+            ->addWidgetCard('cardMesAffectations', null, ['partenaires' => $partnerIds])
             ->addWidgetCard('cardTousLesSignalements', $this->countSignalement->getTotal())
             ->addWidgetCard('cardCloturesGlobales', $this->countSignalement->getClosedAllPartnersRecently())
             ->addWidgetCard('cardNouvellesAffectations', $this->countSignalement->getNew())
@@ -218,10 +223,8 @@ class WidgetDataKpiBuilder
         );
     }
 
-    private function getPartnerFromUser(User $user): ?Partner
+    private function getPartnerFromUser(User $user): ?Collection
     {
-        return 1 === \count(array_diff([User::ROLE_USER_PARTNER, User::ROLE_ADMIN_PARTNER], $user->getRoles()))
-            ? $user->getPartner()
-            : null;
+        return 1 === \count(array_diff([User::ROLE_USER_PARTNER, User::ROLE_ADMIN_PARTNER], $user->getRoles())) ? $user->getPartners() : null;
     }
 }

@@ -50,7 +50,7 @@ class TagController extends AbstractController
         if ($this->isGranted('ROLE_ADMIN')) {
             $currentTerritory = $territoryRepository->find((int) $request->get('territory'));
         } else {
-            $currentTerritory = $user->getPartner()?->getTerritory();
+            $currentTerritory = $user->getFirstTerritory();
         }
         $search = $request->get('search');
 
@@ -86,7 +86,7 @@ class TagController extends AbstractController
         if (!$this->isGranted('ROLE_ADMIN')) {
             /** @var User $user */
             $user = $this->getUser();
-            $territory = $user->getPartner()?->getTerritory();
+            $territory = $user->getFirstTerritory();
             $tag->setTerritory($territory);
         }
         $form = $this->createForm(AddTagType::class, $tag);

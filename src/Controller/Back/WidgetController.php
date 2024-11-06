@@ -28,7 +28,7 @@ class WidgetController extends AbstractController
         } else {
             /** @var User $user */
             $user = $this->getUser();
-            $territory = $user->getPartner()?->getTerritory();
+            $territory = $user->getFirstTerritory();
             if (null === $territory) {
                 $logger->critical(\sprintf('%s has no territory', $user->getEmail()));
 

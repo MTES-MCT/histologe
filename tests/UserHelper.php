@@ -5,6 +5,7 @@ namespace App\Tests;
 use App\Entity\Partner;
 use App\Entity\Territory;
 use App\Entity\User;
+use App\Entity\UserPartner;
 
 trait UserHelper
 {
@@ -20,10 +21,17 @@ trait UserHelper
             ->setNom('Partner')
             ->setTerritory($territory);
 
-        return (new User())
+        $user = (new User())
             ->setNom('Doe')
             ->setPrenom('John')
-            ->setRoles([$role])
+            ->setRoles([$role]);
+
+        $userPartner = (new UserPartner())
+            ->setUser($user)
             ->setPartner($partner);
+
+        $user->addUserPartner($userPartner);
+
+        return $user;
     }
 }

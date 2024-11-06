@@ -6,6 +6,7 @@ use App\Entity\Enum\PartnerType;
 use App\Entity\Partner;
 use App\Entity\Territory;
 use App\Entity\User;
+use App\Entity\UserPartner;
 use App\Factory\PartnerFactory;
 use App\Factory\UserFactory;
 use App\Manager\ManagerInterface;
@@ -131,12 +132,23 @@ class GridAffectationLoader
                         && null !== $userToCheck
                         && !\in_array('ROLE_USAGER', $userToCheck->getRoles())
                     ) {
+                        $territories = '';
+                        foreach ($userToCheck->getPartners() as $partner) {
+                            $territories .= $partner->getTerritory()->getName().', ';
+                        }
+                        $territories = \substr($territories, 0, -2);
+                        $partners = '';
+                        foreach ($userToCheck->getPartners() as $partner) {
+                            $partners .= $partner->getNom().', ';
+                        }
+                        $partners = \substr($partners, 0, -2);
+
                         $errors[] = \sprintf(
                             'line %d : Utilisateur déjà existant avec (%s) dans %s, partenaire : %s, rôle : %s',
                             $numLine,
                             $emailUser,
-                            $userToCheck->getPartner()->getTerritory()->getName(),
-                            $userToCheck->getPartner()->getNom(),
+                            $territories,
+                            $partners,
                             $userToCheck->getRoleLabel()
                         );
                     }
@@ -236,17 +248,19 @@ class GridAffectationLoader
                     ++$countUsers;
                     $user = $this->userFactory->createInstanceFrom(
                         roleLabel: $roleLabel,
-                        partner: $partner,
                         firstname: trim($item[GridAffectationHeader::USER_FIRSTNAME]),
                         lastname: trim($item[GridAffectationHeader::USER_LASTNAME]),
                         email: $email,
                         isActivateAccountNotificationEnabled: !\in_array($partnerType->name, $ignoreNotifPartnerTypes)
                     );
-
+                    $userPartner = (new UserPartner())->setPartner($partner)->setUser($user);
+                    $user->addUserPartner($userPartner);
                     /** @var ConstraintViolationList $errors */
                     $errors = $this->validator->validate($user);
                     if (0 === $errors->count()) {
                         $this->userManager->save($user, false);
+                        $this->userManager->persist($partner);
+                        $this->userManager->persist($userPartner);
                         ++$this->metadata['nb_users_created'];
                     } else {
                         $this->metadata['errors'][] = \sprintf('line : %s', (string) $errors);

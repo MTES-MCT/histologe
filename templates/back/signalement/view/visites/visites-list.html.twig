@@ -13,7 +13,8 @@
             {% include 'back/signalement/view/visites/modals/visites-modal-add.html.twig' %}
             {% set displayAddVisiteButton = true %}
             {% for pendingVisite in pendingVisites %}
-                {% if pendingVisite.partner and pendingVisite.partner.id is same as app.user.partner.id %}
+                {% set partner = app.user.partnerInTerritory(signalement.territory) ?? app.user.partners.first %}
+                {% if pendingVisite.partner and pendingVisite.partner.id is same as partner.id %}
                     {% set displayAddVisiteButton = false %}
                 {% endif %}
             {% endfor %}

@@ -38,7 +38,6 @@ class CartographieController extends AbstractController
 
         if ($request->get('load_markers')) {
             $filters['authorized_codes_insee'] = $this->getParameter('authorized_codes_insee');
-            $filters['partner_name'] = $user->getPartner()->getNom();
 
             return $this->json(
                 [
@@ -63,7 +62,7 @@ class CartographieController extends AbstractController
             'displayRefreshAll' => false,
             'signalements' => [/* $signalements */],
             'criteres' => $critereRepository->findAllList(),
-            'tags' => $tagsRepository->findAllActive($user->getPartner()?->getTerritory() ?? null),
+            'tags' => $tagsRepository->findAllActiveInTerritories($this->isGranted('ROLE_ADMIN') ? [] : $user->getPartnersTerritories()),
         ]);
     }
 }

@@ -25,8 +25,6 @@ class WidgetSettingsControllerTest extends WebTestCase
         $this->assertArrayHasKey('firstname', $responseContent);
         $this->assertArrayHasKey('lastname', $responseContent);
         $this->assertArrayHasKey('roleLabel', $responseContent);
-        $this->assertArrayHasKey('partnerName', $responseContent);
-        $this->assertArrayHasKey('territoryName', $responseContent);
         $this->assertArrayHasKey('territories', $responseContent);
     }
 
