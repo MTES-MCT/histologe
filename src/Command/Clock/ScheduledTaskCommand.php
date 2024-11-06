@@ -38,7 +38,7 @@ class ScheduledTaskCommand extends Command
 
         $resolver = new ArrayResolver();
         foreach ($tasks as $task) {
-            if ($task['schedule'] === 'false') {
+            if ('false' === $task['schedule']) {
                 continue;
             }
             $job = new ShellJob();
