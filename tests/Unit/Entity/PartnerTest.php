@@ -58,19 +58,34 @@ class PartnerTest extends KernelTestCase
         $this->assertEquals(0, $errors->count());
     }
 
-    public function testPartnerSCHSCompetenceRSDWithSpecificInseeCanSyncWithOilhi(): void
-    {
-        $territory = $this->getTerritory('Pas-de-calais')->setZip('62');
+    /**
+     * @dataProvider provideDataSyncOilhi
+     */
+    public function testPartnerSCHSCompetenceRSDWithSpecificInseeCanSyncWithOilhi(
+        string $zip,
+        string $territoryName,
+        string $insee,
+        string $partnerName
+    ): void {
+        $territory = $this->getTerritory($territoryName)->setZip($zip);
         $signalement = $this->getSignalement($territory);
-        $signalement->setInseeOccupant('62091');
+        $signalement->setInseeOccupant($insee);
         $partner = (new Partner())
-            ->setNom('BEAUDRICOURT')
+            ->setNom($partnerName)
             ->setType(PartnerType::COMMUNE_SCHS)
             ->setCompetence([Qualification::RSD])
-            ->setInsee([62091])
+            ->setInsee([(int) $insee])
             ->setTerritory($territory);
 
         $this->assertTrue($partner->canSyncWithOilhi($signalement));
+    }
+
+    public function provideDataSyncOilhi(): \Generator
+    {
+        yield 'Code insee 62091' => ['zip' => '62', 'Pas-de-Calais', '62091', 'BEAUDRICOURT'];
+        yield 'Code insee 55502' => ['zip' => '55', 'Meuse', '55502', 'STENAY'];
+        yield 'Code insee 55029' => ['zip' => '55', 'Meuse', '55029', 'BAR-lE-DUC'];
+        yield 'Code insee 55545' => ['zip' => '55', 'Meuse', '55545', 'VERDUN'];
     }
 
     /**
