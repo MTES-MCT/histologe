@@ -84,7 +84,7 @@ class PartnerTest extends KernelTestCase
     {
         yield 'Code insee 62091' => ['zip' => '62', 'Pas-de-Calais', '62091', 'BEAUDRICOURT'];
         yield 'Code insee 55502' => ['zip' => '55', 'Meuse', '55502', 'STENAY'];
-        yield 'Code insee 55029' => ['zip' => '55', 'Meuse', '55029', 'BAR-lE-DUC'];
+        yield 'Code insee 55029' => ['zip' => '55', 'Meuse', '55029', 'BAR-LE-DUC'];
         yield 'Code insee 55545' => ['zip' => '55', 'Meuse', '55545', 'VERDUN'];
     }
 
