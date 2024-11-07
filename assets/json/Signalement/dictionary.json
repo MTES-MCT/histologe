@@ -244,7 +244,12 @@
   "desordres_logement_electricite_pas_compteur": { "default": "Il n'y a pas de compteur électrique pour le logement" },
   "desordres_logement_electricite_installation_dangereuse": { "default": "L'installation est dangereuse : les fils sont dénudés, les prises ne tiennent pas dans les murs, etc." },
   "desordres_logement_electricite_manque_prises": { "default": "Il n'y a pas de prises, ou il en manque" },
-  "desordres_logement_electricite_manque_prises_details_multiprises": { "default": "Des multi-prises sont branchées les unes sur les autres : {{dictionaryStore::formStore.data.desordres_logement_electricite_manque_prises_details_multiprises}}" },
+  "desordres_logement_electricite_manque_prises_details_multiprises": {
+    "default": "Des multi-prises doivent-elles être branchées les unes sur les autres ?",
+    "disorderOverview": {
+      "default": "Des multi-prises sont branchées les unes sur les autres : {{dictionaryStore::formStore.data.desordres_logement_electricite_manque_prises_details_multiprises}}" 
+    }
+  },
   "desordres_logement_nuisibles_cafards": { "default": "Il y a des cafards ou blattes" },
   "desordres_logement_nuisibles_rongeurs": { "default": "Il y a des rongeurs (rats, souris…)" },
   "desordres_logement_nuisibles_punaises": { "default": "Il y a des punaises de lit" },

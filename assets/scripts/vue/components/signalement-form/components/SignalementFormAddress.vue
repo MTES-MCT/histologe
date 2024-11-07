@@ -61,6 +61,7 @@
 import { defineComponent, watch } from 'vue'
 import formStore from './../store'
 import { requests } from './../requests'
+import { variableTester } from './../services/variableTester'
 import { subscreenManager } from './../services/subscreenManager'
 import subscreenData from './../address_subscreen.json'
 import SignalementFormTextfield from './SignalementFormTextfield.vue'
@@ -134,15 +135,21 @@ export default defineComponent({
       }
     )
     watch(
+      () => this.formStore.data[this.id + '_detail_numero'],
+      async () => {
+        this.handleAddressFieldsEdited(false)
+      }
+    )
+    watch(
       () => this.formStore.data[this.id + '_detail_code_postal'],
       async () => {
-        this.handleAddressFieldsEdited()
+        this.handleAddressFieldsEdited(true)
       }
     )
     watch(
       () => this.formStore.data[this.id + '_detail_commune'],
       async () => {
-        this.handleAddressFieldsEdited()
+        this.handleAddressFieldsEdited(true)
       }
     )
   },
@@ -159,7 +166,11 @@ export default defineComponent({
       return ''
     },
     subscreenCss () {
-      if (this.buttonCss === '') {
+      if (this.buttonCss === '' &&
+        variableTester.isEmpty(this.formStore.validationErrors[this.id + '_detail_numero']) &&
+        variableTester.isEmpty(this.formStore.validationErrors[this.id + '_detail_code_postal']) &&
+        variableTester.isEmpty(this.formStore.validationErrors[this.id + '_detail_commune'])
+      ) {
         return 'fr-hidden'
       }
       return ''
@@ -169,8 +180,19 @@ export default defineComponent({
     updateValue (value: any) {
       this.$emit('update:modelValue', value)
     },
-    handleAddressFieldsEdited () {
-      formStore.data[this.id + '_detail_need_refresh_insee'] = true
+    handleAddressFieldsEdited (changeCommune:Boolean) {
+      if (changeCommune) {
+        formStore.data[this.id + '_detail_need_refresh_insee'] = true
+      }
+      if (
+        variableTester.isEmpty(this.formStore.data[this.id + '_detail_numero']) &&
+        variableTester.isEmpty(this.formStore.data[this.id + '_detail_code_postal']) &&
+        variableTester.isEmpty(this.formStore.data[this.id + '_detail_commune'])
+      ) {
+        if (this.validate !== null && this.validate.required === false) {
+          this.formStore.data[this.id + '_detail_manual'] = 0
+        }
+      }
     },
     handleClickButton (type:string, param:string, slugButton:string) {
       this.formStore.data[this.idShow] = 1
