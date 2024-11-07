@@ -294,7 +294,7 @@ and signalement.profileDeclarant is not same as enum('App\\Entity\\Enum\\Profile
 <div class="fr-mb-4v">
 	<h4 class="fr-mb-2v">Précisions sur votre situation</h4>
 	{% if signalement.details and signalement.details != 'N/C' %}
-		{{ signalement.details }}
+		{{ signalement.details|nl2br }}
 	{% else %}
 		Aucun commentaire
 	{% endif %}
