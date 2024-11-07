@@ -1,6 +1,6 @@
 <template>
   <section class="fr-background--white" :style="{ display: isVisible ? 'block' : 'none' }">
-    <div class="fr-grid-row fr-p-3w fr-pb-6w" :class="sharedProps.featureEnableMenuHorizontale == 1 ? 'fr-container' : 'fr-p-3w'">
+    <div class="fr-grid-row fr-pb-6w" :class="sharedProps.featureEnableMenuHorizontale == 1 ? 'fr-container-sml fr-p-3w' : 'fr-p-3w'">
       <div class="fr-col-12">
         <h1 class="fr-mb-2w fr-h2">Liste des signalements</h1>
         <div class="fr-container--fluid" role="search">

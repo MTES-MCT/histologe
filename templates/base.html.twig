@@ -1,3 +1,10 @@
+{% set container_class = 'fr-container' %}
+{% if platform.feature_enable_menu_horizontale %}
+    {% if 'back_' in app.request.get('_route') and app.user is not null %}
+        {% set container_class = 'fr-container-sml' %}
+    {% endif %}
+{% endif %}
+
 <!DOCTYPE html>
 <html lang="fr"{# data-fr-scheme="light" #}>
 <head>
