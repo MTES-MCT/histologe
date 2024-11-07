@@ -60,9 +60,9 @@
 
     <fieldset
       :id=idSecondGroup
-      :class="[ 'fr-fieldset', isHiddenSecond ? 'fr-hidden' : '', hasErrorSecond ? 'fr-fieldset--error' : '']"
-      :aria-hidden="isHiddenSecond ? true : undefined"
-      :hidden="isHiddenSecond ? true : undefined"
+      :class="[ 'fr-fieldset', isHiddenSecond && !hasErrorSecond ? 'fr-hidden' : '', hasErrorSecond ? 'fr-fieldset--error' : '']"
+      :aria-hidden="isHiddenSecond && !hasErrorSecond ? true : undefined"
+      :hidden="isHiddenSecond && !hasErrorSecond ? true : undefined"
       :aria-labelledby="id + '-legend-second'"
       >
       <legend class="fr-fieldset__legend--regular fr-fieldset__legend fr-col-12" :id="id + '-legend-second'">
@@ -172,9 +172,6 @@ export default defineComponent({
     },
     getSelectOptionLabel (countryCode:CountryCode) {
       return getCountryNameByCode(countryCode) + ' : +' + getCountryCallingCode(countryCode)
-    },
-    isHiddenSecond () {
-      return formStore.data[this.idSecond] === '' || formStore.data[this.idSecond] === undefined
     }
   },
   computed: {
@@ -206,6 +203,9 @@ export default defineComponent({
     },
     hasErrorSecond () {
       return formStore.validationErrors[this.idSecond] !== undefined
+    },
+    isHiddenSecond () {
+      return formStore.data[this.idSecond] === '' || formStore.data[this.idSecond] === undefined
     }
   }
 })
