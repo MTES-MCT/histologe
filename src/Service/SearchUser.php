@@ -5,12 +5,17 @@ namespace App\Service;
 use App\Entity\Enum\PartnerType;
 use App\Entity\Territory;
 use App\Entity\User;
+use App\Service\Behaviour\SearchQueryTrait;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Symfony\Component\Validator\Constraints as Assert;
 
 class SearchUser
 {
+    use SearchQueryTrait {
+        getUrlParams as getUrlParamsBase;
+    }
+
     private User $user;
     #[Assert\Positive(message: 'La page doit être un nombre positif')]
     private ?int $page = 1;
@@ -122,24 +127,7 @@ class SearchUser
 
     public function getUrlParams(): array
     {
-        $params = [];
-        foreach (get_object_vars($this) as $key => $value) {
-            if (in_array($key, ['user', 'page'])) {
-                continue;
-            }
-            if ($value instanceof Collection) {
-                if ($value->isEmpty()) {
-                    continue;
-                }
-                $params[$key] = $value->map(fn ($partner) => $partner->getId())->toArray();
-            } elseif ('partnerType' === $key && null !== $value) {
-                $params[$key] = $value->name;
-            } elseif (is_object($value)) {
-                $params[$key] = $value->getId();
-            } elseif (null !== $value) {
-                $params[$key] = $value;
-            }
-        }
+        $params = $this->getUrlParamsBase();
         if (isset($params['territory']) && !$this->getUser()->isSuperAdmin()) {
             unset($params['territory']);
         }
