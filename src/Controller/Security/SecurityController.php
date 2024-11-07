@@ -81,7 +81,11 @@ class SecurityController extends AbstractController
         return $this->json(['success']);
     }
 
-    #[Route('/connexion', name: 'app_login')]
+    #[Route(
+        '/connexion',
+        name: 'app_login',
+        defaults: ['show_sitemap' => true]
+    )]
     public function login(AuthenticationUtils $authenticationUtils): Response
     {
         $title = 'Connexion';

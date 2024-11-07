@@ -42,7 +42,11 @@ use Symfony\Component\Validator\Validator\ValidatorInterface;
 #[Route('/')]
 class SignalementController extends AbstractController
 {
-    #[Route('/signalement', name: 'front_signalement')]
+    #[Route(
+        '/signalement',
+        name: 'front_signalement',
+        defaults: ['show_sitemap' => true]
+    )]
     public function index(
     ): Response {
         return $this->render('front/nouveau_formulaire.html.twig', [

@@ -21,7 +21,11 @@ use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 class UserAccountController extends AbstractController
 {
-    #[Route('/activation', name: 'login_activation')]
+    #[Route(
+        '/activation',
+        name: 'login_activation',
+        defaults: ['show_sitemap' => true]
+    )]
     public function requestLoginLink(
         NotificationMailerRegistry $notificationMailerRegistry,
         UserRepository $userRepository,
@@ -62,7 +66,11 @@ class UserAccountController extends AbstractController
         return $this->render('security/login_activation.html.twig');
     }
 
-    #[Route('/mot-de-pass-perdu', name: 'login_mdp_perdu')]
+    #[Route(
+        '/mot-de-pass-perdu',
+        name: 'login_mdp_perdu',
+        defaults: ['show_sitemap' => true]
+    )]
     public function requestNewPass(
         UserRepository $userRepository,
         Request $request,

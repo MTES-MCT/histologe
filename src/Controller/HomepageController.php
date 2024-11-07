@@ -13,16 +13,23 @@ use App\Service\Mailer\NotificationMailerRegistry;
 use App\Service\Mailer\NotificationMailerType;
 use App\Service\Signalement\PostalCodeHomeChecker;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Attribute\Cache;
 use Symfony\Component\RateLimiter\RateLimiterFactory;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Routing\RouterInterface;
 
 class HomepageController extends AbstractController
 {
-    #[Route('/', name: 'home')]
+    #[Route(
+        '/',
+        name: 'home',
+        defaults: ['show_sitemap' => true]
+    )]
     public function index(
         Request $request,
         SignalementRepository $signalementRepository,
@@ -111,13 +118,21 @@ class HomepageController extends AbstractController
         return new JsonResponse(['html' => $view]);
     }
 
-    #[Route('/qui-sommes-nous', name: 'front_about')]
+    #[Route(
+        '/qui-sommes-nous',
+        name: 'front_about',
+        defaults: ['show_sitemap' => true]
+    )]
     public function about(): Response
     {
         return $this->render('front/about.html.twig');
     }
 
-    #[Route('/entretien-logement-obligations-proprietaire-locataire', name: 'front_obligations_entretien')]
+    #[Route(
+        '/entretien-logement-obligations-proprietaire-locataire',
+        name: 'front_obligations_entretien',
+        defaults: ['show_sitemap' => true]
+    )]
     public function obligations_entretien(): Response
     {
         return $this->render('front/obligations_entretien.html.twig', [
@@ -125,13 +140,22 @@ class HomepageController extends AbstractController
         ]);
     }
 
-    #[Route('/aides-travaux-logement', name: 'front_aides_travaux')]
+    #[Route(
+        '/aides-travaux-logement',
+        name: 'front_aides_travaux',
+        defaults: ['show_sitemap' => true]
+    )]
     public function aides_travaux(): Response
     {
         return $this->render('front/aides_travaux.html.twig');
     }
 
-    #[Route('/contact', name: 'front_contact', methods: ['GET'])]
+    #[Route(
+        '/contact',
+        name: 'front_contact',
+        methods: ['GET'],
+        defaults: ['show_sitemap' => true]
+    )]
     public function contact(
         ParameterBagInterface $parameterBag,
     ): Response {
@@ -185,31 +209,51 @@ class HomepageController extends AbstractController
         return new JsonResponse(['html' => $view]);
     }
 
-    #[Route('/cgu', name: 'front_cgu')]
+    #[Route(
+        '/cgu',
+        name: 'front_cgu',
+        defaults: ['show_sitemap' => true]
+    )]
     public function cguUsager(): Response
     {
         return $this->render('front/cgu_usagers.html.twig');
     }
 
-    #[Route('/cgu-agents', name: 'front_cgu_agents')]
+    #[Route(
+        '/cgu-agents',
+        name: 'front_cgu_agents',
+        defaults: ['show_sitemap' => true]
+    )]
     public function cguPro(): Response
     {
         return $this->render('front/cgu_agents.html.twig');
     }
 
-    #[Route('/politique-de-confidentialite', name: 'politique_de_confidentialite')]
+    #[Route(
+        '/politique-de-confidentialite',
+        name: 'politique_de_confidentialite',
+        defaults: ['show_sitemap' => true]
+    )]
     public function politiqueConfidentialite(): Response
     {
         return $this->render('front/politique_de_confidentialite.html.twig');
     }
 
-    #[Route('/mentions-legales', name: 'mentions_legales')]
+    #[Route(
+        '/mentions-legales',
+        name: 'mentions_legales',
+        defaults: ['show_sitemap' => true]
+    )]
     public function mentionsLegales(): Response
     {
         return $this->render('front/mentions_legales.html.twig');
     }
 
-    #[Route('/accessibilite', name: 'front_accessibilite')]
+    #[Route(
+        '/accessibilite',
+        name: 'front_accessibilite',
+        defaults: ['show_sitemap' => true]
+    )]
     public function accessibilite(): Response
     {
         return $this->render('front/accessibilite.html.twig');
@@ -219,5 +263,27 @@ class HomepageController extends AbstractController
     public function planDuSite(): Response
     {
         return $this->render('front/plan_du_site.html.twig');
+    }
+
+    #[Cache(public: true, maxage: 3600)]
+    #[Route('/sitemap.{_format}', name: 'app_front_sitemap', defaults: ['_format' => 'xml'])]
+    public function generateSitemap(
+        RouterInterface $router,
+        #[Autowire(param: 'host_url')]
+        string $hostUrl,
+    ) {
+        $urls = [];
+        $routes = $router->getRouteCollection()->all();
+        foreach ($routes as $route) {
+            if ($route->getDefaults()['show_sitemap'] ?? false) {
+                $urls[] = ['loc' => $hostUrl.$route->getPath()];
+            }
+        }
+
+        return new Response(
+            $this->renderView('front/sitemap.xml.twig', ['urls' => $urls]),
+            Response::HTTP_OK,
+            ['Content-Type' => 'text/xml']
+        );
     }
 }
