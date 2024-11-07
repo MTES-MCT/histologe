@@ -23,6 +23,7 @@
     <div
       :id="id + '-text-input-error-desc-error'"
       class="fr-error-text"
+      role="alert"
       v-if="hasError"
       >
       {{ error }}
