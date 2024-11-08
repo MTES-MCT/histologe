@@ -2,11 +2,13 @@
 
 namespace App\Form;
 
+use App\Entity\Enum\ZoneType;
 use App\Entity\Territory;
 use App\Service\SearchZone;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\EnumType;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\Extension\Core\Type\SearchType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -37,6 +39,16 @@ class SearchZoneType extends AbstractType
                 'label' => false,
             ]);
         }
+
+        $builder->add('type', EnumType::class, [
+            'class' => ZoneType::class,
+            'choice_label' => function ($choice) {
+                return $choice->label();
+            },
+            'placeholder' => 'Sélectionner le type de zone',
+            'label' => false,
+        ]);
+
         $builder->add('page', HiddenType::class);
     }
 

@@ -33,6 +33,9 @@ class ZoneRepository extends ServiceEntityRepository
         if ($searchZone->getTerritory()) {
             $qb->andWhere('z.territory = :territory')->setParameter('territory', $searchZone->getTerritory());
         }
+        if ($searchZone->getType()) {
+            $qb->andWhere('z.type = :type')->setParameter('type', $searchZone->getType()->value);
+        }
 
         $firstResult = ($searchZone->getPage() - 1) * $maxResult;
         $qb->setFirstResult($firstResult)->setMaxResults($maxResult);

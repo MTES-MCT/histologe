@@ -4,6 +4,7 @@ namespace App\Entity;
 
 use App\Entity\Behaviour\EntityHistoryInterface;
 use App\Entity\Enum\HistoryEntryEvent;
+use App\Entity\Enum\ZoneType;
 use App\Repository\ZoneRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -37,6 +38,13 @@ class Zone implements EntityHistoryInterface
     #[ORM\Column(length: 255)]
     #[Assert\NotBlank(message: 'Merci de saisir un nom.')]
     private ?string $name = null;
+
+    #[ORM\Column(
+        type: 'string',
+        enumType: ZoneType::class,
+        options: ['comment' => 'Value possible enum ZoneType'])]
+    #[Assert\NotBlank(message: 'Merci de choisir un type de zone.')]
+    private ZoneType $type;
 
     #[ORM\ManyToOne]
     #[ORM\JoinColumn(nullable: false)]
@@ -90,6 +98,18 @@ class Zone implements EntityHistoryInterface
     public function setName(string $name): static
     {
         $this->name = $name;
+
+        return $this;
+    }
+
+    public function getType(): ZoneType
+    {
+        return $this->type;
+    }
+
+    public function setType(ZoneType $type): self
+    {
+        $this->type = $type;
 
         return $this;
     }

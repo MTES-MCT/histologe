@@ -2,6 +2,7 @@
 
 namespace App\Service;
 
+use App\Entity\Enum\ZoneType;
 use App\Entity\Territory;
 use App\Entity\User;
 use App\Service\Behaviour\SearchQueryTrait;
@@ -17,6 +18,7 @@ class SearchZone
     private ?int $page = 1;
     private ?string $queryName = null;
     private ?Territory $territory = null;
+    private ?ZoneType $type = null;
 
     public function __construct(User $user)
     {
@@ -63,6 +65,16 @@ class SearchZone
     public function setTerritory(?Territory $territory): void
     {
         $this->territory = $territory;
+    }
+
+    public function getType(): ?ZoneType
+    {
+        return $this->type;
+    }
+
+    public function setType(?ZoneType $type): void
+    {
+        $this->type = $type;
     }
 
     public function getUrlParams(): array

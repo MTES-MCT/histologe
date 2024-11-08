@@ -2,6 +2,7 @@
 
 namespace App\DataFixtures\Loader;
 
+use App\Entity\Enum\ZoneType;
 use App\Entity\Zone;
 use App\Repository\PartnerRepository;
 use App\Repository\TerritoryRepository;
@@ -33,10 +34,11 @@ class LoadZoneData extends Fixture implements OrderedFixtureInterface
     private function loadZone(ObjectManager $manager, array $row): void
     {
         $zone = new Zone();
-        $zone->setArea($row['area']);
-        $zone->setName($row['name']);
-        $zone->setTerritory($this->territoryRepository->findOneBy(['name' => $row['territory']]));
-        $zone->setCreatedBy($this->userRepository->findOneBy(['email' => $row['created_by']]));
+        $zone->setArea($row['area'])
+            ->setName($row['name'])
+            ->setType(ZoneType::AUTRE)
+            ->setTerritory($this->territoryRepository->findOneBy(['name' => $row['territory']]))
+            ->setCreatedBy($this->userRepository->findOneBy(['email' => $row['created_by']]));
         foreach ($row['partners'] as $partner) {
             $zone->addPartner($this->partnerRepository->findOneBy(['email' => $partner]));
         }

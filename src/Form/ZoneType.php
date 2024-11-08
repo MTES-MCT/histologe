@@ -2,6 +2,7 @@
 
 namespace App\Form;
 
+use App\Entity\Enum\ZoneType as EnumZoneType;
 use App\Entity\Partner;
 use App\Entity\Territory;
 use App\Entity\Zone;
@@ -10,6 +11,7 @@ use App\Repository\PartnerRepository;
 use App\Repository\TerritoryRepository;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\EnumType;
 use Symfony\Component\Form\Extension\Core\Type\FileType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -63,6 +65,16 @@ class ZoneType extends AbstractType
                 'by_reference' => false,
             ]);
         }
+
+        $builder->add('type', EnumType::class, [
+            'class' => EnumZoneType::class,
+            'choice_label' => function ($choice) {
+                return $choice->label();
+            },
+            'placeholder' => 'Sélectionner le type de zone',
+            'label' => 'Type de zone',
+        ]);
+
         // $docUrl = 'https://data.sigea.educagri.fr/download/sigea/supports/QGIS/distance/initiation/M08_Import_Export/co/10_N1_Export_CSV_geo.html';
         $fileLabel = 'Fichier (en cas de modification des coordonnées de la zone uniquement)';
         $fileConstraints = [
