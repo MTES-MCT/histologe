@@ -291,6 +291,15 @@ and signalement.profileDeclarant is not same as enum('App\\Entity\\Enum\\Profile
 	{% endif %}
 </div>
 
+<div class="fr-mb-4v">
+	<h4 class="fr-mb-2v">Précisions sur votre situation</h4>
+	{% if signalement.details and signalement.details != 'N/C' %}
+		{{ signalement.details|nl2br }}
+	{% else %}
+		Aucun commentaire
+	{% endif %}
+</div>
+
 <h4 class="fr-mb-2v">Vos photos</h4>
 <div class="fr-mb-4v">
 	{% if signalement.files|filter(photo => photo.fileType == 'photo' and photo.isUsagerFile)|length %}
