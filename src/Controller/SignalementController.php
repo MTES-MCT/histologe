@@ -113,11 +113,17 @@ class SignalementController extends AbstractController
             SignalementDraftRequest::class,
             'json'
         );
-        $errors = $validator->validate(
-            $signalementDraftRequest,
-            null,
-            ['Default', 'POST_'.strtoupper($signalementDraftRequest->getProfil())]
-        );
+
+        if (empty($signalementDraftRequest->getProfil())) {
+            $errors = ['Merci de sélectionner le type de déclarant'];
+        } else {
+            $errors = $validator->validate(
+                $signalementDraftRequest,
+                null,
+                ['Default', 'POST_'.strtoupper($signalementDraftRequest->getProfil())]
+            );
+        }
+
         if (0 === $errors->count()) {
             $isTiersDeclarant = SignalementDraftHelper::isTiersDeclarant($signalementDraftRequest);
             $existingSignalements = $signalementRepository->findAllForEmailAndAddress(
