@@ -4,19 +4,29 @@
             "type": "SignalementFormTextfield",
             "label": "Numéro et voie",
             "slug": "detail_numero",
-            "tagWhenEdit": "detail_manual"
+            "tagWhenEdit": "detail_manual",
+            "validate": {
+                "minLength":6,
+                "maxLength":100
+            }
         },
         {
             "type": "SignalementFormTextfield",
             "label": "Code postal",
             "slug": "detail_code_postal",
-            "tagWhenEdit": "detail_manual"
+            "tagWhenEdit": "detail_manual",
+            "validate": {
+                "maxLength":5
+            }
         },
         {
             "type": "SignalementFormTextfield",
             "label": "Commune",
             "slug": "detail_commune",
-            "tagWhenEdit": "detail_manual"
+            "tagWhenEdit": "detail_manual",
+            "validate": {
+                "maxLength":95
+            }
         }
     ]
 }

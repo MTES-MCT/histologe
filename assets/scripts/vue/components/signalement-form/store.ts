@@ -2,6 +2,7 @@ import { reactive, computed } from 'vue'
 import { ZoneComponents } from './interfaces/interfaceZoneComponents'
 import { Component } from './interfaces/interfaceComponent'
 import { PictureDescription } from './interfaces/interfacePictureDescription'
+import { variableTester } from './services/variableTester'
 
 interface FormData {
   [key: string]: any
@@ -119,7 +120,7 @@ const formStore: FormStore = reactive({
     formStore.data[key] = value
   },
   shouldShowField (component: any) {
-    if (component.conditional === undefined || component.conditional === '') {
+    if (variableTester.isEmpty(component.conditional)) {
       return true
     }
     return computed(() => eval(component.conditional.show)).value

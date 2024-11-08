@@ -53,17 +53,17 @@ export const componentValidator = {
     // si le composant est requis et que tous les champs sont vides, on affiche l'erreur sur le champ de recherche
     if (
       (component.validate === undefined || component.validate.required !== false) &&
-      (formStore.data[componentSlug] === undefined || formStore.data[componentSlug] === '') &&
-      (formStore.data[componentSlug + '_detail_numero'] === undefined || formStore.data[componentSlug + '_detail_numero'] === '') &&
-      (formStore.data[componentSlug + '_detail_code_postal'] === undefined || formStore.data[componentSlug + '_detail_code_postal'] === '') &&
-      (formStore.data[componentSlug + '_detail_commune'] === undefined || formStore.data[componentSlug + '_detail_commune'] === '')
+      (variableTester.isEmpty(formStore.data[componentSlug])) &&
+      (variableTester.isEmpty(formStore.data[componentSlug + '_detail_numero'])) &&
+      (variableTester.isEmpty(formStore.data[componentSlug + '_detail_code_postal'])) &&
+      (variableTester.isEmpty(formStore.data[componentSlug + '_detail_commune']))
     ) {
       formStore.validationErrors[componentSlug] = validationError
 
     // il y a eu une édition manuelle : on vérifie tous les sous-champs
     } else if (formStore.data[componentSlug + '_detail_manual'] !== 0 && formStore.data[componentSlug + '_detail_manual'] !== undefined) {
       const addressDetailNumero = formStore.data[componentSlug + '_detail_numero']
-      if (addressDetailNumero === undefined || addressDetailNumero === '') {
+      if (variableTester.isEmpty(addressDetailNumero === undefined)) {
         formStore.validationErrors[componentSlug + '_detail_numero'] = 'Veuillez renseigner l\'adresse du logement.'
       } else {
         const regexPattern = /^[0-9]*$/
@@ -72,9 +72,7 @@ export const componentValidator = {
         }
       }
 
-      if (formStore.data[componentSlug + '_detail_code_postal'] === undefined ||
-        formStore.data[componentSlug + '_detail_code_postal'] === ''
-      ) {
+      if (variableTester.isEmpty(formStore.data[componentSlug + '_detail_code_postal'])) {
         formStore.validationErrors[componentSlug + '_detail_code_postal'] = 'Veuillez renseigner le code postal du logement.'
 
       // vérification du code postal
@@ -82,10 +80,15 @@ export const componentValidator = {
         formStore.validationErrors[componentSlug + '_detail_code_postal'] = 'Le code postal doit être composé de 5 chiffres'
       }
 
-      if (formStore.data[componentSlug + '_detail_commune'] === undefined ||
-        formStore.data[componentSlug + '_detail_commune'] === ''
-      ) {
+      const addressDetailCommune = formStore.data[componentSlug + '_detail_commune']
+      if (variableTester.isEmpty(addressDetailCommune)) {
         formStore.validationErrors[componentSlug + '_detail_commune'] = 'Veuillez renseigner la commune du logement.'
+      } else {
+        // en bdd on peut mettre jusqu'à 100 caractères pour le nom de la commune, mais l'API BAN crash au-dessus de 200 caractères
+        // et le nom de commune le plus long de France est Saint-Remy-en-Bouzemont-Saint-Genest-et-Isson (45 caractères)
+        if (addressDetailCommune.length > 95) {
+          formStore.validationErrors[componentSlug + '_detail_commune'] = 'Veuillez renseigner une commune valide.'
+        }
       }
     }
   }

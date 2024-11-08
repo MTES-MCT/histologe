@@ -7,7 +7,10 @@ export const subscreenManager = {
         ...component,
         slug: id + '_' + (component.slug as string),
         tagWhenEdit: id + '_' + (component.tagWhenEdit as string),
-        validate: validateParent
+        // Si les deux objets validateParent et component.validate ont des clés en commun, les valeurs de component.validate écraseront celles de validateParent pour les mêmes clés lors de la fusion.
+        validate: (validateParent != null && component.validate != null)
+          ? { ...validateParent, ...component.validate }
+          : (validateParent != null ? validateParent : component.validate)
       }
     })
   },
