@@ -6,6 +6,7 @@ use App\Entity\Signalement;
 use App\Entity\SignalementDraft;
 use App\Event\SignalementDraftCompletedEvent;
 use App\Manager\SignalementManager;
+use App\Messenger\Message\NewSignalementCheckFileMessage;
 use App\Messenger\Message\SignalementDraftFileMessage;
 use App\Service\Files\DocumentProvider;
 use App\Service\Mailer\NotificationMail;
@@ -15,8 +16,10 @@ use App\Service\Signalement\AutoAssigner;
 use App\Service\Signalement\SignalementBuilder;
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
+use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\Messenger\MessageBusInterface;
+use Symfony\Component\Messenger\Stamp\DelayStamp;
 
 class SignalementDraftCompletedSubscriber implements EventSubscriberInterface
 {
@@ -29,6 +32,7 @@ class SignalementDraftCompletedSubscriber implements EventSubscriberInterface
         private readonly MessageBusInterface $messageBus,
         private readonly EntityManagerInterface $entityManager,
         private readonly LoggerInterface $logger,
+        private readonly ParameterBagInterface $parameterBag,
     ) {
     }
 
@@ -66,6 +70,7 @@ class SignalementDraftCompletedSubscriber implements EventSubscriberInterface
                 $this->sendNotifications($signalement);
                 $this->processFiles($signalementDraft, $signalement);
                 $this->autoAssigner->assign($signalement);
+                $this->dispatchCheckFiles($signalement);
             } else {
                 $this->entityManager->rollback();
             }
@@ -98,5 +103,19 @@ class SignalementDraftCompletedSubscriber implements EventSubscriberInterface
             $signalementDraft->getId(),
             $signalement->getId()
         ));
+    }
+
+    private function dispatchCheckFiles(Signalement $signalement): void
+    {
+        $delay = $this->parameterBag->get('delay_check_new_signalement_files');
+        if (!$delay) {
+            return;
+        }
+        $this->messageBus->dispatch(
+            new NewSignalementCheckFileMessage($signalement->getId()),
+            [
+                new DelayStamp($delay),
+            ]
+        );
     }
 }

@@ -16,6 +16,7 @@ use App\Service\Mailer\NotificationMailerType;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -32,6 +33,7 @@ class SignalementActionController extends AbstractController
         Request $request,
         ManagerRegistry $doctrine,
         NotificationMailerRegistry $notificationMailerRegistry,
+        ParameterBagInterface $parameterBag,
     ): Response {
         $this->denyAccessUnlessGranted('SIGN_VALIDATE', $signalement);
         if ($this->isCsrfTokenValid('signalement_validation_response_'.$signalement->getId(), $request->get('_token'))
@@ -45,7 +47,7 @@ class SignalementActionController extends AbstractController
                 foreach ($toRecipients as $toRecipient) {
                     $notificationMailerRegistry->send(
                         new NotificationMail(
-                            type: $signalement->hasNDE() ?
+                            type: $signalement->hasNDE() && !$parameterBag->get('delay_check_new_signalement_files') ?
                                 NotificationMailerType::TYPE_SIGNALEMENT_ASK_BAIL_DPE_TO_USAGER :
                                 NotificationMailerType::TYPE_SIGNALEMENT_VALIDATION_TO_USAGER,
                             to: $toRecipient,
