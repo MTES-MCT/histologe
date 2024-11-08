@@ -155,10 +155,29 @@ class SignalementRepositoryTest extends KernelTestCase
     {
         /** @var SignalementRepository $signalementRepository */
         $signalementRepository = $this->entityManager->getRepository(Signalement::class);
-        /** @var TerritoryRepository $territoryRepository */
-        $territoryRepository = $this->entityManager->getRepository(Territory::class);
-        $territory = $territoryRepository->findOneBy(['zip' => '13']);
         $signalementsArchived = $signalementRepository->findAllArchived(null, '2024-04', null);
         $this->assertEquals(1, \count($signalementsArchived));
+    }
+
+    public function testFindAllForEmailAndAddressWithValue(): void
+    {
+        /** @var SignalementRepository $signalementRepository */
+        $signalementRepository = $this->entityManager->getRepository(Signalement::class);
+        $emailExistingSignalements = $signalementRepository->findAllForEmailAndAddress(
+            'francis.cabrel@astaffort.com',
+            '3 rue Mars',
+            '13015',
+            'Marseille',
+            false
+        );
+        $this->assertEquals(1, \count($emailExistingSignalements));
+    }
+
+    public function testFindAllForEmailAndAddressWithNullValue(): void
+    {
+        /** @var SignalementRepository $signalementRepository */
+        $signalementRepository = $this->entityManager->getRepository(Signalement::class);
+        $emptyEmailExistingSignalements = $signalementRepository->findAllForEmailAndAddress(null, null, null, null);
+        $this->assertEmpty($emptyEmailExistingSignalements);
     }
 }

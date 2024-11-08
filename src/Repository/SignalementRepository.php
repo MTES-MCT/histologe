@@ -1250,12 +1250,16 @@ class SignalementRepository extends ServiceEntityRepository
     }
 
     public function findAllForEmailAndAddress(
-        string $email,
-        string $address,
-        string $zipcode,
-        string $city,
+        ?string $email,
+        ?string $address,
+        ?string $zipcode,
+        ?string $city,
         bool $isTiersDeclarant = true
     ): array {
+        if (empty($email) || empty($address) || empty($zipcode) || empty($city)) {
+            return [];
+        }
+
         $qb = $this->createQueryBuilder('s');
         if ($isTiersDeclarant) {
             $qb->andWhere('s.mailDeclarant = :email')->setParameter('email', $email);
