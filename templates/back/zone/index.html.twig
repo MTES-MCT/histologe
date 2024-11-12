@@ -3,7 +3,7 @@
 {% block title %}Zones du territoire{% endblock %}
 
 {% block content %}
-    <section class="fr-p-5v">
+    <section class="fr-pt-5v fr-px-5v">
         {% include 'back/breadcrumb_bo.html.twig' with {
             'level2Title': 'Outils admin',
             'level2Link': '',
@@ -15,7 +15,7 @@
         <header>
             <div class="fr-grid-row">
                 <div class="fr-col-8 fr-text--left">
-                    <h1>Gérer les zones du territoires</h1>
+                    <h1 class="fr-mb-0">Gérer les zones du territoires</h1>
                     <p>
                         Les zones peuvent être créées, éditées et supprimées par les responsables territoire uniquement. 
                     </p>
@@ -59,7 +59,7 @@
         </div>
     </section>
 
-    <section class="fr-col-12 fr-table fr-table--lg fr-pt-0 fr-px-5v">
+    <section class="fr-col-12 fr-table {{ not platform.feature_enable_menu_horizontale ? 'fr-table--lg' : '' }} fr-pt-0 fr-px-5v">
 		<div class="fr-table__wrapper">
 			<div class="fr-table__container">
 				<div class="fr-table__content">

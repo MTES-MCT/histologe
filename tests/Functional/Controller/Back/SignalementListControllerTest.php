@@ -30,7 +30,7 @@ class SignalementListControllerTest extends WebTestCase
         $userRepository = static::getContainer()->get(UserRepository::class);
         $user = $userRepository->findOneBy(['email' => $email]);
         $client->loginUser($user);
-        $route = $generatorUrl->generate('back_index');
+        $route = $generatorUrl->generate('back_signalement_index');
         $client->request('GET', $route);
         $this->assertLessThan(
             Response::HTTP_INTERNAL_SERVER_ERROR,
@@ -53,23 +53,6 @@ class SignalementListControllerTest extends WebTestCase
                 yield $user->getEmail() => [$user->getEmail()];
             }
         }
-    }
-
-    public function testDisplayGitBookDocumentationExternalLink(): void
-    {
-        $client = static::createClient();
-        /** @var UrlGeneratorInterface $generatorUrl */
-        $generatorUrl = static::getContainer()->get(UrlGeneratorInterface::class);
-
-        /** @var UserRepository $userRepository */
-        $userRepository = static::getContainer()->get(UserRepository::class);
-        $user = $userRepository->findOneBy(['email' => 'admin-01@histologe.fr']);
-        $client->loginUser($user);
-        $crawler = $client->request('GET', $generatorUrl->generate('back_index'));
-
-        $this->assertSelectorTextContains('.fr-sidemenu ul:nth-of-type(2)', 'Documentation');
-        $link = $crawler->selectLink('Documentation')->link();
-        $this->assertEquals('https://documentation.histologe.beta.gouv.fr', $link->getUri());
     }
 
     public function testDisplaySignalementMDLRoleAdminTerritory()
@@ -123,7 +106,7 @@ class SignalementListControllerTest extends WebTestCase
 
         $user = $userRepository->findOneBy(['email' => $emailUser]);
         $client->loginUser($user);
-        $route = $generatorUrl->generate('back_index').$filter;
+        $route = $generatorUrl->generate('back_signalement_index').$filter;
         $client->request('GET', $route);
 
         $this->assertResponseIsSuccessful();

@@ -50,6 +50,7 @@ parameters:
     feature_zonage: '%env(bool:FEATURE_ZONAGE)%'
     feature_grille_visite: '%env(bool:FEATURE_GRILLE_VISITE)%'
     feature_permission_affectation: '%env(bool:FEATURE_PERMISSION_AFFECTATION)%'
+    feature_enable_menu_horizontale: '%env(bool:FEATURE_ENABLE_MENU_HORIZONTALE)%'
 
 services:
     # default configuration for services in *this* file

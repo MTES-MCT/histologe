@@ -13,7 +13,7 @@ class WidgetDataKpiTest extends TestCase
     public function testValidWidgetDataKpi()
     {
         $widgetDataKpi = new WidgetDataKpi(
-            ['cardMesAffectations' => ['Mes affectations', 2, 'back_index']],
+            ['cardMesAffectations' => ['Mes affectations', 2, 'back_signalement_index']],
             new CountSignalement(20, 5, 5, 5, 5),
             new CountSuivi(20, 50, 10),
             new CountUser(10, 10)

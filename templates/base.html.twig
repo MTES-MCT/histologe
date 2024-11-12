@@ -1,3 +1,10 @@
+{% set container_class = 'fr-container' %}
+{% if platform.feature_enable_menu_horizontale %}
+    {% if 'back_' in app.request.get('_route') and app.user is not null %}
+        {% set container_class = 'fr-container-sml' %}
+    {% endif %}
+{% endif %}
+
 <!DOCTYPE html>
 <html lang="fr"{# data-fr-scheme="light" #}>
 <head>
@@ -30,6 +37,7 @@
     <meta name="apple-mobile-web-app-title" content="{{ platform.name }}">
     <link rel="icon" href={{ asset('favicon.ico') }}>
     <link rel="stylesheet" href="{{ asset('build/dsfr/dsfr.min.css') }}">
+    <link rel="stylesheet" href="{{ asset('build/dsfr/utility/icons/icons-buildings/icons-buildings.min.css') }}">
     <link rel="stylesheet" href="{{ asset('build/dsfr/utility/icons/icons-business/icons-business.min.css') }}">
     <link rel="stylesheet" href="{{ asset('build/dsfr/utility/icons/icons-communication/icons-communication.min.css') }}">
     <link rel="stylesheet" href="{{ asset('build/dsfr/utility/icons/icons-others/icons-others.min.css') }}">
