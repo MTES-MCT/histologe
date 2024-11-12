@@ -20,14 +20,14 @@
         <header>
             <div class="fr-grid-row">
                 <div class="fr-col-12 fr-text--left">
-                    <h1>Zone {{zone.name}}</h1>
+                    <h1 class="fr-mb-0">Zone {{zone.name}}</h1>
                 </div>
             </div>
         </header>
     </section>
 
-    <section class="fr-grid-row fr-px-5v">
-        <div class="fr-col-12 fr-col-lg-6">
+    <section class="fr-grid-row fr-px-5v fr-pb-5v">
+        <div class="fr-col-12 {% if not platform.feature_enable_menu_horizontale %} fr-col-lg-6 {% endif %}">
             {% form_theme form 'form/dsfr_theme.html.twig' %}
             {{form(form, {'attr': {'id': 'form-add-zone'}} )}}
         </div>
