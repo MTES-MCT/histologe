@@ -49,7 +49,7 @@ parameters:
     feature_grille_visite: '%env(bool:FEATURE_GRILLE_VISITE)%'
     feature_permission_affectation: '%env(bool:FEATURE_PERMISSION_AFFECTATION)%'
     feature_enable_menu_horizontale: '%env(bool:FEATURE_ENABLE_MENU_HORIZONTALE)%'
-    delay_check_new_signalement_files: '%env(bool:DELAY_CHECK_NEW_SIGNALEMENT_FILES)%'
+    delay_check_new_signalement_files: '%env(DELAY_CHECK_NEW_SIGNALEMENT_FILES)%'
 
 services:
     # default configuration for services in *this* file

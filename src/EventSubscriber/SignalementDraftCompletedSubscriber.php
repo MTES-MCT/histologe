@@ -61,7 +61,6 @@ class SignalementDraftCompletedSubscriber implements EventSubscriberInterface
 
             if (null !== $signalement) {
                 $this->signalementManager->save($signalement);
-                $this->entityManager->commit();
                 $this->logger->info(sprintf(
                     'Signalement saved with reference #%s in territory %s',
                     $signalement->getReference(),
@@ -69,8 +68,9 @@ class SignalementDraftCompletedSubscriber implements EventSubscriberInterface
                 ));
                 $this->sendNotifications($signalement);
                 $this->processFiles($signalementDraft, $signalement);
-                $this->autoAssigner->assign($signalement);
                 $this->dispatchCheckFiles($signalement);
+                $this->autoAssigner->assign($signalement);
+                $this->entityManager->commit();
             } else {
                 $this->entityManager->rollback();
             }

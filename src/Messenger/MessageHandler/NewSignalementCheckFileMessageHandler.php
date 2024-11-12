@@ -120,7 +120,7 @@ class NewSignalementCheckFileMessageHandler
     private function hasCritereFromCategorieSlug(Signalement $signalement, string $desordreCategorieSlug): ?string
     {
         $desordreCriteres = $this->desordreCritereRepository->findBy(
-            ['slug_categorie' => $desordreCategorieSlug]
+            ['slugCategorie' => $desordreCategorieSlug]
         );
         foreach ($desordreCriteres as $desordreCritere) {
             if ($signalement->hasDesordreCritere($desordreCritere)) {
@@ -134,7 +134,7 @@ class NewSignalementCheckFileMessageHandler
     private function hasCritereFromCritereSlug(Signalement $signalement, string $desordreCritereSlug): ?string
     {
         $desordreCritere = $this->desordreCritereRepository->findOneBy(
-            ['slug_critere' => $desordreCritereSlug]
+            ['slugCritere' => $desordreCritereSlug]
         );
         if ($signalement->hasDesordreCritere($desordreCritere)) {
             return $desordreCritere->getLabelCategorie();
@@ -150,6 +150,8 @@ class NewSignalementCheckFileMessageHandler
                 return true;
             }
         }
+
+        return false;
     }
 
     private function createSuivi(Signalement $signalement, string $documents, string $desordres): Suivi
@@ -159,24 +161,22 @@ class NewSignalementCheckFileMessageHandler
         $description .= 'Votre dossier a bien été enregistré par nos services.<br><br>';
         $description .= 'Afin de nous aider à traiter au mieux votre dossier, veuillez nous fournir :<br>';
         if (!empty($documents)) {
-            $description .= 'le ou les documents suivants : ' . $documents . '<br>';
+            $description .= '- le ou les documents suivants : ' . $documents . '<br>';
         }
         if (!empty($desordres)) {
-            $description .= 'des photos pour les désordres suivants : ' . $desordres . '<br>';
+            $description .= '- des photos pour les désordres suivants : ' . $desordres . '<br>';
         }
         $description .= '<br>';
         $description .= 'Envoyez-nous un message en y ajoutant vos documents !<br>';
         $description .= 'Merci,<br>';
         $description .= 'L\'équipe Histologe';
 
-        /** @var User $user */
-        $user = $this->security->getUser();
         return $this->suiviManager->createSuivi(
-            user: $user,
+            user: null,
             signalement: $signalement,
             params: [
                 'type' => Suivi::TYPE_AUTO,
-                'description' => $description.$user->getNomComplet(),
+                'description' => $description,
             ],
             flush: true
         );
