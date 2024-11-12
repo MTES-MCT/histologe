@@ -63,7 +63,7 @@ export const componentValidator = {
     // il y a eu une édition manuelle : on vérifie tous les sous-champs
     } else if (formStore.data[componentSlug + '_detail_manual'] !== 0 && formStore.data[componentSlug + '_detail_manual'] !== undefined) {
       const addressDetailNumero = formStore.data[componentSlug + '_detail_numero']
-      if (variableTester.isEmpty(addressDetailNumero === undefined)) {
+      if (variableTester.isEmpty(addressDetailNumero)) {
         formStore.validationErrors[componentSlug + '_detail_numero'] = 'Veuillez renseigner l\'adresse du logement.'
       } else {
         const regexPattern = /^[0-9]*$/
