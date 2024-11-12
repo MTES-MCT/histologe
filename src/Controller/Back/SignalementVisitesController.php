@@ -311,7 +311,9 @@ class SignalementVisitesController extends AbstractController
     ): Response {
         $requestData = $request->get('visite-edit');
 
-        $intervention = $interventionRepository->findOneBy(['id' => $requestData['intervention'], 'signalement' => $signalement]);
+        $intervention = !empty($requestData['intervention'])
+            ? $interventionRepository->findOneBy(['id' => $requestData['intervention'], 'signalement' => $signalement])
+            : null;
         if (!$intervention) {
             $this->addFlash('error', "Cette visite n'existe pas.");
 

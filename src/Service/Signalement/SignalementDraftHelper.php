@@ -9,6 +9,9 @@ class SignalementDraftHelper
 {
     public static function isTiersDeclarant(SignalementDraftRequest $signalementDraftRequest): bool
     {
+        if (empty($signalementDraftRequest->getProfil())) {
+            return false;
+        }
         switch (strtoupper($signalementDraftRequest->getProfil())) {
             case ProfileDeclarant::SERVICE_SECOURS->name:
             case ProfileDeclarant::BAILLEUR->name:
