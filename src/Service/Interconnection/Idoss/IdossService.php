@@ -10,6 +10,7 @@ use App\Manager\JobEventManager;
 use App\Messenger\Message\Idoss\DossierMessage;
 use App\Service\ImageManipulationHandler;
 use Doctrine\ORM\EntityManagerInterface;
+use League\Flysystem\FilesystemException;
 use Symfony\Component\DependencyInjection\ParameterBag\ContainerBagInterface;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Mime\Part\DataPart;
@@ -74,6 +75,9 @@ class IdossService
         return $jobEvent;
     }
 
+    /**
+     * @throws FilesystemException
+     */
     public function uploadFiles(Partner $partner, Signalement $signalement): JobEvent|false
     {
         $files = [];
@@ -92,7 +96,7 @@ class IdossService
         $url = $partner->getIdossUrl().self::UPLOAD_FILES_ENDPOINT;
         $payload = $this->getFilesPayload($signalement, $files);
         $jobAction = self::ACTION_UPLOAD_FILES;
-        $jobMessage = json_encode($filesJson, true);
+        $jobMessage = json_encode($payload, true);
         $signalementId = $signalement->getId();
 
         $jobEvent = $this->processRequestAndSaveJobEvent($partner, $url, $jobAction, $jobMessage, $signalementId, $payload, 'POST', 'multipart/form-data');
@@ -201,6 +205,9 @@ class IdossService
         return $payload;
     }
 
+    /**
+     * @throws FilesystemException
+     */
     private function getFilesPayload(Signalement $signalement, array $files): array
     {
         $payload = [
@@ -211,9 +218,8 @@ class IdossService
         foreach ($files as $file) {
             $dataparts[] = ['file' => DataPart::fromPath($this->imageManipulationHandler->getFilePath($file))];
         }
-        $payload = array_merge($payload, $dataparts);
 
-        return $payload;
+        return array_merge($payload, $dataparts);
     }
 
     private function getToken(Partner $partner): string

@@ -4,6 +4,7 @@ namespace App\Service;
 
 use App\Entity\File;
 use Intervention\Image\ImageManager;
+use League\Flysystem\FilesystemException;
 use League\Flysystem\FilesystemOperator;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Symfony\Component\HttpFoundation\File\Exception\FileNotFoundException;
@@ -108,10 +109,16 @@ class ImageManipulationHandler
         return $this;
     }
 
-    public function getFilePath(File $file)
+    /**
+     * @throws FilesystemException
+     */
+    public function getFilePath(File $file): string
     {
-        $variantNames = self::getVariantNames($file->getFilename());
-        $filename = $variantNames[self::SUFFIX_RESIZE];
+        $filename = $file->getFilename();
+        if ($this->isImage($filename)) {
+            $variantNames = self::getVariantNames($file->getFilename());
+            $filename = $variantNames[self::SUFFIX_RESIZE];
+        }
         if (!$this->fileStorage->fileExists($filename) && !$this->fileStorage->fileExists($file->getFilename())) {
             throw new FileNotFoundException('File "'.$filename.'" not found');
         }
@@ -143,5 +150,12 @@ class ImageManipulationHandler
         $thumb = $pathInfo['filename'].self::SUFFIX_THUMB.$ext;
 
         return [self::SUFFIX_RESIZE => $resize, self::SUFFIX_THUMB => $thumb];
+    }
+
+    public function isImage(string $filename): bool
+    {
+        $extension = strtolower(pathinfo($filename, \PATHINFO_EXTENSION));
+
+        return in_array($extension, File::IMAGE_EXTENSION);
     }
 }
