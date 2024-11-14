@@ -54,18 +54,18 @@ class NewSignalementCheckFileMessageHandler
         );
 
         $documents = '';
-        if ($signalement->getTypeCompositionLogement()->getBailDpeBail()
+        if ($signalement->getTypeCompositionLogement()->getBailDpeBail() === 'oui'
                 && !$this->hasDocumentType($signalement, DocumentType::SITUATION_FOYER_BAIL)) {
             $documents = 'le bail du logement';
         }
-        if ($signalement->getTypeCompositionLogement()->getBailDpeEtatDesLieux()
+        if ($signalement->getTypeCompositionLogement()->getBailDpeEtatDesLieux() === 'oui'
                 && !$this->hasDocumentType($signalement, DocumentType::SITUATION_FOYER_ETAT_DES_LIEUX)) {
             if (!empty($documents)) {
                 $documents .= ', ';
             }
             $documents .= 'l\'état des lieux réalisé à l\'entrée dans le logement';
         }
-        if ($signalement->getTypeCompositionLogement()->getBailDpeDpe()
+        if ($signalement->getTypeCompositionLogement()->getBailDpeDpe() === 'oui'
                 && !$this->hasDocumentType($signalement, DocumentType::SITUATION_FOYER_DPE)) {
             if (!empty($documents)) {
                 $documents .= ', ';
@@ -178,6 +178,7 @@ class NewSignalementCheckFileMessageHandler
                 'type' => Suivi::TYPE_AUTO,
                 'description' => $description,
             ],
+            isPublic: true,
             flush: true
         );
     }
