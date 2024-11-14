@@ -107,14 +107,14 @@ class SignalementDraftCompletedSubscriber implements EventSubscriberInterface
 
     private function dispatchCheckFiles(Signalement $signalement): void
     {
-        $delay = $this->parameterBag->get('delay_check_new_signalement_files');
-        if (!$delay) {
+        if (!$this->parameterBag->get('feature_check_new_signalement_files')) {
             return;
         }
+
         $this->messageBus->dispatch(
             new NewSignalementCheckFileMessage($signalement->getId()),
             [
-                new DelayStamp($delay),
+                new DelayStamp($this->parameterBag->get('delay_min_check_new_signalement_files')),
             ]
         );
     }

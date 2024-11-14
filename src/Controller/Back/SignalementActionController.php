@@ -47,7 +47,7 @@ class SignalementActionController extends AbstractController
                 foreach ($toRecipients as $toRecipient) {
                     $notificationMailerRegistry->send(
                         new NotificationMail(
-                            type: $signalement->hasNDE() && !$parameterBag->get('delay_check_new_signalement_files') ?
+                            type: $signalement->hasNDE() && !$parameterBag->get('feature_check_new_signalement_files') ?
                                 NotificationMailerType::TYPE_SIGNALEMENT_ASK_BAIL_DPE_TO_USAGER :
                                 NotificationMailerType::TYPE_SIGNALEMENT_VALIDATION_TO_USAGER,
                             to: $toRecipient,
