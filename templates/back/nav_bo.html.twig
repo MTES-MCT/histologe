@@ -1,4 +1,5 @@
 {% if platform.feature_enable_menu_horizontale %}
+    {% set notification_count = count_notification(app.user) %}
     <header class="fr-header">
         <div class="fr-header__body">
             <div class="{{ container_class }}">
@@ -28,7 +29,8 @@
                                 <li>
                                     <a class="fr-btn fr-icon-notification-3-fill notification-icon" href="{{ path('back_notifications_list') }}">
                                         Notifications
-                                        {% if count_notification(app.user) > 0 %}
+                                        {% if notification_count > 0 %}
+                                            ({{ notification_count }})
                                             <span class="notification-badge"></span>
                                         {% endif %}
                                     </a>
