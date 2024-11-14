@@ -2899,6 +2899,24 @@
           },
           "validate": {
             "message": "Veuillez détailler la situation."
+          },
+          "conditional": {
+            "show": "formStore.data.signalement_concerne_profil_detail_tiers === 'tiers_particulier'"
+          }
+        },
+        {
+          "type": "SignalementFormTextarea",
+          "slug": "message_administration",
+          "customCss": "fr-mt-5v",
+          "label": "Votre message ici (facultatif) :",
+          "accessibility": {
+            "focus": true
+          },
+          "validate": {
+            "required": false
+          },
+          "conditional": {
+            "show": "formStore.data.signalement_concerne_profil_detail_tiers !== 'tiers_particulier'"
           }
         }
       ],
