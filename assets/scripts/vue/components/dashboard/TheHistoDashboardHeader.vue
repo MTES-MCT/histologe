@@ -107,7 +107,7 @@ export default defineComponent({
   .histo-dashboard-header div.header-list div.header-item {
     display: table-cell;
     background-color: #FFF;
-    padding: 6px 12px;
+    padding: 6px 1.95rem;
   }
   .histo-dashboard-header div.header-list div.border-left {
     display: table-cell;
@@ -115,7 +115,7 @@ export default defineComponent({
     margin-right: 5px;
   }
 
-  @media (max-width: 1200px) {
+  @media (max-width: 1550px) {
     .histo-dashboard-header div.header-list {
       display: block;
       cursor: pointer;
