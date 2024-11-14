@@ -11,26 +11,34 @@
     "components": {
       "body": [
         {
-          "type": "SignalementFormModal",
-          "label": "En savoir plus",
-          "description": "Les désordres sur le bâtiment concernent :<ul><li>La structure du bâtiment (toit, murs porteurs, les façades, sol)</li><li>Les caves et sous-sol</li><li>Autour du bâtiment</li><li>Pour les immeubles : les parties communes</li></ul><br>Les désordres sur le logement concernent tous les problèmes à l'intérieur du logement (aération, chauffage, moisissure, équipements, etc.).",
-          "slug": "zone_concernee_modal"
+          "type": "SignalementFormSubscreen",
+          "slug": "ecran_intermediaire_les_desordres_text_intro",
+          "customCss": "fr-mt-5v",
+          "description": "<p>Vous avez indiqué que votre signalement concerne {{dictionaryStore::formStore.data.zone_concernee_zone}}.</p>"
         },
         {
-          "type": "SignalementFormButton",
-          "label": "En savoir plus",
-          "slug": "zone_concernee_savoir_plus",
-          "customCss": "fr-btn--sm fr-badge fr-badge--info",
-          "ariaControls": "zone_concernee_modal",
-          "accessibility": {
-            "focus": true
+          "type": "SignalementFormSubscreen",
+          "slug": "ecran_intermediaire_les_desordres_text_batiment",
+          "customCss": "fr-mt-5v",
+          "description": "<p>Les désordres sur le bâtiment concernent :</p><ul><li>La structure du bâtiment (toit, murs porteurs, les façades, sol)</li><li>Les caves et sous-sol</li><li>Autour du bâtiment</li><li>Pour les immeubles : les parties communes</li></ul>",
+          "conditional": {
+            "show": "formStore.data.zone_concernee_zone === 'batiment' || formStore.data.zone_concernee_zone === 'batiment_logement'"
           }
         },
         {
           "type": "SignalementFormSubscreen",
-          "slug": "ecran_intermediaire_les_desordres_text",
+          "slug": "ecran_intermediaire_les_desordres_text_logement",
           "customCss": "fr-mt-5v",
-          "description": "<p>Vous avez indiqué que votre signalement concerne {{dictionaryStore::formStore.data.zone_concernee_zone}}.</p><p>Sélectionnez le ou les problèmes rencontrés parmi les catégories et répondez aux questions.</p><p>Vous pourrez aussi ajouter des photos des problèmes.</p><p><b>Toutes les questions sont obligatoires, sauf mention contraire.</b></p>"
+          "description": "<p>Les désordres sur le logement concernent tous les problèmes à l'intérieur du logement, par exemple :</p><ul><li>Aération</li><li>Chauffage</li><li>Moisissure</li><li>Equipements</li><li>Electricité</li><li>Nuisibles</li><li>etc.</li></ul>",
+          "conditional": {
+            "show": "formStore.data.zone_concernee_zone === 'logement' || formStore.data.zone_concernee_zone === 'batiment_logement'"
+          }
+        },
+        {
+          "type": "SignalementFormSubscreen",
+          "slug": "ecran_intermediaire_les_desordres_text_outro",
+          "customCss": "fr-mt-5v",
+          "description": "<p>Sélectionnez le ou les problèmes rencontrés parmi les catégories et répondez aux questions.</p><p>Vous pourrez aussi ajouter des photos des problèmes.</p><p><b>Toutes les questions sont obligatoires, sauf mention contraire.</b></p>"
         }
       ],
       "footer": [
