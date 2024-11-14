@@ -5,11 +5,11 @@
         <br>
         Un nouveau suivi de
         <strong>{{
-            entity.createdBy
-            ? entity.createdBy.nomComplet ~ ' (' ~ entity.createdBy.partner.nom ~ ')'
-            : entity.signalement.prenomDeclarant ~ ' ' ~ entity.signalement.nomDeclarant
+            suivi.createdBy
+            ? suivi.createdBy.nomComplet ~ ' (' ~ suivi.createdBy.partner.nom ~ ')'
+            : suivi.signalement.prenomDeclarant ~ ' ' ~ suivi.signalement.nomDeclarant
         }}</strong>
-        est disponible pour le signalement <strong>#{{ entity.signalement.reference }}</strong>.
+        est disponible pour le signalement <strong>#{{ suivi.signalement.reference }}</strong>.
         <br>
         Rendez-vous sur votre plateforme {{ platform.name }} pour le découvrir.
     </p>
