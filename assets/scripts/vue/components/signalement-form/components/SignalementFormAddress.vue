@@ -6,7 +6,7 @@
       :label="label"
       :description="description"
       placeholder="Taper l'adresse ici"
-      :validate="validate"
+      :validate="validateWithMaxLength"
       v-model="formStore.data[idAddress]"
       :hasError="hasError"
       :error="error"
@@ -175,6 +175,12 @@ export default defineComponent({
         return 'fr-hidden'
       }
       return ''
+    },
+    validateWithMaxLength () {
+      return {
+        ...this.validate,
+        maxLength: 200
+      }
     }
   },
   methods: {
