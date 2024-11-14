@@ -219,6 +219,7 @@ when@test:
                 $parameterBag: '@Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface'
                 $logger: '@Psr\Log\LoggerInterface'
                 $urlGenerator: '@Symfony\Component\Routing\Generator\UrlGeneratorInterface'
+                $entityManager: '@Doctrine\ORM\EntityManagerInterface'
                 $userManager: '@App\Manager\UserManager'
             tags:
                 - name: 'app.notification_mailer'

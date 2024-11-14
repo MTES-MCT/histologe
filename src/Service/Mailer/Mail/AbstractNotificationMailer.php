@@ -2,10 +2,12 @@
 
 namespace App\Service\Mailer\Mail;
 
+use App\Entity\FailedEmail;
 use App\Entity\Suivi;
 use App\Entity\Territory;
 use App\Service\Mailer\NotificationMail;
 use App\Service\Mailer\NotificationMailerType;
+use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
 use Sentry\State\Scope;
 use Symfony\Bridge\Twig\Mime\NotificationEmail;
@@ -29,10 +31,11 @@ abstract class AbstractNotificationMailer implements NotificationMailerInterface
         protected ParameterBagInterface $parameterBag,
         protected LoggerInterface $logger,
         protected UrlGeneratorInterface $urlGenerator,
+        private EntityManagerInterface $entityManager,
     ) {
     }
 
-    public function send(NotificationMail $notificationMail): bool
+    public function send(NotificationMail $notificationMail, bool $saveFailedMail = true): bool
     {
         if (!$this->parameterBag->get('mail_enable')) {
             $this->logger->info('E-mail has been disable, please enable MAIL_ENABLE=1');
@@ -79,7 +82,13 @@ abstract class AbstractNotificationMailer implements NotificationMailerInterface
         );
 
         if (!empty($params['attach'])) {
-            $message->attachFromPath($params['attach']);
+            if (\is_array($params['attach'])) {
+                foreach ($params['attach'] as $attachPath) {
+                    $message->attachFromPath($attachPath);
+                }
+            } else {
+                $message->attachFromPath($params['attach']);
+            }
         }
         if (!empty($params['attachContent'])) {
             $message->attach($params['attachContent']['content'], $params['attachContent']['filename']);
@@ -89,22 +98,61 @@ abstract class AbstractNotificationMailer implements NotificationMailerInterface
 
             return true;
         } catch (\Throwable $exception) {
-            $object = $params['entity'] ?? null;
-            \Sentry\configureScope(function (Scope $scope) use ($object): void {
-                $scope->setTag('mailer_type', $this->mailerType->name);
-                if ($object instanceof Suivi) {
-                    $scope->setTag('notify_usager', $object->getIsPublic() ? 'yes' : 'no');
-                } elseif (str_contains($this->mailerType->name, 'USAGER')) {
-                    $scope->setTag('notify_usager', 'yes');
-                }
-            });
-            $this->logger->error(\sprintf(
-                '[%s] %s',
-                $notificationMail->getType()->name, $exception->getMessage()
-            ));
+            $this->logAndSaveFailedEmail($notificationMail, $exception, $params, $saveFailedMail);
         }
 
         return false;
+    }
+
+    private function logAndSaveFailedEmail(NotificationMail $notificationMail, \Throwable $exception, array $params, bool $saveFailedMail): void
+    {
+        $object = $params['entity'] ?? null;
+        $notifyUsager = false;
+        if ($object instanceof Suivi) {
+            $notifyUsager = $object->getIsPublic() ? true : false;
+        } elseif (str_contains($this->mailerType->name, 'USAGER')) {
+            $notifyUsager = true;
+        }
+        \Sentry\configureScope(function (Scope $scope) use ($notifyUsager): void {
+            $scope->setTag('mailer_type', $this->mailerType->name);
+            $scope->setTag('notify_usager', $notifyUsager ? 'yes' : 'no');
+        });
+        $this->logger->error(\sprintf(
+            '[%s] %s',
+            $notificationMail->getType()->name, $exception->getMessage()
+        ));
+        if ($saveFailedMail && NotificationMailerType::TYPE_ERROR_SIGNALEMENT !== $notificationMail->getType()) {
+            $failedEmail = new FailedEmail();
+            $failedEmail->setType($notificationMail->getTypeName());
+            $failedEmail->setToEmail($notificationMail->getEmails()); // TODO : getTo ?
+            $failedEmail->setFromEmail($notificationMail->getFromEmail());
+            $failedEmail->setFromFullname($notificationMail->getFromFullname());
+            $failedEmail->setSignalement($notificationMail->getSignalement());
+            $failedEmail->setSignalementDraft($notificationMail->getSignalementDraft());
+            $failedEmail->setSuivi($notificationMail->getSuivi());
+            $failedEmail->setMessage($notificationMail->getMessage());
+            $failedEmail->setTerritory($notificationMail->getTerritory());
+            $failedEmail->setUser($notificationMail->getUser());
+            $failedEmail->setIntervention($notificationMail->getIntervention());
+            $failedEmail->setPreviousVisiteDate($notificationMail->getPreviousVisiteDate());
+            $failedEmail->setAttachment(
+                \is_array($notificationMail->getAttachment()) ?
+                $notificationMail->getAttachment() : [$notificationMail->getAttachment()]);
+            $failedEmail->setMotif($notificationMail->getMotif());
+            $failedEmail->setCronLabel($notificationMail->getCronLabel());
+            $failedEmail->setCronCount($notificationMail->getCronCount());
+            $failedEmail->setParams($notificationMail->getParams());
+            $failedEmail->setNotifyUsager($notifyUsager);
+            $failedEmail->setErrorMessage($exception->getMessage());
+            $failedEmail->setCreatedAt(new \DateTimeImmutable());
+
+            try {
+                $this->entityManager->persist($failedEmail);
+                $this->entityManager->flush();
+            } catch (\Exception $e) {
+                $this->logger->error('Failed to save FailedEmail: '.$e->getMessage());
+            }
+        }
     }
 
     public function supports(NotificationMailerType $type): bool

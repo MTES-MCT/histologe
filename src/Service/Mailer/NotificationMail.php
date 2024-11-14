@@ -5,6 +5,7 @@ namespace App\Service\Mailer;
 use App\Entity\Intervention;
 use App\Entity\Signalement;
 use App\Entity\SignalementDraft;
+use App\Entity\Suivi;
 use App\Entity\Territory;
 use App\Entity\User;
 
@@ -19,6 +20,7 @@ class NotificationMail
         private readonly ?Territory $territory = null,
         private readonly ?User $user = null,
         private readonly ?Signalement $signalement = null,
+        private readonly ?Suivi $suivi = null,
         private readonly ?SignalementDraft $signalementDraft = null,
         private readonly ?Intervention $intervention = null,
         private readonly ?\DateTimeImmutable $previousVisiteDate = null,
@@ -34,6 +36,11 @@ class NotificationMail
     public function getType(): NotificationMailerType
     {
         return $this->type;
+    }
+
+    public function getTypeName(): string
+    {
+        return $this->type->name;
     }
 
     public function getTo(): array|string
@@ -64,6 +71,11 @@ class NotificationMail
     public function getSignalement(): ?Signalement
     {
         return $this->signalement;
+    }
+
+    public function getSuivi(): ?Suivi
+    {
+        return $this->suivi;
     }
 
     public function getSignalementDraft(): ?SignalementDraft

@@ -31,6 +31,7 @@ class ActivityListener
     private $em;
     private $uow;
     private ArrayCollection $tos;
+    private bool $isProcessing = false;
 
     public function __construct(
         private NotificationMailerRegistry $notificationMailerRegistry,
@@ -46,57 +47,66 @@ class ActivityListener
 
     public function onFlush(OnFlushEventArgs $args): void
     {
-        $this->em = $args->getObjectManager();
-        $this->uow = $this->em->getUnitOfWork();
-        foreach ($this->uow->getScheduledEntityInsertions() as $entity) {
-            if ($entity instanceof Signalement) {
-                $this->notifyAdmins($entity, Notification::TYPE_NEW_SIGNALEMENT, $entity->getTerritory());
-                $this->sendMail($entity, NotificationMailerType::TYPE_SIGNALEMENT_NEW);
-            } elseif ($entity instanceof Affectation) {
-                $partner = $entity->getPartner();
-                $this->notifyPartner($partner, $entity, Notification::TYPE_AFFECTATION);
-                $this->sendMail($entity, NotificationMailerType::TYPE_ASSIGNMENT_NEW);
-            } elseif ($entity instanceof Suivi) {
-                // pas de notification pour un suivi technique ou si intervention
-                if (Suivi::TYPE_TECHNICAL === $entity->getType() || Suivi::CONTEXT_INTERVENTION === $entity->getContext()) {
-                    continue;
-                }
+        if ($this->isProcessing) {
+            return;
+        }
 
-                $notifyAdminsAndPartners = $entity->getDescription() != $this->parameterBag->get('suivi_message')['first_accepted_affectation'];
-
-                if ($notifyAdminsAndPartners) {
-                    $this->tos->clear();
-                    $this->notifyAdmins($entity, Notification::TYPE_SUIVI, $entity->getSignalement()->getTerritory());
-                    $entity->getSignalement()->getAffectations()->filter(function (Affectation $affectation) use ($entity) {
-                        $partner = $affectation->getPartner();
-                        if (AffectationStatus::STATUS_WAIT->value === $affectation->getStatut()
-                            || AffectationStatus::STATUS_ACCEPTED->value === $affectation->getStatut()) {
-                            $this->notifyPartner($partner, $entity, Notification::TYPE_SUIVI);
-                        }
-                    });
-
-                    if (Signalement::STATUS_CLOSED !== $entity->getSignalement()->getStatut()) {
-                        $this->sendMail($entity, NotificationMailerType::TYPE_NEW_COMMENT_BACK);
+        $this->isProcessing = true;
+        try {
+            $this->em = $args->getObjectManager();
+            $this->uow = $this->em->getUnitOfWork();
+            foreach ($this->uow->getScheduledEntityInsertions() as $entity) {
+                if ($entity instanceof Signalement) {
+                    $this->notifyAdmins($entity, Notification::TYPE_NEW_SIGNALEMENT, $entity->getTerritory());
+                    $this->sendMail($entity, NotificationMailerType::TYPE_SIGNALEMENT_NEW);
+                } elseif ($entity instanceof Affectation) {
+                    $partner = $entity->getPartner();
+                    $this->notifyPartner($partner, $entity, Notification::TYPE_AFFECTATION);
+                    $this->sendMail($entity, NotificationMailerType::TYPE_ASSIGNMENT_NEW);
+                } elseif ($entity instanceof Suivi) {
+                    // pas de notification pour un suivi technique ou si intervention
+                    if (Suivi::TYPE_TECHNICAL === $entity->getType() || Suivi::CONTEXT_INTERVENTION === $entity->getContext()) {
+                        continue;
                     }
-                }
 
-                if ($entity->getSendMail() && $entity->getIsPublic() && Signalement::STATUS_REFUSED !== $entity->getSignalement()->getStatut()) {
-                    $toRecipients = new ArrayCollection($entity->getSignalement()->getMailUsagers());
-                    if (!$toRecipients->isEmpty() && Signalement::STATUS_CLOSED !== $entity->getSignalement()->getStatut()) {
-                        $toRecipients->removeElement($entity->getCreatedBy()?->getEmail());
-                        foreach ($toRecipients as $toRecipient) {
-                            $this->notificationMailerRegistry->send(
-                                new NotificationMail(
-                                    type: NotificationMailerType::TYPE_NEW_COMMENT_FRONT_TO_USAGER,
-                                    to: $toRecipient,
-                                    territory: $entity->getSignalement()->getTerritory(),
-                                    signalement: $entity->getSignalement(),
-                                )
-                            );
+                    $notifyAdminsAndPartners = $entity->getDescription() != $this->parameterBag->get('suivi_message')['first_accepted_affectation'];
+
+                    if ($notifyAdminsAndPartners) {
+                        $this->tos->clear();
+                        $this->notifyAdmins($entity, Notification::TYPE_SUIVI, $entity->getSignalement()->getTerritory());
+                        $entity->getSignalement()->getAffectations()->filter(function (Affectation $affectation) use ($entity) {
+                            $partner = $affectation->getPartner();
+                            if (AffectationStatus::STATUS_WAIT->value === $affectation->getStatut()
+                                || AffectationStatus::STATUS_ACCEPTED->value === $affectation->getStatut()) {
+                                $this->notifyPartner($partner, $entity, Notification::TYPE_SUIVI);
+                            }
+                        });
+
+                        if (Signalement::STATUS_CLOSED !== $entity->getSignalement()->getStatut()) {
+                            $this->sendMail($entity, NotificationMailerType::TYPE_NEW_COMMENT_BACK);
+                        }
+                    }
+
+                    if ($entity->getSendMail() && $entity->getIsPublic() && Signalement::STATUS_REFUSED !== $entity->getSignalement()->getStatut()) {
+                        $toRecipients = new ArrayCollection($entity->getSignalement()->getMailUsagers());
+                        if (!$toRecipients->isEmpty() && Signalement::STATUS_CLOSED !== $entity->getSignalement()->getStatut()) {
+                            $toRecipients->removeElement($entity->getCreatedBy()?->getEmail());
+                            foreach ($toRecipients as $toRecipient) {
+                                $this->notificationMailerRegistry->send(
+                                    new NotificationMail(
+                                        type: NotificationMailerType::TYPE_NEW_COMMENT_FRONT_TO_USAGER,
+                                        to: $toRecipient,
+                                        territory: $entity->getSignalement()->getTerritory(),
+                                        signalement: $entity->getSignalement(),
+                                    )
+                                );
+                            }
                         }
                     }
                 }
             }
+        } finally {
+            $this->isProcessing = false;
         }
     }
 
@@ -162,10 +172,13 @@ class ActivityListener
 
     private function sendMail($entity, $mailType): void
     {
-        $options = [];
-        $options['entity'] = $entity;
+        $suivi = null;
         if ($entity instanceof Signalement) {
             $signalement = $entity;
+        } elseif ($entity instanceof Suivi) {
+            /** @var Signalement $signalement */
+            $signalement = $entity->getSignalement();
+            $suivi = $entity;
         } else {
             /** @var Signalement $signalement */
             $signalement = $entity->getSignalement();
@@ -183,7 +196,7 @@ class ActivityListener
                         to: array_unique($this->tos->toArray()),
                         territory: $signalement->getTerritory(),
                         signalement: $signalement,
-                        params: $options,
+                        suivi: $suivi,
                     )
                 );
                 $this->tos->clear();
