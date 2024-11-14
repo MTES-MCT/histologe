@@ -5,7 +5,6 @@ namespace App\Messenger\MessageHandler;
 use App\Entity\Enum\DocumentType;
 use App\Entity\Signalement;
 use App\Entity\Suivi;
-use App\Entity\User;
 use App\Manager\SuiviManager;
 use App\Messenger\Message\NewSignalementCheckFileMessage;
 use App\Repository\DesordreCritereRepository;
@@ -34,6 +33,9 @@ class NewSignalementCheckFileMessageHandler
         'desordres_logement_electricite_installation_dangereuse' => 'desordres_logement_electricite_installation_dangereuse_details_photos',
     ];
 
+    public ?Suivi $suivi;
+    public ?string $description;
+
     public function __construct(
         private SignalementRepository $signalementRepository,
         private LoggerInterface $logger,
@@ -54,23 +56,25 @@ class NewSignalementCheckFileMessageHandler
         );
 
         $documents = '';
-        if ($signalement->getTypeCompositionLogement()->getBailDpeBail() === 'oui'
-                && !$this->hasDocumentType($signalement, DocumentType::SITUATION_FOYER_BAIL)) {
-            $documents = 'le bail du logement';
-        }
-        if ($signalement->getTypeCompositionLogement()->getBailDpeEtatDesLieux() === 'oui'
-                && !$this->hasDocumentType($signalement, DocumentType::SITUATION_FOYER_ETAT_DES_LIEUX)) {
-            if (!empty($documents)) {
-                $documents .= ', ';
+        if ($signalement->getTypeCompositionLogement()) {
+            if ($signalement->getTypeCompositionLogement()->getBailDpeBail() === 'oui'
+                    && !$this->hasDocumentType($signalement, DocumentType::SITUATION_FOYER_BAIL)) {
+                $documents = 'le bail du logement';
             }
-            $documents .= 'l\'état des lieux réalisé à l\'entrée dans le logement';
-        }
-        if ($signalement->getTypeCompositionLogement()->getBailDpeDpe() === 'oui'
-                && !$this->hasDocumentType($signalement, DocumentType::SITUATION_FOYER_DPE)) {
-            if (!empty($documents)) {
-                $documents .= ', ';
+            if ($signalement->getTypeCompositionLogement()->getBailDpeEtatDesLieux() === 'oui'
+                    && !$this->hasDocumentType($signalement, DocumentType::SITUATION_FOYER_ETAT_DES_LIEUX)) {
+                if (!empty($documents)) {
+                    $documents .= ', ';
+                }
+                $documents .= 'l\'état des lieux réalisé à l\'entrée dans le logement';
             }
-            $documents .= 'le diagnostic de performance énergétique du logement (DPE)';
+            if ($signalement->getTypeCompositionLogement()->getBailDpeDpe() === 'oui'
+                    && !$this->hasDocumentType($signalement, DocumentType::SITUATION_FOYER_DPE)) {
+                if (!empty($documents)) {
+                    $documents .= ', ';
+                }
+                $documents .= 'le diagnostic de performance énergétique du logement (DPE)';
+            }
         }
 
         $desordres = '';
@@ -94,15 +98,14 @@ class NewSignalementCheckFileMessageHandler
             }
         }
 
-        $suiviId = null;
+        $this->suivi = null;
         if (!empty($documents) || !empty($desordres)) {
-            $suivi = $this->createSuivi($signalement, $documents, $desordres);
-            $suiviId = $suivi->getId();
+            $this->suivi = $this->createSuivi($signalement, $documents, $desordres);
         }
 
         $this->logger->info('NewSignalementCheckFileMessage handled successfully', [
             'signalementId' => $newSignalementCheckFileMessage->getSignalementId(),
-            'suiviId' => $suiviId,
+            'suiviId' => $this->suivi ? $this->suivi->getId() : null,
         ]);
     }
 
@@ -156,27 +159,27 @@ class NewSignalementCheckFileMessageHandler
 
     private function createSuivi(Signalement $signalement, string $documents, string $desordres): Suivi
     {
-        $description = 'Bonjour,<br><br>';
-        $description .= 'Vous avez un signalé un problème sur un logement.<br>';
-        $description .= 'Votre dossier a bien été enregistré par nos services.<br><br>';
-        $description .= 'Afin de nous aider à traiter au mieux votre dossier, veuillez nous fournir :<br>';
+        $this->description = 'Bonjour,<br><br>';
+        $this->description .= 'Vous avez un signalé un problème sur un logement.<br>';
+        $this->description .= 'Votre dossier a bien été enregistré par nos services.<br><br>';
+        $this->description .= 'Afin de nous aider à traiter au mieux votre dossier, veuillez nous fournir :<br>';
         if (!empty($documents)) {
-            $description .= '- le ou les documents suivants : ' . $documents . '<br>';
+            $this->description .= '- le ou les documents suivants : ' . $documents . '<br>';
         }
         if (!empty($desordres)) {
-            $description .= '- des photos pour les désordres suivants : ' . $desordres . '<br>';
+            $this->description .= '- des photos pour les désordres suivants : ' . $desordres . '<br>';
         }
-        $description .= '<br>';
-        $description .= 'Envoyez-nous un message en y ajoutant vos documents !<br>';
-        $description .= 'Merci,<br>';
-        $description .= 'L\'équipe Histologe';
+        $this->description .= '<br>';
+        $this->description .= 'Envoyez-nous un message en y ajoutant vos documents !<br>';
+        $this->description .= 'Merci,<br>';
+        $this->description .= 'L\'équipe Histologe';
 
         return $this->suiviManager->createSuivi(
             user: null,
             signalement: $signalement,
             params: [
                 'type' => Suivi::TYPE_AUTO,
-                'description' => $description,
+                'description' => $this->description,
             ],
             isPublic: true,
             flush: true
