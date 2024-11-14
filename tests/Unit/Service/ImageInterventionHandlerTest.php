@@ -113,20 +113,6 @@ class ImageInterventionHandlerTest extends TestCase
         $this->assertInstanceOf(ImageManipulationHandler::class, $result);
     }
 
-    /**
-     * @dataProvider provideFile
-     */
-    public function testIsImage(string $filepath, bool $result): void
-    {
-        $imageManipulationHandler = new ImageManipulationHandler(
-            $this->parameterBag,
-            $this->fileStorage,
-            $this->imageManager
-        );
-
-        $this->assertEquals($result, $imageManipulationHandler->isImage($filepath));
-    }
-
     public function provideFile(): \Generator
     {
         yield 'sample.jpg is image' => [__DIR__.'/../../files/sample.jpg', true];

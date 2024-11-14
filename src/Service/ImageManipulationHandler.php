@@ -115,12 +115,10 @@ class ImageManipulationHandler
     public function getFilePath(File $file): string
     {
         $filename = $file->getFilename();
-        if ($this->isImage($filename)) {
-            $variantNames = self::getVariantNames($file->getFilename());
-            $filename = $variantNames[self::SUFFIX_RESIZE];
-        }
+        $variantNames = self::getVariantNames($file->getFilename());
+        $filename = $variantNames[self::SUFFIX_RESIZE];
         if (!$this->fileStorage->fileExists($filename) && !$this->fileStorage->fileExists($file->getFilename())) {
-            throw new FileNotFoundException('File "'.$filename.'" not found');
+            throw new FileNotFoundException($filename);
         }
         if (!$this->fileStorage->fileExists($filename)) {
             $filename = $file->getFilename();
@@ -150,12 +148,5 @@ class ImageManipulationHandler
         $thumb = $pathInfo['filename'].self::SUFFIX_THUMB.$ext;
 
         return [self::SUFFIX_RESIZE => $resize, self::SUFFIX_THUMB => $thumb];
-    }
-
-    public function isImage(string $filename): bool
-    {
-        $extension = strtolower(pathinfo($filename, \PATHINFO_EXTENSION));
-
-        return in_array($extension, File::IMAGE_EXTENSION);
     }
 }

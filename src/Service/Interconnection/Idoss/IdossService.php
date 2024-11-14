@@ -38,6 +38,7 @@ class IdossService
     private const CREATE_DOSSIER_ENDPOINT = '/api/EtatCivil/creatDossHistologe';
     private const UPLOAD_FILES_ENDPOINT = '/api/EtatCivil/uploadFileRepoHistologe';
     private const LIST_STATUTS_ENDPOINT = '/api/EtatCivil/listStatutsHistologe';
+    private const NB_MAX_FILES = 20;
 
     public function __construct(
         private readonly HttpClientInterface $client,
@@ -88,6 +89,9 @@ class IdossService
             }
             $files[] = $file;
             $filesJson[] = ['id' => $file->getId(), 'filename' => $file->getFilename()];
+            if (count($files) >= self::NB_MAX_FILES) {
+                break;
+            }
         }
         if (!\count($files)) {
             return false;
