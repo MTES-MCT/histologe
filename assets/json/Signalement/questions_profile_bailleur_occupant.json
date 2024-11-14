@@ -134,7 +134,7 @@
         {
           "type": "SignalementFormModal",
           "label": "En savoir plus",
-          "description": "Les désordres sur le bâtiment concernent :<ul><li>La structure du bâtiment (toit, murs porteurs, les façades, sol)</li><li>Les caves et sous-sol</li><li>Autour du bâtiment</li><li>Pour les immeubles : les parties communes</li></ul><br>Les désordres sur le logement concernent tous les problèmes à l'intérieur du logement (aération, chauffage, moisissure, équipements, etc.).",
+          "description": "Les désordres sur le bâtiment concernent :<ul><li>La structure du bâtiment (toit, murs porteurs, les façades, sol)</li><li>Les caves et sous-sol</li><li>Autour du bâtiment</li><li>Pour les immeubles : les parties communes</li></ul><br>Les désordres sur le logement concernent tous les problèmes à l'intérieur du logement, par exemple :<ul><li>Aération</li><li>Chauffage</li><li>Moisissure</li><li>Equipements</li><li>Electricité</li><li>Nuisibles</li><li>etc.</li></ul>",
           "slug": "zone_concernee_modal"
         },
         {
