@@ -57,18 +57,18 @@ class NewSignalementCheckFileMessageHandler
 
         $documents = '';
         if ($signalement->getTypeCompositionLogement()) {
-            if ($signalement->getTypeCompositionLogement()->getBailDpeBail() === 'oui'
+            if ('oui' === $signalement->getTypeCompositionLogement()->getBailDpeBail()
                     && !$this->hasDocumentType($signalement, DocumentType::SITUATION_FOYER_BAIL)) {
                 $documents = 'le bail du logement';
             }
-            if ($signalement->getTypeCompositionLogement()->getBailDpeEtatDesLieux() === 'oui'
+            if ('oui' === $signalement->getTypeCompositionLogement()->getBailDpeEtatDesLieux()
                     && !$this->hasDocumentType($signalement, DocumentType::SITUATION_FOYER_ETAT_DES_LIEUX)) {
                 if (!empty($documents)) {
                     $documents .= ', ';
                 }
                 $documents .= 'l\'état des lieux réalisé à l\'entrée dans le logement';
             }
-            if ($signalement->getTypeCompositionLogement()->getBailDpeDpe() === 'oui'
+            if ('oui' === $signalement->getTypeCompositionLogement()->getBailDpeDpe()
                     && !$this->hasDocumentType($signalement, DocumentType::SITUATION_FOYER_DPE)) {
                 if (!empty($documents)) {
                     $documents .= ', ';
@@ -164,10 +164,10 @@ class NewSignalementCheckFileMessageHandler
         $this->description .= 'Votre dossier a bien été enregistré par nos services.<br><br>';
         $this->description .= 'Afin de nous aider à traiter au mieux votre dossier, veuillez nous fournir :<br>';
         if (!empty($documents)) {
-            $this->description .= '- le ou les documents suivants : ' . $documents . '<br>';
+            $this->description .= '- le ou les documents suivants : '.$documents.'<br>';
         }
         if (!empty($desordres)) {
-            $this->description .= '- des photos pour les désordres suivants : ' . $desordres . '<br>';
+            $this->description .= '- des photos pour les désordres suivants : '.$desordres.'<br>';
         }
         $this->description .= '<br>';
         $this->description .= 'Envoyez-nous un message en y ajoutant vos documents !<br>';
