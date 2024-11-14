@@ -114,17 +114,17 @@ class ImageManipulationHandler
      */
     public function getFilePath(File $file): string
     {
-        $filename = $file->getFilename();
         $variantNames = self::getVariantNames($file->getFilename());
         $filename = $variantNames[self::SUFFIX_RESIZE];
-        if (!$this->fileStorage->fileExists($filename) && !$this->fileStorage->fileExists($file->getFilename())) {
-            throw new FileNotFoundException($filename);
+        $originalFilename = $file->getFilename();
+        if ($this->fileStorage->fileExists($filename)) {
+            return $this->parameterBag->get('url_bucket').'/'.$filename;
         }
-        if (!$this->fileStorage->fileExists($filename)) {
-            $filename = $file->getFilename();
+        if ($this->fileStorage->fileExists($originalFilename)) {
+            return $this->parameterBag->get('url_bucket').'/'.$originalFilename;
         }
 
-        return $this->parameterBag->get('url_bucket').'/'.$filename;
+        throw new FileNotFoundException($filename);
     }
 
     private function getNewPath(string $suffix): string
