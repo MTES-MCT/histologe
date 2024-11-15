@@ -15,6 +15,7 @@ use App\Service\Mailer\NotificationMail;
 use App\Service\Mailer\NotificationMailerRegistry;
 use App\Service\Mailer\NotificationMailerType;
 use Doctrine\ORM\EntityManagerInterface;
+use League\Flysystem\FilesystemException;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
@@ -160,6 +161,9 @@ class SynchronizeIdossCommand extends AbstractCronCommand
         return $nbStatusUpdated;
     }
 
+    /**
+     * @throws FilesystemException
+     */
     private function uploadFilesOnIdoss(): int
     {
         $nbFilesUploaded = 0;

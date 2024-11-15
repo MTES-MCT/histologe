@@ -10,6 +10,7 @@ use App\Manager\JobEventManager;
 use App\Messenger\Message\Idoss\DossierMessage;
 use App\Service\ImageManipulationHandler;
 use Doctrine\ORM\EntityManagerInterface;
+use League\Flysystem\FilesystemException;
 use Symfony\Component\DependencyInjection\ParameterBag\ContainerBagInterface;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Mime\Part\DataPart;
@@ -37,6 +38,7 @@ class IdossService
     private const CREATE_DOSSIER_ENDPOINT = '/api/EtatCivil/creatDossHistologe';
     private const UPLOAD_FILES_ENDPOINT = '/api/EtatCivil/uploadFileRepoHistologe';
     private const LIST_STATUTS_ENDPOINT = '/api/EtatCivil/listStatutsHistologe';
+    private const NB_MAX_FILES = 20;
 
     public function __construct(
         private readonly HttpClientInterface $client,
@@ -74,6 +76,9 @@ class IdossService
         return $jobEvent;
     }
 
+    /**
+     * @throws FilesystemException
+     */
     public function uploadFiles(Partner $partner, Signalement $signalement): JobEvent|false
     {
         $files = [];
@@ -84,6 +89,9 @@ class IdossService
             }
             $files[] = $file;
             $filesJson[] = ['id' => $file->getId(), 'filename' => $file->getFilename()];
+            if (count($files) >= self::NB_MAX_FILES) {
+                break;
+            }
         }
         if (!\count($files)) {
             return false;
@@ -92,7 +100,7 @@ class IdossService
         $url = $partner->getIdossUrl().self::UPLOAD_FILES_ENDPOINT;
         $payload = $this->getFilesPayload($signalement, $files);
         $jobAction = self::ACTION_UPLOAD_FILES;
-        $jobMessage = json_encode($filesJson, true);
+        $jobMessage = json_encode($payload, true);
         $signalementId = $signalement->getId();
 
         $jobEvent = $this->processRequestAndSaveJobEvent($partner, $url, $jobAction, $jobMessage, $signalementId, $payload, 'POST', 'multipart/form-data');
@@ -201,6 +209,9 @@ class IdossService
         return $payload;
     }
 
+    /**
+     * @throws FilesystemException
+     */
     private function getFilesPayload(Signalement $signalement, array $files): array
     {
         $payload = [
@@ -211,9 +222,8 @@ class IdossService
         foreach ($files as $file) {
             $dataparts[] = ['file' => DataPart::fromPath($this->imageManipulationHandler->getFilePath($file))];
         }
-        $payload = array_merge($payload, $dataparts);
 
-        return $payload;
+        return array_merge($payload, $dataparts);
     }
 
     private function getToken(Partner $partner): string
