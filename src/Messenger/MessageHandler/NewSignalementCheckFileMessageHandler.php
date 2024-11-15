@@ -16,21 +16,19 @@ use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 #[AsMessageHandler]
 class NewSignalementCheckFileMessageHandler
 {
-    private const DESORDRES_CATEGORIES_WITH_PHOTOS = [
-        'desordres_batiment_proprete' => 'desordres_batiment_proprete_photos',
-        'desordres_batiment_nuisibles' => 'desordres_batiment_nuisibles_photos',
-        'desordres_logement_humidite' => 'desordres_logement_humidite_photos',
-        'desordres_logement_nuisibles' => 'desordres_logement_nuisibles_photos',
+    private const array DESORDRES_CATEGORIES_WITH_PHOTOS = [
+        'desordres_batiment_proprete',
+        'desordres_batiment_nuisibles',
+        'desordres_batiment_isolation',
+        'desordres_batiment_maintenance',
+        'desordres_logement_humidite',
+        'desordres_logement_nuisibles',
+        'desordres_logement_securite',
     ];
 
-    private const DESORDRES_CRITERES_WITH_PHOTOS = [
-        'desordres_batiment_isolation_infiltration_eau' => 'desordres_batiment_isolation_photos',
-        'desordres_batiment_maintenance_petites_reparations' => 'desordres_batiment_maintenance_photos',
-        'desordres_logement_chauffage_details_chauffage_dangereux' => 'desordres_logement_chauffage_details_chauffage_dangereux_photos',
-        'desordres_logement_securite_sol_glissant' => 'desordres_logement_securite_photos',
-        'desordres_logement_securite_balcons' => 'desordres_logement_securite_photos',
-        'desordres_logement_securite_plomb' => 'desordres_logement_securite_photos',
-        'desordres_logement_electricite_installation_dangereuse' => 'desordres_logement_electricite_installation_dangereuse_details_photos',
+    private const array DESORDRES_CRITERES_WITH_PHOTOS = [
+        'desordres_logement_chauffage_details_chauffage_dangereux',
+        'desordres_logement_electricite_installation_dangereuse',
     ];
 
     public ?Suivi $suivi;
@@ -78,9 +76,13 @@ class NewSignalementCheckFileMessageHandler
         }
 
         $desordres = '';
-        foreach (self::DESORDRES_CATEGORIES_WITH_PHOTOS as $desordreCategorieSlug => $desordreSlug) {
-            $categorieLabel = $this->hasCritereFromCategorieSlug($signalement, $desordreCategorieSlug);
-            if ($categorieLabel && !$this->hasPhotoForCritere($signalement, $desordreSlug)) {
+        $signalementDesordreCategorieSlugs = $signalement->getDesordreCategorieSlugs();
+        foreach (self::DESORDRES_CATEGORIES_WITH_PHOTOS as $desordreCategorieSlug) {
+            if (!in_array($desordreCategorieSlug, $signalementDesordreCategorieSlugs)) {
+                continue;
+            }
+            $categorieLabel = $this->getCategorieLabelFromCategorieSlug($desordreCategorieSlug);
+            if ($categorieLabel && !$this->hasPhotoForCritere($signalement, $desordreCategorieSlug)) {
                 if (!empty($desordres)) {
                     $desordres .= ' / ';
                 }
@@ -88,9 +90,13 @@ class NewSignalementCheckFileMessageHandler
             }
         }
 
-        foreach (self::DESORDRES_CRITERES_WITH_PHOTOS as $desordrePrecisionSlug => $desordreSlug) {
-            $categorieLabel = $this->hasCritereFromCritereSlug($signalement, $desordrePrecisionSlug);
-            if ($categorieLabel && !$this->hasPhotoForCritere($signalement, $desordreSlug)) {
+        $signalementDesordrePrecisionSlugs = $signalement->getDesordrePrecisionSlugs();
+        foreach (self::DESORDRES_CRITERES_WITH_PHOTOS as $desordrePrecisionSlug) {
+            if (!in_array($desordrePrecisionSlug, $signalementDesordrePrecisionSlugs)) {
+                continue;
+            }
+            $categorieLabel = $this->getCategorieLabelFromCritereSlug($desordrePrecisionSlug);
+            if ($categorieLabel && !$this->hasPhotoForCritere($signalement, $desordrePrecisionSlug)) {
                 if (!empty($desordres)) {
                     $desordres .= ' / ';
                 }
@@ -120,26 +126,25 @@ class NewSignalementCheckFileMessageHandler
         return false;
     }
 
-    private function hasCritereFromCategorieSlug(Signalement $signalement, string $desordreCategorieSlug): ?string
+    private function getCategorieLabelFromCategorieSlug(string $desordreCategorieSlug): ?string
     {
-        $desordreCriteres = $this->desordreCritereRepository->findBy(
+        $desordresCritere = $this->desordreCritereRepository->findBy(
             ['slugCategorie' => $desordreCategorieSlug]
         );
-        foreach ($desordreCriteres as $desordreCritere) {
-            if ($signalement->hasDesordreCritere($desordreCritere)) {
-                return $desordreCritere->getLabelCategorie();
-            }
+        $desordreCritere = $desordresCritere[0];
+        if ($desordreCritere) {
+            return $desordreCritere->getLabelCategorie();
         }
 
         return null;
     }
 
-    private function hasCritereFromCritereSlug(Signalement $signalement, string $desordreCritereSlug): ?string
+    private function getCategorieLabelFromCritereSlug(string $desordreCritereSlug): ?string
     {
         $desordreCritere = $this->desordreCritereRepository->findOneBy(
             ['slugCritere' => $desordreCritereSlug]
         );
-        if ($signalement->hasDesordreCritere($desordreCritere)) {
+        if ($desordreCritere) {
             return $desordreCritere->getLabelCategorie();
         }
 
