@@ -25,11 +25,6 @@ class BackUserControllerTest extends WebTestCase
         $route = $router->generate('back_user_index');
         $client->request('GET', $route, $params);
 
-        $feature_export_users = static::getContainer()->getParameter('feature_export_users');
-        if (!$feature_export_users) {
-            $this->markTestSkipped('La fonctionnalité "feature_export_users" est désactivée.');
-        }
-
         if ($nb > 1) {
             $this->assertSelectorTextContains('h2', $nb.' utilisateurs');
         } else {
@@ -67,10 +62,6 @@ class BackUserControllerTest extends WebTestCase
         $route = $router->generate('back_user_export');
         $client->request('GET', $route, $params);
 
-        $feature_export_users = static::getContainer()->getParameter('feature_export_users');
-        if (!$feature_export_users) {
-            $this->markTestSkipped('La fonctionnalité "feature_export_users" est désactivée.');
-        }
         $this->assertSelectorTextContains('h1', 'Exporter la liste des '.$nb.' utilisateurs');
     }
 

@@ -5,15 +5,13 @@
         </div>
         <div class="fr-col-3 fr-col-md-6">
             <div class="fr-text--right fr-btns-group fr-btns-group--sm fr-btns-group--inline fr-btns-group--right fr-btns-group--icon-left">
-                {% if platform.feature_historique_affectations %}
-                    <button 
-                        class="fr-btn fr-btn--secondary fr-btn--icon-left"
-                        data-fr-opened="false"
-                        aria-controls="fr-modal-historique-affectation"
-                    >
-                        Voir l'historique des affectations
-                    </button>
-                {% endif %}
+                <button 
+                    class="fr-btn fr-btn--secondary fr-btn--icon-left"
+                    data-fr-opened="false"
+                    aria-controls="fr-modal-historique-affectation"
+                >
+                    Voir l'historique des affectations
+                </button>
                 {% if signalement.statut is not same as constant('App\\Entity\\Signalement::STATUS_CLOSED') %}
                     <button class="fr-btn fr-fi-add-line fr-btn--icon-left" data-fr-opened="false" aria-controls="fr-modal-affectation">
                         Affecter des partenaires

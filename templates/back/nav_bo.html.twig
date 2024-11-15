@@ -168,13 +168,11 @@
                                            target="_self"
                                            {% if 'back_partner' in app.request.get('_route') %}aria-current="page"{% endif %}>Partenaires</a>
                                     </li>
-                                    {% if platform.feature_export_users %}
-                                        <li class="fr-sidemenu__item {% if 'back_user_' in app.request.get('_route') %}fr-sidemenu__item--active{% endif %}">
-                                            <a class="fr-sidemenu__link" href="{{ path('back_user_index') }}"
-                                               target="_self"
-                                               {% if 'back_user_' in app.request.get('_route') %}aria-current="page"{% endif %}>Utilisateurs</a>
-                                        </li>
-                                    {% endif %}
+                                    <li class="fr-sidemenu__item {% if 'back_user_' in app.request.get('_route') %}fr-sidemenu__item--active{% endif %}">
+                                        <a class="fr-sidemenu__link" href="{{ path('back_user_index') }}"
+                                            target="_self"
+                                            {% if 'back_user_' in app.request.get('_route') %}aria-current="page"{% endif %}>Utilisateurs</a>
+                                    </li>
                                     <li class="fr-sidemenu__item {% if 'back_tags' in app.request.get('_route') %}fr-sidemenu__item--active{% endif %}">
                                         <a class="fr-sidemenu__link" href="{{ path('back_tags_index') }}"
                                            target="_self"
