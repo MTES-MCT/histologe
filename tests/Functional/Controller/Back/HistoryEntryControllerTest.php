@@ -22,10 +22,6 @@ class HistoryEntryControllerTest extends WebTestCase
 
     public function testAccessDeniedForNonAdminTerritoryRole()
     {
-        $featureHistoriqueAffectations = static::getContainer()->getParameter('feature_historique_affectations');
-        if (!$featureHistoriqueAffectations) {
-            $this->markTestSkipped('La fonctionnalité "feature_historique_affectations" est désactivée.');
-        }
         $user = $this->userRepository->findOneBy(['email' => 'user-13-01@histologe.fr']);
         $this->client->loginUser($user);
 
@@ -38,10 +34,6 @@ class HistoryEntryControllerTest extends WebTestCase
 
     public function testListHistoryAffectationWithValidSignalementId()
     {
-        $featureHistoriqueAffectations = static::getContainer()->getParameter('feature_historique_affectations');
-        if (!$featureHistoriqueAffectations) {
-            $this->markTestSkipped('La fonctionnalité "feature_historique_affectations" est désactivée.');
-        }
         $user = $this->userRepository->findOneBy(['email' => 'admin-territoire-13-01@histologe.fr']);
         $this->client->loginUser($user);
 
@@ -62,10 +54,6 @@ class HistoryEntryControllerTest extends WebTestCase
 
     public function testListHistoryAffectationWithoutSignalementId()
     {
-        $featureHistoriqueAffectations = static::getContainer()->getParameter('feature_historique_affectations');
-        if (!$featureHistoriqueAffectations) {
-            $this->markTestSkipped('La fonctionnalité "feature_historique_affectations" est désactivée.');
-        }
         $user = $this->userRepository->findOneBy(['email' => 'admin-territoire-13-01@histologe.fr']);
         $this->client->loginUser($user);
 

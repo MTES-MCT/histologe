@@ -141,11 +141,6 @@ class HistoryEntryManagerTest extends WebTestCase
 
     public function testGetAffectationHistory()
     {
-        $featureHistoriqueAffectations = static::getContainer()->getParameter('feature_historique_affectations');
-        if (!$featureHistoriqueAffectations) {
-            $this->markTestSkipped('La fonctionnalité "feature_historique_affectations" est désactivée.');
-        }
-
         /** @var Signalement $signalement */
         $signalement = $this->managerRegistry->getRepository(Signalement::class)->findOneBy(
             ['reference' => '2022-8']
@@ -160,10 +155,6 @@ class HistoryEntryManagerTest extends WebTestCase
 
     public function testGetAffectationHistoryWithAffectation()
     {
-        $featureHistoriqueAffectations = static::getContainer()->getParameter('feature_historique_affectations');
-        if (!$featureHistoriqueAffectations) {
-            $this->markTestSkipped('La fonctionnalité "feature_historique_affectations" est désactivée.');
-        }
         /** @var UserRepository $userRepository */
         $userRepository = $this->entityManager->getRepository(User::class);
         $user = $userRepository->findOneBy(['email' => 'user-01-01@histologe.fr']);

@@ -32,7 +32,7 @@ readonly class MenuBuilder
         $adminToolsSubItem = (new MenuItem(label: 'Outils Admin', roleGranted: User::ROLE_ADMIN_PARTNER))
             ->addChild(new MenuItem(label: 'Partenaires', route: 'back_partner_index', roleGranted: User::ROLE_ADMIN_TERRITORY))
             ->addChild(new MenuItem(label: 'Mon partenaire', route: 'back_partner_view', routeParameters: ['id' => $user->getPartner()?->getId()], roleGranted: User::ROLE_ADMIN_PARTNER, roleNotGranted: User::ROLE_ADMIN_TERRITORY))
-            ->addChild(new MenuItem(label: 'Utilisateurs', route: 'back_user_index', roleGranted: User::ROLE_ADMIN_TERRITORY, featureEnable: (bool) $this->parameterBag->get('feature_export_users')))
+            ->addChild(new MenuItem(label: 'Utilisateurs', route: 'back_user_index', roleGranted: User::ROLE_ADMIN_TERRITORY))
             ->addChild(new MenuItem(label: 'Etiquettes', route: 'back_tags_index', roleGranted: User::ROLE_ADMIN_TERRITORY))
             ->addChild(new MenuItem(label: 'Zones', route: 'back_zone_index', roleGranted: User::ROLE_ADMIN_TERRITORY, featureEnable: (bool) $this->parameterBag->get('feature_zonage')))
             ->addChild(new MenuItem(route: 'back_partner_new'))

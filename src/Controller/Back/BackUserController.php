@@ -8,7 +8,6 @@ use App\Repository\UserRepository;
 use App\Service\SearchUser;
 use App\Service\UserExportLoader;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -21,15 +20,6 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 class BackUserController extends AbstractController
 {
     public const MAX_LIST_PAGINATION = 25;
-
-    public function __construct(
-        #[Autowire(env: 'FEATURE_EXPORT_USERS')]
-        bool $featureExportUsers,
-    ) {
-        if (!$featureExportUsers) {
-            throw $this->createNotFoundException();
-        }
-    }
 
     #[Route('/', name: 'back_user_index', methods: ['GET'])]
     public function index(Request $request, UserRepository $userRepository): Response

@@ -6,9 +6,7 @@
 {% block content %}
     {% if not needValidation and canPartnerAffectation %}
         {% include '_partials/_modal_affectation.html.twig' %}
-        {% if platform.feature_historique_affectations and canPartnerAffectation %}
-            {% include '_partials/_modal_historique_affectation.html.twig' %}
-        {% endif %}
+        {% include '_partials/_modal_historique_affectation.html.twig' %}
     {% endif %}
     {% include '_partials/_modal_dpe.html.twig' %}
     {% if signalement.statut is not same as constant('App\\Entity\\Signalement::STATUS_NEED_VALIDATION') and not isClosed and not isClosedForMe and ((isAffected and isAccepted)) or is_granted('ROLE_ADMIN_TERRITORY') %}
