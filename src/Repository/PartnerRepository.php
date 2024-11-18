@@ -47,7 +47,7 @@ class PartnerRepository extends ServiceEntityRepository
         ?Territory $territory,
         ?PartnerType $type,
         ?string $filterTerms,
-        $page
+        $page,
     ): Paginator {
         $maxResult = Partner::MAX_LIST_PAGINATION;
         $firstResult = ($page - 1) * $maxResult;
@@ -109,7 +109,7 @@ class PartnerRepository extends ServiceEntityRepository
         ?Territory $territory,
         bool $isNoneTerritory,
         ?string $filterTerms,
-        $page
+        $page,
     ): Paginator {
         $maxResult = Partner::MAX_LIST_PAGINATION;
         $firstResult = ($page - 1) * $maxResult;

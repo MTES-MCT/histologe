@@ -10,7 +10,7 @@ class NotificationMailerRegistry
     private iterable $notificationMailers;
 
     public function __construct(
-        #[TaggedIterator('app.notification_mailer')] iterable $notificationMailers
+        #[TaggedIterator('app.notification_mailer')] iterable $notificationMailers,
     ) {
         $this->notificationMailers = $notificationMailers;
     }

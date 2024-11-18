@@ -105,7 +105,7 @@ class QualificationServiceTest extends KernelTestCase
         array $qualificationsToCheck,
         array $qualificationsStatusToCheck,
         string $isAssuranceContactee = 'non',
-        ?int $consoFinale = null
+        ?int $consoFinale = null,
     ): void {
         $signalementRepository = $this->entityManager->getRepository(Signalement::class);
         $desordrePrecisionRepository = $this->entityManager->getRepository(DesordrePrecision::class);

@@ -16,6 +16,7 @@ final class Version20241023122343 extends AbstractMigration
 
     public function up(Schema $schema): void
     {
+        $this->skipIf(true, "Already executed in production");
         $idPartner7130 = 7130;
         $idPartner7131 = 7131;
 
@@ -1414,12 +1415,8 @@ final class Version20241023122343 extends AbstractMigration
             '2023-213',
         ];
 
-        $this->connection->beginTransaction();
-
         $this->insertNewAffectations($idPartner7130, $listToAssignTo7130);
         $this->insertNewAffectations($idPartner7131, $listToAssignTo7131);
-
-        $this->connection->commit();
     }
 
     private function insertNewAffectations($idNewPartner, $listToAssign): void

@@ -65,7 +65,7 @@ class PartnerTest extends KernelTestCase
         string $zip,
         string $territoryName,
         string $insee,
-        string $partnerName
+        string $partnerName,
     ): void {
         $territory = $this->getTerritory($territoryName)->setZip($zip);
         $signalement = $this->getSignalement($territory);

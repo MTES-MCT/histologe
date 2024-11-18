@@ -9,7 +9,7 @@ use Symfony\Component\Validator\ConstraintValidator;
 
 class ValidPartnerTypeValidator extends ConstraintValidator
 {
-    public function validate($value, Constraint $constraint)
+    public function validate($value, Constraint $constraint): void
     {
         if (!$constraint instanceof ValidPartnerType) {
             throw new UnexpectedTypeException($constraint, __NAMESPACE__.'\ValidPartnerType');

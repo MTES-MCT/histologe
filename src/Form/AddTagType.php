@@ -15,7 +15,7 @@ class AddTagType extends AbstractType
     private $isAdmin = false;
 
     public function __construct(
-        private readonly Security $security
+        private readonly Security $security,
     ) {
         if ($this->security->isGranted('ROLE_ADMIN')) {
             $this->isAdmin = true;

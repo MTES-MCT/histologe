@@ -549,7 +549,7 @@ class PartnerController extends AbstractController
     public function deleteUser(
         Request $request,
         UserManager $userManager,
-        NotificationMailerRegistry $notificationMailerRegistry
+        NotificationMailerRegistry $notificationMailerRegistry,
     ): Response {
         $userId = $request->request->get('user_id');
         if (!$this->isCsrfTokenValid('partner_user_delete', $request->request->get('_token'))) {
@@ -587,7 +587,7 @@ class PartnerController extends AbstractController
     #[IsGranted('ROLE_ADMIN_PARTNER')]
     public function checkMail(
         Request $request,
-        UserRepository $userRepository
+        UserRepository $userRepository,
     ): Response {
         if ($this->isCsrfTokenValid('partner_checkmail', $request->request->get('_token'))) {
             $userExist = $userRepository->findOneBy(['email' => $request->get('email')]);

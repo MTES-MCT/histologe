@@ -25,7 +25,7 @@ class SuiviRepository extends ServiceEntityRepository
     public function __construct(
         ManagerRegistry $registry,
         #[Autowire(env: 'LIMIT_DAILY_RELANCES_BY_REQUEST')]
-        private int $limitDailyRelancesByRequest
+        private int $limitDailyRelancesByRequest,
     ) {
         parent::__construct($registry, Suivi::class);
     }
@@ -175,7 +175,7 @@ class SuiviRepository extends ServiceEntityRepository
 
     private function getSignalementsQuery(
         ?Territory $territory = null,
-        ?Partner $partner = null
+        ?Partner $partner = null,
     ): string {
         $whereTerritory = $wherePartner = $innerPartnerJoin = '';
 

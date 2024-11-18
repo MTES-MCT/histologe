@@ -9,7 +9,7 @@ class TerritoryManager extends AbstractManager
 {
     public function __construct(
         protected ManagerRegistry $managerRegistry,
-        protected string $entityName = Territory::class
+        protected string $entityName = Territory::class,
     ) {
         parent::__construct($managerRegistry, $entityName);
     }

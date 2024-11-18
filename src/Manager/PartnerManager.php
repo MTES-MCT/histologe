@@ -13,7 +13,7 @@ class PartnerManager extends AbstractManager
     public function __construct(
         private PartnerRepository $partnerRepository,
         protected ManagerRegistry $managerRegistry,
-        protected string $entityName = Partner::class
+        protected string $entityName = Partner::class,
     ) {
         parent::__construct($managerRegistry, $entityName);
     }

@@ -23,7 +23,7 @@ class AttributeParser
         string $class,
         string $field,
         ProfileDeclarant $profileDeclarant,
-        bool $isNewForm = true
+        bool $isNewForm = true,
     ): string {
         $attributes = self::parse($class, $field, NotBlank::class);
         $groups = [];

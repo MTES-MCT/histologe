@@ -20,7 +20,7 @@ class LoadAffectationData extends Fixture implements OrderedFixtureInterface
         private SignalementRepository $signalementRepository,
         private PartnerRepository $partnerRepository,
         private TerritoryRepository $territoryRepository,
-        private UserRepository $userRepository
+        private UserRepository $userRepository,
     ) {
     }
 

@@ -39,7 +39,7 @@ class FileFactoryTest extends TestCase
         array $dataItem,
         string $filename,
         string $fileType,
-        DocumentType $documentType
+        DocumentType $documentType,
     ): void {
         $signalement = $this->getSignalement();
         $file = (new FileFactory())->createFromFileArray($dataItem, $signalement);

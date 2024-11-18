@@ -8,7 +8,7 @@ use App\Entity\Suivi;
 use App\Entity\User;
 use App\Factory\SuiviFactory;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
-use Symfony\Component\Security\Core\Security;
+use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\Security\Core\User\UserInterface;
 
 class SuiviFactoryTest extends KernelTestCase

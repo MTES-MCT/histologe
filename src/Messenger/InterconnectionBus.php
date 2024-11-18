@@ -13,7 +13,7 @@ class InterconnectionBus
 
     public function __construct(
         private readonly MessageBusInterface $messageBus,
-        #[TaggedIterator('app.dossier_message_factory')] iterable $dossierMessageFactories
+        #[TaggedIterator('app.dossier_message_factory')] iterable $dossierMessageFactories,
     ) {
         $this->dossierMessageFactories = $dossierMessageFactories;
     }

@@ -6,7 +6,7 @@ class ResourceCreateRequest
 {
     public function __construct(
         public string $reference,
-        public string $message
+        public string $message,
     ) {
     }
 }

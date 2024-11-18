@@ -58,7 +58,7 @@ class JobEventRepository extends ServiceEntityRepository implements EntityCleane
     }
 
     public function findLastEsaboraJobByPartner(
-        Partner $partner
+        Partner $partner,
     ): array {
         return $this->createQueryBuilder('j')
             ->select('MAX(j.createdAt) AS last_event')
@@ -72,7 +72,7 @@ class JobEventRepository extends ServiceEntityRepository implements EntityCleane
 
     public function findFailedEsaboraDossierByPartnerTypeByAction(
         PartnerType $partnerType,
-        string $action
+        string $action,
     ): ?array {
         $qb = $this->createQueryBuilder('j');
 

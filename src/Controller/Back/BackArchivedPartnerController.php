@@ -19,7 +19,7 @@ class BackArchivedPartnerController extends AbstractController
     public function index(
         Request $request,
         TerritoryRepository $territoryRepository,
-        PartnerRepository $partnerRepository
+        PartnerRepository $partnerRepository,
     ): Response {
         $page = $request->get('page') ?? 1;
 

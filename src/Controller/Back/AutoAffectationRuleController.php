@@ -24,7 +24,7 @@ class AutoAffectationRuleController extends AbstractController
     public function index(
         Request $request,
         TerritoryRepository $territoryRepository,
-        AutoAffectationRuleRepository $autoAffectationRuleRepository
+        AutoAffectationRuleRepository $autoAffectationRuleRepository,
     ): Response {
         $page = $request->get('page') ?? 1;
 
@@ -61,7 +61,7 @@ class AutoAffectationRuleController extends AbstractController
     public function deleteAutoAffectationRule(
         Request $request,
         AutoAffectationRuleRepository $autoAffectationRuleRepository,
-        EntityManagerInterface $entityManager
+        EntityManagerInterface $entityManager,
     ): Response {
         $ruleId = $request->request->get('autoaffectationrule_id');
         if (!$this->isCsrfTokenValid('autoaffectationrule_delete', $request->request->get('_token'))) {
@@ -90,7 +90,7 @@ class AutoAffectationRuleController extends AbstractController
     #[IsGranted('ROLE_ADMIN')]
     public function reactiveAutoAffectationRule(
         AutoAffectationRule $autoAffectationRule,
-        EntityManagerInterface $entityManager
+        EntityManagerInterface $entityManager,
     ): Response {
         if (AutoAffectationRule::STATUS_ACTIVE === $autoAffectationRule->getStatus()) {
             $this->addFlash('error', 'Cette règle est déjà active.');

@@ -14,7 +14,7 @@ class SituationFoyer
         private ?string $travailleurSocialQuitteLogement = null,
         private ?string $travailleurSocialPreavisDepart = null,
         private ?string $travailleurSocialAccompagnement = null,
-        private ?string $travailleurSocialAccompagnementDeclarant = null
+        private ?string $travailleurSocialAccompagnementDeclarant = null,
     ) {
     }
 

@@ -22,7 +22,7 @@ class MotifClotureStatisticProvider
     public function getData(
         ?Territory $territory,
         ?int $year,
-        string $type = 'doughnut'
+        string $type = 'doughnut',
     ): array {
         $countPerMotifsCloture = $this->signalementRepository->countByMotifCloture($territory, $year, true);
 

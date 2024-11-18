@@ -226,7 +226,7 @@ class SignalementController extends AbstractController
         Request $request,
         ManagerRegistry $doctrine,
         AffectationRepository $affectationRepository,
-        NotificationRepository $notificationRepository
+        NotificationRepository $notificationRepository,
     ): JsonResponse {
         $this->denyAccessUnlessGranted('SIGN_DELETE', $signalement);
         if ($this->isCsrfTokenValid(
@@ -257,7 +257,7 @@ class SignalementController extends AbstractController
         Signalement $signalement,
         Request $request,
         TagRepository $tagRepository,
-        EntityManagerInterface $entityManager
+        EntityManagerInterface $entityManager,
     ): Response {
         $this->denyAccessUnlessGranted('SIGN_EDIT', $signalement);
 

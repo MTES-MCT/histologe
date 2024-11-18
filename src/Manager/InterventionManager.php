@@ -30,7 +30,7 @@ class InterventionManager extends AbstractManager
         private readonly FileFactory $fileFactory,
         private readonly Security $security,
         private readonly LoggerInterface $logger,
-        string $entityName = Intervention::class
+        string $entityName = Intervention::class,
     ) {
         parent::__construct($managerRegistry, $entityName);
     }
@@ -130,7 +130,7 @@ class InterventionManager extends AbstractManager
 
     public function confirmVisiteFromRequest(
         VisiteRequest $visiteRequest,
-        ?Intervention $intervention = null
+        ?Intervention $intervention = null,
     ): ?Intervention {
         if (!$visiteRequest->getDetails()) {
             return null;
@@ -208,7 +208,7 @@ class InterventionManager extends AbstractManager
         Intervention $intervention,
         string $document,
         string $fileType = File::FILE_TYPE_DOCUMENT,
-        DocumentType $documentType = DocumentType::PROCEDURE_RAPPORT_DE_VISITE
+        DocumentType $documentType = DocumentType::PROCEDURE_RAPPORT_DE_VISITE,
     ): File {
         /** @var User $user */
         $user = $this->security->getUser();

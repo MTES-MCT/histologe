@@ -40,7 +40,7 @@ class ExportSignalementController extends AbstractController
     #[Route('/file', name: 'back_signalement_list_export_file', methods: ['POST'])]
     public function exportFile(
         Request $request,
-        MessageBusInterface $messageBus
+        MessageBusInterface $messageBus,
     ): RedirectResponse {
         $selectedColumns = $request->get('cols') ?? [];
         $format = $request->get('file-format');

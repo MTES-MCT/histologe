@@ -45,7 +45,7 @@ class FirstAffectationAcceptedSpecification
         Affectation $affectation,
         Collection $affectationAccepted,
         Collection $interventions,
-        array $suiviAffectationAccepted
+        array $suiviAffectationAccepted,
     ): bool {
         return !$signalement->getIsImported()
         && 1 === $affectationAccepted->count()

@@ -21,7 +21,7 @@ class SignalementExportPdfGenerator
     public function generateToTempFolder(
         Signalement $signalement,
         string $content,
-        ?array $options = null
+        ?array $options = null,
     ): string {
         $pdfContent = $this->generate($content, $options);
 

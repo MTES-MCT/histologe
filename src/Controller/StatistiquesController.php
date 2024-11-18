@@ -30,7 +30,7 @@ class StatistiquesController extends AbstractController
         private DesordresCategoriesStatisticProvider $desordresCategoriesStatisticProvider,
         private LogementDesordresStatisticProvider $logementDesordresStatisticProvider,
         private BatimentDesordresStatisticProvider $batimentDesordresStatisticProvider,
-        private MotifClotureStatisticProvider $motifClotureStatisticProvider
+        private MotifClotureStatisticProvider $motifClotureStatisticProvider,
     ) {
     }
 

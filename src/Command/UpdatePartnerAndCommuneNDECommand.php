@@ -27,7 +27,7 @@ class UpdatePartnerAndCommuneNDECommand extends Command
         private EntityManagerInterface $entityManager,
         private CommuneRepository $communeRepository,
         private PartnerRepository $partnerRepository,
-        private TerritoryRepository $territoryRepository
+        private TerritoryRepository $territoryRepository,
     ) {
         parent::__construct();
     }

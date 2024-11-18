@@ -29,7 +29,7 @@ readonly class ListExportMessageHandler
         private UserRepository $userRepository,
         private ParameterBagInterface $parameterBag,
         private UploadHandlerService $uploadHandlerService,
-        private FileManager $fileManager
+        private FileManager $fileManager,
     ) {
     }
 

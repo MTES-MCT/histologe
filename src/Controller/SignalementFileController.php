@@ -87,7 +87,7 @@ class SignalementFileController extends AbstractController
         Request $request,
         EntityManagerInterface $entityManager,
         UploadHandlerService $uploadHandlerService,
-        FileRepository $fileRepository
+        FileRepository $fileRepository,
     ): JsonResponse {
         $this->denyAccessUnlessGranted('SIGN_USAGER_EDIT', $signalement);
         $file = $fileRepository->findOneBy(['id' => $request->get('file_id'), 'signalement' => $signalement, 'isTemp' => true]);

@@ -13,7 +13,7 @@ class AffectationAnsweredEvent extends Event
     public function __construct(
         private Affectation $affectation,
         private User $user,
-        private array $params
+        private array $params,
     ) {
     }
 

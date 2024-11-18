@@ -10,7 +10,7 @@ readonly class MenuBuilder
 {
     public function __construct(
         private ParameterBagInterface $parameterBag,
-        private Security $currentRoute
+        private Security $currentRoute,
     ) {
     }
 

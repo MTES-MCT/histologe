@@ -13,8 +13,8 @@ use App\Service\Interconnection\Esabora\Response\DossierVisiteSISHCollectionResp
 use App\Service\Interconnection\JobEventMetaData;
 use App\Service\UploadHandlerService;
 use Psr\Log\LoggerInterface;
+use Symfony\Component\Emoji\EmojiTransliterator;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Intl\Transliterator\EmojiTransliterator;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
 
 class EsaboraSISHService extends AbstractEsaboraService
@@ -55,7 +55,7 @@ class EsaboraSISHService extends AbstractEsaboraService
 
     public function pushPersonne(
         DossierMessageSISH $dossierMessageSISH,
-        DossierMessageSISHPersonne $dossierMessageSISHPersonne
+        DossierMessageSISHPersonne $dossierMessageSISHPersonne,
     ): DossierPushSISHResponse {
         $url = $dossierMessageSISH->getUrl();
         $token = $dossierMessageSISH->getToken();
@@ -190,7 +190,7 @@ class EsaboraSISHService extends AbstractEsaboraService
         string $url,
         string $token,
         array $payload,
-        DossierMessageInterface $dossierMessage
+        DossierMessageInterface $dossierMessage,
     ): DossierPushSISHResponse {
         $statusCode = Response::HTTP_SERVICE_UNAVAILABLE;
         try {
@@ -261,19 +261,18 @@ class EsaboraSISHService extends AbstractEsaboraService
         ];
     }
 
+    /**
+     * @throws \IntlException
+     */
     private function preparePayloadPushDossier(
         DossierMessageSISH $dossierMessageSISH,
-        bool $encodeDocuments = true
     ): array {
-        $piecesJointes = [];
-        if ($encodeDocuments) {
-            $piecesJointes = array_map(function ($pieceJointe) {
-                $filepath = $this->uploadHandlerService->getTmpFilepath($pieceJointe['documentContent']);
-                $pieceJointe['documentContent'] = base64_encode(file_get_contents($filepath));
+        $piecesJointes = array_map(function ($pieceJointe) {
+            $filepath = $this->uploadHandlerService->getTmpFilepath($pieceJointe['documentContent']);
+            $pieceJointe['documentContent'] = base64_encode(file_get_contents($filepath));
 
-                return $pieceJointe;
-            }, $dossierMessageSISH->getPiecesJointesDocuments());
-        }
+            return $pieceJointe;
+        }, $dossierMessageSISH->getPiecesJointesDocuments());
 
         $transliterator = EmojiTransliterator::create('strip');
 
@@ -468,7 +467,7 @@ class EsaboraSISHService extends AbstractEsaboraService
 
     public function preparePayloadPushPersonne(
         DossierMessageSISH $dossierMessageSISH,
-        DossierMessageSISHPersonne $dossierMessageSISHPersonne
+        DossierMessageSISHPersonne $dossierMessageSISHPersonne,
     ): array {
         return [
             [

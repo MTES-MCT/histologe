@@ -144,7 +144,7 @@ class EsaboraSCHSService extends AbstractEsaboraService
      */
     public function getDossierEventFiles(
         Affectation $affectation,
-        DossierEventSCHS $dossierEventSCHS
+        DossierEventSCHS $dossierEventSCHS,
     ): DossierEventFilesSCHSResponse {
         list($url, $token) = $affectation->getPartner()->getEsaboraCredential();
         $url .= self::TASK_GET_DOCUMENTS;

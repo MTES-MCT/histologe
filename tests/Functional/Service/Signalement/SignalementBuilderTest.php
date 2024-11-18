@@ -22,6 +22,7 @@ use App\Service\Signalement\Qualification\SignalementQualificationUpdater;
 use App\Service\Signalement\ReferenceGenerator;
 use App\Service\Signalement\SignalementBuilder;
 use App\Tests\FixturesHelper;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 
 class SignalementBuilderTest extends KernelTestCase
@@ -29,6 +30,7 @@ class SignalementBuilderTest extends KernelTestCase
     use FixturesHelper;
 
     private const FR_PHONE_COUNTRY_CODE = '33';
+    private ?EntityManagerInterface $entityManager = null;
 
     protected SignalementBuilder $signalementBuilder;
     private DesordreCritereRepository $desordreCritereRepository;
@@ -37,7 +39,7 @@ class SignalementBuilderTest extends KernelTestCase
     protected function setUp(): void
     {
         self::bootKernel();
-
+        $this->entityManager = static::getContainer()->get(EntityManagerInterface::class);
         $territoryRepository = static::getContainer()->get(TerritoryRepository::class);
         $bailleurRepository = static::getContainer()->get(BailleurRepository::class);
         $referenceGenerator = static::getContainer()->get(ReferenceGenerator::class);
@@ -75,6 +77,8 @@ class SignalementBuilderTest extends KernelTestCase
 
     public function testBuildSignalement(): void
     {
+        $this->entityManager->beginTransaction();
+
         $payload = json_decode(
             file_get_contents(__DIR__.'../../../../../src/DataFixtures/Files/signalement_draft_payload/locataire.json'),
             true
@@ -184,10 +188,14 @@ class SignalementBuilderTest extends KernelTestCase
         $this->assertCount(3, $signalement->getDesordreCategories());
         $this->assertCount(5, $signalement->getDesordreCriteres());
         $this->assertCount(5, $signalement->getDesordrePrecisions());
+
+        $this->entityManager->commit();
     }
 
     public function testBuildSignalementAllDesordres(): void
     {
+        $this->entityManager->beginTransaction();
+
         $payload = json_decode(
             file_get_contents(__DIR__.'../../../../../src/DataFixtures/Files/signalement_draft_payload/locataire_all_in.json'),
             true
@@ -245,8 +253,13 @@ class SignalementBuilderTest extends KernelTestCase
             ['desordrePrecisionSlug' => 'desordres_type_composition_logement_suroccupation_allocataire']
         );
         $this->assertTrue($signalement->getDesordrePrecisions()->contains($desordrePrecision));
+
+        $this->entityManager->commit();
     }
 
+    /**
+     * @throws \ReflectionException
+     */
     public function testIsConstructionAvant1949(): void
     {
         $this->assertNull($this->invokeMethod($this->signalementBuilder, 'isConstructionAvant1949', [null]));
@@ -254,11 +267,13 @@ class SignalementBuilderTest extends KernelTestCase
         $this->assertFalse($this->invokeMethod($this->signalementBuilder, 'isConstructionAvant1949', ['1949']));
     }
 
+    /**
+     * @throws \ReflectionException
+     */
     private function invokeMethod(&$object, $methodName, array $parameters = [])
     {
         $reflection = new \ReflectionClass($object::class);
         $method = $reflection->getMethod($methodName);
-        $method->setAccessible(true);
 
         return $method->invokeArgs($object, $parameters);
     }

@@ -18,7 +18,7 @@ readonly class ClearEntitiesHandler
     public function handle(
         callable $deleteFunction,
         string $entityName,
-        string $cronLabel
+        string $cronLabel,
     ): int {
         $countDeletedSuccess = $deleteFunction();
         $this->notificationMailerRegistry->send(

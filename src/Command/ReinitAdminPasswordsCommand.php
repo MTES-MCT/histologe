@@ -30,7 +30,7 @@ class ReinitAdminPasswordsCommand extends Command
         private UserManager $userManager,
         private ValidatorInterface $validator,
         private UserRepository $userRepository,
-        private NotificationMailerRegistry $notificationMailerRegistry
+        private NotificationMailerRegistry $notificationMailerRegistry,
     ) {
         parent::__construct();
     }

@@ -198,7 +198,7 @@ class TypeCompositionLogement
             return match ($this->compositionLogementPieceUnique) {
                 'piece_unique' => 'Pièce unique',
                 'plusieurs_pieces' => 'Plusieurs pièces',
-                default => $this->compositionLogementPieceUnique
+                default => $this->compositionLogementPieceUnique,
             };
         }
 

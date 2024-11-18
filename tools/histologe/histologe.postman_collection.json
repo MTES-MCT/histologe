@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "b01eeea0-49e2-4e04-ae9e-0d1944383f6d",
+		"_postman_id": "44cd33a6-6154-47ad-a9c4-cb1b29c9f06c",
 		"name": "histologe",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
 		"_exporter_id": "1569180"
@@ -18,13 +18,14 @@
 								"method": "GET",
 								"header": [],
 								"url": {
-									"raw": "http://localhost:8080/api/questions?profil=tous",
+									"raw": "http://localhost:8080/public/api/questions?profil=tous",
 									"protocol": "http",
 									"host": [
 										"localhost"
 									],
 									"port": "8080",
 									"path": [
+										"public",
 										"api",
 										"questions"
 									],
@@ -44,13 +45,14 @@
 								"method": "GET",
 								"header": [],
 								"url": {
-									"raw": "http://localhost:8080/api/questions?profil=locataire",
+									"raw": "http://localhost:8080/public/api/questions?profil=locataire",
 									"protocol": "http",
 									"host": [
 										"localhost"
 									],
 									"port": "8080",
 									"path": [
+										"public",
 										"api",
 										"questions"
 									],
@@ -70,13 +72,14 @@
 								"method": "GET",
 								"header": [],
 								"url": {
-									"raw": "http://localhost:8080/api/questions?profil=bailleur_occupant",
+									"raw": "http://localhost:8080/public/api/questions?profil=bailleur_occupant",
 									"protocol": "http",
 									"host": [
 										"localhost"
 									],
 									"port": "8080",
 									"path": [
+										"public",
 										"api",
 										"questions"
 									],
@@ -96,13 +99,14 @@
 								"method": "GET",
 								"header": [],
 								"url": {
-									"raw": "http://localhost:8080/api/questions?profil=tiers_particulier",
+									"raw": "http://localhost:8080/public/api/questions?profil=tiers_particulier",
 									"protocol": "http",
 									"host": [
 										"localhost"
 									],
 									"port": "8080",
 									"path": [
+										"public",
 										"api",
 										"questions"
 									],
@@ -122,13 +126,14 @@
 								"method": "GET",
 								"header": [],
 								"url": {
-									"raw": "http://localhost:8080/api/questions?profil=tiers_pro",
+									"raw": "http://localhost:8080/public/api/questions?profil=tiers_pro",
 									"protocol": "http",
 									"host": [
 										"localhost"
 									],
 									"port": "8080",
 									"path": [
+										"public",
 										"api",
 										"questions"
 									],
@@ -148,13 +153,14 @@
 								"method": "GET",
 								"header": [],
 								"url": {
-									"raw": "http://localhost:8080/api/questions?profil=bailleur",
+									"raw": "http://localhost:8080/public/api/questions?profil=bailleur",
 									"protocol": "http",
 									"host": [
 										"localhost"
 									],
 									"port": "8080",
 									"path": [
+										"public",
 										"api",
 										"questions"
 									],
@@ -174,13 +180,14 @@
 								"method": "GET",
 								"header": [],
 								"url": {
-									"raw": "http://localhost:8080/api/questions?profil=service_secours",
+									"raw": "http://localhost:8080/public/api/questions?profil=service_secours",
 									"protocol": "http",
 									"host": [
 										"localhost"
 									],
 									"port": "8080",
 									"path": [
+										"public",
 										"api",
 										"questions"
 									],

@@ -250,13 +250,13 @@ class SignalementSearchQuery
             'public' => [1],
             'privee' => [0],
             'non_renseigne' => ['non_renseigne'],
-            default => null
+            default => null,
         };
         $filters['enfantsM6'] = match ($this->getEnfantsM6()) {
             'oui' => [1],
             'non' => [0],
             'non_renseigne' => ['non_renseigne'],
-            default => null
+            default => null,
         };
 
         if ('oui' === $this->getAllocataire()) {
@@ -293,12 +293,12 @@ class SignalementSearchQuery
         $filters['closed_affectation'] = match ($filters['statusAffectation']) {
             'cloture_un_partenaire' => ['ONE_CLOSED'],
             'cloture_tous_partenaire' => ['ALL_CLOSED'],
-            default => null
+            default => null,
         };
 
         $filters['isImported'] = match ($this->getIsImported()) {
             'oui' => true,
-            default => null
+            default => null,
         };
 
         $filters['relances_usager'] = [$this->getRelancesUsager()];

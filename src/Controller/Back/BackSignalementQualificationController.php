@@ -27,7 +27,7 @@ class BackSignalementQualificationController extends AbstractController
         Signalement $signalement,
         SignalementQualification $signalementQualification,
         SignalementManager $signalementManager,
-        SerializerInterface $serializer
+        SerializerInterface $serializer,
     ): RedirectResponse|JsonResponse {
         $this->denyAccessUnlessGranted(SignalementVoter::EDIT_NDE, $signalement);
         $decodedRequest = json_decode($request->getContent());

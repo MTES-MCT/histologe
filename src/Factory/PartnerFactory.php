@@ -10,7 +10,7 @@ use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 class PartnerFactory
 {
     public function __construct(
-        private ParameterBagInterface $parameterBag
+        private ParameterBagInterface $parameterBag,
     ) {
     }
 
@@ -19,7 +19,7 @@ class PartnerFactory
         ?string $name = null,
         ?string $email = null,
         ?PartnerType $type = null,
-        ?string $insee = null
+        ?string $insee = null,
     ): Partner {
         $partner = (new Partner())
             ->setTerritory($territory)

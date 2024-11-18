@@ -21,7 +21,7 @@ class AffectationManager extends Manager
         protected SuiviManager $suiviManager,
         protected LoggerInterface $logger,
         protected HistoryEntryManager $historyEntryManager,
-        string $entityName = Affectation::class
+        string $entityName = Affectation::class,
     ) {
         parent::__construct($this->managerRegistry, $entityName);
     }
@@ -89,7 +89,7 @@ class AffectationManager extends Manager
     public function removeAffectationsFrom(
         Signalement $signalement,
         array $postedPartner = [],
-        array $partnersIdToRemove = []
+        array $partnersIdToRemove = [],
     ): void {
         if (empty($postedPartner) && empty($partnersIdToRemove)) {
             $signalement->getAffectations()->filter(function (Affectation $affectation) {

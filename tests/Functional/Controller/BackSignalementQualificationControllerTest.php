@@ -21,7 +21,7 @@ class BackSignalementQualificationControllerTest extends WebTestCase
         array $payload,
         int $superficie,
         int $consommationEnergie,
-        QualificationStatus $qualificationStatus
+        QualificationStatus $qualificationStatus,
     ): void {
         $client = static::createClient();
 

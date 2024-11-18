@@ -17,7 +17,7 @@ class AutoAffectationRuleFactory
         ?string $inseeToExclude = null,
         ?string $partnerToExclude = null,
         ?string $parc = null,
-        ?string $allocataire = null
+        ?string $allocataire = null,
     ): AutoAffectationRule {
         $autoAffectationRule = (new AutoAffectationRule())
             ->setTerritory($territory)

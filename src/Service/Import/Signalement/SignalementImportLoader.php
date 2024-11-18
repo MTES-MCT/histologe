@@ -207,7 +207,7 @@ class SignalementImportLoader
     private function loadSignalementSituation(
         Signalement $signalement,
         array $dataMapped,
-        string $situation
+        string $situation,
     ): Signalement {
         if (isset($dataMapped[$situation]) && !empty($dataMapped[$situation])) {
             foreach ($dataMapped[$situation] as $critereLabel => $etat) {

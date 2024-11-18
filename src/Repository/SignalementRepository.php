@@ -46,7 +46,7 @@ class SignalementRepository extends ServiceEntityRepository
     public function __construct(
         ManagerRegistry $registry,
         private SearchFilter $searchFilter,
-        private array $params
+        private array $params,
     ) {
         parent::__construct($registry, Signalement::class);
     }
@@ -80,7 +80,7 @@ class SignalementRepository extends ServiceEntityRepository
         ?Territory $territory,
         ?Partner $partner,
         bool $removeImported = false,
-        bool $removeArchived = false
+        bool $removeArchived = false,
     ): int {
         $qb = $this->createQueryBuilder('s');
         $qb->select('COUNT(s.id)');
@@ -326,7 +326,7 @@ class SignalementRepository extends ServiceEntityRepository
     public function countByDesordresCriteres(
         ?Territory $territory,
         ?int $year,
-        ?DesordreCritereZone $desordreCritereZone = null
+        ?DesordreCritereZone $desordreCritereZone = null,
     ): array {
         $qb = $this->createQueryBuilder('s');
         $qb->select('COUNT(s.id) AS count, desordreCriteres.labelCritere')
@@ -434,7 +434,7 @@ class SignalementRepository extends ServiceEntityRepository
 
     public function findSignalementAffectationQuery(
         User $user,
-        array $options
+        array $options,
     ): QueryBuilder {
         $qb = $this->createQueryBuilder('s');
         $qb->select('
@@ -636,7 +636,7 @@ class SignalementRepository extends ServiceEntityRepository
         ?User $user = null,
         ?Territory $territory = null,
         ?string $field = null,
-        ?string $alias = null
+        ?string $alias = null,
     ): array|int|string {
         $user = $user?->isUserPartner() || $user?->isPartnerAdmin() ? $user : null;
 
@@ -1063,7 +1063,7 @@ class SignalementRepository extends ServiceEntityRepository
         QueryBuilder $qb,
         string $territoryZip,
         string $partnerName,
-        array $options
+        array $options,
     ): QueryBuilder {
         if (
             isset($this->params[$territoryZip])
@@ -1173,7 +1173,7 @@ class SignalementRepository extends ServiceEntityRepository
     public function createQueryBuilderActiveSignalement(
         ?Territory $territory = null,
         bool $removeImported = false,
-        bool $removeArchived = false
+        bool $removeArchived = false,
     ): QueryBuilder {
         $qb = $this->createQueryBuilder('s');
 
@@ -1254,7 +1254,7 @@ class SignalementRepository extends ServiceEntityRepository
         ?string $address,
         ?string $zipcode,
         ?string $city,
-        bool $isTiersDeclarant = true
+        bool $isTiersDeclarant = true,
     ): array {
         if (empty($email) || empty($address) || empty($zipcode) || empty($city)) {
             return [];
@@ -1322,7 +1322,7 @@ class SignalementRepository extends ServiceEntityRepository
     public function findAllArchived(
         ?Territory $territory,
         ?string $referenceTerms,
-        $page
+        $page,
     ): Paginator {
         $maxResult = Partner::MAX_LIST_PAGINATION;
         $firstResult = ($page - 1) * $maxResult;

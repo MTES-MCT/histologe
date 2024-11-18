@@ -14,7 +14,7 @@ use Doctrine\ORM\Events;
 class UserCreatedListener
 {
     public function __construct(
-        private NotificationMailerRegistry $notificationMailerRegistry
+        private NotificationMailerRegistry $notificationMailerRegistry,
     ) {
     }
 

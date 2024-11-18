@@ -164,7 +164,7 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
         bool $isNonePartner,
         ?string $filterTerms,
         bool $includeUsagers,
-        $page
+        $page,
     ): Paginator {
         $maxResult = User::MAX_LIST_PAGINATION;
         $firstResult = ($page - 1) * $maxResult;

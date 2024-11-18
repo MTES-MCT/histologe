@@ -16,7 +16,7 @@ class SuroccupationSpecification
 
     public function isSatisfiedBy(
         SituationFoyer $situationFoyer,
-        TypeCompositionLogement $typeCompositionLogement
+        TypeCompositionLogement $typeCompositionLogement,
     ): bool {
         return $this->checkSuroccupation(
             $situationFoyer->getLogementSocialAllocation(),

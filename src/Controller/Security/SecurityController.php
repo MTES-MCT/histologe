@@ -6,7 +6,7 @@ use App\Entity\Signalement;
 use App\Entity\User;
 use App\Service\ImageManipulationHandler;
 use League\Flysystem\FilesystemOperator;
-use Nelmio\ApiDocBundle\Annotation\Security;
+use Nelmio\ApiDocBundle\Attribute\Security;
 use OpenApi\Attributes as OA;
 use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -69,7 +69,7 @@ class SecurityController extends AbstractController
         ]
     )]
     public function loginApi(
-        #[CurrentUser] ?User $user = null
+        #[CurrentUser] ?User $user = null,
     ): JsonResponse {
         if (!$user) {
             return $this->json([

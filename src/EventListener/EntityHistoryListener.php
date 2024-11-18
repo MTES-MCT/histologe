@@ -134,7 +134,7 @@ readonly class EntityHistoryListener
     public function saveEntityHistory(
         HistoryEntryEvent $event,
         EntityHistoryInterface $entity,
-        array $changes
+        array $changes,
     ): void {
         try {
             $this->historyEntryManager->create(

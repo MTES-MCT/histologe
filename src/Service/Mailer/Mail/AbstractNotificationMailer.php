@@ -142,7 +142,7 @@ abstract class AbstractNotificationMailer implements NotificationMailerInterface
 
     private function renderMailContentWithParams(
         array $params,
-        ?Territory $territory
+        ?Territory $territory,
     ): NotificationEmail {
         $config['territory'] = $territory;
         $notification = new NotificationEmail();

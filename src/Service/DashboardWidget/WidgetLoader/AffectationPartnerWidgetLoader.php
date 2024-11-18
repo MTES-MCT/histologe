@@ -13,7 +13,7 @@ class AffectationPartnerWidgetLoader extends AbstractWidgetLoader
 
     public function __construct(
         protected ParameterBagInterface $parameterBag,
-        protected WidgetDataManagerInterface $widgetDataManager
+        protected WidgetDataManagerInterface $widgetDataManager,
     ) {
         parent::__construct($this->parameterBag);
     }

@@ -49,7 +49,7 @@ class AppExtension extends AbstractExtension implements GlobalsInterface
     public function customDateFilter(
         string|\DateTimeImmutable|\DateTime|null $dateTime,
         string $format = 'F j, Y H:i',
-        ?string $timezone = null
+        ?string $timezone = null,
     ): ?string {
         if (null === $dateTime) {
             return null;

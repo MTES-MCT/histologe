@@ -12,7 +12,7 @@ use App\Service\Signalement\Qualification\QualificationStatusService;
 class SignalementQualificationFactory
 {
     public function __construct(
-        private QualificationStatusService $qualificationStatusService
+        private QualificationStatusService $qualificationStatusService,
     ) {
     }
 
@@ -21,7 +21,7 @@ class SignalementQualificationFactory
         QualificationStatus $qualificationStatus,
         ?array $listCriticiteIds = null,
         ?array $listDesordrePrecisionsIds = null,
-        bool $isPostVisite = false
+        bool $isPostVisite = false,
     ): SignalementQualification {
         $signalementQualification = new SignalementQualification();
         $signalementQualification->setQualification($qualification);

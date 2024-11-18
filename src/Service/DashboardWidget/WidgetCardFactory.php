@@ -14,7 +14,7 @@ class WidgetCardFactory
         string $label,
         ?int $count = null,
         ?string $route = null,
-        ?array $parameters = null
+        ?array $parameters = null,
     ): WidgetCard {
         $link = null;
         if (!empty($route)) {

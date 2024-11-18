@@ -98,7 +98,7 @@ class EsaboraSISHMock extends AbstractEsaboraMock
         WireMock $wiremock,
         string $service,
         string $response,
-        string $uuidSignalement = self::SIGNALEMENT_SUBCRIBED_SISH_SCHS
+        string $uuidSignalement = self::SIGNALEMENT_SUBCRIBED_SISH_SCHS,
     ) {
         self::createSearchDossierMock(
             $wiremock,

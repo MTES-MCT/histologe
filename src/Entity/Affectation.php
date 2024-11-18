@@ -243,7 +243,7 @@ class Affectation implements EntityHistoryInterface
             self::STATUS_ACCEPTED => 'Accepté',
             self::STATUS_REFUSED => 'Refusé',
             self::STATUS_CLOSED => 'Cloturé',
-            default => 'Unexpected affectation status : '.$this->getStatut()
+            default => 'Unexpected affectation status : '.$this->getStatut(),
         };
     }
 

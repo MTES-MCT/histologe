@@ -10,7 +10,7 @@ use App\Specification\SpecificationInterface;
 class AllocataireSpecification implements SpecificationInterface
 {
     public function __construct(
-        private string $ruleAllocataire
+        private string $ruleAllocataire,
     ) {
     }
 

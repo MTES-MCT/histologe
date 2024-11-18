@@ -628,7 +628,7 @@ class SignalementDraftRequest
     }
 
     public function setAdresseLogementComplementAdresseNumeroAppartement(
-        ?string $adresseLogementComplementAdresseNumeroAppartement
+        ?string $adresseLogementComplementAdresseNumeroAppartement,
     ): self {
         $this->adresseLogementComplementAdresseNumeroAppartement = $adresseLogementComplementAdresseNumeroAppartement;
 
@@ -689,7 +689,7 @@ class SignalementDraftRequest
     }
 
     public function setSignalementConcerneProfilDetailBailleurProprietaire(
-        ?string $signalementConcerneProfilDetailBailleurProprietaire
+        ?string $signalementConcerneProfilDetailBailleurProprietaire,
     ): self {
         $this->signalementConcerneProfilDetailBailleurProprietaire
             = $signalementConcerneProfilDetailBailleurProprietaire;
@@ -703,7 +703,7 @@ class SignalementDraftRequest
     }
 
     public function setSignalementConcerneProfilDetailBailleurBailleur(
-        ?string $signalementConcerneProfilDetailBailleurBailleur
+        ?string $signalementConcerneProfilDetailBailleurBailleur,
     ): self {
         $this->signalementConcerneProfilDetailBailleurBailleur = $signalementConcerneProfilDetailBailleurBailleur;
 
@@ -716,7 +716,7 @@ class SignalementDraftRequest
     }
 
     public function setSignalementConcerneLogementSocialServiceSecours(
-        ?string $signalementConcerneLogementSocialServiceSecours
+        ?string $signalementConcerneLogementSocialServiceSecours,
     ): self {
         $this->signalementConcerneLogementSocialServiceSecours = $signalementConcerneLogementSocialServiceSecours;
 
@@ -729,7 +729,7 @@ class SignalementDraftRequest
     }
 
     public function setSignalementConcerneLogementSocialAutreTiers(
-        ?string $signalementConcerneLogementSocialAutreTiers
+        ?string $signalementConcerneLogementSocialAutreTiers,
     ): self {
         $this->signalementConcerneLogementSocialAutreTiers = $signalementConcerneLogementSocialAutreTiers;
 
@@ -946,7 +946,7 @@ class SignalementDraftRequest
     }
 
     public function setCoordonneesBailleurAdresseDetailCodePostal(
-        ?string $coordonneesBailleurAdresseDetailCodePostal
+        ?string $coordonneesBailleurAdresseDetailCodePostal,
     ): self {
         $this->coordonneesBailleurAdresseDetailCodePostal = $coordonneesBailleurAdresseDetailCodePostal;
 
@@ -1247,7 +1247,7 @@ class SignalementDraftRequest
     }
 
     public function setTypeLogementCommoditesSalleDeBainCollective(
-        ?string $typeLogementCommoditesSalleDeBainCollective
+        ?string $typeLogementCommoditesSalleDeBainCollective,
     ): self {
         $this->typeLogementCommoditesSalleDeBainCollective = $typeLogementCommoditesSalleDeBainCollective;
 

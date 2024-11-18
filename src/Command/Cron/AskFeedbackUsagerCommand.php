@@ -152,7 +152,7 @@ class AskFeedbackUsagerCommand extends AbstractCronCommand
     protected function sendMailToUsagers(
         InputInterface $input,
         array $signalementsIds,
-        NotificationMailerType $notificationMailerType
+        NotificationMailerType $notificationMailerType,
     ): int {
         $totalRead = 0;
         $signalements = $this->signalementRepository->findAllByIds($signalementsIds);

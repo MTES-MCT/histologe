@@ -10,7 +10,7 @@ class DesordrePrecisionManager extends AbstractManager
 {
     public function __construct(
         protected ManagerRegistry $managerRegistry,
-        string $entityName = DesordrePrecision::class
+        string $entityName = DesordrePrecision::class,
     ) {
         parent::__construct($managerRegistry, $entityName);
     }

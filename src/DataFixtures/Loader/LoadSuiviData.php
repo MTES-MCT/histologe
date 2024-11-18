@@ -17,7 +17,7 @@ class LoadSuiviData extends Fixture implements OrderedFixtureInterface
     public function __construct(
         private readonly SignalementRepository $signalementRepository,
         private readonly UserRepository $userRepository,
-        private readonly ParameterBagInterface $parameterBag
+        private readonly ParameterBagInterface $parameterBag,
     ) {
     }
 

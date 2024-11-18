@@ -11,7 +11,7 @@ class DesordreTraitementProcessor
 
     public function __construct(
         #[TaggedIterator('desordre_traitement', indexAttribute: 'key')]
-        iterable $desordreTraitements
+        iterable $desordreTraitements,
     ) {
         $this->desordreTraitements = $desordreTraitements;
     }

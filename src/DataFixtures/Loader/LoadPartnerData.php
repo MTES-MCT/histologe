@@ -17,7 +17,7 @@ class LoadPartnerData extends Fixture implements OrderedFixtureInterface
 {
     public function __construct(
         private TerritoryRepository $territoryRepository,
-        private TokenGeneratorInterface $tokenGenerator
+        private TokenGeneratorInterface $tokenGenerator,
     ) {
     }
 
