@@ -9,8 +9,10 @@ use App\Manager\SuiviManager;
 use App\Messenger\Message\NewSignalementCheckFileMessage;
 use App\Repository\DesordreCritereRepository;
 use App\Repository\SignalementRepository;
+use App\Repository\UserRepository;
 use Psr\Log\LoggerInterface;
 use Symfony\Bundle\SecurityBundle\Security;
+use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 
 #[AsMessageHandler]
@@ -21,6 +23,7 @@ class NewSignalementCheckFileMessageHandler
         'desordres_batiment_nuisibles',
         'desordres_batiment_isolation',
         'desordres_batiment_maintenance',
+        'desordres_batiment_securite',
         'desordres_logement_humidite',
         'desordres_logement_nuisibles',
         'desordres_logement_securite',
@@ -36,9 +39,11 @@ class NewSignalementCheckFileMessageHandler
 
     public function __construct(
         private SignalementRepository $signalementRepository,
-        private LoggerInterface $logger,
+        private UserRepository $userRepository,
         private DesordreCritereRepository $desordreCritereRepository,
+        private LoggerInterface $logger,
         private SuiviManager $suiviManager,
+        private ParameterBagInterface $parameterBag,
         protected Security $security,
     ) {
     }
@@ -53,6 +58,23 @@ class NewSignalementCheckFileMessageHandler
             $newSignalementCheckFileMessage->getSignalementId()
         );
 
+        $documents = $this->getMissingDocumentsString($signalement);
+
+        $desordres = $this->getMissingDesordresPhotosString($signalement);
+
+        $this->suivi = null;
+        if (!empty($documents) || !empty($desordres)) {
+            $this->suivi = $this->createSuivi($signalement, $documents, $desordres);
+        }
+
+        $this->logger->info('NewSignalementCheckFileMessage handled successfully', [
+            'signalementId' => $newSignalementCheckFileMessage->getSignalementId(),
+            'suiviId' => $this->suivi ? $this->suivi->getId() : null,
+        ]);
+    }
+
+    public function getMissingDocumentsString(Signalement $signalement): string
+    {
         $documents = '';
         if ($signalement->getTypeCompositionLogement()) {
             if ('oui' === $signalement->getTypeCompositionLogement()->getBailDpeBail()
@@ -75,6 +97,11 @@ class NewSignalementCheckFileMessageHandler
             }
         }
 
+        return $documents;
+    }
+
+    public function getMissingDesordresPhotosString(Signalement $signalement): string
+    {
         $desordres = '';
         $signalementDesordreCategorieSlugs = $signalement->getDesordreCategorieSlugs();
         foreach (self::DESORDRES_CATEGORIES_WITH_PHOTOS as $desordreCategorieSlug) {
@@ -104,21 +131,13 @@ class NewSignalementCheckFileMessageHandler
             }
         }
 
-        $this->suivi = null;
-        if (!empty($documents) || !empty($desordres)) {
-            $this->suivi = $this->createSuivi($signalement, $documents, $desordres);
-        }
-
-        $this->logger->info('NewSignalementCheckFileMessage handled successfully', [
-            'signalementId' => $newSignalementCheckFileMessage->getSignalementId(),
-            'suiviId' => $this->suivi ? $this->suivi->getId() : null,
-        ]);
+        return $desordres;
     }
 
     private function hasDocumentType(Signalement $signalement, DocumentType $documentType): bool
     {
         foreach ($signalement->getFiles() as $file) {
-            if ($file->getDocumentType() == $documentType) {
+            if ($file->getDocumentType() === $documentType) {
                 return true;
             }
         }
@@ -154,7 +173,7 @@ class NewSignalementCheckFileMessageHandler
     private function hasPhotoForCritere(Signalement $signalement, string $desordreSlug): bool
     {
         foreach ($signalement->getFiles() as $file) {
-            if ($file->getDesordreSlug() == $desordreSlug) {
+            if ($file->getDesordreSlug() === $desordreSlug) {
                 return true;
             }
         }
@@ -179,8 +198,10 @@ class NewSignalementCheckFileMessageHandler
         $this->description .= 'Merci,<br>';
         $this->description .= 'L\'équipe Histologe';
 
+        $userAdmin = $this->userRepository->findOneBy(['email' => $this->parameterBag->get('user_system_email')]);
+
         return $this->suiviManager->createSuivi(
-            user: null,
+            user: $userAdmin,
             signalement: $signalement,
             params: [
                 'type' => Suivi::TYPE_AUTO,
