@@ -112,7 +112,9 @@ class PartnerType extends AbstractType
                 'choice_label' => function ($choice) {
                     return $choice->label();
                 },
+                'label' => 'Compétences (facultatif)',
                 'noselectionlabel' => 'Sélectionner une ou plusieurs compétences',
+                'nochoiceslabel' => 'Aucune compétence disponible',
                 'multiple' => true,
                 'expanded' => false,
                 'help' => 'Choisissez une ou plusieurs compétences parmi la liste ci-dessous.',

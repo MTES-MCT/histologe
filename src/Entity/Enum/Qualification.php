@@ -7,7 +7,7 @@ use App\Entity\Behaviour\EnumTrait;
 enum Qualification: string
 {
     use EnumTrait;
-    
+
     case ACCOMPAGNEMENT_JURIDIQUE = 'ACCOMPAGNEMENT_JURIDIQUE';
     case ACCOMPAGNEMENT_SOCIAL = 'ACCOMPAGNEMENT_SOCIAL';
     case ACCOMPAGNEMENT_TRAVAUX = 'ACCOMPAGNEMENT_TRAVAUX';
