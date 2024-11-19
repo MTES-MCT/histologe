@@ -63,9 +63,7 @@ class RetryFailedEmailsCommand extends Command
                 $io->error(sprintf('E-mail non envoyé à %s', implode(', ', $failedEmail->getToEmail())));
                 $failedEmail->setRetryCount($failedEmail->getRetryCount() + 1);
                 $failedEmail->setLastAttemptAt(new \DateTimeImmutable());
-                $failedEmail->setResendSuccessful(false);
             }
-            $this->entityManager->persist($failedEmail);
         }
 
         $this->entityManager->flush();
