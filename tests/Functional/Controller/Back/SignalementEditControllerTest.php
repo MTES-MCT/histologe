@@ -158,6 +158,7 @@ class SignalementEditControllerTest extends WebTestCase
             'bailDpeBail' => 'oui',
             'bailDpeEtatDesLieux' => 'oui',
             'bailDpeDpe' => 'oui',
+            'bailDpeClasseEnergetique' => 'F',
             'loyer' => '494',
             'loyersPayes' => 'oui',
             'anneeConstruction' => '1994',

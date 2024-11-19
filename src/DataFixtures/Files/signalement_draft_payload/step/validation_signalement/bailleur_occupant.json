@@ -40,6 +40,7 @@
   "type_logement_commodites_wc_cuisine": "non",
   "bail_dpe_date_emmenagement": "2020-12-10",
   "bail_dpe_dpe": "oui",
+  "bail_dpe_classe_energetique": "B",
   "logement_social_montant_allocation": null,
   "logement_social_demande_relogement": "non",
   "logement_social_allocation": "non",

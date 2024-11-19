@@ -48,6 +48,7 @@ class TypeCompositionLogementFactory
             compositionLogementEnfants: $data['composition_logement_enfants'] ?? null,
             bailDpeBail: $data['bail_dpe_bail'] ?? null,
             bailDpeDpe: $data['bail_dpe_dpe'] ?? null,
+            bailDpeClasseEnergetique: $data['bail_dpe_classe_energetique'] ?? null,
             bailDpeEtatDesLieux: $data['bail_dpe_etat_des_lieux'] ?? null,
             bailDpeDateEmmenagement: $data['bail_dpe_date_emmenagement'] ?? null,
             desordresLogementChauffageDetailsDpeConsoFinale: $data['desordres_logement_chauffage_details_dpe_conso_finale'] ?? null,

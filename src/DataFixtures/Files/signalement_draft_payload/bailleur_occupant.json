@@ -2,6 +2,7 @@
   "profil": "bailleur_occupant",
   "currentStep": "desordres_batiment_eau",
   "bail_dpe_dpe": "oui",
+  "bail_dpe_classe_energetique": "C",
   "type_logement_rdc": "non",
   "categorieDisorders": {
     "batiment": [

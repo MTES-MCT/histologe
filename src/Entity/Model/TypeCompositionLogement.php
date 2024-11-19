@@ -27,6 +27,7 @@ class TypeCompositionLogement
         private ?string $typeLogementCommoditesPieceAVivre9m = null,
         private ?string $bailDpeBail = null,
         private ?string $bailDpeDpe = null,
+        private ?string $bailDpeClasseEnergetique = null,
         private ?string $bailDpeEtatDesLieux = null,
         private ?string $bailDpeDateEmmenagement = null,
         private ?string $desordresLogementChauffageDetailsDpeConsoFinale = null,
@@ -296,6 +297,18 @@ class TypeCompositionLogement
         return $this;
     }
 
+    public function getBailDpeClasseEnergetique(bool $raw = true): ?string
+    {
+        return (!$raw && 'nsp' === $this->bailDpeClasseEnergetique) ? 'Ne sait pas' : $this->bailDpeClasseEnergetique;
+    }
+
+    public function setBailDpeClasseEnergetique(?string $bailDpeClasseEnergetique): self
+    {
+        $this->bailDpeClasseEnergetique = $bailDpeClasseEnergetique;
+
+        return $this;
+    }
+
     public function getBailDpeEtatDesLieux(bool $raw = true): ?string
     {
         return (!$raw && 'nsp' === $this->bailDpeEtatDesLieux) ? 'Ne sait pas' : $this->bailDpeEtatDesLieux;
@@ -405,6 +418,7 @@ class TypeCompositionLogement
             'composition_logement_enfants' => $this->compositionLogementEnfants,
             'bail_dpe_bail' => $this->bailDpeBail,
             'bail_dpe_dpe' => $this->bailDpeDpe,
+            'bail_dpe_classe_energetique' => $this->bailDpeClasseEnergetique,
             'bail_dpe_etat_des_lieux' => $this->bailDpeEtatDesLieux,
             'bail_dpe_date_emmenagement' => $this->bailDpeDateEmmenagement,
             'desordres_logement_chauffage_details_dpe_conso_finale' => $this->desordresLogementChauffageDetailsDpeConsoFinale,

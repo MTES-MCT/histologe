@@ -925,7 +925,7 @@
         {
           "type": "SignalementFormDate",
           "label": "A quelle date avez-vous emménagé dans le logement ?",
-          "hint": "Format attendu : JJ/MM/AAAA. Si vous ne connaissez pas la date exacte, sélectionnez un jour du mois d'emménagement",
+          "description": "Format attendu : JJ/MM/AAAA. Si vous ne connaissez pas la date exacte, sélectionnez un jour du mois d'emménagement",
           "slug": "bail_dpe_date_emmenagement",
           "validate": {
             "message": "Veuillez renseigner une date d'emménagement."
@@ -1055,6 +1055,52 @@
           },
           "validate": {
             "required": false
+          }
+        },
+        {
+          "type": "SignalementFormSelect",
+          "slug": "bail_dpe_classe_energetique",
+          "label": "Quelle est la classe énergétique de votre logement ?",
+          "description": "La classe énergétique indique si le logement consomme beaucoup d'énergie ou non. La classe A est la meilleure, la classe G est la moins bonne.",
+          "values": [
+            {
+              "label": "A",
+              "value": "A"
+            },
+            {
+              "label": "B",
+              "value": "B"
+            },
+            {
+              "label": "C",
+              "value": "C"
+            },
+            {
+              "label": "D",
+              "value": "D"
+            },
+            {
+              "label": "E",
+              "value": "E"
+            },
+            {
+              "label": "F",
+              "value": "F"
+            },
+            {
+              "label": "G",
+              "value": "G"
+            },
+            {
+              "label": "Je ne sais pas",
+              "value": "nsp"
+            }
+          ],
+          "conditional": {
+            "show": "formStore.data.bail_dpe_dpe === 'oui'"
+          },
+          "validate": {
+            "message": "Veuillez indiquer la classe énergétique pour le logement."
           }
         }
       ],
@@ -1226,7 +1272,7 @@
           "type": "SignalementFormDate",
           "label": "Quelle est votre date de naissance ?",
           "slug": "logement_social_date_naissance",
-          "hint": "Format attendu : JJ/MM/AAAA",
+          "description": "Format attendu : JJ/MM/AAAA",
           "conditional": {
             "show": "formStore.data.logement_social_allocation === 'oui'"
           },
@@ -1690,7 +1736,7 @@
                 "type": "SignalementFormDate",
                 "label": "Quelle est votre date de naissance ?",
                 "slug": "informations_complementaires_situation_occupants_date_naissance",
-                "hint": "Format attendu : JJ/MM/AAAA",
+                "description": "Format attendu : JJ/MM/AAAA",
                 "conditional": {
                   "show": "formStore.data.logement_social_allocation === 'non'"
                 },

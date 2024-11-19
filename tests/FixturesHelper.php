@@ -431,6 +431,7 @@ trait FixturesHelper
     {
         $typeCompostion = [
             'bail_dpe_dpe' => 'oui',
+            'bail_dpe_classe_energetique' => 'E',
             'bail_dpe_bail' => 'oui',
             'type_logement_rdc' => 'non',
             'type_logement_nature' => 'appartement',

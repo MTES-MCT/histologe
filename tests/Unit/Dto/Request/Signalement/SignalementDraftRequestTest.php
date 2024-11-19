@@ -91,6 +91,7 @@ class SignalementDraftRequestTest extends WebTestCase
             ->setBailDpeBail('oui')
             ->setBailDpeEtatDesLieux('oui')
             ->setBailDpeDpe('oui')
+            ->setBailDpeClasseEnergetique('D')
             ->setLogementSocialDemandeRelogement('oui')
             ->setLogementSocialAllocation('oui')
             ->setLogementSocialAllocationCaisse('caf')
@@ -147,6 +148,7 @@ class SignalementDraftRequestTest extends WebTestCase
         $this->assertSame('non', $signalementDraftRequest->getTypeLogementCommoditesWcCuisine());
         $this->assertSame('oui', $signalementDraftRequest->getBailDpeEtatDesLieux());
         $this->assertSame('oui', $signalementDraftRequest->getBailDpeDpe());
+        $this->assertSame('D', $signalementDraftRequest->getBailDpeClasseEnergetique());
         $this->assertSame('oui', $signalementDraftRequest->getTravailleurSocialAccompagnement());
         $this->assertSame('1', $signalementDraftRequest->getTravailleurSocialAccompagnementDeclarant());
         $this->assertSame('oui', $signalementDraftRequest->getInfoProcedureAssuranceContactee());
@@ -258,6 +260,7 @@ class SignalementDraftRequestTest extends WebTestCase
             ->setBailDpeBail('invalid_bail')
             ->setBailDpeEtatDesLieux('invalid_etat_des_lieux')
             ->setBailDpeDpe('invalid_dpe')
+            ->setBailDpeClasseEnergetique('invalid_classe_energetique')
             ->setLogementSocialDemandeRelogement('invalid_demande_relogement')
             ->setLogementSocialAllocation('invalid_allocation')
             ->setLogementSocialAllocationCaisse('invalid_caisse')
@@ -290,6 +293,6 @@ class SignalementDraftRequestTest extends WebTestCase
             ->setMessageAdministration('Message administration');
 
         $errors = $this->validator->validate($signalementDraftRequest);
-        $this->assertCount(97, $errors);
+        $this->assertCount(98, $errors);
     }
 }

@@ -30,6 +30,8 @@ class InformationsLogementRequest implements RequestInterface
         #[Assert\NotBlank(message: 'Merci d\'indiquer si un DPE existe (ou a été fourni).', groups: ['LOCATAIRE', 'BAILLEUR', 'BAILLEUR_OCCUPANT'])]
         #[Assert\Choice(choices: ['oui', 'non', 'nsp'], message: 'Le champ "DPE" est incorrect.')]
         private readonly ?string $bailDpeDpe = null,
+        #[Assert\Choice(choices: ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'nsp'], message: 'Le champ "Classe énergétique" est incorrect.')]
+        private readonly ?string $bailDpeClasseEnergetique = null,
         #[Assert\Type(type: 'numeric', message: 'Le loyer doit être un nombre.')]
         #[Assert\Length(max: 20, maxMessage: 'Le loyer ne doit pas dépasser {{ limit }} caractères.')]
         private readonly ?string $loyer = null,
@@ -73,6 +75,11 @@ class InformationsLogementRequest implements RequestInterface
     public function getBailDpeDpe(): ?string
     {
         return $this->bailDpeDpe;
+    }
+
+    public function getBailDpeClasseEnergetique(): ?string
+    {
+        return $this->bailDpeClasseEnergetique;
     }
 
     public function getLoyer(): ?string

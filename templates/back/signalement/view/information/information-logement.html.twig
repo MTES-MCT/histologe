@@ -94,6 +94,12 @@
         {% endif %}
     </div>
     <div class="fr-col-12 fr-col-md-6">
+        <strong>Classe énergétique :</strong>
+        {% if signalement.typeCompositionLogement %}
+            {{signalement.typeCompositionLogement.bailDpeClasseEnergetique(false)}}
+        {% endif %}
+    </div>
+    <div class="fr-col-12 fr-col-md-6">
         <strong>Montant du loyer :</strong> {{ signalement.loyer ? signalement.loyer ~ ' €'}}
     </div>
     <div class="fr-col-12 fr-col-md-6">
