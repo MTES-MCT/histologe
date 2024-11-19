@@ -14,38 +14,42 @@
             id="filter-communes"
             v-model="sharedState.filters.communes"
             @update:modelValue="onChange(false)"
-            inner-label="Communes"
             :option-items=sharedState.filters.communesList
             :active="!sharedState.filters.canFilterTerritoires || sharedState.filters.territoire !== 'all'"
-            />
+            >
+            <template #label>Communes</template>
+          </HistoMultiSelect>
         </div>
         <div class="fr-col-12 fr-col-lg-6 fr-col-xl-3">
           <HistoSelect
             id="filter-statut"
             v-model="sharedState.filters.statut"
             @update:modelValue="onChange(false)"
-            inner-label="Statut"
             :option-items=statusList
-            />
+            >
+            <template #label>Statut</template>
+          </HistoSelect>
         </div>
         <div class="fr-col-12 fr-col-lg-6 fr-col-xl-3">
           <HistoMultiSelect
             id="filter-etiquettes"
             v-model="sharedState.filters.etiquettes"
             @update:modelValue="onChange(false)"
-            inner-label="Etiquettes"
             :option-items=sharedState.filters.etiquettesList
             :active="!sharedState.filters.canFilterTerritoires || sharedState.filters.territoire !== 'all'"
-            />
+            >
+            <template #label>Etiquettes</template>
+          </HistoMultiSelect>
         </div>
         <div class="fr-col-12 fr-col-lg-6 fr-col-xl-3">
           <HistoSelect
             id="filter-type"
             v-model="sharedState.filters.type"
             @update:modelValue="onChange(false)"
-            inner-label="Type"
             :option-items=typesList
-            />
+            >
+            <template #label>Type</template>
+          </HistoSelect>
         </div>
         <div class="fr-col-12 fr-col-lg-6 fr-col-xl-4">
           <HistoDatePicker
@@ -53,7 +57,9 @@
             ref="histofiltersdatepicker"
             v-model="sharedState.filters.dateRange"
             @update:modelValue="onChange(false)"
-            />
+            >
+            <template #label>Dates des signalements</template>
+          </HistoDatePicker>
         </div>
         <div class="fr-col-12 fr-col-lg-6 fr-col-xl-5">
           <div class="fr-mb-3v">

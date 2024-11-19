@@ -1,5 +1,8 @@
 <template>
   <div class="histo-date-picker">
+    <label class="fr-label fr-mb-2v" :for="id">
+      <slot name="label"></slot>
+    </label>
     <Datepicker
       v-model="dates"
       @update:modelValue="handleDate"

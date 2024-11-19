@@ -1,13 +1,17 @@
 <template>
   <div
-    :class="['histo-multi-select', active ? 'active' : 'inactive']"
+    :class="['histo-multi-select', 'fr-select-group', active ? 'active' : 'inactive']"
     @focusout="isExpanded = false"
     >
+    <label class="fr-label" :for="id">
+      <slot name="label"></slot>
+    </label>
     <div
       class="selector fr-select"
       @click="handleClickSelect"
       >
-      {{ innerLabel }} ({{ strCountSelectedItems }})
+      <span v-if="innerLabel !== ''">{{ innerLabel }} ({{ strCountSelectedItems }})</span>
+      <span v-else>{{ strCountSelectedItems }}</span>
     </div>
 
     <div v-if="isExpanded" class="selector-items">

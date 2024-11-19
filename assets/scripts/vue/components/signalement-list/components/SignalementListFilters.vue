@@ -37,62 +37,70 @@
           <div class="fr-grid-row fr-grid-row--gutters">
             <div v-if="sharedState.user.isAdmin" class="fr-col-12 fr-col-lg-6 fr-col-xl-2 grey-background">
               <HistoSelect
-                  v-if="sharedState.territories.length > 0"
-                  id="filter-territoire"
-                  v-model="sharedState.input.filters.territoire"
-                  @update:modelValue="updateTerritory"
-                  inner-label="Territoire"
-                  title="Rechercher par territoire"
-                  :option-items=sharedState.territories
-                  :placeholder="'Territoire'"
-              />
+                v-if="sharedState.territories.length > 0"
+                id="filter-territoire"
+                v-model="sharedState.input.filters.territoire"
+                @update:modelValue="updateTerritory"
+                title="Rechercher par territoire"
+                :option-items=sharedState.territories
+                :placeholder="'Tous'"
+              >
+                <template #label>Territoire</template>
+              </HistoSelect>
             </div>
             <div class="fr-col-12 fr-col-lg-6" :class="sharedState.user.isAdmin ? 'fr-col-xl-3' : 'fr-col-xl-4'">
               <AppSearch
-                  id="filter-search-terms"
-                  v-model="sharedState.input.filters.searchTerms"
-                  :placeholder="'Taper un nom, référence ou email'"
-                  :minLengthSearch=3
-                  title="Rechercher par nom, référence ou email"
-                  @update:modelValue="onChange(false)"
-              />
+                id="filter-search-terms"
+                v-model="sharedState.input.filters.searchTerms"
+                :placeholder="'Taper un nom, référence ou email'"
+                title="Taper un nom, référence ou email"
+                :minLengthSearch=3
+                @update:modelValue="onChange(false)"
+              >
+                <template #label>Recherche</template>
+              </AppSearch>
             </div>
             <div class="fr-col-12 fr-col-lg-6" :class="sharedState.user.isAdmin ? 'fr-col-xl-2' : 'fr-col-xl-3'">
               <AppAutoComplete
-                  id="filter-communes"
-                  v-model="sharedState.input.filters.communes"
-                  :suggestions="sharedState.communes"
-                  :initSelectedSuggestions="sharedState.input.filters.communes"
-                  :multiple="true"
-                  :placeholder="'Commune ou code postal'"
-                  @update:modelValue="onChange(false)"
-                  :reset="reset"
-                  class="fr-input-wrap fr-icon-map-pin-2-line"
-              />
+                id="filter-communes"
+                v-model="sharedState.input.filters.communes"
+                :suggestions="sharedState.communes"
+                :initSelectedSuggestions="sharedState.input.filters.communes"
+                :multiple="true"
+                @update:modelValue="onChange(false)"
+                :reset="reset"
+                :iconClass="'fr-icon-map-pin-2-line'"
+              >
+                <template #label>Commune ou code postal</template>
+              </AppAutoComplete>
             </div>
             <div class="fr-col-12 fr-col-lg-6 fr-col-xl-3">
               <AppAutoComplete
-                  id="filter-epci"
-                  v-model="sharedState.input.filters.epcis"
-                  :suggestions="sharedState.epcis"
-                  :initSelectedSuggestions="sharedState.input.filters.epcis"
-                  :multiple="true"
-                  :placeholder="'EPCI (Établissement public de coopération intercommunale)'"
-                  @update:modelValue="onChange(false)"
-                  :reset="reset"
-                  title="Rechercher par EPCI (Établissement public de coopération intercommunale)"
-                  class="fr-input-wrap fr-icon-map-pin-2-line"
-              />
+                id="filter-epci"
+                v-model="sharedState.input.filters.epcis"
+                :suggestions="sharedState.epcis"
+                :initSelectedSuggestions="sharedState.input.filters.epcis"
+                :multiple="true"
+                :placeholder="'EPCI (Établissement public de coopération intercommunale)'"
+                title="EPCI (Établissement public de coopération intercommunale)"
+                @update:modelValue="onChange(false)"
+                :reset="reset"
+                :iconClass="'fr-icon-map-pin-2-line'"
+              >
+                <template #label>EPCI</template>
+              </AppAutoComplete>
             </div>
             <div class="fr-col-12 fr-col-lg-6 fr-col-xl-2 grey-background">
               <HistoSelect
-                  id="filter-status"
-                  v-model="sharedState.input.filters.status"
-                  @update:modelValue="onChange(false)"
-                  :option-items=statusSignalementList
-                  title="Rechercher par statut"
-                  :placeholder="'Statut'"
-              />
+                id="filter-status"
+                v-model="sharedState.input.filters.status"
+                @update:modelValue="onChange(false)"
+                :option-items=statusSignalementList
+                title="Rechercher par statut"
+                :placeholder="'Tous'"
+              >
+                <template #label>Statut</template>
+              </HistoSelect>
             </div>
           </div>
           <div class="fr-grid-row fr-grid-row--gutters">
@@ -128,171 +136,196 @@
               <div class="fr-col-12 fr-col-lg-6 fr-col-xl-3 grey-background"
                    v-if="sharedState.etiquettes.length > 0">
                 <HistoMultiSelect
-                    id="filter-etiquettes"
-                    v-model="sharedState.input.filters.etiquettes"
-                    @update:modelValue="onChange(false)"
-                    inner-label="Etiquettes"
-                    :option-items=sharedState.etiquettes
-                    title="Rechercher par étiquettes"
-                    :active=true
-                />
+                  id="filter-etiquettes"
+                  v-model="sharedState.input.filters.etiquettes"
+                  @update:modelValue="onChange(false)"
+                  :option-items=sharedState.etiquettes
+                  title="Rechercher par étiquettes"
+                  :active=true
+                  >
+                  <template #label>Etiquettes</template>
+                </HistoMultiSelect>
               </div>
               <div class="fr-col-12 fr-col-lg-6 fr-col-xl-3 grey-background">
                 <HistoDatePicker
-                    id="filter-date-depot"
-                    ref="filter-date-depot"
-                    v-model="sharedState.input.filters.dateDepot"
-                    :placeholder="'Date de dépot'"
-                    title="Rechercher par date de dépot"
-                    @update:modelValue="onChange(false)"
-                />
+                  id="filter-date-depot"
+                  ref="filter-date-depot"
+                  v-model="sharedState.input.filters.dateDepot"
+                  title="Rechercher par date de dépot"
+                  @update:modelValue="onChange(false)"
+                  >
+                  <template #label>Date de dépot</template>
+                </HistoDatePicker>
               </div>
               <div class="fr-col-12 fr-col-lg-6 fr-col-xl-3 grey-background">
                 <HistoSelect
-                    id="filter-procedure"
-                    v-model="sharedState.input.filters.procedure"
-                    @update:modelValue="onChange(false)"
-                    :option-items=procedureList
-                    title="Rechercher par procédure suspectée"
-                    :placeholder="'Procédure suspectée'"
-                />
+                  id="filter-procedure"
+                  v-model="sharedState.input.filters.procedure"
+                  @update:modelValue="onChange(false)"
+                  :option-items=procedureList
+                  title="Rechercher par procédure suspectée"
+                  :placeholder="'Toutes'"
+                  >
+                  <template #label>Procédure suspectée</template>
+                </HistoSelect>
               </div>
               <div class="fr-col-12 fr-col-lg-4 fr-col-xl-3 grey-background"
                    v-if="sharedState.user.canSeeFilterPartner && sharedState.partenaires.length > 0">
                 <HistoMultiSelect
-                    id="filter-partenaires"
-                    v-model="sharedState.input.filters.partenaires"
-                    @update:modelValue="selectPartnerInList()"
-                    inner-label="Partenaires"
-                    :option-items=sharedState.partenaires
-                    :isInnerLabelFemale="false"
-                    :active=true
-                    title="Rechercher par partenaire"
-                />
+                  id="filter-partenaires"
+                  v-model="sharedState.input.filters.partenaires"
+                  @update:modelValue="selectPartnerInList()"
+                  :option-items=sharedState.partenaires
+                  :isInnerLabelFemale="false"
+                  :active=true
+                  title="Rechercher par partenaire"
+                  >
+                  <template #label>Partenaires</template>
+                </HistoMultiSelect>
               </div>
               <div class="fr-col-12 fr-col-lg-6 fr-col-xl-3 grey-background">
                 <HistoSelect
-                    id="filter-status-visite"
-                    v-model="sharedState.input.filters.visiteStatus"
-                    @update:modelValue="onChange(false)"
-                    :option-items=statusVisiteList
-                    :placeholder="'Statut de la visite'"
-                    title="Rechercher par statut de visite"
-                />
+                  id="filter-status-visite"
+                  v-model="sharedState.input.filters.visiteStatus"
+                  @update:modelValue="onChange(false)"
+                  :option-items=statusVisiteList
+                  title="Rechercher par statut de visite"
+                  :placeholder="'Tous'"
+                  >
+                  <template #label>Statut de la visite</template>
+                </HistoSelect>
               </div>
               <div class="fr-col-12 fr-col-lg-6 fr-col-xl-3 grey-background">
                 <HistoSelect
-                    id="filter-type-derniersuivi"
-                    v-model="sharedState.input.filters.typeDernierSuivi"
-                    @update:modelValue="onChange(false)"
-                    :option-items=typeDernierSuiviList
-                    :placeholder="'Type dernier suivi'"
-                    title="Rechercher par type dernier suivi"
-                />
+                  id="filter-type-derniersuivi"
+                  v-model="sharedState.input.filters.typeDernierSuivi"
+                  @update:modelValue="onChange(false)"
+                  :option-items=typeDernierSuiviList
+                  title="Rechercher par type dernier suivi"
+                  :placeholder="'Tous'"
+                  >
+                  <template #label>Type de dernier suivi</template>
+                </HistoSelect>
               </div>
               <div class="fr-col-12 fr-col-lg-6 fr-col-xl-3 grey-background">
                 <HistoDatePicker
-                    id="filter-date-dernier-suivi"
-                    ref="filter-date-dernier-suivi"
-                    v-model="sharedState.input.filters.dateDernierSuivi"
-                    :placeholder="'Date de dernier suivi'"
-                    title="Rechercher par date de dernier suivi"
-                    @update:modelValue="onChange(false)"
-                />
+                  id="filter-date-dernier-suivi"
+                  ref="filter-date-dernier-suivi"
+                  v-model="sharedState.input.filters.dateDernierSuivi"
+                  title="Rechercher par date de dernier suivi"
+                  @update:modelValue="onChange(false)"
+                  >
+                  <template #label>Date de dernier suivi</template>
+                </HistoDatePicker>
               </div>
               <div v-if="sharedState.user.canSeeStatusAffectation" class="fr-col-12 fr-col-lg-4 fr-col-xl-3 grey-background">
                 <HistoSelect
-                    id="filter-statut-affectation"
-                    v-model="sharedState.input.filters.statusAffectation"
-                    @update:modelValue="onChange(false)"
-                    :option-items=statusAffectationList
-                    :placeholder="'Statut de l\'affectation'"
-                    title="Rechercher par statut de l'affectation"
-                />
+                  id="filter-statut-affectation"
+                  v-model="sharedState.input.filters.statusAffectation"
+                  @update:modelValue="onChange(false)"
+                  :option-items=statusAffectationList
+                  title="Rechercher par statut de l'affectation"
+                  :placeholder="'Tous'"
+                  >
+                  <template #label>Statut de l'affectation</template>
+                </HistoSelect>
               </div>
               <div v-if="sharedState.user.canSeeScore"
                    class="histo-score-range fr-col-12 fr-col-lg-4 fr-col-xl-2 grey-background">
                 <AppNumber
                     id="filter-score-min"
                     v-model="sharedState.input.filters.criticiteScoreMin"
-                    placeholder="Min Criticité"
                     title="Rechercher par un score de criticité minimum"
                     @update:modelValue="onChange(false)"
-                />
+                  >
+                  <template #label>Min Criticité</template>
+                </AppNumber>
                 <AppNumber
                     id="filter-score-max"
                     v-model="sharedState.input.filters.criticiteScoreMax"
                     placeholder="Max Criticité"
                     title="Rechercher par un score de criticité maximum"
                     @update:modelValue="onChange(false)"
-                />
+                  >
+                  <template #label>Max Criticité</template>
+                </AppNumber>
               </div>
               <div
                   class="fr-col-12 fr-col-lg-4 grey-background"
                   :class="sharedState.user.isAgent ? 'fr-col-xl-3' : 'fr-col-xl-2'">
                 <HistoSelect
-                    id="filter-type-declarant"
-                    v-model="sharedState.input.filters.typeDeclarant"
-                    @update:modelValue="onChange(false)"
-                    :option-items=typeDeclarantList
-                    :placeholder="'Déclarant'"
-                    title="Rechercher par déclarant"
-                />
+                  id="filter-type-declarant"
+                  v-model="sharedState.input.filters.typeDeclarant"
+                  @update:modelValue="onChange(false)"
+                  :option-items=typeDeclarantList
+                  :placeholder="'Tous'"
+                  title="Rechercher par déclarant"
+                  >
+                  <template #label>Type de déclarant</template>
+                </HistoSelect>
               </div>
               <div class="fr-col-12 fr-col-lg-4 grey-background"
                    :class="sharedState.user.isAgent ? 'fr-col-xl-3' : 'fr-col-xl-2'">
                 <HistoSelect
-                    id="filter-nature-parc"
-                    v-model="sharedState.input.filters.natureParc"
-                    @update:modelValue="onChange(false)"
-                    :option-items=natureParcList
-                    :placeholder="'Nature du parc'"
-                    title="Rechercher par nature du parc"
-                />
+                  id="filter-nature-parc"
+                  v-model="sharedState.input.filters.natureParc"
+                  @update:modelValue="onChange(false)"
+                  :option-items=natureParcList
+                  :placeholder="'Tous'"
+                  title="Rechercher par nature du parc"
+                  >
+                  <template #label>Nature du parc</template>
+                </HistoSelect>
               </div>
               <div v-if="sharedState.user.canSeeBailleurSocial && sharedState.bailleursSociaux.length > 0"
                 class="fr-col-12 fr-col-lg-4 fr-col-xl-3 grey-background">
                 <HistoSelect
-                    id="filter-bailleur-social"
-                    v-model="sharedState.input.filters.bailleurSocial"
-                    @update:modelValue="onChange(false)"
-                    :option-items=sharedState.bailleursSociaux
-                    :placeholder="'Bailleur social'"
-                    title="Rechercher par bailleur social"
-                />
+                  id="filter-bailleur-social"
+                  v-model="sharedState.input.filters.bailleurSocial"
+                  @update:modelValue="onChange(false)"
+                  :option-items=sharedState.bailleursSociaux
+                  :placeholder="'Tous'"
+                  title="Rechercher par bailleur social"
+                  >
+                  <template #label>Bailleur social</template>
+                </HistoSelect>
               </div>
               <div class="fr-col-12 fr-col-lg-4 grey-background"
                    :class="sharedState.user.isAgent ? 'fr-col-xl-3' : 'fr-col-xl-2'">
                 <HistoSelect
-                    id="filter-allocataire"
-                    v-model="sharedState.input.filters.allocataire"
-                    @update:modelValue="onChange(false)"
-                    :option-items=allocataireList
-                    :placeholder="'Allocataire'"
-                    title="Rechercher par allocataire"
-                />
+                  id="filter-allocataire"
+                  v-model="sharedState.input.filters.allocataire"
+                  @update:modelValue="onChange(false)"
+                  :option-items=allocataireList
+                  :placeholder="'Tous'"
+                  title="Rechercher par allocataire"
+                  >
+                  <template #label>Statut d'allocataire</template>
+                </HistoSelect>
               </div>
               <div class="fr-col-12 fr-col-lg-4 grey-background"
                    :class="sharedState.user.isAgent ? 'fr-col-xl-3' : 'fr-col-xl-2'">
                 <HistoSelect
-                    id="filter-enfants-m6"
-                    v-model="sharedState.input.filters.enfantsM6"
-                    @update:modelValue="onChange(false)"
-                    :option-items=enfantMoinsSixList
-                    :placeholder="'Enfant de moins 6 ans'"
-                    title="Rechercher par enfant de moins de 6 ans"
-                />
+                  id="filter-enfants-m6"
+                  v-model="sharedState.input.filters.enfantsM6"
+                  @update:modelValue="onChange(false)"
+                  :option-items=enfantMoinsSixList
+                  title="Rechercher par enfant de moins de 6 ans"
+                  >
+                  <template #label>Enfant de moins 6 ans</template>
+                </HistoSelect>
               </div>
               <div class="fr-col-12 fr-col-lg-4 grey-background"
                    :class="sharedState.user.isAgent ? 'fr-col-xl-3' : 'fr-col-xl-2'">
                 <HistoSelect
-                    id="filter-situation"
-                    v-model="sharedState.input.filters.situation"
-                    @update:modelValue="onChange(false)"
-                    :option-items=situationList
-                    :placeholder="'Situation'"
-                    title="Rechercher par situation"
-                />
+                  id="filter-situation"
+                  v-model="sharedState.input.filters.situation"
+                  @update:modelValue="onChange(false)"
+                  :option-items=situationList
+                  title="Rechercher par situation"
+                  >
+                  <template #label>Type de situation</template>
+                </HistoSelect>
               </div>
             </div>
           </div>

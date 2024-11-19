@@ -1,5 +1,8 @@
 <template>
-  <span class="histo-select">
+  <div class="fr-select-group">
+    <label class="fr-label" :for="id">
+      <slot name="label"></slot>
+    </label>
     <select
       class="fr-select"
       :id="id"
@@ -10,7 +13,7 @@
       <option v-if="placeholder" value="" selected disabled hidden>{{ placeholder }}</option>
       <option v-for="item in displayedItems" :value="item.Id" :key="item.Id">{{ item.Text }}</option>
     </select>
-  </span>
+  </div>
 </template>
 
 <script lang="ts">
@@ -71,7 +74,7 @@ export default defineComponent({
 </script>
 
 <style>
-  .histo-select select {
+  .fr-select-group select {
     background-color: var(--background-contrast-grey);
   }
 </style>
