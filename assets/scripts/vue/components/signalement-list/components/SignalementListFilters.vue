@@ -243,7 +243,6 @@
                 <AppNumber
                     id="filter-score-max"
                     v-model="sharedState.input.filters.criticiteScoreMax"
-                    placeholder="Max Criticité"
                     title="Rechercher par un score de criticité maximum"
                     @update:modelValue="onChange(false)"
                   >
@@ -310,6 +309,7 @@
                   v-model="sharedState.input.filters.enfantsM6"
                   @update:modelValue="onChange(false)"
                   :option-items=enfantMoinsSixList
+                  :placeholder="'Tous'"
                   title="Rechercher par enfant de moins de 6 ans"
                   >
                   <template #label>Enfant de moins 6 ans</template>
@@ -322,6 +322,7 @@
                   v-model="sharedState.input.filters.situation"
                   @update:modelValue="onChange(false)"
                   :option-items=situationList
+                  :placeholder="'Tous'"
                   title="Rechercher par situation"
                   >
                   <template #label>Type de situation</template>
