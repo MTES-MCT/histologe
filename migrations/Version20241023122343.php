@@ -16,7 +16,7 @@ final class Version20241023122343 extends AbstractMigration
 
     public function up(Schema $schema): void
     {
-        $this->skipIf(true, "Already executed in production");
+        $this->skipIf(true, 'No need to execute this migration in localhost or review app');
         $idPartner7130 = 7130;
         $idPartner7131 = 7131;
 

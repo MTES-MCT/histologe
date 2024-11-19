@@ -70,8 +70,6 @@ class SignalementDraftRequestNormalizer implements DenormalizerInterface, Normal
     }
 
     /**
-     * @return array|\ArrayObject|bool|float|int|string|null
-     *
      * @throws \Symfony\Component\Serializer\Exception\ExceptionInterface
      */
     public function normalize(mixed $object, ?string $format = null, array $context = []): array|string|int|float|bool|\ArrayObject|null

@@ -2,7 +2,6 @@
 
 namespace App\Tests\Functional\Service\Signalement;
 
-use App\Entity\Signalement;
 use App\Entity\Territory;
 use App\Repository\SignalementRepository;
 use App\Service\Signalement\ReferenceGenerator;
@@ -60,7 +59,6 @@ class ReferenceGeneratorTest extends KernelTestCase
             ->method('findLastReferenceByTerritory')
             ->with($territory)
             ->willReturn(null);
-
 
         $referenceGenerator = new ReferenceGenerator($signalementRepository);
 
