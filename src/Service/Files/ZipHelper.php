@@ -9,7 +9,7 @@ class ZipHelper
 {
     public function __construct(
         private readonly ParameterBagInterface $parameterBag,
-        private readonly SluggerInterface $slugger
+        private readonly SluggerInterface $slugger,
     ) {
     }
 

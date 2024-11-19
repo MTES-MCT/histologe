@@ -9,7 +9,7 @@ use PhpOffice\PhpSpreadsheet\Spreadsheet;
 readonly class SignalementExportLoader
 {
     public function __construct(
-        private SignalementManager $signalementManager
+        private SignalementManager $signalementManager,
     ) {
     }
 

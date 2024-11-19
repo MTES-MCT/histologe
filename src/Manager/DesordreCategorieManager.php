@@ -9,7 +9,7 @@ class DesordreCategorieManager extends AbstractManager
 {
     public function __construct(
         protected ManagerRegistry $managerRegistry,
-        string $entityName = DesordreCategorie::class
+        string $entityName = DesordreCategorie::class,
     ) {
         parent::__construct($managerRegistry, $entityName);
     }

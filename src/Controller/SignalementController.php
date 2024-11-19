@@ -56,7 +56,7 @@ class SignalementController extends AbstractController
 
     #[Route('/signalement-draft/{uuid}', name: 'front_nouveau_formulaire_edit', methods: 'GET')]
     public function edit(
-        SignalementDraft $signalementDraft
+        SignalementDraft $signalementDraft,
     ): Response {
         if (SignalementDraftStatus::EN_COURS !== $signalementDraft->getStatus()) {
             $this->addFlash('error', 'Le brouillon n\'est plus modifiable.');
@@ -230,7 +230,7 @@ class SignalementController extends AbstractController
         NotificationMailerRegistry $notificationMailerRegistry,
         SignalementDraftRequestSerializer $serializer,
         Request $request,
-        SignalementDraftManager $signalementDraftManager
+        SignalementDraftManager $signalementDraftManager,
     ): JsonResponse {
         /** @var SignalementDraftRequest $signalementDraftRequest */
         $signalementDraftRequest = $serializer->deserialize(
@@ -269,7 +269,7 @@ class SignalementController extends AbstractController
     public function sendMailGetLienSuivi(
         NotificationMailerRegistry $notificationMailerRegistry,
         Signalement $signalement,
-        Request $request
+        Request $request,
     ): JsonResponse|RedirectResponse {
         if ($request->isMethod('POST')) {
             $profil = $request->get('profil');
@@ -340,7 +340,7 @@ class SignalementController extends AbstractController
     public function checkTerritory(
         Request $request,
         PostalCodeHomeChecker $postalCodeHomeChecker,
-        CommuneRepository $communeRepository
+        CommuneRepository $communeRepository,
     ): JsonResponse {
         $postalCode = $request->get('cp');
         if (empty($postalCode)) {
@@ -388,7 +388,7 @@ class SignalementController extends AbstractController
         Request $request,
         LoggerInterface $logger,
         ImageManipulationHandler $imageManipulationHandler,
-        FileScanner $fileScanner
+        FileScanner $fileScanner,
     ): JsonResponse {
         if (null !== ($files = $request->files->get('signalement'))) {
             try {
@@ -427,7 +427,7 @@ class SignalementController extends AbstractController
         SuiviManager $suiviManager,
         EntityManagerInterface $entityManager,
         SuiviFactory $suiviFactory,
-        SignalementDesordresProcessor $signalementDesordresProcessor
+        SignalementDesordresProcessor $signalementDesordresProcessor,
     ): RedirectResponse|Response {
         $signalement = $signalementRepository->findOneByCodeForPublic($code);
         if (!$signalement) {
@@ -548,7 +548,7 @@ class SignalementController extends AbstractController
         SignalementRepository $signalementRepository,
         Request $request,
         UserManager $userManager,
-        SignalementDesordresProcessor $signalementDesordresProcessor
+        SignalementDesordresProcessor $signalementDesordresProcessor,
     ): RedirectResponse|Response {
         if ($signalement = $signalementRepository->findOneByCodeForPublic($code, false)) {
             $requestEmail = $request->get('from');
@@ -587,7 +587,7 @@ class SignalementController extends AbstractController
         SuiviFactory $suiviFactory,
         SignalementFileProcessor $signalementFileProcessor,
         UploadHandlerService $uploadHandlerService,
-        ValidatorInterface $validator
+        ValidatorInterface $validator,
     ): RedirectResponse {
         $signalement = $signalementRepository->findOneByCodeForPublic($code);
         if (!$this->isGranted('SIGN_USAGER_EDIT', $signalement)) {

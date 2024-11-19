@@ -140,7 +140,7 @@ class SignalementExportFactory
         ?string $interventionData,
         ?string $interventionOccupantPresent,
         ?string $interventionConcludeProcedure,
-        ?string $interventionDetails
+        ?string $interventionDetails,
     ): array {
         $lastIntervention = [
             'status' => VisiteStatus::NON_PLANIFIEE->value,

@@ -126,7 +126,7 @@ class SynchronizeEsaboraSCHSCommand extends AbstractSynchronizeEsaboraCommand
     protected function synchronizeEventFiles(
         Suivi $suivi,
         Affectation $affectation,
-        DossierEventSCHS $dossierEventSCHS
+        DossierEventSCHS $dossierEventSCHS,
     ): bool {
         try {
             $dossierEventFiles = $this->esaboraService->getDossierEventFiles($affectation, $dossierEventSCHS);

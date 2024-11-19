@@ -15,7 +15,7 @@ class FileManager extends AbstractManager
     public function __construct(
         private readonly FileFactory $fileFactory,
         ManagerRegistry $managerRegistry,
-        string $entityName = File::class
+        string $entityName = File::class,
     ) {
         parent::__construct($managerRegistry, $entityName);
     }
@@ -28,7 +28,7 @@ class FileManager extends AbstractManager
         ?User $user = null,
         bool $flush = false,
         ?DocumentType $documentType = null,
-        ?string $description = null
+        ?string $description = null,
     ): File {
         /** @var FileRepository $fileRepository */
         $fileRepository = $this->getRepository();

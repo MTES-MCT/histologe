@@ -186,7 +186,7 @@ class GridAffectationLoader
         Territory $territory,
         array $data,
         array $ignoreNotifPartnerTypes,
-        ?OutputInterface $output = null
+        ?OutputInterface $output = null,
     ): void {
         $countUsers = 0;
         $partner = null;

@@ -36,7 +36,7 @@ class SignalementFileProcessor
     public function process(
         array $files,
         string $inputName,
-        ?DocumentType $documentType = DocumentType::AUTRE
+        ?DocumentType $documentType = DocumentType::AUTRE,
     ): array {
         $fileList = [];
         foreach ($files[$inputName] as $key => $file) {
@@ -121,7 +121,7 @@ class SignalementFileProcessor
         ?UserInterface $user = null,
         ?Intervention $intervention = null,
         ?bool $isWaitingSuivi = false,
-        ?bool $isTemp = false
+        ?bool $isTemp = false,
     ): array {
         $list = [];
         foreach ($fileList as $fileItem) {
@@ -165,7 +165,7 @@ class SignalementFileProcessor
         string $filename,
         string $title,
         string $inputName,
-        DocumentType $documentType
+        DocumentType $documentType,
     ): array {
         return [
             'file' => $filename,

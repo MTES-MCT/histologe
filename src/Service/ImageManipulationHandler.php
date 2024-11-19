@@ -24,7 +24,7 @@ class ImageManipulationHandler
     public function __construct(
         private readonly ParameterBagInterface $parameterBag,
         private readonly FilesystemOperator $fileStorage,
-        private readonly ImageManager $imageManager
+        private readonly ImageManager $imageManager,
     ) {
     }
 
@@ -44,7 +44,7 @@ class ImageManipulationHandler
 
     public static function isAcceptedPhotoFormat(
         UploadedFile $file,
-        string $fileType
+        string $fileType,
     ): bool {
         if (File::INPUT_NAME_PHOTOS === $fileType
             && \in_array($file->getMimeType(), File::IMAGE_MIME_TYPES)

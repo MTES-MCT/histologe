@@ -20,7 +20,7 @@ class ProfilEditPasswordMailer extends AbstractNotificationMailer
         protected MailerInterface $mailer,
         protected ParameterBagInterface $parameterBag,
         protected LoggerInterface $logger,
-        protected UrlGeneratorInterface $urlGenerator
+        protected UrlGeneratorInterface $urlGenerator,
     ) {
         parent::__construct($this->mailer, $this->parameterBag, $this->logger, $this->urlGenerator);
     }

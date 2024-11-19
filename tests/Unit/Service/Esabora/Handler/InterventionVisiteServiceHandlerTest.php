@@ -65,7 +65,7 @@ class InterventionVisiteServiceHandlerTest extends TestCase
             ->willReturnCallback(
                 function (
                     Affectation $affectation,
-                    DossierVisiteSISH $dossierVisiteSISH
+                    DossierVisiteSISH $dossierVisiteSISH,
                 ) use ($dossierVisiteSISHCollectionResponse, $matcher) {
                     $this->assertEquals($this->affectation, $affectation);
                     match ($matcher->getInvocationCount()) {
@@ -77,7 +77,7 @@ class InterventionVisiteServiceHandlerTest extends TestCase
                             $dossierVisiteSISHCollectionResponse->getCollection()[1],
                             $dossierVisiteSISH
                         ),
-                        default => throw new \UnexpectedValueException('Unexpected invocation count')
+                        default => throw new \UnexpectedValueException('Unexpected invocation count'),
                     };
                 }
             );

@@ -79,7 +79,7 @@ class TagController extends AbstractController
     public function addTag(
         Request $request,
         EntityManagerInterface $entityManager,
-        TagAwareCacheInterface $cache
+        TagAwareCacheInterface $cache,
     ): Response {
         $this->denyAccessUnlessGranted('TAG_CREATE');
         $tag = new Tag();
@@ -113,7 +113,7 @@ class TagController extends AbstractController
         Tag $tag,
         Request $request,
         EntityManagerInterface $entityManager,
-        TagAwareCacheInterface $cache
+        TagAwareCacheInterface $cache,
     ): JsonResponse {
         $this->denyAccessUnlessGranted('TAG_EDIT', $tag);
         $form = $this->createForm(EditTagType::class, $tag);
@@ -139,7 +139,7 @@ class TagController extends AbstractController
         Request $request,
         TagManager $tagManager,
         EntityManagerInterface $entityManager,
-        TagAwareCacheInterface $cache
+        TagAwareCacheInterface $cache,
     ): Response {
         $tagId = $request->request->get('tag_id');
         /** @var Tag $tag */

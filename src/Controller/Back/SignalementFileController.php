@@ -29,7 +29,7 @@ class SignalementFileController extends AbstractController
     #[Route('/{uuid}/pdf', name: 'back_signalement_gen_pdf')]
     public function generatePdfSignalement(
         Signalement $signalement,
-        MessageBusInterface $messageBus
+        MessageBusInterface $messageBus,
     ): Response {
         $this->denyAccessUnlessGranted('SIGN_VIEW', $signalement);
         /** @var User $user */
@@ -57,7 +57,7 @@ class SignalementFileController extends AbstractController
         Signalement $signalement,
         Request $request,
         EntityManagerInterface $entityManager,
-        SignalementFileProcessor $signalementFileProcessor
+        SignalementFileProcessor $signalementFileProcessor,
     ): Response {
         $this->denyAccessUnlessGranted('SIGN_EDIT', $signalement);
         if (!$this->isCsrfTokenValid('signalement_add_file_'.$signalement->getId(), $request->get('_token')) || !$files = $request->files->get('signalement-add-file')) {
@@ -149,7 +149,7 @@ class SignalementFileController extends AbstractController
         FileRepository $fileRepository,
         UploadHandlerService $uploadHandlerService,
         EntityManagerInterface $entityManager,
-        SuiviFactory $suiviFactory
+        SuiviFactory $suiviFactory,
     ): Response {
         $fileId = $request->get('file_id');
         $file = $fileRepository->findOneBy(

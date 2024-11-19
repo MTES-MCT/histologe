@@ -380,7 +380,7 @@ trait FixturesHelper
     public function getTerritory(
         string $name = 'Ain',
         string $zip = '01',
-        int $isActive = 1
+        int $isActive = 1,
     ): Territory {
         return (new Territory())
             ->setName($name)
@@ -417,7 +417,7 @@ trait FixturesHelper
     public function getIntervention(
         InterventionType $interventionType,
         \DateTimeImmutable $scheduledAt,
-        string $status
+        string $status,
     ): Intervention {
         return (new Intervention())
             ->setSignalement($this->getSignalement())

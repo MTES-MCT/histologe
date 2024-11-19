@@ -17,7 +17,7 @@ class LoadJobEventData extends Fixture implements OrderedFixtureInterface
 {
     public function __construct(
         private PartnerRepository $partnerRepository,
-        private SignalementRepository $signalementRepository
+        private SignalementRepository $signalementRepository,
     ) {
     }
 

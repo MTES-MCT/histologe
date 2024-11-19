@@ -2,11 +2,12 @@
 
 namespace App\Tests\Functional\Service\Signalement;
 
-use App\Entity\Signalement;
 use App\Entity\Territory;
 use App\Repository\SignalementRepository;
 use App\Service\Signalement\ReferenceGenerator;
 use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\NonUniqueResultException;
+use Doctrine\ORM\TransactionRequiredException;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 
 class ReferenceGeneratorTest extends KernelTestCase
@@ -20,6 +21,10 @@ class ReferenceGeneratorTest extends KernelTestCase
         $this->entityManager = $kernel->getContainer()->get('doctrine')->getManager();
     }
 
+    /**
+     * @throws TransactionRequiredException
+     * @throws NonUniqueResultException
+     */
     public function testGenerateReferenceFromExistingSignalement()
     {
         $territoryRepository = $this->entityManager->getRepository(Territory::class);
@@ -39,13 +44,21 @@ class ReferenceGeneratorTest extends KernelTestCase
         $this->assertEquals($todayYear.'-12', $referenceGenerated);
     }
 
+    /**
+     * @throws TransactionRequiredException
+     * @throws NonUniqueResultException
+     */
     public function testGenerateReferenceFromNoSignalement()
     {
-        /** @var SignalementRepository $signalementRepository */
-        $signalementRepository = $this->entityManager->getRepository(Signalement::class);
-
         $territoryRepository = $this->entityManager->getRepository(Territory::class);
         $territory = $territoryRepository->findOneBy(['zip' => 85]);
+
+        $signalementRepository = $this->createMock(SignalementRepository::class);
+        $signalementRepository
+            ->expects($this->once())
+            ->method('findLastReferenceByTerritory')
+            ->with($territory)
+            ->willReturn(null);
 
         $referenceGenerator = new ReferenceGenerator($signalementRepository);
 

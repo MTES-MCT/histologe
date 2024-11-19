@@ -9,7 +9,7 @@ class WidgetLoaderCollection
     private iterable $widgetLoaders;
 
     public function __construct(
-        #[TaggedIterator('app.widget_loader')] iterable $widgetLoaders
+        #[TaggedIterator('app.widget_loader')] iterable $widgetLoaders,
     ) {
         $this->widgetLoaders = $widgetLoaders;
     }

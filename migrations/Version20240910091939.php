@@ -19,7 +19,6 @@ final class Version20240910091939 extends AbstractMigration
 
     public function up(Schema $schema): void
     {
-        $this->connection->beginTransaction();
         try {
             foreach ($this->getInterventions() as $intervention) {
                 $scheduledAt = new \DateTimeImmutable(
@@ -34,9 +33,7 @@ final class Version20240910091939 extends AbstractMigration
                     ]
                 );
             }
-            $this->connection->commit();
         } catch (\Throwable $exception) {
-            $this->connection->rollBack();
             $this->write($exception->getMessage());
         }
     }

@@ -21,7 +21,7 @@ class WidgetController extends AbstractController
         WidgetLoaderCollection $widgetLoaderCollection,
         TerritoryManager $territoryManager,
         LoggerInterface $logger,
-        string $widgetType
+        string $widgetType,
     ): Response {
         if ($this->isGranted('ROLE_ADMIN')) {
             $territory = $territoryManager->find((int) $request->get('territory'));

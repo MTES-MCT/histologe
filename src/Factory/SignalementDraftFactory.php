@@ -11,7 +11,7 @@ class SignalementDraftFactory
 {
     public function createInstanceFrom(
         SignalementDraftRequest $signalementDraftRequest,
-        array $payload
+        array $payload,
     ): SignalementDraft {
         return (new SignalementDraft())
             ->setPayload($payload)

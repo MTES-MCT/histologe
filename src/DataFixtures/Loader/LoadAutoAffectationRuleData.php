@@ -13,7 +13,7 @@ use Symfony\Component\Yaml\Yaml;
 class LoadAutoAffectationRuleData extends Fixture implements OrderedFixtureInterface
 {
     public function __construct(
-        private TerritoryRepository $territoryRepository
+        private TerritoryRepository $territoryRepository,
     ) {
     }
 

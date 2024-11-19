@@ -17,7 +17,7 @@ class WidgetDataKpi
         #[Groups(['widget:read'])]
         private readonly CountSuivi $countSuivi,
         #[Groups(['widget:read'])]
-        private readonly CountUser $countUser
+        private readonly CountUser $countUser,
     ) {
     }
 

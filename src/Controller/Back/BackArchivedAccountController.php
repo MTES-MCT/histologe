@@ -28,7 +28,7 @@ class BackArchivedAccountController extends AbstractController
         Request $request,
         UserRepository $userRepository,
         TerritoryRepository $territoryRepository,
-        PartnerRepository $partnerRepository
+        PartnerRepository $partnerRepository,
     ): Response {
         $page = $request->get('page') ?? 1;
 

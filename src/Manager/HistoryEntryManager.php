@@ -33,7 +33,7 @@ class HistoryEntryManager extends AbstractManager
         private readonly RequestStack $requestStack,
         private readonly CommandContext $commandContext,
         ManagerRegistry $managerRegistry,
-        string $entityName = HistoryEntry::class
+        string $entityName = HistoryEntry::class,
     ) {
         parent::__construct($managerRegistry, $entityName);
     }

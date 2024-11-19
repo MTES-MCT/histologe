@@ -143,7 +143,7 @@ class AbstractSynchronizeEsaboraCommand extends AbstractCronCommand
     protected function notify(
         PartnerType $partnerType,
         int $countSyncSuccess,
-        int $countSyncFailed
+        int $countSyncFailed,
     ): void {
         $this->notificationMailerRegistry->send(
             new NotificationMail(

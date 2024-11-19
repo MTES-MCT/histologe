@@ -11,7 +11,7 @@ class ContactFormHandler
 {
     public function __construct(
         private NotificationMailerRegistry $notificationMailerRegistry,
-        private ParameterBagInterface $parameterBag
+        private ParameterBagInterface $parameterBag,
     ) {
     }
 
@@ -20,7 +20,7 @@ class ContactFormHandler
         string $email,
         string $message,
         string $organisme,
-        string $objet
+        string $objet,
     ) {
         $this->notificationMailerRegistry->send(
             new NotificationMail(

@@ -10,7 +10,7 @@ use Twig\Extension\RuntimeExtensionInterface;
 class NotificationCounter implements RuntimeExtensionInterface
 {
     public function __construct(
-        private readonly NotificationRepository $notificationRepository
+        private readonly NotificationRepository $notificationRepository,
     ) {
     }
 

@@ -10,7 +10,7 @@ use Symfony\Component\HttpKernel\Event\ResponseEvent;
 readonly class ContentSecurityPolicyListener
 {
     public function __construct(
-        private ParameterBagInterface $parameterBag
+        private ParameterBagInterface $parameterBag,
     ) {
     }
 

@@ -8,7 +8,7 @@ use Symfony\Component\Validator\ConstraintValidator;
 
 class PartnerToExcludeValidator extends ConstraintValidator
 {
-    public function validate($value, Constraint $constraint)
+    public function validate($value, Constraint $constraint): void
     {
         if (!$constraint instanceof PartnerToExclude) {
             throw new UnexpectedTypeException($constraint, __NAMESPACE__.'\PartnerToExclude');

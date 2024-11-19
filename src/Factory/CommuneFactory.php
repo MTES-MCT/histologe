@@ -16,7 +16,7 @@ class CommuneFactory
         ?string $nom = null,
         ?string $codePostal = null,
         ?string $codeInsee = null,
-        bool $isZonePermisLouer = false
+        bool $isZonePermisLouer = false,
     ) {
         return (new Commune())
             ->setTerritory($territory)

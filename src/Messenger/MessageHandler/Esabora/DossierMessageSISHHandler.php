@@ -18,7 +18,7 @@ final class DossierMessageSISHHandler
             'app.dossier_sish_handler',
             defaultPriorityMethod: 'getPriority'
         )] iterable $dossierSISHHandlers,
-        private readonly AffectationManager $affectationManager
+        private readonly AffectationManager $affectationManager,
     ) {
         $this->dossierSISHHandlers = $dossierSISHHandlers;
     }

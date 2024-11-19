@@ -12,7 +12,7 @@ class WidgetCard
         #[Groups(['widget:read'])]
         private readonly ?int $count = null,
         #[Groups(['widget:read'])]
-        private readonly ?string $link = null
+        private readonly ?string $link = null,
     ) {
     }
 

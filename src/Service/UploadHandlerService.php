@@ -26,7 +26,7 @@ class UploadHandlerService
         private readonly ParameterBagInterface $parameterBag,
         private readonly LoggerInterface $logger,
         private readonly FilenameGenerator $filenameGenerator,
-        private readonly FileRepository $fileRepository
+        private readonly FileRepository $fileRepository,
     ) {
     }
 
@@ -38,7 +38,7 @@ class UploadHandlerService
      */
     public function toTempFolder(
         UploadedFile $file,
-        ?string $fileType = File::INPUT_NAME_DOCUMENTS
+        ?string $fileType = File::INPUT_NAME_DOCUMENTS,
     ): self|array {
         $originalFilename = pathinfo($file->getClientOriginalName(), \PATHINFO_FILENAME);
         if (empty($originalFilename) || !$file->isValid()) {
@@ -90,7 +90,7 @@ class UploadHandlerService
 
     public static function isAcceptedDocumentFormat(
         UploadedFile $file,
-        string $fileType
+        string $fileType,
     ): bool {
         if (File::INPUT_NAME_DOCUMENTS === $fileType
             && \in_array($file->getMimeType(), File::DOCUMENT_MIME_TYPES)
@@ -230,7 +230,7 @@ class UploadHandlerService
     public function uploadFromFile(
         UploadedFile $file,
         string $newFilename,
-        ?string $fileType = File::INPUT_NAME_DOCUMENTS
+        ?string $fileType = File::INPUT_NAME_DOCUMENTS,
     ): ?string {
         if ($this->isFileEmpty($file)) {
             throw new EmptyFileException();

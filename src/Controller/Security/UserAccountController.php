@@ -75,7 +75,7 @@ class UserAccountController extends AbstractController
         UserRepository $userRepository,
         Request $request,
         NotificationMailerRegistry $notificationMailerRegistry,
-        RateLimiterFactory $loginPasswordFormLimiter
+        RateLimiterFactory $loginPasswordFormLimiter,
     ): Response {
         $title = 'Récupération de votre mot de passe';
         if ($request->isMethod('POST') && $email = $request->request->get('email')) {
@@ -123,7 +123,7 @@ class UserAccountController extends AbstractController
         Security $security,
         #[MapEntity(mapping: ['uuid' => 'uuid'])]
         User $user,
-        string $token
+        string $token,
     ): RedirectResponse|Response {
         if (false === $activationTokenGenerator->validateToken($user, $token)) {
             $this->addFlash('error', 'Votre lien est invalide ou expiré');

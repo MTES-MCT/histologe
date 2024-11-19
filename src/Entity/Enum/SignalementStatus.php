@@ -42,7 +42,7 @@ enum SignalementStatus: int
             self::ACTIVE, self::NEED_PARTNER_RESPONSE => 'en cours',
             self::CLOSED => 'fermé',
             self::REFUSED => 'refusé',
-            self::ARCHIVED => 'archivé'
+            self::ARCHIVED => 'archivé',
         };
     }
 
@@ -53,7 +53,7 @@ enum SignalementStatus: int
             'en_cours' => SignalementStatus::ACTIVE->value,
             'ferme' => SignalementStatus::CLOSED->value,
             'refuse' => SignalementStatus::REFUSED->value,
-            default => throw new \UnexpectedValueException('Unexpected signalement status : '.$label)
+            default => throw new \UnexpectedValueException('Unexpected signalement status : '.$label),
         };
     }
 }

@@ -19,7 +19,7 @@ class UserVoter extends Voter
 
     public function __construct(
         private Security $security,
-        private RoleHierarchyInterface $roleHierarchy
+        private RoleHierarchyInterface $roleHierarchy,
     ) {
     }
 

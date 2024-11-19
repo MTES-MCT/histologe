@@ -25,7 +25,7 @@ class UpdateSignalementGeolocalisationCommand extends Command
     public function __construct(
         private readonly AddressService $addressService,
         private readonly TerritoryRepository $territoryRepository,
-        private readonly SignalementManager $signalementManager
+        private readonly SignalementManager $signalementManager,
     ) {
         parent::__construct();
     }

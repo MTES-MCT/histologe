@@ -70,7 +70,7 @@ class SignalementManager extends AbstractManager
         private BailleurRepository $bailleurRepository,
         private AddressService $addressService,
         private AffectationRepository $affectationRepository,
-        string $entityName = Signalement::class
+        string $entityName = Signalement::class,
     ) {
         parent::__construct($managerRegistry, $entityName);
     }
@@ -255,7 +255,7 @@ class SignalementManager extends AbstractManager
     public function findUsersAffectedToSignalement(
         Signalement $signalement,
         AffectationStatus $statusAffectation,
-        ?Partner $partnerToExclude
+        ?Partner $partnerToExclude,
     ): array {
         $list = [];
         $affectations = $signalement->getAffectations();
@@ -271,7 +271,7 @@ class SignalementManager extends AbstractManager
 
     public function updateFromSignalementQualification(
         SignalementQualification $signalementQualification,
-        QualificationNDERequest $qualificationNDERequest
+        QualificationNDERequest $qualificationNDERequest,
     ) {
         $signalement = $signalementQualification->getSignalement();
         // mise à jour du signalement
@@ -376,7 +376,7 @@ class SignalementManager extends AbstractManager
 
     public function updateFromCoordonneesTiersRequest(
         Signalement $signalement,
-        CoordonneesTiersRequest $coordonneesTiersRequest
+        CoordonneesTiersRequest $coordonneesTiersRequest,
     ) {
         if (ProfileDeclarant::BAILLEUR == $signalement->getProfileDeclarant()) {
             $signalement
@@ -402,7 +402,7 @@ class SignalementManager extends AbstractManager
 
     public function updateFromCoordonneesFoyerRequest(
         Signalement $signalement,
-        CoordonneesFoyerRequest $coordonneesFoyerRequest
+        CoordonneesFoyerRequest $coordonneesFoyerRequest,
     ) {
         if (ProfileDeclarant::BAILLEUR_OCCUPANT == $signalement->getProfileDeclarant()) {
             $signalement
@@ -430,7 +430,7 @@ class SignalementManager extends AbstractManager
 
     public function updateFromCoordonneesBailleurRequest(
         Signalement $signalement,
-        CoordonneesBailleurRequest $coordonneesBailleurRequest
+        CoordonneesBailleurRequest $coordonneesBailleurRequest,
     ) {
         $bailleur = null;
         if ($signalement->getIsLogementSocial() && $coordonneesBailleurRequest->getNom()) {
@@ -480,7 +480,7 @@ class SignalementManager extends AbstractManager
 
     public function updateFromInformationsLogementRequest(
         Signalement $signalement,
-        InformationsLogementRequest $informationsLogementRequest
+        InformationsLogementRequest $informationsLogementRequest,
     ) {
         if (is_numeric($informationsLogementRequest->getNombrePersonnes())) {
             $signalement->setNbOccupantsLogement($informationsLogementRequest->getNombrePersonnes());
@@ -584,7 +584,7 @@ class SignalementManager extends AbstractManager
 
     public function updateFromCompositionLogementRequest(
         Signalement $signalement,
-        CompositionLogementRequest $compositionLogementRequest
+        CompositionLogementRequest $compositionLogementRequest,
     ) {
         $signalement->setNatureLogement($compositionLogementRequest->getType());
         $signalement->setSuperficie($compositionLogementRequest->getSuperficie());
@@ -651,7 +651,7 @@ class SignalementManager extends AbstractManager
 
     public function updateFromSituationFoyerRequest(
         Signalement $signalement,
-        SituationFoyerRequest $situationFoyerRequest
+        SituationFoyerRequest $situationFoyerRequest,
     ) {
         $signalement
             ->setIsLogementSocial(
@@ -744,7 +744,7 @@ class SignalementManager extends AbstractManager
 
     public function updateFromProcedureDemarchesRequest(
         Signalement $signalement,
-        ProcedureDemarchesRequest $procedureDemarchesRequest
+        ProcedureDemarchesRequest $procedureDemarchesRequest,
     ) {
         $signalement->setIsProprioAverti('' === $procedureDemarchesRequest->getIsProprioAverti() ? null : $procedureDemarchesRequest->getIsProprioAverti());
 

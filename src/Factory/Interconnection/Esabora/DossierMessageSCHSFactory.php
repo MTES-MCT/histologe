@@ -14,7 +14,7 @@ use App\Utils\EtageParser;
 class DossierMessageSCHSFactory extends AbstractDossierMessageFactory
 {
     public function __construct(
-        private readonly UploadHandlerService $uploadHandlerService
+        private readonly UploadHandlerService $uploadHandlerService,
     ) {
         parent::__construct($this->uploadHandlerService);
     }

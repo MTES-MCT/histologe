@@ -25,7 +25,7 @@ class SignalementDraftRequestNormalizer implements DenormalizerInterface, Normal
     public function __construct(
         /** @var ObjectNormalizer $objectNormalizer */
         #[Autowire(service: 'serializer.normalizer.object')]
-        private readonly NormalizerInterface $objectNormalizer
+        private readonly NormalizerInterface $objectNormalizer,
     ) {
     }
 
@@ -70,11 +70,9 @@ class SignalementDraftRequestNormalizer implements DenormalizerInterface, Normal
     }
 
     /**
-     * @return array|\ArrayObject|bool|float|int|string|null
-     *
      * @throws \Symfony\Component\Serializer\Exception\ExceptionInterface
      */
-    public function normalize(mixed $object, ?string $format = null, array $context = []): mixed
+    public function normalize(mixed $object, ?string $format = null, array $context = []): array|string|int|float|bool|\ArrayObject|null
     {
         $normalizedPayload = [];
         /** @var SignalementDraft $signalementDraft */

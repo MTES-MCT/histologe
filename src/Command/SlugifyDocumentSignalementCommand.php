@@ -54,7 +54,7 @@ class SlugifyDocumentSignalementCommand extends Command
         private TerritoryManager $territoryManager,
         private CsvParser $csvParser,
         private Filesystem $filesystem,
-        private string $projectDir
+        private string $projectDir,
     ) {
         parent::__construct();
     }

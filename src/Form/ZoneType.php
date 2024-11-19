@@ -21,7 +21,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 class ZoneType extends AbstractType
 {
     public function __construct(
-        private readonly Security $security
+        private readonly Security $security,
     ) {
     }
 

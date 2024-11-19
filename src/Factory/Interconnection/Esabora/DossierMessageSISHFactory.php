@@ -156,7 +156,7 @@ class DossierMessageSISHFactory extends AbstractDossierMessageFactory
 
     private function createDossierPersonne(
         Signalement $signalement,
-        PersonneType $personneType
+        PersonneType $personneType,
     ): ?DossierMessageSISHPersonne {
         if (PersonneType::OCCUPANT === $personneType) {
             $prenom = $signalement->getPrenomOccupant()

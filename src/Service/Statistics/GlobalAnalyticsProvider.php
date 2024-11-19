@@ -10,7 +10,7 @@ class GlobalAnalyticsProvider
 {
     public function __construct(
         private SignalementRepository $signalementRepository,
-        private TerritoryRepository $territoryRepository
+        private TerritoryRepository $territoryRepository,
     ) {
     }
 

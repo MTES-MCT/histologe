@@ -33,7 +33,7 @@ class HomepageController extends AbstractController
     public function index(
         Request $request,
         SignalementRepository $signalementRepository,
-        PostalCodeHomeChecker $postalCodeHomeChecker
+        PostalCodeHomeChecker $postalCodeHomeChecker,
     ): Response {
         $stats = ['pris_en_compte' => 0, 'clotures' => 0];
         $stats['total'] = $signalementRepository->countAll(
@@ -78,7 +78,7 @@ class HomepageController extends AbstractController
         Request $request,
         SignalementRepository $signalementRepository,
         NotificationMailerRegistry $notificationMailerRegistry,
-        RateLimiterFactory $askLinkFormLimiter
+        RateLimiterFactory $askLinkFormLimiter,
     ): JsonResponse {
         $demandeLienSignalement = new DemandeLienSignalement();
         $form = $this->createForm(DemandeLienSignalementType::class, $demandeLienSignalement, [
@@ -178,7 +178,7 @@ class HomepageController extends AbstractController
     public function contactForm(
         Request $request,
         ContactFormHandler $contactFormHandler,
-        RateLimiterFactory $contactFormLimiter
+        RateLimiterFactory $contactFormLimiter,
     ): JsonResponse {
         $type = 'error';
         $message = null;

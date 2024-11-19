@@ -22,7 +22,7 @@ class ArchivedSignalementController extends AbstractController
     public function index(
         Request $request,
         TerritoryRepository $territoryRepository,
-        SignalementRepository $signalementRepository
+        SignalementRepository $signalementRepository,
     ): Response {
         $page = $request->get('page') ?? 1;
 
@@ -64,7 +64,7 @@ class ArchivedSignalementController extends AbstractController
     public function reactiveSignalement(
         Signalement $signalement,
         Request $request,
-        ManagerRegistry $doctrine
+        ManagerRegistry $doctrine,
     ): RedirectResponse {
         if ($this->isCsrfTokenValid('signalement_reactive_'.$signalement->getId(), $request->get('_token'))
         && Signalement::STATUS_ARCHIVED === $signalement->getStatut()) {

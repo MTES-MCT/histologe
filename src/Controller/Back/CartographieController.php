@@ -18,7 +18,7 @@ class CartographieController extends AbstractController
 {
     public function __construct(
         private SearchFilter $searchFilter,
-        private SearchFilterOptionDataProvider $searchFilterOptionDataProvider
+        private SearchFilterOptionDataProvider $searchFilterOptionDataProvider,
     ) {
     }
 

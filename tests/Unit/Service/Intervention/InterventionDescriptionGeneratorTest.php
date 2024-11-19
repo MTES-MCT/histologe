@@ -22,7 +22,7 @@ class InterventionDescriptionGeneratorTest extends TestCase
         string $label,
         string $address,
         string $scheduledAt,
-        string $partnerName
+        string $partnerName,
     ): void {
         $description = InterventionDescriptionGenerator::generate(
             $intervention,

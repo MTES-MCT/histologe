@@ -57,7 +57,7 @@ class EsaboraManager
 
     public function synchronizeAffectationFrom(
         DossierResponseInterface $dossierResponse,
-        Affectation $affectation
+        Affectation $affectation,
     ): void {
         $adminUser = $this->userManager->findOneBy(['email' => $this->parameterBag->get('user_system_email')]);
         $signalement = $affectation->getSignalement();
@@ -87,7 +87,7 @@ class EsaboraManager
     public function updateStatusFor(
         Affectation $affectation,
         User $user,
-        DossierResponseInterface $dossierResponse
+        DossierResponseInterface $dossierResponse,
     ): string {
         $description = '';
         $currentStatus = $affectation->getStatut();

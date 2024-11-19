@@ -13,7 +13,7 @@ class CountUser
         #[Groups(['widget:read'])]
         private readonly ?int $active = null,
         #[Groups(['widget:read'])]
-        private readonly ?int $inactive = null
+        private readonly ?int $inactive = null,
     ) {
         $total = $this->active + $this->inactive;
         $this->percentage = [

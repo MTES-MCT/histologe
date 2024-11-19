@@ -130,7 +130,7 @@ class AffectationController extends AbstractController
         Request $request,
         FirstAffectationAcceptedSpecification $firstAcceptedAffectationSpecification,
         DossierMessageFactory $dossierMessageFactory,
-        MessageBusInterface $bus
+        MessageBusInterface $bus,
     ): Response {
         $this->denyAccessUnlessGranted('ASSIGN_ANSWER', $affectation);
         if ($this->isCsrfTokenValid('signalement_affectation_response_'.$signalement->getId(), $request->get('_token'))
@@ -171,7 +171,7 @@ class AffectationController extends AbstractController
 
     private function dispatchAffectationAnsweredEvent(
         Affectation $affectation,
-        array $response
+        array $response,
     ): void {
         if (isset($response['suivi'])) {
             $this->eventDispatcher->dispatch(

@@ -47,7 +47,7 @@ class ProfilController extends AbstractController
         UploadHandlerService $uploadHandlerService,
         LoggerInterface $logger,
         ImageManipulationHandler $imageManipulationHandler,
-        FileScanner $fileScanner
+        FileScanner $fileScanner,
     ): Response {
         $payload = $request->getPayload()->all();
         /** @var User $user */

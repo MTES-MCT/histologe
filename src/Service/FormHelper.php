@@ -34,7 +34,7 @@ class FormHelper
     public static function getErrorsFromRequest(
         ValidatorInterface $validator,
         RequestInterface $request,
-        ?array $validationGroups = []
+        ?array $validationGroups = [],
     ): array {
         $errors = [];
         $violations = $validator->validate($request, null, $validationGroups);

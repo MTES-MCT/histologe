@@ -24,7 +24,7 @@ class SuiviManager extends Manager
         protected SignalementUpdatedListener $signalementUpdatedListener,
         protected Security $security,
         private DesordreCritereRepository $desordreCritereRepository,
-        string $entityName = Suivi::class
+        string $entityName = Suivi::class,
     ) {
         parent::__construct($managerRegistry, $entityName);
     }
@@ -35,7 +35,7 @@ class SuiviManager extends Manager
         array $params,
         bool $isPublic = false,
         bool $flush = false,
-        string $context = ''
+        string $context = '',
     ): Suivi {
         $suivi = $this->suiviFactory->createInstanceFrom($user, $signalement, $params, $isPublic, $context);
 

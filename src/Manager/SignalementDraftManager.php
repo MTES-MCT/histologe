@@ -38,7 +38,7 @@ class SignalementDraftManager extends AbstractManager
 
     public function create(
         SignalementDraftRequest $signalementDraftRequest,
-        array $payload
+        array $payload,
     ): ?string {
         $signalementDraft = $this->signalementDraftFactory->createInstanceFrom($signalementDraftRequest, $payload);
         $this->save($signalementDraft);
@@ -49,7 +49,7 @@ class SignalementDraftManager extends AbstractManager
     public function update(
         SignalementDraft $signalementDraft,
         SignalementDraftRequest $signalementDraftRequest,
-        array $payload
+        array $payload,
     ): ?array {
         $signalementDraft
             ->setPayload($payload)

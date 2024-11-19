@@ -9,7 +9,7 @@ class AutoAffectationRuleManager extends AbstractManager
 {
     public function __construct(
         protected ManagerRegistry $managerRegistry,
-        protected string $entityName = AutoAffectationRule::class
+        protected string $entityName = AutoAffectationRule::class,
     ) {
         parent::__construct($managerRegistry, $entityName);
     }

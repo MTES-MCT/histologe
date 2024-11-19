@@ -61,7 +61,7 @@ class BackTerritoryController extends AbstractController
         Request $request,
         FileScanner $fileScanner,
         UploadHandlerService $uploadHandlerService,
-        EntityManagerInterface $em
+        EntityManagerInterface $em,
     ): Response {
         $form = $this->createForm(TerritoryType::class, $territory);
         $form->handleRequest($request);

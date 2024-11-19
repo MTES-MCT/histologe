@@ -59,7 +59,7 @@ class SignalementTest extends KernelTestCase
     public function testResolveProfileDeclarant(
         bool $isNotOccupant,
         ProfileDeclarant $profileDeclarant,
-        ?string $lienDeclarant = null
+        ?string $lienDeclarant = null,
     ): void {
         $signalement = $this->getSignalement($this->getTerritory('Pas-de-calais', '62'));
         $signalement->setIsNotOccupant($isNotOccupant);

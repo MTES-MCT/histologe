@@ -28,7 +28,7 @@ class PushEsaboraDossierCommand extends Command
         private TerritoryRepository $territoryRepository,
         private InterconnectionBus $esaboraBus,
         #[Autowire(param: 'kernel.environment')]
-        private string $env
+        private string $env,
     ) {
         parent::__construct();
     }

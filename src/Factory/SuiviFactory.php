@@ -15,7 +15,7 @@ class SuiviFactory
         Signalement $signalement,
         array $params = [],
         bool $isPublic = false,
-        string $context = ''
+        string $context = '',
     ): Suivi {
         return (new Suivi())
             ->setCreatedBy($user)

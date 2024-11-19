@@ -84,7 +84,7 @@ class SignalementQualificationUpdater
      */
     private function updateInsalubriteQualification(
         Signalement $signalement,
-        ?SignalementQualification $existingQualificationInsalubrite
+        ?SignalementQualification $existingQualificationInsalubrite,
     ): void {
         $score = $signalement->getScore();
 
@@ -229,7 +229,7 @@ class SignalementQualificationUpdater
     private function addOneQualification(
         Signalement $signalement,
         Qualification $qualification,
-        QualificationStatus $statusQualification
+        QualificationStatus $statusQualification,
     ): void {
         $data = [];
         $data['listDesordrePrecisionsIds'] = $this->getLinkedDesordrePrecisions($signalement, $qualification);
@@ -446,7 +446,7 @@ class SignalementQualificationUpdater
      */
     private function updateDangerQualification(
         Signalement $signalement,
-        ?SignalementQualification $existingQualificationDanger
+        ?SignalementQualification $existingQualificationDanger,
     ): void {
         $listCriticiteDanger = $this->getCriticitesDanger($signalement);
         // If already exists
@@ -502,7 +502,7 @@ class SignalementQualificationUpdater
      */
     private function updateSuroccupationQualification(
         Signalement $signalement,
-        ?SignalementQualification $existingQualificationSuroccupation
+        ?SignalementQualification $existingQualificationSuroccupation,
     ): void {
         $listPrecisionsSuroccupation = $this->getPrecisionsSuroccupation($signalement);
         // If already exists

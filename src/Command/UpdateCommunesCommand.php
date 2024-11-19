@@ -32,7 +32,7 @@ class UpdateCommunesCommand extends Command
         private readonly CommuneFactory $communeFactory,
         private array $territories = [],
         private array $communes = [],
-        private array $csvData = []
+        private array $csvData = [],
     ) {
         parent::__construct();
     }

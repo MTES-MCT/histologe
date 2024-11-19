@@ -39,7 +39,7 @@ enum AffectationStatus: int
             'en_attente' => AffectationStatus::STATUS_WAIT->value,
             'accepte' => AffectationStatus::STATUS_ACCEPTED->value,
             'refuse' => AffectationStatus::STATUS_REFUSED->value,
-            default => throw new \UnexpectedValueException('Unexpected affectation status : '.$label)
+            default => throw new \UnexpectedValueException('Unexpected affectation status : '.$label),
         };
     }
 }

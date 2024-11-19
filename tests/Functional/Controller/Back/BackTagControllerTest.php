@@ -103,7 +103,7 @@ class BackTagControllerTest extends WebTestCase
         string $tagTerritory,
         bool $withCsrfToken,
         int $codeResponse,
-        string $message
+        string $message,
     ): void {
         /** @var TagRepository $tagRepository */
         $tagRepository = self::getContainer()->get(TagRepository::class);
@@ -135,7 +135,7 @@ class BackTagControllerTest extends WebTestCase
         string $tagLabel,
         bool $withCsrfToken,
         int $codeResponse,
-        string $message
+        string $message,
     ): void {
         /** @var TagRepository $tagRepository */
         $tagRepository = self::getContainer()->get(TagRepository::class);

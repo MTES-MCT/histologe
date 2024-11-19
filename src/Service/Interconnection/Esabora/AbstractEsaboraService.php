@@ -39,7 +39,7 @@ abstract class AbstractEsaboraService implements EsaboraServiceInterface
         string $url,
         string $token,
         array $payload,
-        array $requestOptions = []
+        array $requestOptions = [],
     ): ResponseInterface|JsonResponse {
         try {
             $taskPath = $this->getTaskPath($payload);
@@ -88,7 +88,7 @@ abstract class AbstractEsaboraService implements EsaboraServiceInterface
     }
 
     public static function hasSuccess(
-        DossierResponseInterface|DossierCollectionResponseInterface $dossierResponse
+        DossierResponseInterface|DossierCollectionResponseInterface $dossierResponse,
     ): bool {
         return Response::HTTP_OK === $dossierResponse->getStatusCode()
             && null !== $dossierResponse->getSasEtat()

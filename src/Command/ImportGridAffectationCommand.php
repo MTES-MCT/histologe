@@ -182,7 +182,7 @@ class ImportGridAffectationCommand extends Command
         SymfonyStyle $io,
         bool $isModeUpdate,
         string $fromFile,
-        ?Territory $territory = null
+        ?Territory $territory = null,
     ): bool {
         $canExecute = true;
 

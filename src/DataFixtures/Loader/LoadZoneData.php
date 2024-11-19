@@ -17,7 +17,7 @@ class LoadZoneData extends Fixture implements OrderedFixtureInterface
     public function __construct(
         private TerritoryRepository $territoryRepository,
         private UserRepository $userRepository,
-        private PartnerRepository $partnerRepository
+        private PartnerRepository $partnerRepository,
     ) {
     }
 

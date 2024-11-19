@@ -2130,7 +2130,7 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
             return match ($this->civiliteOccupant) {
                 'mme' => 'Madame',
                 'mr' => 'Monsieur',
-                default => $this->civiliteOccupant
+                default => $this->civiliteOccupant,
             };
         }
 

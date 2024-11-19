@@ -475,7 +475,7 @@ class LoadSignalementData extends Fixture implements OrderedFixtureInterface
     private function buildSignalementQualification(
         Signalement $signalement,
         array $row,
-        string $qualificationLabel
+        string $qualificationLabel,
     ): SignalementQualification {
         $faker = Factory::create();
         $signalementQualification = (new SignalementQualification())

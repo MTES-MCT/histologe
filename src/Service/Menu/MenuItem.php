@@ -13,7 +13,7 @@ class MenuItem
         private readonly string $icon = '',
         private readonly string $roleGranted = '',
         private readonly string $roleNotGranted = '',
-        private readonly bool $featureEnable = true
+        private readonly bool $featureEnable = true,
     ) {
     }
 

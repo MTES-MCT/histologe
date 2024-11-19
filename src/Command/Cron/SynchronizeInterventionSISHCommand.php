@@ -41,7 +41,7 @@ class SynchronizeInterventionSISHCommand extends AbstractSynchronizeEsaboraComma
         #[TaggedIterator(
             'app.intervention_sish_handler',
             defaultPriorityMethod: 'getPriority'
-        )] iterable $interventionHandlers
+        )] iterable $interventionHandlers,
     ) {
         parent::__construct(
             $this->esaboraManager,
