@@ -24,42 +24,8 @@
             </div>
         </header>
     </section>
-    <section class="fr-container--fluid overflow-visible">
-        {% form_theme form 'form/dsfr_theme.html.twig' %}
-        {{ form_start(form) }}
-        {{ form_errors(form) }}
-        <div class="fr-grid-row fr-grid-row--gutters">
-            <div class="fr-col-12 fr-col-lg-3">
-                {{ form_row(form.queryUser) }}
-            </div>
-            {% if is_granted('ROLE_ADMIN') %}
-                <div class="fr-col-12 fr-col-lg-3">
-                    {{ form_row(form.territory) }}
-                </div>
-            {% endif %}
-            <div class="fr-col-12 fr-col-lg-3">
-                {{ form_row(form.partnerType) }}
-            </div>
-            <div class="fr-col-12 fr-col-lg-3">
-                {{ form_row(form.partners) }}
-            </div>
-            <div class="fr-col-12 fr-col-lg-3">
-                {{ form_row(form.statut) }}
-            </div>
-            <div class="fr-col-12 fr-col-lg-3">
-                {{ form_row(form.role) }}
-            </div>
-            {% if platform.feature_permission_affectation %}
-            <div class="fr-col-12 fr-col-lg-3">
-                {{ form_row(form.permissionAffectation) }}
-            </div>
-            {% endif %}
-            <div class="fr-col-12">
-                <a href="{{ path('back_user_index') }}" class="fr-link fr-link--icon-left fr-icon-close-circle-line">Réinitialiser les résultats</a>
-            </div>
-        </div>
-        {{ form_end(form) }}
-    </section>
+
+    {% include 'back/_partials/filters.html.twig' %}
 
     <section class="fr-grid-row fr-grid-row--middle fr-p-5v">
         <div class="fr-col-12 fr-text--right">

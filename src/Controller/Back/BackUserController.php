@@ -34,9 +34,11 @@ class BackUserController extends AbstractController
         $boTable
             ->setPage($searchUser->getPage())
             ->setPages((int) ceil($paginatedUsers->count() / self::MAX_LIST_PAGINATION));
+        $boFilters = $boListUser->buildFilters($form);
 
         return $this->render('back/user/index.html.twig', [
             'bo_table' => $boTable,
+            'bo_filters' => $boFilters,
             'form' => $form,
             'searchUser' => $searchUser,
             'users' => $paginatedUsers,

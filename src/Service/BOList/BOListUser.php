@@ -2,6 +2,7 @@
 
 namespace App\Service\BOList;
 
+use App\Dto\BOList\BOFilters;
 use App\Dto\BOList\BOHeaderItem;
 use App\Dto\BOList\BOListItem;
 use App\Dto\BOList\BOListItemLink;
@@ -11,6 +12,7 @@ use App\Service\SearchUser;
 use Doctrine\ORM\Tools\Pagination\Paginator;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
+use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 class BOListUser
@@ -33,6 +35,17 @@ class BOListUser
             rowClass: 'signalement-row',
             paginationSlug: 'back_user_index',
             paginationParams: $this->getPaginationParams($searchUser),
+        );
+    }
+
+    public function buildFilters(FormInterface $searchUserType): BOFilters
+    {
+        $formKeys = array_keys($searchUserType->all());
+        $formKeys = array_filter($formKeys, fn ($m) => 'page' != $m);
+
+        return new BOFilters(
+            formKeys: $formKeys,
+            reinitSlug: 'back_user_index',
         );
     }
 
