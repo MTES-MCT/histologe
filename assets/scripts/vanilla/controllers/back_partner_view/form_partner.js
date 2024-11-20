@@ -7,21 +7,13 @@ function histoUpdateFieldsVisibility () {
   const partnerType = document.getElementById('partner_type')
   partnerType.value = partnerType.value.toUpperCase()
 
-  let showZonePDL, showEsabora, showIdoss
-  showZonePDL = showEsabora = showIdoss = false
+  let showEsabora, showIdoss
+  showEsabora = showIdoss = false
   if (partnerType.value === 'COMMUNE_SCHS') {
-    showZonePDL = true
     showEsabora = true
     showIdoss = true
   } else if (partnerType.value === 'ARS') {
     showEsabora = true
-  } else if (partnerType.value === 'EPCI') {
-    showZonePDL = true
-  }
-  if (showZonePDL) {
-    document.querySelector('#partner_create_zone_pdl').classList.remove('fr-hidden')
-  } else {
-    document.querySelector('#partner_create_zone_pdl').classList.add('fr-hidden')
   }
   if (showEsabora) {
     document.querySelector('#partner_esabora').classList.remove('fr-hidden')

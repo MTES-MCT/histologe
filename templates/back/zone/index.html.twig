@@ -68,7 +68,8 @@
                             <tr>
                                 <th scope="col" class="number">ID</th>
                                 <th scope="col">Nom</th>
-                                <th scope="col">Partenaires</th>
+                                <th scope="col">partenaires</th>
+                                <th scope="col">partenaires exclus</th>
                                 <th scope="col">Territoire</th>
                                 <th scope="col">Type</th>
                                 <th scope="col" class="fr-text--right">Actions</th>
@@ -81,7 +82,12 @@
                                     <td>{{ item.name }}</td>
                                     <td>
                                         {% for partner in item.partners %}
-                                            <span class="fr-badge fr-badge--blue-ecume fr-badge--no-icon">{{ partner.nom }}</span>
+                                            <span class="fr-badge fr-badge--success fr-badge--no-icon">{{ partner.nom }}</span>
+                                        {% endfor %}
+                                    </td>
+                                    <td>
+                                        {% for partner in item.excludedPartners %}
+                                            <span class="fr-badge fr-badge--error fr-badge--no-icon">{{ partner.nom }}</span>
                                         {% endfor %}
                                     </td>
                                     <td>

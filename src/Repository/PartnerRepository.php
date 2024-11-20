@@ -54,7 +54,8 @@ class PartnerRepository extends ServiceEntityRepository
 
         $queryBuilder = $this->getPartnersQueryBuilder($territory);
         $queryBuilder->addSelect('z')
-            ->leftJoin('p.zones', 'z');
+            ->leftJoin('p.zones', 'z')
+            ->leftJoin('p.excludedZones', 'ez');
 
         if (!empty($type)) {
             $queryBuilder
@@ -186,10 +187,13 @@ class PartnerRepository extends ServiceEntityRepository
                 FROM partner p
                 LEFT JOIN partner_zone pz ON p.id = pz.partner_id
                 LEFT JOIN zone z ON pz.zone_id = z.id
+                LEFT JOIN partner_excluded_zone pez ON p.id = pez.partner_id
+                LEFT JOIN zone ez ON pez.zone_id = ez.id
                 WHERE p.is_archive = 0
                 AND p.territory_id = :territory
                 AND (p.insee LIKE :insee OR p.insee LIKE \'%[]%\' OR p.insee LIKE \'%[""]%\')
                 AND (z.id IS NULL OR ST_Contains(ST_GeomFromText(z.area), Point(:lng, :lat)))
+                AND (ez.id IS NULL OR NOT ST_Contains(ST_GeomFromText(ez.area), Point(:lng, :lat)))
                 '.$clauseSubquery.'
                 ORDER BY p.nom ASC';
 
@@ -210,7 +214,6 @@ class PartnerRepository extends ServiceEntityRepository
                 )
             )
             ->setParameter('insee', '%'.$signalement->getInseeOccupant().'%')
-            ->leftJoin('p.zones', 'z')
         ;
         if (\count($affectedPartners) > 0 || 'IN' == $operator) {
             $queryBuilder->andWhere('p.id '.$operator.' (:subquery)')

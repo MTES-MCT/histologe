@@ -102,6 +102,13 @@ class Partner implements EntityHistoryInterface
     #[ORM\ManyToMany(targetEntity: Zone::class, inversedBy: 'partners', cascade: ['persist'])]
     private Collection $zones;
 
+    /**
+     * @var Collection<int, Zone>
+     */
+    #[ORM\ManyToMany(targetEntity: Zone::class, inversedBy: 'excludedPartners', cascade: ['persist'])]
+    #[ORM\JoinTable(name: 'partner_excluded_zone')]
+    private Collection $excludedZones;
+
     public function __construct()
     {
         $this->users = new ArrayCollection();
@@ -110,6 +117,7 @@ class Partner implements EntityHistoryInterface
         $this->interventions = new ArrayCollection();
         $this->isIdossActive = false;
         $this->zones = new ArrayCollection();
+        $this->excludedZones = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -430,6 +438,30 @@ class Partner implements EntityHistoryInterface
     public function removeZone(Zone $zone): static
     {
         $this->zones->removeElement($zone);
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Zone>
+     */
+    public function getExcludedZones(): Collection
+    {
+        return $this->excludedZones;
+    }
+
+    public function addExcludedZone(Zone $excludedZone): static
+    {
+        if (!$this->excludedZones->contains($excludedZone)) {
+            $this->excludedZones->add($excludedZone);
+        }
+
+        return $this;
+    }
+
+    public function removeExcludedZone(Zone $excludedZone): static
+    {
+        $this->excludedZones->removeElement($excludedZone);
 
         return $this;
     }

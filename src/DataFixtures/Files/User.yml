@@ -489,3 +489,11 @@ users:
     is_generique: 0
     is_mailing_active: 1
     territory: "Hérault"
+  -
+    email: admin-territoire-34-02@histologe.fr
+    roles: "[\"ROLE_ADMIN_TERRITORY\"]"
+    partner: "Partenaire Hors Zone Agde"
+    statut: 1
+    is_generique: 0
+    is_mailing_active: 1
+    territory: "Hérault"

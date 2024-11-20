@@ -25,117 +25,173 @@
         {% endif %}            
         <header>         
             <div class="fr-grid-row"> 
-                <div class="fr-col-6 fr-text--left">
-                    <h1 class="fr-h1 fr-mb-0">{{ partner.nom }}</h1>
+                <div class="fr-col-12">
+                    <h1>{{ partner.nom }}</h1>
+                    <p>Territoire : {{ partner.territory ? partner.territory.zip ~ ' - ' ~ partner.territory.name : ''}}</p>
                 </div>
-                <div class="fr-col-6 fr-text--right">
-                    <a class="fr-btn fr-btn--icon-left fr-btn--md fr-fi-edit-line" href="{{ path('back_partner_edit', {'id': partner.id}) }}">Modifier
-                        le partenaire</a>
-                </div>
-            </div>
-        {% if is_granted('ROLE_ADMIN') and partnerAutoAffectationRules|length > 0 %}
-            <span>Règles d'auto-affectation concernant ce partenaire</span>
-            <ul>
-            {% for partnerAutoAffectationRule in partnerAutoAffectationRules %}
-                <li>{{ partnerAutoAffectationRule.description(false)}}</li>
-            {% endfor %}
-            </ul>
-        {% endif %}            
+            </div>          
         </header>
     </section>
-    <section class="fr-p-5v">
-        <div class="fr-col-12 fr-grid-row fr-grid-row--gutters">
-            <div class="fr-col-6">
-                <div><b>Nom :</b> {{ partner.nom }}</div>
+
+    <div class="fr-tabs">
+        <ul class="fr-tabs__list" role="tablist" aria-label="Informations du partenaire">
+            <li role="presentation">
+                <button id="tabpanel-informations" class="fr-tabs__tab" tabindex="0" role="tab" aria-selected="true" aria-controls="tabpanel-informations-panel">Informations</button>
+            </li>
+            <li role="presentation">
+                <button id="tabpanel-perimetre" class="fr-tabs__tab" tabindex="-1" role="tab" aria-selected="false" aria-controls="tabpanel-perimetre-panel">Périmètre</button>
+            </li>
+            <li role="presentation">
+                <button id="tabpanel-agents" class="fr-tabs__tab" tabindex="-1" role="tab" aria-selected="false" aria-controls="tabpanel-agents-panel">Agents</button>
+            </li>
+        </ul>
+        <div id="tabpanel-informations-panel" class="fr-tabs__panel fr-tabs__panel--selected" role="tabpanel" aria-labelledby="tabpanel-informations" tabindex="0">
+            <div class="fr-grid-row fr-grid-row--gutters">
+                <div class="fr-col-6">
+                    <h2>Informations du partenaire</h2>
+                </div>
+                <div class="fr-col-6 fr-text--right">
+                    <a class="fr-btn fr-btn--secondary fr-btn--icon-left fr-btn--md fr-fi-edit-line" href="{{ path('back_partner_edit', {'id': partner.id}) }}">Modifier les infos</a>
+                </div>
             </div>
-            <div class="fr-col-6">
-                <div><b>Territoire :</b> {{ partner.territory ? partner.territory.zip ~ ' - ' ~ partner.territory.name : ''}}</div>
-            </div>
-        </div>
-        <div class="fr-col-12 fr-grid-row fr-grid-row--gutters">
-            <div class="fr-col-6">
-                <div><b>E-mail générique :</b> {{ partner.email }}</div>
-            </div>
-            <div class="fr-col-6">
-                <div><b>Type :</b> {{ partner.type ? partner.type.label : (partner.isCommune ? 'Commune':'N/A') }}</div>
-            </div>
-        </div>
-        <div class="fr-col-12 fr-grid-row fr-grid-row--gutters">
-            <div class="fr-col-6"><b>Compétences :</b>
-                {% if partner.competence %}
-                    {% for competence in partner.competence %}
-                        <span class="fr-badge fr-badge--blue-ecume fr-mb-1v">{{ competence.label }}</span>
-                    {% endfor %}
-                {% else %}
-                    /
-                {% endif %}
-            </div>
-            <div class="fr-col-6"><b>Code(s) INSEE :</b>
-                {% if partner.insee %}
-                    {% for insee in partner.insee %}
-                        <span class="fr-badge fr-badge--blue-ecume fr-mb-1v">{{ insee }}</span>
-                    {% endfor %}
-                {% else %}
-                    /
-                {% endif %}
-            </div>
-        </div>
-        {% if platform.feature_zonage %}
-            <div class="fr-col-12 fr-grid-row fr-grid-row--gutters">
-                <div class="fr-col-6"><b>Zone(s) :</b>
-                    {% if partner.zones %}
-                        {% for zone in partner.zones %}
-                            <span class="fr-badge fr-badge--blue-ecume fr-mb-1v">{{ zone.name }}</span>
+            <h3>Informations générales</h3>
+            <div class="fr-grid-row fr-grid-row--gutters">
+                <div class="fr-col-6">
+                    <div><b>Nom :</b> {{ partner.nom }}</div>
+                </div>
+                <div class="fr-col-6">
+                    <div><b>Territoire :</b> {{ partner.territory ? partner.territory.zip ~ ' - ' ~ partner.territory.name : ''}}</div>
+                </div>
+                <div class="fr-col-6">
+                    <div><b>E-mail générique :</b> {{ partner.email }}</div>
+                </div>
+                <div class="fr-col-6">
+                    <div><b>Type :</b> {{ partner.type ? partner.type.label : (partner.isCommune ? 'Commune':'N/A') }}</div>
+                </div>
+                <div class="fr-col-6"><b>Compétences :</b>
+                    {% if partner.competence %}
+                        {% for competence in partner.competence %}
+                            <span class="fr-badge fr-badge--blue-ecume fr-mb-1v">{{ competence.label }}</span>
                         {% endfor %}
                     {% else %}
                         /
                     {% endif %}
                 </div>
+                {% if is_granted('ROLE_ADMIN') and partnerAutoAffectationRules|length > 0 %}
+                    <div class="fr-col-6">
+                        <span>Règles d'auto-affectation concernant ce partenaire</span>
+                        <ul>
+                        {% for partnerAutoAffectationRule in partnerAutoAffectationRules %}
+                            <li>{{ partnerAutoAffectationRule.description(false)}}</li>
+                        {% endfor %}
+                        </ul>
+                    </div>
+                {% endif %}  
             </div>
-        {% endif %}
-        {% if partner.esaboraUrl %}
-            <div class="fr-col-12 fr-grid-row fr-grid-row--gutters">
-                <div class="fr-col-6">
-                    <div><b>URL ESABORA :</b> {{ partner.esaboraUrl }}</div>
+            {% if partner.esaboraUrl or partner.isIdossActive %}
+                <h3>Interfaçage</h3>
+                <div class="fr-grid-row fr-grid-row--gutters">
+                    {% if partner.esaboraUrl %}
+                        <div class="fr-col-6">
+                            <div><b>URL ESABORA :</b> {{ partner.esaboraUrl }}</div>
+                        </div>
+                        <div class="fr-col-6">
+                            <div>
+                                <b>Synchronisation ESABORA :</b>
+                                {% if partner.isEsaboraActive %}
+                                    <span class="fr-badge fr-badge--success">Active</span>
+                                {% else %}
+                                    <span class="fr-badge fr-badge--info">Inactive</span>
+                                {% endif %}
+                            </div>
+                        </div>
+                        <div class="fr-col-6">
+                            <div><b>Token ESABORA :</b> {{ partner.esaboraToken }}</div>
+                        </div>
+                        <div class="fr-col-6">
+                            <div><b>Dernière synchro : </b>{{ last_job_date ? last_job_date|date('d/m/Y à H:i') : '-' }}</div>
+                        </div>
+                    {% endif %}
+                    {% if partner.isIdossActive %}
+                        <div class="fr-col-6">
+                            <div>
+                                <b>Synchronisation iDoss :</b>
+                                <span class="fr-badge fr-badge--success">Active</span>
+                            </div>
+                        </div>
+                    {% endif %}
                 </div>
+            {% endif %}
+        </div>
+        <div id="tabpanel-perimetre-panel" class="fr-tabs__panel fr-tabs__panel" role="tabpanel" aria-labelledby="tabpanel-perimetre" tabindex="0">
+            <div class="fr-grid-row fr-grid-row--gutters">
                 <div class="fr-col-6">
-                    <div>
-                        <b>Synchronisation ESABORA :</b>
-                        {% if partner.isEsaboraActive %}
-                            <span class="fr-badge fr-badge--success">Active</span>
+                    <h2>Périmètre d'intervention</h2>
+                </div>
+                <div class="fr-col-6 fr-text--right">
+                    <a class="fr-btn fr-btn--secondary fr-btn--icon-left fr-btn--md fr-fi-edit-line" href="{{ path('back_partner_edit_perimetre', {'id': partner.id}) }}">Modifier le périmètre</a>
+                </div>
+                <div class="fr-col-12">
+                    <p>
+                        Le périmètre d'intervention du partenaire correspond aux zones géographiques sur lesquelles il intervient. 
+                        Le partenaire pourra uniquement être affecté et intervenir sur les dossiers des zones définies dans son périmètre.
+                        <br> 
+                        Si aucun périmètre n'est défini, le partenaire pourra être affecté à n'importe quel dossier du territoire.
+                    </p>
+                    <div class="fr-callout">
+                        <p class="fr-callout__text">
+                            Les périmètres définis sont cumulatifs. 
+                            <br>
+                            Par exemple : vous ajoutez le code INSEE d'une commune et une zone OPAH à un partenaire, le partenaire pourra uniquement être affecté aux dossiers qui sont à la fois dans la commune <u>ET</u> dans la zone OPAH sélectionnée.
+                        </p>
+                    </div>
+                </div>
+                <div class="fr-col-12">
+                    <h3>Code(s) INSEE</h3>
+                    {% if partner.insee %}
+                        {% for insee in partner.insee %}
+                            <span class="fr-badge fr-badge--blue-ecume fr-mb-1v">{{ insee }}</span>
+                        {% endfor %}
+                    {% else %}
+                        <b><i>Aucune code INSEE</i></b>
+                    {% endif %}
+                </div>
+                {% if platform.feature_zonage %}
+                    <div class="fr-col-12">
+                        <h3>Zones</h3>
+                        <p>
+                            Les zones doivent être créées dans la partie Outils Admin > Zones.
+                        </p>
+                        {% if partner.zones|length %}
+                            {% for zone in partner.zones %}
+                                <span class="fr-badge fr-badge--blue-ecume fr-mb-1v">{{ zone.name }}</span>
+                            {% endfor %}
                         {% else %}
-                            <span class="fr-badge fr-badge--info">Inactive</span>
+                            <b><i>Aucune zone</i></b>
                         {% endif %}
                     </div>
-                </div>
-            </div>
-            <div class="fr-col-12 fr-grid-row fr-grid-row--gutters">
-                <div class="fr-col-6">
-                    <div><b>Token ESABORA :</b> {{ partner.esaboraToken }}</div>
-                </div>
-                <div class="fr-col-6">
-                    <div><b>Dernière synchro : </b>{{ last_job_date ? last_job_date|date('d/m/Y à H:i') : '-' }}</div>
-                </div>
-            </div>
-        {% endif %}
-        {% if partner.isIdossActive %}
-            <div class="fr-col-12 fr-grid-row fr-grid-row--gutters">
-                <div class="fr-col-6">
-                    <div>
-                        <b>Synchronisation iDoss :</b>
-                        <span class="fr-badge fr-badge--success">Active</span>
+                    <div class="fr-col-12">
+                        <h3>Zones à exclure</h3>
+                        <p>
+                            Si vous souhaitez que le partenaire n'intervienne pas sur les dossiers d'une zone spécifique, sélectionnez une zone à exclure.
+                            <br> 
+                            Les zones doivent être créées dans la partie Outils Admin > Zones.
+                        </p>
+                        {% if partner.excludedZones|length %}
+                            {% for zone in partner.excludedZones %}
+                                <span class="fr-badge fr-badge--blue-ecume fr-mb-1v">{{ zone.name }}</span>
+                            {% endfor %}
+                        {% else %}
+                            <b><i>Aucune zone à exclure</i></b>
+                        {% endif %}
                     </div>
-                </div>
+                {% endif %}
             </div>
-        {% endif %}
-
-    </section>
-    <hr>
-    <section class="fr-p-5v">
-        <header>
-            <div class="fr-grid-row">
-                <div class="fr-col-6 fr-text--left">
-                    <h1 class="fr-h1 fr-mb-0">Utilisateurs</h1>
+        </div>
+        <div id="tabpanel-agents-panel" class="fr-tabs__panel fr-tabs__panel" role="tabpanel" aria-labelledby="tabpanel-agents" tabindex="0">
+            <div class="fr-grid-row fr-grid-row--gutters">
+                <div class="fr-col-6">
+                    <h2>Agents du partenaire</h2>
                 </div>
                 <div class="fr-col-6 fr-text--right">
                     <a href="#" class="fr-btn fr-btn--success fr-btn--icon-left fr-btn--md fr-fi-add-line fr-btn-add-user"
@@ -144,92 +200,91 @@
                         un utilisateur</a>
                 </div>
             </div>
-        </header>
-    </section>
-
-    
-    <section class="fr-col-12 fr-table {{ not platform.feature_enable_menu_horizontale ? 'fr-table--lg' : '' }} fr-pt-0 fr-px-5v">
-		<div class="fr-table__wrapper">
-			<div class="fr-table__container">
-				<div class="fr-table__content">
-                    <table class="fr-cell--multiline sortable" aria-label="Liste des utilisateurs du partenaire">
-                        <thead>
-                        <tr>
-                            <th scope="col">Dernière connexion</th>
-                            <th scope="col">Nom</th>
-                            <th scope="col">Prénom</th>
-                            <th scope="col">Courriel</th>
-                            <th scope="col">Notif. e-mails</th>
-                            <th scope="col">Statut</th>
-                            <th scope="col">Rôle</th>
-                            {% if platform.feature_permission_affectation and is_granted('ASSIGN_PERMISSION_AFFECTATION', partner) %}
-                            <th scope="col">Droits d'affectation</th>
-                            {% endif %}
-                            <th scope="col" class="fr-text--right">Actions</th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                            {% for user in partner.users|filter(user => user.id is not null) %}
-                                <tr class="user-row">
-                                    <td>{{ user.getLastLoginAtStr('d/m/Y') }}</td>
-                                    <td>{{ user.nom }}</td>
-                                    <td>{{ user.prenom }}</td>
-                                    <td>{{ user.email }}</td>
-                                    <td><span class="fr-badge fr-badge--blue-ecume fr-mb-1v">{{ user.isMailingActive ? 'OUI' : 'NON' }}</span></td>
-                                    <td>{% if user.statut == 0 %}
-                                            {% set classe = 'fr-badge--orange-terre-battue' %}
-                                            {% set label = 'INACTIF' %}
-                                        {% elseif user.statut == 1 %}
-                                            {% set classe = 'fr-badge--green-emeraude' %}
-                                            {% set label = 'ACTIF' %}
-                                        {% elseif user.statut == 2 %}
-                                            {% set classe = 'fr-badge--blue-ecume' %}
-                                            {% set label = 'ARCHIVE' %}
-                                        {% endif %}
-                                        <span class="fr-badge {{ classe }} fr-mb-1v">{{ label }}</span></td>
-                                    <td>
-                                        {{ user.roleLabel() }}
-                                    </td>
-                                    {% if platform.feature_permission_affectation and is_granted('ASSIGN_PERMISSION_AFFECTATION', partner) %}
-                                    <td>{{ user.isSuperAdmin() or user.isTerritoryAdmin() or user.hasPermissionAffectation() ? 'Oui' : 'Non' }}</td>
-                                    {% endif %}
-                                    <td class="fr-text--right">
-                                        {% if is_granted('USER_EDIT', user) %}
-                                            <a href="#" class="fr-btn fr-fi-edit-line fr-mt-3v btn-edit-partner-user"
-                                                id="partner_users_edit_{{ user.id }}" aria-controls="fr-modal-user-edit"
-                                                data-fr-opened="false"
-                                                data-usernom="{{ user.nom }}"
-                                                data-userprenom="{{ user.prenom }}"
-                                                data-userrole="{{ user.roles[0] }}"
-                                                {% if platform.feature_permission_affectation and is_granted('ASSIGN_PERMISSION_AFFECTATION', partner) %}
-                                                data-userpermissionaffectation="{{ user.hasPermissionAffectation() ? '1' : '0' }}"
-                                                {% endif %}
-                                                data-userismailingactive="{{ user.isMailingActive }}"
-                                                data-userid="{{ user.id }}"
-                                                data-useremail="{{ user.email }}">
-                                            </a>
-                                        {% endif %}
-                                        {% if is_granted('USER_TRANSFER', user) and app.request.get('_route') is not same as('back_partner_new') %}
-                                            <a href="#" class="fr-btn fr-btn--orange fr-fi-upload-2-fill fr-mt-3v btn-transfer-partner-user"
-                                            id="partner_users_transfer_{{ user.id }}" aria-controls="fr-modal-user-transfer"
-                                            data-fr-opened="false" data-username="{{ user.nomComplet }}" data-userid="{{ user.id }}"></a>
-                                        {% endif %}
-                                        {% if is_granted('USER_DELETE', user) and app.request.get('_route') is not same as('back_partner_new') %}
-                                            <a href="#" class="fr-btn fr-btn--danger fr-fi-delete-line fr-mt-3v btn-delete-partner-user"
-                                            id="partner_users_delete_{{ user.id }}" aria-controls="fr-modal-user-delete"
-                                            data-fr-opened="false" data-username="{{ user.nomComplet }}" data-userid="{{ user.id }}" data-useremail="{{ user.email }}"></a>
-                                        {% endif %}
-                                    </td>
-                                </tr>
-                            {% else %}
+            <div class="fr-table">
+                <div class="fr-table__wrapper">
+                    <div class="fr-table__container">
+                        <div class="fr-table__content">
+                            <table class="fr-cell--multiline" aria-label="Liste des utilisateurs du partenaire">
+                                <thead>
                                 <tr>
-                                    <td colspan="3">Aucun partenaire trouvé</td>
+                                    <th scope="col">Dernière connexion</th>
+                                    <th scope="col">Nom</th>
+                                    <th scope="col">Prénom</th>
+                                    <th scope="col">Courriel</th>
+                                    <th scope="col">Notif. e-mails</th>
+                                    <th scope="col">Statut</th>
+                                    <th scope="col">Rôle</th>
+                                    {% if platform.feature_permission_affectation and is_granted('ASSIGN_PERMISSION_AFFECTATION', partner) %}
+                                    <th scope="col">Droits d'affectation</th>
+                                    {% endif %}
+                                    <th scope="col" class="fr-text--right">Actions</th>
                                 </tr>
-                            {% endfor %}
-                        </tbody>
-                    </table>
-				</div>
-			</div>
-		</div>
-    </section>
+                                </thead>
+                                <tbody>
+                                    {% for user in partner.users|filter(user => user.id is not null) %}
+                                        <tr class="user-row">
+                                            <td>{{ user.getLastLoginAtStr('d/m/Y') }}</td>
+                                            <td>{{ user.nom }}</td>
+                                            <td>{{ user.prenom }}</td>
+                                            <td>{{ user.email }}</td>
+                                            <td><span class="fr-badge fr-badge--blue-ecume fr-mb-1v">{{ user.isMailingActive ? 'OUI' : 'NON' }}</span></td>
+                                            <td>{% if user.statut == 0 %}
+                                                    {% set classe = 'fr-badge--orange-terre-battue' %}
+                                                    {% set label = 'INACTIF' %}
+                                                {% elseif user.statut == 1 %}
+                                                    {% set classe = 'fr-badge--green-emeraude' %}
+                                                    {% set label = 'ACTIF' %}
+                                                {% elseif user.statut == 2 %}
+                                                    {% set classe = 'fr-badge--blue-ecume' %}
+                                                    {% set label = 'ARCHIVE' %}
+                                                {% endif %}
+                                                <span class="fr-badge {{ classe }} fr-mb-1v">{{ label }}</span></td>
+                                            <td>
+                                                {{ user.roleLabel() }}
+                                            </td>
+                                            {% if platform.feature_permission_affectation and is_granted('ASSIGN_PERMISSION_AFFECTATION', partner) %}
+                                            <td>{{ user.isSuperAdmin() or user.isTerritoryAdmin() or user.hasPermissionAffectation() ? 'Oui' : 'Non' }}</td>
+                                            {% endif %}
+                                            <td class="fr-text--right">
+                                                {% if is_granted('USER_EDIT', user) %}
+                                                    <a href="#" class="fr-btn fr-fi-edit-line fr-mt-3v btn-edit-partner-user"
+                                                        id="partner_users_edit_{{ user.id }}" aria-controls="fr-modal-user-edit"
+                                                        data-fr-opened="false"
+                                                        data-usernom="{{ user.nom }}"
+                                                        data-userprenom="{{ user.prenom }}"
+                                                        data-userrole="{{ user.roles[0] }}"
+                                                        {% if platform.feature_permission_affectation and is_granted('ASSIGN_PERMISSION_AFFECTATION', partner) %}
+                                                        data-userpermissionaffectation="{{ user.hasPermissionAffectation() ? '1' : '0' }}"
+                                                        {% endif %}
+                                                        data-userismailingactive="{{ user.isMailingActive }}"
+                                                        data-userid="{{ user.id }}"
+                                                        data-useremail="{{ user.email }}">
+                                                    </a>
+                                                {% endif %}
+                                                {% if is_granted('USER_TRANSFER', user) and app.request.get('_route') is not same as('back_partner_new') %}
+                                                    <a href="#" class="fr-btn fr-btn--orange fr-fi-upload-2-fill fr-mt-3v btn-transfer-partner-user"
+                                                    id="partner_users_transfer_{{ user.id }}" aria-controls="fr-modal-user-transfer"
+                                                    data-fr-opened="false" data-username="{{ user.nomComplet }}" data-userid="{{ user.id }}"></a>
+                                                {% endif %}
+                                                {% if is_granted('USER_DELETE', user) and app.request.get('_route') is not same as('back_partner_new') %}
+                                                    <a href="#" class="fr-btn fr-btn--danger fr-fi-delete-line fr-mt-3v btn-delete-partner-user"
+                                                    id="partner_users_delete_{{ user.id }}" aria-controls="fr-modal-user-delete"
+                                                    data-fr-opened="false" data-username="{{ user.nomComplet }}" data-userid="{{ user.id }}" data-useremail="{{ user.email }}"></a>
+                                                {% endif %}
+                                            </td>
+                                        </tr>
+                                    {% else %}
+                                        <tr>
+                                            <td colspan="3">Aucun agent trouvé</td>
+                                        </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
 {% endblock %}

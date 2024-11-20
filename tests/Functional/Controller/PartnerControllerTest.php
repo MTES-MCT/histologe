@@ -67,7 +67,6 @@ class PartnerControllerTest extends WebTestCase
                 'partner[nom]' => $this->faker->company(),
                 'partner[email]' => $this->faker->companyEmail(),
                 'partner[type]' => PartnerType::ARS->value,
-                'partner[insee]' => [],
             ]
         );
 
@@ -99,7 +98,6 @@ class PartnerControllerTest extends WebTestCase
                 'partner[nom]' => $this->faker->company(),
                 'partner[email]' => $this->faker->companyEmail(),
                 'partner[type]' => PartnerType::ARS->value,
-                'partner[insee]' => [],
             ]
         );
 

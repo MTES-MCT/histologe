@@ -10,6 +10,8 @@ use App\Entity\Intervention;
 use App\Entity\Partner;
 use App\Entity\User;
 use App\Factory\UserFactory;
+use App\Form\OldPartnerType;
+use App\Form\PartnerPerimetreType;
 use App\Form\PartnerType;
 use App\Manager\AffectationManager;
 use App\Manager\InterventionManager;
@@ -29,6 +31,7 @@ use App\Service\Signalement\VisiteNotifier;
 use App\Validator\EmailFormatValidator;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Symfony\Component\Form\FormError;
 use Symfony\Component\Form\FormInterface;
@@ -43,8 +46,11 @@ use Symfony\Component\Workflow\WorkflowInterface;
 #[Route('/bo/partenaires')]
 class PartnerController extends AbstractController
 {
-    public function __construct(private readonly AffectationManager $affectationManager)
-    {
+    public function __construct(
+        private readonly AffectationManager $affectationManager,
+        #[Autowire(env: 'FEATURE_ZONAGE')]
+        private readonly bool $featureZonage,
+    ) {
     }
 
     #[Route('/', name: 'back_partner_index', methods: ['GET', 'POST'])]
@@ -108,11 +114,15 @@ class PartnerController extends AbstractController
         if (!$this->isGranted('ROLE_ADMIN')) {
             $partner->setTerritory($user->getTerritory());
         }
-        $form = $this->createForm(PartnerType::class, $partner, [
-            'can_edit_territory' => $this->isGranted('ROLE_ADMIN'),
-            'territory' => $user->getTerritory(),
-            'route' => 'back_partner_new',
-        ]);
+        if ($this->featureZonage) {
+            $form = $this->createForm(PartnerType::class, $partner);
+        } else {
+            $form = $this->createForm(OldPartnerType::class, $partner, [
+                'can_edit_territory' => $this->isGranted('ROLE_ADMIN'),
+                'territory' => $user->getTerritory(),
+                'route' => 'back_partner_new',
+            ]);
+        }
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
             $entityManager->persist($partner);
@@ -156,7 +166,13 @@ class PartnerController extends AbstractController
             $partnerAutoAffectationRules = $autoAffectationRuleRepository->findForPartner($partner);
         }
 
-        return $this->render('back/partner/view.html.twig', [
+        if ($this->featureZonage) {
+            $template = 'back/partner/view.html.twig';
+        } else {
+            $template = 'back/partner/old-view.html.twig';
+        }
+
+        return $this->render($template, [
             'partner' => $partner,
             'partners' => $partnerRepository->findAllList($partner->getTerritory()),
             'last_job_date' => $lastJobEventDate,
@@ -185,11 +201,15 @@ class PartnerController extends AbstractController
 
         $previousTerritory = $partner->getTerritory();
 
-        /** @var User $user */
-        $user = $this->getUser();
-        $form = $this->createForm(PartnerType::class, $partner, [
-            'can_edit_territory' => $user->isSuperAdmin(),
-        ]);
+        if ($this->featureZonage) {
+            $form = $this->createForm(PartnerType::class, $partner);
+        } else {
+            /** @var User $user */
+            $user = $this->getUser();
+            $form = $this->createForm(OldPartnerType::class, $partner, [
+                'can_edit_territory' => $user->isSuperAdmin(),
+            ]);
+        }
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
@@ -248,6 +268,35 @@ class PartnerController extends AbstractController
             'partners' => $partnerRepository->findAllList($partner->getTerritory()),
             'form' => $form,
             'create' => false,
+        ]);
+    }
+
+    #[Route('/{id}/edit-perimetre', name: 'back_partner_edit_perimetre', methods: ['GET', 'POST'])]
+    public function editPerimetre(
+        Request $request,
+        Partner $partner,
+        PartnerManager $partnerManager,
+    ): Response {
+        if (!$this->featureZonage) {
+            throw $this->createNotFoundException();
+        }
+        $this->denyAccessUnlessGranted('PARTNER_EDIT', $partner);
+        if ($partner->getIsArchive()) {
+            return $this->redirect($this->generateUrl('back_partner_index', ['page' => 1, 'territory' => $partner->getTerritory()->getId()]));
+        }
+        $form = $this->createForm(PartnerPerimetreType::class, $partner);
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $partnerManager->save($partner);
+            $this->addFlash('success', 'Le périmetre a bien été modifié.');
+
+            return $this->redirectToRoute('back_partner_view', ['id' => $partner->getId()]);
+        }
+
+        return $this->render('back/partner/edit-perimetre.html.twig', [
+            'partner' => $partner,
+            'form' => $form,
         ]);
     }
 

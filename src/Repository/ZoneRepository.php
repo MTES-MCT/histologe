@@ -21,8 +21,9 @@ class ZoneRepository extends ServiceEntityRepository
     public function findFilteredPaginated(SearchZone $searchZone, int $maxResult): Paginator
     {
         $qb = $this->createQueryBuilder('z');
-        $qb->select('z', 'p', 't')
+        $qb->select('z', 'p', 'ep', 't')
             ->leftJoin('z.partners', 'p')
+            ->leftJoin('z.excludedPartners', 'ep')
             ->leftJoin('z.territory', 't')
             ->orderBy('z.name', 'ASC');
 

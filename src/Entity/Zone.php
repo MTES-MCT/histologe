@@ -56,9 +56,16 @@ class Zone implements EntityHistoryInterface
     #[ORM\ManyToMany(targetEntity: Partner::class, mappedBy: 'zones')]
     private Collection $partners;
 
+    /**
+     * @var Collection<int, Partner>
+     */
+    #[ORM\ManyToMany(targetEntity: Partner::class, mappedBy: 'excludedZones')]
+    private Collection $excludedPartners;
+
     public function __construct()
     {
         $this->partners = new ArrayCollection();
+        $this->excludedPartners = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -71,7 +78,7 @@ class Zone implements EntityHistoryInterface
         return $this->area;
     }
 
-    public function setArea(string $area): static
+    public function setArea(?string $area): static
     {
         $this->area = $area;
 
@@ -153,6 +160,33 @@ class Zone implements EntityHistoryInterface
     {
         if ($this->partners->removeElement($partner)) {
             $partner->removeZone($this);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Partner>
+     */
+    public function getExcludedPartners(): Collection
+    {
+        return $this->excludedPartners;
+    }
+
+    public function addExcludedPartner(Partner $excludedPartner): static
+    {
+        if (!$this->excludedPartners->contains($excludedPartner)) {
+            $this->excludedPartners->add($excludedPartner);
+            $excludedPartner->addExcludedZone($this);
+        }
+
+        return $this;
+    }
+
+    public function removeExcludedPartner(Partner $excludedPartner): static
+    {
+        if ($this->excludedPartners->removeElement($excludedPartner)) {
+            $excludedPartner->removeExcludedZone($this);
         }
 
         return $this;
