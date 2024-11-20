@@ -6,7 +6,9 @@ use App\Dto\Request\Signalement\SignalementSearchQuery;
 use App\Entity\User;
 use App\Manager\SignalementManager;
 use App\Service\Signalement\SearchFilter;
+use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\Cookie;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
@@ -44,11 +46,19 @@ class SignalementListController extends AbstractController
         $session->set('signalementSearchQuery', $signalementQuery);
         $signalements = $signalementManager->findSignalementAffectationList($user, $filters);
 
-        return $this->json(
+        $response = $this->json(
             $signalements,
             Response::HTTP_OK,
             ['content-type' => 'application/json'],
             ['groups' => ['signalements:read']]
         );
+
+        $cookie = Cookie::create('filters')
+            ->withValue(json_encode($filters))
+            ->withExpires(strtotime('+1 hour'));
+
+        $response->headers->setCookie($cookie);
+
+        return $response;
     }
 }
