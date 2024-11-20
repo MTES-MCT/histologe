@@ -21,6 +21,7 @@ use App\Repository\PartnerRepository;
 use App\Repository\TerritoryRepository;
 use App\Repository\UserRepository;
 use App\Security\Voter\PartnerVoter;
+use App\Service\BOList\BOListPartner;
 use App\Service\Mailer\NotificationMail;
 use App\Service\Mailer\NotificationMailerRegistry;
 use App\Service\Mailer\NotificationMailerType;
@@ -53,6 +54,7 @@ class PartnerController extends AbstractController
         Request $request,
         PartnerRepository $partnerRepository,
         TerritoryRepository $territoryRepository,
+        BOListPartner $boListPartner,
     ): Response {
         $page = $request->get('page') ?? 1;
         /** @var User $user */
@@ -65,10 +67,6 @@ class PartnerController extends AbstractController
         $currentType = $request->get('type');
         $enumType = $request->get('type') ? EnumPartnerType::tryFrom($request->get('type')) : null;
         $userTerms = $request->get('userTerms');
-
-        $paginatedPartners = $partnerRepository->getPartners($currentTerritory, $enumType, $userTerms, (int) $page);
-
-        $types = EnumPartnerType::getLabelList();
 
         if (Request::METHOD_POST === $request->getMethod()) {
             $currentTerritory = $territoryRepository->find((int) $request->request->get('territory'));
@@ -83,9 +81,18 @@ class PartnerController extends AbstractController
             ]));
         }
 
+        $paginatedPartners = $partnerRepository->getPartners($currentTerritory, $enumType, $userTerms, (int) $page);
         $totalPartners = \count($paginatedPartners);
 
+        $types = EnumPartnerType::getLabelList();
+
+        $boTable = $boListPartner->buildTable($paginatedPartners, $currentTerritory, $currentType, $userTerms);
+        $boTable
+            ->setPage($page)
+            ->setpages((int) ceil($totalPartners / Partner::MAX_LIST_PAGINATION));
+
         return $this->render('back/partner/index.html.twig', [
+            'bo_table' => $boTable,
             'currentTerritory' => $currentTerritory,
             'territories' => $territoryRepository->findAllList(),
             'partners' => $paginatedPartners,
@@ -93,8 +100,6 @@ class PartnerController extends AbstractController
             'types' => $types,
             'userTerms' => $userTerms,
             'total' => $totalPartners,
-            'page' => $page,
-            'pages' => (int) ceil($totalPartners / Partner::MAX_LIST_PAGINATION),
         ]);
     }
 

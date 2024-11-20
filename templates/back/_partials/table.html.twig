@@ -1,0 +1,55 @@
+<section class="fr-col-12 fr-pt-0 fr-px-5v fr-table {{ not platform.feature_enable_menu_horizontale ? 'fr-table--lg' : '' }}">
+    <div class="fr-table__wrapper">
+        <div class="fr-table__container">
+            <div class="fr-table__content">
+                <table class="sortable fr-cell--multiline" aria-label="{{ bo_table.tableDescription }}">
+                    <thead>
+                    <tr>
+                        {% for header in bo_table.headers %}
+                            <th scope="{{ header.scope }}" class="{{ header.class }}">{{ header.label }}</th>
+                        {% endfor %}
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% for data_row in bo_table.data %}
+                        <tr class="{{ bo_table.rowClass }}">
+                            {% for data_item in data_row %}
+                                <td {% if data_item.class %}class="{{ data_item.class }}"{% endif %}>
+                                {% if data_item.links %}
+                                    {% for link in data_item.links %}
+                                        <a href="{{ link.href }}" class="{{ link.class }}"
+                                            {% if link.attrList %}
+                                                {% for attrKey, attrVal in link.attrList %}
+                                                    {{attrKey}}="{{attrVal}}"
+                                                {% endfor %}
+                                            {% endif %}
+                                            ></a>
+                                    {% endfor %}
+                                {% elseif data_item.badgeLabels %}
+                                    {% for badgetLabel in data_item.badgeLabels %}
+                                        <div class="fr-badge fr-badge--blue-ecume fr-mb-1v">{{ badgetLabel }}</div>
+                                    {% endfor %}
+                                    {% if data_item.label %}
+                                        {{ data_item.label }}
+                                    {% endif %}
+                                {% elseif data_item.label %}
+                                    {{ data_item.label }}
+                                {% endif %}
+                                </td>
+                            {% endfor %}
+                        </tr>
+                    {% else %}
+                        <tr>
+                            <td colspan="{{ bo_table.headers|length }}">{{ bo_table.noDataLabel }}</td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    <div class="fr-grid-row fr-mt-2v fr-grid-row--center" id="partner-pagination">
+        {% import '_partials/macros.html.twig' as macros %}
+        {{ macros.customPagination(bo_table.pages, bo_table.page, bo_table.paginationSlug, bo_table.paginationParams) }}
+    </div>
+</section>

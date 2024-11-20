@@ -5,6 +5,7 @@ namespace App\Controller\Back;
 use App\Form\SearchUserType;
 use App\Messenger\Message\UserExportMessage;
 use App\Repository\UserRepository;
+use App\Service\BOList\BOListUser;
 use App\Service\SearchUser;
 use App\Service\UserExportLoader;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -22,15 +23,23 @@ class BackUserController extends AbstractController
     public const MAX_LIST_PAGINATION = 25;
 
     #[Route('/', name: 'back_user_index', methods: ['GET'])]
-    public function index(Request $request, UserRepository $userRepository): Response
-    {
+    public function index(
+        Request $request,
+        UserRepository $userRepository,
+        BOListUser $boListUser,
+    ): Response {
         [$form, $searchUser, $paginatedUsers] = $this->handleSearchUser($request, $userRepository);
 
+        $boTable = $boListUser->buildTable($paginatedUsers, $searchUser);
+        $boTable
+            ->setPage($searchUser->getPage())
+            ->setPages((int) ceil($paginatedUsers->count() / self::MAX_LIST_PAGINATION));
+
         return $this->render('back/user/index.html.twig', [
+            'bo_table' => $boTable,
             'form' => $form,
             'searchUser' => $searchUser,
             'users' => $paginatedUsers,
-            'pages' => (int) ceil($paginatedUsers->count() / self::MAX_LIST_PAGINATION),
         ]);
     }
 
