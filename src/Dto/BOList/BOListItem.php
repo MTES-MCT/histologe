@@ -8,6 +8,7 @@ class BOListItem
         private readonly ?string $class = null,
         private readonly ?string $label = null,
         private readonly ?array $badgeLabels = null,
+        private readonly ?string $badgeClass = null,
         private readonly ?array $links = null,
     ) {
     }
@@ -25,6 +26,11 @@ class BOListItem
     public function getBadgeLabels(): ?array
     {
         return $this->badgeLabels;
+    }
+
+    public function getBadgeClass(): ?string
+    {
+        return $this->badgeClass;
     }
 
     public function getLinks(): ?array

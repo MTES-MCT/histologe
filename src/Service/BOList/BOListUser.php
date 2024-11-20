@@ -27,6 +27,8 @@ class BOListUser
         return new BOTable(
             headers: $this->getHeaders(),
             data: $this->getData($users),
+            tableTitle: count($users).' utilisateur'.(count($users) > 1 ? 's' : '').' trouvé'.(count($users) > 1 ? 's' : ''),
+            tableDescription: 'Liste des utilisateurs',
             noDataLabel: 'Aucun utilisateur trouvé',
             rowClass: 'signalement-row',
             paginationSlug: 'back_user_index',
@@ -73,9 +75,9 @@ class BOListUser
             $item[] = new BOListItem(label: $user->getPartner() && $user->getPartner()->getType() ? $user->getPartner()->getType()->label() : 'N/A');
 
             if (User::STATUS_INACTIVE === $user->getStatut()) {
-                $item[] = new BOListItem(badgeLabels: ['Non activé']);
+                $item[] = new BOListItem(badgeLabels: ['Non activé'], badgeClass: 'fr-badge--error');
             } elseif (User::STATUS_ACTIVE === $user->getStatut()) {
-                $item[] = new BOListItem(badgeLabels: ['Activé']);
+                $item[] = new BOListItem(badgeLabels: ['Activé'], badgeClass: 'fr-badge--success');
             } else {
                 $item[] = new BOListItem(badgeLabels: [$user->getStatutLabel()]);
             }

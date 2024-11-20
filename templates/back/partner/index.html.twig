@@ -57,10 +57,5 @@
             <a href="{{ path('back_partner_index') }}" class="fr-link fr-link--icon-left fr-icon-close-circle-line">Réinitialiser</a>
         </div>
     </form>
-    <section class="fr-grid-row fr-grid-row--middle fr-p-5v ">
-        <div class="fr-col-6">
-            <h1 class="fr-h2 fr-mb-0" id="desc-table">{{total}} partenaires trouvés</h1>
-        </div>
-    </section>
     {% include 'back/_partials/table.html.twig' %}
 {% endblock %}

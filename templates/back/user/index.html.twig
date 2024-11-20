@@ -62,10 +62,7 @@
     </section>
 
     <section class="fr-grid-row fr-grid-row--middle fr-p-5v">
-        <div class="fr-col">
-            <h2 class="fr-h2 fr-mb-0" id="desc-table">{{users|length}} utilisateur{% if users|length > 1%}s{% endif %}</h2>
-        </div>
-        <div class="fr-col fr-text--right">
+        <div class="fr-col-12 fr-text--right">
             <a href="{{path('back_user_export', searchUser.urlParams)}}" class="fr-btn fr-btn--secondary fr-btn--icon-left fr-icon-download-fill"> Exporter les résultats </a>
         </div>
     </section>

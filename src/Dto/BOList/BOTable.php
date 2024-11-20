@@ -10,6 +10,7 @@ class BOTable
     public function __construct(
         private readonly ?array $headers = null,
         private readonly ?array $data = null,
+        private readonly ?string $tableTitle = null,
         private readonly ?string $tableDescription = null,
         private readonly ?string $noDataLabel = null,
         private readonly ?string $rowClass = null,
@@ -50,6 +51,11 @@ class BOTable
     public function getData(): ?array
     {
         return $this->data;
+    }
+
+    public function getTableTitle(): ?string
+    {
+        return $this->tableTitle;
     }
 
     public function getTableDescription(): ?string

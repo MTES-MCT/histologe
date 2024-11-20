@@ -27,6 +27,8 @@ class BOListPartner
         return new BOTable(
             headers: $this->getHeaders(),
             data: $this->getData($partners),
+            tableTitle: count($partners).' partenaire'.(count($partners) > 1 ? 's' : '').' trouvé'.(count($partners) > 1 ? 's' : ''),
+            tableDescription: 'Liste des partenaires',
             noDataLabel: 'Aucun partenaire trouvé',
             rowClass: 'partner-row',
             paginationSlug: 'back_partner_index',
