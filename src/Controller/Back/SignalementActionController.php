@@ -16,6 +16,7 @@ use App\Service\Mailer\NotificationMailerType;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -32,6 +33,8 @@ class SignalementActionController extends AbstractController
         Request $request,
         ManagerRegistry $doctrine,
         NotificationMailerRegistry $notificationMailerRegistry,
+        #[Autowire(env: 'FEATURE_CHECK_NEW_SIGNALEMENT_FILES')]
+        bool $isEnabledFeatureCheckNewSignalementFiles,
     ): Response {
         $this->denyAccessUnlessGranted('SIGN_VALIDATE', $signalement);
         if ($this->isCsrfTokenValid('signalement_validation_response_'.$signalement->getId(), $request->get('_token'))
@@ -45,7 +48,7 @@ class SignalementActionController extends AbstractController
                 foreach ($toRecipients as $toRecipient) {
                     $notificationMailerRegistry->send(
                         new NotificationMail(
-                            type: $signalement->hasNDE() ?
+                            type: $signalement->hasNDE() && !$isEnabledFeatureCheckNewSignalementFiles ?
                                 NotificationMailerType::TYPE_SIGNALEMENT_ASK_BAIL_DPE_TO_USAGER :
                                 NotificationMailerType::TYPE_SIGNALEMENT_VALIDATION_TO_USAGER,
                             to: $toRecipient,
