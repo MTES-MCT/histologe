@@ -13,7 +13,7 @@
                                 {% if all == '1' %}
                                     Rouvrir le signalement pour tous
                                 {% else %}
-                                    Rouvrir pour {{ app.user.partnerInTerritory(signalement.territory) ? app.user.partnerInTerritory(signalement.territory).nom : app.user.partners.first.nom }}
+                                    Rouvrir pour {{ app.user.partnerInTerritoryOrFirstOne(signalement.territory) ? app.user.partnerInTerritoryOrFirstOne(signalement.territory).nom : 'N/A' }}
                                 {% endif %}
                             </h1>
                             <fieldset class="fr-fieldset" id="radio-hint{% if all == '1' %}-all{% endif %}" aria-labelledby="radio-hint-legend{% if all == '1' %}-all{% endif %} radio-hint-messages">
@@ -52,7 +52,7 @@
                                         {% if all == '1' %}
                                             Rouvrir le signalement pour tous
                                         {% else %}
-                                            Rouvrir pour {{ app.user.partnerInTerritory(signalement.territory) ? app.user.partnerInTerritory(signalement.territory).nom : app.user.partners.first.nom }}
+                                            Rouvrir pour {{ app.user.partnerInTerritoryOrFirstOne(signalement.territory) ? app.user.partnerInTerritoryOrFirstOne(signalement.territory).nom : 'N/A' }}
                                         {% endif %}
                                     </button>
                                 </li>

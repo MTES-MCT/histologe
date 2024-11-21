@@ -16,6 +16,10 @@ class WidgetSettings
     #[Groups('widget-settings:read')]
     private ?string $roleLabel = null;
     #[Groups('widget-settings:read')]
+    private ?string $canSeeNDE = null;
+    #[Groups('widget-settings:read')]
+    private array $partnerIds = [];
+    #[Groups('widget-settings:read')]
     private array $territories = [];
     #[Groups('widget-settings:read')]
     private array $partners = [];
@@ -33,6 +37,7 @@ class WidgetSettings
     public function __construct(
         User $user,
         array $territories,
+        bool $canSeeNDE,
         array $partners = [],
         array $communes = [],
         array $epcis = [],
@@ -45,6 +50,8 @@ class WidgetSettings
         $this->lastname = $user->getNom();
         $this->avatarOrPlaceHolder = $avatarOrPlaceHolder;
         $this->roleLabel = $user->getRoleLabel();
+        $this->canSeeNDE = (string) $canSeeNDE;
+        $this->partnerIds = $user->getUserPartners()->map(fn ($userPartner) => $userPartner->getPartner()->getId())->toArray();
         $this->territories = $territories;
         $this->partners = $partners;
         $this->communes = $communes;
@@ -67,6 +74,16 @@ class WidgetSettings
     public function getAvatarOrPlaceHolder(): string
     {
         return $this->avatarOrPlaceHolder;
+    }
+
+    public function getCanSeeNDE(): ?string
+    {
+        return $this->canSeeNDE;
+    }
+
+    public function getPartnerIds(): array
+    {
+        return $this->partnerIds;
     }
 
     public function getRoleLabel(): ?string

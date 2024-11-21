@@ -225,7 +225,7 @@ class PartnerControllerTest extends WebTestCase
         );
 
         $this->assertEquals($newPartnerId, $user->getPartners()->first()->getId());
-        $this->assertResponseRedirects('/bo/partenaires/'.$newPartnerId.'/voir');
+        $this->assertResponseRedirects('/bo/partenaires/'.$newPartnerId.'/voir#agents');
     }
 
     public function testTransferUserAccountWithUserNotAllowed(): void

@@ -127,11 +127,11 @@ class WidgetDataKpiBuilder
         $countSignalementNoSuivi = $this->suiviRepository->countSignalementNoSuiviSince(
             Suivi::DEFAULT_PERIOD_INACTIVITY,
             $this->territory,
-            $this->getPartnerFromUser($user)
+            $this->getPartnersFromUser($user)?->map(fn ($partner) => $partner->getId())->toArray()
         );
         $countSignalementNoSuiviAfter3Relances = $this->suiviRepository->countSignalementNoSuiviAfter3Relances(
             $this->territory,
-            $this->getPartnerFromUser($user)
+            $this->getPartnersFromUser($user)
         );
 
         $this->countSuivi = new CountSuivi(
@@ -223,7 +223,7 @@ class WidgetDataKpiBuilder
         );
     }
 
-    private function getPartnerFromUser(User $user): ?Collection
+    private function getPartnersFromUser(User $user): ?Collection
     {
         return 1 === \count(array_diff([User::ROLE_USER_PARTNER, User::ROLE_ADMIN_PARTNER], $user->getRoles())) ? $user->getPartners() : null;
     }

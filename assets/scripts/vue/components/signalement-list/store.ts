@@ -45,10 +45,9 @@ export const store = {
       isAgent: false,
       canSeeStatusAffectation: false,
       canSeeBailleurSocial: false,
-      canSeeNonDecenceEnergetique: false,
       canSeeScore: false,
       canSeeFilterPartner: false,
-      partnerId: null as number | null
+      partnerIds: new Array<string>(),
     },
     showOptions: false,
     territories: new Array<HistoInterfaceSelectOption>(),

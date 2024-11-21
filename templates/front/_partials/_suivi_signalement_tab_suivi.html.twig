@@ -12,7 +12,7 @@
 						Suivi automatique
 					{% elseif suivi.createdBy is not null %}
 						{% if suivi.createdBy.partners|length %}
-							{{suivi.createdBy.partnerInTerritory(signalement.territory) ? suivi.createdBy.partnerInTerritory(signalement.territory).nom : suivi.createdBy.partners.first.nom}}
+							{{suivi.createdBy.partnerInTerritoryOrFirstOne(signalement.territory) ? suivi.createdBy.partnerInTerritoryOrFirstOne(signalement.territory).nom : 'N/A'}}
 						{% else %}
 							{{(suivi.createdBy.email ? (suivi.createdBy.email is same as signalement.mailOccupant ? 'OCCUPANT' : 'DECLARANT') : 'Aucun')}}
 						{% endif %}					

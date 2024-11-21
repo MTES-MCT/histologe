@@ -36,10 +36,10 @@
                             ? 'OCCUPANT'~ '\n' ~ suivi.createdBy.nomComplet|capitalize
                             : 'DECLARANT'~ '\n' ~ suivi.createdBy.nomComplet|capitalize
                         )|nl2br
-                        : (suivi.createdBy.partnerInTerritory(signalement.territory)
-                            ? (suivi.createdBy.partnerInTerritory(signalement.territory).isArchive
+                        : (suivi.createdBy.partnerInTerritoryOrFirstOne(signalement.territory)
+                            ? (suivi.createdBy.partnerInTerritoryOrFirstOne(signalement.territory).isArchive
                                 ? 'Partenaire supprimé'
-                                : suivi.createdBy.partnerInTerritory(signalement.territory).nom ~ '\n' ~ suivi.createdBy.prenom ~ ' ' ~ suivi.createdBy.nom
+                                : suivi.createdBy.partnerInTerritoryOrFirstOne(signalement.territory).nom ~ '\n' ~ suivi.createdBy.prenom ~ ' ' ~ suivi.createdBy.nom
                             )
                             : 'Aucun')|nl2br
                 }}

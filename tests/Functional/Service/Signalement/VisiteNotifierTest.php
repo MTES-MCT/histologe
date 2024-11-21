@@ -44,7 +44,7 @@ class VisiteNotifierTest extends KernelTestCase
         $intervention = $signalement->getInterventions()[0];
 
         $nbNotified = $this->visiteNotifier->notifyVisiteToConclude($intervention);
-        $this->assertEquals($nbNotified, 3);
+        $this->assertEquals($nbNotified, 4);
     }
 
     public function testNotifyVisiteToConclude69()

@@ -128,9 +128,7 @@ users:
   -
     email: admin-partenaire-13-01@histologe.fr
     roles: "[\"ROLE_ADMIN_PARTNER\"]"
-    partners: 
-      - "Partenaire 13-01"
-      - "Partenaire 01-01"
+    partner: "Partenaire 13-01"
     statut: 1
     is_generique: 0
     is_mailing_active: 1
@@ -440,3 +438,12 @@ users:
     is_generique: 0
     is_mailing_active: 1
     territory: "Hérault"
+  -
+    email: admin-partenaire-multi-ter-13-01@histologe.fr
+    roles: "[\"ROLE_ADMIN_PARTNER\"]"
+    partners: 
+      - "Partenaire 13-01"
+      - "Partenaire 01-01"
+    statut: 1
+    is_generique: 0
+    is_mailing_active: 1

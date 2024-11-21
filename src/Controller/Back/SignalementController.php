@@ -72,7 +72,7 @@ class SignalementController extends AbstractController
         );
 
         $isRefused = $isAccepted = $isClosedForMe = null;
-        $partner = $user->getPartnerInTerritory($signalement->getTerritory()) ?? $user->getPartners()->first();
+        $partner = $user->getPartnerInTerritoryOrFirstOne($signalement->getTerritory());
         if ($isAffected = $signalement->getAffectations()->filter(function (Affectation $affectation) use ($partner) {
             return $affectation->getPartner() === $partner;
         })->first()) {
