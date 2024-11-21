@@ -70,7 +70,6 @@ class ActivityListener
                     }
 
                     $notifyAdminsAndPartners = $entity->getDescription() != $this->parameterBag->get('suivi_message')['first_accepted_affectation'];
-
                     if ($notifyAdminsAndPartners) {
                         $this->tos->clear();
                         $this->notifyAdmins($entity, Notification::TYPE_SUIVI, $entity->getSignalement()->getTerritory());
@@ -86,7 +85,6 @@ class ActivityListener
                             $this->sendMail($entity, NotificationMailerType::TYPE_NEW_COMMENT_BACK);
                         }
                     }
-
                     if ($entity->getSendMail() && $entity->getIsPublic() && Signalement::STATUS_REFUSED !== $entity->getSignalement()->getStatut()) {
                         $toRecipients = new ArrayCollection($entity->getSignalement()->getMailUsagers());
                         if (!$toRecipients->isEmpty() && Signalement::STATUS_CLOSED !== $entity->getSignalement()->getStatut()) {

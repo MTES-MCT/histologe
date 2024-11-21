@@ -4,7 +4,7 @@
     <p>Bonjour,</p>
     <p>
         La visite du logement prévue le
-        {{ (intervention.scheduledAt.format('H')) > 0 ? intervention.scheduledAt|date('d/m/Y à H:i') : intervention.scheduledAt.format('d/m/Y') }}
+        {{ intervention_scheduledAt }}
         n'a pas pu avoir lieu.
         <br><br>
         Cliquez sur le bouton ci-dessous pour accéder au signalement.

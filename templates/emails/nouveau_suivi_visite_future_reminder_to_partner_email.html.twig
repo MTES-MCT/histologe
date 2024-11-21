@@ -4,8 +4,8 @@
     <p>Bonjour,</p>
     <p>
         Une visite est prévue pour le logement situé 
-        <strong>{{ signalement.adresseOccupant~', '~signalement.cpOccupant~' '~signalement.villeOccupant|upper }}</strong>
-        le {{ (intervention.scheduledAt.format('H')) > 0 ? intervention.scheduledAt|date('d/m/Y à H:i') : intervention.scheduledAt.format('d/m/Y') }}.
+        <strong>{{ signalement_adresseOccupant~', '~signalement_cpOccupant~' '~signalement_villeOccupant|upper }}</strong>
+        le {{ intervention_scheduledAt }}.
         <br>
         Si la date de visite a changé, cliquez le bouton ci-dessous pour accéder au signalement et la modifier.
     </p>

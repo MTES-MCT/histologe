@@ -3,11 +3,11 @@
 namespace App\Service\Mailer\Mail\Account;
 
 use App\Entity\User;
+use App\Manager\FailedEmailManager;
 use App\Manager\UserManager;
 use App\Service\Mailer\Mail\AbstractNotificationMailer;
 use App\Service\Mailer\NotificationMail;
 use App\Service\Mailer\NotificationMailerType;
-use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Symfony\Component\Mailer\MailerInterface;
@@ -24,10 +24,10 @@ class AccountTransferMailer extends AbstractNotificationMailer
         protected ParameterBagInterface $parameterBag,
         protected LoggerInterface $logger,
         protected UrlGeneratorInterface $urlGenerator,
-        private EntityManagerInterface $entityManager,
+        protected FailedEmailManager $failedEmailManager,
         private UserManager $userManager,
     ) {
-        parent::__construct($this->mailer, $this->parameterBag, $this->logger, $this->urlGenerator, $this->entityManager);
+        parent::__construct($this->mailer, $this->parameterBag, $this->logger, $this->urlGenerator, $this->failedEmailManager);
     }
 
     public function getMailerParamsFromNotification(NotificationMail $notificationMail): array
@@ -45,6 +45,7 @@ class AccountTransferMailer extends AbstractNotificationMailer
             'link' => $link,
             'user_status' => $user->getStatut(),
             'partner_name' => $user->getPartner()->getNom(),
+            'territory_name' => $notificationMail->getTerritory()->getName(),
         ];
     }
 }

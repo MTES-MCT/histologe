@@ -4,12 +4,8 @@
     <p>Bonjour,
         <br>
         Un nouveau suivi de
-        <strong>{{
-            suivi.createdBy
-            ? suivi.createdBy.nomComplet ~ ' (' ~ suivi.createdBy.partner.nom ~ ')'
-            : suivi.signalement.prenomDeclarant ~ ' ' ~ suivi.signalement.nomDeclarant
-        }}</strong>
-        est disponible pour le signalement <strong>#{{ suivi.signalement.reference }}</strong>.
+        <strong>{{ suiviCreator }}</strong>
+        est disponible pour le signalement <strong>#{{ signalement_reference }}</strong>.
         <br>
         Rendez-vous sur votre plateforme {{ platform.name }} pour le découvrir.
     </p>
