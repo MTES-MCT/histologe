@@ -181,6 +181,9 @@ class DossierMessageSISHFactory extends AbstractDossierMessageFactory
                 ? substr($signalement->getTelProprioDecoded(true), 0, 20)
                 : null;
             $personneQualite = CiviliteMapper::mapProprio($signalement);
+            $prenom = $signalement->getPrenomProprio()
+                ? substr($signalement->getPrenomProprio(), 0, 30)
+                : null;
 
             $dossierMessageSISHPersonne = new DossierMessageSISHPersonne();
             $dossierMessageSISHPersonne
@@ -191,6 +194,10 @@ class DossierMessageSISHFactory extends AbstractDossierMessageFactory
                 ->setTelephone($tel);
             if (!empty($personneQualite)) {
                 $dossierMessageSISHPersonne->setQualite($personneQualite->value);
+            }
+
+            if (!empty($prenom)) {
+                $dossierMessageSISHPersonne->setPrenom($prenom);
             }
 
             return $dossierMessageSISHPersonne;
