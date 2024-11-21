@@ -9,6 +9,7 @@ use App\Entity\Partner;
 use App\Entity\Territory;
 use App\Entity\User;
 use App\Entity\Zone;
+use App\Form\Type\SearchCheckboxEnumType;
 use App\Form\Type\SearchCheckboxType;
 use App\Manager\CommuneManager;
 use App\Repository\TerritoryRepository;
@@ -98,7 +99,7 @@ class OldPartnerType extends AbstractType
                 ],
                 'disabled' => !$this->isAdminTerritory,
             ])
-            ->add('competence', EnumType::class, [
+            ->add('competence', SearchCheckboxEnumType::class, [
                 'class' => Qualification::class,
                 'choice_filter' => ChoiceList::filter(
                     $this,
@@ -110,15 +111,11 @@ class OldPartnerType extends AbstractType
                 'choice_label' => function ($choice) {
                     return $choice->label();
                 },
-                'row_attr' => [
-                    'class' => 'fr-select-group',
-                ],
-                'placeholder' => 'Sélectionner une ou plusieurs compétences',
+                'label' => 'Compétences (facultatif)',
+                'noselectionlabel' => 'Sélectionner une ou plusieurs compétences',
+                'nochoiceslabel' => 'Aucune compétence disponible',
                 'multiple' => true,
                 'expanded' => false,
-                'attr' => [
-                    'class' => 'fr-select',
-                ],
                 'help' => 'Choisissez une ou plusieurs compétences parmi la liste ci-dessous.',
                 'help_attr' => [
                     'class' => 'fr-hint-text',
