@@ -178,10 +178,20 @@
                             </li>
                             <li>
                                 <b>Preavis de départ :</b>
-                                {% if signalement.isPreavisDepart %}
+                                {% set travailleurSocialPreavisDepart = signalement.situationFoyer ? signalement.situationFoyer.travailleurSocialPreavisDepart : null %}
+                                {% if travailleurSocialPreavisDepart is same as null %}
+                                    {% if signalement.isPreavisDepart is same as true %}
+                                        {% set travailleurSocialPreavisDepart = 'oui' %}
+                                    {% elseif signalement.isPreavisDepart is same as false %}
+                                        {% set travailleurSocialPreavisDepart = 'non' %}
+                                    {% endif %}
+                                {% endif %}
+                                {% if travailleurSocialPreavisDepart is same as 'oui' %}
                                     {{ picto_yes|raw }}
-                                {% else %}
+                                {% elseif travailleurSocialPreavisDepart is same as 'non' %}
                                     {{ picto_no|raw }}
+                                {% elseif travailleurSocialPreavisDepart is same as 'nsp' %}
+                                    Ne sait pas
                                 {% endif %}
                             </li>
                             <li>
