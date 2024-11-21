@@ -136,7 +136,7 @@ class AppExtension extends AbstractExtension implements GlobalsInterface
             return '';
         }
 
-        if (strpos($phoneNumber, '+33') === 0) {
+        if (str_starts_with($phoneNumber, '+33')) {
             return preg_replace("/(\d{2})(\d{1})(\d{2})(\d{2})(\d{2})(\d{2})/i", '$1 $2 $3 $4 $5 $6', $phoneNumber);
         }
 
