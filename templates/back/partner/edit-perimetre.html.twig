@@ -12,7 +12,7 @@
                 'level3Link': path('back_partner_index'),
                 'level3Label': 'Retour à la liste des partenaires',
                 'level4Title': 'Partenaire '~partner.nom,
-                'level4Link': path('back_partner_view', {id:partner.id}),
+                'level4Link': path('back_partner_view', {id:partner.id})~'#perimetre',
                 'level4Label': 'Retour au partenaire',
                 'level5Title': 'Modifier le périmètre d\'intervention',
                 'level5Link': '',
@@ -62,7 +62,7 @@
                     </div>
                     <div class="fr-col-6"></div>
                     <div class="fr-col-6">
-                        <a href="{{path('back_zone_index')}}" class="fr-btn fr-btn--secondary fr-btn--icon-left fr-icon-close-line" type="button">Annuler</a>
+                        <a href="{{path('back_partner_view', {id:partner.id})}}#perimetre" class="fr-btn fr-btn--secondary fr-btn--icon-left fr-icon-close-line" type="button">Annuler</a>
                     </div>
                     <div class="fr-col-6">
                         {{ form_row(form.save) }}

@@ -291,7 +291,7 @@ class PartnerController extends AbstractController
             $partnerManager->save($partner);
             $this->addFlash('success', 'Le périmetre a bien été modifié.');
 
-            return $this->redirectToRoute('back_partner_view', ['id' => $partner->getId()]);
+            return $this->redirectToRoute('back_partner_view', ['id' => $partner->getId(), '_fragment' => 'perimetre']);
         }
 
         return $this->render('back/partner/edit-perimetre.html.twig', [
@@ -403,10 +403,10 @@ class PartnerController extends AbstractController
         if (!$this->isCsrfTokenValid('partner_user_create', $request->request->get('_token'))) {
             $this->addFlash('error', 'Token CSRF invalide, merci d\'actualiser la page et réessayer.');
 
-            return $this->redirectToRoute('back_partner_view', ['id' => $partner->getId()], Response::HTTP_SEE_OTHER);
+            return $this->redirectToRoute('back_partner_view', ['id' => $partner->getId(), '_fragment' => 'agents'], Response::HTTP_SEE_OTHER);
         }
         if (!$this->canAttributeRole($data['roles'])) {
-            return $this->redirectToRoute('back_partner_view', ['id' => $partner->getId()], Response::HTTP_SEE_OTHER);
+            return $this->redirectToRoute('back_partner_view', ['id' => $partner->getId(), '_fragment' => 'agents'], Response::HTTP_SEE_OTHER);
         }
         if (!$parameterBag->get('feature_permission_affectation') || !$this->isGranted(PartnerVoter::ASSIGN_PERMISSION_AFFECTATION, $partner)) {
             $data['hasPermissionAffectation'] = false;
@@ -416,7 +416,7 @@ class PartnerController extends AbstractController
         if (!EmailFormatValidator::validate($data['email'])) {
             $this->addFlash('error', 'L\'adresse e-mail n\'est pas valide.');
 
-            return $this->redirectToRoute('back_partner_view', ['id' => $partner->getId()], Response::HTTP_SEE_OTHER);
+            return $this->redirectToRoute('back_partner_view', ['id' => $partner->getId(), '_fragment' => 'agents'], Response::HTTP_SEE_OTHER);
         }
 
         /** @var User $user */
@@ -445,7 +445,7 @@ class PartnerController extends AbstractController
             }
         }
 
-        return $this->redirectToRoute('back_partner_view', ['id' => $partner->getId()], Response::HTTP_SEE_OTHER);
+        return $this->redirectToRoute('back_partner_view', ['id' => $partner->getId(), '_fragment' => 'agents'], Response::HTTP_SEE_OTHER);
     }
 
     #[Route('/editerutilisateur', name: 'back_partner_user_edit', methods: ['POST'])]
@@ -468,7 +468,7 @@ class PartnerController extends AbstractController
         if (!$this->isCsrfTokenValid('partner_user_edit', $request->request->get('_token'))) {
             $this->addFlash('error', 'Token CSRF invalide, merci d\'actualiser la page et réessayer.');
 
-            return $this->redirectToRoute('back_partner_view', ['id' => $user->getPartner()->getId()], Response::HTTP_SEE_OTHER);
+            return $this->redirectToRoute('back_partner_view', ['id' => $user->getPartner()->getId(), '_fragment' => 'agents'], Response::HTTP_SEE_OTHER);
         }
         $this->denyAccessUnlessGranted('USER_EDIT', $user);
 
@@ -476,25 +476,25 @@ class PartnerController extends AbstractController
         if (!EmailFormatValidator::validate($data['email'])) {
             $this->addFlash('error', 'L\'adresse e-mail n\'est pas valide.');
 
-            return $this->redirectToRoute('back_partner_view', ['id' => $user->getPartner()->getId()], Response::HTTP_SEE_OTHER);
+            return $this->redirectToRoute('back_partner_view', ['id' => $user->getPartner()->getId(), '_fragment' => 'agents'], Response::HTTP_SEE_OTHER);
         }
         if ($data['email'] != $user->getEmail()) {
             $userExist = $userRepository->findOneBy(['email' => $data['email']]);
             if ($userExist && !\in_array('ROLE_USAGER', $userExist->getRoles())) {
                 $this->addFlash('error', 'Un utilisateur existe déjà avec cette adresse e-mail.');
 
-                return $this->redirectToRoute('back_partner_view', ['id' => $user->getPartner()->getId()], Response::HTTP_SEE_OTHER);
+                return $this->redirectToRoute('back_partner_view', ['id' => $user->getPartner()->getId(), '_fragment' => 'agents'], Response::HTTP_SEE_OTHER);
             }
             $partnerExist = $partnerRepository->findOneBy(['email' => $data['email']]);
             if ($partnerExist) {
                 $this->addFlash('error', 'Un partenaire existe déjà avec cette adresse e-mail.');
 
-                return $this->redirectToRoute('back_partner_view', ['id' => $user->getPartner()->getId()], Response::HTTP_SEE_OTHER);
+                return $this->redirectToRoute('back_partner_view', ['id' => $user->getPartner()->getId(), '_fragment' => 'agents'], Response::HTTP_SEE_OTHER);
             }
         }
         if ($data['roles'] != $user->getRoles()[0]) {
             if (!$this->canAttributeRole($data['roles'])) {
-                return $this->redirectToRoute('back_partner_view', ['id' => $user->getPartner()->getId()], Response::HTTP_SEE_OTHER);
+                return $this->redirectToRoute('back_partner_view', ['id' => $user->getPartner()->getId(), '_fragment' => 'agents'], Response::HTTP_SEE_OTHER);
             }
         }
 
@@ -533,7 +533,7 @@ class PartnerController extends AbstractController
             return $this->redirectToRoute('back_user_index', [], Response::HTTP_SEE_OTHER);
         }
 
-        return $this->redirectToRoute('back_partner_view', ['id' => $user->getPartner()->getId()], Response::HTTP_SEE_OTHER);
+        return $this->redirectToRoute('back_partner_view', ['id' => $user->getPartner()->getId(), '_fragment' => 'agents'], Response::HTTP_SEE_OTHER);
     }
 
     private function canAttributeRole(string $role): bool
@@ -591,7 +591,7 @@ class PartnerController extends AbstractController
         $userManager->transferUserToPartner($user, $partner);
         $this->addFlash('success', 'L\'utilisateur a bien été transféré.');
 
-        return $this->redirectToRoute('back_partner_view', ['id' => $partner->getId()], Response::HTTP_SEE_OTHER);
+        return $this->redirectToRoute('back_partner_view', ['id' => $partner->getId(), '_fragment' => 'agents'], Response::HTTP_SEE_OTHER);
     }
 
     #[Route('/supprimerutilisateur', name: 'back_partner_user_delete', methods: ['POST'])]

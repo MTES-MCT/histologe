@@ -151,7 +151,7 @@ class PartnerControllerTest extends WebTestCase
             ]
         );
 
-        $this->assertResponseRedirects('/bo/partenaires/'.$partner->getId().'/voir');
+        $this->assertResponseRedirects('/bo/partenaires/'.$partner->getId().'/voir#agents');
         $this->assertEmailCount(1);
     }
 
@@ -178,7 +178,7 @@ class PartnerControllerTest extends WebTestCase
             ]
         );
 
-        $this->assertResponseRedirects('/bo/partenaires/'.$partner->getId().'/voir');
+        $this->assertResponseRedirects('/bo/partenaires/'.$partner->getId().'/voir#agents');
         $this->assertEmailCount(1);
     }
 
@@ -224,7 +224,7 @@ class PartnerControllerTest extends WebTestCase
         );
 
         $this->assertEquals($newPartnerId, $user->getPartner()->getId());
-        $this->assertResponseRedirects('/bo/partenaires/'.$newPartnerId.'/voir');
+        $this->assertResponseRedirects('/bo/partenaires/'.$newPartnerId.'/voir#agents');
     }
 
     public function testTransferUserAccountWithUserNotAllowed(): void
