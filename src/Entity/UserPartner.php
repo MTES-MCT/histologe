@@ -2,11 +2,13 @@
 
 namespace App\Entity;
 
+use App\Entity\Behaviour\EntityHistoryInterface;
+use App\Entity\Enum\HistoryEntryEvent;
 use App\Repository\UserPartnerRepository;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: UserPartnerRepository::class)]
-class UserPartner
+class UserPartner implements EntityHistoryInterface
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
@@ -20,6 +22,14 @@ class UserPartner
     #[ORM\ManyToOne(inversedBy: 'userPartners')]
     #[ORM\JoinColumn(nullable: false)]
     private ?Partner $partner = null;
+
+    #[ORM\Column]
+    private ?\DateTimeImmutable $createdAt = null;
+
+    public function __construct()
+    {
+        $this->createdAt = new \DateTimeImmutable();
+    }
 
     public function getId(): ?int
     {
@@ -48,5 +58,22 @@ class UserPartner
         $this->partner = $partner;
 
         return $this;
+    }
+
+    public function getCreatedAt(): ?\DateTimeImmutable
+    {
+        return $this->createdAt;
+    }
+
+    public function setCreatedAt(\DateTimeImmutable $createdAt): static
+    {
+        $this->createdAt = $createdAt;
+
+        return $this;
+    }
+
+    public function getHistoryRegisteredEvent(): array
+    {
+        return [HistoryEntryEvent::CREATE, HistoryEntryEvent::UPDATE, HistoryEntryEvent::DELETE];
     }
 }

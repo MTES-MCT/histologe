@@ -35,7 +35,7 @@ class SignalementClosedToAllPartnersMailer extends AbstractNotificationMailer
             'ref_signalement' => $signalement->getReference(),
             'motif_cloture' => $signalement->getMotifCloture()->label(),
             'closed_by' => $signalement->getClosedBy()->getNomComplet(),
-            'partner_name' => $signalement->getClosedBy()->getPartnerInTerritory($signalement->getTerritory())?->getNom() ?? $signalement->getClosedBy()->getPartners()->first()->getNom(),
+            'partner_name' => $signalement->getClosedBy()->getPartnerInTerritoryOrFirstOne($signalement->getTerritory())?->getNom(),
             'link' => $this->generateLinkSignalementView($signalement->getUuid()),
         ];
     }

@@ -34,14 +34,14 @@ class BackUserControllerTest extends WebTestCase
 
     public function provideParamsUserList(): iterable
     {
-        yield 'Search without params' => [[], 52];
-        yield 'Search with queryUser admin' => [['queryUser' => 'admin'], 19];
-        yield 'Search with territory 13' => [['territory' => 13], 9];
+        yield 'Search without params' => [[], 53];
+        yield 'Search with queryUser admin' => [['queryUser' => 'admin'], 20];
+        yield 'Search with territory 13' => [['territory' => 13], 10];
         yield 'Search with territory 13 and partner 6 and 7' => [['territory' => 13, 'partners' => [6, 7]], 2];
         yield 'Search with status 0' => [['statut' => 0], 8];
         yield 'Search with role ROLE_ADMIN' => [['role' => 'ROLE_ADMIN'], 3];
         yield 'Search with role ROLE_ADMIN and territory 13' => [['role' => 'ROLE_ADMIN', 'territory' => 13], 0];
-        yield 'Search with territory 13 and partnerType Autre' => [['territory' => 13, 'partnerType' => 'AUTRE'], 7];
+        yield 'Search with territory 13 and partnerType Autre' => [['territory' => 13, 'partnerType' => 'AUTRE'], 8];
         yield 'Search with territory 13 and partnerType Ars' => [['territory' => 13, 'partnerType' => 'ARS'], 1];
     }
 
@@ -67,13 +67,13 @@ class BackUserControllerTest extends WebTestCase
 
     public function provideParamsUserExport(): iterable
     {
-        yield 'Search without params' => [[], 9];
+        yield 'Search without params' => [[], 10];
         yield 'Search with queryUser user' => [['queryUser' => 'user'], 6];
-        yield 'Search with partner 6 and 7' => [['partners' => [2]], 3];
-        yield 'Search with status 1' => [['statut' => 1], 7];
+        yield 'Search with partner 6 and 7' => [['partners' => [2]], 4];
+        yield 'Search with status 1' => [['statut' => 1], 8];
         yield 'Search with role ROLE_USER_PARTNER' => [['role' => 'ROLE_USER_PARTNER'], 6];
         yield 'Search with role ROLE_USER_PARTNER and status 1' => [['role' => 'ROLE_USER_PARTNER', 'statut' => 1], 4];
-        yield 'Search with territory 13 and partnerType Autre' => [['territory' => 13, 'partnerType' => 'AUTRE'], 9];
+        yield 'Search with territory 13 and partnerType Autre' => [['territory' => 13, 'partnerType' => 'AUTRE'], 10];
         yield 'Search with partnerType Ars' => [['partnerType' => 'ARS'], 1];
     }
 }

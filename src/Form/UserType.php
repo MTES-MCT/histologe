@@ -23,7 +23,7 @@ class UserType extends AbstractType
 {
     public function __construct(
         private PartnerRepository $partnerRepository,
-        private TerritoryRepository $territoryRepository
+        private TerritoryRepository $territoryRepository,
     ) {
     }
 
@@ -31,7 +31,7 @@ class UserType extends AbstractType
     {
         /** @var User $user */
         $user = $options['data'];
-        $territory = $user->getPartners()->count() ? $user->getPartners()->first()->getTerritory() : null;
+        $territory = $user->getPartners()->count() ? $user->getFirstTerritory() : null;
 
         $builder
             ->add('email', EmailType::class, [
@@ -104,7 +104,7 @@ class UserType extends AbstractType
 
         $builder->addEventListener(FormEvents::PRE_SET_DATA, function (FormEvent $event) use ($formModifier) {
             $data = $event->getData();
-            $formModifier($event->getForm(), $data->getPartners()->count() ? $data->getPartners()->first()->getTerritory() : null);
+            $formModifier($event->getForm(), $data->getPartners()->count() ? $data->getFirstTerritory() : null);
         });
         $builder->addEventListener(FormEvents::PRE_SUBMIT, function (FormEvent $event) use ($formModifier) {
             $formModifier($event->getForm(), $this->territoryRepository->find($event->getData()['territory']));

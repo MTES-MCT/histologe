@@ -64,7 +64,7 @@ class SuiviRepository extends ServiceEntityRepository
     public function countSignalementNoSuiviSince(
         int $period = Suivi::DEFAULT_PERIOD_INACTIVITY,
         ?Territory $territory = null,
-        ?ArrayCollection $partners = null,
+        ?array $partnersIds = null,
     ): int {
         $connection = $this->getEntityManager()->getConnection();
         $parameters = [
@@ -80,15 +80,15 @@ class SuiviRepository extends ServiceEntityRepository
         if (null !== $territory) {
             $parameters['territory_id'] = $territory->getId();
         }
-        if (null !== $partners && !$partners->isEmpty()) {
-            $parameters['partners'] = $partners;
+        if (!empty($partnersIds)) {
+            $parameters['partners'] = implode(',', $partnersIds);
             $parameters['status_wait'] = AffectationStatus::STATUS_WAIT->value;
             $parameters['status_accepted'] = AffectationStatus::STATUS_ACCEPTED->value;
         }
 
         $sql = 'SELECT COUNT(*) as count_signalement
                 FROM ('.
-                        $this->getSignalementsQuery($territory, $partners)
+                        $this->getSignalementsQuery($territory, $partnersIds)
                 .') as countSignalementSuivi';
 
         $statement = $connection->prepare($sql);
@@ -102,7 +102,7 @@ class SuiviRepository extends ServiceEntityRepository
     public function findSignalementNoSuiviSince(
         int $period = Suivi::DEFAULT_PERIOD_INACTIVITY,
         ?Territory $territory = null,
-        ?ArrayCollection $partners = null,
+        ?array $partnersIds = null,
     ): array {
         $connection = $this->getEntityManager()->getConnection();
         $parameters = [
@@ -115,17 +115,17 @@ class SuiviRepository extends ServiceEntityRepository
             'status_refused' => Signalement::STATUS_REFUSED,
         ];
 
-        if (null !== $territoryId) {
-            $parameters['territory_id'] = $territoryId;
+        if (null !== $territory) {
+            $parameters['territory_id'] = $territory->getId();
         }
 
-        if (null != $partners && !$partners->isEmpty()) {
-            $parameters['partners'] = $partners;
+        if (!empty($partnersIds)) {
+            $parameters['partners'] = implode(',', $partnersIds);
             $parameters['status_wait'] = AffectationStatus::STATUS_WAIT->value;
             $parameters['status_accepted'] = AffectationStatus::STATUS_ACCEPTED->value;
         }
 
-        $sql = $this->getSignalementsQuery($territory, $partners);
+        $sql = $this->getSignalementsQuery($territory, $partnersIds);
         $statement = $connection->prepare($sql);
 
         return $statement->executeQuery($parameters)->fetchFirstColumn();
@@ -176,15 +176,15 @@ class SuiviRepository extends ServiceEntityRepository
 
     private function getSignalementsQuery(
         ?Territory $territory = null,
-        ?ArrayCollection $partners = null
+        ?array $partnersIds = null,
     ): string {
         $whereTerritory = $wherePartner = $innerPartnerJoin = '';
 
-        if (null !== $territoryId) {
+        if (null !== $territory) {
             $whereTerritory = 'AND s.territory_id = :territory_id';
         }
 
-        if (null != $partners && !$partners->isEmpty()) {
+        if (!empty($partnersIds)) {
             $wherePartner = 'AND a.partner_id IN (:partners)';
             $innerPartnerJoin = 'INNER JOIN affectation a ON a.signalement_id = su.signalement_id AND a.statut IN (:status_wait, :status_accepted)';
         }

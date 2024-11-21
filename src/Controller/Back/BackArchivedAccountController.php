@@ -125,7 +125,6 @@ class BackArchivedAccountController extends AbstractController
             $user->setEmail($untaggedEmail);
             // tempPartner is not mapped, so we need to set the partner manually
             foreach ($user->getUserPartners() as $userPartner) {
-                $user->removeUserPartner($userPartner);
                 $entityManager->remove($userPartner);
             }
             $partner = $form->get('tempPartner')->getData();

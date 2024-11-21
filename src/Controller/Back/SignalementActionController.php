@@ -179,12 +179,11 @@ class SignalementActionController extends AbstractController
                 $affectationRepository->updateStatusBySignalement(Affectation::STATUS_WAIT, $signalement);
                 $reopenFor = 'tous les partenaires';
             } else {
-                $partner = $user->getPartnerInTerritory($signalement->getTerritory()) ?: $user->getPartners()->first();
+                $partner = $user->getPartnerInTerritoryOrFirstOne($signalement->getTerritory());
                 $reopenFor = mb_strtoupper($partner->getNom());
                 foreach ($partner->getAffectations() as $affectation) {
                     if ($affectation->getSignalement()->getId() === $signalement->getId()) {
                         $affectation->setStatut(Affectation::STATUS_WAIT);
-                        $reopenFor = mb_strtoupper($partner->getNom());
                         break;
                     }
                 }

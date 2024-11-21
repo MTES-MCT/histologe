@@ -103,8 +103,8 @@ class SearchFilter
         }
 
         if (isset($filters['delays'])) {
-            $filters['delays_partners'] = $partners;
-            $filters['delays_territory'] = $territory;
+            $filters['delays_partners'] = $partners->map(fn ($partner) => $partner->getId())->toArray();
+            $filters['delays_territory'] = $territory?->getId();
         }
 
         if (isset($filters['nouveau_suivi'])) {
@@ -216,8 +216,8 @@ class SearchFilter
                 $partners = $user->getPartners();
             }
             $this->filters['delays'] = (int) $period;
-            $this->filters['delays_territory'] = $territory;
-            $this->filters['delays_partners'] = $partners;
+            $this->filters['delays_territory'] = $territory?->getId();
+            $this->filters['delays_partners'] = $partners->map(fn ($partner) => $partner->getId())->toArray();
         }
 
         return $this;
@@ -342,7 +342,7 @@ class SearchFilter
                 ];
 
                 $partners = ($user->isPartnerAdmin() || $user->isUserPartner()) ? $user->getPartners() : new ArrayCollection();
-                if ($partners->isEmpty()) {
+                if (!$partners->isEmpty()) {
                     $parameters['partners'] = $partners;
                     $parameters['status_accepted'] = AffectationStatus::STATUS_ACCEPTED->value;
                 }

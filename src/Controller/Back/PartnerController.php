@@ -633,7 +633,7 @@ class PartnerController extends AbstractController
                 }
             }
             $this->addFlash('success', 'L\'utilisateur a bien été supprimé du partenaire.');
-            $this->addFlash('warning', 'Attention, cet utilisateur est toujours actif sur d\'autres partneaires.');
+            $this->addFlash('warning', 'Attention, cet utilisateur est toujours actif sur d\'autres territoires.');
 
             return $this->redirectToRoute('back_partner_view', ['id' => $partner->getId()], Response::HTTP_SEE_OTHER);
         }

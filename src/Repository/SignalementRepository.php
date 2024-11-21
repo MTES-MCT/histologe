@@ -731,7 +731,6 @@ class SignalementRepository extends ServiceEntityRepository
         }
 
         $usersEmail = [];
-        // dd($queryBuilder->getQuery());
         foreach ($queryBuilder->getQuery()->getArrayResult() as $value) {
             if ($value['email'] && !\in_array($value['email'], $usersEmail)) {
                 $usersEmail[] = $value['email'];
