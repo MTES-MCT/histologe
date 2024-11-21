@@ -4,10 +4,10 @@
     <p>Bonjour,</p>
     <p>
         La visite du logement situé
-        <strong>{{ signalement.adresseOccupant~', '~signalement.cpOccupant~' '~signalement.villeOccupant|upper }}</strong>
-        aura lieu le {{intervention.scheduledAt.format('d/m/Y')}}.
+        <strong>{{ signalement_adresseOccupant~', '~signalement_cpOccupant~' '~signalement_villeOccupant|upper }}</strong>
+        aura lieu le {{ intervention_scheduledAt }}.
         <br>
-        La visite sera effectuée par {{intervention.partner ? intervention.partner.nom : 'Non renseigné'}}.
+        La visite sera effectuée par {{ partner_name }}.
         <br>
         <strong>Attention :</strong> si vous ne vous présentez pas à cette visite, nous ne pouvons pas garantir
         qu'une nouvelle date de visite vous sera proposée rapidement.

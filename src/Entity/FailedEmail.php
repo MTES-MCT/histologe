@@ -18,14 +18,23 @@ class FailedEmail
     #[ORM\Column(type: 'json')]
     private array $toEmail;
 
-    #[ORM\Column(type: 'string', length: 255, nullable: true)]
-    private ?string $fromEmail;
+    #[ORM\Column(type: 'string', length: 255)]
+    private string $fromEmail;
 
-    #[ORM\Column(type: 'string', length: 255, nullable: true)]
+    #[ORM\Column(type: 'string', length: 255)]
     private ?string $fromFullname;
 
+    #[ORM\Column(type: 'string', length: 255)]
+    private string $replyTo;
+
+    #[ORM\Column(type: 'text', nullable: true)]
+    private ?string $subject;
+
     #[ORM\Column(type: 'json')]
-    private array $params = [];
+    private array $context = [];
+
+    #[ORM\Column]
+    private bool $notifyUsager = false;
 
     #[ORM\Column(type: 'text', nullable: true)]
     private ?string $errorMessage;
@@ -33,53 +42,14 @@ class FailedEmail
     #[ORM\Column(type: 'datetime_immutable')]
     private \DateTimeImmutable $createdAt;
 
+    #[ORM\Column(type: 'boolean')]
+    private bool $isResendSuccessful = false;
+
     #[ORM\Column(type: 'integer')]
     private int $retryCount = 0;
 
     #[ORM\Column(type: 'datetime_immutable', nullable: true)]
     private ?\DateTimeImmutable $lastAttemptAt;
-
-    #[ORM\Column(type: 'text', nullable: true)]
-    private ?string $message;
-
-    #[ORM\ManyToOne(targetEntity: Territory::class)]
-    private ?Territory $territory;
-
-    #[ORM\ManyToOne(targetEntity: User::class)]
-    private ?User $user;
-
-    #[ORM\ManyToOne(targetEntity: Signalement::class)]
-    private ?Signalement $signalement;
-
-    #[ORM\ManyToOne(targetEntity: Suivi::class)]
-    private ?Suivi $suivi;
-
-    #[ORM\ManyToOne(targetEntity: SignalementDraft::class)]
-    private ?SignalementDraft $signalementDraft;
-
-    #[ORM\ManyToOne(targetEntity: Intervention::class)]
-    private ?Intervention $intervention;
-
-    #[ORM\Column(type: 'datetime_immutable', nullable: true)]
-    private ?\DateTimeImmutable $previousVisiteDate;
-
-    #[ORM\Column(type: 'json', nullable: true)]
-    private ?array $attachment;
-
-    #[ORM\Column(type: 'string', length: 255, nullable: true)]
-    private ?string $motif;
-
-    #[ORM\Column(type: 'string', length: 255, nullable: true)]
-    private ?string $cronLabel;
-
-    #[ORM\Column(type: 'integer', nullable: true)]
-    private ?int $cronCount;
-
-    #[ORM\Column]
-    private bool $notifyUsager = false;
-
-    #[ORM\Column(type: 'boolean')]
-    private bool $isResendSuccessful = false;
 
     public function __construct()
     {
@@ -146,14 +116,50 @@ class FailedEmail
         return $this;
     }
 
-    public function getParams(): array
+    public function getReplyTo(): ?string
     {
-        return $this->params;
+        return $this->replyTo;
     }
 
-    public function setParams(array $params): static
+    public function setReplyTo(?string $replyTo): static
     {
-        $this->params = $params;
+        $this->replyTo = $replyTo;
+
+        return $this;
+    }
+
+    public function getSubject(): ?string
+    {
+        return $this->subject;
+    }
+
+    public function setSubject(string $subject): static
+    {
+        $this->subject = $subject;
+
+        return $this;
+    }
+
+    public function getContext(): array
+    {
+        return $this->context;
+    }
+
+    public function setContext(array $context): static
+    {
+        $this->context = $context;
+
+        return $this;
+    }
+
+    public function getNotifyUsager(): bool
+    {
+        return $this->notifyUsager;
+    }
+
+    public function setNotifyUsager(bool $notifyUsager): static
+    {
+        $this->notifyUsager = $notifyUsager;
 
         return $this;
     }
@@ -182,6 +188,18 @@ class FailedEmail
         return $this;
     }
 
+    public function isResendSuccessful(): bool
+    {
+        return $this->isResendSuccessful;
+    }
+
+    public function setResendSuccessful(bool $isResendSuccessful): static
+    {
+        $this->isResendSuccessful = $isResendSuccessful;
+
+        return $this;
+    }
+
     public function getRetryCount(): int
     {
         return $this->retryCount;
@@ -202,174 +220,6 @@ class FailedEmail
     public function setLastAttemptAt(?\DateTimeImmutable $lastAttemptAt): static
     {
         $this->lastAttemptAt = $lastAttemptAt;
-
-        return $this;
-    }
-
-    public function getMessage(): ?string
-    {
-        return $this->message;
-    }
-
-    public function setMessage(?string $message): static
-    {
-        $this->message = $message;
-
-        return $this;
-    }
-
-    public function getTerritory(): ?Territory
-    {
-        return $this->territory;
-    }
-
-    public function setTerritory(?Territory $territory): static
-    {
-        $this->territory = $territory;
-
-        return $this;
-    }
-
-    public function getUser(): ?User
-    {
-        return $this->user;
-    }
-
-    public function setUser(?User $user): static
-    {
-        $this->user = $user;
-
-        return $this;
-    }
-
-    public function getSignalement(): ?Signalement
-    {
-        return $this->signalement;
-    }
-
-    public function setSignalement(?Signalement $signalement): static
-    {
-        $this->signalement = $signalement;
-
-        return $this;
-    }
-
-    public function getSuivi(): ?Suivi
-    {
-        return $this->suivi;
-    }
-
-    public function setSuivi(?Suivi $suivi): static
-    {
-        $this->suivi = $suivi;
-
-        return $this;
-    }
-
-    public function getSignalementDraft(): ?SignalementDraft
-    {
-        return $this->signalementDraft;
-    }
-
-    public function setSignalementDraft(?SignalementDraft $signalementDraft): static
-    {
-        $this->signalementDraft = $signalementDraft;
-
-        return $this;
-    }
-
-    public function getIntervention(): ?Intervention
-    {
-        return $this->intervention;
-    }
-
-    public function setIntervention(?Intervention $intervention): static
-    {
-        $this->intervention = $intervention;
-
-        return $this;
-    }
-
-    public function getPreviousVisiteDate(): ?\DateTimeImmutable
-    {
-        return $this->previousVisiteDate;
-    }
-
-    public function setPreviousVisiteDate(?\DateTimeImmutable $previousVisiteDate): static
-    {
-        $this->previousVisiteDate = $previousVisiteDate;
-
-        return $this;
-    }
-
-    public function getAttachment(): mixed
-    {
-        return $this->attachment;
-    }
-
-    public function setAttachment(mixed $attachment): static
-    {
-        $this->attachment = $attachment;
-
-        return $this;
-    }
-
-    public function getMotif(): ?string
-    {
-        return $this->motif;
-    }
-
-    public function setMotif(?string $motif): static
-    {
-        $this->motif = $motif;
-
-        return $this;
-    }
-
-    public function getCronLabel(): ?string
-    {
-        return $this->cronLabel;
-    }
-
-    public function setCronLabel(?string $cronLabel): static
-    {
-        $this->cronLabel = $cronLabel;
-
-        return $this;
-    }
-
-    public function getCronCount(): ?int
-    {
-        return $this->cronCount;
-    }
-
-    public function setCronCount(?int $cronCount): static
-    {
-        $this->cronCount = $cronCount;
-
-        return $this;
-    }
-
-    public function getNotifyUsager(): bool
-    {
-        return $this->notifyUsager;
-    }
-
-    public function setNotifyUsager(bool $notifyUsager): static
-    {
-        $this->notifyUsager = $notifyUsager;
-
-        return $this;
-    }
-
-    public function isResendSuccessful(): bool
-    {
-        return $this->isResendSuccessful;
-    }
-
-    public function setResendSuccessful(bool $isResendSuccessful): self
-    {
-        $this->isResendSuccessful = $isResendSuccessful;
 
         return $this;
     }

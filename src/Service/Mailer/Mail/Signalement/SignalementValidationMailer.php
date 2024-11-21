@@ -2,10 +2,10 @@
 
 namespace App\Service\Mailer\Mail\Signalement;
 
+use App\Manager\FailedEmailManager;
 use App\Service\Mailer\Mail\AbstractNotificationMailer;
 use App\Service\Mailer\NotificationMail;
 use App\Service\Mailer\NotificationMailerType;
-use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Symfony\Component\Mailer\MailerInterface;
@@ -24,9 +24,9 @@ class SignalementValidationMailer extends AbstractNotificationMailer
         protected ParameterBagInterface $parameterBag,
         protected LoggerInterface $logger,
         protected UrlGeneratorInterface $urlGenerator,
-        private EntityManagerInterface $entityManager,
+        protected FailedEmailManager $failedEmailManager,
     ) {
-        parent::__construct($this->mailer, $this->parameterBag, $this->logger, $this->urlGenerator, $this->entityManager);
+        parent::__construct($this->mailer, $this->parameterBag, $this->logger, $this->urlGenerator, $this->failedEmailManager);
     }
 
     public function getMailerParamsFromNotification(NotificationMail $notificationMail): array
@@ -35,7 +35,9 @@ class SignalementValidationMailer extends AbstractNotificationMailer
         $toRecipient = $notificationMail->getTo();
 
         return [
-            'signalement' => $signalement,
+            'signalement_adresseOccupant' => $signalement->getAdresseOccupant(),
+            'signalement_cpOccupant' => $signalement->getCpOccupant(),
+            'signalement_villeOccupant' => $signalement->getVilleOccupant(),
             'lien_suivi' => $this->urlGenerator->generate(
                 'front_suivi_signalement',
                 [
@@ -44,6 +46,7 @@ class SignalementValidationMailer extends AbstractNotificationMailer
                 ],
                 UrlGeneratorInterface::ABSOLUTE_URL
             ),
+            'territory_name' => $notificationMail->getTerritory()->getName(),
         ];
     }
 }

@@ -5,10 +5,10 @@
     <p>
         Une visite est prévue pour le logement situé
         <br>
-        <strong>{{ signalement.adresseOccupant~', '~signalement.cpOccupant~' '~signalement.villeOccupant|upper }}</strong>
-        le {{ (intervention.scheduledAt.format('H')) > 0 ? intervention.scheduledAt|date('d/m/Y à H:i') : intervention.scheduledAt.format('d/m/Y') }}.
+        <strong>{{ signalement_adresseOccupant~', '~signalement_cpOccupant~' '~signalement_villeOccupant|upper }}</strong>
+        le {{ intervention_scheduledAt }}.
         <br><br>
-        La visite sera effectuée par {{ intervention.partner ? intervention.partner.nom : 'Non renseigné' }}.
+        La visite sera effectuée par {{ partner_name }}.
         <br><br>
         Cliquez sur le bouton ci-dessous pour accéder au signalement.
     </p>

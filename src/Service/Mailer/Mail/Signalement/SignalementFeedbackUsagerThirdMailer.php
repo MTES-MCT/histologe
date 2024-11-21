@@ -3,10 +3,10 @@
 namespace App\Service\Mailer\Mail\Signalement;
 
 use App\Entity\Suivi;
+use App\Manager\FailedEmailManager;
 use App\Service\Mailer\Mail\AbstractNotificationMailer;
 use App\Service\Mailer\NotificationMail;
 use App\Service\Mailer\NotificationMailerType;
-use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Symfony\Component\Mailer\MailerInterface;
@@ -24,9 +24,9 @@ class SignalementFeedbackUsagerThirdMailer extends AbstractNotificationMailer
         protected ParameterBagInterface $parameterBag,
         protected LoggerInterface $logger,
         protected UrlGeneratorInterface $urlGenerator,
-        private EntityManagerInterface $entityManager,
+        protected FailedEmailManager $failedEmailManager,
     ) {
-        parent::__construct($this->mailer, $this->parameterBag, $this->logger, $this->urlGenerator, $this->entityManager);
+        parent::__construct($this->mailer, $this->parameterBag, $this->logger, $this->urlGenerator, $this->failedEmailManager);
     }
 
     public function getMailerParamsFromNotification(NotificationMail $notificationMail): array
@@ -35,7 +35,15 @@ class SignalementFeedbackUsagerThirdMailer extends AbstractNotificationMailer
         $toRecipient = $notificationMail->getTo();
 
         return [
-            'signalement' => $signalement,
+            'signalement_adresseOccupant' => $signalement->getAdresseOccupant(),
+            'signalement_cpOccupant' => $signalement->getCpOccupant(),
+            'signalement_villeOccupant' => $signalement->getVilleOccupant(),
+            'signalement_mailOccupant' => $signalement->getMailOccupant(),
+            'signalement_nomOccupant' => $signalement->getNomOccupant(),
+            'signalement_prenomOccupant' => $signalement->getPrenomOccupant(),
+            'signalement_mailDeclarant' => $signalement->getMailDeclarant(),
+            'signalement_nomDeclarant' => $signalement->getNomDeclarant(),
+            'signalement_prenomDeclarant' => $signalement->getPrenomDeclarant(),
             'from' => $toRecipient,
             'lien_suivi_poursuivre' => $this->generateLink(
                 'front_suivi_procedure', [

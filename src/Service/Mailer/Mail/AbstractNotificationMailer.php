@@ -2,12 +2,11 @@
 
 namespace App\Service\Mailer\Mail;
 
-use App\Entity\FailedEmail;
 use App\Entity\Suivi;
 use App\Entity\Territory;
+use App\Manager\FailedEmailManager;
 use App\Service\Mailer\NotificationMail;
 use App\Service\Mailer\NotificationMailerType;
-use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
 use Sentry\State\Scope;
 use Symfony\Bridge\Twig\Mime\NotificationEmail;
@@ -31,7 +30,7 @@ abstract class AbstractNotificationMailer implements NotificationMailerInterface
         protected ParameterBagInterface $parameterBag,
         protected LoggerInterface $logger,
         protected UrlGeneratorInterface $urlGenerator,
-        private EntityManagerInterface $entityManager,
+        protected FailedEmailManager $failedEmailManager,
     ) {
     }
 
@@ -50,6 +49,7 @@ abstract class AbstractNotificationMailer implements NotificationMailerInterface
             'subject' => $this->mailerSubject,
             'btntext' => $this->mailerButtonText,
             'url' => $this->parameterBag->get('host_url'),
+            'tagHeader' => $this->tagHeader,
         ];
 
         $params = array_merge($params, $notificationMail->getParams(), $this->mailerParams);
@@ -98,14 +98,19 @@ abstract class AbstractNotificationMailer implements NotificationMailerInterface
 
             return true;
         } catch (\Throwable $exception) {
-            $this->logAndSaveFailedEmail($notificationMail, $exception, $params, $saveFailedMail);
+            $this->logAndSaveFailedEmail($message, $notificationMail, $exception, $params, $saveFailedMail);
         }
 
         return false;
     }
 
-    private function logAndSaveFailedEmail(NotificationMail $notificationMail, \Throwable $exception, array $params, bool $saveFailedMail): void
-    {
+    private function logAndSaveFailedEmail(
+        NotificationEmail $message,
+        NotificationMail $notificationMail,
+        \Throwable $exception,
+        array $params,
+        bool $saveFailedMail,
+    ): void {
         $object = $params['entity'] ?? null;
         $notifyUsager = false;
         if ($object instanceof Suivi) {
@@ -122,33 +127,9 @@ abstract class AbstractNotificationMailer implements NotificationMailerInterface
             $notificationMail->getType()->name, $exception->getMessage()
         ));
         if ($saveFailedMail && NotificationMailerType::TYPE_ERROR_SIGNALEMENT !== $notificationMail->getType()) {
-            $failedEmail = new FailedEmail();
-            $failedEmail->setType($notificationMail->getTypeName());
-            $failedEmail->setToEmail($notificationMail->getEmails()); // TODO : getTo ?
-            $failedEmail->setFromEmail($notificationMail->getFromEmail());
-            $failedEmail->setFromFullname($notificationMail->getFromFullname());
-            $failedEmail->setSignalement($notificationMail->getSignalement());
-            $failedEmail->setSignalementDraft($notificationMail->getSignalementDraft());
-            $failedEmail->setSuivi($notificationMail->getSuivi());
-            $failedEmail->setMessage($notificationMail->getMessage());
-            $failedEmail->setTerritory($notificationMail->getTerritory());
-            $failedEmail->setUser($notificationMail->getUser());
-            $failedEmail->setIntervention($notificationMail->getIntervention());
-            $failedEmail->setPreviousVisiteDate($notificationMail->getPreviousVisiteDate());
-            $failedEmail->setAttachment(
-                \is_array($notificationMail->getAttachment()) ?
-                $notificationMail->getAttachment() : [$notificationMail->getAttachment()]);
-            $failedEmail->setMotif($notificationMail->getMotif());
-            $failedEmail->setCronLabel($notificationMail->getCronLabel());
-            $failedEmail->setCronCount($notificationMail->getCronCount());
-            $failedEmail->setParams($notificationMail->getParams());
-            $failedEmail->setNotifyUsager($notifyUsager);
-            $failedEmail->setErrorMessage($exception->getMessage());
-            $failedEmail->setCreatedAt(new \DateTimeImmutable());
-
             try {
-                $this->entityManager->persist($failedEmail);
-                $this->entityManager->flush();
+                $this->failedEmailManager->create(
+                    $message, $notificationMail, $exception, $this->parameterBag->get('reply_to_email'), $notifyUsager);
             } catch (\Exception $e) {
                 $this->logger->error('Failed to save FailedEmail: '.$e->getMessage());
             }
@@ -192,12 +173,11 @@ abstract class AbstractNotificationMailer implements NotificationMailerInterface
         array $params,
         ?Territory $territory,
     ): NotificationEmail {
-        $config['territory'] = $territory;
         $notification = new NotificationEmail();
         $notification->markAsPublic();
 
         return $notification->htmlTemplate('emails/'.$this->mailerTemplate.'.html.twig')
-            ->context(array_merge($params, $config))
+            ->context($params)
             ->replyTo($this->parameterBag->get('reply_to_email'))
             ->subject(
                 mb_strtoupper($this->parameterBag->get('platform_name'))

@@ -1,9 +1,9 @@
 {% extends 'emails/base_email.html.twig' %}
 
 {% block body %}
-    <p>Bonjour {{ signalement.nomOccupant|upper ~' '~signalement.prenomOccupant|capitalize }}</p>
+    <p>Bonjour {{ signalement_nomOccupant|upper ~' '~signalement_prenomOccupant|capitalize }}</p>
     <p>
-        Votre signalement sur la plateforme <strong>{{ platform.name }} - {{ territory.getName() }}</strong> ne peut pas être traité par nos
+        Votre signalement sur la plateforme <strong>{{ platform.name }} - {{ territory_name }}</strong> ne peut pas être traité par nos
         équipes pour la raison suivante :
         <br>
         <br>

@@ -2,10 +2,10 @@
 
 namespace App\Service\Mailer\Mail\Suivi;
 
+use App\Manager\FailedEmailManager;
 use App\Service\Mailer\Mail\AbstractNotificationMailer;
 use App\Service\Mailer\NotificationMail;
 use App\Service\Mailer\NotificationMailerType;
-use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Symfony\Component\Mailer\MailerInterface;
@@ -24,19 +24,26 @@ class SuiviVisiteConfirmedToPartnerMailer extends AbstractNotificationMailer
         protected ParameterBagInterface $parameterBag,
         protected LoggerInterface $logger,
         protected UrlGeneratorInterface $urlGenerator,
-        private EntityManagerInterface $entityManager,
+        protected FailedEmailManager $failedEmailManager,
     ) {
-        parent::__construct($this->mailer, $this->parameterBag, $this->logger, $this->urlGenerator, $this->entityManager);
+        parent::__construct($this->mailer, $this->parameterBag, $this->logger, $this->urlGenerator, $this->failedEmailManager);
     }
 
     public function getMailerParamsFromNotification(NotificationMail $notificationMail): array
     {
         $signalement = $notificationMail->getSignalement();
         $intervention = $notificationMail->getIntervention();
+        if ($intervention->getPartner()) {
+            $interventionOperator = 'effectuée par '.$intervention->getPartner()->getNom();
+        } else {
+            $interventionOperator = '';
+        }
 
         return [
-            'signalement' => $signalement,
-            'intervention' => $intervention,
+            'signalement_adresseOccupant' => $signalement->getAdresseOccupant(),
+            'signalement_cpOccupant' => $signalement->getCpOccupant(),
+            'signalement_villeOccupant' => $signalement->getVilleOccupant(),
+            'intervention_operator' => $interventionOperator,
             'lien_suivi' => $this->generateLinkSignalementView($signalement->getUuid()),
         ];
     }
