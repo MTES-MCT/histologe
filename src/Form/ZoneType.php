@@ -114,7 +114,7 @@ class ZoneType extends AbstractType
         $builder->add('area', null, [
             'label' => $zone->getId() ? 'Copier / coller le texte au format WKT' : 'Ou copier / coller le texte au format WKT',
             'required' => false,
-            'help' => 'Vous pouvez générer une zone au bon format avec l\'outil <a href="https://wktmap.com/">wktmap.com</a>',
+            'help' => 'Vous pouvez générer une zone au bon format avec l\'outil <a rel="noreferrer noopener" title="wktmap.com - ouvre une nouvelle fenêtre"href="https://wktmap.com/">wktmap.com</a>',
             'help_html' => true,
             'attr' => ['rows' => 5],
         ]);
