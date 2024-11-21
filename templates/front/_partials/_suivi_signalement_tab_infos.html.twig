@@ -24,11 +24,11 @@
 {% endif %}
 {% if signalement.telOccupant %}
 	<br>
-	{{ signalement.telOccupant }}
+	{{ signalement.telOccupantDecoded|phone }}
 {% endif %}
 {% if signalement.telOccupantBis %}
 	<br>
-	{{ signalement.telOccupantBis }}
+	{{ signalement.telOccupantBisDecoded|phone }}
 {% endif %}
 </div>
 
@@ -57,11 +57,11 @@
 {% endif %}
 {% if signalement.telProprio %}
 	<br>
-	{{ signalement.telProprio }}
+	{{ signalement.telProprioDecoded|phone }}
 {% endif %}
 {% if signalement.telProprioSecondaire %}
 	<br>
-	{{ signalement.telProprioSecondaire }}
+	{{ signalement.telProprioSecondaireDecoded|phone }}
 {% endif %}
 </div>
 {% if 
