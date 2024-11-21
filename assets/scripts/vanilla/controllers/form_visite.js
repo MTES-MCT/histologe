@@ -98,8 +98,14 @@ function histoCheckVisiteForms (formType) {
         }
 
         if (isVisiteDone) {
-          const selectConcludeProcedure = visiteForm.querySelector('select[name="visite-' + formType + '[concludeProcedure][]"]')
-          if (!selectConcludeProcedure || selectConcludeProcedure.value === '') {
+          let hasCheckedConcludeProcedure = false
+          const listInputConcludeProcedure = visiteForm.querySelectorAll('input[name="visite-' + formType + '[concludeProcedure][]"]')
+          listInputConcludeProcedure.forEach(checkField => {
+            if (checkField.checked) {
+              hasCheckedConcludeProcedure = true
+            }
+          })
+          if (!listInputConcludeProcedure || !hasCheckedConcludeProcedure) {
             selectConcludeProcedureError.classList.remove('fr-hidden')
             stopSubmit = true
           }

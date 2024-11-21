@@ -47,22 +47,29 @@
             <label for="visite-{{ formType }}-{{ intervention is defined ? intervention.id : '' }}-proprietaire-present-0">Non</label>
         </div>
     </fieldset>
-    <fieldset id="fieldset-conclude-procedure" class="fr-fieldset fr-fieldset--inline fr-mb-5v fr-hidden">
+    <fieldset id="fieldset-conclude-procedure" class="fr-fieldset fr-fieldset--inline fr-mb-5v fr-w-100-left fr-hidden">
         <legend class="fr-fieldset__legend fr-text--regular required">
             Quelle est la conclusion de la visite ?
         </legend>
         <p id="signalement-confirm-visite-procedure-error" class="fr-error-text fr-hidden fr-my-3v">
             Veuillez préciser la conclusion de la visite.
         </p>
-        <select name="visite-{{ formType }}[concludeProcedure][]" class="fr-select" multiple="multiple">
-            {% set listProceduresTypes = enum('\\App\\Entity\\Enum\\ProcedureType') %}
-            {% for type in listProceduresTypes.cases() %}
-                <option value="{{ type.value }}">{{ type.label() }}</option>
-            {% endfor %}
-        </select>
-        <p class="fr-text--sm fr-pt-1v">
-            Maintenez la touche CTRL enfoncée pour sélectionner plusieurs motifs.
-        </p>
+        <div class="search-checkbox-container fr-input-group fr-w-100">
+            <input id="visite-{{ formType }}[concludeProcedure]_input" type="text" placeholder="Sélectionner une ou plusieurs conclusions" class="fr-input">
+            <div class="search-checkbox" class="fr-hidden">
+                {% set listProceduresTypes = enum('\\App\\Entity\\Enum\\ProcedureType') %}
+                {% for type in listProceduresTypes.cases() %}
+                <div class="fr-fieldset__element topped">
+                    <div class="fr-checkbox-group">
+                        <input name="visite-{{ formType }}[concludeProcedure][]" id="visite-{{ formType }}-{{ intervention is defined ? intervention.id : '' }}-checkboxes-{{ type.value }}" type="checkbox" value="{{ type.value }}">
+                        <label class="fr-label" for="visite-{{ formType }}-{{ intervention is defined ? intervention.id : '' }}-checkboxes-{{ type.value }}">
+                            {{ type.label() }}
+                        </label>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
     </fieldset>
 {% endif %}
 

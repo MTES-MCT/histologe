@@ -46,6 +46,9 @@ document.querySelectorAll('.search-checkbox-container')?.forEach(element => {
       searchCheckboxTriggerChange(element, initialValues)
     }
   })
+  element.addEventListener('click', function (event) {
+    event.stopPropagation()
+  })
   // reorder on uncheck
   checkboxesContainer.querySelectorAll('input[type="checkbox"]').forEach((checkbox) => {
     checkbox.addEventListener('change', function () {

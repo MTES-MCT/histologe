@@ -41,11 +41,9 @@
 				</div>
 			</div>
 			<div class="fr-fieldset__element">
-				<div class="fr-select-group">
-					<label for="{{ form.competence.vars.id }}" class="fr-label">Compétences (facultatif)</label>
-					{{ form_widget(form.competence) }}
-					<span class="fr-hint-text">Maintenez la touche CTRL enfoncée pour sélectionner plusieurs compétences.</span>
-				</div>
+				{% if form.competence is defined %}
+					{{ form_row(form.competence) }}
+				{% endif %}
 			</div>
 		</fieldset>
 	</div>

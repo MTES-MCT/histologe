@@ -2,8 +2,12 @@
 
 namespace App\Entity\Enum;
 
+use App\Entity\Behaviour\EnumTrait;
+
 enum Qualification: string
 {
+    use EnumTrait;
+
     case ACCOMPAGNEMENT_JURIDIQUE = 'ACCOMPAGNEMENT_JURIDIQUE';
     case ACCOMPAGNEMENT_SOCIAL = 'ACCOMPAGNEMENT_SOCIAL';
     case ACCOMPAGNEMENT_TRAVAUX = 'ACCOMPAGNEMENT_TRAVAUX';
@@ -24,11 +28,6 @@ enum Qualification: string
     case VISITES = 'VISITES';
     case DANGER = 'DANGER';
     case SUROCCUPATION = 'SUROCCUPATION';
-
-    public function label(): string
-    {
-        return self::getLabelList()[$this->name];
-    }
 
     public static function getLabelList(): array
     {
@@ -54,20 +53,6 @@ enum Qualification: string
             'DANGER' => 'Danger',
             'SUROCCUPATION' => 'Suroccupation',
         ];
-    }
-
-    public static function fromLabel(string $label): self
-    {
-        $key = self::getKeyFromLabel($label);
-
-        return self::from($key);
-    }
-
-    public static function tryFromLabel(string $label): ?self
-    {
-        $key = self::getKeyFromLabel($label);
-
-        return self::tryFrom($key);
     }
 
     private static function getKeyFromLabel(string $label): string|int|false

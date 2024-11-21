@@ -108,6 +108,7 @@
     {{ block('attributes') }}
 {% endblock button_attributes %}
 
+{# custom type #}
 {% block choice_widget_expanded %}
     <div {{ block('widget_container_attributes') }}>
     {% if not form|length and nochoiceslabel is defined %}
@@ -125,16 +126,52 @@
     </div>
 {% endblock choice_widget_expanded %}
 
-{# custom type #}
 {% block search_checkbox_row %}
     <div class="search-checkbox-container fr-input-group {% if errors|length > 0 %}fr-select-group--error{% endif %}">   
         <div class="fr-input-group fr-mb-0">
             {% if label is not same as(false) %}
-                <label for="{{ id }}" class="fr-label">{{ label }}</label>
+                <label for="{{ id }}_input" class="fr-label">{{ label }}</label>
             {% endif %}
-            <input id="{{ id }}" type="text" placeholder="{{ noselectionlabel }}" class="fr-input">
+            <input id="{{ id }}_input" type="text" placeholder="{{ noselectionlabel }}" class="fr-input">
         </div>
         {{ block('choice_widget_expanded') }}
+        {{ block('form_errors') }}
+    </div>
+{% endblock %}
+
+{% block choice_enum_widget_expanded %}
+    <div {{ block('widget_container_attributes') }}>
+    {% if not form.vars|length and nochoiceslabel is defined %}
+        {{ nochoiceslabel }}
+    {% else %}
+        {% for child in form.vars.choices %}
+            <div class="fr-fieldset__element">
+                <div class="fr-checkbox-group">
+                    <input name="{{form.vars.full_name}}" id="checkboxes-{{child.value}}"
+                        type="checkbox" value="{{child.value}}"
+                        {% if child.value in form.vars.value %}
+                        checked="checked"
+                        {% endif %}
+                        >
+                    <label class="fr-label" for="checkboxes-{{child.value}}">
+                        {{child.label}}
+                    </label>
+                </div>
+            </div>
+        {% endfor %}
+    {% endif %}
+    </div>
+{% endblock choice_enum_widget_expanded %}
+
+{% block search_checkbox_enum_row %}
+    <div class="search-checkbox-container fr-input-group {% if errors|length > 0 %}fr-select-group--error{% endif %}">   
+        <div class="fr-input-group fr-mb-0">
+            {% if label is not same as(false) %}
+                <label for="{{ id }}_input" class="fr-label">{{ label }}</label>
+            {% endif %}
+            <input id="{{ id }}_input" type="text" placeholder="{{ noselectionlabel }}" class="fr-input">
+        </div>
+        {{ block('choice_enum_widget_expanded') }}
         {{ block('form_errors') }}
     </div>
 {% endblock %}
