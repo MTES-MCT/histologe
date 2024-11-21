@@ -198,7 +198,9 @@
                                     {{ picto_no|raw }}
                                 {% endif %}
                             </li>
-                            <li><b>Classe énergétique :</b> {{ signalement.typeCompositionLogement.bailDpeClasseEnergetique(false) ?? 'N/R' }}
+                            <li>
+                                <b>Classe énergétique :</b> {{ signalement.typeCompositionLogement.bailDpeClasseEnergetique(false) ?? 'N/R' }}
+                            </li>
                         </ul>
                     </td>
                 </tr>
