@@ -1,34 +1,43 @@
 <template>
   <div class="app-autocomplete" @click="closeAutocomplete">
-    <input
-        :id="id"
-        :name="id"
-        class="fr-input"
-        type="text"
-        v-model="searchText"
-        @input="updateSearch"
-        :placeholder="placeholder"
-        autocomplete="off"
-        @keydown.down.prevent="handleDownSuggestion"
-        @keydown.up.prevent="handleUpSuggestion"
-        @keydown.enter.prevent="handleEnterSuggestion"
-    />
-    <ul v-if="suggestionFilteredList.length > 0"
-        class="fr-grid-row fr-background-alt--blue-france fr-text-label--blue-france fr-autocomplete-list" >
-      <li
-          class="fr-col-12 fr-p-3v fr-text-label--blue-france fr-autocomplete-suggestion"
-          v-for="(suggestion, index) in suggestionFilteredList"
-          :key="index"
-          @click="selectSuggestion(index)"
-          :class="{ 'fr-autocomplete-suggestion-highlighted': index === selectedSuggestionIndex }"
-      >
-        {{ suggestion }}
-      </li>
-    </ul>
-    <ul v-else-if="searchText.length > 0"
-        class="fr-grid-row fr-background--white fr-text-label--red-marianne fr-autocomplete-list">
-      <li class="fr-col-12 fr-p-3v fr-autocomplete-suggestion--disabled fr-text--xs">Aucun résultat trouvé</li>
-    </ul>
+    <div class="fr-input-group">
+      <label class="fr-label" :for="id">
+        <slot name="label"></slot>
+      </label>
+      <div
+        :class="['fr-input-wrap', iconClass]"
+        >
+        <input
+          :id="id"
+          :name="id"
+          class="fr-input"
+          type="text"
+          v-model="searchText"
+          @input="updateSearch"
+          :placeholder="placeholder"
+          autocomplete="off"
+          @keydown.down.prevent="handleDownSuggestion"
+          @keydown.up.prevent="handleUpSuggestion"
+          @keydown.enter.prevent="handleEnterSuggestion"
+          />
+      </div>
+      <ul v-if="suggestionFilteredList.length > 0"
+          class="fr-grid-row fr-background-alt--blue-france fr-text-label--blue-france fr-autocomplete-list" >
+        <li
+            class="fr-col-12 fr-p-3v fr-text-label--blue-france fr-autocomplete-suggestion"
+            v-for="(suggestion, index) in suggestionFilteredList"
+            :key="index"
+            @click="selectSuggestion(index)"
+            :class="{ 'fr-autocomplete-suggestion-highlighted': index === selectedSuggestionIndex }"
+        >
+          {{ suggestion }}
+        </li>
+      </ul>
+      <ul v-else-if="searchText.length > 0"
+          class="fr-grid-row fr-background--white fr-text-label--red-marianne fr-autocomplete-list">
+        <li class="fr-col-12 fr-p-3v fr-autocomplete-suggestion--disabled fr-text--xs">Aucun résultat trouvé</li>
+      </ul>
+    </div>
   </div>
 </template>
 
@@ -53,6 +62,10 @@ export default defineComponent({
       default: false
     },
     placeholder: {
+      type: String,
+      default: ''
+    },
+    iconClass: {
       type: String,
       default: ''
     },

@@ -38,9 +38,10 @@
               id="filter-territoires"
               v-model="sharedState.filters.territory"
               @update:modelValue="handleChangeTerritoire"
-              inner-label="Territoire"
               :option-items=sharedState.territories
-              />
+              >
+              <template #label>Territoire</template>
+            </HistoSelect>
           </div>
         </div>
 

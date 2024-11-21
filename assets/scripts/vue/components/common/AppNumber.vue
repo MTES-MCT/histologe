@@ -1,5 +1,8 @@
 <template>
-  <div class="histo-number-input">
+  <div class="fr-input-group">
+    <label class="fr-label" :for="id">
+      <slot name="label"></slot>
+    </label>
     <input
         class="fr-input"
         :id="id"

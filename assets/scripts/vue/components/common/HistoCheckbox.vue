@@ -17,7 +17,7 @@
 import { defineComponent } from 'vue'
 
 export default defineComponent({
-  name: 'WDGCheckbox',
+  name: 'HistoCheckbox',
   props: {
     id: { type: String, default: null },
     modelValue: { type: Boolean, default: false },

@@ -1,6 +1,10 @@
 <template>
-  <div class="histo-search fr-input-wrap fr-icon-search-line">
-    <input
+  <div class="fr-input-group">
+    <label class="fr-label" :for="id">
+      <slot name="label"></slot>
+    </label>
+    <div class="fr-input-wrap fr-icon-search-line">
+      <input
         class="fr-input"
         :id="id"
         :name="id"
@@ -8,8 +12,9 @@
         @input="onInputEvent"
         :placeholder="placeholder"
         type="search"
-    />
-  </div>
+        />
+    </div>
+</div>
 </template>
 
 <script lang="ts">
