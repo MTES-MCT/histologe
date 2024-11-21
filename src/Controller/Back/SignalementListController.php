@@ -6,7 +6,6 @@ use App\Dto\Request\Signalement\SignalementSearchQuery;
 use App\Entity\User;
 use App\Manager\SignalementManager;
 use App\Service\Signalement\SearchFilter;
-use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Cookie;
 use Symfony\Component\HttpFoundation\JsonResponse;
