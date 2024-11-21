@@ -29,13 +29,13 @@
     <div class="fr-col-12 fr-col-md-6">
         <strong>Tél. :</strong>
         {% if signalement.telProprio %}
-            <a href="mailto:{{ signalement.telProprioDecoded }}">{{ signalement.telProprioDecoded }}</a>
+            <a href="mailto:{{ signalement.telProprioDecoded }}">{{ signalement.telProprioDecoded|phone }}</a>
         {% endif %}
     </div>
     <div class="fr-col-12 fr-col-md-6">
         <strong>Tél. sec. :</strong>
         {% if signalement.telProprioSecondaire %}
-            <a href="mailto:{{ signalement.telProprioSecondaireDecoded }}">{{ signalement.telProprioSecondaireDecoded }}</a>
+            <a href="mailto:{{ signalement.telProprioSecondaireDecoded }}">{{ signalement.telProprioSecondaireDecoded|phone }}</a>
         {% endif %}
     </div>
     <div class="fr-col-12">

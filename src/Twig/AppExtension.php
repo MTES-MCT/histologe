@@ -40,6 +40,7 @@ class AppExtension extends AbstractExtension implements GlobalsInterface
             new TwigFilter('image64', [ImageBase64Encoder::class, 'encode']),
             new TwigFilter('truncate_filename', [$this, 'getTruncatedFilename']),
             new TwigFilter('clean_tagged_text', [$this, 'cleanTaggedText']),
+            new TwigFilter('phone', [$this, 'formatPhone']),
         ];
     }
 
@@ -127,6 +128,19 @@ class AppExtension extends AbstractExtension implements GlobalsInterface
             default:
                 return $taggedText;
         }
+    }
+
+    public function formatPhone(?string $phoneNumber): string
+    {
+        if (null === $phoneNumber) {
+            return '';
+        }
+
+        if (str_starts_with($phoneNumber, '+33')) {
+            return preg_replace("/(\d{2})(\d{1})(\d{2})(\d{2})(\d{2})(\d{2})/i", '$1 $2 $3 $4 $5 $6', $phoneNumber);
+        }
+
+        return $phoneNumber;
     }
 
     public function getFunctions(): array

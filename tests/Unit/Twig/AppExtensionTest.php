@@ -91,4 +91,41 @@ class AppExtensionTest extends WebTestCase
             'UTC',
         ];
     }
+
+    /**
+     * @dataProvider provideDataPhone
+     */
+    public function testFormatPhone($inputPhone, $expectedOutputPhone): void
+    {
+        self::bootKernel();
+        $container = static::getContainer();
+        $appExtension = $container->get(AppExtension::class);
+
+        $outputPhone = $appExtension->formatPhone($inputPhone);
+
+        $this->assertEquals($expectedOutputPhone, $outputPhone);
+    }
+
+    /**
+     * @throws \Exception
+     */
+    public function provideDataPhone(): \Generator
+    {
+        yield 'No phone' => [
+            null,
+            '',
+        ];
+        yield 'French decoded phone' => [
+            '+33612345678',
+            '+33 6 12 34 56 78',
+        ];
+        yield 'French phone' => [
+            '0612345678',
+            '0612345678',
+        ];
+        yield 'Other phone' => [
+            '+31612345678',
+            '+31612345678',
+        ];
+    }
 }
