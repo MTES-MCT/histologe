@@ -289,7 +289,7 @@ class PartnerController extends AbstractController
 
         if ($form->isSubmitted() && $form->isValid()) {
             $partnerManager->save($partner);
-            $this->addFlash('success', 'Le périmetre a bien été modifié.');
+            $this->addFlash('success', 'Le périmètre a bien été modifié.');
 
             return $this->redirectToRoute('back_partner_view', ['id' => $partner->getId(), '_fragment' => 'perimetre']);
         }
