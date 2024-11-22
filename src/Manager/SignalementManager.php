@@ -687,7 +687,7 @@ class SignalementManager extends AbstractManager
 
         if ('non' === $situationFoyerRequest->getTravailleurSocialPreavisDepart()) {
             $signalement->setIsPreavisDepart(false);
-        } elseif ('oui' === $situationFoyerRequest->getIsAllocataire()) {
+        } elseif ('oui' === $situationFoyerRequest->getTravailleurSocialPreavisDepart()) {
             $signalement->setIsPreavisDepart(true);
         } else {
             $signalement->setIsPreavisDepart(null);
