@@ -41,7 +41,17 @@ html, body {
 }
 img.huechange { filter: hue-rotate(120deg); }
 
-main:has(.signalement-invalid) {
+main#container-horizontal:has(.signalement-invalid) {
+    background: rgba(0, 0, 0, 0.1);
+}
+main#container-vertical .signalement-invalid::before {
+    content: '';
+    position: absolute;
+    line-height: 100vh;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
     background: rgba(0, 0, 0, 0.1);
 }
 .fr-background--white.signalement-invalid {
