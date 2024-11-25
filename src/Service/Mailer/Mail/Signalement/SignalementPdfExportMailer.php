@@ -2,7 +2,6 @@
 
 namespace App\Service\Mailer\Mail\Signalement;
 
-use App\Manager\FailedEmailManager;
 use App\Service\Mailer\Mail\AbstractNotificationMailer;
 use App\Service\Mailer\NotificationMail;
 use App\Service\Mailer\NotificationMailerType;
@@ -24,9 +23,8 @@ class SignalementPdfExportMailer extends AbstractNotificationMailer
         protected ParameterBagInterface $parameterBag,
         protected LoggerInterface $logger,
         protected UrlGeneratorInterface $urlGenerator,
-        protected FailedEmailManager $failedEmailManager,
     ) {
-        parent::__construct($this->mailer, $this->parameterBag, $this->logger, $this->urlGenerator, $this->failedEmailManager);
+        parent::__construct($this->mailer, $this->parameterBag, $this->logger, $this->urlGenerator);
     }
 
     public function getMailerParamsFromNotification(NotificationMail $notificationMail): array

@@ -2,7 +2,6 @@
 
 namespace App\Service\Mailer\Mail\Account;
 
-use App\Manager\FailedEmailManager;
 use App\Manager\UserManager;
 use App\Service\Mailer\Mail\AbstractNotificationMailer;
 use App\Service\Mailer\NotificationMail;
@@ -24,10 +23,10 @@ class AccountActivationFoMailer extends AbstractNotificationMailer
         protected ParameterBagInterface $parameterBag,
         protected LoggerInterface $logger,
         protected UrlGeneratorInterface $urlGenerator,
-        protected FailedEmailManager $failedEmailManager,
+
         private readonly UserManager $userManager,
     ) {
-        parent::__construct($this->mailer, $this->parameterBag, $this->logger, $this->urlGenerator, $this->failedEmailManager);
+        parent::__construct($this->mailer, $this->parameterBag, $this->logger, $this->urlGenerator);
     }
 
     public function getMailerParamsFromNotification(NotificationMail $notificationMail): array
