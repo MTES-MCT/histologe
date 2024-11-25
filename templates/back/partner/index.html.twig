@@ -113,13 +113,13 @@
                                 </td>
                                 {% if platform.feature_zonage %}
                                     <td>
-                                        {% if partner.zones %}
-                                            {% for zone in partner.zones|slice(0, 4) %}
-                                                <div class="fr-badge fr-badge--blue-ecume fr-mb-1v">{{ zone.name }}</div>
+                                        {% if partner.zones or partner.excludedZones %}
+                                            {% for zone in partner.zones %}
+                                                <div class="fr-badge fr-badge--success fr-badge--no-icon fr-mb-1v">{{ zone.name }}</div>
                                             {% endfor %}
-                                            {% if partner.zones|length > 4 %}
-                                                + {{partner.zones|length - 4}}
-                                            {% endif %}
+                                            {% for zone in partner.excludedZones %}
+                                                <div class="fr-badge fr-badge--error fr-badge--no-icon fr-mb-1v">{{ zone.name }}</div>
+                                            {% endfor %}
                                         {% else %}
                                             /
                                         {% endif %}

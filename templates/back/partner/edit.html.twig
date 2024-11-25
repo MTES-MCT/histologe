@@ -16,7 +16,7 @@
                 'level4Link': '',
                 'level4Label': '',
             } %}
-            <h2 class="fr-h2 fr-mb-0"> Ajouter un partenaire </h2>
+            <h1 class="fr-mb-0"> Ajouter un partenaire </h1>
             <span>Remplissez le formulaire ci-dessous pour créer un partenaire.</span><br>
             <span>Tous les champs sont obligatoires, sauf mention contraire.</span>
                 
@@ -35,11 +35,15 @@
                 'level5Link': '',
                 'level5Label': '',
             } %}
-            <h2 class="fr-h2 fr-mb-0"> Modifier le partenaire : {{ partner.nom }} </h2>
+            <h1 class="fr-mb-0"> Modifier le partenaire : {{ partner.nom }} </h1>
             <span>Tous les champs sont obligatoires, sauf mention contraire.</span>
         {% endif %}
         <div class="fr-pt-5v">
-            {{ include('back/partner/_form.html.twig') }}
+            {% if platform.feature_zonage %}
+                {{ include('back/partner/_form.html.twig') }}
+            {% else %}
+                {{ include('back/partner/_old_form.html.twig') }}
+            {% endif %}
         </div>
     </section>
 {% endblock %}

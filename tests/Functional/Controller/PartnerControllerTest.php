@@ -67,7 +67,6 @@ class PartnerControllerTest extends WebTestCase
                 'partner[nom]' => $this->faker->company(),
                 'partner[email]' => $this->faker->companyEmail(),
                 'partner[type]' => PartnerType::ARS->value,
-                'partner[insee]' => [],
             ]
         );
 
@@ -99,7 +98,6 @@ class PartnerControllerTest extends WebTestCase
                 'partner[nom]' => $this->faker->company(),
                 'partner[email]' => $this->faker->companyEmail(),
                 'partner[type]' => PartnerType::ARS->value,
-                'partner[insee]' => [],
             ]
         );
 
@@ -153,7 +151,7 @@ class PartnerControllerTest extends WebTestCase
             ]
         );
 
-        $this->assertResponseRedirects('/bo/partenaires/'.$partner->getId().'/voir');
+        $this->assertResponseRedirects('/bo/partenaires/'.$partner->getId().'/voir#agents');
         $this->assertEmailCount(1);
     }
 
@@ -180,7 +178,7 @@ class PartnerControllerTest extends WebTestCase
             ]
         );
 
-        $this->assertResponseRedirects('/bo/partenaires/'.$partner->getId().'/voir');
+        $this->assertResponseRedirects('/bo/partenaires/'.$partner->getId().'/voir#agents');
         $this->assertEmailCount(1);
     }
 
@@ -226,7 +224,7 @@ class PartnerControllerTest extends WebTestCase
         );
 
         $this->assertEquals($newPartnerId, $user->getPartner()->getId());
-        $this->assertResponseRedirects('/bo/partenaires/'.$newPartnerId.'/voir');
+        $this->assertResponseRedirects('/bo/partenaires/'.$newPartnerId.'/voir#agents');
     }
 
     public function testTransferUserAccountWithUserNotAllowed(): void

@@ -36,6 +36,8 @@ readonly class MenuBuilder
             ->addChild(new MenuItem(label: 'Etiquettes', route: 'back_tags_index', roleGranted: User::ROLE_ADMIN_TERRITORY))
             ->addChild(new MenuItem(label: 'Zones', route: 'back_zone_index', roleGranted: User::ROLE_ADMIN_TERRITORY, featureEnable: (bool) $this->parameterBag->get('feature_zonage')))
             ->addChild(new MenuItem(route: 'back_partner_new'))
+            ->addChild(new MenuItem(route: 'back_partner_edit'))
+            ->addChild(new MenuItem(route: 'back_partner_edit_perimetre'))
             ->addChild(new MenuItem(route: 'back_zone_show'))
             ->addChild(new MenuItem(route: 'back_zone_edit'))
         ;

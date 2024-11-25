@@ -22,7 +22,7 @@
                     <a class="fr-btn fr-btn--icon-left fr-btn--md fr-fi-edit-line" href="{{path('back_zone_edit', {zone: zone.id})}}">Modifier la zone</a>
                 </div>
             </div>
-            <div class="fr-grid-row">
+            <div class="fr-grid-row fr-grid-row--gutters">
                 {% if is_granted('ROLE_ADMIN') %}
                     <div class="fr-col-12">
                         <b>Territoire :</b>
@@ -32,7 +32,13 @@
                 <div class="fr-col-12">
                     <b>Partenaires :</b>
                     {% for partner in zone.partners %}
-                        <span class="fr-badge fr-badge--blue-ecume fr-badge--no-icon">{{ partner.nom }}</span>
+                        <span class="fr-badge fr-badge--success fr-badge--no-icon">{{ partner.nom }}</span>
+                    {% endfor %}
+                </div>
+                <div class="fr-col-12">
+                    <b>Partenaires exclus :</b>
+                    {% for partner in zone.excludedPartners %}
+                        <span class="fr-badge fr-badge--error fr-badge--no-icon">{{ partner.nom }}</span>
                     {% endfor %}
                 </div>
                 <div class="fr-col-12">
@@ -43,7 +49,7 @@
         </header>
     </section>
 
-    <section class="fr-grid-row fr-p-5v">
+    <section class="fr-grid-row fr-grid-row--gutters fr-p-5v">
         <div class="fr-col-12 fr-col-lg-8">
             <div id="zone_map"></div>
         </div>

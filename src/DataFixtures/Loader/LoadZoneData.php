@@ -42,6 +42,9 @@ class LoadZoneData extends Fixture implements OrderedFixtureInterface
         foreach ($row['partners'] as $partner) {
             $zone->addPartner($this->partnerRepository->findOneBy(['email' => $partner]));
         }
+        foreach ($row['excluded_partners'] as $partner) {
+            $zone->addExcludedPartner($this->partnerRepository->findOneBy(['email' => $partner]));
+        }
         $manager->persist($zone);
     }
 

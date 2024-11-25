@@ -4,4 +4,7 @@ zone:
     territory: "Hérault"
     name: "Permis louer Agde"
     created_by: admin-territoire-34-01@histologe.fr
-    partners: ["partenaire-34-07@histologe.fr"]
+    partners: 
+     - partenaire-34-07@histologe.fr
+    excluded_partners: 
+     - partenaire-34-08@histologe.fr

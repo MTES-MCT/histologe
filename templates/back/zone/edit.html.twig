@@ -26,10 +26,38 @@
         </header>
     </section>
 
-    <section class="fr-grid-row fr-px-5v fr-pb-5v">
-        <div class="fr-col-12 {% if not platform.feature_enable_menu_horizontale %} fr-col-lg-6 {% endif %}">
+    <section class="fr-px-5v fr-pb-5v fr-grid-row">
+        <div class="fr-col-12{% if not platform.feature_enable_menu_horizontale %} fr-col-lg-6 {% endif %}">
             {% form_theme form 'form/dsfr_theme.html.twig' %}
-            {{form(form, {'attr': {'id': 'form-add-zone'}} )}}
+            {{ form_start(form, {'attr': {'id': 'form-add-zone'}}) }}
+            {{ form_errors(form) }}
+            <div class="fr-grid-row fr-grid-row--gutters">
+                <div class="fr-col-12">
+                    {{ form_row(form.name) }}
+                </div>
+                <div class="fr-col-12">
+                    {{ form_row(form.partners) }}
+                </div>
+                <div class="fr-col-12">
+                    {{ form_row(form.excludedPartners) }}
+                </div>
+                <div class="fr-col-12">
+                    {{ form_row(form.type) }}
+                </div>
+                <div class="fr-col-12">
+                    {{ form_row(form.file) }}
+                </div>
+                <div class="fr-col-12">
+                    {{ form_row(form.area) }}
+                </div>
+                <div class="fr-col-6">
+                    <a href="{{path('back_zone_index')}}" class="fr-btn fr-btn--secondary fr-btn--icon-left fr-icon-close-line" type="button">Annuler</a>
+                </div>
+                <div class="fr-col-6">
+                    {{ form_row(form.save) }}
+                </div>
+            </div>
+            {{ form_end(form) }}
         </div>
     </section>
 

@@ -85,7 +85,9 @@ class BackZoneController extends AbstractController
         }
         if ($form->isSubmitted()) {
             $file = $form->get('file')->getData();
-            $this->manageCsvFileFormErrors($file, $zone, $form, $csvParser);
+            if ($file) {
+                $this->manageCsvFileFormErrors($file, $zone, $form, $csvParser);
+            }
             if (!$form->isValid()) {
                 $response = ['code' => Response::HTTP_BAD_REQUEST, 'errors' => FormHelper::getErrorsFromForm($form)];
 

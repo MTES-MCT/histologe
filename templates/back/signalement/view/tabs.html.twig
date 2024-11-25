@@ -37,19 +37,3 @@
         {% include 'back/signalement/view/tabs/tab-documents.html.twig' %}
     </div>
 </div>
-<script type="text/javascript" nonce="{{ app.request.attributes.get('csp_script_nonce') }}">
-    const currentHash = window.location.hash != '' ?
-        window.location.hash.substring(1) :
-        {% if signalement.statut is not same as constant('App\\Entity\\Signalement::STATUS_NEED_VALIDATION') %}'activite'{% else %}'situation'{% endif %};
-    const buttonElement = document.getElementById('tabpanel-'+currentHash);
-    buttonElement?.setAttribute('aria-selected', 'true');
-    const tabElement = document.getElementById('tabpanel-'+currentHash+'-panel');
-    tabElement?.classList.add('fr-tabs__panel--selected');
-
-    const btnElements = document.querySelectorAll(`.fr-tabs__tab`);
-    btnElements.forEach((btnElement) => {
-        btnElement.addEventListener('click', (e) => {
-            window.location.hash = btnElement.id.substring(9)
-        })
-    })
-</script>

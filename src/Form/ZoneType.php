@@ -5,24 +5,30 @@ namespace App\Form;
 use App\Entity\Enum\ZoneType as EnumZoneType;
 use App\Entity\Partner;
 use App\Entity\Territory;
-use App\Entity\Zone;
 use App\Form\Type\SearchCheckboxType;
 use App\Repository\PartnerRepository;
 use App\Repository\TerritoryRepository;
 use Symfony\Bundle\SecurityBundle\Security;
+use Symfony\Component\Asset\Package;
+use Symfony\Component\Asset\VersionStrategy\EmptyVersionStrategy;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\EnumType;
 use Symfony\Component\Form\Extension\Core\Type\FileType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Form\FormError;
+use Symfony\Component\Form\FormEvent;
+use Symfony\Component\Form\FormEvents;
 use Symfony\Component\Validator\Constraints as Assert;
 
 class ZoneType extends AbstractType
 {
+    private Package $package;
+
     public function __construct(
         private readonly Security $security,
     ) {
+        $this->package = new Package(new EmptyVersionStrategy());
     }
 
     public function buildForm(FormBuilderInterface $builder, array $options): void
@@ -59,7 +65,23 @@ class ZoneType extends AbstractType
                         ->orderBy('p.nom', 'ASC');
                 },
                 'choice_label' => 'nom',
-                'label' => 'Partenaires',
+                'label' => 'Partenaires de la zone',
+                'help' => 'Sélectionnez dans la liste les partenaires qui pourront intervenir spécifiquement sur les dossiers situés dans la zone.',
+                'noselectionlabel' => 'Sélectionnez les partenaires',
+                'nochoiceslabel' => 'Aucun partenaire disponible',
+                'by_reference' => false,
+            ]);
+            $builder->add('excludedPartners', SearchCheckboxType::class, [
+                'class' => Partner::class,
+                'query_builder' => function (PartnerRepository $partnerRepository) use ($territory) {
+                    return $partnerRepository->createQueryBuilder('p')
+                        ->where('p.territory = :territory')
+                        ->setParameter('territory', $territory)
+                        ->orderBy('p.nom', 'ASC');
+                },
+                'choice_label' => 'nom',
+                'help' => 'Sélectionnez dans la liste les partenaires à exclure de la zone. Ces partenaires ne pourront pas être affectés aux dossiers situés dans la zone.',
+                'label' => 'Partenaires exclus de la zone',
                 'noselectionlabel' => 'Sélectionnez les partenaires',
                 'nochoiceslabel' => 'Aucun partenaire disponible',
                 'by_reference' => false,
@@ -74,29 +96,27 @@ class ZoneType extends AbstractType
             'placeholder' => 'Sélectionner le type de zone',
             'label' => 'Type de zone',
         ]);
-
-        // $docUrl = 'https://data.sigea.educagri.fr/download/sigea/supports/QGIS/distance/initiation/M08_Import_Export/co/10_N1_Export_CSV_geo.html';
-        $fileLabel = 'Fichier (en cas de modification des coordonnées de la zone uniquement)';
         $fileConstraints = [
             new Assert\File([
                 'mimeTypes' => ['text/csv', 'text/plain'],
                 'mimeTypesMessage' => 'Le fichier doit être au format CSV',
             ]),
         ];
-        if (!$zone->getId()) {
-            $fileLabel = 'Fichier';
-            $fileConstraints[] = new Assert\NotBlank([
-                'message' => 'Merci de sélectionner un fichier',
-            ]);
-        }
+        $modeleUrl = $this->package->getUrl('/build/files/zone_modele.csv');
         $builder->add('file', FileType::class, [
-            'label' => $fileLabel,
+            'label' => $zone->getId() ? 'Modifier depuis un fichier (en cas de modification des coordonnées de la zone uniquement)' : 'Importer depuis un fichier',
             'required' => false,
             'mapped' => false,
-            'help' => 'Le fichier doit être au format CSV et contenir une colonnne "WKT"',
-            // 'help' => 'Le fichier doit être au format CSV et contenir une colonnne "WKT" <a href="'.$docUrl.'">doc</a>',
-            // 'help_html' => true,
+            'help' => 'Le fichier doit être au format CSV séparé par des virgules et contenir une colonnne "WKT", <a href="'.$modeleUrl.'">voir le template</a>',
+            'help_html' => true,
             'constraints' => $fileConstraints,
+        ]);
+        $builder->add('area', null, [
+            'label' => $zone->getId() ? 'Copier / coller le texte au format WKT' : 'Ou copier / coller le texte au format WKT',
+            'required' => false,
+            'help' => 'Vous pouvez générer une zone au bon format avec l\'outil <a rel="noreferrer noopener" title="wktmap.com - ouvre une nouvelle fenêtre" target="_blank" href="https://wktmap.com/">wktmap.com</a>',
+            'help_html' => true,
+            'attr' => ['rows' => 5],
         ]);
         if ($zone->getId()) {
             $builder->add('save', SubmitType::class, [
@@ -105,14 +125,18 @@ class ZoneType extends AbstractType
                 'row_attr' => ['class' => 'fr-text--right'],
             ]);
         }
-    }
+        // Ajouter un écouteur d'événements pour valider les champs file et area
+        $builder->addEventListener(FormEvents::POST_SUBMIT, function (FormEvent $event) {
+            $form = $event->getForm();
+            $file = $form->get('file')->getData();
+            $area = $form->get('area')->getData();
 
-    public function configureOptions(OptionsResolver $resolver): void
-    {
-        $resolver->setDefaults([
-            'data_class' => Zone::class,
-            'csrf_token_id' => 'zone_type',
-        ]);
+            if (empty($file) && empty($area)) {
+                $error = new FormError('Vous devez renseigner une zone via le champ fichier ou texte.');
+                $form->get('file')->addError($error);
+                $form->get('area')->addError($error);
+            }
+        });
     }
 
     public function getBlockPrefix(): string

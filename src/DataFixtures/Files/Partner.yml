@@ -551,4 +551,9 @@ partners:
     is_archive: 0
     territory: "Hérault"
     type: "AUTRE"
-
+  -
+    nom: "Partenaire Hors Zone Agde"
+    email: "partenaire-34-08@histologe.fr"
+    is_archive: 0
+    territory: "Hérault"
+    type: "AUTRE"
