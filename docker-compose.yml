@@ -88,7 +88,7 @@ services:
       - .:/home/wiremock
 
   histologe_redis:
-    image: redis:7.0-alpine
+    image: redis:7.2.5-alpine
     container_name: histologe_redis
 
   histologe_clamav:
