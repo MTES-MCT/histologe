@@ -60,6 +60,7 @@
   "bail_dpe_bail": "oui",
   "bail_dpe_etat_des_lieux": "oui",
   "bail_dpe_dpe": "oui",
+  "bail_dpe_classe_energetique": "F",
   "logement_social_montant_allocation": "250",
   "logement_social_demande_relogement": "oui",
   "logement_social_allocation": "oui",

@@ -26,6 +26,7 @@ class InformationsLogementRequestTest extends KernelTestCase
             bailDpeBail: 'oui',
             bailDpeEtatDesLieux: 'oui',
             bailDpeDpe: 'oui',
+            bailDpeClasseEnergetique: 'C',
             loyer: '750',
             loyersPayes: 'oui',
             anneeConstruction: '2000'
@@ -38,6 +39,7 @@ class InformationsLogementRequestTest extends KernelTestCase
         $this->assertSame('oui', $informationsLogementRequest->getBailDpeBail());
         $this->assertSame('oui', $informationsLogementRequest->getBailDpeEtatDesLieux());
         $this->assertSame('oui', $informationsLogementRequest->getBailDpeDpe());
+        $this->assertSame('C', $informationsLogementRequest->getBailDpeClasseEnergetique());
         $this->assertSame('750', $informationsLogementRequest->getLoyer());
         $this->assertSame('oui', $informationsLogementRequest->getLoyersPayes());
         $this->assertSame('2000', $informationsLogementRequest->getAnneeConstruction());
@@ -56,12 +58,13 @@ class InformationsLogementRequestTest extends KernelTestCase
             bailDpeBail: 'unknown',
             bailDpeEtatDesLieux: 'unknown',
             bailDpeDpe: 'unknown',
+            bailDpeClasseEnergetique: 'unknown',
             loyer: 'invalid-loyer',
             loyersPayes: 'unknown',
             anneeConstruction: '20'
         );
 
         $errors = $this->validator->validate($informationsLogementRequest);
-        $this->assertCount(10, $errors);
+        $this->assertCount(11, $errors);
     }
 }

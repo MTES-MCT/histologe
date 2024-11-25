@@ -134,6 +134,29 @@
                                 </select>
                             </div>
 
+                            <div class="fr-select-group">
+                                {% set bailDpeClasseEnergetique = signalement.typeCompositionLogement ? signalement.typeCompositionLogement.bailDpeClasseEnergetique : null %}
+                                <label class="fr-label" for="informationLogementBailDpeClasseEnergetique">Classe énergétique
+                                    {{ show_label_facultatif(
+                                        'App\\Dto\\Request\\Signalement\\InformationsLogementRequest',
+                                        'bailDpeClasseEnergetique',
+                                        signalement.profileDeclarant,
+                                        null != signalement.createdFrom)
+                                    }}
+                                </label>
+                                <select class="fr-select" id="informationLogementBailDpeClasseEnergetique" name="bailDpeClasseEnergetique">
+                                    <option value="" {{ bailDpeClasseEnergetique not in ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'nsp'] ? 'selected' : '' }}></option>
+                                    <option value="A" {{ bailDpeClasseEnergetique is same as 'A' ? 'selected' : '' }}>A</option>
+                                    <option value="B" {{ bailDpeClasseEnergetique is same as 'B' ? 'selected' : '' }}>B</option>
+                                    <option value="C" {{ bailDpeClasseEnergetique is same as 'C' ? 'selected' : '' }}>C</option>
+                                    <option value="D" {{ bailDpeClasseEnergetique is same as 'D' ? 'selected' : '' }}>D</option>
+                                    <option value="E" {{ bailDpeClasseEnergetique is same as 'E' ? 'selected' : '' }}>E</option>
+                                    <option value="F" {{ bailDpeClasseEnergetique is same as 'F' ? 'selected' : '' }}>F</option>
+                                    <option value="G" {{ bailDpeClasseEnergetique is same as 'G' ? 'selected' : '' }}>G</option>
+                                    <option value="nsp" {{ bailDpeClasseEnergetique is same as 'nsp' ? 'selected' : '' }}>Je ne sais pas</option>
+                                </select>
+                            </div>
+
                             <div class="fr-input-group">
                                 <label class="fr-label" for="informationLogementLoyer">Montant du loyer (facultatif)</label>
                                 <input class="fr-input" type="number" id="informationLogementLoyer" name="loyer" value="{{ signalement.loyer }}">

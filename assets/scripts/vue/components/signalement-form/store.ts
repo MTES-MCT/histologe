@@ -105,6 +105,7 @@ const formStore: FormStore = reactive({
     'SignalementFormTextfield',
     'SignalementFormTextarea',
     'SignalementFormOnlyChoice',
+    'SignalementFormSelect',
     'SignalementFormRoomList',
     'SignalementFormAddress',
     'SignalementFormAutocomplete',

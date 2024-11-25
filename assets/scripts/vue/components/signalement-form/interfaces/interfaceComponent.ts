@@ -23,7 +23,6 @@ export interface Component {
   disabled?: string
   multiple?: string
   conditional?: any
-  hint?: string
   placeholder?: string
   ariaControls?: string
   tagWhenEdit?: string

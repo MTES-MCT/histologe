@@ -370,6 +370,8 @@ class SignalementDraftRequest
     #[Assert\Choice(choices: ['oui', 'non', 'nsp'], message: 'Le champ "bailDpeDpe" est incorrect.')]
     private ?string $bailDpeDpe = null;
     private ?array $bailDpeDpeUpload = null;
+    #[Assert\Choice(choices: ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'nsp'], message: 'Le champ "Classe énergétique" est incorrect.')]
+    private ?string $bailDpeClasseEnergetique = null;
     #[Assert\Choice(choices: ['oui', 'non'], message: 'Le champ "logementSocialDemandeRelogement" est incorrect.')]
     private ?string $logementSocialDemandeRelogement = null;
     #[Assert\Choice(choices: ['oui', 'non', 'nsp'], message: 'Le champ "logementSocialAllocation" est incorrect.')]
@@ -1346,6 +1348,18 @@ class SignalementDraftRequest
     public function setBailDpeDpe(?string $bailDpeDpe): self
     {
         $this->bailDpeDpe = $bailDpeDpe;
+
+        return $this;
+    }
+
+    public function getBailDpeClasseEnergetique(): ?string
+    {
+        return $this->bailDpeClasseEnergetique;
+    }
+
+    public function setBailDpeClasseEnergetique(?string $bailDpeClasseEnergetique): self
+    {
+        $this->bailDpeClasseEnergetique = $bailDpeClasseEnergetique;
 
         return $this;
     }

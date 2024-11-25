@@ -1,7 +1,9 @@
 <template>
   <div :class="['fr-input-group', {'fr-input-group--error' : hasError}]" :id="id" :ref="id">
-    <label :class="[ customCss, 'fr-label' ]" :for="id + '_input'">{{ label }}</label>
-    <span v-if="hint !== ''" class="fr-hint-text">{{ hint }}</span>
+    <label :class="[ customCss, 'fr-label' ]" :for="id + '_input'">
+      {{ label }}
+      <span v-if="description !== ''" class="fr-hint-text">{{ description }}</span>
+    </label>
     <input
       type="date"
       :id="id + '_input'"
@@ -31,7 +33,7 @@ export default defineComponent({
   props: {
     id: { type: String, default: null },
     label: { type: String, default: null },
-    hint: { type: String, default: null },
+    description: { type: String, default: null },
     modelValue: { type: String, default: null },
     customCss: { type: String, default: '' },
     hasError: { type: Boolean, default: false },

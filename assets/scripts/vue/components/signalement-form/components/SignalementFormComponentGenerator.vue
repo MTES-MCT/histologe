@@ -5,7 +5,6 @@
       v-bind:key="component.slug"
       :id="component.slug"
       :label="component.label"
-      :hint="component.hint"
       :labelInfo="component.labelInfo"
       :labelUpload="component.labelUpload"
       :description="component.description"
@@ -46,6 +45,7 @@ import SignalementFormTextarea from './SignalementFormTextarea.vue'
 import SignalementFormButton from './SignalementFormButton.vue'
 import SignalementFormLink from './SignalementFormLink.vue'
 import SignalementFormOnlyChoice from './SignalementFormOnlyChoice.vue'
+import SignalementFormSelect from './SignalementFormSelect.vue'
 import SignalementFormDate from './SignalementFormDate.vue'
 import SignalementFormYear from './SignalementFormYear.vue'
 import SignalementFormTime from './SignalementFormTime.vue'
@@ -77,6 +77,7 @@ export default defineComponent({
     SignalementFormButton,
     SignalementFormLink,
     SignalementFormOnlyChoice,
+    SignalementFormSelect,
     SignalementFormDate,
     SignalementFormYear,
     SignalementFormTime,

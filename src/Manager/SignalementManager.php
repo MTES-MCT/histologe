@@ -504,7 +504,8 @@ class SignalementManager extends AbstractManager
             ->setCompositionLogementEnfants($informationsLogementRequest->getCompositionLogementEnfants())
             ->setBailDpeBail($informationsLogementRequest->getBailDpeBail())
             ->setBailDpeEtatDesLieux($informationsLogementRequest->getBailDpeEtatDesLieux())
-            ->setBailDpeDpe($informationsLogementRequest->getBailDpeDpe());
+            ->setBailDpeDpe($informationsLogementRequest->getBailDpeDpe())
+            ->setBailDpeClasseEnergetique($informationsLogementRequest->getBailDpeClasseEnergetique());
         $signalement->setTypeCompositionLogement($typeCompositionLogement);
 
         $informationComplementaire = new InformationComplementaire();
