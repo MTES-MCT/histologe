@@ -9,6 +9,8 @@ class Address
     private ?string $zipCode = null;
     private ?string $city = null;
     private ?string $inseeCode = null;
+    private ?float $score = 0;
+    private ?string $banId = null;
     private ?string $longitude = null;
     private ?string $latitude = null;
 
@@ -20,7 +22,9 @@ class Address
             $this->street = $properties['name'] ?? null;
             $this->zipCode = $properties['postcode'] ?? null;
             $this->city = $properties['city'] ?? null;
+            $this->score = $properties['score'] ?? null;
             $this->inseeCode = $properties['citycode'] ?? null;
+            $this->banId = $properties['id'] ?? null;
         }
 
         if (null !== $data && !empty($data['features'][0]['geometry']['coordinates'])) {
@@ -48,6 +52,16 @@ class Address
     public function getInseeCode(): ?string
     {
         return $this->inseeCode;
+    }
+
+    public function getScore(): ?float
+    {
+        return $this->score;
+    }
+
+    public function getBanId(): ?string
+    {
+        return $this->banId;
     }
 
     public function getLongitude(): ?string
