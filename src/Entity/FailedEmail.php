@@ -2,9 +2,10 @@
 
 namespace App\Entity;
 
+use App\Repository\FailedEmailRepository;
 use Doctrine\ORM\Mapping as ORM;
 
-#[ORM\Entity]
+#[ORM\Entity(repositoryClass: FailedEmailRepository::class)]
 class FailedEmail
 {
     #[ORM\Id]

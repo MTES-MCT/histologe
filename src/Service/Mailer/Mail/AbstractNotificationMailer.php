@@ -24,13 +24,13 @@ abstract class AbstractNotificationMailer implements NotificationMailerInterface
     protected ?string $mailerTemplate = null;
     protected ?string $tagHeader = null;
     protected array $mailerParams = [];
+    private ?FailedEmailManager $failedEmailManager = null;
 
     public function __construct(
         protected MailerInterface $mailer,
         protected ParameterBagInterface $parameterBag,
         protected LoggerInterface $logger,
         protected UrlGeneratorInterface $urlGenerator,
-        protected FailedEmailManager $failedEmailManager,
     ) {
     }
 
@@ -128,7 +128,7 @@ abstract class AbstractNotificationMailer implements NotificationMailerInterface
         ));
         if ($saveFailedMail && NotificationMailerType::TYPE_ERROR_SIGNALEMENT !== $notificationMail->getType()) {
             try {
-                $this->failedEmailManager->create(
+                $this->getFailedEmailManager()->create(
                     $message, $notificationMail, $exception, $this->parameterBag->get('reply_to_email'), $notifyUsager);
             } catch (\Exception $e) {
                 $this->logger->error('Failed to save FailedEmail: '.$e->getMessage());
@@ -186,5 +186,19 @@ abstract class AbstractNotificationMailer implements NotificationMailerInterface
                 .' - '.
                 str_replace('%param.platform_name%', $this->parameterBag->get('platform_name'), $this->mailerSubject)
             );
+    }
+
+    public function setFailedEmailManager(FailedEmailManager $failedEmailManager): void
+    {
+        $this->failedEmailManager = $failedEmailManager;
+    }
+
+    public function getFailedEmailManager(): FailedEmailManager
+    {
+        if (!$this->failedEmailManager) {
+            throw new \LogicException('FailedEmailManager has not been initialized.');
+        }
+
+        return $this->failedEmailManager;
     }
 }

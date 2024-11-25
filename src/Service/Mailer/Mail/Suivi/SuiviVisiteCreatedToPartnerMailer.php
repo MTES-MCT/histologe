@@ -26,7 +26,7 @@ class SuiviVisiteCreatedToPartnerMailer extends AbstractNotificationMailer
     //     protected UrlGeneratorInterface $urlGenerator,
     //     protected FailedEmailManager $failedEmailManager,
     // ) {
-    //     parent::__construct($this->mailer, $this->parameterBag, $this->logger, $this->urlGenerator, $this->failedEmailManager);
+    //     parent::__construct($this->mailer, $this->parameterBag, $this->logger, $this->urlGenerator);
     // }
 
     public function getMailerParamsFromNotification(NotificationMail $notificationMail): array
