@@ -25,7 +25,10 @@ class ExportSignalementController extends AbstractController
     ): Response {
         /** @var User $user */
         $user = $this->getUser();
-        $filters = $options = $request->getSession()->get('filters') ?? ['isImported' => '1'];
+
+        $filters = $options = json_decode($request->cookies->get('filters'), true)
+            ?? $request->getSession()->get('filters', ['isImported' => '1']);
+
         $count_signalements = $signalementManager->findSignalementAffectationList($user, $options, true);
         $textFilters = $signalementExportFiltersDisplay->filtersToText($filters);
 
