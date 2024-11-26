@@ -54,6 +54,7 @@ class SignalementDraftRequest
     #[Assert\NotBlank(message: 'Merci de saisir un code INSEE.')]
     #[Assert\Regex(pattern: '/^[0-9][0-9A-Za-z][0-9]{3}$/', message: 'Le code insee doit être composé de 5 caractères.')]
     private ?string $adresseLogementAdresseDetailInsee = null;
+    private ?string $adresseLogementAdresseDetailBanID = null;
     #[Assert\Length(max: 50, maxMessage: 'La latitude ne peut pas dépasser {{ limit }} caractères.')]
     #[Assert\Regex(
         pattern: '/^[-+]?([1-8]?\d(\.\d+)?|90(\.0+)?)$/',
@@ -560,6 +561,18 @@ class SignalementDraftRequest
     public function setAdresseLogementAdresseDetailInsee(?string $adresseLogementAdresseDetailInsee): self
     {
         $this->adresseLogementAdresseDetailInsee = $adresseLogementAdresseDetailInsee;
+
+        return $this;
+    }
+
+    public function getAdresseLogementAdresseDetailBanID(): ?string
+    {
+        return $this->adresseLogementAdresseDetailBanID;
+    }
+
+    public function setAdresseLogementAdresseDetailBanId(?string $adresseLogementAdresseDetailBanID): self
+    {
+        $this->adresseLogementAdresseDetailBanID = $adresseLogementAdresseDetailBanID;
 
         return $this;
     }

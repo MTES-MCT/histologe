@@ -74,6 +74,9 @@ export function attacheAutocompleteAddressEvent (inputAdresse) {
       if (document?.querySelector('#' + idForm + ' [data-autocomplete-insee]')) {
         document.querySelector('#' + idForm + ' [data-autocomplete-insee]').value = ''
       }
+      if (document?.querySelector('#' + idForm + ' [data-autocomplete-ban-id]')) {
+        document.querySelector('#' + idForm + ' [data-autocomplete-ban-id]').value = ''
+      }
       if (document?.querySelector('#' + idForm + ' [data-autocomplete-geoloclng]')) {
         document.querySelector('#' + idForm + ' [data-autocomplete-geoloclng]').value = ''
       }
@@ -142,6 +145,9 @@ function attachAddressSuggestionEvent (inputAdresse, suggestion, feature) {
     }
     if (document?.querySelector('#' + idForm + ' [data-autocomplete-insee]')) {
       document.querySelector('#' + idForm + ' [data-autocomplete-insee]').value = feature.properties.citycode
+    }
+    if (document?.querySelector('#' + idForm + ' [data-autocomplete-ban-id]')) {
+      document.querySelector('#' + idForm + ' [data-autocomplete-ban-id]').value = feature.properties.id
     }
     if (document?.querySelector('#' + idForm + ' [data-autocomplete-geolocLng]')) {
       document.querySelector('#' + idForm + ' [data-autocomplete-geolocLng]').value = feature.geometry.coordinates[0]

@@ -33,6 +33,7 @@ class AdresseOccupantRequest implements RequestInterface
         private readonly ?string $geolocLat = null,
         #[Assert\Regex(pattern: '/^[0-9][0-9A-Za-z][0-9]{3}$/', message: 'Le code insee doit être composé de 5 caractères.')]
         private readonly ?string $insee = null,
+        private readonly ?string $banId = null,
         #[Assert\Choice(choices: ['1'], message: 'Le champ "manual" est incorrect.')]
         private readonly ?string $manual = null,
         #[Assert\Choice(choices: ['1'], message: 'Le champ "needResetInsee" est incorrect.')]
@@ -88,6 +89,11 @@ class AdresseOccupantRequest implements RequestInterface
     public function getInsee(): ?string
     {
         return $this->insee;
+    }
+
+    public function getBanId(): ?string
+    {
+        return $this->banId;
     }
 
     public function getManual(): ?string

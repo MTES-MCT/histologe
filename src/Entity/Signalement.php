@@ -1059,7 +1059,7 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
         return $this->banIdOccupant;
     }
 
-    public function setBanIdOccupant(string $banIdOccupant): self
+    public function setBanIdOccupant(?string $banIdOccupant): self
     {
         $this->banIdOccupant = $banIdOccupant;
 

@@ -318,6 +318,7 @@ class SignalementBuilder
             ->setAdresseOccupant($this->signalementDraftRequest->getAdresseLogementAdresseDetailNumero())
             ->setCpOccupant($this->signalementDraftRequest->getAdresseLogementAdresseDetailCodePostal())
             ->setInseeOccupant($this->signalementDraftRequest->getAdresseLogementAdresseDetailInsee())
+            ->setBanIdOccupant($this->signalementDraftRequest->getAdresseLogementAdresseDetailBanID())
             ->setGeoloc([
                 'lat' => $this->signalementDraftRequest->getAdresseLogementAdresseDetailGeolocLat(),
                 'lng' => $this->signalementDraftRequest->getAdresseLogementAdresseDetailGeolocLng(),

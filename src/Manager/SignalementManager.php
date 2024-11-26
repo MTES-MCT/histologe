@@ -339,6 +339,7 @@ class SignalementManager extends AbstractManager
             ->setCpOccupant($adresseOccupantRequest->getCodePostal())
             ->setVilleOccupant($adresseOccupantRequest->getVille())
             ->setInseeOccupant($adresseOccupantRequest->getInsee())
+            ->setBanIdOccupant($adresseOccupantRequest->getBanId())
             ->setGeoloc([
                 'lat' => $adresseOccupantRequest->getGeolocLat(),
                 'lng' => $adresseOccupantRequest->getGeolocLng(),
