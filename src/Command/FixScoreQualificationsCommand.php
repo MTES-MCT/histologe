@@ -20,6 +20,7 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 )]
 class FixScoreQualificationsCommand extends Command
 {
+    private const BATCH_SIZE = 200;
     private SymfonyStyle $io;
 
     public function __construct(
@@ -72,6 +73,9 @@ class FixScoreQualificationsCommand extends Command
                 $this->io->info(\sprintf('Number of qualifications of signalement %s changed %s to %s.',
                     $signalement->getUuid(), $oldQualifications->count(), $newQualifications->count()));
                 ++$countQualifChanged;
+            }
+            if (0 === $count % self::BATCH_SIZE) {
+                $this->signalementManager->flush();
             }
 
             ++$count;
