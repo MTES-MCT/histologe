@@ -70,9 +70,10 @@ class JobEventHttpClient implements HttpClientInterface
                 $responseContent = json_encode($this->filterResponse($content));
             }
         } catch (\Throwable $exception) {
-            $this->logger->error('HTTP error occurred', [
+            $responseContent = $exception->getMessage();
+            $this->logger->error('HTTP error occurred, cause : '.$exception->getMessage(), [
                 'status_code' => $statusCode = Response::HTTP_INTERNAL_SERVER_ERROR,
-                'response_content' => $responseContent = $exception->getMessage(),
+                'response_content' => $responseContent,
             ]);
         }
 
