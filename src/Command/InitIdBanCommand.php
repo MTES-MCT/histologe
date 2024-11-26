@@ -2,8 +2,8 @@
 
 namespace App\Command;
 
+use App\Entity\Signalement;
 use App\Repository\SignalementRepository;
-use App\Repository\TerritoryRepository;
 use App\Service\DataGouv\AddressService;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Console\Attribute\AsCommand;
@@ -12,11 +12,6 @@ use Symfony\Component\Console\Helper\ProgressBar;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
-use Symfony\Contracts\HttpClient\Exception\ClientExceptionInterface;
-use Symfony\Contracts\HttpClient\Exception\RedirectionExceptionInterface;
-use Symfony\Contracts\HttpClient\Exception\ServerExceptionInterface;
-use Symfony\Contracts\HttpClient\Exception\TransportExceptionInterface;
-use Symfony\Contracts\HttpClient\HttpClientInterface;
 
 #[AsCommand(
     name: 'app:init-id-ban',
@@ -28,21 +23,13 @@ class InitIdBanCommand extends Command
     private const int BATCH_SIZE = 20;
 
     public function __construct(
-        private readonly HttpClientInterface $httpClient,
         private readonly AddressService $addressService,
         private readonly SignalementRepository $signalementRepository,
-        private readonly TerritoryRepository $territoryRepository,
         private readonly EntityManagerInterface $entityManager,
     ) {
         parent::__construct();
     }
 
-    /**
-     * @throws RedirectionExceptionInterface
-     * @throws ClientExceptionInterface
-     * @throws TransportExceptionInterface
-     * @throws ServerExceptionInterface
-     */
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $io = new SymfonyStyle($input, $output);
