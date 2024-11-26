@@ -367,9 +367,7 @@ export default defineComponent({
       result += this.addLineIfNeeded('bail_dpe_bail', 'Bail établi ? ')
       result += this.addLineIfNeeded('bail_dpe_etat_des_lieux', 'Etat des lieux réalisé ? ')
       result += this.addLineIfNeeded('bail_dpe_dpe', 'DPE réalisé ? ')
-      if (this.formStore.data.bail_dpe_dpe === 'oui') {
-        result += this.addLineIfNeeded('bail_dpe_classe_energetique', 'Classe énergétique du logement : ')
-      }
+      result += this.addLineIfNeeded('bail_dpe_classe_energetique', 'Classe énergétique du logement : ')
       return result
     },
     getFormDataSituationOccupant (): string {

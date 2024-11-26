@@ -1158,9 +1158,6 @@
               "value": "nsp"
             }
           ],
-          "conditional": {
-            "show": "formStore.data.bail_dpe_dpe === 'oui'"
-          },
           "validate": {
             "message": "Veuillez indiquer la classe énergétique pour le logement."
           }
