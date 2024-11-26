@@ -12,6 +12,7 @@ use Symfony\Component\Security\Core\User\UserInterface;
 
 class AssignmentVoter extends Voter
 {
+    public const SEE = 'ASSIGN_SEE';
     public const TOGGLE = 'ASSIGN_TOGGLE';
     public const ANSWER = 'ASSIGN_ANSWER';
     public const CLOSE = 'ASSIGN_CLOSE';
@@ -24,7 +25,7 @@ class AssignmentVoter extends Voter
 
     protected function supports(string $attribute, $subject): bool
     {
-        return \in_array($attribute, [self::TOGGLE, self::ANSWER, self::CLOSE, self::REOPEN])
+        return \in_array($attribute, [self::SEE, self::TOGGLE, self::ANSWER, self::CLOSE, self::REOPEN])
             && ($subject instanceof Affectation || $subject instanceof Signalement);
     }
 
@@ -37,12 +38,23 @@ class AssignmentVoter extends Voter
         }
 
         return match ($attribute) {
+            self::SEE => $this->canSee($subject, $user),
             self::TOGGLE => $this->canToggle($subject, $user),
             self::ANSWER => $this->canAnswer($subject, $user),
             self::CLOSE => $this->canClose($subject, $user),
             self::REOPEN => $this->canReopen($subject, $user),
             default => false,
         };
+    }
+
+    private function canSee(Signalement $signalement, User $user)
+    {
+        return (
+            $user->isSuperAdmin()
+            || $user->isTerritoryAdmin()
+            || ($this->parameterBag->get('feature_permission_affectation') && $user->hasPermissionAffectation())
+        )
+            && Signalement::STATUS_NEED_VALIDATION !== $signalement->getStatut();
     }
 
     private function canToggle(Signalement $signalement, User $user)

@@ -214,7 +214,8 @@ class SignalementController extends AbstractController
             'partnersCanVisite' => $partnerVisite,
             'pendingVisites' => $interventionRepository->getPendingVisitesForSignalement($signalement),
             'allPhotosOrdered' => $allPhotosOrdered,
-            'canPartnerAffectation' => $this->isGranted('ASSIGN_TOGGLE', $signalement),
+            'canTogglePartnerAffectation' => $this->isGranted('ASSIGN_TOGGLE', $signalement),
+            'canSeePartnerAffectation' => $this->isGranted('ASSIGN_SEE', $signalement),
         ];
 
         return $this->render('back/signalement/view.html.twig', $twigParams);
