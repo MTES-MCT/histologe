@@ -1349,6 +1349,15 @@ class SignalementRepository extends ServiceEntityRepository
         return new Paginator($queryBuilder->getQuery(), false);
     }
 
+    public function findNullBanId(): array
+    {
+        return $this->createQueryBuilder('s')
+            ->select('s.id')
+            ->where('s.banIdOccupant IS NULL')
+            ->getQuery()
+            ->getResult();
+    }
+
     public function findLogementSocialWithoutBailleurLink(): array
     {
         return $this->createQueryBuilder('s')

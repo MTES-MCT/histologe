@@ -24,7 +24,7 @@ use Symfony\Contracts\HttpClient\HttpClientInterface;
 )]
 class InitIdBanCommand extends Command
 {
-    private const float SCORE_IF_ACCEPTED = 0.85;
+    private const float SCORE_IF_ACCEPTED = 0.9;
     private const int BATCH_SIZE = 20;
 
     public function __construct(
@@ -47,32 +47,40 @@ class InitIdBanCommand extends Command
     {
         $io = new SymfonyStyle($input, $output);
 
-        $territory = $this->territoryRepository->findBy(['zip' => '44']);
-        $listSignalementBanIdNull = $this->signalementRepository->findBy(['banIdOccupant' => null, 'territory' => $territory]);
+        $signalementIdsWithouBanId = $this->signalementRepository->findNullBanId();
+        $nbSignalementWithoutBanId = \count($signalementIdsWithouBanId);
 
         $nb = 0;
-        $progressBar = new ProgressBar($output, \count($listSignalementBanIdNull));
+        $progressBar = new ProgressBar($output, $nbSignalementWithoutBanId);
         $progressBar->start();
-        /** @var Signalement $signalement */
-        foreach ($listSignalementBanIdNull as $signalement) {
-            $bestAddressResult = $this->addressService->getAddress($signalement->getAddressCompleteOccupant());
-            if ($bestAddressResult->getScore() > self::SCORE_IF_ACCEPTED) {
-                $signalement->setBanIdOccupant($bestAddressResult->getBanId());
-            }
 
-            $this->entityManager->persist($signalement);
-            ++$nb;
-            if (0 === $nb % self::BATCH_SIZE) {
-                $this->entityManager->flush();
+        $nbBatch = ceil($nbSignalementWithoutBanId / self::BATCH_SIZE);
+        for ($i = 0; $i < $nbBatch; ++$i) {
+            $signalementsBatch = array_splice($signalementIdsWithouBanId, 0, self::BATCH_SIZE);
+            $signalementsIdsBatch = [];
+            foreach ($signalementsBatch as $signalementBatch) {
+                $signalementsIdsBatch[] = $signalementBatch['id'];
             }
-            $progressBar->advance();
+            $listSignalementBanIdNull = $this->signalementRepository->findBy(['id' => $signalementsIdsBatch]);
+
+            /** @var Signalement $signalement */
+            foreach ($listSignalementBanIdNull as $signalement) {
+                $bestAddressResult = $this->addressService->getAddress($signalement->getAddressCompleteOccupant());
+                if ($bestAddressResult->getScore() > self::SCORE_IF_ACCEPTED) {
+                    $signalement->setBanIdOccupant($bestAddressResult->getBanId());
+                    ++$nb;
+                }
+                $this->entityManager->persist($signalement);
+                $progressBar->advance();
+            }
+            $this->entityManager->flush();
         }
 
-        $this->entityManager->flush();
         $progressBar->finish();
         $nbSignalementWithoutBanId = $this->signalementRepository->count(['banIdOccupant' => null]);
         $io->success(\sprintf(
-            'BAN IDs have been initialized, but %s signalements remain with no BAN ID',
+            '%s BAN IDs have been initialized, but %s signalements remain with no BAN ID',
+            $nb,
             $nbSignalementWithoutBanId
         ));
 
