@@ -25,7 +25,6 @@ class SignalementClosedToOnePartnerMailer extends AbstractNotificationMailer
         protected ParameterBagInterface $parameterBag,
         protected LoggerInterface $logger,
         protected UrlGeneratorInterface $urlGenerator,
-
         private readonly Security $security,
     ) {
         parent::__construct($this->mailer, $this->parameterBag, $this->logger, $this->urlGenerator);

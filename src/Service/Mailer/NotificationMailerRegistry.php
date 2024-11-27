@@ -15,12 +15,12 @@ class NotificationMailerRegistry
         $this->notificationMailers = $notificationMailers;
     }
 
-    public function send(NotificationMail $notification, bool $saveFailedMail = true): bool
+    public function send(NotificationMail $notification): bool
     {
         /** @var NotificationMailerInterface $notificationMailer */
         foreach ($this->notificationMailers as $notificationMailer) {
             if ($notificationMailer->supports($notification->getType())) {
-                return $notificationMailer->send($notification, $saveFailedMail);
+                return $notificationMailer->send($notification);
             }
         }
 

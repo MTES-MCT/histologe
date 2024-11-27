@@ -85,9 +85,8 @@ class RetryFailedEmailsCommand extends Command
                 $failedEmail->setRetryCount($failedEmail->getRetryCount() + 1);
                 $failedEmail->setLastAttemptAt(new \DateTimeImmutable());
             }
+            $this->entityManager->flush();
         }
-
-        $this->entityManager->flush();
 
         $io->success('Traitement des e-mails échoués terminé.');
 

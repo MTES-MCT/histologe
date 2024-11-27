@@ -34,7 +34,7 @@ abstract class AbstractNotificationMailer implements NotificationMailerInterface
     ) {
     }
 
-    public function send(NotificationMail $notificationMail, bool $saveFailedMail = true): bool
+    public function send(NotificationMail $notificationMail): bool
     {
         if (!$this->parameterBag->get('mail_enable')) {
             $this->logger->info('E-mail has been disable, please enable MAIL_ENABLE=1');
@@ -98,7 +98,7 @@ abstract class AbstractNotificationMailer implements NotificationMailerInterface
 
             return true;
         } catch (\Throwable $exception) {
-            $this->logAndSaveFailedEmail($message, $notificationMail, $exception, $params, $saveFailedMail);
+            $this->logAndSaveFailedEmail($message, $notificationMail, $exception, $params);
         }
 
         return false;
@@ -109,12 +109,11 @@ abstract class AbstractNotificationMailer implements NotificationMailerInterface
         NotificationMail $notificationMail,
         \Throwable $exception,
         array $params,
-        bool $saveFailedMail,
     ): void {
         $object = $params['entity'] ?? null;
         $notifyUsager = false;
         if ($object instanceof Suivi) {
-            $notifyUsager = $object->getIsPublic() ? true : false;
+            $notifyUsager = $object->getIsPublic();
         } elseif (str_contains($this->mailerType->name, 'USAGER')) {
             $notifyUsager = true;
         }
@@ -126,7 +125,7 @@ abstract class AbstractNotificationMailer implements NotificationMailerInterface
             '[%s] %s',
             $notificationMail->getType()->name, $exception->getMessage()
         ));
-        if ($saveFailedMail && NotificationMailerType::TYPE_ERROR_SIGNALEMENT !== $notificationMail->getType()) {
+        if (NotificationMailerType::TYPE_ERROR_SIGNALEMENT !== $notificationMail->getType()) {
             try {
                 $this->getFailedEmailManager()->create(
                     $message, $notificationMail, $exception, $this->parameterBag->get('reply_to_email'), $notifyUsager);
