@@ -4,7 +4,7 @@
 {% set static_picto_no = '<p class="fr-badge fr-badge--error">Non</p>' %}
 
 {% block content %}
-    {% if canTogglePartnerAffectation %}
+    {% if canSeePartnerAffectation and canTogglePartnerAffectation %}
         {% include '_partials/_modal_affectation.html.twig' %}
     {% endif %}
     {% if canSeePartnerAffectation %}        
