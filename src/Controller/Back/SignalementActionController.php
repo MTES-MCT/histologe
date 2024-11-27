@@ -15,6 +15,7 @@ use App\Service\Mailer\NotificationMailerRegistry;
 use App\Service\Mailer\NotificationMailerType;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ManagerRegistry;
+use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -103,12 +104,12 @@ class SignalementActionController extends AbstractController
     public function addSuiviSignalement(
         Signalement $signalement,
         Request $request,
-        ManagerRegistry $doctrine,
+        SuiviRepository $suiviRepository,
+        LoggerInterface $logger,
     ): Response {
         $this->denyAccessUnlessGranted('COMMENT_CREATE', $signalement);
         if ($this->isCsrfTokenValid('signalement_add_suivi_'.$signalement->getId(), $request->get('_token'))
             && $form = $request->get('signalement-add-suivi')) {
-            $suivi = new Suivi();
             $content = $form['content'];
             $content = preg_replace('/<p[^>]*>/', '', $content); // Remove the start <p> or <p attr="">
             $content = str_replace('</p>', '<br />', $content); // Replace the end
@@ -117,13 +118,22 @@ class SignalementActionController extends AbstractController
 
                 return $this->redirectToRoute('back_signalement_view', ['uuid' => $signalement->getUuid()]);
             }
-            $suivi->setDescription($content);
-            $suivi->setIsPublic(!empty($form['notifyUsager']));
-            $suivi->setSignalement($signalement);
-            $suivi->setCreatedBy($this->getUser());
-            $suivi->setType(Suivi::TYPE_PARTNER);
-            $doctrine->getManager()->persist($suivi);
-            $doctrine->getManager()->flush();
+            $suivi = (new Suivi())
+                ->setDescription($content)
+                ->setIsPublic(!empty($form['notifyUsager']))
+                ->setSignalement($signalement)
+                ->setCreatedBy($this->getUser())
+                ->setType(Suivi::TYPE_PARTNER);
+
+            try {
+                $suiviRepository->save($suivi, true);
+            } catch (\Throwable $exception) {
+                $this->addFlash('error', 'Une erreur est survenu lors de la publication');
+                $logger->error($exception->getMessage());
+
+                return $this->redirectToRoute('back_signalement_view', ['uuid' => $signalement->getUuid()]);
+            }
+
             $this->addFlash('success', 'Suivi publié avec succès !');
         } else {
             $this->addFlash('error', 'Une erreur est survenu lors de la publication');
