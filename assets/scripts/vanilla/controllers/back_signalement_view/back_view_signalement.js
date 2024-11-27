@@ -161,6 +161,16 @@ document?.querySelector('#signalement-affectation-form-submit')?.addEventListene
   })
 })
 
+const modalsElement = document?.querySelectorAll('.fr-modal')
+modalsElement.forEach(modalElement => {
+  modalElement.addEventListener('submit', (e) => {
+    const submitButton = modalElement.querySelector('.fr-modal--opened [type=submit]')
+    if (submitButton) {
+      submitButton.disabled = true
+    }
+  })
+})
+
 document?.getElementById('signalement-add-suivi-notify-usager')?.addEventListeners('change', (e) => {
   document.getElementById('signalement-add-suivi-submit').textContent = (e.target.checked) ? 'Envoyer le suivi à l\'usager' : 'Enregistrer le suivi interne'
 })
