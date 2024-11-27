@@ -20,7 +20,7 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 )]
 class FixScoreQualificationsCommand extends Command
 {
-    private const BATCH_SIZE = 200;
+    private const BATCH_SIZE = 20;
     private SymfonyStyle $io;
 
     public function __construct(
