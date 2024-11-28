@@ -116,12 +116,12 @@ class AutoAffectationRuleType extends AbstractType
                 ],
             ])
             ->add('inseeToInclude', TextType::class, [
-                'label' => 'Code insee à inclure',
+                'label' => 'Périmètre géographique à inclure',
                 'attr' => [
                     'class' => 'fr-input',
                 ],
                 'required' => true,
-                'help' => 'Valeurs possibles : "all", "partner_list" ou une liste de codes insee séparés par des virgules.',
+                'help' => 'Valeurs possibles : "all", "partner_list" (codes insee, et zones) ou une liste de codes insee séparés par des virgules.',
                 'help_attr' => [
                     'class' => 'fr-hint-text',
                 ],
