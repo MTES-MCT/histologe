@@ -74,9 +74,6 @@ export function attacheAutocompleteAddressEvent (inputAdresse) {
       if (document?.querySelector('#' + idForm + ' [data-autocomplete-insee]')) {
         document.querySelector('#' + idForm + ' [data-autocomplete-insee]').value = ''
       }
-      if (document?.querySelector('#' + idForm + ' [data-autocomplete-ban-id]')) {
-        document.querySelector('#' + idForm + ' [data-autocomplete-ban-id]').value = ''
-      }
       if (document?.querySelector('#' + idForm + ' [data-autocomplete-geoloclng]')) {
         document.querySelector('#' + idForm + ' [data-autocomplete-geoloclng]').value = ''
       }
@@ -91,7 +88,7 @@ export function attacheAutocompleteAddressEvent (inputAdresse) {
       addressGroup.innerHTML = ''
       selectionIndex = -1
     }
-    
+
     if (e.key === 'ArrowDown') {
       if (addressGroup.children.length > 0) {
         selectionIndex = Math.min(selectionIndex + 1, addressGroup.children.length - 1)
@@ -145,9 +142,6 @@ function attachAddressSuggestionEvent (inputAdresse, suggestion, feature) {
     }
     if (document?.querySelector('#' + idForm + ' [data-autocomplete-insee]')) {
       document.querySelector('#' + idForm + ' [data-autocomplete-insee]').value = feature.properties.citycode
-    }
-    if (document?.querySelector('#' + idForm + ' [data-autocomplete-ban-id]')) {
-      document.querySelector('#' + idForm + ' [data-autocomplete-ban-id]').value = feature.properties.id
     }
     if (document?.querySelector('#' + idForm + ' [data-autocomplete-geolocLng]')) {
       document.querySelector('#' + idForm + ' [data-autocomplete-geolocLng]').value = feature.geometry.coordinates[0]

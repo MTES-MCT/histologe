@@ -2,6 +2,7 @@
 
 namespace App\Manager;
 
+use App\Command\InitIdBanCommand;
 use App\Dto\Request\Signalement\AdresseOccupantRequest;
 use App\Dto\Request\Signalement\CompositionLogementRequest;
 use App\Dto\Request\Signalement\CoordonneesBailleurRequest;
@@ -339,7 +340,6 @@ class SignalementManager extends AbstractManager
             ->setCpOccupant($adresseOccupantRequest->getCodePostal())
             ->setVilleOccupant($adresseOccupantRequest->getVille())
             ->setInseeOccupant($adresseOccupantRequest->getInsee())
-            ->setBanIdOccupant($adresseOccupantRequest->getBanId())
             ->setGeoloc([
                 'lat' => $adresseOccupantRequest->getGeolocLat(),
                 'lng' => $adresseOccupantRequest->getGeolocLng(),
@@ -365,6 +365,13 @@ class SignalementManager extends AbstractManager
                     'lng' => $resetAddress->getLongitude(),
                 ]);
             }
+        }
+
+        $addressResult = $this->addressService->getAddress($signalement->getAddressCompleteOccupant());
+        if ($addressResult->getScore() > InitIdBanCommand::SCORE_IF_ACCEPTED) {
+            $signalement->setBanIdOccupant($addressResult->getBanId());
+        } else {
+            $signalement->setBanIdOccupant(0);
         }
 
         $this->save($signalement);

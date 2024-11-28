@@ -52,7 +52,7 @@ class InitIdBanCommand extends Command
 
             /** @var Signalement $signalement */
             foreach ($listSignalementBanIdNull as $signalement) {
-                $bestAddressResult = $this->addressService->getAddress($signalement->getAddressCompleteOccupant(), 1);
+                $bestAddressResult = $this->addressService->getAddress($signalement->getAddressCompleteOccupant());
                 if ($bestAddressResult->getScore() > self::SCORE_IF_ACCEPTED) {
                     $signalement->setBanIdOccupant($bestAddressResult->getBanId());
                     ++$nb;
