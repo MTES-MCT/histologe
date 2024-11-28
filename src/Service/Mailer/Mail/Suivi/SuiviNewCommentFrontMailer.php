@@ -32,7 +32,9 @@ class SuiviNewCommentFrontMailer extends AbstractNotificationMailer
         $signalement = $notificationMail->getSignalement();
 
         return [
-            'signalement' => $signalement,
+            'signalement_adresseOccupant' => $signalement->getAdresseOccupant(),
+            'signalement_cpOccupant' => $signalement->getCpOccupant(),
+            'signalement_villeOccupant' => $signalement->getVilleOccupant(),
             'lien_suivi' => $this->urlGenerator->generate(
                 'front_suivi_signalement',
                 ['code' => $signalement->getCodeSuivi(), 'from' => $notificationMail->getTo()],

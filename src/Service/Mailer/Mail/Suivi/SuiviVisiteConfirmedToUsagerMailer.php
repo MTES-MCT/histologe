@@ -30,10 +30,17 @@ class SuiviVisiteConfirmedToUsagerMailer extends AbstractNotificationMailer
     {
         $signalement = $notificationMail->getSignalement();
         $intervention = $notificationMail->getIntervention();
+        if ($intervention->getPartner()) {
+            $interventionOperator = 'effectuée par '.$intervention->getPartner()->getNom();
+        } else {
+            $interventionOperator = '';
+        }
 
         return [
-            'signalement' => $signalement,
-            'intervention' => $intervention,
+            'signalement_adresseOccupant' => $signalement->getAdresseOccupant(),
+            'signalement_cpOccupant' => $signalement->getCpOccupant(),
+            'signalement_villeOccupant' => $signalement->getVilleOccupant(),
+            'intervention_operator' => $interventionOperator,
             'lien_suivi' => $this->generateLink(
                 'front_suivi_signalement',
                 ['code' => $signalement->getCodeSuivi(), 'from' => $notificationMail->getTo()],

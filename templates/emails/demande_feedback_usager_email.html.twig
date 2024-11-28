@@ -1,15 +1,15 @@
 {% extends 'emails/base_email.html.twig' %}
 
 {% block body %}
-    {% if from == signalement.mailOccupant %}
-        <p>Bonjour {{ signalement.nomOccupant|upper ~' '~signalement.prenomOccupant|capitalize }}</p>
-    {% elseif from == signalement.mailDeclarant %}
-        <p>Bonjour {{ signalement.nomDeclarant|upper ~' '~signalement.prenomDeclarant|capitalize }}</p>
+    {% if from == signalement_mailOccupant %}
+        <p>Bonjour {{ signalement_nomOccupant|upper ~' '~signalement_prenomOccupant|capitalize }}</p>
+    {% elseif from == signalement_mailDeclarant %}
+        <p>Bonjour {{ signalement_nomDeclarant|upper ~' '~signalement_prenomDeclarant|capitalize }}</p>
     {% else %}
         <p>Bonjour</p>
     {% endif %}
     <p>
-        Vous avez signalé un problème dans le logement au <strong>{{ signalement.adresseOccupant~', '~signalement.cpOccupant~' '~signalement.villeOccupant|upper }}</strong>. <br>
+        Vous avez signalé un problème dans le logement au <strong>{{ signalement_adresseOccupant~', '~signalement_cpOccupant~' '~signalement_villeOccupant|upper }}</strong>. <br>
         Les services compétents ont bien pris en charge votre dossier et vous contacteront bientôt si ce n'a pas encore été fait.<br>
         Nous savons que les procédures règlementaires peuvent prendre un certain temps, et que les situations peuvent évoluer dans cet intervalle, c’est pourquoi nous souhaitons faire le point avec vous sur la situation.<br>
         Précisez toute information qui vous semblerait pertinente (ex : Les travaux ont commencé ? Un agent a visité le logement ? Vous avez quitté ou prévoyez de quitter le logement ?)

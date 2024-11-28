@@ -68,6 +68,8 @@ services:
             - '../src/Entity/'
             - '../src/Kernel.php'
             - '../src/Tests/'
+            - '../src/Service/Mailer/Mail/AbstractNotificationMailer.php'
+
 
     App\EventListener\ContentSecurityPolicyListener:
         tags:
@@ -205,6 +207,17 @@ services:
     _instanceof:
         App\Service\Signalement\DesordreTraitement\DesordreTraitementProcessor:
             tags: ['desordre_traitement']
+
+
+    App\Service\Mailer\Mail\AbstractNotificationMailer:
+        abstract: true
+        autoconfigure: false
+        calls:
+            - setFailedEmailManager: [ '@App\Manager\FailedEmailManager' ]
+
+    App\Service\Mailer\Mail\:
+        resource: '../src/Service/Mailer/Mail/*'
+        parent: App\Service\Mailer\Mail\AbstractNotificationMailer
 
 when@test:
     parameters:

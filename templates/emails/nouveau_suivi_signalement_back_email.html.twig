@@ -4,12 +4,8 @@
     <p>Bonjour,
         <br>
         Un nouveau suivi de
-        <strong>{{
-            entity.createdBy
-            ? entity.createdBy.nomComplet ~ ' (' ~ entity.createdBy.partner.nom ~ ')'
-            : entity.signalement.prenomDeclarant ~ ' ' ~ entity.signalement.nomDeclarant
-        }}</strong>
-        est disponible pour le signalement <strong>#{{ entity.signalement.reference }}</strong>.
+        <strong>{{ suivi_creator }}</strong>
+        est disponible pour le signalement <strong>#{{ signalement_reference }}</strong>.
         <br>
         Rendez-vous sur votre plateforme {{ platform.name }} pour le découvrir.
     </p>

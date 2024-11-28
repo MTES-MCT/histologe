@@ -4,6 +4,7 @@ namespace App\Service\Mailer\Mail;
 
 use App\Entity\Suivi;
 use App\Entity\Territory;
+use App\Manager\FailedEmailManager;
 use App\Service\Mailer\NotificationMail;
 use App\Service\Mailer\NotificationMailerType;
 use Psr\Log\LoggerInterface;
@@ -23,6 +24,7 @@ abstract class AbstractNotificationMailer implements NotificationMailerInterface
     protected ?string $mailerTemplate = null;
     protected ?string $tagHeader = null;
     protected array $mailerParams = [];
+    private ?FailedEmailManager $failedEmailManager = null;
 
     public function __construct(
         protected MailerInterface $mailer,
@@ -47,6 +49,7 @@ abstract class AbstractNotificationMailer implements NotificationMailerInterface
             'subject' => $this->mailerSubject,
             'btntext' => $this->mailerButtonText,
             'url' => $this->parameterBag->get('host_url'),
+            'tagHeader' => $this->tagHeader,
         ];
 
         $params = array_merge($params, $notificationMail->getParams(), $this->mailerParams);
@@ -79,7 +82,13 @@ abstract class AbstractNotificationMailer implements NotificationMailerInterface
         );
 
         if (!empty($params['attach'])) {
-            $message->attachFromPath($params['attach']);
+            if (\is_array($params['attach'])) {
+                foreach ($params['attach'] as $attachPath) {
+                    $message->attachFromPath($attachPath);
+                }
+            } else {
+                $message->attachFromPath($params['attach']);
+            }
         }
         if (!empty($params['attachContent'])) {
             $message->attach($params['attachContent']['content'], $params['attachContent']['filename']);
@@ -89,22 +98,41 @@ abstract class AbstractNotificationMailer implements NotificationMailerInterface
 
             return true;
         } catch (\Throwable $exception) {
-            $object = $params['entity'] ?? null;
-            \Sentry\configureScope(function (Scope $scope) use ($object): void {
-                $scope->setTag('mailer_type', $this->mailerType->name);
-                if ($object instanceof Suivi) {
-                    $scope->setTag('notify_usager', $object->getIsPublic() ? 'yes' : 'no');
-                } elseif (str_contains($this->mailerType->name, 'USAGER')) {
-                    $scope->setTag('notify_usager', 'yes');
-                }
-            });
-            $this->logger->error(\sprintf(
-                '[%s] %s',
-                $notificationMail->getType()->name, $exception->getMessage()
-            ));
+            $this->logAndSaveFailedEmail($message, $notificationMail, $exception, $params);
         }
 
         return false;
+    }
+
+    private function logAndSaveFailedEmail(
+        NotificationEmail $message,
+        NotificationMail $notificationMail,
+        \Throwable $exception,
+        array $params,
+    ): void {
+        $object = $params['entity'] ?? null;
+        $notifyUsager = false;
+        if ($object instanceof Suivi) {
+            $notifyUsager = $object->getIsPublic();
+        } elseif (str_contains($this->mailerType->name, 'USAGER')) {
+            $notifyUsager = true;
+        }
+        \Sentry\configureScope(function (Scope $scope) use ($notifyUsager): void {
+            $scope->setTag('mailer_type', $this->mailerType->name);
+            $scope->setTag('notify_usager', $notifyUsager ? 'yes' : 'no');
+        });
+        $this->logger->error(\sprintf(
+            '[%s] %s',
+            $notificationMail->getType()->name, $exception->getMessage()
+        ));
+        if (NotificationMailerType::TYPE_ERROR_SIGNALEMENT !== $notificationMail->getType()) {
+            try {
+                $this->getFailedEmailManager()->create(
+                    $message, $notificationMail, $exception, $this->parameterBag->get('reply_to_email'), $notifyUsager);
+            } catch (\Exception $e) {
+                $this->logger->error('Failed to save FailedEmail: '.$e->getMessage());
+            }
+        }
     }
 
     public function supports(NotificationMailerType $type): bool
@@ -144,12 +172,11 @@ abstract class AbstractNotificationMailer implements NotificationMailerInterface
         array $params,
         ?Territory $territory,
     ): NotificationEmail {
-        $config['territory'] = $territory;
         $notification = new NotificationEmail();
         $notification->markAsPublic();
 
         return $notification->htmlTemplate('emails/'.$this->mailerTemplate.'.html.twig')
-            ->context(array_merge($params, $config))
+            ->context($params)
             ->replyTo($this->parameterBag->get('reply_to_email'))
             ->subject(
                 mb_strtoupper($this->parameterBag->get('platform_name'))
@@ -158,5 +185,19 @@ abstract class AbstractNotificationMailer implements NotificationMailerInterface
                 .' - '.
                 str_replace('%param.platform_name%', $this->parameterBag->get('platform_name'), $this->mailerSubject)
             );
+    }
+
+    public function setFailedEmailManager(FailedEmailManager $failedEmailManager): void
+    {
+        $this->failedEmailManager = $failedEmailManager;
+    }
+
+    public function getFailedEmailManager(): FailedEmailManager
+    {
+        if (!$this->failedEmailManager) {
+            throw new \LogicException('FailedEmailManager has not been initialized.');
+        }
+
+        return $this->failedEmailManager;
     }
 }

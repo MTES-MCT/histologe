@@ -37,6 +37,7 @@ class SignalementNewMailer extends AbstractNotificationMailer
             'link' => $this->urlGenerator->generate('back_signalement_view', [
                 'uuid' => $uuid,
             ], UrlGeneratorInterface::ABSOLUTE_URL),
+            'territory_name' => $notificationMail->getTerritory()->getName(),
         ];
     }
 

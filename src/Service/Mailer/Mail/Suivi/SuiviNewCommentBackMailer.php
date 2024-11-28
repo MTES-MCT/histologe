@@ -30,8 +30,19 @@ class SuiviNewCommentBackMailer extends AbstractNotificationMailer
     public function getMailerParamsFromNotification(NotificationMail $notificationMail): array
     {
         $signalement = $notificationMail->getSignalement();
+        $suivi = $notificationMail->getSuivi();
+        if ($suivi && $suivi->getCreatedBy()) {
+            $suiviCreator = $suivi->getCreatedBy()->getNomComplet();
+            if ($suivi->getCreatedBy()->getPartner()) {
+                $suiviCreator .= ' ('.$suivi->getCreatedBy()->getPartner()->getNom().')';
+            }
+        } else {
+            $suiviCreator = $signalement->getPrenomDeclarant().' '.$signalement->getNomDeclarant();
+        }
 
         return array_merge($notificationMail->getParams(), [
+            'signalement_reference' => $signalement->getReference(),
+            'suivi_creator' => $suiviCreator ?? 'N/A',
             'ref_signalement' => $signalement->getReference(),
             'link' => $this->generateLinkSignalementView($signalement->getUuid()),
         ]);

@@ -34,7 +34,10 @@ class SignalementConfirmReceptionMailer extends AbstractNotificationMailer
         $attachment = $notificationMail->getAttachment();
 
         return [
-            'signalement' => $signalement,
+            'signalement_adresseOccupant' => $signalement->getAdresseOccupant(),
+            'signalement_cpOccupant' => $signalement->getCpOccupant(),
+            'signalement_villeOccupant' => $signalement->getVilleOccupant(),
+            'signalement_isProprioAverti' => $signalement->getIsProprioAverti(),
             'attach' => $attachment,
             'lien_suivi' => $this->urlGenerator->generate(
                 'front_suivi_signalement', [

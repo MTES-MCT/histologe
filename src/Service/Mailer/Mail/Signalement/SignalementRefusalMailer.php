@@ -29,8 +29,10 @@ class SignalementRefusalMailer extends AbstractNotificationMailer
     public function getMailerParamsFromNotification(NotificationMail $notificationMail): array
     {
         return [
-            'signalement' => $notificationMail->getSignalement(),
             'motif' => $notificationMail->getMotif(),
+            'territory_name' => $notificationMail->getTerritory()->getName(),
+            'signalement_nomOccupant' => $notificationMail->getSignalement()->getNomOccupant(),
+            'signalement_prenomOccupant' => $notificationMail->getSignalement()->getPrenomOccupant(),
         ];
     }
 }

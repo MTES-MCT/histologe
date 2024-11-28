@@ -31,10 +31,13 @@ class SuiviVisitePastReminderToPartnerMailer extends AbstractNotificationMailer
     {
         $signalement = $notificationMail->getSignalement();
         $intervention = $notificationMail->getIntervention();
+        $interventionScheduledAt = $intervention->getScheduledAt()->format('H') > 0 ? $intervention->getScheduledAt()->format('d/m/Y à H:i') : $intervention->getScheduledAt()->format('d/m/Y');
 
         return [
-            'signalement' => $signalement,
-            'intervention' => $intervention,
+            'signalement_adresseOccupant' => $signalement->getAdresseOccupant(),
+            'signalement_cpOccupant' => $signalement->getCpOccupant(),
+            'signalement_villeOccupant' => $signalement->getVilleOccupant(),
+            'intervention_scheduledAt' => $interventionScheduledAt,
             'lien_suivi' => $this->generateLinkSignalementView($signalement->getUuid()),
         ];
     }

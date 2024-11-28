@@ -33,7 +33,15 @@ class SignalementFeedbackUsagerThirdMailer extends AbstractNotificationMailer
         $toRecipient = $notificationMail->getTo();
 
         return [
-            'signalement' => $signalement,
+            'signalement_adresseOccupant' => $signalement->getAdresseOccupant(),
+            'signalement_cpOccupant' => $signalement->getCpOccupant(),
+            'signalement_villeOccupant' => $signalement->getVilleOccupant(),
+            'signalement_mailOccupant' => $signalement->getMailOccupant(),
+            'signalement_nomOccupant' => $signalement->getNomOccupant(),
+            'signalement_prenomOccupant' => $signalement->getPrenomOccupant(),
+            'signalement_mailDeclarant' => $signalement->getMailDeclarant(),
+            'signalement_nomDeclarant' => $signalement->getNomDeclarant(),
+            'signalement_prenomDeclarant' => $signalement->getPrenomDeclarant(),
             'from' => $toRecipient,
             'lien_suivi_poursuivre' => $this->generateLink(
                 'front_suivi_procedure', [

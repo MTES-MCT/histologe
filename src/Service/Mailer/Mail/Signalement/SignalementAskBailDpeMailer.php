@@ -32,7 +32,9 @@ class SignalementAskBailDpeMailer extends AbstractNotificationMailer
         $toRecipient = $notificationMail->getTo();
 
         return [
-            'signalement' => $signalement,
+            'signalement_adresseOccupant' => $signalement->getAdresseOccupant(),
+            'signalement_cpOccupant' => $signalement->getCpOccupant(),
+            'signalement_villeOccupant' => $signalement->getVilleOccupant(),
             'lien_suivi' => $this->generateAbsoluteLink(
                 'front_suivi_signalement',
                 ['code' => $signalement->getCodeSuivi(), 'from' => $toRecipient]

@@ -32,7 +32,7 @@ class SignalementPdfExportMailer extends AbstractNotificationMailer
         $signalement = $notificationMail->getSignalement();
 
         return [
-            'signalement' => $signalement,
+            'signalement_reference' => $signalement->getReference(),
             'link' => $this->generateLink(
                 'show_uploaded_file', [
                     'folder' => '_up',

@@ -31,10 +31,10 @@ class SuiviVisiteCanceledMailer extends AbstractNotificationMailer
     {
         $signalement = $notificationMail->getSignalement();
         $intervention = $notificationMail->getIntervention();
+        $interventionScheduledAt = $intervention->getScheduledAt()->format('H') > 0 ? $intervention->getScheduledAt()->format('d/m/Y à H:i') : $intervention->getScheduledAt()->format('d/m/Y');
 
         return [
-            'signalement' => $signalement,
-            'intervention' => $intervention,
+            'intervention_scheduledAt' => $interventionScheduledAt,
             'lien_suivi' => $this->urlGenerator->generate(
                 'front_suivi_signalement',
                 ['code' => $signalement->getCodeSuivi(), 'from' => $notificationMail->getTo()],

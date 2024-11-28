@@ -30,10 +30,15 @@ class SuiviVisiteFutureReminderToUsagerMailer extends AbstractNotificationMailer
     {
         $signalement = $notificationMail->getSignalement();
         $intervention = $notificationMail->getIntervention();
+        $interventionScheduledAt = $intervention->getScheduledAt()->format('H') > 0 ? $intervention->getScheduledAt()->format('d/m/Y à H:i') : $intervention->getScheduledAt()->format('d/m/Y');
+        $partnerName = $intervention->getPartner() ? $intervention->getPartner()->getNom() : 'Non renseigné';
 
         return [
-            'signalement' => $signalement,
-            'intervention' => $intervention,
+            'signalement_adresseOccupant' => $signalement->getAdresseOccupant(),
+            'signalement_cpOccupant' => $signalement->getCpOccupant(),
+            'signalement_villeOccupant' => $signalement->getVilleOccupant(),
+            'intervention_scheduledAt' => $interventionScheduledAt,
+            'partner_name' => $partnerName,
             'lien_suivi' => $this->generateLink(
                 'front_suivi_signalement',
                 ['code' => $signalement->getCodeSuivi(), 'from' => $notificationMail->getTo()],

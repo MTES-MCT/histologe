@@ -29,7 +29,9 @@ class SignalementLienSuiviMailer extends AbstractNotificationMailer
     public function getMailerParamsFromNotification(NotificationMail $notificationMail): array
     {
         return [
-            'signalement' => $notificationMail->getSignalement(),
+            'signalement_adresseOccupant' => $notificationMail->getSignalement()->getAdresseOccupant(),
+            'signalement_cpOccupant' => $notificationMail->getSignalement()->getCpOccupant(),
+            'signalement_villeOccupant' => $notificationMail->getSignalement()->getVilleOccupant(),
             'lien_suivi' => $this->generateLink(
                 'front_suivi_signalement',
                 ['code' => $notificationMail->getSignalement()->getCodeSuivi(), 'from' => $notificationMail->getTo()]

@@ -31,10 +31,13 @@ class SuiviVisiteEditedToUsagerMailer extends AbstractNotificationMailer
     {
         $signalement = $notificationMail->getSignalement();
         $intervention = $notificationMail->getIntervention();
+        $partnerName = $intervention->getPartner() ? $intervention->getPartner()->getNom() : 'Non renseigné';
 
         return [
-            'signalement' => $signalement,
-            'intervention' => $intervention,
+            'signalement_adresseOccupant' => $signalement->getAdresseOccupant(),
+            'signalement_cpOccupant' => $signalement->getCpOccupant(),
+            'signalement_villeOccupant' => $signalement->getVilleOccupant(),
+            'partner_name' => $partnerName,
             'lien_suivi' => $this->generateLink(
                 'front_suivi_signalement',
                 ['code' => $signalement->getCodeSuivi(), 'from' => $notificationMail->getTo()],

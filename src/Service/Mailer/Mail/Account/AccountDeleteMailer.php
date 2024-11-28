@@ -27,6 +27,6 @@ class AccountDeleteMailer extends AbstractNotificationMailer
 
     public function getMailerParamsFromNotification(NotificationMail $notificationMail): array
     {
-        return [];
+        return ['territory_name' => $notificationMail->getTerritory()->getName()];
     }
 }

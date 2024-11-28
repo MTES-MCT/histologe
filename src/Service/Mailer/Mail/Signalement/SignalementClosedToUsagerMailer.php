@@ -30,6 +30,7 @@ class SignalementClosedToUsagerMailer extends AbstractNotificationMailer
     public function getMailerParamsFromNotification(NotificationMail $notificationMail): array
     {
         $signalement = $notificationMail->getSignalement();
+        $territory = $notificationMail->getTerritory();
         $toRecipient = $notificationMail->getTo();
 
         return [
@@ -38,6 +39,7 @@ class SignalementClosedToUsagerMailer extends AbstractNotificationMailer
                 'front_suivi_signalement',
                 ['code' => $signalement->getCodeSuivi(), 'from' => $toRecipient]
             ),
+            'territory_name' => $territory->getName(),
         ];
     }
 }

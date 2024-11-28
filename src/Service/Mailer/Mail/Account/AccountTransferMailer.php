@@ -23,6 +23,7 @@ class AccountTransferMailer extends AbstractNotificationMailer
         protected ParameterBagInterface $parameterBag,
         protected LoggerInterface $logger,
         protected UrlGeneratorInterface $urlGenerator,
+
         private UserManager $userManager,
     ) {
         parent::__construct($this->mailer, $this->parameterBag, $this->logger, $this->urlGenerator);
@@ -43,6 +44,7 @@ class AccountTransferMailer extends AbstractNotificationMailer
             'link' => $link,
             'user_status' => $user->getStatut(),
             'partner_name' => $user->getPartner()->getNom(),
+            'territory_name' => $notificationMail->getTerritory()->getName(),
         ];
     }
 }

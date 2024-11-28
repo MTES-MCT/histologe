@@ -4,9 +4,9 @@
     <p>Bonjour,</p>
     <p>
         La visite du logement initialement prévue le {{ old_date.format('d/m/Y') }} a été décalée au 
-        {{ (intervention.scheduledAt.format('H')) > 0 ? intervention.scheduledAt|date('d/m/Y à H:i') : intervention.scheduledAt.format('d/m/Y') }}.
+        {{ intervention_scheduledAt }}.
         <br><br>
-        La visite sera effectuée par {{ intervention.partner ? intervention.partner.nom : 'Non renseigné' }}.
+        La visite sera effectuée par {{ partner_name }}.
         <br><br>
         Si vous n'êtes pas disponible à cette date, veuillez nous le signaler au plus vite en cliquant sur le bouton ci-dessous.
     </p>
