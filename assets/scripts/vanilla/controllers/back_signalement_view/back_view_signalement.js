@@ -161,7 +161,7 @@ document?.querySelector('#signalement-affectation-form-submit')?.addEventListene
   })
 })
 
-const modalsElement = document?.querySelectorAll('.fr-modal')
+const modalsElement = document?.querySelectorAll('#cloture-modal, #fr-modal-add-suivi, #refus-signalement-modal, #refus-affectation-modal')
 modalsElement.forEach(modalElement => {
   modalElement.addEventListener('submit', (e) => {
     const submitButton = modalElement.querySelector('.fr-modal--opened [type=submit]')

@@ -104,7 +104,7 @@ class SignalementActionController extends AbstractController
     public function addSuiviSignalement(
         Signalement $signalement,
         Request $request,
-        SuiviRepository $suiviRepository,
+        EntityManagerInterface $entityManager,
         LoggerInterface $logger,
     ): Response {
         $this->denyAccessUnlessGranted('COMMENT_CREATE', $signalement);
@@ -126,9 +126,10 @@ class SignalementActionController extends AbstractController
                 ->setType(Suivi::TYPE_PARTNER);
 
             try {
-                $suiviRepository->save($suivi, true);
+                $entityManager->persist($suivi);
+                $entityManager->flush();
             } catch (\Throwable $exception) {
-                $this->addFlash('error', 'Une erreur est survenu lors de la publication');
+                $this->addFlash('error', 'Une erreur est survenue lors de la publication.');
                 $logger->error($exception->getMessage());
 
                 return $this->redirectToRoute('back_signalement_view', ['uuid' => $signalement->getUuid()]);
@@ -136,7 +137,7 @@ class SignalementActionController extends AbstractController
 
             $this->addFlash('success', 'Suivi publié avec succès !');
         } else {
-            $this->addFlash('error', 'Une erreur est survenu lors de la publication');
+            $this->addFlash('error', 'Une erreur est survenue lors de la publication.');
         }
 
         return $this->redirect(
