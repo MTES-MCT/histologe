@@ -30,15 +30,6 @@ class SuiviRepository extends ServiceEntityRepository
         parent::__construct($registry, Suivi::class);
     }
 
-    public function save(Suivi $entity, bool $flush = false): void
-    {
-        $this->getEntityManager()->persist($entity);
-
-        if ($flush) {
-            $this->getEntityManager()->flush();
-        }
-    }
-
     /**
      * @throws Exception
      */
