@@ -2,7 +2,6 @@
 
 namespace App\Service\Signalement;
 
-use App\Command\InitIdBanCommand;
 use App\Dto\Request\Signalement\SignalementDraftRequest;
 use App\Entity\Enum\ChauffageType;
 use App\Entity\Enum\OccupantLink;
@@ -20,6 +19,7 @@ use App\Factory\Signalement\InformationProcedureFactory;
 use App\Factory\Signalement\SituationFoyerFactory;
 use App\Factory\Signalement\TypeCompositionLogementFactory;
 use App\Manager\DesordreCritereManager;
+use App\Manager\SignalementManager;
 use App\Repository\BailleurRepository;
 use App\Repository\DesordreCritereRepository;
 use App\Repository\DesordrePrecisionRepository;
@@ -57,6 +57,7 @@ class SignalementBuilder
         private SignalementQualificationUpdater $signalementQualificationUpdater,
         private DesordreCompositionLogementLoader $desordreCompositionLogementLoader,
         private AddressService $addressService,
+        private SignalementManager $signalementManager,
     ) {
     }
 
@@ -321,7 +322,6 @@ class SignalementBuilder
             ->setAdresseOccupant($this->signalementDraftRequest->getAdresseLogementAdresseDetailNumero())
             ->setCpOccupant($this->signalementDraftRequest->getAdresseLogementAdresseDetailCodePostal())
             ->setInseeOccupant($this->signalementDraftRequest->getAdresseLogementAdresseDetailInsee())
-            ->setBanIdOccupant($this->signalementDraftRequest->getAdresseLogementAdresseDetailBanID())
             ->setGeoloc([
                 'lat' => $this->signalementDraftRequest->getAdresseLogementAdresseDetailGeolocLat(),
                 'lng' => $this->signalementDraftRequest->getAdresseLogementAdresseDetailGeolocLng(),
@@ -335,12 +335,8 @@ class SignalementBuilder
             ->setAdresseAutreOccupant($this->signalementDraftRequest->getAdresseLogementComplementAdresseAutre())
             ->setManualAddressOccupant($this->signalementDraftRequest->getAdresseLogementAdresseDetailManual());
 
-        $addressResult = $this->addressService->getAddress($this->signalement->getAddressCompleteOccupant());
-        if ($addressResult->getScore() > InitIdBanCommand::SCORE_IF_ACCEPTED) {
-            $this->signalement->setBanIdOccupant($addressResult->getBanId());
-        } else {
-            $this->signalement->setBanIdOccupant(0);
-        }
+        $this->signalementManager->updateBanIdOccupantFromAddressComplete($this->signalement);
+
         $inseeResult = $this->addressService->getAddress($this->signalement->getCpOccupant().' '.$this->signalement->getVilleOccupant());
         $this->signalement->setGeoloc([
             'lat' => $inseeResult->getLatitude(),

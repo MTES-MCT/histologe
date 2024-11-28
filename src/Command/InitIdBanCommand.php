@@ -3,8 +3,8 @@
 namespace App\Command;
 
 use App\Entity\Signalement;
+use App\Manager\SignalementManager;
 use App\Repository\SignalementRepository;
-use App\Service\DataGouv\AddressService;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
@@ -19,11 +19,10 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 )]
 class InitIdBanCommand extends Command
 {
-    public const float SCORE_IF_ACCEPTED = 0.9;
     private const int BATCH_SIZE = 20;
 
     public function __construct(
-        private readonly AddressService $addressService,
+        private readonly SignalementManager $signalementManager,
         private readonly SignalementRepository $signalementRepository,
         private readonly EntityManagerInterface $entityManager,
     ) {
@@ -52,13 +51,7 @@ class InitIdBanCommand extends Command
 
             /** @var Signalement $signalement */
             foreach ($listSignalementBanIdNull as $signalement) {
-                $bestAddressResult = $this->addressService->getAddress($signalement->getAddressCompleteOccupant());
-                if ($bestAddressResult->getScore() > self::SCORE_IF_ACCEPTED) {
-                    $signalement->setBanIdOccupant($bestAddressResult->getBanId());
-                    ++$nb;
-                } else {
-                    $signalement->setBanIdOccupant(0);
-                }
+                $this->signalementManager->updateBanIdOccupantFromAddressComplete($signalement);
                 $progressBar->advance();
             }
             $this->entityManager->flush();

@@ -10,6 +10,7 @@ use App\Factory\Signalement\InformationProcedureFactory;
 use App\Factory\Signalement\SituationFoyerFactory;
 use App\Factory\Signalement\TypeCompositionLogementFactory;
 use App\Manager\DesordreCritereManager;
+use App\Manager\SignalementManager;
 use App\Repository\BailleurRepository;
 use App\Repository\DesordreCritereRepository;
 use App\Repository\DesordrePrecisionRepository;
@@ -57,6 +58,7 @@ class SignalementBuilderTest extends KernelTestCase
         $signalementQualificationUpdater = static::getContainer()->get(SignalementQualificationUpdater::class);
         $desordreCompositionLogementLoader = static::getContainer()->get(DesordreCompositionLogementLoader::class);
         $addressService = static::getContainer()->get(AddressService::class);
+        $signalementManager = static::getContainer()->get(SignalementManager::class);
 
         $this->signalementBuilder = new SignalementBuilder(
             $territoryRepository,
@@ -75,6 +77,7 @@ class SignalementBuilderTest extends KernelTestCase
             $signalementQualificationUpdater,
             $desordreCompositionLogementLoader,
             $addressService,
+            $signalementManager,
         );
     }
 

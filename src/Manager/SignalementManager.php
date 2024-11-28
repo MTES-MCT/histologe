@@ -2,7 +2,6 @@
 
 namespace App\Manager;
 
-use App\Command\InitIdBanCommand;
 use App\Dto\Request\Signalement\AdresseOccupantRequest;
 use App\Dto\Request\Signalement\CompositionLogementRequest;
 use App\Dto\Request\Signalement\CoordonneesBailleurRequest;
@@ -53,6 +52,8 @@ use Symfony\Component\Security\Core\User\UserInterface;
 
 class SignalementManager extends AbstractManager
 {
+    public const float SCORE_IF_BAN_ID_ACCEPTED = 0.9;
+
     public function __construct(
         protected ManagerRegistry $managerRegistry,
         private Security $security,
@@ -191,6 +192,16 @@ class SignalementManager extends AbstractManager
 
         if (empty($signalement->getCpOccupant())) {
             $signalement->setCpOccupant($address->getZipCode());
+        }
+    }
+
+    public function updateBanIdOccupantFromAddressComplete(Signalement $signalement): void
+    {
+        $addressResult = $this->addressService->getAddress($signalement->getAddressCompleteOccupant());
+        if ($addressResult->getScore() > self::SCORE_IF_BAN_ID_ACCEPTED) {
+            $signalement->setBanIdOccupant($addressResult->getBanId());
+        } else {
+            $signalement->setBanIdOccupant(0);
         }
     }
 
@@ -367,12 +378,7 @@ class SignalementManager extends AbstractManager
             }
         }
 
-        $addressResult = $this->addressService->getAddress($signalement->getAddressCompleteOccupant());
-        if ($addressResult->getScore() > InitIdBanCommand::SCORE_IF_ACCEPTED) {
-            $signalement->setBanIdOccupant($addressResult->getBanId());
-        } else {
-            $signalement->setBanIdOccupant(0);
-        }
+        $this->updateBanIdOccupantFromAddressComplete($signalement);
 
         $this->save($signalement);
 
