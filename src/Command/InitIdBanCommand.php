@@ -19,7 +19,7 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 )]
 class InitIdBanCommand extends Command
 {
-    private const float SCORE_IF_ACCEPTED = 0.9;
+    public const float SCORE_IF_ACCEPTED = 0.9;
     private const int BATCH_SIZE = 20;
 
     public function __construct(
@@ -52,19 +52,20 @@ class InitIdBanCommand extends Command
 
             /** @var Signalement $signalement */
             foreach ($listSignalementBanIdNull as $signalement) {
-                $bestAddressResult = $this->addressService->getAddress($signalement->getAddressCompleteOccupant());
+                $bestAddressResult = $this->addressService->getAddress($signalement->getAddressCompleteOccupant(), 1);
                 if ($bestAddressResult->getScore() > self::SCORE_IF_ACCEPTED) {
                     $signalement->setBanIdOccupant($bestAddressResult->getBanId());
                     ++$nb;
+                } else {
+                    $signalement->setBanIdOccupant(0);
                 }
-                $this->entityManager->persist($signalement);
                 $progressBar->advance();
             }
             $this->entityManager->flush();
         }
 
         $progressBar->finish();
-        $nbSignalementWithoutBanId = $this->signalementRepository->count(['banIdOccupant' => null]);
+        $nbSignalementWithoutBanId = $this->signalementRepository->count(['banIdOccupant' => '0']);
         $io->success(\sprintf(
             '%s BAN IDs have been initialized, but %s signalements remain with no BAN ID',
             $nb,

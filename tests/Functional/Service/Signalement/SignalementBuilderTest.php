@@ -15,6 +15,7 @@ use App\Repository\DesordreCritereRepository;
 use App\Repository\DesordrePrecisionRepository;
 use App\Repository\TerritoryRepository;
 use App\Serializer\SignalementDraftRequestSerializer;
+use App\Service\DataGouv\AddressService;
 use App\Service\Signalement\CriticiteCalculator;
 use App\Service\Signalement\DesordreTraitement\DesordreCompositionLogementLoader;
 use App\Service\Signalement\DesordreTraitement\DesordreTraitementProcessor;
@@ -55,6 +56,7 @@ class SignalementBuilderTest extends KernelTestCase
         $criticiteCalculator = static::getContainer()->get(CriticiteCalculator::class);
         $signalementQualificationUpdater = static::getContainer()->get(SignalementQualificationUpdater::class);
         $desordreCompositionLogementLoader = static::getContainer()->get(DesordreCompositionLogementLoader::class);
+        $addressService = static::getContainer()->get(AddressService::class);
 
         $this->signalementBuilder = new SignalementBuilder(
             $territoryRepository,
@@ -71,7 +73,8 @@ class SignalementBuilderTest extends KernelTestCase
             $desordreCritereManager,
             $criticiteCalculator,
             $signalementQualificationUpdater,
-            $desordreCompositionLogementLoader
+            $desordreCompositionLogementLoader,
+            $addressService,
         );
     }
 

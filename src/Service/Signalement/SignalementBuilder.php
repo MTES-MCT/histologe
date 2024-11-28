@@ -2,6 +2,7 @@
 
 namespace App\Service\Signalement;
 
+use App\Command\InitIdBanCommand;
 use App\Dto\Request\Signalement\SignalementDraftRequest;
 use App\Entity\Enum\ChauffageType;
 use App\Entity\Enum\OccupantLink;
@@ -24,6 +25,7 @@ use App\Repository\DesordreCritereRepository;
 use App\Repository\DesordrePrecisionRepository;
 use App\Repository\TerritoryRepository;
 use App\Serializer\SignalementDraftRequestSerializer;
+use App\Service\DataGouv\AddressService;
 use App\Service\Signalement\DesordreTraitement\DesordreCompositionLogementLoader;
 use App\Service\Signalement\DesordreTraitement\DesordreTraitementProcessor;
 use App\Service\Signalement\Qualification\SignalementQualificationUpdater;
@@ -54,6 +56,7 @@ class SignalementBuilder
         private CriticiteCalculator $criticiteCalculator,
         private SignalementQualificationUpdater $signalementQualificationUpdater,
         private DesordreCompositionLogementLoader $desordreCompositionLogementLoader,
+        private AddressService $addressService,
     ) {
     }
 
@@ -331,6 +334,21 @@ class SignalementBuilder
             )
             ->setAdresseAutreOccupant($this->signalementDraftRequest->getAdresseLogementComplementAdresseAutre())
             ->setManualAddressOccupant($this->signalementDraftRequest->getAdresseLogementAdresseDetailManual());
+
+        // Update geoloc and BAN ID if manual edit
+        if ($this->signalement->getManualAddressOccupant()) {
+            $addressResult = $this->addressService->getAddress($this->signalement->getAddressCompleteOccupant(), 1);
+            if ($addressResult->getScore() > InitIdBanCommand::SCORE_IF_ACCEPTED) {
+                $this->signalement->setBanIdOccupant($addressResult->getBanId());
+            } else {
+                $this->signalement->setBanIdOccupant(0);
+            }
+            $inseeResult = $this->addressService->getAddress($this->signalement->getCpOccupant().' '.$this->signalement->getVilleOccupant(), 1);
+            $this->signalement->setGeoloc([
+                'lat' => $inseeResult->getLatitude(),
+                'lng' => $inseeResult->getLongitude(),
+            ]);
+        }
     }
 
     private function setOccupantDeclarantData(): void
