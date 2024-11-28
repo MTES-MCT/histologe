@@ -1375,4 +1375,17 @@ class SignalementRepository extends ServiceEntityRepository
             ->getQuery()
             ->getResult();
     }
+
+    public function findSignalementsBetweenDates(\DateTimeImmutable $startDate, \DateTimeImmutable $endDate): array
+    {
+        $qb = $this->createQueryBuilder('s');
+
+        return $qb
+            ->where('s.createdAt BETWEEN :startDate AND :endDate')
+            ->setParameter('startDate', $startDate)
+            ->setParameter('endDate', $endDate)
+            ->orderBy('s.createdAt', 'ASC')
+            ->getQuery()
+            ->getResult();
+    }
 }
