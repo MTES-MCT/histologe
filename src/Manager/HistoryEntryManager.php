@@ -11,18 +11,24 @@ use App\Entity\Enum\MotifRefus;
 use App\Entity\HistoryEntry;
 use App\Entity\Partner;
 use App\Entity\Signalement;
+use App\EventListener\Behaviour\DoctrineListenerRemoverTrait;
+use App\EventListener\EntityHistoryListener;
 use App\Factory\HistoryEntryFactory;
 use App\Repository\AffectationRepository;
 use App\Repository\HistoryEntryRepository;
 use App\Repository\PartnerRepository;
 use App\Service\TimezoneProvider;
 use Doctrine\Common\Collections\Collection;
+use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\Events;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\Serializer\Exception\ExceptionInterface;
 
 class HistoryEntryManager extends AbstractManager
 {
+    use DoctrineListenerRemoverTrait;
+
     public const FORMAT_DATE_TIME = 'Y-m-d H:i:s';
 
     public function __construct(
@@ -99,6 +105,18 @@ class HistoryEntryManager extends AbstractManager
         }
 
         return $formattedHistory;
+    }
+
+    public function removeEntityListeners(): void
+    {
+        /** @var EntityManagerInterface $objectManager */
+        $objectManager = $this->managerRegistry->getManager();
+        $eventManager = $objectManager->getEventManager();
+        $this->removeListeners(
+            $eventManager,
+            EntityHistoryListener::class,
+            [Events::postPersist, Events::postUpdate, Events::preRemove]
+        );
     }
 
     private function getHistoryEntries(int $signalementId, string $entityClass, ?HistoryEntryEvent $event = null): array
