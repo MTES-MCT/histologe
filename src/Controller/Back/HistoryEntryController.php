@@ -19,7 +19,11 @@ class HistoryEntryController extends AbstractController
         SignalementRepository $signalementRepository,
     ): Response {
         $signalement = $signalementRepository->find($request->get('id'));
-        if (!$signalement || !$this->isGranted('SIGN_VIEW', $signalement) || !$this->isGranted('ASSIGN_TOGGLE', $signalement)) {
+        if (
+            !$signalement
+            || !$this->isGranted('SIGN_VIEW', $signalement)
+            || !$this->isGranted('ASSIGN_SEE', $signalement)
+        ) {
             return $this->json(['response' => 'error'], Response::HTTP_FORBIDDEN);
         }
 

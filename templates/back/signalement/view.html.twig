@@ -4,8 +4,10 @@
 {% set static_picto_no = '<p class="fr-badge fr-badge--error">Non</p>' %}
 
 {% block content %}
-    {% if not needValidation and canPartnerAffectation %}
+    {% if canSeePartnerAffectation and canTogglePartnerAffectation %}
         {% include '_partials/_modal_affectation.html.twig' %}
+    {% endif %}
+    {% if canSeePartnerAffectation %}        
         {% include '_partials/_modal_historique_affectation.html.twig' %}
     {% endif %}
     {% include '_partials/_modal_dpe.html.twig' %}
