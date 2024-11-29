@@ -3,6 +3,7 @@
 namespace App\Command;
 
 use App\Entity\Signalement;
+use App\Manager\HistoryEntryManager;
 use App\Manager\SignalementManager;
 use App\Repository\SignalementRepository;
 use Doctrine\ORM\EntityManagerInterface;
@@ -25,12 +26,15 @@ class InitIdBanCommand extends Command
         private readonly SignalementManager $signalementManager,
         private readonly SignalementRepository $signalementRepository,
         private readonly EntityManagerInterface $entityManager,
+        private readonly HistoryEntryManager $historyEntryManager,
     ) {
         parent::__construct();
     }
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
+        $this->historyEntryManager->removeEntityListeners();
+
         $io = new SymfonyStyle($input, $output);
 
         $signalementIdsWithouBanId = $this->signalementRepository->findNullBanId();
