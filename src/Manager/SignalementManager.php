@@ -351,10 +351,6 @@ class SignalementManager extends AbstractManager
             ->setCpOccupant($adresseOccupantRequest->getCodePostal())
             ->setVilleOccupant($adresseOccupantRequest->getVille())
             ->setInseeOccupant($adresseOccupantRequest->getInsee())
-            ->setGeoloc([
-                'lat' => $adresseOccupantRequest->getGeolocLat(),
-                'lng' => $adresseOccupantRequest->getGeolocLng(),
-            ])
 
             ->setEtageOccupant($adresseOccupantRequest->getEtage())
             ->setEscalierOccupant($adresseOccupantRequest->getEscalier())
@@ -362,20 +358,18 @@ class SignalementManager extends AbstractManager
             ->setAdresseAutreOccupant($adresseOccupantRequest->getAutre())
             ->setManualAddressOccupant('1' === $adresseOccupantRequest->getManual());
 
-        if ('1' === $adresseOccupantRequest->getNeedResetInsee()) {
-            $resetAddress = $this->addressService->getAddress($adresseOccupantRequest->getCodePostal().' '.$adresseOccupantRequest->getVille());
-            if (!empty($resetAddress->getCity())) {
-                $signalement->setVilleOccupant($resetAddress->getCity());
-            }
-            if (!empty($resetAddress->getInseeCode())) {
-                $signalement->setInseeOccupant($resetAddress->getInseeCode());
-            }
-            if (!empty($resetAddress->getLatitude())) {
-                $signalement->setGeoloc([
-                    'lat' => $resetAddress->getLatitude(),
-                    'lng' => $resetAddress->getLongitude(),
-                ]);
-            }
+        $resetAddress = $this->addressService->getAddress($adresseOccupantRequest->getCodePostal().' '.$adresseOccupantRequest->getVille());
+        if (!empty($resetAddress->getCity())) {
+            $signalement->setVilleOccupant($resetAddress->getCity());
+        }
+        if (!empty($resetAddress->getInseeCode())) {
+            $signalement->setInseeOccupant($resetAddress->getInseeCode());
+        }
+        if (!empty($resetAddress->getLatitude())) {
+            $signalement->setGeoloc([
+                'lat' => $resetAddress->getLatitude(),
+                'lng' => $resetAddress->getLongitude(),
+            ]);
         }
 
         $this->updateBanIdOccupantFromAddressComplete($signalement);

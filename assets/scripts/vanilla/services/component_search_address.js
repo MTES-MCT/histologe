@@ -74,12 +74,6 @@ export function attacheAutocompleteAddressEvent (inputAdresse) {
       if (document?.querySelector('#' + idForm + ' [data-autocomplete-insee]')) {
         document.querySelector('#' + idForm + ' [data-autocomplete-insee]').value = ''
       }
-      if (document?.querySelector('#' + idForm + ' [data-autocomplete-geoloclng]')) {
-        document.querySelector('#' + idForm + ' [data-autocomplete-geoloclng]').value = ''
-      }
-      if (document?.querySelector('#' + idForm + ' [data-autocomplete-geoloclat]')) {
-        document.querySelector('#' + idForm + ' [data-autocomplete-geoloclat]').value = ''
-      }
     }
   })
 
@@ -142,12 +136,6 @@ function attachAddressSuggestionEvent (inputAdresse, suggestion, feature) {
     }
     if (document?.querySelector('#' + idForm + ' [data-autocomplete-insee]')) {
       document.querySelector('#' + idForm + ' [data-autocomplete-insee]').value = feature.properties.citycode
-    }
-    if (document?.querySelector('#' + idForm + ' [data-autocomplete-geolocLng]')) {
-      document.querySelector('#' + idForm + ' [data-autocomplete-geolocLng]').value = feature.geometry.coordinates[0]
-    }
-    if (document?.querySelector('#' + idForm + ' [data-autocomplete-geolocLat]')) {
-      document.querySelector('#' + idForm + ' [data-autocomplete-geolocLat]').value = feature.geometry.coordinates[1]
     }
     const addressGroup = document?.querySelector(inputAdresse.dataset.autocompleteQuerySelector)
     addressGroup.innerHTML = ''
