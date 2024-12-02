@@ -62,7 +62,8 @@ class SignalementSearchQuery
             'danger',
             'insalubrite',
             'mise_en_securite_peril',
-            'suroccupation', ])]
+            'suroccupation',
+            'assurantiel', ])]
         private readonly ?string $procedure = null,
         private readonly ?int $page = 1,
         #[Assert\Choice(['oui'])]

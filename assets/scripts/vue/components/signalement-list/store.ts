@@ -92,7 +92,8 @@ export const store = {
       { Id: 'danger', Text: 'Danger occupant' },
       { Id: 'insalubrite', Text: 'Insalubrité' },
       { Id: 'mise_en_securite_peril', Text: 'Péril' },
-      { Id: 'suroccupation', Text: 'Suroccupation' }
+      { Id: 'suroccupation', Text: 'Suroccupation' },
+      { Id: 'assurantiel', Text: 'Assurantiel' }
     ],
     typeDernierSuiviList: [
       { Id: 'partenaire', Text: 'Suivi Partenaire' },
