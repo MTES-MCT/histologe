@@ -24,6 +24,11 @@ class CodeInseeSpecificationTest extends KernelTestCase
         'lng' => -1.41422,
     ];
 
+    private array $geolocLaGree = [
+        'lat' => 47.37025,
+        'lng' => -1.455196,
+    ];
+
     /**
      * @dataProvider provideRulesAndSignalementWithZone
      */
@@ -51,7 +56,7 @@ class CodeInseeSpecificationTest extends KernelTestCase
             $zone = new Zone();
             $zone->setArea($zoneToExclude);
             $partner->addExcludedZone($zone);
-            $this->assertEquals($zoneToInclude, $partner->getExcludedZones()[0]->getArea());
+            $this->assertEquals($zoneToExclude, $partner->getExcludedZones()[0]->getArea());
         }
 
         $signalement = new Signalement();
@@ -70,16 +75,98 @@ class CodeInseeSpecificationTest extends KernelTestCase
 
     public function provideRulesAndSignalementWithZone(): \Generator
     {
-        yield 'same insee as partner - no exclusion - same zone as geoloc, no zone excluded' => ['44179', ['44179'], null, $this->geolocLaBodiniere, $this->zoneLaBodiniere, null, true];
-        yield 'same insee as partner - no exclusion - different zone as geoloc, no zone excluded' => ['44179', ['44179'], null, $this->geolocLaBodiniere, $this->zoneBourgStMars, null, false];
-        // yield 'same insee as partner - but excluded' => ['44179', ['44179'], ['44179'], false];
-        // yield 'same insee as partner - another excluded' => ['44179', ['44179'], ['44028'], true];
-        // yield 'different insee than partner - no exclusion' => ['44179', ['44028'], null, false];
-        // yield 'different insee than partner - but excluded' => ['44179', ['44028'], ['44179'], false];
-        // yield 'different insee than partner - another excluded' => ['44179', ['44028'], ['44028'], false];
-        // yield 'partner without insee - no exclusion' => ['44179', [], null, false];
-        // yield 'partner without insee - but excluded' => ['44179', [], ['44179'], false];
-        // yield 'partner without insee - another excluded' => ['44179', [], ['44028'], false];
+        yield 'same insee as partner - no excluded insee - same zone as geoloc, no zone excluded' => ['44179', ['44179'], null, $this->geolocLaBodiniere, $this->zoneLaBodiniere, null, true];
+        yield 'same insee as partner - no excluded insee - same zone as geoloc, same zone as excluded' => ['44179', ['44179'], null, $this->geolocLaBodiniere, $this->zoneLaBodiniere, $this->zoneLaBodiniere, false]; // illogique, mais à tester, doit renvoyer false
+        yield 'same insee as partner - no excluded insee - same zone as geoloc, different zone as excluded' => ['44179', ['44179'], null, $this->geolocLaBodiniere, $this->zoneLaBodiniere, $this->zoneBourgStMars, true];
+        yield 'same insee as partner - no excluded insee - no zone - no zone excluded' => ['44179', ['44179'], null, $this->geolocLaBodiniere, null, null, true];
+        yield 'same insee as partner - no excluded insee - no zone - same zone as excluded' => ['44179', ['44179'], null, $this->geolocLaBodiniere, null, $this->zoneLaBodiniere, false];
+        yield 'same insee as partner - no excluded insee - no zone - different zone as excluded' => ['44179', ['44179'], null, $this->geolocLaBodiniere, null, $this->zoneBourgStMars, true];
+        yield 'same insee as partner - no excluded insee - different zone as geoloc, no zone excluded' => ['44179', ['44179'], null, $this->geolocLaBodiniere, $this->zoneBourgStMars, null, false];
+        yield 'same insee as partner - no excluded insee - different zone as geoloc, same zone as excluded' => ['44179', ['44179'], null, $this->geolocLaTourmentinerie, $this->zoneBourgStMars, $this->zoneBourgStMars, false];
+        yield 'same insee as partner - no excluded insee - different zone as geoloc, different zone as excluded' => ['44179', ['44179'], null, $this->geolocLaGree, $this->zoneBourgStMars, $this->zoneBourgStMars, false];
+
+        // tout cela est illogique, et doit renvoyer false
+        yield 'same insee as partner - but excluded - same zone as geoloc, no zone excluded' => ['44179', ['44179'], ['44179'], $this->geolocLaBodiniere, $this->zoneLaBodiniere, null, false];
+        yield 'same insee as partner - but excluded - same zone as geoloc, same zone as excluded' => ['44179', ['44179'], ['44179'], $this->geolocLaBodiniere, $this->zoneLaBodiniere, $this->zoneLaBodiniere, false]; // illogique, mais à tester, doit renvoyer false
+        yield 'same insee as partner - but excluded - same zone as geoloc, different zone as excluded' => ['44179', ['44179'], ['44179'], $this->geolocLaBodiniere, $this->zoneLaBodiniere, $this->zoneBourgStMars, false];
+        yield 'same insee as partner - but excluded - no zone - no zone excluded' => ['44179', ['44179'], ['44179'], $this->geolocLaBodiniere, null, null, false];
+        yield 'same insee as partner - but excluded - no zone - same zone as excluded' => ['44179', ['44179'], ['44179'], $this->geolocLaBodiniere, null, $this->zoneLaBodiniere, false];
+        yield 'same insee as partner - but excluded - no zone - different zone as excluded' => ['44179', ['44179'], ['44179'], $this->geolocLaBodiniere, null, $this->zoneBourgStMars, false];
+        yield 'same insee as partner - but excluded - different zone as geoloc, no zone excluded' => ['44179', ['44179'], ['44179'], $this->geolocLaBodiniere, $this->zoneBourgStMars, null, false];
+        yield 'same insee as partner - but excluded - different zone as geoloc, same zone as excluded' => ['44179', ['44179'], ['44179'], $this->geolocLaTourmentinerie, $this->zoneBourgStMars, $this->zoneBourgStMars, false];
+        yield 'same insee as partner - but excluded - different zone as geoloc, different zone as excluded' => ['44179', ['44179'], ['44179'], $this->geolocLaGree, $this->zoneBourgStMars, $this->zoneBourgStMars, false];
+
+        yield 'same insee as partner - another insee - same zone as geoloc, no zone excluded' => ['44179', ['44179'], ['44028'], $this->geolocLaBodiniere, $this->zoneLaBodiniere, null, true];
+        yield 'same insee as partner - another insee - same zone as geoloc, same zone as excluded' => ['44179', ['44179'], ['44028'], $this->geolocLaBodiniere, $this->zoneLaBodiniere, $this->zoneLaBodiniere, false]; // illogique, mais à tester, doit renvoyer false
+        yield 'same insee as partner - another insee - same zone as geoloc, different zone as excluded' => ['44179', ['44179'], ['44028'], $this->geolocLaBodiniere, $this->zoneLaBodiniere, $this->zoneBourgStMars, true];
+        yield 'same insee as partner - another insee - no zone - no zone excluded' => ['44179', ['44179'], ['44028'], $this->geolocLaBodiniere, null, null, true];
+        yield 'same insee as partner - another insee - no zone - same zone as excluded' => ['44179', ['44179'], ['44028'], $this->geolocLaBodiniere, null, $this->zoneLaBodiniere, false];
+        yield 'same insee as partner - another insee - no zone - different zone as excluded' => ['44179', ['44179'], ['44028'], $this->geolocLaBodiniere, null, $this->zoneBourgStMars, true];
+        yield 'same insee as partner - another insee - different zone as geoloc, no zone excluded' => ['44179', ['44179'], ['44028'], $this->geolocLaBodiniere, $this->zoneBourgStMars, null, false];
+        yield 'same insee as partner - another insee - different zone as geoloc, same zone as excluded' => ['44179', ['44179'], ['44028'], $this->geolocLaTourmentinerie, $this->zoneBourgStMars, $this->zoneBourgStMars, false];
+        yield 'same insee as partner - another insee - different zone as geoloc, different zone as excluded' => ['44179', ['44179'], ['44028'], $this->geolocLaGree, $this->zoneBourgStMars, $this->zoneBourgStMars, false];
+
+        yield 'different insee than partner - no excluded insee - same zone as geoloc, no zone excluded' => ['44179', ['44028'], null, $this->geolocLaBodiniere, $this->zoneLaBodiniere, null, false];
+        yield 'different insee than partner - no excluded insee - same zone as geoloc, same zone as excluded' => ['44179', ['44028'], null, $this->geolocLaBodiniere, $this->zoneLaBodiniere, $this->zoneLaBodiniere, false]; // illogique, mais à tester, doit renvoyer false
+        yield 'different insee than partner - no excluded insee - same zone as geoloc, different zone as excluded' => ['44179', ['44028'], null, $this->geolocLaBodiniere, $this->zoneLaBodiniere, $this->zoneBourgStMars, false];
+        yield 'different insee than partner - no excluded insee - no zone - no zone excluded' => ['44179', ['44028'], null, $this->geolocLaBodiniere, null, null, false];
+        yield 'different insee than partner - no excluded insee - no zone - same zone as excluded' => ['44179', ['44028'], null, $this->geolocLaBodiniere, null, $this->zoneLaBodiniere, false];
+        yield 'different insee than partner - no excluded insee - no zone - different zone as excluded' => ['44179', ['44028'], null, $this->geolocLaBodiniere, null, $this->zoneBourgStMars, false];
+        yield 'different insee than partner - no excluded insee - different zone as geoloc, no zone excluded' => ['44179', ['44028'], null, $this->geolocLaBodiniere, $this->zoneBourgStMars, null, false];
+        yield 'different insee than partner - no excluded insee - different zone as geoloc, same zone as excluded' => ['44179', ['44028'], null, $this->geolocLaTourmentinerie, $this->zoneBourgStMars, $this->zoneBourgStMars, false];
+        yield 'different insee than partner - no excluded insee - different zone as geoloc, different zone as excluded' => ['44179', ['44028'], null, $this->geolocLaGree, $this->zoneBourgStMars, $this->zoneBourgStMars, false];
+
+        // tout cela est illogique, et doit renvoyer false
+        yield 'different insee than partner - but excluded - same zone as geoloc, no zone excluded' => ['44179', ['44028'], ['44179'], $this->geolocLaBodiniere, $this->zoneLaBodiniere, null, false];
+        yield 'different insee than partner - but excluded - same zone as geoloc, same zone as excluded' => ['44179', ['44028'], ['44179'], $this->geolocLaBodiniere, $this->zoneLaBodiniere, $this->zoneLaBodiniere, false]; // illogique, mais à tester, doit renvoyer false
+        yield 'different insee than partner - but excluded - same zone as geoloc, different zone as excluded' => ['44179', ['44028'], ['44179'], $this->geolocLaBodiniere, $this->zoneLaBodiniere, $this->zoneBourgStMars, false];
+        yield 'different insee than partner - but excluded - no zone - no zone excluded' => ['44179', ['44028'], ['44179'], $this->geolocLaBodiniere, null, null, false];
+        yield 'different insee than partner - but excluded - no zone - same zone as excluded' => ['44179', ['44028'], ['44179'], $this->geolocLaBodiniere, null, $this->zoneLaBodiniere, false];
+        yield 'different insee than partner - but excluded - no zone - different zone as excluded' => ['44179', ['44028'], ['44179'], $this->geolocLaBodiniere, null, $this->zoneBourgStMars, false];
+        yield 'different insee than partner - but excluded - different zone as geoloc, no zone excluded' => ['44179', ['44028'], ['44179'], $this->geolocLaBodiniere, $this->zoneBourgStMars, null, false];
+        yield 'different insee than partner - but excluded - different zone as geoloc, same zone as excluded' => ['44179', ['44028'], ['44179'], $this->geolocLaTourmentinerie, $this->zoneBourgStMars, $this->zoneBourgStMars, false];
+        yield 'different insee than partner - but excluded - different zone as geoloc, different zone as excluded' => ['44179', ['44028'], ['44179'], $this->geolocLaGree, $this->zoneBourgStMars, $this->zoneBourgStMars, false];
+
+        yield 'different insee than partner - another insee excluded - same zone as geoloc, no zone excluded' => ['44179', ['44028'], ['44028'], $this->geolocLaBodiniere, $this->zoneLaBodiniere, null, false];
+        yield 'different insee than partner - another insee excluded - same zone as geoloc, same zone as excluded' => ['44179', ['44028'], ['44028'], $this->geolocLaBodiniere, $this->zoneLaBodiniere, $this->zoneLaBodiniere, false]; // illogique, mais à tester, doit renvoyer false
+        yield 'different insee than partner - another insee excluded - same zone as geoloc, different zone as excluded' => ['44179', ['44028'], ['44028'], $this->geolocLaBodiniere, $this->zoneLaBodiniere, $this->zoneBourgStMars, false];
+        yield 'different insee than partner - another insee excluded - no zone - no zone excluded' => ['44179', ['44028'], ['44028'], $this->geolocLaBodiniere, null, null, false];
+        yield 'different insee than partner - another insee excluded - no zone - same zone as excluded' => ['44179', ['44028'], ['44028'], $this->geolocLaBodiniere, null, $this->zoneLaBodiniere, false];
+        yield 'different insee than partner - another insee excluded - no zone - different zone as excluded' => ['44179', ['44028'], ['44028'], $this->geolocLaBodiniere, null, $this->zoneBourgStMars, false];
+        yield 'different insee than partner - another insee excluded - different zone as geoloc, no zone excluded' => ['44179', ['44028'], ['44028'], $this->geolocLaBodiniere, $this->zoneBourgStMars, null, false];
+        yield 'different insee than partner - another insee excluded - different zone as geoloc, same zone as excluded' => ['44179', ['44028'], ['44028'], $this->geolocLaTourmentinerie, $this->zoneBourgStMars, $this->zoneBourgStMars, false];
+        yield 'different insee than partner - another insee excluded - different zone as geoloc, different zone as excluded' => ['44179', ['44028'], ['44028'], $this->geolocLaGree, $this->zoneBourgStMars, $this->zoneBourgStMars, false];
+
+        yield 'partner without insee - no excluded insee - same zone as geoloc, no zone excluded' => ['44179', [], null, $this->geolocLaBodiniere, $this->zoneLaBodiniere, null, false];
+        yield 'partner without insee - no excluded insee - same zone as geoloc, same zone as excluded' => ['44179', [], null, $this->geolocLaBodiniere, $this->zoneLaBodiniere, $this->zoneLaBodiniere, false]; // illogique, mais à tester, doit renvoyer false
+        yield 'partner without insee - no excluded insee - same zone as geoloc, different zone as excluded' => ['44179', [], null, $this->geolocLaBodiniere, $this->zoneLaBodiniere, $this->zoneBourgStMars, false];
+        yield 'partner without insee - no excluded insee - no zone - no zone excluded' => ['44179', [], null, $this->geolocLaBodiniere, null, null, false];
+        yield 'partner without insee - no excluded insee - no zone - same zone as excluded' => ['44179', [], null, $this->geolocLaBodiniere, null, $this->zoneLaBodiniere, false];
+        yield 'partner without insee - no excluded insee - no zone - different zone as excluded' => ['44179', [], null, $this->geolocLaBodiniere, null, $this->zoneBourgStMars, false];
+        yield 'partner without insee - no excluded insee - different zone as geoloc, no zone excluded' => ['44179', [], null, $this->geolocLaBodiniere, $this->zoneBourgStMars, null, false];
+        yield 'partner without insee - no excluded insee - different zone as geoloc, same zone as excluded' => ['44179', [], null, $this->geolocLaTourmentinerie, $this->zoneBourgStMars, $this->zoneBourgStMars, false];
+        yield 'partner without insee - no excluded insee - different zone as geoloc, different zone as excluded' => ['44179', [], null, $this->geolocLaGree, $this->zoneBourgStMars, $this->zoneBourgStMars, false];
+
+        // tout cela est illogique, et doit renvoyer false
+        yield 'partner without insee - but excluded - same zone as geoloc, no zone excluded' => ['44179', [], ['44179'], $this->geolocLaBodiniere, $this->zoneLaBodiniere, null, false];
+        yield 'partner without insee - but excluded - same zone as geoloc, same zone as excluded' => ['44179', [], ['44179'], $this->geolocLaBodiniere, $this->zoneLaBodiniere, $this->zoneLaBodiniere, false]; // illogique, mais à tester, doit renvoyer false
+        yield 'partner without insee - but excluded - same zone as geoloc, different zone as excluded' => ['44179', [], ['44179'], $this->geolocLaBodiniere, $this->zoneLaBodiniere, $this->zoneBourgStMars, false];
+        yield 'partner without insee - but excluded - no zone - no zone excluded' => ['44179', [], ['44179'], $this->geolocLaBodiniere, null, null, false];
+        yield 'partner without insee - but excluded - no zone - same zone as excluded' => ['44179', [], ['44179'], $this->geolocLaBodiniere, null, $this->zoneLaBodiniere, false];
+        yield 'partner without insee - but excluded - no zone - different zone as excluded' => ['44179', [], ['44179'], $this->geolocLaBodiniere, null, $this->zoneBourgStMars, false];
+        yield 'partner without insee - but excluded - different zone as geoloc, no zone excluded' => ['44179', [], ['44179'], $this->geolocLaBodiniere, $this->zoneBourgStMars, null, false];
+        yield 'partner without insee - but excluded - different zone as geoloc, same zone as excluded' => ['44179', [], ['44179'], $this->geolocLaTourmentinerie, $this->zoneBourgStMars, $this->zoneBourgStMars, false];
+        yield 'partner without insee - but excluded - different zone as geoloc, different zone as excluded' => ['44179', [], ['44179'], $this->geolocLaGree, $this->zoneBourgStMars, $this->zoneBourgStMars, false];
+
+        yield 'partner without insee - another insee excluded - same zone as geoloc, no zone excluded' => ['44179', [], ['44028'], $this->geolocLaBodiniere, $this->zoneLaBodiniere, null, false];
+        yield 'partner without insee - another insee excluded - same zone as geoloc, same zone as excluded' => ['44179', [], ['44028'], $this->geolocLaBodiniere, $this->zoneLaBodiniere, $this->zoneLaBodiniere, false]; // illogique, mais à tester, doit renvoyer false
+        yield 'partner without insee - another insee excluded - same zone as geoloc, different zone as excluded' => ['44179', [], ['44028'], $this->geolocLaBodiniere, $this->zoneLaBodiniere, $this->zoneBourgStMars, false];
+        yield 'partner without insee - another insee excluded - no zone - no zone excluded' => ['44179', [], ['44028'], $this->geolocLaBodiniere, null, null, false];
+        yield 'partner without insee - another insee excluded - no zone - same zone as excluded' => ['44179', [], ['44028'], $this->geolocLaBodiniere, null, $this->zoneLaBodiniere, false];
+        yield 'partner without insee - another insee excluded - no zone - different zone as excluded' => ['44179', [], ['44028'], $this->geolocLaBodiniere, null, $this->zoneBourgStMars, false];
+        yield 'partner without insee - another insee excluded - different zone as geoloc, no zone excluded' => ['44179', [], ['44028'], $this->geolocLaBodiniere, $this->zoneBourgStMars, null, false];
+        yield 'partner without insee - another insee excluded - different zone as geoloc, same zone as excluded' => ['44179', [], ['44028'], $this->geolocLaTourmentinerie, $this->zoneBourgStMars, $this->zoneBourgStMars, false];
+        yield 'partner without insee - another insee excluded - different zone as geoloc, different zone as excluded' => ['44179', [], ['44028'], $this->geolocLaGree, $this->zoneBourgStMars, $this->zoneBourgStMars, false];
     }
 
     /**
