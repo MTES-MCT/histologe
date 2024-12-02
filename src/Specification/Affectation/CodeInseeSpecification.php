@@ -92,7 +92,8 @@ class CodeInseeSpecification implements SpecificationInterface
 
     private function isInseeIncludeInPartnerList(Partner $partner, string $insee)
     {
-        return !empty($partner->getInsee()) && \in_array($insee, $partner->getInsee());
+        return (!empty($partner->getInsee()) && \in_array($insee, $partner->getInsee()))
+        || (empty($partner->getInsee()) && $partner->getZones()->count() > 0);
     }
 
     private function isInseeIncluded(string $insee): bool

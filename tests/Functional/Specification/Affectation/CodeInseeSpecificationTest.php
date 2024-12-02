@@ -119,7 +119,6 @@ class CodeInseeSpecificationTest extends KernelTestCase
         yield 'different insee than partner - no excluded insee - different zone as geoloc, same zone as excluded' => [self::INSEE_STMARS, [self::INSEE_CELLIER], null, $this->geolocLaTourmentinerie, $this->zoneBourgStMars, $this->zoneBourgStMars, false];
         yield 'different insee than partner - no excluded insee - different zone as geoloc, different zone as excluded' => [self::INSEE_STMARS, [self::INSEE_CELLIER], null, $this->geolocLaGree, $this->zoneBourgStMars, $this->zoneBourgStMars, false];
 
-        // tout cela est illogique, et doit renvoyer false
         yield 'different insee than partner - but excluded - same zone as geoloc, no zone excluded' => [self::INSEE_STMARS, [self::INSEE_CELLIER], [self::INSEE_STMARS], $this->geolocLaBodiniere, $this->zoneLaBodiniere, null, false];
         yield 'different insee than partner - but excluded - same zone as geoloc, same zone as excluded' => [self::INSEE_STMARS, [self::INSEE_CELLIER], [self::INSEE_STMARS], $this->geolocLaBodiniere, $this->zoneLaBodiniere, $this->zoneLaBodiniere, false]; // illogique, mais à tester, doit renvoyer false
         yield 'different insee than partner - but excluded - same zone as geoloc, different zone as excluded' => [self::INSEE_STMARS, [self::INSEE_CELLIER], [self::INSEE_STMARS], $this->geolocLaBodiniere, $this->zoneLaBodiniere, $this->zoneBourgStMars, false];
@@ -140,9 +139,9 @@ class CodeInseeSpecificationTest extends KernelTestCase
         yield 'different insee than partner - another insee excluded - different zone as geoloc, same zone as excluded' => [self::INSEE_STMARS, [self::INSEE_CELLIER], [self::INSEE_CELLIER], $this->geolocLaTourmentinerie, $this->zoneBourgStMars, $this->zoneBourgStMars, false];
         yield 'different insee than partner - another insee excluded - different zone as geoloc, different zone as excluded' => [self::INSEE_STMARS, [self::INSEE_CELLIER], [self::INSEE_CELLIER], $this->geolocLaGree, $this->zoneBourgStMars, $this->zoneBourgStMars, false];
 
-        yield 'partner without insee - no excluded insee - same zone as geoloc, no zone excluded' => [self::INSEE_STMARS, [], null, $this->geolocLaBodiniere, $this->zoneLaBodiniere, null, false];
+        yield 'partner without insee - no excluded insee - same zone as geoloc, no zone excluded' => [self::INSEE_STMARS, [], null, $this->geolocLaBodiniere, $this->zoneLaBodiniere, null, true];
         yield 'partner without insee - no excluded insee - same zone as geoloc, same zone as excluded' => [self::INSEE_STMARS, [], null, $this->geolocLaBodiniere, $this->zoneLaBodiniere, $this->zoneLaBodiniere, false]; // illogique, mais à tester, doit renvoyer false
-        yield 'partner without insee - no excluded insee - same zone as geoloc, different zone as excluded' => [self::INSEE_STMARS, [], null, $this->geolocLaBodiniere, $this->zoneLaBodiniere, $this->zoneBourgStMars, false];
+        yield 'partner without insee - no excluded insee - same zone as geoloc, different zone as excluded' => [self::INSEE_STMARS, [], null, $this->geolocLaBodiniere, $this->zoneLaBodiniere, $this->zoneBourgStMars, true];
         yield 'partner without insee - no excluded insee - no zone - no zone excluded' => [self::INSEE_STMARS, [], null, $this->geolocLaBodiniere, null, null, false];
         yield 'partner without insee - no excluded insee - no zone - same zone as excluded' => [self::INSEE_STMARS, [], null, $this->geolocLaBodiniere, null, $this->zoneLaBodiniere, false];
         yield 'partner without insee - no excluded insee - no zone - different zone as excluded' => [self::INSEE_STMARS, [], null, $this->geolocLaBodiniere, null, $this->zoneBourgStMars, false];
@@ -150,7 +149,6 @@ class CodeInseeSpecificationTest extends KernelTestCase
         yield 'partner without insee - no excluded insee - different zone as geoloc, same zone as excluded' => [self::INSEE_STMARS, [], null, $this->geolocLaTourmentinerie, $this->zoneBourgStMars, $this->zoneBourgStMars, false];
         yield 'partner without insee - no excluded insee - different zone as geoloc, different zone as excluded' => [self::INSEE_STMARS, [], null, $this->geolocLaGree, $this->zoneBourgStMars, $this->zoneBourgStMars, false];
 
-        // tout cela est illogique, et doit renvoyer false
         yield 'partner without insee - but excluded - same zone as geoloc, no zone excluded' => [self::INSEE_STMARS, [], [self::INSEE_STMARS], $this->geolocLaBodiniere, $this->zoneLaBodiniere, null, false];
         yield 'partner without insee - but excluded - same zone as geoloc, same zone as excluded' => [self::INSEE_STMARS, [], [self::INSEE_STMARS], $this->geolocLaBodiniere, $this->zoneLaBodiniere, $this->zoneLaBodiniere, false]; // illogique, mais à tester, doit renvoyer false
         yield 'partner without insee - but excluded - same zone as geoloc, different zone as excluded' => [self::INSEE_STMARS, [], [self::INSEE_STMARS], $this->geolocLaBodiniere, $this->zoneLaBodiniere, $this->zoneBourgStMars, false];
@@ -161,9 +159,9 @@ class CodeInseeSpecificationTest extends KernelTestCase
         yield 'partner without insee - but excluded - different zone as geoloc, same zone as excluded' => [self::INSEE_STMARS, [], [self::INSEE_STMARS], $this->geolocLaTourmentinerie, $this->zoneBourgStMars, $this->zoneBourgStMars, false];
         yield 'partner without insee - but excluded - different zone as geoloc, different zone as excluded' => [self::INSEE_STMARS, [], [self::INSEE_STMARS], $this->geolocLaGree, $this->zoneBourgStMars, $this->zoneBourgStMars, false];
 
-        yield 'partner without insee - another insee excluded - same zone as geoloc, no zone excluded' => [self::INSEE_STMARS, [], [self::INSEE_CELLIER], $this->geolocLaBodiniere, $this->zoneLaBodiniere, null, false];
+        yield 'partner without insee - another insee excluded - same zone as geoloc, no zone excluded' => [self::INSEE_STMARS, [], [self::INSEE_CELLIER], $this->geolocLaBodiniere, $this->zoneLaBodiniere, null, true];
         yield 'partner without insee - another insee excluded - same zone as geoloc, same zone as excluded' => [self::INSEE_STMARS, [], [self::INSEE_CELLIER], $this->geolocLaBodiniere, $this->zoneLaBodiniere, $this->zoneLaBodiniere, false]; // illogique, mais à tester, doit renvoyer false
-        yield 'partner without insee - another insee excluded - same zone as geoloc, different zone as excluded' => [self::INSEE_STMARS, [], [self::INSEE_CELLIER], $this->geolocLaBodiniere, $this->zoneLaBodiniere, $this->zoneBourgStMars, false];
+        yield 'partner without insee - another insee excluded - same zone as geoloc, different zone as excluded' => [self::INSEE_STMARS, [], [self::INSEE_CELLIER], $this->geolocLaBodiniere, $this->zoneLaBodiniere, $this->zoneBourgStMars, true];
         yield 'partner without insee - another insee excluded - no zone - no zone excluded' => [self::INSEE_STMARS, [], [self::INSEE_CELLIER], $this->geolocLaBodiniere, null, null, false];
         yield 'partner without insee - another insee excluded - no zone - same zone as excluded' => [self::INSEE_STMARS, [], [self::INSEE_CELLIER], $this->geolocLaBodiniere, null, $this->zoneLaBodiniere, false];
         yield 'partner without insee - another insee excluded - no zone - different zone as excluded' => [self::INSEE_STMARS, [], [self::INSEE_CELLIER], $this->geolocLaBodiniere, null, $this->zoneBourgStMars, false];
