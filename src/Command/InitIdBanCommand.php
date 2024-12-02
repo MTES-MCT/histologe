@@ -59,6 +59,9 @@ class InitIdBanCommand extends Command
                     signalement: $signalement,
                     updateGeoloc: false,
                 );
+                if (!empty($signalement->getBanIdOccupant())) {
+                    ++$nb;
+                }
                 $progressBar->advance();
             }
             $this->entityManager->flush();
