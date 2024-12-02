@@ -1,248 +1,66 @@
-{% if platform.feature_enable_menu_horizontale %}
-    {% set notification_count = count_notification(app.user) %}
-    <header class="fr-header">
-        <div class="fr-header__body">
-            <div class="{{ container_class }}">
-                <div class="fr-header__body-row">
-                    <div class="fr-header__brand fr-enlarge-link">
-                        <div class="fr-header__brand-top">
-                            <div class="fr-header__logo">
-                                <p class="fr-logo">
-                                    ministère <br> de la transition <br>écologique
-                                </p>
-                            </div>
-                            <div class="fr-header__navbar">
-                                <button class="fr-btn--menu fr-btn" data-fr-opened="false" aria-controls="modal-header-menu" aria-haspopup="menu" id="button-header-menu" title="Menu">
-                                    Menu
-                                </button>
-                            </div>
+{% set notification_count = count_notification(app.user) %}
+<header class="fr-header">
+    <div class="fr-header__body">
+        <div class="{{ container_class }}">
+            <div class="fr-header__body-row">
+                <div class="fr-header__brand fr-enlarge-link">
+                    <div class="fr-header__brand-top">
+                        <div class="fr-header__logo">
+                            <p class="fr-logo">
+                                ministère <br> de la transition <br>écologique
+                            </p>
                         </div>
-                        <div class="fr-header__service">
-                            <a href="{{ path('home') }}" title="Accueil - {{ platform.name }} - Ministère de la transition écologique">
-                                <img class="fr-responsive-img logo-width" src="{{ asset('img/' ~ platform.logo145) }}" alt="{{ platform.name }}">
-                            </a>
+                        <div class="fr-header__navbar">
+                            <button class="fr-btn--menu fr-btn" data-fr-opened="false" aria-controls="modal-header-menu" aria-haspopup="menu" id="button-header-menu" title="Menu">
+                                Menu
+                            </button>
                         </div>
                     </div>
-                    <div class="fr-header__tools">
-                        <div class="fr-header__tools-links">
-                            <ul class="fr-btns-group">
-                                <li>
-                                    <a class="fr-btn fr-icon-notification-3-fill notification-icon" href="{{ path('back_notifications_list') }}">
-                                        Notifications
-                                        {% if notification_count > 0 %}
-                                            ({{ notification_count }})
-                                            <span class="notification-badge"></span>
-                                        {% endif %}
-                                    </a>
-                                </li>
-                                <li>
-                                    <a class="fr-btn"
-                                       href="{{ path('back_profil') }}"
-                                       target="_self">
-                                        <span class="fr-mr-2v">{{ user_avatar_or_placeholder(app.user, 18) }}</span>
-                                        {{ app.user.prenom ~' '~app.user.nom[:1]|capitalize~'.' }}
-                                    </a>
-                                </li>
-                                <li>
-                                    <a class="fr-btn fr-fi-logout-box-r-line" href="{{ path('app_logout') }}">
-                                        Se déconnecter
-                                    </a>
-                                </li>
-                            </ul>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="fr-header__menu fr-modal" id="modal-header-menu" aria-labelledby="button-header-menu">
-            <div class="{{ container_class }}">
-                <button class="fr-btn--close fr-btn" aria-controls="modal-header-menu" title="Fermer">
-                    Fermer
-                </button>
-                <div class="fr-header__menu-links">
-                </div>
-                {% include 'back/header_main_menu.html.twig' with {'main_menu': main_menu()} %}
-            </div>
-        </div>
-    </header>
-{% else %}
-    <nav class="fr-sidemenu fr-sidemenu--sticky-full-height fr-text--center fr-col-12 fr-col-md-3 fr-col-lg-2 fr-pr-0"
-         aria-label="Menu latéral">
-        <div class="fr-p-5v fr-sidemenu__inner">
-            <button class="fr-sidemenu__btn" hidden aria-controls="fr-sidemenu-wrapper" aria-expanded="false">
-                Menu
-            </button>
-            <div class="fr-collapse" id="fr-sidemenu-wrapper">
-                <div class="fr-pb-5v">
-                    <img src="{{ asset('img/' ~ platform.logo145) }}" alt="{{ platform.name }}" width="145px">
-                </div>
-                <div>
-                    <div class="fr-display-inline-flex fr-align-items-center">
-                        {{ user_avatar_or_placeholder(app.user, 26) }}
-                        <div class="fr-ml-3v">
-                        <span class="fr-display-block">
-                            <a class="fr-link fr-link--lg text-decoration-underline" href="{{ path('back_profil') }}" target="_self">{{ app.user.prenom ~' '~app.user.nom[:1]|capitalize~'.' }}</a>
-                        </span>
-                        </div>
-                    </div>
-                    <div>
-                        {% if is_granted('ROLE_ADMIN') %}
-                            Super Admin
-                        {% elseif is_granted('ROLE_ADMIN_TERRITORY') %}
-                            {{ app.user.territory.name }}
-                        {% else %}
-                            {{ app.user.partner ? app.user.partner.nom : '' }}
-                        {% endif %}
-                    </div>
-                </div>
-                <ul class="fr-sidemenu__list">
-                    <li class="fr-sidemenu__item" {% if 'back_dashboard' is same as(app.request.get('_route')) %}fr-sidemenu__item--active{% endif %}>
-                        <a class="fr-sidemenu__link" href="{{ path('back_dashboard') }}"
-                           {% if 'back_dashboard' is same as(app.request.get('_route')) %}aria-current="page"{% endif %}>
-                            Tableau de bord
+                    <div class="fr-header__service">
+                        <a href="{{ path('home') }}" title="Accueil - {{ platform.name }} - Ministère de la transition écologique">
+                            <img class="fr-responsive-img logo-width" src="{{ asset('img/' ~ platform.logo145) }}" alt="{{ platform.name }}">
                         </a>
-                    </li>
-                    <li class="fr-sidemenu__item" {% if 'back_notifications_list' is same as(app.request.get('_route')) %}fr-sidemenu__item--active{% endif %}>
-                        <a class="fr-sidemenu__link" href="{{ path('back_notifications_list') }}"
-                           {% if 'back_notifications_list' is same as(app.request.get('_route')) %}aria-current="page"{% endif %}>Notifications
-                            <span class="fr-puce fr-puce--danger">{{ count_notification(app.user) }} </span>
-                        </a>
-                    </li>
-                    <button class="fr-sidemenu__btn"
-                            aria-expanded="{% if 'back_signalement_index' in app.request.get('_route') or 'back_signalement' in app.request.get('_route') %}true{% else %}false{% endif %}"
-                            aria-controls="fr-sidemenu-signalement">Signalements
-                    </button>
-                    <div class="fr-collapse" id="fr-sidemenu-signalement">
-                        <ul class="fr-sidemenu__list">
-                            <li class="fr-sidemenu__item {% if 'back_signalement_index' is same as(app.request.get('_route')) %}fr-sidemenu__item--active{% endif %}">
-                                <a class="fr-sidemenu__link" href="{{ path('back_signalement_index') }}" target="_self"
-                                   {% if 'back_signalement_index' is same as(app.request.get('_route')) %}aria-current="page" {% endif %}>Liste</a>
-                            </li>
-                            <li class="fr-sidemenu__item">
-                                <a class="fr-sidemenu__link" href="{{ path('front_signalement') }}" target="_self">Créer un
-                                    signalement</a>
-                            </li>
-                            {% if 'back_signalement_view' in app.request.get('_route') %}
-                                <li class="fr-sidemenu__item">
-                                    <a class="fr-sidemenu__link" href="#" target="_self"
-                                       aria-current="page">Détail {{ signalement.reference }}</a>
-                                </li>
-                            {% endif %}
-                        </ul>
                     </div>
-                    <button class="fr-sidemenu__btn"
-                            aria-expanded="{% if 'back_cartographie' is same as(app.request.get('_route')) or 'back_statistiques' is same as(app.request.get('_route')) %}true{% else %}false{% endif %}"
-                            aria-controls="fr-sidemenu-pilotage">Données chiffrées
-                    </button>
-                    <div class="fr-collapse" id="fr-sidemenu-pilotage">
-                        <ul class="fr-sidemenu__list">
-                            <li class="fr-sidemenu__item {% if 'back_cartographie' is same as(app.request.get('_route')) %}fr-sidemenu__item--active{% endif %}">
-                                <a class="fr-sidemenu__link" href="{{ path('back_cartographie') }}" target="_self"
-                                   {% if 'back_cartographie' is same as(app.request.get('_route')) %}aria-current="page"{% endif %}>Cartographie</a>
-                            </li>
-                            <li class="fr-sidemenu__item {% if 'back_statistiques' is same as(app.request.get('_route')) %}fr-sidemenu__item--active{% endif %}">
-                                <a class="fr-sidemenu__link" href="{{ path('back_statistiques') }}" target="_self"
-                                   {% if 'back_statistiques' is same as(app.request.get('_route')) %}aria-current="page"{% endif %}>Statistiques</a>
-                            </li>
-                        </ul>
-                    </div>
-                    {% if is_granted('ROLE_ADMIN_PARTNER') %}
-                        {% set routesAdmin = ['back_user_', 'back_partner_', 'back_tags', 'back_zone_'] %}
-                        <button class="fr-sidemenu__btn"
-                                aria-expanded="{% if routesAdmin|filter(route => app.request.get('_route') starts with route)|length > 0  %}true{% else %}false{% endif %}"
-                                aria-controls="fr-sidemenu-outils-admin">Outils Admin
-                        </button>
-                        <div class="fr-collapse" id="fr-sidemenu-outils-admin">
-                            <ul class="fr-sidemenu__list">
-                                {% if not is_granted('ROLE_ADMIN_TERRITORY') %}
-                                    <li class="fr-sidemenu__item {% if 'back_partner' is same as(app.request.get('_route')) %}fr-sidemenu__item--active{% endif %}">
-                                        <a class="fr-sidemenu__link"
-                                           href="{{ path('back_partner_view',{id:app.user.partner.id}) }}"
-                                           target="_self"
-                                           {% if 'back_partner' is same as(app.request.get('_route')) %}aria-current="page"{% endif %}>Mon partenaire</a>
-                                    </li>
-                                {% endif %}
-                                {% if is_granted('ROLE_ADMIN_TERRITORY') %}
-                                    <li class="fr-sidemenu__item {% if 'back_partner' in app.request.get('_route') %}fr-sidemenu__item--active{% endif %}">
-                                        <a class="fr-sidemenu__link" href="{{ path('back_partner_index') }}"
-                                           target="_self"
-                                           {% if 'back_partner' in app.request.get('_route') %}aria-current="page"{% endif %}>Partenaires</a>
-                                    </li>
-                                    <li class="fr-sidemenu__item {% if 'back_user_' in app.request.get('_route') %}fr-sidemenu__item--active{% endif %}">
-                                        <a class="fr-sidemenu__link" href="{{ path('back_user_index') }}"
-                                            target="_self"
-                                            {% if 'back_user_' in app.request.get('_route') %}aria-current="page"{% endif %}>Utilisateurs</a>
-                                    </li>
-                                    <li class="fr-sidemenu__item {% if 'back_tags' in app.request.get('_route') %}fr-sidemenu__item--active{% endif %}">
-                                        <a class="fr-sidemenu__link" href="{{ path('back_tags_index') }}"
-                                           target="_self"
-                                           {% if 'back_tags' in app.request.get('_route') %}aria-current="page"{% endif %}>Etiquettes</a>
-                                    </li>
-                                    {% if platform.feature_zonage %}
-                                        <li class="fr-sidemenu__item {% if 'back_zone_' in app.request.get('_route') %}fr-sidemenu__item--active{% endif %}">
-                                            <a class="fr-sidemenu__link" href="{{ path('back_zone_index') }}"
-                                               target="_self"
-                                               {% if 'back_zone' in app.request.get('_route') %}aria-current="page"{% endif %}>Zones</a>
-                                        </li>
+                </div>
+                <div class="fr-header__tools">
+                    <div class="fr-header__tools-links">
+                        <ul class="fr-btns-group">
+                            <li>
+                                <a class="fr-btn fr-icon-notification-3-fill notification-icon" href="{{ path('back_notifications_list') }}">
+                                    Notifications
+                                    {% if notification_count > 0 %}
+                                        ({{ notification_count }})
+                                        <span class="notification-badge"></span>
                                     {% endif %}
-                                {% endif %}
-                            </ul>
-                        </div>
-                    {% endif %}
-                    {% if is_granted('ROLE_ADMIN') %}
-                        {% set routesSA = ['back_account_', 'back_archived_partner', 'back_archived_signalements_index', 'back_auto_affectation', 'back_territory_'] %}
-                        <button class="fr-sidemenu__btn"
-                                aria-expanded="{% if routesSA|filter(route => app.request.get('_route') starts with route)|length > 0  %}true{% else %}false{% endif %}"
-                                aria-controls="fr-sidemenu-outils-sa">Outils SA
-                        </button>
-                        <div class="fr-collapse" id="fr-sidemenu-outils-sa">
-                            <ul class="fr-sidemenu__list">
-                                <li class="fr-sidemenu__item {% if 'back_archived_partner' in app.request.get('_route') %}fr-sidemenu__item--active{% endif %}">
-                                    <a class="fr-sidemenu__link" href="{{ path('back_archived_partner_index') }}"
-                                       target="_self"
-                                       {% if 'back_archived_partner' in app.request.get('_route') %}aria-current="page"{% endif %}>Partenaires archivés</a>
-                                </li>
-                                <li class="fr-sidemenu__item {% if 'back_account_' in app.request.get('_route') %}fr-sidemenu__item--active{% endif %}">
-                                    <a class="fr-sidemenu__link" href="{{ path('back_account_index') }}"
-                                       target="_self"
-                                       {% if 'back_account_' in app.request.get('_route') %}aria-current="page"{% endif %}>Comptes archivés</a>
-                                </li>
-                                <li class="fr-sidemenu__item {% if 'back_archived_signalements' in app.request.get('_route') %}fr-sidemenu__item--active{% endif %}">
-                                    <a class="fr-sidemenu__link" href="{{ path('back_archived_signalements_index') }}"
-                                       target="_self"
-                                       {% if 'back_archived_signalements' in app.request.get('_route') %}aria-current="page"{% endif %}>Signalements archivés</a>
-                                </li>
-                                <li class="fr-sidemenu__item {% if 'back_auto_affectation' in app.request.get('_route') %}fr-sidemenu__item--active{% endif %}">
-                                    <a class="fr-sidemenu__link" href="{{ path('back_auto_affectation_rule_index') }}"
-                                       target="_self"
-                                       {% if 'back_auto_affectation' in app.request.get('_route') %}aria-current="page"{% endif %}>Règles d'auto-affectation</a>
-                                </li>
-                                {% if platform.feature_grille_visite %}
-                                    <li class="fr-sidemenu__item {% if 'back_territory_' in app.request.get('_route') %}fr-sidemenu__item--active{% endif %}">
-                                        <a class="fr-sidemenu__link" href="{{ path('back_territory_index') }}"
-                                           target="_self"
-                                           {% if 'back_territory_' in app.request.get('_route') %}aria-current="page"{% endif %}>Territoires</a>
-                                    </li>
-                                {% endif %}
-                            </ul>
-                        </div>
-                    {% endif %}
-                </ul>
-                {% if gitbook is defined %}
-                    <ul class="fr-sidemenu__list fr-sidemenu__list-bottom">
-                        <li class="fr-sidemenu__item">
-                            <a class="fr-sidemenu__link fr-fi-external-link-line"
-                               href="{{ gitbook.documentation }}" target="_blank"  rel="noopener">Documentation</a>
-                        </li>
-                    </ul>
-                {% endif %}
-                <ul class="fr-sidemenu__list fr-sidemenu__list-bottom">
-                    <li class="fr-sidemenu__item">
-                        <a class="fr-sidemenu__link fr-fi-logout-box-r-line"
-                           href="{{ path('app_logout') }}">Se déconnecter</a>
-                    </li>
-                </ul>
+                                </a>
+                            </li>
+                            <li>
+                                <a class="fr-btn"
+                                    href="{{ path('back_profil') }}"
+                                    target="_self">
+                                    <span class="fr-mr-2v">{{ user_avatar_or_placeholder(app.user, 18) }}</span>
+                                    {{ app.user.prenom ~' '~app.user.nom[:1]|capitalize~'.' }}
+                                </a>
+                            </li>
+                            <li>
+                                <a class="fr-btn fr-fi-logout-box-r-line" href="{{ path('app_logout') }}">
+                                    Se déconnecter
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
             </div>
         </div>
-    </nav>
-{% endif %}
+    </div>
+    <div class="fr-header__menu fr-modal" id="modal-header-menu" aria-labelledby="button-header-menu">
+        <div class="{{ container_class }}">
+            <button class="fr-btn--close fr-btn" aria-controls="modal-header-menu" title="Fermer">
+                Fermer
+            </button>
+            <div class="fr-header__menu-links">
+            </div>
+            {% include 'back/header_main_menu.html.twig' with {'main_menu': main_menu()} %}
+        </div>
+    </div>
+</header>

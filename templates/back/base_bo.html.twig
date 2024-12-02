@@ -3,35 +3,27 @@
 {% block title %}{{ title }}{% endblock %}
 
 {% block body %}
-    {% if platform.feature_enable_menu_horizontale %}
-        {% include 'back/nav_bo.html.twig' %}
-        <main id="container-horizontal" class="fr-mb-5v">
-            <div class="{{ app.request.get('_route') in ['back_cartographie', 'back_signalement_index', 'back_dashboard'] ? 'fr-container-fluid' : container_class }}">
-                <div class="fr-grid-row">
-                    <div class="fr-col-12" id="content">
-    {% else %}
-        <main id="container-vertical">
-            <div class="fr-container-fluid">
-                <div class="fr-grid-row">
-                    {% include 'back/nav_bo.html.twig' %}
-                    <div class="fr-col-12 fr-col-md-9 fr-col-lg-10 overflow-x-hidden" id="content">
-    {% endif %}
-                        {% for label, messages in app.flashes %}
-                            {% for message in messages %}
-                                <div role="alert" class="fr-alert fr-alert--{{ label }} fr-alert--sm">
-                                    {% if label is same as('error error-raw')  %}
-                                        <p>{{ message|raw }}</p>
-                                    {% else %}
-                                        <p>{{ message }}</p>
-                                    {% endif %}
-                                </div>
-                            {% endfor %}
+    {% include 'back/nav_bo.html.twig' %}
+    <main id="container-horizontal" class="fr-mb-5v">
+        <div class="{{ app.request.get('_route') in ['back_cartographie', 'back_signalement_index', 'back_dashboard'] ? 'fr-container-fluid' : container_class }}">
+            <div class="fr-grid-row">
+                <div class="fr-col-12" id="content">
+                    {% for label, messages in app.flashes %}
+                        {% for message in messages %}
+                            <div role="alert" class="fr-alert fr-alert--{{ label }} fr-alert--sm">
+                                {% if label is same as('error error-raw')  %}
+                                    <p>{{ message|raw }}</p>
+                                {% else %}
+                                    <p>{{ message }}</p>
+                                {% endif %}
+                            </div>
                         {% endfor %}
-                        {% block content %}{% endblock %}
-                    </div>
+                    {% endfor %}
+                {% block content %}{% endblock %}
                 </div>
             </div>
-        </main>
+        </div>
+    </main>
 {% endblock %}
 
 {% block customscripts %}
