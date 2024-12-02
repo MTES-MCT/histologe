@@ -129,7 +129,9 @@ class SignalementFileController extends AbstractController
             ->set('f.isWaitingSuivi', 'false')
             ->where('f.signalement = :signalement')
             ->andWhere('f.isWaitingSuivi = true')
+            ->andWhere('f.uploadedBy = :user')
             ->setParameter('signalement', $signalement)
+            ->setParameter('user', $this->getUser())
             ->getQuery();
         $update->execute();
 

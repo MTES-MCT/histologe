@@ -17,6 +17,7 @@ enum MotifCloture: string
     case RESPONSABILITE_DE_L_OCCUPANT = 'RESPONSABILITE_DE_L_OCCUPANT';
     case RSD = 'RSD';
     case TRAVAUX_FAITS_OU_EN_COURS = 'TRAVAUX_FAITS_OU_EN_COURS';
+    case DOUBLON = 'DOUBLON';
     case AUTRE = 'AUTRE';
 
     public function label(): string
@@ -40,6 +41,7 @@ enum MotifCloture: string
             'RESPONSABILITE_DE_L_OCCUPANT' => "Responsabilité de l'occupant / assurantiel",
             'RSD' => 'RSD',
             'TRAVAUX_FAITS_OU_EN_COURS' => 'Travaux faits ou en cours', // précise Problème résolu
+            'DOUBLON' => 'Doublon',
             'AUTRE' => 'Autre',
         ];
     }
