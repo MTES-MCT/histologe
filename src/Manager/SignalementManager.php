@@ -195,7 +195,7 @@ class SignalementManager extends AbstractManager
         }
     }
 
-    public function updateAddressOccupantFromBanData(Signalement $signalement, bool $updateGeoloc = true, ?string $cpOccupant = null, ?string $villeOccupant = null): void
+    public function updateAddressOccupantFromBanData(Signalement $signalement, bool $updateGeoloc = true): void
     {
         $addressResult = $this->addressService->getAddress($signalement->getAddressCompleteOccupant());
         if ($addressResult->getScore() > self::SCORE_IF_BAN_ID_ACCEPTED) {
@@ -210,8 +210,8 @@ class SignalementManager extends AbstractManager
             }
 
             return;
-        } elseif ($updateGeoloc && !empty($cpOccupant) && !empty($villeOccupant)) {
-            $inseeResult = $this->addressService->getAddress($cpOccupant.' '.$villeOccupant);
+        } elseif ($updateGeoloc && !empty($signalement->getCpOccupant()) && !empty($signalement->getVilleOccupant())) {
+            $inseeResult = $this->addressService->getAddress($signalement->getCpOccupant().' '.$signalement->getVilleOccupant());
             if (!empty($inseeResult->getCity())) {
                 $signalement
                     ->setBanIdOccupant(0)
@@ -389,9 +389,6 @@ class SignalementManager extends AbstractManager
 
         $this->updateAddressOccupantFromBanData(
             signalement: $signalement,
-            updateGeoloc: true,
-            cpOccupant: $adresseOccupantRequest->getCodePostal(),
-            villeOccupant: $adresseOccupantRequest->getVille(),
         );
 
         $this->save($signalement);

@@ -330,9 +330,6 @@ class SignalementBuilder
 
         $this->signalementManager->updateAddressOccupantFromBanData(
             signalement: $this->signalement,
-            updateGeoloc: true,
-            cpOccupant: $this->signalement->getCpOccupant(),
-            villeOccupant: $this->signalement->getVilleOccupant(),
         );
     }
 
