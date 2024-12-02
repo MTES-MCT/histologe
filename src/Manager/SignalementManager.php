@@ -195,13 +195,42 @@ class SignalementManager extends AbstractManager
         }
     }
 
-    public function updateBanIdOccupantFromAddressComplete(Signalement $signalement): void
+    public function updateAddressOccupantFromBanData(Signalement $signalement, bool $updateGeoloc = true, ?string $cpOccupant = null, ?string $villeOccupant = null): void
     {
         $addressResult = $this->addressService->getAddress($signalement->getAddressCompleteOccupant());
         if ($addressResult->getScore() > self::SCORE_IF_BAN_ID_ACCEPTED) {
             $signalement->setBanIdOccupant($addressResult->getBanId());
-        } else {
-            $signalement->setBanIdOccupant(0);
+            if ($updateGeoloc) {
+                $signalement
+                    ->setInseeOccupant($addressResult->getInseeCode())
+                    ->setGeoloc([
+                        'lat' => $addressResult->getLatitude(),
+                        'lng' => $addressResult->getLongitude(),
+                    ]);
+            }
+
+            return;
+        } elseif ($updateGeoloc && !empty($cpOccupant) && !empty($villeOccupant)) {
+            $inseeResult = $this->addressService->getAddress($cpOccupant.' '.$villeOccupant);
+            if (!empty($inseeResult->getCity())) {
+                $signalement
+                    ->setBanIdOccupant(0)
+                    ->setVilleOccupant($inseeResult->getCity())
+                    ->setInseeOccupant($inseeResult->getInseeCode())
+                    ->setGeoloc([
+                        'lat' => $inseeResult->getLatitude(),
+                        'lng' => $inseeResult->getLongitude(),
+                    ]);
+
+                return;
+            }
+        }
+
+        $signalement->setBanIdOccupant(0);
+        if ($updateGeoloc) {
+            $signalement
+                ->setInseeOccupant(null)
+                ->setGeoloc([]);
         }
     }
 
@@ -358,21 +387,12 @@ class SignalementManager extends AbstractManager
             ->setAdresseAutreOccupant($adresseOccupantRequest->getAutre())
             ->setManualAddressOccupant('1' === $adresseOccupantRequest->getManual());
 
-        $resetAddress = $this->addressService->getAddress($adresseOccupantRequest->getCodePostal().' '.$adresseOccupantRequest->getVille());
-        if (!empty($resetAddress->getCity())) {
-            $signalement->setVilleOccupant($resetAddress->getCity());
-        }
-        if (!empty($resetAddress->getInseeCode())) {
-            $signalement->setInseeOccupant($resetAddress->getInseeCode());
-        }
-        if (!empty($resetAddress->getLatitude())) {
-            $signalement->setGeoloc([
-                'lat' => $resetAddress->getLatitude(),
-                'lng' => $resetAddress->getLongitude(),
-            ]);
-        }
-
-        $this->updateBanIdOccupantFromAddressComplete($signalement);
+        $this->updateAddressOccupantFromBanData(
+            signalement: $signalement,
+            updateGeoloc: true,
+            cpOccupant: $adresseOccupantRequest->getCodePostal(),
+            villeOccupant: $adresseOccupantRequest->getVille(),
+        );
 
         $this->save($signalement);
 

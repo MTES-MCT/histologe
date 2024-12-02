@@ -289,6 +289,6 @@ class SignalementDraftRequestTest extends WebTestCase
             ->setMessageAdministration('Message administration');
 
         $errors = $this->validator->validate($signalementDraftRequest);
-        $this->assertCount(98, $errors);
+        $this->assertCount(96, $errors);
     }
 }

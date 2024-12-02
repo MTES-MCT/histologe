@@ -55,7 +55,10 @@ class InitIdBanCommand extends Command
 
             /** @var Signalement $signalement */
             foreach ($listSignalementBanIdNull as $signalement) {
-                $this->signalementManager->updateBanIdOccupantFromAddressComplete($signalement);
+                $this->signalementManager->updateAddressOccupantFromBanData(
+                    signalement: $signalement,
+                    updateGeoloc: false,
+                );
                 $progressBar->advance();
             }
             $this->entityManager->flush();

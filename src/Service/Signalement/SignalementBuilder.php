@@ -25,7 +25,6 @@ use App\Repository\DesordreCritereRepository;
 use App\Repository\DesordrePrecisionRepository;
 use App\Repository\TerritoryRepository;
 use App\Serializer\SignalementDraftRequestSerializer;
-use App\Service\DataGouv\AddressService;
 use App\Service\Signalement\DesordreTraitement\DesordreCompositionLogementLoader;
 use App\Service\Signalement\DesordreTraitement\DesordreTraitementProcessor;
 use App\Service\Signalement\Qualification\SignalementQualificationUpdater;
@@ -56,7 +55,6 @@ class SignalementBuilder
         private CriticiteCalculator $criticiteCalculator,
         private SignalementQualificationUpdater $signalementQualificationUpdater,
         private DesordreCompositionLogementLoader $desordreCompositionLogementLoader,
-        private AddressService $addressService,
         private SignalementManager $signalementManager,
     ) {
     }
@@ -321,7 +319,6 @@ class SignalementBuilder
             ->setIsLogementSocial($this->isLogementSocial())
             ->setAdresseOccupant($this->signalementDraftRequest->getAdresseLogementAdresseDetailNumero())
             ->setCpOccupant($this->signalementDraftRequest->getAdresseLogementAdresseDetailCodePostal())
-            ->setInseeOccupant($this->signalementDraftRequest->getAdresseLogementAdresseDetailInsee())
             ->setVilleOccupant($this->signalementDraftRequest->getAdresseLogementAdresseDetailCommune())
             ->setEtageOccupant($this->signalementDraftRequest->getAdresseLogementComplementAdresseEtage())
             ->setEscalierOccupant($this->signalementDraftRequest->getAdresseLogementComplementAdresseEscalier())
@@ -331,13 +328,12 @@ class SignalementBuilder
             ->setAdresseAutreOccupant($this->signalementDraftRequest->getAdresseLogementComplementAdresseAutre())
             ->setManualAddressOccupant($this->signalementDraftRequest->getAdresseLogementAdresseDetailManual());
 
-        $this->signalementManager->updateBanIdOccupantFromAddressComplete($this->signalement);
-
-        $inseeResult = $this->addressService->getAddress($this->signalement->getCpOccupant().' '.$this->signalement->getVilleOccupant());
-        $this->signalement->setGeoloc([
-            'lat' => $inseeResult->getLatitude(),
-            'lng' => $inseeResult->getLongitude(),
-        ]);
+        $this->signalementManager->updateAddressOccupantFromBanData(
+            signalement: $this->signalement,
+            updateGeoloc: true,
+            cpOccupant: $this->signalement->getCpOccupant(),
+            villeOccupant: $this->signalement->getVilleOccupant(),
+        );
     }
 
     private function setOccupantDeclarantData(): void
