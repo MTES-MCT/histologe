@@ -1,9 +1,9 @@
-const currentHash = window.location.hash != '' ? window.location.hash.substring(1) : ''
-const btnElements = document.querySelectorAll(`.fr-tabs__tab`);
-const tabElements = document.querySelectorAll(`.fr-tabs__panel`);
-const buttonElement = document.getElementById('tabpanel-'+currentHash)
-const tabElement = document.getElementById('tabpanel-'+currentHash+'-panel');
-if(buttonElement && tabElement){
+const currentHash = window.location.hash !== '' ? window.location.hash.substring(1) : ''
+const btnElements = document.querySelectorAll('.fr-tabs__tab')
+const tabElements = document.querySelectorAll('.fr-tabs__panel')
+const buttonElement = document.getElementById('tabpanel-' + currentHash)
+const tabElement = document.getElementById('tabpanel-' + currentHash + '-panel')
+if (buttonElement && tabElement) {
   if (!tabElement.disabled) {
     btnElements.forEach((btnElement) => {
       btnElement.setAttribute('aria-selected', 'false')
@@ -16,7 +16,7 @@ if(buttonElement && tabElement){
   }
 }
 btnElements.forEach((btnElement) => {
-    btnElement.addEventListener('click', (e) => {
-        window.location.hash = btnElement.id.substring(9)
-    })
+  btnElement.addEventListener('click', (e) => {
+    window.location.hash = btnElement.id.substring(9)
+  })
 })

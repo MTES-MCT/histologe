@@ -26,8 +26,6 @@ class AdresseOccupantRequestTest extends KernelTestCase
             escalier: 'A',
             numAppart: '42',
             autre: 'Proche de la boulangerie',
-            geolocLng: '2.3522',
-            geolocLat: '48.8566',
             insee: '75056',
             manual: '1',
             needResetInsee: '1'
@@ -40,8 +38,6 @@ class AdresseOccupantRequestTest extends KernelTestCase
         $this->assertSame('A', $adresseOccupantRequest->getEscalier());
         $this->assertSame('42', $adresseOccupantRequest->getNumAppart());
         $this->assertSame('Proche de la boulangerie', $adresseOccupantRequest->getAutre());
-        $this->assertSame('2.3522', $adresseOccupantRequest->getGeolocLng());
-        $this->assertSame('48.8566', $adresseOccupantRequest->getGeolocLat());
         $this->assertSame('75056', $adresseOccupantRequest->getInsee());
         $this->assertSame('1', $adresseOccupantRequest->getManual());
         $this->assertSame('1', $adresseOccupantRequest->getNeedResetInsee());
@@ -60,14 +56,12 @@ class AdresseOccupantRequestTest extends KernelTestCase
             escalier: 'EscalierInvalide',
             numAppart: 'NumAppInvalide',
             autre: str_repeat('x', 256),
-            geolocLng: 'LongitudeInvalide',
-            geolocLat: 'LatitudeInvalide',
             insee: '123',
             manual: '2',
             needResetInsee: '2'
         );
 
         $errors = $this->validator->validate($adresseOccupantRequestInvalide);
-        $this->assertCount(13, $errors);
+        $this->assertCount(11, $errors);
     }
 }

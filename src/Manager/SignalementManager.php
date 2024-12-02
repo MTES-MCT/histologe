@@ -52,6 +52,8 @@ use Symfony\Component\Security\Core\User\UserInterface;
 
 class SignalementManager extends AbstractManager
 {
+    public const float SCORE_IF_BAN_ID_ACCEPTED = 0.9;
+
     public function __construct(
         protected ManagerRegistry $managerRegistry,
         private Security $security,
@@ -190,6 +192,45 @@ class SignalementManager extends AbstractManager
 
         if (empty($signalement->getCpOccupant())) {
             $signalement->setCpOccupant($address->getZipCode());
+        }
+    }
+
+    public function updateAddressOccupantFromBanData(Signalement $signalement, bool $updateGeoloc = true): void
+    {
+        $addressResult = $this->addressService->getAddress($signalement->getAddressCompleteOccupant());
+        if ($addressResult->getScore() > self::SCORE_IF_BAN_ID_ACCEPTED) {
+            $signalement->setBanIdOccupant($addressResult->getBanId());
+            if ($updateGeoloc) {
+                $signalement
+                    ->setInseeOccupant($addressResult->getInseeCode())
+                    ->setGeoloc([
+                        'lat' => $addressResult->getLatitude(),
+                        'lng' => $addressResult->getLongitude(),
+                    ]);
+            }
+
+            return;
+        } elseif ($updateGeoloc && !empty($signalement->getCpOccupant()) && !empty($signalement->getVilleOccupant())) {
+            $inseeResult = $this->addressService->getAddress($signalement->getCpOccupant().' '.$signalement->getVilleOccupant());
+            if (!empty($inseeResult->getCity())) {
+                $signalement
+                    ->setBanIdOccupant(0)
+                    ->setVilleOccupant($inseeResult->getCity())
+                    ->setInseeOccupant($inseeResult->getInseeCode())
+                    ->setGeoloc([
+                        'lat' => $inseeResult->getLatitude(),
+                        'lng' => $inseeResult->getLongitude(),
+                    ]);
+
+                return;
+            }
+        }
+
+        $signalement->setBanIdOccupant(0);
+        if ($updateGeoloc) {
+            $signalement
+                ->setInseeOccupant(null)
+                ->setGeoloc([]);
         }
     }
 
@@ -339,10 +380,6 @@ class SignalementManager extends AbstractManager
             ->setCpOccupant($adresseOccupantRequest->getCodePostal())
             ->setVilleOccupant($adresseOccupantRequest->getVille())
             ->setInseeOccupant($adresseOccupantRequest->getInsee())
-            ->setGeoloc([
-                'lat' => $adresseOccupantRequest->getGeolocLat(),
-                'lng' => $adresseOccupantRequest->getGeolocLng(),
-            ])
 
             ->setEtageOccupant($adresseOccupantRequest->getEtage())
             ->setEscalierOccupant($adresseOccupantRequest->getEscalier())
@@ -350,21 +387,9 @@ class SignalementManager extends AbstractManager
             ->setAdresseAutreOccupant($adresseOccupantRequest->getAutre())
             ->setManualAddressOccupant('1' === $adresseOccupantRequest->getManual());
 
-        if ('1' === $adresseOccupantRequest->getNeedResetInsee()) {
-            $resetAddress = $this->addressService->getAddress($adresseOccupantRequest->getCodePostal().' '.$adresseOccupantRequest->getVille());
-            if (!empty($resetAddress->getCity())) {
-                $signalement->setVilleOccupant($resetAddress->getCity());
-            }
-            if (!empty($resetAddress->getInseeCode())) {
-                $signalement->setInseeOccupant($resetAddress->getInseeCode());
-            }
-            if (!empty($resetAddress->getLatitude())) {
-                $signalement->setGeoloc([
-                    'lat' => $resetAddress->getLatitude(),
-                    'lng' => $resetAddress->getLongitude(),
-                ]);
-            }
-        }
+        $this->updateAddressOccupantFromBanData(
+            signalement: $signalement,
+        );
 
         $this->save($signalement);
 

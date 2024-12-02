@@ -10,6 +10,7 @@ use Symfony\Contracts\HttpClient\HttpClientInterface;
 class AddressService
 {
     private const string API_URL = 'https://api-adresse.data.gouv.fr/search/?q=';
+    private const string API_PARAM_LIMIT = '&limit=1';
 
     public function __construct(
         private readonly HttpClientInterface $httpClient,
@@ -20,7 +21,8 @@ class AddressService
     public function searchAddress(string $query): ?array
     {
         try {
-            $response = $this->httpClient->request('GET', self::API_URL.urlencode($query));
+            $url = self::API_URL.urlencode($query).self::API_PARAM_LIMIT;
+            $response = $this->httpClient->request('GET', $url);
 
             if (Response::HTTP_OK === $response->getStatusCode()) {
                 return $response->toArray();

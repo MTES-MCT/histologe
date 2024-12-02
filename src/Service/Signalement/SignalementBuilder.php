@@ -19,6 +19,7 @@ use App\Factory\Signalement\InformationProcedureFactory;
 use App\Factory\Signalement\SituationFoyerFactory;
 use App\Factory\Signalement\TypeCompositionLogementFactory;
 use App\Manager\DesordreCritereManager;
+use App\Manager\SignalementManager;
 use App\Repository\BailleurRepository;
 use App\Repository\DesordreCritereRepository;
 use App\Repository\DesordrePrecisionRepository;
@@ -54,6 +55,7 @@ class SignalementBuilder
         private CriticiteCalculator $criticiteCalculator,
         private SignalementQualificationUpdater $signalementQualificationUpdater,
         private DesordreCompositionLogementLoader $desordreCompositionLogementLoader,
+        private SignalementManager $signalementManager,
     ) {
     }
 
@@ -317,11 +319,6 @@ class SignalementBuilder
             ->setIsLogementSocial($this->isLogementSocial())
             ->setAdresseOccupant($this->signalementDraftRequest->getAdresseLogementAdresseDetailNumero())
             ->setCpOccupant($this->signalementDraftRequest->getAdresseLogementAdresseDetailCodePostal())
-            ->setInseeOccupant($this->signalementDraftRequest->getAdresseLogementAdresseDetailInsee())
-            ->setGeoloc([
-                'lat' => $this->signalementDraftRequest->getAdresseLogementAdresseDetailGeolocLat(),
-                'lng' => $this->signalementDraftRequest->getAdresseLogementAdresseDetailGeolocLng(),
-            ])
             ->setVilleOccupant($this->signalementDraftRequest->getAdresseLogementAdresseDetailCommune())
             ->setEtageOccupant($this->signalementDraftRequest->getAdresseLogementComplementAdresseEtage())
             ->setEscalierOccupant($this->signalementDraftRequest->getAdresseLogementComplementAdresseEscalier())
@@ -330,6 +327,10 @@ class SignalementBuilder
             )
             ->setAdresseAutreOccupant($this->signalementDraftRequest->getAdresseLogementComplementAdresseAutre())
             ->setManualAddressOccupant($this->signalementDraftRequest->getAdresseLogementAdresseDetailManual());
+
+        $this->signalementManager->updateAddressOccupantFromBanData(
+            signalement: $this->signalement,
+        );
     }
 
     private function setOccupantDeclarantData(): void

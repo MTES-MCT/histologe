@@ -27,8 +27,6 @@ class SignalementDraftRequestTest extends WebTestCase
             ->setAdresseLogementAdresseDetailCodePostal('13129')
             ->setAdresseLogementAdresseDetailCommune('Arles')
             ->setAdresseLogementAdresseDetailInsee('13004')
-            ->setAdresseLogementAdresseDetailGeolocLat(48.8566)
-            ->setAdresseLogementAdresseDetailGeolocLng(2.3522)
             ->setAdresseLogementAdresseDetailManual(true)
             ->setAdresseLogementComplementAdresseEscalier('A')
             ->setAdresseLogementComplementAdresseEtage('3')
@@ -199,8 +197,6 @@ class SignalementDraftRequestTest extends WebTestCase
             ->setAdresseLogementAdresseDetailCodePostal('1234')
             ->setAdresseLogementAdresseDetailCommune('')
             ->setAdresseLogementAdresseDetailInsee('1234')
-            ->setAdresseLogementAdresseDetailGeolocLat(999.999)
-            ->setAdresseLogementAdresseDetailGeolocLng(999.999)
             ->setAdresseLogementComplementAdresseEscalier(str_repeat('c', 4))
             ->setAdresseLogementComplementAdresseEtage(str_repeat('d', 6))
             ->setAdresseLogementComplementAdresseNumeroAppartement(str_repeat('e', 6))
@@ -293,6 +289,6 @@ class SignalementDraftRequestTest extends WebTestCase
             ->setMessageAdministration('Message administration');
 
         $errors = $this->validator->validate($signalementDraftRequest);
-        $this->assertCount(98, $errors);
+        $this->assertCount(96, $errors);
     }
 }

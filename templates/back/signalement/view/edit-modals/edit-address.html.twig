@@ -51,8 +51,6 @@
                                     <input type="hidden" name="needResetInsee" value="0" data-autocomplete-need-reset-insee="true">
                                     <input type="hidden" name="manual" value="{{ signalement.manualAddressOccupant }}" data-autocomplete-manual="true">
                                     <input type="hidden" name="insee" value="{{ signalement.inseeOccupant }}" data-autocomplete-insee="true">
-                                    <input type="hidden" name="geolocLat" value="{% if signalement.geoloc.lat is defined %}{{ signalement.geoloc.lat }}{% endif %}" data-autocomplete-geoloclat="true">
-                                    <input type="hidden" name="geolocLng" value="{% if signalement.geoloc.lng is defined %}{{ signalement.geoloc.lng }}{% endif %}" data-autocomplete-geoloclng="true">
                                 </div>
                                 <div class="fr-col-12 fr-col-md-6">
                                     <h2 class="fr-h5">Complément d'adresse (facultatif)</h2>

@@ -200,6 +200,9 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
     #[ORM\Column(type: 'string', length: 100, nullable: true)]
     private $villeOccupant;
 
+    #[ORM\Column(type: 'string', length: 50, nullable: true)]
+    private $banIdOccupant;
+
     #[ORM\Column(type: 'boolean')]
     private $isCguAccepted;
 
@@ -1049,6 +1052,18 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
             $this->cpOccupant,
             $this->villeOccupant
         );
+    }
+
+    public function getBanIdOccupant(): ?string
+    {
+        return $this->banIdOccupant;
+    }
+
+    public function setBanIdOccupant(?string $banIdOccupant): self
+    {
+        $this->banIdOccupant = $banIdOccupant;
+
+        return $this;
     }
 
     public function getIsCguAccepted(): ?bool

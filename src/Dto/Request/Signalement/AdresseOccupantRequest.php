@@ -25,12 +25,6 @@ class AdresseOccupantRequest implements RequestInterface
         private readonly ?string $numAppart = null,
         #[Assert\Length(max: 255, maxMessage: 'Le champ Autre ne peut pas dépasser {{ limit }} caractères.')]
         private readonly ?string $autre = null,
-        #[Assert\Length(max: 50, maxMessage: 'La longitude ne peut pas dépasser {{ limit }} caractères.')]
-        #[Assert\Regex(pattern: '/^[-+]?([1-8]?\d(\.\d+)?|90(\.0+)?)$/', message: 'La longitude doit être un nombre décimal.')]
-        private readonly ?string $geolocLng = null,
-        #[Assert\Length(max: 50, maxMessage: 'La latitude ne peut pas dépasser {{ limit }} caractères.')]
-        #[Assert\Regex(pattern: '/^[-+]?([1-8]?\d(\.\d+)?|90(\.0+)?)$/', message: 'La latitude doit être un nombre décimal.')]
-        private readonly ?string $geolocLat = null,
         #[Assert\Regex(pattern: '/^[0-9][0-9A-Za-z][0-9]{3}$/', message: 'Le code insee doit être composé de 5 caractères.')]
         private readonly ?string $insee = null,
         #[Assert\Choice(choices: ['1'], message: 'Le champ "manual" est incorrect.')]
@@ -73,16 +67,6 @@ class AdresseOccupantRequest implements RequestInterface
     public function getAutre(): ?string
     {
         return $this->autre;
-    }
-
-    public function getGeolocLng(): ?string
-    {
-        return $this->geolocLng;
-    }
-
-    public function getGeolocLat(): ?string
-    {
-        return $this->geolocLat;
     }
 
     public function getInsee(): ?string
