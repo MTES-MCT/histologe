@@ -112,7 +112,7 @@ class SignalementControllerTest extends WebTestCase
 
         $client->request('GET', $route);
         $client->submitForm(
-            'Cloturer pour tous les partenaires',
+            'Clôturer pour tous les partenaires',
             [
                 'cloture[motif]' => 'INSALUBRITE',
                 'cloture[suivi]' => 'Lorem ipsum dolor sit amet, consectetur adipiscing elit',
@@ -153,7 +153,7 @@ class SignalementControllerTest extends WebTestCase
 
         $client->request('GET', $route);
         $client->submitForm(
-            'Cloturer pour tous les partenaires',
+            'Clôturer pour tous les partenaires',
             [
                 'cloture[motif]' => 'INSALUBRITE',
                 'cloture[suivi]' => 'Lorem ipsum dolor sit amet, consectetur adipiscing elit',
@@ -194,7 +194,7 @@ class SignalementControllerTest extends WebTestCase
 
         $client->request('GET', $route);
         $client->submitForm(
-            'Cloturer pour Partenaire 13-01',
+            'Clôturer pour Partenaire 13-01',
             [
                 'cloture[motif]' => 'INSALUBRITE',
                 'cloture[suivi]' => 'Lorem ipsum dolor sit amet, consectetur adipiscing elit',
@@ -231,7 +231,7 @@ class SignalementControllerTest extends WebTestCase
 
         $client->request('GET', $route);
         $client->submitForm(
-            'Cloturer pour Partenaire 13-02',
+            'Clôturer pour Partenaire 13-02',
             [
                 'cloture[motif]' => 'RSD',
                 'cloture[suivi]' => 'Lorem ipsum dolor sit amet, consectetur adipiscing elit',
@@ -271,7 +271,7 @@ class SignalementControllerTest extends WebTestCase
 
         $client->request('GET', $route);
         $client->submitForm(
-            'Cloturer pour Partenaire 13-02',
+            'Clôturer pour Partenaire 13-02',
             [
                 'cloture[motif]' => 'RSD',
                 'cloture[type]' => 'partner',
