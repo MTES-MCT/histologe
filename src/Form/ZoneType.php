@@ -65,7 +65,7 @@ class ZoneType extends AbstractType
                         ->orderBy('p.nom', 'ASC');
                 },
                 'choice_label' => 'nom',
-                'label' => 'Partenaires de la zone',
+                'label' => 'Partenaires de la zone (facultatitf)',
                 'help' => 'Sélectionnez dans la liste les partenaires qui pourront intervenir spécifiquement sur les dossiers situés dans la zone.',
                 'noselectionlabel' => 'Sélectionnez les partenaires',
                 'nochoiceslabel' => 'Aucun partenaire disponible',
@@ -81,7 +81,7 @@ class ZoneType extends AbstractType
                 },
                 'choice_label' => 'nom',
                 'help' => 'Sélectionnez dans la liste les partenaires à exclure de la zone. Ces partenaires ne pourront pas être affectés aux dossiers situés dans la zone.',
-                'label' => 'Partenaires exclus de la zone',
+                'label' => 'Partenaires exclus de la zone (facultatif)',
                 'noselectionlabel' => 'Sélectionnez les partenaires',
                 'nochoiceslabel' => 'Aucun partenaire disponible',
                 'by_reference' => false,
@@ -120,7 +120,7 @@ class ZoneType extends AbstractType
         ]);
         if ($zone->getId()) {
             $builder->add('save', SubmitType::class, [
-                'label' => 'Modifier',
+                'label' => 'Valider',
                 'attr' => ['class' => 'fr-btn fr-icon-check-line fr-btn--icon-left'],
                 'row_attr' => ['class' => 'fr-text--right'],
             ]);

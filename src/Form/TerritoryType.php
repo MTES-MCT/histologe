@@ -74,7 +74,7 @@ class TerritoryType extends AbstractType
             'required' => false,
         ]);
         $builder->add('submit', SubmitType::class, [
-            'label' => 'Modifier',
+            'label' => 'Valider',
             'attr' => ['class' => 'fr-btn fr-icon-check-line fr-btn--icon-left'],
             'row_attr' => ['class' => 'fr-text--right'],
         ]);

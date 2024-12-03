@@ -43,6 +43,9 @@ class PartnerPerimetreType extends AbstractType
                     'readonly' => isset($insee[$territory?->getZip()][$partner->getNom()]),
                 ],
                 'required' => false,
+                'constraints' => [
+                    new Assert\Callback([$this, 'validateInseeInTerritory']),
+                ],
             ])->add('zones', SearchCheckboxType::class, [
                 'class' => Zone::class,
                 'query_builder' => function (ZoneRepository $zoneRepository) use ($territory) {
@@ -72,7 +75,7 @@ class PartnerPerimetreType extends AbstractType
                 'nochoiceslabel' => 'Aucune zone disponible',
                 'by_reference' => false,
             ])->add('save', SubmitType::class, [
-                'label' => 'Modifier',
+                'label' => 'Valider',
                 'attr' => ['class' => 'fr-btn fr-icon-check-line fr-btn--icon-left'],
                 'row_attr' => ['class' => 'fr-text--right'],
             ]);
@@ -95,29 +98,23 @@ class PartnerPerimetreType extends AbstractType
     {
         $resolver->setDefaults([
             'data_class' => Partner::class,
-            'constraints' => [
-                new Assert\Callback([$this, 'validateInseeInTerritory']),
-            ],
         ]);
     }
 
-    public function validateInseeInTerritory(mixed $value, ExecutionContextInterface $context)
+    public function validateInseeInTerritory($codesInsee, ExecutionContextInterface $context)
     {
-        if ($value instanceof Partner) {
-            $partner = $value;
-            $codesInsee = $partner->getInsee();
-            if (empty($codesInsee)) {
-                return;
-            }
-            $territory = $partner->getTerritory();
-            foreach ($codesInsee as $insee) {
-                /** @var ?Commune $commune */
-                $commune = $this->communeManager->findOneBy(['codeInsee' => trim($insee)]);
-                if (null === $commune) {
-                    $context->addViolation('Il n\'existe pas de commune avec le code insee '.$insee);
-                } elseif ($commune->getTerritory() !== $territory) {
-                    $context->addViolation('La commune avec le code insee '.$insee.' ne fait pas partie du territoire du partenaire');
-                }
+        $partner = $context->getObject()->getParent()->getData();
+        $territory = $partner->getTerritory();
+        if (empty($codesInsee)) {
+            return;
+        }
+        foreach ($codesInsee as $insee) {
+            /** @var ?Commune $commune */
+            $commune = $this->communeManager->findOneBy(['codeInsee' => trim($insee)]);
+            if (null === $commune) {
+                $context->buildViolation('Il n\'existe pas de commune avec le code insee '.$insee)->atPath('insee')->addViolation();
+            } elseif ($commune->getTerritory() !== $territory) {
+                $context->buildViolation('La commune avec le code insee '.$insee.' ne fait pas partie du territoire du partenaire')->atPath('insee')->addViolation();
             }
         }
     }
