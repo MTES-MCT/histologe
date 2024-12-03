@@ -7,7 +7,6 @@
     :data-ajaxurl-signalements-nosuivi="sharedProps.ajaxurlSignalementsNosuivi"
     :data-ajaxurl-signalements-per-territoire="sharedProps.ajaxurlSignalementsPerTerritoire"
     :data-ajaxurl-connections-esabora="sharedProps.ajaxurlConnectionsEsabora"
-    :data-feature-enable-menu-horizontale="sharedProps.featureEnableMenuHorizontale"
     >
 
     <div v-if="isLoadingInit" class="loading fr-m-10w fr-text--center">
@@ -22,7 +21,7 @@
     <div v-else>
       <TheHistoDashboardHeader />
 
-      <div :class="['fr-p-3w', { 'fr-container-sml': sharedProps.featureEnableMenuHorizontale }]">
+      <div :class="['fr-p-3w', 'fr-container-sml']">
         <div class="fr-grid-row fr-grid-row--gutters fr-mb-1w">
           <div class="fr-col fr-col-md-9">
             <div class="fr-display-inline-flex fr-align-items-center">
@@ -97,7 +96,6 @@ export default defineComponent({
       this.sharedProps.ajaxurlSignalementsNosuivi = initElements.dataset.ajaxurlSignalementsNosuivi
       this.sharedProps.ajaxurlSignalementsPerTerritoire = initElements.dataset.ajaxurlSignalementsPerTerritoire
       this.sharedProps.ajaxurlConnectionsEsabora = initElements.dataset.ajaxurlConnectionsEsabora
-      this.sharedProps.featureEnableMenuHorizontale = initElements.dataset.featureEnableMenuHorizontale
       try {
         await this.initSettingsWithPromise()
         await this.initKPIWithPromise()

@@ -130,8 +130,7 @@ export const store = {
     ajaxurlRemoveSignalement: '',
     ajaxurlExportCsv: '',
     ajaxurlSettings: '',
-    ajaxurlContact: '',
-    featureEnableMenuHorizontale: ''
+    ajaxurlContact: ''
   }
 }
 

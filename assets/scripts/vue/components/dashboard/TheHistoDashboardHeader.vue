@@ -1,6 +1,6 @@
 <template>
   <div class="histo-dashboard-header fr-py-3w fr-px-1w fr-mb-3w">
-    <div :class="['header-list', classExpanded, { 'header-list-horizontale': sharedProps.featureEnableMenuHorizontale }]" @click=handleClick>
+    <div :class="['header-list', classExpanded, 'header-list-horizontale']" @click=handleClick>
       <div class="label-clickzone">
         Cliquez sur cette zone pour afficher quelques statistiques.
       </div>
