@@ -13,14 +13,6 @@ class ClotureType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
-        $clotureType = 'partner';
-        if ($options['is_admin_territory']) {
-            $clotureType = 'all';
-            if ($options['is_affected'] && $options['is_accepted']) {
-                $clotureType = 'partner';
-            }
-        }
-
         $builder
             ->add('motif', EnumType::class, [
                 'class' => MotifCloture::class,
@@ -39,7 +31,7 @@ class ClotureType extends AbstractType
                     'class' => 'fr-hint-text',
                 ],
             ])
-            ->add('type', HiddenType::class, ['data' => $clotureType]);
+            ->add('type', HiddenType::class);
     }
 
     public function configureOptions(OptionsResolver $resolver): void
@@ -47,9 +39,6 @@ class ClotureType extends AbstractType
         $resolver->setDefaults([
             'data_class' => null,
             'allow_extra_fields' => true,
-            'is_admin_territory' => false,
-            'is_affected' => false,
-            'is_accepted' => false,
             'attr' => [
                 'id' => 'cloture_form',
             ],

@@ -88,11 +88,7 @@ class SignalementController extends AbstractController
             }
         }
         $isClosedForMe = $isClosedForMe ?? Signalement::STATUS_CLOSED === $signalement->getStatut();
-        $clotureForm = $this->createForm(type: ClotureType::class, options: [
-            'is_admin_territory' => $this->isGranted('ROLE_ADMIN_TERRITORY'),
-            'is_accepted' => $isAccepted,
-            'is_affected' => $isAffected,
-        ]);
+        $clotureForm = $this->createForm(ClotureType::class);
         $clotureForm->handleRequest($request);
         $eventParams = [];
         if ($clotureForm->isSubmitted() && $clotureForm->isValid()) {

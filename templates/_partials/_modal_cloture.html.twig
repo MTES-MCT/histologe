@@ -69,6 +69,7 @@
                                     <button class="fr-btn fr-icon-check-line"
                                             form="cloture_form"
                                             type="submit"
+                                            data-cloture-type="all"
                                             disabled>
                                         Clôturer pour tous les partenaires
                                     </button>
@@ -78,6 +79,7 @@
                                         <button class="fr-btn fr-icon-check-line"
                                                 form="cloture_form"
                                                 type="submit"
+                                                data-cloture-type="partner"
                                                 disabled>
                                             Clôturer pour {{ app.user.partner ? app.user.partner.nom }}
                                         </button>
@@ -87,7 +89,7 @@
                                 <li>
                                     <button class="fr-btn fr-icon-check-line"
                                             form="cloture_form"
-                                            value="partner"
+                                            data-cloture-type="partner"
                                             type="submit"
                                             disabled>
                                         Clôturer pour {{ app.user.partner ? app.user.partner.nom }}
