@@ -18,6 +18,8 @@
         "knplabs/knp-snappy-bundle": "^1.9",
         "league/flysystem-aws-s3-v3": "^3.0",
         "league/flysystem-bundle": "^3.0",
+        "longitude-one/wkt-parser": "^3.0",
+        "mjaschen/phpgeo": "^5.0",
         "nelmio/cors-bundle": "^2.2",
         "phpdocumentor/reflection-docblock": "^5.3",
         "phpoffice/phpspreadsheet": "^2.2",
