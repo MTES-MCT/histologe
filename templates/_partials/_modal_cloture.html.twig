@@ -16,6 +16,7 @@
                         {{ form_label(clotureForm.motif) }}
                         {{ form_help(clotureForm.motif) }}
                         {{ form_widget(clotureForm.motif) }}
+                        {{ form_widget(clotureForm.type) }}
                         <div class="fr-input-group fr-mt-2v">
                             <label for="cloture_suivi" class="fr-label required">Détails de la clôture</label>
                             <p class="fr-hint-text">Précisez le contexte et les raisons de la clôture <em>(10 caractères
@@ -66,23 +67,30 @@
                             {% if is_granted('ROLE_ADMIN_TERRITORY') %}
                                 <li>
                                     <button class="fr-btn fr-icon-check-line"
-                                            form="cloture_form" name="cloture[type]" value="all" type="submit" disabled>
-                                        Cloturer pour tous les partenaires
+                                            form="cloture_form"
+                                            type="submit"
+                                            disabled>
+                                        Clôturer pour tous les partenaires
                                     </button>
                                 </li>
                                 {% if isAffected and isAccepted %}
                                     <li>
-                                        <button class="fr-btn fr-icon-check-line" form="cloture_form"
-                                                name="cloture[type]" value="partner" type="submit" disabled>
-                                            Cloturer pour {{ app.user.partner ? app.user.partner.nom }}
+                                        <button class="fr-btn fr-icon-check-line"
+                                                form="cloture_form"
+                                                type="submit"
+                                                disabled>
+                                            Clôturer pour {{ app.user.partner ? app.user.partner.nom }}
                                         </button>
                                     </li>
                                 {% endif %}
                             {% else %}
                                 <li>
-                                    <button class="fr-btn fr-icon-check-line" form="cloture_form"
-                                            name="cloture[type]" value="partner" type="submit" disabled>
-                                        Cloturer pour {{ app.user.partner ? app.user.partner.nom }}
+                                    <button class="fr-btn fr-icon-check-line"
+                                            form="cloture_form"
+                                            value="partner"
+                                            type="submit"
+                                            disabled>
+                                        Clôturer pour {{ app.user.partner ? app.user.partner.nom }}
                                     </button>
                                 </li>
                             {% endif %}
