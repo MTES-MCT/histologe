@@ -107,8 +107,8 @@ class SearchFilter
         }
 
         if (isset($filters['delays'])) {
-            $filters['delays_partner'] = $partner;
-            $filters['delays_territory'] = $territory;
+            $filters['delays_partner'] = $partner?->getId();
+            $filters['delays_territory'] = $territory?->getId();
         }
 
         if (isset($filters['nouveau_suivi'])) {
@@ -217,8 +217,8 @@ class SearchFilter
             $period = $this->filters['delays'] ?? $request->query->get('sans_suivi_periode');
             $partner = \in_array(User::ROLE_USER_PARTNER, $user->getRoles()) ? $user->getPartner() : null;
             $this->filters['delays'] = (int) $period;
-            $this->filters['delays_territory'] = $territory;
-            $this->filters['delays_partner'] = $partner;
+            $this->filters['delays_territory'] = $territory?->getId();
+            $this->filters['delays_partner'] = $partner?->getId();
         }
 
         return $this;
