@@ -100,8 +100,8 @@ class SuiviRepository extends ServiceEntityRepository
      */
     public function findSignalementNoSuiviSince(
         int $period = Suivi::DEFAULT_PERIOD_INACTIVITY,
-        ?int $territory_id = null,
-        ?int $partner_id = null,
+        ?int $territoryId = null,
+        ?int $partnerId = null,
     ): array {
         $connection = $this->getEntityManager()->getConnection();
         $parameters = [
@@ -114,17 +114,17 @@ class SuiviRepository extends ServiceEntityRepository
             'status_refused' => Signalement::STATUS_REFUSED,
         ];
 
-        if (null !== $territory_id) {
-            $parameters['territory_id'] = $territory_id;
+        if (null !== $territoryId) {
+            $parameters['territory_id'] = $territoryId;
         }
 
-        if (null != $partner_id) {
-            $parameters['partner_id'] = $partner_id;
+        if (null != $partnerId) {
+            $parameters['partner_id'] = $partnerId;
             $parameters['status_wait'] = AffectationStatus::STATUS_WAIT->value;
             $parameters['status_accepted'] = AffectationStatus::STATUS_ACCEPTED->value;
         }
 
-        $sql = $this->getSignalementsQuery($territory_id, $partner_id);
+        $sql = $this->getSignalementsQuery($territoryId, $partnerId);
         $statement = $connection->prepare($sql);
 
         return $statement->executeQuery($parameters)->fetchFirstColumn();
@@ -174,16 +174,16 @@ class SuiviRepository extends ServiceEntityRepository
     }
 
     private function getSignalementsQuery(
-        ?int $territory_id = null,
-        ?int $partner_id = null,
+        ?int $territoryId = null,
+        ?int $partnerId = null,
     ): string {
         $whereTerritory = $wherePartner = $innerPartnerJoin = '';
 
-        if (null !== $territory_id) {
+        if (null !== $territoryId) {
             $whereTerritory = 'AND s.territory_id = :territory_id';
         }
 
-        if (null != $partner_id) {
+        if (null != $partnerId) {
             $wherePartner = 'AND a.partner_id = :partner_id';
             $innerPartnerJoin = 'INNER JOIN affectation a ON a.signalement_id = su.signalement_id AND a.statut IN (:status_wait, :status_accepted)';
         }
