@@ -184,7 +184,7 @@ class NewSignalementCheckFileMessageHandler
     private function createSuivi(Signalement $signalement, string $documents, string $desordres): Suivi
     {
         $this->description = 'Bonjour,<br><br>';
-        $this->description .= 'Vous avez un signalé un problème sur un logement.<br>';
+        $this->description .= 'Vous avez signalé un problème sur un logement.<br>';
         $this->description .= 'Votre dossier a bien été enregistré par nos services.<br><br>';
         $this->description .= 'Afin de nous aider à traiter au mieux votre dossier, veuillez nous fournir :<br>';
         if (!empty($documents)) {
