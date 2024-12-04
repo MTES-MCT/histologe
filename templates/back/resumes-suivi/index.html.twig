@@ -1,0 +1,42 @@
+{% extends 'back/base_bo.html.twig' %}
+
+{% block title %}Résumés de suivis{% endblock %}
+
+{% block content %}
+    {% if is_granted('ROLE_ADMIN') %}
+    <section class="fr-p-5v">
+        {% include 'back/breadcrumb_bo.html.twig' with {
+            'level2Title': 'Outils SA',
+            'level2Link': '',
+            'level2Label': '',
+            'level3Title': 'Résumés de suivis',
+            'level3Link': '',
+        } %}
+        <header>
+            <div class="fr-grid-row">
+                <div class="fr-text--left">
+                    <h1 class="fr-h1 fr-mb-0">Résumés de suivis</h1>
+                </div>
+            </div>
+        </header>
+    </section>
+    <section class="fr-container--fluid">
+        <div class="fr-grid-row fr-grid-row--center">
+            <div class="fr-col-6">
+                {{ form_start(form)}}
+
+                {{ form_row(form.territory,{}) }}
+                {{ form_row(form.count,{}) }}
+                {{ form_row(form.prompt,{}) }}
+                {{ form_row(form.querySignalement,{}) }}
+
+                {{ form_row(form.save) }}
+                {{ form_end(form) }}
+            </div>
+        </div>
+    </section>
+    {% endif %}
+{% endblock %}
+{% block javascripts %}
+    {{ encore_entry_script_tags('app') }}
+{% endblock %}
