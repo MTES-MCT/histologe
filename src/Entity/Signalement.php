@@ -169,7 +169,7 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
     private $structureDeclarant;
 
     #[ORM\Column(type: 'string', length: 10, nullable: true)]
-    private ?string $civiliteOccupant;
+    private ?string $civiliteOccupant = null;
 
     #[ORM\Column(type: 'string', length: 50, nullable: true)]
     #[Assert\NotBlank]
