@@ -2,8 +2,6 @@
 
 namespace App\Messenger\MessageHandler;
 
-use App\Entity\Signalement;
-use App\Entity\Suivi;
 use App\Messenger\Message\SuiviSummariesMessage;
 use App\Repository\SignalementRepository;
 use App\Service\HtmlCleaner;
@@ -16,6 +14,7 @@ use PhpOffice\PhpSpreadsheet\Writer\Csv;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
 
 #[AsMessageHandler]
@@ -28,6 +27,7 @@ class SuiviSummariesMessageHandler
         private readonly LoggerInterface $logger,
         private readonly SignalementRepository $signalementRepository,
         private readonly HttpClientInterface $httpClient,
+        private readonly UrlGeneratorInterface $urlGenerator,
         private ParameterBagInterface $parameterBag,
     ) {
     }
@@ -63,36 +63,40 @@ class SuiviSummariesMessageHandler
     }
 
     /**
-     * TODO : export to an export service
+     * TODO : move to an export service.
      */
     private function buildSpreadsheet(SuiviSummariesMessage $suiviSummariesMessage): Spreadsheet
     {
         $spreadsheet = new Spreadsheet();
         $sheet = $spreadsheet->getActiveSheet();
-        $headers = ['Lien', 'Résumé'];
+        $headers = ['Lien', 'Date', 'Résumé'];
         $sheetData = [$headers];
 
-        /*
-        case 'reponse-usager':
-            return 'Relancés automatiquement, avec réponse usager';
-        case 'dernier-suivi-3-semaines':
-            return 'Dernier suivi non-automatique et non-RT, mais sans suivi depuis 3 semaines';
-            */
+        $list = [];
+        switch ($suiviSummariesMessage->getQuerySignalement()) {
+            case 'reponse-usager':
+                $list = $this->signalementRepository->findSignalementsLastSuiviWithSuiviAuto(
+                    territory: $suiviSummariesMessage->getTerritory(),
+                    limit: $suiviSummariesMessage->getCount(),
+                );
+                break;
+            case 'dernier-suivi-20-jours':
+                $list = $this->signalementRepository->findSignalementsLastSuiviByPartnerOlderThan(
+                    territory: $suiviSummariesMessage->getTerritory(),
+                    limit: $suiviSummariesMessage->getCount(),
+                    nbDays: 20,
+                );
+                break;
+            default:
+                break;
+        }
 
-        $list = $this->signalementRepository->findBy(
-            criteria: [
-                'statut' => Signalement::STATUS_ACTIVE,
-                'territory' => $suiviSummariesMessage->getTerritory()
-            ],
-            orderBy: ['createdAt' => 'DESC'],
-            limit: $suiviSummariesMessage->getCount(),
-        );
-
-        /** @var Signalement $signalement */
-        foreach ($list as $signalement) {
+        /** @var array $signalementResult */
+        foreach ($list as $signalementResult) {
             $rowArray = [
-                $signalement->getUuid(),
-                $this->getSummaryFromSignalement($signalement, $suiviSummariesMessage),
+                $this->urlGenerator->generate('back_signalement_view', ['uuid' => $signalementResult['uuid']], UrlGeneratorInterface::ABSOLUTE_URL),
+                $signalementResult['dernier_suivi_date'],
+                $this->getSummaryFromSignalement($signalementResult['dernier_suivi_description'], $suiviSummariesMessage),
             ];
             $sheetData[] = $rowArray;
         }
@@ -103,26 +107,17 @@ class SuiviSummariesMessageHandler
     }
 
     /**
-     * TODO : export to an Albert API communication service
+     * TODO : move to an Albert API communication service.
      */
-    private function getSummaryFromSignalement(Signalement $signalement, SuiviSummariesMessage $suiviSummariesMessage): ?string
+    private function getSummaryFromSignalement(string $lastSuiviDescription, SuiviSummariesMessage $suiviSummariesMessage): ?string
     {
         $messages = [];
 
-        $suivis = $signalement->getSuivis();
-        $countSuivis = \count($suivis);
-        for ($iSuivi = $countSuivis - 1; $iSuivi >= 0; --$iSuivi) {
-            /** @var Suivi $suivi */
-            $suivi = $suivis[$iSuivi];
-            if (Suivi::TYPE_AUTO !== $suivi->getType() && Suivi::TYPE_TECHNICAL !== $suivi->getType()) {
-                $suiviDescription = HtmlCleaner::clean($suivi->getDescription());
-                $messages[] = $this->getAlbertMessage($suiviSummariesMessage->getPrompt());
-                $messages[] = $this->getAlbertMessage('Message du '.$suivi->getCreatedAt()->format('d/m/Y').' : '.$suiviDescription);
-                break;
-            }
-        }
-
-        if (empty($messages)) {
+        if (!empty($lastSuiviDescription)) {
+            $lastSuiviDescriptionClean = HtmlCleaner::clean($lastSuiviDescription);
+            $messages[] = $this->getAlbertMessage($suiviSummariesMessage->getPrompt());
+            $messages[] = $this->getAlbertMessage($lastSuiviDescriptionClean);
+        } else {
             return null;
         }
 
