@@ -171,6 +171,15 @@ modalsElement.forEach(modalElement => {
   })
 })
 
+document.querySelectorAll('button[data-cloture-type]').forEach(button => {
+  button.addEventListener('click', (e) => {
+    const element = e.target;
+    if (element && element?.dataset) {
+      document.getElementById('cloture_type').value = element.dataset.clotureType
+    }
+  });
+});
+
 document?.getElementById('signalement-add-suivi-notify-usager')?.addEventListeners('change', (e) => {
   document.getElementById('signalement-add-suivi-submit').textContent = (e.target.checked) ? 'Envoyer le suivi à l\'usager' : 'Enregistrer le suivi interne'
 })
