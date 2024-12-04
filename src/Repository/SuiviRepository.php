@@ -88,7 +88,7 @@ class SuiviRepository extends ServiceEntityRepository
 
         $sql = 'SELECT COUNT(*) as count_signalement
                 FROM ('.
-                        $this->getSignalementsQuery($territory, $partner)
+                        $this->getSignalementsQuery($territory?->getId(), $partner?->getId())
                 .') as countSignalementSuivi';
         $statement = $connection->prepare($sql);
 
@@ -100,8 +100,8 @@ class SuiviRepository extends ServiceEntityRepository
      */
     public function findSignalementNoSuiviSince(
         int $period = Suivi::DEFAULT_PERIOD_INACTIVITY,
-        ?Territory $territory = null,
-        ?Partner $partner = null,
+        ?int $territoryId = null,
+        ?int $partnerId = null,
     ): array {
         $connection = $this->getEntityManager()->getConnection();
         $parameters = [
@@ -114,17 +114,17 @@ class SuiviRepository extends ServiceEntityRepository
             'status_refused' => Signalement::STATUS_REFUSED,
         ];
 
-        if (null !== $territory) {
-            $parameters['territory_id'] = $territory->getId();
+        if (null !== $territoryId) {
+            $parameters['territory_id'] = $territoryId;
         }
 
-        if (null != $partner) {
-            $parameters['partner_id'] = $partner->getId();
+        if (null != $partnerId) {
+            $parameters['partner_id'] = $partnerId;
             $parameters['status_wait'] = AffectationStatus::STATUS_WAIT->value;
             $parameters['status_accepted'] = AffectationStatus::STATUS_ACCEPTED->value;
         }
 
-        $sql = $this->getSignalementsQuery($territory, $partner);
+        $sql = $this->getSignalementsQuery($territoryId, $partnerId);
         $statement = $connection->prepare($sql);
 
         return $statement->executeQuery($parameters)->fetchFirstColumn();
@@ -174,16 +174,16 @@ class SuiviRepository extends ServiceEntityRepository
     }
 
     private function getSignalementsQuery(
-        ?Territory $territory = null,
-        ?Partner $partner = null,
+        ?int $territoryId = null,
+        ?int $partnerId = null,
     ): string {
         $whereTerritory = $wherePartner = $innerPartnerJoin = '';
 
-        if (null !== $territory) {
+        if (null !== $territoryId) {
             $whereTerritory = 'AND s.territory_id = :territory_id';
         }
 
-        if (null != $partner) {
+        if (null != $partnerId) {
             $wherePartner = 'AND a.partner_id = :partner_id';
             $innerPartnerJoin = 'INNER JOIN affectation a ON a.signalement_id = su.signalement_id AND a.statut IN (:status_wait, :status_accepted)';
         }
