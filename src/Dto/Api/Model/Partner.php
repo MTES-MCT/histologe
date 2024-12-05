@@ -1,21 +1,20 @@
 <?php
 
-namespace App\Dto\Api\Response;
+namespace App\Dto\Api\Model;
 
-use App\Entity\Partner;
+use App\Entity\Partner as PartnerEntity;
 
-class PartnerResponse
+class Partner
 {
     public string $nom;
     public ?string $type;
     public array $competences = [];
 
     public function __construct(
-        Partner $partner,
+        PartnerEntity $partner,
     ) {
         $this->nom = $partner->getNom();
         $this->type = $partner->getType()?->label();
         $this->competences = $partner->getCompetence() ?? [];
-        // besoin d'exposer plus d'élements ?
     }
 }

@@ -1388,12 +1388,13 @@ class SignalementRepository extends ServiceEntityRepository
             ->getResult();
     }
 
-    public function findForAPI(User $user, int $limit = 1, ?string $uuid = null, ?string $reference = null): array
+    public function findForAPI(User $user, int $limit = 1, int $page = 1, ?string $uuid = null, ?string $reference = null): array
     {
-        $territory = $user->getPartner()->getTerritory(); // TODO : impact multi territoire
+        $partner = $user->getPartner(); // TODO : impact multi territoire
+        $offset = ($page - 1) * $limit;
         $qb = $this->createQueryBuilder('s')
             ->select('s', 'desordrePrecisions', 'desordreCategories', 'desordreCriteres', 'signalementQualifications',
-                'files', 'tags', 'suivi', 'affectations', 'interventions', 'territory')
+                'files', 'tags', 'suivi', 'interventions', 'territory')
             ->leftJoin('s.desordrePrecisions', 'desordrePrecisions')
             ->leftJoin('s.desordreCategories', 'desordreCategories')
             ->leftJoin('s.desordreCriteres', 'desordreCriteres')
@@ -1404,9 +1405,10 @@ class SignalementRepository extends ServiceEntityRepository
             ->leftJoin('s.affectations', 'affectations')
             ->leftJoin('s.interventions', 'interventions')
             ->leftJoin('s.territory', 'territory')
-            ->where('s.territory = :territory')
-            ->setParameter('territory', $territory)
+            ->where('affectations.partner = :partner')
+            ->setParameter('partner', $partner)
             ->orderBy('s.createdAt', 'DESC')
+            ->setFirstResult($offset)
             ->setMaxResults($limit);
         if ($uuid) {
             $qb->andWhere('s.uuid = :uuid')

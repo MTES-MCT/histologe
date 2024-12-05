@@ -1,11 +1,11 @@
 <?php
 
-namespace App\Dto\Api\Response;
+namespace App\Dto\Api\Model;
 
 use App\Entity\Criticite;
 use App\Entity\DesordrePrecision;
 
-class DesordreResponse
+class Desordre
 {
     public string $categorie;
     public ?string $zone;
@@ -18,12 +18,10 @@ class DesordreResponse
     ) {
         $this->categorie = $categorie;
         $this->zone = $zone;
-        foreach ($data as $label => $unused) {
+        foreach ($data as $label => $detail) {
             $details = $label;
-            if ($unused instanceof DesordrePrecision && $unused->getLabel()) {
-                $details .= ' : '.$unused->getLabel();
-            } elseif ($unused instanceof Criticite && $unused->getLabel()) {
-                $details .= ' : '.$unused->getLabel();
+            if ($detail->getLabel() && ($detail instanceof DesordrePrecision || $detail instanceof Criticite)) {
+                $details .= ' : '.$detail->getLabel();
             }
             $this->details[] = $details;
         }

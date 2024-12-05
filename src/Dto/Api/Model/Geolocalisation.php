@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Dto\Api\Response;
+namespace App\Dto\Api\Model;
 
-class GeolocalisationResponse
+class Geolocalisation
 {
     public function __construct(public ?float $latitude, public ?float $longitude)
     {
