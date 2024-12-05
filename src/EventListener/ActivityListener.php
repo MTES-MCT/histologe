@@ -69,7 +69,7 @@ class ActivityListener
                         continue;
                     }
 
-                    $notifyAdminsAndPartners = $entity->getDescription() != $this->parameterBag->get('suivi_message')['first_accepted_affectation'];
+                    $notifyAdminsAndPartners = Suivi::CONTEXT_NOTIFY_USAGER_ONLY !== $entity->getContext();
                     if ($notifyAdminsAndPartners) {
                         $this->tos->clear();
                         $this->notifyAdmins($entity, Notification::TYPE_SUIVI, $entity->getSignalement()->getTerritory());

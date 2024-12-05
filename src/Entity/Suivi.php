@@ -17,7 +17,7 @@ class Suivi implements EntityHistoryInterface
     public const TYPE_PARTNER = 3;
     public const TYPE_TECHNICAL = 4;
     public const TYPE_USAGER_POST_CLOTURE = 5;
-
+    public const string CONTEXT_NOTIFY_USAGER_ONLY = 'notifyUsagerOnly';
     public const CONTEXT_INTERVENTION = 'intervention';
     public const CONTEXT_SCHS = 'schs';
 

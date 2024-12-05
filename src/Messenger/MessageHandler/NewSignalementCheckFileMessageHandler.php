@@ -208,7 +208,8 @@ class NewSignalementCheckFileMessageHandler
                 'description' => $this->description,
             ],
             isPublic: true,
-            flush: true
+            context: Suivi::CONTEXT_NOTIFY_USAGER_ONLY,
+            flush: true,
         );
     }
 }
