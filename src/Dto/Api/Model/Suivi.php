@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Dto\Api\Response;
+namespace App\Dto\Api\Model;
 
-use App\Entity\Suivi;
+use App\Entity\Suivi as SuiviEntity;
 
-class SuiviResponse
+class Suivi
 {
     public int $id;
     public string $dateCreation;
@@ -13,13 +13,13 @@ class SuiviResponse
     public int $type;
 
     public function __construct(
-        Suivi $suivi,
+        SuiviEntity $suivi,
     ) {
         $this->id = $suivi->getId();
         $this->dateCreation = $suivi->getCreatedAt()->format(\DATE_ATOM);
         $this->description = $suivi->getDescription(); // traitement de suppression du html ? comment gérer les bouton/doc qui sont présent en dur  dans le contenu ?
         $this->public = $suivi->getIsPublic();
         $this->type = $suivi->getType(); // envoyer un libellé ?
-        // exposer "createdBy" sous quelle forme ?
+        // TODO : exposer "createdBy" attendre merge multi ter. et essayer de faire propre
     }
 }
