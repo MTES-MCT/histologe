@@ -16,6 +16,11 @@
             <div class="fr-grid-row">
                 <div class="fr-text--left">
                     <h1 class="fr-h1 fr-mb-0">Résumés de suivis</h1>
+                    <p>
+                        Cette fonctionnalité interroge l'API de l'IA Albert pour générer des résumés de suivis qui vous seront envoyés par e-mail.
+                        <br>
+                        Modèle de langage utilisé : AgentPublic/llama3-instruct-8b
+                    </p>
                 </div>
             </div>
         </header>
@@ -23,15 +28,8 @@
     <section class="fr-container--fluid">
         <div class="fr-grid-row fr-grid-row--center">
             <div class="fr-col-6">
-                {{ form_start(form)}}
-
-                {{ form_row(form.territory,{}) }}
-                {{ form_row(form.count,{}) }}
-                {{ form_row(form.prompt,{}) }}
-                {{ form_row(form.querySignalement,{}) }}
-
-                {{ form_row(form.save) }}
-                {{ form_end(form) }}
+                {% form_theme form 'form/dsfr_theme.html.twig' %}
+                {{ form(form) }}
             </div>
         </div>
     </section>

@@ -8,7 +8,6 @@ use App\Service\HtmlCleaner;
 use App\Service\Mailer\NotificationMail;
 use App\Service\Mailer\NotificationMailerRegistry;
 use App\Service\Mailer\NotificationMailerType;
-use App\Service\TimezoneProvider;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Writer\Csv;
 use Psr\Log\LoggerInterface;
@@ -39,8 +38,7 @@ class SuiviSummariesMessageHandler
             $spreadsheet = $this->buildSpreadsheet($suiviSummariesMessage);
 
             $writer = new Csv($spreadsheet);
-            $timezone = $user->getTerritory()?->getTimezone() ?? TimezoneProvider::TIMEZONE_EUROPE_PARIS;
-            $datetimeStr = (new \DateTimeImmutable())->setTimezone(new \DateTimeZone($timezone))->format('dmY-Hi');
+            $datetimeStr = (new \DateTimeImmutable())->format('dmY-Hi');
             $filename = 'resumes-suivis-'.$user->getId().'-'.$datetimeStr.'.csv';
             $tmpFilepath = $this->parameterBag->get('uploads_tmp_dir').$filename;
             $writer->save($tmpFilepath);
@@ -69,7 +67,7 @@ class SuiviSummariesMessageHandler
     {
         $spreadsheet = new Spreadsheet();
         $sheet = $spreadsheet->getActiveSheet();
-        $headers = ['Lien', 'Date', 'Résumé'];
+        $headers = ['Lien vers le signalement', 'Date du dernier suivi', 'Résumé du dernier suivi'];
         $sheetData = [$headers];
 
         $list = [];

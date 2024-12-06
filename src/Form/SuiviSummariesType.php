@@ -26,35 +26,20 @@ class SuiviSummariesType extends AbstractType
                     return $territory->getZip().' - '.$territory->getName();
                 },
                 'placeholder' => 'Choisissez un territoire',
-                'attr' => [
-                    'class' => 'fr-select',
-                ],
-                'row_attr' => [
-                    'class' => 'fr-input-group',
-                ],
                 'label' => 'Territoire',
                 'required' => true,
             ])
 
             ->add('count', NumberType::class, [
                 'data' => 300,
-                'row_attr' => [
-                    'class' => 'fr-input-group',
-                ],
-                'attr' => [
-                    'class' => 'fr-input',
-                ],
                 'label' => 'Nombre de signalements',
                 'required' => true,
             ])
 
             ->add('prompt', TextareaType::class, [
                 'data' => 'Tu es un analyste de haute qualité. Ton travail est de résumer en français en quelques mots uniquement, le contenu d\'un email pour que n\'importe qui puisse savoir l\'essence de son propos.',
-                'row_attr' => [
-                    'class' => 'fr-input-group',
-                ],
                 'attr' => [
-                    'class' => 'fr-input',
+                    'rows' => 5,
                 ],
                 'label' => 'Prompt',
                 'required' => true,
@@ -75,15 +60,9 @@ class SuiviSummariesType extends AbstractType
                             return '';
                     }
                 },
-                'row_attr' => [
-                    'class' => 'fr-select-group',
-                ],
                 'placeholder' => 'Choisissez un type de signalements à extraire',
                 'multiple' => false,
                 'expanded' => false,
-                'attr' => [
-                    'class' => 'fr-select',
-                ],
                 'label' => 'Type de signalements',
             ])
 

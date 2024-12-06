@@ -6,8 +6,6 @@ use App\Entity\User;
 use App\Form\SuiviSummariesType;
 use App\Messenger\Message\SuiviSummariesMessage;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\Form\FormError;
-use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Messenger\MessageBusInterface;
@@ -41,22 +39,10 @@ class SuiviSummariesController extends AbstractController
                     $user->getEmail()
                 )
             );
-
-            return $this->redirectToRoute('back_suivi_summaries_index');
         }
-
-        $this->displayErrors($form);
 
         return $this->render('back/resumes-suivi/index.html.twig', [
             'form' => $form,
         ]);
-    }
-
-    private function displayErrors(FormInterface $form): void
-    {
-        /** @var FormError $error */
-        foreach ($form->getErrors(true) as $error) {
-            $this->addFlash('error', $error->getMessage());
-        }
     }
 }

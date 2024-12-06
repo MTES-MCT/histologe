@@ -42,6 +42,7 @@ class SignalementRepository extends ServiceEntityRepository
     public const ARRAY_LIST_PAGE_SIZE = 30;
     public const MARKERS_PAGE_SIZE = 9000; // @todo: is high cause duplicate result, the query findAllWithGeoData should be reviewed
     public const SEPARATOR_GROUP_CONCAT = '|'; // | used in maps.js
+    private const DATE_FEEDBACK_USAGER_ONLINE = '2023-03-28';
 
     public function __construct(
         ManagerRegistry $registry,
@@ -1417,7 +1418,7 @@ class SignalementRepository extends ServiceEntityRepository
                 AND s.territory_id = :territoryId
                 AND su.type = :suiviTypeUsager
                 GROUP BY s.id
-                HAVING dernier_suivi_date > \'2023-03-28\'
+                HAVING dernier_suivi_date > \''.self::DATE_FEEDBACK_USAGER_ONLINE.'\'
                 ORDER BY dernier_suivi_date DESC
                 LIMIT '.$limit.';';
 
