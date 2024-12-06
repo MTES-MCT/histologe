@@ -1,0 +1,13 @@
+{% macro tableOpen(label) %}
+<div class="fr-table__wrapper">
+    <div class="fr-table__container">
+        <div class="fr-table__content">
+            <table class="sortable fr-cell--multiline" aria-label="{{ label }}" aria-describedby="desc-table">
+{% endmacro %}
+
+{% macro tableEnd() %}
+            </table>
+        </div>
+    </div>
+</div>
+{% endmacro %}
