@@ -14,67 +14,56 @@
 </section>
 
 <section class="fr-grid-row fr-grid-row--middle fr-px-5v">
-	<div class="fr-col-12 fr-table fr-table--no-caption">
-		<div class="fr-table__wrapper">
-			<div class="fr-table__container">
-				<div class="fr-table__content">
-					<table class="fr-cell--multiline"  aria-label="Liste des comptes inactifs" aria-describedby="desc-table-inactive">
-					<caption>Erreurs</caption>
-						<thead>
-							<tr>
-								<th scope="col">Signalement</th>
-								<th scope="col">Date</th>
-								<th scope="col">action</th>
-								<th scope="col">Réponse</th>
-								<th scope="col">Code</th>
-							</tr>
-						</thead>
-						<tbody>
-							{% for error in errors %}
-								<tr class="user-row">
-									<td><a href="{{path('back_signalement_view', {'uuid': error.uuid})}}">{{error.reference}}</a></td>
-									<td>{{error.createdAt|date('d/m/Y H:i:s')}}</td>
-									<td>{{error.action}}</td>
-									<td>{{error.response}}</td>
-									<td>{{error.codeStatus}}</td>
-								</tr>
-							{% endfor %}
-						</tbody>
-					</table>
-				</div>
-			</div>
-		</div>
+	<h2 id="table-desc-idoss-error">Erreurs IDOSS</h2>
+
+	<div class="fr-col-12">
+        {% set tableHead %}
+			<th scope="col">Signalement</th>
+			<th scope="col">Date</th>
+			<th scope="col">action</th>
+			<th scope="col">Réponse</th>
+			<th scope="col">Code</th>
+        {% endset %}
+
+        {% set tableBody %}
+			{% for error in errors %}
+				<tr class="user-row">
+					<td><a href="{{path('back_signalement_view', {'uuid': error.uuid})}}">{{error.reference}}</a></td>
+					<td>{{error.createdAt|date('d/m/Y H:i:s')}}</td>
+					<td>{{error.action}}</td>
+					<td>{{error.response}}</td>
+					<td>{{error.codeStatus}}</td>
+				</tr>
+			{% endfor %}
+        {% endset %}
+
+        {% include '_partials/back/table.html.twig' with { 'tableLabel': 'Erreurs IDOSS', 'tableDescId': 'table-desc-idoss-error', 'tableHead': tableHead, 'tableBody': tableBody } %}
 	</div>
-		<div class="fr-col-12 fr-table fr-table--no-caption">
-		<div class="fr-table__wrapper">
-			<div class="fr-table__container">
-				<div class="fr-table__content">
-					<table class="fr-cell--multiline"  aria-label="Liste des comptes inactifs" aria-describedby="desc-table-inactive">
-					<caption>Success</caption>
-						<thead>
-							<tr>
-								<th scope="col">Signalement</th>
-								<th scope="col">Date</th>
-								<th scope="col">action</th>
-								<th scope="col">Réponse</th>
-								<th scope="col">Code</th>
-							</tr>
-						</thead>
-						<tbody>
-							{% for item in success %}
-								<tr class="user-row">
-									<td><a href="{{path('back_signalement_view', {'uuid': item.uuid})}}">{{item.reference}}</a></td>
-									<td>{{item.createdAt|date('d/m/Y H:i:s')}}</td>
-									<td>{{item.action}}</td>
-									<td>{{item.response}}</td>
-									<td>{{item.codeStatus}}</td>
-								</tr>
-							{% endfor %}
-						</tbody>
-					</table>
-				</div>
-			</div>
-		</div>
+
+	<div class="fr-col-12">
+		<h2 id="table-desc-idoss-success">Succès IDOSS</h2>
+
+        {% set tableHead %}
+			<th scope="col">Signalement</th>
+			<th scope="col">Date</th>
+			<th scope="col">action</th>
+			<th scope="col">Réponse</th>
+			<th scope="col">Code</th>
+        {% endset %}
+
+        {% set tableBody %}
+			{% for item in success %}
+				<tr class="user-row">
+					<td><a href="{{path('back_signalement_view', {'uuid': item.uuid})}}">{{item.reference}}</a></td>
+					<td>{{item.createdAt|date('d/m/Y H:i:s')}}</td>
+					<td>{{item.action}}</td>
+					<td>{{item.response}}</td>
+					<td>{{item.codeStatus}}</td>
+				</tr>
+			{% endfor %}
+        {% endset %}
+
+        {% include '_partials/back/table.html.twig' with { 'tableLabel': 'Succès IDOSS', 'tableDescId': 'table-desc-idoss-success', 'tableHead': tableHead, 'tableBody': tableBody } %}
 	</div>
 </section>
 {% endblock %}
