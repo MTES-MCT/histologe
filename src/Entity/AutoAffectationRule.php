@@ -289,7 +289,6 @@ class AutoAffectationRule implements EntityHistoryInterface
                 $description .= 'allocataires et non-allocataires.';
                 break;
         }
-        // TODO : ajouter procédure suspectée
 
         $description .= ' Elle s\'applique ';
         switch ($this->getInseeToInclude()) {
