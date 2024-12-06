@@ -4,6 +4,7 @@ namespace App\Messenger\MessageHandler;
 
 use App\Messenger\Message\SuiviSummariesMessage;
 use App\Repository\SignalementRepository;
+use App\Repository\UserRepository;
 use App\Service\HtmlCleaner;
 use App\Service\Mailer\NotificationMail;
 use App\Service\Mailer\NotificationMailerRegistry;
@@ -25,6 +26,7 @@ class SuiviSummariesMessageHandler
         private readonly NotificationMailerRegistry $notificationMailerRegistry,
         private readonly LoggerInterface $logger,
         private readonly SignalementRepository $signalementRepository,
+        private readonly UserRepository $userRepository,
         private readonly HttpClientInterface $httpClient,
         private readonly UrlGeneratorInterface $urlGenerator,
         private ParameterBagInterface $parameterBag,
@@ -67,7 +69,7 @@ class SuiviSummariesMessageHandler
     {
         $spreadsheet = new Spreadsheet();
         $sheet = $spreadsheet->getActiveSheet();
-        $headers = ['Lien vers le signalement', 'Date du dernier suivi', 'Résumé du dernier suivi'];
+        $headers = ['Référence du signalement', 'Lien vers le signalement', 'Date du dernier suivi', 'Auteur du dernier suivi', 'Résumé du dernier suivi', 'Contenu du dernier suivi'];
         $sheetData = [$headers];
 
         $list = [];
@@ -91,10 +93,19 @@ class SuiviSummariesMessageHandler
 
         /** @var array $signalementResult */
         foreach ($list as $signalementResult) {
+            $cleanLastSuiviDescription = HtmlCleaner::clean($signalementResult['dernier_suivi_description']);
+            $userAuthorSuivi = $this->userRepository->find($signalementResult['dernier_suivi_created_by']);
+            $userAuthorSuiviStr = $userAuthorSuivi->getPrenom().' '.$userAuthorSuivi->getNom();
+            if (!empty($userAuthorSuivi->getPartner())) {
+                $userAuthorSuiviStr .= ' ('.$userAuthorSuivi->getPartner()->getNom().')';
+            }
             $rowArray = [
+                $signalementResult['reference'],
                 $this->urlGenerator->generate('back_signalement_view', ['uuid' => $signalementResult['uuid']], UrlGeneratorInterface::ABSOLUTE_URL),
                 $signalementResult['dernier_suivi_date'],
-                $this->getSummaryFromSignalement($signalementResult['dernier_suivi_description'], $suiviSummariesMessage),
+                $userAuthorSuiviStr,
+                $this->getSummaryFromSignalement($cleanLastSuiviDescription, $suiviSummariesMessage),
+                $cleanLastSuiviDescription,
             ];
             $sheetData[] = $rowArray;
         }
@@ -107,21 +118,20 @@ class SuiviSummariesMessageHandler
     /**
      * TODO : move to an Albert API communication service.
      */
-    private function getSummaryFromSignalement(string $lastSuiviDescription, SuiviSummariesMessage $suiviSummariesMessage): ?string
+    private function getSummaryFromSignalement(string $cleanLastSuiviDescription, SuiviSummariesMessage $suiviSummariesMessage): ?string
     {
         $messages = [];
 
-        if (!empty($lastSuiviDescription)) {
-            $lastSuiviDescriptionClean = HtmlCleaner::clean($lastSuiviDescription);
+        if (!empty($cleanLastSuiviDescription)) {
             $messages[] = $this->getAlbertMessage($suiviSummariesMessage->getPrompt());
-            $messages[] = $this->getAlbertMessage($lastSuiviDescriptionClean);
+            $messages[] = $this->getAlbertMessage($cleanLastSuiviDescription);
         } else {
             return null;
         }
 
         $payload = [
             'messages' => $messages,
-            'model' => 'AgentPublic/llama3-instruct-8b',
+            'model' => $suiviSummariesMessage->getModel(),
             'stream' => false,
             'n' => 1,
         ];

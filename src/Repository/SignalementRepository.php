@@ -1402,7 +1402,7 @@ class SignalementRepository extends ServiceEntityRepository
     public function findSignalementsLastSuiviWithSuiviAuto(Territory $territory, int $limit): array
     {
         $connexion = $this->getEntityManager()->getConnection();
-        $sql = 'SELECT s.id, s.uuid, MAX(su.created_at) as dernier_suivi_date, MAX(su.description) as dernier_suivi_description
+        $sql = 'SELECT s.id, s.reference, s.uuid, MAX(su.created_at) as dernier_suivi_date, MAX(su.created_by_id) as dernier_suivi_created_by, MAX(su.description) as dernier_suivi_description
                 FROM signalement s
                 INNER JOIN suivi su ON su.signalement_id = s.id
                 INNER JOIN territory ON s.territory_id = territory.id
@@ -1435,7 +1435,7 @@ class SignalementRepository extends ServiceEntityRepository
     public function findSignalementsLastSuiviByPartnerOlderThan(Territory $territory, int $limit, int $nbDays): array
     {
         $connexion = $this->getEntityManager()->getConnection();
-        $sql = 'SELECT s.id, s.uuid, MAX(su.created_at) as dernier_suivi_date, MAX(su.description) as dernier_suivi_description
+        $sql = 'SELECT s.id, s.reference, s.uuid, MAX(su.created_at) as dernier_suivi_date, MAX(su.created_by_id) as dernier_suivi_created_by, MAX(su.description) as dernier_suivi_description
                 FROM signalement s
                 INNER JOIN suivi su ON su.signalement_id = s.id
                 INNER JOIN territory ON s.territory_id = territory.id

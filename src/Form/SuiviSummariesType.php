@@ -45,6 +45,23 @@ class SuiviSummariesType extends AbstractType
                 'required' => true,
             ])
 
+            // Commented languages are listed in Albert doc, but don't work when used
+            ->add('model', ChoiceType::class, [
+                'choices' => [
+                    'meta-llama/Meta-Llama-3.1-8B-Instruct' => 'meta-llama/Meta-Llama-3.1-8B-Instruct',
+                    // 'mistralai/Mixtral-8x7B-Instruct-v0.1' => 'mistralai/Mixtral-8x7B-Instruct-v0.1',
+                    'AgentPublic/llama3-instruct-8b' => 'AgentPublic/llama3-instruct-8b',
+                    // 'BAAI/bge-m3' => 'BAAI/bge-m3',
+                    'AgentPublic/llama3-instruct-guillaumetell' => 'AgentPublic/llama3-instruct-guillaumetell',
+                    // 'intfloat/multilingual-e5-large' => 'intfloat/multilingual-e5-large',
+                    // 'google/gemma-2-9b-it' => 'google/gemma-2-9b-it',
+                ],
+                'placeholder' => 'Choisissez un modèle de langage',
+                'multiple' => false,
+                'expanded' => false,
+                'label' => 'Modèle de langage',
+            ])
+
             ->add('querySignalement', ChoiceType::class, [
                 'choices' => [
                     'reponse-usager',

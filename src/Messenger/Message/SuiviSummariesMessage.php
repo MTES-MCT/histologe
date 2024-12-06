@@ -12,6 +12,7 @@ class SuiviSummariesMessage
         private Territory $territory,
         private int $count,
         private string $prompt,
+        private string $model,
         private string $querySignalement,
     ) {
     }
@@ -34,6 +35,11 @@ class SuiviSummariesMessage
     public function getPrompt(): string
     {
         return $this->prompt;
+    }
+
+    public function getModel(): string
+    {
+        return $this->model;
     }
 
     public function getQuerySignalement(): string

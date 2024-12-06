@@ -29,9 +29,10 @@ class SuiviSummariesController extends AbstractController
             $territory = $form->get('territory')->getData();
             $count = $form->get('count')->getData();
             $prompt = $form->get('prompt')->getData();
+            $model = $form->get('model')->getData();
             $querySignalement = $form->get('querySignalement')->getData();
 
-            $messageBus->dispatch(new SuiviSummariesMessage($user, $territory, $count, $prompt, $querySignalement));
+            $messageBus->dispatch(new SuiviSummariesMessage($user, $territory, $count, $prompt, $model, $querySignalement));
             $this->addFlash(
                 'success',
                 \sprintf(
