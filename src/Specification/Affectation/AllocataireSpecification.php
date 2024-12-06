@@ -31,6 +31,8 @@ class AllocataireSpecification implements SpecificationInterface
                 return \in_array($isAllocataire, ['oui', 'caf', 'msa', '1']);
             case 'non':
                 return \in_array($isAllocataire, ['non', '0']);
+            case 'nsp':
+                return \in_array($isAllocataire, [null, '']);
             default:
                 return $isAllocataire === $this->ruleAllocataire;
         }

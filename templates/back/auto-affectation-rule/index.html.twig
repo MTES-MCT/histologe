@@ -55,6 +55,7 @@
             <th scope="col">Code insee inclus</th>
             <th scope="col">Code insee exclus</th>
             <th scope="col">Id partenaires exclus</th>
+            <th scope="col">Procédures suspectées</th>
             <th scope="col" class="fr-text--right">Actions</th>
         {% endset %}
 
@@ -96,6 +97,15 @@
                         {% if autoaffectationrule.partnerToExclude %}
                             {% for idPartner in autoaffectationrule.partnerToExclude %}
                                 <div class="fr-badge fr-badge--blue-ecume fr-mb-1v">{{ idPartner }}</div>
+                            {% endfor %}
+                        {% else %}
+                            /
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if autoaffectationrule.procedureSuspectee %}
+                            {% for proc in autoaffectationrule.procedureSuspectee %}
+                                <div class="fr-badge fr-badge--blue-ecume fr-mb-1v">{{ proc.label() }}</div>
                             {% endfor %}
                         {% else %}
                             /

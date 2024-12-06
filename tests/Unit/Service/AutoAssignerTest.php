@@ -3,7 +3,9 @@
 namespace App\Tests\Unit\Service;
 
 use App\Entity\Enum\ProfileDeclarant;
+use App\Entity\Enum\Qualification;
 use App\Entity\Signalement;
+use App\Entity\SignalementQualification;
 use App\Factory\SuiviFactory;
 use App\Manager\AffectationManager;
 use App\Manager\SignalementManager;
@@ -54,20 +56,6 @@ class AutoAssignerTest extends KernelTestCase
         // Signalement '2023-1' à Gex, sans règles d'affectation
         /** @var Signalement $signalement */
         $signalement = $this->signalementRepository->findOneBy(['reference' => '2023-1']);
-        $signalement->setStatut(Signalement::STATUS_NEED_VALIDATION);
-        $this->suiviFactory->expects($this->never())
-        ->method('createInstanceFrom');
-        $this->suiviManager->expects($this->never())
-        ->method('persist');
-        $this->testHelper($signalement, 0);
-        $this->assertEquals(Signalement::STATUS_NEED_VALIDATION, $signalement->getStatut());
-    }
-
-    public function testAutoAssignmentRuleArchived(): void
-    {
-        // l'autoAffectationRule de Loire-Atlantique est archivée, signalement 2023-27 en Loire-Atlantique
-        /** @var Signalement $signalement */
-        $signalement = $this->signalementRepository->findOneBy(['reference' => '2023-27']);
         $signalement->setStatut(Signalement::STATUS_NEED_VALIDATION);
         $this->suiviFactory->expects($this->never())
         ->method('createInstanceFrom');
@@ -159,6 +147,66 @@ class AutoAssignerTest extends KernelTestCase
         $this->suiviManager->expects($this->once())
         ->method('persist');
         $this->testHelper($signalement, 2);
+        $this->assertEquals(Signalement::STATUS_ACTIVE, $signalement->getStatut());
+    }
+
+    public function testAutoAssignmentRuleArchived(): void
+    {
+        // l'autoAffectationRule des Bouches-du-Rhône est archivée, signalement 2022-1 en Loire-Atlantique
+        /** @var Signalement $signalement */
+        $signalement = $this->signalementRepository->findOneBy(['reference' => '2022-1']);
+        $signalement->setStatut(Signalement::STATUS_NEED_VALIDATION);
+        $this->suiviFactory->expects($this->never())
+        ->method('createInstanceFrom');
+        $this->suiviManager->expects($this->never())
+        ->method('persist');
+        $this->testHelper($signalement, 0);
+        $this->assertEquals(Signalement::STATUS_NEED_VALIDATION, $signalement->getStatut());
+    }
+
+    public function testAutoAssignmentOneZoneExcluded(): void
+    {
+        // signalement 2023-27 au bourg de St-Mars, 1 partenaire exclus de cette zone et 1 inclus
+        /** @var Signalement $signalement */
+        $signalement = $this->signalementRepository->findOneBy(['reference' => '2023-27']);
+        $signalement->setStatut(Signalement::STATUS_NEED_VALIDATION);
+        $this->suiviFactory->expects($this->once())
+        ->method('createInstanceFrom');
+        $this->suiviManager->expects($this->once())
+        ->method('persist');
+        $this->testHelper($signalement, 1);
+        $this->assertEquals(Signalement::STATUS_ACTIVE, $signalement->getStatut());
+    }
+
+    public function testAutoAssignmentZoneIncluded(): void
+    {
+        // signalement 2024-09 à La Bodinière, 2 partenaires sur cette zone
+        /** @var Signalement $signalement */
+        $signalement = $this->signalementRepository->findOneBy(['reference' => '2024-09']);
+        $signalement->setStatut(Signalement::STATUS_NEED_VALIDATION);
+        $this->suiviFactory->expects($this->once())
+        ->method('createInstanceFrom');
+        $this->suiviManager->expects($this->once())
+        ->method('persist');
+        $this->testHelper($signalement, 2);
+        $this->assertEquals(Signalement::STATUS_ACTIVE, $signalement->getStatut());
+    }
+
+    public function testAutoAssignmentProcedure(): void
+    {
+        // signalement 2024-09 à La Bodinière, 2 partenaires sur cette zone
+        // + 1 partenaire si procédure DANGER
+        /** @var Signalement $signalement */
+        $signalement = $this->signalementRepository->findOneBy(['reference' => '2024-09']);
+        $signalement->setStatut(Signalement::STATUS_NEED_VALIDATION);
+        $signalement->addSignalementQualification((new SignalementQualification())->setQualification(
+            Qualification::DANGER
+        ));
+        $this->suiviFactory->expects($this->once())
+        ->method('createInstanceFrom');
+        $this->suiviManager->expects($this->once())
+        ->method('persist');
+        $this->testHelper($signalement, 3);
         $this->assertEquals(Signalement::STATUS_ACTIVE, $signalement->getStatut());
     }
 

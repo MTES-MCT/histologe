@@ -5,11 +5,14 @@ namespace App\Form;
 use App\Entity\AutoAffectationRule;
 use App\Entity\Enum\PartnerType;
 use App\Entity\Enum\ProfileDeclarant;
+use App\Entity\Enum\Qualification;
 use App\Entity\Territory;
+use App\Form\Type\SearchCheckboxEnumType;
 use App\Repository\TerritoryRepository;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\CallbackTransformer;
+use Symfony\Component\Form\ChoiceList\ChoiceList;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\EnumType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
@@ -104,9 +107,10 @@ class AutoAffectationRuleType extends AbstractType
                     'Sélectionnez quels profils d\'allocataire sont concernés' => '',
                     'Tous' => 'all',
                     'Tous les allocataires' => 'oui',
-                    'Tous les  non-allocataires' => 'non',
+                    'Tous les non-allocataires' => 'non',
                     'Allocataires CAF' => 'caf',
                     'Allocataires MSA' => 'msa',
+                    'Situation allocataire inconnue' => 'nsp',
                 ],
                 'row_attr' => [
                     'class' => 'fr-select-group',
@@ -148,6 +152,29 @@ class AutoAffectationRuleType extends AbstractType
                 'help_attr' => [
                     'class' => 'fr-hint-text',
                 ],
+            ])
+            ->add('procedureSuspectee', SearchCheckboxEnumType::class, [
+                'class' => Qualification::class,
+                'choice_filter' => ChoiceList::filter(
+                    $this,
+                    function ($choice) {
+                        return \in_array($choice, Qualification::getProcedureSuspecteeList()) ? $choice : false;
+                    },
+                    'competence'
+                ),
+                'choice_label' => function ($choice) {
+                    return $choice->label();
+                },
+                'label' => 'Procédures suspectée (facultatif)',
+                'noselectionlabel' => 'Sélectionner une ou plusieurs procédures',
+                'nochoiceslabel' => 'Aucune procédure disponible',
+                'multiple' => true,
+                'expanded' => false,
+                'help' => 'Choisissez une ou plusieurs procédure parmi la liste ci-dessous.',
+                'help_attr' => [
+                    'class' => 'fr-hint-text',
+                ],
+                'required' => false,
             ])
         ;
         $builder->get('inseeToExclude')->addModelTransformer(new CallbackTransformer(

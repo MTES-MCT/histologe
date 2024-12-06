@@ -75,5 +75,14 @@ class AllocataireSpecificationTest extends KernelTestCase
         yield 'msa - oui' => ['oui', 'msa', false];
         yield 'msa - null' => [null, 'msa', false];
         yield 'msa - ' => ['', 'msa', false];
+
+        yield 'nsp - 0' => ['0', 'nsp', false];
+        yield 'nsp - 1' => ['1', 'nsp', false];
+        yield 'nsp - CAF' => ['CAF', 'nsp', false];
+        yield 'nsp - MSA' => ['MSA', 'nsp', false];
+        yield 'nsp - non' => ['non', 'nsp', false];
+        yield 'nsp - oui' => ['oui', 'nsp', false];
+        yield 'nsp - null' => [null, 'nsp', true];
+        yield 'nsp - ' => ['', 'nsp', true];
     }
 }

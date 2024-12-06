@@ -6,8 +6,10 @@ use App\Entity\Behaviour\EntityHistoryInterface;
 use App\Entity\Enum\HistoryEntryEvent;
 use App\Entity\Enum\PartnerType;
 use App\Entity\Enum\ProfileDeclarant;
+use App\Entity\Enum\Qualification;
 use App\Repository\AutoAffectationRuleRepository;
 use App\Validator as AppAssert;
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
 
@@ -72,12 +74,15 @@ class AutoAffectationRule implements EntityHistoryInterface
         message: 'Choisissez une option valide: all, non_renseigne, prive ou public')]
     private string $parc;
 
-    #[ORM\Column(length: 32, options: ['comment' => 'Value possible all, non, oui, caf or msa'])]
+    #[ORM\Column(length: 32, options: ['comment' => 'Value possible all, non, oui, caf, msa or nsp'])]
     #[Assert\NotBlank(message: 'Merci de renseigner le profil d\'allocataire.')]
     #[Assert\Choice(
-        choices: ['all', 'non', 'oui', 'caf', 'msa'],
-        message: 'Choisissez une option valide: all, non, oui, caf ou msa')]
+        choices: ['all', 'non', 'oui', 'caf', 'msa', 'nsp'],
+        message: 'Choisissez une option valide: all, non, oui, caf, msa ou nsp')]
     private string $allocataire;
+
+    #[ORM\Column(type: Types::SIMPLE_ARRAY, nullable: true, enumType: Qualification::class)]
+    private array $procedureSuspectee = [];
 
     public function getId(): ?int
     {
@@ -199,6 +204,23 @@ class AutoAffectationRule implements EntityHistoryInterface
         return $this;
     }
 
+    public function getProcedureSuspectee(): ?array
+    {
+        return $this->procedureSuspectee;
+    }
+
+    public function setProcedureSuspectee(?array $procedureSuspectee): self
+    {
+        $this->procedureSuspectee = $procedureSuspectee;
+
+        return $this;
+    }
+
+    public function hasProcedureSuspectee(Qualification $qualification): bool
+    {
+        return \in_array($qualification, $this->getProcedureSuspectee());
+    }
+
     public function getDescription(bool $isShort = true): string
     {
         $description = 'Règle d\'auto-affectation pour les partenaires '.$this->getPartnerType()->label();
@@ -228,19 +250,25 @@ class AutoAffectationRule implements EntityHistoryInterface
         $description .= ' Cette règle concerne les signalements faits par ';
         switch ($this->getProfileDeclarant()) {
             case 'all':
-                $description .= 'tous profils de déclarant.';
+                $description .= 'tous profils de déclarant';
                 break;
             case 'tiers':
-                $description .= 'un tiers.';
+                $description .= 'un tiers';
                 break;
             case 'occupant':
-                $description .= 'un occupant.';
+                $description .= 'un occupant';
                 break;
             default:
-                $description .= ProfileDeclarant::tryFrom($this->getProfileDeclarant())?->label().'.';
+                $description .= ProfileDeclarant::tryFrom($this->getProfileDeclarant())?->label();
                 break;
         }
-        $description .= ' Elle concerne les foyers ';
+        if (\count($this->getProcedureSuspectee()) > 0) {
+            $description .= ', ayant les procédures suspectées suivantes : ';
+            foreach ($this->getProcedureSuspectee() as $procedure) {
+                $description .= $procedure->label().' ';
+            }
+        }
+        $description .= '. Elle concerne les foyers ';
         switch ($this->getAllocataire()) {
             case 'oui':
                 $description .= 'allocataires.';
@@ -254,10 +282,14 @@ class AutoAffectationRule implements EntityHistoryInterface
             case 'msa':
                 $description .= 'allocataires à la MSA.';
                 break;
+            case 'nsp':
+                $description .= 'dont on ne connait pas la situation d\'allocataire.';
+                break;
             default:
                 $description .= 'allocataires et non-allocataires.';
                 break;
         }
+        // TODO : ajouter procédure suspectée
 
         $description .= ' Elle s\'applique ';
         switch ($this->getInseeToInclude()) {
@@ -265,7 +297,7 @@ class AutoAffectationRule implements EntityHistoryInterface
                 $description .= 'à tous les logements du territoire';
                 break;
             case 'partner_list':
-                $description .= 'aux logements situés dans le périmètre du partenaire (codes insee)';
+                $description .= 'aux logements situés dans le périmètre géographique du partenaire (codes insee et/ou zones)';
                 break;
             default:
                 $description .= 'aux logements situés dans les communes aux codes insee suivants : '.$this->getInseeToInclude();

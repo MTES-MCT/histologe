@@ -34,7 +34,8 @@ class AutoAffectationRuleFactoryTest extends KernelTestCase
             inseeToExclude : null,
             partnerToExclude : null,
             parc : 'all',
-            allocataire : 'all'
+            allocataire : 'all',
+            procedureSuspectee: null
         );
 
         /** @var ConstraintViolationList $errors */
@@ -60,7 +61,8 @@ class AutoAffectationRuleFactoryTest extends KernelTestCase
             inseeToExclude : null,
             partnerToExclude : null,
             parc : 'ERROR',
-            allocataire : 'ERROR'
+            allocataire : 'ERROR',
+            procedureSuspectee: ['ERROR']
         );
 
         /** @var ConstraintViolationList $errors */
@@ -69,6 +71,6 @@ class AutoAffectationRuleFactoryTest extends KernelTestCase
         $this->assertStringContainsString('Choisissez une option valide: ACTIVE or ARCHIVED', (string) $errors);
         $this->assertStringContainsString('La valeur "ERROR" n\'est pas un profil déclarant ou groupe de profils valide', (string) $errors);
         $this->assertStringContainsString('Choisissez une option valide: all, non_renseigne, prive ou public', (string) $errors);
-        $this->assertStringContainsString('Choisissez une option valide: all, non, oui, caf ou msa', (string) $errors);
+        $this->assertStringContainsString('Choisissez une option valide: all, non, oui, caf, msa ou nsp', (string) $errors);
     }
 }
