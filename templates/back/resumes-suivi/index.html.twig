@@ -1,0 +1,38 @@
+{% extends 'back/base_bo.html.twig' %}
+
+{% block title %}Résumés de suivis{% endblock %}
+
+{% block content %}
+    {% if is_granted('ROLE_ADMIN') %}
+    <section class="fr-p-5v">
+        {% include 'back/breadcrumb_bo.html.twig' with {
+            'level2Title': 'Outils SA',
+            'level2Link': '',
+            'level2Label': '',
+            'level3Title': 'Résumés de suivis',
+            'level3Link': '',
+        } %}
+        <header>
+            <div class="fr-grid-row">
+                <div class="fr-text--left">
+                    <h1 class="fr-h1 fr-mb-0">Résumés de suivis</h1>
+                    <p>
+                        Cette fonctionnalité interroge l'API de l'IA Albert pour générer des résumés de suivis qui vous seront envoyés par e-mail.
+                    </p>
+                </div>
+            </div>
+        </header>
+    </section>
+    <section class="fr-container--fluid">
+        <div class="fr-grid-row fr-grid-row--center">
+            <div class="fr-col-6">
+                {% form_theme form 'form/dsfr_theme.html.twig' %}
+                {{ form(form) }}
+            </div>
+        </div>
+    </section>
+    {% endif %}
+{% endblock %}
+{% block javascripts %}
+    {{ encore_entry_script_tags('app') }}
+{% endblock %}

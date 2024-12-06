@@ -47,6 +47,7 @@ readonly class MenuBuilder
             ->addChild(new MenuItem(label: 'Comptes archivés', route: 'back_account_index', roleGranted: User::ROLE_ADMIN))
             ->addChild(new MenuItem(label: 'Signalement archivés', route: 'back_archived_signalements_index', roleGranted: User::ROLE_ADMIN))
             ->addChild(new MenuItem(label: 'Règles d\'auto-affectation', route: 'back_auto_affectation_rule_index', roleGranted: User::ROLE_ADMIN))
+            ->addChild(new MenuItem(label: 'Résumés de suivis', route: 'back_suivi_summaries_index', roleGranted: User::ROLE_ADMIN))
             ->addChild(new MenuItem(label: 'Territoires', route: 'back_territory_index', roleGranted: User::ROLE_ADMIN, featureEnable: (bool) $this->parameterBag->get('feature_grille_visite')))
             ->addChild(new MenuItem(route: 'back_account_reactiver'))
             ->addChild(new MenuItem(route: 'back_territory_edit'))
