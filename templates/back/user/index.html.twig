@@ -1,83 +1,78 @@
-{% extends 'back/base_bo_table.html.twig' %}
+{% extends 'back/base_bo.html.twig' %}
 
 {% block title %}Liste des utilisateurs{% endblock %}
+{% block content %}
+{% include '_partials/_modal_user_edit.html.twig' with { 'currentPage': 'userList' } %}
+<section class="fr-p-5v">
+    {% include 'back/breadcrumb_bo.html.twig' with {
+        'level2Title': 'Outils admin',
+        'level2Link': '',
+        'level2Label': '',
+        'level3Title': 'Utilisateurs',
+        'level3Link': '',
+    } %}
 
-{% block contentTitle %}
-    {% include '_partials/_modal_user_edit.html.twig' with { 'currentPage': 'userList' } %}
-    <section class="fr-p-5v">
-        {% include 'back/breadcrumb_bo.html.twig' with {
-            'level2Title': 'Outils admin',
-            'level2Link': '',
-            'level2Label': '',
-            'level3Title': 'Utilisateurs',
-            'level3Link': '',
-        } %}
-
-        <header>
-            <div class="fr-grid-row">
-                <div class="fr-col-12 fr-text--left">
-                    <h1>Liste des utilisateurs</h1>
-                    <p>
-                        La liste des agents ayant un compte sur {{ platform.name }}. Vous pouvez filtrer les utilisateurs et exporter la liste.
-                    </p>
-                </div>
-            </div>
-        </header>
-    </section>
-{% endblock %}
-
-{% block contentFilters %}
-    <section class="fr-container--fluid overflow-visible">
-        {% form_theme form 'form/dsfr_theme.html.twig' %}
-        {{ form_start(form) }}
-        {{ form_errors(form) }}
-        <div class="fr-grid-row fr-grid-row--gutters">
-            <div class="fr-col-12 fr-col-lg-3">
-                {{ form_row(form.queryUser) }}
-            </div>
-            {% if is_granted('ROLE_ADMIN') %}
-                <div class="fr-col-12 fr-col-lg-3">
-                    {{ form_row(form.territory) }}
-                </div>
-            {% endif %}
-            <div class="fr-col-12 fr-col-lg-3">
-                {{ form_row(form.partnerType) }}
-            </div>
-            <div class="fr-col-12 fr-col-lg-3">
-                {{ form_row(form.partners) }}
-            </div>
-            <div class="fr-col-12 fr-col-lg-3">
-                {{ form_row(form.statut) }}
-            </div>
-            <div class="fr-col-12 fr-col-lg-3">
-                {{ form_row(form.role) }}
-            </div>
-            {% if platform.feature_permission_affectation %}
-            <div class="fr-col-12 fr-col-lg-3">
-                {{ form_row(form.permissionAffectation) }}
-            </div>
-            {% endif %}
-            <div class="fr-col-12">
-                <a href="{{ path('back_user_index') }}" class="fr-link fr-link--icon-left fr-icon-close-circle-line">Réinitialiser les résultats</a>
+    <header>
+        <div class="fr-grid-row">
+            <div class="fr-col-12 fr-text--left">
+                <h1>Liste des utilisateurs</h1>
+                <p>
+                    La liste des agents ayant un compte sur {{ platform.name }}. Vous pouvez filtrer les utilisateurs et exporter la liste.
+                </p>
             </div>
         </div>
-        {{ form_end(form) }}
-    </section>
-{% endblock %}
+    </header>
+</section>
 
-{% block contentDescription %}
-    <section class="fr-grid-row fr-grid-row--middle fr-p-5v">
-        <div class="fr-col">
-            <h2 class="fr-h2 fr-mb-0" id="desc-table">{{users|length}} utilisateur{% if users|length > 1%}s{% endif %}</h2>
+<section class="fr-container--fluid overflow-visible">
+    {% form_theme form 'form/dsfr_theme.html.twig' %}
+    {{ form_start(form) }}
+    {{ form_errors(form) }}
+    <div class="fr-grid-row fr-grid-row--gutters">
+        <div class="fr-col-12 fr-col-lg-3">
+            {{ form_row(form.queryUser) }}
         </div>
-        <div class="fr-col fr-text--right">
-            <a href="{{path('back_user_export', searchUser.urlParams)}}" class="fr-btn fr-btn--secondary fr-btn--icon-left fr-icon-download-fill"> Exporter les résultats </a>
+        {% if is_granted('ROLE_ADMIN') %}
+            <div class="fr-col-12 fr-col-lg-3">
+                {{ form_row(form.territory) }}
+            </div>
+        {% endif %}
+        <div class="fr-col-12 fr-col-lg-3">
+            {{ form_row(form.partnerType) }}
         </div>
-    </section>
-{% endblock %}
+        <div class="fr-col-12 fr-col-lg-3">
+            {{ form_row(form.partners) }}
+        </div>
+        <div class="fr-col-12 fr-col-lg-3">
+            {{ form_row(form.statut) }}
+        </div>
+        <div class="fr-col-12 fr-col-lg-3">
+            {{ form_row(form.role) }}
+        </div>
+        {% if platform.feature_permission_affectation %}
+        <div class="fr-col-12 fr-col-lg-3">
+            {{ form_row(form.permissionAffectation) }}
+        </div>
+        {% endif %}
+        <div class="fr-col-12">
+            <a href="{{ path('back_user_index') }}" class="fr-link fr-link--icon-left fr-icon-close-circle-line">Réinitialiser les résultats</a>
+        </div>
+    </div>
+    {{ form_end(form) }}
+</section>
+
+<section class="fr-grid-row fr-grid-row--middle fr-p-5v">
+    <div class="fr-col">
+        <h2 class="fr-h2 fr-mb-0" id="desc-table">{{users|length}} utilisateur{% if users|length > 1%}s{% endif %}</h2>
+    </div>
+    <div class="fr-col fr-text--right">
+        <a href="{{path('back_user_export', searchUser.urlParams)}}" class="fr-btn fr-btn--secondary fr-btn--icon-left fr-icon-download-fill"> Exporter les résultats </a>
+    </div>
+</section>
 
 {% set tableLabel = 'Liste des utilisateurs' %}
-{% block contentTableHead %}
+
+{% set tableHead %}
     {% if is_granted('ROLE_ADMIN') %}
         <th scope="col">Territoire</th>
     {% endif %}
@@ -92,9 +87,9 @@
     <th scope="col">Droits d'affectation</th>
     {% endif %}
     <th scope="col" class="fr-text--right">Actions</th>
-{% endblock %}
+{% endset %}
 
-{% block contentTableBody %}
+{% set tableBody %}
     {% for user in users %}
         <tr class="signalement-row">
             {% if is_granted('ROLE_ADMIN') %}
@@ -139,4 +134,8 @@
             </td>
         </tr>
     {% endfor %}
+{% endset %}
+
+{% include '_partials/_dsfr_table.html.twig' %}
+
 {% endblock %}
