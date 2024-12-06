@@ -62,4 +62,17 @@ enum Qualification: string
 
         return array_search($label, self::getLabelList());
     }
+
+    public static function getProcedureSuspecteeList(): array
+    {
+        return [
+            self::ASSURANTIEL,
+            self::INSALUBRITE,
+            self::NON_DECENCE,
+            self::NON_DECENCE_ENERGETIQUE,
+            self::RSD,
+            self::DANGER,
+            self::SUROCCUPATION,
+        ];
+    }
 }
