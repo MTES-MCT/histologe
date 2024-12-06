@@ -1,0 +1,18 @@
+<div class="fr-table">
+	<div class="fr-table__wrapper">
+		<div class="fr-table__container">
+			<div class="fr-table__content">
+				<table class="{{ cancelSortable is defined ? '' : 'sortable' }} fr-cell--multiline" aria-label="{{ tableLabel }}" aria-describedby="{{ tableDescId ?? 'desc-table' }}">
+					<thead>
+						<tr>
+							{{tableHead}}
+						</tr>
+					</thead>
+					<tbody>
+						{{tableBody}}
+					</tbody>
+				</table>
+			</div>
+		</div>
+	</div>
+</div>
