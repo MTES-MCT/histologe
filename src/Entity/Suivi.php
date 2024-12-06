@@ -10,6 +10,7 @@ use Doctrine\ORM\Mapping as ORM;
 #[ORM\Entity(repositoryClass: SuiviRepository::class)]
 #[ORM\Index(columns: ['type'], name: 'idx_suivi_type')]
 #[ORM\Index(columns: ['created_at'], name: 'idx_suivi_created_at')]
+#[ORM\Index(columns: ['signalement_id', 'type', 'created_at'], name: 'idx_suivi_signalement_type_created_at')]
 class Suivi implements EntityHistoryInterface
 {
     public const TYPE_AUTO = 1;

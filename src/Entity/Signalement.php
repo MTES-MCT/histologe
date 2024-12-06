@@ -31,6 +31,7 @@ use Symfony\Component\Validator\Context\ExecutionContextInterface;
 #[ORM\Index(columns: ['created_at'], name: 'idx_signalement_created_at')]
 #[ORM\Index(columns: ['is_imported'], name: 'idx_signalement_is_imported')]
 #[ORM\Index(columns: ['uuid'], name: 'idx_signalement_uuid')]
+#[ORM\Index(columns: ['code_suivi'], name: 'idx_signalement_code_suivi')]
 class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInterface
 {
     public const STATUS_NEED_VALIDATION = 1;
