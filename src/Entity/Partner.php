@@ -44,9 +44,6 @@ class Partner implements EntityHistoryInterface
     #[Groups(['widget-settings:read'])]
     private ?string $nom = null;
 
-    #[ORM\OneToMany(mappedBy: 'partner', targetEntity: User::class, cascade: ['persist'])]
-    private Collection $users;
-
     #[ORM\Column(type: 'boolean')]
     private bool $isArchive = false;
 
@@ -109,14 +106,20 @@ class Partner implements EntityHistoryInterface
     #[ORM\JoinTable(name: 'partner_excluded_zone')]
     private Collection $excludedZones;
 
+    /**
+     * @var Collection<int, UserPartner>
+     */
+    #[ORM\OneToMany(mappedBy: 'partner', targetEntity: UserPartner::class, orphanRemoval: true)]
+    private Collection $userPartners;
+
     public function __construct()
     {
-        $this->users = new ArrayCollection();
         $this->isArchive = false;
         $this->affectations = new ArrayCollection();
         $this->interventions = new ArrayCollection();
         $this->isIdossActive = false;
         $this->zones = new ArrayCollection();
+        $this->userPartners = new ArrayCollection();
         $this->excludedZones = new ArrayCollection();
     }
 
@@ -144,33 +147,44 @@ class Partner implements EntityHistoryInterface
         return $this;
     }
 
-    public function getUsers(): Collection
+    /**
+     * @return Collection<int, UserPartner>
+     */
+    public function getUserPartners(): Collection
     {
-        return $this->users->filter(function (User $user) {
-            if (User::STATUS_ARCHIVE !== $user->getStatut()) {
-                return $user;
+        return $this->userPartners->filter(function (UserPartner $userPartner) {
+            if (User::STATUS_ARCHIVE !== $userPartner->getUser()->getStatut()) {
+                return $userPartner;
             }
         });
     }
 
-    public function addUser(User $user): self
+    /**
+     * @return Collection<int, User>
+     */
+    public function getUsers(): Collection
     {
-        if (!$this->users->contains($user)) {
-            $this->users[] = $user;
-            $user->setPartner($this);
+        $users = new ArrayCollection();
+        foreach ($this->getUserPartners() as $userPartner) {
+            $users->add($userPartner->getUser());
+        }
+
+        return $users;
+    }
+
+    public function addUserPartner(UserPartner $userPartner): static
+    {
+        if (!$this->userPartners->contains($userPartner)) {
+            $this->userPartners->add($userPartner);
+            $userPartner->setPartner($this);
         }
 
         return $this;
     }
 
-    public function removeUser(User $user): self
+    public function removeUserPartner(UserPartner $userPartner): static
     {
-        if ($this->users->removeElement($user)) {
-            // set the owning side to null (unless already changed)
-            if ($user->getPartner() === $this) {
-                $user->setPartner(null);
-            }
-        }
+        $this->userPartners->removeElement($userPartner);
 
         return $this;
     }
@@ -328,9 +342,10 @@ class Partner implements EntityHistoryInterface
 
     public function getEmailActiveUsers(): array
     {
-        $emailUsers = $this->users->map(function (User $user) {
-            return User::STATUS_ARCHIVE !== $user->getStatut() ? $user->getEmail() : null;
-        })->toArray();
+        $emailUsers = [];
+        foreach ($this->getUsers() as $user) {
+            $emailUsers[] = $user->getEmail();
+        }
 
         return array_filter($emailUsers);
     }

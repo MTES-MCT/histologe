@@ -61,7 +61,6 @@ class RemindInactiveUserCommand extends AbstractCronCommand
                     new NotificationMail(
                         type: NotificationMailerType::TYPE_ACCOUNT_ACTIVATION_REMINDER,
                         to: $user->getEmail(),
-                        territory: $user->getTerritory(),
                         user: $user,
                         params: [
                             'nb_signalements' => $userItem['nb_signalements'],

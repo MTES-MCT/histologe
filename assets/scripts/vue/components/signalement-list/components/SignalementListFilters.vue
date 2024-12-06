@@ -400,12 +400,14 @@ export default defineComponent({
 
       if (this.sharedState.input.filters.showMyAffectationOnly === 'oui') {
         this.deactiveWithoutAffectationsOnly()
-        const currentPartner = this.sharedState.partenaires.filter((partner: HistoInterfaceSelectOption) => {
-          return partner.Id === this.sharedState.user.partnerId?.toString() || ''
+        const currentPartners = this.sharedState.partenaires.filter((partner: HistoInterfaceSelectOption) => {
+          for (const partnerId of this.sharedState.user.partnerIds) {
+            if (partner.Id?.toString() === partnerId.toString()) {
+              return true
+            }
+          }
         })
-        this.sharedState.input.filters.partenaires = [currentPartner[0].Id]
-      } else {
-        delete this.sharedState.input.filters.partenaires[0]
+        this.sharedState.input.filters.partenaires = currentPartners.map(partner => partner.Id)
       }
 
       if (typeof this.onChange === 'function') {
@@ -448,9 +450,8 @@ export default defineComponent({
       }
     },
     removeFilter (key: string) {
-      const currentMyAffectationOnly = (this.sharedState.input.filters as any)[key][0]
       const showMyAffectationOnly = this.sharedState.input.filters.showMyAffectationOnly
-      if (showMyAffectationOnly === 'oui' && currentMyAffectationOnly === this.sharedState.user.partnerId?.toString()) {
+      if (showMyAffectationOnly === 'oui' && key === 'partenaires') {
         this.deactiveMyAffectationsOnly()
       }
       if (this.sharedState.input.filters.showWithoutAffectationOnly === 'oui') {

@@ -59,10 +59,10 @@ class BackTerritoryControllerTest extends WebTestCase
         /** @var RouterInterface $router */
         $router = self::getContainer()->get(RouterInterface::class);
 
-        $client->request('GET', $router->generate('back_territory_grille_visite', ['territory' => $user->getPartner()->getTerritory()->getId()]));
+        $client->request('GET', $router->generate('back_territory_grille_visite', ['territory' => $user->getFirstTerritory()->getId()]));
         $this->assertResponseIsSuccessful();
 
-        $client->request('GET', $router->generate('back_territory_grille_visite', ['territory' => $user->getPartner()->getTerritory()->getId() + 1]));
+        $client->request('GET', $router->generate('back_territory_grille_visite', ['territory' => $user->getFirstTerritory()->getId() + 1]));
         $this->assertResponseStatusCodeSame(Response::HTTP_FORBIDDEN);
     }
 
@@ -81,7 +81,7 @@ class BackTerritoryControllerTest extends WebTestCase
         /** @var RouterInterface $router */
         $router = self::getContainer()->get(RouterInterface::class);
 
-        $client->request('GET', $router->generate('back_territory_grille_visite', ['territory' => $user->getPartner()->getTerritory()->getId()]));
+        $client->request('GET', $router->generate('back_territory_grille_visite', ['territory' => $user->getFirstTerritory()->getId()]));
         $this->assertResponseStatusCodeSame(Response::HTTP_NOT_FOUND);
     }
 }

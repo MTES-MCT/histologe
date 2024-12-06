@@ -30,8 +30,8 @@ class SearchUser
     public function __construct(User $user)
     {
         $this->user = $user;
-        if (!$user->isSuperAdmin()) {
-            $this->territory = $user->getTerritory();
+        if (!$user->isSuperAdmin() && 1 === count($user->getPartnersTerritories())) {
+            $this->territory = $user->getFirstTerritory();
         }
         $this->partners = new ArrayCollection();
     }

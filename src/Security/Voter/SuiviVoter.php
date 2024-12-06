@@ -24,11 +24,7 @@ class SuiviVoter extends Voter
     {
         /** @var User $user */
         $user = $token->getUser();
-        if (
-            !$user instanceof UserInterface
-            || !$user->isSuperAdmin()
-            && $subject->getTerritory() !== $user->getTerritory()
-        ) {
+        if (!$user instanceof UserInterface || !$user->isSuperAdmin() && !$user->hasPartnerInTerritory($subject->getTerritory())) {
             return false;
         }
 
@@ -40,12 +36,17 @@ class SuiviVoter extends Voter
 
     private function canCreate(Signalement $signalement, User $user): bool
     {
-        $isUserInAcceptedAffectation = $signalement->getAffectations()->filter(function (Affectation $affectation) use ($user) {
-            return $affectation->getPartner()->getId() === $user->getPartner()->getId()
-                && Affectation::STATUS_ACCEPTED == $affectation->getStatut();
-        })->count() > 0;
+        if (Signalement::STATUS_ACTIVE !== $signalement->getStatut()) {
+            return false;
+        }
+        if ($user->isTerritoryAdmin() || $user->isSuperAdmin()) {
+            return true;
+        }
 
-        return Signalement::STATUS_ACTIVE === $signalement->getStatut()
-            && ($isUserInAcceptedAffectation || $user->isTerritoryAdmin() || $user->isSuperAdmin());
+        $partner = $user->getPartnerInTerritory($signalement->getTerritory());
+
+        return $signalement->getAffectations()->filter(function (Affectation $affectation) use ($partner) {
+            return $affectation->getPartner()->getId() === $partner->getId() && Affectation::STATUS_ACCEPTED == $affectation->getStatut();
+        })->count() > 0;
     }
 }

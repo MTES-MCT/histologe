@@ -2,7 +2,7 @@ const territory = document.querySelector('#user_territory')
 
 territory?.addEventListeners('change', (event) => {
   const form = document.querySelector('form#account_user')
-  const partner = document.querySelector('#user_partner')
+  const partner = document.querySelector('#user_tempPartner')
   const url = form.action
   const type = form.method
 
@@ -19,7 +19,7 @@ territory?.addEventListeners('change', (event) => {
     .then(function (html) {
       const parser = new DOMParser()
       const receivedDoc = parser.parseFromString(html, 'text/html')
-      const newPartner = receivedDoc.querySelector('#user_partner')
+      const newPartner = receivedDoc.querySelector('#user_tempPartner')
       if (newPartner !== null) {
         newPartner.addEventListener('change', function (e) {
           e.target.classList.remove('is-invalid')

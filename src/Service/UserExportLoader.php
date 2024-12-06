@@ -40,14 +40,31 @@ readonly class UserExportLoader
         foreach ($list as $user) {
             $rowArray = [];
             foreach ($headers as $key => $unused) {
+                $territories = '';
+                foreach ($user->getPartnersTerritories() as $territory) {
+                    $territories .= $territory->getZip().' - '.$territory->getName().', ';
+                }
+                $territories = substr($territories, 0, -2);
+                $partners = '';
+                $partnerTypes = '';
+                foreach ($user->getPartners() as $partner) {
+                    $partners .= $partner->getNom().', ';
+                    if ($partner->getType()) {
+                        $partnerTypes .= $partner->getType()->label().', ';
+                    } else {
+                        $partnerTypes .= 'N/A, ';
+                    }
+                }
+                $partners = substr($partners, 0, -2);
+                $partnerTypes = substr($partnerTypes, 0, -2);
                 $rowArray[] = match ($key) {
                     'id' => $user->getId(),
-                    'territory' => $user->getTerritory() ? $user->getTerritory()->getZip().' - '.$user->getTerritory()->getName() : '',
+                    'territory' => $territories,
                     'email' => $user->getEmail(),
                     'nom' => $user->getNom(),
                     'prenom' => $user->getPrenom(),
-                    'partner' => $user->getPartner() ? $user->getPartner()->getNom() : '',
-                    'partnerType' => $user->getPartner() && $user->getPartner()->getType() ? $user->getPartner()->getType()->label() : '',
+                    'partner' => $partners,
+                    'partnerType' => $partnerTypes,
                     'createdAt' => $user->getCreatedAt()->format('d/m/Y'),
                     'statut' => User::STATUS_ACTIVE === $user->getStatut() ? 'Activé' : 'Non activé',
                     'lastLoginAt' => $user->getLastLoginAt() ? $user->getLastLoginAt()->format('d/m/Y') : '',

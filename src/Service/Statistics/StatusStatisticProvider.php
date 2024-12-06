@@ -24,7 +24,7 @@ class StatusStatisticProvider
     {
         $countPerStatuses = $this->signalementRepository->countByStatus(
             territory: $territory,
-            partner: null,
+            partners: null,
             year: $year,
             removeImported: true
         );

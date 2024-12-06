@@ -33,7 +33,7 @@ class AssignmentVoter extends Voter
     {
         /** @var User $user */
         $user = $token->getUser();
-        if (!$user instanceof UserInterface || !$user->isSuperAdmin() && $subject->getTerritory() !== $user->getTerritory()) {
+        if (!$user instanceof UserInterface || !$user->isSuperAdmin() && !$user->hasPartnerInTerritory($subject->getTerritory())) {
             return false;
         }
 
@@ -69,7 +69,7 @@ class AssignmentVoter extends Voter
 
     private function canAnswer(Affectation $assignment, User $user): bool
     {
-        return $assignment->getPartner() === $user->getPartner() && Signalement::STATUS_ACTIVE === $assignment->getSignalement()->getStatut();
+        return $assignment->getPartner() === $user->getPartnerInTerritory($assignment->getSignalement()->getTerritory()) && Signalement::STATUS_ACTIVE === $assignment->getSignalement()->getStatut();
     }
 
     private function canClose(Affectation $assignment, User $user): bool

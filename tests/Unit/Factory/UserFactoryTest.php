@@ -3,8 +3,8 @@
 namespace App\Tests\Unit\Factory;
 
 use App\Entity\Partner;
-use App\Entity\Territory;
 use App\Entity\User;
+use App\Entity\UserPartner;
 use App\Factory\UserFactory;
 use App\Manager\PartnerManager;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
@@ -27,13 +27,10 @@ class UserFactoryTest extends KernelTestCase
 
     public function testCreateUserInstance(): void
     {
-        $territory = new Territory();
         $partner = new Partner();
 
         $user = (new UserFactory())->createInstanceFrom(
             roleLabel: 'Agent',
-            territory: $territory,
-            partner: $partner,
             firstname: 'John',
             lastname: 'Doe',
             email: 'john.doe@example.com'
@@ -51,12 +48,7 @@ class UserFactoryTest extends KernelTestCase
 
     public function testCreateUserAdminInstanceWithoutPartnerAndTerritory(): void
     {
-        $territory = new Territory();
-        $partner = new Partner();
-
         $user = (new UserFactory())->createInstanceFrom(
-            partner: null,
-            territory: null,
             roleLabel: 'Super Admin',
             firstname: 'John',
             lastname: 'Doe',
@@ -71,8 +63,8 @@ class UserFactoryTest extends KernelTestCase
 
         $this->assertEquals($user->getIsMailingActive(), true);
         $this->assertEquals($user->getStatut(), User::STATUS_INACTIVE);
-        $this->assertEquals($user->getTerritory(), null);
-        $this->assertEquals($user->getPartner(), null);
+        $this->assertEquals($user->getFirstTerritory(), null);
+        $this->assertEquals($user->getPartners()->count(), 0);
     }
 
     public function testCreateUserFromArray(): void
@@ -87,7 +79,9 @@ class UserFactoryTest extends KernelTestCase
             'isMailingActive' => true,
         ];
 
-        $user = (new UserFactory())->createInstanceFromArray($partner, $data);
+        $user = (new UserFactory())->createInstanceFromArray($data);
+        $userPartner = (new UserPartner())->setPartner($partner)->setUser($user);
+        $user->addUserPartner($userPartner);
 
         /** @var ConstraintViolationList $errors */
         $errors = $this->validator->validate($user);
@@ -97,7 +91,7 @@ class UserFactoryTest extends KernelTestCase
 
         $this->assertEquals($user->getIsMailingActive(), true);
         $this->assertEquals($user->getStatut(), User::STATUS_INACTIVE);
-        $this->assertEquals($user->getTerritory(), $partner->getTerritory());
-        $this->assertEquals($user->getPartner(), $partner);
+        $this->assertEquals($user->getFirstTerritory(), $partner->getTerritory());
+        $this->assertEquals($user->getPartners()->first(), $partner);
     }
 }

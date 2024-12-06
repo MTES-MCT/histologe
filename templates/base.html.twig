@@ -74,8 +74,8 @@
             /* tracker methods like "setCustomDimension" should be called before "trackPageView" */
             {% if app.user is not null and 'ROLE_ADMIN' not in app.user.roles and 'ROLE_USAGER' not in app.user.roles %}
                 _paq.push(['setCustomDimension', customDimensionId = 1, customDimensionValue = '{{ app.user.roles|first}}' ]);
-                _paq.push(['setCustomDimension', customDimensionId = 2, customDimensionValue = '{{ app.user.territory.name }}' ]);
-                _paq.push(['setCustomDimension', customDimensionId = 3, customDimensionValue = '{{ app.user.partner.nom }}' ]);
+                _paq.push(['setCustomDimension', customDimensionId = 2, customDimensionValue = '{{ app.user.firstTerritory.name }}' ]);
+                _paq.push(['setCustomDimension', customDimensionId = 3, customDimensionValue = '{{ app.user.partners.first.nom }}' ]);
                 _paq.push(['requireConsent']);
             {% endif %}
             _paq.push(['trackPageView']);
@@ -198,7 +198,7 @@
                             {% endfor %}
                         ];
                 
-                        {% if can_see_nde_edit_zone(signalementQualificationNDE) and is_granted('USER_SEE_NDE', app.user) and files is defined and files.documents is defined %}  
+                        {% if can_see_nde_edit_zone(signalementQualificationNDE) and is_granted('SIGN_SEE_NDE', signalement) and files is defined and files.documents is defined %}  
                         {% for doc in files.documents %}
                                 {% if enum('App\\Entity\\Enum\\Qualification').NON_DECENCE_ENERGETIQUE.name in doc.params.qualification|joinEnumKeys(',') %}
                                     items.push({

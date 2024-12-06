@@ -88,7 +88,7 @@ class SignalementExportFiltersDisplay
         unset($filters['sortBy']);
         unset($filters['orderBy']);
         unset($filters['signalement_ids']);
-        unset($filters['delays_partner']);
+        unset($filters['delays_partners']);
         unset($filters['delays_territory']);
 
         if (!$this->security->isGranted('ROLE_ADMIN')) {

@@ -9,6 +9,7 @@ use App\Entity\Enum\Qualification;
 use App\Entity\Intervention;
 use App\Entity\Partner;
 use App\Entity\User;
+use App\Entity\UserPartner;
 use App\Factory\UserFactory;
 use App\Form\OldPartnerType;
 use App\Form\PartnerPerimetreType;
@@ -66,7 +67,7 @@ class PartnerController extends AbstractController
         if ($this->isGranted('ROLE_ADMIN')) {
             $currentTerritory = $territoryRepository->find((int) $request->get('territory'));
         } else {
-            $currentTerritory = $user->getTerritory();
+            $currentTerritory = $user->getFirstTerritory();
         }
         $currentType = $request->get('type');
         $enumType = $request->get('type') ? EnumPartnerType::tryFrom($request->get('type')) : null;
@@ -112,14 +113,14 @@ class PartnerController extends AbstractController
         /** @var User $user */
         $user = $this->getUser();
         if (!$this->isGranted('ROLE_ADMIN')) {
-            $partner->setTerritory($user->getTerritory());
+            $partner->setTerritory($user->getFirstTerritory());
         }
         if ($this->featureZonage) {
             $form = $this->createForm(PartnerType::class, $partner);
         } else {
             $form = $this->createForm(OldPartnerType::class, $partner, [
                 'can_edit_territory' => $this->isGranted('ROLE_ADMIN'),
-                'territory' => $user->getTerritory(),
+                'territory' => $user->getFirstTerritory(),
                 'route' => 'back_partner_new',
             ]);
         }
@@ -223,14 +224,13 @@ class PartnerController extends AbstractController
             if ($partner->getTerritory() != $previousTerritory) {
                 /** @var User $partnerUser */
                 foreach ($partner->getUsers() as $partnerUser) {
-                    $partnerUser->setTerritory($partner->getTerritory());
-                    $entityManager->persist($partnerUser);
                     $notificationMailerRegistry->send(
                         new NotificationMail(
                             type: NotificationMailerType::TYPE_ACCOUNT_TRANSFER,
                             to: $partnerUser->getEmail(),
                             territory: $partner->getTerritory(),
                             user: $partnerUser,
+                            params: ['partner_name' => $partner->getNom()]
                         )
                     );
                 }
@@ -333,7 +333,7 @@ class PartnerController extends AbstractController
                     new NotificationMail(
                         type: NotificationMailerType::TYPE_ACCOUNT_DELETE,
                         to: $user->getEmail(),
-                        territory: $user->getTerritory()
+                        territory: $partner->getTerritory()
                     )
                 );
             }
@@ -426,14 +426,18 @@ class PartnerController extends AbstractController
         if (null !== $partnerExist) {
             $this->addFlash('error', 'Un partenaire existe déjà avec cette adresse e-mail.');
         } elseif (null !== $user && \in_array('ROLE_USAGER', $user->getRoles())) {
-            $data['territory'] = $partner->getTerritory();
-            $data['partner'] = $partner;
             $data['statut'] = User::STATUS_INACTIVE;
+            $userPartner = (new UserPartner())->setUser($user)->setPartner($partner);
+            $user->addUserPartner($userPartner);
+            $userManager->persist($userPartner);
             $userManager->updateUserFromData($user, $data);
         } elseif (null !== $user) {
             $this->addFlash('error', 'Un utilisateur existe déjà avec cette adresse e-mail.');
         } else {
-            $user = $userFactory->createInstanceFromArray($partner, $data);
+            $user = $userFactory->createInstanceFromArray($data);
+            $userPartner = (new UserPartner())->setUser($user)->setPartner($partner);
+            $user->addUserPartner($userPartner);
+            $userManager->persist($userPartner);
             $errors = $validator->validate($user);
             foreach ($errors as $error) {
                 $this->addFlash('error', $error->getMessage());
@@ -448,9 +452,10 @@ class PartnerController extends AbstractController
         return $this->redirectToRoute('back_partner_view', ['id' => $partner->getId(), '_fragment' => 'agents'], Response::HTTP_SEE_OTHER);
     }
 
-    #[Route('/editerutilisateur', name: 'back_partner_user_edit', methods: ['POST'])]
+    #[Route('/{id}/editerutilisateur', name: 'back_partner_user_edit', methods: ['POST'])]
     public function editUser(
         Request $request,
+        Partner $partner,
         UserManager $userManager,
         UserRepository $userRepository,
         PartnerRepository $partnerRepository,
@@ -460,7 +465,7 @@ class PartnerController extends AbstractController
         $userId = $request->request->get('user_id');
         $user = $userManager->find((int) $userId);
         /** @var User $user */
-        if (!$userId || !$user || !$user->getPartner()) {
+        if (!$userId || !$user || !$user->hasPartner($partner)) {
             $this->addFlash('error', 'Utilisateur introuvable.');
 
             return $this->redirectToRoute('back_partner_index', [], Response::HTTP_SEE_OTHER);
@@ -468,7 +473,7 @@ class PartnerController extends AbstractController
         if (!$this->isCsrfTokenValid('partner_user_edit', $request->request->get('_token'))) {
             $this->addFlash('error', 'Token CSRF invalide, merci d\'actualiser la page et réessayer.');
 
-            return $this->redirectToRoute('back_partner_view', ['id' => $user->getPartner()->getId(), '_fragment' => 'agents'], Response::HTTP_SEE_OTHER);
+            return $this->redirectToRoute('back_partner_view', ['id' => $partner->getId(), '_fragment' => 'agents'], Response::HTTP_SEE_OTHER);
         }
         $this->denyAccessUnlessGranted('USER_EDIT', $user);
 
@@ -476,25 +481,25 @@ class PartnerController extends AbstractController
         if (!EmailFormatValidator::validate($data['email'])) {
             $this->addFlash('error', 'L\'adresse e-mail n\'est pas valide.');
 
-            return $this->redirectToRoute('back_partner_view', ['id' => $user->getPartner()->getId(), '_fragment' => 'agents'], Response::HTTP_SEE_OTHER);
+            return $this->redirectToRoute('back_partner_view', ['id' => $partner->getId(), '_fragment' => 'agents'], Response::HTTP_SEE_OTHER);
         }
         if ($data['email'] != $user->getEmail()) {
             $userExist = $userRepository->findOneBy(['email' => $data['email']]);
             if ($userExist && !\in_array('ROLE_USAGER', $userExist->getRoles())) {
                 $this->addFlash('error', 'Un utilisateur existe déjà avec cette adresse e-mail.');
 
-                return $this->redirectToRoute('back_partner_view', ['id' => $user->getPartner()->getId(), '_fragment' => 'agents'], Response::HTTP_SEE_OTHER);
+                return $this->redirectToRoute('back_partner_view', ['id' => $partner->getId(), '_fragment' => 'agents'], Response::HTTP_SEE_OTHER);
             }
             $partnerExist = $partnerRepository->findOneBy(['email' => $data['email']]);
             if ($partnerExist) {
                 $this->addFlash('error', 'Un partenaire existe déjà avec cette adresse e-mail.');
 
-                return $this->redirectToRoute('back_partner_view', ['id' => $user->getPartner()->getId(), '_fragment' => 'agents'], Response::HTTP_SEE_OTHER);
+                return $this->redirectToRoute('back_partner_view', ['id' => $partner->getId(), '_fragment' => 'agents'], Response::HTTP_SEE_OTHER);
             }
         }
         if ($data['roles'] != $user->getRoles()[0]) {
             if (!$this->canAttributeRole($data['roles'])) {
-                return $this->redirectToRoute('back_partner_view', ['id' => $user->getPartner()->getId(), '_fragment' => 'agents'], Response::HTTP_SEE_OTHER);
+                return $this->redirectToRoute('back_partner_view', ['id' => $partner->getId(), '_fragment' => 'agents'], Response::HTTP_SEE_OTHER);
             }
         }
 
@@ -506,7 +511,7 @@ class PartnerController extends AbstractController
             'isMailingActive' => $data['isMailingActive'],
             'hasPermissionAffectation' => $data['hasPermissionAffectation'] ?? false,
         ];
-        if (!$parameterBag->get('feature_permission_affectation') || !$this->isGranted(PartnerVoter::ASSIGN_PERMISSION_AFFECTATION, $user->getPartner())) {
+        if (!$parameterBag->get('feature_permission_affectation') || !$this->isGranted(PartnerVoter::ASSIGN_PERMISSION_AFFECTATION, $partner)) {
             unset($updateData['hasPermissionAffectation']);
         } else {
             $updateData['hasPermissionAffectation'] = $updateData['hasPermissionAffectation'] ?? false;
@@ -533,7 +538,7 @@ class PartnerController extends AbstractController
             return $this->redirectToRoute('back_user_index', [], Response::HTTP_SEE_OTHER);
         }
 
-        return $this->redirectToRoute('back_partner_view', ['id' => $user->getPartner()->getId(), '_fragment' => 'agents'], Response::HTTP_SEE_OTHER);
+        return $this->redirectToRoute('back_partner_view', ['id' => $partner->getId(), '_fragment' => 'agents'], Response::HTTP_SEE_OTHER);
     }
 
     private function canAttributeRole(string $role): bool
@@ -560,8 +565,8 @@ class PartnerController extends AbstractController
         return true;
     }
 
-    #[Route('/transfererutilisateur', name: 'back_partner_user_transfer', methods: ['POST'])]
-    public function transferUser(Request $request, UserManager $userManager, PartnerManager $partnerManager, PartnerRepository $partnerRepository): Response
+    #[Route('/{id}/transfererutilisateur', name: 'back_partner_user_transfer', methods: ['POST'])]
+    public function transferUser(Request $request, Partner $fromPartner, UserManager $userManager, PartnerManager $partnerManager, PartnerRepository $partnerRepository): Response
     {
         $data = $request->get('user_transfer');
         if (!$this->isCsrfTokenValid('partner_user_transfer', $request->request->get('_token'))) {
@@ -569,34 +574,33 @@ class PartnerController extends AbstractController
 
             return $this->redirectToRoute('back_partner_index', [], Response::HTTP_SEE_OTHER);
         }
-        $partner = $partnerManager->find($data['partner']);
+        $toPartner = $partnerManager->find($data['partner']);
         $user = $userManager->find($data['user']);
-        if (!$partner || !$user) {
+        if (!$toPartner || !$user) {
             $this->addFlash('error', 'Partenaire ou utilisateur introuvable.');
 
             return $this->redirectToRoute('back_partner_index', [], Response::HTTP_SEE_OTHER);
         }
         $this->denyAccessUnlessGranted('USER_TRANSFER', $user);
         if (!$this->isGranted('ROLE_ADMIN')) {
-            /** @var User $currentUser */
-            $currentUser = $this->getUser();
-            $partnersAuthorized = $partnerRepository->findAllList($currentUser->getTerritory());
-            if (!isset($partnersAuthorized[$partner->getId()])) {
+            $partnersAuthorized = $partnerRepository->findAllList($fromPartner->getTerritory());
+            if (!isset($partnersAuthorized[$toPartner->getId()])) {
                 $this->addFlash('error', 'Vous n\'avez pas les droits pour transférer sur ce partenaire.');
 
                 return $this->redirectToRoute('back_partner_index', [], Response::HTTP_SEE_OTHER);
             }
         }
 
-        $userManager->transferUserToPartner($user, $partner);
+        $userManager->transferUserToPartner($user, $fromPartner, $toPartner);
         $this->addFlash('success', 'L\'utilisateur a bien été transféré.');
 
-        return $this->redirectToRoute('back_partner_view', ['id' => $partner->getId(), '_fragment' => 'agents'], Response::HTTP_SEE_OTHER);
+        return $this->redirectToRoute('back_partner_view', ['id' => $toPartner->getId(), '_fragment' => 'agents'], Response::HTTP_SEE_OTHER);
     }
 
-    #[Route('/supprimerutilisateur', name: 'back_partner_user_delete', methods: ['POST'])]
+    #[Route('/{id}/supprimerutilisateur', name: 'back_partner_user_delete', methods: ['POST'])]
     public function deleteUser(
         Request $request,
+        Partner $partner,
         UserManager $userManager,
         NotificationMailerRegistry $notificationMailerRegistry,
     ): Response {
@@ -608,28 +612,44 @@ class PartnerController extends AbstractController
         }
         /** @var User $user */
         $user = $userManager->find($userId);
+        if (!$user || !$user->hasPartner($partner)) {
+            $this->addFlash('error', 'Utilisateur introuvable sur le partenaire.');
+
+            return $this->redirectToRoute('back_partner_view', ['id' => $partner->getId()], Response::HTTP_SEE_OTHER);
+        }
+
         $this->denyAccessUnlessGranted('USER_DELETE', $user);
+        if (User::STATUS_ARCHIVE === $user->getStatut()) {
+            $this->addFlash('error', 'Cet utilisateur est déjà supprimé.');
+
+            return $this->redirectToRoute('back_partner_view', ['id' => $partner->getId()], Response::HTTP_SEE_OTHER);
+        }
+        if ($user->getUserPartners()->count() > 1) {
+            foreach ($user->getUserPartners() as $userPartner) {
+                if ($userPartner->getPartner()->getId() === $partner->getId()) {
+                    $user->removeUserPartner($userPartner);
+                    $userManager->remove($userPartner);
+                    break;
+                }
+            }
+            $this->addFlash('success', 'L\'utilisateur a bien été supprimé du partenaire.');
+            $this->addFlash('warning', 'Attention, cet utilisateur est toujours actif sur d\'autres territoires.');
+
+            return $this->redirectToRoute('back_partner_view', ['id' => $partner->getId()], Response::HTTP_SEE_OTHER);
+        }
         $notificationMailerRegistry->send(
             new NotificationMail(
                 type: NotificationMailerType::TYPE_ACCOUNT_DELETE,
                 to: $user->getEmail(),
-                territory: $user->getTerritory()
+                territory: $partner->getTerritory()
             )
         );
-        if (User::STATUS_ARCHIVE === $user->getStatut()) {
-            $this->addFlash('error', 'Cet utilisateur est déjà supprimé.');
-        } else {
-            $user->setEmail(Sanitizer::tagArchivedEmail($user->getEmail()));
-            $user->setStatut(User::STATUS_ARCHIVE);
-            $userManager->save($user);
-            $this->addFlash('success', 'L\'utilisateur a bien été supprimé.');
-        }
+        $user->setEmail(Sanitizer::tagArchivedEmail($user->getEmail()));
+        $user->setStatut(User::STATUS_ARCHIVE);
+        $userManager->save($user);
+        $this->addFlash('success', 'L\'utilisateur a bien été supprimé.');
 
-        return $this->redirectToRoute(
-            'back_partner_view',
-            ['id' => $user->getPartner()->getId()],
-            Response::HTTP_SEE_OTHER
-        );
+        return $this->redirectToRoute('back_partner_view', ['id' => $partner->getId()], Response::HTTP_SEE_OTHER);
     }
 
     #[Route('/checkmail', name: 'back_partner_check_user_email', methods: ['POST'])]

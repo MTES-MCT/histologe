@@ -105,8 +105,8 @@ class User implements UserInterface, EntityHistoryInterface, PasswordAuthenticat
     #[ORM\OneToMany(mappedBy: 'createdBy', targetEntity: Suivi::class, orphanRemoval: true)]
     private $suivis;
 
-    #[ORM\ManyToOne(targetEntity: Partner::class, inversedBy: 'users', cascade: ['persist'])]
-    private $partner;
+    #[ORM\ManyToOne(targetEntity: Partner::class)]
+    private $partner; // @phpstan-ignore-line
 
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
     #[Assert\NotBlank(message: 'Merci de saisir un nom.')]
@@ -130,9 +130,9 @@ class User implements UserInterface, EntityHistoryInterface, PasswordAuthenticat
     #[ORM\OneToMany(mappedBy: 'user', targetEntity: Notification::class)]
     private $notifications;
 
-    #[ORM\ManyToOne(targetEntity: Territory::class, inversedBy: 'users')]
+    #[ORM\ManyToOne(targetEntity: Territory::class)]
     #[ORM\JoinColumn(nullable: true)]
-    private $territory;
+    private $territory; // @phpstan-ignore-line
 
     #[ORM\OneToMany(mappedBy: 'uploadedBy', targetEntity: File::class)]
     private Collection $files;
@@ -168,6 +168,12 @@ class User implements UserInterface, EntityHistoryInterface, PasswordAuthenticat
     #[ORM\OneToMany(mappedBy: 'ownedBy', targetEntity: ApiUserToken::class, cascade: ['persist'])]
     private Collection $apiUserTokens;
 
+    /**
+     * @var Collection<int, UserPartner>
+     */
+    #[ORM\OneToMany(mappedBy: 'user', targetEntity: UserPartner::class, orphanRemoval: true)]
+    private Collection $userPartners;
+
     public function __construct()
     {
         $this->suivis = new ArrayCollection();
@@ -178,6 +184,7 @@ class User implements UserInterface, EntityHistoryInterface, PasswordAuthenticat
         $this->signalementUsagerDeclarants = new ArrayCollection();
         $this->signalementUsagerOccupants = new ArrayCollection();
         $this->apiUserTokens = new ArrayCollection();
+        $this->userPartners = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -291,16 +298,103 @@ class User implements UserInterface, EntityHistoryInterface, PasswordAuthenticat
         return $this;
     }
 
-    public function getPartner(): ?Partner
+    /**
+     * @return Collection<int, UserPartner>
+     */
+    public function getUserPartners(): Collection
     {
-        return $this->partner;
+        return $this->userPartners;
     }
 
-    public function setPartner(?Partner $partner): self
+    /**
+     * @return Collection<int, Partner>
+     */
+    public function getPartners(): Collection
     {
-        $this->partner = $partner;
+        $partners = new ArrayCollection();
+        foreach ($this->userPartners as $userPartner) {
+            $partners->add($userPartner->getPartner());
+        }
+
+        return $partners;
+    }
+
+    public function hasPartner(Partner $partner): bool
+    {
+        foreach ($this->userPartners as $userPartner) {
+            if ($userPartner->getPartner() === $partner) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    public function addUserPartner(UserPartner $userPartner): static
+    {
+        if (!$this->userPartners->contains($userPartner)) {
+            $this->userPartners->add($userPartner);
+            $userPartner->setUser($this);
+        }
 
         return $this;
+    }
+
+    public function removeUserPartner(UserPartner $userPartner): static
+    {
+        $this->userPartners->removeElement($userPartner);
+
+        return $this;
+    }
+
+    public function getPartnersTerritories(): array
+    {
+        $territories = [];
+        foreach ($this->userPartners as $userPartner) {
+            $territory = $userPartner->getPartner()->getTerritory();
+            if ($territory) {
+                $territories[$territory->getId()] = $territory;
+            }
+        }
+
+        return $territories;
+    }
+
+    public function getPartnerInTerritory(Territory $territory): ?Partner
+    {
+        foreach ($this->userPartners as $userPartner) {
+            if ($userPartner->getPartner()->getTerritory() === $territory) {
+                return $userPartner->getPartner();
+            }
+        }
+
+        return null;
+    }
+
+    public function getPartnerInTerritoryOrFirstOne(Territory $territory): ?Partner
+    {
+        return $this->getPartnerInTerritory($territory) ?? $this->getPartners()->count() ? $this->getPartners()->first() : null;
+    }
+
+    public function hasPartnerInTerritory(Territory $territory): bool
+    {
+        foreach ($this->userPartners as $userPartner) {
+            if ($userPartner->getPartner()->getTerritory() === $territory) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    public function getFirstTerritory(): ?Territory
+    {
+        $territory = null;
+        if ($this->userPartners->count()) {
+            $territory = $this->userPartners->first()->getPartner()->getTerritory();
+        }
+
+        return $territory;
     }
 
     public function getNom(): ?string
@@ -478,18 +572,6 @@ class User implements UserInterface, EntityHistoryInterface, PasswordAuthenticat
     public function setHasPermissionAffectation(bool $hasPermissionAffectation): self
     {
         $this->hasPermissionAffectation = $hasPermissionAffectation;
-
-        return $this;
-    }
-
-    public function getTerritory(): ?Territory
-    {
-        return $this->territory;
-    }
-
-    public function setTerritory(?Territory $territory): self
-    {
-        $this->territory = $territory;
 
         return $this;
     }

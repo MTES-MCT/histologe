@@ -11,9 +11,9 @@
                         <div class="fr-modal__content fr-text--left">
                             <h1 id="reopen{% if all == '1' %}-all{% endif %}-signalement-modal-title" class="fr-modal__title">
                                 {% if all == '1' %}
-                                Rouvrir le signalement pour tous
+                                    Rouvrir le signalement pour tous
                                 {% else %}
-                                Rouvrir pour {{ app.user.partner.nom ?? 'N/A' }}
+                                    Rouvrir pour {{ app.user.partnerInTerritoryOrFirstOne(signalement.territory) ? app.user.partnerInTerritoryOrFirstOne(signalement.territory).nom : 'N/A' }}
                                 {% endif %}
                             </h1>
                             <fieldset class="fr-fieldset" id="radio-hint{% if all == '1' %}-all{% endif %}" aria-labelledby="radio-hint-legend{% if all == '1' %}-all{% endif %} radio-hint-messages">
@@ -50,9 +50,9 @@
                                         class="fr-btn fr-icon-check-line reopen"
                                         name="signalement-action[{% if all == '1' %}reopenAll{% else %}reopen{% endif %}]" value="1">
                                         {% if all == '1' %}
-                                        Rouvrir le signalement pour tous
+                                            Rouvrir le signalement pour tous
                                         {% else %}
-                                        Rouvrir le signalement pour {{ app.user.partner.nom ?? 'N/A' }}
+                                            Rouvrir pour {{ app.user.partnerInTerritoryOrFirstOne(signalement.territory) ? app.user.partnerInTerritoryOrFirstOne(signalement.territory).nom : 'N/A' }}
                                         {% endif %}
                                     </button>
                                 </li>

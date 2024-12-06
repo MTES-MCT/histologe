@@ -3,10 +3,10 @@
 namespace App\DataFixtures\Loader;
 
 use App\Entity\User;
+use App\Entity\UserPartner;
 use App\EventListener\UserCreatedListener;
 use App\Factory\UserFactory;
 use App\Repository\PartnerRepository;
-use App\Repository\TerritoryRepository;
 use App\Service\Sanitizer;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Common\DataFixtures\OrderedFixtureInterface;
@@ -23,7 +23,6 @@ class LoadUserData extends Fixture implements OrderedFixtureInterface
     private const PLAIN_HISTOLOGE = 'histologe';
 
     public function __construct(
-        private TerritoryRepository $territoryRepository,
         private PartnerRepository $partnerRepository,
         private UserPasswordHasherInterface $hasher,
         private EntityManagerInterface $entityManager,
@@ -65,12 +64,16 @@ class LoadUserData extends Fixture implements OrderedFixtureInterface
             $user->setEmail($row['email']);
         }
 
-        if (isset($row['territory'])) {
-            $user->setTerritory($this->territoryRepository->findOneBy(['name' => $row['territory']]));
-        }
-
-        if (isset($row['partner'])) {
-            $user->setPartner($this->partnerRepository->findOneBy(['nom' => $row['partner']]));
+        if (isset($row['partners'])) {
+            foreach ($row['partners'] as $partner) {
+                $userPartner = new UserPartner();
+                $userPartner->setUser($user)->setPartner($this->partnerRepository->findOneBy(['nom' => $partner]));
+                $manager->persist($userPartner);
+            }
+        } elseif (isset($row['partner'])) {
+            $userPartner = new UserPartner();
+            $userPartner->setUser($user)->setPartner($this->partnerRepository->findOneBy(['nom' => $row['partner']]));
+            $manager->persist($userPartner);
         }
 
         if (isset($row['last_login_at'])) {
@@ -98,21 +101,21 @@ class LoadUserData extends Fixture implements OrderedFixtureInterface
 
     private function loadSystemUser(ObjectManager $manager)
     {
-        $partner = $this->partnerRepository->findOneBy(['nom' => 'Administrateurs Histologe ALL']);
         $user = $this->userFactory->createInstanceFrom(
             roleLabel: 'Super Admin',
-            partner: $partner,
-            territory: null,
             firstname: 'Histologe',
             lastname: 'Admin',
             email: $this->parameterBag->get('user_system_email'),
             isMailActive: false,
         );
-
         $password = $this->hasher->hashPassword($user, self::PLAIN_HISTOLOGE);
         $user->setStatut(User::STATUS_ACTIVE)->setPassword($password);
-
         $manager->persist($user);
+
+        $partner = $this->partnerRepository->findOneBy(['nom' => 'Administrateurs Histologe ALL']);
+        $userPartner = new UserPartner();
+        $userPartner->setUser($user)->setPartner($partner);
+        $manager->persist($userPartner);
     }
 
     public function getOrder(): int

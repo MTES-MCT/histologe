@@ -4,8 +4,10 @@ declare(strict_types=1);
 
 namespace App\Tests\Unit\Service;
 
+use App\Entity\Partner;
 use App\Entity\Territory;
 use App\Entity\User;
+use App\Entity\UserPartner;
 use App\Service\UserAvatar;
 use League\Flysystem\FilesystemOperator;
 use PHPUnit\Framework\MockObject\MockObject;
@@ -29,7 +31,10 @@ class UserAvatarTest extends WebTestCase
         $this->assertEquals('<span class="avatar-histologe avatar-placeholder avatar-80">SA</span>', $outputSpan);
 
         $user->setRoles([User::ROLES['Admin. partenaire']]);
-        $user->setTerritory((new Territory())->setZip('44'));
+        $territory = (new Territory())->setZip('44');
+        $partner = (new Partner())->setTerritory($territory);
+        $userPartner = (new UserPartner())->setPartner($partner)->setUser($user);
+        $user->addUserPartner($userPartner);
         $outputSpan = $userAvatar->userAvatarOrPlaceHolder($user);
         $this->assertEquals('<span class="avatar-histologe avatar-placeholder avatar-74">44</span>', $outputSpan);
 

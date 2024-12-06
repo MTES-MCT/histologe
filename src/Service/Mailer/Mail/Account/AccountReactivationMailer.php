@@ -30,11 +30,21 @@ class AccountReactivationMailer extends AbstractNotificationMailer
     public function getMailerParamsFromNotification(NotificationMail $notificationMail): array
     {
         $user = $notificationMail->getUser();
+        $partner_name = '';
+        $territoire_name = '';
+        foreach ($user->getPartners() as $partner) {
+            $partner_name .= $partner->getNom().' et ';
+        }
+        $partner_name = substr($partner_name, 0, -4);
+        foreach ($user->getPartnersTerritories() as $territory) {
+            $territoire_name .= $territory->getName().'/';
+        }
+        $territoire_name = substr($territoire_name, 0, -1);
 
         return [
             'link' => $this->generateLink(FormLoginAuthenticator::LOGIN_ROUTE, ['token' => $user->getToken()]),
-            'territoire_name' => $user->getTerritory()?->getName(),
-            'partner_name' => $user->getPartner()->getNom(),
+            'territoire_name' => $territoire_name,
+            'partner_name' => $partner_name,
         ];
     }
 }

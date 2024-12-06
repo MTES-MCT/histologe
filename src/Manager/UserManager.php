@@ -46,12 +46,6 @@ class UserManager extends AbstractManager
             ->setRoles([$data['roles']])
             ->setEmail($data['email'])
             ->setIsMailingActive($data['isMailingActive']);
-        if (\array_key_exists('territory', $data)) {
-            $user->setTerritory($data['territory']);
-        }
-        if (\array_key_exists('partner', $data)) {
-            $user->setPartner($data['partner']);
-        }
         if (\array_key_exists('statut', $data)) {
             $user->setStatut($data['statut']);
         }
@@ -70,34 +64,31 @@ class UserManager extends AbstractManager
         return $user;
     }
 
-    public function createUserFromData(Partner $partner, array $data): User
-    {
-        $user = $this->userFactory->createInstanceFromArray($partner, $data);
-
-        $this->save($user);
-
-        return $user;
-    }
-
     public function getUserFrom(Partner $partner, int $userId): ?User
     {
         return $this->getRepository()->findOneBy(['partner' => $partner, 'id' => $userId]);
     }
 
-    public function transferUserToPartner(User $user, Partner $partner): void
+    public function transferUserToPartner(User $user, Partner $fromPartner, Partner $toPartner): void
     {
-        if ($user->getPartner() === $partner) {
+        if ($user->hasPartner($toPartner)) {
             return;
         }
-        $user->setPartner($partner);
-        $this->save($user);
+        foreach ($user->getUserPartners() as $userPartner) {
+            if ($userPartner->getPartner() === $fromPartner) {
+                $userPartner->setPartner($toPartner);
+                $this->save($userPartner);
+                break;
+            }
+        }
 
         $this->notificationMailerRegistry->send(
             new NotificationMail(
                 type: NotificationMailerType::TYPE_ACCOUNT_TRANSFER,
                 to: $user->getEmail(),
-                territory: $user->getTerritory(),
-                user: $user
+                territory: $toPartner->getTerritory(),
+                user: $user,
+                params: ['partner_name' => $toPartner->getNom()]
             )
         );
     }
@@ -165,8 +156,6 @@ class UserManager extends AbstractManager
             if (null === $user) {
                 $user = $this->userFactory->createInstanceFrom(
                     roleLabel: User::ROLES['Usager'],
-                    partner: null,
-                    territory: null,
                     firstname: $prenom,
                     lastname: $nom,
                     email: $mail
@@ -223,7 +212,7 @@ class UserManager extends AbstractManager
         return $this->getRepository()->findOneBy(['email' => $this->parameterBag->get('user_system_email')]);
     }
 
-    public function sendAccountActivationNotification(User $user): void
+    private function sendAccountActivationNotification(User $user): void
     {
         if (!\in_array('ROLE_USAGER', $user->getRoles())
             && User::STATUS_ARCHIVE !== $user->getStatut()
@@ -232,7 +221,6 @@ class UserManager extends AbstractManager
                 new NotificationMail(
                     type: NotificationMailerType::TYPE_ACCOUNT_ACTIVATION_FROM_BO,
                     to: $user->getEmail(),
-                    territory: $user->getTerritory(),
                     user: $user,
                 )
             );
