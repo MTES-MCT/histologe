@@ -175,56 +175,50 @@
         </dialog>
     {% endfor %}
 
-
-    <section class="fr-grid-row fr-grid-row--middle fr-p-5v">
-        <h2 class="fr-h2 fr-mb-0" id="desc-table">{{total}} étiquette{% if total > 1%}s{% endif %}</h2>
+    <section class="fr-col-12 fr-p-5v">
+        <h2 class="fr-mb-0" id="desc-table">{{total}} étiquette{% if total > 1%}s{% endif %}</h2>
     </section>
-    <section class="fr-col-12 fr-table fr-pt-0 fr-px-5v">
-		<div class="fr-table__wrapper">
-			<div class="fr-table__container">
-				<div class="fr-table__content">
-                    <table class="sortable fr-cell--multiline" aria-label="Liste des étiquettes" aria-describedby="desc-table">
-                        <thead>
-                        <tr>
-                            <th scope="col" class="number">ID</th>
-                            <th scope="col">Etiquette</th>
-                            <th scope="col" class="number">Nombre d'utilisation</th>
-                            <th scope="col">Territoire</th>
-                            <th scope="col" class="fr-text--right">Actions</th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                            {% for index,tag in tags %}
-                                <tr class="signalement-row">
-                                    <td>{{ tag.id }}</td>
-                                    <td><span class="fr-badge fr-badge--blue-ecume fr-badge--no-icon">{{ tag.label }}</span></td>
-                                    <td>{{ tag.signalements|length }}</td>
-                                    <td>{{ tag.territory.name }}</td>
-                                    <td class="fr-text--right fr-ws-nowrap">
-                                        <button class="fr-btn fr-icon-edit-line"
-                                            title="Editer l'étiquette {{ tag.label }}"
-                                            data-fr-opened="false" aria-controls="fr-modal-etiquette-edit-{{ tag.id }}"
-                                            >Editer l'étiquette {{ tag.label }}</button>
-                                        <a class="fr-btn fr-icon-list-unordered"
-                                            title="Voir la liste des signalements avec l'étiquette {{ tag.label }}"
-                                            {% if is_granted('ROLE_ADMIN') %}
-                                                href="{{ path('back_signalement_index', { 'etiquettes[]': tag.id, 'isImported': 'oui', 'territoire': tag.territory.id }) }}"
-                                            {% else %}
-                                                href="{{ path('back_signalement_index', { 'etiquettes[]': tag.id, 'isImported': 'oui' }) }}"
-                                            {% endif %}
-                                            >Voir la liste des signalements avec l'étiquette {{ tag.label }}</a>
-                                        <button class="fr-btn fr-btn--secondary fr-icon-delete-line"
-                                            title="Supprimer l'étiquette {{ tag.label }}"
-                                            data-fr-opened="false" aria-controls="fr-modal-etiquette-delete-{{ tag.id }}"
-                                            >Supprimer l'étiquette {{ tag.label }}</button>
-                                    </td>
-                                </tr>
-                            {% endfor %}
-                        </tbody>
-                    </table>
-				</div>
-			</div>
-		</div>
+
+    <section class="fr-col-12 fr-pt-0 fr-px-5v">
+        {% set tableHead %}
+            <th scope="col" class="number">ID</th>
+            <th scope="col">Etiquette</th>
+            <th scope="col" class="number">Nombre d'utilisation</th>
+            <th scope="col">Territoire</th>
+            <th scope="col" class="fr-text--right">Actions</th>
+        {% endset %}
+        
+        {% set tableBody %}
+            {% for index,tag in tags %}
+                <tr class="signalement-row">
+                    <td>{{ tag.id }}</td>
+                    <td><span class="fr-badge fr-badge--blue-ecume fr-badge--no-icon">{{ tag.label }}</span></td>
+                    <td>{{ tag.signalements|length }}</td>
+                    <td>{{ tag.territory.name }}</td>
+                    <td class="fr-text--right fr-ws-nowrap">
+                        <button class="fr-btn fr-icon-edit-line"
+                            title="Editer l'étiquette {{ tag.label }}"
+                            data-fr-opened="false" aria-controls="fr-modal-etiquette-edit-{{ tag.id }}"
+                            >Editer l'étiquette {{ tag.label }}</button>
+                        <a class="fr-btn fr-icon-list-unordered"
+                            title="Voir la liste des signalements avec l'étiquette {{ tag.label }}"
+                            {% if is_granted('ROLE_ADMIN') %}
+                                href="{{ path('back_signalement_index', { 'etiquettes[]': tag.id, 'isImported': 'oui', 'territoire': tag.territory.id }) }}"
+                            {% else %}
+                                href="{{ path('back_signalement_index', { 'etiquettes[]': tag.id, 'isImported': 'oui' }) }}"
+                            {% endif %}
+                            >Voir la liste des signalements avec l'étiquette {{ tag.label }}</a>
+                        <button class="fr-btn fr-btn--secondary fr-icon-delete-line"
+                            title="Supprimer l'étiquette {{ tag.label }}"
+                            data-fr-opened="false" aria-controls="fr-modal-etiquette-delete-{{ tag.id }}"
+                            >Supprimer l'étiquette {{ tag.label }}</button>
+                    </td>
+                </tr>
+            {% endfor %}
+        {% endset %}
+
+        {% include '_partials/back/table.html.twig' with { 'tableLabel': 'Liste des étiquettes', 'tableHead': tableHead, 'tableBody': tableBody } %}
+
         <div class="fr-grid-row fr-mt-2v fr-grid-row--center">
             {% import '_partials/macros.html.twig' as macros %}
             {{ macros.customPagination(pages, page, 'back_tags_index', {territory: (currentTerritory ? currentTerritory.id :  null), search: search}) }}

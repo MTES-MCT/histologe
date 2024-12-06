@@ -48,52 +48,48 @@
         </form>
     </section>
     {% endif %}
-    <section class="fr-grid-row fr-grid-row--middle fr-p-5v">
-        <h1 class="fr-h2 fr-mb-0" id="desc-table">{{total}} partenaires archivés ou sans territoires trouvés</h1>
+
+    <section class="fr-col-12 fr-p-5v">
+        <h2 class="fr-mb-0" id="desc-table">{{total}} partenaires archivés ou sans territoires trouvés</h2>
     </section>
-    <section class="fr-col-12 fr-table fr-pt-0 fr-px-5v">
-		<div class="fr-table__wrapper">
-			<div class="fr-table__container">
-				<div class="fr-table__content">
-                    <table class="sortable" aria-label="Liste des partenaires archivés ou sans territoires" aria-describedby="desc-table">
-                        <thead>
-                        <tr>
-                            <th scope="col">Territoire</th>
-                            <th scope="col">Statut</th>
-                            <th scope="col">E-mail</th>
-                            <th scope="col">Nom</th>
-                            <th scope="col">Type</th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        {% for partner in partners %}
-                            {% if partner is null %}
-                                {% set classe = 'fr-badge--info' %}
-                                {% set statut = 'aucun' %}
-                            {% elseif partner and partner.isArchive  %}
-                                {% set classe = 'fr-badge--error' %}
-                                {% set statut = 'archivé' %}
-                            {% else %}
-                                {% set classe = 'fr-badge--success' %}
-                                {% set statut = 'actif' %}
-                            {% endif %}
-                            <tr class="user-row">
-                                <td>{{ partner.territory ? partner.territory.zip ~ ' - ' ~ partner.territory.name : 'aucun' }}</td>
-                                <td><span class="fr-badge {{ classe }} fr-badge--no-icon fr-ws-nowrap ">{{ statut|upper }}</span></td>
-                                <td>{{ partner.email|clean_tagged_text(constant('App\\Entity\\User::SUFFIXE_ARCHIVED'), 'left') }}</ail td>
-                                <td>{{ partner.nom}}</ail td>
-                                <td>{{ partner.type is null ? 'N/R' : partner.type.label}}</ail td>
-                            </tr>
-                        {% else %}
-                            <tr>
-                                <td colspan="4">Aucun partenaire trouvé</td>
-                            </tr>
-                        {% endfor %}
-                        </tbody>
-                    </table>
-				</div>
-			</div>
-		</div>
+
+    <section class="fr-col-12 fr-pt-0 fr-px-5v">
+        {% set tableHead %}
+            <th scope="col">Territoire</th>
+            <th scope="col">Statut</th>
+            <th scope="col">E-mail</th>
+            <th scope="col">Nom</th>
+            <th scope="col">Type</th>
+        {% endset %}
+
+        {% set tableBody %}
+            {% for partner in partners %}
+                {% if partner is null %}
+                    {% set classe = 'fr-badge--info' %}
+                    {% set statut = 'aucun' %}
+                {% elseif partner and partner.isArchive  %}
+                    {% set classe = 'fr-badge--error' %}
+                    {% set statut = 'archivé' %}
+                {% else %}
+                    {% set classe = 'fr-badge--success' %}
+                    {% set statut = 'actif' %}
+                {% endif %}
+                <tr class="user-row">
+                    <td>{{ partner.territory ? partner.territory.zip ~ ' - ' ~ partner.territory.name : 'aucun' }}</td>
+                    <td><span class="fr-badge {{ classe }} fr-badge--no-icon fr-ws-nowrap ">{{ statut|upper }}</span></td>
+                    <td>{{ partner.email|clean_tagged_text(constant('App\\Entity\\User::SUFFIXE_ARCHIVED'), 'left') }}</ail td>
+                    <td>{{ partner.nom}}</ail td>
+                    <td>{{ partner.type is null ? 'N/R' : partner.type.label}}</ail td>
+                </tr>
+            {% else %}
+                <tr>
+                    <td colspan="5">Aucun partenaire trouvé</td>
+                </tr>
+            {% endfor %}
+        {% endset %}
+
+        {% include '_partials/back/table.html.twig' with { 'tableLabel': 'Liste des partenaires archivés ou sans territoires', 'tableHead': tableHead, 'tableBody': tableBody } %}
+        
         <div class="fr-grid-row fr-mt-2v fr-grid-row--center">    
             {% import '_partials/macros.html.twig' as macros %}
             {{ macros.customPagination(pages, page, 'back_archived_partner_index', {territory: (currentTerritory ? currentTerritory.id : (isNoneTerritory ? 'none' : null)), partnerTerms: partnerTerms}) }}
