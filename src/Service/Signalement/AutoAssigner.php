@@ -19,6 +19,7 @@ use App\Specification\Affectation\CodeInseeSpecification;
 use App\Specification\Affectation\ParcSpecification;
 use App\Specification\Affectation\PartnerExcludeSpecification;
 use App\Specification\Affectation\PartnerTypeSpecification;
+use App\Specification\Affectation\ProcedureSuspecteeSpecification;
 use App\Specification\Affectation\ProfilDeclarantSpecification;
 use App\Specification\AndSpecification;
 use App\Specification\Context\PartnerSignalementContext;
@@ -62,6 +63,7 @@ class AutoAssigner
                 new PartnerExcludeSpecification($rule->getPartnerToExclude()),
                 new ParcSpecification($rule->getParc()),
                 new AllocataireSpecification($rule->getAllocataire()),
+                new ProcedureSuspecteeSpecification($rule->getProceduresSuspectees()),
             );
 
             foreach ($partners as $partner) {

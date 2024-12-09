@@ -429,7 +429,6 @@ users:
     statut: 1
     is_generique: 0
     is_mailing_active: 1
-    territory: "Hérault"
   -
     email: admin-territoire-34-02@histologe.fr
     roles: "[\"ROLE_ADMIN_TERRITORY\"]"
@@ -437,13 +436,40 @@ users:
     statut: 1
     is_generique: 0
     is_mailing_active: 1
-    territory: "Hérault"
   -
     email: admin-partenaire-multi-ter-13-01@histologe.fr
     roles: "[\"ROLE_ADMIN_PARTNER\"]"
     partners: 
       - "Partenaire 13-01"
       - "Partenaire 01-01"
+    statut: 1
+    is_generique: 0
+    is_mailing_active: 1
+  -
+    email: admin-territoire-44-01@histologe.fr
+    roles: "[\"ROLE_ADMIN_TERRITORY\"]"
+    partner: "DDT Loire-Atlantique"
+    statut: 1
+    is_generique: 0
+    is_mailing_active: 1
+  -
+    email: user-44-02@histologe.fr
+    roles: "[\"ROLE_USER_PARTNER\"]"
+    partner: "SDIS 44"
+    statut: 1
+    is_generique: 0
+    is_mailing_active: 1
+  -
+    email: user-44-03@histologe.fr
+    roles: "[\"ROLE_USER_PARTNER\"]"
+    partner: "Mairie de Saint-Mars du Désert"
+    statut: 1
+    is_generique: 0
+    is_mailing_active: 1
+  -
+    email: user-44-04@histologe.fr
+    roles: "[\"ROLE_USER_PARTNER\"]"
+    partner: "Cocoland"
     statut: 1
     is_generique: 0
     is_mailing_active: 1
