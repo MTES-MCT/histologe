@@ -123,6 +123,11 @@ class MotifClotureStatisticProvider
                 'color' => '#FC5D00',
                 'count' => 0,
             ],
+            'DOUBLON' => [
+                'label' => 'Doublon',
+                'color' => '#CECE00',
+                'count' => 0,
+            ],
             'AUTRE' => [
                 'label' => 'Autre',
                 'color' => '#CECECE',
