@@ -4,8 +4,8 @@ namespace App\Command;
 
 use App\Entity\Signalement;
 use App\Manager\HistoryEntryManager;
-use App\Manager\SignalementManager;
 use App\Repository\SignalementRepository;
+use App\Service\Signalement\SignalementAddressUpdater;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
@@ -23,7 +23,7 @@ class InitIdBanCommand extends Command
     private const int BATCH_SIZE = 20;
 
     public function __construct(
-        private readonly SignalementManager $signalementManager,
+        private readonly SignalementAddressUpdater $signalementAddressUpdater,
         private readonly SignalementRepository $signalementRepository,
         private readonly EntityManagerInterface $entityManager,
         private readonly HistoryEntryManager $historyEntryManager,
@@ -55,9 +55,9 @@ class InitIdBanCommand extends Command
 
             /** @var Signalement $signalement */
             foreach ($listSignalementBanIdNull as $signalement) {
-                $this->signalementManager->updateAddressOccupantFromBanData(
+                $this->signalementAddressUpdater->updateAddressOccupantFromBanData(
                     signalement: $signalement,
-                    updateGeoloc: false,
+                    updateGeolocAndBatId: false,
                 );
                 if (!empty($signalement->getBanIdOccupant())) {
                     ++$nb;

@@ -35,12 +35,12 @@ use App\Repository\BailleurRepository;
 use App\Repository\DesordrePrecisionRepository;
 use App\Repository\PartnerRepository;
 use App\Repository\SignalementRepository;
-use App\Service\DataGouv\AddressService;
 use App\Service\DataGouv\Response\Address;
 use App\Service\Signalement\CriticiteCalculator;
 use App\Service\Signalement\DesordreTraitement\DesordreCompositionLogementLoader;
 use App\Service\Signalement\Qualification\QualificationStatusService;
 use App\Service\Signalement\Qualification\SignalementQualificationUpdater;
+use App\Service\Signalement\SignalementAddressUpdater;
 use App\Service\Signalement\SignalementInputValueMapper;
 use App\Service\Signalement\ZipcodeProvider;
 use App\Specification\Signalement\SuroccupationSpecification;
@@ -52,8 +52,6 @@ use Symfony\Component\Security\Core\User\UserInterface;
 
 class SignalementManager extends AbstractManager
 {
-    public const float SCORE_IF_BAN_ID_ACCEPTED = 0.9;
-
     public function __construct(
         protected ManagerRegistry $managerRegistry,
         private Security $security,
@@ -70,8 +68,8 @@ class SignalementManager extends AbstractManager
         private DesordreCompositionLogementLoader $desordreCompositionLogementLoader,
         private SuiviManager $suiviManager,
         private BailleurRepository $bailleurRepository,
-        private AddressService $addressService,
         private AffectationRepository $affectationRepository,
+        private readonly SignalementAddressUpdater $signalementAddressUpdater,
         string $entityName = Signalement::class,
     ) {
         parent::__construct($managerRegistry, $entityName);
@@ -192,45 +190,6 @@ class SignalementManager extends AbstractManager
 
         if (empty($signalement->getCpOccupant())) {
             $signalement->setCpOccupant($address->getZipCode());
-        }
-    }
-
-    public function updateAddressOccupantFromBanData(Signalement $signalement, bool $updateGeoloc = true): void
-    {
-        $addressResult = $this->addressService->getAddress($signalement->getAddressCompleteOccupant());
-        if ($addressResult->getScore() > self::SCORE_IF_BAN_ID_ACCEPTED) {
-            $signalement->setBanIdOccupant($addressResult->getBanId());
-            if ($updateGeoloc) {
-                $signalement
-                    ->setInseeOccupant($addressResult->getInseeCode())
-                    ->setGeoloc([
-                        'lat' => $addressResult->getLatitude(),
-                        'lng' => $addressResult->getLongitude(),
-                    ]);
-            }
-
-            return;
-        } elseif ($updateGeoloc && !empty($signalement->getCpOccupant()) && !empty($signalement->getVilleOccupant())) {
-            $inseeResult = $this->addressService->getAddress($signalement->getCpOccupant().' '.$signalement->getVilleOccupant());
-            if (!empty($inseeResult->getCity())) {
-                $signalement
-                    ->setBanIdOccupant(0)
-                    ->setVilleOccupant($inseeResult->getCity())
-                    ->setInseeOccupant($inseeResult->getInseeCode())
-                    ->setGeoloc([
-                        'lat' => $inseeResult->getLatitude(),
-                        'lng' => $inseeResult->getLongitude(),
-                    ]);
-
-                return;
-            }
-        }
-
-        $signalement->setBanIdOccupant(0);
-        if ($updateGeoloc) {
-            $signalement
-                ->setInseeOccupant(null)
-                ->setGeoloc([]);
         }
     }
 
@@ -387,9 +346,7 @@ class SignalementManager extends AbstractManager
             ->setAdresseAutreOccupant($adresseOccupantRequest->getAutre())
             ->setManualAddressOccupant('1' === $adresseOccupantRequest->getManual());
 
-        $this->updateAddressOccupantFromBanData(
-            signalement: $signalement,
-        );
+        $this->signalementAddressUpdater->updateAddressOccupantFromBanData(signalement: $signalement);
 
         $this->save($signalement);
 
