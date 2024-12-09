@@ -23,6 +23,6 @@ class CacheCommonKeyGeneratorTest extends TestCase
         $cacheCommonKeyGenerator = new CacheCommonKeyGenerator($securityMock);
         $key = $cacheCommonKeyGenerator->generate();
 
-        $this->assertEquals('ROLE_USER_PARTNER-partnerId-1', $key);
+        $this->assertEquals('ROLE_USER_PARTNER', $key);
     }
 }

@@ -38,7 +38,7 @@ class HomepageController extends AbstractController
         $stats = ['pris_en_compte' => 0, 'clotures' => 0];
         $stats['total'] = $signalementRepository->countAll(
             territory: null,
-            partner: null,
+            partners: null,
             removeImported: true,
             removeArchived: true
         );

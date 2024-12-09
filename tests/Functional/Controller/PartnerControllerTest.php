@@ -159,9 +159,9 @@ class PartnerControllerTest extends WebTestCase
     {
         /** @var User $partnerUser */
         $partnerUser = $this->userRepository->findOneBy(['email' => 'user-13-01@histologe.fr']);
-        $partner = $partnerUser->getPartner();
+        $partner = $partnerUser->getPartners()->first();
 
-        $route = $this->router->generate('back_partner_user_edit');
+        $route = $this->router->generate('back_partner_user_edit', ['id' => $partner->getId()]);
         $this->client->request(
             'POST',
             $route,
@@ -186,9 +186,9 @@ class PartnerControllerTest extends WebTestCase
     {
         /** @var User $partnerUser */
         $partnerUser = $this->userRepository->findAnonymizedUsers()[0];
-        $partner = $partnerUser->getPartner();
+        $partner = $partnerUser->getPartners()->first();
 
-        $route = $this->router->generate('back_partner_user_edit');
+        $route = $this->router->generate('back_partner_user_edit', ['id' => $partner->getId()]);
         $this->client->request(
             'POST',
             $route,
@@ -210,20 +210,21 @@ class PartnerControllerTest extends WebTestCase
     public function testTransferUserAccount(): void
     {
         $user = $this->userRepository->findOneBy(['email' => 'user-13-02@histologe.fr']);
+        $partner = $user->getPartners()->first();
         $userId = $user->getId();
 
         $newPartnerId = $this->partnerRepository->findOneBy(['nom' => 'Partenaire 13-01'])->getId();
 
         $this->client->request(
             'POST',
-            $this->router->generate('back_partner_user_transfer'),
+            $this->router->generate('back_partner_user_transfer', ['id' => $partner->getId()]),
             [
                 'user_transfer' => ['user' => $userId, 'partner' => $newPartnerId],
                 '_token' => $this->generateCsrfToken($this->client, 'partner_user_transfer'),
             ]
         );
 
-        $this->assertEquals($newPartnerId, $user->getPartner()->getId());
+        $this->assertEquals($newPartnerId, $user->getPartners()->first()->getId());
         $this->assertResponseRedirects('/bo/partenaires/'.$newPartnerId.'/voir#agents');
     }
 
@@ -234,40 +235,40 @@ class PartnerControllerTest extends WebTestCase
 
         $user = $this->userRepository->findOneBy(['email' => 'user-13-02@histologe.fr']);
         $userId = $user->getId();
-        $userOldPartner = $user->getPartner()->getId();
+        $userOldPartner = $user->getPartners()->first()->getId();
 
         $newPartnerId = $this->partnerRepository->findOneBy(['nom' => 'Partenaire 13-02'])->getId();
 
         $this->client->request(
             'POST',
-            $this->router->generate('back_partner_user_transfer'),
+            $this->router->generate('back_partner_user_transfer', ['id' => $user->getPartners()->first()->getId()]),
             [
                 'user_transfer' => ['user' => $userId, 'partner' => $newPartnerId],
                 '_token' => $this->generateCsrfToken($this->client, 'partner_user_transfer'),
             ]
         );
 
-        $this->assertEquals($userOldPartner, $user->getPartner()->getId());
+        $this->assertEquals($userOldPartner, $user->getPartners()->first()->getId());
     }
 
     public function testTransferUserAccountWithCsrfUnvalid(): void
     {
         $user = $this->userRepository->findOneBy(['email' => 'user-13-02@histologe.fr']);
         $userId = $user->getId();
-        $userOldPartner = $user->getPartner()->getId();
+        $userOldPartner = $user->getPartners()->first()->getId();
 
         $newPartnerId = $this->partnerRepository->findOneBy(['nom' => 'Partenaire 13-02'])->getId();
 
         $this->client->request(
             'POST',
-            $this->router->generate('back_partner_user_transfer'),
+            $this->router->generate('back_partner_user_transfer', ['id' => $user->getPartners()->first()->getId()]),
             [
                 'user_transfer' => ['user' => $userId, 'partner' => $newPartnerId],
                 '_token' => $this->generateCsrfToken($this->client, 'bad_csrf'),
             ]
         );
 
-        $this->assertEquals($userOldPartner, $user->getPartner()->getId());
+        $this->assertEquals($userOldPartner, $user->getPartners()->first()->getId());
         $this->assertResponseRedirects('/bo/partenaires/');
     }
 
@@ -276,7 +277,7 @@ class PartnerControllerTest extends WebTestCase
         $user = $this->userRepository->findOneBy(['email' => 'user-13-01@histologe.fr']);
         $userId = $user->getId();
 
-        $this->client->request('POST', $this->router->generate('back_partner_user_delete'), [
+        $this->client->request('POST', $this->router->generate('back_partner_user_delete', ['id' => $user->getPartners()->first()->getId()]), [
             'user_id' => $userId,
             '_token' => $this->generateCsrfToken($this->client, 'partner_user_delete'),
         ]);
@@ -290,7 +291,7 @@ class PartnerControllerTest extends WebTestCase
         $user = $this->userRepository->findAnonymizedUsers()[0];
         $userId = $user->getId();
 
-        $this->client->request('POST', $this->router->generate('back_partner_user_delete'), [
+        $this->client->request('POST', $this->router->generate('back_partner_user_delete', ['id' => $user->getPartners()->first()->getId()]), [
             'user_id' => $userId,
             '_token' => $this->generateCsrfToken($this->client, 'partner_user_delete'),
         ]);
@@ -303,7 +304,7 @@ class PartnerControllerTest extends WebTestCase
         $user = $this->userRepository->findOneBy(['email' => 'user-01-03@histologe.fr']);
         $userId = $user->getId();
 
-        $this->client->request('POST', $this->router->generate('back_partner_user_delete'), [
+        $this->client->request('POST', $this->router->generate('back_partner_user_delete', ['id' => $user->getPartners()->first()->getId()]), [
             'user_id' => $userId,
             '_token' => $this->generateCsrfToken($this->client, 'bad_csrf'),
         ]);

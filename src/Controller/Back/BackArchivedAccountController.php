@@ -3,6 +3,7 @@
 namespace App\Controller\Back;
 
 use App\Entity\User;
+use App\Entity\UserPartner;
 use App\Form\UserType;
 use App\Repository\PartnerRepository;
 use App\Repository\TerritoryRepository;
@@ -91,7 +92,7 @@ class BackArchivedAccountController extends AbstractController
         EntityManagerInterface $entityManager,
         NotificationMailerRegistry $notificationMailerRegistry,
     ): Response {
-        $isUserUnlinked = (!$user->getTerritory() || !$user->getPartner());
+        $isUserUnlinked = $user->getPartners()->isEmpty();
 
         if ((User::STATUS_ARCHIVE !== $user->getStatut() && !$isUserUnlinked) || $user->getAnonymizedAt()) {
             $this->addFlash('error', 'Ce compte ne peut pas être réactivé.');
@@ -122,6 +123,15 @@ class BackArchivedAccountController extends AbstractController
         if (!$userExist && !$partnerExist && $form->isSubmitted() && $form->isValid()) {
             $user->setStatut(User::STATUS_ACTIVE);
             $user->setEmail($untaggedEmail);
+            // tempPartner is not mapped, so we need to set the partner manually
+            foreach ($user->getUserPartners() as $userPartner) {
+                $entityManager->remove($userPartner);
+            }
+            $partner = $form->get('tempPartner')->getData();
+            $userPartner = (new UserPartner())->setUser($user)->setPartner($partner);
+            $user->addUserPartner($userPartner);
+            $entityManager->persist($userPartner);
+
             $entityManager->flush();
             $this->addFlash('success', 'Réactivation du compte effectuée.');
 
@@ -129,7 +139,6 @@ class BackArchivedAccountController extends AbstractController
                 new NotificationMail(
                     type: NotificationMailerType::TYPE_ACCOUNT_REACTIVATION,
                     to: $user->getEmail(),
-                    territory: $user->getTerritory(),
                     user: $user,
                 )
             );

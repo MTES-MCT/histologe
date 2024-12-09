@@ -53,13 +53,14 @@ class AffectationRepository extends ServiceEntityRepository
     {
         $qb = $this->createQueryBuilder('a')
             ->select('COUNT(a.signalement) as count')
-            ->andWhere('a.partner = :partner')
             ->leftJoin('a.signalement', 's', 'WITH', 's = a.signalement')
             ->andWhere('s.statut != 7')
-            ->setParameter('partner', $user->getPartner())
-            ->addSelect('a.statut');
+            ->addSelect('a.statut')
+            ->andWhere('a.partner IN (:partners)')
+            ->setParameter('partners', $user->getPartners());
         if ($territory) {
-            $qb->andWhere('s.territory = :territory')
+            $qb->leftJoin('a.partner', 'p')
+                ->andWhere('p.territory = :territory')
                 ->setParameter('territory', $territory);
         }
 
@@ -85,7 +86,7 @@ class AffectationRepository extends ServiceEntityRepository
         $qb = $this->createQueryBuilder('a');
         $qb->select('a.id, a.statut, partner.id, partner.nom')
             ->leftJoin('a.signalement', 's');
-        if (null === $statisticsFilters->getPartner()) {
+        if (!$statisticsFilters->getPartners() || $statisticsFilters->getPartners()->isEmpty()) {
             $qb->leftJoin('a.partner', 'partner');
         }
 
@@ -151,12 +152,12 @@ class AffectationRepository extends ServiceEntityRepository
         return $qb->getQuery()->getResult();
     }
 
-    public function countAffectationByPartner(Partner $partner): int
+    public function countAffectationForUser(User $user): int
     {
         $qb = $this->createQueryBuilder('a');
         $qb->select('COUNT(a.id) as nb_affectation')
-            ->where('a.partner = :partner')
-            ->setParameter('partner', $partner)
+            ->where('a.partner IN (:partners)')
+            ->setParameter('partners', $user->getPartners())
             ->andWhere('a.statut = :statut_wait')
             ->setParameter('statut_wait', Affectation::STATUS_WAIT);
 
@@ -166,7 +167,7 @@ class AffectationRepository extends ServiceEntityRepository
     /**
      * @throws NonUniqueResultException
      */
-    public function countSignalementByPartner(Partner $partner): CountSignalement
+    public function countSignalementForUser(User $user): CountSignalement
     {
         $qb = $this->createQueryBuilder('a');
         $qb->select(
@@ -186,9 +187,9 @@ class AffectationRepository extends ServiceEntityRepository
             ->innerJoin('a.partner', 'p')
             ->innerJoin('a.signalement', 's')
             ->where('s.statut != :statut_archived')
-            ->andWhere('a.partner = :partner')
+            ->andWhere('a.partner IN (:partners)')
             ->setParameter('statut_archived', Signalement::STATUS_ARCHIVED)
-            ->setParameter('partner', $partner);
+            ->setParameter('partners', $user->getPartners());
 
         return $qb->getQuery()->getOneOrNullResult();
     }

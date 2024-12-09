@@ -98,15 +98,34 @@
                                 <tr class="signalement-row">
                                     {% if is_granted('ROLE_ADMIN') %}
                                         <td>
-                                            {% if user.territory %}
-                                                {{ user.territory.zip }} - {{ user.territory.name }}
-                                            {% endif %}
+                                            {% for partner in user.partners %}
+                                                {% if partner.territory %}
+                                                    {{ partner.territory.zip ~ ' - ' ~ partner.territory.name }}
+                                                {% else %}
+                                                    N/A
+                                                {% endif %}
+                                                {% if not loop.last %}<br>{% endif %}
+                                            {% endfor %}
                                         </td>
                                     {% endif %}
                                     <td>{{ user.prenom }} {{ user.nom }}</td>
                                     <td>{{ user.email }}</td>
-                                    <td>{{ user.partner ? user.partner.nom }}</td>
-                                    <td>{{ user.partner and user.partner.type ? user.partner.type.label : 'N/A' }}</td>
+                                    <td>
+                                        {% for partner in user.partners %}
+                                            {{ partner.nom }}
+                                            {% if not loop.last %}<br>{% endif %}
+                                        {% endfor %}
+                                    </td>
+                                    <td>
+                                        {% for partner in user.partners %}
+                                             {% if partner.type %}
+                                                {{ partner.type.label }}
+                                             {% else %}
+                                                N/A
+                                             {% endif %}
+                                             {% if not loop.last %}<br>{% endif %}
+                                        {% endfor %}
+                                    </td>
                                     <td>
                                         {% if user.statut is same as constant('App\\Entity\\User::STATUS_INACTIVE') %}
                                             <span class="fr-badge fr-badge--no-icon fr-badge--error">Non activé</span>
@@ -122,19 +141,22 @@
                                     <td>{{ user.isSuperAdmin() or user.isTerritoryAdmin() or user.hasPermissionAffectation() ? 'Oui' : 'Non' }}</td>
                                     {% endif %}
                                     <td class="fr-text--right">
-                                        <a href="#" class="fr-btn fr-fi-edit-line fr-mt-3v btn-edit-partner-user"
-                                            id="partner_users_edit_{{ user.id }}" aria-controls="fr-modal-user-edit"
-                                            data-fr-opened="false"
-                                            data-usernom="{{ user.nom }}"
-                                            data-userprenom="{{ user.prenom }}"
-                                            data-userrole="{{ user.roles[0] }}"
-                                            {% if platform.feature_permission_affectation %}
-                                            data-userpermissionaffectation="{{ user.hasPermissionAffectation() ? '1' : '0' }}"
-                                            {% endif %}
-                                            data-userismailingactive="{{ user.isMailingActive }}"
-                                            data-userid="{{ user.id }}"
-                                            data-useremail="{{ user.email }}">
-                                        </a>
+                                        {% if user.getPartners|length %}
+                                            <a href="#" class="fr-btn fr-fi-edit-line fr-mt-3v btn-edit-partner-user"
+                                                id="partner_users_edit_{{ user.id }}" aria-controls="fr-modal-user-edit"
+                                                data-fr-opened="false"
+                                                data-submit-url="{{ path('back_partner_user_edit', {'id': user.getPartners.first.id}) }}"
+                                                data-usernom="{{ user.nom }}"
+                                                data-userprenom="{{ user.prenom }}"
+                                                data-userrole="{{ user.roles[0] }}"
+                                                {% if platform.feature_permission_affectation %}
+                                                data-userpermissionaffectation="{{ user.hasPermissionAffectation() ? '1' : '0' }}"
+                                                {% endif %}
+                                                data-userismailingactive="{{ user.isMailingActive }}"
+                                                data-userid="{{ user.id }}"
+                                                data-useremail="{{ user.email }}">
+                                            </a>
+                                        {% endif %}
                                     </td>
                                 </tr>
                             {% endfor %}

@@ -65,7 +65,6 @@ class ReinitAdminPasswordsCommand extends Command
                     type: NotificationMailerType::TYPE_ACCOUNT_ACTIVATION_FROM_BO,
                     to: $user->getEmail(),
                     user: $user,
-                    territory: $user->getTerritory(),
                 )
             );
         }

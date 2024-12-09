@@ -10,7 +10,7 @@
                         <h1 id="fr-user-delete-title" class="fr-modal__title">
                             Suppression du compte de <span class="fr-modal-user-delete_username"></span> 
                         </h1>   
-                        <form action="{{ path('back_partner_user_delete') }}" name="user_delete"
+                        <form action="{{ path('back_partner_user_delete', {id:partner.id}) }}" name="user_delete"
                               id="user_delete_form" method="POST">
                             <div class="fr-select-group">
                                 Vous êtes sur le point de supprimer le compte utilisateur de <span class="fr-modal-user-delete_username"></span> (<span class="fr-modal-user-delete_useremail"></span>). Une fois le compte supprimé :

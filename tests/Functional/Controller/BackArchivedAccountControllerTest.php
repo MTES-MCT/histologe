@@ -133,7 +133,7 @@ class BackArchivedAccountControllerTest extends WebTestCase
         $form['user[nom]'] = $faker->lastName();
         $form['user[email]'] = (string) $account->getEmail();
         $form['user[territory]'] = (string) $territory->getId();
-        $form['user[partner]'] = (string) $partner->getId();
+        $form['user[tempPartner]'] = (string) $partner->getId();
         $client->submit($form);
 
         /** @var User $account */
@@ -183,7 +183,7 @@ class BackArchivedAccountControllerTest extends WebTestCase
         $form['user[nom]'] = $faker->lastName();
         $form['user[email]'] = (string) $account->getEmail();
         $form['user[territory]'] = (string) $territory->getId();
-        $form['user[partner]'] = (string) $partner->getId();
+        $form['user[tempPartner]'] = '';
         $client->submit($form);
 
         /** @var User $account */
@@ -221,7 +221,7 @@ class BackArchivedAccountControllerTest extends WebTestCase
         $form['user[nom]'] = $faker->lastName();
         $form['user[email]'] = (string) $account->getEmail();
         $form['user[territory]'] = '';
-        $form['user[partner]'] = '';
+        $form['user[tempPartner]'] = '';
         $client->submit($form);
 
         /** @var User $account */
@@ -277,7 +277,6 @@ class BackArchivedAccountControllerTest extends WebTestCase
         $accountEmail = 'user-unlinked@histologe.fr';
         /** @var User $account */
         $account = $userRepository->findOneBy(['email' => $accountEmail]);
-        $account->setTerritory($territory);
         $route = $router->generate('back_account_reactiver', [
             'id' => $account->getId(),
         ]);
@@ -291,7 +290,13 @@ class BackArchivedAccountControllerTest extends WebTestCase
         $form['user[nom]'] = (string) $account->getNom();
         $form['user[email]'] = (string) $account->getEmail();
         $form['user[territory]'] = (string) $territory->getId();
-        $form['user[partner]'] = (string) $partner->getId();
+        $client->submit($form);
+
+        $crawler = $client->getCrawler();
+        $buttonCrawlerNode = $crawler->selectButton('submit_btn_account');
+        $form = $buttonCrawlerNode->form();
+
+        $form['user[tempPartner]'] = (string) $partner->getId();
         $client->submit($form);
 
         /** @var User $account */

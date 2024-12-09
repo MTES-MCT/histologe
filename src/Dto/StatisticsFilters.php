@@ -2,8 +2,8 @@
 
 namespace App\Dto;
 
-use App\Entity\Partner;
 use App\Entity\Territory;
+use Doctrine\Common\Collections\ArrayCollection;
 
 class StatisticsFilters
 {
@@ -16,7 +16,7 @@ class StatisticsFilters
     private bool $countRefused;
     private bool $countArchived;
     private ?Territory $territory;
-    private ?Partner $partner;
+    private ?ArrayCollection $partners;
 
     public function __construct(
         ?array $communes,
@@ -28,7 +28,7 @@ class StatisticsFilters
         bool $countRefused,
         bool $countArchived,
         ?Territory $territory,
-        ?Partner $partner,
+        ?ArrayCollection $partners,
     ) {
         $this->communes = $communes;
         $this->statut = $statut;
@@ -39,7 +39,7 @@ class StatisticsFilters
         $this->countRefused = $countRefused;
         $this->countArchived = $countArchived;
         $this->territory = $territory;
-        $this->partner = $partner;
+        $this->partners = $partners;
     }
 
     public function getCommunes(): ?array
@@ -150,14 +150,14 @@ class StatisticsFilters
         return $this;
     }
 
-    public function getPartner(): ?Partner
+    public function getPartners(): ?ArrayCollection
     {
-        return $this->partner;
+        return $this->partners;
     }
 
-    public function setPartner(?Partner $partner): self
+    public function setPartners(?ArrayCollection $partners): self
     {
-        $this->partner = $partner;
+        $this->partners = $partners;
 
         return $this;
     }

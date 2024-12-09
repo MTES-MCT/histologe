@@ -20,6 +20,7 @@ use App\Service\Interconnection\Idoss\IdossService;
 use App\Service\Signalement\SearchFilter;
 use App\Service\Statistics\CriticitePercentStatisticProvider;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\DBAL\Exception;
 use Doctrine\DBAL\LockMode;
 use Doctrine\ORM\NonUniqueResultException;
@@ -79,7 +80,7 @@ class SignalementRepository extends ServiceEntityRepository
 
     public function countAll(
         ?Territory $territory,
-        ?Partner $partner,
+        ?ArrayCollection $partners,
         bool $removeImported = false,
         bool $removeArchived = false,
     ): int {
@@ -97,11 +98,11 @@ class SignalementRepository extends ServiceEntityRepository
         if ($territory) {
             $qb->andWhere('s.territory = :territory')->setParameter('territory', $territory);
         }
-        if ($partner) {
+        if ($partners && $partners->count() > 0) {
             $qb->leftJoin('s.affectations', 'affectations')
                 ->leftJoin('affectations.partner', 'partner')
-                ->andWhere('partner = :partner')
-                ->setParameter('partner', $partner);
+                ->andWhere('partner IN (:partners)')
+                ->setParameter('partners', $partners);
         }
 
         return $qb->getQuery()
@@ -127,14 +128,14 @@ class SignalementRepository extends ServiceEntityRepository
         if ($user?->isUserPartner() || $user?->isPartnerAdmin()) {
             $qb->innerJoin('s.affectations', 'affectations')
                 ->innerJoin('affectations.partner', 'partner')
-                ->andWhere('partner = :partner')
-                ->setParameter('partner', $user->getPartner());
+                ->andWhere('partner IN (:partners)')
+                ->setParameter('partners', $user->getPartners());
         }
 
         return $qb->getQuery()->getSingleScalarResult();
     }
 
-    public function countByStatus(?Territory $territory, ?Partner $partner, ?int $year = null, bool $removeImported = false, ?Qualification $qualification = null, ?array $qualificationStatuses = null): array
+    public function countByStatus(?Territory $territory, ?ArrayCollection $partners, ?int $year = null, bool $removeImported = false, ?Qualification $qualification = null, ?array $qualificationStatuses = null): array
     {
         $qb = $this->createQueryBuilder('s');
         $qb->select('COUNT(s.id) as count')
@@ -149,11 +150,11 @@ class SignalementRepository extends ServiceEntityRepository
         if ($territory) {
             $qb->andWhere('s.territory = :territory')->setParameter('territory', $territory);
         }
-        if ($partner) {
+        if ($partners && $partners->count() > 0) {
             $qb->leftJoin('s.affectations', 'affectations')
                 ->leftJoin('affectations.partner', 'partner')
-                ->andWhere('partner = :partner')
-                ->setParameter('partner', $partner);
+                ->andWhere('partner IN (:partners)')
+                ->setParameter('partners', $partners);
         }
         if ($year) {
             $qb->andWhere('YEAR(s.createdAt) = :year')->setParameter('year', $year);
@@ -474,17 +475,31 @@ class SignalementRepository extends ServiceEntityRepository
             ->setParameter('group_concat_separator', SignalementAffectationListView::SEPARATOR_GROUP_CONCAT);
 
         if ($user->isTerritoryAdmin()) {
-            $qb->andWhere('s.territory = :territory')->setParameter('territory', $user->getTerritory());
-            if (\array_key_exists($user->getTerritory()->getZip(), $options['authorized_codes_insee'])) {
-                $qb = $this->filterForSpecificAgglomeration(
-                    $qb,
-                    $user->getTerritory()->getZip(),
-                    $user->getPartner()->getNom(),
-                    $options['authorized_codes_insee']
-                );
+            $authorized_codes_insee = [];
+            $otherTerritories = [];
+            foreach ($user->getPartners() as $partner) {
+                if (isset($this->params[$partner->getTerritory()->getZip()][$partner->getNom()])) {
+                    $authorized_codes_insee = array_merge($options['authorized_codes_insee'][$partner->getTerritory()->getZip()][$partner->getNom()], $authorized_codes_insee);
+                } else {
+                    $otherTerritories[] = $partner->getTerritory();
+                }
+            }
+            if (count($authorized_codes_insee)) {
+                if (count($otherTerritories)) {
+                    $qb->andWhere('s.inseeOccupant IN (:authorized_codes_insee) OR s.territory IN (:territories)')
+                    ->setParameter('authorized_codes_insee', $authorized_codes_insee)
+                    ->setParameter('territories', $otherTerritories);
+                } else {
+                    $qb->andWhere('s.inseeOccupant IN (:authorized_codes_insee)')
+                        ->setParameter('authorized_codes_insee', $authorized_codes_insee);
+                }
+            } elseif (empty($options['territories'])) {
+                $qb->andWhere('s.territory IN (:territories)')->setParameter('territories', $user->getPartnersTerritories());
             }
         } elseif ($user->isUserPartner() || $user->isPartnerAdmin()) {
-            $qb->andWhere('s.territory = :territory')->setParameter('territory', $user->getTerritory());
+            if (empty($options['territories'])) {
+                $qb->andWhere('s.territory IN (:territories)')->setParameter('territories', $user->getPartnersTerritories());
+            }
             $statuses = [];
             if (!empty($options['statuses'])) {
                 $statuses = array_map(function ($status) {
@@ -495,21 +510,14 @@ class SignalementRepository extends ServiceEntityRepository
             $subQueryBuilder = $this->_em->createQueryBuilder()
                 ->select('DISTINCT IDENTITY(a2.signalement)')
                 ->from(Affectation::class, 'a2')
-                ->where('a2.partner = :partner_1');
+                ->where('a2.partner IN (:partners)');
 
             if (!empty($options['statuses'])) {
                 $subQueryBuilder->andWhere('a2.statut IN (:statut_affectation)');
             }
+            $qb->andWhere('s.id IN ('.$subQueryBuilder->getDQL().')');
 
-            $qb->andWhere(
-                $qb->expr()->orX(
-                    $qb->expr()->eq('a.partner', ':partner_2'),
-                    $qb->expr()->in('s.id', $subQueryBuilder->getDQL())
-                )
-            );
-
-            $qb->setParameter('partner_1', $user->getPartner());
-            $qb->setParameter('partner_2', $user->getPartner());
+            $qb->setParameter('partners', $user->getPartners());
             if (!empty($options['statuses'])) {
                 $qb->setParameter('statut_affectation', $statuses);
             }
@@ -648,8 +656,8 @@ class SignalementRepository extends ServiceEntityRepository
         if ($user) {
             $qb->leftJoin('s.affectations', 'affectations')
                 ->leftJoin('affectations.partner', 'partner')
-                ->andWhere('partner = :partner')
-                ->setParameter('partner', $user->getPartner());
+                ->andWhere('partner IN (:partners)')
+                ->setParameter('partners', $user->getPartners());
         }
         if ($territory) {
             $qb->andWhere('s.territory = :territory')
@@ -710,7 +718,8 @@ class SignalementRepository extends ServiceEntityRepository
             ->select('u.email')
             ->innerJoin('s.affectations', 'a')
             ->innerJoin('a.partner', 'p')
-            ->innerJoin('p.users', 'u')
+            ->innerJoin('p.userPartners', 'up')
+            ->innerJoin('up.user', 'u')
             ->where('s.id = :signalement_id')
             ->setParameter('signalement_id', $signalementId)
             ->andWhere('u.statut = '.User::STATUS_ACTIVE)
@@ -752,7 +761,7 @@ class SignalementRepository extends ServiceEntityRepository
         return $partnersEmail;
     }
 
-    public function getAverageCriticite(?Territory $territory, ?Partner $partner, bool $removeImported = false): ?float
+    public function getAverageCriticite(?Territory $territory, ?ArrayCollection $partners, bool $removeImported = false): ?float
     {
         $qb = $this->createQueryBuilder('s');
         $qb->select('AVG(s.score)');
@@ -763,28 +772,28 @@ class SignalementRepository extends ServiceEntityRepository
         if ($territory) {
             $qb->andWhere('s.territory = :territory')->setParameter('territory', $territory);
         }
-        if ($partner) {
+        if ($partners && $partners->count() > 0) {
             $qb->leftJoin('s.affectations', 'affectations')
                 ->leftJoin('affectations.partner', 'partner')
-                ->andWhere('partner = :partner')
-                ->setParameter('partner', $partner);
+                ->andWhere('partner IN (:partners)')
+                ->setParameter('partners', $partners);
         }
 
         return $qb->getQuery()
             ->getSingleScalarResult();
     }
 
-    public function getAverageDaysValidation(?Territory $territory, ?Partner $partner, bool $removeImported = false): ?float
+    public function getAverageDaysValidation(?Territory $territory, ?ArrayCollection $partners, bool $removeImported = false): ?float
     {
-        return $this->getAverageDayResult('validatedAt', $territory, $partner, $removeImported);
+        return $this->getAverageDayResult('validatedAt', $territory, $partners, $removeImported);
     }
 
-    public function getAverageDaysClosure(?Territory $territory, ?Partner $partner, bool $removeImported = false): ?float
+    public function getAverageDaysClosure(?Territory $territory, ?ArrayCollection $partners, bool $removeImported = false): ?float
     {
-        return $this->getAverageDayResult('closedAt', $territory, $partner, $removeImported);
+        return $this->getAverageDayResult('closedAt', $territory, $partners, $removeImported);
     }
 
-    private function getAverageDayResult(string $field, ?Territory $territory, ?Partner $partner, bool $removeImported = false): ?float
+    private function getAverageDayResult(string $field, ?Territory $territory, ?ArrayCollection $partners, bool $removeImported = false): ?float
     {
         $qb = $this->createQueryBuilder('s');
         $qb->select('AVG(datediff(s.'.$field.', s.createdAt))');
@@ -797,11 +806,11 @@ class SignalementRepository extends ServiceEntityRepository
         if ($territory) {
             $qb->andWhere('s.territory = :territory')->setParameter('territory', $territory);
         }
-        if ($partner) {
+        if ($partners && $partners->count() > 0) {
             $qb->leftJoin('s.affectations', 'affectations')
                 ->leftJoin('affectations.partner', 'partner')
-                ->andWhere('partner = :partner')
-                ->setParameter('partner', $partner);
+                ->andWhere('partner IN (:partners)')
+                ->setParameter('partners', $partners);
         }
 
         return $qb->getQuery()
@@ -1036,11 +1045,11 @@ class SignalementRepository extends ServiceEntityRepository
                 ->setParameter('communes', $filters->getCommunes());
         }
 
-        if ($filters->getPartner()) {
+        if ($filters->getPartners() && $filters->getPartners()->count() > 0) {
             $qb->leftJoin('s.affectations', 'affectations')
                 ->leftJoin('affectations.partner', 'partner')
-                ->andWhere('partner = :partner')
-                ->setParameter('partner', $filters->getPartner());
+                ->andWhere('partner IN (:partners)')
+                ->setParameter('partners', $filters->getPartners());
         }
 
         return $qb;
@@ -1058,26 +1067,6 @@ class SignalementRepository extends ServiceEntityRepository
             ->setParameter('reference', '%'.$chunkReference.'%')
             ->getQuery()
             ->getOneOrNullResult();
-    }
-
-    private function filterForSpecificAgglomeration(
-        QueryBuilder $qb,
-        string $territoryZip,
-        string $partnerName,
-        array $options,
-    ): QueryBuilder {
-        if (
-            isset($this->params[$territoryZip])
-            && isset($this->params[$territoryZip][$partnerName])
-        ) {
-            $qb->andWhere('s.inseeOccupant IN (:authorized_codes_insee)')
-                ->setParameter(
-                    'authorized_codes_insee',
-                    $options[$territoryZip][$partnerName]
-                );
-        }
-
-        return $qb;
     }
 
     /**

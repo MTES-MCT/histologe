@@ -6,7 +6,6 @@ users:
     statut: 1
     is_generique: 0
     is_mailing_active: 0
-    territory: null
   -
     email: api-02@histologe.fr
     roles: "[\"ROLE_API_USER\"]"
@@ -14,7 +13,6 @@ users:
     statut: 1
     is_generique: 0
     is_mailing_active: 0
-    territory: "La Réunion"
   -
     email: admin-01@histologe.fr
     roles: "[\"ROLE_ADMIN\"]"
@@ -22,7 +20,6 @@ users:
     statut: 1
     is_generique: 0
     is_mailing_active: 0
-    territory: null
   -
     email: admin-02@histologe.fr
     roles: "[\"ROLE_ADMIN\"]"
@@ -30,7 +27,6 @@ users:
     statut: 2
     is_generique: 0
     is_mailing_active: 1
-    territory: null
   -
     email: admin-03@histologe.fr
     roles: "[\"ROLE_ADMIN\"]"
@@ -38,7 +34,6 @@ users:
     statut: 1
     is_generique: 0
     is_mailing_active: 0
-    territory: null
   -
     email: admin-territoire-13-01@histologe.fr
     roles: "[\"ROLE_ADMIN_TERRITORY\"]"
@@ -46,7 +41,6 @@ users:
     statut: 1
     is_generique: 0
     is_mailing_active: 1
-    territory: "Bouches-du-Rhône"
   -
     email: admin-territoire-13-02@histologe.fr
     roles: "[\"ROLE_ADMIN_TERRITORY\"]"
@@ -54,7 +48,6 @@ users:
     statut: 1
     is_generique: 0
     is_mailing_active: 0
-    territory: "Bouches-du-Rhône"
   -
     email: admin-territoire-01-01@histologe.fr
     roles: "[\"ROLE_ADMIN_TERRITORY\"]"
@@ -62,7 +55,6 @@ users:
     statut: 1
     is_generique: 0
     is_mailing_active: 0
-    territory: "Ain"
   -
     email: admin-territoire-63-01@histologe.fr
     roles: "[\"ROLE_ADMIN_TERRITORY\"]"
@@ -70,7 +62,6 @@ users:
     statut: 1
     is_generique: 0
     is_mailing_active: 1
-    territory: "Puy-de-Dôme"
   -
     email: admin-territoire-89-01@histologe.fr
     roles: "[\"ROLE_ADMIN_TERRITORY\"]"
@@ -78,7 +69,6 @@ users:
     statut: 1
     is_generique: 0
     is_mailing_active: 1
-    territory: "Yonne"
   -
     email: admin-territoire-06-01@histologe.fr
     roles: "[\"ROLE_ADMIN_TERRITORY\"]"
@@ -86,7 +76,6 @@ users:
     statut: 1
     is_generique: 0
     is_mailing_active: 1
-    territory: "Alpes-Maritimes"
   -
     email: admin-territoire-59-01@histologe.fr
     roles: "[\"ROLE_ADMIN_TERRITORY\"]"
@@ -94,7 +83,6 @@ users:
     statut: 1
     is_generique: 0
     is_mailing_active: 1
-    territory: "Nord"
   -
     email: admin-territoire-69-mdl@histologe.fr
     roles: "[\"ROLE_ADMIN_TERRITORY\"]"
@@ -102,7 +90,6 @@ users:
     statut: 1
     is_generique: 0
     is_mailing_active: 1
-    territory: "Rhône"
   -
     email: admin-territoire-69-cor@histologe.fr
     roles: "[\"ROLE_ADMIN_TERRITORY\"]"
@@ -110,7 +97,6 @@ users:
     statut: 1
     is_generique: 0
     is_mailing_active: 1
-    territory: "Rhône"
   -
     email: user-69205-mdl@histologe.fr
     roles: "[\"ROLE_USER_PARTNER\"]"
@@ -118,7 +104,6 @@ users:
     statut: 1
     is_generique: 0
     is_mailing_active: 1
-    territory: "Rhône"
   -
     email: user-69054-cor@histologe.fr
     roles: "[\"ROLE_USER_PARTNER\"]"
@@ -126,7 +111,6 @@ users:
     statut: 1
     is_generique: 0
     is_mailing_active: 1
-    territory: "Rhône"
   -
     email: user-69-05@histologe.fr
     roles: "[\"ROLE_USER_PARTNER\"]"
@@ -134,7 +118,6 @@ users:
     statut: 1
     is_generique: 0
     is_mailing_active: 1
-    territory: "Rhône"
   -
     email: user-69-06@histologe.fr
     roles: "[\"ROLE_USER_PARTNER\"]"
@@ -142,7 +125,6 @@ users:
     statut: 1
     is_generique: 0
     is_mailing_active: 1
-    territory: "Rhône"
   -
     email: admin-partenaire-13-01@histologe.fr
     roles: "[\"ROLE_ADMIN_PARTNER\"]"
@@ -150,7 +132,6 @@ users:
     statut: 1
     is_generique: 0
     is_mailing_active: 1
-    territory: "Bouches-du-Rhône"
   -
     email: admin-partenaire-01-01@histologe.fr
     roles: "[\"ROLE_ADMIN_PARTNER\"]"
@@ -158,7 +139,6 @@ users:
     statut: 1
     is_generique: 0
     is_mailing_active: 0
-    territory: "Ain"
   -
     email: user-13-01@histologe.fr
     roles: "[\"ROLE_USER_PARTNER\"]"
@@ -166,7 +146,6 @@ users:
     statut: 1
     is_generique: 0
     is_mailing_active: 1
-    territory: "Bouches-du-Rhône"
     last_login_at: '-1 year'
   -
     email: user-13-02@histologe.fr
@@ -175,7 +154,6 @@ users:
     statut: 1
     is_generique: 0
     is_mailing_active: 1
-    territory: "Bouches-du-Rhône"
     last_login_at: '-2 year'
   -
     email: user-13-03@histologe.fr
@@ -184,7 +162,6 @@ users:
     statut: 0
     is_generique: 0
     is_mailing_active: 1
-    territory: "Bouches-du-Rhône"
   -
     email: user-13-04@histologe.fr
     roles: "[\"ROLE_USER_PARTNER\"]"
@@ -192,7 +169,6 @@ users:
     statut: 0
     is_generique: 0
     is_mailing_active: 0
-    territory: "Bouches-du-Rhône"
   -
     email: user-13-05@histologe.fr
     roles: "[\"ROLE_USER_PARTNER\"]"
@@ -200,7 +176,6 @@ users:
     statut: 1
     is_generique: 0
     is_mailing_active: 1
-    territory: "Bouches-du-Rhône"
   -
     email: user-13-06@histologe.fr
     roles: "[\"ROLE_USER_PARTNER\"]"
@@ -208,7 +183,6 @@ users:
     statut: 1
     is_generique: 0
     is_mailing_active: 1
-    territory: "Bouches-du-Rhône"
   -
     email: user-13-07@histologe.fr
     roles: "[\"ROLE_USER_PARTNER\"]"
@@ -216,7 +190,6 @@ users:
     statut: 2
     is_generique: 0
     is_mailing_active: 1
-    territory: "Bouches-du-Rhône"
   -
     email: user-13-08@histologe.fr
     roles: "[\"ROLE_USER_PARTNER\"]"
@@ -224,7 +197,6 @@ users:
     statut: 2
     is_generique: 0
     is_mailing_active: 1
-    territory: "Bouches-du-Rhône"
     anonymized: true
   -
     email: user-13-09@histologe.fr
@@ -233,7 +205,6 @@ users:
     statut: 2
     is_generique: 0
     is_mailing_active: 1
-    territory: "Bouches-du-Rhône"
     last_login_at: '-2 year'
   -
     email: user-2A-01@histologe.fr
@@ -242,7 +213,6 @@ users:
     statut: 0
     is_generique: 0
     is_mailing_active: 0
-    territory: "Corse-du-Sud"
   -
     email: user-974-01@histologe.fr
     roles: "[\"ROLE_USER_PARTNER\"]"
@@ -250,7 +220,6 @@ users:
     statut: 2
     is_generique: 0
     is_mailing_active: 1
-    territory: "La Réunion"
   -
     email: user-01-01@histologe.fr
     roles: "[\"ROLE_USER_PARTNER\"]"
@@ -258,7 +227,6 @@ users:
     statut: 1
     is_generique: 0
     is_mailing_active: 0
-    territory: "Ain"
   -
     email: user-01-02@histologe.fr
     roles: "[\"ROLE_USER_PARTNER\"]"
@@ -266,7 +234,6 @@ users:
     statut: 0
     is_generique: 0
     is_mailing_active: 1
-    territory: "Ain"
     token: 00000000-0000-0000-0000-000000000001
   -
     email: user-01-03@histologe.fr
@@ -275,7 +242,6 @@ users:
     statut: 1
     is_generique: 0
     is_mailing_active: 1
-    territory: "Ain"
   -
     email: user-01-04@histologe.fr
     roles: "[\"ROLE_USER_PARTNER\"]"
@@ -283,7 +249,6 @@ users:
     statut: 0
     is_generique: 0
     is_mailing_active: 1
-    territory: "Ain"
   -
     email: user-01-05@histologe.fr
     roles: "[\"ROLE_USER_PARTNER\"]"
@@ -291,7 +256,6 @@ users:
     statut: 0
     is_generique: 0
     is_mailing_active: 1
-    territory: "Ain"
   -
     email: user-01-06@histologe.fr
     roles: "[\"ROLE_USER_PARTNER\"]"
@@ -299,15 +263,12 @@ users:
     statut: 1
     is_generique: 0
     is_mailing_active: 0
-    territory: "Ain"
   -
     email: user-01-06@histologe.fr
     roles: "[\"ROLE_USER_PARTNER\"]"
-    partner: "Partenaire 01-03-ARCHIVE"
     statut: 2
     is_generique: 0
     is_mailing_active: 0
-    territory: "Ain"
   -
     email: user-01-07@histologe.fr
     roles: "[\"ROLE_USER_PARTNER\"]"
@@ -315,7 +276,6 @@ users:
     statut: 2
     is_generique: 0
     is_mailing_active: 0
-    territory: "Ain"
   -
     email: user-01-08@histologe.fr
     roles: "[\"ROLE_USER_PARTNER\"]"
@@ -323,7 +283,6 @@ users:
     statut: 2
     is_generique: 0
     is_mailing_active: 0
-    territory: "Ain"
   -
     email: user-01-09@histologe.fr
     roles: "[\"ROLE_USER_PARTNER\"]"
@@ -331,7 +290,6 @@ users:
     statut: 2
     is_generique: 0
     is_mailing_active: 0
-    territory: "Ain"
   -
     email: user-01-10@histologe.fr
     roles: "[\"ROLE_USER_PARTNER\"]"
@@ -339,7 +297,6 @@ users:
     statut: 2
     is_generique: 0
     is_mailing_active: 0
-    territory: "Ain"
   -
     email: user-63-01@histologe.fr
     roles: "[\"ROLE_USER_PARTNER\"]"
@@ -347,7 +304,6 @@ users:
     statut: 1
     is_generique: 0
     is_mailing_active: 0
-    territory: "Puy-de-Dôme"
   -
     email: user-63-02@histologe.fr
     roles: "[\"ROLE_USER_PARTNER\"]"
@@ -355,7 +311,6 @@ users:
     statut: 0
     is_generique: 0
     is_mailing_active: 1
-    territory: "Puy-de-Dôme"
   -
     email: user-63-03@histologe.fr
     roles: "[\"ROLE_USER_PARTNER\"]"
@@ -363,7 +318,6 @@ users:
     statut: 1
     is_generique: 0
     is_mailing_active: 1
-    territory: "Puy-de-Dôme"
   -
     email: user-63-04@histologe.fr
     roles: "[\"ROLE_USER_PARTNER\"]"
@@ -371,7 +325,6 @@ users:
     statut: 0
     is_generique: 0
     is_mailing_active: 1
-    territory: "Puy-de-Dôme"
   -
     email: user-89-01@histologe.fr
     roles: "[\"ROLE_USER_PARTNER\"]"
@@ -379,7 +332,6 @@ users:
     statut: 1
     is_generique: 0
     is_mailing_active: 0
-    territory: "Yonne"
   -
     email: user-89-02@histologe.fr
     roles: "[\"ROLE_USER_PARTNER\"]"
@@ -387,7 +339,6 @@ users:
     statut: 1
     is_generique: 0
     is_mailing_active: 0
-    territory: "Yonne"
   -
     email: user-89-03@histologe.fr
     roles: "[\"ROLE_USER_PARTNER\"]"
@@ -395,7 +346,6 @@ users:
     statut: 1
     is_generique: 0
     is_mailing_active: 0
-    territory: "Yonne"
   -
     email: user-89-04@histologe.fr
     roles: "[\"ROLE_USER_PARTNER\"]"
@@ -403,7 +353,6 @@ users:
     statut: 1
     is_generique: 0
     is_mailing_active: 0
-    territory: "Yonne"
   -
     email: user-unlinked@histologe.fr
     roles: "[\"ROLE_USER_PARTNER\"]"
@@ -417,7 +366,6 @@ users:
     statut: 1
     is_generique: 0
     is_mailing_active: 0
-    territory: "Isère"
   -
     email: user-38-01@histologe.fr
     roles: "[\"ROLE_USER_PARTNER\"]"
@@ -425,7 +373,6 @@ users:
     statut: 1
     is_generique: 0
     is_mailing_active: 0
-    territory: "Isère"
   -
     email: admin-territoire-62-01@histologe.fr
     roles: "[\"ROLE_ADMIN_TERRITORY\"]"
@@ -433,7 +380,6 @@ users:
     statut: 1
     is_generique: 0
     is_mailing_active: 1
-    territory: "Pas-de-Calais"
   -
     email: user-62-01@histologe.fr
     roles: "[\"ROLE_USER_PARTNER\"]"
@@ -441,7 +387,6 @@ users:
     statut: 1
     is_generique: 0
     is_mailing_active: 1
-    territory: "Pas-de-Calais"
   -
     email: user-93-01@histologe.fr
     roles: "[\"ROLE_USER_PARTNER\"]"
@@ -449,7 +394,6 @@ users:
     statut: 1
     is_generique: 0
     is_mailing_active: 1
-    territory: "Seine-Saint-Denis"
   -
     email: usager-01@histologe.fr
     roles: "[\"ROLE_USAGER\"]"
@@ -464,7 +408,6 @@ users:
     statut: 1
     is_generique: 0
     is_mailing_active: 1
-    territory: "Martinique"
   -
     email: user-972-01@histologe.fr
     roles: "[\"ROLE_USER_PARTNER\"]"
@@ -472,7 +415,6 @@ users:
     statut: 1
     is_generique: 0
     is_mailing_active: 1
-    territory: "Martinique"
   -
     email: user-972-02@histologe.fr
     roles: "[\"ROLE_USER_PARTNER\"]"
@@ -480,7 +422,6 @@ users:
     statut: 1
     is_generique: 0
     is_mailing_active: 1
-    territory: "Martinique"
   -
     email: admin-territoire-34-01@histologe.fr
     roles: "[\"ROLE_ADMIN_TERRITORY\"]"
@@ -497,3 +438,12 @@ users:
     is_generique: 0
     is_mailing_active: 1
     territory: "Hérault"
+  -
+    email: admin-partenaire-multi-ter-13-01@histologe.fr
+    roles: "[\"ROLE_ADMIN_PARTNER\"]"
+    partners: 
+      - "Partenaire 13-01"
+      - "Partenaire 01-01"
+    statut: 1
+    is_generique: 0
+    is_mailing_active: 1

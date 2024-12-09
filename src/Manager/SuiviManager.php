@@ -135,10 +135,11 @@ class SuiviManager extends Manager
 
         if (DocumentType::PROCEDURE_RAPPORT_DE_VISITE === $documentType && null !== $intervention) {
             $isVisibleUsager = true;
+            $partner = $user->getPartnerInTerritoryOrFirstOne($signalement->getTerritory());
             if ($nbDocs > 0) {
                 $description .= \sprintf(
                     '%s a ajouté %s %s de la visite du %s :',
-                    $user->getPartner()->getNom(),
+                    $partner->getNom(),
                     $nbDocs,
                     $nbDocs > 1 ? ' rapports de visite' : ' rapport de visite',
                     $intervention->getScheduledAt()->format('d/m/Y')
@@ -148,10 +149,11 @@ class SuiviManager extends Manager
 
         if (DocumentType::PHOTO_VISITE === $documentType) {
             $isVisibleUsager = true;
+            $partner = $user->getPartnerInTerritoryOrFirstOne($signalement->getTerritory());
             if ($nbPhotos > 0) {
                 $description .= \sprintf(
                     '%s a ajouté %s %s de la visite du %s :',
-                    $user->getPartner()->getNom(),
+                    $partner->getNom(),
                     $nbPhotos,
                     $nbPhotos > 1 ? ' photos' : ' photo',
                     $intervention->getScheduledAt()->format('d/m/Y')

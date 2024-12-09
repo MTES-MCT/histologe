@@ -96,8 +96,9 @@ class SuiviSummariesMessageHandler
             $cleanLastSuiviDescription = HtmlCleaner::clean($signalementResult['dernier_suivi_description']);
             $userAuthorSuivi = $this->userRepository->find($signalementResult['dernier_suivi_created_by']);
             $userAuthorSuiviStr = $userAuthorSuivi->getPrenom().' '.$userAuthorSuivi->getNom();
-            if (!empty($userAuthorSuivi->getPartner())) {
-                $userAuthorSuiviStr .= ' ('.$userAuthorSuivi->getPartner()->getNom().')';
+            $partner = $userAuthorSuivi->getPartnerInTerritoryOrFirstOne($suiviSummariesMessage->getTerritory());
+            if ($partner) {
+                $userAuthorSuiviStr .= ' ('.$partner->getNom().')';
             }
             $rowArray = [
                 $signalementResult['reference'],

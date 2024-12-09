@@ -6,7 +6,6 @@ use App\Entity\Enum\PartnerType;
 use App\Entity\Enum\Qualification;
 use App\Entity\Partner;
 use App\Entity\Territory;
-use App\Entity\User;
 use App\Tests\FixturesHelper;
 use Faker\Factory;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
@@ -25,14 +24,6 @@ class PartnerTest extends KernelTestCase
         $territory = $entityManager->getRepository(Territory::class)->find(1);
         $faker = Factory::create();
 
-        $user = (new User())
-            ->setEmail($faker->email())
-            ->setNom($faker->lastName())
-            ->setPrenom($faker->firstName())
-            ->setRoles([User::ROLES['Agent']])
-            ->setIsMailingActive(true)
-            ->setPassword($faker->password());
-
         $partner = (new Partner())
             ->setNom($faker->company())
             ->setEmail($faker->companyEmail())
@@ -41,17 +32,6 @@ class PartnerTest extends KernelTestCase
             ->setEsaboraUrl($faker->url())
             ->setEsaboraToken($faker->randomKey())
             ->setType(PartnerType::ADIL);
-
-        for ($i = 0; $i < 3; ++$i) {
-            $user = (new User())
-                ->setEmail($faker->email())
-                ->setNom($faker->lastName())
-                ->setPrenom($faker->firstName())
-                ->setRoles([User::ROLES['Agent']])
-                ->setIsMailingActive(true)
-                ->setPassword($faker->password(8));
-            $partner->addUser($user);
-        }
 
         /** @var ConstraintViolationList $errors */
         $errors = $validator->validate($partner);

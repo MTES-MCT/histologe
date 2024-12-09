@@ -18,11 +18,7 @@ class WidgetSettings
     #[Groups('widget-settings:read')]
     private ?string $canSeeNDE = null;
     #[Groups('widget-settings:read')]
-    private ?int $partnerId = null;
-    #[Groups('widget-settings:read')]
-    private ?string $partnerName = null;
-    #[Groups('widget-settings:read')]
-    private ?string $territoryName = null;
+    private array $partnerIds = [];
     #[Groups('widget-settings:read')]
     private array $territories = [];
     #[Groups('widget-settings:read')]
@@ -55,9 +51,7 @@ class WidgetSettings
         $this->avatarOrPlaceHolder = $avatarOrPlaceHolder;
         $this->roleLabel = $user->getRoleLabel();
         $this->canSeeNDE = (string) $canSeeNDE;
-        $this->partnerId = $user->getPartner()->getId();
-        $this->partnerName = $user->getPartner()->getNom();
-        $this->territoryName = $user->getTerritory()?->getZip().'-'.$user->getTerritory()?->getName();
+        $this->partnerIds = $user->getUserPartners()->map(fn ($userPartner) => $userPartner->getPartner()->getId())->toArray();
         $this->territories = $territories;
         $this->partners = $partners;
         $this->communes = $communes;
@@ -82,29 +76,19 @@ class WidgetSettings
         return $this->avatarOrPlaceHolder;
     }
 
-    public function getRoleLabel(): ?string
-    {
-        return $this->roleLabel;
-    }
-
     public function getCanSeeNDE(): ?string
     {
         return $this->canSeeNDE;
     }
 
-    public function getPartnerId(): ?int
+    public function getPartnerIds(): array
     {
-        return $this->partnerId;
+        return $this->partnerIds;
     }
 
-    public function getPartnerName(): ?string
+    public function getRoleLabel(): ?string
     {
-        return $this->partnerName;
-    }
-
-    public function getTerritoryName(): ?string
-    {
-        return $this->territoryName;
+        return $this->roleLabel;
     }
 
     public function getTerritories(): array

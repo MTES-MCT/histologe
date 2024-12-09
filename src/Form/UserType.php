@@ -21,15 +21,17 @@ use Symfony\Component\Validator\Context\ExecutionContextInterface;
 
 class UserType extends AbstractType
 {
-    public function __construct(private PartnerRepository $partnerRepository)
-    {
+    public function __construct(
+        private PartnerRepository $partnerRepository,
+        private TerritoryRepository $territoryRepository,
+    ) {
     }
 
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         /** @var User $user */
         $user = $options['data'];
-        $territory = $user->getTerritory();
+        $territory = $user->getPartners()->count() ? $user->getFirstTerritory() : null;
 
         $builder
             ->add('email', EmailType::class, [
@@ -64,6 +66,7 @@ class UserType extends AbstractType
             'query_builder' => function (TerritoryRepository $tr) {
                 return $tr->createQueryBuilder('t')->where('t.isActive = 1')->orderBy('t.id', 'ASC');
             },
+            'mapped' => false,
             'data' => !empty($territory) ? $territory : null,
             'choice_label' => 'name',
             'placeholder' => 'Aucun territoire',
@@ -77,14 +80,15 @@ class UserType extends AbstractType
             'required' => false,
         ]);
 
-        $formModifier = function (FormInterface $form, ?Territory $territory = null) {
+        $formModifier = function (FormInterface $form, ?Territory $territory = null) use ($user) {
             $partners = null === $territory ?
             $this->partnerRepository->findAllWithoutTerritory()
             : $this->partnerRepository->findAllList($territory);
-
-            $form->add('partner', EntityType::class, [
+            $form->add('tempPartner', EntityType::class, [
                 'class' => Partner::class,
                 'choices' => $partners,
+                'data' => $user->getPartners()->count() ? $user->getPartners()->first() : null,
+                'mapped' => false,
                 'choice_label' => 'nom',
                 'placeholder' => 'Aucun partenaire',
                 'attr' => [
@@ -98,15 +102,13 @@ class UserType extends AbstractType
             ]);
         };
 
-        $builder->addEventListener(
-            FormEvents::PRE_SET_DATA,
-            function (FormEvent $event) use ($formModifier) {
-                $data = $event->getData();
-
-                $formModifier($event->getForm(), $data->getTerritory());
-            }
-        );
-
+        $builder->addEventListener(FormEvents::PRE_SET_DATA, function (FormEvent $event) use ($formModifier) {
+            $data = $event->getData();
+            $formModifier($event->getForm(), $data->getPartners()->count() ? $data->getFirstTerritory() : null);
+        });
+        $builder->addEventListener(FormEvents::PRE_SUBMIT, function (FormEvent $event) use ($formModifier) {
+            $formModifier($event->getForm(), $this->territoryRepository->find($event->getData()['territory']));
+        });
         $builder->get('territory')->addEventListener(
             FormEvents::POST_SUBMIT,
             function (FormEvent $event) use ($formModifier) {
@@ -137,8 +139,10 @@ class UserType extends AbstractType
     {
         if ($value instanceof User) {
             $user = $value;
+            $form = $context->getRoot();
+            $territory = $form->get('territory')->getData();
 
-            if ((null === $user->getTerritory())
+            if ((null === $territory)
             && (\in_array('ROLE_USER_PARTNER', $user->getRoles())
             || \in_array('ROLE_ADMIN_PARTNER', $user->getRoles())
             || \in_array('ROLE_ADMIN_TERRITORY', $user->getRoles()))) {
@@ -149,12 +153,11 @@ class UserType extends AbstractType
 
     public function validatePartner(mixed $value, ExecutionContextInterface $context)
     {
-        if ($value instanceof User) {
-            $user = $value;
+        $form = $context->getRoot();
+        $tempPartner = $form->get('tempPartner')->getData();
 
-            if (null === $user->getPartner()) {
-                $context->addViolation('Le partenaire doit être renseigné');
-            }
+        if (null === $tempPartner) {
+            $context->addViolation('Le partenaire doit être renseigné');
         }
     }
 }

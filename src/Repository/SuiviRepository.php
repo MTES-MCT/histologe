@@ -3,11 +3,11 @@
 namespace App\Repository;
 
 use App\Entity\Enum\AffectationStatus;
-use App\Entity\Partner;
 use App\Entity\Signalement;
 use App\Entity\Suivi;
 use App\Entity\Territory;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\DBAL\Exception;
 use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\ORM\NoResultException;
@@ -64,7 +64,7 @@ class SuiviRepository extends ServiceEntityRepository
     public function countSignalementNoSuiviSince(
         int $period = Suivi::DEFAULT_PERIOD_INACTIVITY,
         ?Territory $territory = null,
-        ?Partner $partner = null,
+        ?array $partnersIds = null,
     ): int {
         $connection = $this->getEntityManager()->getConnection();
         $parameters = [
@@ -80,16 +80,17 @@ class SuiviRepository extends ServiceEntityRepository
         if (null !== $territory) {
             $parameters['territory_id'] = $territory->getId();
         }
-        if (null !== $partner) {
-            $parameters['partner_id'] = $partner->getId();
+        if (!empty($partnersIds)) {
+            $parameters['partners'] = implode(',', $partnersIds);
             $parameters['status_wait'] = AffectationStatus::STATUS_WAIT->value;
             $parameters['status_accepted'] = AffectationStatus::STATUS_ACCEPTED->value;
         }
 
         $sql = 'SELECT COUNT(*) as count_signalement
                 FROM ('.
-                        $this->getSignalementsQuery($territory?->getId(), $partner?->getId())
+                        $this->getSignalementsQuery($territory, $partnersIds)
                 .') as countSignalementSuivi';
+
         $statement = $connection->prepare($sql);
 
         return (int) $statement->executeQuery($parameters)->fetchOne();
@@ -100,8 +101,8 @@ class SuiviRepository extends ServiceEntityRepository
      */
     public function findSignalementNoSuiviSince(
         int $period = Suivi::DEFAULT_PERIOD_INACTIVITY,
-        ?int $territoryId = null,
-        ?int $partnerId = null,
+        ?Territory $territory = null,
+        ?array $partnersIds = null,
     ): array {
         $connection = $this->getEntityManager()->getConnection();
         $parameters = [
@@ -114,17 +115,17 @@ class SuiviRepository extends ServiceEntityRepository
             'status_refused' => Signalement::STATUS_REFUSED,
         ];
 
-        if (null !== $territoryId) {
-            $parameters['territory_id'] = $territoryId;
+        if (null !== $territory) {
+            $parameters['territory_id'] = $territory->getId();
         }
 
-        if (null != $partnerId) {
-            $parameters['partner_id'] = $partnerId;
+        if (!empty($partnersIds)) {
+            $parameters['partners'] = implode(',', $partnersIds);
             $parameters['status_wait'] = AffectationStatus::STATUS_WAIT->value;
             $parameters['status_accepted'] = AffectationStatus::STATUS_ACCEPTED->value;
         }
 
-        $sql = $this->getSignalementsQuery($territoryId, $partnerId);
+        $sql = $this->getSignalementsQuery($territory, $partnersIds);
         $statement = $connection->prepare($sql);
 
         return $statement->executeQuery($parameters)->fetchFirstColumn();
@@ -174,17 +175,17 @@ class SuiviRepository extends ServiceEntityRepository
     }
 
     private function getSignalementsQuery(
-        ?int $territoryId = null,
-        ?int $partnerId = null,
+        ?Territory $territory = null,
+        ?array $partnersIds = null,
     ): string {
         $whereTerritory = $wherePartner = $innerPartnerJoin = '';
 
-        if (null !== $territoryId) {
+        if (null !== $territory) {
             $whereTerritory = 'AND s.territory_id = :territory_id';
         }
 
-        if (null != $partnerId) {
-            $wherePartner = 'AND a.partner_id = :partner_id';
+        if (!empty($partnersIds)) {
+            $wherePartner = 'AND a.partner_id IN (:partners)';
             $innerPartnerJoin = 'INNER JOIN affectation a ON a.signalement_id = su.signalement_id AND a.statut IN (:status_wait, :status_accepted)';
         }
 
@@ -295,7 +296,7 @@ class SuiviRepository extends ServiceEntityRepository
      */
     public function countSignalementNoSuiviAfter3Relances(
         ?Territory $territory = null,
-        ?Partner $partner = null,
+        ?ArrayCollection $partners = null,
     ): int {
         $connection = $this->getEntityManager()->getConnection();
         $parameters = [
@@ -310,8 +311,8 @@ class SuiviRepository extends ServiceEntityRepository
         if (null !== $territory) {
             $parameters['territory_id'] = $territory->getId();
         }
-        if (null !== $partner) {
-            $parameters['partner_id'] = $partner->getId();
+        if (null !== $partners && !$partners->isEmpty()) {
+            $parameters['partners'] = $partners;
             $parameters['status_accepted'] = AffectationStatus::STATUS_ACCEPTED->value;
         }
 
@@ -320,7 +321,7 @@ class SuiviRepository extends ServiceEntityRepository
                         $this->getSignalementsLastSuivisTechnicalsQuery(
                             excludeUsagerAbandonProcedure: false,
                             dayPeriod: 0,
-                            partner: $partner,
+                            partners: $partners,
                             territory: $territory,
                         )
                 .') as countSignalementSuivi';
@@ -332,7 +333,7 @@ class SuiviRepository extends ServiceEntityRepository
     public function getSignalementsLastSuivisTechnicalsQuery(
         bool $excludeUsagerAbandonProcedure = true,
         int $dayPeriod = 0,
-        ?Partner $partner = null,
+        ?ArrayCollection $partners = null,
         ?Territory $territory = null,
     ): string {
         $joinMaxDateSuivi = $whereTerritory = $wherePartner = $innerPartnerJoin = $whereExcludeUsagerAbandonProcedure
@@ -342,8 +343,8 @@ class SuiviRepository extends ServiceEntityRepository
             $whereTerritory = 'AND s.territory_id = :territory_id ';
         }
 
-        if (null != $partner) {
-            $wherePartner = 'AND a.partner_id = :partner_id ';
+        if (null != $partners && !$partners->isEmpty()) {
+            $wherePartner = 'AND a.partner_id IN (:partners) ';
             $innerPartnerJoin = 'INNER JOIN affectation a
             ON a.signalement_id = su.signalement_id AND a.statut = :status_accepted ';
         }
@@ -354,7 +355,7 @@ class SuiviRepository extends ServiceEntityRepository
         if ($dayPeriod > 0) {
             $whereLastSuiviDelay = 'AND su.max_date_suivi < DATE_SUB(NOW(), INTERVAL '.$dayPeriod.' DAY) ';
         }
-        if ($dayPeriod > 0 || null != $partner) {
+        if ($dayPeriod > 0 || (null != $partners && !$partners->isEmpty())) {
             $joinMaxDateSuivi = '
             INNER JOIN (
                 SELECT signalement_id, MAX(created_at) AS max_date_suivi

@@ -68,7 +68,7 @@ class SignalementClosedSubscriber implements EventSubscriberInterface
             $signalement->addSuivi($suivi);
             $this->sendMailToPartner(
                 signalement: $signalement,
-                partnerToExclude: $user->getPartner()
+                partnerToExclude: $user->getPartnerInTerritoryOrFirstOne($signalement->getTerritory())
             );
         }
 

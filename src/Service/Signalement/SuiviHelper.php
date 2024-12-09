@@ -32,6 +32,17 @@ class SuiviHelper
             return $user->getEmail() === $signalement->getMailOccupant() ? 'OCCUPANT' : 'DECLARANT';
         }
 
-        return $user?->getPartner()?->getNom() ?? 'Aucun';
+        if ($user) {
+            foreach ($user->getPartners() as $partner) {
+                if ($signalement->getTerritory() === $partner->getTerritory()) {
+                    return $partner->getNom();
+                }
+            }
+            if ($user->getPartners()->count()) {
+                return $user->getPartners()->first()->getNom();
+            }
+        }
+
+        return 'Aucun';
     }
 }

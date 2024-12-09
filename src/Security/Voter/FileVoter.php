@@ -42,10 +42,11 @@ class FileVoter extends Voter
         if ($this->isAdminOrRTonHisTerritory($file, $user)) {
             return true;
         }
+        $partner = $user->getPartnerInTerritory($file->getSignalement()->getTerritory());
 
         return $file->getSignalement()->getAffectations()->filter(
-            function (Affectation $affectation) use ($user) {
-                return $affectation->getPartner()->getId() === $user->getPartner()->getId();
+            function (Affectation $affectation) use ($partner) {
+                return $affectation->getPartner()->getId() === $partner->getId();
             }
         )->count() > 0;
     }
@@ -87,7 +88,7 @@ class FileVoter extends Voter
         if ($user->isSuperAdmin()) {
             return true;
         }
-        if ($user->isTerritoryAdmin() && $subject->getSignalement()->getTerritory() === $user->getTerritory()) {
+        if ($user->isTerritoryAdmin() && $user->hasPartnerInTerritory($subject->getSignalement()->getTerritory())) {
             return true;
         }
 

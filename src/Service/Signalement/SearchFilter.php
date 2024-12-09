@@ -22,6 +22,7 @@ use App\Repository\SuiviRepository;
 use App\Repository\TerritoryRepository;
 use App\Utils\CommuneHelper;
 use App\Utils\ImportCommune;
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\DBAL\Exception;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\QueryBuilder;
@@ -95,19 +96,14 @@ class SearchFilter
         /** @var SignalementSearchQuery $signalementSearchQuery */
         $signalementSearchQuery = $this->request;
         $filters = $signalementSearchQuery->getFilters();
-        $partner = null;
-        if (!$user->isSuperAdmin()) {
-            $filters['territories'][] = $user->getTerritory()->getId();
-            $territory = $user->getTerritory();
-            $partner = \in_array(User::ROLE_USER_PARTNER, $user->getRoles()) ? $user->getPartner() : null;
-        } else {
-            $territory = isset($filters['territories'][0])
-                ? $this->territoryRepository->find($filters['territories'][0])
-                : null;
+        $partners = new ArrayCollection();
+        $territory = isset($filters['territories'][0]) ? $this->territoryRepository->find($filters['territories'][0]) : null;
+        if (\in_array(User::ROLE_USER_PARTNER, $user->getRoles())) {
+            $partners = $user->getPartners();
         }
 
         if (isset($filters['delays'])) {
-            $filters['delays_partner'] = $partner?->getId();
+            $filters['delays_partners'] = $partners->map(fn ($partner) => $partner->getId())->toArray();
             $filters['delays_territory'] = $territory?->getId();
         }
 
@@ -215,10 +211,13 @@ class SearchFilter
                 ++$this->countActive;
             }
             $period = $this->filters['delays'] ?? $request->query->get('sans_suivi_periode');
-            $partner = \in_array(User::ROLE_USER_PARTNER, $user->getRoles()) ? $user->getPartner() : null;
+            $partners = new ArrayCollection();
+            if (\in_array(User::ROLE_USER_PARTNER, $user->getRoles())) {
+                $partners = $user->getPartners();
+            }
             $this->filters['delays'] = (int) $period;
             $this->filters['delays_territory'] = $territory?->getId();
-            $this->filters['delays_partner'] = $partner?->getId();
+            $this->filters['delays_partners'] = $partners->map(fn ($partner) => $partner->getId())->toArray();
         }
 
         return $this;
@@ -342,14 +341,14 @@ class SearchFilter
                     'nb_suivi_technical' => 3,
                 ];
 
-                $partner = ($user->isPartnerAdmin() || $user->isUserPartner()) ? $user->getPartner() : null;
-                if (null !== $partner) {
-                    $parameters['partner_id'] = $partner->getId();
+                $partners = ($user->isPartnerAdmin() || $user->isUserPartner()) ? $user->getPartners() : new ArrayCollection();
+                if (!$partners->isEmpty()) {
+                    $parameters['partners'] = $partners;
                     $parameters['status_accepted'] = AffectationStatus::STATUS_ACCEPTED->value;
                 }
                 $sql = $this->suiviRepository->getSignalementsLastSuivisTechnicalsQuery(
                     excludeUsagerAbandonProcedure: false,
-                    partner: $partner
+                    partners: $partners
                 );
 
                 $statement = $connection->prepare($sql);
@@ -460,7 +459,7 @@ class SearchFilter
             $signalementIds = $this->suiviRepository->findSignalementNoSuiviSince(
                 $filters['delays'],
                 $filters['delays_territory'],
-                $filters['delays_partner']
+                $filters['delays_partners']
             );
             $qb->andWhere('s.id IN (:signalement_ids)')
                 ->setParameter('signalement_ids', $signalementIds);
@@ -540,8 +539,8 @@ class SearchFilter
             if ($request->query->get('territoire_id')) {
                 $territory = $this->territoryRepository->find($request->query->get('territoire_id'));
             }
-        } elseif (!$user->isSuperAdmin()) {
-            $territory = $user->getTerritory();
+        } elseif (1 === $user->getPartners()->count()) {
+            $territory = $user->getFirstTerritory();
         }
 
         return $territory;

@@ -24,9 +24,15 @@ class WidgetSettingsController extends AbstractController
     ): JsonResponse {
         /** @var User $user */
         $user = $this->getUser();
-        $territory = ($security->isGranted('ROLE_ADMIN') && null !== $territoryId)
-            ? $territoryRepository->find($territoryId)
-            : $user->getTerritory();
+        $enabledTerritories = $user->getPartnersTerritories();
+
+        $territory = null;
+        if ($territoryId && ($security->isGranted('ROLE_ADMIN') || isset($enabledTerritories[$territoryId]))) {
+            $territory = $territoryRepository->find($territoryId);
+        }
+        if (!$territory && !$security->isGranted('ROLE_ADMIN')) {
+            $territory = $user->getFirstTerritory();
+        }
 
         return $this->json(
             $widgetSettingsFactory->createInstanceFrom($user, $territory),

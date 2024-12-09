@@ -149,13 +149,12 @@ export default defineComponent({
       this.sharedState.user.isResponsableTerritoire = requestResponse.roleLabel === 'Resp. Territoire'
       this.sharedState.user.isAdministrateurPartenaire = requestResponse.roleLabel === 'Admin. partenaire'
       this.sharedState.user.isAgent = ['Admin. partenaire', 'Agent'].includes(requestResponse.roleLabel)
-      this.sharedState.user.canSeeNonDecenceEnergetique = requestResponse.canSeeNDE === '1'
       const isAdminOrAdminTerritoire = this.sharedState.user.isAdmin || this.sharedState.user.isResponsableTerritoire
       this.sharedState.user.canSeeStatusAffectation = isAdminOrAdminTerritoire
       this.sharedState.user.canSeeBailleurSocial = isAdminOrAdminTerritoire
       this.sharedState.user.canSeeFilterPartner = isAdminOrAdminTerritoire
       this.sharedState.user.canSeeScore = isAdminOrAdminTerritoire
-      this.sharedState.user.partnerId = requestResponse.partnerId
+      this.sharedState.user.partnerIds = requestResponse.partnerIds
       this.sharedState.hasSignalementImported = requestResponse.hasSignalementImported
       this.sharedState.input.order = 'reference-DESC'
       this.sharedState.input.filters.isImported = 'oui'

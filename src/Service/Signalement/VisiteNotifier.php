@@ -54,8 +54,9 @@ class VisiteNotifier
         bool $notifyOtherAffectedPartners = false,
     ): void {
         if ($intervention) {
+            $userPartner = $currentUser?->getPartnerInTerritoryOrFirstOne($intervention->getSignalement()->getTerritory());
             $listUsersToNotify = [];
-            $listUsersPartner = $intervention->getPartner() && $intervention->getPartner() != $currentUser?->getPartner() && !$notifyOtherAffectedPartners ?
+            $listUsersPartner = $intervention->getPartner() && $intervention->getPartner() != $userPartner && !$notifyOtherAffectedPartners ?
                 $intervention->getPartner()->getUsers()->toArray() : [];
             if ($notifyAdminTerritory) {
                 $listUsersTerritoryAdmin = $this->userRepository->findActiveTerritoryAdmins($intervention->getSignalement()->getTerritory(), $intervention->getSignalement()->getInseeOccupant());

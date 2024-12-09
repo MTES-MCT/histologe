@@ -322,7 +322,7 @@
                                 {% if suivi.createdBy is defined and suivi.createdBy is not null %}
                                     <b> {{ suivi.createdBy.nom|upper~'. '~ suivi.createdBy.prenom|capitalize }}</b>
                                     <br>
-                                    <small>[{{ suivi.createdBy.partner ? suivi.createdBy.partner.nom : 'Aucun' }}
+                                    <small>[{{ suivi.createdBy.partnerInTerritoryOrFirstOne(signalement.territory) ? suivi.createdBy.partnerInTerritoryOrFirstOne(signalement.territory).nom : 'Aucun' }}
                                         ]</small>
                                     <br>
                                 {% else %}
