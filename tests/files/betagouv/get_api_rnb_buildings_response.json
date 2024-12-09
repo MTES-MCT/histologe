@@ -1,0 +1,73 @@
+{
+  "next": null,
+  "previous": null,
+  "results": [
+      {
+          "rnb_id": "FQYN6F6WPEJ8",
+          "status": "constructed",
+          "point": {
+              "type": "Point",
+              "coordinates": [
+                  4.141756415466935,
+                  44.05309187516625
+              ]
+          },
+          "shape": {
+              "type": "MultiPolygon",
+              "coordinates": [
+                  [
+                      [
+                          [
+                              4.14166820068322,
+                              44.05308064363605
+                          ],
+                          [
+                              4.141787016824452,
+                              44.05303079850556
+                          ],
+                          [
+                              4.141844630274239,
+                              44.053103106696454
+                          ],
+                          [
+                              4.14172581403257,
+                              44.05315295189149
+                          ],
+                          [
+                              4.14166820068322,
+                              44.05308064363605
+                          ]
+                      ]
+                  ]
+              ]
+          },
+          "addresses": [
+              {
+                  "id": "30348_0430_00015",
+                  "source": "bdnb",
+                  "street_number": "15",
+                  "street_rep": "",
+                  "street": "rue montfaucon",
+                  "city_name": "Vézénobres",
+                  "city_zipcode": "30360",
+                  "city_insee_code": "30348"
+              }
+          ],
+          "ext_ids": [
+              {
+                  "id": "bdnb-bc-D58V-9J29-VZ9B",
+                  "source": "bdnb",
+                  "created_at": "2023-12-09T19:37:21.915219+00:00",
+                  "source_version": "2023_01"
+              },
+              {
+                  "id": "BATIMENT0000000314481721",
+                  "source": "bdtopo",
+                  "created_at": "2023-12-21T23:51:00.180152+00:00",
+                  "source_version": "bdtopo_2023_09"
+              }
+          ],
+          "is_active": true
+      }
+  ]
+}
