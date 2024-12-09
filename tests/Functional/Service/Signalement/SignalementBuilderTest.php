@@ -10,7 +10,6 @@ use App\Factory\Signalement\InformationProcedureFactory;
 use App\Factory\Signalement\SituationFoyerFactory;
 use App\Factory\Signalement\TypeCompositionLogementFactory;
 use App\Manager\DesordreCritereManager;
-use App\Manager\SignalementManager;
 use App\Repository\BailleurRepository;
 use App\Repository\DesordreCritereRepository;
 use App\Repository\DesordrePrecisionRepository;
@@ -56,7 +55,6 @@ class SignalementBuilderTest extends KernelTestCase
         $criticiteCalculator = static::getContainer()->get(CriticiteCalculator::class);
         $signalementQualificationUpdater = static::getContainer()->get(SignalementQualificationUpdater::class);
         $desordreCompositionLogementLoader = static::getContainer()->get(DesordreCompositionLogementLoader::class);
-        $signalementManager = static::getContainer()->get(SignalementManager::class);
 
         $this->signalementBuilder = new SignalementBuilder(
             $territoryRepository,
@@ -74,7 +72,6 @@ class SignalementBuilderTest extends KernelTestCase
             $criticiteCalculator,
             $signalementQualificationUpdater,
             $desordreCompositionLogementLoader,
-            $signalementManager,
         );
     }
 
@@ -102,7 +99,8 @@ class SignalementBuilderTest extends KernelTestCase
             ->withProcedure()
             ->withInformationComplementaire()
             ->withDesordres()
-            ->build();
+            ->build()
+        ;
 
         $this->assertNotEmpty($signalement->getUuid());
         $this->assertNotEmpty($signalement->getReference());
@@ -142,11 +140,8 @@ class SignalementBuilderTest extends KernelTestCase
         $this->assertEquals('33 Rue des phoceens', $signalement->getAdresseOccupant());
         $this->assertEquals('13002', $signalement->getCpOccupant());
         $this->assertEquals('Marseille', $signalement->getVilleOccupant());
-        $this->assertEquals('13202', $signalement->getInseeOccupant());
         $this->assertEquals('5', $signalement->getEtageOccupant());
         $this->assertEquals('A', $signalement->getEscalierOccupant());
-        $this->assertArrayHasKey('lat', $signalement->getGeoloc());
-        $this->assertArrayHasKey('lng', $signalement->getGeoloc());
 
         $this->assertEquals('13 HABITAT', $signalement->getNomProprio());
         $this->assertEquals('Sandrine', $signalement->getPrenomProprio());

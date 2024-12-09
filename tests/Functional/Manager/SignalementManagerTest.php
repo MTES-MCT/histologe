@@ -18,11 +18,11 @@ use App\Manager\SuiviManager;
 use App\Repository\AffectationRepository;
 use App\Repository\BailleurRepository;
 use App\Repository\DesordrePrecisionRepository;
-use App\Service\DataGouv\AddressService;
 use App\Service\Signalement\CriticiteCalculator;
 use App\Service\Signalement\DesordreTraitement\DesordreCompositionLogementLoader;
 use App\Service\Signalement\Qualification\QualificationStatusService;
 use App\Service\Signalement\Qualification\SignalementQualificationUpdater;
+use App\Service\Signalement\SignalementAddressUpdater;
 use App\Specification\Signalement\SuroccupationSpecification;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ManagerRegistry;
@@ -55,7 +55,7 @@ class SignalementManagerTest extends WebTestCase
     private DesordreCompositionLogementLoader $desordreCompositionLogementLoader;
     private SuiviManager $suiviManager;
     private BailleurRepository $bailleurRepository;
-    private AddressService $addressService;
+    private SignalementAddressUpdater $signalementAddressUpdater;
     private AffectationRepository $affectationRepository;
 
     protected function setUp(): void
@@ -80,7 +80,7 @@ class SignalementManagerTest extends WebTestCase
         $this->desordreCompositionLogementLoader = static::getContainer()->get(DesordreCompositionLogementLoader::class);
         $this->suiviManager = static::getContainer()->get(SuiviManager::class);
         $this->bailleurRepository = static::getContainer()->get(BailleurRepository::class);
-        $this->addressService = static::getContainer()->get(AddressService::class);
+        $this->signalementAddressUpdater = static::getContainer()->get(SignalementAddressUpdater::class);
         $this->affectationRepository = static::getContainer()->get(AffectationRepository::class);
 
         $this->signalementManager = new SignalementManager(
@@ -99,8 +99,8 @@ class SignalementManagerTest extends WebTestCase
             $this->desordreCompositionLogementLoader,
             $this->suiviManager,
             $this->bailleurRepository,
-            $this->addressService,
-            $this->affectationRepository
+            $this->affectationRepository,
+            $this->signalementAddressUpdater,
         );
         $user = $this->entityManager->getRepository(User::class)->findOneBy(['email' => 'admin-01@histologe.fr']);
         $client->loginUser($user);

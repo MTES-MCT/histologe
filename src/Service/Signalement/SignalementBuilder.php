@@ -19,7 +19,6 @@ use App\Factory\Signalement\InformationProcedureFactory;
 use App\Factory\Signalement\SituationFoyerFactory;
 use App\Factory\Signalement\TypeCompositionLogementFactory;
 use App\Manager\DesordreCritereManager;
-use App\Manager\SignalementManager;
 use App\Repository\BailleurRepository;
 use App\Repository\DesordreCritereRepository;
 use App\Repository\DesordrePrecisionRepository;
@@ -55,7 +54,6 @@ class SignalementBuilder
         private CriticiteCalculator $criticiteCalculator,
         private SignalementQualificationUpdater $signalementQualificationUpdater,
         private DesordreCompositionLogementLoader $desordreCompositionLogementLoader,
-        private SignalementManager $signalementManager,
     ) {
     }
 
@@ -327,10 +325,6 @@ class SignalementBuilder
             )
             ->setAdresseAutreOccupant($this->signalementDraftRequest->getAdresseLogementComplementAdresseAutre())
             ->setManualAddressOccupant($this->signalementDraftRequest->getAdresseLogementAdresseDetailManual());
-
-        $this->signalementManager->updateAddressOccupantFromBanData(
-            signalement: $this->signalement,
-        );
     }
 
     private function setOccupantDeclarantData(): void
