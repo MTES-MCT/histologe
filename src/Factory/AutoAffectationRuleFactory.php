@@ -18,7 +18,7 @@ class AutoAffectationRuleFactory
         ?string $partnerToExclude = null,
         ?string $parc = null,
         ?string $allocataire = null,
-        ?array $procedureSuspectee = null,
+        ?array $proceduresSuspectees = null,
     ): AutoAffectationRule {
         $autoAffectationRule = (new AutoAffectationRule())
             ->setTerritory($territory)
@@ -35,8 +35,8 @@ class AutoAffectationRuleFactory
         if (!empty($partnerToExclude)) {
             $autoAffectationRule->setPartnerToExclude(array_map('trim', explode(',', $partnerToExclude)));
         }
-        if (!empty($procedureSuspectee)) {
-            $autoAffectationRule->setProcedureSuspectee($procedureSuspectee);
+        if (!empty($proceduresSuspectees)) {
+            $autoAffectationRule->setProceduresSuspectees($proceduresSuspectees);
         }
 
         return $autoAffectationRule;

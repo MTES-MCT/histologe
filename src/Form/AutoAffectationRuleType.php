@@ -153,7 +153,7 @@ class AutoAffectationRuleType extends AbstractType
                     'class' => 'fr-hint-text',
                 ],
             ])
-            ->add('procedureSuspectee', SearchCheckboxEnumType::class, [
+            ->add('proceduresSuspectees', SearchCheckboxEnumType::class, [
                 'class' => Qualification::class,
                 'choice_filter' => ChoiceList::filter(
                     $this,
@@ -165,12 +165,12 @@ class AutoAffectationRuleType extends AbstractType
                 'choice_label' => function ($choice) {
                     return $choice->label();
                 },
-                'label' => 'Procédures suspectée (facultatif)',
+                'label' => 'Procédures suspectées (facultatif)',
                 'noselectionlabel' => 'Sélectionner une ou plusieurs procédures',
                 'nochoiceslabel' => 'Aucune procédure disponible',
                 'multiple' => true,
                 'expanded' => false,
-                'help' => 'Choisissez une ou plusieurs procédure parmi la liste ci-dessous.',
+                'help' => 'Choisissez une ou plusieurs procédures parmi la liste ci-dessous.',
                 'help_attr' => [
                     'class' => 'fr-hint-text',
                 ],

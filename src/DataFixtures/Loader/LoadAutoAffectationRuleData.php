@@ -41,16 +41,16 @@ class LoadAutoAffectationRuleData extends Fixture implements OrderedFixtureInter
             ->setAllocataire($row['allocataire'])
         ;
 
-        if (isset($row['procedure_suspectee'])) {
-            $procedureSuspectee = [];
-            if (\is_array($row['procedure_suspectee'])) {
-                foreach ($row['procedure_suspectee'] as $procedure) {
-                    $procedureSuspectee[] = Qualification::tryFrom($procedure);
+        if (isset($row['procedures_suspectees'])) {
+            $proceduresSuspectees = [];
+            if (\is_array($row['procedures_suspectees'])) {
+                foreach ($row['procedures_suspectees'] as $procedureSuspectee) {
+                    $proceduresSuspectees[] = Qualification::tryFrom($procedureSuspectee);
                 }
             } else {
-                $procedureSuspectee[] = Qualification::tryFrom($row['procedure_suspectee']);
+                $proceduresSuspectees[] = Qualification::tryFrom($row['procedures_suspectees']);
             }
-            $affectation->setProcedureSuspectee($procedureSuspectee);
+            $affectation->setProceduresSuspectees($proceduresSuspectees);
         }
 
         $manager->persist($affectation);

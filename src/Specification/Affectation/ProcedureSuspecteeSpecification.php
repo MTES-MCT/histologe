@@ -10,9 +10,9 @@ use App\Specification\SpecificationInterface;
 
 class ProcedureSuspecteeSpecification implements SpecificationInterface
 {
-    public function __construct(private ?array $procedureSuspectee)
+    public function __construct(private ?array $proceduresSuspectees)
     {
-        $this->procedureSuspectee = $procedureSuspectee;
+        $this->proceduresSuspectees = $proceduresSuspectees;
     }
 
     public function isSatisfiedBy(SpecificationContextInterface $context): bool
@@ -24,11 +24,11 @@ class ProcedureSuspecteeSpecification implements SpecificationInterface
         /** @var Signalement $signalement */
         $signalement = $context->getSignalement();
 
-        if (!empty($this->procedureSuspectee)) {
+        if (!empty($this->proceduresSuspectees)) {
             $signalementQualifications = $signalement->getSignalementQualifications();
             foreach ($signalementQualifications as $signalementQualification) {
                 if (QualificationStatus::ARCHIVED !== $signalementQualification->getStatus()
-                && \in_array($signalementQualification->getQualification(), $this->procedureSuspectee)
+                && \in_array($signalementQualification->getQualification(), $this->proceduresSuspectees)
                 ) {
                     return true;
                 }
