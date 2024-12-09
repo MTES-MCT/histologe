@@ -1,4 +1,13 @@
 <header>
+    {% include 'back/breadcrumb_bo.html.twig' with {
+        'canFix': true,
+        'level2Title': 'Liste des signalements',
+        'level2Link': path('back_signalement_index'),
+        'level2Label': 'Retour à la liste des signalements',
+        'level3Title': 'Signalement #'~signalement.reference,
+        'level3Link': '',
+    } %}
+
     <div class="fr-grid-row fr-grid-row--gutters">
         <div class="fr-col-7">
             <div class="fr-mb-4v">      

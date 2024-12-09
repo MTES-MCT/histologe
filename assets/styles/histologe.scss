@@ -966,10 +966,6 @@ a.photo-preview {
     padding-right: 1.5rem;
 }
 
-.fr-breadcrumb.can-fix {
-    padding-top: 15px;
-}
-
 @media (min-width: 992px) {
     .fr-breadcrumb.can-fix.fixed {
         position: fixed;
@@ -986,7 +982,7 @@ a.photo-preview {
             margin: 0 auto;
             width: 100%;
             max-width: 95rem;
-            padding: 0 1.5rem;
+            padding: 0 2.75rem;
         }
     }
 }
