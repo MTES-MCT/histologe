@@ -38,6 +38,7 @@ class SignalementAddressUpdater
             return;
         } elseif ($updateGeolocAndBatId && !empty($signalement->getCpOccupant()) && !empty($signalement->getVilleOccupant())) {
             $inseeResult = $this->addressService->getAddress($signalement->getCpOccupant().' '.$signalement->getVilleOccupant());
+            $signalement->setRnbIdOccupant(null);
             if (!empty($inseeResult->getCity())) {
                 $signalement
                     ->setBanIdOccupant(0)
@@ -53,6 +54,7 @@ class SignalementAddressUpdater
         }
 
         $signalement->setBanIdOccupant(0);
+        $signalement->setRnbIdOccupant(null);
         if ($updateGeolocAndBatId) {
             $signalement
                 ->setInseeOccupant(null)
