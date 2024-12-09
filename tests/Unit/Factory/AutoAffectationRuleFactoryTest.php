@@ -35,7 +35,7 @@ class AutoAffectationRuleFactoryTest extends KernelTestCase
             partnerToExclude : null,
             parc : 'all',
             allocataire : 'all',
-            procedureSuspectee: null
+            proceduresSuspectees: null
         );
 
         /** @var ConstraintViolationList $errors */
@@ -62,7 +62,7 @@ class AutoAffectationRuleFactoryTest extends KernelTestCase
             partnerToExclude : null,
             parc : 'ERROR',
             allocataire : 'ERROR',
-            procedureSuspectee: ['ERROR']
+            proceduresSuspectees: ['ERROR']
         );
 
         /** @var ConstraintViolationList $errors */

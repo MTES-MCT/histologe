@@ -63,7 +63,7 @@ auto_affectation_rules:
     insee_to_exclude: null
     parc: "all"
     allocataire: "all"
-    procedure_suspectee:
+    procedures_suspectees:
       - "DANGER"
   -
     territory: "Loire-Atlantique"

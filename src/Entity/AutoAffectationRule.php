@@ -82,7 +82,7 @@ class AutoAffectationRule implements EntityHistoryInterface
     private string $allocataire;
 
     #[ORM\Column(type: Types::SIMPLE_ARRAY, nullable: true, enumType: Qualification::class)]
-    private array $procedureSuspectee = [];
+    private array $proceduresSuspectees = [];
 
     public function getId(): ?int
     {
@@ -204,21 +204,21 @@ class AutoAffectationRule implements EntityHistoryInterface
         return $this;
     }
 
-    public function getProcedureSuspectee(): ?array
+    public function getProceduresSuspectees(): ?array
     {
-        return $this->procedureSuspectee;
+        return $this->proceduresSuspectees;
     }
 
-    public function setProcedureSuspectee(?array $procedureSuspectee): self
+    public function setProceduresSuspectees(?array $proceduresSuspectees): self
     {
-        $this->procedureSuspectee = $procedureSuspectee;
+        $this->proceduresSuspectees = $proceduresSuspectees;
 
         return $this;
     }
 
     public function hasProcedureSuspectee(Qualification $qualification): bool
     {
-        return \in_array($qualification, $this->getProcedureSuspectee());
+        return \in_array($qualification, $this->getProceduresSuspectees());
     }
 
     public function getDescription(bool $isShort = true): string
@@ -262,9 +262,9 @@ class AutoAffectationRule implements EntityHistoryInterface
                 $description .= ProfileDeclarant::tryFrom($this->getProfileDeclarant())?->label();
                 break;
         }
-        if (\count($this->getProcedureSuspectee()) > 0) {
+        if (\count($this->getProceduresSuspectees()) > 0) {
             $description .= ', ayant les procédures suspectées suivantes : ';
-            foreach ($this->getProcedureSuspectee() as $procedure) {
+            foreach ($this->getProceduresSuspectees() as $procedure) {
                 $description .= $procedure->label().' ';
             }
         }

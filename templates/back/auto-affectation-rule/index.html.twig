@@ -103,8 +103,8 @@
                         {% endif %}
                     </td>
                     <td>
-                        {% if autoaffectationrule.procedureSuspectee %}
-                            {% for proc in autoaffectationrule.procedureSuspectee %}
+                        {% if autoaffectationrule.proceduresSuspectees %}
+                            {% for proc in autoaffectationrule.proceduresSuspectees %}
                                 <div class="fr-badge fr-badge--blue-ecume fr-mb-1v">{{ proc.label() }}</div>
                             {% endfor %}
                         {% else %}

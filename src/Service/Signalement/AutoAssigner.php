@@ -63,7 +63,7 @@ class AutoAssigner
                 new PartnerExcludeSpecification($rule->getPartnerToExclude()),
                 new ParcSpecification($rule->getParc()),
                 new AllocataireSpecification($rule->getAllocataire()),
-                new ProcedureSuspecteeSpecification($rule->getProcedureSuspectee()),
+                new ProcedureSuspecteeSpecification($rule->getProceduresSuspectees()),
             );
 
             foreach ($partners as $partner) {

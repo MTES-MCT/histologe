@@ -15,7 +15,7 @@ class ProcedureSuspecteeSpecificationTest extends KernelTestCase
     /**
      * @dataProvider provideRulesAndSignalement
      */
-    public function testIsSatisfiedBy(?array $procedureSuspectees, array $qualificationsSignalement, bool $isSatisfied): void
+    public function testIsSatisfiedBy(?array $proceduresSuspectees, array $qualificationsSignalement, bool $isSatisfied): void
     {
         $partner = new Partner();
         $signalement = new Signalement();
@@ -25,7 +25,7 @@ class ProcedureSuspecteeSpecificationTest extends KernelTestCase
             ));
         }
 
-        $specification = new ProcedureSuspecteeSpecification($procedureSuspectees);
+        $specification = new ProcedureSuspecteeSpecification($proceduresSuspectees);
         $context = new PartnerSignalementContext($partner, $signalement);
         if ($isSatisfied) {
             $this->assertTrue($specification->isSatisfiedBy($context));
