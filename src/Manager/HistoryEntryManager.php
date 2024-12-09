@@ -137,10 +137,10 @@ class HistoryEntryManager extends AbstractManager
         foreach ($entries as $entry) {
             $userName = $entry->getUser() ? $entry->getUser()->getFullName() : 'Système (automatique)';
             if ('affectation' === $type) {
-                /** @var ?Partner */
+                /** @var ?Partner $partner */
                 $partner = $entry->getUser()?->getPartnerInTerritoryOrFirstOne($entry->getSignalement()->getTerritory());
             } else {
-                /** @var ?Partner */
+                /** @var ?Partner $partner */
                 $partner = $entry->getUser()?->getPartnerInTerritoryOrFirstOne($signalement->getTerritory());
             }
             $partnerName = $partner ? $partner->getNom() : 'N/A';
