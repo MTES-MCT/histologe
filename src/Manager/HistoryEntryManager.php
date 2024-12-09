@@ -134,13 +134,12 @@ class HistoryEntryManager extends AbstractManager
 
     private function formatEntries(array &$formattedHistory, array $entries, string $type, ?Signalement $signalement = null): void
     {
+        /** @var HistoryEntry $entry */
         foreach ($entries as $entry) {
             $userName = $entry->getUser() ? $entry->getUser()->getFullName() : 'Système (automatique)';
             if ('affectation' === $type) {
-                /** @var ?Partner $partner */
                 $partner = $entry->getUser()?->getPartnerInTerritoryOrFirstOne($entry->getSignalement()->getTerritory());
             } else {
-                /** @var ?Partner $partner */
                 $partner = $entry->getUser()?->getPartnerInTerritoryOrFirstOne($signalement->getTerritory());
             }
             $partnerName = $partner ? $partner->getNom() : 'N/A';
