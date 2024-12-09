@@ -94,6 +94,17 @@
 			</div>
 		</fieldset>
 	</div>
+	<div class="fr-col-12" id="partner_bailleur_social">
+		<fieldset class="fr-fieldset " role="group" aria-labelledby="bailleur-social-fieldset-legend">
+			<legend class="fr-fieldset__legend fr-h3 fr-mb-0 " id="bailleur-social-fieldset-legend">Bailleur Social</legend>
+			<div class="fr-fieldset__element">
+				<div class="fr-input-group">
+					<label for="{{ form.bailleur.vars.id }}" class="fr-label">Bailleur Social</label>
+					{{ form_widget(form.bailleur, {'attr': {'id': 'bailleurSocial'}}) }}
+				</div>
+			</div>
+		</fieldset>
+	</div>
 	<div class="fr-col-6">
 		{% if create %}
 			<a class="fr-btn fr-btn--danger fr-fi-close-line fr-btn--icon-left" href="{{ path('back_partner_index') }}"  data-filter-list-partner>Annuler</a>

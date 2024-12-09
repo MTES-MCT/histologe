@@ -2,12 +2,14 @@
 
 namespace App\Form;
 
+use App\Entity\Bailleur;
 use App\Entity\Enum\PartnerType as EnumPartnerType;
 use App\Entity\Enum\Qualification;
 use App\Entity\Partner;
 use App\Entity\Territory;
 use App\Entity\User;
 use App\Form\Type\SearchCheckboxEnumType;
+use App\Repository\BailleurRepository;
 use App\Repository\TerritoryRepository;
 use App\Repository\UserRepository;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
@@ -21,6 +23,9 @@ use Symfony\Component\Form\Extension\Core\Type\EnumType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\Extension\Core\Type\UrlType;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\Form\FormEvent;
+use Symfony\Component\Form\FormEvents;
+use Symfony\Component\Form\FormInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\Validator\Context\ExecutionContextInterface;
@@ -33,6 +38,7 @@ class PartnerType extends AbstractType
     public function __construct(
         private readonly ParameterBagInterface $parameterBag,
         private readonly UserRepository $userRepository,
+        private readonly TerritoryRepository $territoryRepository,
         private readonly Security $security,
     ) {
         if ($this->security->isGranted('ROLE_ADMIN')) {
@@ -50,6 +56,32 @@ class PartnerType extends AbstractType
         /** @var Partner $partner */
         $partner = $builder->getData();
         $territory = $options['data']->getTerritory();
+        // dump($territory);
+
+        // $builder->addEventListener(FormEvents::PRE_SET_DATA, function (FormEvent $event) use ($builder) {
+        //     dump('PRE_SET_DATA');
+        //     dump($event);
+        //     dump($builder);
+        //     $this->addBailleurSocialField(
+        //         $event->getForm(),
+        //         $builder->getData()->getTerritory()
+        //     );
+        //     // $this->desactivePartnerType($event->getForm(), $builder->getData()->getPartners());
+        // });
+        // $builder->addEventListener(FormEvents::PRE_SUBMIT, function (FormEvent $event) {
+        //     dump('PRE_SUBMIT');
+        //     dump($event);
+        //     if (isset($event->getData()['territory'])) {
+        //         $this->addBailleurSocialField(
+        //             $event->getForm(),
+        //             $event->getData()['territory']
+        //         );
+        //     }
+        //     // $this->desactivePartnerType(
+        //     //     $event->getForm(),
+        //     //     isset($event->getData()['partners']) ? $event->getData()['partners'] : null
+        //     // );
+        // });
 
         $builder
             ->add('nom', TextType::class, [
@@ -161,7 +193,99 @@ class PartnerType extends AbstractType
             'label' => 'Territoire',
             'required' => true,
         ]);
+        $builder->add('bailleur', EntityType::class, [
+            'class' => Bailleur::class,
+            'choices' => [], // Initialement vide, rempli dynamiquement par JS
+            'choice_label' => 'Bailleur social',
+            'placeholder' => $territory ? 'Sélectionner un bailleur social' : 'Sélectionner un territoire pour afficher les bailleurs',
+            'required' => false,
+            'help' => !$territory ? 'Veuillez sélectionner un territoire pour afficher les bailleurs sociaux.' : null,
+            'help_attr' => [
+                'class' => !$territory ? 'fr-hint-text fr-hint-text--error' : 'fr-hint-text',
+            ],
+            'attr' => [
+                'data-dynamic' => 'bailleur-social', // Attribut pour cibler le champ avec JS
+            ],
+        ]);
+        $builder->addEventListener(FormEvents::PRE_SUBMIT, function (FormEvent $event) {
+            $data = $event->getData();
+            $form = $event->getForm();
+        
+            // Vérifier si un territoire est sélectionné
+            if (isset($data['territory']) && !empty($data['territory'])) {
+                // Récupérer le territoire
+                $territoryId = $data['territory'];
+        
+                /** @var Territory $territory */
+                $territory = $this->territoryRepository->find($territoryId);
+        
+                if ($territory) {
+                    // Mettre à jour les choix du champ bailleurSocial
+                    $this->addBailleurSocialField($form, $territory->getZip());
+                }
+            }
+        });
+        $builder->addEventListener(FormEvents::PRE_SET_DATA, function (FormEvent $event) {
+            $partner = $event->getData();
+            $form = $event->getForm();
+        
+            // Si un territoire est défini, charger les bailleurs sociaux associés
+            if ($partner instanceof Partner && $partner->getTerritory()) {
+                $this->addBailleurSocialField($form, $partner->getTerritory()->getZip());
+            }
+        });
+        
+        
     }
+    private function addBailleurSocialField(FormInterface $builder, ?string $territoryZip = null): void
+    {
+        $builder->add('bailleur', EntityType::class, [
+            'class' => Bailleur::class,
+            'query_builder' => function (BailleurRepository $bailleurRepository) use ($territoryZip) {
+                // Si aucun territoire sélectionné, renvoyer une requête vide
+                if (!$territoryZip) {
+                    return $bailleurRepository->createQueryBuilder('b')->where('1 = 0');
+                }
+    
+                // Sinon, renvoyer les bailleurs liés au territoire
+                return $bailleurRepository->getBailleursByTerritoryQueryBuilder($territoryZip);
+            },
+            'choice_label' => 'Bailleur social',
+            'placeholder' => 'Sélectionner un bailleur social',
+            'required' => false,
+        ]);
+    }
+    
+    // private function addBailleurSocialField(FormInterface $builder, $territory): void
+    // {
+    //     dump($territory);
+    //     $builder->add('bailleur', EntityType::class, [
+    //         'class' => Bailleur::class,
+    //         'choices' => [], // Initialement vide, rempli dynamiquement par JS
+    //         // 'query_builder' => function (BailleurRepository $bailleurRepository) use ($territory) {
+    //         //     if ($territory) {
+    //         //         return $bailleurRepository->getBailleursByTerritoryQueryBuilder($territory->getZip());
+    //         //     }
+
+    //         //     return $bailleurRepository->createQueryBuilder('b')->where('1 = 0');
+    //         // },
+    //         'choice_label' => 'Bailleur social',
+    //         'placeholder' => $territory ? 'Sélectionner un bailleur social' : 'Sélectionner un territoire pour afficher les bailleurs',
+    //         'required' => false,
+    //         'help' => !$territory ? 'Veuillez sélectionner un territoire pour afficher les bailleurs sociaux.' : null,
+    //         'help_attr' => [
+    //             'class' => !$territory ? 'fr-hint-text fr-hint-text--error' : 'fr-hint-text',
+    //         ],
+    //         'attr' => [
+    //             'data-dynamic' => 'bailleur-social', // Attribut pour cibler le champ avec JS
+    //         ],
+    //         // 'choice_label' => 'nom',
+    //         // 'label' => false,
+    //         // 'empty_data' => '',
+    //         // 'noselectionlabel' => 'Tous les ???',
+    //         // 'nochoiceslabel' => !$territory ? 'Sélectionner un territoire pour afficher les bailleurs sociaux disponibles' : 'Aucun bailleur social disponible',
+    //     ]);
+    // }
 
     public function configureOptions(OptionsResolver $resolver): void
     {

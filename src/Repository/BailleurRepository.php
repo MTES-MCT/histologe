@@ -4,6 +4,7 @@ namespace App\Repository;
 
 use App\Entity\Bailleur;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\ORM\QueryBuilder;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
@@ -34,6 +35,21 @@ class BailleurRepository extends ServiceEntityRepository
         $queryBuilder->orderBy('b.name', 'ASC');
 
         return $queryBuilder->getQuery()->getResult();
+    }
+
+    public function getBailleursByTerritoryQueryBuilder(?string $zip = null): QueryBuilder
+    {
+        $queryBuilder = $this
+            ->createQueryBuilder('b');
+        if (null !== $zip) {
+            $queryBuilder->innerJoin('b.bailleurTerritories', 'bt')
+            ->innerJoin('bt.territory', 't')
+            ->where('t.zip = :zip')
+            ->setParameter('zip', $zip);
+        }
+        $queryBuilder->orderBy('b.name', 'ASC');
+
+        return $queryBuilder;
     }
 
     public function findBailleursBy(string $name, string $zip): array
