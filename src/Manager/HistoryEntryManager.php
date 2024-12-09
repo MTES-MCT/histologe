@@ -76,22 +76,22 @@ class HistoryEntryManager extends AbstractManager
         return $this->requestStack->getCurrentRequest()?->getPathInfo() ?? $this->commandContext->getCommandName();
     }
 
-    public function getAffectationHistory(int $signalementId): array
+    public function getAffectationHistory(Signalement $signalement): array
     {
         $affectationHistoryEntries = $this->getHistoryEntries(
-            $signalementId,
+            $signalement->getId(),
             Affectation::class
         );
 
         $signalementHistoryEntries = $this->getHistoryEntries(
-            $signalementId,
+            $signalement->getId(),
             Signalement::class,
             HistoryEntryEvent::UPDATE
         );
 
         $formattedHistory = [];
         $this->formatEntries($formattedHistory, $affectationHistoryEntries, 'affectation');
-        $this->formatEntries($formattedHistory, $signalementHistoryEntries, 'signalement');
+        $this->formatEntries($formattedHistory, $signalementHistoryEntries, 'signalement', $signalement);
         if (isset($formattedHistory['N/A'])) {
             unset($formattedHistory['N/A']);
         }
@@ -132,12 +132,17 @@ class HistoryEntryManager extends AbstractManager
         return $this->historyEntryRepository->findBy($criteria, ['entityId' => 'ASC', 'createdAt' => 'ASC']);
     }
 
-    private function formatEntries(array &$formattedHistory, array $entries, string $type): void
+    private function formatEntries(array &$formattedHistory, array $entries, string $type, ?Signalement $signalement = null): void
     {
         foreach ($entries as $entry) {
             $userName = $entry->getUser() ? $entry->getUser()->getFullName() : 'Système (automatique)';
-            /** @var ?Partner */
-            $partner = $entry->getUser()?->getPartnerInTerritoryOrFirstOne($entry->getSignalement()->getTerritory());
+            if ('affectation' === $type) {
+                /** @var ?Partner */
+                $partner = $entry->getUser()?->getPartnerInTerritoryOrFirstOne($entry->getSignalement()->getTerritory());
+            } else {
+                /** @var ?Partner */
+                $partner = $entry->getUser()?->getPartnerInTerritoryOrFirstOne($signalement->getTerritory());
+            }
             $partnerName = $partner ? $partner->getNom() : 'N/A';
             $date = $entry->getCreatedAt()
                 ->setTimezone(

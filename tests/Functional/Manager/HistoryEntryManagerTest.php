@@ -145,9 +145,8 @@ class HistoryEntryManagerTest extends WebTestCase
         $signalement = $this->managerRegistry->getRepository(Signalement::class)->findOneBy(
             ['reference' => '2022-8']
         );
-        $signalementId = $signalement->getId();
 
-        $historyEntries = $this->historyEntryManager->getAffectationHistory($signalementId);
+        $historyEntries = $this->historyEntryManager->getAffectationHistory($signalement);
 
         $this->assertIsArray($historyEntries);
         $this->assertNotEmpty($historyEntries);
@@ -164,7 +163,6 @@ class HistoryEntryManagerTest extends WebTestCase
         $signalement = $this->managerRegistry->getRepository(Signalement::class)->findOneBy(
             ['reference' => '2022-8']
         );
-        $signalementId = $signalement->getId();
         $affectations = $signalement->getAffectations();
         $changes = [];
         $changes['statut'] = [];
@@ -176,7 +174,7 @@ class HistoryEntryManagerTest extends WebTestCase
         $this->historyEntryManager->save($historyEntry);
         $this->entityManager->persist($historyEntry);
 
-        $historyEntries = $this->historyEntryManager->getAffectationHistory($signalementId);
+        $historyEntries = $this->historyEntryManager->getAffectationHistory($signalement);
 
         $this->assertIsArray($historyEntries);
 

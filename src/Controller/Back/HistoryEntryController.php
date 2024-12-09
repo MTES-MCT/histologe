@@ -27,7 +27,7 @@ class HistoryEntryController extends AbstractController
             return $this->json(['response' => 'error'], Response::HTTP_FORBIDDEN);
         }
 
-        $historyEntries = $historyEntryManager->getAffectationHistory($signalement->getId());
+        $historyEntries = $historyEntryManager->getAffectationHistory($signalement);
 
         return $this->json(['historyEntries' => $historyEntries]);
     }
