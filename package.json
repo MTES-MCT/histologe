@@ -5,20 +5,22 @@
     "@sentry/browser": "^8.33.0",
     "@sentry/tracing": "^7.99.0",
     "@symfony/webpack-encore": "^3.0.0",
-    "@vuepic/vue-datepicker": "^3.4.6",
+    "@vuepic/vue-datepicker": "^9.0.3",
     "axios": "^1.7.7",
     "datatables.net-dt": "^1.12.1",
     "datatables.net-vue3": "^1.0.0",
     "libphonenumber-js": "^1.10.44",
-    "vue": "^3.2.37",
+    "vue": "^3.4.0",
     "vue-chartjs": "^4.1.1",
     "vue-loader": "^17.0.0",
     "vue-template-compiler": "^2.7.16"
   },
   "devDependencies": {
     "@hotwired/stimulus": "^3.0.0",
+    "@playwright/test": "^1.47.0",
     "@symfony/stimulus-bridge": "^3.0.0",
     "@symfony/webpack-encore": "^3.0.0",
+    "@types/node": "^22.5.4",
     "@typescript-eslint/eslint-plugin": "^5.33.1",
     "core-js": "^3.0.0",
     "dotenv-webpack": "^8.0.1",
@@ -32,7 +34,7 @@
     "sass": "^1.52.3",
     "sass-loader": "^13.0.0",
     "ts-loader": "^9.0.0",
-    "typescript": "4.6.4",
+    "typescript": "^4.7.0",
     "webpack-notifier": "^1.15.0"
   },
   "scripts": {
