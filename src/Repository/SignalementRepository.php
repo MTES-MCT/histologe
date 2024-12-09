@@ -1390,7 +1390,7 @@ class SignalementRepository extends ServiceEntityRepository
 
     public function findForAPI(User $user, int $limit = 1, int $page = 1, ?string $uuid = null, ?string $reference = null): array
     {
-        $partner = $user->getPartner(); // TODO : impact multi territoire
+        $partners = $user->getPartners();
         $offset = ($page - 1) * $limit;
         $qb = $this->createQueryBuilder('s')
             ->select('s', 'desordrePrecisions', 'desordreCategories', 'desordreCriteres', 'signalementQualifications',
@@ -1405,8 +1405,8 @@ class SignalementRepository extends ServiceEntityRepository
             ->leftJoin('s.affectations', 'affectations')
             ->leftJoin('s.interventions', 'interventions')
             ->leftJoin('s.territory', 'territory')
-            ->where('affectations.partner = :partner')
-            ->setParameter('partner', $partner)
+            ->where('affectations.partner IN (:partners)')
+            ->setParameter('partners', $partners)
             ->orderBy('s.createdAt', 'DESC')
             ->setFirstResult($offset)
             ->setMaxResults($limit);
