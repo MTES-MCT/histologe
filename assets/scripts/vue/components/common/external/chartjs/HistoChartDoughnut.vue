@@ -54,7 +54,7 @@ export default defineComponent({
     },
     height: {
       type: Number,
-      default: 400
+      default: 550
     },
     cssClasses: {
       type: String,
