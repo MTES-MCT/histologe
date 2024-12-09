@@ -363,7 +363,7 @@ class User implements UserInterface, EntityHistoryInterface, PasswordAuthenticat
     public function getPartnerInTerritory(Territory $territory): ?Partner
     {
         foreach ($this->userPartners as $userPartner) {
-            if ($userPartner->getPartner()->getTerritory() === $territory) {
+            if ($userPartner->getPartner()->getTerritory()?->getId() === $territory->getId()) {
                 return $userPartner->getPartner();
             }
         }
@@ -379,7 +379,7 @@ class User implements UserInterface, EntityHistoryInterface, PasswordAuthenticat
     public function hasPartnerInTerritory(Territory $territory): bool
     {
         foreach ($this->userPartners as $userPartner) {
-            if ($userPartner->getPartner()->getTerritory() === $territory) {
+            if ($userPartner->getPartner()->getTerritory()?->getId() === $territory->getId()) {
                 return true;
             }
         }
