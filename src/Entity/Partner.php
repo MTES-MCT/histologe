@@ -93,6 +93,10 @@ class Partner implements EntityHistoryInterface
     #[ORM\Column(type: Types::DATETIME_IMMUTABLE, nullable: true)]
     private ?\DateTimeInterface $idossTokenExpirationDate = null;
 
+    #[ORM\ManyToOne(targetEntity: Bailleur::class, inversedBy: 'partners')]
+    #[ORM\JoinColumn(nullable: true)]
+    private ?Bailleur $bailleur = null;
+
     /**
      * @var Collection<int, Zone>
      */
@@ -477,6 +481,18 @@ class Partner implements EntityHistoryInterface
     public function removeExcludedZone(Zone $excludedZone): static
     {
         $this->excludedZones->removeElement($excludedZone);
+
+        return $this;
+    }
+
+    public function getBailleur(): ?Bailleur
+    {
+        return $this->bailleur;
+    }
+
+    public function setBailleur(?Bailleur $bailleur): self
+    {
+        $this->bailleur = $bailleur;
 
         return $this;
     }
