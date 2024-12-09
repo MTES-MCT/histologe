@@ -189,7 +189,7 @@ class SignalementController extends AbstractController
 
         $allPhotosOrdered = PhotoHelper::getSortedPhotos($signalement);
         $twigParams = [
-            'title' => 'Signalement',
+            'title' => '#'.$signalement->getReference().' Signalement',
             'createdFromDraft' => $signalement->getCreatedFrom(),
             'situations' => $infoDesordres['criticitesArranged'],
             'photos' => $infoDesordres['photos'],
