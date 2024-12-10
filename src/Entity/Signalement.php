@@ -43,131 +43,131 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column(type: 'integer')]
-    private $id;
+    private ?int $id = null;
 
     #[ORM\Column(type: 'string', length: 255)]
-    private $uuid;
+    private ?string $uuid = null;
 
     #[ORM\Column(type: 'string', nullable: true, enumType: ProfileDeclarant::class)]
     private ?ProfileDeclarant $profileDeclarant = null;
 
     #[ORM\ManyToMany(targetEntity: Situation::class, inversedBy: 'signalements')]
-    private $situations;
+    private Collection $situations;
 
     #[ORM\ManyToMany(targetEntity: Critere::class, inversedBy: 'signalements')]
-    private $criteres;
+    private Collection $criteres;
 
     #[ORM\ManyToMany(targetEntity: Criticite::class, inversedBy: 'signalements')]
-    private $criticites;
+    private Collection $criticites;
 
     #[ORM\Column(type: 'text', nullable: true)]
-    private $details;
+    private ?string $details = null;
 
     #[ORM\Column(type: 'boolean', nullable: true)]
-    private $isProprioAverti;
+    private ?bool $isProprioAverti = null;
 
     #[ORM\Column(type: 'string', nullable: true)]
-    private $nbAdultes;
+    private ?string $nbAdultes = null;
 
     #[ORM\Column(type: 'string', nullable: true)]
-    private $nbEnfantsM6;
+    private ?string $nbEnfantsM6 = null;
 
     #[ORM\Column(type: 'string', nullable: true)]
-    private $nbEnfantsP6;
+    private ?string $nbEnfantsP6 = null;
 
     #[ORM\Column(type: 'string', length: 3, nullable: true)]
-    private $isAllocataire;
+    private ?string $isAllocataire = null;
 
     #[ORM\Column(type: 'string', length: 25, nullable: true)]
-    private $numAllocataire;
+    private ?string $numAllocataire = null;
 
     #[ORM\Column(type: 'string', length: 15, nullable: true)]
-    private $natureLogement;
+    private ?string $natureLogement = null;
 
     #[ORM\Column(type: 'float', nullable: true)]
-    private $superficie;
+    private ?float $superficie = null;
 
     #[ORM\Column(type: 'float', nullable: true)]
-    private $loyer;
+    private ?float $loyer = null;
 
     #[ORM\Column(type: 'boolean', nullable: true)]
-    private $isBailEnCours;
+    private ?bool $isBailEnCours = null;
 
     #[ORM\Column(type: 'date', nullable: true)]
-    private $dateEntree;
+    private ?\DateTimeInterface $dateEntree = null;
 
     #[ORM\Column(type: 'string', nullable: true, enumType: ProprioType::class)]
     private ?ProprioType $typeProprio = null;
 
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
     #[Assert\Length(max: 255)]
-    private $nomProprio;
+    private ?string $nomProprio = null;
 
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
     #[Assert\Length(max: 255)]
-    private ?string $prenomProprio;
+    private ?string $prenomProprio = null;
 
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
-    private $adresseProprio;
+    private ?string $adresseProprio = null;
 
     #[ORM\Column(type: 'string', length: 5, nullable: true)]
     #[Assert\Regex(pattern: '/^[0-9]{5}$/', message: 'Le code postal être composé de 5 chiffres.')]
-    private ?string $codePostalProprio;
+    private ?string $codePostalProprio = null;
 
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
-    private ?string $villeProprio;
+    private ?string $villeProprio = null;
 
     #[ORM\Column(type: 'string', length: 128, nullable: true)]
     #[AppAssert\TelephoneFormat]
-    private $telProprio;
+    private ?string $telProprio = null;
 
     #[ORM\Column(type: 'string', length: 128, nullable: true)]
     #[AppAssert\TelephoneFormat]
-    private ?string $telProprioSecondaire;
+    private ?string $telProprioSecondaire = null;
 
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
-    private $mailProprio;
+    private ?string $mailProprio = null;
 
     #[ORM\Column(type: 'boolean', nullable: true)]
-    private $isLogementSocial;
+    private ?bool $isLogementSocial = null;
 
     #[ORM\Column(type: 'boolean', nullable: true)]
-    private $isPreavisDepart;
+    private ?bool $isPreavisDepart = null;
 
     #[ORM\Column(type: 'boolean', nullable: true)]
-    private $isRelogement;
+    private ?bool $isRelogement = null;
 
     #[ORM\Column(type: 'boolean', nullable: true)]
-    private $isRefusIntervention;
+    private ?bool $isRefusIntervention = null;
 
     #[ORM\Column(type: 'text', nullable: true)]
-    private $raisonRefusIntervention;
+    private ?string $raisonRefusIntervention = null;
 
     #[ORM\Column(type: 'boolean', nullable: true)]
-    private $isNotOccupant;
+    private ?bool $isNotOccupant = null;
 
     #[ORM\Column(type: 'string', length: 50, nullable: true)]
     #[Assert\Length(max: 50)]
-    private $nomDeclarant;
+    private ?string $nomDeclarant = null;
 
     #[ORM\Column(type: 'string', length: 50, nullable: true)]
     #[Assert\Length(max: 50)]
-    private $prenomDeclarant;
+    private ?string $prenomDeclarant = null;
 
     #[ORM\Column(type: 'string', length: 128, nullable: true)]
     #[AppAssert\TelephoneFormat]
-    private $telDeclarant;
+    private ?string $telDeclarant = null;
 
     #[ORM\Column(type: 'string', length: 128, nullable: true)]
     #[AppAssert\TelephoneFormat]
-    private ?string $telDeclarantSecondaire;
+    private ?string $telDeclarantSecondaire = null;
 
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
     #[Email(mode: Email::VALIDATION_MODE_STRICT, message: 'L\'adresse e-mail du déclarant n\'est pas valide.')]
-    private $mailDeclarant;
+    private ?string $mailDeclarant = null;
 
     #[ORM\Column(type: 'string', length: 200, nullable: true)]
-    private $structureDeclarant;
+    private ?string $structureDeclarant = null;
 
     #[ORM\Column(type: 'string', length: 10, nullable: true)]
     private ?string $civiliteOccupant = null;
@@ -175,64 +175,64 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
     #[ORM\Column(type: 'string', length: 50, nullable: true)]
     #[Assert\NotBlank]
     #[Assert\Length(max: 50)]
-    private $nomOccupant;
+    private ?string $nomOccupant = null;
 
     #[ORM\Column(type: 'string', length: 50, nullable: true)]
     #[Assert\NotBlank]
     #[Assert\Length(max: 50)]
-    private $prenomOccupant;
+    private ?string $prenomOccupant = null;
 
     #[ORM\Column(type: 'string', length: 128, nullable: true)]
     #[AppAssert\TelephoneFormat]
-    private $telOccupant;
+    private ?string $telOccupant = null;
 
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
     #[Email(mode: Email::VALIDATION_MODE_STRICT, message: 'L\'adresse e-mail de l\'occupant n\'est pas valide.')]
-    private $mailOccupant;
+    private ?string $mailOccupant = null;
 
     #[ORM\Column(type: 'string', length: 100, nullable: true)]
-    private $adresseOccupant;
+    private ?string $adresseOccupant = null;
 
     #[ORM\Column(type: 'string', length: 5, nullable: true)]
     #[Assert\NotBlank]
     #[Assert\Regex(pattern: '/^[0-9]{5}$/', message: 'Le code postal doit être composé de 5 chiffres.')]
-    private $cpOccupant;
+    private ?string $cpOccupant = null;
 
     #[ORM\Column(type: 'string', length: 100, nullable: true)]
-    private $villeOccupant;
+    private ?string $villeOccupant = null;
 
     #[ORM\Column(type: 'string', length: 50, nullable: true)]
-    private $banIdOccupant;
+    private ?string $banIdOccupant = null;
 
     #[ORM\Column(type: 'boolean')]
-    private $isCguAccepted;
+    private ?bool $isCguAccepted = null;
 
     #[ORM\Column(type: 'datetime_immutable')]
-    private $createdAt;
+    private \DateTimeImmutable $createdAt;
 
     #[ORM\Column(type: 'datetime_immutable', nullable: true)]
-    private $modifiedAt;
+    private ?\DateTimeImmutable $modifiedAt = null;
 
     #[ORM\Column(type: 'integer')]
-    private $statut;
+    private ?int $statut = null;
 
     #[ORM\Column(type: 'string', length: 100)]
-    private $reference;
+    private ?string $reference = null;
 
     #[ORM\Column(type: 'json')]
-    private $jsonContent = [];
+    private array $jsonContent = [];
 
     #[ORM\Column(type: 'json')]
-    private $geoloc = [];
+    private array $geoloc = [];
 
     #[ORM\Column(type: 'float', nullable: true)]
-    private $montantAllocation;
+    private ?float $montantAllocation = null;
 
     #[ORM\ManyToOne(targetEntity: User::class, inversedBy: 'signalementsModified')]
-    private $modifiedBy;
+    private ?User $modifiedBy = null;
 
     #[ORM\OneToMany(mappedBy: 'signalement', targetEntity: Suivi::class, orphanRemoval: true, cascade: ['persist'])]
-    private $suivis;
+    private Collection $suivis;
 
     #[ORM\Column(nullable: true)]
     private ?\DateTimeImmutable $lastSuiviAt = null;
@@ -241,116 +241,116 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
     private ?string $lastSuiviBy = null;
 
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
-    private $codeProcedure;
+    private ?string $codeProcedure = null;
 
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
-    private $etageOccupant;
+    private ?string $etageOccupant = null;
 
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
-    private $escalierOccupant;
+    private ?string $escalierOccupant = null;
 
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
-    private $numAppartOccupant;
+    private ?string $numAppartOccupant = null;
 
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
-    private $adresseAutreOccupant;
+    private ?string $adresseAutreOccupant = null;
 
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
-    private $inseeOccupant;
+    private ?string $inseeOccupant = null;
 
     #[ORM\Column(type: 'boolean', nullable: true)]
-    private $manualAddressOccupant;
+    private ?bool $manualAddressOccupant = null;
 
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
-    private $codeSuivi;
+    private ?string $codeSuivi = null;
 
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
     private ?string $lienDeclarantOccupant = null;
 
     #[ORM\Column(type: 'boolean', nullable: true)]
-    private $isConsentementTiers;
+    private ?bool $isConsentementTiers = null;
 
     #[ORM\Column(type: 'datetime_immutable', nullable: true)]
-    private $validatedAt;
+    private ?\DateTimeImmutable $validatedAt = null;
 
     #[ORM\Column(type: 'boolean', nullable: true)]
-    private $isRsa;
+    private ?bool $isRsa = null;
 
     #[ORM\Column(type: 'string', nullable: true)]
-    private $anneeConstruction;
+    private ?string $anneeConstruction = null;
 
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
-    private $typeEnergieLogement;
+    private ?string $typeEnergieLogement = null;
 
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
-    private $origineSignalement;
+    private ?string $origineSignalement = null;
 
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
-    private $situationOccupant;
+    private ?string $situationOccupant = null;
 
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
-    private $situationProOccupant;
+    private ?string $situationProOccupant = null;
 
     #[ORM\Column(type: 'string', nullable: true)]
-    private $naissanceOccupants;
+    private ?string $naissanceOccupants = null;
 
     #[ORM\Column(type: 'boolean', nullable: true)]
-    private $isLogementCollectif;
+    private ?bool $isLogementCollectif = null;
 
     #[ORM\Column(type: 'boolean', nullable: true)]
-    private $isConstructionAvant1949;
+    private ?bool $isConstructionAvant1949 = null;
 
     #[ORM\Column(type: 'boolean', nullable: true)]
-    private $isDiagSocioTechnique;
+    private ?bool $isDiagSocioTechnique = null;
 
     #[ORM\Column(type: 'boolean', nullable: true)]
-    private $isFondSolidariteLogement;
+    private ?bool $isFondSolidariteLogement = null;
 
     #[ORM\Column(type: 'boolean', nullable: true)]
-    private $isRisqueSurOccupation;
+    private ?bool $isRisqueSurOccupation = null;
 
     #[ORM\Column(type: 'datetime_immutable', nullable: true)]
-    private $proprioAvertiAt;
+    private ?\DateTimeImmutable $proprioAvertiAt = null;
 
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
-    private $nomReferentSocial;
+    private ?string $nomReferentSocial = null;
 
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
-    private $StructureReferentSocial;
+    private ?string $structureReferentSocial = null;
 
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
-    private $numeroInvariant;
+    private ?string $numeroInvariant = null;
 
     #[ORM\Column(type: 'integer', nullable: true)]
-    private $nbPiecesLogement;
+    private ?int $nbPiecesLogement = null;
 
     #[ORM\Column(type: 'integer', nullable: true)]
-    private $nbChambresLogement;
+    private ?int $nbChambresLogement = null;
 
     #[ORM\Column(type: 'integer', nullable: true)]
-    private $nbNiveauxLogement;
+    private ?int $nbNiveauxLogement = null;
 
     #[ORM\Column(type: 'integer', nullable: true)]
-    private $nbOccupantsLogement;
+    private ?int $nbOccupantsLogement = null;
 
     #[ORM\OneToMany(mappedBy: 'signalement', targetEntity: Affectation::class, cascade: ['persist'], orphanRemoval: true)]
-    private $affectations;
+    private Collection $affectations;
 
     #[ORM\Column(type: 'string', enumType: MotifCloture::class, nullable: true)]
-    private ?MotifCloture $motifCloture;
+    private ?MotifCloture $motifCloture = null;
 
     #[ORM\Column(type: 'string', enumType: MotifRefus::class, nullable: true)]
-    private ?MotifRefus $motifRefus;
+    private ?MotifRefus $motifRefus = null;
 
     #[ORM\Column(type: 'datetime_immutable', nullable: true)]
-    private $closedAt;
+    private ?\DateTimeImmutable $closedAt = null;
 
     #[ORM\ManyToOne(targetEntity: User::class, inversedBy: 'signalementsClosed')]
-    private $closedBy;
+    private ?User $closedBy = null;
 
     #[ORM\Column(type: 'string', length: 128, nullable: true)]
     #[AppAssert\TelephoneFormat]
-    private $telOccupantBis;
+    private ?string $telOccupantBis = null;
 
     #[ORM\ManyToMany(targetEntity: Tag::class, inversedBy: 'signalements')]
     #[ORM\JoinTable(name: 'tag_signalement')]
@@ -358,10 +358,10 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
 
     #[ORM\ManyToOne(targetEntity: Territory::class, inversedBy: 'signalements')]
     #[ORM\JoinColumn(nullable: true)]
-    private $territory;
+    private ?Territory $territory = null;
 
     #[ORM\Column(type: 'boolean', nullable: true)]
-    private $isImported;
+    private ?bool $isImported = null;
 
     #[ORM\OneToMany(mappedBy: 'signalement', targetEntity: SignalementQualification::class, cascade: ['persist'], orphanRemoval: true)]
     private Collection $signalementQualifications;
@@ -379,7 +379,7 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
     private Collection $interventions;
 
     #[ORM\Column(type: 'boolean', nullable: true)]
-    private ?bool $isUsagerAbandonProcedure;
+    private ?bool $isUsagerAbandonProcedure = null;
 
     #[ORM\Column(nullable: true)]
     private ?\DateTimeImmutable $dateNaissanceOccupant = null;
@@ -574,7 +574,7 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
      * @deprecated  Cette méthode est obsolete et ne doit plus être utilisé dans le cadre du nouveau formulaire
      * Utilisez la méthode @see getTypeCompositionLogement() afin de savoir le nombre de personnes qui vivent dans le logement
      */
-    public function getNbAdultes()
+    public function getNbAdultes(): ?string
     {
         return $this->nbAdultes;
     }
@@ -594,7 +594,7 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
      * @deprecated  Cette méthode est obsolete et ne doit plus être utilisé dans le cadre du nouveau formulaire
      * Utilisez la méthode @see getTypeCompositionLogement() afin de savoir si des enfants de moins de 6 ans occupe le logement
      */
-    public function getNbEnfantsM6()
+    public function getNbEnfantsM6(): ?string
     {
         return $this->nbEnfantsM6;
     }
@@ -615,7 +615,7 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
      * Il n'est plus utile de connaitre le nombre d'enfant de plus de 6 ans
      * Sera supprimé à la prochaine version
      */
-    public function getNbEnfantsP6()
+    public function getNbEnfantsP6(): ?string
     {
         return $this->nbEnfantsP6;
     }
@@ -635,12 +635,17 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
     /**
      * @deprecated  Cette méthode gère l'addition du nombre de personnes avec les données obsolètes.
      * Sera supprimé à la prochaine version
+     * (Utilisé par des fichiers twig)
      */
     public function getNbPersonsDeprecated(): string
     {
-        return str_replace('+', '', $this->nbAdultes ?? 0)
-                + str_replace('+', '', $this->getNbEnfantsM6() ?? 0)
-                + str_replace('+', '', $this->getNbEnfantsP6() ?? 0);
+        $nbAdultes = str_replace('+', '', $this->nbAdultes ?? 0);
+        $nbEnfantsM6 = str_replace('+', '', $this->getNbEnfantsM6() ?? 0);
+        $nbEnfantsP6 = str_replace('+', '', $this->getNbEnfantsP6() ?? 0);
+
+        $nbPersons = (int) $nbAdultes + (int) $nbEnfantsM6 + (int) $nbEnfantsP6;
+
+        return (string) $nbPersons;
     }
 
     public function getIsAllocataire(): ?string
@@ -684,9 +689,9 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
         return $this->superficie;
     }
 
-    public function setSuperficie(?string $superficie): self
+    public function setSuperficie(?float $superficie): self
     {
-        if (empty($superficie) || !is_numeric($superficie)) {
+        if (empty($superficie)) {
             $superficie = null;
         }
 
@@ -1580,12 +1585,12 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
 
     public function getStructureReferentSocial(): ?string
     {
-        return $this->StructureReferentSocial;
+        return $this->structureReferentSocial;
     }
 
-    public function setStructureReferentSocial(?string $StructureReferentSocial): self
+    public function setStructureReferentSocial(?string $structureReferentSocial): self
     {
-        $this->StructureReferentSocial = $StructureReferentSocial;
+        $this->structureReferentSocial = $structureReferentSocial;
 
         return $this;
     }
@@ -2356,21 +2361,21 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
         return $desordreSlug;
     }
 
-    public function getDesordreCritereSlugs()
+    public function getDesordreCritereSlugs(): array
     {
         return $this->getDesordreCriteres()->map(
             fn (DesordreCritere $desordreCritere) => $desordreCritere->getSlugCritere()
         )->toArray();
     }
 
-    public function getDesordrePrecisionSlugs()
+    public function getDesordrePrecisionSlugs(): array
     {
         return $this->getDesordrePrecisions()->map(
             fn (DesordrePrecision $desordrePrecision) => $desordrePrecision->getDesordrePrecisionSlug()
         )->toArray();
     }
 
-    public function getDesordreCategorieSlugs()
+    public function getDesordreCategorieSlugs(): array
     {
         return $this->getDesordreCriteres()->map(
             fn (DesordreCritere $desordreCritere) => $desordreCritere->getSlugCategorie()

@@ -570,7 +570,7 @@ class SignalementManager extends AbstractManager
         CompositionLogementRequest $compositionLogementRequest,
     ) {
         $signalement->setNatureLogement($compositionLogementRequest->getType());
-        $signalement->setSuperficie($compositionLogementRequest->getSuperficie());
+        $signalement->setSuperficie((float) $compositionLogementRequest->getSuperficie());
 
         $typeCompositionLogement = new TypeCompositionLogement();
         if (!empty($signalement->getTypeCompositionLogement())) {
