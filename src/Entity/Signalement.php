@@ -424,7 +424,7 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
     private ?array $synchroData = null;
 
     #[ORM\Column(length: 255, nullable: true)]
-    private ?string $rnb_id_occupant = null;
+    private ?string $rnbIdOccupant = null;
 
     public function __construct()
     {
@@ -2449,12 +2449,12 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
 
     public function getRnbIdOccupant(): ?string
     {
-        return $this->rnb_id_occupant;
+        return $this->rnbIdOccupant;
     }
 
-    public function setRnbIdOccupant(?string $rnb_id_occupant): static
+    public function setRnbIdOccupant(?string $rnbIdOccupant): static
     {
-        $this->rnb_id_occupant = $rnb_id_occupant;
+        $this->rnbIdOccupant = $rnbIdOccupant;
 
         return $this;
     }

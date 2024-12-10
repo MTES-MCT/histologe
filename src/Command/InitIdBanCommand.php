@@ -57,7 +57,7 @@ class InitIdBanCommand extends Command
             foreach ($listSignalementBanIdNull as $signalement) {
                 $this->signalementAddressUpdater->updateAddressOccupantFromBanData(
                     signalement: $signalement,
-                    updateGeolocAndBatId: false,
+                    updateGeolocAndRnbId: false,
                 );
                 if (!empty($signalement->getBanIdOccupant())) {
                     ++$nb;

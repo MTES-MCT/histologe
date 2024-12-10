@@ -16,12 +16,12 @@ class SignalementAddressUpdater
     ) {
     }
 
-    public function updateAddressOccupantFromBanData(Signalement $signalement, bool $updateGeolocAndBatId = true): void
+    public function updateAddressOccupantFromBanData(Signalement $signalement, bool $updateGeolocAndRnbId = true): void
     {
         $addressResult = $this->addressService->getAddress($signalement->getAddressCompleteOccupant());
         if ($addressResult->getScore() > self::SCORE_IF_BAN_ID_ACCEPTED) {
             $signalement->setBanIdOccupant($addressResult->getBanId());
-            if ($updateGeolocAndBatId) {
+            if ($updateGeolocAndRnbId) {
                 $signalement
                     ->setInseeOccupant($addressResult->getInseeCode())
                     ->setGeoloc([
@@ -36,7 +36,7 @@ class SignalementAddressUpdater
             }
 
             return;
-        } elseif ($updateGeolocAndBatId && !empty($signalement->getCpOccupant()) && !empty($signalement->getVilleOccupant())) {
+        } elseif ($updateGeolocAndRnbId && !empty($signalement->getCpOccupant()) && !empty($signalement->getVilleOccupant())) {
             $inseeResult = $this->addressService->getAddress($signalement->getCpOccupant().' '.$signalement->getVilleOccupant());
             $signalement->setRnbIdOccupant(null);
             if (!empty($inseeResult->getCity())) {
@@ -55,7 +55,7 @@ class SignalementAddressUpdater
 
         $signalement->setBanIdOccupant(0);
         $signalement->setRnbIdOccupant(null);
-        if ($updateGeolocAndBatId) {
+        if ($updateGeolocAndRnbId) {
             $signalement
                 ->setInseeOccupant(null)
                 ->setGeoloc([]);
