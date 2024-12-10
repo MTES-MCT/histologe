@@ -2,14 +2,11 @@
 
 namespace App\Messenger\Message;
 
-use App\Entity\Territory;
-use App\Entity\User;
-
-class SuiviSummariesMessage
+readonly class SuiviSummariesMessage
 {
     public function __construct(
-        private User $user,
-        private Territory $territory,
+        private int $userId,
+        private int $territoryId,
         private int $count,
         private string $prompt,
         private string $model,
@@ -17,14 +14,14 @@ class SuiviSummariesMessage
     ) {
     }
 
-    public function getUser(): User
+    public function getUserId(): int
     {
-        return $this->user;
+        return $this->userId;
     }
 
-    public function getTerritory(): Territory
+    public function getTerritoryId(): int
     {
-        return $this->territory;
+        return $this->territoryId;
     }
 
     public function getCount(): int

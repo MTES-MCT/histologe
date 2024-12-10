@@ -4,6 +4,7 @@ namespace App\Messenger\MessageHandler;
 
 use App\Messenger\Message\SuiviSummariesMessage;
 use App\Repository\SignalementRepository;
+use App\Repository\TerritoryRepository;
 use App\Repository\UserRepository;
 use App\Service\HtmlCleaner;
 use App\Service\Mailer\NotificationMail;
@@ -27,16 +28,17 @@ class SuiviSummariesMessageHandler
         private readonly LoggerInterface $logger,
         private readonly SignalementRepository $signalementRepository,
         private readonly UserRepository $userRepository,
+        private readonly TerritoryRepository $territoryRepository,
         private readonly HttpClientInterface $httpClient,
         private readonly UrlGeneratorInterface $urlGenerator,
-        private ParameterBagInterface $parameterBag,
+        private readonly ParameterBagInterface $parameterBag,
     ) {
     }
 
     public function __invoke(SuiviSummariesMessage $suiviSummariesMessage): void
     {
         try {
-            $user = $suiviSummariesMessage->getUser();
+            $user = $this->userRepository->find($suiviSummariesMessage->getUserId());
             $spreadsheet = $this->buildSpreadsheet($suiviSummariesMessage);
 
             $writer = new Csv($spreadsheet);
@@ -48,7 +50,7 @@ class SuiviSummariesMessageHandler
             $this->notificationMailerRegistry->send(
                 new NotificationMail(
                     type: NotificationMailerType::TYPE_SUIVI_SUMMARIES_EXPORT,
-                    to: $suiviSummariesMessage->getUser()->getEmail(),
+                    to: $user->getEmail(),
                     attachment: $tmpFilepath
                 )
             );
@@ -71,18 +73,18 @@ class SuiviSummariesMessageHandler
         $sheet = $spreadsheet->getActiveSheet();
         $headers = ['Référence du signalement', 'Lien vers le signalement', 'Date du dernier suivi', 'Auteur du dernier suivi', 'Résumé du dernier suivi', 'Contenu du dernier suivi'];
         $sheetData = [$headers];
-
+        $territory = $this->territoryRepository->find($suiviSummariesMessage->getTerritoryId());
         $list = [];
         switch ($suiviSummariesMessage->getQuerySignalement()) {
             case 'reponse-usager':
                 $list = $this->signalementRepository->findSignalementsLastSuiviWithSuiviAuto(
-                    territory: $suiviSummariesMessage->getTerritory(),
+                    territory: $territory,
                     limit: $suiviSummariesMessage->getCount(),
                 );
                 break;
             case 'dernier-suivi-20-jours':
                 $list = $this->signalementRepository->findSignalementsLastSuiviByPartnerOlderThan(
-                    territory: $suiviSummariesMessage->getTerritory(),
+                    territory: $territory,
                     limit: $suiviSummariesMessage->getCount(),
                     nbDays: 20,
                 );
@@ -94,12 +96,17 @@ class SuiviSummariesMessageHandler
         /** @var array $signalementResult */
         foreach ($list as $signalementResult) {
             $cleanLastSuiviDescription = HtmlCleaner::clean($signalementResult['dernier_suivi_description']);
-            $userAuthorSuivi = $this->userRepository->find($signalementResult['dernier_suivi_created_by']);
-            $userAuthorSuiviStr = $userAuthorSuivi->getPrenom().' '.$userAuthorSuivi->getNom();
-            $partner = $userAuthorSuivi->getPartnerInTerritoryOrFirstOne($suiviSummariesMessage->getTerritory());
-            if ($partner) {
-                $userAuthorSuiviStr .= ' ('.$partner->getNom().')';
+            if (!empty($signalementResult['dernier_suivi_created_by'])) {
+                $userAuthorSuivi = $this->userRepository->find($signalementResult['dernier_suivi_created_by']);
+                $userAuthorSuiviStr = $userAuthorSuivi->getPrenom().' '.$userAuthorSuivi->getNom();
+                $partner = $userAuthorSuivi->getPartnerInTerritoryOrFirstOne($territory);
+                if ($partner) {
+                    $userAuthorSuiviStr .= ' ('.$partner->getNom().')';
+                }
+            } else {
+                $userAuthorSuiviStr = 'Occupant ou déclarant';
             }
+
             $rowArray = [
                 $signalementResult['reference'],
                 $this->urlGenerator->generate('back_signalement_view', ['uuid' => $signalementResult['uuid']], UrlGeneratorInterface::ABSOLUTE_URL),
