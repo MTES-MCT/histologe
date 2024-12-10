@@ -424,6 +424,9 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
     #[ORM\Column(nullable: true)]
     private ?array $synchroData = null;
 
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $rnbIdOccupant = null;
+
     public function __construct()
     {
         $this->situations = new ArrayCollection();
@@ -2443,5 +2446,17 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
     public function getManyToManyFieldsToTrack(): array
     {
         return ['tags'];
+    }
+
+    public function getRnbIdOccupant(): ?string
+    {
+        return $this->rnbIdOccupant;
+    }
+
+    public function setRnbIdOccupant(?string $rnbIdOccupant): static
+    {
+        $this->rnbIdOccupant = $rnbIdOccupant;
+
+        return $this;
     }
 }
