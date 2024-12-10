@@ -316,7 +316,7 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
     private ?string $nomReferentSocial = null;
 
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
-    private ?string $StructureReferentSocial = null;
+    private ?string $structureReferentSocial = null;
 
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
     private ?string $numeroInvariant = null;
@@ -1582,12 +1582,12 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
 
     public function getStructureReferentSocial(): ?string
     {
-        return $this->StructureReferentSocial;
+        return $this->structureReferentSocial;
     }
 
-    public function setStructureReferentSocial(?string $StructureReferentSocial): self
+    public function setStructureReferentSocial(?string $structureReferentSocial): self
     {
-        $this->StructureReferentSocial = $StructureReferentSocial;
+        $this->structureReferentSocial = $structureReferentSocial;
 
         return $this;
     }
