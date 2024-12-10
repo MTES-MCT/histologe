@@ -141,14 +141,9 @@ class SearchUserType extends AbstractType
             'choice_label' => function ($choice) {
                 return $choice->label();
             },
-            'row_attr' => [
-                'class' => 'fr-select-group',
-            ],
             'placeholder' => 'Type de partenaire',
-            'attr' => [
-                'class' => 'fr-select',
-                'disabled' => isset($partners) && !empty($partners) && \count($partners) > 0,
-            ],
+            'required' => false,
+            'disabled' => isset($partners) && !empty($partners) && \count($partners) > 0,
             'label' => false,
         ];
 
