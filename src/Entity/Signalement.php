@@ -85,7 +85,7 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
     private ?string $natureLogement = null;
 
     #[ORM\Column(type: 'float', nullable: true)]
-    private ?string $superficie = null;
+    private ?float $superficie = null;
 
     #[ORM\Column(type: 'float', nullable: true)]
     private ?float $loyer = null;
@@ -681,14 +681,14 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
         return $this;
     }
 
-    public function getSuperficie(): ?string
+    public function getSuperficie(): ?float
     {
         return $this->superficie;
     }
 
-    public function setSuperficie(?string $superficie): self
+    public function setSuperficie(?float $superficie): self
     {
-        if (empty($superficie) || !is_numeric($superficie)) {
+        if (empty($superficie)) {
             $superficie = null;
         }
 
