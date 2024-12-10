@@ -1,11 +1,13 @@
 import { loadWindowWithLocalStorage } from '../../services/list_filter_helper'
 
-window.onscroll = function () {
-  const yPos = window.scrollY
-  if (yPos > 150) {
-    document?.querySelector('.fr-breadcrumb').classList.add('fixed')
-  } else {
-    document?.querySelector('.fr-breadcrumb').classList.remove('fixed')
+if (document?.querySelector('.fr-breadcrumb.can-fix')) {
+  window.onscroll = function () {
+    const yPos = window.scrollY
+    if (yPos > 150) {
+      document?.querySelector('.fr-breadcrumb.can-fix').classList.add('fixed')
+    } else {
+      document?.querySelector('.fr-breadcrumb.can-fix').classList.remove('fixed')
+    }
   }
 }
 
