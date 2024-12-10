@@ -52,14 +52,14 @@
           </HistoSelect>
         </div>
         <div class="fr-col-12 fr-col-lg-6 fr-col-xl-4">
-          <HistoDatePicker
-            id="histofiltersdatepicker"
-            ref="histofiltersdatepicker"
-            v-model="sharedState.filters.dateRange"
-            @update:modelValue="onChange(false)"
-            >
-            <template #label>Dates des signalements</template>
-          </HistoDatePicker>
+<!--          <HistoDatePicker-->
+<!--            id="histofiltersdatepicker"-->
+<!--            ref="histofiltersdatepicker"-->
+<!--            v-model="sharedState.filters.dateRange"-->
+<!--            @update:modelValue="onChange(false)"-->
+<!--            >-->
+<!--            <template #label>Dates des signalements</template>-->
+<!--          </HistoDatePicker>-->
         </div>
         <div class="fr-col-12 fr-col-lg-6 fr-col-xl-5">
           <div class="fr-mb-3v">
@@ -94,7 +94,7 @@ import { store } from './store'
 import HistoSelect from '../common/HistoSelect.vue'
 import HistoMultiSelect from '../common/HistoMultiSelect.vue'
 import HistoCheckbox from '../common/HistoCheckbox.vue'
-import HistoDatePicker from '../common/external/HistoDatePicker.vue'
+//import HistoDatePicker from '../common/external/HistoDatePicker.vue'
 
 export default defineComponent({
   name: 'TheHistoStatsFilters',
@@ -104,8 +104,8 @@ export default defineComponent({
   components: {
     HistoSelect,
     HistoMultiSelect,
-    HistoCheckbox,
-    HistoDatePicker
+    HistoCheckbox/*,
+    HistoDatePicker*/
   },
   data () {
     const etiquettes = new Array<string>()
