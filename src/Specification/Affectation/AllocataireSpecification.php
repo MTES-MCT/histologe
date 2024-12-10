@@ -32,7 +32,7 @@ class AllocataireSpecification implements SpecificationInterface
             case 'non':
                 return \in_array($isAllocataire, ['non', '0']);
             case 'nsp':
-                return \in_array($isAllocataire, [null, '']);
+                return \in_array($isAllocataire, [null, '', 'nsp']);
             default:
                 return $isAllocataire === $this->ruleAllocataire;
         }
