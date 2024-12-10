@@ -1,5 +1,16 @@
 import { loadWindowWithLocalStorage } from '../../services/list_filter_helper'
 
+if (document?.querySelector('.fr-breadcrumb.can-fix')) {
+  window.onscroll = function () {
+    const yPos = window.scrollY
+    if (yPos > 150) {
+      document?.querySelector('.fr-breadcrumb.can-fix').classList.add('fixed')
+    } else {
+      document?.querySelector('.fr-breadcrumb.can-fix').classList.remove('fixed')
+    }
+  }
+}
+
 /* global histoPhotoIds */
 
 document?.querySelector('#btn-display-all-suivis')?.addEventListeners('click touchdown', (e) => {
@@ -173,12 +184,12 @@ modalsElement.forEach(modalElement => {
 
 document.querySelectorAll('button[data-cloture-type]').forEach(button => {
   button.addEventListener('click', (e) => {
-    const element = e.target;
+    const element = e.target
     if (element && element?.dataset) {
       document.getElementById('cloture_type').value = element.dataset.clotureType
     }
-  });
-});
+  })
+})
 
 document?.getElementById('signalement-add-suivi-notify-usager')?.addEventListeners('change', (e) => {
   document.getElementById('signalement-add-suivi-submit').textContent = (e.target.checked) ? 'Envoyer le suivi à l\'usager' : 'Enregistrer le suivi interne'
