@@ -10,7 +10,7 @@ class SignalementInputValueMapperTest extends TestCase
     /**
      * @dataProvider provideInputValue
      */
-    public function testMap(string $inputValue, bool|string|null $mappedInputValue): void
+    public function testMap(?string $inputValue, bool|string|null $mappedInputValue): void
     {
         $this->assertEquals($mappedInputValue, SignalementInputValueMapper::map($inputValue));
     }
@@ -22,5 +22,7 @@ class SignalementInputValueMapperTest extends TestCase
         yield 'Input with Nsp value' => ['nsp', null];
         yield 'Input with caf value' => ['caf', 'CAF'];
         yield 'Input with msa value' => ['msa', 'MSA'];
+        yield 'Input with null value' => [null, null];
+        yield 'Input with empty value' => ['', null];
     }
 }

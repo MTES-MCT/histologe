@@ -54,4 +54,33 @@ auto_affectation_rules:
     insee_to_exclude: null
     parc: "all"
     allocataire: "all"
+  -
+    territory: "Loire-Atlantique"
+    status: "ACTIVE"
+    profile_declarant: "all"
+    partner_type: "POLICE_GENDARMERIE"
+    insee_to_include: "all"
+    insee_to_exclude: null
+    parc: "all"
+    allocataire: "all"
+    procedures_suspectees:
+      - "DANGER"
+  -
+    territory: "Loire-Atlantique"
+    status: "ACTIVE"
+    profile_declarant: "all"
+    partner_type: "COMMUNE_SCHS"
+    insee_to_include: "partner_list"
+    insee_to_exclude: null
+    parc: "all"
+    allocataire: "all"
+  -
+    territory: "Bouches-du-Rhône"
+    status: "ARCHIVED"
+    profile_declarant: "all"
+    partner_type: "EPCI"
+    insee_to_include: "partner_list"
+    insee_to_exclude: null
+    parc: "all"
+    allocataire: "all"
 

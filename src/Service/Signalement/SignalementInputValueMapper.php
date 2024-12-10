@@ -10,6 +10,7 @@ class SignalementInputValueMapper
         'nsp' => null,
         'caf' => 'CAF',
         'msa' => 'MSA',
+        '' => null,
     ];
 
     public static function map(?string $value): mixed

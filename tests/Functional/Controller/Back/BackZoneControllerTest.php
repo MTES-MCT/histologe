@@ -38,7 +38,7 @@ class BackZoneControllerTest extends WebTestCase
 
     public function provideParamsZoneList(): iterable
     {
-        yield 'Search without params' => [[], 1];
+        yield 'Search without params' => [[], 3];
         yield 'Search with queryName agde' => [['queryName' => 'agde'], 1];
         yield 'Search with territory 13' => [['territory' => 13], 0];
     }

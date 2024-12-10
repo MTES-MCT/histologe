@@ -557,3 +557,29 @@ partners:
     is_archive: 0
     territory: "Hérault"
     type: "AUTRE"
+  -
+    nom: "DDT Loire-Atlantique"
+    email: "partenaire-44-01@histologe.fr"
+    is_archive: 0
+    territory: "Loire-Atlantique"
+    type: "DDT_M"
+  -
+    nom: "SDIS 44"
+    email: "partenaire-44-02@histologe.fr"
+    is_archive: 0
+    territory: "Loire-Atlantique"
+    type: "POLICE_GENDARMERIE"
+  -
+    nom: "Mairie de Saint-Mars du Désert"
+    email: "partenaire-44-03@histologe.fr"
+    insee: "[\"44179\"]"
+    is_archive: 0
+    territory: "Loire-Atlantique"
+    type: "COMMUNE_SCHS"
+  -
+    nom: "Cocoland"
+    email: "partenaire-44-04@histologe.fr"
+    insee: "[\"44179\"]"
+    is_archive: 0
+    territory: "Loire-Atlantique"
+    type: "COMMUNE_SCHS"

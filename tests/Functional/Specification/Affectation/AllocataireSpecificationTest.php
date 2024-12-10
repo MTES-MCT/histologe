@@ -39,6 +39,7 @@ class AllocataireSpecificationTest extends KernelTestCase
         yield 'all - oui' => ['oui', 'all', true];
         yield 'all - null' => [null, 'all', true];
         yield 'all - ' => ['', 'all', true];
+        yield 'all - nsp' => ['nsp', 'all', true];
 
         yield 'oui - 0' => ['0', 'oui', false];
         yield 'oui - 1' => ['1', 'oui', true];
@@ -48,6 +49,7 @@ class AllocataireSpecificationTest extends KernelTestCase
         yield 'oui - oui' => ['oui', 'oui', true];
         yield 'oui - null' => [null, 'oui', false];
         yield 'oui - ' => ['', 'oui', false];
+        yield 'oui - nsp' => ['nsp', 'oui', false];
 
         yield 'non - 0' => ['0', 'non', true];
         yield 'non - 1' => ['1', 'non', false];
@@ -57,6 +59,7 @@ class AllocataireSpecificationTest extends KernelTestCase
         yield 'non - oui' => ['oui', 'non', false];
         yield 'non - null' => [null, 'non', false];
         yield 'non - ' => ['', 'non', false];
+        yield 'non - nsp' => ['nsp', 'non', false];
 
         yield 'caf - 0' => ['0', 'caf', false];
         yield 'caf - 1' => ['1', 'caf', false];
@@ -66,6 +69,7 @@ class AllocataireSpecificationTest extends KernelTestCase
         yield 'caf - oui' => ['oui', 'caf', false];
         yield 'caf - null' => [null, 'caf', false];
         yield 'caf - ' => ['', 'caf', false];
+        yield 'caf - nsp' => ['nsp', 'caf', false];
 
         yield 'msa - 0' => ['0', 'msa', false];
         yield 'msa - 1' => ['1', 'msa', false];
@@ -75,5 +79,16 @@ class AllocataireSpecificationTest extends KernelTestCase
         yield 'msa - oui' => ['oui', 'msa', false];
         yield 'msa - null' => [null, 'msa', false];
         yield 'msa - ' => ['', 'msa', false];
+        yield 'msa - nsp' => ['nsp', 'msa', false];
+
+        yield 'nsp - 0' => ['0', 'nsp', false];
+        yield 'nsp - 1' => ['1', 'nsp', false];
+        yield 'nsp - CAF' => ['CAF', 'nsp', false];
+        yield 'nsp - MSA' => ['MSA', 'nsp', false];
+        yield 'nsp - non' => ['non', 'nsp', false];
+        yield 'nsp - oui' => ['oui', 'nsp', false];
+        yield 'nsp - null' => [null, 'nsp', true];
+        yield 'nsp - ' => ['', 'nsp', true];
+        yield 'nsp - nsp' => ['nsp', 'nsp', true];
     }
 }

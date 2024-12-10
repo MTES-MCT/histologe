@@ -4,6 +4,7 @@ namespace App\DataFixtures\Loader;
 
 use App\Entity\AutoAffectationRule;
 use App\Entity\Enum\PartnerType;
+use App\Entity\Enum\Qualification;
 use App\Repository\TerritoryRepository;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Common\DataFixtures\OrderedFixtureInterface;
@@ -40,11 +41,23 @@ class LoadAutoAffectationRuleData extends Fixture implements OrderedFixtureInter
             ->setAllocataire($row['allocataire'])
         ;
 
+        if (isset($row['procedures_suspectees'])) {
+            $proceduresSuspectees = [];
+            if (\is_array($row['procedures_suspectees'])) {
+                foreach ($row['procedures_suspectees'] as $procedureSuspectee) {
+                    $proceduresSuspectees[] = Qualification::tryFrom($procedureSuspectee);
+                }
+            } else {
+                $proceduresSuspectees[] = Qualification::tryFrom($row['procedures_suspectees']);
+            }
+            $affectation->setProceduresSuspectees($proceduresSuspectees);
+        }
+
         $manager->persist($affectation);
     }
 
     public function getOrder(): int
     {
-        return 18;
+        return 19;
     }
 }
