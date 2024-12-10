@@ -498,13 +498,12 @@ class SignalementBuilder
 
     private function resolveIsAllocataire(): ?string
     {
-        if ($this->evalBoolean($this->signalementDraftRequest->getLogementSocialAllocation())) {
-            return SignalementInputValueMapper::map(
-                $this->signalementDraftRequest->getLogementSocialAllocationCaisse()
-            );
+        if ($this->evalBoolean($this->signalementDraftRequest->getLogementSocialAllocation())
+            && $this->evalBoolean($this->signalementDraftRequest->getLogementSocialAllocationCaisse())) {
+            return SignalementInputValueMapper::map($this->signalementDraftRequest->getLogementSocialAllocationCaisse());
         }
 
-        return '0';
+        return SignalementInputValueMapper::map($this->signalementDraftRequest->getLogementSocialAllocation());
     }
 
     private function resolveTiersLien(): ?string

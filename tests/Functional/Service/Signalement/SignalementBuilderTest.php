@@ -2,6 +2,7 @@
 
 namespace App\Tests\Functional\Service\Signalement;
 
+use App\Dto\Request\Signalement\SignalementDraftRequest;
 use App\Entity\Enum\ProfileDeclarant;
 use App\Entity\Enum\SignalementDraftStatus;
 use App\Entity\SignalementDraft;
@@ -260,6 +261,65 @@ class SignalementBuilderTest extends KernelTestCase
         $this->entityManager->commit();
     }
 
+    public function provideAllocataireCases(): \Generator
+    {
+        // certains cas ne sont pas sensés arriver
+        yield 'oui - caf' => ['oui', 'caf', 'CAF'];
+        yield 'oui - msa' => ['oui', 'msa', 'MSA'];
+        yield 'oui - nsp' => ['oui', 'nsp', true];
+        yield 'oui - null' => ['oui', null, true];
+        yield 'oui - empty' => ['oui', '', true];
+
+        yield 'non - caf' => ['non', 'caf', false];
+        yield 'non - msa' => ['non', 'msa', false];
+        yield 'non - nsp' => ['non', 'nsp', false];
+        yield 'non - null' => ['non', null, false];
+        yield 'non - empty' => ['non', '', false];
+
+        yield 'nsp - caf' => ['nsp', 'caf', null];
+        yield 'nsp - msa' => ['nsp', 'msa', null];
+        yield 'nsp - nsp' => ['nsp', 'nsp', null];
+        yield 'nsp - null' => ['nsp', null, null];
+        yield 'nsp - empty' => ['nsp', '', null];
+
+        yield 'null - caf' => [null, 'caf', null];
+        yield 'null - msa' => [null, 'msa', null];
+        yield 'null - nsp' => [null, 'nsp', null];
+        yield 'null - null' => [null, null, null];
+        yield 'null - empty' => [null, '', null];
+
+        yield 'empty - caf' => ['', 'caf', null];
+        yield 'empty - msa' => ['', 'msa', null];
+        yield 'empty - nsp' => ['', 'nsp', null];
+        yield 'empty - null' => ['', null, null];
+        yield 'empty - empty' => ['', '', null];
+    }
+
+    /**
+     * @dataProvider provideAllocataireCases
+     */
+    public function testResolveIsAllocataire(
+        ?string $logementSocialAllocation,
+        ?string $logementSocialCaisse,
+        string|bool|null $expectedResult,
+    ): void {
+        $signalementDraftRequestMock = $this->createMock(SignalementDraftRequest::class);
+
+        $signalementDraftRequestMock->method('getLogementSocialAllocation')
+            ->willReturn($logementSocialAllocation);
+        $signalementDraftRequestMock->method('getLogementSocialAllocationCaisse')
+            ->willReturn($logementSocialCaisse);
+
+        $reflection = new \ReflectionClass($this->signalementBuilder);
+        $property = $reflection->getProperty('signalementDraftRequest');
+        $property->setAccessible(true);
+        $property->setValue($this->signalementBuilder, $signalementDraftRequestMock);
+
+        $result = $this->invokeMethod($this->signalementBuilder, 'resolveIsAllocataire');
+
+        $this->assertEquals($expectedResult, $result);
+    }
+
     /**
      * @throws \ReflectionException
      */
@@ -277,6 +337,7 @@ class SignalementBuilderTest extends KernelTestCase
     {
         $reflection = new \ReflectionClass($object::class);
         $method = $reflection->getMethod($methodName);
+        $method->setAccessible(true);
 
         return $method->invokeArgs($object, $parameters);
     }
