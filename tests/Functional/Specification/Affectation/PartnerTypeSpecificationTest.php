@@ -3,6 +3,7 @@
 namespace App\Tests\Functional\Specification\Affectation;
 
 use App\Entity\Enum\PartnerType;
+use App\Entity\Bailleur;
 use App\Entity\Partner;
 use App\Entity\Signalement;
 use App\Specification\Affectation\PartnerTypeSpecification;
@@ -34,13 +35,10 @@ class PartnerTypeSpecificationTest extends KernelTestCase
     {
         yield 'ADIL - ADIL' => [PartnerType::ADIL, PartnerType::ADIL, true];
         yield 'ADIL - EPCI' => [PartnerType::ADIL, PartnerType::EPCI, false];
-
         yield 'ARS - ARS' => [PartnerType::ARS, PartnerType::ARS, true];
         yield 'ARS - EPCI' => [PartnerType::ARS, PartnerType::EPCI, false];
         yield 'ASSOCIATION - ASSOCIATION' => [PartnerType::ASSOCIATION, PartnerType::ASSOCIATION, true];
         yield 'ASSOCIATION - EPCI' => [PartnerType::ASSOCIATION, PartnerType::EPCI, false];
-        yield 'BAILLEUR_SOCIAL - BAILLEUR_SOCIAL' => [PartnerType::BAILLEUR_SOCIAL, PartnerType::BAILLEUR_SOCIAL, true];
-        yield 'BAILLEUR_SOCIAL - EPCI' => [PartnerType::BAILLEUR_SOCIAL, PartnerType::EPCI, false];
         yield 'CAF_MSA - CAF_MSA' => [PartnerType::CAF_MSA, PartnerType::CAF_MSA, true];
         yield 'CAF_MSA - EPCI' => [PartnerType::CAF_MSA, PartnerType::EPCI, false];
         yield 'CCAS - CCAS' => [PartnerType::CCAS, PartnerType::CCAS, true];
@@ -69,5 +67,71 @@ class PartnerTypeSpecificationTest extends KernelTestCase
         yield 'TRIBUNAL - EPCI' => [PartnerType::TRIBUNAL, PartnerType::EPCI, false];
         yield 'AUTRE - AUTRE' => [PartnerType::AUTRE, PartnerType::AUTRE, true];
         yield 'AUTRE - EPCI' => [PartnerType::AUTRE, PartnerType::EPCI, false];
+
+        yield 'BAILLEUR_SOCIAL - BAILLEUR_SOCIAL - sans définir le bailleur' => [PartnerType::BAILLEUR_SOCIAL, PartnerType::BAILLEUR_SOCIAL, false];
+        yield 'BAILLEUR_SOCIAL - EPCI' => [PartnerType::BAILLEUR_SOCIAL, PartnerType::EPCI, false];
+    }
+
+    /**
+     * @dataProvider provideRulesAndSignalementWithBailleur
+     */
+    public function testIsSatisfiedByWithBailleur(
+        PartnerType $type,
+        PartnerType $typeRule,
+        Bailleur $bailleurPartner,
+        Bailleur $bailleurSignalement,
+        bool $isSatisfied
+    ): void
+    {
+        $partner = new Partner();
+        $partner->setType($type);
+        $partner->setBailleur($bailleurPartner);
+        $this->assertEquals($type, $partner->getType());
+        $this->assertEquals($bailleurPartner, $partner->getBailleur());
+        $signalement = new Signalement();
+        $signalement->setBailleur($bailleurSignalement);
+        $this->assertEquals($bailleurSignalement, $signalement->getBailleur());
+
+        $specification = new PartnerTypeSpecification($typeRule);
+        $context = new PartnerSignalementContext($partner, $signalement);
+        if ($isSatisfied) {
+            $this->assertTrue($specification->isSatisfiedBy($context));
+        } else {
+            $this->assertFalse($specification->isSatisfiedBy($context));
+        }
+    }
+
+    public function provideRulesAndSignalementWithBailleur(): \Generator
+    {
+        $bailleurHabitat = (new Bailleur())->setName('Habitat 44')->setRaisonSociale('1111');
+        $bailleurOPH = (new Bailleur())->setName('OPH 44')->setRaisonSociale('2222');
+        yield 'BAILLEUR_SOCIAL - BAILLEUR_SOCIAL - liés à la même dénomination' => [
+            PartnerType::BAILLEUR_SOCIAL, 
+            PartnerType::BAILLEUR_SOCIAL, 
+            $bailleurHabitat,
+            $bailleurHabitat,
+            true
+        ];
+        yield 'BAILLEUR_SOCIAL - BAILLEUR_SOCIAL - liés à des dénominations différentes' => [
+            PartnerType::BAILLEUR_SOCIAL, 
+            PartnerType::BAILLEUR_SOCIAL, 
+            $bailleurHabitat,
+            $bailleurOPH,
+            false
+        ];
+        yield 'BAILLEUR_SOCIAL - EPCI - liés à la même dénomination' => [
+            PartnerType::BAILLEUR_SOCIAL, 
+            PartnerType::EPCI, 
+            $bailleurHabitat,
+            $bailleurHabitat,
+            false
+        ];
+        yield 'BAILLEUR_SOCIAL - EPCI - liés à des dénominations différentes' => [
+            PartnerType::BAILLEUR_SOCIAL, 
+            PartnerType::EPCI, 
+            $bailleurHabitat,
+            $bailleurOPH,
+            false
+        ];
     }
 }
