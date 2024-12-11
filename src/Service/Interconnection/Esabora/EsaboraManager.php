@@ -228,7 +228,15 @@ class EsaboraManager
 
     public function createSuiviFromDossierEvent(DossierEventSCHS $event, Affectation $affectation): Suivi
     {
-        $description = "Message provenant d'esabora SCHS :\n".$event->getPresentation();
+        $description = 'Message provenant d\'esabora SCHS :'.\PHP_EOL;
+
+        if (!empty($event->getPresentation())) {
+            $description .= $event->getPresentation().\PHP_EOL;
+        }
+
+        if (!empty($event->getLibelle())) {
+            $description .= $event->getLibelle();
+        }
 
         $suivi = new Suivi();
         $suivi->setCreatedBy($this->userManager->getSystemUser());
@@ -236,7 +244,9 @@ class EsaboraManager
         $suivi->setType(Suivi::TYPE_PARTNER);
         $suivi->setContext(Suivi::CONTEXT_SCHS);
         $suivi->setDescription(nl2br($description));
-        $suivi->setCreatedAt(\DateTimeImmutable::createFromFormat('d/m/Y', $event->getDate()));
+        if (!empty($event->getDate())) {
+            $suivi->setCreatedAt(\DateTimeImmutable::createFromFormat('d/m/Y', $event->getDate()));
+        }
         $suivi->setOriginalData($event->getOriginalData());
         $this->entityManager->persist($suivi);
 
