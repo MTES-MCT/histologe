@@ -27,7 +27,7 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 #[Route('/bo/signalements')]
 class SignalementActionController extends AbstractController
 {
-    #[Route('/{uuid}/validation/response', name: 'back_signalement_validation_response', methods: 'GET')]
+    #[Route('/{uuid:signalement}/validation/response', name: 'back_signalement_validation_response', methods: 'GET')]
     public function validationResponseSignalement(
         Signalement $signalement,
         Request $request,
@@ -95,7 +95,7 @@ class SignalementActionController extends AbstractController
         return $this->redirectToRoute('back_signalement_view', ['uuid' => $signalement->getUuid()]);
     }
 
-    #[Route('/{uuid}/suivi/add', name: 'back_signalement_add_suivi', methods: 'POST')]
+    #[Route('/{uuid:signalement}/suivi/add', name: 'back_signalement_add_suivi', methods: 'POST')]
     public function addSuiviSignalement(
         Signalement $signalement,
         Request $request,
@@ -140,7 +140,7 @@ class SignalementActionController extends AbstractController
         );
     }
 
-    #[Route('/{uuid}/suivi/delete', name: 'back_signalement_delete_suivi', methods: 'POST')]
+    #[Route('/{uuid:signalement}/suivi/delete', name: 'back_signalement_delete_suivi', methods: 'POST')]
     #[IsGranted('ROLE_ADMIN')]
     public function deleteSuivi(
         Request $request,
@@ -169,7 +169,7 @@ class SignalementActionController extends AbstractController
         );
     }
 
-    #[Route('/{uuid}/reopen', name: 'back_signalement_reopen')]
+    #[Route('/{uuid:signalement}/reopen', name: 'back_signalement_reopen')]
     public function reopenSignalement(Signalement $signalement, Request $request, ManagerRegistry $doctrine, AffectationRepository $affectationRepository): RedirectResponse|JsonResponse
     {
         /** @var User $user */
@@ -205,7 +205,7 @@ class SignalementActionController extends AbstractController
         return $this->redirectToRoute('back_signalement_view', ['uuid' => $signalement->getUuid()]);
     }
 
-    #[Route('/{uuid}/switch', name: 'back_signalement_switch_value', methods: 'POST')]
+    #[Route('/{uuid:signalement}/switch', name: 'back_signalement_switch_value', methods: 'POST')]
     public function switchValue(Signalement $signalement, Request $request, EntityManagerInterface $entityManager): RedirectResponse|JsonResponse
     {
         $this->denyAccessUnlessGranted('SIGN_EDIT', $signalement);

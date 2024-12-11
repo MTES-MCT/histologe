@@ -13,7 +13,7 @@ use Symfony\Component\Routing\Attribute\Route;
 #[Route('/bo/signalements')]
 class BackTagController extends AbstractController
 {
-    #[Route('/{uuid}/newtag', name: 'back_tag_create', methods: 'POST')]
+    #[Route('/{uuid:signalement}/newtag', name: 'back_tag_create', methods: 'POST')]
     public function createTag(Signalement $signalement, Request $request, EntityManagerInterface $entityManager): Response
     {
         $this->denyAccessUnlessGranted('TAG_CREATE', null);
@@ -31,7 +31,7 @@ class BackTagController extends AbstractController
     }
 
     #[Route('/deltag/{id}', name: 'back_tag_delete', defaults: ['id' => null], methods: 'GET')]
-    public function deleteTag(Tag $tag, Request $request, EntityManagerInterface $entityManager): Response
+    public function deleteTag(Tag $tag, EntityManagerInterface $entityManager): Response
     {
         $this->denyAccessUnlessGranted('TAG_DELETE', $tag);
         $tag->setIsArchive(true);

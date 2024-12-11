@@ -3,14 +3,14 @@
 namespace App\Service\Mailer;
 
 use App\Service\Mailer\Mail\NotificationMailerInterface;
-use Symfony\Component\DependencyInjection\Attribute\TaggedIterator;
+use Symfony\Component\DependencyInjection\Attribute\AutowireIterator;
 
 class NotificationMailerRegistry
 {
     private iterable $notificationMailers;
 
     public function __construct(
-        #[TaggedIterator('app.notification_mailer')] iterable $notificationMailers,
+        #[AutowireIterator('app.notification_mailer')] iterable $notificationMailers,
     ) {
         $this->notificationMailers = $notificationMailers;
     }

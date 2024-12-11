@@ -9,7 +9,6 @@ use App\Service\Mailer\NotificationMail;
 use App\Service\Mailer\NotificationMailerRegistry;
 use App\Service\Mailer\NotificationMailerType;
 use App\Service\Token\ActivationTokenGenerator;
-use Symfony\Bridge\Doctrine\Attribute\MapEntity;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -112,14 +111,13 @@ class UserAccountController extends AbstractController
         ]);
     }
 
-    #[Route(path: '/activation-compte/{uuid}/{token}', name: 'activate_account', requirements: ['token' => '.+'])]
+    #[Route(path: '/activation-compte/{uuid:user}/{token}', name: 'activate_account', requirements: ['token' => '.+'])]
     public function resetPassword(
         Request $request,
         UserManager $userManager,
         ActivationTokenGenerator $activationTokenGenerator,
         ValidatorInterface $validator,
         Security $security,
-        #[MapEntity(mapping: ['uuid' => 'uuid'])]
         User $user,
         string $token,
     ): RedirectResponse|Response {

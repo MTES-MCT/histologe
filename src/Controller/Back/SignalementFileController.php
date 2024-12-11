@@ -26,7 +26,7 @@ use Symfony\Component\Routing\Attribute\Route;
 #[Route('/bo/signalements')]
 class SignalementFileController extends AbstractController
 {
-    #[Route('/{uuid}/pdf', name: 'back_signalement_gen_pdf')]
+    #[Route('/{uuid:signalement}/pdf', name: 'back_signalement_gen_pdf')]
     public function generatePdfSignalement(
         Signalement $signalement,
         MessageBusInterface $messageBus,
@@ -52,7 +52,7 @@ class SignalementFileController extends AbstractController
         return $this->redirect($this->generateUrl('back_signalement_view', ['uuid' => $signalement->getUuid()]));
     }
 
-    #[Route('/{uuid}/file/add', name: 'back_signalement_add_file')]
+    #[Route('/{uuid:signalement}/file/add', name: 'back_signalement_add_file')]
     public function addFileSignalement(
         Signalement $signalement,
         Request $request,
@@ -102,7 +102,7 @@ class SignalementFileController extends AbstractController
         return $this->redirect($this->generateUrl('back_signalement_view', ['uuid' => $signalement->getUuid()]));
     }
 
-    #[Route('/{uuid}/file-waiting-suivi', name: 'back_signalement_file_waiting_suivi')]
+    #[Route('/{uuid:signalement}/file-waiting-suivi', name: 'back_signalement_file_waiting_suivi')]
     public function fileWaitingSuiviSignalement(
         Signalement $signalement,
         EntityManagerInterface $entityManager,
@@ -144,7 +144,7 @@ class SignalementFileController extends AbstractController
     /**
      * @throws FilesystemException
      */
-    #[Route('/{uuid}/file/delete', name: 'back_signalement_delete_file')]
+    #[Route('/{uuid:signalement}/file/delete', name: 'back_signalement_delete_file')]
     public function deleteFileSignalement(
         Signalement $signalement,
         Request $request,
@@ -222,7 +222,7 @@ class SignalementFileController extends AbstractController
     /**
      * @throws FilesystemException
      */
-    #[Route('/{uuid}/file/edit', name: 'back_signalement_edit_file')]
+    #[Route('/{uuid:signalement}/file/edit', name: 'back_signalement_edit_file')]
     public function editFileSignalement(
         Signalement $signalement,
         Request $request,

@@ -100,7 +100,7 @@ class SecurityController extends AbstractController
         return $this->render('security/login.html.twig', ['title' => $title, 'last_username' => $lastUsername, 'error' => $error]);
     }
 
-    #[Route('/_up/{filename}/{uuid?}', name: 'show_uploaded_file')]
+    #[Route('/_up/{filename}/{uuid:signalement?}', name: 'show_uploaded_file')]
     public function showUploadedFile(
         LoggerInterface $logger,
         FilesystemOperator $fileStorage,

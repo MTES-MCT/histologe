@@ -19,7 +19,7 @@ use Symfony\Component\Routing\Attribute\Route;
 #[Route('/signalement')]
 class SignalementFileController extends AbstractController
 {
-    #[Route('/{uuid}/file/add', name: 'signalement_add_file')]
+    #[Route('/{uuid:signalement}/file/add', name: 'signalement_add_file')]
     public function addFileSignalement(
         Signalement $signalement,
         Request $request,
@@ -47,7 +47,7 @@ class SignalementFileController extends AbstractController
         return $this->json(['response' => $signalementFileProcessor->getLastFile()->getId()]);
     }
 
-    #[Route('/{uuid}/file/edit', name: 'signalement_edit_file')]
+    #[Route('/{uuid:signalement}/file/edit', name: 'signalement_edit_file')]
     public function editFileSignalement(
         Signalement $signalement,
         Request $request,
@@ -81,7 +81,7 @@ class SignalementFileController extends AbstractController
         return $this->json(['response' => 'success']);
     }
 
-    #[Route('/{uuid}/file/delete-tmp', name: 'signalement_delete_tmpfile', methods: ['DELETE'])]
+    #[Route('/{uuid:signalement}/file/delete-tmp', name: 'signalement_delete_tmpfile', methods: ['DELETE'])]
     public function deleteTmpFile(
         Signalement $signalement,
         Request $request,

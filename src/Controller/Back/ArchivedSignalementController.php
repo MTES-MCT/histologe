@@ -59,7 +59,7 @@ class ArchivedSignalementController extends AbstractController
         ]);
     }
 
-    #[Route('/{uuid}/reactiver', name: 'back_archived_signalements_reactiver', methods: 'POST')]
+    #[Route('/{uuid:signalement}/reactiver', name: 'back_archived_signalements_reactiver', methods: 'POST')]
     #[IsGranted('ROLE_ADMIN')]
     public function reactiveSignalement(
         Signalement $signalement,

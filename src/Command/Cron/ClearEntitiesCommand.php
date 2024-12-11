@@ -10,7 +10,7 @@ use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
-use Symfony\Component\DependencyInjection\Attribute\TaggedIterator;
+use Symfony\Component\DependencyInjection\Attribute\AutowireIterator;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 
 #[AsCommand(
@@ -22,7 +22,7 @@ class ClearEntitiesCommand extends AbstractCronCommand
     public function __construct(
         readonly private ParameterBagInterface $parameterBag,
         readonly private ClearEntitiesHandler $clearEntitiesHandler,
-        #[TaggedIterator('app.entity_cleaner')] private readonly iterable $entityCleanerRepositories,
+        #[AutowireIterator('app.entity_cleaner')] private readonly iterable $entityCleanerRepositories,
     ) {
         parent::__construct($this->parameterBag);
     }

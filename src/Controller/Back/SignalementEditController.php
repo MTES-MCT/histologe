@@ -27,7 +27,7 @@ class SignalementEditController extends AbstractController
 {
     private const ERROR_MSG = 'Une erreur s\'est produite. Veuillez actualiser la page.';
 
-    #[Route('/{uuid}/edit-address', name: 'back_signalement_edit_address', methods: 'POST')]
+    #[Route('/{uuid:signalement}/edit-address', name: 'back_signalement_edit_address', methods: 'POST')]
     public function editAddress(
         Signalement $signalement,
         Request $request,
@@ -64,7 +64,7 @@ class SignalementEditController extends AbstractController
         return $this->json($response, $response['code']);
     }
 
-    #[Route('/{uuid}/edit-coordonnees-tiers', name: 'back_signalement_edit_coordonnees_tiers', methods: 'POST')]
+    #[Route('/{uuid:signalement}/edit-coordonnees-tiers', name: 'back_signalement_edit_coordonnees_tiers', methods: 'POST')]
     public function editCoordonneesTiers(
         Signalement $signalement,
         Request $request,
@@ -105,7 +105,7 @@ class SignalementEditController extends AbstractController
         return $this->json($response, $response['code']);
     }
 
-    #[Route('/{uuid}/edit-coordonnees-foyer', name: 'back_signalement_edit_coordonnees_foyer', methods: 'POST')]
+    #[Route('/{uuid:signalement}/edit-coordonnees-foyer', name: 'back_signalement_edit_coordonnees_foyer', methods: 'POST')]
     public function editCoordonneesFoyer(
         Signalement $signalement,
         Request $request,
@@ -150,7 +150,7 @@ class SignalementEditController extends AbstractController
         return $this->json($response, $response['code']);
     }
 
-    #[Route('/{uuid}/edit-coordonnees-bailleur', name: 'back_signalement_edit_coordonnees_bailleur', methods: 'POST')]
+    #[Route('/{uuid:signalement}/edit-coordonnees-bailleur', name: 'back_signalement_edit_coordonnees_bailleur', methods: 'POST')]
     public function editCoordonneesBailleur(
         Signalement $signalement,
         Request $request,
@@ -198,7 +198,7 @@ class SignalementEditController extends AbstractController
         return $this->json($response, $response['code']);
     }
 
-    #[Route('/{uuid}/edit-informations-logement', name: 'back_signalement_edit_informations_logement', methods: 'POST')]
+    #[Route('/{uuid:signalement}/edit-informations-logement', name: 'back_signalement_edit_informations_logement', methods: 'POST')]
     public function editInformationsLogement(
         Signalement $signalement,
         Request $request,
@@ -248,7 +248,7 @@ class SignalementEditController extends AbstractController
         return $this->json($response, $response['code']);
     }
 
-    #[Route('/{uuid}/edit-composition-logement', name: 'back_signalement_edit_composition_logement', methods: 'POST')]
+    #[Route('/{uuid:signalement}/edit-composition-logement', name: 'back_signalement_edit_composition_logement', methods: 'POST')]
     public function editCompositionLogement(
         Signalement $signalement,
         Request $request,
@@ -297,7 +297,7 @@ class SignalementEditController extends AbstractController
         return $this->json($response, $response['code']);
     }
 
-    #[Route('/{uuid}/edit-situation-foyer', name: 'back_signalement_edit_situation_foyer', methods: 'POST')]
+    #[Route('/{uuid:signalement}/edit-situation-foyer', name: 'back_signalement_edit_situation_foyer', methods: 'POST')]
     public function editSituationFoyer(
         Signalement $signalement,
         Request $request,
@@ -343,7 +343,7 @@ class SignalementEditController extends AbstractController
         return $this->json($response, $response['code']);
     }
 
-    #[Route('/{uuid}/edit-procedure-demarches', name: 'back_signalement_edit_procedure_demarches', methods: 'POST')]
+    #[Route('/{uuid:signalement}/edit-procedure-demarches', name: 'back_signalement_edit_procedure_demarches', methods: 'POST')]
     public function editProcedureDemarches(
         Signalement $signalement,
         Request $request,

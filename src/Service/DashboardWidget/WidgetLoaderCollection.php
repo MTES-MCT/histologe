@@ -2,14 +2,14 @@
 
 namespace App\Service\DashboardWidget;
 
-use Symfony\Component\DependencyInjection\Attribute\TaggedIterator;
+use Symfony\Component\DependencyInjection\Attribute\AutowireIterator;
 
 class WidgetLoaderCollection
 {
     private iterable $widgetLoaders;
 
     public function __construct(
-        #[TaggedIterator('app.widget_loader')] iterable $widgetLoaders,
+        #[AutowireIterator('app.widget_loader')] iterable $widgetLoaders,
     ) {
         $this->widgetLoaders = $widgetLoaders;
     }

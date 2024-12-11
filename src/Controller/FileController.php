@@ -16,7 +16,7 @@ use Symfony\Component\Routing\Attribute\Route;
 
 class FileController extends AbstractController
 {
-    #[Route('/show/{uuid}', name: 'show_file')]
+    #[Route('/show/{uuid:file}', name: 'show_file')]
     public function showFile(
         File $file,
         Request $request,
