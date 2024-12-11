@@ -61,6 +61,6 @@ class LoadDesordrePrecisionData extends Fixture implements OrderedFixtureInterfa
 
     public function getOrder(): int
     {
-        return 10;
+        return 11;
     }
 }

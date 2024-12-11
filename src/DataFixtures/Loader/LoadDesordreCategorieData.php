@@ -30,6 +30,6 @@ class LoadDesordreCategorieData extends Fixture implements OrderedFixtureInterfa
 
     public function getOrder(): int
     {
-        return 8;
+        return 9;
     }
 }

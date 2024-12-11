@@ -28,6 +28,7 @@ use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 class AutoAssigner
 {
     private int $countAffectations;
+    private array $affectedPartnersNames = [];
 
     public function __construct(
         private SignalementManager $signalementManager,
@@ -76,7 +77,6 @@ class AutoAssigner
                 }
             }
         }
-
         if (!empty($assignablePartners)) {
             $this->activateSignalement($signalement);
             $this->createSuivi($signalement, $adminUser);
@@ -116,6 +116,7 @@ class AutoAssigner
                 $adminUser
             );
             ++$this->countAffectations;
+            $this->affectedPartnersNames[] = $partner->getNom();
             if ($affectation instanceof Affectation) {
                 $this->affectationManager->persist($affectation);
                 $this->interconnectionBus->dispatch($affectation);
@@ -127,5 +128,10 @@ class AutoAssigner
     public function getCountAffectations(): int
     {
         return $this->countAffectations;
+    }
+
+    public function getAffectedPartnerNames(): array
+    {
+        return $this->affectedPartnersNames;
     }
 }
