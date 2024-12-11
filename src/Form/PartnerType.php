@@ -168,8 +168,8 @@ class PartnerType extends AbstractType
             'required' => true,
         ]);
         $this->addBailleurSocialField($builder, $territory?->getZip());
-        $builder->addEventListener(FormEvents::PRE_SUBMIT, fn(FormEvent $event) => $this->handleTerritoryChange($event));
-        $builder->addEventListener(FormEvents::PRE_SET_DATA, fn(FormEvent $event) => $this->handleTerritoryChange($event, true));
+        $builder->addEventListener(FormEvents::PRE_SUBMIT, fn (FormEvent $event) => $this->handleTerritoryChange($event));
+        $builder->addEventListener(FormEvents::PRE_SET_DATA, fn (FormEvent $event) => $this->handleTerritoryChange($event, true));
     }
 
     private function handleTerritoryChange(FormEvent $event, bool $isPreSetData = false): void
@@ -179,7 +179,7 @@ class PartnerType extends AbstractType
 
         $territory = $isPreSetData && $data instanceof Partner
             ? $data->getTerritory()
-            : $this->territoryRepository->find($data['territory'] ?? null);
+            : (\array_key_exists('territory', $data) ? $this->territoryRepository->find($data['territory']) : null);
 
         $this->addBailleurSocialField($form, $territory?->getZip());
     }
@@ -188,7 +188,7 @@ class PartnerType extends AbstractType
     {
         $builder->add('bailleur', EntityType::class, [
             'class' => Bailleur::class,
-            'query_builder' => fn(BailleurRepository $bailleurRepository) => $bailleurRepository->getBailleursByTerritoryQueryBuilder($territoryZip ?? '01'),
+            'query_builder' => fn (BailleurRepository $bailleurRepository) => $bailleurRepository->getBailleursByTerritoryQueryBuilder($territoryZip ?? '01'),
             'choice_label' => 'name',
             'placeholder' => 'Sélectionner une dénomination officielle pour le bailleur social',
             'required' => false,

@@ -176,10 +176,10 @@ class SignalementListControllerTest extends WebTestCase
         yield 'Search by Territory 13' => [['territoire' => '13', 'isImported' => 'oui'], 26];
         yield 'Search by Commune' => [['communes' => ['gex', 'marseille'], 'isImported' => 'oui'], 31];
         yield 'Search by Commune code postal' => [['communes' => ['13002'], 'isImported' => 'oui'], 2];
-        yield 'Search by EPCIS' => [['epcis' => ['244400503'], 'isImported' => 'oui'], 2];
+        yield 'Search by EPCIS' => [['epcis' => ['244400503'], 'isImported' => 'oui'], 3];
         yield 'Search by Partner' => [['partenaires' => ['5'], 'isImported' => 'oui'], 2];
         yield 'Search by Etiquettes' => [['etiquettes' => ['5'], 'isImported' => 'oui'], 4];
-        yield 'Search by Parc public' => [['natureParc' => 'public', 'isImported' => 'oui'], 5];
+        yield 'Search by Parc public' => [['natureParc' => 'public', 'isImported' => 'oui'], 6];
         yield 'Search by Parc public/prive non renseigné' => [['natureParc' => 'non_renseigne', 'isImported' => 'oui'], 1];
         yield 'Search by Enfant moins de 6ans (non)' => [['enfantsM6' => 'non', 'isImported' => 'oui'], 2];
         yield 'Search by Enfant moins de 6ans (oui)' => [['enfantsM6' => 'oui', 'isImported' => 'oui'], 48];
@@ -193,7 +193,7 @@ class SignalementListControllerTest extends WebTestCase
         yield 'Search by Statut de l\'affectation' => [['statusAffectation' => 'refuse', 'isImported' => 'oui'], 1];
         yield 'Search by Score criticite' => [['criticiteScoreMin' => 5, 'criticiteScoreMax' => 6, 'isImported' => 'oui'], 9];
         yield 'Search by Declarant' => [['typeDeclarant' => 'locataire', 'isImported' => 'oui'], 45];
-        yield 'Search by Nature du parc' => [['natureParc' => 'public', 'isImported' => 'oui'], 5];
+        yield 'Search by Nature du parc' => [['natureParc' => 'public', 'isImported' => 'oui'], 6];
         yield 'Search by Allocataire CAF' => [['allocataire' => 'caf', 'isImported' => 'oui'], 16];
         yield 'Search by Allocataire MSA' => [['allocataire' => 'msa', 'isImported' => 'oui'], 1];
         yield 'Search by Allocataire Oui (CAF+MSA+1)' => [['allocataire' => 'oui', 'isImported' => 'oui'], 17];

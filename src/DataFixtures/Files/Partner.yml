@@ -589,3 +589,11 @@ partners:
     is_archive: 0
     territory: "Gard"
     type: "EPCI"
+  -
+    nom: "Partner Habitat 44"
+    email: "partenaire-44-05@histologe.fr"
+    insee: "[\"44179\"]"
+    is_archive: 0
+    territory: "Loire-Atlantique"
+    type: "BAILLEUR_SOCIAL"
+    bailleur: "Habitat 44"

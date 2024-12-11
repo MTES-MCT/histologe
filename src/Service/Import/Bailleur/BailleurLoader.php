@@ -88,7 +88,7 @@ class BailleurLoader
             $progressBar->clear();
         }
         foreach ($this->bailleurs as $bailleur) {
-            if (!$bailleur->getBailleurTerritories()->count()) {
+            if (!$bailleur->getBailleurTerritories()->count() && !$bailleur->getPartners()->count()) {
                 $this->entityManager->remove($bailleur);
                 ++$this->metadata['deleted_bailleurs'];
             }

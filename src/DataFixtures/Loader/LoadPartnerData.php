@@ -5,6 +5,7 @@ namespace App\DataFixtures\Loader;
 use App\Entity\Enum\PartnerType;
 use App\Entity\Enum\Qualification;
 use App\Entity\Partner;
+use App\Repository\BailleurRepository;
 use App\Repository\TerritoryRepository;
 use App\Service\Sanitizer;
 use App\Service\Token\TokenGeneratorInterface;
@@ -17,6 +18,7 @@ class LoadPartnerData extends Fixture implements OrderedFixtureInterface
 {
     public function __construct(
         private TerritoryRepository $territoryRepository,
+        private BailleurRepository $bailleurRepository,
         private TokenGeneratorInterface $tokenGenerator,
     ) {
     }
@@ -57,6 +59,11 @@ class LoadPartnerData extends Fixture implements OrderedFixtureInterface
             $partner->setType(PartnerType::from($row['type']));
         }
 
+        if (isset($row['bailleur'])) {
+            $zip = $partner->getTerritory()->getZip();
+            $partner->setBailleur($this->bailleurRepository->findOneBailleurBy($row['bailleur'], $zip));
+        }
+
         if (isset($row['competence'])) {
             $competences = [];
             if (\is_array($row['competence'])) {
@@ -81,6 +88,6 @@ class LoadPartnerData extends Fixture implements OrderedFixtureInterface
 
     public function getOrder(): int
     {
-        return 6;
+        return 7;
     }
 }

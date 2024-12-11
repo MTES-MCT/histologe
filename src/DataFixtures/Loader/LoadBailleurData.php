@@ -43,6 +43,6 @@ class LoadBailleurData extends Fixture implements OrderedFixtureInterface
 
     public function getOrder(): int
     {
-        return 11;
+        return 6;
     }
 }

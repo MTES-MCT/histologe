@@ -47,7 +47,7 @@ class AutoAssignerTest extends KernelTestCase
         ->method('createInstanceFrom');
         $this->suiviManager->expects($this->once())
         ->method('persist');
-        $this->testHelper($signalement, 1);
+        $this->testHelper($signalement, 1, ['Mairie de Saint-Denis']);
         $this->assertEquals(Signalement::STATUS_ACTIVE, $signalement->getStatut());
     }
 
@@ -61,7 +61,7 @@ class AutoAssignerTest extends KernelTestCase
         ->method('createInstanceFrom');
         $this->suiviManager->expects($this->never())
         ->method('persist');
-        $this->testHelper($signalement, 0);
+        $this->testHelper($signalement, 0, []);
         $this->assertEquals(Signalement::STATUS_NEED_VALIDATION, $signalement->getStatut());
     }
 
@@ -75,7 +75,7 @@ class AutoAssignerTest extends KernelTestCase
         ->method('createInstanceFrom');
         $this->suiviManager->expects($this->once())
         ->method('persist');
-        $this->testHelper($signalement, 4);
+        $this->testHelper($signalement, 4, ['Ville de Lunel', 'CAF 34', 'CD 34', 'CA Lunel Agglomération']);
         $this->assertEquals(Signalement::STATUS_ACTIVE, $signalement->getStatut());
     }
 
@@ -90,7 +90,7 @@ class AutoAssignerTest extends KernelTestCase
         ->method('createInstanceFrom');
         $this->suiviManager->expects($this->never())
         ->method('persist');
-        $this->testHelper($signalement, 0);
+        $this->testHelper($signalement, 0, []);
         $this->assertEquals(Signalement::STATUS_NEED_VALIDATION, $signalement->getStatut());
     }
 
@@ -104,7 +104,7 @@ class AutoAssignerTest extends KernelTestCase
         ->method('createInstanceFrom');
         $this->suiviManager->expects($this->once())
         ->method('persist');
-        $this->testHelper($signalement, 3);
+        $this->testHelper($signalement, 3, ['Ville de Lunel', 'CD 34', 'CA Lunel Agglomération']);
         $this->assertEquals(Signalement::STATUS_ACTIVE, $signalement->getStatut());
     }
 
@@ -118,7 +118,7 @@ class AutoAssignerTest extends KernelTestCase
         ->method('createInstanceFrom');
         $this->suiviManager->expects($this->once())
         ->method('persist');
-        $this->testHelper($signalement, 3);
+        $this->testHelper($signalement, 3, ['Ville de Lunel', 'CAF 34', 'CD 34']);
         $this->assertEquals(Signalement::STATUS_ACTIVE, $signalement->getStatut());
     }
 
@@ -132,7 +132,7 @@ class AutoAssignerTest extends KernelTestCase
         ->method('createInstanceFrom');
         $this->suiviManager->expects($this->once())
         ->method('persist');
-        $this->testHelper($signalement, 3);
+        $this->testHelper($signalement, 3, ['Commune de Campagne', 'CAF 34', 'CD 34']);
         $this->assertEquals(Signalement::STATUS_ACTIVE, $signalement->getStatut());
     }
 
@@ -146,7 +146,7 @@ class AutoAssignerTest extends KernelTestCase
         ->method('createInstanceFrom');
         $this->suiviManager->expects($this->once())
         ->method('persist');
-        $this->testHelper($signalement, 2);
+        $this->testHelper($signalement, 2, ['Ville de Montpellier', 'CAF 34']);
         $this->assertEquals(Signalement::STATUS_ACTIVE, $signalement->getStatut());
     }
 
@@ -160,7 +160,7 @@ class AutoAssignerTest extends KernelTestCase
         ->method('createInstanceFrom');
         $this->suiviManager->expects($this->never())
         ->method('persist');
-        $this->testHelper($signalement, 0);
+        $this->testHelper($signalement, 0, []);
         $this->assertEquals(Signalement::STATUS_NEED_VALIDATION, $signalement->getStatut());
     }
 
@@ -174,7 +174,7 @@ class AutoAssignerTest extends KernelTestCase
         ->method('createInstanceFrom');
         $this->suiviManager->expects($this->once())
         ->method('persist');
-        $this->testHelper($signalement, 1);
+        $this->testHelper($signalement, 1, ['Mairie de Saint-Mars du Désert']);
         $this->assertEquals(Signalement::STATUS_ACTIVE, $signalement->getStatut());
     }
 
@@ -188,7 +188,7 @@ class AutoAssignerTest extends KernelTestCase
         ->method('createInstanceFrom');
         $this->suiviManager->expects($this->once())
         ->method('persist');
-        $this->testHelper($signalement, 2);
+        $this->testHelper($signalement, 2, ['Mairie de Saint-Mars du Désert', 'Cocoland']);
         $this->assertEquals(Signalement::STATUS_ACTIVE, $signalement->getStatut());
     }
 
@@ -206,11 +206,26 @@ class AutoAssignerTest extends KernelTestCase
         ->method('createInstanceFrom');
         $this->suiviManager->expects($this->once())
         ->method('persist');
-        $this->testHelper($signalement, 3);
+        $this->testHelper($signalement, 3, ['Mairie de Saint-Mars du Désert', 'SDIS 44', 'Cocoland']);
         $this->assertEquals(Signalement::STATUS_ACTIVE, $signalement->getStatut());
     }
 
-    private function testHelper($signalement, $expectedCount)
+    public function testAutoAssignmentBailleurSocial(): void
+    {
+        // signalement 2024-10 à Saint-Mars du Désert, logement social lié au bailleur Habitat 44
+        // partenaire commune et partenaire bailleur social à affecter
+        /** @var Signalement $signalement */
+        $signalement = $this->signalementRepository->findOneBy(['reference' => '2024-10']);
+        $signalement->setStatut(Signalement::STATUS_NEED_VALIDATION);
+        $this->suiviFactory->expects($this->once())
+        ->method('createInstanceFrom');
+        $this->suiviManager->expects($this->once())
+        ->method('persist');
+        $this->testHelper($signalement, 2, ['Mairie de Saint-Mars du Désert', 'Partner Habitat 44']);
+        $this->assertEquals(Signalement::STATUS_ACTIVE, $signalement->getStatut());
+    }
+
+    private function testHelper(Signalement $signalement, int $expectedCount, ?array $expectedPartnerNames = null)
     {
         /** @var SignalementManager|MockObject $signalementManager */
         $signalementManager = $this->createMock(SignalementManager::class);
@@ -232,5 +247,12 @@ class AutoAssignerTest extends KernelTestCase
 
         $autoAssigner->assign($signalement);
         $this->assertEquals($expectedCount, $autoAssigner->getCountAffectations());
+        if ($expectedPartnerNames) {
+            sort($expectedPartnerNames);
+            $partnerNames = $autoAssigner->getAffectedPartnerNames();
+            sort($partnerNames);
+            $this->assertEquals(\count($expectedPartnerNames), \count($partnerNames));
+            $this->assertEquals($expectedPartnerNames, $partnerNames);
+        }
     }
 }

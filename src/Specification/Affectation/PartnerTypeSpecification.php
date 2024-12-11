@@ -32,19 +32,17 @@ class PartnerTypeSpecification implements SpecificationInterface
             return false;
         }
 
-        if ($this->partnerType === PartnerType::BAILLEUR_SOCIAL) {
+        if (PartnerType::BAILLEUR_SOCIAL === $this->partnerType) {
             return $this->isSatisfiedByBailleurSocial($partner, $signalement);
         }
 
         return true;
     }
 
-
-
     private function isSatisfiedByBailleurSocial(Partner $partner, Signalement $signalement): bool
     {
-        return $partner->getBailleur() !== null
-            && $signalement->getBailleur() !== null
+        return null !== $partner->getBailleur()
+            && null !== $signalement->getBailleur()
             && $partner->getBailleur() === $signalement->getBailleur();
     }
 }

@@ -2,8 +2,8 @@
 
 namespace App\Tests\Functional\Specification\Affectation;
 
-use App\Entity\Enum\PartnerType;
 use App\Entity\Bailleur;
+use App\Entity\Enum\PartnerType;
 use App\Entity\Partner;
 use App\Entity\Signalement;
 use App\Specification\Affectation\PartnerTypeSpecification;
@@ -80,9 +80,8 @@ class PartnerTypeSpecificationTest extends KernelTestCase
         PartnerType $typeRule,
         Bailleur $bailleurPartner,
         Bailleur $bailleurSignalement,
-        bool $isSatisfied
-    ): void
-    {
+        bool $isSatisfied,
+    ): void {
         $partner = new Partner();
         $partner->setType($type);
         $partner->setBailleur($bailleurPartner);
@@ -106,32 +105,32 @@ class PartnerTypeSpecificationTest extends KernelTestCase
         $bailleurHabitat = (new Bailleur())->setName('Habitat 44')->setRaisonSociale('1111');
         $bailleurOPH = (new Bailleur())->setName('OPH 44')->setRaisonSociale('2222');
         yield 'BAILLEUR_SOCIAL - BAILLEUR_SOCIAL - liés à la même dénomination' => [
-            PartnerType::BAILLEUR_SOCIAL, 
-            PartnerType::BAILLEUR_SOCIAL, 
+            PartnerType::BAILLEUR_SOCIAL,
+            PartnerType::BAILLEUR_SOCIAL,
             $bailleurHabitat,
             $bailleurHabitat,
-            true
+            true,
         ];
         yield 'BAILLEUR_SOCIAL - BAILLEUR_SOCIAL - liés à des dénominations différentes' => [
-            PartnerType::BAILLEUR_SOCIAL, 
-            PartnerType::BAILLEUR_SOCIAL, 
+            PartnerType::BAILLEUR_SOCIAL,
+            PartnerType::BAILLEUR_SOCIAL,
             $bailleurHabitat,
             $bailleurOPH,
-            false
+            false,
         ];
         yield 'BAILLEUR_SOCIAL - EPCI - liés à la même dénomination' => [
-            PartnerType::BAILLEUR_SOCIAL, 
-            PartnerType::EPCI, 
+            PartnerType::BAILLEUR_SOCIAL,
+            PartnerType::EPCI,
             $bailleurHabitat,
             $bailleurHabitat,
-            false
+            false,
         ];
         yield 'BAILLEUR_SOCIAL - EPCI - liés à des dénominations différentes' => [
-            PartnerType::BAILLEUR_SOCIAL, 
-            PartnerType::EPCI, 
+            PartnerType::BAILLEUR_SOCIAL,
+            PartnerType::EPCI,
             $bailleurHabitat,
             $bailleurOPH,
-            false
+            false,
         ];
     }
 }
