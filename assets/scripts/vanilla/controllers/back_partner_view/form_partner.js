@@ -176,30 +176,20 @@ if (document.querySelector('#user_edit_roles')) {
 }
 
 const territorySelect = document.querySelector("#partner_territory");
-console.log(territorySelect)
 
 if (territorySelect) {
   territorySelect.addEventListener("change", function () {
     const bailleurSocialSelect = document.querySelector("#partner_bailleur");
-    console.log(bailleurSocialSelect)
     if (bailleurSocialSelect){
       const territoryId = this.value;
-
-      console.log('on change le territoire, on doit changer la liste des bailleurs sociaux')
-      console.log(territoryId)
-      // Vider le champ des bailleurs
       bailleurSocialSelect.innerHTML = '<option value="">Sélectionner un bailleur social</option>';
 
       if (!territoryId) {
           return;
       }
 
-      // TODO : passer l'url depuis twig
-      // Appel à l'API pour récupérer les bailleurs sociaux
-      // data-autocomplete-bailleur-url="{{ path('app_bailleur', {'postcode': signalement.cpOccupant}) }}"
       fetch(`/bo/territoire/${territoryId}/bailleurs`)
           .then(response => {
-            console.log(response)
               if (!response.ok) {
                   throw new Error("Erreur lors de la récupération des bailleurs sociaux.");
               }
