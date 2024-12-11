@@ -48,12 +48,12 @@ class DossierEventSCHS
         return $this->originalData;
     }
 
-    public function getDate(): string
+    public function getDate(): ?string
     {
         return $this->date;
     }
 
-    public function getPresentation(): string
+    public function getPresentation(): ?string
     {
         return $this->presentation;
     }
