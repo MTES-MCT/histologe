@@ -15,6 +15,7 @@ use App\Service\Files\ZipHelper;
 use App\Service\ImageManipulationHandler;
 use App\Service\Interconnection\Esabora\EsaboraManager;
 use App\Service\Security\FileScanner;
+use App\Service\Signalement\Qualification\SignalementQualificationUpdater;
 use App\Service\UploadHandlerService;
 use App\Tests\FixturesHelper;
 use Doctrine\ORM\EntityManager;
@@ -47,6 +48,7 @@ class EsaboraManagerTest extends TestCase
     private MockObject|ImageManipulationHandler $imageManipulationHandler;
     private MockObject|UrlGeneratorInterface $UrlGeneratorInterface;
     private MockObject|FileFactory $fileFactory;
+    private MockObject|SignalementQualificationUpdater $signalementQualificationUpdater;
 
     protected function setUp(): void
     {
@@ -65,6 +67,7 @@ class EsaboraManagerTest extends TestCase
         $this->imageManipulationHandler = $this->createMock(ImageManipulationHandler::class);
         $this->UrlGeneratorInterface = $this->createMock(UrlGeneratorInterface::class);
         $this->fileFactory = $this->createMock(FileFactory::class);
+        $this->signalementQualificationUpdater = $this->createMock(SignalementQualificationUpdater::class);
     }
 
     public function testCreateVisite(): void
@@ -111,7 +114,8 @@ class EsaboraManagerTest extends TestCase
             $this->uploadHander,
             $this->imageManipulationHandler,
             $this->UrlGeneratorInterface,
-            $this->fileFactory
+            $this->fileFactory,
+            $this->signalementQualificationUpdater
         );
         $esaboraManager->createOrUpdateVisite($this->getAffectation(PartnerType::ARS), $dossierVisite);
     }
@@ -177,7 +181,8 @@ class EsaboraManagerTest extends TestCase
             $this->uploadHander,
             $this->imageManipulationHandler,
             $this->UrlGeneratorInterface,
-            $this->fileFactory
+            $this->fileFactory,
+            $this->signalementQualificationUpdater
         );
     }
 }

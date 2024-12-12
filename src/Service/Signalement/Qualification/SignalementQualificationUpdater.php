@@ -543,6 +543,7 @@ class SignalementQualificationUpdater
         if ($procedureTypes) {
             foreach ($procedureTypes as $procedureType) {
                 $signalementQualification = null;
+                /** @var ProcedureType $procedureType */
                 switch ($procedureType->name) {
                     case ProcedureType::NON_DECENCE->name:
                         $signalementQualification = $this->signalementQualificationFactory->createInstanceFrom(

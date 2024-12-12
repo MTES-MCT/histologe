@@ -1,6 +1,6 @@
 {
   "searchId": "00000000-0000-0000-2023-000000000012",
-  "nbResults": 2,
+  "nbResults": 3,
   "columnList": [
     "Sas_LogicielProvenance",
     "Reference_Dossier",
@@ -51,7 +51,7 @@
     {
       "columnDataList": [
         "Histologe",
-        "00000000-0000-0000-2024-000000000012",
+        "00000000-0000-0000-2023-000000000012",
         "2024/DD13/0010",
         "14/07/2024",
         "2024/DD13/00664",

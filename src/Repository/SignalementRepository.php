@@ -467,7 +467,7 @@ class SignalementRepository extends ServiceEntityRepository
             ->leftJoin('s.affectations', 'a')
             ->leftJoin('a.partner', 'p')
             ->leftJoin('s.signalementQualifications', 'sq', 'WITH', 'sq.status LIKE \'%AVEREE%\' OR sq.status LIKE \'%CHECK%\'')
-            ->leftJoin('s.interventions', 'i', 'WITH', 'i.type LIKE \'VISITE\'')
+            ->leftJoin('s.interventions', 'i', 'WITH', 'i.type LIKE \'VISITE\' OR i.type LIKE \'ARRETE_PREFECTORAL\'')
             ->leftJoin('s.territory', 'territory')
             ->where('s.statut != :status')
             ->groupBy('s.id')

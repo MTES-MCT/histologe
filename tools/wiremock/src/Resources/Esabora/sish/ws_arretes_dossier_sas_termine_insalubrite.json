@@ -1,0 +1,36 @@
+{
+  "searchId": "00000000-0000-0000-2024-000000000010",
+  "nbResults": 1,
+  "columnList": [
+    "Sas_LogicielProvenance",
+    "Reference_Dossier",
+    "SISH_DossNum",
+    "SISH_ArreteDate",
+    "SISH_ArreteNumero",
+    "SISH_ArreteType",
+    "SISH_ArreteMLDate",
+    "SISH_ArreteMLNumero"
+  ],
+  "keyList": [
+    "i1.imdo_id",
+    "a3_t2.arre_id"
+  ],
+  "rowList": [
+    {
+      "columnDataList": [
+        "Histologe",
+        "00000000-0000-0000-2024-000000000010",
+        "2024/DD13/0011",
+        "05/07/2024",
+        "2024/DD13/00664",
+        "Arrêté L.511-19 - Insalubrité",
+        "01/08/2024",
+        "2024-DD13-00173"
+      ],
+      "keyDataList": [
+        30,
+        601
+      ]
+    }
+  ]
+}

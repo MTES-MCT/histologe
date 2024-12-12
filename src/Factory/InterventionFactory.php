@@ -19,8 +19,9 @@ class InterventionFactory
         ?string $doneBy = null,
         ?string $details = null,
         ?array $additionalInformation = null,
+        ?array $concludeProcedures = [],
     ): Intervention {
-        return (new Intervention())
+        $intervention = (new Intervention())
             ->setPartner($affectation->getPartner())
             ->setSignalement($affectation->getSignalement())
             ->setType($type)
@@ -31,7 +32,12 @@ class InterventionFactory
             ->setProviderId($providerId)
             ->setDoneBy($doneBy)
             ->setDetails($details)
-            ->setAdditionalInformation($additionalInformation)
-        ;
+            ->setAdditionalInformation($additionalInformation);
+
+        if (!empty($concludeProcedures)) {
+            $intervention->setConcludeProcedure($concludeProcedures);
+        }
+
+        return $intervention;
     }
 }

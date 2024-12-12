@@ -90,7 +90,15 @@ class EsaboraSISHMock extends AbstractEsaboraMock
         self::createMockIntervention(
             $wiremock,
             self::SISH_ARRETES_DOSSIER_SAS,
-            'ws_arretes_dossier_sas_termine.json'
+            'ws_arretes_dossier_sas_termine.json',
+            '00000000-0000-0000-2023-000000000010'
+        );
+
+        self::createMockIntervention(
+            $wiremock,
+            self::SISH_ARRETES_DOSSIER_SAS,
+            'ws_arretes_dossier_sas_termine_insalubrite.json',
+            '00000000-0000-0000-2024-000000000010'
         );
     }
 

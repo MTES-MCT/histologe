@@ -74,3 +74,11 @@ interventions:
     user: "admin-partenaire-13-01@histologe.fr"
     scheduled_at: '-2 days'
     status: 'PLANNED'
+  -
+    signalement: "2024-10"
+    partner: "partenaire-13-06@histologe.fr"
+    user: "user-13-06@histologe.fr"
+    scheduled_at: '2024-06-20 10:00:00'
+    status: 'DONE'
+    occupant_present: 1
+    proprietaire_present: 0
