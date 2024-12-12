@@ -563,7 +563,6 @@ class SignalementRepository extends ServiceEntityRepository
 
     public function findSignalementAffectationIterable(User $user, array $options): \Generator
     {
-        ini_set('memory_limit', '4096M');
         // temporary increase the group_concat_max_len to a higher value, for texts in GROUP_CONCAT
         $connection = $this->getEntityManager()->getConnection();
         $sql = 'SET SESSION group_concat_max_len=32505856';
@@ -609,7 +608,7 @@ class SignalementRepository extends ServiceEntityRepository
             GROUP_CONCAT(DISTINCT tags.label SEPARATOR :group_concat_separator_1) as etiquettes,
             GROUP_CONCAT(IFNULL(i.occupantPresent, \'-\') ORDER BY i.scheduledAt ASC SEPARATOR :concat_separator) as interventionOccupantPresent,
             GROUP_CONCAT(IFNULL(i.concludeProcedure, \'-\') ORDER BY i.scheduledAt ASC SEPARATOR :concat_separator) as interventionConcludeProcedure,
-            GROUP_CONCAT(IFNULL(i.details, \'-\') ORDER BY i.scheduledAt ASC SEPARATOR :concat_separator) as interventionDetails,
+            \'-désactivation temporaire-\' as interventionDetails,
             GROUP_CONCAT(
                 DISTINCT
                 CONCAT(
