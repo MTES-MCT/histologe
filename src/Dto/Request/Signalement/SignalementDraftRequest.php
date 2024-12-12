@@ -54,6 +54,18 @@ class SignalementDraftRequest
     #[Assert\NotBlank(message: 'Merci de saisir un code INSEE.')]
     #[Assert\Regex(pattern: '/^[0-9][0-9A-Za-z][0-9]{3}$/', message: 'Le code insee doit être composé de 5 caractères.')]
     private ?string $adresseLogementAdresseDetailInsee = null;
+    #[Assert\Length(max: 50, maxMessage: 'La latitude ne peut pas dépasser {{ limit }} caractères.')]
+    #[Assert\Regex(
+        pattern: '/^[-+]?([1-8]?\d(\.\d+)?|90(\.0+)?)$/',
+        message: 'La latitude doit être un nombre décimal.'
+    )]
+    private ?float $adresseLogementAdresseDetailGeolocLat = null;
+    #[Assert\Length(max: 50, maxMessage: 'La longitude ne peut pas dépasser {{ limit }} caractères.')]
+    #[Assert\Regex(
+        pattern: '/^[-+]?([1-8]?\d(\.\d+)?|90(\.0+)?)$/',
+        message: 'La longitude doit être un nombre décimal.'
+    )]
+    private ?float $adresseLogementAdresseDetailGeolocLng = null;
     private ?bool $adresseLogementAdresseDetailManual = null;
     #[Assert\Length(max: 3, maxMessage: 'L\'escalier ne doit pas dépasser {{ limit }} caractères')]
     private ?string $adresseLogementComplementAdresseEscalier = null;
@@ -548,6 +560,30 @@ class SignalementDraftRequest
     public function setAdresseLogementAdresseDetailInsee(?string $adresseLogementAdresseDetailInsee): self
     {
         $this->adresseLogementAdresseDetailInsee = $adresseLogementAdresseDetailInsee;
+
+        return $this;
+    }
+
+    public function getAdresseLogementAdresseDetailGeolocLat(): ?float
+    {
+        return $this->adresseLogementAdresseDetailGeolocLat;
+    }
+
+    public function setAdresseLogementAdresseDetailGeolocLat(?float $adresseLogementAdresseDetailGeolocLat): self
+    {
+        $this->adresseLogementAdresseDetailGeolocLat = $adresseLogementAdresseDetailGeolocLat;
+
+        return $this;
+    }
+
+    public function getAdresseLogementAdresseDetailGeolocLng(): ?float
+    {
+        return $this->adresseLogementAdresseDetailGeolocLng;
+    }
+
+    public function setAdresseLogementAdresseDetailGeolocLng(?float $adresseLogementAdresseDetailGeolocLng): self
+    {
+        $this->adresseLogementAdresseDetailGeolocLng = $adresseLogementAdresseDetailGeolocLng;
 
         return $this;
     }

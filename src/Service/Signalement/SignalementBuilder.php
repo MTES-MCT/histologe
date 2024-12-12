@@ -324,7 +324,12 @@ class SignalementBuilder
                 $this->signalementDraftRequest->getAdresseLogementComplementAdresseNumeroAppartement()
             )
             ->setAdresseAutreOccupant($this->signalementDraftRequest->getAdresseLogementComplementAdresseAutre())
-            ->setManualAddressOccupant($this->signalementDraftRequest->getAdresseLogementAdresseDetailManual());
+            ->setManualAddressOccupant($this->signalementDraftRequest->getAdresseLogementAdresseDetailManual())
+            ->setInseeOccupant($this->signalementDraftRequest->getAdresseLogementAdresseDetailInsee())
+            ->setGeoloc([
+                'lat' => $this->signalementDraftRequest->getAdresseLogementAdresseDetailGeolocLat(),
+                'lng' => $this->signalementDraftRequest->getAdresseLogementAdresseDetailGeolocLng(),
+            ]);
     }
 
     private function setOccupantDeclarantData(): void
