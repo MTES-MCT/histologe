@@ -141,8 +141,11 @@ class SignalementBuilderTest extends KernelTestCase
         $this->assertEquals('33 Rue des phoceens', $signalement->getAdresseOccupant());
         $this->assertEquals('13002', $signalement->getCpOccupant());
         $this->assertEquals('Marseille', $signalement->getVilleOccupant());
+        $this->assertEquals('13202', $signalement->getInseeOccupant());   
         $this->assertEquals('5', $signalement->getEtageOccupant());
-        $this->assertEquals('A', $signalement->getEscalierOccupant());
+        $this->assertEquals('A', $signalement->getEscalierOccupant());     
+        $this->assertArrayHasKey('lat', $signalement->getGeoloc());
+        $this->assertArrayHasKey('lng', $signalement->getGeoloc());
 
         $this->assertEquals('13 HABITAT', $signalement->getNomProprio());
         $this->assertEquals('Sandrine', $signalement->getPrenomProprio());
