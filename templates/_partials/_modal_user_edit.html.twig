@@ -91,7 +91,7 @@
                                     </fieldset>
                                 </div>
                             </div>
-                            {% if platform.feature_permission_affectation and is_granted('ROLE_ADMIN_TERRITORY') %}
+                            {% if is_granted('ROLE_ADMIN_TERRITORY') %}
                             <div class="fr-grid-row fr-grid-row--gutters">
                                 <div class="fr-col-12">
                                     <fieldset id="user_edit_permission_affectation_toggle" class="fr-fieldset" aria-labelledby="user-edit-permissions-legend">

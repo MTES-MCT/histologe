@@ -17,10 +17,6 @@ env:
   CLAMAV_SOCKET: '/tmp/clamd.socket'
   CLAMAV_HOST: 127.0.0.1
   CLAMAV_PORT: 3310
-  FEATURE_SCHS_SYNC_EVENT_ENABLE: 1
-  FEATURE_PERMISSION_AFFECTATION: 1
-  FEATURE_GRILLE_VISITE: 1
-  FEATURE_ZONAGE: 1
 jobs:
   code-quality:
     name: Histologe (PHP ${{ matrix.php-versions }})

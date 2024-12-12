@@ -156,36 +156,34 @@
                         <b><i>Aucune code INSEE</i></b>
                     {% endif %}
                 </div>
-                {% if platform.feature_zonage %}
-                    <div class="fr-col-12">
-                        <h3>Zones</h3>
-                        <p>
-                            Les zones doivent être créées dans la partie Outils Admin > Zones.
-                        </p>
-                        {% if partner.zones|length %}
-                            {% for zone in partner.zones %}
-                                <span class="fr-badge fr-badge--blue-ecume fr-mb-1v">{{ zone.name }}</span>
-                            {% endfor %}
-                        {% else %}
-                            <b><i>Aucune zone</i></b>
-                        {% endif %}
-                    </div>
-                    <div class="fr-col-12">
-                        <h3>Zones à exclure</h3>
-                        <p>
-                            Si vous souhaitez que le partenaire n'intervienne pas sur les dossiers d'une zone spécifique, sélectionnez une zone à exclure.
-                            <br> 
-                            Les zones doivent être créées dans la partie Outils Admin > Zones.
-                        </p>
-                        {% if partner.excludedZones|length %}
-                            {% for zone in partner.excludedZones %}
-                                <span class="fr-badge fr-badge--blue-ecume fr-mb-1v">{{ zone.name }}</span>
-                            {% endfor %}
-                        {% else %}
-                            <b><i>Aucune zone à exclure</i></b>
-                        {% endif %}
-                    </div>
-                {% endif %}
+                <div class="fr-col-12">
+                    <h3>Zones</h3>
+                    <p>
+                        Les zones doivent être créées dans la partie Outils Admin > Zones.
+                    </p>
+                    {% if partner.zones|length %}
+                        {% for zone in partner.zones %}
+                            <span class="fr-badge fr-badge--blue-ecume fr-mb-1v">{{ zone.name }}</span>
+                        {% endfor %}
+                    {% else %}
+                        <b><i>Aucune zone</i></b>
+                    {% endif %}
+                </div>
+                <div class="fr-col-12">
+                    <h3>Zones à exclure</h3>
+                    <p>
+                        Si vous souhaitez que le partenaire n'intervienne pas sur les dossiers d'une zone spécifique, sélectionnez une zone à exclure.
+                        <br> 
+                        Les zones doivent être créées dans la partie Outils Admin > Zones.
+                    </p>
+                    {% if partner.excludedZones|length %}
+                        {% for zone in partner.excludedZones %}
+                            <span class="fr-badge fr-badge--blue-ecume fr-mb-1v">{{ zone.name }}</span>
+                        {% endfor %}
+                    {% else %}
+                        <b><i>Aucune zone à exclure</i></b>
+                    {% endif %}
+                </div>
             </div>
         </div>
         <div id="tabpanel-agents-panel" class="fr-tabs__panel fr-tabs__panel" role="tabpanel" aria-labelledby="tabpanel-agents" tabindex="0">
@@ -209,7 +207,7 @@
                 <th scope="col">Notif. e-mails</th>
                 <th scope="col">Statut</th>
                 <th scope="col">Rôle</th>
-                {% if platform.feature_permission_affectation and is_granted('ASSIGN_PERMISSION_AFFECTATION', partner) %}
+                {% if is_granted('ASSIGN_PERMISSION_AFFECTATION', partner) %}
                 <th scope="col">Droits d'affectation</th>
                 {% endif %}
                 <th scope="col" class="fr-text--right">Actions</th>
@@ -237,7 +235,7 @@
                         <td>
                             {{ user.roleLabel() }}
                         </td>
-                        {% if platform.feature_permission_affectation and is_granted('ASSIGN_PERMISSION_AFFECTATION', partner) %}
+                        {% if is_granted('ASSIGN_PERMISSION_AFFECTATION', partner) %}
                         <td>{{ user.isSuperAdmin() or user.isTerritoryAdmin() or user.hasPermissionAffectation() ? 'Oui' : 'Non' }}</td>
                         {% endif %}
                         <td class="fr-text--right">
@@ -248,7 +246,7 @@
                                     data-usernom="{{ user.nom }}"
                                     data-userprenom="{{ user.prenom }}"
                                     data-userrole="{{ user.roles[0] }}"
-                                    {% if platform.feature_permission_affectation and is_granted('ASSIGN_PERMISSION_AFFECTATION', partner) %}
+                                    {% if is_granted('ASSIGN_PERMISSION_AFFECTATION', partner) %}
                                     data-userpermissionaffectation="{{ user.hasPermissionAffectation() ? '1' : '0' }}"
                                     {% endif %}
                                     data-userismailingactive="{{ user.isMailingActive }}"

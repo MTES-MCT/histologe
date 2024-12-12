@@ -66,11 +66,7 @@ class SynchronizeEsaboraSCHSCommand extends AbstractSynchronizeEsaboraCommand
             'SAS_Référence'
         );
 
-        if ($this->parameterBag->get('feature_schs_sync_event_enable')) {
-            $this->synchronizeEvents();
-        } else {
-            $output->writeln('<comment>SCHS event sync is not enabled!<comment>');
-        }
+        $this->synchronizeEvents();
 
         return Command::SUCCESS;
     }

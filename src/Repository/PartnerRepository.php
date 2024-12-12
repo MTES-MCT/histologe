@@ -14,7 +14,6 @@ use Doctrine\ORM\Query\QueryException;
 use Doctrine\ORM\QueryBuilder;
 use Doctrine\ORM\Tools\Pagination\Paginator;
 use Doctrine\Persistence\ManagerRegistry;
-use Symfony\Component\DependencyInjection\Attribute\Autowire;
 
 /**
  * @method Partner|null find($id, $lockMode = null, $lockVersion = null)
@@ -26,8 +25,6 @@ class PartnerRepository extends ServiceEntityRepository
 {
     public function __construct(
         ManagerRegistry $registry,
-        #[Autowire(env: 'FEATURE_ZONAGE')]
-        private readonly bool $featureZonage,
     ) {
         parent::__construct($registry, Partner::class);
     }
@@ -161,28 +158,27 @@ class PartnerRepository extends ServiceEntityRepository
         ->setParameter('signalement', $signalement);
 
         $affectedPartners = $subquery->getQuery()->getSingleColumnResult();
-        if ($this->featureZonage) {
-            $conn = $this->getEntityManager()->getConnection();
-            $params = [
-                'territory' => $signalement->getTerritory()->getId(),
-                'insee' => '%'.$signalement->getInseeOccupant().'%',
-                'lng' => $signalement->getGeoloc()['lng'] ?? 'notInZone',
-                'lat' => $signalement->getGeoloc()['lat'] ?? 'notInZone',
-            ];
-            $clauseSubquery = '';
-            if (\count($affectedPartners) || 'IN' == $operator) {
-                if (0 === \count($affectedPartners)) {
-                    $clauseSubquery = 'AND p.id '.$operator.' (null)';
-                } else {
-                    $partnersParams = [];
-                    foreach ($affectedPartners as $key => $partner) {
-                        $partnersParams[] = ':partner_'.$key;
-                        $params['partner_'.$key] = $partner;
-                    }
-                    $clauseSubquery = 'AND p.id '.$operator.' ('.implode(',', $partnersParams).')';
+        $conn = $this->getEntityManager()->getConnection();
+        $params = [
+            'territory' => $signalement->getTerritory()->getId(),
+            'insee' => '%'.$signalement->getInseeOccupant().'%',
+            'lng' => $signalement->getGeoloc()['lng'] ?? 'notInZone',
+            'lat' => $signalement->getGeoloc()['lat'] ?? 'notInZone',
+        ];
+        $clauseSubquery = '';
+        if (\count($affectedPartners) || 'IN' == $operator) {
+            if (0 === \count($affectedPartners)) {
+                $clauseSubquery = 'AND p.id '.$operator.' (null)';
+            } else {
+                $partnersParams = [];
+                foreach ($affectedPartners as $key => $partner) {
+                    $partnersParams[] = ':partner_'.$key;
+                    $params['partner_'.$key] = $partner;
                 }
+                $clauseSubquery = 'AND p.id '.$operator.' ('.implode(',', $partnersParams).')';
             }
-            $sql = '
+        }
+        $sql = '
                 SELECT p.id, p.nom as name
                 FROM partner p
                 LEFT JOIN partner_zone pz ON p.id = pz.partner_id
@@ -197,31 +193,9 @@ class PartnerRepository extends ServiceEntityRepository
                 '.$clauseSubquery.'
                 ORDER BY p.nom ASC';
 
-            $resultSet = $conn->executeQuery($sql, $params);
+        $resultSet = $conn->executeQuery($sql, $params);
 
-            return $resultSet->fetchAllAssociative();
-        }
-        $queryBuilder = $this->createQueryBuilder('p');
-        $queryBuilder->select('p.id, p.nom as name')
-            ->where('p.isArchive = 0')
-            ->andWhere('p.territory = :territory')
-            ->setParameter('territory', $signalement->getTerritory())
-            ->andWhere(
-                $queryBuilder->expr()->orX(
-                    $queryBuilder->expr()->like('p.insee', "'[\"\"]'"),
-                    $queryBuilder->expr()->like('p.insee', "'[]'"),
-                    $queryBuilder->expr()->like('p.insee', ':insee')
-                )
-            )
-            ->setParameter('insee', '%'.$signalement->getInseeOccupant().'%')
-        ;
-        if (\count($affectedPartners) > 0 || 'IN' == $operator) {
-            $queryBuilder->andWhere('p.id '.$operator.' (:subquery)')
-            ->setParameter('subquery', $affectedPartners);
-        }
-        $queryBuilder->orderBy('p.nom', 'ASC');
-
-        return $queryBuilder->getQuery()->getArrayResult();
+        return $resultSet->fetchAllAssociative();
     }
 
     public function findPartnersWithQualification(Qualification $qualification, ?Territory $territory)

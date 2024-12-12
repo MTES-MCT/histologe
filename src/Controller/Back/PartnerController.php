@@ -11,7 +11,6 @@ use App\Entity\Partner;
 use App\Entity\User;
 use App\Entity\UserPartner;
 use App\Factory\UserFactory;
-use App\Form\OldPartnerType;
 use App\Form\PartnerPerimetreType;
 use App\Form\PartnerType;
 use App\Manager\AffectationManager;
@@ -32,8 +31,6 @@ use App\Service\Signalement\VisiteNotifier;
 use App\Validator\EmailFormatValidator;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\DependencyInjection\Attribute\Autowire;
-use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Symfony\Component\Form\FormError;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\Request;
@@ -49,8 +46,6 @@ class PartnerController extends AbstractController
 {
     public function __construct(
         private readonly AffectationManager $affectationManager,
-        #[Autowire(env: 'FEATURE_ZONAGE')]
-        private readonly bool $featureZonage,
     ) {
     }
 
@@ -115,15 +110,7 @@ class PartnerController extends AbstractController
         if (!$this->isGranted('ROLE_ADMIN')) {
             $partner->setTerritory($user->getFirstTerritory());
         }
-        if ($this->featureZonage) {
-            $form = $this->createForm(PartnerType::class, $partner);
-        } else {
-            $form = $this->createForm(OldPartnerType::class, $partner, [
-                'can_edit_territory' => $this->isGranted('ROLE_ADMIN'),
-                'territory' => $user->getFirstTerritory(),
-                'route' => 'back_partner_new',
-            ]);
-        }
+        $form = $this->createForm(PartnerType::class, $partner);
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
             $entityManager->persist($partner);
@@ -167,13 +154,7 @@ class PartnerController extends AbstractController
             $partnerAutoAffectationRules = $autoAffectationRuleRepository->findForPartner($partner);
         }
 
-        if ($this->featureZonage) {
-            $template = 'back/partner/view.html.twig';
-        } else {
-            $template = 'back/partner/old-view.html.twig';
-        }
-
-        return $this->render($template, [
+        return $this->render('back/partner/view.html.twig', [
             'partner' => $partner,
             'partners' => $partnerRepository->findAllList($partner->getTerritory()),
             'last_job_date' => $lastJobEventDate,
@@ -202,15 +183,7 @@ class PartnerController extends AbstractController
 
         $previousTerritory = $partner->getTerritory();
 
-        if ($this->featureZonage) {
-            $form = $this->createForm(PartnerType::class, $partner);
-        } else {
-            /** @var User $user */
-            $user = $this->getUser();
-            $form = $this->createForm(OldPartnerType::class, $partner, [
-                'can_edit_territory' => $user->isSuperAdmin(),
-            ]);
-        }
+        $form = $this->createForm(PartnerType::class, $partner);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
@@ -277,9 +250,6 @@ class PartnerController extends AbstractController
         Partner $partner,
         PartnerManager $partnerManager,
     ): Response {
-        if (!$this->featureZonage) {
-            throw $this->createNotFoundException();
-        }
         $this->denyAccessUnlessGranted('PARTNER_EDIT', $partner);
         if ($partner->getIsArchive()) {
             return $this->redirect($this->generateUrl('back_partner_index', ['page' => 1, 'territory' => $partner->getTerritory()->getId()]));
@@ -396,7 +366,6 @@ class PartnerController extends AbstractController
         UserFactory $userFactory,
         PartnerRepository $partnerRepository,
         ValidatorInterface $validator,
-        ParameterBagInterface $parameterBag,
     ): Response {
         $this->denyAccessUnlessGranted('USER_CREATE', $partner);
         $data = $request->get('user_create');
@@ -408,7 +377,7 @@ class PartnerController extends AbstractController
         if (!$this->canAttributeRole($data['roles'])) {
             return $this->redirectToRoute('back_partner_view', ['id' => $partner->getId(), '_fragment' => 'agents'], Response::HTTP_SEE_OTHER);
         }
-        if (!$parameterBag->get('feature_permission_affectation') || !$this->isGranted(PartnerVoter::ASSIGN_PERMISSION_AFFECTATION, $partner)) {
+        if (!$this->isGranted(PartnerVoter::ASSIGN_PERMISSION_AFFECTATION, $partner)) {
             $data['hasPermissionAffectation'] = false;
         } else {
             $data['hasPermissionAffectation'] = $data['hasPermissionAffectation'] ?? false;
@@ -460,7 +429,6 @@ class PartnerController extends AbstractController
         UserRepository $userRepository,
         PartnerRepository $partnerRepository,
         ValidatorInterface $validator,
-        ParameterBagInterface $parameterBag,
     ): Response {
         $userId = $request->request->get('user_id');
         $user = $userManager->find((int) $userId);
@@ -511,7 +479,7 @@ class PartnerController extends AbstractController
             'isMailingActive' => $data['isMailingActive'],
             'hasPermissionAffectation' => $data['hasPermissionAffectation'] ?? false,
         ];
-        if (!$parameterBag->get('feature_permission_affectation') || !$this->isGranted(PartnerVoter::ASSIGN_PERMISSION_AFFECTATION, $partner)) {
+        if (!$this->isGranted(PartnerVoter::ASSIGN_PERMISSION_AFFECTATION, $partner)) {
             unset($updateData['hasPermissionAffectation']);
         } else {
             $updateData['hasPermissionAffectation'] = $updateData['hasPermissionAffectation'] ?? false;

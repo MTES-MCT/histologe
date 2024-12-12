@@ -39,11 +39,7 @@
             <span>Tous les champs sont obligatoires, sauf mention contraire.</span>
         {% endif %}
         <div class="fr-pt-5v">
-            {% if platform.feature_zonage %}
-                {{ include('back/partner/_form.html.twig') }}
-            {% else %}
-                {{ include('back/partner/_old_form.html.twig') }}
-            {% endif %}
+            {{ include('back/partner/_form.html.twig') }}
         </div>
     </section>
 {% endblock %}

@@ -102,10 +102,6 @@ class PartnerRepositoryTest extends KernelTestCase
 
     public function testFindPartnersNotAffectableZone(): void
     {
-        $feature_zonage = static::getContainer()->getParameter('feature_zonage');
-        if (!$feature_zonage) {
-            $this->markTestSkipped('La fonctionnalité "feature_zonage" est désactivée.');
-        }
         /** @var SignalementRepository $signalementRepository */
         $signalementRepository = $this->entityManager->getRepository(Signalement::class);
 

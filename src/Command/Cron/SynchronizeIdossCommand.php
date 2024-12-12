@@ -21,7 +21,6 @@ use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
-use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 
 #[AsCommand(
@@ -44,8 +43,6 @@ class SynchronizeIdossCommand extends AbstractCronCommand
         private readonly NotificationMailerRegistry $notificationMailerRegistry,
         private readonly ParameterBagInterface $parameterBag,
         private readonly IdossService $idossService,
-        #[Autowire(env: 'FEATURE_IDOSS_ENABLE')]
-        private bool $featureIdossEnable,
     ) {
         parent::__construct($this->parameterBag);
         $this->partners = $this->entityManager->getRepository(Partner::class)->findBy(['isIdossActive' => true]);
@@ -55,11 +52,6 @@ class SynchronizeIdossCommand extends AbstractCronCommand
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $this->io = new SymfonyStyle($input, $output);
-        if (!$this->featureIdossEnable) {
-            $this->io->warning('Feature "FEATURE_IDOSS_ENABLE" is disabled.');
-
-            return Command::SUCCESS;
-        }
 
         $nbStatusUpdated = 0;
         foreach ($this->partners as $partner) {

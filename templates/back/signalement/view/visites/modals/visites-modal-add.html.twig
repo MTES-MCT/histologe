@@ -13,7 +13,7 @@
                         </div>
                         <div class="fr-modal__content">
                             <h1 id="fr-modal-add-visite-modal" class="fr-modal__title">Définir une date de visite</h1>
-                            {% if platform.feature_grille_visite and not signalement.territory.isGrilleVisiteDisabled %}
+                            {% if not signalement.territory.isGrilleVisiteDisabled %}
                                 <div class="fr-my-5v fr-text--right">
                                     <a class="fr-btn fr-btn--secondary fr-icon-article-line fr-btn--icon-left matomo_download" 
                                     title="Télécharger la grille de visite {% if signalement.territory.grilleVisiteFilename %}du territoire{% endif %}"
