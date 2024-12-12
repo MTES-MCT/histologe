@@ -113,6 +113,6 @@ class SignalementExportFactoryTest extends TestCase
         $this->assertEquals(SignalementExportFactory::NON, $signalementExportFactory->isNotOccupant);
         $this->assertEquals(VisiteStatus::TERMINEE->value, $signalementExportFactory->interventionStatus);
         $this->assertEquals('RSD,INSALUBRITE', $signalementExportFactory->interventionConcludeProcedure);
-        $this->assertEquals('dossier envoyé pour manquement sanitaire', $signalementExportFactory->interventionDetails);
+        $this->assertEquals('colonne temporairement désactivée', $signalementExportFactory->interventionDetails);
     }
 }
