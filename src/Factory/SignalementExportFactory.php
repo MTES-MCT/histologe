@@ -103,7 +103,7 @@ class SignalementExportFactory
             isOccupantPresentVisite: ($isOccupantPresentVisite && '-' !== $isOccupantPresentVisite) ? self::OUI : ('0' === $isOccupantPresentVisite ? self::NON : ''),
             interventionStatus: $lastIntervention['status'],
             interventionConcludeProcedure: $lastIntervention['conclude'],
-            interventionDetails: strip_tags($lastIntervention['details']),
+            interventionDetails: 'colonne temporairement désactivée',
             modifiedAt: $modifiedAt,
             closedAt: $closedAt,
             motifCloture: $motifCloture,
