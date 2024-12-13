@@ -82,12 +82,15 @@ class UpdateSignalementGeolocalisationCommandTest extends TestCase
         );
     }
 
-    public function testExecuteCommandWithArgumentTerritory(): void
+    /**
+     * @dataProvider provideTestCases
+     */
+    public function testExecuteCommandWithDates(string $providerMethod, array $option): void
     {
         $this->signalementManager
             ->expects($this->once())
             ->method('getRepository')
-            ->willReturn($this->createMockSignalementRepository(2));
+            ->willReturn($this->createMockSignalementRepository(2, $providerMethod));
 
         $this->signalementManager
             ->expects($this->atMost(2))
@@ -119,51 +122,15 @@ class UpdateSignalementGeolocalisationCommandTest extends TestCase
 
         $this->executeAssertOutputContainsAddress(
             $command,
-            ['--zip' => '13'],
+            $option,
             $address
         );
     }
 
-    public function testExecuteCommandWithDates(): void
+    public function provideTestCases(): \Generator
     {
-        $this->signalementManager
-            ->expects($this->once())
-            ->method('getRepository')
-            ->willReturn($this->createMockSignalementRepository(2, 'findSignalementsBetweenDates'));
-
-        $this->signalementManager
-            ->expects($this->atMost(2))
-            ->method('updateAddressOccupantFromAddress');
-
-        $this->signalementManager
-            ->expects($this->atMost(2))
-            ->method('persist');
-
-        $this->signalementManager
-            ->expects($this->exactly(2))
-            ->method('flush');
-
-        $result = json_decode(
-            file_get_contents(__DIR__.'/../../files/datagouv/get_api_ban_collection_response.json'),
-            true
-        );
-
-        $this->addressService
-            ->expects($this->atLeast(2))
-            ->method('getAddress')
-            ->willReturn($address = new Address($result));
-
-        $command = new UpdateSignalementGeolocalisationCommand(
-            $this->addressService,
-            $this->territoryRepository,
-            $this->signalementManager
-        );
-
-        $this->executeAssertOutputContainsAddress(
-            $command,
-            ['--from_created_at' => '2024-01-01'],
-            $address
-        );
+        yield 'With territory option' => ['findWithNoGeolocalisation', ['--zip' => '13']];
+        yield 'With date option' => ['findSignalementsBetweenDates', ['--from_created_at' => '2024-01-01']];
     }
 
     public function testExecuteCommandWithNoSignalement(): void
