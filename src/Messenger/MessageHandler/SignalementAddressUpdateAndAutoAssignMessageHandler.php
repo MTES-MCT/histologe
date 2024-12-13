@@ -22,10 +22,10 @@ class SignalementAddressUpdateAndAutoAssignMessageHandler
     ) {
     }
 
-    public function __invoke(SignalementAddressUpdateAndAutoAssignMessage $SignalementAddressUpdateAndAutoAssignMessage): void
+    public function __invoke(SignalementAddressUpdateAndAutoAssignMessage $signalementAddressUpdateAndAutoAssignMessage): void
     {
         try {
-            $signalement = $this->signalementRepository->find($SignalementAddressUpdateAndAutoAssignMessage->getSignalementId());
+            $signalement = $this->signalementRepository->find($signalementAddressUpdateAndAutoAssignMessage->getSignalementId());
             $this->signalementAddressUpdater->updateAddressOccupantFromBanData($signalement);
             $this->autoAssigner->assign($signalement);
             $this->entityManager->flush();
@@ -33,7 +33,7 @@ class SignalementAddressUpdateAndAutoAssignMessageHandler
             $this->logger->error(
                 sprintf(
                     'The update from address of the signalement (%s) failed for the following reason : %s',
-                    $SignalementAddressUpdateAndAutoAssignMessage->getSignalementId(),
+                    $signalementAddressUpdateAndAutoAssignMessage->getSignalementId(),
                     $exception->getMessage()
                 )
             );
