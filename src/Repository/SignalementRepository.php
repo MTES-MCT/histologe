@@ -1388,6 +1388,41 @@ class SignalementRepository extends ServiceEntityRepository
             ->getResult();
     }
 
+    public function findForAPI(User $user, int $limit = 1, int $page = 1, ?string $uuid = null, ?string $reference = null): array
+    {
+        $partners = $user->getPartners();
+        $offset = ($page - 1) * $limit;
+        $qb = $this->createQueryBuilder('s')
+            ->select('s', 'desordrePrecisions', 'desordreCategories', 'desordreCriteres', 'signalementQualifications',
+                'files', 'tags', 'suivi', 'interventions', 'territory')
+            ->leftJoin('s.desordrePrecisions', 'desordrePrecisions')
+            ->leftJoin('s.desordreCategories', 'desordreCategories')
+            ->leftJoin('s.desordreCriteres', 'desordreCriteres')
+            ->leftJoin('s.signalementQualifications', 'signalementQualifications')
+            ->leftJoin('s.files', 'files')
+            ->leftJoin('s.tags', 'tags')
+            ->leftJoin('s.suivis', 'suivi')
+            ->leftJoin('s.affectations', 'affectations')
+            ->leftJoin('s.interventions', 'interventions')
+            ->leftJoin('s.territory', 'territory')
+            ->where('affectations.partner IN (:partners)')
+            ->setParameter('partners', $partners)
+            ->orderBy('s.createdAt', 'DESC')
+            ->setFirstResult($offset)
+            ->setMaxResults($limit);
+        if ($uuid) {
+            $qb->andWhere('s.uuid = :uuid')
+            ->setParameter('uuid', $uuid);
+        }
+        if ($reference) {
+            $qb->andWhere('s.reference = :reference')
+            ->setParameter('reference', $reference);
+        }
+
+        return $qb->getQuery()
+            ->getResult();
+    }
+
     public function findSignalementsLastSuiviWithSuiviAuto(Territory $territory, int $limit): array
     {
         $connexion = $this->getEntityManager()->getConnection();

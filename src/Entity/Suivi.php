@@ -108,6 +108,40 @@ class Suivi implements EntityHistoryInterface
         return $this;
     }
 
+    public function getCreatedByLabel(): ?string
+    {
+        if (self::TYPE_TECHNICAL === $this->type) {
+            return 'Suivi automatique';
+        }
+        if ($this->getCreatedBy()) {
+            if (in_array('ROLE_USAGER', $this->getCreatedBy()->getRoles())) {
+                if ($this->getCreatedBy()->getEmail() === $this->getSignalement()->getMailOccupant()) {
+                    return 'OCCUPANT : '.ucfirst($this->getCreatedBy()->getNomComplet());
+                }
+
+                return 'DECLARANT : '.ucfirst($this->getCreatedBy()->getNomComplet());
+            }
+            if ($this->getCreatedBy()->getPartnerInTerritoryOrFirstOne($this->getSignalement()->getTerritory())) {
+                $partner = $this->getCreatedBy()->getPartnerInTerritoryOrFirstOne($this->getSignalement()->getTerritory());
+                if ($partner->getIsArchive()) {
+                    return 'Partenaire supprimé';
+                }
+
+                return $partner->getNom().' : '.$this->getCreatedBy()->getPrenom().' '.$this->getCreatedBy()->getNom();
+            }
+
+            return 'Aucun';
+        }
+        if ($this->getCreatedAt()->format('Y') >= 2024) {
+            return 'Occupant ou déclarant';
+        }
+        if ($this->getSignalement()->getIsNotOccupant()) {
+            return 'DECLARANT : '.strtoupper($this->getSignalement()->getNomDeclarant()).' '.ucfirst($this->getSignalement()->getPrenomDeclarant());
+        }
+
+        return 'OCCUPANT : '.strtoupper($this->getSignalement()->getNomOccupant()).' '.ucfirst($this->getSignalement()->getPrenomOccupant());
+    }
+
     public function getDescription($transformHtml = true): ?string
     {
         if (null !== $this->deletedAt) {

@@ -12,7 +12,7 @@ use Random\RandomException;
 class ApiUserToken implements EntityHistoryInterface
 {
     // Constant values to update later
-    public const string EXPIRATION_TIME = '+2 minutes';
+    public const string EXPIRATION_TIME = '+200 minutes';
     public const string CLEAN_EXPIRATION_PERIOD = '-3 minutes';
 
     #[ORM\Id]
