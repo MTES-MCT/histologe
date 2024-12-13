@@ -34,7 +34,8 @@ class UpdateSignalementGeolocalisationCommand extends Command
     {
         $this
             ->addOption('zip', null, InputOption::VALUE_OPTIONAL, 'Territory zip to target')
-            ->addOption('uuid', null, InputOption::VALUE_OPTIONAL, 'UUID du signalement');
+            ->addOption('uuid', null, InputOption::VALUE_OPTIONAL, 'UUID du signalement')
+            ->addOption('from_created_at', null, InputOption::VALUE_OPTIONAL, 'Get signalements data from created_at');
     }
 
     protected function execute(InputInterface $input, OutputInterface $output): int
@@ -43,14 +44,20 @@ class UpdateSignalementGeolocalisationCommand extends Command
 
         $zip = $input->getOption('zip');
         $uuid = $input->getOption('uuid');
+        $fromCreatedAt = $input->getOption('from_created_at');
+        /** @var SignalementRepository $signalementRepository */
+        $signalementRepository = $this->signalementManager->getRepository();
 
         if ($uuid) {
             $signalements = $this->signalementManager->findBy(['uuid' => $uuid]);
-        } else {
+        } elseif (!empty($zip)) {
             $territory = $this->territoryRepository->findOneBy(['zip' => $zip]);
-            /** @var SignalementRepository $signalementRepository */
-            $signalementRepository = $this->signalementManager->getRepository();
             $signalements = $signalementRepository->findWithNoGeolocalisation($territory);
+        } elseif (!empty($fromCreatedAt)) {
+            $fromCreatedAt = \DateTimeImmutable::createFromFormat('Y-m-d', $fromCreatedAt);
+            if (false !== $fromCreatedAt) {
+                $signalements = $signalementRepository->findSignalementsBetweenDates($fromCreatedAt, new \DateTimeImmutable());
+            }
         }
 
         if (empty($signalements)) {

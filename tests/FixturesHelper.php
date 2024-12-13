@@ -84,7 +84,7 @@ trait FixturesHelper
     /**
      * @return Signalement[]
      */
-    public function getSignalementsWithoutGeolocation($count = 1): array
+    public function getSignalements($count = 1): array
     {
         $faker = Factory::create('fr_FR');
 

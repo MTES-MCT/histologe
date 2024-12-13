@@ -37,12 +37,6 @@ class UpdateSignalementGeolocalisationCommandTest extends TestCase
             $this->signalementManager
         );
 
-        $signalementRepository = $this->createMockSignalementRepository(0);
-        $this->signalementManager
-            ->expects($this->once())
-            ->method('getRepository')
-            ->willReturn($signalementRepository);
-
         $commandTester = new CommandTester($command);
         $commandTester->execute([]);
 
@@ -55,7 +49,7 @@ class UpdateSignalementGeolocalisationCommandTest extends TestCase
         $this->signalementManager
             ->expects($this->once())
             ->method('findBy')
-            ->willReturn($this->getSignalementsWithoutGeolocation());
+            ->willReturn($this->getSignalements());
 
         $this->signalementManager
             ->expects($this->once())
@@ -130,6 +124,48 @@ class UpdateSignalementGeolocalisationCommandTest extends TestCase
         );
     }
 
+    public function testExecuteCommandWithDates(): void
+    {
+        $this->signalementManager
+            ->expects($this->once())
+            ->method('getRepository')
+            ->willReturn($this->createMockSignalementRepository(2, 'findSignalementsBetweenDates'));
+
+        $this->signalementManager
+            ->expects($this->atMost(2))
+            ->method('updateAddressOccupantFromAddress');
+
+        $this->signalementManager
+            ->expects($this->atMost(2))
+            ->method('persist');
+
+        $this->signalementManager
+            ->expects($this->exactly(2))
+            ->method('flush');
+
+        $result = json_decode(
+            file_get_contents(__DIR__.'/../../files/datagouv/get_api_ban_collection_response.json'),
+            true
+        );
+
+        $this->addressService
+            ->expects($this->atLeast(2))
+            ->method('getAddress')
+            ->willReturn($address = new Address($result));
+
+        $command = new UpdateSignalementGeolocalisationCommand(
+            $this->addressService,
+            $this->territoryRepository,
+            $this->signalementManager
+        );
+
+        $this->executeAssertOutputContainsAddress(
+            $command,
+            ['--from_created_at' => '2024-01-01'],
+            $address
+        );
+    }
+
     public function testExecuteCommandWithNoSignalement(): void
     {
         $this->signalementManager
@@ -170,13 +206,13 @@ class UpdateSignalementGeolocalisationCommandTest extends TestCase
         $this->assertStringContainsString($address->getLongitude(), $output);
     }
 
-    private function createMockSignalementRepository(int $countSignalements = 0): MockObject|SignalementRepository
+    private function createMockSignalementRepository(int $countSignalements = 0, $method = 'findWithNoGeolocalisation'): MockObject|SignalementRepository
     {
         $signalementRepository = $this->createMock(SignalementRepository::class);
         $signalementRepository
             ->expects($this->once())
-            ->method('findWithNoGeolocalisation')
-            ->willReturn($countSignalements > 0 ? $this->getSignalementsWithoutGeolocation($countSignalements) : []);
+            ->method($method)
+            ->willReturn($countSignalements > 0 ? $this->getSignalements($countSignalements) : []);
 
         return $signalementRepository;
     }
