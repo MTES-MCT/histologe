@@ -8,6 +8,7 @@ use App\Entity\Enum\Qualification;
 use App\Entity\Partner;
 use App\Entity\Signalement;
 use App\Entity\Territory;
+use App\Service\SearchPartner;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\DBAL\Exception;
 use Doctrine\ORM\Query\QueryException;
@@ -40,13 +41,26 @@ class PartnerRepository extends ServiceEntityRepository
         return $queryBuilder;
     }
 
+    public function findFilteredPaginated(SearchPartner $searchPartner, int $maxResult): Paginator {
+        return $this->getPartners(
+            $searchPartner->getTerritory(),
+            $searchPartner->getPartnerType(),
+            $searchPartner->getQueryPartner(),
+            $searchPartner->getPage(),
+            $maxResult,
+        );
+    }
+
     public function getPartners(
         ?Territory $territory,
         ?PartnerType $type,
         ?string $filterTerms,
         $page,
+        ?int $maxResult = null,
     ): Paginator {
-        $maxResult = Partner::MAX_LIST_PAGINATION;
+        if (empty($maxResult)) {
+            $maxResult = Partner::MAX_LIST_PAGINATION;
+        }
         $firstResult = ($page - 1) * $maxResult;
 
         $queryBuilder = $this->getPartnersQueryBuilder($territory);
