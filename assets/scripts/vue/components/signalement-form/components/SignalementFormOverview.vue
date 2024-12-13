@@ -169,6 +169,7 @@
           :icons="disorderIcons"
           :isValidationScreen="true"
           />
+        <p v-html="getFormDataInfosDesordres()"></p>
       </div>
 
       <!-- LA PROCEDURE  -->
@@ -379,6 +380,15 @@ export default defineComponent({
         result += this.addLineIfNeeded('logement_social_date_naissance', 'Date de naissance : ')
         result += this.addLineIfNeeded('logement_social_numero_allocataire', 'Numéro allocataire : ')
         result += this.addLineIfNeeded('logement_social_montant_allocation', 'Montant allocation : ', ' €')
+      }
+      return result
+    },
+    getFormDataInfosDesordres (): string {
+      console.log('getFormDataInfosDesordres')
+      let result = ''
+      result += this.addLineIfNeeded('zone_concernee_debut_desordres', 'Les désordres ont commencé il y a : ')
+      if (this.formStore.data.profil !== 'bailleur_occupant' && this.formStore.data.profil !== 'locataire') {
+        result += this.addLineIfNeeded('zone_concernee_constatation_desordres', 'Désordres constatés ? ')
       }
       return result
     },
