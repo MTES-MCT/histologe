@@ -47,7 +47,7 @@ class UpdateSignalementGeolocalisationCommand extends Command
         $fromCreatedAt = $input->getOption('from_created_at');
         /** @var SignalementRepository $signalementRepository */
         $signalementRepository = $this->signalementManager->getRepository();
-
+        $signalements = null;
         if ($uuid) {
             $signalements = $this->signalementManager->findBy(['uuid' => $uuid]);
         } elseif (!empty($zip)) {
