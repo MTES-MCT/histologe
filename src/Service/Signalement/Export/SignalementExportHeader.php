@@ -30,6 +30,7 @@ class SignalementExportHeader
             'Complément',
             'Situations',
             'Désordres',
+            'Début des désordres',
             'Étiquettes',
             'Photos',
             'Documents',

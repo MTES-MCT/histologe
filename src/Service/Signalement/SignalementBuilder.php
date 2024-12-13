@@ -153,6 +153,11 @@ class SignalementBuilder
             $this->signalement->setJsonContent($jsonContent);
         }
 
+        $this->signalement->setDebutDesordres($this->signalementDraftRequest->getZoneConcerneeDebutDesordres());
+        $this->signalement->setHasSeenDesordres(
+            $this->evalBoolean($this->signalementDraftRequest->getZoneConcerneeConstatationDesordres())
+        );
+
         $this->signalement->setScore($this->criticiteCalculator->calculate($this->signalement));
 
         $this->signalementQualificationUpdater->updateQualificationFromScore($this->signalement);

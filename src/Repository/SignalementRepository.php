@@ -601,6 +601,7 @@ class SignalementRepository extends ServiceEntityRepository
             s.motifCloture,
             s.geoloc,
             s.typeCompositionLogement,
+            s.debutDesordres,
             GROUP_CONCAT(DISTINCT situations.label SEPARATOR :group_concat_separator_1) as oldSituations,
             GROUP_CONCAT(DISTINCT criteres.label SEPARATOR :group_concat_separator_1) as oldCriteres,
             GROUP_CONCAT(DISTINCT desordreCategories.label SEPARATOR :group_concat_separator_1) as listDesordreCategories,

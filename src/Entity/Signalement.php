@@ -427,6 +427,12 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $rnbIdOccupant = null;
 
+    #[ORM\Column(type: 'string', length: 15, nullable: true)]
+    private ?string $debutDesordres = null;
+
+    #[ORM\Column(type: 'boolean', nullable: true)]
+    private ?bool $hasSeenDesordres = null;
+
     public function __construct()
     {
         $this->situations = new ArrayCollection();
@@ -2461,6 +2467,30 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
     public function setRnbIdOccupant(?string $rnbIdOccupant): static
     {
         $this->rnbIdOccupant = $rnbIdOccupant;
+
+        return $this;
+    }
+
+    public function getDebutDesordres(): ?string
+    {
+        return $this->debutDesordres;
+    }
+
+    public function setDebutDesordres(?string $debutDesordres): static
+    {
+        $this->debutDesordres = $debutDesordres;
+
+        return $this;
+    }
+
+    public function getHasSeenDesordres(): ?bool
+    {
+        return $this->hasSeenDesordres;
+    }
+
+    public function setHasSeenDesordres(?bool $hasSeenDesordres): static
+    {
+        $this->hasSeenDesordres = $hasSeenDesordres;
 
         return $this;
     }

@@ -79,6 +79,7 @@ class SignalementExportFactory
             adresseAutreOccupant: $data['adresseAutreOccupant'] ?? self::NON_RENSEIGNE,
             situations: $data['listDesordreCategories'] ?? $data['oldSituations'] ?? null,
             desordres: $data['listDesordreCriteres'] ?? $data['oldCriteres'] ?? null,
+            debutDesordres: $this->mapData($data, 'debutDesordres'),
             etiquettes: $data['etiquettes'] ?? null,
             photos: '-',
             documents: '-',
@@ -128,6 +129,23 @@ class SignalementExportFactory
                 $value = null === $data[$keyColumn]
                     ? self::NON_RENSEIGNE
                     : (\in_array($data[$keyColumn], self::ALLOCATAIRE) ? self::OUI : self::NON);
+                break;
+            case 'debutDesordres':
+                if ('less_1_month' === $data[$keyColumn]) {
+                    $value = 'Moins d\'un mois';
+                } elseif ('1_to_6_months' === $data[$keyColumn]) {
+                    $value = 'Entre 1 mois et 6 mois';
+                } elseif ('6_to_12_months' === $data[$keyColumn]) {
+                    $value = 'Entre 6 mois et 1 an';
+                } elseif ('1_to_2_years' === $data[$keyColumn]) {
+                    $value = 'Entre 1 et 2 ans';
+                } elseif ('more_2_years' === $data[$keyColumn]) {
+                    $value = 'Plus de 2 ans';
+                } elseif ('nsp' === $data[$keyColumn]) {
+                    $value = 'Ne sait pas';
+                } else {
+                    $value = self::NON_RENSEIGNE;
+                }
                 break;
             default:
                 break;

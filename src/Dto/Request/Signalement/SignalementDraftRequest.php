@@ -465,6 +465,16 @@ class SignalementDraftRequest
     #[Assert\DateTime('Y')]
     private ?string $informationsComplementairesLogementAnneeConstruction = null;
     private ?string $messageAdministration = null;
+    #[Assert\Choice(
+        choices: ['less_1_month', '1_to_6_months', '6_to_12_months', '1_to_2_years', 'more_2_years', 'nsp'],
+        message: 'Le champ "zoneConcerneeDebutDesordres" est incorrect.',
+    )]
+    private ?string $zoneConcerneeDebutDesordres = null;
+    #[Assert\Choice(
+        choices: ['oui', 'non'],
+        message: 'Le champ "zoneConcerneeConstatationDesordres" est incorrect.',
+    )]
+    private ?string $zoneConcerneeConstatationDesordres = null;
     private array $files = [];
     private ?array $categorieDisorders = null;
 
@@ -1777,6 +1787,30 @@ class SignalementDraftRequest
     public function setCategorieDisorders(?array $categorieDisorders): self
     {
         $this->categorieDisorders = $categorieDisorders;
+
+        return $this;
+    }
+
+    public function getZoneConcerneeDebutDesordres(): ?string
+    {
+        return $this->zoneConcerneeDebutDesordres;
+    }
+
+    public function setZoneConcerneeDebutDesordres($zoneConcerneeDebutDesordres): self
+    {
+        $this->zoneConcerneeDebutDesordres = $zoneConcerneeDebutDesordres;
+
+        return $this;
+    }
+
+    public function getZoneConcerneeConstatationDesordres(): ?string
+    {
+        return $this->zoneConcerneeConstatationDesordres;
+    }
+
+    public function setZoneConcerneeConstatationDesordres($zoneConcerneeConstatationDesordres): self
+    {
+        $this->zoneConcerneeConstatationDesordres = $zoneConcerneeConstatationDesordres;
 
         return $this;
     }

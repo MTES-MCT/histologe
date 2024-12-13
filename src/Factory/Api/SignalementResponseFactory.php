@@ -145,6 +145,8 @@ class SignalementResponseFactory
         $signalementResponse->score = $signalement->getScore();
         $signalementResponse->scoreBatiment = $signalement->getScoreBatiment();
         $signalementResponse->scoreLogement = $signalement->getScoreLogement();
+        $signalementResponse->debutDesordres = $signalement->getDebutDesordres();
+        $signalementResponse->hasSeenDesordres = $signalement->getHasSeenDesordres();
         // tags, qualifications, suivis, affectations, visites, files
         foreach ($signalement->getTags() as $tag) {
             $signalementResponse->tags[] = $tag->getLabel();

@@ -126,6 +126,8 @@ class SignalementResponse
     public ?float $score;
     public ?float $scoreBatiment;
     public ?float $scoreLogement;
+    public ?string $debutDesordres = null;
+    public ?bool $hasSeenDesordres = null;
     // tags, qualifications, suivis, affectations, interventions, files
     public array $tags = [];
     public array $qualifications = [];

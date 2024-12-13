@@ -6,7 +6,39 @@
 
 <h3 class="fr-h5">Déclaration usager</h3>
 
-{% if createdFromDraft %}
+{% if createdFromDraft %}    
+    {% if signalement.debutDesordres is not null %}
+        <div class="fr-grid-row fr-mb-3w">
+            <div class="fr-col-12 fr-col-md-6">
+                <strong>Début des désordres : </strong>
+                {% if signalement.debutDesordres %}
+                    {% if signalement.debutDesordres is same as 'less_1_month' %}
+                        moins d'un mois
+                    {% elseif signalement.debutDesordres is same as '1_to_6_months' %}
+                        entre 1 mois et 6 mois
+                    {% elseif signalement.debutDesordres is same as '6_to_12_months' %}
+                        entre 6 mois et 1 an
+                    {% elseif signalement.debutDesordres is same as '1_to_2_years' %}
+                        entre 1 et 2 ans
+                    {% elseif signalement.debutDesordres is same as 'more_2_years' %}
+                        plus de 2 ans
+                    {% else %}
+                        ne sait pas
+                    {% endif %}
+                {% endif %}
+            </div>
+            {% if signalement.hasSeenDesordres is not null %}
+                <div class="fr-col-12 fr-col-md-6">
+                    <strong>Le tiers a vu les désordres :</strong>
+                    {% if signalement.hasSeenDesordres %}
+                        {{ static_picto_yes|raw }}
+                    {% else %}
+                        {{ static_picto_no|raw }}
+                    {% endif %}
+                </div>
+            {% endif %}
+        </div>
+    {% endif %}
     {% include 'back/signalement/view/user-declaration-desordre-list.html.twig' %}
 {% else %}
     {% include 'back/signalement/view/user-declaration-situations.html.twig' %}
