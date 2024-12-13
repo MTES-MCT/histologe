@@ -7,13 +7,12 @@ use App\Entity\SignalementDraft;
 use App\Event\SignalementDraftCompletedEvent;
 use App\Manager\SignalementManager;
 use App\Messenger\Message\NewSignalementCheckFileMessage;
+use App\Messenger\Message\SignalementAddressUpdateAndAutoAssignMessage;
 use App\Messenger\Message\SignalementDraftFileMessage;
-use App\Messenger\Message\SignalementUpdateFromAddressMessage;
 use App\Service\Files\DocumentProvider;
 use App\Service\Mailer\NotificationMail;
 use App\Service\Mailer\NotificationMailerRegistry;
 use App\Service\Mailer\NotificationMailerType;
-use App\Service\Signalement\AutoAssigner;
 use App\Service\Signalement\SignalementBuilder;
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
@@ -29,7 +28,6 @@ class SignalementDraftCompletedSubscriber implements EventSubscriberInterface
         private readonly SignalementManager $signalementManager,
         private readonly NotificationMailerRegistry $notificationMailerRegistry,
         private readonly DocumentProvider $documentProvider,
-        private readonly AutoAssigner $autoAssigner,
         private readonly MessageBusInterface $messageBus,
         private readonly EntityManagerInterface $entityManager,
         private readonly LoggerInterface $logger,
@@ -71,7 +69,6 @@ class SignalementDraftCompletedSubscriber implements EventSubscriberInterface
                 $this->processFiles($signalementDraft, $signalement);
                 $this->dispatchCheckFiles($signalement);
                 $this->dispatchUpdateFromAddress($signalement);
-                $this->autoAssigner->assign($signalement);
                 $this->entityManager->commit();
             } else {
                 $this->entityManager->rollback();
@@ -120,7 +117,7 @@ class SignalementDraftCompletedSubscriber implements EventSubscriberInterface
 
     public function dispatchUpdateFromAddress(Signalement $signalement): void
     {
-        $this->messageBus->dispatch(new SignalementUpdateFromAddressMessage(
+        $this->messageBus->dispatch(new SignalementAddressUpdateAndAutoAssignMessage(
             $signalement->getId()
         ));
     }
