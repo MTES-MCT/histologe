@@ -17,20 +17,32 @@ function histoUpdateFieldsVisibility () {
   } else if (partnerType.value === 'BAILLEUR_SOCIAL') {
     showBailleurSocial = true
   }
-  if (showEsabora) {
-    document.querySelector('#partner_esabora').classList.remove('fr-hidden')
-  } else {
-    document.querySelector('#partner_esabora').classList.add('fr-hidden')
+  const esaboraElement = document.querySelector('#partner_esabora')
+  const idossElement = document.querySelector('#partner_idoss')
+  const bailleurSocialElement = document.querySelector('#partner_bailleur_social')
+  if (esaboraElement) {
+    if (showEsabora) {
+      document.querySelector('#partner_esabora').classList.remove('fr-hidden')
+    } else {
+      document.querySelector('#partner_esabora').classList.add('fr-hidden')
+    }
+
   }
-  if (showIdoss) {
-    document.querySelector('#partner_idoss').classList.remove('fr-hidden')
-  } else {
-    document.querySelector('#partner_idoss').classList.add('fr-hidden')
+  if (idossElement) {
+    if (showIdoss) {
+      document.querySelector('#partner_idoss').classList.remove('fr-hidden')
+    } else {
+      document.querySelector('#partner_idoss').classList.add('fr-hidden')
+    }
+
   }
-  if (showBailleurSocial) {
-    document.querySelector('#partner_bailleur_social').classList.remove('fr-hidden')
-  } else {
-    document.querySelector('#partner_bailleur_social').classList.add('fr-hidden')
+  if (bailleurSocialElement) {
+    if (showBailleurSocial) {
+      document.querySelector('#partner_bailleur_social').classList.remove('fr-hidden')
+    } else {
+      document.querySelector('#partner_bailleur_social').classList.add('fr-hidden')
+    }
+
   }
 }
 function histoUpdateValueFromData (elementName, elementData, target) {
