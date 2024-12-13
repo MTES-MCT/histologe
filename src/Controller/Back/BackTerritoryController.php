@@ -119,8 +119,9 @@ class BackTerritoryController extends AbstractController
         Territory $territory,
         BailleurRepository $bailleurRepository,
     ): JsonResponse {
+        $this->denyAccessUnlessGranted(TerritoryVoter::GET_BAILLEURS_LIST, $territory);
         $zip = $territory->getZip();
-        $bailleurs =$bailleurRepository->findBailleursByTerritory($zip);
+        $bailleurs = $bailleurRepository->findBailleursByTerritory($zip);
 
         return $this->json($bailleurs);
     }

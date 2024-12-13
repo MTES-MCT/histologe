@@ -72,4 +72,23 @@ class BackTerritoryControllerTest extends WebTestCase
         $client->request('GET', $router->generate('back_territory_grille_visite', ['territory' => $user->getFirstTerritory()->getId()]));
         $this->assertResponseStatusCodeSame(Response::HTTP_NOT_FOUND);
     }
+
+    public function testGetBailleursList(): void
+    {
+        $client = static::createClient();
+
+        /** @var UserRepository $userRepository */
+        $userRepository = static::getContainer()->get(UserRepository::class);
+        $user = $userRepository->findOneBy(['email' => 'admin-territoire-44-01@histologe.fr']);
+        $client->loginUser($user);
+
+        /** @var RouterInterface $router */
+        $router = self::getContainer()->get(RouterInterface::class);
+
+        $client->request('GET', $router->generate('back_territory_bailleurs', ['territory' => $user->getFirstTerritory()->getId()]));
+        $this->assertResponseIsSuccessful();
+
+        $client->request('GET', $router->generate('back_territory_bailleurs', ['territory' => $user->getFirstTerritory()->getId() + 1]));
+        $this->assertResponseStatusCodeSame(Response::HTTP_FORBIDDEN);
+    }
 }
