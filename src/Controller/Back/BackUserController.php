@@ -8,7 +8,6 @@ use App\Repository\UserRepository;
 use App\Service\SearchUser;
 use App\Service\UserExportLoader;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Messenger\MessageBusInterface;
@@ -35,7 +34,7 @@ class BackUserController extends AbstractController
     }
 
     #[Route('/export', name: 'back_user_export', methods: ['GET', 'POST'])]
-    public function export(Request $request, UserRepository $userRepository, MessageBusInterface $messageBus, ParameterBagInterface $parameterBag): Response
+    public function export(Request $request, UserRepository $userRepository, MessageBusInterface $messageBus): Response
     {
         $originalMethod = $request->getMethod();
         $request->setMethod('GET'); // to prevent Symfony ignoring GET data while handlning the form
@@ -62,7 +61,7 @@ class BackUserController extends AbstractController
         return $this->render('back/user/export.html.twig', [
             'searchUser' => $searchUser,
             'nbResults' => \count($paginatedUsers),
-            'columns' => UserExportLoader::getColumnForUser($this->getUser(), $parameterBag->get('feature_permission_affectation')),
+            'columns' => UserExportLoader::getColumnForUser($this->getUser()),
         ]);
     }
 

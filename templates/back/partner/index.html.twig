@@ -72,9 +72,7 @@
             <th scope="col">Type</th>
             <th scope="col">Compétences</th>
             <th scope="col">Codes INSEE</th>
-            {% if platform.feature_zonage %}
-                <th scope="col">Zones</th>
-            {% endif %}
+            <th scope="col">Zones</th>
             <th scope="col" class="fr-text--right">Actions</th>
         {% endset %}
 
@@ -106,20 +104,18 @@
                             /
                         {% endif %}
                     </td>
-                    {% if platform.feature_zonage %}
-                        <td>
-                            {% if partner.zones or partner.excludedZones %}
-                                {% for zone in partner.zones %}
-                                    <div class="fr-badge fr-badge--success fr-badge--no-icon fr-mb-1v">{{ zone.name }}</div>
-                                {% endfor %}
-                                {% for zone in partner.excludedZones %}
-                                    <div class="fr-badge fr-badge--error fr-badge--no-icon fr-mb-1v">{{ zone.name }}</div>
-                                {% endfor %}
-                            {% else %}
-                                /
-                            {% endif %}
-                        </td>
-                    {% endif %}
+                    <td>
+                        {% if partner.zones or partner.excludedZones %}
+                            {% for zone in partner.zones %}
+                                <div class="fr-badge fr-badge--success fr-badge--no-icon fr-mb-1v">{{ zone.name }}</div>
+                            {% endfor %}
+                            {% for zone in partner.excludedZones %}
+                                <div class="fr-badge fr-badge--error fr-badge--no-icon fr-mb-1v">{{ zone.name }}</div>
+                            {% endfor %}
+                        {% else %}
+                            /
+                        {% endif %}
+                    </td>
                     <td class="fr-text--right fr-ws-nowrap">
                         <a href="{{ path('back_partner_view', {'id': partner.id}) }}"
                         class="fr-btn fr-fi-arrow-right-line fr-btn--sm"></a>

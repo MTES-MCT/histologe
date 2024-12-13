@@ -5,7 +5,6 @@ namespace App\Service;
 use App\Entity\User;
 use App\Repository\UserRepository;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
-use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 
 readonly class UserExportLoader
 {
@@ -26,7 +25,6 @@ readonly class UserExportLoader
 
     public function __construct(
         private UserRepository $userRepository,
-        private ParameterBagInterface $parameterBag,
     ) {
     }
 
@@ -34,7 +32,7 @@ readonly class UserExportLoader
     {
         $spreadsheet = new Spreadsheet();
         $sheet = $spreadsheet->getActiveSheet();
-        $headers = array_map(fn ($column) => $column['label'], self::getColumnForUser($searchUser->getUser(), $this->parameterBag->get('feature_permission_affectation')));
+        $headers = array_map(fn ($column) => $column['label'], self::getColumnForUser($searchUser->getUser()));
         $sheetData = [$headers];
         $list = $this->userRepository->findFiltered($searchUser);
         foreach ($list as $user) {
@@ -81,14 +79,11 @@ readonly class UserExportLoader
         return $spreadsheet;
     }
 
-    public static function getColumnForUser(User $user, bool $isFeaturePermissionAffectation): array
+    public static function getColumnForUser(User $user): array
     {
         $columnsList = self::COLUMNS_LIST;
         if (!$user->isSuperAdmin()) {
             unset($columnsList['territory']);
-        }
-        if (!$isFeaturePermissionAffectation) {
-            unset($columnsList['permissionAffectation']);
         }
 
         return $columnsList;

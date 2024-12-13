@@ -18,10 +18,6 @@ class BackZoneControllerTest extends WebTestCase
     public function testZoneList(array $params, int $nb): void
     {
         $client = static::createClient();
-        $feature_zonage = static::getContainer()->getParameter('feature_zonage');
-        if (!$feature_zonage) {
-            $this->markTestSkipped('La fonctionnalité "feature_zonage" est désactivée.');
-        }
         /** @var UserRepository $userRepository */
         $userRepository = static::getContainer()->get(UserRepository::class);
         $user = $userRepository->findOneBy(['email' => 'admin-01@histologe.fr']);
@@ -46,10 +42,6 @@ class BackZoneControllerTest extends WebTestCase
     public function testZoneShow(): void
     {
         $client = static::createClient();
-        $feature_zonage = static::getContainer()->getParameter('feature_zonage');
-        if (!$feature_zonage) {
-            $this->markTestSkipped('La fonctionnalité "feature_zonage" est désactivée.');
-        }
         /** @var UserRepository $userRepository */
         $userRepository = static::getContainer()->get(UserRepository::class);
         $user = $userRepository->findOneBy(['email' => 'admin-01@histologe.fr']);
@@ -71,10 +63,6 @@ class BackZoneControllerTest extends WebTestCase
     public function testZoneEdit(): void
     {
         $client = static::createClient();
-        $feature_zonage = static::getContainer()->getParameter('feature_zonage');
-        if (!$feature_zonage) {
-            $this->markTestSkipped('La fonctionnalité "feature_zonage" est désactivée.');
-        }
         /** @var UserRepository $userRepository */
         $userRepository = static::getContainer()->get(UserRepository::class);
         $user = $userRepository->findOneBy(['email' => 'admin-01@histologe.fr']);

@@ -92,7 +92,7 @@
                                     </fieldset>
                                 </div>
                             </div>
-                            {% if platform.feature_permission_affectation and is_granted('ASSIGN_PERMISSION_AFFECTATION', partner) %}
+                            {% if is_granted('ASSIGN_PERMISSION_AFFECTATION', partner) %}
                             <div class="fr-grid-row fr-grid-row--gutters">
                                 <div class="fr-col-12">
                                     <fieldset id="user_create_permission_affectation_toggle" class="fr-fieldset" aria-labelledby="user-create-permissions-legend">

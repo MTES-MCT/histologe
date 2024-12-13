@@ -12,7 +12,6 @@ use App\Service\Security\FileScanner;
 use App\Service\UploadHandlerService;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\File\File as SymfonyFile;
 use Symfony\Component\HttpFoundation\Request;
@@ -24,15 +23,6 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 class BackTerritoryController extends AbstractController
 {
     private const MAX_LIST_PAGINATION = 25;
-
-    public function __construct(
-        #[Autowire(env: 'FEATURE_GRILLE_VISITE')]
-        bool $featureGrilleVisite,
-    ) {
-        if (!$featureGrilleVisite) {
-            throw $this->createNotFoundException();
-        }
-    }
 
     #[Route('/', name: 'back_territory_index', methods: ['GET'])]
     #[IsGranted('ROLE_ADMIN')]

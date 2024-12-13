@@ -13,7 +13,6 @@ use App\Service\Import\CsvParser;
 use App\Service\SearchZone;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\Form\Form;
 use Symfony\Component\Form\FormError;
 use Symfony\Component\HttpFoundation\File\File;
@@ -29,15 +28,6 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 class BackZoneController extends AbstractController
 {
     private const MAX_LIST_PAGINATION = 25;
-
-    public function __construct(
-        #[Autowire(env: 'FEATURE_ZONAGE')]
-        bool $featureZonage,
-    ) {
-        if (!$featureZonage) {
-            throw $this->createNotFoundException();
-        }
-    }
 
     #[Route('/', name: 'back_zone_index', methods: ['GET'])]
     public function index(Request $request, ZoneRepository $zoneRepository): Response

@@ -44,10 +44,6 @@ parameters:
     feature_archive_inactive_account: '%env(bool:FEATURE_ARCHIVE_INACTIVE_ACCOUNT)%'
     feature_anonymize_expired_account: '%env(bool:FEATURE_ANONYMIZE_EXPIRED_ACCOUNT)%'
     cgu_current_version: '05/06/2024'
-    feature_schs_sync_event_enable: '%env(bool:FEATURE_SCHS_SYNC_EVENT_ENABLE)%'
-    feature_zonage: '%env(bool:FEATURE_ZONAGE)%'
-    feature_grille_visite: '%env(bool:FEATURE_GRILLE_VISITE)%'
-    feature_permission_affectation: '%env(bool:FEATURE_PERMISSION_AFFECTATION)%'
     delay_min_check_new_signalement_files: '%env(DELAY_MIN_CHECK_NEW_SIGNALEMENT_FILES)%'
     albert_api_key: '%env(ALBERT_API_KEY)%'
 

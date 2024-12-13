@@ -15,10 +15,6 @@ class BackTerritoryControllerTest extends WebTestCase
     public function testTerritoryList(array $params, int $nb): void
     {
         $client = static::createClient();
-        $feature_grille_visite = static::getContainer()->getParameter('feature_grille_visite');
-        if (!$feature_grille_visite) {
-            $this->markTestSkipped('La fonctionnalité "feature_grille_visite" est désactivée.');
-        }
         /** @var UserRepository $userRepository */
         $userRepository = static::getContainer()->get(UserRepository::class);
         $user = $userRepository->findOneBy(['email' => 'admin-01@histologe.fr']);
@@ -47,10 +43,6 @@ class BackTerritoryControllerTest extends WebTestCase
     public function testgrilleVisite(): void
     {
         $client = static::createClient();
-        $feature_grille_visite = static::getContainer()->getParameter('feature_grille_visite');
-        if (!$feature_grille_visite) {
-            $this->markTestSkipped('La fonctionnalité "feature_grille_visite" est désactivée.');
-        }
         /** @var UserRepository $userRepository */
         $userRepository = static::getContainer()->get(UserRepository::class);
         $user = $userRepository->findOneBy(['email' => 'admin-territoire-13-01@histologe.fr']);
@@ -69,10 +61,6 @@ class BackTerritoryControllerTest extends WebTestCase
     public function testgrilleVisiteDisabled(): void
     {
         $client = static::createClient();
-        $feature_grille_visite = static::getContainer()->getParameter('feature_grille_visite');
-        if (!$feature_grille_visite) {
-            $this->markTestSkipped('La fonctionnalité "feature_grille_visite" est désactivée.');
-        }
         /** @var UserRepository $userRepository */
         $userRepository = static::getContainer()->get(UserRepository::class);
         $user = $userRepository->findOneBy(['email' => 'admin-territoire-01-01@histologe.fr']);
