@@ -12,6 +12,7 @@ use Symfony\Component\Security\Core\User\UserInterface;
 class TerritoryVoter extends Voter
 {
     public const GET_DOCUMENT = 'GET_DOCUMENT';
+    public const GET_BAILLEURS_LIST = 'GET_BAILLEURS_LIST';
 
     public function __construct(private Security $security)
     {
@@ -19,7 +20,7 @@ class TerritoryVoter extends Voter
 
     protected function supports(string $attribute, $subject): bool
     {
-        return \in_array($attribute, [self::GET_DOCUMENT]) && ($subject instanceof Territory);
+        return \in_array($attribute, [self::GET_DOCUMENT, self::GET_BAILLEURS_LIST]) && ($subject instanceof Territory);
     }
 
     protected function voteOnAttribute(string $attribute, $subject, TokenInterface $token): bool
@@ -32,6 +33,7 @@ class TerritoryVoter extends Voter
 
         return match ($attribute) {
             self::GET_DOCUMENT => $this->isInTerritory($subject, $user),
+            self::GET_BAILLEURS_LIST => $this->canGetBailleursList($subject, $user),
             default => false,
         };
     }
@@ -39,6 +41,15 @@ class TerritoryVoter extends Voter
     private function isInTerritory(Territory $territory, User $user): bool
     {
         if ($this->security->isGranted('ROLE_ADMIN') || $user->hasPartnerInTerritory($territory)) {
+            return true;
+        }
+
+        return false;
+    }
+
+    private function canGetBailleursList(Territory $territory, User $user): bool
+    {
+        if ($this->security->isGranted('ROLE_ADMIN_TERRITORY') && $user->hasPartnerInTerritory($territory)) {
             return true;
         }
 
