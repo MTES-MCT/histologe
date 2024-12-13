@@ -200,6 +200,7 @@ if (territorySelect) {
           return;
       }
 
+      // route back_territory_bailleurs
       fetch(`/bo/territoire/${territoryId}/bailleurs`)
           .then(response => {
               if (!response.ok) {

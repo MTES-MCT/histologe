@@ -30,7 +30,7 @@ class Bailleur
 
     #[ORM\OneToMany(mappedBy: 'bailleur', targetEntity: Partner::class)]
     #[Ignore]
-    private Collection $partners; // @phpstan-ignore-line
+    private Collection $partners;
 
     #[ORM\OneToMany(mappedBy: 'bailleur', targetEntity: BailleurTerritory::class, cascade: ['persist'])]
     #[Ignore]
@@ -45,6 +45,7 @@ class Bailleur
     public function __construct()
     {
         $this->signalements = new ArrayCollection();
+        $this->partners = new ArrayCollection();
         $this->bailleurTerritories = new ArrayCollection();
     }
 
