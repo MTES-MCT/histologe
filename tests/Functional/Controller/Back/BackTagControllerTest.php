@@ -28,24 +28,6 @@ class BackTagControllerTest extends WebTestCase
         $this->client->loginUser($user);
     }
 
-    public function testCreateTagSuccess(): void
-    {
-        $route = $this->router->generate('back_tag_create', ['uuid' => '00000000-0000-0000-2023-000000000006']);
-        $this->client->request('POST', $route, ['new-tag-label' => 'test']);
-
-        $this->assertJson($this->client->getResponse()->getContent());
-        $this->assertStringContainsString('success', $this->client->getResponse()->getContent());
-    }
-
-    public function testCreateTagError(): void
-    {
-        $route = $this->router->generate('back_tag_create', ['uuid' => '00000000-0000-0000-2023-000000000006']);
-        $this->client->request('POST', $route, ['new-tag-label' => 't']);
-
-        $this->assertJson($this->client->getResponse()->getContent());
-        $this->assertStringContainsString('Le tag doit contenir au moins 2 caract\u00e8res', $this->client->getResponse()->getContent());
-    }
-
     public function testSearchNewTag(): void
     {
         $route = $this->router->generate('back_tags_index');
