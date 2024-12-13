@@ -88,6 +88,7 @@ class BackZoneController extends AbstractController
             if ($file) {
                 $this->manageCsvFileFormErrors($file, $zone, $form, $csvParser);
             }
+            $this->validateArea($zone, $form, $em);
             if (!$form->isValid()) {
                 $response = ['code' => Response::HTTP_BAD_REQUEST, 'errors' => FormHelper::getErrorsFromForm($form)];
 
@@ -117,6 +118,7 @@ class BackZoneController extends AbstractController
             if ($file) {
                 $this->manageCsvFileFormErrors($file, $zone, $form, $csvParser);
             }
+            $this->validateArea($zone, $form, $em);
             if ($form->isValid()) {
                 $em->flush();
                 $this->addFlash('success', 'La zone a bien été modifiée.');
@@ -171,6 +173,20 @@ class BackZoneController extends AbstractController
         }
         if ($form->isValid()) {
             $zone->setArea($csvLine['WKT']);
+        }
+    }
+
+    private function validateArea(Zone $zone, Form $form, EntityManagerInterface $em): void
+    {
+        try {
+            $testSQL = 'SELECT ST_GeomFromText(:area)';
+            $em->getConnection()->executeQuery($testSQL, ['area' => $zone->getArea()]);
+        } catch (\Exception $e) {
+            if ($form->get('file')->getData()) {
+                $form->get('file')->addError(new FormError('Le format de la zone n\'est pas valide.'));
+            } else {
+                $form->get('area')->addError(new FormError('Le format de la zone n\'est pas valide.'));
+            }
         }
     }
 }
