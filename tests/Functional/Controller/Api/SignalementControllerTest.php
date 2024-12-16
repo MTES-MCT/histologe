@@ -42,7 +42,7 @@ class SignalementControllerTest extends WebTestCase
             'email' => 'api-02@histologe.fr',
         ]);
         $client->loginUser($user, 'api');
-        $client->request('GET', '/api/signalements/00000000-0000-0000-2024-000000000010');
+        $client->request('GET', '/api/signalements/00000000-0000-0000-2024-000000000012');
         $this->assertEquals(200, $client->getResponse()->getStatusCode());
 
         $response = json_decode($client->getResponse()->getContent(), true);
