@@ -17,7 +17,9 @@ class DateParserTest extends TestCase
     public function testParseWithDateFormat(): void
     {
         $date = '04/05/2023';
-        $expected = \DateTimeImmutable::createFromFormat('d/m/Y', $date);
-        $this->assertEquals($expected, DateParser::parse($date));
+        $parsedDate = DateParser::parse($date);
+        $expected = \DateTimeImmutable::createFromFormat('d/m/Y H:i:s', $date.' 00:00:00');
+        $this->assertEquals($expected, $parsedDate);
+        $this->assertSame('00:00:00', $parsedDate->format('H:i:s'));
     }
 }
