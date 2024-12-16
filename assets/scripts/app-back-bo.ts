@@ -19,8 +19,8 @@ import './vanilla/controllers/form_notification.js';
 import './vanilla/controllers/form_visite.js';
 import './vanilla/controllers/form_modal_handler.js';
 
-import './vanilla/controllers/back_account/back_account.js'
 import './vanilla/controllers/back_archived_signalements/back_archived_signalements_reactiver.js'
+import './vanilla/controllers/back_archived_users_index/back_archived_users_index.js'
 import './vanilla/controllers/back_auto_affectation_rule/form_auto_affectation_rule.js'
 import './vanilla/controllers/back_partner_view/form_partner.js';
 import './vanilla/controllers/back_signalement_view/back_view_signalement.js';
