@@ -2,11 +2,9 @@
 
 namespace App\Form;
 
-use App\Entity\Territory;
 use App\Entity\User;
 use App\Repository\TerritoryRepository;
 use App\Service\SearchArchivedPartner;
-use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
