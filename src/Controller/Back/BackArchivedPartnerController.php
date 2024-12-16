@@ -22,7 +22,13 @@ class BackArchivedPartnerController extends AbstractController
         Request $request,
         PartnerRepository $partnerRepository,
     ): Response {
-        [$form, $searchArchivedPartner, $paginatedArchivedPartners] = $this->handleSearchArchivedPartner($request, $partnerRepository);
+        $searchArchivedPartner = new SearchArchivedPartner($this->getUser());
+        $form = $this->createForm(SearchArchivedPartnerType::class, $searchArchivedPartner);
+        $form->handleRequest($request);
+        if ($form->isSubmitted() && !$form->isValid()) {
+            $searchArchivedPartner = new SearchArchivedPartner($this->getUser());
+        }
+        $paginatedArchivedPartners = $partnerRepository->findFilteredArchivedPaginated($searchArchivedPartner, self::MAX_LIST_PAGINATION);
 
         return $this->render('back/partner_archived/index.html.twig', [
             'form' => $form,
@@ -30,18 +36,5 @@ class BackArchivedPartnerController extends AbstractController
             'archivedPartners' => $paginatedArchivedPartners,
             'pages' => (int) ceil($paginatedArchivedPartners->count() / self::MAX_LIST_PAGINATION),
         ]);
-    }
-
-    private function handleSearchArchivedPartner(Request $request, PartnerRepository $partnerRepository): array
-    {
-        $searchArchivedPartner = new SearchArchivedPartner($this->getUser());
-        $form = $this->createForm(SearchArchivedPartnerType::class, $searchArchivedPartner);
-        $form->handleRequest($request);
-        if ($form->isSubmitted() && !$form->isValid()) {
-            $searchArchivedPartner = new SearchArchivedPartner($this->getUser());
-        }
-        $paginatedArchivedPartner = $partnerRepository->findFilteredArchivedPaginated($searchArchivedPartner, self::MAX_LIST_PAGINATION);
-
-        return [$form, $searchArchivedPartner, $paginatedArchivedPartner];
     }
 }

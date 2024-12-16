@@ -32,7 +32,13 @@ class TagController extends AbstractController
         Request $request,
         TagRepository $tagRepository,
     ): Response {
-        [$form, $searchTag, $paginatedTags] = $this->handleSearchTag($request, $tagRepository);
+        $searchTag = new SearchTag($this->getUser());
+        $form = $this->createForm(SearchTagType::class, $searchTag);
+        $form->handleRequest($request);
+        if ($form->isSubmitted() && !$form->isValid()) {
+            $searchTag = new SearchTag($this->getUser());
+        }
+        $paginatedTags = $tagRepository->findFilteredPaginated($searchTag, self::MAX_LIST_PAGINATION);
 
         $addForm = $this->createForm(AddTagType::class, null, ['action' => $this->generateUrl('back_tags_add')]);
 
@@ -131,18 +137,5 @@ class TagController extends AbstractController
         $this->addFlash('error', 'Une erreur est survenue lors de la suppression...');
 
         return $this->redirectToRoute('back_tags_index', [], Response::HTTP_SEE_OTHER);
-    }
-
-    private function handleSearchTag(Request $request, TagRepository $tagRepository): array
-    {
-        $searchTag = new SearchTag($this->getUser());
-        $form = $this->createForm(SearchTagType::class, $searchTag);
-        $form->handleRequest($request);
-        if ($form->isSubmitted() && !$form->isValid()) {
-            $searchTag = new SearchTag($this->getUser());
-        }
-        $paginatedTags = $tagRepository->findFilteredPaginated($searchTag, self::MAX_LIST_PAGINATION);
-
-        return [$form, $searchTag, $paginatedTags];
     }
 }

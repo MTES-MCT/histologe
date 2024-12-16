@@ -33,7 +33,13 @@ class BackArchivedUsersController extends AbstractController
         Request $request,
         UserRepository $userRepository,
     ): Response {
-        [$form, $searchArchivedAccount, $paginatedArchivedAccount] = $this->handleSearchArchivedAccount($request, $userRepository);
+        $searchArchivedAccount = new SearchArchivedAccount($this->getUser());
+        $form = $this->createForm(SearchArchivedAccountType::class, $searchArchivedAccount);
+        $form->handleRequest($request);
+        if ($form->isSubmitted() && !$form->isValid()) {
+            $searchArchivedAccount = new SearchArchivedAccount($this->getUser());
+        }
+        $paginatedArchivedAccount = $userRepository->findArchivedFilteredPaginated($searchArchivedAccount, self::MAX_LIST_PAGINATION);
 
         return $this->render('back/account/index.html.twig', [
             'form' => $form,
@@ -124,18 +130,5 @@ class BackArchivedUsersController extends AbstractController
         foreach ($form->getErrors(true) as $error) {
             $this->addFlash('error', $error->getMessage());
         }
-    }
-
-    private function handleSearchArchivedAccount(Request $request, UserRepository $userRepository): array
-    {
-        $searchArchivedAccount = new SearchArchivedAccount($this->getUser());
-        $form = $this->createForm(SearchArchivedAccountType::class, $searchArchivedAccount);
-        $form->handleRequest($request);
-        if ($form->isSubmitted() && !$form->isValid()) {
-            $searchArchivedAccount = new SearchArchivedAccount($this->getUser());
-        }
-        $paginatedArchivedAccount = $userRepository->findArchivedFilteredPaginated($searchArchivedAccount, self::MAX_LIST_PAGINATION);
-
-        return [$form, $searchArchivedAccount, $paginatedArchivedAccount];
     }
 }
