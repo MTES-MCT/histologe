@@ -2,9 +2,9 @@
 
 namespace App\Controller\Back;
 
-use App\Entity\Partner;
+use App\Form\SearchArchivedPartnerType;
 use App\Repository\PartnerRepository;
-use App\Repository\TerritoryRepository;
+use App\Service\SearchArchivedPartner;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -14,49 +14,34 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 #[Route('/bo/partner-archives')]
 class BackArchivedPartnerController extends AbstractController
 {
+    public const MAX_LIST_PAGINATION = 50;
+
     #[Route('/', name: 'back_archived_partner_index', methods: ['GET', 'POST'])]
     #[IsGranted('ROLE_ADMIN')]
     public function index(
         Request $request,
-        TerritoryRepository $territoryRepository,
         PartnerRepository $partnerRepository,
     ): Response {
-        $page = $request->get('page') ?? 1;
-
-        $isNoneTerritory = 'none' == $request->get('territory');
-        $currentTerritory = $isNoneTerritory ? null : $territoryRepository->find((int) $request->get('territory'));
-        $partnerTerms = $request->get('partnerTerms');
-
-        $paginatedArchivedPartners = $partnerRepository->findAllArchivedOrWithoutTerritory(
-            territory: $currentTerritory,
-            isNoneTerritory: $isNoneTerritory,
-            filterTerms: $partnerTerms,
-            page: (int) $page
-        );
-
-        if ($request->isMethod(Request::METHOD_POST)) {
-            $isNoneTerritory = 'none' == $request->request->get('territory');
-            $currentTerritory = $territoryRepository->find((int) $request->request->get('territory'));
-            $partnerTerms = $request->request->get('bo-filters-partnerterms');
-
-            return $this->redirect($this->generateUrl('back_archived_partner_index', [
-                'page' => 1,
-                'territory' => $isNoneTerritory ? 'none' : $currentTerritory?->getId(),
-                'partnerTerms' => $partnerTerms,
-            ]));
-        }
-
-        $totalArchivedPartners = \count($paginatedArchivedPartners);
+        [$form, $searchArchivedPartner, $paginatedArchivedPartners] = $this->handleSearchArchivedPartner($request, $partnerRepository);
 
         return $this->render('back/partner_archived/index.html.twig', [
-            'isNoneTerritory' => $isNoneTerritory,
-            'currentTerritory' => $currentTerritory,
-            'partnerTerms' => $partnerTerms,
-            'territories' => $territoryRepository->findAllList(),
-            'partners' => $paginatedArchivedPartners,
-            'total' => $totalArchivedPartners,
-            'page' => $page,
-            'pages' => (int) ceil($totalArchivedPartners / Partner::MAX_LIST_PAGINATION),
+            'form' => $form,
+            'searchArchivedPartner' => $searchArchivedPartner,
+            'archivedPartners' => $paginatedArchivedPartners,
+            'pages' => (int) ceil($paginatedArchivedPartners->count() / self::MAX_LIST_PAGINATION),
         ]);
+    }
+
+    private function handleSearchArchivedPartner(Request $request, PartnerRepository $partnerRepository): array
+    {
+        $searchArchivedPartner = new SearchArchivedPartner($this->getUser());
+        $form = $this->createForm(SearchArchivedPartnerType::class, $searchArchivedPartner);
+        $form->handleRequest($request);
+        if ($form->isSubmitted() && !$form->isValid()) {
+            $searchArchivedPartner = new SearchArchivedPartner($this->getUser());
+        }
+        $paginatedArchivedPartner = $partnerRepository->findFilteredArchivedPaginated($searchArchivedPartner, self::MAX_LIST_PAGINATION);
+
+        return [$form, $searchArchivedPartner, $paginatedArchivedPartner];
     }
 }
