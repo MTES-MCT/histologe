@@ -49,4 +49,19 @@ class SignalementControllerTest extends WebTestCase
         $this->assertArrayHasKey('desordres', $response);
         $this->assertCount(7, $response['desordres']);
     }
+
+    public function testGetOldSignalementByUuid()
+    {
+        $client = static::createClient();
+        $user = self::getContainer()->get('doctrine')->getRepository(User::class)->findOneBy([
+            'email' => 'api-01@histologe.fr',
+        ]);
+        $client->loginUser($user, 'api');
+        $client->request('GET', '/api/signalements/00000000-0000-0000-2022-000000000001');
+        $this->assertEquals(200, $client->getResponse()->getStatusCode());
+
+        $response = json_decode($client->getResponse()->getContent(), true);
+        $this->assertArrayHasKey('desordres', $response);
+        $this->assertCount(3, $response['desordres']);
+    }
 }

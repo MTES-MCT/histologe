@@ -25,7 +25,7 @@ class Desordre
             } else {
                 foreach ($detail as $desordrePrecision) {
                     if ($desordrePrecision instanceof DesordrePrecision && $desordrePrecision->getLabel()) {
-                        $details .= \PHP_EOL.' - '.strip_tags($desordrePrecision->getLabel());
+                        $details .= \PHP_EOL.' - '.strip_tags(str_replace('<br>', \PHP_EOL, $desordrePrecision->getLabel()));
                     }
                 }
             }
