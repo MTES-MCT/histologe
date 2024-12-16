@@ -466,7 +466,7 @@ class SignalementDraftRequest
     private ?string $informationsComplementairesLogementAnneeConstruction = null;
     private ?string $messageAdministration = null;
     #[Assert\Choice(
-        choices: ['less_1_month', '1_to_6_months', '6_to_12_months', '1_to_2_years', 'more_2_years', 'nsp'],
+        choices: ['less_1_month', 'months_1_to_6', 'months_6_to_12', 'years_1_to_2', 'more_2_years', 'nsp'],
         message: 'Le champ "zoneConcerneeDebutDesordres" est incorrect.',
     )]
     private ?string $zoneConcerneeDebutDesordres = null;

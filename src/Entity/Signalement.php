@@ -4,6 +4,7 @@ namespace App\Entity;
 
 use App\Entity\Behaviour\EntityHistoryCollectionInterface;
 use App\Entity\Behaviour\EntityHistoryInterface;
+use App\Entity\Enum\DebutDesordres;
 use App\Entity\Enum\HistoryEntryEvent;
 use App\Entity\Enum\MotifCloture;
 use App\Entity\Enum\MotifRefus;
@@ -427,8 +428,8 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $rnbIdOccupant = null;
 
-    #[ORM\Column(type: 'string', length: 15, nullable: true)]
-    private ?string $debutDesordres = null;
+    #[ORM\Column(type: 'string', length: 15, nullable: true, enumType: DebutDesordres::class)]
+    private ?DebutDesordres $debutDesordres = null;
 
     #[ORM\Column(type: 'boolean', nullable: true)]
     private ?bool $hasSeenDesordres = null;
@@ -2471,12 +2472,12 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
         return $this;
     }
 
-    public function getDebutDesordres(): ?string
+    public function getDebutDesordres(): ?DebutDesordres
     {
         return $this->debutDesordres;
     }
 
-    public function setDebutDesordres(?string $debutDesordres): static
+    public function setDebutDesordres(?DebutDesordres $debutDesordres): static
     {
         $this->debutDesordres = $debutDesordres;
 

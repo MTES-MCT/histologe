@@ -3,6 +3,7 @@
 namespace App\Tests\Unit\Factory;
 
 use App\Dto\SignalementExport;
+use App\Entity\Enum\DebutDesordres;
 use App\Entity\Enum\MotifCloture;
 use App\Entity\Enum\ProfileDeclarant;
 use App\Entity\Enum\VisiteStatus;
@@ -69,7 +70,7 @@ class SignalementExportFactoryTest extends TestCase
             'familleSituation' => "l'état et propreté du logement|l'état et propreté du logement|",
             'desordres' => "Les sols sont humides.|Les installations électriques ne sont pas en bon état.|
                 Les murs ont des fissures.|De l'eau s’infiltre dans mon logement.|Il y a des trace ",
-            'debutDesordres' => "1_to_2_years", 
+            'debutDesordres' => DebutDesordres::YEARS_1_TO_2,
             'etiquettes' => null,
             'geoloc' => '{"lat": "43.3426152", "lng": "5.3711848"}',
             'interventionsData' => 'PLANNED||2023-07-13 13:41:15||DONE||2024-06-09 10:00:00',

@@ -181,15 +181,15 @@
             },
             {
               "label": "Entre 1 mois et 6 mois",
-              "value": "1_to_6_months"
+              "value": "months_1_to_6"
             },
             {
               "label": "Entre 6 mois et 1 an",
-              "value": "6_to_12_months"
+              "value": "months_6_to_12"
             },
             {
               "label": "Entre 1 et 2 ans",
-              "value": "1_to_2_years"
+              "value": "years_1_to_2"
             },
             {
               "label": "Plus de 2 ans",
