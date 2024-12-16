@@ -2,7 +2,6 @@
 
 namespace App\Service;
 
-use App\Entity\Territory;
 use App\Entity\User;
 use App\Service\Behaviour\SearchQueryTrait;
 use Symfony\Component\Validator\Constraints as Assert;
@@ -23,7 +22,7 @@ class SearchArchivedPartner
     {
         $this->user = $user;
         if (!$user->isSuperAdmin() && 1 === count($user->getPartnersTerritories())) {
-            $this->territory = $user->getFirstTerritory()->getId();
+            $this->territory = (string) $user->getFirstTerritory()->getId();
         }
     }
 

@@ -25,11 +25,11 @@ class ArchivedSignalementController extends AbstractController
         Request $request,
         SignalementRepository $signalementRepository,
     ): Response {
-        $searchArchivedSignalement = new SearchArchivedSignalement($this->getUser());
+        $searchArchivedSignalement = new SearchArchivedSignalement();
         $form = $this->createForm(SearchArchivedSignalementType::class, $searchArchivedSignalement);
         $form->handleRequest($request);
         if ($form->isSubmitted() && !$form->isValid()) {
-            $searchArchivedSignalement = new SearchArchivedSignalement($this->getUser());
+            $searchArchivedSignalement = new SearchArchivedSignalement();
         }
         $paginatedArchivedSignalementPaginated = $signalementRepository->findFilteredArchivedPaginated($searchArchivedSignalement, self::MAX_LIST_PAGINATION);
 

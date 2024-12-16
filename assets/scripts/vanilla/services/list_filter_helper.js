@@ -41,7 +41,7 @@ export const updateLocalStorageOnEvent = (eventType, idItem, localStorageName) =
 
 const filterForms = document.getElementsByClassName('bo-filter-form')
 if (filterForms.length > 0) {
-  for (let filterForm of filterForms) {
+  for (const filterForm of filterForms) {
     filterForm.querySelectorAll('select').forEach((select) => {
       select.addEventListener('change', function () {
         if (select.name === 'territory') {
