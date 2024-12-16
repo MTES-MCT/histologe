@@ -3,10 +3,10 @@
 namespace App\Controller\Back;
 
 use App\Entity\AutoAffectationRule;
-use App\Entity\Partner;
 use App\Form\AutoAffectationRuleType;
+use App\Form\SearchAutoAffectationRuleType;
 use App\Repository\AutoAffectationRuleRepository;
-use App\Repository\TerritoryRepository;
+use App\Service\SearchAutoAffectationRule;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\FormError;
@@ -19,40 +19,21 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 #[Route('/bo/auto-affectation')]
 class AutoAffectationRuleController extends AbstractController
 {
+    private const int MAX_LIST_PAGINATION = 50;
+
     #[Route('/', name: 'back_auto_affectation_rule_index', methods: ['GET', 'POST'])]
     #[IsGranted('ROLE_ADMIN')]
     public function index(
         Request $request,
-        TerritoryRepository $territoryRepository,
         AutoAffectationRuleRepository $autoAffectationRuleRepository,
     ): Response {
-        $page = $request->get('page') ?? 1;
-
-        $currentTerritory = $territoryRepository->find((int) $request->get('territory'));
-
-        $paginatedAutoAffectationRule = $autoAffectationRuleRepository->getAutoAffectationRules(
-            territory: $currentTerritory,
-            page: (int) $page
-        );
-
-        if ($request->isMethod(Request::METHOD_POST)) {
-            $currentTerritory = $territoryRepository->find((int) $request->request->get('territory'));
-
-            return $this->redirect($this->generateUrl('back_auto_affectation_rule_index', [
-                'page' => 1,
-                'territory' => $currentTerritory?->getId(),
-            ]));
-        }
-
-        $totalAutoAffectationRule = \count($paginatedAutoAffectationRule);
+        [$form, $searchAutoAffectationRule, $paginatedAutoAffectationRule] = $this->handleSearchAutoAffectationRule($request, $autoAffectationRuleRepository);
 
         return $this->render('back/auto-affectation-rule/index.html.twig', [
-            'currentTerritory' => $currentTerritory,
-            'territories' => $territoryRepository->findAllWithAutoAffectationRules(),
-            'autoaffectationrules' => $paginatedAutoAffectationRule,
-            'total' => $totalAutoAffectationRule,
-            'page' => $page,
-            'pages' => (int) ceil($totalAutoAffectationRule / Partner::MAX_LIST_PAGINATION),
+            'form' => $form,
+            'searchAutoAffectationRule' => $searchAutoAffectationRule,
+            'autoAffectationRules' => $paginatedAutoAffectationRule,
+            'pages' => (int) ceil($paginatedAutoAffectationRule->count() / self::MAX_LIST_PAGINATION),
         ]);
     }
 
@@ -168,5 +149,18 @@ class AutoAffectationRuleController extends AbstractController
         foreach ($form->getErrors(true) as $error) {
             $this->addFlash('error', $error->getMessage());
         }
+    }
+
+    private function handleSearchAutoAffectationRule(Request $request, AutoAffectationRuleRepository $autoAffectationRuleRepository): array
+    {
+        $searchAutoAffectationRule = new SearchAutoAffectationRule($this->getUser());
+        $form = $this->createForm(SearchAutoAffectationRuleType::class, $searchAutoAffectationRule);
+        $form->handleRequest($request);
+        if ($form->isSubmitted() && !$form->isValid()) {
+            $searchAutoAffectationRule = new SearchAutoAffectationRule($this->getUser());
+        }
+        $paginatedAutoAffectationRule = $autoAffectationRuleRepository->findFilteredPaginated($searchAutoAffectationRule, self::MAX_LIST_PAGINATION);
+
+        return [$form, $searchAutoAffectationRule, $paginatedAutoAffectationRule];
     }
 }
