@@ -27,7 +27,8 @@ class SignalementAffectationListViewFactory
 
         /** @var ?ProfileDeclarant $profileDeclarant */
         $profileDeclarant = $data['profileDeclarant'];
-        $signalementAffectationListView = new SignalementAffectationListView(
+
+        return new SignalementAffectationListView(
             id: $data['id'],
             uuid: $data['uuid'],
             reference: $data['reference'],
@@ -48,10 +49,8 @@ class SignalementAffectationListViewFactory
             qualifications: SignalementAffectationHelper::getQualificationFrom($data),
             qualificationsStatuses: SignalementAffectationHelper::getQualificationStatusesFrom($data),
             conclusionsProcedure: SignalementAffectationHelper::parseConclusionProcedure($data['conclusionsProcedure']),
-            canDeleteSignalement: $canDeleteSignalement,
             csrfToken: $canDeleteSignalement ? $this->csrfTokenManager->getToken('signalement_delete_'.$data['id']) : null,
+            canDeleteSignalement: $canDeleteSignalement,
         );
-
-        return $signalementAffectationListView;
     }
 }

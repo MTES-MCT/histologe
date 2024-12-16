@@ -5,6 +5,7 @@ namespace App\Service\Interconnection\Esabora;
 use App\Entity\Affectation;
 use App\Entity\Enum\InterfacageType;
 use App\Entity\Enum\InterventionType;
+use App\Entity\Enum\ProcedureType;
 use App\Entity\File;
 use App\Entity\Intervention;
 use App\Entity\Suivi;
@@ -26,6 +27,7 @@ use App\Service\Interconnection\Esabora\Response\Model\DossierEventSCHS;
 use App\Service\Interconnection\Esabora\Response\Model\DossierVisiteSISH;
 use App\Service\Intervention\InterventionDescriptionGenerator;
 use App\Service\Security\FileScanner;
+use App\Service\Signalement\Qualification\SignalementQualificationUpdater;
 use App\Service\UploadHandlerService;
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
@@ -52,6 +54,7 @@ class EsaboraManager
         private readonly ImageManipulationHandler $imageManipulationHandler,
         private readonly UrlGeneratorInterface $urlGenerator,
         private readonly FileFactory $fileFactory,
+        private readonly SignalementQualificationUpdater $signalementQualificationUpdater,
     ) {
     }
 
@@ -190,6 +193,7 @@ class EsaboraManager
      */
     public function createOrUpdateArrete(Affectation $affectation, DossierArreteSISH $dossierArreteSISH): void
     {
+        $signalement = $affectation->getSignalement();
         $intervention = $this->interventionRepository->findOneBy(['providerId' => $dossierArreteSISH->getArreteId()]);
         $additionalInformation = [
             'arrete_numero' => $dossierArreteSISH->getArreteNumero(),
@@ -215,10 +219,15 @@ class EsaboraManager
                 providerName: InterfacageType::ESABORA->value,
                 providerId: $dossierArreteSISH->getArreteId(),
                 details: InterventionDescriptionGenerator::buildDescriptionArreteCreated($dossierArreteSISH),
-                additionalInformation: $additionalInformation
+                additionalInformation: $additionalInformation,
+                concludeProcedures: [ProcedureType::INSALUBRITE]
             );
 
             $this->interventionRepository->save($intervention, true);
+            $this->signalementQualificationUpdater->updateQualificationFromVisiteProcedureList(
+                $signalement,
+                [ProcedureType::INSALUBRITE]
+            );
             $this->eventDispatcher->dispatch(
                 new InterventionCreatedEvent($intervention, $this->userManager->getSystemUser()),
                 InterventionCreatedEvent::NAME

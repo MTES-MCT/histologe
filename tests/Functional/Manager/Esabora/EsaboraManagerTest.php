@@ -18,6 +18,7 @@ use App\Service\Interconnection\Esabora\EsaboraManager;
 use App\Service\Interconnection\Esabora\Response\DossierStateSCHSResponse;
 use App\Service\Interconnection\Esabora\Response\DossierStateSISHResponse;
 use App\Service\Security\FileScanner;
+use App\Service\Signalement\Qualification\SignalementQualificationUpdater;
 use App\Service\UploadHandlerService;
 use App\Tests\FixturesHelper;
 use Doctrine\ORM\EntityManagerInterface;
@@ -45,6 +46,7 @@ class EsaboraManagerTest extends KernelTestCase
     private ImageManipulationHandler $imageManipulationHandler;
     private UrlGeneratorInterface $UrlGeneratorInterface;
     private FileFactory $fileFactory;
+    private SignalementQualificationUpdater $signalementQualificationUpdater;
 
     protected function setUp(): void
     {
@@ -63,6 +65,7 @@ class EsaboraManagerTest extends KernelTestCase
         $this->imageManipulationHandler = self::getContainer()->get(ImageManipulationHandler::class);
         $this->UrlGeneratorInterface = self::getContainer()->get('router');
         $this->fileFactory = self::getContainer()->get(FileFactory::class);
+        $this->signalementQualificationUpdater = self::getContainer()->get(SignalementQualificationUpdater::class);
     }
 
     /**
@@ -107,6 +110,7 @@ class EsaboraManagerTest extends KernelTestCase
             $this->imageManipulationHandler,
             $this->UrlGeneratorInterface,
             $this->fileFactory,
+            $this->signalementQualificationUpdater
         );
 
         $esaboraManager->synchronizeAffectationFrom($dossierResponse, $affectation);
@@ -224,6 +228,7 @@ class EsaboraManagerTest extends KernelTestCase
             $this->imageManipulationHandler,
             $this->UrlGeneratorInterface,
             $this->fileFactory,
+            $this->signalementQualificationUpdater
         );
 
         $esaboraManager->synchronizeAffectationFrom($dossierResponse, $affectation);
