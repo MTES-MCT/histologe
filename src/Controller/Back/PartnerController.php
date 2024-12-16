@@ -54,7 +54,13 @@ class PartnerController extends AbstractController
         Request $request,
         PartnerRepository $partnerRepository,
     ): Response {
-        [$form, $searchPartner, $paginatedPartners] = $this->handleSearchPartner($request, $partnerRepository);
+        $searchPartner = new SearchPartner($this->getUser());
+        $form = $this->createForm(SearchPartnerType::class, $searchPartner);
+        $form->handleRequest($request);
+        if ($form->isSubmitted() && !$form->isValid()) {
+            $searchPartner = new SearchPartner($this->getUser());
+        }
+        $paginatedPartners = $partnerRepository->findFilteredPaginated($searchPartner, self::MAX_LIST_PAGINATION);
 
         return $this->render('back/partner/index.html.twig', [
             'form' => $form,
@@ -622,18 +628,5 @@ class PartnerController extends AbstractController
     private function shouldCancelFutureVisite(Intervention $intervention): bool
     {
         return $intervention->getScheduledAt() > new \DateTimeImmutable();
-    }
-
-    private function handleSearchPartner(Request $request, PartnerRepository $partnerRepository): array
-    {
-        $searchPartner = new SearchPartner($this->getUser());
-        $form = $this->createForm(SearchPartnerType::class, $searchPartner);
-        $form->handleRequest($request);
-        if ($form->isSubmitted() && !$form->isValid()) {
-            $searchPartner = new SearchPartner($this->getUser());
-        }
-        $paginatedPartners = $partnerRepository->findFilteredPaginated($searchPartner, self::MAX_LIST_PAGINATION);
-
-        return [$form, $searchPartner, $paginatedPartners];
     }
 }
