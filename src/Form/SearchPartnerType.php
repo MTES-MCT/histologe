@@ -83,7 +83,7 @@ class SearchPartnerType extends AbstractType
             'data_class' => SearchPartner::class,
             'csrf_protection' => false,
             'method' => 'GET',
-            'attr' => ['id' => 'search-partner-form', 'class' => 'fr-p-4v'],
+            'attr' => ['id' => 'search-partner-form', 'class' => 'fr-p-4v bo-filter-form'],
         ]);
     }
 
