@@ -45,7 +45,6 @@ class SignalementDesordresProcessor
                 $criteres[$desordreCritereSlug] = $labelCritere;
             }
         }
-        dump($criticitesArranged);
 
         return [
             'criticitesArranged' => $criticitesArranged,

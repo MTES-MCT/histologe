@@ -19,7 +19,6 @@ class Desordre
         $this->categorie = $categorie;
         $this->zone = $zone;
         foreach ($data as $label => $detail) {
-            dump($detail);
             $details = $label;
             if ($detail instanceof Criticite && $detail->getLabel()) {
                 $details .= \PHP_EOL.' - '.$detail->getLabel();
