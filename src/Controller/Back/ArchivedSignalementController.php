@@ -18,6 +18,8 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 #[Route('/bo/signalements-archives')]
 class ArchivedSignalementController extends AbstractController
 {
+    public const MAX_LIST_PAGINATION = 50;
+
     #[Route('/', name: 'back_archived_signalements_index', methods: ['GET', 'POST'])]
     #[IsGranted('ROLE_ADMIN')]
     public function index(
