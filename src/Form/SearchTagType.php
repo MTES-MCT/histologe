@@ -57,7 +57,7 @@ class SearchTagType extends AbstractType
             'data_class' => SearchTag::class,
             'csrf_protection' => false,
             'method' => 'GET',
-            'attr' => ['id' => 'search-tag-form', 'class' => 'fr-p-4v'],
+            'attr' => ['id' => 'search-tag-form', 'class' => 'fr-p-4v bo-filter-form'],
         ]);
     }
 

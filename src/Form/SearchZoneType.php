@@ -58,7 +58,7 @@ class SearchZoneType extends AbstractType
             'data_class' => SearchZone::class,
             'csrf_protection' => false,
             'method' => 'GET',
-            'attr' => ['id' => 'search-zone-form', 'class' => 'fr-p-4v'],
+            'attr' => ['id' => 'search-zone-form', 'class' => 'fr-p-4v bo-filter-form'],
         ]);
     }
 
