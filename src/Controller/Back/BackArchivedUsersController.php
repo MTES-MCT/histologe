@@ -23,11 +23,11 @@ use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 #[Route('/bo/comptes-archives')]
-class BackArchivedAccountController extends AbstractController
+class BackArchivedUsersController extends AbstractController
 {
     public const int MAX_LIST_PAGINATION = 20;
 
-    #[Route('/', name: 'back_account_index', methods: ['GET', 'POST'])]
+    #[Route('/', name: 'back_archived_users_index', methods: ['GET', 'POST'])]
     #[IsGranted('ROLE_ADMIN')]
     public function index(
         Request $request,
@@ -43,7 +43,7 @@ class BackArchivedAccountController extends AbstractController
         ]);
     }
 
-    #[Route('/{id}/reactiver', name: 'back_account_reactiver', methods: ['GET', 'POST'])]
+    #[Route('/{id}/reactiver', name: 'back_archived_users_reactiver', methods: ['GET', 'POST'])]
     #[IsGranted('ROLE_ADMIN')]
     public function reactiver(
         Request $request,
@@ -59,7 +59,7 @@ class BackArchivedAccountController extends AbstractController
         if ((User::STATUS_ARCHIVE !== $user->getStatut() && !$isUserUnlinked) || $user->getAnonymizedAt()) {
             $this->addFlash('error', 'Ce compte ne peut pas être réactivé.');
 
-            return $this->redirect($this->generateUrl('back_account_index'));
+            return $this->redirect($this->generateUrl('back_archived_users_index'));
         }
 
         $form = $this->createForm(UserType::class, $user, [
@@ -105,7 +105,7 @@ class BackArchivedAccountController extends AbstractController
                 )
             );
 
-            return $this->redirectToRoute('back_account_index');
+            return $this->redirectToRoute('back_archived_users_index');
         }
 
         $this->displayErrors($form);

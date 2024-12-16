@@ -37,7 +37,7 @@
                 {{ form_row(form.partner) }}
             </div>
             <div class="fr-col-12 fr-col-lg-3">
-                <a href="{{ path('back_account_index') }}" class="fr-link fr-link--icon-left fr-icon-close-circle-line">Réinitialiser les résultats</a>
+                <a href="{{ path('back_archived_users_index') }}" class="fr-link fr-link--icon-left fr-icon-close-circle-line">Réinitialiser les résultats</a>
             </div>
         </div>
         {{ form_end(form) }}
@@ -106,7 +106,7 @@
                     <td>{{ user.nom}}</ail td>
                     <td>{{ user.prenom}}</ail td>
                     <td class="fr-text--right">
-                        <a href="{{ path('back_account_reactiver', {'id': user.id}) }}"
+                        <a href="{{ path('back_archived_users_reactiver', {'id': user.id}) }}"
                         class="fr-btn fr-icon-flashlight-fill fr-btn--sm" title="Réactiver le compte {{user.email|clean_tagged_text(constant('App\\Entity\\User::SUFFIXE_ARCHIVED'), 'left')}}"></a>
                     </td>
                 </tr>
@@ -121,7 +121,7 @@
 
         <div class="fr-grid-row fr-mt-2v fr-grid-row--center">
             {% import '_partials/macros.html.twig' as macros %}
-            {{ macros.customPagination(pages, searchArchivedAccount.page, 'back_account_index', searchArchivedAccount.urlParams) }}
+            {{ macros.customPagination(pages, searchArchivedAccount.page, 'back_archived_users_index', searchArchivedAccount.urlParams) }}
         </div>
     </section>
 
