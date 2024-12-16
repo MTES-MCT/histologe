@@ -25,7 +25,13 @@ class ArchivedSignalementController extends AbstractController
         Request $request,
         SignalementRepository $signalementRepository,
     ): Response {
-        [$form, $searchArchivedSignalement, $paginatedArchivedSignalementPaginated] = $this->handleSearchArchivedSignalement($request, $signalementRepository);
+        $searchArchivedSignalement = new SearchArchivedSignalement($this->getUser());
+        $form = $this->createForm(SearchArchivedSignalementType::class, $searchArchivedSignalement);
+        $form->handleRequest($request);
+        if ($form->isSubmitted() && !$form->isValid()) {
+            $searchArchivedSignalement = new SearchArchivedSignalement($this->getUser());
+        }
+        $paginatedArchivedSignalementPaginated = $signalementRepository->findFilteredArchivedPaginated($searchArchivedSignalement, self::MAX_LIST_PAGINATION);
 
         return $this->render('back/signalement_archived/index.html.twig', [
             'form' => $form,
@@ -52,18 +58,5 @@ class ArchivedSignalementController extends AbstractController
         }
 
         return $this->redirectToRoute('back_archived_signalements_index');
-    }
-
-    private function handleSearchArchivedSignalement(Request $request, SignalementRepository $signalementRepository): array
-    {
-        $searchArchivedSignalement = new SearchArchivedSignalement($this->getUser());
-        $form = $this->createForm(SearchArchivedSignalementType::class, $searchArchivedSignalement);
-        $form->handleRequest($request);
-        if ($form->isSubmitted() && !$form->isValid()) {
-            $searchArchivedSignalement = new SearchArchivedSignalement($this->getUser());
-        }
-        $paginatedArchivedSignalementPaginated = $signalementRepository->findFilteredArchivedPaginated($searchArchivedSignalement, self::MAX_LIST_PAGINATION);
-
-        return [$form, $searchArchivedSignalement, $paginatedArchivedSignalementPaginated];
     }
 }

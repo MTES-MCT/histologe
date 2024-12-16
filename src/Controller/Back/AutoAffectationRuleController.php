@@ -27,7 +27,13 @@ class AutoAffectationRuleController extends AbstractController
         Request $request,
         AutoAffectationRuleRepository $autoAffectationRuleRepository,
     ): Response {
-        [$form, $searchAutoAffectationRule, $paginatedAutoAffectationRule] = $this->handleSearchAutoAffectationRule($request, $autoAffectationRuleRepository);
+        $searchAutoAffectationRule = new SearchAutoAffectationRule($this->getUser());
+        $form = $this->createForm(SearchAutoAffectationRuleType::class, $searchAutoAffectationRule);
+        $form->handleRequest($request);
+        if ($form->isSubmitted() && !$form->isValid()) {
+            $searchAutoAffectationRule = new SearchAutoAffectationRule($this->getUser());
+        }
+        $paginatedAutoAffectationRule = $autoAffectationRuleRepository->findFilteredPaginated($searchAutoAffectationRule, self::MAX_LIST_PAGINATION);
 
         return $this->render('back/auto-affectation-rule/index.html.twig', [
             'form' => $form,
@@ -149,18 +155,5 @@ class AutoAffectationRuleController extends AbstractController
         foreach ($form->getErrors(true) as $error) {
             $this->addFlash('error', $error->getMessage());
         }
-    }
-
-    private function handleSearchAutoAffectationRule(Request $request, AutoAffectationRuleRepository $autoAffectationRuleRepository): array
-    {
-        $searchAutoAffectationRule = new SearchAutoAffectationRule($this->getUser());
-        $form = $this->createForm(SearchAutoAffectationRuleType::class, $searchAutoAffectationRule);
-        $form->handleRequest($request);
-        if ($form->isSubmitted() && !$form->isValid()) {
-            $searchAutoAffectationRule = new SearchAutoAffectationRule($this->getUser());
-        }
-        $paginatedAutoAffectationRule = $autoAffectationRuleRepository->findFilteredPaginated($searchAutoAffectationRule, self::MAX_LIST_PAGINATION);
-
-        return [$form, $searchAutoAffectationRule, $paginatedAutoAffectationRule];
     }
 }
