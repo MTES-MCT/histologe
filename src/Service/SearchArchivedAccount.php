@@ -2,12 +2,11 @@
 
 namespace App\Service;
 
-use App\Entity\Territory;
 use App\Entity\User;
 use App\Service\Behaviour\SearchQueryTrait;
 use Symfony\Component\Validator\Constraints as Assert;
 
-class SearchArchivedPartner
+class SearchArchivedAccount
 {
     use SearchQueryTrait {
         getUrlParams as getUrlParamsBase;
@@ -16,8 +15,9 @@ class SearchArchivedPartner
     private User $user;
     #[Assert\Positive(message: 'La page doit être un nombre positif')]
     private ?int $page = 1;
-    private ?string $queryArchivedPartner = null;
+    private ?string $queryUser = null;
     private ?string $territory = null;
+    private ?string $partner = null;
 
     public function __construct(User $user)
     {
@@ -46,14 +46,14 @@ class SearchArchivedPartner
         $this->page = $page;
     }
 
-    public function getQueryArchivedPartner(): ?string
+    public function getQueryUser(): ?string
     {
-        return $this->queryArchivedPartner;
+        return $this->queryUser;
     }
 
-    public function setQueryArchivedPartner(?string $queryArchivedPartner): void
+    public function setQueryUser(?string $queryUser): void
     {
-        $this->queryArchivedPartner = $queryArchivedPartner;
+        $this->queryUser = $queryUser;
     }
 
     public function getTerritory(): ?string
@@ -64,6 +64,16 @@ class SearchArchivedPartner
     public function setTerritory(?string $territory): void
     {
         $this->territory = $territory;
+    }
+
+    public function getPartner(): ?string
+    {
+        return $this->partner;
+    }
+
+    public function setPartner(?string $partner): void
+    {
+        $this->partner = $partner;
     }
 
     public function getUrlParams(): array

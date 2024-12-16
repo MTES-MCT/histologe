@@ -6,6 +6,7 @@ use App\Dto\CountUser;
 use App\Entity\Partner;
 use App\Entity\Territory;
 use App\Entity\User;
+use App\Service\SearchArchivedAccount;
 use App\Service\SearchUser;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\NonUniqueResultException;
@@ -24,8 +25,11 @@ use Symfony\Component\Security\Core\User\PasswordUpgraderInterface;
  */
 class UserRepository extends ServiceEntityRepository implements PasswordUpgraderInterface
 {
-    public function __construct(ManagerRegistry $registry)
-    {
+    public function __construct(
+        ManagerRegistry $registry,
+        private readonly TerritoryRepository $territoryRepository,
+        private readonly PartnerRepository $partnerRepository,
+    ) {
         parent::__construct($registry, User::class);
     }
 
@@ -159,6 +163,21 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
         }, $pendingUsers);
     }
 
+    public function findArchivedFilteredPaginated(SearchArchivedAccount $searchArchivedAccount, int $maxResult): Paginator {
+        $territory = $searchArchivedAccount->getTerritory() ? $this->territoryRepository->find($searchArchivedAccount->getTerritory()) : null;
+        $partner = $searchArchivedAccount->getPartner() ? $this->partnerRepository->find($searchArchivedAccount->getPartner()) : null;
+        return $this->findAllArchived(
+            territory: $territory,
+            isNoneTerritory: ($searchArchivedAccount->getTerritory() === 'none'),
+            partner: $partner,
+            isNonePartner: ($searchArchivedAccount->getPartner() === 'none'),
+            filterTerms: $searchArchivedAccount->getQueryUser(),
+            includeUsagers: false,
+            page: (int) $searchArchivedAccount->getPage(),
+            maxResult: $maxResult
+        );
+    }
+
     public function findAllArchived(
         ?Territory $territory,
         bool $isNoneTerritory,
@@ -167,8 +186,8 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
         ?string $filterTerms,
         bool $includeUsagers,
         $page,
+        $maxResult,
     ): Paginator {
-        $maxResult = User::MAX_LIST_PAGINATION;
         $firstResult = ($page - 1) * $maxResult;
 
         $queryBuilder = $this->createQueryBuilder('u');
