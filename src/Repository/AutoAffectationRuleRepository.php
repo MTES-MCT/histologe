@@ -20,7 +20,8 @@ class AutoAffectationRuleRepository extends ServiceEntityRepository
         parent::__construct($registry, AutoAffectationRule::class);
     }
 
-    public function findFilteredPaginated(SearchAutoAffectationRule $searchAutoAffectationRule, int $maxResult): Paginator {
+    public function findFilteredPaginated(SearchAutoAffectationRule $searchAutoAffectationRule, int $maxResult): Paginator
+    {
         return $this->getAutoAffectationRules(
             territory: $searchAutoAffectationRule->getTerritory(),
             page: $searchAutoAffectationRule->getPage(),

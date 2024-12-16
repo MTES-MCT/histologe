@@ -21,7 +21,6 @@ use App\Manager\UserManager;
 use App\Repository\AutoAffectationRuleRepository;
 use App\Repository\JobEventRepository;
 use App\Repository\PartnerRepository;
-use App\Repository\TerritoryRepository;
 use App\Repository\UserRepository;
 use App\Security\Voter\PartnerVoter;
 use App\Service\Mailer\NotificationMail;

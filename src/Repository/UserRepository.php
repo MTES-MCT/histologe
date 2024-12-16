@@ -163,14 +163,16 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
         }, $pendingUsers);
     }
 
-    public function findArchivedFilteredPaginated(SearchArchivedAccount $searchArchivedAccount, int $maxResult): Paginator {
+    public function findArchivedFilteredPaginated(SearchArchivedAccount $searchArchivedAccount, int $maxResult): Paginator
+    {
         $territory = $searchArchivedAccount->getTerritory() ? $this->territoryRepository->find($searchArchivedAccount->getTerritory()) : null;
         $partner = $searchArchivedAccount->getPartner() ? $this->partnerRepository->find($searchArchivedAccount->getPartner()) : null;
+
         return $this->findAllArchived(
             territory: $territory,
-            isNoneTerritory: ($searchArchivedAccount->getTerritory() === 'none'),
+            isNoneTerritory: ('none' === $searchArchivedAccount->getTerritory()),
             partner: $partner,
-            isNonePartner: ($searchArchivedAccount->getPartner() === 'none'),
+            isNonePartner: ('none' === $searchArchivedAccount->getPartner()),
             filterTerms: $searchArchivedAccount->getQueryUser(),
             includeUsagers: false,
             page: (int) $searchArchivedAccount->getPage(),

@@ -32,7 +32,7 @@ class SearchArchivedAccountType extends AbstractType
         ]);
         $territories = $this->territoryRepository->findAllList();
         $choicesTerritories = [
-            'Aucun' => 'none'
+            'Aucun' => 'none',
         ];
         foreach ($territories as $territory) {
             $choicesTerritories[$territory->getZip().' - '.$territory->getName()] = $territory->getId();
@@ -66,7 +66,7 @@ class SearchArchivedAccountType extends AbstractType
     {
         $partners = $territory ? $this->partnerRepository->findBy(['territory' => $territory]) : $this->partnerRepository->findAll();
         $choicesPartners = [
-            'Aucun' => 'none'
+            'Aucun' => 'none',
         ];
         foreach ($partners as $partner) {
             $choicesPartners[$partner->getNom()] = $partner->getId();

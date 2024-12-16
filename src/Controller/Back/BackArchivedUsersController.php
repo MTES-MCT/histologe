@@ -33,11 +33,11 @@ class BackArchivedUsersController extends AbstractController
         Request $request,
         UserRepository $userRepository,
     ): Response {
-        $searchArchivedAccount = new SearchArchivedAccount($this->getUser());
+        $searchArchivedAccount = new SearchArchivedAccount();
         $form = $this->createForm(SearchArchivedAccountType::class, $searchArchivedAccount);
         $form->handleRequest($request);
         if ($form->isSubmitted() && !$form->isValid()) {
-            $searchArchivedAccount = new SearchArchivedAccount($this->getUser());
+            $searchArchivedAccount = new SearchArchivedAccount();
         }
         $paginatedArchivedAccount = $userRepository->findArchivedFilteredPaginated($searchArchivedAccount, self::MAX_LIST_PAGINATION);
 
