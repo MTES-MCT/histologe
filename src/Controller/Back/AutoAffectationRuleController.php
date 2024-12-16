@@ -27,11 +27,11 @@ class AutoAffectationRuleController extends AbstractController
         Request $request,
         AutoAffectationRuleRepository $autoAffectationRuleRepository,
     ): Response {
-        $searchAutoAffectationRule = new SearchAutoAffectationRule($this->getUser());
+        $searchAutoAffectationRule = new SearchAutoAffectationRule();
         $form = $this->createForm(SearchAutoAffectationRuleType::class, $searchAutoAffectationRule);
         $form->handleRequest($request);
         if ($form->isSubmitted() && !$form->isValid()) {
-            $searchAutoAffectationRule = new SearchAutoAffectationRule($this->getUser());
+            $searchAutoAffectationRule = new SearchAutoAffectationRule();
         }
         $paginatedAutoAffectationRule = $autoAffectationRuleRepository->findFilteredPaginated($searchAutoAffectationRule, self::MAX_LIST_PAGINATION);
 

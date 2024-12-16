@@ -43,7 +43,8 @@ class PartnerRepository extends ServiceEntityRepository
         return $queryBuilder;
     }
 
-    public function findFilteredPaginated(SearchPartner $searchPartner, int $maxResult): Paginator {
+    public function findFilteredPaginated(SearchPartner $searchPartner, int $maxResult): Paginator
+    {
         return $this->getPartners(
             $searchPartner->getTerritory(),
             $searchPartner->getPartnerType(),
@@ -119,11 +120,13 @@ class PartnerRepository extends ServiceEntityRepository
             ->getResult();
     }
 
-    public function findFilteredArchivedPaginated(SearchArchivedPartner $searchArchivedPartner, int $maxResult): Paginator {
+    public function findFilteredArchivedPaginated(SearchArchivedPartner $searchArchivedPartner, int $maxResult): Paginator
+    {
         $territory = $searchArchivedPartner->getTerritory() ? $this->territoryRepository->find($searchArchivedPartner->getTerritory()) : null;
+
         return $this->findAllArchivedOrWithoutTerritory(
             $territory,
-            ($searchArchivedPartner->getTerritory() == 'none'),
+            'none' == $searchArchivedPartner->getTerritory(),
             $searchArchivedPartner->getQueryArchivedPartner(),
             $searchArchivedPartner->getPage(),
             $maxResult,

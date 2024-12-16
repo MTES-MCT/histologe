@@ -2,7 +2,6 @@
 
 namespace App\Repository;
 
-use App\Controller\Back\TagController;
 use App\Entity\Tag;
 use App\Entity\Territory;
 use App\Service\SearchTag;
@@ -51,7 +50,8 @@ class TagRepository extends ServiceEntityRepository
             ->getResult();
     }
 
-    public function findFilteredPaginated(SearchTag $searchTag, int $maxResult): Paginator {
+    public function findFilteredPaginated(SearchTag $searchTag, int $maxResult): Paginator
+    {
         $qb = $this->createQueryBuilder('t');
         $qb->select('t', 's')
             ->leftJoin('t.signalements', 's', 'WITH', 's.statut != 7')

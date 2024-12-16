@@ -41,7 +41,7 @@ class SearchArchivedPartnerType extends AbstractType
         if ($this->isAdmin) {
             $territories = $this->territoryRepository->findAllList();
             $choicesTerritories = [
-                'Aucun' => 'none'
+                'Aucun' => 'none',
             ];
             foreach ($territories as $territory) {
                 $choicesTerritories[$territory->getZip().' - '.$territory->getName()] = $territory->getId();
