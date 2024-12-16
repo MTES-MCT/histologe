@@ -19,9 +19,16 @@ class Desordre
         $this->categorie = $categorie;
         $this->zone = $zone;
         foreach ($data as $label => $detail) {
+            dump($detail);
             $details = $label;
-            if ($detail->getLabel() && ($detail instanceof DesordrePrecision || $detail instanceof Criticite)) {
-                $details .= ' : '.$detail->getLabel();
+            if ($detail instanceof Criticite && $detail->getLabel()) {
+                $details .= \PHP_EOL.' - '.$detail->getLabel();
+            } else {
+                foreach ($detail as $desordrePrecision) {
+                    if ($desordrePrecision instanceof DesordrePrecision && $desordrePrecision->getLabel()) {
+                        $details .= \PHP_EOL.' - '.strip_tags($desordrePrecision->getLabel());
+                    }
+                }
             }
             $this->details[] = $details;
         }
