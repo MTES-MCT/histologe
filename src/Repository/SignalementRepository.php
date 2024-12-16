@@ -17,6 +17,7 @@ use App\Entity\Suivi;
 use App\Entity\Territory;
 use App\Entity\User;
 use App\Service\Interconnection\Idoss\IdossService;
+use App\Service\SearchArchivedSignalement;
 use App\Service\Signalement\SearchFilter;
 use App\Service\Statistics\CriticitePercentStatisticProvider;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
@@ -1309,10 +1310,23 @@ class SignalementRepository extends ServiceEntityRepository
         return $qb->getQuery()->getResult();
     }
 
+    public function findFilteredArchivedPaginated(
+        SearchArchivedSignalement $searchArchivedSignalement,
+        int $maxResult,
+    ): Paginator {
+        return $this->findAllArchived(
+            territory: $searchArchivedSignalement->getTerritory(),
+            referenceTerms: $searchArchivedSignalement->getQueryReference(),
+            page: $searchArchivedSignalement->getPage(),
+            maxResult: $maxResult,
+        );
+    }
+
     public function findAllArchived(
         ?Territory $territory,
         ?string $referenceTerms,
         $page,
+        ?int $maxResult = null,
     ): Paginator {
         $maxResult = Partner::MAX_LIST_PAGINATION;
         $firstResult = ($page - 1) * $maxResult;
