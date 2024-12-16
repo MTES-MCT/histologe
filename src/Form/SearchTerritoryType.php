@@ -38,7 +38,7 @@ class SearchTerritoryType extends AbstractType
             'data_class' => SearchTerritory::class,
             'csrf_protection' => false,
             'method' => 'GET',
-            'attr' => ['id' => 'search-territory-form', 'class' => 'fr-p-4v'],
+            'attr' => ['id' => 'search-territory-form', 'class' => 'fr-p-4v bo-filter-form'],
         ]);
     }
 
