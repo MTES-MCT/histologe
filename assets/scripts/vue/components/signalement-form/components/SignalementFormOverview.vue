@@ -384,7 +384,6 @@ export default defineComponent({
       return result
     },
     getFormDataInfosDesordres (): string {
-      console.log('getFormDataInfosDesordres')
       let result = ''
       result += this.addLineIfNeeded('zone_concernee_debut_desordres', 'Les désordres ont commencé il y a : ')
       if (this.formStore.data.profil !== 'bailleur_occupant' && this.formStore.data.profil !== 'locataire') {

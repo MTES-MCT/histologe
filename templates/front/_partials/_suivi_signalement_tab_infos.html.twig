@@ -305,13 +305,7 @@ and signalement.profileDeclarant is not same as enum('App\\Entity\\Enum\\Profile
 				{{ signalement.debutDesordres.label}}
 				</li>
             {% if signalement.hasSeenDesordres is not null %}
-				<li>Désordres constatés:
-				{% if signalement.hasSeenDesordres %}
-					Oui
-				{% else %}
-					Non
-				{% endif %}
-				</li>
+				<li>Désordres constatés: {{ signalement.hasSeenDesordres ? 'Oui' : 'Non' }}</li>
             {% endif %}
 			</ul>
         </div>
