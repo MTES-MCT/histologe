@@ -49,8 +49,8 @@ class TerritoryVoter extends Voter
 
     private function canGetBailleursList(Territory $territory, User $user): bool
     {
-        if ($this->security->isGranted('ROLE_ADMIN') ||
-            ($this->security->isGranted('ROLE_ADMIN_TERRITORY') && $user->hasPartnerInTerritory($territory))) {
+        if ($this->security->isGranted('ROLE_ADMIN')
+            || ($this->security->isGranted('ROLE_ADMIN_TERRITORY') && $user->hasPartnerInTerritory($territory))) {
             return true;
         }
 

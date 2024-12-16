@@ -41,10 +41,10 @@ class BailleurRepository extends ServiceEntityRepository
     {
         $queryBuilder = $this
             ->createQueryBuilder('b');
-            $queryBuilder->innerJoin('b.bailleurTerritories', 'bt')
-            ->innerJoin('bt.territory', 't')
-            ->where('t.zip = :zip')
-            ->setParameter('zip', $zip);
+        $queryBuilder->innerJoin('b.bailleurTerritories', 'bt')
+        ->innerJoin('bt.territory', 't')
+        ->where('t.zip = :zip')
+        ->setParameter('zip', $zip);
         $queryBuilder->orderBy('b.name', 'ASC');
 
         return $queryBuilder;
