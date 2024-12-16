@@ -15,7 +15,7 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 
 #[AsCommand(
     name: 'app:update-sish-arrete-procedure',
-    description: 'Add a short description for your command',
+    description: 'Update intervention with arrete procedure insalubrite',
 )]
 class UpdateSishArreteProcedureCommand extends Command
 {
