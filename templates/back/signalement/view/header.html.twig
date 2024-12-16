@@ -95,15 +95,21 @@
                     </div>
                 {% endif %}
 
-                {% if signalement.geoloc.lat is defined and signalement.geoloc.lng is defined %}
                     <div class="fr-mt-3v">
-                        <a target="_blank" rel="noreferrer noopener" class="force-link-color"
-                            href="http://www.openstreetmap.org/?mlat={{ signalement.geoloc.lat }}&mlon={{ signalement.geoloc.lng }}#map=18/{{ signalement.geoloc.lat }}/{{ signalement.geoloc.lng }}"
-                            title="Voir sur la carte - Ouvre une nouvelle fenêtre">
-                            Voir sur la carte
-                        </a>
+                        {% if signalement.geoloc.lat is defined and signalement.geoloc.lng is defined %}
+                            <a target="_blank" rel="noreferrer noopener" class="force-link-color"
+                                href="http://www.openstreetmap.org/?mlat={{ signalement.geoloc.lat }}&mlon={{ signalement.geoloc.lng }}#map=18/{{ signalement.geoloc.lat }}/{{ signalement.geoloc.lng }}"
+                                title="Voir sur la carte - Ouvre une nouvelle fenêtre">
+                                Voir sur la carte
+                            </a>
+                        {% else %}
+                            <a target="_blank" rel="noreferrer noopener" class="force-link-color"
+                                href="http://www.openstreetmap.org/?search?query={{signalement.addressCompleteOccupant}}"
+                                title="Voir sur la carte - Ouvre une nouvelle fenêtre">
+                                Voir sur la carte
+                            </a>
+                        {% endif %}
                     </div>
-                {% endif %}
             </div>
             
             {% if not needValidation %}

@@ -38,16 +38,13 @@ class SignalementAddressUpdater
             return;
         } elseif ($updateGeolocAndRnbId && !empty($signalement->getCpOccupant()) && !empty($signalement->getVilleOccupant())) {
             $inseeResult = $this->addressService->getAddress($signalement->getCpOccupant().' '.$signalement->getVilleOccupant());
-            $signalement->setRnbIdOccupant(null);
             if (!empty($inseeResult->getCity())) {
                 $signalement
                     ->setBanIdOccupant(0)
+                    ->setRnbIdOccupant(null)
                     ->setVilleOccupant($inseeResult->getCity())
                     ->setInseeOccupant($inseeResult->getInseeCode())
-                    ->setGeoloc([
-                        'lat' => $inseeResult->getLatitude(),
-                        'lng' => $inseeResult->getLongitude(),
-                    ]);
+                    ->setGeoloc([]);
 
                 return;
             }
