@@ -20,34 +20,25 @@
         </header>
     </section>
     <section class="fr-container--fluid">
-        <form action="#" name="bo-filters-form" id="bo_filters_form" method="POST"
-              class="fr-background--grey fr-p-2v fr-grid-row fr-grid-row--bottom">
-              
-            <div class="fr-col-4 fr-p-2v">
-                <div class="fr-search-bar fr-mt-2v" id="header-search">
-                    <input class="fr-input" placeholder="Référence" type="search" id="header-search-input"
-                        name="bo-filters-referenceTerms" value="{{ referenceTerms ?? '' }}">
-                    <button class="fr-btn" title="Rechercher">
-                        {{referenceTerms is null ? 'Référence' : referenceTerms}}
-                    </button>&nbsp;
-                </div>
+        {% form_theme form 'form/dsfr_theme.html.twig' %}
+        {{ form_start(form) }}
+        {{ form_errors(form) }}
+        <div class="fr-grid-row fr-grid-row--gutters">
+            <div class="fr-col-12 fr-col-lg-4">
+                {{ form_row(form.queryReference) }}
             </div>
-            <div class="fr-col-3 fr-p-2v">
-                <select id="bo-filters-territories" class="fr-select fr-select-submit" name="territory">
-                    <option value="" {{ currentTerritory is null ? 'selected' : '' }}>Tous les territoires</option>
-                    {% for territory in territories %}
-                        <option value="{{ territory.id }}" {{ currentTerritory ? (territory.id == currentTerritory.id ? 'selected' : '') : ''  }}>{{ territory.zip ~ ' - ' ~ territory.name }}</option>
-                    {% endfor %}
-                </select>
+            <div class="fr-col-12 fr-col-lg-4">
+                {{ form_row(form.territory) }}
             </div>
-            <div class="fr-col-2 fr-p-2v">
-                <a href="{{ path('back_archived_signalements_index') }}" class="fr-link fr-link--icon-left fr-icon-close-circle-line">Réinitialiser</a>
+            <div class="fr-col-12 fr-col-lg-4">
+                <a href="{{ path('back_archived_signalements_index') }}" class="fr-link fr-link--icon-left fr-icon-close-circle-line">Réinitialiser les résultats</a>
             </div>
-        </form>
+        </div>
+        {{ form_end(form) }}
     </section>
 
     <section class="fr-col-12 fr-p-5v">
-        <h2 class="fr-mb-0" id="desc-table">{{total}} signalements archivés</h2>
+        <h2 class="fr-mb-0" id="desc-table">{{signalements|length}} signalement{% if signalements|length > 1 %}s{% endif %} archivé{% if signalements|length > 1 %}s{% endif %}</h2>
     </section>
 
     <section class="fr-col-12 fr-pt-0 fr-px-5v">
@@ -125,7 +116,7 @@
 
         <div class="fr-grid-row fr-mt-2v fr-grid-row--center">
             {% import '_partials/macros.html.twig' as macros %}
-            {{ macros.customPagination(pages, page, 'back_archived_signalements_index', {territory: (currentTerritory ? currentTerritory.id :  null), referenceTerms: referenceTerms}) }}
+            {{ macros.customPagination(pages, searchArchivedSignalement.page, 'back_archived_signalements_index', searchArchivedSignalement.urlParams) }}
         </div>
     </section>
 {% endblock %}

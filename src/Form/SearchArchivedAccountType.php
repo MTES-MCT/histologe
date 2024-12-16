@@ -2,11 +2,9 @@
 
 namespace App\Form;
 
-use App\Entity\User;
 use App\Repository\PartnerRepository;
 use App\Repository\TerritoryRepository;
 use App\Service\SearchArchivedAccount;
-use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
@@ -19,21 +17,10 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class SearchArchivedAccountType extends AbstractType
 {
-    private bool $isAdmin = false;
-    private array $roleChoices = [];
-
     public function __construct(
-        private readonly Security $security,
         private readonly TerritoryRepository $territoryRepository,
         private readonly PartnerRepository $partnerRepository,
     ) {
-        $this->roleChoices = User::ROLES;
-        unset($this->roleChoices['Usager']);
-        if ($this->security->isGranted('ROLE_ADMIN')) {
-            $this->isAdmin = true;
-        } else {
-            unset($this->roleChoices['Super Admin']);
-        }
     }
 
     public function buildForm(FormBuilderInterface $builder, array $options): void
@@ -43,21 +30,19 @@ class SearchArchivedAccountType extends AbstractType
             'label' => false,
             'attr' => ['placeholder' => 'Taper le nom ou l\'e-mail d\'un utilisateur'],
         ]);
-        if ($this->isAdmin) {
-            $territories = $this->territoryRepository->findAllList();
-            $choicesTerritories = [
-                'Aucun' => 'none'
-            ];
-            foreach ($territories as $territory) {
-                $choicesTerritories[$territory->getZip().' - '.$territory->getName()] = $territory->getId();
-            }
-            $builder->add('territory', ChoiceType::class, [
-                'choices' => $choicesTerritories,
-                'required' => false,
-                'placeholder' => 'Tous les territoires',
-                'label' => false,
-            ]);
+        $territories = $this->territoryRepository->findAllList();
+        $choicesTerritories = [
+            'Aucun' => 'none'
+        ];
+        foreach ($territories as $territory) {
+            $choicesTerritories[$territory->getZip().' - '.$territory->getName()] = $territory->getId();
         }
+        $builder->add('territory', ChoiceType::class, [
+            'choices' => $choicesTerritories,
+            'required' => false,
+            'placeholder' => 'Tous les territoires',
+            'label' => false,
+        ]);
         $builder->addEventListener(FormEvents::PRE_SET_DATA, function (FormEvent $event) use ($builder) {
             $territory = $builder->getData()->getTerritory() ? $this->territoryRepository->find($builder->getData()->getTerritory()) : null;
             $this->addPartnersField(
@@ -66,7 +51,7 @@ class SearchArchivedAccountType extends AbstractType
             );
         });
         $builder->addEventListener(FormEvents::PRE_SUBMIT, function (FormEvent $event) {
-            if ($this->isAdmin && isset($event->getData()['territory'])) {
+            if (isset($event->getData()['territory'])) {
                 $territory = $event->getData()['territory'] ? $this->territoryRepository->find($event->getData()['territory']) : null;
                 $this->addPartnersField(
                     $event->getForm(),
