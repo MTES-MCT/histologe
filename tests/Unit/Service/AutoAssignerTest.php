@@ -212,10 +212,10 @@ class AutoAssignerTest extends KernelTestCase
 
     public function testAutoAssignmentBailleurSocial(): void
     {
-        // signalement 2024-10 à Saint-Mars du Désert, logement social lié au bailleur Habitat 44
+        // signalement 2024-11 à Saint-Mars du Désert, logement social lié au bailleur Habitat 44
         // partenaire commune et partenaire bailleur social à affecter
         /** @var Signalement $signalement */
-        $signalement = $this->signalementRepository->findOneBy(['reference' => '2024-10']);
+        $signalement = $this->signalementRepository->findOneBy(['reference' => '2024-11']);
         $signalement->setStatut(Signalement::STATUS_NEED_VALIDATION);
         $this->suiviFactory->expects($this->once())
         ->method('createInstanceFrom');
