@@ -5,6 +5,7 @@ namespace App\Repository;
 use App\Entity\AutoAffectationRule;
 use App\Entity\Partner;
 use App\Entity\Territory;
+use App\Service\SearchAutoAffectationRule;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\Tools\Pagination\Paginator;
 use Doctrine\Persistence\ManagerRegistry;
@@ -19,11 +20,22 @@ class AutoAffectationRuleRepository extends ServiceEntityRepository
         parent::__construct($registry, AutoAffectationRule::class);
     }
 
+    public function findFilteredPaginated(SearchAutoAffectationRule $searchAutoAffectationRule, int $maxResult): Paginator {
+        return $this->getAutoAffectationRules(
+            territory: $searchAutoAffectationRule->getTerritory(),
+            page: $searchAutoAffectationRule->getPage(),
+            maxResult: $maxResult,
+        );
+    }
+
     public function getAutoAffectationRules(
         ?Territory $territory,
         $page,
+        ?int $maxResult = null,
     ): Paginator {
-        $maxResult = Partner::MAX_LIST_PAGINATION;
+        if (empty($maxResult)) {
+            $maxResult = Partner::MAX_LIST_PAGINATION;
+        }
         $firstResult = ($page - 1) * $maxResult;
 
         $queryBuilder = $this->createQueryBuilder('aar');

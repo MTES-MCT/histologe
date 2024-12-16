@@ -1337,7 +1337,9 @@ class SignalementRepository extends ServiceEntityRepository
         $page,
         ?int $maxResult = null,
     ): Paginator {
-        $maxResult = Partner::MAX_LIST_PAGINATION;
+        if (empty($maxResult)) {
+            $maxResult = Partner::MAX_LIST_PAGINATION;
+        }
         $firstResult = ($page - 1) * $maxResult;
         $queryBuilder = $this->createQueryBuilder('s');
 
