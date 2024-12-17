@@ -11,6 +11,7 @@ use Symfony\Component\Form\Extension\Core\Type\NumberType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\Validator\Constraints as Assert;
 
 class SuiviSummariesType extends AbstractType
 {
@@ -43,6 +44,24 @@ class SuiviSummariesType extends AbstractType
                 ],
                 'label' => 'Prompt',
                 'required' => true,
+            ])
+            ->add('promptRole', ChoiceType::class, [
+                'choices' => [
+                    'System' => 'system',
+                    'User' => 'user',
+                ],
+                'label' => 'Rôle du prompt',
+            ])
+            ->add('temperature', NumberType::class, [
+                'data' => 0.7,
+                'label' => 'Température (0.0 - 2.0)',
+                'required' => true,
+                'constraints' => [
+                    new Assert\Range([
+                        'min' => 0,
+                        'max' => 2,
+                    ]),
+                ],
             ])
 
             // Commented languages are listed in Albert doc, but don't work when used

@@ -9,6 +9,8 @@ readonly class SuiviSummariesMessage
         private int $territoryId,
         private int $count,
         private string $prompt,
+        private string $promptRole,
+        private float $temperature,
         private string $model,
         private string $querySignalement,
     ) {
@@ -32,6 +34,16 @@ readonly class SuiviSummariesMessage
     public function getPrompt(): string
     {
         return $this->prompt;
+    }
+
+    public function getPromptRole(): string
+    {
+        return $this->promptRole;
+    }
+
+    public function getTemperature(): float
+    {
+        return $this->temperature;
     }
 
     public function getModel(): string

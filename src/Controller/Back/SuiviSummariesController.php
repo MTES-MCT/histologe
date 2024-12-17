@@ -35,6 +35,8 @@ class SuiviSummariesController extends AbstractController
             $territory = $form->get('territory')->getData();
             $count = $form->get('count')->getData();
             $prompt = $form->get('prompt')->getData();
+            $promptRole = $form->get('promptRole')->getData();
+            $temperature = $form->get('temperature')->getData();
             $model = $form->get('model')->getData();
             $querySignalement = $form->get('querySignalement')->getData();
 
@@ -43,6 +45,8 @@ class SuiviSummariesController extends AbstractController
                 $territory->getId(),
                 $count,
                 $prompt,
+                $promptRole,
+                $temperature,
                 $model,
                 $querySignalement)
             );
