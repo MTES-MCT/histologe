@@ -34,7 +34,7 @@ class SearchTagType extends AbstractType
     {
         $builder->add('queryTag', SearchType::class, [
             'required' => false,
-            'label' => false,
+            'label' => 'Etiquette',
             'attr' => ['placeholder' => 'Taper le nom de l\'étiquette'],
         ]);
         if ($this->isAdmin) {
@@ -45,7 +45,7 @@ class SearchTagType extends AbstractType
                 },
                 'required' => false,
                 'placeholder' => 'Tous les territoires',
-                'label' => false,
+                'label' => 'Territoire',
             ]);
         }
         $builder->add('page', HiddenType::class);

@@ -25,7 +25,7 @@ class SearchZoneType extends AbstractType
     {
         $builder->add('queryName', SearchType::class, [
             'required' => false,
-            'label' => false,
+            'label' => 'Zone',
             'attr' => ['placeholder' => 'Taper le nom d\'une zone'],
         ]);
         if ($this->security->isGranted('ROLE_ADMIN')) {
@@ -36,7 +36,7 @@ class SearchZoneType extends AbstractType
                 },
                 'required' => false,
                 'placeholder' => 'Tous les territoires',
-                'label' => false,
+                'label' => 'Territoire',
             ]);
         }
 
@@ -45,8 +45,8 @@ class SearchZoneType extends AbstractType
             'choice_label' => function ($choice) {
                 return $choice->label();
             },
-            'placeholder' => 'Sélectionner le type de zone',
-            'label' => false,
+            'placeholder' => 'Tous les types de zone',
+            'label' => 'Type de zone',
         ]);
 
         $builder->add('page', HiddenType::class);
