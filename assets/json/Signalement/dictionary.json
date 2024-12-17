@@ -237,7 +237,7 @@
   "desordres_logement_securite_plomb_details_diagnostique": {
     "default": "Un diagnostic plomb / amiante est disponible pour le logement ?",
     "disorderOverview": {
-      "default": "Diagnostique plomb / amiante disponible : {{dictionaryStore::formStore.data.desordres_logement_securite_plomb_details_diagnostique}}"
+      "default": "Diagnostic plomb / amiante disponible : {{dictionaryStore::formStore.data.desordres_logement_securite_plomb_details_diagnostique}}"
     }
   },
   "desordres_logement_electricite_pas_electricite": { "default": "Il n'y a pas d'électricité dans le logement" },

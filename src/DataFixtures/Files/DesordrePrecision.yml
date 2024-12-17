@@ -1042,7 +1042,7 @@ desordre_precision:
     desordre_critere_slug: "desordres_logement_securite_plomb" 
     coef: 6
     is_danger: 1
-    label: "<span>Dans : <b>Tout le logement</b></span><br><span class='fr-border--left'>Diagnostique plomb / amiante disponible : oui</span>" 
+    label: "<span>Dans : <b>Tout le logement</b></span><br><span class='fr-border--left'>Diagnostic plomb / amiante disponible : oui</span>" 
     qualification: ['INSALUBRITE']
     desordre_precision_slug: "desordres_logement_securite_plomb_pieces_tout_diagnostique_oui"
     is_suroccupation: 0
@@ -1050,7 +1050,7 @@ desordre_precision:
     desordre_critere_slug: "desordres_logement_securite_plomb" 
     coef: 3
     is_danger: 1
-    label: "<span>Dans : <b>Une ou des pièces à vivre (salon, chambres)</b></span><br><span class='fr-border--left'>Diagnostique plomb / amiante disponible : oui</span>" 
+    label: "<span>Dans : <b>Une ou des pièces à vivre (salon, chambres)</b></span><br><span class='fr-border--left'>Diagnostic plomb / amiante disponible : oui</span>" 
     qualification: ['RSD', 'INSALUBRITE']
     desordre_precision_slug: "desordres_logement_securite_plomb_pieces_piece_a_vivre_diagnostique_oui"
     is_suroccupation: 0
@@ -1058,7 +1058,7 @@ desordre_precision:
     desordre_critere_slug: "desordres_logement_securite_plomb" 
     coef: 2
     is_danger: 1
-    label: "<span>Dans : <b>La cuisine / le coin cuisine</b></span><br><span class='fr-border--left'>Diagnostique plomb / amiante disponible : oui</span>" 
+    label: "<span>Dans : <b>La cuisine / le coin cuisine</b></span><br><span class='fr-border--left'>Diagnostic plomb / amiante disponible : oui</span>" 
     qualification: ['INSALUBRITE']
     desordre_precision_slug: "desordres_logement_securite_plomb_pieces_cuisine_diagnostique_oui"
     is_suroccupation: 0
@@ -1066,7 +1066,7 @@ desordre_precision:
     desordre_critere_slug: "desordres_logement_securite_plomb" 
     coef: 1
     is_danger: 1
-    label: "<span>Dans : <b>La salle de bain, salle d'eau et / ou les toilettes</b></span><br><span class='fr-border--left'>Diagnostique plomb / amiante disponible : oui</span>" 
+    label: "<span>Dans : <b>La salle de bain, salle d'eau et / ou les toilettes</b></span><br><span class='fr-border--left'>Diagnostic plomb / amiante disponible : oui</span>" 
     qualification: ['INSALUBRITE']
     desordre_precision_slug: "desordres_logement_securite_plomb_pieces_salle_de_bain_diagnostique_oui"
     is_suroccupation: 0
@@ -1074,7 +1074,7 @@ desordre_precision:
     desordre_critere_slug: "desordres_logement_securite_plomb" 
     coef: 4
     is_danger: 1
-    label: "<span>Dans : <b>Tout le logement</b></span><br><span class='fr-border--left'>Diagnostique plomb / amiante disponible : non</span>" 
+    label: "<span>Dans : <b>Tout le logement</b></span><br><span class='fr-border--left'>Diagnostic plomb / amiante disponible : non</span>" 
     qualification: ['INSALUBRITE']
     desordre_precision_slug: "desordres_logement_securite_plomb_pieces_tout_diagnostique_non"
     is_suroccupation: 0
@@ -1082,7 +1082,7 @@ desordre_precision:
     desordre_critere_slug: "desordres_logement_securite_plomb" 
     coef: 2
     is_danger: 1
-    label: "<span>Dans : <b>Une ou des pièces à vivre (salon, chambres)</b></span><br><span class='fr-border--left'>Diagnostique plomb / amiante disponible : non</span>" 
+    label: "<span>Dans : <b>Une ou des pièces à vivre (salon, chambres)</b></span><br><span class='fr-border--left'>Diagnostic plomb / amiante disponible : non</span>" 
     qualification: ['INSALUBRITE']
     desordre_precision_slug: "desordres_logement_securite_plomb_pieces_piece_a_vivre_diagnostique_non"
     is_suroccupation: 0
@@ -1090,7 +1090,7 @@ desordre_precision:
     desordre_critere_slug: "desordres_logement_securite_plomb" 
     coef: 1.5
     is_danger: 1
-    label: "<span>Dans : <b>La cuisine / le coin cuisine</b></span><br><span class='fr-border--left'>Diagnostique plomb / amiante disponible : non</span>" 
+    label: "<span>Dans : <b>La cuisine / le coin cuisine</b></span><br><span class='fr-border--left'>Diagnostic plomb / amiante disponible : non</span>" 
     qualification: ['INSALUBRITE']
     desordre_precision_slug: "desordres_logement_securite_plomb_pieces_cuisine_diagnostique_non"
     is_suroccupation: 0
@@ -1098,7 +1098,7 @@ desordre_precision:
     desordre_critere_slug: "desordres_logement_securite_plomb" 
     coef: 0.5
     is_danger: 1
-    label: "<span>Dans : <b>La salle de bain, salle d'eau et / ou les toilettes</b></span><br><span class='fr-border--left'>Diagnostique plomb / amiante disponible : non</span>" 
+    label: "<span>Dans : <b>La salle de bain, salle d'eau et / ou les toilettes</b></span><br><span class='fr-border--left'>Diagnostic plomb / amiante disponible : non</span>" 
     qualification: ['INSALUBRITE']
     desordre_precision_slug: "desordres_logement_securite_plomb_pieces_salle_de_bain_diagnostique_non"
     is_suroccupation: 0
@@ -1106,7 +1106,7 @@ desordre_precision:
     desordre_critere_slug: "desordres_logement_securite_plomb" 
     coef: 4
     is_danger: 1
-    label: "<span>Dans : <b>Tout le logement</b></span><br><span class='fr-border--left'>Diagnostique plomb / amiante disponible : ne sait pas</span>" 
+    label: "<span>Dans : <b>Tout le logement</b></span><br><span class='fr-border--left'>Diagnostic plomb / amiante disponible : ne sait pas</span>" 
     qualification: ['INSALUBRITE']
     desordre_precision_slug: "desordres_logement_securite_plomb_pieces_tout_diagnostique_nsp"
     is_suroccupation: 0
@@ -1114,7 +1114,7 @@ desordre_precision:
     desordre_critere_slug: "desordres_logement_securite_plomb" 
     coef: 2
     is_danger: 1
-    label: "<span>Dans : <b>Une ou des pièces à vivre (salon, chambres)</b></span><br><span class='fr-border--left'>Diagnostique plomb / amiante disponible : ne sait pas</span>" 
+    label: "<span>Dans : <b>Une ou des pièces à vivre (salon, chambres)</b></span><br><span class='fr-border--left'>Diagnostic plomb / amiante disponible : ne sait pas</span>" 
     qualification: ['INSALUBRITE']
     desordre_precision_slug: "desordres_logement_securite_plomb_pieces_piece_a_vivre_diagnostique_nsp"
     is_suroccupation: 0
@@ -1122,7 +1122,7 @@ desordre_precision:
     desordre_critere_slug: "desordres_logement_securite_plomb" 
     coef: 1.5
     is_danger: 1
-    label: "<span>Dans : <b>La cuisine / le coin cuisine</b></span><br><span class='fr-border--left'>Diagnostique plomb / amiante disponible : ne sait pas</span>" 
+    label: "<span>Dans : <b>La cuisine / le coin cuisine</b></span><br><span class='fr-border--left'>Diagnostic plomb / amiante disponible : ne sait pas</span>" 
     qualification: ['INSALUBRITE']
     desordre_precision_slug: "desordres_logement_securite_plomb_pieces_cuisine_diagnostique_nsp"
     is_suroccupation: 0
@@ -1130,7 +1130,7 @@ desordre_precision:
     desordre_critere_slug: "desordres_logement_securite_plomb" 
     coef: 0.5
     is_danger: 1
-    label: "<span>Dans : <b>La salle de bain, salle d'eau et / ou les toilettes</b></span><br><span class='fr-border--left'>Diagnostique plomb / amiante disponible : ne sait pas</span>" 
+    label: "<span>Dans : <b>La salle de bain, salle d'eau et / ou les toilettes</b></span><br><span class='fr-border--left'>Diagnostic plomb / amiante disponible : ne sait pas</span>" 
     qualification: ['INSALUBRITE']
     desordre_precision_slug: "desordres_logement_securite_plomb_pieces_salle_de_bain_diagnostique_nsp"
     is_suroccupation: 0
