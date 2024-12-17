@@ -19,6 +19,7 @@ use App\Entity\User;
 use App\Service\Interconnection\Idoss\IdossService;
 use App\Service\Signalement\SearchFilter;
 use App\Service\Statistics\CriticitePercentStatisticProvider;
+use App\Utils\CommuneHelper;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\DBAL\Exception;
@@ -1041,8 +1042,15 @@ class SignalementRepository extends ServiceEntityRepository
         }
 
         if ($filters->getCommunes()) {
+            $communes = [];
+            foreach ($filters->getCommunes() as $city) {
+                $communes[] = $filters->getCommunes();
+                if (isset(CommuneHelper::COMMUNES_ARRONDISSEMENTS[$city])) {
+                    $communes = array_merge($communes, CommuneHelper::COMMUNES_ARRONDISSEMENTS[$city]);
+                }
+            }
             $qb->andWhere('s.villeOccupant IN (:communes)')
-                ->setParameter('communes', $filters->getCommunes());
+                ->setParameter('communes', $communes);
         }
 
         if ($filters->getPartners() && $filters->getPartners()->count() > 0) {
