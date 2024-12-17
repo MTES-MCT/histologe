@@ -29,6 +29,19 @@ class SearchTerritoryType extends AbstractType
             ],
         ]);
 
+        $builder->add('orderType', ChoiceType::class, [
+            'choices' => [
+                'Ordre par code' => 't.zip-ASC',
+                'Ordre par code inversé' => 't.zip-DESC',
+                'Ordre alphabétique (A -> Z)' => 't.name-ASC',
+                'Ordre alphabétique inversé (Z -> A)' => 't.name-DESC',
+            ],
+            'required' => false,
+            'placeholder' => false,
+            'label' => 'Trier par',
+            'data' => 't.zip-ASC',
+        ]);
+
         $builder->add('page', HiddenType::class);
     }
 

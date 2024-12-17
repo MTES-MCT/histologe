@@ -74,8 +74,14 @@ class TerritoryRepository extends ServiceEntityRepository
     public function findFilteredPaginated(SearchTerritory $searchTerritory, int $maxResult): Paginator
     {
         $qb = $this->createQueryBuilder('t');
-        $qb->select('t')
-            ->orderBy('t.zip', 'ASC');
+        $qb->select('t');
+
+        if (!empty($searchTerritory->getOrderType())) {
+            [$orderField, $orderDirection] = explode('-', $searchTerritory->getOrderType());
+            $qb->orderBy($orderField, $orderDirection);
+        } else {
+            $qb->orderBy('t.zip', 'ASC');
+        }
 
         if ($searchTerritory->getQueryName()) {
             $qb->andWhere('LOWER(t.name) LIKE :queryName OR t.zip LIKE :queryName');
