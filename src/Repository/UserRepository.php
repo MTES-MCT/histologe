@@ -229,6 +229,13 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
             ->setParameter('role2', '%ROLE_ADMIN_TERRITORY%')
             ->setParameter('role3', '%ROLE_USER_PARTNER%');
 
+        if (!empty($orderType)) {
+            [$orderField, $orderDirection] = explode('-', $orderType);
+            $queryBuilder->orderBy($orderField, $orderDirection);
+        } else {
+            $queryBuilder->orderBy('u.nom', 'ASC');
+        }
+
         $firstResult = ($searchArchivedUser->getPage() - 1) * $maxResult;
         $queryBuilder->setFirstResult($firstResult)->setMaxResults($maxResult);
 

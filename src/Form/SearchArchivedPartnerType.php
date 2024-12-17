@@ -53,6 +53,18 @@ class SearchArchivedPartnerType extends AbstractType
                 'label' => 'Territoire',
             ]);
         }
+
+        $builder->add('orderType', ChoiceType::class, [
+            'choices' => [
+                'Ordre alphabétique (A -> Z)' => 'p.nom-ASC',
+                'Ordre alphabétique inversé (Z -> A)' => 'p.nom-DESC',
+            ],
+            'required' => false,
+            'placeholder' => false,
+            'label' => 'Trier par',
+            'data' => 'p.nom-ASC',
+        ]);
+
         $builder->add('page', HiddenType::class);
     }
 

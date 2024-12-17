@@ -1326,6 +1326,7 @@ class SignalementRepository extends ServiceEntityRepository
             referenceTerms: $searchArchivedSignalement->getQueryReference(),
             page: $searchArchivedSignalement->getPage(),
             maxResult: $maxResult,
+            orderType: $searchArchivedSignalement->getOrderType(),
         );
     }
 
@@ -1334,6 +1335,7 @@ class SignalementRepository extends ServiceEntityRepository
         ?string $referenceTerms,
         int $page,
         int $maxResult,
+        ?string $orderType = null,
     ): Paginator {
         $queryBuilder = $this->createQueryBuilder('s');
 
@@ -1351,6 +1353,13 @@ class SignalementRepository extends ServiceEntityRepository
             $queryBuilder
                 ->andWhere('s.reference LIKE :referenceTerms')
                 ->setParameter('referenceTerms', $referenceTerms);
+        }
+
+        if (!empty($orderType)) {
+            [$orderField, $orderDirection] = explode('-', $orderType);
+            $queryBuilder->orderBy($orderField, $orderDirection);
+        } else {
+            $queryBuilder->orderBy('s.createdAt', 'ASC');
         }
 
         $firstResult = ($page - 1) * $maxResult;

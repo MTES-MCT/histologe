@@ -19,10 +19,12 @@
             </div>
         </header>
     </section>
+
+    {% form_theme form 'form/dsfr_theme.html.twig' %}
+    {{ form_start(form) }}
+
     {% if is_granted('ROLE_ADMIN') %}
     <section class="fr-container--fluid">
-        {% form_theme form 'form/dsfr_theme.html.twig' %}
-        {{ form_start(form) }}
         {{ form_errors(form) }}
         <div class="fr-grid-row fr-grid-row--gutters">
             <div class="fr-col-12 fr-col-lg-4">
@@ -35,13 +37,18 @@
                 <a href="{{ path('back_archived_partner_index') }}" class="fr-link fr-link--icon-left fr-icon-close-circle-line">Réinitialiser les résultats</a>
             </div>
         </div>
-        {{ form_end(form) }}
     </section>
     {% endif %}
 
-    <section class="fr-col-12 fr-p-5v">
+    <section class="fr-col-12 fr-py-5v">
         <h2 class="fr-mb-0" id="desc-table">{{ singular_or_plural(archivedPartners|length, 'partenaire archivé ou sans territoire trouvé', 'partenaires archivés ou sans territoire trouvés') }}</h2>
     </section>
+    
+    <section class="fr-col-3 fr-pt-0">
+        {{ form_row(form.orderType) }}
+    </section>
+
+    {{ form_end(form) }}
 
     <section class="fr-col-12 fr-pt-0 fr-px-5v">
         {% set tableHead %}
@@ -78,7 +85,7 @@
             {% endfor %}
         {% endset %}
 
-        {% include '_partials/back/table.html.twig' with { 'tableLabel': 'Liste des partenaires archivés ou sans territoires', 'tableHead': tableHead, 'tableBody': tableBody } %}
+        {% include '_partials/back/table.html.twig' with { 'tableLabel': 'Liste des partenaires archivés ou sans territoires', 'tableHead': tableHead, 'tableBody': tableBody, 'cancelSortable': true } %}
         
         <div class="fr-grid-row fr-mt-2v fr-grid-row--center">    
             {% import '_partials/macros.html.twig' as macros %}

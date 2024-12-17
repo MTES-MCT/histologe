@@ -16,6 +16,7 @@ class SearchZone
     private ?string $queryName = null;
     private ?Territory $territory = null;
     private ?ZoneType $type = null;
+    private ?string $orderType = null;
 
     public function __construct(User $user)
     {
@@ -58,6 +59,16 @@ class SearchZone
     public function setType(?ZoneType $type): void
     {
         $this->type = $type;
+    }
+
+    public function getOrderType(): ?string
+    {
+        return $this->orderType;
+    }
+
+    public function setOrderType(?string $orderType): void
+    {
+        $this->orderType = $orderType;
     }
 
     public function getUrlParams(): array

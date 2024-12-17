@@ -51,6 +51,7 @@ class PartnerRepository extends ServiceEntityRepository
             $searchPartner->getQueryPartner(),
             $searchPartner->getPage(),
             $maxResult,
+            $searchPartner->getOrderType(),
         );
     }
 
@@ -60,6 +61,7 @@ class PartnerRepository extends ServiceEntityRepository
         ?string $filterTerms,
         int $page,
         int $maxResult,
+        ?string $orderType = null,
     ): Paginator {
         $queryBuilder = $this->getPartnersQueryBuilder($territory);
         $queryBuilder->addSelect('z')
@@ -78,6 +80,13 @@ class PartnerRepository extends ServiceEntityRepository
                 OR LOWER(p.email) LIKE :usersterms');
             $queryBuilder
                 ->setParameter('usersterms', '%'.strtolower($filterTerms).'%');
+        }
+
+        if (!empty($orderType)) {
+            [$orderField, $orderDirection] = explode('-', $orderType);
+            $queryBuilder->orderBy($orderField, $orderDirection);
+        } else {
+            $queryBuilder->orderBy('p.nom', 'ASC');
         }
 
         $firstResult = ($page - 1) * $maxResult;
@@ -146,6 +155,13 @@ class PartnerRepository extends ServiceEntityRepository
             $queryBuilder
                 ->andWhere('LOWER(p.nom) LIKE :usersterms OR LOWER(p.email) LIKE :usersterms')
                 ->setParameter('usersterms', '%'.strtolower($filterTerms).'%');
+        }
+
+        if (!empty($orderType)) {
+            [$orderField, $orderDirection] = explode('-', $orderType);
+            $queryBuilder->orderBy($orderField, $orderDirection);
+        } else {
+            $queryBuilder->orderBy('p.nom', 'ASC');
         }
 
         $firstResult = ($searchArchivedPartner->getPage() - 1) * $maxResult;

@@ -2,21 +2,35 @@
 
 namespace App\Service;
 
+use App\Entity\User;
 use App\Service\Behaviour\SearchQueryTrait;
 use Symfony\Component\Validator\Constraints as Assert;
 
-class SearchArchivedAccount
+class SearchArchivedPartner
 {
     use SearchQueryTrait {
         getUrlParams as getUrlParamsBase;
     }
 
+    private User $user;
     #[Assert\Positive(message: 'La page doit être un nombre positif')]
     private ?int $page = 1;
-    private ?string $queryUser = null;
+    private ?string $queryArchivedPartner = null;
     private ?string $territory = null;
-    private ?string $partner = null;
     private ?string $orderType = null;
+
+    public function __construct(User $user)
+    {
+        $this->user = $user;
+        if (!$user->isSuperAdmin() && 1 === count($user->getPartnersTerritories())) {
+            $this->territory = (string) $user->getFirstTerritory()->getId();
+        }
+    }
+
+    public function getUser(): User
+    {
+        return $this->user;
+    }
 
     public function getPage(): int
     {
@@ -32,14 +46,14 @@ class SearchArchivedAccount
         $this->page = $page;
     }
 
-    public function getQueryUser(): ?string
+    public function getQueryArchivedPartner(): ?string
     {
-        return $this->queryUser;
+        return $this->queryArchivedPartner;
     }
 
-    public function setQueryUser(?string $queryUser): void
+    public function setQueryArchivedPartner(?string $queryArchivedPartner): void
     {
-        $this->queryUser = $queryUser;
+        $this->queryArchivedPartner = $queryArchivedPartner;
     }
 
     public function getTerritory(): ?string
@@ -50,16 +64,6 @@ class SearchArchivedAccount
     public function setTerritory(?string $territory): void
     {
         $this->territory = $territory;
-    }
-
-    public function getPartner(): ?string
-    {
-        return $this->partner;
-    }
-
-    public function setPartner(?string $partner): void
-    {
-        $this->partner = $partner;
     }
 
     public function getOrderType(): ?string
@@ -74,6 +78,11 @@ class SearchArchivedAccount
 
     public function getUrlParams(): array
     {
-        return $this->getUrlParamsBase();
+        $params = $this->getUrlParamsBase();
+        if (isset($params['territory']) && !$this->getUser()->isSuperAdmin()) {
+            unset($params['territory']);
+        }
+
+        return $params;
     }
 }
