@@ -3,10 +3,10 @@
 namespace App\Command;
 
 use App\Entity\Signalement;
-use App\Manager\SignalementManager;
 use App\Repository\SignalementRepository;
 use App\Repository\TerritoryRepository;
-use App\Service\DataGouv\AddressService;
+use App\Service\Signalement\SignalementAddressUpdater;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
@@ -23,9 +23,9 @@ class UpdateSignalementGeolocalisationCommand extends Command
     public const int BATCH_SIZE = 20;
 
     public function __construct(
-        private readonly AddressService $addressService,
         private readonly TerritoryRepository $territoryRepository,
-        private readonly SignalementManager $signalementManager,
+        private readonly EntityManagerInterface $entityManager,
+        private readonly SignalementAddressUpdater $signalementAddressUpdater,
     ) {
         parent::__construct();
     }
@@ -34,7 +34,8 @@ class UpdateSignalementGeolocalisationCommand extends Command
     {
         $this
             ->addOption('zip', null, InputOption::VALUE_OPTIONAL, 'Territory zip to target')
-            ->addOption('uuid', null, InputOption::VALUE_OPTIONAL, 'UUID du signalement');
+            ->addOption('uuid', null, InputOption::VALUE_OPTIONAL, 'UUID du signalement')
+            ->addOption('from_created_at', null, InputOption::VALUE_OPTIONAL, 'Get signalements data from created_at');
     }
 
     protected function execute(InputInterface $input, OutputInterface $output): int
@@ -43,14 +44,24 @@ class UpdateSignalementGeolocalisationCommand extends Command
 
         $zip = $input->getOption('zip');
         $uuid = $input->getOption('uuid');
+        $fromCreatedAt = $input->getOption('from_created_at');
+        $signalements = null;
 
+        /** @var SignalementRepository $signalementRepository */
+        $signalementRepository = $this->entityManager->getRepository(Signalement::class);
         if ($uuid) {
-            $signalements = $this->signalementManager->findBy(['uuid' => $uuid]);
-        } else {
+            $signalements = $signalementRepository->findBy(['uuid' => $uuid]);
+        } elseif (!empty($zip)) {
             $territory = $this->territoryRepository->findOneBy(['zip' => $zip]);
-            /** @var SignalementRepository $signalementRepository */
-            $signalementRepository = $this->signalementManager->getRepository();
             $signalements = $signalementRepository->findWithNoGeolocalisation($territory);
+        } elseif (!empty($fromCreatedAt)) {
+            $fromCreatedAt = \DateTimeImmutable::createFromFormat('Y-m-d', $fromCreatedAt);
+            if (false !== $fromCreatedAt) {
+                $signalements = $signalementRepository->findSignalementsBetweenDates(
+                    $fromCreatedAt,
+                    new \DateTimeImmutable()
+                );
+            }
         }
 
         if (empty($signalements)) {
@@ -62,24 +73,17 @@ class UpdateSignalementGeolocalisationCommand extends Command
         $i = 0;
         /** @var Signalement $signalement */
         foreach ($signalements as $signalement) {
-            $address = $this->addressService->getAddress($signalement->getAddressCompleteOccupant());
-            $this->signalementManager->updateAddressOccupantFromAddress($signalement, $address);
+            $this->signalementAddressUpdater->updateAddressOccupantFromBanData($signalement);
 
-            $io->success(\sprintf('Signalement %s updated.%sAddress : %sCode insee : %sGPS : [%s, %s]',
-                $signalement->getUuid(),
-                \PHP_EOL,
-                $address->getLabel().\PHP_EOL,
-                $address->getInseeCode().\PHP_EOL,
-                $address->getLongitude(),
-                $address->getLatitude()));
+            $io->success(\sprintf('Signalement %s updated', $signalement->getUuid()));
 
             if (0 === $i % self::BATCH_SIZE) {
-                $this->signalementManager->flush();
+                $this->entityManager->flush();
             }
             ++$i;
         }
 
-        $this->signalementManager->flush();
+        $this->entityManager->flush();
 
         return Command::SUCCESS;
     }
