@@ -17,6 +17,7 @@ class SearchArchivedPartner
     private ?int $page = 1;
     private ?string $queryArchivedPartner = null;
     private ?string $territory = null;
+    private ?string $orderType = null;
 
     public function __construct(User $user)
     {
@@ -63,6 +64,16 @@ class SearchArchivedPartner
     public function setTerritory(?string $territory): void
     {
         $this->territory = $territory;
+    }
+
+    public function getOrderType(): ?string
+    {
+        return $this->orderType;
+    }
+
+    public function setOrderType(?string $orderType): void
+    {
+        $this->orderType = $orderType;
     }
 
     public function getUrlParams(): array

@@ -9,6 +9,7 @@ use App\Service\SearchPartner;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\EnumType;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\Extension\Core\Type\SearchType;
@@ -59,6 +60,20 @@ class SearchPartnerType extends AbstractType
         $builder->addEventListener(FormEvents::PRE_SUBMIT, function (FormEvent $event) {
             $this->desactivePartnerType($event->getForm());
         });
+
+        $builder->add('orderType', ChoiceType::class, [
+            'choices' => [
+                'Ordre alphabétique (A -> Z)' => 'p.nom-ASC',
+                'Ordre alphabétique inversé (Z -> A)' => 'p.nom-DESC',
+                'Ordre croissant' => 'p.id-ASC',
+                'Ordre décroissant' => 'p.id-DESC',
+            ],
+            'required' => false,
+            'placeholder' => false,
+            'label' => 'Trier par',
+            'data' => 'p.nom-ASC',
+        ]);
+
         $builder->add('page', HiddenType::class);
     }
 

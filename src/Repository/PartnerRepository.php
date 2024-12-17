@@ -51,6 +51,7 @@ class PartnerRepository extends ServiceEntityRepository
             $searchPartner->getQueryPartner(),
             $searchPartner->getPage(),
             $maxResult,
+            $searchPartner->getOrderType(),
         );
     }
 
@@ -60,6 +61,7 @@ class PartnerRepository extends ServiceEntityRepository
         ?string $filterTerms,
         $page,
         ?int $maxResult = null,
+        ?string $orderType = null,
     ): Paginator {
         if (empty($maxResult)) {
             $maxResult = Partner::MAX_LIST_PAGINATION;
@@ -83,6 +85,13 @@ class PartnerRepository extends ServiceEntityRepository
                 OR LOWER(p.email) LIKE :usersterms');
             $queryBuilder
                 ->setParameter('usersterms', '%'.strtolower($filterTerms).'%');
+        }
+
+        if (!empty($orderType)) {
+            [$orderField, $orderDirection] = explode('-', $orderType);
+            $queryBuilder->orderBy($orderField, $orderDirection);
+        } else {
+            $queryBuilder->orderBy('p.nom', 'ASC');
         }
 
         $queryBuilder->setFirstResult($firstResult)->setMaxResults($maxResult);
@@ -130,6 +139,7 @@ class PartnerRepository extends ServiceEntityRepository
             $searchArchivedPartner->getQueryArchivedPartner(),
             $searchArchivedPartner->getPage(),
             $maxResult,
+            $searchArchivedPartner->getOrderType(),
         );
     }
 
@@ -139,6 +149,7 @@ class PartnerRepository extends ServiceEntityRepository
         ?string $filterTerms,
         $page,
         ?int $maxResult,
+        ?string $orderType = null,
     ): Paginator {
         if (empty($maxResult)) {
             $maxResult = Partner::MAX_LIST_PAGINATION;
@@ -171,6 +182,13 @@ class PartnerRepository extends ServiceEntityRepository
                 OR LOWER(p.email) LIKE :usersterms');
             $queryBuilder
                 ->setParameter('usersterms', '%'.strtolower($filterTerms).'%');
+        }
+
+        if (!empty($orderType)) {
+            [$orderField, $orderDirection] = explode('-', $orderType);
+            $queryBuilder->orderBy($orderField, $orderDirection);
+        } else {
+            $queryBuilder->orderBy('p.nom', 'ASC');
         }
 
         $queryBuilder->setFirstResult($firstResult)->setMaxResults($maxResult);

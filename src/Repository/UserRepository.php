@@ -176,7 +176,8 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
             filterTerms: $searchArchivedAccount->getQueryUser(),
             includeUsagers: false,
             page: (int) $searchArchivedAccount->getPage(),
-            maxResult: $maxResult
+            maxResult: $maxResult,
+            orderType: $searchArchivedAccount->getOrderType(),
         );
     }
 
@@ -189,6 +190,7 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
         bool $includeUsagers,
         $page,
         $maxResult,
+        ?string $orderType = null,
     ): Paginator {
         $firstResult = ($page - 1) * $maxResult;
 
@@ -255,6 +257,13 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
             $queryBuilder
                 ->andWhere('u.roles NOT LIKE :roleadmin')
                 ->setParameter('roleadmin', '%"ROLE_ADMIN%"');
+        }
+
+        if (!empty($orderType)) {
+            [$orderField, $orderDirection] = explode('-', $orderType);
+            $queryBuilder->orderBy($orderField, $orderDirection);
+        } else {
+            $queryBuilder->orderBy('u.nom', 'ASC');
         }
 
         $queryBuilder->setFirstResult($firstResult)->setMaxResults($maxResult);
