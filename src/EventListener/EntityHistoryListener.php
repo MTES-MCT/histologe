@@ -87,8 +87,15 @@ readonly class EntityHistoryListener
                 $originalValue = $changed[0] ?? null;
                 $newValue = $changed[1] ?? null;
 
+                if (is_array($originalValue) && is_array($newValue)) {
+                    $originalValue = $this->sortKey($originalValue);
+                    $newValue = $this->sortKey($newValue);
+                }
+
                 $originalValue = $this->entityComparator->processValue($originalValue);
                 $newValue = $this->entityComparator->processValue($newValue);
+
+
 
                 $fieldChanges = $this->entityComparator->compareValues($originalValue, $newValue, $field);
                 if (!empty($fieldChanges)) {
@@ -145,5 +152,12 @@ readonly class EntityHistoryListener
         } catch (\Throwable $exception) {
             $this->logger->error($exception->getMessage());
         }
+    }
+
+    private function sortKey(array $data): array
+    {
+        ksort($data);
+
+        return $data;
     }
 }
