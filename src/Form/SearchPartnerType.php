@@ -36,8 +36,8 @@ class SearchPartnerType extends AbstractType
     {
         $builder->add('queryPartner', SearchType::class, [
             'required' => false,
-            'label' => false,
-            'attr' => ['placeholder' => 'Rechercher un partenaire'],
+            'label' => 'Partenaire',
+            'attr' => ['placeholder' => 'Saisir le nom ou l\'e-mail d\'un partenaire'],
         ]);
         if ($this->isAdmin) {
             $builder->add('territory', EntityType::class, [
@@ -47,7 +47,7 @@ class SearchPartnerType extends AbstractType
                 },
                 'required' => false,
                 'placeholder' => 'Tous les territoires',
-                'label' => false,
+                'label' => 'Territoire',
             ]);
         }
 
@@ -56,9 +56,9 @@ class SearchPartnerType extends AbstractType
             'choice_label' => function ($choice) {
                 return $choice->label();
             },
-            'placeholder' => 'Type de partenaire',
+            'placeholder' => 'Tous les types de partenaire',
             'required' => false,
-            'label' => false,
+            'label' => 'Type de partenaire',
         ]);
 
         $builder->add('page', HiddenType::class);

@@ -17,7 +17,7 @@ class SearchArchivedSignalementType extends AbstractType
     {
         $builder->add('queryReference', SearchType::class, [
             'required' => false,
-            'label' => false,
+            'label' => 'Référence de signalement',
             'attr' => ['placeholder' => 'Taper la référence'],
         ]);
         $builder->add('territory', EntityType::class, [
@@ -27,7 +27,7 @@ class SearchArchivedSignalementType extends AbstractType
             },
             'required' => false,
             'placeholder' => 'Tous les territoires',
-            'label' => false,
+            'label' => 'Territoire',
         ]);
         $builder->add('page', HiddenType::class);
     }

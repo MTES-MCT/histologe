@@ -21,7 +21,7 @@ class SearchAutoAffectationRuleType extends AbstractType
             },
             'required' => false,
             'placeholder' => 'Tous les territoires',
-            'label' => false,
+            'label' => 'Territoire',
         ]);
         $builder->add('page', HiddenType::class);
     }
