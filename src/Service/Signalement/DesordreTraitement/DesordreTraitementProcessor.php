@@ -3,14 +3,14 @@
 namespace App\Service\Signalement\DesordreTraitement;
 
 use App\Entity\DesordreCritere;
-use Symfony\Component\DependencyInjection\Attribute\TaggedIterator;
+use Symfony\Component\DependencyInjection\Attribute\AutowireIterator;
 
 class DesordreTraitementProcessor
 {
     private iterable $desordreTraitements;
 
     public function __construct(
-        #[TaggedIterator('desordre_traitement', indexAttribute: 'key')]
+        #[AutowireIterator('desordre_traitement', indexAttribute: 'key')]
         iterable $desordreTraitements,
     ) {
         $this->desordreTraitements = $desordreTraitements;

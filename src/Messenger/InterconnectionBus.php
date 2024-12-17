@@ -4,7 +4,7 @@ namespace App\Messenger;
 
 use App\Entity\Affectation;
 use App\Factory\Interconnection\DossierMessageFactoryInterface;
-use Symfony\Component\DependencyInjection\Attribute\TaggedIterator;
+use Symfony\Component\DependencyInjection\Attribute\AutowireIterator;
 use Symfony\Component\Messenger\MessageBusInterface;
 
 class InterconnectionBus
@@ -13,7 +13,7 @@ class InterconnectionBus
 
     public function __construct(
         private readonly MessageBusInterface $messageBus,
-        #[TaggedIterator('app.dossier_message_factory')] iterable $dossierMessageFactories,
+        #[AutowireIterator('app.dossier_message_factory')] iterable $dossierMessageFactories,
     ) {
         $this->dossierMessageFactories = $dossierMessageFactories;
     }

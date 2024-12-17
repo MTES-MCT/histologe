@@ -26,7 +26,6 @@ use App\Service\Security\FileScanner;
 use App\Service\Signalement\PostalCodeHomeChecker;
 use App\Service\Signalement\SignalementDesordresProcessor;
 use App\Service\Signalement\SignalementDraftHelper;
-use App\Service\Signalement\SignalementFileProcessor;
 use App\Service\UploadHandlerService;
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
@@ -54,7 +53,7 @@ class SignalementController extends AbstractController
         ]);
     }
 
-    #[Route('/signalement-draft/{uuid}', name: 'front_nouveau_formulaire_edit', methods: 'GET')]
+    #[Route('/signalement-draft/{uuid:signalementDraft}', name: 'front_nouveau_formulaire_edit', methods: 'GET')]
     public function edit(
         SignalementDraft $signalementDraft,
     ): Response {
@@ -179,7 +178,7 @@ class SignalementController extends AbstractController
         return $this->json($errors);
     }
 
-    #[Route('/signalement-draft/{uuid}/envoi', name: 'mise_a_jour_nouveau_signalement_draft', methods: 'PUT')]
+    #[Route('/signalement-draft/{uuid:signalementDraft}/envoi', name: 'mise_a_jour_nouveau_signalement_draft', methods: 'PUT')]
     public function updateSignalementDraft(
         Request $request,
         SignalementDraftRequestSerializer $serializer,
@@ -214,7 +213,7 @@ class SignalementController extends AbstractController
         return $this->json($errors);
     }
 
-    #[Route('/signalement-draft/{uuid}/informations', name: 'informations_signalement_draft', methods: 'GET')]
+    #[Route('/signalement-draft/{uuid:signalementDraft}/informations', name: 'informations_signalement_draft', methods: 'GET')]
     public function getSignalementDraft(
         SignalementDraft $signalementDraft,
     ): JsonResponse {
@@ -265,7 +264,7 @@ class SignalementController extends AbstractController
         return $this->json(['response' => 'error'], Response::HTTP_BAD_REQUEST);
     }
 
-    #[Route('/signalement/{uuid}/send_mail_get_lien_suivi', name: 'send_mail_get_lien_suivi')]
+    #[Route('/signalement/{uuid:signalement}/send_mail_get_lien_suivi', name: 'send_mail_get_lien_suivi')]
     public function sendMailGetLienSuivi(
         NotificationMailerRegistry $notificationMailerRegistry,
         Signalement $signalement,
@@ -585,7 +584,6 @@ class SignalementController extends AbstractController
         Request $request,
         EntityManagerInterface $entityManager,
         SuiviFactory $suiviFactory,
-        SignalementFileProcessor $signalementFileProcessor,
         UploadHandlerService $uploadHandlerService,
         ValidatorInterface $validator,
     ): RedirectResponse {

@@ -44,7 +44,7 @@ class AffectationController extends AbstractController
     /**
      * @throws InvalidArgumentException
      */
-    #[Route('/{uuid}/affectation/toggle', name: 'back_signalement_toggle_affectation')]
+    #[Route('/{uuid:signalement}/affectation/toggle', name: 'back_signalement_toggle_affectation')]
     public function toggleAffectationSignalement(
         Request $request,
         Signalement $signalement,
@@ -90,7 +90,7 @@ class AffectationController extends AbstractController
         return $this->json(['status' => 'denied'], 400);
     }
 
-    #[Route('/{uuid}/affectation/remove', name: 'back_signalement_remove_partner')]
+    #[Route('/{uuid:signalement}/affectation/remove', name: 'back_signalement_remove_partner')]
     public function removePartnerAffectation(
         Request $request,
         Signalement $signalement,

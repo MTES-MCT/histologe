@@ -36,7 +36,7 @@ use Symfony\Component\Routing\Attribute\Route;
 #[Route('/bo/signalements')]
 class SignalementController extends AbstractController
 {
-    #[Route('/{uuid}', name: 'back_signalement_view')]
+    #[Route('/{uuid:signalement}', name: 'back_signalement_view')]
     public function viewSignalement(
         Signalement $signalement,
         Request $request,
@@ -222,7 +222,7 @@ class SignalementController extends AbstractController
         return $this->render('back/signalement/view.html.twig', $twigParams);
     }
 
-    #[Route('/{uuid}/supprimer', name: 'back_signalement_delete', methods: 'POST')]
+    #[Route('/{uuid:signalement}/supprimer', name: 'back_signalement_delete', methods: 'POST')]
     public function newDeleteSignalement(
         Signalement $signalement,
         Request $request,
@@ -254,7 +254,7 @@ class SignalementController extends AbstractController
         return $this->json($response, $response['status']);
     }
 
-    #[Route('/{uuid}/save-tags', name: 'back_signalement_save_tags', methods: 'POST')]
+    #[Route('/{uuid:signalement}/save-tags', name: 'back_signalement_save_tags', methods: 'POST')]
     public function saveSignalementTags(
         Signalement $signalement,
         Request $request,

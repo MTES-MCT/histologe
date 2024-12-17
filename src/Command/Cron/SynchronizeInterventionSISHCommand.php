@@ -19,7 +19,7 @@ use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
-use Symfony\Component\DependencyInjection\Attribute\TaggedIterator;
+use Symfony\Component\DependencyInjection\Attribute\AutowireIterator;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Symfony\Component\Serializer\SerializerInterface;
 
@@ -38,7 +38,7 @@ class SynchronizeInterventionSISHCommand extends AbstractSynchronizeEsaboraComma
         private readonly SerializerInterface $serializer,
         private readonly NotificationMailerRegistry $notificationMailerRegistry,
         private readonly ParameterBagInterface $parameterBag,
-        #[TaggedIterator(
+        #[AutowireIterator(
             'app.intervention_sish_handler',
             defaultPriorityMethod: 'getPriority'
         )] iterable $interventionHandlers,

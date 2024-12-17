@@ -67,7 +67,7 @@ class SignalementVisitesController extends AbstractController
     /**
      * @throws \Exception
      */
-    #[Route('/{uuid}/visites/ajouter', name: 'back_signalement_visite_add', methods: 'POST')]
+    #[Route('/{uuid:signalement}/visites/ajouter', name: 'back_signalement_visite_add', methods: 'POST')]
     public function addVisiteToSignalement(
         Signalement $signalement,
         Request $request,
@@ -127,7 +127,7 @@ class SignalementVisitesController extends AbstractController
         return $this->redirectToRoute('back_signalement_view', ['uuid' => $signalement->getUuid()]);
     }
 
-    #[Route('/{uuid}/visites/annuler', name: 'back_signalement_visite_cancel', methods: 'POST')]
+    #[Route('/{uuid:signalement}/visites/annuler', name: 'back_signalement_visite_cancel', methods: 'POST')]
     public function cancelVisiteFromSignalement(
         Signalement $signalement,
         Request $request,
@@ -176,7 +176,7 @@ class SignalementVisitesController extends AbstractController
     /**
      * @throws \Exception
      */
-    #[Route('/{uuid}/visites/reprogrammer', name: 'back_signalement_visite_reschedule', methods: 'POST')]
+    #[Route('/{uuid:signalement}/visites/reprogrammer', name: 'back_signalement_visite_reschedule', methods: 'POST')]
     public function rescheduleVisiteFromSignalement(
         Signalement $signalement,
         Request $request,
@@ -247,7 +247,7 @@ class SignalementVisitesController extends AbstractController
     /**
      * @throws \Exception
      */
-    #[Route('/{uuid}/visites/confirmer', name: 'back_signalement_visite_confirm', methods: 'POST')]
+    #[Route('/{uuid:signalement}/visites/confirmer', name: 'back_signalement_visite_confirm', methods: 'POST')]
     public function confirmVisiteFromSignalement(
         Signalement $signalement,
         Request $request,
@@ -299,7 +299,7 @@ class SignalementVisitesController extends AbstractController
     /**
      * @throws \Exception
      */
-    #[Route('/{uuid}/visites/editer', name: 'back_signalement_visite_edit', methods: 'POST')]
+    #[Route('/{uuid:signalement}/visites/editer', name: 'back_signalement_visite_edit', methods: 'POST')]
     public function editVisiteFromSignalement(
         Signalement $signalement,
         Request $request,
@@ -352,7 +352,7 @@ class SignalementVisitesController extends AbstractController
         return $this->redirectToRoute('back_signalement_view', ['uuid' => $signalement->getUuid()]);
     }
 
-    #[Route('/{uuid}/visites/{intervention}/delete-rapport', name: 'back_signalement_visite_deleterapport')]
+    #[Route('/{uuid:signalement}/visites/{intervention}/delete-rapport', name: 'back_signalement_visite_deleterapport')]
     public function deleteRapportVisiteFromSignalement(
         Signalement $signalement,
         Intervention $intervention,

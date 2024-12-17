@@ -118,6 +118,7 @@ class PartnerType extends AbstractType
                 ],
                 'required' => false,
                 'disabled' => !$this->isAdmin,
+                'default_protocol' => null,
             ])
             ->add('esaboraToken', TextType::class, [
                 'attr' => [
@@ -138,6 +139,7 @@ class PartnerType extends AbstractType
                     'class' => 'fr-input',
                 ],
                 'required' => false,
+                'default_protocol' => null,
             ]);
         }
         $builder->add('territory', EntityType::class, [
