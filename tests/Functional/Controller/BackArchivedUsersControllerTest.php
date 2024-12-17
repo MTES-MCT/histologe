@@ -35,7 +35,7 @@ class BackArchivedUsersControllerTest extends WebTestCase
             $client->getResponse()->getStatusCode(),
             \sprintf('Result value: %d', $client->getResponse()->getStatusCode())
         );
-        $this->assertEquals(1, $crawler->filter('h2:contains("9 comptes archivés ou sans territoires et/ou partenaires trouvés")')->count());
+        $this->assertEquals(1, $crawler->filter('h2:contains("9 comptes archivés ou sans territoire et/ou partenaire trouvés")')->count());
     }
 
     public function testAccountListWithTerritory(): void
