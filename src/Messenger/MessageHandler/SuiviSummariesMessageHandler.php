@@ -131,7 +131,7 @@ class SuiviSummariesMessageHandler
         $messages = [];
 
         if (!empty($cleanLastSuiviDescription)) {
-            $messages[] = $this->getAlbertMessage($suiviSummariesMessage->getPrompt());
+            $messages[] = $this->getAlbertMessage($suiviSummariesMessage->getPrompt(), $suiviSummariesMessage->getPromptRole());
             $messages[] = $this->getAlbertMessage($cleanLastSuiviDescription);
         } else {
             return null;
@@ -139,6 +139,7 @@ class SuiviSummariesMessageHandler
 
         $payload = [
             'messages' => $messages,
+            'temperature' => $suiviSummariesMessage->getTemperature(),
             'model' => $suiviSummariesMessage->getModel(),
             'stream' => false,
             'n' => 1,
@@ -157,8 +158,8 @@ class SuiviSummariesMessageHandler
         return $content->choices[0]->message->content;
     }
 
-    private function getAlbertMessage(string $message): array
+    private function getAlbertMessage(string $message, string $role = 'user'): array
     {
-        return ['role' => 'user', 'content' => $message];
+        return ['role' => $role, 'content' => $message];
     }
 }
