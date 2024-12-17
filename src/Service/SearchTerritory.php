@@ -13,6 +13,7 @@ class SearchTerritory
     private ?int $page = 1;
     private ?string $queryName = null;
     private ?bool $isActive = null;
+    private ?string $orderType = null;
 
     public function getPage(): int
     {
@@ -46,5 +47,15 @@ class SearchTerritory
     public function setIsActive(?bool $isActive): void
     {
         $this->isActive = $isActive;
+    }
+
+    public function getOrderType(): ?string
+    {
+        return $this->orderType;
+    }
+
+    public function setOrderType(?string $orderType): void
+    {
+        $this->orderType = $orderType;
     }
 }

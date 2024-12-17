@@ -15,6 +15,7 @@ class SearchAutoAffectationRule
     #[Assert\Positive(message: 'La page doit être un nombre positif')]
     private ?int $page = 1;
     private ?Territory $territory = null;
+    private ?bool $isActive = null;
 
     public function getPage(): int
     {
@@ -38,6 +39,16 @@ class SearchAutoAffectationRule
     public function setTerritory(?Territory $territory): void
     {
         $this->territory = $territory;
+    }
+
+    public function getIsActive(): ?bool
+    {
+        return $this->isActive;
+    }
+
+    public function setIsActive(?bool $isActive): void
+    {
+        $this->isActive = $isActive;
     }
 
     public function getUrlParams(): array
