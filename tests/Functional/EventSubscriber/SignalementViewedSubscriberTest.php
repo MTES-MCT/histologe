@@ -69,8 +69,7 @@ class SignalementViewedSubscriberTest extends KernelTestCase
         $this->assertTrue($isSeenAfter);
 
         $this->assertEquals('13203', $signalement->getInseeOccupant());
-        $this->assertArrayHasKey('lat', $signalement->getGeoloc());
-        $this->assertArrayHasKey('lng', $signalement->getGeoloc());
+        $this->assertEquals([], $signalement->getGeoloc());
         $this->assertEquals('13003', $signalement->getCpOccupant());
     }
 }

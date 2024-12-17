@@ -186,7 +186,6 @@ class SignalementManager extends AbstractManager
     public function updateAddressOccupantFromAddress(Signalement $signalement, Address $address): void
     {
         $signalement->setInseeOccupant($address->getInseeCode());
-        $signalement->setGeoloc($address->getGeoloc());
 
         if (empty($signalement->getCpOccupant())) {
             $signalement->setCpOccupant($address->getZipCode());
