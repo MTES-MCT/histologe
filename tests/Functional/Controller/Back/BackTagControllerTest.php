@@ -30,9 +30,11 @@ class BackTagControllerTest extends WebTestCase
 
     public function testSearchNewTag(): void
     {
-        $route = $this->router->generate('back_tags_index');
-        $this->client->request('POST', $route, ['territory' => 13, 'search' => 'Urgent']);
-        $this->client->followRedirect();
+        $route = $this->router->generate('back_tags_index', [
+            'territory' => 13,
+            'queryTag' => 'Urgent',
+        ]);
+        $this->client->request('GET', $route);
         $this->assertSelectorTextContains('#desc-table', '1 étiquette');
     }
 
