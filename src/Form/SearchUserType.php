@@ -101,7 +101,7 @@ class SearchUserType extends AbstractType
         $builder->add('permissionAffectation', ChoiceType::class, [
             'choices' => self::PERMISSION_CHOICES,
             'required' => false,
-            'placeholder' => 'Tous les droit d\'affectation',
+            'placeholder' => 'Tous les droits d\'affectation',
             'label' => 'Droit d\'affectation',
         ]);
         $builder->add('page', HiddenType::class);
