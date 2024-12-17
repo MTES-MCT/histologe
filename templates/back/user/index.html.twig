@@ -24,9 +24,11 @@
             </div>
         </header>
     </section>
+
+    {% form_theme form 'form/dsfr_theme.html.twig' %}
+    {{ form_start(form) }}
+
     <section class="fr-container--fluid overflow-visible">
-        {% form_theme form 'form/dsfr_theme.html.twig' %}
-        {{ form_start(form) }}
         {{ form_errors(form) }}
         <div class="fr-grid-row fr-grid-row--gutters">
             <div class="fr-col-12 fr-col-lg-3">
@@ -56,10 +58,9 @@
                 <a href="{{ path('back_user_index') }}" class="fr-link fr-link--icon-left fr-icon-close-circle-line">Réinitialiser les résultats</a>
             </div>
         </div>
-        {{ form_end(form) }}
     </section>
 
-    <section class="fr-col-12 fr-grid-row fr-grid-row--middle fr-p-5v">
+    <section class="fr-col-12 fr-grid-row fr-grid-row--middle fr-py-5v">
         <div class="fr-col-12 fr-col-md-6">
             <h2 class="fr-mb-0" id="desc-table">{{ singular_or_plural(users|length, 'utilisateur trouvé', 'utilisateurs trouvés') }}</h2>
         </div>
@@ -67,6 +68,12 @@
             <a href="{{path('back_user_export', searchUser.urlParams)}}" class="fr-btn fr-btn--secondary fr-btn--icon-left fr-icon-download-fill"> Exporter les résultats </a>
         </div>
     </section>
+    
+    <section class="fr-col-3 fr-pt-0">
+        {{ form_row(form.orderType) }}
+    </section>
+
+    {{ form_end(form) }}
 
     <section class="fr-col-12 fr-pt-0 fr-px-5v">
         {% set tableHead %}
@@ -149,7 +156,7 @@
             {% endfor %}
         {% endset %}
 
-        {% include '_partials/back/table.html.twig' with { 'tableLabel': 'Liste des utilisateurs', 'tableHead': tableHead, 'tableBody': tableBody } %}
+        {% include '_partials/back/table.html.twig' with { 'tableLabel': 'Liste des utilisateurs', 'tableHead': tableHead, 'tableBody': tableBody, 'cancelSortable': true } %}
         
         <div class="fr-grid-row fr-mt-2v fr-grid-row--center">
             {% import '_partials/macros.html.twig' as macros %}
