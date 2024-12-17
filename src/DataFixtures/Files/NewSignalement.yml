@@ -270,8 +270,8 @@ signalements:
       - "NON_DECENCE"
   -
     territory: "Gard"
-    uuid: "00000000-0000-0000-2024-000000000005"
-    reference: "2024-05"
+    uuid: "00000000-0000-0000-2024-000000000012"
+    reference: "2024-12"
     details: "Ma maison avait l'air bien, mais en fait c'est une véritable passoire."
     is_proprio_averti: 1
     is_allocataire: "0"
@@ -289,7 +289,7 @@ signalements:
     adresse_occupant: "3 Rue de Lajudie, 30100 Alès"
     cp_occupant: "62100"
     ville_occupant: "Alès"
-    statut: 1
+    statut: 2
     geoloc: "{\"lat\": 44.13945, \"lng\": 4.08469}"
     insee_occupant: "30007"
     nb_pieces_logement: 5

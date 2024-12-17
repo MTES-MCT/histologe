@@ -4,6 +4,8 @@ namespace App\Controller\Api;
 
 use App\Dto\Api\Response\SignalementResponse;
 use App\Factory\Api\SignalementResponseFactory;
+use App\Repository\DesordreCategorieRepository;
+use App\Repository\DesordreCritereRepository;
 use App\Repository\SignalementRepository;
 use Nelmio\ApiDocBundle\Annotation\Model;
 use OpenApi\Attributes as OA;
@@ -51,6 +53,8 @@ class SignalementController extends AbstractController
     )]
     public function getSignalementList(
         SignalementRepository $signalementRepository,
+        DesordreCritereRepository $desordreCritereRepository,
+        DesordreCategorieRepository $desordreCategoriesRepository,
         SignalementResponseFactory $signalementResponseFactory,
         #[MapQueryParameter] int $limit = 20,
         #[MapQueryParameter] int $page = 1,
@@ -64,6 +68,10 @@ class SignalementController extends AbstractController
         if ($page < 1) {
             $page = 1;
         }
+        // preload some data to reduce the number of queries
+        $desordreCritereRepository->findAll();
+        $desordreCategoriesRepository->findAll();
+        // main query
         $signalements = $signalementRepository->findForAPI(user: $this->getUser(), limit: $limit, page: $page);
         $resources = [];
         foreach ($signalements as $signalement) {

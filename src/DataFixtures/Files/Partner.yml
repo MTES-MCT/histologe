@@ -583,3 +583,9 @@ partners:
     is_archive: 0
     territory: "Loire-Atlantique"
     type: "COMMUNE_SCHS"
+  -
+    nom: "Alès Agglomération"
+    email: "partenaire-30-01@histologe.fr"
+    is_archive: 0
+    territory: "Gard"
+    type: "EPCI"
