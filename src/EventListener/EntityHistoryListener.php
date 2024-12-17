@@ -95,8 +95,6 @@ readonly class EntityHistoryListener
                 $originalValue = $this->entityComparator->processValue($originalValue);
                 $newValue = $this->entityComparator->processValue($newValue);
 
-
-
                 $fieldChanges = $this->entityComparator->compareValues($originalValue, $newValue, $field);
                 if (!empty($fieldChanges)) {
                     $changes[$field] = $fieldChanges;
