@@ -18,8 +18,6 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 #[Route('/bo/signalements-archives')]
 class ArchivedSignalementController extends AbstractController
 {
-    public const MAX_LIST_PAGINATION = 50;
-
     #[Route('/', name: 'back_archived_signalements_index', methods: ['GET', 'POST'])]
     #[IsGranted('ROLE_ADMIN')]
     public function index(
@@ -27,11 +25,11 @@ class ArchivedSignalementController extends AbstractController
         SignalementRepository $signalementRepository,
         ParameterBagInterface $parameterBag,
     ): Response {
-        $searchArchivedSignalement = new SearchArchivedSignalement();
+        $searchArchivedSignalement = new SearchArchivedSignalement($this->getUser());
         $form = $this->createForm(SearchArchivedSignalementType::class, $searchArchivedSignalement);
         $form->handleRequest($request);
         if ($form->isSubmitted() && !$form->isValid()) {
-            $searchArchivedSignalement = new SearchArchivedSignalement();
+            $searchArchivedSignalement = new SearchArchivedSignalement($this->getUser());
         }
         $maxListPagination = $parameterBag->get('standard_max_list_pagination');
         $paginatedArchivedSignalementPaginated = $signalementRepository->findFilteredArchivedPaginated($searchArchivedSignalement, $maxListPagination);
@@ -61,18 +59,5 @@ class ArchivedSignalementController extends AbstractController
         }
 
         return $this->redirectToRoute('back_archived_signalements_index');
-    }
-
-    private function handleSearchArchivedSignalement(Request $request, SignalementRepository $signalementRepository): array
-    {
-        $searchArchivedSignalement = new SearchArchivedSignalement($this->getUser());
-        $form = $this->createForm(SearchArchivedSignalementType::class, $searchArchivedSignalement);
-        $form->handleRequest($request);
-        if ($form->isSubmitted() && !$form->isValid()) {
-            $searchArchivedSignalement = new SearchArchivedSignalement($this->getUser());
-        }
-        $paginatedArchivedSignalementPaginated = $signalementRepository->findFilteredArchivedPaginated($searchArchivedSignalement, self::MAX_LIST_PAGINATION);
-
-        return [$form, $searchArchivedSignalement, $paginatedArchivedSignalementPaginated];
     }
 }
