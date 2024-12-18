@@ -85,7 +85,7 @@ class SearchArchivedAccountType extends AbstractType
             'data_class' => SearchArchivedAccount::class,
             'csrf_protection' => false,
             'method' => 'GET',
-            'attr' => ['id' => 'search-archived-account-form', 'class' => 'fr-p-4v bo-filter-form'],
+            'attr' => ['id' => 'search-archived-users-form', 'class' => 'fr-p-4v bo-filter-form'],
         ]);
     }
 

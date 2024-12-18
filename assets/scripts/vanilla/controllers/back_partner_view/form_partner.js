@@ -276,7 +276,7 @@ emailInputs.forEach(emailInput => {
   })
 })
 
-loadWindowWithLocalStorage('click', '[data-filter-list-partner]', 'back_link_partners')
+loadWindowWithLocalStorage('click', '[data-filter-list-partner]', 'search-partner-form')
 updateLocalStorageOnEvent('input', '#partner-input', 'back_link_partners')
 updateLocalStorageOnEvent('change', '#partner-filters-territories', 'back_link_partners')
 updateLocalStorageOnEvent('change', '#partner-filters-types', 'back_link_partners')
