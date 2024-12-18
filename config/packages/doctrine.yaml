@@ -9,6 +9,7 @@ doctrine:
                 server_version: '8.0.40'
                 use_savepoints: false
                 charset: utf8mb4
+                schema_filter: ~^(?!view_)~
                 default_table_options:
                     charset: utf8mb4
                     collate: utf8mb4_unicode_ci
