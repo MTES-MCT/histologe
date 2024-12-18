@@ -56,6 +56,10 @@ class AutoAssigner
 
         /** @var AutoAffectationRule $rule */
         foreach ($autoAffectationRules as $rule) {
+            if (empty($signalement->getGeoloc()) && $rule->getInseeToInclude() === 'partner_list') {
+                continue;
+            }
+
             $specification = new AndSpecification(
                 new ProfilDeclarantSpecification($rule->getProfileDeclarant()),
                 new PartnerTypeSpecification($rule->getPartnerType()),
