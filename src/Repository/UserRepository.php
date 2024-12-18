@@ -3,7 +3,6 @@
 namespace App\Repository;
 
 use App\Dto\CountUser;
-use App\Entity\Partner;
 use App\Entity\Territory;
 use App\Entity\User;
 use App\Service\SearchArchivedAccount;
@@ -182,7 +181,6 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
                 $queryBuilder
                     ->andWhere('up.id IS NULL');
             }
-
         } else {
             $territory = $searchArchivedAccount->getTerritory() ? $this->territoryRepository->find($searchArchivedAccount->getTerritory()) : null;
             $partner = $searchArchivedAccount->getPartner() ? $this->partnerRepository->find($searchArchivedAccount->getPartner()) : null;

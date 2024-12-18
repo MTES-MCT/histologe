@@ -6,7 +6,6 @@ use App\Entity\Enum\PartnerType;
 use App\Entity\Territory;
 use App\Entity\User;
 use App\Service\Behaviour\SearchQueryTrait;
-use Symfony\Component\Validator\Constraints as Assert;
 
 class SearchPartner
 {
@@ -15,8 +14,6 @@ class SearchPartner
     }
 
     private User $user;
-    #[Assert\Positive(message: 'La page doit être un nombre positif')]
-    private ?int $page = 1;
     private ?string $queryPartner = null;
     private ?Territory $territory = null;
     private ?PartnerType $partnerType = null;
@@ -32,20 +29,6 @@ class SearchPartner
     public function getUser(): User
     {
         return $this->user;
-    }
-
-    public function getPage(): int
-    {
-        if ($this->page < 1) {
-            return 1;
-        }
-
-        return $this->page;
-    }
-
-    public function setPage(?int $page): void
-    {
-        $this->page = $page;
     }
 
     public function getQueryPartner(): ?string

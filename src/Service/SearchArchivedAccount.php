@@ -3,33 +3,14 @@
 namespace App\Service;
 
 use App\Service\Behaviour\SearchQueryTrait;
-use Symfony\Component\Validator\Constraints as Assert;
 
 class SearchArchivedAccount
 {
-    use SearchQueryTrait {
-        getUrlParams as getUrlParamsBase;
-    }
+    use SearchQueryTrait;
 
-    #[Assert\Positive(message: 'La page doit être un nombre positif')]
-    private ?int $page = 1;
     private ?string $queryUser = null;
     private ?string $territory = null;
     private ?string $partner = null;
-
-    public function getPage(): int
-    {
-        if ($this->page < 1) {
-            return 1;
-        }
-
-        return $this->page;
-    }
-
-    public function setPage(?int $page): void
-    {
-        $this->page = $page;
-    }
 
     public function getQueryUser(): ?string
     {
@@ -59,10 +40,5 @@ class SearchArchivedAccount
     public function setPartner(?string $partner): void
     {
         $this->partner = $partner;
-    }
-
-    public function getUrlParams(): array
-    {
-        return $this->getUrlParamsBase();
     }
 }
