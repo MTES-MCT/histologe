@@ -32,7 +32,8 @@ class SuiviVisiteRescheduledToUsagerMailer extends AbstractNotificationMailer
         $signalement = $notificationMail->getSignalement();
         $intervention = $notificationMail->getIntervention();
         $previousDate = $notificationMail->getPreviousVisiteDate();
-        $interventionScheduledAt = $intervention->getScheduledAt()->format('H') > 0 ? $intervention->getScheduledAt()->format('d/m/Y à H:i') : $intervention->getScheduledAt()->format('d/m/Y');
+        $interventionScheduledAt = $intervention->getScheduledAtFormated();
+
         $partnerName = $intervention->getPartner() ? $intervention->getPartner()->getNom() : 'Non renseigné';
 
         return [

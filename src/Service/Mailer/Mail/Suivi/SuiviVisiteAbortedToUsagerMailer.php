@@ -31,7 +31,7 @@ class SuiviVisiteAbortedToUsagerMailer extends AbstractNotificationMailer
     {
         $signalement = $notificationMail->getSignalement();
         $intervention = $notificationMail->getIntervention();
-        $interventionScheduledAt = $intervention->getScheduledAt()->format('H') > 0 ? $intervention->getScheduledAt()->format('d/m/Y à H:i') : $intervention->getScheduledAt()->format('d/m/Y');
+        $interventionScheduledAt = $intervention->getScheduledAtFormated();
 
         return [
             'intervention_scheduledAt' => $interventionScheduledAt,
