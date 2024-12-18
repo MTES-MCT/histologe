@@ -97,6 +97,11 @@ class SearchFilter
         $signalementSearchQuery = $this->request;
         $filters = $signalementSearchQuery->getFilters();
         $partners = new ArrayCollection();
+
+        if(!$user->isSuperAdmin()) {
+           $filters['territories'] = [];
+        }
+        
         $territory = isset($filters['territories'][0]) ? $this->territoryRepository->find($filters['territories'][0]) : null;
         if (\in_array(User::ROLE_USER_PARTNER, $user->getRoles())) {
             $partners = $user->getPartners();
