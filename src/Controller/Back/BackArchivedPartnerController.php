@@ -22,11 +22,11 @@ class BackArchivedPartnerController extends AbstractController
         PartnerRepository $partnerRepository,
         ParameterBagInterface $parameterBag,
     ): Response {
-        $searchArchivedPartner = new SearchArchivedPartner($this->getUser());
+        $searchArchivedPartner = new SearchArchivedPartner();
         $form = $this->createForm(SearchArchivedPartnerType::class, $searchArchivedPartner);
         $form->handleRequest($request);
         if ($form->isSubmitted() && !$form->isValid()) {
-            $searchArchivedPartner = new SearchArchivedPartner($this->getUser());
+            $searchArchivedPartner = new SearchArchivedPartner();
         }
         $maxListPagination = $parameterBag->get('standard_max_list_pagination');
         $paginatedArchivedPartners = $partnerRepository->findFilteredArchivedPaginated($searchArchivedPartner, $maxListPagination);

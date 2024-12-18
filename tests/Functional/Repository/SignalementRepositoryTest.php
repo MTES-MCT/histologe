@@ -136,7 +136,7 @@ class SignalementRepositoryTest extends KernelTestCase
     {
         /** @var SignalementRepository $signalementRepository */
         $signalementRepository = $this->entityManager->getRepository(Signalement::class);
-        $signalementsArchived = $signalementRepository->findAllArchived(null, null, null);
+        $signalementsArchived = $signalementRepository->findAllArchived(null, null, 1, 50);
         $this->assertEquals(2, \count($signalementsArchived));
     }
 
@@ -147,7 +147,7 @@ class SignalementRepositoryTest extends KernelTestCase
         /** @var TerritoryRepository $territoryRepository */
         $territoryRepository = $this->entityManager->getRepository(Territory::class);
         $territory = $territoryRepository->findOneBy(['zip' => '13']);
-        $signalementsArchived = $signalementRepository->findAllArchived($territory, null, null);
+        $signalementsArchived = $signalementRepository->findAllArchived($territory, null, 1, 50);
         $this->assertEquals(1, \count($signalementsArchived));
     }
 
@@ -155,7 +155,7 @@ class SignalementRepositoryTest extends KernelTestCase
     {
         /** @var SignalementRepository $signalementRepository */
         $signalementRepository = $this->entityManager->getRepository(Signalement::class);
-        $signalementsArchived = $signalementRepository->findAllArchived(null, '2024-04', null);
+        $signalementsArchived = $signalementRepository->findAllArchived(null, '2024-04', 1, 50);
         $this->assertEquals(1, \count($signalementsArchived));
     }
 
