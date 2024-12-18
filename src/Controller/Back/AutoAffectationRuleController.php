@@ -9,6 +9,7 @@ use App\Repository\AutoAffectationRuleRepository;
 use App\Service\SearchAutoAffectationRule;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Symfony\Component\Form\FormError;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\Request;
@@ -19,13 +20,12 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 #[Route('/bo/auto-affectation')]
 class AutoAffectationRuleController extends AbstractController
 {
-    private const int MAX_LIST_PAGINATION = 50;
-
     #[Route('/', name: 'back_auto_affectation_rule_index', methods: ['GET', 'POST'])]
     #[IsGranted('ROLE_ADMIN')]
     public function index(
         Request $request,
         AutoAffectationRuleRepository $autoAffectationRuleRepository,
+        ParameterBagInterface $parameterBag,
     ): Response {
         $searchAutoAffectationRule = new SearchAutoAffectationRule();
         $form = $this->createForm(SearchAutoAffectationRuleType::class, $searchAutoAffectationRule);
@@ -33,13 +33,14 @@ class AutoAffectationRuleController extends AbstractController
         if ($form->isSubmitted() && !$form->isValid()) {
             $searchAutoAffectationRule = new SearchAutoAffectationRule();
         }
-        $paginatedAutoAffectationRule = $autoAffectationRuleRepository->findFilteredPaginated($searchAutoAffectationRule, self::MAX_LIST_PAGINATION);
+        $maxListPagination = $parameterBag->get('standard_max_list_pagination');
+        $paginatedAutoAffectationRule = $autoAffectationRuleRepository->findFilteredPaginated($searchAutoAffectationRule, $maxListPagination);
 
         return $this->render('back/auto-affectation-rule/index.html.twig', [
             'form' => $form,
             'searchAutoAffectationRule' => $searchAutoAffectationRule,
             'autoAffectationRules' => $paginatedAutoAffectationRule,
-            'pages' => (int) ceil($paginatedAutoAffectationRule->count() / self::MAX_LIST_PAGINATION),
+            'pages' => (int) ceil($paginatedAutoAffectationRule->count() / $maxListPagination),
         ]);
     }
 

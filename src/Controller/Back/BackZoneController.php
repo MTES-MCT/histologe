@@ -13,6 +13,7 @@ use App\Service\Import\CsvParser;
 use App\Service\SearchZone;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Symfony\Component\Form\Form;
 use Symfony\Component\Form\FormError;
 use Symfony\Component\HttpFoundation\File\File;
@@ -27,18 +28,20 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 #[IsGranted('ROLE_ADMIN_TERRITORY')]
 class BackZoneController extends AbstractController
 {
-    private const MAX_LIST_PAGINATION = 25;
-
     #[Route('/', name: 'back_zone_index', methods: ['GET'])]
-    public function index(Request $request, ZoneRepository $zoneRepository): Response
-    {
+    public function index(
+        Request $request,
+        ZoneRepository $zoneRepository,
+        ParameterBagInterface $parameterBag,
+    ): Response {
         $searchZone = new SearchZone($this->getUser());
         $form = $this->createForm(SearchZoneType::class, $searchZone);
         $form->handleRequest($request);
         if ($form->isSubmitted() && !$form->isValid()) {
             $searchZone = new SearchZone($this->getUser());
         }
-        $paginatedZones = $zoneRepository->findFilteredPaginated($searchZone, self::MAX_LIST_PAGINATION);
+        $maxListPagination = $parameterBag->get('standard_max_list_pagination');
+        $paginatedZones = $zoneRepository->findFilteredPaginated($searchZone, $maxListPagination);
 
         $zone = new Zone();
         /** @var User $user */
@@ -53,7 +56,7 @@ class BackZoneController extends AbstractController
             'addForm' => $addForm,
             'searchZone' => $searchZone,
             'zones' => $paginatedZones,
-            'pages' => (int) ceil($paginatedZones->count() / self::MAX_LIST_PAGINATION),
+            'pages' => (int) ceil($paginatedZones->count() / $maxListPagination),
         ]);
     }
 

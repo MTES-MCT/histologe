@@ -8,6 +8,7 @@ use App\Repository\SignalementRepository;
 use App\Service\SearchArchivedSignalement;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -17,13 +18,12 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 #[Route('/bo/signalements-archives')]
 class ArchivedSignalementController extends AbstractController
 {
-    public const MAX_LIST_PAGINATION = 50;
-
     #[Route('/', name: 'back_archived_signalements_index', methods: ['GET', 'POST'])]
     #[IsGranted('ROLE_ADMIN')]
     public function index(
         Request $request,
         SignalementRepository $signalementRepository,
+        ParameterBagInterface $parameterBag,
     ): Response {
         $searchArchivedSignalement = new SearchArchivedSignalement();
         $form = $this->createForm(SearchArchivedSignalementType::class, $searchArchivedSignalement);
@@ -31,13 +31,14 @@ class ArchivedSignalementController extends AbstractController
         if ($form->isSubmitted() && !$form->isValid()) {
             $searchArchivedSignalement = new SearchArchivedSignalement();
         }
-        $paginatedArchivedSignalementPaginated = $signalementRepository->findFilteredArchivedPaginated($searchArchivedSignalement, self::MAX_LIST_PAGINATION);
+        $maxListPagination = $parameterBag->get('standard_max_list_pagination');
+        $paginatedArchivedSignalementPaginated = $signalementRepository->findFilteredArchivedPaginated($searchArchivedSignalement, $maxListPagination);
 
         return $this->render('back/signalement_archived/index.html.twig', [
             'form' => $form,
             'searchArchivedSignalement' => $searchArchivedSignalement,
             'signalements' => $paginatedArchivedSignalementPaginated,
-            'pages' => (int) ceil($paginatedArchivedSignalementPaginated->count() / self::MAX_LIST_PAGINATION),
+            'pages' => (int) ceil($paginatedArchivedSignalementPaginated->count() / $maxListPagination),
         ]);
     }
 

@@ -31,20 +31,16 @@ class AutoAffectationRuleRepository extends ServiceEntityRepository
 
     public function getAutoAffectationRules(
         ?Territory $territory,
-        $page,
-        ?int $maxResult = null,
+        int $page,
+        int $maxResult,
     ): Paginator {
-        if (empty($maxResult)) {
-            $maxResult = Partner::MAX_LIST_PAGINATION;
-        }
-        $firstResult = ($page - 1) * $maxResult;
-
         $queryBuilder = $this->createQueryBuilder('aar');
 
         if ($territory) {
             $queryBuilder->andWhere('aar.territory = :territory')->setParameter('territory', $territory);
         }
 
+        $firstResult = ($page - 1) * $maxResult;
         $queryBuilder->setFirstResult($firstResult)->setMaxResults($maxResult);
 
         return new Paginator($queryBuilder->getQuery(), false);

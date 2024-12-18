@@ -165,39 +165,14 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
 
     public function findArchivedFilteredPaginated(SearchArchivedAccount $searchArchivedAccount, int $maxResult): Paginator
     {
-        $territory = $searchArchivedAccount->getTerritory() ? $this->territoryRepository->find($searchArchivedAccount->getTerritory()) : null;
-        $partner = $searchArchivedAccount->getPartner() ? $this->partnerRepository->find($searchArchivedAccount->getPartner()) : null;
-
-        return $this->findAllArchived(
-            territory: $territory,
-            isNoneTerritory: ('none' === $searchArchivedAccount->getTerritory()),
-            partner: $partner,
-            isNonePartner: ('none' === $searchArchivedAccount->getPartner()),
-            filterTerms: $searchArchivedAccount->getQueryUser(),
-            includeUsagers: false,
-            page: (int) $searchArchivedAccount->getPage(),
-            maxResult: $maxResult
-        );
-    }
-
-    public function findAllArchived(
-        ?Territory $territory,
-        bool $isNoneTerritory,
-        ?Partner $partner,
-        bool $isNonePartner,
-        ?string $filterTerms,
-        bool $includeUsagers,
-        $page,
-        $maxResult,
-    ): Paginator {
-        $firstResult = ($page - 1) * $maxResult;
-
         $queryBuilder = $this->createQueryBuilder('u');
         $queryBuilder->select('u', 'up', 'p')
             ->leftJoin('u.userPartners', 'up')
             ->leftJoin('up.partner', 'p');
         $queryBuilder->andWhere('u.anonymizedAt IS NULL');
 
+        $isNoneTerritory = ('none' === $searchArchivedAccount->getTerritory());
+        $isNonePartner = ('none' === $searchArchivedAccount->getPartner());
         if ($isNoneTerritory || $isNonePartner) {
             if ($isNoneTerritory) {
                 $queryBuilder
@@ -207,7 +182,11 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
                 $queryBuilder
                     ->andWhere('up.id IS NULL');
             }
+
         } else {
+            $territory = $searchArchivedAccount->getTerritory() ? $this->territoryRepository->find($searchArchivedAccount->getTerritory()) : null;
+            $partner = $searchArchivedAccount->getPartner() ? $this->partnerRepository->find($searchArchivedAccount->getPartner()) : null;
+
             $builtOrCondition = '';
             if (empty($territory)) {
                 $builtOrCondition .= ' OR p.territory IS NULL';
@@ -233,6 +212,7 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
             }
         }
 
+        $filterTerms = $searchArchivedAccount->getQueryUser();
         if (!empty($filterTerms)) {
             $queryBuilder
                 ->andWhere('LOWER(u.nom) LIKE :usersterms
@@ -242,21 +222,16 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
                 ->setParameter('usersterms', '%'.strtolower($filterTerms).'%');
         }
 
-        if (!$includeUsagers) {
-            $queryBuilder
-                ->andWhere('u.roles LIKE :role
-                OR u.roles LIKE :role2
-                OR u.roles LIKE :role3');
-            $queryBuilder
-                ->setParameter('role', '%ROLE_ADMIN_PARTNER%')
-                ->setParameter('role2', '%ROLE_ADMIN_TERRITORY%')
-                ->setParameter('role3', '%ROLE_USER_PARTNER%');
-        } else {
-            $queryBuilder
-                ->andWhere('u.roles NOT LIKE :roleadmin')
-                ->setParameter('roleadmin', '%"ROLE_ADMIN%"');
-        }
+        $queryBuilder
+            ->andWhere('u.roles LIKE :role
+            OR u.roles LIKE :role2
+            OR u.roles LIKE :role3');
+        $queryBuilder
+            ->setParameter('role', '%ROLE_ADMIN_PARTNER%')
+            ->setParameter('role2', '%ROLE_ADMIN_TERRITORY%')
+            ->setParameter('role3', '%ROLE_USER_PARTNER%');
 
+        $firstResult = ($searchArchivedAccount->getPage() - 1) * $maxResult;
         $queryBuilder->setFirstResult($firstResult)->setMaxResults($maxResult);
 
         return new Paginator($queryBuilder->getQuery(), false);

@@ -58,14 +58,9 @@ class PartnerRepository extends ServiceEntityRepository
         ?Territory $territory,
         ?PartnerType $type,
         ?string $filterTerms,
-        $page,
-        ?int $maxResult = null,
+        int $page,
+        int $maxResult,
     ): Paginator {
-        if (empty($maxResult)) {
-            $maxResult = Partner::MAX_LIST_PAGINATION;
-        }
-        $firstResult = ($page - 1) * $maxResult;
-
         $queryBuilder = $this->getPartnersQueryBuilder($territory);
         $queryBuilder->addSelect('z')
             ->leftJoin('p.zones', 'z')
@@ -85,6 +80,7 @@ class PartnerRepository extends ServiceEntityRepository
                 ->setParameter('usersterms', '%'.strtolower($filterTerms).'%');
         }
 
+        $firstResult = ($page - 1) * $maxResult;
         $queryBuilder->setFirstResult($firstResult)->setMaxResults($maxResult);
 
         $paginator = new Paginator($queryBuilder->getQuery(), false);
@@ -122,34 +118,14 @@ class PartnerRepository extends ServiceEntityRepository
 
     public function findFilteredArchivedPaginated(SearchArchivedPartner $searchArchivedPartner, int $maxResult): Paginator
     {
-        $territory = $searchArchivedPartner->getTerritory() ? $this->territoryRepository->find($searchArchivedPartner->getTerritory()) : null;
-
-        return $this->findAllArchivedOrWithoutTerritory(
-            $territory,
-            'none' == $searchArchivedPartner->getTerritory(),
-            $searchArchivedPartner->getQueryArchivedPartner(),
-            $searchArchivedPartner->getPage(),
-            $maxResult,
-        );
-    }
-
-    public function findAllArchivedOrWithoutTerritory(
-        ?Territory $territory,
-        bool $isNoneTerritory,
-        ?string $filterTerms,
-        $page,
-        ?int $maxResult,
-    ): Paginator {
-        if (empty($maxResult)) {
-            $maxResult = Partner::MAX_LIST_PAGINATION;
-        }
-        $firstResult = ($page - 1) * $maxResult;
         $queryBuilder = $this->createQueryBuilder('p');
 
+        $isNoneTerritory = ('none' == $searchArchivedPartner->getTerritory());
         if ($isNoneTerritory) {
             $queryBuilder
                 ->where('p.territory IS NULL');
         } else {
+            $territory = $searchArchivedPartner->getTerritory() ? $this->territoryRepository->find($searchArchivedPartner->getTerritory()) : null;
             $builtOrCondition = '';
             if (empty($territory)) {
                 $builtOrCondition .= ' OR p.territory IS NULL';
@@ -165,14 +141,14 @@ class PartnerRepository extends ServiceEntityRepository
             }
         }
 
+        $filterTerms = $searchArchivedPartner->getQueryArchivedPartner();
         if (!empty($filterTerms)) {
             $queryBuilder
-                ->andWhere('LOWER(p.nom) LIKE :usersterms
-                OR LOWER(p.email) LIKE :usersterms');
-            $queryBuilder
+                ->andWhere('LOWER(p.nom) LIKE :usersterms OR LOWER(p.email) LIKE :usersterms')
                 ->setParameter('usersterms', '%'.strtolower($filterTerms).'%');
         }
 
+        $firstResult = ($searchArchivedPartner->getPage() - 1) * $maxResult;
         $queryBuilder->setFirstResult($firstResult)->setMaxResults($maxResult);
 
         return new Paginator($queryBuilder->getQuery(), false);

@@ -15,6 +15,7 @@ use App\Service\Mailer\NotificationMailerType;
 use App\Service\SearchArchivedAccount;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Symfony\Component\Form\FormError;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\Request;
@@ -25,13 +26,12 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 #[Route('/bo/comptes-archives')]
 class BackArchivedUsersController extends AbstractController
 {
-    public const int MAX_LIST_PAGINATION = 20;
-
     #[Route('/', name: 'back_archived_users_index', methods: ['GET', 'POST'])]
     #[IsGranted('ROLE_ADMIN')]
     public function index(
         Request $request,
         UserRepository $userRepository,
+        ParameterBagInterface $parameterBag,
     ): Response {
         $searchArchivedAccount = new SearchArchivedAccount();
         $form = $this->createForm(SearchArchivedAccountType::class, $searchArchivedAccount);
@@ -39,13 +39,14 @@ class BackArchivedUsersController extends AbstractController
         if ($form->isSubmitted() && !$form->isValid()) {
             $searchArchivedAccount = new SearchArchivedAccount();
         }
-        $paginatedArchivedAccount = $userRepository->findArchivedFilteredPaginated($searchArchivedAccount, self::MAX_LIST_PAGINATION);
+        $maxListPagination = $parameterBag->get('standard_max_list_pagination');
+        $paginatedArchivedAccount = $userRepository->findArchivedFilteredPaginated($searchArchivedAccount, $maxListPagination);
 
         return $this->render('back/account/index.html.twig', [
             'form' => $form,
             'searchArchivedAccount' => $searchArchivedAccount,
             'users' => $paginatedArchivedAccount,
-            'pages' => (int) ceil($paginatedArchivedAccount->count() / self::MAX_LIST_PAGINATION),
+            'pages' => (int) ceil($paginatedArchivedAccount->count() / $maxListPagination),
         ]);
     }
 

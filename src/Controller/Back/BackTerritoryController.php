@@ -13,6 +13,7 @@ use App\Service\Security\FileScanner;
 use App\Service\UploadHandlerService;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\File\File as SymfonyFile;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -24,25 +25,27 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 #[Route('/bo/territoire')]
 class BackTerritoryController extends AbstractController
 {
-    private const MAX_LIST_PAGINATION = 25;
-
     #[Route('/', name: 'back_territory_index', methods: ['GET'])]
     #[IsGranted('ROLE_ADMIN')]
-    public function index(Request $request, TerritoryRepository $territoryRepository): Response
-    {
+    public function index(
+        Request $request,
+        TerritoryRepository $territoryRepository,
+        ParameterBagInterface $parameterBag,
+    ): Response {
         $searchTerritory = new SearchTerritory();
         $form = $this->createForm(SearchTerritoryType::class, $searchTerritory);
         $form->handleRequest($request);
         if ($form->isSubmitted() && !$form->isValid()) {
             $searchTerritory = new SearchTerritory();
         }
-        $paginatedTerritories = $territoryRepository->findFilteredPaginated($searchTerritory, self::MAX_LIST_PAGINATION);
+        $maxListPagination = $parameterBag->get('standard_max_list_pagination');
+        $paginatedTerritories = $territoryRepository->findFilteredPaginated($searchTerritory, $maxListPagination);
 
         return $this->render('back/territory/index.html.twig', [
             'form' => $form,
             'searchTerritory' => $searchTerritory,
             'territories' => $paginatedTerritories,
-            'pages' => (int) ceil($paginatedTerritories->count() / self::MAX_LIST_PAGINATION),
+            'pages' => (int) ceil($paginatedTerritories->count() / $maxListPagination),
         ]);
     }
 
