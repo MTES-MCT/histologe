@@ -13,9 +13,6 @@ use Symfony\Component\Form\Extension\Core\Type\EnumType;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\Extension\Core\Type\SearchType;
 use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Component\Form\FormEvent;
-use Symfony\Component\Form\FormEvents;
-use Symfony\Component\Form\FormInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class SearchPartnerType extends AbstractType
@@ -53,18 +50,8 @@ class SearchPartnerType extends AbstractType
                 'label' => false,
             ]);
         }
-        $builder->addEventListener(FormEvents::PRE_SET_DATA, function (FormEvent $event) {
-            $this->desactivePartnerType($event->getForm());
-        });
-        $builder->addEventListener(FormEvents::PRE_SUBMIT, function (FormEvent $event) {
-            $this->desactivePartnerType($event->getForm());
-        });
-        $builder->add('page', HiddenType::class);
-    }
 
-    private function desactivePartnerType(FormInterface $builder): void
-    {
-        $options = [
+        $builder->add('partnerType', EnumType::class, [
             'class' => PartnerType::class,
             'choice_label' => function ($choice) {
                 return $choice->label();
@@ -72,9 +59,9 @@ class SearchPartnerType extends AbstractType
             'placeholder' => 'Type de partenaire',
             'required' => false,
             'label' => false,
-        ];
+        ]);
 
-        $builder->add('partnerType', EnumType::class, $options);
+        $builder->add('page', HiddenType::class);
     }
 
     public function configureOptions(OptionsResolver $resolver): void
