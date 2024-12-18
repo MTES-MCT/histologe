@@ -32,6 +32,7 @@ use App\Service\Signalement\VisiteNotifier;
 use App\Validator\EmailFormatValidator;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Symfony\Component\Form\FormError;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\Request;
@@ -45,13 +46,12 @@ use Symfony\Component\Workflow\WorkflowInterface;
 #[Route('/bo/partenaires')]
 class PartnerController extends AbstractController
 {
-    public const MAX_LIST_PAGINATION = 50;
-
     #[Route('/', name: 'back_partner_index', methods: ['GET', 'POST'])]
     #[IsGranted('ROLE_ADMIN_TERRITORY')]
     public function index(
         Request $request,
         PartnerRepository $partnerRepository,
+        ParameterBagInterface $parameterBag,
     ): Response {
         $searchPartner = new SearchPartner($this->getUser());
         $form = $this->createForm(SearchPartnerType::class, $searchPartner);
@@ -59,13 +59,14 @@ class PartnerController extends AbstractController
         if ($form->isSubmitted() && !$form->isValid()) {
             $searchPartner = new SearchPartner($this->getUser());
         }
-        $paginatedPartners = $partnerRepository->findFilteredPaginated($searchPartner, self::MAX_LIST_PAGINATION);
+        $maxListPagination = $parameterBag->get('standard_max_list_pagination');
+        $paginatedPartners = $partnerRepository->findFilteredPaginated($searchPartner, $maxListPagination);
 
         return $this->render('back/partner/index.html.twig', [
             'form' => $form,
             'searchPartner' => $searchPartner,
             'partners' => $paginatedPartners,
-            'pages' => (int) ceil($paginatedPartners->count() / self::MAX_LIST_PAGINATION),
+            'pages' => (int) ceil($paginatedPartners->count() / $maxListPagination),
         ]);
     }
 

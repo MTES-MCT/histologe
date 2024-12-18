@@ -1333,13 +1333,9 @@ class SignalementRepository extends ServiceEntityRepository
     public function findAllArchived(
         ?Territory $territory,
         ?string $referenceTerms,
-        $page,
-        ?int $maxResult = null,
+        int $page,
+        int $maxResult,
     ): Paginator {
-        if (empty($maxResult)) {
-            $maxResult = Partner::MAX_LIST_PAGINATION;
-        }
-        $firstResult = ($page - 1) * $maxResult;
         $queryBuilder = $this->createQueryBuilder('s');
 
         $queryBuilder
@@ -1358,6 +1354,7 @@ class SignalementRepository extends ServiceEntityRepository
                 ->setParameter('referenceTerms', $referenceTerms);
         }
 
+        $firstResult = ($page - 1) * $maxResult;
         $queryBuilder->setFirstResult($firstResult)->setMaxResults($maxResult);
 
         return new Paginator($queryBuilder->getQuery(), false);

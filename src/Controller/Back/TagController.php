@@ -14,6 +14,7 @@ use App\Service\SearchTag;
 use App\Service\Signalement\SearchFilterOptionDataProvider;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -24,13 +25,12 @@ use Symfony\Contracts\Cache\TagAwareCacheInterface;
 #[Route('/bo/etiquettes')]
 class TagController extends AbstractController
 {
-    public const MAX_LIST_PAGINATION = 50;
-
     #[Route('/', name: 'back_tags_index', methods: ['GET', 'POST'])]
     #[IsGranted('ROLE_ADMIN_TERRITORY')]
     public function index(
         Request $request,
         TagRepository $tagRepository,
+        ParameterBagInterface $parameterBag,
     ): Response {
         $searchTag = new SearchTag($this->getUser());
         $form = $this->createForm(SearchTagType::class, $searchTag);
@@ -38,7 +38,8 @@ class TagController extends AbstractController
         if ($form->isSubmitted() && !$form->isValid()) {
             $searchTag = new SearchTag($this->getUser());
         }
-        $paginatedTags = $tagRepository->findFilteredPaginated($searchTag, self::MAX_LIST_PAGINATION);
+        $maxListPagination = $parameterBag->get('standard_max_list_pagination');
+        $paginatedTags = $tagRepository->findFilteredPaginated($searchTag, $maxListPagination);
 
         $addForm = $this->createForm(AddTagType::class, null, ['action' => $this->generateUrl('back_tags_add')]);
 
@@ -47,7 +48,7 @@ class TagController extends AbstractController
             'addForm' => $addForm,
             'searchTag' => $searchTag,
             'tags' => $paginatedTags,
-            'pages' => (int) ceil($paginatedTags->count() / self::MAX_LIST_PAGINATION),
+            'pages' => (int) ceil($paginatedTags->count() / $maxListPagination),
         ]);
     }
 
