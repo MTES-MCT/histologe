@@ -186,9 +186,19 @@ class PartnerType extends AbstractType
 
     private function addBailleurSocialField(FormBuilderInterface|FormInterface $builder, ?string $territoryZip = null): void
     {
+        if (null === $territoryZip) {
+            if ($this->isAdmin) {
+                $territoryZip = '01';
+            } elseif ($this->isAdminTerritory
+            ) {
+                /** @var User $user */
+                $user = $this->security->getUser();
+                $territoryZip = $user->getFirstTerritory()->getZip();
+            }
+        }
         $builder->add('bailleur', EntityType::class, [
             'class' => Bailleur::class,
-            'query_builder' => fn (BailleurRepository $bailleurRepository) => $bailleurRepository->getBailleursByTerritoryQueryBuilder($territoryZip ?? '01'),
+            'query_builder' => fn (BailleurRepository $bailleurRepository) => $bailleurRepository->getBailleursByTerritoryQueryBuilder($territoryZip),
             'choice_label' => 'name',
             'placeholder' => 'Sélectionner une dénomination officielle pour le bailleur social',
             'required' => false,
