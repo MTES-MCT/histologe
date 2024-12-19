@@ -28,6 +28,7 @@ class SignalementExport
         public ?string $adresseAutreOccupant = null,
         public ?string $situations = null,
         public ?string $desordres = null,
+        public ?string $debutDesordres = null,
         public ?string $etiquettes = null,
         public ?string $photos = null,
         public ?string $documents = null,

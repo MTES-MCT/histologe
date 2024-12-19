@@ -280,6 +280,37 @@
           "validate": {
             "message": "Veuillez sélectionner la zone concernée."
           }
+        },
+        {
+          "type": "SignalementFormSelect",
+          "slug": "zone_concernee_debut_desordres",
+          "label": "Les désordres ont commencé il y a...",
+          "description": "Sélectionnez la période dans la liste",
+          "values": [
+            {
+              "label": "Moins d'un mois",
+              "value": "less_1_month"
+            },
+            {
+              "label": "Entre 1 mois et 6 mois",
+              "value": "months_1_to_6"
+            },
+            {
+              "label": "Entre 6 mois et 1 an",
+              "value": "months_6_to_12"
+            },
+            {
+              "label": "Entre 1 et 2 ans",
+              "value": "years_1_to_2"
+            },
+            {
+              "label": "Plus de 2 ans",
+              "value": "more_2_years"
+            }
+          ],
+          "validate": {
+            "message": "Veuillez indiquer à quel moment les désordres ont commencé"
+          }
         }
       ],
       "footer": [

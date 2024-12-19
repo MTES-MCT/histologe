@@ -274,8 +274,20 @@
                     {% endfor %}
                 {% else %}
                     <i>Aucun désordre signalé dans le bâtiment</i>
+                {% endif %}                
+                {% if signalement.debutDesordres is not null %}
+                <h4>Informations supplémentaires sur les désordres</h4>
+                    <div>
+                        <ul>
+                            <li>Les désordres ont commencé il y a : 
+				            {{ signalement.debutDesordres.label}}
+                            </li>
+                        {% if signalement.hasSeenDesordres is not null %}
+                            <li>Désordres constatés: {{ signalement.hasSeenDesordres ? 'Oui' : 'Non' }}</li>
+                        {% endif %}
+                        </ul>
+                    </div>
                 {% endif %}
-
             {% else %}
                 <ul style="list-style:none; margin-left:0px;padding-left:0px;">
                     {% for situation,criteres in situations %}

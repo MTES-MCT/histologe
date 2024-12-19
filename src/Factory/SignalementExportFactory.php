@@ -79,6 +79,7 @@ class SignalementExportFactory
             adresseAutreOccupant: $data['adresseAutreOccupant'] ?? self::NON_RENSEIGNE,
             situations: $data['listDesordreCategories'] ?? $data['oldSituations'] ?? null,
             desordres: $data['listDesordreCriteres'] ?? $data['oldCriteres'] ?? null,
+            debutDesordres: $this->mapData($data, 'debutDesordres'),
             etiquettes: $data['etiquettes'] ?? null,
             photos: '-',
             documents: '-',
@@ -128,6 +129,14 @@ class SignalementExportFactory
                 $value = null === $data[$keyColumn]
                     ? self::NON_RENSEIGNE
                     : (\in_array($data[$keyColumn], self::ALLOCATAIRE) ? self::OUI : self::NON);
+                break;
+            case 'debutDesordres':
+                $debutDesordres = $data[$keyColumn];
+                if (null !== $debutDesordres) {
+                    $value = $debutDesordres->label();
+                } else {
+                    $value = self::NON_RENSEIGNE;
+                }
                 break;
             default:
                 break;
