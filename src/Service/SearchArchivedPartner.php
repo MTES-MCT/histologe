@@ -2,30 +2,28 @@
 
 namespace App\Service;
 
-use App\Entity\Enum\ZoneType;
-use App\Entity\Territory;
 use App\Entity\User;
 use App\Service\Behaviour\SearchQueryTrait;
 use Symfony\Component\Validator\Constraints as Assert;
 
-class SearchZone
+class SearchArchivedPartner
 {
     use SearchQueryTrait {
         getUrlParams as getUrlParamsBase;
     }
+
     private User $user;
     #[Assert\Positive(message: 'La page doit être un nombre positif')]
     private ?int $page = 1;
-    private ?string $queryName = null;
-    private ?Territory $territory = null;
-    private ?ZoneType $type = null;
+    private ?string $queryArchivedPartner = null;
+    private ?string $territory = null;
     private ?string $orderType = null;
 
     public function __construct(User $user)
     {
         $this->user = $user;
         if (!$user->isSuperAdmin() && 1 === count($user->getPartnersTerritories())) {
-            $this->territory = $user->getFirstTerritory();
+            $this->territory = (string) $user->getFirstTerritory()->getId();
         }
     }
 
@@ -48,34 +46,24 @@ class SearchZone
         $this->page = $page;
     }
 
-    public function getQueryName(): ?string
+    public function getQueryArchivedPartner(): ?string
     {
-        return $this->queryName;
+        return $this->queryArchivedPartner;
     }
 
-    public function setQueryName(?string $queryName): void
+    public function setQueryArchivedPartner(?string $queryArchivedPartner): void
     {
-        $this->queryName = $queryName;
+        $this->queryArchivedPartner = $queryArchivedPartner;
     }
 
-    public function getTerritory(): ?Territory
+    public function getTerritory(): ?string
     {
         return $this->territory;
     }
 
-    public function setTerritory(?Territory $territory): void
+    public function setTerritory(?string $territory): void
     {
         $this->territory = $territory;
-    }
-
-    public function getType(): ?ZoneType
-    {
-        return $this->type;
-    }
-
-    public function setType(?ZoneType $type): void
-    {
-        $this->type = $type;
     }
 
     public function getOrderType(): ?string

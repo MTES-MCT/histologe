@@ -2,34 +2,43 @@
 
 namespace App\Form;
 
-use App\Entity\Enum\ZoneType;
 use App\Entity\Territory;
-use App\Service\SearchZone;
+use App\Entity\User;
+use App\Service\SearchTag;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
-use Symfony\Component\Form\Extension\Core\Type\EnumType;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\Extension\Core\Type\SearchType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
-class SearchZoneType extends AbstractType
+class SearchTagType extends AbstractType
 {
+    private bool $isAdmin = false;
+    private array $roleChoices = [];
+
     public function __construct(
         private readonly Security $security,
     ) {
+        $this->roleChoices = User::ROLES;
+        unset($this->roleChoices['Usager']);
+        if ($this->security->isGranted('ROLE_ADMIN')) {
+            $this->isAdmin = true;
+        } else {
+            unset($this->roleChoices['Super Admin']);
+        }
     }
 
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
-        $builder->add('queryName', SearchType::class, [
+        $builder->add('queryTag', SearchType::class, [
             'required' => false,
-            'label' => 'Zone',
-            'attr' => ['placeholder' => 'Taper le nom d\'une zone'],
+            'label' => 'Etiquette',
+            'attr' => ['placeholder' => 'Taper le nom de l\'étiquette'],
         ]);
-        if ($this->security->isGranted('ROLE_ADMIN')) {
+        if ($this->isAdmin) {
             $builder->add('territory', EntityType::class, [
                 'class' => Territory::class,
                 'choice_label' => function (Territory $territory) {
@@ -41,26 +50,17 @@ class SearchZoneType extends AbstractType
             ]);
         }
 
-        $builder->add('type', EnumType::class, [
-            'class' => ZoneType::class,
-            'choice_label' => function ($choice) {
-                return $choice->label();
-            },
-            'placeholder' => 'Tous les types de zone',
-            'label' => 'Type de zone',
-        ]);
-
         $builder->add('orderType', ChoiceType::class, [
             'choices' => [
-                'Ordre alphabétique (A -> Z)' => 'z.name-ASC',
-                'Ordre alphabétique inversé (Z -> A)' => 'z.name-DESC',
-                'Ordre croissant' => 'z.id-ASC',
-                'Ordre décroissant' => 'z.id-DESC',
+                'Ordre alphabétique (A -> Z)' => 't.label-ASC',
+                'Ordre alphabétique inversé (Z -> A)' => 't.label-DESC',
+                'Ordre croissant' => 't.id-ASC',
+                'Ordre décroissant' => 't.id-DESC',
             ],
             'required' => false,
             'placeholder' => false,
             'label' => 'Trier par',
-            'data' => 'z.name-ASC',
+            'data' => 't.label-ASC',
         ]);
 
         $builder->add('page', HiddenType::class);
@@ -69,10 +69,10 @@ class SearchZoneType extends AbstractType
     public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
-            'data_class' => SearchZone::class,
+            'data_class' => SearchTag::class,
             'csrf_protection' => false,
             'method' => 'GET',
-            'attr' => ['id' => 'search-zone-form', 'class' => 'fr-p-4v bo-filter-form'],
+            'attr' => ['id' => 'search-tag-form', 'class' => 'fr-p-4v bo-filter-form'],
         ]);
     }
 

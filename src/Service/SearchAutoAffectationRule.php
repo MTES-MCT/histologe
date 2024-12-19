@@ -2,18 +2,20 @@
 
 namespace App\Service;
 
+use App\Entity\Territory;
 use App\Service\Behaviour\SearchQueryTrait;
 use Symfony\Component\Validator\Constraints as Assert;
 
-class SearchTerritory
+class SearchAutoAffectationRule
 {
-    use SearchQueryTrait;
+    use SearchQueryTrait {
+        getUrlParams as getUrlParamsBase;
+    }
 
     #[Assert\Positive(message: 'La page doit être un nombre positif')]
     private ?int $page = 1;
-    private ?string $queryName = null;
+    private ?Territory $territory = null;
     private ?bool $isActive = null;
-    private ?string $orderType = null;
 
     public function getPage(): int
     {
@@ -29,14 +31,14 @@ class SearchTerritory
         $this->page = $page;
     }
 
-    public function getQueryName(): ?string
+    public function getTerritory(): ?Territory
     {
-        return $this->queryName;
+        return $this->territory;
     }
 
-    public function setQueryName(?string $queryName): void
+    public function setTerritory(?Territory $territory): void
     {
-        $this->queryName = $queryName;
+        $this->territory = $territory;
     }
 
     public function getIsActive(): ?bool
@@ -49,13 +51,8 @@ class SearchTerritory
         $this->isActive = $isActive;
     }
 
-    public function getOrderType(): ?string
+    public function getUrlParams(): array
     {
-        return $this->orderType;
-    }
-
-    public function setOrderType(?string $orderType): void
-    {
-        $this->orderType = $orderType;
+        return $this->getUrlParamsBase();
     }
 }

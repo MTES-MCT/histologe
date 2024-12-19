@@ -6,6 +6,7 @@ use App\Dto\CountUser;
 use App\Entity\Partner;
 use App\Entity\Territory;
 use App\Entity\User;
+use App\Service\SearchArchivedAccount;
 use App\Service\SearchUser;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\NonUniqueResultException;
@@ -24,8 +25,11 @@ use Symfony\Component\Security\Core\User\PasswordUpgraderInterface;
  */
 class UserRepository extends ServiceEntityRepository implements PasswordUpgraderInterface
 {
-    public function __construct(ManagerRegistry $registry)
-    {
+    public function __construct(
+        ManagerRegistry $registry,
+        private readonly TerritoryRepository $territoryRepository,
+        private readonly PartnerRepository $partnerRepository,
+    ) {
         parent::__construct($registry, User::class);
     }
 
@@ -159,6 +163,24 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
         }, $pendingUsers);
     }
 
+    public function findArchivedFilteredPaginated(SearchArchivedAccount $searchArchivedAccount, int $maxResult): Paginator
+    {
+        $territory = $searchArchivedAccount->getTerritory() ? $this->territoryRepository->find($searchArchivedAccount->getTerritory()) : null;
+        $partner = $searchArchivedAccount->getPartner() ? $this->partnerRepository->find($searchArchivedAccount->getPartner()) : null;
+
+        return $this->findAllArchived(
+            territory: $territory,
+            isNoneTerritory: ('none' === $searchArchivedAccount->getTerritory()),
+            partner: $partner,
+            isNonePartner: ('none' === $searchArchivedAccount->getPartner()),
+            filterTerms: $searchArchivedAccount->getQueryUser(),
+            includeUsagers: false,
+            page: (int) $searchArchivedAccount->getPage(),
+            maxResult: $maxResult,
+            orderType: $searchArchivedAccount->getOrderType(),
+        );
+    }
+
     public function findAllArchived(
         ?Territory $territory,
         bool $isNoneTerritory,
@@ -167,8 +189,9 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
         ?string $filterTerms,
         bool $includeUsagers,
         $page,
+        $maxResult,
+        ?string $orderType = null,
     ): Paginator {
-        $maxResult = User::MAX_LIST_PAGINATION;
         $firstResult = ($page - 1) * $maxResult;
 
         $queryBuilder = $this->createQueryBuilder('u');
@@ -234,6 +257,13 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
             $queryBuilder
                 ->andWhere('u.roles NOT LIKE :roleadmin')
                 ->setParameter('roleadmin', '%"ROLE_ADMIN%"');
+        }
+
+        if (!empty($orderType)) {
+            [$orderField, $orderDirection] = explode('-', $orderType);
+            $queryBuilder->orderBy($orderField, $orderDirection);
+        } else {
+            $queryBuilder->orderBy('u.nom', 'ASC');
         }
 
         $queryBuilder->setFirstResult($firstResult)->setMaxResults($maxResult);
@@ -376,8 +406,15 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
         $qb->select('u', 'up', 'p', 't')
             ->leftJoin('u.userPartners', 'up')
             ->leftJoin('up.partner', 'p')
-            ->leftJoin('p.territory', 't')
-            ->orderBy('u.nom', 'ASC');
+            ->leftJoin('p.territory', 't');
+
+        if (!empty($searchUser->getOrderType())) {
+            [$orderField, $orderDirection] = explode('-', $searchUser->getOrderType());
+            $qb->orderBy($orderField, $orderDirection);
+        } else {
+            $qb->orderBy('u.nom', 'ASC');
+        }
+
         $qb->andWhere('u.statut != :statutArchive')->setParameter('statutArchive', User::STATUS_ARCHIVE);
 
         $qb->andWhere('JSON_CONTAINS(u.roles, :roleUsager) = 0')->setParameter('roleUsager', '"ROLE_USAGER"');

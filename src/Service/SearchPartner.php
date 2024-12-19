@@ -6,11 +6,9 @@ use App\Entity\Enum\PartnerType;
 use App\Entity\Territory;
 use App\Entity\User;
 use App\Service\Behaviour\SearchQueryTrait;
-use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
 use Symfony\Component\Validator\Constraints as Assert;
 
-class SearchUser
+class SearchPartner
 {
     use SearchQueryTrait {
         getUrlParams as getUrlParamsBase;
@@ -19,13 +17,9 @@ class SearchUser
     private User $user;
     #[Assert\Positive(message: 'La page doit être un nombre positif')]
     private ?int $page = 1;
-    private ?string $queryUser = null;
+    private ?string $queryPartner = null;
     private ?Territory $territory = null;
-    private Collection $partners;
     private ?PartnerType $partnerType = null;
-    private ?int $statut = null;
-    private ?string $role = null;
-    private ?string $permissionAffectation = null;
     private ?string $orderType = null;
 
     public function __construct(User $user)
@@ -34,7 +28,6 @@ class SearchUser
         if (!$user->isSuperAdmin() && 1 === count($user->getPartnersTerritories())) {
             $this->territory = $user->getFirstTerritory();
         }
-        $this->partners = new ArrayCollection();
     }
 
     public function getUser(): User
@@ -56,14 +49,14 @@ class SearchUser
         $this->page = $page;
     }
 
-    public function getQueryUser(): ?string
+    public function getQueryPartner(): ?string
     {
-        return $this->queryUser;
+        return $this->queryPartner;
     }
 
-    public function setQueryUser(?string $queryUser): void
+    public function setQueryPartner(?string $queryPartner): void
     {
-        $this->queryUser = $queryUser;
+        $this->queryPartner = $queryPartner;
     }
 
     public function getTerritory(): ?Territory
@@ -76,16 +69,6 @@ class SearchUser
         $this->territory = $territory;
     }
 
-    public function getPartners(): Collection
-    {
-        return $this->partners;
-    }
-
-    public function setPartners(Collection $partners): void
-    {
-        $this->partners = $partners;
-    }
-
     public function getPartnerType(): ?PartnerType
     {
         return $this->partnerType;
@@ -94,36 +77,6 @@ class SearchUser
     public function setPartnerType(PartnerType $partnerType): void
     {
         $this->partnerType = $partnerType;
-    }
-
-    public function getStatut(): ?int
-    {
-        return $this->statut;
-    }
-
-    public function setStatut(?int $statut): void
-    {
-        $this->statut = $statut;
-    }
-
-    public function getRole(): ?string
-    {
-        return $this->role;
-    }
-
-    public function setRole(?string $role): void
-    {
-        $this->role = $role;
-    }
-
-    public function getPermissionAffectation(): ?string
-    {
-        return $this->permissionAffectation;
-    }
-
-    public function setPermissionAffectation(?string $permissionAffectation): void
-    {
-        $this->permissionAffectation = $permissionAffectation;
     }
 
     public function getOrderType(): ?string
@@ -149,31 +102,14 @@ class SearchUser
     public function getFiltersToText(): array
     {
         $filters = [];
-        if ($this->queryUser) {
-            $filters['Recherche'] = $this->queryUser;
+        if ($this->queryPartner) {
+            $filters['Recherche'] = $this->queryPartner;
         }
         if ($this->territory && $this->user->isSuperAdmin()) {
             $filters['Territoire'] = $this->territory->getZip().' - '.$this->territory->getName();
         }
-        if ($this->partners->count()) {
-            $label = '';
-            foreach ($this->partners as $partner) {
-                $label .= $partner->getNom().', ';
-            }
-            $label = substr($label, 0, -2);
-            $filters['Partenaires'] = $label;
-        }
         if (null !== $this->partnerType) {
             $filters['Type de partenaire'] = $this->partnerType->label();
-        }
-        if (null !== $this->statut) {
-            $filters['Statut'] = User::STATUS_LABELS[$this->statut];
-        }
-        if ($this->role) {
-            $filters['Rôle'] = array_search($this->role, User::ROLES);
-        }
-        if ($this->permissionAffectation) {
-            $filters['Droits d\'affectation'] = $this->permissionAffectation;
         }
 
         return $filters;
