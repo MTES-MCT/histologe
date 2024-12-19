@@ -14,15 +14,21 @@
           :option-items=orderList
       />
     </div>
-    <div class="fr-col-12 fr-col-lg-6 fr-col-xl-8 fr-text--right">
+    <div v-if="sharedState.user.isAdmin" class="fr-col-12 fr-col-lg-6 fr-col-xl-8 fr-text--right">
       <a :href="canExport ? `${sharedProps.ajaxurlExportCsv}` : null"
-          :class="[
+         :class="[
               'fr-btn',
               'fr-btn--secondary',
               'fr-btn--icon-left',
               'fr-icon-download-fill',
               { 'fr-label--disabled': !canExport }]"
       >
+        Exporter les résultats
+      </a>
+    </div>
+    <div v-if="!sharedState.user.isAdmin" class="fr-col-12 fr-col-lg-6 fr-col-xl-8 fr-text--right">
+      <a :href="`${sharedProps.ajaxurlExportCsv}`"
+         class="fr-btn fr-btn--secondary fr-btn--icon-left fr-icon-download-fill">
         Exporter les résultats
       </a>
     </div>
