@@ -76,6 +76,6 @@ class SearchFilterOptionDataProvider
         }
         $role = $user->getRoles();
 
-        return $className.array_shift($role).'-territory-'.$territory?->getZip();
+        return $className.array_shift($role).'-territory-'.$territory?->getZip().'-'.$user->getId();
     }
 }
