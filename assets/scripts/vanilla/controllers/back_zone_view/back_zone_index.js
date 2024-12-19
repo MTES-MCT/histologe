@@ -3,15 +3,6 @@ import { loadWindowWithLocalStorage, updateLocalStorageWithFormParams } from '..
 const searchZoneForm = document.getElementById('search-zone-form')
 
 if (searchZoneForm) {
-  searchZoneForm.querySelectorAll('select').forEach((select) => {
-    select.addEventListener('change', function () {
-      document.getElementById('page').value = 1
-      searchZoneForm.submit()
-    })
-  })
-  searchZoneForm.addEventListener('submit', function () {
-    document.getElementById('page').value = 1
-  })
   document.querySelectorAll('.open-modal-zone-delete').forEach((button) => {
     button.addEventListener('click', (e) => {
       document.getElementById('fr-modal-zone-delete-zone-name').textContent = e.target.dataset.name
