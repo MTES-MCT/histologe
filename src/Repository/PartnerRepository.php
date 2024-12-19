@@ -8,6 +8,8 @@ use App\Entity\Enum\Qualification;
 use App\Entity\Partner;
 use App\Entity\Signalement;
 use App\Entity\Territory;
+use App\Service\SearchArchivedPartner;
+use App\Service\SearchPartner;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\DBAL\Exception;
 use Doctrine\ORM\Query\QueryException;
@@ -24,6 +26,7 @@ use Doctrine\Persistence\ManagerRegistry;
 class PartnerRepository extends ServiceEntityRepository
 {
     public function __construct(
+        private readonly TerritoryRepository $territoryRepository,
         ManagerRegistry $registry,
     ) {
         parent::__construct($registry, Partner::class);
@@ -40,13 +43,29 @@ class PartnerRepository extends ServiceEntityRepository
         return $queryBuilder;
     }
 
+    public function findFilteredPaginated(SearchPartner $searchPartner, int $maxResult): Paginator
+    {
+        return $this->getPartners(
+            $searchPartner->getTerritory(),
+            $searchPartner->getPartnerType(),
+            $searchPartner->getQueryPartner(),
+            $searchPartner->getPage(),
+            $maxResult,
+            $searchPartner->getOrderType(),
+        );
+    }
+
     public function getPartners(
         ?Territory $territory,
         ?PartnerType $type,
         ?string $filterTerms,
         $page,
+        ?int $maxResult = null,
+        ?string $orderType = null,
     ): Paginator {
-        $maxResult = Partner::MAX_LIST_PAGINATION;
+        if (empty($maxResult)) {
+            $maxResult = Partner::MAX_LIST_PAGINATION;
+        }
         $firstResult = ($page - 1) * $maxResult;
 
         $queryBuilder = $this->getPartnersQueryBuilder($territory);
@@ -66,6 +85,13 @@ class PartnerRepository extends ServiceEntityRepository
                 OR LOWER(p.email) LIKE :usersterms');
             $queryBuilder
                 ->setParameter('usersterms', '%'.strtolower($filterTerms).'%');
+        }
+
+        if (!empty($orderType)) {
+            [$orderField, $orderDirection] = explode('-', $orderType);
+            $queryBuilder->orderBy($orderField, $orderDirection);
+        } else {
+            $queryBuilder->orderBy('p.nom', 'ASC');
         }
 
         $queryBuilder->setFirstResult($firstResult)->setMaxResults($maxResult);
@@ -103,13 +129,31 @@ class PartnerRepository extends ServiceEntityRepository
             ->getResult();
     }
 
+    public function findFilteredArchivedPaginated(SearchArchivedPartner $searchArchivedPartner, int $maxResult): Paginator
+    {
+        $territory = $searchArchivedPartner->getTerritory() ? $this->territoryRepository->find($searchArchivedPartner->getTerritory()) : null;
+
+        return $this->findAllArchivedOrWithoutTerritory(
+            $territory,
+            'none' == $searchArchivedPartner->getTerritory(),
+            $searchArchivedPartner->getQueryArchivedPartner(),
+            $searchArchivedPartner->getPage(),
+            $maxResult,
+            $searchArchivedPartner->getOrderType(),
+        );
+    }
+
     public function findAllArchivedOrWithoutTerritory(
         ?Territory $territory,
         bool $isNoneTerritory,
         ?string $filterTerms,
         $page,
+        ?int $maxResult,
+        ?string $orderType = null,
     ): Paginator {
-        $maxResult = Partner::MAX_LIST_PAGINATION;
+        if (empty($maxResult)) {
+            $maxResult = Partner::MAX_LIST_PAGINATION;
+        }
         $firstResult = ($page - 1) * $maxResult;
         $queryBuilder = $this->createQueryBuilder('p');
 
@@ -138,6 +182,13 @@ class PartnerRepository extends ServiceEntityRepository
                 OR LOWER(p.email) LIKE :usersterms');
             $queryBuilder
                 ->setParameter('usersterms', '%'.strtolower($filterTerms).'%');
+        }
+
+        if (!empty($orderType)) {
+            [$orderField, $orderDirection] = explode('-', $orderType);
+            $queryBuilder->orderBy($orderField, $orderDirection);
+        } else {
+            $queryBuilder->orderBy('p.nom', 'ASC');
         }
 
         $queryBuilder->setFirstResult($firstResult)->setMaxResults($maxResult);

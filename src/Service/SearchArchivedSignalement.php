@@ -2,17 +2,20 @@
 
 namespace App\Service;
 
+use App\Entity\Territory;
 use App\Service\Behaviour\SearchQueryTrait;
 use Symfony\Component\Validator\Constraints as Assert;
 
-class SearchTerritory
+class SearchArchivedSignalement
 {
-    use SearchQueryTrait;
+    use SearchQueryTrait {
+        getUrlParams as getUrlParamsBase;
+    }
 
     #[Assert\Positive(message: 'La page doit être un nombre positif')]
     private ?int $page = 1;
-    private ?string $queryName = null;
-    private ?bool $isActive = null;
+    private ?string $queryReference = null;
+    private ?Territory $territory = null;
     private ?string $orderType = null;
 
     public function getPage(): int
@@ -29,24 +32,24 @@ class SearchTerritory
         $this->page = $page;
     }
 
-    public function getQueryName(): ?string
+    public function getQueryReference(): ?string
     {
-        return $this->queryName;
+        return $this->queryReference;
     }
 
-    public function setQueryName(?string $queryName): void
+    public function setQueryReference(?string $queryReference): void
     {
-        $this->queryName = $queryName;
+        $this->queryReference = $queryReference;
     }
 
-    public function getIsActive(): ?bool
+    public function getTerritory(): ?Territory
     {
-        return $this->isActive;
+        return $this->territory;
     }
 
-    public function setIsActive(?bool $isActive): void
+    public function setTerritory(?Territory $territory): void
     {
-        $this->isActive = $isActive;
+        $this->territory = $territory;
     }
 
     public function getOrderType(): ?string
@@ -57,5 +60,10 @@ class SearchTerritory
     public function setOrderType(?string $orderType): void
     {
         $this->orderType = $orderType;
+    }
+
+    public function getUrlParams(): array
+    {
+        return $this->getUrlParamsBase();
     }
 }

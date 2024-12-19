@@ -2,23 +2,22 @@
 
 namespace App\Service;
 
-use App\Entity\Enum\ZoneType;
 use App\Entity\Territory;
 use App\Entity\User;
 use App\Service\Behaviour\SearchQueryTrait;
 use Symfony\Component\Validator\Constraints as Assert;
 
-class SearchZone
+class SearchTag
 {
     use SearchQueryTrait {
         getUrlParams as getUrlParamsBase;
     }
+
     private User $user;
     #[Assert\Positive(message: 'La page doit être un nombre positif')]
     private ?int $page = 1;
-    private ?string $queryName = null;
+    private ?string $queryTag = null;
     private ?Territory $territory = null;
-    private ?ZoneType $type = null;
     private ?string $orderType = null;
 
     public function __construct(User $user)
@@ -48,14 +47,14 @@ class SearchZone
         $this->page = $page;
     }
 
-    public function getQueryName(): ?string
+    public function getQueryTag(): ?string
     {
-        return $this->queryName;
+        return $this->queryTag;
     }
 
-    public function setQueryName(?string $queryName): void
+    public function setQueryTag(?string $queryTag): void
     {
-        $this->queryName = $queryName;
+        $this->queryTag = $queryTag;
     }
 
     public function getTerritory(): ?Territory
@@ -66,16 +65,6 @@ class SearchZone
     public function setTerritory(?Territory $territory): void
     {
         $this->territory = $territory;
-    }
-
-    public function getType(): ?ZoneType
-    {
-        return $this->type;
-    }
-
-    public function setType(?ZoneType $type): void
-    {
-        $this->type = $type;
     }
 
     public function getOrderType(): ?string
@@ -96,5 +85,18 @@ class SearchZone
         }
 
         return $params;
+    }
+
+    public function getFiltersToText(): array
+    {
+        $filters = [];
+        if ($this->queryTag) {
+            $filters['Recherche'] = $this->queryTag;
+        }
+        if ($this->territory && $this->user->isSuperAdmin()) {
+            $filters['Territoire'] = $this->territory->getZip().' - '.$this->territory->getName();
+        }
+
+        return $filters;
     }
 }

@@ -17,6 +17,7 @@ use App\Entity\Suivi;
 use App\Entity\Territory;
 use App\Entity\User;
 use App\Service\Interconnection\Idoss\IdossService;
+use App\Service\SearchArchivedSignalement;
 use App\Service\Signalement\SearchFilter;
 use App\Service\Statistics\CriticitePercentStatisticProvider;
 use App\Utils\CommuneHelper;
@@ -1317,12 +1318,29 @@ class SignalementRepository extends ServiceEntityRepository
         return $qb->getQuery()->getResult();
     }
 
+    public function findFilteredArchivedPaginated(
+        SearchArchivedSignalement $searchArchivedSignalement,
+        int $maxResult,
+    ): Paginator {
+        return $this->findAllArchived(
+            territory: $searchArchivedSignalement->getTerritory(),
+            referenceTerms: $searchArchivedSignalement->getQueryReference(),
+            page: $searchArchivedSignalement->getPage(),
+            maxResult: $maxResult,
+            orderType: $searchArchivedSignalement->getOrderType(),
+        );
+    }
+
     public function findAllArchived(
         ?Territory $territory,
         ?string $referenceTerms,
         $page,
+        ?int $maxResult = null,
+        ?string $orderType = null,
     ): Paginator {
-        $maxResult = Partner::MAX_LIST_PAGINATION;
+        if (empty($maxResult)) {
+            $maxResult = Partner::MAX_LIST_PAGINATION;
+        }
         $firstResult = ($page - 1) * $maxResult;
         $queryBuilder = $this->createQueryBuilder('s');
 
@@ -1340,6 +1358,13 @@ class SignalementRepository extends ServiceEntityRepository
             $queryBuilder
                 ->andWhere('s.reference LIKE :referenceTerms')
                 ->setParameter('referenceTerms', $referenceTerms);
+        }
+
+        if (!empty($orderType)) {
+            [$orderField, $orderDirection] = explode('-', $orderType);
+            $queryBuilder->orderBy($orderField, $orderDirection);
+        } else {
+            $queryBuilder->orderBy('s.createdAt', 'ASC');
         }
 
         $queryBuilder->setFirstResult($firstResult)->setMaxResults($maxResult);
