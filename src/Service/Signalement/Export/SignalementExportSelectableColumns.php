@@ -39,6 +39,7 @@ class SignalementExportSelectableColumns
         'DATE_CLOTURE' => ['name' => 'Clôturé le', 'description' => 'La date de clôture du signalement', 'export' => 'closedAt'],
         'MOTIF_CLOTURE' => ['name' => 'Motif de clôture', 'description' => 'Le motif de clôture du signalement', 'export' => 'motifCloture'],
         'GEOLOCALISATION' => ['name' => 'Géolocalisation', 'description' => 'Les coordonnées GPS du logement', 'export' => 'geoloc'],
+        'DEBUT_DESORDRES' => ['name' => 'Début des désordres', 'description' => 'Début des désordres', 'export' => 'debutDesordres'],
     ];
 
     public static function getColumns(): array

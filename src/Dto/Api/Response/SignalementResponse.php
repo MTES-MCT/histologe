@@ -7,6 +7,7 @@ use App\Dto\Api\Model\File;
 use App\Dto\Api\Model\Geolocalisation;
 use App\Dto\Api\Model\Intervention;
 use App\Dto\Api\Model\Suivi;
+use App\Entity\Enum\DebutDesordres;
 use OpenApi\Attributes as OA;
 
 class SignalementResponse
@@ -126,6 +127,8 @@ class SignalementResponse
     public ?float $score;
     public ?float $scoreBatiment;
     public ?float $scoreLogement;
+    public ?DebutDesordres $debutDesordres = null;
+    public ?bool $desordresConstates = null;
     // tags, qualifications, suivis, affectations, interventions, files
     public array $tags = [];
     public array $qualifications = [];

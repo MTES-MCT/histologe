@@ -296,8 +296,20 @@ and signalement.profileDeclarant is not same as enum('App\\Entity\\Enum\\Profile
 	{% if signalement.details and signalement.details != 'N/C' %}
 		{{ signalement.details|nl2br }}
 	{% else %}
-		Aucun commentaire
+		<i>Aucun commentaire</i>
 	{% endif %}
+    {% if signalement.debutDesordres is not null %}
+		<div>
+			<ul>
+                <li>Les désordres ont commencé il y a : 
+				{{ signalement.debutDesordres.label}}
+				</li>
+            {% if signalement.hasSeenDesordres is not null %}
+				<li>Désordres constatés: {{ signalement.hasSeenDesordres ? 'Oui' : 'Non' }}</li>
+            {% endif %}
+			</ul>
+        </div>
+    {% endif %}
 </div>
 
 <h4 class="fr-mb-2v">Vos photos</h4>

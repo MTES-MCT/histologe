@@ -4,6 +4,7 @@ namespace App\Entity;
 
 use App\Entity\Behaviour\EntityHistoryCollectionInterface;
 use App\Entity\Behaviour\EntityHistoryInterface;
+use App\Entity\Enum\DebutDesordres;
 use App\Entity\Enum\HistoryEntryEvent;
 use App\Entity\Enum\MotifCloture;
 use App\Entity\Enum\MotifRefus;
@@ -426,6 +427,12 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
 
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $rnbIdOccupant = null;
+
+    #[ORM\Column(type: 'string', length: 15, nullable: true, enumType: DebutDesordres::class)]
+    private ?DebutDesordres $debutDesordres = null;
+
+    #[ORM\Column(type: 'boolean', nullable: true)]
+    private ?bool $hasSeenDesordres = null;
 
     public function __construct()
     {
@@ -2461,6 +2468,30 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
     public function setRnbIdOccupant(?string $rnbIdOccupant): static
     {
         $this->rnbIdOccupant = $rnbIdOccupant;
+
+        return $this;
+    }
+
+    public function getDebutDesordres(): ?DebutDesordres
+    {
+        return $this->debutDesordres;
+    }
+
+    public function setDebutDesordres(?DebutDesordres $debutDesordres): static
+    {
+        $this->debutDesordres = $debutDesordres;
+
+        return $this;
+    }
+
+    public function getHasSeenDesordres(): ?bool
+    {
+        return $this->hasSeenDesordres;
+    }
+
+    public function setHasSeenDesordres(?bool $hasSeenDesordres): static
+    {
+        $this->hasSeenDesordres = $hasSeenDesordres;
 
         return $this;
     }

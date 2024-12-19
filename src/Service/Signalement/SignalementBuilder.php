@@ -4,6 +4,7 @@ namespace App\Service\Signalement;
 
 use App\Dto\Request\Signalement\SignalementDraftRequest;
 use App\Entity\Enum\ChauffageType;
+use App\Entity\Enum\DebutDesordres;
 use App\Entity\Enum\OccupantLink;
 use App\Entity\Enum\ProfileDeclarant;
 use App\Entity\Enum\ProprioType;
@@ -152,6 +153,14 @@ class SignalementBuilder
         if (isset($jsonContent)) {
             $this->signalement->setJsonContent($jsonContent);
         }
+
+        $this->signalement->setDebutDesordres(
+            DebutDesordres::tryFrom(strtoupper($this->signalementDraftRequest->getZoneConcerneeDebutDesordres()))
+        );
+
+        $this->signalement->setHasSeenDesordres(
+            $this->evalBoolean($this->signalementDraftRequest->getZoneConcerneeConstatationDesordres())
+        );
 
         $this->signalement->setScore($this->criticiteCalculator->calculate($this->signalement));
 
