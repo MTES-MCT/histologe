@@ -14,11 +14,11 @@ use App\Utils\DateHelper;
 
 class SignalementExportFactory
 {
-    public const OUI = 'Oui';
-    public const NON = 'Non';
-    public const NON_RENSEIGNE = 'Non renseigné';
-    public const ALLOCATAIRE = ['CAF', 'MSA', 'Oui', 1];
-    public const DATE_FORMAT = 'd/m/Y';
+    public const string OUI = 'Oui';
+    public const string NON = 'Non';
+    public const string NON_RENSEIGNE = 'Non renseigné';
+    public const array ALLOCATAIRE = ['CAF', 'MSA', 'Oui', 1];
+    public const string DATE_FORMAT = 'd/m/Y';
 
     public function createInstanceFrom(User $user, array $data): SignalementExport
     {
@@ -41,7 +41,7 @@ class SignalementExportFactory
         $geoloc = $data['geoloc'];
         $dateVisite = $data['interventionScheduledAt'];
         $dateVisite = (!empty($dateVisite) && DateHelper::isValidDate($dateVisite)) ? (new \DateTime($dateVisite))->format(self::DATE_FORMAT) : '';
-        $interventionStatus = $this->mapInterventionStatus($dateVisite ?? '', $data['interventionStatus']);
+        $interventionStatus = $this->mapInterventionStatus($dateVisite, $data['interventionStatus']);
         $isOccupantPresentVisite = $data['interventionOccupantPresent'];
 
         $enfantsM6 = null;
@@ -141,7 +141,7 @@ class SignalementExportFactory
 
     private function mapInterventionStatus(?string $scheduledAt = null, ?string $status = null): string
     {
-        if (null === $status) {
+        if (empty($status)) {
             return VisiteStatus::NON_PLANIFIEE->value;
         }
 

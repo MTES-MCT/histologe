@@ -1,3 +1,4 @@
+# https://symfony.com/bundles/DoctrineBundle/current/configuration.html
 doctrine:
     dbal:
         default_connection: default
@@ -9,6 +10,7 @@ doctrine:
                 server_version: '8.0.40'
                 use_savepoints: false
                 charset: utf8mb4
+                # All view or table as well start by view will be ignored by the schema tool.
                 schema_filter: ~^(?!view_)~
                 default_table_options:
                     charset: utf8mb4
