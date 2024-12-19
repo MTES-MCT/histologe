@@ -71,10 +71,12 @@ class SignalementExportFactoryTest extends TestCase
                 Les murs ont des fissures.|De l'eau s’infiltre dans mon logement.|Il y a des trace ",
             'etiquettes' => null,
             'geoloc' => '{"lat": "43.3426152", "lng": "5.3711848"}',
-            'interventionsData' => 'PLANNED||2023-07-13 13:41:15||DONE||2024-06-09 10:00:00',
-            'interventionOccupantPresent' => '||1',
-            'interventionConcludeProcedure' => '||RSD,INSALUBRITE',
-            'interventionDetails' => '||dossier envoyé pour manquement sanitaire',
+            'interventionScheduledAt' => '2024-06-09 13:41:15',
+            'interventionStatus' => 'DONE',
+            'interventionNbVisites' => 2,
+            'interventionOccupantPresent' => 1,
+            'interventionConcludeProcedure' => 'RSD,INSALUBRITE',
+            'interventionDetails' => 'dossier envoyé pour manquement sanitaire',
         ];
 
         $user = $this->getUserFromRole(User::ROLE_ADMIN);
@@ -113,6 +115,6 @@ class SignalementExportFactoryTest extends TestCase
         $this->assertEquals(SignalementExportFactory::NON, $signalementExportFactory->isNotOccupant);
         $this->assertEquals(VisiteStatus::TERMINEE->value, $signalementExportFactory->interventionStatus);
         $this->assertEquals('RSD,INSALUBRITE', $signalementExportFactory->interventionConcludeProcedure);
-        $this->assertEquals('colonne temporairement désactivée', $signalementExportFactory->interventionDetails);
+        $this->assertEquals('dossier envoyé pour manquement sanitaire', $signalementExportFactory->interventionDetails);
     }
 }

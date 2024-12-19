@@ -47,7 +47,7 @@ export const store = {
       canSeeBailleurSocial: false,
       canSeeScore: false,
       canSeeFilterPartner: false,
-      partnerIds: new Array<string>(),
+      partnerIds: new Array<string>()
     },
     showOptions: false,
     territories: new Array<HistoInterfaceSelectOption>(),
