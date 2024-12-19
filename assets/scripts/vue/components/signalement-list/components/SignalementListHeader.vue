@@ -15,7 +15,14 @@
       />
     </div>
     <div class="fr-col-12 fr-col-lg-6 fr-col-xl-8 fr-text--right">
-      <a :href="`${sharedProps.ajaxurlExportCsv}`" class="fr-btn fr-btn--secondary fr-btn--icon-left fr-icon-download-fill">
+      <a :href="canExport ? `${sharedProps.ajaxurlExportCsv}` : null"
+          :class="[
+              'fr-btn',
+              'fr-btn--secondary',
+              'fr-btn--icon-left',
+              'fr-icon-download-fill',
+              { 'fr-label--disabled': !canExport }]"
+      >
         Exporter les résultats
       </a>
     </div>
@@ -65,6 +72,13 @@ export default defineComponent({
         { Id: 'villeOccupant-ASC', Text: 'Nom de commune (A -> Z)' },
         { Id: 'villeOccupant-DESC', Text: 'Nom de commune (Z -> A)' }
       ]
+    }
+  },
+  computed: {
+    canExport () {
+      return Object.entries(this.sharedState.input.filters).some(
+        ([key, value]) => key !== 'isImported' && (value !== null && !(Array.isArray(value) && value.length === 0))
+      )
     }
   }
 })

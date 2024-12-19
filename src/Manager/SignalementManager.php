@@ -44,6 +44,7 @@ use App\Service\Signalement\SignalementAddressUpdater;
 use App\Service\Signalement\SignalementInputValueMapper;
 use App\Service\Signalement\ZipcodeProvider;
 use App\Specification\Signalement\SuroccupationSpecification;
+use Doctrine\DBAL\Exception;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
@@ -799,6 +800,9 @@ class SignalementManager extends AbstractManager
         ];
     }
 
+    /**
+     * @throws Exception
+     */
     public function findSignalementAffectationIterable(
         User|UserInterface $user,
         ?array $options = null,
