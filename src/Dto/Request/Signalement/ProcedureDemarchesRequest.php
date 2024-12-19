@@ -13,6 +13,32 @@ class ProcedureDemarchesRequest implements RequestInterface
             message: 'Le champ "Propriétaire averti" est incorrect.',
         )]
         private readonly ?string $isProprioAverti = null,
+
+        #[Assert\NotBlank(
+            message: 'Merci d\'indiquer comment le bailleur a été averti.',
+            groups: ['LOCATAIRE', 'TIERS_PARTICULIER', 'TIERS_PRO', 'SERVICE_SECOURS']
+        )]// TODO : à vérifier car obligatoire seulement si isProprioAverti = 1
+        #[Assert\Choice(
+            choices: ['courrier', 'email', 'telephone', 'sms', 'autre', 'nsp'],
+            message: 'Le champ "infoProcedureBailleurMoyen" est incorrect.',
+        )]
+        private ?string $infoProcedureBailleurMoyen = null,
+
+        #[Assert\NotBlank(
+            message: 'Merci d\'indiquer comment le bailleur a été averti.',
+            groups: ['LOCATAIRE']
+        )]// TODO : à vérifier car obligatoire seulement si isProprioAverti = 1
+        #[Assert\DateTime('Y-m')]// TODO : à vérifier
+        private ?string $infoProcedureBailleurDate = null,
+
+        #[Assert\NotBlank(
+            message: 'Merci d\'indiquer comment le bailleur a été averti.',
+            groups: ['LOCATAIRE']
+        )]// TODO : à vérifier car obligatoire seulement si isProprioAverti = 1
+        private ?string $infoProcedureBailleurReponse = null,
+
+        private ?string $infoProcedureBailleurNumero = null,
+    
         #[Assert\NotBlank(
             message: 'Merci d\'indiquer si l\'assurance a été contactée.',
             groups: ['LOCATAIRE', 'BAILLEUR_OCCUPANT', 'BAILLEUR']
@@ -41,6 +67,7 @@ class ProcedureDemarchesRequest implements RequestInterface
             message: 'Le champ "Souhaite garder le logement après travaux" est incorrect.',
         )]
         private readonly ?string $infoProcedureDepartApresTravaux = null,
+        // TODO : ajouter les nouvelles lignes
         #[Assert\Length(max: 50)]
         private readonly ?string $preavisDepart = null,
     ) {
@@ -49,6 +76,26 @@ class ProcedureDemarchesRequest implements RequestInterface
     public function getIsProprioAverti(): ?string
     {
         return $this->isProprioAverti;
+    }
+
+    public function getInfoProcedureBailleurMoyen(): ?string
+    {
+        return $this->infoProcedureBailleurMoyen;
+    }
+
+    public function getInfoProcedureBailleurDate(): ?string
+    {
+        return $this->infoProcedureBailleurDate;
+    }
+
+    public function getInfoProcedureBailleurReponse(): ?string
+    {
+        return $this->infoProcedureBailleurReponse;
+    }
+
+    public function getInfoProcedureBailleurNumero(): ?string
+    {
+        return $this->infoProcedureBailleurNumero;
     }
 
     public function getInfoProcedureAssuranceContactee(): ?string

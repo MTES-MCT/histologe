@@ -1492,7 +1492,7 @@
                 "type": "SignalementFormButton",
                 "label": "J'y suis presque !",
                 "slug": "ecran_intermediaire_procedure_next",
-                "action": "goto:info_procedure",
+                "action": "goto:info_procedure_bail",
                 "accessibility": {
                   "focus": true
                 }
@@ -1513,7 +1513,7 @@
   {
     "type": "SignalementFormScreen",
     "label": "",
-    "slug": "info_procedure",
+    "slug": "info_procedure_bail",
     "screenCategory": "Procédure",
     "components": {
       "body": [
@@ -1546,6 +1546,109 @@
             "show": "formStore.data.info_procedure_bailleur_prevenu ===  'non'"
           }
         },
+        {
+          "type": "SignalementFormSelect",
+          "slug": "info_procedure_bail_moyen",
+          "label": "Comment avez-vous informé votre bailleur (propriétaire) ?",
+          "description": "Sélectionnez une réponse dans la liste",
+          "values": [
+            {
+              "label": "Courrier",
+              "value": "courrier"
+            },
+            {
+              "label": "E-mail",
+              "value": "email"
+            },
+            {
+              "label": "Téléphone",
+              "value": "telephone"
+            },
+            {
+              "label": "SMS",
+              "value": "sms"
+            },
+            {
+              "label": "Autre",
+              "value": "autre"
+            }
+          ],
+          "validate": {
+            "message": "Veuillez indiquer par quel moyen vous avez informé votre bailleur."
+          },
+          "conditional": {
+            "show": "formStore.data.info_procedure_bailleur_prevenu ===  'oui'"
+          }
+        },
+        {
+          "type": "SignalementFormDate",
+          "label": "Quand avez-vous prévenu votre bailleur (propriétaire) ?",
+          "description": "Format attendu : MM/AAAA",
+          "slug": "info_procedure_bail_date",
+          "validate": {
+            "message": "Veuillez renseigner quand vous avez prévenu votre bailleur."
+          },
+          "conditional": {
+            "show": "formStore.data.info_procedure_bailleur_prevenu ===  'oui'"
+          }
+        },
+        {
+          "type": "SignalementFormTextarea",
+          "label": "Quelle a été la réponse de votre bailleur (propriétaire) ?",
+          "slug": "info_procedure_bail_reponse",
+          "conditional": {
+            "show": "formStore.data.info_procedure_bailleur_prevenu ===  'oui'"
+          },
+          "validate": {
+            "message": "Veuillez renseigner la réponse de votre bailleur."
+          }
+        },
+        {
+          "type": "SignalementFormTextfield",
+          "label": "Si vous l'avez, indiquez le numéro de réclamation fourni par le bailleur (facultatif)",
+          "slug": "info_procedure_bail_numero",
+          "conditional": {
+            "show": "formStore.data.info_procedure_bailleur_prevenu ===  'oui' && formStore.data.signalement_concerne_logement_social_autre_tiers === 'oui'"
+          },
+          "validate": {
+            "required": false
+          }
+        }
+      ],
+      "footer": [
+        {
+          "type": "SignalementFormSubscreen",
+          "slug": "info_procedure_bail_footer",
+          "customCss": "button-group-responsive-inverted",
+          "components": {
+            "body": [
+              {
+                "type": "SignalementFormButton",
+                "label": "Suivant",
+                "slug": "info_procedure_bail_next",
+                "action": "goto.save:info_procedure_assurance",
+                "customCss": "fr-btn--icon-right fr-icon-arrow-right-line"
+              },
+              {
+                "type": "SignalementFormButton",
+                "label": "Précédent",
+                "slug": "info_procedure_bail_previous",
+                "action": "goto:ecran_intermediaire_procedure",
+                "customCss": "fr-btn--secondary fr-btn--icon-left fr-icon-arrow-left-line"
+              }
+            ]
+          }
+        }
+      ]
+    }
+  },
+  {
+    "type": "SignalementFormScreen",
+    "label": "",
+    "slug": "info_procedure_assurance",
+    "screenCategory": "Procédure",
+    "components": {
+      "body": [
         {
           "type": "SignalementFormOnlyChoice",
           "label": "Avez-vous contacté votre assurance logement ?",
@@ -1621,22 +1724,22 @@
       "footer": [
         {
           "type": "SignalementFormSubscreen",
-          "slug": "info_procedure_footer",
+          "slug": "info_procedure_assurance_footer",
           "customCss": "button-group-responsive-inverted",
           "components": {
             "body": [
               {
                 "type": "SignalementFormButton",
                 "label": "Suivant",
-                "slug": "info_procedure_utilisation_service_next",
+                "slug": "info_procedure_assurance_next",
                 "action": "goto.save:utilisation_service",
                 "customCss": "fr-btn--icon-right fr-icon-arrow-right-line"
               },
               {
                 "type": "SignalementFormButton",
                 "label": "Précédent",
-                "slug": "info_procedure_utilisation_service_previous",
-                "action": "goto:ecran_intermediaire_procedure",
+                "slug": "info_procedure_assurance_previous",
+                "action": "goto:info_procedure_bail",
                 "customCss": "fr-btn--secondary fr-btn--icon-left fr-icon-arrow-left-line"
               }
             ]
@@ -1707,7 +1810,7 @@
                 "type": "SignalementFormButton",
                 "label": "Précédent",
                 "slug": "utilisation_service_previous",
-                "action": "goto:info_procedure",
+                "action": "goto:info_procedure_assurance",
                 "customCss": "fr-btn--secondary fr-btn--icon-left fr-icon-arrow-left-line"
               }
             ]

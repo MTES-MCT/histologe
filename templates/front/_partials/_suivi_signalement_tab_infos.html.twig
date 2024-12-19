@@ -459,6 +459,7 @@ and signalement.profileDeclarant is not same as enum('App\\Entity\\Enum\\Profile
 					{{ signalement.informationProcedure.infoProcedureReponseAssurance | nl2br  }}
 					<br>
 				{% endif %}
+        {# // TODO : ajouter les nouvelles lignes #}
 				Si des travaux sont faits, voulez-vous rester dans le logement ? 
 				{{signalement.informationProcedure.infoProcedureDepartApresTravaux(false)|capitalize}}
 			{% endif %}

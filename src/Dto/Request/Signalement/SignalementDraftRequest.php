@@ -403,6 +403,20 @@ class SignalementDraftRequest
         message: 'Le champ "infoProcedureBailleurPrevenu" est incorrect.',
     )]
     private ?string $infoProcedureBailleurPrevenu = null;
+
+    #[Assert\Choice(
+        choices: ['courrier', 'email', 'telephone', 'sms', 'autre', 'nsp'],
+        message: 'Le champ "infoProcedureBailleurMoyen" est incorrect.',
+    )]
+    private ?string $infoProcedureBailleurMoyen = null;
+
+    #[Assert\DateTime('Y-m')]// TODO : à vérifier
+    private ?string $infoProcedureBailleurDate = null;
+
+    private ?string $infoProcedureBailleurReponse = null;
+
+    private ?string $infoProcedureBailleurNumero = null;
+
     #[Assert\Choice(
         choices: ['oui', 'non', 'pas_assurance_logement', 'nsp'],
         message: 'Le champ "infoProcedureAssuranceContactee" est incorrect.',
@@ -1491,6 +1505,53 @@ class SignalementDraftRequest
     public function setInfoProcedureBailleurPrevenu(?string $infoProcedureBailleurPrevenu): self
     {
         $this->infoProcedureBailleurPrevenu = $infoProcedureBailleurPrevenu;
+
+        return $this;
+    }
+
+    public function getInfoProcedureBailleurMoyen(): ?string
+    {
+        return $this->infoProcedureBailleurMoyen;
+    }
+
+    public function setInfoProcedureBailleurMoyen(?string $infoProcedureBailleurMoyen): self
+    {
+        $this->infoProcedureBailleurMoyen = $infoProcedureBailleurMoyen;
+        return $this;
+    }
+
+    public function getInfoProcedureBailleurDate(): ?string
+    {
+        return $this->infoProcedureBailleurDate;
+    }
+
+    public function setInfoProcedureBailleurDate(?string $infoProcedureBailleurDate): self
+    {
+        $this->infoProcedureBailleurDate = $infoProcedureBailleurDate;
+
+        return $this;
+    }
+
+    public function getInfoProcedureBailleurReponse(): ?string
+    {
+        return $this->infoProcedureBailleurReponse;
+    }
+
+    public function setInfoProcedureBailleurReponse(?string $infoProcedureBailleurReponse): self
+    {
+        $this->infoProcedureBailleurReponse = $infoProcedureBailleurReponse;
+
+        return $this;
+    }
+
+    public function getInfoProcedureBailleurNumero(): ?string
+    {
+        return $this->infoProcedureBailleurNumero;
+    }
+
+    public function setInfoProcedureBailleurNumero(?string $infoProcedureBailleurNumero): self
+    {
+        $this->infoProcedureBailleurNumero = $infoProcedureBailleurNumero;
 
         return $this;
     }

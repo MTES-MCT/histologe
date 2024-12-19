@@ -476,6 +476,7 @@ trait FixturesHelper
 
     public function getLocataireInformationProcedure(): array
     {
+        // TODO : maj le texte
         return [
             'utilisation_service_ok_visite' => 1,
             'info_procedure_bailleur_prevenu' => 'oui',

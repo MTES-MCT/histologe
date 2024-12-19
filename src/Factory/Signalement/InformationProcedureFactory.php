@@ -27,6 +27,10 @@ class InformationProcedureFactory
     {
         return new InformationProcedure(
             infoProcedureBailleurPrevenu: $data['info_procedure_bailleur_prevenu'] ?? null,
+            infoProcedureBailleurMoyen: $data['info_procedure_bail_moyen'] ?? null,
+            infoProcedureBailleurDate: $data['info_procedure_bail_date'] ?? null,
+            infoProcedureBailleurReponse: $data['info_procedure_bail_reponse'] ?? null,
+            infoProcedureBailleurNumero: $data['info_procedure_bail_numero'] ?? null,
             infoProcedureAssuranceContactee: $data['info_procedure_assurance_contactee'] ?? null,
             infoProcedureDepartApresTravaux: $data['info_procedure_depart_apres_travaux'] ?? null,
             infoProcedureReponseAssurance: $data['info_procedure_reponse_assurance'] ?? null,

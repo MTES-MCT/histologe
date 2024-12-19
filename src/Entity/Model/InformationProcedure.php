@@ -6,6 +6,10 @@ class InformationProcedure
 {
     public function __construct(
         private ?string $infoProcedureBailleurPrevenu = null,
+        private ?string $infoProcedureBailleurMoyen = null,
+        private ?string $infoProcedureBailleurDate = null,
+        private ?string $infoProcedureBailleurReponse = null,
+        private ?string $infoProcedureBailleurNumero = null,
         private ?string $infoProcedureAssuranceContactee = null,
         private ?string $infoProcedureDepartApresTravaux = null,
         private ?string $infoProcedureReponseAssurance = null,
@@ -24,6 +28,53 @@ class InformationProcedure
     public function setInfoProcedureBailleurPrevenu(?string $infoProcedureBailleurPrevenu): self
     {
         $this->infoProcedureBailleurPrevenu = $infoProcedureBailleurPrevenu;
+
+        return $this;
+    }
+
+    public function getInfoProcedureBailleurMoyen(): ?string
+    {
+        return $this->infoProcedureBailleurMoyen;
+    }
+
+    public function setInfoProcedureBailleurMoyen(?string $infoProcedureBailleurMoyen): self
+    {
+        $this->infoProcedureBailleurMoyen = $infoProcedureBailleurMoyen;
+        return $this;
+    }
+
+    public function getInfoProcedureBailleurDate(): ?string
+    {
+        return $this->infoProcedureBailleurDate;
+    }
+
+    public function setInfoProcedureBailleurDate(?string $infoProcedureBailleurDate): self
+    {
+        $this->infoProcedureBailleurDate = $infoProcedureBailleurDate;
+
+        return $this;
+    }
+
+    public function getInfoProcedureBailleurReponse(): ?string
+    {
+        return $this->infoProcedureBailleurReponse;
+    }
+
+    public function setInfoProcedureBailleurReponse(?string $infoProcedureBailleurReponse): self
+    {
+        $this->infoProcedureBailleurReponse = $infoProcedureBailleurReponse;
+
+        return $this;
+    }
+
+    public function getInfoProcedureBailleurNumero(): ?string
+    {
+        return $this->infoProcedureBailleurNumero;
+    }
+
+    public function setInfoProcedureBailleurNumero(?string $infoProcedureBailleurNumero): self
+    {
+        $this->infoProcedureBailleurNumero = $infoProcedureBailleurNumero;
 
         return $this;
     }
@@ -124,6 +175,10 @@ class InformationProcedure
     {
         return [
             'info_procedure_bailleur_prevenu' => $this->infoProcedureBailleurPrevenu,
+            'info_procedure_bail_moyen' => $this->infoProcedureBailleurMoyen,
+            'info_procedure_bail_date' => $this->infoProcedureBailleurDate,
+            'info_procedure_bail_reponse' => $this->infoProcedureBailleurReponse,
+            'info_procedure_bail_numero' => $this->infoProcedureBailleurNumero,
             'info_procedure_assurance_contactee' => $this->infoProcedureAssuranceContactee,
             'info_procedure_depart_apres_travaux' => $this->infoProcedureDepartApresTravaux,
             'info_procedure_reponse_assurance' => $this->infoProcedureReponseAssurance,
