@@ -24,42 +24,32 @@
             </div>
         </header>
     </section>
-    <form action="#" name="bo-filters-form" id="bo_filters_form" method="POST"
-              class="fr-background--grey fr-p-2v fr-grid-row fr-grid-row--bottom">
-        <div class="fr-col-4 fr-p-2v">
-            <div class="fr-search-bar fr-mt-2v" id="header-search">
-                <input class="fr-input" placeholder="Rechercher un partenaire" type="search" id="partner-input"
-                    name="userTerms" value="{{ userTerms ?? '' }}">
-                <button class="fr-btn" title="Rechercher">
-                    {{userTerms is null ? 'Rechercher un partenaire' : userTerms}}
-                </button>&nbsp;
+
+    <section class="fr-col-12">
+        {% form_theme form 'form/dsfr_theme.html.twig' %}
+        {{ form_start(form) }}
+        {{ form_errors(form) }}
+        <div class="fr-grid-row fr-grid-row--gutters">
+            <div class="fr-col-12 fr-col-lg-3">
+                {{ form_row(form.queryPartner) }}
+            </div>
+            {% if is_granted('ROLE_ADMIN') %}
+                <div class="fr-col-12 fr-col-lg-3">
+                    {{ form_row(form.territory) }}
+                </div>
+            {% endif %}
+            <div class="fr-col-12 fr-col-lg-3">
+                {{ form_row(form.partnerType) }}
+            </div>
+            <div class="fr-col-12 fr-col-lg-3">
+                <a href="{{ path('back_partner_index') }}" class="fr-link fr-link--icon-left fr-icon-close-circle-line">Réinitialiser les résultats</a>
             </div>
         </div>
-        {% if is_granted('ROLE_ADMIN') %}
-            <div class="fr-col-3 fr-p-2v">
-                <select id="partner-filters-territories" class="fr-select fr-select-submit" name="territory">
-                    <option value="" {{ currentTerritory is null ? 'selected' : '' }}>Tous les territoires</option>
-                    {% for territory in territories %}
-                        <option value="{{ territory.id }}" {{ currentTerritory ? (territory.id == currentTerritory.id ? 'selected' : '') : ''  }}>{{ territory.zip ~ ' - ' ~ territory.name }}</option>
-                    {% endfor %}
-                </select>
-            </div>
-        {% endif %}
-        <div class="fr-col-3 fr-p-2v">
-            <select id="partner-filters-types" class="fr-select fr-select-submit" name="type">
-                <option value="" {{ currentType is null ? 'selected' : '' }}>Type</option>
-                {% for key, type in types %}
-                    <option value="{{ key }}" {{ currentType ? (key == currentType ? 'selected' : '') : '' }}>{{ type }}</option>
-                {% endfor %}
-            </select>
-        </div>
-        <div class="fr-col-2 fr-p-2v">
-            <a href="{{ path('back_partner_index') }}" class="fr-link fr-link--icon-left fr-icon-close-circle-line">Réinitialiser</a>
-        </div>
-    </form>
+        {{ form_end(form) }}
+    </section>
 
     <section class="fr-col-12 fr-p-5v">
-        <h2 class="fr-mb-0" id="desc-table">{{total}} partenaires trouvés</h2>
+        <h2 class="fr-mb-0" id="desc-table">{{partners|length}} partenaire{% if partners|length > 1%}s{% endif %} trouvé{% if partners|length > 1%}s{% endif %}</h2>
     </section>
 
     <section class="fr-col-12 fr-pt-0 fr-px-5v">
@@ -135,7 +125,7 @@
 
         <div class="fr-grid-row fr-mt-2v fr-grid-row--center" id="partner-pagination">
             {% import '_partials/macros.html.twig' as macros %}
-            {{ macros.customPagination(pages, page, 'back_partner_index', {territory: (currentTerritory ? currentTerritory.id : null), type: (currentType ? currentType : null), userTerms: userTerms}) }}
+            {{ macros.customPagination(pages, searchPartner.page, 'back_partner_index', searchPartner.urlParams) }}
         </div>
     </section>
 {% endblock %}

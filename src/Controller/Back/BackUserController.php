@@ -8,6 +8,7 @@ use App\Repository\UserRepository;
 use App\Service\SearchUser;
 use App\Service\UserExportLoader;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Messenger\MessageBusInterface;
@@ -18,27 +19,34 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 #[IsGranted('ROLE_ADMIN_TERRITORY')]
 class BackUserController extends AbstractController
 {
-    public const MAX_LIST_PAGINATION = 25;
-
     #[Route('/', name: 'back_user_index', methods: ['GET'])]
-    public function index(Request $request, UserRepository $userRepository): Response
-    {
-        [$form, $searchUser, $paginatedUsers] = $this->handleSearchUser($request, $userRepository);
+    public function index(
+        Request $request,
+        UserRepository $userRepository,
+        ParameterBagInterface $parameterBag,
+    ): Response {
+        $maxListPagination = $parameterBag->get('standard_max_list_pagination');
+        [$form, $searchUser, $paginatedUsers] = $this->handleSearchUser($request, $userRepository, $maxListPagination);
 
         return $this->render('back/user/index.html.twig', [
             'form' => $form,
             'searchUser' => $searchUser,
             'users' => $paginatedUsers,
-            'pages' => (int) ceil($paginatedUsers->count() / self::MAX_LIST_PAGINATION),
+            'pages' => (int) ceil($paginatedUsers->count() / $maxListPagination),
         ]);
     }
 
     #[Route('/export', name: 'back_user_export', methods: ['GET', 'POST'])]
-    public function export(Request $request, UserRepository $userRepository, MessageBusInterface $messageBus): Response
-    {
+    public function export(
+        Request $request,
+        UserRepository $userRepository,
+        MessageBusInterface $messageBus,
+        ParameterBagInterface $parameterBag,
+    ): Response {
+        $maxListPagination = $parameterBag->get('standard_max_list_pagination');
         $originalMethod = $request->getMethod();
         $request->setMethod('GET'); // to prevent Symfony ignoring GET data while handlning the form
-        [$form, $searchUser, $paginatedUsers] = $this->handleSearchUser($request, $userRepository);
+        [$form, $searchUser, $paginatedUsers] = $this->handleSearchUser($request, $userRepository, $maxListPagination);
         if ('POST' === $originalMethod) {
             $format = $request->request->get('file-format');
             if (!in_array($format, ['csv', 'xlsx'])) {
@@ -65,7 +73,7 @@ class BackUserController extends AbstractController
         ]);
     }
 
-    private function handleSearchUser(Request $request, UserRepository $userRepository): array
+    private function handleSearchUser(Request $request, UserRepository $userRepository, int $maxListPagination): array
     {
         $searchUser = new SearchUser($this->getUser());
         $form = $this->createForm(SearchUserType::class, $searchUser);
@@ -73,7 +81,7 @@ class BackUserController extends AbstractController
         if ($form->isSubmitted() && !$form->isValid()) {
             $searchUser = new SearchUser($this->getUser());
         }
-        $paginatedUsers = $userRepository->findFilteredPaginated($searchUser, self::MAX_LIST_PAGINATION);
+        $paginatedUsers = $userRepository->findFilteredPaginated($searchUser, $maxListPagination);
 
         return [$form, $searchUser, $paginatedUsers];
     }
