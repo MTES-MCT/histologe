@@ -83,4 +83,13 @@ auto_affectation_rules:
     insee_to_exclude: null
     parc: "all"
     allocataire: "all"
+  -
+    territory: "Loire-Atlantique"
+    status: "ACTIVE"
+    profile_declarant: "all"
+    partner_type: "BAILLEUR_SOCIAL"
+    insee_to_include: "all"
+    insee_to_exclude: null
+    parc: "public"
+    allocataire: "all"
 

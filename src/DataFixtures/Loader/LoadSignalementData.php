@@ -400,6 +400,11 @@ class LoadSignalementData extends Fixture implements OrderedFixtureInterface
             $signalement->setDateEntree(new \DateTimeImmutable($row['date_entree']));
         }
 
+        if (isset($row['bailleur'])) {
+            $zip = ZipcodeProvider::getZipCode($row['cp_occupant']);
+            $signalement->setBailleur($this->bailleurRepository->findOneBailleurBy($row['bailleur'], $zip));
+        }
+
         if (Signalement::STATUS_CLOSED === $row['statut']) {
             $signalement
                 ->setMotifCloture(MotifCloture::tryFrom($row['motif_cloture']))
@@ -512,6 +517,6 @@ class LoadSignalementData extends Fixture implements OrderedFixtureInterface
 
     public function getOrder(): int
     {
-        return 12;
+        return 13;
     }
 }

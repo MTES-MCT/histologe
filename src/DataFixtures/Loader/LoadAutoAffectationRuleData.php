@@ -58,6 +58,6 @@ class LoadAutoAffectationRuleData extends Fixture implements OrderedFixtureInter
 
     public function getOrder(): int
     {
-        return 19;
+        return 21;
     }
 }

@@ -77,6 +77,11 @@
                         /
                     {% endif %}
                 </div>
+                {% if partner.type and partner.type.name == 'BAILLEUR_SOCIAL' %}
+                    <div class="fr-col-6">
+                        <div><b>Dénomination officielle bailleur :</b> {{ partner.bailleur ? partner.bailleur.name : 'N/A' }}</div>
+                    </div>
+                {% endif %}
                 {% if is_granted('ROLE_ADMIN') and partnerAutoAffectationRules|length > 0 %}
                     <div class="fr-col-6">
                         <span>Règles d'auto-affectation concernant ce partenaire</span>

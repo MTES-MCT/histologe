@@ -2,7 +2,7 @@
 
 namespace App\Messenger\Message;
 
-class SignalementUpdateFromAddressMessage
+class SignalementAddressUpdateAndAutoAssignMessage
 {
     public function __construct(private ?int $signalementId)
     {

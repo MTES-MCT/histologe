@@ -4,6 +4,7 @@ namespace App\Specification\Affectation;
 
 use App\Entity\Enum\PartnerType;
 use App\Entity\Partner;
+use App\Entity\Signalement;
 use App\Specification\Context\PartnerSignalementContext;
 use App\Specification\Context\SpecificationContextInterface;
 use App\Specification\SpecificationInterface;
@@ -24,6 +25,24 @@ class PartnerTypeSpecification implements SpecificationInterface
         /** @var Partner $partner */
         $partner = $context->getPartner();
 
-        return $partner->getType() === $this->partnerType;
+        /** @var Signalement $signalement */
+        $signalement = $context->getSignalement();
+
+        if ($partner->getType() !== $this->partnerType) {
+            return false;
+        }
+
+        if (PartnerType::BAILLEUR_SOCIAL === $this->partnerType) {
+            return $this->isSatisfiedByBailleurSocial($partner, $signalement);
+        }
+
+        return true;
+    }
+
+    private function isSatisfiedByBailleurSocial(Partner $partner, Signalement $signalement): bool
+    {
+        return null !== $partner->getBailleur()
+            && null !== $signalement->getBailleur()
+            && $partner->getBailleur() === $signalement->getBailleur();
     }
 }
