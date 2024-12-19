@@ -1,7 +1,7 @@
 # docker-compose.yml
 services:
   histologe_mysql:
-    image: 'mysql:8.0.35'
+    image: 'mysql:8.0.40'
     command: --max_allowed_packet=32505856
     container_name: histologe_mysql
     restart: always

@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Tests\Unit\Messenger\MessageHandler\Esabora;
+namespace App\Tests\Unit\Messenger\MessageHandler;
 
 use App\Entity\DesordreCritere;
 use App\Entity\Signalement;
