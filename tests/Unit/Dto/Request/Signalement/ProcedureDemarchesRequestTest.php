@@ -28,6 +28,7 @@ class ProcedureDemarchesRequestTest extends KernelTestCase
 
         $this->assertSame('0', $procedureDemarchesRequest->getIsProprioAverti());
         $this->assertSame('oui', $procedureDemarchesRequest->getInfoProcedureAssuranceContactee());
+        // TODO : ajouter les nouvelles lignes
         $this->assertSame('L\'assurance a accepté notre demande.',
             $procedureDemarchesRequest->getInfoProcedureReponseAssurance());
         $this->assertSame('oui', $procedureDemarchesRequest->getInfoProcedureDepartApresTravaux());
