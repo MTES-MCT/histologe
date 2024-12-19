@@ -102,6 +102,7 @@ class SignalementDraftRequestTest extends WebTestCase
             ->setTravailleurSocialAccompagnementDeclarant('1')
             ->setInfoProcedureBailleurPrevenu('oui')
             ->setInfoProcedureAssuranceContactee('oui')
+            // TODO : ajouter les nouvelles lignes
             ->setInfoProcedureReponseAssurance('Réponse de l\'assurance')
             ->setInfoProcedureDepartApresTravaux('oui')
             ->setUtilisationServiceOkPrevenirBailleur(true)
