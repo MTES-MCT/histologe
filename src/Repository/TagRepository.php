@@ -4,7 +4,7 @@ namespace App\Repository;
 
 use App\Entity\Tag;
 use App\Entity\Territory;
-use App\Service\SearchTag;
+use App\Service\ListFilters\SearchTag;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\Tools\Pagination\Paginator;
 use Doctrine\Persistence\ManagerRegistry;

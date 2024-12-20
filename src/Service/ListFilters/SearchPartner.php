@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Service;
+namespace App\Service\ListFilters;
 
 use App\Entity\Enum\PartnerType;
 use App\Entity\Territory;

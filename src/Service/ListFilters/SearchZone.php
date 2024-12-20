@@ -1,20 +1,21 @@
 <?php
 
-namespace App\Service;
+namespace App\Service\ListFilters;
 
+use App\Entity\Enum\ZoneType;
 use App\Entity\Territory;
 use App\Entity\User;
 use App\Service\Behaviour\SearchQueryTrait;
 
-class SearchTag
+class SearchZone
 {
     use SearchQueryTrait {
         getUrlParams as getUrlParamsBase;
     }
-
     private User $user;
-    private ?string $queryTag = null;
+    private ?string $queryName = null;
     private ?Territory $territory = null;
+    private ?ZoneType $type = null;
 
     public function __construct(User $user)
     {
@@ -29,14 +30,14 @@ class SearchTag
         return $this->user;
     }
 
-    public function getQueryTag(): ?string
+    public function getQueryName(): ?string
     {
-        return $this->queryTag;
+        return $this->queryName;
     }
 
-    public function setQueryTag(?string $queryTag): void
+    public function setQueryName(?string $queryName): void
     {
-        $this->queryTag = $queryTag;
+        $this->queryName = $queryName;
     }
 
     public function getTerritory(): ?Territory
@@ -49,6 +50,16 @@ class SearchTag
         $this->territory = $territory;
     }
 
+    public function getType(): ?ZoneType
+    {
+        return $this->type;
+    }
+
+    public function setType(?ZoneType $type): void
+    {
+        $this->type = $type;
+    }
+
     public function getUrlParams(): array
     {
         $params = $this->getUrlParamsBase();
@@ -57,18 +68,5 @@ class SearchTag
         }
 
         return $params;
-    }
-
-    public function getFiltersToText(): array
-    {
-        $filters = [];
-        if ($this->queryTag) {
-            $filters['Recherche'] = $this->queryTag;
-        }
-        if ($this->territory && $this->user->isSuperAdmin()) {
-            $filters['Territoire'] = $this->territory->getZip().' - '.$this->territory->getName();
-        }
-
-        return $filters;
     }
 }

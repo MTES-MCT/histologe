@@ -4,7 +4,7 @@ namespace App\Form;
 
 use App\Repository\PartnerRepository;
 use App\Repository\TerritoryRepository;
-use App\Service\SearchArchivedAccount;
+use App\Service\ListFilters\SearchArchivedAccount;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;

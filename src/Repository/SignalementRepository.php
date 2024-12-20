@@ -17,7 +17,7 @@ use App\Entity\Suivi;
 use App\Entity\Territory;
 use App\Entity\User;
 use App\Service\Interconnection\Idoss\IdossService;
-use App\Service\SearchArchivedSignalement;
+use App\Service\ListFilters\SearchArchivedSignalement;
 use App\Service\Signalement\SearchFilter;
 use App\Service\Statistics\CriticitePercentStatisticProvider;
 use App\Utils\CommuneHelper;

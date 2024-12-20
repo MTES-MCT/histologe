@@ -4,7 +4,7 @@ namespace App\Form;
 
 use App\Entity\User;
 use App\Repository\TerritoryRepository;
-use App\Service\SearchArchivedPartner;
+use App\Service\ListFilters\SearchArchivedPartner;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;

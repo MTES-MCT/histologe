@@ -8,7 +8,7 @@ use App\Form\TerritoryType;
 use App\Repository\BailleurRepository;
 use App\Repository\TerritoryRepository;
 use App\Security\Voter\TerritoryVoter;
-use App\Service\SearchTerritory;
+use App\Service\ListFilters\SearchTerritory;
 use App\Service\Security\FileScanner;
 use App\Service\UploadHandlerService;
 use Doctrine\ORM\EntityManagerInterface;

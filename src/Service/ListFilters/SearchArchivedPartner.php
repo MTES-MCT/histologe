@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Service;
+namespace App\Service\ListFilters;
 
 use App\Service\Behaviour\SearchQueryTrait;
 

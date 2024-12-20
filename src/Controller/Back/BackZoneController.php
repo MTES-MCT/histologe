@@ -10,7 +10,7 @@ use App\Repository\ZoneRepository;
 use App\Security\Voter\ZoneVoter;
 use App\Service\FormHelper;
 use App\Service\Import\CsvParser;
-use App\Service\SearchZone;
+use App\Service\ListFilters\SearchZone;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;

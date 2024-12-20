@@ -4,7 +4,7 @@ namespace App\Form;
 
 use App\Entity\Territory;
 use App\Entity\User;
-use App\Service\SearchTag;
+use App\Service\ListFilters\SearchTag;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\Form\AbstractType;

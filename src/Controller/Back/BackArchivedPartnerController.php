@@ -4,7 +4,7 @@ namespace App\Controller\Back;
 
 use App\Form\SearchArchivedPartnerType;
 use App\Repository\PartnerRepository;
-use App\Service\SearchArchivedPartner;
+use App\Service\ListFilters\SearchArchivedPartner;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Symfony\Component\HttpFoundation\Request;

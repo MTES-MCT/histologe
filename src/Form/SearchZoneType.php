@@ -4,7 +4,7 @@ namespace App\Form;
 
 use App\Entity\Enum\ZoneType;
 use App\Entity\Territory;
-use App\Service\SearchZone;
+use App\Service\ListFilters\SearchZone;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\Form\AbstractType;

@@ -5,7 +5,7 @@ namespace App\Controller\Back;
 use App\Form\SearchUserType;
 use App\Messenger\Message\UserExportMessage;
 use App\Repository\UserRepository;
-use App\Service\SearchUser;
+use App\Service\ListFilters\SearchUser;
 use App\Service\UserExportLoader;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;

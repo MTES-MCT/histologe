@@ -5,7 +5,7 @@ namespace App\Repository;
 use App\Entity\AutoAffectationRule;
 use App\Entity\Partner;
 use App\Entity\Territory;
-use App\Service\SearchAutoAffectationRule;
+use App\Service\ListFilters\SearchAutoAffectationRule;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\Tools\Pagination\Paginator;
 use Doctrine\Persistence\ManagerRegistry;

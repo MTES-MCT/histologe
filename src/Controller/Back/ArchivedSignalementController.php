@@ -5,7 +5,7 @@ namespace App\Controller\Back;
 use App\Entity\Signalement;
 use App\Form\SearchArchivedSignalementType;
 use App\Repository\SignalementRepository;
-use App\Service\SearchArchivedSignalement;
+use App\Service\ListFilters\SearchArchivedSignalement;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;

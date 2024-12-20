@@ -2,7 +2,7 @@
 
 namespace App\Messenger\Message;
 
-use App\Service\SearchUser;
+use App\Service\ListFilters\SearchUser;
 
 class UserExportMessage
 {

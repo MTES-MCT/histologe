@@ -6,7 +6,7 @@ use App\Entity\AutoAffectationRule;
 use App\Form\AutoAffectationRuleType;
 use App\Form\SearchAutoAffectationRuleType;
 use App\Repository\AutoAffectationRuleRepository;
-use App\Service\SearchAutoAffectationRule;
+use App\Service\ListFilters\SearchAutoAffectationRule;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
