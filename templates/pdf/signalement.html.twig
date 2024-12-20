@@ -139,6 +139,36 @@
                                     {{ picto_no|raw }}
                                 {% endif %}
                             </li>
+                            {% if signalement.isProprioAverti and signalement.informationProcedure %}
+                                <li>
+                                    <b>Moyen d'information du propriétaire :</b>
+                                    {# todo: ajouter les labels, un enum ? #}
+                                    {% if signalement.informationProcedure.infoProcedureBailMoyen %}
+                                        {{ signalement.informationProcedure.infoProcedureBailMoyen }} 
+                                    {% endif %}
+                                </li>
+                                <li>
+                                    <b>Date d'information du propriétaire :</b>
+                                    {% if signalement.informationProcedure.infoProcedureBailDate %}
+                                        {{ signalement.informationProcedure.infoProcedureBailDate }}
+                                    {% endif %}
+                                </li>
+                                <li>
+                                    <b>Réponse du propriétaire :</b>
+                                    {% if signalement.informationProcedure.infoProcedureBailReponse %}
+                                        <br>
+                                        {{ signalement.informationProcedure.infoProcedureBailReponse|nl2br }}
+                                    {% endif %}
+                                </li>
+                                <li>
+                                    <b>Numéro de réclamation :</b>
+                                    {% if signalement.isLogementSocial %}
+                                        {% if signalement.informationProcedure.infoProcedureBailNumero %}
+                                            {{ signalement.informationProcedure.infoProcedureBailNumero|nl2br }}
+                                        {% endif %}
+                                    {% endif %}
+                                </li>
+                            {% endif %}
                             <li><b>Nom :</b> {{ signalement.nomProprio ?? 'N/R' }}
                             <li><b>Courriel :</b><a
                                         href="mailto:{{ signalement.mailProprio }}">{{ signalement.mailProprio ?? 'N/R' }}</a>

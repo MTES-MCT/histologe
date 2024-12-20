@@ -103,6 +103,10 @@ class SignalementResponse
     public ?string $proprietaireDateNaissance;
     // infos location
     public ?bool $proprietaireAverti;
+    public ?string $moyenInformationProprietaire;
+    public ?string $dateInformationProprietaire;
+    public ?string $reponseProprietaire;
+    public ?string $numeroReclamationProprietaire;
     public ?float $loyer;
     public ?bool $bailEnCours;
     public ?bool $bailExistant;

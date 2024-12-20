@@ -6,6 +6,10 @@ class InformationProcedure
 {
     public function __construct(
         private ?string $infoProcedureBailleurPrevenu = null,
+        private ?string $infoProcedureBailMoyen = null,
+        private ?string $infoProcedureBailDate = null,
+        private ?string $infoProcedureBailReponse = null,
+        private ?string $infoProcedureBailNumero = null,
         private ?string $infoProcedureAssuranceContactee = null,
         private ?string $infoProcedureDepartApresTravaux = null,
         private ?string $infoProcedureReponseAssurance = null,
@@ -24,6 +28,54 @@ class InformationProcedure
     public function setInfoProcedureBailleurPrevenu(?string $infoProcedureBailleurPrevenu): self
     {
         $this->infoProcedureBailleurPrevenu = $infoProcedureBailleurPrevenu;
+
+        return $this;
+    }
+
+    public function getinfoProcedureBailMoyen(): ?string
+    {
+        return $this->infoProcedureBailMoyen;
+    }
+
+    public function setinfoProcedureBailMoyen(?string $infoProcedureBailMoyen): self
+    {
+        $this->infoProcedureBailMoyen = $infoProcedureBailMoyen;
+
+        return $this;
+    }
+
+    public function getinfoProcedureBailDate(): ?string
+    {
+        return $this->infoProcedureBailDate;
+    }
+
+    public function setinfoProcedureBailDate(?string $infoProcedureBailDate): self
+    {
+        $this->infoProcedureBailDate = $infoProcedureBailDate;
+
+        return $this;
+    }
+
+    public function getinfoProcedureBailReponse(): ?string
+    {
+        return $this->infoProcedureBailReponse;
+    }
+
+    public function setinfoProcedureBailReponse(?string $infoProcedureBailReponse): self
+    {
+        $this->infoProcedureBailReponse = $infoProcedureBailReponse;
+
+        return $this;
+    }
+
+    public function getinfoProcedureBailNumero(): ?string
+    {
+        return $this->infoProcedureBailNumero;
+    }
+
+    public function setinfoProcedureBailNumero(?string $infoProcedureBailNumero): self
+    {
+        $this->infoProcedureBailNumero = $infoProcedureBailNumero;
 
         return $this;
     }
@@ -124,6 +176,10 @@ class InformationProcedure
     {
         return [
             'info_procedure_bailleur_prevenu' => $this->infoProcedureBailleurPrevenu,
+            'info_procedure_bail_moyen' => $this->infoProcedureBailMoyen,
+            'info_procedure_bail_date' => $this->infoProcedureBailDate,
+            'info_procedure_bail_reponse' => $this->infoProcedureBailReponse,
+            'info_procedure_bail_numero' => $this->infoProcedureBailNumero,
             'info_procedure_assurance_contactee' => $this->infoProcedureAssuranceContactee,
             'info_procedure_depart_apres_travaux' => $this->infoProcedureDepartApresTravaux,
             'info_procedure_reponse_assurance' => $this->infoProcedureReponseAssurance,

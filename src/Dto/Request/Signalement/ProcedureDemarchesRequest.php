@@ -13,6 +13,40 @@ class ProcedureDemarchesRequest implements RequestInterface
             message: 'Le champ "Propriétaire averti" est incorrect.',
         )]
         private readonly ?string $isProprioAverti = null,
+
+        #[Assert\NotBlank(
+            message: 'Merci d\'indiquer comment le bailleur a été averti.',
+            groups: ['LOCATAIRE', 'TIERS_PARTICULIER', 'TIERS_PRO', 'SERVICE_SECOURS']
+        )] // TODO : à vérifier car obligatoire seulement si isProprioAverti = 1
+        #[Assert\Choice(
+            choices: ['courrier', 'email', 'telephone', 'sms', 'autre', 'nsp'],
+            message: 'Le champ "infoProcedureBailMoyen" est incorrect.',
+        )]
+        private ?string $infoProcedureBailMoyen = null,
+
+        #[Assert\NotBlank(
+            message: 'Merci d\'indiquer quand le bailleur a été averti.',
+            groups: ['LOCATAIRE']
+        )] // TODO : à vérifier car obligatoire seulement si isProprioAverti = 1
+        #[Assert\DateTime('m/Y')]
+        private ?string $infoProcedureBailDate = null,
+
+        #[Assert\NotBlank(
+            message: 'Merci d\'indiquer la réponse du bailleur.',
+            groups: ['LOCATAIRE']
+        )] // TODO : à vérifier car obligatoire seulement si isProprioAverti = 1
+        #[Assert\Length(
+            max: 255, // TODO : à vérifier
+            maxMessage: 'La réponse du bailleur ne doit pas dépasser {{ limit }} caractères.',
+        )]
+        private ?string $infoProcedureBailReponse = null,
+
+        #[Assert\Length(
+            max: 255, // TODO : à vérifier
+            maxMessage: 'Le numéro de réclamation ne doit pas dépasser {{ limit }} caractères.',
+        )]
+        private ?string $infoProcedureBailNumero = null,
+
         #[Assert\NotBlank(
             message: 'Merci d\'indiquer si l\'assurance a été contactée.',
             groups: ['LOCATAIRE', 'BAILLEUR_OCCUPANT', 'BAILLEUR']
@@ -41,6 +75,7 @@ class ProcedureDemarchesRequest implements RequestInterface
             message: 'Le champ "Souhaite garder le logement après travaux" est incorrect.',
         )]
         private readonly ?string $infoProcedureDepartApresTravaux = null,
+        // TODO : ajouter les nouvelles lignes
         #[Assert\Length(max: 50)]
         private readonly ?string $preavisDepart = null,
     ) {
@@ -49,6 +84,26 @@ class ProcedureDemarchesRequest implements RequestInterface
     public function getIsProprioAverti(): ?string
     {
         return $this->isProprioAverti;
+    }
+
+    public function getinfoProcedureBailMoyen(): ?string
+    {
+        return $this->infoProcedureBailMoyen;
+    }
+
+    public function getinfoProcedureBailDate(): ?string
+    {
+        return $this->infoProcedureBailDate;
+    }
+
+    public function getinfoProcedureBailReponse(): ?string
+    {
+        return $this->infoProcedureBailReponse;
+    }
+
+    public function getinfoProcedureBailNumero(): ?string
+    {
+        return $this->infoProcedureBailNumero;
     }
 
     public function getInfoProcedureAssuranceContactee(): ?string
