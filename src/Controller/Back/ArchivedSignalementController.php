@@ -2,12 +2,13 @@
 
 namespace App\Controller\Back;
 
-use App\Entity\Partner;
 use App\Entity\Signalement;
+use App\Form\SearchArchivedSignalementType;
 use App\Repository\SignalementRepository;
-use App\Repository\TerritoryRepository;
+use App\Service\ListFilters\SearchArchivedSignalement;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -21,41 +22,23 @@ class ArchivedSignalementController extends AbstractController
     #[IsGranted('ROLE_ADMIN')]
     public function index(
         Request $request,
-        TerritoryRepository $territoryRepository,
         SignalementRepository $signalementRepository,
+        ParameterBagInterface $parameterBag,
     ): Response {
-        $page = $request->get('page') ?? 1;
-
-        $currentTerritory = $territoryRepository->find((int) $request->get('territory'));
-        $referenceTerms = $request->get('referenceTerms');
-
-        $paginatedArchivedSignalements = $signalementRepository->findAllArchived(
-            territory: $currentTerritory,
-            referenceTerms: $referenceTerms,
-            page: (int) $page
-        );
-
-        if ($request->isMethod(Request::METHOD_POST)) {
-            $currentTerritory = $territoryRepository->find((int) $request->request->get('territory'));
-            $referenceTerms = $request->request->get('bo-filters-referenceTerms');
-
-            return $this->redirect($this->generateUrl('back_archived_signalements_index', [
-                'page' => 1,
-                'territory' => $currentTerritory?->getId(),
-                'referenceTerms' => $referenceTerms,
-            ]));
+        $searchArchivedSignalement = new SearchArchivedSignalement();
+        $form = $this->createForm(SearchArchivedSignalementType::class, $searchArchivedSignalement);
+        $form->handleRequest($request);
+        if ($form->isSubmitted() && !$form->isValid()) {
+            $searchArchivedSignalement = new SearchArchivedSignalement();
         }
-
-        $totalArchivedSignalements = \count($paginatedArchivedSignalements);
+        $maxListPagination = $parameterBag->get('standard_max_list_pagination');
+        $paginatedArchivedSignalementPaginated = $signalementRepository->findFilteredArchivedPaginated($searchArchivedSignalement, $maxListPagination);
 
         return $this->render('back/signalement_archived/index.html.twig', [
-            'currentTerritory' => $currentTerritory,
-            'referenceTerms' => $referenceTerms,
-            'territories' => $territoryRepository->findAllList(),
-            'signalements' => $paginatedArchivedSignalements,
-            'total' => $totalArchivedSignalements,
-            'page' => $page,
-            'pages' => (int) ceil($totalArchivedSignalements / Partner::MAX_LIST_PAGINATION),
+            'form' => $form,
+            'searchArchivedSignalement' => $searchArchivedSignalement,
+            'signalements' => $paginatedArchivedSignalementPaginated,
+            'pages' => (int) ceil($paginatedArchivedSignalementPaginated->count() / $maxListPagination),
         ]);
     }
 

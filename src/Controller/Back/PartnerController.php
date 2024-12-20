@@ -13,6 +13,7 @@ use App\Entity\UserPartner;
 use App\Factory\UserFactory;
 use App\Form\PartnerPerimetreType;
 use App\Form\PartnerType;
+use App\Form\SearchPartnerType;
 use App\Manager\AffectationManager;
 use App\Manager\InterventionManager;
 use App\Manager\PartnerManager;
@@ -20,9 +21,9 @@ use App\Manager\UserManager;
 use App\Repository\AutoAffectationRuleRepository;
 use App\Repository\JobEventRepository;
 use App\Repository\PartnerRepository;
-use App\Repository\TerritoryRepository;
 use App\Repository\UserRepository;
 use App\Security\Voter\PartnerVoter;
+use App\Service\ListFilters\SearchPartner;
 use App\Service\Mailer\NotificationMail;
 use App\Service\Mailer\NotificationMailerRegistry;
 use App\Service\Mailer\NotificationMailerType;
@@ -31,6 +32,7 @@ use App\Service\Signalement\VisiteNotifier;
 use App\Validator\EmailFormatValidator;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Symfony\Component\Form\FormError;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\Request;
@@ -44,59 +46,27 @@ use Symfony\Component\Workflow\WorkflowInterface;
 #[Route('/bo/partenaires')]
 class PartnerController extends AbstractController
 {
-    public function __construct(
-        private readonly AffectationManager $affectationManager,
-    ) {
-    }
-
     #[Route('/', name: 'back_partner_index', methods: ['GET', 'POST'])]
     #[IsGranted('ROLE_ADMIN_TERRITORY')]
     public function index(
         Request $request,
         PartnerRepository $partnerRepository,
-        TerritoryRepository $territoryRepository,
+        ParameterBagInterface $parameterBag,
     ): Response {
-        $page = $request->get('page') ?? 1;
-        /** @var User $user */
-        $user = $this->getUser();
-        if ($this->isGranted('ROLE_ADMIN')) {
-            $currentTerritory = $territoryRepository->find((int) $request->get('territory'));
-        } else {
-            $currentTerritory = $user->getFirstTerritory();
+        $searchPartner = new SearchPartner($this->getUser());
+        $form = $this->createForm(SearchPartnerType::class, $searchPartner);
+        $form->handleRequest($request);
+        if ($form->isSubmitted() && !$form->isValid()) {
+            $searchPartner = new SearchPartner($this->getUser());
         }
-        $currentType = $request->get('type');
-        $enumType = $request->get('type') ? EnumPartnerType::tryFrom($request->get('type')) : null;
-        $userTerms = $request->get('userTerms');
-
-        $paginatedPartners = $partnerRepository->getPartners($currentTerritory, $enumType, $userTerms, (int) $page);
-
-        $types = EnumPartnerType::getLabelList();
-
-        if (Request::METHOD_POST === $request->getMethod()) {
-            $currentTerritory = $territoryRepository->find((int) $request->request->get('territory'));
-            $currentType = $request->request->get('type');
-            $userTerms = $request->request->get('userTerms');
-
-            return $this->redirect($this->generateUrl('back_partner_index', [
-                'page' => 1,
-                'territory' => $currentTerritory?->getId(),
-                'type' => $currentType,
-                'userTerms' => $userTerms,
-            ]));
-        }
-
-        $totalPartners = \count($paginatedPartners);
+        $maxListPagination = $parameterBag->get('standard_max_list_pagination');
+        $paginatedPartners = $partnerRepository->findFilteredPaginated($searchPartner, $maxListPagination);
 
         return $this->render('back/partner/index.html.twig', [
-            'currentTerritory' => $currentTerritory,
-            'territories' => $territoryRepository->findAllList(),
+            'form' => $form,
+            'searchPartner' => $searchPartner,
             'partners' => $paginatedPartners,
-            'currentType' => $currentType,
-            'types' => $types,
-            'userTerms' => $userTerms,
-            'total' => $totalPartners,
-            'page' => $page,
-            'pages' => (int) ceil($totalPartners / Partner::MAX_LIST_PAGINATION),
+            'pages' => (int) ceil($paginatedPartners->count() / $maxListPagination),
         ]);
     }
 
@@ -282,6 +252,7 @@ class PartnerController extends AbstractController
         VisiteNotifier $visiteNotifier,
         WorkflowInterface $interventionPlanningStateMachine,
         InterventionManager $interventionManager,
+        AffectationManager $affectationManager,
     ): Response {
         $partnerId = $request->request->get('partner_id');
         /** @var ?Partner $partner */
@@ -309,7 +280,7 @@ class PartnerController extends AbstractController
             }
 
             // delete affectations "en attente" et "acceptées"
-            $this->affectationManager->deleteAffectationsByPartner($partner);
+            $affectationManager->deleteAffectationsByPartner($partner);
 
             $this->cancelOrReplanVisites(
                 partner: $partner,

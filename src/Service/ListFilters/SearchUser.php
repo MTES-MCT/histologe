@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Service;
+namespace App\Service\ListFilters;
 
 use App\Entity\Enum\PartnerType;
 use App\Entity\Territory;
@@ -8,7 +8,6 @@ use App\Entity\User;
 use App\Service\Behaviour\SearchQueryTrait;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
-use Symfony\Component\Validator\Constraints as Assert;
 
 class SearchUser
 {
@@ -17,8 +16,6 @@ class SearchUser
     }
 
     private User $user;
-    #[Assert\Positive(message: 'La page doit être un nombre positif')]
-    private ?int $page = 1;
     private ?string $queryUser = null;
     private ?Territory $territory = null;
     private Collection $partners;
@@ -39,20 +36,6 @@ class SearchUser
     public function getUser(): User
     {
         return $this->user;
-    }
-
-    public function getPage(): int
-    {
-        if ($this->page < 1) {
-            return 1;
-        }
-
-        return $this->page;
-    }
-
-    public function setPage(?int $page): void
-    {
-        $this->page = $page;
     }
 
     public function getQueryUser(): ?string

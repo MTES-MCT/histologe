@@ -35,8 +35,6 @@ class User implements UserInterface, EntityHistoryInterface, PasswordAuthenticat
         self::STATUS_ARCHIVE => 'Archivé',
     ];
 
-    public const int MAX_LIST_PAGINATION = 20;
-
     public const string ROLE_API_USER = 'ROLE_API_USER';
     public const string ROLE_USAGER = self::ROLES['Usager'];
     public const string ROLE_USER_PARTNER = self::ROLES['Agent'];

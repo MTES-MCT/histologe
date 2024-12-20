@@ -4,6 +4,7 @@ namespace App\Service;
 
 use App\Entity\User;
 use App\Repository\UserRepository;
+use App\Service\ListFilters\SearchUser;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 
 readonly class UserExportLoader

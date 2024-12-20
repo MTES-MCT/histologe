@@ -3,7 +3,7 @@
 namespace App\Repository;
 
 use App\Entity\Zone;
-use App\Service\SearchZone;
+use App\Service\ListFilters\SearchZone;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\Tools\Pagination\Paginator;
 use Doctrine\Persistence\ManagerRegistry;

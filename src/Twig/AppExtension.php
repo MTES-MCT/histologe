@@ -153,6 +153,7 @@ class AppExtension extends AbstractExtension implements GlobalsInterface
             new TwigFunction('get_accepted_extensions', [UploadHandlerService::class, 'getAcceptedExtensions']),
             new TwigFunction('show_email_alert', [$this, 'showEmailAlert']),
             new TwigFunction('user_avatar_or_placeholder', [UserAvatar::class, 'userAvatarOrPlaceholder'], ['is_safe' => ['html']]),
+            new TwigFunction('singular_or_plural', [$this, 'displaySingularOrPlural']),
         ];
     }
 
@@ -168,5 +169,17 @@ class AppExtension extends AbstractExtension implements GlobalsInterface
     public function showEmailAlert(?string $emailAddress): bool
     {
         return !EmailFormatValidator::validate($emailAddress) || FixEmailAddressesCommand::EMAIL_HISTOLOGE_INCONNU === $emailAddress;
+    }
+
+    public function displaySingularOrPlural(?int $count, string $strIfSingular, string $strIfPlural): string
+    {
+        if (empty($count)) {
+            $count = 0;
+        }
+        if ($count > 1) {
+            return $count.' '.$strIfPlural;
+        }
+
+        return $count.' '.$strIfSingular;
     }
 }

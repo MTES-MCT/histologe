@@ -6,13 +6,15 @@ use App\Entity\Tag;
 use App\Entity\User;
 use App\Form\AddTagType;
 use App\Form\EditTagType;
+use App\Form\SearchTagType;
 use App\Manager\TagManager;
 use App\Repository\TagRepository;
-use App\Repository\TerritoryRepository;
 use App\Service\FormHelper;
+use App\Service\ListFilters\SearchTag;
 use App\Service\Signalement\SearchFilterOptionDataProvider;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -23,55 +25,30 @@ use Symfony\Contracts\Cache\TagAwareCacheInterface;
 #[Route('/bo/etiquettes')]
 class TagController extends AbstractController
 {
-    public const MAX_LIST_PAGINATION = 50;
-
     #[Route('/', name: 'back_tags_index', methods: ['GET', 'POST'])]
     #[IsGranted('ROLE_ADMIN_TERRITORY')]
     public function index(
         Request $request,
         TagRepository $tagRepository,
-        TerritoryRepository $territoryRepository,
+        ParameterBagInterface $parameterBag,
     ): Response {
-        if ($request->isMethod(Request::METHOD_POST)) {
-            $currentTerritory = $territoryRepository->find((int) $request->request->get('territory'));
-            $search = $request->request->get('search');
-
-            return $this->redirect($this->generateUrl('back_tags_index', [
-                'page' => 1,
-                'territory' => $currentTerritory?->getId(),
-                'search' => $search,
-            ]));
+        $searchTag = new SearchTag($this->getUser());
+        $form = $this->createForm(SearchTagType::class, $searchTag);
+        $form->handleRequest($request);
+        if ($form->isSubmitted() && !$form->isValid()) {
+            $searchTag = new SearchTag($this->getUser());
         }
-
-        $page = $request->get('page') ?? 1;
-
-        /** @var User $user */
-        $user = $this->getUser();
-        if ($this->isGranted('ROLE_ADMIN')) {
-            $currentTerritory = $territoryRepository->find((int) $request->get('territory'));
-        } else {
-            $currentTerritory = $user->getFirstTerritory();
-        }
-        $search = $request->get('search');
-
-        $paginatedTags = $tagRepository->findAllActivePaginated(
-            territory: $currentTerritory,
-            search: $search,
-            page: (int) $page
-        );
-        $totalTags = \count($paginatedTags);
+        $maxListPagination = $parameterBag->get('standard_max_list_pagination');
+        $paginatedTags = $tagRepository->findFilteredPaginated($searchTag, $maxListPagination);
 
         $addForm = $this->createForm(AddTagType::class, null, ['action' => $this->generateUrl('back_tags_add')]);
 
         return $this->render('back/tags/index.html.twig', [
-            'currentTerritory' => $currentTerritory,
-            'territories' => $territoryRepository->findAllList(),
-            'tags' => $paginatedTags,
-            'search' => $search,
-            'total' => $totalTags,
-            'page' => $page,
-            'pages' => (int) ceil($totalTags / self::MAX_LIST_PAGINATION),
+            'form' => $form,
             'addForm' => $addForm,
+            'searchTag' => $searchTag,
+            'tags' => $paginatedTags,
+            'pages' => (int) ceil($paginatedTags->count() / $maxListPagination),
         ]);
     }
 

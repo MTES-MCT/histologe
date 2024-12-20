@@ -33,30 +33,23 @@
         </header>
     </section>
     <section class="fr-container--fluid">
-        <form action="#" name="bo-filters-form" id="bo_filters_form" method="POST"
-              class="fr-background--grey fr-p-2v fr-grid-row fr-grid-row--bottom">
-              
-            <div class="fr-col-4 fr-p-2v">
-                <div class="fr-search-bar fr-mt-2v" id="header-search">
-                    <input class="fr-input" placeholder="Taper le nom de l'étiquette" type="search"
-                        name="search" value="{{ search ?? '' }}">
-                    <button class="fr-btn" title="Rechercher">Rechercher</button>
-                </div>
+        {% form_theme form 'form/dsfr_theme.html.twig' %}
+        {{ form_start(form) }}
+        {{ form_errors(form) }}
+        <div class="fr-grid-row fr-grid-row--gutters">
+            <div class="fr-col-12 fr-col-lg-4">
+                {{ form_row(form.queryTag) }}
             </div>
             {% if is_granted('ROLE_ADMIN') %}
-            <div class="fr-col-3 fr-p-2v">
-                <select id="bo-filters-territories" class="fr-select fr-select-submit" name="territory">
-                    <option value="" {{ currentTerritory is null ? 'selected' : '' }}>Tous les territoires</option>
-                    {% for territory in territories %}
-                        <option value="{{ territory.id }}" {{ currentTerritory ? (territory.id == currentTerritory.id ? 'selected' : '') : ''  }}>{{ territory.zip ~ ' - ' ~ territory.name }}</option>
-                    {% endfor %}
-                </select>
-            </div>
+                <div class="fr-col-12 fr-col-lg-4">
+                    {{ form_row(form.territory) }}
+                </div>
             {% endif %}
-            <div class="fr-col-2 fr-p-2v">
+            <div class="fr-col-12 fr-col-lg-4">
                 <a href="{{ path('back_tags_index') }}" class="fr-link fr-link--icon-left fr-icon-close-circle-line">Réinitialiser les résultats</a>
             </div>
-        </form>
+        </div>
+        {{ form_end(form) }}
     </section>
 
     
@@ -176,7 +169,7 @@
     {% endfor %}
 
     <section class="fr-col-12 fr-p-5v">
-        <h2 class="fr-mb-0" id="desc-table">{{total}} étiquette{% if total > 1%}s{% endif %}</h2>
+        <h2 class="fr-mb-0" id="desc-table">{{ singular_or_plural(tags|length, 'étiquette trouvée', 'étiquettes trouvées') }}</h2>
     </section>
 
     <section class="fr-col-12 fr-pt-0 fr-px-5v">
@@ -221,7 +214,7 @@
 
         <div class="fr-grid-row fr-mt-2v fr-grid-row--center">
             {% import '_partials/macros.html.twig' as macros %}
-            {{ macros.customPagination(pages, page, 'back_tags_index', {territory: (currentTerritory ? currentTerritory.id :  null), search: search}) }}
+            {{ macros.customPagination(pages, searchTag.page, 'back_tags_index', searchTag.urlParams) }}
         </div>
     </section>
 {% endblock %}
