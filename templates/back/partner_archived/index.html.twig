@@ -40,7 +40,7 @@
     {% endif %}
 
     <section class="fr-col-12 fr-p-5v">
-        <h2 class="fr-mb-0" id="desc-table">{{archivedPartners|length}} partenaire{% if archivedPartners|length > 1%}s{% endif %} archivé{% if archivedPartners|length > 1%}s{% endif %} ou sans territoire trouvé{% if archivedPartners|length > 1%}s{% endif %}</h2>
+        <h2 class="fr-mb-0" id="desc-table">{{ singular_or_plural(archivedPartners|length, 'partenaire archivé ou sans territoire trouvé', 'partenaires archivés ou sans territoire trouvés') }}</h2>
     </section>
 
     <section class="fr-col-12 fr-pt-0 fr-px-5v">

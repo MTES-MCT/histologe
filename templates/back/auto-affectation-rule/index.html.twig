@@ -38,7 +38,7 @@
     </section>
 
     <section class="fr-col-12 fr-p-5v">
-        <h2 class="fr-mb-0" id="desc-table">{{autoAffectationRules|length}} règle{% if autoAffectationRules|length > 1 %}s{% endif %} d'auto-affectation</h2>
+        <h2 class="fr-mb-0" id="desc-table">{{ singular_or_plural(autoAffectationRules|length, 'règle d\'auto-affectation trouvée', 'règles d\'auto-affectation trouvées') }}</h2>
     </section>
 
     <section class="fr-col-12 fr-pt-0 fr-px-5v">

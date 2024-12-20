@@ -45,7 +45,7 @@
     {% endif %}
 
     <section class="fr-col-12 fr-p-5v">
-        <h2 class="fr-mb-0" id="desc-table">{{users|length}} compte{% if users|length > 1 %}s{% endif %} archivé{% if users|length > 1 %}s{% endif %} ou sans territoire et/ou partenaire trouvé{% if users|length > 1 %}s{% endif %}</h2>
+        <h2 class="fr-mb-0" id="desc-table">{{ singular_or_plural(users|length, 'compte archivé ou sans territoire et/ou partenaire trouvé', 'comptes archivés ou sans territoire et/ou partenaire trouvés') }}</h2>
     </section>
 
     <section class="fr-col-12 fr-pt-0 fr-px-5v">

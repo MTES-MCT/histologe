@@ -38,7 +38,7 @@
     </section>
 
     <section class="fr-col-12 fr-p-5v">
-        <h2 class="fr-mb-0" id="desc-table">{{signalements|length}} signalement{% if signalements|length > 1 %}s{% endif %} archivé{% if signalements|length > 1 %}s{% endif %}</h2>
+        <h2 class="fr-mb-0" id="desc-table">{{ singular_or_plural(signalements|length, 'signalement archivé trouvé', 'signalements archivés trouvés') }}</h2>
     </section>
 
     <section class="fr-col-12 fr-pt-0 fr-px-5v">

@@ -49,7 +49,7 @@
     </section>
 
     <section class="fr-col-12 fr-p-5v">
-        <h2 class="fr-mb-0" id="desc-table">{{partners|length}} partenaire{% if partners|length > 1%}s{% endif %} trouvé{% if partners|length > 1%}s{% endif %}</h2>
+        <h2 class="fr-mb-0" id="desc-table">{{ singular_or_plural(partners|length, 'partenaire trouvé', 'partenaires trouvés') }}</h2>
     </section>
 
     <section class="fr-col-12 fr-pt-0 fr-px-5v">
