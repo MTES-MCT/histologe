@@ -107,17 +107,11 @@ class Intervention implements EntityHistoryInterface
 
     public function getScheduledAtFormated(): string
     {
-        if ($this->getScheduledAt()->format('H') > 0) {
-            if ($this->getPartner()) {
-                return $this->getScheduledAt()
-                            ->setTimezone(
-                                new \DateTimeZone($this->getPartner()->getTerritory() ? $this->getPartner()->getTerritory()->getTimezone() : TimezoneProvider::TIMEZONE_EUROPE_PARIS)
-                            )
-                            ->format('d/m/Y à H:i');
-            }
+        if ($this->getScheduledAt()->format('His') > 0) {
+            $timezone = $this->getPartner()?->getTerritory()?->getTimezone() ?? TimezoneProvider::TIMEZONE_EUROPE_PARIS;
 
             return $this->getScheduledAt()
-                        ->setTimezone(new \DateTimeZone(TimezoneProvider::TIMEZONE_EUROPE_PARIS))
+                        ->setTimezone(new \DateTimeZone($timezone))
                         ->format('d/m/Y à H:i');
         }
 
