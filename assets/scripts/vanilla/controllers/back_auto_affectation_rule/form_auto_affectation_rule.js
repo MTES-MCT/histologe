@@ -12,8 +12,8 @@ document.querySelectorAll('.btn-delete-autoaffectationrule').forEach(swbtn => {
   })
 })
 
-const searchArchivedUsersForm = document.getElementById('search-auto-affectation-rule-form')
-if (searchArchivedUsersForm) {
+const searchAutoAffectationRuleForm = document.getElementById('search-auto-affectation-rule-form')
+if (searchAutoAffectationRuleForm) {
   updateLocalStorageWithFormParams('search-auto-affectation-rule-form')
 }
 

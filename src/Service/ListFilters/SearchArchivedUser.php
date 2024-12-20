@@ -4,7 +4,7 @@ namespace App\Service\ListFilters;
 
 use App\Service\Behaviour\SearchQueryTrait;
 
-class SearchArchivedAccount
+class SearchArchivedUser
 {
     use SearchQueryTrait;
 

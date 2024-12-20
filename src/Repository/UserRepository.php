@@ -5,7 +5,7 @@ namespace App\Repository;
 use App\Dto\CountUser;
 use App\Entity\Territory;
 use App\Entity\User;
-use App\Service\ListFilters\SearchArchivedAccount;
+use App\Service\ListFilters\SearchArchivedUser;
 use App\Service\ListFilters\SearchUser;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\NonUniqueResultException;
@@ -162,7 +162,7 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
         }, $pendingUsers);
     }
 
-    public function findArchivedFilteredPaginated(SearchArchivedAccount $searchArchivedAccount, int $maxResult): Paginator
+    public function findArchivedFilteredPaginated(SearchArchivedUser $searchArchivedUser, int $maxResult): Paginator
     {
         $queryBuilder = $this->createQueryBuilder('u');
         $queryBuilder->select('u', 'up', 'p')
@@ -170,8 +170,8 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
             ->leftJoin('up.partner', 'p');
         $queryBuilder->andWhere('u.anonymizedAt IS NULL');
 
-        $isNoneTerritory = ('none' === $searchArchivedAccount->getTerritory());
-        $isNonePartner = ('none' === $searchArchivedAccount->getPartner());
+        $isNoneTerritory = ('none' === $searchArchivedUser->getTerritory());
+        $isNonePartner = ('none' === $searchArchivedUser->getPartner());
         if ($isNoneTerritory || $isNonePartner) {
             if ($isNoneTerritory) {
                 $queryBuilder
@@ -182,8 +182,8 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
                     ->andWhere('up.id IS NULL');
             }
         } else {
-            $territory = $searchArchivedAccount->getTerritory() ? $this->territoryRepository->find($searchArchivedAccount->getTerritory()) : null;
-            $partner = $searchArchivedAccount->getPartner() ? $this->partnerRepository->find($searchArchivedAccount->getPartner()) : null;
+            $territory = $searchArchivedUser->getTerritory() ? $this->territoryRepository->find($searchArchivedUser->getTerritory()) : null;
+            $partner = $searchArchivedUser->getPartner() ? $this->partnerRepository->find($searchArchivedUser->getPartner()) : null;
 
             $builtOrCondition = '';
             if (empty($territory)) {
@@ -210,7 +210,7 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
             }
         }
 
-        $filterTerms = $searchArchivedAccount->getQueryUser();
+        $filterTerms = $searchArchivedUser->getQueryUser();
         if (!empty($filterTerms)) {
             $queryBuilder
                 ->andWhere('LOWER(u.nom) LIKE :usersterms
@@ -229,7 +229,7 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
             ->setParameter('role2', '%ROLE_ADMIN_TERRITORY%')
             ->setParameter('role3', '%ROLE_USER_PARTNER%');
 
-        $firstResult = ($searchArchivedAccount->getPage() - 1) * $maxResult;
+        $firstResult = ($searchArchivedUser->getPage() - 1) * $maxResult;
         $queryBuilder->setFirstResult($firstResult)->setMaxResults($maxResult);
 
         return new Paginator($queryBuilder->getQuery(), false);

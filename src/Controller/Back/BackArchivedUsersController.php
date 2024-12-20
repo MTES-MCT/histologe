@@ -4,12 +4,12 @@ namespace App\Controller\Back;
 
 use App\Entity\User;
 use App\Entity\UserPartner;
-use App\Form\SearchArchivedAccountType;
+use App\Form\SearchArchivedUserType;
 use App\Form\UserType;
 use App\Repository\PartnerRepository;
 use App\Repository\TerritoryRepository;
 use App\Repository\UserRepository;
-use App\Service\ListFilters\SearchArchivedAccount;
+use App\Service\ListFilters\SearchArchivedUser;
 use App\Service\Mailer\NotificationMail;
 use App\Service\Mailer\NotificationMailerRegistry;
 use App\Service\Mailer\NotificationMailerType;
@@ -33,18 +33,18 @@ class BackArchivedUsersController extends AbstractController
         UserRepository $userRepository,
         ParameterBagInterface $parameterBag,
     ): Response {
-        $searchArchivedAccount = new SearchArchivedAccount();
-        $form = $this->createForm(SearchArchivedAccountType::class, $searchArchivedAccount);
+        $searchArchivedUser = new SearchArchivedUser();
+        $form = $this->createForm(SearchArchivedUserType::class, $searchArchivedUser);
         $form->handleRequest($request);
         if ($form->isSubmitted() && !$form->isValid()) {
-            $searchArchivedAccount = new SearchArchivedAccount();
+            $searchArchivedUser = new SearchArchivedUser();
         }
         $maxListPagination = $parameterBag->get('standard_max_list_pagination');
-        $paginatedArchivedAccount = $userRepository->findArchivedFilteredPaginated($searchArchivedAccount, $maxListPagination);
+        $paginatedArchivedAccount = $userRepository->findArchivedFilteredPaginated($searchArchivedUser, $maxListPagination);
 
-        return $this->render('back/account/index.html.twig', [
+        return $this->render('back/user_archived/index.html.twig', [
             'form' => $form,
-            'searchArchivedAccount' => $searchArchivedAccount,
+            'searchArchivedUser' => $searchArchivedUser,
             'users' => $paginatedArchivedAccount,
             'pages' => (int) ceil($paginatedArchivedAccount->count() / $maxListPagination),
         ]);
@@ -117,7 +117,7 @@ class BackArchivedUsersController extends AbstractController
 
         $this->displayErrors($form);
 
-        return $this->render('back/account/edit.html.twig', [
+        return $this->render('back/user_archived/edit.html.twig', [
             'user' => $user,
             'territories' => $territoryRepository->findAllList(),
             'partners' => $partnerRepository->findAllList(null),

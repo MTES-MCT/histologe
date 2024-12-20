@@ -4,7 +4,7 @@ namespace App\Form;
 
 use App\Repository\PartnerRepository;
 use App\Repository\TerritoryRepository;
-use App\Service\ListFilters\SearchArchivedAccount;
+use App\Service\ListFilters\SearchArchivedUser;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
@@ -15,7 +15,7 @@ use Symfony\Component\Form\FormEvents;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
-class SearchArchivedAccountType extends AbstractType
+class SearchArchivedUserType extends AbstractType
 {
     public function __construct(
         private readonly TerritoryRepository $territoryRepository,
@@ -82,7 +82,7 @@ class SearchArchivedAccountType extends AbstractType
     public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
-            'data_class' => SearchArchivedAccount::class,
+            'data_class' => SearchArchivedUser::class,
             'csrf_protection' => false,
             'method' => 'GET',
             'attr' => ['id' => 'search-archived-users-form', 'class' => 'fr-p-4v bo-filter-form'],
