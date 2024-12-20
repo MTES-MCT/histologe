@@ -30,6 +30,55 @@
                             </div>
 
                             <div class="fr-select-group">
+                                {% set infoProcedureBailMoyen = signalement.informationProcedure ? signalement.informationProcedure.infoProcedureBailMoyen : null %}
+                                <label class="fr-label" for="procedureDemarchesinfoProcedureBailMoyen">
+                                    Moyen de contact du bailleur (si bailleur contacté)
+                                    {{ show_label_facultatif(
+                                        'App\\Dto\\Request\\Signalement\\ProcedureDemarchesRequest',
+                                        'infoProcedureBailMoyen',
+                                        signalement.profileDeclarant,
+                                        null != signalement.createdFrom)
+                                    }}
+                                </label>
+                                <select class="fr-select" id="procedureDemarchesinfoProcedureBailMoyen" name="infoProcedureBailMoyen">
+                                    <option value="" {{ infoProcedureBailMoyen not in ['courrier', 'email', 'telephone', 'sms', 'autre', 'nsp'] ? 'selected' : '' }}></option>
+                                    <option value="courrier" {{ infoProcedureBailMoyen is same as 'courrier' ? 'selected' : '' }}>Courrier</option>
+                                    <option value="email" {{ infoProcedureBailMoyen is same as 'email' ? 'selected' : '' }}>E-mail</option>
+                                    <option value="telephone" {{ infoProcedureBailMoyen is same as 'telephone' ? 'selected' : '' }}>Téléphone</option>
+                                    <option value="sms" {{ infoProcedureBailMoyen is same as 'sms' ? 'selected' : '' }}>SMS</option>
+                                    <option value="autre" {{ infoProcedureBailMoyen is same as 'autre' ? 'selected' : '' }}>Autre</option>
+                                    <option value="nsp" {{ infoProcedureBailMoyen is same as 'nsp' ? 'selected' : '' }}>Ne sait pas</option>
+                                </select>
+                            </div>
+
+                            <div class="fr-input-group">
+                                <label class="fr-label" for="procedureDemarchesinfoProcedureBailDate">Date de contact bailleur (si bailleur contacté)
+                                    {{ show_label_facultatif(
+                                        'App\\Dto\\Request\\Signalement\\ProcedureDemarchesRequest',
+                                        'infoProcedureBailMoyen',
+                                        signalement.profileDeclarant,
+                                        null != signalement.createdFrom)
+                                    }}</label>
+                                <input class="fr-input" type="date" id="procedureDemarchesinfoProcedureBailDate" name="infoProcedureBailDate" value="{{ signalement.informationProcedure and  signalement.informationProcedure.infoProcedureBailDate ?? '' }}">
+                            </div>
+
+                            <div class="fr-input-group">
+                                <label class="fr-label" for="procedureDemarchesinfoProcedureBailReponse">Réponse bailleur (si bailleur contacté)
+                                    {{ show_label_facultatif(
+                                        'App\\Dto\\Request\\Signalement\\ProcedureDemarchesRequest',
+                                        'infoProcedureBailMoyen',
+                                        signalement.profileDeclarant,
+                                        null != signalement.createdFrom)
+                                    }}</label>
+                                <textarea class="fr-input fr-input--no-resize" id="procedureDemarchesinfoProcedureBailReponse" name="infoProcedureBailReponse">{{ signalement.informationProcedure and signalement.informationProcedure.infoProcedureBailReponse ? signalement.informationProcedure.infoProcedureBailReponse : '' }}</textarea>
+                            </div>
+
+                            <div class="fr-input-group">
+                                <label class="fr-label" for="procedureDemarchesinfoProcedureBailNumero">Numéro de réclamation (si bailleur contacté) (facultatif)</label>
+                                <textarea class="fr-input fr-input--no-resize" id="procedureDemarchesinfoProcedureBailNumero" name="infoProcedureBailNumero">{{ signalement.informationProcedure and signalement.informationProcedure.infoProcedureBailNumero ? signalement.informationProcedure.infoProcedureBailNumero : '' }}</textarea>
+                            </div>
+
+                            <div class="fr-select-group">
                                 {% set infoProcedureAssuranceContactee = signalement.informationProcedure ? signalement.informationProcedure.infoProcedureAssuranceContactee : null %}
                                 <label class="fr-label" for="procedureDemarchesInfoProcedureAssuranceContactee">
                                     Contact assurance
@@ -48,7 +97,6 @@
                                 </select>
                             </div>
 
-        {# // TODO : ajouter les nouvelles lignes #}
                             <div class="fr-input-group">
                                 <label class="fr-label" for="procedureDemarchesInfoProcedureReponseAssurance">Réponse assurance (si assurance contactée)</label>
                                 <textarea class="fr-input fr-input--no-resize" id="procedureDemarchesInfoProcedureReponseAssurance" name="infoProcedureReponseAssurance">{{ signalement.informationProcedure and signalement.informationProcedure.infoProcedureReponseAssurance ? signalement.informationProcedure.infoProcedureReponseAssurance : '' }}</textarea>

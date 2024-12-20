@@ -476,10 +476,13 @@ trait FixturesHelper
 
     public function getLocataireInformationProcedure(): array
     {
-        // TODO : maj le texte
         return [
             'utilisation_service_ok_visite' => 1,
             'info_procedure_bailleur_prevenu' => 'oui',
+            'info_procedure_bail_moyen' => 'courrier',
+            'info_procedure_bail_date' => '2024-11',
+            'info_procedure_bail_reponse' => 'Réponse du bailleur',
+            'info_procedure_bail_numero' => 'R-TR45',
             'info_procedure_assurance_contactee' => 'oui',
             'info_procedure_depart_apres_travaux' => 'oui',
             'utilisation_service_ok_demande_logement' => 1,

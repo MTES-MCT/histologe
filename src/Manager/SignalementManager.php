@@ -743,9 +743,11 @@ class SignalementManager extends AbstractManager
             $assuranceContacteeUpdated = true;
         }
 
-        // TODO : ajouter les nouvelles lignes
-        // TODO : ajouter les nouvelles lignes
         $informationProcedure
+            ->setinfoProcedureBailMoyen($procedureDemarchesRequest->getinfoProcedureBailMoyen())
+            ->setinfoProcedureBailDate($procedureDemarchesRequest->getinfoProcedureBailDate())
+            ->setinfoProcedureBailReponse($procedureDemarchesRequest->getinfoProcedureBailReponse())
+            ->setinfoProcedureBailNumero($procedureDemarchesRequest->getinfoProcedureBailNumero())
             ->setInfoProcedureAssuranceContactee($procedureDemarchesRequest->getInfoProcedureAssuranceContactee())
             ->setInfoProcedureReponseAssurance($procedureDemarchesRequest->getInfoProcedureReponseAssurance())
             ->setInfoProcedureDepartApresTravaux($procedureDemarchesRequest->getInfoProcedureDepartApresTravaux());

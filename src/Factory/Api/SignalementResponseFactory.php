@@ -93,7 +93,6 @@ class SignalementResponseFactory
         $signalementResponse->enfantsDansLogement = $this->stringToBool($signalement->getTypeCompositionLogement()?->getCompositionLogementEnfants());
         $signalementResponse->assuranceContactee = $this->stringToBool($signalement->getInformationProcedure()?->getInfoProcedureAssuranceContactee());
         $signalementResponse->reponseAssurance = $signalement->getInformationProcedure()?->getInfoProcedureReponseAssurance();
-        // TODO : ajouter les nouvelles lignes
         $signalementResponse->souhaiteQuitterLogement = $this->stringToBool($signalement->getSituationFoyer()?->getTravailleurSocialQuitteLogement());
         $signalementResponse->souhaiteQuitterLogementApresTravaux = $this->stringToBool($signalement->getInformationProcedure()?->getInfoProcedureDepartApresTravaux());
         $signalementResponse->suiviParTravailleurSocial = $this->stringToBool($signalement->getSituationFoyer()?->getTravailleurSocialAccompagnement());
@@ -113,6 +112,10 @@ class SignalementResponseFactory
         $signalementResponse->proprietaireBeneficiaireFsl = $this->stringToBool($signalement->getInformationComplementaire()?->getInformationsComplementairesSituationBailleurBeneficiaireFsl());
         // infos location
         $signalementResponse->proprietaireAverti = $signalement->getIsProprioAverti();
+        $signalementResponse->moyenInformationProprietaire = $signalement->getInformationProcedure()?->getinfoProcedureBailMoyen();
+        $signalementResponse->dateInformationProprietaire = $signalement->getInformationProcedure()?->getinfoProcedureBailDate();
+        $signalementResponse->reponseProprietaire = $signalement->getInformationProcedure()?->getinfoProcedureBailReponse();
+        $signalementResponse->numeroReclamationProprietaire = $signalement->getInformationProcedure()?->getinfoProcedureBailNumero();
         $signalementResponse->loyer = $signalement->getLoyer();
         $signalementResponse->bailEnCours = $signalement->getIsBailEnCours();
         $signalementResponse->bailExistant = $this->stringToBool($signalement->getTypeCompositionLogement()?->getBailDpeBail());
