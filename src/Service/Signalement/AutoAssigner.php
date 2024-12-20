@@ -23,6 +23,7 @@ use App\Specification\Affectation\ProcedureSuspecteeSpecification;
 use App\Specification\Affectation\ProfilDeclarantSpecification;
 use App\Specification\AndSpecification;
 use App\Specification\Context\PartnerSignalementContext;
+use Psr\Log\LoggerInterface;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 
 class AutoAssigner
@@ -38,6 +39,7 @@ class AutoAssigner
         private UserManager $userManager,
         private ParameterBagInterface $parameterBag,
         private InterconnectionBus $interconnectionBus,
+        private LoggerInterface $logger,
     ) {
     }
 
@@ -51,6 +53,12 @@ class AutoAssigner
             return;
         }
         if (empty($signalement->getGeoloc())) {
+            $logMessage = \sprintf(
+                'No auto-affectation for signalement %s - Empty geolocation',
+                $signalement->getUuid(),
+            );
+            $this->logger->info($logMessage);
+            \Sentry\captureMessage($logMessage);
             return;
         }
         $adminEmail = $this->parameterBag->get('user_system_email');
