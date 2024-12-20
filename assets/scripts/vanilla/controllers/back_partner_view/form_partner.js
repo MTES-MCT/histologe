@@ -7,23 +7,42 @@ function histoUpdateFieldsVisibility () {
   const partnerType = document.getElementById('partner_type')
   partnerType.value = partnerType.value.toUpperCase()
 
-  let showEsabora, showIdoss
-  showEsabora = showIdoss = false
+  let showEsabora, showIdoss, showBailleurSocial
+  showEsabora = showIdoss = showBailleurSocial = false
   if (partnerType.value === 'COMMUNE_SCHS') {
     showEsabora = true
     showIdoss = true
   } else if (partnerType.value === 'ARS') {
     showEsabora = true
+  } else if (partnerType.value === 'BAILLEUR_SOCIAL') {
+    showBailleurSocial = true
   }
-  if (showEsabora) {
-    document.querySelector('#partner_esabora').classList.remove('fr-hidden')
-  } else {
-    document.querySelector('#partner_esabora').classList.add('fr-hidden')
+  const esaboraElement = document.querySelector('#partner_esabora')
+  const idossElement = document.querySelector('#partner_idoss')
+  const bailleurSocialElement = document.querySelector('#partner_bailleur_social')
+  if (esaboraElement) {
+    if (showEsabora) {
+      document.querySelector('#partner_esabora').classList.remove('fr-hidden')
+    } else {
+      document.querySelector('#partner_esabora').classList.add('fr-hidden')
+    }
+
   }
-  if (showIdoss) {
-    document.querySelector('#partner_idoss').classList.remove('fr-hidden')
-  } else {
-    document.querySelector('#partner_idoss').classList.add('fr-hidden')
+  if (idossElement) {
+    if (showIdoss) {
+      document.querySelector('#partner_idoss').classList.remove('fr-hidden')
+    } else {
+      document.querySelector('#partner_idoss').classList.add('fr-hidden')
+    }
+
+  }
+  if (bailleurSocialElement) {
+    if (showBailleurSocial) {
+      document.querySelector('#partner_bailleur_social').classList.remove('fr-hidden')
+    } else {
+      document.querySelector('#partner_bailleur_social').classList.add('fr-hidden')
+    }
+
   }
 }
 function histoUpdateValueFromData (elementName, elementData, target) {
@@ -166,6 +185,44 @@ if (document.querySelector('#user_edit_roles')) {
     histoUpdatePermissionsFromRole('edit', null)
   })
   histoUpdatePermissionsFromRole('edit', null)
+}
+
+const territorySelect = document.querySelector("#partner_territory");
+
+if (territorySelect) {
+  territorySelect.addEventListener("change", function () {
+    const bailleurSocialSelect = document.querySelector("#partner_bailleur");
+    if (bailleurSocialSelect){
+      const territoryId = this.value;
+      bailleurSocialSelect.innerHTML = '<option value="">Sélectionner un bailleur social</option>';
+
+      if (!territoryId) {
+          return;
+      }
+
+      // route back_territory_bailleurs
+      fetch(`/bo/territoire/${territoryId}/bailleurs`)
+          .then(response => {
+              if (!response.ok) {
+                  throw new Error("Erreur lors de la récupération des bailleurs sociaux.");
+              }
+              return response.json();
+          })
+          .then(data => {
+              // Ajouter les nouvelles options
+              data.forEach(bailleur => {
+                  const option = document.createElement("option");
+                  option.value = bailleur.id;
+                  option.textContent = bailleur.name;
+                  bailleurSocialSelect.appendChild(option);
+              });
+          })
+          .catch(error => {
+              console.error("Erreur:", error);
+          });
+
+    }
+  });
 }
 
 const deletePartnerForm = document.querySelectorAll('form[name="deletePartner"]')

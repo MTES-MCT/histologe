@@ -2,12 +2,14 @@
 
 namespace App\Form;
 
+use App\Entity\Bailleur;
 use App\Entity\Enum\PartnerType as EnumPartnerType;
 use App\Entity\Enum\Qualification;
 use App\Entity\Partner;
 use App\Entity\Territory;
 use App\Entity\User;
 use App\Form\Type\SearchCheckboxEnumType;
+use App\Repository\BailleurRepository;
 use App\Repository\TerritoryRepository;
 use App\Repository\UserRepository;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
@@ -21,6 +23,9 @@ use Symfony\Component\Form\Extension\Core\Type\EnumType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\Extension\Core\Type\UrlType;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\Form\FormEvent;
+use Symfony\Component\Form\FormEvents;
+use Symfony\Component\Form\FormInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\Validator\Context\ExecutionContextInterface;
@@ -33,6 +38,7 @@ class PartnerType extends AbstractType
     public function __construct(
         private readonly ParameterBagInterface $parameterBag,
         private readonly UserRepository $userRepository,
+        private readonly TerritoryRepository $territoryRepository,
         private readonly Security $security,
     ) {
         if ($this->security->isGranted('ROLE_ADMIN')) {
@@ -160,6 +166,46 @@ class PartnerType extends AbstractType
             ],
             'label' => 'Territoire',
             'required' => true,
+        ]);
+        $this->addBailleurSocialField($builder, $territory?->getZip(), $partner);
+        $builder->addEventListener(FormEvents::PRE_SUBMIT, fn (FormEvent $event) => $this->handleTerritoryChange($event));
+        $builder->addEventListener(FormEvents::PRE_SET_DATA, fn (FormEvent $event) => $this->handleTerritoryChange($event, true));
+    }
+
+    private function handleTerritoryChange(FormEvent $event, bool $isPreSetData = false): void
+    {
+        $data = $event->getData();
+        $form = $event->getForm();
+
+        $territory = $isPreSetData && $data instanceof Partner
+            ? $data->getTerritory()
+            : (\array_key_exists('territory', $data) ? $this->territoryRepository->find($data['territory']) : null);
+
+        $this->addBailleurSocialField($form, $territory?->getZip(), $data);
+    }
+
+    private function addBailleurSocialField(FormBuilderInterface|FormInterface $builder, ?string $territoryZip = null, $data = null): void
+    {
+        if (null === $territoryZip) {
+            if ($data instanceof Partner && null !== $data->getTerritory()) {
+                $territoryZip = $data->getTerritory()->getZip();
+            } else {
+                if ($this->isAdmin) {
+                    $territoryZip = '01';
+                } elseif ($this->isAdminTerritory) {
+                    /** @var User $user */
+                    $user = $this->security->getUser();
+                    $territoryZip = $user->getFirstTerritory()->getZip();
+                }
+            }
+        }
+        $builder->add('bailleur', EntityType::class, [
+            'class' => Bailleur::class,
+            'query_builder' => fn (BailleurRepository $bailleurRepository) => $bailleurRepository->getBailleursByTerritoryQueryBuilder($territoryZip),
+            'choice_label' => 'name',
+            'placeholder' => 'Sélectionner une dénomination officielle pour le bailleur social',
+            'required' => false,
+            'attr' => ['data-dynamic' => 'bailleur-social'],
         ]);
     }
 

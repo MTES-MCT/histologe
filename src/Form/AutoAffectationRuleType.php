@@ -54,6 +54,10 @@ class AutoAffectationRuleType extends AbstractType
                     'class' => 'fr-select',
                 ],
                 'label' => 'Type de partenaire',
+                'help' => 'Si type Bailleur Social, le partenaire ne sera affecté au signalement que s\'il est rattaché à la même dénomination officielle de bailleur social.',
+                'help_attr' => [
+                    'class' => 'fr-hint-text',
+                ],
             ])
             ->add('profileDeclarant', ChoiceType::class, [
                 'choices' => ProfileDeclarant::getListWithGroup(),

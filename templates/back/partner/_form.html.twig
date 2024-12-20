@@ -46,6 +46,12 @@
 					{{ form_row(form.competence) }}
 				{% endif %}
 			</div>
+			<div class="fr-fieldset__element" id="partner_bailleur_social">
+				<div class="fr-input-group">
+					<label for="{{ form.bailleur.vars.id }}" class="fr-label">Dénomination officielle bailleur (facultatif)</label>
+					{{ form_widget(form.bailleur, {'attr': {'id': 'bailleurSocial'}}) }}
+				</div>
+			</div>
 		</fieldset>
 	</div>
 	{% if is_granted('ROLE_ADMIN') %}

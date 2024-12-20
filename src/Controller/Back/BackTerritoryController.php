@@ -5,6 +5,7 @@ namespace App\Controller\Back;
 use App\Entity\Territory;
 use App\Form\SearchTerritoryType;
 use App\Form\TerritoryType;
+use App\Repository\BailleurRepository;
 use App\Repository\TerritoryRepository;
 use App\Security\Voter\TerritoryVoter;
 use App\Service\SearchTerritory;
@@ -14,6 +15,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\File\File as SymfonyFile;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -110,5 +112,17 @@ class BackTerritoryController extends AbstractController
         $file = new SymfonyFile($filePath);
 
         return new BinaryFileResponse($file);
+    }
+
+    #[Route('/{territory}/bailleurs', name: 'back_territory_bailleurs', methods: ['GET'])]
+    public function bailleursByTerritory(
+        Territory $territory,
+        BailleurRepository $bailleurRepository,
+    ): JsonResponse {
+        $this->denyAccessUnlessGranted(TerritoryVoter::GET_BAILLEURS_LIST, $territory);
+        $zip = $territory->getZip();
+        $bailleurs = $bailleurRepository->findBailleursByTerritory($zip);
+
+        return $this->json($bailleurs);
     }
 }

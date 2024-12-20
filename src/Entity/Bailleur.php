@@ -28,6 +28,10 @@ class Bailleur
     #[Ignore]
     private Collection $signalements; // @phpstan-ignore-line
 
+    #[ORM\OneToMany(mappedBy: 'bailleur', targetEntity: Partner::class)]
+    #[Ignore]
+    private Collection $partners;
+
     #[ORM\OneToMany(mappedBy: 'bailleur', targetEntity: BailleurTerritory::class, cascade: ['persist'])]
     #[Ignore]
     private Collection $bailleurTerritories;
@@ -41,6 +45,7 @@ class Bailleur
     public function __construct()
     {
         $this->signalements = new ArrayCollection();
+        $this->partners = new ArrayCollection();
         $this->bailleurTerritories = new ArrayCollection();
     }
 
@@ -121,5 +126,13 @@ class Bailleur
         $this->siret = $siret;
 
         return $this;
+    }
+
+    /**
+     * @return Collection<int, Partner>
+     */
+    public function getPartners(): Collection
+    {
+        return $this->partners;
     }
 }
