@@ -40,13 +40,13 @@ class BackArchivedUsersController extends AbstractController
             $searchArchivedUser = new SearchArchivedUser();
         }
         $maxListPagination = $parameterBag->get('standard_max_list_pagination');
-        $paginatedArchivedAccount = $userRepository->findArchivedFilteredPaginated($searchArchivedUser, $maxListPagination);
+        $paginatedArchivedUser = $userRepository->findArchivedFilteredPaginated($searchArchivedUser, $maxListPagination);
 
         return $this->render('back/user_archived/index.html.twig', [
             'form' => $form,
             'searchArchivedUser' => $searchArchivedUser,
-            'users' => $paginatedArchivedAccount,
-            'pages' => (int) ceil($paginatedArchivedAccount->count() / $maxListPagination),
+            'users' => $paginatedArchivedUser,
+            'pages' => (int) ceil($paginatedArchivedUser->count() / $maxListPagination),
         ]);
     }
 
