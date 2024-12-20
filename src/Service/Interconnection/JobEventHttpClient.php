@@ -118,11 +118,15 @@ class JobEventHttpClient implements HttpClientInterface
 
     private function filterResponse($response): array
     {
+        if (empty($response)) {
+            return [];
+        }
+
         $responseDecoded = json_decode($response, true);
         if (isset($responseDecoded['rowList'][0]['documentZipContent'])) {
             unset($responseDecoded['rowList'][0]['documentZipContent']);
         }
 
-        return $responseDecoded;
+        return !empty($responseDecoded) ? $responseDecoded : [];
     }
 }
