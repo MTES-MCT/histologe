@@ -212,7 +212,7 @@ class SignalementEditControllerTest extends WebTestCase
         return [
             'isProprioAverti' => '1',
             'infoProcedureBailMoyen' => 'courrier',
-            'infoProcedureBailDate' => '2024-11',
+            'infoProcedureBailDate' => '11/2024',
             'infoProcedureBailReponse' => 'Réponse du bailleur',
             'infoProcedureBailNumero' => 'R-TR45',
             'infoProcedureAssuranceContactee' => 'oui',

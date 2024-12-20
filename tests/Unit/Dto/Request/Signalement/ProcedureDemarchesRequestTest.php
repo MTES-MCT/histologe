@@ -21,7 +21,7 @@ class ProcedureDemarchesRequestTest extends KernelTestCase
         $procedureDemarchesRequest = new ProcedureDemarchesRequest(
             isProprioAverti: '0',
             infoProcedureBailMoyen: 'autre',
-            infoProcedureBailDate: '2024-05',
+            infoProcedureBailDate: '05/2024',
             infoProcedureBailReponse: 'Le bailleur nous a envoyé nous faire cuire un oeuf.',
             infoProcedureBailNumero: '1234567890',
             infoProcedureAssuranceContactee: 'oui',

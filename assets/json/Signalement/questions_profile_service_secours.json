@@ -1343,11 +1343,14 @@
           }
         },
         {
-          "type": "SignalementFormDate",
+          "type": "SignalementFormTextfield",
           "label": "Quand le bailleur (propriétaire) a-t-il été prévenu ? (facultatif)",
           "description": "Format attendu : MM/AAAA",
           "slug": "info_procedure_bail_date",
+          "placeholder": "01/1970",
           "validate": {
+            "pattern": "^(0[1-9]|1[0-2])\\/\\d{4}$",
+            "patternMessage": "Veuillez renseigner quand vous avez prévenu votre bailleur.",
             "required": false
           },
           "conditional": {
