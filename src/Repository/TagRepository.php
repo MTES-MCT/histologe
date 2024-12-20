@@ -5,6 +5,7 @@ namespace App\Repository;
 use App\Controller\Back\TagController;
 use App\Entity\Tag;
 use App\Entity\Territory;
+use App\Entity\User;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\Tools\Pagination\Paginator;
 use Doctrine\Persistence\ManagerRegistry;
@@ -36,11 +37,15 @@ class TagRepository extends ServiceEntityRepository
 
     public function findAllActive(
         ?Territory $territory = null,
+        ?User $user = null,
     ): mixed {
         $qb = $this->createQueryBuilder('t');
         $qb->andWhere('t.isArchive != 1')
             ->orderBy('t.label', 'ASC')
             ->indexBy('t', 't.id');
+        if ($user && !$user->isSuperAdmin()) {
+            $qb->andWhere('t.territory IN (:territories)')->setParameter('territories', $user->getPartnersTerritories());
+        }
         if ($territory) {
             $qb->andWhere('t.territory = :territory')
                 ->setParameter('territory', $territory);
