@@ -38,7 +38,7 @@ class JobEventRepositoryTest extends KernelTestCase
         $jobEvents = $jobEventRepository->findLastJobEventByInterfacageType(
             'esabora',
             7,
-            null
+            []
         );
 
         $this->assertCount(7, $jobEvents);

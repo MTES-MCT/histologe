@@ -8,6 +8,7 @@ use App\Entity\Enum\Qualification;
 use App\Entity\Partner;
 use App\Entity\Signalement;
 use App\Entity\Territory;
+use App\Entity\User;
 use App\Service\ListFilters\SearchArchivedPartner;
 use App\Service\ListFilters\SearchPartner;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
@@ -91,11 +92,14 @@ class PartnerRepository extends ServiceEntityRepository
     /**
      * @throws QueryException
      */
-    public function findAllList(?Territory $territory = null)
+    public function findAllList(?Territory $territory = null, ?User $user = null)
     {
         $qb = $this->createQueryBuilder('p')
             ->where('p.isArchive != 1')
             ->orderBy('p.nom', 'ASC');
+        if ($user && !$user->isSuperAdmin()) {
+            $qb->andWhere('p.territory IN (:territories)')->setParameter('territories', $user->getPartnersTerritories());
+        }
         if ($territory) {
             $qb->andWhere('p.territory = :territory')->setParameter('territory', $territory);
         }

@@ -98,7 +98,7 @@ class NotificationRepository extends ServiceEntityRepository implements EntityCl
      * @throws NonUniqueResultException
      * @throws NoResultException
      */
-    public function countSignalementNewSuivi(User $user, ?Territory $territory): int
+    public function countSignalementNewSuivi(User $user, array $territories): int
     {
         $qb = $this->createQueryBuilder('n')
             ->select('COUNT(DISTINCT n.signalement)')
@@ -113,10 +113,10 @@ class NotificationRepository extends ServiceEntityRepository implements EntityCl
             ->setParameter('type_suivi_usager', Suivi::TYPE_USAGER)
             ->setParameter('type_suivi_partner', Suivi::TYPE_PARTNER);
 
-        if (null !== $territory) {
+        if (\count($territories)) {
             $qb->innerJoin('n.signalement', 's')
-                ->andWhere('s.territory = :territory')
-                ->setParameter('territory', $territory);
+                ->andWhere('s.territory IN (:territories)')
+                ->setParameter('territories', $territories);
         }
 
         return $qb->getQuery()->getSingleScalarResult();
@@ -154,7 +154,7 @@ class NotificationRepository extends ServiceEntityRepository implements EntityCl
      * @throws NonUniqueResultException
      * @throws NoResultException
      */
-    public function countSignalementClosedNotSeen(?User $user, ?Territory $territory): int
+    public function countSignalementClosedNotSeen(?User $user, array $territories): int
     {
         $qb = $this->createQueryBuilder('n');
         $qb
@@ -172,8 +172,8 @@ class NotificationRepository extends ServiceEntityRepository implements EntityCl
             ->setParameter('description', Suivi::DESCRIPTION_MOTIF_CLOTURE_ALL.'%')
             ->setParameter('user', $user);
 
-        if (null !== $territory) {
-            $qb->andWhere('si.territory = :territory')->setParameter('territory', $territory);
+        if (\count($territories)) {
+            $qb->andWhere('si.territory IN (:territories)')->setParameter('territories', $territories);
         }
 
         return $qb->getQuery()->getSingleScalarResult();
@@ -183,7 +183,7 @@ class NotificationRepository extends ServiceEntityRepository implements EntityCl
      * @throws NonUniqueResultException
      * @throws NoResultException
      */
-    public function countAffectationClosedNotSeen(?User $user, ?Territory $territory): int
+    public function countAffectationClosedNotSeen(?User $user, array $territories): int
     {
         $qb = $this->createQueryBuilder('n');
         $qb
@@ -202,8 +202,8 @@ class NotificationRepository extends ServiceEntityRepository implements EntityCl
             ->setParameter('status_closed', SignalementStatus::CLOSED)
             ->setParameter('user', $user);
 
-        if (null !== $territory) {
-            $qb->andWhere('si.territory = :territory')->setParameter('territory', $territory);
+        if (\count($territories)) {
+            $qb->andWhere('si.territory IN (:territories)')->setParameter('territories', $territories);
         }
 
         return $qb->getQuery()->getSingleScalarResult();

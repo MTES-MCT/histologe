@@ -32,7 +32,7 @@
                 </div>
             </div>
           </div>
-          <div v-if="sharedState.user.isAdmin" class="fr-col fr-col-md-3">
+          <div v-if="sharedState.user.isAdmin || sharedState.user.isMultiTerritoire" class="fr-col fr-col-md-3">
             <HistoSelect
               id="filter-territoires"
               v-model="sharedState.filters.territory"
@@ -112,6 +112,7 @@ export default defineComponent({
       this.sharedState.user.isAdmin = requestResponse.roleLabel === 'Super Admin'
       this.sharedState.user.isResponsableTerritoire = requestResponse.roleLabel === 'Resp. Territoire'
       this.sharedState.user.isAdministrateurPartenaire = requestResponse.roleLabel === 'Admin. partenaire'
+      this.sharedState.user.isMultiTerritoire = requestResponse.isMultiTerritoire === true
       this.sharedState.user.canSeeNonDecenceEnergetique = requestResponse.canSeeNDE === '1'
       this.sharedState.user.prenom = requestResponse.firstname
       this.sharedState.user.avatarOrPlaceHolder = requestResponse.avatarOrPlaceHolder
@@ -156,8 +157,8 @@ export default defineComponent({
       this.sharedState.signalements.percent = requestResponse.data.countSignalement.percentage.active
       this.sharedState.closedSignalements.count = requestResponse.data.countSignalement.closed
       this.sharedState.closedSignalements.percent = requestResponse.data.countSignalement.percentage.closed
-      this.sharedState.newSignalements.count = requestResponse.data.countSignalement.new
-      this.sharedState.newSignalements.percent = requestResponse.data.countSignalement.percentage.new
+      this.sharedState.newSignalementsStats.count = requestResponse.data.countSignalement.new
+      this.sharedState.newSignalementsStats.percent = requestResponse.data.countSignalement.percentage.new
       this.sharedState.refusedSignalements.count = requestResponse.data.countSignalement.refused
       this.sharedState.refusedSignalements.percent = requestResponse.data.countSignalement.percentage.refused
       this.sharedState.suivis.countMoyen = requestResponse.data.countSuivi.average

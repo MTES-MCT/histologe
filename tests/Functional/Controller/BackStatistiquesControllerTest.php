@@ -13,6 +13,8 @@ class BackStatistiquesControllerTest extends WebTestCase
     private const USER_SUPER_ADMIN = 'admin-01@histologe.fr';
     private const USER_ADMIN_TERRITOIRE = 'admin-territoire-13-01@histologe.fr';
     private const USER_PARTNER = 'user-13-01@histologe.fr';
+    private const USER_ADMIN_PARTNER_MULTI_TERRITORIES = 'admin-partenaire-multi-ter-13-01@histologe.fr';
+    private const USER_USER_PARTNER_MULTI_TERRITORIES = 'user-partenaire-multi-ter-34-30@histologe.fr';
 
     public function provideRoutesHomepage(): \Generator
     {
@@ -64,6 +66,26 @@ class BackStatistiquesControllerTest extends WebTestCase
             ['result' => 88.4, 'label' => 'average_criticite'],
             ['result' => 0, 'label' => 'count_signalement_filtered'],
             ['result' => 0, 'label' => 'average_criticite_filtered'],
+        ]];
+        yield 'Admin partenaire multi territories' => ['back_statistiques_filter', [], self::USER_ADMIN_PARTNER_MULTI_TERRITORIES, [
+            ['result' => 5, 'label' => 'count_signalement'],
+            ['result' => 0, 'label' => 'count_signalement_refuses'],
+            ['result' => 0, 'label' => 'count_signalement_archives'],
+        ]];
+        yield 'Admin partenaire multi territories filtered on Ain' => ['back_statistiques_filter', ['territoire' => 1], self::USER_ADMIN_PARTNER_MULTI_TERRITORIES, [
+            ['result' => 1, 'label' => 'count_signalement'],
+            ['result' => 0, 'label' => 'count_signalement_refuses'],
+            ['result' => 0, 'label' => 'count_signalement_archives'],
+        ]];
+        yield 'User partenaire multi territories' => ['back_statistiques_filter', [], self::USER_USER_PARTNER_MULTI_TERRITORIES, [
+            ['result' => 2, 'label' => 'count_signalement'],
+            ['result' => 0, 'label' => 'count_signalement_refuses'],
+            ['result' => 0, 'label' => 'count_signalement_archives'],
+        ]];
+        yield 'User partenaire multi territories filtered on Ain' => ['back_statistiques_filter', ['territoire' => 35], self::USER_USER_PARTNER_MULTI_TERRITORIES, [
+            ['result' => 1, 'label' => 'count_signalement'],
+            ['result' => 0, 'label' => 'count_signalement_refuses'],
+            ['result' => 0, 'label' => 'count_signalement_archives'],
         ]];
     }
 

@@ -149,6 +149,7 @@ export default defineComponent({
       this.sharedState.user.isResponsableTerritoire = requestResponse.roleLabel === 'Resp. Territoire'
       this.sharedState.user.isAdministrateurPartenaire = requestResponse.roleLabel === 'Admin. partenaire'
       this.sharedState.user.isAgent = ['Admin. partenaire', 'Agent'].includes(requestResponse.roleLabel)
+      this.sharedState.user.isMultiTerritoire = requestResponse.isMultiTerritoire === true
       const isAdminOrAdminTerritoire = this.sharedState.user.isAdmin || this.sharedState.user.isResponsableTerritoire
       this.sharedState.user.canSeeStatusAffectation = isAdminOrAdminTerritoire
       this.sharedState.user.canSeeBailleurSocial = isAdminOrAdminTerritoire

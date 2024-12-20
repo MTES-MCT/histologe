@@ -3,6 +3,8 @@
 namespace App\Repository;
 
 use App\Entity\Bailleur;
+use App\Entity\Territory;
+use App\Entity\User;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\QueryBuilder;
 use Doctrine\Persistence\ManagerRegistry;
@@ -22,15 +24,18 @@ class BailleurRepository extends ServiceEntityRepository
         parent::__construct($registry, Bailleur::class);
     }
 
-    public function findBailleursByTerritory(?string $zip = null): array
+    public function findBailleursByTerritory(User $user, ?Territory $territory): array
     {
         $queryBuilder = $this
             ->createQueryBuilder('b');
-        if (null !== $zip) {
-            $queryBuilder->innerJoin('b.bailleurTerritories', 'bt')
-            ->innerJoin('bt.territory', 't')
-            ->where('t.zip = :zip')
-            ->setParameter('zip', $zip);
+        if ($territory || !$user->isSuperAdmin()) {
+            $queryBuilder->innerJoin('b.bailleurTerritories', 'bt');
+            if (!$user->isSuperAdmin()) {
+                $queryBuilder->andWhere('bt.territory IN (:territories)')->setParameter('territories', $user->getPartnersTerritories());
+            }
+            if ($territory) {
+                $queryBuilder->andWhere('bt.territory = :territory')->setParameter('territory', $territory);
+            }
         }
         $queryBuilder->orderBy('b.name', 'ASC');
 
