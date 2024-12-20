@@ -124,13 +124,13 @@ class BackStatistiquesController extends AbstractController
     {
         /** @var User $user */
         $user = $this->getUser();
-        $enabledTerritories = $user->getPartnersTerritories();
+        $authorizedTerritories = $user->getPartnersTerritories();
         $territoryId = $request->get('territoire');
         if (!$territoryId || 'all' === $territoryId) {
             $territoryId = null;
         }
         $territory = null;
-        if ($territoryId && ($this->isGranted('ROLE_ADMIN') || isset($enabledTerritories[$territoryId]))) {
+        if ($territoryId && ($this->isGranted('ROLE_ADMIN') || isset($authorizedTerritories[$territoryId]))) {
             $territory = $territoryRepository->find($territoryId);
         }
         if (!$territory && !$this->isGranted('ROLE_ADMIN')) {

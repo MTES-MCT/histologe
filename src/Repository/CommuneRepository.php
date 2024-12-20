@@ -4,6 +4,7 @@ namespace App\Repository;
 
 use App\Entity\Commune;
 use App\Entity\Territory;
+use App\Entity\User;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
@@ -35,14 +36,17 @@ class CommuneRepository extends ServiceEntityRepository
         }
     }
 
-    public function findEpciByCommuneTerritory(?Territory $territory = null): array
+    public function findEpciByCommuneTerritory(?Territory $territory = null, ?User $user = null): array
     {
         $qb = $this->createQueryBuilder('c')
             ->select('distinct e.code, e.nom')
             ->join('c.epci', 'e');
+        if ($user && !$user->isSuperAdmin()) {
+            $qb->andWhere('c.territory IN (:territories)')->setParameter('territories', $user->getPartnersTerritories());
+        }
         if (null !== $territory) {
             $qb
-                ->where('c.territory = :territory')
+                ->andWhere('c.territory = :territory')
                 ->setParameter('territory', $territory);
         }
 
