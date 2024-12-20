@@ -2,20 +2,21 @@
 
 namespace App\Service;
 
-use App\Entity\Enum\ZoneType;
+use App\Entity\Enum\PartnerType;
 use App\Entity\Territory;
 use App\Entity\User;
 use App\Service\Behaviour\SearchQueryTrait;
 
-class SearchZone
+class SearchPartner
 {
     use SearchQueryTrait {
         getUrlParams as getUrlParamsBase;
     }
+
     private User $user;
-    private ?string $queryName = null;
+    private ?string $queryPartner = null;
     private ?Territory $territory = null;
-    private ?ZoneType $type = null;
+    private ?PartnerType $partnerType = null;
 
     public function __construct(User $user)
     {
@@ -30,14 +31,14 @@ class SearchZone
         return $this->user;
     }
 
-    public function getQueryName(): ?string
+    public function getQueryPartner(): ?string
     {
-        return $this->queryName;
+        return $this->queryPartner;
     }
 
-    public function setQueryName(?string $queryName): void
+    public function setQueryPartner(?string $queryPartner): void
     {
-        $this->queryName = $queryName;
+        $this->queryPartner = $queryPartner;
     }
 
     public function getTerritory(): ?Territory
@@ -50,14 +51,14 @@ class SearchZone
         $this->territory = $territory;
     }
 
-    public function getType(): ?ZoneType
+    public function getPartnerType(): ?PartnerType
     {
-        return $this->type;
+        return $this->partnerType;
     }
 
-    public function setType(?ZoneType $type): void
+    public function setPartnerType(PartnerType $partnerType): void
     {
-        $this->type = $type;
+        $this->partnerType = $partnerType;
     }
 
     public function getUrlParams(): array
@@ -68,5 +69,21 @@ class SearchZone
         }
 
         return $params;
+    }
+
+    public function getFiltersToText(): array
+    {
+        $filters = [];
+        if ($this->queryPartner) {
+            $filters['Recherche'] = $this->queryPartner;
+        }
+        if ($this->territory && $this->user->isSuperAdmin()) {
+            $filters['Territoire'] = $this->territory->getZip().' - '.$this->territory->getName();
+        }
+        if (null !== $this->partnerType) {
+            $filters['Type de partenaire'] = $this->partnerType->label();
+        }
+
+        return $filters;
     }
 }

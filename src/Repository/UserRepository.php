@@ -3,9 +3,9 @@
 namespace App\Repository;
 
 use App\Dto\CountUser;
-use App\Entity\Partner;
 use App\Entity\Territory;
 use App\Entity\User;
+use App\Service\SearchArchivedAccount;
 use App\Service\SearchUser;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\NonUniqueResultException;
@@ -24,8 +24,11 @@ use Symfony\Component\Security\Core\User\PasswordUpgraderInterface;
  */
 class UserRepository extends ServiceEntityRepository implements PasswordUpgraderInterface
 {
-    public function __construct(ManagerRegistry $registry)
-    {
+    public function __construct(
+        ManagerRegistry $registry,
+        private readonly TerritoryRepository $territoryRepository,
+        private readonly PartnerRepository $partnerRepository,
+    ) {
         parent::__construct($registry, User::class);
     }
 
@@ -159,24 +162,16 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
         }, $pendingUsers);
     }
 
-    public function findAllArchived(
-        ?Territory $territory,
-        bool $isNoneTerritory,
-        ?Partner $partner,
-        bool $isNonePartner,
-        ?string $filterTerms,
-        bool $includeUsagers,
-        $page,
-    ): Paginator {
-        $maxResult = User::MAX_LIST_PAGINATION;
-        $firstResult = ($page - 1) * $maxResult;
-
+    public function findArchivedFilteredPaginated(SearchArchivedAccount $searchArchivedAccount, int $maxResult): Paginator
+    {
         $queryBuilder = $this->createQueryBuilder('u');
         $queryBuilder->select('u', 'up', 'p')
             ->leftJoin('u.userPartners', 'up')
             ->leftJoin('up.partner', 'p');
         $queryBuilder->andWhere('u.anonymizedAt IS NULL');
 
+        $isNoneTerritory = ('none' === $searchArchivedAccount->getTerritory());
+        $isNonePartner = ('none' === $searchArchivedAccount->getPartner());
         if ($isNoneTerritory || $isNonePartner) {
             if ($isNoneTerritory) {
                 $queryBuilder
@@ -187,6 +182,9 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
                     ->andWhere('up.id IS NULL');
             }
         } else {
+            $territory = $searchArchivedAccount->getTerritory() ? $this->territoryRepository->find($searchArchivedAccount->getTerritory()) : null;
+            $partner = $searchArchivedAccount->getPartner() ? $this->partnerRepository->find($searchArchivedAccount->getPartner()) : null;
+
             $builtOrCondition = '';
             if (empty($territory)) {
                 $builtOrCondition .= ' OR p.territory IS NULL';
@@ -212,6 +210,7 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
             }
         }
 
+        $filterTerms = $searchArchivedAccount->getQueryUser();
         if (!empty($filterTerms)) {
             $queryBuilder
                 ->andWhere('LOWER(u.nom) LIKE :usersterms
@@ -221,21 +220,16 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
                 ->setParameter('usersterms', '%'.strtolower($filterTerms).'%');
         }
 
-        if (!$includeUsagers) {
-            $queryBuilder
-                ->andWhere('u.roles LIKE :role
-                OR u.roles LIKE :role2
-                OR u.roles LIKE :role3');
-            $queryBuilder
-                ->setParameter('role', '%ROLE_ADMIN_PARTNER%')
-                ->setParameter('role2', '%ROLE_ADMIN_TERRITORY%')
-                ->setParameter('role3', '%ROLE_USER_PARTNER%');
-        } else {
-            $queryBuilder
-                ->andWhere('u.roles NOT LIKE :roleadmin')
-                ->setParameter('roleadmin', '%"ROLE_ADMIN%"');
-        }
+        $queryBuilder
+            ->andWhere('u.roles LIKE :role
+            OR u.roles LIKE :role2
+            OR u.roles LIKE :role3');
+        $queryBuilder
+            ->setParameter('role', '%ROLE_ADMIN_PARTNER%')
+            ->setParameter('role2', '%ROLE_ADMIN_TERRITORY%')
+            ->setParameter('role3', '%ROLE_USER_PARTNER%');
 
+        $firstResult = ($searchArchivedAccount->getPage() - 1) * $maxResult;
         $queryBuilder->setFirstResult($firstResult)->setMaxResults($maxResult);
 
         return new Paginator($queryBuilder->getQuery(), false);
