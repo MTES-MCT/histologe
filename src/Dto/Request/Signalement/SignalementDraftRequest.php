@@ -410,7 +410,7 @@ class SignalementDraftRequest
     )]
     private ?string $infoProcedureBailMoyen = null;
 
-    #[Assert\DateTime('Y-m')] // TODO : à vérifier
+    #[Assert\DateTime('m/Y')]
     private ?string $infoProcedureBailDate = null;
 
     #[Assert\Length(

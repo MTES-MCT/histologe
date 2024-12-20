@@ -103,7 +103,7 @@ class SignalementDraftRequestTest extends WebTestCase
             ->setTravailleurSocialAccompagnementDeclarant('1')
             ->setInfoProcedureBailleurPrevenu('oui')
             ->setinfoProcedureBailMoyen('sms')
-            ->setinfoProcedureBailDate('2024-11')
+            ->setinfoProcedureBailDate('11/2024')
             ->setinfoProcedureBailReponse('Réponse du bailleur')
             ->setinfoProcedureBailNumero('R-TR45')
             ->setInfoProcedureAssuranceContactee('oui')

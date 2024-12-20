@@ -58,8 +58,10 @@
                                         'infoProcedureBailMoyen',
                                         signalement.profileDeclarant,
                                         null != signalement.createdFrom)
-                                    }}</label>
-                                <input class="fr-input" type="date" id="procedureDemarchesinfoProcedureBailDate" name="infoProcedureBailDate" value="{{ signalement.informationProcedure and  signalement.informationProcedure.infoProcedureBailDate ?? '' }}">
+                                    }}
+                                    <span class="fr-hint-text">Format : mm/aaaa</span>
+                                </label>
+                                <input class="fr-input" type="text" id="procedureDemarchesinfoProcedureBailDate" name="infoProcedureBailDate" value="{{ signalement.informationProcedure and signalement.informationProcedure.infoProcedureBailDate ? signalement.informationProcedure.infoProcedureBailDate : '' }}">
                             </div>
 
                             <div class="fr-input-group">
@@ -74,7 +76,7 @@
                             </div>
 
                             <div class="fr-input-group">
-                                <label class="fr-label" for="procedureDemarchesinfoProcedureBailNumero">Numéro de réclamation (si bailleur contacté) (facultatif)</label>
+                                <label class="fr-label" for="procedureDemarchesinfoProcedureBailNumero">Numéro de réclamation (si bailleur contacté et logement social) (facultatif)</label>
                                 <textarea class="fr-input fr-input--no-resize" id="procedureDemarchesinfoProcedureBailNumero" name="infoProcedureBailNumero">{{ signalement.informationProcedure and signalement.informationProcedure.infoProcedureBailNumero ? signalement.informationProcedure.infoProcedureBailNumero : '' }}</textarea>
                             </div>
 

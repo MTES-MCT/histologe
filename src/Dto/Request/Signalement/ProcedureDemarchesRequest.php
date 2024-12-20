@@ -25,14 +25,14 @@ class ProcedureDemarchesRequest implements RequestInterface
         private ?string $infoProcedureBailMoyen = null,
 
         #[Assert\NotBlank(
-            message: 'Merci d\'indiquer comment le bailleur a été averti.',
+            message: 'Merci d\'indiquer quand le bailleur a été averti.',
             groups: ['LOCATAIRE']
         )] // TODO : à vérifier car obligatoire seulement si isProprioAverti = 1
-        #[Assert\DateTime('Y-m')] // TODO : à vérifier
+        #[Assert\DateTime('m/Y')]
         private ?string $infoProcedureBailDate = null,
 
         #[Assert\NotBlank(
-            message: 'Merci d\'indiquer comment le bailleur a été averti.',
+            message: 'Merci d\'indiquer la réponse du bailleur.',
             groups: ['LOCATAIRE']
         )] // TODO : à vérifier car obligatoire seulement si isProprioAverti = 1
         #[Assert\Length(
