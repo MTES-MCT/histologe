@@ -17,28 +17,36 @@ class ProcedureDemarchesRequest implements RequestInterface
         #[Assert\NotBlank(
             message: 'Merci d\'indiquer comment le bailleur a été averti.',
             groups: ['LOCATAIRE', 'TIERS_PARTICULIER', 'TIERS_PRO', 'SERVICE_SECOURS']
-        )]// TODO : à vérifier car obligatoire seulement si isProprioAverti = 1
+        )] // TODO : à vérifier car obligatoire seulement si isProprioAverti = 1
         #[Assert\Choice(
             choices: ['courrier', 'email', 'telephone', 'sms', 'autre', 'nsp'],
-            message: 'Le champ "infoProcedureBailleurMoyen" est incorrect.',
+            message: 'Le champ "infoProcedureBailMoyen" est incorrect.',
         )]
-        private ?string $infoProcedureBailleurMoyen = null,
+        private ?string $infoProcedureBailMoyen = null,
 
         #[Assert\NotBlank(
             message: 'Merci d\'indiquer comment le bailleur a été averti.',
             groups: ['LOCATAIRE']
-        )]// TODO : à vérifier car obligatoire seulement si isProprioAverti = 1
-        #[Assert\DateTime('Y-m')]// TODO : à vérifier
-        private ?string $infoProcedureBailleurDate = null,
+        )] // TODO : à vérifier car obligatoire seulement si isProprioAverti = 1
+        #[Assert\DateTime('Y-m')] // TODO : à vérifier
+        private ?string $infoProcedureBailDate = null,
 
         #[Assert\NotBlank(
             message: 'Merci d\'indiquer comment le bailleur a été averti.',
             groups: ['LOCATAIRE']
-        )]// TODO : à vérifier car obligatoire seulement si isProprioAverti = 1
-        private ?string $infoProcedureBailleurReponse = null,
+        )] // TODO : à vérifier car obligatoire seulement si isProprioAverti = 1
+        #[Assert\Length(
+            max: 255, // TODO : à vérifier
+            maxMessage: 'La réponse du bailleur ne doit pas dépasser {{ limit }} caractères.',
+        )]
+        private ?string $infoProcedureBailReponse = null,
 
-        private ?string $infoProcedureBailleurNumero = null,
-    
+        #[Assert\Length(
+            max: 255, // TODO : à vérifier
+            maxMessage: 'Le numéro de réclamation ne doit pas dépasser {{ limit }} caractères.',
+        )]
+        private ?string $infoProcedureBailNumero = null,
+
         #[Assert\NotBlank(
             message: 'Merci d\'indiquer si l\'assurance a été contactée.',
             groups: ['LOCATAIRE', 'BAILLEUR_OCCUPANT', 'BAILLEUR']
@@ -78,24 +86,24 @@ class ProcedureDemarchesRequest implements RequestInterface
         return $this->isProprioAverti;
     }
 
-    public function getInfoProcedureBailleurMoyen(): ?string
+    public function getinfoProcedureBailMoyen(): ?string
     {
-        return $this->infoProcedureBailleurMoyen;
+        return $this->infoProcedureBailMoyen;
     }
 
-    public function getInfoProcedureBailleurDate(): ?string
+    public function getinfoProcedureBailDate(): ?string
     {
-        return $this->infoProcedureBailleurDate;
+        return $this->infoProcedureBailDate;
     }
 
-    public function getInfoProcedureBailleurReponse(): ?string
+    public function getinfoProcedureBailReponse(): ?string
     {
-        return $this->infoProcedureBailleurReponse;
+        return $this->infoProcedureBailReponse;
     }
 
-    public function getInfoProcedureBailleurNumero(): ?string
+    public function getinfoProcedureBailNumero(): ?string
     {
-        return $this->infoProcedureBailleurNumero;
+        return $this->infoProcedureBailNumero;
     }
 
     public function getInfoProcedureAssuranceContactee(): ?string

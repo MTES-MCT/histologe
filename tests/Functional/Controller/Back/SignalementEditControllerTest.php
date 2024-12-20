@@ -209,9 +209,12 @@ class SignalementEditControllerTest extends WebTestCase
 
     private function getPayloadProcedureDemarches(): array
     {
-        // TODO : ajouter les nouvelles lignes
         return [
             'isProprioAverti' => '1',
+            'infoProcedureBailMoyen' => 'courrier',
+            'infoProcedureBailDate' => '2024-11',
+            'infoProcedureBailReponse' => 'Réponse du bailleur',
+            'infoProcedureBailNumero' => 'R-TR45',
             'infoProcedureAssuranceContactee' => 'oui',
             'infoProcedureReponseAssurance' => 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
             'infoProcedureDepartApresTravaux' => 'oui',

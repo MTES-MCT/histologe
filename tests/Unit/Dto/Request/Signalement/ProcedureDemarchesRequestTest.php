@@ -19,11 +19,15 @@ class ProcedureDemarchesRequestTest extends KernelTestCase
     public function testValidateSuccess(): void
     {
         $procedureDemarchesRequest = new ProcedureDemarchesRequest(
-            '0',
-            'oui',
-            'L\'assurance a accepté notre demande.',
-            'oui',
-            '2024-05-01'
+            isProprioAverti: '0',
+            infoProcedureBailMoyen: 'autre',
+            infoProcedureBailDate: '2024-05',
+            infoProcedureBailReponse: 'Le bailleur nous a envoyé nous faire cuire un oeuf.',
+            infoProcedureBailNumero: '1234567890',
+            infoProcedureAssuranceContactee: 'oui',
+            infoProcedureReponseAssurance: 'L\'assurance a accepté notre demande.',
+            infoProcedureDepartApresTravaux: 'oui',
+            preavisDepart: '2024-05-01'
         );
 
         $this->assertSame('0', $procedureDemarchesRequest->getIsProprioAverti());
@@ -41,14 +45,18 @@ class ProcedureDemarchesRequestTest extends KernelTestCase
     public function testValidateError(): void
     {
         $procedure = new ProcedureDemarchesRequest(
-            '2',
-            'oui-non',
-            str_repeat('a', 256),
-            'oui-non',
-            str_repeat('a', 51)
+            isProprioAverti: '2',
+            infoProcedureBailMoyen: 'pigeon voyageur',
+            infoProcedureBailDate: 'hier',
+            infoProcedureBailReponse: str_repeat('a', 256),// TODO : à vérifier
+            infoProcedureBailNumero: str_repeat('a', 256),// TODO : à vérifier
+            infoProcedureAssuranceContactee: 'oui-non',
+            infoProcedureReponseAssurance: str_repeat('a', 256),
+            infoProcedureDepartApresTravaux: 'oui-non',
+            preavisDepart: str_repeat('a', 51)
         );
 
         $errors = $this->validator->validate($procedure);
-        $this->assertCount(5, $errors);
+        $this->assertCount(9, $errors);
     }
 }
