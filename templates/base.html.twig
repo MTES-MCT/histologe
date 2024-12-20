@@ -4,7 +4,7 @@
 {% endif %}
 
 <!DOCTYPE html>
-<html lang="fr"{# data-fr-scheme="light" #}>
+<html lang="fr"{# data-fr-scheme="light" #} {{ mise_en_berne ? 'data-fr-mourning' : '' }}>
 <head>
     <meta charset="UTF-8">
     {% if 'back_' in app.request.get('_route') or 'front_suivi_signalement' in app.request.get('_route') %}
