@@ -50,6 +50,9 @@ class AutoAssigner
         if ($autoAffectationRules->isEmpty()) {
             return;
         }
+        if (empty($signalement->getGeoloc())) {
+            return;
+        }
         $adminEmail = $this->parameterBag->get('user_system_email');
         $adminUser = $this->userManager->findOneBy(['email' => $adminEmail]);
         $partners = $signalement->getTerritory()->getPartners();
@@ -57,10 +60,6 @@ class AutoAssigner
 
         /** @var AutoAffectationRule $rule */
         foreach ($autoAffectationRules as $rule) {
-            if (empty($signalement->getGeoloc()) && $rule->getInseeToInclude() === 'partner_list') {
-                continue;
-            }
-
             $specification = new AndSpecification(
                 new ProfilDeclarantSpecification($rule->getProfileDeclarant()),
                 new PartnerTypeSpecification($rule->getPartnerType()),
