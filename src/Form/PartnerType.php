@@ -167,7 +167,7 @@ class PartnerType extends AbstractType
             'label' => 'Territoire',
             'required' => true,
         ]);
-        $this->addBailleurSocialField($builder, $territory?->getZip());
+        $this->addBailleurSocialField($builder, $territory?->getZip(), $partner);
         $builder->addEventListener(FormEvents::PRE_SUBMIT, fn (FormEvent $event) => $this->handleTerritoryChange($event));
         $builder->addEventListener(FormEvents::PRE_SET_DATA, fn (FormEvent $event) => $this->handleTerritoryChange($event, true));
     }
@@ -181,19 +181,22 @@ class PartnerType extends AbstractType
             ? $data->getTerritory()
             : (\array_key_exists('territory', $data) ? $this->territoryRepository->find($data['territory']) : null);
 
-        $this->addBailleurSocialField($form, $territory?->getZip());
+        $this->addBailleurSocialField($form, $territory?->getZip(), $data);
     }
 
-    private function addBailleurSocialField(FormBuilderInterface|FormInterface $builder, ?string $territoryZip = null): void
+    private function addBailleurSocialField(FormBuilderInterface|FormInterface $builder, ?string $territoryZip = null, $data = null): void
     {
         if (null === $territoryZip) {
-            if ($this->isAdmin) {
-                $territoryZip = '01';
-            } elseif ($this->isAdminTerritory
-            ) {
-                /** @var User $user */
-                $user = $this->security->getUser();
-                $territoryZip = $user->getFirstTerritory()->getZip();
+            if ($data instanceof Partner && null !== $data->getTerritory()) {
+                $territoryZip = $data->getTerritory()->getZip();
+            } else {
+                if ($this->isAdmin) {
+                    $territoryZip = '01';
+                } elseif ($this->isAdminTerritory) {
+                    /** @var User $user */
+                    $user = $this->security->getUser();
+                    $territoryZip = $user->getFirstTerritory()->getZip();
+                }
             }
         }
         $builder->add('bailleur', EntityType::class, [
