@@ -9,6 +9,7 @@ use App\Entity\Enum\HistoryEntryEvent;
 use App\Entity\Enum\InterventionType;
 use App\Entity\Enum\ProcedureType;
 use App\Repository\InterventionRepository;
+use App\Service\TimezoneProvider;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
@@ -102,6 +103,19 @@ class Intervention implements EntityHistoryInterface
         $this->scheduledAt = $scheduledAt;
 
         return $this;
+    }
+
+    public function getScheduledAtFormated(): string
+    {
+        if ($this->getScheduledAt()->format('His') > 0) {
+            $timezone = $this->getPartner()?->getTerritory()?->getTimezone() ?? TimezoneProvider::TIMEZONE_EUROPE_PARIS;
+
+            return $this->getScheduledAt()
+                        ->setTimezone(new \DateTimeZone($timezone))
+                        ->format('d/m/Y à H:i');
+        }
+
+        return $this->getScheduledAt()->format('d/m/Y');
     }
 
     public function getRegisteredAt(): ?\DateTimeImmutable
