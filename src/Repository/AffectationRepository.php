@@ -49,7 +49,7 @@ class AffectationRepository extends ServiceEntityRepository
         }
     }
 
-    public function countByStatusForUser($user, ?Territory $territory, ?Qualification $qualification = null, ?array $qualificationStatuses = null)
+    public function countByStatusForUser($user, array $territories, ?Qualification $qualification = null, ?array $qualificationStatuses = null)
     {
         $qb = $this->createQueryBuilder('a')
             ->select('COUNT(a.signalement) as count')
@@ -58,10 +58,10 @@ class AffectationRepository extends ServiceEntityRepository
             ->addSelect('a.statut')
             ->andWhere('a.partner IN (:partners)')
             ->setParameter('partners', $user->getPartners());
-        if ($territory) {
+        if (\count($territories)) {
             $qb->leftJoin('a.partner', 'p')
-                ->andWhere('p.territory = :territory')
-                ->setParameter('territory', $territory);
+                ->andWhere('p.territory IN (:territories)')
+                ->setParameter('territories', $territories);
         }
 
         if ($qualification) {
@@ -132,7 +132,7 @@ class AffectationRepository extends ServiceEntityRepository
         return $qb->getQuery()->getResult();
     }
 
-    public function countAffectationPartner(?Territory $territory = null): array
+    public function countAffectationPartner(array $territories): array
     {
         $qb = $this->createQueryBuilder('a');
         $qb->select('SUM(CASE WHEN a.statut = :statut_wait THEN 1 ELSE 0 END) AS waiting')
@@ -143,8 +143,8 @@ class AffectationRepository extends ServiceEntityRepository
             ->setParameter('statut_wait', Affectation::STATUS_WAIT)
             ->setParameter('statut_refused', Affectation::STATUS_REFUSED);
 
-        if ($territory instanceof Territory) {
-            $qb->andWhere('a.territory = :territory')->setParameter('territory', $territory);
+        if (count($territories)) {
+            $qb->andWhere('a.territory IN (:territories)')->setParameter('territories', $territories);
         }
 
         $qb->groupBy('t.zip', 'p.nom');
@@ -152,7 +152,7 @@ class AffectationRepository extends ServiceEntityRepository
         return $qb->getQuery()->getResult();
     }
 
-    public function countAffectationForUser(User $user): int
+    public function countAffectationForUser(User $user, array $territories): int
     {
         $qb = $this->createQueryBuilder('a');
         $qb->select('COUNT(a.id) as nb_affectation')
@@ -160,6 +160,9 @@ class AffectationRepository extends ServiceEntityRepository
             ->setParameter('partners', $user->getPartners())
             ->andWhere('a.statut = :statut_wait')
             ->setParameter('statut_wait', Affectation::STATUS_WAIT);
+        if (count($territories)) {
+            $qb->andWhere('a.territory IN (:territories)')->setParameter('territories', $territories);
+        }
 
         return $qb->getQuery()->getSingleScalarResult();
     }
@@ -167,7 +170,7 @@ class AffectationRepository extends ServiceEntityRepository
     /**
      * @throws NonUniqueResultException
      */
-    public function countSignalementForUser(User $user): CountSignalement
+    public function countSignalementForUser(User $user, array $territories): CountSignalement
     {
         $qb = $this->createQueryBuilder('a');
         $qb->select(
@@ -190,6 +193,10 @@ class AffectationRepository extends ServiceEntityRepository
             ->andWhere('a.partner IN (:partners)')
             ->setParameter('statut_archived', Signalement::STATUS_ARCHIVED)
             ->setParameter('partners', $user->getPartners());
+
+        if (\count($territories)) {
+            $qb->andWhere('s.territory IN (:territories)')->setParameter('territories', $territories);
+        }
 
         return $qb->getQuery()->getOneOrNullResult();
     }

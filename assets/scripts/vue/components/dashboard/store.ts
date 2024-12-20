@@ -8,11 +8,16 @@ export const store = {
       isAdmin: false,
       isResponsableTerritoire: false,
       isAdministrateurPartenaire: false,
+      isMultiTerritoire: false,
       canSeeNonDecenceEnergetique: false
     },
     territories: new Array<HistoInterfaceSelectOption>(),
     filters: {
       territory: 'all'
+    },
+    newSignalementsStats: {
+      count: 0,
+      percent: 0
     },
     newSignalements: {
       count: 0,

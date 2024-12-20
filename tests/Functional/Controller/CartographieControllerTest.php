@@ -13,6 +13,8 @@ class CartographieControllerTest extends WebTestCase
     private const SUPER_ADMIN = 'admin-01@histologe.fr';
     private const ADMIN_TERRITOIRE = 'admin-territoire-13-01@histologe.fr';
     private const PARTNER = 'user-13-01@histologe.fr';
+    private const ADMIN_PARTNER_MULTI_TERRITORIES = 'admin-partenaire-multi-ter-13-01@histologe.fr';
+    private const USER_PARTNER_MULTI_TERRITORIES = 'user-partenaire-multi-ter-34-30@histologe.fr';
 
     protected function setUp(): void
     {
@@ -134,5 +136,7 @@ class CartographieControllerTest extends WebTestCase
         yield 'Super Admin by visites' => [self::SUPER_ADMIN, 'bo-filters-visites', ['0']];
         yield 'Resp territoire by visites' => [self::ADMIN_TERRITOIRE, 'bo-filters-visites', ['0']];
         yield 'Partenaire by visites' => [self::PARTNER, 'bo-filters-visites', ['0']];
+        yield 'Admin partner multi territory by territory' => [self::ADMIN_PARTNER_MULTI_TERRITORIES, 'bo-filters-territories', ['1']];
+        yield 'User partner multi territory by territory' => [self::USER_PARTNER_MULTI_TERRITORIES, 'bo-filters-territories', ['31']];
     }
 }

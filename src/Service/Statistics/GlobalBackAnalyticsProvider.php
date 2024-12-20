@@ -16,6 +16,10 @@ class GlobalBackAnalyticsProvider
 
     public function getData(?Territory $territory, ArrayCollection $partners): array
     {
+        $territories = [];
+        if ($territory) {
+            $territories[$territory->getId()] = $territory;
+        }
         $data = [];
         $data['count_signalement'] = $this->getCountSignalementData($territory, $partners);
         $data['average_criticite'] = $this->getAverageCriticiteData($territory, $partners);
@@ -24,7 +28,7 @@ class GlobalBackAnalyticsProvider
 
         $data['count_signalement_archives'] = 0;
         $data['count_signalement_refuses'] = 0;
-        $countByStatus = $this->signalementRepository->countByStatus($territory, $partners, null, true);
+        $countByStatus = $this->signalementRepository->countByStatus($territories, $partners, null, true);
         foreach ($countByStatus as $countByStatusItem) {
             switch ($countByStatusItem['statut']) {
                 case Signalement::STATUS_ARCHIVED:

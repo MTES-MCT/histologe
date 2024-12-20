@@ -34,7 +34,7 @@ class BackUserControllerTest extends WebTestCase
 
     public function provideParamsUserList(): iterable
     {
-        yield 'Search without params' => [[], 57];
+        yield 'Search without params' => [[], 58];
         yield 'Search with queryUser admin' => [['queryUser' => 'admin'], 21];
         yield 'Search with territory 13' => [['territory' => 13], 11];
         yield 'Search with territory 13 and partner 6 and 7' => [['territory' => 13, 'partners' => [6, 7]], 2];

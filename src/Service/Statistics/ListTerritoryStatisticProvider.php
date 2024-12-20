@@ -3,6 +3,7 @@
 namespace App\Service\Statistics;
 
 use App\Entity\Territory;
+use App\Entity\User;
 use App\Repository\TerritoryRepository;
 
 class ListTerritoryStatisticProvider
@@ -11,10 +12,14 @@ class ListTerritoryStatisticProvider
     {
     }
 
-    public function getData(): array
+    public function getData(?User $user = null): array
     {
         $data = [];
-        $territories = $this->territoryRepository->findAllList();
+        if ($user && !$user->isSuperAdmin()) {
+            $territories = $user->getPartnersTerritories();
+        } else {
+            $territories = $this->territoryRepository->findAllList();
+        }
         /** @var Territory $territory */
         foreach ($territories as $territory) {
             $data[$territory->getId()] = $territory->getZip().' - '.$territory->getName();

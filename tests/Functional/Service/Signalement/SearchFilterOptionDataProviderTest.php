@@ -9,6 +9,7 @@ use App\Repository\PartnerRepository;
 use App\Repository\SignalementRepository;
 use App\Repository\TagRepository;
 use App\Repository\TerritoryRepository;
+use App\Repository\UserRepository;
 use App\Service\Signalement\Qualification\QualificationStatusService;
 use App\Service\Signalement\SearchFilterOptionDataProvider;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
@@ -56,15 +57,18 @@ class SearchFilterOptionDataProviderTest extends KernelTestCase
 
     public function testGetData(): void
     {
+        /** @var UserRepository $userRepository */
+        $userRepository = static::getContainer()->get(UserRepository::class);
+        $user = $userRepository->findOneBy(['email' => 'admin-territoire-13-01@histologe.fr']);
         $expectedData = [
             'criteres' => $this->critereRepository->findAllList(),
-            'territories' => $this->territoryRepository->findAllList(),
-            'partners' => $this->partnerRepository->findAllList(),
-            'tags' => $this->tagsRepository->findAllActive(),
-            'cities' => $this->signalementRepository->findCities(),
+            'territories' => $user->isSuperAdmin() ? $this->territoryRepository->findAllList() : $user->getPartnersTerritories(),
+            'partners' => $this->partnerRepository->findAllList(null, $user),
+            'tags' => $this->tagsRepository->findAllActive(null, $user),
+            'cities' => $this->signalementRepository->findCities($user),
         ];
 
-        $actualData = $this->searchFilterOptionDataProvider->getData();
+        $actualData = $this->searchFilterOptionDataProvider->getData($user);
         $this->assertSameSize($expectedData['criteres'], $actualData['criteres']);
         $this->assertSameSize($expectedData['territories'], $actualData['territories']);
         $this->assertSameSize($expectedData['partners'], $actualData['partners']);

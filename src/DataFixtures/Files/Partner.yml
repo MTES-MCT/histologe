@@ -590,6 +590,12 @@ partners:
     territory: "Gard"
     type: "EPCI"
   -
+    nom: "CAF 30"
+    email: "partenaire-30-02@histologe.fr"
+    is_archive: 0
+    territory: "Gard"
+    type: "CAF_MSA"
+  -
     nom: "Partner Habitat 44"
     email: "partenaire-44-05@histologe.fr"
     insee: "[\"44179\"]"

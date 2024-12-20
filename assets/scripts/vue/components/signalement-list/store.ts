@@ -43,6 +43,7 @@ export const store = {
       isResponsableTerritoire: false,
       isAdministrateurPartenaire: false,
       isAgent: false,
+      isMultiTerritoire: false,
       canSeeStatusAffectation: false,
       canSeeBailleurSocial: false,
       canSeeScore: false,

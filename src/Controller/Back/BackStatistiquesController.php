@@ -124,20 +124,19 @@ class BackStatistiquesController extends AbstractController
     {
         /** @var User $user */
         $user = $this->getUser();
-        $enabledTerritories = $user->getPartnersTerritories();
+        if (1 === $user->getPartners()->count() && !$this->isGranted('ROLE_ADMIN')) {
+            return $user->getPartners()->first()->getTerritory();
+        }
+        $authorizedTerritories = $user->getPartnersTerritories();
         $territoryId = $request->get('territoire');
         if (!$territoryId || 'all' === $territoryId) {
-            $territoryId = null;
+            return null;
         }
-        $territory = null;
-        if ($territoryId && ($this->isGranted('ROLE_ADMIN') || isset($enabledTerritories[$territoryId]))) {
-            $territory = $territoryRepository->find($territoryId);
-        }
-        if (!$territory && !$this->isGranted('ROLE_ADMIN')) {
-            $territory = $user->getFirstTerritory();
+        if ($this->isGranted('ROLE_ADMIN') || isset($authorizedTerritories[$territoryId])) {
+            return $territoryRepository->find($territoryId);
         }
 
-        return $territory;
+        return null;
     }
 
     /**
@@ -145,13 +144,16 @@ class BackStatistiquesController extends AbstractController
      */
     private function buildFilterLists(?Territory $territory)
     {
-        // Tells Vue component if a user can filter through Territoire
-        $this->result['can_filter_territoires'] = $this->isGranted('ROLE_ADMIN') ? '1' : '0';
+        /** @var User $user */
+        $user = $this->getUser();
+
+        $this->result['can_filter_territoires'] = '0';
         $this->result['can_filter_archived'] = $this->isGranted('ROLE_ADMIN') ? '1' : '0';
         $this->result['can_see_per_partenaire'] = $this->isGranted('ROLE_ADMIN') || $this->isGranted('ROLE_ADMIN_TERRITORY') ? '1' : '0';
 
-        if ($this->isGranted('ROLE_ADMIN')) {
-            $this->result['list_territoires'] = $this->listTerritoryStatisticProvider->getData();
+        if ($this->isGranted('ROLE_ADMIN') || count($user->getPartnersTerritories()) > 1) {
+            $this->result['can_filter_territoires'] = '1';
+            $this->result['list_territoires'] = $this->listTerritoryStatisticProvider->getData($user);
         }
         $this->result['list_communes'] = $this->listCommunesStatisticProvider->getData($territory);
         $this->result['list_etiquettes'] = $this->listTagStatisticProvider->getData($territory);

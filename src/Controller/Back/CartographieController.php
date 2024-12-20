@@ -49,15 +49,10 @@ class CartographieController extends AbstractController
             );
         }
 
-        $userToFilterCities = $user;
-        if ($this->isGranted('ROLE_ADMIN')) {
-            $userToFilterCities = null;
-        }
-
         return $this->render('back/cartographie/index.html.twig', [
             'title' => $title,
             'filters' => $filters,
-            'filtersOptionData' => $this->searchFilterOptionDataProvider->getData($userToFilterCities),
+            'filtersOptionData' => $this->searchFilterOptionDataProvider->getData($user),
             'countActiveFilters' => $countActiveFilters,
             'displayRefreshAll' => false,
             'signalements' => [/* $signalements */],

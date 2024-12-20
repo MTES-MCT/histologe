@@ -6,7 +6,6 @@ use App\Dto\CountSignalement;
 use App\Dto\CountSuivi;
 use App\Dto\CountUser;
 use App\Entity\Enum\InterfacageType;
-use App\Entity\Territory;
 use App\Repository\AffectationRepository;
 use App\Repository\JobEventRepository;
 use App\Repository\SignalementRepository;
@@ -39,13 +38,13 @@ class WidgetDataManagerTest extends TestCase
 
     public function testCountSignalementAcceptedNoSuivi()
     {
-        $territory = new Territory();
+        $territories = [];
         $this->signalementRepositoryMock
             ->expects($this->once())
             ->method('countSignalementAcceptedNoSuivi')
-            ->with($territory)
+            ->with($territories)
             ->willReturn([]);
-        $this->assertEquals([], $this->widgetDataManager->countSignalementAcceptedNoSuivi($territory));
+        $this->assertEquals([], $this->widgetDataManager->countSignalementAcceptedNoSuivi($territories));
     }
 
     public function testGetCountSignalementsByTerritory()
@@ -65,11 +64,11 @@ class WidgetDataManagerTest extends TestCase
 
     public function testCountAffectationPartner()
     {
-        $territory = new Territory();
+        $territories = [];
         $this->affectationRepositoryMock
             ->expects($this->once())
             ->method('countAffectationPartner')
-            ->with($territory)
+            ->with($territories)
             ->willReturn([
                 ['waiting' => 1, 'refused' => 2],
                 ['waiting' => 3, 'refused' => 4],
@@ -77,7 +76,7 @@ class WidgetDataManagerTest extends TestCase
         $this->assertEquals([
             ['waiting' => 1, 'refused' => 2],
             ['waiting' => 3, 'refused' => 4],
-        ], $this->widgetDataManager->countAffectationPartner($territory));
+        ], $this->widgetDataManager->countAffectationPartner($territories));
     }
 
     public function testFindLastJobEventByType()
@@ -90,13 +89,14 @@ class WidgetDataManagerTest extends TestCase
 
         $this->assertEquals([], $this->widgetDataManager->findLastJobEventByInterfacageType(
             InterfacageType::ESABORA->value,
-            ['period' => 5])
+            ['period' => 5],
+            [])
         );
     }
 
     public function testCountDataKpi()
     {
-        $countDataKpi = $this->widgetDataManager->countDataKpi();
+        $countDataKpi = $this->widgetDataManager->countDataKpi([]);
         $this->assertInstanceOf(CountSignalement::class, $countDataKpi->getCountSignalement());
         $this->assertInstanceOf(CountSuivi::class, $countDataKpi->getCountSuivi());
         $this->assertInstanceOf(CountUser::class, $countDataKpi->getCountUser());
