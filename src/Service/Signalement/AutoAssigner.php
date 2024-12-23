@@ -59,6 +59,7 @@ class AutoAssigner
             );
             $this->logger->info($logMessage);
             \Sentry\captureMessage($logMessage);
+
             return;
         }
         $adminEmail = $this->parameterBag->get('user_system_email');
