@@ -2,10 +2,11 @@
 
 namespace App\Controller\Back;
 
-use App\Entity\Partner;
+use App\Form\SearchArchivedPartnerType;
 use App\Repository\PartnerRepository;
-use App\Repository\TerritoryRepository;
+use App\Service\ListFilters\SearchArchivedPartner;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
@@ -18,45 +19,23 @@ class BackArchivedPartnerController extends AbstractController
     #[IsGranted('ROLE_ADMIN')]
     public function index(
         Request $request,
-        TerritoryRepository $territoryRepository,
         PartnerRepository $partnerRepository,
+        ParameterBagInterface $parameterBag,
     ): Response {
-        $page = $request->get('page') ?? 1;
-
-        $isNoneTerritory = 'none' == $request->get('territory');
-        $currentTerritory = $isNoneTerritory ? null : $territoryRepository->find((int) $request->get('territory'));
-        $partnerTerms = $request->get('partnerTerms');
-
-        $paginatedArchivedPartners = $partnerRepository->findAllArchivedOrWithoutTerritory(
-            territory: $currentTerritory,
-            isNoneTerritory: $isNoneTerritory,
-            filterTerms: $partnerTerms,
-            page: (int) $page
-        );
-
-        if ($request->isMethod(Request::METHOD_POST)) {
-            $isNoneTerritory = 'none' == $request->request->get('territory');
-            $currentTerritory = $territoryRepository->find((int) $request->request->get('territory'));
-            $partnerTerms = $request->request->get('bo-filters-partnerterms');
-
-            return $this->redirect($this->generateUrl('back_archived_partner_index', [
-                'page' => 1,
-                'territory' => $isNoneTerritory ? 'none' : $currentTerritory?->getId(),
-                'partnerTerms' => $partnerTerms,
-            ]));
+        $searchArchivedPartner = new SearchArchivedPartner();
+        $form = $this->createForm(SearchArchivedPartnerType::class, $searchArchivedPartner);
+        $form->handleRequest($request);
+        if ($form->isSubmitted() && !$form->isValid()) {
+            $searchArchivedPartner = new SearchArchivedPartner();
         }
-
-        $totalArchivedPartners = \count($paginatedArchivedPartners);
+        $maxListPagination = $parameterBag->get('standard_max_list_pagination');
+        $paginatedArchivedPartners = $partnerRepository->findFilteredArchivedPaginated($searchArchivedPartner, $maxListPagination);
 
         return $this->render('back/partner_archived/index.html.twig', [
-            'isNoneTerritory' => $isNoneTerritory,
-            'currentTerritory' => $currentTerritory,
-            'partnerTerms' => $partnerTerms,
-            'territories' => $territoryRepository->findAllList(),
-            'partners' => $paginatedArchivedPartners,
-            'total' => $totalArchivedPartners,
-            'page' => $page,
-            'pages' => (int) ceil($totalArchivedPartners / Partner::MAX_LIST_PAGINATION),
+            'form' => $form,
+            'searchArchivedPartner' => $searchArchivedPartner,
+            'archivedPartners' => $paginatedArchivedPartners,
+            'pages' => (int) ceil($paginatedArchivedPartners->count() / $maxListPagination),
         ]);
     }
 }

@@ -12,7 +12,7 @@ use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\RouterInterface;
 
-class BackArchivedAccountControllerTest extends WebTestCase
+class BackArchivedUsersControllerTest extends WebTestCase
 {
     use SessionHelper;
 
@@ -28,14 +28,14 @@ class BackArchivedAccountControllerTest extends WebTestCase
         /** @var RouterInterface $router */
         $router = self::getContainer()->get(RouterInterface::class);
 
-        $route = $router->generate('back_account_index');
+        $route = $router->generate('back_archived_users_index');
         $crawler = $client->request('GET', $route);
         $this->assertLessThan(
             Response::HTTP_INTERNAL_SERVER_ERROR,
             $client->getResponse()->getStatusCode(),
             \sprintf('Result value: %d', $client->getResponse()->getStatusCode())
         );
-        $this->assertEquals(1, $crawler->filter('h2:contains("9 comptes archivés ou sans territoires et/ou partenaires trouvés")')->count());
+        $this->assertEquals(1, $crawler->filter('h2:contains("9 comptes archivés ou sans territoire et/ou partenaire trouvés")')->count());
     }
 
     public function testAccountListWithTerritory(): void
@@ -54,7 +54,7 @@ class BackArchivedAccountControllerTest extends WebTestCase
         $territoryRepository = static::getContainer()->get(TerritoryRepository::class);
         $territory = $territoryRepository->findOneBy(['zip' => '01']);
 
-        $route = $router->generate('back_account_index', [
+        $route = $router->generate('back_archived_users_index', [
             'territory' => $territory->getId(),
         ]);
         $client->request('GET', $route);
@@ -80,7 +80,7 @@ class BackArchivedAccountControllerTest extends WebTestCase
         $accountEmail = 'user-01-01@histologe.fr';
         /** @var User $account */
         $account = $userRepository->findOneBy(['email' => $accountEmail]);
-        $route = $router->generate('back_account_reactiver', [
+        $route = $router->generate('back_archived_users_reactiver', [
             'id' => $account->getId(),
         ]);
         $client->request('GET', $route);
@@ -120,7 +120,7 @@ class BackArchivedAccountControllerTest extends WebTestCase
         $accountEmail = 'user-01-09@histologe.fr';
         /** @var User $account */
         $account = $userRepository->findArchivedUserByEmail($accountEmail);
-        $route = $router->generate('back_account_reactiver', [
+        $route = $router->generate('back_archived_users_reactiver', [
             'id' => $account->getId(),
         ]);
 
@@ -170,7 +170,7 @@ class BackArchivedAccountControllerTest extends WebTestCase
         $accountEmail = 'user-01-06@histologe.fr'.User::SUFFIXE_ARCHIVED;
         /** @var User $account */
         $account = $userRepository->findArchivedUserByEmail($accountEmail);
-        $route = $router->generate('back_account_reactiver', [
+        $route = $router->generate('back_archived_users_reactiver', [
             'id' => $account->getId(),
         ]);
 
@@ -208,7 +208,7 @@ class BackArchivedAccountControllerTest extends WebTestCase
         $accountEmail = 'admin-02@histologe.fr';
         /** @var User $account */
         $account = $userRepository->findArchivedUserByEmail($accountEmail);
-        $route = $router->generate('back_account_reactiver', [
+        $route = $router->generate('back_archived_users_reactiver', [
             'id' => $account->getId(),
         ]);
 
@@ -243,7 +243,7 @@ class BackArchivedAccountControllerTest extends WebTestCase
 
         /** @var User $account */
         $account = $userRepository->findAnonymizedUsers()[0];
-        $route = $router->generate('back_account_reactiver', [
+        $route = $router->generate('back_archived_users_reactiver', [
             'id' => $account->getId(),
         ]);
 
@@ -277,7 +277,7 @@ class BackArchivedAccountControllerTest extends WebTestCase
         $accountEmail = 'user-unlinked@histologe.fr';
         /** @var User $account */
         $account = $userRepository->findOneBy(['email' => $accountEmail]);
-        $route = $router->generate('back_account_reactiver', [
+        $route = $router->generate('back_archived_users_reactiver', [
             'id' => $account->getId(),
         ]);
 

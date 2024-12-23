@@ -3,7 +3,7 @@
 namespace App\Repository;
 
 use App\Entity\Territory;
-use App\Service\SearchTerritory;
+use App\Service\ListFilters\SearchTerritory;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\ORM\NoResultException;

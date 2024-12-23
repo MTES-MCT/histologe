@@ -2,43 +2,43 @@
 
 namespace App\Form;
 
-use App\Service\ListFilters\SearchTerritory;
+use App\Entity\Territory;
+use App\Service\ListFilters\SearchArchivedSignalement;
+use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
-use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\Extension\Core\Type\SearchType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
-class SearchTerritoryType extends AbstractType
+class SearchArchivedSignalementType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
-        $builder->add('queryName', SearchType::class, [
+        $builder->add('queryReference', SearchType::class, [
             'required' => false,
             'label' => false,
-            'attr' => ['placeholder' => 'Taper le code ou le nom d\'un territoire'],
+            'attr' => ['placeholder' => 'Taper la référence'],
         ]);
-        $builder->add('isActive', ChoiceType::class, [
+        $builder->add('territory', EntityType::class, [
+            'class' => Territory::class,
+            'choice_label' => function (Territory $territory) {
+                return $territory->getZip().' - '.$territory->getName();
+            },
             'required' => false,
+            'placeholder' => 'Tous les territoires',
             'label' => false,
-            'placeholder' => 'Statut',
-            'choices' => [
-                'Activé' => true,
-                'Non activé' => false,
-            ],
         ]);
-
         $builder->add('page', HiddenType::class);
     }
 
     public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
-            'data_class' => SearchTerritory::class,
+            'data_class' => SearchArchivedSignalement::class,
             'csrf_protection' => false,
             'method' => 'GET',
-            'attr' => ['id' => 'search-territory-form', 'class' => 'fr-p-4v bo-filter-form'],
+            'attr' => ['id' => 'search-archived-signalement-form', 'class' => 'fr-p-4v bo-filter-form'],
         ]);
     }
 

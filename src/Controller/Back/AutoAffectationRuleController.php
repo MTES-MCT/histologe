@@ -3,12 +3,13 @@
 namespace App\Controller\Back;
 
 use App\Entity\AutoAffectationRule;
-use App\Entity\Partner;
 use App\Form\AutoAffectationRuleType;
+use App\Form\SearchAutoAffectationRuleType;
 use App\Repository\AutoAffectationRuleRepository;
-use App\Repository\TerritoryRepository;
+use App\Service\ListFilters\SearchAutoAffectationRule;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Symfony\Component\Form\FormError;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\Request;
@@ -23,36 +24,23 @@ class AutoAffectationRuleController extends AbstractController
     #[IsGranted('ROLE_ADMIN')]
     public function index(
         Request $request,
-        TerritoryRepository $territoryRepository,
         AutoAffectationRuleRepository $autoAffectationRuleRepository,
+        ParameterBagInterface $parameterBag,
     ): Response {
-        $page = $request->get('page') ?? 1;
-
-        $currentTerritory = $territoryRepository->find((int) $request->get('territory'));
-
-        $paginatedAutoAffectationRule = $autoAffectationRuleRepository->getAutoAffectationRules(
-            territory: $currentTerritory,
-            page: (int) $page
-        );
-
-        if ($request->isMethod(Request::METHOD_POST)) {
-            $currentTerritory = $territoryRepository->find((int) $request->request->get('territory'));
-
-            return $this->redirect($this->generateUrl('back_auto_affectation_rule_index', [
-                'page' => 1,
-                'territory' => $currentTerritory?->getId(),
-            ]));
+        $searchAutoAffectationRule = new SearchAutoAffectationRule();
+        $form = $this->createForm(SearchAutoAffectationRuleType::class, $searchAutoAffectationRule);
+        $form->handleRequest($request);
+        if ($form->isSubmitted() && !$form->isValid()) {
+            $searchAutoAffectationRule = new SearchAutoAffectationRule();
         }
-
-        $totalAutoAffectationRule = \count($paginatedAutoAffectationRule);
+        $maxListPagination = $parameterBag->get('standard_max_list_pagination');
+        $paginatedAutoAffectationRule = $autoAffectationRuleRepository->findFilteredPaginated($searchAutoAffectationRule, $maxListPagination);
 
         return $this->render('back/auto-affectation-rule/index.html.twig', [
-            'currentTerritory' => $currentTerritory,
-            'territories' => $territoryRepository->findAllWithAutoAffectationRules(),
-            'autoaffectationrules' => $paginatedAutoAffectationRule,
-            'total' => $totalAutoAffectationRule,
-            'page' => $page,
-            'pages' => (int) ceil($totalAutoAffectationRule / Partner::MAX_LIST_PAGINATION),
+            'form' => $form,
+            'searchAutoAffectationRule' => $searchAutoAffectationRule,
+            'autoAffectationRules' => $paginatedAutoAffectationRule,
+            'pages' => (int) ceil($paginatedAutoAffectationRule->count() / $maxListPagination),
         ]);
     }
 

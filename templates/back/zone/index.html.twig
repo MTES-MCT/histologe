@@ -54,7 +54,7 @@
     </section>
 
     <section class="fr-col-12 fr-p-5v">
-        <h2 class="fr-mb-0" id="desc-table">{{zones|length}} zone{% if zones|length > 1%}s{% endif %}</h2>
+        <h2 class="fr-mb-0" id="desc-table">{{ singular_or_plural(zones|length, 'zone trouvée', 'zones trouvées') }}</h2>
     </section>
 
     <section class="fr-col-12 fr-pt-0 fr-px-5v">

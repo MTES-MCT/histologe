@@ -8,7 +8,7 @@ use App\Entity\Territory;
 use App\Entity\User;
 use App\Form\Type\SearchCheckboxType;
 use App\Repository\PartnerRepository;
-use App\Service\SearchUser;
+use App\Service\ListFilters\SearchUser;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\Form\AbstractType;
@@ -152,7 +152,7 @@ class SearchUserType extends AbstractType
             'data_class' => SearchUser::class,
             'csrf_protection' => false,
             'method' => 'GET',
-            'attr' => ['id' => 'search-user-form', 'class' => 'fr-p-4v'],
+            'attr' => ['id' => 'search-user-form', 'class' => 'fr-p-4v bo-filter-form'],
         ]);
     }
 

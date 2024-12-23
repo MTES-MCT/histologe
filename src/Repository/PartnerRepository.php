@@ -8,6 +8,8 @@ use App\Entity\Enum\Qualification;
 use App\Entity\Partner;
 use App\Entity\Signalement;
 use App\Entity\Territory;
+use App\Service\ListFilters\SearchArchivedPartner;
+use App\Service\ListFilters\SearchPartner;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\DBAL\Exception;
 use Doctrine\ORM\Query\QueryException;
@@ -24,6 +26,7 @@ use Doctrine\Persistence\ManagerRegistry;
 class PartnerRepository extends ServiceEntityRepository
 {
     public function __construct(
+        private readonly TerritoryRepository $territoryRepository,
         ManagerRegistry $registry,
     ) {
         parent::__construct($registry, Partner::class);
@@ -40,15 +43,24 @@ class PartnerRepository extends ServiceEntityRepository
         return $queryBuilder;
     }
 
+    public function findFilteredPaginated(SearchPartner $searchPartner, int $maxResult): Paginator
+    {
+        return $this->getPartners(
+            $searchPartner->getTerritory(),
+            $searchPartner->getPartnerType(),
+            $searchPartner->getQueryPartner(),
+            $searchPartner->getPage(),
+            $maxResult,
+        );
+    }
+
     public function getPartners(
         ?Territory $territory,
         ?PartnerType $type,
         ?string $filterTerms,
-        $page,
+        int $page,
+        int $maxResult,
     ): Paginator {
-        $maxResult = Partner::MAX_LIST_PAGINATION;
-        $firstResult = ($page - 1) * $maxResult;
-
         $queryBuilder = $this->getPartnersQueryBuilder($territory);
         $queryBuilder->addSelect('z')
             ->leftJoin('p.zones', 'z')
@@ -68,6 +80,7 @@ class PartnerRepository extends ServiceEntityRepository
                 ->setParameter('usersterms', '%'.strtolower($filterTerms).'%');
         }
 
+        $firstResult = ($page - 1) * $maxResult;
         $queryBuilder->setFirstResult($firstResult)->setMaxResults($maxResult);
 
         $paginator = new Paginator($queryBuilder->getQuery(), false);
@@ -103,20 +116,16 @@ class PartnerRepository extends ServiceEntityRepository
             ->getResult();
     }
 
-    public function findAllArchivedOrWithoutTerritory(
-        ?Territory $territory,
-        bool $isNoneTerritory,
-        ?string $filterTerms,
-        $page,
-    ): Paginator {
-        $maxResult = Partner::MAX_LIST_PAGINATION;
-        $firstResult = ($page - 1) * $maxResult;
+    public function findFilteredArchivedPaginated(SearchArchivedPartner $searchArchivedPartner, int $maxResult): Paginator
+    {
         $queryBuilder = $this->createQueryBuilder('p');
 
+        $isNoneTerritory = ('none' == $searchArchivedPartner->getTerritory());
         if ($isNoneTerritory) {
             $queryBuilder
                 ->where('p.territory IS NULL');
         } else {
+            $territory = $searchArchivedPartner->getTerritory() ? $this->territoryRepository->find($searchArchivedPartner->getTerritory()) : null;
             $builtOrCondition = '';
             if (empty($territory)) {
                 $builtOrCondition .= ' OR p.territory IS NULL';
@@ -132,14 +141,14 @@ class PartnerRepository extends ServiceEntityRepository
             }
         }
 
+        $filterTerms = $searchArchivedPartner->getQueryArchivedPartner();
         if (!empty($filterTerms)) {
             $queryBuilder
-                ->andWhere('LOWER(p.nom) LIKE :usersterms
-                OR LOWER(p.email) LIKE :usersterms');
-            $queryBuilder
+                ->andWhere('LOWER(p.nom) LIKE :usersterms OR LOWER(p.email) LIKE :usersterms')
                 ->setParameter('usersterms', '%'.strtolower($filterTerms).'%');
         }
 
+        $firstResult = ($searchArchivedPartner->getPage() - 1) * $maxResult;
         $queryBuilder->setFirstResult($firstResult)->setMaxResults($maxResult);
 
         return new Paginator($queryBuilder->getQuery(), false);

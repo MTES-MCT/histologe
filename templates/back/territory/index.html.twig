@@ -39,7 +39,7 @@
     </section>
 
     <section class="fr-col-12 fr-p-5v">
-        <h2 class="fr-mb-0" id="desc-table">{{territories|length}} territoire{% if territories|length > 1%}s{% endif %}</h2>
+        <h2 class="fr-mb-0" id="desc-table">{{ singular_or_plural(territories|length, 'territoire trouvé', 'territoires trouvés') }}</h2>
     </section>
 
     <section class="fr-col-12 fr-pt-0 fr-px-5v">

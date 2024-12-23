@@ -6,7 +6,7 @@ use App\Entity\User;
 use App\Messenger\Message\UserExportMessage;
 use App\Messenger\MessageHandler\UserExportMessageHandler;
 use App\Repository\UserRepository;
-use App\Service\SearchUser;
+use App\Service\ListFilters\SearchUser;
 use Symfony\Bridge\Twig\Mime\NotificationEmail;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\Messenger\MessageBusInterface;
