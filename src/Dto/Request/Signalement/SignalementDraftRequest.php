@@ -402,6 +402,28 @@ class SignalementDraftRequest
         message: 'Le champ "infoProcedureBailleurPrevenu" est incorrect.',
     )]
     private ?string $infoProcedureBailleurPrevenu = null;
+
+    #[Assert\Choice(
+        choices: ['courrier', 'email', 'telephone', 'sms', 'autre', 'nsp'],
+        message: 'Le champ "infoProcedureBailMoyen" est incorrect.',
+    )]
+    private ?string $infoProcedureBailMoyen = null;
+
+    #[Assert\DateTime('m/Y')]
+    private ?string $infoProcedureBailDate = null;
+
+    #[Assert\Length(
+        max: 255, // TODO : à vérifier
+        maxMessage: 'La réponse du bailleur ne doit pas dépasser {{ limit }} caractères.',
+    )]
+    private ?string $infoProcedureBailReponse = null;
+
+    #[Assert\Length(
+        max: 255, // TODO : à vérifier
+        maxMessage: 'Le numéro de réclamation ne doit pas dépasser {{ limit }} caractères.',
+    )]
+    private ?string $infoProcedureBailNumero = null;
+
     #[Assert\Choice(
         choices: ['oui', 'non', 'pas_assurance_logement', 'nsp'],
         message: 'Le champ "infoProcedureAssuranceContactee" est incorrect.',
@@ -1478,6 +1500,54 @@ class SignalementDraftRequest
     public function setInfoProcedureBailleurPrevenu(?string $infoProcedureBailleurPrevenu): self
     {
         $this->infoProcedureBailleurPrevenu = $infoProcedureBailleurPrevenu;
+
+        return $this;
+    }
+
+    public function getinfoProcedureBailMoyen(): ?string
+    {
+        return $this->infoProcedureBailMoyen;
+    }
+
+    public function setinfoProcedureBailMoyen(?string $infoProcedureBailMoyen): self
+    {
+        $this->infoProcedureBailMoyen = $infoProcedureBailMoyen;
+
+        return $this;
+    }
+
+    public function getinfoProcedureBailDate(): ?string
+    {
+        return $this->infoProcedureBailDate;
+    }
+
+    public function setinfoProcedureBailDate(?string $infoProcedureBailDate): self
+    {
+        $this->infoProcedureBailDate = $infoProcedureBailDate;
+
+        return $this;
+    }
+
+    public function getinfoProcedureBailReponse(): ?string
+    {
+        return $this->infoProcedureBailReponse;
+    }
+
+    public function setinfoProcedureBailReponse(?string $infoProcedureBailReponse): self
+    {
+        $this->infoProcedureBailReponse = $infoProcedureBailReponse;
+
+        return $this;
+    }
+
+    public function getinfoProcedureBailNumero(): ?string
+    {
+        return $this->infoProcedureBailNumero;
+    }
+
+    public function setinfoProcedureBailNumero(?string $infoProcedureBailNumero): self
+    {
+        $this->infoProcedureBailNumero = $infoProcedureBailNumero;
 
         return $this;
     }
