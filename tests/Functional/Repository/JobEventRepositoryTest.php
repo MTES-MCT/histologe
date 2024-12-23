@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Tests\Functional\Repository;
 
+use App\Entity\Enum\InterfacageType;
 use App\Entity\Enum\PartnerType;
 use App\Repository\JobEventRepository;
 use App\Service\Interconnection\Esabora\AbstractEsaboraService;
@@ -41,7 +42,7 @@ class JobEventRepositoryTest extends KernelTestCase
             null
         );
 
-        $this->assertCount(7, $jobEvents);
+        $this->assertCount(8, $jobEvents);
     }
 
     public function testFindFailedEsaboraDossierByPartnerTypeByAction(): void
@@ -55,5 +56,18 @@ class JobEventRepositoryTest extends KernelTestCase
         );
 
         $this->assertCount(3, $jobEvents);
+    }
+
+    public function testFindFailedJobEvents(): void
+    {
+        $container = static::getContainer();
+        $jobEventRepository = $container->get(JobEventRepository::class);
+
+        $jobEvents = $jobEventRepository->findFailedJobEvents(
+            InterfacageType::ESABORA->value,
+            AbstractEsaboraService::ACTION_PUSH_DOSSIER_ADRESSE
+        );
+
+        $this->assertCount(1, $jobEvents);
     }
 }
