@@ -16,6 +16,7 @@ use App\Repository\SignalementRepository;
 use App\Service\Signalement\AutoAssigner;
 use Doctrine\ORM\EntityManagerInterface;
 use PHPUnit\Framework\MockObject\MockObject;
+use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 
@@ -235,6 +236,8 @@ class AutoAssignerTest extends KernelTestCase
         $parameterBag = $this->createMock(ParameterBagInterface::class);
         /** @var InterconnectionBus|MockObject $esaboraBus */
         $esaboraBus = $this->createMock(InterconnectionBus::class);
+        /** @var LoggerInterface $logger */
+        $logger = $this->createMock(LoggerInterface::class);
         $autoAssigner = new AutoAssigner(
             $signalementManager,
             $this->affectationManager,
@@ -243,6 +246,7 @@ class AutoAssignerTest extends KernelTestCase
             $userManager,
             $parameterBag,
             $esaboraBus,
+            $logger,
         );
 
         $autoAssigner->assign($signalement);
