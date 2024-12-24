@@ -22,9 +22,9 @@ use Symfony\Component\Mime\Address;
 class RetryFailedEmailsCommand extends Command
 {
     public function __construct(
-        private EntityManagerInterface $entityManager,
-        private FailedEmailRepository $failedEmailRepository,
-        private MailerInterface $mailer,
+        private readonly EntityManagerInterface $entityManager,
+        private readonly FailedEmailRepository $failedEmailRepository,
+        private readonly MailerInterface $mailer,
     ) {
         parent::__construct();
     }
@@ -51,7 +51,9 @@ class RetryFailedEmailsCommand extends Command
             ;
 
             foreach ($failedEmail->getToEmail() as $toEmail) {
-                $toEmail && $emailMessage->addTo($toEmail);
+                if ('NC' !== $toEmail) {
+                    $toEmail && $emailMessage->addTo($toEmail);
+                }
             }
             if (
                 \array_key_exists('tagHeader', $failedEmail->getContext())

@@ -59,10 +59,7 @@ class ZoneType extends AbstractType
             $builder->add('partners', SearchCheckboxType::class, [
                 'class' => Partner::class,
                 'query_builder' => function (PartnerRepository $partnerRepository) use ($territory) {
-                    return $partnerRepository->createQueryBuilder('p')
-                        ->where('p.territory = :territory')
-                        ->setParameter('territory', $territory)
-                        ->orderBy('p.nom', 'ASC');
+                    return $partnerRepository->getPartnersQueryBuilder($territory)->orderBy('p.nom', 'ASC');
                 },
                 'choice_label' => 'nom',
                 'label' => 'Partenaires de la zone (facultatitf)',
@@ -74,10 +71,7 @@ class ZoneType extends AbstractType
             $builder->add('excludedPartners', SearchCheckboxType::class, [
                 'class' => Partner::class,
                 'query_builder' => function (PartnerRepository $partnerRepository) use ($territory) {
-                    return $partnerRepository->createQueryBuilder('p')
-                        ->where('p.territory = :territory')
-                        ->setParameter('territory', $territory)
-                        ->orderBy('p.nom', 'ASC');
+                    return $partnerRepository->getPartnersQueryBuilder($territory)->orderBy('p.nom', 'ASC');
                 },
                 'choice_label' => 'nom',
                 'help' => 'Sélectionnez dans la liste les partenaires à exclure de la zone. Ces partenaires ne pourront pas être affectés aux dossiers situés dans la zone.',
