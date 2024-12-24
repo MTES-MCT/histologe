@@ -8,7 +8,6 @@ use App\Entity\Enum\DebutDesordres;
 use App\Entity\Enum\OccupantLink;
 use App\Entity\Enum\ProfileDeclarant;
 use App\Entity\Enum\ProprioType;
-use App\Entity\Model\SituationFoyer;
 use App\Entity\Model\TypeCompositionLogement;
 use App\Entity\Signalement;
 use App\Entity\SignalementDraft;
@@ -30,6 +29,8 @@ use App\Service\Signalement\DesordreTraitement\DesordreTraitementProcessor;
 use App\Service\Signalement\Qualification\SignalementQualificationUpdater;
 use App\Specification\Signalement\SuroccupationSpecification;
 use App\Utils\DataPropertyArrayFilter;
+use Doctrine\ORM\NonUniqueResultException;
+use Doctrine\ORM\TransactionRequiredException;
 
 class SignalementBuilder
 {
@@ -40,24 +41,28 @@ class SignalementBuilder
     private array $payload;
 
     public function __construct(
-        private TerritoryRepository $territoryRepository,
-        private BailleurRepository $bailleurRepository,
-        private ReferenceGenerator $referenceGenerator,
-        private SignalementDraftRequestSerializer $signalementDraftRequestSerializer,
-        private TypeCompositionLogementFactory $typeCompositionLogementFactory,
-        private SituationFoyerFactory $situationFoyerFactory,
-        private InformationProcedureFactory $informationProcedureFactory,
-        private InformationComplementaireFactory $informationComplementaireFactory,
-        private DesordreCritereRepository $desordreCritereRepository,
-        private DesordrePrecisionRepository $desordrePrecisionRepository,
-        private DesordreTraitementProcessor $desordreTraitementProcessor,
-        private DesordreCritereManager $desordreCritereManager,
-        private CriticiteCalculator $criticiteCalculator,
-        private SignalementQualificationUpdater $signalementQualificationUpdater,
-        private DesordreCompositionLogementLoader $desordreCompositionLogementLoader,
+        private readonly TerritoryRepository $territoryRepository,
+        private readonly BailleurRepository $bailleurRepository,
+        private readonly ReferenceGenerator $referenceGenerator,
+        private readonly SignalementDraftRequestSerializer $signalementDraftRequestSerializer,
+        private readonly TypeCompositionLogementFactory $typeCompositionLogementFactory,
+        private readonly SituationFoyerFactory $situationFoyerFactory,
+        private readonly InformationProcedureFactory $informationProcedureFactory,
+        private readonly InformationComplementaireFactory $informationComplementaireFactory,
+        private readonly DesordreCritereRepository $desordreCritereRepository,
+        private readonly DesordrePrecisionRepository $desordrePrecisionRepository,
+        private readonly DesordreTraitementProcessor $desordreTraitementProcessor,
+        private readonly DesordreCritereManager $desordreCritereManager,
+        private readonly CriticiteCalculator $criticiteCalculator,
+        private readonly SignalementQualificationUpdater $signalementQualificationUpdater,
+        private readonly DesordreCompositionLogementLoader $desordreCompositionLogementLoader,
     ) {
     }
 
+    /**
+     * @throws NonUniqueResultException
+     * @throws TransactionRequiredException
+     */
     public function createSignalementBuilderFrom(SignalementDraft $signalementDraft): self
     {
         $this->signalementDraft = $signalementDraft;
@@ -111,6 +116,9 @@ class SignalementBuilder
         return $this;
     }
 
+    /**
+     * @throws \DateMalformedStringException
+     */
     public function withSituationFoyer(): self
     {
         $montantAllocation = $this->convertStringToNumber($this->signalementDraftRequest->getLogementSocialMontantAllocation(), false);
@@ -127,10 +135,14 @@ class SignalementBuilder
         return $this;
     }
 
+    /**
+     * @throws DesordreTraitementProcessorNotFound
+     * @throws PrecisionNotFound
+     */
     public function withDesordres(): self
     {
         $categoryDisorders = $this->signalementDraftRequest->getCategorieDisorders();
-        if (isset($categoryDisorders) && !empty($categoryDisorders)) {
+        if (!empty($categoryDisorders)) {
             $this->processDesordresByZone('batiment');
             $this->processDesordresByZone('logement');
             $this->processDesordresTypeComposition();
@@ -154,9 +166,11 @@ class SignalementBuilder
             $this->signalement->setJsonContent($jsonContent);
         }
 
-        $this->signalement->setDebutDesordres(
-            DebutDesordres::tryFrom(strtoupper($this->signalementDraftRequest->getZoneConcerneeDebutDesordres()))
-        );
+        if (!empty($this->signalementDraftRequest->getZoneConcerneeConstatationDesordres())) {
+            $this->signalement->setDebutDesordres(
+                DebutDesordres::tryFrom(strtoupper($this->signalementDraftRequest->getZoneConcerneeDebutDesordres()))
+            );
+        }
 
         $this->signalement->setHasSeenDesordres(
             $this->evalBoolean($this->signalementDraftRequest->getZoneConcerneeConstatationDesordres())
@@ -173,13 +187,11 @@ class SignalementBuilder
      * @throws PrecisionNotFound
      * @throws DesordreTraitementProcessorNotFound
      */
-    private function processDesordresByZone(string $zone)
+    private function processDesordresByZone(string $zone): void
     {
         $categoryDisorders = $this->signalementDraftRequest->getCategorieDisorders();
         $desordreCriteresBySlug = $this->desordreCritereRepository->findAllByZoneIndexedBySlug($zone);
-        if (isset($categoryDisorders[$zone])
-        && \is_array($categoryDisorders[$zone])
-        && !empty($categoryDisorders[$zone])) {
+        if (!empty($categoryDisorders[$zone]) && \is_array($categoryDisorders[$zone])) {
             foreach ($categoryDisorders[$zone] as $categoryDisorderSlug) {
                 // on récupère dans le draft toutes les infos liées à cette catégorie de désordres
                 $filteredData = DataPropertyArrayFilter::filterByPrefix(
@@ -202,7 +214,7 @@ class SignalementBuilder
                 foreach ($critereSlugDraft as $slugCritere => $value) {
                     $critereToLink = $desordreCriteresBySlug[$slugCritere];
                     $this->signalement->addDesordreCritere($critereToLink);
-                    // on chercher les précisions qu'on peut lier
+                    // on cherche les précisions qu'on peut lier
                     $precisions = $critereToLink->getDesordrePrecisions();
                     if (1 === \count($precisions)) {
                         if (1 === $value) {
@@ -237,7 +249,7 @@ class SignalementBuilder
         }
     }
 
-    private function processDesordresTypeComposition()
+    private function processDesordresTypeComposition(): void
     {
         /** @var TypeCompositionLogement $typeCompositionLogement */
         $typeCompositionLogement = $this->typeCompositionLogementFactory->createFromSignalementDraftPayload(
@@ -246,7 +258,6 @@ class SignalementBuilder
 
         $this->desordreCompositionLogementLoader->load($this->signalement, $typeCompositionLogement);
 
-        /** @var SituationFoyer $situationFoyer */
         $situationFoyer = $this->situationFoyerFactory->createFromSignalementDraftPayload($this->payload);
         $suroccupationSpecification = new SuroccupationSpecification();
         if ($suroccupationSpecification->isSatisfiedBy($situationFoyer, $typeCompositionLogement)) {
@@ -290,6 +301,9 @@ class SignalementBuilder
         return $this;
     }
 
+    /**
+     * @throws \DateMalformedStringException
+     */
     public function withInformationComplementaire(): self
     {
         if ($this->isServiceSecours()) {
@@ -470,6 +484,9 @@ class SignalementBuilder
         return '1949' > $dateConstruction;
     }
 
+    /**
+     * @throws \DateMalformedStringException
+     */
     private function resolveDateEmmenagement(): ?\DateTimeImmutable
     {
         if (\in_array(
@@ -534,6 +551,9 @@ class SignalementBuilder
         return $tiersLien->value;
     }
 
+    /**
+     * @throws \DateMalformedStringException
+     */
     private function resolveDateNaissanceOccupant(): ?\DateTimeImmutable
     {
         if (empty($this->signalementDraftRequest->getLogementSocialDateNaissance())) {
