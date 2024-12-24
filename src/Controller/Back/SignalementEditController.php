@@ -25,7 +25,7 @@ use Symfony\Component\Validator\Validator\ValidatorInterface;
 #[Route('/bo/signalements')]
 class SignalementEditController extends AbstractController
 {
-    private const ERROR_MSG = 'Une erreur s\'est produite. Veuillez actualiser la page.';
+    private const string ERROR_MSG = 'Une erreur s\'est produite. Veuillez actualiser la page.';
 
     #[Route('/{uuid:signalement}/edit-address', name: 'back_signalement_edit_address', methods: 'POST')]
     public function editAddress(

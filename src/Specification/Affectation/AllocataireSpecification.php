@@ -7,7 +7,7 @@ use App\Specification\Context\PartnerSignalementContext;
 use App\Specification\Context\SpecificationContextInterface;
 use App\Specification\SpecificationInterface;
 
-class AllocataireSpecification implements SpecificationInterface
+readonly class AllocataireSpecification implements SpecificationInterface
 {
     public function __construct(
         private string $ruleAllocataire,
@@ -23,7 +23,7 @@ class AllocataireSpecification implements SpecificationInterface
         /** @var Signalement $signalement */
         $signalement = $context->getSignalement();
 
-        $isAllocataire = strtolower($signalement->getIsAllocataire());
+        $isAllocataire = null === $signalement->getIsAllocataire() ? null : strtolower($signalement->getIsAllocataire());
         switch ($this->ruleAllocataire) {
             case 'all':
                 return true;
