@@ -95,7 +95,7 @@ class UpdateSignalementGeolocalisationCommand extends Command
         $this->entityManager->flush();
         $progressBar->finish();
         $io->newLine();
-        $io->success(sprintf("%s signalements updated", $i));
+        $io->success(sprintf('%s signalements updated', $i));
 
         return Command::SUCCESS;
     }
