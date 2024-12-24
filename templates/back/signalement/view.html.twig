@@ -31,7 +31,7 @@
             {% include '_partials/_modal_reopen_signalement.html.twig' with { 'all': '1' } %}
         {% endif %}
         
-        {% if signalement.statut is not same as constant('App\\Entity\\Signalement::STATUS_CLOSED') or is_granted('ROLE_ADMIN_TERRITORY') %}
+        {% if signalement.statut is not same as constant('App\\Entity\\Signalement::STATUS_CLOSED') or is_granted('ROLE_ADMIN_TERRITORY') or isClosedForMe %}
             {% include '_partials/_modal_reopen_signalement.html.twig' with { 'all': '0' } %}
         {% endif %}
     {% endif %}
