@@ -24,14 +24,11 @@ class WidgetSettingsController extends AbstractController
     ): JsonResponse {
         /** @var User $user */
         $user = $this->getUser();
-        $enabledTerritories = $user->getPartnersTerritories();
+        $authorizedTerritories = $user->getPartnersTerritories();
 
         $territory = null;
-        if ($territoryId && ($security->isGranted('ROLE_ADMIN') || isset($enabledTerritories[$territoryId]))) {
+        if ($territoryId && ($security->isGranted('ROLE_ADMIN') || isset($authorizedTerritories[$territoryId]))) {
             $territory = $territoryRepository->find($territoryId);
-        }
-        if (!$territory && !$security->isGranted('ROLE_ADMIN')) {
-            $territory = $user->getFirstTerritory();
         }
 
         return $this->json(

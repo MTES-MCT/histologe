@@ -2,7 +2,6 @@
 
 namespace App\Service\DashboardWidget;
 
-use App\Entity\Territory;
 use App\Entity\User;
 use App\Service\CacheCommonKeyGenerator;
 use Psr\Cache\InvalidArgumentException;
@@ -33,14 +32,16 @@ class WidgetDataManagerCache implements WidgetDataManagerInterface
     /**
      * @throws InvalidArgumentException
      */
-    public function countSignalementAcceptedNoSuivi(Territory $territory, ?array $params = null): array
+    public function countSignalementAcceptedNoSuivi(array $territories, ?array $params = null): array
     {
+        $territoriesKey = implode('-', array_keys($territories));
+
         return $this->dashboardCache->get(
-            __FUNCTION__.'-'.$this->commonKey.$territory->getZip(),
-            function (ItemInterface $item) use ($territory, $params) {
+            __FUNCTION__.'-'.$this->commonKey.$territoriesKey,
+            function (ItemInterface $item) use ($territories, $params) {
                 $item->expiresAfter($params['expired_after'] ?? null);
 
-                return $this->widgetDataManager->countSignalementAcceptedNoSuivi($territory);
+                return $this->widgetDataManager->countSignalementAcceptedNoSuivi($territories);
             }
         );
     }
@@ -63,14 +64,16 @@ class WidgetDataManagerCache implements WidgetDataManagerInterface
     /**
      * @throws InvalidArgumentException
      */
-    public function countAffectationPartner(?Territory $territory = null, ?array $params = null): array
+    public function countAffectationPartner(array $territories, ?array $params = null): array
     {
+        $territoriesKey = implode('-', array_keys($territories));
+
         return $this->dashboardCache->get(
-            __FUNCTION__.'-'.$this->commonKey.$territory?->getZip(),
-            function (ItemInterface $item) use ($territory, $params) {
+            __FUNCTION__.'-'.$this->commonKey.$territoriesKey,
+            function (ItemInterface $item) use ($territories, $params) {
                 $item->expiresAfter($params['expired_after'] ?? null);
 
-                return $this->widgetDataManager->countAffectationPartner($territory);
+                return $this->widgetDataManager->countAffectationPartner($territories);
             }
         );
     }
@@ -78,14 +81,16 @@ class WidgetDataManagerCache implements WidgetDataManagerInterface
     /**
      * @throws InvalidArgumentException
      */
-    public function findLastJobEventByInterfacageType(string $type, array $params, ?Territory $territory = null): array
+    public function findLastJobEventByInterfacageType(string $type, array $params, array $territories): array
     {
+        $territoriesKey = implode('-', array_keys($territories));
+
         return $this->dashboardCache->get(
-            __FUNCTION__.'-'.$this->commonKey.$territory?->getZip(),
-            function (ItemInterface $item) use ($type, $params, $territory) {
+            __FUNCTION__.'-'.$this->commonKey.$territoriesKey,
+            function (ItemInterface $item) use ($type, $params, $territories) {
                 $item->expiresAfter($params['expired_after'] ?? null);
 
-                return $this->widgetDataManager->findLastJobEventByInterfacageType($type, $params, $territory);
+                return $this->widgetDataManager->findLastJobEventByInterfacageType($type, $params, $territories);
             }
         );
     }
@@ -93,19 +98,20 @@ class WidgetDataManagerCache implements WidgetDataManagerInterface
     /**
      * @throws InvalidArgumentException
      */
-    public function countDataKpi(?Territory $territory = null, ?array $params = null): WidgetDataKpi
+    public function countDataKpi(array $territories, ?array $params = null): WidgetDataKpi
     {
         /** @var User $user */
         $user = $this->security->getUser();
-        $key = __FUNCTION__.'-'.$this->commonKey.$territory?->getZip().'-id-'.$user->getId();
+        $territoriesKey = implode('-', array_keys($territories));
+        $key = __FUNCTION__.'-'.$this->commonKey.$territoriesKey.'-id-'.$user->getId();
 
         return $this->dashboardCache->get(
             $key,
-            function (ItemInterface $item) use ($params, $territory) {
-                $item->tag('data-kpi-'.$territory?->getZip());
+            function (ItemInterface $item) use ($params, $territories, $territoriesKey) {
+                $item->tag('data-kpi-'.$territoriesKey);
                 $item->expiresAfter($params['expired_after'] ?? null);
 
-                return $this->widgetDataManager->countDataKpi($territory, $params);
+                return $this->widgetDataManager->countDataKpi($territories, $params);
             }
         );
     }

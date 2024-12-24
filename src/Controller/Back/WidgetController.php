@@ -6,7 +6,6 @@ use App\Entity\User;
 use App\Manager\TerritoryManager;
 use App\Service\DashboardWidget\Widget;
 use App\Service\DashboardWidget\WidgetLoaderCollection;
-use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -20,22 +19,22 @@ class WidgetController extends AbstractController
         Request $request,
         WidgetLoaderCollection $widgetLoaderCollection,
         TerritoryManager $territoryManager,
-        LoggerInterface $logger,
         string $widgetType,
     ): Response {
-        if ($this->isGranted('ROLE_ADMIN')) {
-            $territory = $territoryManager->find((int) $request->get('territory'));
-        } else {
-            /** @var User $user */
-            $user = $this->getUser();
-            $territory = $user->getFirstTerritory();
-            if (null === $territory) {
-                $logger->critical(\sprintf('%s has no territory', $user->getEmail()));
-
-                return $this->json([], Response::HTTP_BAD_REQUEST);
+        /** @var User $user */
+        $user = $this->getUser();
+        $territories = [];
+        $authorizedTerritories = $user->getPartnersTerritories();
+        $territoryId = $request->get('territory');
+        if ($territoryId && ($this->isGranted('ROLE_ADMIN') || isset($authorizedTerritories[$territoryId]))) {
+            $territory = $territoryManager->find((int) $territoryId);
+            if ($territory) {
+                $territories[$territory->getId()] = $territory;
             }
+        } elseif (!$this->isGranted('ROLE_ADMIN')) {
+            $territories = $user->getPartnersTerritories();
         }
-        $widget = new Widget($widgetType, $territory);
+        $widget = new Widget($widgetType, $territories);
         $this->denyAccessUnlessGranted('VIEW_WIDGET', $widget);
         $widgetLoaderCollection->load($widget);
 

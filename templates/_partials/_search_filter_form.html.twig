@@ -51,7 +51,7 @@
                                 Filtres
                             </h1>
                             <div class="fr-grid-row fr-grid-row--gutters fr-p-3v">
-                                {% if is_granted('ROLE_ADMIN') %}
+                                {% if is_granted('ROLE_ADMIN') or app.user.partnersTerritories|length > 1 %}
                                     <div class="fr-col-12 fr-col-md-6">
                                         <label class="fr-label" for="bo-filters-territories"><strong>Filtrer par territoire</strong></label>
                                         <select id="bo-filters-territories" class="fr-select select-search-filter-form">

@@ -25,10 +25,14 @@
                             {% for child in item.getChildren %}
                                 {% if child.featureEnable and child.label is not empty and is_granted(child.roleGranted) and not is_granted(child.roleNotGranted) %}
                                     <li>
+                                        {% set ariaCurrent = (child.route == app.request.get('_route') or child.getBaseRoute() in app.request.get('_route')) ? 'page' : 'false' %}
+                                        {% if ariaCurrent == 'page' and child.route == 'back_partner_view' and app.request.get('_route_params') != child.routeParameters %}
+                                            {% set ariaCurrent = 'false' %}
+                                        {% endif %}
                                         <a class="fr-nav__link"
                                            href="{{ path(child.route, child.routeParameters) }}"
                                            target="_self"
-                                           aria-current="{{ child.route == app.request.get('_route') or child.getBaseRoute() in app.request.get('_route') ? 'page' : 'false' }}"
+                                           aria-current="{{ariaCurrent}}"
                                         >{{ child.label }}</a>
                                     </li>
                                 {% endif %}
