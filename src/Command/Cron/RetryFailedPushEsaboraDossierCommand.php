@@ -35,7 +35,7 @@ class RetryFailedPushEsaboraDossierCommand extends AbstractCronCommand
     {
         $io = new SymfonyStyle($input, $output);
         $affectations = $this->jobEventRepository->findFailedJobEvents(
-            InterfacageType::ESABORA->name,
+            InterfacageType::ESABORA->value,
             AbstractEsaboraService::ACTION_PUSH_DOSSIER_ADRESSE
         );
 
