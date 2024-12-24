@@ -45,6 +45,7 @@ class SearchZoneType extends AbstractType
             'choice_label' => function ($choice) {
                 return $choice->label();
             },
+            'required' => false,
             'placeholder' => 'Sélectionner le type de zone',
             'label' => false,
         ]);
