@@ -55,3 +55,11 @@ job_event:
     status: success
     code_status: 200
     partner_type: "COMMUNE_SCHS"
+  -
+    partner: "partenaire-13-06@histologe.fr"
+    signalement: "2023-10"
+    service: "esabora"
+    action: "push_dossier_adresse"
+    status: failed
+    code_status: 500
+    partner_type: "ARS"

@@ -12,6 +12,7 @@ use Doctrine\ORM\NonUniqueResultException;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
+use Symfony\Component\Routing\RequestContext;
 
 class DossierMessageSISHFactoryTest extends TestCase
 {
@@ -87,5 +88,26 @@ class DossierMessageSISHFactoryTest extends TestCase
             \DateTimeImmutable::class,
             \DateTimeImmutable::createFromFormat('d/m/Y', $dossierMessage->getSignalementDate())
         );
+    }
+
+    public function testSupportsThrowsLogicExceptionForInvalidUrlOnLocalhost()
+    {
+        $affectation = $this->getAffectation(PartnerType::ARS);
+
+        $context = new RequestContext('localhost'); // On simule que l'hôte est localhost
+        $urlGenerator = $this->createMock(UrlGeneratorInterface::class);
+        $urlGenerator->method('getContext')->willReturn($context);
+
+        $dossierMessageSISHFactory = new DossierMessageSISHFactory(
+            $this->createMock(SuiviRepository::class),
+            $this->createMock(UploadHandlerService::class),
+            $this->createMock(ParameterBagInterface::class),
+            $urlGenerator
+        );
+
+        $this->expectException(\LogicException::class);
+        $this->expectExceptionMessage('Partner url must contain "histologe_wiremock" when on localhost.');
+
+        $dossierMessageSISHFactory->supports($affectation);
     }
 }
