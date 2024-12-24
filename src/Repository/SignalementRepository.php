@@ -628,13 +628,7 @@ class SignalementRepository extends ServiceEntityRepository
             ->setParameter('concat_separator', SignalementAffectationListView::SEPARATOR_CONCAT)
             ->setParameter('group_concat_separator_1', SignalementExport::SEPARATOR_GROUP_CONCAT);
 
-        $iterableResult = $qb->getQuery()->toIterable();
-        foreach ($iterableResult as $key => $row) {
-            yield $row;
-            if (($key % 100) === 0) {
-                gc_collect_cycles();
-            }
-        }
+        return $qb->getQuery()->toIterable();
     }
 
     public function findCities(?User $user = null, ?Territory $territory = null): array|int|string

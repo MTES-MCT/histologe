@@ -22,7 +22,6 @@ readonly class SignalementExportLoader
     public function load(User $user, ?array $filters, ?array $selectedColumns = null): Spreadsheet
     {
         $spreadsheet = new Spreadsheet();
-        $spreadsheet->getCalculationEngine()->disableCalculationCache();
         $sheet = $spreadsheet->getActiveSheet();
 
         $keysToRemove = [];
