@@ -5,6 +5,7 @@ namespace App\Messenger;
 use App\Entity\Affectation;
 use App\Factory\Interconnection\DossierMessageFactoryInterface;
 use Symfony\Component\DependencyInjection\Attribute\AutowireIterator;
+use Symfony\Component\Messenger\Exception\ExceptionInterface;
 use Symfony\Component\Messenger\MessageBusInterface;
 
 class InterconnectionBus
@@ -18,6 +19,9 @@ class InterconnectionBus
         $this->dossierMessageFactories = $dossierMessageFactories;
     }
 
+    /**
+     * @throws ExceptionInterface
+     */
     public function dispatch(Affectation $affectation): void
     {
         if (!$affectation->getPartner()->canSyncWithEsabora()
