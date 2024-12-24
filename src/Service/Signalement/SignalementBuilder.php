@@ -166,7 +166,7 @@ class SignalementBuilder
             $this->signalement->setJsonContent($jsonContent);
         }
 
-        if (!empty($this->signalementDraftRequest->getZoneConcerneeConstatationDesordres())) {
+        if (!empty($this->signalementDraftRequest->getZoneConcerneeDebutDesordres())) {
             $this->signalement->setDebutDesordres(
                 DebutDesordres::tryFrom(strtoupper($this->signalementDraftRequest->getZoneConcerneeDebutDesordres()))
             );
