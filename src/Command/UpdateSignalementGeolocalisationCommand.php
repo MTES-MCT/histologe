@@ -9,6 +9,7 @@ use App\Service\Signalement\SignalementAddressUpdater;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
+use Symfony\Component\Console\Helper\ProgressBar;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -35,9 +36,12 @@ class UpdateSignalementGeolocalisationCommand extends Command
         $this
             ->addOption('zip', null, InputOption::VALUE_OPTIONAL, 'Territory zip to target')
             ->addOption('uuid', null, InputOption::VALUE_OPTIONAL, 'UUID du signalement')
-            ->addOption('from_created_at', null, InputOption::VALUE_OPTIONAL, 'Get signalements data from created_at');
+            ->addOption('from_created_at', null, InputOption::VALUE_OPTIONAL, 'Get signalements data from created_at to 1 month');
     }
 
+    /**
+     * @throws \DateMalformedStringException
+     */
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $io = new SymfonyStyle($input, $output);
@@ -45,6 +49,7 @@ class UpdateSignalementGeolocalisationCommand extends Command
         $zip = $input->getOption('zip');
         $uuid = $input->getOption('uuid');
         $fromCreatedAt = $input->getOption('from_created_at');
+        $toCreatedAt = null;
         $signalements = null;
 
         /** @var SignalementRepository $signalementRepository */
@@ -57,9 +62,14 @@ class UpdateSignalementGeolocalisationCommand extends Command
         } elseif (!empty($fromCreatedAt)) {
             $fromCreatedAt = \DateTimeImmutable::createFromFormat('Y-m-d', $fromCreatedAt);
             if (false !== $fromCreatedAt) {
+                $toCreatedAt = $fromCreatedAt->modify('+1 month');
                 $signalements = $signalementRepository->findSignalementsBetweenDates(
                     $fromCreatedAt,
-                    new \DateTimeImmutable()
+                    $toCreatedAt,
+                );
+                $io->note(\sprintf('Update signalements from %s to %s',
+                    $fromCreatedAt->format('Y-m-d'),
+                    $toCreatedAt->format('Y-m-d'))
                 );
             }
         }
@@ -71,19 +81,21 @@ class UpdateSignalementGeolocalisationCommand extends Command
         }
 
         $i = 0;
+        $progressBar = new ProgressBar($output, \count($signalements));
+        $progressBar->start();
         /** @var Signalement $signalement */
         foreach ($signalements as $signalement) {
             $this->signalementAddressUpdater->updateAddressOccupantFromBanData($signalement);
-
-            $io->success(\sprintf('Signalement %s updated', $signalement->getUuid()));
-
             if (0 === $i % self::BATCH_SIZE) {
                 $this->entityManager->flush();
             }
             ++$i;
+            $progressBar->advance();
         }
-
         $this->entityManager->flush();
+        $progressBar->finish();
+        $io->newLine();
+        $io->success(sprintf("%s signalements updated", $i));
 
         return Command::SUCCESS;
     }
