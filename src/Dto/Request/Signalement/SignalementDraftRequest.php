@@ -370,7 +370,7 @@ class SignalementDraftRequest
     private ?string $logementSocialDateNaissance = null;
     #[Assert\Length(max: 20, maxMessage: 'Le montant de l\'allocation ne doit pas dépasser {{ limit }} caractères.')]
     private ?string $logementSocialMontantAllocation = null;
-    #[Assert\Length(max: 50, maxMessage: 'Le numéro d\'allocataire ne doit pas dépasser {{ limit }} caractères.')]
+    #[Assert\Length(max: 25, maxMessage: 'Le numéro d\'allocataire ne doit pas dépasser {{ limit }} caractères.')]
     private ?string $logementSocialNumeroAllocataire = null;
     #[Assert\Choice(
         choices: ['oui', 'non', 'nsp'],
