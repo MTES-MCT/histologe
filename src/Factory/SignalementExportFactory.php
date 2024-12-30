@@ -8,6 +8,7 @@ use App\Entity\Enum\ProfileDeclarant;
 use App\Entity\Enum\VisiteStatus;
 use App\Entity\Intervention;
 use App\Entity\Model\TypeCompositionLogement;
+use App\Entity\Model\InformationProcedure;
 use App\Entity\User;
 use App\Service\Signalement\SignalementAffectationHelper;
 use App\Utils\DateHelper;
@@ -51,6 +52,16 @@ class SignalementExportFactory
             $enfantsM6 = ($data['nbEnfantsM6'] > 0) ? 'oui' : 'non';
         }
 
+        $infoProcedureBailDate = null;
+        if (isset($data['informationProcedure']) && $data['informationProcedure'] instanceof InformationProcedure) {
+            $infoProcedureBailDate = $data['informationProcedure']->getinfoProcedureBailDate();
+        } 
+
+        $infoProcedureBailMoyen = null;
+        if (isset($data['informationProcedure']) && $data['informationProcedure'] instanceof InformationProcedure) {
+            $infoProcedureBailMoyen = $data['informationProcedure']->getinfoProcedureBailMoyen();
+        } 
+
         return new SignalementExport(
             reference: $data['reference'],
             createdAt: $createdAt,
@@ -78,6 +89,8 @@ class SignalementExportFactory
             photos: '-',
             documents: '-',
             isProprioAverti: $this->mapData($data, 'isProprioAverti'),
+            infoProcedureBailDate: $infoProcedureBailDate,
+            infoProcedureBailMoyen: $infoProcedureBailMoyen,
             nbPersonnes: $data['nbOccupantsLogement'],
             enfantsM6: $enfantsM6,
             isAllocataire: $this->mapData($data, 'isAllocataire'),
