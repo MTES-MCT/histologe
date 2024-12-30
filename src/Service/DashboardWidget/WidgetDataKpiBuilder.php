@@ -174,7 +174,7 @@ class WidgetDataKpiBuilder
         return $this;
     }
 
-    private function canAddCard($key): bool
+    private function canAddCard(string $key): bool
     {
         $roles = $this->user->getRoles();
         $role = array_shift($roles);
