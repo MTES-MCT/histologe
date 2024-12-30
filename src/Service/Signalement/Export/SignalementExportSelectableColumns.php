@@ -16,6 +16,8 @@ class SignalementExportSelectableColumns
         'PHOTOS' => ['name' => 'Photos', 'description' => 'Le nom des fichiers photo ajoutés au signalement', 'export' => 'photos'],
         'DOCUMENTS' => ['name' => 'Documents', 'description' => 'Le nom des documents ajoutés au signalement', 'export' => 'documents'],
         'PROPRIETAIRE_AVERTI' => ['name' => 'Propriétaire averti', 'description' => 'Si le propriétaire a été averti ou non de la situation', 'export' => 'isProprioAverti'],
+        'PROPRIETAIRE_AVERTI_DATE' => ['name' => 'Date d\'information du propriétaire', 'description' => 'A quelle date le propriétaire a été averti de la situation', 'export' => 'infoProcedureBailDate'],
+        'PROPRIETAIRE_AVERTI_MOYEN' => ['name' => 'Moyen d\'information du propriétaire', 'description' => 'Par quel moyen le propriétaire a été averti de la situation', 'export' => 'infoProcedureBailMoyen'],
         'NB_PERSONNES' => ['name' => 'Nb personnes', 'description' => 'Le nombre de personnes occupant le logement', 'export' => 'nbPersonnes'],
         'MOINS_6_ANS' => ['name' => 'Enfants -6 ans', 'description' => 'Si oui ou non il y a des enfants de - de 6 ans dans le logement', 'export' => 'enfantsM6'],
         'NUM_ALLOCATAIRE' => ['name' => 'Numéro allocataire', 'description' => 'Le numéro d\'allocataire de l\'occupant', 'export' => 'numAllocataire'],
