@@ -207,6 +207,21 @@ class PartnerRepository extends ServiceEntityRepository
                 $clauseSubquery = 'AND p.id '.$operator.' ('.implode(',', $partnersParams).')';
             }
         }
+        // $sql = '
+        //         SELECT p.id, p.nom as name
+        //         FROM partner p
+        //         LEFT JOIN partner_zone pz ON p.id = pz.partner_id
+        //         LEFT JOIN zone z ON pz.zone_id = z.id
+        //         LEFT JOIN partner_excluded_zone pez ON p.id = pez.partner_id
+        //         LEFT JOIN zone ez ON pez.zone_id = ez.id
+        //         WHERE p.is_archive = 0
+        //         AND p.territory_id = :territory
+        //         AND (p.insee LIKE :insee OR p.insee LIKE \'%[]%\' OR p.insee LIKE \'%[""]%\')
+        //         AND (z.id IS NULL OR ST_Contains(ST_GeomFromText(z.area), Point(:lng, :lat)))
+        //         AND (ez.id IS NULL OR NOT ST_Contains(ST_GeomFromText(ez.area), Point(:lng, :lat)))
+        //         '.$clauseSubquery.'
+        //         ORDER BY p.nom ASC';
+
         $sql = '
                 SELECT p.id, p.nom as name
                 FROM partner p
@@ -216,8 +231,22 @@ class PartnerRepository extends ServiceEntityRepository
                 LEFT JOIN zone ez ON pez.zone_id = ez.id
                 WHERE p.is_archive = 0
                 AND p.territory_id = :territory
-                AND (p.insee LIKE :insee OR p.insee LIKE \'%[]%\' OR p.insee LIKE \'%[""]%\')
-                AND (z.id IS NULL OR ST_Contains(ST_GeomFromText(z.area), Point(:lng, :lat)))
+                AND (
+                    (
+                        p.insee IS NOT NULL
+                        AND p.insee != \'[]\'
+                        AND p.insee != \'[""]\'
+                        AND p.insee LIKE :insee
+                    )
+                    OR (
+                        z.id IS NOT NULL
+                        AND ST_Contains(ST_GeomFromText(z.area), Point(:lng, :lat))
+                    )
+                    OR (
+                        (p.insee IS NULL OR p.insee LIKE \'[]\' OR p.insee LIKE \'[""]\' )
+                        AND z.id IS NULL
+                    )
+                )
                 AND (ez.id IS NULL OR NOT ST_Contains(ST_GeomFromText(ez.area), Point(:lng, :lat)))
                 '.$clauseSubquery.'
                 ORDER BY p.nom ASC';

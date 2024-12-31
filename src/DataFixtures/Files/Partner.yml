@@ -579,7 +579,6 @@ partners:
   -
     nom: "Cocoland"
     email: "partenaire-44-04@histologe.fr"
-    insee: "[\"44179\"]"
     is_archive: 0
     territory: "Loire-Atlantique"
     type: "COMMUNE_SCHS"
@@ -603,3 +602,9 @@ partners:
     territory: "Loire-Atlantique"
     type: "BAILLEUR_SOCIAL"
     bailleur: "Habitat 44"
+  -
+    nom: "Tiers-Lieu"
+    email: "partenaire-44-06@histologe.fr"
+    is_archive: 0
+    territory: "Loire-Atlantique"
+    type: "COMMUNE_SCHS"
