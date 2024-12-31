@@ -142,9 +142,9 @@
                             {% if signalement.isProprioAverti and signalement.informationProcedure %}
                                 <li>
                                     <b>Moyen d'information du propriétaire :</b>
-                                    {# todo: ajouter les labels, un enum ? #}
                                     {% if signalement.informationProcedure.infoProcedureBailMoyen %}
-                                        {{ signalement.informationProcedure.infoProcedureBailMoyen }} 
+                                        {% set MoyenContact = enum('\\App\\Entity\\Enum\\MoyenContact').tryFromString(signalement.informationProcedure.infoProcedureBailMoyen) %}
+                                        {{ MoyenContact.label }}
                                     {% endif %}
                                 </li>
                                 <li>

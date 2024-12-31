@@ -23,10 +23,11 @@
     <div class="fr-col-12">
         <strong>Moyen d'information du bailleur :</strong>
         {% if signalement.informationProcedure and signalement.informationProcedure.infoProcedureBailMoyen %}
-            {# todo : ajouter les labels, un enum ? #}
-            {{ signalement.informationProcedure.infoProcedureBailMoyen }} 
+            {% set MoyenContact = enum('\\App\\Entity\\Enum\\MoyenContact').tryFromString(signalement.informationProcedure.infoProcedureBailMoyen) %}
+            {{ MoyenContact.label }}
         {% endif %}
     </div>
+
     <div class="fr-col-12">
         <strong>Date d'information du bailleur :</strong>
         {% if signalement.informationProcedure and signalement.informationProcedure.infoProcedureBailDate %}

@@ -40,8 +40,9 @@
                                         null != signalement.createdFrom)
                                     }}
                                 </label>
+                                {% set MoyenContact = enum('\\App\\Entity\\Enum\\MoyenContact') %}
                                 <select class="fr-select" id="procedureDemarchesinfoProcedureBailMoyen" name="infoProcedureBailMoyen">
-                                    <option value="" {{ infoProcedureBailMoyen not in ['courrier', 'email', 'telephone', 'sms', 'autre', 'nsp'] ? 'selected' : '' }}></option>
+                                    <option value="" {{ infoProcedureBailMoyen|upper not in MoyenContact.names() ? 'selected' : '' }}></option>
                                     <option value="courrier" {{ infoProcedureBailMoyen is same as 'courrier' ? 'selected' : '' }}>Courrier</option>
                                     <option value="email" {{ infoProcedureBailMoyen is same as 'email' ? 'selected' : '' }}>E-mail</option>
                                     <option value="telephone" {{ infoProcedureBailMoyen is same as 'telephone' ? 'selected' : '' }}>Téléphone</option>
