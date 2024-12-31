@@ -1,0 +1,106 @@
+name: Playwright Tests
+on:
+  push:
+    branches:
+      - main
+      - develop
+  pull_request:
+    branches:
+      - main
+      - develop
+
+jobs:
+  playwright:
+    timeout-minutes: 60
+    runs-on: ubuntu-latest
+    
+    services:
+      # https://docs.docker.com/samples/library/mysql/
+      mysql:
+        image: mysql:8.0
+        env:
+          MYSQL_ALLOW_EMPTY_PASSWORD: false
+          MYSQL_ROOT_PASSWORD: histologe
+          MYSQL_DATABASE: histologe_db
+        ports:
+          - 3306:3306
+        options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
+
+    strategy:
+      fail-fast: true
+      matrix:
+        php-versions: ['8.3']
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+
+    - name: Setup PHP, extensions and composer with shivammathur/setup-php
+      uses: shivammathur/setup-php@v2
+      with:
+        php-version: ${{ matrix.php-versions }}
+        extensions: mbstring, xml, ctype, iconv, intl, pdo, pdo_mysql, dom, filter, gd, iconv, json, mbstring, sockets
+      env:
+        update: true
+
+    #- uses: actions/setup-node@v4
+    #  with:
+    #    node-version: lts/*
+
+    - name: Get composer cache directory
+      id: composer-cache
+      run: echo "::set-output name=dir::$(composer config cache-files-dir)"
+
+    - name: Cache composer dependencies
+      uses: actions/cache@v1
+      with:
+         path: ${{ steps.composer-cache.outputs.dir }}
+         key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.lock') }}
+         restore-keys: ${{ runner.os }}-composer-
+
+    - name: Cache playwright dependencies
+      uses: actions/cache@v3
+      with:
+        path: ~/.cache/ms-playwright
+        key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+        restore-keys:
+          ${{ runner.os }}-node-
+
+    - name: Init CI environment variables
+      # HACK: Symfony won't read from 'env: { DATABASE_URL: ... }', so we need to edit
+      # .env directly.
+      run: |
+        echo "DATABASE_URL=mysql://root:histologe@127.0.0.1:${{ job.services.mysql.ports['3306'] }}/histologe_db" >> .env
+
+    - name: Install Symfony CLI
+      run: |
+        curl -1sLf 'https://dl.cloudsmith.io/public/symfony/stable/setup.deb.sh' | sudo -E bash
+        sudo apt install symfony-cli
+
+    - name: Call Make
+      run: make test_e2e_ci BIN_CONSOLE="php bin/console" BIN_COMPOSER="composer"
+      env:
+        HISTOLOGE_URL: http://localhost:8080
+        DATABASE_URL: mysql://root:histologe@127.0.0.1:${{ job.services.mysql.ports['3306'] }}/histologe_db
+
+    #- name: Install dependencies
+    #  run: npm ci
+
+    #- name: Install Playwright Browsers
+    #  run: npx playwright install --with-deps
+
+    #- name: Run Playwright tests
+    #  run: npx playwright test
+    #  env:
+    #    APP_SECRET: ${{ secrets.APP_SECRET }}
+    #    PLAYWRIGHT_TEST_BASE_URL: http://localhost:8080
+    #    DATABASE_URL: mysql://root:histologe@127.0.0.1:${{ job.services.mysql.ports['3306'] }}/histologe_db
+    #    HISTOLOGE_URL: http://localhost:8080
+    #    SERVER_NAME: localhost:8080
+
+    - uses: actions/upload-artifact@v4
+      if: always()
+      with:
+        name: playwright-report
+        path: playwright-report/
+        retention-days: 30
