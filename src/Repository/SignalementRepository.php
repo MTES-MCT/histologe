@@ -16,6 +16,7 @@ use App\Entity\Signalement;
 use App\Entity\Suivi;
 use App\Entity\Territory;
 use App\Entity\User;
+use App\Entity\View\ViewLatestIntervention;
 use App\Service\Interconnection\Idoss\IdossService;
 use App\Service\ListFilters\SearchArchivedSignalement;
 use App\Service\Signalement\SearchFilter;
@@ -563,6 +564,9 @@ class SignalementRepository extends ServiceEntityRepository
         return $qb;
     }
 
+    /**
+     * @throws Exception
+     */
     public function findSignalementAffectationIterable(User $user, array $options): \Generator
     {
         // temporary increase the group_concat_max_len to a higher value, for texts in GROUP_CONCAT
@@ -609,25 +613,19 @@ class SignalementRepository extends ServiceEntityRepository
             GROUP_CONCAT(DISTINCT desordreCategories.label SEPARATOR :group_concat_separator_1) as listDesordreCategories,
             GROUP_CONCAT(DISTINCT desordreCriteres.labelCritere SEPARATOR :group_concat_separator_1) as listDesordreCriteres,
             GROUP_CONCAT(DISTINCT tags.label SEPARATOR :group_concat_separator_1) as etiquettes,
-            GROUP_CONCAT(IFNULL(i.occupantPresent, \'-\') ORDER BY i.scheduledAt ASC SEPARATOR :concat_separator) as interventionOccupantPresent,
-            GROUP_CONCAT(IFNULL(i.concludeProcedure, \'-\') ORDER BY i.scheduledAt ASC SEPARATOR :concat_separator) as interventionConcludeProcedure,
-            \'-désactivation temporaire-\' as interventionDetails,
-            GROUP_CONCAT(
-                DISTINCT
-                CONCAT(
-                    i.status,
-                    :concat_separator,
-                    i.scheduledAt
-                )
-                ORDER BY i.scheduledAt ASC
-                SEPARATOR :concat_separator
-            ) as interventionsData
+            MAX(vli.occupantPresent) AS interventionOccupantPresent,
+            MAX(vli.concludeProcedure) AS interventionConcludeProcedure,
+            MAX(vli.details) AS interventionDetails,
+            MAX(vli.status) AS interventionStatus,
+            MAX(vli.scheduledAt) AS interventionScheduledAt,
+            MAX(vli.nbVisites) AS interventionNbVisites
             '
         )->leftJoin('s.situations', 'situations')
             ->leftJoin('s.criteres', 'criteres')
             ->leftJoin('s.desordreCategories', 'desordreCategories')
             ->leftJoin('s.desordreCriteres', 'desordreCriteres')
             ->leftJoin('s.tags', 'tags')
+            ->leftJoin(ViewLatestIntervention::class, 'vli', 'WITH', 'vli.signalementId = s.id')
             ->setParameter('concat_separator', SignalementAffectationListView::SEPARATOR_CONCAT)
             ->setParameter('group_concat_separator_1', SignalementExport::SEPARATOR_GROUP_CONCAT);
 
