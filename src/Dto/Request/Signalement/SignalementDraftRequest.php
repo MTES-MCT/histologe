@@ -414,13 +414,13 @@ class SignalementDraftRequest
     private ?string $infoProcedureBailDate = null;
 
     #[Assert\Length(
-        max: 255, // TODO : à vérifier
+        max: 255,
         maxMessage: 'La réponse du bailleur ne doit pas dépasser {{ limit }} caractères.',
     )]
     private ?string $infoProcedureBailReponse = null;
 
     #[Assert\Length(
-        max: 255, // TODO : à vérifier
+        max: 30,
         maxMessage: 'Le numéro de réclamation ne doit pas dépasser {{ limit }} caractères.',
     )]
     private ?string $infoProcedureBailNumero = null;

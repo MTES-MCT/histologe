@@ -1599,10 +1599,12 @@
           "type": "SignalementFormTextarea",
           "label": "Quelle a été la réponse de votre bailleur (propriétaire) ?",
           "slug": "info_procedure_bail_reponse",
+          "description": "Format attendu : 255 caractères maximum",
           "conditional": {
             "show": "formStore.data.info_procedure_bailleur_prevenu ===  'oui'"
           },
           "validate": {
+            "maxLength": 255,
             "message": "Veuillez renseigner la réponse de votre bailleur."
           }
         },
@@ -1610,10 +1612,12 @@
           "type": "SignalementFormTextfield",
           "label": "Si vous l'avez, indiquez le numéro de réclamation fourni par le bailleur (facultatif)",
           "slug": "info_procedure_bail_numero",
+          "description": "Format attendu : 30 caractères maximum",
           "conditional": {
             "show": "formStore.data.info_procedure_bailleur_prevenu ===  'oui' && formStore.data.signalement_concerne_logement_social_autre_tiers === 'oui'"
           },
           "validate": {
+            "maxLength": 30,
             "required": false
           }
         }

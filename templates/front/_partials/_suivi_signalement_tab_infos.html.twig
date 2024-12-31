@@ -452,9 +452,9 @@ and signalement.profileDeclarant is not same as enum('App\\Entity\\Enum\\Profile
 			<br>
 			{% if signalement.informationProcedure %}
 				Moyen d'information du bailleur :
-				{# todo : ajouter les labels, un enum ? #}
 				{% if signalement.informationProcedure.infoProcedureBailMoyen %}
-					{{ signalement.informationProcedure.infoProcedureBailMoyen }} 
+					{% set MoyenContact = enum('\\App\\Entity\\Enum\\MoyenContact').tryFromString(signalement.informationProcedure.infoProcedureBailMoyen) %}
+					{{ MoyenContact.label }}
 				{% endif %}
 				<br>
 				Date d'information du bailleur :

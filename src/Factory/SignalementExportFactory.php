@@ -4,11 +4,12 @@ namespace App\Factory;
 
 use App\Dto\SignalementExport;
 use App\Entity\Enum\MotifCloture;
+use App\Entity\Enum\MoyenContact;
 use App\Entity\Enum\ProfileDeclarant;
 use App\Entity\Enum\VisiteStatus;
 use App\Entity\Intervention;
-use App\Entity\Model\TypeCompositionLogement;
 use App\Entity\Model\InformationProcedure;
+use App\Entity\Model\TypeCompositionLogement;
 use App\Entity\User;
 use App\Service\Signalement\SignalementAffectationHelper;
 use App\Utils\DateHelper;
@@ -55,12 +56,13 @@ class SignalementExportFactory
         $infoProcedureBailDate = null;
         if (isset($data['informationProcedure']) && $data['informationProcedure'] instanceof InformationProcedure) {
             $infoProcedureBailDate = $data['informationProcedure']->getinfoProcedureBailDate();
-        } 
+        }
 
-        $infoProcedureBailMoyen = null;
+        $infoProcedureBailMoyen = $infoProcedureBailMoyenLabel = null;
         if (isset($data['informationProcedure']) && $data['informationProcedure'] instanceof InformationProcedure) {
-            $infoProcedureBailMoyen = $data['informationProcedure']->getinfoProcedureBailMoyen();
-        } 
+            $infoProcedureBailMoyen = strtoupper($data['informationProcedure']->getinfoProcedureBailMoyen());
+            $infoProcedureBailMoyenLabel = MoyenContact::tryFrom($infoProcedureBailMoyen)?->label();
+        }
 
         return new SignalementExport(
             reference: $data['reference'],
@@ -90,7 +92,7 @@ class SignalementExportFactory
             documents: '-',
             isProprioAverti: $this->mapData($data, 'isProprioAverti'),
             infoProcedureBailDate: $infoProcedureBailDate,
-            infoProcedureBailMoyen: $infoProcedureBailMoyen,
+            infoProcedureBailMoyen: $infoProcedureBailMoyenLabel,
             nbPersonnes: $data['nbOccupantsLogement'],
             enfantsM6: $enfantsM6,
             isAllocataire: $this->mapData($data, 'isAllocataire'),

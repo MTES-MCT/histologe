@@ -275,8 +275,8 @@ class SignalementDraftRequestTest extends WebTestCase
             ->setInfoProcedureBailleurPrevenu('invalid_bailleur_prevenu')
             ->setinfoProcedureBailMoyen('invalid_bailleur_moyen')
             ->setinfoProcedureBailDate('invalid_bailleur_date')
-            ->setinfoProcedureBailReponse(str_repeat('v', 256))// TODO : check taille
-            ->setinfoProcedureBailNumero(str_repeat('v', 256))// TODO : check taille
+            ->setinfoProcedureBailReponse(str_repeat('v', 256))
+            ->setinfoProcedureBailNumero(str_repeat('v', 31))
             ->setInfoProcedureAssuranceContactee('invalid_assurance_contactee')
             ->setInfoProcedureReponseAssurance(str_repeat('v', 256))
             ->setInfoProcedureDepartApresTravaux('invalid_depart_apres_travaux')

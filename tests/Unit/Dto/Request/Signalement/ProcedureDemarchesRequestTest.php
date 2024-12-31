@@ -32,7 +32,10 @@ class ProcedureDemarchesRequestTest extends KernelTestCase
 
         $this->assertSame('0', $procedureDemarchesRequest->getIsProprioAverti());
         $this->assertSame('oui', $procedureDemarchesRequest->getInfoProcedureAssuranceContactee());
-        // TODO : ajouter les nouvelles lignes
+        $this->assertSame('autre', $procedureDemarchesRequest->getinfoProcedureBailMoyen());
+        $this->assertSame('05/2024', $procedureDemarchesRequest->getinfoProcedureBailDate());
+        $this->assertSame('Le bailleur nous a envoyé nous faire cuire un oeuf.', $procedureDemarchesRequest->getinfoProcedureBailReponse());
+        $this->assertSame('1234567890', $procedureDemarchesRequest->getinfoProcedureBailNumero());
         $this->assertSame('L\'assurance a accepté notre demande.',
             $procedureDemarchesRequest->getInfoProcedureReponseAssurance());
         $this->assertSame('oui', $procedureDemarchesRequest->getInfoProcedureDepartApresTravaux());
@@ -48,8 +51,8 @@ class ProcedureDemarchesRequestTest extends KernelTestCase
             isProprioAverti: '2',
             infoProcedureBailMoyen: 'pigeon voyageur',
             infoProcedureBailDate: 'hier',
-            infoProcedureBailReponse: str_repeat('a', 256),// TODO : à vérifier
-            infoProcedureBailNumero: str_repeat('a', 256),// TODO : à vérifier
+            infoProcedureBailReponse: str_repeat('a', 256),
+            infoProcedureBailNumero: str_repeat('a', 31),
             infoProcedureAssuranceContactee: 'oui-non',
             infoProcedureReponseAssurance: str_repeat('a', 256),
             infoProcedureDepartApresTravaux: 'oui-non',
