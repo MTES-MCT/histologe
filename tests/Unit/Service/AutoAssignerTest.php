@@ -165,9 +165,9 @@ class AutoAssignerTest extends KernelTestCase
         $this->assertEquals(Signalement::STATUS_NEED_VALIDATION, $signalement->getStatut());
     }
 
-    public function testAutoAssignmentOneZoneExcluded(): void
+    public function testAutoAssignmentOneZoneIncludedOneCodeInsee(): void
     {
-        // signalement 2023-27 au bourg de St-Mars, 1 partenaire exclus de cette zone et 1 inclus
+        // signalement 2023-27 au bourg de St-Mars, 1 partenaire au code insee, et 1 partenaire dans la zone
         /** @var Signalement $signalement */
         $signalement = $this->signalementRepository->findOneBy(['reference' => '2023-27']);
         $signalement->setStatut(Signalement::STATUS_NEED_VALIDATION);
@@ -175,13 +175,13 @@ class AutoAssignerTest extends KernelTestCase
         ->method('createInstanceFrom');
         $this->suiviManager->expects($this->once())
         ->method('persist');
-        $this->testHelper($signalement, 1, ['Mairie de Saint-Mars du Désert']);
+        $this->testHelper($signalement, 2, ['Mairie de Saint-Mars du Désert', 'Tiers-Lieu']);
         $this->assertEquals(Signalement::STATUS_ACTIVE, $signalement->getStatut());
     }
 
     public function testAutoAssignmentZoneIncluded(): void
     {
-        // signalement 2024-09 à La Bodinière, 2 partenaires sur cette zone
+        // signalement 2024-09 à La Bodinière, 2 partenaires sur cette zone +1 en code insee
         /** @var Signalement $signalement */
         $signalement = $this->signalementRepository->findOneBy(['reference' => '2024-09']);
         $signalement->setStatut(Signalement::STATUS_NEED_VALIDATION);
@@ -189,13 +189,13 @@ class AutoAssignerTest extends KernelTestCase
         ->method('createInstanceFrom');
         $this->suiviManager->expects($this->once())
         ->method('persist');
-        $this->testHelper($signalement, 2, ['Mairie de Saint-Mars du Désert', 'Cocoland']);
+        $this->testHelper($signalement, 3, ['Mairie de Saint-Mars du Désert', 'Cocoland', 'Tiers-Lieu']);
         $this->assertEquals(Signalement::STATUS_ACTIVE, $signalement->getStatut());
     }
 
     public function testAutoAssignmentProcedure(): void
     {
-        // signalement 2024-09 à La Bodinière, 2 partenaires sur cette zone
+        // signalement 2024-09 à La Bodinière, 2 partenaires sur cette zone +1 en code insee
         // + 1 partenaire si procédure DANGER
         /** @var Signalement $signalement */
         $signalement = $this->signalementRepository->findOneBy(['reference' => '2024-09']);
@@ -207,14 +207,14 @@ class AutoAssignerTest extends KernelTestCase
         ->method('createInstanceFrom');
         $this->suiviManager->expects($this->once())
         ->method('persist');
-        $this->testHelper($signalement, 3, ['Mairie de Saint-Mars du Désert', 'SDIS 44', 'Cocoland']);
+        $this->testHelper($signalement, 4, ['Mairie de Saint-Mars du Désert', 'SDIS 44', 'Cocoland', 'Tiers-Lieu']);
         $this->assertEquals(Signalement::STATUS_ACTIVE, $signalement->getStatut());
     }
 
     public function testAutoAssignmentBailleurSocial(): void
     {
         // signalement 2024-11 à Saint-Mars du Désert, logement social lié au bailleur Habitat 44
-        // partenaire commune et partenaire bailleur social à affecter
+        // partenaire commune et partenaire bailleur social à affecter + partenaire dans la zone
         /** @var Signalement $signalement */
         $signalement = $this->signalementRepository->findOneBy(['reference' => '2024-11']);
         $signalement->setStatut(Signalement::STATUS_NEED_VALIDATION);
@@ -222,7 +222,7 @@ class AutoAssignerTest extends KernelTestCase
         ->method('createInstanceFrom');
         $this->suiviManager->expects($this->once())
         ->method('persist');
-        $this->testHelper($signalement, 2, ['Mairie de Saint-Mars du Désert', 'Partner Habitat 44']);
+        $this->testHelper($signalement, 3, ['Mairie de Saint-Mars du Désert', 'Partner Habitat 44', 'Tiers-Lieu']);
         $this->assertEquals(Signalement::STATUS_ACTIVE, $signalement->getStatut());
     }
 

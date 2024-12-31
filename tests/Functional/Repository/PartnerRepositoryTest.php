@@ -116,6 +116,7 @@ class PartnerRepositoryTest extends KernelTestCase
         });
         $this->assertCount(0, $partnerZone);
     }
+    // TODO rajouter des tests sur codes insee et zones
 
     public function testGetPartnerPaginator(): void
     {

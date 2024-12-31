@@ -61,24 +61,20 @@ class CodeInseeSpecification implements SpecificationInterface
 
     private function isPartnerListSatisfied(Signalement $signalement, Partner $partner): bool
     {
-        $isZoneOK = true;
         $isZoneExcludedOK = true;
         $isInseeOK = $this->isInseeIncludeInPartnerList($partner, $signalement->getInseeOccupant());
-
-        if ($isInseeOK) {
-            $isZoneOK = $this->isInZone($signalement, $partner->getZones());
-            if ($isZoneOK && $partner->getExcludedZones()->count() > 0) {
-                $isZoneExcludedOK = !$this->isInZone($signalement, $partner->getExcludedZones());
-            }
+        $isZoneOK = $this->isInZone($signalement, $partner->getZones());
+        if ($partner->getExcludedZones()->count() > 0) {
+            $isZoneExcludedOK = !$this->isInZone($signalement, $partner->getExcludedZones());
         }
 
-        return $isInseeOK && $isZoneOK && $isZoneExcludedOK;
+        return ($isInseeOK || $isZoneOK) && $isZoneExcludedOK;
     }
 
     private function isInZone(Signalement $signalement, Collection $zones): bool
     {
         if (0 === $zones->count()) {
-            return true;
+            return false;
         }
 
         foreach ($zones as $zone) {
@@ -92,8 +88,11 @@ class CodeInseeSpecification implements SpecificationInterface
 
     private function isInseeIncludeInPartnerList(Partner $partner, string $insee)
     {
-        return (!empty($partner->getInsee()) && \in_array($insee, $partner->getInsee()))
-        || (empty($partner->getInsee()) && $partner->getZones()->count() > 0);
+        if (0 === \count($partner->getInsee())) {
+            return false;
+        }
+
+        return \in_array($insee, $partner->getInsee());
     }
 
     private function isInseeIncluded(string $insee): bool
