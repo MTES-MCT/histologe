@@ -6,14 +6,14 @@ use Symfony\Bundle\FrameworkBundle\Console\Application;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use Symfony\Component\Console\Tester\CommandTester;
 
-class RetryFailedPushEsaboraDossierCommandTest extends KernelTestCase
+class RetryFailedPushEsaboraSISHCommandTest extends KernelTestCase
 {
     public function testDisplayMessageSuccessfully(): void
     {
         $kernel = self::bootKernel();
         $application = new Application($kernel);
 
-        $command = $application->find('app:retry-failed-push-esabora-dossier');
+        $command = $application->find('app:retry-failed-push-esabora-sish');
 
         $commandTester = new CommandTester($command);
 

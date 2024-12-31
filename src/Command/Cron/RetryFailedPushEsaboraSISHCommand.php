@@ -17,10 +17,10 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 
 #[AsCommand(
-    name: 'app:retry-failed-push-esabora-dossier',
+    name: 'app:retry-failed-push-esabora-sish',
     description: 'Retry failed push to esabora dossier si-sh'
 )]
-class RetryFailedPushEsaboraDossierCommand extends AbstractCronCommand
+class RetryFailedPushEsaboraSISHCommand extends AbstractCronCommand
 {
     public function __construct(
         private readonly JobEventRepository $jobEventRepository,
