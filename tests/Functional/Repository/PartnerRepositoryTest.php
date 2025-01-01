@@ -83,6 +83,41 @@ class PartnerRepositoryTest extends KernelTestCase
         $this->assertCount(1, $partnerMDL);
     }
 
+    public function testFindPartnersAffectableZoneAndInsee(): void
+    {
+        /** @var SignalementRepository $signalementRepository */
+        $signalementRepository = $this->entityManager->getRepository(Signalement::class);
+
+        /** @var Signalement $signalement */
+        $signalement = $signalementRepository->findOneBy(['reference' => '2024-09']);
+
+        $partners = $this->partnerRepository->findByLocalization($signalement, false);
+        $this->assertCount(6, $partners);
+
+        // partenaires définis par zone
+        $partnerZone = array_filter($partners, function ($partner) {
+            return 'Cocoland' === $partner['name'] || 'Tiers-Lieu' === $partner['name'];
+        });
+        $this->assertCount(2, $partnerZone);
+
+        // partenaires définis par code insee
+        $partnerInsee = array_filter($partners, function ($partner) {
+            return 'Mairie de Saint-Mars du Désert' === $partner['name'] || 'Partner Habitat 44' === $partner['name'];
+        });
+
+        // partenaires sans codes insee ni zone (donc sur tout le territoire)
+        $partnerGeneraux = array_filter($partners, function ($partner) {
+            return 'DDT Loire-Atlantique' === $partner['name'] || 'SDIS 44' === $partner['name'];
+        });
+        $this->assertCount(2, $partnerGeneraux);
+
+        // partenaire hors territoire
+        $partnerAilleurs = array_filter($partners, function ($partner) {
+            return 'Partenaire Zone Agde' === $partner['name'];
+        });
+        $this->assertCount(0, $partnerAilleurs);
+    }
+
     public function testFindPartnersAffectableZone(): void
     {
         /** @var SignalementRepository $signalementRepository */
