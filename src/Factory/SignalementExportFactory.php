@@ -55,12 +55,12 @@ class SignalementExportFactory
 
         $infoProcedureBailDate = null;
         if (isset($data['informationProcedure']) && $data['informationProcedure'] instanceof InformationProcedure) {
-            $infoProcedureBailDate = $data['informationProcedure']->getinfoProcedureBailDate();
+            $infoProcedureBailDate = $data['informationProcedure']->getInfoProcedureBailDate();
         }
 
         $infoProcedureBailMoyen = $infoProcedureBailMoyenLabel = null;
         if (isset($data['informationProcedure']) && $data['informationProcedure'] instanceof InformationProcedure) {
-            $infoProcedureBailMoyen = strtoupper($data['informationProcedure']->getinfoProcedureBailMoyen());
+            $infoProcedureBailMoyen = strtoupper($data['informationProcedure']->getInfoProcedureBailMoyen());
             $infoProcedureBailMoyenLabel = MoyenContact::tryFrom($infoProcedureBailMoyen)?->label();
         }
 

@@ -1517,7 +1517,7 @@ class SignalementDraftRequest
         return $this;
     }
 
-    public function getinfoProcedureBailMoyen(): ?string
+    public function getInfoProcedureBailMoyen(): ?string
     {
         return $this->infoProcedureBailMoyen;
     }
@@ -1529,7 +1529,7 @@ class SignalementDraftRequest
         return $this;
     }
 
-    public function getinfoProcedureBailDate(): ?string
+    public function getInfoProcedureBailDate(): ?string
     {
         return $this->infoProcedureBailDate;
     }
@@ -1541,7 +1541,7 @@ class SignalementDraftRequest
         return $this;
     }
 
-    public function getinfoProcedureBailReponse(): ?string
+    public function getInfoProcedureBailReponse(): ?string
     {
         return $this->infoProcedureBailReponse;
     }
@@ -1553,7 +1553,7 @@ class SignalementDraftRequest
         return $this;
     }
 
-    public function getinfoProcedureBailNumero(): ?string
+    public function getInfoProcedureBailNumero(): ?string
     {
         return $this->infoProcedureBailNumero;
     }
