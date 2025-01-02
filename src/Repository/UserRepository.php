@@ -181,7 +181,6 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
                 $queryBuilder
                     ->andWhere('up.id IS NULL');
             }
-
         } else {
             $territory = $searchArchivedUser->getTerritory() ? $this->territoryRepository->find($searchArchivedUser->getTerritory()) : null;
             $partner = $searchArchivedUser->getPartner() ? $this->partnerRepository->find($searchArchivedUser->getPartner()) : null;
