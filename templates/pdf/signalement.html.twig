@@ -326,6 +326,11 @@
                                     {{ picto_no|raw }}
                                 {% endif %}
                             </li>
+                            {% if signalement.informationComplementaire and  signalement.informationComplementaire.informationsComplementairesSituationBailleurDateEffetBail %}
+                                <li>Date d'effet du bail :
+                                    {{ signalement.informationComplementaire.informationsComplementairesSituationBailleurDateEffetBail('d/m/Y')}}
+                                </li>
+                            {% endif %}
                             <li>
                                 <b>Logement social :</b>
                                 {% if signalement.isLogementSocial %}
@@ -360,6 +365,35 @@
                                     Ne sait pas
                                 {% endif %}
                             </li>
+                            {% if signalement.typeCompositionLogement %}
+                                {% if signalement.typeCompositionLogement.bailDpeBail %}
+                                    <li>Bail :
+                                        {% if signalement.typeCompositionLogement.bailDpeBail is same as 'oui' %}
+                                            {{ picto_yes|raw }}
+                                        {% elseif signalement.typeCompositionLogement.bailDpeBail is same as 'non' %}
+                                            {{ picto_no|raw }}
+                                        {% else %}
+                                            {{signalement.typeCompositionLogement.bailDpeBail(false)}}
+                                        {% endif %}
+                                    </li>
+                                {% endif %}
+                                {% if signalement.typeCompositionLogement.bailDpeInvariant %}
+                                    <li>Invariant fiscal :
+                                        {{signalement.typeCompositionLogement.bailDpeInvariant}}
+                                    </li>
+                                {% endif %}
+                                {% if signalement.typeCompositionLogement.bailDpeEtatDesLieux %}
+                                    <li>Etat des lieux :
+                                        {% if signalement.typeCompositionLogement.bailDpeEtatDesLieux is same as 'oui' %}
+                                            {{ picto_yes|raw }}
+                                        {% elseif signalement.typeCompositionLogement.bailDpeEtatDesLieux is same as 'non' %}
+                                            {{ picto_no|raw }}
+                                        {% else %}
+                                            {{signalement.typeCompositionLogement.bailDpeEtatDesLieux(false)}}
+                                        {% endif %}
+                                    </li>
+                                {% endif %}
+                            {% endif %}
                             <li>
                                 <b>DPE :</b>
                                 {% if signalement.typeCompositionLogement %}
