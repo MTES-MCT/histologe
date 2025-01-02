@@ -193,6 +193,20 @@ class AutoAssignerTest extends KernelTestCase
         $this->assertEquals(Signalement::STATUS_ACTIVE, $signalement->getStatut());
     }
 
+    public function testAutoAssignmentWithoutZoneWithoutInsee(): void
+    {
+        // signalement 2025-01 au Cellier, 1 partenaire pour le bailleur social, pas de partenaire sur le code insee ou la zone
+        /** @var Signalement $signalement */
+        $signalement = $this->signalementRepository->findOneBy(['reference' => '2025-01']);
+        $signalement->setStatut(Signalement::STATUS_NEED_VALIDATION);
+        $this->suiviFactory->expects($this->once())
+        ->method('createInstanceFrom');
+        $this->suiviManager->expects($this->once())
+        ->method('persist');
+        $this->testHelper($signalement, 1, ['Partner Habitat 44']);
+        $this->assertEquals(Signalement::STATUS_ACTIVE, $signalement->getStatut());
+    }
+
     public function testAutoAssignmentProcedure(): void
     {
         // signalement 2024-09 à La Bodinière, 2 partenaires sur cette zone +1 en code insee
