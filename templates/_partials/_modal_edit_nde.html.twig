@@ -32,7 +32,7 @@
                         </div>
                         <form method="POST" name="signalement-edit-nde" id="signalement-edit-nde-form" enctype="application/json"
                         action="{{ path('back_signalement_qualification_editer',{uuid:signalement.uuid, signalementQualification:signalementQualificationNDE.id}) }}">
-                            <div class="fr-grid-row fr-grid-row--gutters fr-grid-row--middle fr-my-3w"
+                            <div class="fr-grid-row fr-grid-row--gutters fr-my-3w"
                                 id="signalement-edit-nde-form-row">
                                 <div class="fr-col-6">
                                     <fieldset class="fr-fieldset fr-fieldset--inline">
@@ -42,17 +42,12 @@
                                         <p id="signalement-edit-nde-date-entree-error" class="fr-error-text fr-hidden fr-my-3v">
                                             Veuillez préciser la date d'entrée dans le logement.
                                         </p>
-                                        <div class="fr-fieldset__content">
-                                            <div class="fr-radio-group">
-                                                <input type="radio" id="signalement-edit-nde-date-entree-before" name="dateEntree" value="1970-01-01" {% if signalement.dateEntree and signalement.dateEntree|date('Y')<2023 %}checked{% endif %}>
-                                                <label class="fr-label" for="signalement-edit-nde-date-entree-before">Avant 2023
-                                                </label>
-                                            </div>
-                                            <div class="fr-radio-group">
-                                                <input type="radio" id="signalement-edit-nde-date-entree-after" name="dateEntree" value="2023-01-02" {% if signalement.dateEntree and signalement.dateEntree|date('Y')>=2023 %}checked{% endif %}>
-                                                <label class="fr-label" for="signalement-edit-nde-date-entree-after">A partir de 2023
-                                                </label>
-                                            </div>
+                                        <div class="fr-input-group">
+                                            {% set dateEntree = '' %}
+                                            {% if signalement.dateEntree %}
+                                                {% set dateEntree = signalement.dateEntree.format('Y-m-d') %}
+                                            {% endif %}
+                                            <input class="fr-input" type="date" id="signalement-edit-nde-date-entree" name="dateEntree" value="{{ dateEntree }}">
                                         </div>
                                     </fieldset>
                                 </div>
