@@ -103,22 +103,22 @@ class ProcedureDemarchesRequest implements RequestInterface
         return $this->isProprioAverti;
     }
 
-    public function getinfoProcedureBailMoyen(): ?string
+    public function getInfoProcedureBailMoyen(): ?string
     {
         return $this->infoProcedureBailMoyen;
     }
 
-    public function getinfoProcedureBailDate(): ?string
+    public function getInfoProcedureBailDate(): ?string
     {
         return $this->infoProcedureBailDate;
     }
 
-    public function getinfoProcedureBailReponse(): ?string
+    public function getInfoProcedureBailReponse(): ?string
     {
         return $this->infoProcedureBailReponse;
     }
 
-    public function getinfoProcedureBailNumero(): ?string
+    public function getInfoProcedureBailNumero(): ?string
     {
         return $this->infoProcedureBailNumero;
     }

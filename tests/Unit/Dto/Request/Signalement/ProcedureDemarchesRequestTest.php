@@ -32,10 +32,10 @@ class ProcedureDemarchesRequestTest extends KernelTestCase
 
         $this->assertSame('0', $procedureDemarchesRequest->getIsProprioAverti());
         $this->assertSame('oui', $procedureDemarchesRequest->getInfoProcedureAssuranceContactee());
-        $this->assertSame('autre', $procedureDemarchesRequest->getinfoProcedureBailMoyen());
-        $this->assertSame('05/2024', $procedureDemarchesRequest->getinfoProcedureBailDate());
-        $this->assertSame('Le bailleur nous a envoyé nous faire cuire un oeuf.', $procedureDemarchesRequest->getinfoProcedureBailReponse());
-        $this->assertSame('1234567890', $procedureDemarchesRequest->getinfoProcedureBailNumero());
+        $this->assertSame('autre', $procedureDemarchesRequest->getInfoProcedureBailMoyen());
+        $this->assertSame('05/2024', $procedureDemarchesRequest->getInfoProcedureBailDate());
+        $this->assertSame('Le bailleur nous a envoyé nous faire cuire un oeuf.', $procedureDemarchesRequest->getInfoProcedureBailReponse());
+        $this->assertSame('1234567890', $procedureDemarchesRequest->getInfoProcedureBailNumero());
         $this->assertSame('L\'assurance a accepté notre demande.',
             $procedureDemarchesRequest->getInfoProcedureReponseAssurance());
         $this->assertSame('oui', $procedureDemarchesRequest->getInfoProcedureDepartApresTravaux());
