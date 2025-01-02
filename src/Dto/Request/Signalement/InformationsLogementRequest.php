@@ -24,6 +24,8 @@ class InformationsLogementRequest implements RequestInterface
         #[Assert\NotBlank(message: 'Merci d\'indiquer si un bail existe (ou a été fourni).', groups: ['LOCATAIRE', 'BAILLEUR'])]
         #[Assert\Choice(choices: ['oui', 'non', 'nsp'], message: 'Le champ "bail" est incorrect.')]
         private readonly ?string $bailDpeBail = null,
+        #[Assert\Length(max: 12, maxMessage: 'L\'invariant fiscal ne doit pas dépasser {{ limit }} caractères.')]
+        private readonly ?string $bailDpeInvariant = null,
         #[Assert\NotBlank(message: 'Merci d\'indiquer si un état des lieux existe (ou a été fourni).', groups: ['LOCATAIRE', 'BAILLEUR'])]
         #[Assert\Choice(choices: ['oui', 'non', 'nsp'], message: 'Le champ "état des lieux" est incorrect.')]
         private readonly ?string $bailDpeEtatDesLieux = null,
@@ -65,6 +67,11 @@ class InformationsLogementRequest implements RequestInterface
     public function getBailDpeBail(): ?string
     {
         return $this->bailDpeBail;
+    }
+
+    public function getBailDpeInvariant(): ?string
+    {
+        return $this->bailDpeInvariant;
     }
 
     public function getBailDpeEtatDesLieux(): ?string

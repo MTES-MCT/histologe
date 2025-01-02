@@ -85,6 +85,79 @@ and signalement.profileDeclarant is not same as enum('App\\Entity\\Enum\\Profile
 {% endif %}
 
 <div class="fr-mb-4v">
+<h4 class="fr-mb-2v">Informations générales sur le logement</h4>
+<section class="fr-accordion fr-mb-4v">
+	<h3 class="fr-accordion__title">
+		<button class="fr-accordion__btn" aria-expanded="false" aria-controls="accordion-infos-generales">Afficher les informations</button>
+	</h3>
+	<div class="fr-collapse" id="accordion-infos-generales">
+		<ul>
+			{% if signalement.dateEntree %}
+				<li>Date arrivée :
+					{{ signalement.dateEntree.format('d/m/Y')}}
+				</li>
+			{% endif %}
+			{% if signalement.informationComplementaire and  signalement.informationComplementaire.informationsComplementairesSituationBailleurDateEffetBail %}
+				<li>Date d'effet du bail :
+					{{ signalement.informationComplementaire.informationsComplementairesSituationBailleurDateEffetBail('d/m/Y')}}
+				</li>
+			{% endif %}
+			<li>Nombre de personnes : {{ signalement.nbOccupantsLogement }}</li>
+			{% if signalement.typeCompositionLogement %}
+				{% if signalement.typeCompositionLogement.compositionLogementEnfants %}
+					<li>Enfants de moins de 6 ans ?
+						{{signalement.typeCompositionLogement.compositionLogementEnfants|capitalize}}
+					</li>
+				{% endif %}
+				{% if signalement.typeCompositionLogement.bailDpeBail %}
+					<li>Bail :
+						{{signalement.typeCompositionLogement.bailDpeBail(false)}}
+					</li>
+				{% endif %}
+				{% if signalement.typeCompositionLogement.bailDpeInvariant %}
+					<li>Invariant fiscal :
+						{{signalement.typeCompositionLogement.bailDpeInvariant}}
+					</li>
+				{% endif %}
+				{% if signalement.typeCompositionLogement.bailDpeEtatDesLieux %}
+					<li>Etat des lieux :
+						{{signalement.typeCompositionLogement.bailDpeEtatDesLieux(false)}}
+					</li>
+				{% endif %}
+				{% if signalement.typeCompositionLogement.bailDpeDpe %}
+					<li>DPE :
+						{{signalement.typeCompositionLogement.bailDpeDpe(false)}}
+					</li>
+				{% endif %}
+				{% if signalement.typeCompositionLogement.bailDpeClasseEnergetique %}
+					<li>Classe énergétique :
+						{{signalement.typeCompositionLogement.bailDpeClasseEnergetique}}
+					</li>
+				{% endif %}
+			{% endif %}
+			{% if signalement.loyer %}
+				<li>Montant du loyer :
+					{{ signalement.loyer}} €
+				</li>
+			{% endif %}
+			{% if signalement.informationComplementaire %}				
+				{% if signalement.informationComplementaire.informationsComplementairesSituationOccupantsLoyersPayes %}
+					<li>Paiement loyers à jour :
+						{{ signalement.informationComplementaire.informationsComplementairesSituationOccupantsLoyersPayes}}
+					</li>
+				{% endif %}
+				{% if signalement.informationComplementaire.informationsComplementairesLogementAnneeConstruction %}
+					<li>Année de construction :
+						{{ signalement.informationComplementaire.informationsComplementairesLogementAnneeConstruction}}
+					</li>
+				{% endif %}
+			{% endif %}
+		</ul>
+	</div>
+</section>
+</div>
+
+<div class="fr-mb-4v">
 <h4 class="fr-mb-2v">Type et composition du logement</h4>
 <section class="fr-accordion fr-mb-4v">
 	<h3 class="fr-accordion__title">
@@ -148,12 +221,6 @@ and signalement.profileDeclarant is not same as enum('App\\Entity\\Enum\\Profile
 					<li>Toilettes (WC) et cuisine dans la même pièce</li>
 				{% endif %}
 			{% endif %}
-			<li>Nombre de personnes : {{ signalement.nbOccupantsLogement }}</li>
-			{% if signalement.typeCompositionLogement %}
-				<li>Enfants de moins de 6 ans ?
-					{{signalement.typeCompositionLogement.compositionLogementEnfants|capitalize}}
-				</li>
-			{% endif %}
 		</ul>
 	</div>
 </section>
@@ -198,6 +265,11 @@ and signalement.profileDeclarant is not same as enum('App\\Entity\\Enum\\Profile
 				{% if signalement.situationFoyer.travailleurSocialQuitteLogement(false) %}
 					<li>Souhaite quitter le logement :
 						{{signalement.situationFoyer.travailleurSocialQuitteLogement(false)|capitalize}}
+					</li>
+				{% endif %}
+				{% if signalement.situationFoyer.travailleurSocialPreavisDepart(false) %}
+					<li>Préavis de départ :
+						{{signalement.situationFoyer.travailleurSocialPreavisDepart(false)|capitalize}}
 					</li>
 				{% endif %}
 				{% if signalement.situationFoyer.travailleurSocialAccompagnement(false) %}

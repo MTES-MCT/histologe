@@ -24,6 +24,7 @@ class InformationsLogementRequestTest extends KernelTestCase
             dateEntree: '2022-01-01',
             bailleurDateEffetBail: '2022-01-01',
             bailDpeBail: 'oui',
+            bailDpeInvariant: 'abcd12ef34',
             bailDpeEtatDesLieux: 'oui',
             bailDpeDpe: 'oui',
             bailDpeClasseEnergetique: 'C',
@@ -37,6 +38,7 @@ class InformationsLogementRequestTest extends KernelTestCase
         $this->assertSame('2022-01-01', $informationsLogementRequest->getDateEntree());
         $this->assertSame('2022-01-01', $informationsLogementRequest->getBailleurDateEffetBail());
         $this->assertSame('oui', $informationsLogementRequest->getBailDpeBail());
+        $this->assertSame('abcd12ef34', $informationsLogementRequest->getBailDpeInvariant());
         $this->assertSame('oui', $informationsLogementRequest->getBailDpeEtatDesLieux());
         $this->assertSame('oui', $informationsLogementRequest->getBailDpeDpe());
         $this->assertSame('C', $informationsLogementRequest->getBailDpeClasseEnergetique());
@@ -56,6 +58,7 @@ class InformationsLogementRequestTest extends KernelTestCase
             dateEntree: 'invalid-date',
             bailleurDateEffetBail: 'invalid-date',
             bailDpeBail: 'unknown',
+            bailDpeInvariant: 'invalid_invariant_fiscal',
             bailDpeEtatDesLieux: 'unknown',
             bailDpeDpe: 'unknown',
             bailDpeClasseEnergetique: 'unknown',
@@ -65,6 +68,6 @@ class InformationsLogementRequestTest extends KernelTestCase
         );
 
         $errors = $this->validator->validate($informationsLogementRequest);
-        $this->assertCount(11, $errors);
+        $this->assertCount(12, $errors);
     }
 }

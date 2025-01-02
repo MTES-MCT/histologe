@@ -156,6 +156,7 @@ class SignalementEditControllerTest extends WebTestCase
             'dateEntree' => '2020-12-01',
             'bailleurDateEffetBail' => '',
             'bailDpeBail' => 'oui',
+            'bailDpeInvariant' => 'abcd12ef34',
             'bailDpeEtatDesLieux' => 'oui',
             'bailDpeDpe' => 'oui',
             'bailDpeClasseEnergetique' => 'F',

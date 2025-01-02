@@ -87,6 +87,7 @@ class SignalementDraftRequestTest extends WebTestCase
             ->setTypeLogementCommoditesWcCuisine('non')
             ->setBailDpeDateEmmenagement('2022-01-01')
             ->setBailDpeBail('oui')
+            ->setBailDpeInvariant('abcd12ef34')
             ->setBailDpeEtatDesLieux('oui')
             ->setBailDpeDpe('oui')
             ->setBailDpeClasseEnergetique('D')
@@ -254,6 +255,7 @@ class SignalementDraftRequestTest extends WebTestCase
             ->setTypeLogementCommoditesWcCuisine('invalid_wc_cuisine')
             ->setBailDpeDateEmmenagement('invalid_date')
             ->setBailDpeBail('invalid_bail')
+            ->setBailDpeInvariant('invalid_invariant_fiscal')
             ->setBailDpeEtatDesLieux('invalid_etat_des_lieux')
             ->setBailDpeDpe('invalid_dpe')
             ->setBailDpeClasseEnergetique('invalid_classe_energetique')
@@ -289,6 +291,6 @@ class SignalementDraftRequestTest extends WebTestCase
             ->setMessageAdministration('Message administration');
 
         $errors = $this->validator->validate($signalementDraftRequest);
-        $this->assertCount(96, $errors);
+        $this->assertCount(97, $errors);
     }
 }

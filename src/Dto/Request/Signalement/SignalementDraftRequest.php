@@ -352,7 +352,8 @@ class SignalementDraftRequest
     #[Assert\Choice(choices: ['oui', 'non', 'nsp'], message: 'Le champ "bailDpeBail" est incorrect.')]
     private ?string $bailDpeBail = null;
     private ?array $bailDpeBailUpload = null;
-
+    #[Assert\Length(max: 12, maxMessage: 'L\'invariant fiscal ne doit pas dépasser {{ limit }} caractères.')]
+    private ?string $bailDpeInvariant = null;
     #[Assert\Choice(choices: ['oui', 'non', 'nsp'], message: 'Le champ "bailDpeEtatDesLieux" est incorrect.')]
     private ?string $bailDpeEtatDesLieux = null;
     #[Assert\Choice(choices: ['oui', 'non', 'nsp'], message: 'Le champ "bailDpeDpe" est incorrect.')]
@@ -1286,6 +1287,18 @@ class SignalementDraftRequest
     public function setBailDpeBail(?string $bailDpeBail): self
     {
         $this->bailDpeBail = $bailDpeBail;
+
+        return $this;
+    }
+
+    public function getBailDpeInvariant(): ?string
+    {
+        return $this->bailDpeInvariant;
+    }
+
+    public function setBailDpeInvariant(?string $bailDpeInvariant): self
+    {
+        $this->bailDpeInvariant = $bailDpeInvariant;
 
         return $this;
     }

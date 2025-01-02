@@ -106,6 +106,7 @@ class SignalementResponse
     public ?float $loyer;
     public ?bool $bailEnCours;
     public ?bool $bailExistant;
+    public ?string $invariantFiscal;
     public ?bool $etatDesLieuxExistant;
     public ?bool $preavisDepartTransmis;
     public ?bool $demandeRelogementEffectuee;
