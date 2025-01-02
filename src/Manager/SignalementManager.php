@@ -277,6 +277,13 @@ class SignalementManager extends AbstractManager
         // mise à jour du signalement
         if ($qualificationNDERequest->getDateEntree()) {
             $signalement->setDateEntree(new \DateTimeImmutable($qualificationNDERequest->getDateEntree()));
+            $typeCompositionLogement = new TypeCompositionLogement();
+            if (!empty($signalement->getTypeCompositionLogement())) {
+                $typeCompositionLogement = clone $signalement->getTypeCompositionLogement();
+            }
+            $typeCompositionLogement
+                ->setBailDpeDateEmmenagement($qualificationNDERequest->getDateEntree());
+            $signalement->setTypeCompositionLogement($typeCompositionLogement);
         }
 
         if (null !== $qualificationNDERequest->getSuperficie()
@@ -477,7 +484,8 @@ class SignalementManager extends AbstractManager
             ->setBailDpeBail($informationsLogementRequest->getBailDpeBail())
             ->setBailDpeEtatDesLieux($informationsLogementRequest->getBailDpeEtatDesLieux())
             ->setBailDpeDpe($informationsLogementRequest->getBailDpeDpe())
-            ->setBailDpeClasseEnergetique($informationsLogementRequest->getBailDpeClasseEnergetique());
+            ->setBailDpeClasseEnergetique($informationsLogementRequest->getBailDpeClasseEnergetique())
+            ->setBailDpeDateEmmenagement($signalement->getDateEntree()?->format('Y-m-d'));
         $signalement->setTypeCompositionLogement($typeCompositionLogement);
 
         $informationComplementaire = new InformationComplementaire();
