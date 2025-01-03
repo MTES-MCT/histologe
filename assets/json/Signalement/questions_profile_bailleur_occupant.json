@@ -854,6 +854,16 @@
           }
         },
         {
+          "type": "SignalementFormTextfield",
+          "label": "Quel est l'invariant fiscal du logement ? (facultatif)",
+          "slug": "bail_dpe_invariant",
+          "description": "L'invariant est composé de 10 ou 12 caractères. Il est inscrit sur votre avis de taxe d'habitation et votre bail.",
+          "validate": {
+            "maxLength": 12,
+            "required": false
+          }
+        },
+        {
           "type": "SignalementFormOnlyChoice",
           "slug": "bail_dpe_dpe",
           "label": "Avez-vous réalisé un DPE pour le logement ? (diagnostic performance énergie)",

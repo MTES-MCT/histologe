@@ -24,6 +24,8 @@ class SignalementExportPdfTest extends KernelTestCase
         $signalement = $signalementRepository->findOneBy(['reference' => '2023-1']);
 
         $html = $twig->render('pdf/signalement.html.twig', [
+            'createdFromDraft' => $signalement->getCreatedFrom(),
+            'listConcludeProcedures' => [],
             'signalement' => $signalement,
             'situations' => [],
             'listQualificationStatusesLabelsCheck' => [],

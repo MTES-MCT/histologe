@@ -2,6 +2,7 @@
 
 namespace App\Messenger\MessageHandler;
 
+use App\Entity\Intervention;
 use App\Messenger\Message\PdfExportMessage;
 use App\Repository\SignalementRepository;
 use App\Service\Mailer\NotificationMail;
@@ -44,9 +45,26 @@ class PdfExportMessageHandler
                 }
             }
 
+            $listConcludeProcedures = [];
+            if (null !== $signalement->getInterventions()) {
+                foreach ($signalement->getInterventions() as $intervention) {
+                    if (Intervention::STATUS_DONE == $intervention->getStatus()) {
+                        $listConcludeProcedures = array_merge(
+                            $listConcludeProcedures,
+                            $intervention->getConcludeProcedure()
+                        );
+                    }
+                }
+            }
+            $listConcludeProcedures = array_unique(array_map(function ($concludeProcedure) {
+                return $concludeProcedure->label();
+            }, $listConcludeProcedures));
+
             $htmlContent = $this->twig->render('pdf/signalement.html.twig', [
+                'createdFromDraft' => $signalement->getCreatedFrom(),
                 'signalement' => $signalement,
                 'situations' => $infoDesordres['criticitesArranged'],
+                'listConcludeProcedures' => $listConcludeProcedures,
                 'listQualificationStatusesLabelsCheck' => $listQualificationStatusesLabelsCheck,
             ]);
 

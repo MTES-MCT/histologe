@@ -115,6 +115,7 @@ class SignalementResponseFactory
         $signalementResponse->loyer = $signalement->getLoyer();
         $signalementResponse->bailEnCours = $signalement->getIsBailEnCours();
         $signalementResponse->bailExistant = $this->stringToBool($signalement->getTypeCompositionLogement()?->getBailDpeBail());
+        $signalementResponse->invariantFiscal = $signalement->getTypeCompositionLogement()?->getBailDpeInvariant();
         $signalementResponse->etatDesLieuxExistant = $this->stringToBool($signalement->getTypeCompositionLogement()?->getBailDpeEtatDesLieux());
         $signalementResponse->preavisDepartTransmis = $signalement->getisPreavisDepart();
         $signalementResponse->demandeRelogementEffectuee = $signalement->getIsRelogement();

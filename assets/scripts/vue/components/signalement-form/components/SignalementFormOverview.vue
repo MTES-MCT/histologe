@@ -366,6 +366,7 @@ export default defineComponent({
       result += this.addLineIfNeeded('composition_logement_nombre_personnes', 'Nombre de personnes : ')
       result += this.addLineIfNeeded('composition_logement_enfants', 'Enfants de moins de 6 ans ? ')
       result += this.addLineIfNeeded('bail_dpe_bail', 'Bail établi ? ')
+      result += this.addLineIfNeeded('bail_dpe_invariant', 'Invariant fiscal : ')
       result += this.addLineIfNeeded('bail_dpe_etat_des_lieux', 'Etat des lieux réalisé ? ')
       result += this.addLineIfNeeded('bail_dpe_dpe', 'DPE réalisé ? ')
       result += this.addLineIfNeeded('bail_dpe_classe_energetique', 'Classe énergétique du logement : ')
