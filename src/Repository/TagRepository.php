@@ -55,9 +55,16 @@ class TagRepository extends ServiceEntityRepository
         $qb = $this->createQueryBuilder('t');
         $qb->select('t', 's')
             ->leftJoin('t.signalements', 's', 'WITH', 's.statut != 7')
-            ->andWhere('t.isArchive != 1')
-            ->orderBy('t.label', 'ASC')
-            ->indexBy('t', 't.id');
+            ->andWhere('t.isArchive != 1');
+
+        if (!empty($searchTag->getOrderType())) {
+            [$orderField, $orderDirection] = explode('-', $searchTag->getOrderType());
+            $qb->orderBy($orderField, $orderDirection);
+        } else {
+            $qb->orderBy('t.label', 'ASC');
+        }
+
+        $qb->indexBy('t', 't.id');
         if ($searchTag->getTerritory()) {
             $qb->andWhere('t.territory = :territory')
                 ->setParameter('territory', $searchTag->getTerritory());

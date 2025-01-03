@@ -8,6 +8,7 @@ use App\Service\ListFilters\SearchTag;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\Extension\Core\Type\SearchType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -48,6 +49,20 @@ class SearchTagType extends AbstractType
                 'label' => 'Territoire',
             ]);
         }
+
+        $builder->add('orderType', ChoiceType::class, [
+            'choices' => [
+                'Ordre alphabétique (A -> Z)' => 't.label-ASC',
+                'Ordre alphabétique inversé (Z -> A)' => 't.label-DESC',
+                'Ordre croissant' => 't.id-ASC',
+                'Ordre décroissant' => 't.id-DESC',
+            ],
+            'required' => false,
+            'placeholder' => false,
+            'label' => 'Trier par',
+            'data' => 't.label-ASC',
+        ]);
+
         $builder->add('page', HiddenType::class);
     }
 

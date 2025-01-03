@@ -10,6 +10,7 @@ class SearchAutoAffectationRule
     use SearchQueryTrait;
 
     private ?Territory $territory = null;
+    private ?bool $isActive = null;
 
     public function getTerritory(): ?Territory
     {
@@ -19,5 +20,15 @@ class SearchAutoAffectationRule
     public function setTerritory(?Territory $territory): void
     {
         $this->territory = $territory;
+    }
+
+    public function getIsActive(): ?bool
+    {
+        return $this->isActive;
+    }
+
+    public function setIsActive(?bool $isActive): void
+    {
+        $this->isActive = $isActive;
     }
 }

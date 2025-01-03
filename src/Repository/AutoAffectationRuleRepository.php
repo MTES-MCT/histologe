@@ -24,6 +24,7 @@ class AutoAffectationRuleRepository extends ServiceEntityRepository
     {
         return $this->getAutoAffectationRules(
             territory: $searchAutoAffectationRule->getTerritory(),
+            isActive: $searchAutoAffectationRule->getIsActive(),
             page: $searchAutoAffectationRule->getPage(),
             maxResult: $maxResult,
         );
@@ -31,6 +32,7 @@ class AutoAffectationRuleRepository extends ServiceEntityRepository
 
     public function getAutoAffectationRules(
         ?Territory $territory,
+        ?bool $isActive,
         int $page,
         int $maxResult,
     ): Paginator {
@@ -38,6 +40,10 @@ class AutoAffectationRuleRepository extends ServiceEntityRepository
 
         if ($territory) {
             $queryBuilder->andWhere('aar.territory = :territory')->setParameter('territory', $territory);
+        }
+        if (null !== $isActive) {
+            $queryBuilder->andWhere('aar.status = :status');
+            $queryBuilder->setParameter('status', $isActive ? AutoAffectationRule::STATUS_ACTIVE : AutoAffectationRule::STATUS_ARCHIVED);
         }
 
         $firstResult = ($page - 1) * $maxResult;
