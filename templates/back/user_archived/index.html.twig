@@ -26,7 +26,7 @@
     {% if is_granted('ROLE_ADMIN') %}
     <section class="fr-container--fluid">
         {{ form_errors(form) }}
-        <div class="fr-grid-row fr-grid-row--gutters">
+        <div class="fr-grid-row fr-grid-row--bottom fr-grid-row--gutters">
             <div class="fr-col-12 fr-col-lg-3">
                 {{ form_row(form.queryUser) }}
             </div>

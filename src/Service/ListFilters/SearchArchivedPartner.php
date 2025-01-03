@@ -10,6 +10,7 @@ class SearchArchivedPartner
 
     private ?string $queryArchivedPartner = null;
     private ?string $territory = null;
+    private ?string $orderType = null;
 
     public function getQueryArchivedPartner(): ?string
     {
@@ -29,5 +30,15 @@ class SearchArchivedPartner
     public function setTerritory(?string $territory): void
     {
         $this->territory = $territory;
+    }
+
+    public function getOrderType(): ?string
+    {
+        return $this->orderType;
+    }
+
+    public function setOrderType(?string $orderType): void
+    {
+        $this->orderType = $orderType;
     }
 }

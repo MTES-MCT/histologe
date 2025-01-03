@@ -157,8 +157,8 @@ class PartnerRepository extends ServiceEntityRepository
                 ->setParameter('usersterms', '%'.strtolower($filterTerms).'%');
         }
 
-        if (!empty($orderType)) {
-            [$orderField, $orderDirection] = explode('-', $orderType);
+        if (!empty($searchArchivedPartner->getOrderType())) {
+            [$orderField, $orderDirection] = explode('-', $searchArchivedPartner->getOrderType());
             $queryBuilder->orderBy($orderField, $orderDirection);
         } else {
             $queryBuilder->orderBy('p.nom', 'ASC');
