@@ -113,7 +113,7 @@ class SearchFilter
 
         if (isset($filters['delays'])) {
             $filters['delays_partners'] = $partners->map(fn ($partner) => $partner->getId())->toArray();
-            $filters['delays_territory'] = $territory?->getId();
+            $filters['delays_territory'] = $territory;
         }
 
         if (isset($filters['nouveau_suivi'])) {
@@ -225,7 +225,7 @@ class SearchFilter
                 $partners = $user->getPartners();
             }
             $this->filters['delays'] = (int) $period;
-            $this->filters['delays_territory'] = $territory?->getId();
+            $this->filters['delays_territory'] = $territory;
             $this->filters['delays_partners'] = $partners->map(fn ($partner) => $partner->getId())->toArray();
         }
 

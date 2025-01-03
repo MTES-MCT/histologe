@@ -15,7 +15,7 @@ class UserAvatar implements RuntimeExtensionInterface
     ) {
     }
 
-    public function userAvatarOrPlaceholder(User $user, $size = 74): string
+    public function userAvatarOrPlaceholder(User $user, int $size = 74): string
     {
         $zipCode = ($user->getFirstTerritory()) ? substr($user->getFirstTerritory()->getZip(), 0, 2) : 'SA';
 

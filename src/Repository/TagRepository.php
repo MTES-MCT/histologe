@@ -28,7 +28,7 @@ class TagRepository extends ServiceEntityRepository
     ): mixed {
         $qb = $this->createQueryBuilder('t');
         $qb->andWhere('t.isArchive != 1')->orderBy('t.label', 'ASC');
-        if (count($territories)) {
+        if (\count($territories)) {
             $qb->andWhere('t.territory IN (:territories)')->setParameter('territories', $territories);
         }
 

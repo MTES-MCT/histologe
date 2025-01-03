@@ -68,7 +68,7 @@ class WidgetDataManager implements WidgetDataManagerInterface
          */ function ($jobEvent) use ($territories) {
             /** @var \DateTimeImmutable $createdAt */
             $createdAt = $jobEvent['createdAt'];
-            $timezone = count($territories) ? reset($territories)->getTimezone() : TimezoneProvider::TIMEZONE_EUROPE_PARIS;
+            $timezone = \count($territories) ? reset($territories)->getTimezone() : TimezoneProvider::TIMEZONE_EUROPE_PARIS;
             $jobEvent['last_event'] = $createdAt
                 ->setTimezone(new \DateTimeZone($timezone))
                 ->format(self::FORMAT_DATE_TIME);

@@ -143,7 +143,7 @@ class AffectationRepository extends ServiceEntityRepository
             ->setParameter('statut_wait', Affectation::STATUS_WAIT)
             ->setParameter('statut_refused', Affectation::STATUS_REFUSED);
 
-        if (count($territories)) {
+        if (\count($territories)) {
             $qb->andWhere('a.territory IN (:territories)')->setParameter('territories', $territories);
         }
 
@@ -160,7 +160,7 @@ class AffectationRepository extends ServiceEntityRepository
             ->setParameter('partners', $user->getPartners())
             ->andWhere('a.statut = :statut_wait')
             ->setParameter('statut_wait', Affectation::STATUS_WAIT);
-        if (count($territories)) {
+        if (\count($territories)) {
             $qb->andWhere('a.territory IN (:territories)')->setParameter('territories', $territories);
         }
 

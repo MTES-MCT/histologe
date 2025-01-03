@@ -66,11 +66,10 @@ class SuiviRepository extends ServiceEntityRepository
     public function countSignalementNoSuiviSince(
         array $territories,
         array $partnersIds = [],
-        int $period = Suivi::DEFAULT_PERIOD_INACTIVITY,
     ): int {
         $connection = $this->getEntityManager()->getConnection();
         $parameters = [
-            'day_period' => $period,
+            'day_period' => Suivi::DEFAULT_PERIOD_INACTIVITY,
             'type_suivi_usager' => Suivi::TYPE_USAGER,
             'type_suivi_partner' => Suivi::TYPE_PARTNER,
             'type_suivi_auto' => Suivi::TYPE_AUTO,

@@ -44,7 +44,7 @@ class JobEventRepository extends ServiceEntityRepository implements EntityCleane
             ->where('j.service = :service')
             ->andWhere('j.createdAt >= :date_limit');
 
-        if (count($territories) > 0) {
+        if (\count($territories)) {
             $qb->andWhere('p.territory IN (:territories)')->setParameter('territories', $territories);
         }
 

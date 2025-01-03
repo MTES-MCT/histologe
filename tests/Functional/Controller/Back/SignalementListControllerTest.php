@@ -202,6 +202,7 @@ class SignalementListControllerTest extends WebTestCase
         yield 'Search by Situation Prévis de départ' => [['situation' => 'preavis_de_depart', 'isImported' => 'oui'], 1];
         yield 'Search by Situation Attente de relogement' => [['situation' => 'attente_relogement', 'isImported' => 'oui'], 2];
         yield 'Search by Signalement Imported' => [['isImported' => 'oui'], 51];
+        yield 'Search by Sans suivi in territory 13' => [['isImported' => 'oui', 'sansSuiviPeriode' => 30, 'territoire' => '13'], 7];
     }
 
     public function provideFilterSearchMultiTerritorAdminPartner(): \Generator
@@ -216,6 +217,7 @@ class SignalementListControllerTest extends WebTestCase
         yield 'Search by Status Fermé' => [['isImported' => 'oui', 'status' => 'ferme'], 2];
         yield 'Search by Status Fermé on Territory 1' => [['territoire' => '1', 'isImported' => 'oui', 'status' => 'ferme'], 1];
         yield 'Search by Status Fermé on Territory 13' => [['territoire' => '13', 'isImported' => 'oui', 'status' => 'ferme'], 1];
+        yield 'Search by Sans suivi in territory 13' => [['isImported' => 'oui', 'sansSuiviPeriode' => 30, 'territoire' => '13'], 1];
     }
 
     /**
