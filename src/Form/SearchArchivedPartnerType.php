@@ -35,7 +35,7 @@ class SearchArchivedPartnerType extends AbstractType
     {
         $builder->add('queryArchivedPartner', SearchType::class, [
             'required' => false,
-            'label' => false,
+            'label' => 'Partenaire',
             'attr' => ['placeholder' => 'Taper le nom du partenaire'],
         ]);
         if ($this->isAdmin) {
@@ -50,7 +50,7 @@ class SearchArchivedPartnerType extends AbstractType
                 'choices' => $choicesTerritories,
                 'required' => false,
                 'placeholder' => 'Tous les territoires',
-                'label' => false,
+                'label' => 'Territoire',
             ]);
         }
         $builder->add('page', HiddenType::class);

@@ -27,7 +27,7 @@ class SearchArchivedUserType extends AbstractType
     {
         $builder->add('queryUser', SearchType::class, [
             'required' => false,
-            'label' => false,
+            'label' => 'Utilisateur',
             'attr' => ['placeholder' => 'Taper le nom ou l\'e-mail d\'un utilisateur'],
         ]);
         $territories = $this->territoryRepository->findAllList();
@@ -41,7 +41,7 @@ class SearchArchivedUserType extends AbstractType
             'choices' => $choicesTerritories,
             'required' => false,
             'placeholder' => 'Tous les territoires',
-            'label' => false,
+            'label' => 'Territoire',
         ]);
         $builder->addEventListener(FormEvents::PRE_SET_DATA, function (FormEvent $event) use ($builder) {
             $territory = $builder->getData()->getTerritory() ? $this->territoryRepository->find($builder->getData()->getTerritory()) : null;
@@ -75,7 +75,7 @@ class SearchArchivedUserType extends AbstractType
             'choices' => $choicesPartners,
             'required' => false,
             'placeholder' => 'Tous les partenaires',
-            'label' => false,
+            'label' => 'Partenaire',
         ]);
     }
 
