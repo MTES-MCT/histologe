@@ -3,9 +3,7 @@ const formBtn = document.querySelector('#signalement-edit-nde-form-submit')
 formBtn?.addEventListener('click', evt => {
   // Check fields
   let postForm = true
-  if (!document.querySelector('#signalement-edit-nde-date-entree-before').checked &&
-        !document.querySelector('#signalement-edit-nde-date-entree-after').checked
-  ) {
+  if (!document.querySelector('#signalement-edit-nde-date-entree')) {
     document.querySelector('#signalement-edit-nde-date-entree-error').classList.remove('fr-hidden')
     postForm = false
   } else {
@@ -57,7 +55,7 @@ formBtn?.addEventListener('click', evt => {
 
     const data = {
       _token: document.getElementById('signalement-edit-nde-token').value,
-      dateEntree: document.querySelector('input[name=dateEntree]:checked')?.value,
+      dateEntree: document.querySelector('input[name=dateEntree]')?.value,
       dpe: stringToBoolean(document.querySelector('input[name=dpe]:checked')?.value),
       dateDernierBail: document.querySelector('input[name=dateDernierBail]:checked')?.value,
       dateDernierDPE: document.querySelector('input[name=dateDernierDPE]:checked')?.value,
