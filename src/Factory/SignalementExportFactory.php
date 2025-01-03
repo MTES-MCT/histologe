@@ -126,7 +126,7 @@ class SignalementExportFactory
                     : (1 == $data[$keyColumn] ? self::OUI : self::NON);
                 break;
             case 'isAllocataire':
-                $value = null === $data[$keyColumn]
+                $value = null === $data[$keyColumn] || '' === $data[$keyColumn]
                     ? self::NON_RENSEIGNE
                     : (\in_array($data[$keyColumn], self::ALLOCATAIRE) ? self::OUI : self::NON);
                 break;
