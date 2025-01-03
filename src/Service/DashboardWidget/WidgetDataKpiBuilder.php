@@ -9,8 +9,6 @@ use App\Entity\Affectation;
 use App\Entity\Enum\Qualification;
 use App\Entity\Enum\QualificationStatus;
 use App\Entity\Signalement;
-use App\Entity\Suivi;
-use App\Entity\Territory;
 use App\Entity\User;
 use App\Repository\AffectationRepository;
 use App\Repository\NotificationRepository;
@@ -31,7 +29,7 @@ class WidgetDataKpiBuilder
     private ?CountSignalement $countSignalement = null;
     private ?CountSuivi $countSuivi = null;
     private ?CountUser $countUser = null;
-    private ?Territory $territory = null;
+    private array $territories = [];
     private ?User $user = null;
     private array $parameters;
 
@@ -60,9 +58,9 @@ class WidgetDataKpiBuilder
         return $this;
     }
 
-    public function setTerritory(?Territory $territory = null): self
+    public function setTerritories(array $territories): self
     {
-        $this->territory = $territory;
+        $this->territories = $territories;
 
         return $this;
     }
@@ -75,17 +73,17 @@ class WidgetDataKpiBuilder
     public function withCountSignalement(): self
     {
         $this->countSignalement = $this->user->isPartnerAdmin() || $this->user->isUserPartner()
-            ? $this->affectationRepository->countSignalementForUser($this->user)
-            : $this->signalementRepository->countSignalementByStatus($this->territory);
+            ? $this->affectationRepository->countSignalementForUser($this->user, $this->territories)
+            : $this->signalementRepository->countSignalementByStatus($this->territories);
 
         $this->countSignalement
-            ->setClosedByAtLeastOnePartner($this->notificationRepository->countAffectationClosedNotSeen($this->user, $this->territory))
-            ->setAffected($this->affectationRepository->countAffectationForUser($this->user))
-            ->setClosedAllPartnersRecently($this->notificationRepository->countSignalementClosedNotSeen($this->user, $this->territory));
+            ->setClosedByAtLeastOnePartner($this->notificationRepository->countAffectationClosedNotSeen($this->user, $this->territories))
+            ->setAffected($this->affectationRepository->countAffectationForUser($this->user, $this->territories))
+            ->setClosedAllPartnersRecently($this->notificationRepository->countSignalementClosedNotSeen($this->user, $this->territories));
 
         if ($this->user->isSuperAdmin() || $this->user->isTerritoryAdmin()) {
             $countSignalementByStatus = $this->signalementRepository->countByStatus(
-                territory: $this->territory,
+                territories: $this->territories,
                 partners: null,
                 qualification: Qualification::NON_DECENCE_ENERGETIQUE,
                 qualificationStatuses: [QualificationStatus::NDE_AVEREE, QualificationStatus::NDE_CHECK]
@@ -95,7 +93,7 @@ class WidgetDataKpiBuilder
         } else {
             $countAffectationByStatus = $this->affectationRepository->countByStatusForUser(
                 $this->user,
-                $this->territory,
+                $this->territories,
                 Qualification::NON_DECENCE_ENERGETIQUE,
                 [QualificationStatus::NDE_AVEREE, QualificationStatus::NDE_CHECK]
             );
@@ -117,20 +115,19 @@ class WidgetDataKpiBuilder
     {
         /** @var User $user */
         $user = $this->security->getUser();
-        $averageSuivi = $this->suiviRepository->getAverageSuivi($this->territory);
-        $countSuiviPartner = $this->suiviRepository->countSuiviPartner($this->territory);
-        $countSuiviUsager = $this->suiviRepository->countSuiviUsager($this->territory);
+        $averageSuivi = $this->suiviRepository->getAverageSuivi($this->territories);
+        $countSuiviPartner = $this->suiviRepository->countSuiviPartner($this->territories);
+        $countSuiviUsager = $this->suiviRepository->countSuiviUsager($this->territories);
         $countSignalementNewSuivi = $this->notificationRepository->countSignalementNewSuivi(
             $user,
-            $this->territory
+            $this->territories
         );
         $countSignalementNoSuivi = $this->suiviRepository->countSignalementNoSuiviSince(
-            Suivi::DEFAULT_PERIOD_INACTIVITY,
-            $this->territory,
-            $this->getPartnersFromUser($user)?->map(fn ($partner) => $partner->getId())->toArray()
+            $this->territories,
+            $this->getPartnersFromUser($user)?->map(fn ($partner) => $partner->getId())->toArray() ?? []
         );
         $countSignalementNoSuiviAfter3Relances = $this->suiviRepository->countSignalementNoSuiviAfter3Relances(
-            $this->territory,
+            $this->territories,
             $this->getPartnersFromUser($user)
         );
 
@@ -151,7 +148,7 @@ class WidgetDataKpiBuilder
      */
     public function withCountUser(): self
     {
-        $this->countUser = $this->userRepository->countUserByStatus($this->territory, $this->user);
+        $this->countUser = $this->userRepository->countUserByStatus($this->territories, $this->user);
 
         return $this;
     }
@@ -162,7 +159,7 @@ class WidgetDataKpiBuilder
             $widgetParams = $this->parameters[$key];
             $link = $widgetParams['link'] ?? null;
             $label = $widgetParams['label'] ?? null;
-            $widgetParams['params']['territoire_id'] = $this->territory?->getId();
+            $widgetParams['params']['territoire'] = 1 === count($this->territories) ? reset($this->territories)->getId() : null;
             $widgetParams['params']['isImported'] = 'oui';
             $parameters = array_merge($linkParameters, $widgetParams['params'] ?? []);
             $widgetCard = $this->widgetCardFactory->createInstance($label, $count, $link, $parameters);

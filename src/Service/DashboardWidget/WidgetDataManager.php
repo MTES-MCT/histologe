@@ -2,7 +2,6 @@
 
 namespace App\Service\DashboardWidget;
 
-use App\Entity\Territory;
 use App\Repository\AffectationRepository;
 use App\Repository\JobEventRepository;
 use App\Repository\SignalementRepository;
@@ -24,9 +23,9 @@ class WidgetDataManager implements WidgetDataManagerInterface
     ) {
     }
 
-    public function countSignalementAcceptedNoSuivi(Territory $territory, ?array $params = null): array
+    public function countSignalementAcceptedNoSuivi(array $territories, ?array $params = null): array
     {
-        return $this->signalementRepository->countSignalementAcceptedNoSuivi($territory);
+        return $this->signalementRepository->countSignalementAcceptedNoSuivi($territories);
     }
 
     /**
@@ -44,9 +43,9 @@ class WidgetDataManager implements WidgetDataManagerInterface
         }, $countSignalementTerritoryList);
     }
 
-    public function countAffectationPartner(?Territory $territory = null, ?array $params = null): array
+    public function countAffectationPartner(array $territories, ?array $params = null): array
     {
-        $countAffectationPartnerList = $this->affectationRepository->countAffectationPartner($territory);
+        $countAffectationPartnerList = $this->affectationRepository->countAffectationPartner($territories);
 
         return array_map(function ($countAffectationPartnerItem) {
             $countAffectationPartnerItem['waiting'] = (int) $countAffectationPartnerItem['waiting'];
@@ -60,19 +59,18 @@ class WidgetDataManager implements WidgetDataManagerInterface
      * @throws \DateMalformedStringException
      * @throws \DateInvalidTimeZoneException
      */
-    public function findLastJobEventByInterfacageType(string $type, array $params, ?Territory $territory = null): array
+    public function findLastJobEventByInterfacageType(string $type, array $params, array $territories): array
     {
-        $jobEvents = $this->jobEventRepository->findLastJobEventByInterfacageType($type, $params['period'], $territory);
+        $jobEvents = $this->jobEventRepository->findLastJobEventByInterfacageType($type, $params['period'], $territories);
 
         return array_map(/**
          * @throws \Exception
-         */ function ($jobEvent) use ($territory) {
+         */ function ($jobEvent) use ($territories) {
             /** @var \DateTimeImmutable $createdAt */
             $createdAt = $jobEvent['createdAt'];
+            $timezone = \count($territories) ? reset($territories)->getTimezone() : TimezoneProvider::TIMEZONE_EUROPE_PARIS;
             $jobEvent['last_event'] = $createdAt
-                ->setTimezone(
-                    new \DateTimeZone($territory ? $territory->getTimezone() : TimezoneProvider::TIMEZONE_EUROPE_PARIS)
-                )
+                ->setTimezone(new \DateTimeZone($timezone))
                 ->format(self::FORMAT_DATE_TIME);
 
             return $jobEvent;
@@ -85,11 +83,11 @@ class WidgetDataManager implements WidgetDataManagerInterface
      * @throws NoResultException
      * @throws Exception
      */
-    public function countDataKpi(?Territory $territory = null, ?array $params = null): WidgetDataKpi
+    public function countDataKpi(array $territories, ?array $params = null): WidgetDataKpi
     {
         return $this->widgetDataKpiBuilder
             ->createWidgetDataKpiBuilder()
-            ->setTerritory($territory)
+            ->setTerritories($territories)
             ->withCountSignalement()
             ->withCountSuivi()
             ->withCountUser()

@@ -345,11 +345,14 @@ class User implements UserInterface, EntityHistoryInterface, PasswordAuthenticat
         return $this;
     }
 
-    public function getPartnersTerritories(): array
+    public function getPartnersTerritories($forceLoadObject = false): array
     {
         $territories = [];
         foreach ($this->userPartners as $userPartner) {
             $territory = $userPartner->getPartner()->getTerritory();
+            if ($forceLoadObject) {
+                $territory->getZip();
+            }
             if ($territory) {
                 $territories[$territory->getId()] = $territory;
             }

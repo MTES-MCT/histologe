@@ -6,8 +6,8 @@
       </div>
       <div class="header-group-item">
         <div class="header-item">
-          <strong>{{ sharedState.newSignalements.count }} nouveaux</strong><br>
-          soit {{ sharedState.newSignalements.percent }} %
+          <strong>{{ sharedState.newSignalementsStats.count }} nouveaux</strong><br>
+          soit {{ sharedState.newSignalementsStats.percent }} %
         </div>
         <div class="header-item">
           <strong>{{ sharedState.signalements.count }} en cours</strong><br>

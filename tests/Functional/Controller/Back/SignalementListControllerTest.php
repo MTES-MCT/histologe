@@ -202,6 +202,22 @@ class SignalementListControllerTest extends WebTestCase
         yield 'Search by Situation Prévis de départ' => [['situation' => 'preavis_de_depart', 'isImported' => 'oui'], 1];
         yield 'Search by Situation Attente de relogement' => [['situation' => 'attente_relogement', 'isImported' => 'oui'], 2];
         yield 'Search by Signalement Imported' => [['isImported' => 'oui'], 51];
+        yield 'Search by Sans suivi in territory 13' => [['isImported' => 'oui', 'sansSuiviPeriode' => 30, 'territoire' => '13'], 7];
+    }
+
+    public function provideFilterSearchMultiTerritorAdminPartner(): \Generator
+    {
+        yield 'Search All' => [['isImported' => 'oui'], 6];
+        yield 'Search by Commune' => [['communes' => ['gex', 'marseille'], 'isImported' => 'oui'], 6];
+        yield 'Search by Territory 1' => [['territoire' => '1', 'isImported' => 'oui'], 1];
+        yield 'Search by Territory 13' => [['territoire' => '13', 'isImported' => 'oui'], 5];
+        yield 'Search by Status En cours' => [['isImported' => 'oui', 'status' => 'en_cours'], 3];
+        yield 'Search by Status En cours on Territory 1' => [['territoire' => '1', 'isImported' => 'oui', 'status' => 'en_cours'], 0];
+        yield 'Search by Status En cours on Territory 13' => [['territoire' => '13', 'isImported' => 'oui', 'status' => 'en_cours'], 3];
+        yield 'Search by Status Fermé' => [['isImported' => 'oui', 'status' => 'ferme'], 2];
+        yield 'Search by Status Fermé on Territory 1' => [['territoire' => '1', 'isImported' => 'oui', 'status' => 'ferme'], 1];
+        yield 'Search by Status Fermé on Territory 13' => [['territoire' => '13', 'isImported' => 'oui', 'status' => 'ferme'], 1];
+        yield 'Search by Sans suivi in territory 13' => [['isImported' => 'oui', 'sansSuiviPeriode' => 30, 'territoire' => '13'], 1];
     }
 
     /**
@@ -216,6 +232,27 @@ class SignalementListControllerTest extends WebTestCase
         /** @var UserRepository $userRepository */
         $userRepository = static::getContainer()->get(UserRepository::class);
         $user = $userRepository->findOneBy(['email' => 'admin-01@histologe.fr']);
+        $client->loginUser($user);
+        $route = $generatorUrl->generate('back_signalement_list_json');
+
+        $client->request('GET', $route, $filter, [], ['HTTP_Accept' => 'application/json']);
+        $result = json_decode($client->getResponse()->getContent(), true);
+
+        $this->assertEquals($results, $result['pagination']['total_items'], json_encode($result['list']));
+    }
+
+    /**
+     * @dataProvider provideFilterSearchMultiTerritorAdminPartner
+     */
+    public function testFilterSignalementsMultiTerritorAdminPartner(array $filter, int $results)
+    {
+        $client = static::createClient();
+        /** @var UrlGeneratorInterface $generatorUrl */
+        $generatorUrl = static::getContainer()->get(UrlGeneratorInterface::class);
+
+        /** @var UserRepository $userRepository */
+        $userRepository = static::getContainer()->get(UserRepository::class);
+        $user = $userRepository->findOneBy(['email' => 'admin-partenaire-multi-ter-13-01@histologe.fr']);
         $client->loginUser($user);
         $route = $generatorUrl->generate('back_signalement_list_json');
 

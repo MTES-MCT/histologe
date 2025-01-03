@@ -98,10 +98,14 @@ class SearchFilter
         $filters = $signalementSearchQuery->getFilters();
         $partners = new ArrayCollection();
 
-        if (!$user->isSuperAdmin()) {
-            $filters['territories'] = [];
+        if (isset($filters['territories'])) {
+            $authorizedTerritories = $user->getPartnersTerritories();
+            foreach ($filters['territories'] as $key => $requestedTerritoryId) {
+                if (!$user->isSuperAdmin() && !isset($authorizedTerritories[$requestedTerritoryId])) {
+                    unset($filters['territories'][$key]);
+                }
+            }
         }
-
         $territory = isset($filters['territories'][0]) ? $this->territoryRepository->find($filters['territories'][0]) : null;
         if (\in_array(User::ROLE_USER_PARTNER, $user->getRoles())) {
             $partners = $user->getPartners();
@@ -109,7 +113,7 @@ class SearchFilter
 
         if (isset($filters['delays'])) {
             $filters['delays_partners'] = $partners->map(fn ($partner) => $partner->getId())->toArray();
-            $filters['delays_territory'] = $territory?->getId();
+            $filters['delays_territory'] = $territory;
         }
 
         if (isset($filters['nouveau_suivi'])) {
@@ -183,7 +187,7 @@ class SearchFilter
                 $this->filters['signalement_ids'] = $signalementIds;
             }
 
-            if ($user->isSuperAdmin() && $request->query->get('territoire_id')) {
+            if ($request->query->get('territoire_id')) {
                 ++$this->countActive;
                 $this->filters['territories'] = [$request->query->get('territoire_id')];
             }
@@ -221,7 +225,7 @@ class SearchFilter
                 $partners = $user->getPartners();
             }
             $this->filters['delays'] = (int) $period;
-            $this->filters['delays_territory'] = $territory?->getId();
+            $this->filters['delays_territory'] = $territory;
             $this->filters['delays_partners'] = $partners->map(fn ($partner) => $partner->getId())->toArray();
         }
 
@@ -540,12 +544,10 @@ class SearchFilter
     private function getTerritory(User $user, Request $request): ?Territory
     {
         $territory = null;
-        if ($user->isSuperAdmin()) {
-            if ($request->query->get('territoire_id')) {
-                $territory = $this->territoryRepository->find($request->query->get('territoire_id'));
-            }
-        } elseif (1 === $user->getPartners()->count()) {
-            $territory = $user->getFirstTerritory();
+        $authorizedTerritories = $user->getPartnersTerritories();
+        $territoryId = $request->query->get('territoire_id');
+        if ($territoryId && ($user->isSuperAdmin() || isset($authorizedTerritories[$territoryId]))) {
+            $territory = $this->territoryRepository->find($territoryId);
         }
 
         return $territory;

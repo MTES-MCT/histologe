@@ -32,6 +32,8 @@ class WidgetSettings
     #[Groups('widget-settings:read')]
     private ?bool $hasSignalementImported = false;
     #[Groups('widget-settings:read')]
+    private ?bool $isMultiTerritoire = false;
+    #[Groups('widget-settings:read')]
     private array $bailleursSociaux = [];
 
     public function __construct(
@@ -58,6 +60,7 @@ class WidgetSettings
         $this->epcis = $epcis;
         $this->tags = $tags;
         $this->hasSignalementImported = $hasSignalementImported;
+        $this->isMultiTerritoire = count($user->getPartnersTerritories()) > 1 ? true : false;
         $this->bailleursSociaux = $bailleursSociaux;
     }
 
@@ -119,6 +122,11 @@ class WidgetSettings
     public function getHasSignalementImported(): bool
     {
         return $this->hasSignalementImported;
+    }
+
+    public function getIsMultiTerritoire(): ?bool
+    {
+        return $this->isMultiTerritoire;
     }
 
     public function getBailleursSociaux(): array

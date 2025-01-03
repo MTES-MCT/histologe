@@ -21,6 +21,6 @@ class DataKpiWidgetLoader extends AbstractWidgetLoader
     public function load(Widget $widget): void
     {
         parent::load($widget);
-        $widget->setData($this->widgetDataManager->countDataKpi($widget->getTerritory(), $this->widgetParameter['data']));
+        $widget->setData($this->widgetDataManager->countDataKpi($widget->getTerritories(), $this->widgetParameter['data']));
     }
 }

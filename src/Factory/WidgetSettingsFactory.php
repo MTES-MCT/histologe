@@ -19,7 +19,7 @@ class WidgetSettingsFactory
     ) {
     }
 
-    public function createInstanceFrom(?User $user = null, ?Territory $territory = null): WidgetSettings
+    public function createInstanceFrom(User $user, ?Territory $territory = null): WidgetSettings
     {
         $filterOptionData = $this->searchFilterOptionDataProvider->getData($user, $territory);
 
