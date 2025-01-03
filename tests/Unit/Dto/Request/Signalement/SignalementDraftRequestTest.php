@@ -101,6 +101,10 @@ class SignalementDraftRequestTest extends WebTestCase
             ->setTravailleurSocialAccompagnement('oui')
             ->setTravailleurSocialAccompagnementDeclarant('1')
             ->setInfoProcedureBailleurPrevenu('oui')
+            ->setinfoProcedureBailMoyen('sms')
+            ->setinfoProcedureBailDate('11/2024')
+            ->setinfoProcedureBailReponse('Réponse du bailleur')
+            ->setinfoProcedureBailNumero('R-TR45')
             ->setInfoProcedureAssuranceContactee('oui')
             ->setInfoProcedureReponseAssurance('Réponse de l\'assurance')
             ->setInfoProcedureDepartApresTravaux('oui')
@@ -267,6 +271,10 @@ class SignalementDraftRequestTest extends WebTestCase
             ->setTravailleurSocialPreavisDepart('invalid_preavis_depart')
             ->setTravailleurSocialAccompagnement('invalid_accompagnement')
             ->setInfoProcedureBailleurPrevenu('invalid_bailleur_prevenu')
+            ->setinfoProcedureBailMoyen('invalid_bailleur_moyen')
+            ->setinfoProcedureBailDate('invalid_bailleur_date')
+            ->setinfoProcedureBailReponse(str_repeat('v', 256))
+            ->setinfoProcedureBailNumero(str_repeat('v', 31))
             ->setInfoProcedureAssuranceContactee('invalid_assurance_contactee')
             ->setInfoProcedureReponseAssurance(str_repeat('v', 256))
             ->setInfoProcedureDepartApresTravaux('invalid_depart_apres_travaux')
@@ -289,6 +297,6 @@ class SignalementDraftRequestTest extends WebTestCase
             ->setMessageAdministration('Message administration');
 
         $errors = $this->validator->validate($signalementDraftRequest);
-        $this->assertCount(96, $errors);
+        $this->assertCount(100, $errors);
     }
 }

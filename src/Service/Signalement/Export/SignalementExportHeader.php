@@ -35,6 +35,8 @@ class SignalementExportHeader
             'Photos',
             'Documents',
             'Propriétaire averti',
+            'Date d\'information du propriétaire',
+            'Moyen d\'information du propriétaire',
             'Nb personnes',
             'Enfants -6 ans',
             'Allocataire',
