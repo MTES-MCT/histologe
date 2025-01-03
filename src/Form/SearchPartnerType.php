@@ -64,7 +64,7 @@ class SearchPartnerType extends AbstractType
             'label' => 'Trier par',
             'data' => 'p.nom-ASC',
         ]);
-        
+
         $builder->add('partnerType', EnumType::class, [
             'class' => PartnerType::class,
             'choice_label' => function ($choice) {
