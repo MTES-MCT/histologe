@@ -23,11 +23,11 @@ class AutoAffectationRuleRepositoryTest extends KernelTestCase
         /** @var AutoAffectationRuleRepository $autoAffectationRuleRepository */
         $autoAffectationRuleRepository = $this->entityManager->getRepository(AutoAffectationRule::class);
 
-        $allAutoAffectationRule = $autoAffectationRuleRepository->getAutoAffectationRules(null, null, 1, 50);
+        $allAutoAffectationRule = $autoAffectationRuleRepository->getAutoAffectationRules(1, 50, null, null);
         $this->assertCount(10, $allAutoAffectationRule);
 
         $territory = $this->entityManager->getRepository(Territory::class)->findOneBy(['zip' => '34']);
-        $heraultAffectationRule = $autoAffectationRuleRepository->getAutoAffectationRules($territory, null, 1, 50);
+        $heraultAffectationRule = $autoAffectationRuleRepository->getAutoAffectationRules(1, 50, $territory, null);
         $this->assertCount(4, $heraultAffectationRule);
     }
 }

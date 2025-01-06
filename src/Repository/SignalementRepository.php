@@ -1322,19 +1322,19 @@ class SignalementRepository extends ServiceEntityRepository
         int $maxResult,
     ): Paginator {
         return $this->findAllArchived(
-            territory: $searchArchivedSignalement->getTerritory(),
-            referenceTerms: $searchArchivedSignalement->getQueryReference(),
             page: $searchArchivedSignalement->getPage(),
             maxResult: $maxResult,
+            territory: $searchArchivedSignalement->getTerritory(),
+            referenceTerms: $searchArchivedSignalement->getQueryReference(),
             orderType: $searchArchivedSignalement->getOrderType(),
         );
     }
 
     public function findAllArchived(
-        ?Territory $territory,
-        ?string $referenceTerms,
         int $page,
         int $maxResult,
+        ?Territory $territory,
+        ?string $referenceTerms,
         ?string $orderType = null,
     ): Paginator {
         $queryBuilder = $this->createQueryBuilder('s');

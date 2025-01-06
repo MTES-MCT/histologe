@@ -46,21 +46,21 @@ class PartnerRepository extends ServiceEntityRepository
     public function findFilteredPaginated(SearchPartner $searchPartner, int $maxResult): Paginator
     {
         return $this->getPartners(
+            $searchPartner->getPage(),
+            $maxResult,
             $searchPartner->getTerritory(),
             $searchPartner->getPartnerType(),
             $searchPartner->getQueryPartner(),
-            $searchPartner->getPage(),
-            $maxResult,
             $searchPartner->getOrderType(),
         );
     }
 
     public function getPartners(
+        int $page,
+        int $maxResult,
         ?Territory $territory,
         ?PartnerType $type,
         ?string $filterTerms,
-        int $page,
-        int $maxResult,
         ?string $orderType = null,
     ): Paginator {
         $queryBuilder = $this->getPartnersQueryBuilder($territory);
