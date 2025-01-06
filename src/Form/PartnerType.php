@@ -189,14 +189,12 @@ class PartnerType extends AbstractType
         if (null === $territoryZip) {
             if ($data instanceof Partner && null !== $data->getTerritory()) {
                 $territoryZip = $data->getTerritory()->getZip();
+            } elseif ($this->isAdmin) {
+                $territoryZip = '01';
             } else {
-                if ($this->isAdmin) {
-                    $territoryZip = '01';
-                } elseif ($this->isAdminTerritory) {
-                    /** @var User $user */
-                    $user = $this->security->getUser();
-                    $territoryZip = $user->getFirstTerritory()->getZip();
-                }
+                /** @var User $user */
+                $user = $this->security->getUser();
+                $territoryZip = $user->getFirstTerritory()->getZip();
             }
         }
         $builder->add('bailleur', EntityType::class, [
