@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace DoctrineMigrations;
 
-use App\Dto\Request\Signalement\QualificationNDERequest;
 use Doctrine\DBAL\Schema\Schema;
 use Doctrine\Migrations\AbstractMigration;
 
@@ -17,14 +16,8 @@ final class Version20250102154204 extends AbstractMigration
 
     public function up(Schema $schema): void
     {
-        $this->addSql('UPDATE `signalement`
-                        SET `date_entree` = JSON_EXTRACT(type_composition_logement, \'$.bail_dpe_date_emmenagement\')
-                        WHERE
-                            (`date_entree` = :dateEntreeBefore2023 OR `date_entree` = :dateEntreeAfter2023)
-                            AND JSON_EXTRACT(type_composition_logement, \'$.bail_dpe_date_emmenagement\') IS NOT NULL', [
-            'dateEntreeBefore2023' => QualificationNDERequest::RADIO_VALUE_BEFORE_2023,
-            'dateEntreeAfter2023' => QualificationNDERequest::RADIO_VALUE_AFTER_2023,
-        ]);
+        $this->addSql('UPDATE `signalement` SET `date_entree` = \'2012-03-06\' WHERE id = 49266');
+        $this->addSql('UPDATE `signalement` SET `date_entree` = \'2024-08-12\' WHERE id = 68601');
     }
 
     public function down(Schema $schema): void
