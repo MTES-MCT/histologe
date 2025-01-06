@@ -37,14 +37,16 @@ class BailleurRepository extends ServiceEntityRepository
         return $queryBuilder->getQuery()->getResult();
     }
 
-    public function getBailleursByTerritoryQueryBuilder(string $zip): QueryBuilder
+    public function getBailleursByTerritoryQueryBuilder(?string $zip): QueryBuilder
     {
         $queryBuilder = $this
             ->createQueryBuilder('b');
-        $queryBuilder->innerJoin('b.bailleurTerritories', 'bt')
-        ->innerJoin('bt.territory', 't')
-        ->where('t.zip = :zip')
-        ->setParameter('zip', $zip);
+        if (null !== $zip) {
+            $queryBuilder->innerJoin('b.bailleurTerritories', 'bt')
+                ->innerJoin('bt.territory', 't')
+                ->where('t.zip = :zip')
+                ->setParameter('zip', $zip);
+        }
         $queryBuilder->orderBy('b.name', 'ASC');
 
         return $queryBuilder;
