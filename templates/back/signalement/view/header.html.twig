@@ -147,7 +147,7 @@
             </div>
 
             <div class="fr-mb-4v fr-text--right">                        
-                {% if isAffected and not isAccepted and not isRefused and not needValidation and not isClosed and not isClosedForMe %}
+                {% if canAcceptOrRefuseAffectation %}
                     <form action="{{ path('back_signalement_affectation_response',{signalement:signalement.id,user:app.user.id,affectation:isAffected.id}) }}"
                             class="tinyCheck" id="signalement-affectation-response-form"
                             name="signalement-affectation-response-form" method="POST">
@@ -173,7 +173,7 @@
                         </div>
                     </div>
 
-                {% elseif isRefused %}
+                {% elseif canCancelRefusedAffectation %}
                     <form method="POST" action="{{ path('back_signalement_affectation_response',{signalement:signalement.id,user:app.user.id,affectation:isRefused.id}) }}">
                         <button class="fr-btn fr-btn--sm fr-btn--icon-left fr-icon-checkbox-circle-fill reaffect fr-mb-3v"
                                 name="signalement-affectation-response[accept]" value="1"
@@ -184,7 +184,7 @@
                                 value="{{ csrf_token('signalement_affectation_response_'~signalement.id) }}">
                     </form>
 
-                {% elseif needValidation and not isClosedForMe and is_granted('ROLE_ADMIN_TERRITORY') %}
+                {% elseif canValidateOrRefuseSignalement %}
                     <div class="admin-territory-validation">
                         <form id="signalement-validation-response-form"
                                 action="{{ path('back_signalement_validation_response',{uuid:signalement.uuid}) }}"

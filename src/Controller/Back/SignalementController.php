@@ -73,6 +73,7 @@ class SignalementController extends AbstractController
             SignalementViewedEvent::NAME
         );
 
+        $canAcceptOrRefuseAffectation = $canCancelRefusedAffectation = false;
         $isRefused = $isAccepted = $isClosedForMe = null;
         $partner = $user->getPartnerInTerritoryOrFirstOne($signalement->getTerritory());
         if ($isAffected = $signalement->getAffectations()->filter(function (Affectation $affectation) use ($partner) {
@@ -84,13 +85,20 @@ class SignalementController extends AbstractController
                     break;
                 case Affectation::STATUS_REFUSED:
                     $isRefused = $isAffected;
+                    $canCancelRefusedAffectation = Signalement::STATUS_ACTIVE === $signalement->getStatut();
                     break;
                 case Affectation::STATUS_CLOSED:
                     $isClosedForMe = true;
                     break;
+                case Affectation::STATUS_WAIT:
+                    $canCancelRefusedAffectation = Signalement::STATUS_ACTIVE === $signalement->getStatut();
+                    break;
             }
         }
+
         $isClosedForMe = $isClosedForMe ?? Signalement::STATUS_CLOSED === $signalement->getStatut();
+        $canValidateOrRefuseSignalement = $this->isGranted('ROLE_ADMIN_TERRITORY') && Signalement::STATUS_NEED_VALIDATION === $signalement->getStatut() && !$isClosedForMe;
+        
         $clotureForm = $this->createForm(ClotureType::class);
         $clotureForm->handleRequest($request);
         $eventParams = [];
@@ -118,7 +126,7 @@ class SignalementController extends AbstractController
                 );
                 $reference = $signalement->getReference();
 
-            /* @var Affectation $isAffected */
+            /** @var Affectation $isAffected */
             } elseif ($isAffected) {
                 $entity = $affectationManager->closeAffectation($isAffected, $user, $eventParams['motif_cloture'], true);
                 $reference = $entity->getSignalement()->getReference();
@@ -198,6 +206,9 @@ class SignalementController extends AbstractController
             'criteres' => $infoDesordres['criteres'],
             'needValidation' => Signalement::STATUS_NEED_VALIDATION === $signalement->getStatut(),
             'canEditSignalement' => $canEditSignalement,
+            'canAcceptOrRefuseAffectation' => $canAcceptOrRefuseAffectation,
+            'canCancelRefusedAffectation' => $canCancelRefusedAffectation,
+            'canValidateOrRefuseSignalement' => $canValidateOrRefuseSignalement,
             'isAffected' => $isAffected,
             'isAccepted' => $isAccepted,
             'isClosed' => Signalement::STATUS_CLOSED === $signalement->getStatut(),
