@@ -451,6 +451,32 @@ and signalement.profileDeclarant is not same as enum('App\\Entity\\Enum\\Profile
 			{% endif %}
 			<br>
 			{% if signalement.informationProcedure %}
+				Moyen d'information du bailleur :
+				{% if signalement.informationProcedure.infoProcedureBailMoyen %}
+					{% set MoyenContact = enum('\\App\\Entity\\Enum\\MoyenContact').tryFromString(signalement.informationProcedure.infoProcedureBailMoyen) %}
+					{{ MoyenContact.label }}
+				{% endif %}
+				<br>
+				Date d'information du bailleur :
+				{# todo : check format date #}
+				{% if signalement.informationProcedure.infoProcedureBailDate %}
+					{{ signalement.informationProcedure.infoProcedureBailDate  }}
+				{% endif %}
+				<br>
+				Réponse du bailleur :
+				{% if signalement.informationProcedure.infoProcedureBailReponse %}
+					{{ signalement.informationProcedure.infoProcedureBailReponse | nl2br  }}
+				{% endif %}
+				<br>
+				{% if signalement.isLogementSocial %}
+					Numéro de réclamation :
+					{% if signalement.informationProcedure.infoProcedureBailNumero %}
+						{{ signalement.informationProcedure.infoProcedureBailNumero | nl2br  }}
+					{% endif %}
+				{% endif %}
+				<br>
+			{% endif %}
+			{% if signalement.informationProcedure %}
 				Assurance contactée ? 
 				{{signalement.informationProcedure.infoProcedureAssuranceContactee(false)|capitalize}}
 				<br>

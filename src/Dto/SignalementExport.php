@@ -33,6 +33,8 @@ class SignalementExport
         public ?string $photos = null,
         public ?string $documents = null,
         public ?string $isProprioAverti = null,
+        public ?string $infoProcedureBailDate = null,
+        public ?string $infoProcedureBailMoyen = null,
         public ?string $nbPersonnes = null,
         public ?string $enfantsM6 = null,
         public ?string $isAllocataire = null,

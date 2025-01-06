@@ -1281,7 +1281,7 @@
                 "type": "SignalementFormButton",
                 "label": "J'y suis presque !",
                 "slug": "ecran_intermediaire_procedure_next",
-                "action": "goto:info_procedure"
+                "action": "goto:info_procedure_assurance"
               },
               {
                 "type": "SignalementFormButton",
@@ -1299,7 +1299,7 @@
   {
     "type": "SignalementFormScreen",
     "label": "",
-    "slug": "info_procedure",
+    "slug": "info_procedure_assurance",
     "screenCategory": "Procédure",
     "components": {
       "body": [
@@ -1382,21 +1382,21 @@
       "footer": [
         {
           "type": "SignalementFormSubscreen",
-          "slug": "info_procedure_footer",
+          "slug": "info_procedure_assurance_footer",
           "customCss": "button-group-responsive-inverted",
           "components": {
             "body": [
               {
                 "type": "SignalementFormButton",
                 "label": "Suivant",
-                "slug": "info_procedure_utilisation_service_next",
+                "slug": "info_procedure_assurance_next",
                 "action": "goto.save:utilisation_service",
                 "customCss": "fr-btn--icon-right fr-icon-arrow-right-line"
               },
               {
                 "type": "SignalementFormButton",
                 "label": "Précédent",
-                "slug": "info_procedure_utilisation_service_previous",
+                "slug": "info_procedure__assurance_previous",
                 "action": "goto:ecran_intermediaire_procedure",
                 "customCss": "fr-btn--secondary fr-btn--icon-left fr-icon-arrow-left-line"
               }
@@ -1460,7 +1460,7 @@
                 "type": "SignalementFormButton",
                 "label": "Précédent",
                 "slug": "utilisation_service_previous",
-                "action": "goto:info_procedure",
+                "action": "goto:info_procedure_assurance",
                 "customCss": "fr-btn--secondary fr-btn--icon-left fr-icon-arrow-left-line"
               }
             ]

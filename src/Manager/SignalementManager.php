@@ -744,6 +744,10 @@ class SignalementManager extends AbstractManager
         }
 
         $informationProcedure
+            ->setInfoProcedureBailMoyen($procedureDemarchesRequest->getInfoProcedureBailMoyen())
+            ->setInfoProcedureBailDate($procedureDemarchesRequest->getInfoProcedureBailDate())
+            ->setInfoProcedureBailReponse($procedureDemarchesRequest->getInfoProcedureBailReponse())
+            ->setInfoProcedureBailNumero($procedureDemarchesRequest->getInfoProcedureBailNumero())
             ->setInfoProcedureAssuranceContactee($procedureDemarchesRequest->getInfoProcedureAssuranceContactee())
             ->setInfoProcedureReponseAssurance($procedureDemarchesRequest->getInfoProcedureReponseAssurance())
             ->setInfoProcedureDepartApresTravaux($procedureDemarchesRequest->getInfoProcedureDepartApresTravaux());

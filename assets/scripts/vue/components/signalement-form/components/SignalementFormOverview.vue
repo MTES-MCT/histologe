@@ -395,6 +395,12 @@ export default defineComponent({
     getFormDataProcedure (): string {
       let result = ''
       result += this.addLineIfNeeded('info_procedure_bailleur_prevenu', 'Bailleur (propriétaire) prévenu ? ')
+      if (this.formStore.data.info_procedure_bailleur_prevenu === 'oui') {
+        result += this.addLineIfNeeded('info_procedure_bail_moyen', 'Moyen d\'information du bailleur : ')
+        result += this.addLineIfNeeded('info_procedure_bail_date', 'Date d\'information du bailleur : ')
+        result += this.addLineIfNeeded('info_procedure_bail_reponse', 'Réponse du bailleur : ')
+        result += this.addLineIfNeeded('info_procedure_bail_numero', 'Numéro de réclamation fourni par le bailleur : ')
+      }
       result += this.addLineIfNeeded('info_procedure_assurance_contactee', 'Assurance contactée ? ')
       if (this.formStore.data.info_procedure_assurance_contactee === 'oui') {
         result += this.addLineIfNeeded('info_procedure_reponse_assurance', 'Réponse de l\'assurance : ')
