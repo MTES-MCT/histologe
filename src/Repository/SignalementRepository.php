@@ -1326,7 +1326,7 @@ class SignalementRepository extends ServiceEntityRepository
             maxResult: $maxResult,
             territory: $searchArchivedSignalement->getTerritory(),
             referenceTerms: $searchArchivedSignalement->getQueryReference(),
-            orderType: $searchArchivedSignalement->getOrderType(),
+            searchArchivedSignalement: $searchArchivedSignalement,
         );
     }
 
@@ -1335,7 +1335,7 @@ class SignalementRepository extends ServiceEntityRepository
         int $maxResult,
         ?Territory $territory,
         ?string $referenceTerms,
-        ?string $orderType = null,
+        ?SearchArchivedSignalement $searchArchivedSignalement = null,
     ): Paginator {
         $queryBuilder = $this->createQueryBuilder('s');
 
@@ -1355,8 +1355,8 @@ class SignalementRepository extends ServiceEntityRepository
                 ->setParameter('referenceTerms', $referenceTerms);
         }
 
-        if (!empty($orderType)) {
-            [$orderField, $orderDirection] = explode('-', $orderType);
+        if (!empty($searchArchivedSignalement) && !empty($searchArchivedSignalement->getOrderType())) {
+            [$orderField, $orderDirection] = explode('-', $searchArchivedSignalement->getOrderType());
             $queryBuilder->orderBy($orderField, $orderDirection);
         } else {
             $queryBuilder->orderBy('s.createdAt', 'ASC');

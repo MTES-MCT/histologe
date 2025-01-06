@@ -51,7 +51,7 @@ class PartnerRepository extends ServiceEntityRepository
             $searchPartner->getTerritory(),
             $searchPartner->getPartnerType(),
             $searchPartner->getQueryPartner(),
-            $searchPartner->getOrderType(),
+            $searchPartner,
         );
     }
 
@@ -61,7 +61,7 @@ class PartnerRepository extends ServiceEntityRepository
         ?Territory $territory,
         ?PartnerType $type,
         ?string $filterTerms,
-        ?string $orderType = null,
+        ?SearchPartner $searchPartner = null,
     ): Paginator {
         $queryBuilder = $this->getPartnersQueryBuilder($territory);
         $queryBuilder->addSelect('z')
@@ -82,8 +82,8 @@ class PartnerRepository extends ServiceEntityRepository
                 ->setParameter('usersterms', '%'.strtolower($filterTerms).'%');
         }
 
-        if (!empty($orderType)) {
-            [$orderField, $orderDirection] = explode('-', $orderType);
+        if (!empty($searchPartner) && !empty($searchPartner->getOrderType())) {
+            [$orderField, $orderDirection] = explode('-', $searchPartner->getOrderType());
             $queryBuilder->orderBy($orderField, $orderDirection);
         } else {
             $queryBuilder->orderBy('p.nom', 'ASC');

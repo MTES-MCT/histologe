@@ -62,8 +62,8 @@ class SearchArchivedUserType extends AbstractType
 
         $builder->add('orderType', ChoiceType::class, [
             'choices' => [
-                'Ordre alphabétique (A -> Z)' => 'u.nom-ASC',
-                'Ordre alphabétique inversé (Z -> A)' => 'u.nom-DESC',
+                'Nom (A -> Z)' => 'u.nom-ASC',
+                'Nom inversé (Z -> A)' => 'u.nom-DESC',
                 'Partenaire (A -> Z)' => 'p.nom-ASC',
                 'Partenaire inversé (Z -> A)' => 'p.nom-DESC',
             ],

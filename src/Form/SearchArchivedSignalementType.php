@@ -35,8 +35,8 @@ class SearchArchivedSignalementType extends AbstractType
             'choices' => [
                 'Ordre alphabétique (A -> Z)' => 's.nomOccupant-ASC',
                 'Ordre alphabétique inversé (Z -> A)' => 's.nomOccupant-DESC',
-                'Ordre croissant' => 's.id-ASC',
-                'Ordre décroissant' => 's.id-DESC',
+                'Ordre croissant' => 's.reference-ASC',
+                'Ordre décroissant' => 's.reference-DESC',
                 'Le plus récent' => 's.createdAt-DESC',
                 'Le plus ancien' => 's.createdAt-ASC',
             ],
