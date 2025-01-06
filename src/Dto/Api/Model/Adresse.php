@@ -6,8 +6,7 @@ use OpenApi\Attributes as OA;
 
 #[OA\Schema(
     schema: 'Adresse',
-    description: 'Représentation d\'une adresse complète. <br>
-    L\'adresse du signalement correspond au logement concerné par le signalement (celle de l\'occupant).',
+    description: 'Représentation d\'une adresse complète.'
 )]
 class Adresse
 {
