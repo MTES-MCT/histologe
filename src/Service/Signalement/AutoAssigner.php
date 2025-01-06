@@ -85,10 +85,11 @@ class AutoAssigner
                 }
                 $context = new PartnerSignalementContext($partner, $signalement);
                 if ($specification->isSatisfiedBy($context)) {
-                    $assignablePartners[] = $partner;
+                    $assignablePartners[$partner->getId()] = $partner;
                 }
             }
         }
+        $assignablePartners = array_values($assignablePartners);
         if (!empty($assignablePartners)) {
             $this->activateSignalement($signalement);
             $this->createSuivi($signalement, $adminUser);
