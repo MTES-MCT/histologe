@@ -23,6 +23,9 @@
     },
     {
       "command": "0 20 * * * php bin/console app:retry-failed-push-esabora-sish"
+    },
+    {
+      "command": "30 * * * * php bin/console app:retry-failed-emails"
     }
   ]
 }

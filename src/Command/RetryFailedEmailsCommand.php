@@ -21,6 +21,12 @@ use Symfony\Component\Mime\Address;
 )]
 class RetryFailedEmailsCommand extends Command
 {
+    public const array ERRORS_TO_IGNORE = [
+        'Unable to send an email: email is not valid in to (code 400).',
+        'An email must have a "To", "Cc", or "Bcc" header.',
+    ];
+    public const int START_AT_YEAR = 2025;
+
     public function __construct(
         private readonly EntityManagerInterface $entityManager,
         private readonly FailedEmailRepository $failedEmailRepository,
@@ -34,7 +40,7 @@ class RetryFailedEmailsCommand extends Command
         $io = new SymfonyStyle($input, $output);
 
         /** @var FailedEmail[] $failedEmails */
-        $failedEmails = $this->failedEmailRepository->findBy(['isResendSuccessful' => false]);
+        $failedEmails = $this->failedEmailRepository->findEmailToResend();
 
         foreach ($failedEmails as $failedEmail) {
             $emailMessage = (new TemplatedEmail())
