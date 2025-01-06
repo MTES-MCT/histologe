@@ -18,7 +18,7 @@ class SignalementExportFactory
     public const OUI = 'Oui';
     public const NON = 'Non';
     public const NON_RENSEIGNE = 'Non renseigné';
-    public const ALLOCATAIRE = ['CAF', 'MSA', 'Oui', 1];
+    public const ALLOCATAIRE = ['CAF', 'MSA', 'oui', 1];
     public const DATE_FORMAT = 'd/m/Y';
 
     public function createInstanceFrom(User $user, array $data): SignalementExport
@@ -126,7 +126,7 @@ class SignalementExportFactory
                     : (1 == $data[$keyColumn] ? self::OUI : self::NON);
                 break;
             case 'isAllocataire':
-                $value = null === $data[$keyColumn]
+                $value = null === $data[$keyColumn] || '' === $data[$keyColumn]
                     ? self::NON_RENSEIGNE
                     : (\in_array($data[$keyColumn], self::ALLOCATAIRE) ? self::OUI : self::NON);
                 break;
