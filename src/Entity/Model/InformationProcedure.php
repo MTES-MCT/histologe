@@ -37,7 +37,7 @@ class InformationProcedure
         return $this->infoProcedureBailMoyen;
     }
 
-    public function setinfoProcedureBailMoyen(?string $infoProcedureBailMoyen): self
+    public function setInfoProcedureBailMoyen(?string $infoProcedureBailMoyen): self
     {
         $this->infoProcedureBailMoyen = $infoProcedureBailMoyen;
 
@@ -49,7 +49,7 @@ class InformationProcedure
         return $this->infoProcedureBailDate;
     }
 
-    public function setinfoProcedureBailDate(?string $infoProcedureBailDate): self
+    public function setInfoProcedureBailDate(?string $infoProcedureBailDate): self
     {
         $this->infoProcedureBailDate = $infoProcedureBailDate;
 
@@ -61,7 +61,7 @@ class InformationProcedure
         return $this->infoProcedureBailReponse;
     }
 
-    public function setinfoProcedureBailReponse(?string $infoProcedureBailReponse): self
+    public function setInfoProcedureBailReponse(?string $infoProcedureBailReponse): self
     {
         $this->infoProcedureBailReponse = $infoProcedureBailReponse;
 
@@ -73,7 +73,7 @@ class InformationProcedure
         return $this->infoProcedureBailNumero;
     }
 
-    public function setinfoProcedureBailNumero(?string $infoProcedureBailNumero): self
+    public function setInfoProcedureBailNumero(?string $infoProcedureBailNumero): self
     {
         $this->infoProcedureBailNumero = $infoProcedureBailNumero;
 
