@@ -33,14 +33,16 @@ class SuiviRepository extends ServiceEntityRepository
     /**
      * @throws Exception
      */
-    public function getAverageSuivi(?Territory $territory = null): float
+    public function getAverageSuivi(array $territories): float
     {
         $connection = $this->getEntityManager()->getConnection();
-        $whereTerritory = $territory instanceof Territory ? 'AND s.territory_id = :territory_id' : null;
+        $whereTerritory = '';
         $parameters['statut'] = Signalement::STATUS_ARCHIVED;
 
-        if (null !== $whereTerritory) {
-            $parameters['territory_id'] = $territory->getId();
+        if (\count($territories)) {
+            $territoriesIds = implode(',', array_keys($territories));
+            $whereTerritory = 'AND s.territory_id IN (:territories)';
+            $parameters['territories'] = $territoriesIds;
         }
 
         $sql = 'SELECT AVG(nb_suivi) as average_nb_suivi
@@ -62,13 +64,12 @@ class SuiviRepository extends ServiceEntityRepository
      * @throws Exception
      */
     public function countSignalementNoSuiviSince(
-        int $period = Suivi::DEFAULT_PERIOD_INACTIVITY,
-        ?Territory $territory = null,
-        ?array $partnersIds = null,
+        array $territories,
+        array $partnersIds = [],
     ): int {
         $connection = $this->getEntityManager()->getConnection();
         $parameters = [
-            'day_period' => $period,
+            'day_period' => Suivi::DEFAULT_PERIOD_INACTIVITY,
             'type_suivi_usager' => Suivi::TYPE_USAGER,
             'type_suivi_partner' => Suivi::TYPE_PARTNER,
             'type_suivi_auto' => Suivi::TYPE_AUTO,
@@ -77,8 +78,8 @@ class SuiviRepository extends ServiceEntityRepository
             'status_refused' => Signalement::STATUS_REFUSED,
         ];
 
-        if (null !== $territory) {
-            $parameters['territory_id'] = $territory->getId();
+        if (\count($territories)) {
+            $parameters['territories'] = implode(',', array_keys($territories));
         }
         if (!empty($partnersIds)) {
             $parameters['partners'] = implode(',', $partnersIds);
@@ -88,7 +89,7 @@ class SuiviRepository extends ServiceEntityRepository
 
         $sql = 'SELECT COUNT(*) as count_signalement
                 FROM ('.
-                        $this->getSignalementsQuery($territory, $partnersIds)
+                        $this->getSignalementsQuery($territories, $partnersIds)
                 .') as countSignalementSuivi';
 
         $statement = $connection->prepare($sql);
@@ -115,8 +116,10 @@ class SuiviRepository extends ServiceEntityRepository
             'status_refused' => Signalement::STATUS_REFUSED,
         ];
 
+        $territories = [];
         if (null !== $territory) {
-            $parameters['territory_id'] = $territory->getId();
+            $parameters['territories'] = $territory->getId();
+            $territories[] = $territory;
         }
 
         if (!empty($partnersIds)) {
@@ -124,8 +127,7 @@ class SuiviRepository extends ServiceEntityRepository
             $parameters['status_wait'] = AffectationStatus::STATUS_WAIT->value;
             $parameters['status_accepted'] = AffectationStatus::STATUS_ACCEPTED->value;
         }
-
-        $sql = $this->getSignalementsQuery($territory, $partnersIds);
+        $sql = $this->getSignalementsQuery($territories, $partnersIds);
         $statement = $connection->prepare($sql);
 
         return $statement->executeQuery($parameters)->fetchFirstColumn();
@@ -135,7 +137,7 @@ class SuiviRepository extends ServiceEntityRepository
      * @throws NonUniqueResultException
      * @throws NoResultException
      */
-    public function countSuiviPartner(?Territory $territory = null): int
+    public function countSuiviPartner(array $territories): int
     {
         $qb = $this->createQueryBuilder('s');
         $qb->select('COUNT(s) as nb_suivi')
@@ -145,8 +147,8 @@ class SuiviRepository extends ServiceEntityRepository
             ->setParameter('statut', Signalement::STATUS_ARCHIVED)
             ->setParameter('type_suivi', Suivi::TYPE_PARTNER);
 
-        if ($territory instanceof Territory) {
-            $qb->andWhere('sig.territory = :territory')->setParameter('territory', $territory);
+        if (\count($territories)) {
+            $qb->andWhere('sig.territory IN (:territories)')->setParameter('territories', $territories);
         }
 
         return (int) $qb->getQuery()->getSingleScalarResult();
@@ -156,7 +158,7 @@ class SuiviRepository extends ServiceEntityRepository
      * @throws NonUniqueResultException
      * @throws NoResultException
      */
-    public function countSuiviUsager(?Territory $territory = null): int
+    public function countSuiviUsager(array $territories): int
     {
         $qb = $this->createQueryBuilder('s');
         $qb->select('COUNT(s) as nb_suivi')
@@ -167,21 +169,21 @@ class SuiviRepository extends ServiceEntityRepository
             ->setParameter('type_suivi', Suivi::TYPE_USAGER)
             ->setParameter('statut', Signalement::STATUS_ARCHIVED);
 
-        if ($territory instanceof Territory) {
-            $qb->andWhere('sig.territory = :territory')->setParameter('territory', $territory);
+        if (\count($territories)) {
+            $qb->andWhere('sig.territory IN (:territories)')->setParameter('territories', $territories);
         }
 
         return (int) $qb->getQuery()->getSingleScalarResult();
     }
 
     private function getSignalementsQuery(
-        ?Territory $territory = null,
+        array $territories,
         ?array $partnersIds = null,
     ): string {
         $whereTerritory = $wherePartner = $innerPartnerJoin = '';
 
-        if (null !== $territory) {
-            $whereTerritory = 'AND s.territory_id = :territory_id';
+        if (\count($territories)) {
+            $whereTerritory = 'AND s.territory_id IN (:territories)';
         }
 
         if (!empty($partnersIds)) {
@@ -295,7 +297,7 @@ class SuiviRepository extends ServiceEntityRepository
      * @throws Exception
      */
     public function countSignalementNoSuiviAfter3Relances(
-        ?Territory $territory = null,
+        array $territories,
         ?ArrayCollection $partners = null,
     ): int {
         $connection = $this->getEntityManager()->getConnection();
@@ -308,8 +310,8 @@ class SuiviRepository extends ServiceEntityRepository
             'nb_suivi_technical' => 3,
         ];
 
-        if (null !== $territory) {
-            $parameters['territory_id'] = $territory->getId();
+        if (\count($territories)) {
+            $parameters['territories'] = implode(',', array_keys($territories));
         }
         if (null !== $partners && !$partners->isEmpty()) {
             $parameters['partners'] = $partners;
@@ -322,7 +324,7 @@ class SuiviRepository extends ServiceEntityRepository
                             excludeUsagerAbandonProcedure: false,
                             dayPeriod: 0,
                             partners: $partners,
-                            territory: $territory,
+                            territories: $territories,
                         )
                 .') as countSignalementSuivi';
         $statement = $connection->prepare($sql);
@@ -334,13 +336,13 @@ class SuiviRepository extends ServiceEntityRepository
         bool $excludeUsagerAbandonProcedure = true,
         int $dayPeriod = 0,
         ?ArrayCollection $partners = null,
-        ?Territory $territory = null,
+        array $territories = [],
     ): string {
         $joinMaxDateSuivi = $whereTerritory = $wherePartner = $innerPartnerJoin = $whereExcludeUsagerAbandonProcedure
         = $whereLastSuiviDelay = '';
 
-        if (null !== $territory) {
-            $whereTerritory = 'AND s.territory_id = :territory_id ';
+        if (\count($territories)) {
+            $whereTerritory = 'AND s.territory_id IN (:territories) ';
         }
 
         if (null != $partners && !$partners->isEmpty()) {

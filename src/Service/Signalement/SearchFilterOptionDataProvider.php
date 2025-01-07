@@ -37,7 +37,7 @@ class SearchFilterOptionDataProvider
     /**
      * @throws InvalidArgumentException
      */
-    public function getData(?User $user = null, ?Territory $territory = null): array
+    public function getData(User $user, ?Territory $territory = null): array
     {
         return $this->cache->get(
             $this->getCacheKey($user, $territory),
@@ -52,30 +52,31 @@ class SearchFilterOptionDataProvider
 
                 return [
                     'criteres' => $this->critereRepository->findAllList(),
-                    'territories' => $this->territoryRepository->findAllList(),
-                    'partners' => $this->partnerRepository->findAllList($territory),
-                    'epcis' => $this->communeRepository->findEpciByCommuneTerritory($territory),
-                    'tags' => $this->tagsRepository->findAllActive($territory),
+                    'territories' => $user->isSuperAdmin() ? $this->territoryRepository->findAllList() : $user->getPartnersTerritories(true),
+                    'partners' => $this->partnerRepository->findAllList($territory, $user),
+                    'epcis' => $this->communeRepository->findEpciByCommuneTerritory($territory, $user),
+                    'tags' => $this->tagsRepository->findAllActive($territory, $user),
                     'cities' => $this->signalementRepository->findCities($user, $territory),
                     'zipcodes' => $this->signalementRepository->findZipcodes($user, $territory),
                     'listQualificationStatus' => $this->qualificationStatusService->getList(),
                     'listVisiteStatus' => VisiteStatus::getLabelList(),
                     'hasSignalementsImported' => $this->signalementRepository->countImported($territory, $user),
-                    'bailleursSociaux' => $this->bailleurRepository->findBailleursByTerritory($territory?->getZip()),
+                    'bailleursSociaux' => $this->bailleurRepository->findBailleursByTerritory($user, $territory),
                 ];
             }
         );
     }
 
-    private function getCacheKey(?User $user, ?Territory $territory = null): string
+    private function getCacheKey(User $user, ?Territory $territory = null): string
     {
         $className = (new \ReflectionClass(__CLASS__))->getShortName();
 
-        if (null == $user) {
-            return $className.User::ROLE_ADMIN;
+        if ($user->isSuperAdmin()) {
+            return $className.User::ROLE_ADMIN.'-territory-'.$territory?->getZip();
         }
         $role = $user->getRoles();
+        $partnersIds = implode('-', $user->getPartners()->map(fn ($partner) => $partner->getId())->toArray());
 
-        return $className.array_shift($role).'-territory-'.$territory?->getZip().'-'.$user->getId();
+        return $className.array_shift($role).'-partners-'.$partnersIds.'-territory-'.$territory?->getZip();
     }
 }

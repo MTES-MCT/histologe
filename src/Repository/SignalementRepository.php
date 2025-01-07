@@ -128,7 +128,7 @@ class SignalementRepository extends ServiceEntityRepository
             $qb->andWhere('s.territory = :territory')->setParameter('territory', $territory);
         }
 
-        if ($user?->isUserPartner() || $user?->isPartnerAdmin()) {
+        if ($user && !$user->isSuperAdmin()) {
             $qb->innerJoin('s.affectations', 'affectations')
                 ->innerJoin('affectations.partner', 'partner')
                 ->andWhere('partner IN (:partners)')
@@ -138,7 +138,7 @@ class SignalementRepository extends ServiceEntityRepository
         return $qb->getQuery()->getSingleScalarResult();
     }
 
-    public function countByStatus(?Territory $territory, ?ArrayCollection $partners, ?int $year = null, bool $removeImported = false, ?Qualification $qualification = null, ?array $qualificationStatuses = null): array
+    public function countByStatus(array $territories, ?ArrayCollection $partners, ?int $year = null, bool $removeImported = false, ?Qualification $qualification = null, ?array $qualificationStatuses = null): array
     {
         $qb = $this->createQueryBuilder('s');
         $qb->select('COUNT(s.id) as count')
@@ -150,8 +150,8 @@ class SignalementRepository extends ServiceEntityRepository
             $qb->andWhere('s.isImported IS NULL OR s.isImported = 0');
         }
 
-        if ($territory) {
-            $qb->andWhere('s.territory = :territory')->setParameter('territory', $territory);
+        if (\count($territories)) {
+            $qb->andWhere('s.territory IN (:territories)')->setParameter('territories', $territories);
         }
         if ($partners && $partners->count() > 0) {
             $qb->leftJoin('s.affectations', 'affectations')
@@ -633,29 +633,27 @@ class SignalementRepository extends ServiceEntityRepository
         return $qb->getQuery()->toIterable();
     }
 
-    public function findCities(?User $user = null, ?Territory $territory = null): array|int|string
+    public function findCities(User $user, ?Territory $territory = null): array|int|string
     {
         return $this->findCommunes($user, $territory, 's.villeOccupant', 'city');
     }
 
-    public function findZipcodes(?User $user = null, ?Territory $territory = null): array|int|string
+    public function findZipcodes(User $user, ?Territory $territory = null): array|int|string
     {
         return $this->findCommunes($user, $territory, 's.cpOccupant', 'zipcode');
     }
 
     public function findCommunes(
-        ?User $user = null,
+        User $user,
         ?Territory $territory = null,
         ?string $field = null,
         ?string $alias = null,
     ): array|int|string {
-        $user = $user?->isUserPartner() || $user?->isPartnerAdmin() ? $user : null;
-
         $qb = $this->createQueryBuilder('s')
             ->select($field.' '.$alias)
             ->where('s.statut != :status')
             ->setParameter('status', Signalement::STATUS_ARCHIVED);
-        if ($user) {
+        if (!$user->isSuperAdmin()) {
             $qb->leftJoin('s.affectations', 'affectations')
                 ->leftJoin('affectations.partner', 'partner')
                 ->andWhere('partner IN (:partners)')
@@ -1107,18 +1105,18 @@ class SignalementRepository extends ServiceEntityRepository
         ])->fetchAllAssociative();
     }
 
-    public function countSignalementAcceptedNoSuivi(Territory $territory)
+    public function countSignalementAcceptedNoSuivi(array $territories): array
     {
         $subquery = $this->_em->createQueryBuilder()
             ->select('IDENTITY(su.signalement)')
             ->from(Suivi::class, 'su')
             ->innerJoin('su.signalement', 'sig')
-            ->where('sig.territory = :territory_1')
+            ->where('sig.territory IN (:territories_1)')
             ->andWhere('sig.statut = :statut')
             ->andWhere('su.type IN (:suivi_type)')
             ->setParameter('suivi_type', [Suivi::TYPE_USAGER, Suivi::TYPE_PARTNER])
             ->setParameter('statut', Signalement::STATUS_ACTIVE)
-            ->setParameter('territory_1', $territory)
+            ->setParameter('territories_1', $territories)
             ->distinct();
 
         $queryBuilder = $this->createQueryBuilder('s')
@@ -1126,11 +1124,11 @@ class SignalementRepository extends ServiceEntityRepository
             ->innerJoin('s.affectations', 'a')
             ->innerJoin('a.partner', 'p')
             ->where('s.statut = :statut')
-            ->andWhere('p.territory = :territory')
+            ->andWhere('p.territory IN (:territories)')
             ->andWhere('s.id NOT IN (:subquery)')
             ->setParameter('statut', Signalement::STATUS_ACTIVE)
             ->setParameter('subquery', $subquery->getQuery()->getSingleColumnResult())
-            ->setParameter('territory', $territory)
+            ->setParameter('territories', $territories)
             ->groupBy('p.nom');
 
         return $queryBuilder->getQuery()->getResult();
@@ -1141,7 +1139,7 @@ class SignalementRepository extends ServiceEntityRepository
      * @throws NoResultException
      * @throws QueryException
      */
-    public function countSignalementByStatus(?Territory $territory = null): CountSignalement
+    public function countSignalementByStatus(array $territories): CountSignalement
     {
         $qb = $this->createQueryBuilder('s');
         $qb->select(
@@ -1162,8 +1160,8 @@ class SignalementRepository extends ServiceEntityRepository
             ->where('s.statut != :archived')
             ->setParameter('archived', Signalement::STATUS_ARCHIVED);
 
-        if (null !== $territory) {
-            $qb->andWhere('s.territory =:territory')->setParameter('territory', $territory);
+        if (\count($territories)) {
+            $qb->andWhere('s.territory IN (:territories)')->setParameter('territories', $territories);
         }
 
         return $qb->getQuery()->getOneOrNullResult();

@@ -46,7 +46,7 @@ class SuiviRepositoryTest extends KernelTestCase
 
     public function testCountSignalementNoSuiviAfter3Relances(): void
     {
-        $result = $this->suiviRepository->countSignalementNoSuiviAfter3Relances();
+        $result = $this->suiviRepository->countSignalementNoSuiviAfter3Relances([]);
         $this->assertEquals(0, $result);
     }
 }

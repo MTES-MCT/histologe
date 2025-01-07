@@ -446,6 +446,15 @@ users:
     is_generique: 0
     is_mailing_active: 1
   -
+    email: user-partenaire-multi-ter-34-30@histologe.fr
+    roles: "[\"ROLE_USER_PARTNER\"]"
+    partners: 
+      - "CAF 34"
+      - "CAF 30"
+    statut: 1
+    is_generique: 0
+    is_mailing_active: 1
+  -
     email: admin-territoire-44-01@histologe.fr
     roles: "[\"ROLE_ADMIN_TERRITORY\"]"
     partner: "DDT Loire-Atlantique"

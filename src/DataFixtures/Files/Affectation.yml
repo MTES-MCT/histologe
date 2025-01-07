@@ -249,3 +249,19 @@ affectations:
     motif_cloture: ""
     territory: "Bouches-du-Rhône"
     is_synchronized: true
+  -
+    signalement: 2024-12
+    partner: "partenaire-30-02@histologe.fr"
+    statut: 0
+    answered_by: ""
+    affected_by: "admin-01@histologe.fr"
+    motif_cloture: ""
+    territory: "Gard"
+  -
+    signalement: 2024-08
+    partner: "partenaire-34-04@histologe.fr"
+    statut: 0
+    answered_by: ""
+    affected_by: "admin-01@histologe.fr"
+    motif_cloture: ""
+    territory: "Hérault"

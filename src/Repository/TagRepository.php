@@ -4,6 +4,7 @@ namespace App\Repository;
 
 use App\Entity\Tag;
 use App\Entity\Territory;
+use App\Entity\User;
 use App\Service\ListFilters\SearchTag;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\Tools\Pagination\Paginator;
@@ -27,7 +28,7 @@ class TagRepository extends ServiceEntityRepository
     ): mixed {
         $qb = $this->createQueryBuilder('t');
         $qb->andWhere('t.isArchive != 1')->orderBy('t.label', 'ASC');
-        if (count($territories)) {
+        if (\count($territories)) {
             $qb->andWhere('t.territory IN (:territories)')->setParameter('territories', $territories);
         }
 
@@ -36,11 +37,15 @@ class TagRepository extends ServiceEntityRepository
 
     public function findAllActive(
         ?Territory $territory = null,
+        ?User $user = null,
     ): mixed {
         $qb = $this->createQueryBuilder('t');
         $qb->andWhere('t.isArchive != 1')
             ->orderBy('t.label', 'ASC')
             ->indexBy('t', 't.id');
+        if ($user && !$user->isSuperAdmin()) {
+            $qb->andWhere('t.territory IN (:territories)')->setParameter('territories', $user->getPartnersTerritories());
+        }
         if ($territory) {
             $qb->andWhere('t.territory = :territory')
                 ->setParameter('territory', $territory);

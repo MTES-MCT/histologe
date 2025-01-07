@@ -7,6 +7,7 @@ use App\Entity\Signalement;
 use App\Entity\Territory;
 use App\Repository\SignalementRepository;
 use App\Repository\TerritoryRepository;
+use App\Repository\UserRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\NonUniqueResultException;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
@@ -179,5 +180,29 @@ class SignalementRepositoryTest extends KernelTestCase
         $signalementRepository = $this->entityManager->getRepository(Signalement::class);
         $emptyEmailExistingSignalements = $signalementRepository->findAllForEmailAndAddress(null, null, null, null);
         $this->assertEmpty($emptyEmailExistingSignalements);
+    }
+
+    /**
+     * @dataProvider provideSearchWithGeoData
+     */
+    public function testfindAllWithGeoData(string $email, array $options, int $nbResult): void
+    {
+        /** @var UserRepository $userRepository */
+        $userRepository = static::getContainer()->get(UserRepository::class);
+        $user = $userRepository->findOneBy(['email' => $email]);
+        /** @var SignalementRepository $signalementRepository */
+        $signalementRepository = $this->entityManager->getRepository(Signalement::class);
+        $signalements = $signalementRepository->findAllWithGeoData($user, $options, 0);
+        $this->assertCount($nbResult, $signalements);
+    }
+
+    public function provideSearchWithGeoData(): \Generator
+    {
+        yield 'Search all for super admin' => ['admin-01@histologe.fr', [], 45];
+        yield 'Search in Marseille for super admin' => ['admin-01@histologe.fr', ['cities' => ['Marseille']], 25];
+        yield 'Search all for admin partner multi territories' => ['admin-partenaire-multi-ter-13-01@histologe.fr', [], 5];
+        yield 'Search in Ain for admin partner multi territories' => ['admin-partenaire-multi-ter-13-01@histologe.fr', ['territories' => 1], 1];
+        yield 'Search all for user partner multi territories' => ['user-partenaire-multi-ter-34-30@histologe.fr', [], 2];
+        yield 'Search in Hérault for user partner multi territories' => ['user-partenaire-multi-ter-34-30@histologe.fr', ['territories' => 35], 1];
     }
 }

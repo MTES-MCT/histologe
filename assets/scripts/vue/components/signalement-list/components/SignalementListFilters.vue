@@ -35,7 +35,7 @@
             </ul>
           </div>
           <div class="fr-grid-row fr-grid-row--gutters">
-            <div v-if="sharedState.user.isAdmin" class="fr-col-12 fr-col-lg-6 fr-col-xl-2 grey-background">
+            <div v-if="sharedState.user.isAdmin || sharedState.user.isMultiTerritoire" class="fr-col-12 fr-col-lg-6 fr-col-xl-2 grey-background">
               <HistoSelect
                 v-if="sharedState.territories.length > 0"
                 id="filter-territoire"
@@ -48,7 +48,7 @@
                 <template #label>Territoire</template>
               </HistoSelect>
             </div>
-            <div class="fr-col-12 fr-col-lg-6" :class="sharedState.user.isAdmin ? 'fr-col-xl-3' : 'fr-col-xl-4'">
+            <div class="fr-col-12 fr-col-lg-6" :class="sharedState.user.isAdmin || sharedState.user.isMultiTerritoire ? 'fr-col-xl-3' : 'fr-col-xl-4'">
               <AppSearch
                 id="filter-search-terms"
                 v-model="sharedState.input.filters.searchTerms"
@@ -60,7 +60,7 @@
                 <template #label>Recherche</template>
               </AppSearch>
             </div>
-            <div class="fr-col-12 fr-col-lg-6" :class="sharedState.user.isAdmin ? 'fr-col-xl-2' : 'fr-col-xl-3'">
+            <div class="fr-col-12 fr-col-lg-6" :class="sharedState.user.isAdmin || sharedState.user.isMultiTerritoire ? 'fr-col-xl-2' : 'fr-col-xl-3'">
               <AppAutoComplete
                 id="filter-communes"
                 v-model="sharedState.input.filters.communes"

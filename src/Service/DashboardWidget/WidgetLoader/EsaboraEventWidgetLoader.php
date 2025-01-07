@@ -26,7 +26,7 @@ class EsaboraEventWidgetLoader extends AbstractWidgetLoader
         $data = $this->widgetDataManager->findLastJobEventByInterfacageType(
             InterfacageType::ESABORA->value,
             $this->widgetParameter['data'],
-            $widget->getTerritory()
+            $widget->getTerritories()
         );
         foreach ($data as $key => $event) {
             $data[$key]['response'] = null;

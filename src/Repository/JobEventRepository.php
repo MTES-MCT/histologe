@@ -8,7 +8,6 @@ use App\Entity\Enum\PartnerType;
 use App\Entity\JobEvent;
 use App\Entity\Partner;
 use App\Entity\Signalement;
-use App\Entity\Territory;
 use App\Repository\Behaviour\EntityCleanerRepositoryInterface;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\NonUniqueResultException;
@@ -36,7 +35,7 @@ class JobEventRepository extends ServiceEntityRepository implements EntityCleane
     public function findLastJobEventByInterfacageType(
         string $type,
         int $dayPeriod,
-        ?Territory $territory,
+        array $territories,
     ): array {
         $qb = $this->createQueryBuilder('j')
             ->select('j.createdAt, p.id, p.nom, s.reference, j.status, j.action, j.codeStatus, j.response')
@@ -45,8 +44,8 @@ class JobEventRepository extends ServiceEntityRepository implements EntityCleane
             ->where('j.service = :service')
             ->andWhere('j.createdAt >= :date_limit');
 
-        if (null !== $territory) {
-            $qb->andWhere('p.territory = :territory')->setParameter('territory', $territory);
+        if (\count($territories)) {
+            $qb->andWhere('p.territory IN (:territories)')->setParameter('territories', $territories);
         }
 
         $qb->setParameter('service', $type)
