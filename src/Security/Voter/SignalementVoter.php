@@ -8,6 +8,7 @@ use App\Entity\Enum\QualificationStatus;
 use App\Entity\Signalement;
 use App\Entity\User;
 use Symfony\Bundle\SecurityBundle\Security;
+use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Authorization\Voter\Voter;
 use Symfony\Component\Security\Core\User\UserInterface;
@@ -24,8 +25,10 @@ class SignalementVoter extends Voter
     public const EDIT_NDE = 'SIGN_EDIT_NDE';
     public const SEE_NDE = 'SIGN_SEE_NDE';
 
-    public function __construct(private Security $security)
-    {
+    public function __construct(
+        private Security $security,
+        private ParameterBagInterface $parameterBag,
+    ) {
     }
 
     protected function supports(string $attribute, $subject): bool
@@ -146,9 +149,18 @@ class SignalementVoter extends Voter
 
         $partner = $user->getPartnerInTerritory($signalement->getTerritory());
         if ($user->isTerritoryAdmin()) {
-            if (!empty($partner->getInsee()) && !empty($signalement->getInseeOccupant()) && !in_array($signalement->getInseeOccupant(), $partner->getInsee())) {
+            $authorizedInsee = $this->parameterBag->get('authorized_codes_insee');
+            $territory = $signalement->getTerritory();
+            if (isset($authorizedInsee[$territory->getZip()])) {
+                foreach ($authorizedInsee[$territory->getZip()] as $key => $authorizedInseePartner) {
+                    if ($key === $partner->getNom() && \in_array($signalement->getInseeOccupant(), $authorizedInseePartner)) {
+                        return true;
+                    }
+                }
+
                 return false;
             }
+
             return true;
         }
 
