@@ -328,6 +328,19 @@
                   <template #label>Type de situation</template>
                 </HistoSelect>
               </div>
+              <div class="fr-col-12 fr-col-lg-6 fr-col-xl-3 grey-background"
+                   v-if="sharedState.zones.length > 0">
+                <HistoMultiSelect
+                  id="filter-zones"
+                  v-model="sharedState.input.filters.zones"
+                  @update:modelValue="onChange(false)"
+                  :option-items=sharedState.zones
+                  title="Rechercher par zones"
+                  :active=true
+                  >
+                  <template #label>Zones</template>
+                </HistoMultiSelect>
+              </div>
             </div>
           </div>
         </div>
@@ -474,6 +487,7 @@ export default defineComponent({
       this.sharedState.input.filters = {
         territoire: null,
         etiquettes: [],
+        zones: [],
         partenaires: [],
         communes: [],
         epcis: [],

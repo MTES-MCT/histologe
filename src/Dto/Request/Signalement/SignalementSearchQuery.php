@@ -19,6 +19,7 @@ class SignalementSearchQuery
         private readonly ?array $communes = null,
         private readonly ?array $epcis = null,
         private readonly ?array $etiquettes = null,
+        private readonly ?array $zones = null,
         #[Assert\Date(message: 'La date de début n\'est pas une date valide')]
         private readonly ?string $dateDepotDebut = null,
         #[Assert\Date(message: 'La date de fin n\'est pas une date valide')]
@@ -108,6 +109,11 @@ class SignalementSearchQuery
     public function getEtiquettes(): ?array
     {
         return $this->etiquettes;
+    }
+
+    public function getZones(): ?array
+    {
+        return $this->zones;
     }
 
     public function getDateDepotDebut(): ?string
@@ -280,6 +286,7 @@ class SignalementSearchQuery
             ];
         }
         $filters['tags'] = $this->getEtiquettes() ?? null;
+        $filters['zones'] = $this->getZones() ?? null;
         $filters['typeDeclarant'] = $this->getTypeDeclarant();
         $filters['situation'] = $this->getSituation();
         $filters['procedure'] = $this->getProcedure();

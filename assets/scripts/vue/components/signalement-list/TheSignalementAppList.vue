@@ -195,6 +195,15 @@ export default defineComponent({
         this.sharedState.etiquettes.push(optionItem)
       })
 
+      this.sharedState.zones = []
+      const zonesArray = Object.values(requestResponse.zones)
+      zonesArray.forEach((zone: any) => {
+        const optionItem = new HistoInterfaceSelectOption()
+        optionItem.Id = zone.id.toString()
+        optionItem.Text = zone.name
+        this.sharedState.zones.push(optionItem)
+      })
+
       this.sharedState.bailleursSociaux = []
       for (const id in requestResponse.bailleursSociaux) {
         const optionItem = new HistoInterfaceSelectOption()
@@ -282,7 +291,7 @@ export default defineComponent({
             url.searchParams.set(`${key}Debut`, dateDebut)
             url.searchParams.set(`${key}Fin`, dateFin)
             url.searchParams.delete(key)
-          } else if (typeof value === 'object' && (key === 'partenaires' || key === 'communes' || key === 'etiquettes')) {
+          } else if (typeof value === 'object' && (key === 'partenaires' || key === 'communes' || key === 'etiquettes' || key === 'zones')) {
             value.forEach((valueItem: any) => {
               this.addQueryParameter(`${key}[]`, valueItem)
               url.searchParams.append(`${key}[]`, valueItem)

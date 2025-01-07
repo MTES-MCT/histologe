@@ -31,6 +31,7 @@ class WidgetSettingsFactory
             communes: $this->getCommunesAndZipCodes($filterOptionData),
             epcis: $filterOptionData['epcis'],
             tags: $filterOptionData['tags'],
+            zones: $filterOptionData['zones'],
             hasSignalementImported: $filterOptionData['hasSignalementsImported'] > 0,
             bailleursSociaux: $filterOptionData['bailleursSociaux'],
             avatarOrPlaceHolder: $this->userAvatar->userAvatarOrPlaceHolder($user, 80)

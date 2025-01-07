@@ -11,6 +11,7 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
+use Symfony\Component\Serializer\Attribute\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: ZoneRepository::class)]
@@ -25,6 +26,7 @@ class Zone implements EntityHistoryInterface
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
+    #[Groups(['widget-settings:read'])]
     private ?int $id = null;
 
     #[ORM\Column(type: Types::TEXT)]
@@ -37,6 +39,7 @@ class Zone implements EntityHistoryInterface
 
     #[ORM\Column(length: 255)]
     #[Assert\NotBlank(message: 'Merci de saisir un nom.')]
+    #[Groups(['widget-settings:read'])]
     private ?string $name = null;
 
     #[ORM\Column(
