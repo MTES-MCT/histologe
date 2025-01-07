@@ -139,10 +139,19 @@ class SignalementVoter extends Voter
         if (Signalement::STATUS_ARCHIVED === $signalement->getStatut()) {
             return false;
         }
-        if ($user->isTerritoryAdmin() && $user->hasPartnerInTerritory($signalement->getTerritory())) {
+
+        if (!$user->hasPartnerInTerritory($signalement->getTerritory())) {
+            return false;
+        }
+
+        $partner = $user->getPartnerInTerritory($signalement->getTerritory());
+        if ($user->isTerritoryAdmin()) {
+            if (!empty($partner->getInsee()) && !empty($signalement->getInseeOccupant()) && !in_array($signalement->getInseeOccupant(), $partner->getInsee())) {
+                return false;
+            }
             return true;
         }
-        $partner = $user->getPartnerInTerritory($signalement->getTerritory());
+
         if (!$partner) {
             return false;
         }
