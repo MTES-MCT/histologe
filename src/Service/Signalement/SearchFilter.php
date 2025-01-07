@@ -376,6 +376,7 @@ class SearchFilter
             $connection = $this->entityManager->getConnection();
             $params = $zonesParams = [];
             foreach ($filters['zones'] as $zoneId) {
+                $zoneId = (int) $zoneId;
                 $zonesParams[] = ':zone_'.$zoneId;
                 $params['zone_'.$zoneId] = $zoneId;
             }
