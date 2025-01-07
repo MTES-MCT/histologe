@@ -2,7 +2,7 @@
 
 namespace App\Form;
 
-use App\Service\SearchTerritory;
+use App\Service\ListFilters\SearchTerritory;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
@@ -16,13 +16,13 @@ class SearchTerritoryType extends AbstractType
     {
         $builder->add('queryName', SearchType::class, [
             'required' => false,
-            'label' => false,
+            'label' => 'Territoire',
             'attr' => ['placeholder' => 'Taper le code ou le nom d\'un territoire'],
         ]);
         $builder->add('isActive', ChoiceType::class, [
             'required' => false,
-            'label' => false,
-            'placeholder' => 'Statut',
+            'label' => 'Statut',
+            'placeholder' => 'Tous les statuts',
             'choices' => [
                 'Activé' => true,
                 'Non activé' => false,
@@ -38,7 +38,7 @@ class SearchTerritoryType extends AbstractType
             'data_class' => SearchTerritory::class,
             'csrf_protection' => false,
             'method' => 'GET',
-            'attr' => ['id' => 'search-territory-form', 'class' => 'fr-p-4v'],
+            'attr' => ['id' => 'search-territory-form', 'class' => 'fr-p-4v bo-filter-form'],
         ]);
     }
 

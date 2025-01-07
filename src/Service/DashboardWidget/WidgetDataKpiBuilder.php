@@ -163,6 +163,7 @@ class WidgetDataKpiBuilder
             $link = $widgetParams['link'] ?? null;
             $label = $widgetParams['label'] ?? null;
             $widgetParams['params']['territoire_id'] = $this->territory?->getId();
+            $widgetParams['params']['isImported'] = 'oui';
             $parameters = array_merge($linkParameters, $widgetParams['params'] ?? []);
             $widgetCard = $this->widgetCardFactory->createInstance($label, $count, $link, $parameters);
             if (!$this->hasWidgetCard($key)) {
@@ -173,7 +174,7 @@ class WidgetDataKpiBuilder
         return $this;
     }
 
-    private function canAddCard($key)
+    private function canAddCard(string $key): bool
     {
         $roles = $this->user->getRoles();
         $role = array_shift($roles);

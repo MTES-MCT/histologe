@@ -38,3 +38,29 @@ export const updateLocalStorageOnEvent = (eventType, idItem, localStorageName) =
   const item = document?.querySelector(idItem)
   item?.addEventListener(eventType, () => updateLocalStorageWithFormParams(localStorageName))
 }
+
+const filterForms = document.getElementsByClassName('bo-filter-form')
+if (filterForms.length > 0) {
+  for (const filterForm of filterForms) {
+    filterForm.querySelectorAll('select').forEach((select) => {
+      select.addEventListener('change', function () {
+        if (select.name === 'territory') {
+          filterForm.querySelectorAll('input[name="partners[]"]').forEach((input) => {
+            input.checked = false
+          })
+        }
+        document.getElementById('page').value = 1
+        filterForm.submit()
+      })
+    })
+    filterForm.querySelectorAll('.search-checkbox-container').forEach((select) => {
+      select.addEventListener('searchCheckboxChange', function () {
+        document.getElementById('page').value = 1
+        filterForm.submit()
+      })
+    })
+    filterForm.addEventListener('submit', function () {
+      document.getElementById('page').value = 1
+    })
+  }
+}

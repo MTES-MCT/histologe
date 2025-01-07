@@ -98,6 +98,12 @@
                                 </select>
                             </div>
 
+                            <div class="fr-input-group">
+                                {% set bailDpeInvariant = signalement.typeCompositionLogement ? signalement.typeCompositionLogement.bailDpeInvariant : null %}
+                                <label class="fr-label" for="informationLogementBailDpeInvariant">Invariant fiscal (facultatif)</label>
+                                <input class="fr-input" type="text" id="informationLogementBailDpeInvariant" name="bailDpeInvariant"  maxlength="12" value="{{ bailDpeInvariant }}">
+                            </div>
+
                             <div class="fr-select-group">
                                 {% set bailDpeEtatDesLieux = signalement.typeCompositionLogement ? signalement.typeCompositionLogement.bailDpeEtatDesLieux : null %}
                                 <label class="fr-label" for="informationLogementBailDpeEtatDesLieux">Etat des lieux

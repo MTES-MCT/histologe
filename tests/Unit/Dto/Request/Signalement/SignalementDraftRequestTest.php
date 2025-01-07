@@ -87,6 +87,7 @@ class SignalementDraftRequestTest extends WebTestCase
             ->setTypeLogementCommoditesWcCuisine('non')
             ->setBailDpeDateEmmenagement('2022-01-01')
             ->setBailDpeBail('oui')
+            ->setBailDpeInvariant('abcd12ef34')
             ->setBailDpeEtatDesLieux('oui')
             ->setBailDpeDpe('oui')
             ->setBailDpeClasseEnergetique('D')
@@ -101,6 +102,10 @@ class SignalementDraftRequestTest extends WebTestCase
             ->setTravailleurSocialAccompagnement('oui')
             ->setTravailleurSocialAccompagnementDeclarant('1')
             ->setInfoProcedureBailleurPrevenu('oui')
+            ->setInfoProcedureBailMoyen('sms')
+            ->setInfoProcedureBailDate('11/2024')
+            ->setInfoProcedureBailReponse('Réponse du bailleur')
+            ->setInfoProcedureBailNumero('R-TR45')
             ->setInfoProcedureAssuranceContactee('oui')
             ->setInfoProcedureReponseAssurance('Réponse de l\'assurance')
             ->setInfoProcedureDepartApresTravaux('oui')
@@ -254,6 +259,7 @@ class SignalementDraftRequestTest extends WebTestCase
             ->setTypeLogementCommoditesWcCuisine('invalid_wc_cuisine')
             ->setBailDpeDateEmmenagement('invalid_date')
             ->setBailDpeBail('invalid_bail')
+            ->setBailDpeInvariant('invalid_invariant_fiscal')
             ->setBailDpeEtatDesLieux('invalid_etat_des_lieux')
             ->setBailDpeDpe('invalid_dpe')
             ->setBailDpeClasseEnergetique('invalid_classe_energetique')
@@ -267,6 +273,10 @@ class SignalementDraftRequestTest extends WebTestCase
             ->setTravailleurSocialPreavisDepart('invalid_preavis_depart')
             ->setTravailleurSocialAccompagnement('invalid_accompagnement')
             ->setInfoProcedureBailleurPrevenu('invalid_bailleur_prevenu')
+            ->setInfoProcedureBailMoyen('invalid_bailleur_moyen')
+            ->setInfoProcedureBailDate('invalid_bailleur_date')
+            ->setInfoProcedureBailReponse(str_repeat('v', 256))
+            ->setInfoProcedureBailNumero(str_repeat('v', 31))
             ->setInfoProcedureAssuranceContactee('invalid_assurance_contactee')
             ->setInfoProcedureReponseAssurance(str_repeat('v', 256))
             ->setInfoProcedureDepartApresTravaux('invalid_depart_apres_travaux')
@@ -289,6 +299,6 @@ class SignalementDraftRequestTest extends WebTestCase
             ->setMessageAdministration('Message administration');
 
         $errors = $this->validator->validate($signalementDraftRequest);
-        $this->assertCount(96, $errors);
+        $this->assertCount(101, $errors);
     }
 }

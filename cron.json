@@ -20,6 +20,12 @@
     },
     {
       "command": "0 1 * * * sh /app/scripts/sync-db.sh"
+    },
+    {
+      "command": "0 20 * * * php bin/console app:retry-failed-push-esabora-sish"
+    },
+    {
+      "command": "30 * * * * php bin/console app:retry-failed-emails"
     }
   ]
 }

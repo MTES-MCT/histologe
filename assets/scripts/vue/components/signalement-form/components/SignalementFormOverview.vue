@@ -366,6 +366,7 @@ export default defineComponent({
       result += this.addLineIfNeeded('composition_logement_nombre_personnes', 'Nombre de personnes : ')
       result += this.addLineIfNeeded('composition_logement_enfants', 'Enfants de moins de 6 ans ? ')
       result += this.addLineIfNeeded('bail_dpe_bail', 'Bail établi ? ')
+      result += this.addLineIfNeeded('bail_dpe_invariant', 'Invariant fiscal : ')
       result += this.addLineIfNeeded('bail_dpe_etat_des_lieux', 'Etat des lieux réalisé ? ')
       result += this.addLineIfNeeded('bail_dpe_dpe', 'DPE réalisé ? ')
       result += this.addLineIfNeeded('bail_dpe_classe_energetique', 'Classe énergétique du logement : ')
@@ -394,6 +395,12 @@ export default defineComponent({
     getFormDataProcedure (): string {
       let result = ''
       result += this.addLineIfNeeded('info_procedure_bailleur_prevenu', 'Bailleur (propriétaire) prévenu ? ')
+      if (this.formStore.data.info_procedure_bailleur_prevenu === 'oui') {
+        result += this.addLineIfNeeded('info_procedure_bail_moyen', 'Moyen d\'information du bailleur : ')
+        result += this.addLineIfNeeded('info_procedure_bail_date', 'Date d\'information du bailleur : ')
+        result += this.addLineIfNeeded('info_procedure_bail_reponse', 'Réponse du bailleur : ')
+        result += this.addLineIfNeeded('info_procedure_bail_numero', 'Numéro de réclamation fourni par le bailleur : ')
+      }
       result += this.addLineIfNeeded('info_procedure_assurance_contactee', 'Assurance contactée ? ')
       if (this.formStore.data.info_procedure_assurance_contactee === 'oui') {
         result += this.addLineIfNeeded('info_procedure_reponse_assurance', 'Réponse de l\'assurance : ')

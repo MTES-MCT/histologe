@@ -156,6 +156,7 @@ class SignalementEditControllerTest extends WebTestCase
             'dateEntree' => '2020-12-01',
             'bailleurDateEffetBail' => '',
             'bailDpeBail' => 'oui',
+            'bailDpeInvariant' => 'abcd12ef34',
             'bailDpeEtatDesLieux' => 'oui',
             'bailDpeDpe' => 'oui',
             'bailDpeClasseEnergetique' => 'F',
@@ -211,6 +212,10 @@ class SignalementEditControllerTest extends WebTestCase
     {
         return [
             'isProprioAverti' => '1',
+            'infoProcedureBailMoyen' => 'courrier',
+            'infoProcedureBailDate' => '11/2024',
+            'infoProcedureBailReponse' => 'Réponse du bailleur',
+            'infoProcedureBailNumero' => 'R-TR45',
             'infoProcedureAssuranceContactee' => 'oui',
             'infoProcedureReponseAssurance' => 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
             'infoProcedureDepartApresTravaux' => 'oui',

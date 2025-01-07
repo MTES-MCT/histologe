@@ -103,6 +103,10 @@ class CodeInseeSpecification implements SpecificationInterface
 
     private function isSignalementInZone(Signalement $signalement, Zone $zone): bool
     {
+        if (empty($signalement->getGeoloc())) {
+            return false;
+        }
+
         $parser = new Parser($zone->getArea());
         $zoneArea = $parser->parse();
         $signalementCoordinate = new Coordinate($signalement->getGeoloc()['lat'], $signalement->getGeoloc()['lng']);

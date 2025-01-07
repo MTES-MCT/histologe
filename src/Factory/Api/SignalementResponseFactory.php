@@ -112,9 +112,14 @@ class SignalementResponseFactory
         $signalementResponse->proprietaireBeneficiaireFsl = $this->stringToBool($signalement->getInformationComplementaire()?->getInformationsComplementairesSituationBailleurBeneficiaireFsl());
         // infos location
         $signalementResponse->proprietaireAverti = $signalement->getIsProprioAverti();
+        $signalementResponse->moyenInformationProprietaire = $signalement->getInformationProcedure()?->getInfoProcedureBailMoyen();
+        $signalementResponse->dateInformationProprietaire = $signalement->getInformationProcedure()?->getInfoProcedureBailDate();
+        $signalementResponse->reponseProprietaire = $signalement->getInformationProcedure()?->getInfoProcedureBailReponse();
+        $signalementResponse->numeroReclamationProprietaire = $signalement->getInformationProcedure()?->getInfoProcedureBailNumero();
         $signalementResponse->loyer = $signalement->getLoyer();
         $signalementResponse->bailEnCours = $signalement->getIsBailEnCours();
         $signalementResponse->bailExistant = $this->stringToBool($signalement->getTypeCompositionLogement()?->getBailDpeBail());
+        $signalementResponse->invariantFiscal = $signalement->getTypeCompositionLogement()?->getBailDpeInvariant();
         $signalementResponse->etatDesLieuxExistant = $this->stringToBool($signalement->getTypeCompositionLogement()?->getBailDpeEtatDesLieux());
         $signalementResponse->preavisDepartTransmis = $signalement->getisPreavisDepart();
         $signalementResponse->demandeRelogementEffectuee = $signalement->getIsRelogement();

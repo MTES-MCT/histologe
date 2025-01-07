@@ -44,6 +44,7 @@ use App\Service\Signalement\SignalementAddressUpdater;
 use App\Service\Signalement\SignalementInputValueMapper;
 use App\Service\Signalement\ZipcodeProvider;
 use App\Specification\Signalement\SuroccupationSpecification;
+use Doctrine\DBAL\Exception;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
@@ -484,6 +485,7 @@ class SignalementManager extends AbstractManager
             ->setCompositionLogementNombrePersonnes($informationsLogementRequest->getNombrePersonnes())
             ->setCompositionLogementEnfants($informationsLogementRequest->getCompositionLogementEnfants())
             ->setBailDpeBail($informationsLogementRequest->getBailDpeBail())
+            ->setBailDpeInvariant($informationsLogementRequest->getBailDpeInvariant())
             ->setBailDpeEtatDesLieux($informationsLogementRequest->getBailDpeEtatDesLieux())
             ->setBailDpeDpe($informationsLogementRequest->getBailDpeDpe())
             ->setBailDpeClasseEnergetique($informationsLogementRequest->getBailDpeClasseEnergetique());
@@ -742,6 +744,10 @@ class SignalementManager extends AbstractManager
         }
 
         $informationProcedure
+            ->setInfoProcedureBailMoyen($procedureDemarchesRequest->getInfoProcedureBailMoyen())
+            ->setInfoProcedureBailDate($procedureDemarchesRequest->getInfoProcedureBailDate())
+            ->setInfoProcedureBailReponse($procedureDemarchesRequest->getInfoProcedureBailReponse())
+            ->setInfoProcedureBailNumero($procedureDemarchesRequest->getInfoProcedureBailNumero())
             ->setInfoProcedureAssuranceContactee($procedureDemarchesRequest->getInfoProcedureAssuranceContactee())
             ->setInfoProcedureReponseAssurance($procedureDemarchesRequest->getInfoProcedureReponseAssurance())
             ->setInfoProcedureDepartApresTravaux($procedureDemarchesRequest->getInfoProcedureDepartApresTravaux());
@@ -799,6 +805,9 @@ class SignalementManager extends AbstractManager
         ];
     }
 
+    /**
+     * @throws Exception
+     */
     public function findSignalementAffectationIterable(
         User|UserInterface $user,
         ?array $options = null,

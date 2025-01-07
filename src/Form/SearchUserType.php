@@ -8,7 +8,7 @@ use App\Entity\Territory;
 use App\Entity\User;
 use App\Form\Type\SearchCheckboxType;
 use App\Repository\PartnerRepository;
-use App\Service\SearchUser;
+use App\Service\ListFilters\SearchUser;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\Form\AbstractType;
@@ -48,7 +48,7 @@ class SearchUserType extends AbstractType
     {
         $builder->add('queryUser', SearchType::class, [
             'required' => false,
-            'label' => false,
+            'label' => 'Utilisateur',
             'attr' => ['placeholder' => 'Taper le nom ou l\'e-mail d\'un utilisateur'],
         ]);
         if ($this->isAdmin) {
@@ -59,7 +59,7 @@ class SearchUserType extends AbstractType
                 },
                 'required' => false,
                 'placeholder' => 'Tous les territoires',
-                'label' => false,
+                'label' => 'Territoire',
             ]);
         }
         $builder->addEventListener(FormEvents::PRE_SET_DATA, function (FormEvent $event) use ($builder) {
@@ -89,20 +89,20 @@ class SearchUserType extends AbstractType
                 'Non activé' => 0,
             ],
             'required' => false,
-            'placeholder' => 'Statut',
-            'label' => false,
+            'placeholder' => 'Tous les statuts',
+            'label' => 'Statut',
         ]);
         $builder->add('role', ChoiceType::class, [
             'choices' => $this->roleChoices,
             'required' => false,
-            'placeholder' => 'Rôle',
-            'label' => false,
+            'placeholder' => 'Tous les rôles',
+            'label' => 'Rôle',
         ]);
         $builder->add('permissionAffectation', ChoiceType::class, [
             'choices' => self::PERMISSION_CHOICES,
             'required' => false,
-            'placeholder' => 'Droit d\'affectation',
-            'label' => false,
+            'placeholder' => 'Tous les droits d\'affectation',
+            'label' => 'Droits d\'affectation',
         ]);
         $builder->add('page', HiddenType::class);
     }
@@ -124,8 +124,9 @@ class SearchUserType extends AbstractType
                 return $query;
             },
             'choice_label' => 'nom',
-            'label' => false,
+            'label' => 'Partenaire',
             'noselectionlabel' => 'Tous les partenaires',
+            'required' => false,
             'nochoiceslabel' => !$territory ? 'Sélectionner un territoire pour afficher les partenaires disponibles' : 'Aucun partenaire disponible',
         ]);
     }
@@ -137,10 +138,10 @@ class SearchUserType extends AbstractType
             'choice_label' => function ($choice) {
                 return $choice->label();
             },
-            'placeholder' => 'Type de partenaire',
+            'placeholder' => 'Tous les types de partenaire',
             'required' => false,
             'disabled' => isset($partners) && !empty($partners) && \count($partners) > 0,
-            'label' => false,
+            'label' => 'Type de partenaire',
         ];
 
         $builder->add('partnerType', EnumType::class, $options);
@@ -152,7 +153,7 @@ class SearchUserType extends AbstractType
             'data_class' => SearchUser::class,
             'csrf_protection' => false,
             'method' => 'GET',
-            'attr' => ['id' => 'search-user-form', 'class' => 'fr-p-4v'],
+            'attr' => ['id' => 'search-user-form', 'class' => 'fr-p-4v bo-filter-form'],
         ]);
     }
 

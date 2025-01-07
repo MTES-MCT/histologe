@@ -16,7 +16,9 @@ use App\Entity\Signalement;
 use App\Entity\Suivi;
 use App\Entity\Territory;
 use App\Entity\User;
+use App\Entity\View\ViewLatestIntervention;
 use App\Service\Interconnection\Idoss\IdossService;
+use App\Service\ListFilters\SearchArchivedSignalement;
 use App\Service\Signalement\SearchFilter;
 use App\Service\Statistics\CriticitePercentStatisticProvider;
 use App\Utils\CommuneHelper;
@@ -562,6 +564,9 @@ class SignalementRepository extends ServiceEntityRepository
         return $qb;
     }
 
+    /**
+     * @throws Exception
+     */
     public function findSignalementAffectationIterable(User $user, array $options): \Generator
     {
         // temporary increase the group_concat_max_len to a higher value, for texts in GROUP_CONCAT
@@ -602,31 +607,26 @@ class SignalementRepository extends ServiceEntityRepository
             s.motifCloture,
             s.geoloc,
             s.typeCompositionLogement,
+            s.informationProcedure,
             s.debutDesordres,
             GROUP_CONCAT(DISTINCT situations.label SEPARATOR :group_concat_separator_1) as oldSituations,
             GROUP_CONCAT(DISTINCT criteres.label SEPARATOR :group_concat_separator_1) as oldCriteres,
             GROUP_CONCAT(DISTINCT desordreCategories.label SEPARATOR :group_concat_separator_1) as listDesordreCategories,
             GROUP_CONCAT(DISTINCT desordreCriteres.labelCritere SEPARATOR :group_concat_separator_1) as listDesordreCriteres,
             GROUP_CONCAT(DISTINCT tags.label SEPARATOR :group_concat_separator_1) as etiquettes,
-            GROUP_CONCAT(IFNULL(i.occupantPresent, \'-\') ORDER BY i.scheduledAt ASC SEPARATOR :concat_separator) as interventionOccupantPresent,
-            GROUP_CONCAT(IFNULL(i.concludeProcedure, \'-\') ORDER BY i.scheduledAt ASC SEPARATOR :concat_separator) as interventionConcludeProcedure,
-            \'-désactivation temporaire-\' as interventionDetails,
-            GROUP_CONCAT(
-                DISTINCT
-                CONCAT(
-                    i.status,
-                    :concat_separator,
-                    i.scheduledAt
-                )
-                ORDER BY i.scheduledAt ASC
-                SEPARATOR :concat_separator
-            ) as interventionsData
+            MAX(vli.occupantPresent) AS interventionOccupantPresent,
+            MAX(vli.concludeProcedure) AS interventionConcludeProcedure,
+            MAX(vli.details) AS interventionDetails,
+            MAX(vli.status) AS interventionStatus,
+            MAX(vli.scheduledAt) AS interventionScheduledAt,
+            MAX(vli.nbVisites) AS interventionNbVisites
             '
         )->leftJoin('s.situations', 'situations')
             ->leftJoin('s.criteres', 'criteres')
             ->leftJoin('s.desordreCategories', 'desordreCategories')
             ->leftJoin('s.desordreCriteres', 'desordreCriteres')
             ->leftJoin('s.tags', 'tags')
+            ->leftJoin(ViewLatestIntervention::class, 'vli', 'WITH', 'vli.signalementId = s.id')
             ->setParameter('concat_separator', SignalementAffectationListView::SEPARATOR_CONCAT)
             ->setParameter('group_concat_separator_1', SignalementExport::SEPARATOR_GROUP_CONCAT);
 
@@ -1318,13 +1318,24 @@ class SignalementRepository extends ServiceEntityRepository
         return $qb->getQuery()->getResult();
     }
 
+    public function findFilteredArchivedPaginated(
+        SearchArchivedSignalement $searchArchivedSignalement,
+        int $maxResult,
+    ): Paginator {
+        return $this->findAllArchived(
+            territory: $searchArchivedSignalement->getTerritory(),
+            referenceTerms: $searchArchivedSignalement->getQueryReference(),
+            page: $searchArchivedSignalement->getPage(),
+            maxResult: $maxResult,
+        );
+    }
+
     public function findAllArchived(
         ?Territory $territory,
         ?string $referenceTerms,
-        $page,
+        int $page,
+        int $maxResult,
     ): Paginator {
-        $maxResult = Partner::MAX_LIST_PAGINATION;
-        $firstResult = ($page - 1) * $maxResult;
         $queryBuilder = $this->createQueryBuilder('s');
 
         $queryBuilder
@@ -1343,6 +1354,7 @@ class SignalementRepository extends ServiceEntityRepository
                 ->setParameter('referenceTerms', $referenceTerms);
         }
 
+        $firstResult = ($page - 1) * $maxResult;
         $queryBuilder->setFirstResult($firstResult)->setMaxResults($maxResult);
 
         return new Paginator($queryBuilder->getQuery(), false);

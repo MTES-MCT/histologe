@@ -2,6 +2,7 @@
 
 namespace App\Repository;
 
+use App\Command\RetryFailedEmailsCommand;
 use App\Entity\FailedEmail;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
@@ -19,5 +20,21 @@ class FailedEmailRepository extends ServiceEntityRepository
     public function __construct(ManagerRegistry $registry)
     {
         parent::__construct($registry, FailedEmail::class);
+    }
+
+    public function findEmailToResend(): array
+    {
+        $startAt = new \DateTimeImmutable(RetryFailedEmailsCommand::START_AT_YEAR.'-01-01 00:00:00');
+
+        return $this->createQueryBuilder('f')
+            ->where('f.isResendSuccessful = :isResendSuccessful')
+            ->setParameter('isResendSuccessful', false)
+            ->andWhere('f.createdAt > :createdAt')
+            ->setParameter('createdAt', $startAt)
+            ->andWhere('f.errorMessage NOT IN (:errors)')
+            ->setParameter('errors', RetryFailedEmailsCommand::ERRORS_TO_IGNORE)
+            ->getQuery()
+            ->getResult()
+        ;
     }
 }

@@ -352,7 +352,8 @@ class SignalementDraftRequest
     #[Assert\Choice(choices: ['oui', 'non', 'nsp'], message: 'Le champ "bailDpeBail" est incorrect.')]
     private ?string $bailDpeBail = null;
     private ?array $bailDpeBailUpload = null;
-
+    #[Assert\Length(max: 12, maxMessage: 'L\'invariant fiscal ne doit pas dépasser {{ limit }} caractères.')]
+    private ?string $bailDpeInvariant = null;
     #[Assert\Choice(choices: ['oui', 'non', 'nsp'], message: 'Le champ "bailDpeEtatDesLieux" est incorrect.')]
     private ?string $bailDpeEtatDesLieux = null;
     #[Assert\Choice(choices: ['oui', 'non', 'nsp'], message: 'Le champ "bailDpeDpe" est incorrect.')]
@@ -402,6 +403,28 @@ class SignalementDraftRequest
         message: 'Le champ "infoProcedureBailleurPrevenu" est incorrect.',
     )]
     private ?string $infoProcedureBailleurPrevenu = null;
+
+    #[Assert\Choice(
+        choices: ['courrier', 'email', 'telephone', 'sms', 'autre', 'nsp'],
+        message: 'Le champ "infoProcedureBailMoyen" est incorrect.',
+    )]
+    private ?string $infoProcedureBailMoyen = null;
+
+    #[Assert\DateTime('m/Y')]
+    private ?string $infoProcedureBailDate = null;
+
+    #[Assert\Length(
+        max: 255,
+        maxMessage: 'La réponse du bailleur ne doit pas dépasser {{ limit }} caractères.',
+    )]
+    private ?string $infoProcedureBailReponse = null;
+
+    #[Assert\Length(
+        max: 30,
+        maxMessage: 'Le numéro de réclamation ne doit pas dépasser {{ limit }} caractères.',
+    )]
+    private ?string $infoProcedureBailNumero = null;
+
     #[Assert\Choice(
         choices: ['oui', 'non', 'pas_assurance_logement', 'nsp'],
         message: 'Le champ "infoProcedureAssuranceContactee" est incorrect.',
@@ -1290,6 +1313,18 @@ class SignalementDraftRequest
         return $this;
     }
 
+    public function getBailDpeInvariant(): ?string
+    {
+        return $this->bailDpeInvariant;
+    }
+
+    public function setBailDpeInvariant(?string $bailDpeInvariant): self
+    {
+        $this->bailDpeInvariant = $bailDpeInvariant;
+
+        return $this;
+    }
+
     public function getBailDpeBailUpload(): ?array
     {
         return $this->bailDpeBailUpload;
@@ -1478,6 +1513,54 @@ class SignalementDraftRequest
     public function setInfoProcedureBailleurPrevenu(?string $infoProcedureBailleurPrevenu): self
     {
         $this->infoProcedureBailleurPrevenu = $infoProcedureBailleurPrevenu;
+
+        return $this;
+    }
+
+    public function getInfoProcedureBailMoyen(): ?string
+    {
+        return $this->infoProcedureBailMoyen;
+    }
+
+    public function setInfoProcedureBailMoyen(?string $infoProcedureBailMoyen): self
+    {
+        $this->infoProcedureBailMoyen = $infoProcedureBailMoyen;
+
+        return $this;
+    }
+
+    public function getInfoProcedureBailDate(): ?string
+    {
+        return $this->infoProcedureBailDate;
+    }
+
+    public function setInfoProcedureBailDate(?string $infoProcedureBailDate): self
+    {
+        $this->infoProcedureBailDate = $infoProcedureBailDate;
+
+        return $this;
+    }
+
+    public function getInfoProcedureBailReponse(): ?string
+    {
+        return $this->infoProcedureBailReponse;
+    }
+
+    public function setInfoProcedureBailReponse(?string $infoProcedureBailReponse): self
+    {
+        $this->infoProcedureBailReponse = $infoProcedureBailReponse;
+
+        return $this;
+    }
+
+    public function getInfoProcedureBailNumero(): ?string
+    {
+        return $this->infoProcedureBailNumero;
+    }
+
+    public function setInfoProcedureBailNumero(?string $infoProcedureBailNumero): self
+    {
+        $this->infoProcedureBailNumero = $infoProcedureBailNumero;
 
         return $this;
     }

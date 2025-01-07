@@ -4,15 +4,18 @@ namespace App\Controller\Back;
 
 use App\Entity\User;
 use App\Entity\UserPartner;
+use App\Form\SearchArchivedUserType;
 use App\Form\UserType;
 use App\Repository\PartnerRepository;
 use App\Repository\TerritoryRepository;
 use App\Repository\UserRepository;
+use App\Service\ListFilters\SearchArchivedUser;
 use App\Service\Mailer\NotificationMail;
 use App\Service\Mailer\NotificationMailerRegistry;
 use App\Service\Mailer\NotificationMailerType;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Symfony\Component\Form\FormError;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\Request;
@@ -21,67 +24,33 @@ use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 #[Route('/bo/comptes-archives')]
-class BackArchivedAccountController extends AbstractController
+class BackArchivedUsersController extends AbstractController
 {
-    #[Route('/', name: 'back_account_index', methods: ['GET', 'POST'])]
+    #[Route('/', name: 'back_archived_users_index', methods: ['GET', 'POST'])]
     #[IsGranted('ROLE_ADMIN')]
     public function index(
         Request $request,
         UserRepository $userRepository,
-        TerritoryRepository $territoryRepository,
-        PartnerRepository $partnerRepository,
+        ParameterBagInterface $parameterBag,
     ): Response {
-        $page = $request->get('page') ?? 1;
-
-        $isNoneTerritory = 'none' == $request->get('territory');
-        $currentTerritory = $isNoneTerritory ? null : $territoryRepository->find((int) $request->get('territory'));
-        $isNonePartner = 'none' == $request->get('partner');
-        $currentPartner = $isNonePartner ? null : $partnerRepository->find((int) $request->get('partner'));
-        $userTerms = $request->get('userTerms');
-
-        $paginatedArchivedUsers = $userRepository->findAllArchived(
-            territory: $currentTerritory,
-            isNoneTerritory: $isNoneTerritory,
-            partner: $currentPartner,
-            isNonePartner: $isNonePartner,
-            filterTerms: $userTerms,
-            includeUsagers: false,
-            page: (int) $page
-        );
-
-        if ($request->isMethod(Request::METHOD_POST)) {
-            $isNoneTerritory = 'none' == $request->request->get('territory');
-            $currentTerritory = $territoryRepository->find((int) $request->request->get('territory'));
-            $isNonePartner = 'none' == $request->request->get('partner');
-            $currentPartner = $partnerRepository->find((int) $request->request->get('partner'));
-            $userTerms = $request->request->get('userTerms');
-
-            return $this->redirect($this->generateUrl('back_account_index', [
-                'page' => 1,
-                'territory' => $isNoneTerritory ? 'none' : $currentTerritory?->getId(),
-                'partner' => $isNonePartner ? 'none' : $currentPartner?->getId(),
-                'userTerms' => $userTerms,
-            ]));
+        $searchArchivedUser = new SearchArchivedUser();
+        $form = $this->createForm(SearchArchivedUserType::class, $searchArchivedUser);
+        $form->handleRequest($request);
+        if ($form->isSubmitted() && !$form->isValid()) {
+            $searchArchivedUser = new SearchArchivedUser();
         }
+        $maxListPagination = $parameterBag->get('standard_max_list_pagination');
+        $paginatedArchivedUser = $userRepository->findArchivedFilteredPaginated($searchArchivedUser, $maxListPagination);
 
-        $totalArchivedUsers = \count($paginatedArchivedUsers);
-
-        return $this->render('back/account/index.html.twig', [
-            'isNoneTerritory' => $isNoneTerritory,
-            'currentTerritory' => $currentTerritory,
-            'isNonePartner' => $isNonePartner,
-            'currentPartner' => $currentPartner,
-            'userTerms' => $userTerms,
-            'territories' => $territoryRepository->findAllList(),
-            'partners' => $partnerRepository->findAllList($currentTerritory),
-            'users' => $paginatedArchivedUsers,
-            'total' => $totalArchivedUsers,
-            'page' => $page,
-            'pages' => (int) ceil($totalArchivedUsers / User::MAX_LIST_PAGINATION),
+        return $this->render('back/user_archived/index.html.twig', [
+            'form' => $form,
+            'searchArchivedUser' => $searchArchivedUser,
+            'users' => $paginatedArchivedUser,
+            'pages' => (int) ceil($paginatedArchivedUser->count() / $maxListPagination),
         ]);
     }
 
-    #[Route('/{id}/reactiver', name: 'back_account_reactiver', methods: ['GET', 'POST'])]
+    #[Route('/{id}/reactiver', name: 'back_archived_users_reactiver', methods: ['GET', 'POST'])]
     #[IsGranted('ROLE_ADMIN')]
     public function reactiver(
         Request $request,
@@ -97,7 +66,7 @@ class BackArchivedAccountController extends AbstractController
         if ((User::STATUS_ARCHIVE !== $user->getStatut() && !$isUserUnlinked) || $user->getAnonymizedAt()) {
             $this->addFlash('error', 'Ce compte ne peut pas être réactivé.');
 
-            return $this->redirect($this->generateUrl('back_account_index'));
+            return $this->redirect($this->generateUrl('back_archived_users_index'));
         }
 
         $form = $this->createForm(UserType::class, $user, [
@@ -143,12 +112,12 @@ class BackArchivedAccountController extends AbstractController
                 )
             );
 
-            return $this->redirectToRoute('back_account_index');
+            return $this->redirectToRoute('back_archived_users_index');
         }
 
         $this->displayErrors($form);
 
-        return $this->render('back/account/edit.html.twig', [
+        return $this->render('back/user_archived/edit.html.twig', [
             'user' => $user,
             'territories' => $territoryRepository->findAllList(),
             'partners' => $partnerRepository->findAllList(null),

@@ -19,9 +19,10 @@ import './vanilla/controllers/form_notification.js';
 import './vanilla/controllers/form_visite.js';
 import './vanilla/controllers/form_modal_handler.js';
 
-import './vanilla/controllers/back_account/back_account.js'
 import './vanilla/controllers/back_archived_signalements/back_archived_signalements_reactiver.js'
+import './vanilla/controllers/back_archived_users_index/back_archived_users_index.js'
 import './vanilla/controllers/back_auto_affectation_rule/form_auto_affectation_rule.js'
+import './vanilla/controllers/back_partner_index/back_partner_index.js';
 import './vanilla/controllers/back_partner_view/form_partner.js';
 import './vanilla/controllers/back_signalement_view/back_view_signalement.js';
 import './vanilla/controllers/back_signalement_view/form_upload_documents.js';
@@ -32,6 +33,5 @@ import './vanilla/controllers/back_signalement_edit_file/back_signalement_edit_f
 import './vanilla/controllers/back_signalement_delete_file/back_signalement_delete_file.js';
 import './vanilla/controllers/back_signalement_list_export/back_signalement_list_export.js';
 import './vanilla/controllers/back_profil_edit_email/back_profil_edit_email.js';
-import './vanilla/controllers/back_user_index/back_user_index.js';
 import './vanilla/controllers/back_zone_view/back_zone_index.js';
 import './vanilla/controllers/back_territory_view/back_territory_index.js';

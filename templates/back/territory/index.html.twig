@@ -25,13 +25,13 @@
         {{ form_start(form) }}
         {{ form_errors(form) }}
         <div class="fr-grid-row fr-grid-row--gutters">
-            <div class="fr-col-12 fr-col-lg-3">
+            <div class="fr-col-12 fr-col-lg-4">
                 {{ form_row(form.queryName) }}
             </div>
-            <div class="fr-col-12 fr-col-lg-3">
+            <div class="fr-col-12 fr-col-lg-4">
                 {{ form_row(form.isActive) }}
             </div>
-            <div class="fr-col-12">
+            <div class="fr-col-12 fr-col-lg-4">
                 <a href="{{ path('back_territory_index') }}" class="fr-link fr-link--icon-left fr-icon-close-circle-line">Réinitialiser les résultats</a>
             </div>
         </div>
@@ -39,7 +39,7 @@
     </section>
 
     <section class="fr-col-12 fr-p-5v">
-        <h2 class="fr-mb-0" id="desc-table">{{territories|length}} territoire{% if territories|length > 1%}s{% endif %}</h2>
+        <h2 class="fr-mb-0" id="desc-table">{{ singular_or_plural(territories|length, 'territoire trouvé', 'territoires trouvés') }}</h2>
     </section>
 
     <section class="fr-col-12 fr-pt-0 fr-px-5v">

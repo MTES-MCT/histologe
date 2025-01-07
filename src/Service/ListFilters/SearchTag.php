@@ -1,24 +1,20 @@
 <?php
 
-namespace App\Service;
+namespace App\Service\ListFilters;
 
-use App\Entity\Enum\ZoneType;
 use App\Entity\Territory;
 use App\Entity\User;
 use App\Service\Behaviour\SearchQueryTrait;
-use Symfony\Component\Validator\Constraints as Assert;
 
-class SearchZone
+class SearchTag
 {
     use SearchQueryTrait {
         getUrlParams as getUrlParamsBase;
     }
+
     private User $user;
-    #[Assert\Positive(message: 'La page doit être un nombre positif')]
-    private ?int $page = 1;
-    private ?string $queryName = null;
+    private ?string $queryTag = null;
     private ?Territory $territory = null;
-    private ?ZoneType $type = null;
 
     public function __construct(User $user)
     {
@@ -33,28 +29,14 @@ class SearchZone
         return $this->user;
     }
 
-    public function getPage(): int
+    public function getQueryTag(): ?string
     {
-        if ($this->page < 1) {
-            return 1;
-        }
-
-        return $this->page;
+        return $this->queryTag;
     }
 
-    public function setPage(?int $page): void
+    public function setQueryTag(?string $queryTag): void
     {
-        $this->page = $page;
-    }
-
-    public function getQueryName(): ?string
-    {
-        return $this->queryName;
-    }
-
-    public function setQueryName(?string $queryName): void
-    {
-        $this->queryName = $queryName;
+        $this->queryTag = $queryTag;
     }
 
     public function getTerritory(): ?Territory
@@ -67,16 +49,6 @@ class SearchZone
         $this->territory = $territory;
     }
 
-    public function getType(): ?ZoneType
-    {
-        return $this->type;
-    }
-
-    public function setType(?ZoneType $type): void
-    {
-        $this->type = $type;
-    }
-
     public function getUrlParams(): array
     {
         $params = $this->getUrlParamsBase();
@@ -85,5 +57,18 @@ class SearchZone
         }
 
         return $params;
+    }
+
+    public function getFiltersToText(): array
+    {
+        $filters = [];
+        if ($this->queryTag) {
+            $filters['Recherche'] = $this->queryTag;
+        }
+        if ($this->territory && $this->user->isSuperAdmin()) {
+            $filters['Territoire'] = $this->territory->getZip().' - '.$this->territory->getName();
+        }
+
+        return $filters;
     }
 }

@@ -19,7 +19,7 @@
                     {% if level3Link %}  href="{{ level3Link }}"{% else %}aria-current="page"{% endif %}                  
                     
                     {% if level3Link == path('back_partner_index') %} data-filter-list-partner {% endif %}
-                    {% if level3Link == path('back_account_index') %} data-filter-list-comptes-archives {% endif %}
+                    {% if level3Link == path('back_archived_users_index') %} data-filter-list-comptes-archives {% endif %}
                     {% if level3Link == path('back_auto_affectation_rule_index') %} data-filter-list-auto-affectation-rule {% endif %}
                     {% if level3Link == path('back_zone_index') %} data-filter-list-zone {% endif %}
                     {% if level3Link == path('back_territory_index') %} data-filter-list-territory {% endif %}

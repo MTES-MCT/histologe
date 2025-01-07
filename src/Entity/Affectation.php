@@ -14,49 +14,49 @@ use Doctrine\ORM\Mapping as ORM;
 #[ORM\Entity(repositoryClass: AffectationRepository::class)]
 class Affectation implements EntityHistoryInterface
 {
-    public const STATUS_WAIT = 0;
-    public const STATUS_ACCEPTED = 1;
-    public const STATUS_REFUSED = 2;
-    public const STATUS_CLOSED = 3;
+    public const int STATUS_WAIT = 0;
+    public const int STATUS_ACCEPTED = 1;
+    public const int STATUS_REFUSED = 2;
+    public const int STATUS_CLOSED = 3;
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column(type: 'integer')]
-    private $id;
+    private ?int $id = null;
 
     #[ORM\ManyToOne(targetEntity: Signalement::class, inversedBy: 'affectations')]
     #[ORM\JoinColumn(nullable: false)]
-    private ?Signalement $signalement;
+    private ?Signalement $signalement = null;
 
     #[ORM\ManyToOne(targetEntity: Partner::class, inversedBy: 'affectations')]
     #[ORM\JoinColumn(nullable: false)]
-    private ?Partner $partner;
+    private ?Partner $partner = null;
 
     #[ORM\Column(type: 'datetime_immutable', nullable: true)]
-    private ?\DateTimeImmutable $answeredAt;
+    private ?\DateTimeImmutable $answeredAt = null;
 
     #[ORM\Column(type: 'datetime_immutable')]
     private \DateTimeImmutable $createdAt;
 
     #[ORM\Column(type: 'integer')]
-    private int $statut;
+    private ?int $statut = null;
 
     #[ORM\Column(type: 'boolean')]
     private bool $isSynchronized = false;
 
     #[ORM\ManyToOne(targetEntity: User::class)]
-    private ?User $answeredBy;
+    private ?User $answeredBy = null;
 
     #[ORM\ManyToOne(targetEntity: User::class)]
-    private ?User $affectedBy;
+    private ?User $affectedBy = null;
 
     #[ORM\Column(type: 'string', nullable: true, enumType: MotifRefus::class)]
-    private ?MotifRefus $motifRefus;
+    private ?MotifRefus $motifRefus = null;
 
     #[ORM\Column(type: 'string', nullable: true, enumType: MotifCloture::class)]
-    private ?MotifCloture $motifCloture;
+    private ?MotifCloture $motifCloture = null;
 
     #[ORM\OneToMany(mappedBy: 'affectation', targetEntity: Notification::class)]
-    private $notifications;
+    private Collection $notifications;
 
     #[ORM\ManyToOne(targetEntity: Territory::class, inversedBy: 'affectations')]
     #[ORM\JoinColumn(nullable: true)]

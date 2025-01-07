@@ -436,6 +436,7 @@ trait FixturesHelper
             'bail_dpe_dpe' => 'oui',
             'bail_dpe_classe_energetique' => 'E',
             'bail_dpe_bail' => 'oui',
+            'bail_dpe_invariant' => 'abcd12ef34',
             'type_logement_rdc' => 'non',
             'type_logement_nature' => 'appartement',
             'bail_dpe_etat_des_lieux' => 'oui',
@@ -478,6 +479,10 @@ trait FixturesHelper
         return [
             'utilisation_service_ok_visite' => 1,
             'info_procedure_bailleur_prevenu' => 'oui',
+            'info_procedure_bail_moyen' => 'courrier',
+            'info_procedure_bail_date' => '11/2024',
+            'info_procedure_bail_reponse' => 'Réponse du bailleur',
+            'info_procedure_bail_numero' => 'R-TR45',
             'info_procedure_assurance_contactee' => 'oui',
             'info_procedure_depart_apres_travaux' => 'oui',
             'utilisation_service_ok_demande_logement' => 1,
