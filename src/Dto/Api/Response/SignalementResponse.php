@@ -3,6 +3,7 @@
 namespace App\Dto\Api\Response;
 
 use App\Dto\Api\Model\Adresse;
+use App\Dto\Api\Model\Desordre;
 use App\Dto\Api\Model\File;
 use App\Dto\Api\Model\Intervention;
 use App\Dto\Api\Model\Personne;
@@ -30,7 +31,7 @@ class SignalementResponse
     )]
     public string $reference;
     #[OA\Property(
-        description: 'Date de dépot du signalement',
+        description: 'Date de dépot du signalement.<br>Exemple : `2025-01-05T15:30:15+00:00`',
         format: 'date-time',
         example: '2025-01-05T14:30:15+00:00'
     )]
@@ -38,6 +39,7 @@ class SignalementResponse
     #[OA\Property(
         ref: new Model(type: Adresse::class),
         description: 'Informations détaillées sur l\'adresse de l\'occupant',
+        type: 'object',
     )]
     public Adresse $adresse;
     #[OA\Property(
@@ -276,7 +278,7 @@ class SignalementResponse
     public ?string $dpeClasseEnergetique;
 
     #[OA\Property(
-        description: 'La date d\'entrée du locataire dans le logement, au format (AAAA-MM-JJ).<br>
+        description: 'La date d\'entrée du locataire dans le logement. (Format : YYYY-MM-DD).<br>
         Exemple : `2025-01-05`',
         format: 'date',
         example: '2023-01-15',
@@ -363,8 +365,8 @@ class SignalementResponse
     public ?string $moyenInformationProprietaire;
 
     #[OA\Property(
-        description: "Date à laquelle le propriétaire a été informé d'une situation liée au logement.<br>
-        - Exemple (2023-09-15)",
+        description: "Date à laquelle le propriétaire a été informé d'une situation liée au logement. (Format : YYYY-MM-DD)<br>
+        - Exemple : `2023-09-15`",
         format: 'date',
         example: '2023-09-15',
         nullable: true
@@ -401,7 +403,7 @@ class SignalementResponse
     public ?bool $bailEnCours;
 
     #[OA\Property(
-        description: 'Indique si un bail est existe.',
+        description: 'Indique si un bail existe.',
         example: true,
         nullable: true
     )]
@@ -445,40 +447,68 @@ class SignalementResponse
         nullable: true
     )]
     public ?bool $loyersPayes;
+
+    #[OA\Property(
+        description: 'La date de prise d’effet du bail. (Format : YYYY-MM-DD).',
+        format: 'date',
+        example: '2020-10-10'
+    )]
     public ?string $dateEffetBail;
     #[OA\Property(
         description: "Liste des désordres associés au logement signalant les problèmes affectant la qualité, la sécurité ou les conditions d'habitabilité.<br>
-        Les désordres sur le logement concernent tous les problèmes à l'intérieur du logement ou batiment, par exemple :<br>
+        Les désordres sur le logement concernent tous les problèmes à l'intérieur du logement ou batiment. <br>
+        **Liste des catégories de désordre Bâtiment :**
         <ul>
-            <li>Aération</li>
-            <li>Chauffage</li>
-            <li>Moisissure</li>
-            <li>Équipements</li>
-            <li>Électricité</li>
-            <li>Nuisibles</li>
-            <li>ect.</li>
+            <li>Propreté et entretien</li>
+            <li>Eau et évacuation</li>
+            <li>Isolation du bâtiment</li>
+            <li>Maintenance et équipements</li>
+            <li>Présence de nuisibles</li>
+            <li>Sécurité, risque de chute</li>
+            <li>Risque d'incendie</li>
+            <li>Accessibilité et alentours</li>
+            <li>Bruit, pollution sonore</li>
         </ul>
-        <code>
-            [
-                {
-                    \"categorie\": \"Équipements\",
-                    \"zone\": LOGEMENT,
-                    \"details\": [
-                        \"Les prises électriques ne fonctionnent pas.\",
-                        \"Il n'y a pas d'éclairage dans le logement.\"
-                    ]
-                }
-            ]
-        </code>
+        **Liste des catégories de désordre Logement :**
+        <ul>
+            <li>Eau et évacuation</li>
+            <li>Aération et ventilation</li>
+            <li>Chauffage et isolation</li>
+            <li>Humidité et moisissure</li>
+            <li>Sécurité</li>
+            <li>Électricité</li>
+            <li>Présence de nuisibles</li>
+            <li>Bruit, pollution sonore</li>
+            <li>Éclairement, lumière naturelle</li>
+            <li>Propreté et entretien</li>
+        </ul>
+        *Exemple* :<br>
 
-
+```json
+[
+    {
+        \"categorie\": \"Équipements\",
+        \"zone\": \"LOGEMENT\",
+        \"details\": [
+            \"Les prises électriques ne fonctionnent pas.\",
+            \"Il n'y a pas d'éclairage dans le logement.\"
+        ]
+    },
+    {
+        \"categorie\": \"Etanchéité / isolation\",
+        \"zone\": \"BATIMENT\",
+        \"details\": [
+            \"Les murs ne sont pas ou peu isolés\",
+            \"Il manque des portes ou des fenêtres...\",
+            \"Le dernier étage n'est pas isolé,...\",
+            \"De l'eau s'infiltre par le sol ou les murs\"
+        ]
+    }
+]
+```
         ",
         type: 'array',
-        items: new OA\Items(properties: [
-            new OA\Property(property: 'categorie', description: 'Catégorie principale du désordre.', type: 'string'),
-            new OA\Property(property: 'zone', description: 'Zone exacte du logement où le désordre est constaté.', type: 'string', nullable: true),
-            new OA\Property(property: 'details', description: 'Liste des observations détaillées associées au désordre.', type: 'array', items: new OA\Items(type: 'string')),
-        ], type: 'object'),
+        items: new OA\Items(ref: new Model(type: Desordre::class)),
         example: [
             [
                 'categorie' => 'Équipements',
@@ -486,6 +516,16 @@ class SignalementResponse
                 'details' => [
                     'Les prises électriques ne fonctionnent pas.',
                     "Il n'y a pas d'éclairage dans le logement.",
+                ],
+            ],
+            [
+                'categorie' => 'Etanchéité / isolation',
+                'zone' => 'BATIMENT',
+                'details' => [
+                    'Les murs ne sont pas ou peu isolés',
+                    'Il manque des portes ou des fenêtres, ou elles sont mal isolées.',
+                    "Le dernier étage n'est pas isolé, le toit n'est pas étanche\n - Le logement est sous les combles",
+                    "De l'eau s'infiltre par le sol ou les murs",
                 ],
             ],
         ]
@@ -544,6 +584,15 @@ class SignalementResponse
         nullable: true
     )]
     public ?bool $desordresConstates = null;
+
+    #[OA\Property(
+        description: "Les étiquettes permettent de caractériser ou organiser les signalements.<br>
+        Exemple : `['Urgent', 'Commission du 12/09 ', 'Péril']`
+        ",
+        type: 'array',
+        items: new OA\Items(type: 'string'),
+        example: ['Urgent', 'Commission du 12/09 ', 'Péril']
+    )]
     public array $tags = [];
 
     #[OA\Property(
@@ -594,9 +643,31 @@ class SignalementResponse
     )]
     public array $suivis = [];
     #[OA\Property(
-        description: 'Liste des visites ou arrêtés',
+        description: 'Liste des visites ou arrêtés du logement effectuées dans le cadre du traitement du dossier.',
         type: 'array',
-        items: new OA\Items(ref: new Model(type: Intervention::class))
+        items: new OA\Items(ref: new Model(type: Intervention::class)),
+        example: [
+            [
+                'dateIntervention' => '2024-10-10T08:00:00+00:00',
+                'type' => 'Visite',
+                'statut' => 'DONE',
+                'details' => '<p>lorem ipsum</p>',
+                'partner' => [
+                    'nom' => 'Partenaire 13-01',
+                    'type' => 'Autre',
+                    'competences' => [
+                        'VISITES',
+                    ],
+                ],
+                'conclusions' => [
+                    'NON_DECENCE',
+                    'RSD',
+                    'INSALUBRITE',
+                ],
+                'occupantPresent' => true,
+                'proprietairePresent' => false,
+            ],
+        ]
     )]
     public array $interventions = [];
     #[OA\Property(
@@ -609,7 +680,66 @@ class SignalementResponse
     #[OA\Property(
         description: 'Liste des personnes associées (occupant, déclarant, propriétaire), contenant des informations personnelles, leurs liens avec l’occupant, ainsi que leurs coordonnées.',
         type: 'array',
-        items: new OA\Items(ref: Personne::class)
+        items: new OA\Items(ref: new Model(type: Personne::class)),
+        example: [
+            [
+                'personneType' => 'OCCUPANT',
+                'structure' => null,
+                'lienOccupant' => null,
+                'precisionTypeSiBailleur' => null,
+                'estTravailleurSocialPourOccupant' => null,
+                'civilite' => 'mme',
+                'nom' => 'AHAMADA',
+                'prenom' => 'Saidi',
+                'email' => 'saidi.ahamada@gmail.com',
+                'telephone' => '+33611571631',
+                'telephoneSecondaire' => null,
+                'dateNaissance' => '2020-10-10',
+                'revenuFiscal' => null,
+                'beneficiaireRsa' => '1',
+                'beneficiaireFsl' => '1',
+                'allocataire' => '1',
+                'typeAllocataire' => 'CAF',
+                'numAllocataire' => '255',
+                'montantAllocation' => '250',
+                'adresse' => null,
+            ],
+            [
+                'personneType' => 'PROPRIETAIRE',
+                'structure' => null,
+                'lienOccupant' => null,
+                'precisionTypeSiBailleur' => null,
+                'estTravailleurSocialPourOccupant' => null,
+                'civilite' => null,
+                'nom' => 'AHAMADA',
+                'prenom' => 'Saidi',
+                'email' => 'saidi.ahamada@gmail.com',
+                'telephone' => '+33611571631',
+                'telephoneSecondaire' => null,
+                'dateNaissance' => null,
+                'revenuFiscal' => null,
+                'beneficiaireRsa' => null,
+                'beneficiaireFsl' => null,
+                'allocataire' => null,
+                'typeAllocataire' => null,
+                'numAllocataire' => null,
+                'montantAllocation' => null,
+                'adresse' => [
+                    'adresse' => '10 Rue du 14 Juillet',
+                    'codePostal' => '59260',
+                    'ville' => 'Lille',
+                    'etage' => null,
+                    'escalier' => null,
+                    'numAppart' => null,
+                    'codeInsee' => null,
+                    'latitude' => null,
+                    'longitude' => null,
+                    'adresseAutre' => null,
+                    'rnbId' => null,
+                    'cleBanAdresse' => null,
+                ],
+            ],
+        ]
     )]
     public array $personnes = [];
     #[OA\Property(

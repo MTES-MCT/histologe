@@ -102,7 +102,7 @@ readonly class SignalementResponseFactory
         $signalementResponse->scoreBatiment = $signalement->getScoreBatiment();
         $signalementResponse->scoreLogement = $signalement->getScoreLogement();
 
-        $signalementResponse->desordres[] = $this->buildDesordres($signalement);
+        $signalementResponse->desordres = $this->buildDesordres($signalement);
         $signalementResponse->debutDesordres = $signalement->getDebutDesordres();
         $signalementResponse->desordresConstates = $signalement->getHasSeenDesordres();
         // tags, qualifications, suivis, affectations, visites, files

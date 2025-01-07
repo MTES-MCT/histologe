@@ -29,10 +29,10 @@ class SecurityController extends AbstractController
     #[Security(name: null)]
     #[OA\Post(
         path: '/api/login',
-        summary: 'Login using email and password',
+        summary: 'Se connecter en utilisant l\'email et le mot de passe',
         security: null,
         requestBody: new OA\RequestBody(
-            description: 'Credentials for logging in',
+            description: 'Identifiants pour se connecter',
             required: true,
             content: new OA\JsonContent(
                 required: ['email', 'password'],
@@ -46,7 +46,7 @@ class SecurityController extends AbstractController
         responses: [
             new OA\Response(
                 response: 200,
-                description: 'Successful login',
+                description: 'Connexion réussie',
                 content: new OA\JsonContent(
                     properties: [
                         new OA\Property(property: 'token', type: 'string', example: 'abcd1234'),
@@ -57,11 +57,11 @@ class SecurityController extends AbstractController
             ),
             new OA\Response(
                 response: 401,
-                description: 'Invalid credentials',
+                description: 'Identifiants invalides',
                 content: new OA\JsonContent(
                     properties: [
-                        new OA\Property(property: 'error', type: 'string', example: 'Invalid credentials.'),
-                        new OA\Property(property: 'message', type: 'string', example: 'The credentials are invalid.'),
+                        new OA\Property(property: 'error', type: 'string', example: 'Identifiants invalides.'),
+                        new OA\Property(property: 'message', type: 'string', example: 'Les identifiants sont invalides.'),
                     ],
                     type: 'object'
                 )
@@ -73,8 +73,8 @@ class SecurityController extends AbstractController
     ): JsonResponse {
         if (!$user) {
             return $this->json([
-                'error' => 'Invalid credentials.',
-                'message' => 'The credentials are invalid.',
+                'error' => 'Identifiants invalides.',
+                'message' => 'Les identifiants sont invalides.',
             ], Response::HTTP_UNAUTHORIZED);
         }
 

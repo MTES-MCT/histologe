@@ -6,8 +6,7 @@ use App\Entity\Suivi as SuiviEntity;
 use OpenApi\Attributes as OA;
 
 #[OA\Schema(
-    schema: 'Suivi',
-    type: 'object',
+    schema: 'Suivi'
 )]
 class Suivi
 {

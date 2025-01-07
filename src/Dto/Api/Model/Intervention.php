@@ -5,13 +5,18 @@ namespace App\Dto\Api\Model;
 use App\Entity\Intervention as InterventionEntity;
 use OpenApi\Attributes as OA;
 
+#[OA\Schema(
+    schema: 'Intervention',
+    description: 'Représentation d\'une intervention.'
+)]
 class Intervention
 {
     #[OA\Property(
         description: 'Date de l\'intervention.',
         type: 'string',
         format: 'date-time',
-        example: '2024-11-03T14:30:00+00:00'
+        example: '2024-11-03T14:30:00+00:00',
+        nullable: true
     )]
     public string $dateIntervention;
 
