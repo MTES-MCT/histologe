@@ -101,7 +101,11 @@ class AbstractSynchronizeEsaboraCommand extends AbstractCronCommand
             return $this->printInfoSISH($dossierResponse);
         }
 
-        return $this->printInfoSCHS($dossierResponse);
+        if ($dossierResponse instanceof DossierStateSCHSResponse) {
+            return $this->printInfoSCHS($dossierResponse);
+        }
+
+        return 'error';
     }
 
     protected function printInfoSISH(DossierStateSISHResponse $dossierStateSISHResponse): string

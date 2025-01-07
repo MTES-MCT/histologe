@@ -36,7 +36,7 @@ class SignalementControllerTest extends WebTestCase
         $client->loginUser($user);
         $client->request('GET', $route);
         if (Signalement::STATUS_ARCHIVED !== $signalement->getStatut()) {
-            $this->assertResponseIsSuccessful($signalement->getId());
+            $this->assertResponseIsSuccessful((string) $signalement->getId());
             $this->assertSelectorTextContains(
                 'h1.fr-h2',
                 '#'.$signalement->getReference(),
@@ -82,7 +82,7 @@ class SignalementControllerTest extends WebTestCase
 
         $client->loginUser($user);
         $client->request('GET', $route);
-        $this->assertResponseIsSuccessful($signalement->getId());
+        $this->assertResponseIsSuccessful((string) $signalement->getId());
         $this->assertSelectorTextContains(
             '#title-nde',
             'Non décence énergétique'

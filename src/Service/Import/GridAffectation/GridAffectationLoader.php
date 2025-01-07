@@ -56,7 +56,7 @@ class GridAffectationLoader
         $mailPartners = [];
         $mailUsers = [];
 
-        $emailConstraint = new Email(['mode' => 'strict'], true);
+        $emailConstraint = new Email(['mode' => 'strict']);
         $numLine = 1;
 
         foreach ($data as $item) {

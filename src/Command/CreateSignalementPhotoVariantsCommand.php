@@ -79,11 +79,13 @@ class CreateSignalementPhotoVariantsCommand extends Command
             $processed = false;
             if (!$this->fileStorage->fileExists($variantNames[ImageManipulationHandler::SUFFIX_RESIZE])) {
                 $this->imageManipulationHandler->resize($file->getFilename());
-                $file->setSize($this->fileStorage->fileSize($variantNames[ImageManipulationHandler::SUFFIX_RESIZE]));
+                $fileSize = $this->fileStorage->fileSize($variantNames[ImageManipulationHandler::SUFFIX_RESIZE]);
+                $file->setSize((string) $fileSize);
                 $processed = true;
             }
             if (!$file->getSize()) {
-                $file->setSize($this->fileStorage->fileSize($file->getFilename()));
+                $fileSize = $this->fileStorage->fileSize($file->getFilename());
+                $file->setSize((string) $fileSize);
             }
             if (!$this->fileStorage->fileExists($variantNames[ImageManipulationHandler::SUFFIX_THUMB])) {
                 $this->imageManipulationHandler->thumbnail($file->getFilename());

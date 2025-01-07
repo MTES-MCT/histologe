@@ -60,7 +60,7 @@ class SignalementImportLoaderTest extends KernelTestCase
      */
     public function testLoadSignalementImport()
     {
-        $this->entityManager->getEventManager()->removeEventListener([Events::onFlush], SuiviCreatedListener::class);
+        $this->entityManager->getEventManager()->removeEventListener([Events::onFlush], new SuiviCreatedListener());
         $signalementImportLoader = new SignalementImportLoader(
             $this->signalementImportMapper,
             $this->signalementManager,

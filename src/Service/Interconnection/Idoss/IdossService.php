@@ -100,7 +100,7 @@ class IdossService
         $url = $partner->getIdossUrl().self::UPLOAD_FILES_ENDPOINT;
         $payload = $this->getFilesPayload($signalement, $files);
         $jobAction = self::ACTION_UPLOAD_FILES;
-        $jobMessage = json_encode($payload, true);
+        $jobMessage = json_encode($payload, \JSON_HEX_TAG);
         $signalementId = $signalement->getId();
 
         $jobEvent = $this->processRequestAndSaveJobEvent($partner, $url, $jobAction, $jobMessage, $signalementId, $payload, 'POST', 'multipart/form-data');

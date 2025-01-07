@@ -49,7 +49,6 @@ use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
-use Symfony\Component\Security\Core\User\UserInterface;
 
 class SignalementManager extends AbstractManager
 {
@@ -228,7 +227,9 @@ class SignalementManager extends AbstractManager
             ->setMotifCloture($motif)
             ->setClosedAt(new \DateTimeImmutable());
 
-        $this->affectationRepository->closeBySignalement($signalement, $motif, $this->security->getUser());
+        /** @var User $user */
+        $user = $this->security->getUser();
+        $this->affectationRepository->closeBySignalement($signalement, $motif, $user);
         $this->managerRegistry->getManager()->flush();
 
         return $signalement;
@@ -465,10 +466,10 @@ class SignalementManager extends AbstractManager
         InformationsLogementRequest $informationsLogementRequest,
     ) {
         if (is_numeric($informationsLogementRequest->getNombrePersonnes())) {
-            $signalement->setNbOccupantsLogement($informationsLogementRequest->getNombrePersonnes());
+            $signalement->setNbOccupantsLogement((int) $informationsLogementRequest->getNombrePersonnes());
         }
         if (is_numeric($informationsLogementRequest->getLoyer())) {
-            $signalement->setLoyer($informationsLogementRequest->getLoyer());
+            $signalement->setLoyer((float) $informationsLogementRequest->getLoyer());
         }
         if (!empty($informationsLogementRequest->getDateEntree())) {
             $signalement->setDateEntree(new \DateTimeImmutable($informationsLogementRequest->getDateEntree()));
@@ -730,7 +731,7 @@ class SignalementManager extends AbstractManager
         Signalement $signalement,
         ProcedureDemarchesRequest $procedureDemarchesRequest,
     ) {
-        $signalement->setIsProprioAverti('' === $procedureDemarchesRequest->getIsProprioAverti() ? null : $procedureDemarchesRequest->getIsProprioAverti());
+        $signalement->setIsProprioAverti('' === $procedureDemarchesRequest->getIsProprioAverti() ? null : (bool) ($procedureDemarchesRequest->getIsProprioAverti()));
 
         $informationProcedure = new InformationProcedure();
         if (!empty($signalement->getInformationProcedure())) {
@@ -770,7 +771,7 @@ class SignalementManager extends AbstractManager
         );
     }
 
-    public function findSignalementAffectationList(User|UserInterface $user, array $options, bool $count = false): array|int
+    public function findSignalementAffectationList(User $user, array $options, bool $count = false): array|int
     {
         $maxListPagination = $options['maxItemsPerPage'] ?? SignalementAffectationListView::MAX_LIST_PAGINATION;
         $options['authorized_codes_insee'] = $this->parameterBag->get('authorized_codes_insee');
@@ -785,10 +786,11 @@ class SignalementManager extends AbstractManager
             return $total;
         }
         $dataResultList = $paginator->getQuery()->getResult();
-
+        /** @var User $user */
+        $user = $this->security->getUser();
         foreach ($dataResultList as $dataResultItem) {
             $signalementAffectationList[] = $this->signalementAffectationListViewFactory->createInstanceFrom(
-                $this->security->getUser(),
+                $user,
                 $dataResultItem
             );
         }
@@ -809,7 +811,7 @@ class SignalementManager extends AbstractManager
      * @throws Exception
      */
     public function findSignalementAffectationIterable(
-        User|UserInterface $user,
+        User $user,
         ?array $options = null,
     ): \Generator {
         $options['authorized_codes_insee'] = $this->parameterBag->get('authorized_codes_insee');

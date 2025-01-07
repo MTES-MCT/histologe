@@ -78,9 +78,9 @@ class SignalementQualificationFactory
             dateEntree: $signalement->getDateEntree() ? $signalement->getDateEntree()->format('Y-m-d') : null,
             dateDernierBail: $dataDateBailToSave,
             dateDernierDPE: isset($dataDateDPE) ? $dataDateDPE : null,
-            superficie: !empty($dataConsoSize) ? $dataConsoSize : null,
-            consommationEnergie: $dataConsoToSave,
-            dpe: $dataHasDPEToSave
+            superficie: !empty($dataConsoSize) ? (float) $dataConsoSize : null,
+            consommationEnergie: null !== $dataConsoToSave ? (int) $dataConsoToSave : null,
+            dpe: null !== $dataHasDPEToSave ? (bool) $dataHasDPEToSave : null,
         );
         $signalementQualification->setDetails($qualificationNDERequest->getDetails());
         $signalementQualification->setStatus(

@@ -40,7 +40,7 @@ class SignalementAddressUpdater
             $inseeResult = $this->addressService->getAddress($signalement->getCpOccupant().' '.$signalement->getVilleOccupant());
             if (!empty($inseeResult->getCity())) {
                 $signalement
-                    ->setBanIdOccupant(0)
+                    ->setBanIdOccupant('0')
                     ->setRnbIdOccupant(null)
                     ->setVilleOccupant($inseeResult->getCity())
                     ->setInseeOccupant($inseeResult->getInseeCode())
@@ -50,7 +50,7 @@ class SignalementAddressUpdater
             }
         }
 
-        $signalement->setBanIdOccupant(0);
+        $signalement->setBanIdOccupant('0');
         $signalement->setRnbIdOccupant(null);
         if ($updateGeolocAndRnbId) {
             $signalement

@@ -421,7 +421,7 @@ class SuiviRepository extends ServiceEntityRepository
     /**
      * @throws NonUniqueResultException
      */
-    public function findFirstSuiviBy(Signalement $signalement, string $typeSuivi): ?Suivi
+    public function findFirstSuiviBy(Signalement $signalement, int $typeSuivi): ?Suivi
     {
         $qb = $this->createQueryBuilder('s');
         $qb->where('s.signalement = :signalement')

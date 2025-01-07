@@ -58,10 +58,10 @@ trait FixturesHelper
             ->setNbEnfantsM6(1)
             ->setTelOccupant($faker->phoneNumber())
             ->setAdresseOccupant('25 rue du test')
-            ->setEtageOccupant(2)
+            ->setEtageOccupant('2')
             ->setVilleOccupant('Calais')
             ->setCpOccupant('62100')
-            ->setNumAppartOccupant(2)
+            ->setNumAppartOccupant('2')
             ->setCiviliteOccupant('mme')
             ->setNomOccupant($faker->lastName())
             ->setPrenomOccupant($faker->firstName())
@@ -97,9 +97,9 @@ trait FixturesHelper
                 ->setNbEnfantsM6(1)
                 ->setTelOccupant($faker->phoneNumber())
                 ->setAdresseOccupant('25 rue de l\'est')
-                ->setEtageOccupant(2)
+                ->setEtageOccupant('2')
                 ->setVilleOccupant('Bourg-en-Bresse')
-                ->setNumAppartOccupant(2)
+                ->setNumAppartOccupant('2')
                 ->setNomOccupant($faker->lastName())
                 ->setPrenomOccupant($faker->firstName())
                 ->addSuivi($this->getSuiviPartner());
@@ -215,7 +215,7 @@ trait FixturesHelper
             ->setPartnerType(PartnerType::ARS)
             ->setSignalementId($faker->randomDigit())
             ->setReferenceAdresse($uuid)
-            ->setLocalisationNumero($faker->randomDigit())
+            ->setLocalisationNumero((string) $faker->randomDigit())
             ->setLocalisationNumeroExt(ExtensionAdresse::BIS->name)
             ->setLocalisationAdresse1($faker->streetName())
             ->setLocalisationAdresse2(null)
@@ -225,12 +225,12 @@ trait FixturesHelper
             ->setSasLogicielProvenance('H')
             ->setReferenceDossier($uuid)
             ->setSasDateAffectation('25/04/2023 15:01')
-            ->setLocalisationEtage($faker->randomDigit())
-            ->setLocalisationEscalier($faker->randomDigit())
-            ->setLocalisationNumPorte($faker->randomDigit())
-            ->setSitOccupantNbAdultes(3)
-            ->setSitOccupantNbEnfantsM6(4)
-            ->setSitOccupantNbEnfantsP6(2)
+            ->setLocalisationEtage((string) $faker->randomDigit())
+            ->setLocalisationEscalier((string) $faker->randomDigit())
+            ->setLocalisationNumPorte((string) $faker->randomDigit())
+            ->setSitOccupantNbAdultes('3')
+            ->setSitOccupantNbEnfantsM6('4')
+            ->setSitOccupantNbEnfantsP6('2')
             ->setSitOccupantNbOccupants(9)
             ->setSitOccupantNumAllocataire('0000000')
             ->setSitOccupantMontantAlloc(100)
@@ -388,7 +388,7 @@ trait FixturesHelper
         return (new Territory())
             ->setName($name)
             ->setZip($zip)
-            ->setIsActive($isActive);
+            ->setIsActive((bool) $isActive);
     }
 
     public function getClosedTerritory(): Territory
@@ -396,7 +396,7 @@ trait FixturesHelper
         return (new Territory())
             ->setName('Gard')
             ->setZip('30')
-            ->setIsActive(0);
+            ->setIsActive((bool) 0);
     }
 
     public function getDocumentFile(): File

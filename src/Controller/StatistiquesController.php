@@ -68,7 +68,7 @@ class StatistiquesController extends AbstractController
             $territory = $territoryRepository->findOneBy(['id' => $requestTerritory]);
         }
         $currentDate = new \DateTime();
-        $currentYear = $currentDate->format('Y');
+        $currentYear = (int) $currentDate->format('Y');
 
         $this->ajaxResult['signalement_per_month'] = $this->monthStatisticProvider->getData($territory, null);
         $this->ajaxResult['signalement_per_month_this_year'] = $this->monthStatisticProvider->getData($territory, $currentYear);

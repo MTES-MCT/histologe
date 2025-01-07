@@ -6,6 +6,7 @@ use App\Entity\Enum\DocumentType;
 use App\Entity\File;
 use App\Entity\Intervention;
 use App\Entity\Signalement;
+use App\Entity\User;
 use App\Factory\FileFactory;
 use App\Service\Files\FilenameGenerator;
 use App\Service\ImageManipulationHandler;
@@ -14,7 +15,6 @@ use App\Service\UploadHandlerService;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
-use Symfony\Component\Security\Core\User\UserInterface;
 
 class SignalementFileProcessor
 {
@@ -118,7 +118,7 @@ class SignalementFileProcessor
     public function addFilesToSignalement(
         array $fileList,
         Signalement $signalement,
-        ?UserInterface $user = null,
+        ?User $user = null,
         ?Intervention $intervention = null,
         ?bool $isWaitingSuivi = false,
         ?bool $isTemp = false,
@@ -136,7 +136,8 @@ class SignalementFileProcessor
                 isTemp: $isTemp,
                 scannedAt: $this->clamavScanEnable ? new \DateTimeImmutable() : null
             );
-            $file->setSize($this->uploadHandlerService->getFileSize($file->getFilename()));
+            $fileSize = $this->uploadHandlerService->getFileSize($file->getFilename());
+            $file->setSize(null !== $fileSize ? (string) $fileSize : null);
             $file->setIsVariantsGenerated($this->uploadHandlerService->hasVariants($file->getFilename()));
             $signalement->addFile($file);
             $this->lastFile = $file;

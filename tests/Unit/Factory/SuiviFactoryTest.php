@@ -7,13 +7,14 @@ use App\Entity\Signalement;
 use App\Entity\Suivi;
 use App\Entity\User;
 use App\Factory\SuiviFactory;
+use PHPUnit\Framework\MockObject\MockObject;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\Security\Core\User\UserInterface;
 
 class SuiviFactoryTest extends KernelTestCase
 {
-    private Security $security;
+    private MockObject|Security $security;
 
     protected function setUp(): void
     {
@@ -25,9 +26,12 @@ class SuiviFactoryTest extends KernelTestCase
     public function testCreateSuiviInstance(): void
     {
         $suiviFactory = new SuiviFactory();
+        /** @var MockObject&Signalement $signalement */
         $signalement = $this->createMock(Signalement::class);
+        /** @var User $user */
+        $user = $this->security->getUser();
 
-        $suivi = $suiviFactory->createInstanceFrom($this->security->getUser(), $signalement, []);
+        $suivi = $suiviFactory->createInstanceFrom($user, $signalement, []);
 
         $this->assertInstanceOf(Suivi::class, $suivi);
         $this->assertEquals('', $suivi->getDescription());
@@ -38,9 +42,12 @@ class SuiviFactoryTest extends KernelTestCase
     public function testCreateSuiviInstanceWithClosedSignalementParameters(): void
     {
         $suiviFactory = new SuiviFactory();
+        /** @var MockObject&Signalement $signalement */
         $signalement = $this->createMock(Signalement::class);
+        /** @var User $user */
+        $user = $this->security->getUser();
         $suivi = $suiviFactory->createInstanceFrom(
-            $this->security->getUser(),
+            $user,
             $signalement,
             [
                 'motif_suivi' => 'Lorem ipsum suivi sit amet, consectetur adipiscing elit.',

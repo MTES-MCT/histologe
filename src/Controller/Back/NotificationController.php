@@ -20,9 +20,11 @@ class NotificationController extends AbstractController
         Request $request,
         NotificationRepository $notificationRepository,
     ): Response {
+        /** @var User $user */
+        $user = $this->getUser();
         $page = $request->get('page') ?? 1;
         $options = $this->getParameter('authorized_codes_insee');
-        $notifications = $notificationRepository->getNotificationUser($this->getUser(), (int) $page, $options);
+        $notifications = $notificationRepository->getNotificationUser($user, (int) $page, $options);
 
         return $this->render('back/notifications/index.html.twig', [
             'notifications' => $notifications,

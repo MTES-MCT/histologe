@@ -13,6 +13,7 @@ use App\Service\Interconnection\Oilhi\HookZapierService;
 use App\Tests\FixturesHelper;
 use Doctrine\ORM\EntityManagerInterface;
 use Faker\Factory;
+use PHPUnit\Framework\MockObject\MockObject;
 use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use Symfony\Component\HttpClient\Exception\TransportException;
@@ -110,6 +111,7 @@ class DossierMessageFactoryTest extends KernelTestCase
         $faker = Factory::create();
 
         // Throw an exception when the HTTP client is used
+        /** @var MockObject&HttpClientInterface $mockHttpClient */
         $mockHttpClient = $this->createMock(HttpClientInterface::class);
         $mockHttpClient->method('request')
             ->willThrowException(new TransportException('HTTP request failed'));
@@ -117,7 +119,7 @@ class DossierMessageFactoryTest extends KernelTestCase
         $hookZapierService = new HookZapierService(
             $mockHttpClient,
             $this->logger,
-            $this->serializer,
+            $this->serializer, // @phpstan-ignore-line
             'ZAPIER_OILHI_TOKEN',
             'USER_ID',
             'ZAP_ID',

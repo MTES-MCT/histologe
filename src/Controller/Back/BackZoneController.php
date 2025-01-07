@@ -34,18 +34,18 @@ class BackZoneController extends AbstractController
         ZoneRepository $zoneRepository,
         ParameterBagInterface $parameterBag,
     ): Response {
-        $searchZone = new SearchZone($this->getUser());
+        /** @var User $user */
+        $user = $this->getUser();
+        $searchZone = new SearchZone($user);
         $form = $this->createForm(SearchZoneType::class, $searchZone);
         $form->handleRequest($request);
         if ($form->isSubmitted() && !$form->isValid()) {
-            $searchZone = new SearchZone($this->getUser());
+            $searchZone = new SearchZone($user);
         }
         $maxListPagination = $parameterBag->get('standard_max_list_pagination');
         $paginatedZones = $zoneRepository->findFilteredPaginated($searchZone, $maxListPagination);
 
         $zone = new Zone();
-        /** @var User $user */
-        $user = $this->getUser();
         if (!$this->isGranted('ROLE_ADMIN') && 1 === count($user->getPartnersTerritories())) {
             $zone->setTerritory($user->getFirstTerritory());
         }
@@ -69,6 +69,7 @@ class BackZoneController extends AbstractController
         if (!$this->isGranted('ROLE_ADMIN') && 1 === count($user->getPartnersTerritories())) {
             $zone->setTerritory($user->getFirstTerritory());
         }
+        /** @var Form $form */
         $form = $this->createForm(ZoneType::class, $zone, ['action' => $this->generateUrl('back_zone_add')]);
         $form->handleRequest($request);
         if ($form->isSubmitted() && !$form->isValid()) {
@@ -87,7 +88,7 @@ class BackZoneController extends AbstractController
 
                 return $this->json($response, $response['code']);
             }
-            $zone->setCreatedBy($this->getUser());
+            $zone->setCreatedBy($user);
             $em->persist($zone);
             $em->flush();
 
@@ -104,6 +105,7 @@ class BackZoneController extends AbstractController
     {
         $this->denyAccessUnlessGranted(ZoneVoter::MANAGE, $zone);
 
+        /** @var Form $form */
         $form = $this->createForm(ZoneType::class, $zone);
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {

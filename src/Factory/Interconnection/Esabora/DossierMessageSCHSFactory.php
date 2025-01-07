@@ -54,7 +54,7 @@ class DossierMessageSCHSFactory extends AbstractDossierMessageFactory
             ->setAdresseSignalement($address['street'])
             ->setCodepostaleSignalement($signalement->getCpOccupant())
             ->setVilleSignalement($signalement->getVilleOccupant())
-            ->setEtageSignalement($etage)
+            ->setEtageSignalement(null !== $etage ? (string) $etage : null)
             ->setNumeroAppartementSignalement($numeroAppartement)
             ->setNumeroAdresseSignalement($address['number'])
             ->setLatitudeSignalement($signalement->getGeoloc()['lat'] ?? 0)

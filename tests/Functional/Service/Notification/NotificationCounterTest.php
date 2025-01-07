@@ -4,6 +4,7 @@ namespace App\Tests\Functional\Service\Notification;
 
 use App\Entity\Notification;
 use App\Entity\User;
+use App\Repository\NotificationRepository;
 use App\Service\Notification\NotificationCounter;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
@@ -20,6 +21,7 @@ class NotificationCounterTest extends KernelTestCase
 
     public function testCountUnseenNotification(): void
     {
+        /** @var NotificationRepository $notificationRepository */
         $notificationRepository = $this->entityManager->getRepository(Notification::class);
         $userRepository = $this->entityManager->getRepository(User::class);
 

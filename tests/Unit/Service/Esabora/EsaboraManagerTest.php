@@ -104,7 +104,7 @@ class EsaboraManagerTest extends TestCase
             $this->suiviManager,
             $this->interventionRepository,
             $this->interventionFactory,
-            $this->eventDispatcher,
+            $this->eventDispatcher, // @phpstan-ignore-line
             $this->userManager,
             $this->logger,
             $this->parameterBag,
@@ -171,7 +171,7 @@ class EsaboraManagerTest extends TestCase
             $this->suiviManager,
             $this->interventionRepository,
             $this->interventionFactory,
-            $this->eventDispatcher,
+            $this->eventDispatcher, // @phpstan-ignore-line
             $this->userManager,
             $this->logger,
             $this->parameterBag,

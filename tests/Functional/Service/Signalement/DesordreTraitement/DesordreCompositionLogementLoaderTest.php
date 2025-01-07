@@ -5,6 +5,8 @@ namespace App\Tests\Functional\Service\Signalement\DesordreTraitement;
 use App\Entity\DesordreCritere;
 use App\Entity\DesordrePrecision;
 use App\Entity\Signalement;
+use App\Repository\DesordreCritereRepository;
+use App\Repository\DesordrePrecisionRepository;
 use App\Repository\SignalementRepository;
 use App\Service\Signalement\DesordreTraitement\DesordreCompositionLogementLoader;
 use Doctrine\ORM\EntityManagerInterface;
@@ -22,7 +24,9 @@ class DesordreCompositionLogementLoaderTest extends KernelTestCase
 
     public function testDefineDesordresLinkedToComposition()
     {
+        /** @var DesordrePrecisionRepository $desordrePrecisionRepository */
         $desordrePrecisionRepository = $this->entityManager->getRepository(DesordrePrecision::class);
+        /** @var DesordreCritereRepository $desordreCritereRepository */
         $desordreCritereRepository = $this->entityManager->getRepository(DesordreCritere::class);
 
         /** @var SignalementRepository $signalementRepository */

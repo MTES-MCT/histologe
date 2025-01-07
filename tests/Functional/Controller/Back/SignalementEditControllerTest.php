@@ -101,7 +101,7 @@ class SignalementEditControllerTest extends WebTestCase
         $payload['_token'] = '1234';
         $this->client->request('POST', $route, [], [], [], json_encode($payload));
 
-        $this->assertResponseStatusCodeSame(401, $this->client->getResponse()->getStatusCode());
+        $this->assertResponseStatusCodeSame(401, (string) $this->client->getResponse()->getStatusCode());
     }
 
     /**
@@ -117,7 +117,7 @@ class SignalementEditControllerTest extends WebTestCase
         $payload['_token'] = $this->getCsrfToken($token, $this->signalement->getId());
         $payload[key($payload)] = str_repeat('x', 5000);
         $this->client->request('POST', $route, [], [], [], json_encode($payload));
-        $this->assertResponseStatusCodeSame(400, $this->client->getResponse()->getStatusCode());
+        $this->assertResponseStatusCodeSame(400, (string) $this->client->getResponse()->getStatusCode());
     }
 
     private function getPayloadCoordonneesBailleur(string $bailleurName, int $signalementId): array

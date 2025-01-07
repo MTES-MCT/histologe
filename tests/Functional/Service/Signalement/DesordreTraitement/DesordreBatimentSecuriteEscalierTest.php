@@ -3,6 +3,7 @@
 namespace App\Tests\Functional\Service\Signalement\DesordreTraitement;
 
 use App\Entity\DesordrePrecision;
+use App\Repository\DesordrePrecisionRepository;
 use App\Service\Signalement\DesordreTraitement\DesordreBatimentSecuriteEscalier;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
@@ -19,6 +20,7 @@ class DesordreBatimentSecuriteEscalierTest extends KernelTestCase
 
     public function testFindDesordresPrecisionsBy()
     {
+        /** @var DesordrePrecisionRepository $desordrePrecisionRepository */
         $desordrePrecisionRepository = $this->entityManager->getRepository(DesordrePrecision::class);
 
         $payload = json_decode(

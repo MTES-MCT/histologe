@@ -21,7 +21,7 @@ class SuroccupationSpecification
         return $this->checkSuroccupation(
             $situationFoyer->getLogementSocialAllocation(),
             (int) $typeCompositionLogement->getCompositionLogementNombrePersonnes(),
-            $typeCompositionLogement->getCompositionLogementNbPieces(),
+            (int) $typeCompositionLogement->getCompositionLogementNbPieces(),
             $typeCompositionLogement->getCompositionLogementSuperficie(),
         );
     }
@@ -30,13 +30,14 @@ class SuroccupationSpecification
         ?string $isAllocataire,
         int $nbOccupants,
         ?int $nbPieces,
-        ?float $superficie,
+        float|string|null $superficie,
     ): bool {
         $suroccupation = false;
         if ('oui' === $isAllocataire) {
             if (null === $superficie) {
                 return $suroccupation;
             }
+            $superficie = (float) $superficie;
             if (1 === $nbOccupants && $superficie < $this::ALLOCATAIRE_SUPERFICIE_1_OCCUPANT) {
                 $suroccupation = true;
             } elseif (2 === $nbOccupants && $superficie < $this::ALLOCATAIRE_SUPERFICIE_2_OCCUPANTS) {

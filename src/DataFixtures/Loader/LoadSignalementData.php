@@ -94,7 +94,7 @@ class LoadSignalementData extends Fixture implements OrderedFixtureInterface
             ->setNbEnfantsM6($row['nb_enfants_m6'])
             ->setNbEnfantsP6($row['nb_enfants_p6'])
             ->setMailOccupant($row['mail_occupant'] ?? $faker->email())
-            ->setNumAppartOccupant($faker->randomNumber(3))
+            ->setNumAppartOccupant((string) $faker->randomNumber(3))
             ->setNatureLogement($row['nature_logement'])
             ->setSuperficie($row['superficie'])
             ->setDetails($row['details'])
@@ -323,7 +323,7 @@ class LoadSignalementData extends Fixture implements OrderedFixtureInterface
             ->setNbOccupantsLogement($row['nb_occupants_logement'])
             ->setMailOccupant($row['mail_occupant'] ?? $faker->email())
             ->setEtageOccupant($row['etage_occupant'] ?? $faker->randomNumber(2))
-            ->setNumAppartOccupant($faker->randomNumber(3))
+            ->setNumAppartOccupant((string) $faker->randomNumber(3))
             ->setNatureLogement($row['nature_logement'])
             ->setSuperficie($row['superficie'])
             ->setLoyer($row['loyer'] ?? $faker->randomNumber(3))
@@ -387,7 +387,7 @@ class LoadSignalementData extends Fixture implements OrderedFixtureInterface
                 ->setStructureDeclarant($faker->company())
                 ->setLienDeclarantOccupant($linkChoices[array_rand($linkChoices)]);
         } else {
-            $signalement->setIsNotOccupant(0);
+            $signalement->setIsNotOccupant(false);
         }
 
         if (isset($row['is_imported'])) {

@@ -3,6 +3,7 @@
 namespace App\Controller\Api;
 
 use App\Dto\Api\Response\SignalementResponse;
+use App\Entity\User;
 use App\Factory\Api\SignalementResponseFactory;
 use App\Repository\DesordreCategorieRepository;
 use App\Repository\DesordreCritereRepository;
@@ -72,7 +73,9 @@ class SignalementController extends AbstractController
         $desordreCritereRepository->findAll();
         $desordreCategoriesRepository->findAll();
         // main query
-        $signalements = $signalementRepository->findForAPI(user: $this->getUser(), limit: $limit, page: $page);
+        /** @var User $user */
+        $user = $this->getUser();
+        $signalements = $signalementRepository->findForAPI(user: $user, limit: $limit, page: $page);
         $resources = [];
         foreach ($signalements as $signalement) {
             $resources[] = $signalementResponseFactory->createFromSignalement($signalement);
@@ -99,7 +102,9 @@ class SignalementController extends AbstractController
         SignalementResponseFactory $signalementResponseFactory,
         string $uuid,
     ): JsonResponse {
-        $signalements = $signalementRepository->findForAPI(user : $this->getUser(), uuid : $uuid);
+        /** @var User $user */
+        $user = $this->getUser();
+        $signalements = $signalementRepository->findForAPI(user : $user, uuid : $uuid);
         if (!count($signalements)) {
             return new JsonResponse(['message' => 'Signalement introuvable'], Response::HTTP_NOT_FOUND);
         }

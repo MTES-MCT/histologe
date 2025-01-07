@@ -350,7 +350,7 @@ class SearchFilter
                     'nb_suivi_technical' => 3,
                 ];
 
-                $partners = ($user->isPartnerAdmin() || $user->isUserPartner()) ? $user->getPartners() : new ArrayCollection();
+                $partners = ($user->isPartnerAdmin() || $user->isUserPartner()) ? new ArrayCollection($user->getPartners()->toArray()) : new ArrayCollection();
                 if (!$partners->isEmpty()) {
                     $parameters['partners'] = $partners;
                     $parameters['status_accepted'] = AffectationStatus::STATUS_ACCEPTED->value;

@@ -52,7 +52,7 @@ class PushEsaboraDossierCommandTest extends TestCase
                 $this->equalTo(PartnerType::ARS),
                 null,
                 null,
-                (new Territory())->setZip('01')->setIsActive(1)->setName('Ain')
+                (new Territory())->setZip('01')->setIsActive(true)->setName('Ain')
             )
             ->willReturn([$affectation1, $affectation2]);
 
