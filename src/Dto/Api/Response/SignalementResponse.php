@@ -606,15 +606,41 @@ class SignalementResponse
             <li>**Entre 30 et 50** : `NON DECENCE` et/ou `RSD` et `INSALUBRITE` seront affichés si ces procédures sont rattachées à au moins un des désordres sélectionnés.</li>
             <li>**Au-delà de 50** : `NON DECENCE` et/ou `RSD` et/ou `PERIL` et `INSALUBRITE` seront affichés si ces procédures sont rattachées à au moins un des désordres sélectionnés.</li>
         </ul>
+        <p>La liste affiché n\'est pas exhaustive</p>
         ',
         type: 'array',
-        items: new OA\Items(ref: Qualification::class),
+        items: new OA\Items(
+            type: 'string',
+            enum: [
+                Qualification::RSD,
+                Qualification::INSALUBRITE,
+                Qualification::ACCOMPAGNEMENT_JURIDIQUE,
+                Qualification::ACCOMPAGNEMENT_SOCIAL,
+                Qualification::ACCOMPAGNEMENT_TRAVAUX,
+                Qualification::VISITES,
+                Qualification::NON_DECENCE,
+                Qualification::NON_DECENCE_ENERGETIQUE,
+                Qualification::ARRETES,
+                Qualification::ASSURANTIEL,
+                Qualification::CONCILIATION,
+                Qualification::CONSIGNATION_AL,
+                Qualification::DALO,
+                Qualification::DIOGENE,
+                Qualification::FSL,
+                Qualification::HEBERGEMENT_RELOGEMENT,
+                Qualification::MISE_EN_SECURITE_PERIL,
+                Qualification::NUISIBLES,
+                Qualification::DANGER,
+                Qualification::SUROCCUPATION,
+            ],
+            example: 'NON_DECENCE'
+        ),
         example: [
-            'NON_DECENCE_CHECK',
-            'RSD_CHECK',
-            'INSALUBRITE_MANQUEMENT_CHECK',
-            'SUROCCUPATION_CHECK',
-            'DANGER_CHECK',
+            'NON_DECENCE',
+            'RSD',
+            'INSALUBRITE_MANQUEMENT',
+            'SUROCCUPATION',
+            'DANGER',
         ]
     )]
     public array $qualifications = [];
@@ -673,7 +699,7 @@ class SignalementResponse
     #[OA\Property(
         description: 'Liste des fichiers joints au signalement',
         type: 'array',
-        items: new OA\Items(ref: File::class)
+        items: new OA\Items(ref: new Model(type: File::class)),
     )]
     public array $files = [];
 
