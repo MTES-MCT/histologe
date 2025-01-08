@@ -179,7 +179,7 @@ class SignalementActionController extends AbstractController
                 $affectationRepository->updateStatusBySignalement(Affectation::STATUS_WAIT, $signalement);
                 $reopenFor = 'tous les partenaires';
             } elseif (!$this->isGranted('ROLE_ADMIN_TERRITORY') && Signalement::STATUS_CLOSED === $signalement->getStatut()) {
-                $this->addFlash('error', 'Seul un administrateur peut réouvrir un signalement clôturé !');
+                $this->addFlash('error', 'Seul un responsable de territoire peut réouvrir un signalement clôturé !');
 
                 return $this->redirectToRoute('back_signalement_view', ['uuid' => $signalement->getUuid()]);
             } else {
