@@ -201,11 +201,10 @@ class SignalementListControllerTest extends WebTestCase
         yield 'Search by Situation Bail en cours' => [['situation' => 'bail_en_cours', 'isImported' => 'oui'], 11];
         yield 'Search by Situation Prévis de départ' => [['situation' => 'preavis_de_depart', 'isImported' => 'oui'], 1];
         yield 'Search by Situation Attente de relogement' => [['situation' => 'attente_relogement', 'isImported' => 'oui'], 2];
-        yield 'Search by Signalement Imported' => [['isImported' => 'oui'], 51];
+        yield 'Search by Signalement Imported' => [['isImported' => 'oui'], 52];
         yield 'Search by Zones' => [['isImported' => 'oui', 'zones' => [1, 2, 3]], 4];
         yield 'Search by Zones on Territory 34' => [['isImported' => 'oui', 'zones' => [1, 2, 3], 'territoire' => '35'], 1];
         yield 'Search by Sans suivi in territory 13' => [['isImported' => 'oui', 'sansSuiviPeriode' => 30, 'territoire' => '13'], 7];
-        yield 'Search by Signalement Imported' => [['isImported' => 'oui'], 52];
     }
 
     public function provideFilterSearchMultiTerritorAdminPartner(): \Generator
