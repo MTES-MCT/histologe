@@ -12,6 +12,7 @@ use App\Repository\PartnerRepository;
 use App\Repository\SignalementRepository;
 use App\Repository\TagRepository;
 use App\Repository\TerritoryRepository;
+use App\Repository\ZoneRepository;
 use App\Service\Signalement\Qualification\QualificationStatusService;
 use Psr\Cache\InvalidArgumentException;
 use Symfony\Contracts\Cache\ItemInterface;
@@ -31,6 +32,7 @@ class SearchFilterOptionDataProvider
         private readonly TagAwareCacheInterface $cache,
         private readonly QualificationStatusService $qualificationStatusService,
         private readonly BailleurRepository $bailleurRepository,
+        private readonly ZoneRepository $zoneRepository,
     ) {
     }
 
@@ -56,6 +58,7 @@ class SearchFilterOptionDataProvider
                     'partners' => $this->partnerRepository->findAllList($territory, $user),
                     'epcis' => $this->communeRepository->findEpciByCommuneTerritory($territory, $user),
                     'tags' => $this->tagsRepository->findAllActive($territory, $user),
+                    'zones' => $this->zoneRepository->findAllByTerritory($territory),
                     'cities' => $this->signalementRepository->findCities($user, $territory),
                     'zipcodes' => $this->signalementRepository->findZipcodes($user, $territory),
                     'listQualificationStatus' => $this->qualificationStatusService->getList(),

@@ -10,6 +10,7 @@ use App\Repository\SignalementRepository;
 use App\Repository\TagRepository;
 use App\Repository\TerritoryRepository;
 use App\Repository\UserRepository;
+use App\Repository\ZoneRepository;
 use App\Service\Signalement\Qualification\QualificationStatusService;
 use App\Service\Signalement\SearchFilterOptionDataProvider;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
@@ -27,6 +28,7 @@ class SearchFilterOptionDataProviderTest extends KernelTestCase
     private BailleurRepository $bailleurRepository;
     private TagAwareCacheInterface $cache;
     private QualificationStatusService $qualificationStatusService;
+    private ZoneRepository $zoneRepository;
 
     protected function setUp(): void
     {
@@ -41,6 +43,7 @@ class SearchFilterOptionDataProviderTest extends KernelTestCase
         $this->bailleurRepository = self::getContainer()->get(BailleurRepository::class);
         $this->cache = self::getContainer()->get(TagAwareCacheInterface::class);
         $this->qualificationStatusService = self::getContainer()->get(QualificationStatusService::class);
+        $this->zoneRepository = self::getContainer()->get(ZoneRepository::class);
 
         $this->searchFilterOptionDataProvider = new SearchFilterOptionDataProvider(
             $this->critereRepository,
@@ -51,7 +54,8 @@ class SearchFilterOptionDataProviderTest extends KernelTestCase
             $this->signalementRepository,
             $this->cache,
             $this->qualificationStatusService,
-            $this->bailleurRepository
+            $this->bailleurRepository,
+            $this->zoneRepository
         );
     }
 

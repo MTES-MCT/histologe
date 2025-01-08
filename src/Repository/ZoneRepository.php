@@ -2,6 +2,8 @@
 
 namespace App\Repository;
 
+use App\Entity\Signalement;
+use App\Entity\Territory;
 use App\Entity\Zone;
 use App\Service\ListFilters\SearchZone;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
@@ -63,5 +65,32 @@ class ZoneRepository extends ServiceEntityRepository
         }
 
         return $list;
+    }
+
+    public function findZonesBySignalement(Signalement $signalement): array
+    {
+        $conn = $this->getEntityManager()->getConnection();
+        $sql = '
+            SELECT z.name
+            FROM signalement s
+            JOIN zone z ON ST_Contains(ST_GeomFromText(z.area),
+            Point(JSON_EXTRACT(s.geoloc, "$.lng"), JSON_EXTRACT(s.geoloc, "$.lat")))
+            WHERE s.id = :signalement AND z.territory_id = z.territory_id
+            ORDER BY z.name ASC
+            ';
+        $resultSet = $conn->executeQuery($sql, ['signalement' => $signalement->getId()]);
+
+        return $resultSet->fetchAllAssociative();
+    }
+
+    public function findAllByTerritory(?Territory $territory): array
+    {
+        $qb = $this->createQueryBuilder('z');
+        if ($territory) {
+            $qb->andWhere('z.territory = :territory')->setParameter('territory', $territory);
+        }
+        $qb->orderBy('z.name', 'ASC');
+
+        return $qb->getQuery()->getResult();
     }
 }

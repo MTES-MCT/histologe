@@ -21,6 +21,7 @@ use App\Repository\InterventionRepository;
 use App\Repository\NotificationRepository;
 use App\Repository\SignalementQualificationRepository;
 use App\Repository\TagRepository;
+use App\Repository\ZoneRepository;
 use App\Service\Signalement\PhotoHelper;
 use App\Service\Signalement\SignalementDesordresProcessor;
 use Doctrine\ORM\EntityManagerInterface;
@@ -53,6 +54,7 @@ class SignalementController extends AbstractController
         SignalementDesordresProcessor $signalementDesordresProcessor,
         DesordreCategorieRepository $desordreCategorieRepository,
         DesordreCritereRepository $desordreCritereRepository,
+        ZoneRepository $zoneRepository,
     ): Response {
         // load desordres data to prevent n+1 queries
         $desordreCategorieRepository->findAll();
@@ -217,6 +219,7 @@ class SignalementController extends AbstractController
             'allPhotosOrdered' => $allPhotosOrdered,
             'canTogglePartnerAffectation' => $this->isGranted('ASSIGN_TOGGLE', $signalement),
             'canSeePartnerAffectation' => $this->isGranted('ASSIGN_SEE', $signalement),
+            'zones' => $zoneRepository->findZonesBySignalement($signalement),
         ];
 
         return $this->render('back/signalement/view.html.twig', $twigParams);

@@ -30,6 +30,8 @@ class WidgetSettings
     #[Groups('widget-settings:read')]
     private array $tags = [];
     #[Groups('widget-settings:read')]
+    private array $zones = [];
+    #[Groups('widget-settings:read')]
     private ?bool $hasSignalementImported = false;
     #[Groups('widget-settings:read')]
     private ?bool $isMultiTerritoire = false;
@@ -44,6 +46,7 @@ class WidgetSettings
         array $communes = [],
         array $epcis = [],
         array $tags = [],
+        array $zones = [],
         bool $hasSignalementImported = false,
         array $bailleursSociaux = [],
         string $avatarOrPlaceHolder = '',
@@ -59,6 +62,7 @@ class WidgetSettings
         $this->communes = $communes;
         $this->epcis = $epcis;
         $this->tags = $tags;
+        $this->zones = $zones;
         $this->hasSignalementImported = $hasSignalementImported;
         $this->isMultiTerritoire = count($user->getPartnersTerritories()) > 1 ? true : false;
         $this->bailleursSociaux = $bailleursSociaux;
@@ -117,6 +121,11 @@ class WidgetSettings
     public function getTags(): array
     {
         return $this->tags;
+    }
+
+    public function getZones(): array
+    {
+        return $this->zones;
     }
 
     public function getHasSignalementImported(): bool

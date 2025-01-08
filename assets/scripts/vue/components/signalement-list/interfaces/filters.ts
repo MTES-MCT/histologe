@@ -30,6 +30,7 @@ export const SEARCH_FILTERS = [
   { type: 'collection', name: 'communes', showOptions: false, defaultValue: null },
   { type: 'collection', name: 'epcis', showOptions: false, defaultValue: null },
   { type: 'collection', name: 'etiquettes', showOptions: true, defaultValue: null },
+  { type: 'collection', name: 'zones', showOptions: true, defaultValue: null },
   { type: 'collection', name: 'partenaires', showOptions: true, defaultValue: null },
   { type: 'date', name: 'dateDepotDebut', showOptions: true, defaultValue: null },
   { type: 'date', name: 'dateDernierSuiviDebut', showOptions: true, defaultValue: null }

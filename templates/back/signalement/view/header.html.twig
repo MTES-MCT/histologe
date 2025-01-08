@@ -42,7 +42,10 @@
                         Bailleur non-averti
                     {% endif %}
                 </span>
-
+                
+                {% for zone in zones %}
+                    <span class="fr-badge fr-badge--blue-ecume fr-badge--no-icon fr-m-1v">{{zone.name}}</span>
+                {% endfor %}
             </div>
 
             <div class="fr-display-inline-flex fr-align-items-center">

@@ -13,7 +13,7 @@ export function buildBadge (key: string, value: any): string | undefined | null 
   if (key === 'bailleurSocial') {
     return store.state.bailleursSociaux.find(bailleurSocial => bailleurSocial.Id.toString() === value)?.Text
   }
-  if (key === 'etiquettes' || key === 'partenaires') {
+  if (key === 'etiquettes' || key === 'partenaires' || key === 'zones') {
     const matchedItems = store.state[key]
       .filter(item => item.Id !== '' && Array.from(value).includes(item.Id.toString()))
 

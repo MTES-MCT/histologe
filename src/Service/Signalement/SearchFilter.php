@@ -372,6 +372,38 @@ class SearchFilter
                 ->setParameter('tag', $filters['tags'])
                 ->andWhere('t.isArchive = 0');
         }
+        if (!empty($filters['zones'])) {
+            $connection = $this->entityManager->getConnection();
+            $params = $zonesParams = [];
+            foreach ($filters['zones'] as $zoneId) {
+                $zoneId = (int) $zoneId;
+                $zonesParams[] = ':zone_'.$zoneId;
+                $params['zone_'.$zoneId] = $zoneId;
+            }
+            $sql = '
+                SELECT DISTINCT s2.id
+                FROM signalement s2, zone z
+                WHERE z.id IN ('.implode(',', $zonesParams).")
+                AND ST_Contains(
+                    ST_GeomFromText(z.area),
+                    Point(
+                        JSON_EXTRACT(s2.geoloc, '$.lng'),
+                        JSON_EXTRACT(s2.geoloc, '$.lat')
+                    )
+                ) = 1
+            ";
+            $stmt = $connection->prepare($sql);
+
+            $zonesSignalements = $stmt->executeQuery($params)->fetchAllAssociative();
+
+            if (!empty($zonesSignalements)) {
+                $qb->andWhere('s.id IN (:zonesSignalements)')
+                   ->setParameter('zonesSignalements', $zonesSignalements);
+            } else {
+                $qb->andWhere('s.id IS NULL');
+            }
+        }
+
         if (!empty($filters['statuses'])) {
             if ($user->isSuperAdmin() || $user->isTerritoryAdmin()) {
                 $qb->andWhere('s.statut IN (:statuses)')
