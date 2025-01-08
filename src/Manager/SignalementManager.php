@@ -526,7 +526,7 @@ class SignalementManager extends AbstractManager
             }
             $signalementQualificationNDE->setDetails($qualificationDetails);
             $this->save($signalementQualificationNDE);
-    
+
             $signalementQualificationNDE->setStatus(
                 $this->qualificationStatusService->getNDEStatus($signalementQualificationNDE)
             );
