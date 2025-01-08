@@ -2,6 +2,7 @@
 
 namespace App\Controller\Back;
 
+use App\Entity\User;
 use App\Form\SearchUserType;
 use App\Messenger\Message\UserExportMessage;
 use App\Repository\UserRepository;
@@ -43,6 +44,8 @@ class BackUserController extends AbstractController
         MessageBusInterface $messageBus,
         ParameterBagInterface $parameterBag,
     ): Response {
+        /** @var User $user */
+        $user = $this->getUser();
         $maxListPagination = $parameterBag->get('standard_max_list_pagination');
         $originalMethod = $request->getMethod();
         $request->setMethod('GET'); // to prevent Symfony ignoring GET data while handlning the form
@@ -69,17 +72,19 @@ class BackUserController extends AbstractController
         return $this->render('back/user/export.html.twig', [
             'searchUser' => $searchUser,
             'nbResults' => \count($paginatedUsers),
-            'columns' => UserExportLoader::getColumnForUser($this->getUser()),
+            'columns' => UserExportLoader::getColumnForUser($user),
         ]);
     }
 
     private function handleSearchUser(Request $request, UserRepository $userRepository, int $maxListPagination): array
     {
-        $searchUser = new SearchUser($this->getUser());
+        /** @var User $user */
+        $user = $this->getUser();
+        $searchUser = new SearchUser($user);
         $form = $this->createForm(SearchUserType::class, $searchUser);
         $form->handleRequest($request);
         if ($form->isSubmitted() && !$form->isValid()) {
-            $searchUser = new SearchUser($this->getUser());
+            $searchUser = new SearchUser($user);
         }
         $paginatedUsers = $userRepository->findFilteredPaginated($searchUser, $maxListPagination);
 

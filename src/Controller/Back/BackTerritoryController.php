@@ -3,6 +3,7 @@
 namespace App\Controller\Back;
 
 use App\Entity\Territory;
+use App\Entity\User;
 use App\Form\SearchTerritoryType;
 use App\Form\TerritoryType;
 use App\Repository\BailleurRepository;
@@ -123,6 +124,7 @@ class BackTerritoryController extends AbstractController
         BailleurRepository $bailleurRepository,
     ): JsonResponse {
         $this->denyAccessUnlessGranted(TerritoryVoter::GET_BAILLEURS_LIST, $territory);
+        /** @var User $user */
         $user = $this->getUser();
         $bailleurs = $bailleurRepository->findBailleursByTerritory($user, $territory);
 

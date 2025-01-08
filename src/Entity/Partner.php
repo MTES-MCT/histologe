@@ -156,9 +156,7 @@ class Partner implements EntityHistoryInterface
     public function getUserPartners(): Collection
     {
         return $this->userPartners->filter(function (UserPartner $userPartner) {
-            if (User::STATUS_ARCHIVE !== $userPartner->getUser()->getStatut()) {
-                return $userPartner;
-            }
+            return User::STATUS_ARCHIVE !== $userPartner->getUser()->getStatut();
         });
     }
 

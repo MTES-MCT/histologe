@@ -48,7 +48,7 @@ class LoadUserData extends Fixture implements OrderedFixtureInterface
     private function loadUsers(ObjectManager $manager, array $row): void
     {
         // do not send activation mail on loading fixtures
-        $this->entityManager->getEventManager()->removeEventListener([Events::onFlush], UserCreatedListener::class);
+        $this->entityManager->getEventManager()->removeEventListener([Events::onFlush], UserCreatedListener::class); // @phpstan-ignore-line
 
         $faker = Factory::create();
         $user = (new User())

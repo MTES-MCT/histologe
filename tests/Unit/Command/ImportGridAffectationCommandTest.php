@@ -113,7 +113,7 @@ class ImportGridAffectationCommandTest extends KernelTestCase
         $this->territoryManager
             ->expects($this->once())
             ->method('findOneBy')
-            ->willReturn($this->getTerritory(name: 'Bouches-du-Rhône', zip: 13, isActive: 1));
+            ->willReturn($this->getTerritory(name: 'Bouches-du-Rhône', zip: '13', isActive: 1));
 
         $this->gridAffectationLoader
             ->expects($this->once())

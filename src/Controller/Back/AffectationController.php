@@ -174,9 +174,11 @@ class AffectationController extends AbstractController
         Affectation $affectation,
         array $response,
     ): void {
+        /** @var User $user */
+        $user = $this->getUser();
         if (isset($response['suivi'])) {
             $this->eventDispatcher->dispatch(
-                new AffectationAnsweredEvent($affectation, $this->getUser(), $response),
+                new AffectationAnsweredEvent($affectation, $user, $response),
                 AffectationAnsweredEvent::NAME
             );
         }

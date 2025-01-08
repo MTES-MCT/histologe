@@ -75,10 +75,12 @@ class SignalementActionController extends AbstractController
                     )
                 );
             }
+            /** @var User $user */
+            $user = $this->getUser();
             $suivi = new Suivi();
             $suivi->setSignalement($signalement)
                 ->setDescription('Signalement '.$description)
-                ->setCreatedBy($this->getUser())
+                ->setCreatedBy($user)
                 ->setIsPublic(true)
                 ->setType(Suivi::TYPE_AUTO)
                 ->setSendMail(false);
@@ -113,11 +115,13 @@ class SignalementActionController extends AbstractController
 
                 return $this->redirectToRoute('back_signalement_view', ['uuid' => $signalement->getUuid()]);
             }
+            /** @var User $user */
+            $user = $this->getUser();
             $suivi = (new Suivi())
                 ->setDescription($content)
                 ->setIsPublic(!empty($form['notifyUsager']))
                 ->setSignalement($signalement)
-                ->setCreatedBy($this->getUser())
+                ->setCreatedBy($user)
                 ->setType(Suivi::TYPE_PARTNER);
 
             try {
@@ -153,8 +157,10 @@ class SignalementActionController extends AbstractController
         ) {
             $suivi = $suiviRepository->findOneBy(['id' => $idSuivi]);
             if ($suivi) {
+                /** @var User $user */
+                $user = $this->getUser();
                 $suivi->setDeletedAt(new \DateTimeImmutable());
-                $suivi->setDeletedBy($this->getUser());
+                $suivi->setDeletedBy($user);
                 $doctrine->getManager()->persist($suivi);
                 $doctrine->getManager()->flush();
 

@@ -4,6 +4,7 @@ namespace App\EventSubscriber;
 
 use App\Entity\Enum\InterventionType;
 use App\Entity\Suivi;
+use App\Entity\User;
 use App\Manager\SuiviManager;
 use App\Service\Mailer\NotificationMailerType;
 use App\Service\Signalement\VisiteNotifier;
@@ -32,6 +33,7 @@ class InterventionCanceledSubscriber implements EventSubscriberInterface
     public function onInterventionCanceled(Event $event): void
     {
         $intervention = $event->getSubject();
+        /** @var User $currentUser */
         $currentUser = $this->security->getUser();
         if (InterventionType::VISITE === $intervention->getType()) {
             $description = 'Annulation de visite :';

@@ -51,7 +51,7 @@ class BackStatistiquesController extends AbstractController
         $this->result = [];
 
         $territory = $this->getSelectedTerritory($request, $territoryRepository);
-        $partners = $this->getSelectedPartners();
+        $partners = new ArrayCollection($this->getSelectedPartners()->toArray());
 
         $this->buildFilterLists($territory);
 

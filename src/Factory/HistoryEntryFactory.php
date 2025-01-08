@@ -6,6 +6,7 @@ use App\Entity\Affectation;
 use App\Entity\Behaviour\EntityHistoryInterface;
 use App\Entity\Enum\HistoryEntryEvent;
 use App\Entity\HistoryEntry;
+use App\Entity\User;
 use Symfony\Bundle\SecurityBundle\Security;
 
 readonly class HistoryEntryFactory
@@ -20,11 +21,13 @@ readonly class HistoryEntryFactory
         HistoryEntryEvent $historyEntryEvent,
         EntityHistoryInterface $entityHistory,
     ): HistoryEntry {
+        /** @var User $user */
+        $user = $this->security->getUser();
         $historyEntry = (new HistoryEntry())
             ->setEvent($historyEntryEvent)
             ->setEntityId($entityHistory->getId())
             ->setEntityName(str_replace(self::ENTITY_PROXY_PREFIX, '', $entityHistory::class))
-            ->setUser($this->security->getUser());
+            ->setUser($user);
 
         if ($entityHistory instanceof Affectation) {
             $historyEntry->setSignalement($entityHistory->getSignalement());

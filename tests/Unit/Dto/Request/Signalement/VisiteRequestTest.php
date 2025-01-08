@@ -17,7 +17,7 @@ class VisiteRequestTest extends KernelTestCase
         string $date,
         string $time,
         string $timezone,
-        string $idPartner,
+        int $idPartner,
         string $expectedLocale,
         string $expectedUTC): void
     {
@@ -46,7 +46,7 @@ class VisiteRequestTest extends KernelTestCase
             'date' => '2024-08-13',
             'time' => '12:00',
             'timezone' => 'Europe/Paris',
-            'idPartner' => '1',
+            'idPartner' => 1,
             'expectedLocale' => '2024-08-13 12:00',
             'expectedUTC' => '2024-08-13 10:00',
         ];
@@ -55,7 +55,7 @@ class VisiteRequestTest extends KernelTestCase
             'date' => '2024-08-13',
             'time' => '12:00',
             'timezone' => 'America/Martinique',
-            'idPartner' => '2',
+            'idPartner' => 2,
             'expectedLocale' => '2024-08-13 12:00',
             'expectedUTC' => '2024-08-13 16:00',
         ];

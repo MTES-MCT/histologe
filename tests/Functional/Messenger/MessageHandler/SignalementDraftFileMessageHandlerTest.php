@@ -71,7 +71,7 @@ class SignalementDraftFileMessageHandlerTest extends KernelTestCase
 
         $this->expectException(\Throwable::class);
 
-        $this->messageBus->dispatch($message, ['simulate_exception' => true]);
+        $this->messageBus->dispatch($message, ['simulate_exception' => true]); // @phpstan-ignore-line
         $transport = static::getContainer()->get('messenger.transport.failed_high_priority');
         $envelopes = $transport->get();
         $this->assertCount(1, $envelopes);

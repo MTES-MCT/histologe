@@ -16,6 +16,7 @@ use App\Repository\SignalementRepository;
 use App\Repository\SuiviRepository;
 use App\Repository\UserRepository;
 use App\Security\Voter\UserVoter;
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Exception;
 use Doctrine\ORM\NonUniqueResultException;
@@ -128,7 +129,7 @@ class WidgetDataKpiBuilder
         );
         $countSignalementNoSuiviAfter3Relances = $this->suiviRepository->countSignalementNoSuiviAfter3Relances(
             $this->territories,
-            $this->getPartnersFromUser($user)
+            $this->getPartnersFromUser($user) ? new ArrayCollection($this->getPartnersFromUser($user)->toArray()) : null
         );
 
         $this->countSuivi = new CountSuivi(

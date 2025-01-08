@@ -32,11 +32,13 @@ class TagController extends AbstractController
         TagRepository $tagRepository,
         ParameterBagInterface $parameterBag,
     ): Response {
-        $searchTag = new SearchTag($this->getUser());
+        /** @var User $user */
+        $user = $this->getUser();
+        $searchTag = new SearchTag($user);
         $form = $this->createForm(SearchTagType::class, $searchTag);
         $form->handleRequest($request);
         if ($form->isSubmitted() && !$form->isValid()) {
-            $searchTag = new SearchTag($this->getUser());
+            $searchTag = new SearchTag($user);
         }
         $maxListPagination = $parameterBag->get('standard_max_list_pagination');
         $paginatedTags = $tagRepository->findFilteredPaginated($searchTag, $maxListPagination);

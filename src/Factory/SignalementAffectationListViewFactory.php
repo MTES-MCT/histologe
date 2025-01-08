@@ -7,7 +7,6 @@ use App\Entity\Enum\ProfileDeclarant;
 use App\Entity\User;
 use App\Service\Signalement\SignalementAffectationHelper;
 use Symfony\Bundle\SecurityBundle\Security;
-use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Security\Csrf\CsrfTokenManagerInterface;
 
 class SignalementAffectationListViewFactory
@@ -18,7 +17,7 @@ class SignalementAffectationListViewFactory
     ) {
     }
 
-    public function createInstanceFrom(UserInterface|User $user, array $data): SignalementAffectationListView
+    public function createInstanceFrom(User $user, array $data): SignalementAffectationListView
     {
         $signalement = SignalementAffectationHelper::getSignalementFromDataForVoter($data);
         $canDeleteSignalement = $this->security->isGranted('SIGN_DELETE', $signalement);

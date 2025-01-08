@@ -73,7 +73,7 @@ class ActivityListener
                     if ($notifyAdminsAndPartners) {
                         $this->tos->clear();
                         $this->notifyAdmins($entity, Notification::TYPE_SUIVI, $entity->getSignalement()->getTerritory());
-                        $entity->getSignalement()->getAffectations()->filter(function (Affectation $affectation) use ($entity) {
+                        $entity->getSignalement()->getAffectations()->filter(function (Affectation $affectation) use ($entity) { // @phpstan-ignore-line
                             $partner = $affectation->getPartner();
                             if (AffectationStatus::STATUS_WAIT->value === $affectation->getStatut()
                                 || AffectationStatus::STATUS_ACCEPTED->value === $affectation->getStatut()) {
@@ -218,7 +218,7 @@ class ActivityListener
         if ($partner->getEmail()) {
             $this->tos->add($partner->getEmail());
         }
-        $partner->getUsers()->filter(function (User $user) use ($inAppType, $entity, $partner) {
+        $partner->getUsers()->filter(function (User $user) use ($inAppType, $entity, $partner) { // @phpstan-ignore-line
             if ($this->isUserNotified($partner, $user, $entity)) {
                 $this->createInAppNotification($user, $entity, $inAppType);
                 if ($user->getIsMailingActive()) {
@@ -247,7 +247,7 @@ class ActivityListener
     {
         $entity = $args->getObject();
         if ($entity instanceof Affectation) {
-            $entity->getNotifications()->filter(function (Notification $notification) use ($args) {
+            $entity->getNotifications()->filter(function (Notification $notification) use ($args) { // @phpstan-ignore-line
                 $args->getObjectManager()->remove($notification);
             });
         }

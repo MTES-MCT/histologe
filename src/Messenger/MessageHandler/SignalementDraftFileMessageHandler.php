@@ -55,7 +55,8 @@ class SignalementDraftFileMessageHandler
                     $fileItem['slug'] = $key;
                     $file = $this->fileFactory->createFromFileArray(file: $fileItem, signalement: $signalement);
                     $this->uploadHandlerService->moveFromBucketTempFolder($file->getFilename());
-                    $file->setSize($this->uploadHandlerService->getFileSize($file->getFilename()));
+                    $fileSize = $this->uploadHandlerService->getFileSize($file->getFilename());
+                    $file->setSize(null !== $fileSize ? (string) $fileSize : null);
                     $file->setIsVariantsGenerated($this->uploadHandlerService->hasVariants($file->getFilename()));
                     $file->setUploadedBy($uploadUser);
                     if ($this->clamavScanEnable) {

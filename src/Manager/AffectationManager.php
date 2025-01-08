@@ -26,7 +26,7 @@ class AffectationManager extends Manager
         parent::__construct($this->managerRegistry, $entityName);
     }
 
-    public function updateAffectation(Affectation $affectation, User $user, string $status, ?string $motifRefus = null): Affectation
+    public function updateAffectation(Affectation $affectation, User $user, int $status, ?string $motifRefus = null): Affectation
     {
         $affectation
             ->setStatut($status)
@@ -92,19 +92,17 @@ class AffectationManager extends Manager
         array $partnersIdToRemove = [],
     ): void {
         if (empty($postedPartner) && empty($partnersIdToRemove)) {
-            $signalement->getAffectations()->filter(function (Affectation $affectation) {
+            foreach ($signalement->getAffectations() as $affectation) {
                 $this->remove($affectation);
-            });
+            }
         } else {
             foreach ($partnersIdToRemove as $partnerIdToRemove) {
                 $partner = $this->managerRegistry->getRepository(Partner::class)->find($partnerIdToRemove);
-                $signalement->getAffectations()->filter(
-                    function (Affectation $affectation) use ($partner) {
-                        if ($affectation->getPartner()->getId() === $partner->getId()) {
-                            $this->remove($affectation);
-                        }
+                foreach ($signalement->getAffectations() as $affectation) {
+                    if ($affectation->getPartner()->getId() === $partner->getId()) {
+                        $this->remove($affectation);
                     }
-                );
+                }
             }
         }
     }

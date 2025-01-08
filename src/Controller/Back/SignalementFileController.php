@@ -86,10 +86,12 @@ class SignalementFileController extends AbstractController
 
             return $this->redirect($this->generateUrl('back_signalement_view', ['uuid' => $signalement->getUuid()]));
         }
+        /** @var User $user */
+        $user = $this->getUser();
         $signalementFileProcessor->addFilesToSignalement(
             fileList: $fileList,
             signalement: $signalement,
-            user: $this->getUser(),
+            user: $user,
             isWaitingSuivi: true
         );
         $entityManager->persist($signalement);
@@ -111,7 +113,9 @@ class SignalementFileController extends AbstractController
     ): JsonResponse {
         $this->denyAccessUnlessGranted('SIGN_EDIT', $signalement);
         $fileRepository = $entityManager->getRepository(File::class);
-        $files = $fileRepository->findBy(['signalement' => $signalement, 'isWaitingSuivi' => true, 'uploadedBy' => $this->getUser()]);
+        /** @var User $user */
+        $user = $this->getUser();
+        $files = $fileRepository->findBy(['signalement' => $signalement, 'isWaitingSuivi' => true, 'uploadedBy' => $user]);
         foreach ($files as $key => $file) {
             if ($uploadHandlerService->deleteIfExpiredFile($file)) {
                 unset($files[$key]);
@@ -121,7 +125,7 @@ class SignalementFileController extends AbstractController
             return $this->json(['success' => true]);
         }
 
-        $suivi = $suiviManager->createInstanceForFilesSignalement($this->getUser(), $signalement, $files);
+        $suivi = $suiviManager->createInstanceForFilesSignalement($user, $signalement, $files);
         $entityManager->persist($suivi);
 
         $update = $entityManager->createQueryBuilder()
@@ -131,7 +135,7 @@ class SignalementFileController extends AbstractController
             ->andWhere('f.isWaitingSuivi = true')
             ->andWhere('f.uploadedBy = :user')
             ->setParameter('signalement', $signalement)
-            ->setParameter('user', $this->getUser())
+            ->setParameter('user', $user)
             ->getQuery();
         $update->execute();
 
@@ -168,10 +172,10 @@ class SignalementFileController extends AbstractController
             $filename = $file->getFilename();
             $type = $file->getFileType();
             if ($uploadHandlerService->deleteFile($file)) {
-                $suivi = $suiviFactory->createInstanceFrom($this->getUser(), $signalement);
+                /** @var User $user */
+                $user = $this->getUser();
+                $suivi = $suiviFactory->createInstanceFrom($user, $signalement);
                 if (!$this->isGranted('ROLE_ADMIN')) {
-                    /** @var User $user */
-                    $user = $this->getUser();
                     $description = $user->getNomComplet().' a supprimé ';
                     $description .= File::FILE_TYPE_DOCUMENT === $type ? 'le document suivant :' : 'la photo suivante :';
                     $suivi->setDescription(

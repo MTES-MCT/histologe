@@ -32,7 +32,7 @@ class MonthStatisticProvider
     {
         $monthsWithResults = [];
         foreach ($countPerMonths as $countPerMonth) {
-            $strKey = $countPerMonth['year'].'-'.str_pad($countPerMonth['month'], 2, 0, \STR_PAD_LEFT);
+            $strKey = $countPerMonth['year'].'-'.str_pad($countPerMonth['month'], 2, '0', \STR_PAD_LEFT);
             $monthsWithResults[$strKey] = $countPerMonth['count'];
         }
 

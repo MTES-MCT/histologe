@@ -131,7 +131,7 @@ readonly class EntityHistoryListener
                     /* @var EntityHistoryInterface $deleteItem */
                     $changes[$fieldName]['old'][] = $deleteItem->getId();
                 }
-                $this->saveEntityHistory($event, $ownerEntity, $changes);
+                $this->saveEntityHistory($event, $ownerEntity, $changes); // @phpstan-ignore-line
             }
         }
     }

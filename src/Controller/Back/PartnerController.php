@@ -53,11 +53,13 @@ class PartnerController extends AbstractController
         PartnerRepository $partnerRepository,
         ParameterBagInterface $parameterBag,
     ): Response {
-        $searchPartner = new SearchPartner($this->getUser());
+        /** @var User $user */
+        $user = $this->getUser();
+        $searchPartner = new SearchPartner($user);
         $form = $this->createForm(SearchPartnerType::class, $searchPartner);
         $form->handleRequest($request);
         if ($form->isSubmitted() && !$form->isValid()) {
-            $searchPartner = new SearchPartner($this->getUser());
+            $searchPartner = new SearchPartner($user);
         }
         $maxListPagination = $parameterBag->get('standard_max_list_pagination');
         $paginatedPartners = $partnerRepository->findFilteredPaginated($searchPartner, $maxListPagination);

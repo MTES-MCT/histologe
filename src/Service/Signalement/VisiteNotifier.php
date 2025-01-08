@@ -27,8 +27,11 @@ class VisiteNotifier
     ) {
     }
 
-    public function notifyUsagers(Intervention $intervention, NotificationMailerType $notificationMailerType, ?\DateTimeInterface $previousDate = null): void
-    {
+    public function notifyUsagers(
+        Intervention $intervention,
+        NotificationMailerType $notificationMailerType,
+        ?\DateTimeImmutable $previousDate = null,
+    ): void {
         $toRecipients = $intervention->getSignalement()->getMailUsagers();
         foreach ($toRecipients as $toRecipient) {
             $this->notificationMailerRegistry->send(
