@@ -520,7 +520,7 @@ class SignalementManager extends AbstractManager
                 $qualificationDetails['DPE'] = false;
                 break;
             default:
-            $qualificationDetails['DPE'] = null;
+                $qualificationDetails['DPE'] = null;
                 break;
         }
         $signalementQualificationNDE->setDetails($qualificationDetails);
