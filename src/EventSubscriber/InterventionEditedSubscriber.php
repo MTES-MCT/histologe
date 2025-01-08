@@ -52,14 +52,11 @@ class InterventionEditedSubscriber implements EventSubscriberInterface
             $suivi = $this->suiviManager->createSuivi(
                 user: $currentUser,
                 signalement: $intervention->getSignalement(),
-                params: [
-                    'description' => $description,
-                    'type' => Suivi::TYPE_AUTO,
-                ],
+                description: $description,
+                type: Suivi::TYPE_AUTO,
                 isPublic: $event->isUsagerNotified(),
                 context: Suivi::CONTEXT_INTERVENTION,
             );
-            $this->suiviManager->save($suivi);
 
             if ($event->isUsagerNotified()) {
                 $this->visiteNotifier->notifyUsagers(

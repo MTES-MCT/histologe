@@ -3,7 +3,6 @@
 namespace App\EventSubscriber;
 
 use App\Entity\Enum\InterventionType;
-use App\Entity\Intervention;
 use App\Entity\Suivi;
 use App\Event\InterventionCreatedEvent;
 use App\Manager\SuiviManager;
@@ -41,20 +40,21 @@ class InterventionCreatedSubscriber implements EventSubscriberInterface
     private function createSuiviAndNotify(InterventionCreatedEvent $event): void
     {
         $intervention = $event->getIntervention();
-        $suivi = $this->suiviManager->createSuivi(
-            user: $event->getUser(),
-            signalement: $intervention->getSignalement(),
-            params: $this->getParams($intervention),
-            isPublic: true,
-            context: Suivi::CONTEXT_INTERVENTION,
-        );
+        $description = (string) InterventionDescriptionGenerator::generate($intervention, InterventionCreatedEvent::NAME);
         $foundSuivi = $this->suiviManager->findOneBy([
-            'signalement' => $suivi->getSignalement(),
-            'description' => $suivi->getDescription(),
+            'signalement' => $intervention->getSignalement(),
+            'description' => $description,
         ]);
 
         if (!$foundSuivi) {
-            $this->suiviManager->save($suivi);
+            $suivi = $this->suiviManager->createSuivi(
+                user: $event->getUser(),
+                signalement: $intervention->getSignalement(),
+                description: $description,
+                type: Suivi::TYPE_AUTO,
+                isPublic: true,
+                context: Suivi::CONTEXT_INTERVENTION,
+            );
 
             if (InterventionType::VISITE === $intervention->getType()
                 && $intervention->getScheduledAt()->format('Y-m-d') >= (new \DateTimeImmutable())->format('Y-m-d')
@@ -73,16 +73,5 @@ class InterventionCreatedSubscriber implements EventSubscriberInterface
                 notifyOtherAffectedPartners: true,
             );
         }
-    }
-
-    private function getParams(Intervention $intervention): array
-    {
-        return [
-            'type' => Suivi::TYPE_AUTO,
-            'description' => InterventionDescriptionGenerator::generate(
-                $intervention,
-                InterventionCreatedEvent::NAME
-            ),
-        ];
     }
 }

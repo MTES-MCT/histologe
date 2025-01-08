@@ -106,14 +106,11 @@ class AutoAssigner
 
     private function createSuivi(Signalement $signalement, ?User $adminUser): void
     {
-        $params = [
-            'type' => Suivi::TYPE_AUTO,
-            'description' => 'Signalement validé',
-        ];
         $suivi = $this->suiviFactory->createInstanceFrom(
             user: $adminUser,
             signalement: $signalement,
-            params: $params,
+            description: 'Signalement validé',
+            type: Suivi::TYPE_AUTO,
             isPublic: true,
         );
         $this->suiviManager->persist($suivi);

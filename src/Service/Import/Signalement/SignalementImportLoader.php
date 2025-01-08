@@ -9,8 +9,10 @@ use App\Entity\Enum\MotifCloture;
 use App\Entity\File;
 use App\Entity\Partner;
 use App\Entity\Signalement;
+use App\Entity\Suivi;
 use App\Entity\Territory;
 use App\Entity\User;
+use App\Factory\SuiviFactory;
 use App\Manager\AffectationManager;
 use App\Manager\FileManager;
 use App\Manager\SignalementManager;
@@ -58,6 +60,7 @@ class SignalementImportLoader
         private TagManager $tagManager,
         private AffectationManager $affectationManager,
         private SuiviManager $suiviManager,
+        private SuiviFactory $suiviFactory,
         private EntityManagerInterface $entityManager,
         private ParameterBagInterface $parameterBag,
         private LoggerInterface $logger,
@@ -264,8 +267,13 @@ class SignalementImportLoader
                 ]);
 
                 if (null === $suivi) {
-                    $suivi = $this->suiviManager->createSuivi($this->userSystem, $signalement, [], false);
-                    $suivi->setDescription($description);
+                    $suivi = $this->suiviFactory->createInstanceFrom(
+                        user: $this->userSystem,
+                        signalement: $signalement,
+                        description: $description,
+                        type: Suivi::TYPE_PARTNER,
+                    );
+
                     if (null !== $createdAt) {
                         $suivi->setCreatedAt(new \DateTimeImmutable($createdAt));
                     }

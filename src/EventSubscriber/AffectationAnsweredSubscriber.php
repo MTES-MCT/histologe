@@ -2,13 +2,15 @@
 
 namespace App\EventSubscriber;
 
+use App\Entity\Suivi;
 use App\Event\AffectationAnsweredEvent;
+use App\Factory\SuiviFactory;
 use App\Manager\SuiviManager;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 class AffectationAnsweredSubscriber implements EventSubscriberInterface
 {
-    public function __construct(private SuiviManager $suiviManager)
+    public function __construct(private readonly SuiviManager $suiviManager)
     {
     }
 
@@ -28,8 +30,8 @@ class AffectationAnsweredSubscriber implements EventSubscriberInterface
         $this->suiviManager->createSuivi(
             user: $user,
             signalement: $signalement,
-            params: $params,
-            flush: true
+            description: SuiviFactory::buildDescriptionAnswerAffectation($params),
+            type: Suivi::TYPE_AUTO,
         );
     }
 }

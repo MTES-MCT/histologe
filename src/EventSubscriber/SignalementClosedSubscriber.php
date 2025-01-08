@@ -5,8 +5,10 @@ namespace App\EventSubscriber;
 use App\Entity\Affectation;
 use App\Entity\Partner;
 use App\Entity\Signalement;
+use App\Entity\Suivi;
 use App\Entity\User;
 use App\Event\SignalementClosedEvent;
+use App\Factory\SuiviFactory;
 use App\Manager\SignalementManager;
 use App\Manager\SuiviManager;
 use App\Repository\SignalementRepository;
@@ -19,10 +21,10 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 class SignalementClosedSubscriber implements EventSubscriberInterface
 {
     public function __construct(
-        private NotificationMailerRegistry $notificationMailerRegistry,
-        private SignalementManager $signalementManager,
-        private SuiviManager $suiviManager,
-        private Security $security,
+        private readonly NotificationMailerRegistry $notificationMailerRegistry,
+        private readonly SignalementManager $signalementManager,
+        private readonly SuiviManager $suiviManager,
+        private readonly Security $security,
     ) {
     }
 
@@ -43,12 +45,12 @@ class SignalementClosedSubscriber implements EventSubscriberInterface
 
         if ($signalement instanceof Signalement) {
             $suivi = $this->suiviManager->createSuivi(
-                $user,
-                $signalement,
-                params: $params,
-                isPublic: '1' == $params['suivi_public']
+                user : $user,
+                signalement : $signalement,
+                description : SuiviFactory::buildDescriptionClotureSignalement($params),
+                type : Suivi::TYPE_PARTNER,
+                isPublic: '1' == $params['suivi_public'],
             );
-            $this->suiviManager->save($suivi);
 
             $signalement
                 ->setClosedBy($user)
@@ -62,8 +64,12 @@ class SignalementClosedSubscriber implements EventSubscriberInterface
 
         if ($affectation instanceof Affectation) {
             $signalement = $affectation->getSignalement();
-            $suivi = $this->suiviManager->createSuivi($user, $signalement, $params);
-            $this->suiviManager->save($suivi);
+            $suivi = $this->suiviManager->createSuivi(
+                user : $user,
+                signalement : $signalement,
+                description : SuiviFactory::buildDescriptionClotureSignalement($params),
+                type : Suivi::TYPE_PARTNER,
+            );
 
             $signalement->addSuivi($suivi);
             $this->sendMailToPartner(

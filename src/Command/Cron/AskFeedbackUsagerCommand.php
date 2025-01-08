@@ -183,9 +183,9 @@ class AskFeedbackUsagerCommand extends AbstractCronCommand
             ];
 
             $suivi = $this->suiviFactory->createInstanceFrom(
-                user: null,
                 signalement: $signalement,
-                params: $params,
+                description: "Un message automatique a été envoyé à l'usager pour lui demander de mettre à jour sa situation.",
+                type: Suivi::TYPE_TECHNICAL,
             );
 
             if (0 === $totalRead % self::FLUSH_COUNT) {

@@ -6,7 +6,7 @@ use App\Entity\JobEvent;
 use App\Entity\Partner;
 use App\Entity\Suivi;
 use App\Entity\User;
-use App\Manager\SuiviManager;
+use App\Factory\SuiviFactory;
 use App\Repository\AffectationRepository;
 use App\Repository\SignalementRepository;
 use App\Repository\UserRepository;
@@ -39,7 +39,7 @@ class SynchronizeIdossCommand extends AbstractCronCommand
         private readonly SignalementRepository $signalementRepository,
         private readonly AffectationRepository $affectationRepository,
         private readonly UserRepository $userRepository,
-        private readonly SuiviManager $suiviManager,
+        private readonly SuiviFactory $suiviFactory,
         private readonly NotificationMailerRegistry $notificationMailerRegistry,
         private readonly ParameterBagInterface $parameterBag,
         private readonly IdossService $idossService,
@@ -132,17 +132,11 @@ class SynchronizeIdossCommand extends AbstractCronCommand
                         default:
                             $description = 'Le signalement a été mis à jour ("'.$item['statut'].'") par IDOSS';
                     }
-                    $params = [
-                        'domain' => IdossService::TYPE_SERVICE,
-                        'action' => 'synchronize',
-                        'description' => $description,
-                        'name_partner' => $affectation->getPartner()->getNom(),
-                        'type' => Suivi::TYPE_TECHNICAL,
-                    ];
-                    $suivi = $this->suiviManager->createSuivi(
+                    $suivi = $this->suiviFactory->createInstanceFrom(
                         user: $this->adminUser,
                         signalement: $signalement,
-                        params: $params,
+                        description: $description,
+                        type: Suivi::TYPE_TECHNICAL,
                     );
                     $this->entityManager->persist($suivi);
                 }

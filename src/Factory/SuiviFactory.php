@@ -2,76 +2,163 @@
 
 namespace App\Factory;
 
+use App\Entity\Enum\DocumentType;
 use App\Entity\Enum\MotifRefus;
+use App\Entity\File;
+use App\Entity\Intervention;
 use App\Entity\Signalement;
 use App\Entity\Suivi;
 use App\Entity\User;
+use App\Repository\DesordreCritereRepository;
 use App\Service\Sanitizer;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 class SuiviFactory
 {
+    public function __construct(
+        private readonly UrlGeneratorInterface $urlGenerator,
+        private readonly DesordreCritereRepository $desordreCritereRepository,
+    ) {
+    }
+
     public function createInstanceFrom(
-        ?User $user,
         Signalement $signalement,
-        array $params = [],
-        bool $isPublic = false,
-        string $context = '',
+        string $description,
+        int $type,
+        ?bool $isPublic = false,
+        ?User $user = null,
+        ?string $context = null,
     ): Suivi {
         return (new Suivi())
             ->setCreatedBy($user)
             ->setSignalement($signalement)
-            ->setDescription($this->buildDescription($params))
-            ->setType($this->buildType($user, $params))
+            ->setDescription($description)
+            ->setType($type)
             ->setIsPublic($isPublic)
-            ->setContext($context);
+            ->setContext($context)
+        ;
     }
 
-    private function buildType(?User $user, array $params): int
+    public function createInstanceForFilesSignalement(User $user, Signalement $signalement, array $files): Suivi
     {
-        if (isset($params['type'])) {
-            return (int) $params['type'];
+        $nbDocs = 0;
+        $nbPhotos = 0;
+        /** @var ?DocumentType $documentType */
+        $documentType = null;
+
+        /** @var ?Intervention $intervention */
+        $intervention = null;
+        foreach ($files as $file) {
+            if (File::FILE_TYPE_PHOTO === $file->getFileType()) {
+                ++$nbPhotos;
+            } else {
+                ++$nbDocs;
+            }
+            $documentType = $file->getDocumentType();
+            $intervention = $file->getIntervention();
         }
-
-        if ($user && \in_array('ROLE_USAGER', $user->getRoles())) {
-            return Suivi::TYPE_USAGER;
-        }
-
-        if (isset($params['accept'])
-        || isset($params['suivi'])
-        || (isset($params['domain']) && 'esabora' === $params['domain'])) {
-            return Suivi::TYPE_AUTO;
-        }
-
-        return Suivi::TYPE_PARTNER;
-    }
-
-    private function buildDescription($params): string
-    {
         $description = '';
-        if (empty($params)) {
-            return $description;
+        $isVisibleUsager = false;
+
+        if (
+            \array_key_exists($documentType?->value, DocumentType::getOrderedProcedureList())
+            && null === $intervention
+        ) {
+            if ($nbDocs > 0) {
+                $description .= $nbDocs;
+                $description .= $nbDocs > 1 ? ' documents liés à la procédure ont été ajoutés' : ' document lié à la procédure a été ajouté';
+                $description .= ' au signalement.';
+            }
         }
 
-        if (isset($params['motif_cloture'])) {
-            return $this->buildDescriptionClotureSignalement($params);
+        if (\array_key_exists($documentType?->value, DocumentType::getOrderedSituationList())) {
+            $isVisibleUsager = true;
+            if ($nbDocs > 0) {
+                $description .= $nbDocs;
+                $description .= $nbDocs > 1 ? ' documents ' : ' document ';
+                $description .= 'sur la situation usager';
+            }
+
+            if ($nbPhotos > 0) {
+                if ('' !== $description) {
+                    $description .= ' et ';
+                }
+                $description .= $nbPhotos;
+                $description .= $nbPhotos > 1 ? ' photos' : ' photo';
+                if (null !== $signalement->getCreatedFrom()) {
+                    $description .= ' concernant les désordres suivants';
+                }
+            }
+            if (0 === $nbDocs && $nbPhotos > 1) {
+                $description .= ' ont été ajoutées au signalement : ';
+            } elseif ($nbDocs + $nbPhotos > 1) {
+                $description .= ' ont été ajoutés au signalement : ';
+            } elseif (1 === $nbPhotos) {
+                $description .= ' a été ajoutée au signalement : ';
+            }
         }
 
-        if (isset($params['accept']) || isset($params['suivi'])) {
-            return $this->buildDescriptionAnswerAffectation($params);
+        if (DocumentType::PROCEDURE_RAPPORT_DE_VISITE === $documentType && null !== $intervention) {
+            $isVisibleUsager = true;
+            $partner = $user->getPartnerInTerritoryOrFirstOne($signalement->getTerritory());
+            if ($nbDocs > 0) {
+                $description .= \sprintf(
+                    '%s a ajouté %s %s de la visite du %s :',
+                    $partner->getNom(),
+                    $nbDocs,
+                    $nbDocs > 1 ? ' rapports de visite' : ' rapport de visite',
+                    $intervention->getScheduledAt()->format('d/m/Y')
+                );
+            }
         }
 
-        if (isset($params['domain']) && 'esabora' === $params['domain']) {
-            return 'Signalement <b>'.$params['description'].'</b> par '.$params['name_partner'];
+        if (DocumentType::PHOTO_VISITE === $documentType) {
+            $isVisibleUsager = true;
+            $partner = $user->getPartnerInTerritoryOrFirstOne($signalement->getTerritory());
+            if ($nbPhotos > 0) {
+                $description .= \sprintf(
+                    '%s a ajouté %s %s de la visite du %s :',
+                    $partner->getNom(),
+                    $nbPhotos,
+                    $nbPhotos > 1 ? ' photos' : ' photo',
+                    $intervention->getScheduledAt()->format('d/m/Y')
+                );
+            }
         }
 
-        if (isset($params['description'])) {
-            return $params['description'];
-        }
+        $descriptionList = [];
+        foreach ($files as $file) {
+            $fileUrl = $this->urlGenerator->generate(
+                'show_file',
+                ['uuid' => $file->getUuid()],
+                UrlGeneratorInterface::ABSOLUTE_URL
+            );
 
-        return $description;
+            $linkFile = '<li><a class="fr-link" target="_blank" rel="noopener" href="'.$fileUrl.'">'.$file->getTitle().'</a>';
+            if (DocumentType::PHOTO_SITUATION === $file->getDocumentType() && null !== $file->getDesordreSlug()) {
+                $desordreCritere = $this->desordreCritereRepository->findOneBy(
+                    ['slugCritere' => $file->getDesordreSlug()]
+                );
+                if (null !== $desordreCritere) {
+                    $linkFile .= ' ('.$desordreCritere->getLabelCritere().')';
+                }
+            }
+            $linkFile .= '</li>';
+            $descriptionList[] = $linkFile;
+        }
+        $description .= '<ul>'.implode('', $descriptionList).'</ul>';
+        $suivi = $this->createInstanceFrom(
+            user: $user,
+            signalement: $signalement,
+            description: $description,
+            type: Suivi::TYPE_AUTO,
+            isPublic: $isVisibleUsager,
+        );
+
+        return $suivi;
     }
 
-    private function buildDescriptionClotureSignalement($params): string
+    public static function buildDescriptionClotureSignalement($params): string
     {
         $motifSuivi = Sanitizer::sanitize($params['motif_suivi']);
 
@@ -83,7 +170,7 @@ class SuiviFactory
         );
     }
 
-    private function buildDescriptionAnswerAffectation($params): string
+    public static function buildDescriptionAnswerAffectation($params): string
     {
         $description = '';
         if (isset($params['accept'])) {

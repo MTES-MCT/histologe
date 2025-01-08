@@ -108,7 +108,7 @@ class SignalementFileController extends AbstractController
     public function fileWaitingSuiviSignalement(
         Signalement $signalement,
         EntityManagerInterface $entityManager,
-        SuiviManager $suiviManager,
+        SuiviFactory $suiviFactory,
         UploadHandlerService $uploadHandlerService,
     ): JsonResponse {
         $this->denyAccessUnlessGranted('SIGN_EDIT', $signalement);
@@ -125,7 +125,7 @@ class SignalementFileController extends AbstractController
             return $this->json(['success' => true]);
         }
 
-        $suivi = $suiviManager->createInstanceForFilesSignalement($user, $signalement, $files);
+        $suivi = $suiviFactory->createInstanceForFilesSignalement($user, $signalement, $files);
         $entityManager->persist($suivi);
 
         $update = $entityManager->createQueryBuilder()
@@ -155,7 +155,7 @@ class SignalementFileController extends AbstractController
         FileRepository $fileRepository,
         UploadHandlerService $uploadHandlerService,
         EntityManagerInterface $entityManager,
-        SuiviFactory $suiviFactory,
+        SuiviManager $suiviManager,
     ): Response {
         $fileId = $request->get('file_id');
         $file = $fileRepository->findOneBy(
@@ -172,22 +172,18 @@ class SignalementFileController extends AbstractController
             $filename = $file->getFilename();
             $type = $file->getFileType();
             if ($uploadHandlerService->deleteFile($file)) {
-                /** @var User $user */
-                $user = $this->getUser();
-                $suivi = $suiviFactory->createInstanceFrom($user, $signalement);
                 if (!$this->isGranted('ROLE_ADMIN')) {
+                    /** @var User $user */
+                    $user = $this->getUser();
                     $description = $user->getNomComplet().' a supprimé ';
                     $description .= File::FILE_TYPE_DOCUMENT === $type ? 'le document suivant :' : 'la photo suivante :';
-                    $suivi->setDescription(
-                        $description
-                        .'<ul><li>'
-                        .$filename
-                        .'</li></ul>'
+                    $description .= '<ul><li>'.$filename.'</li></ul>';
+                    $suiviManager->createSuivi(
+                        user: $user,
+                        signalement: $signalement,
+                        description: $description,
+                        type: Suivi::TYPE_AUTO,
                     );
-                    $suivi->setType(Suivi::TYPE_AUTO);
-
-                    $entityManager->persist($suivi);
-                    $entityManager->flush();
                 }
                 if (File::FILE_TYPE_DOCUMENT === $type) {
                     $this->addFlash('success', 'Le document a bien été supprimé.');
