@@ -17,6 +17,7 @@ use App\Entity\Enum\AffectationStatus;
 use App\Entity\Enum\MotifCloture;
 use App\Entity\Enum\ProfileDeclarant;
 use App\Entity\Enum\ProprioType;
+use App\Entity\Enum\Qualification;
 use App\Entity\Model\InformationComplementaire;
 use App\Entity\Model\InformationProcedure;
 use App\Entity\Model\SituationFoyer;
@@ -318,6 +319,12 @@ class SignalementManager extends AbstractManager
         }
 
         $signalementQualification->setDetails($qualificationNDERequest->getDetails());
+        $this->save($signalementQualification);
+
+        $signalementQualification->setStatus(
+            $this->qualificationStatusService->getNDEStatus($signalementQualification)
+        );
+        $this->save($signalementQualification);
 
         $typeCompositionLogement = new TypeCompositionLogement();
         if (!empty($signalement->getTypeCompositionLogement())) {
@@ -337,14 +344,7 @@ class SignalementManager extends AbstractManager
             }
         }
         $signalement->setTypeCompositionLogement($typeCompositionLogement);
-
-        $this->save($signalementQualification);
-
-        $signalementQualification->setStatus(
-            $this->qualificationStatusService->getNDEStatus($signalementQualification)
-        );
-
-        $this->save($signalementQualification);
+        $this->save($signalement);
     }
 
     public function updateFromAdresseOccupantRequest(
@@ -507,6 +507,24 @@ class SignalementManager extends AbstractManager
             ->setBailDpeClasseEnergetique($informationsLogementRequest->getBailDpeClasseEnergetique())
             ->setBailDpeDateEmmenagement($signalement->getDateEntree()?->format('Y-m-d'));
         $signalement->setTypeCompositionLogement($typeCompositionLogement);
+
+        $signalementQualificationNDE = $signalement->getSignalementQualifications()->filter(function ($qualification) {
+            return Qualification::NON_DECENCE_ENERGETIQUE === $qualification->getQualification();
+        })->first();
+        $qualificationDetails = $signalementQualificationNDE->getDetails();
+        switch ($informationsLogementRequest->getBailDpeDpe()) {
+            case 'oui':
+                $qualificationDetails['DPE'] = true;
+                break;
+            case 'non':
+                $qualificationDetails['DPE'] = false;
+                break;
+            default:
+            $qualificationDetails['DPE'] = null;
+                break;
+        }
+        $signalementQualificationNDE->setDetails($qualificationDetails);
+        $this->save($signalementQualificationNDE);
 
         $informationComplementaire = new InformationComplementaire();
         if (!empty($signalement->getInformationComplementaire())) {
