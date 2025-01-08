@@ -104,6 +104,22 @@ class SearchUserType extends AbstractType
             'placeholder' => 'Tous les droits d\'affectation',
             'label' => 'Droits d\'affectation',
         ]);
+
+        $builder->add('orderType', ChoiceType::class, [
+            'choices' => [
+                'Ordre alphabétique (A -> Z)' => 'u.nom-ASC',
+                'Ordre alphabétique inversé (Z -> A)' => 'u.nom-DESC',
+                'Partenaire (A -> Z)' => 'p.nom-ASC',
+                'Partenaire inversé (Z -> A)' => 'p.nom-DESC',
+                'Connexion la plus récente' => 'u.lastLoginAt-DESC',
+                'Connexion la plus ancienne' => 'u.lastLoginAt-ASC',
+            ],
+            'required' => false,
+            'placeholder' => false,
+            'label' => 'Trier par',
+            'data' => 'u.nom-ASC',
+        ]);
+
         $builder->add('page', HiddenType::class);
     }
 

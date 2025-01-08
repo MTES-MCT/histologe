@@ -11,6 +11,7 @@ class SearchArchivedUser
     private ?string $queryUser = null;
     private ?string $territory = null;
     private ?string $partner = null;
+    private ?string $orderType = null;
 
     public function getQueryUser(): ?string
     {
@@ -40,5 +41,15 @@ class SearchArchivedUser
     public function setPartner(?string $partner): void
     {
         $this->partner = $partner;
+    }
+
+    public function getOrderType(): ?string
+    {
+        return $this->orderType;
+    }
+
+    public function setOrderType(?string $orderType): void
+    {
+        $this->orderType = $orderType;
     }
 }

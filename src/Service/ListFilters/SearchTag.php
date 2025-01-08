@@ -15,6 +15,7 @@ class SearchTag
     private User $user;
     private ?string $queryTag = null;
     private ?Territory $territory = null;
+    private ?string $orderType = null;
 
     public function __construct(User $user)
     {
@@ -47,6 +48,16 @@ class SearchTag
     public function setTerritory(?Territory $territory): void
     {
         $this->territory = $territory;
+    }
+
+    public function getOrderType(): ?string
+    {
+        return $this->orderType;
+    }
+
+    public function setOrderType(?string $orderType): void
+    {
+        $this->orderType = $orderType;
     }
 
     public function getUrlParams(): array

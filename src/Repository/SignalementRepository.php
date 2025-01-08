@@ -1321,18 +1321,20 @@ class SignalementRepository extends ServiceEntityRepository
         int $maxResult,
     ): Paginator {
         return $this->findAllArchived(
-            territory: $searchArchivedSignalement->getTerritory(),
-            referenceTerms: $searchArchivedSignalement->getQueryReference(),
             page: $searchArchivedSignalement->getPage(),
             maxResult: $maxResult,
+            territory: $searchArchivedSignalement->getTerritory(),
+            referenceTerms: $searchArchivedSignalement->getQueryReference(),
+            searchArchivedSignalement: $searchArchivedSignalement,
         );
     }
 
     public function findAllArchived(
-        ?Territory $territory,
-        ?string $referenceTerms,
         int $page,
         int $maxResult,
+        ?Territory $territory,
+        ?string $referenceTerms,
+        ?SearchArchivedSignalement $searchArchivedSignalement = null,
     ): Paginator {
         $queryBuilder = $this->createQueryBuilder('s');
 
@@ -1350,6 +1352,13 @@ class SignalementRepository extends ServiceEntityRepository
             $queryBuilder
                 ->andWhere('s.reference LIKE :referenceTerms')
                 ->setParameter('referenceTerms', $referenceTerms);
+        }
+
+        if (!empty($searchArchivedSignalement) && !empty($searchArchivedSignalement->getOrderType())) {
+            [$orderField, $orderDirection] = explode('-', $searchArchivedSignalement->getOrderType());
+            $queryBuilder->orderBy($orderField, $orderDirection);
+        } else {
+            $queryBuilder->orderBy('s.createdAt', 'ASC');
         }
 
         $firstResult = ($page - 1) * $maxResult;

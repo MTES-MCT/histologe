@@ -47,20 +47,22 @@ class PartnerRepository extends ServiceEntityRepository
     public function findFilteredPaginated(SearchPartner $searchPartner, int $maxResult): Paginator
     {
         return $this->getPartners(
+            $searchPartner->getPage(),
+            $maxResult,
             $searchPartner->getTerritory(),
             $searchPartner->getPartnerType(),
             $searchPartner->getQueryPartner(),
-            $searchPartner->getPage(),
-            $maxResult,
+            $searchPartner,
         );
     }
 
     public function getPartners(
+        int $page,
+        int $maxResult,
         ?Territory $territory,
         ?PartnerType $type,
         ?string $filterTerms,
-        int $page,
-        int $maxResult,
+        ?SearchPartner $searchPartner = null,
     ): Paginator {
         $queryBuilder = $this->getPartnersQueryBuilder($territory);
         $queryBuilder->addSelect('z')
@@ -79,6 +81,13 @@ class PartnerRepository extends ServiceEntityRepository
                 OR LOWER(p.email) LIKE :usersterms');
             $queryBuilder
                 ->setParameter('usersterms', '%'.strtolower($filterTerms).'%');
+        }
+
+        if (!empty($searchPartner) && !empty($searchPartner->getOrderType())) {
+            [$orderField, $orderDirection] = explode('-', $searchPartner->getOrderType());
+            $queryBuilder->orderBy($orderField, $orderDirection);
+        } else {
+            $queryBuilder->orderBy('p.nom', 'ASC');
         }
 
         $firstResult = ($page - 1) * $maxResult;
@@ -150,6 +159,13 @@ class PartnerRepository extends ServiceEntityRepository
             $queryBuilder
                 ->andWhere('LOWER(p.nom) LIKE :usersterms OR LOWER(p.email) LIKE :usersterms')
                 ->setParameter('usersterms', '%'.strtolower($filterTerms).'%');
+        }
+
+        if (!empty($searchArchivedPartner->getOrderType())) {
+            [$orderField, $orderDirection] = explode('-', $searchArchivedPartner->getOrderType());
+            $queryBuilder->orderBy($orderField, $orderDirection);
+        } else {
+            $queryBuilder->orderBy('p.nom', 'ASC');
         }
 
         $firstResult = ($searchArchivedPartner->getPage() - 1) * $maxResult;

@@ -59,6 +59,20 @@ class SearchArchivedUserType extends AbstractType
                 );
             }
         });
+
+        $builder->add('orderType', ChoiceType::class, [
+            'choices' => [
+                'Nom (A -> Z)' => 'u.nom-ASC',
+                'Nom inversé (Z -> A)' => 'u.nom-DESC',
+                'Partenaire (A -> Z)' => 'p.nom-ASC',
+                'Partenaire inversé (Z -> A)' => 'p.nom-DESC',
+            ],
+            'required' => false,
+            'placeholder' => false,
+            'label' => 'Trier par',
+            'data' => 'u.nom-ASC',
+        ]);
+
         $builder->add('page', HiddenType::class);
     }
 

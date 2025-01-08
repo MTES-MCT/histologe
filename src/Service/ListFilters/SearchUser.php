@@ -23,6 +23,7 @@ class SearchUser
     private ?int $statut = null;
     private ?string $role = null;
     private ?string $permissionAffectation = null;
+    private ?string $orderType = null;
 
     public function __construct(User $user)
     {
@@ -106,6 +107,16 @@ class SearchUser
     public function setPermissionAffectation(?string $permissionAffectation): void
     {
         $this->permissionAffectation = $permissionAffectation;
+    }
+
+    public function getOrderType(): ?string
+    {
+        return $this->orderType;
+    }
+
+    public function setOrderType(?string $orderType): void
+    {
+        $this->orderType = $orderType;
     }
 
     public function getUrlParams(): array

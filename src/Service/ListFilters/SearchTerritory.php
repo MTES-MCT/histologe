@@ -10,6 +10,7 @@ class SearchTerritory
 
     private ?string $queryName = null;
     private ?bool $isActive = null;
+    private ?string $orderType = null;
 
     public function getQueryName(): ?string
     {
@@ -29,5 +30,15 @@ class SearchTerritory
     public function setIsActive(?bool $isActive): void
     {
         $this->isActive = $isActive;
+    }
+
+    public function getOrderType(): ?string
+    {
+        return $this->orderType;
+    }
+
+    public function setOrderType(?string $orderType): void
+    {
+        $this->orderType = $orderType;
     }
 }

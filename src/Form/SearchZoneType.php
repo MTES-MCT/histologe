@@ -8,6 +8,7 @@ use App\Service\ListFilters\SearchZone;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\EnumType;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\Extension\Core\Type\SearchType;
@@ -48,6 +49,19 @@ class SearchZoneType extends AbstractType
             'required' => false,
             'placeholder' => 'Tous les types de zone',
             'label' => 'Type de zone',
+        ]);
+
+        $builder->add('orderType', ChoiceType::class, [
+            'choices' => [
+                'Ordre alphabétique (A -> Z)' => 'z.name-ASC',
+                'Ordre alphabétique inversé (Z -> A)' => 'z.name-DESC',
+                'Ordre croissant' => 'z.id-ASC',
+                'Ordre décroissant' => 'z.id-DESC',
+            ],
+            'required' => false,
+            'placeholder' => false,
+            'label' => 'Trier par',
+            'data' => 'z.name-ASC',
         ]);
 
         $builder->add('page', HiddenType::class);

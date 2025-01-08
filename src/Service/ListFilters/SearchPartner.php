@@ -17,6 +17,7 @@ class SearchPartner
     private ?string $queryPartner = null;
     private ?Territory $territory = null;
     private ?PartnerType $partnerType = null;
+    private ?string $orderType = null;
 
     public function __construct(User $user)
     {
@@ -59,6 +60,16 @@ class SearchPartner
     public function setPartnerType(PartnerType $partnerType): void
     {
         $this->partnerType = $partnerType;
+    }
+
+    public function getOrderType(): ?string
+    {
+        return $this->orderType;
+    }
+
+    public function setOrderType(?string $orderType): void
+    {
+        $this->orderType = $orderType;
     }
 
     public function getUrlParams(): array

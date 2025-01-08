@@ -229,6 +229,13 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
             ->setParameter('role2', '%ROLE_ADMIN_TERRITORY%')
             ->setParameter('role3', '%ROLE_USER_PARTNER%');
 
+        if (!empty($searchArchivedUser->getOrderType())) {
+            [$orderField, $orderDirection] = explode('-', $searchArchivedUser->getOrderType());
+            $queryBuilder->orderBy($orderField, $orderDirection);
+        } else {
+            $queryBuilder->orderBy('u.nom', 'ASC');
+        }
+
         $firstResult = ($searchArchivedUser->getPage() - 1) * $maxResult;
         $queryBuilder->setFirstResult($firstResult)->setMaxResults($maxResult);
 
@@ -369,8 +376,15 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
         $qb->select('u', 'up', 'p', 't')
             ->leftJoin('u.userPartners', 'up')
             ->leftJoin('up.partner', 'p')
-            ->leftJoin('p.territory', 't')
-            ->orderBy('u.nom', 'ASC');
+            ->leftJoin('p.territory', 't');
+
+        if (!empty($searchUser->getOrderType())) {
+            [$orderField, $orderDirection] = explode('-', $searchUser->getOrderType());
+            $qb->orderBy($orderField, $orderDirection);
+        } else {
+            $qb->orderBy('u.nom', 'ASC');
+        }
+
         $qb->andWhere('u.statut != :statutArchive')->setParameter('statutArchive', User::STATUS_ARCHIVE);
 
         $qb->andWhere('JSON_CONTAINS(u.roles, :roleUsager) = 0')->setParameter('roleUsager', '"ROLE_USAGER"');

@@ -23,21 +23,27 @@ class AutoAffectationRuleRepository extends ServiceEntityRepository
     public function findFilteredPaginated(SearchAutoAffectationRule $searchAutoAffectationRule, int $maxResult): Paginator
     {
         return $this->getAutoAffectationRules(
-            territory: $searchAutoAffectationRule->getTerritory(),
             page: $searchAutoAffectationRule->getPage(),
             maxResult: $maxResult,
+            territory: $searchAutoAffectationRule->getTerritory(),
+            isActive: $searchAutoAffectationRule->getIsActive(),
         );
     }
 
     public function getAutoAffectationRules(
-        ?Territory $territory,
         int $page,
         int $maxResult,
+        ?Territory $territory,
+        ?bool $isActive,
     ): Paginator {
         $queryBuilder = $this->createQueryBuilder('aar');
 
         if ($territory) {
             $queryBuilder->andWhere('aar.territory = :territory')->setParameter('territory', $territory);
+        }
+        if (null !== $isActive) {
+            $queryBuilder->andWhere('aar.status = :status');
+            $queryBuilder->setParameter('status', $isActive ? AutoAffectationRule::STATUS_ACTIVE : AutoAffectationRule::STATUS_ARCHIVED);
         }
 
         $firstResult = ($page - 1) * $maxResult;

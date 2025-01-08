@@ -26,8 +26,14 @@ class ZoneRepository extends ServiceEntityRepository
         $qb->select('z', 'p', 'ep', 't')
             ->leftJoin('z.partners', 'p')
             ->leftJoin('z.excludedPartners', 'ep')
-            ->leftJoin('z.territory', 't')
-            ->orderBy('z.name', 'ASC');
+            ->leftJoin('z.territory', 't');
+
+        if (!empty($searchZone->getOrderType())) {
+            [$orderField, $orderDirection] = explode('-', $searchZone->getOrderType());
+            $qb->orderBy($orderField, $orderDirection);
+        } else {
+            $qb->orderBy('z.name', 'ASC');
+        }
 
         if ($searchZone->getQueryName()) {
             $qb->andWhere('LOWER(z.name) LIKE :queryName');
