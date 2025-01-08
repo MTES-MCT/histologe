@@ -319,6 +319,25 @@ class SignalementManager extends AbstractManager
 
         $signalementQualification->setDetails($qualificationNDERequest->getDetails());
 
+        $typeCompositionLogement = new TypeCompositionLogement();
+        if (!empty($signalement->getTypeCompositionLogement())) {
+            $typeCompositionLogement = clone $signalement->getTypeCompositionLogement();
+        }
+        if (!empty($qualificationNDERequest->getDetails()['DPE'])) {
+            switch ($qualificationNDERequest->getDetails()['DPE']) {
+                case true:
+                    $typeCompositionLogement->setBailDpeDpe('oui');
+                    break;
+                case false:
+                    $typeCompositionLogement->setBailDpeDpe('non');
+                    break;
+                default:
+                    $typeCompositionLogement->setBailDpeDpe('nsp');
+                    break;
+            }
+        }
+        $signalement->setTypeCompositionLogement($typeCompositionLogement);
+
         $this->save($signalementQualification);
 
         $signalementQualification->setStatus(
