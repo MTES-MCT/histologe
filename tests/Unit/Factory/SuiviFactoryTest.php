@@ -36,9 +36,8 @@ class SuiviFactoryTest extends KernelTestCase
         $signalement = $this->createMock(Signalement::class);
         /** @var User $user */
         $user = $this->security->getUser();
-
         $suivi = $suiviFactory->createInstanceFrom(
-            user: $this->security->getUser(),
+            user: $user,
             signalement: $signalement,
             description: '',
             type: Suivi::TYPE_PARTNER,
@@ -61,8 +60,10 @@ class SuiviFactoryTest extends KernelTestCase
             'subject' => 'tous les partenaires',
             'closed_for' => 'all',
         ];
+        /** @var User $user */
+        $user = $this->security->getUser();
         $suivi = $suiviFactory->createInstanceFrom(
-            user: $this->security->getUser(),
+            user: $user,
             signalement: $signalement,
             description: $suiviFactory->buildDescriptionClotureSignalement($params),
             type: Suivi::TYPE_PARTNER,
