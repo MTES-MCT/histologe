@@ -193,7 +193,7 @@ class SignalementResponseFactory
 
     private function stringToInt(?string $value): ?int
     {
-        if (!empty($value) )  {
+        if (!empty($value)) {
             return (int) $value;
         }
 
