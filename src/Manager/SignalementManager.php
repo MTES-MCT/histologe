@@ -511,25 +511,27 @@ class SignalementManager extends AbstractManager
         $signalementQualificationNDE = $signalement->getSignalementQualifications()->filter(function ($qualification) {
             return Qualification::NON_DECENCE_ENERGETIQUE === $qualification->getQualification();
         })->first();
-        $qualificationDetails = $signalementQualificationNDE->getDetails();
-        switch ($informationsLogementRequest->getBailDpeDpe()) {
-            case 'oui':
-                $qualificationDetails['DPE'] = true;
-                break;
-            case 'non':
-                $qualificationDetails['DPE'] = false;
-                break;
-            default:
-                $qualificationDetails['DPE'] = null;
-                break;
+        if ($signalementQualificationNDE) {
+            $qualificationDetails = $signalementQualificationNDE->getDetails();
+            switch ($informationsLogementRequest->getBailDpeDpe()) {
+                case 'oui':
+                    $qualificationDetails['DPE'] = true;
+                    break;
+                case 'non':
+                    $qualificationDetails['DPE'] = false;
+                    break;
+                default:
+                    $qualificationDetails['DPE'] = null;
+                    break;
+            }
+            $signalementQualificationNDE->setDetails($qualificationDetails);
+            $this->save($signalementQualificationNDE);
+    
+            $signalementQualificationNDE->setStatus(
+                $this->qualificationStatusService->getNDEStatus($signalementQualificationNDE)
+            );
+            $this->save($signalementQualificationNDE);
         }
-        $signalementQualificationNDE->setDetails($qualificationDetails);
-        $this->save($signalementQualificationNDE);
-
-        $signalementQualificationNDE->setStatus(
-            $this->qualificationStatusService->getNDEStatus($signalementQualificationNDE)
-        );
-        $this->save($signalementQualificationNDE);
 
         $informationComplementaire = new InformationComplementaire();
         if (!empty($signalement->getInformationComplementaire())) {
