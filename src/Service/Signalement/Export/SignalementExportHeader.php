@@ -38,6 +38,7 @@ class SignalementExportHeader
             'Date d\'information du propriétaire',
             'Moyen d\'information du propriétaire',
             'Nb personnes',
+            'Nb enfants',
             'Enfants -6 ans',
             'Allocataire',
             'Numéro allocataire',

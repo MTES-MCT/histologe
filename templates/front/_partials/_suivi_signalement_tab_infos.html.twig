@@ -104,6 +104,10 @@ and signalement.profileDeclarant is not same as enum('App\\Entity\\Enum\\Profile
 			{% endif %}
 			<li>Nombre de personnes : {{ signalement.nbOccupantsLogement }}</li>
 			{% if signalement.typeCompositionLogement %}
+				{% if signalement.typeCompositionLogement.compositionLogementNombreEnfants %}
+					- dont nombre d'enfants :
+						{{signalement.typeCompositionLogement.compositionLogementNombreEnfants}}
+				{% endif %}
 				{% if signalement.typeCompositionLogement.compositionLogementEnfants %}
 					<li>Enfants de moins de 6 ans ?
 						{{signalement.typeCompositionLogement.compositionLogementEnfants|capitalize}}

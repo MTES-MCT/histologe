@@ -11,10 +11,14 @@ class InformationsLogementRequest implements RequestInterface
         #[Assert\Positive(message: 'Le nombre de personnes doit être un nombre positif.')]
         #[Assert\Type(type: 'numeric', message: 'Le nombre de personnes doit être un nombre.')]
         private readonly ?string $nombrePersonnes = null,
+        #[Assert\NotBlank(message: 'Merci de définir le nombre d\'enfants.')] // TODO : check retrococmpatibliity
+        #[Assert\Positive(message: 'Le nombre d\'enfants doit être un nombre positif.')]
+        #[Assert\Type(type: 'numeric', message: 'Le nombre d\'enfantss doit être un nombre.')]
+        private readonly ?string $compositionLogementNombreEnfants = null,
         #[Assert\NotBlank(
             message: 'Merci de définir si il y a des enfants de moins de 6 ans',
             groups: ['LOCATAIRE', 'BAILLEUR_OCCUPANT', 'TIERS_PARTICULIER', 'TIERS_PRO', 'BAILLEUR'])]
-        #[Assert\Choice(choices: ['oui', 'non'], message: 'Le champ "Enfants -6 ans" est incorrect.')]
+        #[Assert\Choice(choices: ['oui', 'non', 'nsp'], message: 'Le champ "Enfants -6 ans" est incorrect.')]
         private readonly ?string $compositionLogementEnfants = null,
         #[Assert\NotBlank(message: 'Merci de définir la date d\'arrivée.', groups: ['LOCATAIRE', 'BAILLEUR_OCCUPANT'])]
         #[Assert\DateTime('Y-m-d')]
@@ -47,6 +51,11 @@ class InformationsLogementRequest implements RequestInterface
     public function getNombrePersonnes(): ?string
     {
         return $this->nombrePersonnes;
+    }
+
+    public function getCompositionLogementNombreEnfants(): ?string
+    {
+        return $this->compositionLogementNombreEnfants;
     }
 
     public function getCompositionLogementEnfants(): ?string

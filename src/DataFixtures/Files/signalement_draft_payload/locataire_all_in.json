@@ -85,6 +85,7 @@
     "desordres_batiment_eau_evacuation_KO": 1,
     "desordres_batiment_securite_escalier": 1,
     "adresse_logement_adresse_detail_insee": "13004",
+    "composition_logement_nombre_enfants": "2",
     "composition_logement_nombre_personnes": "3",
     "desordres_batiment_eau_pas_eau_chaude": 1,
     "desordres_batiment_incendie_odeur_gaz": 1,

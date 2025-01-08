@@ -80,6 +80,7 @@ class SignalementResponse
     public ?string $dateNaissanceOccupant;
     public ?string $dateEntreeLogement;
     public ?int $nbOccupantsLogement;
+    public ?int $nombreEnfantsDansLogement;
     public ?bool $enfantsDansLogement;
     public ?bool $assuranceContactee;
     public ?string $reponseAssurance;

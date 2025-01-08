@@ -364,6 +364,7 @@ export default defineComponent({
         result += this.addLineIfNeeded('type_logement_commodites_wc_cuisine', 'Toilettes (WC) et cuisine dans la même pièce ? ')
       }
       result += this.addLineIfNeeded('composition_logement_nombre_personnes', 'Nombre de personnes : ')
+      result += this.addLineIfNeeded('composition_logement_nombre_enfants', 'Nombre d\'enfants :  ')
       result += this.addLineIfNeeded('composition_logement_enfants', 'Enfants de moins de 6 ans ? ')
       result += this.addLineIfNeeded('bail_dpe_bail', 'Bail établi ? ')
       result += this.addLineIfNeeded('bail_dpe_invariant', 'Invariant fiscal : ')

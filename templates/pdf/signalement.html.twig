@@ -57,7 +57,9 @@
                                 <b>Nb. personnes :</b>
                                 {% if signalement.typeCompositionLogement %}
                                     {{ signalement.nbOccupantsLogement }}
-
+                                    {% if signalement.typeCompositionLogement.compositionLogementNombreEnfants %}
+                                        <br><strong>- dont nb. enfants : </strong>{{ signalement.typeCompositionLogement.compositionLogementNombreEnfants }}
+                                    {% endif %}
                                 {% else %}
                                     {{ signalement.nbPersonsDeprecated }} :
                                     {{ signalement.nbAdultes }} {{ signalement.nbAdultes > 1 ? 'adultes' : 'adulte' }}

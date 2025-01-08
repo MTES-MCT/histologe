@@ -32,6 +32,7 @@
   "composition_logement_superficie": "51",
   "composition_logement_hauteur": "oui",
   "composition_logement_piece_unique": "piece_unique",
+  "composition_logement_nombre_enfants": "1",
   "composition_logement_enfants": "oui",
   "type_logement_commodites_cuisine": "oui",
   "type_logement_commodites_piece_a_vivre_9m": "oui",

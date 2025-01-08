@@ -21,6 +21,7 @@ class InformationsLogementRequestTest extends KernelTestCase
         $informationsLogementRequest = new InformationsLogementRequest(
             nombrePersonnes: '3',
             compositionLogementEnfants: 'oui',
+            compositionLogementNombreEnfants: '2',
             dateEntree: '2022-01-01',
             bailleurDateEffetBail: '2022-01-01',
             bailDpeBail: 'oui',
@@ -55,6 +56,7 @@ class InformationsLogementRequestTest extends KernelTestCase
         $informationsLogementRequest = new InformationsLogementRequest(
             nombrePersonnes: '-1',
             compositionLogementEnfants: 'maybe',
+            compositionLogementNombreEnfants: '-1',
             dateEntree: 'invalid-date',
             bailleurDateEffetBail: 'invalid-date',
             bailDpeBail: 'unknown',
@@ -68,6 +70,6 @@ class InformationsLogementRequestTest extends KernelTestCase
         );
 
         $errors = $this->validator->validate($informationsLogementRequest);
-        $this->assertCount(12, $errors);
+        $this->assertCount(13, $errors);
     }
 }

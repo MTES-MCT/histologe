@@ -29,6 +29,22 @@
                                 <input class="fr-input" type="number" id="informationLogementNombrePersonnes" name="nombrePersonnes" value="{{ nombrePersonnes }}">
                             </div>
 
+                            <div class="fr-input-group">
+                                {% set compositionLogementNombreEnfants = null %}
+                                {% if signalement.typeCompositionLogement %}
+                                    {% set compositionLogementNombreEnfants = signalement.typeCompositionLogement.compositionLogementNombreEnfants %}
+                                {% endif %}
+                                <label class="fr-label" for="informationLogementNombrePersonnes">Dont nb. enfants
+                                    {{ show_label_facultatif(
+                                        'App\\Dto\\Request\\Signalement\\InformationsLogementRequest',
+                                        'compositionLogementNombreEnfants',
+                                        signalement.profileDeclarant,
+                                        null != signalement.createdFrom)
+                                    }}
+                                </label>
+                                <input class="fr-input" type="number" id="informationLogementCompositionLogementNombreEnfants" name="compositionLogementNombreEnfants" value="{{ compositionLogementNombreEnfants }}">
+                            </div>
+
                             <div class="fr-select-group">
                                 {% set compositionLogementEnfants = null %}
                                 {% if signalement.typeCompositionLogement %}

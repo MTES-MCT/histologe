@@ -218,7 +218,7 @@ class SignalementEditController extends AbstractController
                 InformationsLogementRequest::class,
                 'json'
             );
-
+            dump($informationsLogementRequest);
             $validationGroups = ['Default'];
             $validationGroups[] = null !== $signalement->getCreatedFrom()
                 ? $signalement->getProfileDeclarant()->value :
@@ -229,6 +229,7 @@ class SignalementEditController extends AbstractController
                 $informationsLogementRequest,
                 $validationGroups
             );
+            dump($errorMessage);
 
             if (empty($errorMessage)) {
                 $signalementManager->updateFromInformationsLogementRequest($signalement, $informationsLogementRequest);

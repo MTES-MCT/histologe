@@ -46,6 +46,15 @@ class SignalementExportFactory
         $interventionStatus = $this->mapInterventionStatus($dateVisite, $data['interventionStatus']);
         $isOccupantPresentVisite = $data['interventionOccupantPresent'];
 
+        $nbEnfants = null;
+        if (isset($data['typeCompositionLogement']) && $data['typeCompositionLogement'] instanceof TypeCompositionLogement) {
+            $nbEnfants = $data['typeCompositionLogement']->getCompositionLogementNombreEnfants();
+        } elseif (isset($data['nbEnfantsM6']) && isset($data['nbEnfantsP6'])) {
+            $nbEnfantsM6 = (int) str_replace('+', '', $data['nbEnfantsM6'] ?? 0);
+            $nbEnfantsP6 = (int) str_replace('+', '', $data['nbEnfantsP6'] ?? 0);
+            $nbEnfants = $nbEnfantsM6 + $nbEnfantsP6;
+        }
+
         $enfantsM6 = null;
         if (isset($data['typeCompositionLogement']) && $data['typeCompositionLogement'] instanceof TypeCompositionLogement) {
             $enfantsM6 = $data['typeCompositionLogement']->getCompositionLogementEnfants();
@@ -94,6 +103,7 @@ class SignalementExportFactory
             infoProcedureBailDate: $infoProcedureBailDate,
             infoProcedureBailMoyen: $infoProcedureBailMoyenLabel,
             nbPersonnes: $data['nbOccupantsLogement'],
+            nbEnfants: $nbEnfants,
             enfantsM6: $enfantsM6,
             isAllocataire: $this->mapData($data, 'isAllocataire'),
             numAllocataire: $data['numAllocataire'] ?? self::NON_RENSEIGNE,
