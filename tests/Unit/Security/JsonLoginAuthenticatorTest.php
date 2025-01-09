@@ -91,7 +91,7 @@ class JsonLoginAuthenticatorTest extends TestCase
     public function testOnAuthenticationFailure()
     {
         $request = new Request();
-        $exception = new AuthenticationException('Invalid credentials.');
+        $exception = new AuthenticationException('Identifiants invalides.');
         $response = $this->authenticator->onAuthenticationFailure($request, $exception);
         $data = json_decode($response->getContent(), true);
         $this->assertSame('Une exception d\'authentification s\'est produite.', $data['error']);
