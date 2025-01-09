@@ -467,6 +467,18 @@ class SignalementBuilder
         return ProfileDeclarant::TIERS_PRO === $this->signalement->getProfileDeclarant();
     }
 
+    private function evalString(?bool $value): ?string
+    {
+        if (null === $value) {
+            return null;
+        }
+        if (!$value) {
+            return '0';
+        }
+
+        return (string) $value;
+    }
+
     private function evalBoolean(?string $value): ?bool
     {
         if (null === $value || 'ne-sais-pas' === $value || 'nsp' === $value) {
@@ -524,7 +536,7 @@ class SignalementBuilder
             return SignalementInputValueMapper::map($this->signalementDraftRequest->getLogementSocialAllocationCaisse());
         }
 
-        return SignalementInputValueMapper::map($this->signalementDraftRequest->getLogementSocialAllocation());
+        return $this->evalString(SignalementInputValueMapper::map($this->signalementDraftRequest->getLogementSocialAllocation()));
     }
 
     private function resolveTiersLien(): ?string

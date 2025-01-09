@@ -191,6 +191,40 @@ class SignalementBuilderTest extends KernelTestCase
         $this->entityManager->commit();
     }
 
+    public function testBuildSignalementAllocataire(): void
+    {
+        $this->entityManager->beginTransaction();
+
+        $payload = json_decode(
+            file_get_contents(__DIR__.'../../../../../src/DataFixtures/Files/signalement_draft_payload/locataire.json'),
+            true
+        );
+        $payload['logement_social_allocation'] = 'non';
+        $payload['logement_social_montant_allocation'] = null;
+        unset($payload['logement_social_allocation_caisse']);
+
+        $signalementDraft = (new SignalementDraft())
+            ->setPayload($payload)
+            ->setProfileDeclarant(ProfileDeclarant::LOCATAIRE)
+            ->setStatus(SignalementDraftStatus::EN_COURS)
+            ->setCurrentStep('informations_complementaires')
+            ->setEmailDeclarant($payload['vos_coordonnees_occupant_email']);
+
+        $signalement = $this->signalementBuilder
+            ->createSignalementBuilderFrom($signalementDraft)
+            ->withAdressesCoordonnees()
+            ->withTypeCompositionLogement()
+            ->withSituationFoyer()
+            ->withProcedure()
+            ->withInformationComplementaire()
+            ->withDesordres()
+            ->build()
+        ;
+        $this->assertEquals('0', $signalement->getIsAllocataire());
+
+        $this->entityManager->commit();
+    }
+
     public function testBuildSignalementAllDesordres(): void
     {
         $this->entityManager->beginTransaction();
@@ -261,15 +295,15 @@ class SignalementBuilderTest extends KernelTestCase
         // certains cas ne sont pas sensés arriver
         yield 'oui - caf' => ['oui', 'caf', 'CAF'];
         yield 'oui - msa' => ['oui', 'msa', 'MSA'];
-        yield 'oui - nsp' => ['oui', 'nsp', true];
-        yield 'oui - null' => ['oui', null, true];
-        yield 'oui - empty' => ['oui', '', true];
+        yield 'oui - nsp' => ['oui', 'nsp', '1'];
+        yield 'oui - null' => ['oui', null, '1'];
+        yield 'oui - empty' => ['oui', '', '1'];
 
-        yield 'non - caf' => ['non', 'caf', false];
-        yield 'non - msa' => ['non', 'msa', false];
-        yield 'non - nsp' => ['non', 'nsp', false];
-        yield 'non - null' => ['non', null, false];
-        yield 'non - empty' => ['non', '', false];
+        yield 'non - caf' => ['non', 'caf', '0'];
+        yield 'non - msa' => ['non', 'msa', '0'];
+        yield 'non - nsp' => ['non', 'nsp', '0'];
+        yield 'non - null' => ['non', null, '0'];
+        yield 'non - empty' => ['non', '', '0'];
 
         yield 'nsp - caf' => ['nsp', 'caf', null];
         yield 'nsp - msa' => ['nsp', 'msa', null];
