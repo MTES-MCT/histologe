@@ -29,7 +29,7 @@ class JsonLoginAuthenticatorTest extends TestCase
         $this->authenticator = new JsonLoginAuthenticator($userRepository, $translator);
 
         $translator->method('trans')
-            ->willReturnCallback(function ($key, $parameters = [], $domain = null) {
+            ->willReturnCallback(function ($key) {
                 $translations = [
                     'Invalid credentials.' => 'Identifiants invalides.',
                     'An authentication exception occurred.' => 'Une exception d\'authentification s\'est produite.',

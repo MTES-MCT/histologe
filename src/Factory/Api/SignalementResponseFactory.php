@@ -12,9 +12,7 @@ use App\Entity\Enum\Api\PersonneType;
 use App\Entity\Enum\DesordreCritereZone;
 use App\Entity\Enum\SignalementStatus;
 use App\Entity\Signalement;
-use App\Entity\User;
 use App\Service\Signalement\SignalementDesordresProcessor;
-use Symfony\Bundle\SecurityBundle\Security;
 
 readonly class SignalementResponseFactory
 {
@@ -27,14 +25,11 @@ readonly class SignalementResponseFactory
     public function __construct(
         private SignalementDesordresProcessor $signalementDesordresProcessor,
         private FileFactory $fileFactory,
-        private Security $security,
     ) {
     }
 
     public function createFromSignalement(Signalement $signalement): SignalementResponse
     {
-        /** @var User $user */
-        $user = $this->security->getUser();
         $signalementResponse = new SignalementResponse();
         // references, dates et statut
         $signalementResponse->uuid = $signalement->getUuid();
@@ -61,7 +56,6 @@ readonly class SignalementResponseFactory
         $signalementResponse->nbNiveaux = $signalement->getInformationComplementaire()?->getInformationsComplementairesLogementNombreEtages() ?? $signalement->getNbNiveauxLogement();
         $signalementResponse->rezDeChaussee = $this->stringToBool($signalement->getTypeCompositionLogement()?->getTypeLogementRdc());
 
-        dd($this->stringToBool($signalement->getTypeCompositionLogement()?->getTypeLogementDernierEtage()));
         $signalementResponse->dernierEtage = $this->stringToBool($signalement->getTypeCompositionLogement()?->getTypeLogementDernierEtage());
         $signalementResponse->sousSolSansFenetre = $this->stringToBool($signalement->getTypeCompositionLogement()?->getTypeLogementSousSolSansFenetre());
         $signalementResponse->sousCombleSansFenetre = $this->stringToBool($signalement->getTypeCompositionLogement()?->getTypeLogementSousCombleSansFenetre());
