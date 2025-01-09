@@ -60,6 +60,8 @@ readonly class SignalementResponseFactory
         $signalementResponse->constructionAvant1949 = $signalement->getIsConstructionAvant1949();
         $signalementResponse->nbNiveaux = $signalement->getInformationComplementaire()?->getInformationsComplementairesLogementNombreEtages() ?? $signalement->getNbNiveauxLogement();
         $signalementResponse->rezDeChaussee = $this->stringToBool($signalement->getTypeCompositionLogement()?->getTypeLogementRdc());
+
+        dd($this->stringToBool($signalement->getTypeCompositionLogement()?->getTypeLogementDernierEtage()));
         $signalementResponse->dernierEtage = $this->stringToBool($signalement->getTypeCompositionLogement()?->getTypeLogementDernierEtage());
         $signalementResponse->sousSolSansFenetre = $this->stringToBool($signalement->getTypeCompositionLogement()?->getTypeLogementSousSolSansFenetre());
         $signalementResponse->sousCombleSansFenetre = $this->stringToBool($signalement->getTypeCompositionLogement()?->getTypeLogementSousCombleSansFenetre());
@@ -152,13 +154,17 @@ readonly class SignalementResponseFactory
         return $signalementResponse;
     }
 
-    private function stringToBool(?string $value): ?bool
+    private function stringToBool(?string $value): bool|string|null
     {
         if (in_array($value, ['oui', 'piece_unique'])) {
             return true;
         }
         if (in_array($value, ['non', 'plusieurs_pieces'])) {
             return false;
+        }
+
+        if ('nsp' === $value) {
+            return $value;
         }
 
         return null;
@@ -200,7 +206,8 @@ readonly class SignalementResponseFactory
                 personneType: $personneType,
                 structure: $signalement->getStructureDeclarant(),
                 lienOccupant: $signalement->getLienDeclarantOccupant(),
-                precisionTypeSiBailleur: $this->stringToBool($signalement->getSituationFoyer()?->getTravailleurSocialAccompagnementDeclarant()),
+                precisionTypeSiBailleur: $signalement->getTypeProprio()?->value,
+                estTravailleurSocialPourOccupant: $this->stringToBool($signalement->getSituationFoyer()?->getTravailleurSocialAccompagnementDeclarant()),
                 nom: $signalement->getNomDeclarant(),
                 prenom: $signalement->getPrenomDeclarant(),
                 email: $signalement->getMailDeclarant(),

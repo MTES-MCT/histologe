@@ -38,19 +38,24 @@ class Personne
         public ?string $lienOccupant = null,
 
         #[OA\Property(
-            description: 'Type si la personne est un bailleur.',
+            description: 'Type si la personne est un bailleur.<br>
+            <ul>
+                <li>PARTICULIER</li>
+                <li>ORGANISME_SOCIETE</li>
+            </ul>
+            ',
             type: 'string',
-            example: 'Gestionnaire immobilier',
+            example: 'PARTICULIER',
             nullable: true
         )]
         public ?string $precisionTypeSiBailleur = null,
 
         #[OA\Property(
             description: 'Indique si la personne est un travailleur social pour l\'occupant.',
-            example: 'Oui',
+            example: true,
             nullable: true
         )]
-        public ?string $estTravailleurSocialPourOccupant = null,
+        public ?bool $estTravailleurSocialPourOccupant = null,
 
         #[OA\Property(
             description: 'Civilité de la personne.<br>
@@ -117,21 +122,21 @@ class Personne
             example: 'Oui',
             nullable: true
         )]
-        public ?string $beneficiaireRsa = null,
+        public ?bool $beneficiaireRsa = null,
 
         #[OA\Property(
             description: 'Indique si la personne est bénéficiaire du FSL.',
             example: 'Non',
             nullable: true
         )]
-        public ?string $beneficiaireFsl = null,
+        public ?bool $beneficiaireFsl = null,
 
         #[OA\Property(
             description: 'Indique si la personne est allocataire.',
             example: 'Non',
             nullable: true
         )]
-        public ?string $allocataire = null,
+        public ?bool $allocataire = null,
 
         #[OA\Property(
             description: 'Type d\'allocataire `CAF` ou `MSA`.',

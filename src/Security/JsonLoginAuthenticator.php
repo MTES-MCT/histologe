@@ -48,7 +48,7 @@ class JsonLoginAuthenticator extends AbstractAuthenticator
         $password = $payload['password'] ?? null;
 
         if (!$email || !$password) {
-            throw new AuthenticationException('Missing email or password');
+            throw new AuthenticationException('E-mail ou mot de passe manquant');
         }
 
         return new Passport(

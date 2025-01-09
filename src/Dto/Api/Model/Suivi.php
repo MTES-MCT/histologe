@@ -53,7 +53,6 @@ class Suivi
         $this->dateCreation = $suivi->getCreatedAt()->format(\DATE_ATOM);
         $this->description = $suivi->getDescription(); // traitement de suppression du html ? comment gérer les bouton/doc qui sont présent en dur  dans le contenu ?
         $this->public = $suivi->getIsPublic();
-        $this->type = $suivi->getType();
         $this->createdBy = $suivi->getCreatedByLabel();
     }
 }

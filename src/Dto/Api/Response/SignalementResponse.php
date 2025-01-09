@@ -133,11 +133,17 @@ class SignalementResponse
     )]
     public ?string $precisionNatureLogement;
     #[OA\Property(
-        description: 'Indique si le logement concerné est un logement social.',
+        description: 'Indique si le logement concerné est un logement social.<br>
+        <ul>
+           <li>`true` pour "oui"</li>
+           <li>`false` pour "non"</li>
+           <li>`nsp` pour "Je ne sais pas".</li>
+        </ul>
+        ',
         example: true,
         nullable: true
     )]
-    public ?bool $logementSocial;
+    public bool|string|null $logementSocial;
 
     #[OA\Property(
         description: 'Superficie du logement en mètres carrés.',
@@ -187,105 +193,177 @@ class SignalementResponse
     public ?string $nbNiveaux;
 
     #[OA\Property(
-        description: 'Indique si le logement est situé au rez-de-chaussée.',
+        description: 'Indique si le logement est situé au rez-de-chaussée.<br>
+        <ul>
+           <li>`true` pour "oui"</li>
+           <li>`false` pour "non"</li>
+           <li>`nsp` pour "Je ne sais pas".</li>
+        </ul>
+        ',
         example: false,
         nullable: true
     )]
-    public ?bool $rezDeChaussee;
+    public bool|string|null $rezDeChaussee;
     #[OA\Property(
-        description: 'Indique si le logement est situé au dernier étage.',
+        description: 'Indique si le logement est situé au dernier étage.<br>
+        <ul>
+            `true` pour "oui",
+            `false` pour "non",
+            `nsp` pour "Je ne sais pas".
+        </ul>',
         example: false,
         nullable: true
     )]
-    public ?bool $dernierEtage;
+    public bool|string|null $dernierEtage;
 
     #[OA\Property(
-        description: 'Indique si le logement est au sous-sol sans fenêtre.',
+        description: 'Indique si le logement est au sous-sol sans fenêtre.<br>
+        <ul>
+           <li>`true` pour "oui"</li>
+           <li>`false` pour "non"</li>
+           <li>`nsp` pour "Je ne sais pas".</li>
+        </ul>',
         example: false,
         nullable: true
     )]
-    public ?bool $sousSolSansFenetre;
+    public bool|string|null $sousSolSansFenetre;
 
     #[OA\Property(
-        description: 'Indique si le logement est sous les combles sans fenêtre.',
+        description: 'Indique si le logement est sous les combles sans fenêtre.<br>
+        <ul>
+           <li>`true` pour "oui"</li>
+           <li>`false` pour "non"</li>
+           <li>`nsp` pour "Je ne sais pas".</li>
+        </ul>',
         example: false,
         nullable: true
     )]
-    public ?bool $sousCombleSansFenetre;
+    public bool|string|null $sousCombleSansFenetre;
     #[OA\Property(
-        description: 'Indique si la pièce à vivre fait plus de 9m².',
+        description: 'Indique si la pièce à vivre fait plus de 9m².<br>
+        <ul>
+           <li>`true` pour "oui"</li>
+           <li>`false` pour "non"</li>
+           <li>`nsp` pour "Je ne sais pas".</li>
+        </ul>',
         example: false,
         nullable: true
     )]
-    public ?bool $pieceAVivreSuperieureA9m;
+    public bool|string|null $pieceAVivreSuperieureA9m;
     #[OA\Property(
-        description: 'Indique si le logement dispose d\'une cuisine.',
+        description: 'Indique si le logement dispose d\'une cuisine.<br>
+        <ul>
+           <li>`true` pour "oui"</li>
+           <li>`false` pour "non"</li>
+           <li>`nsp` pour "Je ne sais pas".</li>
+        </ul>',
         example: true,
         nullable: true
     )]
-    public ?bool $cuisine;
+    public bool|string|null $cuisine;
 
     #[OA\Property(
-        description: 'Indique si la cuisine est collective.',
+        description: 'Indique si la cuisine est collective.<br>
+        <ul>
+           <li>`true` pour "oui"</li>
+           <li>`false` pour "non"</li>
+           <li>`nsp` pour "Je ne sais pas".</li>
+        </ul>',
         type: 'boolean',
         example: false,
         nullable: true
     )]
-    public ?bool $cuisineCollective;
+    public bool|string|null $cuisineCollective;
 
     #[OA\Property(
-        description: 'Indique si le logement dispose d\'une salle de bain indépendante.',
+        description: 'Indique si le logement dispose d\'une salle de bain indépendante.<br>
+        <ul>
+           <li>`true` pour "oui"</li>
+           <li>`false` pour "non"</li>
+           <li>`nsp` pour "Je ne sais pas".</li>
+        </ul>',
         example: true,
         nullable: true
     )]
-    public ?bool $salleDeBain;
+    public bool|string|null $salleDeBain;
 
     #[OA\Property(
-        description: 'Indique si le l\'occupant dispose d\'une salle de bain collective.',
+        description: 'Indique si le l\'occupant dispose d\'une salle de bain collective.<br>
+        <ul>
+           <li>`true` pour "oui"</li>
+           <li>`false` pour "non"</li>
+           <li>`nsp` pour "Je ne sais pas".</li>
+        </ul>',
         example: true,
         nullable: true
     )]
-    public ?bool $salleDeBainCollective;
+    public bool|string|null $salleDeBainCollective;
 
     #[OA\Property(
-        description: 'Indique si le logement dispose de toilettes.',
+        description: 'Indique si le logement dispose de toilettes.<br>
+        <ul>
+           <li>`true` pour "oui"</li>
+           <li>`false` pour "non"</li>
+           <li>`nsp` pour "Je ne sais pas".</li>
+        </ul>',
         example: false,
         nullable: true
     )]
-    public ?bool $wc;
+    public bool|string|null $wc;
 
     #[OA\Property(
-        description: 'Indique si les toilettes se situent dans la cuisine',
+        description: 'Indique si les toilettes se situent dans la cuisine.<br>
+        <ul>
+           <li>`true` pour "oui"</li>
+           <li>`false` pour "non"</li>
+           <li>`nsp` pour "Je ne sais pas".</li>
+        </ul>',
         example: false,
         nullable: true
     )]
-    public ?bool $wcDansCuisine;
+    public bool|string|null $wcDansCuisine;
 
     #[OA\Property(
-        description: 'Indique si les toilettes sont collectives.',
+        description: 'Indique si les toilettes sont collectives.<br>
+        <ul>
+           <li>`true` pour "oui"</li>
+           <li>`false` pour "non"</li>
+           <li>`nsp` pour "Je ne sais pas".</li>
+        </ul>',
         example: false,
         nullable: true
     )]
-    public ?bool $wcCollectif;
+    public bool|string|null $wcCollectif;
 
     #[OA\Property(
-        description: 'Indique si la hauteur sous plafond est supérieure à 2 mètres.',
+        description: 'Indique si la hauteur sous plafond est supérieure à 2 mètres.<br>
+        <ul>
+           <li>`true` pour "oui"</li>
+           <li>`false` pour "non"</li>
+           <li>`nsp` pour "Je ne sais pas".</li>
+        </ul>',
         example: true,
         nullable: true
     )]
-    public ?bool $hauteurSuperieureA2metres;
+    public bool|string|null $hauteurSuperieureA2metres;
 
     #[OA\Property(
-        description: 'Indique si un diagnostic de performance énergétique (DPE) existe pour le logement.',
+        description: 'Indique si un diagnostic de performance énergétique (DPE) existe pour le logement.<br>
+        <ul>
+           <li>`true` pour "oui"</li>
+           <li>`false` pour "non"</li>
+           <li>`nsp` pour "Je ne sais pas".</li>
+        </ul>',
         example: true,
         nullable: true
     )]
-    public ?bool $dpeExistant;
+    public bool|string|null $dpeExistant;
 
     #[OA\Property(
         description: 'Classe énergétique du logement selon le diagnostic de performance énergétique (DPE).
         <ul>
             <li>La valeur doit être une lettre entre `A` et `G` selon la nomenclature du DPE</li>
+            <li>`nsp` pour Je ne sais pas</li>
             <li>`null` si aucune information.</li>
         </ul>',
         example: 'C',
@@ -336,25 +414,40 @@ class SignalementResponse
     public ?string $reponseAssurance;
 
     #[OA\Property(
-        description: 'Indique si le locataire souhaite quitter le logement.',
+        description: 'Indique si le locataire souhaite quitter le logement.<br>
+        <ul>
+           <li>`true` pour "oui"</li>
+           <li>`false` pour "non"</li>
+           <li>`nsp` pour "Je ne sais pas".</li>
+        </ul>',
         example: false,
         nullable: true
     )]
-    public ?bool $souhaiteQuitterLogement;
+    public bool|string|null $souhaiteQuitterLogement;
 
     #[OA\Property(
-        description: 'Indique si l\'occupant souhaite quitter le logement après les travaux.',
+        description: 'Indique si l\'occupant souhaite quitter le logement après les travaux.<br>
+        <ul>
+           <li>`true` pour "oui"</li>
+           <li>`false` pour "non"</li>
+           <li>`nsp` pour "Je ne sais pas".</li>
+        </ul>',
         example: false,
         nullable: true
     )]
-    public ?bool $souhaiteQuitterLogementApresTravaux;
+    public bool|string|null $souhaiteQuitterLogementApresTravaux;
 
     #[OA\Property(
-        description: 'Indique si l\'occupant est suivi par un travailleur social.',
+        description: 'Indique si l\'occupant est suivi par un travailleur social.<br>
+        <ul>
+           <li>`true` pour "oui"</li>
+           <li>`false` pour "non"</li>
+           <li>`nsp` pour "Je ne sais pas".</li>
+        </ul>',
         example: false,
         nullable: true
     )]
-    public ?bool $suiviParTravailleurSocial;
+    public bool|string|null $suiviParTravailleurSocial;
 
     #[OA\Property(
         description: "Indique si le propriétaire a été averti d'une situation concernant le logement.",
@@ -412,18 +505,28 @@ class SignalementResponse
     public ?float $loyer;
 
     #[OA\Property(
-        description: 'Indique si un bail est actuellement en cours.',
+        description: 'Indique si un bail est actuellement en cours.<br>
+        <ul>
+           <li>`true` pour "oui"</li>
+           <li>`false` pour "non"</li>
+           <li>`nsp` pour "Je ne sais pas".</li>
+        </ul>',
         example: true,
         nullable: true
     )]
-    public ?bool $bailEnCours;
+    public bool|string|null $bailEnCours;
 
     #[OA\Property(
-        description: 'Indique si un bail existe.',
+        description: 'Indique si un bail existe.<br>
+        <ul>
+           <li>`true` pour "oui"</li>
+           <li>`false` pour "non"</li>
+           <li>`nsp` pour "Je ne sais pas".</li>
+        </ul>',
         example: true,
         nullable: true
     )]
-    public ?bool $bailExistant;
+    public bool|string|null $bailExistant;
 
     #[OA\Property(
         description: 'Identifiant fiscal invariant attribué au logement.',
@@ -434,27 +537,42 @@ class SignalementResponse
     public ?string $invariantFiscal;
 
     #[OA\Property(
-        description: 'Indique si un état des lieux a été réalisé et est disponible.',
+        description: 'Indique si un état des lieux a été réalisé et est disponible.<br>
+        <ul>
+           <li>`true` pour "oui"</li>
+           <li>`false` pour "non"</li>
+           <li>`nsp` pour "Je ne sais pas".</li>
+        </ul>',
         example: true,
         nullable: true
     )]
-    public ?bool $etatDesLieuxExistant;
+    public bool|string|null $etatDesLieuxExistant;
 
     #[OA\Property(
-        description: 'Indique si le locataire a transmis un préavis de départ.',
+        description: 'Indique si le locataire a transmis un préavis de départ.<br>
+        <ul>
+           <li>`true` pour "oui"</li>
+           <li>`false` pour "non"</li>
+           <li>`nsp` pour "Je ne sais pas".</li>
+        </ul>',
         type: 'boolean',
         example: false,
         nullable: true
     )]
-    public ?bool $preavisDepartTransmis;
+    public bool|string|null $preavisDepartTransmis;
 
     #[OA\Property(
-        description: 'Indique si une demande de relogement a été effectuée.',
+        description: 'Indique si une demande de relogement a été effectuée.<br>
+        <ul>
+           <li>`true` pour "oui"</li>
+           <li>`false` pour "non"</li>
+           <li>`nsp` pour "Je ne sais pas".</li>
+        </ul>',
         type: 'boolean',
         example: true,
         nullable: true
     )]
-    public ?bool $demandeRelogementEffectuee;
+    public bool|string|null $demandeRelogementEffectuee;
 
     #[OA\Property(
         description: 'Indique si les loyers du logement sont payés.',
