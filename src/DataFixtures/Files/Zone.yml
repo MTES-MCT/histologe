@@ -14,7 +14,7 @@ zone:
     name: "StMars"
     created_by: admin-territoire-44-01@histologe.fr
     partners: 
-     - partenaire-44-03@histologe.fr
+     - partenaire-44-06@histologe.fr
   -
     area: "POLYGON ((-1.444273 47.350861, -1.448994 47.352024, -1.450453 47.350745, -1.44865 47.349059, -1.446505 47.348593, -1.444273 47.349, -1.444273 47.350861))"
     territory: "Loire-Atlantique"

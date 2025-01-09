@@ -29,9 +29,9 @@
                 </p>
                 <div class="fr-callout">
                     <p class="fr-callout__text">
-                        Les périmètres définis sont cumulatifs. 
+                        Les périmètres définis ne sont pas cumulatifs.
                         <br>
-                        Par exemple : vous ajoutez le code INSEE d'une commune et une zone OPAH à un partenaire, le partenaire pourra uniquement être affecté aux dossiers qui sont à la fois dans la commune <u>ET</u> dans la zone OPAH sélectionnée.
+                        Par exemple : vous ajoutez le code INSEE d'une commune et une zone OPAH à un partenaire, le partenaire pourra être affecté aux dossiers qui sont dans la commune <u>ET</u> aux dossiers se trouvant dans la zone OPAH sélectionnée, même si elle ne correspond pas à ce code INSEE.
                     </p>
                 </div>
                 <h2>Périmètre d'intervention</h2>
@@ -53,6 +53,8 @@
                         <h2>Zones à exclure</h2>
                         <p>
                             Si vous souhaitez que le partenaire n'intervienne pas sur les dossiers d'une zone spécifique, sélectionnez une zone à exclure. 
+                            <br>
+                            Ces zones à exclure sont prioritaires sur les codes insee et les zones. Dès qu'un signalement se trouve dans une zone à exclure, ce partenaire ne peut pas y être affecté, quels que soient la configuration des codes insee et des zones.
                             <br>
                             Les zones doivent être créées dans la partie Outils Admin > Zones.
                         </p>

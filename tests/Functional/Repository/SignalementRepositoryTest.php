@@ -198,7 +198,7 @@ class SignalementRepositoryTest extends KernelTestCase
 
     public function provideSearchWithGeoData(): \Generator
     {
-        yield 'Search all for super admin' => ['admin-01@histologe.fr', [], 45];
+        yield 'Search all for super admin' => ['admin-01@histologe.fr', [], 46];
         yield 'Search in Marseille for super admin' => ['admin-01@histologe.fr', ['cities' => ['Marseille']], 25];
         yield 'Search all for admin partner multi territories' => ['admin-partenaire-multi-ter-13-01@histologe.fr', [], 5];
         yield 'Search in Ain for admin partner multi territories' => ['admin-partenaire-multi-ter-13-01@histologe.fr', ['territories' => 1], 1];
