@@ -17,6 +17,9 @@ use Symfony\Contracts\HttpClient\Exception\TransportExceptionInterface;
 
 class JobEventHttpClientTest extends TestCase
 {
+    public const string API_WIREMOCK_URL = 'http://histologe_wiremock:8080';
+    public const string API_RANDOM_URL = 'https://example.com';
+
     /**
      * @throws TransportExceptionInterface
      * @throws ServerExceptionInterface
@@ -25,7 +28,6 @@ class JobEventHttpClientTest extends TestCase
      */
     public function testRequest(): void
     {
-        $url = 'https://example.com';
         $payload = [
             'treatmentName' => 'Import HISTOLOGE',
             'fieldList' => [
@@ -67,10 +69,11 @@ class JobEventHttpClientTest extends TestCase
         $jobEventHttpClient = new JobEventHttpClient(
             $mockHttpClient,
             $jobEventManagerMock,
-            $loggerMock
+            $loggerMock,
+            'http://localhost:8080',
         );
 
-        $response = $jobEventHttpClient->request('POST', $url, $options);
+        $response = $jobEventHttpClient->request('POST', self::API_WIREMOCK_URL, $options);
         $this->assertSame($mockResponseBody, $response->getContent());
     }
 
@@ -91,10 +94,11 @@ class JobEventHttpClientTest extends TestCase
         $jobEventHttpClient = new JobEventHttpClient(
             $mockHttpClient,
             $jobEventManagerMock,
-            $loggerMock
+            $loggerMock,
+            'http://localhost:8080'
         );
 
-        $jobEventHttpClient->request('GET', 'https://example.com');
+        $jobEventHttpClient->request('GET', self::API_WIREMOCK_URL);
     }
 
     /**
@@ -116,10 +120,47 @@ class JobEventHttpClientTest extends TestCase
         $jobEventHttpClient = new JobEventHttpClient(
             $mockHttpClient,
             $jobEventManagerMock,
-            $loggerMock
+            $loggerMock,
+            'http://localhost:8080'
         );
         $options['extra']['job_event_metadata'] = new JobEventMetaData('esabora', 'push_dossier');
-        $response = $jobEventHttpClient->request('GET', 'https://example.com', $options);
+        $response = $jobEventHttpClient->request('GET', self::API_WIREMOCK_URL, $options);
         $this->assertSame('Internal server error', $response->getContent(throw: false));
+    }
+
+    /**
+     * @throws RedirectionExceptionInterface
+     * @throws ClientExceptionInterface
+     * @throws ServerExceptionInterface
+     */
+    public function testRequestThrowsLogicExceptionWhenUrlIsInvalid(): void
+    {
+        $options['extra'] = [
+            'job_event_metadata' => new JobEventMetaData(
+                service: 'esabora',
+                action: 'push_dossier',
+                payload: ['body' => ['treatmentName' => 'Import HISTOLOGE']]
+            ),
+        ];
+
+        $mockResponseBody = json_encode(['message' => 'hello wiremock']);
+        $mockResponse = new MockResponse($mockResponseBody, [
+            'http_code' => Response::HTTP_OK,
+        ]);
+        $mockHttpClient = new MockHttpClient($mockResponse);
+        $jobEventManagerMock = $this->createMock(JobEventManager::class);
+        $loggerMock = $this->createMock(LoggerInterface::class);
+
+        $jobEventHttpClient = new JobEventHttpClient(
+            $mockHttpClient,
+            $jobEventManagerMock,
+            $loggerMock,
+            'http://localhost:8080',
+        );
+
+        $this->expectException(\LogicException::class);
+        $this->expectExceptionMessage('url must contain "histologe_wiremock" when on localhost.');
+
+        $jobEventHttpClient->request('POST', self::API_RANDOM_URL, $options);
     }
 }

@@ -35,13 +35,6 @@ class DossierMessageSISHFactory extends AbstractDossierMessageFactory
 
     public function supports(Affectation $affectation): bool
     {
-        if (str_contains($this->urlGenerator->getContext()->getHost(), 'localhost')) {
-            if (str_contains($affectation->getPartner()->getEsaboraUrl(), 'histologe_wiremock')) {
-                return $this->isEsaboraPartnerActive($affectation) && PartnerType::ARS === $affectation->getPartner()->getType();
-            }
-            throw new \LogicException('Partner url must contain "histologe_wiremock" when on localhost.');
-        }
-
         return $this->isEsaboraPartnerActive($affectation) && PartnerType::ARS === $affectation->getPartner()->getType();
     }
 

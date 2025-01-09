@@ -5,6 +5,7 @@ namespace App\Service\Interconnection;
 use App\Entity\JobEvent;
 use App\Manager\JobEventManager;
 use Psr\Log\LoggerInterface;
+use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\HttpClient\HttpClientTrait;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Contracts\HttpClient\Exception\ClientExceptionInterface;
@@ -22,6 +23,8 @@ class JobEventHttpClient implements HttpClientInterface
         private readonly HttpClientInterface $httpClient,
         private readonly JobEventManager $jobEventManager,
         private readonly LoggerInterface $logger,
+        #[Autowire(env: 'HISTOLOGE_URL')]
+        private readonly string $host,
     ) {
     }
 
@@ -32,6 +35,12 @@ class JobEventHttpClient implements HttpClientInterface
      */
     public function request(string $method, string $url, array $options = []): ResponseInterface
     {
+        if (str_contains($this->host, 'localhost')) {
+            if (!str_contains($url, 'histologe_wiremock')) {
+                throw new \LogicException('url must contain "histologe_wiremock" when on localhost.');
+            }
+        }
+
         $jobEventMetaData = $options['extra']['job_event_metadata'] ?? null;
         if (null === $jobEventMetaData) {
             throw new \InvalidArgumentException(<<<'ERROR'
