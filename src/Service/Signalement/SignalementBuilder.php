@@ -340,6 +340,7 @@ class SignalementBuilder
             ->setIsLogementSocial($this->isLogementSocial())
             ->setAdresseOccupant($this->signalementDraftRequest->getAdresseLogementAdresseDetailNumero())
             ->setCpOccupant($this->signalementDraftRequest->getAdresseLogementAdresseDetailCodePostal())
+            ->setInseeOccupant($this->signalementDraftRequest->getAdresseLogementAdresseDetailInsee())
             ->setVilleOccupant($this->signalementDraftRequest->getAdresseLogementAdresseDetailCommune())
             ->setEtageOccupant($this->signalementDraftRequest->getAdresseLogementComplementAdresseEtage())
             ->setEscalierOccupant($this->signalementDraftRequest->getAdresseLogementComplementAdresseEscalier())
