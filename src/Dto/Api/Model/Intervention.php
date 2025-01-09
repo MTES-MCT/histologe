@@ -3,6 +3,7 @@
 namespace App\Dto\Api\Model;
 
 use App\Entity\Intervention as InterventionEntity;
+use Nelmio\ApiDocBundle\Attribute\Model;
 use OpenApi\Attributes as OA;
 
 #[OA\Schema(
@@ -21,19 +22,37 @@ class Intervention
     public string $dateIntervention;
 
     #[OA\Property(
-        description: 'Type d\'intervention réalisée.',
+        description: 'Type d\'intervention réalisée.<br>
+        <ul>
+            <li>`VISITE`</li>
+            <li>`VISITE_CONTROLE`</li>
+            <li>`ARRETE_PREFECTORAL`</li>
+        </ul>',
         type: 'string',
         example: 'VISITE',
         nullable: true
     )]
     public ?string $type;
     #[OA\Property(
-        description: 'Statut de l\'intervention.',
+        description: 'Statut de l\'intervention.<br>
+        <ul>
+            <li>`PLANNED`</li>
+            <li>`DONE`</li>
+            <li>`NOT_DONE`</li>
+            <li>`CANCELED`</li>
+        </ul>',
         type: 'string',
         example: 'DONE',
         nullable: true
     )]
     public ?string $statut;
+
+    #[OA\Property(
+        ref: new Model(type: Partner::class),
+        description: 'Partenaire ayant effectué l\'intervention.',
+        type: 'object',
+        nullable: true
+    )]
     public ?Partner $partner;
 
     #[OA\Property(

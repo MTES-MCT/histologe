@@ -25,7 +25,7 @@ class SignalementResponse
     )]
     public string $uuid;
     #[OA\Property(
-        description: 'Identifiant fonctionnel du signalement, composé de l\'année de dépôt et d\'un compteur séparé par un tiret.',
+        description: 'Identifiant métier du signalement, composé de l\'année de dépôt et d\'un compteur séparé par un tiret.',
         format: 'année-compteur',
         example: '2023-125'
     )]
@@ -46,7 +46,7 @@ class SignalementResponse
         description: "Le statut du signalement peut prendre l'une des valeurs suivantes : `en cours` (le signalement est actif), `fermé` (le signalement est terminé), `refusé` (le signalement a été refusé), ou `archivé` (le signalement a été archivé).",
         type: 'string',
         enum: ['en cours', 'fermé', 'refusé', 'archivé'],
-        example: 'nouveau'
+        example: 'fermé'
     )]
     public string $statut;
 
@@ -92,12 +92,21 @@ class SignalementResponse
     )]
     public ?bool $abandonProcedureUsager;
     #[OA\Property(
-        description: 'Type de déclarant ayant déposé le signalement.',
+        description: 'Type de déclarant ayant déposé le signalement.<br>
+        <ul>
+            <li>`LOCATAIRE`</li>
+            <li>`BAILLEUR_OCCUPANT`</li>
+            <li>`TIERS_PARTICULIER`</li>
+            <li>`TIERS_PRO`</li>
+            <li>`SERVICE_SECOURS`</li>
+            <li>`BAILLEUR`</li>
+        </ul>
+        ',
         example: 'LOCATAIRE',
     )]
     public ?ProfileDeclarant $typeDeclarant;
     #[OA\Property(
-        description: 'Détail de la situation par le déclarant ainsi que des démarches déjà engagées et toutes les informations utiles au traitement du dossier.',
+        description: 'Détails de la situation par le déclarant ainsi que des démarches déjà engagées et toutes les informations utiles au traitement du dossier.',
         example: "Le logement présente des infiltrations d'eau à plusieurs endroits, avec une forte humidité dans les murs."
     )]
     public ?string $description;
@@ -191,7 +200,7 @@ class SignalementResponse
     public ?bool $sousSolSansFenetre;
 
     #[OA\Property(
-        description: 'Indique si le logement est au sous-sol sans fenêtre.',
+        description: 'Indique si le logement est sous les combles sans fenêtre.',
         example: false,
         nullable: true
     )]
@@ -278,7 +287,7 @@ class SignalementResponse
     public ?string $dpeClasseEnergetique;
 
     #[OA\Property(
-        description: 'La date d\'entrée du locataire dans le logement. (Format : YYYY-MM-DD).<br>
+        description: 'La date d\'entrée du locataire dans le logement.<br>
         Exemple : `2025-01-05`',
         format: 'date',
         example: '2023-01-15',
@@ -293,11 +302,11 @@ class SignalementResponse
     )]
     public ?int $nbOccupantsLogement;
     #[OA\Property(
-        description: 'Indique si des enfants habitent dans le logement.',
+        description: 'Indique si des enfants de moins de 6 ans habitent dans le logement.',
         example: true,
         nullable: true
     )]
-    public ?bool $enfantsDansLogement;
+    public ?bool $enfantsDansLogementMoinsSixAns;
     #[OA\Property(
         description: 'Nombre d\'enfants habitant actuellement dans le logement.',
         example: 2,
@@ -351,11 +360,11 @@ class SignalementResponse
     #[OA\Property(
         description: 'Moyen utilisé par le locataire pour avertir le propriétaire.
         <ul>
-            <li>Courrier `courrier`</li>
-            <li>E-mail `email`</li>
-            <li>Téléphone `telephone`</li>
-            <li>SMS `sms`</li>
-            <li>Autre `autre`</li>
+            <li>`courrier`</li>
+            <li>`email`</li>
+            <li>`telephone`</li>
+            <li>`sms`</li>
+            <li>`autre`</li>
         </ul>
         ',
         type: 'string',
@@ -365,7 +374,7 @@ class SignalementResponse
     public ?string $moyenInformationProprietaire;
 
     #[OA\Property(
-        description: "Date à laquelle le propriétaire a été informé d'une situation liée au logement. (Format : YYYY-MM-DD)<br>
+        description: "Date à laquelle le propriétaire a été informé d'une situation liée au logement.<br>
         - Exemple : `2023-09-15`",
         format: 'date',
         example: '2023-09-15',
@@ -449,7 +458,8 @@ class SignalementResponse
     public ?bool $loyersPayes;
 
     #[OA\Property(
-        description: 'La date de prise d’effet du bail. (Format : YYYY-MM-DD).',
+        description: 'La date de prise d’effet du bail.<br>
+        Exemple : `2020-10-10`',
         format: 'date',
         example: '2020-10-10'
     )]
@@ -459,28 +469,22 @@ class SignalementResponse
         Les désordres sur le logement concernent tous les problèmes à l'intérieur du logement ou batiment. <br>
         **Liste des catégories de désordre Bâtiment :**
         <ul>
-            <li>Propreté et entretien</li>
-            <li>Eau et évacuation</li>
-            <li>Isolation du bâtiment</li>
-            <li>Maintenance et équipements</li>
-            <li>Présence de nuisibles</li>
-            <li>Sécurité, risque de chute</li>
-            <li>Risque d'incendie</li>
-            <li>Accessibilité et alentours</li>
-            <li>Bruit, pollution sonore</li>
+            <li>`Usage / entretien`</li>
+            <li>`Equipements collectifs` </li>
+            <li>`Etanchéité / isolation`</li>
+            <li>`Bâtiment risques particuliers`</li>
+            <li>`Structure du bâti`</li>
+            <li>`Environnement / éclairage`</li>
         </ul>
         **Liste des catégories de désordre Logement :**
         <ul>
-            <li>Eau et évacuation</li>
-            <li>Aération et ventilation</li>
-            <li>Chauffage et isolation</li>
-            <li>Humidité et moisissure</li>
-            <li>Sécurité</li>
-            <li>Électricité</li>
-            <li>Présence de nuisibles</li>
-            <li>Bruit, pollution sonore</li>
-            <li>Éclairement, lumière naturelle</li>
-            <li>Propreté et entretien</li>
+            <li>`Structure / équipements`</li>
+            <li>`Suroccupation`</li>
+            <li>`Eau potable / assainissement`</li>
+            <li>`Aération / humidité`</li>
+            <li>`Sécurite risques particuliers`</li>
+            <li>`Propreté / entretien`</li>
+            <li>`Eclairage`</li>
         </ul>
         *Exemple* :<br>
 
@@ -563,23 +567,23 @@ class SignalementResponse
     )]
     public ?float $scoreLogement;
     #[OA\Property(
-        description: "Décrit depuis combien de temps les désordres ont commencé.
+        description: 'Décrit depuis combien de temps les désordres ont commencé.<br>
         Les valeurs disponibles sont :
         <ul>
-            <li>Moins d'un mois</li>
-            <li>Entre 1 mois et 6 mois</li>
-            <li>Entre 6 mois et 1 an</li>
-            <li>Entre 1 et 2 ans</li>
-            <li>Plus de 2 ans</li>
-            <li>Ne sait pas</li>
-        </ul>",
+            <li>`LESS_1_MONTH`</li>
+            <li>`MONTHS_1_to_6`</li>
+            <li>`MONTHS_6_to_12`</li>
+            <li>`YEARS_1_TO_2`</li>
+            <li>`MORE_2_YEARS`</li>
+            <li>`NSP`</li>
+        </ul>',
         example: 'MONTHS_1_to_6',
         nullable: true
     )]
     public ?DebutDesordres $debutDesordres = null;
 
     #[OA\Property(
-        description: 'Indique si des désordres ont été constatés',
+        description: 'Indique si des désordres ont été constatés par le déclarant.',
         example: true,
         nullable: true
     )]
@@ -654,7 +658,6 @@ class SignalementResponse
                 'dateCreation' => '2024-11-01T10:00:00+00:00',
                 'description' => 'Premier suivi associé.',
                 'public' => true,
-                'type' => 2,
                 'createdBy' => 'John Doe',
             ],
             [
@@ -662,14 +665,13 @@ class SignalementResponse
                 'dateCreation' => '2024-11-02T12:30:00+00:00',
                 'description' => 'Deuxième suivi, accès limité.',
                 'public' => false,
-                'type' => 1,
                 'createdBy' => 'Jane Doe',
             ],
         ]
     )]
     public array $suivis = [];
     #[OA\Property(
-        description: 'Liste des visites ou arrêtés du logement effectuées dans le cadre du traitement du dossier.',
+        description: 'Liste des visites ou arrêtés du logement effectués dans le cadre du traitement du dossier.',
         type: 'array',
         items: new OA\Items(ref: new Model(type: Intervention::class)),
         example: [
@@ -769,9 +771,7 @@ class SignalementResponse
     )]
     public array $personnes = [];
     #[OA\Property(
-        description: 'Correspond au nom du département<br>
-        Exemple : `Bouches-du-Rhône`
-        ',
+        description: 'Correspond au nom du département',
         type: 'string',
         example: 'Bouches-du-Rhône',
     )]

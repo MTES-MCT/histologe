@@ -1,1 +1,7 @@
 Too many failed login attempts, please try again in %minutes% minutes.: Vous avez fait trop de tentatives de connexion, merci de ré-essayer dans %minutes% minutes.
+Invalid credentials.: Identifiants invalides.
+Bad credentials.: Mauvaises informations d'identification.
+User not found.: Utilisateur introuvable.
+Missing email or password.: Email ou mot de passe manquant.
+An authentication exception occurred.: Une exception d'authentification s'est produite.
+The presented password is invalid.: Les identifiants sont invalides.

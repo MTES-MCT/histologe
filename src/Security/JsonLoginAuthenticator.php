@@ -15,11 +15,13 @@ use Symfony\Component\Security\Http\Authenticator\AbstractAuthenticator;
 use Symfony\Component\Security\Http\Authenticator\Passport\Badge\UserBadge;
 use Symfony\Component\Security\Http\Authenticator\Passport\Credentials\PasswordCredentials;
 use Symfony\Component\Security\Http\Authenticator\Passport\Passport;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 class JsonLoginAuthenticator extends AbstractAuthenticator
 {
     public function __construct(
         private readonly UserRepository $userRepository,
+        private readonly TranslatorInterface $translator,
     ) {
     }
 
@@ -87,8 +89,8 @@ class JsonLoginAuthenticator extends AbstractAuthenticator
     public function onAuthenticationFailure(Request $request, AuthenticationException $exception): ?Response
     {
         return new JsonResponse([
-            'error' => $exception->getMessageKey(),
-            'message' => $exception->getMessage(),
+            'error' => $this->translator->trans($exception->getMessageKey(), [], 'security'),
+            'message' => $this->translator->trans($exception->getMessage(), [], 'security'),
         ], Response::HTTP_UNAUTHORIZED);
     }
 }

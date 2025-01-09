@@ -14,7 +14,12 @@ class Personne
 {
     public function __construct(
         #[OA\Property(
-            description: 'Type de personne (occupant, déclarant, propriétaire, etc.).',
+            description: 'Type de personne<br>
+            <ul>
+                <li>`OCCUPANT`</li>
+                <li>`DECLARANT`</li>
+                <li>`PROPRIETAIRE`</li>
+            </ul>',
             nullable: true
         )]
         public ?PersonneType $personneType = null,
@@ -48,8 +53,13 @@ class Personne
         public ?string $estTravailleurSocialPourOccupant = null,
 
         #[OA\Property(
-            description: 'Civilité de la personne.',
-            example: 'Mr',
+            description: 'Civilité de la personne.<br>
+            <ul>
+                <li>mr</li>
+                <li>mme</li>
+            </ul>
+',
+            example: 'mr',
             nullable: true
         )]
         public ?string $civilite = null,
@@ -117,21 +127,21 @@ class Personne
         public ?string $beneficiaireFsl = null,
 
         #[OA\Property(
-            description: 'Indique si la personne est bénéficiaire du FSL.',
+            description: 'Indique si la personne est allocataire.',
             example: 'Non',
             nullable: true
         )]
         public ?string $allocataire = null,
 
         #[OA\Property(
-            description: 'Type d\'allocataire de la CAF.',
-            example: 'Allocataire principal',
+            description: 'Type d\'allocataire `CAF` ou `MSA`.',
+            example: 'CAF',
             nullable: true
         )]
         public ?string $typeAllocataire = null,
 
         #[OA\Property(
-            description: 'Numéro d\'allocataire CAF.',
+            description: 'Numéro d\'allocataire CAF ou MSA.',
             example: '1234567A',
             nullable: true
         )]
@@ -139,7 +149,7 @@ class Personne
 
         #[OA\Property(
             description: 'Montant total de l\'allocation.',
-            example: '500 €',
+            example: '500',
             nullable: true
         )]
         public ?string $montantAllocation = null,

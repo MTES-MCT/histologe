@@ -16,6 +16,7 @@ use Symfony\Component\Security\Http\Authenticator\AuthenticatorInterface;
 use Symfony\Component\Security\Http\Authenticator\Passport\Badge\UserBadge;
 use Symfony\Component\Security\Http\Authenticator\Passport\Credentials\PasswordCredentials;
 use Symfony\Component\Security\Http\Authenticator\Passport\Passport;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 class JsonLoginAuthenticatorTest extends TestCase
 {
@@ -24,7 +25,18 @@ class JsonLoginAuthenticatorTest extends TestCase
     protected function setUp(): void
     {
         $userRepository = $this->createMock(UserRepository::class);
-        $this->authenticator = new JsonLoginAuthenticator($userRepository);
+        $translator = $this->createMock(TranslatorInterface::class);
+        $this->authenticator = new JsonLoginAuthenticator($userRepository, $translator);
+
+        $translator->method('trans')
+            ->willReturnCallback(function ($key, $parameters = [], $domain = null) {
+                $translations = [
+                    'Invalid credentials.' => 'Identifiants invalides.',
+                    'An authentication exception occurred.' => 'Une exception d\'authentification s\'est produite.',
+                ];
+
+                return $translations[$key] ?? $key;
+            });
     }
 
     public function testSupports()
@@ -80,11 +92,10 @@ class JsonLoginAuthenticatorTest extends TestCase
     {
         $request = new Request();
         $exception = new AuthenticationException('Invalid credentials.');
-
         $response = $this->authenticator->onAuthenticationFailure($request, $exception);
         $data = json_decode($response->getContent(), true);
-        $this->assertSame('An authentication exception occurred.', $data['error']);
-        $this->assertSame('Invalid credentials.', $data['message']);
+        $this->assertSame('Une exception d\'authentification s\'est produite.', $data['error']);
+        $this->assertSame('Identifiants invalides.', $data['message']);
         $this->assertSame(Response::HTTP_UNAUTHORIZED, $response->getStatusCode());
     }
 }

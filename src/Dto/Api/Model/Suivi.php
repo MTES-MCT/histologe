@@ -39,14 +39,6 @@ class Suivi
     )]
     public bool $public;
 
-    /* @todo Revoir les types de suivi */
-    #[OA\Property(
-        description: 'Type du suivi.',
-        type: 'integer',
-        example: 2
-    )]
-    public int $type;
-
     #[OA\Property(
         description: 'Auteur ayant créé le suivi.',
         type: 'string',

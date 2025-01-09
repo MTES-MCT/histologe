@@ -77,7 +77,7 @@ readonly class SignalementResponseFactory
         $signalementResponse->dateEntreeLogement = $signalement->getDateEntree()?->format('Y-m-d');
         $signalementResponse->nbOccupantsLogement = $signalement->getNbOccupantsLogement();
         $signalementResponse->nombreEnfantsDansLogement = $this->stringToInt($signalement->getTypeCompositionLogement()?->getCompositionLogementNombreEnfants());
-        $signalementResponse->enfantsDansLogement = $this->stringToBool($signalement->getTypeCompositionLogement()?->getCompositionLogementEnfants());
+        $signalementResponse->enfantsDansLogementMoinsSixAns = $this->stringToBool($signalement->getTypeCompositionLogement()?->getCompositionLogementEnfants());
         $signalementResponse->assuranceContactee = $this->stringToBool($signalement->getInformationProcedure()?->getInfoProcedureAssuranceContactee());
         $signalementResponse->reponseAssurance = $signalement->getInformationProcedure()?->getInfoProcedureReponseAssurance();
         $signalementResponse->souhaiteQuitterLogement = $this->stringToBool($signalement->getSituationFoyer()?->getTravailleurSocialQuitteLogement());
