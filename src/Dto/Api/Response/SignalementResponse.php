@@ -13,6 +13,7 @@ use App\Entity\Enum\MotifCloture;
 use App\Entity\Enum\MotifRefus;
 use App\Entity\Enum\ProfileDeclarant;
 use App\Entity\Enum\Qualification;
+use App\Entity\Enum\SignalementNewStatus;
 use Nelmio\ApiDocBundle\Attribute\Model;
 use OpenApi\Attributes as OA;
 
@@ -43,12 +44,18 @@ class SignalementResponse
     )]
     public Adresse $adresse;
     #[OA\Property(
-        description: "Le statut du signalement peut prendre l'une des valeurs suivantes : `en cours` (le signalement est actif), `fermé` (le signalement est terminé), `refusé` (le signalement a été refusé), ou `archivé` (le signalement a été archivé).",
-        type: 'string',
-        enum: ['en cours', 'fermé', 'refusé', 'archivé'],
-        example: 'fermé'
+        description: "Le statut du signalement peut prendre l'une des valeurs suivantes : <br>
+        <ul>
+            <li>`NOUVEAU`</li>
+            <li>`EN_COURS`</li>
+            <li>`FERME`</li>
+            <li>`ARCHIVE`</li>
+            <li>`REFUSE`</li>
+        </ul>
+        .",
+        example: 'FERME'
     )]
-    public string $statut;
+    public SignalementNewStatus $statut;
 
     #[OA\Property(
         description: 'Date à laquelle le signalement a été validé par un responsable territoire.<br>

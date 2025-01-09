@@ -42,4 +42,15 @@ enum AffectationStatus: int
             default => throw new \UnexpectedValueException('Unexpected affectation status : '.$label),
         };
     }
+
+    public static function mapNewStatus(int $codeStatus): string
+    {
+        return match ($codeStatus) {
+            0 => AffectationNewStatus::NOUVEAU->value,
+            1 => AffectationNewStatus::EN_COURS->value,
+            2 => AffectationNewStatus::REFUSE->value,
+            3 => AffectationNewStatus::FERME->value,
+            default => throw new \UnexpectedValueException('Unexpected affectation status : '.$codeStatus),
+        };
+    }
 }
