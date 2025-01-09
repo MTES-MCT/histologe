@@ -21,7 +21,7 @@ final class Version20250109113158 extends AbstractMigration
             if ($payload && isset($payload['logement_social_allocation']) && 'non' === $payload['logement_social_allocation']) {
                 $this->connection->executeStatement(
                     'UPDATE signalement s
-                    SET s.is_allocataire = \'O\'
+                    SET s.is_allocataire = \'0\'
                     WHERE s.id = :signalement_id',
                     [
                         'signalement_id' => $signalement['id'],
