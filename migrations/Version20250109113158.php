@@ -16,25 +16,18 @@ final class Version20250109113158 extends AbstractMigration
 
     public function up(Schema $schema): void
     {
-        $this->connection->beginTransaction();
-        try {
-            foreach ($this->getSignalements() as $signalement) {
-                $payload = json_decode($signalement['payload'], true);
-                if ($payload && isset($payload['logement_social_allocation']) && 'non' === $payload['logement_social_allocation']) {
-                    $this->connection->executeStatement(
-                        'UPDATE signalement s
-                        SET s.is_allocataire = \'1\'
-                        WHERE s.id = :signalement_id',
-                        [
-                            'signalement_id' => $signalement['id'],
-                        ]
-                    );
-                }
+        foreach ($this->getSignalements() as $signalement) {
+            $payload = json_decode($signalement['payload'], true);
+            if ($payload && isset($payload['logement_social_allocation']) && 'non' === $payload['logement_social_allocation']) {
+                $this->connection->executeStatement(
+                    'UPDATE signalement s
+                    SET s.is_allocataire = \'1\'
+                    WHERE s.id = :signalement_id',
+                    [
+                        'signalement_id' => $signalement['id'],
+                    ]
+                );
             }
-            $this->connection->commit();
-        } catch (\Throwable $exception) {
-            $this->connection->rollBack();
-            $this->write($exception->getMessage());
         }
     }
 
