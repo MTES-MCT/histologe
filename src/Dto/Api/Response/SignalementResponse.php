@@ -465,6 +465,7 @@ class SignalementResponse
             <li>`telephone`</li>
             <li>`sms`</li>
             <li>`autre`</li>
+            <li>`nsp`</li>
         </ul>
         ',
         type: 'string',
