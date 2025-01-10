@@ -10,6 +10,7 @@ use App\Service\ImageManipulationHandler;
 use App\Service\Interconnection\Idoss\IdossService;
 use Doctrine\ORM\EntityManagerInterface;
 use PHPUnit\Framework\MockObject\MockObject;
+use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use Symfony\Component\DependencyInjection\ParameterBag\ContainerBagInterface;
 use Symfony\Component\HttpClient\MockHttpClient;
@@ -36,6 +37,7 @@ class IdossServiceTest extends KernelTestCase
         $serializerMock = $this->createMock(SerializerInterface::class);
         /** @var ImageManipulationHandler|MockObject $imageManipulationHandlerMock */
         $imageManipulationHandlerMock = $this->createMock(ImageManipulationHandler::class);
+        $logger = $this->createMock(LoggerInterface::class);
 
         return new IdossService(
             $mockHttpClient,
@@ -43,7 +45,8 @@ class IdossServiceTest extends KernelTestCase
             $this->entityManager,
             $jobEventManager,
             $serializerMock,
-            $imageManipulationHandlerMock
+            $imageManipulationHandlerMock,
+            $logger,
         );
     }
 
