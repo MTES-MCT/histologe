@@ -476,9 +476,9 @@ class SignalementResponse
 
     #[OA\Property(
         description: "Date à laquelle le propriétaire a été informé d'une situation liée au logement.<br>
-        - Exemple : `2023-09-15`",
+        - Exemple : `2023-09`",
         format: 'date',
-        example: '2023-09-15',
+        example: '2023-09',
         nullable: true
     )]
     public ?string $dateInformationProprietaire;
