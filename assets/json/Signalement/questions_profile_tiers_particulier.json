@@ -1016,7 +1016,7 @@
           "description": "Indiquez le nombre de personnes de moins de 18 ans",
           "slug": "composition_logement_nombre_enfants",
           "validate": {
-            "message": "Veuillez renseigner le nombre d'enfants vivant dans votre logement.",
+            "message": "Veuillez renseigner le nombre d'enfants vivant dans le logement.",
             "pattern": "^[0-9]*$",
             "patternMessage": "Veuillez renseigner un nombre d'enfants valide."
           }

@@ -13,7 +13,7 @@ class InformationsLogementRequest implements RequestInterface
         private readonly ?string $nombrePersonnes = null,
         #[Assert\NotBlank(message: 'Merci de définir le nombre d\'enfants.')] // TODO : check retrococmpatibliity
         #[Assert\Positive(message: 'Le nombre d\'enfants doit être un nombre positif.')]
-        #[Assert\Type(type: 'numeric', message: 'Le nombre d\'enfantss doit être un nombre.')]
+        #[Assert\Type(type: 'numeric', message: 'Le nombre d\'enfants doit être un nombre.')]
         private readonly ?string $compositionLogementNombreEnfants = null,
         #[Assert\NotBlank(
             message: 'Merci de définir si il y a des enfants de moins de 6 ans',
