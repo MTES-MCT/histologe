@@ -83,7 +83,6 @@ class DossierMessageSCHSFactory extends AbstractDossierMessageFactory
         if ($signalement->getCreatedFrom()) {
             $commentaire .= \PHP_EOL.'Nb personnes : '
                 .$signalement->getTypeCompositionLogement()->getCompositionLogementNombrePersonnes();
-            // TODO ?
             $commentaire .= \PHP_EOL.'Enfants moins de 6 ans : '
                 .$signalement->getTypeCompositionLogement()->getCompositionLogementEnfants();
         } else {
