@@ -2,7 +2,6 @@
 
 namespace App\Controller\Back;
 
-use App\Dto\Request\Signalement\SignalementSearchQuery;
 use App\Entity\User;
 use App\Manager\SignalementManager;
 use App\Messenger\Message\ListExportMessage;
@@ -25,12 +24,13 @@ class ExportSignalementController extends AbstractController
         SignalementExportFiltersDisplay $signalementExportFiltersDisplay,
         SignalementManager $signalementManager,
         SearchFilter $searchFilter,
-        SignalementSearchQuery $signalementSearchQuery,
     ): Response {
         /** @var User $user */
         $user = $this->getUser();
-        $signalementSearchQuery = $request->getSession()->get('signalementSearchQuery', $signalementSearchQuery);
-        $filters = $searchFilter->setRequest($signalementSearchQuery)->buildFilters($user);
+        $filters = ['isImported' => '1'];
+        if ($signalementSearchQuery = $request->getSession()->get('signalementSearchQuery')) {
+            $filters = $searchFilter->setRequest($signalementSearchQuery)->buildFilters($user);
+        }
         $count_signalements = $signalementManager->findSignalementAffectationList($user, $filters, true);
         $textFilters = $signalementExportFiltersDisplay->filtersToText($filters);
 
@@ -47,7 +47,6 @@ class ExportSignalementController extends AbstractController
         Request $request,
         MessageBusInterface $messageBus,
         SearchFilter $searchFilter,
-        SignalementSearchQuery $signalementSearchQuery,
     ): RedirectResponse {
         $selectedColumns = $request->get('cols') ?? [];
         $format = $request->get('file-format');
@@ -61,8 +60,10 @@ class ExportSignalementController extends AbstractController
 
         /** @var User $user */
         $user = $this->getUser();
-        $signalementSearchQuery = $request->getSession()->get('signalementSearchQuery', $signalementSearchQuery);
-        $filters = $searchFilter->setRequest($signalementSearchQuery)->buildFilters($user);
+        $filters = ['isImported' => '1'];
+        if ($signalementSearchQuery = $request->getSession()->get('signalementSearchQuery')) {
+            $filters = $searchFilter->setRequest($signalementSearchQuery)->buildFilters($user);
+        }
 
         $message = (new ListExportMessage())
             ->setUserId($user->getId())
