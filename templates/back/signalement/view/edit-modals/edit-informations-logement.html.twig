@@ -33,6 +33,8 @@
                                 {% set compositionLogementNombreEnfants = null %}
                                 {% if signalement.typeCompositionLogement %}
                                     {% set compositionLogementNombreEnfants = signalement.typeCompositionLogement.compositionLogementNombreEnfants %}
+                                {% else %}
+                                    {% set compositionLogementNombreEnfants = signalement.getNbEnfantsDeprecated %}
                                 {% endif %}
                                 <label class="fr-label" for="informationLogementNombrePersonnes">Dont nb. enfants
                                     {{ show_label_facultatif(

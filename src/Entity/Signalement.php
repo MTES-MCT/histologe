@@ -655,6 +655,21 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
         return (string) $nbPersons;
     }
 
+    /**
+     * @deprecated  Cette méthode gère l'addition du nombre de personnes avec les données obsolètes.
+     * Sera supprimé à la prochaine version
+     * (Utilisé par des fichiers twig)
+     */
+    public function getNbEnfantsDeprecated(): string
+    {
+        $nbEnfantsM6 = str_replace('+', '', $this->getNbEnfantsM6() ?? 0);
+        $nbEnfantsP6 = str_replace('+', '', $this->getNbEnfantsP6() ?? 0);
+
+        $nbEnfants = (int) $nbEnfantsM6 + (int) $nbEnfantsP6;
+
+        return (string) $nbEnfants;
+    }
+
     public function getIsAllocataire(): ?string
     {
         return $this->isAllocataire;
