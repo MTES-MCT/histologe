@@ -11,6 +11,7 @@ use App\Messenger\Message\Idoss\DossierMessage;
 use App\Service\ImageManipulationHandler;
 use Doctrine\ORM\EntityManagerInterface;
 use League\Flysystem\FilesystemException;
+use Psr\Log\LoggerInterface;
 use Symfony\Component\DependencyInjection\ParameterBag\ContainerBagInterface;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Mime\Part\DataPart;
@@ -47,6 +48,7 @@ class IdossService
         private readonly JobEventManager $jobEventManager,
         private readonly SerializerInterface $serializer,
         private readonly ImageManipulationHandler $imageManipulationHandler,
+        private readonly LoggerInterface $logger,
     ) {
     }
 
@@ -145,6 +147,7 @@ class IdossService
             $responseContent = $response->getContent(throw: false);
         } catch (\Exception $e) {
             $responseContent = $e->getMessage();
+            $this->logger->error('Idoss HTTP error occurred, cause : '.$e->getMessage());
             $status = JobEvent::STATUS_FAILED;
             $statusCode = 9999;
         }
@@ -255,6 +258,11 @@ class IdossService
 
     private function request(string $url, array $payload, ?string $token = null, $requestMethod = 'POST', $contentType = 'application/json'): ResponseInterface
     {
+        if (str_contains($this->params->get('host_url'), 'localhost')) {
+            if (!str_contains($url, 'histologe_wiremock')) {
+                throw new \LogicException('url must contain "histologe_wiremock" when on localhost.');
+            }
+        }
         $options = ['headers' => []];
         if ('multipart/form-data' === $contentType) {
             $formData = new FormDataPart($payload);
