@@ -27,21 +27,20 @@ class SignalementListController extends AbstractController
         SessionInterface $session,
         SignalementManager $signalementManager,
         SearchFilter $searchFilter,
-        #[MapQueryString] ?SignalementSearchQuery $signalementQuery = null,
+        #[MapQueryString] ?SignalementSearchQuery $signalementSearchQuery = null,
     ): JsonResponse {
+        $session->set('signalementSearchQuery', $signalementSearchQuery);
+        $session->save();
         /** @var User $user */
         $user = $this->getUser();
-        $filters = null !== $signalementQuery
-            ? $searchFilter->setRequest($signalementQuery)->buildFilters($user)
+        $filters = null !== $signalementSearchQuery
+            ? $searchFilter->setRequest($signalementSearchQuery)->buildFilters($user)
             : [
                 'maxItemsPerPage' => SignalementSearchQuery::MAX_LIST_PAGINATION,
                 'orderBy' => 'DESC',
                 'sortBy' => 'reference',
                 'isImported' => 'oui',
             ];
-
-        $session->set('filters', $filters);
-        $session->set('signalementSearchQuery', $signalementQuery);
         $signalements = $signalementManager->findSignalementAffectationList($user, $filters);
 
         return $this->json(

@@ -7,6 +7,7 @@ use App\Manager\SignalementManager;
 use App\Messenger\Message\ListExportMessage;
 use App\Service\Signalement\Export\SignalementExportFiltersDisplay;
 use App\Service\Signalement\Export\SignalementExportSelectableColumns;
+use App\Service\Signalement\SearchFilter;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -22,11 +23,15 @@ class ExportSignalementController extends AbstractController
         Request $request,
         SignalementExportFiltersDisplay $signalementExportFiltersDisplay,
         SignalementManager $signalementManager,
+        SearchFilter $searchFilter,
     ): Response {
         /** @var User $user */
         $user = $this->getUser();
-        $filters = $options = $request->getSession()->get('filters', ['isImported' => '1']);
-        $count_signalements = $signalementManager->findSignalementAffectationList($user, $options, true);
+        $filters = ['isImported' => '1'];
+        if ($signalementSearchQuery = $request->getSession()->get('signalementSearchQuery')) {
+            $filters = $searchFilter->setRequest($signalementSearchQuery)->buildFilters($user);
+        }
+        $count_signalements = $signalementManager->findSignalementAffectationList($user, $filters, true);
         $textFilters = $signalementExportFiltersDisplay->filtersToText($filters);
 
         return $this->render('back/signalement_export/index.html.twig', [
@@ -41,6 +46,7 @@ class ExportSignalementController extends AbstractController
     public function exportFile(
         Request $request,
         MessageBusInterface $messageBus,
+        SearchFilter $searchFilter,
     ): RedirectResponse {
         $selectedColumns = $request->get('cols') ?? [];
         $format = $request->get('file-format');
@@ -54,7 +60,10 @@ class ExportSignalementController extends AbstractController
 
         /** @var User $user */
         $user = $this->getUser();
-        $filters = $request->getSession()->get('filters') ?? [];
+        $filters = ['isImported' => '1'];
+        if ($signalementSearchQuery = $request->getSession()->get('signalementSearchQuery')) {
+            $filters = $searchFilter->setRequest($signalementSearchQuery)->buildFilters($user);
+        }
 
         $message = (new ListExportMessage())
             ->setUserId($user->getId())
