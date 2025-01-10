@@ -58,7 +58,8 @@ parameters:
     form-action:
       - "'self'"
     frame-ancestors:
-      - "'none'"
+      - "'self'"
+      - "https://histologe-sites-faciles.osc-fr1.scalingo.io/"
     media-src:
       - "'self'"
     worker-src:
