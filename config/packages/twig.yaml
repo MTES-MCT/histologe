@@ -16,7 +16,7 @@ twig:
             banner_enable: '%maintenance_banner_enable%'
             banner_message: '%maintenance_banner_message%'
             enable: '%maintenance_enable%'
-        mise_en_berne: '%env(FEATURE_MISE_EN_BERNE)%'
+        mise_en_berne: '%env(MISE_EN_BERNE_ENABLE)%'
     paths:
         # point this wherever your images live
         '%kernel.project_dir%/public/img': images

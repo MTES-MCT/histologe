@@ -19,6 +19,7 @@ class JobEventHttpClientTest extends TestCase
 {
     public const string API_WIREMOCK_URL = 'http://histologe_wiremock:8080';
     public const string API_RANDOM_URL = 'https://example.com';
+    public const string HISTOLOGE_LOCAL_URL = 'http://localhost:8080';
 
     /**
      * @throws TransportExceptionInterface
@@ -70,7 +71,7 @@ class JobEventHttpClientTest extends TestCase
             $mockHttpClient,
             $jobEventManagerMock,
             $loggerMock,
-            'http://localhost:8080',
+            self::HISTOLOGE_LOCAL_URL,
         );
 
         $response = $jobEventHttpClient->request('POST', self::API_WIREMOCK_URL, $options);
@@ -95,7 +96,7 @@ class JobEventHttpClientTest extends TestCase
             $mockHttpClient,
             $jobEventManagerMock,
             $loggerMock,
-            'http://localhost:8080'
+            self::HISTOLOGE_LOCAL_URL,
         );
 
         $jobEventHttpClient->request('GET', self::API_WIREMOCK_URL);
@@ -121,7 +122,7 @@ class JobEventHttpClientTest extends TestCase
             $mockHttpClient,
             $jobEventManagerMock,
             $loggerMock,
-            'http://localhost:8080'
+            self::HISTOLOGE_LOCAL_URL
         );
         $options['extra']['job_event_metadata'] = new JobEventMetaData('esabora', 'push_dossier');
         $response = $jobEventHttpClient->request('GET', self::API_WIREMOCK_URL, $options);
@@ -155,7 +156,7 @@ class JobEventHttpClientTest extends TestCase
             $mockHttpClient,
             $jobEventManagerMock,
             $loggerMock,
-            'http://localhost:8080',
+            self::HISTOLOGE_LOCAL_URL,
         );
 
         $this->expectException(\LogicException::class);

@@ -255,6 +255,11 @@ class IdossService
 
     private function request(string $url, array $payload, ?string $token = null, $requestMethod = 'POST', $contentType = 'application/json'): ResponseInterface
     {
+        if (str_contains($this->params->get('host_url'), 'localhost')) {
+            if (!str_contains($url, 'histologe_wiremock')) {
+                throw new \LogicException('url must contain "histologe_wiremock" when on localhost.');
+            }
+        }
         $options = ['headers' => []];
         if ('multipart/form-data' === $contentType) {
             $formData = new FormDataPart($payload);
