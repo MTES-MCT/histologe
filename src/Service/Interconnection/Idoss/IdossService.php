@@ -147,7 +147,7 @@ class IdossService
             $responseContent = $response->getContent(throw: false);
         } catch (\Exception $e) {
             $responseContent = $e->getMessage();
-            $this->logger->error('Idoss HTTP error occurred, cause : '.$e->getMessage(), []);
+            $this->logger->error('Idoss HTTP error occurred, cause : '.$e->getMessage());
             $status = JobEvent::STATUS_FAILED;
             $statusCode = 9999;
         }
