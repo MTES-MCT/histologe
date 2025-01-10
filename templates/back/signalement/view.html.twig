@@ -11,7 +11,7 @@
         {% include '_partials/_modal_historique_affectation.html.twig' %}
     {% endif %}
     {% include '_partials/_modal_dpe.html.twig' %}
-    {% if signalement.statut is not same as constant('App\\Entity\\Signalement::STATUS_NEED_VALIDATION') and not isClosed and not isClosedForMe and ((isAffected and isAccepted)) or is_granted('ROLE_ADMIN_TERRITORY') %}
+    {% if signalement.statut is not same as constant('App\\Entity\\Signalement::STATUS_NEED_VALIDATION') and not isSignalementClosed and not isClosedForMe and ((affectation and isAssignmentAccepted)) or is_granted('ROLE_ADMIN_TERRITORY') %}
         {% include '_partials/_modal_cloture.html.twig' %}
     {% endif %}
     {% if canEditNDE %}
@@ -26,12 +26,12 @@
     {% include '_partials/_modal_file_delete.html.twig' %}
     {% include 'back/signalement/view/edit-modals/edit-file.html.twig' %}
 
-    {% if isClosedForMe or signalement.statut is same as constant('App\\Entity\\Signalement::STATUS_CLOSED') or signalement.statut is same as constant('App\\Entity\\Signalement::STATUS_REFUSED')  %}
-        {% if isClosed and is_granted('ROLE_ADMIN_TERRITORY') %}
+    {% if is_granted('SIGN_REOPEN', signalement) or canReopenAssignment %}
+        {% if is_granted('SIGN_REOPEN', signalement) %}
             {% include '_partials/_modal_reopen_signalement.html.twig' with { 'all': '1' } %}
         {% endif %}
         
-        {% if signalement.statut is not same as constant('App\\Entity\\Signalement::STATUS_CLOSED') and isClosedForMe %}
+        {% if canReopenAssignment %}
             {% include '_partials/_modal_reopen_signalement.html.twig' with { 'all': '0' } %}
         {% endif %}
     {% endif %}
