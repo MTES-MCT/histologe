@@ -35,7 +35,7 @@ class SignalementActionControllerTest extends WebTestCase
 
     public function testValidationResponseSignalementSuccess(): void
     {
-        $signalement = $this->signalementRepository->findOneBy(['uuid' => '00000000-0000-0000-2023-000000000006']);
+        $signalement = $this->signalementRepository->findOneBy(['uuid' => '00000000-0000-0000-2023-000000000016']);
         $route = $this->router->generate('back_signalement_validation_response', ['uuid' => $signalement->getUuid()]);
         $this->client->request(
             'GET',
@@ -56,7 +56,7 @@ class SignalementActionControllerTest extends WebTestCase
 
     public function testValidationResponseSignalementError(): void
     {
-        $signalement = $this->signalementRepository->findOneBy(['uuid' => '00000000-0000-0000-2023-000000000006']);
+        $signalement = $this->signalementRepository->findOneBy(['uuid' => '00000000-0000-0000-2023-000000000016']);
         $route = $this->router->generate('back_signalement_validation_response', ['uuid' => $signalement->getUuid()]);
         $this->client->request(
             'GET',

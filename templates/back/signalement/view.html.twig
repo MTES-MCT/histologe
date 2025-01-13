@@ -26,14 +26,12 @@
     {% include '_partials/_modal_file_delete.html.twig' %}
     {% include 'back/signalement/view/edit-modals/edit-file.html.twig' %}
 
-    {% if is_granted('SIGN_REOPEN', signalement) or canReopenAssignment %}
-        {% if is_granted('SIGN_REOPEN', signalement) %}
-            {% include '_partials/_modal_reopen_signalement.html.twig' with { 'all': '1' } %}
-        {% endif %}
-        
-        {% if canReopenAssignment %}
-            {% include '_partials/_modal_reopen_signalement.html.twig' with { 'all': '0' } %}
-        {% endif %}
+    {% if is_granted('SIGN_REOPEN', signalement) %}
+        {% include '_partials/_modal_reopen_signalement.html.twig' with { 'all': '1' } %}
+    {% endif %}
+    
+    {% if canReopenAssignment %}
+        {% include '_partials/_modal_reopen_signalement.html.twig' with { 'all': '0' } %}
     {% endif %}
 
     <div class="fr-background--white

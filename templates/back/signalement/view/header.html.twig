@@ -214,28 +214,26 @@
                         </div>
                     </div>
 
-                {% elseif is_granted('SIGN_REOPEN', signalement) or canReopenAssignment %}
-                    {% if is_granted('SIGN_REOPEN', signalement) %}
+                {% elseif is_granted('SIGN_REOPEN', signalement) %}
                     <button class="fr-btn fr-btn--sm fr-btn--success fr-fi-lock-fill fr-btn--icon-left fr-mt-1v reopen"
                             aria-controls="reopen-all-signalement-modal" data-fr-opened="false">
                         Rouvrir pour tous
                     </button>
-                    {% endif %}
-                    {% if canReopenAssignment %}
-                        <button class="fr-btn fr-btn--sm fr-btn--success fr-fi-lock-fill fr-btn--icon-left fr-mt-1v reopen"
-                                aria-controls="reopen-signalement-modal" data-fr-opened="false">
-                            Rouvrir pour {{ app.user.partnerInTerritoryOrFirstOne(signalement.territory) ? app.user.partnerInTerritoryOrFirstOne(signalement.territory).nom : 'N/A' }}
-                        </button>
-                    {% endif %}
+
+                {% elseif canReopenAssignment %}
+                    <button class="fr-btn fr-btn--sm fr-btn--success fr-fi-lock-fill fr-btn--icon-left fr-mt-1v reopen"
+                            aria-controls="reopen-signalement-modal" data-fr-opened="false">
+                        Rouvrir pour {{ app.user.partnerInTerritoryOrFirstOne(signalement.territory) ? app.user.partnerInTerritoryOrFirstOne(signalement.territory).nom : 'N/A' }}
+                    </button>
 
                 {% elseif is_granted('SIGN_CLOSE', signalement) %}
-                    <button aria-controls="cloture-modal" data-fr-opened="false"
-                        class="fr-btn fr-btn--sm fr-btn--secondary fr-icon-close-line fr-btn--icon-left keep-when-signalement-closed" id="test-bouton-cloturer">
+                    <button id="test-bouton-cloturer" aria-controls="cloture-modal" data-fr-opened="false"
+                        class="fr-btn fr-btn--sm fr-btn--secondary fr-icon-close-line fr-btn--icon-left keep-when-signalement-closed">
                         Clôturer
                     </button>
                 
-                {% elseif is_granted('ASSIGN_CLOSE', signalement) %}
-                    <a href="#" aria-controls="cloture-modal" data-fr-opened="false"
+                {% elseif affectation and is_granted('ASSIGN_CLOSE', affectation) %}
+                    <a id="link-bouton-cloturer" href="#" aria-controls="cloture-modal" data-fr-opened="false"
                         class="fr-btn fr-btn--sm fr-btn--secondary fr-icon-close-line fr-btn--icon-left">
                         Clôturer
                     </a>
