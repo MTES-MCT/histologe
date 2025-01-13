@@ -6,7 +6,11 @@
     {% if is_granted('ROLE_ADMIN_TERRITORY') and app.request.get('_route') is not same as('back_partner_new') %}
         {% include '_partials/_modal_user_transfer.html.twig' %}
     {% endif %}
-    {% include '_partials/_modal_user_create.html.twig' %}
+    {% if feature_multi_territories %}
+        {% include '_partials/_modal_user_create.html.twig' %}
+    {% else %}
+        {% include '_partials/_old_modal_user_create.html.twig' %}
+    {% endif %}
     {% include '_partials/_modal_user_delete.html.twig' %}
     {% include '_partials/_modal_user_edit.html.twig' with { 'currentPage': 'partnerEdit' } %}
     <section class="fr-p-5v">
@@ -199,10 +203,12 @@
                     <h2 id="desc-table">Agents du partenaire</h2>
                 </div>
                 <div class="fr-col-6 fr-text--right">
-                    <a href="#" class="fr-btn fr-btn--success fr-btn--icon-left fr-btn--md fr-fi-add-line fr-btn-add-user"
-                        id="partner_users_create" aria-controls="fr-modal-user-create"
-                        data-fr-opened="false" data-partnerid="{{ partner.id }}">Ajouter
-                        un utilisateur</a>
+                    <a href="#" 
+                        class="fr-btn fr-btn--success fr-btn--icon-left fr-btn--md fr-fi-add-line fr-btn-add-user"
+                        id="partner_users_create" 
+                        aria-controls="{% if feature_multi_territories %}fr-modal-user-create{% else %}fr-modal-old-user-create{% endif %}"
+                        data-fr-opened="false" 
+                        data-partnerid="{{ partner.id }}">Ajouter un utilisateur</a>
                 </div>
             </div>
 

@@ -1,0 +1,39 @@
+{% extends 'emails/base_email.html.twig' %}
+
+{% block body %}
+    <p>Bonjour,</p>
+    <p>
+        Un administrateur a ajouté votre compte {{ platform.name }} au partenaire {{partner_name}} du territoire {{ territory_name }}.
+    </p>
+    <p>
+        Vous pourrez désormais intervenir sur les signalements affectés à {{partner_name}} en plus des signalements auxquels vous aviez déjà accès.
+        <br>
+        Pour simplifier votre gestion, un filtre territoire est disponible sur votre tableau de bord et votre liste de signalement.
+    </p>
+    <p>
+        Pour découvrir ces nouveautés, rendez-vous sur Histologe en cliquant sur le bouton ci-dessous.
+    </p>
+    <table role="presentation" border="0" cellpadding="0" cellspacing="0" class="btn btn-primary"
+           style="text-align: center">
+        <tbody>
+        <tr>
+            <td align="left">
+                <table role="presentation" border="0" cellpadding="0" cellspacing="0">
+                    <tbody>
+                    <tr style="text-align: center;width: 100%">
+                        <td>
+                            <a href="{{ link|raw }}" target="_blank" rel="noopener">{{ btntext }}</a></td>
+                    </tr>
+                    </tbody>
+                </table>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+    <p>Si le bouton ne fonctionne pas <a href="{{ link|raw }}" target="_blank" rel="noopener">cliquez ici</a></p>
+    <p>
+        Pour plus d'information, rapprochez vous de votre référent territorial.
+    </p>
+
+    <p>Merci d'avoir utilisé {{ platform.name }} !</p>
+{% endblock %}

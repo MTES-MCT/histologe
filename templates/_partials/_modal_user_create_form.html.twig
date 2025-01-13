@@ -1,0 +1,33 @@
+{% form_theme formUserPartner 'form/dsfr_theme.html.twig' %}
+{{ form_start(formUserPartner, {'attr': {'id': 'partner-add-user-form'}}) }}
+{{ form_errors(formUserPartner) }}
+<div class="fr-grid-row fr-grid-row--gutters">
+    <div class="fr-col-12">
+        {{ form_row(formUserPartner.emailDisplay) }}
+        {{ form_row(formUserPartner.email) }}
+    </div>
+    <div class="fr-col-6">
+        {{ form_row(formUserPartner.nom) }}
+    </div>
+    <div class="fr-col-6">
+        {{ form_row(formUserPartner.prenom) }}
+    </div>
+    <div class="fr-col-6">
+        {{ form_row(formUserPartner.role) }}
+    </div>
+    <div class="fr-col-12">
+        {{ form_row(formUserPartner.isMailingActive) }}
+    </div>
+    {% if formUserPartner.hasPermissionAffectation is defined %}
+        <div class="fr-col-12">
+            <label class="fr-label fr-pb-1w">Droits d'affectation</label>
+            <div id="user_partner_permission_affectation_toggle">
+                {{ form_row(formUserPartner.hasPermissionAffectation) }}
+            </div>
+            <div id="user_partner_permission_affectation_text" class="fr-alert fr-alert--info fr-alert--sm fr-mt-2v" class="fr-hidden">
+                <p>Les responsables de territoire ont le droit d'affecter des partenaires aux signalements du territoire. Ce droit ne peut pas leur être retiré.</p>
+            </div>
+        </div>
+    {% endif %}
+    {{ form_end(formUserPartner) }}
+</div>

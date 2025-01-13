@@ -1,0 +1,21 @@
+
+<div class="fr-hidden">
+    {% form_theme formMultiMail 'form/dsfr_theme.html.twig' %}
+    {{form(formMultiMail, {'attr': {'id': 'partner-add-user-form'}})}}
+</div>
+
+<div>
+    Ce compte agent existe déjà dans :
+    <ul>
+        {% for item in user.partners %}
+            <li>le partenaire {{item.nom}} du territoire {{item.territory.zip}} - {{item.territory.name}}</li>
+        {% endfor %}
+    </ul>
+    <strong>Vous pouvez ajouter ce compte agent à votre partenaire {{partner.nom}}.</strong> Si vous l'ajoutez :
+    <ul>
+        <li>l'agent pourra traiter les signalements que vous affectez à ce partenaire</li>
+        <li>il aura toujours accès aux signalements qui lui sont affectés sur les autres territoires</li>
+        <li>vous ne pourrez pas modifier les informations du compte agent</li>
+        <li>l'agent pourra modifier ses informations depuis son profil utilisateur</li>
+    </ul>
+</div>

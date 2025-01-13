@@ -130,8 +130,114 @@ class PartnerControllerTest extends WebTestCase
         }
     }
 
+    /**
+     * @dataProvider provideAgentEmailToAddOnPartner
+     */
+    public function testAddNewAgentToPartner(string $email, string $expected)
+    {
+        $feature_multi_territories = static::getContainer()->getParameter('feature_multi_territories');
+        if (!$feature_multi_territories) {
+            $this->markTestSkipped('La fonctionnalité "feature_multi_territories" est désactivée.');
+        }
+        /** @var Partner $partner */
+        $partner = $this->partnerRepository->findOneBy(['nom' => 'Partenaire 13-03']);
+
+        $route = $this->router->generate('back_partner_add_user', ['id' => $partner->getId()]);
+        $this->client->request(
+            'POST',
+            $route,
+            [
+                'user_partner' => [
+                    'email' => $email,
+                    'role' => 'ROLE_USER_PARTNER',
+                    'prenom' => 'John',
+                    'nom' => 'Doe',
+                    'isMailingActive' => 0,
+                    '_token' => $this->generateCsrfToken($this->client, 'user_partner'),
+                ],
+            ]
+        );
+        if ('redirect' === $expected) {
+            $this->assertResponseRedirects('/bo/partenaires/'.$partner->getId().'/voir#agents');
+            $this->assertEmailCount(1);
+        } else {
+            $this->assertResponseStatusCodeSame(200);
+            $this->assertResponseHeaderSame('content-type', 'application/json');
+            $response = json_decode($this->client->getResponse()->getContent(), true);
+            $this->assertArrayHasKey('content', $response);
+            $this->assertStringContainsString($expected, $response['content']);
+        }
+    }
+
+    public function provideAgentEmailToAddOnPartner(): \Generator
+    {
+        yield 'Invalid email' => ['nanana', 'L&#039;adresse e-mail est invalide.'];
+        yield 'Partner email already exists' => ['partenaire-13-02@histologe.fr', 'Un partenaire existe déjà avec cette adresse e-mail.'];
+        yield 'Email already exists on same territory' => ['user-13-01@histologe.fr', 'Un utilisateur avec cette adresse e-mail existe déja sur le territoire.'];
+        yield 'Email existing on RT' => ['admin-territoire-01-01@histologe.fr', 'Un utilisateur Responsable Territoire existe déjà avec cette adresse e-mail.'];
+        yield 'Email existing on SA' => ['admin-01@histologe.fr', 'Un utilisateur Super Admin existe déjà avec cette adresse e-mail.'];
+        yield 'Email existing with permission affectation' => ['user-partenaire-30@histologe.fr', 'Un utilisateur ayant les droits d&#039;affectation existe déjà avec cette adresse e-mail.'];
+
+        yield 'New user' => ['new.email@test.com', 'redirect'];
+        yield 'New user from usager' => ['usager-01@histologe.fr', 'redirect'];
+        yield 'Email ok to multi territories' => ['user-44-02@histologe.fr', 'Ce compte agent existe déjà dans :'];
+    }
+
+    /**
+     * @dataProvider provideMultiTerAgentEmailToAddOnPartner
+     */
+    public function testAddExistingAgentToPartner(string $email, string $expected)
+    {
+        $feature_multi_territories = static::getContainer()->getParameter('feature_multi_territories');
+        if (!$feature_multi_territories) {
+            $this->markTestSkipped('La fonctionnalité "feature_multi_territories" est désactivée.');
+        }
+        /** @var Partner $partner */
+        $partner = $this->partnerRepository->findOneBy(['nom' => 'Partenaire 13-03']);
+        $route = $this->router->generate('back_partner_add_user_multi', ['id' => $partner->getId()]);
+        $this->client->request(
+            'POST',
+            $route,
+            [
+                'user_partner_email' => [
+                    'email' => $email,
+                    '_token' => $this->generateCsrfToken($this->client, 'user_partner_email'),
+                ],
+            ]
+        );
+        if ('redirect' === $expected) {
+            $this->assertResponseRedirects('/bo/partenaires/'.$partner->getId().'/voir#agents');
+            $this->assertEmailCount(1);
+        } else {
+            $this->assertResponseStatusCodeSame(200);
+            $this->assertResponseHeaderSame('content-type', 'application/json');
+            $response = json_decode($this->client->getResponse()->getContent(), true);
+            $this->assertArrayHasKey('content', $response);
+            $this->assertStringContainsString($expected, $response['content']);
+        }
+    }
+
+    public function provideMultiTerAgentEmailToAddOnPartner(): \Generator
+    {
+        yield 'Invalid email' => ['nanana', 'L&#039;adresse e-mail est invalide.'];
+        yield 'Partner email already exists' => ['partenaire-13-02@histologe.fr', 'Un partenaire existe déjà avec cette adresse e-mail.'];
+        yield 'Email already exists on same territory' => ['user-13-01@histologe.fr', 'Un utilisateur avec cette adresse e-mail existe déja sur le territoire.'];
+        yield 'Email existing on RT' => ['admin-territoire-01-01@histologe.fr', 'Un utilisateur Responsable Territoire existe déjà avec cette adresse e-mail.'];
+        yield 'Email existing on SA' => ['admin-01@histologe.fr', 'Un utilisateur Super Admin existe déjà avec cette adresse e-mail.'];
+        yield 'Email existing with permission affectation' => ['user-partenaire-30@histologe.fr', 'Un utilisateur ayant les droits d&#039;affectation existe déjà avec cette adresse e-mail.'];
+
+        yield 'New user' => ['new.email@test.com', 'Agent introuvalbe avec cette adresse e-mail.'];
+        yield 'New user from usager' => ['usager-01@histologe.fr', 'Agent introuvalbe avec cette adresse e-mail.'];
+        yield 'Email ok to multi territories' => ['user-44-02@histologe.fr', 'redirect'];
+    }
+
     public function testAddUserToPartner()
     {
+        $feature_multi_territories = static::getContainer()->getParameter('feature_multi_territories');
+        if ($feature_multi_territories) {
+            $this->markTestSkipped('La fonctionnalité "feature_multi_territories" est activée.');
+        }
+
         /** @var Partner $partner */
         $partner = $this->partnerRepository->findOneBy(['nom' => 'Partenaire 13-03']);
 

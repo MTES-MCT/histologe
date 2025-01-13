@@ -54,7 +54,12 @@ function histoUpdatePermissionsFromRole (editOrCreate, toggleValue) {
   if (!elementTogglePermissionAffectation || !elementTextPermissionAffectation) {
     return
   }
-  const rolesSelect = document.querySelector('#user_' + editOrCreate + '_roles')
+  let rolesSelect = null
+  if(editOrCreate === 'partner'){
+    rolesSelect = document.querySelector('#user_partner_role')
+  }else{
+    rolesSelect = document.querySelector('#user_' + editOrCreate + '_roles')
+  }
   if (rolesSelect.value === 'ROLE_ADMIN' || rolesSelect.value === 'ROLE_ADMIN_TERRITORY') {
     if (!elementTogglePermissionAffectation.checked) {
       elementTogglePermissionAffectation.click()
@@ -234,6 +239,7 @@ deletePartnerForm.forEach(form => {
   })
 })
 
+//TODO : delete with feature_multi_territories deletion
 const checkUserMail = (el) => {
   const formData = new FormData()
   formData.append('email', el.value)
@@ -275,9 +281,57 @@ emailInputs.forEach(emailInput => {
     checkUserMail(this)
   })
 })
+//END TODO
 
 loadWindowWithLocalStorage('click', '[data-filter-list-partner]', 'search-partner-form')
 updateLocalStorageOnEvent('input', '#partner-input', 'back_link_partners')
 updateLocalStorageOnEvent('change', '#partner-filters-territories', 'back_link_partners')
 updateLocalStorageOnEvent('change', '#partner-filters-types', 'back_link_partners')
 updateLocalStorageWithPaginationParams('click', '#partner-pagination a', 'back_link_partners')
+
+//add for multi territories
+const modalPartnerUserCreate = document?.querySelector('#fr-modal-user-create')
+const btnSubmit = modalPartnerUserCreate?.querySelector('button[type="submit"]')
+if(modalPartnerUserCreate){
+  modalPartnerUserCreate.addEventListener('dsfr.conceal', (event) => {
+    const refreshUrl = event.target.dataset.refreshUrl;
+    btnSubmit.disabled = true
+    fetch(refreshUrl).then(response => {
+      managePartnerAddUserFormResponse(response)
+    })
+  })
+}
+
+function attachSubmitPartnerAddUserForm () {
+  document.querySelector('#partner-add-user-form').addEventListener('submit', (e) => {
+    e.preventDefault()
+    btnSubmit.disabled = true
+    const formData = new FormData(e.target)
+    fetch(e.target.action, {method: 'POST', body: formData}).then(response => {
+      managePartnerAddUserFormResponse(response)
+    })
+  })
+}
+
+function managePartnerAddUserFormResponse(response) {
+  console.log(response);
+  if (response.redirected) {
+    window.location.href = response.url
+  }else if (response.ok) {
+    response.json().then((response) => {
+      document.querySelector('#partner-add-user-title').innerHTML = response.title
+        document.querySelector('#partner-add-user-form-container').innerHTML = response.content
+        attachSubmitPartnerAddUserForm()
+        if (document.querySelector('#user_partner_role')) {
+          document.querySelector('#user_partner_role').addEventListener('change', () => {
+            histoUpdatePermissionsFromRole('partner', null)
+          })
+          histoUpdatePermissionsFromRole('partner', null)
+        }
+        btnSubmit.disabled = false
+    })
+  }else{
+    const content = '<div class="fr-alert fr-alert--error" role="alert"><p class="fr-alert__title">Erreur</p><p>Une erreur est survenue veuillez fermer cette fenêtre.</p></div>'
+    document.querySelector('#partner-add-user-form-container').innerHTML = content
+  }
+}
