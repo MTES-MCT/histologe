@@ -2,10 +2,8 @@
 
 namespace App\Controller;
 
-use App\Entity\Enum\DocumentType;
 use App\Entity\File;
-use App\Service\ImageManipulationHandler;
-use League\Flysystem\FilesystemOperator;
+use App\Service\Files\ImageVariantProvider;
 use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
@@ -21,36 +19,17 @@ class FileController extends AbstractController
         File $file,
         Request $request,
         LoggerInterface $logger,
-        FilesystemOperator $fileStorage,
+        ImageVariantProvider $imageVariantProvider,
     ): BinaryFileResponse {
         try {
             $variant = $request->query->get('variant');
             $filename = $file->getFilename();
-            $documentType = $file->getDocumentType();
-            $variantNames = ImageManipulationHandler::getVariantNames($filename);
+            $file = $imageVariantProvider->getFileVariant($filename, $variant);
 
-            if ('thumb' == $variant && $fileStorage->fileExists($variantNames[ImageManipulationHandler::SUFFIX_THUMB])) {
-                $filename = $variantNames[ImageManipulationHandler::SUFFIX_THUMB];
-            } elseif ($fileStorage->fileExists($variantNames[ImageManipulationHandler::SUFFIX_RESIZE])) {
-                $filename = $variantNames[ImageManipulationHandler::SUFFIX_RESIZE];
-            }
-            if (!$fileStorage->fileExists($filename)) {
-                throw new \Exception('File "'.$filename.'" not found');
-            }
-            $tmpFilepath = $this->getParameter('uploads_tmp_dir').$filename;
-            $bucketFilepath = $this->getParameter('url_bucket').'/'.$filename;
-            $content = file_get_contents($bucketFilepath);
-            file_put_contents($tmpFilepath, $content);
-            $file = new SymfonyFile($tmpFilepath);
-
-            if (DocumentType::EXPORT === $documentType) {
-                return (new BinaryFileResponse($file))->setContentDisposition(
-                    ResponseHeaderBag::DISPOSITION_INLINE,
-                    $file->getFilename()
-                );
-            }
-
-            return new BinaryFileResponse($file);
+            return (new BinaryFileResponse($file))->setContentDisposition(
+                ResponseHeaderBag::DISPOSITION_INLINE,
+                $file->getFilename()
+            );
         } catch (\Throwable $exception) {
             $logger->error($exception->getMessage());
         }

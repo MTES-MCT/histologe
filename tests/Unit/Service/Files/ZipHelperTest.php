@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Tests\Unit\Service\File;
+namespace App\Tests\Unit\Service\Files;
 
 use App\Service\Files\ZipHelper;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
