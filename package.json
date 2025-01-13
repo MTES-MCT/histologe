@@ -10,6 +10,7 @@
     "datatables.net-dt": "^1.12.1",
     "datatables.net-vue3": "^1.0.0",
     "leaflet": "^1.9.4",
+    "leaflet.markercluster": "^1.5.3",
     "libphonenumber-js": "^1.10.44",
     "vue": "^3.2.37",
     "vue-chartjs": "^4.1.1",
