@@ -4,7 +4,6 @@ namespace App\Tests\Functional\Service\Import\Signalement;
 
 use App\Entity\Territory;
 use App\EventListener\SuiviCreatedListener;
-use App\Factory\SuiviFactory;
 use App\Manager\AffectationManager;
 use App\Manager\FileManager;
 use App\Manager\SignalementManager;
@@ -31,7 +30,6 @@ class SignalementImportLoaderTest extends KernelTestCase
     private TagManager $tagManager;
     private AffectationManager $affectationManager;
     private SuiviManager $suiviManager;
-    private SuiviFactory $suiviFactory;
     private EntityManagerInterface $entityManager;
     private ParameterBagInterface $parameterBag;
     private LoggerInterface $logger;
@@ -48,7 +46,6 @@ class SignalementImportLoaderTest extends KernelTestCase
         $this->tagManager = self::getContainer()->get(TagManager::class);
         $this->affectationManager = self::getContainer()->get(AffectationManager::class);
         $this->suiviManager = self::getContainer()->get(SuiviManager::class);
-        $this->suiviFactory = self::getContainer()->get(SuiviFactory::class);
         $this->parameterBag = self::getContainer()->get(ParameterBagInterface::class);
         $this->logger = self::getContainer()->get(LoggerInterface::class);
         $this->criticiteCalculator = self::getContainer()->get(CriticiteCalculator::class);
@@ -70,7 +67,6 @@ class SignalementImportLoaderTest extends KernelTestCase
             $this->tagManager,
             $this->affectationManager,
             $this->suiviManager,
-            $this->suiviFactory,
             $this->entityManager,
             $this->parameterBag,
             $this->logger,

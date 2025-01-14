@@ -7,7 +7,6 @@ use App\Entity\File;
 use App\Entity\Signalement;
 use App\Entity\Suivi;
 use App\Entity\User;
-use App\Factory\SuiviFactory;
 use App\Manager\SuiviManager;
 use App\Messenger\Message\PdfExportMessage;
 use App\Repository\FileRepository;
@@ -108,7 +107,7 @@ class SignalementFileController extends AbstractController
     public function fileWaitingSuiviSignalement(
         Signalement $signalement,
         EntityManagerInterface $entityManager,
-        SuiviFactory $suiviFactory,
+        SuiviManager $suiviManager,
         UploadHandlerService $uploadHandlerService,
     ): JsonResponse {
         $this->denyAccessUnlessGranted('SIGN_EDIT', $signalement);
@@ -125,7 +124,7 @@ class SignalementFileController extends AbstractController
             return $this->json(['success' => true]);
         }
 
-        $suivi = $suiviFactory->createInstanceForFilesSignalement($user, $signalement, $files);
+        $suivi = $suiviManager->createInstanceForFilesSignalement($user, $signalement, $files);
         $entityManager->persist($suivi);
 
         $update = $entityManager->createQueryBuilder()

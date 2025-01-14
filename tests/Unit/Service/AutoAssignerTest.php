@@ -6,7 +6,6 @@ use App\Entity\Enum\ProfileDeclarant;
 use App\Entity\Enum\Qualification;
 use App\Entity\Signalement;
 use App\Entity\SignalementQualification;
-use App\Factory\SuiviFactory;
 use App\Manager\AffectationManager;
 use App\Manager\SignalementManager;
 use App\Manager\SuiviManager;
@@ -26,7 +25,6 @@ class AutoAssignerTest extends KernelTestCase
     private AffectationManager $affectationManager;
     private SignalementRepository $signalementRepository;
     private SuiviManager|MockObject $suiviManager;
-    private SuiviFactory|MockObject $suiviFactory;
 
     protected function setUp(): void
     {
@@ -35,7 +33,6 @@ class AutoAssignerTest extends KernelTestCase
         $this->affectationManager = self::getContainer()->get(AffectationManager::class);
         $this->signalementRepository = $this->entityManager->getRepository(Signalement::class);
         $this->suiviManager = $this->createMock(SuiviManager::class);
-        $this->suiviFactory = $this->createMock(SuiviFactory::class);
     }
 
     public function testAutoAssignmentSeineStDenis(): void
@@ -44,8 +41,8 @@ class AutoAssignerTest extends KernelTestCase
         /** @var Signalement $signalement */
         $signalement = $this->signalementRepository->findOneBy(['reference' => '2024-05']);
         $signalement->setStatut(Signalement::STATUS_NEED_VALIDATION);
-        $this->suiviFactory->expects($this->once())
-        ->method('createInstanceFrom');
+        $this->suiviManager->expects($this->once())
+        ->method('createSuivi');
         $this->suiviManager->expects($this->once())
         ->method('persist');
         $this->testHelper($signalement, 1, ['Mairie de Saint-Denis']);
@@ -58,8 +55,8 @@ class AutoAssignerTest extends KernelTestCase
         /** @var Signalement $signalement */
         $signalement = $this->signalementRepository->findOneBy(['reference' => '2023-1']);
         $signalement->setStatut(Signalement::STATUS_NEED_VALIDATION);
-        $this->suiviFactory->expects($this->never())
-        ->method('createInstanceFrom');
+        $this->suiviManager->expects($this->never())
+        ->method('createSuivi');
         $this->suiviManager->expects($this->never())
         ->method('persist');
         $this->testHelper($signalement, 0, []);
@@ -72,8 +69,8 @@ class AutoAssignerTest extends KernelTestCase
         /** @var Signalement $signalement */
         $signalement = $this->signalementRepository->findOneBy(['reference' => '2024-06']);
         $signalement->setStatut(Signalement::STATUS_NEED_VALIDATION);
-        $this->suiviFactory->expects($this->once())
-        ->method('createInstanceFrom');
+        $this->suiviManager->expects($this->once())
+        ->method('createSuivi');
         $this->suiviManager->expects($this->once())
         ->method('persist');
         $this->testHelper($signalement, 4, ['Ville de Lunel', 'CAF 34', 'CD 34', 'CA Lunel Agglomération']);
@@ -87,8 +84,8 @@ class AutoAssignerTest extends KernelTestCase
         $signalement = $this->signalementRepository->findOneBy(['reference' => '2024-06']);
         $signalement->setStatut(Signalement::STATUS_NEED_VALIDATION);
         $signalement->setIsLogementSocial(true);
-        $this->suiviFactory->expects($this->never())
-        ->method('createInstanceFrom');
+        $this->suiviManager->expects($this->never())
+        ->method('createSuivi');
         $this->suiviManager->expects($this->never())
         ->method('persist');
         $this->testHelper($signalement, 0, []);
@@ -101,8 +98,8 @@ class AutoAssignerTest extends KernelTestCase
         $signalement = $this->signalementRepository->findOneBy(['reference' => '2024-06']);
         $signalement->setStatut(Signalement::STATUS_NEED_VALIDATION);
         $signalement->setIsAllocataire('non');
-        $this->suiviFactory->expects($this->once())
-        ->method('createInstanceFrom');
+        $this->suiviManager->expects($this->once())
+        ->method('createSuivi');
         $this->suiviManager->expects($this->once())
         ->method('persist');
         $this->testHelper($signalement, 3, ['Ville de Lunel', 'CD 34', 'CA Lunel Agglomération']);
@@ -115,8 +112,8 @@ class AutoAssignerTest extends KernelTestCase
         $signalement = $this->signalementRepository->findOneBy(['reference' => '2024-06']);
         $signalement->setStatut(Signalement::STATUS_NEED_VALIDATION);
         $signalement->setProfileDeclarant(ProfileDeclarant::BAILLEUR);
-        $this->suiviFactory->expects($this->once())
-        ->method('createInstanceFrom');
+        $this->suiviManager->expects($this->once())
+        ->method('createSuivi');
         $this->suiviManager->expects($this->once())
         ->method('persist');
         $this->testHelper($signalement, 3, ['Ville de Lunel', 'CAF 34', 'CD 34']);
@@ -129,8 +126,8 @@ class AutoAssignerTest extends KernelTestCase
         $signalement = $this->signalementRepository->findOneBy(['reference' => '2024-06']);
         $signalement->setStatut(Signalement::STATUS_NEED_VALIDATION);
         $signalement->setInseeOccupant('34048');
-        $this->suiviFactory->expects($this->once())
-        ->method('createInstanceFrom');
+        $this->suiviManager->expects($this->once())
+        ->method('createSuivi');
         $this->suiviManager->expects($this->once())
         ->method('persist');
         $this->testHelper($signalement, 3, ['Commune de Campagne', 'CAF 34', 'CD 34']);
@@ -143,8 +140,8 @@ class AutoAssignerTest extends KernelTestCase
         $signalement = $this->signalementRepository->findOneBy(['reference' => '2024-06']);
         $signalement->setStatut(Signalement::STATUS_NEED_VALIDATION);
         $signalement->setInseeOccupant('34172');
-        $this->suiviFactory->expects($this->once())
-        ->method('createInstanceFrom');
+        $this->suiviManager->expects($this->once())
+        ->method('createSuivi');
         $this->suiviManager->expects($this->once())
         ->method('persist');
         $this->testHelper($signalement, 2, ['Ville de Montpellier', 'CAF 34']);
@@ -157,8 +154,8 @@ class AutoAssignerTest extends KernelTestCase
         /** @var Signalement $signalement */
         $signalement = $this->signalementRepository->findOneBy(['reference' => '2022-1']);
         $signalement->setStatut(Signalement::STATUS_NEED_VALIDATION);
-        $this->suiviFactory->expects($this->never())
-        ->method('createInstanceFrom');
+        $this->suiviManager->expects($this->never())
+        ->method('createSuivi');
         $this->suiviManager->expects($this->never())
         ->method('persist');
         $this->testHelper($signalement, 0, []);
@@ -171,8 +168,8 @@ class AutoAssignerTest extends KernelTestCase
         /** @var Signalement $signalement */
         $signalement = $this->signalementRepository->findOneBy(['reference' => '2023-27']);
         $signalement->setStatut(Signalement::STATUS_NEED_VALIDATION);
-        $this->suiviFactory->expects($this->once())
-        ->method('createInstanceFrom');
+        $this->suiviManager->expects($this->once())
+        ->method('createSuivi');
         $this->suiviManager->expects($this->once())
         ->method('persist');
         $this->testHelper($signalement, 2, ['Mairie de Saint-Mars du Désert', 'Tiers-Lieu']);
@@ -185,8 +182,8 @@ class AutoAssignerTest extends KernelTestCase
         /** @var Signalement $signalement */
         $signalement = $this->signalementRepository->findOneBy(['reference' => '2024-09']);
         $signalement->setStatut(Signalement::STATUS_NEED_VALIDATION);
-        $this->suiviFactory->expects($this->once())
-        ->method('createInstanceFrom');
+        $this->suiviManager->expects($this->once())
+        ->method('createSuivi');
         $this->suiviManager->expects($this->once())
         ->method('persist');
         $this->testHelper($signalement, 3, ['Mairie de Saint-Mars du Désert', 'Cocoland', 'Tiers-Lieu']);
@@ -217,8 +214,8 @@ class AutoAssignerTest extends KernelTestCase
         $signalement->addSignalementQualification((new SignalementQualification())->setQualification(
             Qualification::DANGER
         ));
-        $this->suiviFactory->expects($this->once())
-        ->method('createInstanceFrom');
+        $this->suiviManager->expects($this->once())
+        ->method('createSuivi');
         $this->suiviManager->expects($this->once())
         ->method('persist');
         $this->testHelper($signalement, 4, ['Mairie de Saint-Mars du Désert', 'SDIS 44', 'Cocoland', 'Tiers-Lieu']);
@@ -232,8 +229,8 @@ class AutoAssignerTest extends KernelTestCase
         /** @var Signalement $signalement */
         $signalement = $this->signalementRepository->findOneBy(['reference' => '2024-11']);
         $signalement->setStatut(Signalement::STATUS_NEED_VALIDATION);
-        $this->suiviFactory->expects($this->once())
-        ->method('createInstanceFrom');
+        $this->suiviManager->expects($this->once())
+        ->method('createSuivi');
         $this->suiviManager->expects($this->once())
         ->method('persist');
         $this->testHelper($signalement, 3, ['Mairie de Saint-Mars du Désert', 'Partner Habitat 44', 'Tiers-Lieu']);
@@ -256,7 +253,6 @@ class AutoAssignerTest extends KernelTestCase
             $signalementManager,
             $this->affectationManager,
             $this->suiviManager,
-            $this->suiviFactory,
             $userManager,
             $parameterBag,
             $esaboraBus,

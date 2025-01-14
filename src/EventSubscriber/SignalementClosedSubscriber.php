@@ -8,7 +8,6 @@ use App\Entity\Signalement;
 use App\Entity\Suivi;
 use App\Entity\User;
 use App\Event\SignalementClosedEvent;
-use App\Factory\SuiviFactory;
 use App\Manager\SignalementManager;
 use App\Manager\SuiviManager;
 use App\Repository\SignalementRepository;
@@ -47,7 +46,7 @@ class SignalementClosedSubscriber implements EventSubscriberInterface
             $suivi = $this->suiviManager->createSuivi(
                 user : $user,
                 signalement : $signalement,
-                description : SuiviFactory::buildDescriptionClotureSignalement($params),
+                description : SuiviManager::buildDescriptionClotureSignalement($params),
                 type : Suivi::TYPE_PARTNER,
                 isPublic: '1' == $params['suivi_public'],
             );
@@ -67,7 +66,7 @@ class SignalementClosedSubscriber implements EventSubscriberInterface
             $suivi = $this->suiviManager->createSuivi(
                 user : $user,
                 signalement : $signalement,
-                description : SuiviFactory::buildDescriptionClotureSignalement($params),
+                description : SuiviManager::buildDescriptionClotureSignalement($params),
                 type : Suivi::TYPE_PARTNER,
             );
 

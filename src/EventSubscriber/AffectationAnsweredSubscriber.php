@@ -4,7 +4,6 @@ namespace App\EventSubscriber;
 
 use App\Entity\Suivi;
 use App\Event\AffectationAnsweredEvent;
-use App\Factory\SuiviFactory;
 use App\Manager\SuiviManager;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
@@ -30,7 +29,7 @@ class AffectationAnsweredSubscriber implements EventSubscriberInterface
         $this->suiviManager->createSuivi(
             user: $user,
             signalement: $signalement,
-            description: SuiviFactory::buildDescriptionAnswerAffectation($params),
+            description: SuiviManager::buildDescriptionAnswerAffectation($params),
             type: Suivi::TYPE_AUTO,
         );
     }

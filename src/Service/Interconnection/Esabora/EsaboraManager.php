@@ -236,12 +236,14 @@ class EsaboraManager
             $description .= $event->getLibelle();
         }
 
-        $suivi = new Suivi();
-        $suivi->setCreatedBy($this->userManager->getSystemUser());
-        $suivi->setSignalement($affectation->getSignalement());
-        $suivi->setType(Suivi::TYPE_PARTNER);
-        $suivi->setContext(Suivi::CONTEXT_SCHS);
-        $suivi->setDescription(nl2br($description));
+        $suivi = $this->suiviManager->createSuivi(
+            user: $this->userManager->getSystemUser(),
+            signalement: $affectation->getSignalement(),
+            description: $description,
+            type: Suivi::TYPE_PARTNER,
+            context: Suivi::CONTEXT_SCHS,
+            flush: false,
+        );
         if (!empty($event->getDate())) {
             $suivi->setCreatedAt(\DateTimeImmutable::createFromFormat('d/m/Y', $event->getDate()));
         }
