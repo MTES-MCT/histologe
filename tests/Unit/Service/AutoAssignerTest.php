@@ -196,8 +196,8 @@ class AutoAssignerTest extends KernelTestCase
         /** @var Signalement $signalement */
         $signalement = $this->signalementRepository->findOneBy(['reference' => '2025-01']);
         $signalement->setStatut(Signalement::STATUS_NEED_VALIDATION);
-        $this->suiviFactory->expects($this->once())
-        ->method('createInstanceFrom');
+        $this->suiviManager->expects($this->once())
+        ->method('createSuivi');
         $this->suiviManager->expects($this->once())
         ->method('persist');
         $this->testHelper($signalement, 1, ['Partner Habitat 44']);
