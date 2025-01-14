@@ -38,7 +38,7 @@ class SuiviSummariesType extends AbstractType
             ])
 
             ->add('prompt', TextareaType::class, [
-                'data' => 'Tu es un analyste de haute qualité. Ton travail est de résumer en français en quelques mots uniquement, le contenu d\'un email pour que n\'importe qui puisse savoir l\'essence de son propos.',
+                'data' => 'Tu es un analyste de haute qualité. Ton travail est de résumer en français en quelques mots uniquement, le contenu du texte suivant pour que n\'importe qui puisse savoir l\'essence de son propos.',
                 'attr' => [
                     'rows' => 5,
                 ],
@@ -73,7 +73,7 @@ class SuiviSummariesType extends AbstractType
                     // 'BAAI/bge-m3' => 'BAAI/bge-m3',
                     'AgentPublic/llama3-instruct-guillaumetell' => 'AgentPublic/llama3-instruct-guillaumetell',
                     // 'intfloat/multilingual-e5-large' => 'intfloat/multilingual-e5-large',
-                    // 'google/gemma-2-9b-it' => 'google/gemma-2-9b-it',
+                    'google/gemma-2-9b-it' => 'google/gemma-2-9b-it',
                 ],
                 'placeholder' => 'Choisissez un modèle de langage',
                 'multiple' => false,

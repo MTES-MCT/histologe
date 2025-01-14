@@ -130,9 +130,14 @@ class SuiviSummariesMessageHandler
     {
         $messages = [];
 
-        if (!empty($cleanLastSuiviDescription)) {
+        // User system doesn't exist in Google, and needs alternate between user and assistant
+        if ('google/gemma-2-9b-it' === $suiviSummariesMessage->getModel()) {
+            $messages[] = $this->getAlbertMessage(
+                message: $suiviSummariesMessage->getPrompt().' --- '.$cleanLastSuiviDescription,
+            );
+        } elseif (!empty($cleanLastSuiviDescription)) {
             $messages[] = $this->getAlbertMessage($suiviSummariesMessage->getPrompt(), $suiviSummariesMessage->getPromptRole());
-            $messages[] = $this->getAlbertMessage($cleanLastSuiviDescription);
+            $messages[] = $this->getAlbertMessage($cleanLastSuiviDescription, $suiviSummariesMessage->getPromptRole());
         } else {
             return null;
         }
