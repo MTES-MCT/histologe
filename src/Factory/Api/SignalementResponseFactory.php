@@ -90,6 +90,7 @@ class SignalementResponseFactory
         $signalementResponse->dateNaissanceOccupant = $signalement->getDateNaissanceOccupant()?->format('Y-m-d') ?? $signalement->getInformationComplementaire()?->getInformationsComplementairesSituationOccupantsDateNaissance();
         $signalementResponse->dateEntreeLogement = $signalement->getDateEntree()?->format('Y-m-d');
         $signalementResponse->nbOccupantsLogement = $signalement->getNbOccupantsLogement();
+        $signalementResponse->nombreEnfantsDansLogement = $this->stringToInt($signalement->getTypeCompositionLogement()?->getCompositionLogementNombreEnfants());
         $signalementResponse->enfantsDansLogement = $this->stringToBool($signalement->getTypeCompositionLogement()?->getCompositionLogementEnfants());
         $signalementResponse->assuranceContactee = $this->stringToBool($signalement->getInformationProcedure()?->getInfoProcedureAssuranceContactee());
         $signalementResponse->reponseAssurance = $signalement->getInformationProcedure()?->getInfoProcedureReponseAssurance();
@@ -185,6 +186,15 @@ class SignalementResponseFactory
         }
         if (in_array($value, ['non', 'plusieurs_pieces'])) {
             return false;
+        }
+
+        return null;
+    }
+
+    private function stringToInt(?string $value): ?int
+    {
+        if (!empty($value)) {
+            return (int) $value;
         }
 
         return null;

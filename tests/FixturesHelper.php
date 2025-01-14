@@ -444,6 +444,7 @@ trait FixturesHelper
             'type_logement_commodites_wc' => 'oui',
             'type_logement_dernier_etage' => 'non',
             'composition_logement_enfants' => 'oui',
+            'composition_logement_nombre_enfants' => '1',
             'composition_logement_nb_pieces' => '2',
             'composition_logement_superficie' => '45',
             'composition_logement_hauteur' => 'oui',

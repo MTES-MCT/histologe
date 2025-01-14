@@ -901,6 +901,17 @@
           }
         },
         {
+          "type": "SignalementFormCounter",
+          "label": "Dont combien d'enfants ?",
+          "description": "Indiquez le nombre de personnes de moins de 18 ans",
+          "slug": "composition_logement_nombre_enfants",
+          "validate": {
+            "message": "Veuillez renseigner le nombre d'enfants vivant dans votre logement.",
+            "pattern": "^[0-9]*$",
+            "patternMessage": "Veuillez renseigner un nombre d'enfants valide."
+          }
+        },
+        {
           "type": "SignalementFormOnlyChoice",
           "label": "Des enfants de moins de 6 ans vivent dans le logement ?",
           "slug": "composition_logement_enfants",
@@ -916,6 +927,9 @@
           ],
           "validate": {
             "message": "Veuillez indiquer si des enfants de moins de 6 ans vivent dans le logement."
+          },
+          "conditional": {
+            "show": "formStore.data.composition_logement_nombre_enfants > 0"
           }
         }
       ],

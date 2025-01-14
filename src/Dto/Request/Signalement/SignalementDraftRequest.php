@@ -302,8 +302,16 @@ class SignalementDraftRequest
     )]
     private ?string $compositionLogementNombrePersonnes = null;
 
+    #[Assert\Positive(message: 'Le nombre d\'enfants doit être un nombre positif.')]
+    #[Assert\Type(type: 'numeric', message: 'Le nombre d\'enfants doit être un nombre.')]
+    #[Assert\Length(
+        max: 10,
+        maxMessage: 'Le nombre d\'enfants ne doit pas dépasser {{ limit }} caractères.',
+    )]
+    private ?string $compositionLogementNombreEnfants = null;
+
     #[Assert\Choice(
-        choices: ['oui', 'non'],
+        choices: ['oui', 'non', 'nsp'],
         message: 'Le champs "compositionLogementEnfants" est incorrect.'
     )]
     private ?string $compositionLogementEnfants = null;
@@ -1176,6 +1184,18 @@ class SignalementDraftRequest
     public function setCompositionLogementNombrePersonnes(?string $compositionLogementNombrePersonnes): self
     {
         $this->compositionLogementNombrePersonnes = $compositionLogementNombrePersonnes;
+
+        return $this;
+    }
+
+    public function getCompositionLogementNombreEnfants(): ?string
+    {
+        return $this->compositionLogementNombreEnfants;
+    }
+
+    public function setCompositionLogementNombreEnfants(?string $compositionLogementNombreEnfants): self
+    {
+        $this->compositionLogementNombreEnfants = $compositionLogementNombreEnfants;
 
         return $this;
     }

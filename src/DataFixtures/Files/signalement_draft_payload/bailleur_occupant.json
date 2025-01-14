@@ -41,6 +41,7 @@
   "type_logement_sous_sol_sans_fenetre": "non",
   "desordres_batiment_eau_evacuation_KO": 1,
   "adresse_logement_adresse_detail_insee": "13202",
+  "composition_logement_nombre_enfants": "3",
   "composition_logement_nombre_personnes": "5",
   "adresse_logement_adresse_detail_numero": "31 Rue des phoceens",
   "desordres_batiment_eau_pas_eau_potable": 1,

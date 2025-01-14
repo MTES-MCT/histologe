@@ -107,6 +107,7 @@
   "type_logement_sous_sol_sans_fenetre": "non",
   "desordres_logement_nuisibles_cafards": 1,
   "adresse_logement_adresse_detail_insee": "13202",
+  "composition_logement_nombre_enfants": "1",
   "composition_logement_nombre_personnes": "3",
   "desordres_logement_nuisibles_punaises": 1,
   "adresse_logement_adresse_detail_numero": "33 Rue des phoceens",

@@ -80,6 +80,12 @@ class SignalementResponse
     public ?string $dateNaissanceOccupant;
     public ?string $dateEntreeLogement;
     public ?int $nbOccupantsLogement;
+    #[OA\Property(
+        description: 'Nombre d\'enfants habitant actuellement dans le logement.',
+        example: 2,
+        nullable: true
+    )]
+    public ?int $nombreEnfantsDansLogement;
     public ?bool $enfantsDansLogement;
     public ?bool $assuranceContactee;
     public ?string $reponseAssurance;

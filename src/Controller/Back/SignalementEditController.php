@@ -218,7 +218,6 @@ class SignalementEditController extends AbstractController
                 InformationsLogementRequest::class,
                 'json'
             );
-
             $validationGroups = ['Default'];
             $validationGroups[] = null !== $signalement->getCreatedFrom()
                 ? $signalement->getProfileDeclarant()->value :

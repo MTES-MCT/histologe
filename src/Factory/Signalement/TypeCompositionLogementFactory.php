@@ -45,6 +45,7 @@ class TypeCompositionLogementFactory
             compositionLogementHauteur: $data['composition_logement_hauteur'] ?? null,
             compositionLogementNbPieces: $data['composition_logement_nb_pieces'] ?? null,
             compositionLogementNombrePersonnes: $data['composition_logement_nombre_personnes'] ?? null,
+            compositionLogementNombreEnfants: $data['composition_logement_nombre_enfants'] ?? null,
             compositionLogementEnfants: $data['composition_logement_enfants'] ?? null,
             bailDpeBail: $data['bail_dpe_bail'] ?? null,
             bailDpeInvariant: $data['bail_dpe_invariant'] ?? null,

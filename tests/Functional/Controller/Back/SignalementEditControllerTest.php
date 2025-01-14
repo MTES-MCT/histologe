@@ -153,6 +153,7 @@ class SignalementEditControllerTest extends WebTestCase
         return [
             'nombrePersonnes' => '4',
             'compositionLogementEnfants' => 'oui',
+            'compositionLogementNombreEnfants' => '2',
             'dateEntree' => '2020-12-01',
             'bailleurDateEffetBail' => '',
             'bailDpeBail' => 'oui',

@@ -590,6 +590,7 @@ class SignalementRepository extends ServiceEntityRepository
             s.isProprioAverti,
             s.nbOccupantsLogement,
             s.nbEnfantsM6,
+            s.nbEnfantsP6,
             s.isAllocataire,
             s.numAllocataire,
             s.natureLogement,
