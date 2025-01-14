@@ -133,7 +133,8 @@ export const store = {
     ajaxurlRemoveSignalement: '',
     ajaxurlExportCsv: '',
     ajaxurlSettings: '',
-    ajaxurlContact: ''
+    ajaxurlContact: '',
+    token: ''
   }
 }
 

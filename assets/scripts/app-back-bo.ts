@@ -2,6 +2,7 @@ import './base-import.ts';
 
 import './vue/index';
 import './vue/signalement-list.ts';
+import './vue/signalement-carto.ts';
 import './vue/dashboard.ts';
 
 import './vanilla/services/data_delete.js'
