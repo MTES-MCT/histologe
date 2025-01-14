@@ -4,6 +4,7 @@ namespace App\Repository;
 
 use App\Entity\Signalement;
 use App\Entity\Territory;
+use App\Entity\User;
 use App\Entity\Zone;
 use App\Service\ListFilters\SearchZone;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
@@ -89,9 +90,12 @@ class ZoneRepository extends ServiceEntityRepository
         return $resultSet->fetchAllAssociative();
     }
 
-    public function findAllByTerritory(?Territory $territory): array
+    public function findForUserAndTerritory(User $user, ?Territory $territory): array
     {
         $qb = $this->createQueryBuilder('z');
+        if (!$user->isSuperAdmin()) {
+            $qb->andWhere('z.territory IN (:territories)')->setParameter('territories', $user->getPartnersTerritories());
+        }
         if ($territory) {
             $qb->andWhere('z.territory = :territory')->setParameter('territory', $territory);
         }

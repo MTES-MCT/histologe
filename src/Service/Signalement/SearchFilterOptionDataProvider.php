@@ -58,7 +58,7 @@ class SearchFilterOptionDataProvider
                     'partners' => $this->partnerRepository->findAllList($territory, $user),
                     'epcis' => $this->communeRepository->findEpciByCommuneTerritory($territory, $user),
                     'tags' => $this->tagsRepository->findAllActive($territory, $user),
-                    'zones' => $this->zoneRepository->findAllByTerritory($territory),
+                    'zones' => $this->zoneRepository->findForUserAndTerritory($user, $territory),
                     'cities' => $this->signalementRepository->findCities($user, $territory),
                     'zipcodes' => $this->signalementRepository->findZipcodes($user, $territory),
                     'listQualificationStatus' => $this->qualificationStatusService->getList(),
