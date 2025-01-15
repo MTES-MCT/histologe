@@ -72,7 +72,7 @@ readonly class SignalementResponseFactory
         $signalementResponse->dpeClasseEnergetique = $signalement->getTypeCompositionLogement()?->getBailDpeClasseEnergetique();
         $signalementResponse->dateEntreeLogement = $signalement->getDateEntree()?->format('Y-m-d');
         $signalementResponse->nbOccupantsLogement = $signalement->getNbOccupantsLogement();
-        $signalementResponse->nombreEnfantsDansLogement = $this->stringToInt($signalement->getTypeCompositionLogement()?->getCompositionLogementNombreEnfants());
+        $signalementResponse->nbEnfantsDansLogement = $this->stringToInt($signalement->getTypeCompositionLogement()?->getCompositionLogementNombreEnfants());
         $signalementResponse->enfantsDansLogementMoinsSixAns = $this->stringToBool($signalement->getTypeCompositionLogement()?->getCompositionLogementEnfants());
         $signalementResponse->assuranceContactee = $this->stringToBool($signalement->getInformationProcedure()?->getInfoProcedureAssuranceContactee());
         $signalementResponse->reponseAssurance = $signalement->getInformationProcedure()?->getInfoProcedureReponseAssurance();

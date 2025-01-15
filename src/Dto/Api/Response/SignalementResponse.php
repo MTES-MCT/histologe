@@ -397,7 +397,7 @@ class SignalementResponse
         example: 2,
         nullable: true
     )]
-    public ?int $nombreEnfantsDansLogement;
+    public ?int $nbEnfantsDansLogement;
 
     #[OA\Property(
         description: 'Indique si l\'assurance du logement a été contactée.',
