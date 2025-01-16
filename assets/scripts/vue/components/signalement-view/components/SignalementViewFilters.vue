@@ -345,6 +345,8 @@ import HistoMultiSelect from '../../common/HistoMultiSelect.vue'
 import { store } from '../store'
 import { buildBadge } from '../services/badgeFilterLabelBuilder'
 import HistoInterfaceSelectOption from '../../common/HistoInterfaceSelectOption'
+import { removeLocalStorage } from '../utils/signalementUtils'
+
 
 export default defineComponent({
   name: 'SignalementViewFilters',
@@ -550,7 +552,7 @@ export default defineComponent({
 
       this.reset = !this.reset
       this.$emit('clickReset')
-      localStorage.removeItem('back_link_signalement_view')
+      removeLocalStorage(this)
 
       if (typeof this.onChange === 'function') {
         this.onChange(false)
@@ -566,6 +568,7 @@ export default defineComponent({
       showOptions: store.state.showOptions,
       reset: false,
       sharedState: store.state,
+      sharedProps: store.props,
       ariaPressed: {
         isImported: store.state.input.filters.isImported === 'oui',
         showMyAffectationOnly: store.state.input.filters.showMyAffectationOnly === 'oui',

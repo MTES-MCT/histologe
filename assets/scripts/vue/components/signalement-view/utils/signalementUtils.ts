@@ -253,11 +253,21 @@ export function buildUrl (context: any, ajaxurl: string): any {
     .queryParameters
     .map((parameter: any) => `${parameter.name}=${parameter.value}`).join('&')
   context.sharedProps.ajaxurlSignalement = ajaxurl + '?' + queryParams
-  localStorage.setItem('back_link_signalement_view', queryParams) // TODO check url
+  if (!ajaxurl.includes('cartographie')) {
+    // on n'enregistre en localStorage les filtres que si on est sur la liste de signalements
+    localStorage.setItem('back_link_signalement_view', queryParams)
+  }
 }
 
 export function clearScreen (context: any): any {
   context.messageDeleteConfirmation = ''
   context.classNameDeleteConfirmation = ''
   context.loadingList = true
+}
+
+export function removeLocalStorage (context: any) {
+  if (!context.sharedProps.ajaxurlSignalement.includes('cartographie')) {
+    // on n'enregistre en localStorage les filtres que si on est sur la liste de signalements
+    localStorage.removeItem('back_link_signalement_view')
+  }
 }
