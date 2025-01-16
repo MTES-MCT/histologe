@@ -654,7 +654,7 @@ class SignalementRepository extends ServiceEntityRepository
             ->select($field.' '.$alias)
             ->where('s.statut != :status')
             ->setParameter('status', Signalement::STATUS_ARCHIVED);
-        if (!$user->isSuperAdmin()) {
+        if (!$user->isSuperAdmin() && !$user->isTerritoryAdmin()) {
             $qb->leftJoin('s.affectations', 'affectations')
                 ->leftJoin('affectations.partner', 'partner')
                 ->andWhere('partner IN (:partners)')
@@ -663,6 +663,9 @@ class SignalementRepository extends ServiceEntityRepository
         if ($territory) {
             $qb->andWhere('s.territory = :territory')
                 ->setParameter('territory', $territory);
+        } elseif (!$user->isSuperAdmin()) {
+            $qb->andWhere('s.territory IN (:territories)')
+                ->setParameter('territories', $user->getPartnersTerritories());
         }
 
         return $qb
