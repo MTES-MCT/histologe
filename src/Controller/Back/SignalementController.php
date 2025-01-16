@@ -76,17 +76,17 @@ class SignalementController extends AbstractController
         );
 
         $canAnswerAssignment = $canCancelRefusedAssignment = false;
-        $isAssignmentRefused = $isAssignmentAccepted = $isClosedForMe = null;
+        $isAssignmentRefused = $isAssignmentAccepted = $isClosedForMe = false;
         $partner = $user->getPartnerInTerritoryOrFirstOne($signalement->getTerritory());
         if ($affectation = $signalement->getAffectations()->filter(function (Affectation $affectation) use ($partner) {
             return $affectation->getPartner() === $partner;
         })->first()) {
             switch ($affectation->getStatut()) {
                 case Affectation::STATUS_ACCEPTED:
-                    $isAssignmentAccepted = $affectation;
+                    $isAssignmentAccepted = true;
                     break;
                 case Affectation::STATUS_REFUSED:
-                    $isAssignmentRefused = $affectation;
+                    $isAssignmentRefused = true;
                     $canCancelRefusedAssignment = $this->isGranted(AssignmentVoter::ANSWER, $affectation);
                     break;
                 case Affectation::STATUS_CLOSED:

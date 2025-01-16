@@ -174,7 +174,7 @@
                     </div>
 
                 {% elseif canCancelRefusedAssignment %}
-                    <form method="POST" action="{{ path('back_signalement_affectation_response',{signalement:signalement.id,user:app.user.id,affectation:isAssignmentRefused.id}) }}">
+                    <form method="POST" action="{{ path('back_signalement_affectation_response',{signalement:signalement.id,user:app.user.id,affectation:affectation.id}) }}">
                         <button class="fr-btn fr-btn--sm fr-btn--icon-left fr-icon-checkbox-circle-fill reaffect fr-mb-3v"
                                 name="signalement-affectation-response[accept]" value="1"
                                 >
