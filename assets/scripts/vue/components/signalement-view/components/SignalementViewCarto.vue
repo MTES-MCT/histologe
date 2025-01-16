@@ -50,6 +50,7 @@ export default defineComponent({
   },
   methods: {
     initializeMap () {
+      console.log('initializeMap')
       this.map = L.map('map-signalements-view', {
         center: [47.11, -0.01],
         maxBounds: this.bounds,
@@ -76,10 +77,12 @@ export default defineComponent({
             details: signalement.details
           }
           const marker = L.marker([signalement.geoloc.lat, signalement.geoloc.lng], signalementOptions)
+          console.log(signalement.id+' : '+signalement.geoloc.lat+'/'+signalement.geoloc.lng)
           this.markers.addLayer(marker)
         }
       })
       this.map?.addLayer(this.markers as unknown as L.Layer)
+      console.log('addMarkers')
     },
     configurePopups () {
       this.markers.getLayers().forEach((layer: any) => {
@@ -97,7 +100,9 @@ export default defineComponent({
       })
     },
     adjustMapBounds () {
+      console.log('adjustMapBounds')
       const bounds = this.markers.getBounds()
+      console.log(bounds)
       if (Object.keys(bounds).length !== 0) {
         this.map?.fitBounds([
           [bounds.getNorthEast().lat, bounds.getNorthEast().lng],

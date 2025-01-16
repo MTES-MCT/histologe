@@ -4,12 +4,22 @@
     <p>{{ messageDeleteConfirmation }}</p>
   </div>
   <div id="histo-app-signalement-view">
-    <SignalementViewFilters
-        :shared-props="sharedProps"
-        @change="handleFilters"
-        @changeTerritory="handleTerritoryChange"
-        @clickReset="handleClickReset"
-    />
+    <section class="fr-background--white" :style="'block'">
+      <div class="fr-grid-row fr-p-3w fr-pb-6w' fr-container-sml">
+        <div class="fr-col-12">
+          <h1 class="fr-mb-2w fr-h2">Liste des signalements</h1>
+          <div class="fr-container--fluid" role="search">
+            <SignalementViewFilters
+                :shared-props="sharedProps"
+                @change="handleFilters"
+                @changeTerritory="handleTerritoryChange"
+                @clickReset="handleClickReset"
+                :layout="'horizontal'"
+            />
+          </div>
+        </div>
+      </div>
+    </section>
     <section v-if="loadingList" class="loading fr-m-10w fr-text--center">
       <h2 class="fr-text--light" v-if="!hasErrorLoading">Chargement de la liste...</h2>
       <h2 class="fr-text--light" v-if="hasErrorLoading">Erreur lors du chargement de la liste.</h2>

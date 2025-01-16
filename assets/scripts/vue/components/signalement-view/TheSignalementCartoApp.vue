@@ -1,16 +1,23 @@
 
 <template>
   <div id="histo-app-signalement-carto">
-    <SignalementViewFilters
-        :shared-props="sharedProps"
-        @change="handleFilters"
-        @changeTerritory="handleTerritoryChange"
-        @clickReset="handleClickReset"
-    />
-    <SignalementViewCarto
-        :api-url="sharedProps.ajaxurlSignalement"
-        :token="sharedProps.token"
-        formSelector="#signalement-view-filters"/>
+    <div class="fr-grid-row">
+      <div class="fr-col-2">
+        <SignalementViewFilters
+            :shared-props="sharedProps"
+            @change="handleFilters"
+            @changeTerritory="handleTerritoryChange"
+            @clickReset="handleClickReset"
+            :layout="'vertical'"
+        />
+      </div>
+      <div class="fr-col-10">
+        <SignalementViewCarto
+          :api-url="sharedProps.ajaxurlSignalement"
+          :token="sharedProps.token"
+          formSelector="#signalement-view-filters"/>
+      </div>
+    </div>
   </div>
 </template>
 
