@@ -302,7 +302,7 @@ class SignalementDraftRequest
     )]
     private ?string $compositionLogementNombrePersonnes = null;
 
-    #[Assert\Positive(message: 'Le nombre d\'enfants doit être un nombre positif.')]
+    #[Assert\PositiveOrZero(message: 'Le nombre d\'enfants doit être un nombre positif ou zero.')]
     #[Assert\Type(type: 'numeric', message: 'Le nombre d\'enfants doit être un nombre.')]
     #[Assert\Length(
         max: 10,
