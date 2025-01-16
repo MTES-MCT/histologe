@@ -3,14 +3,15 @@
 namespace App\Manager;
 
 use App\Entity\Enum\DocumentType;
+use App\Entity\Enum\MotifRefus;
 use App\Entity\File;
 use App\Entity\Intervention;
 use App\Entity\Signalement;
 use App\Entity\Suivi;
 use App\Entity\User;
 use App\EventListener\SignalementUpdatedListener;
-use App\Factory\SuiviFactory;
 use App\Repository\DesordreCritereRepository;
+use App\Service\Sanitizer;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
@@ -18,39 +19,37 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 class SuiviManager extends Manager
 {
     public function __construct(
-        private readonly SuiviFactory $suiviFactory,
         protected ManagerRegistry $managerRegistry,
         private readonly UrlGeneratorInterface $urlGenerator,
-        protected SignalementUpdatedListener $signalementUpdatedListener,
-        protected Security $security,
-        private DesordreCritereRepository $desordreCritereRepository,
+        private readonly SignalementUpdatedListener $signalementUpdatedListener,
+        private readonly Security $security,
+        private readonly DesordreCritereRepository $desordreCritereRepository,
         string $entityName = Suivi::class,
     ) {
         parent::__construct($managerRegistry, $entityName);
     }
 
     public function createSuivi(
-        ?User $user,
         Signalement $signalement,
-        array $params,
+        string $description,
+        int $type,
         bool $isPublic = false,
-        bool $flush = false,
-        string $context = '',
+        ?User $user = null,
+        ?string $context = null,
+        bool $sendMail = true,
+        bool $flush = true,
     ): Suivi {
-        $suivi = $this->suiviFactory->createInstanceFrom($user, $signalement, $params, $isPublic, $context);
-
+        $suivi = (new Suivi())
+        ->setCreatedBy($user)
+        ->setSignalement($signalement)
+        ->setDescription($description)
+        ->setType($type)
+        ->setIsPublic($isPublic)
+        ->setContext($context)
+        ->setSendMail($sendMail);
         if ($flush) {
             $this->save($suivi);
         }
-
-        return $suivi;
-    }
-
-    public function updateSuiviCreatedByUser(Suivi $suivi, User $user): Suivi
-    {
-        $suivi->setCreatedBy($user);
-
-        $this->save($suivi);
 
         return $suivi;
     }
@@ -65,11 +64,8 @@ class SuiviManager extends Manager
             $this->createSuivi(
                 user: $user,
                 signalement: $signalement,
-                params: [
-                    'type' => Suivi::TYPE_AUTO,
-                    'description' => $description.$user->getNomComplet(),
-                ],
-                flush: true
+                description: $description.$user->getNomComplet(),
+                type: Suivi::TYPE_AUTO,
             );
         }
     }
@@ -181,19 +177,42 @@ class SuiviManager extends Manager
             $linkFile .= '</li>';
             $descriptionList[] = $linkFile;
         }
-
-        $suivi = $this->suiviFactory->createInstanceFrom($user, $signalement);
-        $suivi->setDescription(
-            $description
-            .'<ul>'
-            .implode('', $descriptionList)
-            .'</ul>'
+        $description .= '<ul>'.implode('', $descriptionList).'</ul>';
+        $suivi = $this->createSuivi(
+            user: $user,
+            signalement: $signalement,
+            description: $description,
+            type: Suivi::TYPE_AUTO,
+            isPublic: $isVisibleUsager,
+            flush: false
         );
 
-        $suivi->setIsPublic($isVisibleUsager);
-
-        $suivi->setType(Suivi::TYPE_AUTO);
-
         return $suivi;
+    }
+
+    public static function buildDescriptionClotureSignalement($params): string
+    {
+        $motifSuivi = Sanitizer::sanitize($params['motif_suivi']);
+
+        return \sprintf(
+            'Le signalement a été cloturé pour %s avec le motif suivant <br><strong>%s</strong><br><strong>Desc. : </strong>%s',
+            $params['subject'],
+            $params['motif_cloture']->label(),
+            $motifSuivi
+        );
+    }
+
+    public static function buildDescriptionAnswerAffectation($params): string
+    {
+        $description = '';
+        if (isset($params['accept'])) {
+            $description = 'Le signalement a été accepté';
+        } elseif (isset($params['suivi'])) {
+            $motifRejected = !empty($params['motifRefus']) ? MotifRefus::tryFrom($params['motifRefus'])->label() : 'Non précisé';
+            $commentaire = Sanitizer::sanitize($params['suivi']);
+            $description = 'Le signalement a été refusé avec le motif suivant : '.$motifRejected.'.<br>Plus précisément :<br>'.$commentaire;
+        }
+
+        return $description;
     }
 }

@@ -8,6 +8,7 @@ use App\Entity\Signalement;
 use App\Entity\Suivi;
 use App\Entity\Tag;
 use App\Entity\User;
+use App\Manager\SuiviManager;
 use App\Repository\AffectationRepository;
 use App\Repository\SuiviRepository;
 use App\Service\Mailer\NotificationMail;
@@ -31,8 +32,8 @@ class SignalementActionController extends AbstractController
     public function validationResponseSignalement(
         Signalement $signalement,
         Request $request,
-        ManagerRegistry $doctrine,
         NotificationMailerRegistry $notificationMailerRegistry,
+        SuiviManager $suiviManager,
     ): Response {
         $this->denyAccessUnlessGranted('SIGN_VALIDATE', $signalement);
         if ($this->isCsrfTokenValid('signalement_validation_response_'.$signalement->getId(), $request->get('_token'))
@@ -77,17 +78,16 @@ class SignalementActionController extends AbstractController
             }
             /** @var User $user */
             $user = $this->getUser();
-            $suivi = new Suivi();
-            $suivi->setSignalement($signalement)
-                ->setDescription('Signalement '.$description)
-                ->setCreatedBy($user)
-                ->setIsPublic(true)
-                ->setType(Suivi::TYPE_AUTO)
-                ->setSendMail(false);
             $signalement->setStatut($statut);
-            $doctrine->getManager()->persist($signalement);
-            $doctrine->getManager()->persist($suivi);
-            $doctrine->getManager()->flush();
+
+            $suiviManager->createSuivi(
+                user : $user,
+                signalement: $signalement,
+                description: 'Signalement '.$description,
+                type : Suivi::TYPE_AUTO,
+                isPublic: true,
+                sendMail: false
+            );
 
             $this->addFlash('success', 'Statut du signalement mis à jour avec succès !');
         } else {
@@ -101,7 +101,7 @@ class SignalementActionController extends AbstractController
     public function addSuiviSignalement(
         Signalement $signalement,
         Request $request,
-        EntityManagerInterface $entityManager,
+        SuiviManager $suiviManager,
         LoggerInterface $logger,
     ): Response {
         $this->denyAccessUnlessGranted('COMMENT_CREATE', $signalement);
@@ -115,18 +115,16 @@ class SignalementActionController extends AbstractController
 
                 return $this->redirectToRoute('back_signalement_view', ['uuid' => $signalement->getUuid()]);
             }
-            /** @var User $user */
-            $user = $this->getUser();
-            $suivi = (new Suivi())
-                ->setDescription($content)
-                ->setIsPublic(!empty($form['notifyUsager']))
-                ->setSignalement($signalement)
-                ->setCreatedBy($user)
-                ->setType(Suivi::TYPE_PARTNER);
-
             try {
-                $entityManager->persist($suivi);
-                $entityManager->flush();
+                /** @var User $user */
+                $user = $this->getUser();
+                $suiviManager->createSuivi(
+                    user: $user,
+                    signalement: $signalement,
+                    description: $content,
+                    type: Suivi::TYPE_PARTNER,
+                    isPublic: !empty($form['notifyUsager']),
+                );
             } catch (\Throwable $exception) {
                 $this->addFlash('error', 'Une erreur est survenue lors de la publication.');
                 $logger->error($exception->getMessage());
@@ -176,8 +174,12 @@ class SignalementActionController extends AbstractController
     }
 
     #[Route('/{uuid:signalement}/reopen', name: 'back_signalement_reopen')]
-    public function reopenSignalement(Signalement $signalement, Request $request, ManagerRegistry $doctrine, AffectationRepository $affectationRepository): RedirectResponse|JsonResponse
-    {
+    public function reopenSignalement(
+        Signalement $signalement,
+        Request $request,
+        AffectationRepository $affectationRepository,
+        SuiviManager $suiviManager,
+    ): RedirectResponse|JsonResponse {
         /** @var User $user */
         $user = $this->getUser();
         if ($this->isCsrfTokenValid('signalement_reopen_'.$signalement->getId(), $request->get('_token')) && $response = $request->get('signalement-action')) {
@@ -199,14 +201,13 @@ class SignalementActionController extends AbstractController
                 }
             }
             $signalement->setStatut(Signalement::STATUS_ACTIVE);
-            $suivi = new Suivi();
-            $suivi->setSignalement($signalement)
-                ->setDescription('Signalement rouvert pour '.$reopenFor)
-                ->setCreatedBy($user)
-                ->setIsPublic('1' === $request->get('publicSuivi'))
-                ->setType(Suivi::TYPE_AUTO);
-            $doctrine->getManager()->persist($suivi);
-            $doctrine->getManager()->flush();
+            $suiviManager->createSuivi(
+                user: $user,
+                signalement: $signalement,
+                description: 'Signalement rouvert pour '.$reopenFor,
+                type: Suivi::TYPE_AUTO,
+                isPublic: '1' === $request->get('publicSuivi'),
+            );
             $this->addFlash('success', 'Signalement rouvert avec succès !');
         } else {
             $this->addFlash('error', 'Erreur lors de la réouverture du signalement !');

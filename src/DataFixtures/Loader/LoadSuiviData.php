@@ -4,6 +4,7 @@ namespace App\DataFixtures\Loader;
 
 use App\Entity\Signalement;
 use App\Entity\Suivi;
+use App\Manager\SuiviManager;
 use App\Repository\SignalementRepository;
 use App\Repository\UserRepository;
 use Doctrine\Bundle\FixturesBundle\Fixture;
@@ -18,6 +19,7 @@ class LoadSuiviData extends Fixture implements OrderedFixtureInterface
         private readonly SignalementRepository $signalementRepository,
         private readonly UserRepository $userRepository,
         private readonly ParameterBagInterface $parameterBag,
+        private readonly SuiviManager $suiviManager,
     ) {
     }
 
@@ -34,16 +36,15 @@ class LoadSuiviData extends Fixture implements OrderedFixtureInterface
         $second = 1;
         foreach ($signalements as $signalement) {
             $createdAtUpdated = $signalement->getCreatedAt()->modify('+'.$second.' second');
-            $suivi = (new Suivi())
-                ->setSignalement($signalement)
-                ->setType(Suivi::TYPE_AUTO)
-                ->setDescription(Suivi::DESCRIPTION_SIGNALEMENT_VALIDE)
-                ->setIsPublic(true)
-                ->setCreatedBy($this->userRepository->findOneBy(
-                    ['email' => $this->parameterBag->get('user_system_email')]
-                ))
-                ->setCreatedAt($createdAtUpdated);
-
+            $suivi = $this->suiviManager->createSuivi(
+                user: $this->userRepository->findOneBy(['email' => $this->parameterBag->get('user_system_email')]),
+                signalement: $signalement,
+                description: Suivi::DESCRIPTION_SIGNALEMENT_VALIDE,
+                type: Suivi::TYPE_AUTO,
+                isPublic: true,
+                flush: false,
+            );
+            $suivi->setCreatedAt($createdAtUpdated);
             $manager->persist($suivi);
             ++$second;
         }
@@ -62,22 +63,20 @@ class LoadSuiviData extends Fixture implements OrderedFixtureInterface
     public function loadSuivi(ObjectManager $manager, array $row): void
     {
         $signalement = $this->signalementRepository->findOneBy(['reference' => $row['signalement']]);
-        $suivi = (new Suivi())
-            ->setSignalement($signalement)
-            ->setDescription($row['description'])
-            ->setIsPublic($row['is_public'])
-            ->setCreatedAt(
-                isset($row['created_at'])
-                    ? new \DateTimeImmutable($row['created_at'])
-                    : (Suivi::TYPE_USAGER_POST_CLOTURE === $row['type']
-                        ? $signalement->getClosedAt()->modify('+3 days')
-                        : new \DateTimeImmutable())
-            )
-            ->setType($row['type']);
+        $suivi = $this->suiviManager->createSuivi(
+            signalement : $signalement,
+            description : $row['description'],
+            type : $row['type'],
+            isPublic : $row['is_public'],
+            flush: false
+        );
+        $suivi->setCreatedAt(
+            isset($row['created_at']) ? new \DateTimeImmutable($row['created_at']) :
+            (Suivi::TYPE_USAGER_POST_CLOTURE === $row['type'] ? $signalement->getClosedAt()->modify('+3 days') : new \DateTimeImmutable())
+        );
         if (isset($row['created_by'])) {
             $suivi->setCreatedBy($this->userRepository->findOneBy(['email' => $row['created_by']]));
         }
-
         $manager->persist($suivi);
     }
 

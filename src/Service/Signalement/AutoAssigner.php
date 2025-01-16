@@ -8,7 +8,6 @@ use App\Entity\Partner;
 use App\Entity\Signalement;
 use App\Entity\Suivi;
 use App\Entity\User;
-use App\Factory\SuiviFactory;
 use App\Manager\AffectationManager;
 use App\Manager\SignalementManager;
 use App\Manager\SuiviManager;
@@ -35,7 +34,6 @@ class AutoAssigner
         private SignalementManager $signalementManager,
         private AffectationManager $affectationManager,
         private SuiviManager $suiviManager,
-        private SuiviFactory $suiviFactory,
         private UserManager $userManager,
         private ParameterBagInterface $parameterBag,
         private InterconnectionBus $interconnectionBus,
@@ -106,15 +104,13 @@ class AutoAssigner
 
     private function createSuivi(Signalement $signalement, ?User $adminUser): void
     {
-        $params = [
-            'type' => Suivi::TYPE_AUTO,
-            'description' => 'Signalement validé',
-        ];
-        $suivi = $this->suiviFactory->createInstanceFrom(
+        $suivi = $this->suiviManager->createSuivi(
             user: $adminUser,
             signalement: $signalement,
-            params: $params,
+            description: 'Signalement validé',
+            type: Suivi::TYPE_AUTO,
             isPublic: true,
+            flush: false
         );
         $this->suiviManager->persist($suivi);
     }

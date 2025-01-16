@@ -3,7 +3,6 @@
 namespace App\Command\Cron;
 
 use App\Entity\Suivi;
-use App\Factory\SuiviFactory;
 use App\Manager\SuiviManager;
 use App\Repository\SignalementRepository;
 use App\Repository\SuiviRepository;
@@ -33,7 +32,6 @@ class AskFeedbackUsagerCommand extends AbstractCronCommand
         private readonly ParameterBagInterface $parameterBag,
         private readonly SuiviRepository $suiviRepository,
         private readonly SignalementRepository $signalementRepository,
-        private readonly SuiviFactory $suiviFactory,
     ) {
         parent::__construct($this->parameterBag);
     }
@@ -177,15 +175,11 @@ class AskFeedbackUsagerCommand extends AbstractCronCommand
                 }
             }
 
-            $params = [
-                'type' => Suivi::TYPE_TECHNICAL,
-                'description' => "Un message automatique a été envoyé à l'usager pour lui demander de mettre à jour sa situation.",
-            ];
-
-            $suivi = $this->suiviFactory->createInstanceFrom(
-                user: null,
+            $suivi = $this->suiviManager->createSuivi(
                 signalement: $signalement,
-                params: $params,
+                description: "Un message automatique a été envoyé à l'usager pour lui demander de mettre à jour sa situation.",
+                type: Suivi::TYPE_TECHNICAL,
+                flush: false
             );
 
             if (0 === $totalRead % self::FLUSH_COUNT) {

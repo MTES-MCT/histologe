@@ -56,16 +56,12 @@ class NotifyVisitsCommand extends AbstractCronCommand
             $description .= ' aura lieu le '.$intervention->getScheduledAt()->format('d/m/Y');
             $description .= '<br>La visite sera effectuée par '.$partnerName.'.';
             $suivi = $this->suiviManager->createSuivi(
-                user: null,
                 signalement: $intervention->getSignalement(),
-                params: [
-                    'description' => $description,
-                    'type' => Suivi::TYPE_TECHNICAL,
-                ],
+                description: $description,
+                type: Suivi::TYPE_TECHNICAL,
                 isPublic: true,
                 context: Suivi::CONTEXT_INTERVENTION,
             );
-            $this->suiviManager->save($suivi);
 
             $this->visiteNotifier->notifyUsagers(
                 $intervention,
@@ -112,16 +108,12 @@ class NotifyVisitsCommand extends AbstractCronCommand
                 $description = 'La réalisation d\'une visite est nécessaire pour caractériser les désordres signalés.';
                 $description .= ' Merci de renseigner la date ou les conclusions de la visite afin de poursuivre la prise en charge de ce signalement.';
                 $suivi = $this->suiviManager->createSuivi(
-                    user: null,
                     signalement: $affectation->getSignalement(),
+                    description: $description,
+                    type: Suivi::TYPE_TECHNICAL,
                     isPublic: false,
                     context: Suivi::CONTEXT_INTERVENTION,
-                    params: [
-                        'description' => $description,
-                        'type' => Suivi::TYPE_TECHNICAL,
-                    ],
                 );
-                $this->suiviManager->save($suivi);
 
                 $this->visiteNotifier->notifyAgents(
                     intervention: null,

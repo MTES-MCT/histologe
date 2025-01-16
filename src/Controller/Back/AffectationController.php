@@ -146,13 +146,10 @@ class AffectationController extends AbstractController
                 $suiviManager->createSuivi(
                     user: $adminUser,
                     signalement: $signalement,
-                    params: [
-                        'description' => $parameterBag->get('suivi_message')['first_accepted_affectation'],
-                        'type' => Suivi::TYPE_AUTO,
-                    ],
+                    description: $parameterBag->get('suivi_message')['first_accepted_affectation'],
+                    type: Suivi::TYPE_AUTO,
                     isPublic: true,
                     context: Suivi::CONTEXT_NOTIFY_USAGER_ONLY,
-                    flush: true
                 );
             }
 

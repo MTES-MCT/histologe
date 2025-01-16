@@ -132,17 +132,12 @@ class SynchronizeIdossCommand extends AbstractCronCommand
                         default:
                             $description = 'Le signalement a été mis à jour ("'.$item['statut'].'") par IDOSS';
                     }
-                    $params = [
-                        'domain' => IdossService::TYPE_SERVICE,
-                        'action' => 'synchronize',
-                        'description' => $description,
-                        'name_partner' => $affectation->getPartner()->getNom(),
-                        'type' => Suivi::TYPE_TECHNICAL,
-                    ];
                     $suivi = $this->suiviManager->createSuivi(
                         user: $this->adminUser,
                         signalement: $signalement,
-                        params: $params,
+                        description: $description,
+                        type: Suivi::TYPE_TECHNICAL,
+                        flush: false
                     );
                     $this->entityManager->persist($suivi);
                 }

@@ -10,7 +10,6 @@ use App\Entity\Signalement;
 use App\Entity\SignalementDraft;
 use App\Entity\Suivi;
 use App\Entity\User;
-use App\Factory\SuiviFactory;
 use App\Form\DemandeLienSignalementType;
 use App\Manager\SignalementDraftManager;
 use App\Manager\SuiviManager;
@@ -425,7 +424,6 @@ class SignalementController extends AbstractController
         UserManager $userManager,
         SuiviManager $suiviManager,
         EntityManagerInterface $entityManager,
-        SuiviFactory $suiviFactory,
         SignalementDesordresProcessor $signalementDesordresProcessor,
     ): RedirectResponse|Response {
         $signalement = $signalementRepository->findOneByCodeForPublic($code);
@@ -510,19 +508,13 @@ class SignalementController extends AbstractController
                 N'hésitez pas à mettre à jour votre situation en envoyant un message via le formulaire ci-dessous.");
             }
 
-            $params = [
-                'type' => Suivi::TYPE_USAGER,
-                'description' => $description,
-            ];
-
-            $suivi = $suiviFactory->createInstanceFrom(
-                $user,
-                $signalement,
-                $params,
-                true
+            $suiviManager->createSuivi(
+                user: $user,
+                signalement: $signalement,
+                description: $description,
+                type: Suivi::TYPE_USAGER,
+                isPublic: true,
             );
-            $entityManager->persist($suivi);
-            $entityManager->flush();
 
             return $this->redirectToRoute(
                 'front_suivi_signalement',
@@ -583,7 +575,7 @@ class SignalementController extends AbstractController
         UserManager $userManager,
         Request $request,
         EntityManagerInterface $entityManager,
-        SuiviFactory $suiviFactory,
+        SuiviManager $suiviManager,
         UploadHandlerService $uploadHandlerService,
         ValidatorInterface $validator,
     ): RedirectResponse {
@@ -598,13 +590,6 @@ class SignalementController extends AbstractController
         }
         $email = $request->get('signalement_front_response')['email'];
         $user = $userManager->getOrCreateUserForSignalementAndEmail($signalement, $email);
-        $typeSuivi = Signalement::STATUS_CLOSED === $signalement->getStatut() ? Suivi::TYPE_USAGER_POST_CLOTURE : Suivi::TYPE_USAGER;
-        $suivi = $suiviFactory->createInstanceFrom(
-            user: $user,
-            signalement: $signalement,
-            params: ['type' => $typeSuivi],
-            isPublic: true,
-        );
 
         $errors = $validator->validate($request->get('signalement_front_response')['content'], [
             new \Symfony\Component\Validator\Constraints\NotBlank(),
@@ -637,9 +622,14 @@ class SignalementController extends AbstractController
             $description .= '<br>Ajout de pièces au signalement<ul>'.implode('', $descriptionList).'</ul>';
         }
 
-        $suivi->setDescription($description);
-        $entityManager->persist($suivi);
-        $entityManager->flush();
+        $typeSuivi = Signalement::STATUS_CLOSED === $signalement->getStatut() ? Suivi::TYPE_USAGER_POST_CLOTURE : Suivi::TYPE_USAGER;
+        $suiviManager->createSuivi(
+            user: $user,
+            signalement: $signalement,
+            description: $description,
+            type: $typeSuivi,
+            isPublic: true,
+        );
 
         $messageRetour = Signalement::STATUS_CLOSED === $signalement->getStatut() ?
         'Nos services vont prendre connaissance de votre message. Votre dossier est clôturé, vous ne pouvez désormais plus envoyer de message.' :
