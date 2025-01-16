@@ -23,18 +23,6 @@ class TagRepository extends ServiceEntityRepository
         parent::__construct($registry, Tag::class);
     }
 
-    public function findAllActiveInTerritories(
-        array $territories,
-    ): mixed {
-        $qb = $this->createQueryBuilder('t');
-        $qb->andWhere('t.isArchive != 1')->orderBy('t.label', 'ASC');
-        if (\count($territories)) {
-            $qb->andWhere('t.territory IN (:territories)')->setParameter('territories', $territories);
-        }
-
-        return $qb->getQuery()->getResult();
-    }
-
     public function findAllActive(
         ?Territory $territory = null,
         ?User $user = null,

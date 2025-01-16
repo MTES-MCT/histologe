@@ -237,11 +237,6 @@ class SearchFilter
         return $this->request;
     }
 
-    public function getCountActive(): int
-    {
-        return $this->countActive;
-    }
-
     /**
      * @throws Exception
      */

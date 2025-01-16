@@ -49,11 +49,6 @@
     <link rel="stylesheet" href="{{ asset('build/dsfr/utility/icons/icons-user/icons-user.min.css') }}">
     <link rel="stylesheet" href="{{ asset('build/dsfr/utility/icons/icons-weather/icons-weather.min.css') }}">
     <link rel="stylesheet" href={{ asset('build/app.css') }}>
-    {% if 'back_cartographie' in app.request.get('_route') %}
-        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.css">
-        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet.markercluster@1.5.3/dist/MarkerCluster.Default.css">
-        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet.markercluster@1.5.3/dist/MarkerCluster.css">
-    {% endif %}
 
     {% if 'back_signalement_view' in app.request.get('_route') %}
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/tippy.js@6/dist/tippy.css">
