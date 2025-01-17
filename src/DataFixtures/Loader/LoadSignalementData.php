@@ -417,6 +417,11 @@ class LoadSignalementData extends Fixture implements OrderedFixtureInterface
                 ->setMotifRefus(MotifRefus::tryFrom($row['motif_refus']));
         }
 
+        if (isset($row['created_by'])) {
+            $signalement
+                ->setCreatedBy($this->userRepository->findOneBy(['email' => $row['created_by']]));
+        }
+
         if (isset($row['type_proprio'])) {
             $signalement
                 ->setTypeProprio(ProprioType::tryFrom($row['type_proprio']));

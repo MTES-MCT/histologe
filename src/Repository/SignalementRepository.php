@@ -86,6 +86,7 @@ class SignalementRepository extends ServiceEntityRepository
         ?ArrayCollection $partners,
         bool $removeImported = false,
         bool $removeArchived = false,
+        bool $removeDraft = true,
     ): int {
         $qb = $this->createQueryBuilder('s');
         $qb->select('COUNT(s.id)');
@@ -93,6 +94,11 @@ class SignalementRepository extends ServiceEntityRepository
         if ($removeArchived) {
             $qb->andWhere('s.statut != :statutArchived')
                 ->setParameter('statutArchived', Signalement::STATUS_ARCHIVED);
+        }
+
+        if ($removeDraft) {
+            $qb->andWhere('s.statut != :statutDraft')
+                ->setParameter('statutDraft', Signalement::STATUS_DRAFT);
         }
 
         if ($removeImported) {
@@ -120,8 +126,8 @@ class SignalementRepository extends ServiceEntityRepository
     {
         $qb = $this->createQueryBuilder('s')
             ->select('COUNT(s.id)')
-            ->andWhere('s.statut != :statutArchived')
-            ->setParameter('statutArchived', Signalement::STATUS_ARCHIVED)
+            ->andWhere('s.statut NOT IN (:statutList)')
+            ->setParameter('statutList', [Signalement::STATUS_ARCHIVED, Signalement::STATUS_DRAFT])
             ->andWhere('s.isImported = 1');
 
         if (null !== $territory) {
@@ -143,8 +149,8 @@ class SignalementRepository extends ServiceEntityRepository
         $qb = $this->createQueryBuilder('s');
         $qb->select('COUNT(s.id) as count')
             ->addSelect('s.statut')
-            ->where('s.statut != :statutArchived')
-            ->setParameter('statutArchived', Signalement::STATUS_ARCHIVED);
+            ->andWhere('s.statut NOT IN (:statutList)')
+            ->setParameter('statutList', [Signalement::STATUS_ARCHIVED, Signalement::STATUS_DRAFT]);
 
         if ($removeImported) {
             $qb->andWhere('s.isImported IS NULL OR s.isImported = 0');
@@ -183,7 +189,7 @@ class SignalementRepository extends ServiceEntityRepository
 
     public function countValidated(bool $removeImported = false): int
     {
-        $notStatus = [Signalement::STATUS_NEED_VALIDATION, Signalement::STATUS_ARCHIVED];
+        $notStatus = [Signalement::STATUS_NEED_VALIDATION, Signalement::STATUS_ARCHIVED, Signalement::STATUS_DRAFT];
         $qb = $this->createQueryBuilder('s');
         $qb->select('COUNT(s.id)');
         $qb->andWhere('s.statut NOT IN (:notStatus)')
@@ -231,8 +237,8 @@ class SignalementRepository extends ServiceEntityRepository
         $qb->select('COUNT(s.id) AS count, t.zip, t.name, t.id')
             ->leftJoin('s.territory', 't')
 
-            ->where('s.statut != :statutArchived')
-            ->setParameter('statutArchived', Signalement::STATUS_ARCHIVED);
+            ->where('s.statut NOT IN (:statutList)')
+            ->setParameter('statutList', [Signalement::STATUS_ARCHIVED, Signalement::STATUS_DRAFT]);
 
         if ($removeImported) {
             $qb->andWhere('s.isImported IS NULL OR s.isImported = 0');
@@ -249,8 +255,8 @@ class SignalementRepository extends ServiceEntityRepository
         $qb = $this->createQueryBuilder('s');
         $qb->select('COUNT(s.id) AS count, MONTH(s.createdAt) AS month, YEAR(s.createdAt) AS year')
 
-            ->where('s.statut != :statutArchived')
-            ->setParameter('statutArchived', Signalement::STATUS_ARCHIVED);
+        ->where('s.statut NOT IN (:statutList)')
+        ->setParameter('statutList', [Signalement::STATUS_ARCHIVED, Signalement::STATUS_DRAFT]);
 
         if ($removeImported) {
             $qb->andWhere('s.isImported IS NULL OR s.isImported = 0');
@@ -279,8 +285,8 @@ class SignalementRepository extends ServiceEntityRepository
         $qb->select('COUNT(s.id) AS count, sit.id, sit.menuLabel')
             ->leftJoin('s.situations', 'sit')
 
-            ->where('s.statut != :statutArchived')
-            ->setParameter('statutArchived', Signalement::STATUS_ARCHIVED);
+            ->where('s.statut NOT IN (:statutList)')
+            ->setParameter('statutList', [Signalement::STATUS_ARCHIVED, Signalement::STATUS_DRAFT]);
 
         if ($removeImported) {
             $qb->andWhere('s.isImported IS NULL OR s.isImported = 0');
@@ -336,8 +342,8 @@ class SignalementRepository extends ServiceEntityRepository
         $qb = $this->createQueryBuilder('s');
         $qb->select('COUNT(s.id) AS count, desordreCriteres.labelCritere')
             ->leftJoin('s.desordreCriteres', 'desordreCriteres')
-            ->where('s.statut != :statutArchived')
-            ->setParameter('statutArchived', Signalement::STATUS_ARCHIVED)
+            ->where('s.statut NOT IN (:statutList)')
+            ->setParameter('statutList', [Signalement::STATUS_ARCHIVED, Signalement::STATUS_DRAFT])
             ->andWhere('s.createdFrom IS NOT NULL');
 
         $qb->andWhere('s.isImported IS NULL OR s.isImported = 0');
@@ -370,9 +376,8 @@ class SignalementRepository extends ServiceEntityRepository
             ->where('s.motifCloture IS NOT NULL')
             ->andWhere('s.motifCloture != \'0\'')
             ->andWhere('s.closedAt IS NOT NULL')
-
-            ->andWhere('s.statut != :statutArchived')
-            ->setParameter('statutArchived', Signalement::STATUS_ARCHIVED);
+            ->andWhere('s.statut NOT IN (:statutList)')
+            ->setParameter('statutList', [Signalement::STATUS_ARCHIVED, Signalement::STATUS_DRAFT]);
 
         if ($removeImported) {
             $qb->andWhere('s.isImported IS NULL OR s.isImported = 0');
@@ -402,7 +407,7 @@ class SignalementRepository extends ServiceEntityRepository
             ->andWhere('s.mailOccupant = :email')
             ->setParameter('email', $email)
             ->andWhere('s.statut NOT IN (:statusList)')
-            ->setParameter('statusList', [Signalement::STATUS_ARCHIVED, Signalement::STATUS_CLOSED, Signalement::STATUS_REFUSED])
+            ->setParameter('statusList', [Signalement::STATUS_ARCHIVED, Signalement::STATUS_CLOSED, Signalement::STATUS_REFUSED, Signalement::STATUS_DRAFT])
             ->getQuery()
             ->getOneOrNullResult();
     }
@@ -416,7 +421,7 @@ class SignalementRepository extends ServiceEntityRepository
             ->andWhere('s.mailDeclarant = :email')
             ->setParameter('email', $email)
             ->andWhere('s.statut NOT IN (:statusList)')
-            ->setParameter('statusList', [Signalement::STATUS_ARCHIVED, Signalement::STATUS_CLOSED, Signalement::STATUS_REFUSED])
+            ->setParameter('statusList', [Signalement::STATUS_ARCHIVED, Signalement::STATUS_CLOSED, Signalement::STATUS_REFUSED, Signalement::STATUS_DRAFT])
             ->getQuery()
             ->getOneOrNullResult();
     }
@@ -472,7 +477,7 @@ class SignalementRepository extends ServiceEntityRepository
             ->leftJoin('s.signalementQualifications', 'sq', 'WITH', 'sq.status LIKE \'%AVEREE%\' OR sq.status LIKE \'%CHECK%\'')
             ->leftJoin('s.interventions', 'i', 'WITH', 'i.type LIKE \'VISITE\' OR i.type LIKE \'ARRETE_PREFECTORAL\'')
             ->leftJoin('s.territory', 'territory')
-            ->where('s.statut != :status')
+            ->where('s.statut NOT IN (:statusList)')
             ->groupBy('s.id')
             ->setParameter('concat_separator', SignalementAffectationListView::SEPARATOR_CONCAT)
             ->setParameter('group_concat_separator', SignalementAffectationListView::SEPARATOR_GROUP_CONCAT);
@@ -532,7 +537,7 @@ class SignalementRepository extends ServiceEntityRepository
                 ->setParameter('bailleur', $options['bailleurSocial']);
             }
         }
-        $qb->setParameter('status', Signalement::STATUS_ARCHIVED);
+        $qb->setParameter('statusList', [Signalement::STATUS_ARCHIVED, Signalement::STATUS_DRAFT]);
         $qb = $this->searchFilter->applyFilters($qb, $options, $user);
 
         if (isset($options['sortBy'])) {
@@ -652,8 +657,8 @@ class SignalementRepository extends ServiceEntityRepository
     ): array|int|string {
         $qb = $this->createQueryBuilder('s')
             ->select($field.' '.$alias)
-            ->where('s.statut != :status')
-            ->setParameter('status', Signalement::STATUS_ARCHIVED);
+            ->where('s.statut NOT IN (:statutList)')
+            ->setParameter('statutList', [Signalement::STATUS_ARCHIVED, Signalement::STATUS_DRAFT]);
         if (!$user->isSuperAdmin() && !$user->isTerritoryAdmin()) {
             $qb->leftJoin('s.affectations', 'affectations')
                 ->leftJoin('affectations.partner', 'partner')
@@ -681,7 +686,9 @@ class SignalementRepository extends ServiceEntityRepository
             ->andWhere('s.codeSuivi = :code')
             ->setParameter('code', $code)
             ->leftJoin('s.suivis', 'suivis', Join::WITH, 'suivis.isPublic = 1')
-            ->addSelect('suivis');
+            ->addSelect('suivis')
+            ->andWhere('s.statut != :statutDraft')
+            ->setParameter('statutDraft', Signalement::STATUS_DRAFT);
 
         if ($excludeArchived) {
             $qb->andWhere('s.statut != :status')
@@ -765,13 +772,19 @@ class SignalementRepository extends ServiceEntityRepository
         return $partnersEmail;
     }
 
-    public function getAverageCriticite(?Territory $territory, ?ArrayCollection $partners, bool $removeImported = false): ?float
+    public function getAverageCriticite(
+        ?Territory $territory, ?ArrayCollection $partners, bool $removeImported = false,
+        bool $removeDraft = true, ): ?float
     {
         $qb = $this->createQueryBuilder('s');
         $qb->select('AVG(s.score)');
 
         if ($removeImported) {
             $qb->andWhere('s.isImported IS NULL OR s.isImported = 0');
+        }
+
+        if ($removeDraft) {
+            $qb->andWhere('s.statut != :statusDraft')->setParameter('statusDraft', Signalement::STATUS_DRAFT);
         }
         if ($territory) {
             $qb->andWhere('s.territory = :territory')->setParameter('territory', $territory);
@@ -787,23 +800,29 @@ class SignalementRepository extends ServiceEntityRepository
             ->getSingleScalarResult();
     }
 
-    public function getAverageDaysValidation(?Territory $territory, ?ArrayCollection $partners, bool $removeImported = false): ?float
+    public function getAverageDaysValidation(?Territory $territory, ?ArrayCollection $partners, bool $removeImported = false,
+        bool $removeDraft = true, ): ?float
     {
-        return $this->getAverageDayResult('validatedAt', $territory, $partners, $removeImported);
+        return $this->getAverageDayResult('validatedAt', $territory, $partners, $removeImported, $removeDraft);
     }
 
-    public function getAverageDaysClosure(?Territory $territory, ?ArrayCollection $partners, bool $removeImported = false): ?float
+    public function getAverageDaysClosure(?Territory $territory, ?ArrayCollection $partners, bool $removeImported = false,
+        bool $removeDraft = true, ): ?float
     {
-        return $this->getAverageDayResult('closedAt', $territory, $partners, $removeImported);
+        return $this->getAverageDayResult('closedAt', $territory, $partners, $removeImported, $removeDraft);
     }
 
-    private function getAverageDayResult(string $field, ?Territory $territory, ?ArrayCollection $partners, bool $removeImported = false): ?float
+    private function getAverageDayResult(
+        string $field, ?Territory $territory, ?ArrayCollection $partners, bool $removeImported = false, bool $removeDraft = true, ): ?float
     {
         $qb = $this->createQueryBuilder('s');
         $qb->select('AVG(datediff(s.'.$field.', s.createdAt))');
 
         $qb->andWhere('s.'.$field.' IS NOT NULL');
 
+        if ($removeDraft) {
+            $qb->andWhere('s.statut != :statusDraft')->setParameter('statusDraft', Signalement::STATUS_DRAFT);
+        }
         if ($removeImported) {
             $qb->andWhere('s.isImported IS NULL OR s.isImported = 0');
         }
@@ -1004,6 +1023,9 @@ class SignalementRepository extends ServiceEntityRepository
                 $qb->andWhere('s.statut != :statutArchived')
                     ->setParameter('statutArchived', Signalement::STATUS_ARCHIVED);
             }
+            // Pour l'instant on exclue de base les brouillons
+            $qb->andWhere('s.statut != :statutDraft')
+                ->setParameter('statutDraft', Signalement::STATUS_DRAFT);
         }
 
         // Filter on creation date
@@ -1161,8 +1183,8 @@ class SignalementRepository extends ServiceEntityRepository
             ->setParameter('active', Signalement::STATUS_ACTIVE)
             ->setParameter('closed', Signalement::STATUS_CLOSED)
             ->setParameter('refused', Signalement::STATUS_REFUSED)
-            ->where('s.statut != :archived')
-            ->setParameter('archived', Signalement::STATUS_ARCHIVED);
+            ->where('s.statut NOT IN (:statutList)')
+            ->setParameter('statutList', [Signalement::STATUS_ARCHIVED, Signalement::STATUS_DRAFT]);
 
         if (\count($territories)) {
             $qb->andWhere('s.territory IN (:territories)')->setParameter('territories', $territories);
@@ -1171,28 +1193,29 @@ class SignalementRepository extends ServiceEntityRepository
         return $qb->getQuery()->getOneOrNullResult();
     }
 
-    public function createQueryBuilderActiveSignalement(
-        ?Territory $territory = null,
-        bool $removeImported = false,
-        bool $removeArchived = false,
-    ): QueryBuilder {
-        $qb = $this->createQueryBuilder('s');
+    // fonction pas utilisée
+    // public function createQueryBuilderActiveSignalement(
+    //     ?Territory $territory = null,
+    //     bool $removeImported = false,
+    //     bool $removeArchived = false,
+    // ): QueryBuilder {
+    //     $qb = $this->createQueryBuilder('s');
 
-        if ($removeArchived) {
-            $qb->andWhere('s.statut != :statutArchived')
-                ->setParameter('statutArchived', Signalement::STATUS_ARCHIVED);
-        }
+    //     if ($removeArchived) {
+    //         $qb->andWhere('s.statut != :statutArchived')
+    //             ->setParameter('statutArchived', Signalement::STATUS_ARCHIVED);
+    //     }
 
-        if ($removeImported) {
-            $qb->andWhere('s.isImported IS NULL OR s.isImported = 0');
-        }
+    //     if ($removeImported) {
+    //         $qb->andWhere('s.isImported IS NULL OR s.isImported = 0');
+    //     }
 
-        if ($territory) {
-            $qb->andWhere('s.territory = :territory')->setParameter('territory', $territory);
-        }
+    //     if ($territory) {
+    //         $qb->andWhere('s.territory = :territory')->setParameter('territory', $territory);
+    //     }
 
-        return $qb;
-    }
+    //     return $qb;
+    // }
 
     public function findAllByIds(array $ids): array
     {
@@ -1229,7 +1252,7 @@ class SignalementRepository extends ServiceEntityRepository
             ->andWhere('s.adresseOccupant = :address')->setParameter('address', $address)
             ->andWhere('s.cpOccupant = :zipcode')->setParameter('zipcode', $zipcode)
             ->andWhere('s.villeOccupant = :city')->setParameter('city', $city)
-            ->andWhere('s.statut != :statutArchived')->setParameter('statutArchived', Signalement::STATUS_ARCHIVED);
+            ->andWhere('s.statut NOT IN (:statutList)')->setParameter('statutList', [Signalement::STATUS_ARCHIVED, Signalement::STATUS_DRAFT]);
 
         $list = $qb->addOrderBy('s.createdAt', 'DESC')
             ->getQuery()->getResult();

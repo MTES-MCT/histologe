@@ -68,6 +68,11 @@ class SignalementController extends AbstractController
 
             return $this->redirectToRoute('back_signalement_index');
         }
+        if (Signalement::STATUS_DRAFT === $signalement->getStatut()) {
+            $this->addFlash('error', "Ce signalement est un brouillon et n'est pas consultable.");
+
+            return $this->redirectToRoute('back_signalement_index');
+        }
         $this->denyAccessUnlessGranted('SIGN_VIEW', $signalement);
 
         $eventDispatcher->dispatch(

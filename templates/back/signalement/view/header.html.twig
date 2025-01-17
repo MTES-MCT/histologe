@@ -59,7 +59,8 @@
                         {% elseif signalement.statut is same as constant('App\\Entity\\Signalement::STATUS_REFUSED') %}
                             <span class="fr-badge fr-badge--new fr-badge--no-icon"><span class="fr-icon-close-line" aria-hidden="true"></span> Refusé</span>
                         {% elseif signalement.statut is same as constant('App\\Entity\\Signalement::STATUS_CLOSED')
-                            or signalement.statut is same as constant('App\\Entity\\Signalement::STATUS_ARCHIVED') %}
+                            or signalement.statut is same as constant('App\\Entity\\Signalement::STATUS_ARCHIVED') 
+                            or signalement.statut is same as constant('App\\Entity\\Signalement::STATUS_DRAFT') %} <!-- NE DOIT PAS ARRIVER -->
                             <span class="fr-badge fr-badge--error fr-badge--no-icon"><span class="fr-icon-checkbox-circle-line" aria-hidden="true"></span> Clôturé</span>
                         {% endif %}
                     {% else %}

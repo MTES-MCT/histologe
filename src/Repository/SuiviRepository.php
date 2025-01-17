@@ -37,7 +37,8 @@ class SuiviRepository extends ServiceEntityRepository
     {
         $connection = $this->getEntityManager()->getConnection();
         $whereTerritory = '';
-        $parameters['statut'] = Signalement::STATUS_ARCHIVED;
+        $parameters['statut_archived'] = Signalement::STATUS_ARCHIVED;
+        $parameters['statut_draft'] = Signalement::STATUS_DRAFT;
 
         if (\count($territories)) {
             $territoriesIds = implode(',', array_keys($territories));
@@ -50,11 +51,12 @@ class SuiviRepository extends ServiceEntityRepository
                     SELECT count(*) as nb_suivi
                     FROM suivi su
                     INNER JOIN signalement s on s.id = su.signalement_id
-                    WHERE s.statut != :statut
+                    WHERE s.statut NOT IN (:statut_archived, :statut_draft)
                     '.$whereTerritory.'
                     GROUP BY su.signalement_id
                 ) as countQuery';
 
+        dump($sql);
         $statement = $connection->prepare($sql);
 
         return (float) $statement->executeQuery($parameters)->fetchOne();
@@ -76,6 +78,7 @@ class SuiviRepository extends ServiceEntityRepository
             'status_archived' => Signalement::STATUS_ARCHIVED,
             'status_closed' => Signalement::STATUS_CLOSED,
             'status_refused' => Signalement::STATUS_REFUSED,
+            'status_draft' => Signalement::STATUS_DRAFT,
         ];
 
         if (\count($territories)) {
@@ -114,6 +117,7 @@ class SuiviRepository extends ServiceEntityRepository
             'status_archived' => Signalement::STATUS_ARCHIVED,
             'status_closed' => Signalement::STATUS_CLOSED,
             'status_refused' => Signalement::STATUS_REFUSED,
+            'status_draft' => Signalement::STATUS_DRAFT,
         ];
 
         $territories = [];
@@ -142,9 +146,9 @@ class SuiviRepository extends ServiceEntityRepository
         $qb = $this->createQueryBuilder('s');
         $qb->select('COUNT(s) as nb_suivi')
             ->innerJoin('s.signalement', 'sig')
-            ->where('sig.statut != :statut')
+            ->where('sig.statut NOT IN (:statutList)')
             ->andWhere('s.type = :type_suivi')
-            ->setParameter('statut', Signalement::STATUS_ARCHIVED)
+            ->setParameter('statutList', [Signalement::STATUS_ARCHIVED, Signalement::STATUS_DRAFT])
             ->setParameter('type_suivi', Suivi::TYPE_PARTNER);
 
         if (\count($territories)) {
@@ -164,10 +168,10 @@ class SuiviRepository extends ServiceEntityRepository
         $qb->select('COUNT(s) as nb_suivi')
             ->innerJoin('s.signalement', 'sig')
             ->leftJoin('s.createdBy', 'u')
-            ->where('sig.statut != :statut')
+            ->where('sig.statut NOT IN (:statutList)')
             ->andWhere('s.type = :type_suivi')
             ->setParameter('type_suivi', Suivi::TYPE_USAGER)
-            ->setParameter('statut', Signalement::STATUS_ARCHIVED);
+            ->setParameter('statutList', [Signalement::STATUS_ARCHIVED, Signalement::STATUS_DRAFT]);
 
         if (\count($territories)) {
             $qb->andWhere('sig.territory IN (:territories)')->setParameter('territories', $territories);
@@ -196,7 +200,7 @@ class SuiviRepository extends ServiceEntityRepository
                 INNER JOIN signalement s on s.id = su.signalement_id
                 '.$innerPartnerJoin.'
                 WHERE type in (:type_suivi_usager,:type_suivi_partner, :type_suivi_auto)
-                AND s.statut NOT IN (:status_closed, :status_archived, :status_refused)
+                AND s.statut NOT IN (:status_closed, :status_archived, :status_refused, :status_draft)
                 '.$whereTerritory.'
                 '.$wherePartner.'
                 GROUP BY su.signalement_id
@@ -216,6 +220,7 @@ class SuiviRepository extends ServiceEntityRepository
             'status_closed' => Signalement::STATUS_CLOSED,
             'status_archived' => Signalement::STATUS_ARCHIVED,
             'status_refused' => Signalement::STATUS_REFUSED,
+            'status_draft' => Signalement::STATUS_DRAFT,
         ];
 
         $sql = 'SELECT s.id, s.created_at, MAX(su.max_date_suivi_technique_or_public) AS last_posted_at
@@ -226,7 +231,7 @@ class SuiviRepository extends ServiceEntityRepository
             WHERE (type = :type_suivi_technical OR is_public = 1)
             GROUP BY signalement_id
         ) su ON s.id = su.signalement_id
-        WHERE s.statut NOT IN (:status_need_validation, :status_closed, :status_archived, :status_refused)
+        WHERE s.statut NOT IN (:status_need_validation, :status_closed, :status_archived, :status_refused, :status_draft)
         AND s.is_imported != 1
         AND (s.is_usager_abandon_procedure != 1 OR s.is_usager_abandon_procedure IS NULL)
         GROUP BY s.id
@@ -251,6 +256,7 @@ class SuiviRepository extends ServiceEntityRepository
             'status_closed' => Signalement::STATUS_CLOSED,
             'status_archived' => Signalement::STATUS_ARCHIVED,
             'status_refused' => Signalement::STATUS_REFUSED,
+            'status_draft' => Signalement::STATUS_DRAFT,
         ];
 
         $sql = 'SELECT s.id
@@ -263,7 +269,7 @@ class SuiviRepository extends ServiceEntityRepository
                 ) su ON s.id = su.signalement_id
                 LEFT JOIN suivi su_last ON su_last.signalement_id = su.signalement_id AND su_last.created_at > su.max_date_suivi_technique
                 WHERE su_last.id IS NULL AND su.max_date_suivi_technique < DATE_SUB(NOW(), INTERVAL :day_period DAY)
-                AND s.statut NOT IN (:status_need_validation, :status_closed, :status_archived, :status_refused)
+                AND s.statut NOT IN (:status_need_validation, :status_closed, :status_archived, :status_refused, :status_draft)
                 AND s.is_imported != 1
                 AND (s.is_usager_abandon_procedure != 1 OR s.is_usager_abandon_procedure IS NULL)
                 LIMIT '.$this->limitDailyRelancesByRequest;
@@ -283,6 +289,7 @@ class SuiviRepository extends ServiceEntityRepository
             'status_closed' => Signalement::STATUS_CLOSED,
             'status_archived' => Signalement::STATUS_ARCHIVED,
             'status_refused' => Signalement::STATUS_REFUSED,
+            'status_draft' => Signalement::STATUS_DRAFT,
             'nb_suivi_technical' => 2,
         ];
 
@@ -307,6 +314,7 @@ class SuiviRepository extends ServiceEntityRepository
             'status_archived' => Signalement::STATUS_ARCHIVED,
             'status_closed' => Signalement::STATUS_CLOSED,
             'status_refused' => Signalement::STATUS_REFUSED,
+            'status_draft' => Signalement::STATUS_DRAFT,
             'nb_suivi_technical' => 3,
         ];
 
@@ -381,7 +389,7 @@ class SuiviRepository extends ServiceEntityRepository
                 AND su2.created_at > t1.min_date
                 AND su2.type <> :type_suivi_technical
                 WHERE su2.signalement_id IS NULL
-                AND s.statut NOT IN (:status_need_validation, :status_closed, :status_archived, :status_refused)
+                AND s.statut NOT IN (:status_need_validation, :status_closed, :status_archived, :status_refused, :status_draft)
                 AND s.is_imported != 1 '
                 .$whereLastSuiviDelay
                 .$whereExcludeUsagerAbandonProcedure

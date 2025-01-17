@@ -35,7 +35,7 @@ class SignalementControllerTest extends WebTestCase
 
         $client->loginUser($user);
         $client->request('GET', $route);
-        if (Signalement::STATUS_ARCHIVED !== $signalement->getStatut()) {
+        if (Signalement::STATUS_ARCHIVED !== $signalement->getStatut() && Signalement::STATUS_DRAFT !== $signalement->getStatut()) {
             $this->assertResponseIsSuccessful((string) $signalement->getId());
             $this->assertSelectorTextContains(
                 'h1.fr-h2',

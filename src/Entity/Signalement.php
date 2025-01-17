@@ -35,6 +35,7 @@ use Symfony\Component\Validator\Context\ExecutionContextInterface;
 #[ORM\Index(columns: ['code_suivi'], name: 'idx_signalement_code_suivi')]
 class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInterface
 {
+    public const STATUS_DRAFT = 0;
     public const STATUS_NEED_VALIDATION = 1;
     public const STATUS_ACTIVE = 2;
     public const STATUS_CLOSED = 6;
@@ -231,6 +232,9 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
 
     #[ORM\ManyToOne(targetEntity: User::class, inversedBy: 'signalementsModified')]
     private ?User $modifiedBy = null;
+
+    #[ORM\ManyToOne(targetEntity: User::class, inversedBy: 'signalementsCreated')]
+    private ?User $createdBy = null;
 
     #[ORM\OneToMany(mappedBy: 'signalement', targetEntity: Suivi::class, orphanRemoval: true, cascade: ['persist'])]
     private Collection $suivis;
@@ -1141,6 +1145,18 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
     public function setModifiedBy(?User $modifiedBy): self
     {
         $this->modifiedBy = $modifiedBy;
+
+        return $this;
+    }
+
+    public function getCreatedBy(): ?User
+    {
+        return $this->createdBy;
+    }
+
+    public function setCreatedBy(?User $createdBy): self
+    {
+        $this->createdBy = $createdBy;
 
         return $this;
     }

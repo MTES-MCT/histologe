@@ -110,8 +110,8 @@ class AffectationRepository extends ServiceEntityRepository
             ->innerJoin('a.partner', 'p')
             ->innerJoin('a.signalement', 's')
             ->where('p.esaboraUrl IS NOT NULL AND p.esaboraToken IS NOT NULL AND p.isEsaboraActive = 1')
-            ->andWhere('s.statut != :signalement_statut')
-            ->setParameter('signalement_statut', Signalement::STATUS_ARCHIVED)
+            ->andWhere('s.statut NOT IN (:signalement_status_list)')
+            ->setParameter('signalement_status_list', [Signalement::STATUS_ARCHIVED, Signalement::STATUS_DRAFT])
             ->andWhere('p.type = :partner_type')
             ->setParameter('partner_type', $partnerType);
 
@@ -189,9 +189,9 @@ class AffectationRepository extends ServiceEntityRepository
             ->setParameter('statut_refused', Affectation::STATUS_REFUSED)
             ->innerJoin('a.partner', 'p')
             ->innerJoin('a.signalement', 's')
-            ->where('s.statut != :statut_archived')
+            ->where('s.statut NOT IN (:statut_list)')
             ->andWhere('a.partner IN (:partners)')
-            ->setParameter('statut_archived', Signalement::STATUS_ARCHIVED)
+            ->setParameter('statut_list', [Signalement::STATUS_ARCHIVED, Signalement::STATUS_DRAFT])
             ->setParameter('partners', $user->getPartners());
 
         if (\count($territories)) {

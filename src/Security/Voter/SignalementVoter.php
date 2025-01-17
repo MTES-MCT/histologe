@@ -77,6 +77,7 @@ class SignalementVoter extends Voter
     {
         if (Signalement::STATUS_ARCHIVED !== $signalement->getStatut()
             && Signalement::STATUS_REFUSED !== $signalement->getStatut()
+            && Signalement::STATUS_DRAFT !== $signalement->getStatut()
         ) {
             if (Signalement::STATUS_CLOSED === $signalement->getStatut()) {
                 $datePostCloture = $signalement->getClosedAt()->modify('+ 30days');
