@@ -6,6 +6,7 @@ use App\Repository\FileRepository;
 use App\Service\Mailer\NotificationMail;
 use App\Service\Mailer\NotificationMailerRegistry;
 use App\Service\Mailer\NotificationMailerType;
+use App\Service\UploadHandlerService;
 use League\Flysystem\FilesystemException;
 use League\Flysystem\FilesystemOperator;
 use League\Flysystem\StorageAttributes;
@@ -30,6 +31,7 @@ class ClearStorageTmpFolderCommand extends AbstractCronCommand
         private readonly NotificationMailerRegistry $notificationMailerRegistry,
         private readonly LoggerInterface $logger,
         private readonly FileRepository $fileRepository,
+        private readonly UploadHandlerService $uploadHandlerService,
     ) {
         parent::__construct($this->parameterBag);
     }
@@ -41,15 +43,13 @@ class ClearStorageTmpFolderCommand extends AbstractCronCommand
     {
         $io = new SymfonyStyle($input, $output);
         $nbFiles = $this->cleanFilesOlderThan6Months($io, $output);
-        $nbFiles = $this->cleanExportsOlderThan1Month($io, $output);
+        $nbExports = $this->cleanExportsOlderThan1Month($io, $output);
 
         $this->notificationMailerRegistry->send(
             new NotificationMail(
                 type: NotificationMailerType::TYPE_CRON,
                 to: $this->parameterBag->get('admin_email'),
-                message: $nbFiles > 1
-                    ? sprintf('%s fichiers ont été supprimés', $nbFiles)
-                    : sprintf('%s a été supprimé', $nbFiles),
+                message: sprintf('%s fichiers et %s exports ont été supprimés', $nbFiles, $nbExports),
                 cronLabel: 'Suppression de fichier(s) temporaires s3://tmp',
                 cronCount: $nbFiles,
             )
@@ -101,19 +101,18 @@ class ClearStorageTmpFolderCommand extends AbstractCronCommand
     {
         $limit = new \DateTimeImmutable('- 1 month');
         $files = $this->fileRepository->findExportsOlderThan($limit);
-        $nbFiles = \count($files);
+        $nbExports = \count($files);
 
         $io->warning(sprintf(
             '%d exports seront supprimés',
-            $nbFiles,
+            $nbExports,
         ));
 
-        $progressBar = new ProgressBar($output, $nbFiles);
+        $progressBar = new ProgressBar($output, $nbExports);
         $progressBar->start();
         foreach ($files as $file) {
-            $filename = $file->getFilename();
-            if ($this->fileStorage->fileExists($filename)) {
-                $this->fileStorage->delete($filename);
+            if ($this->uploadHandlerService->deleteFile($file)) {
+                $filename = $file->getFilename();
                 $this->logger->info(
                     sprintf('Fichier supprimé : %s', $filename)
                 );
@@ -122,8 +121,8 @@ class ClearStorageTmpFolderCommand extends AbstractCronCommand
         }
         $progressBar->finish();
         $progressBar->clear();
-        $io->success(sprintf('%d exports ont été supprimés du repertoire /tmp', $nbFiles));
+        $io->success(sprintf('%d exports ont été supprimés', $nbExports));
 
-        return $nbFiles;
+        return $nbExports;
     }
 }
