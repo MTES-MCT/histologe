@@ -23,6 +23,7 @@ use Symfony\Component\Validator\Constraints\Email;
 #[ORM\Entity(repositoryClass: UserRepository::class)]
 #[UniqueEntity('email', message: '{{ value }} existe déja, merci de saisir un nouvel e-mail')]
 #[ORM\HasLifecycleCallbacks()]
+#[AppAssert\UserPartnerEmailMulti(groups: ['user_partner_mail_multi'])]
 #[AppAssert\UserPartnerEmail(groups: ['user_partner_mail'])]
 class User implements UserInterface, EntityHistoryInterface, PasswordAuthenticatedUserInterface, TwoFactorInterface
 {

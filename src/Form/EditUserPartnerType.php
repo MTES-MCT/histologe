@@ -7,11 +7,11 @@ use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
-use Symfony\Component\Form\Extension\Core\Type\HiddenType;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
-class UserPartnerType extends AbstractType
+class EditUserPartnerType extends AbstractType
 {
     private array $roles;
 
@@ -32,23 +32,27 @@ class UserPartnerType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $user = $builder->getData();
+        if ($user->getUserPartners()->count() > 1) {
+            $this->roles = [
+                'Admin. partenaire' => 'ROLE_ADMIN_PARTNER',
+                'Agent' => 'ROLE_USER_PARTNER',
+            ];
+        }
         $builder
-            ->add('emailDisplay', null, [
-                'mapped' => false,
-                'disabled' => true,
-                'label' => 'Courriel',
-                'help' => 'Un e-mail d\'activation du compte sera envoyé à cette adresse e-mail.',
-                'data' => $user->getEmail(),
-            ])
-            ->add('email', HiddenType::class)
             ->add('nom', null, [
                 'required' => false,
             ])
             ->add('prenom', null, [
                 'required' => false,
             ])
+            ->add('email', TextType::class, [
+                'required' => false,
+                'label' => 'Courriel',
+                'row_attr' => [
+                    'class' => 'fr-mb-1w',
+                ],
+            ])
             ->add('role', ChoiceType::class, [
-                // TODO si utilisé en édition : role limité pour les user multi territoire
                 'choices' => $this->roles,
                 'label' => 'Rôle',
                 'mapped' => false,
@@ -83,7 +87,12 @@ class UserPartnerType extends AbstractType
     {
         $resolver->setDefaults([
             'data_class' => User::class,
-            'validation_groups' => ['user_partner_mail_multi', 'user_partner'],
+            'validation_groups' => ['user_partner_mail', 'user_partner'],
         ]);
+    }
+
+    public function getBlockPrefix(): string
+    {
+        return 'user_partner';
     }
 }

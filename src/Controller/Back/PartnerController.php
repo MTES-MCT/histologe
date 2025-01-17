@@ -11,6 +11,7 @@ use App\Entity\Partner;
 use App\Entity\User;
 use App\Entity\UserPartner;
 use App\Factory\UserFactory;
+use App\Form\EditUserPartnerType;
 use App\Form\PartnerPerimetreType;
 use App\Form\PartnerType;
 use App\Form\SearchPartnerType;
@@ -43,6 +44,7 @@ use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Symfony\Component\Serializer\Exception\ExceptionInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
@@ -378,7 +380,9 @@ class PartnerController extends AbstractController
                 $message = 'L\'utilisateur a bien été créé. Un e-mail de confirmation a été envoyé à '.$user->getEmail();
                 $this->addFlash('success', $message);
 
-                return $this->redirectToRoute('back_partner_view', ['id' => $partner->getId(), '_fragment' => 'agents']);
+                $url = $this->generateUrl('back_partner_view', ['id' => $partner->getId(), '_fragment' => 'agents'], UrlGeneratorInterface::ABSOLUTE_URL);
+
+                return $this->json(['redirect' => true, 'url' => $url]);
             }
             $formMultiMail->get('email')->addError(new FormError('Agent introuvalbe avec cette adresse e-mail.'));
         }
@@ -422,7 +426,9 @@ class PartnerController extends AbstractController
             $message = 'L\'utilisateur a bien été créé. Un e-mail de confirmation a été envoyé à '.$user->getEmail();
             $this->addFlash('success', $message);
 
-            return $this->redirectToRoute('back_partner_view', ['id' => $partner->getId(), '_fragment' => 'agents']);
+            $url = $this->generateUrl('back_partner_view', ['id' => $partner->getId(), '_fragment' => 'agents'], UrlGeneratorInterface::ABSOLUTE_URL);
+
+            return $this->json(['redirect' => true, 'url' => $url]);
         }
         $content = $this->renderView('_partials/_modal_user_create_form.html.twig', ['formUserPartner' => $formUserPartner]);
 
@@ -496,94 +502,38 @@ class PartnerController extends AbstractController
         return $this->redirectToRoute('back_partner_view', ['id' => $partner->getId(), '_fragment' => 'agents'], Response::HTTP_SEE_OTHER);
     }
 
-    #[Route('/{id}/editerutilisateur', name: 'back_partner_user_edit', methods: ['POST'])]
+    #[Route('/{partner}/editerutilisateur/{user}', name: 'back_partner_user_edit')]
     public function editUser(
-        Request $request,
         Partner $partner,
+        User $user,
+        Request $request,
         UserManager $userManager,
-        UserRepository $userRepository,
-        PartnerRepository $partnerRepository,
-        ValidatorInterface $validator,
-    ): Response {
-        $userId = $request->request->get('user_id');
-        $user = $userManager->find((int) $userId);
-        /** @var User $user */
-        if (!$userId || !$user || !$user->hasPartner($partner)) {
-            $this->addFlash('error', 'Utilisateur introuvable.');
-
-            return $this->redirectToRoute('back_partner_index', [], Response::HTTP_SEE_OTHER);
-        }
-        if (!$this->isCsrfTokenValid('partner_user_edit', $request->request->get('_token'))) {
-            $this->addFlash('error', 'Token CSRF invalide, merci d\'actualiser la page et réessayer.');
-
-            return $this->redirectToRoute('back_partner_view', ['id' => $partner->getId(), '_fragment' => 'agents'], Response::HTTP_SEE_OTHER);
-        }
+    ): JsonResponse|RedirectResponse {
         $this->denyAccessUnlessGranted('USER_EDIT', $user);
-
-        $data = $request->get('user_edit');
-        if (!EmailFormatValidator::validate($data['email'])) {
-            $this->addFlash('error', 'L\'adresse e-mail n\'est pas valide.');
-
-            return $this->redirectToRoute('back_partner_view', ['id' => $partner->getId(), '_fragment' => 'agents'], Response::HTTP_SEE_OTHER);
-        }
-        if ($data['email'] != $user->getEmail()) {
-            $userExist = $userRepository->findOneBy(['email' => $data['email']]);
-            if ($userExist && !\in_array('ROLE_USAGER', $userExist->getRoles())) {
-                $this->addFlash('error', 'Un utilisateur existe déjà avec cette adresse e-mail.');
-
-                return $this->redirectToRoute('back_partner_view', ['id' => $partner->getId(), '_fragment' => 'agents'], Response::HTTP_SEE_OTHER);
+        $originalEmail = $user->getEmail();
+        $editUserRoute = $this->generateUrl('back_partner_user_edit', ['partner' => $partner->getId(), 'user' => $user->getId(), 'from' => $request->query->get('from')]);
+        $formUserPartner = $this->createForm(EditUserPartnerType::class, $user, ['action' => $editUserRoute]);
+        $formUserPartner->handleRequest($request);
+        if ($formUserPartner->isSubmitted() && $formUserPartner->isValid()) {
+            if ($originalEmail != $user->getEmail()) {
+                $user->setPassword('');
+                $userManager->sendAccountActivationNotification($user);
             }
-            $partnerExist = $partnerRepository->findOneBy(['email' => $data['email']]);
-            if ($partnerExist) {
-                $this->addFlash('error', 'Un partenaire existe déjà avec cette adresse e-mail.');
-
-                return $this->redirectToRoute('back_partner_view', ['id' => $partner->getId(), '_fragment' => 'agents'], Response::HTTP_SEE_OTHER);
+            $userManager->flush();
+            $this->addFlash('success', 'L\'utilisateur a bien été modifié.');
+            $url = $this->generateUrl('back_partner_view', ['id' => $partner->getId(), '_fragment' => 'agents'], UrlGeneratorInterface::ABSOLUTE_URL);
+            if ('users' == $request->query->get('from')) {
+                $url = $this->generateUrl('back_user_index', [], UrlGeneratorInterface::ABSOLUTE_URL);
             }
-        }
-        if ($data['roles'] != $user->getRoles()[0]) {
-            if (!$this->canAttributeRole($data['roles'])) {
-                return $this->redirectToRoute('back_partner_view', ['id' => $partner->getId(), '_fragment' => 'agents'], Response::HTTP_SEE_OTHER);
-            }
-        }
 
-        $updateData = [
-            'nom' => $data['nom'],
-            'prenom' => $data['prenom'],
-            'roles' => $data['roles'],
-            'email' => $data['email'],
-            'isMailingActive' => $data['isMailingActive'],
-            'hasPermissionAffectation' => $data['hasPermissionAffectation'] ?? false,
-        ];
-        if (!$this->isGranted(PartnerVoter::ASSIGN_PERMISSION_AFFECTATION, $partner)) {
-            unset($updateData['hasPermissionAffectation']);
-        } else {
-            $updateData['hasPermissionAffectation'] = $updateData['hasPermissionAffectation'] ?? false;
+            return $this->json(['redirect' => true, 'url' => $url]);
         }
+        $content = $this->renderView('_partials/_modal_user_edit_form.html.twig', ['formUserPartner' => $formUserPartner]);
 
-        $user = $userManager->updateUserFromData(
-            user: $user,
-            data: $updateData,
-            save: false
-        );
-
-        $errors = $validator->validate($user);
-        foreach ($errors as $error) {
-            $this->addFlash('error', $error->getMessage());
-        }
-        if (0 === \count($errors)) {
-            $userManager->save($user);
-            $message = 'L\'utilisateur a bien été modifié.';
-            $this->addFlash('success', $message);
-        }
-
-        $redirect_to = $request->request->get('redirect_to');
-        if ('userList' === $redirect_to) {
-            return $this->redirectToRoute('back_user_index', [], Response::HTTP_SEE_OTHER);
-        }
-
-        return $this->redirectToRoute('back_partner_view', ['id' => $partner->getId(), '_fragment' => 'agents'], Response::HTTP_SEE_OTHER);
+        return $this->json(['content' => $content, 'title' => 'Modifier le compte de : '.$user->getEmail()]);
     }
 
+    // TODO : delete with feature_multi_territories deletion
     private function canAttributeRole(string $role): bool
     {
         if (empty($role)) {

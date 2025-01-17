@@ -157,13 +157,15 @@ class PartnerControllerTest extends WebTestCase
                 ],
             ]
         );
+        $this->assertResponseStatusCodeSame(200);
+        $this->assertResponseHeaderSame('content-type', 'application/json');
+        $response = json_decode($this->client->getResponse()->getContent(), true);
         if ('redirect' === $expected) {
-            $this->assertResponseRedirects('/bo/partenaires/'.$partner->getId().'/voir#agents');
+            $this->assertArrayHasKey('redirect', $response);
+            $this->assertArrayHasKey('url', $response);
+            $this->assertStringEndsWith('/bo/partenaires/'.$partner->getId().'/voir#agents', $response['url']);
             $this->assertEmailCount(1);
         } else {
-            $this->assertResponseStatusCodeSame(200);
-            $this->assertResponseHeaderSame('content-type', 'application/json');
-            $response = json_decode($this->client->getResponse()->getContent(), true);
             $this->assertArrayHasKey('content', $response);
             $this->assertStringContainsString($expected, $response['content']);
         }
@@ -205,13 +207,15 @@ class PartnerControllerTest extends WebTestCase
                 ],
             ]
         );
+        $this->assertResponseStatusCodeSame(200);
+        $this->assertResponseHeaderSame('content-type', 'application/json');
+        $response = json_decode($this->client->getResponse()->getContent(), true);
         if ('redirect' === $expected) {
-            $this->assertResponseRedirects('/bo/partenaires/'.$partner->getId().'/voir#agents');
+            $this->assertArrayHasKey('redirect', $response);
+            $this->assertArrayHasKey('url', $response);
+            $this->assertStringEndsWith('/bo/partenaires/'.$partner->getId().'/voir#agents', $response['url']);
             $this->assertEmailCount(1);
         } else {
-            $this->assertResponseStatusCodeSame(200);
-            $this->assertResponseHeaderSame('content-type', 'application/json');
-            $response = json_decode($this->client->getResponse()->getContent(), true);
             $this->assertArrayHasKey('content', $response);
             $this->assertStringContainsString($expected, $response['content']);
         }
@@ -261,31 +265,53 @@ class PartnerControllerTest extends WebTestCase
         $this->assertEmailCount(1);
     }
 
-    public function testEditUserOfPartner()
+    /**
+     * @dataProvider provideAgentEmailToEdit
+     */
+    public function testEditUserOfPartner(string $email, string $expected, int $nbEmailSent)
     {
         /** @var User $partnerUser */
         $partnerUser = $this->userRepository->findOneBy(['email' => 'user-13-01@histologe.fr']);
         $partner = $partnerUser->getPartners()->first();
 
-        $route = $this->router->generate('back_partner_user_edit', ['id' => $partner->getId()]);
+        $route = $this->router->generate('back_partner_user_edit', ['partner' => $partner->getId(), 'user' => $partnerUser->getId()]);
         $this->client->request(
             'POST',
             $route,
             [
-                'user_edit' => [
-                    'roles' => 'ROLE_USER_PARTNER',
+                'user_partner' => [
+                    'role' => 'ROLE_USER_PARTNER',
                     'prenom' => 'John',
                     'nom' => 'Doe',
-                    'email' => 'ajout.partner@histologe.fr',
-                    'isMailingActive' => false,
+                    'email' => $email,
+                    'isMailingActive' => 0,
+                    '_token' => $this->generateCsrfToken($this->client, 'user_partner'),
                 ],
-                'user_id' => $partnerUser->getId(),
-                '_token' => $this->generateCsrfToken($this->client, 'partner_user_edit'),
             ]
         );
+        $this->assertResponseStatusCodeSame(200);
+        $this->assertResponseHeaderSame('content-type', 'application/json');
+        $response = json_decode($this->client->getResponse()->getContent(), true);
+        if ('redirect' === $expected) {
+            $this->assertArrayHasKey('redirect', $response);
+            $this->assertArrayHasKey('url', $response);
+            $this->assertStringEndsWith('/bo/partenaires/'.$partner->getId().'/voir#agents', $response['url']);
+            $this->assertEmailCount($nbEmailSent);
+        } else {
+            $this->assertArrayHasKey('content', $response);
+            $this->assertStringContainsString($expected, $response['content']);
+            $this->assertEmailCount($nbEmailSent);
+        }
+    }
 
-        $this->assertResponseRedirects('/bo/partenaires/'.$partner->getId().'/voir#agents');
-        $this->assertEmailCount(1);
+    public function provideAgentEmailToEdit(): \Generator
+    {
+        yield 'Invalid email' => ['nanana', 'L&#039;adresse e-mail est invalide.', 0];
+        yield 'Partner email already exists' => ['partenaire-13-02@histologe.fr', 'Un partenaire existe déjà avec cette adresse e-mail.', 0];
+        yield 'User email already' => ['user-44-02@histologe.fr', 'Un utilisateur existe déjà avec cette adresse e-mail.', 0];
+
+        yield 'Original email' => ['user-13-01@histologe.fr', 'redirect', 0];
+        yield 'Changed email' => ['new.email@test.com', 'redirect', 1];
     }
 
     public function testEditAnonymizedUser()
@@ -294,20 +320,19 @@ class PartnerControllerTest extends WebTestCase
         $partnerUser = $this->userRepository->findAnonymizedUsers()[0];
         $partner = $partnerUser->getPartners()->first();
 
-        $route = $this->router->generate('back_partner_user_edit', ['id' => $partner->getId()]);
+        $route = $this->router->generate('back_partner_user_edit', ['partner' => $partner->getId(), 'user' => $partnerUser->getId()]);
         $this->client->request(
             'POST',
             $route,
             [
-                'user_edit' => [
-                    'roles' => 'ROLE_USER_PARTNER',
+                'user_partner' => [
+                    'role' => 'ROLE_USER_PARTNER',
                     'prenom' => 'John',
                     'nom' => 'Doe',
                     'email' => 'ajout.partner@histologe.fr',
-                    'isMailingActive' => false,
+                    'isMailingActive' => 0,
+                    '_token' => $this->generateCsrfToken($this->client, 'user_partner'),
                 ],
-                'user_id' => $partnerUser->getId(),
-                '_token' => $this->generateCsrfToken($this->client, 'partner_user_edit'),
             ]
         );
         $this->assertResponseStatusCodeSame(403);

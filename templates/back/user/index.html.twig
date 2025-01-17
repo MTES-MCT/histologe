@@ -3,7 +3,7 @@
 {% block title %}Liste des utilisateurs{% endblock %}
 
 {% block content %}
-    {% include '_partials/_modal_user_edit.html.twig' with { 'currentPage': 'userList' } %}
+    {% include '_partials/_modal_user_edit.html.twig' %}
     <section class="fr-p-5v">
         {% include 'back/breadcrumb_bo.html.twig' with {
             'level2Title': 'Outils admin',
@@ -139,16 +139,10 @@
                     <td class="fr-text--right">
                         {% if user.getPartners|length %}
                             <a href="#" class="fr-btn fr-fi-edit-line fr-mt-3v btn-edit-partner-user"
-                                id="partner_users_edit_{{ user.id }}" aria-controls="fr-modal-user-edit"
+                                aria-controls="fr-modal-user-edit"
                                 data-fr-opened="false"
-                                data-submit-url="{{ path('back_partner_user_edit', {'id': user.getPartners.first.id}) }}"
-                                data-usernom="{{ user.nom }}"
-                                data-userprenom="{{ user.prenom }}"
-                                data-userrole="{{ user.roles[0] }}"
-                                data-userpermissionaffectation="{{ user.hasPermissionAffectation() ? '1' : '0' }}"
-                                data-userismailingactive="{{ user.isMailingActive }}"
-                                data-userid="{{ user.id }}"
-                                data-useremail="{{ user.email }}">
+                                data-refresh-url="{{ path('back_partner_user_edit',{partner:user.partners.first.id, user:user.id}) }}?from=users"
+                                >
                             </a>
                         {% endif %}
                     </td>

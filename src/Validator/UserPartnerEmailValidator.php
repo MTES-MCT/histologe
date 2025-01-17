@@ -40,21 +40,9 @@ class UserPartnerEmailValidator extends ConstraintValidator
         if ($partnerExist) {
             $this->context->buildViolation('Un partenaire existe déjà avec cette adresse e-mail.')->atPath('email')->addViolation();
         }
-        $userExist = $this->userRepository->findAgentByEmail($email);
-        if (!$userExist) {
-            return;
-        }
-        if ($userExist->isTerritoryAdmin()) {
-            $this->context->buildViolation('Un utilisateur Responsable Territoire existe déjà avec cette adresse e-mail.')->atPath('email')->addViolation();
-        }
-        if ($userExist->isSuperAdmin()) {
-            $this->context->buildViolation('Un utilisateur Super Admin existe déjà avec cette adresse e-mail.')->atPath('email')->addViolation();
-        }
-        if ($userExist->hasPermissionAffectation()) {
-            $this->context->buildViolation('Un utilisateur ayant les droits d\'affectation existe déjà avec cette adresse e-mail.')->atPath('email')->addViolation();
-        }
-        if ($userExist->hasPartnerInTerritory($user->getFirstTerritory())) {
-            $this->context->buildViolation('Un utilisateur avec cette adresse e-mail existe déja sur le territoire.')->atPath('email')->addViolation();
+        $userExist = $this->userRepository->findOneBy(['email' => $email]);
+        if ($userExist && $userExist->getId() !== $user->getId()) {
+            $this->context->buildViolation('Un utilisateur existe déjà avec cette adresse e-mail.')->atPath('email')->addViolation();
         }
     }
 }

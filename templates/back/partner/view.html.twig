@@ -12,7 +12,7 @@
         {% include '_partials/_old_modal_user_create.html.twig' %}
     {% endif %}
     {% include '_partials/_modal_user_delete.html.twig' %}
-    {% include '_partials/_modal_user_edit.html.twig' with { 'currentPage': 'partnerEdit' } %}
+    {% include '_partials/_modal_user_edit.html.twig' %}
     <section class="fr-p-5v">
         {% if is_granted('ROLE_ADMIN_TERRITORY') %}
             {% include 'back/breadcrumb_bo.html.twig' with {
@@ -254,17 +254,10 @@
                         <td class="fr-text--right">
                             {% if is_granted('USER_EDIT', user) %}
                                 <a href="#" class="fr-btn fr-fi-edit-line fr-mt-3v btn-edit-partner-user"
-                                    id="partner_users_edit_{{ user.id }}" aria-controls="fr-modal-user-edit"
+                                    aria-controls="fr-modal-user-edit"
                                     data-fr-opened="false"
-                                    data-usernom="{{ user.nom }}"
-                                    data-userprenom="{{ user.prenom }}"
-                                    data-userrole="{{ user.roles[0] }}"
-                                    {% if is_granted('ASSIGN_PERMISSION_AFFECTATION', partner) %}
-                                    data-userpermissionaffectation="{{ user.hasPermissionAffectation() ? '1' : '0' }}"
-                                    {% endif %}
-                                    data-userismailingactive="{{ user.isMailingActive }}"
-                                    data-userid="{{ user.id }}"
-                                    data-useremail="{{ user.email }}">
+                                    data-refresh-url="{{ path('back_partner_user_edit',{partner:partner.id, user:user.id}) }}?from=partner"
+                                    >
                                 </a>
                             {% endif %}
                             {% if is_granted('USER_TRANSFER', user) and app.request.get('_route') is not same as('back_partner_new') %}

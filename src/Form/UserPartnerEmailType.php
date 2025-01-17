@@ -24,7 +24,7 @@ class UserPartnerEmailType extends AbstractType
     {
         $resolver->setDefaults([
             'data_class' => User::class,
-            'validation_groups' => ['user_partner_mail'],
+            'validation_groups' => ['user_partner_mail_multi'],
         ]);
     }
 }

@@ -1,11 +1,7 @@
 {% form_theme formUserPartner 'form/dsfr_theme.html.twig' %}
-{{ form_start(formUserPartner, {'attr': {'id': 'fr-modal-user-create-form'}}) }}
+{{ form_start(formUserPartner, {'attr': {'id': 'fr-modal-user-edit-form'}}) }}
 {{ form_errors(formUserPartner) }}
 <div class="fr-grid-row fr-grid-row--gutters">
-    <div class="fr-col-12">
-        {{ form_row(formUserPartner.emailDisplay) }}
-        {{ form_row(formUserPartner.email) }}
-    </div>
     <div class="fr-col-6">
         {{ form_row(formUserPartner.nom) }}
     </div>
@@ -14,6 +10,10 @@
     </div>
     <div class="fr-col-6">
         {{ form_row(formUserPartner.role) }}
+    </div>
+    <div class="fr-col-6">
+        {{ form_row(formUserPartner.email) }}
+        <span class="fr-hint-text">Un e-mail d'activation du compte sera envoyé à cette adresse e-mail.</span>
     </div>
     <div class="fr-col-12">
         {{ form_row(formUserPartner.isMailingActive) }}

@@ -48,7 +48,9 @@ function histoUpdateFieldsVisibility () {
 function histoUpdateValueFromData (elementName, elementData, target) {
   document.querySelector(elementName).value = target.getAttribute(elementData)
 }
-function histoUpdatePermissionsFromRole (editOrCreate, toggleValue) {
+
+//TODO : remove editOrCreate param after feature_multi_territories deletion (will always be 'partner')
+function histoUpdatePermissionsFromRole (editOrCreate) {
   const elementTogglePermissionAffectation = document.querySelector('#user_' + editOrCreate + '_permission_affectation_toggle input')
   const elementTextPermissionAffectation = document.querySelector('#user_' + editOrCreate + '_permission_affectation_text')
   if (!elementTogglePermissionAffectation || !elementTextPermissionAffectation) {
@@ -68,12 +70,6 @@ function histoUpdatePermissionsFromRole (editOrCreate, toggleValue) {
     elementTextPermissionAffectation.classList.remove('fr-hidden')
   } else {
     elementTogglePermissionAffectation.removeAttribute('disabled')
-    if (toggleValue === false && elementTogglePermissionAffectation.checked) {
-      elementTogglePermissionAffectation.click()
-    }
-    if (editOrCreate === 'edit' && toggleValue === true && !elementTogglePermissionAffectation.checked) {
-      elementTogglePermissionAffectation.click()
-    }
     elementTextPermissionAffectation.classList.add('fr-hidden')
   }
 }
@@ -116,80 +112,12 @@ document.querySelectorAll('.btn-delete-partner').forEach(swbtn => {
     })
   })
 })
-let userEditedId = null
-
-function clearErrors () {
-  const divErrorElements = document.querySelectorAll('.fr-input-group--error')
-  divErrorElements.forEach((divErrorElement) => {
-    divErrorElement.classList.remove('fr-input-group--error')
-    const pErrorElement = divErrorElement.querySelector('.fr-error-text')
-    if (pErrorElement) {
-      pErrorElement.classList.add('fr-hidden')
-    }
-  })
-}
-document.querySelectorAll('.btn-edit-partner-user').forEach(swbtn => {
-  swbtn.addEventListener('click', evt => {
-    clearErrors()
-    const target = evt.target
-    document.querySelectorAll('.fr-modal-user-edit_useremail').forEach(userItem => {
-      userItem.textContent = target.getAttribute('data-useremail')
-    })
-    userEditedId = target.getAttribute('data-userid')
-    if (target.getAttribute('data-submit-url')) {
-      document.querySelector('#fr-modal-user-edit form').action = target.getAttribute('data-submit-url')
-    }
-    histoUpdateValueFromData('#user_edit_userid', 'data-userid', target)
-    histoUpdateValueFromData('#user_edit_email', 'data-useremail', target)
-    histoUpdateValueFromData('#user_edit_nom', 'data-usernom', target)
-    histoUpdateValueFromData('#user_edit_prenom', 'data-userprenom', target)
-    const isMailingActive = target.getAttribute('data-userismailingactive')
-    if (isMailingActive === '1') {
-      document.querySelector('#user_edit_is_mailing_active-1').checked = true
-    } else {
-      document.querySelector('#user_edit_is_mailing_active-2').checked = true
-    }
-
-    const elementPermissionAffectation = document.querySelector('#user_edit_permission_affectation')
-    if (elementPermissionAffectation) {
-      elementPermissionAffectation.removeAttribute('disabled')
-    }
-
-    const userRole = target.getAttribute('data-userrole')
-    const rolesSelect = document.querySelector('#user_edit_roles')
-    rolesSelect.value = userRole
-    histoUpdatePermissionsFromRole('edit', target.getAttribute('data-userpermissionaffectation') === '1')
-
-    document.querySelector('#user_edit_form').addEventListener('submit', (e) => {
-      histoUpdateSubmitButton('#user_edit_form_submit', 'Edition en cours...')
-    })
-  })
-})
-if (document.querySelector('.fr-btn-add-user')) {
-  document.querySelector('.fr-btn-add-user').addEventListener('click', () => {
-    clearErrors()
-    userEditedId = null
-  })
-}
 
 if (document.querySelector('#partner_type')) {
   histoUpdateFieldsVisibility()
   document.querySelector('#partner_type').addEventListener('change', () => {
     histoUpdateFieldsVisibility()
   })
-}
-
-if (document.querySelector('#user_create_roles')) {
-  document.querySelector('#user_create_roles').addEventListener('change', () => {
-    histoUpdatePermissionsFromRole('create', null)
-  })
-  histoUpdatePermissionsFromRole('create', null)
-}
-if (document.querySelector('#user_edit_roles')) {
-  document.querySelector('#user_edit_roles').addEventListener('change', () => {
-    histoUpdatePermissionsFromRole('edit', null)
-  })
-  histoUpdatePermissionsFromRole('edit', null)
 }
 
 const territorySelect = document.querySelector("#partner_territory");
@@ -240,10 +168,33 @@ deletePartnerForm.forEach(form => {
 })
 
 //TODO : delete with feature_multi_territories deletion
+function clearErrors () {
+  const divErrorElements = document.querySelectorAll('.fr-input-group--error')
+  divErrorElements.forEach((divErrorElement) => {
+    divErrorElement.classList.remove('fr-input-group--error')
+    const pErrorElement = divErrorElement.querySelector('.fr-error-text')
+    if (pErrorElement) {
+      pErrorElement.classList.add('fr-hidden')
+    }
+  })
+}
+
+if (document.querySelector('.fr-btn-add-user')) {
+  document.querySelector('.fr-btn-add-user').addEventListener('click', () => {
+    clearErrors()
+  })
+}
+
+if (document.querySelector('#user_create_roles')) {
+  document.querySelector('#user_create_roles').addEventListener('change', () => {
+    histoUpdatePermissionsFromRole('create')
+  })
+  histoUpdatePermissionsFromRole('create')
+}
+
 const checkUserMail = (el) => {
   const formData = new FormData()
   formData.append('email', el.value)
-  formData.append('userEditedId', userEditedId)
   formData.append('_token', el.getAttribute('data-token'))
   fetch('/bo/partenaires/checkmail', {
     method: 'POST',
@@ -281,7 +232,7 @@ emailInputs.forEach(emailInput => {
     checkUserMail(this)
   })
 })
-//END TODO
+//END TODO : delete with feature_multi_territories deletion
 
 loadWindowWithLocalStorage('click', '[data-filter-list-partner]', 'search-partner-form')
 updateLocalStorageOnEvent('input', '#partner-input', 'back_link_partners')
@@ -290,48 +241,67 @@ updateLocalStorageOnEvent('change', '#partner-filters-types', 'back_link_partner
 updateLocalStorageWithPaginationParams('click', '#partner-pagination a', 'back_link_partners')
 
 //add for multi territories
+document.querySelectorAll('.btn-edit-partner-user').forEach(swbtn => {
+  swbtn.addEventListener('click', event => {
+    const refreshUrl = event.target.dataset.refreshUrl;
+    document.querySelector('#fr-modal-user-edit button[type="submit"]').disabled = true;
+    document.querySelector('#fr-modal-user-edit-title').innerHTML = 'Chargement en cours...'
+    document.querySelector('#fr-modal-user-edit-form-container').innerHTML = 'Chargement en cours...'
+    fetch(refreshUrl).then(response => {
+      updateModaleFromResponse(response, '#fr-modal-user-edit', addEventListenerOnRoleChange)
+    })
+  })
+})
+
 const modalPartnerUserCreate = document?.querySelector('#fr-modal-user-create')
-const btnSubmit = modalPartnerUserCreate?.querySelector('button[type="submit"]')
 if(modalPartnerUserCreate){
   modalPartnerUserCreate.addEventListener('dsfr.conceal', (event) => {
     const refreshUrl = event.target.dataset.refreshUrl;
-    btnSubmit.disabled = true
+    modalPartnerUserCreate.querySelector('button[type="submit"]').disabled = true;
     fetch(refreshUrl).then(response => {
-      managePartnerAddUserFormResponse(response)
+      updateModaleFromResponse(response, '#fr-modal-user-create', addEventListenerOnRoleChange)
     })
   })
 }
 
-function attachSubmitPartnerAddUserForm () {
-  document.querySelector('#partner-add-user-form').addEventListener('submit', (e) => {
-    e.preventDefault()
-    btnSubmit.disabled = true
-    const formData = new FormData(e.target)
-    fetch(e.target.action, {method: 'POST', body: formData}).then(response => {
-      managePartnerAddUserFormResponse(response)
+function addEventListenerOnRoleChange(){
+  if (document.querySelector('#user_partner_role')) {
+    document.querySelector('#user_partner_role').addEventListener('change', () => {
+      histoUpdatePermissionsFromRole('partner')
     })
-  })
+    histoUpdatePermissionsFromRole('partner')
+  }
 }
 
-function managePartnerAddUserFormResponse(response) {
-  console.log(response);
-  if (response.redirected) {
-    window.location.href = response.url
-  }else if (response.ok) {
+function updateModaleFromResponse(response, modalSelector, callback = null){
+  if (response.ok) {
     response.json().then((response) => {
-      document.querySelector('#partner-add-user-title').innerHTML = response.title
-        document.querySelector('#partner-add-user-form-container').innerHTML = response.content
-        attachSubmitPartnerAddUserForm()
-        if (document.querySelector('#user_partner_role')) {
-          document.querySelector('#user_partner_role').addEventListener('change', () => {
-            histoUpdatePermissionsFromRole('partner', null)
-          })
-          histoUpdatePermissionsFromRole('partner', null)
+      if (response.redirect) {
+        window.location.href = response.url
+        window.location.reload()
+      }else{
+        document.querySelector(modalSelector + '-title').innerHTML = response.title
+        document.querySelector(modalSelector + '-form-container').innerHTML = response.content
+        attachSubmitFormModal(modalSelector, callback)
+        if (typeof callback === 'function') {
+          callback();
         }
-        btnSubmit.disabled = false
+        document.querySelector(modalSelector +' button[type="submit"]').disabled = false
+      }
     })
   }else{
     const content = '<div class="fr-alert fr-alert--error" role="alert"><p class="fr-alert__title">Erreur</p><p>Une erreur est survenue veuillez fermer cette fenêtre.</p></div>'
-    document.querySelector('#partner-add-user-form-container').innerHTML = content
+    document.querySelector(modalSelector + '-form-container').innerHTML = content
   }
+}
+
+function attachSubmitFormModal (modalSelector, callback) {
+  document.querySelector(modalSelector + ' form').addEventListener('submit', (e) => {
+    e.preventDefault()
+    document.querySelector(modalSelector + ' button[type="submit"]').disabled = true
+    const formData = new FormData(e.target)
+    fetch(e.target.action, {method: 'POST', body: formData}).then(response => {
+      updateModaleFromResponse(response, modalSelector, callback)
+    })
+  })
 }
