@@ -286,6 +286,9 @@ function updateModaleFromResponse(response, modalSelector, callback = null){
         if (typeof callback === 'function') {
           callback();
         }
+        if(response.disabled){
+          return
+        }
         document.querySelector(modalSelector +' button[type="submit"]').disabled = false
       }
     })

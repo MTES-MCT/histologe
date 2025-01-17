@@ -1,18 +1,18 @@
 {% form_theme formUserPartner 'form/dsfr_theme.html.twig' %}
 {{ form_start(formUserPartner, {'attr': {'id': 'fr-modal-user-create-form'}}) }}
 {{ form_errors(formUserPartner) }}
+{{ form_row(formUserPartner.email) }}
 <div class="fr-grid-row fr-grid-row--gutters">
     <div class="fr-col-12">
         {{ form_row(formUserPartner.emailDisplay) }}
-        {{ form_row(formUserPartner.email) }}
     </div>
-    <div class="fr-col-6">
+    <div class="fr-col-12">
         {{ form_row(formUserPartner.nom) }}
     </div>
-    <div class="fr-col-6">
+    <div class="fr-col-12">
         {{ form_row(formUserPartner.prenom) }}
     </div>
-    <div class="fr-col-6">
+    <div class="fr-col-12">
         {{ form_row(formUserPartner.role) }}
     </div>
     <div class="fr-col-12">

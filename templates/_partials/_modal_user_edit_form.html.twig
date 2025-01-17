@@ -1,19 +1,29 @@
+{% if user.userPartners|length > 1 %}
+    <div class="fr-alert fr-alert--info fr-alert--sm fr-mb-3v">
+        <p>
+            Cet agent intervient sur plusieurs territoires. 
+            Vous ne pouvez pas modifier les informations d'un compte agent intervenant sur plusieurs territoires. 
+            L'agent peut modifier ses informations depuis son profil utilisateur.
+        </p>
+    </div>
+{% else %}
+    <span class="fr-mb-3v">Tous les champs sont obligatoires</span>
+{% endif %}
 {% form_theme formUserPartner 'form/dsfr_theme.html.twig' %}
 {{ form_start(formUserPartner, {'attr': {'id': 'fr-modal-user-edit-form'}}) }}
 {{ form_errors(formUserPartner) }}
 <div class="fr-grid-row fr-grid-row--gutters">
-    <div class="fr-col-6">
+    <div class="fr-col-12">
+        {{ form_row(formUserPartner.email) }}
+    </div>
+    <div class="fr-col-12">
         {{ form_row(formUserPartner.nom) }}
     </div>
-    <div class="fr-col-6">
+    <div class="fr-col-12">
         {{ form_row(formUserPartner.prenom) }}
     </div>
-    <div class="fr-col-6">
+    <div class="fr-col-12">
         {{ form_row(formUserPartner.role) }}
-    </div>
-    <div class="fr-col-6">
-        {{ form_row(formUserPartner.email) }}
-        <span class="fr-hint-text">Un e-mail d'activation du compte sera envoyé à cette adresse e-mail.</span>
     </div>
     <div class="fr-col-12">
         {{ form_row(formUserPartner.isMailingActive) }}

@@ -8,6 +8,7 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
@@ -32,7 +33,21 @@ class UserPartnerType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $user = $builder->getData();
-        $builder
+        if ($user->getUserPartners()->count() > 1) {
+            $this->roles = [
+                'Admin. partenaire' => 'ROLE_ADMIN_PARTNER',
+                'Agent' => 'ROLE_USER_PARTNER',
+            ];
+        }
+        $role = in_array($user->getRoles()[0], $this->roles) ? $user->getRoles()[0] : 'ROLE_USER_PARTNER';
+        if ($user->getId()) {
+            $builder->add('email', TextType::class, [
+                'required' => false,
+                'label' => 'Courriel',
+                'help' => 'Un e-mail d\'activation du compte sera envoyé à cette adresse e-mail.',
+            ]);
+        } else {
+            $builder
             ->add('emailDisplay', null, [
                 'mapped' => false,
                 'disabled' => true,
@@ -40,18 +55,19 @@ class UserPartnerType extends AbstractType
                 'help' => 'Un e-mail d\'activation du compte sera envoyé à cette adresse e-mail.',
                 'data' => $user->getEmail(),
             ])
-            ->add('email', HiddenType::class)
-            ->add('nom', null, [
-                'required' => false,
-            ])
+            ->add('email', HiddenType::class);
+        }
+        $builder->add('nom', null, [
+            'required' => false,
+        ])
             ->add('prenom', null, [
                 'required' => false,
             ])
             ->add('role', ChoiceType::class, [
-                // TODO si utilisé en édition : role limité pour les user multi territoire
                 'choices' => $this->roles,
                 'label' => 'Rôle',
                 'mapped' => false,
+                'data' => $role,
             ])
             ->add('isMailingActive', ChoiceType::class, [
                 'choices' => [

@@ -11,7 +11,6 @@ use App\Entity\Partner;
 use App\Entity\User;
 use App\Entity\UserPartner;
 use App\Factory\UserFactory;
-use App\Form\EditUserPartnerType;
 use App\Form\PartnerPerimetreType;
 use App\Form\PartnerType;
 use App\Form\SearchPartnerType;
@@ -282,16 +281,26 @@ class PartnerController extends AbstractController
             }
             $partner->setIsArchive(true);
             foreach ($partner->getUsers() as $user) {
-                $user->setEmail(Sanitizer::tagArchivedEmail($user->getEmail()));
-                $user->setStatut(User::STATUS_ARCHIVE);
-                $entityManager->persist($user);
-                $notificationMailerRegistry->send(
-                    new NotificationMail(
-                        type: NotificationMailerType::TYPE_ACCOUNT_DELETE,
-                        to: $user->getEmail(),
-                        territory: $partner->getTerritory()
-                    )
-                );
+                if ($user->getUserPartners()->count() > 1) {
+                    foreach ($user->getUserPartners() as $userPartner) {
+                        if ($userPartner->getPartner()->getId() === $partner->getId()) {
+                            $user->removeUserPartner($userPartner);
+                            $entityManager->remove($userPartner);
+                            break;
+                        }
+                    }
+                } else {
+                    $user->setEmail(Sanitizer::tagArchivedEmail($user->getEmail()));
+                    $user->setStatut(User::STATUS_ARCHIVE);
+                    $entityManager->persist($user);
+                    $notificationMailerRegistry->send(
+                        new NotificationMail(
+                            type: NotificationMailerType::TYPE_ACCOUNT_DELETE,
+                            to: $user->getEmail(),
+                            territory: $partner->getTerritory()
+                        )
+                    );
+                }
             }
 
             // delete affectations "en attente" et "acceptées"
@@ -512,7 +521,15 @@ class PartnerController extends AbstractController
         $this->denyAccessUnlessGranted('USER_EDIT', $user);
         $originalEmail = $user->getEmail();
         $editUserRoute = $this->generateUrl('back_partner_user_edit', ['partner' => $partner->getId(), 'user' => $user->getId(), 'from' => $request->query->get('from')]);
-        $formUserPartner = $this->createForm(EditUserPartnerType::class, $user, ['action' => $editUserRoute]);
+        $formDisabled = false;
+        if (1 !== $user->getUserPartners()->count()) {
+            $formDisabled = true;
+        }
+        $formUserPartner = $this->createForm(UserPartnerType::class, $user, [
+            'action' => $editUserRoute,
+            'validation_groups' => ['user_partner_mail', 'user_partner'],
+            'disabled' => $formDisabled]
+        );
         $formUserPartner->handleRequest($request);
         if ($formUserPartner->isSubmitted() && $formUserPartner->isValid()) {
             if ($originalEmail != $user->getEmail()) {
@@ -528,9 +545,9 @@ class PartnerController extends AbstractController
 
             return $this->json(['redirect' => true, 'url' => $url]);
         }
-        $content = $this->renderView('_partials/_modal_user_edit_form.html.twig', ['formUserPartner' => $formUserPartner]);
+        $content = $this->renderView('_partials/_modal_user_edit_form.html.twig', ['formUserPartner' => $formUserPartner, 'user' => $user]);
 
-        return $this->json(['content' => $content, 'title' => 'Modifier le compte de : '.$user->getEmail()]);
+        return $this->json(['content' => $content, 'title' => 'Modifier le compte de : '.$user->getEmail(), 'disabled' => $formDisabled]);
     }
 
     // TODO : delete with feature_multi_territories deletion
@@ -625,6 +642,14 @@ class PartnerController extends AbstractController
                     break;
                 }
             }
+            $notificationMailerRegistry->send(
+                new NotificationMail(
+                    type: NotificationMailerType::TYPE_ACCOUNT_REMOVE_FROM_TERRITORY,
+                    to: $user->getEmail(),
+                    territory: $partner->getTerritory(),
+                    params: ['partner_name' => $partner->getNom()]
+                )
+            );
             $this->addFlash('success', 'L\'utilisateur a bien été supprimé du partenaire.');
             $this->addFlash('warning', 'Attention, cet utilisateur est toujours actif sur d\'autres territoires.');
 
