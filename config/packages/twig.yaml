@@ -8,7 +8,8 @@ twig:
             logosvg: 'logo-histologe.svg'
             url: '%host_url%'
             demo: 'https://app.livestorm.co/mte/demonstration-histologe'
-            cgu_current_version: '%cgu_current_version%'
+            cgu_current_version: '%cgu_current_version%'            
+            feature_bo_signalement_create: '%feature_bo_signalement_create%'
         gitbook:
             documentation: https://documentation.histologe.beta.gouv.fr
             faq: https://faq.histologe.beta.gouv.fr
