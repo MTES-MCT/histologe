@@ -2,6 +2,7 @@
 
 namespace App\Repository;
 
+use App\Dto\Api\Request\SignalementListQueryParams;
 use App\Dto\CountSignalement;
 use App\Dto\SignalementAffectationListView;
 use App\Dto\SignalementExport;
@@ -1421,30 +1422,63 @@ class SignalementRepository extends ServiceEntityRepository
             ->getResult();
     }
 
-    public function findForAPI(User $user, int $limit = 1, int $page = 1, ?string $uuid = null, ?string $reference = null): array
+    public function findOneForApi(
+        User $user,
+        ?string $uuid = null,
+        ?string $reference = null,
+    ): array {
+        $qb = $this->findForApi($user);
+        if ($uuid) {
+            $qb->andWhere('s.uuid = :uuid')->setParameter('uuid', $uuid);
+        }
+        if ($reference) {
+            $qb->andWhere('s.reference = :reference')->setParameter('reference', $reference);
+        }
+
+        return $qb->getQuery()->getResult();
+    }
+
+    /**
+     * @throws \DateMalformedStringException
+     */
+    public function findAllForApi(User $user, SignalementListQueryParams $signalementListQueryParams): array
+    {
+        $page = $signalementListQueryParams->page ?? SignalementListQueryParams::DEFAULT_PAGE;
+        $limit = $signalementListQueryParams->limit ?? SignalementListQueryParams::DEFAULT_LIMIT;
+
+        $offset = ($page - 1) * $limit;
+        $qb = $this->findForApi($user);
+
+        if (!empty($signalementListQueryParams->dateAffectationDebut)) {
+            $qb->andWhere('affectations.createdAt >= :dateAffectationStart')
+                ->setParameter('dateAffectationStart', $signalementListQueryParams->dateAffectationDebut);
+        }
+
+        if (!empty($signalementListQueryParams->dateAffectationFin)) {
+            $dateAffectationEnd = (new \DateTimeImmutable($signalementListQueryParams->dateAffectationFin))
+                ->modify('+1 day');
+
+            $qb->andWhere('affectations.createdAt <= :dateAffectationEnd')
+                ->setParameter('dateAffectationEnd', $dateAffectationEnd);
+        }
+
+        $qb->orderBy('s.createdAt', 'DESC')
+            ->setFirstResult($offset)
+            ->setMaxResults($limit);
+
+        return $qb->getQuery()->getResult();
+    }
+
+    public function findForAPI(User $user): QueryBuilder
     {
         $partners = $user->getPartners();
-        $offset = ($page - 1) * $limit;
-        $qb = $this->createQueryBuilder('s')
-            ->select('s', 'territory')
+        $qb = $this->createQueryBuilder('s');
+
+        return $qb->select('s', 'territory')
             ->leftJoin('s.territory', 'territory')
             ->leftJoin('s.affectations', 'affectations')
             ->where('affectations.partner IN (:partners)')
-            ->setParameter('partners', $partners)
-            ->orderBy('s.createdAt', 'DESC')
-            ->setFirstResult($offset)
-            ->setMaxResults($limit);
-        if ($uuid) {
-            $qb->andWhere('s.uuid = :uuid')
-            ->setParameter('uuid', $uuid);
-        }
-        if ($reference) {
-            $qb->andWhere('s.reference = :reference')
-            ->setParameter('reference', $reference);
-        }
-
-        return $qb->getQuery()
-            ->getResult();
+            ->setParameter('partners', $partners);
     }
 
     public function findSignalementsLastSuiviWithSuiviAuto(Territory $territory, int $limit): array

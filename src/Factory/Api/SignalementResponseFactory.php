@@ -8,11 +8,15 @@ use App\Dto\Api\Model\Intervention;
 use App\Dto\Api\Model\Personne;
 use App\Dto\Api\Model\Suivi;
 use App\Dto\Api\Response\SignalementResponse;
+use App\Entity\Affectation;
+use App\Entity\Enum\AffectationStatus;
 use App\Entity\Enum\Api\PersonneType;
 use App\Entity\Enum\DesordreCritereZone;
 use App\Entity\Enum\SignalementStatus;
 use App\Entity\Signalement;
+use App\Entity\User;
 use App\Service\Signalement\SignalementDesordresProcessor;
+use Symfony\Bundle\SecurityBundle\Security;
 
 readonly class SignalementResponseFactory
 {
@@ -25,11 +29,24 @@ readonly class SignalementResponseFactory
     public function __construct(
         private SignalementDesordresProcessor $signalementDesordresProcessor,
         private FileFactory $fileFactory,
+        private Security $security,
     ) {
     }
 
     public function createFromSignalement(Signalement $signalement): SignalementResponse
     {
+        /** @var User $user */
+        $user = $this->security->getUser();
+        $partner = $user->getPartners()->first();
+
+        /** @var Affectation $affectation */
+        $affectation = $signalement->getAffectations()
+            ->filter(
+                function (Affectation $affectation) use ($partner) {
+                    return $affectation->getPartner() === $partner;
+                })
+            ->current();
+
         $signalementResponse = new SignalementResponse();
         // references, dates et statut
         $signalementResponse->uuid = $signalement->getUuid();
@@ -43,6 +60,9 @@ readonly class SignalementResponseFactory
         $signalementResponse->abandonProcedureUsager = $signalement->getIsUsagerAbandonProcedure();
         $signalementResponse->typeDeclarant = $signalement->getProfileDeclarant();
         $signalementResponse->description = $signalement->getDetails();
+
+        $signalementResponse->statutAffectation = AffectationStatus::mapNewStatus($affectation->getStatut());
+        $signalementResponse->dateAffectation = $affectation->getCreatedAt()->format(\DATE_ATOM);
 
         // infos logement
         $signalementResponse->natureLogement = $signalement->getNatureLogement();

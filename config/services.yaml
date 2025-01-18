@@ -83,6 +83,10 @@ services:
         tags:
             - { name: 'kernel.event_listener', event: 'kernel.exception' }
 
+    App\EventListener\RequestApiExceptionListener:
+        tags:
+            - { name: 'kernel.event_listener', event: 'kernel.exception' }
+
     App\EventListener\SeoPageNotFoundRedirectListener:
         tags:
             - { name: 'kernel.event_listener', event: 'kernel.request' }
