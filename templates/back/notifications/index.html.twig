@@ -69,10 +69,10 @@
                     </td>
                     <td>{{ notification.suivi.createdAt|format_datetime(locale='fr', timezone=territory_timezone, pattern='d MMMM yyyy à HH:mm:ss') }}</td>
                     <td class="word-wrap-anywhere">{{ notification.suivi.description
-                        |replace({'&t=___TOKEN___':'/'~notification.signalement.uuid})
-                        |replace({'?t=___TOKEN___':'/'~notification.signalement.uuid})
-                        |replace({'?folder=_up':'/'~notification.signalement.uuid~'?variant=resize'})
-                        |sanitize_html('app.message_sanitizer') }}
+                        |replace({'&amp;t&#61;___TOKEN___':'/'~notification.signalement.uuid})
+                        |replace({'?t&#61;___TOKEN___':'/'~notification.signalement.uuid})
+                        |replace({'?folder&#61;_up':'/'~notification.signalement.uuid~'?variant=resize'})
+                        |raw }}
                     </td>
                     <td>{{ notification.suivi.createdBy ? notification.suivi.createdBy.nomComplet : notification.signalement.nomOccupant|upper~' '~notification.signalement.prenomOccupant|capitalize }}</td>
                     <td class="fr-text--right fr-ws-nowrap">

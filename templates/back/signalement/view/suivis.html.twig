@@ -62,10 +62,10 @@
             <div class="fr-col-7 bloc-suivi-content-row fr-pl-3v">
         {% endif %}
             {{ suivi.description
-                |replace({'&t=___TOKEN___':'/'~signalement.uuid})
-                |replace({'?t=___TOKEN___':'/'~signalement.uuid})
-                |replace({'?folder=_up':'/'~signalement.uuid~'?variant=resize'})
-                |sanitize_html('app.message_sanitizer')
+                |replace({'&amp;t&#61;___TOKEN___':'/'~signalement.uuid})
+                |replace({'?t&#61;___TOKEN___':'/'~signalement.uuid})
+                |replace({'?foldert&#61_up':'/'~signalement.uuid~'?variant=resize'})
+                |raw
             }}
         </div>
         <div class="fr-col-2">

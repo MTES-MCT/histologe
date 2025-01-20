@@ -124,7 +124,7 @@ class SignalementActionControllerTest extends WebTestCase
         $route = $this->router->generate('back_signalement_delete_suivi', ['uuid' => $signalement->getUuid()]);
         $this->client->request('GET', $route);
 
-        $description = 'Un petit message de rappel afin d\'y revenir plus tard';
+        $description = 'Un petit message de rappel afin d&#039;y revenir plus tard';
         $suivi = $this->suiviRepository->findOneBy(['description' => $description]);
 
         $this->client->request(

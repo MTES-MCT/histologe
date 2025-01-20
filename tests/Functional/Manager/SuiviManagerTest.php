@@ -13,6 +13,7 @@ use App\Repository\UserRepository;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use Symfony\Bundle\SecurityBundle\Security;
+use Symfony\Component\HtmlSanitizer\HtmlSanitizerInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 
@@ -24,6 +25,7 @@ class SuiviManagerTest extends KernelTestCase
     private Security $security;
     private UrlGeneratorInterface $urlGenerator;
     private DesordreCritereRepository $desordreCritereRepository;
+    private HtmlSanitizerInterface $htmlSanitizerInterface;
 
     protected function setUp(): void
     {
@@ -33,6 +35,7 @@ class SuiviManagerTest extends KernelTestCase
         $this->security = static::getContainer()->get(Security::class);
         $this->urlGenerator = static::getContainer()->get(UrlGeneratorInterface::class);
         $this->desordreCritereRepository = static::getContainer()->get(DesordreCritereRepository::class);
+        $this->htmlSanitizerInterface = static::getContainer()->get(HtmlSanitizerInterface::class);
     }
 
     public function testCreateSuivi(): void
@@ -43,6 +46,7 @@ class SuiviManagerTest extends KernelTestCase
             $this->signalementUpdatedListener,
             $this->security,
             $this->desordreCritereRepository,
+            $this->htmlSanitizerInterface,
             Suivi::class,
         );
 
@@ -74,9 +78,10 @@ class SuiviManagerTest extends KernelTestCase
         $this->assertEquals(Suivi::TYPE_PARTNER, $suivi->getType());
         $this->assertNotEquals($countSuivisBeforeCreate, $countSuivisAfterCreate);
         $this->assertInstanceOf(Suivi::class, $suivi);
-        $desc = 'Le signalement a été cloturé pour test avec le motif suivant <br><strong>Non décence</strong><br><strong>Desc. : </strong>Lorem ipsum suivi sit amet, consectetur adipiscing elit.';
+        $desc = 'Le signalement a été cloturé pour test avec le motif suivant <br /><strong>Non décence</strong><br /><strong>Desc. : </strong>Lorem ipsum suivi sit amet, consectetur adipiscing elit.';
         $this->assertEquals($desc, $suivi->getDescription());
         $this->assertTrue($suivi->getIsPublic());
+        $this->assertTrue($suivi->getIsSanitized());
         $this->assertInstanceOf(UserInterface::class, $suivi->getCreatedBy());
     }
 }
