@@ -1,5 +1,10 @@
 <template>
+  <div id="map-container-wrapper" class="map-wrapper">
+    <div v-if="sharedState.signalements.list.length === 0" class="no-signalements-message">
+      Pas de signalements pour cette recherche
+    </div>
     <div id="map-signalements-view" class="map-container"></div>
+  </div>
 </template>
 
 <script lang="ts">
@@ -35,7 +40,9 @@ export default defineComponent({
       markers: L.markerClusterGroup(),
       sharedState: store.state,
       offset: 0,
-      bounds: L.latLngBounds(L.latLng(8, -80), L.latLng(70, 20))
+      bounds: L.latLngBounds(L.latLng(8, -80), L.latLng(70, 20)),
+      defaultCenter: [47.11, -0.01] as L.LatLngExpression,
+      defaultZoom: 5
     }
   },
   mounted () {
@@ -51,11 +58,11 @@ export default defineComponent({
   methods: {
     initializeMap () {
       this.map = L.map('map-signalements-view', {
-        center: [47.11, -0.01],
+        center: this.defaultCenter,
         maxBounds: this.bounds,
         minZoom: 5,
         maxZoom: 18,
-        zoom: 5
+        zoom: this.defaultZoom
       })
       L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { crossOrigin: true }).addTo(this.map as unknown as L.Map)
     },
@@ -97,12 +104,16 @@ export default defineComponent({
       })
     },
     adjustMapBounds () {
-      const bounds = this.markers.getBounds()
-      if (Object.keys(bounds).length !== 0) {
-        this.map?.fitBounds([
-          [bounds.getNorthEast().lat, bounds.getNorthEast().lng],
-          [bounds.getSouthWest().lat, bounds.getSouthWest().lng]
-        ])
+      if (this.sharedState.signalements.list.length === 0){
+        this.map?.setView(this.defaultCenter, this.defaultZoom)
+      }else{
+        const bounds = this.markers.getBounds()
+        if (Object.keys(bounds).length !== 0) {
+          this.map?.fitBounds([
+            [bounds.getNorthEast().lat, bounds.getNorthEast().lng],
+            [bounds.getSouthWest().lat, bounds.getSouthWest().lng]
+          ])
+        }
       }
     },
     getBadgeType (status: string) {
@@ -141,7 +152,25 @@ export default defineComponent({
 
 <style scoped>
   .map-container {
+    position: relative;
     width: 100%;
     height: 100vh;
+  }
+  .map-wrapper {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center; 
+    justify-content: center;
+  }
+  .no-signalements-message {
+    position: absolute;
+    z-index: 1000; 
+    background-color: rgba(255, 255, 255, 0.9); 
+    color: #000; 
+    padding: 1rem 2rem; 
+    border-radius: 8px; 
+    text-align: center;
   }
 </style>

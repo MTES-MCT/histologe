@@ -154,7 +154,9 @@ export function handleSignalementsShared (context: any, requestResponse: any) {
     context.sharedState.signalements.list = requestResponse.list
     context.sharedState.signalements.pagination = requestResponse.pagination
     context.loadingList = false
-    window.scrollTo(0, 0)
+    if (!context.sharedProps.ajaxurlSignalement.includes('cartographie')) {
+      window.scrollTo(0, 0)
+    }
   }
 }
 

@@ -2,7 +2,7 @@
 <template>
   <div id="histo-app-signalement-carto">
     <div class="fr-grid-row">
-      <div class="fr-col-2">
+      <div class="fr-col-2 filter-container-carto">
         <SignalementViewFilters
             :shared-props="sharedProps"
             @change="handleFilters"
@@ -94,5 +94,9 @@ export default defineComponent({
 <style>
 #histo-app-signalement-carto .fr-container--fluid {
   overflow: visible;
+}
+.filter-container-carto {
+  overflow: auto;
+  height: 100vh;
 }
 </style>
