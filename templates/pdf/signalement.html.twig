@@ -578,13 +578,6 @@
                             <h3><b>{{ situation|capitalize }}</b></h3>
                             <ul style="list-style:none;">
                                 {% for critere,criticite in criteres %}
-                                    {% if criticite.score is same as(1) %}
-                                        {% set icon = 'moyen' %}
-                                    {% elseif criticite.score is same as(2) %}
-                                        {% set icon = 'grave' %}
-                                    {% else %}
-                                        {% set icon = 'tres-grave' %}
-                                    {% endif %}
                                     <li>{% if criticite.critere.isDanger %}<p class="fr-badge fr-badge--warning">
                                         danger</p>&nbsp;&nbsp;{% endif %}<b>{{ critere }}</b>
                                         <ul style="list-style:none;">
