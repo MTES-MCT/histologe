@@ -2,6 +2,7 @@
 
 namespace App\Repository;
 
+use App\Entity\Enum\DocumentType;
 use App\Entity\File;
 use App\Entity\Territory;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
@@ -87,5 +88,15 @@ class FileRepository extends ServiceEntityRepository
             ->andWhere('f.isOriginalDeleted = false')
             ->andWhere('f.createdAt < :limit')
             ->setParameter('limit', $limit);
+    }
+
+    public function findExportsOlderThan(\DateTimeInterface $limit): array
+    {
+        return $this->createQueryBuilder('f')
+            ->andWhere('f.documentType = :documentType')
+            ->andWhere('f.createdAt < :limit')
+            ->setParameter('documentType', DocumentType::EXPORT)
+            ->setParameter('limit', $limit)
+            ->getQuery()->getResult();
     }
 }

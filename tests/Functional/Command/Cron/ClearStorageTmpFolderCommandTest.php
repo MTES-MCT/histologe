@@ -3,7 +3,9 @@
 namespace App\Tests\Functional\Command\Cron;
 
 use App\Command\Cron\ClearStorageTmpFolderCommand;
+use App\Repository\FileRepository;
 use App\Service\Mailer\NotificationMailerRegistry;
+use App\Service\UploadHandlerService;
 use League\Flysystem\DirectoryListing;
 use League\Flysystem\FilesystemException;
 use League\Flysystem\FilesystemOperator;
@@ -21,6 +23,8 @@ class ClearStorageTmpFolderCommandTest extends KernelTestCase
     private MockObject|ParameterBagInterface $parameterBag;
     private MockObject|NotificationMailerRegistry $mailerRegistry;
     private MockObject|LoggerInterface $logger;
+    private MockObject|FileRepository $fileRepository;
+    private MockObject|UploadHandlerService $uploadHandlerService;
 
     protected function setUp(): void
     {
@@ -28,6 +32,8 @@ class ClearStorageTmpFolderCommandTest extends KernelTestCase
         $this->parameterBag = self::getContainer()->getParameterBag();
         $this->mailerRegistry = self::getContainer()->get(NotificationMailerRegistry::class);
         $this->logger = $this->createMock(LoggerInterface::class);
+        $this->fileRepository = self::getContainer()->get(FileRepository::class);
+        $this->uploadHandlerService = self::getContainer()->get(UploadHandlerService::class);
     }
 
     /**
@@ -54,11 +60,14 @@ class ClearStorageTmpFolderCommandTest extends KernelTestCase
             $this->parameterBag,
             $this->mailerRegistry,
             $this->logger,
+            $this->fileRepository,
+            $this->uploadHandlerService,
         );
         $commandTester = new CommandTester($command);
         $commandTester->execute([]);
 
         $output = $commandTester->getDisplay();
+        $this->assertStringContainsString('1 exports ont été supprimés', $output);
         $this->assertStringContainsString('1 document(s) ont été supprimé(s) du repertoire /tmp', $output);
         $this->assertEquals(Command::SUCCESS, $commandTester->getStatusCode());
     }
