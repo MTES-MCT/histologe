@@ -22,7 +22,6 @@ class SignalementCreateController extends AbstractController
     #[Route('create', name: 'back_signalement_create', methods: 'GET')]
     public function createSignalement(
     ): Response {
-        // $this->denyAccessUnlessGranted('SIGN_CREATE');
         return $this->render('back/signalement_create/index.html.twig');
     }
 }
