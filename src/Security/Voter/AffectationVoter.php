@@ -11,11 +11,11 @@ use Symfony\Component\Security\Core\User\UserInterface;
 
 class AffectationVoter extends Voter
 {
-    public const SEE = 'ASSIGN_SEE';
-    public const TOGGLE = 'ASSIGN_TOGGLE';
-    public const ANSWER = 'ASSIGN_ANSWER';
-    public const CLOSE = 'ASSIGN_CLOSE';
-    public const REOPEN = 'ASSIGN_REOPEN';
+    public const SEE = 'AFFECTATION_SEE';
+    public const TOGGLE = 'AFFECTATION_TOGGLE';
+    public const ANSWER = 'AFFECTATION_ANSWER';
+    public const CLOSE = 'AFFECTATION_CLOSE';
+    public const REOPEN = 'AFFECTATION_REOPEN';
 
     protected function supports(string $attribute, $subject): bool
     {

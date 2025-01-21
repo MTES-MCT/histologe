@@ -232,7 +232,7 @@
                         Clôturer
                     </button>
                 
-                {% elseif affectation and is_granted('ASSIGN_CLOSE', affectation) %}
+                {% elseif affectation and is_granted('AFFECTATION_CLOSE', affectation) %}
                     <a id="link-bouton-cloturer" href="#" aria-controls="cloture-modal" data-fr-opened="false"
                         class="fr-btn fr-btn--sm fr-btn--secondary fr-icon-close-line fr-btn--icon-left">
                         Clôturer
