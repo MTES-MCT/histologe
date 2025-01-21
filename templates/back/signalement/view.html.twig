@@ -11,7 +11,7 @@
         {% include '_partials/_modal_historique_affectation.html.twig' %}
     {% endif %}
     {% include '_partials/_modal_dpe.html.twig' %}
-    {% if signalement.statut is not same as constant('App\\Entity\\Signalement::STATUS_NEED_VALIDATION') and not isSignalementClosed and not isClosedForMe and ((affectation and isAssignmentAccepted)) or is_granted('ROLE_ADMIN_TERRITORY') %}
+    {% if signalement.statut is not same as constant('App\\Entity\\Signalement::STATUS_NEED_VALIDATION') and not isSignalementClosed and not isClosedForMe and ((affectation and isAffectationAccepted)) or is_granted('ROLE_ADMIN_TERRITORY') %}
         {% include '_partials/_modal_cloture.html.twig' %}
     {% endif %}
     {% if canEditNDE %}
@@ -30,7 +30,7 @@
         {% include '_partials/_modal_reopen_signalement.html.twig' with { 'all': '1' } %}
     {% endif %}
     
-    {% if canReopenAssignment %}
+    {% if canReopenAffectation %}
         {% include '_partials/_modal_reopen_signalement.html.twig' with { 'all': '0' } %}
     {% endif %}
 
