@@ -76,7 +76,8 @@ class SignalementController extends AbstractController
         );
 
         $canAnswerAssignment = $canCancelRefusedAssignment = false;
-        $isAssignmentRefused = $isAssignmentAccepted = $isClosedForMe = false;
+        $isAssignmentRefused = $isAssignmentAccepted = false;
+        $isClosedForMe = null;
         $partner = $user->getPartnerInTerritoryOrFirstOne($signalement->getTerritory());
         if ($affectation = $signalement->getAffectations()->filter(function (Affectation $affectation) use ($partner) {
             return $affectation->getPartner() === $partner;
