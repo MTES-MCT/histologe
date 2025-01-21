@@ -9,7 +9,7 @@
             <li>
                 <a class="fr-breadcrumb__link"
                     {% if level2Link %}  href="{{ level2Link }}"{% else %}aria-current="page"{% endif %}
-                    {% if level2Link == path('back_signalement_index') %} data-filter-list-signalement {% endif %}
+                    {% if level2Link == path('back_signalements_index') %} data-filter-list-signalement {% endif %}
                     {% if level2Label %}aria-label="{{ level2Label }}"{% endif %}
                     >{{ level2Title }}</a>
             </li>

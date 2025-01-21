@@ -19,14 +19,14 @@ class WidgetFactoryTest extends TestCase
         $urlGeneratorMock
             ->expects($this->once())
             ->method('generate')
-            ->with('back_signalement_index', ['status_signalement' => 6], UrlGeneratorInterface::ABSOLUTE_URL)
+            ->with('back_signalements_index', ['status_signalement' => 6], UrlGeneratorInterface::ABSOLUTE_URL)
             ->willReturn($url);
 
         $widgetCardFactory = new WidgetCardFactory($urlGeneratorMock);
         $widgetCard = $widgetCardFactory->createInstance(
             'Clôtures globales',
             2,
-            'back_signalement_index',
+            'back_signalements_index',
             ['status_signalement' => 6]
         );
 

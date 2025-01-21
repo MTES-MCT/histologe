@@ -19,7 +19,7 @@ readonly class MenuBuilder
         /** @var User $user */
         $user = $this->currentRoute->getUser();
         $signalementsSubMenu = (new MenuItem(label: 'Signalements', roleGranted: User::ROLE_USER))
-            ->addChild(new MenuItem(label: 'Liste', route: 'back_signalement_index', roleGranted: User::ROLE_USER, routeParameters: $this->currentRoute->isGranted(User::ROLE_ADMIN) ? ['status' => 'nouveau', 'isImported' => 'oui'] : []))
+            ->addChild(new MenuItem(label: 'Liste', route: 'back_signalements_index', roleGranted: User::ROLE_USER, routeParameters: $this->currentRoute->isGranted(User::ROLE_ADMIN) ? ['status' => 'nouveau', 'isImported' => 'oui'] : []))
             ->addChild(new MenuItem(label: 'Créer un signalement', route: $this->parameterBag->get('feature_bo_signalement_create') ? 'back_signalement_create' : 'front_signalement', roleGranted: User::ROLE_USER))
             ->addChild(new MenuItem(route: 'back_signalement_view'))
         ;

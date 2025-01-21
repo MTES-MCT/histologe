@@ -7,7 +7,7 @@ use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 
-#[Route('/bo/signalement/')]
+#[Route('/bo/signalement')]
 class SignalementCreateController extends AbstractController
 {
     public function __construct(
@@ -19,7 +19,7 @@ class SignalementCreateController extends AbstractController
         }
     }
 
-    #[Route('create', name: 'back_signalement_create', methods: 'GET')]
+    #[Route('/create', name: 'back_signalement_create', methods: 'GET')]
     public function createSignalement(
     ): Response {
         return $this->render('back/signalement_create/index.html.twig');

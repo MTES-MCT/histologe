@@ -1193,30 +1193,6 @@ class SignalementRepository extends ServiceEntityRepository
         return $qb->getQuery()->getOneOrNullResult();
     }
 
-    // fonction pas utilisée
-    // public function createQueryBuilderActiveSignalement(
-    //     ?Territory $territory = null,
-    //     bool $removeImported = false,
-    //     bool $removeArchived = false,
-    // ): QueryBuilder {
-    //     $qb = $this->createQueryBuilder('s');
-
-    //     if ($removeArchived) {
-    //         $qb->andWhere('s.statut != :statutArchived')
-    //             ->setParameter('statutArchived', Signalement::STATUS_ARCHIVED);
-    //     }
-
-    //     if ($removeImported) {
-    //         $qb->andWhere('s.isImported IS NULL OR s.isImported = 0');
-    //     }
-
-    //     if ($territory) {
-    //         $qb->andWhere('s.territory = :territory')->setParameter('territory', $territory);
-    //     }
-
-    //     return $qb;
-    // }
-
     public function findAllByIds(array $ids): array
     {
         return $this->createQueryBuilder('s')

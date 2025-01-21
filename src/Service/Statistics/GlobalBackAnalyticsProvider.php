@@ -50,8 +50,7 @@ class GlobalBackAnalyticsProvider
         return $this->signalementRepository->countAll(
             territory: $territory,
             partners: $partners,
-            removeImported: true,
-            removeDraft: true
+            removeImported: true
         );
     }
 
@@ -60,8 +59,7 @@ class GlobalBackAnalyticsProvider
         return round($this->signalementRepository->getAverageCriticite(
             territory: $territory,
             partners: $partners,
-            removeImported: true,
-            removeDraft: true
+            removeImported: true
         ) * 10) / 10;
     }
 
@@ -70,8 +68,8 @@ class GlobalBackAnalyticsProvider
         return round($this->signalementRepository->getAverageDaysValidation(
             territory: $territory,
             partners: $partners,
-            removeImported: true,
-            removeDraft: true) * 10) / 10;
+            removeImported: true
+        ) * 10) / 10;
     }
 
     private function getAverageDaysClosureData(?Territory $territory, ArrayCollection $partners): float
@@ -79,7 +77,7 @@ class GlobalBackAnalyticsProvider
         return round($this->signalementRepository->getAverageDaysClosure(
             territory: $territory,
             partners: $partners,
-            removeImported: true,
-            removeDraft: true) * 10) / 10;
+            removeImported: true
+        ) * 10) / 10;
     }
 }

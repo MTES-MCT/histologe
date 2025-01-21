@@ -4,7 +4,7 @@
 
 {% block content %}
 
-    <section class="fr-pt-5v {{ app.request.get('_route') == 'back_signalement_index' ? container_class : 'fr-pl-5v' }}">
+    <section class="fr-pt-5v {{ app.request.get('_route') == 'back_signalements_index' ? container_class : 'fr-pl-5v' }}">
         {% include 'back/breadcrumb_bo.html.twig' with {
             'level2Title': 'Liste des signalements',
             'level2Link': '',
@@ -12,7 +12,7 @@
         } %}
     </section>
     <div id="app-signalement-list"
-         data-ajaxurl="{{ path('back_signalement_list_json') }}"
+         data-ajaxurl="{{ path('back_signalements_list_json') }}"
          data-ajaxurl-export-csv="{{ path('back_signalement_list_export') }}"
          data-ajaxurl-settings="{{ path('back_widget_settings') }}"
          data-ajaxurl-contact="{{ path('front_contact') }}"

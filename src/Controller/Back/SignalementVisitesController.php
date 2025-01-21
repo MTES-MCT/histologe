@@ -140,7 +140,7 @@ class SignalementVisitesController extends AbstractController
         if (!$intervention) {
             $this->addFlash('error', "Cette visite n'existe pas.");
 
-            return $this->redirectToRoute('back_signalement_index');
+            return $this->redirectToRoute('back_signalements_index');
         }
         $this->denyAccessUnlessGranted('INTERVENTION_EDIT_VISITE', $intervention);
 
@@ -194,7 +194,7 @@ class SignalementVisitesController extends AbstractController
         if (!$intervention) {
             $this->addFlash('error', "Cette visite n'existe pas.");
 
-            return $this->redirectToRoute('back_signalement_index');
+            return $this->redirectToRoute('back_signalements_index');
         }
         $this->denyAccessUnlessGranted('INTERVENTION_EDIT_VISITE', $intervention);
 
@@ -262,7 +262,7 @@ class SignalementVisitesController extends AbstractController
         if (!$intervention) {
             $this->addFlash('error', "Cette visite n'existe pas.");
 
-            return $this->redirectToRoute('back_signalement_index');
+            return $this->redirectToRoute('back_signalements_index');
         }
         $this->denyAccessUnlessGranted('INTERVENTION_EDIT_VISITE', $intervention);
 
@@ -317,7 +317,7 @@ class SignalementVisitesController extends AbstractController
         if (!$intervention) {
             $this->addFlash('error', "Cette visite n'existe pas.");
 
-            return $this->redirectToRoute('back_signalement_index');
+            return $this->redirectToRoute('back_signalements_index');
         }
         $this->denyAccessUnlessGranted('INTERVENTION_EDIT_VISITE', $intervention);
 

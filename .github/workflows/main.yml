@@ -18,6 +18,7 @@ env:
   CLAMAV_HOST: 127.0.0.1
   CLAMAV_PORT: 3310
   FEATURE_MULTI_TERRITORIES: 1
+  FEATURE_BO_SIGNALEMENT_CREATE: 1
 jobs:
   code-quality:
     name: Histologe (PHP ${{ matrix.php-versions }})

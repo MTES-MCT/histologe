@@ -5,7 +5,7 @@
 {% block body %}
     {% include 'back/nav_bo.html.twig' %}
     <main id="container-horizontal" class="fr-mb-5v">
-        <div class="{{ app.request.get('_route') in ['back_cartographie', 'back_signalement_index', 'back_dashboard'] ? 'fr-container-fluid' : container_class }}">
+        <div class="{{ app.request.get('_route') in ['back_cartographie', 'back_signalements_index', 'back_dashboard'] ? 'fr-container-fluid' : container_class }}">
             <div class="fr-grid-row">
                 <div class="fr-col-12" id="content">
                     {% for label, messages in app.flashes %}
