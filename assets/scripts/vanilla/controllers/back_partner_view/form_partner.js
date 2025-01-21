@@ -293,7 +293,7 @@ function updateModaleFromResponse(response, modalSelector, callback = null){
       }
     })
   }else{
-    const content = '<div class="fr-alert fr-alert--error" role="alert"><p class="fr-alert__title">Erreur</p><p>Une erreur est survenue veuillez fermer cette fenêtre.</p></div>'
+    const content = '<div class="fr-alert fr-alert--error" role="alert"><p class="fr-alert__title">Erreur</p><p>Une erreur s\'est produite. Veuillez actualiser la page.</p></div>'
     document.querySelector(modalSelector + '-form-container').innerHTML = content
   }
 }

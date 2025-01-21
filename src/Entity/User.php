@@ -425,8 +425,12 @@ class User implements UserInterface, EntityHistoryInterface, PasswordAuthenticat
         return $this;
     }
 
-    public function getNomComplet()
+    public function getNomComplet($firstNameFirst = false)
     {
+        if ($firstNameFirst) {
+            return ucfirst($this->prenom ?? '').' '.mb_strtoupper($this->nom ?? '');
+        }
+
         return mb_strtoupper($this->nom ?? '').' '.ucfirst($this->prenom ?? '');
     }
 

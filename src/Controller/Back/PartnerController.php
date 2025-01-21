@@ -393,7 +393,7 @@ class PartnerController extends AbstractController
 
                 return $this->json(['redirect' => true, 'url' => $url]);
             }
-            $formMultiMail->get('email')->addError(new FormError('Agent introuvalbe avec cette adresse e-mail.'));
+            $formMultiMail->get('email')->addError(new FormError('Agent introuvable avec cette adresse e-mail.'));
         }
         $content = $this->renderView('_partials/_modal_user_create_email.html.twig', ['formCheckMail' => $formMultiMail]);
 

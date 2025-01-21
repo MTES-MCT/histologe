@@ -230,8 +230,8 @@ class PartnerControllerTest extends WebTestCase
         yield 'Email existing on SA' => ['admin-01@histologe.fr', 'Un utilisateur Super Admin existe déjà avec cette adresse e-mail.'];
         yield 'Email existing with permission affectation' => ['user-partenaire-30@histologe.fr', 'Un utilisateur ayant les droits d&#039;affectation existe déjà avec cette adresse e-mail.'];
 
-        yield 'New user' => ['new.email@test.com', 'Agent introuvalbe avec cette adresse e-mail.'];
-        yield 'New user from usager' => ['usager-01@histologe.fr', 'Agent introuvalbe avec cette adresse e-mail.'];
+        yield 'New user' => ['new.email@test.com', 'Agent introuvable avec cette adresse e-mail.'];
+        yield 'New user from usager' => ['usager-01@histologe.fr', 'Agent introuvable avec cette adresse e-mail.'];
         yield 'Email ok to multi territories' => ['user-44-02@histologe.fr', 'redirect'];
     }
 
