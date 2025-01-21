@@ -6,6 +6,7 @@ use App\Command\FixEmailAddressesCommand;
 use App\Entity\Enum\OccupantLink;
 use App\Entity\Enum\QualificationStatus;
 use App\Entity\File;
+use App\Entity\Suivi;
 use App\Service\Files\ImageBase64Encoder;
 use App\Service\Notification\NotificationCounter;
 use App\Service\Signalement\Qualification\QualificationStatusService;
@@ -154,6 +155,7 @@ class AppExtension extends AbstractExtension implements GlobalsInterface
             new TwigFunction('show_email_alert', [$this, 'showEmailAlert']),
             new TwigFunction('user_avatar_or_placeholder', [UserAvatar::class, 'userAvatarOrPlaceholder'], ['is_safe' => ['html']]),
             new TwigFunction('singular_or_plural', [$this, 'displaySingularOrPlural']),
+            new TwigFunction('transform_suivi_description', [$this, 'transformSuiviDescription']),
         ];
     }
 
@@ -181,5 +183,15 @@ class AppExtension extends AbstractExtension implements GlobalsInterface
         }
 
         return $count.' '.$strIfSingular;
+    }
+
+    public function transformSuiviDescription(Suivi $suivi): string
+    {
+        $content = $suivi->getDescription();
+        $content = str_replace('&amp;t&#61;___TOKEN___', '/'.$suivi->getSignalement()->getUuid(), $content);
+        $content = str_replace('?t&#61;___TOKEN___', '/'.$suivi->getSignalement()->getUuid(), $content);
+        $content = str_replace('?folder&#61;_up', '/'.$suivi->getSignalement()->getUuid().'?variant=resize', $content);
+
+        return $content;
     }
 }
