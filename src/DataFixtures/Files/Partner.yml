@@ -165,7 +165,7 @@ partners:
     territory: "Rhône"
     type: "ADIL"
   -
-    nom: "ADIL"
+    nom: "ADIL 63"
     email: "partenaire-63-01@histologe.fr"
     is_archive: 0
     insee: "[\"\"]"
@@ -179,7 +179,7 @@ partners:
     territory: "Puy-de-Dôme"
     type: "DISPOSITIF_RENOVATION_HABITAT"
   -
-    nom: "MSA"
+    nom: "MSA 63"
     email: "partenaire-63-03@histologe.fr"
     is_archive: 0
     insee: "[\"\"]"
@@ -193,7 +193,7 @@ partners:
     territory: "Puy-de-Dôme"
     type: "EPCI"
   -
-    nom: "ARS"
+    nom: "ARS 63"
     email: "partenaire-63-05@histologe.fr"
     is_archive: 0
     insee: "[\"\"]"
@@ -214,14 +214,14 @@ partners:
     territory: "Puy-de-Dôme"
     type: "EPCI"
   -
-    nom: "CAF"
+    nom: "CAF 63"
     email: "partenaire-63-08@histologe.fr"
     is_archive: 0
     insee: "[\"\"]"
     territory: "Puy-de-Dôme"
     type: "CAF_MSA"
   -
-    nom: "DDTM"
+    nom: "DDTM 63"
     email: "partenaire-63-09@histologe.fr"
     is_archive: 0
     insee: "[\"\"]"
@@ -284,42 +284,42 @@ partners:
     territory: "Puy-de-Dôme"
     type: "OPERATEUR_VISITES_ET_TRAVAUX"
   -
-    nom: "DDETS"
+    nom: "DDETS 63"
     email: "partenaire-63-18@histologe.fr"
     is_archive: 0
     insee: "[\"\"]"
     territory: "Puy-de-Dôme"
     type: "DDETS"
   -
-    nom: "ADIL"
+    nom: "ADIL 89"
     email: "partenaire-89-01@histologe.fr"
     is_archive: 0
     insee: "[\"\"]"
     territory: "Yonne"
     type: "ADIL"
   -
-    nom: "DDT"
+    nom: "DDT 89"
     email: "partenaire-89-02@histologe.fr"
     is_archive: 0
     insee: "[\"\"]"
     territory: "Yonne"
     type: "DDT_M"
   -
-    nom: "CAF"
+    nom: "CAF 89"
     email: "partenaire-89-03@histologe.fr"
     is_archive: 0
     insee: "[\"\"]"
     territory: "Yonne"
     type: "CAF_MSA"
   -
-    nom: "ARS"
+    nom: "ARS 89"
     email: "partenaire-89-04@histologe.fr"
     is_archive: 0
     insee: "[\"\"]"
     territory: "Yonne"
     type: "ARS"
   -
-    nom: "CD"
+    nom: "CD 89"
     email: "partenaire-89-05@histologe.fr"
     is_archive: 0
     insee: "[\"\"]"
@@ -361,7 +361,7 @@ partners:
     territory: "Yonne"
     type: "COMMUNE_SCHS"
   -
-    nom: "DDTESPP"
+    nom: "DDTESPP 89"
     email: "partenaire-89-11@histologe.fr"
     is_archive: 0
     insee: "[\"\"]"
