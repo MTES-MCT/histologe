@@ -27,8 +27,8 @@ class SignalementAddressUpdateAndAutoAssignMessageHandler
         try {
             $signalement = $this->signalementRepository->find($signalementAddressUpdateAndAutoAssignMessage->getSignalementId());
             $this->signalementAddressUpdater->updateAddressOccupantFromBanData($signalement);
-            $this->autoAssigner->assign($signalement);
             $this->entityManager->flush();
+            $this->autoAssigner->assign($signalement);
         } catch (\Throwable $exception) {
             $this->logger->error(
                 sprintf(

@@ -68,7 +68,9 @@ class SignalementExportFactory
         }
 
         $infoProcedureBailMoyen = $infoProcedureBailMoyenLabel = null;
-        if (isset($data['informationProcedure']) && $data['informationProcedure'] instanceof InformationProcedure) {
+        if (isset($data['informationProcedure'])
+                && $data['informationProcedure'] instanceof InformationProcedure
+                && !empty($data['informationProcedure']->getInfoProcedureBailMoyen())) {
             $infoProcedureBailMoyen = strtoupper($data['informationProcedure']->getInfoProcedureBailMoyen());
             $infoProcedureBailMoyenLabel = MoyenContact::tryFrom($infoProcedureBailMoyen)?->label();
         }
