@@ -120,6 +120,10 @@ class CodeInseeSpecification implements SpecificationInterface
 
     private function isPointInPolygon(Coordinate $point, array $polygonData): bool
     {
+        // special case : POLYGON ((X1 Y1, X2 Y2)))
+        if (1 === \count($polygonData)) {
+            $polygonData = $polygonData[0];
+        }
         $polygon = $this->buildPolygon($polygonData);
 
         return $polygon->contains($point);
@@ -127,6 +131,10 @@ class CodeInseeSpecification implements SpecificationInterface
 
     private function isPointInMultiPolygon(Coordinate $point, array $multiPolygonData): bool
     {
+        // special case : MULTIPOLYGON (((X1 Y1, X2 Y2),(X3 Y3, X4 Y4)))
+        if (1 === \count($multiPolygonData)) {
+            $multiPolygonData = $multiPolygonData[0];
+        }
         foreach ($multiPolygonData as $polygonData) {
             if ($this->isPointInPolygon($point, $polygonData)) {
                 return true;
