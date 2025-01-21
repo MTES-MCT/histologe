@@ -279,6 +279,10 @@ small {
     background-color: var(--background-contrast-orange-terre-battue);
 }
 
+.leaflet-control-zoom a[href]{
+    background: #fff;
+}
+
 a[href].fr-btn--orange {
     background: #FF9940;
     &:hover {
