@@ -8,6 +8,7 @@ use App\Entity\Partner;
 use App\Entity\Signalement;
 use App\Entity\Suivi;
 use App\Entity\User;
+use App\Event\AffectationCreatedEvent;
 use App\Manager\AffectationManager;
 use App\Manager\SignalementManager;
 use App\Manager\SuiviManager;
@@ -24,6 +25,7 @@ use App\Specification\AndSpecification;
 use App\Specification\Context\PartnerSignalementContext;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 class AutoAssigner
 {
@@ -38,6 +40,7 @@ class AutoAssigner
         private ParameterBagInterface $parameterBag,
         private InterconnectionBus $interconnectionBus,
         private LoggerInterface $logger,
+        private EventDispatcherInterface $eventDispatcher,
     ) {
     }
 
@@ -124,6 +127,9 @@ class AutoAssigner
                 $partner,
                 $adminUser
             );
+            if ($affectation instanceof Affectation) {
+                $this->eventDispatcher->dispatch(new AffectationCreatedEvent($affectation), AffectationCreatedEvent::NAME);
+            }
             ++$this->countAffectations;
             $this->affectedPartnersNames[] = $partner->getNom();
             if ($affectation instanceof Affectation) {

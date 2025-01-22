@@ -56,14 +56,7 @@ class ActivityListener
             $this->em = $args->getObjectManager();
             $this->uow = $this->em->getUnitOfWork();
             foreach ($this->uow->getScheduledEntityInsertions() as $entity) {
-                if ($entity instanceof Signalement) {
-                    $this->notifyAdmins($entity, Notification::TYPE_NEW_SIGNALEMENT, $entity->getTerritory());
-                    $this->sendMail($entity, NotificationMailerType::TYPE_SIGNALEMENT_NEW);
-                } elseif ($entity instanceof Affectation) {
-                    $partner = $entity->getPartner();
-                    $this->notifyPartner($partner, $entity, Notification::TYPE_AFFECTATION);
-                    $this->sendMail($entity, NotificationMailerType::TYPE_ASSIGNMENT_NEW);
-                } elseif ($entity instanceof Suivi) {
+                if ($entity instanceof Suivi) {
                     // pas de notification pour un suivi technique ou si intervention
                     if (Suivi::TYPE_TECHNICAL === $entity->getType() || Suivi::CONTEXT_INTERVENTION === $entity->getContext()) {
                         continue;
