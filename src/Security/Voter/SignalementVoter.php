@@ -17,6 +17,7 @@ class SignalementVoter extends Voter
 {
     public const VALIDATE = 'SIGN_VALIDATE';
     public const CLOSE = 'SIGN_CLOSE';
+    public const REOPEN = 'SIGN_REOPEN';
     public const DELETE = 'SIGN_DELETE';
     public const EDIT = 'SIGN_EDIT';
     public const VIEW = 'SIGN_VIEW';
@@ -33,7 +34,7 @@ class SignalementVoter extends Voter
 
     protected function supports(string $attribute, $subject): bool
     {
-        return \in_array($attribute, [self::EDIT, self::VIEW, self::DELETE, self::VALIDATE, self::CLOSE, self::ADD_VISITE, self::USAGER_EDIT, self::EDIT_NDE, self::SEE_NDE])
+        return \in_array($attribute, [self::EDIT, self::VIEW, self::DELETE, self::VALIDATE, self::CLOSE, self::REOPEN, self::ADD_VISITE, self::USAGER_EDIT, self::EDIT_NDE, self::SEE_NDE])
             && ($subject instanceof Signalement);
     }
 
@@ -61,13 +62,10 @@ class SignalementVoter extends Voter
             };
         }
 
-        if ($this->security->isGranted('ROLE_ADMIN') && self::DELETE !== $attribute) {
-            return true;
-        }
-
         return match ($attribute) {
             self::VALIDATE => $this->canValidate($subject, $user),
             self::CLOSE => $this->canClose($subject, $user),
+            self::REOPEN => $this->canReopen($subject, $user),
             self::DELETE => $this->canDelete($subject, $user),
             self::EDIT => $this->canEdit($subject, $user),
             self::VIEW => $this->canView($subject, $user),
@@ -94,14 +92,33 @@ class SignalementVoter extends Voter
         return false;
     }
 
+    private function isAdminOrTerritoryAdmin(Signalement $signalement, User $user): bool
+    {
+        return $this->security->isGranted('ROLE_ADMIN')
+                || ($user->isTerritoryAdmin() && $user->hasPartnerInTerritory($signalement->getTerritory()));
+    }
+
     private function canValidate(Signalement $signalement, User $user): bool
     {
-        return Signalement::STATUS_NEED_VALIDATION === $signalement->getStatut() && $user->isTerritoryAdmin() && $user->hasPartnerInTerritory($signalement->getTerritory());
+        if (Signalement::STATUS_NEED_VALIDATION !== $signalement->getStatut()) {
+            return false;
+        }
+
+        return $this->isAdminOrTerritoryAdmin($signalement, $user);
     }
 
     private function canClose(Signalement $signalement, User $user): bool
     {
-        return $signalement->getStatut() >= Signalement::STATUS_ACTIVE && $user->isTerritoryAdmin() && $user->hasPartnerInTerritory($signalement->getTerritory());
+        if (Signalement::STATUS_ACTIVE !== $signalement->getStatut()) {
+            return false;
+        }
+
+        return $this->isAdminOrTerritoryAdmin($signalement, $user);
+    }
+
+    private function canReopen(Signalement $signalement, User $user): bool
+    {
+        return $this->canDelete($signalement, $user);
     }
 
     private function canDelete(Signalement $signalement, User $user): bool
@@ -109,14 +126,8 @@ class SignalementVoter extends Voter
         if (!\in_array($signalement->getStatut(), [Signalement::STATUS_CLOSED, Signalement::STATUS_REFUSED])) {
             return false;
         }
-        if ($this->security->isGranted('ROLE_ADMIN')) {
-            return true;
-        }
-        if ($this->security->isGranted('ROLE_ADMIN_TERRITORY') && $user->hasPartnerInTerritory($signalement->getTerritory())) {
-            return true;
-        }
 
-        return false;
+        return $this->isAdminOrTerritoryAdmin($signalement, $user);
     }
 
     private function canEdit(Signalement $signalement, User $user): bool
@@ -139,6 +150,10 @@ class SignalementVoter extends Voter
 
     private function canView(Signalement $signalement, User $user): bool
     {
+        if ($this->security->isGranted('ROLE_ADMIN')) {
+            return true;
+        }
+
         if (Signalement::STATUS_ARCHIVED === $signalement->getStatut()) {
             return false;
         }

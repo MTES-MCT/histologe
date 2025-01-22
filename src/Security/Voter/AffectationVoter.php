@@ -9,13 +9,13 @@ use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Authorization\Voter\Voter;
 use Symfony\Component\Security\Core\User\UserInterface;
 
-class AssignmentVoter extends Voter
+class AffectationVoter extends Voter
 {
-    public const SEE = 'ASSIGN_SEE';
-    public const TOGGLE = 'ASSIGN_TOGGLE';
-    public const ANSWER = 'ASSIGN_ANSWER';
-    public const CLOSE = 'ASSIGN_CLOSE';
-    public const REOPEN = 'ASSIGN_REOPEN';
+    public const SEE = 'AFFECTATION_SEE';
+    public const TOGGLE = 'AFFECTATION_TOGGLE';
+    public const ANSWER = 'AFFECTATION_ANSWER';
+    public const CLOSE = 'AFFECTATION_CLOSE';
+    public const REOPEN = 'AFFECTATION_REOPEN';
 
     protected function supports(string $attribute, $subject): bool
     {
@@ -61,18 +61,18 @@ class AssignmentVoter extends Voter
             && Signalement::STATUS_ACTIVE === $signalement->getStatut();
     }
 
-    private function canAnswer(Affectation $assignment, User $user): bool
+    private function canAnswer(Affectation $affectation, User $user): bool
     {
-        return $assignment->getPartner() === $user->getPartnerInTerritory($assignment->getSignalement()->getTerritory()) && Signalement::STATUS_ACTIVE === $assignment->getSignalement()->getStatut();
+        return $affectation->getPartner() === $user->getPartnerInTerritory($affectation->getSignalement()->getTerritory()) && Signalement::STATUS_ACTIVE === $affectation->getSignalement()->getStatut();
     }
 
-    private function canClose(Affectation $assignment, User $user): bool
+    private function canClose(Affectation $affectation, User $user): bool
     {
-        return $this->canAnswer($assignment, $user) && Affectation::STATUS_ACCEPTED === $assignment->getStatut();
+        return $this->canAnswer($affectation, $user) && Affectation::STATUS_ACCEPTED === $affectation->getStatut();
     }
 
-    private function canReopen(Affectation $assignment, User $user): bool
+    private function canReopen(Affectation $affectation, User $user): bool
     {
-        return $this->canAnswer($assignment, $user) && Affectation::STATUS_CLOSED === $assignment->getStatut();
+        return $this->canAnswer($affectation, $user) && Affectation::STATUS_CLOSED === $affectation->getStatut();
     }
 }

@@ -15,6 +15,7 @@ use App\Manager\UserManager;
 use App\Messenger\InterconnectionBus;
 use App\Repository\AffectationRepository;
 use App\Repository\PartnerRepository;
+use App\Security\Voter\AffectationVoter;
 use App\Service\Signalement\SearchFilterOptionDataProvider;
 use App\Specification\Signalement\FirstAffectationAcceptedSpecification;
 use Psr\Cache\InvalidArgumentException;
@@ -50,7 +51,7 @@ class AffectationController extends AbstractController
         Signalement $signalement,
         TagAwareCacheInterface $cache,
     ): RedirectResponse|JsonResponse {
-        $this->denyAccessUnlessGranted('ASSIGN_TOGGLE', $signalement);
+        $this->denyAccessUnlessGranted(AffectationVoter::TOGGLE, $signalement);
         if ($this->isCsrfTokenValid('signalement_affectation_'.$signalement->getId(), $request->get('_token'))) {
             $data = $request->get('signalement-affectation');
             if (isset($data['partners'])) {
@@ -96,7 +97,7 @@ class AffectationController extends AbstractController
         Signalement $signalement,
         AffectationRepository $affectationRepository,
     ): RedirectResponse|JsonResponse {
-        $this->denyAccessUnlessGranted('ASSIGN_TOGGLE', $signalement);
+        $this->denyAccessUnlessGranted(AffectationVoter::TOGGLE, $signalement);
         $idAffectation = $request->get('affectation');
         $affectation = $affectationRepository->findOneBy(['id' => $idAffectation]);
         if (!$affectation || $affectation->getSignalement()->getId() !== $signalement->getId()) {
@@ -132,7 +133,7 @@ class AffectationController extends AbstractController
         DossierMessageFactory $dossierMessageFactory,
         MessageBusInterface $bus,
     ): Response {
-        $this->denyAccessUnlessGranted('ASSIGN_ANSWER', $affectation);
+        $this->denyAccessUnlessGranted(AffectationVoter::ANSWER, $affectation);
         if ($this->isCsrfTokenValid('signalement_affectation_response_'.$signalement->getId(), $request->get('_token'))
             && $response = $request->get('signalement-affectation-response')
         ) {

@@ -22,6 +22,8 @@ use App\Repository\NotificationRepository;
 use App\Repository\SignalementQualificationRepository;
 use App\Repository\TagRepository;
 use App\Repository\ZoneRepository;
+use App\Security\Voter\AffectationVoter;
+use App\Security\Voter\SignalementVoter;
 use App\Service\Signalement\PhotoHelper;
 use App\Service\Signalement\SignalementDesordresProcessor;
 use Doctrine\ORM\EntityManagerInterface;
@@ -73,24 +75,36 @@ class SignalementController extends AbstractController
             SignalementViewedEvent::NAME
         );
 
-        $isRefused = $isAccepted = $isClosedForMe = null;
+        $canAnswerAffectation = $canCancelRefusedAffectation = false;
+        $isAffectationRefused = $isAffectationAccepted = false;
+        $isClosedForMe = null;
         $partner = $user->getPartnerInTerritoryOrFirstOne($signalement->getTerritory());
-        if ($isAffected = $signalement->getAffectations()->filter(function (Affectation $affectation) use ($partner) {
+        if ($affectation = $signalement->getAffectations()->filter(function (Affectation $affectation) use ($partner) {
             return $affectation->getPartner() === $partner;
         })->first()) {
-            switch ($isAffected->getStatut()) {
+            switch ($affectation->getStatut()) {
                 case Affectation::STATUS_ACCEPTED:
-                    $isAccepted = $isAffected;
+                    $isAffectationAccepted = true;
                     break;
                 case Affectation::STATUS_REFUSED:
-                    $isRefused = $isAffected;
+                    $isAffectationRefused = true;
+                    $canCancelRefusedAffectation = $this->isGranted(AffectationVoter::ANSWER, $affectation);
                     break;
                 case Affectation::STATUS_CLOSED:
                     $isClosedForMe = true;
                     break;
+                case Affectation::STATUS_WAIT:
+                    $canAnswerAffectation = $this->isGranted(AffectationVoter::ANSWER, $affectation);
+                    break;
             }
         }
+
         $isClosedForMe = $isClosedForMe ?? Signalement::STATUS_CLOSED === $signalement->getStatut();
+        $canValidateOrRefuseSignalement = $this->isGranted(SignalementVoter::VALIDATE, $signalement)
+                                            && !$isClosedForMe
+                                            && Signalement::STATUS_NEED_VALIDATION === $signalement->getStatut();
+        $canReopenAffectation = $affectation ? $this->isGranted(AffectationVoter::REOPEN, $affectation) : false;
+
         $clotureForm = $this->createForm(ClotureType::class);
         $clotureForm->handleRequest($request);
         $eventParams = [];
@@ -118,9 +132,9 @@ class SignalementController extends AbstractController
                 );
                 $reference = $signalement->getReference();
 
-            /* @var Affectation $isAffected */
-            } elseif ($isAffected) {
-                $entity = $affectationManager->closeAffectation($isAffected, $user, $eventParams['motif_cloture'], true);
+            /* @var Affectation $affectation */
+            } elseif ($affectation) {
+                $entity = $affectationManager->closeAffectation($affectation, $user, $eventParams['motif_cloture'], true);
                 $reference = $entity->getSignalement()->getReference();
             }
 
@@ -139,7 +153,7 @@ class SignalementController extends AbstractController
         if (Signalement::STATUS_ACTIVE === $signalement->getStatut()) {
             $canEditSignalement = $this->isGranted('ROLE_ADMIN')
                 || $this->isGranted('ROLE_ADMIN_TERRITORY')
-                || $isAccepted;
+                || $isAffectationAccepted;
         }
 
         $signalementQualificationNDE = $signalementQualificationRepository->findOneBy([
@@ -196,13 +210,16 @@ class SignalementController extends AbstractController
             'situations' => $infoDesordres['criticitesArranged'],
             'photos' => $infoDesordres['photos'],
             'criteres' => $infoDesordres['criteres'],
-            'needValidation' => Signalement::STATUS_NEED_VALIDATION === $signalement->getStatut(),
             'canEditSignalement' => $canEditSignalement,
-            'isAffected' => $isAffected,
-            'isAccepted' => $isAccepted,
-            'isClosed' => Signalement::STATUS_CLOSED === $signalement->getStatut(),
+            'canAnswerAffectation' => $canAnswerAffectation,
+            'canCancelRefusedAffectation' => $canCancelRefusedAffectation,
+            'canValidateOrRefuseSignalement' => $canValidateOrRefuseSignalement,
+            'canReopenAffectation' => $canReopenAffectation,
+            'affectation' => $affectation,
+            'isAffectationAccepted' => $isAffectationAccepted,
+            'isSignalementClosed' => Signalement::STATUS_CLOSED === $signalement->getStatut(),
             'isClosedForMe' => $isClosedForMe,
-            'isRefused' => $isRefused,
+            'isAffectationRefused' => $isAffectationRefused,
             'isDanger' => $infoDesordres['isDanger'],
             'signalement' => $signalement,
             'partners' => $partners,
@@ -217,8 +234,8 @@ class SignalementController extends AbstractController
             'partnersCanVisite' => $partnerVisite,
             'pendingVisites' => $interventionRepository->getPendingVisitesForSignalement($signalement),
             'allPhotosOrdered' => $allPhotosOrdered,
-            'canTogglePartnerAffectation' => $this->isGranted('ASSIGN_TOGGLE', $signalement),
-            'canSeePartnerAffectation' => $this->isGranted('ASSIGN_SEE', $signalement),
+            'canTogglePartnerAffectation' => $this->isGranted(AffectationVoter::TOGGLE, $signalement),
+            'canSeePartnerAffectation' => $this->isGranted(AffectationVoter::SEE, $signalement),
             'zones' => $zoneRepository->findZonesBySignalement($signalement),
         ];
 

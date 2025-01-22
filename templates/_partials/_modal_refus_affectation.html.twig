@@ -3,7 +3,7 @@
         <div class="fr-grid-row fr-grid-row--center">
             <div class="fr-col-12 fr-col-md-8 fr-col-lg-6">
                 <div class="fr-modal__body">
-                    <form action="{{ path('back_signalement_affectation_response',{signalement:signalement.id,user:app.user.id,affectation:isAffected.id}) }}"
+                    <form action="{{ path('back_signalement_affectation_response',{signalement:signalement.id,user:app.user.id,affectation:affectation.id}) }}"
                             class="tinyCheck fr-mb-3v" id="signalement-affectation-response-deny-form"
                             name="signalement-affectation-response-form" method="POST">
                         <div class="fr-modal__header">
