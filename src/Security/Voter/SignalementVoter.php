@@ -35,7 +35,7 @@ class SignalementVoter extends Voter
 
     protected function supports(string $attribute, $subject): bool
     {
-        return \in_array($attribute, [self::EDIT, self::VIEW, self::DELETE, self::VALIDATE, self::CLOSE, self::REOPEN,, self::CREATE, self::ADD_VISITE, self::USAGER_EDIT, self::EDIT_NDE, self::SEE_NDE])
+        return \in_array($attribute, [self::EDIT, self::VIEW, self::DELETE, self::VALIDATE, self::CLOSE, self::REOPEN, self::CREATE, self::ADD_VISITE, self::USAGER_EDIT, self::EDIT_NDE, self::SEE_NDE])
             && ($subject instanceof Signalement);
     }
 
