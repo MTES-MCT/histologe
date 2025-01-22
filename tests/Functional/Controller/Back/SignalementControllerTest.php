@@ -35,15 +35,20 @@ class SignalementControllerTest extends WebTestCase
 
         $client->loginUser($user);
         $client->request('GET', $route);
-        if (Signalement::STATUS_ARCHIVED !== $signalement->getStatut()) {
-            $this->assertResponseIsSuccessful((string) $signalement->getId());
-            $this->assertSelectorTextContains(
-                'h1.fr-h2',
-                '#'.$signalement->getReference(),
-                $signalement->getReference()
-            );
-        } else {
-            $this->assertResponseRedirects('/bo/signalements/');
+        switch ($signalement->getStatut()) {
+            case Signalement::STATUS_ARCHIVED:
+                $this->assertResponseRedirects('/bo/signalements/');
+                break;
+            case Signalement::STATUS_DRAFT:
+                $this->assertResponseStatusCodeSame(Response::HTTP_FORBIDDEN);
+                break;
+            default:
+                $this->assertResponseIsSuccessful((string) $signalement->getId());
+                $this->assertSelectorTextContains(
+                    'h1.fr-h2',
+                    '#'.$signalement->getReference(),
+                    $signalement->getReference()
+                );
         }
     }
 
