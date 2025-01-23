@@ -244,9 +244,7 @@ class EsaboraManager
             context: Suivi::CONTEXT_SCHS,
             flush: false,
         );
-        if (!empty($event->getDate())) {
-            $suivi->setCreatedAt(\DateTimeImmutable::createFromFormat('d/m/Y', $event->getDate()));
-        }
+        $suivi->setCreatedAt(\DateTimeImmutable::createFromFormat('d/m/Y', $event->getDate()));
         $suivi->setOriginalData($event->getOriginalData());
         $this->entityManager->persist($suivi);
 

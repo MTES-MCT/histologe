@@ -10,6 +10,7 @@ use App\Entity\Suivi;
 use App\Repository\AffectationRepository;
 use App\Service\Interconnection\Esabora\EsaboraManager;
 use App\Service\Interconnection\Esabora\EsaboraSCHSService;
+use App\Service\Interconnection\Esabora\Response\DossierEventsSCHSCollectionResponse;
 use App\Service\Interconnection\Esabora\Response\DossierStateSCHSResponse;
 use App\Service\Mailer\NotificationMailerRegistry;
 use Doctrine\Common\Collections\ArrayCollection;
@@ -21,16 +22,21 @@ use Symfony\Component\Serializer\SerializerInterface;
 
 class SynchronizeEsaboraSCHSCommandTest extends KernelTestCase
 {
-    public const PATH_MOCK = '/../../../../tools/wiremock/src/Resources/Esabora/schs/ws_etat_dossier_sas/';
+    public const PATH_MOCK = '/../../../../tools/wiremock/src/Resources/Esabora/schs/';
 
     public function testSyncDossierEsaboraSCHS(): void
     {
         $kernel = self::bootKernel();
         $application = new Application($kernel);
 
-        $filepath = __DIR__.self::PATH_MOCK.'etat_non_importe.json';
+        $filepath = __DIR__.self::PATH_MOCK.'ws_etat_dossier_sas/etat_non_importe.json';
         $responseEsabora = json_decode(file_get_contents($filepath), true);
         $dossierResponse = new DossierStateSCHSResponse($responseEsabora, 200);
+
+        $fileEventPath = __DIR__.self::PATH_MOCK.'ws_get_dossier_events.json';
+        $responseEsaboraEvent = json_decode(file_get_contents($fileEventPath), true);
+        $dossierEventResponse = new DossierEventsSCHSCollectionResponse($responseEsaboraEvent, 200);
+
         $affectation = (new Affectation())->setSignalement(new Signalement())->setPartner(new Partner());
 
         $esaboraServiceMock = $this->createMock(EsaboraSCHSService::class);
@@ -39,6 +45,12 @@ class SynchronizeEsaboraSCHSCommandTest extends KernelTestCase
             ->method('getStateDossier')
             ->with($affectation)
             ->willReturn($dossierResponse);
+
+        $esaboraServiceMock
+            ->expects($this->atLeast(1))
+            ->method('getDossierEvents')
+            ->with($affectation)
+            ->willReturn($dossierEventResponse);
 
         $affectationRepositoryMock = $this->createMock(AffectationRepository::class);
 
@@ -70,8 +82,7 @@ class SynchronizeEsaboraSCHSCommandTest extends KernelTestCase
 
         $commandTester = new CommandTester($command);
         $commandTester->execute([]);
-        $commandTester->getDisplay();
-
+        $this->assertStringContainsString('Synchronized 4 new events with 0 files', $commandTester->getDisplay());
         $commandTester->assertCommandIsSuccessful();
     }
 }
