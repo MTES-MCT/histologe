@@ -18,8 +18,8 @@ class Desordre
     )]
     public string $categorie;
     #[OA\Property(
-        description: 'Zone exacte du logement ou du bâtiment où le désordre est constaté.
-        Les choix possibles sont : `BATIMENT`, `LOGEMENT`.',
+        description: 'Zone exacte du logement ou du bâtiment où le désordre est constaté.',
+        enum: ['BATIMENT', 'LOGEMENT'],
         example: 'LOGEMENT',
         nullable: true
     )]

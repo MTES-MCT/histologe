@@ -44,15 +44,7 @@ class SignalementResponse
     )]
     public Adresse $adresse;
     #[OA\Property(
-        description: "Le statut du signalement peut prendre l'une des valeurs suivantes : <br>
-        <ul>
-            <li>`NOUVEAU`</li>
-            <li>`EN_COURS`</li>
-            <li>`FERME`</li>
-            <li>`ARCHIVE`</li>
-            <li>`REFUSE`</li>
-        </ul>
-        .",
+        description: 'Statut du signalement',
         example: 'FERME'
     )]
     public SignalementNewStatus $statut;
@@ -99,16 +91,7 @@ class SignalementResponse
     )]
     public ?bool $abandonProcedureUsager;
     #[OA\Property(
-        description: 'Type de déclarant ayant déposé le signalement.<br>
-        <ul>
-            <li>`LOCATAIRE`</li>
-            <li>`BAILLEUR_OCCUPANT`</li>
-            <li>`TIERS_PARTICULIER`</li>
-            <li>`TIERS_PRO`</li>
-            <li>`SERVICE_SECOURS`</li>
-            <li>`BAILLEUR`</li>
-        </ul>
-        ',
+        description: 'Type de déclarant ayant déposé le signalement.',
         example: 'LOCATAIRE',
     )]
     public ?ProfileDeclarant $typeDeclarant;
@@ -458,17 +441,9 @@ class SignalementResponse
     public ?bool $proprietaireAverti;
 
     #[OA\Property(
-        description: 'Moyen utilisé par le locataire pour avertir le propriétaire.
-        <ul>
-            <li>`courrier`</li>
-            <li>`email`</li>
-            <li>`telephone`</li>
-            <li>`sms`</li>
-            <li>`autre`</li>
-            <li>`nsp`</li>
-        </ul>
-        ',
+        description: 'Moyen utilisé par le locataire pour avertir le propriétaire.',
         type: 'string',
+        enum: ['courrier', 'email', 'telephone', 'sms', 'autre', 'nsp'],
         example: 'sms',
         nullable: true
     )]
@@ -693,16 +668,7 @@ class SignalementResponse
     )]
     public ?float $scoreLogement;
     #[OA\Property(
-        description: 'Décrit depuis combien de temps les désordres ont commencé.<br>
-        Les valeurs disponibles sont :
-        <ul>
-            <li>`LESS_1_MONTH`</li>
-            <li>`MONTHS_1_to_6`</li>
-            <li>`MONTHS_6_to_12`</li>
-            <li>`YEARS_1_TO_2`</li>
-            <li>`MORE_2_YEARS`</li>
-            <li>`NSP`</li>
-        </ul>',
+        description: 'Décrit depuis combien de temps les désordres ont commencé.',
         example: 'MONTHS_1_to_6',
         nullable: true
     )]

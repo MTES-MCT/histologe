@@ -2,6 +2,7 @@
 
 namespace App\Dto\Api\Model;
 
+use App\Entity\Enum\InterventionType;
 use App\Entity\Intervention as InterventionEntity;
 use Nelmio\ApiDocBundle\Attribute\Model;
 use OpenApi\Attributes as OA;
@@ -22,26 +23,15 @@ class Intervention
     public string $dateIntervention;
 
     #[OA\Property(
-        description: 'Type d\'intervention réalisée.<br>
-        <ul>
-            <li>`VISITE`</li>
-            <li>`VISITE_CONTROLE`</li>
-            <li>`ARRETE_PREFECTORAL`</li>
-        </ul>',
-        type: 'string',
+        description: 'Type d\'intervention réalisée.',
         example: 'VISITE',
         nullable: true
     )]
-    public ?string $type;
+    public ?InterventionType $type;
     #[OA\Property(
-        description: 'Statut de l\'intervention.<br>
-        <ul>
-            <li>`PLANNED`</li>
-            <li>`DONE`</li>
-            <li>`NOT_DONE`</li>
-            <li>`CANCELED`</li>
-        </ul>',
+        description: 'Statut de l\'intervention.',
         type: 'string',
+        enum: ['PLANNED', 'DONE', 'NOT_DONE', 'CANCELED'],
         example: 'DONE',
         nullable: true
     )]
@@ -91,7 +81,7 @@ class Intervention
         InterventionEntity $intervention,
     ) {
         $this->dateIntervention = $intervention->getScheduledAt()->format(\DATE_ATOM);
-        $this->type = $intervention->getType()?->label();
+        $this->type = $intervention->getType();
         $this->statut = $intervention->getStatus();
         $this->partner = $intervention->getPartner() ? new Partner($intervention->getPartner()) : null;
         $this->details = $intervention->getDetails(); // traitement de suppression du html

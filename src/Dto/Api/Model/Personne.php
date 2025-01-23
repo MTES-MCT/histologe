@@ -3,6 +3,7 @@
 namespace App\Dto\Api\Model;
 
 use App\Entity\Enum\Api\PersonneType;
+use App\Entity\Enum\ProprioType;
 use OpenApi\Attributes as OA;
 
 #[OA\Schema(
@@ -14,12 +15,7 @@ class Personne
 {
     public function __construct(
         #[OA\Property(
-            description: 'Type de personne<br>
-            <ul>
-                <li>`OCCUPANT`</li>
-                <li>`DECLARANT`</li>
-                <li>`PROPRIETAIRE`</li>
-            </ul>',
+            description: 'Type de personne',
             nullable: true
         )]
         public ?PersonneType $personneType = null,
@@ -38,17 +34,11 @@ class Personne
         public ?string $lienOccupant = null,
 
         #[OA\Property(
-            description: 'Type si la personne est un bailleur.<br>
-            <ul>
-                <li>PARTICULIER</li>
-                <li>ORGANISME_SOCIETE</li>
-            </ul>
-            ',
-            type: 'string',
+            description: 'Type si la personne est un bailleur.',
             example: 'PARTICULIER',
             nullable: true
         )]
-        public ?string $precisionTypeSiBailleur = null,
+        public ?ProprioType $precisionTypeSiBailleur = null,
 
         #[OA\Property(
             description: 'Indique si la personne est un travailleur social pour l\'occupant.',
@@ -58,12 +48,8 @@ class Personne
         public ?bool $estTravailleurSocialPourOccupant = null,
 
         #[OA\Property(
-            description: 'Civilité de la personne.<br>
-            <ul>
-                <li>mr</li>
-                <li>mme</li>
-            </ul>
-',
+            description: 'Civilité de la personne.',
+            enum: ['mr', 'mme'],
             example: 'mr',
             nullable: true
         )]

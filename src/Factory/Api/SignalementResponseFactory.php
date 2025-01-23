@@ -200,7 +200,7 @@ readonly class SignalementResponseFactory
                 personneType: $personneType,
                 structure: $signalement->getStructureDeclarant(),
                 lienOccupant: $signalement->getLienDeclarantOccupant(),
-                precisionTypeSiBailleur: $signalement->getTypeProprio()?->value,
+                precisionTypeSiBailleur: $signalement->getTypeProprio(),
                 estTravailleurSocialPourOccupant: $this->stringToBool($signalement->getSituationFoyer()?->getTravailleurSocialAccompagnementDeclarant()),
                 nom: $signalement->getNomDeclarant(),
                 prenom: $signalement->getPrenomDeclarant(),
@@ -219,7 +219,7 @@ readonly class SignalementResponseFactory
 
             return new Personne(
                 personneType: $personneType,
-                precisionTypeSiBailleur: $signalement->getTypeProprio()?->value,
+                precisionTypeSiBailleur: $signalement->getTypeProprio(),
                 nom: $signalement->getNomProprio(),
                 prenom: $signalement->getPrenomProprio(),
                 email: $signalement->getMailProprio(),
