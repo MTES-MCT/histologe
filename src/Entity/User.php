@@ -377,7 +377,7 @@ class User implements UserInterface, EntityHistoryInterface, PasswordAuthenticat
 
     public function getPartnerInTerritoryOrFirstOne(Territory $territory): ?Partner
     {
-        return $this->getPartnerInTerritory($territory) ?? $this->getPartners()->count() ? $this->getPartners()->first() : null;
+        return $this->getPartnerInTerritory($territory) ?? ($this->getPartners()->count() ? $this->getPartners()->first() : null);
     }
 
     public function hasPartnerInTerritory(Territory $territory): bool
