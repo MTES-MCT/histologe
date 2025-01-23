@@ -124,7 +124,7 @@ class AutoAffectationRuleType extends AbstractType
                 ],
             ])
             ->add('inseeToInclude', TextType::class, [
-                'label' => 'Périmètre géographique à inclure (facultatif)',
+                'label' => 'Code insee à inclure (facultatif)',
                 'attr' => [
                     'class' => 'fr-input',
                 ],

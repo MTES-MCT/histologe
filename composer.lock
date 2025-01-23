@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "727f9a63054c0e1f2b9ac17c5ca06b06",
+    "content-hash": "5096f2ed35426df739daceb598708c81",
     "packages": [
         {
             "name": "aws/aws-crt-php",
@@ -3352,74 +3352,6 @@
             "time": "2024-03-23T07:42:40+00:00"
         },
         {
-            "name": "longitude-one/wkt-parser",
-            "version": "3.0.0",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/longitude-one/wkt-parser.git",
-                "reference": "cb9ded868bfd0200e5134bf259b1e001b83ebaa2"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/longitude-one/wkt-parser/zipball/cb9ded868bfd0200e5134bf259b1e001b83ebaa2",
-                "reference": "cb9ded868bfd0200e5134bf259b1e001b83ebaa2",
-                "shasum": ""
-            },
-            "require": {
-                "doctrine/lexer": "^2.1|^3.0",
-                "php": "^8.1"
-            },
-            "replace": {
-                "creof/wkt-parser": "*"
-            },
-            "require-dev": {
-                "phpunit/phpunit": "^10.5"
-            },
-            "type": "library",
-            "autoload": {
-                "psr-0": {
-                    "LongitudeOne\\Geo\\WKT": "lib/"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Alexandre Tranchant",
-                    "email": "alexandre.tranchant@gmail.com"
-                },
-                {
-                    "name": "axi"
-                },
-                {
-                    "name": "Derek J. Lambert",
-                    "email": "dlambert@dereklambert.com"
-                },
-                {
-                    "name": "ellisgl"
-                }
-            ],
-            "description": "Parser for well-known text (WKT) object strings",
-            "keywords": [
-                "ewkt",
-                "geography",
-                "geometry",
-                "lexer",
-                "parser",
-                "spatial",
-                "string",
-                "text",
-                "wkt"
-            ],
-            "support": {
-                "issues": "https://github.com/longitude-one/wkt-parser/issues",
-                "source": "https://github.com/longitude-one/wkt-parser/tree/3.0.0"
-            },
-            "time": "2024-04-27T07:44:31+00:00"
-        },
-        {
             "name": "lorenzo/pinky",
             "version": "1.1.0",
             "source": {
@@ -3723,89 +3655,6 @@
                 "source": "https://github.com/Masterminds/html5-php/tree/2.9.0"
             },
             "time": "2024-03-31T07:05:07+00:00"
-        },
-        {
-            "name": "mjaschen/phpgeo",
-            "version": "5.0.0",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/mjaschen/phpgeo.git",
-                "reference": "20524a47c8edc76364c7373911224a710aeb1cae"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/mjaschen/phpgeo/zipball/20524a47c8edc76364c7373911224a710aeb1cae",
-                "reference": "20524a47c8edc76364c7373911224a710aeb1cae",
-                "shasum": ""
-            },
-            "require": {
-                "php": "^8.1"
-            },
-            "require-dev": {
-                "phpunit/phpunit": "^10.0",
-                "squizlabs/php_codesniffer": "^3.7",
-                "vimeo/psalm": "^5.0"
-            },
-            "type": "library",
-            "autoload": {
-                "psr-4": {
-                    "Location\\": "src/"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Marcus Jaschen",
-                    "email": "mjaschen@gmail.com",
-                    "homepage": "https://www.marcusjaschen.de/"
-                }
-            ],
-            "description": "Simple Yet Powerful Geo Library",
-            "homepage": "https://phpgeo.marcusjaschen.de/",
-            "keywords": [
-                "Polygon",
-                "area",
-                "bearing",
-                "bounds",
-                "calculation",
-                "coordinate",
-                "distance",
-                "earth",
-                "ellipsoid",
-                "geo",
-                "geofence",
-                "gis",
-                "gps",
-                "haversine",
-                "length",
-                "perpendicular",
-                "point",
-                "polyline",
-                "projection",
-                "simplify",
-                "track",
-                "vincenty"
-            ],
-            "support": {
-                "docs": "https://phpgeo.marcusjaschen.de/Installation.html",
-                "email": "mjaschen@gmail.com",
-                "issues": "https://github.com/mjaschen/phpgeo/issues",
-                "source": "https://github.com/mjaschen/phpgeo/tree/5.0.0"
-            },
-            "funding": [
-                {
-                    "url": "https://www.paypal.com/paypalme/mjaschen",
-                    "type": "custom"
-                },
-                {
-                    "url": "https://github.com/mjaschen",
-                    "type": "github"
-                }
-            ],
-            "time": "2023-12-07T09:53:11+00:00"
         },
         {
             "name": "monolog/monolog",
