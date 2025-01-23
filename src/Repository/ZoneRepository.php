@@ -62,10 +62,11 @@ class ZoneRepository extends ServiceEntityRepository
             JOIN zone z ON ST_Contains(ST_GeomFromText(z.area),
             Point(JSON_EXTRACT(s.geoloc, "$.lng"), JSON_EXTRACT(s.geoloc, "$.lat")))
             WHERE z.id = :zone AND s.territory_id = z.territory_id
+            AND s.statut NOT IN (:status_draft, :status_archived)
             ORDER BY s.created_at DESC
             ';
 
-        $resultSet = $conn->executeQuery($sql, ['zone' => $zone->getId()]);
+        $resultSet = $conn->executeQuery($sql, ['zone' => $zone->getId(), 'status_draft' => Signalement::STATUS_DRAFT, 'status_archived' => Signalement::STATUS_ARCHIVED]);
         $list = $resultSet->fetchAllAssociative();
         foreach ($list as $key => $value) {
             $list[$key]['geoloc'] = json_decode($value['geoloc'], true);

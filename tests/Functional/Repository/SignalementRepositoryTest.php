@@ -138,7 +138,7 @@ class SignalementRepositoryTest extends KernelTestCase
         /** @var SignalementRepository $signalementRepository */
         $signalementRepository = $this->entityManager->getRepository(Signalement::class);
         $signalementsArchived = $signalementRepository->findAllArchived(1, 50, null, null);
-        $this->assertEquals(2, \count($signalementsArchived));
+        $this->assertEquals(3, \count($signalementsArchived));
     }
 
     public function testFindAllArchivedTerritory(): void
