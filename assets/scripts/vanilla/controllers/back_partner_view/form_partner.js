@@ -282,6 +282,11 @@ function updateModaleFromResponse(response, modalSelector, callback = null){
       }else{
         document.querySelector(modalSelector + '-title').innerHTML = response.title
         document.querySelector(modalSelector + '-form-container').innerHTML = response.content
+        if(response.submitLabel){
+          document.querySelector(modalSelector + ' button[type="submit"]').innerHTML = response.submitLabel
+        }else{
+          document.querySelector(modalSelector + ' button[type="submit"]').innerHTML = 'Valider'
+        }
         attachSubmitFormModal(modalSelector, callback)
         if (typeof callback === 'function') {
           callback();

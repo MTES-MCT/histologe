@@ -424,7 +424,7 @@ class PartnerController extends AbstractController
                 $formMultiMail = $this->createForm(UserPartnerEmailType::class, $user, ['action' => $addUserOnPartnerRoute]);
                 $content = $this->renderView('_partials/_modal_user_create_multi.html.twig', ['formMultiMail' => $formMultiMail, 'user' => $userExist, 'partner' => $partner]);
 
-                return $this->json(['content' => $content, 'title' => 'Compte existant sur un autre territoire']);
+                return $this->json(['content' => $content, 'title' => 'Compte existant sur un autre territoire', 'submitLabel' => 'Ajouter l\'utilisateur']);
             }
             if ($userExist) {
                 $user->setStatut(User::STATUS_INACTIVE);
@@ -691,7 +691,7 @@ class PartnerController extends AbstractController
                 $formMultiMail = $this->createForm(UserPartnerEmailType::class, $user, ['action' => $addUserOnPartnerRoute]);
                 $content = $this->renderView('_partials/_modal_user_create_multi.html.twig', ['formMultiMail' => $formMultiMail, 'user' => $userExist, 'partner' => $partner]);
 
-                return $this->json(['content' => $content, 'title' => 'Compte existant sur un autre territoire']);
+                return $this->json(['content' => $content, 'title' => 'Compte existant sur un autre territoire', 'submitLabel' => 'Ajouter l\'utilisateur']);
             }
             $addUserRoute = $this->generateUrl('back_partner_add_user', ['id' => $partner->getId()]);
             $formUserPartner = $this->createForm(UserPartnerType::class, $user, ['action' => $addUserRoute]);
