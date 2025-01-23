@@ -73,10 +73,14 @@ class Suivi implements EntityHistoryInterface
     #[ORM\Column(nullable: true)]
     private ?array $originalData = null;
 
+    #[ORM\Column]
+    private ?bool $isSanitized = null;
+
     public function __construct()
     {
         $this->createdAt = new \DateTimeImmutable();
         $this->isPublic = false;
+        $this->isSanitized = true;
     }
 
     public function getId(): ?int
@@ -142,8 +146,11 @@ class Suivi implements EntityHistoryInterface
         return 'OCCUPANT : '.strtoupper($this->getSignalement()->getNomOccupant()).' '.ucfirst($this->getSignalement()->getPrenomOccupant());
     }
 
-    public function getDescription($transformHtml = true): ?string
+    public function getDescription($transformHtml = true, $originalData = false): ?string
     {
+        if ($originalData) {
+            return $this->description;
+        }
         if (null !== $this->deletedAt) {
             return self::DESCRIPTION_DELETED.' '.$this->deletedAt->format('d/m/Y');
         }
@@ -261,5 +268,17 @@ class Suivi implements EntityHistoryInterface
     public function getHistoryRegisteredEvent(): array
     {
         return [HistoryEntryEvent::CREATE, HistoryEntryEvent::UPDATE, HistoryEntryEvent::DELETE];
+    }
+
+    public function getIsSanitized(): ?bool
+    {
+        return $this->isSanitized;
+    }
+
+    public function setIsSanitized(bool $isSanitized): static
+    {
+        $this->isSanitized = $isSanitized;
+
+        return $this;
     }
 }

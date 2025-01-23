@@ -61,12 +61,7 @@
         {% else %}
             <div class="fr-col-7 bloc-suivi-content-row fr-pl-3v">
         {% endif %}
-            {{ suivi.description
-                |replace({'&t=___TOKEN___':'/'~signalement.uuid})
-                |replace({'?t=___TOKEN___':'/'~signalement.uuid})
-                |replace({'?folder=_up':'/'~signalement.uuid~'?variant=resize'})
-                |sanitize_html('app.message_sanitizer')
-            }}
+        {{ transform_suivi_description(suivi)|raw}}
         </div>
         <div class="fr-col-2">
             {% if suivi.isPublic %}

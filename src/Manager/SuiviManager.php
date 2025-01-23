@@ -14,6 +14,8 @@ use App\Repository\DesordreCritereRepository;
 use App\Service\Sanitizer;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Bundle\SecurityBundle\Security;
+use Symfony\Component\DependencyInjection\Attribute\Autowire;
+use Symfony\Component\HtmlSanitizer\HtmlSanitizerInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 class SuiviManager extends Manager
@@ -24,6 +26,8 @@ class SuiviManager extends Manager
         private readonly SignalementUpdatedListener $signalementUpdatedListener,
         private readonly Security $security,
         private readonly DesordreCritereRepository $desordreCritereRepository,
+        #[Autowire(service: 'html_sanitizer.sanitizer.app.message_sanitizer')]
+        private readonly HtmlSanitizerInterface $htmlSanitizer,
         string $entityName = Suivi::class,
     ) {
         parent::__construct($managerRegistry, $entityName);
@@ -42,7 +46,7 @@ class SuiviManager extends Manager
         $suivi = (new Suivi())
         ->setCreatedBy($user)
         ->setSignalement($signalement)
-        ->setDescription($description)
+        ->setDescription($this->htmlSanitizer->sanitize($description))
         ->setType($type)
         ->setIsPublic($isPublic)
         ->setContext($context)
