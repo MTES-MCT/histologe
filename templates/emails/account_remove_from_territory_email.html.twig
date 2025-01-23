@@ -1,0 +1,15 @@
+{% extends 'emails/base_email.html.twig' %}
+
+{% block body %}
+    <p>Bonjour,</p>
+    <p>
+        Votre compte a été retiré du partenaire {{partner_name}} du territoire {{territory_name}}.
+        Vous ne pouvez désormais plus accéder aux signalements affectés à ce partenaire.
+    </p>
+    <p>
+        Si vous souhaitez à nouveau avoir accès au signalement du partenaire {{partner_name}} - {{territory_name}}, 
+        rapprochez-vous des responsables du territoire {{territory_name}}.
+    </p>
+
+    <p>A bientôt sur {{ platform.name }} !</p>
+{% endblock %}

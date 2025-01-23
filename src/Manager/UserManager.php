@@ -33,6 +33,7 @@ class UserManager extends AbstractManager
         parent::__construct($managerRegistry, $entityName);
     }
 
+    // TODO : delete with feature_multi_territories deletion
     public function updateUserFromData(User $user, array $data, bool $save = true): User
     {
         $emailUpdated = false;
@@ -212,7 +213,7 @@ class UserManager extends AbstractManager
         return $this->getRepository()->findOneBy(['email' => $this->parameterBag->get('user_system_email')]);
     }
 
-    private function sendAccountActivationNotification(User $user): void
+    public function sendAccountActivationNotification(User $user): void
     {
         if (!\in_array('ROLE_USAGER', $user->getRoles())
             && User::STATUS_ARCHIVE !== $user->getStatut()

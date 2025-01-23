@@ -10,7 +10,11 @@
     {% elseif 'choice' in block_prefixes %}
         {% set row_attr = row_attr|merge({'class': (row_attr.class|default('') ~ ' fr-select-group')|trim}) %}
     {% elseif 'checkbox' in block_prefixes %}
-        {% set row_attr = row_attr|merge({'class': (row_attr.class|default('') ~ ' fr-checkbox-group fr-mb-6v')|trim}) %}
+        {% if row_attr.class is defined and row_attr.class starts with 'fr-toggle' %}
+            {% set row_attr = row_attr|merge({'class': row_attr.class ~ ' fr-mb-6v'}) %}
+        {% else %}
+            {% set row_attr = row_attr|merge({'class': (row_attr.class|default('') ~ ' fr-checkbox-group fr-mb-6v')|trim}) %}
+        {% endif %}
     {% else %} 
         {% set row_attr = row_attr|merge({'class': (row_attr.class|default('') ~ ' fr-input-group')|trim}) %}
     {% endif %}
@@ -46,7 +50,7 @@
     {% endif %}
 {% endblock form_errors %}
 
-{%- block search_widget -%}
+{%- block search_widget %}
     {% set type = type|default('search') %}
     <div class="fr-search-bar fr-mt-2v">
         {{ block('form_widget_simple') }}
@@ -95,7 +99,7 @@
 
 {% block form_help %}
     {% if help is not empty %}
-        {% set help_attr = help_attr|merge({class: (help_attr.class|default('') ~ ' fr-hint-text')|trim})%}
+        {% set help_attr = help_attr|merge({class: (help_attr.class|default('') ~ ' fr-hint-text fr-pb-1w')|trim})%}
         <{{ element|default('span') }} id="{{ id }}_help"{% with { attr: help_attr } %}{{ block('attributes') }}{% endwith %}>
             {{ block('form_help_content') }}
         </{{ element|default('span') }}>
@@ -108,15 +112,14 @@
     {{ block('attributes') }}
 {% endblock button_attributes %}
 
-{# custom type #}
 {% block choice_widget_expanded %}
-    <div {{ block('widget_container_attributes') }}>
+    <div {{ block('widget_container_attributes') }} class="fr-fieldset">
     {% if not form|length and nochoiceslabel is defined %}
         {{ nochoiceslabel }}
     {% else %}
         {% for child in form %}
-            <div class="fr-fieldset__element">
-                <div class="fr-checkbox-group">
+            <div class="fr-fieldset__element {% if 'radio' in child.vars.block_prefixes %}fr-fieldset__element--inline{% endif %}">
+                <div class="{% if 'radio' in child.vars.block_prefixes %}fr-radio-group{% else %}fr-checkbox-group{% endif %}">
                     {{form_widget(child)}}
                     {{form_label(child, null, {translation_domain: choice_translation_domain})}}
                 </div>

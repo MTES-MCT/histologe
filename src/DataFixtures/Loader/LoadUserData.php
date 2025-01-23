@@ -58,6 +58,10 @@ class LoadUserData extends Fixture implements OrderedFixtureInterface
             ->setPrenom($faker->firstName())
             ->setNom($faker->lastName());
 
+        if (isset($row['has_permission_affectation'])) {
+            $user->setHasPermissionAffectation($row['has_permission_affectation']);
+        }
+
         if (User::STATUS_ARCHIVE === $row['statut']) {
             $user->setEmail(Sanitizer::tagArchivedEmail($row['email']));
         } else {

@@ -47,6 +47,7 @@ parameters:
     delay_min_check_new_signalement_files: '%env(DELAY_MIN_CHECK_NEW_SIGNALEMENT_FILES)%'
     albert_api_key: '%env(ALBERT_API_KEY)%'
     standard_max_list_pagination: 50
+    feature_multi_territories: '%env(bool:FEATURE_MULTI_TERRITORIES)%'
 
 services:
     # default configuration for services in *this* file

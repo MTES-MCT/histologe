@@ -6,6 +6,7 @@ use App\Entity\Behaviour\EntityHistoryInterface;
 use App\Entity\Behaviour\TimestampableTrait;
 use App\Entity\Enum\HistoryEntryEvent;
 use App\Repository\UserRepository;
+use App\Validator as AppAssert;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
@@ -22,6 +23,8 @@ use Symfony\Component\Validator\Constraints\Email;
 #[ORM\Entity(repositoryClass: UserRepository::class)]
 #[UniqueEntity('email', message: '{{ value }} existe déja, merci de saisir un nouvel e-mail')]
 #[ORM\HasLifecycleCallbacks()]
+#[AppAssert\UserPartnerEmailMulti(groups: ['user_partner_mail_multi'])]
+#[AppAssert\UserPartnerEmail(groups: ['user_partner_mail'])]
 class User implements UserInterface, EntityHistoryInterface, PasswordAuthenticatedUserInterface, TwoFactorInterface
 {
     use TimestampableTrait;
@@ -68,7 +71,7 @@ class User implements UserInterface, EntityHistoryInterface, PasswordAuthenticat
     #[ORM\Column(type: 'string', length: 180, unique: false)]
     #[Email(mode: Email::VALIDATION_MODE_STRICT, groups: ['registration'])]
     #[Assert\NotBlank(message: 'Merci de saisir une adresse e-mail.')]
-    #[Assert\Length(max: 255)]
+    #[Assert\Length(max: 255, groups: ['user_partner', 'Default'])]
     private $email;
 
     #[ORM\Column(type: 'json')]
@@ -107,13 +110,13 @@ class User implements UserInterface, EntityHistoryInterface, PasswordAuthenticat
     private $partner; // @phpstan-ignore-line
 
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
-    #[Assert\NotBlank(message: 'Merci de saisir un nom.')]
-    #[Assert\Length(max: 255)]
+    #[Assert\NotBlank(message: 'Merci de saisir un nom.', groups: ['user_partner', 'Default'])]
+    #[Assert\Length(max: 255, groups: ['user_partner', 'Default'])]
     private $nom;
 
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
-    #[Assert\NotBlank(message: 'Merci de saisir un prénom.')]
-    #[Assert\Length(max: 255)]
+    #[Assert\NotBlank(message: 'Merci de saisir un prénom.', groups: ['user_partner', 'Default'])]
+    #[Assert\Length(max: 255, groups: ['user_partner', 'Default'])]
     private $prenom;
 
     #[ORM\Column(type: 'integer')]
@@ -422,8 +425,12 @@ class User implements UserInterface, EntityHistoryInterface, PasswordAuthenticat
         return $this;
     }
 
-    public function getNomComplet()
+    public function getNomComplet($firstNameFirst = false)
     {
+        if ($firstNameFirst) {
+            return ucfirst($this->prenom ?? '').' '.mb_strtoupper($this->nom ?? '');
+        }
+
         return mb_strtoupper($this->nom ?? '').' '.ucfirst($this->prenom ?? '');
     }
 
