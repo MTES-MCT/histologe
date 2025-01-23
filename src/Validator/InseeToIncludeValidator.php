@@ -18,10 +18,6 @@ class InseeToIncludeValidator extends ConstraintValidator
             return;
         }
 
-        if (\in_array($value, ['all', 'partner_list'], true)) {
-            return;
-        }
-
         $inseeCodes = explode(',', $value);
         foreach ($inseeCodes as $code) {
             if (!preg_match('/^\d{5}$/', trim($code))) {

@@ -53,11 +53,10 @@ class AutoAffectationRule implements EntityHistoryInterface
     #[AppAssert\ValidProfileDeclarant()]
     private string $profileDeclarant;
 
-    #[ORM\Column(length: 255, options: ['comment' => 'Value possible all, partner_list or an array of code insee'])]
-    #[Assert\NotBlank(message: 'Merci de renseigner les code insee des communes concernées.')]
+    #[ORM\Column(nullable: true, length: 255, options: ['comment' => 'Value possible null or an array of code insee'])]
     #[Assert\Length(max: 255)]
     #[AppAssert\InseeToInclude()]
-    private string $inseeToInclude;
+    private ?string $inseeToInclude;
 
     #[ORM\Column(nullable: true, options: ['comment' => 'Value possible null or an array of code insee'])]
     #[AppAssert\InseeToExclude()]
@@ -144,12 +143,12 @@ class AutoAffectationRule implements EntityHistoryInterface
         return $this;
     }
 
-    public function getInseeToInclude(): string
+    public function getInseeToInclude(): ?string
     {
         return $this->inseeToInclude;
     }
 
-    public function setInseeToInclude(string $inseeToInclude): self
+    public function setInseeToInclude(?string $inseeToInclude): self
     {
         $this->inseeToInclude = $inseeToInclude;
 
@@ -292,14 +291,11 @@ class AutoAffectationRule implements EntityHistoryInterface
 
         $description .= ' Elle s\'applique ';
         switch ($this->getInseeToInclude()) {
-            case 'all':
-                $description .= 'à tous les logements du territoire';
-                break;
-            case 'partner_list':
+            case null:
                 $description .= 'aux logements situés dans le périmètre géographique du partenaire (codes insee et/ou zones)';
                 break;
             default:
-                $description .= 'aux logements situés dans les communes aux codes insee suivants : '.$this->getInseeToInclude();
+                $description .= 'aux logements situés dans le périmètre géographique du partenaire (codes insee et/ou zones), limités aux codes insee suivants : '.$this->getInseeToInclude();
                 break;
         }
         if ($this->getInseeToExclude()) {

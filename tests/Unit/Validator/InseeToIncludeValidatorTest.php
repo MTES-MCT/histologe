@@ -9,7 +9,7 @@ use Symfony\Component\Validator\Test\ConstraintValidatorTestCase;
 
 class InseeToIncludeValidatorTest extends ConstraintValidatorTestCase
 {
-    private const ERROR = 'La valeur "{{ value }}" n\'est pas valide. Elle doit être soit "all", "partner_list", soit une liste de codes INSEE séparés par des virgules.';
+    private const ERROR = 'La valeur "{{ value }}" n\'est pas valide. Elle doit être soit vide soit une liste de codes INSEE séparés par des virgules.';
 
     protected function createValidator(): ConstraintValidatorInterface
     {
@@ -19,7 +19,7 @@ class InseeToIncludeValidatorTest extends ConstraintValidatorTestCase
     /**
      * @dataProvider provideValues
      */
-    public function testValues(string $insee, bool $isValid, ?string $message = null): void
+    public function testValues(?string $insee, bool $isValid, ?string $message = null): void
     {
         $constraint = new InseeToInclude();
         $this->validator->validate($insee, $constraint);
@@ -34,8 +34,9 @@ class InseeToIncludeValidatorTest extends ConstraintValidatorTestCase
 
     public function provideValues(): \Generator
     {
-        yield 'all' => ['all', true];
-        yield 'partner_list' => ['partner_list', true];
+        yield 'null' => [null, true];
+        yield 'all' => ['all', false, self::ERROR];
+        yield 'partner_list' => ['partner_list', false, self::ERROR];
         yield '44058' => ['44058', true];
         yield '44058,44890' => ['44058,44890', true];
         yield 'error' => ['error', false, self::ERROR];

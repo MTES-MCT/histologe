@@ -4,7 +4,7 @@ auto_affectation_rules:
     status: "ACTIVE"
     profile_declarant: "all"
     partner_type: "COMMUNE_SCHS"
-    insee_to_include: "partner_list"
+    insee_to_include: null
     insee_to_exclude: null
     parc: "all"
     allocataire: "all"
@@ -13,7 +13,7 @@ auto_affectation_rules:
     status: "ACTIVE"
     profile_declarant: "all"
     partner_type: "COMMUNE_SCHS"
-    insee_to_include: "partner_list"
+    insee_to_include: null
     insee_to_exclude: null
     parc: "prive"
     allocataire: "all"
@@ -22,7 +22,7 @@ auto_affectation_rules:
     status: "ACTIVE"
     profile_declarant: "all"
     partner_type: "CAF_MSA"
-    insee_to_include: "all"
+    insee_to_include: null
     insee_to_exclude: null
     parc: "prive"
     allocataire: "caf"
@@ -40,7 +40,7 @@ auto_affectation_rules:
     status: "ACTIVE"
     profile_declarant: "LOCATAIRE"
     partner_type: "EPCI"
-    insee_to_include: "partner_list"
+    insee_to_include: null
     insee_to_exclude: 
       - "34048"
     parc: "prive"
@@ -50,7 +50,7 @@ auto_affectation_rules:
     status: "ARCHIVED"
     profile_declarant: "all"
     partner_type: "EPCI"
-    insee_to_include: "partner_list"
+    insee_to_include: null
     insee_to_exclude: null
     parc: "all"
     allocataire: "all"
@@ -59,7 +59,7 @@ auto_affectation_rules:
     status: "ACTIVE"
     profile_declarant: "all"
     partner_type: "POLICE_GENDARMERIE"
-    insee_to_include: "all"
+    insee_to_include: null
     insee_to_exclude: null
     parc: "all"
     allocataire: "all"
@@ -70,7 +70,7 @@ auto_affectation_rules:
     status: "ACTIVE"
     profile_declarant: "all"
     partner_type: "COMMUNE_SCHS"
-    insee_to_include: "partner_list"
+    insee_to_include: null
     insee_to_exclude: null
     parc: "all"
     allocataire: "all"
@@ -79,7 +79,7 @@ auto_affectation_rules:
     status: "ARCHIVED"
     profile_declarant: "all"
     partner_type: "EPCI"
-    insee_to_include: "partner_list"
+    insee_to_include: null
     insee_to_exclude: null
     parc: "all"
     allocataire: "all"
@@ -88,7 +88,7 @@ auto_affectation_rules:
     status: "ACTIVE"
     profile_declarant: "all"
     partner_type: "BAILLEUR_SOCIAL"
-    insee_to_include: "all"
+    insee_to_include: null
     insee_to_exclude: null
     parc: "public"
     allocataire: "all"

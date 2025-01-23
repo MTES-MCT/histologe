@@ -27,7 +27,7 @@ class AutoAffectationRuleTest extends KernelTestCase
         $this->assertEquals('prive', $autoAffectationRule->getParc());
         $this->assertEquals('all', $autoAffectationRule->getProfileDeclarant());
         $this->assertEquals('oui', $autoAffectationRule->getAllocataire());
-        $this->assertEquals('partner_list', $autoAffectationRule->getInseeToInclude());
+        $this->assertNull($autoAffectationRule->getInseeToInclude());
         $this->assertNull($autoAffectationRule->getInseeToExclude());
         $this->assertEmpty($autoAffectationRule->getPartnerToExclude());
         $this->assertEquals(AutoAffectationRule::STATUS_ACTIVE, $autoAffectationRule->getStatus());
