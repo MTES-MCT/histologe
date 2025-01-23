@@ -107,7 +107,7 @@ class SynchronizeEsaboraSCHSCommand extends AbstractSynchronizeEsaboraCommand
 
     protected function synchronizeEvent(DossierEventSCHS $event, Affectation $affectation): bool
     {
-        if (isset($this->existingEvents[$event->getEventId()])) {
+        if (empty($event->getDate()) || isset($this->existingEvents[$event->getEventId()])) {
             return false;
         }
         $suivi = $this->esaboraManager->createSuiviFromDossierEvent($event, $affectation);
