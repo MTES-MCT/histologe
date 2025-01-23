@@ -386,7 +386,7 @@ class PartnerController extends AbstractController
                         params: ['partner_name' => $partner->getNom()]
                     )
                 );
-                $message = 'L\'utilisateur a bien été créé. Un e-mail de confirmation a été envoyé à '.$user->getEmail();
+                $message = 'L\'utilisateur a bien été ajouté à votre partenaire. Un e-mail de confirmation a été envoyé à '.$user->getEmail();
                 $this->addFlash('success', $message);
 
                 $url = $this->generateUrl('back_partner_view', ['id' => $partner->getId(), '_fragment' => 'agents'], UrlGeneratorInterface::ABSOLUTE_URL);
@@ -432,7 +432,7 @@ class PartnerController extends AbstractController
             $user->setRoles([$formUserPartner->get('role')->getData()]);
             $userManager->persist($userPartner);
             $userManager->save($user);
-            $message = 'L\'utilisateur a bien été créé. Un e-mail de confirmation a été envoyé à '.$user->getEmail();
+            $message = 'L\'utilisateur a bien été ajouté à votre partenaire. Un e-mail de confirmation a été envoyé à '.$user->getEmail();
             $this->addFlash('success', $message);
 
             $url = $this->generateUrl('back_partner_view', ['id' => $partner->getId(), '_fragment' => 'agents'], UrlGeneratorInterface::ABSOLUTE_URL);
