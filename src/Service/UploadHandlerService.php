@@ -46,7 +46,7 @@ class UploadHandlerService
         }
         $newFilename = $this->filenameGenerator->generate($file);
         $titre = $this->filenameGenerator->getTitle();
-
+        
         if ($this->isFileEmpty($file)) {
             throw new EmptyFileException();
         }
@@ -117,6 +117,23 @@ class UploadHandlerService
         $all = implode(', ', $allButLast).' ou '.$last;
 
         return $all;
+    }
+
+    /**
+     * @throws EmptyFileException
+     * @throws MaxUploadSizeExceededException
+     */
+    public function isFileSizeOk(
+        UploadedFile $file,
+    ): bool {
+        if ($this->isFileEmpty($file)) {
+            throw new EmptyFileException();
+        }
+        if ($file->getSize() > self::MAX_FILESIZE) {
+            throw new MaxUploadSizeExceededException(self::MAX_FILESIZE);
+        }
+
+        return true;
     }
 
     public function moveFilePath(string $filePath): ?string
