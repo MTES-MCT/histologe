@@ -108,7 +108,6 @@ readonly class EntityHistoryListener
         if (in_array($event, [HistoryEntryEvent::UPDATE, HistoryEntryEvent::DELETE]) && empty($changes)) {
             return;
         }
-
         $this->saveEntityHistory($event, $entity, $changes);
     }
 

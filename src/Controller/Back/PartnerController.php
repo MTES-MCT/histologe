@@ -284,7 +284,6 @@ class PartnerController extends AbstractController
                 if ($user->getUserPartners()->count() > 1) {
                     foreach ($user->getUserPartners() as $userPartner) {
                         if ($userPartner->getPartner()->getId() === $partner->getId()) {
-                            $user->removeUserPartner($userPartner);
                             $entityManager->remove($userPartner);
                             break;
                         }
@@ -637,7 +636,6 @@ class PartnerController extends AbstractController
         if ($user->getUserPartners()->count() > 1) {
             foreach ($user->getUserPartners() as $userPartner) {
                 if ($userPartner->getPartner()->getId() === $partner->getId()) {
-                    $user->removeUserPartner($userPartner);
                     $userManager->remove($userPartner);
                     break;
                 }

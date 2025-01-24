@@ -107,7 +107,7 @@ class PartnerControllerTest extends WebTestCase
     public function testDeletePartner()
     {
         /** @var Partner $partner */
-        $partner = $this->partnerRepository->findOneBy(['nom' => 'Partenaire 13-03']);
+        $partner = $this->partnerRepository->findOneBy(['nom' => 'Partenaire 13-01']);
         $partnerUsers = $partner->getUsers();
         $mailBeforArchive = $partner->getEmail();
 
@@ -125,8 +125,13 @@ class PartnerControllerTest extends WebTestCase
         $this->assertTrue($partner->getIsArchive());
         $this->assertStringStartsWith($mailBeforArchive.User::SUFFIXE_ARCHIVED, $partner->getEmail());
         foreach ($partnerUsers as $user) {
-            $this->assertEquals(User::STATUS_ARCHIVE, $user->getStatut());
-            $this->assertStringContainsString(User::SUFFIXE_ARCHIVED, $user->getEmail());
+            if ('admin-partenaire-multi-ter-13-01@histologe.fr' === $user->getEmail()) {
+                $this->assertEquals(User::STATUS_ACTIVE, $user->getStatut());
+                $this->assertCount(1, $user->getPartners());
+            } else {
+                $this->assertEquals(User::STATUS_ARCHIVE, $user->getStatut());
+                $this->assertStringContainsString(User::SUFFIXE_ARCHIVED, $user->getEmail());
+            }
         }
     }
 
@@ -415,6 +420,22 @@ class PartnerControllerTest extends WebTestCase
 
         $this->assertEquals(2, $user->getStatut());
         $this->assertStringContainsString(User::SUFFIXE_ARCHIVED, $user->getEmail());
+        $this->assertEmailCount(1);
+    }
+
+    public function testDeleteMultiUserFromPartner(): void
+    {
+        $user = $this->userRepository->findOneBy(['email' => 'admin-partenaire-multi-ter-13-01@histologe.fr']);
+        $userId = $user->getId();
+
+        $this->client->request('POST', $this->router->generate('back_partner_user_delete', ['id' => $user->getPartners()->first()->getId()]), [
+            'user_id' => $userId,
+            '_token' => $this->generateCsrfToken($this->client, 'partner_user_delete'),
+        ]);
+
+        $this->assertEquals(1, $user->getStatut());
+        $this->assertEmailCount(1);
+        $this->assertCount(1, $user->getPartners());
     }
 
     public function testDeleteAnonymizedUserAccount(): void
