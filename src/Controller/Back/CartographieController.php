@@ -26,7 +26,6 @@ class CartographieController extends AbstractController
     #[Route('/', name: 'back_cartographie')]
     public function index(
     ): Response {
-
         return $this->render('back/cartographie/index.html.twig');
     }
 
