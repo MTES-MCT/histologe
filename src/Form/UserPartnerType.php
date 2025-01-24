@@ -61,6 +61,7 @@ class UserPartnerType extends AbstractType
             'required' => false,
         ])
             ->add('prenom', null, [
+                'label' => 'Prénom',
                 'required' => false,
             ])
             ->add('role', ChoiceType::class, [

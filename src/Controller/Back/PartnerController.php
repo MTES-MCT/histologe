@@ -385,7 +385,7 @@ class PartnerController extends AbstractController
                         params: ['partner_name' => $partner->getNom()]
                     )
                 );
-                $message = 'L\'utilisateur a bien été créé. Un e-mail de confirmation a été envoyé à '.$user->getEmail();
+                $message = 'L\'utilisateur a bien été ajouté à votre partenaire. Un e-mail de confirmation a été envoyé à '.$user->getEmail();
                 $this->addFlash('success', $message);
 
                 $url = $this->generateUrl('back_partner_view', ['id' => $partner->getId(), '_fragment' => 'agents'], UrlGeneratorInterface::ABSOLUTE_URL);
@@ -423,7 +423,7 @@ class PartnerController extends AbstractController
                 $formMultiMail = $this->createForm(UserPartnerEmailType::class, $user, ['action' => $addUserOnPartnerRoute]);
                 $content = $this->renderView('_partials/_modal_user_create_multi.html.twig', ['formMultiMail' => $formMultiMail, 'user' => $userExist, 'partner' => $partner]);
 
-                return $this->json(['content' => $content, 'title' => 'Compte existant sur un autre territoire']);
+                return $this->json(['content' => $content, 'title' => 'Compte existant sur un autre territoire', 'submitLabel' => 'Ajouter l\'utilisateur']);
             }
             if ($userExist) {
                 $user->setStatut(User::STATUS_INACTIVE);
@@ -689,7 +689,7 @@ class PartnerController extends AbstractController
                 $formMultiMail = $this->createForm(UserPartnerEmailType::class, $user, ['action' => $addUserOnPartnerRoute]);
                 $content = $this->renderView('_partials/_modal_user_create_multi.html.twig', ['formMultiMail' => $formMultiMail, 'user' => $userExist, 'partner' => $partner]);
 
-                return $this->json(['content' => $content, 'title' => 'Compte existant sur un autre territoire']);
+                return $this->json(['content' => $content, 'title' => 'Compte existant sur un autre territoire', 'submitLabel' => 'Ajouter l\'utilisateur']);
             }
             $addUserRoute = $this->generateUrl('back_partner_add_user', ['id' => $partner->getId()]);
             $formUserPartner = $this->createForm(UserPartnerType::class, $user, ['action' => $addUserRoute]);
