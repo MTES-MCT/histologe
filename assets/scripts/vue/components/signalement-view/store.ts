@@ -63,6 +63,8 @@ export const store = {
     currentCommunes: '',
     currentPartenaires: '',
     hasSignalementImported: false,
+    loadingList: true,
+    hasErrorLoading: false,
     statusSignalementList: [
       { Id: 'nouveau', Text: 'Nouveau' },
       { Id: 'en_cours', Text: 'En cours' },

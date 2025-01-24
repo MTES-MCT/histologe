@@ -1,6 +1,6 @@
 {% extends 'back/base_bo.html.twig' %}
 
-{% block title %}{{ title }}{% endblock %}
+{% block title %}Cartographie{% endblock %}
 
 {% block content %}
     <section class="fr-pt-5v {{ app.request.get('_route') == 'back_signalement_index' ? container_class : 'fr-pl-5v' }}">
@@ -12,7 +12,7 @@
             'level3Link': '',
         } %}
     </section>
-    <div id="app-signalement-carto"
+    <div id="app-signalement-carto" class="cartography-page"
          data-ajaxurl="{{ path('back_signalement_carto_json') }}"
          data-ajaxurl-settings="{{ path('back_widget_settings') }}"
          data-token="{{ csrf_token('load_markers_'~''|date('dmYhi')) }}"

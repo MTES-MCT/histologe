@@ -20,10 +20,10 @@
         </div>
       </div>
     </section>
-    <section v-if="loadingList" class="loading fr-m-10w fr-text--center">
-      <h2 class="fr-text--light" v-if="!hasErrorLoading">Chargement de la liste...</h2>
-      <h2 class="fr-text--light" v-if="hasErrorLoading">Erreur lors du chargement de la liste.</h2>
-      <p v-if="hasErrorLoading">Veuillez recharger la page ou nous prévenir <a :href="sharedProps.ajaxurlContact">via le formulaire de contact</a>.</p>
+    <section v-if="sharedState.loadingList" class="loading fr-m-10w fr-text--center">
+      <h2 class="fr-text--light" v-if="!sharedState.hasErrorLoading">Chargement de la liste...</h2>
+      <h2 class="fr-text--light" v-if="sharedState.hasErrorLoading">Erreur lors du chargement de la liste.</h2>
+      <p v-if="sharedState.hasErrorLoading">Veuillez recharger la page ou nous prévenir <a :href="sharedProps.ajaxurlContact">via le formulaire de contact</a>.</p>
     </section>
     <section v-else class="fr-col-12 fr-background-alt--blue-france fr-mt-0">
         <div :class="['fr-p-3w', 'fr-container-sml']">
@@ -66,8 +66,6 @@ export default defineComponent({
     return {
       sharedProps: store.props,
       sharedState: store.state,
-      loadingList: true,
-      hasErrorLoading: false,
       messageDeleteConfirmation: '',
       classNameDeleteConfirmation: '',
       abortRequest: null as AbortController | null
@@ -97,7 +95,7 @@ export default defineComponent({
         requests.getSettings(this.handleSettings)
         requests.getSignalements(this.handleSignalements, { signal: this.abortRequest?.signal })
       } else {
-        this.hasErrorLoading = true
+        this.sharedState.hasErrorLoading = true
       }
     },
     handleSettings (requestResponse: any) {

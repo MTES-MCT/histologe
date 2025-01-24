@@ -129,7 +129,9 @@
 {% endif %}
 
 {% block body %}{% endblock %}
-{% include "footer.html.twig" %}
+{% if 'back_cartographie' not in app.request.get('_route') %}
+    {% include "footer.html.twig" %}
+{% endif %}
 
 <script type="module" src="{{ asset('build/dsfr/dsfr.module.min.js') }}"></script>
 <script nomodule src="{{ asset('build/dsfr/dsfr.nomodule.min.js') }}"></script>

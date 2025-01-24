@@ -970,6 +970,11 @@ a.photo-preview {
     padding-right: 1.5rem;
 }
 
+.cartography-page {
+    position:fixed;
+    width:100%;
+}
+
 @media (min-width: 992px) {
     .fr-breadcrumb.can-fix.fixed {
         position: fixed;

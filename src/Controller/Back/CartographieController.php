@@ -26,11 +26,8 @@ class CartographieController extends AbstractController
     #[Route('/', name: 'back_cartographie')]
     public function index(
     ): Response {
-        $title = 'Cartographie';
 
-        return $this->render('back/cartographie/index.html.twig', [
-            'title' => $title,
-        ]);
+        return $this->render('back/cartographie/index.html.twig');
     }
 
     #[Route('/signalements/', name: 'back_signalement_carto_json')]

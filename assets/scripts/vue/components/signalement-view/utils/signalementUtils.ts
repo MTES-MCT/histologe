@@ -2,8 +2,10 @@ import { requests } from '../requests'
 import { PATTERN_BADGE_EPCI, store } from '../store'
 import { Filters, SEARCH_FILTERS } from '../interfaces/filters'
 import HistoInterfaceSelectOption from '../../common/HistoInterfaceSelectOption'
+import { variableTester } from '../../../utils/variableTester'
+import { QueryParameter } from '../interfaces/queryParameter'
 
-export function handleQueryParameter (context: any) {
+export function handleQueryParameter (context: any): any {
   const url = new URL(window.location.toString())
   const params = new URLSearchParams(url.search)
   const filters = context.sharedState.input.filters as Filters
@@ -13,13 +15,13 @@ export function handleQueryParameter (context: any) {
     const value = params.get(key)
     const epciData = localStorage.getItem('epci')
     let valueList = params.getAll(`${key}[]`)
-    if (value && value.length > 0) {
+    if (variableTester.isNotEmpty(value) && value.length > 0) {
       if (['sortBy', 'direction', 'page'].includes(key)) {
         addQueryParameter(context, key, value)
         continue
       }
       if (type === 'text') {
-        filters[key] = filter?.defaultValue || value
+        filters[key] = filter?.defaultValue ?? (variableTester.isNotEmpty(value) ? value : null)
         addQueryParameter(context, key, value)
       } else if (type === 'date') {
         const keyDebut = key
@@ -27,7 +29,7 @@ export function handleQueryParameter (context: any) {
         const newKey = key.replace('Debut', '')
         const dateDebut = params.get(keyDebut)
         const dateFin = params.get(keyFin)
-        if (dateDebut && dateFin) {
+        if (variableTester.isNotEmpty(dateDebut) && variableTester.isNotEmpty(dateFin)) {
           addQueryParameter(context, keyDebut, dateDebut)
           const dateDebutFormatted = new Date(dateDebut)
           addQueryParameter(context, keyFin, dateFin)
@@ -35,13 +37,13 @@ export function handleQueryParameter (context: any) {
           filters[newKey] = [dateDebutFormatted, dateFinFormatted]
         }
       }
-    } else if (valueList && valueList.length > 0) {
+    } else if (variableTester.isNotEmpty(valueList) && valueList.length > 0) {
       if (type === 'collection') {
         valueList = params.getAll(`${key}[]`)
-        if (valueList && valueList.length > 0) {
+        if (variableTester.isNotEmpty(valueList) && valueList.length > 0) {
           valueList.forEach(valueItem => {
             addQueryParameter(context, `${key}[]`, valueItem.trim())
-            if (key === 'epcis' && epciData) {
+            if (key === 'epcis' && variableTester.isNotEmpty(epciData)) {
               const listEpci = JSON.parse(epciData)
               const itemEpci = listEpci.filter((itemEpci: string) => itemEpci.includes(valueItem))
               filters[key].push(itemEpci.shift())
@@ -52,19 +54,19 @@ export function handleQueryParameter (context: any) {
         }
       }
     }
-    if (value && value.length > 0) {
+    if (variableTester.isNotEmpty(value) && value.length > 0) {
       context.sharedState.showOptions = filter.showOptions
     }
   }
 }
 
-export function handleSettings (context: any, requestResponse: any) {
+export function handleSettings (context: any, requestResponse: any): any {
   context.sharedState.user.isAdmin = requestResponse.roleLabel === 'Super Admin'
   context.sharedState.user.isResponsableTerritoire = requestResponse.roleLabel === 'Resp. Territoire'
   context.sharedState.user.isAdministrateurPartenaire = requestResponse.roleLabel === 'Admin. partenaire'
   context.sharedState.user.isAgent = ['Admin. partenaire', 'Agent'].includes(requestResponse.roleLabel)
   context.sharedState.user.isMultiTerritoire = requestResponse.isMultiTerritoire === true
-  const isAdminOrAdminTerritoire = context.sharedState.user.isAdmin || context.sharedState.user.isResponsableTerritoire
+  const isAdminOrAdminTerritoire = variableTester.isNotEmpty(context.sharedState.user.isAdmin) || variableTester.isNotEmpty(context.sharedState.user.isResponsableTerritoire)
   context.sharedState.user.canSeeStatusAffectation = isAdminOrAdminTerritoire
   context.sharedState.user.canSeeBailleurSocial = isAdminOrAdminTerritoire
   context.sharedState.user.canSeeFilterPartner = isAdminOrAdminTerritoire
@@ -78,7 +80,12 @@ export function handleSettings (context: any, requestResponse: any) {
   for (const id in requestResponse.territories) {
     const optionItem = new HistoInterfaceSelectOption()
     optionItem.Id = requestResponse.territories[id].id
-    optionItem.Text = `${requestResponse.territories[id].zip} - ${requestResponse.territories[id].name}`
+    if (variableTester.isNotEmpty(requestResponse.territories[id])) {
+      const territory = requestResponse.territories[id]
+      optionItem.Text = (territory.zip as string) + ' - ' + (territory.name as string)
+    } else {
+      optionItem.Text = 'Territoire inconnu'
+    }
     context.sharedState.territories.push(optionItem)
   }
 
@@ -133,37 +140,40 @@ export function handleSettings (context: any, requestResponse: any) {
 
   context.sharedState.epcis = []
   for (const id in requestResponse.epcis) {
-    context.sharedState.epcis.push(`${requestResponse.epcis[id].nom} (${requestResponse.epcis[id].code} )`)
+    if (variableTester.isNotEmpty(requestResponse.epcis[id])) {
+      const epci = requestResponse.territories[id]
+      context.sharedState.epcis.push((epci.nom as string) + ' ' + (epci.code as string))
+    }
   }
   localStorage.setItem('epci', JSON.stringify(context.sharedState.epcis))
 }
 
-export function handleTerritoryChange (context: any, value: any) {
+export function handleTerritoryChange (context: any, value: any): any {
   delete (context.sharedState.input.filters).communes
   delete (context.sharedState.input.filters).epcis
   context.sharedState.currentTerritoryId = value.toString()
   requests.getSettings(context.handleSettings)
 }
 
-export function handleSignalementsShared (context: any, requestResponse: any) {
+export function handleSignalementsShared (context: any, requestResponse: any): any {
   if (typeof requestResponse === 'string' && requestResponse === 'error') {
-    context.hasErrorLoading = true
+    context.sharedState.hasErrorLoading = true
   } else {
-    context.hasErrorLoading = false
+    context.sharedState.hasErrorLoading = false
     context.sharedState.signalements.filters = requestResponse.filters
     context.sharedState.signalements.list = requestResponse.list
     context.sharedState.signalements.pagination = requestResponse.pagination
-    context.loadingList = false
-    if (!context.sharedProps.ajaxurlSignalement.includes('cartographie')) {
+    context.sharedState.loadingList = false
+    if (context.sharedProps.ajaxurlSignalement.includes('cartographie') === false) {
       window.scrollTo(0, 0)
     }
   }
 }
 
-export function handleFilters (context: any, ajaxurl: string) {
+export function handleFilters (context: any, ajaxurl: string): any {
   clearScreen(context)
 
-  if (context.abortRequest) {
+  if (context.abortRequest === true) {
     context.abortRequest?.abort()
   }
 
@@ -174,7 +184,7 @@ export function handleFilters (context: any, ajaxurl: string) {
   context.sharedState.input.queryParameters = []
 
   for (const [key, value] of Object.entries(context.sharedState.input.filters)) {
-    if (value) {
+    if (variableTester.isNotEmpty(value)) {
       if (key === 'dateDepot' || key === 'dateDernierSuivi') {
         const [dateDebut, dateFin] = handleDateParameter(context, key, value)
         url.searchParams.set(`${key}Debut`, dateDebut)
@@ -186,7 +196,7 @@ export function handleFilters (context: any, ajaxurl: string) {
           url.searchParams.append(`${key}[]`, valueItem)
         })
       } else if (Array.isArray(value) && key === 'epcis') {
-        if (!localStorage.getItem('epci')) {
+        if (localStorage.getItem('epci') === null) {
           requests.getSettings(context.handleSettings)
         }
         value.forEach((valueItem: any) => {
@@ -218,7 +228,7 @@ export function handleFilters (context: any, ajaxurl: string) {
   requests.getSignalements(context.handleSignalements, { signal: context.abortRequest?.signal })
 }
 
-export function handleDateParameter (context: any, key: string, value: any) {
+export function handleDateParameter (context: any, key: string, value: any): any {
   const dateDebut = new Date(value[0]).toISOString().split('T')[0]
   const dateFin = new Date(value[1]).toISOString().split('T')[0]
   addQueryParameter(context, `${key}Debut`, dateDebut)
@@ -228,7 +238,7 @@ export function handleDateParameter (context: any, key: string, value: any) {
   return [dateDebut, dateFin]
 }
 
-export function addQueryParameter (context: any, name: string, value: string) {
+export function addQueryParameter (context: any, name: string, value: string): any {
   const param = store
     .state
     .input
@@ -241,7 +251,7 @@ export function addQueryParameter (context: any, name: string, value: string) {
   }
 }
 
-export function removeQueryParameter (context: any, name: string) {
+export function removeQueryParameter (context: any, name: string): any {
   const index = context.sharedState.input.queryParameters.findIndex((parameter: any) => parameter.name === name)
   if (index !== -1) {
     context.sharedState.input.queryParameters.splice(index, 1)
@@ -253,8 +263,9 @@ export function buildUrl (context: any, ajaxurl: string): any {
     .sharedState
     .input
     .queryParameters
-    .map((parameter: any) => `${parameter.name}=${parameter.value}`).join('&')
-  context.sharedProps.ajaxurlSignalement = ajaxurl + '?' + queryParams
+    .map((parameter: QueryParameter) => `${parameter.name}=${parameter.value}`)
+    .join('&')
+  context.sharedProps.ajaxurlSignalement = ajaxurl + '?' + (queryParams as string)
   if (!ajaxurl.includes('cartographie')) {
     // on n'enregistre en localStorage les filtres que si on est sur la liste de signalements
     localStorage.setItem('back_link_signalement_view', queryParams)
@@ -264,11 +275,11 @@ export function buildUrl (context: any, ajaxurl: string): any {
 export function clearScreen (context: any): any {
   context.messageDeleteConfirmation = ''
   context.classNameDeleteConfirmation = ''
-  context.loadingList = true
+  context.sharedState.loadingList = true
 }
 
-export function removeLocalStorage (context: any) {
-  if (!context.sharedProps.ajaxurlSignalement.includes('cartographie')) {
+export function removeLocalStorage (context: any): any {
+  if (context.sharedProps.ajaxurlSignalement.includes('cartographie') === false) {
     // on n'enregistre en localStorage les filtres que si on est sur la liste de signalements
     localStorage.removeItem('back_link_signalement_view')
   }

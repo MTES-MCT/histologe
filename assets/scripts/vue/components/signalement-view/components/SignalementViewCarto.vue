@@ -1,7 +1,12 @@
 <template>
   <div id="map-container-wrapper" class="map-wrapper">
-    <div v-if="sharedState.signalements.list.length === 0" class="no-signalements-message">
-      Pas de signalements pour cette recherche
+
+    <div v-if="sharedState.loadingList" class="no-signalements-message fr-m-10w fr-text--center">
+        <h2 class="fr-text--light" v-if="!sharedState.hasErrorLoading">Chargement des signalements...</h2>
+        <h2 class="fr-text--light" v-if="sharedState.hasErrorLoading">Erreur lors du chargement des signalements.</h2>
+    </div>
+    <div v-if="sharedState.signalements.list.length === 0  && !sharedState.loadingList" class="no-signalements-message">
+      <h2 class="fr-text--light">Pas de signalements pour cette recherche</h2>
     </div>
     <div id="map-signalements-view" class="map-container"></div>
   </div>
@@ -39,6 +44,7 @@ export default defineComponent({
       map: null as L.Map | null,
       markers: L.markerClusterGroup(),
       sharedState: store.state,
+      sharedProps: store.props,
       offset: 0,
       bounds: L.latLngBounds(L.latLng(8, -80), L.latLng(70, 20)),
       defaultCenter: [47.11, -0.01] as L.LatLngExpression,
@@ -154,7 +160,7 @@ export default defineComponent({
   .map-container {
     position: relative;
     width: 100%;
-    height: 100vh;
+    height: 100%;
   }
   .map-wrapper {
     position: relative;

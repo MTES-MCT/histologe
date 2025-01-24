@@ -2,7 +2,7 @@
 <template>
   <div id="histo-app-signalement-carto">
     <div class="fr-grid-row">
-      <div class="fr-col-2 filter-container-carto">
+      <div class="fr-col-3 filter-container-carto">
         <SignalementViewFilters
             :shared-props="sharedProps"
             @change="handleFilters"
@@ -11,7 +11,7 @@
             :layout="'vertical'"
         />
       </div>
-      <div class="fr-col-10">
+      <div class="fr-col-9">
         <SignalementViewCarto
           :api-url="sharedProps.ajaxurlSignalement"
           :token="sharedProps.token"
@@ -41,8 +41,6 @@ export default defineComponent({
     return {
       sharedProps: store.props,
       sharedState: store.state,
-      loadingList: true,
-      hasErrorLoading: false,
       abortRequest: null as AbortController | null
     }
   },
@@ -68,7 +66,7 @@ export default defineComponent({
         requests.getSettings(this.handleSettings)
         requests.getSignalements(this.handleSignalements, { signal: this.abortRequest?.signal })
       } else {
-        this.hasErrorLoading = true
+        this.sharedState.hasErrorLoading = true
       }
     },
     handleSettings (requestResponse: any) {
@@ -85,7 +83,21 @@ export default defineComponent({
     },
     handleFilters () {
       handleFilters(this, initElements.dataset.ajaxurl)
+    },
+    updateHeight() {
+      const cartographyDiv = document.querySelector('.filter-container-carto');
+      if (cartographyDiv) {
+        const topPosition = cartographyDiv.getBoundingClientRect().top; 
+        document.documentElement.style.setProperty('--offset-top', `${topPosition}px`);
+      }
     }
+  },
+  mounted() {
+    this.updateHeight(); 
+    window.addEventListener('resize', this.updateHeight); 
+  },
+  beforeUnmount() {
+    window.removeEventListener('resize', this.updateHeight); 
   }
 })
 
@@ -97,6 +109,6 @@ export default defineComponent({
 }
 .filter-container-carto {
   overflow: auto;
-  height: 100vh;
+  height: calc(100vh - var(--offset-top, 0px));
 }
 </style>
