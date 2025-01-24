@@ -17,7 +17,7 @@ use Symfony\Component\DependencyInjection\Attribute\Autowire;
 #[AsDoctrineListener(event: Events::postPersist)]
 #[AsDoctrineListener(event: Events::postUpdate)]
 #[AsDoctrineListener(event: Events::preRemove)]
-class EntityHistoryListener
+readonly class EntityHistoryListener
 {
     public const array FIELDS_TO_IGNORE = [
         'lastLoginAt',
@@ -27,15 +27,13 @@ class EntityHistoryListener
         'lastSuiviIsPublic',
     ];
 
-    private array $deletedObjects;
-
     public function __construct(
-        private readonly HistoryEntryManager $historyEntryManager,
-        private readonly EntityManagerInterface $entityManager,
-        private readonly EntityComparator $entityComparator,
-        private readonly LoggerInterface $logger,
+        private HistoryEntryManager $historyEntryManager,
+        private EntityManagerInterface $entityManager,
+        private EntityComparator $entityComparator,
+        private LoggerInterface $logger,
         #[Autowire(env: 'HISTORY_TRACKING_ENABLE')]
-        private readonly string $historyTrackingEnable,
+        private string $historyTrackingEnable,
     ) {
     }
 
@@ -104,11 +102,7 @@ class EntityHistoryListener
             }
         }
         if (HistoryEntryEvent::DELETE === $event) {
-            $className = $this->entityManager->getMetadataFactory()->getMetadataFor($entity::class)->getName();
-            if (!isset($this->deletedObjects[$className][$entity->getId()])) {
-                $this->deletedObjects[$className][$entity->getId()] = $entity;
-                $changes = $this->entityComparator->getEntityPropertiesAndValueNormalized($entity);
-            }
+            $changes = $this->entityComparator->getEntityPropertiesAndValueNormalized($entity);
         }
 
         if (in_array($event, [HistoryEntryEvent::UPDATE, HistoryEntryEvent::DELETE]) && empty($changes)) {
