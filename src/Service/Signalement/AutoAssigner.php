@@ -127,13 +127,11 @@ class AutoAssigner
                 $partner,
                 $adminUser
             );
-            if ($affectation instanceof Affectation) {
-                $this->eventDispatcher->dispatch(new AffectationCreatedEvent($affectation), AffectationCreatedEvent::NAME);
-            }
             ++$this->countAffectations;
             $this->affectedPartnersNames[] = $partner->getNom();
             if ($affectation instanceof Affectation) {
                 $this->affectationManager->persist($affectation);
+                $this->eventDispatcher->dispatch(new AffectationCreatedEvent($affectation), AffectationCreatedEvent::NAME);
                 $this->interconnectionBus->dispatch($affectation);
             }
         }

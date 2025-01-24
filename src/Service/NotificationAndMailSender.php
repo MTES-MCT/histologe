@@ -51,7 +51,7 @@ class NotificationAndMailSender
 
     public function sendNewAffectation(Affectation $affectation): void
     {
-        $mailerType = NotificationMailerType::TYPE_ASSIGNMENT_NEW;
+        $mailerType = NotificationMailerType::TYPE_AFFECTATION_NEW;
         $this->affectation = $affectation;
         $this->signalement = $affectation->getSignalement();
         $recipients = $this->getRecipientsPartner($affectation->getPartner());
@@ -123,11 +123,11 @@ class NotificationAndMailSender
             $recipients->add($partner);
         }
 
-        $partner->getUsers()->filter(function (User $user) use ($recipients, $partner) { // @phpstan-ignore-line
+        foreach ($partner->getUsers() as $user) {
             if ($user->getIsMailingActive() && $this->isUserNotified($partner, $user)) {
                 $recipients->add($user);
             }
-        });
+        }
 
         return $recipients;
     }
