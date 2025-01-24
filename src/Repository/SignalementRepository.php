@@ -1433,7 +1433,11 @@ class SignalementRepository extends ServiceEntityRepository
             $qb->andWhere('s.reference = :reference')->setParameter('reference', $reference);
         }
 
-        return current($qb->getQuery()->getResult());
+        if (count($result = $qb->getQuery()->getResult()) > 0) {
+            return current($result);
+        }
+
+        return null;
     }
 
     /**
