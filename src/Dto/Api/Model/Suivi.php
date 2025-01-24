@@ -33,7 +33,7 @@ class Suivi
     public string $description;
 
     #[OA\Property(
-        description: 'Indique si le suivi est public.',
+        description: 'Indique si le suivi est visible pour les usagers.',
         type: 'boolean',
         example: true
     )]
