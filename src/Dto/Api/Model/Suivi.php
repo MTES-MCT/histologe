@@ -19,7 +19,7 @@ class Suivi
     public int $id;
 
     #[OA\Property(
-        description: 'Date de création du suivi.<br>Exemple : 2024-11-01T10:00:00+00:00',
+        description: 'Date de création du suivi.<br>Exemple : `2024-11-01T10:00:00+00:00`',
         type: 'string',
         format: 'date-time',
         example: '2024-11-01T10:00:00+00:00'
