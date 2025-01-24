@@ -2,10 +2,10 @@
 
 namespace App\Controller\Security;
 
+use App\Controller\FileController;
 use App\Entity\Signalement;
 use App\Entity\User;
-use App\Service\ImageManipulationHandler;
-use League\Flysystem\FilesystemOperator;
+use App\Service\Files\ImageVariantProvider;
 use Nelmio\ApiDocBundle\Attribute\Security;
 use OpenApi\Attributes as OA;
 use Psr\Log\LoggerInterface;
@@ -23,6 +23,10 @@ use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
 
 class SecurityController extends AbstractController
 {
+    public function __construct(private readonly ImageVariantProvider $imageVariantProvider)
+    {
+    }
+
     #[When('dev')]
     #[When('test')]
     #[Route('/api/login', name: 'api_login', methods: ['POST'])]
@@ -100,10 +104,14 @@ class SecurityController extends AbstractController
         return $this->render('security/login.html.twig', ['title' => $title, 'last_username' => $lastUsername, 'error' => $error]);
     }
 
+    /**
+     * Use only for exporting pdf signalement and using in old description suivi
+     * Use @see FileController::showFile() instead.
+     */
     #[Route('/_up/{filename}/{uuid:signalement?}', name: 'show_uploaded_file')]
     public function showUploadedFile(
         LoggerInterface $logger,
-        FilesystemOperator $fileStorage,
+        ImageVariantProvider $imageVariantProvider,
         string $filename,
         ?Signalement $signalement = null,
     ): BinaryFileResponse|RedirectResponse {
@@ -114,21 +122,7 @@ class SecurityController extends AbstractController
         }
         try {
             $variant = $request->query->get('variant');
-            $variantNames = ImageManipulationHandler::getVariantNames($filename);
-
-            if ('thumb' == $variant && $fileStorage->fileExists($variantNames[ImageManipulationHandler::SUFFIX_THUMB])) {
-                $filename = $variantNames[ImageManipulationHandler::SUFFIX_THUMB];
-            } elseif ($fileStorage->fileExists($variantNames[ImageManipulationHandler::SUFFIX_RESIZE])) {
-                $filename = $variantNames[ImageManipulationHandler::SUFFIX_RESIZE];
-            }
-            if (!$fileStorage->fileExists($filename)) {
-                throw new \Exception('File "'.$filename.'" not found');
-            }
-            $tmpFilepath = $this->getParameter('uploads_tmp_dir').$filename;
-            $bucketFilepath = $this->getParameter('url_bucket').'/'.$filename;
-            $content = file_get_contents($bucketFilepath);
-            file_put_contents($tmpFilepath, $content);
-            $file = new File($tmpFilepath);
+            $file = $imageVariantProvider->getFileVariant($filename, $variant);
 
             return new BinaryFileResponse($file);
         } catch (\Throwable $exception) {

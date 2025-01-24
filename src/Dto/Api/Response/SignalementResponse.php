@@ -791,9 +791,21 @@ class SignalementResponse
     )]
     public array $interventions = [];
     #[OA\Property(
-        description: 'Liste des fichiers joints au signalement',
+        description: 'Liste des fichiers joints au signalement.',
         type: 'array',
         items: new OA\Items(ref: new Model(type: File::class)),
+        example: [
+            [
+                'titre' => 'Capture d’écran du 2025-01-13 09-48-11.png',
+                'documentType' => 'PHOTO_VISITE',
+                'url' => 'https://histologe-staging.osc-fr1.scalingo.io/show/5ca99705-5ef6-11ef-ba0f-0242ac110034',
+            ],
+            [
+                'titre' => '9c2fef07-f2a9-4505-914a-523cbfb911df.png',
+                'documentType' => 'AUTRE',
+                'url' => 'https://histologe-staging.osc-fr1.scalingo.io/show/5ca99705-5ef6-11ef-ba0f-0242ac110034',
+            ],
+        ]
     )]
     public array $files = [];
 
