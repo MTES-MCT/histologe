@@ -3,7 +3,6 @@
 namespace App\Service;
 
 use App\Entity\Affectation;
-use Doctrine\Common\Collections\ArrayCollection;
 use App\Entity\Notification;
 use App\Entity\Partner;
 use App\Entity\Signalement;
@@ -16,6 +15,7 @@ use App\Repository\UserRepository;
 use App\Service\Mailer\NotificationMail;
 use App\Service\Mailer\NotificationMailerRegistry;
 use App\Service\Mailer\NotificationMailerType;
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
@@ -58,7 +58,8 @@ class NotificationAndMailSender
         $this->send($mailerType, $recipients);
     }
 
-    private function send(NotificationMailerType $notificationMailerType, ArrayCollection $recipients, bool $isInAppNotificationCreated = false): void {
+    private function send(NotificationMailerType $notificationMailerType, ArrayCollection $recipients, bool $isInAppNotificationCreated = false): void
+    {
         if ($isInAppNotificationCreated) {
             foreach ($recipients as $user) {
                 $this->createInAppNotification($user);
@@ -67,7 +68,7 @@ class NotificationAndMailSender
 
         $this->sendMail($recipients, $notificationMailerType);
     }
-    
+
     private function createInAppNotification($user): void
     {
         if (empty($this->suivi) || Suivi::DESCRIPTION_SIGNALEMENT_VALIDE === $this->suivi->getDescription()) {
@@ -81,7 +82,7 @@ class NotificationAndMailSender
             $notification
         );
     }
-    
+
     private function sendMail(ArrayCollection $recipients, NotificationMailerType $mailType): void
     {
         if (!$recipients->isEmpty()) {
@@ -123,13 +124,11 @@ class NotificationAndMailSender
         }
 
         $partner->getUsers()->filter(function (User $user) use ($recipients, $partner) { // @phpstan-ignore-line
-            if ($this->isUserNotified($partner, $user)) {
-                if ($user->getIsMailingActive()) {
-                    $recipients->add($user->getEmail());
-                }
+            if ($user->getIsMailingActive() && $this->isUserNotified($partner, $user)) {
+                $recipients->add($user);
             }
         });
-        
+
         return $recipients;
     }
 
@@ -147,12 +146,12 @@ class NotificationAndMailSender
                 continue;
             }
             if ('' !== trim($recipientUserOrPartner->getEmail()) && null !== $recipientUserOrPartner->getEmail()) {
-                $recipientsEmails []= $recipientUserOrPartner->getEmail();
+                $recipientsEmails[] = $recipientUserOrPartner->getEmail();
             }
         }
 
         $recipientsEmails = array_unique($recipientsEmails);
-        
+
         return $recipientsEmails;
     }
 
@@ -177,12 +176,13 @@ class NotificationAndMailSender
         // - the user must be active and not an admin
         // - if entity is Affectation
         // - if entity is Suivi: we check that the partner of the user is different from the partner of the user who created the suivi
+        // TODO: activate when suivi is out of ActivityListener
         /*if ($entity instanceof Suivi) {
             $suiviPartner = $entity->getCreatedBy()?->getPartnerInTerritory($entity->getSignalement()->getTerritory());
         }*/
 
         return User::STATUS_ACTIVE === $user->getStatut()
             && !$user->isSuperAdmin() && !$user->isTerritoryAdmin()
-            && (!empty($this->affectation)/* || ($entity->getCreatedBy() && $partner !== $suiviPartner)*/);
+            && (!empty($this->affectation)/* || ($entity->getCreatedBy() && $partner !== $suiviPartner) */);
     }
 }
