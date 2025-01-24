@@ -16,8 +16,7 @@
     "libphonenumber-js": "^1.10.44",
     "vue": "^3.2.37",
     "vue-chartjs": "^4.1.1",
-    "vue-loader": "^17.0.0",
-    "vue-template-compiler": "^2.7.16"
+    "vue-loader": "^17.0.0"
   },
   "devDependencies": {
     "@hotwired/stimulus": "^3.0.0",
