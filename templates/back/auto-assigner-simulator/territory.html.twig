@@ -1,0 +1,62 @@
+{% extends 'back/base_bo.html.twig' %}
+
+{% block title %}Auto Assigner Simulator ⚗️{% endblock %}
+
+{% block content %}
+    <section class="fr-p-5v">
+        {% include 'back/breadcrumb_bo.html.twig' with {
+            'level2Title': 'Outils SA',
+            'level2Link': '',
+            'level2Label': '',
+            'level3Title': 'Auto Assigner Simulator ⚗️',
+            'level3Link': path('back_auto_assigner_simulator_index'),
+            'level3Label': 'Retour à la liste des territoires ayant des règles d\'auto-affectation',
+            'level4Title': 'Simulation',
+            'level4Link': '',
+            'level4Label': '',
+        } %}
+        <header>
+            <div class="fr-grid-row">
+                <div class="fr-col-12">
+                    <h1 class="fr-h1 fr-mb-0">
+                        Auto Assigner Simulator ⚗️ 
+                        <br>
+                        {% if uuid %}
+                            <small>sur le signalement {{uuid}} du territoire {{territory.zip}} - {{territory.name}}</small>
+                        {% else %}
+                            <small>sur les {{limit}} derniers signalements du {{territory.zip}} - {{territory.name}}</small>
+                        {% endif %}
+                    </h1>
+                </div>
+            </div>
+        </header>
+    </section>
+
+    <section class="fr-col-12 fr-pt-0 fr-px-5v">
+        {% set tableHead %}
+            <th scope="col">Signalement</th>
+            <th scope="col">Partenaires affectés</th>
+            <th scope="col">Affectations simulées</th>
+        {% endset %}
+
+        {% set tableBody %}
+            {% for item in results %}
+                <tr>
+                    <td><a href="{{path('back_signalement_view', {uuid:item.signalement.uuid})}}">{{ item.signalement.reference}}</a></td>
+                    <td>
+                        {% for affectation in item.signalement.affectations %}
+                            <div class="fr-badge fr-badge--blue-ecume fr-mb-1v">{{ affectation.partner.nom }}</div>
+                        {% endfor %}
+                    </td>
+                    <td>
+                        {% for partner in item.assignablePartners %}
+                            <div class="fr-badge fr-mb-1v">{{ partner.nom }}</div>
+                        {% endfor %}
+                    </td>
+                </tr>
+            {% endfor %}
+        {% endset %}
+
+        {% include '_partials/back/table.html.twig' with { 'tableLabel': 'Auto Assigner Simulator ⚗️', 'tableHead': tableHead, 'tableBody': tableBody } %}
+    </section>
+{% endblock %}

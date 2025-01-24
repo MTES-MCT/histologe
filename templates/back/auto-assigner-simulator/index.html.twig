@@ -1,0 +1,42 @@
+{% extends 'back/base_bo.html.twig' %}
+
+{% block title %}Auto Assigner Simulator ⚗️{% endblock %}
+
+{% block content %}
+    <section class="fr-p-5v">
+        {% include 'back/breadcrumb_bo.html.twig' with {
+            'level2Title': 'Outils SA',
+            'level2Link': '',
+            'level2Label': '',
+            'level3Title': 'Auto Assigner Simulator ⚗️',
+            'level3Link': '',
+        } %}
+        <header>
+            <div class="fr-grid-row">
+                <div class="fr-col-12">
+                    <h1 class="fr-h1 fr-mb-0">
+                        Auto Assigner Simulator ⚗️ 
+                        <br>
+                        <small>Liste des territoires ayant des règles d'auto-affectation</small>
+                    </h1>
+                </div>
+            </div>
+        </header>
+    </section>
+
+    <section class="fr-col-12 fr-pt-0 fr-px-5v">
+        {% set tableHead %}
+            <th scope="col">Territoire</th>
+        {% endset %}
+
+        {% set tableBody %}
+            {% for item in territories %}
+                <tr>
+                    <td><a href="{{path('back_auto_assigner_simulator_territory', {territory:item.id})}}">{{ item.zip}} - {{item.name}}</a></td>
+                </tr>
+            {% endfor %}
+        {% endset %}
+
+        {% include '_partials/back/table.html.twig' with { 'tableLabel': 'Auto Assigner Simulator ⚗️', 'tableHead': tableHead, 'tableBody': tableBody } %}
+    </section>
+{% endblock %}

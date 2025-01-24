@@ -29,6 +29,7 @@ use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 class AutoAssigner
 {
     private int $countAffectations;
+    private array $assignablePartners = [];
     private array $affectedPartnersNames = [];
 
     public function __construct(
@@ -43,8 +44,9 @@ class AutoAssigner
     ) {
     }
 
-    public function assign(Signalement $signalement): void
+    public function assign(Signalement $signalement, $simulation = false): void
     {
+        $this->assignablePartners = [];
         $this->countAffectations = 0;
         $autoAffectationRules = $signalement->getTerritory()->getAutoAffectationRules()->filter(function (AutoAffectationRule $autoAffectationRule) {
             return AutoAffectationRule::STATUS_ACTIVE === $autoAffectationRule->getStatus();
@@ -64,7 +66,7 @@ class AutoAssigner
         }
         $adminEmail = $this->parameterBag->get('user_system_email');
         $adminUser = $this->userManager->findOneBy(['email' => $adminEmail]);
-        $partners = $this->partnerRepository->findPartnersByLocalization($signalement);
+        $partners = $this->partnerRepository->findPartnersByLocalization($signalement, $simulation);
         $assignablePartners = [];
 
         /** @var AutoAffectationRule $rule */
@@ -90,6 +92,13 @@ class AutoAssigner
             }
         }
         $assignablePartners = array_values($assignablePartners);
+
+        if ($simulation) {
+            $this->assignablePartners = $assignablePartners;
+
+            return;
+        }
+
         if (!empty($assignablePartners)) {
             $this->activateSignalement($signalement);
             $this->createSuivi($signalement, $adminUser);
@@ -144,5 +153,10 @@ class AutoAssigner
     public function getAffectedPartnerNames(): array
     {
         return $this->affectedPartnersNames;
+    }
+
+    public function getAssignablePartners(): array
+    {
+        return $this->assignablePartners;
     }
 }
