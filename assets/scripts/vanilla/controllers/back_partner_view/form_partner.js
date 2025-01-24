@@ -26,7 +26,6 @@ function histoUpdateFieldsVisibility () {
     } else {
       document.querySelector('#partner_esabora').classList.add('fr-hidden')
     }
-
   }
   if (idossElement) {
     if (showIdoss) {
@@ -34,7 +33,6 @@ function histoUpdateFieldsVisibility () {
     } else {
       document.querySelector('#partner_idoss').classList.add('fr-hidden')
     }
-
   }
   if (bailleurSocialElement) {
     if (showBailleurSocial) {
@@ -42,14 +40,13 @@ function histoUpdateFieldsVisibility () {
     } else {
       document.querySelector('#partner_bailleur_social').classList.add('fr-hidden')
     }
-
   }
 }
 function histoUpdateValueFromData (elementName, elementData, target) {
   document.querySelector(elementName).value = target.getAttribute(elementData)
 }
 
-//TODO : remove editOrCreate param after feature_multi_territories deletion (will always be 'partner')
+// TODO : remove editOrCreate param after feature_multi_territories deletion (will always be 'partner')
 function histoUpdatePermissionsFromRole (editOrCreate) {
   const elementTogglePermissionAffectation = document.querySelector('#user_' + editOrCreate + '_permission_affectation_toggle input')
   const elementTextPermissionAffectation = document.querySelector('#user_' + editOrCreate + '_permission_affectation_text')
@@ -57,9 +54,9 @@ function histoUpdatePermissionsFromRole (editOrCreate) {
     return
   }
   let rolesSelect = null
-  if(editOrCreate === 'partner'){
+  if (editOrCreate === 'partner') {
     rolesSelect = document.querySelector('#user_partner_role')
-  }else{
+  } else {
     rolesSelect = document.querySelector('#user_' + editOrCreate + '_roles')
   }
   if (rolesSelect.value === 'ROLE_ADMIN' || rolesSelect.value === 'ROLE_ADMIN_TERRITORY') {
@@ -120,42 +117,41 @@ if (document.querySelector('#partner_type')) {
   })
 }
 
-const territorySelect = document.querySelector("#partner_territory");
+const territorySelect = document.querySelector('#partner_territory')
 
 if (territorySelect) {
-  territorySelect.addEventListener("change", function () {
-    const bailleurSocialSelect = document.querySelector("#partner_bailleur");
-    if (bailleurSocialSelect){
-      const territoryId = this.value;
-      bailleurSocialSelect.innerHTML = '<option value="">Sélectionner un bailleur social</option>';
+  territorySelect.addEventListener('change', function () {
+    const bailleurSocialSelect = document.querySelector('#partner_bailleur')
+    if (bailleurSocialSelect) {
+      const territoryId = this.value
+      bailleurSocialSelect.innerHTML = '<option value="">Sélectionner un bailleur social</option>'
 
       if (!territoryId) {
-          return;
+        return
       }
 
       // route back_territory_bailleurs
       fetch(`/bo/territoire/${territoryId}/bailleurs`)
-          .then(response => {
-              if (!response.ok) {
-                  throw new Error("Erreur lors de la récupération des bailleurs sociaux.");
-              }
-              return response.json();
+        .then(response => {
+          if (!response.ok) {
+            throw new Error('Erreur lors de la récupération des bailleurs sociaux.')
+          }
+          return response.json()
+        })
+        .then(data => {
+          // Ajouter les nouvelles options
+          data.forEach(bailleur => {
+            const option = document.createElement('option')
+            option.value = bailleur.id
+            option.textContent = bailleur.name
+            bailleurSocialSelect.appendChild(option)
           })
-          .then(data => {
-              // Ajouter les nouvelles options
-              data.forEach(bailleur => {
-                  const option = document.createElement("option");
-                  option.value = bailleur.id;
-                  option.textContent = bailleur.name;
-                  bailleurSocialSelect.appendChild(option);
-              });
-          })
-          .catch(error => {
-              console.error("Erreur:", error);
-          });
-
+        })
+        .catch(error => {
+          console.error('Erreur:', error)
+        })
     }
-  });
+  })
 }
 
 const deletePartnerForm = document.querySelectorAll('form[name="deletePartner"]')
@@ -167,7 +163,7 @@ deletePartnerForm.forEach(form => {
   })
 })
 
-//TODO : delete with feature_multi_territories deletion
+// TODO : delete with feature_multi_territories deletion
 function clearErrors () {
   const divErrorElements = document.querySelectorAll('.fr-input-group--error')
   divErrorElements.forEach((divErrorElement) => {
@@ -232,7 +228,7 @@ emailInputs.forEach(emailInput => {
     checkUserMail(this)
   })
 })
-//END TODO : delete with feature_multi_territories deletion
+// END TODO : delete with feature_multi_territories deletion
 
 loadWindowWithLocalStorage('click', '[data-filter-list-partner]', 'search-partner-form')
 updateLocalStorageOnEvent('input', '#partner-input', 'back_link_partners')
@@ -240,11 +236,11 @@ updateLocalStorageOnEvent('change', '#partner-filters-territories', 'back_link_p
 updateLocalStorageOnEvent('change', '#partner-filters-types', 'back_link_partners')
 updateLocalStorageWithPaginationParams('click', '#partner-pagination a', 'back_link_partners')
 
-//add for multi territories
+// add for multi territories
 document.querySelectorAll('.btn-edit-partner-user').forEach(swbtn => {
   swbtn.addEventListener('click', event => {
-    const refreshUrl = event.target.dataset.refreshUrl;
-    document.querySelector('#fr-modal-user-edit button[type="submit"]').disabled = true;
+    const refreshUrl = event.target.dataset.refreshUrl
+    document.querySelector('#fr-modal-user-edit button[type="submit"]').disabled = true
     document.querySelector('#fr-modal-user-edit-title').innerHTML = 'Chargement en cours...'
     document.querySelector('#fr-modal-user-edit-form-container').innerHTML = 'Chargement en cours...'
     fetch(refreshUrl).then(response => {
@@ -254,17 +250,17 @@ document.querySelectorAll('.btn-edit-partner-user').forEach(swbtn => {
 })
 
 const modalPartnerUserCreate = document?.querySelector('#fr-modal-user-create')
-if(modalPartnerUserCreate){
+if (modalPartnerUserCreate) {
   modalPartnerUserCreate.addEventListener('dsfr.conceal', (event) => {
-    const refreshUrl = event.target.dataset.refreshUrl;
-    modalPartnerUserCreate.querySelector('button[type="submit"]').disabled = true;
+    const refreshUrl = event.target.dataset.refreshUrl
+    modalPartnerUserCreate.querySelector('button[type="submit"]').disabled = true
     fetch(refreshUrl).then(response => {
       updateModaleFromResponse(response, '#fr-modal-user-create', addEventListenerOnRoleChange)
     })
   })
 }
 
-function addEventListenerOnRoleChange(){
+function addEventListenerOnRoleChange () {
   if (document.querySelector('#user_partner_role')) {
     document.querySelector('#user_partner_role').addEventListener('change', () => {
       histoUpdatePermissionsFromRole('partner')
@@ -273,31 +269,27 @@ function addEventListenerOnRoleChange(){
   }
 }
 
-function updateModaleFromResponse(response, modalSelector, callback = null){
+function updateModaleFromResponse (response, modalSelector, callback = null) {
   if (response.ok) {
     response.json().then((response) => {
       if (response.redirect) {
         window.location.href = response.url
         window.location.reload()
-      }else{
+      } else {
         document.querySelector(modalSelector + '-title').innerHTML = response.title
         document.querySelector(modalSelector + '-form-container').innerHTML = response.content
-        if(response.submitLabel){
-          document.querySelector(modalSelector + ' button[type="submit"]').innerHTML = response.submitLabel
-        }else{
-          document.querySelector(modalSelector + ' button[type="submit"]').innerHTML = 'Valider'
-        }
+        document.querySelector(modalSelector + ' button[type="submit"]').innerHTML = response.submitLabel ? response.submitLabel : 'Valider'
         attachSubmitFormModal(modalSelector, callback)
         if (typeof callback === 'function') {
-          callback();
+          callback()
         }
-        if(response.disabled){
+        if (response.disabled) {
           return
         }
-        document.querySelector(modalSelector +' button[type="submit"]').disabled = false
+        document.querySelector(modalSelector + ' button[type="submit"]').disabled = false
       }
     })
-  }else{
+  } else {
     const content = '<div class="fr-alert fr-alert--error" role="alert"><p class="fr-alert__title">Erreur</p><p>Une erreur s\'est produite. Veuillez actualiser la page.</p></div>'
     document.querySelector(modalSelector + '-form-container').innerHTML = content
   }
@@ -308,7 +300,7 @@ function attachSubmitFormModal (modalSelector, callback) {
     e.preventDefault()
     document.querySelector(modalSelector + ' button[type="submit"]').disabled = true
     const formData = new FormData(e.target)
-    fetch(e.target.action, {method: 'POST', body: formData}).then(response => {
+    fetch(e.target.action, { method: 'POST', body: formData }).then(response => {
       updateModaleFromResponse(response, modalSelector, callback)
     })
   })
