@@ -773,9 +773,11 @@ class SignalementRepository extends ServiceEntityRepository
     }
 
     public function getAverageCriticite(
-        ?Territory $territory, ?ArrayCollection $partners, bool $removeImported = false,
-        bool $removeDraft = true, ): ?float
-    {
+        ?Territory $territory,
+        ?ArrayCollection $partners,
+        bool $removeImported = false,
+        bool $removeDraft = true,
+    ): ?float {
         $qb = $this->createQueryBuilder('s');
         $qb->select('AVG(s.score)');
 
