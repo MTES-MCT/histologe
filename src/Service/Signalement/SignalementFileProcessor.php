@@ -65,7 +65,6 @@ class SignalementFileProcessor
                 $fileSizeOk = true;
             }
 
-
             if ($fileSizeOk) {
                 $fileExtension = $file instanceof UploadedFile ? $file->getClientOriginalExtension() : null;
 

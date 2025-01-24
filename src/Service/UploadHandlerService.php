@@ -46,7 +46,7 @@ class UploadHandlerService
         }
         $newFilename = $this->filenameGenerator->generate($file);
         $titre = $this->filenameGenerator->getTitle();
-        
+
         if ($this->isFileEmpty($file)) {
             throw new EmptyFileException();
         }
