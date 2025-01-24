@@ -144,12 +144,13 @@ class SignalementController extends AbstractController
     ): JsonResponse {
         /** @var User $user */
         $user = $this->getUser();
-        $signalements = $signalementRepository->findOneForApi(user : $user, uuid : $uuid);
-        if (!count($signalements)) {
-            return new JsonResponse(['message' => 'Signalement introuvable'], Response::HTTP_NOT_FOUND);
-        }
-        $resource = $signalementResponseFactory->createFromSignalement($signalements[0]);
+        $signalement = $signalementRepository->findOneForApi(user : $user, uuid : $uuid);
+        if (null !== $signalement) {
+            $resource = $signalementResponseFactory->createFromSignalement($signalement);
 
-        return new JsonResponse($resource, Response::HTTP_OK);
+            return new JsonResponse($resource, Response::HTTP_OK);
+        }
+
+        return new JsonResponse(['message' => 'Signalement introuvable'], Response::HTTP_NOT_FOUND);
     }
 }

@@ -90,7 +90,7 @@ class AffectationRepository extends ServiceEntityRepository
             $qb->leftJoin('a.partner', 'partner');
         }
 
-        $qb = SignalementRepository::addFiltersToQuery($qb, $statisticsFilters);
+        $qb = SignalementRepository::addFiltersToQueryBuilder($qb, $statisticsFilters);
 
         return $qb->getQuery()
             ->getResult();
