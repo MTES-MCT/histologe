@@ -14,6 +14,7 @@ use Symfony\Component\Security\Core\Exception\AuthenticationException;
 use Symfony\Component\Security\Http\Authenticator\AuthenticatorInterface;
 use Symfony\Component\Security\Http\Authenticator\Passport\Badge\UserBadge;
 use Symfony\Component\Security\Http\Authenticator\Passport\SelfValidatingPassport;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 class TokenAuthenticatorTest extends TestCase
 {
@@ -22,7 +23,18 @@ class TokenAuthenticatorTest extends TestCase
     protected function setUp(): void
     {
         $apiUserTokenRepository = $this->createMock(ApiUserTokenRepository::class);
-        $this->authenticator = new TokenAuthenticator($apiUserTokenRepository);
+        $translator = $this->createMock(TranslatorInterface::class);
+        $translator->method('trans')
+            ->willReturnCallback(function ($key) {
+                $translations = [
+                    'Invalid credentials.' => 'Identifiants invalides.',
+                    'An authentication exception occurred.' => 'Une exception d\'authentification s\'est produite.',
+                ];
+
+                return $translations[$key] ?? $key;
+            });
+
+        $this->authenticator = new TokenAuthenticator($apiUserTokenRepository, $translator);
     }
 
     public function testSupports(): void
@@ -74,12 +86,12 @@ class TokenAuthenticatorTest extends TestCase
     public function testOnAuthenticationFailure(): void
     {
         $request = new Request();
-        $exception = new AuthenticationException('Invalid token');
+        $exception = new AuthenticationException('Le token est invalide.');
 
         $response = $this->authenticator->onAuthenticationFailure($request, $exception);
         $data = json_decode($response->getContent(), true);
-        $this->assertSame('An authentication exception occurred.', $data['error']);
-        $this->assertSame('Invalid token', $data['message']);
+        $this->assertSame('Une exception d\'authentification s\'est produite.', $data['error']);
+        $this->assertSame('Le token est invalide.', $data['message']);
         $this->assertSame(Response::HTTP_UNAUTHORIZED, $response->getStatusCode());
     }
 }

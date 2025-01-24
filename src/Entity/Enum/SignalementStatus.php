@@ -56,4 +56,16 @@ enum SignalementStatus: int
             default => throw new \UnexpectedValueException('Unexpected signalement status : '.$label),
         };
     }
+
+    public static function mapNewStatus(int $codeStatus): SignalementNewStatus
+    {
+        return match ($codeStatus) {
+            1 => SignalementNewStatus::NOUVEAU,
+            2, 3 => SignalementNewStatus::EN_COURS,
+            6 => SignalementNewStatus::FERME,
+            7 => SignalementNewStatus::ARCHIVE,
+            8 => SignalementNewStatus::REFUSE,
+            default => throw new \UnexpectedValueException('Unexpected signalement code status : '.$codeStatus),
+        };
+    }
 }

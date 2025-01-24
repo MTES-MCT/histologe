@@ -2,20 +2,29 @@
 
 namespace App\Factory\Api;
 
+use App\Dto\Api\Model\Adresse;
 use App\Dto\Api\Model\Desordre;
-use App\Dto\Api\Model\Geolocalisation;
 use App\Dto\Api\Model\Intervention;
+use App\Dto\Api\Model\Personne;
 use App\Dto\Api\Model\Suivi;
 use App\Dto\Api\Response\SignalementResponse;
+use App\Entity\Enum\Api\PersonneType;
 use App\Entity\Enum\DesordreCritereZone;
+use App\Entity\Enum\SignalementStatus;
 use App\Entity\Signalement;
 use App\Service\Signalement\SignalementDesordresProcessor;
 
-class SignalementResponseFactory
+readonly class SignalementResponseFactory
 {
+    public const array PERSONNE_TYPES = [
+        PersonneType::OCCUPANT,
+        PersonneType::DECLARANT,
+        PersonneType::PROPRIETAIRE,
+    ];
+
     public function __construct(
-        private readonly SignalementDesordresProcessor $signalementDesordresProcessor,
-        private readonly FileFactory $fileFactory,
+        private SignalementDesordresProcessor $signalementDesordresProcessor,
+        private FileFactory $fileFactory,
     ) {
     }
 
@@ -26,17 +35,15 @@ class SignalementResponseFactory
         $signalementResponse->uuid = $signalement->getUuid();
         $signalementResponse->reference = $signalement->getReference();
         $signalementResponse->dateCreation = $signalement->getCreatedAt()->format(\DATE_ATOM);
-        $signalementResponse->statut = $signalement->getStatut(); // envoyer un libellé ?
+        $signalementResponse->statut = SignalementStatus::mapNewStatus($signalement->getStatut());
         $signalementResponse->dateValidation = $signalement->getValidatedAt()?->format(\DATE_ATOM);
         $signalementResponse->dateCloture = $signalement->getClosedAt()?->format(\DATE_ATOM);
-        $signalementResponse->motifCloture = $signalement->getMotifCloture()?->value;
-        $signalementResponse->motifRefus = $signalement->getMotifRefus()?->value;
+        $signalementResponse->motifCloture = $signalement->getMotifCloture();
+        $signalementResponse->motifRefus = $signalement->getMotifRefus();
         $signalementResponse->abandonProcedureUsager = $signalement->getIsUsagerAbandonProcedure();
-        // type declarant et details
-        $signalementResponse->typeDeclarant = $signalement->getProfileDeclarant()?->value;
-        $signalementResponse->precisionTypeSiBailleur = $signalement->getTypeProprio()?->value;
-        $signalementResponse->lienDeclarantOccupantSiTiers = $signalement->getLienDeclarantOccupant();
-        $signalementResponse->details = $signalement->getDetails(); // renomer ?
+        $signalementResponse->typeDeclarant = $signalement->getProfileDeclarant();
+        $signalementResponse->description = $signalement->getDetails();
+
         // infos logement
         $signalementResponse->natureLogement = $signalement->getNatureLogement();
         $signalementResponse->precisionNatureLogement = $signalement->getTypeCompositionLogement()?->getTypeLogementNatureAutrePrecision();
@@ -48,6 +55,7 @@ class SignalementResponseFactory
         $signalementResponse->constructionAvant1949 = $signalement->getIsConstructionAvant1949();
         $signalementResponse->nbNiveaux = $signalement->getInformationComplementaire()?->getInformationsComplementairesLogementNombreEtages() ?? $signalement->getNbNiveauxLogement();
         $signalementResponse->rezDeChaussee = $this->stringToBool($signalement->getTypeCompositionLogement()?->getTypeLogementRdc());
+
         $signalementResponse->dernierEtage = $this->stringToBool($signalement->getTypeCompositionLogement()?->getTypeLogementDernierEtage());
         $signalementResponse->sousSolSansFenetre = $this->stringToBool($signalement->getTypeCompositionLogement()?->getTypeLogementSousSolSansFenetre());
         $signalementResponse->sousCombleSansFenetre = $this->stringToBool($signalement->getTypeCompositionLogement()?->getTypeLogementSousCombleSansFenetre());
@@ -62,56 +70,15 @@ class SignalementResponseFactory
         $signalementResponse->hauteurSuperieureA2metres = $this->stringToBool($signalement->getTypeCompositionLogement()?->getCompositionLogementHauteur());
         $signalementResponse->dpeExistant = $this->stringToBool($signalement->getTypeCompositionLogement()?->getBailDpeDpe());
         $signalementResponse->dpeClasseEnergetique = $signalement->getTypeCompositionLogement()?->getBailDpeClasseEnergetique();
-        $signalementResponse->geoLocalisation = new Geolocalisation($signalement->getGeoloc()['lat'] ?? null, $signalement->getGeoloc()['lng'] ?? null);
-        // infos declarant
-        $signalementResponse->structureDeclarant = $signalement->getStructureDeclarant();
-        $signalementResponse->nomDeclarant = $signalement->getNomDeclarant();
-        $signalementResponse->prenomDeclarant = $signalement->getPrenomDeclarant();
-        $signalementResponse->telephoneDeclarant = $signalement->getTelDeclarantDecoded();
-        $signalementResponse->telephoneSecondaireDeclarant = $signalement->getTelDeclarantSecondaireDecoded();
-        $signalementResponse->mailDeclarant = $signalement->getMailDeclarant();
-        $signalementResponse->estTravailleurSocialPourOccupant = $this->stringToBool($signalement->getSituationFoyer()?->getTravailleurSocialAccompagnementDeclarant());
-        // infos occupants
-        $signalementResponse->civiliteOccupant = $signalement->getCiviliteOccupant();
-        $signalementResponse->nomOccupant = $signalement->getNomOccupant();
-        $signalementResponse->prenomOccupant = $signalement->getPrenomOccupant();
-        $signalementResponse->telephoneOccupant = $signalement->getTelOccupantDecoded();
-        $signalementResponse->telephoneSecondaireOccupant = $signalement->getTelOccupantBisDecoded();
-        $signalementResponse->mailOccupant = $signalement->getMailOccupant();
-        $signalementResponse->adresseOccupant = $signalement->getAdresseOccupant();
-        $signalementResponse->codePostalOccupant = $signalement->getCpOccupant();
-        $signalementResponse->villeOccupant = $signalement->getVilleOccupant();
-        $signalementResponse->etageOccupant = $signalement->getEtageOccupant();
-        $signalementResponse->escalierOccupant = $signalement->getEscalierOccupant();
-        $signalementResponse->numAppartOccupant = $signalement->getNumAppartOccupant();
-        $signalementResponse->adresseAutreOccupant = $signalement->getAdresseAutreOccupant();
-        $signalementResponse->codeInseeOccupant = $signalement->getInseeOccupant();
-        $signalementResponse->cleBanAdresseOccupant = $signalement->getBanIdOccupant();
-        $signalementResponse->dateNaissanceOccupant = $signalement->getDateNaissanceOccupant()?->format('Y-m-d') ?? $signalement->getInformationComplementaire()?->getInformationsComplementairesSituationOccupantsDateNaissance();
         $signalementResponse->dateEntreeLogement = $signalement->getDateEntree()?->format('Y-m-d');
         $signalementResponse->nbOccupantsLogement = $signalement->getNbOccupantsLogement();
-        $signalementResponse->nombreEnfantsDansLogement = $this->stringToInt($signalement->getTypeCompositionLogement()?->getCompositionLogementNombreEnfants());
-        $signalementResponse->enfantsDansLogement = $this->stringToBool($signalement->getTypeCompositionLogement()?->getCompositionLogementEnfants());
+        $signalementResponse->nbEnfantsDansLogement = $this->stringToInt($signalement->getTypeCompositionLogement()?->getCompositionLogementNombreEnfants());
+        $signalementResponse->enfantsDansLogementMoinsSixAns = $this->stringToBool($signalement->getTypeCompositionLogement()?->getCompositionLogementEnfants());
         $signalementResponse->assuranceContactee = $this->stringToBool($signalement->getInformationProcedure()?->getInfoProcedureAssuranceContactee());
         $signalementResponse->reponseAssurance = $signalement->getInformationProcedure()?->getInfoProcedureReponseAssurance();
         $signalementResponse->souhaiteQuitterLogement = $this->stringToBool($signalement->getSituationFoyer()?->getTravailleurSocialQuitteLogement());
         $signalementResponse->souhaiteQuitterLogementApresTravaux = $this->stringToBool($signalement->getInformationProcedure()?->getInfoProcedureDepartApresTravaux());
         $signalementResponse->suiviParTravailleurSocial = $this->stringToBool($signalement->getSituationFoyer()?->getTravailleurSocialAccompagnement());
-        $signalementResponse->revenuFiscalOccupant = $signalement->getInformationComplementaire()?->getInformationsComplementairesSituationOccupantsRevenuFiscal();
-        // infos proprietaire
-        $signalementResponse->nomProprietaire = $signalement->getNomProprio();
-        $signalementResponse->prenomProprietaire = $signalement->getPrenomProprio();
-        $signalementResponse->adresseProprietaire = $signalement->getAdresseProprio();
-        $signalementResponse->codePostalProprietaire = $signalement->getCodePostalProprio();
-        $signalementResponse->villeProprietaire = $signalement->getVilleProprio();
-        $signalementResponse->telephoneProprietaire = $signalement->getTelProprioDecoded();
-        $signalementResponse->telephoneSecondaireProprietaire = $signalement->getTelProprioSecondaireDecoded();
-        $signalementResponse->mailProprietaire = $signalement->getMailProprio();
-        $signalementResponse->proprietaireDateNaissance = $signalement->getInformationComplementaire()?->getInformationsComplementairesSituationBailleurDateNaissance();
-        $signalementResponse->proprietaireRevenuFiscal = $signalement->getInformationComplementaire()?->getInformationsComplementairesSituationBailleurRevenuFiscal() ?: null;
-        $signalementResponse->proprietaireBeneficiaireRsa = $this->stringToBool($signalement->getInformationComplementaire()?->getInformationsComplementairesSituationBailleurBeneficiaireRsa());
-        $signalementResponse->proprietaireBeneficiaireFsl = $this->stringToBool($signalement->getInformationComplementaire()?->getInformationsComplementairesSituationBailleurBeneficiaireFsl());
-        // infos location
         $signalementResponse->proprietaireAverti = $signalement->getIsProprioAverti();
         $signalementResponse->moyenInformationProprietaire = $signalement->getInformationProcedure()?->getInfoProcedureBailMoyen();
         $signalementResponse->dateInformationProprietaire = $signalement->getInformationProcedure()?->getInfoProcedureBailDate();
@@ -126,31 +93,12 @@ class SignalementResponseFactory
         $signalementResponse->demandeRelogementEffectuee = $signalement->getIsRelogement();
         $signalementResponse->loyersPayes = $this->stringToBool($signalement->getInformationComplementaire()?->getinformationsComplementairesSituationOccupantsLoyersPayes());
         $signalementResponse->dateEffetBail = $signalement->getInformationComplementaire()?->getInformationsComplementairesSituationBailleurDateEffetBail() ?? $signalementResponse->dateEntreeLogement;
-        // infos allocataire
-        $signalementResponse->allocataire = in_array($signalement->getIsAllocataire(), [null, '']) ? null : (bool) $signalement->getIsAllocataire(); // valeurs possibles : null, '', 0, 1, 'CAF', 'MSA'
-        $signalementResponse->typeAllocataire = in_array($signalement->getIsAllocataire(), ['MSA', 'CAF']) ? $signalement->getIsAllocataire() : null;
-        $signalementResponse->numAllocataire = $signalement->getNumAllocataire();
-        $signalementResponse->montantAllocation = $signalement->getSituationFoyer()?->getLogementSocialMontantAllocation() ?? $signalement->getMontantAllocation();
-        $signalementResponse->beneficiaireRSA = $this->stringToBool($signalement->getInformationComplementaire()?->getInformationsComplementairesSituationOccupantsBeneficiaireRsa()) ?? $signalement->getIsRsa();
-        $signalementResponse->beneficiaireFSL = $this->stringToBool($signalement->getInformationComplementaire()?->getInformationsComplementairesSituationOccupantsBeneficiaireFsl()) ?? $signalement->getIsFondSolidariteLogement();
-        // désordres
-        $desordresInfos = $this->signalementDesordresProcessor->process($signalement);
-        if (!$signalement->getCreatedFrom()) {
-            foreach ($desordresInfos['criticitesArranged'] as $label => $data) {
-                $signalementResponse->desordres[] = new Desordre($label, $data);
-            }
-        } else {
-            foreach (DesordreCritereZone::getLabelList() as $zone => $unused) {
-                if (isset($desordresInfos['criticitesArranged'][$zone])) {
-                    foreach ($desordresInfos['criticitesArranged'][$zone] as $label => $data) {
-                        $signalementResponse->desordres[] = new Desordre($label, $data, $zone);
-                    }
-                }
-            }
-        }
+
         $signalementResponse->score = $signalement->getScore();
         $signalementResponse->scoreBatiment = $signalement->getScoreBatiment();
         $signalementResponse->scoreLogement = $signalement->getScoreLogement();
+
+        $signalementResponse->desordres = $this->buildDesordres($signalement);
         $signalementResponse->debutDesordres = $signalement->getDebutDesordres();
         $signalementResponse->desordresConstates = $signalement->getHasSeenDesordres();
         // tags, qualifications, suivis, affectations, visites, files
@@ -176,16 +124,41 @@ class SignalementResponseFactory
         $signalementResponse->territoireCode = $signalement->getTerritory()?->getZip();
         $signalementResponse->signalementImporte = $signalement->getIsImported();
 
+        $signalementResponse->adresse = new Adresse(
+            adresse: $signalement->getAdresseOccupant(),
+            codePostal: $signalement->getCpOccupant(),
+            ville: $signalement->getVilleOccupant(),
+            etage: $signalement->getEtageOccupant(),
+            escalier: $signalement->getEscalierOccupant(),
+            numAppart: $signalement->getNumAppartOccupant(),
+            codeInsee: $signalement->getInseeOccupant(),
+            latitude: $signalement->getGeoloc()['lat'] ?? null,
+            longitude: $signalement->getGeoloc()['lng'] ?? null,
+            adresseAutre: $signalement->getAdresseAutreOccupant(),
+            rnbId: $signalement->getRnbIdOccupant(),
+            cleBanAdresse: $signalement->getBanIdOccupant(),
+        );
+
+        foreach (self::PERSONNE_TYPES as $personneType) {
+            if (($personne = $this->createPersonne($signalement, $personneType)) !== null) {
+                $signalementResponse->personnes[] = $personne;
+            }
+        }
+
         return $signalementResponse;
     }
 
-    private function stringToBool(?string $value): ?bool
+    private function stringToBool(?string $value): bool|string|null
     {
         if (in_array($value, ['oui', 'piece_unique'])) {
             return true;
         }
         if (in_array($value, ['non', 'plusieurs_pieces'])) {
             return false;
+        }
+
+        if ('nsp' === $value) {
+            return $value;
         }
 
         return null;
@@ -198,5 +171,89 @@ class SignalementResponseFactory
         }
 
         return null;
+    }
+
+    private function createPersonne(Signalement $signalement, PersonneType $personneType): ?Personne
+    {
+        if (PersonneType::OCCUPANT === $personneType) {
+            return new Personne(
+                personneType: $personneType,
+                civilite: $signalement->getCiviliteOccupant(),
+                nom: $signalement->getNomOccupant(),
+                prenom: $signalement->getPrenomOccupant(),
+                email: $signalement->getMailOccupant(),
+                telephone: $signalement->getTelOccupant(),
+                telephoneSecondaire: $signalement->getTelOccupantBis(),
+                dateNaissance: $signalement->getDateNaissanceOccupant()?->format('Y-m-d') ?? $signalement->getInformationComplementaire()?->getInformationsComplementairesSituationOccupantsDateNaissance(),
+                revenuFiscal: $signalement->getInformationComplementaire()?->getInformationsComplementairesSituationOccupantsRevenuFiscal(),
+                beneficiaireRsa: $this->stringToBool($signalement->getInformationComplementaire()?->getInformationsComplementairesSituationOccupantsBeneficiaireRsa()),
+                beneficiaireFsl: $this->stringToBool($signalement->getInformationComplementaire()?->getInformationsComplementairesSituationOccupantsBeneficiaireFsl()),
+                allocataire: in_array($signalement->getIsAllocataire(), [null, '']) ? null : (bool) $signalement->getIsAllocataire(), // valeurs possibles : null, '', 0, 1, 'CAF', 'MSA',
+                typeAllocataire: in_array($signalement->getIsAllocataire(), ['MSA', 'CAF']) ? $signalement->getIsAllocataire() : null,
+                numAllocataire: $signalement->getNumAllocataire(),
+                montantAllocation: $signalement->getSituationFoyer()?->getLogementSocialMontantAllocation() ?? $signalement->getMontantAllocation(),
+            );
+        }
+
+        if (PersonneType::DECLARANT === $personneType && !empty($signalement->getLienDeclarantOccupant())) {
+            return new Personne(
+                personneType: $personneType,
+                structure: $signalement->getStructureDeclarant(),
+                lienOccupant: $signalement->getLienDeclarantOccupant(),
+                precisionTypeSiBailleur: $signalement->getTypeProprio(),
+                estTravailleurSocialPourOccupant: $this->stringToBool($signalement->getSituationFoyer()?->getTravailleurSocialAccompagnementDeclarant()),
+                nom: $signalement->getNomDeclarant(),
+                prenom: $signalement->getPrenomDeclarant(),
+                email: $signalement->getMailDeclarant(),
+                telephone: $signalement->getTelDeclarant(),
+                telephoneSecondaire: $signalement->getTelDeclarantSecondaire()
+            );
+        }
+
+        if (PersonneType::PROPRIETAIRE === $personneType && !empty($signalement->getNomProprio())) {
+            $adresse = new Adresse(
+                adresse: $signalement->getAdresseProprio(),
+                codePostal: $signalement->getCodePostalProprio(),
+                ville: $signalement->getVilleProprio(),
+            );
+
+            return new Personne(
+                personneType: $personneType,
+                precisionTypeSiBailleur: $signalement->getTypeProprio(),
+                nom: $signalement->getNomProprio(),
+                prenom: $signalement->getPrenomProprio(),
+                email: $signalement->getMailProprio(),
+                telephone: $signalement->getTelProprio(),
+                telephoneSecondaire: $signalement->getTelProprioSecondaire(),
+                dateNaissance: $signalement->getInformationComplementaire()?->getInformationsComplementairesSituationBailleurDateNaissance(),
+                revenuFiscal: $signalement->getInformationComplementaire()?->getInformationsComplementairesSituationBailleurRevenuFiscal(),
+                beneficiaireRsa: $this->stringToBool($signalement->getInformationComplementaire()?->getInformationsComplementairesSituationBailleurBeneficiaireRsa()),
+                beneficiaireFsl: $this->stringToBool($signalement->getInformationComplementaire()?->getInformationsComplementairesSituationBailleurBeneficiaireFsl()),
+                adresse: $adresse
+            );
+        }
+
+        return null;
+    }
+
+    private function buildDesordres(Signalement $signalement): array
+    {
+        $desordres = [];
+        $desordresInfos = $this->signalementDesordresProcessor->process($signalement);
+        if (!$signalement->getCreatedFrom()) {
+            foreach ($desordresInfos['criticitesArranged'] as $label => $data) {
+                $desordres[] = new Desordre($label, $data);
+            }
+        } else {
+            foreach (DesordreCritereZone::getLabelList() as $zone => $unused) {
+                if (isset($desordresInfos['criticitesArranged'][$zone])) {
+                    foreach ($desordresInfos['criticitesArranged'][$zone] as $label => $data) {
+                        $desordres[] = new Desordre($label, $data, $zone);
+                    }
+                }
+            }
+        }
+
+        return $desordres;
     }
 }

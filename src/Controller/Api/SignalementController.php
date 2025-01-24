@@ -72,7 +72,7 @@ class SignalementController extends AbstractController
         // preload some data to reduce the number of queries
         $desordreCritereRepository->findAll();
         $desordreCategoriesRepository->findAll();
-        // main query
+
         /** @var User $user */
         $user = $this->getUser();
         $signalements = $signalementRepository->findForAPI(user: $user, limit: $limit, page: $page);
