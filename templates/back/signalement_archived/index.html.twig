@@ -62,7 +62,7 @@
 
         {% set tableBody %}
             {% for index,signalement in signalements %}
-                <tr class="{% if signalement.statut is same as(1) or signalement.statut is same as(3) %}fr-background-contrast--orange-terre-battue{% endif %} signalement-row"
+                <tr class="{% if signalement.statut is same as(constant('App\\Entity\\Signalement::STATUS_NEED_VALIDATION')) %}fr-background-contrast--orange-terre-battue{% endif %} signalement-row"
                     data-score="{{ signalement.score }}">
                     <td>
                         <a href="{{ path('back_signalement_view',{uuid:signalement.uuid}) }}"

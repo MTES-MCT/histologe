@@ -56,16 +56,28 @@ class GlobalBackAnalyticsProvider
 
     private function getAverageCriticiteData(?Territory $territory, ArrayCollection $partners): float
     {
-        return round($this->signalementRepository->getAverageCriticite($territory, $partners, true) * 10) / 10;
+        return round($this->signalementRepository->getAverageCriticite(
+            territory: $territory,
+            partners: $partners,
+            removeImported: true
+        ) * 10) / 10;
     }
 
     private function getAverageDaysValidationData(?Territory $territory, ArrayCollection $partners): float
     {
-        return round($this->signalementRepository->getAverageDaysValidation($territory, $partners, true) * 10) / 10;
+        return round($this->signalementRepository->getAverageDaysValidation(
+            territory: $territory,
+            partners: $partners,
+            removeImported: true
+        ) * 10) / 10;
     }
 
     private function getAverageDaysClosureData(?Territory $territory, ArrayCollection $partners): float
     {
-        return round($this->signalementRepository->getAverageDaysClosure($territory, $partners, true) * 10) / 10;
+        return round($this->signalementRepository->getAverageDaysClosure(
+            territory: $territory,
+            partners: $partners,
+            removeImported: true
+        ) * 10) / 10;
     }
 }

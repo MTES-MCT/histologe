@@ -20,6 +20,7 @@ class SignalementVoter extends Voter
     public const REOPEN = 'SIGN_REOPEN';
     public const DELETE = 'SIGN_DELETE';
     public const EDIT = 'SIGN_EDIT';
+    public const CREATE = 'SIGN_CREATE';
     public const VIEW = 'SIGN_VIEW';
     public const ADD_VISITE = 'SIGN_ADD_VISITE';
     public const USAGER_EDIT = 'SIGN_USAGER_EDIT';
@@ -34,7 +35,7 @@ class SignalementVoter extends Voter
 
     protected function supports(string $attribute, $subject): bool
     {
-        return \in_array($attribute, [self::EDIT, self::VIEW, self::DELETE, self::VALIDATE, self::CLOSE, self::REOPEN, self::ADD_VISITE, self::USAGER_EDIT, self::EDIT_NDE, self::SEE_NDE])
+        return \in_array($attribute, [self::EDIT, self::VIEW, self::DELETE, self::VALIDATE, self::CLOSE, self::REOPEN, self::CREATE, self::ADD_VISITE, self::USAGER_EDIT, self::EDIT_NDE, self::SEE_NDE])
             && ($subject instanceof Signalement);
     }
 
@@ -48,6 +49,10 @@ class SignalementVoter extends Voter
             }
 
             return false;
+        }
+
+        if (self::CREATE == $attribute) {
+            return true; // TODO : à faire évoluer
         }
 
         if (self::ADD_VISITE == $attribute) {
@@ -77,6 +82,7 @@ class SignalementVoter extends Voter
     {
         if (Signalement::STATUS_ARCHIVED !== $signalement->getStatut()
             && Signalement::STATUS_REFUSED !== $signalement->getStatut()
+            && Signalement::STATUS_DRAFT !== $signalement->getStatut()
         ) {
             if (Signalement::STATUS_CLOSED === $signalement->getStatut()) {
                 $datePostCloture = $signalement->getClosedAt()->modify('+ 30days');
@@ -150,11 +156,12 @@ class SignalementVoter extends Voter
 
     private function canView(Signalement $signalement, User $user): bool
     {
-        if ($this->security->isGranted('ROLE_ADMIN')) {
+        if ($this->security->isGranted('ROLE_ADMIN') && Signalement::STATUS_DRAFT !== $signalement->getStatut()) {
             return true;
         }
 
-        if (Signalement::STATUS_ARCHIVED === $signalement->getStatut()) {
+        if (Signalement::STATUS_ARCHIVED === $signalement->getStatut()
+        || Signalement::STATUS_DRAFT === $signalement->getStatut()) {
             return false;
         }
 

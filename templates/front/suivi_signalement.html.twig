@@ -27,7 +27,8 @@
 					<span class="fr-badge fr-badge--no-icon fr-badge--success">En cours</span>
 				{% elseif signalement.statut is same as constant('App\\Entity\\Signalement::STATUS_CLOSED')
 						or signalement.statut is same as constant('App\\Entity\\Signalement::STATUS_ARCHIVED')
-						or signalement.statut is same as constant('App\\Entity\\Signalement::STATUS_REFUSED') %}
+						or signalement.statut is same as constant('App\\Entity\\Signalement::STATUS_REFUSED') 
+						or signalement.statut is same as constant('App\\Entity\\Signalement::STATUS_DRAFT') %} <!-- ne doit pas arriver -->
 					<span class="fr-badge fr-badge--no-icon fr-badge--error">Fermé</span>
 				{% endif %}
 			</div>

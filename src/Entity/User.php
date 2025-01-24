@@ -100,6 +100,9 @@ class User implements UserInterface, EntityHistoryInterface, PasswordAuthenticat
     #[ORM\OneToMany(mappedBy: 'modifiedBy', targetEntity: Signalement::class)]
     private $signalementsModified;
 
+    #[ORM\OneToMany(mappedBy: 'createdBy', targetEntity: Signalement::class)]
+    private $signalementsCreated;
+
     #[ORM\OneToMany(mappedBy: 'closedBy', targetEntity: Signalement::class)]
     private $signalementsClosed; // @phpstan-ignore-line
 
@@ -263,6 +266,46 @@ class User implements UserInterface, EntityHistoryInterface, PasswordAuthenticat
             // set the owning side to null (unless already changed)
             if ($signalement->getModifiedBy() === $this) {
                 $signalement->setModifiedBy(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|Signalement[]
+     */
+    public function getSignalementsCreated(): Collection
+    {
+        return $this->signalementsCreated;
+    }
+
+    /**
+     * @return Collection|Signalement[]
+     */
+    public function getSignalementsCreatedByStatut(int $statut): Collection
+    {
+        return $this->signalementsCreated->filter(function (Signalement $signalement) use ($statut) {
+            return $statut === $signalement->getStatut();
+        });
+    }
+
+    public function addSignalementCreated(Signalement $signalement): self
+    {
+        if (!$this->signalementsCreated->contains($signalement)) {
+            $this->signalementsCreated[] = $signalement;
+            $signalement->setCreatedBy($this);
+        }
+
+        return $this;
+    }
+
+    public function removeSignalementCreated(Signalement $signalement): self
+    {
+        if ($this->signalementsCreated->removeElement($signalement)) {
+            // set the owning side to null (unless already changed)
+            if ($signalement->getCreatedBy() === $this) {
+                $signalement->setCreatedBy(null);
             }
         }
 

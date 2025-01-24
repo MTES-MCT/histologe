@@ -28,6 +28,7 @@ class SignalementControllerTest extends WebTestCase
         yield 'Clôturé' => [Signalement::STATUS_CLOSED];
         yield 'Refusé' => [Signalement::STATUS_REFUSED];
         yield 'Archivé' => [Signalement::STATUS_ARCHIVED];
+        yield 'Brouillon' => [Signalement::STATUS_DRAFT];
     }
 
     /**
@@ -50,7 +51,7 @@ class SignalementControllerTest extends WebTestCase
         ]).'?from='.$signalement->getMailOccupant().'&suiviAuto='.Suivi::ARRET_PROCEDURE;
 
         $crawler = $client->request('GET', $urlSuiviSignalementUser);
-        if (Signalement::STATUS_ARCHIVED === $status) {
+        if (Signalement::STATUS_ARCHIVED === $status || Signalement::STATUS_DRAFT === $status) {
             $this->assertResponseRedirects('/');
         } elseif (Signalement::STATUS_ACTIVE === $status) {
             $this->assertEquals('Signalement #2022-1 '.ucwords($signalement->getPrenomOccupant().' '.$signalement->getNomOccupant()), $crawler->filter('h1')->eq(2)->text());
@@ -98,6 +99,8 @@ class SignalementControllerTest extends WebTestCase
                 'Votre signalement a été refusé, vous ne pouvez plus envoyer de messages.',
                 $crawler->filter('.fr-alert--error p')->text()
             );
+        } elseif (Signalement::STATUS_DRAFT === $status) {
+            $this->assertResponseRedirects('/');
         }
     }
 

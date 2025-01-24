@@ -48,6 +48,7 @@ parameters:
     albert_api_key: '%env(ALBERT_API_KEY)%'
     standard_max_list_pagination: 50
     feature_multi_territories: '%env(bool:FEATURE_MULTI_TERRITORIES)%'
+    feature_bo_signalement_create: '%env(bool:FEATURE_BO_SIGNALEMENT_CREATE)%'
 
 services:
     # default configuration for services in *this* file

@@ -47,6 +47,9 @@
 	{% elseif signalement.statut is same as constant('App\\Entity\\Signalement::STATUS_ARCHIVED') %}
 		<div role="alert" class="fr-alert fr-alert--error fr-alert--sm">
 			<p>Votre signalement a été archivé, vous ne pouvez plus envoyer de messages.</p>
+	{% elseif signalement.statut is same as constant('App\\Entity\\Signalement::STATUS_DRAFT') %}
+		<div role="alert" class="fr-alert fr-alert--error fr-alert--sm">
+			<p>Votre signalement est un brouillon, vous ne pouvez pas encore envoyer de messages.</p>
 		</div>
 	{% else %}
 		<form action="{{ path('front_suivi_signalement_user_response',{code:signalement.codeSuivi}) }}" class="needs-validation fr-disable-button-when-submit" novalidate method="POST">

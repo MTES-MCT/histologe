@@ -187,6 +187,8 @@ class HistoryEntryManager extends AbstractManager
                 case Signalement::STATUS_ACTIVE:
                     if (Signalement::STATUS_NEED_VALIDATION === $changes['statut']['old']) {
                         $description .= ' a validé le signalement ';
+                    } elseif (Signalement::STATUS_DRAFT === $changes['statut']['old']) {
+                        $description .= ' a validé le brouillon de signalement ';
                     } else {
                         $description .= ' a réouvert le signalement ';
                     }
@@ -201,7 +203,11 @@ class HistoryEntryManager extends AbstractManager
                     $description .= ' a refusé le signalement ';
                     break;
                 case Signalement::STATUS_NEED_VALIDATION:
-                    $description .= ' a remis le signalement en attente de validation ';
+                    if (Signalement::STATUS_DRAFT === $changes['statut']['old']) {
+                        $description .= ' a créé un signalement ';
+                    } else {
+                        $description .= ' a remis le signalement en attente de validation ';
+                    }
                     break;
                 default:
                     $description .= " a modifié le signalement du statut {$changes['statut']['old']} au statut {$changes['statut']['new']}";

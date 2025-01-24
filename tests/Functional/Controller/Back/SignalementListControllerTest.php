@@ -30,7 +30,7 @@ class SignalementListControllerTest extends WebTestCase
         $userRepository = static::getContainer()->get(UserRepository::class);
         $user = $userRepository->findOneBy(['email' => $email]);
         $client->loginUser($user);
-        $route = $generatorUrl->generate('back_signalement_index');
+        $route = $generatorUrl->generate('back_signalements_index');
         $client->request('GET', $route);
         $this->assertLessThan(
             Response::HTTP_INTERNAL_SERVER_ERROR,
@@ -65,7 +65,7 @@ class SignalementListControllerTest extends WebTestCase
 
         $user = $userRepository->findOneBy(['email' => 'admin-territoire-69-mdl@histologe.fr']);
         $client->loginUser($user);
-        $route = $generatorUrl->generate('back_signalement_list_json');
+        $route = $generatorUrl->generate('back_signalements_list_json');
         $client->request('GET', $route);
 
         $content = json_decode($client->getResponse()->getContent(), true);
@@ -84,7 +84,7 @@ class SignalementListControllerTest extends WebTestCase
 
         $user = $userRepository->findOneBy(['email' => 'admin-territoire-69-cor@histologe.fr']);
         $client->loginUser($user);
-        $route = $generatorUrl->generate('back_signalement_list_json');
+        $route = $generatorUrl->generate('back_signalements_list_json');
         $client->request('GET', $route);
 
         $content = json_decode($client->getResponse()->getContent(), true);
@@ -106,7 +106,7 @@ class SignalementListControllerTest extends WebTestCase
 
         $user = $userRepository->findOneBy(['email' => $emailUser]);
         $client->loginUser($user);
-        $route = $generatorUrl->generate('back_signalement_index').$filter;
+        $route = $generatorUrl->generate('back_signalements_index').$filter;
         $client->request('GET', $route);
 
         $this->assertResponseIsSuccessful();
@@ -153,7 +153,7 @@ class SignalementListControllerTest extends WebTestCase
         $userRepository = static::getContainer()->get(UserRepository::class);
         $user = $userRepository->findOneBy(['email' => $email]);
         $client->loginUser($user);
-        $route = $generatorUrl->generate('back_signalement_list_json');
+        $route = $generatorUrl->generate('back_signalements_list_json');
 
         $client->request('GET', $route, [], [], ['HTTP_Accept' => 'application/json']);
         $result = json_decode($client->getResponse()->getContent(), true);
@@ -235,7 +235,7 @@ class SignalementListControllerTest extends WebTestCase
         $userRepository = static::getContainer()->get(UserRepository::class);
         $user = $userRepository->findOneBy(['email' => 'admin-01@histologe.fr']);
         $client->loginUser($user);
-        $route = $generatorUrl->generate('back_signalement_list_json');
+        $route = $generatorUrl->generate('back_signalements_list_json');
 
         $client->request('GET', $route, $filter, [], ['HTTP_Accept' => 'application/json']);
         $result = json_decode($client->getResponse()->getContent(), true);
@@ -256,7 +256,7 @@ class SignalementListControllerTest extends WebTestCase
         $userRepository = static::getContainer()->get(UserRepository::class);
         $user = $userRepository->findOneBy(['email' => 'admin-partenaire-multi-ter-13-01@histologe.fr']);
         $client->loginUser($user);
-        $route = $generatorUrl->generate('back_signalement_list_json');
+        $route = $generatorUrl->generate('back_signalements_list_json');
 
         $client->request('GET', $route, $filter, [], ['HTTP_Accept' => 'application/json']);
         $result = json_decode($client->getResponse()->getContent(), true);
@@ -277,7 +277,7 @@ class SignalementListControllerTest extends WebTestCase
         $userRepository = static::getContainer()->get(UserRepository::class);
         $user = $userRepository->findOneBy(['email' => $email]);
         $client->loginUser($user);
-        $route = $generatorUrl->generate('back_signalement_list_json');
+        $route = $generatorUrl->generate('back_signalements_list_json');
 
         $client->request('GET', $route, [], [], ['HTTP_Accept' => 'application/json']);
         $result = json_decode($client->getResponse()->getContent(), true);

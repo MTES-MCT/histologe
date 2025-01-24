@@ -302,9 +302,10 @@ class SearchFilter
                     ->select('DISTINCT IDENTITY(a.signalement)')
                     ->innerJoin('a.signalement', 's')
                     ->where('a.statut = :statut_affectation_closed')
-                    ->andWhere('s.statut != :status_archived AND s.statut != :statut_closed')
+                    ->andWhere('s.statut != :status_archived AND s.statut != :statut_closed AND s.statut != :status_draft')
                     ->setParameter('status_archived', Signalement::STATUS_ARCHIVED)
                     ->setParameter('statut_closed', Signalement::STATUS_CLOSED)
+                    ->setParameter('status_draft', Signalement::STATUS_DRAFT)
                     ->setParameter('statut_affectation_closed', Affectation::STATUS_CLOSED);
 
                 if (!empty($filters['territories'])) {
@@ -334,6 +335,7 @@ class SearchFilter
                 )
                 ->setParameter('idUnclosedAffectation', $subquery->getQuery()->getSingleColumnResult())
                 ->setParameter('statut', Signalement::STATUS_ARCHIVED);
+                // TODO : à vérifier
             }
         }
 
@@ -347,6 +349,7 @@ class SearchFilter
                     'status_archived' => Signalement::STATUS_ARCHIVED,
                     'status_closed' => Signalement::STATUS_CLOSED,
                     'status_refused' => Signalement::STATUS_REFUSED,
+                    'status_draft' => Signalement::STATUS_DRAFT,
                     'nb_suivi_technical' => 3,
                 ];
 

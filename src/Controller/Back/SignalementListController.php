@@ -16,13 +16,13 @@ use Symfony\Component\Routing\Attribute\Route;
 #[Route('/bo')]
 class SignalementListController extends AbstractController
 {
-    #[Route('/signalements/', name: 'back_signalement_index')]
+    #[Route('/signalements/', name: 'back_signalements_index')]
     public function show(): Response
     {
         return $this->render('back/signalement/list/index.html.twig');
     }
 
-    #[Route('/list/signalements/', name: 'back_signalement_list_json')]
+    #[Route('/list/signalements/', name: 'back_signalements_list_json')]
     public function list(
         SessionInterface $session,
         SignalementManager $signalementManager,

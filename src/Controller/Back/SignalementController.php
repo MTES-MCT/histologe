@@ -66,7 +66,7 @@ class SignalementController extends AbstractController
         if (Signalement::STATUS_ARCHIVED === $signalement->getStatut()) {
             $this->addFlash('error', "Ce signalement a été archivé et n'est pas consultable.");
 
-            return $this->redirectToRoute('back_signalement_index');
+            return $this->redirectToRoute('back_signalements_index');
         }
         $this->denyAccessUnlessGranted('SIGN_VIEW', $signalement);
 
@@ -143,7 +143,7 @@ class SignalementController extends AbstractController
                 $this->addFlash('success', sprintf('Signalement #%s cloturé avec succès !', $reference));
             }
             $signalementSearchQuery = $request->getSession()->get('signalementSearchQuery');
-            $url = $signalementSearchQuery ? $this->generateUrl('back_signalement_index').$signalementSearchQuery->getQueryStringForUrl() : $this->generateUrl('back_signalement_index');
+            $url = $signalementSearchQuery ? $this->generateUrl('back_signalements_index').$signalementSearchQuery->getQueryStringForUrl() : $this->generateUrl('back_signalements_index');
 
             return $this->redirect($url);
         }
