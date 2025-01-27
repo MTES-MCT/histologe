@@ -23,10 +23,6 @@ use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
 
 class SecurityController extends AbstractController
 {
-    public function __construct(private readonly ImageVariantProvider $imageVariantProvider)
-    {
-    }
-
     #[When('dev')]
     #[When('test')]
     #[Route('/api/login', name: 'api_login', methods: ['POST'])]
