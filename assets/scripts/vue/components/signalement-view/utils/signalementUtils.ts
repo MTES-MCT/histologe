@@ -141,7 +141,7 @@ export function handleSettings (context: any, requestResponse: any): any {
   context.sharedState.epcis = []
   for (const id in requestResponse.epcis) {
     if (variableTester.isNotEmpty(requestResponse.epcis[id])) {
-      const epci = requestResponse.territories[id]
+      const epci = requestResponse.epcis[id]
       context.sharedState.epcis.push((epci.nom as string) + ' ' + (epci.code as string))
     }
   }
