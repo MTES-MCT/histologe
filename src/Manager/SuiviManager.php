@@ -9,12 +9,14 @@ use App\Entity\Intervention;
 use App\Entity\Signalement;
 use App\Entity\Suivi;
 use App\Entity\User;
+use App\Event\SuiviCreatedEvent;
 use App\EventListener\SignalementUpdatedListener;
 use App\Repository\DesordreCritereRepository;
 use App\Service\Sanitizer;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HtmlSanitizer\HtmlSanitizerInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
@@ -24,6 +26,7 @@ class SuiviManager extends Manager
         protected ManagerRegistry $managerRegistry,
         private readonly UrlGeneratorInterface $urlGenerator,
         private readonly SignalementUpdatedListener $signalementUpdatedListener,
+        private readonly EventDispatcherInterface $eventDispatcher,
         private readonly Security $security,
         private readonly DesordreCritereRepository $desordreCritereRepository,
         #[Autowire(service: 'html_sanitizer.sanitizer.app.message_sanitizer')]
@@ -54,6 +57,7 @@ class SuiviManager extends Manager
         if ($flush) {
             $this->save($suivi);
         }
+        $this->eventDispatcher->dispatch(new SuiviCreatedEvent($suivi), SuiviCreatedEvent::NAME);
 
         return $suivi;
     }
