@@ -2,7 +2,6 @@
 
 namespace App\Controller\Security;
 
-use App\Controller\FileController;
 use App\Entity\Signalement;
 use App\Entity\User;
 use App\Service\Files\ImageVariantProvider;
