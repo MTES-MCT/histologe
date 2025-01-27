@@ -18,7 +18,6 @@ use PHPUnit\Framework\MockObject\MockObject;
 use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 class AutoAssignerTest extends KernelTestCase
 {
@@ -250,8 +249,6 @@ class AutoAssignerTest extends KernelTestCase
         $esaboraBus = $this->createMock(InterconnectionBus::class);
         /** @var LoggerInterface $logger */
         $logger = $this->createMock(LoggerInterface::class);
-        /** @var EventDispatcherInterface $eventDispatcher */
-        $eventDispatcher = $this->createMock(EventDispatcherInterface::class);
         $autoAssigner = new AutoAssigner(
             $signalementManager,
             $this->affectationManager,
@@ -260,7 +257,6 @@ class AutoAssignerTest extends KernelTestCase
             $parameterBag,
             $esaboraBus,
             $logger,
-            $eventDispatcher,
         );
 
         $autoAssigner->assign($signalement);

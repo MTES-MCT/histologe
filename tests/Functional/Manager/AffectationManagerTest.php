@@ -12,6 +12,7 @@ use App\Manager\SuiviManager;
 use Doctrine\Persistence\ManagerRegistry;
 use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 class AffectationManagerTest extends KernelTestCase
 {
@@ -21,6 +22,7 @@ class AffectationManagerTest extends KernelTestCase
     private LoggerInterface $logger;
     private HistoryEntryManager $historyEntryManager;
     private AffectationManager $affectationManager;
+    private EventDispatcherInterface $eventDispatcher;
 
     protected function setUp(): void
     {
@@ -29,11 +31,13 @@ class AffectationManagerTest extends KernelTestCase
         $this->suiviManager = self::getContainer()->get(SuiviManager::class);
         $this->logger = self::getContainer()->get(LoggerInterface::class);
         $this->historyEntryManager = self::getContainer()->get(HistoryEntryManager::class);
+        $this->eventDispatcher = self::getContainer()->get(EventDispatcherInterface::class);
         $this->affectationManager = new AffectationManager(
             $this->managerRegistry,
             $this->suiviManager,
             $this->logger,
             $this->historyEntryManager,
+            $this->eventDispatcher,
             Affectation::class,
         );
     }

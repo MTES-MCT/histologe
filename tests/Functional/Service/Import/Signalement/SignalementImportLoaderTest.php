@@ -22,7 +22,6 @@ use PHPUnit\Framework\MockObject\MockObject;
 use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 class SignalementImportLoaderTest extends KernelTestCase
 {
@@ -38,7 +37,6 @@ class SignalementImportLoaderTest extends KernelTestCase
     private SignalementQualificationUpdater $signalementQualificationUpdater;
     private FileManager $fileManager;
     private MockObject|FilesystemOperator $filesystemOperator;
-    private EventDispatcherInterface $eventDispatcher;
 
     protected function setUp(): void
     {
@@ -55,7 +53,6 @@ class SignalementImportLoaderTest extends KernelTestCase
         $this->fileManager = self::getContainer()->get(FileManager::class);
         $this->filesystemOperator = $this->createMock(FilesystemOperator::class);
         $this->entityManager = $kernel->getContainer()->get('doctrine')->getManager();
-        $this->eventDispatcher = $this->createMock(EventDispatcherInterface::class);
     }
 
     /**
@@ -77,7 +74,6 @@ class SignalementImportLoaderTest extends KernelTestCase
             $this->signalementQualificationUpdater,
             $this->fileManager,
             $this->filesystemOperator,
-            $this->eventDispatcher,
         );
 
         $territory = $this->entityManager->getRepository(Territory::class)->findOneBy(['zip' => '01']);
