@@ -8,6 +8,7 @@ use App\Dto\Api\Model\File;
 use App\Dto\Api\Model\Intervention;
 use App\Dto\Api\Model\Personne;
 use App\Dto\Api\Model\Suivi;
+use App\Entity\Enum\AffectationNewStatus;
 use App\Entity\Enum\DebutDesordres;
 use App\Entity\Enum\MotifCloture;
 use App\Entity\Enum\MotifRefus;
@@ -38,6 +39,12 @@ class SignalementResponse
     )]
     public string $dateCreation;
     #[OA\Property(
+        description: 'Date d\'affectation du signalement au partenaire.<br>Exemple : `2025-01-05T15:30:15+00:00`',
+        format: 'date-time',
+        example: '2025-01-05T14:30:15+00:00'
+    )]
+    public string $dateAffectation;
+    #[OA\Property(
         ref: new Model(type: Adresse::class),
         description: 'Informations détaillées sur l\'adresse de l\'occupant',
         type: 'object',
@@ -48,6 +55,12 @@ class SignalementResponse
         example: 'FERME'
     )]
     public SignalementNewStatus $statut;
+
+    #[OA\Property(
+        description: 'Le statut d\'affectation',
+        example: 'FERME'
+    )]
+    public AffectationNewStatus $statutAffectation;
 
     #[OA\Property(
         description: 'Date à laquelle le signalement a été validé par un responsable territoire.<br>

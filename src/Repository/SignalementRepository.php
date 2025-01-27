@@ -2,6 +2,7 @@
 
 namespace App\Repository;
 
+use App\Dto\Api\Request\SignalementListQueryParams;
 use App\Dto\CountSignalement;
 use App\Dto\SignalementAffectationListView;
 use App\Dto\SignalementExport;
@@ -43,15 +44,13 @@ use Doctrine\Persistence\ManagerRegistry;
  */
 class SignalementRepository extends ServiceEntityRepository
 {
-    public const ARRAY_LIST_PAGE_SIZE = 30;
     public const MARKERS_PAGE_SIZE = 9000; // @todo: is high cause duplicate result, the query findAllWithGeoData should be reviewed
-    public const SEPARATOR_GROUP_CONCAT = '|'; // | used in maps.js
     private const DATE_FEEDBACK_USAGER_ONLINE = '2023-03-28';
 
     public function __construct(
         ManagerRegistry $registry,
-        private SearchFilter $searchFilter,
-        private array $params,
+        private readonly SearchFilter $searchFilter,
+        private readonly array $params,
     ) {
         parent::__construct($registry, Signalement::class);
     }
@@ -69,7 +68,7 @@ class SignalementRepository extends ServiceEntityRepository
     {
         $firstResult = $offset;
 
-        $qb = $this->findSignalementAffectationQuery($user, $options);
+        $qb = $this->findSignalementAffectationQueryBuilder($user, $options);
 
         $qb->addSelect('s.geoloc, s.details, s.cpOccupant, s.inseeOccupant')
             ->andWhere("JSON_EXTRACT(s.geoloc,'$.lat') != ''")
@@ -433,7 +432,7 @@ class SignalementRepository extends ServiceEntityRepository
         $maxResult = $options['maxItemsPerPage'] ?? SignalementAffectationListView::MAX_LIST_PAGINATION;
         $page = \array_key_exists('page', $options) ? (int) $options['page'] : 1;
         $firstResult = (($page < 1 ? 1 : $page) - 1) * $maxResult;
-        $qb = $this->findSignalementAffectationQuery($user, $options);
+        $qb = $this->findSignalementAffectationQueryBuilder($user, $options);
         $qb
             ->setFirstResult($firstResult)
             ->setMaxResults($maxResult)
@@ -442,7 +441,7 @@ class SignalementRepository extends ServiceEntityRepository
         return new Paginator($qb, true);
     }
 
-    public function findSignalementAffectationQuery(
+    public function findSignalementAffectationQueryBuilder(
         User $user,
         array $options,
     ): QueryBuilder {
@@ -579,7 +578,7 @@ class SignalementRepository extends ServiceEntityRepository
         $sql = 'SET SESSION group_concat_max_len=32505856';
         $connection->prepare($sql)->executeQuery();
 
-        $qb = $this->findSignalementAffectationQuery($user, $options);
+        $qb = $this->findSignalementAffectationQueryBuilder($user, $options);
 
         $qb->addSelect(
             's.details,
@@ -847,7 +846,7 @@ class SignalementRepository extends ServiceEntityRepository
         $qb = $this->createQueryBuilder('s');
 
         $qb->select('COUNT(s.id)');
-        $qb = self::addFiltersToQuery($qb, $statisticsFilters);
+        $qb = self::addFiltersToQueryBuilder($qb, $statisticsFilters);
 
         return $qb->getQuery()
             ->getSingleScalarResult();
@@ -858,7 +857,7 @@ class SignalementRepository extends ServiceEntityRepository
         $qb = $this->createQueryBuilder('s');
         $qb->select('COUNT(s.id) AS count, MONTH(s.createdAt) AS month, YEAR(s.createdAt) AS year');
 
-        $qb = self::addFiltersToQuery($qb, $statisticsFilters);
+        $qb = self::addFiltersToQueryBuilder($qb, $statisticsFilters);
 
         $qb->groupBy('month')
             ->addGroupBy('year');
@@ -877,7 +876,7 @@ class SignalementRepository extends ServiceEntityRepository
         $qb->select('AVG(s.score)');
         $qb->andWhere('s.score IS NOT NULL');
 
-        $qb = self::addFiltersToQuery($qb, $statisticsFilters);
+        $qb = self::addFiltersToQueryBuilder($qb, $statisticsFilters);
 
         return $qb->getQuery()
             ->getSingleScalarResult();
@@ -889,7 +888,7 @@ class SignalementRepository extends ServiceEntityRepository
         $qb->select('COUNT(s.id) AS count, sit.id, sit.menuLabel');
         $qb->leftJoin('s.situations', 'sit');
 
-        $qb = self::addFiltersToQuery($qb, $statisticsFilters);
+        $qb = self::addFiltersToQueryBuilder($qb, $statisticsFilters);
 
         $qb->andWhere('sit.isActive = :isActive')->setParameter('isActive', true);
         $qb->groupBy('sit.id');
@@ -904,7 +903,7 @@ class SignalementRepository extends ServiceEntityRepository
         $qb->select('COUNT(s.id) AS count, crit.id, crit.label');
         $qb->leftJoin('s.criticites', 'crit');
 
-        $qb = self::addFiltersToQuery($qb, $statisticsFilters);
+        $qb = self::addFiltersToQueryBuilder($qb, $statisticsFilters);
 
         $qb->andWhere('crit.isArchive = :isArchive')->setParameter('isArchive', false);
         $qb->groupBy('crit.id');
@@ -919,7 +918,7 @@ class SignalementRepository extends ServiceEntityRepository
         $qb->select('COUNT(s.id) as count')
             ->addSelect('s.statut');
 
-        $qb = self::addFiltersToQuery($qb, $statisticsFilters);
+        $qb = self::addFiltersToQueryBuilder($qb, $statisticsFilters);
 
         $qb->indexBy('s', 's.statut');
         $qb->groupBy('s.statut');
@@ -938,7 +937,7 @@ class SignalementRepository extends ServiceEntityRepository
                 else \''.CriticitePercentStatisticProvider::CRITICITE_STRONG.'\'
                 end as range');
 
-        $qb = self::addFiltersToQuery($qb, $statisticsFilters);
+        $qb = self::addFiltersToQueryBuilder($qb, $statisticsFilters);
 
         $qb->groupBy('range');
 
@@ -958,7 +957,7 @@ class SignalementRepository extends ServiceEntityRepository
             )
             ->leftJoin('s.interventions', 'i');
 
-        $qb = self::addFiltersToQuery($qb, $statisticsFilters);
+        $qb = self::addFiltersToQueryBuilder($qb, $statisticsFilters);
 
         $qb->groupBy('visite');
 
@@ -975,7 +974,7 @@ class SignalementRepository extends ServiceEntityRepository
             ->andWhere('s.motifCloture != \'0\'')
             ->andWhere('s.closedAt IS NOT NULL');
 
-        $qb = self::addFiltersToQuery($qb, $statisticsFilters);
+        $qb = self::addFiltersToQueryBuilder($qb, $statisticsFilters);
 
         $qb->groupBy('s.motifCloture');
 
@@ -983,7 +982,7 @@ class SignalementRepository extends ServiceEntityRepository
             ->getResult();
     }
 
-    public static function addFiltersToQuery(QueryBuilder $qb, StatisticsFilters $filters): QueryBuilder
+    public static function addFiltersToQueryBuilder(QueryBuilder $qb, StatisticsFilters $filters): QueryBuilder
     {
         // Is the status defined?
         if ('' != $filters->getStatut() && 'all' != $filters->getStatut()) {
@@ -1421,30 +1420,67 @@ class SignalementRepository extends ServiceEntityRepository
             ->getResult();
     }
 
-    public function findForAPI(User $user, int $limit = 1, int $page = 1, ?string $uuid = null, ?string $reference = null): array
+    public function findOneForApi(
+        User $user,
+        ?string $uuid = null,
+        ?string $reference = null,
+    ): ?Signalement {
+        $qb = $this->findForAPIQueryBuilder($user);
+        if ($uuid) {
+            $qb->andWhere('s.uuid = :uuid')->setParameter('uuid', $uuid);
+        }
+        if ($reference) {
+            $qb->andWhere('s.reference = :reference')->setParameter('reference', $reference);
+        }
+
+        if (count($result = $qb->getQuery()->getResult()) > 0) {
+            return current($result);
+        }
+
+        return null;
+    }
+
+    /**
+     * @throws \DateMalformedStringException
+     */
+    public function findAllForApi(User $user, SignalementListQueryParams $signalementListQueryParams): array
+    {
+        $page = (int) ($signalementListQueryParams->page ?? SignalementListQueryParams::DEFAULT_PAGE);
+        $limit = (int) ($signalementListQueryParams->limit ?? SignalementListQueryParams::DEFAULT_LIMIT);
+
+        $offset = ($page - 1) * $limit;
+        $qb = $this->findForAPIQueryBuilder($user);
+
+        if (!empty($signalementListQueryParams->dateAffectationDebut)) {
+            $qb->andWhere('affectations.createdAt >= :dateAffectationStart')
+                ->setParameter('dateAffectationStart', $signalementListQueryParams->dateAffectationDebut);
+        }
+
+        if (!empty($signalementListQueryParams->dateAffectationFin)) {
+            $dateAffectationEnd = (new \DateTimeImmutable($signalementListQueryParams->dateAffectationFin))
+                ->modify('+1 day');
+
+            $qb->andWhere('affectations.createdAt <= :dateAffectationEnd')
+                ->setParameter('dateAffectationEnd', $dateAffectationEnd);
+        }
+
+        $qb->orderBy('s.createdAt', 'DESC')
+            ->setFirstResult($offset)
+            ->setMaxResults($limit);
+
+        return $qb->getQuery()->getResult();
+    }
+
+    public function findForAPIQueryBuilder(User $user): QueryBuilder
     {
         $partners = $user->getPartners();
-        $offset = ($page - 1) * $limit;
-        $qb = $this->createQueryBuilder('s')
-            ->select('s', 'territory')
+        $qb = $this->createQueryBuilder('s');
+
+        return $qb->select('s', 'territory')
             ->leftJoin('s.territory', 'territory')
             ->leftJoin('s.affectations', 'affectations')
             ->where('affectations.partner IN (:partners)')
-            ->setParameter('partners', $partners)
-            ->orderBy('s.createdAt', 'DESC')
-            ->setFirstResult($offset)
-            ->setMaxResults($limit);
-        if ($uuid) {
-            $qb->andWhere('s.uuid = :uuid')
-            ->setParameter('uuid', $uuid);
-        }
-        if ($reference) {
-            $qb->andWhere('s.reference = :reference')
-            ->setParameter('reference', $reference);
-        }
-
-        return $qb->getQuery()
-            ->getResult();
+            ->setParameter('partners', $partners);
     }
 
     public function findSignalementsLastSuiviWithSuiviAuto(Territory $territory, int $limit): array

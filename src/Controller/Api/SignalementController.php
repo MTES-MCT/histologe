@@ -2,11 +2,10 @@
 
 namespace App\Controller\Api;
 
+use App\Dto\Api\Request\SignalementListQueryParams;
 use App\Dto\Api\Response\SignalementResponse;
 use App\Entity\User;
 use App\Factory\Api\SignalementResponseFactory;
-use App\Repository\DesordreCategorieRepository;
-use App\Repository\DesordreCritereRepository;
 use App\Repository\SignalementRepository;
 use Nelmio\ApiDocBundle\Annotation\Model;
 use OpenApi\Attributes as OA;
@@ -14,7 +13,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\DependencyInjection\Attribute\When;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpKernel\Attribute\MapQueryParameter;
+use Symfony\Component\HttpKernel\Attribute\MapQueryString;
 use Symfony\Component\Routing\Attribute\Route;
 
 #[When('dev')]
@@ -22,27 +21,23 @@ use Symfony\Component\Routing\Attribute\Route;
 #[Route('/api')]
 class SignalementController extends AbstractController
 {
+    /**
+     * @throws \DateMalformedStringException
+     */
     #[Route('/signalements', name: 'api_signalements', methods: ['GET'])]
     #[OA\Get(
         path: '/api/signalements',
-        description: 'Retourne les {{ limit }} derniers signalements',
+        description: 'Retourne une liste des signalements les plus récents, triés par date de dépôt en ordre décroissant.',
         summary: 'Liste des signalements',
-        security: [['bearerAuth' => []]],
+        security: [['Bearer' => []]],
         tags: ['Signalements'],
     )]
     #[OA\Parameter(
-        name: 'limit',
-        description: 'Nombre de signalements à retourner (défaut : 20, max : 100)',
+        name: 'query',
+        description: 'Filtres de recherche pour les signalements',
         in: 'query',
         required: false,
-        schema: new OA\Schema(type: 'limit', example: '10')
-    )]
-    #[OA\Parameter(
-        name: 'page',
-        description: 'Numéro de la page de signalement à retourner (défaut : 1)',
-        in: 'query',
-        required: false,
-        schema: new OA\Schema(type: 'page', example: '2')
+        content: new OA\JsonContent(ref: new Model(type: SignalementListQueryParams::class))
     )]
     #[OA\Response(
         response: Response::HTTP_OK,
@@ -52,30 +47,61 @@ class SignalementController extends AbstractController
             items: new OA\Items(ref: new Model(type: SignalementResponse::class))
         )
     )]
+    #[OA\Response(
+        response: Response::HTTP_BAD_REQUEST,
+        description: 'Mauvaise requête (données invalides).',
+        content: new OA\JsonContent(
+            properties: [
+                new OA\Property(
+                    property: 'message',
+                    type: 'string',
+                    example: 'Valeurs invalides pour les filtres suivants :'
+                ),
+                new OA\Property(
+                    property: 'status',
+                    type: 'integer',
+                    example: 400
+                ),
+                new OA\Property(
+                    property: 'errors',
+                    type: 'array',
+                    items: new OA\Items(
+                        properties: [
+                            new OA\Property(
+                                property: 'property',
+                                type: 'string',
+                                example: 'limit'
+                            ),
+                            new OA\Property(
+                                property: 'message',
+                                type: 'string',
+                                example: 'La limite ne peut pas dépasser 100.'
+                            ),
+                            new OA\Property(
+                                property: 'invalidValue',
+                                type: 'integer',
+                                example: 454544
+                            ),
+                        ],
+                        type: 'object'
+                    )
+                ),
+            ],
+            type: 'object'
+        )
+    )]
     public function getSignalementList(
         SignalementRepository $signalementRepository,
-        DesordreCritereRepository $desordreCritereRepository,
-        DesordreCategorieRepository $desordreCategoriesRepository,
         SignalementResponseFactory $signalementResponseFactory,
-        #[MapQueryParameter] int $limit = 20,
-        #[MapQueryParameter] int $page = 1,
+        #[MapQueryString] ?SignalementListQueryParams $signalementListQueryParams = null,
     ): JsonResponse {
-        if ($limit < 1) {
-            $limit = 1;
-        }
-        if ($limit > 100) {
-            $limit = 100;
-        }
-        if ($page < 1) {
-            $page = 1;
-        }
-        // preload some data to reduce the number of queries
-        $desordreCritereRepository->findAll();
-        $desordreCategoriesRepository->findAll();
-
+        $signalementListQueryParams ??= new SignalementListQueryParams();
         /** @var User $user */
         $user = $this->getUser();
-        $signalements = $signalementRepository->findForAPI(user: $user, limit: $limit, page: $page);
+        $signalements = $signalementRepository->findAllForApi(
+            user: $user,
+            signalementListQueryParams: $signalementListQueryParams
+        );
         $resources = [];
         foreach ($signalements as $signalement) {
             $resources[] = $signalementResponseFactory->createFromSignalement($signalement);
@@ -89,13 +115,27 @@ class SignalementController extends AbstractController
         path: '/api/signalements/{uuid}',
         description: 'Retourne un signalement récupéré par son UUID',
         summary: 'Signalement par UUID',
-        security: [['bearerAuth' => []]],
+        security: [['Bearer' => []]],
         tags: ['Signalements']
     )]
     #[OA\Response(
         response: Response::HTTP_OK,
         description: 'Un signalement',
         content: new OA\JsonContent(ref: '#/components/schemas/SignalementResponse')
+    )]
+    #[OA\Response(
+        response: Response::HTTP_NOT_FOUND,
+        description: 'Signalement introuvable',
+        content: new OA\JsonContent(
+            properties: [
+                new OA\Property(
+                    property: 'message',
+                    type: 'string',
+                    example: 'Signalement introuvable'
+                ),
+            ],
+            type: 'object'
+        )
     )]
     public function getSignalementByUuid(
         SignalementRepository $signalementRepository,
@@ -104,12 +144,13 @@ class SignalementController extends AbstractController
     ): JsonResponse {
         /** @var User $user */
         $user = $this->getUser();
-        $signalements = $signalementRepository->findForAPI(user : $user, uuid : $uuid);
-        if (!count($signalements)) {
-            return new JsonResponse(['message' => 'Signalement introuvable'], Response::HTTP_NOT_FOUND);
-        }
-        $resource = $signalementResponseFactory->createFromSignalement($signalements[0]);
+        $signalement = $signalementRepository->findOneForApi(user : $user, uuid : $uuid);
+        if (null !== $signalement) {
+            $resource = $signalementResponseFactory->createFromSignalement($signalement);
 
-        return new JsonResponse($resource, Response::HTTP_OK);
+            return new JsonResponse($resource, Response::HTTP_OK);
+        }
+
+        return new JsonResponse(['message' => 'Signalement introuvable'], Response::HTTP_NOT_FOUND);
     }
 }

@@ -43,13 +43,13 @@ enum AffectationStatus: int
         };
     }
 
-    public static function mapNewStatus(int $codeStatus): string
+    public static function mapNewStatus(int $codeStatus): AffectationNewStatus
     {
         return match ($codeStatus) {
-            0 => AffectationNewStatus::NOUVEAU->value,
-            1 => AffectationNewStatus::EN_COURS->value,
-            2 => AffectationNewStatus::REFUSE->value,
-            3 => AffectationNewStatus::FERME->value,
+            0 => AffectationNewStatus::NOUVEAU,
+            1 => AffectationNewStatus::EN_COURS,
+            2 => AffectationNewStatus::REFUSE,
+            3 => AffectationNewStatus::FERME,
             default => throw new \UnexpectedValueException('Unexpected affectation status : '.$codeStatus),
         };
     }
