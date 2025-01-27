@@ -66,7 +66,7 @@ class SignalementAffectationHelper
         return null;
     }
 
-    public static function parseAffectations(?string $rawAffectations): ?array
+    private static function parseAffectations(?string $rawAffectations): array
     {
         if (empty($rawAffectations)) {
             return [];
@@ -74,6 +74,10 @@ class SignalementAffectationHelper
         $affectations = [];
         $affectationsList = explode(SignalementAffectationListView::SEPARATOR_GROUP_CONCAT, $rawAffectations);
         foreach ($affectationsList as $affectationItem) {
+            // if the separator is not found, it means that the query is truncated (by the limit length of group_concat)
+            if (!str_contains($affectationItem, SignalementAffectationListView::SEPARATOR_CONCAT)) {
+                break;
+            }
             list($partner, $status) = explode(SignalementAffectationListView::SEPARATOR_CONCAT, $affectationItem);
             $statusAffectation = AffectationStatus::from($status)->value;
             $affectations[$partner] = [

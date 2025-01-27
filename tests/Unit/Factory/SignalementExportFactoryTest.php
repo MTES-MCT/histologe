@@ -37,7 +37,6 @@ class SignalementExportFactoryTest extends TestCase
             'rawAffectations' => 'DDETS-PS-DL PE - Mission Logement indigne||0;M.A.M.P. - CT1 / EAH Marseille||0;MARSEILLE||1',
             'affectationPartnerName' => 'DDETS-PS-DL PE - Mission Logement indigne;M.A.M.P. - CT1 / EAH Marseille;MARSEILLE',
             'affectationStatus' => '0;1',
-            'affectationPartnerId' => '636;645;708',
             'details' => $faker->text(),
             'telOccupant' => $faker->phoneNumber(),
             'telOccupantBis' => null,
