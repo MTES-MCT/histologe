@@ -12,7 +12,6 @@ use App\Entity\Signalement;
 use App\Entity\Suivi;
 use App\Entity\Territory;
 use App\Entity\User;
-use App\Event\AffectationCreatedEvent;
 use App\Manager\AffectationManager;
 use App\Manager\FileManager;
 use App\Manager\SignalementManager;
@@ -30,7 +29,6 @@ use Psr\Log\LoggerInterface;
 use Symfony\Component\Console\Helper\ProgressBar;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 class SignalementImportLoader
 {
@@ -68,7 +66,6 @@ class SignalementImportLoader
         private SignalementQualificationUpdater $signalementQualificationUpdater,
         private FileManager $fileManager,
         private FilesystemOperator $fileStorage,
-        private EventDispatcherInterface $eventDispatcher,
     ) {
     }
 
@@ -185,7 +182,6 @@ class SignalementImportLoader
                     $partner->getUsers()->isEmpty() ? null : $partner->getUsers()->first(),
                 );
                 if ($affectation instanceof Affectation) {
-                    $this->eventDispatcher->dispatch(new AffectationCreatedEvent($affectation), AffectationCreatedEvent::NAME);
                     $affectation
                         ->setCreatedAt($dataMapped['createdAt'])
                         ->setAnsweredAt($dataMapped['createdAt']);

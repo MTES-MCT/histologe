@@ -7,7 +7,6 @@ use App\Entity\Signalement;
 use App\Entity\Suivi;
 use App\Entity\User;
 use App\Event\AffectationAnsweredEvent;
-use App\Event\AffectationCreatedEvent;
 use App\Factory\Interconnection\Idoss\DossierMessageFactory;
 use App\Manager\AffectationManager;
 use App\Manager\SignalementManager;
@@ -75,7 +74,6 @@ class AffectationController extends AbstractController
                     );
                     if ($affectation instanceof Affectation) {
                         $this->affectationManager->persist($affectation);
-                        $this->eventDispatcher->dispatch(new AffectationCreatedEvent($affectation), AffectationCreatedEvent::NAME);
                         $this->interconnectionBus->dispatch($affectation);
                     }
                 }

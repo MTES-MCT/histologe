@@ -8,10 +8,12 @@ use App\Entity\Enum\MotifRefus;
 use App\Entity\Partner;
 use App\Entity\Signalement;
 use App\Entity\User;
+use App\Event\AffectationCreatedEvent;
 use App\Messenger\Message\DossierMessageInterface;
 use App\Repository\AffectationRepository;
 use Doctrine\Persistence\ManagerRegistry;
 use Psr\Log\LoggerInterface;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Serializer\Exception\ExceptionInterface;
 
 class AffectationManager extends Manager
@@ -21,6 +23,7 @@ class AffectationManager extends Manager
         protected SuiviManager $suiviManager,
         protected LoggerInterface $logger,
         protected HistoryEntryManager $historyEntryManager,
+        private EventDispatcherInterface $eventDispatcher,
         string $entityName = Affectation::class,
     ) {
         parent::__construct($this->managerRegistry, $entityName);
@@ -65,11 +68,15 @@ class AffectationManager extends Manager
             return false;
         }
 
-        return (new Affectation())
+        $affectation = (new Affectation())
             ->setSignalement($signalement)
             ->setPartner($partner)
             ->setAffectedBy($user ?? null)
             ->setTerritory($partner->getTerritory());
+
+        $this->eventDispatcher->dispatch(new AffectationCreatedEvent($affectation), AffectationCreatedEvent::NAME);
+
+        return $affectation;
     }
 
     public function closeAffectation(Affectation $affectation, User $user, MotifCloture $motif, bool $flush = false): Affectation
