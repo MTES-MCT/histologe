@@ -220,7 +220,7 @@ services:
 when@test:
     parameters:
         uploads_tmp_dir: '%kernel.project_dir%/tmp/'
-        url_bucket: '/app/public/img'
+        url_bucket: '%kernel.project_dir%/public/img'
 
     services:
         App\Service\Mailer\Mail\Account\AccountTransferMailer:
