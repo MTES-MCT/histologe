@@ -9,9 +9,9 @@ use App\Specification\SpecificationInterface;
 
 class CodeInseeSpecification implements SpecificationInterface
 {
-    public function __construct(private string|array|null $inseeToInclude, private ?array $inseeToExclude)
+    public function __construct(private string|array $inseeToInclude, private ?array $inseeToExclude)
     {
-        if (null !== $inseeToInclude) {
+        if ('' !== $inseeToInclude) {
             $this->inseeToInclude = explode(',', $inseeToInclude);
         } else {
             $this->inseeToInclude = $inseeToInclude;
@@ -40,7 +40,7 @@ class CodeInseeSpecification implements SpecificationInterface
         }
 
         return match ($this->inseeToInclude) {
-            null => true,
+            '' => true,
             default => $this->isInseeIncluded($signalement->getInseeOccupant()),
         };
     }

@@ -26,6 +26,9 @@ class InseeToIncludeValidatorTest extends ConstraintValidatorTestCase
         if ($isValid) {
             $this->assertNoViolation();
         } else {
+            if (null === $insee) {
+                $insee = 'null';
+            }
             $this->buildViolation($message)
                 ->setParameter('{{ value }}', $insee)
                 ->assertRaised();
@@ -34,7 +37,8 @@ class InseeToIncludeValidatorTest extends ConstraintValidatorTestCase
 
     public function provideValues(): \Generator
     {
-        yield 'null' => [null, true];
+        yield 'null' => [null, false, self::ERROR];
+        yield 'empty' => ['', true];
         yield 'all' => ['all', false, self::ERROR];
         yield 'partner_list' => ['partner_list', false, self::ERROR];
         yield '44058' => ['44058', true];

@@ -42,15 +42,15 @@ class CodeInseeSpecificationTest extends KernelTestCase
 
     public function provideRulesAndSignalement(): \Generator
     {
-        yield 'null - same insee as partner - no exclude' => [self::INSEE_STMARS, [self::INSEE_STMARS], null, null, true];
-        yield 'null - same insee as partner - but excluded' => [self::INSEE_STMARS, [self::INSEE_STMARS], null, [self::INSEE_STMARS], false];
-        yield 'null - same insee as partner - another excluded' => [self::INSEE_STMARS, [self::INSEE_STMARS], null, [self::INSEE_CELLIER], true];
-        yield 'null - different insee than partner - no exclude' => [self::INSEE_STMARS, [self::INSEE_CELLIER], null, null, true];
-        yield 'null - different insee than partner - but excluded' => [self::INSEE_STMARS, [self::INSEE_CELLIER], null, [self::INSEE_STMARS], false];
-        yield 'null - different insee than partner - another excluded' => [self::INSEE_STMARS, [self::INSEE_CELLIER], null, [self::INSEE_CELLIER], true];
-        yield 'null - partner without insee - no exclude' => [self::INSEE_STMARS, [], null, null, true];
-        yield 'null - partner without insee - but excluded' => [self::INSEE_STMARS, [], null, [self::INSEE_STMARS], false];
-        yield 'null - partner without insee - another excluded' => [self::INSEE_STMARS, [], null, [self::INSEE_CELLIER], true];
+        yield 'empty - same insee as partner - no exclude' => [self::INSEE_STMARS, [self::INSEE_STMARS], '', null, true];
+        yield 'empty - same insee as partner - but excluded' => [self::INSEE_STMARS, [self::INSEE_STMARS], '', [self::INSEE_STMARS], false];
+        yield 'empty - same insee as partner - another excluded' => [self::INSEE_STMARS, [self::INSEE_STMARS], '', [self::INSEE_CELLIER], true];
+        yield 'empty - different insee than partner - no exclude' => [self::INSEE_STMARS, [self::INSEE_CELLIER], '', null, true];
+        yield 'empty - different insee than partner - but excluded' => [self::INSEE_STMARS, [self::INSEE_CELLIER], '', [self::INSEE_STMARS], false];
+        yield 'empty - different insee than partner - another excluded' => [self::INSEE_STMARS, [self::INSEE_CELLIER], '', [self::INSEE_CELLIER], true];
+        yield 'empty - partner without insee - no exclude' => [self::INSEE_STMARS, [], '', null, true];
+        yield 'empty - partner without insee - but excluded' => [self::INSEE_STMARS, [], '', [self::INSEE_STMARS], false];
+        yield 'empty - partner without insee - another excluded' => [self::INSEE_STMARS, [], '', [self::INSEE_CELLIER], true];
 
         yield 'array of insee with this one - same insee as partner - no exclusion' => [self::INSEE_STMARS, [self::INSEE_STMARS], self::INSEE_STMARS, null, true];
         yield 'array of insee with this one - same insee as partner - but excluded' => [self::INSEE_STMARS, [self::INSEE_STMARS], self::INSEE_STMARS, [self::INSEE_STMARS], false];
@@ -73,7 +73,7 @@ class CodeInseeSpecificationTest extends KernelTestCase
         yield 'array of insee without this one - partner without insee - another excluded' => [self::INSEE_STMARS, [], self::INSEE_CELLIER, [self::INSEE_CELLIER], false];
 
         // tous les cas ne sont pas testés en cas d'absence d'insee sur le signalement, car ça renvoie toujours false
-        yield 'null - no insee signalement' => [null, [self::INSEE_CELLIER], null, [self::INSEE_CELLIER], false];
+        yield 'empty - no insee signalement' => [null, [self::INSEE_CELLIER], '', [self::INSEE_CELLIER], false];
         yield 'array of insee - no insee signalement - another excluded' => [null, [], self::INSEE_STMARS, [self::INSEE_CELLIER], false];
     }
 }

@@ -16,8 +16,8 @@ final class Version20250122140631 extends AbstractMigration
 
     public function up(Schema $schema): void
     {
-        $this->addSql('ALTER TABLE auto_affectation_rule CHANGE insee_to_include insee_to_include VARCHAR(255) DEFAULT NULL COMMENT \'Value possible null or an array of code insee\'');
-        $this->addSql("UPDATE auto_affectation_rule SET insee_to_include = null WHERE insee_to_include IN ('all','partner_list')");
+        $this->addSql('ALTER TABLE auto_affectation_rule CHANGE insee_to_include insee_to_include VARCHAR(255) NOT NULL COMMENT \'Value possible empty or an array of code insee\'');
+        $this->addSql("UPDATE auto_affectation_rule SET insee_to_include = '' WHERE insee_to_include IN ('all','partner_list')");
     }
 
     public function down(Schema $schema): void
