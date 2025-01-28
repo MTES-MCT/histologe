@@ -12,6 +12,10 @@
     "FRESHCLAM_DISABLE_DAEMON": {
       "description": "When set, this environment variable instructs the image to NOT start the freshclam daemon.",
       "value": "true"
+    },
+    "CLAMAV_SCAN_ENABLE": {
+      "description": "When set to false, this environment variable instructs the application to NOT check virus in files.",
+      "value": "false"
     }
   }
 }
