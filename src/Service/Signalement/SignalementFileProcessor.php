@@ -7,6 +7,8 @@ use App\Entity\File;
 use App\Entity\Intervention;
 use App\Entity\Signalement;
 use App\Entity\User;
+use App\Exception\File\EmptyFileException;
+use App\Exception\File\MaxUploadSizeExceededException;
 use App\Factory\FileFactory;
 use App\Service\Files\FilenameGenerator;
 use App\Service\ImageManipulationHandler;
@@ -40,6 +42,7 @@ class SignalementFileProcessor
     ): array {
         $fileList = [];
         foreach ($files[$inputName] as $key => $file) {
+            $fileSizeOk = false;
             if ($file instanceof UploadedFile) {
                 try {
                     if (!$this->fileScanner->isClean($file->getPathname())) {
@@ -53,61 +56,73 @@ class SignalementFileProcessor
                     $this->logger->error($exception->getMessage());
                     continue;
                 }
-            }
-            $fileExtension = $file instanceof UploadedFile ? $file->getExtension() : null;
-            if (
-                $file instanceof UploadedFile
-                && File::INPUT_NAME_DOCUMENTS === $inputName
-                && !UploadHandlerService::isAcceptedDocumentFormat($file, $inputName)
-            ) {
-                $acceptedExtensions = UploadHandlerService::getAcceptedExtensions('document');
-                $message = <<<ERROR
-                Les fichiers de format {$fileExtension} ne sont pas pris en charge,
-                merci de choisir un fichier au format {$acceptedExtensions}.
-                ERROR;
-                $fileInfo = '( Fichier : '.$file->__toString().' MimeType : '.$file->getMimeType().' )';
-                $this->logger->error($message.$fileInfo);
-                $this->errors[] = $message;
-            } elseif (
-                $file instanceof UploadedFile
-                && File::INPUT_NAME_PHOTOS === $inputName
-                && !ImageManipulationHandler::isAcceptedPhotoFormat($file, $inputName)
-            ) {
-                $acceptedExtensions = UploadHandlerService::getAcceptedExtensions('photo');
-                $message = <<<ERROR
-                Les fichiers de format {$fileExtension} ne sont pas pris en charge,
-                merci de choisir un fichier au format {$acceptedExtensions}.
-                ERROR;
-                $fileInfo = '( Fichier : '.$file->__toString().' MimeType : '.$file->getMimeType().' )';
-                $this->logger->error($message.$fileInfo);
-                $this->errors[] = $message;
-            } else {
-                $inputTypeDetection = $inputName;
                 try {
-                    if ($file instanceof UploadedFile) {
-                        $filename = $this->uploadHandlerService->uploadFromFile(
-                            $file,
-                            $this->filenameGenerator->generate($file),
-                            $inputTypeDetection
-                        );
-                        $title = $this->filenameGenerator->getTitle();
-
-                        if (\in_array($file->getMimeType(), File::IMAGE_MIME_TYPES)) {
-                            $this->imageManipulationHandler->setUseTmpDir(false)->resize($filename)->thumbnail($filename);
-                        } else {
-                            $inputTypeDetection = 'documents';
-                        }
-                    } else {
-                        $filename = $this->uploadHandlerService->moveFromBucketTempFolder($file);
-                        $title = $key;
-                    }
-                } catch (\Exception $exception) {
-                    $this->logger->error($exception->getMessage());
+                    $fileSizeOk = $this->uploadHandlerService->isFileSizeOk($file);
+                } catch (MaxUploadSizeExceededException|EmptyFileException $exception) {
                     $this->errors[] = $exception->getMessage();
-                    continue;
+                    $this->logger->error($exception->getMessage());
                 }
-                if (!empty($filename)) {
-                    $fileList[] = $this->createFileItem($filename, $title, $inputTypeDetection, $documentType);
+            } else {
+                $fileSizeOk = true;
+            }
+
+            if ($fileSizeOk) {
+                $fileExtension = $file instanceof UploadedFile ? $file->getClientOriginalExtension() : null;
+
+                if (
+                    $file instanceof UploadedFile
+                    && File::INPUT_NAME_DOCUMENTS === $inputName
+                    && !UploadHandlerService::isAcceptedDocumentFormat($file, $inputName)
+                ) {
+                    $acceptedExtensions = UploadHandlerService::getAcceptedExtensions('document');
+                    $message = <<<ERROR
+                Les fichiers de format {$fileExtension} ne sont pas pris en charge,
+                merci de choisir un fichier au format {$acceptedExtensions}.
+                ERROR;
+                    $fileInfo = ' ( Fichier : '.$file->__toString().' MimeType : '.$file->getMimeType().' )';
+                    $this->logger->error($message.$fileInfo);
+                    $this->errors[] = $message;
+                } elseif (
+                    $file instanceof UploadedFile
+                    && File::INPUT_NAME_PHOTOS === $inputName
+                    && !ImageManipulationHandler::isAcceptedPhotoFormat($file, $inputName)
+                ) {
+                    $acceptedExtensions = UploadHandlerService::getAcceptedExtensions('photo');
+                    $message = <<<ERROR
+                Les fichiers de format {$fileExtension} ne sont pas pris en charge,
+                merci de choisir un fichier au format {$acceptedExtensions}.
+                ERROR;
+                    $fileInfo = ' ( Fichier : '.$file->__toString().' MimeType : '.$file->getMimeType().' )';
+                    $this->logger->error($message.$fileInfo);
+                    $this->errors[] = $message;
+                } else {
+                    $inputTypeDetection = $inputName;
+                    try {
+                        if ($file instanceof UploadedFile) {
+                            $filename = $this->uploadHandlerService->uploadFromFile(
+                                $file,
+                                $this->filenameGenerator->generate($file),
+                                $inputTypeDetection
+                            );
+                            $title = $this->filenameGenerator->getTitle();
+
+                            if (\in_array($file->getMimeType(), File::IMAGE_MIME_TYPES)) {
+                                $this->imageManipulationHandler->setUseTmpDir(false)->resize($filename)->thumbnail($filename);
+                            } else {
+                                $inputTypeDetection = 'documents';
+                            }
+                        } else {
+                            $filename = $this->uploadHandlerService->moveFromBucketTempFolder($file);
+                            $title = $key;
+                        }
+                    } catch (\Exception $exception) {
+                        $this->logger->error($exception->getMessage());
+                        $this->errors[] = $exception->getMessage();
+                        continue;
+                    }
+                    if (!empty($filename)) {
+                        $fileList[] = $this->createFileItem($filename, $title, $inputTypeDetection, $documentType);
+                    }
                 }
             }
         }
