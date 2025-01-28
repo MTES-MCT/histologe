@@ -2,7 +2,7 @@
 <template>
   <div id="histo-app-signalement-carto">
     <div class="fr-grid-row">
-      <div class="fr-col-3 filter-container-carto">
+      <div class="fr-col-3 fr-col-md-2 filter-container-carto">
         <SignalementViewFilters
             :shared-props="sharedProps"
             @change="handleFilters"
@@ -11,7 +11,7 @@
             :layout="'vertical'"
         />
       </div>
-      <div class="fr-col-9">
+      <div class="fr-col-9 fr-col-md-10">
         <SignalementViewCarto
           :api-url="sharedProps.ajaxurlSignalement"
           :token="sharedProps.token"
