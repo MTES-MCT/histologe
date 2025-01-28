@@ -52,8 +52,10 @@ readonly class MenuBuilder
             ->addChild(new MenuItem(label: 'Règles d\'auto-affectation', route: 'back_auto_affectation_rule_index', roleGranted: User::ROLE_ADMIN))
             ->addChild(new MenuItem(label: 'Résumés de suivis', route: 'back_suivi_summaries_index', roleGranted: User::ROLE_ADMIN))
             ->addChild(new MenuItem(label: 'Territoires', route: 'back_territory_index', roleGranted: User::ROLE_ADMIN))
+            ->addChild(new MenuItem(label: 'Bailleurs', route: 'back_bailleur_index', roleGranted: User::ROLE_ADMIN))
             ->addChild(new MenuItem(route: 'back_archived_users_reactiver'))
             ->addChild(new MenuItem(route: 'back_territory_edit'))
+            ->addChild(new MenuItem(route: 'back_bailleur_edit'))
             ->addChild(new MenuItem(route: 'back_auto_affectation_rule_new'))
             ->addChild(new MenuItem(route: 'back_auto_affectation_rule_edit'))
         ;

@@ -5,8 +5,10 @@ namespace App\Repository;
 use App\Entity\Bailleur;
 use App\Entity\Territory;
 use App\Entity\User;
+use App\Service\ListFilters\SearchBailleur;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\QueryBuilder;
+use Doctrine\ORM\Tools\Pagination\Paginator;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
@@ -113,5 +115,34 @@ class BailleurRepository extends ServiceEntityRepository
         }
 
         return $indexed;
+    }
+
+    public function findFilteredPaginated(SearchBailleur $searchBailleur, int $maxResult): Paginator
+    {
+        $qb = $this->createQueryBuilder('b');
+        $qb->select('b', 'bt')
+        ->leftJoin('b.bailleurTerritories', 'bt');
+
+        if (!empty($searchBailleur->getOrderType())) {
+            [$orderField, $orderDirection] = explode('-', $searchBailleur->getOrderType());
+            $qb->orderBy($orderField, $orderDirection);
+        } else {
+            $qb->orderBy('b.name', 'ASC');
+        }
+
+        if ($searchBailleur->getQueryName()) {
+            $qb->andWhere('LOWER(b.name) LIKE :queryName');
+            $qb->setParameter('queryName', '%'.strtolower($searchBailleur->getQueryName()).'%');
+        }
+        if (null !== $searchBailleur->getTerritory()) {
+            $qb->innerJoin('b.bailleurTerritories', 'bt_select')
+                ->andWhere('bt_select.territory = :territory')
+                ->setParameter('territory', $searchBailleur->getTerritory());
+        }
+
+        $firstResult = ($searchBailleur->getPage() - 1) * $maxResult;
+        $qb->setFirstResult($firstResult)->setMaxResults($maxResult);
+
+        return new Paginator($qb->getQuery());
     }
 }
