@@ -26,6 +26,11 @@ Encore
         to: 'dsfr/[path][name].[ext]'
     })
 
+    .copyFiles({
+        from: './node_modules/leaflet/dist/images',
+        to: 'images/leaflet/[name].[ext]'
+    })
+
     // public path used by the web server to access the output path
     .setPublicPath('/build')
     // only needed for CDN's or sub-directory deploy

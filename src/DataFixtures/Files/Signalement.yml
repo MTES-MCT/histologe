@@ -1699,7 +1699,7 @@ signalements:
     ville_occupant: "ALLOUAGNE"
     statut: 2
     reference: "2024-01"
-    geoloc: "{\"lng\":\"50.532118\", \"lat\":\"2.51608\"}"
+    geoloc: "{\"lat\":\"50.532118\", \"lng\":\"2.51608\"}"
     created_at: "2024-01-01 16:06:33"
     score: 0
     insee_occupant: "62023"
@@ -1739,7 +1739,7 @@ signalements:
     ville_occupant: "MARSEILLE"
     statut: 7
     reference: "2024-04"
-    geoloc: "{\"lng\":\"43.301787\", \"lat\":\"5.364626\"}"
+    geoloc: "{\"lat\":\"43.301787\", \"lng\":\"5.364626\"}"
     created_at: "2024-01-01 16:06:33"
     score: 0
     insee_occupant: "13202"
@@ -1778,7 +1778,7 @@ signalements:
     ville_occupant: "Saint-Denis"
     statut: 7
     reference: "2024-05"
-    geoloc: "{\"lng\":\"43.301787\", \"lat\":\"5.364626\"}"
+    geoloc: "{\"lat\":\"43.301787\", \"lng\":\"5.364626\"}"
     created_at: "2024-01-01 16:06:33"
     score: 0
     insee_occupant: "93066"

@@ -12,7 +12,6 @@ use App\Entity\Enum\VisiteStatus;
 use App\Entity\Intervention;
 use App\Entity\Signalement;
 use App\Entity\Suivi;
-use App\Entity\Territory;
 use App\Entity\User;
 use App\Repository\BailleurRepository;
 use App\Repository\EpciRepository;
@@ -26,40 +25,10 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\DBAL\Exception;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\QueryBuilder;
-use Symfony\Component\HttpFoundation\Request;
 
 class SearchFilter
 {
-    private array $filters;
-    private SignalementSearchQuery|Request $request;
-    private int $countActive;
-
-    /** @deprecated Cette constante est obsolete et ne doit plus être utilisé dans le cadre de la nouvelle liste
-     *  Les filtres sont gérés par la classe SignalementSearchQuery
-     */
-    private const REQUESTS = [
-        'searchterms',
-        'territories',
-        'statuses',
-        'cities',
-        'partners',
-        'closed_affectation',
-        'relances_usager',
-        'criteres',
-        'allocs',
-        'housetypes',
-        'declarants',
-        'proprios',
-        'avant1949',
-        'enfantsM6',
-        'affectations',
-        'visites',
-        'delays',
-        'scores',
-        'dates',
-        'nde',
-        'tags',
-    ];
+    private SignalementSearchQuery $request;
 
     public function __construct(
         private NotificationRepository $notificationRepository,
@@ -72,23 +41,11 @@ class SearchFilter
     ) {
     }
 
-    /**
-     * @todo Ne plus injecter Request apres la refonte de la liste.
-     */
-    public function setRequest(SignalementSearchQuery|Request $request): static
+    public function setRequest(SignalementSearchQuery $request): static
     {
         $this->request = $request;
 
         return $this;
-    }
-
-    /**
-     * @deprecated  Cette méthode est obsolete et ne doit plus être utilisé dans le cadre de la nouvelle liste.
-     * Utilisez @see SignalementSearchQuery::getFilters()
-     */
-    public function getFilters(): ?array
-    {
-        return $this->filters ?? null;
     }
 
     public function buildFilters(User $user): array
@@ -126,120 +83,6 @@ class SearchFilter
         }
 
         return $filters;
-    }
-
-    /**
-     * @deprecated  cette méthode est obsolete et ne doit plus être utilisé dans le cadre de la nouvelle liste.
-     * Utilisez @see buildFilters() qui s'appuie sur la clsse @see SignalementSearchQuery
-     */
-    public function setFilters(User $user): self
-    {
-        $this->countActive = 0;
-        $request = $this->getRequest();
-        $filters = self::REQUESTS;
-        $this->filters = [];
-
-        if (!$request instanceof Request) {
-            return $this;
-        }
-
-        $territory = $this->getTerritory($user, $request);
-        foreach ($filters as $filter) {
-            $this->filters[$filter] = $request->get('bo-filters-'.$filter) ?? null;
-
-            if ($request->get('bo-filters-'.$filter)) {
-                switch ($filter) {
-                    case 'dates':
-                        $filterDates = $request->get('bo-filters-'.$filter);
-                        if (!empty($filterDates['on']) || !empty($filterDates['off'])) {
-                            ++$this->countActive;
-                        }
-                        break;
-                    case 'scores':
-                        $filterScores = $request->get('bo-filters-'.$filter);
-                        if ('0' != $filterScores['on'] || '100' != $filterScores['off']) {
-                            ++$this->countActive;
-                        }
-                        break;
-                    default:
-                        ++$this->countActive;
-                        break;
-                }
-            }
-        }
-
-        $this->filters['page'] = $request->get('page') ?? 1;
-
-        if ($request->isMethod('GET')) {
-            if ($request->query->get('statut')) {
-                ++$this->countActive;
-                $this->filters['statuses'] = [$request->query->get('statut')];
-            }
-
-            if ($request->query->get('partenaires')) {
-                ++$this->countActive;
-                $this->filters['partners'] = [$request->query->get('partenaires')];
-            }
-
-            if ($request->query->get('nouveau_suivi')) {
-                ++$this->countActive;
-                $signalementIds = $this->notificationRepository->findSignalementNewSuivi($user, $territory);
-                $this->filters['signalement_ids'] = $signalementIds;
-            }
-
-            if ($request->query->get('territoire_id')) {
-                ++$this->countActive;
-                $this->filters['territories'] = [$request->query->get('territoire_id')];
-            }
-
-            if ($request->query->get('closed_affectation')) {
-                ++$this->countActive;
-                $this->filters['closed_affectation'] = [$request->query->get('closed_affectation')];
-            }
-
-            if ($request->query->get('relances_usager')) {
-                ++$this->countActive;
-                $this->filters['relances_usager'] = [$request->query->get('relances_usager')];
-            }
-
-            if ($request->query->get('nde')) {
-                ++$this->countActive;
-                $this->filters['nde'] = [QualificationStatus::NDE_AVEREE->name, QualificationStatus::NDE_CHECK->name];
-            }
-
-            if ($request->query->get('sort')) {
-                $this->filters['sortBy'] = $request->query->get('sort');
-                $this->filters['orderBy'] = 'DESC';
-            }
-        }
-
-        if (!empty($this->filters['delays'])
-            || $request->isMethod('GET') && $request->query->get('sans_suivi_periode')
-        ) {
-            if ($request->isMethod('GET') && $request->query->get('sans_suivi_periode')) {
-                ++$this->countActive;
-            }
-            $period = $this->filters['delays'] ?? $request->query->get('sans_suivi_periode');
-            $partners = new ArrayCollection();
-            if (\in_array(User::ROLE_USER_PARTNER, $user->getRoles())) {
-                $partners = $user->getPartners();
-            }
-            $this->filters['delays'] = (int) $period;
-            $this->filters['delays_territory'] = $territory;
-            $this->filters['delays_partners'] = $partners->map(fn ($partner) => $partner->getId())->toArray();
-        }
-
-        return $this;
-    }
-
-    private function getRequest(): Request|SignalementSearchQuery
-    {
-        return $this->request;
-    }
-
-    public function getCountActive(): int
-    {
-        return $this->countActive;
     }
 
     /**
@@ -574,18 +417,6 @@ class SearchFilter
         }
 
         return $qb;
-    }
-
-    private function getTerritory(User $user, Request $request): ?Territory
-    {
-        $territory = null;
-        $authorizedTerritories = $user->getPartnersTerritories();
-        $territoryId = $request->query->get('territoire_id');
-        if ($territoryId && ($user->isSuperAdmin() || isset($authorizedTerritories[$territoryId]))) {
-            $territory = $this->territoryRepository->find($territoryId);
-        }
-
-        return $territory;
     }
 
     private function addFilterSituation(QueryBuilder $qb, string $situation): QueryBuilder

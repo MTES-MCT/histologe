@@ -2,7 +2,7 @@ import { reactive, computed } from 'vue'
 import { ZoneComponents } from './interfaces/interfaceZoneComponents'
 import { Component } from './interfaces/interfaceComponent'
 import { PictureDescription } from './interfaces/interfacePictureDescription'
-import { variableTester } from './services/variableTester'
+import { variableTester } from '../../utils/variableTester'
 
 interface FormData {
   [key: string]: any
