@@ -73,7 +73,7 @@ class SignalementImportLoaderTest extends KernelTestCase
             $this->criticiteCalculator,
             $this->signalementQualificationUpdater,
             $this->fileManager,
-            $this->filesystemOperator
+            $this->filesystemOperator,
         );
 
         $territory = $this->entityManager->getRepository(Territory::class)->findOneBy(['zip' => '01']);
