@@ -364,11 +364,7 @@ export default defineComponent({
       required: false,
       default: 'horizontal'
     },
-    onChange: { type: Function },
-    sharedProps: {
-      type: Object,
-      required: true
-    }
+    onChange: { type: Function }
   },
   emits: ['changeTerritory', 'clickReset'],
   computed: {
