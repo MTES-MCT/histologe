@@ -3,7 +3,7 @@
     <label class="fr-label fr-mb-2v" :for="id">
       <slot name="label"></slot>
     </label>
-    <Datepicker
+    <VueDatePicker
       v-model="dates"
       @update:modelValue="handleDate"
       locale="fr"
@@ -23,11 +23,11 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue'
-import Datepicker from '@vuepic/vue-datepicker'
+import VueDatePicker from '@vuepic/vue-datepicker';
 
 export default defineComponent({
   name: 'HistoDatePicker',
-  components: { Datepicker },
+  components: { VueDatePicker },
   expose: ['updateDate'],
   props: {
     id: { type: String, default: null },
@@ -36,6 +36,7 @@ export default defineComponent({
   },
   watch: {
     modelValue (newValue: any) {
+      // @ts-ignore
       this.dates = newValue
     }
   },
@@ -47,13 +48,16 @@ export default defineComponent({
   emits: ['update:modelValue'],
   methods: {
     updateDate: function (newDates: Array<Date>) {
+      // @ts-ignore
       this.dates = newDates
     },
     handleDate: function (modelData: any) {
       if (modelData !== null && modelData[1] === null) {
         modelData[1] = new Date()
       }
+      // @ts-ignore
       if (this.dates !== undefined && this.dates !== null) {
+        // @ts-ignore
         this.dates = modelData
       }
       this.$emit('update:modelValue', modelData)
