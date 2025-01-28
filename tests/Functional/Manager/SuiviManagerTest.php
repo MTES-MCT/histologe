@@ -13,6 +13,7 @@ use App\Repository\UserRepository;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use Symfony\Bundle\SecurityBundle\Security;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HtmlSanitizer\HtmlSanitizerInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
@@ -22,6 +23,7 @@ class SuiviManagerTest extends KernelTestCase
     private const REF_SIGNALEMENT = '2022-8';
     private ManagerRegistry $managerRegistry;
     private SignalementUpdatedListener $signalementUpdatedListener;
+    private EventDispatcherInterface $eventDispatcherInterface;
     private Security $security;
     private UrlGeneratorInterface $urlGenerator;
     private DesordreCritereRepository $desordreCritereRepository;
@@ -33,6 +35,7 @@ class SuiviManagerTest extends KernelTestCase
         self::bootKernel();
         $this->managerRegistry = self::getContainer()->get(ManagerRegistry::class);
         $this->signalementUpdatedListener = static::getContainer()->get(SignalementUpdatedListener::class);
+        $this->eventDispatcherInterface = static::getContainer()->get(EventDispatcherInterface::class);
         $this->security = static::getContainer()->get(Security::class);
         $this->urlGenerator = static::getContainer()->get(UrlGeneratorInterface::class);
         $this->desordreCritereRepository = static::getContainer()->get(DesordreCritereRepository::class);
@@ -41,6 +44,7 @@ class SuiviManagerTest extends KernelTestCase
             $this->managerRegistry,
             $this->urlGenerator,
             $this->signalementUpdatedListener,
+            $this->eventDispatcherInterface,
             $this->security,
             $this->desordreCritereRepository,
             $this->htmlSanitizerInterface,

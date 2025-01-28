@@ -4,7 +4,6 @@ namespace App\Service;
 
 use App\Entity\Affectation;
 use App\Entity\Enum\AffectationStatus;
-use App\Entity\Notification;
 use App\Entity\Partner;
 use App\Entity\Signalement;
 use App\Entity\Suivi;
@@ -23,7 +22,6 @@ use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 
 class NotificationAndMailSender
 {
-    private $unitOfWork;
     private Signalement $signalement;
     private ?Suivi $suivi;
     private ?Affectation $affectation;
@@ -37,7 +35,6 @@ class NotificationAndMailSender
         private readonly ParameterBagInterface $parameterBag,
         private readonly Security $security,
     ) {
-        $this->unitOfWork = $this->entityManager->getUnitOfWork();
         $this->suivi = null;
     }
 
@@ -66,7 +63,7 @@ class NotificationAndMailSender
         $this->signalement = $suivi->getSignalement();
         $territory = $this->signalement->getTerritory();
         $recipients = $this->getRecipientsAdmin($territory);
-        
+
         foreach ($this->signalement->getAffectations() as $affectation) {
             if (AffectationStatus::STATUS_WAIT->value === $affectation->getStatut()
                     || AffectationStatus::STATUS_ACCEPTED->value === $affectation->getStatut()) {
@@ -127,10 +124,6 @@ class NotificationAndMailSender
 
         $notification = $this->notificationFactory->createInstanceFrom($user, $this->suivi);
         $this->entityManager->persist($notification);
-        $this->unitOfWork->computeChangeSet(
-            $this->entityManager->getClassMetadata(Notification::class),
-            $notification
-        );
     }
 
     private function sendMail(ArrayCollection $recipients, NotificationMailerType $mailType): void
