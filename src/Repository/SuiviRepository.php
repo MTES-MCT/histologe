@@ -55,8 +55,6 @@ class SuiviRepository extends ServiceEntityRepository
                     '.$whereTerritory.'
                     GROUP BY su.signalement_id
                 ) as countQuery';
-
-        dump($sql);
         $statement = $connection->prepare($sql);
 
         return (float) $statement->executeQuery($parameters)->fetchOne();
