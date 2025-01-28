@@ -79,10 +79,12 @@ class SignalementAffectationHelper
                 break;
             }
             list($partner, $status) = explode(SignalementAffectationListView::SEPARATOR_CONCAT, $affectationItem);
-            $statusAffectation = AffectationStatus::tryFrom($status)->value;
+            if ('' === $status || !$statusAffectation = AffectationStatus::tryFrom($status)) {
+                break;
+            }
             $affectations[$partner] = [
                 'partner' => $partner,
-                'statut' => $statusAffectation,
+                'statut' => $statusAffectation->value,
             ];
         }
 
