@@ -60,6 +60,7 @@ class SignalementFileProcessor
                     $fileSizeOk = $this->uploadHandlerService->isFileSizeOk($file);
                 } catch (MaxUploadSizeExceededException|EmptyFileException $exception) {
                     $this->errors[] = $exception->getMessage();
+                    $this->logger->error($exception->getMessage());
                 }
             } else {
                 $fileSizeOk = true;
