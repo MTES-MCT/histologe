@@ -41,8 +41,8 @@ class AutoAssignerSimulatorController extends AbstractController
         }
         $signalements = $signalementRepository->findBy($criteria, ['createdAt' => 'DESC'], $limit);
         foreach ($signalements as $signalement) {
-            $autoAssigner->assign($signalement, true);
-            $assignablePartners = $autoAssigner->getAssignablePartners();
+            $assignablePartners = $autoAssigner->assign($signalement, true);
+            dump($assignablePartners);
             $results[] = [
                 'signalement' => $signalement,
                 'assignablePartners' => $assignablePartners,

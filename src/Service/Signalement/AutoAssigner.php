@@ -29,7 +29,6 @@ use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 class AutoAssigner
 {
     private int $countAffectations;
-    private array $assignablePartners = [];
     private array $affectedPartnersNames = [];
 
     public function __construct(
@@ -44,15 +43,14 @@ class AutoAssigner
     ) {
     }
 
-    public function assign(Signalement $signalement, $simulation = false): void
+    public function assign(Signalement $signalement, $simulation = false): array
     {
-        $this->assignablePartners = [];
         $this->countAffectations = 0;
         $autoAffectationRules = $signalement->getTerritory()->getAutoAffectationRules()->filter(function (AutoAffectationRule $autoAffectationRule) {
             return AutoAffectationRule::STATUS_ACTIVE === $autoAffectationRule->getStatus();
         });
         if ($autoAffectationRules->isEmpty()) {
-            return;
+            return [];
         }
         if (empty($signalement->getGeoloc())) {
             $logMessage = \sprintf(
@@ -62,7 +60,7 @@ class AutoAssigner
             $this->logger->info($logMessage);
             \Sentry\captureMessage($logMessage);
 
-            return;
+            return [];
         }
         $adminEmail = $this->parameterBag->get('user_system_email');
         $adminUser = $this->userManager->findOneBy(['email' => $adminEmail]);
@@ -93,17 +91,13 @@ class AutoAssigner
         }
         $assignablePartners = array_values($assignablePartners);
 
-        if ($simulation) {
-            $this->assignablePartners = $assignablePartners;
-
-            return;
-        }
-
-        if (!empty($assignablePartners)) {
+        if (!$simulation && !empty($assignablePartners)) {
             $this->activateSignalement($signalement);
             $this->createSuivi($signalement, $adminUser);
             $this->assignPartners($signalement, $adminUser, $assignablePartners);
         }
+
+        return $assignablePartners;
     }
 
     private function activateSignalement(Signalement $signalement): void
@@ -153,10 +147,5 @@ class AutoAssigner
     public function getAffectedPartnerNames(): array
     {
         return $this->affectedPartnersNames;
-    }
-
-    public function getAssignablePartners(): array
-    {
-        return $this->assignablePartners;
     }
 }
