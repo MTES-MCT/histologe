@@ -55,21 +55,21 @@ class SignalementManager extends AbstractManager
 {
     public function __construct(
         protected ManagerRegistry $managerRegistry,
-        private Security $security,
-        private SignalementFactory $signalementFactory,
-        private EventDispatcherInterface $eventDispatcher,
-        private QualificationStatusService $qualificationStatusService,
-        private SignalementAffectationListViewFactory $signalementAffectationListViewFactory,
-        private SignalementExportFactory $signalementExportFactory,
-        private ParameterBagInterface $parameterBag,
-        private SuroccupationSpecification $suroccupationSpecification,
-        private CriticiteCalculator $criticiteCalculator,
-        private SignalementQualificationUpdater $signalementQualificationUpdater,
-        private DesordrePrecisionRepository $desordrePrecisionRepository,
-        private DesordreCompositionLogementLoader $desordreCompositionLogementLoader,
-        private SuiviManager $suiviManager,
-        private BailleurRepository $bailleurRepository,
-        private AffectationRepository $affectationRepository,
+        private readonly Security $security,
+        private readonly SignalementFactory $signalementFactory,
+        private readonly EventDispatcherInterface $eventDispatcher,
+        private readonly QualificationStatusService $qualificationStatusService,
+        private readonly SignalementAffectationListViewFactory $signalementAffectationListViewFactory,
+        private readonly SignalementExportFactory $signalementExportFactory,
+        private readonly ParameterBagInterface $parameterBag,
+        private readonly SuroccupationSpecification $suroccupationSpecification,
+        private readonly CriticiteCalculator $criticiteCalculator,
+        private readonly SignalementQualificationUpdater $signalementQualificationUpdater,
+        private readonly DesordrePrecisionRepository $desordrePrecisionRepository,
+        private readonly DesordreCompositionLogementLoader $desordreCompositionLogementLoader,
+        private readonly SuiviManager $suiviManager,
+        private readonly BailleurRepository $bailleurRepository,
+        private readonly AffectationRepository $affectationRepository,
         private readonly SignalementAddressUpdater $signalementAddressUpdater,
         string $entityName = Signalement::class,
     ) {
@@ -193,15 +193,14 @@ class SignalementManager extends AbstractManager
         }
     }
 
+    /**
+     * @throws Exception
+     */
     public function findAllPartners(Signalement $signalement): array
     {
         /** @var PartnerRepository $partnerRepository */
         $partnerRepository = $this->managerRegistry->getRepository(Partner::class);
-        $partners['affected'] = $partnerRepository->findByLocalization(
-            signalement: $signalement,
-            affected: true
-        );
-
+        $partners['affected'] = $partnerRepository->findByLocalization(signalement: $signalement);
         $partners['not_affected'] = $partnerRepository->findByLocalization(
             signalement: $signalement,
             affected: false
@@ -271,10 +270,13 @@ class SignalementManager extends AbstractManager
         return array_unique($list, \SORT_REGULAR);
     }
 
+    /**
+     * @throws \DateMalformedStringException
+     */
     public function updateFromSignalementQualification(
         SignalementQualification $signalementQualification,
         QualificationNDERequest $qualificationNDERequest,
-    ) {
+    ): void {
         $signalement = $signalementQualification->getSignalement();
         // mise à jour du signalement
         if ($qualificationNDERequest->getDateEntree()) {
@@ -295,7 +297,7 @@ class SignalementManager extends AbstractManager
         }
         $this->save($signalement);
 
-        // mise à jour du signalementqualification
+        // mise à jour du signalementQualification
         if ($qualificationNDERequest->getDateDernierBail()) {
             if (QualificationNDERequest::RADIO_VALUE_AFTER_2023 === $qualificationNDERequest->getDateDernierBail()
                 && (
@@ -349,7 +351,7 @@ class SignalementManager extends AbstractManager
     public function updateFromAdresseOccupantRequest(
         Signalement $signalement,
         AdresseOccupantRequest $adresseOccupantRequest,
-    ) {
+    ): void {
         $signalement->setAdresseOccupant($adresseOccupantRequest->getAdresse())
             ->setCpOccupant($adresseOccupantRequest->getCodePostal())
             ->setVilleOccupant($adresseOccupantRequest->getVille())
@@ -374,7 +376,7 @@ class SignalementManager extends AbstractManager
     public function updateFromCoordonneesTiersRequest(
         Signalement $signalement,
         CoordonneesTiersRequest $coordonneesTiersRequest,
-    ) {
+    ): void {
         if (ProfileDeclarant::BAILLEUR == $signalement->getProfileDeclarant()) {
             $signalement
                 ->setTypeProprio(
@@ -400,7 +402,7 @@ class SignalementManager extends AbstractManager
     public function updateFromCoordonneesFoyerRequest(
         Signalement $signalement,
         CoordonneesFoyerRequest $coordonneesFoyerRequest,
-    ) {
+    ): void {
         if (ProfileDeclarant::BAILLEUR_OCCUPANT == $signalement->getProfileDeclarant()) {
             $signalement
                 ->setTypeProprio(
@@ -428,7 +430,7 @@ class SignalementManager extends AbstractManager
     public function updateFromCoordonneesBailleurRequest(
         Signalement $signalement,
         CoordonneesBailleurRequest $coordonneesBailleurRequest,
-    ) {
+    ): void {
         $bailleur = null;
         if ($signalement->getIsLogementSocial() && $coordonneesBailleurRequest->getNom()) {
             $bailleur = $this->bailleurRepository->findOneBailleurBy(
@@ -478,7 +480,7 @@ class SignalementManager extends AbstractManager
     public function updateFromInformationsLogementRequest(
         Signalement $signalement,
         InformationsLogementRequest $informationsLogementRequest,
-    ) {
+    ): void {
         if (is_numeric($informationsLogementRequest->getNombrePersonnes())) {
             $signalement->setNbOccupantsLogement((int) $informationsLogementRequest->getNombrePersonnes());
         }
@@ -538,6 +540,7 @@ class SignalementManager extends AbstractManager
             $informationComplementaire = clone $signalement->getInformationComplementaire();
         }
         $informationComplementaire
+            ->setInformationsComplementairesLogementMontantLoyer($informationsLogementRequest->getLoyer())
             ->setInformationsComplementairesSituationOccupantsLoyersPayes(
                 $informationsLogementRequest->getLoyersPayes()
             )
@@ -564,7 +567,7 @@ class SignalementManager extends AbstractManager
 
     private function updateDesordresAndScoreWithSuroccupationChanges(
         Signalement $signalement,
-    ) {
+    ): void {
         $situationFoyer = $signalement->getSituationFoyer();
         $typeCompositionLogement = $signalement->getTypeCompositionLogement();
         if ($signalement->getCreatedFrom()) {
@@ -611,7 +614,7 @@ class SignalementManager extends AbstractManager
     public function updateFromCompositionLogementRequest(
         Signalement $signalement,
         CompositionLogementRequest $compositionLogementRequest,
-    ) {
+    ): void {
         $signalement->setNatureLogement($compositionLogementRequest->getType());
         $signalement->setSuperficie((float) $compositionLogementRequest->getSuperficie());
 
@@ -629,6 +632,7 @@ class SignalementManager extends AbstractManager
         }
 
         $typeCompositionLogement
+            ->setTypeLogementNature($compositionLogementRequest->getType())
             ->setCompositionLogementPieceUnique($compositionLogementRequest->getTypeCompositionLogement())
             ->setCompositionLogementSuperficie($compositionLogementRequest->getSuperficie())
             ->setCompositionLogementHauteur($compositionLogementRequest->getCompositionLogementHauteur())
@@ -653,6 +657,7 @@ class SignalementManager extends AbstractManager
                 $compositionLogementRequest->getTypeLogementCommoditesWcCollective()
             )
             ->setTypeLogementCommoditesWcCuisine($compositionLogementRequest->getTypeLogementCommoditesWcCuisine());
+
         $signalement->setTypeCompositionLogement($typeCompositionLogement);
 
         $this->desordreCompositionLogementLoader->load($signalement, $typeCompositionLogement);
@@ -671,14 +676,17 @@ class SignalementManager extends AbstractManager
         $this->save($signalement);
         $this->suiviManager->addSuiviIfNeeded(
             signalement: $signalement,
-            description: 'La description du logement a été modifée par ',
+            description: 'La description du logement a été modifiée par ',
         );
     }
 
+    /**
+     * @throws \DateMalformedStringException
+     */
     public function updateFromSituationFoyerRequest(
         Signalement $signalement,
         SituationFoyerRequest $situationFoyerRequest,
-    ) {
+    ): void {
         $signalement
             ->setIsLogementSocial(
                 SignalementInputValueMapper::map(
@@ -703,6 +711,8 @@ class SignalementManager extends AbstractManager
             $situationFoyer = clone $signalement->getSituationFoyer();
         }
         $situationFoyer
+            ->setLogementSocialNumeroAllocataire($situationFoyerRequest->getNumAllocataire())
+            ->setLogementSocialDateNaissance($situationFoyerRequest->getDateNaissanceOccupant())
             ->setLogementSocialMontantAllocation($situationFoyerRequest->getLogementSocialMontantAllocation())
             ->setTravailleurSocialQuitteLogement($situationFoyerRequest->getTravailleurSocialQuitteLogement())
             ->setTravailleurSocialPreavisDepart($situationFoyerRequest->getTravailleurSocialPreavisDepart())
@@ -771,7 +781,7 @@ class SignalementManager extends AbstractManager
     public function updateFromProcedureDemarchesRequest(
         Signalement $signalement,
         ProcedureDemarchesRequest $procedureDemarchesRequest,
-    ) {
+    ): void {
         $signalement->setIsProprioAverti('' === $procedureDemarchesRequest->getIsProprioAverti() ? null : (bool) ($procedureDemarchesRequest->getIsProprioAverti()));
 
         $informationProcedure = new InformationProcedure();
@@ -786,6 +796,7 @@ class SignalementManager extends AbstractManager
         }
 
         $informationProcedure
+            ->setInfoProcedureBailleurPrevenu($procedureDemarchesRequest->getIsProprioAverti())
             ->setInfoProcedureBailMoyen($procedureDemarchesRequest->getInfoProcedureBailMoyen())
             ->setInfoProcedureBailDate($procedureDemarchesRequest->getInfoProcedureBailDate())
             ->setInfoProcedureBailReponse($procedureDemarchesRequest->getInfoProcedureBailReponse())

@@ -7,7 +7,7 @@ use App\Entity\Model\TypeCompositionLogement;
 use App\Serializer\SignalementDraftRequestSerializer;
 use App\Utils\DataPropertyArrayFilter;
 
-class TypeCompositionLogementFactory
+readonly class TypeCompositionLogementFactory
 {
     public function __construct(private SignalementDraftRequestSerializer $serializer)
     {
@@ -33,7 +33,6 @@ class TypeCompositionLogementFactory
             typeLogementSousSolSansFenetre: $data['type_logement_sous_sol_sans_fenetre'] ?? null,
             typeLogementSousCombleSansFenetre: $data['type_logement_sous_comble_sans_fenetre'] ?? null,
             typeLogementCommoditesCuisine: $data['type_logement_commodites_cuisine'] ?? null,
-            typeLogementCommoditesPieceAVivre9m: $data['type_logement_commodites_piece_a_vivre_9m'] ?? null,
             typeLogementCommoditesCuisineCollective: $data['type_logement_commodites_cuisine_collective'] ?? null,
             typeLogementCommoditesSalleDeBain: $data['type_logement_commodites_salle_de_bain'] ?? null,
             typeLogementCommoditesSalleDeBainCollective: $data['type_logement_commodites_salle_de_bain_collective'] ?? null,
@@ -47,6 +46,7 @@ class TypeCompositionLogementFactory
             compositionLogementNombrePersonnes: $data['composition_logement_nombre_personnes'] ?? null,
             compositionLogementNombreEnfants: $data['composition_logement_nombre_enfants'] ?? null,
             compositionLogementEnfants: $data['composition_logement_enfants'] ?? null,
+            typeLogementCommoditesPieceAVivre9m: $data['type_logement_commodites_piece_a_vivre_9m'] ?? null,
             bailDpeBail: $data['bail_dpe_bail'] ?? null,
             bailDpeInvariant: $data['bail_dpe_invariant'] ?? null,
             bailDpeDpe: $data['bail_dpe_dpe'] ?? null,
