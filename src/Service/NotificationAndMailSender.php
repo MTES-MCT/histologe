@@ -162,7 +162,11 @@ class NotificationAndMailSender
         if (isset($authorizedInsee[$territory->getZip()])) {
             foreach ($authorizedInsee[$territory->getZip()] as $key => $authorizedInseePartner) {
                 if (\in_array($signalement->getInseeOccupant(), $authorizedInseePartner)) {
-                    return $this->partnerRepository->findOneBy(['nom' => $key, 'territory' => $territory]);
+                    return $this->partnerRepository->findOneBy([
+                        'nom' => $key,
+                        'territory' => $territory,
+                        'isArchive' => false,
+                    ]);
                 }
             }
         }
