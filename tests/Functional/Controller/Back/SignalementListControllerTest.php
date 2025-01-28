@@ -188,8 +188,8 @@ class SignalementListControllerTest extends WebTestCase
         yield 'Search by Procédure estimée' => [['procedure' => 'rsd', 'isImported' => 'oui'], 7];
         yield 'Search by Partenaires affectés' => [['partenaires' => ['5'], 'isImported' => 'oui'], 2];
         yield 'Search by Statut de la visite' => [['visiteStatus' => 'Planifiée', 'isImported' => 'oui'], 5];
-        yield 'Search by Type de dernier suivi' => [['typeDernierSuivi' => 'automatique', 'isImported' => 'oui'], 34];
-        yield 'Search by Date de dernier suivi' => [['dateDernierSuiviDebut' => '2023-04-01', 'dateDernierSuiviFin' => '2023-04-18', 'isImported' => 'oui'], 3];
+        yield 'Search by Type de dernier suivi' => [['typeDernierSuivi' => 'automatique', 'isImported' => 'oui'], 33];
+        yield 'Search by Date de dernier suivi' => [['dateDernierSuiviDebut' => '2023-04-01', 'dateDernierSuiviFin' => '2023-04-18', 'isImported' => 'oui'], 2];
         yield 'Search by Statut de l\'affectation' => [['statusAffectation' => 'refuse', 'isImported' => 'oui'], 1];
         yield 'Search by Score criticite' => [['criticiteScoreMin' => 5, 'criticiteScoreMax' => 6, 'isImported' => 'oui'], 9];
         yield 'Search by Declarant' => [['typeDeclarant' => 'locataire', 'isImported' => 'oui'], 47];

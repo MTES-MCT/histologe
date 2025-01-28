@@ -8,7 +8,6 @@ use App\Repository\TerritoryRepository;
 use App\Service\Import\CsvParser;
 use App\Service\Import\Signalement\SignalementImportLoader;
 use App\Service\UploadHandlerService;
-use Doctrine\Common\EventManager;
 use Doctrine\ORM\EntityManager;
 use League\Flysystem\FilesystemOperator;
 use Symfony\Bundle\FrameworkBundle\Console\Application;
@@ -39,11 +38,6 @@ class ImportSignalementCommandTest extends KernelTestCase
             ->method('getRepository')
             ->with(Territory::class)
             ->willReturn($territoryRepository);
-
-        $eventManager = $this->createMock(EventManager::class);
-        $entityManager->expects($this->atLeast(1))
-            ->method('getEventManager')
-            ->willReturn($eventManager);
 
         $uploadHandlerService = $this->createMock(UploadHandlerService::class);
         $uploadHandlerService->expects($this->once())
@@ -168,11 +162,6 @@ class ImportSignalementCommandTest extends KernelTestCase
             ->method('getRepository')
             ->with(Territory::class)
             ->willReturn($territoryRepository);
-
-        $eventManager = $this->createMock(EventManager::class);
-        $entityManager->expects($this->atLeast(1))
-            ->method('getEventManager')
-            ->willReturn($eventManager);
 
         $uploadHandlerService = $this->createMock(UploadHandlerService::class);
         $signalementImportLoader = $this->createMock(SignalementImportLoader::class);

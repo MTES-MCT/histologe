@@ -35,7 +35,6 @@ class LoadSuiviData extends Fixture implements OrderedFixtureInterface
 
         $second = 1;
         foreach ($signalements as $signalement) {
-            $createdAtUpdated = $signalement->getCreatedAt()->modify('+'.$second.' second');
             $suivi = $this->suiviManager->createSuivi(
                 user: $this->userRepository->findOneBy(['email' => $this->parameterBag->get('user_system_email')]),
                 signalement: $signalement,
@@ -44,6 +43,7 @@ class LoadSuiviData extends Fixture implements OrderedFixtureInterface
                 isPublic: true,
                 flush: false,
             );
+            $createdAtUpdated = $signalement->getCreatedAt()->modify('+'.$second.' second');
             $suivi->setCreatedAt($createdAtUpdated);
             $manager->persist($suivi);
             ++$second;
