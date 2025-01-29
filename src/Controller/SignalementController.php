@@ -29,6 +29,8 @@ use App\Service\UploadHandlerService;
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\DependencyInjection\Attribute\Autowire;
+use Symfony\Component\HtmlSanitizer\HtmlSanitizerInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -425,6 +427,8 @@ class SignalementController extends AbstractController
         SuiviManager $suiviManager,
         EntityManagerInterface $entityManager,
         SignalementDesordresProcessor $signalementDesordresProcessor,
+        #[Autowire(service: 'html_sanitizer.sanitizer.app.message_sanitizer')]
+        HtmlSanitizerInterface $htmlSanitizer,
     ): RedirectResponse|Response {
         $signalement = $signalementRepository->findOneByCodeForPublic($code);
         if (!$signalement) {
@@ -475,7 +479,7 @@ class SignalementController extends AbstractController
         if (Suivi::POURSUIVRE_PROCEDURE === $suiviAuto) {
             $description = $user->getNomComplet().' ('.$type.') a indiqué vouloir poursuivre la procédure.';
             $suiviPoursuivreProcedure = $suiviManager->findOneBy([
-                'description' => $description,
+                'description' => $htmlSanitizer->sanitize($description),
                 'signalement' => $signalement,
             ]);
             if (null !== $suiviPoursuivreProcedure) {
