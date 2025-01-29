@@ -87,7 +87,7 @@ class BackBailleurController extends AbstractController
         }
         $em->remove($bailleur);
         $em->flush();
-        $this->addFlash('success', 'Le bailleur a bien été supprimée.');
+        $this->addFlash('success', 'Le bailleur a bien été supprimé.');
 
         return $this->redirectToRoute('back_bailleur_index');
     }
