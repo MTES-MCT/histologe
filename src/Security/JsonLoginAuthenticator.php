@@ -66,10 +66,7 @@ class JsonLoginAuthenticator extends AbstractAuthenticator
             }),
             new PasswordCredentials($password)
         );
-        $password = null;
-        $payload['password'] = null;
-        unset($password);
-        unset($payload['password']);
+        $password = $payload['password'] = null;
 
         return $passport;
     }

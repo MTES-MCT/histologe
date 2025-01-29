@@ -111,7 +111,6 @@ class UserManager extends AbstractManager
 
         $this->save($user);
         $password = null;
-        unset($password);
 
         return $user;
     }
