@@ -9,13 +9,17 @@ use App\Manager\SuiviManager;
 use App\Service\Intervention\InterventionDescriptionGenerator;
 use App\Service\Mailer\NotificationMailerType;
 use App\Service\Signalement\VisiteNotifier;
+use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
+use Symfony\Component\HtmlSanitizer\HtmlSanitizerInterface;
 
 class InterventionCreatedSubscriber implements EventSubscriberInterface
 {
     public function __construct(
         private readonly VisiteNotifier $visiteNotifier,
         private readonly SuiviManager $suiviManager,
+        #[Autowire(service: 'html_sanitizer.sanitizer.app.message_sanitizer')]
+        private readonly HtmlSanitizerInterface $htmlSanitizer,
     ) {
     }
 
@@ -43,7 +47,7 @@ class InterventionCreatedSubscriber implements EventSubscriberInterface
         $description = (string) InterventionDescriptionGenerator::generate($intervention, InterventionCreatedEvent::NAME);
         $foundSuivi = $this->suiviManager->findOneBy([
             'signalement' => $intervention->getSignalement(),
-            'description' => $description,
+            'description' => $this->htmlSanitizer->sanitize($description),
         ]);
 
         if (!$foundSuivi) {
