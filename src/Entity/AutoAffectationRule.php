@@ -53,8 +53,7 @@ class AutoAffectationRule implements EntityHistoryInterface
     #[AppAssert\ValidProfileDeclarant()]
     private string $profileDeclarant;
 
-    #[ORM\Column(length: 255, options: ['comment' => 'Value possible all, partner_list or an array of code insee'])]
-    #[Assert\NotBlank(message: 'Merci de renseigner les code insee des communes concernées.')]
+    #[ORM\Column(length: 255, options: ['comment' => 'Value possible empty or an array of code insee'])]
     #[Assert\Length(max: 255)]
     #[AppAssert\InseeToInclude()]
     private string $inseeToInclude;
@@ -292,14 +291,12 @@ class AutoAffectationRule implements EntityHistoryInterface
 
         $description .= ' Elle s\'applique ';
         switch ($this->getInseeToInclude()) {
-            case 'all':
-                $description .= 'à tous les logements du territoire';
-                break;
-            case 'partner_list':
+            case null:
+            case '':
                 $description .= 'aux logements situés dans le périmètre géographique du partenaire (codes insee et/ou zones)';
                 break;
             default:
-                $description .= 'aux logements situés dans les communes aux codes insee suivants : '.$this->getInseeToInclude();
+                $description .= 'aux logements situés dans le périmètre géographique du partenaire (codes insee et/ou zones), limités aux codes insee suivants : '.$this->getInseeToInclude();
                 break;
         }
         if ($this->getInseeToExclude()) {

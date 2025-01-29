@@ -76,12 +76,12 @@
                     <td>{{ autoaffectationrule.parc }}</td>
                     <td>{{ autoaffectationrule.allocataire }}</td>
                     <td>
-                        {% if autoaffectationrule.inseeToInclude is same as('all') or autoaffectationrule.inseeToInclude is same as('partner_list') %}
-                            {{ autoaffectationrule.inseeToInclude }}
-                        {% else %}
+                        {% if autoaffectationrule.inseeToInclude %}
                             {% for insee in autoaffectationrule.inseeToInclude|split(',') %}
                                 <div class="fr-badge fr-badge--blue-ecume fr-mb-1v">{{ insee }}</div>
                             {% endfor %}
+                        {% else %}
+                            /
                         {% endif %}
                     </td>
                     <td>

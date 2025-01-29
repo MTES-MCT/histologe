@@ -4,6 +4,7 @@ namespace App\Tests\Unit\Service;
 
 use App\Entity\Enum\ProfileDeclarant;
 use App\Entity\Enum\Qualification;
+use App\Entity\Partner;
 use App\Entity\Signalement;
 use App\Entity\SignalementQualification;
 use App\Manager\AffectationManager;
@@ -11,6 +12,7 @@ use App\Manager\SignalementManager;
 use App\Manager\SuiviManager;
 use App\Manager\UserManager;
 use App\Messenger\InterconnectionBus;
+use App\Repository\PartnerRepository;
 use App\Repository\SignalementRepository;
 use App\Service\Signalement\AutoAssigner;
 use Doctrine\ORM\EntityManagerInterface;
@@ -24,6 +26,7 @@ class AutoAssignerTest extends KernelTestCase
     private EntityManagerInterface $entityManager;
     private AffectationManager $affectationManager;
     private SignalementRepository $signalementRepository;
+    private PartnerRepository $partnerRepository;
     private SuiviManager|MockObject $suiviManager;
 
     protected function setUp(): void
@@ -32,6 +35,7 @@ class AutoAssignerTest extends KernelTestCase
         $this->entityManager = $kernel->getContainer()->get('doctrine')->getManager();
         $this->affectationManager = self::getContainer()->get(AffectationManager::class);
         $this->signalementRepository = $this->entityManager->getRepository(Signalement::class);
+        $this->partnerRepository = $this->entityManager->getRepository(Partner::class);
         $this->suiviManager = $this->createMock(SuiviManager::class);
     }
 
@@ -192,16 +196,16 @@ class AutoAssignerTest extends KernelTestCase
 
     public function testAutoAssignmentWithoutZoneWithoutInsee(): void
     {
-        // signalement 2025-01 au Cellier, 1 partenaire pour le bailleur social, pas de partenaire sur le code insee ou la zone
+        // signalement 2025-01 au Cellier, pas de partenaire sur le code insee ou la zone
         /** @var Signalement $signalement */
         $signalement = $this->signalementRepository->findOneBy(['reference' => '2025-01']);
         $signalement->setStatut(Signalement::STATUS_NEED_VALIDATION);
-        $this->suiviManager->expects($this->once())
+        $this->suiviManager->expects($this->never())
         ->method('createSuivi');
-        $this->suiviManager->expects($this->once())
+        $this->suiviManager->expects($this->never())
         ->method('persist');
-        $this->testHelper($signalement, 1, ['Partner Habitat 44']);
-        $this->assertEquals(Signalement::STATUS_ACTIVE, $signalement->getStatut());
+        $this->testHelper($signalement, 0, null);
+        $this->assertEquals(Signalement::STATUS_NEED_VALIDATION, $signalement->getStatut());
     }
 
     public function testAutoAssignmentProcedure(): void
@@ -239,6 +243,10 @@ class AutoAssignerTest extends KernelTestCase
 
     private function testHelper(Signalement $signalement, int $expectedCount, ?array $expectedPartnerNames = null)
     {
+        foreach ($signalement->getAffectations() as $affectation) {
+            $signalement->removeAffectation($affectation);
+        }
+
         /** @var SignalementManager|MockObject $signalementManager */
         $signalementManager = $this->createMock(SignalementManager::class);
         /** @var UserManager|MockObject $userManager */
@@ -256,6 +264,7 @@ class AutoAssignerTest extends KernelTestCase
             $userManager,
             $parameterBag,
             $esaboraBus,
+            $this->partnerRepository,
             $logger,
         );
 

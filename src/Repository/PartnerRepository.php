@@ -179,23 +179,57 @@ class PartnerRepository extends ServiceEntityRepository
      */
     public function findByLocalization(Signalement $signalement, bool $affected = true): array
     {
+        $queryData = $this->buildLocalizationQuery($signalement, $affected);
+
+        $resultSet = $this->getEntityManager()->getConnection()->executeQuery(
+            $queryData['sql'],
+            $queryData['params']
+        );
+
+        return $resultSet->fetchAllAssociative();
+    }
+
+    /**
+     * @throws Exception
+     */
+    public function findPartnersByLocalization(Signalement $signalement): array
+    {
+        $queryData = $this->buildLocalizationQuery($signalement, false); // Always use $affected = false
+
+        $resultSet = $this->getEntityManager()->getConnection()->executeQuery(
+            $queryData['sql'],
+            $queryData['params']
+        );
+        $partnerIds = array_column($resultSet->fetchAllAssociative(), 'id');
+
+        return $this->getEntityManager()->getRepository(Partner::class)->findBy(['id' => $partnerIds]);
+    }
+
+    /**
+     * Builds the SQL query and parameters for localization search.
+     *
+     * @throws Exception
+     */
+    private function buildLocalizationQuery(Signalement $signalement, bool $affected): array
+    {
         $operator = $affected ? 'IN' : 'NOT IN';
 
         $subquery = $this->getEntityManager()->getRepository(Affectation::class)->createQueryBuilder('a')
-        ->select('IDENTITY(a.partner)')
-        ->where('a.signalement = :signalement')
-        ->setParameter('signalement', $signalement);
+            ->select('IDENTITY(a.partner)')
+            ->where('a.signalement = :signalement')
+            ->setParameter('signalement', $signalement);
 
         $affectedPartners = $subquery->getQuery()->getSingleColumnResult();
-        $conn = $this->getEntityManager()->getConnection();
+
         $params = [
             'territory' => $signalement->getTerritory()->getId(),
             'insee' => '%'.$signalement->getInseeOccupant().'%',
             'lng' => $signalement->getGeoloc()['lng'] ?? 'notInZone',
             'lat' => $signalement->getGeoloc()['lat'] ?? 'notInZone',
         ];
+
         $clauseSubquery = '';
-        if (\count($affectedPartners) || 'IN' == $operator) {
+        if (\count($affectedPartners) || 'IN' === $operator) {
             if (0 === \count($affectedPartners)) {
                 $clauseSubquery = 'AND p.id '.$operator.' (null)';
             } else {
@@ -237,9 +271,10 @@ class PartnerRepository extends ServiceEntityRepository
                 '.$clauseSubquery.'
                 ORDER BY p.nom ASC';
 
-        $resultSet = $conn->executeQuery($sql, $params);
-
-        return $resultSet->fetchAllAssociative();
+        return [
+            'sql' => $sql,
+            'params' => $params,
+        ];
     }
 
     public function findPartnersWithQualification(Qualification $qualification, ?Territory $territory)

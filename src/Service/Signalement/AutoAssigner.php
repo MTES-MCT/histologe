@@ -13,6 +13,7 @@ use App\Manager\SignalementManager;
 use App\Manager\SuiviManager;
 use App\Manager\UserManager;
 use App\Messenger\InterconnectionBus;
+use App\Repository\PartnerRepository;
 use App\Specification\Affectation\AllocataireSpecification;
 use App\Specification\Affectation\CodeInseeSpecification;
 use App\Specification\Affectation\ParcSpecification;
@@ -37,6 +38,7 @@ class AutoAssigner
         private UserManager $userManager,
         private ParameterBagInterface $parameterBag,
         private InterconnectionBus $interconnectionBus,
+        private PartnerRepository $partnerRepository,
         private LoggerInterface $logger,
     ) {
     }
@@ -62,7 +64,7 @@ class AutoAssigner
         }
         $adminEmail = $this->parameterBag->get('user_system_email');
         $adminUser = $this->userManager->findOneBy(['email' => $adminEmail]);
-        $partners = $signalement->getTerritory()->getPartners();
+        $partners = $this->partnerRepository->findPartnersByLocalization($signalement);
         $assignablePartners = [];
 
         /** @var AutoAffectationRule $rule */

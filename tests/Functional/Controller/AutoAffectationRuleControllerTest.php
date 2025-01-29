@@ -52,7 +52,7 @@ class AutoAffectationRuleControllerTest extends WebTestCase
                 'auto_affectation_rule[profileDeclarant]' => 'occupant',
                 'auto_affectation_rule[parc]' => 'all',
                 'auto_affectation_rule[allocataire]' => 'oui',
-                'auto_affectation_rule[inseeToInclude]' => 'all',
+                'auto_affectation_rule[inseeToInclude]' => '',
                 'auto_affectation_rule[inseeToExclude]' => '',
                 'auto_affectation_rule[partnerToExclude]' => '',
             ]
@@ -77,7 +77,7 @@ class AutoAffectationRuleControllerTest extends WebTestCase
                 'auto_affectation_rule[profileDeclarant]' => 'occupant',
                 'auto_affectation_rule[parc]' => 'all',
                 'auto_affectation_rule[allocataire]' => 'oui',
-                'auto_affectation_rule[inseeToInclude]' => 'all',
+                'auto_affectation_rule[inseeToInclude]' => '',
                 'auto_affectation_rule[inseeToExclude]' => '',
                 'auto_affectation_rule[partnerToExclude]' => '',
             ]

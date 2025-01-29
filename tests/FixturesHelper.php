@@ -512,7 +512,7 @@ trait FixturesHelper
             ->setProfileDeclarant('all')
             ->setParc('prive')
             ->setAllocataire('oui')
-            ->setInseeToInclude('partner_list')
+            ->setInseeToInclude('')
             ->setInseeToExclude(null)
             ->setPartnerToExclude([])
             ->setStatus(AutoAffectationRule::STATUS_ACTIVE);

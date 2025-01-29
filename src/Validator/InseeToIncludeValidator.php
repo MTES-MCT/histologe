@@ -14,11 +14,15 @@ class InseeToIncludeValidator extends ConstraintValidator
             throw new UnexpectedTypeException($constraint, __NAMESPACE__.'\InseeToInclude');
         }
         /* @var InseeToInclude $constraint */
-        if (null === $value || '' === $value) {
+        if ('' === $value) {
             return;
         }
 
-        if (\in_array($value, ['all', 'partner_list'], true)) {
+        if (null === $value) {
+            $this->context->buildViolation($constraint->message)
+                ->setParameter('{{ value }}', 'null')
+                ->addViolation();
+
             return;
         }
 
