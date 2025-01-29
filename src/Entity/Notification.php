@@ -33,6 +33,7 @@ class Notification
     private ?Signalement $signalement;
 
     #[ORM\ManyToOne(targetEntity: Suivi::class)]
+    #[ORM\JoinColumn(onDelete: 'CASCADE')]
     private ?Suivi $suivi;
 
     #[ORM\Column(type: 'datetime_immutable')]

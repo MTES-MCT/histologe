@@ -28,7 +28,9 @@ use League\Flysystem\FilesystemOperator;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Console\Helper\ProgressBar;
 use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
+use Symfony\Component\HtmlSanitizer\HtmlSanitizerInterface;
 
 class SignalementImportLoader
 {
@@ -66,6 +68,8 @@ class SignalementImportLoader
         private SignalementQualificationUpdater $signalementQualificationUpdater,
         private FileManager $fileManager,
         private FilesystemOperator $fileStorage,
+        #[Autowire(service: 'html_sanitizer.sanitizer.app.message_sanitizer')]
+        private HtmlSanitizerInterface $htmlSanitizer,
     ) {
     }
 
@@ -259,7 +263,7 @@ class SignalementImportLoader
                 $description = trim(preg_replace(self::REGEX_DATE_FORMAT_CSV, '', $suivi));
 
                 $suivi = $this->suiviManager->findOneBy([
-                    'description' => $description,
+                    'description' => $this->htmlSanitizer->sanitize($description),
                     'createdBy' => $this->userSystem,
                     'signalement' => $signalement,
                 ]);
