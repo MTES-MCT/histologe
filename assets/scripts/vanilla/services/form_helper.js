@@ -1,3 +1,5 @@
+import * as Sentry from "@sentry/browser";
+
 Node.prototype.addEventListeners = function (eventNames, eventFunction) {
   for (const eventName of eventNames.split(' ')) { this.addEventListener(eventName, eventFunction) }
 }
@@ -97,8 +99,6 @@ forms.forEach((form) => {
           const finishSubmitBtn = document.querySelector('#form_finish_submit')
           request.open('POST', event.target.getAttribute('data-handle-url'))
           request.upload.addEventListener('progress', function (e) {
-            console.log('progress')
-            console.log(e)
             totalProgress.classList.remove('fr-hidden')
             finishSubmitBtn.disabled = true
             finishSubmitBtn.innerHTML = 'Téléversement en cours, veuillez patienter....'
@@ -112,8 +112,6 @@ forms.forEach((form) => {
             progress.value = percentCompleted
           })
           request.addEventListener('load', function (e) {
-            console.log('load')
-            console.log(e)
             event.target.parentElement.classList.remove('fr-icon-refresh-line');
             [preview, deleter].forEach(el => el?.classList?.remove('fr-hidden'))
             progress.value = 0
@@ -124,6 +122,8 @@ forms.forEach((form) => {
               resTextEl.innerText = jsonRes.error
               resTextEl.classList.remove('fr-hidden')
               resTextEl.classList.add('fr-text-label--red-marianne')
+              console.error(jsonRes.error)
+              Sentry.captureException(new Error(error))
             } else {
               resTextEl.innerText = jsonRes.titre
               resTextEl.classList.remove('fr-hidden')

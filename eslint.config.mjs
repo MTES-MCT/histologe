@@ -18,6 +18,7 @@ export default [
             "no-unused-expressions": "off",
             "vue/no-mutating-props": "off",
             "vue/no-reserved-component-names": "off",
+            "no-console": ["error", { "allow": ["warn", "error"] }]
         },
     },
 ]
