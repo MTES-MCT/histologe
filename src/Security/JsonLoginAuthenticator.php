@@ -51,7 +51,7 @@ class JsonLoginAuthenticator extends AbstractAuthenticator
             throw new AuthenticationException('E-mail ou mot de passe manquant.');
         }
 
-        return new Passport(
+        $passport = new Passport(
             new UserBadge($email, function (string $email) {
                 $user = $this->userRepository->findOneBy([
                     'email' => $email,
@@ -66,6 +66,9 @@ class JsonLoginAuthenticator extends AbstractAuthenticator
             }),
             new PasswordCredentials($password)
         );
+        $password = $payload['password'] = null;
+
+        return $passport;
     }
 
     /**

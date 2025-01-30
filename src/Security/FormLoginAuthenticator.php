@@ -47,7 +47,7 @@ class FormLoginAuthenticator extends AbstractLoginFormAuthenticator
 
         $request->getSession()->set(SecurityRequestAttributes::LAST_USERNAME, $email);
 
-        return new Passport(
+        $passport = new Passport(
             new UserBadge($email, function (string $email) {
                 return $this->userRepository->findOneBy(['email' => $email, 'statut' => User::STATUS_ACTIVE]);
             }),
@@ -57,6 +57,9 @@ class FormLoginAuthenticator extends AbstractLoginFormAuthenticator
                 new RememberMeBadge(),
             ]
         );
+        $request->request->remove('password');
+
+        return $passport;
     }
 
     public function onAuthenticationSuccess(Request $request, TokenInterface $token, string $firewallName): ?Response

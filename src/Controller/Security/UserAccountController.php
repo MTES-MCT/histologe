@@ -151,6 +151,7 @@ class UserAccountController extends AbstractController
             }
             $user = $userManager->resetPassword($user, $request->get('password'));
             $this->addFlash('success', 'Votre compte est maintenant activé, vous pouvez vous connecter');
+            $request->request->remove('password');
 
             return $this->redirectToRoute('app_login');
         }

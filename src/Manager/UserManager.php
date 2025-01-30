@@ -110,6 +110,7 @@ class UserManager extends AbstractManager
             ->setTokenExpiredAt(null);
 
         $this->save($user);
+        $password = null;
 
         return $user;
     }

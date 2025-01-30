@@ -305,6 +305,8 @@ class ProfilController extends AbstractController
                 return $this->redirectToRoute('back_profil', [], Response::HTTP_SEE_OTHER);
             }
             $user = $userManager->resetPassword($user, $password);
+            $payload['password'] = $payload['password-repeat'] = null;
+            $password = $passwordRepeat = $oldPassword = null;
 
             $notificationMailerRegistry->send(
                 new NotificationMail(
