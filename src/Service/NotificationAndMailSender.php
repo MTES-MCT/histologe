@@ -225,6 +225,7 @@ class NotificationAndMailSender
         // - the user must be active and not an admin
         // - if entity is Affectation
         // - if entity is Suivi: we check that the partner of the user is different from the partner of the user who created the suivi
+        $suiviPartner = null;
         if (!empty($this->suivi)) {
             $suiviPartner = $this->suivi->getCreatedBy()?->getPartnerInTerritory($this->suivi->getSignalement()->getTerritory());
         }
