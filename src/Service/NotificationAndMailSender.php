@@ -56,9 +56,9 @@ class NotificationAndMailSender
         $this->send($mailerType, $recipients);
     }
 
-    public function sendNewSuiviToAdminsAndPartners(Suivi $suivi): void
+    public function sendNewSuiviToAdminsAndPartners(Suivi $suivi, bool $sendEmail): void
     {
-        $mailerType = NotificationMailerType::TYPE_NEW_COMMENT_BACK;
+        $mailerType = $sendEmail ? NotificationMailerType::TYPE_NEW_COMMENT_BACK : null;
         $this->suivi = $suivi;
         $this->signalement = $suivi->getSignalement();
         $territory = $this->signalement->getTerritory();
@@ -102,7 +102,7 @@ class NotificationAndMailSender
         }
     }
 
-    private function send(NotificationMailerType $notificationMailerType, ArrayCollection $recipients, bool $isInAppNotificationCreated = false): void
+    private function send(?NotificationMailerType $notificationMailerType, ArrayCollection $recipients, bool $isInAppNotificationCreated = false): void
     {
         if ($isInAppNotificationCreated) {
             foreach ($recipients as $user) {
@@ -113,7 +113,9 @@ class NotificationAndMailSender
             $this->entityManager->flush();
         }
 
-        $this->sendMail($recipients, $notificationMailerType);
+        if ($notificationMailerType) {
+            $this->sendMail($recipients, $notificationMailerType);
+        }
     }
 
     private function createInAppNotification($user): void
@@ -223,13 +225,12 @@ class NotificationAndMailSender
         // - the user must be active and not an admin
         // - if entity is Affectation
         // - if entity is Suivi: we check that the partner of the user is different from the partner of the user who created the suivi
-        // TODO: activate when suivi is out of ActivityListener
-        /*if ($entity instanceof Suivi) {
-            $suiviPartner = $entity->getCreatedBy()?->getPartnerInTerritory($entity->getSignalement()->getTerritory());
-        }*/
+        if (!empty($this->suivi)) {
+            $suiviPartner = $this->suivi->getCreatedBy()?->getPartnerInTerritory($this->suivi->getSignalement()->getTerritory());
+        }
 
         return User::STATUS_ACTIVE === $user->getStatut()
             && !$user->isSuperAdmin() && !$user->isTerritoryAdmin()
-            && (!empty($this->affectation)/* || ($entity->getCreatedBy() && $partner !== $suiviPartner) */);
+            && (!empty($this->affectation) || ($this->suivi->getCreatedBy() && $partner !== $suiviPartner));
     }
 }
