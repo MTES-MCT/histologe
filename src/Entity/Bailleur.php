@@ -26,7 +26,7 @@ class Bailleur
 
     #[ORM\OneToMany(mappedBy: 'bailleur', targetEntity: Signalement::class)]
     #[Ignore]
-    private Collection $signalements; // @phpstan-ignore-line
+    private Collection $signalements;
 
     #[ORM\OneToMany(mappedBy: 'bailleur', targetEntity: Partner::class)]
     #[Ignore]
@@ -134,5 +134,13 @@ class Bailleur
     public function getPartners(): Collection
     {
         return $this->partners;
+    }
+
+    /**
+     * @return Collection<int, Signalement>
+     */
+    public function getSignalements(): Collection
+    {
+        return $this->signalements;
     }
 }
