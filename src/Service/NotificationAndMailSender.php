@@ -86,7 +86,7 @@ class NotificationAndMailSender
         $this->suivi = $suivi;
         $this->signalement = $suivi->getSignalement();
         $recipients = new ArrayCollection($this->signalement->getMailUsagers());
-        if (!$recipients->isEmpty() && Signalement::STATUS_CLOSED !== $this->signalement->getStatut()) {
+        if (!$recipients->isEmpty()) {
             $recipients->removeElement($suivi->getCreatedBy()?->getEmail());
             foreach ($recipients as $recipient) {
                 $this->notificationMailerRegistry->send(

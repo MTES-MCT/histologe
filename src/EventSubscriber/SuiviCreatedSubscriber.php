@@ -31,8 +31,13 @@ class SuiviCreatedSubscriber implements EventSubscriberInterface
             return;
         }
 
-        if (Suivi::CONTEXT_NOTIFY_USAGER_ONLY !== $suivi->getContext()
-                && Signalement::STATUS_CLOSED !== $suivi->getSignalement()->getStatut()) {
+        if (Signalement::STATUS_DRAFT === $suivi->getSignalement()->getStatut()
+                || Signalement::STATUS_CLOSED === $suivi->getSignalement()->getStatut()
+                || Signalement::STATUS_ARCHIVED === $suivi->getSignalement()->getStatut()) {
+            return;
+        }
+
+        if (Suivi::CONTEXT_NOTIFY_USAGER_ONLY !== $suivi->getContext()) {
             $this->notificationAndMailSender->sendNewSuiviToAdminsAndPartners($suivi);
         }
 
