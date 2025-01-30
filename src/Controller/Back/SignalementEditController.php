@@ -296,6 +296,9 @@ class SignalementEditController extends AbstractController
         return $this->json($response, $response['code']);
     }
 
+    /**
+     * @throws \DateMalformedStringException
+     */
     #[Route('/{uuid:signalement}/edit-situation-foyer', name: 'back_signalement_edit_situation_foyer', methods: 'POST')]
     public function editSituationFoyer(
         Signalement $signalement,
