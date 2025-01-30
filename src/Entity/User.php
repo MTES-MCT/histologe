@@ -178,6 +178,12 @@ class User implements UserInterface, EntityHistoryInterface, PasswordAuthenticat
     #[ORM\OneToMany(mappedBy: 'user', targetEntity: UserPartner::class, orphanRemoval: true)]
     private Collection $userPartners;
 
+    /**
+     * @var Collection<int, PopNotification>
+     */
+    #[ORM\OneToMany(mappedBy: 'user', targetEntity: PopNotification::class, orphanRemoval: true)]
+    private Collection $popNotifications;
+
     public function __construct()
     {
         $this->suivis = new ArrayCollection();
@@ -189,6 +195,7 @@ class User implements UserInterface, EntityHistoryInterface, PasswordAuthenticat
         $this->signalementUsagerOccupants = new ArrayCollection();
         $this->apiUserTokens = new ArrayCollection();
         $this->userPartners = new ArrayCollection();
+        $this->popNotifications = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -835,6 +842,36 @@ class User implements UserInterface, EntityHistoryInterface, PasswordAuthenticat
             // set the owning side to null (unless already changed)
             if ($apiUserToken->getOwnedBy() === $this) {
                 $apiUserToken->setOwnedBy(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, PopNotification>
+     */
+    public function getPopNotifications(): Collection
+    {
+        return $this->popNotifications;
+    }
+
+    public function addPopNotification(PopNotification $popNotification): static
+    {
+        if (!$this->popNotifications->contains($popNotification)) {
+            $this->popNotifications->add($popNotification);
+            $popNotification->setUser($this);
+        }
+
+        return $this;
+    }
+
+    public function removePopNotification(PopNotification $popNotification): static
+    {
+        if ($this->popNotifications->removeElement($popNotification)) {
+            // set the owning side to null (unless already changed)
+            if ($popNotification->getUser() === $this) {
+                $popNotification->setUser(null);
             }
         }
 

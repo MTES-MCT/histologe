@@ -45,3 +45,24 @@ function handleAcceptButton () {
 acceptCguBoCheckbox?.addEventListener('click', handleAcceptCheck)
 acceptCguBoButton?.addEventListener('click', handleAcceptButton)
 modalCguBo?.addEventListener('dsfr.disclose', handleModalDisclose)
+
+document.addEventListener('DOMContentLoaded', () => {
+  const modalPopNotification = document.getElementById('fr-modal-pop-notification')
+  if(modalPopNotification){
+    modalPopNotification.addEventListener('dsfr.conceal', (e) => {
+        const deletePopNotificationUrl = modalPopNotification.dataset.deleteUrl;
+        console.log(e)
+        console.log(deletePopNotificationUrl)
+        //fetch(deletePopNotificationUrl, {})
+    });
+  }
+
+  if(modalCguBo && modalPopNotification){
+    modalCguBo.addEventListener('dsfr.conceal', (e) => {
+      dsfr(modalPopNotification).modal.disclose()
+    });
+  }else if(modalPopNotification){
+    dsfr(modalPopNotification).modal.disclose()
+  }
+});
+
