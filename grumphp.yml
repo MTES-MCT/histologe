@@ -4,14 +4,6 @@ grumphp:
         enforce_capitalized_subject: false
         matchers:
            must contain github issue number: '/#(\d+)$/'
-      git_blacklist:
-        keywords:
-          - 'var_dump('
-          - 'dump('
-          - ' dd('
-          - ';dd('
-          - 'die('
-          - 'exit('
       yamllint:
         parse_custom_tags: true
       phpstan: ~

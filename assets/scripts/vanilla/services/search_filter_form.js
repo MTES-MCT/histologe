@@ -30,7 +30,6 @@ const removeBadge = (badge) => {
   select.querySelector(`option[value="${val}"]`)?.classList?.remove('fr-hidden')
   input?.remove()
   const badges = badge.parentElement.querySelectorAll('.fr-badge[data-value]').length !== 1
-  console.log(badge.parentElement.querySelectorAll('.fr-badge[data-value]').length)
   if (!badges) {
     badge?.parentElement?.querySelector('.fr-badge:not([data-value])')?.classList?.remove('fr-hidden')
     if (select.tagName === 'SELECT') { select.options[0].selected = true }
