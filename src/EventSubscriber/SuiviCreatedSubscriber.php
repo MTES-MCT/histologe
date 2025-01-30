@@ -45,6 +45,7 @@ class SuiviCreatedSubscriber implements EventSubscriberInterface
 
         if ($suivi->getSendMail()
                 && $suivi->getIsPublic()
+                && Signalement::STATUS_CLOSED !== $suivi->getSignalement()->getStatut()
                 && Signalement::STATUS_REFUSED !== $suivi->getSignalement()->getStatut()) {
             $this->notificationAndMailSender->sendNewSuiviToUsagers($suivi);
         }
