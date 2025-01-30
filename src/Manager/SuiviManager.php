@@ -42,18 +42,22 @@ class SuiviManager extends Manager
         int $type,
         bool $isPublic = false,
         ?User $user = null,
+        ?\DateTimeImmutable $createdAt = null,
         ?string $context = null,
         bool $sendMail = true,
         bool $flush = true,
     ): Suivi {
         $suivi = (new Suivi())
-        ->setCreatedBy($user)
-        ->setSignalement($signalement)
-        ->setDescription($this->htmlSanitizer->sanitize($description))
-        ->setType($type)
-        ->setIsPublic($isPublic)
-        ->setContext($context)
-        ->setSendMail($sendMail);
+            ->setCreatedBy($user)
+            ->setSignalement($signalement)
+            ->setDescription($this->htmlSanitizer->sanitize($description))
+            ->setType($type)
+            ->setIsPublic($isPublic)
+            ->setContext($context)
+            ->setSendMail($sendMail);
+        if (!empty($createdAt)) {
+            $suivi->setCreatedAt($createdAt);
+        }
         if ($flush) {
             $this->save($suivi);
         }

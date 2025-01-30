@@ -63,20 +63,23 @@ class LoadSuiviData extends Fixture implements OrderedFixtureInterface
     public function loadSuivi(ObjectManager $manager, array $row): void
     {
         $signalement = $this->signalementRepository->findOneBy(['reference' => $row['signalement']]);
-        $suivi = $this->suiviManager->createSuivi(
-            signalement : $signalement,
-            description : $row['description'],
-            type : $row['type'],
-            isPublic : $row['is_public'],
-            flush: false
-        );
-        $suivi->setCreatedAt(
-            isset($row['created_at']) ? new \DateTimeImmutable($row['created_at']) :
-            (Suivi::TYPE_USAGER_POST_CLOTURE === $row['type'] ? $signalement->getClosedAt()->modify('+3 days') : new \DateTimeImmutable())
-        );
-        if (isset($row['created_by'])) {
-            $suivi->setCreatedBy($this->userRepository->findOneBy(['email' => $row['created_by']]));
+        $createdBy = isset($row['created_by']) ? $this->userRepository->findOneBy(['email' => $row['created_by']]) : null;
+        $createdAt = new \DateTimeImmutable();
+        if (isset($row['created_at'])) {
+            $createdAt = new \DateTimeImmutable($row['created_at']);
+        } elseif (Suivi::TYPE_USAGER_POST_CLOTURE === $row['type']) {
+            $createdAt = $signalement->getClosedAt()->modify('+3 days');
         }
+
+        $suivi = $this->suiviManager->createSuivi(
+            signalement: $signalement,
+            description: $row['description'],
+            type: $row['type'],
+            isPublic: $row['is_public'],
+            user: $createdBy,
+            createdAt: $createdAt,
+            flush: false,
+        );
         $manager->persist($suivi);
     }
 
