@@ -209,17 +209,17 @@ class SignalementListControllerTest extends WebTestCase
 
     public function provideFilterSearchMultiTerritorAdminPartner(): \Generator
     {
-        yield 'Search All' => [['isImported' => 'oui'], 6];
-        yield 'Search by Commune' => [['communes' => ['gex', 'marseille'], 'isImported' => 'oui'], 6];
+        yield 'Search All' => [['isImported' => 'oui'], 7];
+        yield 'Search by Commune' => [['communes' => ['gex', 'marseille'], 'isImported' => 'oui'], 7];
         yield 'Search by Territory 1' => [['territoire' => '1', 'isImported' => 'oui'], 1];
-        yield 'Search by Territory 13' => [['territoire' => '13', 'isImported' => 'oui'], 5];
+        yield 'Search by Territory 13' => [['territoire' => '13', 'isImported' => 'oui'], 6];
         yield 'Search by Status En cours' => [['isImported' => 'oui', 'status' => 'en_cours'], 3];
         yield 'Search by Status En cours on Territory 1' => [['territoire' => '1', 'isImported' => 'oui', 'status' => 'en_cours'], 0];
         yield 'Search by Status En cours on Territory 13' => [['territoire' => '13', 'isImported' => 'oui', 'status' => 'en_cours'], 3];
-        yield 'Search by Status Fermé' => [['isImported' => 'oui', 'status' => 'ferme'], 2];
+        yield 'Search by Status Fermé' => [['isImported' => 'oui', 'status' => 'ferme'], 3];
         yield 'Search by Status Fermé on Territory 1' => [['territoire' => '1', 'isImported' => 'oui', 'status' => 'ferme'], 1];
-        yield 'Search by Status Fermé on Territory 13' => [['territoire' => '13', 'isImported' => 'oui', 'status' => 'ferme'], 1];
-        yield 'Search by Sans suivi in territory 13' => [['isImported' => 'oui', 'sansSuiviPeriode' => 30, 'territoire' => '13'], 1];
+        yield 'Search by Status Fermé on Territory 13' => [['territoire' => '13', 'isImported' => 'oui', 'status' => 'ferme'], 2];
+        yield 'Search by Sans suivi in territory 13' => [['isImported' => 'oui', 'sansSuiviPeriode' => 30, 'territoire' => '13'], 2];
     }
 
     /**

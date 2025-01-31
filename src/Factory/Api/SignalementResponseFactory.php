@@ -3,6 +3,7 @@
 namespace App\Factory\Api;
 
 use App\Dto\Api\Model\Adresse;
+use App\Dto\Api\Model\Affectation as AffectationModel;
 use App\Dto\Api\Model\Desordre;
 use App\Dto\Api\Model\Intervention;
 use App\Dto\Api\Model\Personne;
@@ -61,8 +62,13 @@ readonly class SignalementResponseFactory
         $signalementResponse->typeDeclarant = $signalement->getProfileDeclarant();
         $signalementResponse->description = $signalement->getDetails();
 
-        $signalementResponse->statutAffectation = AffectationStatus::mapNewStatus($affectation->getStatut());
-        $signalementResponse->dateAffectation = $affectation->getCreatedAt()->format(\DATE_ATOM);
+        $signalementResponse->affectation = new AffectationModel();
+        $signalementResponse->affectation->uuid = $affectation->getUuid();
+        $signalementResponse->affectation->statut = AffectationStatus::mapNewStatus($affectation->getStatut());
+        $signalementResponse->affectation->dateAffectation = $affectation->getCreatedAt()->format(\DATE_ATOM);
+        $signalementResponse->affectation->dateAcceptation = $affectation->getAnsweredAt()?->format(\DATE_ATOM);
+        $signalementResponse->affectation->motifCloture = $affectation->getMotifCloture();
+        $signalementResponse->affectation->motifRefus = $affectation->getMotifRefus();
 
         // infos logement
         $signalementResponse->natureLogement = $signalement->getNatureLogement();

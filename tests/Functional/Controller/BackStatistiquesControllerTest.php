@@ -68,7 +68,7 @@ class BackStatistiquesControllerTest extends WebTestCase
             ['result' => 0, 'label' => 'average_criticite_filtered'],
         ]];
         yield 'Admin partenaire multi territories' => ['back_statistiques_filter', [], self::USER_ADMIN_PARTNER_MULTI_TERRITORIES, [
-            ['result' => 5, 'label' => 'count_signalement'],
+            ['result' => 6, 'label' => 'count_signalement'],
             ['result' => 0, 'label' => 'count_signalement_refuses'],
             ['result' => 0, 'label' => 'count_signalement_archives'],
         ]];

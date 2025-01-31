@@ -11,15 +11,23 @@ use Symfony\Component\Security\Core\User\UserInterface;
 
 class AffectationVoter extends Voter
 {
-    public const SEE = 'AFFECTATION_SEE';
-    public const TOGGLE = 'AFFECTATION_TOGGLE';
-    public const ANSWER = 'AFFECTATION_ANSWER';
-    public const CLOSE = 'AFFECTATION_CLOSE';
-    public const REOPEN = 'AFFECTATION_REOPEN';
+    public const string SEE = 'AFFECTATION_SEE';
+    public const string TOGGLE = 'AFFECTATION_TOGGLE';
+    public const string ANSWER = 'AFFECTATION_ANSWER';
+    public const string CLOSE = 'AFFECTATION_CLOSE';
+    public const string REOPEN = 'AFFECTATION_REOPEN';
+    public const string UPDATE_STATUT = 'AFFECTATION_UPDATE_STATUS';
+
+    private const array VALID_WORKFLOW_STATUT = [
+        Affectation::STATUS_WAIT => [Affectation::STATUS_ACCEPTED, Affectation::STATUS_REFUSED],
+        Affectation::STATUS_ACCEPTED => [Affectation::STATUS_CLOSED],
+        Affectation::STATUS_REFUSED => [Affectation::STATUS_ACCEPTED],
+        Affectation::STATUS_CLOSED => [Affectation::STATUS_WAIT],
+    ];
 
     protected function supports(string $attribute, $subject): bool
     {
-        return \in_array($attribute, [self::SEE, self::TOGGLE, self::ANSWER, self::CLOSE, self::REOPEN])
+        return \in_array($attribute, [self::SEE, self::TOGGLE, self::ANSWER, self::CLOSE, self::REOPEN, self::UPDATE_STATUT])
             && ($subject instanceof Affectation || $subject instanceof Signalement);
     }
 
@@ -37,11 +45,12 @@ class AffectationVoter extends Voter
             self::ANSWER => $this->canAnswer($subject, $user),
             self::CLOSE => $this->canClose($subject, $user),
             self::REOPEN => $this->canReopen($subject, $user),
+            self::UPDATE_STATUT => $this->canUpdateStatut($subject, $user),
             default => false,
         };
     }
 
-    private function canSee(Signalement $signalement, User $user)
+    private function canSee(Signalement $signalement, User $user): bool
     {
         return (
             $user->isSuperAdmin()
@@ -51,7 +60,7 @@ class AffectationVoter extends Voter
             && Signalement::STATUS_NEED_VALIDATION !== $signalement->getStatut();
     }
 
-    private function canToggle(Signalement $signalement, User $user)
+    private function canToggle(Signalement $signalement, User $user): bool
     {
         return (
             $user->isSuperAdmin()
@@ -74,5 +83,15 @@ class AffectationVoter extends Voter
     private function canReopen(Affectation $affectation, User $user): bool
     {
         return $this->canAnswer($affectation, $user) && Affectation::STATUS_CLOSED === $affectation->getStatut();
+    }
+
+    private function canUpdateStatut(Affectation $affectation, User $user): bool
+    {
+        $newStatut = $affectation->getNextStatut();
+        $previousStatut = $affectation->getStatut();
+        $canUpdateStatut = isset(self::VALID_WORKFLOW_STATUT[$previousStatut])
+            && in_array($newStatut, self::VALID_WORKFLOW_STATUT[$previousStatut], true);
+
+        return $this->canAnswer($affectation, $user) && $canUpdateStatut;
     }
 }

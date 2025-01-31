@@ -2,28 +2,25 @@
 
 namespace App\EventSubscriber;
 
-use App\Entity\Affectation;
-use App\Entity\Partner;
 use App\Entity\Signalement;
 use App\Entity\Suivi;
 use App\Entity\User;
 use App\Event\SignalementClosedEvent;
 use App\Manager\SignalementManager;
 use App\Manager\SuiviManager;
-use App\Repository\SignalementRepository;
 use App\Service\Mailer\NotificationMail;
 use App\Service\Mailer\NotificationMailerRegistry;
 use App\Service\Mailer\NotificationMailerType;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
-class SignalementClosedSubscriber implements EventSubscriberInterface
+readonly class SignalementClosedSubscriber implements EventSubscriberInterface
 {
     public function __construct(
-        private readonly NotificationMailerRegistry $notificationMailerRegistry,
-        private readonly SignalementManager $signalementManager,
-        private readonly SuiviManager $suiviManager,
-        private readonly Security $security,
+        private NotificationMailerRegistry $notificationMailerRegistry,
+        private SignalementManager $signalementManager,
+        private SuiviManager $suiviManager,
+        private Security $security,
     ) {
     }
 
@@ -44,11 +41,11 @@ class SignalementClosedSubscriber implements EventSubscriberInterface
 
         if ($signalement instanceof Signalement) {
             $suivi = $this->suiviManager->createSuivi(
-                user : $user,
-                signalement : $signalement,
-                description : SuiviManager::buildDescriptionClotureSignalement($params),
-                type : Suivi::TYPE_PARTNER,
+                signalement: $signalement,
+                description: SuiviManager::buildDescriptionClotureSignalement($params),
+                type: Suivi::TYPE_PARTNER,
                 isPublic: '1' == $params['suivi_public'],
+                user: $user,
             );
 
             $signalement
@@ -59,22 +56,6 @@ class SignalementClosedSubscriber implements EventSubscriberInterface
                 $this->sendMailToUsager($signalement);
             }
             $this->sendMailToPartners($signalement);
-        }
-
-        if ($affectation instanceof Affectation) {
-            $signalement = $affectation->getSignalement();
-            $suivi = $this->suiviManager->createSuivi(
-                user : $user,
-                signalement : $signalement,
-                description : SuiviManager::buildDescriptionClotureSignalement($params),
-                type : Suivi::TYPE_PARTNER,
-            );
-
-            $signalement->addSuivi($suivi);
-            $this->sendMailToPartner(
-                signalement: $signalement,
-                partnerToExclude: $user->getPartnerInTerritoryOrFirstOne($signalement->getTerritory())
-            );
         }
 
         $this->signalementManager->save($signalement);
@@ -108,29 +89,6 @@ class SignalementClosedSubscriber implements EventSubscriberInterface
                 to: $sendTo,
                 territory: $signalement->getTerritory(),
                 signalement: $signalement
-            )
-        );
-    }
-
-    private function sendMailToPartner(Signalement $signalement, ?Partner $partnerToExclude = null)
-    {
-        /** @var SignalementRepository $signalementRepository */
-        $signalementRepository = $this->signalementManager->getRepository();
-        $sendTo = $signalementRepository->findUsersPartnerEmailAffectedToSignalement(
-            $signalement->getId(),
-            $partnerToExclude
-        );
-
-        if (empty($sendTo)) {
-            return;
-        }
-
-        $this->notificationMailerRegistry->send(
-            new NotificationMail(
-                type: NotificationMailerType::TYPE_SIGNALEMENT_CLOSED_TO_PARTNER,
-                to: $sendTo,
-                territory: $signalement->getTerritory(),
-                signalement: $signalement,
             )
         );
     }

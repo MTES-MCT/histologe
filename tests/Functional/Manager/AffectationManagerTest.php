@@ -16,7 +16,7 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 class AffectationManagerTest extends KernelTestCase
 {
-    private const REF_SIGNALEMENT = '2022-8';
+    private const string REF_SIGNALEMENT = '2022-8';
     private ManagerRegistry $managerRegistry;
     private SuiviManager $suiviManager;
     private LoggerInterface $logger;
@@ -90,6 +90,7 @@ class AffectationManagerTest extends KernelTestCase
             $affectationAccepted,
             $user,
             MotifCloture::tryFrom('NON_DECENCE'),
+            null,
             true
         );
 

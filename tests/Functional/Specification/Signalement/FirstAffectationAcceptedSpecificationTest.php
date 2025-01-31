@@ -41,7 +41,6 @@ class FirstAffectationAcceptedSpecificationTest extends KernelTestCase
 
         $firstAffectationAcceptedSpecification = new FirstAffectationAcceptedSpecification($this->suiviRepository);
         $canAddSuiviFirstAffectation = $firstAffectationAcceptedSpecification->isSatisfiedBy(
-            $signalement,
             $affectation
         );
 
@@ -72,7 +71,6 @@ class FirstAffectationAcceptedSpecificationTest extends KernelTestCase
 
         $firstAffectationAcceptedSpecification = new FirstAffectationAcceptedSpecification($this->suiviRepository);
         $canAddSuiviFirstAffectation = $firstAffectationAcceptedSpecification->isSatisfiedBy(
-            $signalement,
             $affectation
         );
 

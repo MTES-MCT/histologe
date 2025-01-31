@@ -204,11 +204,11 @@ class SignalementActionController extends AbstractController
             }
             $signalement->setStatut(Signalement::STATUS_ACTIVE);
             $suiviManager->createSuivi(
-                user: $user,
                 signalement: $signalement,
                 description: 'Signalement rouvert pour '.$reopenFor,
                 type: Suivi::TYPE_AUTO,
                 isPublic: '1' === $request->get('publicSuivi'),
+                user: $user,
             );
             $this->addFlash('success', 'Signalement rouvert avec succès !');
         } else {

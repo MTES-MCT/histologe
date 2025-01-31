@@ -68,10 +68,10 @@ class EsaboraManager
         $description = $this->updateStatusFor($affectation, $adminUser, $dossierResponse);
         if (!empty($description)) {
             $this->suiviManager->createSuivi(
-                user : $adminUser,
                 signalement: $signalement,
                 description: 'Signalement <b>'.$description.'</b> par '.$affectation->getPartner()->getNom(),
                 type: EsaboraStatus::ESABORA_WAIT->value === $dossierResponse->getSasEtat() ? Suivi::TYPE_TECHNICAL : Suivi::TYPE_AUTO,
+                user: $adminUser,
             );
         }
     }
