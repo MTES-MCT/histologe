@@ -268,6 +268,7 @@ class PartnerController extends AbstractController
         WorkflowInterface $interventionPlanningStateMachine,
         InterventionManager $interventionManager,
         AffectationManager $affectationManager,
+        PopNotificationManager $popNotificationManager,
     ): Response {
         $partnerId = $request->request->get('partner_id');
         /** @var ?Partner $partner */
@@ -285,6 +286,7 @@ class PartnerController extends AbstractController
                 if ($user->getUserPartners()->count() > 1) {
                     foreach ($user->getUserPartners() as $userPartner) {
                         if ($userPartner->getPartner()->getId() === $partner->getId()) {
+                            $popNotificationManager->createOrUpdatePopNotification($user, 'removePartner', $partner);
                             $entityManager->remove($userPartner);
                             break;
                         }
