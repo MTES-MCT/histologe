@@ -46,23 +46,26 @@ acceptCguBoCheckbox?.addEventListener('click', handleAcceptCheck)
 acceptCguBoButton?.addEventListener('click', handleAcceptButton)
 modalCguBo?.addEventListener('dsfr.disclose', handleModalDisclose)
 
-document.addEventListener('DOMContentLoaded', () => {
-  const modalPopNotification = document.getElementById('fr-modal-pop-notification')
-  if(modalPopNotification){
-    modalPopNotification.addEventListener('dsfr.conceal', (e) => {
-        const deletePopNotificationUrl = modalPopNotification.dataset.deleteUrl;
-        console.log(e)
-        console.log(deletePopNotificationUrl)
-        //fetch(deletePopNotificationUrl, {})
-    });
-  }
+const modalPopNotification = document.getElementById('fr-modal-pop-notification')
+if(modalPopNotification){
+  //prevent error dsfr is not defined or null
+  const checkDsfrInterval = setInterval(() => {
+    if (typeof dsfr !== 'undefined' && dsfr !== null) {
+      clearInterval(checkDsfrInterval);
 
-  if(modalCguBo && modalPopNotification){
-    modalCguBo.addEventListener('dsfr.conceal', (e) => {
-      dsfr(modalPopNotification).modal.disclose()
-    });
-  }else if(modalPopNotification){
-    dsfr(modalPopNotification).modal.disclose()
-  }
-});
+        modalPopNotification.addEventListener('dsfr.conceal', (e) => {
+            const deletePopNotificationUrl = modalPopNotification.dataset.deleteUrl;
+            fetch(deletePopNotificationUrl, {})
+        });
+
+      if (modalCguBo && modalPopNotification) {
+        modalCguBo.addEventListener('dsfr.conceal', (e) => {
+          dsfr(modalPopNotification).modal.disclose();
+        });
+      } else if (modalPopNotification) {
+        dsfr(modalPopNotification).modal.disclose();
+      }
+    }
+  }, 100);
+}
 

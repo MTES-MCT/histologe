@@ -97,7 +97,7 @@
     {% endif %}
 
     {% if app.user.popNotifications|length %}
-            {{ render(controller('App\\Controller\\Back\\PopNotificationController::show')) }}
+        {{ render(controller('App\\Controller\\Back\\PopNotificationController::show')) }}
     {% endif %}
 
 {% endblock %}
