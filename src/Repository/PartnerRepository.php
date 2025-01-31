@@ -192,7 +192,7 @@ class PartnerRepository extends ServiceEntityRepository
     /**
      * @throws Exception
      */
-    public function findPartnersByLocalization(Signalement $signalement): array
+    public function findPartnersByLocalization(Signalement $signalement, $addAffectedPartner = false): array
     {
         $queryData = $this->buildLocalizationQuery($signalement, false); // Always use $affected = false
 
@@ -201,6 +201,14 @@ class PartnerRepository extends ServiceEntityRepository
             $queryData['params']
         );
         $partnerIds = array_column($resultSet->fetchAllAssociative(), 'id');
+        if ($addAffectedPartner) {
+            $queryData = $this->buildLocalizationQuery($signalement, true);
+            $resultSet = $this->getEntityManager()->getConnection()->executeQuery(
+                $queryData['sql'],
+                $queryData['params']
+            );
+            $partnerIds = array_merge($partnerIds, array_column($resultSet->fetchAllAssociative(), 'id'));
+        }
 
         return $this->getEntityManager()->getRepository(Partner::class)->findBy(['id' => $partnerIds]);
     }

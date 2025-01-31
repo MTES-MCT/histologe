@@ -43,14 +43,14 @@ class AutoAssigner
     ) {
     }
 
-    public function assign(Signalement $signalement): void
+    public function assign(Signalement $signalement, $simulation = false): array
     {
         $this->countAffectations = 0;
         $autoAffectationRules = $signalement->getTerritory()->getAutoAffectationRules()->filter(function (AutoAffectationRule $autoAffectationRule) {
             return AutoAffectationRule::STATUS_ACTIVE === $autoAffectationRule->getStatus();
         });
         if ($autoAffectationRules->isEmpty()) {
-            return;
+            return [];
         }
         if (empty($signalement->getGeoloc())) {
             $logMessage = \sprintf(
@@ -60,11 +60,11 @@ class AutoAssigner
             $this->logger->info($logMessage);
             \Sentry\captureMessage($logMessage);
 
-            return;
+            return [];
         }
         $adminEmail = $this->parameterBag->get('user_system_email');
         $adminUser = $this->userManager->findOneBy(['email' => $adminEmail]);
-        $partners = $this->partnerRepository->findPartnersByLocalization($signalement);
+        $partners = $this->partnerRepository->findPartnersByLocalization($signalement, $simulation);
         $assignablePartners = [];
 
         /** @var AutoAffectationRule $rule */
@@ -90,11 +90,14 @@ class AutoAssigner
             }
         }
         $assignablePartners = array_values($assignablePartners);
-        if (!empty($assignablePartners)) {
+
+        if (!$simulation && !empty($assignablePartners)) {
             $this->activateSignalement($signalement);
             $this->createSuivi($signalement, $adminUser);
             $this->assignPartners($signalement, $adminUser, $assignablePartners);
         }
+
+        return $assignablePartners;
     }
 
     private function activateSignalement(Signalement $signalement): void
