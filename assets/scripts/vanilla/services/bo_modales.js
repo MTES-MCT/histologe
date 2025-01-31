@@ -58,11 +58,11 @@ if(modalPopNotification){
             fetch(deletePopNotificationUrl, {})
         });
 
-      if (modalCguBo && modalPopNotification) {
+      if (modalCguBo) {
         modalCguBo.addEventListener('dsfr.conceal', (e) => {
           dsfr(modalPopNotification).modal.disclose();
         });
-      } else if (modalPopNotification) {
+      } else {
         dsfr(modalPopNotification).modal.disclose();
       }
     }
