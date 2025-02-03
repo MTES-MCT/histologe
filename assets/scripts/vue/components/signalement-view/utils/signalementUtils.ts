@@ -173,7 +173,7 @@ export function handleSignalementsShared (context: any, requestResponse: any): a
 export function handleFilters (context: any, ajaxurl: string): any {
   clearScreen(context)
 
-  if (context.abortRequest === true) {
+  if (context.abortRequest !== null) {
     context.abortRequest?.abort()
   }
 
