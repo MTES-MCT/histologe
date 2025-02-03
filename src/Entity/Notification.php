@@ -32,7 +32,7 @@ class Notification
     #[ORM\ManyToOne(targetEntity: Signalement::class)]
     private ?Signalement $signalement;
 
-    #[ORM\ManyToOne(targetEntity: Suivi::class, cascade: ['persist'])]
+    #[ORM\ManyToOne(targetEntity: Suivi::class)]
     #[ORM\JoinColumn(onDelete: 'CASCADE')]
     private ?Suivi $suivi;
 

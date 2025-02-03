@@ -26,7 +26,7 @@ class Tag implements EntityHistoryInterface
     #[Groups(['widget-settings:read'])]
     private ?int $id = null;
 
-    #[ORM\ManyToMany(targetEntity: Signalement::class, mappedBy: 'tags', cascade: ['persist'])]
+    #[ORM\ManyToMany(targetEntity: Signalement::class, mappedBy: 'tags')]
     private Collection $signalements;
 
     #[ORM\Column(type: 'string', length: 255)]

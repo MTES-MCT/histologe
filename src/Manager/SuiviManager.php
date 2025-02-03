@@ -60,6 +60,8 @@ class SuiviManager extends Manager
         }
         if ($flush) {
             $this->save($suivi);
+        } else {
+            $this->persist($suivi);
         }
         $this->eventDispatcher->dispatch(new SuiviCreatedEvent($suivi), SuiviCreatedEvent::NAME);
 
