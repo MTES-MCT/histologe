@@ -978,7 +978,7 @@
         {
           "type": "SignalementFormInfo",
           "slug": "bail_dpe_bail_info",
-          "label": "Etablir un bail écrit et signé avec ses locataires est fortement recommandé. Pour savoir comment rédiger un bail, rendez-vous sur <a href='https://www.service-public.fr/particuliers/vosdroits/N349' target='_blank' rel='noopener' title='Le site du Service Public - Ouvre une nouvelle fenêtre'>le site du Service Public</a>.",
+          "label": "Depuis le 9 avril 2024, il est obligatoire d'avoir un bail écrit et signé avec ses locataires. Si le bail a été conclu avant cette date et à l'oral, nous vous recommandons fortement d'en rédiger une version écrite ! Pour savoir comment rédiger un bail, rendez-vous sur <a href='https://www.service-public.fr/particuliers/vosdroits/F920' target='_blank' rel='noopener' title='Le site du Service Public - Ouvre une nouvelle fenêtre'>le site du Service Public</a>.",
           "conditional": {
             "show": "formStore.data.bail_dpe_bail === 'non' || formStore.data.bail_dpe_bail === 'nsp'"
           }

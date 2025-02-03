@@ -1109,7 +1109,7 @@
         {
           "type": "SignalementFormInfo",
           "slug": "bail_dpe_bail_info",
-          "label": "Avoir un bail écrit et signé pour son logement est fortement recommandé pour faire valoir ses droits ! Plus d'info sur <a href='https://www.service-public.fr/particuliers/vosdroits/N349' target='_blank' rel='noopener' title='Le site du Service Public - Ouvre une nouvelle fenêtre'>le site du Service Public</a>.",
+          "label": "Avoir un contrat de location (bail) est obligatoire, qu'il soit verbal ou à l'écrit. Depuis le 9 avril 2024, le bail d'un logement doit être rédigé à l'écrit. Si votre bail est verbal (fait à l'oral), nous vous recommandons de demander un bail écrit à votre propriétaire ou bailleur, c'est le meilleur moyen de faire valoir ses droits ! Plus d'info sur <a href='https://www.service-public.fr/particuliers/vosdroits/N349' target='_blank' rel='noopener' title='Le site du Service Public - Ouvre une nouvelle fenêtre'>le site du Service Public</a>.",
           "conditional": {
             "show": "formStore.data.bail_dpe_bail === 'non' || formStore.data.bail_dpe_bail === 'nsp'"
           }
