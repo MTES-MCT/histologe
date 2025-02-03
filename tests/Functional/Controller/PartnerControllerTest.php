@@ -270,6 +270,31 @@ class PartnerControllerTest extends WebTestCase
         $this->assertEmailCount(1);
     }
 
+    public function testEditRoleOfUserOfPartner()
+    {
+        /** @var User $partnerUser */
+        $partnerUser = $this->userRepository->findOneBy(['email' => 'user-13-01@histologe.fr']);
+        $partner = $partnerUser->getPartners()->first();
+
+        $route = $this->router->generate('back_partner_user_edit', ['partner' => $partner->getId(), 'user' => $partnerUser->getId()]);
+        $this->client->request(
+            'POST',
+            $route,
+            [
+                'user_partner' => [
+                    'role' => 'ROLE_ADMIN_TERRITORY',
+                    'prenom' => 'John',
+                    'nom' => 'Doe',
+                    'email' => 'user-13-01@histologe.fr',
+                    'isMailingActive' => 0,
+                    '_token' => $this->generateCsrfToken($this->client, 'user_partner'),
+                ],
+            ]
+        );
+        $this->assertResponseStatusCodeSame(200);
+        $this->assertContains('ROLE_ADMIN_TERRITORY', $partnerUser->getRoles());
+    }
+
     /**
      * @dataProvider provideAgentEmailToEdit
      */

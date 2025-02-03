@@ -535,6 +535,7 @@ class PartnerController extends AbstractController
                 $user->setPassword('');
                 $userManager->sendAccountActivationNotification($user);
             }
+            $user->setRoles([$formUserPartner->get('role')->getData()]);
             $userManager->flush();
             $this->addFlash('success', 'L\'utilisateur a bien été modifié.');
             $url = $this->generateUrl('back_partner_view', ['id' => $partner->getId(), '_fragment' => 'agents'], UrlGeneratorInterface::ABSOLUTE_URL);
