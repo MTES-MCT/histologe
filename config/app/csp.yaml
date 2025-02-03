@@ -15,6 +15,7 @@ parameters:
       - "https://cdn.jsdelivr.net/npm/tinymce@7.1.2/"
       - "https://cdn.jsdelivr.net/gh/nelmio/NelmioApiDocBundle/public/swagger-ui/"
       - "https://cdn.jsdelivr.net/gh/nelmio/NelmioApiDocBundle/public/"
+      - "https://cdn.jsdelivr.net/npm/leaflet.vectorgrid/dist/Leaflet.VectorGrid.bundled.min.js"
     style-src:
       - "'self'"
       - "'unsafe-inline'"
@@ -34,6 +35,7 @@ parameters:
       - "blob:"
       - "https://voxusagers.numerique.gouv.fr"
       - "https://*.tile.openstreetmap.org"
+      - "https://tile.openstreetmap.org"
       - "https://cdn.jsdelivr.net"
       - "https://jedonnemonavis.numerique.gouv.fr"
       - "https://cdn.redoc.ly"
@@ -44,6 +46,7 @@ parameters:
       - "https://histologe.matomo.cloud"
       - "https://koumoul.com"
       - "https://sentry.incubateur.net"
+      - "https://rnb-api.beta.gouv.fr"
     font-src:
       - "'self'"
       - "https://fonts.gstatic.com"

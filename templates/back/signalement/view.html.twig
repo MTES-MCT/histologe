@@ -20,6 +20,11 @@
     {% if is_granted('SIGN_EDIT', signalement) %}
         {% include '_partials/_modal_upload_files.html.twig' %}
     {% endif %}
+    {% if signalement.geoloc.lat is defined and signalement.geoloc.lng is defined %}
+        {% include '_partials/_modal_localisation.html.twig' %}
+    {% elseif is_granted('SIGN_EDIT', signalement) %}
+        {% include '_partials/_modal_pick_localisation.html.twig' %}
+    {% endif %}
     {% if is_granted('ROLE_ADMIN') %}
         {% include '_partials/_modal_send_lien_suivi.html.twig' %}
     {% endif %}
