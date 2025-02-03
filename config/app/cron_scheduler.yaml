@@ -11,3 +11,6 @@ parameters:
         -
           command: 'php bin/console app:sync-esabora-schs'
           schedule: '%env(ESABORA_CRON_SCHEDULE_SYNC_SCHS)%'
+        -
+          command: 'sh /app/scripts/sync-db.sh'
+          schedule: '%env(METABASE_CRON_SCHEDULE_SYNC_BDD)%'
