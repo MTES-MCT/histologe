@@ -4,16 +4,16 @@ namespace App\Entity\Enum;
 
 use App\Entity\Behaviour\EnumTrait;
 
-enum SignalementStatus: int
+enum SignalementStatus: string
 {
     use EnumTrait;
 
-    case NEED_VALIDATION = 1;
-    case ACTIVE = 2;
-    case NEED_PARTNER_RESPONSE = 3;
-    case CLOSED = 6;
-    case ARCHIVED = 7;
-    case REFUSED = 8;
+    case NEED_VALIDATION = 'NEED_VALIDATION';
+    case ACTIVE = 'ACTIVE';
+    case NEED_PARTNER_RESPONSE = 'NEED_PARTNER_RESPONSE';
+    case CLOSED = 'CLOSED';
+    case ARCHIVED = 'ARCHIVED';
+    case REFUSED = 'REFUSED';
 
     public function mapAffectationStatus(): int
     {
