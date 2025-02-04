@@ -343,7 +343,7 @@
   {
     "type": "SignalementFormScreen",
     "label": "Type et composition du logement",
-    "description": "<p>Nous allons vous poser des questions sur la composition du logement.<p><p>Les documents utiles sont:</p><ul><li>Le bail</li><li>L'état des lieux d'entrée</li><li>Le diagnostic performance énergie (DPE)</li></ul><p><b>Toutes les questions sont obligatoires, sauf mention contraire.</b></p>",
+    "description": "<p>Nous allons vous poser des questions sur la composition du logement.</p><p>Les documents utiles sont :</p><ul><li>Le bail</li><li>L'état des lieux d'entrée</li><li>Le diagnostic performance énergie (DPE)</li></ul><p><b>Toutes les questions sont obligatoires, sauf mention contraire.</b></p>",
     "slug": "ecran_intermediaire_type_composition",
     "screenCategory": "Type et composition",
     "icon": {
@@ -1004,7 +1004,7 @@
         {
           "type": "SignalementFormInfo",
           "slug": "bail_dpe_bail_info",
-          "label": "Avoir un contrat de location (bail) est obligatoire, qu'il soit verbal ou à l'écrit. Depuis le 9 avril 2024, le bail d'un logement doit être rédigé à l'écrit. Si votre bail est verbal (fait à l'oral), nous vous recommandons de demander un bail écrit à votre propriétaire ou bailleur, c'est le meilleur moyen de faire valoir ses droits ! Plus d'info sur <a href='https://www.service-public.fr/particuliers/vosdroits/N349' target='_blank' rel='noopener' title='Le site du Service Public - Ouvre une nouvelle fenêtre'>le site du Service Public</a>.",
+          "label": "Avoir un contrat de location (bail) est obligatoire, qu'il soit verbal ou à l'écrit. Depuis le 9 avril 2024, le bail d'un logement doit être rédigé à l'écrit. Si le bail du logement est verbal (fait à l'oral), nous vous recommandons de demander un bail écrit au propriétaire ou bailleur, il ne peut pas refuser de le faire ! Plus d'info sur <a href='https://www.service-public.fr/particuliers/vosdroits/N349' target='_blank' rel='noopener' title='Le site du Service Public - Ouvre une nouvelle fenêtre'>le site du Service Public</a>.",
           "conditional": {
             "show": "formStore.data.bail_dpe_bail === 'non' || formStore.data.bail_dpe_bail === 'nsp'"
           }
