@@ -5,6 +5,8 @@ namespace App\Tests\Functional\Controller\Back;
 use App\Entity\Signalement;
 use App\Repository\SignalementRepository;
 use App\Repository\UserRepository;
+use App\Service\DataGouv\AddressService;
+use App\Service\DataGouv\Response\Address;
 use App\Tests\SessionHelper;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
@@ -76,6 +78,10 @@ class SignalementEditControllerTest extends WebTestCase
      */
     public function testEditSignalementSuccess(string $routeName, array $payload, string $token): void
     {
+        $addressResult = json_decode(file_get_contents(__DIR__.'/../../../files/datagouv/get_api_ban_item_response_13202.json'), true);
+        $addressMock = $this->createMock(AddressService::class);
+        $addressMock->method('getAddress')->willReturn(new Address($addressResult));
+        $this->client->getContainer()->set(AddressService::class, $addressMock);
         $route = $this->router->generate(
             $routeName,
             ['uuid' => $this->signalement->getUuid()]

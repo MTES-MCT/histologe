@@ -1,0 +1,36 @@
+{
+  "type": "FeatureCollection",
+  "version": "draft",
+  "features": [
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          5.36617,
+          43.30334
+        ]
+      },
+      "properties": {
+        "label": "17 Boulevard Saadé - Quai Joliette 13002 Marseille",
+        "score": 0.9530109090909089,
+        "housenumber": "17",
+        "id": "13202_xarfhv_00017",
+        "name": "17 Boulevard Saadé - Quai Joliette",
+        "postcode": "13002",
+        "citycode": "13202",
+        "x": 900980.45,
+        "y": 6279500.67,
+        "city": "Marseille",
+        "context": "13, Bouches-du-Rhône, Provence-Alpes-Côte d'Azur",
+        "type": "housenumber",
+        "importance": 0.48312,
+        "street": "Boulevard Saadé - Quai Joliette"
+      }
+    }
+  ],
+  "attribution": "BAN",
+  "licence": "ETALAB-2.0",
+  "query": "17 Boulevard Saadé - Quai Joliette 13002 Marseille",
+  "limit": 5
+}

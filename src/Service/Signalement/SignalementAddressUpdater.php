@@ -19,6 +19,7 @@ class SignalementAddressUpdater
     public function updateAddressOccupantFromBanData(Signalement $signalement, bool $updateGeolocAndRnbId = true): void
     {
         $addressResult = $this->addressService->getAddress($signalement->getAddressCompleteOccupant());
+
         if ($addressResult->getScore() > self::SCORE_IF_BAN_ID_ACCEPTED) {
             $signalement->setBanIdOccupant($addressResult->getBanId());
             if ($updateGeolocAndRnbId) {

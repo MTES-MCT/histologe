@@ -1,0 +1,36 @@
+{
+  "type": "FeatureCollection",
+  "version": "draft",
+  "features": [
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          5.38107,
+          43.30853
+        ]
+      },
+      "properties": {
+        "label": "15 Boulevard National 13003 Marseille",
+        "score": 0.9530109090909089,
+        "housenumber": "15",
+        "id": "13203_xarfhv_00015",
+        "name": "15 Boulevard National",
+        "postcode": "13003",
+        "citycode": "13203",
+        "x": 901540.75,
+        "y": 6280102.34,
+        "city": "Marseille",
+        "context": "13, Bouches-du-Rhône, Provence-Alpes-Côte d'Azur",
+        "type": "housenumber",
+        "importance": 0.48312,
+        "street": "Boulevard National"
+      }
+    }
+  ],
+  "attribution": "BAN",
+  "licence": "ETALAB-2.0",
+  "query": "15 Boulevard National 13003 Marseille",
+  "limit": 5
+}
