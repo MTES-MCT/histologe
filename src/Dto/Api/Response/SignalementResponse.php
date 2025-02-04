@@ -14,7 +14,7 @@ use App\Entity\Enum\MotifCloture;
 use App\Entity\Enum\MotifRefus;
 use App\Entity\Enum\ProfileDeclarant;
 use App\Entity\Enum\Qualification;
-use App\Entity\Enum\SignalementNewStatus;
+use App\Entity\Enum\SignalementApiStatus;
 use Nelmio\ApiDocBundle\Attribute\Model;
 use OpenApi\Attributes as OA;
 
@@ -56,7 +56,7 @@ class SignalementResponse
         description: 'Statut du signalement',
         example: 'FERME'
     )]
-    public SignalementNewStatus $statut;
+    public SignalementApiStatus $statut;
 
     #[OA\Property(
         description: 'Date à laquelle le signalement a été validé par un responsable territoire.<br>

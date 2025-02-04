@@ -8,7 +8,7 @@ use App\Dto\CountUser;
 use App\Entity\Affectation;
 use App\Entity\Enum\Qualification;
 use App\Entity\Enum\QualificationStatus;
-use App\Entity\Signalement;
+use App\Entity\Enum\SignalementStatus;
 use App\Entity\User;
 use App\Repository\AffectationRepository;
 use App\Repository\NotificationRepository;
@@ -89,8 +89,8 @@ class WidgetDataKpiBuilder
                 qualification: Qualification::NON_DECENCE_ENERGETIQUE,
                 qualificationStatuses: [QualificationStatus::NDE_AVEREE, QualificationStatus::NDE_CHECK]
             );
-            $newNDE = isset($countSignalementByStatus[Signalement::STATUS_NEED_VALIDATION]) ? $countSignalementByStatus[Signalement::STATUS_NEED_VALIDATION]['count'] : 0;
-            $currentNDE = isset($countSignalementByStatus[Signalement::STATUS_ACTIVE]) ? $countSignalementByStatus[Signalement::STATUS_ACTIVE]['count'] : 0;
+            $newNDE = isset($countSignalementByStatus[SignalementStatus::NEED_VALIDATION->value]) ? $countSignalementByStatus[SignalementStatus::NEED_VALIDATION->value]['count'] : 0;
+            $currentNDE = isset($countSignalementByStatus[SignalementStatus::ACTIVE->value]) ? $countSignalementByStatus[SignalementStatus::ACTIVE->value]['count'] : 0;
         } else {
             $countAffectationByStatus = $this->affectationRepository->countByStatusForUser(
                 $this->user,

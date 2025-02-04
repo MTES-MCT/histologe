@@ -21,7 +21,7 @@ signalements:
     adresse_occupant: "8 Rue de la tourmentinerie"
     cp_occupant: "44850"
     ville_occupant: "Saint-Mars-du-Désert"
-    statut: 1
+    statut: "NEED_VALIDATION"
     geoloc: "{\"lat\": 47.360679, \"lng\": -1.410753}"
     insee_occupant: "44179"
     code_suivi: "2db341e0d1fd76a6221666f2155328b8e16783d1619ab1343fae7c87b2bc5886"
@@ -116,7 +116,7 @@ signalements:
     adresse_occupant: "47 Rue du Général Chanzy"
     cp_occupant: "62100"
     ville_occupant: "Calais"
-    statut: 1
+    statut: "NEED_VALIDATION"
     geoloc: "{\"lat\": 50.94877, \"lng\": 1.85867}"
     insee_occupant: "62193"
     nb_pieces_logement: 5
@@ -203,7 +203,7 @@ signalements:
     adresse_occupant: "49 Rue du Général Chanzy"
     cp_occupant: "62100"
     ville_occupant: "Calais"
-    statut: 1
+    statut: "NEED_VALIDATION"
     geoloc: "{\"lat\": 50.94877, \"lng\": 1.85867}"
     insee_occupant: "62193"
     nb_pieces_logement: 5
@@ -289,7 +289,7 @@ signalements:
     adresse_occupant: "3 Rue de Lajudie, 30100 Alès"
     cp_occupant: "62100"
     ville_occupant: "Alès"
-    statut: 2
+    statut: "ACTIVE"
     geoloc: "{\"lat\": 44.13945, \"lng\": 4.08469}"
     insee_occupant: "30007"
     nb_pieces_logement: 5
@@ -375,7 +375,7 @@ signalements:
     adresse_occupant: "240 Avenue Victor Hugo"
     cp_occupant: "34400"
     ville_occupant: "LUNEL"
-    statut: 1
+    statut: "NEED_VALIDATION"
     geoloc: "{\"lat\": 43.682153, \"lng\": 4.134681}"
     insee_occupant: "34145"
     nb_pieces_logement: 5
@@ -460,7 +460,7 @@ signalements:
     adresse_occupant: "34 Rue des Arawaks"
     cp_occupant: "97223"
     ville_occupant: "Le Diamant"
-    statut: 1
+    statut: "NEED_VALIDATION"
     geoloc: "{\"lat\": 14.478662, \"lng\": -61.030641}"
     insee_occupant: "97206"
     nb_pieces_logement: 5
@@ -546,7 +546,7 @@ signalements:
     adresse_occupant: "240 Avenue Victor Hugo"
     cp_occupant: "34300"
     ville_occupant: "AGDE"
-    statut: 2
+    statut: "ACTIVE"
     geoloc: "{\"lat\": 43.311679, \"lng\": 3.4677498}"
     insee_occupant: "34145"
     nb_pieces_logement: 5
@@ -582,7 +582,7 @@ signalements:
     adresse_occupant: "240 Avenue Victor Hugo"
     cp_occupant: "34300"
     ville_occupant: "AGDE"
-    statut: 7
+    statut: "ARCHIVED"
     geoloc: "{\"lat\": 43.311679, \"lng\": 3.4677498}"
     insee_occupant: "34145"
     nb_pieces_logement: 5
@@ -619,7 +619,7 @@ signalements:
     adresse_occupant: "6 La Bodinière"
     cp_occupant: "44850"
     ville_occupant: "Saint-Mars-du-Désert"
-    statut: 1
+    statut: "NEED_VALIDATION"
     geoloc: "{\"lat\": 47.349698, \"lng\": -1.446676}"
     insee_occupant: "44179"
     nb_pieces_logement: 5
@@ -671,7 +671,7 @@ signalements:
     adresse_occupant: "25 Rue desiree clary"
     cp_occupant: "13002"
     ville_occupant: "Marseille"
-    statut: 2
+    statut: "ACTIVE"
     geoloc: "{\"lat\": 43.3085624, \"lng\": 5.3705315}"
     insee_occupant: "13202"
     nb_pieces_logement: 5
@@ -727,7 +727,7 @@ signalements:
     adresse_occupant: "le grand moulin des places"
     cp_occupant: "44850"
     ville_occupant: "Saint-Mars-du-Désert"
-    statut: 1
+    statut: "NEED_VALIDATION"
     geoloc: "{\"lat\": 47.363197, \"lng\": -1.429960}"
     insee_occupant: "44179"
     nb_pieces_logement: 5
@@ -780,7 +780,7 @@ signalements:
     adresse_occupant: "1 Clermont"
     cp_occupant: "44850"
     ville_occupant: "Le Cellier"
-    statut: 1
+    statut: "NEED_VALIDATION"
     geoloc: "{\"lat\": 47.3215193, \"lng\": -1.3616279}"
     insee_occupant: "44028"
     nb_pieces_logement: 30
@@ -833,7 +833,7 @@ signalements:
     adresse_occupant: "2 Beau Soleil"
     cp_occupant: "44850"
     ville_occupant: "Le Cellier"
-    statut: 0
+    statut: "DRAFT"
     created_by: "admin-territoire-44-01@histologe.fr"
     geoloc: "{\"lat\": 47.3408013, \"lng\": -1.3496451}"
     insee_occupant: "44028"

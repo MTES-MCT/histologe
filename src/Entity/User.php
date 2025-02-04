@@ -5,6 +5,7 @@ namespace App\Entity;
 use App\Entity\Behaviour\EntityHistoryInterface;
 use App\Entity\Behaviour\TimestampableTrait;
 use App\Entity\Enum\HistoryEntryEvent;
+use App\Entity\Enum\SignalementStatus;
 use App\Repository\UserRepository;
 use App\Validator as AppAssert;
 use Doctrine\Common\Collections\ArrayCollection;
@@ -290,7 +291,7 @@ class User implements UserInterface, EntityHistoryInterface, PasswordAuthenticat
     /**
      * @return Collection|Signalement[]
      */
-    public function getSignalementsCreatedByStatut(int $statut): Collection
+    public function getSignalementsCreatedByStatut(SignalementStatus $statut): Collection
     {
         return $this->signalementsCreated->filter(function (Signalement $signalement) use ($statut) {
             return $statut === $signalement->getStatut();

@@ -4,8 +4,8 @@ namespace App\Security\Voter;
 
 use App\Entity\Affectation;
 use App\Entity\Enum\Qualification;
+use App\Entity\Enum\SignalementStatus;
 use App\Entity\Intervention;
-use App\Entity\Signalement;
 use App\Entity\User;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Authorization\Voter\Voter;
@@ -37,7 +37,7 @@ class InterventionVoter extends Voter
     private function canEditVisite(Intervention $intervention, User $user): bool
     {
         $signalement = $intervention->getSignalement();
-        if (Signalement::STATUS_ACTIVE !== $signalement->getStatut()) {
+        if (SignalementStatus::ACTIVE !== $signalement->getStatut()) {
             return false;
         }
         if ($user->isSuperAdmin()) {

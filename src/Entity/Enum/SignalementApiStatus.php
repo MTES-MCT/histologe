@@ -2,8 +2,9 @@
 
 namespace App\Entity\Enum;
 
-enum SignalementNewStatus: string
+enum SignalementApiStatus: string
 {
+    case BROUILLON = 'BROUILLON';
     case NOUVEAU = 'NOUVEAU';
     case EN_COURS = 'EN_COURS';
     case FERME = 'FERME';

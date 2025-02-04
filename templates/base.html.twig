@@ -224,7 +224,7 @@
             maxWidth: "100%"
         });
         
-        {% if isClosedForMe or signalement.statut is same as constant('App\\Entity\\Signalement::STATUS_CLOSED') %}
+        {% if isClosedForMe or signalement.statut is same as enum('App\\Entity\\Enum\\SignalementStatus').CLOSED %}
         document?.querySelector('#signalement-{{ signalement.id }}-content').querySelectorAll('button:not(.reopen,.reaffect,.img-box,.fr-accordion__btn,.keep-when-signalement-closed),.fr-btn:not(.reopen,.reaffect,.img-box,.fr-fi-file-pdf-fill,.keep-when-signalement-closed)').forEach(input => {
             input.remove()
         })

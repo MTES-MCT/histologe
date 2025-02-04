@@ -4,6 +4,7 @@ namespace App\Tests\Functional\Controller;
 
 use App\Entity\Enum\Qualification;
 use App\Entity\Enum\QualificationStatus;
+use App\Entity\Enum\SignalementStatus;
 use App\Entity\Signalement;
 use App\Entity\SignalementQualification;
 use App\Repository\SignalementRepository;
@@ -31,7 +32,7 @@ class BackSignalementQualificationControllerTest extends WebTestCase
         $signalement = $signalementRepository->findOneBy(['reference' => '2023-8']);
         /** @var SignalementQualification $signalementQualification */
         $signalementQualification = $signalement->getSignalementQualifications()[0];
-        $this->assertEquals(Signalement::STATUS_ACTIVE, $signalement->getStatut());
+        $this->assertEquals(SignalementStatus::ACTIVE, $signalement->getStatut());
         $this->assertEquals(Qualification::NON_DECENCE_ENERGETIQUE, $signalementQualification->getQualification());
 
         /** @var UserRepository $userRepository */

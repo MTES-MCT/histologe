@@ -3,6 +3,7 @@
 namespace App\Factory;
 
 use App\Entity\Enum\MotifCloture;
+use App\Entity\Enum\SignalementStatus;
 use App\Entity\Signalement;
 use App\Entity\Territory;
 
@@ -11,9 +12,9 @@ class SignalementFactory
     public function createInstanceFrom(Territory $territory, array $data, bool $isImported = false): Signalement
     {
         if (empty($data['statut'])) {
-            $data['statut'] = Signalement::STATUS_ACTIVE;
+            $data['statut'] = SignalementStatus::ACTIVE;
             if ($data['motifCloture'] || $data['closedAt']) {
-                $data['statut'] = Signalement::STATUS_CLOSED;
+                $data['statut'] = SignalementStatus::CLOSED;
             }
         }
 
@@ -57,9 +58,9 @@ class SignalementFactory
             ->setIsCguAccepted((bool) $data['isCguAccepted'])
             ->setCreatedAt($data['createdAt'])
             ->setModifiedAt($data['modifiedAt'])
-            ->setStatut((int) $data['statut'])
+            ->setStatut($data['statut'])
             ->setValidatedAt(
-                Signalement::STATUS_ACTIVE === $data['statut'] ? $data['createdAt'] : new \DateTimeImmutable()
+                SignalementStatus::ACTIVE === $data['statut'] ? $data['createdAt'] : new \DateTimeImmutable()
             )
             ->setReference($data['reference'])
             ->setMontantAllocation((float) $data['montantAllocation'])

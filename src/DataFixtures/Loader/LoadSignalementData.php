@@ -11,6 +11,7 @@ use App\Entity\Enum\ProfileDeclarant;
 use App\Entity\Enum\ProprioType;
 use App\Entity\Enum\Qualification;
 use App\Entity\Enum\QualificationStatus;
+use App\Entity\Enum\SignalementStatus;
 use App\Entity\File;
 use App\Entity\Model\TypeCompositionLogement;
 use App\Entity\Signalement;
@@ -107,7 +108,7 @@ class LoadSignalementData extends Fixture implements OrderedFixtureInterface
             ->setIsCguAccepted(true)
             ->setIsAllocataire($row['is_allocataire'] ?? null)
             ->setNumAllocataire($faker->randomNumber(6))
-            ->setStatut($row['statut'])
+            ->setStatut(SignalementStatus::tryFrom($row['statut']))
             ->setScore($row['score'])
             ->setReference($row['reference'])
             ->setIsBailEnCours(false)
@@ -120,7 +121,7 @@ class LoadSignalementData extends Fixture implements OrderedFixtureInterface
             ->setCodeSuivi($row['code_suivi'] ?? $faker->uuid())
             ->setUuid($row['uuid'])
             ->setSituationOccupant($row['situation_occupant'] ?? null)
-            ->setValidatedAt(Signalement::STATUS_ACTIVE === $row['statut'] ? new \DateTimeImmutable() : null)
+            ->setValidatedAt(SignalementStatus::ACTIVE->value === $row['statut'] ? new \DateTimeImmutable() : null)
             ->setOrigineSignalement($row['origine_signalement'] ?? null)
             ->setCreatedAt(
                 isset($row['created_at'])
@@ -168,14 +169,14 @@ class LoadSignalementData extends Fixture implements OrderedFixtureInterface
             $signalement->setMontantAllocation($row['montant_allocation']);
         }
 
-        if (Signalement::STATUS_CLOSED === $row['statut']) {
+        if (SignalementStatus::CLOSED->value === $row['statut']) {
             $signalement
                 ->setMotifCloture(MotifCloture::tryFrom($row['motif_cloture']))
                 ->setClosedAt(new \DateTimeImmutable())
                 ->setClosedBy($this->userRepository->findOneBy(['statut' => User::STATUS_ACTIVE]));
         }
 
-        if (Signalement::STATUS_REFUSED === $row['statut']) {
+        if (SignalementStatus::REFUSED->value === $row['statut']) {
             $signalement
                 ->setMotifRefus(MotifRefus::tryFrom($row['motif_refus']));
         }
@@ -336,7 +337,7 @@ class LoadSignalementData extends Fixture implements OrderedFixtureInterface
             ->setIsCguAccepted(true)
             ->setIsAllocataire($row['is_allocataire'] ?? null)
             ->setNumAllocataire($faker->randomNumber(6))
-            ->setStatut($row['statut'])
+            ->setStatut(SignalementStatus::tryFrom($row['statut']))
             ->setScore($row['score'])
             ->setScoreBatiment($row['score_batiment'])
             ->setScoreLogement($row['score_logement'])
@@ -350,7 +351,7 @@ class LoadSignalementData extends Fixture implements OrderedFixtureInterface
             ->setIsRsa(false)
             ->setCodeSuivi($row['code_suivi'] ?? $faker->uuid())
             ->setUuid($row['uuid'])
-            ->setValidatedAt(Signalement::STATUS_ACTIVE === $row['statut'] ? new \DateTimeImmutable() : null)
+            ->setValidatedAt(SignalementStatus::ACTIVE->value === $row['statut'] ? new \DateTimeImmutable() : null)
             ->setCreatedAt(
                 isset($row['created_at'])
                     ? new \DateTimeImmutable($row['created_at'])
@@ -405,14 +406,14 @@ class LoadSignalementData extends Fixture implements OrderedFixtureInterface
             $signalement->setBailleur($this->bailleurRepository->findOneBailleurBy($row['bailleur'], $zip));
         }
 
-        if (Signalement::STATUS_CLOSED === $row['statut']) {
+        if (SignalementStatus::CLOSED->value === $row['statut']) {
             $signalement
                 ->setMotifCloture(MotifCloture::tryFrom($row['motif_cloture']))
                 ->setClosedAt(new \DateTimeImmutable())
                 ->setClosedBy($this->userRepository->findOneBy(['statut' => User::STATUS_ACTIVE]));
         }
 
-        if (Signalement::STATUS_REFUSED === $row['statut']) {
+        if (SignalementStatus::REFUSED->value === $row['statut']) {
             $signalement
                 ->setMotifRefus(MotifRefus::tryFrom($row['motif_refus']));
         }

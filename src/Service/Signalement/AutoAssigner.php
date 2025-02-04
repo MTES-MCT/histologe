@@ -4,6 +4,7 @@ namespace App\Service\Signalement;
 
 use App\Entity\Affectation;
 use App\Entity\AutoAffectationRule;
+use App\Entity\Enum\SignalementStatus;
 use App\Entity\Partner;
 use App\Entity\Signalement;
 use App\Entity\Suivi;
@@ -102,7 +103,7 @@ class AutoAssigner
 
     private function activateSignalement(Signalement $signalement): void
     {
-        $signalement->setStatut(Signalement::STATUS_ACTIVE);
+        $signalement->setStatut(SignalementStatus::ACTIVE);
         $signalement->setValidatedAt(new \DateTimeImmutable());
         $this->signalementManager->persist($signalement);
     }

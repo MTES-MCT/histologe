@@ -3,6 +3,7 @@
 namespace App\Service\Import\Signalement;
 
 use App\Entity\Enum\MotifCloture;
+use App\Entity\Enum\SignalementStatus;
 use App\Entity\Signalement;
 
 class SignalementImportMapper
@@ -307,13 +308,13 @@ class SignalementImportMapper
         return false !== $date ? $date : null;
     }
 
-    private function transformToSignalementStatus(?string $value): ?int
+    private function transformToSignalementStatus(?string $value): ?SignalementStatus
     {
         if (self::STATUT_CSV_EN_COURS === $value || self::STATUT_CSV_OUVERTURE === $value) {
-            return Signalement::STATUS_ACTIVE;
+            return SignalementStatus::ACTIVE;
         }
         if (self::STATUT_CSV_FERMETURE === $value) {
-            return Signalement::STATUS_CLOSED;
+            return SignalementStatus::CLOSED;
         }
 
         return null;

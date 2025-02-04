@@ -2,7 +2,7 @@
 
 namespace App\DataFixtures\Loader;
 
-use App\Entity\Signalement;
+use App\Entity\Enum\SignalementStatus;
 use App\Entity\Suivi;
 use App\Manager\SuiviManager;
 use App\Repository\SignalementRepository;
@@ -29,8 +29,8 @@ class LoadSuiviData extends Fixture implements OrderedFixtureInterface
     public function load(ObjectManager $manager): void
     {
         $signalements = $this->signalementRepository->findBy(['statut' => [
-            Signalement::STATUS_ACTIVE,
-            Signalement::STATUS_CLOSED,
+            SignalementStatus::ACTIVE->value,
+            SignalementStatus::CLOSED->value,
         ]]);
 
         $second = 1;

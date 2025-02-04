@@ -36,13 +36,6 @@ use Symfony\Component\Validator\Context\ExecutionContextInterface;
 #[ORM\Index(columns: ['code_suivi'], name: 'idx_signalement_code_suivi')]
 class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInterface
 {
-    public const STATUS_DRAFT = 0;
-    public const STATUS_NEED_VALIDATION = 1;
-    public const STATUS_ACTIVE = 2;
-    public const STATUS_CLOSED = 6;
-    public const STATUS_ARCHIVED = 7;
-    public const STATUS_REFUSED = 8;
-
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column(type: 'integer')]

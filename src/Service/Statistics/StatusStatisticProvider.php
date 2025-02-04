@@ -3,7 +3,7 @@
 namespace App\Service\Statistics;
 
 use App\Dto\StatisticsFilters;
-use App\Entity\Signalement;
+use App\Entity\Enum\SignalementStatus;
 use App\Entity\Territory;
 use App\Repository\SignalementRepository;
 
@@ -52,28 +52,28 @@ class StatusStatisticProvider
     private static function initStatutByValue($statusResult): bool|array
     {
         switch ($statusResult['statut']) {
-            case Signalement::STATUS_REFUSED:
+            case SignalementStatus::REFUSED->value:
                 return [
                     'label' => 'Refusé',
                     'color' => '#CE0500',
                     'count' => $statusResult['count'],
                 ];
 
-            case Signalement::STATUS_CLOSED:
+            case SignalementStatus::CLOSED->value:
                 return [
                     'label' => 'Fermé',
                     'color' => '#21AB8E',
                     'count' => $statusResult['count'],
                 ];
 
-            case Signalement::STATUS_ACTIVE:
+            case SignalementStatus::ACTIVE->value:
                 return [
                     'label' => 'En cours',
                     'color' => '#000091',
                     'count' => $statusResult['count'],
                 ];
 
-            case Signalement::STATUS_NEED_VALIDATION:
+            case SignalementStatus::NEED_VALIDATION->value:
                 return [
                     'label' => 'Nouveau',
                     'color' => '#E4794A',

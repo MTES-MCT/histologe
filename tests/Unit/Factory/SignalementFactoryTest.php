@@ -2,7 +2,7 @@
 
 namespace App\Tests\Unit\Factory;
 
-use App\Entity\Signalement;
+use App\Entity\Enum\SignalementStatus;
 use App\Entity\Territory;
 use App\Factory\SignalementFactory;
 use Faker\Factory;
@@ -68,7 +68,7 @@ class SignalementFactoryTest extends KernelTestCase
             'raisonRefusIntervention' => null,
             'isCguAccepted' => true,
             'modifiedAt' => null,
-            'statut' => Signalement::STATUS_ACTIVE,
+            'statut' => SignalementStatus::ACTIVE,
             'geoloc' => ['lat' => 43.312827, 'lng' => 5.386161],
             'montantAllocation' => null,
             'codeProcedure' => null,

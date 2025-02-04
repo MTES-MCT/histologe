@@ -67,7 +67,7 @@
                                     <span class="fr-badge fr-badge--sm fr-fi-close-circle-fill">Clôturée</span>
                                 {% endif %}
                             </div>
-                            {% if signalement.statut is not same as constant('App\\Entity\\Signalement::STATUS_CLOSED') %}
+                            {% if signalement.statut is not same as enum('App\\Entity\\Enum\\SignalementStatus').CLOSED %}
                                 <div class="fr-col-2 fr-text--right">
                                     <button title="Désaffecter le partenaire"
                                             data-delete="{{ path('back_signalement_remove_partner',{uuid:signalement.uuid,affectation:partnerAffectation.id}) }}"

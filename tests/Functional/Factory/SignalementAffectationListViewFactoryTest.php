@@ -45,7 +45,7 @@ class SignalementAffectationListViewFactoryTest extends KernelTestCase
             'uuid' => '00000000-0000-0000-2022-000000000001',
             'reference' => '2022-1',
             'createdAt' => new \DateTimeImmutable(),
-            'statut' => SignalementStatus::ACTIVE->value,
+            'statut' => SignalementStatus::ACTIVE,
             'score' => 25,
             'isNotOccupant' => false,
             'nomOccupant' => $faker->lastName(),

@@ -168,7 +168,7 @@ class NotificationRepository extends ServiceEntityRepository implements EntityCl
             ->andWhere('su.description LIKE :description')
             ->setParameter('is_seen', 0)
             ->setParameter('type_notification', Notification::TYPE_SUIVI)
-            ->setParameter('statut', Signalement::STATUS_CLOSED)
+            ->setParameter('statut', SignalementStatus::CLOSED->value)
             ->setParameter('description', Suivi::DESCRIPTION_MOTIF_CLOTURE_ALL.'%')
             ->setParameter('user', $user);
 
