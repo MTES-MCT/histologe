@@ -3,7 +3,7 @@
 namespace App\Service;
 
 use App\Entity\Affectation;
-use App\Entity\Notification;
+use App\Entity\Enum\AffectationStatus;
 use App\Entity\Partner;
 use App\Entity\Signalement;
 use App\Entity\Suivi;
@@ -22,7 +22,6 @@ use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 
 class NotificationAndMailSender
 {
-    private $unitOfWork;
     private Signalement $signalement;
     private ?Suivi $suivi;
     private ?Affectation $affectation;
@@ -36,7 +35,6 @@ class NotificationAndMailSender
         private readonly ParameterBagInterface $parameterBag,
         private readonly Security $security,
     ) {
-        $this->unitOfWork = $this->entityManager->getUnitOfWork();
         $this->suivi = null;
     }
 
@@ -45,7 +43,7 @@ class NotificationAndMailSender
         $mailerType = NotificationMailerType::TYPE_SIGNALEMENT_NEW;
         $this->signalement = $signalement;
         $territory = $this->signalement->getTerritory();
-        $recipients = $this->getRecipientsAdmins($territory);
+        $recipients = $this->getRecipientsAdmin($territory);
         $this->send($mailerType, $recipients);
     }
 
@@ -58,15 +56,66 @@ class NotificationAndMailSender
         $this->send($mailerType, $recipients);
     }
 
-    private function send(NotificationMailerType $notificationMailerType, ArrayCollection $recipients, bool $isInAppNotificationCreated = false): void
+    public function sendNewSuiviToAdminsAndPartners(Suivi $suivi, bool $sendEmail): void
     {
-        if ($isInAppNotificationCreated) {
-            foreach ($recipients as $user) {
-                $this->createInAppNotification($user);
+        $mailerType = $sendEmail ? NotificationMailerType::TYPE_NEW_COMMENT_BACK : null;
+        $this->suivi = $suivi;
+        $this->signalement = $suivi->getSignalement();
+        $territory = $this->signalement->getTerritory();
+        $recipients = $this->getRecipientsAdmin($territory);
+
+        foreach ($this->signalement->getAffectations() as $affectation) {
+            if (AffectationStatus::STATUS_WAIT->value === $affectation->getStatut()
+                    || AffectationStatus::STATUS_ACCEPTED->value === $affectation->getStatut()) {
+                $partnerRecipients = $this->getRecipientsPartner($affectation->getPartner());
+                $recipients = new ArrayCollection(
+                    array_merge($recipients->toArray(), $partnerRecipients->toArray())
+                );
             }
         }
 
-        $this->sendMail($recipients, $notificationMailerType);
+        $this->send(
+            notificationMailerType: $mailerType,
+            recipients: $recipients,
+            isInAppNotificationCreated: true
+        );
+    }
+
+    public function sendNewSuiviToUsagers(Suivi $suivi): void
+    {
+        $this->suivi = $suivi;
+        $this->signalement = $suivi->getSignalement();
+        $recipients = new ArrayCollection($this->signalement->getMailUsagers());
+        if (!$recipients->isEmpty()) {
+            $recipients->removeElement($suivi->getCreatedBy()?->getEmail());
+            foreach ($recipients as $recipient) {
+                $this->notificationMailerRegistry->send(
+                    new NotificationMail(
+                        type: NotificationMailerType::TYPE_NEW_COMMENT_FRONT_TO_USAGER,
+                        to: $recipient,
+                        territory: $this->signalement->getTerritory(),
+                        signalement: $this->signalement,
+                        suivi: $this->suivi,
+                    )
+                );
+            }
+        }
+    }
+
+    private function send(?NotificationMailerType $notificationMailerType, ArrayCollection $recipients, bool $isInAppNotificationCreated = false): void
+    {
+        if ($isInAppNotificationCreated) {
+            foreach ($recipients as $user) {
+                if ($user instanceof User) {
+                    $this->createInAppNotification($user);
+                }
+            }
+            $this->entityManager->flush();
+        }
+
+        if ($notificationMailerType) {
+            $this->sendMail($recipients, $notificationMailerType);
+        }
     }
 
     private function createInAppNotification($user): void
@@ -77,10 +126,6 @@ class NotificationAndMailSender
 
         $notification = $this->notificationFactory->createInstanceFrom($user, $this->suivi);
         $this->entityManager->persist($notification);
-        $this->unitOfWork->computeChangeSet(
-            $this->entityManager->getClassMetadata(Notification::class),
-            $notification
-        );
     }
 
     private function sendMail(ArrayCollection $recipients, NotificationMailerType $mailType): void
@@ -102,7 +147,7 @@ class NotificationAndMailSender
         }
     }
 
-    private function getRecipientsAdmins(?Territory $territory): ArrayCollection
+    private function getRecipientsAdmin(?Territory $territory): ArrayCollection
     {
         $recipients = new ArrayCollection();
 
@@ -180,13 +225,13 @@ class NotificationAndMailSender
         // - the user must be active and not an admin
         // - if entity is Affectation
         // - if entity is Suivi: we check that the partner of the user is different from the partner of the user who created the suivi
-        // TODO: activate when suivi is out of ActivityListener
-        /*if ($entity instanceof Suivi) {
-            $suiviPartner = $entity->getCreatedBy()?->getPartnerInTerritory($entity->getSignalement()->getTerritory());
-        }*/
+        $suiviPartner = null;
+        if (!empty($this->suivi)) {
+            $suiviPartner = $this->suivi->getCreatedBy()?->getPartnerInTerritory($this->suivi->getSignalement()->getTerritory());
+        }
 
         return User::STATUS_ACTIVE === $user->getStatut()
             && !$user->isSuperAdmin() && !$user->isTerritoryAdmin()
-            && (!empty($this->affectation)/* || ($entity->getCreatedBy() && $partner !== $suiviPartner) */);
+            && (!empty($this->affectation) || ($this->suivi->getCreatedBy() && $partner !== $suiviPartner));
     }
 }

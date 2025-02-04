@@ -98,6 +98,8 @@ class SignalementImportLoader
                     $progressBar->advance();
                 }
                 $signalement = $this->signalementManager->createOrUpdate($territory, $dataMapped, true);
+                $this->signalementManager->persist($signalement);
+
                 $signalement = $this->loadTags($signalement, $territory, $dataMapped);
                 foreach (self::SITUATIONS as $situation) {
                     $signalement = $this->loadSignalementSituation($signalement, $dataMapped, $situation);
@@ -120,7 +122,6 @@ class SignalementImportLoader
                 $this->loadFiles($signalement, File::INPUT_NAME_DOCUMENTS, $dataMapped);
 
                 $this->metadata['count_signalement'] = $countSignalement;
-                $this->signalementManager->persist($signalement);
                 if (0 === $countSignalement % self::FLUSH_COUNT) {
                     $this->logger->info(\sprintf('in progress - %s signalements saved', $countSignalement));
                     $this->signalementManager->flush();

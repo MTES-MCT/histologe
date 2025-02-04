@@ -3,12 +3,10 @@
 namespace App\Command;
 
 use App\Entity\Territory;
-use App\EventListener\ActivityListener;
 use App\Service\Import\CsvParser;
 use App\Service\Import\Signalement\SignalementImportLoader;
 use App\Service\UploadHandlerService;
 use Doctrine\ORM\EntityManagerInterface;
-use Doctrine\ORM\Events;
 use Doctrine\ORM\NonUniqueResultException;
 use League\Flysystem\FilesystemException;
 use League\Flysystem\FilesystemOperator;
@@ -57,8 +55,6 @@ class ImportSignalementCommand extends Command
             return Command::FAILURE;
         }
 
-        $this->removeEventListener();
-
         $fromFile = 'csv/signalement_'.$territoryZip.'.csv';
         $toFile = $this->parameterBag->get('uploads_tmp_dir').'signalement.csv';
         if (!$this->fileStorage->fileExists($fromFile)) {
@@ -106,20 +102,5 @@ class ImportSignalementCommand extends Command
         $io->success(\sprintf('%s signalement(s) have been imported', $metadata['count_signalement']));
 
         return Command::SUCCESS;
-    }
-
-    private function removeEventListener(): void
-    {
-        $eventManager = $this->entityManager->getEventManager();
-
-        $eventsToCheck = [Events::onFlush, Events::preRemove];
-
-        foreach ($eventsToCheck as $event) {
-            foreach ($eventManager->getListeners($event) as $listener) {
-                if ($listener instanceof ActivityListener) {
-                    $eventManager->removeEventListener([$event], $listener);
-                }
-            }
-        }
     }
 }

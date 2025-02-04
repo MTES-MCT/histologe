@@ -9,12 +9,14 @@ use App\Entity\Intervention;
 use App\Entity\Signalement;
 use App\Entity\Suivi;
 use App\Entity\User;
+use App\Event\SuiviCreatedEvent;
 use App\EventListener\SignalementUpdatedListener;
 use App\Repository\DesordreCritereRepository;
 use App\Service\Sanitizer;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HtmlSanitizer\HtmlSanitizerInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
@@ -24,6 +26,7 @@ class SuiviManager extends Manager
         protected ManagerRegistry $managerRegistry,
         private readonly UrlGeneratorInterface $urlGenerator,
         private readonly SignalementUpdatedListener $signalementUpdatedListener,
+        private readonly EventDispatcherInterface $eventDispatcher,
         private readonly Security $security,
         private readonly DesordreCritereRepository $desordreCritereRepository,
         #[Autowire(service: 'html_sanitizer.sanitizer.app.message_sanitizer')]
@@ -39,21 +42,28 @@ class SuiviManager extends Manager
         int $type,
         bool $isPublic = false,
         ?User $user = null,
+        ?\DateTimeImmutable $createdAt = null,
         ?string $context = null,
         bool $sendMail = true,
         bool $flush = true,
     ): Suivi {
         $suivi = (new Suivi())
-        ->setCreatedBy($user)
-        ->setSignalement($signalement)
-        ->setDescription($this->htmlSanitizer->sanitize($description))
-        ->setType($type)
-        ->setIsPublic($isPublic)
-        ->setContext($context)
-        ->setSendMail($sendMail);
+            ->setCreatedBy($user)
+            ->setSignalement($signalement)
+            ->setDescription($this->htmlSanitizer->sanitize($description))
+            ->setType($type)
+            ->setIsPublic($isPublic)
+            ->setContext($context)
+            ->setSendMail($sendMail);
+        if (!empty($createdAt)) {
+            $suivi->setCreatedAt($createdAt);
+        }
         if ($flush) {
             $this->save($suivi);
+        } else {
+            $this->persist($suivi);
         }
+        $this->eventDispatcher->dispatch(new SuiviCreatedEvent($suivi), SuiviCreatedEvent::NAME);
 
         return $suivi;
     }

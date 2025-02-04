@@ -134,7 +134,7 @@ class SignalementActionController extends AbstractController
 
             $this->addFlash('success', 'Suivi publié avec succès !');
         } else {
-            $this->addFlash('error', 'Une erreur est survenue lors de la publication.');
+            $this->addFlash('error', 'Une erreur de jeton est survenue lors de la publication.');
         }
 
         return $this->redirect(
