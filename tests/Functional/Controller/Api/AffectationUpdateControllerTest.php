@@ -7,22 +7,35 @@ use App\Entity\Enum\AffectationStatus;
 use App\Repository\SignalementRepository;
 use App\Repository\UserRepository;
 use Doctrine\Common\Collections\Collection;
+use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
+use Symfony\Component\HttpFoundation\Response;
 
 class AffectationUpdateControllerTest extends WebTestCase
 {
+    private KernelBrowser $client;
+    private SignalementRepository $signalementRepository;
+
+    private const string TRANSITION_ERROR_MESSAGE = 'Cette transition n\'est pas valide';
+    private const string AFFECTATION_NOT_FOUND_ERROR_MESSAGE = 'Affectation introuvable';
+
+    protected function setUp(): void
+    {
+        $this->client = static::createClient();
+        $user = self::getContainer()->get(UserRepository::class)->findOneBy([
+            'email' => 'api-01@histologe.fr',
+        ]);
+        $this->signalementRepository = self::getContainer()->get(SignalementRepository::class);
+
+        $this->client->loginUser($user, 'api');
+    }
+
     /**
      * @dataProvider provideValidTransitionData
      */
     public function testValidWorkflow(string $signalementUuid, array $payload, string $statut, int $mailSent): void
     {
-        $client = static::createClient();
-        $user = self::getContainer()->get(UserRepository::class)->findOneBy([
-            'email' => 'api-01@histologe.fr',
-        ]);
-
-        $signalementRepository = self::getContainer()->get(SignalementRepository::class);
-        $signalement = $signalementRepository->findOneBy(['uuid' => $signalementUuid]);
+        $signalement = $this->signalementRepository->findOneBy(['uuid' => $signalementUuid]);
         /** @var Collection $affectations */
         $affectations = $signalement->getAffectations();
 
@@ -31,48 +44,43 @@ class AffectationUpdateControllerTest extends WebTestCase
             return 'Partenaire 13-01' === $affectation->getPartner()->getNom();
         })->current();
 
-        $client->loginUser($user, 'api');
-        $client->request(
-            method: 'PATCH',
-            uri: '/api/affectations/'.$affectation->getUuid(),
-            server: ['CONTENT_TYPE' => 'application/json'],
-            content: json_encode($payload)
-        );
-
+        $this->patchAffectation($affectation->getUuid(), $payload);
         $this->assertResponseIsSuccessful();
         $this->assertEquals($statut, AffectationStatus::mapNewStatus($affectation->getStatut())->value);
         $this->assertEmailCount($mailSent);
     }
 
-    /** @dataProvider provideUnvalidTransitionData */
-    public function testInvalidWorkflow(string $signalementUuid, array $payload): void
+    /** @dataProvider provideUnvalidData */
+    public function testInvalidWorkflow(string $signalementUuid, array $payload, string $errorMessage, int $httpCodeStatus): void
     {
-        $client = static::createClient();
-        $user = self::getContainer()->get(UserRepository::class)->findOneBy([
-            'email' => 'api-01@histologe.fr',
-        ]);
-
-        $signalementRepository = self::getContainer()->get(SignalementRepository::class);
-        $signalement = $signalementRepository->findOneBy(['uuid' => $signalementUuid]);
+        $signalement = $this->signalementRepository->findOneBy(['uuid' => $signalementUuid]);
         /** @var Collection $affectations */
-        $affectations = $signalement->getAffectations();
+        $affectations = $signalement?->getAffectations();
 
-        /** @var Affectation $affectation */
-        $affectation = $affectations->filter(function (Affectation $affectation) {
-            return 'Partenaire 13-01' === $affectation->getPartner()->getNom();
-        })->current();
+        $affectation = null;
+        /* @var Affectation $affectation */
+        if (null !== $affectations) {
+            $affectation = $affectations->filter(function (Affectation $affectation) {
+                return 'Partenaire 13-01' === $affectation->getPartner()->getNom();
+            })->current();
+        }
+        $this->patchAffectation($affectation?->getUuid(), $payload);
+        $response = json_decode($this->client->getResponse()->getContent(), true);
+        $this->assertEquals($httpCodeStatus, $this->client->getResponse()->getStatusCode());
+        $this->assertStringContainsString($errorMessage, $response['message']);
+    }
 
-        $client->loginUser($user, 'api');
-        $client->request(
+    private function patchAffectation(?string $affectationUuid, array $payload): void
+    {
+        if (null === $affectationUuid) {
+            $affectationUuid = 'wrong-uuid';
+        }
+        $this->client->request(
             method: 'PATCH',
-            uri: '/api/affectations/'.$affectation->getUuid(),
+            uri: '/api/affectations/'.$affectationUuid,
             server: ['CONTENT_TYPE' => 'application/json'],
             content: json_encode($payload)
         );
-
-        $response = json_decode($client->getResponse()->getContent(), true);
-        $this->assertEquals(403, $client->getResponse()->getStatusCode());
-        $this->assertStringContainsString('Cette transition n\'est pas valide', $response['message']);
     }
 
     public function provideValidTransitionData(): \Generator
@@ -84,6 +92,16 @@ class AffectationUpdateControllerTest extends WebTestCase
             ],
             'EN_COURS',
             0,
+        ];
+        yield 'NOUVEAU ==> REFUSE' => [
+            '00000000-0000-0000-2022-000000000001',
+            [
+                'statut' => 'REFUSE',
+                'motifRefus' => 'DOUBLON',
+                'message' => 'lorem ipsum dolor sit amet',
+            ],
+            'REFUSE',
+            1,
         ];
         yield 'EN_COURS ==> FERME' => [
             '00000000-0000-0000-2022-000000000006',
@@ -107,7 +125,7 @@ class AffectationUpdateControllerTest extends WebTestCase
         ];
     }
 
-    public function provideUnvalidTransitionData(): \Generator
+    public function provideUnvalidData(): \Generator
     {
         yield 'NOUVEAU ==> FERME' => [
             '00000000-0000-0000-2022-000000000001',
@@ -116,6 +134,8 @@ class AffectationUpdateControllerTest extends WebTestCase
                 'motifCloture' => 'RELOGEMENT_OCCUPANT',
                 'message' => 'Hello world buddy!!!!',
             ],
+            self::TRANSITION_ERROR_MESSAGE,
+            Response::HTTP_FORBIDDEN,
         ];
         yield 'EN_COURS ==> NOUVEAU' => [
             '00000000-0000-0000-2022-000000000006',
@@ -123,6 +143,8 @@ class AffectationUpdateControllerTest extends WebTestCase
                 'statut' => 'NOUVEAU',
                 'notifyUsager' => true,
             ],
+            self::TRANSITION_ERROR_MESSAGE,
+            Response::HTTP_FORBIDDEN,
         ];
 
         yield 'FERME ==> EN_COURS' => [
@@ -130,6 +152,17 @@ class AffectationUpdateControllerTest extends WebTestCase
             [
                 'statut' => 'EN_COURS',
             ],
+            self::TRANSITION_ERROR_MESSAGE,
+            Response::HTTP_FORBIDDEN,
+        ];
+
+        yield 'NOUVEAU ==> EN_COURS' => [
+            'wrong-uuid',
+            [
+                'statut' => 'EN_COURS',
+            ],
+            self::AFFECTATION_NOT_FOUND_ERROR_MESSAGE,
+            Response::HTTP_NOT_FOUND,
         ];
     }
 }

@@ -48,7 +48,7 @@ class AffectationManager extends Manager
         }
 
         if (Affectation::STATUS_WAIT === $status || Affectation::STATUS_ACCEPTED === $status) {
-            $affectation->clear();
+            $affectation->clearMotifs();
         }
 
         $this->save($affectation);

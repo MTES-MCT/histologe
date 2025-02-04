@@ -10,10 +10,10 @@ use Symfony\Component\Routing\RouterInterface;
 
 class WidgetControllerTest extends WebTestCase
 {
-    private const USER_SUPER_ADMIN = 'admin-01@histologe.fr';
-    private const USER_ADMIN_TERRITOIRE = 'admin-territoire-13-01@histologe.fr';
-    private const USER_PARTNER = 'user-13-01@histologe.fr';
-    private const USER_MULTI_TER_ADMIN_PARTNER = 'admin-partenaire-multi-ter-13-01@histologe.fr';
+    private const string USER_SUPER_ADMIN = 'admin-01@histologe.fr';
+    private const string USER_ADMIN_TERRITOIRE = 'admin-territoire-13-01@histologe.fr';
+    private const string USER_PARTNER = 'user-13-01@histologe.fr';
+    private const string USER_MULTI_TER_ADMIN_PARTNER = 'admin-partenaire-multi-ter-13-01@histologe.fr';
 
     public function testWidgetRouteDataKpi(): void
     {

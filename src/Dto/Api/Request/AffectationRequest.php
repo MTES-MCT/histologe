@@ -7,6 +7,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 
 #[OA\Schema(
     description: 'Payload pour mettre à jour une affectation.',
+    required: ['statut'],
 )]
 class AffectationRequest implements RequestInterface
 {
@@ -23,6 +24,7 @@ class AffectationRequest implements RequestInterface
             enum: ['NOUVEAU', 'EN_COURS', 'FERME', 'REFUSE'],
             example: 'EN_COURS',
         )]
+        #[Assert\NotNull(message: 'Le statut est obligatoire.')]
         #[Assert\Choice(
             choices: ['NOUVEAU', 'EN_COURS', 'FERME', 'REFUSE'],
             message: 'Cette valeur doit être l\'un des choix suivants : {{ choices }}')
@@ -83,7 +85,7 @@ class AffectationRequest implements RequestInterface
                 'DOUBLON',
                 'AUTRE',
             ],
-            example: 'EN_COURS',
+            example: 'HORS_COMPETENCE',
         )]
         #[Assert\Choice(
             choices: [

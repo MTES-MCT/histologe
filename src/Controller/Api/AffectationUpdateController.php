@@ -39,7 +39,47 @@ class AffectationUpdateController extends AbstractController
         description: 'Mise à jour d\'une affectation',
         summary: 'Mise à jour d\'une affectation',
         security: [['Bearer' => []]],
-        tags: ['Affectations'],
+        requestBody: new OA\RequestBody(
+            content: new OA\JsonContent(
+                examples: [
+                    new OA\Examples(
+                        example: 'Dossier en cours',
+                        summary: 'Affectation passant de NOUVEAU à EN_COURS',
+                        value: [
+                            'statut' => 'EN_COURS',
+                        ]
+                    ),
+                    new OA\Examples(
+                        example: 'Dossier fermé',
+                        summary: 'Affectation passant EN_COURS à FERME',
+                        value: [
+                            'statut' => 'FERME',
+                            'motifCloture' => 'REFUS_DE_VISITE',
+                            'message' => 'Lorem ipsum dolor sit amet',
+                        ]
+                    ),
+                    new OA\Examples(
+                        example: 'Dossier refusé',
+                        summary: 'Affectation passant de NOUVEAU à REFUSE',
+                        value: [
+                            'statut' => 'FERME',
+                            'motifCloture' => 'REFUS_DE_VISITE',
+                            'message' => 'Lorem ipsum dolor sit amet',
+                        ]
+                    ),
+                    new OA\Examples(
+                        example: 'Dossier de nouveau ouvert',
+                        summary: 'Affectation passant de FERME à NOUVEAU',
+                        value: [
+                            'statut' => 'NOUVEAU',
+                            'notifyUsager' => true,
+                        ]
+                    ),
+                ],
+                ref: '#/components/schemas/AffectationRequest'
+            ),
+        ),
+        tags: ['Affectations']
     )]
     #[OA\Response(
         response: Response::HTTP_OK,
@@ -152,29 +192,25 @@ class AffectationUpdateController extends AbstractController
         /** @var User $user */
         $user = $this->getUser();
 
-        $statut = AffectationNewStatus::mapStatus($affectationRequest->statut);
-        if ($statut !== $affectation->getStatut()) {
-            if (Affectation::STATUS_CLOSED === $statut) {
-                $motifCloture = MotifCloture::tryFrom($affectationRequest->motifCloture);
+        $statut = $affectation->getNextStatut();
+        if (Affectation::STATUS_CLOSED === $statut) {
+            $motifCloture = MotifCloture::tryFrom($affectationRequest->motifCloture);
 
-                return $this->affectationManager->closeAffectation(
-                    $affectation,
-                    $user,
-                    $motifCloture,
-                    $affectationRequest->message,
-                    true
-                );
-            }
-            $motifRefus = $message = null;
-            if (Affectation::STATUS_REFUSED === $statut) {
-                $motifRefus = MotifRefus::tryFrom($affectationRequest->motifRefus)->value;
-                $message = $affectationRequest->message;
-            }
-
-            return $this->affectationManager->updateAffectation($affectation, $user, $statut, $motifRefus, $message);
+            return $this->affectationManager->closeAffectation(
+                $affectation,
+                $user,
+                $motifCloture,
+                $affectationRequest->message,
+                true
+            );
+        }
+        $motifRefus = $message = null;
+        if (Affectation::STATUS_REFUSED === $statut) {
+            $motifRefus = MotifRefus::tryFrom($affectationRequest->motifRefus)->value;
+            $message = $affectationRequest->message;
         }
 
-        return $affectation;
+        return $this->affectationManager->updateAffectation($affectation, $user, $statut, $motifRefus, $message);
     }
 
     /**

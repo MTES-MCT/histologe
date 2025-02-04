@@ -34,7 +34,6 @@ readonly class SignalementClosedSubscriber implements EventSubscriberInterface
     public function onSignalementClosed(SignalementClosedEvent $event): void
     {
         $signalement = $event->getSignalement();
-        $affectation = $event->getAffectation();
         $params = $event->getParams();
         /** @var User $user */
         $user = $this->security->getUser();

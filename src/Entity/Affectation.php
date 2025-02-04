@@ -24,8 +24,8 @@ class Affectation implements EntityHistoryInterface
     #[ORM\Column(type: 'integer')]
     private ?int $id = null;
 
-    #[ORM\Column(type: 'string', length: 255)]
-    private ?string $uuid = null;
+    #[ORM\Column(type: 'string', length: 255, unique: true)]
+    private ?string $uuid;
 
     #[ORM\ManyToOne(targetEntity: Signalement::class, inversedBy: 'affectations')]
     #[ORM\JoinColumn(nullable: false)]
@@ -85,13 +85,6 @@ class Affectation implements EntityHistoryInterface
     public function getUuid(): ?string
     {
         return $this->uuid;
-    }
-
-    public function setUuid(?string $uuid): static
-    {
-        $this->uuid = $uuid;
-
-        return $this;
     }
 
     public function getSignalement(): ?Signalement
@@ -287,7 +280,7 @@ class Affectation implements EntityHistoryInterface
         $this->hasNotificationUsagerToCreate = $hasNotificationUsagerToCreate;
     }
 
-    public function clear(): void
+    public function clearMotifs(): void
     {
         $this->motifRefus = null;
         $this->motifCloture = null;
