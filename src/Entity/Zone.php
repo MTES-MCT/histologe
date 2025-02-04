@@ -3,6 +3,7 @@
 namespace App\Entity;
 
 use App\Entity\Behaviour\EntityHistoryInterface;
+use App\Entity\Behaviour\TimestampableTrait;
 use App\Entity\Enum\HistoryEntryEvent;
 use App\Entity\Enum\ZoneType;
 use App\Repository\ZoneRepository;
@@ -15,6 +16,7 @@ use Symfony\Component\Serializer\Attribute\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: ZoneRepository::class)]
+#[ORM\HasLifecycleCallbacks()]
 #[ORM\UniqueConstraint(columns: ['name', 'territory_id'])]
 #[UniqueEntity(
     fields: ['name', 'territory'],
@@ -23,6 +25,8 @@ use Symfony\Component\Validator\Constraints as Assert;
 )]
 class Zone implements EntityHistoryInterface
 {
+    use TimestampableTrait;
+
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
