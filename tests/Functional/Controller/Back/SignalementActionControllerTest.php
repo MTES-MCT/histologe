@@ -6,6 +6,8 @@ use App\Entity\Suivi;
 use App\Repository\SignalementRepository;
 use App\Repository\SuiviRepository;
 use App\Repository\UserRepository;
+use App\Service\BetaGouv\Response\RnbBuilding;
+use App\Service\BetaGouv\RnbService;
 use App\Tests\SessionHelper;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
@@ -185,5 +187,49 @@ class SignalementActionControllerTest extends WebTestCase
         $this->assertEquals('{"response":"success"}', $this->client->getResponse()->getContent());
         $this->assertEquals(1, $signalement->getTags()->count());
         $this->assertEquals(3, $signalement->getTags()->first()->getId());
+    }
+
+    /**
+     * @dataProvider provideSignalementToSetRnbId
+     */
+    public function testsetRnbId($uuid, $isGeolocUpdated): void
+    {
+        $buildingData = json_decode(file_get_contents(__DIR__.'/../../../files/betagouv/get_api_rnb_buildings_response.json'), true);
+        $building = new RnbBuilding($buildingData['results'][0]);
+        $rnbService = $this->createMock(RnbService::class);
+        if ($isGeolocUpdated) {
+            $rnbService->expects($this->once())
+            ->method('getBuilding')
+            ->willReturn($building);
+        } else {
+            $rnbService->expects($this->never())
+            ->method('getBuilding');
+        }
+        self::getContainer()->set(RnbService::class, $rnbService);
+
+        $signalement = $this->signalementRepository->findOneBy(['uuid' => $uuid]);
+
+        $route = $this->router->generate('back_signalement_set_rnb', ['uuid' => $signalement->getUuid()]);
+        $this->client->request(
+            'POST',
+            $route,
+            [
+                'rnbId' => 'FQYN6F6WPEJ8',
+                '_token' => $this->generateCsrfToken($this->client, 'signalement_set_rnb_'.$signalement->getUuid()),
+            ]
+        );
+        if ($isGeolocUpdated) {
+            $this->assertEquals('FQYN6F6WPEJ8', $signalement->getRnbIdOccupant());
+            $this->assertEquals(['lat' => 44.05309187516625, 'lng' => 4.141756415466935], $signalement->getGeoloc());
+        } else {
+            $this->assertNull($signalement->getRnbIdOccupant());
+        }
+        $this->assertResponseRedirects('/bo/signalements/'.$signalement->getUuid());
+    }
+
+    public function provideSignalementToSetRnbId(): \Generator
+    {
+        yield 'Signalement without geoloc' => ['00000000-0000-0000-2025-000000000004', true];
+        yield 'Signalement with geoloc' => ['00000000-0000-0000-2025-000000000003', false];
     }
 }
