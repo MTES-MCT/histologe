@@ -2,12 +2,18 @@
 
 namespace App\Entity;
 
+use App\Entity\Behaviour\EntityHistoryInterface;
+use App\Entity\Behaviour\TimestampableTrait;
+use App\Entity\Enum\HistoryEntryEvent;
 use App\Repository\PopNotificationRepository;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: PopNotificationRepository::class)]
-class PopNotification
+#[ORM\HasLifecycleCallbacks()]
+class PopNotification implements EntityHistoryInterface
 {
+    use TimestampableTrait;
+
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
@@ -18,15 +24,7 @@ class PopNotification
     private ?User $user = null;
 
     #[ORM\Column]
-    private ?\DateTimeImmutable $createdAt = null;
-
-    #[ORM\Column]
     private array $params = [];
-
-    public function __construct()
-    {
-        $this->createdAt = new \DateTimeImmutable();
-    }
 
     public function getId(): ?int
     {
@@ -45,18 +43,6 @@ class PopNotification
         return $this;
     }
 
-    public function getCreatedAt(): ?\DateTimeImmutable
-    {
-        return $this->createdAt;
-    }
-
-    public function setCreatedAt(\DateTimeImmutable $createdAt): static
-    {
-        $this->createdAt = $createdAt;
-
-        return $this;
-    }
-
     public function getParams(): array
     {
         return $this->params;
@@ -67,5 +53,10 @@ class PopNotification
         $this->params = $params;
 
         return $this;
+    }
+
+    public function getHistoryRegisteredEvent(): array
+    {
+        return [HistoryEntryEvent::CREATE, HistoryEntryEvent::UPDATE, HistoryEntryEvent::DELETE];
     }
 }
