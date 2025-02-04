@@ -57,6 +57,6 @@
     "es-js-fix": "node_modules/.bin/eslint --parser espree --fix assets/scripts/vanilla/*"
   },
   "engines": {
-    "node": "18.14.2"
+    "node": "22"
   }
 }
