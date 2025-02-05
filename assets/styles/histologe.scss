@@ -930,6 +930,9 @@ a.photo-preview {
         background: white;
     }
 }
+#fr-modal-localisation-map, #fr-modal-pick-localisation-map {
+    height: 50vh;
+}
 #zone_map, #info_zone_map {
     height: 70vh;
 }

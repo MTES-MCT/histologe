@@ -17,10 +17,16 @@ class RnbService
     ) {
     }
 
-    private function searchBuildings(array $queryParams): ?array
+    private function searchBuildings(?string $rnbId = null, array $queryParams = []): ?array
     {
         try {
-            $url = self::API_URL.'?'.http_build_query($queryParams);
+            $url = self::API_URL;
+            if (null !== $rnbId) {
+                $url .= $rnbId.'/';
+            }
+            if (!empty($queryParams)) {
+                $url .= '?'.http_build_query($queryParams);
+            }
             $response = $this->httpClient->request('GET', $url);
 
             if (Response::HTTP_OK === $response->getStatusCode()) {
@@ -36,7 +42,7 @@ class RnbService
     public function getBuildings(string $cleInteropBan): array
     {
         $buildings = [];
-        $results = $this->searchBuildings(['cle_interop_ban' => $cleInteropBan]);
+        $results = $this->searchBuildings(queryParams: ['cle_interop_ban' => $cleInteropBan]);
         if (null !== $results && !empty($results['results'])) {
             foreach ($results['results'] as $item) {
                 $buildings[] = new RnbBuilding($item);
@@ -44,5 +50,15 @@ class RnbService
         }
 
         return $buildings;
+    }
+
+    public function getBuilding(string $rnbId): ?RnbBuilding
+    {
+        $result = $this->searchBuildings(rnbId: $rnbId);
+        if (!empty($result)) {
+            return new RnbBuilding($result);
+        }
+
+        return null;
     }
 }

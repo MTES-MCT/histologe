@@ -1,0 +1,47 @@
+<dialog 
+    aria-labelledby="fr-modal-pick-localisation-title" 
+    id="fr-modal-pick-localisation" 
+    class="fr-modal" 
+    data-address="{{signalement.adresseOccupant}}"
+    data-postcode="{{signalement.cpOccupant}}"
+    data-loaded="false"
+    >
+    <div class="fr-container fr-container--fluid fr-container-md">
+        <div class="fr-grid-row fr-grid-row--center">
+            <div class="fr-col-12 fr-col-md-8 fr-col-lg-6">
+                <div class="fr-modal__body">
+                    <div class="fr-modal__header">
+                       <button type="button" class="fr-btn--close fr-btn" aria-controls="fr-modal-pick-localisation">Fermer</button>
+                    </div>
+                    <div class="fr-modal__content">
+                        <h1 class="fr-modal__title">Sélectionner le bâtiment correspondant au logement</h1>  
+                        <div id="fr-modal-pick-localisation-message">Chargement en cours</div>
+                        <div id="fr-modal-pick-localisation-map"></div>
+                    </div>
+                    <div class="fr-modal__footer">
+                        <ul class="fr-btns-group fr-btns-group--right fr-btns-group--inline-reverse fr-btns-group--inline-lg fr-btns-group--icon-left">
+                            <li>
+                                <form action="{{ path('back_signalement_set_rnb', {'uuid': signalement.uuid}) }}" method="POST">
+                                    <input type="hidden" name="rnbId" id="fr-modal-pick-localisation-rnb-id">
+                                    <input type="hidden" name="_token" value="{{ csrf_token('signalement_set_rnb_'~signalement.uuid) }}">
+                                    <button 
+                                        class="fr-btn fr-icon-check-line" 
+                                        id="fr-modal-pick-localisation-submit" 
+                                        disabled
+                                    >
+                                        Valider
+                                    </button>
+                                </form>
+                            </li>
+                            <li>
+                                <button class="fr-btn fr-btn--secondary fr-icon-close-line" aria-controls="fr-modal-pick-localisation">
+                                    Annuler
+                                </button>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</dialog>

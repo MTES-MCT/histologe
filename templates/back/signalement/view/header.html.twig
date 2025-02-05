@@ -101,21 +101,25 @@
                     </div>
                 {% endif %}
 
-                    <div class="fr-mt-3v">
-                        {% if signalement.geoloc.lat is defined and signalement.geoloc.lng is defined %}
-                            <a target="_blank" rel="noreferrer noopener" class="force-link-color"
-                                href="http://www.openstreetmap.org/?mlat={{ signalement.geoloc.lat }}&mlon={{ signalement.geoloc.lng }}#map=18/{{ signalement.geoloc.lat }}/{{ signalement.geoloc.lng }}"
-                                title="Voir sur la carte - Ouvre une nouvelle fenêtre">
-                                Voir sur la carte
-                            </a>
-                        {% else %}
-                            <a target="_blank" rel="noreferrer noopener" class="force-link-color"
-                                href="http://www.openstreetmap.org/?search?query={{signalement.addressCompleteOccupant}}"
-                                title="Voir sur la carte - Ouvre une nouvelle fenêtre">
-                                Voir sur la carte
-                            </a>
-                        {% endif %}
-                    </div>
+                <div class="fr-mt-3v">
+                    {% if signalement.geoloc.lat is defined and signalement.geoloc.lng is defined %}
+                        <button 
+                            class="fr-btn fr-btn--sm fr-btn--secondary fr-btn--icon-left fr-icon-france-line" 
+                            data-fr-opened="false" 
+                            aria-controls="fr-modal-localisation"
+                        >
+                            Voir sur la carte
+                        </button>
+                    {% elseif is_granted('SIGN_EDIT', signalement) %}
+                        <button 
+                            class="fr-btn fr-btn--sm fr-btn--icon-left fr-icon-map-pin-2-line" 
+                            data-fr-opened="false" 
+                            aria-controls="fr-modal-pick-localisation"
+                        >
+                            Sélectionner le bâtiment sur la carte
+                        </button>
+                    {% endif %}
+                </div>
             </div>
             
             {% if signalement.statut is not same as constant('App\\Entity\\Signalement::STATUS_NEED_VALIDATION') %}

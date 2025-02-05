@@ -8,9 +8,11 @@ use App\Entity\Signalement;
 use App\Entity\Suivi;
 use App\Entity\Tag;
 use App\Entity\User;
+use App\Manager\SignalementManager;
 use App\Manager\SuiviManager;
 use App\Repository\AffectationRepository;
 use App\Repository\SuiviRepository;
+use App\Service\BetaGouv\RnbService;
 use App\Service\Mailer\NotificationMail;
 use App\Service\Mailer\NotificationMailerRegistry;
 use App\Service\Mailer\NotificationMailerType;
@@ -237,5 +239,38 @@ class SignalementActionController extends AbstractController
         }
 
         return $this->json(['response' => 'error'], 400);
+    }
+
+    #[Route('/{uuid:signalement}/set-rnb', name: 'back_signalement_set_rnb', methods: 'POST')]
+    public function setRnbId(
+        Signalement $signalement,
+        Request $request,
+        RnbService $rnbService,
+        SignalementManager $signalementManager,
+    ): RedirectResponse {
+        $this->denyAccessUnlessGranted('SIGN_EDIT', $signalement);
+        $rnbId = $request->get('rnbId');
+        $token = $request->get('_token');
+        if (!$this->isCsrfTokenValid('signalement_set_rnb_'.$signalement->getUuid(), $token)) {
+            $this->addFlash('error', 'Le jeton CSRF est invalide. Veuillez réessayer.');
+
+            return $this->redirectToRoute('back_signalement_view', ['uuid' => $signalement->getUuid()]);
+        }
+        if (!empty($signalement->getGeoloc())) {
+            $this->addFlash('error', 'Le signalement a déjà une géolocalisation.');
+
+            return $this->redirectToRoute('back_signalement_view', ['uuid' => $signalement->getUuid()]);
+        }
+        $building = $rnbService->getBuilding($rnbId);
+        if (!$building) {
+            $this->addFlash('error', 'Le bâtiment n\'a pas été trouvé.');
+        } else {
+            $signalement->setRnbIdOccupant($building->getRnbId());
+            $signalement->setGeoloc(['lat' => $building->getLat(), 'lng' => $building->getLng()]);
+            $signalementManager->flush();
+            $this->addFlash('success', 'Le bâtiment a été mis à jour avec succès.');
+        }
+
+        return $this->redirectToRoute('back_signalement_view', ['uuid' => $signalement->getUuid()]);
     }
 }
