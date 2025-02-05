@@ -9,6 +9,7 @@ use App\Event\SignalementViewedEvent;
 use App\EventSubscriber\SignalementViewedSubscriber;
 use App\Manager\SignalementManager;
 use App\Service\DataGouv\AddressService;
+use App\Service\DataGouv\Response\Address;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use Symfony\Component\EventDispatcher\EventDispatcher;
@@ -16,14 +17,12 @@ use Symfony\Component\EventDispatcher\EventDispatcher;
 class SignalementViewedSubscriberTest extends KernelTestCase
 {
     private EntityManagerInterface $entityManager;
-    private AddressService $addressService;
     private SignalementManager $signalementManager;
 
     protected function setUp(): void
     {
         $kernel = self::bootKernel();
         $this->entityManager = $kernel->getContainer()->get('doctrine')->getManager();
-        $this->addressService = static::getContainer()->get(AddressService::class);
         $this->signalementManager = static::getContainer()->get(SignalementManager::class);
     }
 
@@ -53,9 +52,19 @@ class SignalementViewedSubscriberTest extends KernelTestCase
         $isSeenBefore = $notification->getIsSeen();
         $this->assertFalse($isSeenBefore);
 
+        $addressResult = json_decode(file_get_contents(__DIR__.'/../../files/datagouv/get_api_ban_item_response_13203.json'), true);
+        $address = new Address($addressResult);
+        $addressServiceMock = $this->createMock(AddressService::class);
+        $this->signalementManager = static::getContainer()->get(SignalementManager::class);
+
+        $addressServiceMock
+            ->expects($this->once())
+            ->method('getAddress')
+            ->willReturn($address);
+
         $signalementViewedSubscriber = new SignalementViewedSubscriber(
             $this->entityManager,
-            $this->addressService,
+            $addressServiceMock,
             $this->signalementManager
         );
 
