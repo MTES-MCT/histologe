@@ -26,6 +26,7 @@ class SignalementQualificationUpdater
         $existingQualificationInsalubrite = null;
         $existingQualificationDanger = null;
         $existingQualificationSuroccupation = null;
+        $existingQualificationNDE = null;
 
         $listQualifications = $signalement->getSignalementQualifications();
         foreach ($listQualifications as $qualification) {
@@ -44,6 +45,9 @@ class SignalementQualificationUpdater
             if (Qualification::SUROCCUPATION == $qualification->getQualification()) {
                 $existingQualificationSuroccupation = $qualification;
             }
+            if (Qualification::NON_DECENCE_ENERGETIQUE == $qualification->getQualification()) {
+                $existingQualificationNDE = $qualification;
+            }
         }
 
         if (null === $signalement->getCreatedFrom()) {
@@ -55,6 +59,7 @@ class SignalementQualificationUpdater
             $this->updateSuroccupationQualification($signalement, $existingQualificationSuroccupation);
         }
         $this->updateDangerQualification($signalement, $existingQualificationDanger);
+        $this->updateNDEQualification($signalement, $existingQualificationNDE);
     }
 
     /**
@@ -166,26 +171,6 @@ class SignalementQualificationUpdater
             }
         }
 
-        foreach ($desordrePrecisionsQualifications as $qualification) {
-            $desordrePrecisionsQualifications[$qualification] = $qualification;
-            if (Qualification::NON_DECENCE_ENERGETIQUE->value === $qualification) {
-                $linkedDesordrePrecisions = $this->getLinkedDesordrePrecisions(
-                    $signalement,
-                    Qualification::tryFrom($qualification)
-                );
-                $signalementQualification = $this->createNDEQualification($signalement, $linkedDesordrePrecisions);
-                if (null !== $signalementQualification) {
-                    $signalement->addSignalementQualification($signalementQualification);
-                }
-            }
-        }
-
-        if ('G' === $signalement->getTypeCompositionLogement()->getBailDpeClasseEnergetique()) {
-            $signalementQualification = $this->createNDEQualification($signalement);
-            if (null !== $signalementQualification) {
-                $signalement->addSignalementQualification($signalementQualification);
-            }
-        }
         if (0 <= $score && $score <= 10) {
             $this->addQualificationScore0To10(
                 $signalement,
@@ -433,6 +418,55 @@ class SignalementQualificationUpdater
         }
 
         return $associatedDesordrePrecisions;
+    }
+
+    /**
+     * If one criticité/precision is Nde, we add Nde.
+     */
+    private function updateNdeQualification(
+        Signalement $signalement,
+        ?SignalementQualification $existingQualificationNde,
+    ): void {
+        $listCriticiteNDE = $this->getCriticitesNde($signalement);
+        // If already exists
+        if ($existingQualificationNde) {
+            // But should be deleted
+            if (empty($listCriticiteNDE) && 'G' !== $signalement->getTypeCompositionLogement()->getBailDpeClasseEnergetique()) {
+                $signalement->removeSignalementQualification($existingQualificationNde);
+            }
+        // $existingQualificationNde->setStatus(QualificationStatus::DANGER_CHECK);
+        // TODO : mettre à jour le status ?
+
+        // If not added yet, but should be added
+        } elseif (!empty($listCriticiteNDE) || 'G' === $signalement->getTypeCompositionLogement()->getBailDpeClasseEnergetique()) {
+            $signalementQualification = $this->createNDEQualification($signalement, $listCriticiteNDE);
+            $signalement->addSignalementQualification($signalementQualification);
+        }
+    }
+
+    private function getCriticitesNde(
+        Signalement $signalement,
+    ): array {
+        $listCriticiteNDE = [];
+        if (null === $signalement->getCreatedFrom()) {
+            foreach ($signalement->getCriticites() as $criticite) {
+                if ($criticite->getQualification()
+                    && \in_array(Qualification::NON_DECENCE_ENERGETIQUE->value, $criticite->getQualification())
+                ) {
+                    $listCriticiteNDE[] = $criticite->getId();
+                }
+            }
+        } else {
+            foreach ($signalement->getDesordrePrecisions() as $precision) {
+                if ($precision->getQualification()
+                    && \in_array(Qualification::NON_DECENCE_ENERGETIQUE->value, $precision->getQualification())
+                ) {
+                    $listCriticiteNDE[] = $precision->getId();
+                }
+            }
+        }
+
+        return $listCriticiteNDE;
     }
 
     /**

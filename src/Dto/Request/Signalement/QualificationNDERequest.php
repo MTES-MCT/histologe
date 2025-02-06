@@ -9,7 +9,6 @@ class QualificationNDERequest
 
     public function __construct(
         private ?string $dateEntree = null,
-        // private ?string $dateDernierBail = null,
         private ?string $dateDernierDPE = null,
         private ?float $superficie = null,
         private ?int $consommationEnergie = null,
@@ -27,11 +26,6 @@ class QualificationNDERequest
     {
         return $this->superficie;
     }
-
-    // public function getDateDernierBail(): ?string
-    // {
-    //     return $this->dateDernierBail;
-    // }
 
     public function getDateDernierDPE(): ?string
     {
