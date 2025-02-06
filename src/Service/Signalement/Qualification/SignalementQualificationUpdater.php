@@ -391,13 +391,6 @@ class SignalementQualificationUpdater
         Signalement $signalement,
         array $linkedDesordrePrecisions = [],
     ): SignalementQualification {
-        // var_dump('createNDEQualification');
-        // $dataDateBail = null;
-        // if ($signalement->getTypeCompositionLogement()->getBailDpeDateEmmenagement()) {
-        //     $dataDateBail = new \DateTimeImmutable(
-        //         $signalement->getTypeCompositionLogement()->getBailDpeDateEmmenagement()
-        //     );
-        // }
         $dataHasDPE = null;
         if ('oui' === $signalement->getTypeCompositionLogement()->getBailDpeDpe()) {
             $dataHasDPE = true;
@@ -405,11 +398,7 @@ class SignalementQualificationUpdater
             $dataHasDPE = false;
         }
 
-        // $isDateBail2023 = (null !== $signalement->getDateEntree() && $signalement->getDateEntree()->format('Y') >= 2023)
-        //     || (null !== $dataDateBail && $dataDateBail->format('Y') >= 2023);
         $anDPE = $signalement->getTypeCompositionLogement()->getDesordresLogementChauffageDetailsDpeAnnee();
-        // var_dump($isDateBail2023);
-        // if ($isDateBail2023 || $signalement->getTypeCompositionLogement()->getBailDpeClasseEnergetique() === 'G') {
         if ('before2023' === $anDPE) {
             $dataDateDPE = '1970-01-01';
         } else {
@@ -419,7 +408,6 @@ class SignalementQualificationUpdater
         $signalementQualification = $this->signalementQualificationFactory->createNDEInstanceFrom(
             signalement: $signalement,
             listNDECriticites: $linkedDesordrePrecisions,
-            // dataDateBail: $signalement->getTypeCompositionLogement()->getBailDpeDateEmmenagement(),
             dataConsoSizeYear: $signalement->getTypeCompositionLogement()->getDesordresLogementChauffageDetailsDpeConsoFinale(),
             dataConsoYear: $signalement->getTypeCompositionLogement()->getDesordresLogementChauffageDetailsDpeConso(),
             dataConsoSize: $signalement->getTypeCompositionLogement()->getCompositionLogementSuperficie(),
@@ -432,9 +420,6 @@ class SignalementQualificationUpdater
         );
 
         return $signalementQualification;
-        // }
-
-        // return null;
     }
 
     private function getLinkedDesordrePrecisions(Signalement $signalement, Qualification $qualification): array

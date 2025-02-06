@@ -279,14 +279,20 @@ class SignalementManager extends AbstractManager
     ): void {
         $signalement = $signalementQualification->getSignalement();
         // mise à jour du signalement
-        if ($qualificationNDERequest->getDateEntree()) {
-            $signalement->setDateEntree(new \DateTimeImmutable($qualificationNDERequest->getDateEntree()));
+        if ($qualificationNDERequest->getDateEntree() || $qualificationNDERequest->getClasseEnergetique()) {
             $typeCompositionLogement = new TypeCompositionLogement();
             if (!empty($signalement->getTypeCompositionLogement())) {
                 $typeCompositionLogement = clone $signalement->getTypeCompositionLogement();
             }
-            $typeCompositionLogement
-                ->setBailDpeDateEmmenagement($qualificationNDERequest->getDateEntree());
+            if ($qualificationNDERequest->getDateEntree()) {
+                $signalement->setDateEntree(new \DateTimeImmutable($qualificationNDERequest->getDateEntree()));
+                $typeCompositionLogement
+                    ->setBailDpeDateEmmenagement($qualificationNDERequest->getDateEntree());
+            }
+            if ($qualificationNDERequest->getClasseEnergetique()) {
+                $typeCompositionLogement
+                    ->setBailDpeClasseEnergetique($qualificationNDERequest->getClasseEnergetique());
+            }
             $signalement->setTypeCompositionLogement($typeCompositionLogement);
         }
 
@@ -296,30 +302,6 @@ class SignalementManager extends AbstractManager
             $signalement->setSuperficie($qualificationNDERequest->getSuperficie());
         }
         $this->save($signalement);
-
-        // // mise à jour du signalementQualification
-        // if ($qualificationNDERequest->getDateDernierBail()) {
-        //     if (QualificationNDERequest::RADIO_VALUE_AFTER_2023 === $qualificationNDERequest->getDateDernierBail()
-        //         && (
-        //             null === $signalementQualification->getDernierBailAt()
-        //             || $signalementQualification->getDernierBailAt()->format('Y') < '2023'
-        //         )
-        //     ) {
-        //         $signalementQualification->setDernierBailAt(new \DateTimeImmutable(
-        //             QualificationNDERequest::RADIO_VALUE_AFTER_2023
-        //         ));
-        //     }
-        //     if (QualificationNDERequest::RADIO_VALUE_BEFORE_2023 === $qualificationNDERequest->getDateDernierBail()
-        //         && (
-        //             null === $signalementQualification->getDernierBailAt()
-        //             || $signalementQualification->getDernierBailAt()->format('Y') >= '2023'
-        //         )
-        //     ) {
-        //         $signalementQualification->setDernierBailAt(
-        //             new \DateTimeImmutable(QualificationNDERequest::RADIO_VALUE_BEFORE_2023)
-        //         );
-        //     }
-        // }
 
         $signalementQualification->setDetails($qualificationNDERequest->getDetails());
         $this->save($signalementQualification);

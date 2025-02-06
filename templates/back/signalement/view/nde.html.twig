@@ -28,6 +28,12 @@
             {% endif %} 
             </span>
         </div>
+        <div class="fr-col-12 fr-col-md-6">
+            <strong>Classe énergétique :</strong>
+            {% if signalement.typeCompositionLogement %}
+                {{signalement.typeCompositionLogement.bailDpeClasseEnergetique(false)}}
+            {% endif %}
+        </div>
         <div class="fr-col-12 fr-col-md-6">                    
             <strong>Analyse :</strong> <span class="{{ signalementQualificationNDE.status|status_to_css }}">{{ signalementQualificationNDE.status.label }}</span>
         </div>
@@ -51,9 +57,6 @@
         <div class="fr-col-12 fr-col-md-6">
             <strong>DPE :</strong> {{ signalementQualificationNDE.details.DPE ? 'Oui' : (signalementQualificationNDE.details.DPE is same as null ? 'A vérifier' : 'Non') }} 
         </div>
-        {# <div class="fr-col-12 fr-col-md-6">
-            <strong>Dernier bail :</strong> {{ signalementQualificationNDE.dernierBailAt  ? ( signalementQualificationNDE.dernierBailAt|date('Y') < '2023' ? 'Avant 2023' : 'A partir de 2023' ) : ''}}
-        </div> #}
         <div class="fr-col-12 fr-col-md-6">
             <strong>Date dernier DPE :</strong> {{ signalementQualificationNDE.details.date_dernier_dpe  ? ( signalementQualificationNDE.details.date_dernier_dpe|date('Y') < '2023' ? 'Avant 2023' : 'A partir de 2023' ) : ''}}
         </div>

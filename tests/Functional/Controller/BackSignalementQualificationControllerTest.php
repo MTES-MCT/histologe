@@ -106,19 +106,6 @@ class BackSignalementQualificationControllerTest extends WebTestCase
             QualificationStatus::NDE_OK,
         ];
 
-        // yield 'Submit qualification NDE Archived' => [
-        //     [
-        //         'dpe' => true,
-        //         'superficie' => 234,
-        //         'dateDernierDPE' => '2023-01-02',
-        //         'dateDernierBail' => '1970-01-01',
-        //         'consommationEnergie' => 545,
-        //     ],
-        //     234,
-        //     545,
-        //     QualificationStatus::ARCHIVED,
-        // ];
-
         yield 'Submit qualification NDE Averee' => [
             [
                 'dpe' => true,
