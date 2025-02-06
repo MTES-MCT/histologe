@@ -11,17 +11,28 @@ class QualificationStatusService implements RuntimeExtensionInterface
 {
     public function getNDEStatus(SignalementQualification $signalementQualification): ?QualificationStatus
     {
+        // - si l'usager indique **classe G**, quoiqu'il arrive il a une qualif NDE au moins au statut **check**
+        // - si l'usager a un des 3 désordres "NDE", on calcule en fonction de surface/énergie sa qualif NDE, qui peut être
+        //     --> soit inexistante ou au statut **archivée** (donc non visible) si bail inférieur à 2023,
+        //     --> soit au statut **OK** si conso énergie OK,
+        //    --> soit au statut **check** (dans la plupart des cas),
+        //    --> soit **avérée** s'il ya bien ses documents et que le calcul indique une conso d'énergie trop forte.
         // pas de date de bail -> à vérifier
-        if (null === $signalementQualification->getDernierBailAt()) {
-            return QualificationStatus::NDE_CHECK;
-        }
+        // if (null === $signalementQualification->getDernierBailAt()) {
+        //     return QualificationStatus::NDE_CHECK;
+        // }
 
-        // bail avant 2023 -> pas concerné
-        if ($signalementQualification->getDernierBailAt()->format('Y') < '2023') {
-            return QualificationStatus::ARCHIVED;
-        }
+        // // bail avant 2023 et que classe énergétique pas G -> pas concerné
+        // if ($signalementQualification->getDernierBailAt()->format('Y') < '2023' && 'G' !== $signalementQualification->getDetails()['classe_energetique']) {
+        //     return QualificationStatus::ARCHIVED;
+        // }
 
-        // bail après 2023, on passe aux vérifications DPE
+        // // bail après 2023, on passe aux vérifications DPE
+
+        // si la classe est G --> NDE
+        // si la classe est inférieure à G --> pas NDE
+        // si on ne connait pas la classe (nsp) --> si les infos d'énergie on calcule comme avant
+        // si on n'a pas du tout la classe -> si les infos d'énergie on calcule comme avant
 
         // on ne sait pas si on a un DPE -> à vérifier
         if ('' === $signalementQualification->getDetails()['DPE']
@@ -63,7 +74,7 @@ class QualificationStatusService implements RuntimeExtensionInterface
             return QualificationStatus::NDE_AVEREE;
         }
 
-        if (isset($consoEnergie) && $consoEnergie <= 450) {
+        if (isset($consoEnergie) && $consoEnergie <= 450 && 'G' !== $signalementQualification->getDetails()['classe_energetique']) {
             return QualificationStatus::NDE_OK;
         }
 

@@ -180,6 +180,12 @@ class SignalementQualificationUpdater
             }
         }
 
+        if ('G' === $signalement->getTypeCompositionLogement()->getBailDpeClasseEnergetique()) {
+            $signalementQualification = $this->createNDEQualification($signalement);
+            if (null !== $signalementQualification) {
+                $signalement->addSignalementQualification($signalementQualification);
+            }
+        }
         if (0 <= $score && $score <= 10) {
             $this->addQualificationScore0To10(
                 $signalement,
@@ -383,14 +389,15 @@ class SignalementQualificationUpdater
 
     private function createNDEQualification(
         Signalement $signalement,
-        array $linkedDesordrePrecisions,
-    ): ?SignalementQualification {
-        $dataDateBail = null;
-        if ($signalement->getTypeCompositionLogement()->getBailDpeDateEmmenagement()) {
-            $dataDateBail = new \DateTimeImmutable(
-                $signalement->getTypeCompositionLogement()->getBailDpeDateEmmenagement()
-            );
-        }
+        array $linkedDesordrePrecisions = [],
+    ): SignalementQualification {
+        // var_dump('createNDEQualification');
+        // $dataDateBail = null;
+        // if ($signalement->getTypeCompositionLogement()->getBailDpeDateEmmenagement()) {
+        //     $dataDateBail = new \DateTimeImmutable(
+        //         $signalement->getTypeCompositionLogement()->getBailDpeDateEmmenagement()
+        //     );
+        // }
         $dataHasDPE = null;
         if ('oui' === $signalement->getTypeCompositionLogement()->getBailDpeDpe()) {
             $dataHasDPE = true;
@@ -398,34 +405,36 @@ class SignalementQualificationUpdater
             $dataHasDPE = false;
         }
 
-        $isDateBail2023 = (null !== $signalement->getDateEntree() && $signalement->getDateEntree()->format('Y') >= 2023)
-            || (null !== $dataDateBail && $dataDateBail->format('Y') >= 2023);
+        // $isDateBail2023 = (null !== $signalement->getDateEntree() && $signalement->getDateEntree()->format('Y') >= 2023)
+        //     || (null !== $dataDateBail && $dataDateBail->format('Y') >= 2023);
         $anDPE = $signalement->getTypeCompositionLogement()->getDesordresLogementChauffageDetailsDpeAnnee();
-        if ($isDateBail2023) {
-            if ('before2023' === $anDPE) {
-                $dataDateDPE = '1970-01-01';
-            } else {
-                $dataDateDPE = '2023-01-02';
-            }
-
-            $signalementQualification = $this->signalementQualificationFactory->createNDEInstanceFrom(
-                signalement: $signalement,
-                listNDECriticites: $linkedDesordrePrecisions,
-                dataDateBail: $signalement->getTypeCompositionLogement()->getBailDpeDateEmmenagement(),
-                dataConsoSizeYear: $signalement->getTypeCompositionLogement()->getDesordresLogementChauffageDetailsDpeConsoFinale(),
-                dataConsoYear: $signalement->getTypeCompositionLogement()->getDesordresLogementChauffageDetailsDpeConso(),
-                dataConsoSize: $signalement->getTypeCompositionLogement()->getCompositionLogementSuperficie(),
-                dataHasDPE: null !== $dataHasDPE ? (string) $dataHasDPE : null,
-                dataDateDPE: $dataDateDPE,
-            );
-            $signalementQualification->setStatus(
-                $this->qualificationStatusService->getNDEStatus($signalementQualification)
-            );
-
-            return $signalementQualification;
+        // var_dump($isDateBail2023);
+        // if ($isDateBail2023 || $signalement->getTypeCompositionLogement()->getBailDpeClasseEnergetique() === 'G') {
+        if ('before2023' === $anDPE) {
+            $dataDateDPE = '1970-01-01';
+        } else {
+            $dataDateDPE = '2023-01-02';
         }
 
-        return null;
+        $signalementQualification = $this->signalementQualificationFactory->createNDEInstanceFrom(
+            signalement: $signalement,
+            listNDECriticites: $linkedDesordrePrecisions,
+            // dataDateBail: $signalement->getTypeCompositionLogement()->getBailDpeDateEmmenagement(),
+            dataConsoSizeYear: $signalement->getTypeCompositionLogement()->getDesordresLogementChauffageDetailsDpeConsoFinale(),
+            dataConsoYear: $signalement->getTypeCompositionLogement()->getDesordresLogementChauffageDetailsDpeConso(),
+            dataConsoSize: $signalement->getTypeCompositionLogement()->getCompositionLogementSuperficie(),
+            dataHasDPE: null !== $dataHasDPE ? (string) $dataHasDPE : null,
+            dataDateDPE: $dataDateDPE,
+            classeEnergetique: $signalement->getTypeCompositionLogement()->getBailDpeClasseEnergetique()
+        );
+        $signalementQualification->setStatus(
+            $this->qualificationStatusService->getNDEStatus($signalementQualification)
+        );
+
+        return $signalementQualification;
+        // }
+
+        // return null;
     }
 
     private function getLinkedDesordrePrecisions(Signalement $signalement, Qualification $qualification): array

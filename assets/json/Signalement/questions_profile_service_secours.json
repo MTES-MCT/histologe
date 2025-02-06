@@ -1215,6 +1215,36 @@
           "validate": {
             "message": "Veuillez indiquer la classe énergétique pour le logement."
           }
+        },
+        {
+          "type": "SignalementFormOnlyChoice",
+          "label": "Quand le DPE de votre logement a-t-il été réalisé ?",
+          "slug": "desordres_logement_chauffage_details_dpe_annee",
+          "values": [
+            {
+              "label": "{{dictionaryStore::post2023}}",
+              "value": "post2023"
+            },
+            {
+              "label": "{{dictionaryStore::before2023}}",
+              "value": "before2023"
+            },
+            {
+              "label": "{{dictionaryStore::nsp}}",
+              "value": "nsp"
+            }
+          ],
+          "validate": {
+            "message": "Veuillez indiquer quand le DPE a été réalisé."
+          }
+        },
+        {
+          "type": "SignalementFormWarning",
+          "slug": "bail_dpe_date_warning",
+          "label": "Les DPE réalisés <u>avant le 30 juin 2021</u> ne sont plus valables. Si le DPE du logement a été réalisé avant le 30 juin 2021, demandez au propriétaire / bailleur du logement de réaliser un nouveau DPE.",
+          "conditional": {
+            "show": "formStore.data.desordres_logement_chauffage_details_dpe_annee === 'before2023' || formStore.data.desordres_logement_chauffage_details_dpe_annee === 'nsp'"
+          }
         }
       ],
       "footer": [

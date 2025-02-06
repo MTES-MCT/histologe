@@ -7,12 +7,14 @@ use App\Entity\Signalement;
 use App\Entity\SignalementQualification;
 use App\Factory\SignalementQualificationFactory;
 use App\Service\Signalement\Qualification\QualificationStatusService;
+use PHPUnit\Framework\MockObject\MockObject;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 
 class SignalementQualificationFactoryTest extends KernelTestCase
 {
     public function testCreateSignalementQualificationInstance(): void
     {
+        /** @var MockObject&QualificationStatusService $qualificationStatusServiceMock */
         $qualificationStatusServiceMock = $this->createMock(QualificationStatusService::class);
         $qualificationStatusServiceMock
             ->expects($this->atLeast(1))
@@ -22,7 +24,7 @@ class SignalementQualificationFactoryTest extends KernelTestCase
         $signalement = new Signalement();
         $signalement->setDateEntree(new \DateTimeImmutable('2023-01-02'));
         $listNDECriticites = [1];
-        $dataDateBail = '2023-01-02';
+        // $dataDateBail = '2023-01-02';
         $dataConsoSizeYear = '1400';
         $dataConsoYear = '1400';
         $dataConsoSize = '40';
@@ -31,7 +33,7 @@ class SignalementQualificationFactoryTest extends KernelTestCase
         $signalementQualification = (new SignalementQualificationFactory($qualificationStatusServiceMock))->createNDEInstanceFrom(
             signalement: $signalement,
             listNDECriticites: $listNDECriticites,
-            dataDateBail: $dataDateBail,
+            // dataDateBail: $dataDateBail,
             dataConsoSizeYear: $dataConsoSizeYear,
             dataConsoYear: $dataConsoYear,
             dataConsoSize: $dataConsoSize,

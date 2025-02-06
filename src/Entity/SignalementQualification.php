@@ -29,8 +29,8 @@ class SignalementQualification
     #[ORM\Column(nullable: true)]
     private ?array $desordrePrecisionIds = [];
 
-    #[ORM\Column(type: Types::DATETIME_IMMUTABLE, nullable: true)]
-    private ?\DateTimeImmutable $dernierBailAt = null;
+    // #[ORM\Column(type: Types::DATETIME_IMMUTABLE, nullable: true)]
+    // private ?\DateTimeImmutable $dernierBailAt = null;
 
     #[ORM\Column(nullable: true)]
     private array $details = [];
@@ -100,17 +100,17 @@ class SignalementQualification
         return $this;
     }
 
-    public function getDernierBailAt(): ?\DateTimeImmutable
-    {
-        return $this->dernierBailAt;
-    }
+    // public function getDernierBailAt(): ?\DateTimeImmutable
+    // {
+    //     return $this->dernierBailAt;
+    // }
 
-    public function setDernierBailAt(?\DateTimeImmutable $dernierBailAt): self
-    {
-        $this->dernierBailAt = $dernierBailAt;
+    // public function setDernierBailAt(?\DateTimeImmutable $dernierBailAt): self
+    // {
+    //     $this->dernierBailAt = $dernierBailAt;
 
-        return $this;
-    }
+    //     return $this;
+    // }
 
     public function getDetails(): array
     {

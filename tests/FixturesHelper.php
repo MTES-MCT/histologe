@@ -434,7 +434,7 @@ trait FixturesHelper
     {
         $typeCompostion = [
             'bail_dpe_dpe' => 'oui',
-            'bail_dpe_classe_energetique' => 'E',
+            'bail_dpe_classe_energetique' => 'G',
             'bail_dpe_bail' => 'oui',
             'bail_dpe_invariant' => 'abcd12ef34',
             'type_logement_rdc' => 'non',
@@ -456,6 +456,7 @@ trait FixturesHelper
             'composition_logement_nombre_personnes' => '3',
             'type_logement_commodites_salle_de_bain' => 'oui',
             'type_logement_commodites_salle_de_bain_collective' => 'oui',
+            'desordres_logement_chauffage_details_dpe_annee' => 'post2023',
         ];
 
         return $typeCompostion;
