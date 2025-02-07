@@ -37,25 +37,22 @@ readonly class SignalementClosedSubscriber implements EventSubscriberInterface
         $params = $event->getParams();
         /** @var User $user */
         $user = $this->security->getUser();
+        $suivi = $this->suiviManager->createSuivi(
+            signalement: $signalement,
+            description: SuiviManager::buildDescriptionClotureSignalement($params),
+            type: Suivi::TYPE_PARTNER,
+            isPublic: '1' == $params['suivi_public'],
+            user: $user,
+        );
 
-        if ($signalement instanceof Signalement) {
-            $suivi = $this->suiviManager->createSuivi(
-                signalement: $signalement,
-                description: SuiviManager::buildDescriptionClotureSignalement($params),
-                type: Suivi::TYPE_PARTNER,
-                isPublic: '1' == $params['suivi_public'],
-                user: $user,
-            );
+        $signalement
+            ->setClosedBy($user)
+            ->addSuivi($suivi);
 
-            $signalement
-                ->setClosedBy($user)
-                ->addSuivi($suivi);
-
-            if ('1' == $params['suivi_public']) {
-                $this->sendMailToUsager($signalement);
-            }
-            $this->sendMailToPartners($signalement);
+        if ('1' == $params['suivi_public']) {
+            $this->sendMailToUsager($signalement);
         }
+        $this->sendMailToPartners($signalement);
 
         $this->signalementManager->save($signalement);
     }

@@ -31,7 +31,7 @@ class AffectationRequest implements RequestInterface
         ]
         public ?string $statut = null,
         #[OA\Property(
-            description: 'Le motif de cloture de l\'affectation, celui doit être accompagné d\'un message',
+            description: 'Le motif de cloture de l\'affectation, il doit être accompagné d\'un message.',
             enum: [
                 'ABANDON_DE_PROCEDURE_ABSENCE_DE_REPONSE',
                 'DEPART_OCCUPANT',
@@ -77,7 +77,7 @@ class AffectationRequest implements RequestInterface
         )]
         public ?string $motifCloture = null,
         #[OA\Property(
-            description: 'Le motif de refus de l\'affectation, celui doit être accompagné d\'un message',
+            description: 'Le motif de refus de l\'affectation, il doit être accompagné d\'un message',
             enum: [
                 'HORS_PDLHI',
                 'HORS_ZONE_GEOGRAPHIQUE',
@@ -121,6 +121,12 @@ class AffectationRequest implements RequestInterface
         #[OA\Property(
             description: 'Il est obligatoire d\'indiquer si l\'usager doit être notifié lors d\'une réouverture (TRANSITION : FERME → NOUVEAU).',
             example: 'true',
+        )]
+        #[Assert\When(
+            expression: 'this.statut === "NOUVEAU"',
+            constraints: [
+                new Assert\NotNull(message: 'Il est obligatoire d\'indiquer si l\'usager doit être notifié lors d\'une réouverture.'),
+            ]
         )]
         public ?bool $notifyUsager = null,
     ) {

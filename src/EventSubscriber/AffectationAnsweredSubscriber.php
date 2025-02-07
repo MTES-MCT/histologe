@@ -66,14 +66,14 @@ readonly class AffectationAnsweredSubscriber implements EventSubscriberInterface
                 user: $user,
             );
         }
-        $this->createFirstAcceptationSpecificationSuivi($event->getAffectation());
+        $this->createSuiviOnFirstAcceptedAffectation($event->getAffectation());
 
         if ($this->dossierMessageFactory->supports($affectation)) {
             $this->bus->dispatch($this->dossierMessageFactory->createInstance($affectation));
         }
     }
 
-    private function createFirstAcceptationSpecificationSuivi(Affectation $affectation): void
+    private function createSuiviOnFirstAcceptedAffectation(Affectation $affectation): void
     {
         if ($this->firstAcceptedAffectationSpecification->isSatisfiedBy($affectation)) {
             $adminEmail = $this->parameterBag->get('user_system_email');

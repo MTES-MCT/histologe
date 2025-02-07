@@ -150,7 +150,7 @@ class AffectationUpdateController extends AbstractController
     )]
     #[OA\Response(
         response: Response::HTTP_FORBIDDEN,
-        description: 'Accès à la ressource non autorisée.',
+        description: 'Accès à la ressource non autorisé.',
         content: new OA\JsonContent(
             properties: [
                 new OA\Property(
@@ -213,17 +213,10 @@ class AffectationUpdateController extends AbstractController
         return $this->affectationManager->updateAffectation($affectation, $user, $statut, $motifRefus, $message);
     }
 
-    /**
-     * @throws UsagerNotificationRequiredException
-     */
     private function applyUsagerNotification(AffectationRequest $affectationRequest, Affectation $affectation): void
     {
         if (Affectation::STATUS_CLOSED === $affectation->getStatut()
             && Affectation::STATUS_WAIT === $affectation->getNextStatut()) {
-            if (null === $affectationRequest->notifyUsager) {
-                throw new UsagerNotificationRequiredException($affectationRequest);
-            }
-
             $affectation->setHasNotificationUsagerToCreate($affectationRequest->notifyUsager);
         }
     }
