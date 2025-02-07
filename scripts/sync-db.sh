@@ -48,8 +48,29 @@ backup_file_name="$(ls /app/*.sql)"
 echo ">>> Remove CREATE and USE instruction"
 sed -i '/CREATE DATABASE/d' "${backup_file_name}"
 sed -i '/^USE/d' "${backup_file_name}"
+sed -i '/DEFINER/d' "${backup_file_name}"
 
 # Loading database
 echo ">>> Loading database"
 mysql -u ${DATABASE_USER} --password=${DATABASE_PASSWORD} -h ${DATABASE_HOST} -P ${DATABASE_PORT} ${DATABASE_NAME} < "${backup_file_name}"
+EXIT_CODE=$?
+
+if [ $EXIT_CODE -ne 0 ]; then
+    echo ">>> ERROR: Database sync failed!"
+
+    # Capture les logs MySQL pour le diagnostic
+    TITLE="Database sync failed"
+    ERROR_MESSAGE="Database sync failed with exit code $EXIT_CODE"
+    TIMESTAMP=$(date +"%Y-%m-%d %H:%M:%S")
+    HOSTNAME=$(hostname)
+    
+    # Appelle l'API Symfony en cas d'erreur HISTOLOGE_URL risque de renvoyer l'url de la preprod, en créer une autre ?
+    curl -X POST "${HISTOLOGE_URL}/send-error-email" \ 
+         -H "Content-Type: application/json" \
+         -H "Authorization: Bearer ${SEND_ERROR_EMAIL_TOKEN}" \
+         -d "{\"title\": \"$TITLE\", \"timestamp\": \"$TIMESTAMP\", \"host\": \"$HOSTNAME\", \"database\": \"${DATABASE_NAME}\", \"error\": \"$ERROR_MESSAGE\"}"
+
+    echo ">>> Error reported to API."
+fi
+
 echo ">>> Done, thank you"

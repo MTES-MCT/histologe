@@ -14,6 +14,7 @@ use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Exception\MethodNotAllowedException;
 use Symfony\Component\Serializer\Exception\NotEncodableValueException;
+use Symfony\Component\HttpKernel\Exception\HttpException;
 
 readonly class ExceptionListener
 {
@@ -46,11 +47,29 @@ readonly class ExceptionListener
         }
 
         if ($this->shouldNotifyForException($exception)) {
+
+            $extraData = [];
+            if ($exception instanceof HttpException) {
+                dump('hhh');
+                $extraData = $exception->getHeaders();
+                dump($extraData);
+            }
+    
+            $message = "Une erreur s'est produite : {$exception->getMessage()}";
+    
+            if (!empty($extraData)) {
+                $message .= "\n\n📅 Date : " . ($extraData['timestamp'] ?? 'N/A');
+                $message .= "\n💾 Base : " . ($extraData['database'] ?? 'N/A');
+                $message .= "\n🔍 Hôte : " . ($extraData['host'] ?? 'N/A');
+                $message .= "\n❗ Erreur : " . ($extraData['error'] ?? 'N/A');
+            }
+
             $this->notificationMailerRegistry->send(
                 new NotificationMail(
                     type: NotificationMailerType::TYPE_ERROR_SIGNALEMENT,
                     to: $this->params->get('admin_email'),
                     event: $event,
+                    message: $message
                 )
             );
         }
