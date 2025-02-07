@@ -377,28 +377,31 @@ class SignalementQualificationUpdater
         array $linkedDesordrePrecisions = [],
     ): SignalementQualification {
         $dataHasDPE = null;
-        if ('oui' === $signalement->getTypeCompositionLogement()->getBailDpeDpe()) {
-            $dataHasDPE = true;
-        } elseif ('non' === $signalement->getTypeCompositionLogement()->getBailDpeDpe()) {
-            $dataHasDPE = false;
-        }
+        $dataDateDPE = null;
+        if ( $signalement->getTypeCompositionLogement()){
+            if ('oui' === $signalement->getTypeCompositionLogement()->getBailDpeDpe()) {
+                $dataHasDPE = true;
+            } elseif ('non' === $signalement->getTypeCompositionLogement()->getBailDpeDpe()) {
+                $dataHasDPE = false;
+            }
 
-        $anDPE = $signalement->getTypeCompositionLogement()->getDesordresLogementChauffageDetailsDpeAnnee();
-        if ('before2023' === $anDPE) {
-            $dataDateDPE = '1970-01-01';
-        } else {
-            $dataDateDPE = '2023-01-02';
+            $anDPE = $signalement->getTypeCompositionLogement()->getDesordresLogementChauffageDetailsDpeAnnee();
+            if ('before2023' === $anDPE) {
+                $dataDateDPE = '1970-01-01';
+            } else {
+                $dataDateDPE = '2023-01-02';
+            }
         }
 
         $signalementQualification = $this->signalementQualificationFactory->createNDEInstanceFrom(
             signalement: $signalement,
             listNDECriticites: $linkedDesordrePrecisions,
-            dataConsoSizeYear: $signalement->getTypeCompositionLogement()->getDesordresLogementChauffageDetailsDpeConsoFinale(),
-            dataConsoYear: $signalement->getTypeCompositionLogement()->getDesordresLogementChauffageDetailsDpeConso(),
-            dataConsoSize: $signalement->getTypeCompositionLogement()->getCompositionLogementSuperficie(),
+            dataConsoSizeYear: $signalement->getTypeCompositionLogement()?->getDesordresLogementChauffageDetailsDpeConsoFinale(),
+            dataConsoYear: $signalement->getTypeCompositionLogement()?->getDesordresLogementChauffageDetailsDpeConso(),
+            dataConsoSize: $signalement->getTypeCompositionLogement()?->getCompositionLogementSuperficie(),
             dataHasDPE: null !== $dataHasDPE ? (string) $dataHasDPE : null,
             dataDateDPE: $dataDateDPE,
-            classeEnergetique: $signalement->getTypeCompositionLogement()->getBailDpeClasseEnergetique()
+            classeEnergetique: $signalement->getTypeCompositionLogement()?->getBailDpeClasseEnergetique()
         );
         $signalementQualification->setStatus(
             $this->qualificationStatusService->getNDEStatus($signalementQualification)
@@ -431,14 +434,15 @@ class SignalementQualificationUpdater
         // If already exists
         if ($existingQualificationNde) {
             // But should be deleted
-            if (empty($listCriticiteNDE) && 'G' !== $signalement->getTypeCompositionLogement()->getBailDpeClasseEnergetique()) {
+            if (empty($listCriticiteNDE) && 'G' !== $signalement->getTypeCompositionLogement()?->getBailDpeClasseEnergetique()) {
                 $signalement->removeSignalementQualification($existingQualificationNde);
             }
             $existingQualificationNde->setStatus(
                 $this->qualificationStatusService->getNDEStatus($existingQualificationNde)
             );
         // If not added yet, but should be added
-        } elseif (!empty($listCriticiteNDE) || 'G' === $signalement->getTypeCompositionLogement()->getBailDpeClasseEnergetique()) {
+        } elseif (!empty($listCriticiteNDE) || 
+            (null !== $signalement->getTypeCompositionLogement() && 'G' === $signalement->getTypeCompositionLogement()?->getBailDpeClasseEnergetique())) {
             $signalementQualification = $this->createNDEQualification($signalement, $listCriticiteNDE);
             $signalement->addSignalementQualification($signalementQualification);
         }

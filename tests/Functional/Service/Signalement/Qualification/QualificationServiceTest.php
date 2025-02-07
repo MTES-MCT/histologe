@@ -44,7 +44,6 @@ class QualificationServiceTest extends KernelTestCase
 
         $this->signalementQualificationUpdater->updateQualificationFromScore($signalement);
         $signalementQualifications = $signalement->getSignalementQualifications();
-
         $this->assertEquals(\count($qualificationsToCheck), \count($signalementQualifications));
     }
 
@@ -529,28 +528,28 @@ class QualificationServiceTest extends KernelTestCase
             1,
             $listSlugDesordrePrecision,
             [
-                Qualification::NON_DECENCE_ENERGETIQUE,
                 Qualification::NON_DECENCE,
                 Qualification::RSD,
+                Qualification::NON_DECENCE_ENERGETIQUE,
             ],
             [
-                QualificationStatus::NDE_CHECK,
                 QualificationStatus::NON_DECENCE_CHECK,
                 QualificationStatus::RSD_CHECK,
+                QualificationStatus::NDE_CHECK,
             ],
         ];
         yield 'NON_DECENCE, RSD, NON_DECENCE_ENERGETIQUE AVEREE' => [
             1,
             $listSlugDesordrePrecision,
             [
-                Qualification::NON_DECENCE_ENERGETIQUE,
                 Qualification::NON_DECENCE,
                 Qualification::RSD,
+                Qualification::NON_DECENCE_ENERGETIQUE,
             ],
             [
-                QualificationStatus::NDE_AVEREE,
                 QualificationStatus::NON_DECENCE_CHECK,
                 QualificationStatus::RSD_CHECK,
+                QualificationStatus::NDE_AVEREE,
             ],
             'non',
             800,
@@ -559,14 +558,14 @@ class QualificationServiceTest extends KernelTestCase
             1,
             $listSlugDesordrePrecision,
             [
-                Qualification::NON_DECENCE_ENERGETIQUE,
                 Qualification::NON_DECENCE,
                 Qualification::RSD,
+                Qualification::NON_DECENCE_ENERGETIQUE,
             ],
             [
-                QualificationStatus::NDE_OK,
                 QualificationStatus::NON_DECENCE_CHECK,
                 QualificationStatus::RSD_CHECK,
+                QualificationStatus::NDE_OK,
             ],
             'non',
             150,

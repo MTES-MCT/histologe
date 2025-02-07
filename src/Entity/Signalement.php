@@ -396,7 +396,7 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
     private ?SignalementDraft $createdFrom = null;
 
     #[ORM\Column(type: 'type_composition_logement', nullable: true)]
-    private ?TypeCompositionLogement $typeCompositionLogement;
+    private ?TypeCompositionLogement $typeCompositionLogement = null;
 
     #[ORM\Column(type: 'situation_foyer', nullable: true)]
     private ?SituationFoyer $situationFoyer;
