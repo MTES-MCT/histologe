@@ -17,7 +17,7 @@
                             Votre compte a été ajouté :
                             <ul class="fr-mb-2v fr-mt-0">
                                 {% for partner in addedPartners %}
-                                <li>au partenaire {{partner.nom}} du territoire {{partner.territory.zip}} - {{partner.territory.name}}</li>
+                                <li>au partenaire <strong>{{partner.nom}}</strong> du territoire <strong>{{partner.territory.zip}} - {{partner.territory.name}}</strong></li>
                                 {% endfor %}
                             </ul>
                         {% endif %}
@@ -25,24 +25,24 @@
                             Votre compte a été retiré :
                             <ul class="fr-mb-2v fr-mt-0">
                                 {% for partner in removedPartners %}
-                                <li>du partenaire {{partner.nom}} du territoire {{partner.territory.zip}} - {{partner.territory.name}}</li>
+                                <li>du partenaire <strong>{{partner.nom}}</strong> du territoire <strong>{{partner.territory.zip}} - {{partner.territory.name}}</strong></li>
                                 {% endfor %}
                             </ul>
                         {% endif %}
                         Désormais,
                         <br>
-                        1. Vous avez accès aux signalements de :
+                        1. Vous avez accès aux signalements :
                         <ul class="fr-mb-2v fr-mt-0 fr-ml-2v">
                             {% for partner in user.partners %}
-                            <li>{{partner.nom}} - {{partner.territory.zip}} - {{partner.territory.name}}</li>
+                            <li>du partenaire <strong>{{partner.nom}}</strong> du territoire <strong>{{partner.territory.zip}} - {{partner.territory.name}}</strong></li>
                             {% endfor %}
                         </ul>
                         {% set nb = 2 %}
                         {% if removedPartners|length %}
-                            {{nb}}. Vous n'avez plus accès aux signalements de :
+                            {{nb}}. Vous n'avez plus accès aux signalements :
                             <ul class="fr-mb-2v fr-mt-0 fr-ml-2v">
                                 {% for partner in removedPartners %}
-                                <li>{{partner.nom}} - {{partner.territory.zip}} - {{partner.territory.name}}</li>
+                                <li>du partenaire <strong>{{partner.nom}}</strong> du territoire <strong>{{partner.territory.zip}} - {{partner.territory.name}}</strong></li>
                                 {% endfor %}
                             </ul>
                             {% set nb = nb + 1 %}
