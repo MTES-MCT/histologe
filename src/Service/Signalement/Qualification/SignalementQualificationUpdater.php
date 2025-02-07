@@ -378,7 +378,7 @@ class SignalementQualificationUpdater
     ): SignalementQualification {
         $dataHasDPE = null;
         $dataDateDPE = null;
-        if ( $signalement->getTypeCompositionLogement()){
+        if ($signalement->getTypeCompositionLogement()) {
             if ('oui' === $signalement->getTypeCompositionLogement()->getBailDpeDpe()) {
                 $dataHasDPE = true;
             } elseif ('non' === $signalement->getTypeCompositionLogement()->getBailDpeDpe()) {
@@ -441,8 +441,8 @@ class SignalementQualificationUpdater
                 $this->qualificationStatusService->getNDEStatus($existingQualificationNde)
             );
         // If not added yet, but should be added
-        } elseif (!empty($listCriticiteNDE) || 
-            (null !== $signalement->getTypeCompositionLogement() && 'G' === $signalement->getTypeCompositionLogement()?->getBailDpeClasseEnergetique())) {
+        } elseif (!empty($listCriticiteNDE)
+            || (null !== $signalement->getTypeCompositionLogement() && 'G' === $signalement->getTypeCompositionLogement()->getBailDpeClasseEnergetique())) {
             $signalementQualification = $this->createNDEQualification($signalement, $listCriticiteNDE);
             $signalement->addSignalementQualification($signalementQualification);
         }
