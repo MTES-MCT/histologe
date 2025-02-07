@@ -85,17 +85,18 @@ class AffectationControllerTest extends WebTestCase
         $this->assertResponseRedirects('/bo/signalements/'.$signalement->getUuid());
     }
 
-    public function testAcceptAffectationSignalement(): void
+    public function testFirstAcceptationAffectationSignalement(): void
     {
-        $user = $this->userRepository->findOneBy(['email' => self::USER_ADMIN_TERRITORY_13]);
+        $user = $this->userRepository->findOneBy(['email' => 'user-partenaire-multi-ter-34-30@histologe.fr']);
         $this->client->loginUser($user);
 
         /** @var Signalement $signalement */
-        $signalement = $this->signalementRepository->findOneBy(['reference' => self::SIGNALEMENT_REFERENCE]);
+        $signalement = $this->signalementRepository->findOneBy(['reference' => '2024-08']);
+        $affectation = $this->affectationRepository->findOneBy(['signalement' => $signalement, 'partner' => $user->getPartnerInTerritory($signalement->getTerritory())]);
 
         $routeAffectationResponse = $this->router->generate('back_signalement_affectation_response', [
             'signalement' => $signalement->getId(),
-            'affectation' => $signalement->getAffectations()->first()->getId(),
+            'affectation' => $affectation->getId(),
             'user' => $user->getId(),
         ]);
 
@@ -112,6 +113,50 @@ class AffectationControllerTest extends WebTestCase
             ]
         );
 
+        $suivi = $this->suiviRepository->findSuiviByDescription(
+            $signalement,
+            '<p>Suite à votre signalement, le ou les partenaires compétents'
+        );
+        $this->assertEquals(Signalement::STATUS_ACTIVE, $signalement->getStatut());
+        $this->assertCount(1, $suivi);
+        $this->assertEmailCount(1);
+        $this->assertResponseRedirects('/bo/signalements/'.$signalement->getUuid());
+    }
+
+    public function testSecondAffectationAffectationSignalement(): void
+    {
+        $user = $this->userRepository->findOneBy(['email' => 'user-partenaire-multi-ter-34-30@histologe.fr']);
+        $this->client->loginUser($user);
+
+        /** @var Signalement $signalement */
+        $signalement = $this->signalementRepository->findOneBy(['reference' => '2024-12']);
+        $affectation = $this->affectationRepository->findOneBy(['signalement' => $signalement, 'partner' => $user->getPartnerInTerritory($signalement->getTerritory())]);
+
+        $routeAffectationResponse = $this->router->generate('back_signalement_affectation_response', [
+            'signalement' => $signalement->getId(),
+            'affectation' => $affectation->getId(),
+            'user' => $user->getId(),
+        ]);
+
+        $tokenId = 'signalement_affectation_response_'.$signalement->getId();
+        $this->client->request(
+            'POST',
+            $routeAffectationResponse,
+            [
+                'signalement-affectation-response' => [
+                    'accept' => 1,
+                    'suivi' => '',
+                ],
+                '_token' => $this->generateCsrfToken($this->client, $tokenId),
+            ]
+        );
+        $suivi = $this->suiviRepository->findSuiviByDescription(
+            $signalement,
+            '<p>Suite à votre signalement, le ou les partenaires compétents'
+        );
+        $this->assertEquals(Signalement::STATUS_ACTIVE, $signalement->getStatut());
+        $this->assertCount(0, $suivi);
+        $this->assertEmailCount(0);
         $this->assertResponseRedirects('/bo/signalements/'.$signalement->getUuid());
     }
 
