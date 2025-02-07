@@ -74,7 +74,7 @@ class SignalementVoter extends Voter
             self::DELETE => $this->canDelete($subject, $user),
             self::EDIT => $this->canEdit($subject, $user),
             self::VIEW => $this->canView($subject, $user),
-            self::USAGER_EDIT => $this->canUsagerEdit($subject, $user),
+            self::USAGER_EDIT => $this->canUsagerEdit($subject),
             default => false,
         };
     }
