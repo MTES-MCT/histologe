@@ -434,9 +434,9 @@ class SignalementQualificationUpdater
             if (empty($listCriticiteNDE) && 'G' !== $signalement->getTypeCompositionLogement()->getBailDpeClasseEnergetique()) {
                 $signalement->removeSignalementQualification($existingQualificationNde);
             }
-        // $existingQualificationNde->setStatus(QualificationStatus::DANGER_CHECK);
-        // TODO : mettre à jour le status ?
-
+            $existingQualificationNde->setStatus(
+                $this->qualificationStatusService->getNDEStatus($existingQualificationNde)
+            );
         // If not added yet, but should be added
         } elseif (!empty($listCriticiteNDE) || 'G' === $signalement->getTypeCompositionLogement()->getBailDpeClasseEnergetique()) {
             $signalementQualification = $this->createNDEQualification($signalement, $listCriticiteNDE);
