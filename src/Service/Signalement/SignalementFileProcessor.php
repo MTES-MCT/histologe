@@ -31,7 +31,7 @@ class SignalementFileProcessor
         private readonly ImageManipulationHandler $imageManipulationHandler,
         private readonly FileScanner $fileScanner,
         #[Autowire(env: 'CLAMAV_SCAN_ENABLE')]
-        private bool $clamavScanEnable,
+        private readonly bool $clamavScanEnable,
     ) {
     }
 

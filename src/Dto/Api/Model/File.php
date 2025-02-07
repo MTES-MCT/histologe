@@ -11,6 +11,12 @@ use OpenApi\Attributes as OA;
 class File
 {
     #[OA\Property(
+        description: 'Uuid du fichier',
+        example: '123e4567-e89b-12d3-a456-426614174000',
+    )]
+    public string $uuid;
+
+    #[OA\Property(
         description: 'Titre du fichier',
         example: 'sample.png',
     )]

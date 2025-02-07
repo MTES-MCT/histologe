@@ -13,9 +13,10 @@ readonly class FileFactory
     ) {
     }
 
-    public function createFromSignalement(FileEntity $fileEntity): File
+    public function createFrom(FileEntity $fileEntity): File
     {
         $file = new File();
+        $file->uuid = $fileEntity->getUuid();
         $file->titre = $fileEntity->getTitle();
         $file->documentType = $fileEntity->getDocumentType()->value;
         $file->url = $this->urlGenerator->generate(
@@ -25,5 +26,15 @@ readonly class FileFactory
         );
 
         return $file;
+    }
+
+    public function createFromArray(array $files): array
+    {
+        $fileList = [];
+        foreach ($files as $file) {
+            $fileList[] = $this->createFrom($file);
+        }
+
+        return $fileList;
     }
 }
