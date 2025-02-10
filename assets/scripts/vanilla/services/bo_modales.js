@@ -45,3 +45,27 @@ function handleAcceptButton () {
 acceptCguBoCheckbox?.addEventListener('click', handleAcceptCheck)
 acceptCguBoButton?.addEventListener('click', handleAcceptButton)
 modalCguBo?.addEventListener('dsfr.disclose', handleModalDisclose)
+
+const modalPopNotification = document.getElementById('fr-modal-pop-notification')
+if(modalPopNotification){
+  //prevent error dsfr is not defined or null
+  const checkDsfrInterval = setInterval(() => {
+    if (typeof dsfr !== 'undefined' && dsfr !== null) {
+      clearInterval(checkDsfrInterval);
+
+        modalPopNotification.addEventListener('dsfr.conceal', (e) => {
+            const deletePopNotificationUrl = modalPopNotification.dataset.deleteUrl;
+            fetch(deletePopNotificationUrl, {})
+        });
+
+      if (modalCguBo) {
+        modalCguBo.addEventListener('dsfr.conceal', (e) => {
+          dsfr(modalPopNotification).modal.disclose();
+        });
+      } else {
+        dsfr(modalPopNotification).modal.disclose();
+      }
+    }
+  }, 100);
+}
+

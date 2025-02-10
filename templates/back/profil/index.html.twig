@@ -46,9 +46,23 @@
                 {{ user_avatar_or_placeholder(app.user, 74) }}
                 <div class="fr-ml-3v">
                     <span class="fr-display-block"><strong>{{ app.user.prenom ~' '~app.user.nom }}</strong></span>
-                    {% for partner in app.user.partners %}
-                        <span class="fr-display-block">{{ partner.nom}}</span>
-                    {% endfor %}
+                    {% if app.user.partners|length > 1 %}
+                        <p class="fr-mt-2v"><strong>Mes partenaires</strong></p>
+                        <ul>
+                        {% for partner in app.user.partners %}
+                            <li>{{partner.nom}} du territoire {{partner.territory.zip}} - {{partner.territory.name}}</li>
+                        {% endfor %}
+                        </ul>
+                        <div class="fr-alert fr-alert--info">
+                            <p>
+                                Vous ne pouvez pas modifier vos partenaires vous-même. 
+                                <br>
+                                Si vous souhaitez modifier vos partenaires, contactez vos responsables de territoire !
+                            </p>
+                        </div>
+                    {% elseif app.user.partners|length == 1 %}
+                        <span class="fr-display-block">{{ app.user.partners.first.nom }}</span>
+                    {% endif %}
                 </div>
             </div>
         </div>

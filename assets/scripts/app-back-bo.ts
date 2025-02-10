@@ -6,7 +6,7 @@ import './vue/signalement-carto.ts';
 import './vue/dashboard.ts';
 
 import './vanilla/services/data_delete.js'
-import './vanilla/services/modale_cgu_bo.js';
+import './vanilla/services/bo_modales.js';
 import './vanilla/services/pagination.js'
 import './vanilla/services/search_filter_form.js'
 import './vanilla/services/table_sortable.js'

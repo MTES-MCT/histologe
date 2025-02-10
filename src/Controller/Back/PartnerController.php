@@ -19,6 +19,7 @@ use App\Form\UserPartnerType;
 use App\Manager\AffectationManager;
 use App\Manager\InterventionManager;
 use App\Manager\PartnerManager;
+use App\Manager\PopNotificationManager;
 use App\Manager\UserManager;
 use App\Repository\AutoAffectationRuleRepository;
 use App\Repository\JobEventRepository;
@@ -267,6 +268,7 @@ class PartnerController extends AbstractController
         WorkflowInterface $interventionPlanningStateMachine,
         InterventionManager $interventionManager,
         AffectationManager $affectationManager,
+        PopNotificationManager $popNotificationManager,
     ): Response {
         $partnerId = $request->request->get('partner_id');
         /** @var ?Partner $partner */
@@ -284,6 +286,7 @@ class PartnerController extends AbstractController
                 if ($user->getUserPartners()->count() > 1) {
                     foreach ($user->getUserPartners() as $userPartner) {
                         if ($userPartner->getPartner()->getId() === $partner->getId()) {
+                            $popNotificationManager->createOrUpdatePopNotification($user, 'removePartner', $partner);
                             $entityManager->remove($userPartner);
                             break;
                         }
@@ -360,6 +363,7 @@ class PartnerController extends AbstractController
         UserRepository $userRepository,
         UserManager $userManager,
         NotificationMailerRegistry $notificationMailerRegistry,
+        PopNotificationManager $popNotificationManager,
     ): JsonResponse|RedirectResponse {
         if (!$this->featureMultiTerritories) {
             throw $this->createNotFoundException();
@@ -375,6 +379,7 @@ class PartnerController extends AbstractController
             $user = $userRepository->findAgentByEmail($userTmp->getEmail());
             if ($user) {
                 $userPartner->setUser($user);
+                $popNotificationManager->createOrUpdatePopNotification($user, 'addPartner', $partner);
                 $userManager->save($userPartner);
                 $notificationMailerRegistry->send(
                     new NotificationMail(
@@ -613,6 +618,7 @@ class PartnerController extends AbstractController
         Partner $partner,
         UserManager $userManager,
         NotificationMailerRegistry $notificationMailerRegistry,
+        PopNotificationManager $popNotificationManager,
     ): Response {
         $userId = $request->request->get('user_id');
         if (!$this->isCsrfTokenValid('partner_user_delete', $request->request->get('_token'))) {
@@ -637,6 +643,7 @@ class PartnerController extends AbstractController
         if ($user->getUserPartners()->count() > 1) {
             foreach ($user->getUserPartners() as $userPartner) {
                 if ($userPartner->getPartner()->getId() === $partner->getId()) {
+                    $popNotificationManager->createOrUpdatePopNotification($user, 'removePartner', $partner);
                     $userManager->remove($userPartner);
                     break;
                 }

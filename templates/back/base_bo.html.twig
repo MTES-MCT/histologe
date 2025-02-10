@@ -43,7 +43,7 @@
     </div>
 {% endblock %}
 
-{% block cgumodale %}
+{% block bo_modales %}
     {% if platform.cgu_current_version is not same as app.user.cguVersionChecked %}
         <button class="fr-hidden" data-fr-opened="true" aria-controls="fr-modal-cgu-bo"></button>
         <dialog aria-labelledby="fr-modal-cgu-bo-title" id="fr-modal-cgu-bo" class="fr-modal" open="true">
@@ -95,4 +95,9 @@
             </div>
         </dialog>
     {% endif %}
+
+    {% if app.user.popNotifications|length %}
+        {{ render(controller('App\\Controller\\Back\\PopNotificationController::show')) }}
+    {% endif %}
+
 {% endblock %}
