@@ -1,7 +1,7 @@
 <template>
   <div class="fr-grid-row fr-my-2w" v-for=" (item, index) in list" :key="index">
     <div class="fr-col-12">
-      <div class="fr-card" :class="{ 'card-signalement--new': item.statut === 1 }">
+      <div class="fr-card" :class="{ 'card-signalement--new': item.statut === 'NEED_VALIDATION' }">
         <div class="fr-card__body">
           <div class="fr-card__content">
             <div class="fr-grid-row">
@@ -187,10 +187,6 @@ export default defineComponent({
         case 'ACTIVE':
           statusSignalement.className += 'fr-badge--success'
           statusSignalement.label = 'En cours'
-          break
-        case 'NEED_PARTNER_RESPONSE':
-          statusSignalement.className += 'fr-badge--info'
-          statusSignalement.label = 'En attente'
           break
         case 'CLOSED':
           statusSignalement.className += 'fr-badge--blue-france-975'

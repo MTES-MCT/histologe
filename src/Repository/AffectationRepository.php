@@ -55,7 +55,8 @@ class AffectationRepository extends ServiceEntityRepository
         $qb = $this->createQueryBuilder('a')
             ->select('COUNT(a.signalement) as count')
             ->leftJoin('a.signalement', 's', 'WITH', 's = a.signalement')
-            ->andWhere('s.statut != 7')
+            ->andWhere('s.statut NOT IN (:signalement_status_list)')
+            ->setParameter('signalement_status_list', [SignalementStatus::DRAFT, SignalementStatus::ARCHIVED])
             ->addSelect('a.statut')
             ->andWhere('a.partner IN (:partners)')
             ->setParameter('partners', $user->getPartners());
@@ -112,7 +113,7 @@ class AffectationRepository extends ServiceEntityRepository
             ->innerJoin('a.signalement', 's')
             ->where('p.esaboraUrl IS NOT NULL AND p.esaboraToken IS NOT NULL AND p.isEsaboraActive = 1')
             ->andWhere('s.statut NOT IN (:signalement_status_list)')
-            ->setParameter('signalement_status_list', [SignalementStatus::ARCHIVED->value, SignalementStatus::DRAFT->value])
+            ->setParameter('signalement_status_list', [SignalementStatus::ARCHIVED, SignalementStatus::DRAFT])
             ->andWhere('p.type = :partner_type')
             ->setParameter('partner_type', $partnerType);
 

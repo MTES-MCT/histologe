@@ -73,7 +73,8 @@ class SignalementRepository extends ServiceEntityRepository
         $qb->addSelect('s.geoloc, s.details, s.cpOccupant, s.inseeOccupant')
             ->andWhere("JSON_EXTRACT(s.geoloc,'$.lat') != ''")
             ->andWhere("JSON_EXTRACT(s.geoloc,'$.lng') != ''")
-            ->andWhere('s.statut != 7');
+            ->andWhere('s.statut NOT IN (:signalement_status_list)')
+            ->setParameter('signalement_status_list', [SignalementStatus::ARCHIVED, SignalementStatus::DRAFT]);
 
         $qb->setFirstResult($firstResult)->setMaxResults(self::MARKERS_PAGE_SIZE);
 
@@ -1116,7 +1117,7 @@ class SignalementRepository extends ServiceEntityRepository
 
         $sql = 'SELECT t1.id, t1.zip, t1.name as territory_name,
                 CONCAT(t1.zip, " - ", t1.name) as label,
-                SUM(CASE WHEN s1.statut = 1 THEN 1 ELSE 0 END) AS new,
+                SUM(CASE WHEN s1.statut = :statut_1 THEN 1 ELSE 0 END) AS new,
                 ('.$noAffectedSql.') AS no_affected
                 FROM signalement s1
                 INNER JOIN territory t1 ON t1.id = s1.territory_id

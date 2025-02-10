@@ -886,7 +886,7 @@ signalements:
     adresse_occupant: "15 chemin de la route"
     cp_occupant: "30360"
     ville_occupant: "Vézénobres"
-    statut: 2
+    statut: "ACTIVE"
     geoloc: "[]"
     insee_occupant: ""
     nb_pieces_logement: 4
