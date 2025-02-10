@@ -32,7 +32,7 @@ class UserAccountController extends AbstractController
         RateLimiterFactory $loginActivationFormLimiter,
     ): Response {
         if ($request->isMethod('POST') && $email = $request->request->get('email')) {
-            $limiter = $loginActivationFormLimiter->create($request->getClientIp());
+            $limiter = $loginActivationFormLimiter->create($email);
             if (false === $limiter->consume(1)->isAccepted()) {
                 return $this->render('security/login_link_sent.html.twig', [
                     'title' => 'Lien d\'activation',
@@ -77,7 +77,7 @@ class UserAccountController extends AbstractController
     ): Response {
         $title = 'Récupération de votre mot de passe';
         if ($request->isMethod('POST') && $email = $request->request->get('email')) {
-            $limiter = $loginPasswordFormLimiter->create($request->getClientIp());
+            $limiter = $loginPasswordFormLimiter->create($email);
             if (false === $limiter->consume(1)->isAccepted()) {
                 return $this->render('security/login_link_sent.html.twig', [
                     'title' => 'Lien de récupération',

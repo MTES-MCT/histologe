@@ -92,8 +92,8 @@ class JsonLoginAuthenticator extends AbstractAuthenticator
     public function onAuthenticationFailure(Request $request, AuthenticationException $exception): ?Response
     {
         return new JsonResponse([
-            'error' => $this->translator->trans($exception->getMessageKey(), [], 'security'),
-            'message' => $this->translator->trans($exception->getMessage(), [], 'security'),
+            'error' => $this->translator->trans($exception->getMessageKey(), $exception->getMessageData(), 'security'),
+            'message' => $this->translator->trans($exception->getMessage(), $exception->getMessageData(), 'security'),
         ], Response::HTTP_UNAUTHORIZED);
     }
 }
