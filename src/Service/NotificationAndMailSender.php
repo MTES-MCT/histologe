@@ -62,22 +62,29 @@ class NotificationAndMailSender
         $this->suivi = $suivi;
         $this->signalement = $suivi->getSignalement();
         $territory = $this->signalement->getTerritory();
-        $recipients = $this->getRecipientsAdmin($territory);
+        $recipientsEmail = $this->getRecipientsAdmin($territory);
+        $recipientsNotifications = $this->getRecipientsAdmin($territory);
 
         foreach ($this->signalement->getAffectations() as $affectation) {
             if (AffectationStatus::STATUS_WAIT->value === $affectation->getStatut()
                     || AffectationStatus::STATUS_ACCEPTED->value === $affectation->getStatut()) {
-                $partnerRecipients = $this->getRecipientsPartner($affectation->getPartner());
-                $recipients = new ArrayCollection(
-                    array_merge($recipients->toArray(), $partnerRecipients->toArray())
+                $partnerRecipientsFiltered = $this->getRecipientsPartner($affectation->getPartner());
+                $partnerRecipients = $this->getRecipientsPartner($affectation->getPartner(), false);
+                $recipientsEmail = new ArrayCollection(
+                    array_merge($recipientsEmail->toArray(), $partnerRecipientsFiltered->toArray())
+                );
+                $recipientsNotifications = new ArrayCollection(
+                    array_merge($recipientsNotifications->toArray(), $partnerRecipients->toArray())
                 );
             }
         }
 
         $this->send(
             notificationMailerType: $mailerType,
-            recipients: $recipients,
-            isInAppNotificationCreated: true
+            recipients: $recipientsEmail
+        );
+        $this->createInAppNotifications(
+            recipients: $recipientsNotifications,
         );
     }
 
@@ -102,20 +109,21 @@ class NotificationAndMailSender
         }
     }
 
-    private function send(?NotificationMailerType $notificationMailerType, ArrayCollection $recipients, bool $isInAppNotificationCreated = false): void
+    private function send(?NotificationMailerType $notificationMailerType, ArrayCollection $recipients): void
     {
-        if ($isInAppNotificationCreated) {
-            foreach ($recipients as $user) {
-                if ($user instanceof User) {
-                    $this->createInAppNotification($user);
-                }
-            }
-            $this->entityManager->flush();
-        }
-
         if ($notificationMailerType) {
             $this->sendMail($recipients, $notificationMailerType);
         }
+    }
+
+    private function createInAppNotifications(ArrayCollection $recipients)
+    {
+        foreach ($recipients as $user) {
+            if ($user instanceof User) {
+                $this->createInAppNotification($user);
+            }
+        }
+        $this->entityManager->flush();
     }
 
     private function createInAppNotification($user): void
@@ -161,7 +169,7 @@ class NotificationAndMailSender
         return $recipients;
     }
 
-    private function getRecipientsPartner(Partner $partner): ArrayCollection
+    private function getRecipientsPartner(Partner $partner, bool $filterMailingActive = true): ArrayCollection
     {
         $recipients = new ArrayCollection();
         if ($partner->getEmail()) {
@@ -169,7 +177,9 @@ class NotificationAndMailSender
         }
 
         foreach ($partner->getUsers() as $user) {
-            if ($user->getIsMailingActive() && $this->isUserNotified($partner, $user)) {
+            if ($filterMailingActive && $user->getIsMailingActive() && $this->isUserNotified($partner, $user)) {
+                $recipients->add($user);
+            } elseif (!$filterMailingActive && $this->isUserNotified($partner, $user)) {
                 $recipients->add($user);
             }
         }
