@@ -10,12 +10,19 @@ use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Event\ExceptionEvent;
+use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Exception\MethodNotAllowedException;
 use Symfony\Component\Serializer\Exception\NotEncodableValueException;
 
 readonly class ExceptionListener
 {
+    private const array IGNORED_EXCEPTIONS = [
+        MethodNotAllowedException::class,
+        NotFoundHttpException::class,
+        AccessDeniedHttpException::class,
+    ];
+
     public function __construct(
         private NotificationMailerRegistry $notificationMailerRegistry,
         private ParameterBagInterface $params,
@@ -38,7 +45,7 @@ readonly class ExceptionListener
             $event->setResponse($response);
         }
 
-        if (!$exception instanceof MethodNotAllowedException && !$exception instanceof NotFoundHttpException) {
+        if ($this->shouldNotifyForException($exception)) {
             $this->notificationMailerRegistry->send(
                 new NotificationMail(
                     type: NotificationMailerType::TYPE_ERROR_SIGNALEMENT,
@@ -47,5 +54,10 @@ readonly class ExceptionListener
                 )
             );
         }
+    }
+
+    private function shouldNotifyForException(\Throwable $exception): bool
+    {
+        return !in_array($exception::class, self::IGNORED_EXCEPTIONS, true);
     }
 }
