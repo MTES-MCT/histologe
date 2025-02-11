@@ -755,14 +755,12 @@ class SignalementResponse
         items: new OA\Items(ref: new Model(type: Suivi::class)),
         example: [
             [
-                'id' => 1,
                 'dateCreation' => '2024-11-01T10:00:00+00:00',
                 'description' => 'Premier suivi associé.',
                 'public' => true,
                 'createdBy' => 'John Doe',
             ],
             [
-                'id' => 2,
                 'dateCreation' => '2024-11-02T12:30:00+00:00',
                 'description' => 'Deuxième suivi, accès limité.',
                 'public' => false,

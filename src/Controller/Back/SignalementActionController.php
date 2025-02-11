@@ -16,6 +16,7 @@ use App\Service\BetaGouv\RnbService;
 use App\Service\Mailer\NotificationMail;
 use App\Service\Mailer\NotificationMailerRegistry;
 use App\Service\Mailer\NotificationMailerType;
+use App\Service\Sanitizer;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ManagerRegistry;
 use Psr\Log\LoggerInterface;
@@ -109,9 +110,7 @@ class SignalementActionController extends AbstractController
         $this->denyAccessUnlessGranted('COMMENT_CREATE', $signalement);
         if ($this->isCsrfTokenValid('signalement_add_suivi_'.$signalement->getId(), $request->get('_token'))
             && $form = $request->get('signalement-add-suivi')) {
-            $content = $form['content'];
-            $content = preg_replace('/<p[^>]*>/', '', $content); // Remove the start <p> or <p attr="">
-            $content = str_replace('</p>', '<br />', $content); // Replace the end
+            $content = Sanitizer::sanitize($form['content']);
             if (mb_strlen($content) < 10) {
                 $this->addFlash('error', 'Le contenu du suivi doit faire au moins 10 caractères !');
 
@@ -121,11 +120,11 @@ class SignalementActionController extends AbstractController
                 /** @var User $user */
                 $user = $this->getUser();
                 $suiviManager->createSuivi(
-                    user: $user,
                     signalement: $signalement,
                     description: $content,
                     type: Suivi::TYPE_PARTNER,
                     isPublic: !empty($form['notifyUsager']),
+                    user: $user,
                 );
             } catch (\Throwable $exception) {
                 $this->addFlash('error', 'Une erreur est survenue lors de la publication.');

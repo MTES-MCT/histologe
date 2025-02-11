@@ -7,7 +7,7 @@ use App\Dto\Api\Response\SignalementResponse;
 use App\Entity\User;
 use App\Factory\Api\SignalementResponseFactory;
 use App\Repository\SignalementRepository;
-use Nelmio\ApiDocBundle\Annotation\Model;
+use Nelmio\ApiDocBundle\Attribute\Model;
 use OpenApi\Attributes as OA;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\DependencyInjection\Attribute\When;
