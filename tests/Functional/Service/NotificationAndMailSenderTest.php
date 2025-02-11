@@ -58,13 +58,13 @@ class NotificationAndMailSenderTest extends KernelTestCase
         $expectedNotification = $this->userRepository->findActiveAdminsAndTerritoryAdmins($territory, null);
         foreach ($signalement->getAffectations() as $affectation) {
             $partner = $affectation->getPartner();
-    
+
             if ($partnerEmail = $partner->getEmail()) {
                 $expectedAdress[] = $partnerEmail;
             }
-    
+
             foreach ($partner->getUsers() as $user) {
-                if ($user->getStatut() === User::STATUS_ACTIVE) {
+                if (User::STATUS_ACTIVE === $user->getStatut()) {
                     if ($user->getIsMailingActive()) {
                         $expectedAdress[] = $user->getEmail();
                     }
@@ -93,23 +93,22 @@ class NotificationAndMailSenderTest extends KernelTestCase
         );
 
         $notificationAndMailSender->sendNewSuiviToAdminsAndPartners($suivi, true);
-        
+
         $this->assertEmailCount(1);
         $email = $this->getMailerMessage();
-    
+
         foreach ($expectedAdress as $adressMail) {
             $this->assertEmailAddressContains($email, 'To', $adressMail);
         }
-    
+
         $newNotifications = $this->notificationRepository->findBy(['suivi' => $suivi]);
-        $expectedNotificationIds = array_map(fn($user) => $user->getId(), $expectedNotification);
-        $newNotificationIds = array_map(fn($notification) => $notification->getUser()->getId(), $newNotifications);
-    
+        $expectedNotificationIds = array_map(fn ($user) => $user->getId(), $expectedNotification);
+        $newNotificationIds = array_map(fn ($notification) => $notification->getUser()->getId(), $newNotifications);
+
         sort($expectedNotificationIds);
         sort($newNotificationIds);
-    
+
         $this->assertEquals(\count($expectedNotification), \count($newNotifications));
         $this->assertEquals($expectedNotificationIds, $newNotificationIds);
-
     }
 }
