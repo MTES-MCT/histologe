@@ -140,7 +140,7 @@ class EsaboraManagerTest extends KernelTestCase
             'remis en attente',
             Affectation::STATUS_WAIT,
             Suivi::TYPE_TECHNICAL,
-            false, // suivi mail not sent cause suivi techical
+            false, // suivi mail not sent cause suivi technical
         ];
 
         yield EsaboraStatus::ESABORA_ACCEPTED->value => [

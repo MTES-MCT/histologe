@@ -18,7 +18,7 @@ class SignalementControllerTest extends WebTestCase
         $this->assertEquals(200, $client->getResponse()->getStatusCode());
 
         $response = json_decode($client->getResponse()->getContent(), true);
-        $this->assertCount(5, $response);
+        $this->assertCount(6, $response);
     }
 
     public function testGetSignalementListWithLimit(): void
@@ -57,7 +57,7 @@ class SignalementControllerTest extends WebTestCase
             'email' => 'api-01@histologe.fr',
         ]);
         $client->loginUser($user, 'api');
-        $client->request('GET', '/api/signalements/00000000-0000-0000-2022-000000000001');
+        $client->request('GET', '/api/signalements/00000000-0000-0000-2022-000000000003');
         $this->assertEquals(200, $client->getResponse()->getStatusCode());
 
         $response = json_decode($client->getResponse()->getContent(), true);

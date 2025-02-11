@@ -131,15 +131,19 @@ class SignalementController extends AbstractController
                     $eventParams['motif_cloture']
                 );
                 $reference = $signalement->getReference();
-
+                $eventDispatcher->dispatch(new SignalementClosedEvent($entity, $eventParams), SignalementClosedEvent::NAME);
             /* @var Affectation $affectation */
             } elseif ($affectation) {
-                $entity = $affectationManager->closeAffectation($affectation, $user, $eventParams['motif_cloture'], true);
+                $entity = $affectationManager->closeAffectation(
+                    $affectation,
+                    $user,
+                    $eventParams['motif_cloture'],
+                    $eventParams['motif_suivi'],
+                    true);
                 $reference = $entity->getSignalement()->getReference();
             }
 
             if (!empty($entity)) {
-                $eventDispatcher->dispatch(new SignalementClosedEvent($entity, $eventParams), SignalementClosedEvent::NAME);
                 $this->addFlash('success', sprintf('Signalement #%s cloturé avec succès !', $reference));
             }
             $signalementSearchQuery = $request->getSession()->get('signalementSearchQuery');

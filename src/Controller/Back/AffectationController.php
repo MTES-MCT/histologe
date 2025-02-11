@@ -4,29 +4,21 @@ namespace App\Controller\Back;
 
 use App\Entity\Affectation;
 use App\Entity\Signalement;
-use App\Entity\Suivi;
 use App\Entity\User;
-use App\Event\AffectationAnsweredEvent;
-use App\Factory\Interconnection\Idoss\DossierMessageFactory;
 use App\Manager\AffectationManager;
 use App\Manager\SignalementManager;
-use App\Manager\SuiviManager;
-use App\Manager\UserManager;
 use App\Messenger\InterconnectionBus;
 use App\Repository\AffectationRepository;
 use App\Repository\PartnerRepository;
 use App\Security\Voter\AffectationVoter;
 use App\Service\Signalement\SearchFilterOptionDataProvider;
-use App\Specification\Signalement\FirstAffectationAcceptedSpecification;
 use Psr\Cache\InvalidArgumentException;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Messenger\MessageBusInterface;
+use Symfony\Component\Messenger\Exception\ExceptionInterface;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Contracts\Cache\TagAwareCacheInterface;
 
@@ -34,15 +26,15 @@ use Symfony\Contracts\Cache\TagAwareCacheInterface;
 class AffectationController extends AbstractController
 {
     public function __construct(
-        private SignalementManager $signalementManager,
-        private AffectationManager $affectationManager,
-        private PartnerRepository $partnerRepository,
-        private InterconnectionBus $interconnectionBus,
-        private EventDispatcherInterface $eventDispatcher,
+        private readonly SignalementManager $signalementManager,
+        private readonly AffectationManager $affectationManager,
+        private readonly PartnerRepository $partnerRepository,
+        private readonly InterconnectionBus $interconnectionBus,
     ) {
     }
 
     /**
+     * @throws ExceptionInterface
      * @throws InvalidArgumentException
      */
     #[Route('/{uuid:signalement}/affectation/toggle', name: 'back_signalement_toggle_affectation')]
@@ -122,16 +114,10 @@ class AffectationController extends AbstractController
         methods: 'POST'
     )]
     public function affectationResponseSignalement(
-        SuiviManager $suiviManager,
-        UserManager $userManager,
-        ParameterBagInterface $parameterBag,
         Signalement $signalement,
         Affectation $affectation,
         User $user,
         Request $request,
-        FirstAffectationAcceptedSpecification $firstAcceptedAffectationSpecification,
-        DossierMessageFactory $dossierMessageFactory,
-        MessageBusInterface $bus,
     ): Response {
         $this->denyAccessUnlessGranted(AffectationVoter::ANSWER, $affectation);
         if ($this->isCsrfTokenValid('signalement_affectation_response_'.$signalement->getId(), $request->get('_token'))
@@ -139,46 +125,13 @@ class AffectationController extends AbstractController
         ) {
             $status = isset($response['accept']) ? Affectation::STATUS_ACCEPTED : Affectation::STATUS_REFUSED;
             $motifRefus = (Affectation::STATUS_REFUSED === $status) ? $response['motifRefus'] : null;
-            $affectation = $this->affectationManager->updateAffectation($affectation, $user, $status, $motifRefus);
-
-            if ($firstAcceptedAffectationSpecification->isSatisfiedBy($signalement, $affectation)) {
-                $adminEmail = $parameterBag->get('user_system_email');
-                $adminUser = $userManager->findOneBy(['email' => $adminEmail]);
-                $suiviManager->createSuivi(
-                    user: $adminUser,
-                    signalement: $signalement,
-                    description: $parameterBag->get('suivi_message')['first_accepted_affectation'],
-                    type: Suivi::TYPE_AUTO,
-                    isPublic: true,
-                    context: Suivi::CONTEXT_NOTIFY_USAGER_ONLY,
-                );
-            }
-
-            if (Affectation::STATUS_REFUSED == $status) {
-                $this->dispatchAffectationAnsweredEvent($affectation, $response);
-            }
-            if ($dossierMessageFactory->supports($affectation)) {
-                $bus->dispatch($dossierMessageFactory->createInstance($affectation));
-            }
+            $message = $response['suivi'] ?? null;
+            $this->affectationManager->updateAffectation($affectation, $user, $status, $motifRefus, $message);
             $this->addFlash('success', 'Affectation mise à jour avec succès !');
         } else {
             $this->addFlash('error', "Une erreur est survenu lors de l'affectation");
         }
 
         return $this->redirectToRoute('back_signalement_view', ['uuid' => $signalement->getUuid()]);
-    }
-
-    private function dispatchAffectationAnsweredEvent(
-        Affectation $affectation,
-        array $response,
-    ): void {
-        /** @var User $user */
-        $user = $this->getUser();
-        if (isset($response['suivi'])) {
-            $this->eventDispatcher->dispatch(
-                new AffectationAnsweredEvent($affectation, $user, $response),
-                AffectationAnsweredEvent::NAME
-            );
-        }
     }
 }

@@ -8,6 +8,8 @@ use App\Entity\Enum\MotifRefus;
 use App\Entity\Partner;
 use App\Entity\Signalement;
 use App\Entity\User;
+use App\Event\AffectationAnsweredEvent;
+use App\Event\AffectationClosedEvent;
 use App\Event\AffectationCreatedEvent;
 use App\Messenger\Message\DossierMessageInterface;
 use App\Repository\AffectationRepository;
@@ -23,14 +25,19 @@ class AffectationManager extends Manager
         protected SuiviManager $suiviManager,
         protected LoggerInterface $logger,
         protected HistoryEntryManager $historyEntryManager,
-        private EventDispatcherInterface $eventDispatcher,
+        private readonly EventDispatcherInterface $eventDispatcher,
         string $entityName = Affectation::class,
     ) {
         parent::__construct($this->managerRegistry, $entityName);
     }
 
-    public function updateAffectation(Affectation $affectation, User $user, int $status, ?string $motifRefus = null): Affectation
-    {
+    public function updateAffectation(
+        Affectation $affectation,
+        User $user,
+        int $status,
+        ?string $motifRefus = null,
+        ?string $message = null,
+    ): Affectation {
         $affectation
             ->setStatut($status)
             ->setAnsweredBy($user)
@@ -40,7 +47,12 @@ class AffectationManager extends Manager
             $affectation->setMotifRefus(MotifRefus::tryFrom($motifRefus));
         }
 
+        if (Affectation::STATUS_WAIT === $status || Affectation::STATUS_ACCEPTED === $status) {
+            $affectation->clearMotifs();
+        }
+
         $this->save($affectation);
+        $this->dispatchAffectationAnsweredEvent($affectation, $user, $status, $affectation->getMotifRefus(), $message);
 
         return $affectation;
     }
@@ -79,7 +91,12 @@ class AffectationManager extends Manager
         return $affectation;
     }
 
-    public function closeAffectation(Affectation $affectation, User $user, MotifCloture $motif, bool $flush = false): Affectation
+    public function closeAffectation(
+        Affectation $affectation,
+        User $user,
+        MotifCloture $motif,
+        ?string $message = null,
+        bool $flush = false): Affectation
     {
         $affectation
             ->setStatut(Affectation::STATUS_CLOSED)
@@ -88,6 +105,14 @@ class AffectationManager extends Manager
             ->setAnsweredBy($user);
         if ($flush) {
             $this->save($affectation);
+            $this->eventDispatcher->dispatch(
+                new AffectationClosedEvent(
+                    affectation: $affectation,
+                    user: $user,
+                    message: $message
+                ),
+                AffectationClosedEvent::NAME
+            );
         }
 
         return $affectation;
@@ -135,5 +160,18 @@ class AffectationManager extends Manager
         /** @var AffectationRepository $affectationRepository */
         $affectationRepository = $this->getRepository();
         $affectationRepository->deleteAffectationsByPartner($partner);
+    }
+
+    private function dispatchAffectationAnsweredEvent(
+        Affectation $affectation,
+        User $user,
+        int $status,
+        ?MotifRefus $motifRefus = null,
+        ?string $message = null,
+    ): void {
+        $this->eventDispatcher->dispatch(
+            new AffectationAnsweredEvent($affectation, $user, $status, $motifRefus, $message),
+            AffectationAnsweredEvent::NAME
+        );
     }
 }

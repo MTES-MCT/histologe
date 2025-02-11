@@ -14,7 +14,6 @@ use App\Repository\UserRepository;
 use App\Service\Mailer\NotificationMail;
 use App\Service\Mailer\NotificationMailerRegistry;
 use App\Service\Mailer\NotificationMailerType;
-use App\Service\Token\TokenGeneratorInterface;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use Symfony\Bundle\SecurityBundle\Security;
@@ -75,7 +74,6 @@ class SignalementClosedSubscriberTest extends KernelTestCase
                     ),
                 ]
             )->willReturn(true);
-        $tokenGeneratorMock = $this->createMock(TokenGeneratorInterface::class);
         $securityMock = $this->createMock(Security::class);
         $securityMock->expects($this->once())->method('getUser')->willReturn($user);
 
@@ -105,7 +103,6 @@ class SignalementClosedSubscriberTest extends KernelTestCase
         $event = $dispatcher->dispatch($signalementClosedEvent, SignalementClosedEvent::NAME);
 
         $this->assertInstanceOf(Signalement::class, $event->getSignalement());
-        $this->assertNull($event->getAffectation());
         $this->assertIsArray($event->getParams());
     }
 }

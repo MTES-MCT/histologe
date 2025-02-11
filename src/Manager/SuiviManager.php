@@ -3,7 +3,6 @@
 namespace App\Manager;
 
 use App\Entity\Enum\DocumentType;
-use App\Entity\Enum\MotifRefus;
 use App\Entity\File;
 use App\Entity\Intervention;
 use App\Entity\Signalement;
@@ -76,10 +75,10 @@ class SuiviManager extends Manager
             /** @var User $user */
             $user = $this->security->getUser();
             $this->createSuivi(
-                user: $user,
                 signalement: $signalement,
                 description: $description.$user->getNomComplet(),
                 type: Suivi::TYPE_AUTO,
+                user: $user,
             );
         }
     }
@@ -192,16 +191,15 @@ class SuiviManager extends Manager
             $descriptionList[] = $linkFile;
         }
         $description .= '<ul>'.implode('', $descriptionList).'</ul>';
-        $suivi = $this->createSuivi(
-            user: $user,
+
+        return $this->createSuivi(
             signalement: $signalement,
             description: $description,
             type: Suivi::TYPE_AUTO,
             isPublic: $isVisibleUsager,
+            user: $user,
             flush: false
         );
-
-        return $suivi;
     }
 
     public static function buildDescriptionClotureSignalement($params): string
@@ -216,13 +214,13 @@ class SuiviManager extends Manager
         );
     }
 
-    public static function buildDescriptionAnswerAffectation($params): string
+    public static function buildDescriptionAnswerAffectation(array $params): string
     {
         $description = '';
         if (isset($params['accept'])) {
             $description = 'Le signalement a été accepté';
         } elseif (isset($params['suivi'])) {
-            $motifRejected = !empty($params['motifRefus']) ? MotifRefus::tryFrom($params['motifRefus'])->label() : 'Non précisé';
+            $motifRejected = !empty($params['motifRefus']) ? $params['motifRefus']->label() : 'Non précisé';
             $commentaire = Sanitizer::sanitize($params['suivi']);
             $description = 'Le signalement a été refusé avec le motif suivant : '.$motifRejected.'.<br>Plus précisément :<br>'.$commentaire;
         }

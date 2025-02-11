@@ -8,14 +8,15 @@ use App\Entity\Signalement;
 use App\Repository\SuiviRepository;
 use Doctrine\Common\Collections\Collection;
 
-class FirstAffectationAcceptedSpecification
+readonly class FirstAffectationAcceptedSpecification
 {
     public function __construct(private SuiviRepository $suiviRepository)
     {
     }
 
-    public function isSatisfiedBy(Signalement $signalement, Affectation $affectation): bool
+    public function isSatisfiedBy(Affectation $affectation): bool
     {
+        $signalement = $affectation->getSignalement();
         $suiviAffectationAccepted = $this->suiviRepository->findSuiviByDescription(
             $signalement,
             '<p>Suite à votre signalement, le ou les partenaires compétents'
@@ -50,6 +51,7 @@ class FirstAffectationAcceptedSpecification
         return !$signalement->getIsImported()
         && 1 === $affectationAccepted->count()
         && Affectation::STATUS_ACCEPTED === $affectation->getStatut()
+        && Signalement::STATUS_ACTIVE === $signalement->getStatut()
         && empty($suiviAffectationAccepted)
         && $interventions->isEmpty();
     }

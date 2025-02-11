@@ -265,3 +265,11 @@ affectations:
     affected_by: "admin-01@histologe.fr"
     motif_cloture: ""
     territory: "Hérault"
+  -
+    signalement: 2023-13
+    partner: "partenaire-13-01@histologe.fr"
+    statut: 3
+    answered_by: "api-01@histologe.fr"
+    affected_by: "admin-03@histologe.fr"
+    motif_cloture: "DEPART_OCCUPANT"
+    territory: "Bouches-du-Rhône"

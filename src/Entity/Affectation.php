@@ -10,6 +10,7 @@ use App\Repository\AffectationRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Uid\Uuid;
 
 #[ORM\Entity(repositoryClass: AffectationRepository::class)]
 class Affectation implements EntityHistoryInterface
@@ -22,6 +23,9 @@ class Affectation implements EntityHistoryInterface
     #[ORM\GeneratedValue]
     #[ORM\Column(type: 'integer')]
     private ?int $id = null;
+
+    #[ORM\Column(type: 'string', length: 255, unique: true)]
+    private ?string $uuid;
 
     #[ORM\ManyToOne(targetEntity: Signalement::class, inversedBy: 'affectations')]
     #[ORM\JoinColumn(nullable: false)]
@@ -62,11 +66,15 @@ class Affectation implements EntityHistoryInterface
     #[ORM\JoinColumn(nullable: true)]
     private ?Territory $territory;
 
+    private ?int $nextStatut = null;
+    private ?bool $hasNotificationUsagerToCreate = null;
+
     public function __construct()
     {
         $this->statut = self::STATUS_WAIT;
         $this->createdAt = new \DateTimeImmutable();
         $this->notifications = new ArrayCollection();
+        $this->uuid = Uuid::v4();
     }
 
     public function getId(): ?int
@@ -74,12 +82,17 @@ class Affectation implements EntityHistoryInterface
         return $this->id;
     }
 
+    public function getUuid(): ?string
+    {
+        return $this->uuid;
+    }
+
     public function getSignalement(): ?Signalement
     {
         return $this->signalement;
     }
 
-    public function setSignalement(?Signalement $signalement): self
+    public function setSignalement(?Signalement $signalement): static
     {
         $this->signalement = $signalement;
 
@@ -91,7 +104,7 @@ class Affectation implements EntityHistoryInterface
         return $this->partner;
     }
 
-    public function setPartner(?Partner $partner): self
+    public function setPartner(?Partner $partner): static
     {
         $this->partner = $partner;
 
@@ -103,7 +116,7 @@ class Affectation implements EntityHistoryInterface
         return $this->answeredAt;
     }
 
-    public function setAnsweredAt(\DateTimeImmutable $answeredAt): self
+    public function setAnsweredAt(\DateTimeImmutable $answeredAt): static
     {
         $this->answeredAt = $answeredAt;
 
@@ -115,7 +128,7 @@ class Affectation implements EntityHistoryInterface
         return $this->createdAt;
     }
 
-    public function setCreatedAt(\DateTimeImmutable $createdAt): self
+    public function setCreatedAt(\DateTimeImmutable $createdAt): static
     {
         $this->createdAt = $createdAt;
 
@@ -127,7 +140,7 @@ class Affectation implements EntityHistoryInterface
         return $this->statut;
     }
 
-    public function setStatut(int $statut): self
+    public function setStatut(int $statut): static
     {
         $this->statut = $statut;
 
@@ -139,7 +152,7 @@ class Affectation implements EntityHistoryInterface
         return $this->answeredBy;
     }
 
-    public function setAnsweredBy(?User $answeredBy): self
+    public function setAnsweredBy(?User $answeredBy): static
     {
         $this->answeredBy = $answeredBy;
 
@@ -151,7 +164,7 @@ class Affectation implements EntityHistoryInterface
         return $this->affectedBy;
     }
 
-    public function setAffectedBy(?User $affectedBy): self
+    public function setAffectedBy(?User $affectedBy): static
     {
         $this->affectedBy = $affectedBy;
 
@@ -163,7 +176,7 @@ class Affectation implements EntityHistoryInterface
         return $this->motifRefus;
     }
 
-    public function setMotifRefus(?MotifRefus $motifRefus): self
+    public function setMotifRefus(?MotifRefus $motifRefus): static
     {
         $this->motifRefus = $motifRefus;
 
@@ -175,7 +188,7 @@ class Affectation implements EntityHistoryInterface
         return $this->motifCloture;
     }
 
-    public function setMotifCloture(?MotifCloture $motifCloture): self
+    public function setMotifCloture(?MotifCloture $motifCloture): static
     {
         $this->motifCloture = $motifCloture;
 
@@ -190,7 +203,7 @@ class Affectation implements EntityHistoryInterface
         return $this->notifications;
     }
 
-    public function addNotification(Notification $notification): self
+    public function addNotification(Notification $notification): static
     {
         if (!$this->notifications->contains($notification)) {
             $this->notifications[] = $notification;
@@ -200,7 +213,7 @@ class Affectation implements EntityHistoryInterface
         return $this;
     }
 
-    public function removeNotification(Notification $notification): self
+    public function removeNotification(Notification $notification): static
     {
         if ($this->notifications->removeElement($notification)) {
             // set the owning side to null (unless already changed)
@@ -217,7 +230,7 @@ class Affectation implements EntityHistoryInterface
         return $this->territory;
     }
 
-    public function setTerritory(?Territory $territory): self
+    public function setTerritory(?Territory $territory): static
     {
         $this->territory = $territory;
 
@@ -229,7 +242,7 @@ class Affectation implements EntityHistoryInterface
         return $this->isSynchronized;
     }
 
-    public function setIsSynchronized(bool $isSynchronized): self
+    public function setIsSynchronized(bool $isSynchronized): static
     {
         $this->isSynchronized = $isSynchronized;
 
@@ -245,6 +258,32 @@ class Affectation implements EntityHistoryInterface
             self::STATUS_CLOSED => 'Cloturé',
             default => 'Unexpected affectation status : '.$this->getStatut(),
         };
+    }
+
+    public function getNextStatut(): ?int
+    {
+        return $this->nextStatut;
+    }
+
+    public function setNextStatut(int $nextStatut): void
+    {
+        $this->nextStatut = $nextStatut;
+    }
+
+    public function getHasNotificationUsagerToCreate(): ?bool
+    {
+        return $this->hasNotificationUsagerToCreate;
+    }
+
+    public function setHasNotificationUsagerToCreate(?bool $hasNotificationUsagerToCreate): void
+    {
+        $this->hasNotificationUsagerToCreate = $hasNotificationUsagerToCreate;
+    }
+
+    public function clearMotifs(): void
+    {
+        $this->motifRefus = null;
+        $this->motifCloture = null;
     }
 
     public function getHistoryRegisteredEvent(): array
