@@ -1847,6 +1847,14 @@
         },
         {
           "type": "SignalementFormCheckbox",
+          "slug": "utilisation_service_ok_donnees_sante",
+          "label": "Je certifie ne pas avoir partagé de données personnelles de santé me concernant ou concernant les personnes occupant le logement.",
+          "validate": {
+            "message": "Veuillez certifier que vous n'avez pas partagé de données personnelles de santé me concernant ou concernant les personnes occupant le logement."
+          }
+        },
+        {
+          "type": "SignalementFormCheckbox",
           "slug": "utilisation_service_ok_cgu",
           "label": "Je certifie avoir pris connaissance et accepter les&nbsp;<a href='/cgu' target='_blank' rel='noopener' title='conditions générales d&apos;utilisation - ouvre une nouvelle fenêtre'>conditions générales d'utilisation</a>&nbsp;et la&nbsp;<a href='/politique-de-confidentialite' target='_blank' rel='noopener' title='politique de confidentialité - ouvre une nouvelle fenêtre'>politique de confidentialité</a>&nbsp;du service {{formStore.props.platformName}}.",
           "validate": {

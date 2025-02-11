@@ -2879,6 +2879,11 @@
     "components": {
       "body": [
         {
+          "type": "SignalementFormInfo",
+          "slug": "message_administration_info",
+          "label": "Attention à vos données ! Merci de ne pas transmettre de données personnelles sur votre santé !"
+        },
+        {
           "type": "SignalementFormTextarea",
           "slug": "message_administration",
           "customCss": "fr-mt-5v",

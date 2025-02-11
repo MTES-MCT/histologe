@@ -55,7 +55,10 @@
 		<form action="{{ path('front_suivi_signalement_user_response',{code:signalement.codeSuivi}) }}" class="needs-validation fr-disable-button-when-submit" novalidate method="POST">
 			<div class="fr-input-group">
 				<label for="signalement_front_response_content" class="fr-h4">Envoyer un message</label>
-				<p class="fr-hint-text fr-mb-2v">Dix (10) caractères minimum</p>
+				<p class="fr-hint-text fr-my-2v">Dix (10) caractères minimum</p>
+				<div class="fr-alert fr-alert--info fr-alert--sm fr-mb-2v">
+					<p>Attention à vos données ! Merci de ne pas transmettre de données personnelles sur votre votre santé ou celle d'autres personnes !</p>
+				</div>
 				<input type="hidden" name="signalement_front_response[email]" value="{{ email }}" id="suivi_from_email">
 				<input type="hidden" name="signalement_front_response[type]" value="{{ type }}">
 				<textarea name="signalement_front_response[content]" id="signalement_front_response_content" rows="10" class="fr-input" required minlength="10"></textarea>

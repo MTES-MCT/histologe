@@ -2898,6 +2898,11 @@
     "components": {
       "body": [
         {
+          "type": "SignalementFormInfo",
+          "slug": "message_administration_info",
+          "label": "Attention à vos données ! Merci de ne pas transmettre de données personnelles de santé vous concernant ou concernant les personnes occupant le logement !"
+        },
+        {
           "type": "SignalementFormTextarea",
           "slug": "message_administration",
           "customCss": "fr-mt-5v",
