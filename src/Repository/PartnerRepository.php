@@ -299,4 +299,11 @@ class PartnerRepository extends ServiceEntityRepository
             ->getQuery()
             ->getResult();
     }
+
+    public function trimPartnerNames(): void
+    {
+        $connection = $this->getEntityManager()->getConnection();
+        $sql = 'UPDATE partner SET nom = TRIM(nom)';
+        $connection->prepare($sql)->executeQuery();
+    }
 }
