@@ -44,7 +44,7 @@ class NotificationAndMailSender
         $this->signalement = $signalement;
         $territory = $this->signalement->getTerritory();
         $recipients = $this->getRecipientsAdmin($territory);
-        $this->send($mailerType, $recipients);
+        $this->sendMail($recipients, $mailerType);
     }
 
     public function sendNewAffectation(Affectation $affectation): void
@@ -53,7 +53,7 @@ class NotificationAndMailSender
         $this->affectation = $affectation;
         $this->signalement = $affectation->getSignalement();
         $recipients = $this->getRecipientsPartner($affectation->getPartner());
-        $this->send($mailerType, $recipients);
+        $this->sendMail($recipients, $mailerType);
     }
 
     public function sendNewSuiviToAdminsAndPartners(Suivi $suivi, bool $sendEmail): void
@@ -79,10 +79,7 @@ class NotificationAndMailSender
             }
         }
 
-        $this->send(
-            notificationMailerType: $mailerType,
-            recipients: $recipientsEmail
-        );
+        $this->sendMail($recipientsEmail, $mailerType);
         $this->createInAppNotifications(
             recipients: $recipientsNotifications,
         );
@@ -109,13 +106,6 @@ class NotificationAndMailSender
         }
     }
 
-    private function send(?NotificationMailerType $notificationMailerType, ArrayCollection $recipients): void
-    {
-        if ($notificationMailerType) {
-            $this->sendMail($recipients, $notificationMailerType);
-        }
-    }
-
     private function createInAppNotifications(ArrayCollection $recipients)
     {
         foreach ($recipients as $user) {
@@ -136,9 +126,9 @@ class NotificationAndMailSender
         $this->entityManager->persist($notification);
     }
 
-    private function sendMail(ArrayCollection $recipients, NotificationMailerType $mailType): void
+    private function sendMail(ArrayCollection $recipients, ?NotificationMailerType $mailType): void
     {
-        if (!$recipients->isEmpty()) {
+        if (!$recipients->isEmpty() && $mailType) {
             $recipientsEmails = $this->getRecipientsFilteredEmail($recipients);
 
             if (!empty($recipientsEmails)) {
@@ -177,9 +167,7 @@ class NotificationAndMailSender
         }
 
         foreach ($partner->getUsers() as $user) {
-            if ($filterMailingActive && $user->getIsMailingActive() && $this->isUserNotified($partner, $user)) {
-                $recipients->add($user);
-            } elseif (!$filterMailingActive && $this->isUserNotified($partner, $user)) {
+            if ($this->isUserNotified($partner, $user) && (!$filterMailingActive || $user->getIsMailingActive())) {
                 $recipients->add($user);
             }
         }
