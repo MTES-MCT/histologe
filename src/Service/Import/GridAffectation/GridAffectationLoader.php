@@ -209,7 +209,7 @@ class GridAffectationLoader
         }
         foreach ($data as $item) {
             if (\count($item) > 1) {
-                $partnerName = trim($item[GridAffectationHeader::PARTNER_NAME_INSTITUTION]);
+                $partnerName = trim($item[GridAffectationHeader::PARTNER_NAME_INSTITUTION]); // Replace with mb_trim($name); when php 8.4
                 $partnerType = PartnerType::tryFromLabel($item[GridAffectationHeader::PARTNER_TYPE]);
 
                 if (!\in_array($partnerName, $newPartnerNames)) {
