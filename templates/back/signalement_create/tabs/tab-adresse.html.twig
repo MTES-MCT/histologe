@@ -1,1 +1,86 @@
-<h2 class="fr-h4">Adresse du logement</h2>
+
+{% form_theme form 'form/dsfr_theme.html.twig' %}
+{{ form_start(form, {'attr': {'id': 'bo-form-signalement-address'}}) }}
+{{ form_errors(form) }}
+<div class="fr-grid-row fr-grid-row--gutters">
+
+    <div class="fr-col-12 fr-col-md-6">
+        <fieldset class="fr-fieldset">
+            <legend>
+                <h2 class="fr-h4">Adresse du logement <span class="text-required">*</span></h2>
+            </legend>
+            <div class="fr-fieldset__element">
+                {{ form_row(form.adresseCompleteOccupant) }}
+                <div class="fr-address-group-container">
+                    <div class="fr-grid-row fr-background-alt--blue-france fr-text-label--blue-france fr-address-group">
+                    </div>
+                </div>
+                <div class="fr-mt-n2w">
+                    <a href="#" id="bo-signalement-manual-address-switcher" class="fr-link fr-icon-edit-line fr-link--icon-left">Saisir une adresse manuellement</a>
+                </div>
+            </div>
+            <div id="bo-form-signalement-manual-address-container" class="fr-hidden fr-w-100" >
+                <div class="fr-fieldset__element">
+                    {{ form_row(form.adresseOccupant) }}
+                </div>
+                <div class="fr-fieldset__element">
+                    {{ form_row(form.cpOccupant) }}
+                </div>
+                <div class="fr-fieldset__element">
+                    {{ form_row(form.villeOccupant) }}
+                </div>
+            </div>
+        </fieldset>
+        <fieldset class="fr-fieldset">
+            <legend>
+                <h2 class="fr-h4">Complément d'adresse (facultatif)</h2>
+            </legend>
+            <div class="fr-fieldset__element">
+                {{ form_row(form.etageOccupant) }}
+            </div>
+            <div class="fr-fieldset__element">
+                {{ form_row(form.escalierOccupant) }}
+            </div>
+            <div class="fr-fieldset__element">
+                {{ form_row(form.numAppartOccupant) }}
+            </div>
+            <div class="fr-fieldset__element">
+                {{ form_row(form.adresseAutreOccupant) }}
+            </div>
+        </fieldset>
+    </div>
+
+    <div class="fr-col-12 fr-col-md-6">
+        <fieldset class="fr-fieldset">
+            <legend>
+                <h2 class="fr-h4">Occupation du logement</h2>
+            </legend>
+            <div class="fr-fieldset__element">
+                {{ form_row(form.isLogementSocial) }}
+            </div>
+            <div class="fr-fieldset__element">
+                {{ form_row(form.occupationLogement) }}
+            </div>
+            <div class="fr-fieldset__element">
+                {{ form_row(form.nbOccupantsLogement) }}
+            </div>
+            <div class="fr-fieldset__element">
+                {{ form_row(form.nbEnfantsDansLogement) }}
+            </div>
+            <div class="fr-fieldset__element">
+                {{ form_row(form.enfantsDansLogementMoinsSixAns) }}
+            </div>
+        </fieldset>
+    </div>
+
+    <div class="fr-col-12">
+        <div class="fr-grid-row fr-grid-row--right">
+            {{ form_row(form.forceSave) }}
+            {{ form_row(form.draft) }}
+            {{ form_row(form.save) }}
+        </div>
+    </div>
+
+</div>
+
+{{ form_end(form) }}

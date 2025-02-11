@@ -1545,4 +1545,24 @@ class SignalementRepository extends ServiceEntityRepository
             'nbDays' => $nbDays,
         ])->fetchAllAssociative();
     }
+
+    public function findOnSameAddress(Signalement $signalement): array
+    {
+        $qb = $this->createQueryBuilder('s')
+            ->where('s.adresseOccupant = :address')
+            ->andWhere('s.cpOccupant = :zipcode')
+            ->andWhere('s.villeOccupant = :city')
+            ->andWhere('s.statut IN (:statuts)')
+            ->setParameter('address', $signalement->getAdresseOccupant())
+            ->setParameter('zipcode', $signalement->getCpOccupant())
+            ->setParameter('city', $signalement->getVilleOccupant())
+            ->setParameter('statuts', [Signalement::STATUS_NEED_VALIDATION, Signalement::STATUS_ACTIVE]);
+
+        if (null !== $signalement->getId()) {
+            $qb->andWhere('s.id != :id')
+            ->setParameter('id', $signalement->getId());
+        }
+
+        return $qb->getQuery()->getResult();
+    }
 }

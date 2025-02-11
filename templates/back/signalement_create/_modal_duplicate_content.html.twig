@@ -1,0 +1,20 @@
+<p>
+    Il semblerait qu'il existe déja des signalements à cette adresse postale.
+    <br>
+    Voici la liste des signalements existants à cette adresse :
+</p>
+{% for signalement in duplicates %}
+    <ul>
+        <li>
+            Signalement {{ signalement.reference }} - {{ signalement.nomOccupant|upper }} - {{ signalement.prenomOccupant|capitalize }}
+        </li>
+    </ul>
+{% endfor %}
+<p>
+    Avant de poursuivre la création de ce signalement, nous vous invitons à vérifier qu'il en s'agitpas d'un doublon !
+</p>
+{% if not is_granted('ROLE_ADMIN_TERRITORY') %}
+    <div class="fr-alert fr-alert--info fr-mb-2v">
+        <p>Si votre partenaire n'est pas affecté aux signalements listés, vous n'y aurez pas accès. Nous vous invitons à vous rapprocher de vos responsables de territoire.</p>
+    </div>
+{% endif %}
