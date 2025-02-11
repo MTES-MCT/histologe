@@ -388,7 +388,7 @@ class SignalementDraftRequest
     private ?string $travailleurSocialQuitteLogement = null;
 
     #[Assert\When(
-        expression: 'this.getTravailleurSocialQuitteLogement() == "oui"',
+        expression: 'this.getTravailleurSocialQuitteLogement() == "oui" && this.getSignalementConcerneProfilDetailOccupant() != "bailleur_occupant"',
         constraints: [
             new Assert\NotBlank(message: 'Merci de préciser s\'il y a un préavis de départ.'),
         ],
