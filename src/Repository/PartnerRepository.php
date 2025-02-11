@@ -299,4 +299,12 @@ class PartnerRepository extends ServiceEntityRepository
             ->getQuery()
             ->getResult();
     }
+
+    public function trimPartnerNames(): void
+    {
+        $connection = $this->getEntityManager()->getConnection();
+        // Replace unbreakable spaces, and then trim
+        $sql = 'UPDATE partner SET nom = TRIM(REPLACE(nom, UNHEX("C2A0"), " "))';
+        $connection->prepare($sql)->executeStatement();
+    }
 }
