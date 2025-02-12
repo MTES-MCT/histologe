@@ -33,7 +33,7 @@ class SignalementFileUpdateControllerTest extends WebTestCase
         })->current();
 
         $payload = [
-            'documentType' => 'PROCEDURE_ARRETE_PREFECTORAL',
+            'documentType' => 'PHOTO_SITUATION',
             'description' => 'lorem ipsum dolor sit amet',
         ];
         $this->client->request(
@@ -46,6 +46,29 @@ class SignalementFileUpdateControllerTest extends WebTestCase
         $response = json_decode($this->client->getResponse()->getContent(), true);
         $this->assertResponseIsSuccessful();
         $this->assertEquals($payload['documentType'], $response['documentType']);
+    }
+
+    public function testUpdateSignalementFileWithIncorrectType(): void
+    {
+        $signalement = self::getContainer()->get(SignalementRepository::class)->find(1);
+        $file = $signalement->getFiles()->filter(function (File $file) {
+            return 'photo' === $file->getFileType();
+        })->current();
+
+        $payload = [
+            'documentType' => 'PROCEDURE_ARRETE_PREFECTORAL',
+            'description' => 'lorem ipsum dolor sit amet',
+        ];
+        $this->client->request(
+            method: 'PATCH',
+            uri: $this->router->generate('api_signalements_files_patch', ['uuid' => $file->getUuid()]),
+            server: ['CONTENT_TYPE' => 'application/json'],
+            content: json_encode($payload)
+        );
+
+        $response = json_decode($this->client->getResponse()->getContent(), true);
+        $this->assertResponseIsSuccessful();
+        $this->assertEquals('AUTRE', $response['documentType']);
     }
 
     public function testUpdateSignalementFileWithFileNotFound(): void

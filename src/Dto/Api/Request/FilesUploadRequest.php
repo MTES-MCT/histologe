@@ -19,7 +19,7 @@ class FilesUploadRequest implements RequestInterface
             maxSize: '10M',
             mimeTypes: File::DOCUMENT_MIME_TYPES,
             maxSizeMessage: 'Le fichier ne doit pas dépasser 10 Mo.',
-            mimeTypesMessage: 'Seuls les fichiers {{mimeTypes}} sont autorisés.'
+            mimeTypesMessage: 'Seuls les fichiers {{ types }} sont autorisés.'
         ),
     ])]
     #[Assert\Count(

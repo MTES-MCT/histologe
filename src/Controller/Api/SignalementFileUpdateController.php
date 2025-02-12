@@ -95,9 +95,14 @@ class SignalementFileUpdateController extends AbstractController
         }
         $this->denyAccessUnlessGranted('FILE_EDIT', $file);
 
-        $file->setDocumentType(DocumentType::tryFrom($fileRequest->documentType));
+        $documentType = DocumentType::tryFrom($fileRequest->documentType);
         if (File::FILE_TYPE_PHOTO === $file->getFileType()) {
+            if (isset(DocumentType::getOrderedPhotosList()[$documentType->name])) {
+                $file->setDocumentType($documentType);
+            }
             $file->setDescription($fileRequest->description);
+        } else {
+            $file->setDocumentType($documentType);
         }
         $this->entityManager->flush();
 
