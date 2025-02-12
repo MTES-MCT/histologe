@@ -123,9 +123,10 @@ class SignalementFileController extends AbstractController
         if (!\count($files)) {
             return $this->json(['success' => true]);
         }
-
-        $suivi = $suiviManager->createInstanceForFilesSignalement($user, $signalement, $files);
-        $entityManager->persist($suivi);
+        if (Signalement::STATUS_CLOSED !== $signalement->getStatut()) {
+            $suivi = $suiviManager->createInstanceForFilesSignalement($user, $signalement, $files);
+            $entityManager->persist($suivi);
+        }
 
         $update = $entityManager->createQueryBuilder()
             ->update(File::class, 'f')
@@ -139,6 +140,7 @@ class SignalementFileController extends AbstractController
         $update->execute();
 
         $entityManager->flush();
+
         $this->addFlash('success', 'Les documents ont bien été ajoutés.');
 
         return $this->json(['success' => true]);

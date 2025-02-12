@@ -36,6 +36,9 @@ class FileVoter extends Voter
 
     private function canCreate(File $file, User $user): bool
     {
+        if (SignalementStatus::CLOSED === $file->getSignalement()->getStatut() && $this->isAdminOrRTonHisTerritory($file, $user)) {
+            return true;
+        }
         if (SignalementStatus::ACTIVE !== $file->getSignalement()->getStatut()) {
             return false;
         }
