@@ -11,10 +11,10 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Event\ExceptionEvent;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
+use Symfony\Component\HttpKernel\Exception\HttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Exception\MethodNotAllowedException;
 use Symfony\Component\Serializer\Exception\NotEncodableValueException;
-use Symfony\Component\HttpKernel\Exception\HttpException;
 
 readonly class ExceptionListener
 {
@@ -47,21 +47,18 @@ readonly class ExceptionListener
         }
 
         if ($this->shouldNotifyForException($exception)) {
-
             $extraData = [];
             if ($exception instanceof HttpException) {
-                dump('hhh');
                 $extraData = $exception->getHeaders();
-                dump($extraData);
             }
-    
+
             $message = "Une erreur s'est produite : {$exception->getMessage()}";
-    
+
             if (!empty($extraData)) {
-                $message .= "\n\n📅 Date : " . ($extraData['timestamp'] ?? 'N/A');
-                $message .= "\n💾 Base : " . ($extraData['database'] ?? 'N/A');
-                $message .= "\n🔍 Hôte : " . ($extraData['host'] ?? 'N/A');
-                $message .= "\n❗ Erreur : " . ($extraData['error'] ?? 'N/A');
+                $message .= "\n\n📅 Date : ".($extraData['timestamp'] ?? 'N/A');
+                $message .= "\n💾 Base : ".($extraData['database'] ?? 'N/A');
+                $message .= "\n🔍 Hôte : ".($extraData['host'] ?? 'N/A');
+                $message .= "\n❗ Erreur : ".($extraData['error'] ?? 'N/A');
             }
 
             $this->notificationMailerRegistry->send(

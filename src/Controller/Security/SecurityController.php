@@ -5,9 +5,7 @@ namespace App\Controller\Security;
 use App\Entity\Signalement;
 use App\Entity\User;
 use App\Service\Files\ImageVariantProvider;
-use App\Service\Mailer\NotificationMail;
 use App\Service\Mailer\NotificationMailerRegistry;
-use App\Service\Mailer\NotificationMailerType;
 use Nelmio\ApiDocBundle\Attribute\Security;
 use OpenApi\Attributes as OA;
 use Psr\Log\LoggerInterface;
@@ -19,10 +17,10 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Exception\HttpException;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\CurrentUser;
 use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
-use Symfony\Component\HttpKernel\Exception\HttpException;
 
 class SecurityController extends AbstractController
 {
@@ -141,15 +139,14 @@ class SecurityController extends AbstractController
 
     #[Route('/send-error-email', methods: ['POST'])]
     public function handleSendErrorEmail(
-        Request $request, 
-        LoggerInterface $logger, 
-        NotificationMailerRegistry $notificationMailerRegistry
-    ): JsonResponse
-    {
+        Request $request,
+        LoggerInterface $logger,
+        NotificationMailerRegistry $notificationMailerRegistry,
+    ): JsonResponse {
         $expectedToken = $this->getParameter('send_error_email_token');
         $providedToken = $request->headers->get('Authorization');
 
-        if ($providedToken !== 'Bearer ' . $expectedToken) {
+        if ($providedToken !== 'Bearer '.$expectedToken) {
             return new JsonResponse(['error' => 'Unauthorized'], 403);
         }
 
@@ -162,11 +159,6 @@ class SecurityController extends AbstractController
         // Log de l'erreur
         $logger->error("send-error-mail: {$data['title']} {$data['error']} (DB: {$data['database']}, Host: {$data['host']}, Time: {$data['timestamp']})");
 
-        throw new HttpException(500, $data['title'], null, [
-            'timestamp' => $data['timestamp'],
-            'database' => $data['database'],
-            'host' => $data['host'],
-            'error' => $data['error']
-        ]);
+        throw new HttpException(500, $data['title'], null, ['timestamp' => $data['timestamp'], 'database' => $data['database'], 'host' => $data['host'], 'error' => $data['error']]);
     }
 }

@@ -64,8 +64,8 @@ if [ $EXIT_CODE -ne 0 ]; then
     TIMESTAMP=$(date +"%Y-%m-%d %H:%M:%S")
     HOSTNAME=$(hostname)
     
-    # Appelle l'API Symfony en cas d'erreur HISTOLOGE_URL risque de renvoyer l'url de la preprod, en créer une autre ?
-    curl -X POST "${HISTOLOGE_URL}/send-error-email" \ 
+    # En cas d'erreur  envoi de mail via une route sur la prod
+    curl -X POST "${HISTOLOGE_PROD_URL}/send-error-email" \ 
          -H "Content-Type: application/json" \
          -H "Authorization: Bearer ${SEND_ERROR_EMAIL_TOKEN}" \
          -d "{\"title\": \"$TITLE\", \"timestamp\": \"$TIMESTAMP\", \"host\": \"$HOSTNAME\", \"database\": \"${DATABASE_NAME}\", \"error\": \"$ERROR_MESSAGE\"}"
