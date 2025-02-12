@@ -100,7 +100,7 @@ class SignalementAddressType extends AbstractType
                 'required' => false,
                 'placeholder' => false,
                 'constraints' => [
-                    new Assert\NotBlank([
+                    new Assert\NotNull([
                         'message' => 'Veuillez renseigner si il s\'agit d\'un logement social.',
                         'groups' => ['bo_step_address'],
                     ]),

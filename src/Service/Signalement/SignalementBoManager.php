@@ -48,7 +48,7 @@ class SignalementBoManager
                 }
                 break;
         }
-        $typeCompositionLogement = $signalement->getTypeCompositionLogement() ?: new TypeCompositionLogement();
+        $typeCompositionLogement = $signalement->getTypeCompositionLogement() ? clone $signalement->getTypeCompositionLogement() : new TypeCompositionLogement();
         $typeCompositionLogement->setCompositionLogementNombreEnfants($form->get('nbEnfantsDansLogement')->getData());
         $typeCompositionLogement->setCompositionLogementEnfants($form->get('enfantsDansLogementMoinsSixAns')->getData());
         $signalement->setTypeCompositionLogement($typeCompositionLogement);
@@ -71,12 +71,12 @@ class SignalementBoManager
 
         $territory = $this->postalCodeHomeChecker->getActiveTerritory($signalement->getCpOccupant(), $signalement->getInseeOccupant());
         if (!$territory) {
-            $form->addError(new FormError($fieldAddress, 'L\'adresse renseignée ne correspond pas à un territoire actif.'));
+            $form->get($fieldAddress)->addError(new FormError('L\'adresse renseignée ne correspond pas à un territoire actif.'));
 
             return false;
         }
-        if (!$this->security->isGranted('ROLE_ADMIN') && $this->user->hasPartnerInTerritory($territory)) {
-            $form->addError(new FormError($fieldAddress, 'Vous n\'avez pas le droit de créer un signalement sur ce territoire.'));
+        if (!$this->security->isGranted('ROLE_ADMIN') && !$this->user->hasPartnerInTerritory($territory)) {
+            $form->get($fieldAddress)->addError(new FormError('Vous n\'avez pas le droit de créer un signalement sur ce territoire.'));
 
             return false;
         }
