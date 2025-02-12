@@ -14,6 +14,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Uid\Uuid;
 
 #[ORM\Entity(repositoryClass: InterventionRepository::class)]
 #[ORM\HasLifecycleCallbacks()]
@@ -21,15 +22,18 @@ class Intervention implements EntityHistoryInterface
 {
     use TimestampableTrait;
 
-    public const STATUS_PLANNED = 'PLANNED';
-    public const STATUS_DONE = 'DONE';
-    public const STATUS_CANCELED = 'CANCELED';
-    public const STATUS_NOT_DONE = 'NOT_DONE';
+    public const string STATUS_PLANNED = 'PLANNED';
+    public const string STATUS_DONE = 'DONE';
+    public const string STATUS_CANCELED = 'CANCELED';
+    public const string STATUS_NOT_DONE = 'NOT_DONE';
 
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
     private ?int $id = null;
+
+    #[ORM\Column(type: 'string', length: 255, unique: true)]
+    private ?string $uuid;
 
     #[ORM\Column(nullable: true)]
     private ?\DateTimeImmutable $scheduledAt = null;
@@ -86,11 +90,17 @@ class Intervention implements EntityHistoryInterface
     public function __construct()
     {
         $this->files = new ArrayCollection();
+        $this->uuid = Uuid::v4();
     }
 
     public function getId(): ?int
     {
         return $this->id;
+    }
+
+    public function getUuid(): ?string
+    {
+        return $this->uuid;
     }
 
     public function getScheduledAt(): ?\DateTimeImmutable

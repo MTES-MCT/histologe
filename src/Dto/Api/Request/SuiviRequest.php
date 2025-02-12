@@ -10,7 +10,7 @@ use OpenApi\Attributes as OA;
     description: 'Payload pour créer un suivi.',
     required: ['description'],
 )]
-class SuiviRequest implements RequestInterface
+class SuiviRequest implements RequestInterface, RequestFileInterface
 {
     #[OA\Property(
         description: 'Un message de 10 caractères minimum est obligatoire.',
@@ -34,4 +34,14 @@ class SuiviRequest implements RequestInterface
     )]
     #[ValidFiles]
     public array $files = [];
+
+    public function getDescription(): ?string
+    {
+        return $this->description ?? null;
+    }
+
+    public function getFiles(): array
+    {
+        return $this->files;
+    }
 }

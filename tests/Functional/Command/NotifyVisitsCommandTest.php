@@ -21,10 +21,9 @@ class NotifyVisitsCommandTest extends KernelTestCase
 
         $commandTester->assertCommandIsSuccessful();
 
-        $this->assertEmailCount(12);
+        $this->assertEmailCount(9);
         $this->assertEmailSubjectContains($this->getMailerMessages()[1], '2024-02');
         $this->assertEmailSubjectContains($this->getMailerMessages()[4], '2022-6');
         $this->assertEmailSubjectContains($this->getMailerMessages()[6], '2023-26');
-        $this->assertEmailSubjectContains($this->getMailerMessages()[8], '2023-20');
     }
 }

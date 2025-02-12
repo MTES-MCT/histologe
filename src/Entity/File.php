@@ -34,7 +34,7 @@ class File implements EntityHistoryInterface
         'message/rfc822',
         'application/vnd.ms-outlook',
     ];
-    public const DOCUMENT_EXTENSION = [
+    public const array DOCUMENT_EXTENSION = [
         'jpeg',
         'jpg',
         'png',
@@ -49,12 +49,12 @@ class File implements EntityHistoryInterface
         'eml',
         'msg',
     ];
-    public const IMAGE_MIME_TYPES = [
+    public const array IMAGE_MIME_TYPES = [
         'image/jpeg',
         'image/png',
         'image/gif',
     ];
-    public const IMAGE_EXTENSION = [
+    public const array IMAGE_EXTENSION = [
         'jpeg',
         'jpg',
         'png',
@@ -101,7 +101,7 @@ class File implements EntityHistoryInterface
     #[ORM\Column]
     private ?bool $isVariantsGenerated = null;
 
-    #[ORM\Column(type: 'text', nullable: true, length: 250)]
+    #[ORM\Column(type: 'text', length: 250, nullable: true)]
     #[Assert\Length(max: 250)]
     private ?string $description = null;
 

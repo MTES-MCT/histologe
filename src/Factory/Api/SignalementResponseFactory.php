@@ -5,7 +5,6 @@ namespace App\Factory\Api;
 use App\Dto\Api\Model\Adresse;
 use App\Dto\Api\Model\Affectation as AffectationModel;
 use App\Dto\Api\Model\Desordre;
-use App\Dto\Api\Model\Intervention;
 use App\Dto\Api\Model\Personne;
 use App\Dto\Api\Model\Suivi;
 use App\Dto\Api\Response\SignalementResponse;
@@ -30,6 +29,7 @@ readonly class SignalementResponseFactory
     public function __construct(
         private SignalementDesordresProcessor $signalementDesordresProcessor,
         private FileFactory $fileFactory,
+        private InterventionFactory $interventionFactory,
         private Security $security,
     ) {
     }
@@ -137,7 +137,7 @@ readonly class SignalementResponseFactory
             $signalementResponse->suivis[] = new Suivi($suivi);
         }
         foreach ($signalement->getInterventions() as $intervention) {
-            $signalementResponse->interventions[] = new Intervention($intervention);
+            $signalementResponse->interventions[] = $this->interventionFactory->createInstance($intervention);
         }
         foreach ($signalement->getFiles() as $file) {
             $signalementResponse->files[] = $this->fileFactory->createFrom($file);

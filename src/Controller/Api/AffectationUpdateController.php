@@ -10,7 +10,6 @@ use App\Entity\Enum\MotifCloture;
 use App\Entity\Enum\MotifRefus;
 use App\Entity\User;
 use App\EventListener\SecurityApiExceptionListener;
-use App\Exception\Suivi\UsagerNotificationRequiredException;
 use App\Manager\AffectationManager;
 use App\Security\Voter\AffectationVoter;
 use OpenApi\Attributes as OA;
@@ -30,9 +29,6 @@ class AffectationUpdateController extends AbstractController
     {
     }
 
-    /**
-     * @throws UsagerNotificationRequiredException
-     */
     #[Route('/affectations/{uuid:affectation}', name: 'api_affectations_update', methods: 'PATCH')]
     #[OA\Patch(
         path: '/api/affectations/{uuid}',
@@ -167,7 +163,7 @@ class AffectationUpdateController extends AbstractController
             type: 'object'
         )
     )]
-    public function index(
+    public function __invoke(
         #[MapRequestPayload] AffectationRequest $affectationRequest,
         ?Affectation $affectation = null,
     ): JsonResponse {

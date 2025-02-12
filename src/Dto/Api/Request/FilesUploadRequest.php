@@ -21,12 +21,29 @@ class FilesUploadRequest implements RequestInterface
             maxSizeMessage: 'Le fichier ne doit pas dépasser 10 Mo.',
             mimeTypesMessage: 'Seuls les fichiers {{ types }} sont autorisés.'
         ),
-    ])]
+    ], groups: ['single', 'multiple_documents'])]
+    #[Assert\All([
+        new Assert\Type(type: UploadedFile::class, message: 'Chaque élément doit être une image valide.'),
+        new Assert\File(
+            maxSize: '10M',
+            mimeTypes: File::IMAGE_MIME_TYPES,
+            maxSizeMessage: 'L\'image ne doit pas dépasser 10 Mo.',
+            mimeTypesMessage: 'Seuls les images {{ types }} sont autorisés.'
+        ),
+    ], groups: ['multiple_images'])]
     #[Assert\Count(
         min: 1,
         max: 5,
         minMessage: 'Vous devez téléverser au moins un fichier.',
-        maxMessage: 'Vous ne pouvez pas téléverser plus {{ limit }} fichiers.'
+        maxMessage: 'Vous ne pouvez pas téléverser plus {{ limit }} fichiers.',
+        groups: ['multiple_documents', 'multiple_images']
+    )]
+    #[Assert\Count(
+        min: 1,
+        max: 1,
+        minMessage: 'Vous devez téléverser un fichier.',
+        maxMessage: 'Vous ne pouvez pas téléverser qu\'un seul fichier.',
+        groups: ['single']
     )]
     #[OA\Property(
         description: 'Liste des fichiers téléversés',

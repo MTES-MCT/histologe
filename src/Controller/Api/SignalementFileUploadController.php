@@ -58,6 +58,7 @@ class SignalementFileUploadController extends AbstractController
                 schema: new OA\Schema(
                     properties: [
                         'files' => new OA\Property(
+                            property: 'files',
                             description: 'Liste des fichiers téléversés',
                             type: 'array',
                             items: new OA\Items(type: 'string', format: 'binary'),
@@ -139,15 +140,15 @@ class SignalementFileUploadController extends AbstractController
         }
         $this->denyAccessUnlessGranted('SIGN_EDIT', $signalement);
         $data['files'] = $request->files->all();
-        $fileRequest = $this->normalizer->denormalize($data['files'], FilesUploadRequest::class, 'json');
-        $errors = $this->validator->validate($fileRequest);
+        $filesUploadRequest = $this->normalizer->denormalize($data['files'], FilesUploadRequest::class, 'json');
+        $errors = $this->validator->validate(value: $filesUploadRequest, groups: ['multiple_documents']);
         if (count($errors) > 0) {
-            throw new ValidationFailedException($fileRequest, $errors);
+            throw new ValidationFailedException($filesUploadRequest, $errors);
         }
 
         /** @var User $user */
         $user = $this->getUser();
-        $fileList = $this->processFiles($fileRequest);
+        $fileList = $this->processFiles($filesUploadRequest);
         $this->signalementFileProcessor->addFilesToSignalement(
             fileList: $fileList,
             signalement: $signalement,
