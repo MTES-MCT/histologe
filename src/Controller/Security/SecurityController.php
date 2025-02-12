@@ -141,7 +141,6 @@ class SecurityController extends AbstractController
     public function handleSendErrorEmail(
         Request $request,
         LoggerInterface $logger,
-        NotificationMailerRegistry $notificationMailerRegistry,
     ): JsonResponse {
         $expectedToken = $this->getParameter('send_error_email_token');
         $providedToken = $request->headers->get('Authorization');
@@ -152,7 +151,7 @@ class SecurityController extends AbstractController
 
         $data = json_decode($request->getContent(), true);
 
-        if (!$data || !isset($data['timestamp'], $data['host'], $data['database'], $data['error'])) {
+        if (!$data || !isset($data['title'], $data['timestamp'], $data['host'], $data['database'], $data['error'])) {
             return new JsonResponse(['error' => 'Invalid request'], 400);
         }
 
