@@ -167,7 +167,7 @@ class AffectationUpdateController extends AbstractController
             type: 'object'
         )
     )]
-    public function index(
+    public function __invoke(
         #[MapRequestPayload] AffectationRequest $affectationRequest,
         ?Affectation $affectation = null,
     ): JsonResponse {

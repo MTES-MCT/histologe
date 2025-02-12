@@ -14,6 +14,12 @@ use OpenApi\Attributes as OA;
 class Intervention
 {
     #[OA\Property(
+        description: 'Identifiant unique de l\'intervention.',
+        type: 'string',
+        example: 'e96325bf-139e-4793-a7b4-a4c713a0fbd9',
+    )]
+    public ?string $uuid = null;
+    #[OA\Property(
         description: 'Date de l\'intervention.',
         type: 'string',
         format: 'date-time',
@@ -80,6 +86,7 @@ class Intervention
     public function __construct(
         InterventionEntity $intervention,
     ) {
+        $this->uuid = $intervention->getUuid();
         $this->dateIntervention = $intervention->getScheduledAt()->format(\DATE_ATOM);
         $this->type = $intervention->getType();
         $this->statut = $intervention->getStatus();
