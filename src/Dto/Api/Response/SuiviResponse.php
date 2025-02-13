@@ -1,15 +1,11 @@
 <?php
 
-namespace App\Dto\Api\Model;
+namespace App\Dto\Api\Response;
 
-use App\Entity\Suivi as SuiviEntity;
+use App\Entity\Suivi;
 use OpenApi\Attributes as OA;
 
-#[OA\Schema(
-    schema: 'Suivi',
-    description: 'Représentation d\'un suivi.'
-)]
-class Suivi
+class SuiviResponse
 {
     #[OA\Property(
         description: 'Date de création du suivi.<br>Exemple : `2024-11-01T10:00:00+00:00`',
@@ -18,10 +14,11 @@ class Suivi
         example: '2024-11-01T10:00:00+00:00'
     )]
     public string $dateCreation;
+
     #[OA\Property(
         description: 'Description détaillée du suivi, peut contenir des balises HTML.',
         type: 'string',
-        example: 'Premier <em>suivi associé</em>.'
+        example: '<ul><li>lorem</li><li>ipsum</li></ul>'
     )]
     public string $description;
 
@@ -32,19 +29,10 @@ class Suivi
     )]
     public bool $public;
 
-    #[OA\Property(
-        description: 'Auteur ayant créé le suivi.',
-        type: 'string',
-        example: 'John Doe'
-    )]
-    public string $createdBy;
-
-    public function __construct(
-        SuiviEntity $suivi,
-    ) {
+    public function __construct(Suivi $suivi)
+    {
         $this->dateCreation = $suivi->getCreatedAt()->format(\DATE_ATOM);
         $this->description = $suivi->getDescription();
         $this->public = $suivi->getIsPublic();
-        $this->createdBy = $suivi->getCreatedByLabel();
     }
 }

@@ -11,7 +11,7 @@ use App\Event\FileUploadedEvent;
 use App\Factory\Api\FileFactory;
 use App\Service\Signalement\SignalementFileProcessor;
 use Doctrine\ORM\EntityManagerInterface;
-use Nelmio\ApiDocBundle\Annotation\Model;
+use Nelmio\ApiDocBundle\Attribute\Model;
 use OpenApi\Attributes as OA;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\DependencyInjection\Attribute\When;

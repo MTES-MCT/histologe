@@ -17,7 +17,6 @@ class SecurityApiExceptionListener
     public function onKernelException(ExceptionEvent $event): void
     {
         $exception = $event->getThrowable();
-
         if ($this->supports($exception)) {
             $previous = $exception->getPrevious();
             $affectation = null;
