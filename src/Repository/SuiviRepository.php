@@ -3,6 +3,7 @@
 namespace App\Repository;
 
 use App\Entity\Enum\AffectationStatus;
+use App\Entity\Enum\SignalementStatus;
 use App\Entity\Signalement;
 use App\Entity\Suivi;
 use App\Entity\Territory;
@@ -37,8 +38,8 @@ class SuiviRepository extends ServiceEntityRepository
     {
         $connection = $this->getEntityManager()->getConnection();
         $whereTerritory = '';
-        $parameters['statut_archived'] = Signalement::STATUS_ARCHIVED;
-        $parameters['statut_draft'] = Signalement::STATUS_DRAFT;
+        $parameters['statut_archived'] = SignalementStatus::ARCHIVED->value;
+        $parameters['statut_draft'] = SignalementStatus::DRAFT->value;
 
         if (\count($territories)) {
             $territoriesIds = implode(',', array_keys($territories));
@@ -73,10 +74,10 @@ class SuiviRepository extends ServiceEntityRepository
             'type_suivi_usager' => Suivi::TYPE_USAGER,
             'type_suivi_partner' => Suivi::TYPE_PARTNER,
             'type_suivi_auto' => Suivi::TYPE_AUTO,
-            'status_archived' => Signalement::STATUS_ARCHIVED,
-            'status_closed' => Signalement::STATUS_CLOSED,
-            'status_refused' => Signalement::STATUS_REFUSED,
-            'status_draft' => Signalement::STATUS_DRAFT,
+            'status_archived' => SignalementStatus::ARCHIVED->value,
+            'status_closed' => SignalementStatus::CLOSED->value,
+            'status_refused' => SignalementStatus::REFUSED->value,
+            'status_draft' => SignalementStatus::DRAFT->value,
         ];
 
         if (\count($territories)) {
@@ -112,10 +113,10 @@ class SuiviRepository extends ServiceEntityRepository
             'type_suivi_usager' => Suivi::TYPE_USAGER,
             'type_suivi_partner' => Suivi::TYPE_PARTNER,
             'type_suivi_auto' => Suivi::TYPE_AUTO,
-            'status_archived' => Signalement::STATUS_ARCHIVED,
-            'status_closed' => Signalement::STATUS_CLOSED,
-            'status_refused' => Signalement::STATUS_REFUSED,
-            'status_draft' => Signalement::STATUS_DRAFT,
+            'status_archived' => SignalementStatus::ARCHIVED->value,
+            'status_closed' => SignalementStatus::CLOSED->value,
+            'status_refused' => SignalementStatus::REFUSED->value,
+            'status_draft' => SignalementStatus::DRAFT->value,
         ];
 
         $territories = [];
@@ -146,7 +147,7 @@ class SuiviRepository extends ServiceEntityRepository
             ->innerJoin('s.signalement', 'sig')
             ->where('sig.statut NOT IN (:statutList)')
             ->andWhere('s.type = :type_suivi')
-            ->setParameter('statutList', [Signalement::STATUS_ARCHIVED, Signalement::STATUS_DRAFT])
+            ->setParameter('statutList', [SignalementStatus::ARCHIVED->value, SignalementStatus::DRAFT->value])
             ->setParameter('type_suivi', Suivi::TYPE_PARTNER);
 
         if (\count($territories)) {
@@ -169,7 +170,7 @@ class SuiviRepository extends ServiceEntityRepository
             ->where('sig.statut NOT IN (:statutList)')
             ->andWhere('s.type = :type_suivi')
             ->setParameter('type_suivi', Suivi::TYPE_USAGER)
-            ->setParameter('statutList', [Signalement::STATUS_ARCHIVED, Signalement::STATUS_DRAFT]);
+            ->setParameter('statutList', [SignalementStatus::ARCHIVED->value, SignalementStatus::DRAFT->value]);
 
         if (\count($territories)) {
             $qb->andWhere('sig.territory IN (:territories)')->setParameter('territories', $territories);
@@ -214,11 +215,11 @@ class SuiviRepository extends ServiceEntityRepository
         $parameters = [
             'day_period' => $period,
             'type_suivi_technical' => Suivi::TYPE_TECHNICAL,
-            'status_need_validation' => Signalement::STATUS_NEED_VALIDATION,
-            'status_closed' => Signalement::STATUS_CLOSED,
-            'status_archived' => Signalement::STATUS_ARCHIVED,
-            'status_refused' => Signalement::STATUS_REFUSED,
-            'status_draft' => Signalement::STATUS_DRAFT,
+            'status_need_validation' => SignalementStatus::NEED_VALIDATION->value,
+            'status_closed' => SignalementStatus::CLOSED->value,
+            'status_archived' => SignalementStatus::ARCHIVED->value,
+            'status_refused' => SignalementStatus::REFUSED->value,
+            'status_draft' => SignalementStatus::DRAFT->value,
         ];
 
         $sql = 'SELECT s.id, s.created_at, MAX(su.max_date_suivi_technique_or_public) AS last_posted_at
@@ -250,11 +251,11 @@ class SuiviRepository extends ServiceEntityRepository
         $parameters = [
             'day_period' => $period,
             'type_suivi_technical' => Suivi::TYPE_TECHNICAL,
-            'status_need_validation' => Signalement::STATUS_NEED_VALIDATION,
-            'status_closed' => Signalement::STATUS_CLOSED,
-            'status_archived' => Signalement::STATUS_ARCHIVED,
-            'status_refused' => Signalement::STATUS_REFUSED,
-            'status_draft' => Signalement::STATUS_DRAFT,
+            'status_need_validation' => SignalementStatus::NEED_VALIDATION->value,
+            'status_closed' => SignalementStatus::CLOSED->value,
+            'status_archived' => SignalementStatus::ARCHIVED->value,
+            'status_refused' => SignalementStatus::REFUSED->value,
+            'status_draft' => SignalementStatus::DRAFT->value,
         ];
 
         $sql = 'SELECT s.id
@@ -283,11 +284,11 @@ class SuiviRepository extends ServiceEntityRepository
 
         $parameters = [
             'type_suivi_technical' => Suivi::TYPE_TECHNICAL,
-            'status_need_validation' => Signalement::STATUS_NEED_VALIDATION,
-            'status_closed' => Signalement::STATUS_CLOSED,
-            'status_archived' => Signalement::STATUS_ARCHIVED,
-            'status_refused' => Signalement::STATUS_REFUSED,
-            'status_draft' => Signalement::STATUS_DRAFT,
+            'status_need_validation' => SignalementStatus::NEED_VALIDATION->value,
+            'status_closed' => SignalementStatus::CLOSED->value,
+            'status_archived' => SignalementStatus::ARCHIVED->value,
+            'status_refused' => SignalementStatus::REFUSED->value,
+            'status_draft' => SignalementStatus::DRAFT->value,
             'nb_suivi_technical' => 2,
         ];
 
@@ -308,11 +309,11 @@ class SuiviRepository extends ServiceEntityRepository
         $connection = $this->getEntityManager()->getConnection();
         $parameters = [
             'type_suivi_technical' => Suivi::TYPE_TECHNICAL,
-            'status_need_validation' => Signalement::STATUS_NEED_VALIDATION,
-            'status_archived' => Signalement::STATUS_ARCHIVED,
-            'status_closed' => Signalement::STATUS_CLOSED,
-            'status_refused' => Signalement::STATUS_REFUSED,
-            'status_draft' => Signalement::STATUS_DRAFT,
+            'status_need_validation' => SignalementStatus::NEED_VALIDATION->value,
+            'status_archived' => SignalementStatus::ARCHIVED->value,
+            'status_closed' => SignalementStatus::CLOSED->value,
+            'status_refused' => SignalementStatus::REFUSED->value,
+            'status_draft' => SignalementStatus::DRAFT->value,
             'nb_suivi_technical' => 3,
         ];
 

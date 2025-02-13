@@ -1,7 +1,7 @@
 <template>
   <div class="fr-grid-row fr-my-2w" v-for=" (item, index) in list" :key="index">
     <div class="fr-col-12">
-      <div class="fr-card" :class="{ 'card-signalement--new': item.statut === 1 }">
+      <div class="fr-card" :class="{ 'card-signalement--new': item.statut === 'NEED_VALIDATION' }">
         <div class="fr-card__body">
           <div class="fr-card__content">
             <div class="fr-grid-row">
@@ -177,26 +177,22 @@ export default defineComponent({
 
       return className
     },
-    getStatusLabel (status: number): Object {
+    getStatusLabel (status: string): Object {
       const statusSignalement = { className: 'fr-badge fr-badge--no-icon ', label: '' }
       switch (status) {
-        case 1:
+        case 'NEED_VALIDATION':
           statusSignalement.className += 'fr-badge--error'
           statusSignalement.label = 'A valider'
           break
-        case 2:
+        case 'ACTIVE':
           statusSignalement.className += 'fr-badge--success'
           statusSignalement.label = 'En cours'
           break
-        case 3:
-          statusSignalement.className += 'fr-badge--info'
-          statusSignalement.label = 'En attente'
-          break
-        case 6:
+        case 'CLOSED':
           statusSignalement.className += 'fr-badge--blue-france-975'
           statusSignalement.label = 'Fermé'
           break
-        case 8:
+        case 'REFUSED':
           statusSignalement.className += 'fr-badge-grey'
           statusSignalement.label = 'Refusé'
           break

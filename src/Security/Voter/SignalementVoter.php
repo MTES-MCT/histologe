@@ -5,6 +5,7 @@ namespace App\Security\Voter;
 use App\Entity\Affectation;
 use App\Entity\Enum\Qualification;
 use App\Entity\Enum\QualificationStatus;
+use App\Entity\Enum\SignalementStatus;
 use App\Entity\Signalement;
 use App\Entity\User;
 use Symfony\Bundle\SecurityBundle\Security;
@@ -81,11 +82,11 @@ class SignalementVoter extends Voter
 
     private function canUsagerEdit(Signalement $signalement): bool
     {
-        if (Signalement::STATUS_ARCHIVED !== $signalement->getStatut()
-            && Signalement::STATUS_REFUSED !== $signalement->getStatut()
-            && Signalement::STATUS_DRAFT !== $signalement->getStatut()
+        if (SignalementStatus::ARCHIVED !== $signalement->getStatut()
+            && SignalementStatus::REFUSED !== $signalement->getStatut()
+            && SignalementStatus::DRAFT !== $signalement->getStatut()
         ) {
-            if (Signalement::STATUS_CLOSED === $signalement->getStatut()) {
+            if (SignalementStatus::CLOSED === $signalement->getStatut()) {
                 $datePostCloture = $signalement->getClosedAt()->modify('+ 30days');
                 $today = new \DateTimeImmutable();
                 if ($today < $datePostCloture && !$signalement->hasSuiviUsagePostCloture()) {
@@ -107,7 +108,7 @@ class SignalementVoter extends Voter
 
     private function canValidate(Signalement $signalement, User $user): bool
     {
-        if (Signalement::STATUS_NEED_VALIDATION !== $signalement->getStatut()) {
+        if (SignalementStatus::NEED_VALIDATION !== $signalement->getStatut()) {
             return false;
         }
 
@@ -116,7 +117,7 @@ class SignalementVoter extends Voter
 
     private function canClose(Signalement $signalement, User $user): bool
     {
-        if (Signalement::STATUS_ACTIVE !== $signalement->getStatut()) {
+        if (SignalementStatus::ACTIVE !== $signalement->getStatut()) {
             return false;
         }
 
@@ -130,7 +131,7 @@ class SignalementVoter extends Voter
 
     private function canDelete(Signalement $signalement, User $user): bool
     {
-        if (!\in_array($signalement->getStatut(), [Signalement::STATUS_CLOSED, Signalement::STATUS_REFUSED])) {
+        if (!\in_array($signalement->getStatut(), [SignalementStatus::CLOSED, SignalementStatus::REFUSED])) {
             return false;
         }
 
@@ -142,7 +143,7 @@ class SignalementVoter extends Voter
         if ($this->security->isGranted('ROLE_ADMIN')) {
             return true;
         }
-        if (Signalement::STATUS_ACTIVE !== $signalement->getStatut()) {
+        if (SignalementStatus::ACTIVE !== $signalement->getStatut()) {
             return false;
         }
         if ($user->isTerritoryAdmin() && $user->hasPartnerInTerritory($signalement->getTerritory())) {
@@ -157,12 +158,12 @@ class SignalementVoter extends Voter
 
     private function canView(Signalement $signalement, User $user): bool
     {
-        if ($this->security->isGranted('ROLE_ADMIN') && Signalement::STATUS_DRAFT !== $signalement->getStatut()) {
+        if ($this->security->isGranted('ROLE_ADMIN') && SignalementStatus::DRAFT !== $signalement->getStatut()) {
             return true;
         }
 
-        if (Signalement::STATUS_ARCHIVED === $signalement->getStatut()
-        || Signalement::STATUS_DRAFT === $signalement->getStatut()) {
+        if (SignalementStatus::ARCHIVED === $signalement->getStatut()
+        || SignalementStatus::DRAFT === $signalement->getStatut()) {
             return false;
         }
 
@@ -198,7 +199,7 @@ class SignalementVoter extends Voter
 
     public function canAddVisite(Signalement $signalement, User $user): bool
     {
-        if (Signalement::STATUS_ACTIVE !== $signalement->getStatut()) {
+        if (SignalementStatus::ACTIVE !== $signalement->getStatut()) {
             return false;
         }
         if ($user->isSuperAdmin()) {

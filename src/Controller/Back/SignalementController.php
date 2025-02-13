@@ -4,6 +4,7 @@ namespace App\Controller\Back;
 
 use App\Entity\Affectation;
 use App\Entity\Enum\Qualification;
+use App\Entity\Enum\SignalementStatus;
 use App\Entity\Intervention;
 use App\Entity\Signalement;
 use App\Entity\User;
@@ -63,7 +64,7 @@ class SignalementController extends AbstractController
         $desordreCritereRepository->findAll();
         /** @var User $user */
         $user = $this->getUser();
-        if (Signalement::STATUS_ARCHIVED === $signalement->getStatut()) {
+        if (SignalementStatus::ARCHIVED === $signalement->getStatut()) {
             $this->addFlash('error', "Ce signalement a été archivé et n'est pas consultable.");
 
             return $this->redirectToRoute('back_signalements_index');
@@ -99,10 +100,10 @@ class SignalementController extends AbstractController
             }
         }
 
-        $isClosedForMe = $isClosedForMe ?? Signalement::STATUS_CLOSED === $signalement->getStatut();
+        $isClosedForMe = $isClosedForMe ?? SignalementStatus::CLOSED === $signalement->getStatut();
         $canValidateOrRefuseSignalement = $this->isGranted(SignalementVoter::VALIDATE, $signalement)
                                             && !$isClosedForMe
-                                            && Signalement::STATUS_NEED_VALIDATION === $signalement->getStatut();
+                                            && SignalementStatus::NEED_VALIDATION === $signalement->getStatut();
         $canReopenAffectation = $affectation ? $this->isGranted(AffectationVoter::REOPEN, $affectation) : false;
 
         $clotureForm = $this->createForm(ClotureType::class);
@@ -154,7 +155,7 @@ class SignalementController extends AbstractController
         $infoDesordres = $signalementDesordresProcessor->process($signalement);
 
         $canEditSignalement = false;
-        if (Signalement::STATUS_ACTIVE === $signalement->getStatut()) {
+        if (SignalementStatus::ACTIVE === $signalement->getStatut()) {
             $canEditSignalement = $this->isGranted('ROLE_ADMIN')
                 || $this->isGranted('ROLE_ADMIN_TERRITORY')
                 || $isAffectationAccepted;
@@ -221,7 +222,7 @@ class SignalementController extends AbstractController
             'canReopenAffectation' => $canReopenAffectation,
             'affectation' => $affectation,
             'isAffectationAccepted' => $isAffectationAccepted,
-            'isSignalementClosed' => Signalement::STATUS_CLOSED === $signalement->getStatut(),
+            'isSignalementClosed' => SignalementStatus::CLOSED === $signalement->getStatut(),
             'isClosedForMe' => $isClosedForMe,
             'isAffectationRefused' => $isAffectationRefused,
             'isDanger' => $infoDesordres['isDanger'],
@@ -260,7 +261,7 @@ class SignalementController extends AbstractController
             $request->getPayload()->get('_token')
         )
         ) {
-            $signalement->setStatut(Signalement::STATUS_ARCHIVED);
+            $signalement->setStatut(SignalementStatus::ARCHIVED);
             $notificationRepository->deleteBySignalement($signalement);
             $affectationRepository->deleteByStatusAndSignalement(Affectation::STATUS_WAIT, $signalement);
             $doctrine->getManager()->flush();

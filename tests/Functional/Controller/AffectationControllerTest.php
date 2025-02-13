@@ -3,6 +3,7 @@
 namespace App\Tests\Functional\Controller;
 
 use App\Entity\Enum\MotifRefus;
+use App\Entity\Enum\SignalementStatus;
 use App\Entity\Signalement;
 use App\Entity\Suivi;
 use App\Repository\AffectationRepository;
@@ -117,7 +118,7 @@ class AffectationControllerTest extends WebTestCase
             $signalement,
             '<p>Suite à votre signalement, le ou les partenaires compétents'
         );
-        $this->assertEquals(Signalement::STATUS_ACTIVE, $signalement->getStatut());
+        $this->assertEquals(SignalementStatus::ACTIVE, $signalement->getStatut());
         $this->assertCount(1, $suivi);
         $this->assertEmailCount(1);
         $this->assertResponseRedirects('/bo/signalements/'.$signalement->getUuid());
@@ -154,7 +155,7 @@ class AffectationControllerTest extends WebTestCase
             $signalement,
             '<p>Suite à votre signalement, le ou les partenaires compétents'
         );
-        $this->assertEquals(Signalement::STATUS_ACTIVE, $signalement->getStatut());
+        $this->assertEquals(SignalementStatus::ACTIVE, $signalement->getStatut());
         $this->assertCount(0, $suivi);
         $this->assertEmailCount(0);
         $this->assertResponseRedirects('/bo/signalements/'.$signalement->getUuid());

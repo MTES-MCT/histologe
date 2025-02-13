@@ -6,6 +6,7 @@ use App\Dto\Request\Signalement\CompositionLogementRequest;
 use App\Dto\Request\Signalement\QualificationNDERequest;
 use App\Entity\Affectation;
 use App\Entity\Enum\MotifCloture;
+use App\Entity\Enum\SignalementStatus;
 use App\Entity\Signalement;
 use App\Entity\SignalementQualification;
 use App\Entity\Territory;
@@ -121,7 +122,7 @@ class SignalementManagerTest extends WebTestCase
     public function testCloseSignalementForAllPartners()
     {
         $signalementRepository = $this->entityManager->getRepository(Signalement::class);
-        $signalementActive = $signalementRepository->findOneBy(['statut' => Signalement::STATUS_ACTIVE]);
+        $signalementActive = $signalementRepository->findOneBy(['statut' => SignalementStatus::ACTIVE->value]);
 
         $signalementClosed = $this->signalementManager->closeSignalementForAllPartners(
             $signalementActive,
@@ -129,7 +130,7 @@ class SignalementManagerTest extends WebTestCase
         );
 
         $this->assertInstanceOf(Signalement::class, $signalementClosed);
-        $this->assertEquals(Signalement::STATUS_CLOSED, $signalementClosed->getStatut());
+        $this->assertEquals(SignalementStatus::CLOSED, $signalementClosed->getStatut());
         $this->assertEquals('Travaux faits ou en cours', $signalementClosed->getMotifCloture()->label());
         $this->assertInstanceOf(\DateTimeInterface::class, $signalementClosed->getClosedAt());
 
@@ -146,7 +147,7 @@ class SignalementManagerTest extends WebTestCase
     {
         $signalementRepository = $this->entityManager->getRepository(Signalement::class);
 
-        $signalement = $signalementRepository->findOneBy(['statut' => Signalement::STATUS_ACTIVE]);
+        $signalement = $signalementRepository->findOneBy(['statut' => SignalementStatus::ACTIVE->value]);
         $emails = $this->signalementManager->findEmailsAffectedToSignalement($signalement);
 
         $this->assertGreaterThan(1, \count($emails));

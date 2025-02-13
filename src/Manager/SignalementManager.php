@@ -18,6 +18,7 @@ use App\Entity\Enum\MotifCloture;
 use App\Entity\Enum\ProfileDeclarant;
 use App\Entity\Enum\ProprioType;
 use App\Entity\Enum\Qualification;
+use App\Entity\Enum\SignalementStatus;
 use App\Entity\Model\InformationComplementaire;
 use App\Entity\Model\InformationProcedure;
 use App\Entity\Model\SituationFoyer;
@@ -99,9 +100,9 @@ class SignalementManager extends AbstractManager
     public function update(Signalement $signalement, array $data): Signalement
     {
         if (empty($data['statut'])) {
-            $data['statut'] = Signalement::STATUS_ACTIVE;
+            $data['statut'] = SignalementStatus::ACTIVE;
             if ($data['motifCloture'] || $data['closedAt']) {
-                $data['statut'] = Signalement::STATUS_CLOSED;
+                $data['statut'] = SignalementStatus::CLOSED;
             }
         }
 
@@ -143,9 +144,9 @@ class SignalementManager extends AbstractManager
             ->setIsCguAccepted((bool) $data['isCguAccepted'])
             ->setCreatedAt($data['createdAt'])
             ->setModifiedAt(new \DateTimeImmutable())
-            ->setStatut((int) $data['statut'])
+            ->setStatut($data['statut'])
             ->setValidatedAt(
-                Signalement::STATUS_ACTIVE === $data['statut'] ? $data['createdAt'] : new \DateTimeImmutable()
+                SignalementStatus::ACTIVE === $data['statut'] ? $data['createdAt'] : new \DateTimeImmutable()
             )
             ->setReference($data['reference'])
             ->setMontantAllocation((float) $data['montantAllocation'])
@@ -223,7 +224,7 @@ class SignalementManager extends AbstractManager
     public function closeSignalementForAllPartners(Signalement $signalement, MotifCloture $motif): Signalement
     {
         $signalement
-            ->setStatut(Signalement::STATUS_CLOSED)
+            ->setStatut(SignalementStatus::CLOSED)
             ->setMotifCloture($motif)
             ->setClosedAt(new \DateTimeImmutable());
 

@@ -5,7 +5,6 @@ namespace App\Service\Signalement;
 use App\Dto\SignalementAffectationListView;
 use App\Entity\Enum\AffectationStatus;
 use App\Entity\Enum\ProcedureType;
-use App\Entity\Enum\SignalementStatus;
 use App\Entity\Signalement;
 use App\Entity\Territory;
 use App\Entity\User;
@@ -16,7 +15,7 @@ class SignalementAffectationHelper
     {
         $affectations = self::parseAffectations($data['rawAffectations']);
         if (empty($affectations) || ($user->isSuperAdmin() || $user->isTerritoryAdmin())) {
-            return SignalementStatus::tryFrom($data['statut'])->label();
+            return $data['statut']->label();
         }
         $statusAffectation = null;
         foreach ($user->getPartners() as $partner) {

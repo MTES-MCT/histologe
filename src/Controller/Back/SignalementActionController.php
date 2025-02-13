@@ -4,6 +4,7 @@ namespace App\Controller\Back;
 
 use App\Entity\Affectation;
 use App\Entity\Enum\MotifRefus;
+use App\Entity\Enum\SignalementStatus;
 use App\Entity\Signalement;
 use App\Entity\Suivi;
 use App\Entity\Tag;
@@ -41,7 +42,7 @@ class SignalementActionController extends AbstractController
         if ($this->isCsrfTokenValid('signalement_validation_response_'.$signalement->getId(), $request->get('_token'))
             && $response = $request->get('signalement-validation-response')) {
             if (isset($response['accept'])) {
-                $statut = Signalement::STATUS_ACTIVE;
+                $statut = SignalementStatus::ACTIVE;
                 $description = 'validé';
                 $signalement->setValidatedAt(new \DateTimeImmutable());
                 $toRecipients = $signalement->getMailUsagers();
@@ -57,7 +58,7 @@ class SignalementActionController extends AbstractController
                     );
                 }
             } else {
-                $statut = Signalement::STATUS_REFUSED;
+                $statut = SignalementStatus::REFUSED;
                 $motifRefus = MotifRefus::tryFrom($response['motifRefus']);
                 if (!$motifRefus || mb_strlen($response['suivi']) < 10) {
                     $this->addFlash('error', 'Champs incorrects ou manquants !');
@@ -188,7 +189,7 @@ class SignalementActionController extends AbstractController
             if ($this->isGranted('ROLE_ADMIN_TERRITORY') && isset($response['reopenAll'])) {
                 $affectationRepository->updateStatusBySignalement(Affectation::STATUS_WAIT, $signalement);
                 $reopenFor = 'tous les partenaires';
-            } elseif (!$this->isGranted('ROLE_ADMIN_TERRITORY') && Signalement::STATUS_CLOSED === $signalement->getStatut()) {
+            } elseif (!$this->isGranted('ROLE_ADMIN_TERRITORY') && SignalementStatus::CLOSED === $signalement->getStatut()) {
                 $this->addFlash('error', 'Seul un responsable de territoire peut réouvrir un signalement clôturé !');
 
                 return $this->redirectToRoute('back_signalement_view', ['uuid' => $signalement->getUuid()]);
@@ -202,7 +203,7 @@ class SignalementActionController extends AbstractController
                     }
                 }
             }
-            $signalement->setStatut(Signalement::STATUS_ACTIVE);
+            $signalement->setStatut(SignalementStatus::ACTIVE);
             $suiviManager->createSuivi(
                 signalement: $signalement,
                 description: 'Signalement rouvert pour '.$reopenFor,

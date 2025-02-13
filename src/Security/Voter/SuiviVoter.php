@@ -3,6 +3,7 @@
 namespace App\Security\Voter;
 
 use App\Entity\Affectation;
+use App\Entity\Enum\SignalementStatus;
 use App\Entity\Signalement;
 use App\Entity\Suivi;
 use App\Entity\User;
@@ -36,7 +37,7 @@ class SuiviVoter extends Voter
 
     private function canCreate(Signalement $signalement, User $user): bool
     {
-        if (Signalement::STATUS_ACTIVE !== $signalement->getStatut()) {
+        if (SignalementStatus::ACTIVE !== $signalement->getStatut()) {
             return false;
         }
         if ($user->isTerritoryAdmin() || $user->isSuperAdmin()) {

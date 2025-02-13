@@ -3,6 +3,7 @@
 namespace App\Tests\Functional\Controller;
 
 use App\Entity\Enum\SignalementDraftStatus;
+use App\Entity\Enum\SignalementStatus;
 use App\Entity\Signalement;
 use App\Entity\SignalementDraft;
 use App\Entity\Suivi;
@@ -24,17 +25,17 @@ class SignalementControllerTest extends WebTestCase
 
     public function provideStatusSignalement(): \Generator
     {
-        yield 'Actif' => [Signalement::STATUS_ACTIVE];
-        yield 'Clôturé' => [Signalement::STATUS_CLOSED];
-        yield 'Refusé' => [Signalement::STATUS_REFUSED];
-        yield 'Archivé' => [Signalement::STATUS_ARCHIVED];
-        yield 'Brouillon' => [Signalement::STATUS_DRAFT];
+        yield 'Actif' => [SignalementStatus::ACTIVE->value];
+        yield 'Clôturé' => [SignalementStatus::CLOSED->value];
+        yield 'Refusé' => [SignalementStatus::REFUSED->value];
+        yield 'Archivé' => [SignalementStatus::ARCHIVED->value];
+        yield 'Brouillon' => [SignalementStatus::DRAFT->value];
     }
 
     /**
      * @dataProvider provideStatusSignalement
      */
-    public function testDisplaySuiviProcedure(int $status): void
+    public function testDisplaySuiviProcedure(string $status): void
     {
         $client = static::createClient();
 
@@ -51,9 +52,9 @@ class SignalementControllerTest extends WebTestCase
         ]).'?from='.$signalement->getMailOccupant().'&suiviAuto='.Suivi::ARRET_PROCEDURE;
 
         $crawler = $client->request('GET', $urlSuiviSignalementUser);
-        if (Signalement::STATUS_ARCHIVED === $status || Signalement::STATUS_DRAFT === $status) {
+        if (SignalementStatus::ARCHIVED->value === $status || SignalementStatus::DRAFT->value === $status) {
             $this->assertResponseRedirects('/');
-        } elseif (Signalement::STATUS_ACTIVE === $status) {
+        } elseif (SignalementStatus::ACTIVE->value === $status) {
             $this->assertEquals('Signalement #2022-1 '.ucwords($signalement->getPrenomOccupant().' '.$signalement->getNomOccupant()), $crawler->filter('h1')->eq(2)->text());
         } else {
             $this->assertResponseRedirects(
@@ -65,7 +66,7 @@ class SignalementControllerTest extends WebTestCase
     /**
      * @dataProvider provideStatusSignalement
      */
-    public function testDisplaySuiviSignalement(int $status): void
+    public function testDisplaySuiviSignalement(string $status): void
     {
         $client = static::createClient();
 
@@ -82,24 +83,24 @@ class SignalementControllerTest extends WebTestCase
         ]).'?from='.$signalement->getMailOccupant();
 
         $crawler = $client->request('GET', $urlSuiviSignalementUser);
-        if (Signalement::STATUS_ARCHIVED === $status) {
+        if (SignalementStatus::ARCHIVED->value === $status) {
             $this->assertEquals(
                 'Votre signalement a été archivé, vous ne pouvez plus envoyer de messages.',
                 $crawler->filter('.fr-alert--error p')->text()
             );
-        } elseif (Signalement::STATUS_ACTIVE === $status) {
+        } elseif (SignalementStatus::ACTIVE->value === $status) {
             $this->assertEquals('Signalement #2022-1 '.$signalement->getPrenomOccupant().' '.$signalement->getNomOccupant(), $crawler->filter('h1')->eq(2)->text());
-        } elseif (Signalement::STATUS_CLOSED === $status) {
+        } elseif (SignalementStatus::CLOSED->value === $status) {
             $this->assertEquals(
                 'Votre message suite à la clôture de votre dossier a bien été envoyé. Vous ne pouvez désormais plus envoyer de messages.',
                 $crawler->filter('.fr-alert--error p')->text()
             );
-        } elseif (Signalement::STATUS_REFUSED === $status) {
+        } elseif (SignalementStatus::REFUSED->value === $status) {
             $this->assertEquals(
                 'Votre signalement a été refusé, vous ne pouvez plus envoyer de messages.',
                 $crawler->filter('.fr-alert--error p')->text()
             );
-        } elseif (Signalement::STATUS_DRAFT === $status) {
+        } elseif (SignalementStatus::DRAFT->value === $status) {
             $this->assertResponseRedirects('/');
         }
     }
@@ -107,7 +108,7 @@ class SignalementControllerTest extends WebTestCase
     /**
      * @dataProvider provideStatusSignalement
      */
-    public function testPostUsagerResponse(int $status): void
+    public function testPostUsagerResponse(string $status): void
     {
         $client = static::createClient();
         /** @var EntityManagerInterface $entityManager */
@@ -130,7 +131,7 @@ class SignalementControllerTest extends WebTestCase
                 'content' => 'Lorem Ipsum is simply dummy text of the printing and typesetting industry',
             ],
         ]);
-        if (Signalement::STATUS_ACTIVE === $status) {
+        if (SignalementStatus::ACTIVE->value === $status) {
             $this->assertResponseRedirects('/suivre-mon-signalement/'.$codeSuivi.'?from='.$emailOccupant);
         } else {
             $this->assertResponseRedirects('/');

@@ -3,6 +3,7 @@
 namespace App\Security\Voter;
 
 use App\Entity\Affectation;
+use App\Entity\Enum\SignalementStatus;
 use App\Entity\Signalement;
 use App\Entity\User;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
@@ -57,7 +58,7 @@ class AffectationVoter extends Voter
             || $user->isTerritoryAdmin()
             || $user->hasPermissionAffectation()
         )
-            && Signalement::STATUS_NEED_VALIDATION !== $signalement->getStatut();
+            && SignalementStatus::NEED_VALIDATION !== $signalement->getStatut();
     }
 
     private function canToggle(Signalement $signalement, User $user): bool
@@ -67,12 +68,12 @@ class AffectationVoter extends Voter
             || $user->isTerritoryAdmin()
             || $user->hasPermissionAffectation()
         )
-            && Signalement::STATUS_ACTIVE === $signalement->getStatut();
+            && SignalementStatus::ACTIVE === $signalement->getStatut();
     }
 
     private function canAnswer(Affectation $affectation, User $user): bool
     {
-        return $affectation->getPartner() === $user->getPartnerInTerritory($affectation->getSignalement()->getTerritory()) && Signalement::STATUS_ACTIVE === $affectation->getSignalement()->getStatut();
+        return $affectation->getPartner() === $user->getPartnerInTerritory($affectation->getSignalement()->getTerritory()) && SignalementStatus::ACTIVE === $affectation->getSignalement()->getStatut();
     }
 
     private function canClose(Affectation $affectation, User $user): bool

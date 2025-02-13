@@ -18,7 +18,7 @@ signalements:
     cp_occupant: "13015"
     ville_occupant: "Marseille"
     mail_occupant: "francis.cabrel@astaffort.com"
-    statut: 2
+    statut: "ACTIVE"
     reference: "2022-1"
     geoloc: "{\"lat\":\"43.3426152\",\"lng\":\"5.3711848\"}"
     score: 100
@@ -62,7 +62,7 @@ signalements:
     cp_occupant: "01170"
     ville_occupant: "Gex"
     etage_occupant: "5"
-    statut: 6
+    statut: "CLOSED"
     motif_cloture: 'NON_DECENCE'
     reference: "2022-2"
     geoloc: "{\"lat\":\"46.3370155\",\"lng\":\"6.060438\"}"
@@ -107,7 +107,7 @@ signalements:
     adresse_occupant: "14 Pl. Sébastopol"
     cp_occupant: "13004"
     ville_occupant: "Marseille"
-    statut: 6
+    statut: "CLOSED"
     motif_cloture: 'NON_DECENCE'
     reference: "2022-3"
     geoloc: "{\"lat\":\"43.2928291\",\"lng\":\"5.3695447\"}"
@@ -153,7 +153,7 @@ signalements:
     adresse_occupant: "5 rue Fauchier"
     cp_occupant: "13002"
     ville_occupant: "Marseille"
-    statut: 2
+    statut: "ACTIVE"
     reference: "2022-4"
     geoloc: "{\"lat\":\"43.2928291\",\"lng\":\"5.3695447\"}"
     score: 100
@@ -197,7 +197,7 @@ signalements:
     adresse_occupant: "255 Av. du Prado"
     cp_occupant: "13008"
     ville_occupant: "Marseille"
-    statut: 2
+    statut: "ACTIVE"
     reference: "2022-5"
     geoloc: "{\"lat\":\"43.2909138\",\"lng\":\"5.3719882\"}"
     score: 100
@@ -241,7 +241,7 @@ signalements:
     adresse_occupant: "13 Rue Chape"
     cp_occupant: "13004"
     ville_occupant: "Marseille"
-    statut: 2
+    statut: "ACTIVE"
     reference: "2022-6"
     geoloc: "{\"lat\":\"43.2996767\",\"lng\":\"5.3876584\"}"
     score: 100
@@ -284,7 +284,7 @@ signalements:
     adresse_occupant: "65 Bd Longchamp"
     cp_occupant: "13001"
     ville_occupant: "Marseille"
-    statut: 2
+    statut: "ACTIVE"
     reference: "2022-7"
     geoloc: "{\"lat\":\"43.2996767\",\"lng\":\"5.3876584\"}"
     score: 100
@@ -328,7 +328,7 @@ signalements:
     adresse_occupant: "50 Rue Monte Cristo"
     cp_occupant: "13005"
     ville_occupant: "Marseille"
-    statut: 2
+    statut: "ACTIVE"
     reference: "2022-8"
     geoloc: "{\"lat\":\"43.2996767\",\"lng\":\"5.3876584\"}"
     created_at: "2022-03-08 17:06:33"
@@ -373,7 +373,7 @@ signalements:
     adresse_occupant: "87 Rue Saint-Savournin"
     cp_occupant: "13005"
     ville_occupant: "Marseille"
-    statut: 2
+    statut: "ACTIVE"
     reference: "2022-9"
     geoloc: "{\"lat\":\"43.2996767\",\"lng\":\"5.3876584\"}"
     score: 100
@@ -417,7 +417,7 @@ signalements:
     adresse_occupant: "Square Narvick, Esp. Saint-Charles"
     cp_occupant: "13001"
     ville_occupant: "Marseille"
-    statut: 2
+    statut: "ACTIVE"
     reference: "2022-10"
     geoloc: "{\"lat\":\"43.301004\",\"lng\":\"5.3798692\"}"
     score: 100
@@ -461,7 +461,7 @@ signalements:
     adresse_occupant: "5 Av. Rostand"
     cp_occupant: "13003"
     ville_occupant: "Marseille"
-    statut: 2
+    statut: "ACTIVE"
     reference: "2022-11"
     geoloc: "{\"lat\":\"43.3117791\",\"lng\":\"5.3755551\"}"
     score: 100
@@ -506,7 +506,7 @@ signalements:
     cp_occupant: "01170"
     ville_occupant: "Gex"
     etage_occupant: "5"
-    statut: 6
+    statut: "CLOSED"
     motif_cloture: 'TRAVAUX_FAITS_OU_EN_COURS'
     reference: "2022-12"
     geoloc: "{\"lat\":\"46.3343579\",\"lng\":\"6.0549235\"}"
@@ -552,7 +552,7 @@ signalements:
     cp_occupant: "01170"
     ville_occupant: "Gex"
     etage_occupant: "5"
-    statut: 6
+    statut: "CLOSED"
     motif_cloture: 'ABANDON_DE_PROCEDURE_ABSENCE_DE_REPONSE'
     reference: "2022-13"
     geoloc: "{\"lat\":\"46.3343579\",\"lng\":\"6.0549235\"}"
@@ -599,7 +599,7 @@ signalements:
     cp_occupant: "01170"
     ville_occupant: "Gex"
     etage_occupant: "5"
-    statut: 1
+    statut: "NEED_VALIDATION"
     motif_cloture: 'RESPONSABILITE_DE_L_OCCUPANT'
     reference: "2022-14"
     geoloc: "{\"lat\":\"46.3343579\",\"lng\":\"6.0549235\"}"
@@ -645,7 +645,7 @@ signalements:
     cp_occupant: "01170"
     ville_occupant: "Gex"
     etage_occupant: "5"
-    statut: 6
+    statut: "CLOSED"
     motif_cloture: 'NON_DECENCE'
     reference: "2023-1"
     geoloc: "{\"lat\":\"46.3343579\",\"lng\":\"6.0549235\"}"
@@ -682,7 +682,7 @@ signalements:
     cp_occupant: "69170"
     ville_occupant: "Affoux"
     etage_occupant: "5"
-    statut: 2
+    statut: "ACTIVE"
     reference: "2023-2"
     geoloc: "{\"lat\":\"45.8448649\", \"lng\":\"4.4042316\"}"
     score: 5.420054200542
@@ -717,7 +717,7 @@ signalements:
     cp_occupant: "69001"
     ville_occupant: "Lyon"
     etage_occupant: "5"
-    statut: 2
+    statut: "ACTIVE"
     reference: "2023-3"
     geoloc: "{\"lat\":\"45.7726408\", \"lng\":\"4.8332996\"}"
     score: 5.420054200542
@@ -752,7 +752,7 @@ signalements:
     cp_occupant: "69290"
     ville_occupant: "Saint-Genis-les-Ollières"
     etage_occupant: "5"
-    statut: 2
+    statut: "ACTIVE"
     reference: "2023-4"
     geoloc: "{\"lat\":\"45.7549087\", \"lng\":\"4.7365062\"}"
     score: 5.420054200542
@@ -787,7 +787,7 @@ signalements:
     cp_occupant: "69430"
     ville_occupant: "Chenelette"
     etage_occupant: "5"
-    statut: 2
+    statut: "ACTIVE"
     reference: "2023-5"
     geoloc: "{\"lat\":\"46.1684594\", \"lng\":\"4.4857661\"}"
     score: 5.420054200542
@@ -821,7 +821,7 @@ signalements:
     adresse_occupant: "136 Rue Loubon"
     cp_occupant: "13003"
     ville_occupant: "Marseille"
-    statut: 2
+    statut: "ACTIVE"
     reference: "2023-6"
     geoloc: "{\"lat\":\"43.3117791\", \"lng\":\"5.3755551\"}"
     score: 100
@@ -866,7 +866,7 @@ signalements:
     cp_occupant: "89000"
     ville_occupant: "Auxerre"
     etage_occupant: "5"
-    statut: 2
+    statut: "ACTIVE"
     reference: "2023-7"
     geoloc: "{\"lat\":\"47.7948182\", \"lng\":\"3.5743749\"}"
     score: 43
@@ -910,7 +910,7 @@ signalements:
     cp_occupant: "63033"
     ville_occupant: "Clermont-Ferrand"
     etage_occupant: "5"
-    statut: 2
+    statut: "ACTIVE"
     reference: "2023-8"
     geoloc: "{\"lat\":\"45.777271\", \"lng\":\"3.0812268\"}"
     score: 43
@@ -953,7 +953,7 @@ signalements:
     adresse_occupant: "147 Bd Baille"
     cp_occupant: "13005"
     ville_occupant: "Marseille"
-    statut: 2
+    statut: "ACTIVE"
     reference: "2023-9"
     geoloc: "{\"lat\":\"43.2924995\", \"lng\":\"5.3904671\"}"
     score: 100
@@ -994,7 +994,7 @@ signalements:
     adresse_occupant: "5 Imp. Madeleine Simon"
     cp_occupant: "13004"
     ville_occupant: "Marseille"
-    statut: 2
+    statut: "ACTIVE"
     reference: "2023-10"
     geoloc: "{\"lat\":\"43.3062255\", \"lng\":\"5.3898396\"}"
     score: 80
@@ -1037,7 +1037,7 @@ signalements:
     cp_occupant: "13004"
     ville_occupant: "Marseille"
     adresse_autre_occupant: "Résidence Soleiado"
-    statut: 2
+    statut: "ACTIVE"
     reference: "2023-12"
     geoloc: "{\"lat\":\"43.3062255\", \"lng\":\"5.3898396\"}"
     score: 80
@@ -1079,7 +1079,7 @@ signalements:
     adresse_occupant: "5 Av. Rostand"
     cp_occupant: "13003"
     ville_occupant: "Marseille"
-    statut: 2
+    statut: "ACTIVE"
     reference: "2023-13"
     synchro_data:
         id: 202313
@@ -1127,7 +1127,7 @@ signalements:
     adresse_occupant: "5 Av. Rostand"
     cp_occupant: "13003"
     ville_occupant: "Marseille"
-    statut: 2
+    statut: "ACTIVE"
     reference: "2023-14"
     synchro_data:
         id: 202314
@@ -1175,7 +1175,7 @@ signalements:
     adresse_occupant: "136 Rue Loubon"
     cp_occupant: "13003"
     ville_occupant: "Marseille"
-    statut: 2
+    statut: "ACTIVE"
     reference: "2023-15"
     synchro_data:
         id: 202315
@@ -1223,7 +1223,7 @@ signalements:
     adresse_occupant: "138 Rue Loubon"
     cp_occupant: "13003"
     ville_occupant: "Marseille"
-    statut: 1
+    statut: "NEED_VALIDATION"
     reference: "2023-16"
     geoloc: "{\"lat\":\"43.3117791\", \"lng\":\"5.3755551\"}"
     created_at: "2023-01-03 17:06:33"
@@ -1268,7 +1268,7 @@ signalements:
     adresse_occupant: "140 Rue Loubon"
     cp_occupant: "13003"
     ville_occupant: "Marseille"
-    statut: 1
+    statut: "NEED_VALIDATION"
     reference: "2023-17"
     geoloc: "{\"lat\":\"43.3117791\", \"lng\":\"5.3755551\"}"
     created_at: "2023-06-16 15:06:33"
@@ -1313,7 +1313,7 @@ signalements:
     adresse_occupant: "142 Rue Loubon"
     cp_occupant: "13003"
     ville_occupant: "Marseille"
-    statut: 1
+    statut: "NEED_VALIDATION"
     code_suivi: '0123456789'
     reference: "2023-18"
     geoloc: "{\"lat\":\"43.3117791\", \"lng\":\"5.3755551\"}"
@@ -1359,7 +1359,7 @@ signalements:
     adresse_occupant: "136 Rue Loubon"
     cp_occupant: "13003"
     ville_occupant: "Marseille"
-    statut: 2
+    statut: "ACTIVE"
     reference: "2023-19"
     geoloc: "{\"lat\":\"43.3117791\", \"lng\":\"5.3755551\"}"
     created_at: "2023-06-16 17:06:33"
@@ -1405,7 +1405,7 @@ signalements:
     adresse_occupant: "7 Av. Rostand"
     cp_occupant: "13003"
     ville_occupant: "Marseille"
-    statut: 2
+    statut: "ACTIVE"
     reference: "2023-20"
     geoloc: "{\"lat\":\"43.3117791\",\"lng\":\"5.3755551\"}"
     created_at: "2023-01-08 17:06:33"
@@ -1452,7 +1452,7 @@ signalements:
     adresse_occupant: "7 Av. Rostand"
     cp_occupant: "13003"
     ville_occupant: "Marseille"
-    statut: 2
+    statut: "ACTIVE"
     reference: "2023-120"
     geoloc: "{\"lat\":\"43.3117791\",\"lng\":\"5.3755551\"}"
     created_at: "2023-01-08 17:06:33"
@@ -1497,7 +1497,7 @@ signalements:
     adresse_occupant: "142 Rue Loubon"
     cp_occupant: "13003"
     ville_occupant: "Marseille"
-    statut: 8
+    statut: "REFUSED"
     motif_refus: "DOUBLON"
     code_suivi: '0123456784569'
     reference: "2023-21"
@@ -1538,7 +1538,7 @@ signalements:
     adresse_occupant: "2 Rue Auguste Gache"
     cp_occupant: "38000"
     ville_occupant: "Grenoble"
-    statut: 2
+    statut: "ACTIVE"
     reference: "2023-22"
     geoloc: "{\"lng\":\"5.731586\", \"lat\":\"45.191496\"}"
     created_at: "2023-10-27 16:06:33"
@@ -1570,7 +1570,7 @@ signalements:
     adresse_occupant: "4 Rue Auguste Gache"
     cp_occupant: "38000"
     ville_occupant: "Grenoble"
-    statut: 2
+    statut: "ACTIVE"
     reference: "2023-23"
     geoloc: "{\"lng\":\"5.731586\", \"lat\":\"45.191496\"}"
     created_at: "2023-10-27 16:06:33"
@@ -1602,7 +1602,7 @@ signalements:
     adresse_occupant: "4 Rue Auguste Gache"
     cp_occupant: "29000"
     ville_occupant: "Quimper"
-    statut: 2
+    statut: "ACTIVE"
     reference: "2023-24"
     geoloc: "{\"lng\":\"5.731586\", \"lat\":\"45.191496\"}"
     created_at: "2023-11-04 15:53:00"
@@ -1634,7 +1634,7 @@ signalements:
     adresse_occupant: "4 Rue Auguste Gache"
     cp_occupant: "29100"
     ville_occupant: "Douarnenez"
-    statut: 2
+    statut: "ACTIVE"
     reference: "2023-25"
     geoloc: "{\"lng\":\"5.731586\", \"lat\":\"45.191496\"}"
     created_at: "2023-11-04 15:55:01"
@@ -1667,7 +1667,7 @@ signalements:
     adresse_occupant: "3 rue Mars"
     cp_occupant: "13015"
     ville_occupant: "Marseille"
-    statut: 2
+    statut: "ACTIVE"
     reference: "2023-26"
     geoloc: "{\"lat\":\"43.3426152\",\"lng\":\"5.3711848\"}"
     score: 100
@@ -1697,7 +1697,7 @@ signalements:
     adresse_occupant: "12 Ruelle du Touquet"
     cp_occupant: "62157"
     ville_occupant: "ALLOUAGNE"
-    statut: 2
+    statut: "ACTIVE"
     reference: "2024-01"
     geoloc: "{\"lat\":\"50.532118\", \"lng\":\"2.51608\"}"
     created_at: "2024-01-01 16:06:33"
@@ -1737,7 +1737,7 @@ signalements:
     adresse_occupant: "17 Boulevard saade - quai joliette"
     cp_occupant: "13002"
     ville_occupant: "MARSEILLE"
-    statut: 7
+    statut: "ARCHIVED"
     reference: "2024-04"
     geoloc: "{\"lat\":\"43.301787\", \"lng\":\"5.364626\"}"
     created_at: "2024-01-01 16:06:33"
@@ -1776,7 +1776,7 @@ signalements:
     adresse_occupant: "17 Avenue Didier Morville"
     cp_occupant: "93002"
     ville_occupant: "Saint-Denis"
-    statut: 7
+    statut: "ARCHIVED"
     reference: "2024-05"
     geoloc: "{\"lat\":\"43.301787\", \"lng\":\"5.364626\"}"
     created_at: "2024-01-01 16:06:33"

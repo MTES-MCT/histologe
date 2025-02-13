@@ -2,6 +2,7 @@
 
 namespace App\Repository;
 
+use App\Entity\Enum\SignalementStatus;
 use App\Entity\Tag;
 use App\Entity\Territory;
 use App\Entity\User;
@@ -47,7 +48,8 @@ class TagRepository extends ServiceEntityRepository
     {
         $qb = $this->createQueryBuilder('t');
         $qb->select('t', 's')
-            ->leftJoin('t.signalements', 's', 'WITH', 's.statut != 7')
+            ->leftJoin('t.signalements', 's', 'WITH', 's.statut NOT IN (:signalement_status_list)')
+            ->setParameter('signalement_status_list', [SignalementStatus::ARCHIVED, SignalementStatus::DRAFT])
             ->andWhere('t.isArchive != 1');
 
         if (!empty($searchTag->getOrderType())) {

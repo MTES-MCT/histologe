@@ -6,6 +6,7 @@ use App\Dto\SignalementExport;
 use App\Entity\Enum\DebutDesordres;
 use App\Entity\Enum\MotifCloture;
 use App\Entity\Enum\ProfileDeclarant;
+use App\Entity\Enum\SignalementStatus;
 use App\Entity\Enum\VisiteStatus;
 use App\Entity\User;
 use App\Factory\SignalementExportFactory;
@@ -26,7 +27,7 @@ class SignalementExportFactoryTest extends TestCase
             'uuid' => '661c23e9-8abb-4840-ab9d-4880f475ccfb',
             'reference' => '2023-542',
             'createdAt' => new \DateTimeImmutable(),
-            'statut' => 2,
+            'statut' => SignalementStatus::ACTIVE,
             'score' => 100.0,
             'isNotOccupant' => false,
             'profileDeclarant' => ProfileDeclarant::LOCATAIRE,

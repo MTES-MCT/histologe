@@ -2,6 +2,7 @@
 
 namespace App\Tests\Functional\Controller\Back;
 
+use App\Entity\Enum\SignalementStatus;
 use App\Entity\Signalement;
 use App\Entity\Tag;
 use App\Repository\SignalementRepository;
@@ -36,10 +37,10 @@ class SignalementControllerTest extends WebTestCase
         $client->loginUser($user);
         $client->request('GET', $route);
         switch ($signalement->getStatut()) {
-            case Signalement::STATUS_ARCHIVED:
+            case SignalementStatus::ARCHIVED:
                 $this->assertResponseRedirects('/bo/signalements/');
                 break;
-            case Signalement::STATUS_DRAFT:
+            case SignalementStatus::DRAFT:
                 $this->assertResponseStatusCodeSame(Response::HTTP_FORBIDDEN);
                 break;
             default:
@@ -193,7 +194,7 @@ class SignalementControllerTest extends WebTestCase
         /** @var Signalement $signalement */
         $signalement = $signalementRepository->findOneBy([
             'reference' => '2022-8',
-            'statut' => Signalement::STATUS_ACTIVE,
+            'statut' => SignalementStatus::ACTIVE->value,
         ]);
 
         /** @var UserRepository $userRepository */
@@ -219,7 +220,7 @@ class SignalementControllerTest extends WebTestCase
         $this->assertResponseRedirects('/bo/signalements/');
         /** @var Signalement $signalement */
         $signalement = $signalementRepository->findOneBy(['reference' => '2022-8']);
-        $this->assertEquals(Signalement::STATUS_CLOSED, $signalement->getStatut());
+        $this->assertEquals(SignalementStatus::CLOSED, $signalement->getStatut());
 
         $client->enableProfiler();
         $this->assertEmailCount(1);
@@ -234,7 +235,7 @@ class SignalementControllerTest extends WebTestCase
         /** @var Signalement $signalement */
         $signalement = $signalementRepository->findOneBy([
             'reference' => '2022-1',
-            'statut' => Signalement::STATUS_ACTIVE,
+            'statut' => SignalementStatus::ACTIVE->value,
         ]);
 
         /** @var UserRepository $userRepository */
@@ -260,7 +261,7 @@ class SignalementControllerTest extends WebTestCase
         $this->assertResponseRedirects('/bo/signalements/');
         /** @var Signalement $signalement */
         $signalement = $signalementRepository->findOneBy(['reference' => '2022-1']);
-        $this->assertEquals(Signalement::STATUS_CLOSED, $signalement->getStatut());
+        $this->assertEquals(SignalementStatus::CLOSED, $signalement->getStatut());
 
         $client->enableProfiler();
         $this->assertEmailCount(3);
@@ -275,7 +276,7 @@ class SignalementControllerTest extends WebTestCase
         /** @var Signalement $signalement */
         $signalement = $signalementRepository->findOneBy([
             'reference' => '2023-26',
-            'statut' => Signalement::STATUS_ACTIVE,
+            'statut' => SignalementStatus::ACTIVE->value,
         ]);
 
         /** @var UserRepository $userRepository */
@@ -312,7 +313,7 @@ class SignalementControllerTest extends WebTestCase
         /** @var Signalement $signalement */
         $signalement = $signalementRepository->findOneBy([
             'reference' => '2022-10',
-            'statut' => Signalement::STATUS_ACTIVE,
+            'statut' => SignalementStatus::ACTIVE->value,
         ]);
 
         /** @var UserRepository $userRepository */
@@ -352,7 +353,7 @@ class SignalementControllerTest extends WebTestCase
         /** @var Signalement $signalement */
         $signalement = $signalementRepository->findOneBy([
             'reference' => '2022-10',
-            'statut' => Signalement::STATUS_ACTIVE,
+            'statut' => SignalementStatus::ACTIVE->value,
         ]);
 
         /** @var UserRepository $userRepository */

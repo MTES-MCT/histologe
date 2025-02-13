@@ -30,24 +30,24 @@
 	{% endfor %}
 </div>
 <div class="fr-mt-6v">
-	{% if signalement.statut is same as constant('App\\Entity\\Signalement::STATUS_REFUSED') %}
+	{% if signalement.statut is same as enum('App\\Entity\\Enum\\SignalementStatus').REFUSED %}
 		<div role="alert" class="fr-alert fr-alert--error fr-alert--sm">
 			<p>Votre signalement a été refusé, vous ne pouvez plus envoyer de messages.</p>
 		</div>
-	{% elseif signalement.statut is same as constant('App\\Entity\\Signalement::STATUS_CLOSED') 
+	{% elseif signalement.statut is same as enum('App\\Entity\\Enum\\SignalementStatus').CLOSED
 		and signalement.hasSuiviUsagePostCloture %}
 		<div role="alert" class="fr-alert fr-alert--error fr-alert--sm">
 			<p>Votre message suite à la clôture de votre dossier a bien été envoyé. Vous ne pouvez désormais plus envoyer de messages.</p>
 		</div>
-	{% elseif signalement.statut is same as constant('App\\Entity\\Signalement::STATUS_CLOSED') 
+	{% elseif signalement.statut is same as enum('App\\Entity\\Enum\\SignalementStatus').CLOSED
 		and date(signalement.closedAt) < date('-30days') %}
 		<div role="alert" class="fr-alert fr-alert--error fr-alert--sm">
 			<p>Votre dossier a été clôturé il y a plus de 30 jours, vous ne pouvez plus envoyer de messages.</p>
 		</div>
-	{% elseif signalement.statut is same as constant('App\\Entity\\Signalement::STATUS_ARCHIVED') %}
+	{% elseif signalement.statut is same as enum('App\\Entity\\Enum\\SignalementStatus').ARCHIVED %}
 		<div role="alert" class="fr-alert fr-alert--error fr-alert--sm">
 			<p>Votre signalement a été archivé, vous ne pouvez plus envoyer de messages.</p>
-	{% elseif signalement.statut is same as constant('App\\Entity\\Signalement::STATUS_DRAFT') %}
+	{% elseif signalement.statut is same as enum('App\\Entity\\Enum\\SignalementStatus').DRAFT %}
 		<div role="alert" class="fr-alert fr-alert--error fr-alert--sm">
 			<p>Votre signalement est un brouillon, vous ne pouvez pas encore envoyer de messages.</p>
 		</div>

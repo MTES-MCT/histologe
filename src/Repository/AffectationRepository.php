@@ -8,6 +8,7 @@ use App\Entity\Affectation;
 use App\Entity\Enum\MotifCloture;
 use App\Entity\Enum\PartnerType;
 use App\Entity\Enum\Qualification;
+use App\Entity\Enum\SignalementStatus;
 use App\Entity\Partner;
 use App\Entity\Signalement;
 use App\Entity\Territory;
@@ -54,7 +55,8 @@ class AffectationRepository extends ServiceEntityRepository
         $qb = $this->createQueryBuilder('a')
             ->select('COUNT(a.signalement) as count')
             ->leftJoin('a.signalement', 's', 'WITH', 's = a.signalement')
-            ->andWhere('s.statut != 7')
+            ->andWhere('s.statut NOT IN (:signalement_status_list)')
+            ->setParameter('signalement_status_list', [SignalementStatus::DRAFT, SignalementStatus::ARCHIVED])
             ->addSelect('a.statut')
             ->andWhere('a.partner IN (:partners)')
             ->setParameter('partners', $user->getPartners());
@@ -111,7 +113,7 @@ class AffectationRepository extends ServiceEntityRepository
             ->innerJoin('a.signalement', 's')
             ->where('p.esaboraUrl IS NOT NULL AND p.esaboraToken IS NOT NULL AND p.isEsaboraActive = 1')
             ->andWhere('s.statut NOT IN (:signalement_status_list)')
-            ->setParameter('signalement_status_list', [Signalement::STATUS_ARCHIVED, Signalement::STATUS_DRAFT])
+            ->setParameter('signalement_status_list', [SignalementStatus::ARCHIVED, SignalementStatus::DRAFT])
             ->andWhere('p.type = :partner_type')
             ->setParameter('partner_type', $partnerType);
 
@@ -191,7 +193,7 @@ class AffectationRepository extends ServiceEntityRepository
             ->innerJoin('a.signalement', 's')
             ->where('s.statut NOT IN (:statut_list)')
             ->andWhere('a.partner IN (:partners)')
-            ->setParameter('statut_list', [Signalement::STATUS_ARCHIVED, Signalement::STATUS_DRAFT])
+            ->setParameter('statut_list', [SignalementStatus::ARCHIVED->value, SignalementStatus::DRAFT->value])
             ->setParameter('partners', $user->getPartners());
 
         if (\count($territories)) {
@@ -223,7 +225,7 @@ class AffectationRepository extends ServiceEntityRepository
             ->where('a.statut = :statusAffectation')
             ->setParameter('statusAffectation', Affectation::STATUS_ACCEPTED)
             ->andWhere('s.statut = :statusSignalement')
-            ->setParameter('statusSignalement', Signalement::STATUS_ACTIVE)
+            ->setParameter('statusSignalement', SignalementStatus::ACTIVE->value)
             ->andWhere('p.competence LIKE :qualification')
             ->setParameter('qualification', Qualification::VISITES->name)
             ->andWhere('DATEDIFF(CURRENT_DATE(),a.answeredAt) = :day_delay')

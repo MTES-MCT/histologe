@@ -9,12 +9,12 @@ enum AffectationStatus: int
     case STATUS_REFUSED = 2;
     case STATUS_CLOSED = 3;
 
-    public function mapSignalementStatus(): int
+    public function mapSignalementStatus(): SignalementStatus
     {
         return match ($this) {
-            self::STATUS_WAIT => SignalementStatus::NEED_VALIDATION->value,
-            self::STATUS_ACCEPTED => SignalementStatus::ACTIVE->value,
-            self::STATUS_CLOSED, self::STATUS_REFUSED => SignalementStatus::CLOSED->value,
+            self::STATUS_WAIT => SignalementStatus::NEED_VALIDATION,
+            self::STATUS_ACCEPTED => SignalementStatus::ACTIVE,
+            self::STATUS_CLOSED, self::STATUS_REFUSED => SignalementStatus::CLOSED,
         };
     }
 

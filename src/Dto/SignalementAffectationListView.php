@@ -4,6 +4,7 @@ namespace App\Dto;
 
 use App\Entity\Enum\Qualification;
 use App\Entity\Enum\QualificationStatus;
+use App\Entity\Enum\SignalementStatus;
 use Symfony\Component\Serializer\Attribute\Groups;
 
 #[Groups(['signalements:read'])]
@@ -20,7 +21,7 @@ class SignalementAffectationListView
         private ?string $uuid = null,
         private ?string $reference = null,
         private ?\DateTimeImmutable $createdAt = null,
-        private ?int $statut = null,
+        private ?SignalementStatus $statut = null,
         private ?string $score = null,
         private ?bool $isNotOccupant = null,
         private ?string $nomOccupant = null,
@@ -61,7 +62,7 @@ class SignalementAffectationListView
         return $this->createdAt;
     }
 
-    public function getStatut(): ?int
+    public function getStatut(): ?SignalementStatus
     {
         return $this->statut;
     }

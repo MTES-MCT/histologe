@@ -2,6 +2,7 @@
 
 namespace App\Tests\Functional\Controller;
 
+use App\Entity\Enum\SignalementStatus;
 use App\Entity\Signalement;
 use App\Repository\SignalementRepository;
 use App\Repository\UserRepository;
@@ -43,7 +44,7 @@ class ArchivedSignalementControllerTest extends WebTestCase
     {
         /** @var Signalement $signalement */
         $signalement = $this->signalementRepository->findOneBy([
-            'statut' => Signalement::STATUS_ARCHIVED,
+            'statut' => SignalementStatus::ARCHIVED->value,
         ]);
 
         $route = $this->router->generate('back_archived_signalements_reactiver', [
@@ -59,6 +60,6 @@ class ArchivedSignalementControllerTest extends WebTestCase
         );
 
         $this->assertResponseRedirects('/bo/signalements/'.$signalement->getUuid());
-        $this->assertEquals(Signalement::STATUS_ACTIVE, $signalement->getStatut());
+        $this->assertEquals(SignalementStatus::ACTIVE, $signalement->getStatut());
     }
 }

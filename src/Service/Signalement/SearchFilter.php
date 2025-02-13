@@ -10,7 +10,6 @@ use App\Entity\Enum\QualificationStatus;
 use App\Entity\Enum\SignalementStatus;
 use App\Entity\Enum\VisiteStatus;
 use App\Entity\Intervention;
-use App\Entity\Signalement;
 use App\Entity\Suivi;
 use App\Entity\User;
 use App\Repository\BailleurRepository;
@@ -146,9 +145,9 @@ class SearchFilter
                     ->innerJoin('a.signalement', 's')
                     ->where('a.statut = :statut_affectation_closed')
                     ->andWhere('s.statut != :status_archived AND s.statut != :statut_closed AND s.statut != :status_draft')
-                    ->setParameter('status_archived', Signalement::STATUS_ARCHIVED)
-                    ->setParameter('statut_closed', Signalement::STATUS_CLOSED)
-                    ->setParameter('status_draft', Signalement::STATUS_DRAFT)
+                    ->setParameter('status_archived', SignalementStatus::ARCHIVED->value)
+                    ->setParameter('statut_closed', SignalementStatus::CLOSED->value)
+                    ->setParameter('status_draft', SignalementStatus::DRAFT->value)
                     ->setParameter('statut_affectation_closed', Affectation::STATUS_CLOSED);
 
                 if (!empty($filters['territories'])) {
@@ -177,7 +176,7 @@ class SearchFilter
                     )
                 )
                 ->setParameter('idUnclosedAffectation', $subquery->getQuery()->getSingleColumnResult())
-                ->setParameter('statut', Signalement::STATUS_ARCHIVED);
+                ->setParameter('statut', SignalementStatus::ARCHIVED->value);
                 // TODO : à vérifier
             }
         }
@@ -188,11 +187,11 @@ class SearchFilter
                 $parameters = [
                     'day_period' => 0,
                     'type_suivi_technical' => Suivi::TYPE_TECHNICAL,
-                    'status_need_validation' => Signalement::STATUS_NEED_VALIDATION,
-                    'status_archived' => Signalement::STATUS_ARCHIVED,
-                    'status_closed' => Signalement::STATUS_CLOSED,
-                    'status_refused' => Signalement::STATUS_REFUSED,
-                    'status_draft' => Signalement::STATUS_DRAFT,
+                    'status_need_validation' => SignalementStatus::NEED_VALIDATION->value,
+                    'status_archived' => SignalementStatus::ARCHIVED->value,
+                    'status_closed' => SignalementStatus::CLOSED->value,
+                    'status_refused' => SignalementStatus::REFUSED->value,
+                    'status_draft' => SignalementStatus::DRAFT->value,
                     'nb_suivi_technical' => 3,
                 ];
 

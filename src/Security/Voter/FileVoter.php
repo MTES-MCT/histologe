@@ -3,8 +3,8 @@
 namespace App\Security\Voter;
 
 use App\Entity\Affectation;
+use App\Entity\Enum\SignalementStatus;
 use App\Entity\File;
-use App\Entity\Signalement;
 use App\Entity\User;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Authorization\Voter\Voter;
@@ -36,7 +36,7 @@ class FileVoter extends Voter
 
     private function canCreate(File $file, User $user): bool
     {
-        if (Signalement::STATUS_ACTIVE !== $file->getSignalement()->getStatut()) {
+        if (SignalementStatus::ACTIVE !== $file->getSignalement()->getStatut()) {
             return false;
         }
         if ($this->isAdminOrRTonHisTerritory($file, $user)) {

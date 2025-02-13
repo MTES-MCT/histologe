@@ -11,6 +11,7 @@ use App\Entity\Enum\MotifRefus;
 use App\Entity\Enum\ProfileDeclarant;
 use App\Entity\Enum\ProprioType;
 use App\Entity\Enum\Qualification;
+use App\Entity\Enum\SignalementStatus;
 use App\Entity\Model\InformationComplementaire;
 use App\Entity\Model\InformationProcedure;
 use App\Entity\Model\SituationFoyer;
@@ -35,13 +36,6 @@ use Symfony\Component\Validator\Context\ExecutionContextInterface;
 #[ORM\Index(columns: ['code_suivi'], name: 'idx_signalement_code_suivi')]
 class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInterface
 {
-    public const STATUS_DRAFT = 0;
-    public const STATUS_NEED_VALIDATION = 1;
-    public const STATUS_ACTIVE = 2;
-    public const STATUS_CLOSED = 6;
-    public const STATUS_ARCHIVED = 7;
-    public const STATUS_REFUSED = 8;
-
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column(type: 'integer')]
@@ -215,8 +209,8 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
     #[ORM\Column(type: 'datetime_immutable', nullable: true)]
     private ?\DateTimeImmutable $modifiedAt = null;
 
-    #[ORM\Column(type: 'integer')]
-    private ?int $statut = null;
+    #[ORM\Column(type: 'string', enumType: SignalementStatus::class)]
+    private ?SignalementStatus $statut = null;
 
     #[ORM\Column(type: 'string', length: 100)]
     private ?string $reference = null;
@@ -444,7 +438,7 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
         $this->criteres = new ArrayCollection();
         $this->criticites = new ArrayCollection();
         $this->createdAt = new \DateTimeImmutable();
-        $this->statut = self::STATUS_NEED_VALIDATION;
+        $this->statut = SignalementStatus::NEED_VALIDATION;
         $this->uuid = Uuid::v4();
         $this->codeSuivi = Uuid::v4();
         $this->suivis = new ArrayCollection();
@@ -1161,12 +1155,12 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
         return $this;
     }
 
-    public function getStatut(): ?int
+    public function getStatut(): ?SignalementStatus
     {
         return $this->statut;
     }
 
-    public function setStatut(int $statut): self
+    public function setStatut(SignalementStatus $statut): self
     {
         $this->statut = $statut;
 

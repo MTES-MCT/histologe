@@ -3,6 +3,7 @@
 namespace App\Specification\Signalement;
 
 use App\Entity\Affectation;
+use App\Entity\Enum\SignalementStatus;
 use App\Entity\Intervention;
 use App\Entity\Signalement;
 use App\Repository\SuiviRepository;
@@ -51,7 +52,7 @@ readonly class FirstAffectationAcceptedSpecification
         return !$signalement->getIsImported()
         && 1 === $affectationAccepted->count()
         && Affectation::STATUS_ACCEPTED === $affectation->getStatut()
-        && Signalement::STATUS_ACTIVE === $signalement->getStatut()
+        && SignalementStatus::ACTIVE === $signalement->getStatut()
         && empty($suiviAffectationAccepted)
         && $interventions->isEmpty();
     }

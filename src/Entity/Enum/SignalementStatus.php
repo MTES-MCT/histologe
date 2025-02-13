@@ -4,22 +4,22 @@ namespace App\Entity\Enum;
 
 use App\Entity\Behaviour\EnumTrait;
 
-enum SignalementStatus: int
+enum SignalementStatus: string
 {
     use EnumTrait;
 
-    case NEED_VALIDATION = 1;
-    case ACTIVE = 2;
-    case NEED_PARTNER_RESPONSE = 3;
-    case CLOSED = 6;
-    case ARCHIVED = 7;
-    case REFUSED = 8;
+    case DRAFT = 'DRAFT';
+    case NEED_VALIDATION = 'NEED_VALIDATION';
+    case ACTIVE = 'ACTIVE';
+    case CLOSED = 'CLOSED';
+    case ARCHIVED = 'ARCHIVED';
+    case REFUSED = 'REFUSED';
 
     public function mapAffectationStatus(): int
     {
         return match ($this) {
-            self::NEED_VALIDATION => AffectationStatus::STATUS_WAIT->value,
-            self::ACTIVE, self::NEED_PARTNER_RESPONSE => AffectationStatus::STATUS_ACCEPTED->value,
+            self::DRAFT, self::NEED_VALIDATION => AffectationStatus::STATUS_WAIT->value,
+            self::ACTIVE => AffectationStatus::STATUS_ACCEPTED->value,
             self::CLOSED, self::REFUSED, self::ARCHIVED => AffectationStatus::STATUS_CLOSED->value,
         };
     }
@@ -27,9 +27,9 @@ enum SignalementStatus: int
     public static function getLabelList(): array
     {
         return [
+            self::DRAFT->name => 'brouillon',
             self::NEED_VALIDATION->name => 'nouveau',
             self::ACTIVE->name => 'en cours',
-            self::NEED_PARTNER_RESPONSE->name => 'en cours',
             self::CLOSED->name => 'fermé',
             self::REFUSED->name => 'refusé',
         ];
@@ -38,34 +38,24 @@ enum SignalementStatus: int
     public static function getLabel(self $value): string
     {
         return match ($value) {
+            self::DRAFT => 'brouillon',
             self::NEED_VALIDATION => 'nouveau',
-            self::ACTIVE, self::NEED_PARTNER_RESPONSE => 'en cours',
+            self::ACTIVE => 'en cours',
             self::CLOSED => 'fermé',
             self::REFUSED => 'refusé',
             self::ARCHIVED => 'archivé',
         };
     }
 
-    public static function mapFilterStatus(string $label): int
+    public static function mapFilterStatus(string $label): string
     {
         return match ($label) {
+            'brouillon' => SignalementStatus::DRAFT->value,
             'nouveau' => SignalementStatus::NEED_VALIDATION->value,
             'en_cours' => SignalementStatus::ACTIVE->value,
             'ferme' => SignalementStatus::CLOSED->value,
             'refuse' => SignalementStatus::REFUSED->value,
             default => throw new \UnexpectedValueException('Unexpected signalement status : '.$label),
-        };
-    }
-
-    public static function mapNewStatus(int $codeStatus): SignalementNewStatus
-    {
-        return match ($codeStatus) {
-            1 => SignalementNewStatus::NOUVEAU,
-            2, 3 => SignalementNewStatus::EN_COURS,
-            6 => SignalementNewStatus::FERME,
-            7 => SignalementNewStatus::ARCHIVE,
-            8 => SignalementNewStatus::REFUSE,
-            default => throw new \UnexpectedValueException('Unexpected signalement code status : '.$codeStatus),
         };
     }
 }

@@ -52,17 +52,17 @@
                 <h1 class="fr-h2">#{{ signalement.reference }} {{ signalement.nomOccupant|upper }} {{ signalement.prenomOccupant }}</h1>
                 <div class="fr-h2 fr-ml-3v">
                     {% if is_granted('ROLE_ADMIN_TERRITORY') %}
-                        {% if signalement.statut is same as constant('App\\Entity\\Signalement::STATUS_NEED_VALIDATION') %}
+                        {% if signalement.statut is same as enum('App\\Entity\\Enum\\SignalementStatus').NEED_VALIDATION %}
                             <span class="fr-badge fr-badge--warning fr-badge--no-icon"><span class="fr-icon-warning-line" aria-hidden="true"></span> Nouveau</span>
-                        {% elseif signalement.statut is same as constant('App\\Entity\\Signalement::STATUS_ACTIVE') %}
+                        {% elseif signalement.statut is same as enum('App\\Entity\\Enum\\SignalementStatus').ACTIVE %}
                             <span class="fr-badge fr-badge--success fr-badge--no-icon"><span class="fr-icon-message-2-line" aria-hidden="true"></span> En cours</span>
-                        {% elseif signalement.statut is same as constant('App\\Entity\\Signalement::STATUS_REFUSED') %}
+                        {% elseif signalement.statut is same as enum('App\\Entity\\Enum\\SignalementStatus').REFUSED %}
                             <span class="fr-badge fr-badge--new fr-badge--no-icon"><span class="fr-icon-close-line" aria-hidden="true"></span> Refusé</span>
-                        {% elseif signalement.statut is same as constant('App\\Entity\\Signalement::STATUS_CLOSED') %}
+                        {% elseif signalement.statut is same as enum('App\\Entity\\Enum\\SignalementStatus').CLOSED %}
                             <span class="fr-badge fr-badge--error fr-badge--no-icon"><span class="fr-icon-checkbox-circle-line" aria-hidden="true"></span> Clôturé</span>
-                        {% elseif signalement.statut is same as constant('App\\Entity\\Signalement::STATUS_ARCHIVED') %} <!-- NE DOIT PAS ARRIVER -->
+                        {% elseif signalement.statut is same as enum('App\\Entity\\Enum\\SignalementStatus').ARCHIVED %} <!-- NE DOIT PAS ARRIVER -->
                             <span class="fr-badge fr-badge--error fr-badge--no-icon"><span class="fr-icon-checkbox-circle-line" aria-hidden="true"></span> Archivé</span>
-                        {% elseif signalement.statut is same as constant('App\\Entity\\Signalement::STATUS_DRAFT') %} <!-- NE DOIT PAS ARRIVER -->
+                        {% elseif signalement.statut is same as enum('App\\Entity\\Enum\\SignalementStatus').DRAFT %} <!-- NE DOIT PAS ARRIVER -->
                             <span class="fr-badge fr-badge--error fr-badge--no-icon"><span class="fr-icon-checkbox-circle-line" aria-hidden="true"></span> Brouillon</span>
                         {% endif %}
                     {% else %}
@@ -122,7 +122,7 @@
                 </div>
             </div>
             
-            {% if signalement.statut is not same as constant('App\\Entity\\Signalement::STATUS_NEED_VALIDATION') %}
+            {% if signalement.statut is not same as enum('App\\Entity\\Enum\\SignalementStatus').NEED_VALIDATION %}
             <div class="fr-mt-4v fr-p-4v fr-background-alt--grey">
                 <strong>Etiquettes</strong>
                 {% include 'back/signalement/view/tags.html.twig' %}

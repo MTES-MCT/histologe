@@ -2,7 +2,7 @@
 
 namespace App\EventSubscriber;
 
-use App\Entity\Signalement;
+use App\Entity\Enum\SignalementStatus;
 use App\Entity\Suivi;
 use App\Event\SuiviCreatedEvent;
 use App\Service\NotificationAndMailSender;
@@ -31,22 +31,22 @@ class SuiviCreatedSubscriber implements EventSubscriberInterface
             return;
         }
 
-        if (Signalement::STATUS_DRAFT === $suivi->getSignalement()->getStatut()
-                || Signalement::STATUS_ARCHIVED === $suivi->getSignalement()->getStatut()) {
+        if (SignalementStatus::DRAFT === $suivi->getSignalement()->getStatut()
+                || SignalementStatus::ARCHIVED === $suivi->getSignalement()->getStatut()) {
             return;
         }
 
         if (Suivi::CONTEXT_NOTIFY_USAGER_ONLY !== $suivi->getContext()) {
             $this->notificationAndMailSender->sendNewSuiviToAdminsAndPartners(
                 suivi: $suivi,
-                sendEmail: (Signalement::STATUS_CLOSED !== $suivi->getSignalement()->getStatut())
+                sendEmail: (SignalementStatus::CLOSED !== $suivi->getSignalement()->getStatut())
             );
         }
 
         if ($suivi->getSendMail()
                 && $suivi->getIsPublic()
-                && Signalement::STATUS_CLOSED !== $suivi->getSignalement()->getStatut()
-                && Signalement::STATUS_REFUSED !== $suivi->getSignalement()->getStatut()) {
+                && SignalementStatus::CLOSED !== $suivi->getSignalement()->getStatut()
+                && SignalementStatus::REFUSED !== $suivi->getSignalement()->getStatut()) {
             $this->notificationAndMailSender->sendNewSuiviToUsagers($suivi);
         }
     }

@@ -2,6 +2,7 @@
 
 namespace App\Repository;
 
+use App\Entity\Enum\SignalementStatus;
 use App\Entity\Signalement;
 use App\Entity\Territory;
 use App\Entity\User;
@@ -66,7 +67,7 @@ class ZoneRepository extends ServiceEntityRepository
             ORDER BY s.created_at DESC
             ';
 
-        $resultSet = $conn->executeQuery($sql, ['zone' => $zone->getId(), 'status_draft' => Signalement::STATUS_DRAFT, 'status_archived' => Signalement::STATUS_ARCHIVED]);
+        $resultSet = $conn->executeQuery($sql, ['zone' => $zone->getId(), 'status_draft' => SignalementStatus::DRAFT->value, 'status_archived' => SignalementStatus::ARCHIVED->value]);
         $list = $resultSet->fetchAllAssociative();
         foreach ($list as $key => $value) {
             $list[$key]['geoloc'] = json_decode($value['geoloc'], true);

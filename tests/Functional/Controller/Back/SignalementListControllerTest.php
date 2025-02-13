@@ -2,7 +2,7 @@
 
 namespace App\Tests\Functional\Controller\Back;
 
-use App\Entity\Signalement;
+use App\Entity\Enum\SignalementStatus;
 use App\Entity\Suivi;
 use App\Entity\User;
 use App\Repository\UserRepository;
@@ -115,17 +115,17 @@ class SignalementListControllerTest extends WebTestCase
     public function provideLinkFilterDashboard(): \Generator
     {
         $adminUser = 'admin-01@histologe.fr';
-        yield 'SUPER_ADMIN - Nouveaux signalements' => [$adminUser, '?statut='.Signalement::STATUS_NEED_VALIDATION];
+        yield 'SUPER_ADMIN - Nouveaux signalements' => [$adminUser, '?statut='.SignalementStatus::NEED_VALIDATION->value];
         yield 'SUPER_ADMIN - Nouveaux suivis' => [$adminUser, '?nouveau_suivi=1'];
         yield 'SUPER_ADMIN - Sans suivis' => [$adminUser, '?sans_suivi_periode='.Suivi::DEFAULT_PERIOD_INACTIVITY];
         yield 'SUPER_ADMIN - Suggestion de clotures' => [$adminUser, '?relances_usager=NO_SUIVI_AFTER_3_RELANCES'];
-        yield 'SUPER_ADMIN - Clotures globales' => [$adminUser, '?statut='.Signalement::STATUS_CLOSED];
+        yield 'SUPER_ADMIN - Clotures globales' => [$adminUser, '?statut='.SignalementStatus::CLOSED->value];
         yield 'SUPER_ADMIN - Clotures partenaires' => [$adminUser, '?closed_affectation=ONE_CLOSED'];
         yield 'SUPER_ADMIN - Nouveautés non-décence énergétique' => [$adminUser, '?nde=1&statut=1'];
         yield 'SUPER_ADMIN - Non-décence énergétique en cours' => [$adminUser, '?nde=1&statut=2'];
 
         $adminTerritoryUser = 'admin-territoire-13-01@histologe.fr';
-        yield 'ADMIN_T - Nouveaux signalements' => [$adminTerritoryUser, '?statut='.Signalement::STATUS_NEED_VALIDATION];
+        yield 'ADMIN_T - Nouveaux signalements' => [$adminTerritoryUser, '?statut='.SignalementStatus::NEED_VALIDATION->value];
         yield 'ADMIN_T - Nouveaux suivis' => [$adminTerritoryUser, '?nouveau_suivi=1'];
         yield 'ADMIN_T - Sans suivis' => [$adminTerritoryUser, '?sans_suivi_periode='.Suivi::DEFAULT_PERIOD_INACTIVITY];
         yield 'ADMIN_T - Suggestion de clotures' => [$adminTerritoryUser, '?relances_usager=NO_SUIVI_AFTER_3_RELANCES'];

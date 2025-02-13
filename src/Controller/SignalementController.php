@@ -5,6 +5,7 @@ namespace App\Controller;
 use App\Dto\DemandeLienSignalement;
 use App\Dto\Request\Signalement\SignalementDraftRequest;
 use App\Entity\Enum\SignalementDraftStatus;
+use App\Entity\Enum\SignalementStatus;
 use App\Entity\File;
 use App\Entity\Signalement;
 use App\Entity\SignalementDraft;
@@ -456,7 +457,7 @@ class SignalementController extends AbstractController
 
         if (!$user
         || !\in_array($suiviAuto, [Suivi::POURSUIVRE_PROCEDURE, Suivi::ARRET_PROCEDURE])
-        || \in_array($signalement->getStatut(), [Signalement::STATUS_CLOSED, Signalement::STATUS_REFUSED])) {
+        || \in_array($signalement->getStatut(), [SignalementStatus::CLOSED, SignalementStatus::REFUSED])) {
             $this->addFlash('error', 'Le lien utilisé est invalide.');
 
             return $this->redirectToRoute(
@@ -626,7 +627,7 @@ class SignalementController extends AbstractController
             $description .= '<br>Ajout de pièces au signalement<ul>'.implode('', $descriptionList).'</ul>';
         }
 
-        $typeSuivi = Signalement::STATUS_CLOSED === $signalement->getStatut() ? Suivi::TYPE_USAGER_POST_CLOTURE : Suivi::TYPE_USAGER;
+        $typeSuivi = SignalementStatus::CLOSED === $signalement->getStatut() ? Suivi::TYPE_USAGER_POST_CLOTURE : Suivi::TYPE_USAGER;
         $suiviManager->createSuivi(
             user: $user,
             signalement: $signalement,
@@ -635,7 +636,7 @@ class SignalementController extends AbstractController
             isPublic: true,
         );
 
-        $messageRetour = Signalement::STATUS_CLOSED === $signalement->getStatut() ?
+        $messageRetour = SignalementStatus::CLOSED === $signalement->getStatut() ?
         'Nos services vont prendre connaissance de votre message. Votre dossier est clôturé, vous ne pouvez désormais plus envoyer de message.' :
         'Votre message a bien été envoyé, vous recevrez un email lorsque votre dossier sera mis à jour.
                 N\'hésitez pas à consulter votre page de suivi !';

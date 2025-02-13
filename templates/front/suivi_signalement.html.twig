@@ -21,20 +21,20 @@
 				</h1>
 				<div>Déposé le :
 					{{ signalement.createdAt|date('d/m/Y') }}</div>
-				{% if signalement.statut is same as constant('App\\Entity\\Signalement::STATUS_NEED_VALIDATION') %}
+				{% if signalement.statut is same as enum('App\\Entity\\Enum\\SignalementStatus').NEED_VALIDATION %}
 					<span class="fr-badge fr-badge--no-icon fr-badge--info">Nouveau</span>
-				{% elseif signalement.statut is same as constant('App\\Entity\\Signalement::STATUS_ACTIVE') %}
+				{% elseif signalement.statut is same as enum('App\\Entity\\Enum\\SignalementStatus').ACTIVE %}
 					<span class="fr-badge fr-badge--no-icon fr-badge--success">En cours</span>
-				{% elseif signalement.statut is same as constant('App\\Entity\\Signalement::STATUS_CLOSED')
-						or signalement.statut is same as constant('App\\Entity\\Signalement::STATUS_ARCHIVED')
-						or signalement.statut is same as constant('App\\Entity\\Signalement::STATUS_REFUSED') 
-						or signalement.statut is same as constant('App\\Entity\\Signalement::STATUS_DRAFT') %} <!-- ne doit pas arriver -->
+				{% elseif signalement.statut is same as enum('App\\Entity\\Enum\\SignalementStatus').CLOSED
+						or signalement.statut is same as enum('App\\Entity\\Enum\\SignalementStatus').ARCHIVED
+						or signalement.statut is same as enum('App\\Entity\\Enum\\SignalementStatus').REFUSED
+						or signalement.statut is same as enum('App\\Entity\\Enum\\SignalementStatus').DRAFT %} <!-- ne doit pas arriver -->
 					<span class="fr-badge fr-badge--no-icon fr-badge--error">Fermé</span>
 				{% endif %}
 			</div>
 
 			{% if suiviAuto is defined and suiviAuto is not empty %}
-				{% if signalement.statut is same as constant('App\\Entity\\Signalement::STATUS_REFUSED') or signalement.statut is same as constant('App\\Entity\\Signalement::STATUS_CLOSED') %}
+				{% if signalement.statut is same as enum('App\\Entity\\Enum\\SignalementStatus').REFUSED or signalement.statut is same as enum('App\\Entity\\Enum\\SignalementStatus').CLOSED %}
 					<div class="fr-col-12 fr-mt-2v">
 						<div role="alert" class="fr-alert fr-alert--error fr-alert--sm">
 							<p>Vous ne pouvez plus modifier la procédure.</p>
@@ -104,7 +104,7 @@
 	</div>
 
 	{% if 
-		(signalement.statut is same as constant('App\\Entity\\Signalement::STATUS_REFUSED') or signalement.statut is same as constant('App\\Entity\\Signalement::STATUS_ARCHIVED')) 
+		(signalement.statut is same as enum('App\\Entity\\Enum\\SignalementStatus').REFUSED or signalement.statut is same as enum('App\\Entity\\Enum\\SignalementStatus').ARCHIVED) 
 		and signalement.motifRefus is same as constant('App\\Entity\\Enum\\MotifRefus::DOUBLON') %}
 			<div class="fr-mb-1w">
 			{{ include ('_partials/_demande-lien-signalement.html.twig', {motifRefusDoublon: true}) }}

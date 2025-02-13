@@ -8,6 +8,7 @@ use App\Entity\Behaviour\EntityHistoryInterface;
 use App\Entity\Enum\HistoryEntryEvent;
 use App\Entity\Enum\MotifCloture;
 use App\Entity\Enum\MotifRefus;
+use App\Entity\Enum\SignalementStatus;
 use App\Entity\HistoryEntry;
 use App\Entity\Partner;
 use App\Entity\Signalement;
@@ -184,26 +185,26 @@ class HistoryEntryManager extends AbstractManager
         if (array_key_exists('statut', $changes)) {
             $description = $userName;
             switch ($changes['statut']['new']) {
-                case Signalement::STATUS_ACTIVE:
-                    if (Signalement::STATUS_NEED_VALIDATION === $changes['statut']['old']) {
+                case SignalementStatus::ACTIVE->value:
+                    if (SignalementStatus::NEED_VALIDATION->value === $changes['statut']['old']) {
                         $description .= ' a validé le signalement ';
-                    } elseif (Signalement::STATUS_DRAFT === $changes['statut']['old']) {
+                    } elseif (SignalementStatus::DRAFT->value === $changes['statut']['old']) {
                         $description .= ' a validé le brouillon de signalement ';
                     } else {
                         $description .= ' a réouvert le signalement ';
                     }
                     break;
-                case Signalement::STATUS_CLOSED:
+                case SignalementStatus::CLOSED->value:
                     $description .= ' a clôturé le signalement ';
                     break;
-                case Signalement::STATUS_ARCHIVED:
+                case SignalementStatus::ARCHIVED->value:
                     $description .= ' a archivé le signalement ';
                     break;
-                case Signalement::STATUS_REFUSED:
+                case SignalementStatus::REFUSED->value:
                     $description .= ' a refusé le signalement ';
                     break;
-                case Signalement::STATUS_NEED_VALIDATION:
-                    if (Signalement::STATUS_DRAFT === $changes['statut']['old']) {
+                case SignalementStatus::NEED_VALIDATION->value:
+                    if (SignalementStatus::DRAFT->value === $changes['statut']['old']) {
                         $description .= ' a créé un signalement ';
                     } else {
                         $description .= ' a remis le signalement en attente de validation ';

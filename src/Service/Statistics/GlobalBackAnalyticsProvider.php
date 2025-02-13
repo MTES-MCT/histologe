@@ -2,7 +2,7 @@
 
 namespace App\Service\Statistics;
 
-use App\Entity\Signalement;
+use App\Entity\Enum\SignalementStatus;
 use App\Entity\Territory;
 use App\Repository\SignalementRepository;
 use Doctrine\Common\Collections\ArrayCollection;
@@ -31,10 +31,10 @@ class GlobalBackAnalyticsProvider
         $countByStatus = $this->signalementRepository->countByStatus($territories, $partners, null, true);
         foreach ($countByStatus as $countByStatusItem) {
             switch ($countByStatusItem['statut']) {
-                case Signalement::STATUS_ARCHIVED:
+                case SignalementStatus::ARCHIVED->value:
                     $data['count_signalement_archives'] = $countByStatusItem['count'];
                     break;
-                case Signalement::STATUS_REFUSED:
+                case SignalementStatus::REFUSED->value:
                     $data['count_signalement_refuses'] = $countByStatusItem['count'];
                     break;
                 default:
