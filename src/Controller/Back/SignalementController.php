@@ -157,13 +157,10 @@ class SignalementController extends AbstractController
         $canEditSignalement = false;
         $canEditClosedSignalement = false;
         if (SignalementStatus::ACTIVE === $signalement->getStatut()) {
-            $canEditSignalement = $this->isGranted('ROLE_ADMIN')
-                || $this->isGranted('ROLE_ADMIN_TERRITORY')
-                || $isAffectationAccepted;
+            $canEditSignalement = $this->isGranted('ROLE_ADMIN_TERRITORY') || $isAffectationAccepted;
         }
-        if (SignalementStatus::CLOSED === $signalement->getStatut()) {
-            $canEditClosedSignalement = $this->isGranted('ROLE_ADMIN')
-                || $this->isGranted('ROLE_ADMIN_TERRITORY');
+        if (SignalementStatus::CLOSED === $signalement->getStatut() && $this->isGranted('ROLE_ADMIN_TERRITORY')) {
+            $canEditClosedSignalement = true;
         }
 
         $signalementQualificationNDE = $signalementQualificationRepository->findOneBy([
