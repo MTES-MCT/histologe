@@ -247,6 +247,23 @@ class Partner implements EntityHistoryInterface
         return $this;
     }
 
+    public function receiveEmailNotifications(?User $excludeUser = null): bool
+    {
+        if ($this->email) {
+            return true;
+        }
+        foreach ($this->getUsers() as $user) {
+            if ($excludeUser && $user->getId() === $excludeUser->getId()) {
+                continue;
+            }
+            if (User::STATUS_ACTIVE === $user->getStatut() && $user->getIsMailingActive()) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
     public function getEsaboraUrl(): ?string
     {
         return $this->esaboraUrl;

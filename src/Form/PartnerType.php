@@ -238,22 +238,8 @@ class PartnerType extends AbstractType
     public function validatePartnerCanBeNotified(mixed $value, ExecutionContextInterface $context)
     {
         if ($value instanceof Partner) {
-            $partner = $value;
-            $usersActive = $partner->getUsers()->filter(function (User $user) {
-                return User::STATUS_ACTIVE === $user->getStatut();
-            });
-
-            if (!empty($partner->getEmail()) || $usersActive->isEmpty()) {
-                return;
-            }
-
-            $canBeNotified = $usersActive->exists(function (int $i, User $user) {
-                return $user->getIsMailingActive();
-            });
-
-            if (!$canBeNotified) {
-                $context->addViolation('E-mail générique manquante: Il faut donc obligatoirement qu\'au moins
-                1 compte utilisateur accepte de recevoir les e-mails.');
+            if (!$value->receiveEmailNotifications()) {
+                $context->addViolation('E-mail générique manquant: Il faut obligatoirement qu\'un compte utilisateur accepte de recevoir les e-mails.');
             }
         }
     }

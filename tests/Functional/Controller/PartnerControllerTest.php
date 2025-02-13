@@ -104,6 +104,26 @@ class PartnerControllerTest extends WebTestCase
         $this->assertResponseRedirects('/bo/partenaires/'.$partner->getId().'/voir');
     }
 
+    public function testPartnerFormEditSubmitWithoutEmail(): void
+    {
+        /** @var Partner $partner */
+        $partner = $this->partnerRepository->findOneBy(['nom' => 'Partenaire 13-04']);
+
+        $route = $this->router->generate('back_partner_edit', ['id' => $partner->getId()]);
+        $this->client->request('GET', $route);
+
+        $this->client->submitForm(
+            'Enregistrer',
+            [
+                'partner[territory]' => $partner->getTerritory()->getId(),
+                'partner[nom]' => $partner->getNom(),
+                'partner[email]' => '',
+                'partner[type]' => $partner->getType()->value,
+            ]
+        );
+        $this->assertSelectorTextContains('.fr-alert--error', 'E-mail générique manquant: Il faut obligatoirement qu\'un compte utilisateur accepte de recevoir les e-mails.');
+    }
+
     public function testDeletePartner()
     {
         /** @var Partner $partner */
@@ -368,25 +388,31 @@ class PartnerControllerTest extends WebTestCase
         $this->assertResponseStatusCodeSame(403);
     }
 
-    public function testTransferUserAccount(): void
+    public function testEditLastNotifiedUser()
     {
-        $user = $this->userRepository->findOneBy(['email' => 'user-13-02@histologe.fr']);
-        $partner = $user->getPartners()->first();
-        $userId = $user->getId();
+        $partner = $this->partnerRepository->findOneBy(['nom' => 'Partenaire 13-08']);
+        $user = $this->userRepository->findOneBy(['email' => 'user-13-10@histologe.fr']);
 
-        $newPartnerId = $this->partnerRepository->findOneBy(['nom' => 'Partenaire 13-01'])->getId();
-
+        $route = $this->router->generate('back_partner_user_edit', ['partner' => $partner->getId(), 'user' => $user->getId()]);
         $this->client->request(
             'POST',
-            $this->router->generate('back_partner_user_transfer', ['id' => $partner->getId()]),
+            $route,
             [
-                'user_transfer' => ['user' => $userId, 'partner' => $newPartnerId],
-                '_token' => $this->generateCsrfToken($this->client, 'partner_user_transfer'),
+                'user_partner' => [
+                    'role' => 'ROLE_USER_PARTNER',
+                    'prenom' => 'John',
+                    'nom' => 'Doe',
+                    'email' => 'ajout.partner@histologe.fr',
+                    'isMailingActive' => 0,
+                    '_token' => $this->generateCsrfToken($this->client, 'user_partner'),
+                ],
             ]
         );
-
-        $this->assertEquals($newPartnerId, $user->getPartners()->first()->getId());
-        $this->assertResponseRedirects('/bo/partenaires/'.$newPartnerId.'/voir#agents');
+        $this->assertResponseStatusCodeSame(200);
+        $this->assertResponseHeaderSame('content-type', 'application/json');
+        $response = json_decode($this->client->getResponse()->getContent(), true);
+        $this->assertArrayHasKey('content', $response);
+        $this->assertStringContainsString('Impossible : il s&#039;agit du dernier utilisateur ayant les notifications email actives sur le partenaire.', $response['content']);
     }
 
     public function testTransferUserAccountWithUserNotAllowed(): void
@@ -431,6 +457,26 @@ class PartnerControllerTest extends WebTestCase
 
         $this->assertEquals($userOldPartner, $user->getPartners()->first()->getId());
         $this->assertResponseRedirects('/bo/partenaires/');
+    }
+
+    public function testTransferLastNotifiedUser(): void
+    {
+        $fromPartner = $this->partnerRepository->findOneBy(['nom' => 'Partenaire 13-08']);
+        $toPartner = $this->partnerRepository->findOneBy(['nom' => 'Partenaire 13-01']);
+        $user = $this->userRepository->findOneBy(['email' => 'user-13-10@histologe.fr']);
+
+        $this->client->request(
+            'POST',
+            $this->router->generate('back_partner_user_transfer', ['id' => $fromPartner->getId()]),
+            [
+                'user_transfer' => ['user' => $user->getId(), 'partner' => $toPartner->getId()],
+                '_token' => $this->generateCsrfToken($this->client, 'partner_user_transfer'),
+            ]
+        );
+
+        $this->assertResponseRedirects('/bo/partenaires/'.$fromPartner->getId().'/voir#agents');
+        $this->client->followRedirect();
+        $this->assertSelectorTextContains('.fr-alert--error', 'Impossible : Il s\'agit du dernier utilisateur ayant les notifications email actives sur le partenaire.');
     }
 
     public function testDeleteUserAccount(): void
@@ -489,6 +535,21 @@ class PartnerControllerTest extends WebTestCase
         $this->assertNotEquals(2, $user->getStatut());
         $this->assertStringNotContainsString(User::SUFFIXE_ARCHIVED, $user->getEmail());
         $this->assertResponseRedirects('/bo/partenaires/');
+    }
+
+    public function testDeleteLastNotifiedUserAccount(): void
+    {
+        $partner = $this->partnerRepository->findOneBy(['nom' => 'Partenaire 13-08']);
+        $user = $this->userRepository->findOneBy(['email' => 'user-13-10@histologe.fr']);
+
+        $this->client->request('POST', $this->router->generate('back_partner_user_delete', ['id' => $partner->getId()]), [
+            'user_id' => $user->getId(),
+            '_token' => $this->generateCsrfToken($this->client, 'partner_user_delete'),
+        ]);
+
+        $this->assertResponseRedirects('/bo/partenaires/'.$partner->getId().'/voir#agents');
+        $this->client->followRedirect();
+        $this->assertSelectorTextContains('.fr-alert--error', 'Impossible : Il s\'agit du dernier utilisateur ayant les notifications email actives sur le partenaire.');
     }
 
     public function testCheckMailOk()

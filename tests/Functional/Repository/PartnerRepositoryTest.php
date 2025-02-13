@@ -46,7 +46,7 @@ class PartnerRepositoryTest extends KernelTestCase
         $signalement = $signalementRepository->findOneBy(['reference' => '2022-1']);
 
         $partners = $this->partnerRepository->findByLocalization($signalement, false);
-        $this->assertCount(5, $partners);
+        $this->assertCount(6, $partners);
     }
 
     public function testFindPossiblePartnersForCOR69(): void
