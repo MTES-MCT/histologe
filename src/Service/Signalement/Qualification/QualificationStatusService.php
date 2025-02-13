@@ -51,7 +51,8 @@ class QualificationStatusService implements RuntimeExtensionInterface
             return QualificationStatus::NDE_AVEREE;
         }
 
-        if (isset($consoEnergie) && $consoEnergie <= 450 && 'G' !== $signalementQualification->getDetails()['classe_energetique']) {
+        if ((isset($consoEnergie) && $consoEnergie <= 450 && 'G' !== $signalementQualification->getDetails()['classe_energetique'])
+            || (null === $consoEnergie && 'G' !== $signalementQualification->getDetails()['classe_energetique'] && !$signalementQualification->hasDesordres())) {
             return QualificationStatus::NDE_OK;
         }
 

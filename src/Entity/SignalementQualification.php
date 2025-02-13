@@ -96,6 +96,18 @@ class SignalementQualification
         return $this;
     }
 
+    public function hasDesordres(): bool
+    {
+        if (null !== $this->getDesordrePrecisionIds() && \count($this->getDesordrePrecisionIds()) > 0) {
+            return true;
+        }
+        if (null !== $this->getCriticites() && \count($this->getCriticites()) > 0) {
+            return true;
+        }
+
+        return false;
+    }
+
     public function getDetails(): array
     {
         return $this->details;
