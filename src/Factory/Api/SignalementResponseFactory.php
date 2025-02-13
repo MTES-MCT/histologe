@@ -13,7 +13,6 @@ use App\Entity\Affectation;
 use App\Entity\Enum\AffectationStatus;
 use App\Entity\Enum\Api\PersonneType;
 use App\Entity\Enum\DesordreCritereZone;
-use App\Entity\Enum\SignalementStatus;
 use App\Entity\Signalement;
 use App\Entity\User;
 use App\Service\Signalement\SignalementDesordresProcessor;
