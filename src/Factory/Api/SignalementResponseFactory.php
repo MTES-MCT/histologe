@@ -53,7 +53,7 @@ readonly class SignalementResponseFactory
         $signalementResponse->uuid = $signalement->getUuid();
         $signalementResponse->reference = $signalement->getReference();
         $signalementResponse->dateCreation = $signalement->getCreatedAt()->format(\DATE_ATOM);
-        $signalementResponse->statut = SignalementStatus::mapApiStatus($signalement->getStatut());
+        $signalementResponse->statut = $signalement->getStatut();
         $signalementResponse->dateValidation = $signalement->getValidatedAt()?->format(\DATE_ATOM);
         $signalementResponse->dateCloture = $signalement->getClosedAt()?->format(\DATE_ATOM);
         $signalementResponse->motifCloture = $signalement->getMotifCloture();

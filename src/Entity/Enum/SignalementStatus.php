@@ -58,16 +58,4 @@ enum SignalementStatus: string
             default => throw new \UnexpectedValueException('Unexpected signalement status : '.$label),
         };
     }
-
-    public static function mapApiStatus(SignalementStatus $status): SignalementApiStatus
-    {
-        return match ($status) {
-            SignalementStatus::DRAFT => SignalementApiStatus::BROUILLON,
-            SignalementStatus::NEED_VALIDATION => SignalementApiStatus::NOUVEAU,
-            SignalementStatus::ACTIVE => SignalementApiStatus::EN_COURS,
-            SignalementStatus::CLOSED => SignalementApiStatus::FERME,
-            SignalementStatus::ARCHIVED => SignalementApiStatus::ARCHIVE,
-            SignalementStatus::REFUSED => SignalementApiStatus::REFUSE,
-        };
-    }
 }
