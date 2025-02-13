@@ -42,7 +42,7 @@ class SuiviCreateController extends AbstractController
     )]
     #[OA\Response(
         response: Response::HTTP_CREATED,
-        description: 'Suivi crée avec succès',
+        description: 'Suivi créé avec succès',
         content: new OA\JsonContent(ref: new Model(type: SuiviResponse::class))
     )]
     #[OA\Response(
