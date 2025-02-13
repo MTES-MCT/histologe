@@ -5,7 +5,6 @@ namespace App\Controller\Security;
 use App\Entity\Signalement;
 use App\Entity\User;
 use App\Service\Files\ImageVariantProvider;
-use App\Service\Mailer\NotificationMailerRegistry;
 use Nelmio\ApiDocBundle\Attribute\Security;
 use OpenApi\Attributes as OA;
 use Psr\Log\LoggerInterface;
