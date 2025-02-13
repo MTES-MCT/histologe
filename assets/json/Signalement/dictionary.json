@@ -12,7 +12,7 @@
   "plusieurs_pieces": { "default": "Plusieurs pièces" },
   "caf": { "default": "CAF" },
   "msa": { "default": "MSA" },
-  "post2023": { "default": "En 2023" },
+  "post2023": { "default": "A partir de 2023" },
   "before2023": { "default": "Avant 2023" },
   "before_movein": { "default": "Avant emménagement" },
   "after_movein": { "default": "Après emménagement" },

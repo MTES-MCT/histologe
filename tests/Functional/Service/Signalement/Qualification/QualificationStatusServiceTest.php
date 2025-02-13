@@ -35,7 +35,6 @@ class QualificationStatusServiceTest extends KernelTestCase
         /** @var SignalementQualification $signalementQualification */
         $signalementQualification = $signalement->getSignalementQualifications()[0];
 
-        $signalementQualification->setDernierBailAt(new \DateTimeImmutable($qualificationNDERequest->getDateDernierBail()));
         $signalementQualification->setDetails($qualificationNDERequest->getDetails());
         $signalement->setSuperficie($qualificationNDERequest->getSuperficie());
 
@@ -51,7 +50,6 @@ class QualificationStatusServiceTest extends KernelTestCase
     {
         $qualificationNDERequest = new QualificationNDERequest(
             dateEntree: null,
-            dateDernierBail: null,
             dateDernierDPE: null,
             superficie: null,
             consommationEnergie: null,
@@ -60,16 +58,6 @@ class QualificationStatusServiceTest extends KernelTestCase
         yield 'No date bail Status Check' => [$qualificationNDERequest, QualificationStatus::NDE_CHECK];
         $qualificationNDERequest = new QualificationNDERequest(
             dateEntree: '2023-01-01',
-            dateDernierBail: '2022-01-01',
-            dateDernierDPE: null,
-            superficie: null,
-            consommationEnergie: null,
-            dpe: null
-        );
-        yield 'Bail before 2023 Status Archived' => [$qualificationNDERequest, QualificationStatus::ARCHIVED];
-        $qualificationNDERequest = new QualificationNDERequest(
-            dateEntree: '2023-02-01',
-            dateDernierBail: '2023-02-01',
             dateDernierDPE: null,
             superficie: null,
             consommationEnergie: null,
@@ -78,7 +66,6 @@ class QualificationStatusServiceTest extends KernelTestCase
         yield 'Unknown DPE Status NDE Check' => [$qualificationNDERequest, QualificationStatus::NDE_CHECK];
         $qualificationNDERequest = new QualificationNDERequest(
             dateEntree: '2023-02-01',
-            dateDernierBail: '2023-02-01',
             dateDernierDPE: null,
             superficie: null,
             consommationEnergie: null,
@@ -87,7 +74,6 @@ class QualificationStatusServiceTest extends KernelTestCase
         yield 'No DPE Status NDE Avérée' => [$qualificationNDERequest, QualificationStatus::NDE_AVEREE];
         $qualificationNDERequest = new QualificationNDERequest(
             dateEntree: '2023-02-01',
-            dateDernierBail: '2023-02-01',
             dateDernierDPE: '2022-02-01',
             superficie: 30,
             consommationEnergie: 30000,
@@ -96,7 +82,6 @@ class QualificationStatusServiceTest extends KernelTestCase
         yield 'DPE Before 2023 Status NDE Avérée' => [$qualificationNDERequest, QualificationStatus::NDE_AVEREE];
         $qualificationNDERequest = new QualificationNDERequest(
             dateEntree: '2023-02-01',
-            dateDernierBail: '2023-02-01',
             dateDernierDPE: '2022-02-01',
             superficie: 30,
             consommationEnergie: 10000,
@@ -105,7 +90,6 @@ class QualificationStatusServiceTest extends KernelTestCase
         yield 'DPE Before 2023 Status NDE OK' => [$qualificationNDERequest, QualificationStatus::NDE_OK];
         $qualificationNDERequest = new QualificationNDERequest(
             dateEntree: '2023-02-01',
-            dateDernierBail: '2023-02-01',
             dateDernierDPE: '2023-02-01',
             superficie: 100,
             consommationEnergie: 580,
@@ -114,7 +98,6 @@ class QualificationStatusServiceTest extends KernelTestCase
         yield 'DPE after 2023 Status NDE Avérée' => [$qualificationNDERequest, QualificationStatus::NDE_AVEREE];
         $qualificationNDERequest = new QualificationNDERequest(
             dateEntree: '2023-02-01',
-            dateDernierBail: '2023-02-01',
             dateDernierDPE: '2023-02-01',
             superficie: 100,
             consommationEnergie: 320,

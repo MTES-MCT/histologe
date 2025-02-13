@@ -273,7 +273,6 @@ class SignalementManagerTest extends WebTestCase
         $signalementQualification = $signalement->getSignalementQualifications()->first();
         $qualificationNDERequest = new QualificationNDERequest(
             dateEntree: '1970-01-01',
-            dateDernierBail: '1970-01-01',
             dateDernierDPE: '2023-01-02',
             superficie: 50,
             consommationEnergie: 10000,
@@ -282,7 +281,6 @@ class SignalementManagerTest extends WebTestCase
         $this->signalementManager->updateFromSignalementQualification($signalementQualification, $qualificationNDERequest);
         $this->assertEquals('1970-01-01', $signalement->getDateEntree()->format('Y-m-d'));
         $this->assertEquals(50, $signalement->getSuperficie());
-        $this->assertEquals('1970-01-01', $signalementQualification->getDernierBailAt()->format('Y-m-d'));
     }
 
     public function testUpdateFromSignalementQualificationWithNullNdeRequest(): void
@@ -293,7 +291,6 @@ class SignalementManagerTest extends WebTestCase
         $signalementQualification = $signalement->getSignalementQualifications()->first();
         $qualificationNDERequest = new QualificationNDERequest(
             dateEntree: null,
-            dateDernierBail: null,
             dateDernierDPE: null,
             superficie: null,
             consommationEnergie: null,
@@ -302,7 +299,6 @@ class SignalementManagerTest extends WebTestCase
         $this->signalementManager->updateFromSignalementQualification($signalementQualification, $qualificationNDERequest);
         $this->assertEquals('2023-01-08', $signalement->getDateEntree()->format('Y-m-d'));
         $this->assertEquals(100, $signalement->getSuperficie());
-        $this->assertEquals('2023-01-08', $signalementQualification->getDernierBailAt()->format('Y-m-d'));
     }
 
     private function getSignalementData(?string $reference = null): array

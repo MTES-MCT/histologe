@@ -491,11 +491,6 @@ class LoadSignalementData extends Fixture implements OrderedFixtureInterface
         $signalementQualification = (new SignalementQualification())
             ->setSignalement($signalement)
             ->setQualification(Qualification::from($qualificationLabel))
-            ->setDernierBailAt(
-                isset($row['date_entree'])
-                    ? new \DateTimeImmutable($row['date_entree'])
-                    : new \DateTimeImmutable()
-            )
             ->setCriticites($signalement->getCriticites()->map(function (Criticite $criticite) {
                 return $criticite->getId();
             })->toArray());

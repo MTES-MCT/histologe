@@ -2,7 +2,7 @@
   "profil": "locataire",
   "currentStep": "informations_complementaires",
   "bail_dpe_dpe": "oui",
-  "bail_dpe_classe_energetique": "E",
+  "bail_dpe_classe_energetique": "G",
   "bail_dpe_bail": "oui",
   "type_logement_rdc": "non",
   "categorieDisorders": {
@@ -125,6 +125,7 @@
   "signalement_concerne_profil_detail_occupant": "locataire",
   "adresse_logement_complement_adresse_escalier": "A",
   "desordres_logement_electricite_manque_prises": 1,
+  "desordres_logement_chauffage_details_dpe_annee": "post2023",
   "signalement_concerne_logement_social_autre_tiers": "oui",
   "desordres_logement_nuisibles_cafards_details_date": "after_movein",
   "type_logement_commodites_salle_de_bain_collective": "oui",

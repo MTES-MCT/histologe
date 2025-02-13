@@ -11,18 +11,6 @@ class QualificationStatusService implements RuntimeExtensionInterface
 {
     public function getNDEStatus(SignalementQualification $signalementQualification): ?QualificationStatus
     {
-        // pas de date de bail -> à vérifier
-        if (null === $signalementQualification->getDernierBailAt()) {
-            return QualificationStatus::NDE_CHECK;
-        }
-
-        // bail avant 2023 -> pas concerné
-        if ($signalementQualification->getDernierBailAt()->format('Y') < '2023') {
-            return QualificationStatus::ARCHIVED;
-        }
-
-        // bail après 2023, on passe aux vérifications DPE
-
         // on ne sait pas si on a un DPE -> à vérifier
         if ('' === $signalementQualification->getDetails()['DPE']
         || null === $signalementQualification->getDetails()['DPE']) {
@@ -63,7 +51,8 @@ class QualificationStatusService implements RuntimeExtensionInterface
             return QualificationStatus::NDE_AVEREE;
         }
 
-        if (isset($consoEnergie) && $consoEnergie <= 450) {
+        if ((isset($consoEnergie) && $consoEnergie <= 450 && 'G' !== $signalementQualification->getDetails()['classe_energetique'])
+            || (null === $consoEnergie && 'G' !== $signalementQualification->getDetails()['classe_energetique'] && !$signalementQualification->hasDesordres())) {
             return QualificationStatus::NDE_OK;
         }
 

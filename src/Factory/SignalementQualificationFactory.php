@@ -40,12 +40,12 @@ class SignalementQualificationFactory
     public function createNDEInstanceFrom(
         Signalement $signalement,
         array $listNDECriticites = [],
-        ?string $dataDateBail = '',
         ?string $dataConsoSizeYear = '',
         ?string $dataConsoYear = '',
         ?string $dataConsoSize = '',
         ?string $dataHasDPE = '',
         ?string $dataDateDPE = '',
+        ?string $classeEnergetique = '',
     ): SignalementQualification {
         $signalementQualification = new SignalementQualification();
         $signalementQualification->setSignalement($signalement);
@@ -53,34 +53,25 @@ class SignalementQualificationFactory
 
         $dataHasDPEToSave = null;
         $dataConsoToSave = null;
-        $dataDateBailToSave = null;
-        if ('Je ne sais pas' !== $dataDateBail) {
-            if (null !== $signalement->getDateEntree() && $signalement->getDateEntree()->format('Y') >= 2023) {
-                $signalementQualification->setDernierBailAt(new \DateTimeImmutable($signalement->getDateEntree()->format('Y-m-d')));
-            } elseif (!empty($dataDateBail)) {
-                $signalementQualification->setDernierBailAt(new \DateTimeImmutable($dataDateBail));
-            }
-            $dataDateBailToSave = $signalementQualification->getDernierBailAt()?->format('Y-m-d');
-            if (
-                isset($dataDateDPE)
-                && '1970-01-01' === $dataDateDPE
-                && !empty($dataConsoYear)
-                && !empty($dataConsoSize)
-            ) {
-                $dataConsoToSave = $dataConsoYear;
-            } elseif (!empty($dataConsoSizeYear)) {
-                $dataConsoToSave = $dataConsoSizeYear;
-            }
-
-            $dataHasDPEToSave = ('' === $dataHasDPE) ? null : $dataHasDPE;
+        if (
+            isset($dataDateDPE)
+            && '1970-01-01' === $dataDateDPE
+            && !empty($dataConsoYear)
+            && !empty($dataConsoSize)
+        ) {
+            $dataConsoToSave = $dataConsoYear;
+        } elseif (!empty($dataConsoSizeYear)) {
+            $dataConsoToSave = $dataConsoSizeYear;
         }
+
+        $dataHasDPEToSave = ('' === $dataHasDPE) ? null : $dataHasDPE;
         $qualificationNDERequest = new QualificationNDERequest(
             dateEntree: $signalement->getDateEntree() ? $signalement->getDateEntree()->format('Y-m-d') : null,
-            dateDernierBail: $dataDateBailToSave,
             dateDernierDPE: isset($dataDateDPE) ? $dataDateDPE : null,
             superficie: !empty($dataConsoSize) ? (float) $dataConsoSize : null,
             consommationEnergie: null !== $dataConsoToSave ? (int) $dataConsoToSave : null,
             dpe: null !== $dataHasDPEToSave ? (bool) $dataHasDPEToSave : null,
+            classeEnergetique: $classeEnergetique
         );
         $signalementQualification->setDetails($qualificationNDERequest->getDetails());
         $signalementQualification->setStatus(

@@ -9,11 +9,11 @@ class QualificationNDERequest
 
     public function __construct(
         private ?string $dateEntree = null,
-        private ?string $dateDernierBail = null,
         private ?string $dateDernierDPE = null,
         private ?float $superficie = null,
         private ?int $consommationEnergie = null,
         private ?bool $dpe = null,
+        private ?string $classeEnergetique = null,
     ) {
     }
 
@@ -25,11 +25,6 @@ class QualificationNDERequest
     public function getSuperficie(): ?float
     {
         return $this->superficie;
-    }
-
-    public function getDateDernierBail(): ?string
-    {
-        return $this->dateDernierBail;
     }
 
     public function getDateDernierDPE(): ?string
@@ -47,12 +42,18 @@ class QualificationNDERequest
         return $this->dpe;
     }
 
+    public function getClasseEnergetique(): ?string
+    {
+        return $this->classeEnergetique;
+    }
+
     public function getDetails(): ?array
     {
         return [
             'consommation_energie' => $this->consommationEnergie,
             'DPE' => $this->dpe,
             'date_dernier_dpe' => $this->dateDernierDPE,
+            'classe_energetique' => $this->classeEnergetique,
         ];
     }
 }

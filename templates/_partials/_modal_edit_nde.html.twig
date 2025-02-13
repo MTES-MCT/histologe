@@ -31,100 +31,89 @@
                             </div>
                         </div>
                         <form method="POST" name="signalement-edit-nde" id="signalement-edit-nde-form" enctype="application/json"
-                        action="{{ path('back_signalement_qualification_editer',{uuid:signalement.uuid, signalementQualification:signalementQualificationNDE.id}) }}">
-                            <div class="fr-grid-row fr-grid-row--gutters fr-my-3w"
-                                id="signalement-edit-nde-form-row">
-                                <div class="fr-col-6">
-                                    <fieldset class="fr-fieldset fr-fieldset--inline">
-                                        <legend class="fr-fieldset__legend fr-text--regular" id='signalement-edit-nde-date-entree-legend'>
-                                            Entrée dans le logement*
-                                        </legend>
-                                        <p id="signalement-edit-nde-date-entree-error" class="fr-error-text fr-hidden fr-my-3v">
-                                            Veuillez préciser la date d'entrée dans le logement.
-                                        </p>
-                                        <div class="fr-input-group">
-                                            {% set dateEntree = '' %}
-                                            {% if signalement.dateEntree %}
-                                                {% set dateEntree = signalement.dateEntree.format('Y-m-d') %}
-                                            {% endif %}
-                                            <input class="fr-input" type="date" id="signalement-edit-nde-date-entree" name="dateEntree" value="{{ dateEntree }}">
-                                        </div>
-                                    </fieldset>
-                                </div>
-                                <div class="fr-col-6">
-                                    <fieldset class="fr-fieldset fr-fieldset--inline">
-                                        <legend class="fr-fieldset__legend fr-text--regular" id='signalement-edit-nde-dpe-legend'>
-                                            DPE Disponible ?*
-                                        </legend>
-                                        <p id="signalement-edit-nde-dpe-error" class="fr-error-text fr-hidden fr-my-3v">
-                                            Veuillez préciser la disponibilité du DPE.
-                                        </p>
-                                        <div class="fr-fieldset__content">
-                                            <div class="fr-radio-group">
-                                                <input type="radio" id="signalement-edit-nde-dpe-1" name="dpe" value='1' {% if signalementQualificationNDE.details and signalementQualificationNDE.details.DPE == 1 %}checked{% endif %}>
-                                                <label class="fr-label" for="signalement-edit-nde-dpe-1">Oui
-                                                </label>
-                                            </div>
-                                            <div class="fr-radio-group">
-                                                <input type="radio" id="signalement-edit-nde-dpe-0" name="dpe" value='0' {% if signalementQualificationNDE.details and signalementQualificationNDE.details.DPE == 0 %}checked{% endif %}>
-                                                <label class="fr-label" for="signalement-edit-nde-dpe-0">Non
-                                                </label>
-                                            </div>
-                                            <div class="fr-radio-group">
-                                                <input type="radio" id="signalement-edit-nde-dpe-2" name="dpe" value='null' {% if signalementQualificationNDE.details and signalementQualificationNDE.details.DPE is null %}checked{% endif %}>
-                                                <label class="fr-label" for="signalement-edit-nde-dpe-2">Ne sait pas
-                                                </label>
-                                            </div>
-                                        </div>
-                                    </fieldset>
-                                </div>
+                        action="{{ path('back_signalement_qualification_editer',{uuid:signalement.uuid, signalementQualification:signalementQualificationNDE.id}) }}">                                    
+                            <div class="fr-input-group fr-mt-3w">
+                                {% set dateEntree = '' %}
+                                {% if signalement.dateEntree %}
+                                    {% set dateEntree = signalement.dateEntree.format('Y-m-d') %}
+                                {% endif %}
+                                <label class="fr-label" for="signalement-edit-nde-date-entree">Entrée dans le logement*
+                                </label>
+                                <p id="signalement-edit-nde-date-entree-error" class="fr-error-text fr-hidden fr-my-3v">
+                                    Veuillez préciser la date d'entrée dans le logement.
+                                </p>
+                                <input class="fr-input"
+                                    type="date"
+                                    id="signalement-edit-nde-date-entree"
+                                    name="dateEntree"
+                                    value="{{ dateEntree }}"
+                                >
                             </div>
-                            <div class="fr-grid-row fr-grid-row--gutters fr-my-3w"
-                                id="signalement-edit-nde-form-row">
-                                <div class="fr-col-6">
-                                    <fieldset class="fr-fieldset fr-fieldset--inline">
-                                        <legend class="fr-fieldset__legend fr-text--regular" id='signalement-edit-nde-dernier-bail-legend'>
-                                            Date du dernier bail*
-                                        </legend>
-                                        <p id="signalement-edit-nde-dernier-bail-error" class="fr-error-text fr-hidden fr-my-3v">
-                                            Veuillez préciser la date du dernier bail.
-                                        </p>
-                                        <div class="fr-fieldset__content">
-                                            <div class="fr-radio-group">
-                                                <input type="radio" id="signalement-edit-nde-dernier-bail-before" name="dateDernierBail" value="1970-01-01" {% if signalementQualificationNDE.dernierBailAt and signalementQualificationNDE.dernierBailAt|date('Y')<2023 %}checked{% endif %}>
-                                                <label class="fr-label" for="signalement-edit-nde-dernier-bail-before">Avant 2023
-                                                </label>
-                                            </div>
-                                            <div class="fr-radio-group">
-                                                <input type="radio" id="signalement-edit-nde-dernier-bail-after" name="dateDernierBail" value="2023-01-02" {% if signalementQualificationNDE.dernierBailAt and signalementQualificationNDE.dernierBailAt|date('Y')>=2023 %}checked{% endif %}>
-                                                <label class="fr-label" for="signalement-edit-nde-dernier-bail-after">A partir de 2023
-                                                </label>
-                                            </div>
-                                        </div>
-                                    </fieldset>
+                            <fieldset class="fr-fieldset fr-fieldset--inline">
+                                <legend class="fr-fieldset__legend fr-text--regular" id='signalement-edit-nde-dpe-legend'>
+                                    DPE Disponible ?*
+                                </legend>
+                                <p id="signalement-edit-nde-dpe-error" class="fr-error-text fr-hidden fr-my-3v">
+                                    Veuillez préciser la disponibilité du DPE.
+                                </p>
+                                <div class="fr-fieldset__content">
+                                    <div class="fr-radio-group">
+                                        <input type="radio" id="signalement-edit-nde-dpe-1" name="dpe" value='1' {% if signalementQualificationNDE.details and signalementQualificationNDE.details.DPE == 1 %}checked{% endif %}>
+                                        <label class="fr-label" for="signalement-edit-nde-dpe-1">Oui
+                                        </label>
+                                    </div>
+                                    <div class="fr-radio-group">
+                                        <input type="radio" id="signalement-edit-nde-dpe-0" name="dpe" value='0' {% if signalementQualificationNDE.details and signalementQualificationNDE.details.DPE == 0 %}checked{% endif %}>
+                                        <label class="fr-label" for="signalement-edit-nde-dpe-0">Non
+                                        </label>
+                                    </div>
+                                    <div class="fr-radio-group">
+                                        <input type="radio" id="signalement-edit-nde-dpe-2" name="dpe" value='null' {% if signalementQualificationNDE.details and signalementQualificationNDE.details.DPE is null %}checked{% endif %}>
+                                        <label class="fr-label" for="signalement-edit-nde-dpe-2">Ne sait pas
+                                        </label>
+                                    </div>
                                 </div>
-                                <div class="fr-col-6">
-                                    <fieldset class="fr-fieldset fr-fieldset--inline">
-                                        <legend class="fr-fieldset__legend fr-text--regular" id='signalement-edit-nde-dpe-date-legend'>
-                                            Date du dernier DPE
-                                        </legend>
-                                        <div class="fr-fieldset__content">
-                                            <div class="fr-radio-group">
-                                                <input type="radio" id="signalement-edit-nde-dpe-date-before" name="dateDernierDPE" value="1970-01-01" {% if signalementQualificationNDE.details.date_dernier_dpe and signalementQualificationNDE.details.date_dernier_dpe|date('Y')<2023 %}checked{% endif %}>
-                                                <label class="fr-label" for="signalement-edit-nde-dpe-date-before">Avant 2023
-                                                </label>
-                                            </div>
-                                            <div class="fr-radio-group">
-                                                <input type="radio" id="signalement-edit-nde-dpe-date-after" name="dateDernierDPE" value="2023-01-02" {% if signalementQualificationNDE.details.date_dernier_dpe and signalementQualificationNDE.details.date_dernier_dpe|date('Y')>=2023 %}checked{% endif %}>
-                                                <label class="fr-label" for="signalement-edit-nde-dpe-date-after">A partir de 2023
-                                                </label>
-                                            </div>
-                                        </div>
-                                    </fieldset>
+                            </fieldset>
+                            <fieldset class="fr-fieldset fr-fieldset--inline">
+                                <legend class="fr-fieldset__legend fr-text--regular" id='signalement-edit-nde-dpe-date-legend'>
+                                    Date du dernier DPE
+                                </legend>
+                                <div class="fr-fieldset__content">
+                                    <div class="fr-radio-group">
+                                        <input type="radio" id="signalement-edit-nde-dpe-date-before" name="dateDernierDPE" value="1970-01-01" {% if signalementQualificationNDE.details.date_dernier_dpe and signalementQualificationNDE.details.date_dernier_dpe|date('Y')<2023 %}checked{% endif %}>
+                                        <label class="fr-label" for="signalement-edit-nde-dpe-date-before">Avant 2023
+                                        </label>
+                                    </div>
+                                    <div class="fr-radio-group">
+                                        <input type="radio" id="signalement-edit-nde-dpe-date-after" name="dateDernierDPE" value="2023-01-02" {% if signalementQualificationNDE.details.date_dernier_dpe and signalementQualificationNDE.details.date_dernier_dpe|date('Y')>=2023 %}checked{% endif %}>
+                                        <label class="fr-label" for="signalement-edit-nde-dpe-date-after">A partir de 2023
+                                        </label>
+                                    </div>
                                 </div>
+                            </fieldset>
+                            <div class="fr-select-group">
+                                {% set bailDpeClasseEnergetique = signalement.typeCompositionLogement ? signalement.typeCompositionLogement.bailDpeClasseEnergetique : null %}
+                                <label class="fr-label" for="informationLogementBailDpeClasseEnergetique">Classe énergétique
+                                    {{ show_label_facultatif(
+                                        'App\\Dto\\Request\\Signalement\\InformationsLogementRequest',
+                                        'bailDpeClasseEnergetique',
+                                        signalement.profileDeclarant,
+                                        null != signalement.createdFrom)
+                                    }}
+                                </label>
+                                <select class="fr-select" id="informationLogementBailDpeClasseEnergetique" name="bailDpeClasseEnergetique">
+                                    <option value="" {{ bailDpeClasseEnergetique not in ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'nsp'] ? 'selected' : '' }}></option>
+                                    <option value="A" {{ bailDpeClasseEnergetique is same as 'A' ? 'selected' : '' }}>A</option>
+                                    <option value="B" {{ bailDpeClasseEnergetique is same as 'B' ? 'selected' : '' }}>B</option>
+                                    <option value="C" {{ bailDpeClasseEnergetique is same as 'C' ? 'selected' : '' }}>C</option>
+                                    <option value="D" {{ bailDpeClasseEnergetique is same as 'D' ? 'selected' : '' }}>D</option>
+                                    <option value="E" {{ bailDpeClasseEnergetique is same as 'E' ? 'selected' : '' }}>E</option>
+                                    <option value="F" {{ bailDpeClasseEnergetique is same as 'F' ? 'selected' : '' }}>F</option>
+                                    <option value="G" {{ bailDpeClasseEnergetique is same as 'G' ? 'selected' : '' }}>G</option>
+                                    <option value="nsp" {{ bailDpeClasseEnergetique is same as 'nsp' ? 'selected' : '' }}>Je ne sais pas</option>
+                                </select>
                             </div>
-                            <div class="fr-grid-row fr-grid-row--gutters fr-grid-row--middle fr-my-3w"
-                                id="signalement-edit-nde-form-row">
+                            <div class="fr-grid-row fr-grid-row--gutters fr-grid-row--middle fr-my-3w" id="signalement-edit-nde-form-row"> 
                                 {# Si date de DPE à partir du 01/01/2023 -> On affiche un champ unique kWh/m²/an sur toute la largeur #}
                                 {% set isDPE2023 = signalementQualificationNDE.details.date_dernier_dpe and signalementQualificationNDE.details.date_dernier_dpe|date('Y') >= '2023' %}
                                 <div class="{% if isDPE2023 %}fr-col-12{% else %}fr-col-6{% endif %} field-nde-conso-energie">
@@ -132,7 +121,7 @@
                                         <label class="fr-label" for="signalement-edit-nde-conso-energie">
                                             Consommation énergétique
                                         </label>
-                                        <input class="fr-input fr-col-10 fr-display-inline" pattern="[0-9]*" inputmode="numeric" type="number" id="signalement-edit-nde-conso-energie" name="consommationEnergie" value="{{ signalementQualificationNDE.details.consommation_energie }}">
+                                        <input class="fr-input fr-col-9 fr-display-inline" pattern="[0-9]*" inputmode="numeric" type="number" id="signalement-edit-nde-conso-energie" name="consommationEnergie" value="{{ signalementQualificationNDE.details.consommation_energie }}">
                                         kWh<span class="{% if not isDPE2023 %}fr-hidden{% endif %} field-nde-conso-energie-unity">/m²</span>/an
                                     </div>
                                 </div>
