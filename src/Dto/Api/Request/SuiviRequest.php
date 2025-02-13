@@ -13,7 +13,7 @@ use OpenApi\Attributes as OA;
 class SuiviRequest implements RequestInterface
 {
     #[OA\Property(
-        description: 'Un message de 10 caractère minimum est obligatoire.',
+        description: 'Un message de 10 caractères minimum est obligatoire.',
         example: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
     )]
     #[SanitizedLength(min: 10)]
