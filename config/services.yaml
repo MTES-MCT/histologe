@@ -49,6 +49,7 @@ parameters:
     standard_max_list_pagination: 50
     feature_multi_territories: '%env(bool:FEATURE_MULTI_TERRITORIES)%'
     feature_bo_signalement_create: '%env(bool:FEATURE_BO_SIGNALEMENT_CREATE)%'
+    send_error_email_token: '%env(SEND_ERROR_EMAIL_TOKEN)%'
 
 services:
     # default configuration for services in *this* file

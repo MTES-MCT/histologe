@@ -16,6 +16,7 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Exception\HttpException;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\CurrentUser;
 use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
@@ -133,5 +134,29 @@ class SecurityController extends AbstractController
     public function logout(): void
     {
         throw new \LogicException('This method can be blank - it will be intercepted by the logout key on your firewall.');
+    }
+
+    #[Route('/send-error-email', methods: ['POST'])]
+    public function handleSendErrorEmail(
+        Request $request,
+        LoggerInterface $logger,
+    ): JsonResponse {
+        $expectedToken = $this->getParameter('send_error_email_token');
+        $providedToken = $request->headers->get('Authorization');
+
+        if ($providedToken !== 'Bearer '.$expectedToken) {
+            return new JsonResponse(['error' => 'Unauthorized'], 403);
+        }
+
+        $data = json_decode($request->getContent(), true);
+
+        if (!$data || !isset($data['title'], $data['timestamp'], $data['host'], $data['database'], $data['error'])) {
+            return new JsonResponse(['error' => 'Invalid request'], 400);
+        }
+
+        // Log de l'erreur
+        $logger->error("send-error-mail: {$data['title']} {$data['error']} (DB: {$data['database']}, Host: {$data['host']}, Time: {$data['timestamp']})");
+
+        throw new HttpException(500, $data['title'], null, ['timestamp' => $data['timestamp'], 'database' => $data['database'], 'host' => $data['host'], 'error' => $data['error']]);
     }
 }
