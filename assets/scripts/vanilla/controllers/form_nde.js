@@ -45,14 +45,25 @@ formBtn?.addEventListener('click', evt => {
       }
     }
 
+    const inputValueToNumber = (inputValue) => {
+      switch (inputValue) {
+        case '':
+        case null:
+        case undefined:
+          return null
+        default:
+          return Math.round(Number(inputValue))
+      }
+    }
+    
     const data = {
       _token: document.getElementById('signalement-edit-nde-token').value,
       dateEntree: document.querySelector('input[name=dateEntree]')?.value,
       dpe: stringToBoolean(document.querySelector('input[name=dpe]:checked')?.value),
       classeEnergetique: document.querySelector('select[name=bailDpeClasseEnergetique]')?.value,
       dateDernierDPE: document.querySelector('input[name=dateDernierDPE]:checked')?.value,
-      consommationEnergie: Math.round(Number(document.getElementById('signalement-edit-nde-conso-energie')?.value)),
-      superficie: Math.round(Number(document.getElementById('signalement-edit-nde-superficie')?.value))
+      consommationEnergie: inputValueToNumber(document.getElementById('signalement-edit-nde-conso-energie')?.value),
+      superficie: inputValueToNumber(document.getElementById('signalement-edit-nde-superficie')?.value)
     }
 
     const options = {
