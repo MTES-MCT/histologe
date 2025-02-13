@@ -4,147 +4,126 @@ users:
     roles: "[\"ROLE_API_USER\"]"
     partner: "Partenaire 13-01"
     statut: 1
-    is_generique: 0
     is_mailing_active: 0
   -
     email: api-02@histologe.fr
     roles: "[\"ROLE_API_USER\"]"
     partner: "Alès Agglomération"
     statut: 1
-    is_generique: 0
     is_mailing_active: 0
   -
     email: admin-01@histologe.fr
     roles: "[\"ROLE_ADMIN\"]"
     partner: "Administrateurs Histologe ALL"
     statut: 1
-    is_generique: 0
     is_mailing_active: 0
   -
     email: admin-02@histologe.fr
     roles: "[\"ROLE_ADMIN\"]"
     partner: "Administrateurs Histologe ALL"
     statut: 2
-    is_generique: 0
     is_mailing_active: 1
   -
     email: admin-03@histologe.fr
     roles: "[\"ROLE_ADMIN\"]"
     partner: "Administrateurs Histologe ALL"
     statut: 1
-    is_generique: 0
     is_mailing_active: 0
   -
     email: admin-territoire-13-01@histologe.fr
     roles: "[\"ROLE_ADMIN_TERRITORY\"]"
     partner: "Partenaire 13-01"
     statut: 1
-    is_generique: 0
     is_mailing_active: 1
   -
     email: admin-territoire-13-02@histologe.fr
     roles: "[\"ROLE_ADMIN_TERRITORY\"]"
     partner: "Partenaire 13-01"
     statut: 1
-    is_generique: 0
     is_mailing_active: 0
   -
     email: admin-territoire-01-01@histologe.fr
     roles: "[\"ROLE_ADMIN_TERRITORY\"]"
     partner: "Partenaire 01-01"
     statut: 1
-    is_generique: 0
     is_mailing_active: 0
   -
     email: admin-territoire-63-01@histologe.fr
     roles: "[\"ROLE_ADMIN_TERRITORY\"]"
     partner: "Partenaire 63-01"
     statut: 1
-    is_generique: 0
     is_mailing_active: 1
   -
     email: admin-territoire-89-01@histologe.fr
     roles: "[\"ROLE_ADMIN_TERRITORY\"]"
     partner: "DDT 89"
     statut: 1
-    is_generique: 0
     is_mailing_active: 1
   -
     email: admin-territoire-06-01@histologe.fr
     roles: "[\"ROLE_ADMIN_TERRITORY\"]"
     partner: "Partenaire 06-01"
     statut: 1
-    is_generique: 0
     is_mailing_active: 1
   -
     email: admin-territoire-59-01@histologe.fr
     roles: "[\"ROLE_ADMIN_TERRITORY\"]"
     partner: "Partenaire 59-01"
     statut: 1
-    is_generique: 0
     is_mailing_active: 1
   -
     email: admin-territoire-69-mdl@histologe.fr
     roles: "[\"ROLE_ADMIN_TERRITORY\"]"
     partner: "EMHA - Métropole de Lyon"
     statut: 1
-    is_generique: 0
     is_mailing_active: 1
   -
     email: admin-territoire-69-cor@histologe.fr
     roles: "[\"ROLE_ADMIN_TERRITORY\"]"
     partner: "COR"
     statut: 1
-    is_generique: 0
     is_mailing_active: 1
   -
     email: user-69205-mdl@histologe.fr
     roles: "[\"ROLE_USER_PARTNER\"]"
     partner: "Commune 69-03 MDL"
     statut: 1
-    is_generique: 0
     is_mailing_active: 1
   -
     email: user-69054-cor@histologe.fr
     roles: "[\"ROLE_USER_PARTNER\"]"
     partner: "Commune 69-04 COR"
     statut: 1
-    is_generique: 0
     is_mailing_active: 1
   -
     email: user-69-05@histologe.fr
     roles: "[\"ROLE_USER_PARTNER\"]"
     partner: "Partenaire 69-05"
     statut: 1
-    is_generique: 0
     is_mailing_active: 1
   -
     email: user-69-06@histologe.fr
     roles: "[\"ROLE_USER_PARTNER\"]"
     partner: "Partenaire 69-06"
     statut: 1
-    is_generique: 0
     is_mailing_active: 1
   -
     email: admin-partenaire-13-01@histologe.fr
     roles: "[\"ROLE_ADMIN_PARTNER\"]"
     partner: "Partenaire 13-01"
     statut: 1
-    is_generique: 0
     is_mailing_active: 1
   -
     email: admin-partenaire-01-01@histologe.fr
     roles: "[\"ROLE_ADMIN_PARTNER\"]"
     partner: "Partenaire 01-01"
     statut: 1
-    is_generique: 0
     is_mailing_active: 0
   -
     email: user-13-01@histologe.fr
     roles: "[\"ROLE_USER_PARTNER\"]"
     partner: "Partenaire 13-02"
     statut: 1
-    is_generique: 0
     is_mailing_active: 1
     last_login_at: '-1 year'
   -
@@ -152,7 +131,6 @@ users:
     roles: "[\"ROLE_USER_PARTNER\"]"
     partner: "Partenaire 13-03"
     statut: 1
-    is_generique: 0
     is_mailing_active: 1
     last_login_at: '-2 year'
   -
@@ -160,42 +138,36 @@ users:
     roles: "[\"ROLE_USER_PARTNER\"]"
     partner: "Partenaire 13-04"
     statut: 0
-    is_generique: 0
     is_mailing_active: 1
   -
     email: user-13-04@histologe.fr
     roles: "[\"ROLE_USER_PARTNER\"]"
     partner: "Partenaire 13-03"
     statut: 0
-    is_generique: 0
     is_mailing_active: 0
   -
     email: user-13-05@histologe.fr
     roles: "[\"ROLE_USER_PARTNER\"]"
     partner: "Partenaire 13-05 ESABORA SCHS"
     statut: 1
-    is_generique: 0
     is_mailing_active: 1
   -
     email: user-13-06@histologe.fr
     roles: "[\"ROLE_USER_PARTNER\"]"
     partner: "Partenaire 13-06 ESABORA ARS"
     statut: 1
-    is_generique: 0
     is_mailing_active: 1
   -
     email: user-13-07@histologe.fr
     roles: "[\"ROLE_USER_PARTNER\"]"
     partner: "Partenaire 13-07"
     statut: 2
-    is_generique: 0
     is_mailing_active: 1
   -
     email: user-13-08@histologe.fr
     roles: "[\"ROLE_USER_PARTNER\"]"
     partner: "Partenaire 13-01"
     statut: 2
-    is_generique: 0
     is_mailing_active: 1
     anonymized: true
   -
@@ -203,36 +175,43 @@ users:
     roles: "[\"ROLE_USER_PARTNER\"]"
     partner: "Partenaire 13-01"
     statut: 2
-    is_generique: 0
     is_mailing_active: 1
     last_login_at: '-2 year'
+  -
+    email: user-13-10@histologe.fr
+    roles: "[\"ROLE_USER_PARTNER\"]"
+    partner: "Partenaire 13-08"
+    statut: 1
+    is_mailing_active: 1
+  -
+    email: user-13-11@histologe.fr
+    roles: "[\"ROLE_USER_PARTNER\"]"
+    partner: "Partenaire 13-08"
+    statut: 0
+    is_mailing_active: 1
   -
     email: user-2A-01@histologe.fr
     roles: "[\"ROLE_USER_PARTNER\"]"
     partner: "Partenaire 2A-01"
     statut: 0
-    is_generique: 0
     is_mailing_active: 0
   -
     email: user-974-01@histologe.fr
     roles: "[\"ROLE_USER_PARTNER\"]"
     partner: "Partenaire 974-01"
     statut: 2
-    is_generique: 0
     is_mailing_active: 1
   -
     email: user-01-01@histologe.fr
     roles: "[\"ROLE_USER_PARTNER\"]"
     partner: "Partenaire 01-04"
     statut: 1
-    is_generique: 0
     is_mailing_active: 0
   -
     email: user-01-02@histologe.fr
     roles: "[\"ROLE_USER_PARTNER\"]"
     partner: "Partenaire 01-03"
     statut: 0
-    is_generique: 0
     is_mailing_active: 1
     token: 00000000-0000-0000-0000-000000000001
   -
@@ -240,165 +219,141 @@ users:
     roles: "[\"ROLE_USER_PARTNER\"]"
     partner: "Partenaire 01-01"
     statut: 1
-    is_generique: 0
     is_mailing_active: 1
   -
     email: user-01-04@histologe.fr
     roles: "[\"ROLE_USER_PARTNER\"]"
     partner: "Partenaire 01-03"
     statut: 0
-    is_generique: 0
     is_mailing_active: 1
   -
     email: user-01-05@histologe.fr
     roles: "[\"ROLE_USER_PARTNER\"]"
     partner: "Partenaire 01-03"
     statut: 0
-    is_generique: 0
     is_mailing_active: 1
   -
     email: user-01-06@histologe.fr
     roles: "[\"ROLE_USER_PARTNER\"]"
     partner: "Partenaire 01-02"
     statut: 1
-    is_generique: 0
     is_mailing_active: 0
   -
     email: user-01-06@histologe.fr
     roles: "[\"ROLE_USER_PARTNER\"]"
     statut: 2
-    is_generique: 0
     is_mailing_active: 0
   -
     email: user-01-07@histologe.fr
     roles: "[\"ROLE_USER_PARTNER\"]"
     partner: "Partenaire 01-03"
     statut: 2
-    is_generique: 0
     is_mailing_active: 0
   -
     email: user-01-08@histologe.fr
     roles: "[\"ROLE_USER_PARTNER\"]"
     partner: "Partenaire 01-02"
     statut: 2
-    is_generique: 0
     is_mailing_active: 0
   -
     email: user-01-09@histologe.fr
     roles: "[\"ROLE_USER_PARTNER\"]"
     partner: "Partenaire 01-03"
     statut: 2
-    is_generique: 0
     is_mailing_active: 0
   -
     email: user-01-10@histologe.fr
     roles: "[\"ROLE_USER_PARTNER\"]"
     partner: "Partenaire 01-03"
     statut: 2
-    is_generique: 0
     is_mailing_active: 0
   -
     email: user-63-01@histologe.fr
     roles: "[\"ROLE_USER_PARTNER\"]"
     partner: "ADIL 63"
     statut: 1
-    is_generique: 0
     is_mailing_active: 0
   -
     email: user-63-02@histologe.fr
     roles: "[\"ROLE_USER_PARTNER\"]"
     partner: "ALF (OPAH)"
     statut: 0
-    is_generique: 0
     is_mailing_active: 1
   -
     email: user-63-03@histologe.fr
     roles: "[\"ROLE_USER_PARTNER\"]"
     partner: "API"
     statut: 1
-    is_generique: 0
     is_mailing_active: 1
   -
     email: user-63-04@histologe.fr
     roles: "[\"ROLE_USER_PARTNER\"]"
     partner: "CAF 63"
     statut: 0
-    is_generique: 0
     is_mailing_active: 1
   -
     email: user-89-01@histologe.fr
     roles: "[\"ROLE_USER_PARTNER\"]"
     partner: "ADIL 89"
     statut: 1
-    is_generique: 0
     is_mailing_active: 0
   -
     email: user-89-02@histologe.fr
     roles: "[\"ROLE_USER_PARTNER\"]"
     partner: "CAF 89"
     statut: 1
-    is_generique: 0
     is_mailing_active: 0
   -
     email: user-89-03@histologe.fr
     roles: "[\"ROLE_USER_PARTNER\"]"
     partner: "ARS 89"
     statut: 1
-    is_generique: 0
     is_mailing_active: 0
   -
     email: user-89-04@histologe.fr
     roles: "[\"ROLE_USER_PARTNER\"]"
     partner: "Mairie de Tonnerre"
     statut: 1
-    is_generique: 0
     is_mailing_active: 0
   -
     email: user-unlinked@histologe.fr
     roles: "[\"ROLE_USER_PARTNER\"]"
     statut: 1
-    is_generique: 0
     is_mailing_active: 0
   -
     email: admin-territoire-38-01@histologe.fr
     roles: "[\"ROLE_ADMIN_TERRITORY\"]"
     partner: "DDT 38"
     statut: 1
-    is_generique: 0
     is_mailing_active: 0
   -
     email: user-38-01@histologe.fr
     roles: "[\"ROLE_USER_PARTNER\"]"
     partner: "Partenaire 38-02"
     statut: 1
-    is_generique: 0
     is_mailing_active: 0
   -
     email: admin-territoire-62-01@histologe.fr
     roles: "[\"ROLE_ADMIN_TERRITORY\"]"
     partner: "Partenaire 62-01"
     statut: 1
-    is_generique: 0
     is_mailing_active: 1
   -
     email: user-62-01@histologe.fr
     roles: "[\"ROLE_USER_PARTNER\"]"
     partner: "Partenaire 62-01"
     statut: 1
-    is_generique: 0
     is_mailing_active: 1
   -
     email: user-93-01@histologe.fr
     roles: "[\"ROLE_USER_PARTNER\"]"
     partner: "Mairie de Saint-Denis"
     statut: 1
-    is_generique: 0
     is_mailing_active: 1
   -
     email: usager-01@histologe.fr
     roles: "[\"ROLE_USAGER\"]"
     statut: 0
-    is_generique: 0
     is_mailing_active: 0
     last_login_at: '-5 year'
   -
@@ -406,35 +361,30 @@ users:
     roles: "[\"ROLE_ADMIN_TERRITORY\"]"
     partner: "DDT_M 972"
     statut: 1
-    is_generique: 0
     is_mailing_active: 1
   -
     email: user-972-01@histologe.fr
     roles: "[\"ROLE_USER_PARTNER\"]"
     partner: "DDT_M 972"
     statut: 1
-    is_generique: 0
     is_mailing_active: 1
   -
     email: user-972-02@histologe.fr
     roles: "[\"ROLE_USER_PARTNER\"]"
     partner: "ARS 972"
     statut: 1
-    is_generique: 0
     is_mailing_active: 1
   -
     email: admin-territoire-34-01@histologe.fr
     roles: "[\"ROLE_ADMIN_TERRITORY\"]"
     partner: "Partenaire Zone Agde"
     statut: 1
-    is_generique: 0
     is_mailing_active: 1
   -
     email: admin-territoire-34-02@histologe.fr
     roles: "[\"ROLE_ADMIN_TERRITORY\"]"
     partner: "Partenaire Hors Zone Agde"
     statut: 1
-    is_generique: 0
     is_mailing_active: 1
   -
     email: admin-partenaire-multi-ter-13-01@histologe.fr
@@ -443,7 +393,6 @@ users:
       - "Partenaire 13-01"
       - "Partenaire 01-01"
     statut: 1
-    is_generique: 0
     is_mailing_active: 1
   -
     email: user-partenaire-multi-ter-34-30@histologe.fr
@@ -452,7 +401,6 @@ users:
       - "CAF 34"
       - "CAF 30"
     statut: 1
-    is_generique: 0
     is_mailing_active: 1
   -
     email: user-partenaire-30@histologe.fr
@@ -460,7 +408,6 @@ users:
     partners: 
       - "CAF 30"
     statut: 1
-    is_generique: 0
     is_mailing_active: 1
     has_permission_affectation: 1
   -
@@ -468,26 +415,22 @@ users:
     roles: "[\"ROLE_ADMIN_TERRITORY\"]"
     partner: "DDT Loire-Atlantique"
     statut: 1
-    is_generique: 0
     is_mailing_active: 1
   -
     email: user-44-02@histologe.fr
     roles: "[\"ROLE_USER_PARTNER\"]"
     partner: "SDIS 44"
     statut: 1
-    is_generique: 0
     is_mailing_active: 1
   -
     email: user-44-03@histologe.fr
     roles: "[\"ROLE_USER_PARTNER\"]"
     partner: "Mairie de Saint-Mars du Désert"
     statut: 1
-    is_generique: 0
     is_mailing_active: 1
   -
     email: user-44-04@histologe.fr
     roles: "[\"ROLE_USER_PARTNER\"]"
     partner: "Cocoland"
     statut: 1
-    is_generique: 0
     is_mailing_active: 1

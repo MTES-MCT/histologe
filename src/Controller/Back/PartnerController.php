@@ -524,6 +524,7 @@ class PartnerController extends AbstractController
     ): JsonResponse|RedirectResponse {
         $this->denyAccessUnlessGranted('USER_EDIT', $user);
         $originalEmail = $user->getEmail();
+        $originalIsMailingActive = $user->getIsMailingActive();
         $editUserRoute = $this->generateUrl('back_partner_user_edit', ['partner' => $partner->getId(), 'user' => $user->getId(), 'from' => $request->query->get('from')]);
         $formDisabled = false;
         if (1 !== $user->getUserPartners()->count()) {
@@ -536,19 +537,24 @@ class PartnerController extends AbstractController
         );
         $formUserPartner->handleRequest($request);
         if ($formUserPartner->isSubmitted() && $formUserPartner->isValid()) {
-            if ($originalEmail != $user->getEmail()) {
-                $user->setPassword('');
-                $userManager->sendAccountActivationNotification($user);
+            if ($originalIsMailingActive && !$user->getIsMailingActive() && User::STATUS_ACTIVE === $user->getStatut() && !$partner->receiveEmailNotifications()) {
+                $formUserPartner->get('isMailingActive')->addError(new FormError('Impossible : il s\'agit du dernier utilisateur ayant les notifications email actives sur le partenaire.'));
             }
-            $user->setRoles([$formUserPartner->get('role')->getData()]);
-            $userManager->flush();
-            $this->addFlash('success', 'L\'utilisateur a bien été modifié.');
-            $url = $this->generateUrl('back_partner_view', ['id' => $partner->getId(), '_fragment' => 'agents'], UrlGeneratorInterface::ABSOLUTE_URL);
-            if ('users' == $request->query->get('from')) {
-                $url = $this->generateUrl('back_user_index', [], UrlGeneratorInterface::ABSOLUTE_URL);
-            }
+            if ($formUserPartner->isValid()) { // @phpstan-ignore-line
+                if ($originalEmail != $user->getEmail()) {
+                    $user->setPassword('');
+                    $userManager->sendAccountActivationNotification($user);
+                }
+                $user->setRoles([$formUserPartner->get('role')->getData()]);
+                $userManager->flush();
+                $this->addFlash('success', 'L\'utilisateur a bien été modifié.');
+                $url = $this->generateUrl('back_partner_view', ['id' => $partner->getId(), '_fragment' => 'agents'], UrlGeneratorInterface::ABSOLUTE_URL);
+                if ('users' == $request->query->get('from')) {
+                    $url = $this->generateUrl('back_user_index', [], UrlGeneratorInterface::ABSOLUTE_URL);
+                }
 
-            return $this->json(['redirect' => true, 'url' => $url]);
+                return $this->json(['redirect' => true, 'url' => $url]);
+            }
         }
         $content = $this->renderView('_partials/_modal_user_edit_form.html.twig', ['formUserPartner' => $formUserPartner, 'user' => $user]);
 
@@ -605,6 +611,11 @@ class PartnerController extends AbstractController
                 return $this->redirectToRoute('back_partner_index', [], Response::HTTP_SEE_OTHER);
             }
         }
+        if ($user->getIsMailingActive() && User::STATUS_ACTIVE === $user->getStatut() && !$fromPartner->receiveEmailNotifications($user)) {
+            $this->addFlash('error', 'Impossible : Il s\'agit du dernier utilisateur ayant les notifications email actives sur le partenaire.');
+
+            return $this->redirectToRoute('back_partner_view', ['id' => $fromPartner->getId(), '_fragment' => 'agents'], Response::HTTP_SEE_OTHER);
+        }
 
         $userManager->transferUserToPartner($user, $fromPartner, $toPartner);
         $this->addFlash('success', 'L\'utilisateur a bien été transféré.');
@@ -640,6 +651,13 @@ class PartnerController extends AbstractController
 
             return $this->redirectToRoute('back_partner_view', ['id' => $partner->getId()], Response::HTTP_SEE_OTHER);
         }
+
+        if ($user->getIsMailingActive() && User::STATUS_ACTIVE === $user->getStatut() && !$partner->receiveEmailNotifications($user)) {
+            $this->addFlash('error', 'Impossible : Il s\'agit du dernier utilisateur ayant les notifications email actives sur le partenaire.');
+
+            return $this->redirectToRoute('back_partner_view', ['id' => $partner->getId(), '_fragment' => 'agents'], Response::HTTP_SEE_OTHER);
+        }
+
         if ($user->getUserPartners()->count() > 1) {
             foreach ($user->getUserPartners() as $userPartner) {
                 if ($userPartner->getPartner()->getId() === $partner->getId()) {
