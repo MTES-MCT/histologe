@@ -11,7 +11,7 @@ final class Version20250207080229 extends AbstractMigration
 {
     public function getDescription(): string
     {
-        return 'Delete dernier_bail_at for signamement_qualification';
+        return 'Delete dernier_bail_at for signalement_qualification';
     }
 
     public function up(Schema $schema): void
