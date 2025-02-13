@@ -155,13 +155,11 @@ class SignalementController extends AbstractController
         $infoDesordres = $signalementDesordresProcessor->process($signalement);
 
         $canEditSignalement = false;
-        $canEditClosedSignalement = false;
         if (SignalementStatus::ACTIVE === $signalement->getStatut()) {
             $canEditSignalement = $this->isGranted('ROLE_ADMIN_TERRITORY') || $isAffectationAccepted;
         }
-        if (SignalementStatus::CLOSED === $signalement->getStatut() && $this->isGranted('ROLE_ADMIN_TERRITORY')) {
-            $canEditClosedSignalement = true;
-        }
+        $canEditClosedSignalement = SignalementStatus::CLOSED === $signalement->getStatut()
+            && $this->isGranted('ROLE_ADMIN_TERRITORY');
 
         $signalementQualificationNDE = $signalementQualificationRepository->findOneBy([
             'signalement' => $signalement,

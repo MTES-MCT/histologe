@@ -3,6 +3,7 @@
 namespace App\Controller\Back;
 
 use App\Entity\Enum\DocumentType;
+use App\Entity\Enum\SignalementStatus;
 use App\Entity\File;
 use App\Entity\Signalement;
 use App\Entity\Suivi;
@@ -123,7 +124,7 @@ class SignalementFileController extends AbstractController
         if (!\count($files)) {
             return $this->json(['success' => true]);
         }
-        if (Signalement::STATUS_CLOSED !== $signalement->getStatut()) {
+        if (SignalementStatus::CLOSED !== $signalement->getStatut()) {
             $suivi = $suiviManager->createInstanceForFilesSignalement($user, $signalement, $files);
             $entityManager->persist($suivi);
         }
