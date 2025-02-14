@@ -5,6 +5,8 @@ export const store = {
     filters: {
       communesList: new Array<HistoInterfaceSelectOption>(),
       communes: new Array<string>(),
+      epcisList: new Array<HistoInterfaceSelectOption>(),
+      epcis: new Array<string>(),
       statut: 'all',
       etiquettesList: new Array<HistoInterfaceSelectOption>(),
       etiquettes: new Array<string>(),

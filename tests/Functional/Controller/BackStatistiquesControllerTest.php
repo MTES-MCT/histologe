@@ -61,6 +61,12 @@ class BackStatistiquesControllerTest extends WebTestCase
             ['result' => 3, 'label' => 'count_signalement'],
             ['result' => 100, 'label' => 'average_criticite'],
         ]];
+        yield 'Super Admin - filtered with EPCI CC d\'Erdre et Gesvres' => ['back_statistiques_filter', ['territoire' => 45, 'epcis' => '["2"]'], self::USER_SUPER_ADMIN, [
+            ['result' => 4, 'label' => 'count_signalement'],
+            ['result' => 3, 'label' => 'count_signalement_filtered'],
+            ['result' => 0, 'label' => 'count_signalement_refuses'],
+            ['result' => 0, 'label' => 'count_signalement_archives'],
+        ]];
         yield 'RT - filtered with commune Arles' => ['back_statistiques_filter', ['communes' => '["Arles"]'], self::USER_ADMIN_TERRITOIRE, [
             ['result' => 26, 'label' => 'count_signalement'],
             ['result' => 88.4, 'label' => 'average_criticite'],

@@ -131,6 +131,14 @@ export default defineComponent({
         optionItem.Text = requestResponse.list_communes[id]
         this.sharedState.filters.communesList.push(optionItem)
       }
+      
+      this.sharedState.filters.epcisList = []
+      for (const id in requestResponse.list_epcis) {
+        const optionItem = new HistoInterfaceSelectOption()
+        optionItem.Id = id
+        optionItem.Text = requestResponse.list_epcis[id]
+        this.sharedState.filters.epcisList.push(optionItem)
+      }
 
       this.sharedState.filters.canFilterTerritoires = requestResponse.can_filter_territoires === '1'
       this.sharedState.filters.canFilterArchived = requestResponse.can_filter_archived === '1'

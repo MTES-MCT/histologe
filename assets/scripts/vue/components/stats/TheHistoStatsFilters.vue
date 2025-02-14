@@ -21,6 +21,17 @@
           </HistoMultiSelect>
         </div>
         <div class="fr-col-12 fr-col-lg-6 fr-col-xl-3">
+          <HistoMultiSelect
+            id="filter-epcis"
+            v-model="sharedState.filters.epcis"
+            @update:modelValue="onChange(false)"
+            :option-items="sharedState.filters.epcisList"
+            :active="!sharedState.filters.canFilterTerritoires || sharedState.filters.territoire !== 'all'"
+            >
+            <template #label>EPCI</template>
+          </HistoMultiSelect>
+        </div>
+        <div class="fr-col-12 fr-col-lg-6 fr-col-xl-3">
           <HistoSelect
             id="filter-statut"
             v-model="sharedState.filters.statut"
@@ -118,6 +129,7 @@ export default defineComponent({
       initFilters: {
         territoire: store.state.filters.territoire,
         communes: store.state.filters.communes,
+        epcis: store.state.filters.epcis,
         statut: store.state.filters.statut,
         etiquettes,
         type: store.state.filters.type,
@@ -147,6 +159,7 @@ export default defineComponent({
 
       this.sharedState.filters.etiquettes = new Array<string>()
       this.sharedState.filters.communes = new Array<string>()
+      this.sharedState.filters.epcis = new Array<string>()
 
       // Other simple data
       this.sharedState.filters.territoire = this.initFilters.territoire
