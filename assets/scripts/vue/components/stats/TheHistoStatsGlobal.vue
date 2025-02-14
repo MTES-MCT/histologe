@@ -10,7 +10,7 @@
           <HistoSelect
             id="filter-territoires"
             v-model="sharedState.filters.territoire"
-            @update:modelValue="onChange(true)"
+            @update:modelValue="onTerritoryChange"
             :option-items=sharedState.filters.territoiresList
             >
             <template #label>Territoire</template>
@@ -62,7 +62,10 @@ import TheHistoStatsDetailsItem from './TheHistoStatsDetailsItem.vue'
 export default defineComponent({
   name: 'TheHistoStatsFilters',
   props: {
-    onChange: { type: Function }
+    onChange: { 
+      type: Function,
+      required: true
+    }
   },
   components: {
     HistoSelect,
@@ -98,7 +101,16 @@ export default defineComponent({
       const countSignalement:string = this.sharedState.stats.countSignalementsArchives !== undefined ? this.sharedState.stats.countSignalementsArchives.toString() : '0'
       return countSignalement
     }
-  }
+  },
+  methods: {
+    onTerritoryChange(value: any) {
+      this.sharedState.filters.communes = []
+      this.sharedState.filters.epcis = []
+      this.sharedState.filters.etiquettes = []
+      
+      this.onChange(true)
+    }
+  },
 })
 </script>
 
