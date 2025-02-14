@@ -14,6 +14,7 @@ use App\Form\ClotureType;
 use App\Manager\AffectationManager;
 use App\Manager\SignalementManager;
 use App\Repository\AffectationRepository;
+use App\Repository\CritereRepository;
 use App\Repository\CriticiteRepository;
 use App\Repository\DesordreCategorieRepository;
 use App\Repository\DesordreCritereRepository;
@@ -21,6 +22,7 @@ use App\Repository\DesordrePrecisionRepository;
 use App\Repository\InterventionRepository;
 use App\Repository\NotificationRepository;
 use App\Repository\SignalementQualificationRepository;
+use App\Repository\SituationRepository;
 use App\Repository\TagRepository;
 use App\Repository\ZoneRepository;
 use App\Security\Voter\AffectationVoter;
@@ -58,10 +60,14 @@ class SignalementController extends AbstractController
         DesordreCategorieRepository $desordreCategorieRepository,
         DesordreCritereRepository $desordreCritereRepository,
         ZoneRepository $zoneRepository,
+        SituationRepository $situationRepository,
+        CritereRepository $critereRepository,
     ): Response {
         // load desordres data to prevent n+1 queries
         $desordreCategorieRepository->findAll();
         $desordreCritereRepository->findAll();
+        $situationRepository->findAll();
+        $critereRepository->findAll();
         /** @var User $user */
         $user = $this->getUser();
         if (SignalementStatus::ARCHIVED === $signalement->getStatut()) {
