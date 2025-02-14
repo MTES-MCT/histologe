@@ -2,6 +2,7 @@
 
 namespace App\Tests\Functional\Controller\Back;
 
+use App\Entity\Enum\ProfileDeclarant;
 use App\Entity\Enum\SignalementStatus;
 use App\Repository\SignalementRepository;
 use App\Repository\UserRepository;
@@ -112,7 +113,7 @@ class SignalementCreateControllerTest extends WebTestCase
         $form->setValues([
             'signalement_address[adresseCompleteOccupant]' => '5 Rue Basse 44350 Guérande',
             'signalement_address[isLogementSocial]' => '0',
-            'signalement_address[occupationLogement]' => 'bail_en_cours',
+            'signalement_address[occupationLogement]' => 'proprio_occupant',
             'signalement_address[nbOccupantsLogement]' => '4',
             'signalement_address[nbEnfantsDansLogement]' => '2',
             'signalement_address[enfantsDansLogementMoinsSixAns]' => 'non',
@@ -133,6 +134,7 @@ class SignalementCreateControllerTest extends WebTestCase
         $this->assertEquals('5 Rue Basse', $signalement->getAdresseOccupant());
         $this->assertEquals('44350', $signalement->getCpOccupant());
         $this->assertEquals('Guérande', $signalement->getVilleOccupant());
+        $this->assertEquals(ProfileDeclarant::BAILLEUR_OCCUPANT, $signalement->getProfileDeclarant());
         $this->assertEquals(4, $signalement->getTypeCompositionLogement()->getCompositionLogementNombrePersonnes());
         $this->assertEquals(2, $signalement->getTypeCompositionLogement()->getCompositionLogementNombreEnfants());
         $this->assertEquals('non', $signalement->getTypeCompositionLogement()->getCompositionLogementEnfants());

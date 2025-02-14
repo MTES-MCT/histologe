@@ -2094,7 +2094,7 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
 
     public function getProfileDeclarant(): ?ProfileDeclarant
     {
-        if (null !== $this->createdFrom) {
+        if (null !== $this->createdFrom || null !== $this->createdBy) {
             return $this->profileDeclarant;
         }
 

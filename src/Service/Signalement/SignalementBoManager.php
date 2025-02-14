@@ -28,26 +28,12 @@ class SignalementBoManager
 
     public function formAddressManager(FormInterface $form, Signalement $signalement): bool
     {
-        switch ($form->get('occupationLogement')->getData()) {
-            case 'bail_en_cours':
-                $signalement->setIsBailEnCours(true);
-                $signalement->setIsLogementVacant(false);
-                if (ProfileDeclarant::BAILLEUR_OCCUPANT === $signalement->getProfileDeclarant()) {
-                    $signalement->setProfileDeclarant(null);
-                }
-                break;
-            case 'proprio_occupant':
-                $signalement->setProfileDeclarant(ProfileDeclarant::BAILLEUR_OCCUPANT);
-                $signalement->setIsBailEnCours(false);
-                $signalement->setIsLogementVacant(false);
-                break;
-            case 'logement_vacant':
-                $signalement->setIsLogementVacant(true);
-                $signalement->setIsBailEnCours(false);
-                if (ProfileDeclarant::BAILLEUR_OCCUPANT === $signalement->getProfileDeclarant()) {
-                    $signalement->setProfileDeclarant(null);
-                }
-                break;
+        $signalement->setIsBailEnCours('bail_en_cours' === $form->get('occupationLogement')->getData());
+        $signalement->setIsLogementVacant('logement_vacant' === $form->get('occupationLogement')->getData());
+        if ('proprio_occupant' === $form->get('occupationLogement')->getData()) {
+            $signalement->setProfileDeclarant(ProfileDeclarant::BAILLEUR_OCCUPANT);
+        } elseif (ProfileDeclarant::BAILLEUR_OCCUPANT === $signalement->getProfileDeclarant()) {
+            $signalement->setProfileDeclarant(null);
         }
         $typeCompositionLogement = $signalement->getTypeCompositionLogement() ? clone $signalement->getTypeCompositionLogement() : new TypeCompositionLogement();
         $typeCompositionLogement->setCompositionLogementNombreEnfants($form->get('nbEnfantsDansLogement')->getData());
