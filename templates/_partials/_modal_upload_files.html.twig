@@ -42,9 +42,15 @@
                                 <div class="fr-alert fr-alert--info fr-alert--sm fr-mt-1w ">
                                     <p>Pour ajouter des documents concernant la procédure ou le bailleur, rendez-vous dans l'onglet "Documents".</p>
                                 </div>
-                                <div class="fr-alert fr-alert--warning fr-alert--sm fr-mt-1w ">
-                                    <p>Ces documents seront partagés à l'usager.</p>
-                                </div>
+                                {% if signalement.statut is same as enum('App\\Entity\\Enum\\SignalementStatus').CLOSED %}   
+                                    <div class="fr-alert fr-alert--warning fr-alert--sm fr-mt-1w ">
+                                        <p>Ces documents seront visibles sur la fiche de suivi usager.</p>
+                                    </div>
+                                {% else %}
+                                    <div class="fr-alert fr-alert--warning fr-alert--sm fr-mt-1w ">
+                                        <p>Ces documents seront partagés à l'usager.</p>
+                                    </div>
+                                {% endif %}
                             </div>
                         </div>
                         <div class="type-conditional type-photo">
@@ -54,9 +60,15 @@
                             <div>
                                 Ajouter une ou plusieurs photos au signalement. Pour chaque photo, veuillez sélectionner le désordre auquel elle est rattachée. 
                             </div>
-                            <div class="fr-alert fr-alert--warning fr-alert--sm fr-mt-1w ">
-                                <p>Ces photos seront partagées à l'usager.</p>
-                            </div>
+                            {% if signalement.statut is same as enum('App\\Entity\\Enum\\SignalementStatus').CLOSED %}                                
+                                <div class="fr-alert fr-alert--warning fr-alert--sm fr-mt-1w ">
+                                    <p>Ces photos seront visibles sur la fiche de suivi usager.</p>
+                                </div>
+                            {% else %}                            
+                                <div class="fr-alert fr-alert--warning fr-alert--sm fr-mt-1w ">
+                                    <p>Ces photos seront partagées à l'usager.</p>
+                                </div>
+                            {% endif %}
                         </div>
                         <div class="modal-upload-upload-container fr-mb-4w">
                             <div class="modal-upload-drop-section">
