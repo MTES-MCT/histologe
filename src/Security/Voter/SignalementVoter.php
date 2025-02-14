@@ -143,6 +143,9 @@ class SignalementVoter extends Voter
         if ($this->security->isGranted('ROLE_ADMIN')) {
             return true;
         }
+        if (SignalementStatus::CLOSED === $signalement->getStatut() && $user->isTerritoryAdmin() && $user->hasPartnerInTerritory($signalement->getTerritory())) {
+            return true;
+        }
         if (SignalementStatus::ACTIVE !== $signalement->getStatut()) {
             return false;
         }
