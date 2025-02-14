@@ -174,7 +174,7 @@ class SignalementFileController extends AbstractController
             $filename = $file->getFilename();
             $type = $file->getFileType();
             if ($uploadHandlerService->deleteFile($file)) {
-                if (!$this->isGranted('ROLE_ADMIN')) {
+                if (!$this->isGranted('ROLE_ADMIN') && SignalementStatus::CLOSED !== $signalement->getStatut()) {
                     /** @var User $user */
                     $user = $this->getUser();
                     $description = $user->getNomComplet().' a supprimé ';
