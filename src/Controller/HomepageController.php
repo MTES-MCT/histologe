@@ -41,22 +41,25 @@ class HomepageController extends AbstractController
         SignalementRepository $signalementRepository,
         PostalCodeHomeChecker $postalCodeHomeChecker,
     ): Response {
-        $stats = ['pris_en_compte' => 0, 'clotures' => 0];
-        $stats['total'] = $this->cache->get('homepage.stats.total', function (ItemInterface $item) use ($signalementRepository) {
+        $stats = $this->cache->get('homepage.stats.array', function (ItemInterface $item) use ($signalementRepository) {
             $item->expiresAfter(900);
 
-            return $signalementRepository->countAll(
+            $stats = ['pris_en_compte' => 0, 'clotures' => 0];
+            $stats['total'] = $signalementRepository->countAll(
                 territory: null,
                 partners: null,
                 removeImported: true,
                 removeArchived: true
             );
+
+            if ($stats['total'] > 0) {
+                $stats['pris_en_compte'] = round($signalementRepository->countValidated(true) / $stats['total'] * 100, 1);
+                $stats['clotures'] = round($signalementRepository->countClosed(true) / $stats['total'] * 100, 1);
+            }
+
+            return $stats;
         });
 
-        if ($stats['total'] > 0) {
-            $stats['pris_en_compte'] = round($signalementRepository->countValidated(true) / $stats['total'] * 100, 1);
-            $stats['clotures'] = round($signalementRepository->countClosed(true) / $stats['total'] * 100, 1);
-        }
 
         $displayModal = '';
 
