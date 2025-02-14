@@ -37,17 +37,23 @@ class SuiviCreatedSubscriber implements EventSubscriberInterface
         }
 
         if (Suivi::CONTEXT_NOTIFY_USAGER_ONLY !== $suivi->getContext()) {
-            $this->notificationAndMailSender->sendNewSuiviToAdminsAndPartners(
-                suivi: $suivi,
-                sendEmail: (SignalementStatus::CLOSED !== $suivi->getSignalement()->getStatut())
-            );
+            if (Suivi::CONTEXT_SIGNALEMENT_CLOSED === $suivi->getContext()) {
+                $this->notificationAndMailSender->sendSignalementIsClosedToPartners($suivi);
+            } else {
+                $this->notificationAndMailSender->sendNewSuiviToAdminsAndPartners(
+                    suivi: $suivi,
+                    sendEmail: (SignalementStatus::CLOSED !== $suivi->getSignalement()->getStatut())
+                );
+            }
         }
 
-        if ($suivi->getSendMail()
-                && $suivi->getIsPublic()
-                && SignalementStatus::CLOSED !== $suivi->getSignalement()->getStatut()
-                && SignalementStatus::REFUSED !== $suivi->getSignalement()->getStatut()) {
-            $this->notificationAndMailSender->sendNewSuiviToUsagers($suivi);
+        if ($suivi->getSendMail() && $suivi->getIsPublic()) {
+            if (Suivi::CONTEXT_SIGNALEMENT_CLOSED === $suivi->getContext()) {
+                $this->notificationAndMailSender->sendSignalementIsClosedToUsager($suivi);
+            } elseif (SignalementStatus::CLOSED !== $suivi->getSignalement()->getStatut()
+                        && SignalementStatus::REFUSED !== $suivi->getSignalement()->getStatut()) {
+                $this->notificationAndMailSender->sendNewSuiviToUsagers($suivi);
+            }
         }
     }
 }

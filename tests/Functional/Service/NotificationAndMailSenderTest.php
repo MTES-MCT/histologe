@@ -2,6 +2,7 @@
 
 namespace App\Tests\Functional\Service;
 
+use App\Entity\Enum\AffectationStatus;
 use App\Entity\Signalement;
 use App\Entity\Suivi;
 use App\Entity\User;
@@ -67,19 +68,21 @@ class NotificationAndMailSenderTest extends KernelTestCase
         $expectedAdress = [$respTerritoire->getEmail()];
         $expectedNotification = $this->userRepository->findActiveAdminsAndTerritoryAdmins($territory, null);
         foreach ($signalement->getAffectations() as $affectation) {
-            $partner = $affectation->getPartner();
+            if (AffectationStatus::STATUS_WAIT->value === $affectation->getStatut()
+                    || AffectationStatus::STATUS_ACCEPTED->value === $affectation->getStatut()) {
+                $partner = $affectation->getPartner();
 
-            if ($partnerEmail = $partner->getEmail()) {
-                $expectedAdress[] = $partnerEmail;
-            }
+                if ($partnerEmail = $partner->getEmail()) {
+                    $expectedAdress[] = $partnerEmail;
+                }
 
-            foreach ($partner->getUsers() as $user) {
-                if (User::STATUS_ACTIVE === $user->getStatut()) {
-                    // only user with mailing active can receive e-mail
-                    if ($user->getIsMailingActive()) {
-                        $expectedAdress[] = $user->getEmail();
+                foreach ($partner->getUsers() as $user) {
+                    if (User::STATUS_ACTIVE === $user->getStatut()) {
+                        if ($user->getIsMailingActive()) {
+                            $expectedAdress[] = $user->getEmail();
+                        }
+                        $expectedNotification[] = $user;
                     }
-                    $expectedNotification[] = $user;
                 }
             }
         }
