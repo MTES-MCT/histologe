@@ -21,6 +21,8 @@ class Suivi implements EntityHistoryInterface
     public const CONTEXT_NOTIFY_USAGER_ONLY = 'notifyUsagerOnly';
     public const CONTEXT_INTERVENTION = 'intervention';
     public const CONTEXT_SCHS = 'schs';
+    public const CONTEXT_SIGNALEMENT_ACCEPTED = 'signalementAccepted';
+    public const CONTEXT_SIGNALEMENT_REFUSED = 'signalementRefused';
     public const CONTEXT_SIGNALEMENT_CLOSED = 'signalementClosed';
 
     public const DEFAULT_PERIOD_INACTIVITY = 30;
