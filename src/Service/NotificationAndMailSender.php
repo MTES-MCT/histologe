@@ -86,6 +86,20 @@ class NotificationAndMailSender
         $this->sendMailToUsagers(NotificationMailerType::TYPE_NEW_COMMENT_FRONT_TO_USAGER);
     }
 
+    public function sendSignalementIsAcceptedToUsager(Suivi $suivi): void
+    {
+        $this->suivi = $suivi;
+        $this->signalement = $suivi->getSignalement();
+        $this->sendMailToUsagers(NotificationMailerType::TYPE_SIGNALEMENT_VALIDATION_TO_USAGER);
+    }
+
+    public function sendSignalementIsRefusedToUsager(Suivi $suivi, string $motif): void
+    {
+        $this->suivi = $suivi;
+        $this->signalement = $suivi->getSignalement();
+        $this->sendMailToUsagers(NotificationMailerType::TYPE_SIGNALEMENT_REFUSAL_TO_USAGER, $motif);
+    }
+
     public function sendSignalementIsClosedToUsager(Suivi $suivi): void
     {
         $this->suivi = $suivi;
@@ -123,7 +137,7 @@ class NotificationAndMailSender
         $this->entityManager->persist($notification);
     }
 
-    private function sendMailToUsagers(NotificationMailerType $mailType): void
+    private function sendMailToUsagers(NotificationMailerType $mailType, ?string $motif = null): void
     {
         $recipients = new ArrayCollection($this->signalement->getMailUsagers());
         if (!$recipients->isEmpty()) {
@@ -136,6 +150,7 @@ class NotificationAndMailSender
                         territory: $this->signalement->getTerritory(),
                         signalement: $this->signalement,
                         suivi: $this->suivi,
+                        motif: $motif,
                     )
                 );
             }
