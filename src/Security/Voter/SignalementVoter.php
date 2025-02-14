@@ -248,7 +248,7 @@ class SignalementVoter extends Voter
 
     private function canEditDraft(Signalement $signalement, User $user): bool
     {
-        if (Signalement::STATUS_DRAFT !== $signalement->getStatut()) {
+        if (SignalementStatus::DRAFT !== $signalement->getStatut()) {
             return false;
         }
 

@@ -2,7 +2,7 @@
 
 namespace App\Tests\Functional\Controller\Back;
 
-use App\Entity\Signalement;
+use App\Entity\Enum\SignalementStatus;
 use App\Repository\SignalementRepository;
 use App\Repository\UserRepository;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
@@ -65,7 +65,7 @@ class SignalementCreateControllerTest extends WebTestCase
         ], ['createdAt' => 'DESC']);
         $this->assertCount(2, $signalements);
         $this->assertEquals($user->getId(), $signalements[0]->getCreatedBy()->getId());
-        $this->assertEquals(Signalement::STATUS_DRAFT, $signalements[0]->getStatut());
+        $this->assertEquals(SignalementStatus::DRAFT, $signalements[0]->getStatut());
         $this->assertEquals(44, $signalements[1]->getTerritory()->getZip());
     }
 
@@ -128,7 +128,7 @@ class SignalementCreateControllerTest extends WebTestCase
 
         $signalement = $this->signalementRepository->findOneBy(['uuid' => '00000000-0000-0000-2025-000000000002']);
         $this->assertFalse($signalement->getIsLogementSocial());
-        $this->assertEquals(Signalement::STATUS_DRAFT, $signalement->getStatut());
+        $this->assertEquals(SignalementStatus::DRAFT, $signalement->getStatut());
         $this->assertEquals(44, $signalement->getTerritory()->getZip());
         $this->assertEquals('5 Rue Basse', $signalement->getAdresseOccupant());
         $this->assertEquals('44350', $signalement->getCpOccupant());

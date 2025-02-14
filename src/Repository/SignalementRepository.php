@@ -1556,7 +1556,7 @@ class SignalementRepository extends ServiceEntityRepository
             ->setParameter('address', $signalement->getAdresseOccupant())
             ->setParameter('zipcode', $signalement->getCpOccupant())
             ->setParameter('city', $signalement->getVilleOccupant())
-            ->setParameter('statuts', [Signalement::STATUS_NEED_VALIDATION, Signalement::STATUS_ACTIVE]);
+            ->setParameter('statuts', [SignalementStatus::NEED_VALIDATION, SignalementStatus::ACTIVE]);
 
         if (null !== $signalement->getId()) {
             $qb->andWhere('s.id != :id')

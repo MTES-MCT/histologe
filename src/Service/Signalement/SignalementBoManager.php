@@ -3,6 +3,7 @@
 namespace App\Service\Signalement;
 
 use App\Entity\Enum\ProfileDeclarant;
+use App\Entity\Enum\SignalementStatus;
 use App\Entity\Model\TypeCompositionLogement;
 use App\Entity\Signalement;
 use App\Entity\User;
@@ -81,7 +82,7 @@ class SignalementBoManager
             return false;
         }
 
-        $signalement->setStatut(Signalement::STATUS_DRAFT);
+        $signalement->setStatut(SignalementStatus::DRAFT);
         $signalement->setCreatedBy($this->user);
         $signalement->setTerritory($territory);
         $signalement->setIsCguAccepted(true);

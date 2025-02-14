@@ -2,6 +2,7 @@
 
 namespace App\Controller\Back;
 
+use App\Entity\Enum\SignalementStatus;
 use App\Entity\Signalement;
 use App\Form\SignalementAddressType;
 use App\Manager\SignalementManager;
@@ -36,7 +37,7 @@ class SignalementCreateController extends AbstractController
     ): Response {
         $drafts = $signalementRepository->findBy([
             'createdBy' => $this->getUser(),
-            'statut' => [Signalement::STATUS_DRAFT, Signalement::STATUS_NEED_VALIDATION],
+            'statut' => [SignalementStatus::DRAFT, SignalementStatus::NEED_VALIDATION],
         ],
             ['createdAt' => 'DESC']
         );
@@ -114,7 +115,10 @@ class SignalementCreateController extends AbstractController
             if ($form->get('forceSave')->isEmpty() && $duplicates = $signalementRepository->findOnSameAddress($signalement)) {
                 $hasDuplicates = true;
                 $duplicateContent = $this->renderView('back/signalement_create/_modal_duplicate_content.html.twig', ['duplicates' => $duplicates]);
-                $linkDuplicates = $this->generateUrl('back_signalements_index', ['searchTerms' => $signalement->getAdresseOccupant()], UrlGeneratorInterface::ABSOLUTE_URL);
+                $linkDuplicates = $this->generateUrl('back_signalements_index', [
+                    'searchTerms' => $signalement->getAdresseOccupant(),
+                    'communes[]' => $signalement->getCpOccupant(),
+                ], UrlGeneratorInterface::ABSOLUTE_URL);
             } else {
                 $this->signalementManager->save($signalement);
                 $entityManager->commit();

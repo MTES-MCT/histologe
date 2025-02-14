@@ -7,6 +7,7 @@ use App\Entity\Signalement;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
+use Symfony\Component\Form\Extension\Core\Type\NumberType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormError;
@@ -127,15 +128,31 @@ class SignalementAddressType extends AbstractType
                     ]),
                 ],
             ])
-            ->add('nbOccupantsLogement', null, [
+            ->add('nbOccupantsLogement', NumberType::class, [
                 'label' => 'Nombre de personnes occupant le logement',
                 'help' => 'Format attendu : saisir un nombre entier',
+                'required' => false,
+                'constraints' => [
+                    new Assert\Regex([
+                        'pattern' => '/^\d+$/',
+                        'message' => 'Veuillez saisir un nombre entier.',
+                        'groups' => ['bo_step_address'],
+                    ]),
+                ],
             ])
-            ->add('nbEnfantsDansLogement', null, [
+            ->add('nbEnfantsDansLogement', NumberType::class, [
                 'label' => 'Dont enfants',
                 'help' => 'Format attendu : saisir un nombre entier',
+                'required' => false,
                 'mapped' => false,
                 'data' => $nbEnfantsDansLogement,
+                'constraints' => [
+                    new Assert\Regex([
+                        'pattern' => '/^\d+$/',
+                        'message' => 'Veuillez saisir un nombre entier.',
+                        'groups' => ['bo_step_address'],
+                    ]),
+                ],
             ])
             ->add('enfantsDansLogementMoinsSixAns', ChoiceType::class, [
                 'label' => 'Enfants de 6 ans ou moins',
