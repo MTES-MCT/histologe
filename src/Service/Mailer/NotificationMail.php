@@ -29,6 +29,7 @@ class NotificationMail
         private readonly ?string $motif = null,
         private readonly ?string $cronLabel = null,
         private readonly ?int $cronCount = null,
+        private readonly bool $isRecipientVisible = true,
         private readonly array $params = [],
     ) {
     }
@@ -131,5 +132,10 @@ class NotificationMail
     public function getCronCount(): ?int
     {
         return $this->cronCount;
+    }
+
+    public function isRecipientVisible(): bool
+    {
+        return $this->isRecipientVisible;
     }
 }

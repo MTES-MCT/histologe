@@ -68,7 +68,11 @@ abstract class AbstractNotificationMailer implements NotificationMailerInterface
 
         foreach ($notificationMail->getEmails() as $email) {
             try {
-                $email && $message->addTo($email);
+                if ($notificationMail->isRecipientVisible()) {
+                    $email && $message->addTo($email);
+                } else {
+                    $email && $message->addBcc($email);
+                }
             } catch (\Exception $e) {
                 $this->logger->error(\sprintf('[%s] %s', $notificationMail->getType()->name, $e->getMessage()));
             }
