@@ -26,6 +26,9 @@ class SignalementAffectationHelper
             }
         }
 
+        if (empty($statusAffectation)) {
+            return '';
+        }
         return AffectationStatus::tryFrom($statusAffectation)?->label();
     }
 
@@ -44,7 +47,11 @@ class SignalementAffectationHelper
             }
         }
 
-        return [AffectationStatus::tryFrom($statusAffectation)?->mapSignalementStatus(), $affectations];
+        $signalementStatus = '';
+        if (!empty($statusAffectation)) {
+            $signalementStatus = AffectationStatus::tryFrom($statusAffectation)?->mapSignalementStatus();
+        }
+        return [$signalementStatus, $affectations];
     }
 
     public static function getQualificationFrom(array $data): ?array
