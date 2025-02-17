@@ -4,13 +4,13 @@ namespace App\Tests\Functional\EventSubscriber;
 
 use App\Entity\Notification;
 use App\Entity\Signalement;
-use App\Entity\User;
 use App\Event\SignalementViewedEvent;
 use App\EventSubscriber\SignalementViewedSubscriber;
 use App\Manager\SignalementManager;
 use App\Service\DataGouv\AddressService;
 use App\Service\DataGouv\Response\Address;
 use Doctrine\ORM\EntityManagerInterface;
+use PHPUnit\Framework\MockObject\MockObject;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use Symfony\Component\EventDispatcher\EventDispatcher;
 
@@ -44,16 +44,17 @@ class SignalementViewedSubscriberTest extends KernelTestCase
             ->setGeoloc([])
             ->setCpOccupant(null);
 
-        $user = $this->entityManager->getRepository(User::class)->findOneBy(['email' => 'admin-01@histologe.fr']);
-        $signalementViewedEvent = new SignalementViewedEvent($signalement, $user);
-
         /** @var Notification $notification */
         $notification = $this->entityManager->getRepository(Notification::class)->findOneBy(['signalement' => $signalement]);
         $isSeenBefore = $notification->getIsSeen();
         $this->assertFalse($isSeenBefore);
 
+        $user = $notification->getUser();
+        $signalementViewedEvent = new SignalementViewedEvent($signalement, $user);
+
         $addressResult = json_decode(file_get_contents(__DIR__.'/../../files/datagouv/get_api_ban_item_response_13203.json'), true);
         $address = new Address($addressResult);
+        /** @var MockObject&AddressService $addressServiceMock */
         $addressServiceMock = $this->createMock(AddressService::class);
         $this->signalementManager = static::getContainer()->get(SignalementManager::class);
 

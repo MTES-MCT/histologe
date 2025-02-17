@@ -54,6 +54,16 @@ class NotificationAndMailSenderTest extends KernelTestCase
         $respTerritoire = $this->entityManager->getRepository(User::class)->findOneBy([
             'email' => 'admin-territoire-13-01@histologe.fr',
         ]);
+
+        $suivi = (new Suivi())
+        ->setCreatedBy($respTerritoire)
+        ->setSignalement($signalement)
+        ->setDescription('test description')
+        ->setType(Suivi::TYPE_PARTNER)
+        ->setIsPublic(true);
+
+        $this->entityManager->persist($suivi);
+
         $expectedAdress = [$respTerritoire->getEmail()];
         $expectedNotification = $this->userRepository->findActiveAdminsAndTerritoryAdmins($territory, null);
         foreach ($signalement->getAffectations() as $affectation) {
@@ -65,6 +75,7 @@ class NotificationAndMailSenderTest extends KernelTestCase
 
             foreach ($partner->getUsers() as $user) {
                 if (User::STATUS_ACTIVE === $user->getStatut()) {
+                    // only user with mailing active can receive e-mail
                     if ($user->getIsMailingActive()) {
                         $expectedAdress[] = $user->getEmail();
                     }
@@ -73,14 +84,8 @@ class NotificationAndMailSenderTest extends KernelTestCase
             }
         }
 
-        $suivi = (new Suivi())
-        ->setCreatedBy($respTerritoire)
-        ->setSignalement($signalement)
-        ->setDescription('test description')
-        ->setType(Suivi::TYPE_PARTNER)
-        ->setIsPublic(true);
-
-        $this->entityManager->persist($suivi);
+        // suivi creator doesn't receive notification
+        unset($expectedNotification[array_search($suivi->getCreatedBy(), $expectedNotification)]);
 
         $notificationAndMailSender = new NotificationAndMailSender(
             $this->entityManager,

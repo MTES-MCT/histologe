@@ -109,7 +109,7 @@ class NotificationAndMailSender
     private function createInAppNotifications(ArrayCollection $recipients)
     {
         foreach ($recipients as $user) {
-            if ($user instanceof User) {
+            if ($user instanceof User && $user !== $this->suivi->getCreatedBy()) {
                 $this->createInAppNotification($user);
             }
         }
