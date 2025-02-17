@@ -139,6 +139,7 @@ class NotificationAndMailSender
                         territory: $this->signalement->getTerritory(),
                         signalement: $this->signalement,
                         suivi: $this->suivi,
+                        isRecipientVisible: false,
                     )
                 );
             }
