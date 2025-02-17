@@ -103,7 +103,7 @@ class NotificationAndMailSenderTest extends KernelTestCase
         $email = $this->getMailerMessage();
 
         foreach ($expectedAdress as $adressMail) {
-            $this->assertEmailAddressContains($email, 'To', $adressMail);
+            $this->assertEmailAddressContains($email, 'Bcc', $adressMail);
         }
 
         $newNotifications = $this->notificationRepository->findBy(['suivi' => $suivi]);
