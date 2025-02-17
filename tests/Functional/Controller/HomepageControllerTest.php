@@ -4,6 +4,7 @@ namespace App\Tests\Functional\Controller;
 
 use Faker\Factory;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
+use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 class HomepageControllerTest extends WebTestCase
@@ -57,7 +58,7 @@ class HomepageControllerTest extends WebTestCase
         $client = static::createClient();
         /** @var UrlGeneratorInterface $generatorUrl */
         $generatorUrl = static::getContainer()->get(UrlGeneratorInterface::class);
-        $crawler = $client->request('GET', $generatorUrl->generate('front_contact'));
+        $client->request('GET', $generatorUrl->generate('front_contact'));
 
         $client->submitForm('Envoyer le message', [
             'contact[nom]' => 'John Doe',
@@ -71,9 +72,10 @@ class HomepageControllerTest extends WebTestCase
         $client->enableProfiler();
         $this->assertEmailCount(1);
 
+        $parameterBag = self::getContainer()->get(ParameterBagInterface::class);
         $email = $this->getMailerMessage();
-        $this->assertEmailHeaderSame($email, 'From', 'HISTOLOGE - ALERTE <notifications@histologe.beta.gouv.fr>');
-        $this->assertEmailHeaderSame($email, 'To', 'contact@histologe.beta.gouv.fr');
+        $this->assertEmailHeaderSame($email, 'From', 'HISTOLOGE - ALERTE <' .$parameterBag->get('notifications_email'). '>');
+        $this->assertEmailHeaderSame($email, 'To', $parameterBag->get('contact_email'));
     }
 
     public function testSubmitContactWithEmptyMessage(): void
