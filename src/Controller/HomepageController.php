@@ -60,7 +60,6 @@ class HomepageController extends AbstractController
             return $stats;
         });
 
-
         $displayModal = '';
 
         $form = $this->createForm(PostalCodeSearchType::class, []);
