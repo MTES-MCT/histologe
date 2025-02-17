@@ -29,6 +29,7 @@ class SignalementAffectationHelper
         if (empty($statusAffectation)) {
             return '';
         }
+
         return AffectationStatus::tryFrom($statusAffectation)?->label();
     }
 
@@ -51,6 +52,7 @@ class SignalementAffectationHelper
         if (!empty($statusAffectation)) {
             $signalementStatus = AffectationStatus::tryFrom($statusAffectation)?->mapSignalementStatus();
         }
+
         return [$signalementStatus, $affectations];
     }
 
