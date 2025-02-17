@@ -9,6 +9,7 @@ export const requests = {
       data.append('territoire', store.state.filters.territoire)
     }
     data.append('communes', JSON.stringify(store.state.filters.communes))
+    data.append('epcis', JSON.stringify(store.state.filters.epcis))
     data.append('statut', store.state.filters.statut)
     data.append('etiquettes', JSON.stringify(store.state.filters.etiquettes))
     data.append('type', store.state.filters.type)

@@ -8,6 +8,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 class StatisticsFilters
 {
     private ?array $communes;
+    private ?array $epcis;
     private ?string $statut;
     private array $etiquettes;
     private ?string $type;
@@ -20,6 +21,7 @@ class StatisticsFilters
 
     public function __construct(
         ?array $communes,
+        ?array $epcis,
         ?string $statut,
         array $etiquettes,
         ?string $type,
@@ -31,6 +33,7 @@ class StatisticsFilters
         ?ArrayCollection $partners,
     ) {
         $this->communes = $communes;
+        $this->epcis = $epcis;
         $this->statut = $statut;
         $this->etiquettes = $etiquettes;
         $this->type = $type;
@@ -50,6 +53,18 @@ class StatisticsFilters
     public function setCommunes(array $communes): self
     {
         $this->communes = $communes;
+
+        return $this;
+    }
+
+    public function getEpcis(): ?array
+    {
+        return $this->epcis;
+    }
+
+    public function setEpcis(array $epcis): self
+    {
+        $this->epcis = $epcis;
 
         return $this;
     }

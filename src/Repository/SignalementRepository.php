@@ -8,6 +8,7 @@ use App\Dto\SignalementAffectationListView;
 use App\Dto\SignalementExport;
 use App\Dto\StatisticsFilters;
 use App\Entity\Affectation;
+use App\Entity\Commune;
 use App\Entity\Enum\DesordreCritereZone;
 use App\Entity\Enum\Qualification;
 use App\Entity\Enum\SignalementStatus;
@@ -1077,6 +1078,19 @@ class SignalementRepository extends ServiceEntityRepository
             }
             $qb->andWhere('s.villeOccupant IN (:communes)')
                 ->setParameter('communes', $communes);
+        }
+
+        if ($filters->getEpcis()) {
+            $subQuery = $qb->getEntityManager()->createQueryBuilder()
+            ->select('DISTINCT s2.id')
+            ->from(Signalement::class, 's2')
+            ->innerJoin(
+                Commune::class,
+                'c2',
+                'WITH',
+                's2.cpOccupant = c2.codePostal AND s2.inseeOccupant = c2.codeInsee AND c2.epci IN (:epcis)'
+            );
+            $qb->andWhere('s.id IN ('.$subQuery->getDQL().')')->setParameter('epcis', $filters->getEpcis());
         }
 
         if ($filters->getPartners() && $filters->getPartners()->count() > 0) {

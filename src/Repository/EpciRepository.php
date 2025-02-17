@@ -3,6 +3,7 @@
 namespace App\Repository;
 
 use App\Entity\Epci;
+use App\Entity\Territory;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
@@ -30,5 +31,16 @@ class EpciRepository extends ServiceEntityRepository
             ->setParameter('epci_codes', $epciCodes);
 
         return $queryBuilder->getQuery()->getArrayResult();
+    }
+
+    public function findAllByTerritory(Territory $territory): array
+    {
+        $queryBuilder = $this->createQueryBuilder('e')
+            ->innerJoin('e.communes', 'c')
+            ->innerJoin('c.territory', 't')
+            ->where('t.id = :territory')
+            ->setParameter('territory', $territory);
+
+        return $queryBuilder->getQuery()->getResult();
     }
 }

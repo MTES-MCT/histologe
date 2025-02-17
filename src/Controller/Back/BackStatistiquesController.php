@@ -9,6 +9,7 @@ use App\Repository\TerritoryRepository;
 use App\Service\Statistics\FilteredBackAnalyticsProvider;
 use App\Service\Statistics\GlobalBackAnalyticsProvider;
 use App\Service\Statistics\ListCommunesStatisticProvider;
+use App\Service\Statistics\ListEpciStatisticProvider;
 use App\Service\Statistics\ListTagsStatisticProvider;
 use App\Service\Statistics\ListTerritoryStatisticProvider;
 use Doctrine\Common\Collections\ArrayCollection;
@@ -26,6 +27,7 @@ class BackStatistiquesController extends AbstractController
     public function __construct(
         private ListTerritoryStatisticProvider $listTerritoryStatisticProvider,
         private ListCommunesStatisticProvider $listCommunesStatisticProvider,
+        private ListEpciStatisticProvider $listEpciStatisticProvider,
         private ListTagsStatisticProvider $listTagStatisticProvider,
         private GlobalBackAnalyticsProvider $globalBackAnalyticsProvider,
         private FilteredBackAnalyticsProvider $filteredBackAnalyticsProvider,
@@ -84,6 +86,7 @@ class BackStatistiquesController extends AbstractController
     private function createFilters(Request $request, ?Territory $territory, ArrayCollection $partners): StatisticsFilters
     {
         $communes = json_decode($request->get('communes'));
+        $epcis = json_decode($request->get('epcis'));
         $statut = $request->get('statut');
         $strEtiquettes = json_decode($request->get('etiquettes') ?? '[]');
         $etiquettes = array_map(fn ($value): int => $value * 1, $strEtiquettes);
@@ -97,6 +100,7 @@ class BackStatistiquesController extends AbstractController
 
         return new StatisticsFilters(
             $communes,
+            $epcis,
             $statut,
             $etiquettes,
             $type,
@@ -156,6 +160,7 @@ class BackStatistiquesController extends AbstractController
             $this->result['list_territoires'] = $this->listTerritoryStatisticProvider->getData($user);
         }
         $this->result['list_communes'] = $this->listCommunesStatisticProvider->getData($territory);
+        $this->result['list_epcis'] = $this->listEpciStatisticProvider->getData($territory);
         $this->result['list_etiquettes'] = $this->listTagStatisticProvider->getData($territory);
     }
 }
