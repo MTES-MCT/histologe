@@ -67,8 +67,6 @@ class SignalementFileProcessor
             }
 
             if ($fileSizeOk) {
-                $fileExtension = $file instanceof UploadedFile ? $file->getClientOriginalExtension() : null;
-
                 if (
                     $file instanceof UploadedFile
                     && File::INPUT_NAME_DOCUMENTS === $inputName
@@ -76,7 +74,7 @@ class SignalementFileProcessor
                 ) {
                     $acceptedExtensions = UploadHandlerService::getAcceptedExtensions('document');
                     $message = <<<ERROR
-                Les fichiers de format {$fileExtension} ne sont pas pris en charge,
+                Les fichiers de format {$file->getMimeType()} ne sont pas pris en charge,
                 merci de choisir un fichier au format {$acceptedExtensions}.
                 ERROR;
                     $fileInfo = ' ( Fichier : '.$file->__toString().' MimeType : '.$file->getMimeType().' )';
@@ -89,7 +87,7 @@ class SignalementFileProcessor
                 ) {
                     $acceptedExtensions = UploadHandlerService::getAcceptedExtensions('photo');
                     $message = <<<ERROR
-                Les fichiers de format {$fileExtension} ne sont pas pris en charge,
+                Les fichiers de format {$file->getMimeType()} ne sont pas pris en charge,
                 merci de choisir un fichier au format {$acceptedExtensions}.
                 ERROR;
                     $fileInfo = ' ( Fichier : '.$file->__toString().' MimeType : '.$file->getMimeType().' )';
