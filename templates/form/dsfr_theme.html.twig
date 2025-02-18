@@ -78,28 +78,28 @@
 {% endblock textarea_widget %}
 
 {% block form_label %}
-    {% if label is not same as(false) %}
-        {% set label_attr = label_attr|merge({'class': (label_attr.class|default('') ~ ' fr-label')|trim}) %}
-        {% if not compound %}
-            {% set label_attr = label_attr|merge({'for': id}) %}
-        {% endif %}
-        {% if required %}
-            {% set label_attr = label_attr|merge({'class': (label_attr.class|default('') ~ ' label-required')|trim}) %}
-        {% endif %}
-        <{{ element|default('label') }}{% if label_attr %}{% with { attr: label_attr } %}{{ block('attributes') }}{% endwith %}{% endif %}>
-            {{block('form_label_content')}}
-        </{{ element|default('label') }}>
+    {% set label_attr = label_attr|merge({'class': (label_attr.class|default('') ~ ' fr-label')|trim}) %}
+    {% if not compound %}
+        {% set label_attr = label_attr|merge({'for': id}) %}
     {% endif %}
+    {% if required %}
+        {% set label_attr = label_attr|merge({'class': (label_attr.class|default('') ~ ' label-required')|trim}) %}
+    {% endif %}
+    <{{ element|default('label') }}{% if label_attr %}{% with { attr: label_attr } %}{{ block('attributes') }}{% endwith %}{% endif %}>
+        {{block('form_label_content')}}
+    </{{ element|default('label') }}>
 {% endblock form_label %}
 
 {% block form_label_content %}
-    {{ parent() }}
+    {% if label is not same as(false) %}
+        {{ parent() }}
+    {% endif %}
     {{ block('form_help')}}
 {% endblock form_label_content %}
 
 {% block form_help %}
     {% if help is not empty %}
-        {% set help_attr = help_attr|merge({class: (help_attr.class|default('') ~ ' fr-hint-text fr-pb-1w')|trim})%}
+        {% set help_attr = help_attr|merge({class: (help_attr.class|default('') ~ ' fr-hint-text')|trim})%}
         <{{ element|default('span') }} id="{{ id }}_help"{% with { attr: help_attr } %}{{ block('attributes') }}{% endwith %}>
             {{ block('form_help_content') }}
         </{{ element|default('span') }}>
@@ -113,7 +113,7 @@
 {% endblock button_attributes %}
 
 {% block choice_widget_expanded %}
-    <div {{ block('widget_container_attributes') }} class="fr-fieldset">
+    <div {{ block('widget_container_attributes') }} class="fr-fieldset fr-mt-1w fr-mb-0">
     {% if not form|length and nochoiceslabel is defined %}
         {{ nochoiceslabel }}
     {% else %}

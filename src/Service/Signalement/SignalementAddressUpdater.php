@@ -23,6 +23,9 @@ class SignalementAddressUpdater
             $signalement->setBanIdOccupant($addressResult->getBanId());
             if ($updateGeolocAndRnbId) {
                 $signalement
+                    ->setAdresseOccupant($addressResult->getStreet())
+                    ->setVilleOccupant($addressResult->getCity())
+                    ->setCpOccupant($addressResult->getZipCode())
                     ->setInseeOccupant($addressResult->getInseeCode())
                     ->setGeoloc([
                         'lat' => $addressResult->getLatitude(),
@@ -43,6 +46,7 @@ class SignalementAddressUpdater
                     ->setBanIdOccupant('0')
                     ->setRnbIdOccupant(null)
                     ->setVilleOccupant($inseeResult->getCity())
+                    ->setCpOccupant($inseeResult->getZipCode())
                     ->setInseeOccupant($inseeResult->getInseeCode())
                     ->setGeoloc([]);
 

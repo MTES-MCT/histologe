@@ -90,6 +90,9 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
     #[ORM\Column(type: 'boolean', nullable: true)]
     private ?bool $isBailEnCours = null;
 
+    #[ORM\Column(type: 'boolean', nullable: true)]
+    private ?bool $isLogementVacant = null;
+
     #[ORM\Column(type: 'date', nullable: true)]
     private ?\DateTimeInterface $dateEntree = null;
 
@@ -188,14 +191,16 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
     private ?string $mailOccupant = null;
 
     #[ORM\Column(type: 'string', length: 100, nullable: true)]
+    #[Assert\Length(max: 100, groups: ['bo_step_address'])]
     private ?string $adresseOccupant = null;
 
     #[ORM\Column(type: 'string', length: 5, nullable: true)]
     #[Assert\NotBlank]
-    #[Assert\Regex(pattern: '/^[0-9]{5}$/', message: 'Le code postal doit être composé de 5 chiffres.')]
+    #[Assert\Regex(pattern: '/^[0-9]{5}$/', message: 'Le code postal doit être composé de 5 chiffres.', groups: ['Default', 'bo_step_address'])]
     private ?string $cpOccupant = null;
 
     #[ORM\Column(type: 'string', length: 100, nullable: true)]
+    #[Assert\Length(max: 100, groups: ['bo_step_address'])]
     private ?string $villeOccupant = null;
 
     #[ORM\Column(type: 'string', length: 50, nullable: true)]
@@ -244,15 +249,19 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
     private ?string $codeProcedure = null;
 
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
+    #[Assert\Length(max: 5, groups: ['bo_step_address'])]
     private ?string $etageOccupant = null;
 
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
+    #[Assert\Length(max: 3, groups: ['bo_step_address'])]
     private ?string $escalierOccupant = null;
 
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
+    #[Assert\Length(max: 5, groups: ['bo_step_address'])]
     private ?string $numAppartOccupant = null;
 
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
+    #[Assert\Length(max: 255, groups: ['bo_step_address'])]
     private ?string $adresseAutreOccupant = null;
 
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
@@ -394,13 +403,13 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
     private ?TypeCompositionLogement $typeCompositionLogement = null;
 
     #[ORM\Column(type: 'situation_foyer', nullable: true)]
-    private ?SituationFoyer $situationFoyer;
+    private ?SituationFoyer $situationFoyer = null;
 
     #[ORM\Column(type: 'information_procedure', nullable: true)]
-    private ?InformationProcedure $informationProcedure;
+    private ?InformationProcedure $informationProcedure = null;
 
     #[ORM\Column(type: 'information_complementaire', nullable: true)]
-    private ?InformationComplementaire $informationComplementaire;
+    private ?InformationComplementaire $informationComplementaire = null;
 
     #[ORM\ManyToMany(targetEntity: DesordreCategorie::class, inversedBy: 'signalement', cascade: ['persist'])]
     #[ORM\JoinTable(name: 'desordre_categorie_signalement')]
@@ -741,6 +750,18 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
     public function setIsBailEnCours(?bool $isBailEnCours): self
     {
         $this->isBailEnCours = $isBailEnCours;
+
+        return $this;
+    }
+
+    public function getIsLogementVacant(): ?bool
+    {
+        return $this->isLogementVacant;
+    }
+
+    public function setIsLogementVacant(?bool $isLogementVacant): self
+    {
+        $this->isLogementVacant = $isLogementVacant;
 
         return $this;
     }
@@ -2074,7 +2095,7 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
 
     public function getProfileDeclarant(): ?ProfileDeclarant
     {
-        if (null !== $this->createdFrom) {
+        if (null !== $this->createdFrom || null !== $this->createdBy) {
             return $this->profileDeclarant;
         }
 

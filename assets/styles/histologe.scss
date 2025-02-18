@@ -180,6 +180,9 @@ legend.required::after, label.required::after {
     position: relative;
     left: 3px;
 }
+.text-required {
+    color: var(--red-marianne-425-625);
+}
 .fr-fieldset__content .fr-checkbox-group input[type="checkbox"] + label.required::after,
 .fr-fieldset__content .fr-radio-group:not(.fr-radio-rich) input[type="radio"] + label.required::after {
     position: absolute;
@@ -769,6 +772,7 @@ ul.fr-autocomplete-list {
 }
 .fr-address-group-container {
     position: relative;
+    z-index: 100;
     .fr-address-group {
         position: absolute;
         width: 100%;

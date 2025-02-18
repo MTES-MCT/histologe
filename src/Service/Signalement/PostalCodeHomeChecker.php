@@ -12,7 +12,7 @@ class PostalCodeHomeChecker
     ) {
     }
 
-    public function isActive(string $postalCode, ?string $inseeCode = null): bool
+    public function getActiveTerritory(string $postalCode, ?string $inseeCode = null): ?Territory
     {
         // Si on a un code Insee, on vérifie en priorité celui-ci car il indique le vrai territoire
         $codeToCheck = $inseeCode ?? $postalCode;
@@ -23,13 +23,20 @@ class PostalCodeHomeChecker
 
         if (!empty($territoryItem)) {
             if (empty($inseeCode)) {
-                return true;
+                return $territoryItem;
             }
 
-            return $this->isAuthorizedInseeCode($territoryItem, $inseeCode);
+            return $this->isAuthorizedInseeCode($territoryItem, $inseeCode) ? $territoryItem : null;
         }
 
-        return false;
+        return null;
+    }
+
+    public function isActive(string $postalCode, ?string $inseeCode = null): bool
+    {
+        $activeTerritory = $this->getActiveTerritory($postalCode, $inseeCode);
+
+        return $activeTerritory ? true : false;
     }
 
     public function isAuthorizedInseeCode(Territory $territory, string $inseeCode): bool

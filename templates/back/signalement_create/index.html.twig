@@ -3,10 +3,11 @@
 {% block title %}Créer un signalement{% endblock %}
 
 {% block content %}
+    {% include '_partials/_modal_duplicate.html.twig' %}
     <section class="fr-p-5v">
         {% include 'back/breadcrumb_bo.html.twig' with {
             'level2Title': 'Liste des signalements',
-            'level2Link': path('back_signalements_index'),
+            'level2Link': path('back_signalement_drafts'),
             'level2Label': 'Retour à la liste des signalements',
             'level3Title': 'Créer un signalement',
             'level3Link': '',
@@ -16,8 +17,13 @@
                 <div class="fr-text--left">
                     <h1 class="fr-h1 fr-mb-1v">Créer un signalement</h1>
                     <p>
-                       Ajoutez un signalement en complétant le formulaire ci-dessous. <br>
-                       Vous pouvez choisir les partenaires à affecter à la dernière étape. Le signalement sera validé automatiquement.
+                        {% if is_granted('ROLE_ADMIN_TERRITORY') %}
+                            Ajoutez un signalement en complétant le formulaire ci-dessous. <br>
+                            Vous pouvez choisir les partenaires à affecter à la dernière étape. Le signalement sera validé automatiquement.
+                        {% else %} 
+                            Ajoutez un signalement en complétant le formulaire ci-dessous. <br>
+                            Une fois terminé, le signalement sera soumis à validation aux responsables de territoire.
+                        {% endif %}
                     </p>
                 </div>
             </div>
@@ -30,40 +36,43 @@
                     <button id="tabpanel-adresse" class="fr-tabs__tab"
                         tabindex="0" role="tab" aria-selected="false" aria-controls="tabpanel-adresse-panel">Adresse</button>
                 </li>
+                {% set tabDisabled = (signalement.id is null) ? 'disabled' : '' %}
                 <li role="presentation">
-                    <button id="tabpanel-logement" class="fr-tabs__tab" tabindex="-1" role="tab" aria-selected="false" aria-controls="tabpanel-logement-panel">Logement</button>
+                    <button id="tabpanel-logement" class="fr-tabs__tab" {{ tabDisabled }} tabindex="-1" role="tab" aria-selected="false" aria-controls="tabpanel-logement-panel">Logement</button>
                 </li>
                 <li role="presentation">
-                    <button id="tabpanel-situation" class="fr-tabs__tab" tabindex="-1" role="tab" aria-selected="false" aria-controls="tabpanel-situation-panel">Situation</button>
+                    <button id="tabpanel-situation" class="fr-tabs__tab" {{ tabDisabled }} tabindex="-1" role="tab" aria-selected="false" aria-controls="tabpanel-situation-panel">Situation</button>
                 </li>
                 <li role="presentation">
-                    <button id="tabpanel-coordonnees" class="fr-tabs__tab" tabindex="-1" role="tab" aria-selected="false" aria-controls="tabpanel-coordonnees-panel">Coordonnées</button>
+                    <button id="tabpanel-coordonnees" class="fr-tabs__tab" {{ tabDisabled }} tabindex="-1" role="tab" aria-selected="false" aria-controls="tabpanel-coordonnees-panel">Coordonnées</button>
                 </li>
                 <li role="presentation">
-                    <button id="tabpanel-desordres" class="fr-tabs__tab" tabindex="-1" role="tab" aria-selected="false" aria-controls="tabpanel-desordres-panel">Désordres</button>
+                    <button id="tabpanel-desordres" class="fr-tabs__tab" {{ tabDisabled }} tabindex="-1" role="tab" aria-selected="false" aria-controls="tabpanel-desordres-panel">Désordres</button>
                 </li>
                 <li role="presentation">
-                    <button id="tabpanel-validation" class="fr-tabs__tab" tabindex="-1" role="tab" aria-selected="false" aria-controls="tabpanel-validation-panel">Validation</button>
+                    <button id="tabpanel-validation" class="fr-tabs__tab" {{ tabDisabled }} tabindex="-1" role="tab" aria-selected="false" aria-controls="tabpanel-validation-panel">Validation</button>
                 </li>
             </ul>
             <div id="tabpanel-adresse-panel" class="fr-tabs__panel" role="tabpanel" aria-labelledby="tabpanel-adresse" tabindex="0">
-                {% include 'back/signalement_create/tabs/tab-adresse.html.twig' %}
+                {% include 'back/signalement_create/tabs/tab-adresse.html.twig' with { 'form': formAddress } %}
             </div>
-            <div id="tabpanel-logement-panel" class="fr-tabs__panel" role="tabpanel" aria-labelledby="tabpanel-logement" tabindex="0">
-                {% include 'back/signalement_create/tabs/tab-logement.html.twig' %}
-            </div>
-            <div id="tabpanel-situation-panel" class="fr-tabs__panel" role="tabpanel" aria-labelledby="tabpanel-situation" tabindex="0">
-                {% include 'back/signalement_create/tabs/tab-situation.html.twig' %}
-            </div>
-            <div id="tabpanel-coordonnees-panel" class="fr-tabs__panel" role="tabpanel" aria-labelledby="tabpanel-coordonnees" tabindex="0">
-                {% include 'back/signalement_create/tabs/tab-coordonnees.html.twig' %}
-            </div>
-            <div id="tabpanel-desordres-panel" class="fr-tabs__panel" role="tabpanel" aria-labelledby="tabpanel-desordres" tabindex="0">
-                {% include 'back/signalement_create/tabs/tab-desordres.html.twig' %}
-            </div>
-            <div id="tabpanel-validation-panel" class="fr-tabs__panel" role="tabpanel" aria-labelledby="tabpanel-validation" tabindex="0">
-                {% include 'back/signalement_create/tabs/tab-validation.html.twig' %}
-            </div>
+            {% if signalement.id is not null %}
+                <div id="tabpanel-logement-panel" class="fr-tabs__panel" role="tabpanel" aria-labelledby="tabpanel-logement" tabindex="0">
+                    {% include 'back/signalement_create/tabs/tab-logement.html.twig' %}
+                </div>
+                <div id="tabpanel-situation-panel" class="fr-tabs__panel" role="tabpanel" aria-labelledby="tabpanel-situation" tabindex="0">
+                    {% include 'back/signalement_create/tabs/tab-situation.html.twig' %}
+                </div>
+                <div id="tabpanel-coordonnees-panel" class="fr-tabs__panel" role="tabpanel" aria-labelledby="tabpanel-coordonnees" tabindex="0">
+                    {% include 'back/signalement_create/tabs/tab-coordonnees.html.twig' %}
+                </div>
+                <div id="tabpanel-desordres-panel" class="fr-tabs__panel" role="tabpanel" aria-labelledby="tabpanel-desordres" tabindex="0">
+                    {% include 'back/signalement_create/tabs/tab-desordres.html.twig' %}
+                </div>
+                <div id="tabpanel-validation-panel" class="fr-tabs__panel" role="tabpanel" aria-labelledby="tabpanel-validation" tabindex="0">
+                    {% include 'back/signalement_create/tabs/tab-validation.html.twig' %}
+                </div>
+            {% endif %}
         </div>
     </section>
 {% endblock %}
