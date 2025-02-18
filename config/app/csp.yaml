@@ -51,7 +51,7 @@ parameters:
       - "'self'"
       - "https://fonts.gstatic.com"
     frame-src:
-      - "'none'"
+      - "'self'"
     object-src:
       - "'none'"
     base-uri:

@@ -773,7 +773,12 @@ ul.fr-autocomplete-list {
         position: absolute;
         width: 100%;
     }
+    .fr-address-group.iframed {
+        max-height: 145px;
+        overflow: auto;
+    }
 }
+
 .fr-input:not([type="radio"]):read-only {
     box-shadow: inset 0 -2px 0 0 var(--border-disabled-grey);
     color: var(--text-disabled-grey);

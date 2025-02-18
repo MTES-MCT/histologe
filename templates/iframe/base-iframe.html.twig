@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="fr">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="robots" content="noindex, nofollow">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+        <title>{{ platform.name }}</title>
+        <link rel="icon" href={{ asset('favicon.ico') }}>
+        <link rel="stylesheet" href="{{ asset('build/dsfr/dsfr.min.css') }}">
+        <link rel="stylesheet" href="{{ asset('build/dsfr/utility/icons/icons-buildings/icons-buildings.min.css') }}">
+        <link rel="stylesheet" href="{{ asset('build/dsfr/utility/icons/icons-business/icons-business.min.css') }}">
+        <link rel="stylesheet" href="{{ asset('build/dsfr/utility/icons/icons-communication/icons-communication.min.css') }}">
+        <link rel="stylesheet" href="{{ asset('build/dsfr/utility/icons/icons-others/icons-others.min.css') }}">
+        <link rel="stylesheet" href="{{ asset('build/dsfr/utility/icons/icons-device/icons-device.min.css') }}">
+        <link rel="stylesheet" href="{{ asset('build/dsfr/utility/icons/icons-design/icons-design.min.css') }}">
+        <link rel="stylesheet" href="{{ asset('build/dsfr/utility/icons/icons-document/icons-document.min.css') }}">
+        <link rel="stylesheet" href="{{ asset('build/dsfr/utility/icons/icons-editor/icons-editor.min.css') }}">
+        <link rel="stylesheet" href="{{ asset('build/dsfr/utility/icons/icons-map/icons-map.min.css') }}">
+        <link rel="stylesheet" href="{{ asset('build/dsfr/utility/icons/icons-media/icons-media.min.css') }}">
+        <link rel="stylesheet" href="{{ asset('build/dsfr/utility/icons/icons-system/icons-system.min.css') }}">
+        <link rel="stylesheet" href="{{ asset('build/dsfr/utility/icons/icons-user/icons-user.min.css') }}">
+        <link rel="stylesheet" href="{{ asset('build/dsfr/utility/icons/icons-weather/icons-weather.min.css') }}">
+        <link rel="stylesheet" href={{ asset('build/app.css') }}>
+        {% block customscripts %}
+            {{ encore_entry_script_tags('app') }}
+            {{ encore_entry_link_tags('app') }}
+        {% endblock %}
+    </head>
+
+    <body>
+        {% block body %}{% endblock %}
+    </body>
+</html>

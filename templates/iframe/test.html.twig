@@ -1,0 +1,12 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Test Iframe{% endblock %}
+
+{% block body %}
+    {% include "breadcrumbs.html.twig" with { 'breadcrumbsLabel': 'Test Iframe' } %}
+	<main id="content">
+		<section class="fr-container">
+			<iframe src="{{ path('iframe_demande_lien_signalement') }}" width="100%" height="500px" frameborder="0"></iframe>
+		</section>
+	</main>
+{% endblock %}
