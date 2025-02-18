@@ -1,0 +1,59 @@
+{% extends 'back/base_bo.html.twig' %}
+
+{% block title %}Mes brouillons{% endblock %}
+
+{% block content %}
+    <section class="fr-pt-5v">
+        {% include 'back/breadcrumb_bo.html.twig' with {
+            'level2Title': 'Liste des signalements',
+            'level2Link': path('back_signalements_index'),
+            'level2Label': 'Retour à la liste des signalements',
+            'level3Title': 'Brouillons',
+            'level3Link': '',
+        } %}
+        <header>
+            <div class="fr-grid-row">
+                <div class="fr-col-6 fr-text--left">
+                    <h1 class="fr-h1 fr-mb-0">Brouillons</h1>
+                </div>
+                <div class="fr-col-6 fr-text--right">
+                    <a class="fr-btn fr-btn--success fr-btn--icon-left fr-icon-add-line" href="{{path('back_signalement_create')}}">Créer un signalement</a>
+                </div>
+            </div>
+        </header>
+    </section>
+
+    <section class="fr-col-12 fr-py-5v">
+        <h2 class="fr-mb-0" id="desc-table">{{ singular_or_plural(drafts|length, 'brouillon trouvé', 'brouillons trouvés') }}</h2>
+    </section>
+    {% form_theme form 'form/dsfr_theme.html.twig' %}
+    {{ form_start(form) }}
+    
+    <section class="fr-col-4 fr-p-0">
+        {{ form_row(form.orderType) }}
+    </section>
+
+    {{ form_end(form) }}
+
+    <section class="fr-container--fluid">
+        {% for signalement in drafts %}
+            {% if signalement.statut is same as enum('App\\Entity\\Enum\\SignalementStatus').DRAFT %}                
+                {% include 'back/signalement_drafts/draft_card.html.twig' %}   
+            {% endif %}
+            {% if signalement.statut is same as enum('App\\Entity\\Enum\\SignalementStatus').NEED_VALIDATION %}    
+                {% include 'back/signalement_drafts/need_validation_card.html.twig' %}   
+            {% endif %}
+        {% else %}
+            <div>
+                Aucun brouillon trouvé
+            </div>
+        {% endfor %}
+        <div class="fr-grid-row fr-mt-2v fr-grid-row--center" id="drafts-pagination">
+            {% import '_partials/macros.html.twig' as macros %}
+            {{ macros.customPagination(pages, searchDraft.page, 'back_signalement_drafts', searchDraft.urlParams) }}
+        </div>
+    </section>
+{% endblock %}
+{% block javascripts %}
+    {{ encore_entry_script_tags('app') }}
+{% endblock %}

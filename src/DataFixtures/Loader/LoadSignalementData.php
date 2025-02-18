@@ -328,7 +328,7 @@ class LoadSignalementData extends Fixture implements OrderedFixtureInterface
             ->setNatureLogement($row['nature_logement'])
             ->setSuperficie($row['superficie'])
             ->setLoyer($row['loyer'] ?? $faker->randomNumber(3))
-            ->setDetails($row['details'])
+            ->setDetails($row['details'] ?? '')
             ->setIsProprioAverti($row['is_proprio_averti'])
             ->setNomProprio($row['nom_proprio'] ?? $faker->company())
             ->setMailProprio($faker->companyEmail)
@@ -338,9 +338,9 @@ class LoadSignalementData extends Fixture implements OrderedFixtureInterface
             ->setIsAllocataire($row['is_allocataire'] ?? null)
             ->setNumAllocataire($faker->randomNumber(6))
             ->setStatut(SignalementStatus::from($row['statut']))
-            ->setScore($row['score'])
-            ->setScoreBatiment($row['score_batiment'])
-            ->setScoreLogement($row['score_logement'])
+            ->setScore($row['score'] ?? 0)
+            ->setScoreBatiment($row['score_batiment'] ?? 0)
+            ->setScoreLogement($row['score_logement'] ?? 0)
             ->setReference($row['reference'])
             ->setIsBailEnCours(true)
             ->setIsRelogement($row['is_relogement'] ?? false)
@@ -360,9 +360,11 @@ class LoadSignalementData extends Fixture implements OrderedFixtureInterface
             ->setIsUsagerAbandonProcedure(0)
             ->setNbPiecesLogement($row['nb_pieces_logement']);
 
-        $signalement->setCreatedFrom(
-            $this->signalementDraftRepository->findOneBy(['uuid' => $row['created_from_uuid']])
-        );
+        if (isset($row['created_from_uuid'])) {
+            $signalement->setCreatedFrom(
+                $this->signalementDraftRepository->findOneBy(['uuid' => $row['created_from_uuid']])
+            );
+        }
         $signalement->setProfileDeclarant(ProfileDeclarant::tryFrom($row['profile_declarant']))
             ->setTypeCompositionLogement(
                 TypeCompositionLogementFactory::createFromArray(json_decode($row['type_composition_logement'], true))

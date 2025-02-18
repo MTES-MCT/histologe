@@ -1,0 +1,23 @@
+<div class="fr-card fr-my-5v fr-enlarge-link fr-card--grey">
+    <div class="fr-card__body">
+        <div class="fr-card__content">
+            <div class="fr-grid-row">
+              <div class="fr-col-xl-9 fr-col-lg-6 fr-col-12">
+                    <h3 class="fr-card__title fr-my-1v">#{{ signalement.reference }} - {{signalement.nomOccupant|upper}} {{signalement.prenomOccupant|capitalize}}</h3>
+                    <p class="fr-my-1v fr-text--bold fr-text--lg">{{signalement.adresseOccupant}}, {{signalement.cpOccupant}} {{signalement.villeOccupant}}</p>
+                </div>
+                <div class="fr-col-xl-3 fr-col-lg-6 fr-col-12">
+                    <p class="fr-my-1v fr-text--right">
+                        <span class="fr-badge fr-badge--info fr-badge--no-icon">En attente de validation</span><br>
+                        <span class="fr-icon-information-line" aria-hidden="true"></span>Une fois validé, le signalement ne sera plus visible sur cette liste
+                    </p>
+                </div>
+            </div>
+            <div class="fr-grid-row fr-mt-1w">
+                <div class="fr-col-xl-10 fr-col-12">
+                    <p>Signalement enregistré le  {{ signalement.createdAt|date('d/m/Y') }}  à  {{ signalement.createdAt|date('H:i') }} </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
