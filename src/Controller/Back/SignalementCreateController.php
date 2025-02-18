@@ -2,15 +2,18 @@
 
 namespace App\Controller\Back;
 
-use App\Entity\Enum\SignalementStatus;
 use App\Entity\Signalement;
+use App\Entity\User;
+use App\Form\SearchDraftType;
 use App\Form\SignalementAddressType;
 use App\Manager\SignalementManager;
 use App\Repository\SignalementRepository;
+use App\Service\ListFilters\SearchDraft;
 use App\Service\Signalement\SignalementBoManager;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
+use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -31,19 +34,28 @@ class SignalementCreateController extends AbstractController
         }
     }
 
-    #[Route('/drafts', name: 'back_signalement_drafts', methods: ['GET'])]
+    #[Route('/drafts', name: 'back_signalement_drafts', methods: ['GET', 'POST'])]
     public function showDrafts(
+        Request $request,
         SignalementRepository $signalementRepository,
+        ParameterBagInterface $parameterBag,
     ): Response {
-        $drafts = $signalementRepository->findBy([
-            'createdBy' => $this->getUser(),
-            'statut' => [SignalementStatus::DRAFT, SignalementStatus::NEED_VALIDATION],
-        ],
-            ['createdAt' => 'DESC']
-        );
+        /** @var User $user */
+        $user = $this->getUser();
+        $searchDraft = new SearchDraft($user);
+        $form = $this->createForm(SearchDraftType::class, $searchDraft);
+        $form->handleRequest($request);
+        if ($form->isSubmitted() && !$form->isValid()) {
+            $searchDraft = new SearchDraft($user);
+        }
+        $maxListPagination = $parameterBag->get('standard_max_list_pagination');
+        $paginatedDrafts = $signalementRepository->findFilteredPaginatedDrafts($searchDraft, $maxListPagination);
 
-        return $this->render('back/signalement_create/drafts.html.twig', [
-            'drafts' => $drafts,
+        return $this->render('back/signalement_drafts/index.html.twig', [
+            'form' => $form,
+            'searchDraft' => $searchDraft,
+            'drafts' => $paginatedDrafts,
+            'pages' => (int) ceil($paginatedDrafts->count() / $maxListPagination),
         ]);
     }
 

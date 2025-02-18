@@ -21,6 +21,7 @@ use App\Entity\User;
 use App\Entity\View\ViewLatestIntervention;
 use App\Service\Interconnection\Idoss\IdossService;
 use App\Service\ListFilters\SearchArchivedSignalement;
+use App\Service\ListFilters\SearchDraft;
 use App\Service\Signalement\SearchFilter;
 use App\Service\Statistics\CriticitePercentStatisticProvider;
 use App\Utils\CommuneHelper;
@@ -1312,6 +1313,30 @@ class SignalementRepository extends ServiceEntityRepository
         ;
 
         return $qb->getQuery()->getResult();
+    }
+
+    public function findFilteredPaginatedDrafts(
+        SearchDraft $searchDraft,
+        int $maxResult,
+    ): Paginator {
+        $queryBuilder = $this->createQueryBuilder('s');
+        $queryBuilder
+            ->where('s.statut IN (:draft)')
+            ->andWhere('s.createdBy = :user')
+            ->setParameter('draft', [SignalementStatus::DRAFT, SignalementStatus::NEED_VALIDATION])
+            ->setParameter('user', $searchDraft->getUser());
+
+        if (!empty($searchDraft->getOrderType())) {
+            [$orderField, $orderDirection] = explode('-', $searchDraft->getOrderType());
+            $queryBuilder->orderBy($orderField, $orderDirection);
+        } else {
+            $queryBuilder->orderBy('s.createdAt', 'DESC');
+        }
+
+        $firstResult = ($searchDraft->getPage() - 1) * $maxResult;
+        $queryBuilder->setFirstResult($firstResult)->setMaxResults($maxResult);
+
+        return new Paginator($queryBuilder->getQuery(), false);
     }
 
     public function findFilteredArchivedPaginated(

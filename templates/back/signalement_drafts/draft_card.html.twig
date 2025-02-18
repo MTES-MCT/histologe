@@ -1,0 +1,36 @@
+<div class="fr-card fr-my-5v">
+    <div class="fr-card__body">
+        <div class="fr-card__content">
+            <div class="fr-grid-row">
+              <div class="fr-col-xl-8 fr-col-lg-6 fr-col-12">
+                    <h3 class="fr-card__title fr-my-1v">Brouillon du {{ signalement.createdAt|date('d/m/Y') }} - {{signalement.nomOccupant|upper}} {{signalement.prenomOccupant|capitalize}}</h3>
+                    <p class="fr-my-1v fr-text--bold fr-text--lg">{{signalement.adresseOccupant}}, {{signalement.cpOccupant}} {{signalement.villeOccupant}}</p>
+                </div>
+                <div class="fr-col-xl-4 fr-col-lg-6 fr-col-12">
+                    <p class="fr-my-1v fr-text--right">
+                        <span class="fr-badge fr-badge--warning fr-badge--no-icon">A compléter</span>
+                    </p>
+                </div>
+            </div>
+            <div class="fr-grid-row fr-mt-1w">
+                <div class="fr-col-xl-10 fr-col-12">
+                    <p>Brouillon enregistré le  {{ signalement.createdAt|date('d/m/Y') }}  à  {{ signalement.createdAt|date('H:i') }} </p>
+                </div>
+            </div>
+        </div>
+        <div class="fr-card__footer">
+            <div class="fr-grid-row">
+                <div class="fr-col-12 fr-text--right">
+                    <div class="fr-display-inline-flex">
+                        <a href="{{ path('back_signalement_edit_draft', { 'uuid': signalement.uuid }) }}" class="fr-btn fr-btn--secondary fr-btn--icon-left fr-fi-delete-line fr-mx-1w">
+                            Supprimer le brouillon
+                        </a>
+                        <a href="{{ path('back_signalement_edit_draft', { 'uuid': signalement.uuid }) }}" class="fr-btn fr-btn--icon-right fr-icon-arrow-right-line fr-mx-1w">
+                            Terminer le signalement
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

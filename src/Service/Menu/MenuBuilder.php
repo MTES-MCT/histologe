@@ -23,6 +23,10 @@ readonly class MenuBuilder
             ->addChild(new MenuItem(label: 'Créer un signalement', route: $this->parameterBag->get('feature_bo_signalement_create') ? 'back_signalement_create' : 'front_signalement', roleGranted: User::ROLE_USER))
             ->addChild(new MenuItem(route: 'back_signalement_view'))
         ;
+        if ($this->parameterBag->get('feature_bo_signalement_create')) {
+            $signalementsSubMenu
+            ->addChild(new MenuItem(label: 'Mes brouillons', route: 'back_signalement_drafts', roleGranted: User::ROLE_USER));
+        }
 
         $donneesChiffreesSubMenu = (new MenuItem(label: 'Données chiffrées', roleGranted: User::ROLE_USER))
             ->addChild(new MenuItem(label: 'Cartographie', route: 'back_cartographie', roleGranted: User::ROLE_USER))
