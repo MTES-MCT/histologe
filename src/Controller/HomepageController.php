@@ -22,9 +22,15 @@ use Symfony\Component\HttpKernel\Attribute\Cache;
 use Symfony\Component\RateLimiter\RateLimiterFactory;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Routing\RouterInterface;
+use Symfony\Contracts\Cache\CacheInterface;
+use Symfony\Contracts\Cache\ItemInterface;
 
 class HomepageController extends AbstractController
 {
+    public function __construct(private readonly CacheInterface $cache)
+    {
+    }
+
     #[Route(
         '/',
         name: 'home',
@@ -35,18 +41,24 @@ class HomepageController extends AbstractController
         SignalementRepository $signalementRepository,
         PostalCodeHomeChecker $postalCodeHomeChecker,
     ): Response {
-        $stats = ['pris_en_compte' => 0, 'clotures' => 0];
-        $stats['total'] = $signalementRepository->countAll(
-            territory: null,
-            partners: null,
-            removeImported: true,
-            removeArchived: true
-        );
+        $stats = $this->cache->get('homepage.stats.array', function (ItemInterface $item) use ($signalementRepository) {
+            $item->expiresAfter(900);
 
-        if ($stats['total'] > 0) {
-            $stats['pris_en_compte'] = round($signalementRepository->countValidated(true) / $stats['total'] * 100, 1);
-            $stats['clotures'] = round($signalementRepository->countClosed(true) / $stats['total'] * 100, 1);
-        }
+            $stats = ['pris_en_compte' => 0, 'clotures' => 0];
+            $stats['total'] = $signalementRepository->countAll(
+                territory: null,
+                partners: null,
+                removeImported: true,
+                removeArchived: true
+            );
+
+            if ($stats['total'] > 0) {
+                $stats['pris_en_compte'] = round($signalementRepository->countValidated(true) / $stats['total'] * 100, 1);
+                $stats['clotures'] = round($signalementRepository->countClosed(true) / $stats['total'] * 100, 1);
+            }
+
+            return $stats;
+        });
 
         $displayModal = '';
 

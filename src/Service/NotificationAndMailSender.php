@@ -64,12 +64,12 @@ class NotificationAndMailSender
         $territory = $this->signalement->getTerritory();
         $recipientsEmail = $this->getRecipientsAdmin($territory);
         $recipientsNotifications = $this->getRecipientsAdmin($territory);
-
         foreach ($this->signalement->getAffectations() as $affectation) {
             if (AffectationStatus::STATUS_WAIT->value === $affectation->getStatut()
                     || AffectationStatus::STATUS_ACCEPTED->value === $affectation->getStatut()) {
-                $partnerRecipientsFiltered = $this->getRecipientsPartner($affectation->getPartner());
-                $partnerRecipients = $this->getRecipientsPartner($affectation->getPartner(), false);
+                $partner = $this->partnerRepository->getWithUserPartners($affectation->getPartner());
+                $partnerRecipientsFiltered = $this->getRecipientsPartner($partner);
+                $partnerRecipients = $this->getRecipientsPartner($partner, false);
                 $recipientsEmail = new ArrayCollection(
                     array_merge($recipientsEmail->toArray(), $partnerRecipientsFiltered->toArray())
                 );
@@ -78,7 +78,6 @@ class NotificationAndMailSender
                 );
             }
         }
-
         $this->sendMail($recipientsEmail, $mailerType);
         $this->createInAppNotifications(
             recipients: $recipientsNotifications,

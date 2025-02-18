@@ -307,4 +307,16 @@ class PartnerRepository extends ServiceEntityRepository
         $sql = 'UPDATE partner SET nom = TRIM(REPLACE(nom, UNHEX("C2A0"), " "))';
         $connection->prepare($sql)->executeStatement();
     }
+
+    public function getWithUserPartners(Partner $partner): Partner
+    {
+        return $this->createQueryBuilder('p')
+        ->select('p', 'up', 'u')
+        ->leftJoin('p.userPartners', 'up')
+        ->leftJoin('up.user', 'u')
+        ->where('p.id = :partner')
+        ->setParameter('partner', $partner)
+        ->getQuery()
+        ->getOneOrNullResult();
+    }
 }
