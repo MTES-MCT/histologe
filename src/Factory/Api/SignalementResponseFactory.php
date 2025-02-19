@@ -142,7 +142,7 @@ readonly class SignalementResponseFactory
             $signalementResponse->interventions[] = new Intervention($intervention);
         }
         foreach ($signalement->getFiles() as $file) {
-            $signalementResponse->files[] = $this->fileFactory->createFromSignalement($file);
+            $signalementResponse->files[] = $this->fileFactory->createFrom($file);
         }
         // divers
         $signalementResponse->territoireNom = $signalement->getTerritory()?->getName();

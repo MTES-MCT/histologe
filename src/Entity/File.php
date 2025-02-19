@@ -161,7 +161,8 @@ class File implements EntityHistoryInterface
         && ($this->uploadedBy->isSuperAdmin()
         || $this->uploadedBy->isTerritoryAdmin()
         || $this->uploadedBy->isPartnerAdmin()
-        || $this->uploadedBy->isUserPartner());
+        || $this->uploadedBy->isUserPartner()
+        || $this->uploadedBy->isApiUser());
     }
 
     public function getSignalement(): ?Signalement
