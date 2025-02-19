@@ -88,7 +88,8 @@ const formStore: FormStore = reactive({
     ajaxurlCheckSignalementOrDraftAlreadyExists: '',
     ajaxurlSendMailContinueFromDraft: '',
     ajaxurlSendMailGetLienSuivi: '',
-    ajaxurlArchiveDraft: ''
+    ajaxurlArchiveDraft: '',
+    initProfile: ''
   },
   screenData: [],
   currentScreen: null,
