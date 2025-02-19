@@ -49,13 +49,15 @@ class SignalementController extends AbstractController
         defaults: ['show_sitemap' => true]
     )]
     public function index(
+        Request $request,
     ): Response {
-        return $this->render('front/nouveau_formulaire.html.twig', [
+        return $this->render('front/formulaire_signalement.html.twig', [
             'uuid_signalement' => null,
+            'profile' => $request->query->get('profil'),
         ]);
     }
 
-    #[Route('/signalement-draft/{uuid:signalementDraft}', name: 'front_nouveau_formulaire_edit', methods: 'GET')]
+    #[Route('/signalement-draft/{uuid:signalementDraft}', name: 'front_formulaire_signalement_edit', methods: 'GET')]
     public function edit(
         SignalementDraft $signalementDraft,
     ): Response {
@@ -65,12 +67,12 @@ class SignalementController extends AbstractController
             return $this->redirectToRoute('front_signalement');
         }
 
-        return $this->render('front/nouveau_formulaire.html.twig', [
+        return $this->render('front/formulaire_signalement.html.twig', [
             'uuid_signalement' => $signalementDraft->getUuid(),
         ]);
     }
 
-    #[Route('/signalement-draft/envoi', name: 'envoi_nouveau_signalement_draft', methods: 'POST')]
+    #[Route('/signalement-draft/envoi', name: 'envoi_formulaire_signalement_draft', methods: 'POST')]
     public function sendSignalementDraft(
         Request $request,
         SignalementDraftRequestSerializer $serializer,
@@ -180,7 +182,7 @@ class SignalementController extends AbstractController
         return $this->json($errors);
     }
 
-    #[Route('/signalement-draft/{uuid:signalementDraft}/envoi', name: 'mise_a_jour_nouveau_signalement_draft', methods: 'PUT')]
+    #[Route('/signalement-draft/{uuid:signalementDraft}/envoi', name: 'mise_a_jour_formulaire_signalement_draft', methods: 'PUT')]
     public function updateSignalementDraft(
         Request $request,
         SignalementDraftRequestSerializer $serializer,

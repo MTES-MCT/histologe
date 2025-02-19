@@ -35,7 +35,7 @@ class ContinueFromDraftMailer extends AbstractNotificationMailer
             'signalement_draft_createdAt' => $signalementDraft->getCreatedAt()->format('d/m/Y'),
             'signalement_draft_addressComplete' => $signalementDraft->getAddressComplete(),
             'lien_draft' => $this->urlGenerator->generate(
-                'front_nouveau_formulaire_edit',
+                'front_formulaire_signalement_edit',
                 [
                     'uuid' => $signalementDraft->getUuid(),
                 ],

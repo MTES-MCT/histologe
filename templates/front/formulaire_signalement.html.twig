@@ -17,8 +17,8 @@
         data-ajaxurl-dictionary="{{ path('public_api_dictionary') }}"
         data-ajaxurl-questions="{{ path('public_api_question_profile') }}?profil="
         data-ajaxurl-desordres="{{ path('public_api_desordres_profile') }}?profil="
-        data-ajaxurl-post-signalement-draft="{{ path('envoi_nouveau_signalement_draft') }}"
-        data-ajaxurl-put-signalement-draft="{{ path('mise_a_jour_nouveau_signalement_draft', {uuid: 'uuid'}) }}"
+        data-ajaxurl-post-signalement-draft="{{ path('envoi_formulaire_signalement_draft') }}"
+        data-ajaxurl-put-signalement-draft="{{ path('mise_a_jour_formulaire_signalement_draft', {uuid: 'uuid'}) }}"
         data-ajaxurl-handle-upload="{{ path('handle_upload') }}"
         {% if uuid_signalement is not null %}
           data-ajaxurl-get-signalement-draft="{{ path('informations_signalement_draft', {uuid: uuid_signalement}) }}"
@@ -29,6 +29,7 @@
         data-ajaxurl-send-mail-continue-from-draft="{{ path('send_mail_continue_from_draft') }}"
         data-ajaxurl-send-mail-get-lien-suivi="{{ path('send_mail_get_lien_suivi', {uuid: 'uuid'}) }}"
         data-ajaxurl-archive-draft="{{ path('archive_draft') }}"
+        data-init-profile="{{ profile }}"
         >
     </div>
   </main>
