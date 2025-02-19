@@ -56,7 +56,7 @@ class AffectationRepository extends ServiceEntityRepository
             ->select('COUNT(a.signalement) as count')
             ->leftJoin('a.signalement', 's', 'WITH', 's = a.signalement')
             ->andWhere('s.statut NOT IN (:signalement_status_list)')
-            ->setParameter('signalement_status_list', [SignalementStatus::DRAFT, SignalementStatus::ARCHIVED])
+            ->setParameter('signalement_status_list', [SignalementStatus::DRAFT, SignalementStatus::ARCHIVED, SignalementStatus::DRAFT_ARCHIVED])
             ->addSelect('a.statut')
             ->andWhere('a.partner IN (:partners)')
             ->setParameter('partners', $user->getPartners());
@@ -113,7 +113,7 @@ class AffectationRepository extends ServiceEntityRepository
             ->innerJoin('a.signalement', 's')
             ->where('p.esaboraUrl IS NOT NULL AND p.esaboraToken IS NOT NULL AND p.isEsaboraActive = 1')
             ->andWhere('s.statut NOT IN (:signalement_status_list)')
-            ->setParameter('signalement_status_list', [SignalementStatus::ARCHIVED, SignalementStatus::DRAFT])
+            ->setParameter('signalement_status_list', [SignalementStatus::ARCHIVED, SignalementStatus::DRAFT, SignalementStatus::DRAFT_ARCHIVED])
             ->andWhere('p.type = :partner_type')
             ->setParameter('partner_type', $partnerType);
 
@@ -193,7 +193,7 @@ class AffectationRepository extends ServiceEntityRepository
             ->innerJoin('a.signalement', 's')
             ->where('s.statut NOT IN (:statut_list)')
             ->andWhere('a.partner IN (:partners)')
-            ->setParameter('statut_list', [SignalementStatus::ARCHIVED->value, SignalementStatus::DRAFT->value])
+            ->setParameter('statut_list', [SignalementStatus::ARCHIVED->value, SignalementStatus::DRAFT->value, SignalementStatus::DRAFT_ARCHIVED->value])
             ->setParameter('partners', $user->getPartners());
 
         if (\count($territories)) {

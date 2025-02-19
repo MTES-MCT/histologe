@@ -41,6 +41,7 @@ class SignalementControllerTest extends WebTestCase
                 $this->assertResponseRedirects('/bo/signalements/');
                 break;
             case SignalementStatus::DRAFT:
+            case SignalementStatus::DRAFT_ARCHIVED:
                 $this->assertResponseStatusCodeSame(Response::HTTP_FORBIDDEN);
                 break;
             default:

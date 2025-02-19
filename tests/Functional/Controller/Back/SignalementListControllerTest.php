@@ -18,6 +18,70 @@ class SignalementListControllerTest extends WebTestCase
     }
 
     /**
+     * @dataProvider provideNewFilterSearch
+     */
+    public function testFilterSignalements(array $filter, int $results)
+    {
+        $client = static::createClient();
+        /** @var UrlGeneratorInterface $generatorUrl */
+        $generatorUrl = static::getContainer()->get(UrlGeneratorInterface::class);
+
+        /** @var UserRepository $userRepository */
+        $userRepository = static::getContainer()->get(UserRepository::class);
+        $user = $userRepository->findOneBy(['email' => 'admin-01@histologe.fr']);
+        $client->loginUser($user);
+        $route = $generatorUrl->generate('back_signalements_list_json');
+
+        $client->request('GET', $route, $filter, [], ['HTTP_Accept' => 'application/json']);
+        $result = json_decode($client->getResponse()->getContent(), true);
+
+        $this->assertEquals($results, $result['pagination']['total_items'], json_encode($result['list']));
+    }
+
+    public function provideNewFilterSearch(): \Generator
+    {
+        yield 'Search Terms with Reference' => [['searchTerms' => '2022-1', 'isImported' => 'oui'], 1];
+        yield 'Search Terms with cp Occupant' => [['searchTerms' => '13003', 'isImported' => 'oui'], 12];
+        yield 'Search Terms with cp Occupant 13005' => [['searchTerms' => '13005', 'isImported' => 'oui'], 3];
+        yield 'Search Terms with city Occupant' => [['searchTerms' => 'Gex', 'isImported' => 'oui'], 5];
+        yield 'Search Terms with Firstname Occupant' => [['searchTerms' => 'Mapaire', 'isImported' => 'oui'], 1];
+        yield 'Search Terms with Lastname Occupant' => [['searchTerms' => 'Nawell', 'isImported' => 'oui'], 2];
+        yield 'Search Terms with Email Occupant' => [['searchTerms' => 'nawell.mapaire@yopmail.com', 'isImported' => 'oui'], 1];
+        yield 'Search by Territory 13' => [['territoire' => '13', 'isImported' => 'oui'], 26];
+        yield 'Search by Commune' => [['communes' => ['gex', 'marseille'], 'isImported' => 'oui'], 31];
+        yield 'Search by Commune code postal' => [['communes' => ['13002'], 'isImported' => 'oui'], 2];
+        yield 'Search by EPCIS' => [['epcis' => ['244400503'], 'isImported' => 'oui'], 3];
+        yield 'Search by Partner' => [['partenaires' => ['5'], 'isImported' => 'oui'], 2];
+        yield 'Search by Etiquettes' => [['etiquettes' => ['5'], 'isImported' => 'oui'], 4];
+        yield 'Search by Parc public' => [['natureParc' => 'public', 'isImported' => 'oui'], 7];
+        yield 'Search by Parc public/prive non renseigné' => [['natureParc' => 'non_renseigne', 'isImported' => 'oui'], 1];
+        yield 'Search by Enfant moins de 6ans (non)' => [['enfantsM6' => 'non', 'isImported' => 'oui'], 2];
+        yield 'Search by Enfant moins de 6ans (oui)' => [['enfantsM6' => 'oui', 'isImported' => 'oui'], 50];
+        yield 'Search by Enfant moins de 6ans (non_renseignee)' => [['enfantsM6' => 'non_renseigne', 'isImported' => 'oui'], 0];
+        yield 'Search by Date de depot' => [['dateDepotDebut' => '2023-03-08', 'dateDepotFin' => '2023-03-16', 'isImported' => 'oui'], 2];
+        yield 'Search by Procédure estimée' => [['procedure' => 'rsd', 'isImported' => 'oui'], 7];
+        yield 'Search by Partenaires affectés' => [['partenaires' => ['5'], 'isImported' => 'oui'], 2];
+        yield 'Search by Statut de la visite' => [['visiteStatus' => 'Planifiée', 'isImported' => 'oui'], 5];
+        yield 'Search by Type de dernier suivi' => [['typeDernierSuivi' => 'automatique', 'isImported' => 'oui'], 35];
+        yield 'Search by Date de dernier suivi' => [['dateDernierSuiviDebut' => '2023-04-01', 'dateDernierSuiviFin' => '2023-04-18', 'isImported' => 'oui'], 3];
+        yield 'Search by Statut de l\'affectation' => [['statusAffectation' => 'refuse', 'isImported' => 'oui'], 1];
+        yield 'Search by Score criticite' => [['criticiteScoreMin' => 5, 'criticiteScoreMax' => 6, 'isImported' => 'oui'], 9];
+        yield 'Search by Declarant' => [['typeDeclarant' => 'locataire', 'isImported' => 'oui'], 49];
+        yield 'Search by Nature du parc' => [['natureParc' => 'public', 'isImported' => 'oui'], 7];
+        yield 'Search by Allocataire CAF' => [['allocataire' => 'caf', 'isImported' => 'oui'], 16];
+        yield 'Search by Allocataire MSA' => [['allocataire' => 'msa', 'isImported' => 'oui'], 1];
+        yield 'Search by Allocataire Oui (CAF+MSA+1)' => [['allocataire' => 'oui', 'isImported' => 'oui'], 17];
+        yield 'Search by Allocataire Non (null+empty)' => [['allocataire' => 'non', 'isImported' => 'oui'], 10];
+        yield 'Search by Situation Bail en cours' => [['situation' => 'bail_en_cours', 'isImported' => 'oui'], 13];
+        yield 'Search by Situation Prévis de départ' => [['situation' => 'preavis_de_depart', 'isImported' => 'oui'], 1];
+        yield 'Search by Situation Attente de relogement' => [['situation' => 'attente_relogement', 'isImported' => 'oui'], 2];
+        yield 'Search by Signalement Imported' => [['isImported' => 'oui'], 54];
+        yield 'Search by Zones' => [['isImported' => 'oui', 'zones' => [1, 2, 3]], 5];
+        yield 'Search by Zones on Territory 34' => [['isImported' => 'oui', 'zones' => [1, 2, 3], 'territoire' => '35'], 1];
+        yield 'Search by Sans suivi in territory 13' => [['isImported' => 'oui', 'sansSuiviPeriode' => 30, 'territoire' => '13'], 7];
+    }
+
+    /**
      * @dataProvider provideUserEmail
      */
     public function testListSignalementSuccessfullyOrRedirectWithoutError500(string $email): void
@@ -164,49 +228,6 @@ class SignalementListControllerTest extends WebTestCase
         $this->assertResponseHeaderSame('Content-Type', 'application/json');
     }
 
-    public function provideNewFilterSearch(): \Generator
-    {
-        yield 'Search Terms with Reference' => [['searchTerms' => '2022-1', 'isImported' => 'oui'], 1];
-        yield 'Search Terms with cp Occupant' => [['searchTerms' => '13003', 'isImported' => 'oui'], 12];
-        yield 'Search Terms with cp Occupant 13005' => [['searchTerms' => '13005', 'isImported' => 'oui'], 3];
-        yield 'Search Terms with city Occupant' => [['searchTerms' => 'Gex', 'isImported' => 'oui'], 5];
-        yield 'Search Terms with Firstname Occupant' => [['searchTerms' => 'Mapaire', 'isImported' => 'oui'], 1];
-        yield 'Search Terms with Lastname Occupant' => [['searchTerms' => 'Nawell', 'isImported' => 'oui'], 2];
-        yield 'Search Terms with Email Occupant' => [['searchTerms' => 'nawell.mapaire@yopmail.com', 'isImported' => 'oui'], 1];
-        yield 'Search by Territory 13' => [['territoire' => '13', 'isImported' => 'oui'], 26];
-        yield 'Search by Commune' => [['communes' => ['gex', 'marseille'], 'isImported' => 'oui'], 31];
-        yield 'Search by Commune code postal' => [['communes' => ['13002'], 'isImported' => 'oui'], 2];
-        yield 'Search by EPCIS' => [['epcis' => ['244400503'], 'isImported' => 'oui'], 3];
-        yield 'Search by Partner' => [['partenaires' => ['5'], 'isImported' => 'oui'], 2];
-        yield 'Search by Etiquettes' => [['etiquettes' => ['5'], 'isImported' => 'oui'], 4];
-        yield 'Search by Parc public' => [['natureParc' => 'public', 'isImported' => 'oui'], 7];
-        yield 'Search by Parc public/prive non renseigné' => [['natureParc' => 'non_renseigne', 'isImported' => 'oui'], 1];
-        yield 'Search by Enfant moins de 6ans (non)' => [['enfantsM6' => 'non', 'isImported' => 'oui'], 2];
-        yield 'Search by Enfant moins de 6ans (oui)' => [['enfantsM6' => 'oui', 'isImported' => 'oui'], 50];
-        yield 'Search by Enfant moins de 6ans (non_renseignee)' => [['enfantsM6' => 'non_renseigne', 'isImported' => 'oui'], 0];
-        yield 'Search by Date de depot' => [['dateDepotDebut' => '2023-03-08', 'dateDepotFin' => '2023-03-16', 'isImported' => 'oui'], 2];
-        yield 'Search by Procédure estimée' => [['procedure' => 'rsd', 'isImported' => 'oui'], 7];
-        yield 'Search by Partenaires affectés' => [['partenaires' => ['5'], 'isImported' => 'oui'], 2];
-        yield 'Search by Statut de la visite' => [['visiteStatus' => 'Planifiée', 'isImported' => 'oui'], 5];
-        yield 'Search by Type de dernier suivi' => [['typeDernierSuivi' => 'automatique', 'isImported' => 'oui'], 35];
-        yield 'Search by Date de dernier suivi' => [['dateDernierSuiviDebut' => '2023-04-01', 'dateDernierSuiviFin' => '2023-04-18', 'isImported' => 'oui'], 3];
-        yield 'Search by Statut de l\'affectation' => [['statusAffectation' => 'refuse', 'isImported' => 'oui'], 1];
-        yield 'Search by Score criticite' => [['criticiteScoreMin' => 5, 'criticiteScoreMax' => 6, 'isImported' => 'oui'], 9];
-        yield 'Search by Declarant' => [['typeDeclarant' => 'locataire', 'isImported' => 'oui'], 48];
-        yield 'Search by Nature du parc' => [['natureParc' => 'public', 'isImported' => 'oui'], 7];
-        yield 'Search by Allocataire CAF' => [['allocataire' => 'caf', 'isImported' => 'oui'], 16];
-        yield 'Search by Allocataire MSA' => [['allocataire' => 'msa', 'isImported' => 'oui'], 1];
-        yield 'Search by Allocataire Oui (CAF+MSA+1)' => [['allocataire' => 'oui', 'isImported' => 'oui'], 17];
-        yield 'Search by Allocataire Non (null+empty)' => [['allocataire' => 'non', 'isImported' => 'oui'], 9];
-        yield 'Search by Situation Bail en cours' => [['situation' => 'bail_en_cours', 'isImported' => 'oui'], 12];
-        yield 'Search by Situation Prévis de départ' => [['situation' => 'preavis_de_depart', 'isImported' => 'oui'], 1];
-        yield 'Search by Situation Attente de relogement' => [['situation' => 'attente_relogement', 'isImported' => 'oui'], 2];
-        yield 'Search by Signalement Imported' => [['isImported' => 'oui'], 53];
-        yield 'Search by Zones' => [['isImported' => 'oui', 'zones' => [1, 2, 3]], 4];
-        yield 'Search by Zones on Territory 34' => [['isImported' => 'oui', 'zones' => [1, 2, 3], 'territoire' => '35'], 1];
-        yield 'Search by Sans suivi in territory 13' => [['isImported' => 'oui', 'sansSuiviPeriode' => 30, 'territoire' => '13'], 7];
-    }
-
     public function provideFilterSearchMultiTerritorAdminPartner(): \Generator
     {
         yield 'Search All' => [['isImported' => 'oui'], 7];
@@ -220,27 +241,6 @@ class SignalementListControllerTest extends WebTestCase
         yield 'Search by Status Fermé on Territory 1' => [['territoire' => '1', 'isImported' => 'oui', 'status' => 'ferme'], 1];
         yield 'Search by Status Fermé on Territory 13' => [['territoire' => '13', 'isImported' => 'oui', 'status' => 'ferme'], 2];
         yield 'Search by Sans suivi in territory 13' => [['isImported' => 'oui', 'sansSuiviPeriode' => 30, 'territoire' => '13'], 2];
-    }
-
-    /**
-     * @dataProvider provideNewFilterSearch
-     */
-    public function testFilterSignalements(array $filter, int $results)
-    {
-        $client = static::createClient();
-        /** @var UrlGeneratorInterface $generatorUrl */
-        $generatorUrl = static::getContainer()->get(UrlGeneratorInterface::class);
-
-        /** @var UserRepository $userRepository */
-        $userRepository = static::getContainer()->get(UserRepository::class);
-        $user = $userRepository->findOneBy(['email' => 'admin-01@histologe.fr']);
-        $client->loginUser($user);
-        $route = $generatorUrl->generate('back_signalements_list_json');
-
-        $client->request('GET', $route, $filter, [], ['HTTP_Accept' => 'application/json']);
-        $result = json_decode($client->getResponse()->getContent(), true);
-
-        $this->assertEquals($results, $result['pagination']['total_items'], json_encode($result['list']));
     }
 
     /**

@@ -84,6 +84,7 @@ class SignalementVoter extends Voter
         if (SignalementStatus::ARCHIVED !== $signalement->getStatut()
             && SignalementStatus::REFUSED !== $signalement->getStatut()
             && SignalementStatus::DRAFT !== $signalement->getStatut()
+            && SignalementStatus::DRAFT_ARCHIVED !== $signalement->getStatut()
         ) {
             if (SignalementStatus::CLOSED === $signalement->getStatut()) {
                 $datePostCloture = $signalement->getClosedAt()->modify('+ 30days');
@@ -160,12 +161,13 @@ class SignalementVoter extends Voter
 
     private function canView(Signalement $signalement, User $user): bool
     {
-        if ($this->security->isGranted('ROLE_ADMIN') && SignalementStatus::DRAFT !== $signalement->getStatut()) {
+        if ($this->security->isGranted('ROLE_ADMIN') && SignalementStatus::DRAFT !== $signalement->getStatut() && SignalementStatus::DRAFT_ARCHIVED !== $signalement->getStatut()) {
             return true;
         }
 
         if (SignalementStatus::ARCHIVED === $signalement->getStatut()
-        || SignalementStatus::DRAFT === $signalement->getStatut()) {
+        || SignalementStatus::DRAFT === $signalement->getStatut()
+        || SignalementStatus::DRAFT_ARCHIVED === $signalement->getStatut()) {
             return false;
         }
 
