@@ -199,8 +199,9 @@ class NotificationAndMailSender
             if (!$isFilteredAffectationStatus
                     || AffectationStatus::STATUS_WAIT->value === $affectation->getStatut()
                     || AffectationStatus::STATUS_ACCEPTED->value === $affectation->getStatut()) {
-                $partnerRecipientsMailItem = $this->getRecipientsPartner($affectation->getPartner());
-                $partnerRecipientsInAppNotifItem = $this->getRecipientsPartner($affectation->getPartner(), false);
+                $partner = $this->partnerRepository->getWithUserPartners($affectation->getPartner());
+                $partnerRecipientsMailItem = $this->getRecipientsPartner($partner);
+                $partnerRecipientsInAppNotifItem = $this->getRecipientsPartner($partner, false);
                 $partnerRecipientsMail = new ArrayCollection(
                     array_merge($partnerRecipientsMail->toArray(), $partnerRecipientsMailItem->toArray())
                 );
