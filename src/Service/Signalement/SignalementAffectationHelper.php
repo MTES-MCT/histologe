@@ -48,7 +48,7 @@ class SignalementAffectationHelper
             }
         }
 
-        $signalementStatus = '';
+        $signalementStatus = null;
         if (!empty($statusAffectation)) {
             $signalementStatus = AffectationStatus::tryFrom($statusAffectation)?->mapSignalementStatus();
         }
