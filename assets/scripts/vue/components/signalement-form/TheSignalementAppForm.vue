@@ -104,11 +104,12 @@ export default defineComponent({
       this.sharedProps.ajaxurlSendMailContinueFromDraft = initElements.dataset.ajaxurlSendMailContinueFromDraft
       this.sharedProps.ajaxurlSendMailGetLienSuivi = initElements.dataset.ajaxurlSendMailGetLienSuivi
       this.sharedProps.ajaxurlArchiveDraft = initElements.dataset.ajaxurlArchiveDraft
+      this.sharedProps.initProfile = initElements.dataset.initProfile
       if (initElements.dataset.ajaxurlGetSignalementDraft !== undefined) {
         this.sharedProps.ajaxurlGetSignalementDraft = initElements.dataset.ajaxurlGetSignalementDraft
         requests.initWithExistingData(this.handleInitData)
       } else {
-        requests.initDictionary(this.handleInitDictionary)
+        this.initProfile()
       }
     } else {
       this.isErrorInit = true
@@ -124,6 +125,35 @@ export default defineComponent({
       }
       if (formStore.data.currentStep !== undefined) {
         this.nextSlug = formStore.data.currentStep
+      }
+      requests.initDictionary(this.handleInitDictionary)
+    },
+    initProfile () {
+      switch (this.sharedProps.initProfile) {
+        case 'locataire':
+          formStore.data.signalement_concerne_profil = 'logement_occupez'
+          formStore.data.signalement_concerne_profil_detail_occupant = 'locataire'
+          break
+        case 'bailleur_occupant':
+          formStore.data.signalement_concerne_profil = 'logement_occupez'
+          formStore.data.signalement_concerne_profil_detail_occupant = 'bailleur_occupant'
+          break
+        case 'tiers_particulier':
+          formStore.data.signalement_concerne_profil = 'autre_logement'
+          formStore.data.signalement_concerne_profil_detail_tiers = 'tiers_particulier'
+          break
+        case 'tiers_pro':
+          formStore.data.signalement_concerne_profil = 'autre_logement'
+          formStore.data.signalement_concerne_profil_detail_tiers = 'tiers_pro'
+          break
+        case 'bailleur':
+          formStore.data.signalement_concerne_profil = 'autre_logement'
+          formStore.data.signalement_concerne_profil_detail_tiers = 'bailleur'
+          break
+        case 'service_secours':
+          formStore.data.signalement_concerne_profil = 'autre_logement'
+          formStore.data.signalement_concerne_profil_detail_tiers = 'service_secours'
+          break
       }
       requests.initDictionary(this.handleInitDictionary)
     },

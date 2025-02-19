@@ -144,7 +144,7 @@ class SignalementControllerTest extends WebTestCase
 
         /** @var RouterInterface $router */
         $router = $client->getContainer()->get(RouterInterface::class);
-        $urlPutSignalement = $router->generate('envoi_nouveau_signalement_draft');
+        $urlPutSignalement = $router->generate('envoi_formulaire_signalement_draft');
 
         $payloadLocataireSignalement = file_get_contents(__DIR__.'../../../files/post_signalement_draft_payload.json');
 
@@ -167,7 +167,7 @@ class SignalementControllerTest extends WebTestCase
 
         /** @var RouterInterface $router */
         $router = $client->getContainer()->get(RouterInterface::class);
-        $urlPutSignalement = $router->generate('mise_a_jour_nouveau_signalement_draft', [
+        $urlPutSignalement = $router->generate('mise_a_jour_formulaire_signalement_draft', [
             'uuid' => $uuidSignalement,
         ]);
 
@@ -201,7 +201,7 @@ class SignalementControllerTest extends WebTestCase
 
         /** @var RouterInterface $router */
         $router = $client->getContainer()->get(RouterInterface::class);
-        $urlPutSignalement = $router->generate('mise_a_jour_nouveau_signalement_draft', [
+        $urlPutSignalement = $router->generate('mise_a_jour_formulaire_signalement_draft', [
             'uuid' => '00000000-0000-0000-2024-locataire003',
         ]);
 
@@ -237,18 +237,18 @@ class SignalementControllerTest extends WebTestCase
 
         /** @var RouterInterface $router */
         $router = static::getContainer()->get(RouterInterface::class);
-        $urlSignalementEdit = $router->generate('front_nouveau_formulaire_edit', ['uuid' => 'test']);
+        $urlSignalementEdit = $router->generate('front_formulaire_signalement_edit', ['uuid' => 'test']);
         $client->request('GET', $urlSignalementEdit);
 
         $this->assertEquals(Response::HTTP_NOT_FOUND, $client->getResponse()->getStatusCode());
 
-        $urlSignalementEdit = $router->generate('front_nouveau_formulaire_edit', ['uuid' => '00000000-0000-0000-2024-locataire003']);
+        $urlSignalementEdit = $router->generate('front_formulaire_signalement_edit', ['uuid' => '00000000-0000-0000-2024-locataire003']);
         $client->request('GET', $urlSignalementEdit);
 
         $this->assertEquals(Response::HTTP_FOUND, $client->getResponse()->getStatusCode());
         $this->assertResponseRedirects('/signalement');
 
-        $urlSignalementEdit = $router->generate('front_nouveau_formulaire_edit', ['uuid' => '00000000-0000-0000-2023-locataire001']);
+        $urlSignalementEdit = $router->generate('front_formulaire_signalement_edit', ['uuid' => '00000000-0000-0000-2023-locataire001']);
         $client->request('GET', $urlSignalementEdit);
 
         $this->assertEquals(Response::HTTP_OK, $client->getResponse()->getStatusCode());
