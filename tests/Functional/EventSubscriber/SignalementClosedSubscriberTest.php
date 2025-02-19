@@ -11,9 +11,6 @@ use App\Manager\SignalementManager;
 use App\Manager\SuiviManager;
 use App\Repository\SignalementRepository;
 use App\Repository\UserRepository;
-use App\Service\Mailer\NotificationMail;
-use App\Service\Mailer\NotificationMailerRegistry;
-use App\Service\Mailer\NotificationMailerType;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use Symfony\Bundle\SecurityBundle\Security;
@@ -42,38 +39,9 @@ class SignalementClosedSubscriberTest extends KernelTestCase
     {
         /** @var Signalement $signalementClosed */
         $signalementClosed = $this->signalementRepository->findOneBy(['reference' => '2022-2']);
-        $mailsPartner = $this->signalementRepository
-            ->findUsersPartnerEmailAffectedToSignalement($signalementClosed->getId());
-
-        $genericMailsPartner = $this->signalementRepository
-            ->findPartnersEmailAffectedToSignalement($signalementClosed->getId());
-
-        $sendToPartners = array_merge($mailsPartner, $genericMailsPartner);
 
         $user = $this->userRepository->findOneBy(['statut' => User::STATUS_ACTIVE]);
 
-        $notificationMailerRegistryMock = $this->createMock(NotificationMailerRegistry::class);
-        $notificationMailerRegistryMock
-            ->expects($this->exactly(2))
-            ->method('send')
-            ->withConsecutive(
-                [
-                    new NotificationMail(
-                        type: NotificationMailerType::TYPE_SIGNALEMENT_CLOSED_TO_USAGER,
-                        to: $signalementClosed->getMailUsagers(),
-                        territory: $signalementClosed->getTerritory(),
-                        signalement: $signalementClosed
-                    ),
-                ],
-                [
-                    new NotificationMail(
-                        type: NotificationMailerType::TYPE_SIGNALEMENT_CLOSED_TO_PARTNERS,
-                        to: $sendToPartners,
-                        territory: $signalementClosed->getTerritory(),
-                        signalement: $signalementClosed
-                    ),
-                ]
-            )->willReturn(true);
         $securityMock = $this->createMock(Security::class);
         $securityMock->expects($this->once())->method('getUser')->willReturn($user);
 
@@ -81,7 +49,6 @@ class SignalementClosedSubscriberTest extends KernelTestCase
         $suiviManager = static::getContainer()->get(SuiviManager::class);
 
         $signalementClosedSubscriber = new SignalementClosedSubscriber(
-            $notificationMailerRegistryMock,
             $signalementManager,
             $suiviManager,
             $securityMock
@@ -104,5 +71,6 @@ class SignalementClosedSubscriberTest extends KernelTestCase
 
         $this->assertInstanceOf(Signalement::class, $event->getSignalement());
         $this->assertIsArray($event->getParams());
+        $this->assertEmailCount(2);
     }
 }

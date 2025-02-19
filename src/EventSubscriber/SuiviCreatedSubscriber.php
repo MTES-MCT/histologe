@@ -10,6 +10,8 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 class SuiviCreatedSubscriber implements EventSubscriberInterface
 {
+    private const SEPARATOR_MOTIF_REFUS = 'Plus précisément :<br />';
+
     public function __construct(
         private readonly NotificationAndMailSender $notificationAndMailSender,
     ) {
@@ -36,18 +38,45 @@ class SuiviCreatedSubscriber implements EventSubscriberInterface
             return;
         }
 
-        if (Suivi::CONTEXT_NOTIFY_USAGER_ONLY !== $suivi->getContext()) {
-            $this->notificationAndMailSender->sendNewSuiviToAdminsAndPartners(
-                suivi: $suivi,
-                sendEmail: (SignalementStatus::CLOSED !== $suivi->getSignalement()->getStatut())
-            );
-        }
+        $this->sendToAdminAndPartners($suivi);
+        $this->sendToUsagers($suivi);
+    }
 
-        if ($suivi->getSendMail()
-                && $suivi->getIsPublic()
-                && SignalementStatus::CLOSED !== $suivi->getSignalement()->getStatut()
-                && SignalementStatus::REFUSED !== $suivi->getSignalement()->getStatut()) {
-            $this->notificationAndMailSender->sendNewSuiviToUsagers($suivi);
+    private function sendToAdminAndPartners(Suivi $suivi): void
+    {
+        if (Suivi::CONTEXT_NOTIFY_USAGER_ONLY !== $suivi->getContext()) {
+            if (Suivi::CONTEXT_SIGNALEMENT_CLOSED === $suivi->getContext()) {
+                $this->notificationAndMailSender->sendSignalementIsClosedToPartners($suivi);
+            } else {
+                $this->notificationAndMailSender->sendNewSuiviToAdminsAndPartners(
+                    suivi: $suivi,
+                    sendEmail: (SignalementStatus::CLOSED !== $suivi->getSignalement()->getStatut())
+                );
+            }
+        }
+    }
+
+    private function sendToUsagers(Suivi $suivi): void
+    {
+        if ($suivi->getSendMail() && $suivi->getIsPublic()) {
+            switch ($suivi->getContext()) {
+                case Suivi::CONTEXT_SIGNALEMENT_ACCEPTED:
+                    $this->notificationAndMailSender->sendSignalementIsAcceptedToUsager($suivi);
+                    break;
+                case Suivi::CONTEXT_SIGNALEMENT_REFUSED:
+                    $motifDescription = \explode(self::SEPARATOR_MOTIF_REFUS, $suivi->getDescription())[1];
+                    $this->notificationAndMailSender->sendSignalementIsRefusedToUsager($suivi, $motifDescription);
+                    break;
+                case Suivi::CONTEXT_SIGNALEMENT_CLOSED:
+                    $this->notificationAndMailSender->sendSignalementIsClosedToUsager($suivi);
+                    break;
+                default:
+                    if (SignalementStatus::CLOSED !== $suivi->getSignalement()->getStatut()
+                            && SignalementStatus::REFUSED !== $suivi->getSignalement()->getStatut()) {
+                        $this->notificationAndMailSender->sendNewSuiviToUsagers($suivi);
+                    }
+                    break;
+            }
         }
     }
 }
