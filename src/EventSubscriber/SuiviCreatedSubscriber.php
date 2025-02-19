@@ -32,7 +32,8 @@ class SuiviCreatedSubscriber implements EventSubscriberInterface
         }
 
         if (SignalementStatus::DRAFT === $suivi->getSignalement()->getStatut()
-                || SignalementStatus::ARCHIVED === $suivi->getSignalement()->getStatut()) {
+                || SignalementStatus::ARCHIVED === $suivi->getSignalement()->getStatut()
+                || SignalementStatus::DRAFT_ARCHIVED === $suivi->getSignalement()->getStatut()) {
             return;
         }
 

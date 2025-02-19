@@ -30,6 +30,7 @@ class SignalementControllerTest extends WebTestCase
         yield 'Refusé' => [SignalementStatus::REFUSED->value];
         yield 'Archivé' => [SignalementStatus::ARCHIVED->value];
         yield 'Brouillon' => [SignalementStatus::DRAFT->value];
+        yield 'Brouillon de signalement' => [SignalementStatus::DRAFT_ARCHIVED->value];
     }
 
     /**
@@ -52,7 +53,7 @@ class SignalementControllerTest extends WebTestCase
         ]).'?from='.$signalement->getMailOccupant().'&suiviAuto='.Suivi::ARRET_PROCEDURE;
 
         $crawler = $client->request('GET', $urlSuiviSignalementUser);
-        if (SignalementStatus::ARCHIVED->value === $status || SignalementStatus::DRAFT->value === $status) {
+        if (SignalementStatus::ARCHIVED->value === $status || SignalementStatus::DRAFT->value === $status || SignalementStatus::DRAFT_ARCHIVED->value === $status) {
             $this->assertResponseRedirects('/');
         } elseif (SignalementStatus::ACTIVE->value === $status) {
             $this->assertEquals('Signalement #2022-1 '.ucwords($signalement->getPrenomOccupant().' '.$signalement->getNomOccupant()), $crawler->filter('h1')->eq(2)->text());
@@ -101,6 +102,8 @@ class SignalementControllerTest extends WebTestCase
                 $crawler->filter('.fr-alert--error p')->text()
             );
         } elseif (SignalementStatus::DRAFT->value === $status) {
+            $this->assertResponseRedirects('/');
+        } elseif (SignalementStatus::DRAFT_ARCHIVED->value === $status) {
             $this->assertResponseRedirects('/');
         }
     }
