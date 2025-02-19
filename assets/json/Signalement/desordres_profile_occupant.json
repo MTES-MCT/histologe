@@ -2818,6 +2818,17 @@
           "validate": {
             "message": "Veuillez détailler votre situation."
           }
+        },
+        {
+          "type": "SignalementFormUploadPhotos",
+          "slug": "message_administration_upload",
+          "label": "Documents et photos complémentaires (facultatif)",
+          "labelInfo": "Merci de ne transmettre aucun document comportant des données de santé. Les photos ne doivent pas contenir de visages de personnes ou d'objets personnels",
+          "description": "Vous pouvez ajouter ici les photos et / ou documents utiles au traitement du dossier.",
+          "labelUpload": "Ajouter des documents",
+          "validate": {
+            "required": false
+          }
         }
       ],
       "footer": [
