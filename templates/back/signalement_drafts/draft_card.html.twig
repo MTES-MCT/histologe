@@ -22,7 +22,7 @@
             <div class="fr-grid-row">
                 <div class="fr-col-12 fr-text--right">
                     <div class="fr-display-inline-flex">
-                        <a href="{{ path('back_signalement_edit_draft', { 'uuid': signalement.uuid }) }}" class="fr-btn fr-btn--secondary fr-btn--icon-left fr-fi-delete-line fr-mx-1w">
+                        <a href="#" class="fr-btn fr-btn--secondary fr-btn--icon-left fr-fi-delete-line fr-mx-1w" id="drafts_delete_{{ signalement.id }}" aria-controls="fr-modal-draft-delete-{{ signalement.id }}" data-fr-opened="false" data-draftdate="{{ signalement.createdAt|date('d/m/Y') }}" data-draftid="{{ signalement.id }}">
                             Supprimer le brouillon
                         </a>
                         <a href="{{ path('back_signalement_edit_draft', { 'uuid': signalement.uuid }) }}" class="fr-btn fr-btn--icon-right fr-icon-arrow-right-line fr-mx-1w">
@@ -34,3 +34,43 @@
         </div>
     </div>
 </div>
+{# Modale de suppression #}
+<dialog aria-labelledby="fr-modal-title-draft-delete-{{ signalement.id }}" id="fr-modal-draft-delete-{{ signalement.id }}" class="fr-modal">
+    <div class="fr-container fr-container--fluid fr-container-md">
+        <div class="fr-grid-row fr-grid-row--center">
+            <div class="fr-col-12 fr-col-md-8 fr-col-lg-6">
+                <div class="fr-modal__body">
+                    <div class="fr-modal__header">
+                        <button class="fr-btn--close fr-btn" title="Fermer la fenêtre modale" aria-controls="fr-modal-draft-delete-{{ signalement.id }}">Fermer</button>
+                    </div>
+                    <div class="fr-modal__content">
+                        <h1 id="fr-modal-title-draft-delete-{{ signalement.id }}" class="fr-modal__title">
+                            Supprimer le brouillon du {{ signalement.createdAt|date('d/m/Y') }}
+                        </h1>
+                        <p>Vous êtes sur le point de supprimer le brouillon du {{ signalement.createdAt|date('d/m/Y') }}.</p>
+                        <p>Une fois le brouillon supprimé :</p>
+                        <ul>
+                            <li>Vous ne pourrez plus y accéder</li>
+                            <li>Le signalement ne sera pas enregistré</li>
+                        </ul>
+                        <div class="fr-alert fr-alert--info">
+                            <p>Voulez-vous vraiment supprimer le brouillon ?</p>
+                        </div>
+                        <form method="POST" action="{{ path('back_signalement_delete_draft') }}" id="form-delete-draft-{{ signalement.id }}">
+                            <input type="hidden" name="draft_id" value="{{ signalement.id }}">
+                            <input type="hidden" name="_token" value="{{ csrf_token('draft_delete') }}">
+                        </form>
+                    </div>
+                    <div class="fr-modal__footer">
+                        <div class="fr-btns-group fr-btns-group--right fr-btns-group--inline-reverse fr-btns-group--inline-lg fr-btns-group--icon-left">
+                            <button class="fr-btn fr-icon-check-line" form="form-delete-draft-{{ signalement.id }}" type="submit"
+                                >Oui, supprimer</button>
+                            <button class="fr-btn fr-btn--secondary fr-icon-close-line" type="button" aria-controls="fr-modal-draft-delete-{{ signalement.id }}"
+                                >Non, annuler</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</dialog>

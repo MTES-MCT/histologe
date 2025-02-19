@@ -22,6 +22,7 @@ class SignalementVoter extends Voter
     public const DELETE = 'SIGN_DELETE';
     public const EDIT = 'SIGN_EDIT';
     public const EDIT_DRAFT = 'SIGN_EDIT_DRAFT';
+    public const DELETE_DRAFT = 'SIGN_DELETE_DRAFT';
     public const VIEW = 'SIGN_VIEW';
     public const ADD_VISITE = 'SIGN_ADD_VISITE';
     public const USAGER_EDIT = 'SIGN_USAGER_EDIT';
@@ -36,7 +37,7 @@ class SignalementVoter extends Voter
 
     protected function supports(string $attribute, $subject): bool
     {
-        return \in_array($attribute, [self::EDIT, self::EDIT_DRAFT, self::VIEW, self::DELETE, self::VALIDATE, self::CLOSE, self::REOPEN, self::ADD_VISITE, self::USAGER_EDIT, self::EDIT_NDE, self::SEE_NDE])
+        return \in_array($attribute, [self::EDIT, self::EDIT_DRAFT, self::VIEW, self::DELETE, self::VALIDATE, self::CLOSE, self::REOPEN, self::ADD_VISITE, self::USAGER_EDIT, self::EDIT_NDE, self::SEE_NDE, self::DELETE_DRAFT])
             && ($subject instanceof Signalement);
     }
 
@@ -73,6 +74,7 @@ class SignalementVoter extends Voter
             self::VIEW => $this->canView($subject, $user),
             self::USAGER_EDIT => $this->canUsagerEdit($subject),
             self::EDIT_DRAFT => $this->canEditDraft($subject, $user),
+            self::DELETE_DRAFT => $this->canEditDraft($subject, $user),
             default => false,
         };
     }

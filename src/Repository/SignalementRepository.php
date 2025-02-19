@@ -1321,9 +1321,9 @@ class SignalementRepository extends ServiceEntityRepository
     ): Paginator {
         $queryBuilder = $this->createQueryBuilder('s');
         $queryBuilder
-            ->where('s.statut IN (:draft)')
+            ->where('s.statut IN (:status_list)')
             ->andWhere('s.createdBy = :user')
-            ->setParameter('draft', [SignalementStatus::DRAFT, SignalementStatus::NEED_VALIDATION])
+            ->setParameter('status_list', [SignalementStatus::DRAFT, SignalementStatus::NEED_VALIDATION])
             ->setParameter('user', $searchDraft->getUser());
 
         if (!empty($searchDraft->getOrderType())) {
