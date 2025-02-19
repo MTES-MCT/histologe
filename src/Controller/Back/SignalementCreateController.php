@@ -2,6 +2,7 @@
 
 namespace App\Controller\Back;
 
+use App\Entity\Enum\SignalementStatus;
 use App\Entity\Signalement;
 use App\Entity\User;
 use App\Form\SearchDraftType;
@@ -57,6 +58,34 @@ class SignalementCreateController extends AbstractController
             'drafts' => $paginatedDrafts,
             'pages' => (int) ceil($paginatedDrafts->count() / $maxListPagination),
         ]);
+    }
+
+    #[Route('/supprimer', name: 'back_signalement_delete_draft', methods: ['POST'])]
+    public function deleteDraftSignalement(
+        Request $request,
+        SignalementManager $signalementManager,
+        EntityManagerInterface $entityManager,
+    ): Response {
+        $draftId = $request->request->get('draft_id');
+        /** @var Signalement $signalement */
+        $signalement = $signalementManager->find($draftId);
+
+        $this->denyAccessUnlessGranted('SIGN_DELETE_DRAFT', $signalement);
+
+        if (
+            $signalement
+            && $this->isCsrfTokenValid('draft_delete', $request->request->get('_token'))
+        ) {
+            $signalement->setStatut(SignalementStatus::DRAFT_ARCHIVED);
+            $entityManager->flush();
+            $this->addFlash('success', 'Le brouillon a bien été supprimé !');
+
+            return $this->redirectToRoute('back_signalement_drafts', [], Response::HTTP_SEE_OTHER);
+        }
+
+        $this->addFlash('error', 'Une erreur est survenue lors de la suppression...');
+
+        return $this->redirectToRoute('back_signalement_drafts', [], Response::HTTP_SEE_OTHER);
     }
 
     #[Route('/create', name: 'back_signalement_create', methods: ['GET'])]
