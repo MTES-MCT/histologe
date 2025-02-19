@@ -69,6 +69,7 @@ class SignalementController extends AbstractController
 
         return $this->render('front/formulaire_signalement.html.twig', [
             'uuid_signalement' => $signalementDraft->getUuid(),
+            'profile' => '',
         ]);
     }
 
