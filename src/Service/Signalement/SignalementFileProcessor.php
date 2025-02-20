@@ -73,10 +73,7 @@ class SignalementFileProcessor
                     && !UploadHandlerService::isAcceptedDocumentFormat($file, $inputName)
                 ) {
                     $acceptedExtensions = UploadHandlerService::getAcceptedExtensions('document');
-                    $message = <<<ERROR
-                Les fichiers de format {$file->getMimeType()} ne sont pas pris en charge,
-                merci de choisir un fichier au format {$acceptedExtensions}.
-                ERROR;
+                    $message = $this->getFileFormatErrorMessage($file, $acceptedExtensions);
                     $fileInfo = ' ( Fichier : '.$file->__toString().' MimeType : '.$file->getMimeType().' )';
                     $this->logger->error($message.$fileInfo);
                     $this->errors[] = $message;
@@ -86,10 +83,7 @@ class SignalementFileProcessor
                     && !ImageManipulationHandler::isAcceptedPhotoFormat($file, $inputName)
                 ) {
                     $acceptedExtensions = UploadHandlerService::getAcceptedExtensions('photo');
-                    $message = <<<ERROR
-                Les fichiers de format {$file->getMimeType()} ne sont pas pris en charge,
-                merci de choisir un fichier au format {$acceptedExtensions}.
-                ERROR;
+                    $message = $this->getFileFormatErrorMessage($file, $acceptedExtensions);
                     $fileInfo = ' ( Fichier : '.$file->__toString().' MimeType : '.$file->getMimeType().' )';
                     $this->logger->error($message.$fileInfo);
                     $this->errors[] = $message;
@@ -126,6 +120,25 @@ class SignalementFileProcessor
         }
 
         return $fileList;
+    }
+
+    private function getFileFormatErrorMessage(UploadedFile $file, string $acceptedExtensions): string
+    {
+        $ext = $file->getClientOriginalExtension();
+        $mime = $file->getMimeType();
+
+        if (!str_ends_with($mime, '/'.$ext)) {
+            return <<<ERROR
+            Le fichier a une extension {$ext} mais est au format {$mime}.
+            Les fichiers de format {$mime} ne sont pas pris en charge,
+            merci de choisir un fichier au format {$acceptedExtensions}.
+            ERROR;
+        }
+
+        return <<<ERROR
+            Les fichiers de format {$mime} ne sont pas pris en charge,
+            merci de choisir un fichier au format {$acceptedExtensions}.
+            ERROR;
     }
 
     public function addFilesToSignalement(
