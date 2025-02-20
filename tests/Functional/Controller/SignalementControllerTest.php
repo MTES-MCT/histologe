@@ -26,7 +26,7 @@ class SignalementControllerTest extends WebTestCase
     public function provideStatusSignalement(): \Generator
     {
         yield 'Actif' => [SignalementStatus::ACTIVE->value];
-        yield 'Clôturé' => [SignalementStatus::CLOSED->value];
+        yield 'Fermé' => [SignalementStatus::CLOSED->value];
         yield 'Refusé' => [SignalementStatus::REFUSED->value];
         yield 'Archivé' => [SignalementStatus::ARCHIVED->value];
         yield 'Brouillon' => [SignalementStatus::DRAFT->value];

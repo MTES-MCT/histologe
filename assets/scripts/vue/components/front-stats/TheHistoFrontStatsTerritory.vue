@@ -28,7 +28,7 @@
           </TheHistoFrontStatsTerritoryItem>
 
           <TheHistoFrontStatsTerritoryItem sizeClass="12" v-model="sharedState.filters.perMotifClotureYearType" :onChange="handleChangePerMotifCloture">
-            <template #title>Répartition des signalements clôturés par motif de clôture</template>
+            <template #title>Répartition des signalements fermés par motif de clôture</template>
             <template #graph>
               <HistoChartBar v-if="!isLoadingPerMotifCloture" :items=perMotifClotureData indexAxis="x"  />
             </template>

@@ -67,14 +67,14 @@ class SignalementResponse
     public ?string $dateValidation;
 
     #[OA\Property(
-        description: 'Date à laquelle le signalement a été cloturé par un responsable territoire.<br>
+        description: 'Date à laquelle le signalement a été fermé par un responsable territoire.<br>
         Exemple : `2025-01-05T15:30:15+00:00`',
         format: 'date-time',
         example: '2025-01-05T15:30:15+00:00'
     )]
     public ?string $dateCloture;
     #[OA\Property(
-        description: 'Motif de clôture du signalement, précisant la raison pour laquelle il a été clôturé.',
+        description: 'Motif de clôture du signalement, précisant la raison pour laquelle il a été fermé.',
         example: 'LOGEMENT_DECENT',
         nullable: true
     )]

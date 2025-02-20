@@ -66,7 +66,7 @@ class SignalementActionController extends AbstractController
                     return $this->redirectToRoute('back_signalement_view', ['uuid' => $signalement->getUuid()]);
                 }
                 $signalement->setMotifRefus($motifRefus);
-                $description = 'cloturé car non-valide avec le motif suivant : '.$motifRefus->label().'<br>Plus précisément :<br>'.$response['suivi'];
+                $description = 'fermé car non-valide avec le motif suivant : '.$motifRefus->label().'<br>Plus précisément :<br>'.$response['suivi'];
 
                 $toRecipients = $signalement->getMailUsagers();
                 $notificationMailerRegistry->send(
@@ -190,7 +190,7 @@ class SignalementActionController extends AbstractController
                 $affectationRepository->updateStatusBySignalement(Affectation::STATUS_WAIT, $signalement);
                 $reopenFor = 'tous les partenaires';
             } elseif (!$this->isGranted('ROLE_ADMIN_TERRITORY') && SignalementStatus::CLOSED === $signalement->getStatut()) {
-                $this->addFlash('error', 'Seul un responsable de territoire peut réouvrir un signalement clôturé !');
+                $this->addFlash('error', 'Seul un responsable de territoire peut réouvrir un signalement fermé !');
 
                 return $this->redirectToRoute('back_signalement_view', ['uuid' => $signalement->getUuid()]);
             } else {

@@ -129,7 +129,7 @@
               <a :href=getSanitizedUrl(sharedState.cloturesGlobales.link)>Clôtures globales</a>
             </h3>
             <p class="fr-card__desc">
-              Retrouvez les signalements récemment clôturés par les responsables territoire.
+              Retrouvez les signalements récemment fermés par les responsables territoire.
             </p>
           </div>
         </div>
@@ -149,7 +149,7 @@
               <a :href=getSanitizedUrl(sharedState.cloturesPartenaires.link)>Clôtures partenaires</a>
             </h3>
             <p class="fr-card__desc">
-              Retrouvez les signalements récemment clôturés par les partenaires.
+              Retrouvez les signalements récemment fermés par les partenaires.
             </p>
           </div>
         </div>

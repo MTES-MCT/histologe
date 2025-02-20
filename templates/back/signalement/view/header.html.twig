@@ -59,7 +59,7 @@
                         {% elseif signalement.statut is same as enum('App\\Entity\\Enum\\SignalementStatus').REFUSED %}
                             <span class="fr-badge fr-badge--new fr-badge--no-icon"><span class="fr-icon-close-line" aria-hidden="true"></span> Refusé</span>
                         {% elseif signalement.statut is same as enum('App\\Entity\\Enum\\SignalementStatus').CLOSED %}
-                            <span class="fr-badge fr-badge--error fr-badge--no-icon"><span class="fr-icon-checkbox-circle-line" aria-hidden="true"></span> Clôturé</span>
+                            <span class="fr-badge fr-badge--error fr-badge--no-icon"><span class="fr-icon-checkbox-circle-line" aria-hidden="true"></span> Fermé</span>
                         {% elseif signalement.statut is same as enum('App\\Entity\\Enum\\SignalementStatus').ARCHIVED %} <!-- NE DOIT PAS ARRIVER -->
                             <span class="fr-badge fr-badge--error fr-badge--no-icon"><span class="fr-icon-checkbox-circle-line" aria-hidden="true"></span> Archivé</span>
                         {% elseif signalement.statut is same as enum('App\\Entity\\Enum\\SignalementStatus').DRAFT %} <!-- NE DOIT PAS ARRIVER -->

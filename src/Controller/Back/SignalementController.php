@@ -151,7 +151,7 @@ class SignalementController extends AbstractController
             }
 
             if (!empty($entity)) {
-                $this->addFlash('success', sprintf('Signalement #%s cloturé avec succès !', $reference));
+                $this->addFlash('success', sprintf('Signalement #%s fermé avec succès !', $reference));
             }
             $signalementSearchQuery = $request->getSession()->get('signalementSearchQuery');
             $url = $signalementSearchQuery ? $this->generateUrl('back_signalements_index').$signalementSearchQuery->getQueryStringForUrl() : $this->generateUrl('back_signalements_index');
