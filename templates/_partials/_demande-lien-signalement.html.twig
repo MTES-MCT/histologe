@@ -15,7 +15,6 @@
 	</p>
 {% endif %}
 <div id="container-form-demande-lien-signalement">
-	{% set iframed = iframed is defined ? iframed : false %}
-	{% include 'form/form-demande-lien-signalement.html.twig' with {'form': formDemandeLienSignalement, 'iframed': iframed} only %}
+	{% include 'form/form-demande-lien-signalement.html.twig' with {'form': formDemandeLienSignalement} only %}
 </div>
 

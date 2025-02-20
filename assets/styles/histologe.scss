@@ -773,10 +773,10 @@ ul.fr-autocomplete-list {
         position: absolute;
         width: 100%;
     }
-    .fr-address-group.iframed {
-        max-height: 145px;
-        overflow: auto;
-    }
+}
+.iframed .fr-address-group {
+    max-height: 145px;
+    overflow: auto;
 }
 
 .fr-input:not([type="radio"]):read-only {
