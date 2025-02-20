@@ -35,7 +35,7 @@ class SignalementCreateController extends AbstractController
         }
     }
 
-    #[Route('/drafts', name: 'back_signalement_drafts', methods: ['GET', 'POST'])]
+    #[Route('/brouillons', name: 'back_signalement_drafts', methods: ['GET', 'POST'])]
     public function showDrafts(
         Request $request,
         SignalementRepository $signalementRepository,
@@ -60,7 +60,7 @@ class SignalementCreateController extends AbstractController
         ]);
     }
 
-    #[Route('/supprimer', name: 'back_signalement_delete_draft', methods: ['POST'])]
+    #[Route('/brouillon/supprimer', name: 'back_signalement_delete_draft', methods: ['POST'])]
     public function deleteDraftSignalement(
         Request $request,
         SignalementManager $signalementManager,
@@ -88,7 +88,7 @@ class SignalementCreateController extends AbstractController
         return $this->redirectToRoute('back_signalement_drafts', [], Response::HTTP_SEE_OTHER);
     }
 
-    #[Route('/create', name: 'back_signalement_create', methods: ['GET'])]
+    #[Route('/brouillon/creer', name: 'back_signalement_create', methods: ['GET'])]
     public function createSignalement(
     ): Response {
         $signalement = new Signalement();
@@ -100,7 +100,7 @@ class SignalementCreateController extends AbstractController
         ]);
     }
 
-    #[Route('/edit-draft/{uuid:signalement}', name: 'back_signalement_edit_draft', methods: ['GET'])]
+    #[Route('/brouillon/editer/{uuid:signalement}', name: 'back_signalement_edit_draft', methods: ['GET'])]
     public function editSignalement(
         Signalement $signalement,
     ): Response {
