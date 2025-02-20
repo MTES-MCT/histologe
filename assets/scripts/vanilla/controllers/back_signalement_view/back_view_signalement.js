@@ -24,7 +24,7 @@ document?.querySelector('#btn-display-all-suivis')?.addEventListeners('click tou
 document?.querySelectorAll('.open-photo-album')?.forEach(btn => {
   const swipeId = btn.getAttribute('data-id')
   btn.addEventListeners('click touchdown', (event) => {
-    document?.documentElement.setAttribute('data-fr-theme', 'dark')
+    document?.documentElement.setAttribute('data-fr-scheme', 'dark')
     document?.querySelectorAll('.photos-album')?.forEach(element => {
       element.classList?.remove('fr-hidden')
       displayPhotoAlbum(swipeId)
@@ -33,7 +33,7 @@ document?.querySelectorAll('.open-photo-album')?.forEach(btn => {
 })
 document?.querySelectorAll('.photos-album-btn-close')?.forEach(btn => {
   btn.addEventListeners('click touchdown', (event) => {
-    document?.documentElement.setAttribute('data-fr-theme', 'light')
+    document?.documentElement.setAttribute('data-fr-scheme', 'light')
     document?.querySelectorAll('.photos-album')?.forEach(element => {
       element.classList?.add('fr-hidden')
     })
@@ -93,9 +93,6 @@ const displayPhotoAlbum = (photoId) => {
   document?.querySelector('.photos-album-main-btn-edit[data-id="' + photoId + '"]')?.classList?.remove('fr-hidden')
   document?.querySelector('.photos-album-list-btn-edit[data-id="' + photoId + '"]')?.classList?.add('fr-hidden')
 
-  if (document?.documentElement.getAttribute('data-fr-theme') === 'light') {
-    document?.documentElement.setAttribute('data-fr-theme', 'dark')
-  }
   document?.querySelectorAll('.photos-album-image-item.loop-current')?.forEach(element => {
     element.classList?.remove('loop-current')
     element.classList?.add('fr-hidden')
