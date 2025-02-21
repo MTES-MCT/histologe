@@ -9,6 +9,7 @@ use App\Entity\Signalement;
 use App\Entity\User;
 use App\Exception\File\EmptyFileException;
 use App\Exception\File\MaxUploadSizeExceededException;
+use App\Exception\File\UnsupportedFileFormatException;
 use App\Factory\FileFactory;
 use App\Service\Files\FilenameGenerator;
 use App\Service\ImageManipulationHandler;
@@ -72,8 +73,7 @@ class SignalementFileProcessor
                     && File::INPUT_NAME_DOCUMENTS === $inputName
                     && !UploadHandlerService::isAcceptedDocumentFormat($file, $inputName)
                 ) {
-                    $acceptedExtensions = UploadHandlerService::getAcceptedExtensions('document');
-                    $message = $this->getFileFormatErrorMessage($file, $acceptedExtensions);
+                    $message = UnsupportedFileFormatException::getFileFormatErrorMessage($file, 'document');
                     $fileInfo = ' ( Fichier : '.$file->__toString().' MimeType : '.$file->getMimeType().' )';
                     $this->logger->error($message.$fileInfo);
                     $this->errors[] = $message;
@@ -82,8 +82,7 @@ class SignalementFileProcessor
                     && File::INPUT_NAME_PHOTOS === $inputName
                     && !ImageManipulationHandler::isAcceptedPhotoFormat($file, $inputName)
                 ) {
-                    $acceptedExtensions = UploadHandlerService::getAcceptedExtensions('photo');
-                    $message = $this->getFileFormatErrorMessage($file, $acceptedExtensions);
+                    $message = UnsupportedFileFormatException::getFileFormatErrorMessage($file, 'photo');
                     $fileInfo = ' ( Fichier : '.$file->__toString().' MimeType : '.$file->getMimeType().' )';
                     $this->logger->error($message.$fileInfo);
                     $this->errors[] = $message;
@@ -120,25 +119,6 @@ class SignalementFileProcessor
         }
 
         return $fileList;
-    }
-
-    private function getFileFormatErrorMessage(UploadedFile $file, string $acceptedExtensions): string
-    {
-        $ext = $file->getClientOriginalExtension();
-        $mime = $file->getMimeType();
-
-        if (!str_ends_with($mime, '/'.$ext)) {
-            return <<<ERROR
-            Le fichier a une extension {$ext} mais est au format {$mime}.
-            Les fichiers de format {$mime} ne sont pas pris en charge,
-            merci de choisir un fichier au format {$acceptedExtensions}.
-            ERROR;
-        }
-
-        return <<<ERROR
-            Les fichiers de format {$mime} ne sont pas pris en charge,
-            merci de choisir un fichier au format {$acceptedExtensions}.
-            ERROR;
     }
 
     public function addFilesToSignalement(
