@@ -103,7 +103,7 @@ class File implements EntityHistoryInterface
 
     #[ORM\Column(type: 'text', nullable: true, length: 250)]
     #[Assert\Length(max: 250)]
-    private ?string $description;
+    private ?string $description = null;
 
     #[ORM\Column]
     private ?bool $isWaitingSuivi = null;
