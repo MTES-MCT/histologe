@@ -302,7 +302,7 @@ class SignalementFileController extends AbstractController
         return $this->redirect($this->generateUrl('back_signalement_view', ['uuid' => $signalement->getUuid()]));
     }
 
-    #[Route('/{uuid:signalement}/file/{id:file}/rotate', name: 'back_signalement_file_rotate', methods: ['POST'])]
+    #[Route('/{uuid:signalement}/file/{id:file}/rotation', name: 'back_signalement_file_rotate', methods: ['POST'])]
     public function rotateFile(
         Signalement $signalement,
         File $file,

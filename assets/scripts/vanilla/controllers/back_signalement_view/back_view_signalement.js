@@ -24,7 +24,6 @@ document?.querySelector('#btn-display-all-suivis')?.addEventListeners('click tou
 document?.querySelectorAll('.open-photo-album')?.forEach(btn => {
   const swipeId = btn.getAttribute('data-id')
   btn.addEventListeners('click touchdown', (event) => {
-    document?.documentElement.setAttribute('data-fr-scheme', 'dark')
     document?.querySelectorAll('.photos-album')?.forEach(element => {
       element.classList?.remove('fr-hidden')
       displayPhotoAlbum(swipeId)
@@ -33,7 +32,6 @@ document?.querySelectorAll('.open-photo-album')?.forEach(btn => {
 })
 document?.querySelectorAll('.photos-album-btn-close')?.forEach(btn => {
   btn.addEventListeners('click touchdown', (event) => {
-    document?.documentElement.setAttribute('data-fr-scheme', 'light')
     document?.querySelectorAll('.photos-album')?.forEach(element => {
       element.classList?.add('fr-hidden')
     })

@@ -660,6 +660,21 @@ div.photos-album {
     padding: 2rem;
     color: white;
 
+    .fr-btn{
+        background-color: #8585f6;
+        color: #000091;
+    }
+    .fr-btn:hover {
+        background-color: #b1b1f9;
+    }
+    .fr-btn:active {
+        background-color: #c6c6fb;
+    }
+    .fr-btn:disabled {
+        background-color: #2a2a2a;
+        color: #666;
+    }
+
     .photos-album-close-button-container {
         text-align: right;
     }
