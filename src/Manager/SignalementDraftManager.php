@@ -102,7 +102,6 @@ class SignalementDraftManager extends AbstractManager
 
         $signalement = $signalementDraftCompletedEvent->getSignalementDraft()->getSignalements()->first();
         if ($signalement) {
-            $signalementDraft->setStatus(SignalementDraftStatus::EN_SIGNALEMENT);
             $this->eventDispatcher->dispatch(new SignalementCreatedEvent($signalement), SignalementCreatedEvent::NAME);
 
             return $signalement;

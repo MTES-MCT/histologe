@@ -2,6 +2,7 @@
 
 namespace App\EventSubscriber;
 
+use App\Entity\Enum\SignalementDraftStatus;
 use App\Entity\Signalement;
 use App\Entity\SignalementDraft;
 use App\Event\SignalementDraftCompletedEvent;
@@ -69,6 +70,7 @@ class SignalementDraftCompletedSubscriber implements EventSubscriberInterface
                 $this->processFiles($signalementDraft, $signalement);
                 $this->dispatchCheckFiles($signalement);
                 $this->dispatchUpdateFromAddress($signalement);
+                $signalementDraft->setStatus(SignalementDraftStatus::EN_SIGNALEMENT);
                 $this->entityManager->commit();
             } else {
                 $this->entityManager->rollback();
