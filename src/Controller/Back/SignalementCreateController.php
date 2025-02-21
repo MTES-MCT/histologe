@@ -35,7 +35,7 @@ class SignalementCreateController extends AbstractController
         }
     }
 
-    #[Route('/brouillons', name: 'back_signalement_drafts', methods: ['GET', 'POST'])]
+    #[Route('/brouillons', name: 'back_signalement_drafts', methods: ['GET'])]
     public function showDrafts(
         Request $request,
         SignalementRepository $signalementRepository,

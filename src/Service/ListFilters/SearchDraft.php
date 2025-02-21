@@ -7,12 +7,9 @@ use App\Service\Behaviour\SearchQueryTrait;
 
 class SearchDraft
 {
-    use SearchQueryTrait {
-        getUrlParams as getUrlParamsBase;
-    }
+    use SearchQueryTrait;
 
     private User $user;
-    private ?string $queryDraft = null;
     private ?string $orderType = null;
 
     public function __construct(User $user)
@@ -25,16 +22,6 @@ class SearchDraft
         return $this->user;
     }
 
-    public function getQueryDraft(): ?string
-    {
-        return $this->queryDraft;
-    }
-
-    public function setQueryDraft(?string $queryDraft): void
-    {
-        $this->queryDraft = $queryDraft;
-    }
-
     public function getOrderType(): ?string
     {
         return $this->orderType;
@@ -43,22 +30,5 @@ class SearchDraft
     public function setOrderType(?string $orderType): void
     {
         $this->orderType = $orderType;
-    }
-
-    public function getUrlParams(): array
-    {
-        $params = $this->getUrlParamsBase();
-
-        return $params;
-    }
-
-    public function getFiltersToText(): array
-    {
-        $filters = [];
-        if ($this->queryDraft) {
-            $filters['Recherche'] = $this->queryDraft;
-        }
-
-        return $filters;
     }
 }
