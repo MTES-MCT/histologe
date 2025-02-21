@@ -236,24 +236,6 @@ class SignalementManager extends AbstractManager
         return $signalement;
     }
 
-    public function findEmailsAffectedToSignalement(Signalement $signalement): array
-    {
-        $sendTo = [];
-        /** @var SignalementRepository $signalementRepository */
-        $signalementRepository = $this->getRepository();
-
-        $usersPartnerEmail = $signalementRepository->findUsersPartnerEmailAffectedToSignalement(
-            $signalement->getId(),
-        );
-        $sendTo = array_merge($sendTo, $usersPartnerEmail);
-
-        $partnersEmail = $signalementRepository->findPartnersEmailAffectedToSignalement(
-            $signalement->getId()
-        );
-
-        return array_merge($sendTo, $partnersEmail);
-    }
-
     public function findUsersAffectedToSignalement(
         Signalement $signalement,
         AffectationStatus $statusAffectation,

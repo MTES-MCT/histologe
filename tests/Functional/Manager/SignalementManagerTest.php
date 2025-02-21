@@ -143,16 +143,6 @@ class SignalementManagerTest extends WebTestCase
         $this->assertTrue($signalementHasAllAffectationsClosed);
     }
 
-    public function testFindEmailsAffectedToSignalement()
-    {
-        $signalementRepository = $this->entityManager->getRepository(Signalement::class);
-
-        $signalement = $signalementRepository->findOneBy(['statut' => SignalementStatus::ACTIVE->value]);
-        $emails = $this->signalementManager->findEmailsAffectedToSignalement($signalement);
-
-        $this->assertGreaterThan(1, \count($emails));
-    }
-
     public function testCreateSignalement(): void
     {
         $territoryRepository = $this->entityManager->getRepository(Territory::class);

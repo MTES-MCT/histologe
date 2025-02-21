@@ -14,9 +14,6 @@ use App\Manager\SuiviManager;
 use App\Repository\AffectationRepository;
 use App\Repository\SuiviRepository;
 use App\Service\BetaGouv\RnbService;
-use App\Service\Mailer\NotificationMail;
-use App\Service\Mailer\NotificationMailerRegistry;
-use App\Service\Mailer\NotificationMailerType;
 use App\Service\Sanitizer;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ManagerRegistry;
@@ -36,29 +33,18 @@ class SignalementActionController extends AbstractController
     public function validationResponseSignalement(
         Signalement $signalement,
         Request $request,
-        NotificationMailerRegistry $notificationMailerRegistry,
         SuiviManager $suiviManager,
     ): Response {
         $this->denyAccessUnlessGranted('SIGN_VALIDATE', $signalement);
         if ($this->isCsrfTokenValid('signalement_validation_response_'.$signalement->getId(), $request->get('_token'))
-            && $response = $request->get('signalement-validation-response')) {
+                && $response = $request->get('signalement-validation-response')) {
             if (isset($response['accept'])) {
+                $suiviContext = Suivi::CONTEXT_SIGNALEMENT_ACCEPTED;
                 $statut = SignalementStatus::ACTIVE;
                 $description = 'validé';
                 $signalement->setValidatedAt(new \DateTimeImmutable());
-                $toRecipients = $signalement->getMailUsagers();
-
-                foreach ($toRecipients as $toRecipient) {
-                    $notificationMailerRegistry->send(
-                        new NotificationMail(
-                            type: NotificationMailerType::TYPE_SIGNALEMENT_VALIDATION_TO_USAGER,
-                            to: $toRecipient,
-                            territory: $signalement->getTerritory(),
-                            signalement: $signalement,
-                        )
-                    );
-                }
             } else {
+                $suiviContext = Suivi::CONTEXT_SIGNALEMENT_REFUSED;
                 $statut = SignalementStatus::REFUSED;
                 $motifRefus = MotifRefus::tryFrom($response['motifRefus']);
                 if (!$motifRefus || mb_strlen($response['suivi']) < 10) {
@@ -68,17 +54,6 @@ class SignalementActionController extends AbstractController
                 }
                 $signalement->setMotifRefus($motifRefus);
                 $description = 'fermé car non-valide avec le motif suivant : '.$motifRefus->label().'<br>Plus précisément :<br>'.$response['suivi'];
-
-                $toRecipients = $signalement->getMailUsagers();
-                $notificationMailerRegistry->send(
-                    new NotificationMail(
-                        type: NotificationMailerType::TYPE_SIGNALEMENT_REFUSAL_TO_USAGER,
-                        to: $toRecipients,
-                        territory: $signalement->getTerritory(),
-                        signalement: $signalement,
-                        motif: $response['suivi'],
-                    )
-                );
             }
             /** @var User $user */
             $user = $this->getUser();
@@ -90,7 +65,8 @@ class SignalementActionController extends AbstractController
                 description: 'Signalement '.$description,
                 type : Suivi::TYPE_AUTO,
                 isPublic: true,
-                sendMail: false
+                sendMail: true,
+                context: $suiviContext,
             );
 
             $this->addFlash('success', 'Statut du signalement mis à jour avec succès !');
