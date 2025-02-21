@@ -28,8 +28,8 @@ class Suivi implements EntityHistoryInterface
     public const int DEFAULT_PERIOD_INACTIVITY = 30;
     public const int DEFAULT_PERIOD_RELANCE = 45;
 
-    public const string DESCRIPTION_MOTIF_CLOTURE_ALL = 'Le signalement a été fermé pour tous';
-    public const string DESCRIPTION_MOTIF_CLOTURE_PARTNER = 'Le signalement a été fermé pour';
+    public const string DESCRIPTION_MOTIF_CLOTURE_ALL = 'Le signalement a été cloturé pour tous';
+    public const string DESCRIPTION_MOTIF_CLOTURE_PARTNER = 'Le signalement a été cloturé pour';
     public const string DESCRIPTION_SIGNALEMENT_VALIDE = 'Signalement validé';
     public const string DESCRIPTION_DELETED = 'Ce suivi a été supprimé par un administrateur le ';
 

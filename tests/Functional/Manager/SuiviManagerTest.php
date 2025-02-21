@@ -82,7 +82,7 @@ class SuiviManagerTest extends KernelTestCase
         $this->assertEquals(Suivi::TYPE_PARTNER, $suivi->getType());
         $this->assertNotEquals($countSuivisBeforeCreate, $countSuivisAfterCreate);
         $this->assertInstanceOf(Suivi::class, $suivi);
-        $desc = 'Le signalement a été fermé pour test avec le motif suivant <br /><strong>Non décence</strong><br /><strong>Desc. : </strong>Lorem ipsum suivi sit amet, consectetur adipiscing elit.';
+        $desc = Suivi::DESCRIPTION_MOTIF_CLOTURE_PARTNER.' test avec le motif suivant <br /><strong>Non décence</strong><br /><strong>Desc. : </strong>Lorem ipsum suivi sit amet, consectetur adipiscing elit.';
         $this->assertEquals($desc, $suivi->getDescription());
         $this->assertTrue($suivi->getIsPublic());
         $this->assertTrue($suivi->getIsSanitized());

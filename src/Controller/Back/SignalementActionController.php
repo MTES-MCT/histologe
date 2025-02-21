@@ -53,7 +53,7 @@ class SignalementActionController extends AbstractController
                     return $this->redirectToRoute('back_signalement_view', ['uuid' => $signalement->getUuid()]);
                 }
                 $signalement->setMotifRefus($motifRefus);
-                $description = 'fermé car non-valide avec le motif suivant : '.$motifRefus->label().'<br>Plus précisément :<br>'.$response['suivi'];
+                $description = 'cloturé car non-valide avec le motif suivant : '.$motifRefus->label().'<br>Plus précisément :<br>'.$response['suivi'];
             }
             /** @var User $user */
             $user = $this->getUser();
