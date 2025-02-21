@@ -13,28 +13,28 @@ use Doctrine\ORM\Mapping as ORM;
 #[ORM\Index(columns: ['signalement_id', 'type', 'created_at'], name: 'idx_suivi_signalement_type_created_at')]
 class Suivi implements EntityHistoryInterface
 {
-    public const TYPE_AUTO = 1;
-    public const TYPE_USAGER = 2;
-    public const TYPE_PARTNER = 3;
-    public const TYPE_TECHNICAL = 4;
-    public const TYPE_USAGER_POST_CLOTURE = 5;
-    public const CONTEXT_NOTIFY_USAGER_ONLY = 'notifyUsagerOnly';
-    public const CONTEXT_INTERVENTION = 'intervention';
-    public const CONTEXT_SCHS = 'schs';
-    public const CONTEXT_SIGNALEMENT_ACCEPTED = 'signalementAccepted';
-    public const CONTEXT_SIGNALEMENT_REFUSED = 'signalementRefused';
-    public const CONTEXT_SIGNALEMENT_CLOSED = 'signalementClosed';
+    public const int TYPE_AUTO = 1;
+    public const int TYPE_USAGER = 2;
+    public const int TYPE_PARTNER = 3;
+    public const int TYPE_TECHNICAL = 4;
+    public const int TYPE_USAGER_POST_CLOTURE = 5;
+    public const string CONTEXT_NOTIFY_USAGER_ONLY = 'notifyUsagerOnly';
+    public const string CONTEXT_INTERVENTION = 'intervention';
+    public const string CONTEXT_SCHS = 'schs';
+    public const string CONTEXT_SIGNALEMENT_ACCEPTED = 'signalementAccepted';
+    public const string CONTEXT_SIGNALEMENT_REFUSED = 'signalementRefused';
+    public const string CONTEXT_SIGNALEMENT_CLOSED = 'signalementClosed';
 
-    public const DEFAULT_PERIOD_INACTIVITY = 30;
-    public const DEFAULT_PERIOD_RELANCE = 45;
+    public const int DEFAULT_PERIOD_INACTIVITY = 30;
+    public const int DEFAULT_PERIOD_RELANCE = 45;
 
-    public const DESCRIPTION_MOTIF_CLOTURE_ALL = 'Le signalement a été fermé pour tous';
-    public const DESCRIPTION_MOTIF_CLOTURE_PARTNER = 'Le signalement a été fermé pour';
-    public const DESCRIPTION_SIGNALEMENT_VALIDE = 'Signalement validé';
-    public const DESCRIPTION_DELETED = 'Ce suivi a été supprimé par un administrateur le ';
+    public const string DESCRIPTION_MOTIF_CLOTURE_ALL = 'Le signalement a été fermé pour tous';
+    public const string DESCRIPTION_MOTIF_CLOTURE_PARTNER = 'Le signalement a été fermé pour';
+    public const string DESCRIPTION_SIGNALEMENT_VALIDE = 'Signalement validé';
+    public const string DESCRIPTION_DELETED = 'Ce suivi a été supprimé par un administrateur le ';
 
-    public const ARRET_PROCEDURE = 'arret-procedure';
-    public const POURSUIVRE_PROCEDURE = 'poursuivre-procedure';
+    public const string ARRET_PROCEDURE = 'arret-procedure';
+    public const string POURSUIVRE_PROCEDURE = 'poursuivre-procedure';
 
     #[ORM\Id]
     #[ORM\GeneratedValue]

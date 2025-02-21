@@ -752,26 +752,6 @@ class SignalementRepository extends ServiceEntityRepository
         return $usersEmail;
     }
 
-    public function findPartnersEmailAffectedToSignalement(int $signalementId): array
-    {
-        $queryBuilder = $this->createQueryBuilder('s');
-        $queryBuilder
-            ->select('p.email')
-            ->innerJoin('s.affectations', 'a')
-            ->innerJoin('a.partner', 'p')
-            ->where('s.id = :signalement_id')
-            ->setParameter('signalement_id', $signalementId);
-
-        $partnersEmail = [];
-        foreach ($queryBuilder->getQuery()->getArrayResult() as $value) {
-            if ($value['email'] && !\in_array($value['email'], $partnersEmail)) {
-                $partnersEmail[] = $value['email'];
-            }
-        }
-
-        return $partnersEmail;
-    }
-
     public function getAverageCriticite(
         ?Territory $territory,
         ?ArrayCollection $partners,
