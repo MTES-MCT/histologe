@@ -4,13 +4,17 @@ namespace App\Controller\Back;
 
 use App\Entity\Enum\SignalementStatus;
 use App\Entity\Signalement;
+use App\Entity\User;
+use App\Form\SearchDraftType;
 use App\Form\SignalementAddressType;
 use App\Manager\SignalementManager;
 use App\Repository\SignalementRepository;
+use App\Service\ListFilters\SearchDraft;
 use App\Service\Signalement\SignalementBoManager;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
+use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -31,23 +35,60 @@ class SignalementCreateController extends AbstractController
         }
     }
 
-    #[Route('/drafts', name: 'back_signalement_drafts', methods: ['GET'])]
+    #[Route('/brouillons', name: 'back_signalement_drafts', methods: ['GET'])]
     public function showDrafts(
+        Request $request,
         SignalementRepository $signalementRepository,
+        ParameterBagInterface $parameterBag,
     ): Response {
-        $drafts = $signalementRepository->findBy([
-            'createdBy' => $this->getUser(),
-            'statut' => [SignalementStatus::DRAFT, SignalementStatus::NEED_VALIDATION],
-        ],
-            ['createdAt' => 'DESC']
-        );
+        /** @var User $user */
+        $user = $this->getUser();
+        $searchDraft = new SearchDraft($user);
+        $form = $this->createForm(SearchDraftType::class, $searchDraft);
+        $form->handleRequest($request);
+        if ($form->isSubmitted() && !$form->isValid()) {
+            $searchDraft = new SearchDraft($user);
+        }
+        $maxListPagination = $parameterBag->get('standard_max_list_pagination');
+        $paginatedDrafts = $signalementRepository->findFilteredPaginatedDrafts($searchDraft, $maxListPagination);
 
-        return $this->render('back/signalement_create/drafts.html.twig', [
-            'drafts' => $drafts,
+        return $this->render('back/signalement_drafts/index.html.twig', [
+            'form' => $form,
+            'searchDraft' => $searchDraft,
+            'drafts' => $paginatedDrafts,
+            'pages' => (int) ceil($paginatedDrafts->count() / $maxListPagination),
         ]);
     }
 
-    #[Route('/create', name: 'back_signalement_create', methods: ['GET'])]
+    #[Route('/brouillon/supprimer', name: 'back_signalement_delete_draft', methods: ['POST'])]
+    public function deleteDraftSignalement(
+        Request $request,
+        SignalementManager $signalementManager,
+        EntityManagerInterface $entityManager,
+    ): Response {
+        $draftId = $request->request->get('draft_id');
+        /** @var Signalement $signalement */
+        $signalement = $signalementManager->find($draftId);
+
+        $this->denyAccessUnlessGranted('SIGN_DELETE_DRAFT', $signalement);
+
+        if (
+            $signalement
+            && $this->isCsrfTokenValid('draft_delete', $request->request->get('_token'))
+        ) {
+            $signalement->setStatut(SignalementStatus::DRAFT_ARCHIVED);
+            $entityManager->flush();
+            $this->addFlash('success', 'Le brouillon a bien été supprimé !');
+
+            return $this->redirectToRoute('back_signalement_drafts', [], Response::HTTP_SEE_OTHER);
+        }
+
+        $this->addFlash('error', 'Une erreur est survenue lors de la suppression...');
+
+        return $this->redirectToRoute('back_signalement_drafts', [], Response::HTTP_SEE_OTHER);
+    }
+
+    #[Route('/brouillon/creer', name: 'back_signalement_create', methods: ['GET'])]
     public function createSignalement(
     ): Response {
         $signalement = new Signalement();
@@ -59,7 +100,7 @@ class SignalementCreateController extends AbstractController
         ]);
     }
 
-    #[Route('/edit-draft/{uuid:signalement}', name: 'back_signalement_edit_draft', methods: ['GET'])]
+    #[Route('/brouillon/editer/{uuid:signalement}', name: 'back_signalement_edit_draft', methods: ['GET'])]
     public function editSignalement(
         Signalement $signalement,
     ): Response {

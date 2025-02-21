@@ -50,8 +50,8 @@ class BackStatistiquesControllerTest extends WebTestCase
     public function provideRoutesStatistiquesDatas(): \Generator
     {
         yield 'Super Admin' => ['back_statistiques_filter', [], self::USER_SUPER_ADMIN, [
-            ['result' => 50, 'label' => 'count_signalement'],
-            ['result' => 57, 'label' => 'average_criticite'],
+            ['result' => 51, 'label' => 'count_signalement'],
+            ['result' => 55.9, 'label' => 'average_criticite'],
         ]];
         yield 'Responsable Territoire' => ['back_statistiques_filter', [], self::USER_ADMIN_TERRITOIRE, [
             ['result' => 26, 'label' => 'count_signalement'],
@@ -62,7 +62,7 @@ class BackStatistiquesControllerTest extends WebTestCase
             ['result' => 100, 'label' => 'average_criticite'],
         ]];
         yield 'Super Admin - filtered with EPCI CC d\'Erdre et Gesvres' => ['back_statistiques_filter', ['territoire' => 45, 'epcis' => '["2"]'], self::USER_SUPER_ADMIN, [
-            ['result' => 4, 'label' => 'count_signalement'],
+            ['result' => 5, 'label' => 'count_signalement'],
             ['result' => 3, 'label' => 'count_signalement_filtered'],
             ['result' => 0, 'label' => 'count_signalement_refuses'],
             ['result' => 0, 'label' => 'count_signalement_archives'],

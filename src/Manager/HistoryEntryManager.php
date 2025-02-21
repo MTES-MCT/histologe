@@ -200,6 +200,9 @@ class HistoryEntryManager extends AbstractManager
                 case SignalementStatus::ARCHIVED->value:
                     $description .= ' a archivé le signalement ';
                     break;
+                case SignalementStatus::DRAFT_ARCHIVED->value:
+                    $description .= ' a archivé le brouillon du signalement ';
+                    break;
                 case SignalementStatus::REFUSED->value:
                     $description .= ' a refusé le signalement ';
                     break;

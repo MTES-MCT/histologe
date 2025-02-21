@@ -28,7 +28,7 @@ class SignalementCreateControllerTest extends WebTestCase
         $user = $this->userRepository->findOneBy(['email' => 'admin-01@histologe.fr']);
         $this->client->loginUser($user);
 
-        $crawler = $this->client->request('GET', '/bo/signalement/create');
+        $crawler = $this->client->request('GET', '/bo/signalement/brouillon/creer');
         $this->assertResponseIsSuccessful();
 
         $form = $crawler->filter('#bo-form-signalement-address')->form();
@@ -57,7 +57,7 @@ class SignalementCreateControllerTest extends WebTestCase
         $this->assertArrayHasKey('redirect', $response);
         $this->assertArrayHasKey('url', $response);
         $this->assertTrue($response['redirect']);
-        $this->assertStringContainsString('/bo/signalement/edit-draft/', $response['url']);
+        $this->assertStringContainsString('/bo/signalement/brouillon/editer/', $response['url']);
 
         $signalements = $this->signalementRepository->findBy([
             'adresseOccupant' => '8 Rue de la tourmentinerie',
@@ -78,7 +78,7 @@ class SignalementCreateControllerTest extends WebTestCase
         $user = $this->userRepository->findOneBy(['email' => $userEmail]);
         $this->client->loginUser($user);
 
-        $this->client->request('GET', '/bo/signalement/edit-draft/'.$signalementUuid);
+        $this->client->request('GET', '/bo/signalement/brouillon/editer/'.$signalementUuid);
         $this->assertResponseStatusCodeSame($expectedStatusCode);
     }
 
@@ -106,7 +106,7 @@ class SignalementCreateControllerTest extends WebTestCase
         $user = $this->userRepository->findOneBy(['email' => 'admin-territoire-44-01@histologe.fr']);
         $this->client->loginUser($user);
 
-        $crawler = $this->client->request('GET', '/bo/signalement/edit-draft/00000000-0000-0000-2025-000000000002');
+        $crawler = $this->client->request('GET', '/bo/signalement/brouillon/editer/00000000-0000-0000-2025-000000000002');
         $this->assertResponseIsSuccessful();
 
         $form = $crawler->filter('#bo-form-signalement-address')->form();
@@ -125,7 +125,7 @@ class SignalementCreateControllerTest extends WebTestCase
         $this->assertArrayHasKey('redirect', $response);
         $this->assertArrayHasKey('url', $response);
         $this->assertTrue($response['redirect']);
-        $this->assertStringContainsString('/bo/signalement/edit-draft/00000000-0000-0000-2025-000000000002#logement', $response['url']);
+        $this->assertStringContainsString('/bo/signalement/brouillon/editer/00000000-0000-0000-2025-000000000002#logement', $response['url']);
 
         $signalement = $this->signalementRepository->findOneBy(['uuid' => '00000000-0000-0000-2025-000000000002']);
         $this->assertFalse($signalement->getIsLogementSocial());
@@ -145,7 +145,7 @@ class SignalementCreateControllerTest extends WebTestCase
         $user = $this->userRepository->findOneBy(['email' => 'admin-territoire-44-01@histologe.fr']);
         $this->client->loginUser($user);
 
-        $crawler = $this->client->request('GET', '/bo/signalement/edit-draft/00000000-0000-0000-2025-000000000002');
+        $crawler = $this->client->request('GET', '/bo/signalement/brouillon/editer/00000000-0000-0000-2025-000000000002');
         $this->assertResponseIsSuccessful();
 
         $form = $crawler->filter('#bo-form-signalement-address')->form();
