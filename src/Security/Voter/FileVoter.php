@@ -53,7 +53,6 @@ class FileVoter extends Voter
 
     private function canEdit(File $file, User $user): bool
     {
-        return true;
         return $this->canCreate($file, $user)
             && (
                 $this->isFileUploadedByUser($file, $user)
