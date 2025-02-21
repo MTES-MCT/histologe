@@ -774,6 +774,11 @@ ul.fr-autocomplete-list {
         width: 100%;
     }
 }
+.iframed .fr-address-group {
+    max-height: 145px;
+    overflow: auto;
+}
+
 .fr-input:not([type="radio"]):read-only {
     box-shadow: inset 0 -2px 0 0 var(--border-disabled-grey);
     color: var(--text-disabled-grey);
