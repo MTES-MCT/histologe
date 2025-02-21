@@ -9,6 +9,7 @@ use App\Entity\Signalement;
 use App\Entity\User;
 use App\Exception\File\EmptyFileException;
 use App\Exception\File\MaxUploadSizeExceededException;
+use App\Exception\File\UnsupportedFileFormatException;
 use App\Factory\FileFactory;
 use App\Service\Files\FilenameGenerator;
 use App\Service\ImageManipulationHandler;
@@ -67,18 +68,12 @@ class SignalementFileProcessor
             }
 
             if ($fileSizeOk) {
-                $fileExtension = $file instanceof UploadedFile ? $file->getClientOriginalExtension() : null;
-
                 if (
                     $file instanceof UploadedFile
                     && File::INPUT_NAME_DOCUMENTS === $inputName
                     && !UploadHandlerService::isAcceptedDocumentFormat($file, $inputName)
                 ) {
-                    $acceptedExtensions = UploadHandlerService::getAcceptedExtensions('document');
-                    $message = <<<ERROR
-                Les fichiers de format {$fileExtension} ne sont pas pris en charge,
-                merci de choisir un fichier au format {$acceptedExtensions}.
-                ERROR;
+                    $message = UnsupportedFileFormatException::getFileFormatErrorMessage($file, 'document');
                     $fileInfo = ' ( Fichier : '.$file->__toString().' MimeType : '.$file->getMimeType().' )';
                     $this->logger->error($message.$fileInfo);
                     $this->errors[] = $message;
@@ -87,11 +82,7 @@ class SignalementFileProcessor
                     && File::INPUT_NAME_PHOTOS === $inputName
                     && !ImageManipulationHandler::isAcceptedPhotoFormat($file, $inputName)
                 ) {
-                    $acceptedExtensions = UploadHandlerService::getAcceptedExtensions('photo');
-                    $message = <<<ERROR
-                Les fichiers de format {$fileExtension} ne sont pas pris en charge,
-                merci de choisir un fichier au format {$acceptedExtensions}.
-                ERROR;
+                    $message = UnsupportedFileFormatException::getFileFormatErrorMessage($file, 'photo');
                     $fileInfo = ' ( Fichier : '.$file->__toString().' MimeType : '.$file->getMimeType().' )';
                     $this->logger->error($message.$fileInfo);
                     $this->errors[] = $message;

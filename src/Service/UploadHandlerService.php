@@ -57,12 +57,12 @@ class UploadHandlerService
             File::INPUT_NAME_DOCUMENTS === $fileType
             && !self::isAcceptedDocumentFormat($file, $fileType)
         ) {
-            throw new UnsupportedFileFormatException($file->getMimeType(), $fileType);
+            throw new UnsupportedFileFormatException($file, $fileType);
         } elseif (
             File::INPUT_NAME_PHOTOS === $fileType
             && !ImageManipulationHandler::isAcceptedPhotoFormat($file, $fileType)
         ) {
-            throw new UnsupportedFileFormatException($file->getMimeType(), $fileType);
+            throw new UnsupportedFileFormatException($file, $fileType);
         }
 
         try {
@@ -259,12 +259,12 @@ class UploadHandlerService
             File::INPUT_NAME_DOCUMENTS === $fileType
             && !self::isAcceptedDocumentFormat($file, $fileType)
         ) {
-            throw new UnsupportedFileFormatException($file->getMimeType(), $fileType);
+            throw new UnsupportedFileFormatException($file, $fileType);
         } elseif (
             File::INPUT_NAME_PHOTOS === $fileType
             && !ImageManipulationHandler::isAcceptedPhotoFormat($file, $fileType)
         ) {
-            throw new UnsupportedFileFormatException($file->getMimeType(), $fileType);
+            throw new UnsupportedFileFormatException($file, $fileType);
         }
         try {
             $tmpFilepath = $file->getPathname();

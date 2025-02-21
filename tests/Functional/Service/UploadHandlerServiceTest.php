@@ -127,9 +127,13 @@ class UploadHandlerServiceTest extends KernelTestCase
             ->expects($this->atLeast(1))
             ->method('getMimeType')
             ->willReturn('video/webm');
+        $uploadedFileMock
+            ->expects($this->atLeast(1))
+            ->method('getClientOriginalExtension')
+            ->willReturn('webm');
 
         $this->expectException(\Exception::class);
-        $this->expectExceptionMessage('Le format video/webm n\'est pas supporté, merci d\'essayer avec un format '.UploadHandlerService::getAcceptedExtensions('document'));
+        $this->expectExceptionMessage('Les fichiers de format video/webm ne sont pas pris en charge, merci de choisir un fichier au format '.UploadHandlerService::getAcceptedExtensions('document'));
         $uploadHandlerService->uploadFromFile($uploadedFileMock, 'test.webm');
     }
 
