@@ -12,14 +12,14 @@ use Symfony\Component\HttpFoundation\File\UploadedFile;
 
 class ImageManipulationHandler
 {
-    public const SUFFIX_RESIZE = '_resize';
-    public const SUFFIX_THUMB = '_thumb';
+    public const string SUFFIX_RESIZE = '_resize';
+    public const string SUFFIX_THUMB = '_thumb';
 
-    private const DEFAULT_SIZE_RESIZE = 1000;
-    private const DEFAULT_SIZE_THUMB = 400;
-    private const DEFAULT_SIZE_AVATAR = 150;
+    private const int DEFAULT_SIZE_RESIZE = 1000;
+    private const int DEFAULT_SIZE_THUMB = 400;
+    private const int DEFAULT_SIZE_AVATAR = 150;
     private bool $useTmpDir = true;
-    private string $imagePath;
+    private ?string $imagePath = null;
 
     public function __construct(
         private readonly ParameterBagInterface $parameterBag,

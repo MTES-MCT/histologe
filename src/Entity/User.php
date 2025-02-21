@@ -618,6 +618,11 @@ class User implements UserInterface, EntityHistoryInterface, PasswordAuthenticat
         return \in_array(self::ROLE_USER_PARTNER, $this->getRoles());
     }
 
+    public function isApiUser(): bool
+    {
+        return \in_array(self::ROLE_API_USER, $this->getRoles());
+    }
+
     public function isUsager(): bool
     {
         return \in_array(self::ROLE_USAGER, $this->getRoles());

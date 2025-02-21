@@ -11,6 +11,12 @@ use OpenApi\Attributes as OA;
 class File
 {
     #[OA\Property(
+        description: 'Uuid du fichier',
+        example: '123e4567-e89b-12d3-a456-426614174000',
+    )]
+    public string $uuid;
+
+    #[OA\Property(
         description: 'Titre du fichier',
         example: 'sample.png',
     )]
@@ -39,6 +45,11 @@ class File
         example: 'PHOTO_VISITE'
     )]
     public string $documentType;
+    #[OA\Property(
+        description: 'Description du fichier (uniquement pour les documents de type images)',
+        example: 'Dégats dans la cuisine'
+    )]
+    public ?string $description;
     #[OA\Property(
         description: 'URL du fichier<br>
         Le nom du fichier peut être récupéré avec les informations du header HTTP de la ressource `Content-Disposition` indiquant son nom et son extension.
