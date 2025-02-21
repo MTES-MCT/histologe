@@ -1,7 +1,7 @@
 <template>
   <SignalementFormUploadPhotos
     :id="id"
-    :label="labelUpload"
+    :label="label"
     :description="description"
     v-model="formStore.data[id + '_upload']"
     :labelInfo="labelInfo"

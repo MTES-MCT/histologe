@@ -104,6 +104,10 @@
       <br>
       <h5 class="fr-h6">Précisions sur la situation</h5>
       <p class="white-space-pre-line">{{ formStore.data[idMessageAdministration] }}</p>
+      <p>
+        <span v-if="formStore.data['message_administration_documents_upload'].length > 0">{{ formStore.data['message_administration_documents_upload'].length }} document(s) complémentaire(s) ajouté(s).<br></span>
+        <span v-if="formStore.data['message_administration_photos_upload'].length > 0">{{ formStore.data['message_administration_photos_upload'].length }} photo(s) complémentaire(s) ajoutée(s).</span>
+      </p>
     </div>
   </div>
 </template>

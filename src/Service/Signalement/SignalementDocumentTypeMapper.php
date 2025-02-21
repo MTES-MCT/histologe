@@ -12,7 +12,7 @@ class SignalementDocumentTypeMapper
             return DocumentType::SITUATION_DIAGNOSTIC_PLOMB_AMIANTE;
         }
 
-        if (str_starts_with($value, 'desordres_') || str_starts_with($value, 'message_administration_photos')) {
+        if (str_starts_with($value, 'desordres_')) {
             return DocumentType::PHOTO_SITUATION;
         }
 
