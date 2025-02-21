@@ -80,6 +80,7 @@ export default defineComponent({
       nextSlug: '',
       isErrorInit: false,
       isLoadingInit: true,
+      isIntroSkipped: false,
       formStore,
       dictionaryStore,
       matomo,
@@ -154,6 +155,15 @@ export default defineComponent({
           formStore.data.signalement_concerne_profil = 'autre_logement'
           formStore.data.signalement_concerne_profil_detail_tiers = 'service_secours'
           break
+        case 'bailleur_social':
+          formStore.data.signalement_concerne_profil = 'autre_logement'
+          formStore.data.signalement_concerne_profil_detail_tiers = 'bailleur'
+          formStore.data.signalement_concerne_profil_detail_bailleur_bailleur = 'organisme_societe'
+          formStore.data.signalement_concerne_logement_social_autre_tiers = 'oui'
+          break
+      }
+      if (this.sharedProps.initProfile !== '' && formStore.data.signalement_concerne_profil != undefined) {
+        this.isIntroSkipped = true
       }
       requests.initDictionary(this.handleInitDictionary)
     },
@@ -172,7 +182,8 @@ export default defineComponent({
         if (this.nextSlug !== '') {
           this.changeScreenBySlug(undefined) // TODO : que mettre ?
         } else {
-          formStore.currentScreen = requestResponse[0]
+          let screenIndex = this.isIntroSkipped ? 1 : 0
+          formStore.currentScreen = requestResponse[screenIndex]
         }
       }
     },
