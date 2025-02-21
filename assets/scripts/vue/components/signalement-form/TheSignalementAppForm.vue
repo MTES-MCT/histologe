@@ -80,6 +80,7 @@ export default defineComponent({
       nextSlug: '',
       isErrorInit: false,
       isLoadingInit: true,
+      isIntroSkipped: false,
       formStore,
       dictionaryStore,
       matomo,
@@ -104,11 +105,12 @@ export default defineComponent({
       this.sharedProps.ajaxurlSendMailContinueFromDraft = initElements.dataset.ajaxurlSendMailContinueFromDraft
       this.sharedProps.ajaxurlSendMailGetLienSuivi = initElements.dataset.ajaxurlSendMailGetLienSuivi
       this.sharedProps.ajaxurlArchiveDraft = initElements.dataset.ajaxurlArchiveDraft
+      this.sharedProps.initProfile = initElements.dataset.initProfile
       if (initElements.dataset.ajaxurlGetSignalementDraft !== undefined) {
         this.sharedProps.ajaxurlGetSignalementDraft = initElements.dataset.ajaxurlGetSignalementDraft
         requests.initWithExistingData(this.handleInitData)
       } else {
-        requests.initDictionary(this.handleInitDictionary)
+        this.initProfile()
       }
     } else {
       this.isErrorInit = true
@@ -127,6 +129,45 @@ export default defineComponent({
       }
       requests.initDictionary(this.handleInitDictionary)
     },
+    initProfile () {
+      switch (this.sharedProps.initProfile) {
+        case 'locataire':
+          formStore.data.signalement_concerne_profil = 'logement_occupez'
+          formStore.data.signalement_concerne_profil_detail_occupant = 'locataire'
+          break
+        case 'bailleur_occupant':
+          formStore.data.signalement_concerne_profil = 'logement_occupez'
+          formStore.data.signalement_concerne_profil_detail_occupant = 'bailleur_occupant'
+          formStore.data.signalement_concerne_profil_detail_bailleur_proprietaire = 'particulier'
+          break
+        case 'tiers_particulier':
+          formStore.data.signalement_concerne_profil = 'autre_logement'
+          formStore.data.signalement_concerne_profil_detail_tiers = 'tiers_particulier'
+          break
+        case 'tiers_pro':
+          formStore.data.signalement_concerne_profil = 'autre_logement'
+          formStore.data.signalement_concerne_profil_detail_tiers = 'tiers_pro'
+          break
+        case 'bailleur':
+          formStore.data.signalement_concerne_profil = 'autre_logement'
+          formStore.data.signalement_concerne_profil_detail_tiers = 'bailleur'
+          break
+        case 'service_secours':
+          formStore.data.signalement_concerne_profil = 'autre_logement'
+          formStore.data.signalement_concerne_profil_detail_tiers = 'service_secours'
+          break
+        case 'bailleur_social':
+          formStore.data.signalement_concerne_profil = 'autre_logement'
+          formStore.data.signalement_concerne_profil_detail_tiers = 'bailleur'
+          formStore.data.signalement_concerne_profil_detail_bailleur_bailleur = 'organisme_societe'
+          formStore.data.signalement_concerne_logement_social_autre_tiers = 'oui'
+          break
+      }
+      if (this.sharedProps.initProfile !== '' && formStore.data.signalement_concerne_profil != undefined) {
+        this.isIntroSkipped = true
+      }
+      requests.initDictionary(this.handleInitDictionary)
+    },
     handleInitDictionary (requestResponse: any) {
       for (const slug in requestResponse) {
         dictionaryStore[slug] = requestResponse[slug]
@@ -142,7 +183,8 @@ export default defineComponent({
         if (this.nextSlug !== '') {
           this.changeScreenBySlug(undefined) // TODO : que mettre ?
         } else {
-          formStore.currentScreen = requestResponse[0]
+          let screenIndex = this.isIntroSkipped ? 1 : 0
+          formStore.currentScreen = requestResponse[screenIndex]
         }
       }
     },
