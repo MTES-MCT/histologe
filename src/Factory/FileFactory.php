@@ -102,7 +102,7 @@ class FileFactory
     private function getFileType(array $file, DocumentType $documentType)
     {
         if ('photos' === $file['key']
-            && File::FILE_TYPE_PHOTO === $documentType->mapFileType()
+            && (File::FILE_TYPE_PHOTO === $documentType->mapFileType() || DocumentType::AUTRE === $documentType)
             && \in_array(
                 strtolower(pathinfo($file['file'], \PATHINFO_EXTENSION)),
                 File::IMAGE_EXTENSION
