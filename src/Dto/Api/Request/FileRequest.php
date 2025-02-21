@@ -17,7 +17,6 @@ class FileRequest implements RequestInterface
             <li>`PROCEDURE_RAPPORT_DE_VISITE`</li>
             <li>`SITUATION_FOYER_BAIL`</li>
             <li>`PHOTO_SITUATION`</li>
-            <li>`PHOTO_VISITE`</li>
             <li>`SITUATION_DIAGNOSTIC_PLOMB_AMIANTE`</li>
             <li>`PROCEDURE_MISE_EN_DEMEURE`</li>
             <li>`PROCEDURE_ARRETE_PREFECTORAL`</li>
@@ -25,7 +24,6 @@ class FileRequest implements RequestInterface
             <li>`PROCEDURE_ARRETE_MUNICIPAL`</li>
             <li>`PROCEDURE_SAISINE`</li>
             <li>`BAILLEUR_DEVIS_POUR_TRAVAUX`</li>
-            <li>`EXPORT`</li>
         </ul>
         ',
         example: 'BAILLEUR_REPONSE_BAILLEUR'
@@ -40,7 +38,6 @@ class FileRequest implements RequestInterface
             'PROCEDURE_RAPPORT_DE_VISITE',
             'SITUATION_FOYER_BAIL',
             'PHOTO_SITUATION',
-            'PHOTO_VISITE',
             'SITUATION_DIAGNOSTIC_PLOMB_AMIANTE',
             'PROCEDURE_MISE_EN_DEMEURE',
             'PROCEDURE_ARRETE_PREFECTORAL',
@@ -48,7 +45,6 @@ class FileRequest implements RequestInterface
             'PROCEDURE_ARRETE_MUNICIPAL',
             'PROCEDURE_SAISINE',
             'BAILLEUR_DEVIS_POUR_TRAVAUX',
-            'EXPORT',
         ],
         message: 'Veuillez choisir une valeur valide pour le type de document. {{ choices }}'
     )]

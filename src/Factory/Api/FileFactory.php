@@ -19,6 +19,7 @@ readonly class FileFactory
         $file->uuid = $fileEntity->getUuid();
         $file->titre = $fileEntity->getTitle();
         $file->documentType = $fileEntity->getDocumentType()->value;
+        $file->description = $fileEntity->getDescription();
         $file->url = $this->urlGenerator->generate(
             'show_file',
             ['uuid' => $fileEntity->getUuid()],

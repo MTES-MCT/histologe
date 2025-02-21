@@ -94,16 +94,16 @@ class SignalementFileUpdateController extends AbstractController
             );
         }
         $this->denyAccessUnlessGranted('FILE_EDIT', $file);
-
         $documentType = DocumentType::tryFrom($fileRequest->documentType);
-        if (File::FILE_TYPE_PHOTO === $file->getFileType()) {
-            if (isset(DocumentType::getOrderedPhotosList()[$documentType->name])) {
-                $file->setDocumentType($documentType);
-            }
+        $ext = pathinfo($file->getFilename(), \PATHINFO_EXTENSION);
+        if (in_array($ext, File::IMAGE_EXTENSION) && isset(DocumentType::getOrderedPhotosList()[$documentType->name])) {
+            $file->setFileType(File::FILE_TYPE_PHOTO);
             $file->setDescription($fileRequest->description);
         } else {
-            $file->setDocumentType($documentType);
+            $file->setFileType(File::FILE_TYPE_DOCUMENT);
+            $file->setDescription(null);
         }
+        $file->setDocumentType($documentType);
         $this->entityManager->flush();
 
         return $this->json($this->fileFactory->createFrom($file));

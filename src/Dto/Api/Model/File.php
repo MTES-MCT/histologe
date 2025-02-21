@@ -46,6 +46,11 @@ class File
     )]
     public string $documentType;
     #[OA\Property(
+        description: 'Description du fichier (uniquement pour les documents de type images)',
+        example: 'Dégats dans la cuisine'
+    )]
+    public ?string $description;
+    #[OA\Property(
         description: 'URL du fichier<br>
         Le nom du fichier peut être récupéré avec les informations du header HTTP de la ressource `Content-Disposition` indiquant son nom et son extension.
         <br> Exemple : `Content-Disposition: inline; filename=sample_demo_resize.png`',

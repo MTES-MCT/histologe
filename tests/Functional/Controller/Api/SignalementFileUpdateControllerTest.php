@@ -48,7 +48,7 @@ class SignalementFileUpdateControllerTest extends WebTestCase
         $this->assertEquals($payload['documentType'], $response['documentType']);
     }
 
-    public function testUpdateSignalementFileWithIncorrectType(): void
+    public function testUpdateSignalementFileWithFileTypeUpdated(): void
     {
         $signalement = self::getContainer()->get(SignalementRepository::class)->find(1);
         $file = $signalement->getFiles()->filter(function (File $file) {
@@ -68,7 +68,8 @@ class SignalementFileUpdateControllerTest extends WebTestCase
 
         $response = json_decode($this->client->getResponse()->getContent(), true);
         $this->assertResponseIsSuccessful();
-        $this->assertEquals('AUTRE', $response['documentType']);
+        $this->assertNull($response['description']);
+        $this->assertEquals('PROCEDURE_ARRETE_PREFECTORAL', $response['documentType']);
     }
 
     public function testUpdateSignalementFileWithFileNotFound(): void
