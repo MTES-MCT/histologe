@@ -98,7 +98,7 @@ export default defineComponent({
         'Signalements',
         'En attente',
         'En cours',
-        'Clôturés'
+        'Fermés'
       ]
     }
   },

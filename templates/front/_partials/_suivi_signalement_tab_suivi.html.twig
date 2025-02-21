@@ -42,7 +42,7 @@
 	{% elseif signalement.statut is same as enum('App\\Entity\\Enum\\SignalementStatus').CLOSED
 		and date(signalement.closedAt) < date('-30days') %}
 		<div role="alert" class="fr-alert fr-alert--error fr-alert--sm">
-			<p>Votre dossier a été clôturé il y a plus de 30 jours, vous ne pouvez plus envoyer de messages.</p>
+			<p>Votre dossier a été fermé il y a plus de 30 jours, vous ne pouvez plus envoyer de messages.</p>
 		</div>
 	{% elseif signalement.statut is same as enum('App\\Entity\\Enum\\SignalementStatus').ARCHIVED %}
 		<div role="alert" class="fr-alert fr-alert--error fr-alert--sm">

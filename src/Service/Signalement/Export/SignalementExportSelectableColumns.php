@@ -39,7 +39,7 @@ class SignalementExportSelectableColumns
         'CONCLUSION_VISITE' => ['name' => 'Ccl. de la dernière visite', 'description' => 'La conclusion de la dernière visite (procédures constatées)', 'export' => 'interventionConcludeProcedure'],
         'COMMENTAIRE_VISITE' => ['name' => 'Comm. de la dernière visite', 'description' => 'Le commentaire laissé par l\'opérateur suite à la dernière visite', 'export' => 'interventionDetails'],
         'DERNIERE_MAJ' => ['name' => 'Dernière MAJ le', 'description' => 'La date de la dernière mise à jour du signalement', 'export' => 'modifiedAt'],
-        'DATE_CLOTURE' => ['name' => 'Clôturé le', 'description' => 'La date de clôture du signalement', 'export' => 'closedAt'],
+        'DATE_CLOTURE' => ['name' => 'Fermé le', 'description' => 'La date de clôture du signalement', 'export' => 'closedAt'],
         'MOTIF_CLOTURE' => ['name' => 'Motif de clôture', 'description' => 'Le motif de clôture du signalement', 'export' => 'motifCloture'],
         'GEOLOCALISATION' => ['name' => 'Géolocalisation', 'description' => 'Les coordonnées GPS du logement', 'export' => 'geoloc'],
         'DEBUT_DESORDRES' => ['name' => 'Début des désordres', 'description' => 'Début des désordres', 'export' => 'debutDesordres'],

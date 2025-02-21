@@ -195,7 +195,7 @@ class HistoryEntryManager extends AbstractManager
                     }
                     break;
                 case SignalementStatus::CLOSED->value:
-                    $description .= ' a clôturé le signalement ';
+                    $description .= ' a fermé le signalement ';
                     break;
                 case SignalementStatus::ARCHIVED->value:
                     $description .= ' a archivé le signalement ';
