@@ -12,6 +12,8 @@ use App\Manager\SuiviManager;
 use App\Messenger\Message\PdfExportMessage;
 use App\Repository\FileRepository;
 use App\Repository\InterventionRepository;
+use App\Security\Voter\SignalementVoter;
+use App\Service\ImageManipulationHandler;
 use App\Service\Signalement\SignalementFileProcessor;
 use App\Service\UploadHandlerService;
 use Doctrine\ORM\EntityManagerInterface;
@@ -298,5 +300,29 @@ class SignalementFileController extends AbstractController
         }
 
         return $this->redirect($this->generateUrl('back_signalement_view', ['uuid' => $signalement->getUuid()]));
+    }
+
+    #[Route('/{uuid:signalement}/file/{id:file}/rotation', name: 'back_signalement_file_rotate', methods: ['POST'])]
+    public function rotateFile(
+        Signalement $signalement,
+        File $file,
+        Request $request,
+        ImageManipulationHandler $imageManipulationHandler,
+    ): Response {
+        $this->denyAccessUnlessGranted(SignalementVoter::EDIT, $signalement);
+        $rotate = (int) $request->get('rotate', 0);
+        if (!$rotate) {
+            return $this->redirect($this->generateUrl('back_signalement_view', ['uuid' => $signalement->getUuid(), '_fragment' => 'photos']));
+        }
+        if (!$this->isCsrfTokenValid('save_file_rotation', $request->get('_token'))) {
+            $this->addFlash('error', 'Token CSRF invalide, merci de réessayer.');
+
+            return $this->redirect($this->generateUrl('back_signalement_view', ['uuid' => $signalement->getUuid(), '_fragment' => 'photos']));
+        }
+        $angle = $rotate * 90;
+        $imageManipulationHandler->rotate($file, $angle);
+        $this->addFlash('success', 'La photo a bien été modifiée.');
+
+        return $this->redirect($this->generateUrl('back_signalement_view', ['uuid' => $signalement->getUuid(), '_fragment' => 'photos']));
     }
 }

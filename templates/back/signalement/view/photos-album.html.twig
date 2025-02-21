@@ -10,34 +10,59 @@
         <div>
             {% for index, photo in allPhotosOrdered %}
             <div class="photos-album-image-item {{ loop.index > 1 ? 'fr-hidden' : 'loop-current' }}" data-id="{{ photo.id }}">
-                <div>
+                <div class="photos-album-flex">
                     {{ photo.documentType.label}} - {{ loop.index }} / {{ loopLength }}
                 </div>
-                <div>
-                    <img
+                <div class="photos-album-flex">
+                    <div>
+                        <button class="photos-album-main-btn-edit fr-btn fr-btn--icon-left fr-icon-edit-line keep-when-signalement-closed" data-id="{{ photo.id }}">Modifier l'orientation</button>
+                        <ul class="photos-album-list-btn-edit fr-hidden fr-btns-group fr-btns-group--inline-lg fr-btns-group--icon-left fr-btns-group--center" data-id="{{ photo.id }}">
+                            <li>
+                                <button class="photo-album-rotate-left-btn fr-btn fr-icon-arrow-go-back-line keep-when-signalement-closed" data-id="{{ photo.id }}">Pivoter à gauche</button>
+                            </li>
+                            <li>
+                                <button class="photo-album-rotate-right-btn fr-btn fr-btn--icon-right fr-icon-arrow-go-forward-line keep-when-signalement-closed" data-id="{{ photo.id }}">Pivoter à droite</button>
+                            </li>
+                            <li>
+                                <button 
+                                    class="photo-album-save-rotation fr-btn fr-icon-save-3-line keep-when-signalement-closed" 
+                                    disabled 
+                                    data-action="{{path('back_signalement_file_rotate', {uuid: photo.signalement.uuid, id: photo.id})}}" 
+                                    data-id="{{ photo.id }}">Enregistrer
+                                </button>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="photos-album-flex">
+                    <img class="photos-album-image"
                         src="{{ path('show_file', {uuid: photo.uuid}) }}?variant=resize"
                         alt="Photo ajoutée par : {{ photo.uploadedBy.nomComplet ?? 'N/R' }}"
+                        data-id="{{ photo.id }}"
+                        data-rotate="0"
                         >
                 </div>
-                <div class="fr-mt-1w">
-                    {% if photo.documentType is not same as null
-                        and photo.documentType is not same as enum('App\\Entity\\Enum\\DocumentType').AUTRE %}
-                        {% if photo.documentType is same as enum('App\\Entity\\Enum\\DocumentType').PHOTO_SITUATION
-                                and photo.desordreSlug is not same as null %}
-                            {{ signalement.getDesordreLabel(photo.desordreSlug) }}
-                        {% elseif photo.documentType is same as enum('App\\Entity\\Enum\\DocumentType').PHOTO_VISITE %}
-                            {{ photo.documentType.label() }} du {{ photo.intervention.scheduledAt|date('d/m/Y') }} par {{ photo.intervention.partner.nom}}
-                        {% else %}
-                            {{ photo.documentType.label() }}
+                <div class="photos-album-flex">
+                    <div class="fr-mt-1w">
+                        {% if photo.documentType is not same as null
+                            and photo.documentType is not same as enum('App\\Entity\\Enum\\DocumentType').AUTRE %}
+                            {% if photo.documentType is same as enum('App\\Entity\\Enum\\DocumentType').PHOTO_SITUATION
+                                    and photo.desordreSlug is not same as null %}
+                                {{ signalement.getDesordreLabel(photo.desordreSlug) }}
+                            {% elseif photo.documentType is same as enum('App\\Entity\\Enum\\DocumentType').PHOTO_VISITE %}
+                                {{ photo.documentType.label() }} du {{ photo.intervention.scheduledAt|date('d/m/Y') }} par {{ photo.intervention.partner.nom}}
+                            {% else %}
+                                {{ photo.documentType.label() }}
+                            {% endif %}
+                            <br>
                         {% endif %}
-                        <br>
-                    {% endif %}
-                    {% if photo.description is not same as null %}
-                        {{ photo.description }}
-                    {% endif %}
-                </div>
-                <div class="fr-mt-1w">
-                    Photo ajoutée par {{ photo.uploadedBy.nomComplet ?? 'l\'usager' }}
+                        {% if photo.description is not same as null %}
+                            {{ photo.description }}
+                        {% endif %}
+                    </div>
+                    <div class="fr-mt-1w">
+                        Photo ajoutée par {{ photo.uploadedBy.nomComplet ?? 'l\'usager' }}
+                    </div>
                 </div>
             </div>
             {% endfor %}
@@ -53,3 +78,7 @@
         {% endfor %}
     </script>
 </div>
+<form id="form-save-file-rotation" action="#" method="POST" class="fr-hidden">
+    <input type="hidden" name="rotate" value="0">
+    <input type="hidden" name="_token" value="{{ csrf_token('save_file_rotation') }}">
+</form>

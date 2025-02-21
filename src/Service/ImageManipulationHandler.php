@@ -109,6 +109,21 @@ class ImageManipulationHandler
         return $this;
     }
 
+    public function rotate(File $file, int $angle): void
+    {
+        $variantNames = self::getVariantNames($file->getFilename());
+
+        foreach ($variantNames as $variant) {
+            if (!$this->fileStorage->fileExists($variant)) {
+                continue;
+            }
+            $image = $this->imageManager->make($this->fileStorage->readStream($variant));
+            $image->rotate($angle);
+            $resource = $image->stream()->detach();
+            $this->fileStorage->writeStream($variant, $resource);
+        }
+    }
+
     /**
      * @throws FilesystemException
      */

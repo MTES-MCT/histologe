@@ -660,6 +660,21 @@ div.photos-album {
     padding: 2rem;
     color: white;
 
+    .fr-btn{
+        background-color: #8585f6;
+        color: #000091;
+    }
+    .fr-btn:hover {
+        background-color: #b1b1f9;
+    }
+    .fr-btn:active {
+        background-color: #c6c6fb;
+    }
+    .fr-btn:disabled {
+        background-color: #2a2a2a;
+        color: #666;
+    }
+
     .photos-album-close-button-container {
         text-align: right;
     }
@@ -686,27 +701,28 @@ div.photos-album {
                 display: flex;
                 flex-direction: column;
                 
-                div {
-                    justify-content: center;
+                .photos-album-flex {
                     text-align: center;
+                    display: flex;
+                    flex-direction: column;
+                    justify-content: center;
+                    flex: 0 0 4rem;
                 }
     
-                div:nth-child(1) {
-                    height: 4rem;
-                }
-                div:nth-child(2) {
-                    flex: 1;
-                    height: calc(100% - 12rem - 40px);
-
+                .photos-album-flex:nth-child(3) {
+                    flex: 1 1 auto;
+                    height: auto;
+                    min-height: 0;
+                    
                     img {
                         max-width: 100%;
                         max-height: 100%;
+                        object-fit: contain;
+                        width: auto;
+                        height: auto;
+                        margin-left: auto;
+                        margin-right: auto;
                     }
-                }
-                div:nth-child(3) {
-                    height: 4rem;
-                    display: flex;
-                    align-items: center;
                 }
             }
         }

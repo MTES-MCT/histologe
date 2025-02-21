@@ -24,7 +24,6 @@ document?.querySelector('#btn-display-all-suivis')?.addEventListeners('click tou
 document?.querySelectorAll('.open-photo-album')?.forEach(btn => {
   const swipeId = btn.getAttribute('data-id')
   btn.addEventListeners('click touchdown', (event) => {
-    document?.documentElement.setAttribute('data-fr-theme', 'dark')
     document?.querySelectorAll('.photos-album')?.forEach(element => {
       element.classList?.remove('fr-hidden')
       displayPhotoAlbum(swipeId)
@@ -33,7 +32,6 @@ document?.querySelectorAll('.open-photo-album')?.forEach(btn => {
 })
 document?.querySelectorAll('.photos-album-btn-close')?.forEach(btn => {
   btn.addEventListeners('click touchdown', (event) => {
-    document?.documentElement.setAttribute('data-fr-theme', 'light')
     document?.querySelectorAll('.photos-album')?.forEach(element => {
       element.classList?.add('fr-hidden')
     })
@@ -58,10 +56,41 @@ document?.querySelectorAll('.photos-album-swipe')?.forEach(btn => {
     displayPhotoAlbum(histoPhotoIds[newIndex])
   })
 })
+document?.querySelectorAll('.photos-album-main-btn-edit')?.forEach(btn => {
+  btn.addEventListeners('click touchdown', (event) => {
+    const photoId = btn.dataset.id
+    btn.classList?.add('fr-hidden')
+    document?.querySelector('.photos-album-list-btn-edit[data-id="' + photoId + '"]')?.classList?.remove('fr-hidden')
+  })
+})
+document?.querySelectorAll('.photo-album-rotate-left-btn')?.forEach(btn => {
+  btn.addEventListeners('click touchdown', (event) => {
+    const photoId = btn.dataset.id
+    rotatePhotoAlbumImage(photoId, 'left')
+  })
+})
+document?.querySelectorAll('.photo-album-rotate-right-btn')?.forEach(btn => {
+  btn.addEventListeners('click touchdown', (event) => {
+    const photoId = btn.dataset.id
+    rotatePhotoAlbumImage(photoId, 'right')
+  })
+})
+document?.querySelectorAll('.photo-album-save-rotation')?.forEach(btn => {
+  btn.addEventListeners('click touchdown', (event) => {
+    const photoId = btn.dataset.id
+    const rotate = document.querySelector('.photos-album-image[data-id="' + photoId + '"]').dataset.rotate
+    const action = btn.dataset.action
+    const form = document.querySelector('#form-save-file-rotation')
+    form.querySelector('input[name="rotate"]').value = rotate
+    form.action = action
+    form.submit()
+  })
+})
+
 const displayPhotoAlbum = (photoId) => {
-  if (document?.documentElement.getAttribute('data-fr-theme') === 'light') {
-    document?.documentElement.setAttribute('data-fr-theme', 'dark')
-  }
+  document?.querySelector('.photos-album-main-btn-edit[data-id="' + photoId + '"]')?.classList?.remove('fr-hidden')
+  document?.querySelector('.photos-album-list-btn-edit[data-id="' + photoId + '"]')?.classList?.add('fr-hidden')
+
   document?.querySelectorAll('.photos-album-image-item.loop-current')?.forEach(element => {
     element.classList?.remove('loop-current')
     element.classList?.add('fr-hidden')
@@ -69,8 +98,35 @@ const displayPhotoAlbum = (photoId) => {
   document?.querySelectorAll('.photos-album-image-item[data-id="' + photoId + '"]')?.forEach(element => {
     element.classList?.add('loop-current')
     element.classList?.remove('fr-hidden')
+    document.querySelector('.photos-album-image[data-id="' + photoId + '"]').dataset.rotate = 1
+    rotatePhotoAlbumImage(photoId, 'left')
   })
 }
+const rotatePhotoAlbumImage = (photoId, direction) => {
+  const imgElement = document.querySelector('.photos-album-image[data-id="' + photoId + '"]')
+  const parentElement = imgElement.parentElement
+  
+  imgElement.dataset.rotate = parseInt(imgElement.dataset.rotate) + (direction === 'left' ? -1 : 1)
+  if(imgElement.dataset.rotate > 3 || imgElement.dataset.rotate < -3){
+    imgElement.dataset.rotate = 0
+  }
+  let rotation = 0
+  rotation += parseInt(imgElement.dataset.rotate) * 90
+  imgElement.style.transform = `rotate(${rotation}deg)`
+  if (rotation % 180 !== 0) {
+    imgElement.style.width = parentElement.clientHeight + 'px'
+    imgElement.style.height = parentElement.clientWidth + 'px'
+  } else {
+    imgElement.style.width = parentElement.clientWidth + 'px'
+    imgElement.style.height = parentElement.clientHeight + 'px'
+  }
+  if(imgElement.dataset.rotate !== '0') {
+    document.querySelector('.photo-album-save-rotation[data-id="' + photoId + '"]').removeAttribute('disabled')
+  }else{
+    document.querySelector('.photo-album-save-rotation[data-id="' + photoId + '"]').setAttribute('disabled', 'disabled')
+  }
+}
+
 
 loadWindowWithLocalStorage('click', '[data-filter-list-signalement]', 'back_link_signalement_view')
 
