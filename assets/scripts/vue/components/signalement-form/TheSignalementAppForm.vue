@@ -138,6 +138,7 @@ export default defineComponent({
         case 'bailleur_occupant':
           formStore.data.signalement_concerne_profil = 'logement_occupez'
           formStore.data.signalement_concerne_profil_detail_occupant = 'bailleur_occupant'
+          formStore.data.signalement_concerne_profil_detail_bailleur_proprietaire = 'particulier'
           break
         case 'tiers_particulier':
           formStore.data.signalement_concerne_profil = 'autre_logement'
