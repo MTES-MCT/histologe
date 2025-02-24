@@ -74,7 +74,7 @@ class HomepageControllerTest extends WebTestCase
 
         $parameterBag = self::getContainer()->get(ParameterBagInterface::class);
         $email = $this->getMailerMessage();
-        $this->assertEmailHeaderSame($email, 'From', 'HISTOLOGE - ALERTE <' .$parameterBag->get('notifications_email'). '>');
+        $this->assertEmailHeaderSame($email, 'From', 'HISTOLOGE - ALERTE <'.$parameterBag->get('notifications_email').'>');
         $this->assertEmailHeaderSame($email, 'To', $parameterBag->get('contact_email'));
     }
 
