@@ -50,6 +50,7 @@ parameters:
     feature_multi_territories: '%env(bool:FEATURE_MULTI_TERRITORIES)%'
     feature_bo_signalement_create: '%env(bool:FEATURE_BO_SIGNALEMENT_CREATE)%'
     send_error_email_token: '%env(SEND_ERROR_EMAIL_TOKEN)%'
+    feature_sites_faciles: '%env(bool:FEATURE_SITES_FACILES)%'
 
 services:
     # default configuration for services in *this* file
