@@ -53,6 +53,10 @@
     "dev-server": "encore dev-server",
     "dev": "encore dev",
     "watch": "encore dev --watch",
+    "watch-base": "encore dev --watch",
+    "watch-front-stats": "encore dev --watch",
+    "watch-form": "encore dev --watch",
+    "watch-bo": "encore dev --watch",
     "build": "encore production --progress",
     "es-vue-fix": "node_modules/.bin/eslint --config=eslint.config.mjs --fix assets/scripts/vue/**/*.{ts,vue}",
     "es-js-fix": "node_modules/.bin/eslint --parser espree --fix assets/scripts/vanilla/*"
