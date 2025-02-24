@@ -25,6 +25,12 @@ class IframeController extends AbstractController
         ]);
     }
 
+    #[Route('/stats', name: 'iframe_stats', methods: ['GET'])]
+    public function stats(): Response
+    {
+        return $this->render('iframe/statistiques.html.twig');
+    }
+
     #[Route('/test', name: 'iframe_test', methods: ['GET'])]
     #[When('dev')]
     #[When('test')]

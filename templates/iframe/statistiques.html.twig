@@ -1,0 +1,14 @@
+{% extends 'iframe/base-iframe.html.twig' %}
+
+{% block customscripts %}
+    {{ encore_entry_script_tags('app') }}
+    {{ encore_entry_link_tags('app') }}
+    {{ encore_entry_script_tags('app-front-stats') }}
+    {{ encore_entry_link_tags('app-front-stats') }}
+{% endblock %}
+
+{% block body %}
+    <main id="content">
+        <div id="app-front-stats" data-ajaxurl="{{ path('front_statistiques_filter') }}"></div>
+    </main>
+{% endblock %}
