@@ -42,13 +42,21 @@ Encore
      * Each entry will result in one JavaScript file (e.g. app.js)
      * and one CSS file (e.g. app.css) if your JavaScript imports CSS.
      */
-    .addEntry('app', './assets/scripts/app.ts')
-    .addEntry('app-back-bo', './assets/scripts/app-back-bo.ts')
-    .addEntry('app-front-signalement-form', './assets/scripts/app-front-signalement-form.ts')
-    .addEntry('app-front-stats', './assets/scripts/app-front-stats.ts')
+if (process.env.npm_lifecycle_event !== 'watch-front-stats' && process.env.npm_lifecycle_event !== 'watch-bo' && process.env.npm_lifecycle_event !== 'watch-form') {
+    Encore.addEntry('app', './assets/scripts/app.ts')
+}
+if (process.env.npm_lifecycle_event !== 'watch-base' && process.env.npm_lifecycle_event !== 'watch-bo' && process.env.npm_lifecycle_event !== 'watch-form') {
+    Encore.addEntry('app-front-stats', './assets/scripts/app-front-stats.ts')
+}
+if (process.env.npm_lifecycle_event !== 'watch-base' && process.env.npm_lifecycle_event !== 'watch-front-stats' && process.env.npm_lifecycle_event !== 'watch-form') {
+    Encore.addEntry('app-back-bo', './assets/scripts/app-back-bo.ts')
+}
+if (process.env.npm_lifecycle_event !== 'watch-base' && process.env.npm_lifecycle_event !== 'watch-front-stats' && process.env.npm_lifecycle_event !== 'watch-bo') {
+    Encore.addEntry('app-front-signalement-form', './assets/scripts/app-front-signalement-form.ts')
+}
 
     // enables the Symfony UX Stimulus bridge (used in assets/bootstrap.js)
-    .enableStimulusBridge('./assets/controllers.json')
+Encore.enableStimulusBridge('./assets/controllers.json')
 
     // When enabled, Webpack "splits" your files into smaller pieces for greater optimization.
     .splitEntryChunks()
