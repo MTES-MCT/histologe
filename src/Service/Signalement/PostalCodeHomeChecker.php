@@ -3,40 +3,41 @@
 namespace App\Service\Signalement;
 
 use App\Entity\Territory;
-use App\Repository\TerritoryRepository;
+use App\Repository\CommuneRepository;
 
 class PostalCodeHomeChecker
 {
     public function __construct(
-        private readonly TerritoryRepository $territoryRepository,
+        private readonly ZipcodeProvider $zipcodeProvider,
+        private readonly CommuneRepository $communeRepository,
     ) {
     }
 
-    public function getActiveTerritory(string $postalCode, ?string $inseeCode = null): ?Territory
+    public function getActiveTerritory(string $inseeCode): ?Territory
     {
-        // Si on a un code Insee, on vérifie en priorité celui-ci car il indique le vrai territoire
-        $codeToCheck = $inseeCode ?? $postalCode;
-        $territoryItem = $this->territoryRepository->findOneBy([
-            'zip' => ZipcodeProvider::getZipCode($codeToCheck),
-            'isActive' => 1,
-        ]);
-
-        if (!empty($territoryItem)) {
-            if (empty($inseeCode)) {
-                return $territoryItem;
-            }
-
-            return $this->isAuthorizedInseeCode($territoryItem, $inseeCode) ? $territoryItem : null;
+        $territory = $this->zipcodeProvider->getTerritoryByInseeCode($inseeCode);
+        if (!$territory) {
+            return null;
         }
 
-        return null;
+        return $this->isAuthorizedInseeCode($territory, $inseeCode) ? $territory : null;
     }
 
-    public function isActive(string $postalCode, ?string $inseeCode = null): bool
+    public function isActiveByInseeCode(string $inseeCode): bool
     {
-        $activeTerritory = $this->getActiveTerritory($postalCode, $inseeCode);
+        return $this->getActiveTerritory($inseeCode) ? true : false;
+    }
 
-        return $activeTerritory ? true : false;
+    public function isActiveByPostalCode(string $postalCode): bool
+    {
+        $communes = $this->communeRepository->findBy(['codePostal' => $postalCode]);
+        foreach ($communes as $commune) {
+            if ($this->isActiveByInseeCode($commune->getCodeInsee())) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     public function isAuthorizedInseeCode(Territory $territory, string $inseeCode): bool

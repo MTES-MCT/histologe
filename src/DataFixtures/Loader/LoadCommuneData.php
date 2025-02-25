@@ -4,8 +4,8 @@ namespace App\DataFixtures\Loader;
 
 use App\Factory\CommuneFactory;
 use App\Manager\CommuneManager;
-use App\Manager\TerritoryManager;
 use App\Service\Import\CsvParser;
+use App\Service\Signalement\ZipcodeProvider;
 use App\Utils\ImportCommune;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Common\DataFixtures\OrderedFixtureInterface;
@@ -15,14 +15,14 @@ use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 class LoadCommuneData extends Fixture implements OrderedFixtureInterface
 {
     private const FLUSH_COUNT = 1000;
-    private const ZIP_CODES_ALLOWED = ['01', '06', '13', '44', '30', '62', '64', '67', '69', '89', '93'];
+    private const ZIP_CODES_ALLOWED = ['01', '06', '13', '44', '30', '62', '64', '67', '69', '69A', '89', '93'];
 
     public function __construct(
         private readonly ParameterBagInterface $params,
-        private readonly TerritoryManager $territoryManager,
         private readonly CommuneFactory $communeFactory,
         private readonly CommuneManager $communeManager,
         private readonly CsvParser $csvParser,
+        private readonly ZipcodeProvider $zipcodeProvider,
     ) {
     }
 
@@ -30,7 +30,6 @@ class LoadCommuneData extends Fixture implements OrderedFixtureInterface
     {
         $totalRead = 0;
         $existingCpAndInseeCode = [];
-        $territory = null;
 
         $csvData = $this->csvParser->parse($this->params->get('kernel.project_dir').ImportCommune::COMMUNE_LIST_CSV_PATH);
 
@@ -52,13 +51,9 @@ class LoadCommuneData extends Fixture implements OrderedFixtureInterface
                 continue;
             }
 
-            $zipCode = ImportCommune::getZipCodeByCodeCommune($itemCodeCommune);
+            $territory = $this->zipcodeProvider->getTerritoryByInseeCode($itemCodeCommune, true);
 
-            if (array_filter(self::ZIP_CODES_ALLOWED, fn ($zipCodeAllowed) => $zipCode === $zipCodeAllowed)) {
-                if (null === $territory || $zipCode != $territory->getZip()) {
-                    $territory = $this->territoryManager->findOneBy(['zip' => $zipCode]);
-                }
-
+            if (array_filter(self::ZIP_CODES_ALLOWED, fn ($zipCodeAllowed) => $territory->getZip() === $zipCodeAllowed)) {
                 $commune = $this->communeFactory->createInstanceFrom(
                     $territory,
                     $itemNomCommune,

@@ -70,6 +70,7 @@ class SignalementManager extends AbstractManager
         private readonly BailleurRepository $bailleurRepository,
         private readonly AffectationRepository $affectationRepository,
         private readonly SignalementAddressUpdater $signalementAddressUpdater,
+        private readonly ZipcodeProvider $zipcodeProvider,
         string $entityName = Signalement::class,
     ) {
         parent::__construct($managerRegistry, $entityName);
@@ -398,7 +399,7 @@ class SignalementManager extends AbstractManager
         if ($signalement->getIsLogementSocial() && $coordonneesBailleurRequest->getNom()) {
             $bailleur = $this->bailleurRepository->findOneBailleurBy(
                 $coordonneesBailleurRequest->getNom(),
-                ZipcodeProvider::getZipCode($signalement->getInseeOccupant())
+                $this->zipcodeProvider->getTerritoryByInseeCode($signalement->getInseeOccupant())
             );
         }
 

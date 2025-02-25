@@ -66,7 +66,7 @@ class HomepageController extends AbstractController
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
             $inputPostalCode = $form->get('postalcode')->getData();
-            if ($postalCodeHomeChecker->isActive($inputPostalCode)) {
+            if ($postalCodeHomeChecker->isActiveByPostalCode($inputPostalCode)) {
                 return $this->redirectToRoute('front_signalement', ['cp' => $inputPostalCode]);
             }
             $displayModal = $inputPostalCode;

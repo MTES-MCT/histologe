@@ -56,7 +56,7 @@ class SignalementBoManager
             $this->signalementAddressUpdater->updateAddressOccupantFromBanData($signalement);
         }
 
-        $territory = $this->postalCodeHomeChecker->getActiveTerritory($signalement->getCpOccupant(), $signalement->getInseeOccupant());
+        $territory = $this->postalCodeHomeChecker->getActiveTerritory($signalement->getInseeOccupant());
         if (!$territory) {
             $form->get($fieldAddress)->addError(new FormError('L\'adresse renseignée ne correspond pas à un territoire actif.'));
 

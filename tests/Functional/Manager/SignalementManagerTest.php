@@ -24,6 +24,7 @@ use App\Service\Signalement\DesordreTraitement\DesordreCompositionLogementLoader
 use App\Service\Signalement\Qualification\QualificationStatusService;
 use App\Service\Signalement\Qualification\SignalementQualificationUpdater;
 use App\Service\Signalement\SignalementAddressUpdater;
+use App\Service\Signalement\ZipcodeProvider;
 use App\Specification\Signalement\SuroccupationSpecification;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ManagerRegistry;
@@ -56,6 +57,7 @@ class SignalementManagerTest extends WebTestCase
     private BailleurRepository $bailleurRepository;
     private SignalementAddressUpdater $signalementAddressUpdater;
     private AffectationRepository $affectationRepository;
+    private ZipcodeProvider $zipcodeProvider;
 
     protected function setUp(): void
     {
@@ -80,6 +82,7 @@ class SignalementManagerTest extends WebTestCase
         $this->bailleurRepository = static::getContainer()->get(BailleurRepository::class);
         $this->signalementAddressUpdater = static::getContainer()->get(SignalementAddressUpdater::class);
         $this->affectationRepository = static::getContainer()->get(AffectationRepository::class);
+        $this->zipcodeProvider = static::getContainer()->get(ZipcodeProvider::class);
 
         $this->signalementManager = new SignalementManager(
             $this->managerRegistry,
@@ -98,6 +101,7 @@ class SignalementManagerTest extends WebTestCase
             $this->bailleurRepository,
             $this->affectationRepository,
             $this->signalementAddressUpdater,
+            $this->zipcodeProvider
         );
         $user = $this->entityManager->getRepository(User::class)->findOneBy(['email' => 'admin-01@histologe.fr']);
         $client->loginUser($user);

@@ -33,7 +33,6 @@ use App\Repository\SituationRepository;
 use App\Repository\TagRepository;
 use App\Repository\TerritoryRepository;
 use App\Repository\UserRepository;
-use App\Service\Signalement\ZipcodeProvider;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Common\DataFixtures\OrderedFixtureInterface;
 use Doctrine\Persistence\ObjectManager;
@@ -206,8 +205,7 @@ class LoadSignalementData extends Fixture implements OrderedFixtureInterface
         }
 
         if (isset($row['bailleur'])) {
-            $zip = ZipcodeProvider::getZipCode($row['cp_occupant']);
-            $signalement->setBailleur($this->bailleurRepository->findOneBailleurBy($row['bailleur'], $zip));
+            $signalement->setBailleur($this->bailleurRepository->findOneBailleurBy($row['bailleur'], $signalement->getTerritory()));
         }
 
         if (isset($row['synchro_data'])) {
@@ -404,8 +402,7 @@ class LoadSignalementData extends Fixture implements OrderedFixtureInterface
         }
 
         if (isset($row['bailleur'])) {
-            $zip = ZipcodeProvider::getZipCode($row['cp_occupant']);
-            $signalement->setBailleur($this->bailleurRepository->findOneBailleurBy($row['bailleur'], $zip));
+            $signalement->setBailleur($this->bailleurRepository->findOneBailleurBy($row['bailleur'], $signalement->getTerritory()));
         }
 
         if (SignalementStatus::CLOSED->value === $row['statut']) {

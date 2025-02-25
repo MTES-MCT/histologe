@@ -2,6 +2,7 @@
 
 namespace App\Tests\Functional\Repository;
 
+use App\Entity\Territory;
 use App\Repository\BailleurRepository;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 
@@ -11,10 +12,11 @@ class BailleurRepositoryTest extends KernelTestCase
     {
         /** @var BailleurRepository $bailleurRepository */
         $bailleurRepository = static::getContainer()->get(BailleurRepository::class);
+        $territory = (new Territory())->setZip('13');
 
         $bailleur = $bailleurRepository->findOneBailleurBy(
             name: '13 HABITAT',
-            zip: '13',
+            territory: $territory,
             bailleurSanitized: true
         );
 
@@ -25,10 +27,11 @@ class BailleurRepositoryTest extends KernelTestCase
     {
         /** @var BailleurRepository $bailleurRepository */
         $bailleurRepository = static::getContainer()->get(BailleurRepository::class);
+        $territory = (new Territory())->setZip('13');
 
         $bailleur = $bailleurRepository->findOneBailleurBy(
             name: 'S.A. REGIONALE DE L\'HABITAT',
-            zip: '13',
+            territory: $territory,
             bailleurSanitized: true
         );
 

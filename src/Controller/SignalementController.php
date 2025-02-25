@@ -364,9 +364,13 @@ class SignalementController extends AbstractController
                     'message' => 'Le paramètre code postal et le code insee ne sont pas cohérent',
                     'label' => 'Erreur', ]);
             }
-        }
-        if ($postalCodeHomeChecker->isActive($postalCode, $inseeCode)) {
-            return $this->json(['success' => true]);
+            if ($postalCodeHomeChecker->isActiveByInseeCode($inseeCode)) {
+                return $this->json(['success' => true]);
+            }
+        } else {
+            if ($postalCodeHomeChecker->isActiveByPostalCode($postalCode)) {
+                return $this->json(['success' => true]);
+            }
         }
 
         $messageClosed = '<p>

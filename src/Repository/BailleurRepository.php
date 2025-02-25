@@ -57,15 +57,15 @@ class BailleurRepository extends ServiceEntityRepository
         return $queryBuilder;
     }
 
-    public function findBailleursBy(string $name, string $zip): array
+    public function findBailleursBy(string $name, Territory $territory): array
     {
         $terms = explode(' ', trim($name));
         $queryBuilder = $this
             ->createQueryBuilder('b')
             ->innerJoin('b.bailleurTerritories', 'bt')
             ->innerJoin('bt.territory', 't')
-            ->where('t.zip = :zip')
-            ->setParameter('zip', $zip);
+            ->where('t.id = :territory')
+            ->setParameter('territory', $territory->getId());
 
         foreach ($terms as $index => $term) {
             $placeholder = 'term_'.$index;
@@ -77,14 +77,14 @@ class BailleurRepository extends ServiceEntityRepository
         return $queryBuilder->getQuery()->getResult();
     }
 
-    public function findOneBailleurBy(string $name, string $zip, bool $bailleurSanitized = false): ?Bailleur
+    public function findOneBailleurBy(string $name, Territory $territory, bool $bailleurSanitized = false): ?Bailleur
     {
         $queryBuilder = $this
             ->createQueryBuilder('b')
             ->innerJoin('b.bailleurTerritories', 'bt')
             ->innerJoin('bt.territory', 't')
-            ->where('t.zip = :zip')
-            ->setParameter('zip', $zip);
+            ->where('t.id = :territory')
+            ->setParameter('territory', $territory->getId());
         if ($bailleurSanitized) {
             $queryBuilder->andWhere('b.name = :name OR b.name = :sanitizedName')
             ->setParameter('name', $name)

@@ -11,18 +11,6 @@ class ImportCommune
     public const INDEX_CSV_CODE_COMMUNE = 1;
     public const INDEX_CSV_NOM_COMMUNE = 2;
 
-    public static function getZipCodeByCodeCommune($itemCodeCommune)
-    {
-        $codeCommune = $itemCodeCommune;
-        $codeCommune = str_pad($codeCommune, 5, '0', \STR_PAD_LEFT);
-        $zipCode = substr($codeCommune, 0, 2);
-        if ('97' == $zipCode) {
-            $zipCode = substr($codeCommune, 0, 3);
-        }
-
-        return $zipCode;
-    }
-
     public static function sanitizeCommuneWithArrondissement(string $nom): string
     {
         return trim(preg_replace('/(\d+e|\d+er) Arrondissement$/', '', $nom));

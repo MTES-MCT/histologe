@@ -3,9 +3,9 @@
 namespace App\Command;
 
 use App\Entity\Commune;
-use App\Entity\Territory;
 use App\Factory\CommuneFactory;
 use App\Service\Import\CsvParser;
+use App\Service\Signalement\ZipcodeProvider;
 use App\Utils\ImportCommune;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Console\Attribute\AsCommand;
@@ -30,7 +30,7 @@ class UpdateCommunesCommand extends Command
         private readonly EntityManagerInterface $entityManager,
         private readonly CsvParser $csvParser,
         private readonly CommuneFactory $communeFactory,
-        private array $territories = [],
+        private readonly ZipcodeProvider $zipcodeProvider,
         private array $communes = [],
         private array $csvData = [],
     ) {
@@ -43,10 +43,6 @@ class UpdateCommunesCommand extends Command
         $list = $this->entityManager->getRepository(Commune::class)->findAll();
         foreach ($list as $commune) {
             $this->communes[$commune->getCodePostal().'-'.$commune->getCodeInsee()] = $commune;
-        }
-        $list = $this->entityManager->getRepository(Territory::class)->findAll();
-        foreach ($list as $territory) {
-            $this->territories[$territory->getZip()] = $territory;
         }
         $this->csvData = $this->csvParser->parse($this->params->get('kernel.project_dir').ImportCommune::COMMUNE_LIST_CSV_PATH);
     }
@@ -72,9 +68,8 @@ class UpdateCommunesCommand extends Command
                 continue;
             }
 
-            $zipCode = ImportCommune::getZipCodeByCodeCommune($itemCodeCommune);
             $new = $this->communeFactory->createInstanceFrom(
-                territory: $this->territories[$zipCode],
+                territory: $this->zipcodeProvider->getTerritoryByInseeCode($itemCodeCommune),
                 nom: $itemNomCommune,
                 codePostal: $itemCodePostal,
                 codeInsee: $itemCodeCommune

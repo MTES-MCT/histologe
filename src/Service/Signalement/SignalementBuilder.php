@@ -22,7 +22,6 @@ use App\Manager\DesordreCritereManager;
 use App\Repository\BailleurRepository;
 use App\Repository\DesordreCritereRepository;
 use App\Repository\DesordrePrecisionRepository;
-use App\Repository\TerritoryRepository;
 use App\Serializer\SignalementDraftRequestSerializer;
 use App\Service\Signalement\DesordreTraitement\DesordreCompositionLogementLoader;
 use App\Service\Signalement\DesordreTraitement\DesordreTraitementProcessor;
@@ -41,7 +40,6 @@ class SignalementBuilder
     private array $payload;
 
     public function __construct(
-        private readonly TerritoryRepository $territoryRepository,
         private readonly BailleurRepository $bailleurRepository,
         private readonly ReferenceGenerator $referenceGenerator,
         private readonly SignalementDraftRequestSerializer $signalementDraftRequestSerializer,
@@ -56,6 +54,7 @@ class SignalementBuilder
         private readonly CriticiteCalculator $criticiteCalculator,
         private readonly SignalementQualificationUpdater $signalementQualificationUpdater,
         private readonly DesordreCompositionLogementLoader $desordreCompositionLogementLoader,
+        private readonly ZipcodeProvider $zipcodeProvider,
     ) {
     }
 
@@ -71,12 +70,7 @@ class SignalementBuilder
             $this->payload = $signalementDraft->getPayload(),
             SignalementDraftRequest::class
         );
-
-        $this->territory = $this->territoryRepository->findOneBy([
-            'zip' => ZipcodeProvider::getZipCode(
-                $this->signalementDraftRequest->getAdresseLogementAdresseDetailInsee()
-            ),
-        ]);
+        $this->territory = $this->zipcodeProvider->getTerritoryByInseeCode($this->signalementDraftRequest->getAdresseLogementAdresseDetailInsee());
 
         $this->signalement = (new Signalement())
             ->setCreatedFrom($this->signalementDraft)
@@ -430,7 +424,7 @@ class SignalementBuilder
             if ($this->isLogementSocial() && $bailleurNom) {
                 $bailleur = $this->bailleurRepository->findOneBailleurBy(
                     name: $bailleurNom,
-                    zip: $this->territory->getZip(),
+                    territory: $this->territory,
                     bailleurSanitized: true
                 );
 
