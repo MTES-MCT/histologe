@@ -58,7 +58,7 @@ class SituationFoyerRequestTest extends KernelTestCase
             isLogementSocial: 'maybe',
             isRelogement: '',
             isAllocataire: 'unknown',
-            dateNaissanceOccupant: 'invalid-date',
+            dateNaissanceOccupant: (new \DateTimeImmutable('tomorrow'))->format('Y-m-d'),
             numAllocataire: str_repeat('a', 51),
             logementSocialMontantAllocation: 'invalid-amount',
             travailleurSocialQuitteLogement: 'maybe',

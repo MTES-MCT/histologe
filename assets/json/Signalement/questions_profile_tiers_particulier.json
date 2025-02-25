@@ -1408,7 +1408,8 @@
             "show": "formStore.data.logement_social_allocation === 'oui'"
           },
           "validate": {
-            "message": "Veuillez indiquer la date de naissance de l'allocataire."
+            "message": "Veuillez indiquer la date de naissance de l'allocataire.",
+            "max": "today"
           }
         },
         {

@@ -3,12 +3,15 @@
 namespace App\Dto\Request\Signalement;
 
 use App\Validator as AppAssert;
+use App\Validator\DateNaissanceValidatorTrait;
 use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\Validator\Constraints\Email;
+use Symfony\Component\Validator\Context\ExecutionContextInterface;
 
 #[AppAssert\IsTerritoryActive]
 class SignalementDraftRequest
 {
+    use DateNaissanceValidatorTrait;
     public const PREFIX_PROPERTIES_TYPE_COMPOSITION = ['type_logement', 'composition_logement', 'bail_dpe', 'desordres_logement_chauffage_details_dpe'];
     public const PREFIX_PROPERTIES_SITUATION_FOYER = ['logement_social', 'travailleur_social'];
     public const PREFIX_PROPERTIES_INFORMATION_PROCEDURE = ['info_procedure', 'utilisation_service'];
@@ -508,6 +511,14 @@ class SignalementDraftRequest
     private ?string $zoneConcerneeConstatationDesordres = null;
     private array $files = [];
     private ?array $categorieDisorders = null;
+
+    #[Assert\Callback]
+    public function validate(ExecutionContextInterface $context): void
+    {
+        $this->validateDateNaissance($this->logementSocialDateNaissance, 'logementSocialDateNaissance', $context);
+        $this->validateDateNaissance($this->informationsComplementairesSituationOccupantsDateNaissance, 'informationsComplementairesSituationOccupantsDateNaissance', $context);
+        $this->validateDateNaissance($this->informationsComplementairesSituationBailleurDateNaissance, 'informationsComplementairesSituationBailleurDateNaissance', $context);
+    }
 
     public function getProfil(): ?string
     {

@@ -1165,7 +1165,8 @@
             "show": "formStore.data.logement_social_allocation === 'oui'"
           },
           "validate": {
-            "message": "Veuillez renseigner votre date de naissance."
+            "message": "Veuillez renseigner votre date de naissance.",
+            "max": "today"
           }
         },
         {
