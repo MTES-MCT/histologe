@@ -52,7 +52,6 @@ class SignalementRepository extends ServiceEntityRepository
     public function __construct(
         ManagerRegistry $registry,
         private readonly SearchFilter $searchFilter,
-        private readonly array $params,
     ) {
         parent::__construct($registry, Signalement::class);
     }
@@ -484,25 +483,7 @@ class SignalementRepository extends ServiceEntityRepository
             ->setParameter('group_concat_separator', SignalementAffectationListView::SEPARATOR_GROUP_CONCAT);
 
         if ($user->isTerritoryAdmin()) {
-            $authorized_codes_insee = [];
-            $otherTerritories = [];
-            foreach ($user->getPartners() as $partner) {
-                if (isset($this->params[$partner->getTerritory()->getZip()][$partner->getNom()])) {
-                    $authorized_codes_insee = array_merge($options['authorized_codes_insee'][$partner->getTerritory()->getZip()][$partner->getNom()], $authorized_codes_insee);
-                } else {
-                    $otherTerritories[] = $partner->getTerritory();
-                }
-            }
-            if (count($authorized_codes_insee)) {
-                if (count($otherTerritories)) {
-                    $qb->andWhere('s.inseeOccupant IN (:authorized_codes_insee) OR s.territory IN (:territories)')
-                    ->setParameter('authorized_codes_insee', $authorized_codes_insee)
-                    ->setParameter('territories', $otherTerritories);
-                } else {
-                    $qb->andWhere('s.inseeOccupant IN (:authorized_codes_insee)')
-                        ->setParameter('authorized_codes_insee', $authorized_codes_insee);
-                }
-            } elseif (empty($options['territories'])) {
+            if (empty($options['territories'])) {
                 $qb->andWhere('s.territory IN (:territories)')->setParameter('territories', $user->getPartnersTerritories());
             }
         } elseif ($user->isUserPartner() || $user->isPartnerAdmin()) {

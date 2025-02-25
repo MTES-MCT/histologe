@@ -9,7 +9,6 @@ use App\Entity\Enum\SignalementStatus;
 use App\Entity\Signalement;
 use App\Entity\User;
 use Symfony\Bundle\SecurityBundle\Security;
-use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Authorization\Voter\Voter;
 use Symfony\Component\Security\Core\User\UserInterface;
@@ -31,7 +30,6 @@ class SignalementVoter extends Voter
 
     public function __construct(
         private Security $security,
-        private ParameterBagInterface $parameterBag,
     ) {
     }
 
@@ -177,18 +175,6 @@ class SignalementVoter extends Voter
 
         $partner = $user->getPartnerInTerritory($signalement->getTerritory());
         if ($user->isTerritoryAdmin()) {
-            $authorizedInsee = $this->parameterBag->get('authorized_codes_insee');
-            $territory = $signalement->getTerritory();
-            if (isset($authorizedInsee[$territory->getZip()])) {
-                foreach ($authorizedInsee[$territory->getZip()] as $key => $authorizedInseePartner) {
-                    if ($key === $partner->getNom() && \in_array($signalement->getInseeOccupant(), $authorizedInseePartner)) {
-                        return true;
-                    }
-                }
-
-                return false;
-            }
-
             return true;
         }
 

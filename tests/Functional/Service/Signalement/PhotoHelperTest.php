@@ -21,7 +21,6 @@ use App\Specification\Signalement\SuroccupationSpecification;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use Symfony\Bundle\SecurityBundle\Security;
-use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 class PhotoHelperTest extends KernelTestCase
@@ -33,7 +32,6 @@ class PhotoHelperTest extends KernelTestCase
     private QualificationStatusService $qualificationStatusService;
     private SignalementAffectationListViewFactory $signalementAffectationListViewFactory;
     private SignalementExportFactory $signalementExportFactory;
-    private ParameterBagInterface $parameterBag;
     private SignalementManager $signalementManager;
     private SuroccupationSpecification $suroccupationSpecification;
     private CriticiteCalculator $criticiteCalculator;
@@ -57,7 +55,6 @@ class PhotoHelperTest extends KernelTestCase
             SignalementAffectationListViewFactory::class
         );
         $this->signalementExportFactory = static::getContainer()->get(SignalementExportFactory::class);
-        $this->parameterBag = static::getContainer()->get(ParameterBagInterface::class);
         $this->suroccupationSpecification = static::getContainer()->get(SuroccupationSpecification::class);
         $this->criticiteCalculator = static::getContainer()->get(CriticiteCalculator::class);
         $this->signalementQualificationUpdater = static::getContainer()->get(SignalementQualificationUpdater::class);
@@ -76,7 +73,6 @@ class PhotoHelperTest extends KernelTestCase
             $this->qualificationStatusService,
             $this->signalementAffectationListViewFactory,
             $this->signalementExportFactory,
-            $this->parameterBag,
             $this->suroccupationSpecification,
             $this->criticiteCalculator,
             $this->signalementQualificationUpdater,

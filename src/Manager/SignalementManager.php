@@ -49,7 +49,6 @@ use App\Specification\Signalement\SuroccupationSpecification;
 use Doctrine\DBAL\Exception;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Bundle\SecurityBundle\Security;
-use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 class SignalementManager extends AbstractManager
@@ -62,7 +61,6 @@ class SignalementManager extends AbstractManager
         private readonly QualificationStatusService $qualificationStatusService,
         private readonly SignalementAffectationListViewFactory $signalementAffectationListViewFactory,
         private readonly SignalementExportFactory $signalementExportFactory,
-        private readonly ParameterBagInterface $parameterBag,
         private readonly SuroccupationSpecification $suroccupationSpecification,
         private readonly CriticiteCalculator $criticiteCalculator,
         private readonly SignalementQualificationUpdater $signalementQualificationUpdater,
@@ -791,7 +789,6 @@ class SignalementManager extends AbstractManager
     public function findSignalementAffectationList(User $user, array $options, bool $count = false): array|int
     {
         $maxListPagination = $options['maxItemsPerPage'] ?? SignalementAffectationListView::MAX_LIST_PAGINATION;
-        $options['authorized_codes_insee'] = $this->parameterBag->get('authorized_codes_insee');
         $signalementAffectationList = [];
 
         /** @var SignalementRepository $signalementRepository */
@@ -831,8 +828,6 @@ class SignalementManager extends AbstractManager
         User $user,
         ?array $options = null,
     ): \Generator {
-        $options['authorized_codes_insee'] = $this->parameterBag->get('authorized_codes_insee');
-
         /** @var SignalementRepository $signalementRepository */
         $signalementRepository = $this->getRepository();
         foreach ($signalementRepository->findSignalementAffectationIterable($user, $options) as $row) {

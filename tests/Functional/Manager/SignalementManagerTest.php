@@ -30,7 +30,6 @@ use Doctrine\Persistence\ManagerRegistry;
 use Faker\Factory;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Bundle\SecurityBundle\Security;
-use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Validator\ConstraintViolationList;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
@@ -47,7 +46,6 @@ class SignalementManagerTest extends WebTestCase
     private QualificationStatusService $qualificationStatusService;
     private SignalementAffectationListViewFactory $signalementAffectationListViewFactory;
     private SignalementExportFactory $signalementExportFactory;
-    private ParameterBagInterface $parameterBag;
     private SignalementManager $signalementManager;
     private SuroccupationSpecification $suroccupationSpecification;
     private CriticiteCalculator $criticiteCalculator;
@@ -73,7 +71,6 @@ class SignalementManagerTest extends WebTestCase
             SignalementAffectationListViewFactory::class
         );
         $this->signalementExportFactory = static::getContainer()->get(SignalementExportFactory::class);
-        $this->parameterBag = static::getContainer()->get(ParameterBagInterface::class);
         $this->suroccupationSpecification = static::getContainer()->get(SuroccupationSpecification::class);
         $this->criticiteCalculator = static::getContainer()->get(CriticiteCalculator::class);
         $this->signalementQualificationUpdater = static::getContainer()->get(SignalementQualificationUpdater::class);
@@ -92,7 +89,6 @@ class SignalementManagerTest extends WebTestCase
             $this->qualificationStatusService,
             $this->signalementAffectationListViewFactory,
             $this->signalementExportFactory,
-            $this->parameterBag,
             $this->suroccupationSpecification,
             $this->criticiteCalculator,
             $this->signalementQualificationUpdater,

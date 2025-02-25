@@ -3,7 +3,6 @@
 namespace App\Repository;
 
 use App\Dto\CountUser;
-use App\Entity\Partner;
 use App\Entity\Territory;
 use App\Entity\User;
 use App\Service\ListFilters\SearchArchivedUser;
@@ -69,7 +68,7 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
             ->getResult();
     }
 
-    public function findActiveAdminsAndTerritoryAdmins(?Territory $territory, ?Partner $partner): ?array
+    public function findActiveAdminsAndTerritoryAdmins(?Territory $territory): ?array
     {
         $queryBuilder = $this->createQueryBuilder('u');
 
@@ -82,12 +81,6 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
                 ->setParameter('territory', $territory)
             ->andWhere('u.statut LIKE :active')
                 ->setParameter('active', User::STATUS_ACTIVE);
-
-        if (null !== $partner) {
-            $queryBuilder
-                ->andWhere('up.partner = :partner')
-                ->setParameter('partner', $partner);
-        }
 
         return $queryBuilder->getQuery()
             ->getResult();
