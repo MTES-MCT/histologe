@@ -79,6 +79,7 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
     private ?string $numAllocataire = null;
 
     #[ORM\Column(type: 'string', length: 15, nullable: true)]
+    #[Assert\Length(max: 15, groups: ['bo_step_logement'])]
     private ?string $natureLogement = null;
 
     #[ORM\Column(type: 'float', nullable: true)]

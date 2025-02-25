@@ -1,1 +1,88 @@
 <h2 class="fr-h4">Description du logement</h2>
+<p>Sauf mention contraire, toutes les réponses sont <strong>facultatives</strong>. Essayez de compléter le dossier au mieux !</p>
+
+{% form_theme formLogement 'form/dsfr_theme.html.twig' %}
+{{ form_start(formLogement, {'attr': {'id': 'bo-form-signalement-logement'}}) }}
+{{ form_errors(formLogement) }}
+<div class="fr-grid-row fr-grid-row--gutters">
+
+    <div class="fr-col-12 fr-col-md-6">
+        <fieldset class="fr-fieldset">
+            <legend>
+                <h3 class="fr-h5">Type de logement</h3>
+            </legend>
+            <div class="fr-fieldset__element">
+                {{ form_row(formLogement.natureLogement) }}
+            </div>
+            <div class="fr-fieldset__element">
+                {{ form_row(formLogement.natureLogementAutre) }}
+            </div>
+            <div class="fr-fieldset__element">
+                {{ form_row(formLogement.appartementEtage) }}
+            </div>
+            <div class="fr-fieldset__element">
+                {{ form_row(formLogement.appartementAvecFenetres) }}
+            </div>
+            <div class="fr-fieldset__element">
+                {{ form_row(formLogement.nombreEtages) }}
+            </div>
+            <div class="fr-fieldset__element">
+                {{ form_row(formLogement.anneeConstruction) }}
+            </div>
+        </fieldset>
+
+        <fieldset class="fr-fieldset">
+            <legend>
+                <h3 class="fr-h5">Organisation du logement</h3>
+            </legend>
+            <div class="fr-fieldset__element">
+                {{ form_row(formLogement.pieceUnique) }}
+            </div>
+            <div class="fr-fieldset__element">
+                {{ form_row(formLogement.nombrePieces) }}
+            </div>
+            <div class="fr-fieldset__element">
+                {{ form_row(formLogement.superficie) }}
+            </div>
+            <div class="fr-fieldset__element">
+                {{ form_row(formLogement.hauteur) }}
+            </div>
+            <div class="fr-fieldset__element">
+                {{ form_row(formLogement.pieceAVivre9m) }}
+            </div>
+        </fieldset>
+    </div>
+
+    <div class="fr-col-12 fr-col-md-6">
+        <fieldset class="fr-fieldset">
+            <legend>
+                <h3 class="fr-h5">Pièces et équipements</h3>
+            </legend>
+            <div class="fr-fieldset__element">
+                {{ form_row(formLogement.cuisine) }}
+            </div>
+            <div class="fr-fieldset__element">
+                {{ form_row(formLogement.sdb) }}
+            </div>
+            <div class="fr-fieldset__element">
+                {{ form_row(formLogement.toilettes) }}
+            </div>
+            <div class="fr-fieldset__element">
+                {{ form_row(formLogement.toilettesCuisineMemePiece) }}
+            </div>
+            <div class="fr-fieldset__element">
+                {{ form_row(formLogement.typeChauffage) }}
+            </div>
+        </fieldset>
+    </div>
+
+    <div class="fr-col-12">
+        <div class="fr-grid-row fr-grid-row--right">
+            {{ form_row(formLogement.forceSave) }}
+            {{ form_row(formLogement.draft) }}
+            {{ form_row(formLogement.save) }}
+        </div>
+    </div>
+
+</div>
+{{ form_end(formLogement) }}

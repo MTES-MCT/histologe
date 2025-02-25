@@ -6,8 +6,8 @@ if (document?.querySelector('#bo-form-signalement-address')) {
 
 function initBoFormSignalementAddress() {
   const boFormSignalementAddress = document?.querySelector('#bo-form-signalement-address')
-  const inputAdresse = document?.querySelector('#signalement_address_adresseCompleteOccupant')
-  const inputForceSave = document?.querySelector('#signalement_address_forceSave')
+  const inputAdresse = document?.querySelector('#signalement_draft_address_adresseCompleteOccupant')
+  const inputForceSave = document?.querySelector('#signalement_draft_address_forceSave')
   attacheAutocompleteAddressEvent(inputAdresse)
 
   const modaleDuplicate = document.querySelector('#fr-modal-duplicate')
@@ -17,7 +17,7 @@ function initBoFormSignalementAddress() {
 
   const manualAddressSwitcher = document?.querySelector('#bo-signalement-manual-address-switcher')
   const manualAddressContainer = document?.querySelector('#bo-form-signalement-manual-address-container')
-  const manualAddressAddress = document?.querySelector('#signalement_address_adresseOccupant')
+  const manualAddressAddress = document?.querySelector('#signalement_draft_address_adresseOccupant')
   const manualAddressInputs = document.querySelectorAll('.bo-form-signalement-manual-address');
   const hasManualAddressValues = Array.from(manualAddressInputs).some(input => input.value !== '')
 
@@ -78,7 +78,44 @@ function initBoFormSignalementAddress() {
 
   modaleDuplicateIgnoreButton?.addEventListener('click', (event) => {
     inputForceSave.value = 1
-    document.querySelector('#signalement_address_save').click()
+    document.querySelector('#signalement_draft_address_save').click()
   });
 
+}
+
+if (document?.querySelector('#bo-form-signalement-logement')) {
+  initBoFormSignalementLogement()
+}
+
+function initBoFormSignalementLogement() {
+  const boFormSignalementLogement = document?.querySelector('#bo-form-signalement-logement')
+
+  boFormSignalementLogement.addEventListener('submit', async (event) => {
+    event.preventDefault()
+    const formData = new FormData(event.target)
+    const submitButton = event.submitter;
+    formData.append(submitButton.name, submitButton.value);
+
+    fetch(event.target.action, {method: 'POST', body: formData}).then(response => {
+      if (response.ok) {
+        response.json().then((response) => {
+          if (response.redirect) {
+            const currentUrl = window.location.href.split('#')[0];
+            const newUrl = response.url.split('#')[0];
+            window.location.href = response.url;
+            if (currentUrl === newUrl) {
+              window.location.reload(true);
+            }
+          } else {
+            document.querySelector("#tabpanel-logement-panel").innerHTML = response.tabContent
+            document.querySelector('#tabpanel-logement').scrollIntoView({ behavior: 'smooth' });
+            initBoFormSignalementLogement()
+          }
+        });
+    } else {
+      const errorHtml = '<div class="fr-alert fr-alert--error" role="alert"><p class="fr-alert__title">Une erreur est survenue lors de la soumission du formulaire, veuillez rafraichir la page.</p></div>';
+      document.querySelector("#tabpanel-adresse-panel").innerHTML = errorHtml; 
+    }
+    })
+  })
 }
