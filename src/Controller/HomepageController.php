@@ -166,7 +166,7 @@ class HomepageController extends AbstractController
         '/contact',
         name: 'front_contact',
         methods: ['GET'],
-        defaults: ['show_sitemap' => true]
+        defaults: ['show_sitemap' => false]
     )]
     public function contact(
         ParameterBagInterface $parameterBag,
