@@ -996,6 +996,15 @@ a.photo-preview {
     margin: 0 auto;
     padding-left: 1.5rem;
     padding-right: 1.5rem;
+
+    .fr-btn--close, .fr-nav__item.fr-ml-auto {
+        margin-left: 0px;
+    }
+    .fr-nav__list {
+        .fr-nav__link, .fr-nav__btn {
+            justify-content: inherit;
+        }
+    }
 }
 
 .cartography-page {

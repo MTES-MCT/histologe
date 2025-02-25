@@ -48,6 +48,7 @@
             </button>
             <div class="fr-header__menu-links">
             </div>
+            {% if not feature_sites_faciles %}
             <nav class="fr-nav" id="navigation-main" aria-label="Menu principal">
                 <ul class="fr-nav__list">
                     <li class="fr-nav__item">
@@ -111,6 +112,7 @@
                     </li>
                 </ul>
             </nav>
+            {% endif %}
         </div>
     </div>
 </header>
