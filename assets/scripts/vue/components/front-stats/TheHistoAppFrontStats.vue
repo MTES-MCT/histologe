@@ -119,6 +119,9 @@ export default defineComponent({
     text-align: left;
     color: var(--blue-france-sun-113-625);
   }
+  .iframed .histo-app-front-stats h1 {
+    display: none;
+  }
 
   .histo-app-front-stats a {
     color: var(--blue-france-sun-113-625);
