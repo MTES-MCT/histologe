@@ -91,7 +91,8 @@ export const requests = {
   },
 
   saveSignalementDraft (functionReturn: Function) {
-    if (formStore.data.uuidSignalementDraft !== '') {
+    // on n'enregistre rien si on est sur la page signalement_concerne car on a peut-être changé de profil et on n'a plus l'email-décclarant   
+    if (formStore.data.uuidSignalementDraft !== '' && formStore.currentScreen != null && formStore.currentScreen.slug !== 'signalement_concerne') {
       // TODO : il y a sûrement plus élégant à faire pour construire l'url (cf controlleur et twig)
       const url = formStore.props.ajaxurlPutSignalementDraft.replace('uuid', formStore.data.uuidSignalementDraft)
       requests.doRequestPut(url, formStore.data, functionReturn)
