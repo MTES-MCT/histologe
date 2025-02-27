@@ -14,24 +14,35 @@
                     {{ photo.documentType.label}} - {{ loop.index }} / {{ loopLength }}
                 </div>
                 <div class="photos-album-flex">
-                    <div>
-                        <button class="photos-album-main-btn-edit fr-btn fr-btn--icon-left fr-icon-edit-line keep-when-signalement-closed" data-id="{{ photo.id }}">Modifier l'orientation</button>
-                        <ul class="photos-album-list-btn-edit fr-hidden fr-btns-group fr-btns-group--inline-lg fr-btns-group--icon-left fr-btns-group--center" data-id="{{ photo.id }}">
-                            <li>
-                                <button class="photo-album-rotate-left-btn fr-btn fr-icon-arrow-go-back-line keep-when-signalement-closed" data-id="{{ photo.id }}">Pivoter à gauche</button>
-                            </li>
-                            <li>
-                                <button class="photo-album-rotate-right-btn fr-btn fr-btn--icon-right fr-icon-arrow-go-forward-line keep-when-signalement-closed" data-id="{{ photo.id }}">Pivoter à droite</button>
-                            </li>
-                            <li>
-                                <button 
-                                    class="photo-album-save-rotation fr-btn fr-icon-save-3-line keep-when-signalement-closed" 
-                                    disabled 
-                                    data-action="{{path('back_signalement_file_rotate', {uuid: photo.signalement.uuid, id: photo.id})}}" 
-                                    data-id="{{ photo.id }}">Enregistrer
-                                </button>
-                            </li>
-                        </ul>
+                    <div class="fr-grid-row fr-grid-row--gutters">
+                        <div class="fr-col-12 fr-col-md-6">
+                            <button class="photos-album-main-btn-edit fr-btn fr-btn--icon-left fr-icon-edit-line keep-when-signalement-closed" data-id="{{ photo.id }}">Modifier l'orientation</button>
+                            <ul class="photos-album-list-btn-edit fr-hidden fr-btns-group fr-btns-group--inline-lg fr-btns-group--icon-left fr-btns-group--center" data-id="{{ photo.id }}">
+                                <li>
+                                    <button class="photo-album-rotate-left-btn fr-btn fr-icon-arrow-go-back-line keep-when-signalement-closed" data-id="{{ photo.id }}">Pivoter à gauche</button>
+                                </li>
+                                <li>
+                                    <button class="photo-album-rotate-right-btn fr-btn fr-btn--icon-right fr-icon-arrow-go-forward-line keep-when-signalement-closed" data-id="{{ photo.id }}">Pivoter à droite</button>
+                                </li>
+                                <li>
+                                    <button 
+                                        class="photo-album-save-rotation fr-btn fr-icon-save-3-line keep-when-signalement-closed" 
+                                        disabled 
+                                        data-action="{{path('back_signalement_file_rotate', {uuid: photo.signalement.uuid, id: photo.id})}}" 
+                                        data-id="{{ photo.id }}">Enregistrer
+                                    </button>
+                                </li>
+                            </ul>
+                        </div>
+                        <div class="fr-col-12 fr-col-md-6">
+                            <select class="photos-album-main-select fr-select">
+                                <option value="1">Vue à 100%</option>
+                                <option value="1.5">Zoom 150%</option>
+                                <option value="2">Zoom 200%</option>
+                                <option value="3">Zoom 300%</option>
+                                <option value="4">Zoom 400%</option>
+                            </select>
+                        </div>
                     </div>
                 </div>
                 <div class="photos-album-flex">
