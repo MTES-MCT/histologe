@@ -31,6 +31,9 @@ readonly class HistoryEntryFactory
 
         if ($entityHistory instanceof Affectation) {
             $historyEntry->setSignalement($entityHistory->getSignalement());
+            if (HistoryEntryEvent::CREATE === $historyEntryEvent) {
+                $historyEntry->setUser($entityHistory->getAffectedBy());
+            }
         }
 
         return $historyEntry;
