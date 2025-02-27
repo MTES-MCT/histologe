@@ -14,7 +14,7 @@ class CronMailer extends AbstractNotificationMailer
 {
     protected ?NotificationMailerType $mailerType = NotificationMailerType::TYPE_CRON;
     protected ?string $mailerTemplate = 'cron_email';
-    protected ?string $mailerSubject = 'La tache planifiée s\'est bien éxécutée.';
+    public const MAILER_SUBJECT = 'La tâche planifiée %s.';
 
     public function __construct(
         protected MailerInterface $mailer,
@@ -32,5 +32,15 @@ class CronMailer extends AbstractNotificationMailer
             'message' => $notificationMail->getMessage(),
             'count' => $notificationMail->getCronCount(),
         ];
+    }
+
+    public function updateMailerSubjectFromNotification(NotificationMail $notificationMail): void
+    {
+        $this->mailerSubject = \sprintf(
+            self::MAILER_SUBJECT,
+            isset($notificationMail->getParams()['error_messages']) && $notificationMail->getParams()['error_messages'] > 0 ?
+                's\'est arrêtée en erreur' :
+                's\'est bien exécutée'
+        );
     }
 }

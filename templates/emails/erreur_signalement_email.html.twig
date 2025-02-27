@@ -9,10 +9,7 @@
     {% if error is defined %}
         <p>Message erreur: {{ error }}</p>
     {% endif %}
-    {% if message is defined %}
-        <p>{{ message }}</p>
-    {% endif %}
-    {% if req is defined and message is not defined%}
+    {% if req is defined %}
         <p>{{ req|json_encode() }}</p>
     {% endif %}
 {% endblock %}
