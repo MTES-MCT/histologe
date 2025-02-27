@@ -33,9 +33,9 @@ class SignalementCreateControllerTest extends WebTestCase
 
         $form = $crawler->filter('#bo-form-signalement-address')->form();
         $form->setValues([
-            'signalement_address[adresseCompleteOccupant]' => '8 Rue de la tourmentinerie 44850 Saint-Mars-du-Désert',
-            'signalement_address[isLogementSocial]' => '1',
-            'signalement_address[occupationLogement]' => 'bail_en_cours',
+            'signalement_draft_address[adresseCompleteOccupant]' => '8 Rue de la tourmentinerie 44850 Saint-Mars-du-Désert',
+            'signalement_draft_address[isLogementSocial]' => '1',
+            'signalement_draft_address[occupationLogement]' => 'bail_en_cours',
         ]);
         $this->client->submit($form);
 
@@ -45,10 +45,10 @@ class SignalementCreateControllerTest extends WebTestCase
         $this->assertTrue($response['hasDuplicates']);
 
         $form->setValues([
-            'signalement_address[adresseCompleteOccupant]' => '8 Rue de la tourmentinerie 44850 Saint-Mars-du-Désert',
-            'signalement_address[isLogementSocial]' => '1',
-            'signalement_address[occupationLogement]' => 'bail_en_cours',
-            'signalement_address[forceSave]' => '1',
+            'signalement_draft_address[adresseCompleteOccupant]' => '8 Rue de la tourmentinerie 44850 Saint-Mars-du-Désert',
+            'signalement_draft_address[isLogementSocial]' => '1',
+            'signalement_draft_address[occupationLogement]' => 'bail_en_cours',
+            'signalement_draft_address[forceSave]' => '1',
         ]);
 
         $this->client->submit($form);
@@ -111,12 +111,12 @@ class SignalementCreateControllerTest extends WebTestCase
 
         $form = $crawler->filter('#bo-form-signalement-address')->form();
         $form->setValues([
-            'signalement_address[adresseCompleteOccupant]' => '5 Rue Basse 44350 Guérande',
-            'signalement_address[isLogementSocial]' => '0',
-            'signalement_address[occupationLogement]' => 'proprio_occupant',
-            'signalement_address[nbOccupantsLogement]' => '4',
-            'signalement_address[nbEnfantsDansLogement]' => '2',
-            'signalement_address[enfantsDansLogementMoinsSixAns]' => 'non',
+            'signalement_draft_address[adresseCompleteOccupant]' => '5 Rue Basse 44350 Guérande',
+            'signalement_draft_address[isLogementSocial]' => '0',
+            'signalement_draft_address[occupationLogement]' => 'proprio_occupant',
+            'signalement_draft_address[nbOccupantsLogement]' => '4',
+            'signalement_draft_address[nbEnfantsDansLogement]' => '2',
+            'signalement_draft_address[enfantsDansLogementMoinsSixAns]' => 'non',
         ]);
         $this->client->submit($form);
 
@@ -150,9 +150,9 @@ class SignalementCreateControllerTest extends WebTestCase
 
         $form = $crawler->filter('#bo-form-signalement-address')->form();
         $form->setValues([
-            'signalement_address[adresseCompleteOccupant]' => '5 Rue basse 30360 Vézénobres',
-            'signalement_address[isLogementSocial]' => '1',
-            'signalement_address[occupationLogement]' => 'bail_en_cours',
+            'signalement_draft_address[adresseCompleteOccupant]' => '5 Rue basse 30360 Vézénobres',
+            'signalement_draft_address[isLogementSocial]' => '1',
+            'signalement_draft_address[occupationLogement]' => 'bail_en_cours',
         ]);
         $this->client->submit($form);
 
@@ -160,5 +160,37 @@ class SignalementCreateControllerTest extends WebTestCase
         $response = json_decode($this->client->getResponse()->getContent(), true);
         $this->assertArrayHasKey('tabContent', $response);
         $this->assertStringContainsString('pas le droit de créer un signalement sur ce territoire.', $response['tabContent']);
+    }
+
+    public function testEditLogement()
+    {
+        $user = $this->userRepository->findOneBy(['email' => 'admin-territoire-44-01@histologe.fr']);
+        $this->client->loginUser($user);
+
+        $crawler = $this->client->request('GET', '/bo/signalement/brouillon/editer/00000000-0000-0000-2025-000000000002');
+        $this->assertResponseIsSuccessful();
+
+        $form = $crawler->filter('#bo-form-signalement-logement')->form();
+        $form->setValues([
+            'signalement_draft_logement[natureLogement]' => 'autre',
+            'signalement_draft_logement[natureLogementAutre]' => 'roulotte',
+            'signalement_draft_logement[superficie]' => '15',
+            'signalement_draft_logement[cuisine]' => 'oui',
+        ]);
+        $this->client->submit($form);
+
+        $this->assertResponseHeaderSame('Content-Type', 'application/json');
+        $response = json_decode($this->client->getResponse()->getContent(), true);
+        $this->assertArrayHasKey('redirect', $response);
+        $this->assertArrayHasKey('url', $response);
+        $this->assertTrue($response['redirect']);
+        $this->assertStringContainsString('/bo/signalement/brouillon/editer/00000000-0000-0000-2025-000000000002#situation', $response['url']);
+
+        $signalement = $this->signalementRepository->findOneBy(['uuid' => '00000000-0000-0000-2025-000000000002']);
+        $this->assertEquals(SignalementStatus::DRAFT, $signalement->getStatut());
+        $this->assertEquals('autre', $signalement->getNatureLogement());
+        $this->assertEquals('roulotte', $signalement->getTypeCompositionLogement()->getTypeLogementNatureAutrePrecision());
+        $this->assertEquals(15, $signalement->getSuperficie());
+        $this->assertEquals('oui', $signalement->getTypeCompositionLogement()?->getTypeLogementCommoditesCuisine());
     }
 }

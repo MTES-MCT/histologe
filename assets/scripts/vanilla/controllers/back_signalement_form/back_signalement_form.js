@@ -118,4 +118,103 @@ function initBoFormSignalementLogement() {
     }
     })
   })
+
+  const natureLogementInputs = boFormSignalementLogement?.querySelectorAll('#signalement_draft_logement_natureLogement input')
+  natureLogementInputs.forEach((natureLogementInput) => {
+    natureLogementInput.addEventListener('click', (event) => {
+      refreshFromNatureLogement()
+    })
+  })
+  refreshFromNatureLogement()
+
+  function refreshFromNatureLogement() {
+    let natureLogementValue = ''
+    natureLogementInputs.forEach((natureLogementInput) => {
+      if (natureLogementInput.checked) {
+        natureLogementValue = natureLogementInput.value
+      }
+    })
+
+    const natureLogementAutre = boFormSignalementLogement?.querySelector('#signalement_draft_logement_natureLogementAutre')
+    if (natureLogementValue === 'autre') {
+      natureLogementAutre.parentElement.classList.remove('fr-input-group--disabled')
+      natureLogementAutre.disabled = false
+    } else {
+      natureLogementAutre.parentElement.classList.add('fr-input-group--disabled')
+      natureLogementAutre.disabled = true
+      natureLogementAutre.value = ''
+    }
+
+    const appartementEtage = boFormSignalementLogement?.querySelector('#signalement_draft_logement_appartementEtage')
+    const appartementEtageInputs = appartementEtage?.querySelectorAll('input')
+    const appartementAvecFenetres = boFormSignalementLogement?.querySelector('#signalement_draft_logement_appartementAvecFenetres')
+    const appartementAvecFenetresInputs = appartementAvecFenetres?.querySelectorAll('input')
+    if (natureLogementValue === 'appartement') {
+      appartementEtage?.parentElement.classList.remove('fr-input-group--disabled')
+      appartementEtageInputs.forEach((appartementEtageInput) => {
+        appartementEtageInput.disabled = false
+      })
+      appartementAvecFenetres.parentElement.classList.remove('fr-input-group--disabled')
+      appartementAvecFenetresInputs.forEach((appartementAvecFenetresInput) => {
+        appartementAvecFenetresInput.disabled = false
+      })
+    } else {
+      appartementEtage?.parentElement.classList.add('fr-input-group--disabled')
+      appartementEtageInputs.forEach((appartementEtageInput) => {
+        appartementEtageInput.checked = false
+        appartementEtageInput.disabled = true
+      })
+      appartementAvecFenetres.parentElement.classList.add('fr-input-group--disabled')
+      appartementAvecFenetresInputs.forEach((appartementAvecFenetresInput) => {
+        appartementAvecFenetresInput.checked = false
+        appartementAvecFenetresInput.disabled = true
+      })
+    }
+  }
+
+
+  const cuisineInputs = boFormSignalementLogement?.querySelectorAll('#signalement_draft_logement_cuisine input')
+  cuisineInputs.forEach((cuisineInput) => {
+    cuisineInput.addEventListener('click', (event) => {
+      refreshFromCuisineAndToilettes()
+    })
+  })
+  const toilettesInputs = boFormSignalementLogement?.querySelectorAll('#signalement_draft_logement_toilettes input')
+  toilettesInputs.forEach((toilettesInput) => {
+    toilettesInput.addEventListener('click', (event) => {
+      refreshFromCuisineAndToilettes()
+    })
+  })
+  refreshFromCuisineAndToilettes()
+
+  function refreshFromCuisineAndToilettes() {
+    let cuisineValue = ''
+    cuisineInputs.forEach((cuisineInput) => {
+      if (cuisineInput.checked) {
+        cuisineValue = cuisineInput.value
+      }
+    })
+    let toilettesValue = ''
+    toilettesInputs.forEach((toilettesInput) => {
+      if (toilettesInput.checked) {
+        toilettesValue = toilettesInput.value
+      }
+    })
+
+    const toilettesCuisineMemePiece = boFormSignalementLogement?.querySelector('#signalement_draft_logement_toilettesCuisineMemePiece')
+    const toilettesCuisineMemePieceInputs = toilettesCuisineMemePiece?.querySelectorAll('input')
+    if (cuisineValue === 'oui' && toilettesValue === 'oui') {
+      toilettesCuisineMemePiece.parentElement.classList.remove('fr-input-group--disabled')
+      toilettesCuisineMemePieceInputs.forEach((toilettesCuisineMemePieceInput) => {
+        toilettesCuisineMemePieceInput.disabled = false
+      })
+
+    } else {
+      toilettesCuisineMemePiece.parentElement.classList.add('fr-input-group--disabled')
+      toilettesCuisineMemePieceInputs.forEach((toilettesCuisineMemePieceInput) => {
+        toilettesCuisineMemePieceInput.checked = false
+        toilettesCuisineMemePieceInput.disabled = true
+      })
+    }
+  }
 }
