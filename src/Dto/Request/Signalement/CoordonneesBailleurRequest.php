@@ -3,11 +3,15 @@
 namespace App\Dto\Request\Signalement;
 
 use App\Validator as AppAssert;
+use App\Validator\DateNaissanceValidatorTrait;
 use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\Validator\Constraints\Email;
+use Symfony\Component\Validator\Context\ExecutionContextInterface;
 
 class CoordonneesBailleurRequest implements RequestInterface
 {
+    use DateNaissanceValidatorTrait;
+
     public function __construct(
         #[Assert\NotBlank(
             message: 'Merci de saisir le nom du bailleur.',
@@ -46,6 +50,12 @@ class CoordonneesBailleurRequest implements RequestInterface
         #[Assert\DateTime('Y-m-d')]
         private readonly ?string $dateNaissance = null,
     ) {
+    }
+
+    #[Assert\Callback]
+    public function validate(ExecutionContextInterface $context): void
+    {
+        $this->validateDateNaissance($this->dateNaissance, 'dateNaissance', $context);
     }
 
     public function getNom(): ?string

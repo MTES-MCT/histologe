@@ -2,10 +2,14 @@
 
 namespace App\Dto\Request\Signalement;
 
+use App\Validator\DateNaissanceValidatorTrait;
 use Symfony\Component\Validator\Constraints as Assert;
+use Symfony\Component\Validator\Context\ExecutionContextInterface;
 
 readonly class SituationFoyerRequest implements RequestInterface
 {
+    use DateNaissanceValidatorTrait;
+
     public function __construct(
         #[Assert\Choice(
             choices: ['oui', 'non', 'nsp'],
@@ -85,6 +89,12 @@ readonly class SituationFoyerRequest implements RequestInterface
         #[Assert\Length(max: 50)]
         private ?string $revenuFiscal = null,
     ) {
+    }
+
+    #[Assert\Callback]
+    public function validate(ExecutionContextInterface $context): void
+    {
+        $this->validateDateNaissance($this->dateNaissanceOccupant, 'dateNaissanceOccupant', $context);
     }
 
     public function getIsLogementSocial(): ?string

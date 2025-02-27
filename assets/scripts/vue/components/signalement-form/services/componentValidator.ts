@@ -39,6 +39,14 @@ export const componentValidator = {
       this.validateAddress(component)
     }
 
+    if (variableTester.isNotEmpty(value) && component.type === 'SignalementFormDate') {
+      if (component.validate?.max === 'today'){
+        if (Date.parse(value) >= Date.now()){
+          formStore.validationErrors[componentSlug] = 'Veuillez choisir une date de naissance dans le passé.'
+        }
+      }
+    }
+
     if (variableTester.isNotEmpty(value) && component.validate?.maxLength !== undefined) {
       if (value.length > component.validate?.maxLength) {
         const maxLength: string = component.validate?.maxLength.toString()
