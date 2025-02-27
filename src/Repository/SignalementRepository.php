@@ -378,8 +378,8 @@ class SignalementRepository extends ServiceEntityRepository
             ->where('s.motifCloture IS NOT NULL')
             ->andWhere('s.motifCloture != \'0\'')
             ->andWhere('s.closedAt IS NOT NULL')
-            ->andWhere('s.statut NOT IN (:statutList)')
-            ->setParameter('statutList', [SignalementStatus::ARCHIVED, SignalementStatus::DRAFT, SignalementStatus::DRAFT_ARCHIVED]);
+            ->andWhere('s.statut = :statut')
+            ->setParameter('statut', SignalementStatus::CLOSED);
 
         if ($removeImported) {
             $qb->andWhere('s.isImported IS NULL OR s.isImported = 0');
