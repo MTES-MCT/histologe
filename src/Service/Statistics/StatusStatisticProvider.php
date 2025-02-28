@@ -41,8 +41,9 @@ class StatusStatisticProvider
         $data = [];
         foreach ($countPerStatuses as $countPerStatus) {
             $item = self::initStatutByValue($countPerStatus);
+
             if ($item) {
-                $data[$countPerStatus['statut']] = $item;
+                $data[$countPerStatus['statut']->value] = $item;
             }
         }
 
@@ -51,7 +52,7 @@ class StatusStatisticProvider
 
     private static function initStatutByValue($statusResult): bool|array
     {
-        switch ($statusResult['statut']) {
+        switch ($statusResult['statut']->value) {
             case SignalementStatus::REFUSED->value:
                 return [
                     'label' => 'Refusé',
