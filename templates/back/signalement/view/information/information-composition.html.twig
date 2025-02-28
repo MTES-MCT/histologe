@@ -57,7 +57,7 @@
 
     <div class="fr-col-12 fr-col-md-6">
         <strong>Etage :</strong>
-        {% if signalement.typeCompositionLogement %}               
+        {% if signalement.typeCompositionLogement %}
             {% if signalement.typeCompositionLogement.typeLogementAppartementEtage %}
                 {% if signalement.typeCompositionLogement.typeLogementAppartementEtage is same as enum('App\\Entity\\Enum\\EtageType').RDC.value %}
                     {{ enum('App\\Entity\\Enum\\EtageType').RDC.label }}
@@ -82,7 +82,7 @@
 
     <div class="fr-col-12 fr-col-md-6">
         <strong>Avec fenêtres :</strong>
-        {% if signalement.typeCompositionLogement %}               
+        {% if signalement.typeCompositionLogement %}
             {% if signalement.typeCompositionLogement.typeLogementAppartementAvecFenetres %}
                 {{ signalement.typeCompositionLogement.typeLogementAppartementAvecFenetres }}
                 {% include '_partials/signalement/display_alert.html.twig' with { 'display': signalement.typeCompositionLogement.typeLogementAppartementAvecFenetres is same as 'non' } %}

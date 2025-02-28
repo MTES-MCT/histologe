@@ -1,18 +1,60 @@
 import { attacheAutocompleteAddressEvent } from '../../services/component_search_address'
 
-if (document?.querySelector('#bo-form-signalement-address')) {
-  initBoFormSignalementAddress()
+function initBoFormSignalementSubmit(tabName) {
+  const boFormSignalement = document?.querySelector('#bo-form-signalement-' + tabName)
+
+  boFormSignalement.addEventListener('submit', async (event) => {
+    event.preventDefault()
+    const formData = new FormData(event.target)
+    const submitButton = event.submitter;
+    formData.append(submitButton.name, submitButton.value);
+
+    fetch(event.target.action, {method: 'POST', body: formData}).then(response => {
+      if (response.ok) {
+        response.json().then((response) => {
+          if (response.redirect) {
+            const currentUrl = window.location.href.split('#')[0];
+            const newUrl = response.url.split('#')[0];
+            window.location.href = response.url;
+            if (currentUrl === newUrl) {
+              window.location.reload(true);
+            }
+          } else {
+            document.querySelector("#tabpanel-" +tabName+ "-panel").innerHTML = response.tabContent
+            document.querySelector("#tabpanel-" +tabName).scrollIntoView({ behavior: 'smooth' });
+            initBoFormSignalementSubmit(tabName)
+            if (tabName === 'adresse' && response.hasDuplicates) {
+              const modaleDuplicate = document.querySelector('#fr-modal-duplicate')
+              const modaleDuplicateContainer = document.querySelector('#fr-modal-duplicate-container')
+              const modaleDuplicateOpenLink = document.querySelector('#fr-modal-duplicate-open-duplicates')
+              modaleDuplicateContainer.innerHTML = response.duplicateContent
+              modaleDuplicateOpenLink.href = response.linkDuplicates
+              dsfr(modaleDuplicate).modal.disclose();
+            }
+          }
+        });
+      } else {
+        const errorHtml = '<div class="fr-alert fr-alert--error" role="alert"><p class="fr-alert__title">Une erreur est survenue lors de la soumission du formulaire, veuillez rafraichir la page.</p></div>';
+        document.querySelector("#tabpanel-adresse-panel").innerHTML = errorHtml; 
+      }
+    })
+  })
 }
 
-function initBoFormSignalementAddress() {
-  const boFormSignalementAddress = document?.querySelector('#bo-form-signalement-address')
+if (document?.querySelector('#bo-form-signalement-adresse')) {
+  initBoFormSignalementSubmit('adresse')
+  initBoFormSignalementAdresse()
+}
+if (document?.querySelector('#bo-form-signalement-logement')) {
+  initBoFormSignalementSubmit('logement')
+  initBoFormSignalementLogement()
+}
+
+function initBoFormSignalementAdresse() {
   const inputAdresse = document?.querySelector('#signalement_draft_address_adresseCompleteOccupant')
   const inputForceSave = document?.querySelector('#signalement_draft_address_forceSave')
   attacheAutocompleteAddressEvent(inputAdresse)
 
-  const modaleDuplicate = document.querySelector('#fr-modal-duplicate')
-  const modaleDuplicateContainer = document.querySelector('#fr-modal-duplicate-container')
-  const modaleDuplicateOpenLink = document.querySelector('#fr-modal-duplicate-open-duplicates')
   const modaleDuplicateIgnoreButton = document.querySelector('#fr-modal-duplicate-ignore-duplicates')
 
   const manualAddressSwitcher = document?.querySelector('#bo-signalement-manual-address-switcher')
@@ -42,83 +84,14 @@ function initBoFormSignalementAddress() {
     manualAddressSwitcher.click()
   }
 
-  boFormSignalementAddress.addEventListener('submit', async (event) => {
-    event.preventDefault()
-    const formData = new FormData(event.target)
-    const submitButton = event.submitter;
-    formData.append(submitButton.name, submitButton.value);
-
-    fetch(event.target.action, {method: 'POST', body: formData}).then(response => {
-      if (response.ok) {
-        response.json().then((response) => {
-          if (response.redirect) {
-            const currentUrl = window.location.href.split('#')[0];
-            const newUrl = response.url.split('#')[0];
-            window.location.href = response.url;
-            if (currentUrl === newUrl) {
-              window.location.reload(true);
-            }
-          } else {
-            document.querySelector("#tabpanel-adresse-panel").innerHTML = response.tabContent
-            document.querySelector('#tabpanel-adresse').scrollIntoView({ behavior: 'smooth' });
-            initBoFormSignalementAddress()
-            if(response.hasDuplicates){
-              modaleDuplicateContainer.innerHTML = response.duplicateContent
-              modaleDuplicateOpenLink.href = response.linkDuplicates
-              dsfr(modaleDuplicate).modal.disclose();
-            }
-          }
-        });
-    } else {
-      const errorHtml = '<div class="fr-alert fr-alert--error" role="alert"><p class="fr-alert__title">Une erreur est survenue lors de la soumission du formulaire, veuillez rafraichir la page.</p></div>';
-      document.querySelector("#tabpanel-adresse-panel").innerHTML = errorHtml; 
-    }
-    })
-  })
-
   modaleDuplicateIgnoreButton?.addEventListener('click', (event) => {
     inputForceSave.value = 1
     document.querySelector('#signalement_draft_address_save').click()
   });
-
-}
-
-if (document?.querySelector('#bo-form-signalement-logement')) {
-  initBoFormSignalementLogement()
 }
 
 function initBoFormSignalementLogement() {
   const boFormSignalementLogement = document?.querySelector('#bo-form-signalement-logement')
-
-  boFormSignalementLogement.addEventListener('submit', async (event) => {
-    event.preventDefault()
-    const formData = new FormData(event.target)
-    const submitButton = event.submitter;
-    formData.append(submitButton.name, submitButton.value);
-
-    fetch(event.target.action, {method: 'POST', body: formData}).then(response => {
-      if (response.ok) {
-        response.json().then((response) => {
-          if (response.redirect) {
-            const currentUrl = window.location.href.split('#')[0];
-            const newUrl = response.url.split('#')[0];
-            window.location.href = response.url;
-            if (currentUrl === newUrl) {
-              window.location.reload(true);
-            }
-          } else {
-            document.querySelector("#tabpanel-logement-panel").innerHTML = response.tabContent
-            document.querySelector('#tabpanel-logement').scrollIntoView({ behavior: 'smooth' });
-            initBoFormSignalementLogement()
-          }
-        });
-    } else {
-      const errorHtml = '<div class="fr-alert fr-alert--error" role="alert"><p class="fr-alert__title">Une erreur est survenue lors de la soumission du formulaire, veuillez rafraichir la page.</p></div>';
-      document.querySelector("#tabpanel-adresse-panel").innerHTML = errorHtml; 
-    }
-    })
-  })
-
   const natureLogementInputs = boFormSignalementLogement?.querySelectorAll('#signalement_draft_logement_natureLogement input')
   natureLogementInputs.forEach((natureLogementInput) => {
     natureLogementInput.addEventListener('click', (event) => {

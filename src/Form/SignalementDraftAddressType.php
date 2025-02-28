@@ -44,7 +44,7 @@ class SignalementDraftAddressType extends AbstractType
                 'attr' => [
                     'autocomplete' => 'off',
                     'data-fr-adresse-autocomplete' => 'true',
-                    'data-autocomplete-query-selector' => '#bo-form-signalement-address .fr-address-group',
+                    'data-autocomplete-query-selector' => '#bo-form-signalement-adresse .fr-address-group',
                 ],
             ])
             ->add('adresseOccupant', null, [

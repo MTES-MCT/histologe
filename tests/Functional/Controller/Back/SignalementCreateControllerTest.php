@@ -31,7 +31,7 @@ class SignalementCreateControllerTest extends WebTestCase
         $crawler = $this->client->request('GET', '/bo/signalement/brouillon/creer');
         $this->assertResponseIsSuccessful();
 
-        $form = $crawler->filter('#bo-form-signalement-address')->form();
+        $form = $crawler->filter('#bo-form-signalement-adresse')->form();
         $form->setValues([
             'signalement_draft_address[adresseCompleteOccupant]' => '8 Rue de la tourmentinerie 44850 Saint-Mars-du-Désert',
             'signalement_draft_address[isLogementSocial]' => '1',
@@ -109,7 +109,7 @@ class SignalementCreateControllerTest extends WebTestCase
         $crawler = $this->client->request('GET', '/bo/signalement/brouillon/editer/00000000-0000-0000-2025-000000000002');
         $this->assertResponseIsSuccessful();
 
-        $form = $crawler->filter('#bo-form-signalement-address')->form();
+        $form = $crawler->filter('#bo-form-signalement-adresse')->form();
         $form->setValues([
             'signalement_draft_address[adresseCompleteOccupant]' => '5 Rue Basse 44350 Guérande',
             'signalement_draft_address[isLogementSocial]' => '0',
@@ -148,7 +148,7 @@ class SignalementCreateControllerTest extends WebTestCase
         $crawler = $this->client->request('GET', '/bo/signalement/brouillon/editer/00000000-0000-0000-2025-000000000002');
         $this->assertResponseIsSuccessful();
 
-        $form = $crawler->filter('#bo-form-signalement-address')->form();
+        $form = $crawler->filter('#bo-form-signalement-adresse')->form();
         $form->setValues([
             'signalement_draft_address[adresseCompleteOccupant]' => '5 Rue basse 30360 Vézénobres',
             'signalement_draft_address[isLogementSocial]' => '1',
