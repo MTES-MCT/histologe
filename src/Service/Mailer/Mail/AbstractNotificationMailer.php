@@ -66,6 +66,10 @@ abstract class AbstractNotificationMailer implements NotificationMailerInterface
                     : 'ALERTE'
             );
 
+        if (!$notificationMail->isRecipientVisible() && isset($message->getReplyTo()[0])) {
+            $message->addTo($message->getReplyTo()[0]);
+        }
+
         foreach ($notificationMail->getEmails() as $email) {
             try {
                 if ($notificationMail->isRecipientVisible()) {

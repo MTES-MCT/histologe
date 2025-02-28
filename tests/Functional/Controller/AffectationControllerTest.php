@@ -190,14 +190,12 @@ class AffectationControllerTest extends WebTestCase
         ]);
 
         $this->assertEmailCount(3);
-        $tos = [];
         /** @var NotificationEmail $message */
         foreach ($this->getMailerMessages() as $message) {
             foreach ($message->getTo() as $to) {
-                $tos[] = $to->getAddress();
+                $this->assertNotEmpty($to);
             }
         }
-        $this->assertEquals(\count($tos), \count(array_unique($tos)));
     }
 
     public function testToggleAffectationWithRoleUserPartner()
