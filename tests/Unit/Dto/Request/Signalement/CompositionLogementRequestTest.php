@@ -18,10 +18,8 @@ class CompositionLogementRequestTest extends KernelTestCase
             compositionLogementHauteur: 'oui',
             compositionLogementNbPieces: '3',
             nombreEtages: '2',
-            typeLogementRdc: 'oui',
-            typeLogementDernierEtage: 'non',
-            typeLogementSousCombleSansFenetre: 'non',
-            typeLogementSousSolSansFenetre: 'non',
+            etage: '1',
+            avecFenetres: 'non',
             typeLogementCommoditesPieceAVivre9m: 'oui',
             typeLogementCommoditesCuisine: 'oui',
             typeLogementCommoditesCuisineCollective: 'non',
@@ -39,10 +37,8 @@ class CompositionLogementRequestTest extends KernelTestCase
         $this->assertSame('oui', $compositionLogementRequest->getCompositionLogementHauteur());
         $this->assertSame('3', $compositionLogementRequest->getCompositionLogementNbPieces());
         $this->assertSame('2', $compositionLogementRequest->getNombreEtages());
-        $this->assertSame('oui', $compositionLogementRequest->getTypeLogementRdc());
-        $this->assertSame('non', $compositionLogementRequest->getTypeLogementDernierEtage());
-        $this->assertSame('non', $compositionLogementRequest->getTypeLogementSousCombleSansFenetre());
-        $this->assertSame('non', $compositionLogementRequest->getTypeLogementSousSolSansFenetre());
+        $this->assertSame('1', $compositionLogementRequest->getEtage());
+        $this->assertSame('non', $compositionLogementRequest->getAvecFenetres());
         $this->assertSame('oui', $compositionLogementRequest->getTypeLogementCommoditesPieceAVivre9m());
         $this->assertSame('oui', $compositionLogementRequest->getTypeLogementCommoditesCuisine());
         $this->assertSame('non', $compositionLogementRequest->getTypeLogementCommoditesCuisineCollective());
@@ -67,10 +63,8 @@ class CompositionLogementRequestTest extends KernelTestCase
             compositionLogementHauteur: 'invalid_choice',
             compositionLogementNbPieces: 'invalid_nb',
             nombreEtages: 'invalid_nb',
-            typeLogementRdc: 'oui',
-            typeLogementDernierEtage: 'oui',
-            typeLogementSousCombleSansFenetre: 'invalid_choice',
-            typeLogementSousSolSansFenetre: 'invalid_choice',
+            etage: '1',
+            avecFenetres: 'non',
             typeLogementCommoditesPieceAVivre9m: 'invalid_choice',
             typeLogementCommoditesCuisine: 'invalid_choice',
             typeLogementCommoditesCuisineCollective: 'invalid_choice',
