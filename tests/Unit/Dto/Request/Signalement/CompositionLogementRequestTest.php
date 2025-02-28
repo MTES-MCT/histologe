@@ -3,6 +3,7 @@
 namespace App\Tests\Unit\Dto\Request\Signalement;
 
 use App\Dto\Request\Signalement\CompositionLogementRequest;
+use App\Entity\Enum\EtageType;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use Symfony\Component\Validator\Validation;
 
@@ -18,7 +19,7 @@ class CompositionLogementRequestTest extends KernelTestCase
             compositionLogementHauteur: 'oui',
             compositionLogementNbPieces: '3',
             nombreEtages: '2',
-            etage: '1',
+            etage: EtageType::AUTRE->value,
             avecFenetres: 'non',
             typeLogementCommoditesPieceAVivre9m: 'oui',
             typeLogementCommoditesCuisine: 'oui',
@@ -37,7 +38,7 @@ class CompositionLogementRequestTest extends KernelTestCase
         $this->assertSame('oui', $compositionLogementRequest->getCompositionLogementHauteur());
         $this->assertSame('3', $compositionLogementRequest->getCompositionLogementNbPieces());
         $this->assertSame('2', $compositionLogementRequest->getNombreEtages());
-        $this->assertSame('1', $compositionLogementRequest->getEtage());
+        $this->assertSame(EtageType::AUTRE->value, $compositionLogementRequest->getEtage());
         $this->assertSame('non', $compositionLogementRequest->getAvecFenetres());
         $this->assertSame('oui', $compositionLogementRequest->getTypeLogementCommoditesPieceAVivre9m());
         $this->assertSame('oui', $compositionLogementRequest->getTypeLogementCommoditesCuisine());
@@ -63,8 +64,8 @@ class CompositionLogementRequestTest extends KernelTestCase
             compositionLogementHauteur: 'invalid_choice',
             compositionLogementNbPieces: 'invalid_nb',
             nombreEtages: 'invalid_nb',
-            etage: '1',
-            avecFenetres: 'non',
+            etage: 'invalid_choice',
+            avecFenetres: 'invalid_choice',
             typeLogementCommoditesPieceAVivre9m: 'invalid_choice',
             typeLogementCommoditesCuisine: 'invalid_choice',
             typeLogementCommoditesCuisineCollective: 'invalid_choice',
@@ -77,6 +78,6 @@ class CompositionLogementRequestTest extends KernelTestCase
 
         $validator = Validation::createValidatorBuilder()->enableAttributeMapping()->getValidator();
         $errors = $validator->validate($compositionLogementRequest);
-        $this->assertCount(20, $errors);
+        $this->assertCount(18, $errors);
     }
 }
