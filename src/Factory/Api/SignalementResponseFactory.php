@@ -13,6 +13,7 @@ use App\Entity\Affectation;
 use App\Entity\Enum\AffectationStatus;
 use App\Entity\Enum\Api\PersonneType;
 use App\Entity\Enum\DesordreCritereZone;
+use App\Entity\Enum\EtageType;
 use App\Entity\Signalement;
 use App\Entity\User;
 use App\Service\Signalement\SignalementDesordresProcessor;
@@ -79,11 +80,8 @@ readonly class SignalementResponseFactory
         $signalementResponse->anneeConstruction = $signalement->getInformationComplementaire()?->getInformationsComplementairesLogementAnneeConstruction() ?? $signalement->getAnneeConstruction();
         $signalementResponse->constructionAvant1949 = $signalement->getIsConstructionAvant1949();
         $signalementResponse->nbNiveaux = $signalement->getInformationComplementaire()?->getInformationsComplementairesLogementNombreEtages() ?? $signalement->getNbNiveauxLogement();
-        $signalementResponse->rezDeChaussee = $this->stringToBool($signalement->getTypeCompositionLogement()?->getTypeLogementRdc());
-
-        $signalementResponse->dernierEtage = $this->stringToBool($signalement->getTypeCompositionLogement()?->getTypeLogementDernierEtage());
-        $signalementResponse->sousSolSansFenetre = $this->stringToBool($signalement->getTypeCompositionLogement()?->getTypeLogementSousSolSansFenetre());
-        $signalementResponse->sousCombleSansFenetre = $this->stringToBool($signalement->getTypeCompositionLogement()?->getTypeLogementSousCombleSansFenetre());
+        $signalementResponse->etage = EtageType::tryFrom($signalement->getTypeCompositionLogement()?->getTypeLogementAppartementEtage());
+        $signalementResponse->avecFenetres = $signalement->getTypeCompositionLogement()?->getTypeLogementAppartementAvecFenetres();
         $signalementResponse->pieceAVivreSuperieureA9m = $this->stringToBool($signalement->getTypeCompositionLogement()?->getTypeLogementCommoditesPieceAVivre9m());
         $signalementResponse->cuisine = $this->stringToBool($signalement->getTypeCompositionLogement()?->getTypeLogementCommoditesCuisine());
         $signalementResponse->cuisineCollective = $this->stringToBool($signalement->getTypeCompositionLogement()?->getTypeLogementCommoditesCuisineCollective());

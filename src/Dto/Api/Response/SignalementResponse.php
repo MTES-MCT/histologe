@@ -10,6 +10,7 @@ use App\Dto\Api\Model\Intervention;
 use App\Dto\Api\Model\Personne;
 use App\Dto\Api\Model\Suivi;
 use App\Entity\Enum\DebutDesordres;
+use App\Entity\Enum\EtageType;
 use App\Entity\Enum\MotifCloture;
 use App\Entity\Enum\MotifRefus;
 use App\Entity\Enum\ProfileDeclarant;
@@ -185,7 +186,13 @@ class SignalementResponse
     public ?string $nbNiveaux;
 
     #[OA\Property(
-        description: 'Indique si le logement est situé au rez-de-chaussée.<br>
+        description: 'Indique l\'étage du logement.',
+        example: 'RDC',
+        nullable: true
+    )]
+    public ?EtageType $etage;
+    #[OA\Property(
+        description: 'Indique si le logement a des fenêtres.<br>
         <ul>
            <li>`true` pour "oui"</li>
            <li>`false` pour "non"</li>
@@ -195,42 +202,8 @@ class SignalementResponse
         example: false,
         nullable: true
     )]
-    public bool|string|null $rezDeChaussee;
-    #[OA\Property(
-        description: 'Indique si le logement est situé au dernier étage.<br>
-        <ul>
-            `true` pour "oui",
-            `false` pour "non",
-            `nsp` pour "Je ne sais pas".
-        </ul>',
-        example: false,
-        nullable: true
-    )]
-    public bool|string|null $dernierEtage;
+    public bool|string|null $avecFenetres;
 
-    #[OA\Property(
-        description: 'Indique si le logement est au sous-sol sans fenêtre.<br>
-        <ul>
-           <li>`true` pour "oui"</li>
-           <li>`false` pour "non"</li>
-           <li>`nsp` pour "Je ne sais pas".</li>
-        </ul>',
-        example: false,
-        nullable: true
-    )]
-    public bool|string|null $sousSolSansFenetre;
-
-    #[OA\Property(
-        description: 'Indique si le logement est sous les combles sans fenêtre.<br>
-        <ul>
-           <li>`true` pour "oui"</li>
-           <li>`false` pour "non"</li>
-           <li>`nsp` pour "Je ne sais pas".</li>
-        </ul>',
-        example: false,
-        nullable: true
-    )]
-    public bool|string|null $sousCombleSansFenetre;
     #[OA\Property(
         description: 'Indique si la pièce à vivre fait plus de 9m².<br>
         <ul>
