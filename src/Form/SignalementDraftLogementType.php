@@ -3,6 +3,7 @@
 namespace App\Form;
 
 use App\Entity\Enum\ChauffageType;
+use App\Entity\Enum\EtageType;
 use App\Entity\Signalement;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
@@ -21,19 +22,19 @@ class SignalementDraftLogementType extends AbstractType
         /** @var Signalement $signalement */
         $signalement = $builder->getData();
 
-        $appartementEtage = '';
+        $appartementEtage = null;
         $appartementAvecFenetres = '';
         if ('appartement' === $signalement->getNatureLogement()) {
             if ($signalement->getTypeCompositionLogement()) {
                 if (!empty($signalement->getTypeCompositionLogement()->getTypeLogementAppartementEtage())) {
-                    $appartementEtage = $signalement->getTypeCompositionLogement()->getTypeLogementAppartementEtage();
+                    $appartementEtage = EtageType::tryFrom($signalement->getTypeCompositionLogement()->getTypeLogementAppartementEtage());
                 // Not used at the moment, for future purpose
                 } elseif ('oui' == $signalement->getTypeCompositionLogement()->getTypeLogementRdc()) {
-                    $appartementEtage = 'rdc';
+                    $appartementEtage = EtageType::RDC;
                 } elseif ('oui' == $signalement->getTypeCompositionLogement()->getTypeLogementDernierEtage()) {
-                    $appartementEtage = 'dernier_etage';
+                    $appartementEtage = EtageType::DERNIER_ETAGE;
                 } elseif ('oui' == $signalement->getTypeCompositionLogement()->getTypeLogementSousSolSansFenetre()) {
-                    $appartementEtage = 'sous-sol';
+                    $appartementEtage = EtageType::SOUSSOL;
                 }
 
                 if (!empty($signalement->getTypeCompositionLogement()->getTypeLogementAppartementAvecFenetres())) {
@@ -95,14 +96,12 @@ class SignalementDraftLogementType extends AbstractType
                 'mapped' => false,
                 'data' => $signalement->getTypeCompositionLogement()->getTypeLogementNatureAutrePrecision(),
             ])
-            ->add('appartementEtage', ChoiceType::class, [
+            ->add('appartementEtage', EnumType::class, [
                 'label' => 'Localisation de l\'appartement',
-                'choices' => [
-                    'RDC' => 'rdc',
-                    'Dernier étage' => 'dernier_etage',
-                    'Sous-sol' => 'sous-sol',
-                    'Autre étage' => 'autre',
-                ],
+                'class' => EtageType::class,
+                'choice_label' => function ($choice) {
+                    return $choice->label();
+                },
                 'expanded' => true,
                 'multiple' => false,
                 'required' => false,

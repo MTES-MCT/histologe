@@ -169,7 +169,7 @@ and signalement.profileDeclarant is not same as enum('App\\Entity\\Enum\\Profile
 	</h3>
 	<div class="fr-collapse" id="accordion-type-composition">
 		<ul>
-			<li> Nature du logement  :
+			<li>Nature du logement :
 				{{ signalement.natureLogement|capitalize }}
 				{% if signalement.typeCompositionLogement %}
 					{% if signalement.typeCompositionLogement.typeLogementNatureAutrePrecision %}
@@ -180,6 +180,45 @@ and signalement.profileDeclarant is not same as enum('App\\Entity\\Enum\\Profile
 					{% if signalement.typeCompositionLogement.typeLogementDernierEtage == 'oui' %}, Dernier étage
 					{% endif %}
 					{% if signalement.typeCompositionLogement.typeLogementSousCombleSansFenetre == 'oui' %}, Combles sans fenêtres
+					{% endif %}
+				{% endif %}
+			</li>
+			<li>Etage :
+				{% if signalement.typeCompositionLogement %}               
+					{% if signalement.typeCompositionLogement.typeLogementAppartementEtage %}
+						{{ signalement.typeCompositionLogement.typeLogementAppartementEtage.label }}
+					{% elseif signalement.typeCompositionLogement.typeLogementRdc is same as 'oui' %}
+						{{ enum('App\\Entity\\Enum\\EtageType').RDC.label }}
+					{% elseif signalement.typeCompositionLogement.typeLogementDernierEtage is same as 'oui' %}
+						{{ enum('App\\Entity\\Enum\\EtageType').DERNIER_ETAGE.label }}
+					{% elseif signalement.typeCompositionLogement.typeLogementSousSolSansFenetre is same as 'oui' %}
+						{{ enum('App\\Entity\\Enum\\EtageType').SOUSSOL.label }}
+					{% else %}
+						{{ enum('App\\Entity\\Enum\\EtageType').AUTRE.label }}
+					{% endif %}
+				{% endif %}
+			</li>
+			<li>Avec fenêtres :
+				{% if signalement.typeCompositionLogement %}               
+					{% if signalement.typeCompositionLogement.typeLogementAppartementAvecFenetres %}
+						{{ signalement.typeCompositionLogement.typeLogementAppartementAvecFenetres }}
+						{% include '_partials/signalement/display_alert.html.twig' with { 'display': signalement.typeCompositionLogement.typeLogementAppartementAvecFenetres is same as 'non' } %}
+					{% elseif signalement.typeCompositionLogement.typeLogementDernierEtage is same as 'oui' %}
+						{% if signalement.typeCompositionLogement.typeLogementSousCombleSansFenetre is same as 'oui' %}
+							Non
+							{% include '_partials/signalement/display_alert.html.twig' with { 'display': signalement.typeCompositionLogement.typeLogementSousCombleSansFenetre is same as 'oui' } %}
+						{% elseif signalement.typeCompositionLogement.typeLogementSousCombleSansFenetre is same as 'non' %}
+							Oui
+						{% endif %}
+					{% elseif signalement.typeCompositionLogement.typeLogementRdc is not same as 'oui' and signalement.typeCompositionLogement.typeLogementDernierEtage is not same as 'oui' %}
+						{% if signalement.typeCompositionLogement.typeLogementSousSolSansFenetre is same as 'oui' %}
+							Non
+							{% include '_partials/signalement/display_alert.html.twig' with { 'display': signalement.typeCompositionLogement.typeLogementSousSolSansFenetre is same as 'oui' } %}
+						{% elseif signalement.typeCompositionLogement.typeLogementSousSolSansFenetre is same as 'non' %}
+							Oui
+						{% endif %}
+					{% else %}
+						Oui
 					{% endif %}
 				{% endif %}
 			</li>

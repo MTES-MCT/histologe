@@ -2,6 +2,7 @@
 
 namespace App\Service\Signalement;
 
+use App\Entity\Enum\EtageType;
 use App\Entity\Enum\ProfileDeclarant;
 use App\Entity\Enum\SignalementStatus;
 use App\Entity\Model\InformationComplementaire;
@@ -88,24 +89,29 @@ class SignalementBoManager
             $typeCompositionLogement->setTypeLogementNatureAutrePrecision($form->get('natureLogementAutre')->getData());
         }
         if ('appartement' === $signalement->getNatureLogement()) {
-            $typeCompositionLogement->setTypeLogementAppartementEtage($form->get('appartementEtage')->getData());
-            $typeCompositionLogement->setTypeLogementAppartementAvecFenetres($form->get('appartementAvecFenetres')->getData());
-            if ('rdc' === $typeCompositionLogement->getTypeLogementAppartementEtage()) {
-                $typeCompositionLogement->setTypeLogementRdc('oui');
-            } elseif ('' !== $typeCompositionLogement->getTypeLogementAppartementEtage()) {
-                $typeCompositionLogement->setTypeLogementRdc('non');
+            /** @var EtageType $appartementEtage */
+            $appartementEtage = $form->get('appartementEtage')->getData();
+            if (!empty($appartementEtage)) {
+                $typeCompositionLogement->setTypeLogementAppartementEtage($appartementEtage->value);
+                if (EtageType::RDC === $form->get('appartementEtage')->getData()) {
+                    $typeCompositionLogement->setTypeLogementRdc('oui');
+                } else {
+                    $typeCompositionLogement->setTypeLogementRdc('non');
+                }
             }
 
-            if ('dernier_etage' === $typeCompositionLogement->getTypeLogementAppartementEtage()) {
+            $typeCompositionLogement->setTypeLogementAppartementAvecFenetres($form->get('appartementAvecFenetres')->getData());
+
+            if (EtageType::DERNIER_ETAGE === $appartementEtage) {
                 $typeCompositionLogement->setTypeLogementDernierEtage('oui');
                 if ('non' === $typeCompositionLogement->getTypeLogementAppartementAvecFenetres()) {
                     $typeCompositionLogement->setTypeLogementSousCombleSansFenetre('oui');
                 }
-            } elseif ('' !== $typeCompositionLogement->getTypeLogementAppartementEtage()) {
+            } elseif (!empty($appartementEtage)) {
                 $typeCompositionLogement->setTypeLogementDernierEtage('non');
             }
 
-            if ('sous-sol' === $typeCompositionLogement->getTypeLogementAppartementEtage()
+            if (EtageType::SOUSSOL === $appartementEtage
                     && 'non' === $typeCompositionLogement->getTypeLogementAppartementAvecFenetres()) {
                 $typeCompositionLogement->setTypeLogementSousSolSansFenetre('oui');
             }

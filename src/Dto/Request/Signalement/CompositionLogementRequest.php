@@ -3,7 +3,6 @@
 namespace App\Dto\Request\Signalement;
 
 use Symfony\Component\Validator\Constraints as Assert;
-use Symfony\Component\Validator\Context\ExecutionContextInterface;
 
 class CompositionLogementRequest implements RequestInterface
 {
@@ -76,50 +75,28 @@ class CompositionLogementRequest implements RequestInterface
                 'LOCATAIRE', 'BAILLEUR_OCCUPANT', 'BAILLEUR', 'TIERS_PARTICULIER', 'TIERS_PRO', 'SERVICE_SECOURS',
             ],
             constraints: [
-                new Assert\NotBlank(message: 'Merci de préciser si le logement est au rez-de-chaussée.'),
+                new Assert\NotBlank(message: 'Merci de préciser si l\'étage de l\'appartement.'),
             ],
         )]
         #[Assert\Choice(
-            choices: ['oui', 'non', 'nsp'],
-            message: 'Le champ "Rez-de-chaussée" est incorrect.'
+            choices: ['RDC', 'DERNIER_ETAGE', 'SOUSSOL', 'AUTRE'],
+            message: 'Le champ "Etage" est incorrect.'
         )]
-        private readonly ?string $typeLogementRdc = null,
+        private readonly ?string $etage = null,
         #[Assert\When(
-            expression: 'this.getType() == "appartement" && this.getTypeLogementRdc() == "non"',
+            expression: 'this.getType() == "appartement"',
             groups: [
                 'LOCATAIRE', 'BAILLEUR_OCCUPANT', 'BAILLEUR', 'TIERS_PARTICULIER', 'TIERS_PRO', 'SERVICE_SECOURS',
             ],
             constraints: [
-                new Assert\NotBlank(message: 'Merci de préciser si le logement est au dernier étage.'),
+                new Assert\NotBlank(message: 'Merci de préciser si le logement a des fenêtres.'),
             ],
         )]
         #[Assert\Choice(
             choices: ['oui', 'non', 'nsp'],
-            message: 'Le champ "Dernier étage" est incorrect.'
+            message: 'Le champ "Avec fenêtres" est incorrect.'
         )]
-        private readonly ?string $typeLogementDernierEtage = null,
-        #[Assert\When(
-            expression: 'this.getType() == "appartement" && this.getTypeLogementDernierEtage() == "oui"',
-            constraints: [
-                new Assert\NotBlank(message: 'Merci de préciser si le logement est sous comble et sans fenêtre.'),
-            ],
-        )]
-        #[Assert\Choice(
-            choices: ['oui', 'non', 'nsp'],
-            message: 'Le champ "Sous comble et sans fenêtre" est incorrect.'
-        )]
-        private readonly ?string $typeLogementSousCombleSansFenetre = null,
-        #[Assert\When(
-            expression: 'this.getType() == "appartement" && this.getTypeLogementRdc() == "non" && this.getTypeLogementDernierEtage() == "non"',
-            constraints: [
-                new Assert\NotBlank(message: 'Merci de préciser si le logement est au sous-sol et sans fenêtre.'),
-            ],
-        )]
-        #[Assert\Choice(
-            choices: ['oui', 'non', 'nsp'],
-            message: 'Le champ "Sous-sol et sans fenêtre" est incorrect.'
-        )]
-        private readonly ?string $typeLogementSousSolSansFenetre = null,
+        private readonly ?string $avecFenetres = null,
         #[Assert\NotBlank(
             message: 'Merci de définir si une pièce fait plus de 9m².',
             groups: ['LOCATAIRE', 'BAILLEUR_OCCUPANT', 'BAILLEUR', 'TIERS_PARTICULIER'])]
@@ -237,24 +214,14 @@ class CompositionLogementRequest implements RequestInterface
         return $this->nombreEtages;
     }
 
-    public function getTypeLogementRdc(): ?string
+    public function getEtage(): ?string
     {
-        return $this->typeLogementRdc;
+        return $this->etage;
     }
 
-    public function getTypeLogementDernierEtage(): ?string
+    public function getAvecFenetres(): ?string
     {
-        return $this->typeLogementDernierEtage;
-    }
-
-    public function getTypeLogementSousCombleSansFenetre(): ?string
-    {
-        return $this->typeLogementSousCombleSansFenetre;
-    }
-
-    public function getTypeLogementSousSolSansFenetre(): ?string
-    {
-        return $this->typeLogementSousSolSansFenetre;
+        return $this->avecFenetres;
     }
 
     public function getTypeLogementCommoditesPieceAVivre9m(): ?string
@@ -295,19 +262,5 @@ class CompositionLogementRequest implements RequestInterface
     public function getTypeLogementCommoditesWcCuisine(): ?string
     {
         return $this->typeLogementCommoditesWcCuisine;
-    }
-
-    #[Assert\Callback]
-    public function validate(ExecutionContextInterface $context): void
-    {
-        if ('oui' === $this->getTypeLogementDernierEtage() && 'oui' === $this->getTypeLogementRdc()) {
-            $context->buildViolation('Merci de bien préciser si le logement est au rez-de-chaussée ou dernier étage.')
-                ->atPath('typeLogementRdc')
-                ->addViolation();
-
-            $context->buildViolation('Merci de bien préciser si le logement est au rez-de-chaussée ou dernier étage.')
-                ->atPath('typeLogementDernierEtage')
-                ->addViolation();
-        }
     }
 }
