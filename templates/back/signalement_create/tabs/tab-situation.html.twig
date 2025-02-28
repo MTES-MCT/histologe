@@ -1,1 +1,61 @@
 <h2 class="fr-h4">Situation du foyer et du bail</h2>
+<p>Sauf mention contraire, toutes les réponses sont <strong>facultatives</strong>. Essayez de compléter le dossier au mieux !</p>
+
+{% form_theme formSituation 'form/dsfr_theme.html.twig' %}
+{{ form_start(formSituation, {'attr': {'id': 'bo-form-signalement-situation'}}) }}
+{{ form_errors(formSituation) }}
+<div class="fr-grid-row fr-grid-row--gutters">
+
+    <div class="fr-col-12 fr-col-md-6">
+        <fieldset class="fr-fieldset">
+            <legend>
+                <h3 class="fr-h5">Bail</h3>
+            </legend>
+            <div class="fr-fieldset__element">
+                {{ form_row(formSituation.bail) }}
+            </div>
+            <div class="fr-fieldset__element">
+                {{ form_row(formSituation.dpe) }}
+            </div>
+            <div class="fr-fieldset__element">
+                {{ form_row(formSituation.classeEnergetique) }}
+            </div>
+        </fieldset>
+
+        <fieldset class="fr-fieldset">
+            <legend>
+                <h3 class="fr-h5">Situation du foyer</h3>
+            </legend>
+        </fieldset>
+    </div>
+
+    <div class="fr-col-12 fr-col-md-6">
+        <fieldset class="fr-fieldset">
+            <legend>
+                <h3 class="fr-h5">Démarches</h3>
+            </legend>
+        </fieldset>
+
+        <fieldset class="fr-fieldset">
+            <legend>
+                <h3 class="fr-h5">Assurance</h3>
+            </legend>
+        </fieldset>
+
+        <fieldset class="fr-fieldset">
+            <legend>
+                <h3 class="fr-h5">Documents</h3>
+            </legend>
+        </fieldset>
+    </div>
+
+    <div class="fr-col-12">
+        <div class="fr-grid-row fr-grid-row--right">
+            {{ form_row(formSituation.forceSave) }}
+            {{ form_row(formSituation.draft) }}
+            {{ form_row(formSituation.save) }}
+        </div>
+    </div>
+
+</div>
+{{ form_end(formSituation) }}
