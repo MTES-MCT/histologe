@@ -8,6 +8,7 @@ use App\Entity\User;
 use App\Form\SearchDraftType;
 use App\Form\SignalementDraftAddressType;
 use App\Form\SignalementDraftLogementType;
+use App\Form\SignalementDraftSituationType;
 use App\Manager\SignalementManager;
 use App\Repository\SignalementRepository;
 use App\Service\ListFilters\SearchDraft;
@@ -112,10 +113,14 @@ class SignalementCreateController extends AbstractController
         $formLogement = $this->createForm(SignalementDraftLogementType::class, $signalement, [
             'action' => $this->generateUrl('back_signalement_draft_form_logement_edit', ['uuid' => $signalement->getUuid()]),
         ]);
+        $formSituation = $this->createForm(SignalementDraftSituationType::class, $signalement, [
+            'action' => $this->generateUrl('back_signalement_draft_form_situation_edit', ['uuid' => $signalement->getUuid()]),
+        ]);
 
         return $this->render('back/signalement_create/index.html.twig', [
             'formAddress' => $formAddress,
             'formLogement' => $formLogement,
+            'formSituation' => $formSituation,
             'signalement' => $signalement,
         ]);
     }
@@ -208,6 +213,35 @@ class SignalementCreateController extends AbstractController
             return $this->json(['redirect' => true, 'url' => $url]);
         }
         $tabContent = $this->renderView('back/signalement_create/tabs/tab-logement.html.twig', ['formLogement' => $form]);
+
+        return $this->json(['tabContent' => $tabContent]);
+    }
+
+    #[Route('/bo-form-situation/{uuid:signalement}', name: 'back_signalement_draft_form_situation_edit', methods: ['POST'])]
+    public function editFormSituation(
+        Signalement $signalement,
+        Request $request,
+        EntityManagerInterface $entityManager,
+    ): Response {
+        $this->denyAccessUnlessGranted('SIGN_EDIT_DRAFT', $signalement);
+
+        $entityManager->beginTransaction();
+        $action = $this->generateUrl('back_signalement_draft_form_situation_edit', ['uuid' => $signalement->getUuid()]);
+        $form = $this->createForm(SignalementDraftSituationType::class, $signalement, ['action' => $action]);
+        $form->handleRequest($request);
+        if ($form->isSubmitted() && $form->isValid() && $this->signalementBoManager->formSituationManager($form, $signalement)) {
+            $this->signalementManager->save($signalement);
+            $entityManager->commit();
+            if ($form->get('draft')->isClicked()) { // @phpstan-ignore-line
+                $this->addFlash('success', 'Le brouillon est bien enregistré, n\'oubliez pas de le terminer !');
+                $url = $this->generateUrl('back_signalement_drafts', [], UrlGeneratorInterface::ABSOLUTE_URL);
+            } else {
+                $url = $this->generateUrl('back_signalement_edit_draft', ['uuid' => $signalement->getUuid(), '_fragment' => 'coordonnees'], UrlGeneratorInterface::ABSOLUTE_URL);
+            }
+
+            return $this->json(['redirect' => true, 'url' => $url]);
+        }
+        $tabContent = $this->renderView('back/signalement_create/tabs/tab-situation.html.twig', ['formSituation' => $form]);
 
         return $this->json(['tabContent' => $tabContent]);
     }

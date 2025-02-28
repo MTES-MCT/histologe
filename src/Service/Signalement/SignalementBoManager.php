@@ -159,4 +159,9 @@ class SignalementBoManager
 
         return true;
     }
+
+    public function formSituationManager(FormInterface $form, Signalement $signalement): bool
+    {
+        return true;
+    }
 }
