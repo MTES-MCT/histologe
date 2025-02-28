@@ -11,7 +11,6 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Event\ExceptionEvent;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
-use Symfony\Component\HttpKernel\Exception\HttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Exception\MethodNotAllowedException;
 use Symfony\Component\Serializer\Exception\NotEncodableValueException;
@@ -47,26 +46,11 @@ readonly class ExceptionListener
         }
 
         if ($this->shouldNotifyForException($exception)) {
-            $extraData = [];
-            if ($exception instanceof HttpException) {
-                $extraData = $exception->getHeaders();
-            }
-
-            $message = "Une erreur s'est produite : {$exception->getMessage()}";
-
-            if (!empty($extraData)) {
-                $message .= "\n\n📅 Date : ".($extraData['timestamp'] ?? 'N/A');
-                $message .= "\n💾 Base : ".($extraData['database'] ?? 'N/A');
-                $message .= "\n🔍 Hôte : ".($extraData['host'] ?? 'N/A');
-                $message .= "\n❗ Erreur : ".($extraData['error'] ?? 'N/A');
-            }
-
             $this->notificationMailerRegistry->send(
                 new NotificationMail(
                     type: NotificationMailerType::TYPE_ERROR_SIGNALEMENT,
                     to: $this->params->get('admin_email'),
-                    event: $event,
-                    message: $message
+                    event: $event
                 )
             );
         }

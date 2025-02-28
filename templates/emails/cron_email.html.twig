@@ -2,7 +2,7 @@
 
 {% block body %}
     <p>Plateforme: {{ url }}</p>
-    <p>La tache planifiée <strong>{{ cron_label }}</strong> s'est éxécutée avec succès.</p>
+    <p>La tâche planifiée <strong>{{ cron_label }}</strong> {{ (error_messages is defined and error_messages|length) ? 'a rencontré une erreur' : 's\'est terminée avec succès'}}.</p>
     <p> {{ count is defined ? count : ' '}} {{ message is defined ? message : ' ' }}</p>
     {% if count_success is defined and message_success is defined %}
         <p><span>&#9989;</span> {{ count_success }} {{ message_success }}</p>

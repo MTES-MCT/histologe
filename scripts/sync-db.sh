@@ -55,22 +55,34 @@ echo ">>> Loading database"
 mysql -u ${DATABASE_USER} --password=${DATABASE_PASSWORD} -h ${DATABASE_HOST} -P ${DATABASE_PORT} ${DATABASE_NAME} < "${backup_file_name}"
 EXIT_CODE=$?
 
+TITLE="[Metabase] Synchronisation de Bdd"
 if [ $EXIT_CODE -ne 0 ]; then
     echo ">>> ERROR: Database sync failed!"
 
     # Capture les logs MySQL pour le diagnostic
-    TITLE="Database sync failed"
-    ERROR_MESSAGE="Database sync failed with exit code $EXIT_CODE"
+    ERROR_MESSAGE="La synchronisation de la bdd a échoué avec le code $EXIT_CODE"
     TIMESTAMP=$(date +"%Y-%m-%d %H:%M:%S")
     HOSTNAME=$(hostname)
     
     # En cas d'erreur  envoi de mail via une route sur la prod
-    curl -X POST "${HISTOLOGE_PROD_URL}/send-error-email" \ 
+    curl -X POST "${HISTOLOGE_PROD_URL}/send-email" \ 
          -H "Content-Type: application/json" \
          -H "Authorization: Bearer ${SEND_ERROR_EMAIL_TOKEN}" \
          -d "{\"title\": \"$TITLE\", \"timestamp\": \"$TIMESTAMP\", \"host\": \"$HOSTNAME\", \"database\": \"${DATABASE_NAME}\", \"error\": \"$ERROR_MESSAGE\"}"
 
     echo ">>> Error reported to API."
+else
+    MESSAGE="base de données a été synchronisée avec succès"
+    TIMESTAMP=$(date +"%Y-%m-%d %H:%M:%S")
+    HOSTNAME=$(hostname)
+    
+    # A la fin envoi de mail via une route sur la prod
+    curl -X POST "${HISTOLOGE_PROD_URL}/send-email" \ 
+         -H "Content-Type: application/json" \
+         -H "Authorization: Bearer ${SEND_ERROR_EMAIL_TOKEN}" \
+         -d "{\"title\": \"$TITLE\", \"timestamp\": \"$TIMESTAMP\", \"host\": \"$HOSTNAME\", \"database\": \"${DATABASE_NAME}\", \"message\": \"$MESSAGE\"}"
+
+    echo ">>> Success reported to API."
 fi
 
 echo ">>> Done, thank you"
