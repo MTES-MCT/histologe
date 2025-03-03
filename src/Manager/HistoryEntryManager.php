@@ -185,29 +185,37 @@ class HistoryEntryManager extends AbstractManager
         if (array_key_exists('statut', $changes)) {
             $description = $userName;
             switch ($changes['statut']['new']) {
+                case 2:
                 case SignalementStatus::ACTIVE->value:
-                    if (SignalementStatus::NEED_VALIDATION->value === $changes['statut']['old']) {
+                    if (SignalementStatus::NEED_VALIDATION->value === $changes['statut']['old']
+                        || 1 === $changes['statut']['old']) {
                         $description .= ' a validé le signalement ';
-                    } elseif (SignalementStatus::DRAFT->value === $changes['statut']['old']) {
+                    } elseif (SignalementStatus::DRAFT->value === $changes['statut']['old']
+                        || 0 === $changes['statut']['old']) {
                         $description .= ' a validé le brouillon de signalement ';
                     } else {
                         $description .= ' a réouvert le signalement ';
                     }
                     break;
+                case 6:
                 case SignalementStatus::CLOSED->value:
                     $description .= ' a fermé le signalement ';
                     break;
+                case 7:
                 case SignalementStatus::ARCHIVED->value:
                     $description .= ' a archivé le signalement ';
                     break;
                 case SignalementStatus::DRAFT_ARCHIVED->value:
                     $description .= ' a archivé le brouillon du signalement ';
                     break;
+                case 8:
                 case SignalementStatus::REFUSED->value:
                     $description .= ' a refusé le signalement ';
                     break;
+                case 1:
                 case SignalementStatus::NEED_VALIDATION->value:
-                    if (SignalementStatus::DRAFT->value === $changes['statut']['old']) {
+                    if (SignalementStatus::DRAFT->value === $changes['statut']['old']
+                        || 0 === $changes['statut']['old']) {
                         $description .= ' a créé un signalement ';
                     } else {
                         $description .= ' a remis le signalement en attente de validation ';
