@@ -90,7 +90,7 @@ class HistoryEntryManagerTest extends WebTestCase
         $this->assertInstanceOf(HistoryEntry::class, $historyEntry);
         $this->assertEquals(HistoryEntryEvent::CREATE, $historyEntry->getEvent());
         $this->assertEquals($affectation->getId(), $historyEntry->getEntityId());
-        $this->assertEquals($user->getFullName(), $historyEntry->getUser()->getFullName());
+        $this->assertEquals($affectation->getAffectedBy()->getFullname(), $historyEntry->getUser()->getFullName());
     }
 
     public function testUpdateAffectationHistoryEntry()
