@@ -20,12 +20,51 @@
             <div class="fr-fieldset__element">
                 {{ form_row(formSituation.classeEnergetique) }}
             </div>
+            <div class="fr-fieldset__element">
+                {{ form_row(formSituation.etatDesLieux) }}
+            </div>
+            <div class="fr-fieldset__element">
+                {{ form_row(formSituation.dateEntreeLogement) }}
+            </div>
+            <div class="fr-fieldset__element">
+                {{ form_row(formSituation.montantLoyer) }}
+            </div>
+            <div class="fr-fieldset__element">
+                {{ form_row(formSituation.payementLoyersAJour) }}
+            </div>
         </fieldset>
 
         <fieldset class="fr-fieldset">
             <legend>
                 <h3 class="fr-h5">Situation du foyer</h3>
             </legend>
+            <div class="fr-fieldset__element">
+                {{ form_row(formSituation.allocataire) }}
+            </div>
+            <div class="fr-fieldset__element">
+                {{ form_row(formSituation.caisseAllocation) }}
+            </div>
+            <div class="fr-fieldset__element">
+                {{ form_row(formSituation.dateNaissanceAllocataire) }}
+            </div>
+            <div class="fr-fieldset__element">
+                {{ form_row(formSituation.numeroAllocataire) }}
+            </div>
+            <div class="fr-fieldset__element">
+                {{ form_row(formSituation.typeAllocation) }}
+            </div>
+            <div class="fr-fieldset__element">
+                {{ form_row(formSituation.montantAllocation) }}
+            </div>
+            <div class="fr-fieldset__element">
+                {{ form_row(formSituation.accompagnementTravailleurSocial) }}
+            </div>
+            <div class="fr-fieldset__element">
+                {{ form_row(formSituation.beneficiaireRSA) }}
+            </div>
+            <div class="fr-fieldset__element">
+                {{ form_row(formSituation.beneficiaireFSL) }}
+            </div>
         </fieldset>
     </div>
 
@@ -34,18 +73,65 @@
             <legend>
                 <h3 class="fr-h5">Démarches</h3>
             </legend>
+            <div class="fr-fieldset__element">
+                {{ form_row(formSituation.proprietaireAverti) }}
+            </div>
+            <div class="fr-fieldset__element">
+                {{ form_row(formSituation.dateProprietaireAverti) }}
+            </div>
+            <div class="fr-fieldset__element">
+                {{ form_row(formSituation.moyenInformationProprietaire) }}
+            </div>
+            <div class="fr-fieldset__element">
+                {{ form_row(formSituation.reponseProprietaire) }}
+            </div>
+            <div class="fr-fieldset__element">
+                {{ form_row(formSituation.demandeRelogement) }}
+            </div>
+            <div class="fr-fieldset__element">
+                {{ form_row(formSituation.souhaiteQuitterLogement) }}
+            </div>
+            <div class="fr-fieldset__element">
+                {{ form_row(formSituation.preavisDepartDepose) }}
+            </div>
         </fieldset>
 
         <fieldset class="fr-fieldset">
             <legend>
                 <h3 class="fr-h5">Assurance</h3>
             </legend>
+            <div class="fr-fieldset__element">
+                {{ form_row(formSituation.logementAssure) }}
+            </div>
+            <div class="fr-fieldset__element">
+                {{ form_row(formSituation.assuranceContactee) }}
+            </div>
+            <div class="fr-fieldset__element">
+                {{ form_row(formSituation.reponseAssurance) }}
+            </div>
         </fieldset>
 
         <fieldset class="fr-fieldset">
             <legend>
                 <h3 class="fr-h5">Documents</h3>
             </legend>
+            <p>
+                Cliquez ci-dessous pour ajouter des documents relatifs à la situation (bail, DPE, état des lieux, diagnostic plomb amiante, etc.)
+                <br><br>
+                NB : vous pourrez ajouter les documents après la création du signalement.
+                <br><br>
+                <button
+                    class="fr-btn fr-btn--secondary fr-btn--icon-left fr-icon-add-line open-modal-upload-files-btn"
+                    data-fr-opened="false"
+                    aria-controls="fr-modal-upload-files"
+                    data-file-type="document"
+                    data-file-filter="procedure"
+                    data-accepted-type-mimes={{ get_accepted_mime_type('document')}}
+                    data-accepted-extensions="{{ get_accepted_extensions('document')}}"
+                    >
+                    Ajouter des documents
+                </button>
+            </p>
         </fieldset>
     </div>
 

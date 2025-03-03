@@ -7,6 +7,7 @@ class InformationComplementaire
     public function __construct(
         private ?string $informationsComplementairesSituationOccupantsBeneficiaireRsa = null,
         private ?string $informationsComplementairesSituationOccupantsBeneficiaireFsl = null,
+        private ?string $informationsComplementairesSituationOccupantsTypeAllocation = null,
         private ?string $informationsComplementairesSituationOccupantsRevenuFiscal = null,
         private ?string $informationsComplementairesSituationOccupantsDateNaissance = null,
         private ?string $informationsComplementairesSituationOccupantsDemandeRelogement = null,
@@ -43,6 +44,18 @@ class InformationComplementaire
     public function setInformationsComplementairesSituationOccupantsBeneficiaireFsl(?string $informationsComplementairesSituationOccupantsBeneficiaireFsl): self
     {
         $this->informationsComplementairesSituationOccupantsBeneficiaireFsl = $informationsComplementairesSituationOccupantsBeneficiaireFsl;
+
+        return $this;
+    }
+
+    public function getInformationsComplementairesSituationOccupantsTypeAllocation(): ?string
+    {
+        return $this->informationsComplementairesSituationOccupantsTypeAllocation;
+    }
+
+    public function setInformationsComplementairesSituationOccupantsTypeAllocation(?string $informationsComplementairesSituationOccupantsTypeAllocation): self
+    {
+        $this->informationsComplementairesSituationOccupantsTypeAllocation = $informationsComplementairesSituationOccupantsTypeAllocation;
 
         return $this;
     }
