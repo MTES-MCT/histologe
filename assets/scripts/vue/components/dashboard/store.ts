@@ -42,6 +42,10 @@ export const store = {
       countActive: 0,
       linkActive: undefined
     },
+    partenairesNonNotifiables: {
+      count: 0,
+      link: undefined,
+    },
     allSignalements: {
       link: undefined
     },

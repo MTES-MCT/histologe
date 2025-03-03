@@ -2,6 +2,7 @@
 
 namespace App\Tests\Unit\Manager;
 
+use App\Dto\CountPartner;
 use App\Dto\CountSignalement;
 use App\Dto\CountSuivi;
 use App\Dto\CountUser;
@@ -23,9 +24,13 @@ class WidgetDataManagerTest extends TestCase
 
     protected function setUp(): void
     {
+        /* @var SignalementRepository&MockObject */
         $this->signalementRepositoryMock = $this->createMock(SignalementRepository::class);
+        /* @var JobEventRepository&MockObject */
         $this->jobEventRepositoryMock = $this->createMock(JobEventRepository::class);
+        /* @var AffectationRepository&MockObject */
         $this->affectationRepositoryMock = $this->createMock(AffectationRepository::class);
+        /** @var WidgetDataKpiBuilder&MockObject $widgetDataKpiBuilderMock */
         $widgetDataKpiBuilderMock = $this->createMock(WidgetDataKpiBuilder::class);
 
         $this->widgetDataManager = new WidgetDataManager(
@@ -100,5 +105,6 @@ class WidgetDataManagerTest extends TestCase
         $this->assertInstanceOf(CountSignalement::class, $countDataKpi->getCountSignalement());
         $this->assertInstanceOf(CountSuivi::class, $countDataKpi->getCountSuivi());
         $this->assertInstanceOf(CountUser::class, $countDataKpi->getCountUser());
+        $this->assertInstanceOf(CountPartner::class, $countDataKpi->getCountPartner());
     }
 }

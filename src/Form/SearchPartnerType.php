@@ -9,6 +9,7 @@ use App\Service\ListFilters\SearchPartner;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\EnumType;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
@@ -41,7 +42,7 @@ class SearchPartnerType extends AbstractType
             'attr' => ['placeholder' => 'Saisir le nom ou l\'e-mail d\'un partenaire'],
         ]);
         if ($this->isAdmin) {
-            $builder->add('territory', EntityType::class, [
+            $builder->add('territoire', EntityType::class, [
                 'class' => Territory::class,
                 'choice_label' => function (Territory $territory) {
                     return $territory->getZip().' - '.$territory->getName();
@@ -63,6 +64,15 @@ class SearchPartnerType extends AbstractType
             'placeholder' => false,
             'label' => 'Trier par',
             'data' => 'p.nom-ASC',
+        ]);
+
+        $builder->add('isNotNotifiable', CheckboxType::class, [
+            'attr' => [
+                'class' => 'fr-toggle__input',
+                'onchange' => 'this.form.submit()',
+            ],
+            'required' => false,
+            'label' => 'N\'afficher que les partenaires non-notifiables',
         ]);
 
         $builder->add('partnerType', EnumType::class, [

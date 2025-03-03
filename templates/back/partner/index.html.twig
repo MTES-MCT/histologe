@@ -31,18 +31,23 @@
     <section class="fr-col-12">
         {{ form_errors(form) }}
         <div class="fr-grid-row fr-grid-row--bottom fr-grid-row--gutters">
-            <div class="fr-col-12 fr-col-lg-3">
+            <div class="fr-col-12 fr-col-lg-4">
                 {{ form_row(form.queryPartner) }}
             </div>
             {% if is_granted('ROLE_ADMIN') %}
-                <div class="fr-col-12 fr-col-lg-3">
-                    {{ form_row(form.territory) }}
+                <div class="fr-col-12 fr-col-lg-4">
+                    {{ form_row(form.territoire) }}
                 </div>
             {% endif %}
-            <div class="fr-col-12 fr-col-lg-3">
+            <div class="fr-col-12 fr-col-lg-4">
                 {{ form_row(form.partnerType) }}
             </div>
-            <div class="fr-col-12 fr-col-lg-3">
+        </div>
+        <div class="fr-grid-row fr-grid-row--bottom fr-grid-row--gutters">
+            <div class="fr-col-12 fr-col-lg-4">
+                {{ form_row(form.isNotNotifiable) }}
+            </div>
+            <div class="fr-col-12 fr-col-lg-4">
                 <a href="{{ path('back_partner_index') }}" class="fr-link fr-link--icon-left fr-icon-close-circle-line">Réinitialiser les résultats</a>
             </div>
         </div>

@@ -251,6 +251,26 @@
       </div>
     </div>
 
+<div v-if="sharedState.user.isAdmin || sharedState.user.isResponsableTerritoire" class="fr-col-12 fr-col-md-6 fr-col-lg-4">
+  <div class="fr-card fr-enlarge-link">
+    <div class="fr-card__body">
+      <ul class="fr-badges-group">
+        <li>
+          <p class="fr-badge fr-badge--no-icon" :class=getTagClass(sharedState.partenairesNonNotifiables.count)>{{ getBadgeText(sharedState.partenairesNonNotifiables.count, 'aucun', 'nouveau', 'nouveaux') }}</p>
+        </li>
+      </ul>
+      <div class="fr-card__content">
+        <h3 class="fr-card__title">
+          <a :href=getSanitizedUrl(sharedState.partenairesNonNotifiables.link)>Partenaires non notifiables</a>
+        </h3>
+        <p class="fr-card__desc">
+          Afficher les partenaires qui ne sont pas notifiables
+        </p>
+      </div>
+    </div>
+  </div>
+</div>
+
   </div>
 </template>
 
@@ -279,6 +299,7 @@ export default defineComponent({
       }
     },
     getSanitizedUrl (url:any) {
+      console.log(url)
       if (url === undefined || url === null) {
         return url
       }
