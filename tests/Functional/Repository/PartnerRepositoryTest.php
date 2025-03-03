@@ -5,6 +5,7 @@ namespace App\Tests\Functional\Repository;
 use App\Entity\Partner;
 use App\Entity\Signalement;
 use App\Entity\Territory;
+use App\Entity\User;
 use App\Repository\PartnerRepository;
 use App\Repository\SignalementRepository;
 use Doctrine\ORM\EntityManagerInterface;
@@ -75,7 +76,7 @@ class PartnerRepositoryTest extends KernelTestCase
         $signalement = $signalementRepository->findOneBy(['reference' => '2023-3']);
 
         $partners = $this->partnerRepository->findByLocalization($signalement, false);
-        $this->assertCount(2, $partners);
+        $this->assertCount(1, $partners);
 
         $partnerMDL = array_filter($partners, function ($partner) {
             return 'EMHA - Métropole de Lyon' === $partner['name'];
@@ -154,8 +155,9 @@ class PartnerRepositoryTest extends KernelTestCase
 
     public function testGetPartnerPaginator(): void
     {
+        $user = new User();
         $territory = $this->entityManager->getRepository(Territory::class)->findOneBy(['zip' => '69']);
-        $partnerPaginator = $this->partnerRepository->getPartners(1, 50, $territory, null, null);
+        $partnerPaginator = $this->partnerRepository->getPartners(1, 50, $user, $territory, null, null);
 
         $this->assertGreaterThan(1, $partnerPaginator->count());
     }

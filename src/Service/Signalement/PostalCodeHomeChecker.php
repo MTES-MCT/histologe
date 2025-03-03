@@ -16,7 +16,7 @@ class PostalCodeHomeChecker
     public function getActiveTerritory(string $inseeCode): ?Territory
     {
         $territory = $this->zipcodeProvider->getTerritoryByInseeCode($inseeCode);
-        if (!$territory) {
+        if (!$territory || !$territory->isIsActive()) {
             return null;
         }
 

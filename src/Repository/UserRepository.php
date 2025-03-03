@@ -417,6 +417,9 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
         }
         if ($searchUser->getTerritory()) {
             $qb->andWhere('p.territory = :territory')->setParameter('territory', $searchUser->getTerritory());
+        } elseif (!$searchUser->getUser()->isSuperAdmin()) {
+            $qb->andWhere('p.territory IN (:territories)')
+                ->setParameter('territories', $searchUser->getUser()->getPartnersTerritories());
         }
         if ($searchUser->getPartners()->count() > 0) {
             $qb->andWhere('up.partner IN (:partners)')->setParameter('partners', $searchUser->getPartners());

@@ -63,6 +63,9 @@ class TagRepository extends ServiceEntityRepository
         if ($searchTag->getTerritory()) {
             $qb->andWhere('t.territory = :territory')
                 ->setParameter('territory', $searchTag->getTerritory());
+        } elseif (!$searchTag->getUser()->isSuperAdmin()) {
+            $qb->andWhere('t.territory IN (:territories)')
+                ->setParameter('territories', $searchTag->getUser()->getPartnersTerritories());
         }
         if ($searchTag->getQueryTag()) {
             $qb->andWhere('t.label LIKE :search')

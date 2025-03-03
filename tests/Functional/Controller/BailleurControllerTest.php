@@ -21,7 +21,7 @@ class BailleurControllerTest extends WebTestCase
 
     public function testSearchBailleurs(): void
     {
-        $route = $this->router->generate('app_bailleur', ['name' => 'habitat', 'postcode' => 13002]);
+        $route = $this->router->generate('app_bailleur', ['name' => 'habitat', 'inseecode' => 13002]);
 
         $this->client->request('GET', $route);
         $response = json_decode($this->client->getResponse()->getContent(), true);
@@ -34,12 +34,12 @@ class BailleurControllerTest extends WebTestCase
 
     public function testSearchTerms(): void
     {
-        $routeFirst = $this->router->generate('app_bailleur', ['name' => 'habitat 13', 'postcode' => 13002]);
+        $routeFirst = $this->router->generate('app_bailleur', ['name' => 'habitat 13', 'inseecode' => 13002]);
 
         $this->client->request('GET', $routeFirst);
         $responseFirst = json_decode($this->client->getResponse()->getContent(), true);
 
-        $routeSecond = $this->router->generate('app_bailleur', ['name' => '13 habitat', 'postcode' => 13002]);
+        $routeSecond = $this->router->generate('app_bailleur', ['name' => '13 habitat', 'inseecode' => 13002]);
         $this->client->request('GET', $routeSecond);
         $responseSecond = json_decode($this->client->getResponse()->getContent(), true);
 
@@ -48,7 +48,7 @@ class BailleurControllerTest extends WebTestCase
 
     public function testSearchBailleursSanitized(): void
     {
-        $route = $this->router->generate('app_bailleur', ['name' => 'IÉ', 'postcode' => 30100, 'sanitize' => true]);
+        $route = $this->router->generate('app_bailleur', ['name' => 'IÉ', 'inseecode' => 30100, 'sanitize' => true]);
 
         $this->client->request('GET', $route);
         $response = json_decode($this->client->getResponse()->getContent(), true);
@@ -60,7 +60,7 @@ class BailleurControllerTest extends WebTestCase
 
     public function testSearchBailleursRadies(): void
     {
-        $route = $this->router->generate('app_bailleur', ['name' => 'rad', 'postcode' => 13002]);
+        $route = $this->router->generate('app_bailleur', ['name' => 'rad', 'inseecode' => 13002]);
 
         $this->client->request('GET', $route);
         $response = json_decode($this->client->getResponse()->getContent(), true);
@@ -72,12 +72,12 @@ class BailleurControllerTest extends WebTestCase
 
     public function testSearchTermsSanitized(): void
     {
-        $routeFirst = $this->router->generate('app_bailleur', ['name' => 'habitat 13', 'postcode' => 13002, 'sanitize' => true]);
+        $routeFirst = $this->router->generate('app_bailleur', ['name' => 'habitat 13', 'inseecode' => 13002, 'sanitize' => true]);
 
         $this->client->request('GET', $routeFirst);
         $responseFirst = json_decode($this->client->getResponse()->getContent(), true);
 
-        $routeSecond = $this->router->generate('app_bailleur', ['name' => '13 habitat', 'postcode' => 13002, 'sanitize' => true]);
+        $routeSecond = $this->router->generate('app_bailleur', ['name' => '13 habitat', 'inseecode' => 13002, 'sanitize' => true]);
         $this->client->request('GET', $routeSecond);
         $responseSecond = json_decode($this->client->getResponse()->getContent(), true);
 

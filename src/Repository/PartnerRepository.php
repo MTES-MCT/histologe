@@ -49,6 +49,7 @@ class PartnerRepository extends ServiceEntityRepository
         return $this->getPartners(
             $searchPartner->getPage(),
             $maxResult,
+            $searchPartner->getUser(),
             $searchPartner->getTerritory(),
             $searchPartner->getPartnerType(),
             $searchPartner->getQueryPartner(),
@@ -59,6 +60,7 @@ class PartnerRepository extends ServiceEntityRepository
     public function getPartners(
         int $page,
         int $maxResult,
+        User $user,
         ?Territory $territory,
         ?PartnerType $type,
         ?string $filterTerms,
@@ -68,6 +70,11 @@ class PartnerRepository extends ServiceEntityRepository
         $queryBuilder->addSelect('z')
             ->leftJoin('p.zones', 'z')
             ->leftJoin('p.excludedZones', 'ez');
+
+        if (!$user->isSuperAdmin() && !$territory) {
+            $queryBuilder->andWhere('p.territory IN (:territories)')
+                ->setParameter('territories', $user->getPartnersTerritories());
+        }
 
         if (!empty($type)) {
             $queryBuilder

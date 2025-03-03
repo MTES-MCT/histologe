@@ -15,6 +15,7 @@ class AutoAffectationRuleControllerTest extends WebTestCase
 {
     use SessionHelper;
 
+    private const int DEPT_93_ID = 95;
     private ?KernelBrowser $client = null;
     private UserRepository $userRepository;
     private AutoAffectationRuleRepository $autoAffectationRuleRepository;
@@ -64,7 +65,7 @@ class AutoAffectationRuleControllerTest extends WebTestCase
     public function testAutoAffectationRuleEditFormSubmit(): void
     {
         /** @var AutoAffectationRule $autoAffectationRule */
-        $autoAffectationRule = $this->autoAffectationRuleRepository->findOneBy(['territory' => 94]);
+        $autoAffectationRule = $this->autoAffectationRuleRepository->findOneBy(['territory' => self::DEPT_93_ID]);
 
         $route = $this->router->generate('back_auto_affectation_rule_edit', ['id' => $autoAffectationRule->getId()]);
         $this->client->request('GET', $route);
@@ -72,7 +73,7 @@ class AutoAffectationRuleControllerTest extends WebTestCase
         $this->client->submitForm(
             'Enregistrer',
             [
-                'auto_affectation_rule[territory]' => 94,
+                'auto_affectation_rule[territory]' => self::DEPT_93_ID,
                 'auto_affectation_rule[partnerType]' => PartnerType::ARS->value,
                 'auto_affectation_rule[profileDeclarant]' => 'occupant',
                 'auto_affectation_rule[parc]' => 'all',
@@ -89,7 +90,7 @@ class AutoAffectationRuleControllerTest extends WebTestCase
     public function testDeleteAutoAffectationRule()
     {
         /** @var AutoAffectationRule $autoAffectationRule */
-        $autoAffectationRule = $this->autoAffectationRuleRepository->findOneBy(['territory' => 94]);
+        $autoAffectationRule = $this->autoAffectationRuleRepository->findOneBy(['territory' => self::DEPT_93_ID]);
 
         $route = $this->router->generate('back_auto_affectation_rule_delete');
         $this->client->request(

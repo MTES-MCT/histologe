@@ -45,11 +45,11 @@ class ZipCodeProviderTest extends KernelTestCase
             $this->zipcodeProvider->getTerritoryByInseeCode('13002')->getZip()
         );
         $this->assertEquals(
-            '69',
+            '69A',
             $this->zipcodeProvider->getTerritoryByInseeCode('69123')->getZip()
         );
         $this->assertEquals(
-            '69A',
+            '69',
             $this->zipcodeProvider->getTerritoryByInseeCode('69060')->getZip()
         );
     }

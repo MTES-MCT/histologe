@@ -23,6 +23,7 @@ use App\Service\Interconnection\Idoss\IdossService;
 use App\Service\ListFilters\SearchArchivedSignalement;
 use App\Service\ListFilters\SearchDraft;
 use App\Service\Signalement\SearchFilter;
+use App\Service\Signalement\ZipcodeProvider;
 use App\Service\Statistics\CriticitePercentStatisticProvider;
 use App\Utils\CommuneHelper;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
@@ -262,8 +263,11 @@ class SignalementRepository extends ServiceEntityRepository
         if ($removeImported) {
             $qb->andWhere('s.isImported IS NULL OR s.isImported = 0');
         }
-
-        if ($territory) {
+        if ($territory && ZipcodeProvider::RHONE_CODE_DEPARTMENT_69 === $territory->getZip()) {
+            $qb->innerJoin('s.territory', 't')
+                ->andWhere('t.zip IN (:zipcodes)')
+                ->setParameter('zipcodes', [ZipcodeProvider::RHONE_CODE_DEPARTMENT_69, ZipcodeProvider::METROPOLE_LYON_CODE_DEPARTMENT_69A]);
+        } elseif ($territory) {
             $qb->andWhere('s.territory = :territory')->setParameter('territory', $territory);
         }
         if ($year) {
