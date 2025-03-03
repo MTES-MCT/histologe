@@ -72,7 +72,26 @@ class PartnerRepository extends ServiceEntityRepository
         $queryBuilder = $this->getPartnersQueryBuilder($territory);
         $queryBuilder->addSelect('z')
             ->leftJoin('p.zones', 'z')
-            ->leftJoin('p.excludedZones', 'ez');
+            ->leftJoin('p.excludedZones', 'ez')
+            ->leftJoin('p.userPartners', 'up')
+            ->leftJoin('up.user', 'u');
+
+        $queryBuilder->select('p');
+        $queryBuilder->addSelect(
+            '(CASE
+                WHEN p.email IS NOT NULL THEN 1
+                WHEN EXISTS (
+                    SELECT 1
+                    FROM App\Entity\UserPartner up2
+                    JOIN up2.user u2
+                    WHERE up2.partner = p
+                    AND u2.email IS NOT NULL
+                    AND u2.statut = 1
+                    AND u2.isMailingActive = 1
+                ) THEN 1
+                ELSE 0
+            END) AS isNotifiable'
+        );
 
         if (!$user->isSuperAdmin() && !$territory) {
             $queryBuilder->andWhere('p.territory IN (:territories)')
@@ -80,29 +99,9 @@ class PartnerRepository extends ServiceEntityRepository
         }
 
         if (isset($searchPartner) && $searchPartner->getIsNotNotifiable()) {
-            $queryBuilder
-            ->leftJoin('p.userPartners', 'up')
-            ->leftJoin('up.user', 'u')
-            ->andWhere('p.email IS NULL') // Pas d'email générique
-            ->andWhere(
-                $queryBuilder->expr()->orX(
-                    'up.id IS NULL', // Pas d'utilisateur lié
-                    $queryBuilder->expr()->not(
-                        $queryBuilder->expr()->exists(
-                            $this->createQueryBuilder('p2')
-                                ->select('1')
-                                ->leftJoin('p2.userPartners', 'up2')
-                                ->leftJoin('up2.user', 'u2')
-                                ->where('p2.id = p.id')
-                                ->andWhere('u2.email IS NOT NULL') // L'utilisateur a un email
-                                ->andWhere('u2.statut = 1') // L'utilisateur est actif
-                                ->andWhere('u2.isMailingActive = 1') // L'utilisateur accepte les mails
-                                ->getDQL()
-                        )
-                    )
-                )
-            );
+            $queryBuilder->andHaving('isNotifiable = 0');
         }
+
         if (!empty($type)) {
             $queryBuilder
                 ->andWhere('p.type = :type')

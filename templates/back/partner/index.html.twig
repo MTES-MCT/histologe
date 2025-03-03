@@ -74,11 +74,14 @@
             <th scope="col">Compétences</th>
             <th scope="col">Codes INSEE</th>
             <th scope="col">Zones</th>
+            <th scope="col">Notifiable</th>
             <th scope="col" class="fr-text--right">Actions</th>
         {% endset %}
 
         {% set tableBody %}
             {% for partner in partners %}
+                {% set isNotifiable = partner['isNotifiable'] %}
+                {% set partner = partner[0] %}
                 <tr class="partner-row">
                     <td>{{ partner.id }}</td>
                     {% if is_granted('ROLE_ADMIN') or (is_granted('ROLE_ADMIN_TERRITORY') and app.user.userPartners|length > 1) %}
@@ -115,6 +118,13 @@
                             {% endfor %}
                         {% else %}
                             /
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if isNotifiable %}
+                            <div class="fr-badge fr-badge--success fr-badge--no-icon fr-mb-1v">oui</div>
+                        {% else %}
+                            <div class="fr-badge fr-badge--error fr-badge--no-icon fr-mb-1v">non</div>
                         {% endif %}
                     </td>
                     <td class="fr-text--right fr-ws-nowrap">
