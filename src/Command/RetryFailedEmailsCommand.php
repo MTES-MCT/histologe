@@ -56,9 +56,16 @@ class RetryFailedEmailsCommand extends Command
                 )
             ;
 
+            if (!$failedEmail->isRecipientVisible() && isset($failedEmail->getReplyTo()[0])) {
+                $emailMessage->addTo($emailMessage->getReplyTo()[0]);
+            }
             foreach ($failedEmail->getToEmail() as $toEmail) {
-                if ('NC' !== $toEmail) {
-                    $toEmail && $emailMessage->addTo($toEmail);
+                if ($toEmail && 'NC' !== $toEmail) {
+                    if ($failedEmail->isRecipientVisible()) {
+                        $emailMessage->addTo($toEmail);
+                    } else {
+                        $emailMessage->addBcc($toEmail);
+                    }
                 }
             }
             if (

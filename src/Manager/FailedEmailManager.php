@@ -29,6 +29,7 @@ class FailedEmailManager extends AbstractManager
             ->setFromEmail($message->getFrom()[0]->getAddress() ?? '')
             ->setFromFullname($message->getFrom()[0]->getName())
             ->setReplyTo($replyTo)
+            ->setIsRecipientVisible($notificationMail->isRecipientVisible())
             ->setSubject($message->getSubject())
             ->setContext($message->getContext())
             ->setNotifyUsager($notifyUsager)

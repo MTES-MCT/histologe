@@ -52,6 +52,9 @@ class FailedEmail
     #[ORM\Column(type: 'datetime_immutable', nullable: true)]
     private ?\DateTimeImmutable $lastAttemptAt;
 
+    #[ORM\Column]
+    private ?bool $isRecipientVisible = null;
+
     public function __construct()
     {
         $this->createdAt = new \DateTimeImmutable();
@@ -221,6 +224,18 @@ class FailedEmail
     public function setLastAttemptAt(?\DateTimeImmutable $lastAttemptAt): static
     {
         $this->lastAttemptAt = $lastAttemptAt;
+
+        return $this;
+    }
+
+    public function isRecipientVisible(): ?bool
+    {
+        return $this->isRecipientVisible;
+    }
+
+    public function setIsRecipientVisible(bool $isRecipientVisible): static
+    {
+        $this->isRecipientVisible = $isRecipientVisible;
 
         return $this;
     }
