@@ -23,7 +23,6 @@ class FailedEmailManager extends AbstractManager
         string $replyTo,
         bool $notifyUsager,
     ): FailedEmail {
-        $notificationMail->isRecipientVisible();
         $failedEmail = (new FailedEmail())
             ->setType($notificationMail->getTypeName())
             ->setToEmail($notificationMail->getEmails())
