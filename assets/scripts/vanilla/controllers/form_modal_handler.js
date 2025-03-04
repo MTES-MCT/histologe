@@ -82,7 +82,8 @@ async function submitPayload (formElement) {
             messageError = messageError + error
           })
           pElement.innerHTML = messageError
-          inputElement.insertAdjacentElement('afterend', pElement)
+
+          inputElement.parentElement.appendChild(pElement)
         }
         if (firstErrorElement) {
           inputElement.focus()
