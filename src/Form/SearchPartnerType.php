@@ -74,8 +74,7 @@ class SearchPartnerType extends AbstractType
                 'class' => 'fr-toggle__label',
             ],
             'attr' => [
-                'class' => 'fr-toggle__input',
-                'onchange' => 'this.form.submit()',
+                'class' => 'fr-toggle__input fr-auto-submit',
             ],
             'required' => false,
             'label' => 'N\'afficher que les partenaires non-notifiables',
