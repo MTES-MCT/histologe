@@ -15,7 +15,6 @@ use App\Service\ListFilters\SearchPartner;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\DBAL\Exception;
 use Doctrine\ORM\NonUniqueResultException;
-use Doctrine\ORM\Query\Expr\Join;
 use Doctrine\ORM\Query\QueryException;
 use Doctrine\ORM\QueryBuilder;
 use Doctrine\ORM\Tools\Pagination\Paginator;
@@ -137,19 +136,34 @@ class PartnerRepository extends ServiceEntityRepository
     public function countPartnerNonNotifiables(array $territories): CountPartner
     {
         $queryBuilder = $this->createQueryBuilder('p')
-            ->select('COUNT(DISTINCT p.id) as count');
-
-        // Jointures nécessaires
-        $queryBuilder
-            ->leftJoin('p.userPartners', 'up', Join::WITH, 'up.partner = p.id')
+            ->select('COUNT(DISTINCT p.id) as count')
+            ->leftJoin('p.userPartners', 'up')
             ->leftJoin('up.user', 'u');
 
         // Filtre sur les partenaires non notifiables
+        $expr = $queryBuilder->expr();
         $queryBuilder
-            ->andWhere('p.email IS NULL')
-            ->andWhere('up.id IS NULL OR (u.email IS NULL OR u.statut != 1 OR u.isMailingActive = 0)');
+            ->where('p.email IS NULL') // Pas d'email générique
+            ->andWhere(
+                $expr->orX(
+                    'up.id IS NULL', // Aucun utilisateur lié
+                    $expr->not(
+                        $expr->exists(
+                            $this->createQueryBuilder('p2')
+                                ->select('1')
+                                ->leftJoin('p2.userPartners', 'up2')
+                                ->leftJoin('up2.user', 'u2')
+                                ->where('p2.id = p.id')
+                                ->andWhere('u2.email IS NOT NULL') // L'utilisateur a un email
+                                ->andWhere('u2.statut = 1') // L'utilisateur est actif
+                                ->andWhere('u2.isMailingActive = 1') // Accepte les emails
+                                ->getDQL()
+                        )
+                    )
+                )
+            );
 
-        // Filtrer par territoires si précisés
+        // Filtrer par territoires si précisé
         if (!empty($territories)) {
             $queryBuilder
                 ->andWhere('p.territory IN (:territories)')
