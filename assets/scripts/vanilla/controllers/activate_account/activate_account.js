@@ -10,6 +10,9 @@ document?.querySelectorAll('.fr-password-toggle')?.forEach(pwdToggle => {
   })
 })
 document?.querySelector('form[name="login-creation-mdp-form"]')?.querySelectorAll('[name^="password"]').forEach(pwd => {
+  if (pwd.name === 'password-current') {
+    return
+  }
   pwd.addEventListener('input', canSubmitFormReinitPassword)
 })
 document?.querySelector('form[name="login-creation-mdp-form"]')?.addEventListener('submit', (event) => {
@@ -18,7 +21,7 @@ document?.querySelector('form[name="login-creation-mdp-form"]')?.addEventListene
   if (modalCgu) {
     dsfr(modalCgu).modal.conceal()
   }
-  if (canSubmitFormReinitPassword()) {
+  if (canSubmitFormReinitPassword() && document?.querySelector('form[name="login-creation-mdp-form"] #submitter')) {
     event.target.submit()
   }
 })
@@ -27,7 +30,7 @@ function canSubmitFormReinitPassword () {
   const pass = document?.querySelector('form[name="login-creation-mdp-form"] #login-password').value
   const repeat = document?.querySelector('form[name="login-creation-mdp-form"] #login-password-repeat').value
   const pwdMatchError = document?.querySelector('form[name="login-creation-mdp-form"] #password-match-error')
-  const submitBtn = document?.querySelector('form[name="login-creation-mdp-form"] #submitter')
+  const submitBtn = document?.querySelector('form[name="login-creation-mdp-form"] #submitter') ?? document?.querySelector('#fr-modal-profil-edit-password #submitter')
   const messageLength = document?.querySelector('form[name="login-creation-mdp-form"] #password-input-message-info-length')
   const messageMaj = document?.querySelector('form[name="login-creation-mdp-form"] #password-input-message-info-maj')
   const messageMin = document?.querySelector('form[name="login-creation-mdp-form"] #password-input-message-info-min')

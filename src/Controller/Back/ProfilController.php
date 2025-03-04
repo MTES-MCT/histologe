@@ -14,6 +14,7 @@ use App\Service\Mailer\NotificationMailerType;
 use App\Service\Security\FileScanner;
 use App\Service\UploadHandlerService;
 use App\Validator\EmailFormatValidator;
+use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ManagerRegistry;
 use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -21,6 +22,7 @@ use Symfony\Component\HttpFoundation\File\Exception\FileException;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\PasswordHasher\Hasher\PasswordHasherFactoryInterface;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Symfony\Component\Validator\Constraints as Assert;
@@ -264,6 +266,8 @@ class ProfilController extends AbstractController
         UserManager $userManager,
         ValidatorInterface $validator,
         NotificationMailerRegistry $notificationMailerRegistry,
+        PasswordHasherFactoryInterface $passwordHasherFactory,
+        EntityManagerInterface $entityManager,
     ): Response {
         /** @var User $user */
         $user = $this->getUser();
@@ -272,41 +276,43 @@ class ProfilController extends AbstractController
         if ($request->isMethod('POST')
             && $this->isCsrfTokenValid('profil_edit_password', $payload['_token'])
         ) {
+            $errorMessages = [];
+            $passwordCurrent = $payload['password-current'];
             $password = $payload['password'];
             $passwordRepeat = $payload['password-repeat'];
-            if ('' === $password) {
-                $this->addFlash('error', 'Ce champ est obligatoire.');
 
-                return $this->redirectToRoute('back_profil', [], Response::HTTP_SEE_OTHER);
+            if (!$passwordHasherFactory->getPasswordHasher($user)->verify($user->getPassword(), $passwordCurrent)) {
+                $errorMessages['errors']['password-current']['errors'][] = 'Le mot de passe ne correspond pas à celui enregistré.';
+            }
+            if ('' === $password) {
+                $errorMessages['errors']['password']['errors'][] = 'Ce champ est obligatoire.';
             }
             if ($password !== $passwordRepeat) {
-                $this->addFlash('error', 'Les mots de passes renseignés doivent être identiques.');
-
-                return $this->redirectToRoute('back_profil', [], Response::HTTP_SEE_OTHER);
+                $errorMessages['errors']['password-repeat']['errors'][] = 'Les mots de passes renseignés doivent être identiques.';
             }
             if ($password === $user->getEmail()) {
-                $this->addFlash('error', 'Le mot de passe ne doit pas être votre e-mail.');
-
-                return $this->redirectToRoute('back_profil', [], Response::HTTP_SEE_OTHER);
+                $errorMessages['errors']['password']['errors'][] = 'Le mot de passe ne doit pas être votre e-mail.';
             }
 
             $oldPassword = $user->getPassword();
             $user->setPassword($password);
-            $errors = $validator->validate($user, null, ['password']);
+            $violations = $validator->validate($user, null, ['password']);
             $user->setPassword($oldPassword);
-            if (\count($errors) > 0) {
-                $errorMessage = '<ul>';
-                foreach ($errors as $error) {
-                    $errorMessage .= '<li>'.$error->getMessage().'</li>';
+            if (\count($violations)) {
+                foreach ($violations as $violation) {
+                    $errorMessages['errors'][$violation->getPropertyPath()]['errors'][] = $violation->getMessage();
                 }
-                $errorMessage .= '</ul>';
-                $this->addFlash('error error-raw', $errorMessage);
-
-                return $this->redirectToRoute('back_profil', [], Response::HTTP_SEE_OTHER);
             }
+            if (\count($errorMessages)) {
+                $response = ['code' => Response::HTTP_BAD_REQUEST];
+                $response = [...$response, ...$errorMessages];
+
+                return $this->json($response, $response['code']);
+            }
+
             $user = $userManager->resetPassword($user, $password);
-            $payload['password'] = $payload['password-repeat'] = null;
-            $password = $passwordRepeat = $oldPassword = null;
+            $payload['password'] = $payload['password-repeat'] = $payload['password-current'] = null;
+            $password = $passwordRepeat = $oldPassword = $passwordCurrent = null;
 
             $notificationMailerRegistry->send(
                 new NotificationMail(
@@ -317,12 +323,14 @@ class ProfilController extends AbstractController
             );
 
             $this->addFlash('success', 'Votre mot de passe a bien été modifié.');
-
-            return $this->redirectToRoute('back_profil', [], Response::HTTP_SEE_OTHER);
+            $response = ['code' => Response::HTTP_OK];
+        } else {
+            $response = [
+                'code' => Response::HTTP_UNAUTHORIZED,
+                'message' => self::ERROR_MSG,
+            ];
         }
 
-        $this->addFlash('error', self::ERROR_MSG);
-
-        return $this->redirectToRoute('back_profil', [], Response::HTTP_SEE_OTHER);
+        return $this->json($response, $response['code']);
     }
 }

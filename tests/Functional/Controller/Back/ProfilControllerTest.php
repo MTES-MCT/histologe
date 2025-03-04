@@ -557,16 +557,14 @@ class ProfilControllerTest extends WebTestCase
         $route = $this->router->generate('back_profil_edit_password');
         $this->client->request('POST', $route, [
             '_token' => $csrfToken,
+            'password-current' => 'histologe',
             'password' => 'NewPassword!123',
             'password-repeat' => 'NewPassword!123',
         ]);
         $this->assertEmailCount(1);
 
-        $this->assertResponseRedirects($this->router->generate('back_profil'));
-        $this->client->followRedirect();
-
-        $this->assertSelectorExists('.fr-alert--success p');
-        $this->assertSelectorTextContains('.fr-alert--success p', 'Votre mot de passe a bien été modifié.');
+        $this->assertResponseIsSuccessful();
+        $this->assertJson(json_encode(['code' => Response::HTTP_OK]));
 
         $this->assertTrue($this->client->getContainer()->get('security.password_hasher')
             ->isPasswordValid($this->user, 'NewPassword!123'));
@@ -579,16 +577,21 @@ class ProfilControllerTest extends WebTestCase
         $route = $this->router->generate('back_profil_edit_password');
         $this->client->request('POST', $route, [
             '_token' => $csrfToken,
+            'password-current' => 'histologe',
             'password' => 'NewPassword!123',
             'password-repeat' => 'DifferentPassword!456',
         ]);
 
         $this->assertEmailCount(0);
-        $this->assertResponseRedirects($this->router->generate('back_profil'));
-        $this->client->followRedirect();
-
-        $this->assertSelectorExists('.fr-alert--error p');
-        $this->assertSelectorTextContains('.fr-alert--error p', 'Les mots de passes renseignés doivent être identiques.');
+        $this->assertResponseStatusCodeSame(Response::HTTP_BAD_REQUEST);
+        $this->assertJson(json_encode([
+            'code' => Response::HTTP_BAD_REQUEST,
+            'errors' => [
+                'password-repeat' => [
+                    'errors' => ['Les mots de passes renseignés doivent être identiques.'],
+                ],
+            ],
+        ]));
     }
 
     public function testEditPasswordEmpty(): void
@@ -598,16 +601,21 @@ class ProfilControllerTest extends WebTestCase
         $route = $this->router->generate('back_profil_edit_password');
         $this->client->request('POST', $route, [
             '_token' => $csrfToken,
+            'password-current' => 'histologe',
             'password' => '',
             'password-repeat' => '',
         ]);
 
         $this->assertEmailCount(0);
-        $this->assertResponseRedirects($this->router->generate('back_profil'));
-        $this->client->followRedirect();
-
-        $this->assertSelectorExists('.fr-alert--error p');
-        $this->assertSelectorTextContains('.fr-alert--error p', 'Ce champ est obligatoire.');
+        $this->assertResponseStatusCodeSame(Response::HTTP_BAD_REQUEST);
+        $this->assertJson(json_encode([
+            'code' => Response::HTTP_BAD_REQUEST,
+            'errors' => [
+                'password' => [
+                    'errors' => ['Ce champ est obligatoire.'],
+                ],
+            ],
+        ]));
     }
 
     public function testEditPasswordBadFormat(): void
@@ -617,15 +625,20 @@ class ProfilControllerTest extends WebTestCase
         $route = $this->router->generate('back_profil_edit_password');
         $this->client->request('POST', $route, [
             '_token' => $csrfToken,
+            'password-current' => 'histologe',
             'password' => 'test',
             'password-repeat' => 'test',
         ]);
         $this->assertEmailCount(0);
-        $this->assertResponseRedirects($this->router->generate('back_profil'));
-        $this->client->followRedirect();
-
-        $this->assertSelectorExists('.fr-alert--error');
-        $this->assertSelectorTextContains('.fr-alert--error', 'Le mot de passe doit contenir au moins 12 caractères.Le mot de passe doit contenir au moins une lettre majuscule.Le mot de passe doit contenir au moins un chiffre.Le mot de passe doit contenir au moins un caractère spécial.');
+        $this->assertResponseStatusCodeSame(Response::HTTP_BAD_REQUEST);
+        $this->assertJson(json_encode([
+            'code' => Response::HTTP_BAD_REQUEST,
+            'errors' => [
+                'password' => [
+                    'errors' => ['Le mot de passe doit contenir au moins 12 caractères.Le mot de passe doit contenir au moins une lettre majuscule.Le mot de passe doit contenir au moins un chiffre.Le mot de passe doit contenir au moins un caractère spécial.'],
+                ],
+            ],
+        ]));
     }
 
     public function testEditPasswordEqualToEmail(): void
@@ -635,15 +648,20 @@ class ProfilControllerTest extends WebTestCase
         $route = $this->router->generate('back_profil_edit_password');
         $this->client->request('POST', $route, [
             '_token' => $csrfToken,
+            'password-current' => 'histologe',
             'password' => 'admin-01@histologe.fr',
             'password-repeat' => 'admin-01@histologe.fr',
         ]);
         $this->assertEmailCount(0);
-        $this->assertResponseRedirects($this->router->generate('back_profil'));
-        $this->client->followRedirect();
-
-        $this->assertSelectorExists('.fr-alert--error');
-        $this->assertSelectorTextContains('.fr-alert--error', 'Le mot de passe ne doit pas être votre e-mail.');
+        $this->assertResponseStatusCodeSame(Response::HTTP_BAD_REQUEST);
+        $this->assertJson(json_encode([
+            'code' => Response::HTTP_BAD_REQUEST,
+            'errors' => [
+                'password' => [
+                    'errors' => ['Le mot de passe ne doit pas être votre e-mail.'],
+                ],
+            ],
+        ]));
     }
 
     public function testEditPasswordBadToken(): void
@@ -653,14 +671,38 @@ class ProfilControllerTest extends WebTestCase
         $route = $this->router->generate('back_profil_edit_password');
         $this->client->request('POST', $route, [
             '_token' => $csrfToken,
+            'password-current' => 'histologe',
             'password' => 'NewPassword!123',
             'password-repeat' => 'NewPassword!123',
         ]);
         $this->assertEmailCount(0);
-        $this->assertResponseRedirects($this->router->generate('back_profil'));
-        $this->client->followRedirect();
+        $this->assertResponseStatusCodeSame(Response::HTTP_UNAUTHORIZED);
+        $this->assertJson(json_encode([
+            'code' => Response::HTTP_UNAUTHORIZED,
+            'message' => 'Une erreur s\'est produite. Veuillez actualiser la page.',
+        ]));
+    }
 
-        $this->assertSelectorExists('.fr-alert--error');
-        $this->assertSelectorTextContains('.fr-alert--error', 'Une erreur s\'est produite. Veuillez actualiser la page.');
+    public function testEditPasswordBadCurrentPassword(): void
+    {
+        $csrfToken = $this->generateCsrfToken($this->client, 'wrong_token');
+
+        $route = $this->router->generate('back_profil_edit_password');
+        $this->client->request('POST', $route, [
+            '_token' => $csrfToken,
+            'password-current' => 'incorrect-password',
+            'password' => 'NewPassword!123',
+            'password-repeat' => 'NewPassword!123',
+        ]);
+        $this->assertEmailCount(0);
+        $this->assertResponseStatusCodeSame(Response::HTTP_UNAUTHORIZED);
+        $this->assertJson(json_encode([
+            'code' => Response::HTTP_BAD_REQUEST,
+            'errors' => [
+                'password-current' => [
+                    'errors' => ['Le mot de passe ne correspond pas à celui enregistré.'],
+                ],
+            ],
+        ]));
     }
 }
