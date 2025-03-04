@@ -145,6 +145,33 @@ function initBoFormSignalementLogement() {
     }
   }
 
+  const compositionLogementInputs = boFormSignalementLogement?.querySelectorAll('#signalement_draft_logement_pieceUnique input')
+  compositionLogementInputs.forEach((compositionLogementInput) => {
+    compositionLogementInput.addEventListener('click', (event) => {
+      refreshFromCompositionLogement()
+    })
+  })
+  refreshFromCompositionLogement()
+
+  function refreshFromCompositionLogement() {
+    let compositionLogementValue = ''
+    compositionLogementInputs.forEach((compositionLogementInput) => {
+      if (compositionLogementInput.checked) {
+        compositionLogementValue = compositionLogementInput.value
+      }
+    })
+    const nombrePieces = boFormSignalementLogement?.querySelector('#signalement_draft_logement_nombrePieces')
+    if ('plusieurs_pieces' === compositionLogementValue) {
+      nombrePieces.parentElement.classList.remove('fr-input-group--disabled')
+      nombrePieces.disabled = false
+    } else {
+      if ('piece_unique' === compositionLogementValue) {
+        nombrePieces.value = '1'
+      }
+      nombrePieces.parentElement.classList.add('fr-input-group--disabled')
+      nombrePieces.disabled = true
+    }
+  }
 
   const cuisineInputs = boFormSignalementLogement?.querySelectorAll('#signalement_draft_logement_cuisine input')
   cuisineInputs.forEach((cuisineInput) => {
