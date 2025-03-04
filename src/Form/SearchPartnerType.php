@@ -67,6 +67,12 @@ class SearchPartnerType extends AbstractType
         ]);
 
         $builder->add('isNotNotifiable', CheckboxType::class, [
+            'row_attr' => [
+                'class' => 'fr-toggle',
+            ],
+            'label_attr' => [
+                'class' => 'fr-toggle__label',
+            ],
             'attr' => [
                 'class' => 'fr-toggle__input',
                 'onchange' => 'this.form.submit()',

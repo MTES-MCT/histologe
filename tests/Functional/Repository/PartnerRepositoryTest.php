@@ -49,7 +49,7 @@ class PartnerRepositoryTest extends KernelTestCase
         $signalement = $signalementRepository->findOneBy(['reference' => '2022-1']);
 
         $partners = $this->partnerRepository->findByLocalization($signalement, false);
-        $this->assertCount(6, $partners);
+        $this->assertCount(7, $partners);
     }
 
     public function testFindPossiblePartnersForCOR69(): void
@@ -173,8 +173,11 @@ class PartnerRepositoryTest extends KernelTestCase
         $searchPartner->setIsNotNotifiable(true);
         $territory = $this->entityManager->getRepository(Territory::class)->findOneBy(['zip' => '13']);
         $partnerPaginator = $this->partnerRepository->getPartners(1, 50, $territory, null, null, $searchPartner);
+        foreach ($partnerPaginator as $partner) {
+            $this->assertFalse($partner[0]->receiveEmailNotifications());
+        }
 
-        $this->assertEquals(0, $partnerPaginator->count());
+        $this->assertEquals(1, $partnerPaginator->count());
     }
 
     public function testGetPartnerQueryBuilder(): void
