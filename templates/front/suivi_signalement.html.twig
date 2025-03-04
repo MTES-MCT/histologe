@@ -107,7 +107,8 @@
 		(signalement.statut is same as enum('App\\Entity\\Enum\\SignalementStatus').REFUSED or signalement.statut is same as enum('App\\Entity\\Enum\\SignalementStatus').ARCHIVED) 
 		and signalement.motifRefus is same as constant('App\\Entity\\Enum\\MotifRefus::DOUBLON') %}
 			<div class="fr-mb-1w">
-			{{ include ('_partials/_demande-lien-signalement.html.twig', {motifRefusDoublon: true}) }}
+			{% include '_partials/_demande-lien-signalement-intro.html.twig' with {motifRefusDoublon: true} %}
+			{% include '_partials/_demande-lien-signalement-container.html.twig' %}
 			</div>
 	{% endif %}
 
