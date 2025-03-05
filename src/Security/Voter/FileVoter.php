@@ -39,7 +39,7 @@ class FileVoter extends Voter
         if (SignalementStatus::CLOSED === $file->getSignalement()->getStatut() && $this->isAdminOrRTonHisTerritory($file, $user)) {
             return true;
         }
-        if (SignalementStatus::ACTIVE !== $file->getSignalement()->getStatut()) {
+        if (SignalementStatus::ACTIVE !== $file->getSignalement()->getStatut() && SignalementStatus::DRAFT !== $file->getSignalement()->getStatut()) {
             return false;
         }
         if ($this->isAdminOrRTonHisTerritory($file, $user)) {

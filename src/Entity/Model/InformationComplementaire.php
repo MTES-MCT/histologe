@@ -7,6 +7,7 @@ class InformationComplementaire
     public function __construct(
         private ?string $informationsComplementairesSituationOccupantsBeneficiaireRsa = null,
         private ?string $informationsComplementairesSituationOccupantsBeneficiaireFsl = null,
+        private ?string $informationsComplementairesSituationOccupantsTypeAllocation = null,
         private ?string $informationsComplementairesSituationOccupantsRevenuFiscal = null,
         private ?string $informationsComplementairesSituationOccupantsDateNaissance = null,
         private ?string $informationsComplementairesSituationOccupantsDemandeRelogement = null,
@@ -43,6 +44,18 @@ class InformationComplementaire
     public function setInformationsComplementairesSituationOccupantsBeneficiaireFsl(?string $informationsComplementairesSituationOccupantsBeneficiaireFsl): self
     {
         $this->informationsComplementairesSituationOccupantsBeneficiaireFsl = $informationsComplementairesSituationOccupantsBeneficiaireFsl;
+
+        return $this;
+    }
+
+    public function getInformationsComplementairesSituationOccupantsTypeAllocation(): ?string
+    {
+        return $this->informationsComplementairesSituationOccupantsTypeAllocation;
+    }
+
+    public function setInformationsComplementairesSituationOccupantsTypeAllocation(?string $informationsComplementairesSituationOccupantsTypeAllocation): self
+    {
+        $this->informationsComplementairesSituationOccupantsTypeAllocation = $informationsComplementairesSituationOccupantsTypeAllocation;
 
         return $this;
     }
@@ -208,6 +221,7 @@ class InformationComplementaire
         return [
             'informations_complementaires_situation_occupants_beneficiaire_rsa' => $this->informationsComplementairesSituationOccupantsBeneficiaireRsa,
             'informations_complementaires_situation_occupants_beneficiaire_fsl' => $this->informationsComplementairesSituationOccupantsBeneficiaireFsl,
+            'informations_complementaires_situation_occupants_type_allocation' => $this->informationsComplementairesSituationOccupantsTypeAllocation,
             'informations_complementaires_situation_occupants_revenu_fiscal' => $this->informationsComplementairesSituationOccupantsRevenuFiscal,
             'informations_complementaires_situation_occupants_date_naissance' => $this->informationsComplementairesSituationOccupantsDateNaissance,
             'informations_complementaires_situation_occupants_demande_relogement' => $this->informationsComplementairesSituationOccupantsDemandeRelogement,
