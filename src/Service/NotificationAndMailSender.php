@@ -114,7 +114,12 @@ class NotificationAndMailSender
         [$partnerRecipientsMail, $partnerRecipientsInAppNotif] = $this->getRecipientsPartners(isFilteredAffectationStatus: false);
 
         $this->sendMail($partnerRecipientsMail, NotificationMailerType::TYPE_SIGNALEMENT_CLOSED_TO_PARTNERS);
-        $this->createInAppNotifications($partnerRecipientsInAppNotif);
+
+        $recipientsAdminInAppNotif = $this->getRecipientsAdmin(null);
+        $recipientsInAppNotif = new ArrayCollection(
+            array_merge($partnerRecipientsInAppNotif->toArray(), $recipientsAdminInAppNotif->toArray())
+        );
+        $this->createInAppNotifications($recipientsInAppNotif);
     }
 
     private function createInAppNotifications(ArrayCollection $recipients)
@@ -180,7 +185,6 @@ class NotificationAndMailSender
     private function getRecipientsAdmin(?Territory $territory): ArrayCollection
     {
         $recipients = new ArrayCollection();
-
         $partner = $this->getPartnerFromSignalementInsee($this->signalement, $territory);
         $users = $this->userRepository->findActiveAdminsAndTerritoryAdmins($territory, $partner);
 
@@ -258,6 +262,9 @@ class NotificationAndMailSender
 
     private function getPartnerFromSignalementInsee(Signalement $signalement, ?Territory $territory): ?Partner
     {
+        if (!$territory) {
+            return null;
+        }
         $authorizedInsee = $this->parameterBag->get('authorized_codes_insee');
 
         if (isset($authorizedInsee[$territory->getZip()])) {

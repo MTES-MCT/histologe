@@ -3,12 +3,14 @@
 namespace App\Tests\Functional\EventSubscriber;
 
 use App\Entity\Enum\MotifCloture;
+use App\Entity\Notification;
 use App\Entity\Signalement;
 use App\Entity\User;
 use App\Event\SignalementClosedEvent;
 use App\EventSubscriber\SignalementClosedSubscriber;
 use App\Manager\SignalementManager;
 use App\Manager\SuiviManager;
+use App\Repository\NotificationRepository;
 use App\Repository\SignalementRepository;
 use App\Repository\UserRepository;
 use Doctrine\ORM\EntityManagerInterface;
@@ -21,6 +23,7 @@ class SignalementClosedSubscriberTest extends KernelTestCase
     private EntityManagerInterface $entityManager;
     private SignalementRepository $signalementRepository;
     private UserRepository $userRepository;
+    private NotificationRepository $notificationRepository;
 
     protected function setUp(): void
     {
@@ -28,6 +31,7 @@ class SignalementClosedSubscriberTest extends KernelTestCase
         $this->entityManager = $kernel->getContainer()->get('doctrine')->getManager();
         $this->signalementRepository = $this->entityManager->getRepository(Signalement::class);
         $this->userRepository = $this->entityManager->getRepository(User::class);
+        $this->notificationRepository = $this->entityManager->getRepository(Notification::class);
     }
 
     public function testEventSubscription(): void
@@ -38,7 +42,7 @@ class SignalementClosedSubscriberTest extends KernelTestCase
     public function testOnSignalementClosedForAllPartnerCallNotificationMethods()
     {
         /** @var Signalement $signalementClosed */
-        $signalementClosed = $this->signalementRepository->findOneBy(['reference' => '2022-2']);
+        $signalementClosed = $this->signalementRepository->findOneBy(['reference' => '2024-08']);
 
         $user = $this->userRepository->findOneBy(['statut' => User::STATUS_ACTIVE]);
 
@@ -64,6 +68,7 @@ class SignalementClosedSubscriberTest extends KernelTestCase
                 'closed_for' => 'all',
             ]
         );
+        $signalementClosed->setMotifCloture(MotifCloture::tryFrom('NON_DECENCE'));
 
         $dispatcher = new EventDispatcher();
         $dispatcher->addSubscriber($signalementClosedSubscriber);
@@ -72,5 +77,7 @@ class SignalementClosedSubscriberTest extends KernelTestCase
         $this->assertInstanceOf(Signalement::class, $event->getSignalement());
         $this->assertIsArray($event->getParams());
         $this->assertEmailCount(2);
+        $notifications = $this->notificationRepository->findBy(['signalement' => $signalementClosed]);
+        $this->assertCount(4, $notifications);
     }
 }
