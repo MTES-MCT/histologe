@@ -10,6 +10,7 @@ use App\Entity\Partner;
 use App\Entity\Signalement;
 use App\Entity\Territory;
 use App\Entity\User;
+use App\Entity\UserPartner;
 use App\Service\ListFilters\SearchArchivedPartner;
 use App\Service\ListFilters\SearchPartner;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
@@ -81,7 +82,7 @@ class PartnerRepository extends ServiceEntityRepository
                 WHEN p.email IS NOT NULL THEN 1
                 WHEN EXISTS (
                     SELECT 1
-                    FROM App\Entity\UserPartner up2
+                    FROM ' . UserPartner::class . ' up2
                     JOIN up2.user u2
                     WHERE up2.partner = p
                     AND u2.email IS NOT NULL
