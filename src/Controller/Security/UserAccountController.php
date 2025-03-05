@@ -87,8 +87,8 @@ class UserAccountController extends AbstractController
                 ]);
             }
 
-            $user = $userRepository->findOneBy(['email' => $email]);
-            if ($user && User::STATUS_ACTIVE === $user->getStatut() && !\in_array('ROLE_USAGER', $user->getRoles())) {
+            $user = $userRepository->findAgentByEmail($email);
+            if ($user && User::STATUS_ACTIVE === $user->getStatut()) {
                 $notificationMailerRegistry->send(
                     new NotificationMail(
                         type: NotificationMailerType::TYPE_LOST_PASSWORD,
