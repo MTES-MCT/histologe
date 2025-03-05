@@ -79,7 +79,7 @@ class SearchPartnerType extends AbstractType
             'required' => false,
             'label' => 'N\'afficher que les partenaires non-notifiables',
             'false_values' => ['0', null],
-            'empty_data' => '0', 
+            'empty_data' => '0',
         ]);
 
         $builder->add('partnerType', EnumType::class, [

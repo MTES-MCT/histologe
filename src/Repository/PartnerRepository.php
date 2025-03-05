@@ -82,7 +82,7 @@ class PartnerRepository extends ServiceEntityRepository
                 WHEN p.email IS NOT NULL THEN 1
                 WHEN EXISTS (
                     SELECT 1
-                    FROM ' . UserPartner::class . ' up2
+                    FROM '.UserPartner::class.' up2
                     JOIN up2.user u2
                     WHERE up2.partner = p
                     AND u2.email IS NOT NULL
