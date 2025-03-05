@@ -98,12 +98,14 @@
                                     <option value="{{ key }}">{{ value }}</option>
                                 {% endfor %}
                             </select>
+                            {% if criteres is defined %}
                             <select class="fr-select select-desordre" data-file-id="" id="select-desordre-to-clone">
                                 <option value="">Sélectionner un désordre</option>
                                 {% for key, value in criteres %}
                                     <option value="{{ key }}">{{ value }}</option>
                                 {% endfor %}
                             </select>
+                            {% endif %}
                         </div>
                     </div>
                     <div class="fr-modal__footer">
