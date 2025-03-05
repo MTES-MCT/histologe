@@ -17,7 +17,8 @@
 			<a href="{{ path('front_signalement') }}" class="fr-btn fr-btn--icon-left fr-arrow-up-line">Je dépose un signalement</a>
 		</section>
 		<section class="fr-container">
-			{% include '_partials/_demande-lien-signalement.html.twig' %}
+			{% include '_partials/_demande-lien-signalement-intro.html.twig' %}
+			{% include '_partials/_demande-lien-signalement-container.html.twig' %}
 		</section>
 		<section class="fr-container">
 			<h2 class="fr-mt-5w">J'ai une question sur {{ platform.name }}</h2>
