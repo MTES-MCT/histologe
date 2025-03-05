@@ -28,6 +28,7 @@ class InformationComplementaireFactory
         return new InformationComplementaire(
             informationsComplementairesSituationOccupantsBeneficiaireRsa: $data['informations_complementaires_situation_occupants_beneficiaire_rsa'] ?? null,
             informationsComplementairesSituationOccupantsBeneficiaireFsl: $data['informations_complementaires_situation_occupants_beneficiaire_fsl'] ?? null,
+            informationsComplementairesSituationOccupantsTypeAllocation: $data['informations_complementaires_situation_occupants_type_allocation'] ?? null,
             informationsComplementairesSituationOccupantsRevenuFiscal: $data['informations_complementaires_situation_occupants_revenu_fiscal'] ?? null,
             informationsComplementairesSituationOccupantsDateNaissance: $data['informations_complementaires_situation_occupants_date_naissance'] ?? null,
             informationsComplementairesSituationOccupantsDemandeRelogement: $data['informations_complementaires_situation_occupants_demande_relogement'] ?? null,

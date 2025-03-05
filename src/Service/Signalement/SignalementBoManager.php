@@ -173,21 +173,26 @@ class SignalementBoManager
         $typeCompositionLogement->setBailDpeDpe($form->get('dpe')->getData());
         $typeCompositionLogement->setBailDpeClasseEnergetique($form->get('classeEnergetique')->getData());
         $typeCompositionLogement->setBailDpeEtatDesLieux($form->get('etatDesLieux')->getData());
-        $typeCompositionLogement->setBailDpeDateEmmenagement($form->get('dateEntreeLogement')->getData());
+        if ($form->get('dateEntreeLogement')->getData()) {
+            $typeCompositionLogement->setBailDpeDateEmmenagement($form->get('dateEntreeLogement')->getData()->format('Y-m-d'));
+            $signalement->setDateEntree($form->get('dateEntreeLogement')->getData());
+        }
         $informationComplementaire->setInformationsComplementairesLogementMontantLoyer($form->get('montantLoyer')->getData());
         $informationComplementaire->setInformationsComplementairesSituationOccupantsLoyersPayes($form->get('payementLoyersAJour')->getData());
         if ('non' === $form->get('allocataire')->getData()) {
             $signalement->setIsAllocataire('0');
         } elseif (!empty($form->get('allocataire')->getData())) {
-            if ('caf' === $form->get('allocataire')->getData()) {
+            if ('caf' === $form->get('caisseAllocation')->getData()) {
                 $signalement->setIsAllocataire('caf');
-            } elseif ('msa' === $form->get('allocataire')->getData()) {
+            } elseif ('msa' === $form->get('caisseAllocation')->getData()) {
                 $signalement->setIsAllocataire('msa');
             } else {
                 $signalement->setIsAllocataire('1');
             }
         }
-        $signalement->setDateNaissanceOccupant($form->get('dateNaissanceAllocataire')->getData());
+        if (!empty($form->get('dateNaissanceAllocataire')->getData())) {
+            $signalement->setDateNaissanceOccupant(new \DateTimeImmutable($form->get('dateNaissanceAllocataire')->getData()->format('Y-m-d')));
+        }
         $signalement->setNumAllocataire($form->get('numeroAllocataire')->getData());
         $informationComplementaire->setInformationsComplementairesSituationOccupantsTypeAllocation($form->get('typeAllocation')->getData());
         $signalement->setMontantAllocation($form->get('montantAllocation')->getData());
@@ -199,7 +204,9 @@ class SignalementBoManager
         } elseif ('oui' === $form->get('proprietaireAverti')->getData()) {
             $signalement->setIsProprioAverti(true);
         }
-        $signalement->setProprioAvertiAt(new \DateTimeImmutable($form->get('dateProprietaireAverti')->getData()));
+        if (!empty($form->get('dateProprietaireAverti')->getData())) {
+            $signalement->setProprioAvertiAt(new \DateTimeImmutable($form->get('dateProprietaireAverti')->getData()->format('Y-m-d')));
+        }
         $informationProcedure->setInfoProcedureBailMoyen($form->get('moyenInformationProprietaire')->getData());
         $informationProcedure->setInfoProcedureBailReponse($form->get('reponseProprietaire')->getData());
         if ('non' === $form->get('demandeRelogement')->getData()) {

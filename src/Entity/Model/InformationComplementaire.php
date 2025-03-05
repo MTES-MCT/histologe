@@ -221,6 +221,7 @@ class InformationComplementaire
         return [
             'informations_complementaires_situation_occupants_beneficiaire_rsa' => $this->informationsComplementairesSituationOccupantsBeneficiaireRsa,
             'informations_complementaires_situation_occupants_beneficiaire_fsl' => $this->informationsComplementairesSituationOccupantsBeneficiaireFsl,
+            'informations_complementaires_situation_occupants_type_allocation' => $this->informationsComplementairesSituationOccupantsTypeAllocation,
             'informations_complementaires_situation_occupants_revenu_fiscal' => $this->informationsComplementairesSituationOccupantsRevenuFiscal,
             'informations_complementaires_situation_occupants_date_naissance' => $this->informationsComplementairesSituationOccupantsDateNaissance,
             'informations_complementaires_situation_occupants_demande_relogement' => $this->informationsComplementairesSituationOccupantsDemandeRelogement,

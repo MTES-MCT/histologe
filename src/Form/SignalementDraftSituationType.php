@@ -25,9 +25,9 @@ class SignalementDraftSituationType extends AbstractType
         $dpe = $signalement->getTypeCompositionLogement()->getBailDpeDpe();
         $classeEnergetique = $signalement->getTypeCompositionLogement()->getBailDpeClasseEnergetique();
         $etatDesLieux = $signalement->getTypeCompositionLogement()->getBailDpeEtatDesLieux();
-        $dateEntreeLogement = $signalement->getTypeCompositionLogement()->getBailDpeDateEmmenagement();
-        $montantLoyer = $signalement->getInformationComplementaire()->getInformationsComplementairesLogementMontantLoyer();
-        $payementLoyersAJour = $signalement->getInformationComplementaire()->getInformationsComplementairesSituationOccupantsLoyersPayes();
+        $dateEntreeLogement = $signalement->getTypeCompositionLogement()->getBailDpeDateEmmenagement() ? new \DateTime($signalement->getTypeCompositionLogement()->getBailDpeDateEmmenagement()) : null;
+        $montantLoyer = $signalement->getInformationComplementaire() ? $signalement->getInformationComplementaire()->getInformationsComplementairesLogementMontantLoyer() : null;
+        $payementLoyersAJour = $signalement->getInformationComplementaire() ? $signalement->getInformationComplementaire()->getInformationsComplementairesSituationOccupantsLoyersPayes() : '';
         $allocataire = '';
         if ('0' === $signalement->getIsAllocataire()) {
             $allocataire = 'non';
@@ -37,11 +37,11 @@ class SignalementDraftSituationType extends AbstractType
         $caisseAllocation = ('caf' === $signalement->getIsAllocataire() || 'msa' === $signalement->getIsAllocataire()) ? $signalement->getIsAllocataire() : '';
         $dateNaissanceAllocataire = $signalement->getDateNaissanceOccupant();
         $numeroAllocataire = $signalement->getNumAllocataire();
-        $typeAllocation = $signalement->getInformationComplementaire()->getInformationsComplementairesSituationOccupantsTypeAllocation();
+        $typeAllocation = $signalement->getInformationComplementaire() ? $signalement->getInformationComplementaire()->getInformationsComplementairesSituationOccupantsTypeAllocation() : '';
         $montantAllocation = $signalement->getMontantAllocation();
         $accompagnementTravailleurSocial = $signalement->getSituationFoyer() ? $signalement->getSituationFoyer()->getTravailleurSocialAccompagnement() : '';
-        $beneficiaireRSA = $signalement->getInformationComplementaire()->getInformationsComplementairesSituationOccupantsBeneficiaireRsa();
-        $beneficiaireFSL = $signalement->getInformationComplementaire()->getInformationsComplementairesSituationOccupantsBeneficiaireFsl();
+        $beneficiaireRSA = $signalement->getInformationComplementaire() ? $signalement->getInformationComplementaire()->getInformationsComplementairesSituationOccupantsBeneficiaireRsa() : '';
+        $beneficiaireFSL = $signalement->getInformationComplementaire() ? $signalement->getInformationComplementaire()->getInformationsComplementairesSituationOccupantsBeneficiaireFsl() : '';
         $proprietaireAverti = '';
         if (true === $signalement->getIsProprioAverti()) {
             $proprietaireAverti = 'oui';
