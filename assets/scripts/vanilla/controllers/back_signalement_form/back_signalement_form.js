@@ -41,6 +41,59 @@ function initBoFormSignalementSubmit(tabName) {
   })
 }
 
+function initRefreshFromRadio(tabName, radioName, listElements) {
+  const boFormSignalementTab = document?.querySelector('#bo-form-signalement-' + tabName)
+
+  const radioInputs = boFormSignalementTab?.querySelectorAll('#' +radioName+ ' input')
+  radioInputs.forEach((radioInput) => {
+    radioInput.addEventListener('click', (event) => {
+      refreshFromRadioInput()
+    })
+  })
+  refreshFromRadioInput()
+
+  function refreshFromRadioInput() {
+    let radioInputValue = ''
+    radioInputs.forEach((radioInput) => {
+      if (radioInput.checked) {
+        radioInputValue = radioInput.value
+      }
+    })
+
+    listElements.forEach((elementSelector) => {
+      refreshElementEnable(tabName, elementSelector, (radioInputValue === 'oui'))
+    })
+  }
+}
+
+function refreshElementEnable(tabName, elementSelector, isEnabled) {
+  const boFormSignalementTab = document?.querySelector('#bo-form-signalement-' + tabName)
+  const elementSelected = boFormSignalementTab?.querySelector(elementSelector)
+
+  if (isEnabled) {
+    elementSelected.parentElement.classList.remove('fr-input-group--disabled')
+    elementSelected.disabled = false
+    const elementSelectedInputs = elementSelected?.querySelectorAll('input')
+    if (elementSelectedInputs) {
+      elementSelectedInputs.forEach((elementSelectedInput) => {
+        elementSelectedInput.disabled = false
+      })
+    }
+
+  } else {
+    elementSelected.parentElement.classList.add('fr-input-group--disabled')
+    if (elementSelected.value) {
+      elementSelected.value = ''
+    }
+    elementSelected.disabled = true
+    const elementSelectedInputs = elementSelected?.querySelectorAll('input')
+    elementSelectedInputs.forEach((elementSelectedInput) => {
+      elementSelectedInput.checked = false
+      elementSelectedInput.disabled = true
+    })
+  }
+}
+
 if (document?.querySelector('#bo-form-signalement-adresse')) {
   initBoFormSignalementSubmit('adresse')
   initBoFormSignalementAdresse()
@@ -48,6 +101,10 @@ if (document?.querySelector('#bo-form-signalement-adresse')) {
 if (document?.querySelector('#bo-form-signalement-logement')) {
   initBoFormSignalementSubmit('logement')
   initBoFormSignalementLogement()
+}
+if (document?.querySelector('#bo-form-signalement-situation')) {
+  initBoFormSignalementSubmit('situation')
+  initBoFormSignalementSituation()
 }
 
 function initBoFormSignalementAdresse() {
@@ -108,41 +165,9 @@ function initBoFormSignalementLogement() {
       }
     })
 
-    const natureLogementAutre = boFormSignalementLogement?.querySelector('#signalement_draft_logement_natureLogementAutre')
-    if (natureLogementValue === 'autre') {
-      natureLogementAutre.parentElement.classList.remove('fr-input-group--disabled')
-      natureLogementAutre.disabled = false
-    } else {
-      natureLogementAutre.parentElement.classList.add('fr-input-group--disabled')
-      natureLogementAutre.disabled = true
-      natureLogementAutre.value = ''
-    }
-
-    const appartementEtage = boFormSignalementLogement?.querySelector('#signalement_draft_logement_appartementEtage')
-    const appartementEtageInputs = appartementEtage?.querySelectorAll('input')
-    const appartementAvecFenetres = boFormSignalementLogement?.querySelector('#signalement_draft_logement_appartementAvecFenetres')
-    const appartementAvecFenetresInputs = appartementAvecFenetres?.querySelectorAll('input')
-    if (natureLogementValue === 'appartement') {
-      appartementEtage?.parentElement.classList.remove('fr-input-group--disabled')
-      appartementEtageInputs.forEach((appartementEtageInput) => {
-        appartementEtageInput.disabled = false
-      })
-      appartementAvecFenetres.parentElement.classList.remove('fr-input-group--disabled')
-      appartementAvecFenetresInputs.forEach((appartementAvecFenetresInput) => {
-        appartementAvecFenetresInput.disabled = false
-      })
-    } else {
-      appartementEtage?.parentElement.classList.add('fr-input-group--disabled')
-      appartementEtageInputs.forEach((appartementEtageInput) => {
-        appartementEtageInput.checked = false
-        appartementEtageInput.disabled = true
-      })
-      appartementAvecFenetres.parentElement.classList.add('fr-input-group--disabled')
-      appartementAvecFenetresInputs.forEach((appartementAvecFenetresInput) => {
-        appartementAvecFenetresInput.checked = false
-        appartementAvecFenetresInput.disabled = true
-      })
-    }
+    refreshElementEnable('logement', '#signalement_draft_logement_natureLogementAutre', (natureLogementValue === 'autre'))
+    refreshElementEnable('logement', '#signalement_draft_logement_appartementEtage', (natureLogementValue === 'appartement'))
+    refreshElementEnable('logement', '#signalement_draft_logement_appartementAvecFenetres', (natureLogementValue === 'appartement'))
   }
 
   const compositionLogementInputs = boFormSignalementLogement?.querySelectorAll('#signalement_draft_logement_pieceUnique input')
@@ -160,17 +185,8 @@ function initBoFormSignalementLogement() {
         compositionLogementValue = compositionLogementInput.value
       }
     })
-    const nombrePieces = boFormSignalementLogement?.querySelector('#signalement_draft_logement_nombrePieces')
-    if ('plusieurs_pieces' === compositionLogementValue) {
-      nombrePieces.parentElement.classList.remove('fr-input-group--disabled')
-      nombrePieces.disabled = false
-    } else {
-      if ('piece_unique' === compositionLogementValue) {
-        nombrePieces.value = '1'
-      }
-      nombrePieces.parentElement.classList.add('fr-input-group--disabled')
-      nombrePieces.disabled = true
-    }
+
+    refreshElementEnable('logement', '#signalement_draft_logement_nombrePieces', (compositionLogementValue === 'plusieurs_pieces'))
   }
 
   const cuisineInputs = boFormSignalementLogement?.querySelectorAll('#signalement_draft_logement_cuisine input')
@@ -201,20 +217,37 @@ function initBoFormSignalementLogement() {
       }
     })
 
-    const toilettesCuisineMemePiece = boFormSignalementLogement?.querySelector('#signalement_draft_logement_toilettesCuisineMemePiece')
-    const toilettesCuisineMemePieceInputs = toilettesCuisineMemePiece?.querySelectorAll('input')
-    if (cuisineValue === 'oui' && toilettesValue === 'oui') {
-      toilettesCuisineMemePiece.parentElement.classList.remove('fr-input-group--disabled')
-      toilettesCuisineMemePieceInputs.forEach((toilettesCuisineMemePieceInput) => {
-        toilettesCuisineMemePieceInput.disabled = false
-      })
-
-    } else {
-      toilettesCuisineMemePiece.parentElement.classList.add('fr-input-group--disabled')
-      toilettesCuisineMemePieceInputs.forEach((toilettesCuisineMemePieceInput) => {
-        toilettesCuisineMemePieceInput.checked = false
-        toilettesCuisineMemePieceInput.disabled = true
-      })
-    }
+    refreshElementEnable('logement', '#signalement_draft_logement_toilettesCuisineMemePiece', (cuisineValue === 'oui' && toilettesValue === 'oui'))
   }
+}
+
+function initBoFormSignalementSituation() {
+  initRefreshFromRadio(
+    'situation',
+    'signalement_draft_situation_allocataire',
+    [
+      '#signalement_draft_situation_caisseAllocation',
+      '#signalement_draft_situation_dateNaissanceAllocataire',
+      '#signalement_draft_situation_numeroAllocataire',
+      '#signalement_draft_situation_typeAllocation',
+      '#signalement_draft_situation_montantAllocation',
+    ]
+  )
+  initRefreshFromRadio(
+    'situation',
+    'signalement_draft_situation_proprietaireAverti',
+    [
+      '#signalement_draft_situation_dateProprietaireAverti',
+      '#signalement_draft_situation_moyenInformationProprietaire',
+      '#signalement_draft_situation_reponseProprietaire',
+    ]
+  )
+  initRefreshFromRadio(
+    'situation',
+    'signalement_draft_situation_logementAssure',
+    [
+      '#signalement_draft_situation_assuranceContactee',
+      '#signalement_draft_situation_reponseAssurance',
+    ]
+  )
 }
