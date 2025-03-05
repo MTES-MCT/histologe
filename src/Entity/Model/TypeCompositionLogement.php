@@ -2,11 +2,15 @@
 
 namespace App\Entity\Model;
 
+use App\Entity\Enum\EtageType;
+
 class TypeCompositionLogement
 {
     public function __construct(
         private ?string $typeLogementNature = null,
         private ?string $typeLogementNatureAutrePrecision = null,
+        private ?string $typeLogementAppartementEtage = null,
+        private ?string $typeLogementAppartementAvecFenetres = null,
         private ?string $typeLogementRdc = null,
         private ?string $typeLogementDernierEtage = null,
         private ?string $typeLogementSousSolSansFenetre = null,
@@ -59,6 +63,35 @@ class TypeCompositionLogement
     public function setTypeLogementNatureAutrePrecision(?string $typeLogementNatureAutrePrecision): self
     {
         $this->typeLogementNatureAutrePrecision = $typeLogementNatureAutrePrecision;
+
+        return $this;
+    }
+
+    public function getTypeLogementAppartementEtage(): ?string
+    {
+        return $this->typeLogementAppartementEtage;
+    }
+
+    public function getTypeLogementAppartementEtageEnum(): ?EtageType
+    {
+        return EtageType::tryFrom($this->typeLogementAppartementEtage);
+    }
+
+    public function setTypeLogementAppartementEtage(?string $typeLogementAppartementEtage): self
+    {
+        $this->typeLogementAppartementEtage = $typeLogementAppartementEtage;
+
+        return $this;
+    }
+
+    public function getTypeLogementAppartementAvecFenetres(): ?string
+    {
+        return $this->typeLogementAppartementAvecFenetres;
+    }
+
+    public function setTypeLogementAppartementAvecFenetres(?string $typeLogementAppartementAvecFenetres): self
+    {
+        $this->typeLogementAppartementAvecFenetres = $typeLogementAppartementAvecFenetres;
 
         return $this;
     }
@@ -424,6 +457,8 @@ class TypeCompositionLogement
         return [
             'type_logement_nature' => $this->typeLogementNature,
             'type_logement_nature_autre_precision' => $this->typeLogementNatureAutrePrecision,
+            'type_logement_appartement_etage' => $this->typeLogementAppartementEtage,
+            'type_logement_appartement_avec_fenetres' => $this->typeLogementAppartementAvecFenetres,
             'type_logement_rdc' => $this->typeLogementRdc,
             'type_logement_dernier_etage' => $this->typeLogementDernierEtage,
             'type_logement_sous_sol_sans_fenetre' => $this->typeLogementSousSolSansFenetre,

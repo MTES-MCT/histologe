@@ -169,7 +169,7 @@ and signalement.profileDeclarant is not same as enum('App\\Entity\\Enum\\Profile
 	</h3>
 	<div class="fr-collapse" id="accordion-type-composition">
 		<ul>
-			<li> Nature du logement  :
+			<li>Nature du logement :
 				{{ signalement.natureLogement|capitalize }}
 				{% if signalement.typeCompositionLogement %}
 					{% if signalement.typeCompositionLogement.typeLogementNatureAutrePrecision %}
@@ -182,6 +182,12 @@ and signalement.profileDeclarant is not same as enum('App\\Entity\\Enum\\Profile
 					{% if signalement.typeCompositionLogement.typeLogementSousCombleSansFenetre == 'oui' %}, Combles sans fenêtres
 					{% endif %}
 				{% endif %}
+			</li>
+			<li>Etage :
+				{% include '_partials/signalement/signalement-typecomposition-etage.html.twig' %}
+			</li>
+			<li>Avec fenêtres :
+				{% include '_partials/signalement/signalement-typecomposition-fenetres.html.twig' %}
 			</li>
 			<li>Superficie en m² : {{ signalement.superficie }} m²</li>
 			{% if signalement.typeCompositionLogement %}

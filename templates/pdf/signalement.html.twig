@@ -163,25 +163,13 @@
                                     <b>Nombre de pièces à vivre :</b> {{ signalement.typeCompositionLogement.compositionLogementNbPieces }}
                                 </li>
                                 <li>
-                                    <b>RDC :</b>{{ signalement.typeCompositionLogement.typeLogementRdc }}
+                                    <b>Etage :</b>
+				                    {% include '_partials/signalement/signalement-typecomposition-etage.html.twig' %}
                                 </li>
                                 <li>
-                                    <b>Dernier étage :</b>{{ signalement.typeCompositionLogement.typeLogementDernierEtage }}
+                                    <b>Avec fenêtres :</b>
+		                            {% include '_partials/signalement/signalement-typecomposition-fenetres.html.twig' %}
                                 </li>
-                                {% if signalement.typeCompositionLogement.typeLogementDernierEtage is same as 'oui' %}
-                                    <li>
-                                        <b>Combles sans fenêtres :</b>
-                                        {{ signalement.typeCompositionLogement.typeLogementSousCombleSansFenetre}}
-                                        {% include '_partials/signalement/display_alert.html.twig' with { 'display': signalement.typeCompositionLogement.typeLogementSousCombleSansFenetre is same as 'oui' } %}
-                                    </li>
-
-                                {% elseif signalement.typeCompositionLogement.typeLogementRdc is not same as 'oui' and signalement.typeCompositionLogement.typeLogementDernierEtage is not same as 'oui' %}
-                                    <li>
-                                        <b>Sous-sol sans fenêtres :</b>
-                                        {{ signalement.typeCompositionLogement.typeLogementSousSolSansFenetre}}
-                                        {% include '_partials/signalement/display_alert.html.twig' with { 'display': signalement.typeCompositionLogement.typeLogementSousSolSansFenetre is same as 'oui' } %}
-                                    </li>    
-                                {% endif %}
                                 <li>
                                     <b>Au moins une des pièces à vivre > 9m² :</b>
                                     {{ signalement.typeCompositionLogement.typeLogementCommoditesPieceAVivre9m(false)}}

@@ -601,10 +601,8 @@ class SignalementManager extends AbstractManager
             ->setCompositionLogementSuperficie($compositionLogementRequest->getSuperficie())
             ->setCompositionLogementHauteur($compositionLogementRequest->getCompositionLogementHauteur())
             ->setCompositionLogementNbPieces($compositionLogementRequest->getCompositionLogementNbPieces())
-            ->setTypeLogementRdc($compositionLogementRequest->getTypeLogementRdc())
-            ->setTypeLogementDernierEtage($compositionLogementRequest->getTypeLogementDernierEtage())
-            ->setTypeLogementSousCombleSansFenetre($compositionLogementRequest->getTypeLogementSousCombleSansFenetre())
-            ->setTypeLogementSousSolSansFenetre($compositionLogementRequest->getTypeLogementSousSolSansFenetre())
+            ->setTypeLogementAppartementEtage($compositionLogementRequest->getEtage())
+            ->setTypeLogementAppartementAvecFenetres($compositionLogementRequest->getAvecFenetres())
             ->setTypeLogementCommoditesPieceAVivre9m(
                 $compositionLogementRequest->getTypeLogementCommoditesPieceAVivre9m()
             )

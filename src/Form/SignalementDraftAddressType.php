@@ -15,7 +15,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\Validator\Context\ExecutionContextInterface;
 
-class SignalementAddressType extends AbstractType
+class SignalementDraftAddressType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
@@ -44,7 +44,7 @@ class SignalementAddressType extends AbstractType
                 'attr' => [
                     'autocomplete' => 'off',
                     'data-fr-adresse-autocomplete' => 'true',
-                    'data-autocomplete-query-selector' => '#bo-form-signalement-address .fr-address-group',
+                    'data-autocomplete-query-selector' => '#bo-form-signalement-adresse .fr-address-group',
                 ],
             ])
             ->add('adresseOccupant', null, [
@@ -108,7 +108,7 @@ class SignalementAddressType extends AbstractType
                 ],
             ])
             ->add('occupationLogement', ChoiceType::class, [
-                'label' => 'Occupation du logement  <span class="text-required">*</span>',
+                'label' => 'Occupation du logement <span class="text-required">*</span>',
                 'label_html' => true,
                 'choices' => [
                     'Bail en cours' => 'bail_en_cours',

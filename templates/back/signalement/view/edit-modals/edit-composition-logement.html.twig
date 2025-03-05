@@ -91,46 +91,56 @@
                             </div>
 
                             <div class="fr-select-group">
-                                {% set typeLogementRdc = signalement.typeCompositionLogement ? signalement.typeCompositionLogement.typeLogementRdc : null %}
-                                <label class="fr-label" for="compositionLogementTypeLogementRdc">Est au RDC ?</label>
-                                <select class="fr-select" id="compositionLogementTypeLogementRdc" name="typeLogementRdc">
-                                    <option value="" {{ typeLogementRdc not in ['oui', 'non', 'nsp'] ? 'selected' : '' }}></option>
-                                    <option value="oui" {{ typeLogementRdc is same as 'oui' ? 'selected' : '' }}>Oui</option>
-                                    <option value="non" {{ typeLogementRdc is same as 'non' ? 'selected' : '' }}>Non</option>
-                                    <option value="nsp" {{ typeLogementRdc is same as 'nsp' ? 'selected' : '' }}>Je ne sais pas</option>
+                                {% set typeLogementAppartementEtage = '' %}
+                                {% if signalement.typeCompositionLogement %}               
+                                    {% if signalement.typeCompositionLogement.typeLogementAppartementEtage %}
+                                        {% set typeLogementAppartementEtage = signalement.typeCompositionLogement.typeLogementAppartementEtage %}
+                                    {% elseif signalement.typeCompositionLogement.typeLogementRdc is same as 'oui' %}
+                                        {% set typeLogementAppartementEtage = enum('App\\Entity\\Enum\\EtageType').RDC.value %}
+                                    {% elseif signalement.typeCompositionLogement.typeLogementDernierEtage is same as 'oui' %}
+                                        {% set typeLogementAppartementEtage = enum('App\\Entity\\Enum\\EtageType').DERNIER_ETAGE.value %}
+                                    {% elseif signalement.typeCompositionLogement.typeLogementSousSolSansFenetre is same as 'oui' %}
+                                        {% set typeLogementAppartementEtage = enum('App\\Entity\\Enum\\EtageType').SOUSSOL.value %}
+                                    {% else %}
+                                        {% set typeLogementAppartementEtage = enum('App\\Entity\\Enum\\EtageType').AUTRE.value %}
+                                    {% endif %}
+                                {% endif %}
+                                <label class="fr-label" for="compositionLogementAppartementEtage">Etage</label>
+                                <select class="fr-select" id="compositionLogementAppartementEtage" name="etage">
+                                    <option value="" {{ typeLogementAppartementEtage not in [enum('App\\Entity\\Enum\\EtageType').RDC.value, enum('App\\Entity\\Enum\\EtageType').DERNIER_ETAGE.value, enum('App\\Entity\\Enum\\EtageType').SOUSSOL.value, enum('App\\Entity\\Enum\\EtageType').AUTRE.value] ? 'selected' : '' }}></option>
+                                    <option value="{{ enum('App\\Entity\\Enum\\EtageType').RDC.value }}" {{ typeLogementAppartementEtage is same as enum('App\\Entity\\Enum\\EtageType').RDC.value ? 'selected' : '' }}>{{ enum('App\\Entity\\Enum\\EtageType').RDC.label }}</option>
+                                    <option value="{{ enum('App\\Entity\\Enum\\EtageType').DERNIER_ETAGE.value }}" {{ typeLogementAppartementEtage is same as enum('App\\Entity\\Enum\\EtageType').DERNIER_ETAGE.value ? 'selected' : '' }}>{{ enum('App\\Entity\\Enum\\EtageType').DERNIER_ETAGE.label }}</option>
+                                    <option value="{{ enum('App\\Entity\\Enum\\EtageType').SOUSSOL.value }}" {{ typeLogementAppartementEtage is same as enum('App\\Entity\\Enum\\EtageType').SOUSSOL.value ? 'selected' : '' }}>{{ enum('App\\Entity\\Enum\\EtageType').SOUSSOL.label }}</option>
+                                    <option value="{{ enum('App\\Entity\\Enum\\EtageType').AUTRE.value }}" {{ typeLogementAppartementEtage is same as enum('App\\Entity\\Enum\\EtageType').AUTRE.value ? 'selected' : '' }}>{{ enum('App\\Entity\\Enum\\EtageType').AUTRE.label }}</option>
                                 </select>
                             </div>
 
                             <div class="fr-select-group">
-                                {% set typeLogementDernierEtage = signalement.typeCompositionLogement ? signalement.typeCompositionLogement.typeLogementDernierEtage : null %}
-                                <label class="fr-label" for="compositionLogementTypeLogementDernierEtage">Est au dernier étage ? (si n'est pas au RDC)</label>
-                                <select class="fr-select" id="compositionLogementTypeLogementDernierEtage" name="typeLogementDernierEtage">
-                                    <option value="" {{ typeLogementDernierEtage not in ['oui', 'non', 'nsp'] ? 'selected' : '' }}></option>
-                                    <option value="oui" {{ typeLogementDernierEtage is same as 'oui' ? 'selected' : '' }}>Oui</option>
-                                    <option value="non" {{ typeLogementDernierEtage is same as 'non' ? 'selected' : '' }}>Non</option>
-                                    <option value="nsp" {{ typeLogementDernierEtage is same as 'nsp' ? 'selected' : '' }}>Je ne sais pas</option>
-                                </select>
-                            </div>
-
-                            <div class="fr-select-group">
-                                {% set typeLogementSousCombleSansFenetre = signalement.typeCompositionLogement ? signalement.typeCompositionLogement.typeLogementSousCombleSansFenetre : null %}
-                                <label class="fr-label" for="compositionLogementTypeLogementSousCombleSansFenetre">Combles sans fenêtres ? (si dernier étage)</label>
-                                <select class="fr-select" id="compositionLogementTypeLogementSousCombleSansFenetre" name="typeLogementSousCombleSansFenetre">
-                                    <option value="" {{ typeLogementSousCombleSansFenetre not in ['oui', 'non', 'nsp'] ? 'selected' : '' }}></option>
-                                    <option value="oui" {{ typeLogementSousCombleSansFenetre is same as 'oui' ? 'selected' : '' }}>Oui</option>
-                                    <option value="non" {{ typeLogementSousCombleSansFenetre is same as 'non' ? 'selected' : '' }}>Non</option>
-                                    <option value="nsp" {{ typeLogementSousCombleSansFenetre is same as 'nsp' ? 'selected' : '' }}>Je ne sais pas</option>
-                                </select>
-                            </div>
-
-                            <div class="fr-select-group">
-                                {% set typeLogementSousSolSansFenetre = signalement.typeCompositionLogement ? signalement.typeCompositionLogement.typeLogementSousSolSansFenetre : null %}
-                                <label class="fr-label" for="compositionLogementTypeLogementSousSolSansFenetre">Sous-sol sans fenêtres ? (si n'est pas au RDC et n'est pas au dernier étage)</label>
-                                <select class="fr-select" id="compositionLogementTypeLogementSousSolSansFenetre" name="typeLogementSousSolSansFenetre">
-                                    <option value="" {{ typeLogementSousSolSansFenetre not in ['oui', 'non', 'nsp'] ? 'selected' : '' }}></option>
-                                    <option value="oui" {{ typeLogementSousSolSansFenetre is same as 'oui' ? 'selected' : '' }}>Oui</option>
-                                    <option value="non" {{ typeLogementSousSolSansFenetre is same as 'non' ? 'selected' : '' }}>Non</option>
-                                    <option value="nsp" {{ typeLogementSousSolSansFenetre is same as 'nsp' ? 'selected' : '' }}>Je ne sais pas</option>
+                                {% set typeLogementAppartementAvecFenetres = '' %}
+                                {% if signalement.typeCompositionLogement %}               
+                                    {% if signalement.typeCompositionLogement.typeLogementAppartementAvecFenetres %}
+                                        {% set typeLogementAppartementAvecFenetres = signalement.typeCompositionLogement.typeLogementAppartementAvecFenetres %}
+                                    {% elseif signalement.typeCompositionLogement.typeLogementDernierEtage is same as 'oui' %}
+                                        {% if signalement.typeCompositionLogement.typeLogementSousCombleSansFenetre is same as 'oui' %}
+                                            {% set typeLogementAppartementAvecFenetres = 'non' %}
+                                        {% elseif signalement.typeCompositionLogement.typeLogementSousCombleSansFenetre is same as 'non' %}
+                                            {% set typeLogementAppartementAvecFenetres = 'oui' %}
+                                        {% endif %}
+                                    {% elseif signalement.typeCompositionLogement.typeLogementRdc is not same as 'oui' and signalement.typeCompositionLogement.typeLogementDernierEtage is not same as 'oui' %}
+                                        {% if signalement.typeCompositionLogement.typeLogementSousSolSansFenetre is same as 'oui' %}
+                                            {% set typeLogementAppartementAvecFenetres = 'non' %}
+                                        {% elseif signalement.typeCompositionLogement.typeLogementSousSolSansFenetre is same as 'non' %}
+                                            {% set typeLogementAppartementAvecFenetres = 'oui' %}
+                                        {% endif %}
+                                    {% else %}
+                                        {% set typeLogementAppartementAvecFenetres = 'oui' %}
+                                    {% endif %}
+                                {% endif %}
+                                <label class="fr-label" for="compositionLogementAppartementAvecFenetres">Avec fenêtres ?</label>
+                                <select class="fr-select" id="compositionLogementAppartementAvecFenetres" name="avecFenetres">
+                                    <option value="" {{ typeLogementAppartementAvecFenetres not in ['oui', 'non'] ? 'selected' : '' }}></option>
+                                    <option value="oui" {{ typeLogementAppartementAvecFenetres is same as 'oui' ? 'selected' : '' }}>Oui</option>
+                                    <option value="non" {{ typeLogementAppartementAvecFenetres is same as 'non' ? 'selected' : '' }}>Non</option>
                                 </select>
                             </div>
 

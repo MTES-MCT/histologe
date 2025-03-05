@@ -1,0 +1,22 @@
+{% if signalement.typeCompositionLogement %}
+    {% if signalement.typeCompositionLogement.typeLogementAppartementAvecFenetres %}
+        {{ signalement.typeCompositionLogement.typeLogementAppartementAvecFenetres }}
+        {% include '_partials/signalement/display_alert.html.twig' with { 'display': signalement.typeCompositionLogement.typeLogementAppartementAvecFenetres is same as 'non' } %}
+    {% elseif signalement.typeCompositionLogement.typeLogementDernierEtage is same as 'oui' %}
+        {% if signalement.typeCompositionLogement.typeLogementSousCombleSansFenetre is same as 'oui' %}
+            Non
+            {% include '_partials/signalement/display_alert.html.twig' with { 'display': signalement.typeCompositionLogement.typeLogementSousCombleSansFenetre is same as 'oui' } %}
+        {% elseif signalement.typeCompositionLogement.typeLogementSousCombleSansFenetre is same as 'non' %}
+            Oui
+        {% endif %}
+    {% elseif signalement.typeCompositionLogement.typeLogementRdc is not same as 'oui' and signalement.typeCompositionLogement.typeLogementDernierEtage is not same as 'oui' %}
+        {% if signalement.typeCompositionLogement.typeLogementSousSolSansFenetre is same as 'oui' %}
+            Non
+            {% include '_partials/signalement/display_alert.html.twig' with { 'display': signalement.typeCompositionLogement.typeLogementSousSolSansFenetre is same as 'oui' } %}
+        {% elseif signalement.typeCompositionLogement.typeLogementSousSolSansFenetre is same as 'non' %}
+            Oui
+        {% endif %}
+    {% else %}
+        Oui
+    {% endif %}
+{% endif %}

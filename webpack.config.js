@@ -42,9 +42,7 @@ Encore
      * Each entry will result in one JavaScript file (e.g. app.js)
      * and one CSS file (e.g. app.css) if your JavaScript imports CSS.
      */
-if (process.env.npm_lifecycle_event !== 'watch-front-stats' && process.env.npm_lifecycle_event !== 'watch-bo' && process.env.npm_lifecycle_event !== 'watch-form') {
     Encore.addEntry('app', './assets/scripts/app.ts')
-}
 if (process.env.npm_lifecycle_event !== 'watch-base' && process.env.npm_lifecycle_event !== 'watch-bo' && process.env.npm_lifecycle_event !== 'watch-form') {
     Encore.addEntry('app-front-stats', './assets/scripts/app-front-stats.ts')
 }

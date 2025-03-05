@@ -6,7 +6,8 @@ use App\Entity\Enum\SignalementStatus;
 use App\Entity\Signalement;
 use App\Entity\User;
 use App\Form\SearchDraftType;
-use App\Form\SignalementAddressType;
+use App\Form\SignalementDraftAddressType;
+use App\Form\SignalementDraftLogementType;
 use App\Manager\SignalementManager;
 use App\Repository\SignalementRepository;
 use App\Service\ListFilters\SearchDraft;
@@ -92,7 +93,7 @@ class SignalementCreateController extends AbstractController
     public function createSignalement(
     ): Response {
         $signalement = new Signalement();
-        $formAddress = $this->createForm(SignalementAddressType::class, $signalement, ['action' => $this->generateUrl('back_signalement_form_address')]);
+        $formAddress = $this->createForm(SignalementDraftAddressType::class, $signalement, ['action' => $this->generateUrl('back_signalement_draft_form_address')]);
 
         return $this->render('back/signalement_create/index.html.twig', [
             'formAddress' => $formAddress,
@@ -105,17 +106,21 @@ class SignalementCreateController extends AbstractController
         Signalement $signalement,
     ): Response {
         $this->denyAccessUnlessGranted('SIGN_EDIT_DRAFT', $signalement);
-        $formAddress = $this->createForm(SignalementAddressType::class, $signalement, [
-            'action' => $this->generateUrl('back_signalement_form_address_edit', ['uuid' => $signalement->getUuid()]),
+        $formAddress = $this->createForm(SignalementDraftAddressType::class, $signalement, [
+            'action' => $this->generateUrl('back_signalement_draft_form_address_edit', ['uuid' => $signalement->getUuid()]),
+        ]);
+        $formLogement = $this->createForm(SignalementDraftLogementType::class, $signalement, [
+            'action' => $this->generateUrl('back_signalement_draft_form_logement_edit', ['uuid' => $signalement->getUuid()]),
         ]);
 
         return $this->render('back/signalement_create/index.html.twig', [
             'formAddress' => $formAddress,
+            'formLogement' => $formLogement,
             'signalement' => $signalement,
         ]);
     }
 
-    #[Route('/bo-form-address/{uuid:signalement}', name: 'back_signalement_form_address_edit', methods: ['POST'])]
+    #[Route('/bo-form-address/{uuid:signalement}', name: 'back_signalement_draft_form_address_edit', methods: ['POST'])]
     public function editFormAddress(
         Signalement $signalement,
         Request $request,
@@ -127,7 +132,7 @@ class SignalementCreateController extends AbstractController
         return $this->submitFormAddressHandler($signalement, $request, $signalementRepository, $entityManager);
     }
 
-    #[Route('/bo-form-address', name: 'back_signalement_form_address', methods: ['POST'])]
+    #[Route('/bo-form-address', name: 'back_signalement_draft_form_address', methods: ['POST'])]
     public function createFormAddress(
         Request $request,
         SignalementRepository $signalementRepository,
@@ -145,8 +150,8 @@ class SignalementCreateController extends AbstractController
         EntityManagerInterface $entityManager,
     ): JsonResponse {
         $entityManager->beginTransaction();
-        $action = $signalement->getId() ? $this->generateUrl('back_signalement_form_address_edit', ['uuid' => $signalement->getUuid()]) : $this->generateUrl('back_signalement_form_address');
-        $form = $this->createForm(SignalementAddressType::class, $signalement, ['action' => $action]);
+        $action = $signalement->getId() ? $this->generateUrl('back_signalement_draft_form_address_edit', ['uuid' => $signalement->getUuid()]) : $this->generateUrl('back_signalement_draft_form_address');
+        $form = $this->createForm(SignalementDraftAddressType::class, $signalement, ['action' => $action]);
         $form->handleRequest($request);
         $hasDuplicates = false;
         $duplicateContent = '';
@@ -176,5 +181,34 @@ class SignalementCreateController extends AbstractController
         $tabContent = $this->renderView('back/signalement_create/tabs/tab-adresse.html.twig', ['form' => $form]);
 
         return $this->json(['tabContent' => $tabContent, 'hasDuplicates' => $hasDuplicates, 'duplicateContent' => $duplicateContent, 'linkDuplicates' => $linkDuplicates]);
+    }
+
+    #[Route('/bo-form-logement/{uuid:signalement}', name: 'back_signalement_draft_form_logement_edit', methods: ['POST'])]
+    public function editFormLogement(
+        Signalement $signalement,
+        Request $request,
+        EntityManagerInterface $entityManager,
+    ): Response {
+        $this->denyAccessUnlessGranted('SIGN_EDIT_DRAFT', $signalement);
+
+        $entityManager->beginTransaction();
+        $action = $this->generateUrl('back_signalement_draft_form_logement_edit', ['uuid' => $signalement->getUuid()]);
+        $form = $this->createForm(SignalementDraftLogementType::class, $signalement, ['action' => $action]);
+        $form->handleRequest($request);
+        if ($form->isSubmitted() && $form->isValid() && $this->signalementBoManager->formLogementManager($form, $signalement)) {
+            $this->signalementManager->save($signalement);
+            $entityManager->commit();
+            if ($form->get('draft')->isClicked()) { // @phpstan-ignore-line
+                $this->addFlash('success', 'Le brouillon est bien enregistré, n\'oubliez pas de le terminer !');
+                $url = $this->generateUrl('back_signalement_drafts', [], UrlGeneratorInterface::ABSOLUTE_URL);
+            } else {
+                $url = $this->generateUrl('back_signalement_edit_draft', ['uuid' => $signalement->getUuid(), '_fragment' => 'situation'], UrlGeneratorInterface::ABSOLUTE_URL);
+            }
+
+            return $this->json(['redirect' => true, 'url' => $url]);
+        }
+        $tabContent = $this->renderView('back/signalement_create/tabs/tab-logement.html.twig', ['formLogement' => $form]);
+
+        return $this->json(['tabContent' => $tabContent]);
     }
 }
