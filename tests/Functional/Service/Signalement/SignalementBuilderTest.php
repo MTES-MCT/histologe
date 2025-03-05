@@ -14,7 +14,6 @@ use App\Manager\DesordreCritereManager;
 use App\Repository\BailleurRepository;
 use App\Repository\DesordreCritereRepository;
 use App\Repository\DesordrePrecisionRepository;
-use App\Repository\TerritoryRepository;
 use App\Serializer\SignalementDraftRequestSerializer;
 use App\Service\Signalement\CriticiteCalculator;
 use App\Service\Signalement\DesordreTraitement\DesordreCompositionLogementLoader;
@@ -22,6 +21,7 @@ use App\Service\Signalement\DesordreTraitement\DesordreTraitementProcessor;
 use App\Service\Signalement\Qualification\SignalementQualificationUpdater;
 use App\Service\Signalement\ReferenceGenerator;
 use App\Service\Signalement\SignalementBuilder;
+use App\Service\Signalement\ZipcodeProvider;
 use App\Tests\FixturesHelper;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
@@ -41,7 +41,6 @@ class SignalementBuilderTest extends KernelTestCase
     {
         self::bootKernel();
         $this->entityManager = static::getContainer()->get(EntityManagerInterface::class);
-        $territoryRepository = static::getContainer()->get(TerritoryRepository::class);
         $bailleurRepository = static::getContainer()->get(BailleurRepository::class);
         $referenceGenerator = static::getContainer()->get(ReferenceGenerator::class);
         $signalementDraftRequestSerializer = static::getContainer()->get(SignalementDraftRequestSerializer::class);
@@ -56,9 +55,9 @@ class SignalementBuilderTest extends KernelTestCase
         $criticiteCalculator = static::getContainer()->get(CriticiteCalculator::class);
         $signalementQualificationUpdater = static::getContainer()->get(SignalementQualificationUpdater::class);
         $desordreCompositionLogementLoader = static::getContainer()->get(DesordreCompositionLogementLoader::class);
+        $zipcodeProvider = static::getContainer()->get(ZipcodeProvider::class);
 
         $this->signalementBuilder = new SignalementBuilder(
-            $territoryRepository,
             $bailleurRepository,
             $referenceGenerator,
             $signalementDraftRequestSerializer,
@@ -73,6 +72,7 @@ class SignalementBuilderTest extends KernelTestCase
             $criticiteCalculator,
             $signalementQualificationUpdater,
             $desordreCompositionLogementLoader,
+            $zipcodeProvider
         );
     }
 

@@ -18,7 +18,6 @@ use App\Service\Mailer\NotificationMailerType;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\SecurityBundle\Security;
-use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 
 class NotificationAndMailSender
 {
@@ -32,7 +31,6 @@ class NotificationAndMailSender
         private readonly PartnerRepository $partnerRepository,
         private readonly NotificationFactory $notificationFactory,
         private readonly NotificationMailerRegistry $notificationMailerRegistry,
-        private readonly ParameterBagInterface $parameterBag,
         private readonly Security $security,
     ) {
         $this->suivi = null;
@@ -181,8 +179,7 @@ class NotificationAndMailSender
     {
         $recipients = new ArrayCollection();
 
-        $partner = $this->getPartnerFromSignalementInsee($this->signalement, $territory);
-        $users = $this->userRepository->findActiveAdminsAndTerritoryAdmins($territory, $partner);
+        $users = $this->userRepository->findActiveAdminsAndTerritoryAdmins($territory);
 
         foreach ($users as $user) {
             $recipients[] = $user;
@@ -254,25 +251,6 @@ class NotificationAndMailSender
         $recipientsEmails = array_unique($recipientsEmails);
 
         return $recipientsEmails;
-    }
-
-    private function getPartnerFromSignalementInsee(Signalement $signalement, ?Territory $territory): ?Partner
-    {
-        $authorizedInsee = $this->parameterBag->get('authorized_codes_insee');
-
-        if (isset($authorizedInsee[$territory->getZip()])) {
-            foreach ($authorizedInsee[$territory->getZip()] as $key => $authorizedInseePartner) {
-                if (\in_array($signalement->getInseeOccupant(), $authorizedInseePartner)) {
-                    return $this->partnerRepository->findOneBy([
-                        'nom' => $key,
-                        'territory' => $territory,
-                        'isArchive' => false,
-                    ]);
-                }
-            }
-        }
-
-        return null;
     }
 
     private function isUserNotified(Partner $partner, User $user): bool

@@ -6,7 +6,6 @@
 
 imports:
     - { resource: 'app/widgets.yaml' }
-    - { resource: 'app/insee.yaml'}
     - { resource: 'app/documents.yaml'}
     - { resource: 'app/competences.yaml'}
     - { resource: 'app/suivi_messages.yaml'}
@@ -117,14 +116,6 @@ services:
 
     App\Service\Token\TokenGeneratorInterface:
         alias: App\Service\Token\TokenGenerator
-
-    App\Repository\SignalementRepository:
-        arguments:
-            $params: '%special_territory%'
-
-    App\Repository\NotificationRepository:
-        arguments:
-            $params: '%special_territory%'
 
     App\Service\DashboardWidget\WidgetDataManagerInterface:
         alias: App\Service\DashboardWidget\WidgetDataManager

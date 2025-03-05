@@ -8,7 +8,6 @@ use App\Entity\Zone;
 use App\Form\Type\SearchCheckboxType;
 use App\Manager\CommuneManager;
 use App\Repository\ZoneRepository;
-use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\CallbackTransformer;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
@@ -21,7 +20,6 @@ use Symfony\Component\Validator\Context\ExecutionContextInterface;
 class PartnerPerimetreType extends AbstractType
 {
     public function __construct(
-        private readonly ParameterBagInterface $parameterBag,
         private readonly CommuneManager $communeManager,
     ) {
     }
@@ -29,7 +27,6 @@ class PartnerPerimetreType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $territory = false;
-        $insee = $this->parameterBag->get('authorized_codes_insee');
         /** @var Partner $partner */
         $partner = $builder->getData();
         $territory = $partner->getTerritory();
@@ -40,7 +37,6 @@ class PartnerPerimetreType extends AbstractType
                 'help' => 'Renseignez le ou les codes INSEE, séparés par une virgule. Exemple: 67001, 67002, 67003.',
                 'attr' => [
                     'class' => 'fr-input',
-                    'readonly' => isset($insee[$territory?->getZip()][$partner->getNom()]),
                 ],
                 'required' => false,
                 'constraints' => [

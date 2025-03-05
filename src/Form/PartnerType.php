@@ -14,7 +14,6 @@ use App\Repository\TerritoryRepository;
 use App\Repository\UserRepository;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Bundle\SecurityBundle\Security;
-use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\ChoiceList\ChoiceList;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
@@ -36,7 +35,6 @@ class PartnerType extends AbstractType
     private $isAdminTerritory = false;
 
     public function __construct(
-        private readonly ParameterBagInterface $parameterBag,
         private readonly UserRepository $userRepository,
         private readonly TerritoryRepository $territoryRepository,
         private readonly Security $security,
@@ -52,7 +50,6 @@ class PartnerType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $territory = false;
-        $insee = $this->parameterBag->get('authorized_codes_insee');
         /** @var Partner $partner */
         $partner = $builder->getData();
         $territory = $options['data']->getTerritory();
@@ -61,7 +58,6 @@ class PartnerType extends AbstractType
             ->add('nom', TextType::class, [
                 'attr' => [
                     'class' => 'fr-input',
-                    'readonly' => isset($insee[$partner->getTerritory()?->getZip()][$partner->getNom()]),
                 ],
             ])
             ->add('email', EmailType::class, [

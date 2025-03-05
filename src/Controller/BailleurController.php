@@ -16,13 +16,14 @@ class BailleurController extends AbstractController
     #[Route('/bailleurs', name: 'app_bailleur')]
     public function index(
         BailleurRepository $bailleurRepository,
+        ZipcodeProvider $zipcodeProvider,
         #[MapQueryParameter] string $name,
-        #[MapQueryParameter] string $postcode,
+        #[MapQueryParameter] string $inseecode,
         #[MapQueryParameter] ?bool $sanitize,
     ): JsonResponse {
         $name = trim($name);
-        $zip = ZipcodeProvider::getZipCode($postcode);
-        $bailleurs = !empty($name) ? $bailleurRepository->findBailleursBy($name, $zip) : [];
+        $territory = $zipcodeProvider->getTerritoryByInseeCode($inseecode);
+        $bailleurs = !empty($name) ? $bailleurRepository->findBailleursBy($name, $territory) : [];
 
         if ($sanitize) {
             $bailleurCollection = $this->sanitizeBailleurs($bailleurs, $name);

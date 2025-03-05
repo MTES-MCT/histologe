@@ -99,7 +99,7 @@ class NotificationControllerTest extends WebTestCase
     private function getSelectedNotifications(User $user): string
     {
         $notificationRepository = static::getContainer()->get(NotificationRepository::class);
-        $notificationsUser = $notificationRepository->getNotificationUser($user, 1, []);
+        $notificationsUser = $notificationRepository->getNotificationUser($user, 1);
         $notificationsId = [];
         foreach ($notificationsUser as $notification) {
             $notificationsId[] = $notification->getId();

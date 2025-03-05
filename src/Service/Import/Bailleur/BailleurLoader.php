@@ -5,6 +5,7 @@ namespace App\Service\Import\Bailleur;
 use App\Entity\Bailleur;
 use App\Repository\BailleurRepository;
 use App\Repository\TerritoryRepository;
+use App\Service\Signalement\ZipcodeProvider;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Console\Helper\ProgressBar;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -78,6 +79,9 @@ class BailleurLoader
                          ->setRaisonSociale($bailleurRaisonSociale)
                          ->setSiret($item[BailleurHeader::SIRET])
                          ->addTerritory($this->territories[$deptCode]);
+                if (ZipcodeProvider::RHONE_CODE_DEPARTMENT_69 === $deptCode) {
+                    $bailleur->addTerritory($this->territories[ZipcodeProvider::METROPOLE_LYON_CODE_DEPARTMENT_69A]);
+                }
                 if (null !== $output) {
                     $progressBar->advance();
                 }

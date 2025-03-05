@@ -16,7 +16,6 @@ use App\Tests\FixturesHelper;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use Symfony\Bundle\SecurityBundle\Security;
-use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 
 class NotificationAndMailSenderTest extends KernelTestCase
 {
@@ -27,7 +26,6 @@ class NotificationAndMailSenderTest extends KernelTestCase
     private UserRepository $userRepository;
     private NotificationRepository $notificationRepository;
     private PartnerRepository $partnerRepository;
-    private ParameterBagInterface $parameterBag;
     private NotificationFactory $notificationFactory;
     private Security $security;
 
@@ -39,7 +37,6 @@ class NotificationAndMailSenderTest extends KernelTestCase
         $this->userRepository = self::getContainer()->get(UserRepository::class);
         $this->notificationRepository = self::getContainer()->get(NotificationRepository::class);
         $this->partnerRepository = self::getContainer()->get(PartnerRepository::class);
-        $this->parameterBag = self::getContainer()->get(ParameterBagInterface::class);
         $this->notificationFactory = self::getContainer()->get(NotificationFactory::class);
         $this->security = static::getContainer()->get('security.helper');
     }
@@ -66,7 +63,7 @@ class NotificationAndMailSenderTest extends KernelTestCase
         $this->entityManager->persist($suivi);
 
         $expectedAdress = [$respTerritoire->getEmail()];
-        $expectedNotification = $this->userRepository->findActiveAdminsAndTerritoryAdmins($territory, null);
+        $expectedNotification = $this->userRepository->findActiveAdminsAndTerritoryAdmins($territory);
         foreach ($signalement->getAffectations() as $affectation) {
             if (AffectationStatus::STATUS_WAIT->value === $affectation->getStatut()
                     || AffectationStatus::STATUS_ACCEPTED->value === $affectation->getStatut()) {
@@ -96,7 +93,6 @@ class NotificationAndMailSenderTest extends KernelTestCase
             $this->partnerRepository,
             $this->notificationFactory,
             $this->notificationMailerRegistry,
-            $this->parameterBag,
             $this->security,
         );
 

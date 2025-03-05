@@ -38,7 +38,7 @@ class IsTerritoryActiveValidator extends ConstraintValidator
                     ->addViolation();
             }
 
-            if (!$this->postalCodeHomeChecker->isActive($postalCode, $inseeCode)) {
+            if (!$this->postalCodeHomeChecker->isActiveByInseeCode($inseeCode)) {
                 $message = 'Le territoire n\'est pas actif pour le code postal "'.$postalCode.'" et le code INSEE "'.$inseeCode.'".';
                 $this->context
                     ->buildViolation($message)

@@ -3,18 +3,21 @@
 namespace App\Tests\Functional\Repository;
 
 use App\Repository\BailleurRepository;
+use App\Repository\TerritoryRepository;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 
 class BailleurRepositoryTest extends KernelTestCase
 {
     public function testFindOneBailleur(): void
     {
+        $territoryRepository = static::getContainer()->get(TerritoryRepository::class);
+        $territory = $territoryRepository->findOneBy(['zip' => '13']);
         /** @var BailleurRepository $bailleurRepository */
         $bailleurRepository = static::getContainer()->get(BailleurRepository::class);
 
         $bailleur = $bailleurRepository->findOneBailleurBy(
             name: '13 HABITAT',
-            zip: '13',
+            territory: $territory,
             bailleurSanitized: true
         );
 
@@ -23,12 +26,14 @@ class BailleurRepositoryTest extends KernelTestCase
 
     public function testFindOneBailleurRadie(): void
     {
+        $territoryRepository = static::getContainer()->get(TerritoryRepository::class);
+        $territory = $territoryRepository->findOneBy(['zip' => '13']);
         /** @var BailleurRepository $bailleurRepository */
         $bailleurRepository = static::getContainer()->get(BailleurRepository::class);
 
         $bailleur = $bailleurRepository->findOneBailleurBy(
             name: 'S.A. REGIONALE DE L\'HABITAT',
-            zip: '13',
+            territory: $territory,
             bailleurSanitized: true
         );
 

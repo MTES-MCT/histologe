@@ -19,32 +19,32 @@ class PostalCodeHomeCheckerTest extends KernelTestCase
 
     public function testActiveTerritory(): void
     {
-        $this->assertTrue($this->postalCodeHomeChecker->isActive('01270'));
+        $this->assertTrue($this->postalCodeHomeChecker->isActiveByPostalCode('01270'));
     }
 
     public function testActiveCorseTerritory(): void
     {
-        $this->assertTrue($this->postalCodeHomeChecker->isActive('20151'));
+        $this->assertTrue($this->postalCodeHomeChecker->isActiveByPostalCode('20151'));
     }
 
     public function testActiveCotedorTerritory(): void
     {
-        $this->assertTrue($this->postalCodeHomeChecker->isActive('21000'));
+        $this->assertTrue($this->postalCodeHomeChecker->isActiveByPostalCode('21000'));
     }
 
     public function testActiveTerritoryDifferentZip(): void
     {
-        $this->assertTrue($this->postalCodeHomeChecker->isActive('05130', '04234'));
+        $this->assertTrue($this->postalCodeHomeChecker->isActiveByInseeCode('04234'));
     }
 
     public function testInactiveTerritory(): void
     {
-        $this->assertFalse($this->postalCodeHomeChecker->isActive('75001'));
+        $this->assertFalse($this->postalCodeHomeChecker->isActiveByPostalCode('75001'));
     }
 
     public function testInactiveTerritoryDifferentZip(): void
     {
-        $this->assertFalse($this->postalCodeHomeChecker->isActive('01590', '39102'));
+        $this->assertFalse($this->postalCodeHomeChecker->isActiveByInseeCode('39102'));
     }
 
     public function testTerritoryWithNoAuthorizedInseeCodes(): void

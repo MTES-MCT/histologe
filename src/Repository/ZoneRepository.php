@@ -43,6 +43,8 @@ class ZoneRepository extends ServiceEntityRepository
         }
         if ($searchZone->getTerritory()) {
             $qb->andWhere('z.territory = :territory')->setParameter('territory', $searchZone->getTerritory());
+        } elseif (!$searchZone->getUser()->isSuperAdmin()) {
+            $qb->andWhere('z.territory IN (:territories)')->setParameter('territories', $searchZone->getUser()->getPartnersTerritories());
         }
         if ($searchZone->getType()) {
             $qb->andWhere('z.type = :type')->setParameter('type', $searchZone->getType()->value);

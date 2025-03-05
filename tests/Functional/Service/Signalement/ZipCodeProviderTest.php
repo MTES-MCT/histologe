@@ -7,35 +7,50 @@ use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 
 class ZipCodeProviderTest extends KernelTestCase
 {
+    private ZipcodeProvider $zipcodeProvider;
+
+    protected function setUp(): void
+    {
+        $this->zipcodeProvider = static::getContainer()->get(ZipcodeProvider::class);
+    }
+
     public function testGetZipCodeTerritory(): void
     {
         $this->assertEquals(
-            ZipcodeProvider::CORSE_DU_SUD_CODE_DEPARTMENT_2A,
-            ZipcodeProvider::getZipCode('20167'),
+            '2A',
+            $this->zipcodeProvider->getTerritoryByInseeCode('20167')->getZip(),
         );
         $this->assertEquals(
-            ZipcodeProvider::CORSE_DU_SUD_CODE_DEPARTMENT_2A,
-            ZipcodeProvider::getZipCode('20000'),
+            '2A',
+            $this->zipcodeProvider->getTerritoryByInseeCode('20000')->getZip(),
         );
         $this->assertEquals(
-            ZipcodeProvider::HAUTE_CORSE_CODE_DEPARTMENT_2B,
-            ZipcodeProvider::getZipCode('20200')
+            '2B',
+            $this->zipcodeProvider->getTerritoryByInseeCode('20200')->getZip(),
         );
         $this->assertEquals(
-            ZipcodeProvider::HAUTE_CORSE_CODE_DEPARTMENT_2B,
-            ZipcodeProvider::getZipCode('20600')
+            '2B',
+            $this->zipcodeProvider->getTerritoryByInseeCode('20600')->getZip(),
         );
         $this->assertEquals(
-            ZipcodeProvider::LA_REUNION_CODE_DEPARTMENT_974,
-            ZipcodeProvider::getZipCode('97400')
+            '974',
+            $this->zipcodeProvider->getTerritoryByInseeCode('97400')->getZip()
         );
         $this->assertEquals(
-            ZipcodeProvider::MARTINIQUE_CODE_DEPARTMENT_972,
-            ZipcodeProvider::getZipCode('97200')
+            '972',
+            $this->zipcodeProvider->getTerritoryByInseeCode('97200')->getZip()
         );
         $this->assertEquals(
             '13',
-            ZipcodeProvider::getZipCode('13002')
+            $this->zipcodeProvider->getTerritoryByInseeCode('13002')->getZip()
+        );
+        $this->assertEquals(
+            '69A',
+            $this->zipcodeProvider->getTerritoryByInseeCode('69123')->getZip()
+        );
+        $this->assertEquals(
+            '69',
+            $this->zipcodeProvider->getTerritoryByInseeCode('69060')->getZip()
         );
     }
 }

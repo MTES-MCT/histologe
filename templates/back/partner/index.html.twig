@@ -61,7 +61,7 @@
     <section class="fr-col-12 fr-pt-0 fr-px-5v">
         {% set tableHead %}
             <th scope="col" class="number">Id</th>
-            {% if is_granted('ROLE_ADMIN') %}
+            {% if is_granted('ROLE_ADMIN') or (is_granted('ROLE_ADMIN_TERRITORY') and app.user.userPartners|length > 1) %}
                 <th scope="col">Territoire</th>
             {% endif %}
             <th scope="col">Nom</th>
@@ -76,7 +76,7 @@
             {% for partner in partners %}
                 <tr class="partner-row">
                     <td>{{ partner.id }}</td>
-                    {% if is_granted('ROLE_ADMIN') %}
+                    {% if is_granted('ROLE_ADMIN') or (is_granted('ROLE_ADMIN_TERRITORY') and app.user.userPartners|length > 1) %}
                         <td>{{ partner.territory ? partner.territory.zip ~ ' - ' ~ partner.territory.name : 'aucun' }}</td>
                     {% endif %}
                     <td>{{ partner.nom }}</td>

@@ -25,12 +25,12 @@ use Doctrine\Persistence\ManagerRegistry;
  */
 class NotificationRepository extends ServiceEntityRepository implements EntityCleanerRepositoryInterface
 {
-    public function __construct(ManagerRegistry $registry, private array $params)
+    public function __construct(ManagerRegistry $registry)
     {
         parent::__construct($registry, Notification::class);
     }
 
-    public function getNotificationUserQueryBuilder(User $user, array $options): QueryBuilder
+    public function getNotificationUserQueryBuilder(User $user): QueryBuilder
     {
         $qb = $this->createQueryBuilder('n')
             ->orderBy('suivi.createdAt', 'DESC')
@@ -45,37 +45,15 @@ class NotificationRepository extends ServiceEntityRepository implements EntityCl
             ->leftJoin('n.affectation', 'affectation')
             ->addSelect('suivi', 'signalement', 'affectation', 'user', 'createdBy');
 
-        if ($user->isTerritoryAdmin()) {
-            $authorized_codes_insee = [];
-            $otherTerritories = [];
-            foreach ($user->getPartners() as $partner) {
-                if (isset($this->params[$partner->getTerritory()->getZip()][$partner->getNom()])) {
-                    $authorized_codes_insee = array_merge($options[$partner->getTerritory()->getZip()][$partner->getNom()], $authorized_codes_insee);
-                } else {
-                    $otherTerritories[] = $partner->getTerritory();
-                }
-            }
-            if (count($authorized_codes_insee)) {
-                if (count($otherTerritories)) {
-                    $qb->andWhere('signalement.inseeOccupant IN (:authorized_codes_insee) OR signalement.territory IN (:territories)')
-                    ->setParameter('authorized_codes_insee', $authorized_codes_insee)
-                    ->setParameter('territories', $otherTerritories);
-                } else {
-                    $qb->andWhere('signalement.inseeOccupant IN (:authorized_codes_insee)')
-                        ->setParameter('authorized_codes_insee', $authorized_codes_insee);
-                }
-            }
-        }
-
         return $qb;
     }
 
-    public function getNotificationUser(User $user, int $page, array $options): Paginator
+    public function getNotificationUser(User $user, int $page): Paginator
     {
         $maxResult = Notification::MAX_LIST_PAGINATION;
         $firstResult = ($page - 1) * $maxResult;
 
-        $queryBuilder = $this->getNotificationUserQueryBuilder($user, $options);
+        $queryBuilder = $this->getNotificationUserQueryBuilder($user);
         $queryBuilder->setFirstResult($firstResult)->setMaxResults($maxResult);
 
         return new Paginator($queryBuilder->getQuery(), true);

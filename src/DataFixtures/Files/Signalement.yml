@@ -729,7 +729,7 @@ signalements:
     nb_chambres_logement: 2
     nb_niveaux_logement: 0
     nb_occupants_logement: 2
-    territory: "Rhône"
+    territory: "Métropole de Lyon"
     tags: []
     situations: []
     criteres: []
@@ -764,7 +764,7 @@ signalements:
     nb_chambres_logement: 2
     nb_niveaux_logement: 0
     nb_occupants_logement: 2
-    territory: "Rhône"
+    territory: "Métropole de Lyon"
     tags: []
     situations: []
     criteres: []

@@ -23,6 +23,7 @@ use App\Service\Interconnection\Idoss\IdossService;
 use App\Service\ListFilters\SearchArchivedSignalement;
 use App\Service\ListFilters\SearchDraft;
 use App\Service\Signalement\SearchFilter;
+use App\Service\Signalement\ZipcodeProvider;
 use App\Service\Statistics\CriticitePercentStatisticProvider;
 use App\Utils\CommuneHelper;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
@@ -52,7 +53,6 @@ class SignalementRepository extends ServiceEntityRepository
     public function __construct(
         ManagerRegistry $registry,
         private readonly SearchFilter $searchFilter,
-        private readonly array $params,
     ) {
         parent::__construct($registry, Signalement::class);
     }
@@ -263,8 +263,11 @@ class SignalementRepository extends ServiceEntityRepository
         if ($removeImported) {
             $qb->andWhere('s.isImported IS NULL OR s.isImported = 0');
         }
-
-        if ($territory) {
+        if ($territory && ZipcodeProvider::RHONE_CODE_DEPARTMENT_69 === $territory->getZip()) {
+            $qb->innerJoin('s.territory', 't')
+                ->andWhere('t.zip IN (:zipcodes)')
+                ->setParameter('zipcodes', [ZipcodeProvider::RHONE_CODE_DEPARTMENT_69, ZipcodeProvider::METROPOLE_LYON_CODE_DEPARTMENT_69A]);
+        } elseif ($territory) {
             $qb->andWhere('s.territory = :territory')->setParameter('territory', $territory);
         }
         if ($year) {
@@ -484,25 +487,7 @@ class SignalementRepository extends ServiceEntityRepository
             ->setParameter('group_concat_separator', SignalementAffectationListView::SEPARATOR_GROUP_CONCAT);
 
         if ($user->isTerritoryAdmin()) {
-            $authorized_codes_insee = [];
-            $otherTerritories = [];
-            foreach ($user->getPartners() as $partner) {
-                if (isset($this->params[$partner->getTerritory()->getZip()][$partner->getNom()])) {
-                    $authorized_codes_insee = array_merge($options['authorized_codes_insee'][$partner->getTerritory()->getZip()][$partner->getNom()], $authorized_codes_insee);
-                } else {
-                    $otherTerritories[] = $partner->getTerritory();
-                }
-            }
-            if (count($authorized_codes_insee)) {
-                if (count($otherTerritories)) {
-                    $qb->andWhere('s.inseeOccupant IN (:authorized_codes_insee) OR s.territory IN (:territories)')
-                    ->setParameter('authorized_codes_insee', $authorized_codes_insee)
-                    ->setParameter('territories', $otherTerritories);
-                } else {
-                    $qb->andWhere('s.inseeOccupant IN (:authorized_codes_insee)')
-                        ->setParameter('authorized_codes_insee', $authorized_codes_insee);
-                }
-            } elseif (empty($options['territories'])) {
+            if (empty($options['territories'])) {
                 $qb->andWhere('s.territory IN (:territories)')->setParameter('territories', $user->getPartnersTerritories());
             }
         } elseif ($user->isUserPartner() || $user->isPartnerAdmin()) {

@@ -77,7 +77,7 @@
 
     <section class="fr-col-12 fr-pt-0 fr-px-5v">
         {% set tableHead %}
-            {% if is_granted('ROLE_ADMIN') %}
+            {% if is_granted('ROLE_ADMIN') or (is_granted('ROLE_ADMIN_TERRITORY') and app.user.userPartners|length > 1) %}
                 <th scope="col">Territoire</th>
             {% endif %}
             <th scope="col">Utilisateur</th>
@@ -94,7 +94,7 @@
         {% set tableBody %}
             {% for user in users %}
                 <tr class="signalement-row">
-                    {% if is_granted('ROLE_ADMIN') %}
+                    {% if is_granted('ROLE_ADMIN') or (is_granted('ROLE_ADMIN_TERRITORY') and app.user.userPartners|length > 1) %}
                         <td>
                             {% for partner in user.partners %}
                                 {% if partner.territory %}

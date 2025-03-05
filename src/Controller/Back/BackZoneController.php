@@ -46,7 +46,7 @@ class BackZoneController extends AbstractController
         $paginatedZones = $zoneRepository->findFilteredPaginated($searchZone, $maxListPagination);
 
         $zone = new Zone();
-        if (!$this->isGranted('ROLE_ADMIN') && 1 === count($user->getPartnersTerritories())) {
+        if (!$this->isGranted('ROLE_ADMIN')) {
             $zone->setTerritory($user->getFirstTerritory());
         }
         $addForm = $this->createForm(ZoneType::class, $zone, ['action' => $this->generateUrl('back_zone_add')]);
@@ -66,7 +66,7 @@ class BackZoneController extends AbstractController
         $zone = new Zone();
         /** @var User $user */
         $user = $this->getUser();
-        if (!$this->isGranted('ROLE_ADMIN') && 1 === count($user->getPartnersTerritories())) {
+        if (!$this->isGranted('ROLE_ADMIN')) {
             $zone->setTerritory($user->getFirstTerritory());
         }
         /** @var Form $form */

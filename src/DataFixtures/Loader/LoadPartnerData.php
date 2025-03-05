@@ -60,8 +60,7 @@ class LoadPartnerData extends Fixture implements OrderedFixtureInterface
         }
 
         if (isset($row['bailleur'])) {
-            $zip = $partner->getTerritory()->getZip();
-            $partner->setBailleur($this->bailleurRepository->findOneBailleurBy($row['bailleur'], $zip));
+            $partner->setBailleur($this->bailleurRepository->findOneBailleurBy($row['bailleur'], $partner->getTerritory()));
         }
 
         if (isset($row['competence'])) {
