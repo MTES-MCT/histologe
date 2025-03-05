@@ -299,7 +299,6 @@ export default defineComponent({
       }
     },
     getSanitizedUrl (url:any) {
-      console.log(url)
       if (url === undefined || url === null) {
         return url
       }
