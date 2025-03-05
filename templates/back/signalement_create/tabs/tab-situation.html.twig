@@ -1,6 +1,16 @@
 <h2 class="fr-h4">Situation du foyer et du bail</h2>
 <p>Sauf mention contraire, toutes les réponses sont <strong>facultatives</strong>. Essayez de compléter le dossier au mieux !</p>
 
+{% for index, document in signalement.files|filter(
+    document => document.fileType == 'document'
+) %}
+<form method="POST" id="form-delete-file-{{ document.id }}" enctype="application/json" action="{{ path('back_signalement_delete_file',{uuid:signalement.uuid}) }}">
+    <input type="hidden" name="_token" value="{{ csrf_token('signalement_delete_file_'~signalement.id) }}">
+    <input type="hidden" name="file_id" value="{{ document.id }}">
+    <input type="hidden" name="is_draft" value="1">
+</form>
+{% endfor %}
+
 {% form_theme formSituation 'form/dsfr_theme.html.twig' %}
 {{ form_start(formSituation, {'attr': {'id': 'bo-form-signalement-situation'}}) }}
 {{ form_errors(formSituation) }}
@@ -111,28 +121,53 @@
             </div>
         </fieldset>
 
-        <fieldset class="fr-fieldset">
+        <div class="fr-mt-3v">
             <legend>
                 <h3 class="fr-h5">Documents</h3>
             </legend>
             <p>
                 Cliquez ci-dessous pour ajouter des documents relatifs à la situation (bail, DPE, état des lieux, diagnostic plomb amiante, etc.)
-                <br><br>
+                <br>
                 NB : vous pourrez ajouter les documents après la création du signalement.
-                <br><br>
+            </p>
+            <p>
                 <button
+                    type="button"
                     class="fr-btn fr-btn--secondary fr-btn--icon-left fr-icon-add-line open-modal-upload-files-btn"
                     data-fr-opened="false"
                     aria-controls="fr-modal-upload-files"
                     data-file-type="document"
-                    data-file-filter="procedure"
+                    data-file-filter="situation"
                     data-accepted-type-mimes={{ get_accepted_mime_type('document')}}
                     data-accepted-extensions="{{ get_accepted_extensions('document')}}"
                     >
                     Ajouter des documents
                 </button>
             </p>
-        </fieldset>
+            <div class="fr-mt-1v">
+            {% for index, document in signalement.files|filter(
+                document => document.fileType == 'document'
+            ) %}
+                <div class="fr-grid-row">
+                    <div class="fr-col-8">
+                        <i>{{ document.filename }}</i> (Type {{ document.documentType.label() }})
+                    </div>
+                    <div class="fr-col-4">
+                        <button
+                            form="form-delete-file-{{ document.id }}"
+                            class="fr-link fr-icon-close-circle-line fr-link--icon-left fr-link--error"
+                            aria-label="Supprimer le fichier {{ document.filename }}"
+                            title="Supprimer le fichier {{ document.filename }}"
+                            >
+                        Supprimer
+                        </button>
+                    </div>
+                </div>
+            {% else %}
+                Aucun fichier envoyé pour l'instant
+            {% endfor %}
+            </div>
+        </div>
     </div>
 
     <div class="fr-col-12">
