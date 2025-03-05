@@ -91,6 +91,7 @@ class WidgetDataManager implements WidgetDataManagerInterface
             ->withCountSignalement()
             ->withCountSuivi()
             ->withCountUser()
+            ->withCountPartner()
             ->build();
     }
 }

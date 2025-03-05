@@ -121,7 +121,7 @@ class PartnerControllerTest extends WebTestCase
                 'partner[type]' => $partner->getType()->value,
             ]
         );
-        $this->assertSelectorTextContains('.fr-alert--error', 'E-mail générique manquant: Il faut obligatoirement qu\'un compte utilisateur accepte de recevoir les e-mails.');
+        $this->assertSelectorNotExists('.fr-alert--error', 'E-mail générique manquant: Il faut obligatoirement qu\'un compte utilisateur accepte de recevoir les e-mails.');
     }
 
     public function testDeletePartner()
@@ -411,8 +411,9 @@ class PartnerControllerTest extends WebTestCase
         $this->assertResponseStatusCodeSame(200);
         $this->assertResponseHeaderSame('content-type', 'application/json');
         $response = json_decode($this->client->getResponse()->getContent(), true);
-        $this->assertArrayHasKey('content', $response);
-        $this->assertStringContainsString('Impossible : il s&#039;agit du dernier utilisateur ayant les notifications email actives sur le partenaire.', $response['content']);
+        $this->assertArrayHasKey('redirect', $response);
+        $this->assertArrayHasKey('url', $response);
+        $this->assertStringEndsWith('/bo/partenaires/'.$partner->getId().'/voir#agents', $response['url']);
     }
 
     public function testTransferUserAccountWithUserNotAllowed(): void
@@ -474,9 +475,8 @@ class PartnerControllerTest extends WebTestCase
             ]
         );
 
-        $this->assertResponseRedirects('/bo/partenaires/'.$fromPartner->getId().'/voir#agents');
+        $this->assertResponseRedirects('/bo/partenaires/'.$toPartner->getId().'/voir#agents');
         $this->client->followRedirect();
-        $this->assertSelectorTextContains('.fr-alert--error', 'Impossible : Il s\'agit du dernier utilisateur ayant les notifications email actives sur le partenaire.');
     }
 
     public function testDeleteUserAccount(): void
@@ -547,9 +547,8 @@ class PartnerControllerTest extends WebTestCase
             '_token' => $this->generateCsrfToken($this->client, 'partner_user_delete'),
         ]);
 
-        $this->assertResponseRedirects('/bo/partenaires/'.$partner->getId().'/voir#agents');
+        $this->assertResponseRedirects('/bo/partenaires/'.$partner->getId().'/voir');
         $this->client->followRedirect();
-        $this->assertSelectorTextContains('.fr-alert--error', 'Impossible : Il s\'agit du dernier utilisateur ayant les notifications email actives sur le partenaire.');
     }
 
     public function testCheckMailOk()

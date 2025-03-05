@@ -2,6 +2,7 @@
 
 namespace App\Service\DashboardWidget;
 
+use App\Dto\CountPartner;
 use App\Dto\CountSignalement;
 use App\Dto\CountSuivi;
 use App\Dto\CountUser;
@@ -12,6 +13,7 @@ use App\Entity\Enum\SignalementStatus;
 use App\Entity\User;
 use App\Repository\AffectationRepository;
 use App\Repository\NotificationRepository;
+use App\Repository\PartnerRepository;
 use App\Repository\SignalementRepository;
 use App\Repository\SuiviRepository;
 use App\Repository\UserRepository;
@@ -30,6 +32,7 @@ class WidgetDataKpiBuilder
     private ?CountSignalement $countSignalement = null;
     private ?CountSuivi $countSuivi = null;
     private ?CountUser $countUser = null;
+    private ?CountPartner $countPartner = null;
     private array $territories = [];
     private ?User $user = null;
     private array $parameters;
@@ -44,6 +47,7 @@ class WidgetDataKpiBuilder
         private readonly SignalementRepository $signalementRepository,
         private readonly UserRepository $userRepository,
         private readonly NotificationRepository $notificationRepository,
+        private readonly PartnerRepository $partnerRepository,
         private readonly ParameterBagInterface $parameterBag,
         private readonly Security $security,
     ) {
@@ -154,6 +158,16 @@ class WidgetDataKpiBuilder
         return $this;
     }
 
+    /**
+     * @throws NonUniqueResultException
+     */
+    public function withCountPartner(): self
+    {
+        $this->countPartner = $this->partnerRepository->countPartnerNonNotifiables($this->territories);
+
+        return $this;
+    }
+
     public function addWidgetCard(string $key, ?int $count = null, array $linkParameters = []): self
     {
         if ($this->canAddCard($key)) {
@@ -161,7 +175,9 @@ class WidgetDataKpiBuilder
             $link = $widgetParams['link'] ?? null;
             $label = $widgetParams['label'] ?? null;
             $widgetParams['params']['territoire'] = 1 === count($this->territories) ? reset($this->territories)->getId() : null;
-            $widgetParams['params']['isImported'] = 'oui';
+            if ('cardPartenairesNonNotifiables' !== $key) {
+                $widgetParams['params']['isImported'] = 'oui';
+            }
             $parameters = array_merge($linkParameters, $widgetParams['params'] ?? []);
             $widgetCard = $this->widgetCardFactory->createInstance($label, $count, $link, $parameters);
             if (!$this->hasWidgetCard($key)) {
@@ -212,13 +228,15 @@ class WidgetDataKpiBuilder
             ->addWidgetCard('cardSignalementsEnCoursNonDecence', $this->countSignalement->getCurrentNDE())
             ->addWidgetCard('cardNouveauxSuivis', $this->countSuivi->getSignalementNewSuivi())
             ->addWidgetCard('cardSansSuivi', $this->countSuivi->getSignalementNoSuivi())
-            ->addWidgetCard('cardNoSuiviAfter3Relances', $this->countSuivi->getNoSuiviAfter3Relances());
+            ->addWidgetCard('cardNoSuiviAfter3Relances', $this->countSuivi->getNoSuiviAfter3Relances())
+            ->addWidgetCard('cardPartenairesNonNotifiables', $this->countPartner->getNonNotifiables());
 
         return new WidgetDataKpi(
             $this->widgetCards,
             $this->countSignalement,
             $this->countSuivi,
             $this->countUser,
+            $this->countPartner,
         );
     }
 

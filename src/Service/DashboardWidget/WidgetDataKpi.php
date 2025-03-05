@@ -2,6 +2,7 @@
 
 namespace App\Service\DashboardWidget;
 
+use App\Dto\CountPartner;
 use App\Dto\CountSignalement;
 use App\Dto\CountSuivi;
 use App\Dto\CountUser;
@@ -18,6 +19,8 @@ class WidgetDataKpi
         private readonly CountSuivi $countSuivi,
         #[Groups(['widget:read'])]
         private readonly CountUser $countUser,
+        #[Groups(['widget:read'])]
+        private readonly CountPartner $countPartner,
     ) {
     }
 
@@ -39,5 +42,10 @@ class WidgetDataKpi
     public function getCountUser(): CountUser
     {
         return $this->countUser;
+    }
+
+    public function getCountPartner(): CountPartner
+    {
+        return $this->countPartner;
     }
 }

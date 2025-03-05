@@ -82,6 +82,12 @@ parameters:
         params:
           procedure: 'non_decence_energetique'
           status: 'en_cours'
+      cardPartenairesNonNotifiables:
+        label: "Partenaires non notifiables"
+        roles: [ROLE_ADMIN, ROLE_ADMIN_TERRITORY]
+        link: 'back_partner_index'
+        params:
+          isNotNotifiable: 1
 
   affectations-partenaires:
     roles: [ ROLE_ADMIN, ROLE_ADMIN_TERRITORY ]

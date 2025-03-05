@@ -8,14 +8,16 @@ use App\Entity\Territory;
 use App\Entity\User;
 use App\Repository\PartnerRepository;
 use App\Repository\SignalementRepository;
+use App\Repository\UserRepository;
+use App\Service\ListFilters\SearchPartner;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\QueryBuilder;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 
 class PartnerRepositoryTest extends KernelTestCase
 {
+    public const USER_ADMIN_TERRITORY_13 = 'admin-territoire-13-01@histologe.fr';
     private EntityManagerInterface $entityManager;
-
     private PartnerRepository $partnerRepository;
 
     protected function setUp(): void
@@ -47,7 +49,7 @@ class PartnerRepositoryTest extends KernelTestCase
         $signalement = $signalementRepository->findOneBy(['reference' => '2022-1']);
 
         $partners = $this->partnerRepository->findByLocalization($signalement, false);
-        $this->assertCount(6, $partners);
+        $this->assertCount(7, $partners);
     }
 
     public function testFindPossiblePartnersForCOR69(): void
@@ -160,6 +162,22 @@ class PartnerRepositoryTest extends KernelTestCase
         $partnerPaginator = $this->partnerRepository->getPartners(1, 50, $user, $territory, null, null);
 
         $this->assertGreaterThan(1, $partnerPaginator->count());
+    }
+
+    public function testGetPartnerPaginatorWithSearchPartner(): void
+    {
+        /** @var UserRepository $userRepository */
+        $userRepository = $this->entityManager->getRepository(User::class);
+        $user = $userRepository->findOneBy(['email' => self::USER_ADMIN_TERRITORY_13]);
+        $searchPartner = new SearchPartner($user);
+        $searchPartner->setIsNotNotifiable(true);
+        $territory = $this->entityManager->getRepository(Territory::class)->findOneBy(['zip' => '13']);
+        $partnerPaginator = $this->partnerRepository->getPartners(1, 50, $user, $territory, null, null, $searchPartner);
+        foreach ($partnerPaginator as $partner) {
+            $this->assertFalse($partner[0]->receiveEmailNotifications());
+        }
+
+        $this->assertEquals(1, $partnerPaginator->count());
     }
 
     public function testGetPartnerQueryBuilder(): void

@@ -15,15 +15,16 @@ class SearchPartner
 
     private User $user;
     private ?string $queryPartner = null;
-    private ?Territory $territory = null;
+    private ?Territory $territoire = null;
     private ?PartnerType $partnerType = null;
     private ?string $orderType = null;
+    private ?bool $isNotNotifiable = null;
 
     public function __construct(User $user)
     {
         $this->user = $user;
         if (!$user->isSuperAdmin() && 1 === count($user->getPartnersTerritories())) {
-            $this->territory = $user->getFirstTerritory();
+            $this->territoire = $user->getFirstTerritory();
         }
     }
 
@@ -42,14 +43,14 @@ class SearchPartner
         $this->queryPartner = $queryPartner;
     }
 
-    public function getTerritory(): ?Territory
+    public function getTerritoire(): ?Territory
     {
-        return $this->territory;
+        return $this->territoire;
     }
 
-    public function setTerritory(?Territory $territory): void
+    public function setTerritoire(?Territory $territoire): void
     {
-        $this->territory = $territory;
+        $this->territoire = $territoire;
     }
 
     public function getPartnerType(): ?PartnerType
@@ -72,11 +73,21 @@ class SearchPartner
         $this->orderType = $orderType;
     }
 
+    public function getIsNotNotifiable(): ?bool
+    {
+        return $this->isNotNotifiable;
+    }
+
+    public function setIsNotNotifiable(?bool $isNotNotifiable): void
+    {
+        $this->isNotNotifiable = $isNotNotifiable;
+    }
+
     public function getUrlParams(): array
     {
         $params = $this->getUrlParamsBase();
-        if (isset($params['territory']) && !$this->getUser()->isSuperAdmin()) {
-            unset($params['territory']);
+        if (isset($params['territoire']) && !$this->getUser()->isSuperAdmin()) {
+            unset($params['territoire']);
         }
 
         return $params;
@@ -88,8 +99,8 @@ class SearchPartner
         if ($this->queryPartner) {
             $filters['Recherche'] = $this->queryPartner;
         }
-        if ($this->territory && $this->user->isSuperAdmin()) {
-            $filters['Territoire'] = $this->territory->getZip().' - '.$this->territory->getName();
+        if ($this->territoire && $this->user->isSuperAdmin()) {
+            $filters['Territoire'] = $this->territoire->getZip().' - '.$this->territoire->getName();
         }
         if (null !== $this->partnerType) {
             $filters['Type de partenaire'] = $this->partnerType->label();

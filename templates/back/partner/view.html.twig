@@ -35,6 +35,12 @@
                 </div>
             </div>          
         </header>
+        {% if partner.receiveEmailNotifications is same as false %}  
+            <div class="fr-alert fr-alert--warning">
+                <h3 class="fr-alert__title">Ce partenaire n'est pas notifiable.</h3>
+                <p>Cela signifie qu'il n'a pas d'adresse e-mail générique et qu'aucun utilisateur ne reçoit de notifications par e-mail.</p>
+            </div>     
+        {% endif %}
     </section>
 
     <div class="fr-tabs">

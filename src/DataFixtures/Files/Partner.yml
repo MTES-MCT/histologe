@@ -65,6 +65,12 @@ partners:
     territory: "Bouches-du-Rhône"
     type: "AUTRE"   
   -
+    nom: "Partenaire 13-09 Non Notifiable"
+    email: ""
+    is_archive: 0
+    territory: "Bouches-du-Rhône"
+    type: "AUTRE"   
+  -
     nom: "Partenaire 01-01"
     email: "partenaire-01-01@histologe.fr"
     is_archive: 0
