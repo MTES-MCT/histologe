@@ -112,7 +112,12 @@ class NotificationAndMailSender
         [$partnerRecipientsMail, $partnerRecipientsInAppNotif] = $this->getRecipientsPartners(isFilteredAffectationStatus: false);
 
         $this->sendMail($partnerRecipientsMail, NotificationMailerType::TYPE_SIGNALEMENT_CLOSED_TO_PARTNERS);
-        $this->createInAppNotifications($partnerRecipientsInAppNotif);
+
+        $recipientsAdminInAppNotif = $this->getRecipientsAdmin(null);
+        $recipientsInAppNotif = new ArrayCollection(
+            array_merge($partnerRecipientsInAppNotif->toArray(), $recipientsAdminInAppNotif->toArray())
+        );
+        $this->createInAppNotifications($recipientsInAppNotif);
     }
 
     private function createInAppNotifications(ArrayCollection $recipients)
