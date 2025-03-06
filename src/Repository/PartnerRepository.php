@@ -2,6 +2,7 @@
 
 namespace App\Repository;
 
+use App\Dto\CountPartner;
 use App\Entity\Affectation;
 use App\Entity\Enum\PartnerType;
 use App\Entity\Enum\Qualification;
@@ -9,10 +10,12 @@ use App\Entity\Partner;
 use App\Entity\Signalement;
 use App\Entity\Territory;
 use App\Entity\User;
+use App\Entity\UserPartner;
 use App\Service\ListFilters\SearchArchivedPartner;
 use App\Service\ListFilters\SearchPartner;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\DBAL\Exception;
+use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\ORM\Query\QueryException;
 use Doctrine\ORM\QueryBuilder;
 use Doctrine\ORM\Tools\Pagination\Paginator;
@@ -50,7 +53,7 @@ class PartnerRepository extends ServiceEntityRepository
             $searchPartner->getPage(),
             $maxResult,
             $searchPartner->getUser(),
-            $searchPartner->getTerritory(),
+            $searchPartner->getTerritoire(),
             $searchPartner->getPartnerType(),
             $searchPartner->getQueryPartner(),
             $searchPartner,
@@ -69,11 +72,34 @@ class PartnerRepository extends ServiceEntityRepository
         $queryBuilder = $this->getPartnersQueryBuilder($territory);
         $queryBuilder->addSelect('z')
             ->leftJoin('p.zones', 'z')
-            ->leftJoin('p.excludedZones', 'ez');
+            ->leftJoin('p.excludedZones', 'ez')
+            ->leftJoin('p.userPartners', 'up')
+            ->leftJoin('up.user', 'u');
+
+        $queryBuilder->select('p');
+        $queryBuilder->addSelect(
+            '(CASE
+                WHEN p.email IS NOT NULL THEN 1
+                WHEN EXISTS (
+                    SELECT 1
+                    FROM '.UserPartner::class.' up2
+                    JOIN up2.user u2
+                    WHERE up2.partner = p
+                    AND u2.email IS NOT NULL
+                    AND u2.statut = 1
+                    AND u2.isMailingActive = 1
+                ) THEN 1
+                ELSE 0
+            END) AS isNotifiable'
+        );
 
         if (!$user->isSuperAdmin() && !$territory) {
             $queryBuilder->andWhere('p.territory IN (:territories)')
                 ->setParameter('territories', $user->getPartnersTerritories());
+        }
+
+        if (isset($searchPartner) && $searchPartner->getIsNotNotifiable()) {
+            $queryBuilder->andHaving('isNotifiable = 0');
         }
 
         if (!empty($type)) {
@@ -103,6 +129,55 @@ class PartnerRepository extends ServiceEntityRepository
         $paginator = new Paginator($queryBuilder->getQuery(), false);
 
         return $paginator;
+    }
+
+    /**
+     * @throws NonUniqueResultException
+     */
+    public function countPartnerNonNotifiables(array $territories): CountPartner
+    {
+        $queryBuilder = $this->createQueryBuilder('p')
+            ->select('COUNT(DISTINCT p.id) as count')
+            ->leftJoin('p.userPartners', 'up')
+            ->leftJoin('up.user', 'u');
+
+        // Filtre sur les partenaires non notifiables
+        $expr = $queryBuilder->expr();
+        $queryBuilder
+            ->where('p.email IS NULL') // Pas d'email générique
+            ->andWhere(
+                $expr->orX(
+                    'up.id IS NULL', // Aucun utilisateur lié
+                    $expr->not(
+                        $expr->exists(
+                            $this->createQueryBuilder('p2')
+                                ->select('1')
+                                ->leftJoin('p2.userPartners', 'up2')
+                                ->leftJoin('up2.user', 'u2')
+                                ->where('p2.id = p.id')
+                                ->andWhere('u2.email IS NOT NULL') // L'utilisateur a un email
+                                ->andWhere('u2.statut = 1') // L'utilisateur est actif
+                                ->andWhere('u2.isMailingActive = 1') // Accepte les emails
+                                ->getDQL()
+                        )
+                    )
+                )
+            );
+
+        // Filtrer par territoires si précisé
+        if (!empty($territories)) {
+            $queryBuilder
+                ->andWhere('p.territory IN (:territories)')
+                ->setParameter('territories', $territories);
+        }
+
+        try {
+            $count = $queryBuilder->getQuery()->getSingleScalarResult();
+        } catch (NonUniqueResultException) {
+            $count = 0;
+        }
+
+        return new CountPartner((int) $count);
     }
 
     /**

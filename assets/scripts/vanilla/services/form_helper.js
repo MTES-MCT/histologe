@@ -17,9 +17,9 @@ document.querySelectorAll('.fr-disable-button-when-submit')?.forEach(element => 
   })
 })
 
-const selects = document.querySelectorAll('.fr-select-submit')
-selects.forEach(select => {
-  select.addEventListener('change', function () {
+const autoSubmitElements = document.querySelectorAll('.fr-auto-submit')
+autoSubmitElements.forEach(autoSubmitElements => {
+  autoSubmitElements.addEventListener('change', function () {
     this.form.submit()
   })
 })

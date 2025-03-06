@@ -208,7 +208,6 @@ class PartnerType extends AbstractType
         $resolver->setDefaults([
             'data_class' => Partner::class,
             'constraints' => [
-                new Assert\Callback([$this, 'validatePartnerCanBeNotified']),
                 new Assert\Callback([$this, 'validateEmailIsUnique']),
             ],
         ]);
@@ -227,15 +226,6 @@ class PartnerType extends AbstractType
 
             if (!empty($user) && !$user->isUsager()) {
                 $context->addViolation('Un utilisateur existe déjà avec cette adresse e-mail.');
-            }
-        }
-    }
-
-    public function validatePartnerCanBeNotified(mixed $value, ExecutionContextInterface $context)
-    {
-        if ($value instanceof Partner) {
-            if (!$value->receiveEmailNotifications()) {
-                $context->addViolation('E-mail générique manquant: Il faut obligatoirement qu\'un compte utilisateur accepte de recevoir les e-mails.');
             }
         }
     }

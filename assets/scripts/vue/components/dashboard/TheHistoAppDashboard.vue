@@ -190,6 +190,8 @@ export default defineComponent({
       this.sharedState.nonDecenceSignalements.linkActive = dataWidget.cardSignalementsEnCoursNonDecence?.link
       this.sharedState.noSuiviAfter3Relances.count = dataWidget.cardNoSuiviAfter3Relances?.count
       this.sharedState.noSuiviAfter3Relances.link = dataWidget.cardNoSuiviAfter3Relances?.link
+      this.sharedState.partenairesNonNotifiables.count = dataWidget.cardPartenairesNonNotifiables?.count
+      this.sharedState.partenairesNonNotifiables.link = dataWidget.cardPartenairesNonNotifiables?.link
 
       if (callback) {
         callback()

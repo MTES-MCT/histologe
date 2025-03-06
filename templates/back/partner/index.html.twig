@@ -31,18 +31,23 @@
     <section class="fr-col-12">
         {{ form_errors(form) }}
         <div class="fr-grid-row fr-grid-row--bottom fr-grid-row--gutters">
-            <div class="fr-col-12 fr-col-lg-3">
+            <div class="fr-col-12 fr-col-lg-4">
                 {{ form_row(form.queryPartner) }}
             </div>
             {% if is_granted('ROLE_ADMIN') %}
-                <div class="fr-col-12 fr-col-lg-3">
-                    {{ form_row(form.territory) }}
+                <div class="fr-col-12 fr-col-lg-4">
+                    {{ form_row(form.territoire) }}
                 </div>
             {% endif %}
-            <div class="fr-col-12 fr-col-lg-3">
+            <div class="fr-col-12 fr-col-lg-4">
                 {{ form_row(form.partnerType) }}
             </div>
-            <div class="fr-col-12 fr-col-lg-3">
+        </div>
+        <div class="fr-grid-row fr-grid-row--gutters">
+            <div class="fr-col-12 fr-col-lg-4">
+                {{ form_row(form.isNotNotifiable) }}
+            </div>
+            <div class="fr-col-12 fr-col-lg-4">
                 <a href="{{ path('back_partner_index') }}" class="fr-link fr-link--icon-left fr-icon-close-circle-line">Réinitialiser les résultats</a>
             </div>
         </div>
@@ -69,11 +74,14 @@
             <th scope="col">Compétences</th>
             <th scope="col">Codes INSEE</th>
             <th scope="col">Zones</th>
+            <th scope="col">Notifiable</th>
             <th scope="col" class="fr-text--right">Actions</th>
         {% endset %}
 
         {% set tableBody %}
             {% for partner in partners %}
+                {% set isNotifiable = partner['isNotifiable'] %}
+                {% set partner = partner[0] %}
                 <tr class="partner-row">
                     <td>{{ partner.id }}</td>
                     {% if is_granted('ROLE_ADMIN') or (is_granted('ROLE_ADMIN_TERRITORY') and app.user.userPartners|length > 1) %}
@@ -110,6 +118,13 @@
                             {% endfor %}
                         {% else %}
                             /
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if isNotifiable %}
+                            <div class="fr-badge fr-badge--success fr-badge--no-icon fr-mb-1v">oui</div>
+                        {% else %}
+                            <div class="fr-badge fr-badge--error fr-badge--no-icon fr-mb-1v">non</div>
                         {% endif %}
                     </td>
                     <td class="fr-text--right fr-ws-nowrap">
