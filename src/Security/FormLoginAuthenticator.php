@@ -49,7 +49,7 @@ class FormLoginAuthenticator extends AbstractLoginFormAuthenticator
 
         $passport = new Passport(
             new UserBadge($email, function (string $email) {
-                return $this->userRepository->findOneBy(['email' => $email, 'statut' => User::STATUS_ACTIVE]);
+                return $this->userRepository->findAgentByEmail($email, User::STATUS_ACTIVE);
             }),
             new PasswordCredentials($request->request->get('password', '')),
             [
