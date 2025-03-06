@@ -31,10 +31,10 @@
                                     data-id="{{ photo.id }}">Enregistrer
                                 </button>
                             </li>
-                        </ul>
+                        </ul>             
                     </div>
                 </div>
-                <div class="photos-album-flex">
+                <div class="photos-album-flex">                
                     <img class="photos-album-image"
                         src="{{ path('show_file', {uuid: photo.uuid}) }}?variant=resize"
                         alt="Photo ajoutée par : {{ photo.uploadedBy.nomComplet ?? 'N/R' }}"
@@ -62,6 +62,10 @@
                     </div>
                     <div class="fr-mt-1w">
                         Photo ajoutée par {{ photo.uploadedBy.nomComplet ?? 'l\'usager' }}
+                    </div>
+                    <div class="fr-grid-row fr-mt-2v fr-grid-row--right" id="zoom">
+                        <button class="photos-album-btn-zoom-out fr-btn fr-btn--icon-center fr-icon-zoom-out-line keep-when-signalement-closed" data-id="{{ photo.id }}"></button>
+                        <button class="photos-album-btn-zoom-in fr-btn fr-btn--icon-center fr-icon-zoom-in-line keep-when-signalement-closed" data-id="{{ photo.id }}"></button>
                     </div>
                 </div>
             </div>

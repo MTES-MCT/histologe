@@ -86,6 +86,34 @@ document?.querySelectorAll('.photo-album-save-rotation')?.forEach(btn => {
     form.submit()
   })
 })
+document?.querySelectorAll('.photos-album-btn-zoom-in')?.forEach(btn => {
+  btn.addEventListener('click', (event) => {
+    setZoom(btn.dataset.id, true)
+  });
+});
+
+document?.querySelectorAll('.photos-album-btn-zoom-out')?.forEach(btn => {
+  btn.addEventListener('click', (event) => {
+      setZoom(btn.dataset.id, false)
+  });
+});
+
+const setZoom = (photoId, isZoomIn) => {
+  const img = document.querySelector('.photos-album-image[data-id="' + photoId + '"]');
+  let scale = parseFloat(img.dataset.scale) || 1;
+
+  scale = isZoomIn ? Math.min(scale + 0.25, 4) : Math.max(scale - 0.25, 1);
+  img.dataset.scale = scale;
+  img.style.transform = `scale(${scale})`;
+}
+
+const resetZoom = (photoId) => {
+  const img = document.querySelector('.photos-album-image[data-id="' + photoId + '"]');
+  const scale = 1;
+  img.dataset.scale = scale;
+  img.style.transform = `scale(${scale})`;
+
+}
 
 const displayPhotoAlbum = (photoId) => {
   document?.querySelector('.photos-album-main-btn-edit[data-id="' + photoId + '"]')?.classList?.remove('fr-hidden')
@@ -100,6 +128,7 @@ const displayPhotoAlbum = (photoId) => {
     element.classList?.remove('fr-hidden')
     document.querySelector('.photos-album-image[data-id="' + photoId + '"]').dataset.rotate = 1
     rotatePhotoAlbumImage(photoId, 'left')
+    resetZoom(photoId)
   })
 }
 const rotatePhotoAlbumImage = (photoId, direction) => {
