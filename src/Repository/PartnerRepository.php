@@ -70,13 +70,10 @@ class PartnerRepository extends ServiceEntityRepository
         ?SearchPartner $searchPartner = null,
     ): Paginator {
         $queryBuilder = $this->getPartnersQueryBuilder($territory);
-        $queryBuilder->addSelect('z')
+        $queryBuilder->select('p', 'z', 'ez')
             ->leftJoin('p.zones', 'z')
-            ->leftJoin('p.excludedZones', 'ez')
-            ->leftJoin('p.userPartners', 'up')
-            ->leftJoin('up.user', 'u');
+            ->leftJoin('p.excludedZones', 'ez');
 
-        $queryBuilder->select('p');
         $queryBuilder->addSelect(
             '(CASE
                 WHEN p.email IS NOT NULL THEN 1
@@ -126,7 +123,7 @@ class PartnerRepository extends ServiceEntityRepository
         $firstResult = ($page - 1) * $maxResult;
         $queryBuilder->setFirstResult($firstResult)->setMaxResults($maxResult);
 
-        $paginator = new Paginator($queryBuilder->getQuery(), false);
+        $paginator = new Paginator($queryBuilder->getQuery());
 
         return $paginator;
     }
