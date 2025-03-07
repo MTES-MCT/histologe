@@ -63,4 +63,15 @@ class CommuneHelper
         'Lyon' => self::LYON_ARRONDISSEMENTS,
         'Paris' => self::PARIS_ARRONDISSEMENTS,
     ];
+
+    public static function getCommuneFromArrondissement(?string $commune): ?string
+    {
+        foreach (self::COMMUNES_ARRONDISSEMENTS as $communeName => $communeArrondissements) {
+            if (in_array($commune, $communeArrondissements)) {
+                return $communeName;
+            }
+        }
+
+        return $commune;
+    }
 }

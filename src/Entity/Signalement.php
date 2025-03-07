@@ -18,6 +18,7 @@ use App\Entity\Model\SituationFoyer;
 use App\Entity\Model\TypeCompositionLogement;
 use App\Repository\SignalementRepository;
 use App\Service\TimezoneProvider;
+use App\Utils\CommuneHelper;
 use App\Utils\Phone;
 use App\Validator as AppAssert;
 use Doctrine\Common\Collections\ArrayCollection;
@@ -1096,13 +1097,15 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
         return $this;
     }
 
-    public function getAddressCompleteOccupant(): ?string
+    public function getAddressCompleteOccupant($withArrondisement = true): ?string
     {
+        $ville = $withArrondisement ? $this->villeOccupant : CommuneHelper::getCommuneFromArrondissement($this->villeOccupant);
+
         return \sprintf(
             '%s %s %s',
             $this->adresseOccupant,
             $this->cpOccupant,
-            $this->villeOccupant
+            $ville
         );
     }
 

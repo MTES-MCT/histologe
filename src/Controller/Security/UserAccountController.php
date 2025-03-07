@@ -42,8 +42,8 @@ class UserAccountController extends AbstractController
                 ]);
             }
 
-            $user = $userRepository->findOneBy(['email' => $email]);
-            if ($user && User::STATUS_INACTIVE === $user->getStatut() && !\in_array('ROLE_USAGER', $user->getRoles())) {
+            $user = $userRepository->findAgentByEmail($email, User::STATUS_INACTIVE);
+            if ($user) {
                 $notificationMailerRegistry->send(
                     new NotificationMail(
                         type: NotificationMailerType::TYPE_ACCOUNT_ACTIVATION_FROM_FO,
@@ -87,8 +87,8 @@ class UserAccountController extends AbstractController
                 ]);
             }
 
-            $user = $userRepository->findOneBy(['email' => $email]);
-            if ($user && User::STATUS_ACTIVE === $user->getStatut() && !\in_array('ROLE_USAGER', $user->getRoles())) {
+            $user = $userRepository->findAgentByEmail($email);
+            if ($user && User::STATUS_ACTIVE === $user->getStatut()) {
                 $notificationMailerRegistry->send(
                     new NotificationMail(
                         type: NotificationMailerType::TYPE_LOST_PASSWORD,
