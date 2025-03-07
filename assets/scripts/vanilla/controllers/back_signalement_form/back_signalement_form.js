@@ -1,42 +1,82 @@
 import { attacheAutocompleteAddressEvent } from '../../services/component_search_address'
 
-function initBoFormSignalementSubmit(tabName) {
-  const boFormSignalement = document?.querySelector('#bo-form-signalement-' + tabName)
+let boFormSignalementCurrentTabIsDirty = false
 
-  boFormSignalement.addEventListener('submit', async (event) => {
-    event.preventDefault()
-    const formData = new FormData(event.target)
-    const submitButton = event.submitter;
-    formData.append(submitButton.name, submitButton.value);
+const tabButtons = document?.querySelectorAll('ul.fr-tabs__list button')
+tabButtons.forEach((tabButton) => {
+  tabButton.addEventListener('click', (event) => {
+    if (boFormSignalementCurrentTabIsDirty) {
+      event.stopImmediatePropagation()
+      saveCurrentTab(event)
+    }
+  })
+})
 
-    fetch(event.target.action, {method: 'POST', body: formData}).then(response => {
-      if (response.ok) {
-        response.json().then((response) => {
-          if (response.redirect) {
-            const currentUrl = window.location.href.split('#')[0];
-            const newUrl = response.url.split('#')[0];
-            window.location.href = response.url;
-            if (currentUrl === newUrl) {
-              window.location.reload(true);
-            }
-          } else {
-            document.querySelector("#tabpanel-" +tabName+ "-panel").innerHTML = response.tabContent
-            document.querySelector("#tabpanel-" +tabName).scrollIntoView({ behavior: 'smooth' });
-            initBoFormSignalementSubmit(tabName)
-            if (tabName === 'adresse' && response.hasDuplicates) {
-              const modaleDuplicate = document.querySelector('#fr-modal-duplicate')
-              const modaleDuplicateContainer = document.querySelector('#fr-modal-duplicate-container')
-              const modaleDuplicateOpenLink = document.querySelector('#fr-modal-duplicate-open-duplicates')
-              modaleDuplicateContainer.innerHTML = response.duplicateContent
-              modaleDuplicateOpenLink.href = response.linkDuplicates
-              dsfr(modaleDuplicate).modal.disclose();
-            }
+function saveCurrentTab(event) {
+  let formData = null
+  let formAction = null
+  if (event.type === 'submit') {
+    formData = new FormData(event.target)
+    formAction = event.target.action
+  }
+  if (event.type === 'click') {
+    const currentTabForm = document?.querySelector('.fr-tabs__panel.fr-tabs__panel--selected form')
+    formData = new FormData(currentTabForm)
+    formAction = currentTabForm.action
+  }
+
+
+  fetch(formAction, {method: 'POST', body: formData}).then(response => {
+    if (response.ok) {
+      response.json().then((response) => {
+        if (response.redirect) {
+          boFormSignalementCurrentTabIsDirty = false
+          // switchTab
+        } else {
+          document.querySelector("#tabpanel-" +tabName+ "-panel").innerHTML = response.tabContent
+          document.querySelector("#tabpanel-" +tabName).scrollIntoView({ behavior: 'smooth' });
+          initBoFormSignalementSubmit(tabName)
+          if (tabName === 'adresse' && response.hasDuplicates) {
+            const modaleDuplicate = document.querySelector('#fr-modal-duplicate')
+            const modaleDuplicateContainer = document.querySelector('#fr-modal-duplicate-container')
+            const modaleDuplicateOpenLink = document.querySelector('#fr-modal-duplicate-open-duplicates')
+            modaleDuplicateContainer.innerHTML = response.duplicateContent
+            modaleDuplicateOpenLink.href = response.linkDuplicates
+            dsfr(modaleDuplicate).modal.disclose();
           }
-        });
-      } else {
-        const errorHtml = '<div class="fr-alert fr-alert--error" role="alert"><p class="fr-alert__title">Une erreur est survenue lors de la soumission du formulaire, veuillez rafraichir la page.</p></div>';
-        document.querySelector("#tabpanel-adresse-panel").innerHTML = errorHtml; 
+        }
+      });
+    } else {
+      const errorHtml = '<div class="fr-alert fr-alert--error" role="alert"><p class="fr-alert__title">Une erreur est survenue lors de la soumission du formulaire, veuillez rafraichir la page.</p></div>';
+      document.querySelector("#tabpanel-adresse-panel").innerHTML = errorHtml; 
+    }
+  })
+}
+
+function initBoFormSignalementSubmit(tabName) {
+  const boFormSignalementTab = document?.querySelector('#bo-form-signalement-' + tabName)
+
+  boFormSignalementTab.addEventListener('submit', async (event) => {
+    event.preventDefault(event)
+    saveCurrentTab(event)
+  })
+
+
+  const tabInputs = boFormSignalementTab?.querySelectorAll('input')
+  tabInputs.forEach((tabInput) => {
+    tabInput.addEventListener('click', (event) => {
+      if (tabInput.type == 'radio') {
+        boFormSignalementCurrentTabIsDirty = true
       }
+    })
+    tabInput.addEventListener('change', (event) => {
+      boFormSignalementCurrentTabIsDirty = true
+    })
+  })
+  const tabSelects = boFormSignalementTab?.querySelectorAll('select')
+  tabSelects.forEach((tabSelect) => {
+    tabSelect.addEventListener('change', (event) => {
+      boFormSignalementCurrentTabIsDirty = true
     })
   })
 }
