@@ -70,10 +70,11 @@ class RetryFailedEmailsCommand extends Command
             if (\array_key_exists('attach', $failedEmail->getContext())) {
                 if (\is_array($failedEmail->getContext()['attach'])) {
                     foreach ($failedEmail->getContext()['attach'] as $attachPath) {
-                        $emailMessage->attachFromPath($attachPath);
+                        $attachPath && $emailMessage->attachFromPath($attachPath);
                     }
                 } else {
-                    $emailMessage->attachFromPath($failedEmail->getContext()['attach']);
+                    $attachPath = $failedEmail->getContext()['attach'];
+                    $attachPath && $emailMessage->attachFromPath($attachPath);
                 }
             }
             if (\array_key_exists('attachContent', $failedEmail->getContext())) {
