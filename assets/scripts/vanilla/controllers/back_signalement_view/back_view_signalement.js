@@ -105,6 +105,23 @@ const setZoom = (photoId, isZoomIn) => {
   scale = isZoomIn ? Math.min(scale + 0.25, 4) : Math.max(scale - 0.25, 1);
   img.dataset.scale = scale;
   img.style.transform = `scale(${scale})`;
+
+  // Center inside the scroll zone
+  let parent = img.parentElement;
+  parent.scrollLeft = (parent.scrollWidth - parent.clientWidth) / 2;
+  parent.scrollTop = (parent.scrollHeight - parent.clientHeight) / 2;
+
+  // correct transform scale with margin if necessary
+  let newHeight = img.height * scale
+  let newWidth = img.width * scale
+  if (newHeight > parent.clientHeight && newWidth < parent.clientWidth) {
+    let diffW = newWidth - img.width
+    img.style.marginLeft = '-' + diffW + 'px'
+  }
+  if (newHeight < parent.clientHeight && newWidth > parent.clientWidth) {
+    let diffH = newHeight - img.height
+    img.style.marginTop = '-' + diffH + 'px'
+  }
 }
 
 const resetZoom = (photoId) => {
