@@ -408,6 +408,7 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
         $qb->andWhere('JSON_CONTAINS(u.roles, :roleUsager) = 0')->setParameter('roleUsager', '"ROLE_USAGER"');
         if (!$searchUser->getUser()->isSuperAdmin()) {
             $qb->andWhere('JSON_CONTAINS(u.roles, :roleAdmin) = 0')->setParameter('roleAdmin', '"ROLE_ADMIN"');
+            $qb->andWhere('JSON_CONTAINS(u.roles, :roleAdmin) = 0')->setParameter('roleAdmin', '"ROLE_API_USER"');
         }
         if ($searchUser->getQueryUser()) {
             $qb->andWhere('LOWER(u.nom) LIKE :queryUser

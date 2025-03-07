@@ -41,6 +41,7 @@ class SearchUserType extends AbstractType
             $this->isAdmin = true;
         } else {
             unset($this->roleChoices['Super Admin']);
+            unset($this->roleChoices['API']);
         }
     }
 
