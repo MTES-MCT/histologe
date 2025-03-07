@@ -31,10 +31,10 @@
                                     data-id="{{ photo.id }}">Enregistrer
                                 </button>
                             </li>
-                        </ul>             
+                        </ul>
                     </div>
                 </div>
-                <div class="photos-album-flex">                
+                <div class="photos-album-flex">
                     <img class="photos-album-image"
                         src="{{ path('show_file', {uuid: photo.uuid}) }}?variant=resize"
                         alt="Photo ajoutée par : {{ photo.uploadedBy.nomComplet ?? 'N/R' }}"
