@@ -67,13 +67,34 @@ class BackUserControllerTest extends WebTestCase
 
     public function provideParamsUserExport(): iterable
     {
-        yield 'Search without params' => [[], 15];
+        yield 'Search without params' => [[], 14];
         yield 'Search with queryUser user' => [['queryUser' => 'user'], 10];
-        yield 'Search with partner 6 and 7' => [['partners' => [2]], 5];
-        yield 'Search with status 1' => [['statut' => 1], 11];
+        yield 'Search with partner 6 and 7' => [['partners' => [2]], 4];
+        yield 'Search with status 1' => [['statut' => 1], 10];
         yield 'Search with role ROLE_USER_PARTNER' => [['role' => 'ROLE_USER_PARTNER'], 10];
         yield 'Search with role ROLE_USER_PARTNER and status 1' => [['role' => 'ROLE_USER_PARTNER', 'statut' => 1], 6];
-        yield 'Search with territory 13 and partnerType Autre' => [['territory' => 13, 'partnerType' => 'AUTRE'], 15];
+        yield 'Search with territory 13 and partnerType Autre' => [['territory' => 13, 'partnerType' => 'AUTRE'], 14];
         yield 'Search with partnerType Ars' => [['partnerType' => 'ARS'], 1];
+    }
+
+    public function testUserExportSA(): void
+    {
+        $client = static::createClient();
+        /** @var UserRepository $userRepository */
+        $userRepository = static::getContainer()->get(UserRepository::class);
+        $user = $userRepository->findOneBy(['email' => 'admin-01@histologe.fr']);
+        $client->loginUser($user);
+
+        /** @var RouterInterface $router */
+        $router = self::getContainer()->get(RouterInterface::class);
+
+        $route = $router->generate('back_user_export');
+        $client->request('GET', $route, ['territory' => 13]);
+
+        $this->assertSelectorTextContains('h1', 'Exporter la liste des 15 utilisateurs');
+
+        $client->request('GET', $route, ['role' => 'ROLE_API_USER']);
+
+        $this->assertSelectorTextContains('h1', 'Exporter la liste des 2 utilisateurs');
     }
 }
