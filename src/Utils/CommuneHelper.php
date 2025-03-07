@@ -64,13 +64,11 @@ class CommuneHelper
         'Paris' => self::PARIS_ARRONDISSEMENTS,
     ];
 
-    public static function getCommuneFromArrondissements(?string $commune): ?string
+    public static function getCommuneFromArrondissement(?string $commune): ?string
     {
-        foreach (self::COMMUNES_ARRONDISSEMENTS as $communeName => $arrondissements) {
-            foreach ($arrondissements as $arrondissement) {
-                if ($commune === $arrondissement) {
-                    return $communeName;
-                }
+        foreach (self::COMMUNES_ARRONDISSEMENTS as $communeName => $communeArrondissements) {
+            if (in_array($commune, $communeArrondissements)) {
+                return $communeName;
             }
         }
 

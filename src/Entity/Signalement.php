@@ -1098,7 +1098,7 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
 
     public function getAddressCompleteOccupant($withArrondisement = true): ?string
     {
-        $ville = $withArrondisement ? $this->villeOccupant : CommuneHelper::getCommuneFromArrondissements($this->villeOccupant);
+        $ville = $withArrondisement ? $this->villeOccupant : CommuneHelper::getCommuneFromArrondissement($this->villeOccupant);
 
         return \sprintf(
             '%s %s %s',
