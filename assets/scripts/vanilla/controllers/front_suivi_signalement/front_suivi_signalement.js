@@ -13,6 +13,7 @@ if (modalUploadFiles) {
   const editFileToken = modalUploadFiles.dataset.editFileToken
   const btnValidate = document.querySelector('#btn-validate-modal-upload-files')
   const ancre = document.querySelector('#modal-upload-file-dynamic-content')
+  let nbFilesProccessing = 0;
 
   fileSelector.onclick = () => fileSelectorInput.click()
   fileSelectorInput.onchange = () => {
@@ -75,6 +76,9 @@ if (modalUploadFiles) {
   }
 
   function uploadFile (file) {
+    nbFilesProccessing++
+    disableHeaderAndFooterButtonOfModal(modalUploadFiles)
+
     const div = document.createElement('div')
     div.classList.add('fr-grid-row', 'fr-grid-row--gutters', 'fr-grid-row--middle', 'fr-mb-2w', 'modal-upload-list-item')
     div.innerHTML = initInnerHtml(file)
@@ -97,6 +101,11 @@ if (modalUploadFiles) {
     }
     http.onreadystatechange = function () {
       if (this.readyState === XMLHttpRequest.DONE) {
+        nbFilesProccessing--
+        if (nbFilesProccessing <= 0) {
+          nbFilesProccessing = 0
+          enableHeaderAndFooterButtonOfModal(modalUploadFiles)
+        }
         const response = JSON.parse(this.response)
         if (this.status === 200) {
           modalUploadFiles.dataset.hasChanges = true
@@ -243,6 +252,28 @@ if (modalUploadFiles) {
     })
   }
 
+  function disableHeaderAndFooterButtonOfModal(modal){
+    const headerButtons = modal.querySelectorAll('.fr-modal__header button')
+    const footerButtons = modal.querySelectorAll('.fr-modal__footer button')
+    headerButtons.forEach(button => {
+      button.setAttribute('disabled', '')
+    })
+    footerButtons.forEach(button => {
+      button.setAttribute('disabled', '')
+    })
+  }
+
+  function enableHeaderAndFooterButtonOfModal(modal){
+    const headerButtons = modal.querySelectorAll('.fr-modal__header button')
+    const footerButtons = modal.querySelectorAll('.fr-modal__footer button')
+    headerButtons.forEach(button => {
+      button.removeAttribute('disabled')
+    })
+    footerButtons.forEach(button => {
+      button.removeAttribute('disabled')
+    })
+  }
+
   modalUploadFiles.addEventListener('dsfr.conceal', (e) => {
     if (modalUploadFiles.dataset.validated === 'true' && modalUploadFiles.dataset.hasChanges === 'true') {
       return true
@@ -263,6 +294,7 @@ if (modalUploadFiles) {
   })
 
   modalUploadFiles.addEventListener('dsfr.disclose', (e) => {
+    nbFilesProccessing = 0
     listContainer.innerHTML = ''
     modalUploadFiles.dataset.validated = false
     modalUploadFiles.dataset.hasChanges = false
