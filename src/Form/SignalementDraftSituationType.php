@@ -42,7 +42,6 @@ class SignalementDraftSituationType extends AbstractType
         $accompagnementTravailleurSocial = $signalement->getSituationFoyer() ? $signalement->getSituationFoyer()->getTravailleurSocialAccompagnement() : '';
         $beneficiaireRSA = $signalement->getInformationComplementaire() ? $signalement->getInformationComplementaire()->getInformationsComplementairesSituationOccupantsBeneficiaireRsa() : '';
         $beneficiaireFSL = $signalement->getInformationComplementaire() ? $signalement->getInformationComplementaire()->getInformationsComplementairesSituationOccupantsBeneficiaireFsl() : '';
-        $proprietaireAverti = $signalement->getIsProprioAverti();
         $dateProprietaireAverti = $signalement->getProprioAvertiAt();
         $moyenInformationProprietaire = $signalement->getInformationProcedure() ? $signalement->getInformationProcedure()->getInfoProcedureBailMoyen() : '';
         $reponseProprietaire = $signalement->getInformationProcedure() ? $signalement->getInformationProcedure()->getInfoProcedureBailReponse() : '';
@@ -254,7 +253,7 @@ class SignalementDraftSituationType extends AbstractType
                 'data' => $beneficiaireFSL,
             ])
 
-            ->add('proprietaireAverti', ChoiceType::class, [
+            ->add('isProprioAverti', ChoiceType::class, [
                 'label' => 'Propriétaire / bailleur informé de la situation',
                 'choices' => [
                     'Oui' => true,
@@ -264,8 +263,6 @@ class SignalementDraftSituationType extends AbstractType
                 'multiple' => false,
                 'required' => false,
                 'placeholder' => false,
-                'mapped' => false,
-                'data' => $proprietaireAverti,
             ])
             ->add('dateProprietaireAverti', DateType::class, [
                 'label' => 'Date d\'information du propriétaire / bailleur',
