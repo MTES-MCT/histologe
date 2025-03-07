@@ -13,6 +13,7 @@ import './vanilla/services/table_sortable.js'
 import './vanilla/services/list_filter_helper.js';
 import './vanilla/services/component_search_checkbox.js';
 import './vanilla/services/tabs_manager.js';
+import './vanilla/services/modales_helper.js';
 
 import './vanilla/controllers/form_account.js';
 import './vanilla/controllers/form_nde.js';

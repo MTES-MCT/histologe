@@ -1,3 +1,5 @@
+import { disableHeaderAndFooterButtonOfModal, enableHeaderAndFooterButtonOfModal } from '../../services/modales_helper'
+
 initializeUploadModal(
   '#fr-modal-upload-files',
   '#select-type-situation-to-clone',
@@ -38,6 +40,7 @@ function initializeUploadModal (
   const editFileToken = modal.dataset.editFileToken
   const btnValidate = modal.querySelector('#btn-validate-modal-upload-files')
   const ancre = modal.querySelector('#modal-upload-file-dynamic-content')
+  let nbFilesProccessing = 0;
 
   fileSelector.onclick = () => fileSelectorInput.click()
   fileSelectorInput.onchange = () => {
@@ -100,6 +103,9 @@ function initializeUploadModal (
   }
 
   function uploadFile (file) {
+    nbFilesProccessing++
+    disableHeaderAndFooterButtonOfModal(modal)
+
     const div = document.createElement('div')
     div.classList.add('fr-grid-row', 'fr-grid-row--gutters', 'fr-grid-row--middle', 'fr-mb-2w', 'modal-upload-list-item')
     div.innerHTML = initInnerHtml(file)
@@ -124,6 +130,11 @@ function initializeUploadModal (
     }
     http.onreadystatechange = function () {
       if (this.readyState === XMLHttpRequest.DONE) {
+        nbFilesProccessing--
+        if (nbFilesProccessing <= 0) {
+          nbFilesProccessing = 0
+          enableHeaderAndFooterButtonOfModal(modal)
+        }
         const response = JSON.parse(this.response)
         if (this.status === 200) {
           modal.dataset.hasChanges = true
@@ -320,6 +331,8 @@ function initializeUploadModal (
   })
 
   modal.addEventListener('dsfr.disclose', (e) => {
+    nbFilesProccessing = 0
+    enableHeaderAndFooterButtonOfModal(modal)
     listContainer.innerHTML = ''
     modal.dataset.validated = false
     modal.dataset.hasChanges = false
