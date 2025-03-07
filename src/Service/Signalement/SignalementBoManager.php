@@ -205,11 +205,6 @@ class SignalementBoManager
         }
         $informationProcedure->setInfoProcedureBailMoyen($form->get('moyenInformationProprietaire')->getData());
         $informationProcedure->setInfoProcedureBailReponse($form->get('reponseProprietaire')->getData());
-        if ('non' === $form->get('demandeRelogement')->getData()) {
-            $signalement->setIsRelogement(false);
-        } elseif ('oui' === $form->get('demandeRelogement')->getData()) {
-            $signalement->setIsRelogement(true);
-        }
         $situationFoyer->setTravailleurSocialQuitteLogement($form->get('souhaiteQuitterLogement')->getData());
         $situationFoyer->setTravailleurSocialPreavisDepart($form->get('preavisDepartDepose')->getData());
         if ('oui' === $form->get('logementAssure')->getData()) {

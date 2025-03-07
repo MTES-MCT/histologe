@@ -46,12 +46,6 @@ class SignalementDraftSituationType extends AbstractType
         $dateProprietaireAverti = $signalement->getProprioAvertiAt();
         $moyenInformationProprietaire = $signalement->getInformationProcedure() ? $signalement->getInformationProcedure()->getInfoProcedureBailMoyen() : '';
         $reponseProprietaire = $signalement->getInformationProcedure() ? $signalement->getInformationProcedure()->getInfoProcedureBailReponse() : '';
-        $demandeRelogement = '';
-        if (true === $signalement->getIsRelogement()) {
-            $demandeRelogement = 'oui';
-        } elseif (false === $signalement->getIsRelogement()) {
-            $demandeRelogement = 'non';
-        }
         $souhaiteQuitterLogement = $signalement->getSituationFoyer() ? $signalement->getSituationFoyer()->getTravailleurSocialQuitteLogement() : '';
         $preavisDepartDepose = $signalement->getSituationFoyer() ? $signalement->getSituationFoyer()->getTravailleurSocialPreavisDepart() : '';
         $logementAssure = '';
@@ -305,18 +299,16 @@ class SignalementDraftSituationType extends AbstractType
                 'mapped' => false,
                 'data' => $reponseProprietaire,
             ])
-            ->add('demandeRelogement', ChoiceType::class, [
+            ->add('isRelogement', ChoiceType::class, [
                 'label' => 'Demande de logement / relogement / mutation',
                 'choices' => [
-                    'Oui' => 'oui',
-                    'Non' => 'non',
+                    'Oui' => true,
+                    'Non' => false,
                 ],
                 'expanded' => true,
                 'multiple' => false,
                 'required' => false,
                 'placeholder' => false,
-                'mapped' => false,
-                'data' => $demandeRelogement,
             ])
             ->add('souhaiteQuitterLogement', ChoiceType::class, [
                 'label' => 'Souhaite quitter le logement',
