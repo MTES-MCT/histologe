@@ -42,12 +42,7 @@ class SignalementDraftSituationType extends AbstractType
         $accompagnementTravailleurSocial = $signalement->getSituationFoyer() ? $signalement->getSituationFoyer()->getTravailleurSocialAccompagnement() : '';
         $beneficiaireRSA = $signalement->getInformationComplementaire() ? $signalement->getInformationComplementaire()->getInformationsComplementairesSituationOccupantsBeneficiaireRsa() : '';
         $beneficiaireFSL = $signalement->getInformationComplementaire() ? $signalement->getInformationComplementaire()->getInformationsComplementairesSituationOccupantsBeneficiaireFsl() : '';
-        $proprietaireAverti = '';
-        if (true === $signalement->getIsProprioAverti()) {
-            $proprietaireAverti = 'oui';
-        } elseif (false === $signalement->getIsProprioAverti()) {
-            $proprietaireAverti = 'non';
-        }
+        $proprietaireAverti = $signalement->getIsProprioAverti();
         $dateProprietaireAverti = $signalement->getProprioAvertiAt();
         $moyenInformationProprietaire = $signalement->getInformationProcedure() ? $signalement->getInformationProcedure()->getInfoProcedureBailMoyen() : '';
         $reponseProprietaire = $signalement->getInformationProcedure() ? $signalement->getInformationProcedure()->getInfoProcedureBailReponse() : '';
@@ -268,8 +263,8 @@ class SignalementDraftSituationType extends AbstractType
             ->add('proprietaireAverti', ChoiceType::class, [
                 'label' => 'Propriétaire / bailleur informé de la situation',
                 'choices' => [
-                    'Oui' => 'oui',
-                    'Non' => 'non',
+                    'Oui' => true,
+                    'Non' => false,
                 ],
                 'expanded' => true,
                 'multiple' => false,

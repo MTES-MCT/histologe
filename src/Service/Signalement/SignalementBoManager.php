@@ -199,11 +199,7 @@ class SignalementBoManager
         $situationFoyer->setTravailleurSocialAccompagnement($form->get('accompagnementTravailleurSocial')->getData());
         $informationComplementaire->setInformationsComplementairesSituationOccupantsBeneficiaireRsa($form->get('beneficiaireRSA')->getData());
         $informationComplementaire->setInformationsComplementairesSituationOccupantsBeneficiaireFsl($form->get('beneficiaireFSL')->getData());
-        if ('non' === $form->get('proprietaireAverti')->getData()) {
-            $signalement->setIsProprioAverti(false);
-        } elseif ('oui' === $form->get('proprietaireAverti')->getData()) {
-            $signalement->setIsProprioAverti(true);
-        }
+        $signalement->setIsProprioAverti(null === $form->get('proprietaireAverti')->getData() ? null : (bool) $form->get('proprietaireAverti')->getData());
         if (!empty($form->get('dateProprietaireAverti')->getData())) {
             $signalement->setProprioAvertiAt(new \DateTimeImmutable($form->get('dateProprietaireAverti')->getData()->format('Y-m-d')));
         }

@@ -61,7 +61,7 @@ function initRefreshFromRadio(tabName, radioName, listElements) {
     })
 
     listElements.forEach((elementSelector) => {
-      refreshElementEnable(tabName, elementSelector, (radioInputValue === 'oui'))
+      refreshElementEnable(tabName, elementSelector, (radioInputValue === 'oui' || radioInputValue === '1'))
     })
   }
 }
@@ -247,6 +247,12 @@ function initBoFormSignalementSituation() {
     'signalement_draft_situation_logementAssure',
     [
       '#signalement_draft_situation_assuranceContactee',
+    ]
+  )
+  initRefreshFromRadio(
+    'situation',
+    'signalement_draft_situation_assuranceContactee',
+    [
       '#signalement_draft_situation_reponseAssurance',
     ]
   )
