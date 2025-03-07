@@ -1,3 +1,5 @@
+import { disableHeaderAndFooterButtonOfModal, enableHeaderAndFooterButtonOfModal } from '../../services/modales_helper'
+
 const modalUploadFiles = document?.querySelector('#fr-modal-upload-files-usager')
 if (modalUploadFiles) {
   const dropArea = document.querySelector('.modal-upload-drop-section')
@@ -249,28 +251,6 @@ if (modalUploadFiles) {
             button.removeAttribute('disabled')
           }
         })
-    })
-  }
-
-  function disableHeaderAndFooterButtonOfModal(modal){
-    const headerButtons = modal.querySelectorAll('.fr-modal__header button')
-    const footerButtons = modal.querySelectorAll('.fr-modal__footer button')
-    headerButtons.forEach(button => {
-      button.setAttribute('disabled', '')
-    })
-    footerButtons.forEach(button => {
-      button.setAttribute('disabled', '')
-    })
-  }
-
-  function enableHeaderAndFooterButtonOfModal(modal){
-    const headerButtons = modal.querySelectorAll('.fr-modal__header button')
-    const footerButtons = modal.querySelectorAll('.fr-modal__footer button')
-    headerButtons.forEach(button => {
-      button.removeAttribute('disabled')
-    })
-    footerButtons.forEach(button => {
-      button.removeAttribute('disabled')
     })
   }
 
