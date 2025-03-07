@@ -283,7 +283,7 @@ class VisiteUploadDocumentsController extends AbstractController
         return self::TYPE_DOCUMENT_VISITE === $typeDocumentVisite;
     }
 
-    public function canAddRapportVisite(Intervention $intervention): bool
+    private function canAddRapportVisite(Intervention $intervention): bool
     {
         return $intervention->getRapportDeVisite()->isEmpty();
     }
