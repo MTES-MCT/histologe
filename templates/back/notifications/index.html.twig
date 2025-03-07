@@ -40,6 +40,13 @@
     <section class="fr-col-12 fr-px-5v">
         <h2 class="fr-h6 fr-mb-0" id="desc-table">{{ count_notification(app.user) }} nouveau(x) suivi(s)</h2>
     </section>
+    
+    {% form_theme form 'form/dsfr_theme.html.twig' %}
+    {{ form_start(form) }}
+    <section class="fr-col-4 fr-p-0">
+        {{ form_row(form.orderType) }}
+    </section>
+    {{ form_end(form) }}
 
     <section class="fr-col-12 fr-pt-0 fr-px-5v">
         {% set tableHead %}
@@ -86,9 +93,9 @@
 
         {% include '_partials/back/table.html.twig' with { 'tableLabel': 'Liste des notifications', 'tableHead': tableHead, 'tableBody': tableBody, cancelSortable: true } %}
         
-        <div class="fr-grid-row fr-mt-2v fr-grid-row--center">    
+        <div class="fr-grid-row fr-mt-2v fr-grid-row--center" id="notifications-pagination">
             {% import '_partials/macros.html.twig' as macros %}
-            {{ macros.customPagination(pages, page, 'back_notifications_list', {}) }}
+            {{ macros.customPagination(pages, searchNotification.page, 'back_notifications_list', searchNotification.urlParams) }}
         </div>
     </section>
 {% endblock %}

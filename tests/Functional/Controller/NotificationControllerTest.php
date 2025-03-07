@@ -2,9 +2,11 @@
 
 namespace App\Tests\Functional\Controller;
 
+use App\Entity\Notification;
 use App\Entity\User;
 use App\Repository\NotificationRepository;
 use App\Repository\UserRepository;
+use App\Service\ListFilters\SearchNotification;
 use App\Tests\SessionHelper;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
@@ -99,7 +101,8 @@ class NotificationControllerTest extends WebTestCase
     private function getSelectedNotifications(User $user): string
     {
         $notificationRepository = static::getContainer()->get(NotificationRepository::class);
-        $notificationsUser = $notificationRepository->getNotificationUser($user, 1);
+        $searchNotification = new SearchNotification($user);
+        $notificationsUser = $notificationRepository->findFilteredPaginated($searchNotification, Notification::MAX_LIST_PAGINATION);
         $notificationsId = [];
         foreach ($notificationsUser as $notification) {
             $notificationsId[] = $notification->getId();
