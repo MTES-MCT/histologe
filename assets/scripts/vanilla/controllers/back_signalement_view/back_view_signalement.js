@@ -114,6 +114,7 @@ const setZoom = (photoId, isZoomIn) => {
   // correct transform scale with margin if necessary
   let newHeight = img.height * scale
   let newWidth = img.width * scale
+ 
   if (newHeight > parent.clientHeight && newWidth < parent.clientWidth) {
     let diffW = newWidth - img.width
     img.style.marginLeft = '-' + diffW + 'px'
@@ -122,6 +123,10 @@ const setZoom = (photoId, isZoomIn) => {
     let diffH = newHeight - img.height
     img.style.marginTop = '-' + diffH + 'px'
   }
+  if (scale == 1 ){
+    img.style.marginLeft = '0px';
+    img.style.marginTop = '0px';
+  }
 }
 
 const resetZoom = (photoId) => {
@@ -129,7 +134,8 @@ const resetZoom = (photoId) => {
   const scale = 1;
   img.dataset.scale = scale;
   img.style.transform = `scale(${scale})`;
-
+  img.style.marginLeft = '0px';
+  img.style.marginTop = '0px';
 }
 
 const displayPhotoAlbum = (photoId) => {
