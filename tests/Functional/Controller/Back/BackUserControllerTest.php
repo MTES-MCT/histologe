@@ -93,7 +93,6 @@ class BackUserControllerTest extends WebTestCase
 
         $this->assertSelectorTextContains('h1', 'Exporter la liste des 15 utilisateurs');
 
-
         $client->request('GET', $route, ['role' => 'ROLE_API_USER']);
 
         $this->assertSelectorTextContains('h1', 'Exporter la liste des 2 utilisateurs');
