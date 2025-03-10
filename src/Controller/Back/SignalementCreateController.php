@@ -10,6 +10,7 @@ use App\Form\SignalementDraftAddressType;
 use App\Form\SignalementDraftLogementType;
 use App\Form\SignalementDraftSituationType;
 use App\Manager\SignalementManager;
+use App\Repository\FileRepository;
 use App\Repository\SignalementRepository;
 use App\Service\ListFilters\SearchDraft;
 use App\Service\Signalement\SignalementBoManager;
@@ -123,6 +124,18 @@ class SignalementCreateController extends AbstractController
             'formSituation' => $formSituation,
             'signalement' => $signalement,
         ]);
+    }
+
+    #[Route('/brouillon/{uuid:signalement}/liste-fichiers', name: 'back_signalement_create_file_list', methods: ['GET'])]
+    public function getSignalementFileList(
+        Signalement $signalement,
+        FileRepository $fileRepository,
+    ): JsonResponse {
+        $this->denyAccessUnlessGranted('SIGN_EDIT_DRAFT', $signalement);
+
+        $files = $fileRepository->findBy(['signalement' => $signalement]);
+
+        return $this->json($files);
     }
 
     #[Route('/bo-form-address/{uuid:signalement}', name: 'back_signalement_draft_form_address_edit', methods: ['POST'])]

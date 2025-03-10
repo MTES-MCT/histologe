@@ -304,10 +304,27 @@ function initializeUploadModal (
     })
   }
 
+  function reloadFileList() {
+    const urlListFiles = document?.querySelector('#url-signalement-files').value
+    console.log('reloadFileList > ' + urlListFiles)
+    fetch(urlListFiles, {method: 'GET'}).then(response => {
+      if (response.ok) {
+        response.json().then((response) => {
+          // #bo-create-file-list
+        })
+      }
+    })
+  }
+
   modal.addEventListener('dsfr.conceal', (e) => {
     if (modal.dataset.validated === 'true' && modal.dataset.hasChanges === 'true') {
       fetch(waitingSuiviRoute).then((response) => {
-        window.location.reload()
+        if (btnValidate.getAttribute('data-context') !== 'form-bo-create') {
+          window.location.reload()
+        } else {
+          console.log('goto reloadFileList')
+          reloadFileList()
+        }
         window.scrollTo(0, 0)
       })
       return true

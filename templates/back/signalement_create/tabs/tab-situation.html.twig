@@ -11,6 +11,8 @@
 </form>
 {% endfor %}
 
+<input type="hidden" id="url-signalement-files" value="{{ path('back_signalement_create_file_list',{uuid:signalement.uuid}) }}">
+
 {% form_theme formSituation 'form/dsfr_theme.html.twig' %}
 {{ form_start(formSituation, {'attr': {'id': 'bo-form-signalement-situation'}}) }}
 {{ form_errors(formSituation) }}
@@ -144,7 +146,7 @@
                     Ajouter des documents
                 </button>
             </p>
-            <div class="fr-mt-1v">
+            <div id="bo-create-file-list" class="fr-mt-1v">
             {% for index, document in signalement.files|filter(
                 document => document.fileType == 'document'
             ) %}
