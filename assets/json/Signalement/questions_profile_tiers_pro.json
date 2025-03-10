@@ -337,7 +337,7 @@
           "slug": "zone_concernee_zone",
           "values": [
             {
-              "label": "Le batiment",
+              "label": "Le bâtiment (et / ou parties communes)",
               "value": "batiment"
             },
             {
@@ -438,7 +438,7 @@
   {
     "type": "SignalementFormScreen",
     "label": "Type et composition du logement",
-    "description": "<p>Nous allons vous poser des questions sur la composition du logement.</p><p>Les documents utiles sont :</p><ul><li>Le bail</li><li>L'état des lieux d'entrée</li><li>Le diagnostic performance énergie (DPE)</li></ul><p><b>Toutes les questions sont obligatoires, sauf mention contraire.</b></p>",
+    "description": "<p>Nous allons vous poser des questions sur la composition du logement.</p><p>Les documents utiles sont :</p><ul><li>Le bail</li><li>L'état des lieux d'entrée</li><li>Le diagnostic performance énergétique (DPE)</li></ul><p><b>Toutes les questions sont obligatoires, sauf mention contraire.</b></p>",
     "slug": "ecran_intermediaire_type_composition",
     "screenCategory": "Type et composition",
     "icon": {
@@ -1153,7 +1153,7 @@
         {
           "type": "SignalementFormOnlyChoice",
           "slug": "bail_dpe_dpe",
-          "label": "Est-ce que le foyer a reçu DPE du logement ? (diagnostic performance énergie)",
+          "label": "Est-ce que le foyer a reçu DPE du logement ? (diagnostic performance énergétique)",
           "values": [
             {
               "label": "Oui",
@@ -1169,7 +1169,7 @@
             }
           ],
           "validate": {
-            "message": "Veuillez indiquer si le foyer a reçu le DPE (diagnostic performance énergie) du logement."
+            "message": "Veuillez indiquer si le foyer a reçu le DPE (diagnostic performance énergétique) du logement."
           }
         },
         {
@@ -1411,7 +1411,7 @@
         },
         {
           "type": "SignalementFormCounter",
-          "label": "Quel est le montant de l'allocation ? (facultatif)",
+          "label": "Quel est le montant mensuel de l'allocation ? (facultatif)",
           "description": "Format attendu : Saisir un nombre entier",
           "slug": "logement_social_montant_allocation",
           "conditional": {
@@ -2122,7 +2122,7 @@
   {
     "type": "SignalementFormScreen",
     "label": "Votre signalement a bien été enregistré !",
-    "description": "<p>Votre numéro de signalement est le : <b>#{{formStore.data.signalementReference}}</b><br>Il sera pris en charge par l'administration sous <u>7 jours ouvrés</u>.</p><p>Vous pouvez suivre l'avancée de votre dossier ou ajouter des informations en cliquant sur le bouton ci-dessous.</p>",
+    "description": "<p>Votre numéro de signalement est le : <b>#{{formStore.data.signalementReference}}</b><br>Il va être étudié par l'administration et vous recevrez un retour sous <u>7 jours</u>.</p><p>Vous pouvez suivre l'avancée de votre dossier ou ajouter des informations en cliquant sur le bouton ci-dessous.</p>",
     "slug": "confirmation_signalement",
     "screenCategory": "Récapitulatif",
     "components": {
