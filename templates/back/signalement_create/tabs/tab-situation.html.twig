@@ -170,7 +170,12 @@
         </div>
     </div>
 
-    <div class="fr-col-12">
+    <div class="fr-col-6">
+        <div class="fr-grid-row fr-grid-row--left">
+            {{ form_row(formSituation.previous) }}
+        </div>
+    </div>
+    <div class="fr-col-6">
         <div class="fr-grid-row fr-grid-row--right">
             {{ form_row(formSituation.forceSave) }}
             {{ form_row(formSituation.draft) }}

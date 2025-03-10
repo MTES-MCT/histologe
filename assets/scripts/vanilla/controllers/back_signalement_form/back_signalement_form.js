@@ -1,18 +1,23 @@
 import { attacheAutocompleteAddressEvent } from '../../services/component_search_address'
 
 let boFormSignalementCurrentTabIsDirty = false
+let boFormSignalementTargetTab = ''
 
-const tabButtons = document?.querySelectorAll('ul.fr-tabs__list button')
+const tabButtons = document?.querySelectorAll('ul.fr-tabs__list.fr-tabs__list--bo-create button')
 tabButtons.forEach((tabButton) => {
   tabButton.addEventListener('click', (event) => {
     if (boFormSignalementCurrentTabIsDirty) {
       event.stopImmediatePropagation()
+      boFormSignalementTargetTab = event.target.id.substring(9)
       saveCurrentTab(event)
     }
   })
 })
 
 function saveCurrentTab(event) {
+  const currentTab = document?.querySelector('.fr-tabs__panel.fr-tabs__panel--selected')
+  currentTab.classList.add('fr-tabs__panel--saving')
+
   let formData = null
   let formAction = null
   if (event.type === 'submit') {
@@ -20,29 +25,34 @@ function saveCurrentTab(event) {
     formAction = event.target.action
   }
   if (event.type === 'click') {
-    const currentTabForm = document?.querySelector('.fr-tabs__panel.fr-tabs__panel--selected form')
+    const currentTabForm = currentTab?.querySelector('form')
     formData = new FormData(currentTabForm)
     formAction = currentTabForm.action
   }
 
-
   fetch(formAction, {method: 'POST', body: formData}).then(response => {
     if (response.ok) {
       response.json().then((response) => {
+        currentTab.classList.remove('fr-tabs__panel--saving')
         if (response.redirect) {
           boFormSignalementCurrentTabIsDirty = false
-          // switchTab
+          const targetTabButton = document?.querySelector('#tabpanel-' + boFormSignalementTargetTab)
+          boFormSignalementTargetTab = ''
+          targetTabButton.click()
         } else {
-          document.querySelector("#tabpanel-" +tabName+ "-panel").innerHTML = response.tabContent
-          document.querySelector("#tabpanel-" +tabName).scrollIntoView({ behavior: 'smooth' });
-          initBoFormSignalementSubmit(tabName)
-          if (tabName === 'adresse' && response.hasDuplicates) {
+          const currentTabName = currentTab.id.substring(9, currentTab.id.length - 6)
+          document.querySelector('#tabpanel-' +currentTabName+ '-panel').innerHTML = response.tabContent
+          document.querySelector('#tabpanel-' +currentTabName).scrollIntoView({ behavior: 'smooth' });
+          if (currentTabName === 'adresse' && response.hasDuplicates) {
             const modaleDuplicate = document.querySelector('#fr-modal-duplicate')
             const modaleDuplicateContainer = document.querySelector('#fr-modal-duplicate-container')
             const modaleDuplicateOpenLink = document.querySelector('#fr-modal-duplicate-open-duplicates')
             modaleDuplicateContainer.innerHTML = response.duplicateContent
             modaleDuplicateOpenLink.href = response.linkDuplicates
             dsfr(modaleDuplicate).modal.disclose();
+          } else {
+            const errorAlertStr = '<div class="fr-alert fr-alert--error fr-mb-2v" role="alert"><p class="fr-alert__title">Merci de corriger les champs où des erreurs sont signalées.</p></div>'
+            document.querySelector('#tabpanel-' +currentTabName+ '-panel').innerHTML = errorAlertStr + document.querySelector('#tabpanel-' +currentTabName+ '-panel').innerHTML
           }
         }
       });
@@ -57,10 +67,10 @@ function initBoFormSignalementSubmit(tabName) {
   const boFormSignalementTab = document?.querySelector('#bo-form-signalement-' + tabName)
 
   boFormSignalementTab.addEventListener('submit', async (event) => {
-    event.preventDefault(event)
+    event.preventDefault()
+    boFormSignalementTargetTab = event.submitter.getAttribute('data-target')
     saveCurrentTab(event)
   })
-
 
   const tabInputs = boFormSignalementTab?.querySelectorAll('input')
   tabInputs.forEach((tabInput) => {

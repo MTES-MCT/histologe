@@ -76,7 +76,12 @@
         </fieldset>
     </div>
 
-    <div class="fr-col-12">
+    <div class="fr-col-6">
+        <div class="fr-grid-row fr-grid-row--left">
+            {{ form_row(formLogement.previous) }}
+        </div>
+    </div>
+    <div class="fr-col-6">
         <div class="fr-grid-row fr-grid-row--right">
             {{ form_row(formLogement.forceSave) }}
             {{ form_row(formLogement.draft) }}

@@ -263,13 +263,18 @@ class SignalementDraftLogementType extends AbstractType
             ->add('forceSave', HiddenType::class, [
                 'mapped' => false,
             ])
+            ->add('previous', SubmitType::class, [
+                'label' => 'Précédent',
+                'attr' => ['class' => 'fr-btn fr-icon-arrow-left-line fr-btn--icon-left fr-btn--secondary', 'data-target' => 'adresse'],
+                'row_attr' => ['class' => 'fr-ml-2w'],
+            ])
             ->add('draft', SubmitType::class, [
                 'label' => 'Finir plus tard',
                 'attr' => ['class' => 'fr-btn fr-icon-arrow-go-forward-line fr-btn--icon-left fr-btn--tertiary-no-outline'],
             ])
             ->add('save', SubmitType::class, [
                 'label' => 'Suivant',
-                'attr' => ['class' => 'fr-btn fr-icon-arrow-right-line fr-btn--icon-right'],
+                'attr' => ['class' => 'fr-btn fr-icon-arrow-right-line fr-btn--icon-right', 'data-target' => 'situation'],
                 'row_attr' => ['class' => 'fr-ml-2w'],
             ])
         ;
