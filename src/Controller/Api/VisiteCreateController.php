@@ -39,8 +39,8 @@ class VisiteCreateController extends AbstractController
      */
     #[OA\Post(
         path: '/api/signalements/{uuid}/visites',
-        description: 'Création d\'une visite',
-        summary: 'Création d\'une visite',
+        description: 'Création d\'une visite (déjà effectuée par le partenaire)',
+        summary: 'Création d\'une visite (déjà effectuée par le partenaire)',
         security: [['Bearer' => []]],
         requestBody: new OA\RequestBody(
             description: 'Payload d\'une visite',
@@ -50,7 +50,7 @@ class VisiteCreateController extends AbstractController
     )]
     #[OA\Response(
         response: Response::HTTP_CREATED,
-        description: 'Suivi crée avec succès',
+        description: 'Visite crée avec succès',
         content: new OA\JsonContent(ref: new Model(type: InterventionModel::class))
     )]
     #[OA\Response(

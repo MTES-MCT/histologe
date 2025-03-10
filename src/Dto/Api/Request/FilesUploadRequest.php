@@ -28,7 +28,7 @@ class FilesUploadRequest implements RequestInterface
             maxSize: '10M',
             mimeTypes: File::IMAGE_MIME_TYPES,
             maxSizeMessage: 'L\'image ne doit pas dépasser 10 Mo.',
-            mimeTypesMessage: 'Seuls les images {{ types }} sont autorisés.'
+            mimeTypesMessage: 'Seules les images {{ types }} sont autorisées.'
         ),
     ], groups: ['multiple_images'])]
     #[Assert\Count(
@@ -42,7 +42,7 @@ class FilesUploadRequest implements RequestInterface
         min: 1,
         max: 1,
         minMessage: 'Vous devez téléverser un fichier.',
-        maxMessage: 'Vous ne pouvez pas téléverser qu\'un seul fichier.',
+        maxMessage: 'Vous ne pouvez téléverser qu\'un seul fichier.',
         groups: ['single']
     )]
     #[OA\Property(
