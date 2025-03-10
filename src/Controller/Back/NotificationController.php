@@ -4,8 +4,10 @@ namespace App\Controller\Back;
 
 use App\Entity\Notification;
 use App\Entity\User;
+use App\Form\SearchNotificationType;
 use App\Repository\NotificationRepository;
 use App\Service\DashboardWidget\WidgetDataManagerCache;
+use App\Service\ListFilters\SearchNotification;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -22,13 +24,20 @@ class NotificationController extends AbstractController
     ): Response {
         /** @var User $user */
         $user = $this->getUser();
-        $page = $request->get('page') ?? 1;
-        $notifications = $notificationRepository->getNotificationUser($user, (int) $page);
+        $searchNotification = new SearchNotification($user);
+        $form = $this->createForm(SearchNotificationType::class, $searchNotification);
+        $form->handleRequest($request);
+        if ($form->isSubmitted() && !$form->isValid()) {
+            $searchNotification = new SearchNotification($user);
+        }
+        $maxListPagination = Notification::MAX_LIST_PAGINATION;
+        $paginatedNotifications = $notificationRepository->findFilteredPaginated($searchNotification, $maxListPagination);
 
         return $this->render('back/notifications/index.html.twig', [
-            'notifications' => $notifications,
-            'page' => $page,
-            'pages' => (int) ceil($notifications->count() / Notification::MAX_LIST_PAGINATION),
+            'form' => $form,
+            'searchNotification' => $searchNotification,
+            'notifications' => $paginatedNotifications,
+            'pages' => (int) ceil($paginatedNotifications->count() / $maxListPagination),
         ]);
     }
 

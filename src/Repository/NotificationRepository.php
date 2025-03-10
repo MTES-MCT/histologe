@@ -9,11 +9,11 @@ use App\Entity\Suivi;
 use App\Entity\Territory;
 use App\Entity\User;
 use App\Repository\Behaviour\EntityCleanerRepositoryInterface;
+use App\Service\ListFilters\SearchNotification;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\AbstractQuery;
 use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\ORM\NoResultException;
-use Doctrine\ORM\QueryBuilder;
 use Doctrine\ORM\Tools\Pagination\Paginator;
 use Doctrine\Persistence\ManagerRegistry;
 
@@ -30,33 +30,44 @@ class NotificationRepository extends ServiceEntityRepository implements EntityCl
         parent::__construct($registry, Notification::class);
     }
 
-    public function getNotificationUserQueryBuilder(User $user): QueryBuilder
+    public function findFilteredPaginated(SearchNotification $searchNotification, int $maxResult): Paginator
     {
         $qb = $this->createQueryBuilder('n')
-            ->orderBy('suivi.createdAt', 'DESC')
             ->where('n.user = :user')
             ->andWhere('n.type = :type_notification')
-            ->setParameter('user', $user)
+            ->setParameter('user', $searchNotification->getUser())
             ->setParameter('type_notification', Notification::TYPE_SUIVI)
-            ->leftJoin('n.user', 'user')
-            ->leftJoin('n.suivi', 'suivi')
-            ->leftJoin('suivi.createdBy', 'createdBy')
-            ->leftJoin('n.signalement', 'signalement')
-            ->leftJoin('n.affectation', 'affectation')
-            ->addSelect('suivi', 'signalement', 'affectation', 'user', 'createdBy');
+            ->leftJoin('n.user', 'u')
+            ->leftJoin('n.suivi', 's')
+            ->leftJoin('s.createdBy', 'cb')
+            ->leftJoin('n.signalement', 'si')
+            ->leftJoin('n.affectation', 'a')
+            ->addSelect('s', 'si', 'a', 'u', 'cb');
 
-        return $qb;
-    }
+        if (!empty($searchNotification->getOrderType())) {
+            [$orderField, $orderDirection] = explode('-', $searchNotification->getOrderType());
+            if ('si.reference' === $orderField) {
+                $qb->orderBy(
+                    'SUBSTRING_INDEX(si.reference, \'-\', 1)',
+                    $orderDirection
+                )
+                ->addOrderBy(
+                    'CAST(SUBSTRING_INDEX(si.reference, \'-\', -1) AS UNSIGNED)',
+                    $orderDirection
+                );
+            } elseif ('cb.nom' === $orderField) {
+                $qb->orderBy('CASE WHEN cb.nom IS NOT NULL THEN cb.nom ELSE si.nomOccupant END', $orderDirection);
+            } else {
+                $qb->orderBy($orderField, $orderDirection);
+            }
+        } else {
+            $qb->orderBy('s.createdAt', 'DESC');
+        }
 
-    public function getNotificationUser(User $user, int $page): Paginator
-    {
-        $maxResult = Notification::MAX_LIST_PAGINATION;
-        $firstResult = ($page - 1) * $maxResult;
+        $firstResult = ($searchNotification->getPage() - 1) * $maxResult;
+        $qb->setFirstResult($firstResult)->setMaxResults($maxResult);
 
-        $queryBuilder = $this->getNotificationUserQueryBuilder($user);
-        $queryBuilder->setFirstResult($firstResult)->setMaxResults($maxResult);
-
-        return new Paginator($queryBuilder->getQuery(), true);
+        return new Paginator($qb->getQuery());
     }
 
     /**
