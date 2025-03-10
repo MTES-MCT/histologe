@@ -49,7 +49,8 @@ class FileVoter extends Voter
         }
         $email = $subject['email'];
 
-        return $file->getUploadedBy()?->getEmail() === $email;
+        return $file->getUploadedBy()?->getEmail() === $email || $file->getSignalement()->getMailDeclarant() === $email 
+                || $file->getSignalement()->getMailOccupant() === $email;
     }
 
     private function canCreate(File $file, User $user): bool

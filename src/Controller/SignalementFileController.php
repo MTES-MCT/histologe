@@ -133,9 +133,11 @@ class SignalementFileController extends AbstractController
             $this->addFlash('error', 'Ce fichier n\'existe plus');
         } elseif ($this->isCsrfTokenValid('signalement_delete_file_'.$signalement->getId(), $request->get('_token'))) {
             $type = $file->getFileType();
+            $filename = $file->getFilename();
             if ($uploadHandlerService->deleteFile($file)) {
                 $description = File::FILE_TYPE_DOCUMENT === $type ? 'Document supprimé ' : 'Photo supprimée ';
-                $description .= 'par l\'usager.';
+                $description .= 'par l\'usager :';
+                $description .= '<ul><li>'.$filename.'</li></ul>';
                 $suiviManager->createSuivi(
                     user: $user,
                     signalement: $signalement,
