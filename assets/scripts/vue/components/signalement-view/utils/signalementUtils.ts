@@ -151,6 +151,7 @@ export function handleSettings (context: any, requestResponse: any): any {
 export function handleTerritoryChange (context: any, value: any): any {
   delete (context.sharedState.input.filters).communes
   delete (context.sharedState.input.filters).epcis
+  delete (context.sharedState.input.filters).zones
   context.sharedState.currentTerritoryId = value.toString()
   requests.getSettings(context.handleSettings)
 }
@@ -163,6 +164,7 @@ export function handleSignalementsShared (context: any, requestResponse: any): a
     context.sharedState.signalements.filters = requestResponse.filters
     context.sharedState.signalements.list = requestResponse.list
     context.sharedState.signalements.pagination = requestResponse.pagination
+    context.sharedState.signalements.zoneAreas = requestResponse.zoneAreas
     context.sharedState.loadingList = false
     if (context.sharedProps.ajaxurlSignalement.includes('cartographie') === false) {
       window.scrollTo(0, 0)

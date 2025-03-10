@@ -77,6 +77,7 @@ export default defineComponent({
   methods: {
     init (reset: boolean = false) {
       if (initElements !== null) {
+        this.sharedState.hasErrorLoading = false
         if (this.abortRequest) {
           this.abortRequest?.abort()
         }

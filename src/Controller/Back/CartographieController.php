@@ -5,6 +5,7 @@ namespace App\Controller\Back;
 use App\Dto\Request\Signalement\SignalementSearchQuery;
 use App\Entity\User;
 use App\Repository\SignalementRepository;
+use App\Repository\ZoneRepository;
 use App\Service\Signalement\SearchFilter;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -27,6 +28,7 @@ class CartographieController extends AbstractController
     public function list(
         SessionInterface $session,
         SignalementRepository $signalementRepository,
+        ZoneRepository $zoneRepository,
         SearchFilter $searchFilter,
         Request $request,
         #[MapQueryString] ?SignalementSearchQuery $signalementSearchQuery = null,
@@ -45,11 +47,24 @@ class CartographieController extends AbstractController
             $filters,
             (int) $request->get('offset')
         );
+        $zones = [];
+        $zoneAreas = [];
+        if (!empty($filters['zones'])) {
+            $criteria = ['id' => $filters['zones']];
+            if (!$this->isGranted('ROLE_ADMIN')) {
+                $criteria['territories'] = $user->getPartnersTerritories();
+            }
+            $zones = $zoneRepository->findBy($criteria);
+            foreach ($zones as $zone) {
+                $zoneAreas[] = $zone->getArea();
+            }
+        }
 
         return $this->json(
             [
                 'list' => $signalements,
                 'filters' => $filters,
+                'zoneAreas' => $zoneAreas,
             ],
             Response::HTTP_OK,
             ['content-type' => 'application/json'],
