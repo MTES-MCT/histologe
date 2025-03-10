@@ -86,6 +86,59 @@ document?.querySelectorAll('.photo-album-save-rotation')?.forEach(btn => {
     form.submit()
   })
 })
+document?.querySelectorAll('.photos-album-btn-zoom-in')?.forEach(btn => {
+  btn.addEventListener('click', (event) => {
+    setZoom(btn.dataset.id, true)
+  });
+});
+
+document?.querySelectorAll('.photos-album-btn-zoom-out')?.forEach(btn => {
+  btn.addEventListener('click', (event) => {
+      setZoom(btn.dataset.id, false)
+  });
+});
+
+const setZoom = (photoId, isZoomIn) => {
+  const img = document.querySelector('.photos-album-image[data-id="' + photoId + '"]');
+  let scale = parseFloat(img.dataset.scale) || 1;
+
+  scale = isZoomIn ? Math.min(scale + 0.25, 4) : Math.max(scale - 0.25, 1);
+  img.dataset.scale = scale;
+  img.style.transformOrigin = 'left top';
+  img.style.transform = `scale(${scale})`;
+
+  // Center inside the scroll zone
+  let parent = img.parentElement;
+  parent.scrollLeft = (parent.scrollWidth - parent.clientWidth) / 2;
+  parent.scrollTop = (parent.scrollHeight - parent.clientHeight) / 2;
+
+  // correct transform scale with margin if necessary
+  let newHeight = img.height * scale
+  let newWidth = img.width * scale
+ 
+  if (newHeight > parent.clientHeight && newWidth < parent.clientWidth) {
+    let diffW = newWidth - img.width
+    img.style.marginLeft = '-' + diffW + 'px'
+  }
+  if (newHeight < parent.clientHeight && newWidth > parent.clientWidth) {
+    let diffH = newHeight - img.height
+    img.style.marginTop = '-' + diffH + 'px'
+  }
+  if (scale == 1 ){
+    img.style.marginLeft = '0px';
+    img.style.marginTop = '0px';
+  }
+}
+
+const resetZoom = (photoId) => {
+  const img = document.querySelector('.photos-album-image[data-id="' + photoId + '"]');
+  const scale = 1;
+  img.dataset.scale = scale;
+  img.style.transform = `scale(${scale})`;
+  img.style.marginLeft = '0px';
+  img.style.marginTop = '0px';
+  img.style.transformOrigin = 'center center';
+}
 
 const displayPhotoAlbum = (photoId) => {
   document?.querySelector('.photos-album-main-btn-edit[data-id="' + photoId + '"]')?.classList?.remove('fr-hidden')
@@ -100,9 +153,11 @@ const displayPhotoAlbum = (photoId) => {
     element.classList?.remove('fr-hidden')
     document.querySelector('.photos-album-image[data-id="' + photoId + '"]').dataset.rotate = 1
     rotatePhotoAlbumImage(photoId, 'left')
+    resetZoom(photoId)
   })
 }
 const rotatePhotoAlbumImage = (photoId, direction) => {
+  resetZoom(photoId);
   const imgElement = document.querySelector('.photos-album-image[data-id="' + photoId + '"]')
   const parentElement = imgElement.parentElement
   
