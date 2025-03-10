@@ -5,11 +5,14 @@ namespace App\Controller;
 use App\Entity\Enum\DocumentType;
 use App\Entity\File;
 use App\Entity\Signalement;
+use App\Entity\Suivi;
+use App\Manager\SuiviManager;
 use App\Manager\UserManager;
 use App\Repository\FileRepository;
 use App\Service\Signalement\SignalementFileProcessor;
 use App\Service\UploadHandlerService;
 use Doctrine\ORM\EntityManagerInterface;
+use League\Flysystem\FilesystemException;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -101,5 +104,59 @@ class SignalementFileController extends AbstractController
         $entityManager->flush();
 
         return $this->json(['success' => true, 'fileId' => $request->get('file_id')]);
+    }
+
+    /**
+     * @throws FilesystemException
+     */
+    #[Route('/{uuid:signalement}/file/delete', name: 'signalement_delete_file')]
+    public function deleteFileSignalement(
+        Signalement $signalement,
+        Request $request,
+        FileRepository $fileRepository,
+        UploadHandlerService $uploadHandlerService,
+        SuiviManager $suiviManager,
+        UserManager $userManager,
+    ): Response {
+        $fileId = $request->get('file_id');
+        $file = $fileRepository->findOneBy(
+            [
+                'id' => $fileId,
+                'signalement' => $signalement,
+            ]
+        );
+        $requestEmail = $request->get('from');
+        $fromEmail = \is_array($requestEmail) ? array_pop($requestEmail) : $requestEmail;
+        $user = $userManager->getOrCreateUserForSignalementAndEmail($signalement, $fromEmail);
+        $this->denyAccessUnlessGranted('FRONT_FILE_DELETE', ['file' => $file, 'email' => $fromEmail]);
+        if (null === $file) {
+            $this->addFlash('error', 'Ce fichier n\'existe plus');
+        } elseif ($this->isCsrfTokenValid('signalement_delete_file_'.$signalement->getId(), $request->get('_token'))) {
+            $type = $file->getFileType();
+            if ($uploadHandlerService->deleteFile($file)) {
+                $description = File::FILE_TYPE_DOCUMENT === $type ? 'Document supprimé ' : 'Photo supprimée ';
+                $description .= 'par l\'usager.';
+                $suiviManager->createSuivi(
+                    user: $user,
+                    signalement: $signalement,
+                    description: $description,
+                    type: Suivi::TYPE_AUTO,
+                );
+                if (File::FILE_TYPE_DOCUMENT === $type) {
+                    $this->addFlash('success', 'Le document a bien été supprimé.');
+                } else {
+                    $this->addFlash('success', 'La photo a bien été supprimée.');
+                }
+            } else {
+                $this->addFlash('error', 'Le fichier n\'a pas été supprimé.');
+            }
+        } else {
+            $this->addFlash('error', 'Token CSRF invalide, veuillez rechargez la page');
+        }
+
+        return $this->redirectToRoute(
+            'front_suivi_signalement',
+            ['code' => $signalement->getCodeSuivi(), 'from' => $fromEmail]
+        );
     }
 }

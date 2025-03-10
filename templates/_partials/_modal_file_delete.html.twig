@@ -3,7 +3,15 @@
         <div class="fr-grid-row fr-grid-row--center">
             <div class="fr-col-12 fr-col-md-8 fr-col-lg-6">
                 <div class="fr-modal__body">
-                    <form method="POST" id="form-delete-file" enctype="application/json" action="{{ path('back_signalement_delete_file',{uuid:signalement.uuid}) }}">
+                    {% set action_route = app.request.get('_route') == 'front_suivi_signalement' 
+                        ? path('signalement_delete_file', { uuid: signalement.uuid, from:email }) 
+                        : path('back_signalement_delete_file', { uuid: signalement.uuid }) 
+                    %}
+                    <form 
+                        method="POST" id="form-delete-file" 
+                        enctype="application/json" 
+                        action="{{ action_route }}"
+                        >
                         <div class="fr-modal__header">
                             <button type="button" class="fr-btn--close fr-btn" aria-controls="fr-modal-delete-file">Fermer</button>
                         </div>
@@ -15,7 +23,9 @@
                             <div class="fr-select-group">
                                 Vous êtes sur le point de supprimer <span class="fr-modal-file-delete-type"></span> <b><span class="fr-modal-file-delete-filename"></span></b>. <br>
                                 Une fois supprimé, le fichier ne sera plus visible dans le signalement. <br>
-                                Si vous avez partagé <span class="fr-modal-file-delete-type"></span> à l'usager, il n'y aura plus accès.
+                                {% if app.request.get('_route') != 'front_suivi_signalement' %}
+                                    Si vous avez partagé <span class="fr-modal-file-delete-type"></span> à l'usager, il n'y aura plus accès.
+                                {% endif %}
                             </div>
                             <div class="fr-alert fr-alert--info">
                                 <p>Voulez-vous vraiment supprimer <span class="fr-modal-file-delete-type"></span> ?</p>

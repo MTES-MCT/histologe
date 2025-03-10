@@ -8,6 +8,7 @@ import './vanilla/services/form_helper.js';
 import './vanilla/services/cookie_banner.js';
 import './vanilla/services/maintenance_banner.js';
 import './vanilla/services/modales_helper.js';
+import './vanilla/services/file_delete.js';
 
 import './vanilla/controllers/activate_account/activate_account.js';
 import './vanilla/controllers/front_demande_lien_signalement/front_demande_lien_signalement.js';
