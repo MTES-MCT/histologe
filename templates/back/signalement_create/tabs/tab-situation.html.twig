@@ -1,1 +1,182 @@
 <h2 class="fr-h4">Situation du foyer et du bail</h2>
+<p>Sauf mention contraire, toutes les réponses sont <strong>facultatives</strong>. Essayez de compléter le dossier au mieux !</p>
+
+{% for index, document in signalement.files|filter(
+    document => document.fileType == 'document'
+) %}
+<form method="POST" id="form-delete-file-{{ document.id }}" enctype="application/json" action="{{ path('back_signalement_delete_file',{uuid:signalement.uuid}) }}">
+    <input type="hidden" name="_token" value="{{ csrf_token('signalement_delete_file_'~signalement.id) }}">
+    <input type="hidden" name="file_id" value="{{ document.id }}">
+    <input type="hidden" name="is_draft" value="1">
+</form>
+{% endfor %}
+
+{% form_theme formSituation 'form/dsfr_theme.html.twig' %}
+{{ form_start(formSituation, {'attr': {'id': 'bo-form-signalement-situation'}}) }}
+{{ form_errors(formSituation) }}
+<div class="fr-grid-row fr-grid-row--gutters">
+
+    <div class="fr-col-12 fr-col-md-6">
+        <fieldset class="fr-fieldset">
+            <legend>
+                <h3 class="fr-h5">Bail</h3>
+            </legend>
+            <div class="fr-fieldset__element">
+                {{ form_row(formSituation.bail) }}
+            </div>
+            <div class="fr-fieldset__element">
+                {{ form_row(formSituation.dpe) }}
+            </div>
+            <div class="fr-fieldset__element">
+                {{ form_row(formSituation.classeEnergetique) }}
+            </div>
+            <div class="fr-fieldset__element">
+                {{ form_row(formSituation.etatDesLieux) }}
+            </div>
+            <div class="fr-fieldset__element">
+                {{ form_row(formSituation.dateEntreeLogement) }}
+            </div>
+            <div class="fr-fieldset__element">
+                {{ form_row(formSituation.montantLoyer) }}
+            </div>
+            <div class="fr-fieldset__element">
+                {{ form_row(formSituation.payementLoyersAJour) }}
+            </div>
+        </fieldset>
+
+        <fieldset class="fr-fieldset">
+            <legend>
+                <h3 class="fr-h5">Situation du foyer</h3>
+            </legend>
+            <div class="fr-fieldset__element">
+                {{ form_row(formSituation.allocataire) }}
+            </div>
+            <div class="fr-fieldset__element">
+                {{ form_row(formSituation.caisseAllocation) }}
+            </div>
+            <div class="fr-fieldset__element">
+                {{ form_row(formSituation.dateNaissanceAllocataire) }}
+            </div>
+            <div class="fr-fieldset__element">
+                {{ form_row(formSituation.numeroAllocataire) }}
+            </div>
+            <div class="fr-fieldset__element">
+                {{ form_row(formSituation.typeAllocation) }}
+            </div>
+            <div class="fr-fieldset__element">
+                {{ form_row(formSituation.montantAllocation) }}
+            </div>
+            <div class="fr-fieldset__element">
+                {{ form_row(formSituation.accompagnementTravailleurSocial) }}
+            </div>
+            <div class="fr-fieldset__element">
+                {{ form_row(formSituation.beneficiaireRSA) }}
+            </div>
+            <div class="fr-fieldset__element">
+                {{ form_row(formSituation.beneficiaireFSL) }}
+            </div>
+        </fieldset>
+    </div>
+
+    <div class="fr-col-12 fr-col-md-6">
+        <fieldset class="fr-fieldset">
+            <legend>
+                <h3 class="fr-h5">Démarches</h3>
+            </legend>
+            <div class="fr-fieldset__element">
+                {{ form_row(formSituation.isProprioAverti) }}
+            </div>
+            <div class="fr-fieldset__element">
+                {{ form_row(formSituation.dateProprietaireAverti) }}
+            </div>
+            <div class="fr-fieldset__element">
+                {{ form_row(formSituation.moyenInformationProprietaire) }}
+            </div>
+            <div class="fr-fieldset__element">
+                {{ form_row(formSituation.reponseProprietaire) }}
+            </div>
+            <div class="fr-fieldset__element">
+                {{ form_row(formSituation.isRelogement) }}
+            </div>
+            <div class="fr-fieldset__element">
+                {{ form_row(formSituation.souhaiteQuitterLogement) }}
+            </div>
+            <div class="fr-fieldset__element">
+                {{ form_row(formSituation.preavisDepartDepose) }}
+            </div>
+        </fieldset>
+
+        <fieldset class="fr-fieldset">
+            <legend>
+                <h3 class="fr-h5">Assurance</h3>
+            </legend>
+            <div class="fr-fieldset__element">
+                {{ form_row(formSituation.logementAssure) }}
+            </div>
+            <div class="fr-fieldset__element">
+                {{ form_row(formSituation.assuranceContactee) }}
+            </div>
+            <div class="fr-fieldset__element">
+                {{ form_row(formSituation.reponseAssurance) }}
+            </div>
+        </fieldset>
+
+        <div class="fr-mt-3v">
+            <legend>
+                <h3 class="fr-h5">Documents</h3>
+            </legend>
+            <p>
+                Cliquez ci-dessous pour ajouter des documents relatifs à la situation (bail, DPE, état des lieux, diagnostic plomb amiante, etc.)
+                <br>
+                NB : vous pourrez ajouter les documents après la création du signalement.
+            </p>
+            <p>
+                <button
+                    type="button"
+                    class="fr-btn fr-btn--secondary fr-btn--icon-left fr-icon-add-line open-modal-upload-files-btn"
+                    data-fr-opened="false"
+                    aria-controls="fr-modal-upload-files"
+                    data-file-type="document"
+                    data-file-filter="situation"
+                    data-accepted-type-mimes={{ get_accepted_mime_type('document')}}
+                    data-accepted-extensions="{{ get_accepted_extensions('document')}}"
+                    >
+                    Ajouter des documents
+                </button>
+            </p>
+            <div class="fr-mt-1v">
+            {% for index, document in signalement.files|filter(
+                document => document.fileType == 'document'
+            ) %}
+                <div class="fr-grid-row">
+                    <div class="fr-col-8">
+                        <i>{{ document.filename }}</i> (Type {{ document.documentType.label() }})
+                    </div>
+                    <div class="fr-col-4">
+                        <button
+                            form="form-delete-file-{{ document.id }}"
+                            class="fr-link fr-icon-close-circle-line fr-link--icon-left fr-link--error"
+                            aria-label="Supprimer le fichier {{ document.filename }}"
+                            title="Supprimer le fichier {{ document.filename }}"
+                            >
+                        Supprimer
+                        </button>
+                    </div>
+                </div>
+            {% else %}
+                Aucun fichier envoyé pour l'instant
+            {% endfor %}
+            </div>
+        </div>
+    </div>
+
+    <div class="fr-col-12">
+        <div class="fr-grid-row fr-grid-row--right">
+            {{ form_row(formSituation.forceSave) }}
+            {{ form_row(formSituation.draft) }}
+            {{ form_row(formSituation.save) }}
+        </div>
+    </div>
+
+</div>
+{{ form_end(formSituation) }}

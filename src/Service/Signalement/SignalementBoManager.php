@@ -6,6 +6,8 @@ use App\Entity\Enum\EtageType;
 use App\Entity\Enum\ProfileDeclarant;
 use App\Entity\Enum\SignalementStatus;
 use App\Entity\Model\InformationComplementaire;
+use App\Entity\Model\InformationProcedure;
+use App\Entity\Model\SituationFoyer;
 use App\Entity\Model\TypeCompositionLogement;
 use App\Entity\Signalement;
 use App\Entity\User;
@@ -156,6 +158,69 @@ class SignalementBoManager
         $signalement->setJsonContent($jsonContent);
         $signalement->setTypeCompositionLogement($typeCompositionLogement);
         $signalement->setInformationComplementaire($informationComplementaire);
+
+        return true;
+    }
+
+    public function formSituationManager(FormInterface $form, Signalement $signalement): bool
+    {
+        $typeCompositionLogement = $signalement->getTypeCompositionLogement() ? clone $signalement->getTypeCompositionLogement() : new TypeCompositionLogement();
+        $informationComplementaire = $signalement->getInformationComplementaire() ? clone $signalement->getInformationComplementaire() : new InformationComplementaire();
+        $situationFoyer = $signalement->getSituationFoyer() ? clone $signalement->getSituationFoyer() : new SituationFoyer();
+        $informationProcedure = $signalement->getInformationProcedure() ? clone $signalement->getInformationProcedure() : new InformationProcedure();
+
+        $typeCompositionLogement->setBailDpeBail($form->get('bail')->getData());
+        $typeCompositionLogement->setBailDpeDpe($form->get('dpe')->getData());
+        $typeCompositionLogement->setBailDpeClasseEnergetique($form->get('classeEnergetique')->getData());
+        $typeCompositionLogement->setBailDpeEtatDesLieux($form->get('etatDesLieux')->getData());
+        if ($form->get('dateEntreeLogement')->getData()) {
+            $typeCompositionLogement->setBailDpeDateEmmenagement($form->get('dateEntreeLogement')->getData()->format('Y-m-d'));
+            $signalement->setDateEntree($form->get('dateEntreeLogement')->getData());
+        }
+        $informationComplementaire->setInformationsComplementairesLogementMontantLoyer($form->get('montantLoyer')->getData());
+        $informationComplementaire->setInformationsComplementairesSituationOccupantsLoyersPayes($form->get('payementLoyersAJour')->getData());
+        if ('non' === $form->get('allocataire')->getData()) {
+            $signalement->setIsAllocataire('0');
+        } elseif (!empty($form->get('allocataire')->getData())) {
+            if ('caf' === $form->get('caisseAllocation')->getData()) {
+                $signalement->setIsAllocataire('caf');
+            } elseif ('msa' === $form->get('caisseAllocation')->getData()) {
+                $signalement->setIsAllocataire('msa');
+            } else {
+                $signalement->setIsAllocataire('1');
+            }
+        }
+        if (!empty($form->get('dateNaissanceAllocataire')->getData())) {
+            $signalement->setDateNaissanceOccupant(new \DateTimeImmutable($form->get('dateNaissanceAllocataire')->getData()->format('Y-m-d')));
+        }
+        $signalement->setNumAllocataire($form->get('numeroAllocataire')->getData());
+        $informationComplementaire->setInformationsComplementairesSituationOccupantsTypeAllocation($form->get('typeAllocation')->getData());
+        $signalement->setMontantAllocation($form->get('montantAllocation')->getData());
+        $situationFoyer->setTravailleurSocialAccompagnement($form->get('accompagnementTravailleurSocial')->getData());
+        $informationComplementaire->setInformationsComplementairesSituationOccupantsBeneficiaireRsa($form->get('beneficiaireRSA')->getData());
+        $informationComplementaire->setInformationsComplementairesSituationOccupantsBeneficiaireFsl($form->get('beneficiaireFSL')->getData());
+        if (!empty($form->get('dateProprietaireAverti')->getData())) {
+            $signalement->setProprioAvertiAt(new \DateTimeImmutable($form->get('dateProprietaireAverti')->getData()->format('Y-m-d')));
+        }
+        $informationProcedure->setInfoProcedureBailMoyen($form->get('moyenInformationProprietaire')->getData());
+        $informationProcedure->setInfoProcedureBailReponse($form->get('reponseProprietaire')->getData());
+        $situationFoyer->setTravailleurSocialQuitteLogement($form->get('souhaiteQuitterLogement')->getData());
+        $situationFoyer->setTravailleurSocialPreavisDepart($form->get('preavisDepartDepose')->getData());
+        if ('oui' === $form->get('logementAssure')->getData()) {
+            if ('oui' === $form->get('assuranceContactee')->getData()) {
+                $informationProcedure->setInfoProcedureAssuranceContactee('oui');
+            } elseif ('non' === $form->get('assuranceContactee')->getData()) {
+                $informationProcedure->setInfoProcedureAssuranceContactee('non');
+            }
+        } elseif ('non' === $form->get('logementAssure')->getData()) {
+            $informationProcedure->setInfoProcedureAssuranceContactee('pas_assurance_logement');
+        }
+        $informationProcedure->setInfoProcedureReponseAssurance($form->get('reponseAssurance')->getData());
+
+        $signalement->setTypeCompositionLogement($typeCompositionLogement);
+        $signalement->setInformationComplementaire($informationComplementaire);
+        $signalement->setSituationFoyer($situationFoyer);
+        $signalement->setInformationProcedure($informationProcedure);
 
         return true;
     }
