@@ -7,7 +7,7 @@
   "aucun": { "default": "aucun" },
   "oui": { "default": "OUI" },
   "non": { "default": "NON" },
-  "nsp": { "default": "Ne sait pas" },
+  "nsp": { "default": "Je ne sais pas" },
   "piece_unique": { "default": "Une pièce unique" },
   "plusieurs_pieces": { "default": "Plusieurs pièces" },
   "caf": { "default": "CAF" },
