@@ -9,35 +9,37 @@ use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\Validator\Context\ExecutionContextInterface;
 
 #[OA\Schema(
-    schema: 'VisiteRequest',
-    description: 'Payload d\'une visite effectuée'
+    description: 'Payload d\'une visite'
 )]
+#[Assert\Callback([self::class, 'checkFieldsWhenVisitePlannedOrConfirmed'])]
 class VisiteRequest implements RequestInterface, RequestFileInterface
 {
     #[Assert\NotBlank]
     #[Assert\Date]
-    #[Assert\Callback([self::class, 'validateDateIsPast'])]
     #[OA\Property(
         description: 'Date de la visite effectuée<br>Exemple : `2025-01-05`',
         format: 'date',
         example: '2025-01-05'
     )]
-    public string $date;
+    public ?string $date = null;
 
     #[Assert\NotBlank]
     #[Assert\Time(withSeconds: false)]
     #[OA\Property(description: 'Heure de la visite effectuée<br>Exemple : `10:00`', example: '10:00')]
-    public string $time;
+    public ?string $time = null;
 
     #[Assert\Type('bool')]
+    #[Assert\NotNull(groups: ['PUT_VISITE'])]
     #[OA\Property(description: 'L\'occupant était présent', example: true)]
-    public bool $occupantPresent;
+    public ?bool $occupantPresent = null;
 
     #[OA\Property(description: 'Le propriétaire était présent', example: false)]
     #[Assert\Type('bool')]
+    #[Assert\NotNull(groups: ['PUT_VISITE'])]
     public ?bool $proprietairePresent = null;
 
     #[Assert\Type('bool')]
+    #[Assert\NotNull(groups: ['PUT_VISITE'])]
     #[OA\Property(description: 'Notifier l\'usager', example: true)]
     public ?bool $notifyUsager = null;
 
@@ -57,7 +59,6 @@ class VisiteRequest implements RequestInterface, RequestFileInterface
         items: new OA\Items(type: 'string'),
         example: ['LOGEMENT_DECENT', 'RESPONSABILITE_OCCUPANT_ASSURANTIEL']
     )]
-    #[Assert\NotBlank()]
     #[Assert\Choice(
         choices: [
             'NON_DECENCE',
@@ -71,9 +72,11 @@ class VisiteRequest implements RequestInterface, RequestFileInterface
         multiple: true,
         message: 'Veuillez choisir des valeurs valides. {{ choices }}'
     )]
+    #[Assert\NotBlank(groups: ['PUT_VISITE'])]
     public array $concludeProcedure = [];
 
     #[Assert\Type('string')]
+    #[Assert\NotBlank(groups: ['PUT_VISITE'])]
     #[OA\Property(description: 'Détails de la visite', example: '<p>Compte rendu de visite...</p>')]
     public ?string $details = null;
 
@@ -97,12 +100,43 @@ class VisiteRequest implements RequestInterface, RequestFileInterface
         return $this->files;
     }
 
-    public static function validateDateIsPast(string $date, ExecutionContextInterface $context): void
-    {
-        $dateTime = \DateTime::createFromFormat('Y-m-d', $date);
-        if (!$dateTime || $dateTime > new \DateTimeImmutable('today')) {
-            $context->buildViolation('La date de visite doit être antérieure à aujourd\'hui.')
-                ->addViolation();
+    public static function checkFieldsWhenVisitePlannedOrConfirmed(
+        self $object,
+        ExecutionContextInterface $context,
+    ): void {
+        $dateTime = \DateTimeImmutable::createFromFormat('Y-m-d', $object->date);
+        $today = new \DateTimeImmutable('today');
+
+        $fieldsToCheck = [
+            'occupantPresent' => $object->occupantPresent,
+            'proprietairePresent' => $object->proprietairePresent,
+            'notifyUsager' => $object->notifyUsager,
+            'concludeProcedure' => $object->concludeProcedure,
+            'details' => $object->details,
+        ];
+        if ($dateTime && $dateTime > $today) {
+            $fieldsToCheck['files'] = $object->files;
+            foreach ($fieldsToCheck as $fieldName => $value) {
+                if ($object->$fieldName !== null && $object->$fieldName !== []) {
+                    $context->buildViolation(sprintf(
+                        'Le champ "%s" ne peut être renseigné que si la visite a été effectuée.',
+                        $fieldName))
+                        ->atPath($fieldName)
+                        ->addViolation();
+                }
+            }
+        }
+
+        if ($dateTime <= $today) {
+            foreach ($fieldsToCheck as $fieldName => $value) {
+                if (null === $value || [] === $value || '' === $value) {
+                    $context->buildViolation(sprintf(
+                        'Le champ "%s" est obligatoire pour une visite effectuée.',
+                        $fieldName))
+                        ->atPath($fieldName)
+                        ->addViolation();
+                }
+            }
         }
     }
 }

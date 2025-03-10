@@ -165,7 +165,7 @@ class VisiteUploadDocumentsController extends AbstractController
     )]
     #[OA\Response(
         response: 404,
-        description: 'Signalement non trouvé.',
+        description: 'Intervention non trouvé.',
         content: new OA\JsonContent(
             properties: [
                 new OA\Property(property: 'status', type: 'integer', example: 404),

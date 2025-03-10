@@ -13,13 +13,13 @@ use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HtmlSanitizer\HtmlSanitizerInterface;
 
-class InterventionCreatedSubscriber implements EventSubscriberInterface
+readonly class InterventionCreatedSubscriber implements EventSubscriberInterface
 {
     public function __construct(
-        private readonly VisiteNotifier $visiteNotifier,
-        private readonly SuiviManager $suiviManager,
+        private VisiteNotifier $visiteNotifier,
+        private SuiviManager $suiviManager,
         #[Autowire(service: 'html_sanitizer.sanitizer.app.message_sanitizer')]
-        private readonly HtmlSanitizerInterface $htmlSanitizer,
+        private HtmlSanitizerInterface $htmlSanitizer,
     ) {
     }
 
@@ -52,11 +52,11 @@ class InterventionCreatedSubscriber implements EventSubscriberInterface
 
         if (!$foundSuivi) {
             $suivi = $this->suiviManager->createSuivi(
-                user: $event->getUser(),
                 signalement: $intervention->getSignalement(),
                 description: $description,
                 type: Suivi::TYPE_AUTO,
                 isPublic: true,
+                user: $event->getUser(),
                 context: Suivi::CONTEXT_INTERVENTION,
             );
 
