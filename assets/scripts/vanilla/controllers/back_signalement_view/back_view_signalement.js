@@ -104,6 +104,7 @@ const setZoom = (photoId, isZoomIn) => {
 
   scale = isZoomIn ? Math.min(scale + 0.25, 4) : Math.max(scale - 0.25, 1);
   img.dataset.scale = scale;
+  img.style.transformOrigin = 'left top';
   img.style.transform = `scale(${scale})`;
 
   // Center inside the scroll zone
@@ -136,6 +137,7 @@ const resetZoom = (photoId) => {
   img.style.transform = `scale(${scale})`;
   img.style.marginLeft = '0px';
   img.style.marginTop = '0px';
+  img.style.transformOrigin = 'center center';
 }
 
 const displayPhotoAlbum = (photoId) => {
@@ -155,6 +157,7 @@ const displayPhotoAlbum = (photoId) => {
   })
 }
 const rotatePhotoAlbumImage = (photoId, direction) => {
+  resetZoom(photoId);
   const imgElement = document.querySelector('.photos-album-image[data-id="' + photoId + '"]')
   const parentElement = imgElement.parentElement
   
