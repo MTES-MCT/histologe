@@ -4,7 +4,7 @@
 	{{ signalement.createdAt|date('d/m/Y') }}.
 </div>
 <div class="fr-mt-4v">
-	{% for suivi in signalement.suivis %}
+	{% for suivi in signalement.suivis|reverse %}
 		<div {% if loop.last %}id="suivi-last"{% endif %} class="message-box {% if (suivi.createdBy and suivi.createdBy.partners|length) or suivi.type is same as constant('App\\Entity\\Suivi::TYPE_TECHNICAL') %}message-box--partner{% else %}message-box--usager{% endif %}">
 			<div>
 				<strong>
