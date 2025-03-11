@@ -137,10 +137,10 @@ class SignalementCreateController extends AbstractController
 
         $jsonResult = [];
         foreach ($files as $file) {
-            $jsonResult []= [
+            $jsonResult[] = [
                 'id' => $file->getId(),
                 'filename' => $file->getFilename(),
-                'type' => $file->getDocumentType()->label()
+                'type' => $file->getDocumentType()->label(),
             ];
         }
 
