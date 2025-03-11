@@ -168,6 +168,15 @@ class InformationComplementaire
         return $this;
     }
 
+    public function getInformationsComplementairesSituationBailleurDateNaissanceDate(): ?\DateTime
+    {
+        if ($this->informationsComplementairesSituationBailleurDateNaissance) {
+            return new \DateTime($this->informationsComplementairesSituationBailleurDateNaissance);
+        }
+
+        return null;
+    }
+
     public function getInformationsComplementairesSituationBailleurDateNaissance(): ?string
     {
         return $this->informationsComplementairesSituationBailleurDateNaissance;

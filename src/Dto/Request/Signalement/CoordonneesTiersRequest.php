@@ -3,11 +3,15 @@
 namespace App\Dto\Request\Signalement;
 
 use App\Validator as AppAssert;
+use App\Validator\DateNaissanceValidatorTrait;
 use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\Validator\Constraints\Email;
+use Symfony\Component\Validator\Context\ExecutionContextInterface;
 
 class CoordonneesTiersRequest implements RequestInterface
 {
+    use DateNaissanceValidatorTrait;
+
     public function __construct(
         #[Assert\Choice(choices: ['ORGANISME_SOCIETE', 'PARTICULIER'], message: 'Le type de propriétaire est incorrect.')]
         private readonly ?string $typeProprio = null,
@@ -34,7 +38,15 @@ class CoordonneesTiersRequest implements RequestInterface
         )]
         #[Assert\Length(max: 200, maxMessage: 'Le nom de la structure ne doit pas dépasser {{ limit }} caractères.')]
         private readonly ?string $structure = null,
+        #[Assert\DateTime('Y-m-d')]
+        private readonly ?string $dateNaissance = null,
     ) {
+    }
+
+    #[Assert\Callback]
+    public function validate(ExecutionContextInterface $context): void
+    {
+        $this->validateDateNaissance($this->dateNaissance, 'dateNaissance', $context);
     }
 
     public function getTypeProprio(): ?string
@@ -70,5 +82,10 @@ class CoordonneesTiersRequest implements RequestInterface
     public function getStructure(): ?string
     {
         return $this->structure;
+    }
+
+    public function getDateNaissance(): ?string
+    {
+        return $this->dateNaissance;
     }
 }
