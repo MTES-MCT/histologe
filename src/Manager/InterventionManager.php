@@ -9,10 +9,8 @@ use App\Entity\Enum\ProcedureType;
 use App\Entity\Enum\Qualification;
 use App\Entity\File;
 use App\Entity\Intervention;
-use App\Entity\Partner;
 use App\Entity\Signalement;
 use App\Entity\User;
-use App\Exception\Intervention\VisitePartnerAlreadyPlannedException;
 use App\Factory\FileFactory;
 use App\Repository\InterventionRepository;
 use App\Service\Signalement\Qualification\SignalementQualificationUpdater;
@@ -53,11 +51,6 @@ class InterventionManager extends AbstractManager
         );
         if (!$partnerFound) {
             return null;
-        }
-
-        $interventionVisitePlanned = $this->getInterventionVisitePlanned($signalement, $partnerFound);
-        if (false !== $interventionVisitePlanned) {
-            throw new VisitePartnerAlreadyPlannedException($partnerFound->getNom(), $interventionVisitePlanned->getUuid());
         }
 
         $intervention = new Intervention();
@@ -228,13 +221,5 @@ class InterventionManager extends AbstractManager
             user: $user,
             documentType: $documentType
         );
-    }
-
-    private function getInterventionVisitePlanned(Signalement $signalement, Partner $partner): false|Intervention
-    {
-        return $signalement->getInterventions()
-            ->filter(fn (Intervention $intervention) => Intervention::STATUS_PLANNED === $intervention->getStatus()
-                && $intervention->getPartner() === $partner)
-            ->first();
     }
 }

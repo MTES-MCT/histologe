@@ -17,7 +17,7 @@ class VisiteRequest implements RequestInterface, RequestFileInterface
     #[Assert\NotBlank]
     #[Assert\Date]
     #[OA\Property(
-        description: 'Date de la visite effectuée<br>Exemple : `2025-01-05`',
+        description: 'Date de la visite<br>Exemple : `2025-01-05`',
         format: 'date',
         example: '2025-01-05'
     )]
@@ -25,22 +25,19 @@ class VisiteRequest implements RequestInterface, RequestFileInterface
 
     #[Assert\NotBlank]
     #[Assert\Time(withSeconds: false)]
-    #[OA\Property(description: 'Heure de la visite effectuée<br>Exemple : `10:00`', example: '10:00')]
+    #[OA\Property(description: 'Heure de la visite<br>Exemple : `10:00`', example: '10:00')]
     public ?string $time = null;
 
-    #[Assert\Type('bool')]
-    #[Assert\NotNull(groups: ['PUT_VISITE'])]
     #[OA\Property(description: 'L\'occupant était présent', example: true)]
+    #[Assert\Type('bool')]
     public ?bool $occupantPresent = null;
 
     #[OA\Property(description: 'Le propriétaire était présent', example: false)]
     #[Assert\Type('bool')]
-    #[Assert\NotNull(groups: ['PUT_VISITE'])]
     public ?bool $proprietairePresent = null;
 
-    #[Assert\Type('bool')]
-    #[Assert\NotNull(groups: ['PUT_VISITE'])]
     #[OA\Property(description: 'Notifier l\'usager', example: true)]
+    #[Assert\Type('bool')]
     public ?bool $notifyUsager = null;
 
     #[OA\Property(
@@ -57,7 +54,7 @@ class VisiteRequest implements RequestInterface, RequestFileInterface
         ',
         type: 'array',
         items: new OA\Items(type: 'string'),
-        example: ['LOGEMENT_DECENT', 'RESPONSABILITE_OCCUPANT_ASSURANTIEL']
+        example: ['LOGEMENT_DECENT', 'RESPONSABILITE_OCCUPANT_ASSURANTIEL'],
     )]
     #[Assert\Choice(
         choices: [
@@ -70,13 +67,11 @@ class VisiteRequest implements RequestInterface, RequestFileInterface
             'AUTRE',
         ],
         multiple: true,
-        message: 'Veuillez choisir des valeurs valides. {{ choices }}'
+        message: 'Veuillez choisir des valeurs valides. {{ choices }}',
     )]
-    #[Assert\NotBlank(groups: ['PUT_VISITE'])]
     public array $concludeProcedure = [];
 
     #[Assert\Type('string')]
-    #[Assert\NotBlank(groups: ['PUT_VISITE'])]
     #[OA\Property(description: 'Détails de la visite', example: '<p>Compte rendu de visite...</p>')]
     public ?string $details = null;
 
