@@ -1,15 +1,11 @@
 <h2 class="fr-h4">Situation du foyer et du bail</h2>
 <p>Sauf mention contraire, toutes les réponses sont <strong>facultatives</strong>. Essayez de compléter le dossier au mieux !</p>
 
-{% for index, document in signalement.files|filter(
-    document => document.fileType == 'document'
-) %}
-<form method="POST" id="form-delete-file-{{ document.id }}" enctype="application/json" action="{{ path('back_signalement_delete_file',{uuid:signalement.uuid}) }}">
+<form method="POST" id="form-delete-file" enctype="application/json" action="{{ path('back_signalement_delete_file',{uuid:signalement.uuid}) }}">
     <input type="hidden" name="_token" value="{{ csrf_token('signalement_delete_file_'~signalement.id) }}">
-    <input type="hidden" name="file_id" value="{{ document.id }}">
+    <input type="hidden" name="file_id" value=""
     <input type="hidden" name="is_draft" value="1">
 </form>
-{% endfor %}
 
 <input type="hidden" id="url-signalement-files" value="{{ path('back_signalement_create_file_list',{uuid:signalement.uuid}) }}">
 
@@ -156,10 +152,11 @@
                     </div>
                     <div class="fr-col-4">
                         <button
-                            form="form-delete-file-{{ document.id }}"
+                            form="form-delete-file"
                             class="fr-link fr-icon-close-circle-line fr-link--icon-left fr-link--error"
                             aria-label="Supprimer le fichier {{ document.filename }}"
                             title="Supprimer le fichier {{ document.filename }}"
+                            data-doc="{{ document.id }}"
                             >
                         Supprimer
                         </button>

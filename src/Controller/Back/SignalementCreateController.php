@@ -135,7 +135,16 @@ class SignalementCreateController extends AbstractController
 
         $files = $fileRepository->findBy(['signalement' => $signalement]);
 
-        return $this->json($files);
+        $jsonResult = [];
+        foreach ($files as $file) {
+            $jsonResult []= [
+                'id' => $file->getId(),
+                'filename' => $file->getFilename(),
+                'type' => $file->getDocumentType()->label()
+            ];
+        }
+
+        return $this->json($jsonResult);
     }
 
     #[Route('/bo-form-address/{uuid:signalement}', name: 'back_signalement_draft_form_address_edit', methods: ['POST'])]
