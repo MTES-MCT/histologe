@@ -1697,7 +1697,7 @@
   {
     "type": "SignalementFormScreen",
     "label": "Votre signalement a bien été enregistré !",
-    "description": "<p>Votre numéro de signalement est le : <b>#{{formStore.data.signalementReference}}</b><br>Il va être étudié par l'administration et vous recevrez un retour sous <u>7 jours</u>.</p><p>Vous pouvez suivre l'avancée de votre dossier ou ajouter des informations en cliquant sur le bouton ci-dessous.</p>",
+    "description": "<p>Votre numéro de signalement est le : <b>#{{formStore.data.signalementReference}}</b><br>Il va être étudié par l'administration et vous recevrez un retour sous <u>7 jours ouvrés</u>.</p><p>Vous pouvez suivre l'avancée de votre dossier ou ajouter des informations en cliquant sur le bouton ci-dessous.</p>",
     "slug": "confirmation_signalement",
     "screenCategory": "Récapitulatif",
     "components": {
