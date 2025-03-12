@@ -22,7 +22,7 @@
     <div
       v-for="(file, index) in formStore.data[id]"
       :key="index"
-      class="fr-grid-row "
+      class="fr-grid-row"
       >
       <div class="fr-col-8 cut-text">
         <i>{{ getFileTitle(file) }}</i>
@@ -52,7 +52,7 @@
             max="100"
             id="progress_signalement_photos"
             :value="uploadPercentage"
-            v-if="uploadPercentage > 0 && uploadPercentage < 100"
+            v-if="uploadPercentage > 0 && uploadPercentage <= 100"
             >
           </progress>
       </div>
@@ -178,6 +178,7 @@ export default defineComponent({
       return 'Titre inconnu'
     },
     onFileUploaded (requestResponse: any) {
+      this.uploadPercentage = 0
       if (requestResponse) {
         if (requestResponse.name === 'AxiosError') {
           this.hasError = true
@@ -195,8 +196,7 @@ export default defineComponent({
     },
     uploadFile (event: Event) {
       const fileInput = event.target as HTMLInputElement
-      // on supprime la donnée enregistrée jusqu'ici
-      this.$emit('update:modelValue', undefined)
+      
       if (fileInput.files && fileInput.files.length > 0) {
         for (let i = 0; i < fileInput.files.length; i++) {
           const file = fileInput.files[i]
@@ -205,29 +205,24 @@ export default defineComponent({
             fileInput.value = ''
             this.hasError = true
             this.error = 'Les fichiers de format ' + ext?.toUpperCase() + ' ne sont pas pris en charge.'
-            break
           } else if (this.type === 'photos' && (this.photosMimeTypes.indexOf(file.type) === -1 || this.photosExtensions.indexOf(ext) === -1)) {
             fileInput.value = ''
             this.hasError = true
             this.error = 'Les fichiers de format ' + ext?.toUpperCase() + ' ne sont pas pris en charge, merci de convertir votre image en JPEG, PNG ou en GIF avant de l\'envoyer.'
-            break
           } else if (file.size > 10 * 1024 * 1024) {
             fileInput.value = ''
             this.hasError = true
             this.error = 'L\'image dépasse 10MB'
-            break
           } else {
             this.hasError = false
           }
         }
 
-        if (!this.hasError) {
-          for (let i = 0; i < fileInput.files.length; i++) {
-            const file = fileInput.files[i]
-            const formData = new FormData()
-            formData.append('signalement[' + this.type + ']', file)
-            requests.uploadFile(formData, this.onFileUploaded, this.onFileProgress)
-          }
+        for (let i = 0; i < fileInput.files.length; i++) {
+          const file = fileInput.files[i]
+          const formData = new FormData()
+          formData.append('signalement[' + this.type + ']', file)
+          requests.uploadFile(formData, this.onFileUploaded, this.onFileProgress)
         }
       }
     },
