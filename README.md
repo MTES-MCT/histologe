@@ -127,7 +127,11 @@ Ain                    | Agent Partenaire 01 | user-01-01@histologe.fr          
 - [Documentation usager](https://documentation.histologe.beta.gouv.fr/)
 - [Dossier d'architecture technique](./docs/ARCHITECTURE.md)
 - [Document d'exploitation](./docs/EXPLOITATION.md)
+
+## Sécurité
+
 - [Veille sécurité](./docs/SECURITY.md)
+- [Signaler une faille](./docs/SECURITY.md#signaler-une-faille)
 
 ## Contribuer
 
