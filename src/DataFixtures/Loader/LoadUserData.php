@@ -97,6 +97,12 @@ class LoadUserData extends Fixture implements OrderedFixtureInterface
                 );
         }
 
+        if (isset($row['archiving_scheduled'])) {
+            $user->setArchivingScheduledAt(
+                (new \DateTimeImmutable())->modify('+15 days')
+            );
+        }
+
         $password = $this->hasher->hashPassword($user, self::PLAIN_HISTOLOGE);
         $user->setPassword($password);
 

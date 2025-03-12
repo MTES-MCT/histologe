@@ -12,6 +12,7 @@ use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\ORM\QueryBuilder;
 use Doctrine\ORM\Tools\Pagination\Paginator;
 use Doctrine\Persistence\ManagerRegistry;
+use Symfony\Component\Clock\ClockInterface;
 use Symfony\Component\Security\Core\Exception\UnsupportedUserException;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\PasswordUpgraderInterface;
@@ -28,6 +29,7 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
         ManagerRegistry $registry,
         private readonly TerritoryRepository $territoryRepository,
         private readonly PartnerRepository $partnerRepository,
+        private readonly ClockInterface $clock,
     ) {
         parent::__construct($registry, User::class);
     }
@@ -123,20 +125,16 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
             ->getOneOrNullResult();
     }
 
-    public function findActiveTerritoryAdmins(?Territory $territory, ?string $inseeOccupant): ?array
+    public function findActiveTerritoryAdmins(int $territoryId, ?string $inseeOccupant = null): array
     {
-        if (empty($territory)) {
-            return null;
-        }
-
         $queryBuilder = $this->createQueryBuilder('u')
             ->leftJoin('u.userPartners', 'up')
             ->leftJoin('up.partner', 'p')
             ->andWhere('p.territory = :territory')
-            ->setParameter('territory', $territory)
-            ->andWhere('u.roles LIKE :role')
-            ->setParameter('role', '%ROLE_ADMIN_TERRITORY%')
-            ->andWhere('u.statut LIKE :active')
+            ->setParameter('territory', $territoryId)
+            ->andWhere('JSON_CONTAINS(u.roles, :role) = 1 ')
+            ->setParameter('role', '"ROLE_ADMIN_TERRITORY"')
+            ->andWhere('u.statut = :active')
             ->setParameter('active', User::STATUS_ACTIVE);
 
         if ($inseeOccupant) {
@@ -150,8 +148,7 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
             ->setParameter('insee', '%'.$inseeOccupant.'%');
         }
 
-        return $queryBuilder->getQuery()
-        ->getResult();
+        return $queryBuilder->getQuery()->getResult();
     }
 
     public function findInactiveWithNbAffectationPending(): array
@@ -317,35 +314,22 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
         return $qb->getQuery()->execute();
     }
 
-    public function findExpiredUsers(bool $areArchived = false, string $limitConservation = '2 years'): array
+    public function findExpiredUsers(): array
     {
-        $qb = $this->getQueryBuilerForinactiveUsersSince($limitConservation);
+        $qb = $this->getQueryBuilerForinactiveUsersSince('2 years');
         $qb->andWhere('u.anonymizedAt IS NULL');
-        if ($areArchived) {
-            $qb->andWhere('u.statut = :statut')->setParameter('statut', User::STATUS_ARCHIVE);
-        }
+        $qb->andWhere('u.statut = :statut')->setParameter('statut', User::STATUS_ARCHIVE);
 
         return $qb->getQuery()->execute();
     }
 
-    public function findInactiveUsers(?bool $isArchivingScheduled = null, ?\DateTimeImmutable $archivingScheduledAt = null, string $limitConservation = '11 months'): array
+    public function findInactiveUsers(): array
     {
-        $qb = $this->getQueryBuilerForinactiveUsersSince($limitConservation);
+        $qb = $this->getQueryBuilerForinactiveUsersSince('1 year');
 
         $qb->andWhere('u.statut != :statut')->setParameter('statut', User::STATUS_ARCHIVE);
         $qb->andWhere('u.anonymizedAt IS NULL');
-
-        if (true === $isArchivingScheduled) {
-            $qb->andWhere('u.archivingScheduledAt IS NOT NULL');
-        }
-        if (false === $isArchivingScheduled) {
-            $qb->andWhere('u.archivingScheduledAt IS NULL');
-        }
-
-        if ($archivingScheduledAt) {
-            $qb->andWhere('u.archivingScheduledAt = :date')
-                ->setParameter('date', $archivingScheduledAt->format('Y-m-d'));
-        }
+        $qb->andWhere('u.archivingScheduledAt IS NULL');
 
         return $qb->getQuery()->execute();
     }
@@ -373,7 +357,30 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
         $qb = $this->createQueryBuilder('u')
             ->where('u.archivingScheduledAt IS NOT NULL')
             ->andWhere('u.archivingScheduledAt < :date')
-            ->setParameter('date', new \DateTimeImmutable());
+            ->setParameter('date', $this->clock->now());
+
+        return $qb->getQuery()->execute();
+    }
+
+    public function findUsersPendingToArchive(User $user, array $territories = [], bool $count = false): array|int
+    {
+        $qb = $this->createQueryBuilder('u')
+            ->leftJoin('u.userPartners', 'up')
+            ->leftJoin('up.partner', 'p')
+            ->where('u.archivingScheduledAt IS NOT NULL');
+
+        if (\count($territories)) {
+            $qb->andWhere('p.territory IN (:territories)')->setParameter('territories', $territories);
+        } elseif (!$user->isSuperAdmin()) {
+            $qb->andWhere('p.territory IN (:territories)')->setParameter('territories', $user->getPartnersTerritories());
+        }
+
+        if ($count) {
+            $qb->select('COUNT(u)');
+
+            return $qb->getQuery()->getSingleScalarResult();
+        }
+        $qb->orderBy('u.nom', 'ASC');
 
         return $qb->getQuery()->execute();
     }

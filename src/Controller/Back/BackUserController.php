@@ -76,6 +76,18 @@ class BackUserController extends AbstractController
         ]);
     }
 
+    #[Route('/comptes-inactifs', name: 'back_user_inactive_accounts', methods: ['GET'])]
+    public function inactiveAccounts(UserRepository $userRepository): Response
+    {
+        /** @var User $user */
+        $user = $this->getUser();
+        $users = $userRepository->findUsersPendingToArchive($user);
+
+        return $this->render('back/user/inactive-accounts.html.twig', [
+            'users' => $users,
+        ]);
+    }
+
     private function handleSearchUser(Request $request, UserRepository $userRepository, int $maxListPagination): array
     {
         /** @var User $user */

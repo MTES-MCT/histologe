@@ -10,12 +10,12 @@ use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Symfony\Component\Mailer\MailerInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
-class AccountSoonArchivedMailer extends AbstractNotificationMailer
+class AccountsSoonArchivedMailer extends AbstractNotificationMailer
 {
-    protected ?NotificationMailerType $mailerType = NotificationMailerType::TYPE_ACCOUNT_SOON_ARCHIVED;
-    protected ?string $mailerSubject = 'Compte inactif sur %param.platform_name%';
-    protected ?string $mailerButtonText = 'Réinitialiser mon mot de passe';
-    protected ?string $mailerTemplate = 'account_soon_archived_email';
+    protected ?NotificationMailerType $mailerType = NotificationMailerType::TYPE_ACCOUNTS_SOON_ARCHIVED;
+    protected ?string $mailerSubject = 'Comptes inactifs sur %param.platform_name%';
+    protected ?string $mailerButtonText = 'Voir la liste des comptes';
+    protected ?string $mailerTemplate = 'accounts_soon_archived_email';
 
     public function __construct(
         protected MailerInterface $mailer,
@@ -28,9 +28,9 @@ class AccountSoonArchivedMailer extends AbstractNotificationMailer
 
     public function getMailerParamsFromNotification(NotificationMail $notificationMail): array
     {
-        $nbDays = $notificationMail->getParams()['nbDays'];
-        $link = $this->urlGenerator->generate('login_mdp_perdu', [], UrlGeneratorInterface::ABSOLUTE_URL);
+        $usersData = $notificationMail->getParams()['usersData'];
+        $link = $this->urlGenerator->generate('back_user_inactive_accounts', [], UrlGeneratorInterface::ABSOLUTE_URL);
 
-        return ['link' => $link, 'nbDays' => $nbDays];
+        return ['link' => $link, 'usersData' => $usersData];
     }
 }

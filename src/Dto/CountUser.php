@@ -14,6 +14,8 @@ class CountUser
         private readonly ?int $active = null,
         #[Groups(['widget:read'])]
         private readonly ?int $inactive = null,
+        #[Groups(['widget:read'])]
+        private ?int $archivingScheduled = null,
     ) {
         $total = $this->active + $this->inactive;
         $this->percentage = [
@@ -35,5 +37,17 @@ class CountUser
     public function getPercentage(): ?array
     {
         return $this->percentage;
+    }
+
+    public function setArchivingScheduled(?int $archivingScheduled): self
+    {
+        $this->archivingScheduled = $archivingScheduled;
+
+        return $this;
+    }
+
+    public function getArchivingScheduled(): ?int
+    {
+        return $this->archivingScheduled;
     }
 }

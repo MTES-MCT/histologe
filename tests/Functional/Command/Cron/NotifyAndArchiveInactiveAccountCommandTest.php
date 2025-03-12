@@ -4,6 +4,8 @@ namespace App\Tests\Functional\Command\Cron;
 
 use Symfony\Bundle\FrameworkBundle\Console\Application;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
+use Symfony\Component\Clock\ClockInterface;
+use Symfony\Component\Clock\MockClock;
 use Symfony\Component\Console\Tester\CommandTester;
 
 class NotifyAndArchiveInactiveAccountCommandTest extends KernelTestCase
@@ -13,14 +15,15 @@ class NotifyAndArchiveInactiveAccountCommandTest extends KernelTestCase
         $kernel = self::bootKernel();
         $application = new Application($kernel);
 
+        $container = self::getContainer();
+        $mockClock = new MockClock(new \DateTimeImmutable(date('Y-m-15')));
+        $container->set(ClockInterface::class, $mockClock);
+
         $command = $application->find('app:notify-and-archive-inactive-accounts');
-
         $commandTester = new CommandTester($command);
-
         $commandTester->execute([]);
 
         $commandTester->assertCommandIsSuccessful();
-
         $output = $commandTester->getDisplay();
 
         $isActivated = $kernel->getContainer()->getParameter('feature_archive_inactive_account');
@@ -30,9 +33,15 @@ class NotifyAndArchiveInactiveAccountCommandTest extends KernelTestCase
             return;
         }
 
-        $this->assertStringContainsString('2 first notifications sent to inactive users.', $output);
-        $this->assertStringContainsString('0 second notifications sent to inactive users.', $output);
+        $this->assertStringContainsString('2 inactive accounts pending for archiving.', $output);
         $this->assertStringContainsString('0 accounts archived.', $output);
-        $this->assertEmailCount(3);
+        $this->assertEmailCount(2);
+
+        $mockClock->modify('+15 days');
+
+        $commandTester->execute([]);
+        $commandTester->assertCommandIsSuccessful();
+        $output = $commandTester->getDisplay();
+        $this->assertStringContainsString('3 accounts archived.', $output);
     }
 }

@@ -192,6 +192,8 @@ export default defineComponent({
       this.sharedState.noSuiviAfter3Relances.link = dataWidget.cardNoSuiviAfter3Relances?.link
       this.sharedState.partenairesNonNotifiables.count = dataWidget.cardPartenairesNonNotifiables?.count
       this.sharedState.partenairesNonNotifiables.link = dataWidget.cardPartenairesNonNotifiables?.link
+      this.sharedState.archivingScheduledUsers.count = dataWidget.cardArchivingScheduledUsers?.count
+      this.sharedState.archivingScheduledUsers.link = dataWidget.cardArchivingScheduledUsers?.link
 
       if (callback) {
         callback()

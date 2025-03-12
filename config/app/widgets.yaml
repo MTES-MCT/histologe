@@ -88,6 +88,10 @@ parameters:
         link: 'back_partner_index'
         params:
           isNotNotifiable: 1
+      cardArchivingScheduledUsers:
+        label: "Comptes en instance d'archivage"
+        roles: [ROLE_ADMIN, ROLE_ADMIN_TERRITORY]
+        link: 'back_user_inactive_accounts'
 
   affectations-partenaires:
     roles: [ ROLE_ADMIN, ROLE_ADMIN_TERRITORY ]

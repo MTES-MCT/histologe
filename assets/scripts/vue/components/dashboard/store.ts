@@ -46,6 +46,10 @@ export const store = {
       count: 0,
       link: undefined,
     },
+    archivingScheduledUsers: {
+      count: 0,
+      link: undefined
+    },
     allSignalements: {
       link: undefined
     },
