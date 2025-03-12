@@ -356,6 +356,17 @@ class SignalementManager extends AbstractManager
             ->setLienDeclarantOccupant($coordonneesTiersRequest->getLien())
             ->setStructureDeclarant($coordonneesTiersRequest->getStructure());
 
+        $informationComplementaire = new InformationComplementaire();
+        if (!empty($signalement->getInformationComplementaire())) {
+            $informationComplementaire = clone $signalement->getInformationComplementaire();
+        }
+        if ($coordonneesTiersRequest->getDateNaissance()) {
+            $informationComplementaire->setInformationsComplementairesSituationBailleurDateNaissance(
+                $coordonneesTiersRequest->getDateNaissance()
+            );
+            $signalement->setInformationComplementaire($informationComplementaire);
+        }
+
         $this->save($signalement);
         $this->suiviManager->addSuiviIfNeeded(
             signalement: $signalement,

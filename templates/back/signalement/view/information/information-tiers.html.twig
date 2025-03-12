@@ -53,4 +53,12 @@
     <div class="fr-col-12">
         <strong>Tél. :</strong> {{ signalement.telDeclarantDecoded|phone }}
     </div>
+    {% if signalement.profileDeclarant and signalement.profileDeclarant is same as enum('App\\Entity\\Enum\\ProfileDeclarant').BAILLEUR  %}
+    <div class="fr-col-12">
+        <strong>Date de naissance :</strong>
+        {% if signalement.informationComplementaire and signalement.informationComplementaire.informationsComplementairesSituationBailleurDateNaissanceDate %}
+            {{ signalement.informationComplementaire.informationsComplementairesSituationBailleurDateNaissanceDate.format('d/m/Y') }}
+        {% endif %}
+    </div>
+    {% endif %}
 </div>

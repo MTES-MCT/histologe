@@ -62,6 +62,14 @@
                                 <label class="fr-label" for="coordonneesTiersStructure">Structure (si lien avec l'occupant: professionnel(le) ou service de secours)</label>
                                 <input class="fr-input" type="text" id="coordonneesTiersStructure" name="structure" value="{{ signalement.structureDeclarant }}">
                             </div>
+
+                            {% if signalement.profileDeclarant and signalement.profileDeclarant is same as enum('App\\Entity\\Enum\\ProfileDeclarant').BAILLEUR %}
+                            <div class="fr-input-group">
+                                <label class="fr-label" for="coordonneesBailleurDateNaissance">Date de naissance (facultatif)</label>
+                                <input class="fr-input" type="date" id="coordonneesBailleurDateNaissance" name="dateNaissance" value="{{ signalement.informationComplementaire.informationsComplementairesSituationBailleurDateNaissance ?? '' }}">
+                            </div>
+                            {% endif %}
+
                             <input type="hidden" name="_token" value="{{ csrf_token('signalement_edit_coordonnees_tiers_'~signalement.id) }}">
                         </div>
                         
