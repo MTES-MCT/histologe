@@ -3,32 +3,6 @@
 	Votre signalement a bien été enregistré le
 	{{ signalement.createdAt|date('d/m/Y') }}.
 </div>
-<div class="fr-mt-4v">
-	{% for suivi in signalement.suivis %}
-		<div {% if loop.last %}id="suivi-last"{% endif %} class="message-box {% if (suivi.createdBy and suivi.createdBy.partners|length) or suivi.type is same as constant('App\\Entity\\Suivi::TYPE_TECHNICAL') %}message-box--partner{% else %}message-box--usager{% endif %}">
-			<div>
-				<strong>
-					{% if suivi.type is same as constant('App\\Entity\\Suivi::TYPE_TECHNICAL') %}
-						Suivi automatique
-					{% elseif suivi.createdBy is not null %}
-						{% if suivi.createdBy.partners|length %}
-							{{suivi.createdBy.partnerInTerritoryOrFirstOne(signalement.territory) ? suivi.createdBy.partnerInTerritoryOrFirstOne(signalement.territory).nom : 'N/A'}}
-						{% else %}
-							{{(suivi.createdBy.email ? (suivi.createdBy.email is same as signalement.mailOccupant ? 'OCCUPANT' : 'DECLARANT') : 'Aucun')}}
-						{% endif %}					
-            		{% else %}
-						{{(suivi.createdAt|date('Y') >= 2024) ? 'Occupant ou déclarant' : 'Vous' }}					
-                	{% endif %}
-					-
-					{{ suivi.createdAt|date('d/m/Y') }}
-				</strong>
-			</div>
-			<div class="message-box-message">
-				{{ suivi.description|replace({'___TOKEN___':csrf_token('suivi_signalement_ext_file_view')})|raw }}
-			</div>
-		</div>
-	{% endfor %}
-</div>
 <div class="fr-mt-6v">
 	{% if signalement.statut is same as enum('App\\Entity\\Enum\\SignalementStatus').REFUSED %}
 		<div role="alert" class="fr-alert fr-alert--error fr-alert--sm">
@@ -61,7 +35,7 @@
 				</div>
 				<input type="hidden" name="signalement_front_response[email]" value="{{ email }}" id="suivi_from_email">
 				<input type="hidden" name="signalement_front_response[type]" value="{{ type }}">
-				<textarea name="signalement_front_response[content]" id="signalement_front_response_content" rows="10" class="fr-input" required minlength="10"></textarea>
+				<textarea name="signalement_front_response[content]" id="signalement_front_response_content" rows="5" class="fr-input" required minlength="10"></textarea>
 				<p class="fr-error-text fr-hidden">Veuillez composer un message d'au moins 10 caractères.</p>
 			</div>
 			<div id="uploaded-files-list" class="fr-my-2v"></div>
@@ -101,5 +75,32 @@
 			<input type="hidden" name="_token" value="{{ csrf_token('signalement_front_response_'~signalement.uuid) }}">
 		</form>
 	{% endif %}
+</div>
+<div class="fr-mt-4v">
+	<h3 class="fr-h4 fr-mb-2v">Historique des messages</h3>
+	{% for suivi in signalement.suivis|reverse %}
+		<div {% if loop.last %}id="suivi-last"{% endif %} class="message-box {% if (suivi.createdBy and suivi.createdBy.partners|length) or suivi.type is same as constant('App\\Entity\\Suivi::TYPE_TECHNICAL') %}message-box--partner{% else %}message-box--usager{% endif %}">
+			<div>
+				<strong>
+					{% if suivi.type is same as constant('App\\Entity\\Suivi::TYPE_TECHNICAL') %}
+						Suivi automatique
+					{% elseif suivi.createdBy is not null %}
+						{% if suivi.createdBy.partners|length %}
+							{{suivi.createdBy.partnerInTerritoryOrFirstOne(signalement.territory) ? suivi.createdBy.partnerInTerritoryOrFirstOne(signalement.territory).nom : 'N/A'}}
+						{% else %}
+							{{(suivi.createdBy.email ? (suivi.createdBy.email is same as signalement.mailOccupant ? 'OCCUPANT' : 'DECLARANT') : 'Aucun')}}
+						{% endif %}					
+            		{% else %}
+						{{(suivi.createdAt|date('Y') >= 2024) ? 'Occupant ou déclarant' : 'Vous' }}					
+                	{% endif %}
+					-
+					{{ suivi.createdAt|date('d/m/Y') }}
+				</strong>
+			</div>
+			<div class="message-box-message">
+				{{ suivi.description|replace({'___TOKEN___':csrf_token('suivi_signalement_ext_file_view')})|raw }}
+			</div>
+		</div>
+	{% endfor %}
 </div>
 			
