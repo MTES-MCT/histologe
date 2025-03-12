@@ -125,7 +125,7 @@ class SignalementFileController extends AbstractController
                 'signalement' => $signalement,
             ]
         );
-        $fromEmail = $request->query->get('from');
+        $fromEmail = $request->get('from');
         $user = $userManager->getOrCreateUserForSignalementAndEmail($signalement, $fromEmail);
         $this->denyAccessUnlessGranted('FRONT_FILE_DELETE', ['file' => $file, 'email' => $fromEmail]);
         if (null === $file) {
