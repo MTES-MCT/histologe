@@ -1090,6 +1090,9 @@
           "type": "SignalementFormSelect",
           "slug": "bail_dpe_classe_energetique",
           "label": "Quelle est la classe énergétique du logement ?",
+          "conditional": {
+            "show": "formStore.data.bail_dpe_dpe === 'oui'"
+          },
           "description": "La classe énergétique indique si le logement consomme beaucoup d'énergie ou non. La classe A est la meilleure, la classe G est la moins bonne.",
           "values": [
             {
@@ -1132,6 +1135,9 @@
         {
           "type": "SignalementFormOnlyChoice",
           "label": "Quand le DPE de votre logement a-t-il été réalisé ?",
+          "conditional": {
+            "show": "formStore.data.bail_dpe_dpe === 'oui'"
+          },
           "slug": "desordres_logement_chauffage_details_dpe_annee",
           "values": [
             {
