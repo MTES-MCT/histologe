@@ -125,8 +125,7 @@ class SignalementFileController extends AbstractController
                 'signalement' => $signalement,
             ]
         );
-        $requestEmail = $request->get('from');
-        $fromEmail = \is_array($requestEmail) ? array_pop($requestEmail) : $requestEmail;
+        $fromEmail = $request->query->get('from');
         $user = $userManager->getOrCreateUserForSignalementAndEmail($signalement, $fromEmail);
         $this->denyAccessUnlessGranted('FRONT_FILE_DELETE', ['file' => $file, 'email' => $fromEmail]);
         if (null === $file) {
@@ -144,11 +143,8 @@ class SignalementFileController extends AbstractController
                     description: $description,
                     type: Suivi::TYPE_AUTO,
                 );
-                if (File::FILE_TYPE_DOCUMENT === $type) {
-                    $this->addFlash('success', 'Le document a bien été supprimé.');
-                } else {
-                    $this->addFlash('success', 'La photo a bien été supprimée.');
-                }
+                $message = (File::FILE_TYPE_DOCUMENT === $type) ? 'Le document a bien été supprimé.' : 'La photo a bien été supprimée.';
+                $this->addFlash('success', $message);
             } else {
                 $this->addFlash('error', 'Le fichier n\'a pas été supprimé.');
             }
