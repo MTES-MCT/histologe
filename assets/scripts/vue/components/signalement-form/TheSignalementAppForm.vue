@@ -135,6 +135,16 @@ export default defineComponent({
           formStore.data.signalement_concerne_profil = 'logement_occupez'
           formStore.data.signalement_concerne_profil_detail_occupant = 'locataire'
           break
+        case 'locataire_parc_prive':
+          formStore.data.signalement_concerne_profil = 'logement_occupez'
+          formStore.data.signalement_concerne_profil_detail_occupant = 'locataire'
+          formStore.data.signalement_concerne_logement_social_autre_tiers = 'non'
+          break
+        case 'locataire_parc_public':
+          formStore.data.signalement_concerne_profil = 'logement_occupez'
+          formStore.data.signalement_concerne_profil_detail_occupant = 'locataire'
+          formStore.data.signalement_concerne_logement_social_autre_tiers = 'oui'
+          break
         case 'bailleur_occupant':
           formStore.data.signalement_concerne_profil = 'logement_occupez'
           formStore.data.signalement_concerne_profil_detail_occupant = 'bailleur_occupant'
