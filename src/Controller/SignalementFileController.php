@@ -127,7 +127,7 @@ class SignalementFileController extends AbstractController
         );
         $fromEmail = $request->get('from');
         $user = $userManager->getOrCreateUserForSignalementAndEmail($signalement, $fromEmail);
-        $this->denyAccessUnlessGranted('FRONT_FILE_DELETE', ['file' => $file, 'email' => $fromEmail]);
+        $this->denyAccessUnlessGranted('FRONT_FILE_DELETE', $file);
         if (null === $file) {
             $this->addFlash('error', 'Ce fichier n\'existe plus');
         } elseif ($this->isCsrfTokenValid('signalement_delete_file_'.$signalement->getId(), $request->get('_token'))) {

@@ -17,8 +17,7 @@ class FileVoter extends Voter
 
     protected function supports(string $attribute, $subject): bool
     {
-        return (\in_array($attribute, [self::DELETE, self::EDIT]) && $subject instanceof File)
-            || (self::FRONT_DELETE === $attribute && \is_array($subject) && isset($subject['file'], $subject['email']));
+        return \in_array($attribute, [self::DELETE, self::EDIT, self::FRONT_DELETE]) && $subject instanceof File;
     }
 
     protected function voteOnAttribute(string $attribute, $subject, TokenInterface $token): bool
@@ -40,21 +39,9 @@ class FileVoter extends Voter
         };
     }
 
-    private function canFrontDelete(array $subject): bool
+    private function canFrontDelete(File $file): bool
     {
-        /** @var File $file */
-        $file = $subject['file'];
-        if (!$file instanceof File) {
-            return false;
-        }
-        $email = $subject['email'];
-
-        return $file->isUsagerFile()
-            && (
-                $file->getUploadedBy()?->getEmail() === $email
-                || $file->getSignalement()->getMailDeclarant() === $email
-                || $file->getSignalement()->getMailOccupant() === $email
-            );
+        return $file->isUsagerFile();
     }
 
     private function canCreate(File $file, User $user): bool
