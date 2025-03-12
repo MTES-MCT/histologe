@@ -50,7 +50,7 @@ class NotifyAndArchiveInactiveAccountCommand extends AbstractCronCommand
         }
 
         if ('15' === $this->clock->now()->format('d')) {
-            $nbScheduled = $this->archiveSchedulingAndSendRtNotifications();
+            $nbScheduled = $this->scheduleArchivingAndSendRtNotification();
             $message = $nbScheduled.' comptes inactifs mis en instance d\'archivage.';
         }
         $nbArchived = $this->archiveAccounts();
@@ -74,7 +74,7 @@ class NotifyAndArchiveInactiveAccountCommand extends AbstractCronCommand
         return Command::SUCCESS;
     }
 
-    private function archiveSchedulingAndSendRtNotifications(): int
+    private function scheduleArchivingAndSendRtNotification(): int
     {
         $users = $this->userRepository->findInactiveUsers();
         $pendingUsersByTerritories = [];

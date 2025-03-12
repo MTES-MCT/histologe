@@ -42,6 +42,7 @@
             <th scope="col">Statut du compte</th>
             <th scope="col">Date de création</th>
             <th scope="col">Dernière connexion</th>
+            <th scope="col">Date d'archivage prévue</th>
         {% endset %}
 
         {% set tableBody %}
@@ -78,6 +79,7 @@
                     </td>
                     <td>{{ user.createdAt|date('d/m/Y') }}</td>
                     <td>{{ user.lastLoginAt ? user.lastLoginAt|date('d/m/Y') : '-'}}</td>
+                    <td>{{ user.archivingScheduledAt|date('d/m/Y') }}</td>
                 </tr>
             {% endfor %}
         {% endset %}
