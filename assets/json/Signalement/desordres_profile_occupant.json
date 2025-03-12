@@ -70,7 +70,7 @@
   },  
   {
     "type": "SignalementFormScreen",
-    "label": "Le bâtiment",
+    "label": "Le bâtiment (et / ou parties communes)",
     "description": "Sélectionnez les catégories de désordres qui vous concernent puis validez votre sélection pour détailler les problèmes.",
     "icon": {
       "src": "/img/form/BATIMENT/Picto-batiment.svg",

@@ -79,7 +79,7 @@ class SignalementDraftSituationType extends AbstractType
                 'data' => $bail,
             ])
             ->add('dpe', ChoiceType::class, [
-                'label' => 'Diagnostic performance énergie (DPE)',
+                'label' => 'Diagnostic performance énergétique (DPE)',
                 'choices' => [
                     'Oui' => 'oui',
                     'Non' => 'non',

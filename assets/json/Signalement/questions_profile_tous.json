@@ -3,7 +3,7 @@
     "type": "SignalementFormScreen",
     "label": "Signaler un problème de logement avec Histologe",
     "slug": "introduction",
-    "description": "<h2>Avant de démarrer…</h2><p>Lisez bien les conseils ci-dessous.<br>Après cette page, cela vous prendra <b>environ 25 minutes</b> pour signaler vos problèmes de logement.</p><h2>Comment déposer un signalement ?</h2><p>Pour déposer votre signalement, il faut remplir toutes les étapes du formulaire et répondre à des questions sur :<ul><li>L'état du logement</li><li>L'adresse du logement</li><li>Le logement en général (taille en m², nombre de personnes vivant dans le logement, etc.)</li></ul></p><div class=\"fr-alert fr-alert--info fr-alert--sm fr-mb-8v\"><p>Attention à vos données ! Merci de ne pas transmettre de données personnelles sur votre santé ou celle d'autres personnes !</p></div><p>Si possible, préparez les documents suivants :<ul><li>Des photos des problèmes dans le logement</li><li>Les coordonnées du bailleur (propriétaire)</li><li>Si vous les avez : le bail, l'état des lieux et le DPE du logement</li><li>Si concerné : le numéro d’allocataire</li></ul></p><div class=\"fr-notice fr-notice--info\"><div class=\"fr-container\"><div class=\"fr-notice__body\"><p class=\"fr-notice__title\">Un signalement complet permet une meilleure prise en charge du dossier !</p></div></div></div><br><h2>Qui aura accès à mon signalement ?</h2><p>Les informations demandées sont nécessaires au bon traitement du signalement.<br>Elles seront <b>uniquement partagées avec les administrations compétentes</b> pour traiter votre dossier.</p><h2>Est-ce que je peux déposer un signalement pour quelqu'un d'autre ?</h2><p>Oui. Vous pouvez déposer un signalement pour une autre personne.<br>Assurez-vous d'avoir sa permission et préparez les informations sur son logement.</p>",
+    "description": "<h2>Avant de démarrer…</h2><p>Lisez bien les conseils ci-dessous.<br>Après cette page, cela vous prendra <b>environ 25 minutes</b> pour signaler les problèmes de logement.</p><h2>Comment déposer un signalement ?</h2><p>Pour déposer votre signalement, il faut remplir toutes les étapes du formulaire et répondre à des questions sur :<ul><li>L'état du logement</li><li>L'adresse du logement ou de l'immeuble</li><li>Le logement en général (taille en m², nombre de personnes vivant dans le logement, etc.)</li></ul></p><div class=\"fr-alert fr-alert--info fr-alert--sm fr-mb-8v\"><p>Attention à vos données ! Merci de ne pas transmettre de données personnelles sur votre santé ou celle d'autres personnes !</p></div><p>Si possible, préparez les documents suivants :<ul><li>Des photos des problèmes dans le logement</li><li>Les coordonnées du bailleur (propriétaire)</li><li>Si vous les avez : le bail, l'état des lieux et le DPE du logement</li><li>Si concerné : le numéro d’allocataire</li></ul></p><div class=\"fr-notice fr-notice--info\"><div class=\"fr-container\"><div class=\"fr-notice__body\"><p class=\"fr-notice__title\">Un signalement complet permet une meilleure prise en charge du dossier !</p></div></div></div><br><h2>Qui aura accès à mon signalement ?</h2><p>Les informations demandées sont nécessaires au bon traitement du signalement.<br>Elles seront <b>uniquement partagées avec les administrations compétentes</b> pour traiter votre dossier.</p><h2>Est-ce que je peux déposer un signalement pour quelqu'un d'autre ?</h2><p>Oui. Vous pouvez déposer un signalement pour une autre personne.<br>Assurez-vous d'avoir sa permission et préparez les informations sur son logement.</p>",
     "customCss": "fr-my-md-10w",
     "components": {
       "body": [
@@ -168,7 +168,7 @@
   {
     "type": "SignalementFormScreen",
     "slug": "signalement_concerne",
-    "label": "Vous déposez un signalement…",
+    "label": "Qui est concerné par votre signalement ?",
     "screenCategory": "Adresse et coordonnées",
     "components": {
       "body": [
@@ -190,7 +190,7 @@
         },
         {
           "type": "SignalementFormOnlyChoice",
-          "label": "Qui est concerné par votre signalement ?",
+          "label": "Vous déposez un signalement…",
           "slug": "signalement_concerne_profil",
           "values": [
             {
