@@ -3,7 +3,6 @@
 namespace App\Command\Cron;
 
 use App\Entity\User;
-// use App\Manager\HistoryEntryManager;
 use App\Repository\UserRepository;
 use App\Service\Mailer\NotificationMail;
 use App\Service\Mailer\NotificationMailerRegistry;
@@ -29,7 +28,6 @@ class NotifyAndArchiveInactiveAccountCommand extends AbstractCronCommand
 
     public function __construct(
         private readonly EntityManagerInterface $entityManager,
-        // private readonly HistoryEntryManager $historyEntryManager,
         private readonly ClockInterface $clock,
         private readonly UserRepository $userRepository,
         private readonly NotificationMailerRegistry $notificationMailerRegistry,
@@ -42,7 +40,6 @@ class NotifyAndArchiveInactiveAccountCommand extends AbstractCronCommand
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
-        // $this->historyEntryManager->removeEntityListeners();
         $this->io = new SymfonyStyle($input, $output);
         $message = '';
         $nbScheduled = 0;
