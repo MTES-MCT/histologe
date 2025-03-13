@@ -150,7 +150,11 @@ class UserAccountController extends AbstractController
                 return $this->render('security/reset_password_new.html.twig', ['user' => $user]);
             }
             $user = $userManager->resetPassword($user, $request->get('password'));
-            $this->addFlash('success', 'Votre compte est maintenant activé, vous pouvez vous connecter');
+            if ($user->isApiUser()) {
+                $this->addFlash('success', 'Votre compte est maintenant activé vous pouvez utiliser l\'API');
+            } else {
+                $this->addFlash('success', 'Votre compte est maintenant activé, vous pouvez vous connecter');
+            }
             $request->request->remove('password');
 
             return $this->redirectToRoute('app_login');

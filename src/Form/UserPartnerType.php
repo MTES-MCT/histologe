@@ -10,6 +10,8 @@ use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\Form\FormEvent;
+use Symfony\Component\Form\FormEvents;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class UserPartnerType extends AbstractType
@@ -21,6 +23,7 @@ class UserPartnerType extends AbstractType
     ) {
         $this->roles = [];
         if ($security->isGranted('ROLE_ADMIN')) {
+            $this->roles['API'] = 'ROLE_API_USER';
             $this->roles['Super Admin'] = 'ROLE_ADMIN';
         }
         if ($security->isGranted('ROLE_ADMIN_TERRITORY')) {
@@ -56,6 +59,17 @@ class UserPartnerType extends AbstractType
                 'data' => $user->getEmail(),
             ])
             ->add('email', HiddenType::class);
+            $builder->addEventListener(FormEvents::PRE_SUBMIT, function (FormEvent $event) {
+                $data = $event->getData();
+                $form = $event->getForm();
+                $form->add('emailDisplay', null, [
+                    'mapped' => false,
+                    'disabled' => true,
+                    'label' => 'Courriel',
+                    'help' => 'Un e-mail d\'activation du compte sera envoyé à cette adresse e-mail.',
+                    'data' => $data['email'],
+                ]);
+            });
         }
         $builder->add('nom', null, [
             'required' => false,

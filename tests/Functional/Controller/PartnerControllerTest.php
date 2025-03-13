@@ -204,6 +204,7 @@ class PartnerControllerTest extends WebTestCase
         yield 'Email existing on RT' => ['admin-territoire-01-01@histologe.fr', 'Un utilisateur Responsable Territoire existe déjà avec cette adresse e-mail.'];
         yield 'Email existing on SA' => ['admin-01@histologe.fr', 'Un utilisateur Super Admin existe déjà avec cette adresse e-mail.'];
         yield 'Email existing with permission affectation' => ['user-partenaire-30@histologe.fr', 'Un utilisateur ayant les droits d&#039;affectation existe déjà avec cette adresse e-mail.'];
+        yield 'Email existing for non-admin API user' => ['api-02@histologe.fr', 'Un utilisateur API existe déjà avec cette adresse e-mail.'];
 
         yield 'New user' => ['new.email@test.com', 'redirect'];
         yield 'New user from usager' => ['usager-01@histologe.fr', 'redirect'];
@@ -254,6 +255,7 @@ class PartnerControllerTest extends WebTestCase
         yield 'Email existing on RT' => ['admin-territoire-01-01@histologe.fr', 'Un utilisateur Responsable Territoire existe déjà avec cette adresse e-mail.'];
         yield 'Email existing on SA' => ['admin-01@histologe.fr', 'Un utilisateur Super Admin existe déjà avec cette adresse e-mail.'];
         yield 'Email existing with permission affectation' => ['user-partenaire-30@histologe.fr', 'Un utilisateur ayant les droits d&#039;affectation existe déjà avec cette adresse e-mail.'];
+        yield 'Email existing for non-admin API user' => ['api-02@histologe.fr', 'Un utilisateur API existe déjà avec cette adresse e-mail.'];
 
         yield 'New user' => ['new.email@test.com', 'Agent introuvable avec cette adresse e-mail.'];
         yield 'New user from usager' => ['usager-01@histologe.fr', 'Agent introuvable avec cette adresse e-mail.'];
@@ -368,6 +370,30 @@ class PartnerControllerTest extends WebTestCase
     {
         /** @var User $partnerUser */
         $partnerUser = $this->userRepository->findAnonymizedUsers()[0];
+        $partner = $partnerUser->getPartners()->first();
+
+        $route = $this->router->generate('back_partner_user_edit', ['partner' => $partner->getId(), 'user' => $partnerUser->getId()]);
+        $this->client->request(
+            'POST',
+            $route,
+            [
+                'user_partner' => [
+                    'role' => 'ROLE_USER_PARTNER',
+                    'prenom' => 'John',
+                    'nom' => 'Doe',
+                    'email' => 'ajout.partner@histologe.fr',
+                    'isMailingActive' => 0,
+                    '_token' => $this->generateCsrfToken($this->client, 'user_partner'),
+                ],
+            ]
+        );
+        $this->assertResponseStatusCodeSame(403);
+    }
+
+    public function testEditApiUser()
+    {
+        /** @var User $partnerUser */
+        $partnerUser = $this->userRepository->findOneBy(['email' => 'api-02@histologe.fr']);
         $partner = $partnerUser->getPartners()->first();
 
         $route = $this->router->generate('back_partner_user_edit', ['partner' => $partner->getId(), 'user' => $partnerUser->getId()]);

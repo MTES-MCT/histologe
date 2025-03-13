@@ -524,7 +524,6 @@ class PartnerController extends AbstractController
     ): JsonResponse|RedirectResponse {
         $this->denyAccessUnlessGranted('USER_EDIT', $user);
         $originalEmail = $user->getEmail();
-        $originalIsMailingActive = $user->getIsMailingActive();
         $editUserRoute = $this->generateUrl('back_partner_user_edit', ['partner' => $partner->getId(), 'user' => $user->getId(), 'from' => $request->query->get('from')]);
         $formDisabled = false;
         if (1 !== $user->getUserPartners()->count()) {
