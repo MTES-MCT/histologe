@@ -19,3 +19,4 @@ assets
 cypress
 tools
 node_modules
+vendor/node
