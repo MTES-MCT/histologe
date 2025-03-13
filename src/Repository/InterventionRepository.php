@@ -18,8 +18,8 @@ use Doctrine\Persistence\ManagerRegistry;
  */
 class InterventionRepository extends ServiceEntityRepository
 {
-    private const NB_DAYS_DELAY_NOTIFICATION_VISIT_PAST = 2;
-    private const NB_DAYS_DELAY_NOTIFICATION_VISIT_FUTURE = -2;
+    private const int NB_DAYS_DELAY_NOTIFICATION_VISIT_PAST = 2;
+    private const int NB_DAYS_DELAY_NOTIFICATION_VISIT_FUTURE = -2;
 
     public function __construct(ManagerRegistry $registry)
     {
@@ -92,5 +92,14 @@ class InterventionRepository extends ServiceEntityRepository
             ->setParameter('arrete', InterventionType::ARRETE_PREFECTORAL->name)
             ->getQuery()
             ->getResult();
+    }
+
+    public function getInterventionsWithDescription(): array
+    {
+        return $this
+            ->createQueryBuilder('i')
+            ->andWhere('i.details IS NOT NULL')
+            ->orderBy('i.createdAt', 'DESC')
+            ->getQuery()->getResult();
     }
 }

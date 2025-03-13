@@ -3,6 +3,7 @@
 namespace App\Entity;
 
 use App\Entity\Behaviour\EntityHistoryInterface;
+use App\Entity\Behaviour\EntitySanitizerInterface;
 use App\Entity\Behaviour\TimestampableTrait;
 use App\Entity\Enum\DocumentType;
 use App\Entity\Enum\HistoryEntryEvent;
@@ -14,11 +15,12 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\HtmlSanitizer\HtmlSanitizerInterface;
 use Symfony\Component\Uid\Uuid;
 
 #[ORM\Entity(repositoryClass: InterventionRepository::class)]
 #[ORM\HasLifecycleCallbacks()]
-class Intervention implements EntityHistoryInterface
+class Intervention implements EntityHistoryInterface, EntitySanitizerInterface
 {
     use TimestampableTrait;
 
@@ -193,9 +195,17 @@ class Intervention implements EntityHistoryInterface
         return $this;
     }
 
-    public function getDetails(): ?string
+    public function getDetails($transformHtml = true, $originalData = false): ?string
     {
-        return $this->details;
+        if ($originalData) {
+            return $this->details;
+        }
+
+        if (!$transformHtml) {
+            return $this->details;
+        }
+
+        return str_replace('&lt;br /&gt;', '<br />', $this->details);
     }
 
     public function setDetails(?string $details): self
@@ -356,5 +366,17 @@ class Intervention implements EntityHistoryInterface
     public function getHistoryRegisteredEvent(): array
     {
         return [HistoryEntryEvent::CREATE, HistoryEntryEvent::UPDATE, HistoryEntryEvent::DELETE];
+    }
+
+    public function sanitizeDescription(HtmlSanitizerInterface $htmlSanitizer): void
+    {
+        if (!empty($this->details)) {
+            $this->details = $htmlSanitizer->sanitize($this->details);
+        }
+    }
+
+    public function getDescription(): string
+    {
+        return $this->getDetails() ?? '';
     }
 }

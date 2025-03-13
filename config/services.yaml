@@ -101,6 +101,13 @@ services:
         tags:
             - { name: 'kernel.event_listener', event: 'kernel.request' }
 
+    App\EventListener\EntitySanitizerListener:
+        arguments:
+            $htmlSanitizer: '@html_sanitizer.sanitizer.app.message_sanitizer'
+            $logger: '@logger'
+        tags:
+            - { name: doctrine.orm.entity_listener }
+
     Aws\S3\S3Client:
         arguments:
             - endpoint: '%env(resolve:S3_ENDPOINT)%'
