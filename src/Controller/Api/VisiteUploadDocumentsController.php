@@ -2,7 +2,7 @@
 
 namespace App\Controller\Api;
 
-use App\Dto\Api\Model\Intervention as InterventionModel;
+use App\Dto\Api\Model\Visite as InterventionModel;
 use App\Dto\Api\Request\FilesUploadRequest;
 use App\Entity\Enum\DocumentType;
 use App\Entity\File;
@@ -12,7 +12,7 @@ use App\Entity\User;
 use App\Event\FileUploadedEvent;
 use App\Event\InterventionEditedEvent;
 use App\EventListener\SecurityApiExceptionListener;
-use App\Factory\Api\InterventionFactory;
+use App\Factory\Api\VisiteFactory;
 use App\Service\Signalement\SignalementFileProcessor;
 use Doctrine\ORM\EntityManagerInterface;
 use Nelmio\ApiDocBundle\Attribute\Model;
@@ -44,7 +44,7 @@ class VisiteUploadDocumentsController extends AbstractController
         private readonly SignalementFileProcessor $signalementFileProcessor,
         private readonly EntityManagerInterface $entityManager,
         private readonly EventDispatcherInterface $eventDispatcher,
-        private readonly InterventionFactory $interventionFactory,
+        private readonly VisiteFactory $interventionFactory,
     ) {
     }
 
@@ -52,7 +52,7 @@ class VisiteUploadDocumentsController extends AbstractController
      * @throws ExceptionInterface
      */
     #[OA\Post(
-        path: '/api/interventions/{uuid}/{typeDocumentVisite}',
+        path: '/api/visites/{uuid}/{typeDocumentVisite}',
         description: 'Téléversement du rapport de visite ou des photos de visite.',
         summary: 'Téléversement du rapport de visite ou des photos de visite.',
         security: [['Bearer' => []]],
@@ -91,11 +91,11 @@ class VisiteUploadDocumentsController extends AbstractController
             )
         ),
 
-        tags: ['Interventions'],
+        tags: ['Visites'],
         parameters: [
             new OA\Parameter(
                 name: 'uuid',
-                description: 'Identifiant unique de l\'intervention.',
+                description: 'Identifiant unique de la visite.',
                 in: 'path',
                 required: true,
                 schema: new OA\Schema(type: 'string', format: 'uuid'),
@@ -173,7 +173,7 @@ class VisiteUploadDocumentsController extends AbstractController
             ]
         )
     )]
-    #[Route('/interventions/{uuid:intervention}/{typeDocumentVisite<rapport-visite|photos-visite>}',
+    #[Route('/visites/{uuid:intervention}/{typeDocumentVisite<rapport-visite|photos-visite>}',
         name: 'api_visites_documents_visite_post',
         methods: 'POST')]
     public function __invoke(
@@ -190,12 +190,12 @@ class VisiteUploadDocumentsController extends AbstractController
         }
         $this->denyAccessUnlessGranted('INTERVENTION_EDIT_VISITE', $intervention, SecurityApiExceptionListener::ACCESS_DENIED);
 
-        if (self::TYPE_DOCUMENT_VISITE === $typeDocumentVisite && !$this->canAddRapportVisite($intervention)) {
+        $errorMessage = null;
+        if (!$this->canAddDocument($typeDocumentVisite, $intervention, $errorMessage)) {
             return $this->json([
-                'message' => 'Un rapport de visite existe déjà pour cette intervention.',
-                'status' => Response::HTTP_FORBIDDEN],
-                Response::HTTP_FORBIDDEN
-            );
+                'message' => $errorMessage,
+                'status' => Response::HTTP_FORBIDDEN,
+            ], Response::HTTP_FORBIDDEN);
         }
 
         $signalement = $intervention->getSignalement();
@@ -283,8 +283,30 @@ class VisiteUploadDocumentsController extends AbstractController
         return self::TYPE_DOCUMENT_VISITE === $typeDocumentVisite;
     }
 
-    private function canAddRapportVisite(Intervention $intervention): bool
+    private function canAddDocument(string $typeDocumentVisite, Intervention $intervention, ?string &$errorMessage): bool
     {
-        return $intervention->getRapportDeVisite()->isEmpty();
+        if (self::TYPE_DOCUMENT_VISITE === $typeDocumentVisite) {
+            if (!$intervention->getRapportDeVisite()->isEmpty()) {
+                $errorMessage = 'Un rapport de visite existe déjà pour cette intervention.';
+
+                return false;
+            }
+
+            if (Intervention::STATUS_DONE !== $intervention->getStatus()) {
+                $errorMessage = 'Un rapport de visite ne peut être ajouté que pour une visite terminée.';
+
+                return false;
+            }
+        }
+
+        if (self::TYPE_DOCUMENT_PHOTO === $typeDocumentVisite) {
+            if (Intervention::STATUS_DONE !== $intervention->getStatus()) {
+                $errorMessage = 'Des photos de visite ne peuvent être ajoutées que pour une visite terminée.';
+
+                return false;
+            }
+        }
+
+        return true;
     }
 }

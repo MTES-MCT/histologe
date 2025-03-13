@@ -6,9 +6,9 @@ use App\Dto\Api\Model\Adresse;
 use App\Dto\Api\Model\Affectation;
 use App\Dto\Api\Model\Desordre;
 use App\Dto\Api\Model\File;
-use App\Dto\Api\Model\Intervention;
 use App\Dto\Api\Model\Personne;
 use App\Dto\Api\Model\Suivi;
+use App\Dto\Api\Model\Visite;
 use App\Entity\Enum\DebutDesordres;
 use App\Entity\Enum\EtageType;
 use App\Entity\Enum\MotifCloture;
@@ -745,7 +745,7 @@ class SignalementResponse
     #[OA\Property(
         description: 'Liste des visites ou arrêtés du logement effectués dans le cadre du traitement du dossier.',
         type: 'array',
-        items: new OA\Items(ref: new Model(type: Intervention::class)),
+        items: new OA\Items(ref: new Model(type: Visite::class)),
         example: [
             [
                 'dateIntervention' => '2024-10-10T08:00:00+00:00',
@@ -769,7 +769,7 @@ class SignalementResponse
             ],
         ]
     )]
-    public array $interventions = [];
+    public array $visites = [];
     #[OA\Property(
         description: 'Liste des fichiers joints au signalement.',
         type: 'array',

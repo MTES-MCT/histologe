@@ -8,13 +8,13 @@ use Nelmio\ApiDocBundle\Attribute\Model;
 use OpenApi\Attributes as OA;
 
 #[OA\Schema(
-    schema: 'Intervention',
-    description: 'Représentation d\'une intervention.'
+    schema: 'Visite',
+    description: 'Représentation d\'une visite.'
 )]
-class Intervention
+class Visite
 {
     #[OA\Property(
-        description: 'Identifiant unique de l\'intervention.',
+        description: 'Identifiant unique d\'une visite.',
         type: 'string',
         example: 'e96325bf-139e-4793-a7b4-a4c713a0fbd9',
     )]

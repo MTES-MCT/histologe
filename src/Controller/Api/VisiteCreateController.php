@@ -2,7 +2,7 @@
 
 namespace App\Controller\Api;
 
-use App\Dto\Api\Model\Intervention as InterventionModel;
+use App\Dto\Api\Model\Visite as InterventionModel;
 use App\Dto\Api\Request\VisiteRequest;
 use App\Entity\Intervention;
 use App\Entity\Partner;
@@ -10,7 +10,7 @@ use App\Entity\Signalement;
 use App\Entity\User;
 use App\Event\InterventionCreatedEvent;
 use App\EventListener\SecurityApiExceptionListener;
-use App\Factory\Api\InterventionFactory;
+use App\Factory\Api\VisiteFactory;
 use App\Factory\SignalementVisiteRequestFactory;
 use App\Manager\InterventionManager;
 use App\Service\TimezoneProvider;
@@ -32,7 +32,7 @@ class VisiteCreateController extends AbstractController
     public function __construct(
         private readonly EventDispatcherInterface $eventDispatcher,
         private readonly InterventionManager $interventionManager,
-        private readonly InterventionFactory $interventionFactory,
+        private readonly VisiteFactory $interventionFactory,
         private readonly SignalementVisiteRequestFactory $signalementVisiteRequestFactory,
     ) {
     }
@@ -76,7 +76,7 @@ class VisiteCreateController extends AbstractController
                 ref: '#/components/schemas/VisiteRequest'
             ),
         ),
-        tags: ['Interventions'],
+        tags: ['Visites'],
     )]
     #[OA\Response(
         response: Response::HTTP_CREATED,
