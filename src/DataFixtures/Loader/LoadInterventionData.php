@@ -5,7 +5,6 @@ namespace App\DataFixtures\Loader;
 use App\Entity\Enum\DocumentType;
 use App\Entity\Enum\InterventionType;
 use App\Entity\Enum\ProcedureType;
-use App\Entity\File;
 use App\Entity\Intervention;
 use App\Factory\FileFactory;
 use App\Repository\PartnerRepository;
@@ -67,9 +66,6 @@ class LoadInterventionData extends Fixture implements OrderedFixtureInterface
                 $file = $this->fileFactory->createInstanceFrom(
                     filename: $document,
                     title: $document,
-                    type: \in_array(pathinfo($document, \PATHINFO_EXTENSION), File::IMAGE_EXTENSION)
-                        ? File::FILE_TYPE_DOCUMENT
-                        : File::FILE_TYPE_PHOTO,
                     signalement: $intervention->getSignalement(),
                     user: $user,
                     intervention: $intervention,

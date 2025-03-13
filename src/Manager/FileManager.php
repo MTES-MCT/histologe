@@ -37,7 +37,6 @@ class FileManager extends AbstractManager
             $file = $this->fileFactory->createInstanceFrom(
                 filename: $filename,
                 title: $title,
-                type: $type,
                 signalement: $signalement,
                 user: $user,
                 documentType: $documentType,

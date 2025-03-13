@@ -14,7 +14,6 @@ class FileFactory
     public function createInstanceFrom(
         ?string $filename = null,
         ?string $title = null,
-        ?string $type = null,
         ?Signalement $signalement = null,
         ?User $user = null,
         ?Intervention $intervention = null,
@@ -29,7 +28,7 @@ class FileFactory
         $file = (new File())
             ->setFilename($filename)
             ->setTitle($title)
-            ->setFileType($type)
+            ->setFileType($this->getFileType($filename, $documentType ?? DocumentType::AUTRE))
             ->setIsWaitingSuivi($isWaitingSuivi)
             ->setIsTemp($isTemp);
         if (null !== $signalement) {
@@ -89,7 +88,6 @@ class FileFactory
         return $this->createInstanceFrom(
             filename: $file['file'],
             title: $file['titre'],
-            type: $this->getFileType($file, $documentType),
             signalement: $signalement,
             user: $user,
             intervention: $intervention,
@@ -99,14 +97,12 @@ class FileFactory
         );
     }
 
-    private function getFileType(array $file, DocumentType $documentType)
+    private function getFileType(string $filename, DocumentType $documentType)
     {
-        if ('photos' === $file['key']
-            && (File::FILE_TYPE_PHOTO === $documentType->mapFileType() || DocumentType::AUTRE === $documentType)
-            && \in_array(
-                strtolower(pathinfo($file['file'], \PATHINFO_EXTENSION)),
-                File::IMAGE_EXTENSION
-            )
+        $ext = strtolower(pathinfo($filename, \PATHINFO_EXTENSION));
+        if ((File::FILE_TYPE_PHOTO === $documentType->mapFileType() || DocumentType::AUTRE === $documentType)
+            && \in_array($ext, File::IMAGE_EXTENSION)
+            && 'pdf' !== $ext
         ) {
             return File::FILE_TYPE_PHOTO;
         }

@@ -98,13 +98,15 @@ export default defineComponent({
       photosMimeTypes: [
         'image/jpeg',
         'image/png',
-        'image/gif'
+        'image/gif',
+        'application/pdf',
       ],
       photosExtensions: [
         'jpeg',
         'jpg',
         'png',
-        'gif'
+        'gif',
+        'pdf'
       ],
       documentsMimeTypes: [
         'image/jpeg',

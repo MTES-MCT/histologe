@@ -3,7 +3,6 @@
 namespace App\DataFixtures\Loader;
 
 use App\Entity\Enum\DocumentType;
-use App\Entity\File;
 use App\Factory\FileFactory;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Common\DataFixtures\OrderedFixtureInterface;
@@ -21,7 +20,6 @@ class LoadFileData extends Fixture implements OrderedFixtureInterface
         $file = $this->fileFactory->createInstanceFrom(
             filename: 'export-histologe-xxxx.xslx',
             title: 'export-histologe-xxxx.xslx',
-            type: File::FILE_TYPE_DOCUMENT,
             documentType: DocumentType::EXPORT,
         );
         $file->setCreatedAt(new \DateTimeImmutable('- 2 months'));

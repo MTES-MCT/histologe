@@ -306,15 +306,10 @@ class SignalementImportLoader
                 $this->metadata['files_not_found'][$filename] = $filename;
                 continue;
             }
-            $fileType = File::FILE_TYPE_DOCUMENT;
-            if (\in_array($this->fileStorage->mimeType($filename), File::IMAGE_MIME_TYPES)) {
-                $fileType = File::FILE_TYPE_PHOTO;
-            }
 
             $file = $this->fileManager->createOrUpdate(
                 filename: $filename,
                 title: $filename,
-                type: $fileType,
                 signalement: $signalement,
             );
             $signalement->addFile($file);
