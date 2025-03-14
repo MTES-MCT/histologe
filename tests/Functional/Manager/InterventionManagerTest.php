@@ -8,6 +8,7 @@ use App\Entity\Enum\ProcedureType;
 use App\Entity\Enum\Qualification;
 use App\Entity\Intervention;
 use App\Factory\FileFactory;
+use App\Factory\InterventionFactory;
 use App\Manager\InterventionManager;
 use App\Manager\PartnerManager;
 use App\Repository\InterventionRepository;
@@ -23,6 +24,7 @@ class InterventionManagerTest extends KernelTestCase
 {
     protected ManagerRegistry $managerRegistry;
     private InterventionRepository $interventionRepository;
+    private InterventionFactory $interventionFactory;
     private PartnerManager $partnerManager;
     private WorkflowInterface $workflow;
     private SignalementRepository $signalementRepository;
@@ -40,6 +42,7 @@ class InterventionManagerTest extends KernelTestCase
     {
         self::bootKernel();
         $this->interventionRepository = static::getContainer()->get(InterventionRepository::class);
+        $this->interventionFactory = static::getContainer()->get(InterventionFactory::class);
         $this->partnerManager = static::getContainer()->get(PartnerManager::class);
         $this->workflow = static::getContainer()->get('state_machine.intervention_planning');
         $this->signalementQualificationUpdater = static::getContainer()->get(SignalementQualificationUpdater::class);
@@ -52,6 +55,7 @@ class InterventionManagerTest extends KernelTestCase
         $this->interventionManager = new InterventionManager(
             $this->managerRegistry,
             $this->interventionRepository,
+            $this->interventionFactory,
             $this->partnerManager,
             $this->workflow,
             $this->signalementQualificationUpdater,

@@ -2,7 +2,9 @@
 
 namespace App\Manager;
 
+use App\Dto\Api\Request\ArreteRequest;
 use App\Dto\Request\Signalement\VisiteRequest;
+use App\Entity\Affectation;
 use App\Entity\Enum\DocumentType;
 use App\Entity\Enum\InterventionType;
 use App\Entity\Enum\ProcedureType;
@@ -12,7 +14,9 @@ use App\Entity\Intervention;
 use App\Entity\Signalement;
 use App\Entity\User;
 use App\Factory\FileFactory;
+use App\Factory\InterventionFactory;
 use App\Repository\InterventionRepository;
+use App\Service\Intervention\InterventionDescriptionGenerator;
 use App\Service\Signalement\Qualification\SignalementQualificationUpdater;
 use Doctrine\Persistence\ManagerRegistry;
 use Psr\Log\LoggerInterface;
@@ -24,6 +28,7 @@ class InterventionManager extends AbstractManager
     public function __construct(
         protected ManagerRegistry $managerRegistry,
         private readonly InterventionRepository $interventionRepository,
+        private readonly InterventionFactory $interventionFactory,
         private readonly PartnerManager $partnerManager,
         private readonly WorkflowInterface $interventionPlanningStateMachine,
         private readonly SignalementQualificationUpdater $signalementQualificationUpdater,
@@ -200,6 +205,41 @@ class InterventionManager extends AbstractManager
             $intervention->addFile($this->createFile($intervention, $document));
         }
         $this->save($intervention);
+
+        return $intervention;
+    }
+
+    /**
+     * @throws \DateMalformedStringException
+     */
+    public function createArreteFromRequest(ArreteRequest $arreteRequest, Affectation $affectation): ?Intervention
+    {
+        $description = InterventionDescriptionGenerator::buildDescriptionArreteCreatedFromRequest($arreteRequest);
+        $intervention = $this->getRepository()->findOneBy([
+            'signalement' => $affectation->getSignalement(),
+            'type' => InterventionType::ARRETE_PREFECTORAL,
+            'details' => $description,
+        ]);
+        if (null === $intervention) {
+            $additionalInformation = [
+                'arrete_numero' => $arreteRequest->numero,
+                'arrete_type' => $arreteRequest->type,
+                'arrete_mainlevee_date' => $arreteRequest->mainLeveeDate,
+                'arrete_mainlevee_numero' => $arreteRequest->mainLeveeNumero,
+            ];
+            $intervention = $this->interventionFactory->createInstanceFrom(
+                affectation: $affectation,
+                type: InterventionType::ARRETE_PREFECTORAL,
+                scheduledAt: new \DateTimeImmutable($arreteRequest->date),
+                registeredAt: new \DateTimeImmutable(),
+                status: Intervention::STATUS_DONE,
+                details: InterventionDescriptionGenerator::buildDescriptionArreteCreatedFromRequest($arreteRequest),
+                additionalInformation: $additionalInformation,
+                concludeProcedures: [ProcedureType::INSALUBRITE]
+            );
+
+            $this->save($intervention);
+        }
 
         return $intervention;
     }

@@ -50,6 +50,7 @@ readonly class InterventionCreatedSubscriber implements EventSubscriberInterface
             'description' => $this->htmlSanitizer->sanitize($description),
         ]);
 
+        $event->setSuivi($foundSuivi);
         if (!$foundSuivi) {
             $suivi = $this->suiviManager->createSuivi(
                 signalement: $intervention->getSignalement(),
@@ -59,7 +60,7 @@ readonly class InterventionCreatedSubscriber implements EventSubscriberInterface
                 user: $event->getUser(),
                 context: Suivi::CONTEXT_INTERVENTION,
             );
-
+            $event->setSuivi($suivi);
             if (InterventionType::VISITE === $intervention->getType()
                 && $intervention->getScheduledAt()->format('Y-m-d') >= (new \DateTimeImmutable())->format('Y-m-d')
             ) {
