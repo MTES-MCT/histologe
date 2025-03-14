@@ -65,6 +65,7 @@ class VisiteCreateController extends AbstractController
                         value: [
                             'date' => '2024-03-01',
                             'time' => '10:00',
+                            'visiteEffectuee' => true,
                             'occupantPresent' => true,
                             'proprietairePresent' => false,
                             'notifyUsager' => true,

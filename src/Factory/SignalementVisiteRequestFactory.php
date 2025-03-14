@@ -30,7 +30,7 @@ readonly class SignalementVisiteRequestFactory
             idPartner: $affectation->getPartner()->getId(),
             details: $this->descriptionFilesBuilder->build($signalement, $visiteRequest),
             concludeProcedure: $visiteRequest->concludeProcedure,
-            isVisiteDone: true,
+            isVisiteDone: $visiteRequest->visiteEffectuee,
             isOccupantPresent: $visiteRequest->occupantPresent,
             isProprietairePresent: $visiteRequest->proprietairePresent,
             isUsagerNotified: $visiteRequest->notifyUsager

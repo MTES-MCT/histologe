@@ -28,6 +28,10 @@ class VisiteRequest implements RequestInterface, RequestFileInterface
     #[OA\Property(description: 'Heure de la visite<br>Exemple : `10:00`', example: '10:00')]
     public ?string $time = null;
 
+    #[Assert\Type('bool')]
+    #[OA\Property(description: 'La visite a eu lieu', example: true)]
+    public ?bool $visiteEffectuee = null;
+
     #[OA\Property(description: 'L\'occupant était présent', example: true)]
     #[Assert\Type('bool')]
     public ?bool $occupantPresent = null;
@@ -103,6 +107,7 @@ class VisiteRequest implements RequestInterface, RequestFileInterface
         $today = new \DateTimeImmutable('today');
 
         $fieldsToCheck = [
+            'visiteEffectuee' => $object->visiteEffectuee,
             'occupantPresent' => $object->occupantPresent,
             'proprietairePresent' => $object->proprietairePresent,
             'notifyUsager' => $object->notifyUsager,

@@ -113,6 +113,7 @@ class VisiteCreateControllerTest extends WebTestCase
             [
                 'date' => '2025-01-01',
                 'time' => '12:00',
+                'visiteEffectuee' => true,
                 'occupantPresent' => true,
                 'proprietairePresent' => true,
                 'notifyUsager' => true,
@@ -129,6 +130,7 @@ class VisiteCreateControllerTest extends WebTestCase
             [
                 'date' => '2025-01-01',
                 'time' => '12:00',
+                'visiteEffectuee' => true,
                 'occupantPresent' => true,
                 'proprietairePresent' => true,
                 'notifyUsager' => false,
@@ -163,6 +165,8 @@ class VisiteCreateControllerTest extends WebTestCase
             [
                 'date' => '2024-06-01',
                 'time' => '12:00',
+
+                'visiteEffectuee' => true,
                 'occupantPresent' => true,
                 'proprietairePresent' => true,
                 'notifyUsager' => false,
@@ -182,7 +186,7 @@ class VisiteCreateControllerTest extends WebTestCase
                 'time' => '12:00',
             ],
             [
-                'occupantPresent', 'proprietairePresent', 'notifyUsager', 'concludeProcedure', 'details',
+                'visiteEffectuee', 'occupantPresent', 'proprietairePresent', 'notifyUsager', 'concludeProcedure', 'details',
             ],
             'est obligatoire pour une visite effectuée',
         ];
