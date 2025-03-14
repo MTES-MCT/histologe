@@ -177,7 +177,8 @@ class SignalementCreateController extends AbstractController
         EntityManagerInterface $entityManager,
     ): JsonResponse {
         $entityManager->beginTransaction();
-        $action = $signalement->getId() ? $this->generateUrl('back_signalement_draft_form_address_edit', ['uuid' => $signalement->getUuid()]) : $this->generateUrl('back_signalement_draft_form_address');
+        $isCreation = empty($signalement->getId());
+        $action = $isCreation ? $this->generateUrl('back_signalement_draft_form_address_edit', ['uuid' => $signalement->getUuid()]) : $this->generateUrl('back_signalement_draft_form_address');
         $form = $this->createForm(SignalementDraftAddressType::class, $signalement, ['action' => $action]);
         $form->handleRequest($request);
         $hasDuplicates = false;
@@ -204,7 +205,7 @@ class SignalementCreateController extends AbstractController
 
                 $tabContent = $this->renderView('back/signalement_create/tabs/tab-adresse.html.twig', ['form' => $form]);
 
-                return $this->json(['redirect' => true, 'url' => $url, 'tabContent' => $tabContent]);
+                return $this->json(['redirect' => true, 'url' => $isCreation ? $url : '', 'tabContent' => $tabContent]);
             }
         }
 
@@ -237,7 +238,7 @@ class SignalementCreateController extends AbstractController
 
             $tabContent = $this->renderView('back/signalement_create/tabs/tab-logement.html.twig', ['formLogement' => $form]);
 
-            return $this->json(['redirect' => true, 'url' => $url, 'tabContent' => $tabContent]);
+            return $this->json(['redirect' => true, 'tabContent' => $tabContent]);
         }
 
         $tabContent = $this->renderView('back/signalement_create/tabs/tab-logement.html.twig', ['formLogement' => $form]);
@@ -269,7 +270,7 @@ class SignalementCreateController extends AbstractController
 
             $tabContent = $this->renderView('back/signalement_create/tabs/tab-situation.html.twig', ['formSituation' => $form, 'signalement' => $signalement]);
 
-            return $this->json(['redirect' => true, 'url' => $url, 'tabContent' => $tabContent]);
+            return $this->json(['redirect' => true, 'tabContent' => $tabContent]);
         }
 
         $tabContent = $this->renderView('back/signalement_create/tabs/tab-situation.html.twig', ['formSituation' => $form, 'signalement' => $signalement]);

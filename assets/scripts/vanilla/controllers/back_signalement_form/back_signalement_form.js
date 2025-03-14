@@ -25,7 +25,8 @@ function saveCurrentTab(event) {
     formAction = event.target.action
   }
   if (event.type === 'click') {
-    const currentTabForm = currentTab?.querySelector('form')
+    const currentTabName = currentTab.id.substring(9, currentTab.id.length - 6)
+    const currentTabForm = currentTab?.querySelector('form#bo-form-signalement-' + currentTabName)
     formData = new FormData(currentTabForm)
     formAction = currentTabForm.action
   }
@@ -33,6 +34,15 @@ function saveCurrentTab(event) {
   fetch(formAction, {method: 'POST', body: formData}).then(response => {
     if (response.ok) {
       response.json().then((response) => {
+        if (response.redirect && response.url !== undefined && response.url !== '') {
+          const currentUrl = window.location.href.split('#')[0];
+          const newUrl = response.url.split('#')[0];
+          window.location.href = response.url;
+          if (currentUrl === newUrl) {
+            window.location.reload(true);
+          }
+        }
+
         currentTab.classList.remove('fr-tabs__panel--saving')
         
         const currentTabName = currentTab.id.substring(9, currentTab.id.length - 6)
@@ -41,9 +51,13 @@ function saveCurrentTab(event) {
 
         if (response.redirect) {
           boFormSignalementCurrentTabIsDirty = false
-          const targetTabButton = document?.querySelector('#tabpanel-' + boFormSignalementTargetTab)
-          boFormSignalementTargetTab = ''
-          targetTabButton.click()
+
+          if (response.url === undefined || response.url === '') {
+            const targetTabButton = document?.querySelector('#tabpanel-' + boFormSignalementTargetTab)
+            boFormSignalementTargetTab = ''
+            targetTabButton.click()
+          }
+
         } else {
           if (currentTabName === 'adresse' && response.hasDuplicates) {
             const modaleDuplicate = document.querySelector('#fr-modal-duplicate')
