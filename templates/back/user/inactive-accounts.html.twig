@@ -29,6 +29,9 @@
         <div class="fr-col-12 fr-col-md-6">
             <h2 class="fr-mb-0" id="desc-table">{{ singular_or_plural(users|length, 'utilisateur trouvé', 'utilisateurs trouvés') }}</h2>
         </div>
+        <div class="fr-col-12 fr-col-md-6 fr-text--right">
+            <a href="{{path('back_user_export_inactive_accounts')}}" class="fr-btn fr-btn--secondary fr-btn--icon-left fr-icon-download-fill"> Exporter les résultats</a>
+        </div>
     </section>
 
     <section class="fr-col-12 fr-pt-0 fr-px-5v">

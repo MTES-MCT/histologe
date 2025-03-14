@@ -4,6 +4,7 @@ namespace App\Controller\Back;
 
 use App\Entity\User;
 use App\Form\SearchUserType;
+use App\Messenger\Message\InactiveUserExportMessage;
 use App\Messenger\Message\UserExportMessage;
 use App\Repository\UserRepository;
 use App\Service\ListFilters\SearchUser;
@@ -85,6 +86,38 @@ class BackUserController extends AbstractController
 
         return $this->render('back/user/inactive-accounts.html.twig', [
             'users' => $users,
+        ]);
+    }
+
+    #[Route('/export-comptes-inactifs', name: 'back_user_export_inactive_accounts', methods: ['GET', 'POST'])]
+    public function exportInactiveAccounts(
+        Request $request,
+        UserRepository $userRepository,
+        MessageBusInterface $messageBus,
+    ): Response {
+        /** @var User $user */
+        $user = $this->getUser();
+        $users = $userRepository->findUsersPendingToArchive($user);
+
+        if ('POST' === $request->getMethod()) {
+            $format = $request->request->get('file-format');
+            if (!in_array($format, ['csv', 'xlsx'])) {
+                $this->addFlash('error', 'Merci de sélectionner le format de l\'export.');
+
+                return $this->redirectToRoute('back_user_export_inactive_accounts');
+            }
+            $messageBus->dispatch(new InactiveUserExportMessage($user->getId(), $format));
+            $this->addFlash(
+                'success',
+                'L\'export vous sera envoyé par e-mail. Il arrivera d\'ici quelques minutes. N\'oubliez pas de regarder vos courriers indésirables (spam) !'
+            );
+
+            return $this->redirectToRoute('back_user_inactive_accounts');
+        }
+
+        return $this->render('back/user/export-inactive-accounts.html.twig', [
+            'nbResults' => \count($users),
+            'columns' => UserExportLoader::getColumnForUser($user),
         ]);
     }
 
