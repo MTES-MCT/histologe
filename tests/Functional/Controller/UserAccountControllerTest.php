@@ -48,6 +48,20 @@ class UserAccountControllerTest extends WebTestCase
         $this->assertResponseRedirects('/bo/');
     }
 
+    public function testUserApiLogin(): void
+    {
+        $client = static::createClient();
+
+        $client->request('GET', '/connexion');
+
+        $client->submitForm('Connexion', [
+            'email' => 'api-02@histologe.fr',
+            'password' => 'histologe',
+        ]);
+
+        $this->assertResponseRedirects('/connexion');
+    }
+
     public function testActivationUserFormSubmitWithMismatchedPassword(): void
     {
         $faker = Factory::create();

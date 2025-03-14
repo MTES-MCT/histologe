@@ -42,7 +42,7 @@ class UserVoter extends Voter
         if ($this->security->isGranted('ROLE_ADMIN')) {
             return true;
         }
-        if ($subject->isSuperAdmin()) {
+        if ($subject->isSuperAdmin() || $subject->isApiUser()) {
             return false;
         }
 
