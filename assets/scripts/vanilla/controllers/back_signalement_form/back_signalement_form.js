@@ -34,15 +34,17 @@ function saveCurrentTab(event) {
     if (response.ok) {
       response.json().then((response) => {
         currentTab.classList.remove('fr-tabs__panel--saving')
+        
+        const currentTabName = currentTab.id.substring(9, currentTab.id.length - 6)
+        document.querySelector('#tabpanel-' +currentTabName+ '-panel').innerHTML = response.tabContent
+        document.querySelector('#tabpanel-' +currentTabName).scrollIntoView({ behavior: 'smooth' });
+
         if (response.redirect) {
           boFormSignalementCurrentTabIsDirty = false
           const targetTabButton = document?.querySelector('#tabpanel-' + boFormSignalementTargetTab)
           boFormSignalementTargetTab = ''
           targetTabButton.click()
         } else {
-          const currentTabName = currentTab.id.substring(9, currentTab.id.length - 6)
-          document.querySelector('#tabpanel-' +currentTabName+ '-panel').innerHTML = response.tabContent
-          document.querySelector('#tabpanel-' +currentTabName).scrollIntoView({ behavior: 'smooth' });
           if (currentTabName === 'adresse' && response.hasDuplicates) {
             const modaleDuplicate = document.querySelector('#fr-modal-duplicate')
             const modaleDuplicateContainer = document.querySelector('#fr-modal-duplicate-container')
@@ -54,6 +56,7 @@ function saveCurrentTab(event) {
             const errorAlertStr = '<div class="fr-alert fr-alert--error fr-mb-2v" role="alert"><p class="fr-alert__title">Merci de corriger les champs où des erreurs sont signalées.</p></div>'
             document.querySelector('#tabpanel-' +currentTabName+ '-panel').innerHTML = errorAlertStr + document.querySelector('#tabpanel-' +currentTabName+ '-panel').innerHTML
           }
+          initBoFormSignalementSubmit(currentTabName)
         }
       });
     } else {
