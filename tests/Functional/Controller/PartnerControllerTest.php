@@ -60,17 +60,21 @@ class PartnerControllerTest extends WebTestCase
         $route = $this->router->generate('back_partner_new');
         $this->client->request('GET', $route);
 
+        $name = $this->faker->company();
         $this->client->submitForm(
             'Créer le partenaire',
             [
                 'partner[territory]' => 1,
-                'partner[nom]' => $this->faker->company(),
+                'partner[nom]' => $name,
                 'partner[email]' => $this->faker->companyEmail(),
                 'partner[type]' => PartnerType::ARS->value,
             ]
         );
 
-        $this->assertResponseRedirects('/bo/partenaires/');
+        /** @var Partner $partner */
+        $partner = $this->partnerRepository->findOneBy(['nom' => $name]);
+
+        $this->assertResponseRedirects('/bo/partenaires/'.$partner->getId().'/voir');
     }
 
     public function testPartnerSuccessfullyDisplay()
