@@ -278,7 +278,6 @@ class LoadSignalementData extends Fixture implements OrderedFixtureInterface
                 user: $user,
                 documentType: DocumentType::AUTRE
             );
-            // if (in_array(pathinfo($document['file'], \PATHINFO_EXTENSION), File::IMAGE_EXTENSION)) {
             if (\in_array($document['mimeType'], File::RESIZABLE_MIME_TYPES)) {
                 $file->setIsVariantsGenerated(true);
                 $file->setCreatedAt($dateMinusTwoMonth);

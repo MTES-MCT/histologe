@@ -77,6 +77,7 @@ enum DocumentType: String
             self::PROCEDURE_SAISINE->name => self::PROCEDURE_SAISINE->label(),
             self::BAILLEUR_DEVIS_POUR_TRAVAUX->name => self::BAILLEUR_DEVIS_POUR_TRAVAUX->label(),
             self::BAILLEUR_REPONSE_BAILLEUR->name => self::BAILLEUR_REPONSE_BAILLEUR->label(),
+            self::PHOTO_VISITE->name => self::PHOTO_VISITE->label(),
             self::AUTRE_PROCEDURE->name => self::AUTRE_PROCEDURE->label(),
         ];
     }

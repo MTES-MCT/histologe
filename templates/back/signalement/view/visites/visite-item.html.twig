@@ -107,6 +107,7 @@
                         data-type="photo" 
                         data-file-id="{{ photo.id}}" 
                         data-signalement-uuid="{{ signalement.uuid}}" 
+                        data-file-path="{{ path('show_file', {uuid: photo.uuid}) }}?variant=thumb"
                         data-description="{{ photo.description }}" 
                         data-documentType="{{ photo.documentType.name }}" 
                         data-createdAt="{{ photo.createdAt is defined ? photo.createdAt|date('d.m.Y') : 'N/R' }}"
@@ -131,4 +132,70 @@
             </div>
         </div>
     {% endfor %}
+</div>
+<div class="fr-grid-row fr-grid-row--middle fr-grid-row--gutters fr-mb-3v">
+    <div class="fr-col-12">
+        {% for index, doc in signalement.files|filter(
+            doc => doc.fileType == 'document'
+                    and doc.documentType.name == 'PHOTO_VISITE'
+                    and doc.intervention is not null
+                    and doc.intervention.id is same as intervention.id
+            ) %}
+            <div class="fr-grid-row fr-grid-row--middle fr-background-alt--grey fr-p-3v signalement-file-item">
+                <div class="fr-col-9">
+                    <div class="fr-grid-row">
+                        <div class="fr-col-12 fr-col-lg-2">
+                            {{ doc.createdAt is defined ? doc.createdAt|date('d.m.Y') : 'N/R' }}
+                        </div>
+                        <div class="fr-col-12 fr-col-lg-4">
+                            <i>{{ doc.title|truncate_filename(45) }}</i>
+                        </div>
+                        <div class="fr-col-12 fr-col-lg-6 fr-pl-3v">
+                            <b>{{ doc.description }}</b>
+                        </div>
+                    </div>
+                </div>
+                <div class="fr-col-3 fr-text--right">
+                    <a href="{{ path('show_file', {uuid: doc.uuid}) }}"
+                        class="fr-btn fr-btn--sm fr-icon-eye-fill img-box" title="Afficher le document {{ doc.filename }} - ouvre une nouvelle fenêtre"
+                        target="_blank" rel="noopener"></a>    
+                        
+                    {% if is_granted('FILE_EDIT', doc) %}
+                        {% set DocumentType = enum('\\App\\Entity\\Enum\\DocumentType') %}
+                        {% include 'back/signalement/view/edit-modals/edit-file.html.twig' %}
+                        {% set partner = doc.uploadedBy ? doc.uploadedBy.partnerInTerritoryOrFirstOne(signalement.territory) %}       
+                        <button 
+                            class="fr-btn fr-btn--sm fr-btn--secondary fr-background--white fr-fi-edit-line btn-signalement-file-edit"
+                            id="file_edit_{{ doc.id }}" 
+                            title="Editer la photo {{ doc.filename }}"
+                            aria-controls="fr-modal-edit-file"
+                            data-fr-opened="false" 
+                            data-filename="{{ doc.filename }}" 
+                            data-type="document" 
+                            data-file-id="{{ doc.id}}" 
+                            data-signalement-uuid="{{ signalement.uuid}}" 
+                            data-description="{{ doc.description }}" 
+                            data-documentType="{{ doc.documentType.name }}" 
+                            data-createdAt="{{ doc.createdAt is defined ? doc.createdAt|date('d.m.Y') : 'N/R' }}"
+                            data-partner-name="{{ partner ? partner.nom ~ ' - ' : '' }}"
+                            data-user-name="{{ doc.uploadedBy.nomComplet ?? 'N/R' }}"
+                            data-desordreSlug="{{ doc.desordreSlug }}"
+                            data-signalement-desordres="{{ criteres | json_encode }}"
+                        ></button>
+                    {% endif %}        
+                    {% if is_granted('FILE_DELETE', doc) %}
+                        <button class="fr-btn fr-btn--sm fr-btn--secondary fr-fi-delete-line btn-signalement-file-delete"
+                            id="file_delete_{{ doc.id }}" 
+                            title="Supprimer le document {{ doc.filename }}"
+                            aria-controls="fr-modal-delete-file"
+                            data-fr-opened="false" 
+                            data-filename="{{ doc.filename }}" 
+                            data-type="document" 
+                            data-file-id="{{ doc.id}}"                     
+                        ></button>
+                    {% endif %}
+                </div>
+            </div>
+        {% endfor %}
+    </div>
 </div>
