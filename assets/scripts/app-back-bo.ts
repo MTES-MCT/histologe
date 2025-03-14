@@ -34,7 +34,6 @@ import './vanilla/controllers/back_signalement_view/form_cloture_modal.js';
 import './vanilla/controllers/back_signalement_view/form_acceptation_refus.js';
 import './vanilla/controllers/back_signalement_view/pick-localisation.js';
 import './vanilla/controllers/back_signalement_edit_file/back_signalement_edit_file.js';
-import './vanilla/controllers/back_signalement_delete_file/back_signalement_delete_file.js';
 import './vanilla/controllers/back_signalement_list_export/back_signalement_list_export.js';
 import './vanilla/controllers/back_profil_edit_email/back_profil_edit_email.js';
 import './vanilla/controllers/back_zone_view/back_zone_index.js';

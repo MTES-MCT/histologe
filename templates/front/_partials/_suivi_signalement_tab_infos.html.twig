@@ -396,17 +396,38 @@ and signalement.profileDeclarant is not same as enum('App\\Entity\\Enum\\Profile
 
 <h4 class="fr-mb-2v">Vos photos</h4>
 <div class="fr-mb-4v">
+    	{% include '_partials/_modal_file_delete.html.twig' %}
 	{% if signalement.files|filter(photo => photo.fileType == 'photo' and photo.isUsagerFile)|length %}
 		Les photos que vous avez ajoutées.
-	<br>
+		<br>
 		Cliquez sur la photo pour l'ouvrir dans un nouvel onglet.
 		<br>
-		{% for photo in signalement.files|filter(photo => photo.fileType == 'photo' and photo.isUsagerFile) %}
-			<a href="{{ path('show_file', {uuid: photo.uuid}) }}?variant=resize" class="photo-preview" target="_blank" rel="noopener"
-				title="Voir la photo {{photo.title}} - ouvre une nouvelle fenêtre">
-				<img src="{{ path('show_file', {uuid: photo.uuid}) }}?variant=thumb" alt="{{photo.title}}">
-			</a>
-		{% endfor %}
+			<div class="fr-grid-row fr-grid-row--middle fr-grid-row--gutters fr-mb-3v">
+			{% for photo in signalement.files|filter(photo => photo.fileType == 'photo' and photo.isUsagerFile) %}
+				<div class="fr-col-6 fr-col-md-2 fr-rounded signalement-file-item">
+					<div class="fr-px-5w fr-py-8w fr-rounded fr-border fr-text--center"
+						style="background: url('{{ path('show_file', {uuid: photo.uuid}) }}?variant=thumb')no-repeat center center/cover"
+						>
+						<a  href="{{ path('show_file', {uuid: photo.uuid}) }}?variant=resize" target="_blank" rel="noopener"
+							class="fr-btn fr-btn--sm fr-icon-eye-line" 
+							data-id={{ photo.id }} 
+							title="Voir la photo {{ photo.filename }} - ouvre une nouvelle fenêtre"
+						></a>
+						{% if is_granted('FRONT_FILE_DELETE', { 'file': photo, 'email': email }) %}
+							<button class="fr-btn fr-btn--sm fr-btn--secondary fr-background--white fr-fi-delete-line btn-signalement-file-delete"
+								id="file_delete_{{ photo.id }}" 
+								title="Supprimer la photo {{ photo.filename }}"
+								aria-controls="fr-modal-delete-file"
+								data-fr-opened="false" 
+								data-filename="{{ photo.filename }}" 
+								data-type="photo" 
+								data-file-id="{{ photo.id}}"                     
+							></button>
+						{% endif %}
+					</div>
+				</div>
+			{% endfor %}
+		</div>
 	{% else %}
 		Aucune photo à afficher. Si vous avez ajouté des photos dans votre signalement, rafraîchissez la page pour les voir apparaître.
 	{% endif %}
@@ -419,12 +440,21 @@ and signalement.profileDeclarant is not same as enum('App\\Entity\\Enum\\Profile
 		<br>
 		Cliquez sur la photo pour l'ouvrir dans un nouvel onglet.
 		<br>
-		{% for photo in signalement.files|filter(photo => photo.fileType == 'photo' and photo.isUsagerFile is same as(false)) %}
-			<a href="{{ path('show_file', {uuid: photo.uuid}) }}?variant=resize" class="photo-preview" target="_blank" rel="noopener" 
-               title="Voir la photo {{photo.title}} - ouvre une nouvelle fenêtre">
-				<img src="{{ path('show_file', {uuid: photo.uuid}) }}?variant=thumb" alt="{{photo.title}}">
-			</a>
-		{% endfor %}
+		<div class="fr-grid-row fr-grid-row--middle fr-grid-row--gutters fr-mb-3v">
+			{% for photo in signalement.files|filter(photo => photo.fileType == 'photo' and photo.isUsagerFile is same as(false)) %}
+				<div class="fr-col-6 fr-col-md-2 fr-rounded signalement-file-item">
+					<div class="fr-px-5w fr-py-8w fr-rounded fr-border fr-text--center"
+						style="background: url('{{ path('show_file', {uuid: photo.uuid}) }}?variant=thumb')no-repeat center center/cover"
+						>
+						<a  href="{{ path('show_file', {uuid: photo.uuid}) }}?variant=resize" target="_blank" rel="noopener"
+							class="fr-btn fr-btn--sm fr-icon-eye-line" 
+							data-id={{ photo.id }} 
+							title="Voir la photo {{ photo.filename }} - ouvre une nouvelle fenêtre"
+						></a>
+					</div>
+				</div>
+			{% endfor %}
+		</div>
 	</div>
 {% endif %}
 
@@ -433,12 +463,38 @@ and signalement.profileDeclarant is not same as enum('App\\Entity\\Enum\\Profile
 	{% if signalement.files|filter(doc => doc.fileType == 'document' and doc.isUsagerFile)|length %}
 		Cliquez sur le document pour l'ouvrir dans un nouvel onglet.
 		<br>
-		{% for doc in signalement.files|filter(doc => doc.fileType == 'document' and doc.isUsagerFile) %}
-			<a href="{{ path('show_file', {uuid: doc.uuid}) }}" target="_blank" class="fr-link" rel="noopener"
-				title="Voir le document {{doc.title}} - ouvre une nouvelle fenêtre">
-				{{doc.title}}
-			</a>
-			<br>
+		{% for doc in signalement.files|filter(doc => doc.fileType == 'document' and doc.isUsagerFile) %}			
+			<div class="fr-grid-row fr-grid-row--middle fr-background-alt--grey fr-rounded fr-p-3v signalement-file-item">
+				<div class="fr-col-9">
+					<div class="fr-grid-row">
+						<div class="fr-col-12 fr-col-lg-3">
+							{{ doc.createdAt is defined ? doc.createdAt|date('d.m.Y') : 'N/R' }}
+						</div>
+						<div class="fr-col-12 fr-col-lg-3">
+							<span class="fr-badge fr-badge--blue-ecume fr-mb-1v">{{ doc.documentType.label() }}</span>
+						</div>
+						<div class="fr-col-12 fr-col-lg-6">
+							<i>{{ doc.title|truncate_filename(45) }}</i>
+						</div>
+					</div>
+				</div>
+				<div class="fr-col-3 fr-text--right">
+					<a href="{{ path('show_file', {uuid: doc.uuid}) }}"
+						class="fr-btn fr-btn--sm fr-icon-eye-fill img-box" title="Afficher le document {{ doc.filename }} - ouvre une nouvelle fenêtre"
+						target="_blank" rel="noopener"></a>    
+					{% if is_granted('FRONT_FILE_DELETE', { 'file': doc, 'email': email }) %}
+						<button class="fr-btn fr-btn--sm fr-btn--secondary fr-fi-delete-line btn-signalement-file-delete"
+							id="file_delete_{{ doc.id }}" 
+							title="Supprimer le document {{ doc.filename }}"
+							aria-controls="fr-modal-delete-file"
+							data-fr-opened="false" 
+							data-filename="{{ doc.filename }}" 
+							data-type="document" 
+							data-file-id="{{ doc.id}}"                     
+						></button>
+					{% endif %}
+				</div>
+			</div>
 		{% endfor %}
 	{% else %}
 		Aucun document à afficher. Si vous avez ajouté des documents dans votre signalement, rafraîchissez la page pour les voir apparaître.

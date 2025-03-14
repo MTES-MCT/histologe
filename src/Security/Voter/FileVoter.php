@@ -13,14 +13,19 @@ class FileVoter extends Voter
 {
     public const DELETE = 'FILE_DELETE';
     public const EDIT = 'FILE_EDIT';
+    public const FRONT_DELETE = 'FRONT_FILE_DELETE';
 
     protected function supports(string $attribute, $subject): bool
     {
-        return \in_array($attribute, [self::DELETE, self::EDIT]) && $subject instanceof File;
+        return \in_array($attribute, [self::DELETE, self::EDIT, self::FRONT_DELETE]) && $subject instanceof File;
     }
 
     protected function voteOnAttribute(string $attribute, $subject, TokenInterface $token): bool
     {
+        if (self::FRONT_DELETE === $attribute) {
+            return $this->canFrontDelete($subject);
+        }
+
         /** @var User $user */
         $user = $token->getUser();
         if (!$user instanceof User) {
@@ -32,6 +37,11 @@ class FileVoter extends Voter
             self::EDIT => $this->canEdit($subject, $user),
             default => false,
         };
+    }
+
+    private function canFrontDelete(File $file): bool
+    {
+        return $file->isUsagerFile();
     }
 
     private function canCreate(File $file, User $user): bool

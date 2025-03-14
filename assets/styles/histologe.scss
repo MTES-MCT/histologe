@@ -866,20 +866,6 @@ ul + p {
     }
 }
 
-a.photo-preview {
-    margin: 0.25rem;
-    margin-left: 0;
-    display: inline-block;
-    background-image: none;
-    img {
-        max-width: 100px;
-    }
-    &::after {
-        mask-image: none;
-        width: 0;
-    }
-}
-
 .fr-modal__content .tox .tox-editor-header {
     z-index: 1;
 }

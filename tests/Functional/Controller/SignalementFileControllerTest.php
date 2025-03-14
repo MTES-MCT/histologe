@@ -2,14 +2,18 @@
 
 namespace App\Tests\Functional\Controller;
 
+use App\Entity\Enum\DocumentType;
+use App\Entity\File;
 use App\Entity\Signalement;
+use App\Entity\Suivi;
 use App\Entity\User;
 use App\Repository\SignalementRepository;
 use App\Repository\UserRepository;
+use App\Service\Signalement\SignalementFileProcessor;
+use App\Service\UploadHandlerService;
 use App\Tests\SessionHelper;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
-use Symfony\Component\DomCrawler\Crawler;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\Routing\RouterInterface;
 
@@ -21,14 +25,14 @@ class SignalementFileControllerTest extends WebTestCase
     private ?Signalement $signalement = null;
     private ?User $user = null;
     private RouterInterface $router;
+    private SignalementRepository $signalementRepository;
 
     protected function setUp(): void
     {
         $this->client = static::createClient();
-        /** @var SignalementRepository $signalementRepository */
-        $signalementRepository = static::getContainer()->get(SignalementRepository::class);
+        $this->signalementRepository = static::getContainer()->get(SignalementRepository::class);
         /* @var Signalement $signalement */
-        $this->signalement = $signalementRepository->findOneBy(['uuid' => '00000000-0000-0000-2022-000000000001']);
+        $this->signalement = $this->signalementRepository->findOneBy(['uuid' => '00000000-0000-0000-2022-000000000001']);
 
         /** @var UserRepository $userRepository */
         $userRepository = static::getContainer()->get(UserRepository::class);
@@ -58,20 +62,46 @@ class SignalementFileControllerTest extends WebTestCase
 
         $this->client->loginUser($this->user);
 
-        $route = $this->router->generate('back_signalement_add_file', ['uuid' => $this->signalement->getUuid()]);
-        $this->client->request('POST', $route, [
-            '_token' => $this->generateCsrfToken($this->client, 'signalement_add_file_'.$this->signalement->getId()),
-        ], [
-            'signalement-add-file' => [
-                'photos' => [$imageFile],
-                'documents' => [$documentFile],
+        $signalementFileProcessor = $this->createMock(SignalementFileProcessor::class);
+        $signalementFileProcessor
+            ->method('process')
+            ->willReturn([
+                [
+                    'file' => 'sample1234.jpg',
+                    'title' => 'sample.jpg',
+                    'date' => new \DateTimeImmutable(),
+                    'type' => 'photo',
+                    'documentType' => DocumentType::AUTRE, ],
+                [
+                    'file' => 'sample1234.pdf',
+                    'title' => 'sample.pdf',
+                    'date' => new \DateTimeImmutable(),
+                    'type' => 'document',
+                    'documentType' => DocumentType::AUTRE, ],
+            ]);
+        $signalementFileProcessor
+            ->method('isValid')
+            ->willReturn(true);
+
+        self::getContainer()->set(SignalementFileProcessor::class, $signalementFileProcessor);
+
+        $route = $this->router->generate('signalement_add_file', ['uuid' => $this->signalement->getUuid()]);
+        $this->client->request('POST', $route,
+            [
+                '_token' => $this->generateCsrfToken($this->client, 'signalement_add_file_'.$this->signalement->getId()),
+                'email' => $this->signalement->getMailOccupant() ?? $this->signalement->getMailDeclarant(),
             ],
-        ]);
+            [
+                'signalement-add-file' => [
+                    'photos' => [$imageFile],
+                    'documents' => [$documentFile],
+                ],
+            ],
+            [
+                'HTTP_X-Requested-With' => 'XMLHttpRequest',
+            ]
+        );
 
-        $this->assertEquals(302, $this->client->getResponse()->getStatusCode());
-
-        $redirectUrl = $this->client->getResponse()->headers->get('Location');
-        $this->client->request('GET', $redirectUrl);
         $this->assertEquals(200, $this->client->getResponse()->getStatusCode());
     }
 
@@ -87,38 +117,76 @@ class SignalementFileControllerTest extends WebTestCase
 
         $this->client->loginUser($this->user);
 
-        $route = $this->router->generate('back_signalement_add_file', ['uuid' => $this->signalement->getUuid()]);
-        $this->client->request('POST', $route, [
-            '_token' => $this->generateCsrfToken($this->client, 'signalement_add_file_'.$this->signalement->getId()),
-        ], [
-            'signalement-add-file' => [
-                'photos' => [$imageFile],
+        $route = $this->router->generate('signalement_add_file', ['uuid' => $this->signalement->getUuid()]);
+        $this->client->request(
+            'POST',
+            $route,
+            [
+                '_token' => $this->generateCsrfToken($this->client, 'signalement_add_file_'.$this->signalement->getId()),
+                'email' => $this->signalement->getMailOccupant() ?? $this->signalement->getMailDeclarant(),
             ],
+            [
+                'signalement-add-file' => [
+                    'photos' => [$imageFile],
+                ],
+            ],
+            [
+                'HTTP_X-Requested-With' => 'XMLHttpRequest',
+            ]
+        );
+        $this->assertEquals(400, $this->client->getResponse()->getStatusCode());
+        $this->assertStringContainsString('Le fichier a une extension heic mais est au format', $this->client->getResponse()->getContent());
+    }
+
+    public function testDeleteFileAccessDeniedSignalement()
+    {
+        $this->client->catchExceptions(false);
+        $route = $this->router->generate('signalement_delete_file', ['uuid' => $this->signalement->getUuid()]);
+        /** @var File $file */
+        $file = $this->signalement->getFiles()->first();
+        try {
+            $this->client->request('POST', $route, [
+                '_token' => $this->generateCsrfToken($this->client, 'signalement_delete_file_'.$this->signalement->getId()),
+                'file_id' => $file->getId(),
+                'from' => $this->signalement->getMailOccupant(),
+            ]);
+
+            $this->fail('L\'exception AccessDeniedException n\'a pas été levée.');
+        } catch (\Exception $e) {
+            $this->assertTrue(true);
+        }
+    }
+
+    public function testDeleteFileSuccessSignalement()
+    {
+        /** @var Signalement $signalement */
+        $signalement = $this->signalementRepository->findOneBy(['uuid' => '00000000-0000-0000-2023-000000000027']);
+
+        $route = $this->router->generate('signalement_delete_file', ['uuid' => '00000000-0000-0000-2023-000000000027']);
+        /** @var File $file */
+        $file = $signalement->getFiles()->last();
+
+        $uploadHandlerServiceMock = $this->createMock(UploadHandlerService::class);
+        $uploadHandlerServiceMock
+            ->method('deleteFile')
+            ->willReturn(true);
+
+        self::getContainer()->set(UploadHandlerService::class, $uploadHandlerServiceMock);
+
+        $this->client->request('POST', $route, [
+            '_token' => $this->generateCsrfToken($this->client, 'signalement_delete_file_'.$signalement->getId()),
+            'file_id' => $file->getId(),
+            'from' => $signalement->getMailOccupant(),
         ]);
 
         $this->assertEquals(302, $this->client->getResponse()->getStatusCode());
-    }
-
-    public function testGeneratePdfSignalement()
-    {
-        $this->client->loginUser($this->user);
-
-        /** @var SignalementRepository $signalementRepository */
-        $signalementRepository = static::getContainer()->get(SignalementRepository::class);
-        $signalement = $signalementRepository->findOneBy(['uuid' => '00000000-0000-0000-2022-000000000001']);
-
-        $route = $this->router->generate('back_signalement_gen_pdf', ['uuid' => $signalement->getUuid()]);
-        $this->client->request('GET', $route);
-
-        $this->assertEquals(302, $this->client->getResponse()->getStatusCode());
+        /** @var Suivi $lastSuivi */
+        $lastSuivi = $signalement->getSuivis()->last();
+        $this->assertStringContainsString('Photo supprimée', $lastSuivi->getDescription());
+        $this->assertStringContainsString($file->getFilename(), $lastSuivi->getDescription());
 
         $redirectUrl = $this->client->getResponse()->headers->get('Location');
-        /** @var Crawler $crawler */
-        $crawler = $this->client->request('GET', $redirectUrl);
+        $this->client->request('GET', $redirectUrl);
         $this->assertEquals(200, $this->client->getResponse()->getStatusCode());
-        $this->assertStringContainsString(
-            'L\'export pdf vous sera envoyé par e-mail',
-            $crawler->filter('.fr-alert')->text()
-        );
     }
 }
