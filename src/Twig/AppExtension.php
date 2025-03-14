@@ -164,6 +164,9 @@ class AppExtension extends AbstractExtension implements GlobalsInterface
         if ('document' === $type) {
             return implode(',', File::DOCUMENT_MIME_TYPES);
         }
+        if ('resizable' === $type) {
+            return implode(',', File::RESIZABLE_MIME_TYPES);
+        }
 
         return implode(',', File::IMAGE_MIME_TYPES);
     }
