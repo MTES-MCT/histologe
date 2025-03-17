@@ -111,6 +111,18 @@ function initBoFormSignalementSubmit(tabName) {
       boFormSignalementCurrentTabIsDirty = true
     })
   })
+
+  switch (tabName) {
+    case 'adresse':
+      initBoFormSignalementAdresse()
+      break
+    case 'logement':
+      initBoFormSignalementLogement()
+      break
+    case 'situation':
+      initBoFormSignalementSituation()
+      break
+  }
 }
 
 function initRefreshFromRadio(tabName, radioName, listElements) {
@@ -168,15 +180,12 @@ function refreshElementEnable(tabName, elementSelector, isEnabled) {
 
 if (document?.querySelector('#bo-form-signalement-adresse')) {
   initBoFormSignalementSubmit('adresse')
-  initBoFormSignalementAdresse()
 }
 if (document?.querySelector('#bo-form-signalement-logement')) {
   initBoFormSignalementSubmit('logement')
-  initBoFormSignalementLogement()
 }
 if (document?.querySelector('#bo-form-signalement-situation')) {
   initBoFormSignalementSubmit('situation')
-  initBoFormSignalementSituation()
 }
 
 function initBoFormSignalementAdresse() {

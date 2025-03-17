@@ -158,7 +158,6 @@ class SignalementFileController extends AbstractController
         Request $request,
         FileRepository $fileRepository,
         UploadHandlerService $uploadHandlerService,
-        EntityManagerInterface $entityManager,
         SuiviManager $suiviManager,
     ): Response {
         $fileId = $request->get('file_id');
@@ -198,11 +197,11 @@ class SignalementFileController extends AbstractController
                 $this->addFlash('error', 'Le fichier n\'a pas été supprimé.');
             }
         } else {
-            $this->addFlash('error', 'Token CSRF invalide, veuillez rechargez la page');
+            $this->addFlash('error', 'Token CSRF invalide, veuillez recharger la page');
         }
 
         if ('1' === $request->get('is_draft')) {
-            return $this->redirect($this->generateUrl('back_signalement_edit_draft', ['uuid' => $signalement->getUuid()]));
+            return $this->json(['success' => true]);
         }
 
         return $this->redirect($this->generateUrl('back_signalement_view', ['uuid' => $signalement->getUuid()]));
