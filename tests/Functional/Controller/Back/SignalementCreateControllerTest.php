@@ -125,7 +125,7 @@ class SignalementCreateControllerTest extends WebTestCase
         $this->assertArrayHasKey('redirect', $response);
         $this->assertArrayHasKey('url', $response);
         $this->assertTrue($response['redirect']);
-        $this->assertStringContainsString('/bo/signalement/brouillon/editer/00000000-0000-0000-2025-000000000002#logement', $response['url']);
+        $this->assertEquals('', $response['url']);
 
         $signalement = $this->signalementRepository->findOneBy(['uuid' => '00000000-0000-0000-2025-000000000002']);
         $this->assertFalse($signalement->getIsLogementSocial());
@@ -192,5 +192,39 @@ class SignalementCreateControllerTest extends WebTestCase
         $this->assertEquals('roulotte', $signalement->getTypeCompositionLogement()->getTypeLogementNatureAutrePrecision());
         $this->assertEquals(15, $signalement->getSuperficie());
         $this->assertEquals('oui', $signalement->getTypeCompositionLogement()?->getTypeLogementCommoditesCuisine());
+    }
+
+    public function testEditSituation()
+    {
+        $user = $this->userRepository->findOneBy(['email' => 'admin-territoire-44-01@histologe.fr']);
+        $this->client->loginUser($user);
+
+        $crawler = $this->client->request('GET', '/bo/signalement/brouillon/editer/00000000-0000-0000-2025-000000000002');
+        $this->assertResponseIsSuccessful();
+
+        $form = $crawler->filter('#bo-form-signalement-situation')->form();
+        $form->setValues([
+            'signalement_draft_logement[bail]' => 'oui',
+            'signalement_draft_logement[dpe]' => 'non',
+            'signalement_draft_logement[classeEnergetique]' => 'A',
+            'signalement_draft_logement[etatDesLieux]' => 'oui',
+            'signalement_draft_logement[allocataire]' => 'oui',
+        ]);
+        $this->client->submit($form);
+
+        $this->assertResponseHeaderSame('Content-Type', 'application/json');
+        $response = json_decode($this->client->getResponse()->getContent(), true);
+        $this->assertArrayHasKey('redirect', $response);
+        $this->assertArrayHasKey('url', $response);
+        $this->assertTrue($response['redirect']);
+        $this->assertStringContainsString('/bo/signalement/brouillon/editer/00000000-0000-0000-2025-000000000002#coordonnees', $response['url']);
+
+        $signalement = $this->signalementRepository->findOneBy(['uuid' => '00000000-0000-0000-2025-000000000002']);
+        $this->assertEquals(SignalementStatus::DRAFT, $signalement->getStatut());
+        $this->assertEquals('oui', $signalement->getTypeCompositionLogement()->getBailDpeBail());
+        $this->assertEquals('non', $signalement->getTypeCompositionLogement()->getBailDpeDpe());
+        $this->assertEquals('A', $signalement->getTypeCompositionLogement()->getBailDpeClasseEnergetique());
+        $this->assertEquals('oui', $signalement->getTypeCompositionLogement()->getBailDpeEtatDesLieux());
+        $this->assertEquals('1', $signalement->getIsAllocataire());
     }
 }
