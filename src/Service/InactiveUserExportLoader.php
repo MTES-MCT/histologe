@@ -21,12 +21,21 @@ readonly class InactiveUserExportLoader
         $sheetData = [$headers];
         $list = $this->userRepository->findUsersPendingToArchive($user);
         foreach ($list as $item) {
+            $partnerName = '';
+            if ($user->isSuperAdmin()) {
+                foreach ($item->getPartners() as $partner) {
+                    $partnerName = $partner->getNom().', ';
+                }
+                $partnerName = rtrim($partnerName, ', ');
+            } else {
+                $partnerName = $item->getPartnerinTerritory($user->getFirstTerritory())?->getNom() ?? '';
+            }
             $rowArray = [
                 $item->getId(),
                 $item->getNom(),
                 $item->getPrenom(),
                 $item->getEmail(),
-                $item->getPartnerinTerritory($user->getFirstTerritory())?->getNom() ?? '',
+                $partnerName,
                 $item->getCreatedAt()->format('d/m/Y'),
                 $item->getLastLoginAt() ? $item->getLastLoginAt()->format('d/m/Y') : '',
                 $item->getArchivingScheduledAt() ? $item->getArchivingScheduledAt()->format('d/m/Y') : '',
