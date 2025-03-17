@@ -7,6 +7,7 @@ use App\Entity\Signalement;
 use App\Entity\User;
 use App\Form\SearchDraftType;
 use App\Form\SignalementDraftAddressType;
+use App\Form\SignalementDraftCoordonneesType;
 use App\Form\SignalementDraftLogementType;
 use App\Form\SignalementDraftSituationType;
 use App\Manager\SignalementManager;
@@ -117,11 +118,15 @@ class SignalementCreateController extends AbstractController
         $formSituation = $this->createForm(SignalementDraftSituationType::class, $signalement, [
             'action' => $this->generateUrl('back_signalement_draft_form_situation_edit', ['uuid' => $signalement->getUuid()]),
         ]);
+        $formCoordonnees = $this->createForm(SignalementDraftCoordonneesType::class, $signalement, [
+            'action' => $this->generateUrl('back_signalement_draft_form_coordonnees_edit', ['uuid' => $signalement->getUuid()]),
+        ]);
 
         return $this->render('back/signalement_create/index.html.twig', [
             'formAddress' => $formAddress,
             'formLogement' => $formLogement,
             'formSituation' => $formSituation,
+            'formCoordonnees' => $formCoordonnees,
             'signalement' => $signalement,
         ]);
     }
@@ -274,6 +279,38 @@ class SignalementCreateController extends AbstractController
         }
 
         $tabContent = $this->renderView('back/signalement_create/tabs/tab-situation.html.twig', ['formSituation' => $form, 'signalement' => $signalement]);
+
+        return $this->json(['tabContent' => $tabContent]);
+    }
+
+    #[Route('/bo-form-coordonnees/{uuid:signalement}', name: 'back_signalement_draft_form_coordonnees_edit', methods: ['POST'])]
+    public function editFormCoordonnees(
+        Signalement $signalement,
+        Request $request,
+        EntityManagerInterface $entityManager,
+    ): Response {
+        $this->denyAccessUnlessGranted('SIGN_EDIT_DRAFT', $signalement);
+
+        $entityManager->beginTransaction();
+        $action = $this->generateUrl('back_signalement_draft_form_coordonnees_edit', ['uuid' => $signalement->getUuid()]);
+        $form = $this->createForm(SignalementDraftCoordonneesType::class, $signalement, ['action' => $action]);
+        $form->handleRequest($request);
+        if ($form->isSubmitted() && $form->isValid() && $this->signalementBoManager->formCoordonneesManager($form, $signalement)) {
+            $this->signalementManager->save($signalement);
+            $entityManager->commit();
+            if ($form->get('draft')->isClicked()) { // @phpstan-ignore-line
+                $this->addFlash('success', 'Le brouillon est bien enregistré, n\'oubliez pas de le terminer !');
+                $url = $this->generateUrl('back_signalement_drafts', [], UrlGeneratorInterface::ABSOLUTE_URL);
+            } else {
+                $url = $this->generateUrl('back_signalement_edit_draft', ['uuid' => $signalement->getUuid(), '_fragment' => 'desordres'], UrlGeneratorInterface::ABSOLUTE_URL);
+            }
+
+            $tabContent = $this->renderView('back/signalement_create/tabs/tab-coordonnees.html.twig', ['formCoordonnees' => $form, 'signalement' => $signalement]);
+
+            return $this->json(['redirect' => true, 'tabContent' => $tabContent]);
+        }
+
+        $tabContent = $this->renderView('back/signalement_create/tabs/tab-coordonnees.html.twig', ['formCoordonnees' => $form, 'signalement' => $signalement]);
 
         return $this->json(['tabContent' => $tabContent]);
     }

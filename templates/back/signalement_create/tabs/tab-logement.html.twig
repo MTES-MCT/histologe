@@ -1,5 +1,5 @@
 <h2 class="fr-h4">Description du logement</h2>
-<p>Sauf mention contraire, toutes les réponses sont <strong>facultatives</strong>. Essayez de compléter le dossier au mieux !</p>
+{% include 'back/signalement_create/tabs/_partial_facultative.html.twig' %}
 
 {% form_theme formLogement 'form/dsfr_theme.html.twig' %}
 {{ form_start(formLogement, {'attr': {'id': 'bo-form-signalement-logement'}}) }}

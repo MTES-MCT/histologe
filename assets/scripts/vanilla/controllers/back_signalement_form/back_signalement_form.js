@@ -125,6 +125,9 @@ function initBoFormSignalementSubmit(tabName) {
     case 'situation':
       initBoFormSignalementSituation()
       break
+    case 'coordonnees':
+      initBoFormSignalementCoordonnees()
+      break
   }
 }
 
@@ -189,6 +192,9 @@ if (document?.querySelector('#bo-form-signalement-logement')) {
 }
 if (document?.querySelector('#bo-form-signalement-situation')) {
   initBoFormSignalementSubmit('situation')
+}
+if (document?.querySelector('#bo-form-signalement-coordonnees')) {
+  initBoFormSignalementSubmit('coordonnees')
 }
 
 function initBoFormSignalementAdresse() {
@@ -393,3 +399,6 @@ function reloadDeleteFileList() {
 window.addEventListener('refreshUploadedFileList', (e) => {
   reloadFileList()
 })
+
+function initBoFormSignalementCoordonnees() {
+}

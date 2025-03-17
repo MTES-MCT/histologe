@@ -224,4 +224,11 @@ class SignalementBoManager
 
         return true;
     }
+
+    public function formCoordonneesManager(FormInterface $form, Signalement $signalement): bool
+    {
+        $signalement->setNomOccupant($form->get('nomOccupant')->getData());
+
+        return true;
+    }
 }
