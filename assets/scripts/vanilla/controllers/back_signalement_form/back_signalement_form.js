@@ -17,6 +17,7 @@ tabButtons.forEach((tabButton) => {
 function saveCurrentTab(event) {
   const currentTab = document?.querySelector('.fr-tabs__panel.fr-tabs__panel--selected')
   currentTab.classList.add('fr-tabs__panel--saving')
+  const currentTabName = currentTab.id.substring(9, currentTab.id.length - 6)
 
   let formData = null
   let formAction = null
@@ -25,7 +26,6 @@ function saveCurrentTab(event) {
     formAction = event.target.action
   }
   if (event.type === 'click') {
-    const currentTabName = currentTab.id.substring(9, currentTab.id.length - 6)
     const currentTabForm = currentTab?.querySelector('form#bo-form-signalement-' + currentTabName)
     formData = new FormData(currentTabForm)
     formAction = currentTabForm.action
@@ -45,7 +45,6 @@ function saveCurrentTab(event) {
 
         currentTab.classList.remove('fr-tabs__panel--saving')
         
-        const currentTabName = currentTab.id.substring(9, currentTab.id.length - 6)
         document.querySelector('#tabpanel-' +currentTabName+ '-panel').innerHTML = response.tabContent
         document.querySelector('#tabpanel-' +currentTabName).scrollIntoView({ behavior: 'smooth' });
 
@@ -67,15 +66,15 @@ function saveCurrentTab(event) {
             modaleDuplicateOpenLink.href = response.linkDuplicates
             dsfr(modaleDuplicate).modal.disclose();
           } else {
-            const errorAlertStr = '<div class="fr-alert fr-alert--error fr-mb-2v" role="alert"><p class="fr-alert__title">Merci de corriger les champs où des erreurs sont signalées.</p></div>'
+            const errorAlertStr = '<div class="fr-alert fr-alert--sm fr-alert--error fr-mb-2v" role="alert"><p class="fr-alert__title">Merci de corriger les champs où des erreurs sont signalées.</p></div>'
             document.querySelector('#tabpanel-' +currentTabName+ '-panel').innerHTML = errorAlertStr + document.querySelector('#tabpanel-' +currentTabName+ '-panel').innerHTML
           }
           initBoFormSignalementSubmit(currentTabName)
         }
       });
     } else {
-      const errorHtml = '<div class="fr-alert fr-alert--error" role="alert"><p class="fr-alert__title">Une erreur est survenue lors de la soumission du formulaire, veuillez rafraichir la page.</p></div>';
-      document.querySelector("#tabpanel-adresse-panel").innerHTML = errorHtml; 
+      const errorHtml = '<div class="fr-alert fr-alert--sm fr-alert--error" role="alert"><p class="fr-alert__title">Une erreur est survenue lors de la soumission du formulaire, veuillez rafraichir la page.</p></div>';
+      document.querySelector('#tabpanel-' +currentTabName+ '-panel').innerHTML = errorHtml; 
     }
   })
 }
@@ -103,6 +102,12 @@ function initBoFormSignalementSubmit(tabName) {
   const tabSelects = boFormSignalementTab?.querySelectorAll('select')
   tabSelects.forEach((tabSelect) => {
     tabSelect.addEventListener('change', (event) => {
+      boFormSignalementCurrentTabIsDirty = true
+    })
+  })
+  const tabTextAreas = boFormSignalementTab?.querySelectorAll('textarea')
+  tabTextAreas.forEach((tabTextArea) => {
+    tabTextArea.addEventListener('change', (event) => {
       boFormSignalementCurrentTabIsDirty = true
     })
   })

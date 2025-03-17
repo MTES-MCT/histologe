@@ -178,7 +178,7 @@ class SignalementCreateController extends AbstractController
     ): JsonResponse {
         $entityManager->beginTransaction();
         $isCreation = empty($signalement->getId());
-        $action = $isCreation ? $this->generateUrl('back_signalement_draft_form_address_edit', ['uuid' => $signalement->getUuid()]) : $this->generateUrl('back_signalement_draft_form_address');
+        $action = $isCreation ? $this->generateUrl('back_signalement_draft_form_address') : $this->generateUrl('back_signalement_draft_form_address_edit', ['uuid' => $signalement->getUuid()]);
         $form = $this->createForm(SignalementDraftAddressType::class, $signalement, ['action' => $action]);
         $form->handleRequest($request);
         $hasDuplicates = false;

@@ -182,7 +182,6 @@ class SignalementCreateControllerTest extends WebTestCase
         $this->assertResponseHeaderSame('Content-Type', 'application/json');
         $response = json_decode($this->client->getResponse()->getContent(), true);
         $this->assertArrayHasKey('redirect', $response);
-        $this->assertArrayHasKey('url', $response);
         $this->assertTrue($response['redirect']);
         $this->assertStringContainsString('/bo/signalement/brouillon/editer/00000000-0000-0000-2025-000000000002#situation', $response['url']);
 
@@ -215,7 +214,6 @@ class SignalementCreateControllerTest extends WebTestCase
         $this->assertResponseHeaderSame('Content-Type', 'application/json');
         $response = json_decode($this->client->getResponse()->getContent(), true);
         $this->assertArrayHasKey('redirect', $response);
-        $this->assertArrayHasKey('url', $response);
         $this->assertTrue($response['redirect']);
         $this->assertStringContainsString('/bo/signalement/brouillon/editer/00000000-0000-0000-2025-000000000002#coordonnees', $response['url']);
 
