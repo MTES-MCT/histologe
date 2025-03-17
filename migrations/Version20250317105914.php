@@ -16,10 +16,10 @@ final class Version20250317105914 extends AbstractMigration
 
     public function up(Schema $schema): void
     {
-        /*$this->skipIf(
+        $this->skipIf(
             'prod' !== getenv('APP_ENV'),
             'Cette migration ne s’exécute qu’en environnement de production.'
-        );*/
+        );
         // agents to delete
         $this->addSql('DELETE FROM notification WHERE user_id = 18527');
         $agentsToDelete = [18974, 18975, 18976, 18525, 12063, 15309, 15037, 18527, 17591, 19368, 14755, 19528, 25098, 14907, 67589, 12805, 15918];
