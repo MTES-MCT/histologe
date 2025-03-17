@@ -532,11 +532,9 @@ class SignalementRepository extends ServiceEntityRepository
             }
         }
 
-        if ($user->isSuperAdmin() || $user->isTerritoryAdmin()) {
-            if (!empty($options['bailleurSocial'])) {
-                $qb->andWhere('s.bailleur = :bailleur')
-                ->setParameter('bailleur', $options['bailleurSocial']);
-            }
+        if (!empty($options['bailleurSocial'])) {
+            $qb->andWhere('s.bailleur = :bailleur')
+            ->setParameter('bailleur', $options['bailleurSocial']);
         }
         $qb->setParameter('statusList', [SignalementStatus::ARCHIVED, SignalementStatus::DRAFT, SignalementStatus::DRAFT_ARCHIVED]);
         $qb = $this->searchFilter->applyFilters($qb, $options, $user);
