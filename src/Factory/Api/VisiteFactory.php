@@ -31,6 +31,7 @@ readonly class VisiteFactory
             if (in_array(
                 $file->getDocumentType(),
                 [DocumentType::PHOTO_VISITE, DocumentType::PROCEDURE_RAPPORT_DE_VISITE])
+                && $file->getIntervention()->getId() == $intervention->getId()
             ) {
                 $visite->files[] = $this->fileFactory->createFrom($file);
             }
