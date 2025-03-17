@@ -212,7 +212,7 @@ class PartnerControllerTest extends WebTestCase
         yield 'Email existing for non-admin API user' => ['api-02@signal-logement.fr', 'Un utilisateur API existe déjà avec cette adresse e-mail.'];
 
         yield 'New user' => ['new.email@test.com', 'redirect'];
-        yield 'New user from usager' => ['usager-01@signal-logement.fr', 'redirect'];
+        yield 'New user from usager' => ['usager-02@signal-logement.fr', 'redirect'];
         yield 'Email ok to multi territories' => ['user-44-02@signal-logement.fr', 'Ce compte agent existe déjà dans :'];
     }
 
@@ -263,7 +263,7 @@ class PartnerControllerTest extends WebTestCase
         yield 'Email existing for non-admin API user' => ['api-02@signal-logement.fr', 'Un utilisateur API existe déjà avec cette adresse e-mail.'];
 
         yield 'New user' => ['new.email@test.com', 'Agent introuvable avec cette adresse e-mail.'];
-        yield 'New user from usager' => ['usager-01@signal-logement.fr', 'Agent introuvable avec cette adresse e-mail.'];
+        yield 'New user from usager' => ['usager-02@signal-logement.fr', 'Agent introuvable avec cette adresse e-mail.'];
         yield 'Email ok to multi territories' => ['user-44-02@signal-logement.fr', 'redirect'];
     }
 
