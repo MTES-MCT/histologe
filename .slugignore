@@ -1,4 +1,3 @@
-.buildpacks
 .env.sample
 .gitignore
 .php-cs-fixer.dist.php
