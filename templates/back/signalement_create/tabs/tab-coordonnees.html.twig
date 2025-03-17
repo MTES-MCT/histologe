@@ -1,1 +1,102 @@
 <h2 class="fr-h4">Coordonnées</h2>
+{% include 'back/signalement_create/tabs/_partial_facultative.html.twig' %}
+
+<div class="fr-alert fr-alert--warning fr-alert--sm fr-mb-5v">
+    <p>Renseigner l'adresse e-mail de la personne occupant le logement ou d'un tiers est recommandé pour un meilleur suivi du dossier.</p>
+</div>
+
+{% form_theme formCoordonnees 'form/dsfr_theme.html.twig' %}
+{{ form_start(formCoordonnees, {'attr': {'id': 'bo-form-signalement-coordonnees'}}) }}
+{{ form_errors(formCoordonnees) }}
+<div class="fr-grid-row fr-grid-row--gutters">
+
+    <div class="fr-col-12 fr-col-md-6">
+        <fieldset class="fr-fieldset">
+            <legend>
+                <h3 class="fr-h5">Occupant</h3>
+            </legend>
+            <div class="fr-fieldset__element">
+                {{ form_row(formCoordonnees.nomOccupant) }}
+            </div>
+            <div class="fr-fieldset__element">
+                {{ form_row(formCoordonnees.prenomOccupant) }}
+            </div>
+            <div class="fr-fieldset__element">
+                {{ form_row(formCoordonnees.mailOccupant) }}
+            </div>
+            <div class="fr-fieldset__element">
+                {{ form_row(formCoordonnees.telOccupant) }}
+            </div>
+        </fieldset>
+
+        <fieldset class="fr-fieldset">
+            <legend>
+                <h3 class="fr-h5">Bailleur</h3>
+            </legend>
+            <div class="fr-fieldset__element">
+                {{ form_row(formCoordonnees.typeProprio) }}
+            </div>
+            <div class="fr-fieldset__element">
+                {{ form_row(formCoordonnees.denominationProprio) }}
+            </div>
+            <div class="fr-fieldset__element">
+                {{ form_row(formCoordonnees.nomProprio) }}
+            </div>
+            <div class="fr-fieldset__element">
+                {{ form_row(formCoordonnees.prenomProprio) }}
+            </div>
+            <div class="fr-fieldset__element">
+                {{ form_row(formCoordonnees.mailProprio) }}
+            </div>
+            <div class="fr-fieldset__element">
+                {{ form_row(formCoordonnees.telProprio) }}
+            </div>
+        </fieldset>
+        <fieldset class="fr-fieldset">
+            <legend>
+                <h2 class="fr-h4">Adresse postale</h2>
+            </legend>
+            <div class="fr-fieldset__element">
+                {{ form_row(form.adresseCompleteProprio) }}
+                <div class="fr-address-group-container">
+                    <div class="fr-grid-row fr-background-alt--blue-france fr-text-label--blue-france fr-address-group">
+                    </div>
+                </div>
+                <div class="fr-mt-n2w">
+                    <a href="#" id="bo-signalement-manual-address-switcher" class="fr-link fr-icon-edit-line fr-link--icon-left">Saisir une adresse manuellement</a>
+                </div>
+            </div>
+            <div id="bo-form-signalement-manual-address-container" class="fr-hidden fr-w-100" >
+                <div class="fr-fieldset__element">
+                    {{ form_row(form.adresseProprio) }}
+                </div>
+                <div class="fr-fieldset__element">
+                    {{ form_row(form.codePostalProprio) }}
+                </div>
+                <div class="fr-fieldset__element">
+                    {{ form_row(form.villeProprio) }}
+                </div>
+            </div>
+        </fieldset>
+    </div>
+
+    <div class="fr-col-12 fr-col-md-6">
+        <fieldset class="fr-fieldset">
+        </fieldset>
+    </div>
+
+    <div class="fr-col-6">
+        <div class="fr-grid-row fr-grid-row--left">
+            {{ form_row(formCoordonnees.previous) }}
+        </div>
+    </div>
+    <div class="fr-col-6">
+        <div class="fr-grid-row fr-grid-row--right">
+            {{ form_row(formCoordonnees.forceSave) }}
+            {{ form_row(formCoordonnees.draft) }}
+            {{ form_row(formCoordonnees.save) }}
+        </div>
+    </div>
+
+</div>
+{{ form_end(formCoordonnees) }}
