@@ -202,11 +202,11 @@ class SignalementCreateControllerTest extends WebTestCase
 
         $form = $crawler->filter('#bo-form-signalement-situation')->form();
         $form->setValues([
-            'signalement_draft_logement[bail]' => 'oui',
-            'signalement_draft_logement[dpe]' => 'non',
-            'signalement_draft_logement[classeEnergetique]' => 'A',
-            'signalement_draft_logement[etatDesLieux]' => 'oui',
-            'signalement_draft_logement[allocataire]' => 'oui',
+            'signalement_draft_situation[bail]' => 'oui',
+            'signalement_draft_situation[dpe]' => 'non',
+            'signalement_draft_situation[classeEnergetique]' => 'A',
+            'signalement_draft_situation[etatDesLieux]' => 'oui',
+            'signalement_draft_situation[allocataire]' => 'oui',
         ]);
         $this->client->submit($form);
 
