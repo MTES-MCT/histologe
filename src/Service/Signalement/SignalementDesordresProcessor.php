@@ -2,6 +2,7 @@
 
 namespace App\Service\Signalement;
 
+use App\Entity\Enum\DesordreCritereZone;
 use App\Entity\Signalement;
 
 class SignalementDesordresProcessor
@@ -68,5 +69,27 @@ class SignalementDesordresProcessor
             array_merge($photos[$key], PhotoHelper::getPhotosBySlug($signalement, $slug)),
             \SORT_REGULAR
         );
+    }
+
+    public function processDesordresByZone(
+        Signalement $signalement,
+    ): array {
+        $criteres = [];
+        $criteres[DesordreCritereZone::BATIMENT->value] = [];
+        $criteres[DesordreCritereZone::LOGEMENT->value] = [];
+        foreach ($signalement->getDesordreCriteres() as $desordreCritere) {
+            $zone = $desordreCritere->getZoneCategorie();
+            $desordrePrecisionsSelected = $signalement->getDesordrePrecisions()->filter(function ($desordrePrecision) use ($desordreCritere) {
+                return $desordrePrecision->getDesordreCritere() == $desordreCritere;
+            });
+            $desordrePrecisionsLinked = $desordreCritere->getDesordrePrecisions();
+            $criteres[$zone->value][] = [
+                'desordreCritere' => $desordreCritere,
+                'desordrePrecisionsSelected' => $desordrePrecisionsSelected,
+                'desordrePrecisionsLinked' => $desordrePrecisionsLinked,
+            ];
+        }
+
+        return $criteres;
     }
 }

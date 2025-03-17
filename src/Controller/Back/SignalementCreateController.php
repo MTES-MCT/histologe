@@ -8,6 +8,7 @@ use App\Entity\User;
 use App\Form\SearchDraftType;
 use App\Form\SignalementDraftAddressType;
 use App\Form\SignalementDraftCoordonneesType;
+use App\Form\SignalementDraftDesordresType;
 use App\Form\SignalementDraftLogementType;
 use App\Form\SignalementDraftSituationType;
 use App\Manager\SignalementManager;
@@ -15,6 +16,7 @@ use App\Repository\FileRepository;
 use App\Repository\SignalementRepository;
 use App\Service\ListFilters\SearchDraft;
 use App\Service\Signalement\SignalementBoManager;
+use App\Service\Signalement\SignalementDesordresProcessor;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
@@ -107,6 +109,7 @@ class SignalementCreateController extends AbstractController
     #[Route('/brouillon/editer/{uuid:signalement}', name: 'back_signalement_edit_draft', methods: ['GET'])]
     public function editSignalement(
         Signalement $signalement,
+        SignalementDesordresProcessor $signalementDesordresProcessor,
     ): Response {
         $this->denyAccessUnlessGranted('SIGN_EDIT_DRAFT', $signalement);
         $formAddress = $this->createForm(SignalementDraftAddressType::class, $signalement, [
@@ -121,14 +124,63 @@ class SignalementCreateController extends AbstractController
         $formCoordonnees = $this->createForm(SignalementDraftCoordonneesType::class, $signalement, [
             'action' => $this->generateUrl('back_signalement_draft_form_coordonnees_edit', ['uuid' => $signalement->getUuid()]),
         ]);
+        $formDesordres = $this->createForm(SignalementDraftDesordresType::class, $signalement, [
+            'action' => $this->generateUrl('back_signalement_draft_form_desordres_edit', ['uuid' => $signalement->getUuid()]),
+        ]);
+
+        $criteresByZone = $signalementDesordresProcessor->processDesordresByZone($signalement);
 
         return $this->render('back/signalement_create/index.html.twig', [
+            'criteresByZone' => $criteresByZone,
             'formAddress' => $formAddress,
             'formLogement' => $formLogement,
             'formSituation' => $formSituation,
             'formCoordonnees' => $formCoordonnees,
+            'formDesordres' => $formDesordres,
             'signalement' => $signalement,
         ]);
+    }
+
+    #[Route('/bo-form-desordres/{uuid:signalement}', name: 'back_signalement_draft_form_desordres_edit', methods: ['POST'])]
+    public function editFormDesordres(
+        Signalement $signalement,
+        Request $request,
+        EntityManagerInterface $entityManager,
+        SignalementDesordresProcessor $signalementDesordresProcessor,
+    ): Response {
+        $this->denyAccessUnlessGranted('SIGN_EDIT_DRAFT', $signalement);
+
+        $entityManager->beginTransaction();
+        $action = $this->generateUrl('back_signalement_draft_form_desordres_edit', ['uuid' => $signalement->getUuid()]);
+        $form = $this->createForm(SignalementDraftDesordresType::class, $signalement, ['action' => $action]);
+        $form->handleRequest($request);
+        $criteresByZone = $signalementDesordresProcessor->processDesordresByZone($signalement);
+        if ($form->isSubmitted() && $form->isValid() && $this->signalementBoManager->formDesordresManager($form, $signalement)) {
+            $this->signalementManager->save($signalement);
+            $entityManager->commit();
+            if ($form->get('draft')->isClicked()) { // @phpstan-ignore-line
+                $this->addFlash('success', 'Le brouillon est bien enregistré, n\'oubliez pas de le terminer !');
+                $url = $this->generateUrl('back_signalement_drafts', [], UrlGeneratorInterface::ABSOLUTE_URL);
+            } else {
+                $url = $this->generateUrl('back_signalement_edit_draft', ['uuid' => $signalement->getUuid(), '_fragment' => 'coordonnees'], UrlGeneratorInterface::ABSOLUTE_URL);
+            }
+
+            $tabContent = $this->renderView('back/signalement_create/tabs/tab-desordres.html.twig', [
+                'formDesordres' => $form,
+                'signalement' => $signalement,
+                'criteresByZone' => $criteresByZone,
+            ]);
+
+            return $this->json(['redirect' => true, 'url' => $url, 'tabContent' => $tabContent]);
+        }
+
+        $tabContent = $this->renderView('back/signalement_create/tabs/tab-desordres.html.twig', [
+            'formDesordres' => $form,
+            'signalement' => $signalement,
+            'criteresByZone' => $criteresByZone,
+        ]);
+
+        return $this->json(['tabContent' => $tabContent]);
     }
 
     #[Route('/brouillon/{uuid:signalement}/liste-fichiers', name: 'back_signalement_create_file_list', methods: ['GET'])]

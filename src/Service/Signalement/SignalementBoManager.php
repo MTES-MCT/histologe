@@ -2,6 +2,8 @@
 
 namespace App\Service\Signalement;
 
+use App\Entity\DesordreCritere;
+use App\Entity\DesordrePrecision;
 use App\Entity\Enum\EtageType;
 use App\Entity\Enum\ProfileDeclarant;
 use App\Entity\Enum\SignalementStatus;
@@ -11,6 +13,7 @@ use App\Entity\Model\SituationFoyer;
 use App\Entity\Model\TypeCompositionLogement;
 use App\Entity\Signalement;
 use App\Entity\User;
+use Doctrine\Common\Collections\ArrayCollection;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\Form\FormError;
 use Symfony\Component\Form\FormInterface;
@@ -230,6 +233,41 @@ class SignalementBoManager
         $profileDeclarant = ProfileDeclarant::tryFrom($form->get('profileDeclarantTiers')->getData());
         $signalement->setProfileDeclarant($profileDeclarant);
         $signalement->setLienDeclarantOccupant($form->get('lienDeclarantOccupant')->getData());
+
+        return true;
+    }
+    
+    public function formDesordresManager(FormInterface $form, Signalement $signalement): bool
+    {
+        $signalement->setDetails($form->get('details')->getData());
+
+        // Parcours des champs du formulaire
+        foreach ($form->all() as $field) {
+            $fieldName = $field->getName();
+            $fieldData = $field->getData();
+            if (empty($fieldData) || ($fieldData instanceof ArrayCollection && $fieldData->isEmpty())) {
+                continue;
+            }
+
+            // TODO : retirer un éventuel critère existant et déselectionné
+            if (str_starts_with($fieldName, 'desordres_LOGEMENT') || str_starts_with($fieldName, 'desordres_BATIMENT')) {
+                /** @var DesordreCritere $desordreCritere */
+                foreach ($fieldData as $desordreCritere) {
+                    $signalement->addDesordreCritere($desordreCritere);
+                    $signalement->addDesordreCategory($desordreCritere->getDesordreCategorie());
+                    if ($desordreCritere->getDesordrePrecisions()->count() < 2) {
+                        $signalement->addDesordrePrecision($desordreCritere->getDesordrePrecisions()->first());
+                    }
+                }
+            }
+            // TODO : retirer une éventuelle précision existante et déselectionnée
+            if (str_starts_with($fieldName, 'precisions_')) {
+                /** @var DesordrePrecision $desordrePrecision */
+                foreach ($fieldData as $desordrePrecision) {
+                    $signalement->addDesordrePrecision($desordrePrecision);
+                }
+            }
+        }
 
         return true;
     }
