@@ -177,6 +177,12 @@ class WidgetDataKpiBuilder
             $widgetParams['params']['territoire'] = 1 === count($this->territories) ? reset($this->territories)->getId() : null;
             if ('cardPartenairesNonNotifiables' !== $key) {
                 $widgetParams['params']['isImported'] = 'oui';
+            } else {
+                /** @var User $user */
+                $user = $this->security->getUser();
+                if (0 === count($this->territories) || $user->isTerritoryAdmin()) {
+                    unset($widgetParams['params']['territoire']);
+                }
             }
             $parameters = array_merge($linkParameters, $widgetParams['params'] ?? []);
             $widgetCard = $this->widgetCardFactory->createInstance($label, $count, $link, $parameters);
