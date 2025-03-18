@@ -69,8 +69,8 @@ function saveCurrentTab(event) {
             const errorAlertStr = '<div class="fr-alert fr-alert--sm fr-alert--error fr-mb-2v" role="alert"><p class="fr-alert__title">Merci de corriger les champs où des erreurs sont signalées.</p></div>'
             document.querySelector('#tabpanel-' +currentTabName+ '-panel').innerHTML = errorAlertStr + document.querySelector('#tabpanel-' +currentTabName+ '-panel').innerHTML
           }
-          initBoFormSignalementSubmit(currentTabName)
         }
+        initBoFormSignalementSubmit(currentTabName)
       });
     } else {
       const errorHtml = '<div class="fr-alert fr-alert--sm fr-alert--error" role="alert"><p class="fr-alert__title">Une erreur est survenue lors de la soumission du formulaire, veuillez rafraichir la page.</p></div>';
