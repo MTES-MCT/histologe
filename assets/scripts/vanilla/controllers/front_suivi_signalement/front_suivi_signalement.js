@@ -144,15 +144,21 @@ if (modalUploadFiles) {
     const uploadedFilesList = document.querySelector('#uploaded-files-list')
     const div = document.createElement('div')
     div.id = 'uploaded-file-' + response.response
-    div.classList.add('fr-mb-2v')
+    div.classList.add('fr-grid-row', 'fr-grid-row--middle', 'fr-mb-2v')    
+    const divTitre = document.createElement('div')
+    divTitre.classList.add('fr-col-9')
     const textNode = document.createTextNode(file.name)
-    div.appendChild(textNode)
+    divTitre.appendChild(textNode)
+    div.appendChild(divTitre)
+    const divButton = document.createElement('div')
+    divButton.classList.add('fr-col-3', 'fr-text--right')
     const deleteFileLink = document.createElement('a')
     deleteFileLink.href = deleteTmpFileRoute + '?file_id=' + response.response
     deleteFileLink.classList.add('uploaded-file-delete', 'fr-ml-2v', 'fr-btn', 'fr-btn--tertiary', 'fr-btn--icon-left', 'fr-icon-delete-line')
     deleteFileLink.title = 'Supprimer'
     deleteFileLink.innerHTML = 'Supprimer'
-    div.appendChild(deleteFileLink)
+    divButton.appendChild(deleteFileLink)
+    div.appendChild(divButton)
     uploadedFilesList.appendChild(div)
     deleteFileLink.addEventListener('click', (e) => {
       e.preventDefault()
@@ -161,7 +167,7 @@ if (modalUploadFiles) {
         .then((response) => response.json())
         .then((data) => {
           if (data.success) {
-            deleteFileLink.closest('div').remove()
+            document.getElementById( 'uploaded-file-' + data.fileId).remove()
           } else {
             deleteFileLink.style.display = 'inline'
           }
