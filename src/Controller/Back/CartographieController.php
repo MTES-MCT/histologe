@@ -47,7 +47,6 @@ class CartographieController extends AbstractController
             $filters,
             (int) $request->get('offset')
         );
-        $zones = [];
         $zoneAreas = [];
         if (!empty($filters['zones'])) {
             $criteria = ['id' => $filters['zones']];

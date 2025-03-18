@@ -117,7 +117,7 @@ export default defineComponent({
       this.map?.addLayer(this.zonesLayer as unknown as L.Layer)
     },
     getZoneColor(index: number): string {
-      const colors = ['#3388ff','#ff3388', '#88ff33', '#ff8833', '#33ff88', '#8833ff']
+      const colors = ['#3388ff', '#ff3333', '#33cc33', '#ff9900', '#9966ff', '#ff33cc', '#00cccc', '#ffcc00', '#cc6600', '#999999']
       return colors[index % colors.length]
     },
     configurePopups () {
