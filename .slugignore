@@ -13,4 +13,3 @@ phpstan.neon
 phpunit.xml.dist
 tools
 /node_modules
-vendor/node
