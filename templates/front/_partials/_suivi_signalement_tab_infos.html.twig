@@ -413,7 +413,7 @@ and signalement.profileDeclarant is not same as enum('App\\Entity\\Enum\\Profile
 							data-id={{ photo.id }} 
 							title="Voir la photo {{ photo.filename }} - ouvre une nouvelle fenêtre"
 						></a>
-						{% if is_granted('FRONT_FILE_DELETE', { 'file': photo, 'email': email }) %}
+						{% if is_granted('FRONT_FILE_DELETE', photo) %}
 							<button class="fr-btn fr-btn--sm fr-btn--secondary fr-background--white fr-fi-delete-line btn-signalement-file-delete"
 								id="file_delete_{{ photo.id }}" 
 								title="Supprimer la photo {{ photo.filename }}"
@@ -482,7 +482,7 @@ and signalement.profileDeclarant is not same as enum('App\\Entity\\Enum\\Profile
 					<a href="{{ path('show_file', {uuid: doc.uuid}) }}"
 						class="fr-btn fr-btn--sm fr-icon-eye-fill img-box" title="Afficher le document {{ doc.filename }} - ouvre une nouvelle fenêtre"
 						target="_blank" rel="noopener"></a>    
-					{% if is_granted('FRONT_FILE_DELETE', { 'file': doc, 'email': email }) %}
+					{% if is_granted('FRONT_FILE_DELETE', doc) %}
 						<button class="fr-btn fr-btn--sm fr-btn--secondary fr-fi-delete-line btn-signalement-file-delete"
 							id="file_delete_{{ doc.id }}" 
 							title="Supprimer le document {{ doc.filename }}"
