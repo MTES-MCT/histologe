@@ -304,60 +304,6 @@ function initializeUploadModal (
     })
   }
 
-  function reloadFileList() {
-    const urlListFiles = document?.querySelector('#url-signalement-files').value
-    fetch(urlListFiles, {method: 'GET'}).then(response => {
-      if (response.ok) {
-        response.json().then((response) => {
-          let newList = ''
-          response.forEach((responseItem, index) => {
-            newList += '<div class="fr-grid-row">'
-            newList += '<div class="fr-col-8">'
-            newList += '<i>' + responseItem.filename + '</i> (Type ' + responseItem.type + ')'
-            newList += '</div>'
-            newList += '<div class="fr-col-4">'
-            newList += '<button form="form-delete-file" '
-            newList += 'class="fr-link fr-icon-close-circle-line fr-link--icon-left fr-link--error" '
-            newList += 'aria-label="Supprimer le fichier ' + responseItem.filename + '" '
-            newList += 'title="Supprimer le fichier ' + responseItem.filename + '" '
-            newList += 'data-doc="' + responseItem.id + '" '
-            newList += '>Supprimer</button>'
-            newList += '</div>'
-            newList += '</div>'
-          })
-
-          document.querySelector('#bo-create-file-list').innerHTML = newList
-
-          reloadDeleteFileList()
-        })
-      }
-    })
-  }
-
-  function reloadDeleteFileList() {
-    const deleteFilesButtons = document?.querySelectorAll('#bo-create-file-list button')
-    if (deleteFilesButtons) {
-      deleteFilesButtons.forEach((button) => {
-        button.addEventListener('click', (event) => {
-          event.preventDefault()
-          button.disabled = true
-          button.innerHTML = 'Suppression en cours...'
-          const formDeleteFile = document?.querySelector('#form-delete-file')
-          formDeleteFile.querySelector('input[name="file_id"]').value = button.getAttribute('data-doc')
-          const formData = new FormData(formDeleteFile)
-          const formAction = formDeleteFile.action
-
-          fetch(formAction, {method: 'POST', body: formData}).then(response => {
-            if (response.ok) {
-              reloadFileList()
-            }
-          })
-        })
-      })
-    }
-  }
-  reloadDeleteFileList()
-
   modal.addEventListener('dsfr.conceal', (e) => {
     if (modal.dataset.validated === 'true' && modal.dataset.hasChanges === 'true') {
       if (btnValidate.getAttribute('data-context') === 'form-bo-create') {
@@ -366,7 +312,8 @@ function initializeUploadModal (
 
       fetch(waitingSuiviRoute).then((response) => {
         if (btnValidate.getAttribute('data-context') === 'form-bo-create') {
-          reloadFileList()
+          window.dispatchEvent(new Event('refreshUploadedFileList'))
+
         } else {
           window.location.reload()
           window.scrollTo(0, 0)
@@ -382,6 +329,7 @@ function initializeUploadModal (
 
   let fileType, fileFilter, documentType, interventionId, acceptedTypeMimes, acceptedExtensions
   document.querySelectorAll('.open-modal-upload-files-btn').forEach((button) => {
+    // TODO => Ici, GIGA PALIER
     button.addEventListener('click', (e) => {
       fileType = e.target.dataset.fileType
       fileFilter = e.target.dataset.fileFilter ?? null

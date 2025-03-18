@@ -316,7 +316,7 @@ function initBoFormSignalementSituation() {
   )
   initRefreshFromRadio(
     'situation',
-    'signalement_draft_situation_proprietaireAverti',
+    'signalement_draft_situation_isProprioAverti',
     [
       '#signalement_draft_situation_dateProprietaireAverti',
       '#signalement_draft_situation_moyenInformationProprietaire',
@@ -337,4 +337,62 @@ function initBoFormSignalementSituation() {
       '#signalement_draft_situation_reponseAssurance',
     ]
   )
+  reloadDeleteFileList()
+}
+
+window.addEventListener('refreshUploadedFileList', (e) => {
+  reloadFileList()
+})
+
+function reloadFileList() {
+  const urlListFiles = document?.querySelector('#url-signalement-files').value
+  fetch(urlListFiles, {method: 'GET'}).then(response => {
+    if (response.ok) {
+      response.json().then((response) => {
+        let newList = ''
+        response.forEach((responseItem, index) => {
+          newList += '<div class="fr-grid-row">'
+          newList += '<div class="fr-col-8">'
+          newList += '<i>' + responseItem.filename + '</i> (Type ' + responseItem.type + ')'
+          newList += '</div>'
+          newList += '<div class="fr-col-4">'
+          newList += '<button form="form-delete-file" '
+          newList += 'class="fr-link fr-icon-close-circle-line fr-link--icon-left fr-link--error" '
+          newList += 'aria-label="Supprimer le fichier ' + responseItem.filename + '" '
+          newList += 'title="Supprimer le fichier ' + responseItem.filename + '" '
+          newList += 'data-doc="' + responseItem.id + '" '
+          newList += '>Supprimer</button>'
+          newList += '</div>'
+          newList += '</div>'
+        })
+
+        document.querySelector('#bo-create-file-list').innerHTML = newList
+
+        reloadDeleteFileList()
+      })
+    }
+  })
+}
+
+function reloadDeleteFileList() {
+  const deleteFilesButtons = document?.querySelectorAll('#bo-create-file-list button')
+  if (deleteFilesButtons) {
+    deleteFilesButtons.forEach((button) => {
+      button.addEventListener('click', (event) => {
+        event.preventDefault()
+        button.disabled = true
+        button.innerHTML = 'Suppression en cours...'
+        const formDeleteFile = document?.querySelector('#form-delete-file')
+        formDeleteFile.querySelector('input[name="file_id"]').value = button.getAttribute('data-doc')
+        const formData = new FormData(formDeleteFile)
+        const formAction = formDeleteFile.action
+
+        fetch(formAction, {method: 'POST', body: formData}).then(response => {
+          if (response.ok) {
+            reloadFileList()
+          }
+        })
+      })
+    })
+  }
 }

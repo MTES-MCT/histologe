@@ -1,14 +1,6 @@
 <h2 class="fr-h4">Situation du foyer et du bail</h2>
 <p>Sauf mention contraire, toutes les réponses sont <strong>facultatives</strong>. Essayez de compléter le dossier au mieux !</p>
 
-<form method="POST" id="form-delete-file" enctype="application/json" action="{{ path('back_signalement_delete_file',{uuid:signalement.uuid}) }}">
-    <input type="hidden" name="_token" value="{{ csrf_token('signalement_delete_file_'~signalement.id) }}">
-    <input type="hidden" name="file_id" value="">
-    <input type="hidden" name="is_draft" value="1">
-</form>
-
-<input type="hidden" id="url-signalement-files" value="{{ path('back_signalement_create_file_list',{uuid:signalement.uuid}) }}">
-
 {% form_theme formSituation 'form/dsfr_theme.html.twig' %}
 {{ form_start(formSituation, {'attr': {'id': 'bo-form-signalement-situation'}}) }}
 {{ form_errors(formSituation) }}

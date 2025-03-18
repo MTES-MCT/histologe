@@ -34,6 +34,17 @@
         </header>
     </section>
     <section class="fr-container--fluid">
+
+        {% if signalement.id is not null %}
+        <form method="POST" id="form-delete-file" enctype="application/json" action="{{ path('back_signalement_delete_file',{uuid:signalement.uuid}) }}">
+            <input type="hidden" name="_token" value="{{ csrf_token('signalement_delete_file_'~signalement.id) }}">
+            <input type="hidden" name="file_id" value="">
+            <input type="hidden" name="is_draft" value="1">
+        </form>
+
+        <input type="hidden" id="url-signalement-files" value="{{ path('back_signalement_create_file_list',{uuid:signalement.uuid}) }}">
+        {% endif %}
+
         <div class="fr-tabs">
             <ul class="fr-tabs__list fr-tabs__list--bo-create" role="tablist" aria-label="Informations du signalement">
                 <li role="presentation">
