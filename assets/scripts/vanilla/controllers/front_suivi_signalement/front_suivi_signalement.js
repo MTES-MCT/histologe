@@ -167,7 +167,7 @@ if (modalUploadFiles) {
         .then((response) => response.json())
         .then((data) => {
           if (data.success) {
-            deleteFileLink.closest('div').remove()
+            document.getElementById( 'uploaded-file-' + data.fileId).remove()
           } else {
             deleteFileLink.style.display = 'inline'
           }
