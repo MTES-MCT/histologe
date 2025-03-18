@@ -11,11 +11,11 @@ use App\Service\Signalement\VisiteNotifier;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
-class InterventionEditedSubscriber implements EventSubscriberInterface
+readonly class InterventionEditedSubscriber implements EventSubscriberInterface
 {
     public function __construct(
-        private readonly VisiteNotifier $visiteNotifier,
-        private readonly SuiviManager $suiviManager,
+        private VisiteNotifier $visiteNotifier,
+        private SuiviManager $suiviManager,
         private UrlGeneratorInterface $urlGenerator,
     ) {
     }
@@ -50,11 +50,11 @@ class InterventionEditedSubscriber implements EventSubscriberInterface
             }
 
             $suivi = $this->suiviManager->createSuivi(
-                user: $currentUser,
                 signalement: $intervention->getSignalement(),
                 description: $description,
                 type: Suivi::TYPE_AUTO,
                 isPublic: $event->isUsagerNotified(),
+                user: $currentUser,
                 context: Suivi::CONTEXT_INTERVENTION,
             );
 

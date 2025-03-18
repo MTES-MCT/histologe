@@ -4,13 +4,12 @@ namespace App\Controller\Api;
 
 use App\Dto\Api\Request\SuiviRequest;
 use App\Dto\Api\Response\SuiviResponse;
-use App\Entity\File;
 use App\Entity\Signalement;
 use App\Entity\Suivi;
 use App\Entity\User;
 use App\EventListener\SecurityApiExceptionListener;
 use App\Manager\SuiviManager;
-use App\Service\Sanitizer;
+use App\Service\Signalement\DescriptionFilesBuilder;
 use Nelmio\ApiDocBundle\Attribute\Model;
 use OpenApi\Attributes as OA;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -19,7 +18,6 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Attribute\MapRequestPayload;
 use Symfony\Component\Routing\Attribute\Route;
-use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 #[When('dev')]
 #[When('test')]
@@ -28,7 +26,7 @@ class SuiviCreateController extends AbstractController
 {
     public function __construct(
         readonly private SuiviManager $suiviManager,
-        readonly private UrlGeneratorInterface $urlGenerator,
+        readonly private DescriptionFilesBuilder $descriptionFilesBuilder,
     ) {
     }
 
@@ -141,40 +139,12 @@ class SuiviCreateController extends AbstractController
         $user = $this->getUser();
         $suivi = $this->suiviManager->createSuivi(
             signalement: $signalement,
-            description: $this->buildDescription($signalement, $suiviRequest),
+            description: $this->descriptionFilesBuilder->build($signalement, $suiviRequest),
             type: Suivi::TYPE_PARTNER,
             isPublic: $suiviRequest->notifyUsager,
             user: $user,
         );
 
         return $this->json(new SuiviResponse($suivi), Response::HTTP_CREATED);
-    }
-
-    private function buildDescription(Signalement $signalement, SuiviRequest $suiviRequest): string
-    {
-        $fileListAsHtml = '';
-        $description = Sanitizer::sanitize($suiviRequest->description);
-        $filesFiltered = $signalement->getFiles()->filter(function (File $file) use ($suiviRequest) {
-            return in_array($file->getUuid(), $suiviRequest->files, true);
-        });
-
-        if ($filesFiltered->count() > 0) {
-            $fileListAsHtml = '<ul>';
-            /** @var File $file */
-            foreach ($filesFiltered as $file) {
-                $fileUrl = $this->urlGenerator->generate(
-                    'show_file',
-                    ['uuid' => $file->getUuid()],
-                    UrlGeneratorInterface::ABSOLUTE_URL
-                );
-                $fileListAsHtml .= sprintf("<li><a class='fr-link' target='_blank' rel='noopener' href='%s'>%s</a>",
-                    $fileUrl,
-                    $file->getTitle()
-                );
-            }
-            $fileListAsHtml .= '</ul>';
-        }
-
-        return $description.$fileListAsHtml;
     }
 }

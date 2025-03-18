@@ -2,17 +2,23 @@
 
 namespace App\Dto\Api\Model;
 
+use App\Entity\Enum\DocumentType;
 use App\Entity\Enum\InterventionType;
-use App\Entity\Intervention as InterventionEntity;
 use Nelmio\ApiDocBundle\Attribute\Model;
 use OpenApi\Attributes as OA;
 
 #[OA\Schema(
-    schema: 'Intervention',
-    description: 'Représentation d\'une intervention.'
+    schema: 'Visite',
+    description: 'Représentation d\'une visite.'
 )]
-class Intervention
+class Visite
 {
+    #[OA\Property(
+        description: 'Identifiant unique d\'une visite.',
+        type: 'string',
+        example: 'e96325bf-139e-4793-a7b4-a4c713a0fbd9',
+    )]
+    public ?string $uuid = null;
     #[OA\Property(
         description: 'Date de l\'intervention.',
         type: 'string',
@@ -77,16 +83,22 @@ class Intervention
     )]
     public ?bool $proprietairePresent;
 
-    public function __construct(
-        InterventionEntity $intervention,
-    ) {
-        $this->dateIntervention = $intervention->getScheduledAt()->format(\DATE_ATOM);
-        $this->type = $intervention->getType();
-        $this->statut = $intervention->getStatus();
-        $this->partner = $intervention->getPartner() ? new Partner($intervention->getPartner()) : null;
-        $this->details = $intervention->getDetails(); // traitement de suppression du html
-        $this->conclusions = $intervention->getConcludeProcedure() ?? [];
-        $this->occupantPresent = $intervention->isOccupantPresent();
-        $this->proprietairePresent = $intervention->isProprietairePresent();
-    }
+    #[OA\Property(
+        description: 'Liste des fichiers joints au signalement.',
+        type: 'array',
+        items: new OA\Items(ref: new Model(type: File::class)),
+        example: [
+            [
+                'titre' => 'photo_visite-2025-01-13-09-48-11.png',
+                'documentType' => DocumentType::PHOTO_VISITE,
+                'url' => 'https://histologe-staging.osc-fr1.scalingo.io/show/5ca99705-5ef6-11ef-ba0f-0242ac110034',
+            ],
+            [
+                'titre' => 'rapport_visite-2025-01-13-09-48-11.png',
+                'documentType' => DocumentType::PROCEDURE_RAPPORT_DE_VISITE,
+                'url' => 'https://histologe-staging.osc-fr1.scalingo.io/show/5ca99705-5ef6-11ef-ba0f-0242ac110034',
+            ],
+        ]
+    )]
+    public array $files = [];
 }

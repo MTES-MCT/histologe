@@ -82,3 +82,13 @@ interventions:
     status: 'DONE'
     occupant_present: 1
     proprietaire_present: 0
+
+  - signalement: "2023-20"
+    partner: "partenaire-13-01@histologe.fr"
+    user: "api-01@histologe.fr"
+    scheduled_at: '2024-06-20 10:00:00'
+    status: 'DONE'
+    occupant_present: 1
+    proprietaire_present: 0
+    details: "<p>dossier envoyé pour manquement sanitaire</p>"
+    conclude_procedure: [ 'RSD' ]

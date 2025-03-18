@@ -5,7 +5,6 @@ namespace App\Factory\Api;
 use App\Dto\Api\Model\Adresse;
 use App\Dto\Api\Model\Affectation as AffectationModel;
 use App\Dto\Api\Model\Desordre;
-use App\Dto\Api\Model\Intervention;
 use App\Dto\Api\Model\Personne;
 use App\Dto\Api\Model\Suivi;
 use App\Dto\Api\Response\SignalementResponse;
@@ -14,6 +13,7 @@ use App\Entity\Enum\AffectationStatus;
 use App\Entity\Enum\Api\PersonneType;
 use App\Entity\Enum\DesordreCritereZone;
 use App\Entity\Enum\EtageType;
+use App\Entity\Enum\InterventionType;
 use App\Entity\Signalement;
 use App\Entity\User;
 use App\Service\Signalement\SignalementDesordresProcessor;
@@ -30,6 +30,7 @@ readonly class SignalementResponseFactory
     public function __construct(
         private SignalementDesordresProcessor $signalementDesordresProcessor,
         private FileFactory $fileFactory,
+        private VisiteFactory $visiteFactory,
         private Security $security,
     ) {
     }
@@ -137,7 +138,9 @@ readonly class SignalementResponseFactory
             $signalementResponse->suivis[] = new Suivi($suivi);
         }
         foreach ($signalement->getInterventions() as $intervention) {
-            $signalementResponse->interventions[] = new Intervention($intervention);
+            if (InterventionType::ARRETE_PREFECTORAL !== $intervention->getType()) {
+                $signalementResponse->visites[] = $this->visiteFactory->createInstance($intervention);
+            }
         }
         foreach ($signalement->getFiles() as $file) {
             $signalementResponse->files[] = $this->fileFactory->createFrom($file);

@@ -146,6 +146,7 @@ class SignalementFileProcessor
             $file->setSize(null !== $fileSize ? (string) $fileSize : null);
             $file->setIsVariantsGenerated($this->uploadHandlerService->hasVariants($file->getFilename()));
             $signalement->addFile($file);
+            $intervention?->addFile($file);
             $this->lastFile = $file;
             $list[] = $file;
         }

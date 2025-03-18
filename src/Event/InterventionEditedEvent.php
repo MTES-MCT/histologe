@@ -8,12 +8,12 @@ use Symfony\Contracts\EventDispatcher\Event;
 
 class InterventionEditedEvent extends Event
 {
-    public const NAME = 'intervention.edited';
+    public const string NAME = 'intervention.edited';
 
     public function __construct(
-        private Intervention $intervention,
-        private User $user,
-        private bool $isUsagerNotified,
+        private readonly Intervention $intervention,
+        private readonly User $user,
+        private readonly bool $isUsagerNotified,
     ) {
     }
 
