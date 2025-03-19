@@ -200,12 +200,12 @@ class SignalementCreateController extends AbstractController
                     $this->addFlash('success', 'Le brouillon est bien enregistré, n\'oubliez pas de le terminer !');
                     $url = $this->generateUrl('back_signalement_drafts', [], UrlGeneratorInterface::ABSOLUTE_URL);
                 } else {
-                    $url = $this->generateUrl('back_signalement_edit_draft', ['uuid' => $signalement->getUuid(), '_fragment' => 'logement'], UrlGeneratorInterface::ABSOLUTE_URL);
+                    $url = $isCreation ? $this->generateUrl('back_signalement_edit_draft', ['uuid' => $signalement->getUuid(), '_fragment' => 'logement'], UrlGeneratorInterface::ABSOLUTE_URL) : '';
                 }
 
                 $tabContent = $this->renderView('back/signalement_create/tabs/tab-adresse.html.twig', ['form' => $form]);
 
-                return $this->json(['redirect' => true, 'url' => $isCreation ? $url : '', 'tabContent' => $tabContent]);
+                return $this->json(['redirect' => true, 'url' => $url, 'tabContent' => $tabContent]);
             }
         }
 
@@ -233,12 +233,12 @@ class SignalementCreateController extends AbstractController
                 $this->addFlash('success', 'Le brouillon est bien enregistré, n\'oubliez pas de le terminer !');
                 $url = $this->generateUrl('back_signalement_drafts', [], UrlGeneratorInterface::ABSOLUTE_URL);
             } else {
-                $url = $this->generateUrl('back_signalement_edit_draft', ['uuid' => $signalement->getUuid(), '_fragment' => 'situation'], UrlGeneratorInterface::ABSOLUTE_URL);
+                $url = '';
             }
 
             $tabContent = $this->renderView('back/signalement_create/tabs/tab-logement.html.twig', ['formLogement' => $form]);
 
-            return $this->json(['redirect' => true, 'tabContent' => $tabContent]);
+            return $this->json(['redirect' => true, 'tabContent' => $tabContent, 'url' => $url]);
         }
 
         $tabContent = $this->renderView('back/signalement_create/tabs/tab-logement.html.twig', ['formLogement' => $form]);
@@ -265,12 +265,12 @@ class SignalementCreateController extends AbstractController
                 $this->addFlash('success', 'Le brouillon est bien enregistré, n\'oubliez pas de le terminer !');
                 $url = $this->generateUrl('back_signalement_drafts', [], UrlGeneratorInterface::ABSOLUTE_URL);
             } else {
-                $url = $this->generateUrl('back_signalement_edit_draft', ['uuid' => $signalement->getUuid(), '_fragment' => 'coordonnees'], UrlGeneratorInterface::ABSOLUTE_URL);
+                $url = '';
             }
 
             $tabContent = $this->renderView('back/signalement_create/tabs/tab-situation.html.twig', ['formSituation' => $form, 'signalement' => $signalement]);
 
-            return $this->json(['redirect' => true, 'tabContent' => $tabContent]);
+            return $this->json(['redirect' => true, 'tabContent' => $tabContent, 'url' => $url]);
         }
 
         $tabContent = $this->renderView('back/signalement_create/tabs/tab-situation.html.twig', ['formSituation' => $form, 'signalement' => $signalement]);

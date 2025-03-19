@@ -23,6 +23,7 @@ function saveCurrentTab(event) {
   let formAction = null
   if (event.type === 'submit') {
     formData = new FormData(event.target)
+    formData.append(event.submitter.name, event.submitter.value)
     formAction = event.target.action
   }
   if (event.type === 'click') {
@@ -55,6 +56,8 @@ function saveCurrentTab(event) {
             const targetTabButton = document?.querySelector('#tabpanel-' + boFormSignalementTargetTab)
             boFormSignalementTargetTab = ''
             targetTabButton.click()
+          } else {
+            window.location.href = response.url;
           }
 
         } else {
@@ -337,12 +340,10 @@ function initBoFormSignalementSituation() {
       '#signalement_draft_situation_reponseAssurance',
     ]
   )
+  window.dispatchEvent(new Event('refreshUploadButtonEvent'))
+
   reloadDeleteFileList()
 }
-
-window.addEventListener('refreshUploadedFileList', (e) => {
-  reloadFileList()
-})
 
 function reloadFileList() {
   const urlListFiles = document?.querySelector('#url-signalement-files').value
@@ -389,10 +390,14 @@ function reloadDeleteFileList() {
 
         fetch(formAction, {method: 'POST', body: formData}).then(response => {
           if (response.ok) {
-            reloadFileList()
+            window.dispatchEvent(new Event('refreshUploadedFileList'))
           }
         })
       })
     })
   }
+
+  window.addEventListener('refreshUploadedFileList', (e) => {
+    reloadFileList()
+  })
 }

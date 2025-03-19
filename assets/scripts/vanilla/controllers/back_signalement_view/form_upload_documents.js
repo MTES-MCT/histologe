@@ -328,15 +328,19 @@ function initializeUploadModal (
   })
 
   let fileType, fileFilter, documentType, interventionId, acceptedTypeMimes, acceptedExtensions
-  document.querySelectorAll('.open-modal-upload-files-btn').forEach((button) => {
-    // TODO => Ici, GIGA PALIER
-    button.addEventListener('click', (e) => {
-      fileType = e.target.dataset.fileType
-      fileFilter = e.target.dataset.fileFilter ?? null
-      documentType = e.target.dataset.documentType ?? null
-      interventionId = e.target.dataset.interventionId ?? null
-      acceptedTypeMimes = e.target.dataset.acceptedTypeMimes ?? null
-      acceptedExtensions = e.target.dataset.acceptedExtensions ?? null
+
+  window.dispatchEvent(new Event('refreshUploadButtonEvent'))
+
+  window.addEventListener('refreshUploadButtonEvent', (e) => {
+    document.querySelectorAll('.open-modal-upload-files-btn').forEach((button) => {
+      button.addEventListener('click', (e) => {
+        fileType = e.target.dataset.fileType
+        fileFilter = e.target.dataset.fileFilter ?? null
+        documentType = e.target.dataset.documentType ?? null
+        interventionId = e.target.dataset.interventionId ?? null
+        acceptedTypeMimes = e.target.dataset.acceptedTypeMimes ?? null
+        acceptedExtensions = e.target.dataset.acceptedExtensions ?? null
+      })
     })
   })
 
