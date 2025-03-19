@@ -46,6 +46,7 @@ services:
       MESSENGER_TRANSPORT_DSN: ${MESSENGER_TRANSPORT_DSN}
     volumes:
       - .:/app/
+      - ./.docker/php-fpm/yara_rules:/etc/yara/rules
 
   histologe_phpworker:
     build: .docker/php-worker

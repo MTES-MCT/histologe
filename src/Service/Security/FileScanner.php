@@ -7,6 +7,8 @@ use Sineflow\ClamAV\Exception\SocketException;
 use Sineflow\ClamAV\Scanner;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
+use Symfony\Component\Process\Exception\ProcessFailedException;
+use Symfony\Component\Process\Process;
 use Symfony\Component\Uid\Uuid;
 
 class FileScanner
@@ -39,8 +41,39 @@ class FileScanner
             $copiedFilepath = $filePath;
         }
 
+        $yaraScanResult = $this->scanWithYara($copiedFilepath);
+        if ($yaraScanResult) {
+            return false;
+        }
+
         $scannedFile = $this->scanner->scan($copiedFilepath);
 
         return $scannedFile->isClean();
+    }
+
+    private function scanWithYara(string $filePath): bool
+    {
+        $yaraPath = '/usr/bin/yara';
+        $rulePath = '/etc/yara/rules/PDF_Containing_JavaScript.yar';
+        $realFilePath = realpath($filePath);
+        if (false === $realFilePath) {
+            throw new \Exception("Le fichier n'existe pas ou n'est pas accessible : $filePath");
+        }
+        if (!file_exists($filePath)) {
+            throw new \Exception("Le fichier n'existe pas : $filePath");
+        }
+        if (!is_readable($filePath)) {
+            throw new \Exception("Le fichier n'est pas lisible : $filePath");
+        }
+
+        $process = new Process([$yaraPath, $rulePath, $filePath]);
+        $process->run();
+        if (!$process->isSuccessful()) {
+            throw new ProcessFailedException($process);
+        }
+
+        $output = $process->getOutput();
+
+        return '' !== $output;
     }
 }
