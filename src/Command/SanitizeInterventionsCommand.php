@@ -3,7 +3,7 @@
 namespace App\Command;
 
 use App\Manager\HistoryEntryManager;
-use App\Repository\SuiviRepository;
+use App\Repository\InterventionRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
@@ -15,15 +15,15 @@ use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\HtmlSanitizer\HtmlSanitizerInterface;
 
 #[AsCommand(
-    name: 'app:sanitize-suivis',
-    description: 'Sanitize suivis',
+    name: 'app:sanitize-interventions',
+    description: 'Sanitize interventions',
 )]
-class SanitizeSuivisCommand extends Command
+class SanitizeInterventionsCommand extends Command
 {
     private const int BATCH_SIZE = 1000;
 
     public function __construct(
-        private readonly SuiviRepository $suiviRepository,
+        private readonly InterventionRepository $interventionRepository,
         private readonly EntityManagerInterface $entityManager,
         #[Autowire(service: 'html_sanitizer.sanitizer.app.message_sanitizer')]
         private readonly HtmlSanitizerInterface $htmlSanitizer,
@@ -36,15 +36,14 @@ class SanitizeSuivisCommand extends Command
     {
         $this->historyEntryManager->removeEntityListeners();
         $io = new SymfonyStyle($input, $output);
-        $countAll = $this->suiviRepository->count(['isSanitized' => false]);
-        $io->info(sprintf('Found %s suivis to sanitize', $countAll));
-        $suivis = $this->suiviRepository->findBy(['isSanitized' => false], ['createdAt' => 'DESC'], 50000);
+        $countAll = $this->interventionRepository->count([]);
+        $io->info(sprintf('Found %s intervention to sanitize', $countAll));
+        $interventions = $this->interventionRepository->getInterventionsWithDescription();
         $i = 0;
-        $progressBar = new ProgressBar($output, \count($suivis));
+        $progressBar = new ProgressBar($output, \count($interventions));
         $progressBar->start();
-        foreach ($suivis as $suivi) {
-            $suivi->setDescription($this->htmlSanitizer->sanitize($suivi->getDescription(false, false)));
-            $suivi->setIsSanitized(true);
+        foreach ($interventions as $intervention) {
+            $intervention->setDetails($this->htmlSanitizer->sanitize($intervention->getDetails(false)));
             ++$i;
             $progressBar->advance();
             if (0 === $i % self::BATCH_SIZE) {
@@ -54,7 +53,7 @@ class SanitizeSuivisCommand extends Command
         $this->entityManager->flush();
         $progressBar->finish();
         $io->newLine();
-        $io->success(sprintf('Sanitized %s/%s suivis', $i, $countAll));
+        $io->success(sprintf('Sanitized %s/%s interventions', $i, $countAll));
 
         return Command::SUCCESS;
     }
