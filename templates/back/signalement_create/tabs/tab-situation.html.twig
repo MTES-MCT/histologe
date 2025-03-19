@@ -135,9 +135,7 @@
                 </button>
             </p>
             <div id="bo-create-file-list" class="fr-mt-1v">
-            {% for index, document in signalement.files|filter(
-                document => document.fileType == 'document'
-            ) %}
+            {% for index, document in signalement.files %}
                 <div class="fr-grid-row">
                     <div class="fr-col-8">
                         <i>{{ document.filename }}</i> (Type {{ document.documentType.label() }})

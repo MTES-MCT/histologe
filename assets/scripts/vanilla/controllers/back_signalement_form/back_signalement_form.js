@@ -35,15 +35,6 @@ function saveCurrentTab(event) {
   fetch(formAction, {method: 'POST', body: formData}).then(response => {
     if (response.ok) {
       response.json().then((response) => {
-        if (response.redirect && response.url !== undefined && response.url !== '') {
-          const currentUrl = window.location.href.split('#')[0];
-          const newUrl = response.url.split('#')[0];
-          window.location.href = response.url;
-          if (currentUrl === newUrl) {
-            window.location.reload(true);
-          }
-        }
-
         currentTab.classList.remove('fr-tabs__panel--saving')
         
         document.querySelector('#tabpanel-' +currentTabName+ '-panel').innerHTML = response.tabContent
@@ -396,8 +387,8 @@ function reloadDeleteFileList() {
       })
     })
   }
-
-  window.addEventListener('refreshUploadedFileList', (e) => {
-    reloadFileList()
-  })
 }
+
+window.addEventListener('refreshUploadedFileList', (e) => {
+  reloadFileList()
+})

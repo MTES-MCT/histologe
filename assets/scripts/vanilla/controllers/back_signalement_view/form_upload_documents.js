@@ -329,8 +329,6 @@ function initializeUploadModal (
 
   let fileType, fileFilter, documentType, interventionId, acceptedTypeMimes, acceptedExtensions
 
-  window.dispatchEvent(new Event('refreshUploadButtonEvent'))
-
   window.addEventListener('refreshUploadButtonEvent', (e) => {
     document.querySelectorAll('.open-modal-upload-files-btn').forEach((button) => {
       button.addEventListener('click', (e) => {
@@ -343,6 +341,8 @@ function initializeUploadModal (
       })
     })
   })
+
+  window.dispatchEvent(new Event('refreshUploadButtonEvent'))
 
   modal.addEventListener('dsfr.disclose', (e) => {
     nbFilesProccessing = 0
