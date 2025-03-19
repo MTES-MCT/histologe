@@ -107,6 +107,10 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
 
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
     #[Assert\Length(max: 255)]
+    private ?string $denominationProprio = null;
+
+    #[ORM\Column(type: 'string', length: 255, nullable: true)]
+    #[Assert\Length(max: 255)]
     private ?string $prenomProprio = null;
 
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
@@ -794,16 +798,28 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
 
     public function getNomProprio(): ?string
     {
-        if ($this->bailleur) {
-            return $this->bailleur->getName();
-        }
-
         return $this->nomProprio;
     }
 
     public function setNomProprio(?string $nomProprio): self
     {
         $this->nomProprio = $nomProprio;
+
+        return $this;
+    }
+
+    public function getDenominationProprio(): ?string
+    {
+        if ($this->bailleur) {
+            return $this->bailleur->getName();
+        }
+
+        return $this->denominationProprio;
+    }
+
+    public function setDenominationProprio(?string $denominationProprio): self
+    {
+        $this->denominationProprio = $denominationProprio;
 
         return $this;
     }
