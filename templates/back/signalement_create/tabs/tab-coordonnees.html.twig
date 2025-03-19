@@ -57,7 +57,7 @@
                 <h2 class="fr-h4">Adresse postale</h2>
             </legend>
             <div class="fr-fieldset__element">
-                {{ form_row(form.adresseCompleteProprio) }}
+                {{ form_row(formCoordonnees.adresseCompleteProprio) }}
                 <div class="fr-address-group-container">
                     <div class="fr-grid-row fr-background-alt--blue-france fr-text-label--blue-france fr-address-group">
                     </div>
@@ -68,13 +68,13 @@
             </div>
             <div id="bo-form-signalement-manual-address-container" class="fr-hidden fr-w-100" >
                 <div class="fr-fieldset__element">
-                    {{ form_row(form.adresseProprio) }}
+                    {{ form_row(formCoordonnees.adresseProprio) }}
                 </div>
                 <div class="fr-fieldset__element">
-                    {{ form_row(form.codePostalProprio) }}
+                    {{ form_row(formCoordonnees.codePostalProprio) }}
                 </div>
                 <div class="fr-fieldset__element">
-                    {{ form_row(form.villeProprio) }}
+                    {{ form_row(formCoordonnees.villeProprio) }}
                 </div>
             </div>
         </fieldset>
