@@ -17,7 +17,7 @@ final class Version20250317105914 extends AbstractMigration
     public function up(Schema $schema): void
     {
         $this->skipIf(
-            'prod' !== getenv('APP_ENV'),
+            'histologe' !== getenv('APP'),
             'Cette migration ne s’exécute qu’en environnement de production.'
         );
         // agents to delete
