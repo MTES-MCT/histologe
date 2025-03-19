@@ -4,6 +4,7 @@ namespace App\Tests\Functional\Controller\Api;
 
 use App\Entity\User;
 use App\Repository\SignalementRepository;
+use App\Tests\ApiHelper;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\DomCrawler\Crawler;
@@ -11,6 +12,7 @@ use Symfony\Component\Routing\RouterInterface;
 
 class VisiteCreateControllerTest extends WebTestCase
 {
+    use ApiHelper;
     public const string UUID_SIGNALEMENT = '00000000-0000-0000-2023-000000000026';
 
     private KernelBrowser $client;
@@ -53,6 +55,7 @@ class VisiteCreateControllerTest extends WebTestCase
             $links = $crawler->filter('a.fr-link');
             $this->assertCount(2, $links, 'Il doit y avoir exactement 2 liens dans le contenu HTML.');
         }
+        $this->hasXrequestIdHeaderAndOneApiRequestLog($this->client);
     }
 
     /** @dataProvider provideDataForPendingVisite */
@@ -70,6 +73,7 @@ class VisiteCreateControllerTest extends WebTestCase
         $this->assertEquals(400, $this->client->getResponse()->getStatusCode());
         $message = json_decode($this->client->getResponse()->getContent(), true)['message'];
         $this->assertStringContainsString($signalement->getInterventions()->first()->getUuid(), $message);
+        $this->hasXrequestIdHeaderAndOneApiRequestLog($this->client);
     }
 
     /** @dataProvider provideDataForPendingVisite */
@@ -87,6 +91,7 @@ class VisiteCreateControllerTest extends WebTestCase
         $this->assertEquals(400, $this->client->getResponse()->getStatusCode());
         $message = json_decode($this->client->getResponse()->getContent(), true)['message'];
         $this->assertStringContainsString($signalement->getInterventions()->first()->getUuid(), $message);
+        $this->hasXrequestIdHeaderAndOneApiRequestLog($this->client);
     }
 
     /** @dataProvider  provideDataErrorPayload */
@@ -104,6 +109,7 @@ class VisiteCreateControllerTest extends WebTestCase
         $errors = array_map(function ($error) { return $error['property']; }, $errors);
         $this->assertEquals(400, $this->client->getResponse()->getStatusCode());
         $this->assertEquals($fieldsErrors, $errors);
+        $this->hasXrequestIdHeaderAndOneApiRequestLog($this->client);
     }
 
     public function provideDataForNotification(): \Generator

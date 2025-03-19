@@ -6,6 +6,7 @@ use App\Entity\Affectation;
 use App\Entity\Enum\AffectationStatus;
 use App\Repository\SignalementRepository;
 use App\Repository\UserRepository;
+use App\Tests\ApiHelper;
 use Doctrine\Common\Collections\Collection;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
@@ -13,6 +14,7 @@ use Symfony\Component\HttpFoundation\Response;
 
 class AffectationUpdateControllerTest extends WebTestCase
 {
+    use ApiHelper;
     private KernelBrowser $client;
     private SignalementRepository $signalementRepository;
 
@@ -48,6 +50,7 @@ class AffectationUpdateControllerTest extends WebTestCase
         $this->assertResponseIsSuccessful();
         $this->assertEquals($statut, AffectationStatus::mapNewStatus($affectation->getStatut())->value);
         $this->assertEmailCount($mailSent);
+        $this->hasXrequestIdHeaderAndOneApiRequestLog($this->client);
     }
 
     /** @dataProvider provideUnvalidData */
@@ -68,6 +71,7 @@ class AffectationUpdateControllerTest extends WebTestCase
         $response = json_decode($this->client->getResponse()->getContent(), true);
         $this->assertEquals($httpCodeStatus, $this->client->getResponse()->getStatusCode());
         $this->assertStringContainsString($errorMessage, $response['message']);
+        $this->hasXrequestIdHeaderAndOneApiRequestLog($this->client);
     }
 
     private function patchAffectation(?string $affectationUuid, array $payload): void

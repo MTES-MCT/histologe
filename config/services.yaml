@@ -99,7 +99,7 @@ services:
 
     App\EventListener\MaintenanceListener:
         tags:
-            - { name: 'kernel.event_listener', event: 'kernel.request' }
+            - { name: 'kernel.event_listener', event: 'kernel.request', priority: 10 }
 
     App\EventListener\EntitySanitizerListener:
         arguments:
