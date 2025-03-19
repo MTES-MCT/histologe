@@ -108,6 +108,8 @@ class UploadHandlerService
     {
         if ('document' === $type || 'documents' === $type) {
             $extensions = array_map('strtoupper', File::DOCUMENT_EXTENSION);
+        } elseif ('resizable' === $type) {
+            $extensions = array_map('strtoupper', array_diff(File::IMAGE_EXTENSION, ['pdf']));
         } else {
             $extensions = array_map('strtoupper', File::IMAGE_EXTENSION);
         }

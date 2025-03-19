@@ -96,7 +96,7 @@ class SignalementFileUpdateController extends AbstractController
         $this->denyAccessUnlessGranted('FILE_EDIT', $file);
         $documentType = DocumentType::tryFrom($fileRequest->documentType);
         $ext = pathinfo($file->getFilename(), \PATHINFO_EXTENSION);
-        if (in_array($ext, File::IMAGE_EXTENSION) && isset(DocumentType::getOrderedPhotosList()[$documentType->name])) {
+        if ((in_array($ext, File::IMAGE_EXTENSION) && 'pdf' !== $ext) && isset(DocumentType::getOrderedPhotosList()[$documentType->name])) {
             $file->setFileType(File::FILE_TYPE_PHOTO);
             $file->setDescription($fileRequest->description);
         } else {

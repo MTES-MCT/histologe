@@ -2,7 +2,6 @@
 
 namespace App\Command;
 
-use App\Entity\File;
 use App\Entity\Territory;
 use App\Manager\FileManager;
 use App\Manager\SignalementManager;
@@ -30,9 +29,6 @@ use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 class UpdateSignalementDocumentFieldsCommand extends Command
 {
     private const BATCH_SIZE = 200;
-    private const TYPE_IMAGE = 'image';
-    private const TYPE_DOCUMENT = 'document';
-    private const REGEX_IMAGE = '/(jpe?g|png)/mi';
 
     public function __construct(
         private readonly TerritoryManager $territoryManager,
@@ -92,16 +88,12 @@ class UpdateSignalementDocumentFieldsCommand extends Command
                 }
                 if (null !== $filename) {
                     $currentReference = $row[SignalementImportImageHeader::COLUMN_ID_ENREGISTREMENT];
-                    $fileType = self::TYPE_IMAGE === $this->checkFileType($filename)
-                        ? File::FILE_TYPE_PHOTO
-                        : File::FILE_TYPE_DOCUMENT;
 
                     $signalement = $signalementRepository->findByReferenceChunk($territory, $currentReference);
                     if (null !== $signalement) {
                         $file = $this->fileManager->createOrUpdate(
                             filename: $filename,
                             title: $filename,
-                            type: $fileType,
                             signalement: $signalement,
                         );
                         unset($file);
@@ -127,15 +119,5 @@ class UpdateSignalementDocumentFieldsCommand extends Command
         $io->success(\sprintf('%s files signalement(s) updated', $countFile));
 
         return Command::SUCCESS;
-    }
-
-    private function checkFileType(string $filePath): string
-    {
-        $fileInfo = pathinfo($filePath);
-        if (preg_match(self::REGEX_IMAGE, $fileInfo['extension'])) {
-            return self::TYPE_IMAGE;
-        }
-
-        return self::TYPE_DOCUMENT;
     }
 }

@@ -234,31 +234,37 @@ class LoadSignalementData extends Fixture implements OrderedFixtureInterface
                 'file' => 'test1.23.pdf',
                 'titre' => 'Fiche reperage.pdf',
                 'user' => 1,
+                'mimeType' => 'application/pdf',
             ],
             [
                 'file' => 'test1.pdf',
                 'titre' => 'Compte rendu de visite.pdf',
                 'user' => 22,
+                'mimeType' => 'application/pdf',
             ],
             [
                 'file' => 'blank-'.$row['reference'].'.pdf',
                 'titre' => 'Blank.pdf',
                 'user' => 1,
+                'mimeType' => 'application/pdf',
             ],
             [
                 'file' => 'Capture-d-ecran-du-2023-06-13-12-58-43-648b2a6b9730f.png',
-                'titre' => '20220520_112424.jpg',
+                'titre' => '20220520_112424.png',
                 'user' => 1,
+                'mimeType' => 'image/png',
             ],
             [
                 'file' => 'Capture-d-ecran-du-2023-04-07-15-27-36-64302a1b57a20.png',
-                'titre' => 'IMG_20230220_141432735_HDR.jpg',
+                'titre' => 'IMG_20230220_141432735_HDR.png',
                 'user' => 23,
+                'mimeType' => 'image/png',
             ],
             [
                 'file' => 'blank-'.$row['reference'].'.jpg',
-                'titre' => 'Blank.pdf',
+                'titre' => 'Blank.jpg',
                 'user' => 1,
+                'mimeType' => 'image/jpeg',
             ],
         ];
 
@@ -268,14 +274,11 @@ class LoadSignalementData extends Fixture implements OrderedFixtureInterface
             $file = $this->fileFactory->createInstanceFrom(
                 filename: $document['file'],
                 title: $document['titre'],
-                type: \in_array(pathinfo($document['file'], \PATHINFO_EXTENSION), File::IMAGE_EXTENSION)
-                    ? File::FILE_TYPE_PHOTO
-                    : File::FILE_TYPE_DOCUMENT,
                 signalement: $signalement,
                 user: $user,
                 documentType: DocumentType::AUTRE
             );
-            if (in_array(pathinfo($document['file'], \PATHINFO_EXTENSION), File::IMAGE_EXTENSION)) {
+            if (\in_array($document['mimeType'], File::RESIZABLE_MIME_TYPES)) {
                 $file->setIsVariantsGenerated(true);
                 $file->setCreatedAt($dateMinusTwoMonth);
             }
@@ -289,7 +292,6 @@ class LoadSignalementData extends Fixture implements OrderedFixtureInterface
                 $file = $this->fileFactory->createInstanceFrom(
                     filename: 'blank-'.$row['reference'].'-'.$countMorePhoto.'.jpg',
                     title: 'Blank.pdf',
-                    type: File::FILE_TYPE_PHOTO,
                     signalement: $signalement,
                     user: $user,
                     documentType: DocumentType::AUTRE
@@ -469,7 +471,6 @@ class LoadSignalementData extends Fixture implements OrderedFixtureInterface
                 $file = $this->fileFactory->createInstanceFrom(
                     filename: $document['file'],
                     title: $document['titre'],
-                    type: $document['file_type'] ?? File::FILE_TYPE_PHOTO,
                     signalement: $signalement,
                     // user: $user,
                     documentType: DocumentType::tryFrom($document['document_type']) ?? DocumentType::PHOTO_SITUATION,

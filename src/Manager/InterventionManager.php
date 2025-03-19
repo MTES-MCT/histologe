@@ -207,7 +207,6 @@ class InterventionManager extends AbstractManager
     private function createFile(
         Intervention $intervention,
         string $document,
-        string $fileType = File::FILE_TYPE_DOCUMENT,
         DocumentType $documentType = DocumentType::PROCEDURE_RAPPORT_DE_VISITE,
     ): File {
         /** @var User $user */
@@ -216,7 +215,6 @@ class InterventionManager extends AbstractManager
         return $this->fileFactory->createInstanceFrom(
             filename: $document,
             title: $document,
-            type: $fileType,
             signalement: $intervention->getSignalement(),
             user: $user,
             documentType: $documentType

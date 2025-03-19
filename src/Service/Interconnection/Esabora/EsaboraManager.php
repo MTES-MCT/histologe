@@ -283,14 +283,13 @@ class EsaboraManager
         $fileName = pathinfo($filePath, \PATHINFO_BASENAME);
         $this->uploadHandlerService->uploadFromFilename($fileName);
         $file = new SymfonyFile($filePath);
-        if (\in_array($file->getMimeType(), File::IMAGE_MIME_TYPES)) {
+        if (\in_array($file->getMimeType(), File::RESIZABLE_MIME_TYPES)) {
             $this->imageManipulationHandler->resize($file->getPath())->thumbnail();
             $variantsGenerated = true;
         }
         $file = $this->fileFactory->createInstanceFrom(
             filename: $fileName,
             title: $originalName,
-            type: File::FILE_TYPE_DOCUMENT,
             signalement: $suivi->getSignalement(),
             scannedAt: new \DateTimeImmutable(),
             isVariantsGenerated: $variantsGenerated,

@@ -97,7 +97,7 @@ class SignalementFileProcessor
                             );
                             $title = $this->filenameGenerator->getTitle();
 
-                            if (\in_array($file->getMimeType(), File::IMAGE_MIME_TYPES)) {
+                            if (\in_array($file->getMimeType(), File::RESIZABLE_MIME_TYPES)) {
                                 $this->imageManipulationHandler->setUseTmpDir(false)->resize($filename)->thumbnail($filename);
                             } else {
                                 $inputTypeDetection = 'documents';
@@ -134,7 +134,6 @@ class SignalementFileProcessor
             $file = $this->fileFactory->createInstanceFrom(
                 filename: $fileItem['file'],
                 title: $fileItem['title'],
-                type: $fileItem['type'],
                 user: $user,
                 intervention: $intervention,
                 documentType: $fileItem['documentType'],

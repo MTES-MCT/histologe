@@ -409,7 +409,7 @@ class SignalementController extends AbstractController
                         throw new \Exception($res['error']);
                     }
                     $res = $uploadHandlerService->setKey($key);
-                    if (\in_array($file->getMimeType(), File::IMAGE_MIME_TYPES)) {
+                    if (\in_array($file->getMimeType(), File::RESIZABLE_MIME_TYPES)) {
                         $imageManipulationHandler->resize($res['filePath'])->thumbnail();
                     }
 

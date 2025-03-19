@@ -98,7 +98,7 @@ class ProfilController extends AbstractController
                         }
                         $res = $uploadHandlerService->setKey('avatar');
 
-                        if (\in_array($avatarFile->getMimeType(), File::IMAGE_MIME_TYPES)) {
+                        if (\in_array($avatarFile->getMimeType(), File::RESIZABLE_MIME_TYPES)) {
                             $imageManipulationHandler->avatar($res['filePath']);
                             $uploadHandlerService->moveFilePath($res['filePath']);
                         }

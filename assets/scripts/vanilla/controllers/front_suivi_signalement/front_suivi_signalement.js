@@ -177,7 +177,7 @@ if (modalUploadFiles) {
 
   function initInnerHtml (file) {
     let innerHTML = '<div class="fr-col-12 file-error"></div>'
-    if (modalUploadFiles.dataset.fileType === 'photo') {
+    if (modalUploadFiles.dataset.fileType === 'photo' && file.type !== 'application/pdf') {
       innerHTML += `
             <div class="fr-col-2">
                 <img class="fr-content-media__img" src="${URL.createObjectURL(file)}">

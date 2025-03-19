@@ -49,16 +49,23 @@ class File implements EntityHistoryInterface
         'eml',
         'msg',
     ];
+    public const array RESIZABLE_MIME_TYPES = [
+        'image/jpeg',
+        'image/png',
+        'image/gif',
+    ];
     public const array IMAGE_MIME_TYPES = [
         'image/jpeg',
         'image/png',
         'image/gif',
+        'application/pdf',
     ];
     public const array IMAGE_EXTENSION = [
         'jpeg',
         'jpg',
         'png',
         'gif',
+        'pdf',
     ];
 
     #[ORM\Id]

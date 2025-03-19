@@ -19,13 +19,13 @@ class FileFactoryTest extends TestCase
         $file = (new FileFactory())->createInstanceFrom(
             'sample-123.jpg',
             'sample.jpg',
-            File::FILE_TYPE_PHOTO,
             $this->getSignalement(),
             $this->getUser([User::ROLE_USER_PARTNER])
         );
         $this->assertEquals('sample-123.jpg', $file->getFilename());
         $this->assertEquals('sample.jpg', $file->getTitle());
         $this->assertEquals('photo', $file->getFileType());
+        $this->assertEquals(File::FILE_TYPE_PHOTO, $file->getFileType());
         $this->assertInstanceOf(Signalement::class, $file->getSignalement());
         $this->assertInstanceOf(User::class, $file->getUploadedBy());
         $this->assertInstanceOf(\DateTimeImmutable::class, $file->getCreatedAt());

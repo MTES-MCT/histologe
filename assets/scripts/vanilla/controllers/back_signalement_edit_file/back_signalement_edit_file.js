@@ -59,7 +59,7 @@ document.querySelectorAll('.btn-signalement-file-edit').forEach(swbtn => {
     document.querySelector('#file-edit-fileid').value = target.getAttribute('data-file-id')
 
     const selectedDocumentType = target.getAttribute('data-documentType')
-    if (target.getAttribute('data-type') === 'photo') {
+    if (target.getAttribute('data-type') === 'photo' || target.getAttribute('data-documentType') == 'PHOTO_VISITE') {
       document.querySelector('#fileDescription').value = target.getAttribute('data-description')
       document.querySelector('#fr-modal-edit-file-description').classList.remove('fr-hidden')
     } else {

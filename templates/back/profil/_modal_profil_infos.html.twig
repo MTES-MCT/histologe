@@ -23,9 +23,9 @@
                                 <div class="fr-ml-3v">
                                     <div class="fr-upload-group fr-mb-5v">
                                         <label class="fr-label" for="profil_edit_infos[avatar]">Choisir un nouvel avatar (facultatif)
-                                            <span class="fr-hint-text">Taille Maximale : 5 Mo, Formats supportés : {{ get_accepted_extensions('photo')}}</span>
+                                            <span class="fr-hint-text">Taille Maximale : 5 Mo, Formats supportés : {{ get_accepted_extensions('resizable')}}</span>
                                         </label>
-                                        <input class="fr-upload" type="file" accept={{ get_accepted_mime_type('photo')}} name="profil_edit_infos[avatar]" id="profil_edit_infos_avatar">
+                                        <input class="fr-upload" type="file" accept={{ get_accepted_mime_type('resizable')}} name="profil_edit_infos[avatar]" id="profil_edit_infos_avatar">
                                     </div>
                                 </div>
                             </div>
