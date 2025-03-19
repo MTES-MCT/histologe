@@ -6,7 +6,8 @@ export const store = {
     signalements: {
       filters: Object,
       list: new Array<Object>(),
-      pagination: Object
+      pagination: Object,
+      zoneAreas: new Array<string>(),
     },
     input: {
       order: 'reference-DESC',

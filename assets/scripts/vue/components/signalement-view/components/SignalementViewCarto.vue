@@ -18,6 +18,8 @@ import { store } from '../store'
 import * as L from 'leaflet'
 import 'leaflet.markercluster'
 import { SignalementMarkerOptions } from '../interfaces/signalementMarkerOptions'
+// @ts-ignore
+import omnivore from '@mapbox/leaflet-omnivore'
 
 // Import des fichiers CSS nécessaires pour Leaflet
 import 'leaflet/dist/leaflet.css'
@@ -48,7 +50,8 @@ export default defineComponent({
       offset: 0,
       bounds: L.latLngBounds(L.latLng(8, -80), L.latLng(70, 20)),
       defaultCenter: [47.11, -0.01] as L.LatLngExpression,
-      defaultZoom: 5
+      defaultZoom: 5,
+      zonesLayer: L.layerGroup()
     }
   },
   mounted () {
@@ -59,6 +62,9 @@ export default defineComponent({
       this.addMarkers(newList)
       this.configurePopups()
       this.adjustMapBounds()
+    },
+    'sharedState.signalements.zoneAreas': function (newZones) {
+      this.addZones(newZones)
     }
   },
   methods: {
@@ -93,6 +99,26 @@ export default defineComponent({
         }
       })
       this.map?.addLayer(this.markers as unknown as L.Layer)
+    },
+    addZones(zones: string[]) {
+      this.zonesLayer.clearLayers()
+      zones.forEach((wkt: string, index: number) => {
+        const color = this.getZoneColor(index)
+        // @ts-ignore
+        const zone = omnivore.wkt.parse(wkt)
+        zone.setStyle({
+          color: color,
+          fillColor: color,
+          fillOpacity: 0.2,
+          weight: 2
+        })
+        this.zonesLayer.addLayer(zone)
+      })
+      this.map?.addLayer(this.zonesLayer as unknown as L.Layer)
+    },
+    getZoneColor(index: number): string {
+      const colors = ['#3388ff', '#ff3333', '#33cc33', '#ff9900', '#9966ff', '#ff33cc', '#00cccc', '#ffcc00', '#cc6600', '#999999']
+      return colors[index % colors.length]
     },
     configurePopups () {
       this.markers.getLayers().forEach((layer: any) => {
