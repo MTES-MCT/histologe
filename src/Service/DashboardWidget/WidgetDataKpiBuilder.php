@@ -154,6 +154,7 @@ class WidgetDataKpiBuilder
     public function withCountUser(): self
     {
         $this->countUser = $this->userRepository->countUserByStatus($this->territories, $this->user);
+        $this->countUser->setArchivingScheduled($this->userRepository->findUsersPendingToArchive($this->user, $this->territories, true));
 
         return $this;
     }
@@ -175,7 +176,7 @@ class WidgetDataKpiBuilder
             $link = $widgetParams['link'] ?? null;
             $label = $widgetParams['label'] ?? null;
             $widgetParams['params']['territoire'] = 1 === count($this->territories) ? reset($this->territories)->getId() : null;
-            if ('cardPartenairesNonNotifiables' !== $key) {
+            if (!in_array($key, ['cardPartenairesNonNotifiables', 'cardArchivingScheduledUsers'])) {
                 $widgetParams['params']['isImported'] = 'oui';
             } else {
                 /** @var User $user */
@@ -235,7 +236,8 @@ class WidgetDataKpiBuilder
             ->addWidgetCard('cardNouveauxSuivis', $this->countSuivi->getSignalementNewSuivi())
             ->addWidgetCard('cardSansSuivi', $this->countSuivi->getSignalementNoSuivi())
             ->addWidgetCard('cardNoSuiviAfter3Relances', $this->countSuivi->getNoSuiviAfter3Relances())
-            ->addWidgetCard('cardPartenairesNonNotifiables', $this->countPartner->getNonNotifiables());
+            ->addWidgetCard('cardPartenairesNonNotifiables', $this->countPartner->getNonNotifiables())
+            ->addWidgetCard('cardArchivingScheduledUsers', $this->countUser->getArchivingScheduled());
 
         return new WidgetDataKpi(
             $this->widgetCards,

@@ -66,7 +66,7 @@ class AnonymizeExpiredAccountCommand extends AbstractCronCommand
 
     private function anonymizeExpiredUsers(): int
     {
-        $expiredUsers = $this->userRepository->findExpiredUsers(true);
+        $expiredUsers = $this->userRepository->findExpiredUsers();
 
         /** @var User $user */
         foreach ($expiredUsers as $user) {

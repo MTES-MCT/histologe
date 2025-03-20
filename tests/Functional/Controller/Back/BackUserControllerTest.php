@@ -34,7 +34,7 @@ class BackUserControllerTest extends WebTestCase
 
     public function provideParamsUserList(): iterable
     {
-        yield 'Search without params' => [[], 63];
+        yield 'Search without params' => [[], 64];
         yield 'Search with queryUser admin' => [['queryUser' => 'admin'], 21];
         yield 'Search with territory 13' => [['territory' => 13], 15];
         yield 'Search with territory 13 and partner 6 and 7' => [['territory' => 13, 'partners' => [6, 7]], 2];
@@ -96,5 +96,21 @@ class BackUserControllerTest extends WebTestCase
         $client->request('GET', $route, ['role' => 'ROLE_API_USER']);
 
         $this->assertSelectorTextContains('h1', 'Exporter la liste des 2 utilisateurs');
+    }
+
+    public function testInactiveAccounts(): void
+    {
+        $client = static::createClient();
+        /** @var UserRepository $userRepository */
+        $userRepository = static::getContainer()->get(UserRepository::class);
+        $user = $userRepository->findOneBy(['email' => 'admin-territoire-34-01@histologe.fr']);
+        $client->loginUser($user);
+
+        /** @var RouterInterface $router */
+        $router = self::getContainer()->get(RouterInterface::class);
+        $route = $router->generate('back_user_inactive_accounts');
+        $client->request('GET', $route);
+
+        $this->assertSelectorTextContains('h2', '1 utilisateur trouvé');
     }
 }

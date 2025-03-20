@@ -62,7 +62,7 @@ class VisiteNotifier
             $listUsersPartner = $intervention->getPartner() && $intervention->getPartner() != $userPartner && !$notifyOtherAffectedPartners ?
                 $intervention->getPartner()->getUsers()->toArray() : [];
             if ($notifyAdminTerritory) {
-                $listUsersTerritoryAdmin = $this->userRepository->findActiveTerritoryAdmins($intervention->getSignalement()->getTerritory(), $intervention->getSignalement()->getInseeOccupant());
+                $listUsersTerritoryAdmin = $this->userRepository->findActiveTerritoryAdmins($intervention->getSignalement()->getTerritory()->getId(), $intervention->getSignalement()->getInseeOccupant());
                 $listUsersToNotify = array_unique(array_merge($listUsersTerritoryAdmin, $listUsersPartner), \SORT_REGULAR);
             } else {
                 $listUsersToNotify = $listUsersPartner;
@@ -114,7 +114,7 @@ class VisiteNotifier
     public function notifyVisiteToConclude(Intervention $intervention): int
     {
         $signalement = $intervention->getSignalement();
-        $listUsersToNotify = $this->userRepository->findActiveTerritoryAdmins($signalement->getTerritory(), $signalement->getInseeOccupant());
+        $listUsersToNotify = $this->userRepository->findActiveTerritoryAdmins($signalement->getTerritory()->getId(), $signalement->getInseeOccupant());
         $affectations = $signalement->getAffectations();
         foreach ($affectations as $affectation) {
             if ($affectation->getPartner()->hasCompetence(Qualification::VISITES)) {

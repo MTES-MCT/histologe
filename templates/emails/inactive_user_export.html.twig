@@ -1,0 +1,11 @@
+{% extends 'emails/base_email.html.twig' %}
+
+{% block body %}  
+    <p>Bonjour,</p>
+    <p>
+        Vous trouverez en pièce jointe de cet e-mail l'export de la liste des utilisateurs inactifs.
+    </p>
+    <p>
+        A bientôt sur {{ platform.name }} !
+    </p>
+{% endblock %}

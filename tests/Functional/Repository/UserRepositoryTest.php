@@ -45,7 +45,7 @@ class UserRepositoryTest extends KernelTestCase
         /** @var UserRepository $userRepository */
         $userRepository = $this->entityManager->getRepository(User::class);
 
-        $users = $userRepository->findActiveTerritoryAdmins($signalement->getTerritory(), $signalement->getInseeOccupant());
+        $users = $userRepository->findActiveTerritoryAdmins($signalement->getTerritory()->getId(), $signalement->getInseeOccupant());
 
         $this->assertIsArray($users);
         $this->assertCount(1, $users);
@@ -58,7 +58,7 @@ class UserRepositoryTest extends KernelTestCase
         /** @var UserRepository $userRepository */
         $userRepository = $this->entityManager->getRepository(User::class);
 
-        $users = $userRepository->findActiveTerritoryAdmins($signalement->getTerritory(), $signalement->getInseeOccupant());
+        $users = $userRepository->findActiveTerritoryAdmins($signalement->getTerritory()->getId(), $signalement->getInseeOccupant());
 
         $this->assertIsArray($users);
         $this->assertCount(2, $users);

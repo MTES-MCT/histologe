@@ -23,6 +23,9 @@
     },
     {
       "command": "30 * * * * php bin/console app:retry-failed-emails"
+    },
+    {
+      "command": "0 4 * * * php bin/console app:notify-and-archive-inactive-accounts"
     }
   ]
 }
