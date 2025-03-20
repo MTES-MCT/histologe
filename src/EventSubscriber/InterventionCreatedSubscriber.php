@@ -50,6 +50,7 @@ readonly class InterventionCreatedSubscriber implements EventSubscriberInterface
             'description' => $this->htmlSanitizer->sanitize($description),
         ]);
 
+        $event->setSuivi($foundSuivi);
         if (!$foundSuivi) {
             $suivi = $this->suiviManager->createSuivi(
                 signalement: $intervention->getSignalement(),
@@ -59,13 +60,20 @@ readonly class InterventionCreatedSubscriber implements EventSubscriberInterface
                 user: $event->getUser(),
                 context: Suivi::CONTEXT_INTERVENTION,
             );
-
+            $event->setSuivi($suivi);
             if (InterventionType::VISITE === $intervention->getType()
                 && $intervention->getScheduledAt()->format('Y-m-d') >= (new \DateTimeImmutable())->format('Y-m-d')
             ) {
                 $this->visiteNotifier->notifyUsagers(
                     $intervention,
                     NotificationMailerType::TYPE_VISITE_CREATED_TO_USAGER
+                );
+            }
+
+            if (InterventionType::ARRETE_PREFECTORAL === $intervention->getType()) {
+                $this->visiteNotifier->notifyUsagers(
+                    $intervention,
+                    NotificationMailerType::TYPE_ARRETE_CREATED_TO_USAGER
                 );
             }
 

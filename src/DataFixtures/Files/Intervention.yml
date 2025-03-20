@@ -92,3 +92,16 @@ interventions:
     proprietaire_present: 0
     details: "<p>dossier envoyé pour manquement sanitaire</p>"
     conclude_procedure: [ 'RSD' ]
+
+  - signalement: "2023-20"
+    type: "ARRETE_PREFECTORAL"
+    partner: "partenaire-13-01@histologe.fr"
+    user: "api-01@histologe.fr"
+    scheduled_at: '2025-03-19 10:00:00'
+    status: 'DONE'
+    details: "L'arrêté 123456789 du 2025-01-12 a été pris dans le dossier n°123456789.<br>Type d'arrêté : Arrêté L.511-12 - Suroccupation."
+    conclude_procedure: [ 'INSALUBRITE' ]
+    additional_information:
+      arrete_date: "2025-01-12"
+      arrete_type: "Arrêté L.511-12 - Suroccupation"
+      arrete_numero: "123456789"

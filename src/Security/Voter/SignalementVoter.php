@@ -15,27 +15,43 @@ use Symfony\Component\Security\Core\User\UserInterface;
 
 class SignalementVoter extends Voter
 {
-    public const VALIDATE = 'SIGN_VALIDATE';
-    public const CLOSE = 'SIGN_CLOSE';
-    public const REOPEN = 'SIGN_REOPEN';
-    public const DELETE = 'SIGN_DELETE';
-    public const EDIT = 'SIGN_EDIT';
-    public const EDIT_DRAFT = 'SIGN_EDIT_DRAFT';
-    public const DELETE_DRAFT = 'SIGN_DELETE_DRAFT';
-    public const VIEW = 'SIGN_VIEW';
-    public const ADD_VISITE = 'SIGN_ADD_VISITE';
-    public const USAGER_EDIT = 'SIGN_USAGER_EDIT';
-    public const EDIT_NDE = 'SIGN_EDIT_NDE';
-    public const SEE_NDE = 'SIGN_SEE_NDE';
+    public const string VALIDATE = 'SIGN_VALIDATE';
+    public const string CLOSE = 'SIGN_CLOSE';
+    public const string REOPEN = 'SIGN_REOPEN';
+    public const string DELETE = 'SIGN_DELETE';
+    public const string EDIT = 'SIGN_EDIT';
+    public const string EDIT_DRAFT = 'SIGN_EDIT_DRAFT';
+    public const string DELETE_DRAFT = 'SIGN_DELETE_DRAFT';
+    public const string VIEW = 'SIGN_VIEW';
+    public const string ADD_VISITE = 'SIGN_ADD_VISITE';
+    public const string ADD_ARRETE = 'SIGN_ADD_ARRETE';
+    public const string USAGER_EDIT = 'SIGN_USAGER_EDIT';
+    public const string EDIT_NDE = 'SIGN_EDIT_NDE';
+    public const string SEE_NDE = 'SIGN_SEE_NDE';
 
     public function __construct(
-        private Security $security,
+        private readonly Security $security,
     ) {
     }
 
     protected function supports(string $attribute, $subject): bool
     {
-        return \in_array($attribute, [self::EDIT, self::EDIT_DRAFT, self::VIEW, self::DELETE, self::VALIDATE, self::CLOSE, self::REOPEN, self::ADD_VISITE, self::USAGER_EDIT, self::EDIT_NDE, self::SEE_NDE, self::DELETE_DRAFT])
+        return \in_array($attribute,
+            [
+                self::EDIT,
+                self::EDIT_DRAFT,
+                self::VIEW,
+                self::DELETE,
+                self::VALIDATE,
+                self::CLOSE,
+                self::REOPEN,
+                self::ADD_VISITE,
+                self::ADD_ARRETE,
+                self::USAGER_EDIT,
+                self::EDIT_NDE,
+                self::SEE_NDE,
+                self::DELETE_DRAFT,
+            ])
             && ($subject instanceof Signalement);
     }
 
@@ -51,7 +67,7 @@ class SignalementVoter extends Voter
             return false;
         }
 
-        if (self::ADD_VISITE == $attribute) {
+        if (in_array($attribute, [self::ADD_ARRETE, self::ADD_VISITE])) {
             return $this->canAddVisite($subject, $user);
         }
 
@@ -71,8 +87,7 @@ class SignalementVoter extends Voter
             self::EDIT => $this->canEdit($subject, $user),
             self::VIEW => $this->canView($subject, $user),
             self::USAGER_EDIT => $this->canUsagerEdit($subject),
-            self::EDIT_DRAFT => $this->canEditDraft($subject, $user),
-            self::DELETE_DRAFT => $this->canEditDraft($subject, $user),
+            self::EDIT_DRAFT, self::DELETE_DRAFT => $this->canEditDraft($subject, $user),
             default => false,
         };
     }

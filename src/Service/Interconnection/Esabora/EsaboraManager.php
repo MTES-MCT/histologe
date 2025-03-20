@@ -237,10 +237,10 @@ class EsaboraManager
         }
 
         $suivi = $this->suiviManager->createSuivi(
-            user: $this->userManager->getSystemUser(),
             signalement: $affectation->getSignalement(),
             description: $description,
             type: Suivi::TYPE_PARTNER,
+            user: $this->userManager->getSystemUser(),
             context: Suivi::CONTEXT_SCHS,
             flush: false,
         );
