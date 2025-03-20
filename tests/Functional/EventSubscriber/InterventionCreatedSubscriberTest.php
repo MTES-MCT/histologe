@@ -80,23 +80,15 @@ class InterventionCreatedSubscriberTest extends KernelTestCase
         $this->assertEmailCount(2);
     }
 
-    public function testInterventionNoVisitInFuture(): void
-    {
-        $date = (new \DateTimeImmutable())->modify('+1 day');
-        $type = InterventionType::ARRETE_PREFECTORAL;
-        $this->testNbMailSent($date, $type);
-        $this->assertEmailCount(0);
-    }
-
     public function testInterventionNoVisitInPast(): void
     {
         $date = (new \DateTimeImmutable())->modify('-1 day');
         $type = InterventionType::ARRETE_PREFECTORAL;
-        $this->testNbMailSent($date, $type);
-        $this->assertEmailCount(0);
+        $this->testNbMailSent($date, $type, Intervention::STATUS_DONE);
+        $this->assertEmailCount(2);
     }
 
-    private function testNbMailSent(\DateTimeImmutable $date, $type): void
+    private function testNbMailSent(\DateTimeImmutable $date, InterventionType $type, string $status = Intervention::STATUS_PLANNED): void
     {
         $eventDispatcher = new EventDispatcher();
         $visiteNotifier = static::getContainer()->get(VisiteNotifier::class);
@@ -106,8 +98,8 @@ class InterventionCreatedSubscriberTest extends KernelTestCase
         /** @var InterventionRepository $interventionRepository */
         $interventionRepository = $this->entityManager->getRepository(Intervention::class);
         $intervention = $interventionRepository->findOneBy([
-            'status' => Intervention::STATUS_PLANNED,
-            'type' => InterventionType::VISITE,
+            'status' => $status,
+            'type' => $type,
         ]);
 
         /** @var UserRepository $userRepository */

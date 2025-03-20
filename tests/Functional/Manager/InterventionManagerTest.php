@@ -18,6 +18,7 @@ use Doctrine\Persistence\ManagerRegistry;
 use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use Symfony\Bundle\SecurityBundle\Security;
+use Symfony\Component\HtmlSanitizer\HtmlSanitizerInterface;
 use Symfony\Component\Workflow\WorkflowInterface;
 
 class InterventionManagerTest extends KernelTestCase
@@ -32,6 +33,7 @@ class InterventionManagerTest extends KernelTestCase
     private FileFactory $fileFactory;
     private Security $security;
     private LoggerInterface $logger;
+    private HtmlSanitizerInterface $htmlSanitizer;
 
     private ?InterventionManager $interventionManager = null;
 
@@ -51,6 +53,7 @@ class InterventionManagerTest extends KernelTestCase
         $this->managerRegistry = static::getContainer()->get(ManagerRegistry::class);
         $this->signalementRepository = static::getContainer()->get(SignalementRepository::class);
         $this->logger = static::getContainer()->get(LoggerInterface::class);
+        $this->htmlSanitizer = self::getContainer()->get('html_sanitizer.sanitizer.app.message_sanitizer');
 
         $this->interventionManager = new InterventionManager(
             $this->managerRegistry,
@@ -61,7 +64,8 @@ class InterventionManagerTest extends KernelTestCase
             $this->signalementQualificationUpdater,
             $this->fileFactory,
             $this->security,
-            $this->logger
+            $this->logger,
+            $this->htmlSanitizer,
         );
     }
 

@@ -5,8 +5,8 @@ namespace App\Controller\Api;
 use App\Dto\Api\Request\ArreteRequest;
 use App\Dto\Api\Response\ArreteResponse;
 use App\Entity\Affectation;
-use App\Entity\Enum\InterventionType;
 use App\Entity\Enum\ProcedureType;
+use App\Entity\Enum\Qualification;
 use App\Entity\Signalement;
 use App\Entity\User;
 use App\Event\InterventionCreatedEvent;
@@ -16,8 +16,10 @@ use App\Service\Signalement\Qualification\SignalementQualificationUpdater;
 use Nelmio\ApiDocBundle\Attribute\Model;
 use OpenApi\Attributes as OA;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\DependencyInjection\Attribute\When;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use Symfony\Component\HtmlSanitizer\HtmlSanitizerInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Attribute\MapRequestPayload;
@@ -35,6 +37,8 @@ class ArreteCreateController extends AbstractController
         private readonly EventDispatcherInterface $eventDispatcher,
         private readonly InterventionManager $interventionManager,
         private readonly SignalementQualificationUpdater $signalementQualificationUpdater,
+        #[Autowire(service: 'html_sanitizer.sanitizer.app.message_sanitizer')]
+        private readonly HtmlSanitizerInterface $htmlSanitizer,
     ) {
     }
 
@@ -180,15 +184,16 @@ class ArreteCreateController extends AbstractController
         if (count($errors) > 0) {
             throw new ValidationFailedException($arreteRequest, $errors);
         }
-        $intervention = null;
-        if (!$this->hasArreteForSignalement($signalement, $arreteRequest, $intervention)) {
-            $intervention = $this->interventionManager->createArreteFromRequest($arreteRequest, $affectation);
+        $isNew = false;
+        $intervention = $this->interventionManager->createArreteFromRequest($arreteRequest, $affectation, $isNew);
+        if ($isNew) {
             $signalement->addIntervention($intervention);
-
-            $this->signalementQualificationUpdater->updateQualificationFromVisiteProcedureList(
-                $signalement,
-                [ProcedureType::INSALUBRITE]
-            );
+            if (!$signalement->hasQualificaton(Qualification::INSALUBRITE)) {
+                $this->signalementQualificationUpdater->updateQualificationFromVisiteProcedureList(
+                    $signalement,
+                    [ProcedureType::INSALUBRITE]
+                );
+            }
         }
         $interventionCreatedEvent = $this->eventDispatcher->dispatch(
             new InterventionCreatedEvent($intervention, $user),
@@ -207,19 +212,5 @@ class ArreteCreateController extends AbstractController
                 return $affectation->getPartner()->getNom() === $user->getPartnerInTerritory($signalement->getTerritory())->getNom();
             })
             ->first();
-    }
-
-    /**
-     * @throws \DateMalformedStringException
-     */
-    private function hasArreteForSignalement(Signalement $signalement, ArreteRequest $arreteRequest, &$intervention): bool
-    {
-        $intervention = $this->interventionManager->findOneBy([
-            'signalement' => $signalement,
-            'type' => InterventionType::ARRETE_PREFECTORAL->value,
-            'scheduledAt' => new \DateTimeImmutable($arreteRequest->date)]
-        );
-
-        return !(null === $intervention);
     }
 }

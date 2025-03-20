@@ -21,6 +21,8 @@ use App\Service\Signalement\Qualification\SignalementQualificationUpdater;
 use Doctrine\Persistence\ManagerRegistry;
 use Psr\Log\LoggerInterface;
 use Symfony\Bundle\SecurityBundle\Security;
+use Symfony\Component\DependencyInjection\Attribute\Autowire;
+use Symfony\Component\HtmlSanitizer\HtmlSanitizerInterface;
 use Symfony\Component\Workflow\WorkflowInterface;
 
 class InterventionManager extends AbstractManager
@@ -35,6 +37,8 @@ class InterventionManager extends AbstractManager
         private readonly FileFactory $fileFactory,
         private readonly Security $security,
         private readonly LoggerInterface $logger,
+        #[Autowire(service: 'html_sanitizer.sanitizer.app.message_sanitizer')]
+        private readonly HtmlSanitizerInterface $htmlSanitizer,
         string $entityName = Intervention::class,
     ) {
         parent::__construct($managerRegistry, $entityName);
@@ -212,15 +216,16 @@ class InterventionManager extends AbstractManager
     /**
      * @throws \DateMalformedStringException
      */
-    public function createArreteFromRequest(ArreteRequest $arreteRequest, Affectation $affectation): ?Intervention
+    public function createArreteFromRequest(ArreteRequest $arreteRequest, Affectation $affectation, bool &$isNew): ?Intervention
     {
         $description = InterventionDescriptionGenerator::buildDescriptionArreteCreatedFromRequest($arreteRequest);
         $intervention = $this->getRepository()->findOneBy([
             'signalement' => $affectation->getSignalement(),
             'type' => InterventionType::ARRETE_PREFECTORAL,
-            'details' => $description,
+            'details' => $this->htmlSanitizer->sanitize($description),
         ]);
         if (null === $intervention) {
+            $isNew = true;
             $additionalInformation = [
                 'arrete_numero' => $arreteRequest->numero,
                 'arrete_type' => $arreteRequest->type,
