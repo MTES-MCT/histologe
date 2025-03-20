@@ -35,11 +35,34 @@ class SignalementDraftDesordresType extends AbstractType
         $desordreCriteres = $this->desordreCritereRepository->findAll();
         $groupedCriteria = [];
 
+        // Récupérer les précisions sélectionnées
+        $signalementPrecisions = $signalement ? $signalement->getDesordrePrecisions()->toArray() : [];
         foreach ($desordreCriteres as $critere) {
             $zone = $critere->getZoneCategorie()->value;
             $labelCategorie = $critere->getLabelCategorie();
 
             $groupedCriteria[$zone][$labelCategorie][] = $critere;
+
+            if ($critere->getDesordrePrecisions()->count() > 1) {
+                $choices = $this->getPrecisionsChoices($critere);
+                // Vérifier les précisions déjà sélectionnées
+                $selectedValues = [];
+                foreach ($signalementPrecisions as $selectedPrecision) {
+                    if ($selectedPrecision->getDesordreCritere() === $critere) {
+                        $selectedValues[] = $selectedPrecision; // Ajouter les précisions déjà sélectionnées
+                    }
+                }
+                // TODO : si besoin de préciser via champ texte (autre type de nuisible)
+                $builder->add('precisions_'.$critere->getId(), ChoiceType::class, [
+                    'label' => $critere->getLabelCritere(),
+                    'choices' => $choices,
+                    'expanded' => true,
+                    'multiple' => true,
+                    'required' => false,
+                    'mapped' => false,
+                    'data' => $selectedValues,
+                ]);
+            }
         }
 
         $builder
@@ -51,6 +74,10 @@ class SignalementDraftDesordresType extends AbstractType
                 'data' => $details,
             ]);
 
+        // Récupérer les critères sélectionnés
+        $signalementCriteres = $signalement ? $signalement->getDesordreCriteres()->toArray() : [];
+        // Récupérer les critères sélectionnés sous forme d'un tableau d'ID
+        $selectedCriteriaIds = array_map(fn($critere) => $critere->getId(), $signalementCriteres);
         foreach ($groupedCriteria as $zone => $categories) {
             foreach ($categories as $labelCategorie => $criteres) {
                 $firstCritereId = $criteres[0]->getId();
@@ -71,27 +98,9 @@ class SignalementDraftDesordresType extends AbstractType
                     'nochoiceslabel' => 'Aucun critère disponible',
                     'mapped' => false,
                     'required' => false,
+                    'data' => $criteres ? array_filter($criteres, fn($critere) => in_array($critere->getId(), $selectedCriteriaIds)) : [],
                 ]);
-            }
-        }
 
-        // Récupérer les critères sélectionnés
-        $signalementCriteres = $signalement ? $signalement->getDesordreCriteres() : [];
-
-        // TODO : vérifier l'ajout des précisions à la volée lors du choix d'un critère
-        foreach ($signalementCriteres as $signalementCritere) {
-            if ($signalementCritere->getDesordrePrecisions()->count() > 1) {
-                // TODO : est-ce qu'on met toutes les précisions sous forme de case à cocher ou on essaie de se rapprocher de ce qu'a fait MAthilde ? --> Mathilde OK pour cases à cocher
-                // TODO : gérer le <span>
-                // TODO : si besoin de préciser via champ texte (autre type de nuisible)
-                $builder->add('precisions_'.$signalementCritere->getId(), ChoiceType::class, [
-                    'label' => $signalementCritere->getLabelCritere(),
-                    'choices' => $this->getPrecisionsChoices($signalementCritere),
-                    'expanded' => true,
-                    'multiple' => true,
-                    'required' => false,
-                    'mapped' => false,
-                ]);
             }
         }
 

@@ -10,44 +10,6 @@
 {{ form_start(formDesordres, {'attr': {'id': 'bo-form-signalement-desordres'}}) }}
 {{ form_errors(formDesordres) }}
 
-{% set desordres_logement = [] %}
-{% set desordres_batiment = [] %}
-
-{% for field in formDesordres %}
-    {% if field.vars.name starts with 'desordres_LOGEMENT' and not field.rendered %}
-        {% set desordres_logement = desordres_logement|merge([field]) %}
-    {% elseif field.vars.name starts with 'desordres_BATIMENT' and not field.rendered %}
-        {% set desordres_batiment = desordres_batiment|merge([field]) %}
-    {% endif %}
-    {% if field.vars.name starts with 'precisions_' and not field.rendered %}
-        <dialog aria-labelledby="fr-modal-title-{{ field.vars.id }}" id="modal-precisions-{{ field.vars.id }}" class="fr-modal">
-            <div class="fr-container fr-container--fluid fr-container-md">
-                <div class="fr-grid-row fr-grid-row--center">
-                    <div class="fr-col-12 fr-col-md-8 fr-col-lg-6">
-                        <div class="fr-modal__body">
-                            <div class="fr-modal__header">
-                                <button class="fr-btn--close fr-btn" title="Fermer la fenêtre modale" aria-controls="modal-precisions-{{ field.vars.id }}">Fermer</button>
-                            </div>
-                            <div class="fr-modal__content">
-                                <h1 id="fr-modal-title-{{ field.vars.id }}" class="fr-modal__title">Editer les détails du désordre : {{ field.vars.label }}</h1>
-                                <p>Renseignez les détails du désordre</p>
-                                {{ form_widget(field) }} 
-                            </div>
-                            <div class="fr-modal__footer">
-                                <div class="fr-btns-group fr-btns-group--right fr-btns-group--inline-reverse fr-btns-group--inline-lg fr-btns-group--icon-left">
-                                    {# <button class="fr-btn fr-icon-check-line" form="bo-form-signalement-desordres" type="submit">Valider</button> #}
-                                    <button class="fr-btn fr-icon-check-line" type="button" aria-controls="modal-precisions-{{ field.vars.id }}">Valider</button>
-                                    <button class="fr-btn fr-btn--secondary fr-icon-close-line" type="button" aria-controls="modal-precisions-{{ field.vars.id }}">Annuler</button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </dialog>
-    {% endif %}
-{% endfor %}
-
 <div class="fr-grid-row fr-grid-row--gutters fr-mt-3v">
     <div class="fr-col-12">
         <fieldset class="fr-fieldset">
@@ -62,7 +24,7 @@
         <span>Désordres déclarés dans le logement</span>
         <span class="fr-hint-text">Sélectionnez au moins 1 désordre dans la liste</span>
         <button class="fr-btn fr-btn--icon-left fr-icon-add-line"
-            title="Sélectionner les désordres"
+            title="Sélectionner les désordres" type="button"
             data-fr-opened="false" aria-controls="fr-modal-desordres-logement-add"
             >
             Sélectionner les désordres
@@ -73,15 +35,18 @@
         <span>Désordres déclarés dans le bâtiment</span>
         <span class="fr-hint-text">Sélectionnez au moins 1 désordre dans la liste</span>
         <button class="fr-btn fr-btn--icon-left fr-icon-add-line"
-            title="Sélectionner les désordres"
+            title="Sélectionner les désordres" type="button"
             data-fr-opened="false" aria-controls="fr-modal-desordres-batiment-add"
             >
             Sélectionner les désordres
         </button>
     </div>
 
-    {{ _self.display_criteres('LOGEMENT', criteresByZone['LOGEMENT']) }}
-    {{ _self.display_criteres('BATIMENT', criteresByZone['BATIMENT']) }}
+    <div class="fr-grid-row fr-grid-row--gutters fr-mt-3v">
+        {{ _self.display_criteres('LOGEMENT', criteresByZone['LOGEMENT']) }}
+        {{ _self.display_criteres('BATIMENT', criteresByZone['BATIMENT']) }}
+    </div>
+
 
     <div class="fr-col-6">
         <div class="fr-grid-row fr-grid-row--left">
@@ -97,46 +62,63 @@
     </div>
 
 </div>
-{% macro display_criteres(zone, criteres) %}
-    {% if criteres|length > 0 %}
-        <div class="fr-col-6">
-            <h3 class="fr-h5">Désordres sélectionnés</h3>
-            {% for critere in criteres %}
-                <div>
-                    {# TODO : changer la couleur de la bordure et mettre un warning, si précision pas choisie alors que devrait #}
-                    <div class="fr-grid-row fr-p-3v fr-mb-3v fr-grid-row--top fr-border--grey">
-                        <div class="fr-col-12 fr-col-md-8">
-                            {{ critere['desordreCritere'].labelCritere }}
-                        </div>
-                        <div class="fr-col-12 fr-col-md-4 fr-text--right">
-                            {% if critere['desordrePrecisionsLinked'] and critere['desordrePrecisionsLinked']|length > 1 %}
-                                <a href="#" aria-controls="modal-precisions-signalement_draft_desordres_precisions_{{ critere['desordreCritere'].id }}" data-fr-opened="false" 
-                                class="fr-a-edit fr-btn--icon-left fr-icon-edit-line edit-precisions-btn" 
-                                title="Editer les détails" data-fr-js-modal-button="true">
-                                    Editer les détails
-                                </a>                                
-                            {% endif %}
-                        </div>
-                        <div class="fr-col-12">
-                            {% if critere['desordrePrecisionsSelected'] %}
-                                <ul class="fr-list fr-list--none">   
-                                {% for desordrePrecision in critere['desordrePrecisionsSelected'] %}
-                                    <li>
-                                        {{ desordrePrecision.label|raw }}
-                                    </li>                                    
-                                {% endfor %}    
-                                </ul>                       
-                            {% endif %}
+
+{% set desordres_logement = [] %}
+{% set desordres_batiment = [] %}
+
+{% for field in formDesordres %}
+    {% if field.vars.name starts with 'desordres_LOGEMENT' and not field.rendered %}
+        {% set desordres_logement = desordres_logement|merge([field]) %}
+    {% elseif field.vars.name starts with 'desordres_BATIMENT' and not field.rendered %}
+        {% set desordres_batiment = desordres_batiment|merge([field]) %}
+    {% endif %}
+    {% if field.vars.name starts with 'precisions_' and not field.rendered %}
+        {% set critereId = field.vars.id|replace({'signalement_draft_desordres_precisions_': ''}) %}
+        <dialog aria-labelledby="fr-modal-title-{{ critereId }}" id="modal-precisions-{{ field.vars.id }}" class="fr-modal" data-critereId={{ critereId }}>
+            <div class="fr-container fr-container--fluid fr-container-md">
+                <div class="fr-grid-row fr-grid-row--center">
+                    <div class="fr-col-12 fr-col-md-8 fr-col-lg-6">
+                        <div class="fr-modal__body">
+                            <div class="fr-modal__header">
+                                <button class="fr-btn--close fr-btn" title="Fermer la fenêtre modale" aria-controls="modal-precisions-{{ critereId }}">Fermer</button>
+                            </div>
+                            <div class="fr-modal__content">
+                                <h1 id="fr-modal-title-{{ field.vars.id }}" class="fr-modal__title">Editer les détails du désordre : {{ field.vars.label }}</h1>
+                                <p>Renseignez les détails du désordre</p>
+                                {% for child in field %}
+                                    <fieldset class="fr-fieldset">
+                                        <div class="fr-fieldset__element">
+                                            <div class="fr-checkbox-group">
+                                                {{ form_widget(child) }}
+                                                <label class="fr-label" for="{{ child.vars.id }}">{{ child.vars.label|raw }}</label>
+                                            </div>
+                                        </div>
+                                    </fieldset>
+                                {% endfor %}
+
+                            </div>
+                            <div class="fr-modal__footer">
+                                <div class="fr-btns-group fr-btns-group--right fr-btns-group--inline-reverse fr-btns-group--inline-lg fr-btns-group--icon-left">
+                                    <button class="fr-btn fr-icon-check-line valid-edit-precisions" type="button" aria-controls="modal-precisions-{{ field.vars.id }}">Valider</button>
+                                    <button class="fr-btn fr-btn--secondary fr-icon-close-line" type="button" aria-controls="modal-precisions-{{ field.vars.id }}">Annuler</button>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
-            {% endfor %}
-        </div>
+            </div>
+        </dialog>
     {% endif %}
+{% endfor %}
+{% macro display_criteres(zone, criteres) %}
+    <div class="fr-col-6 fr-hidden" id="list-critere-{{zone}}">
+        <h3 class="fr-h5">Désordres sélectionnés</h3>
+        {# Le reste est ajouté en js  #}
+    </div>
 {% endmacro %}
 
-{% macro modal_add_criteres(id, title, desordres) %}
-    <dialog aria-labelledby="fr-modal-title-{{ id }}" id="fr-modal-{{ id }}" class="fr-modal">
+{% macro modal_add_criteres(id, title, desordres, zone) %}
+    <dialog aria-labelledby="fr-modal-title-{{ id }}" id="fr-modal-{{ id }}" class="fr-modal" data-zone={{ zone }}>
         <div class="fr-container fr-container--fluid fr-container-md">
             <div class="fr-grid-row fr-grid-row--center">
                 <div class="fr-col-12 fr-col-md-8 fr-col-lg-6">
@@ -153,8 +135,7 @@
                         </div>
                         <div class="fr-modal__footer">
                             <div class="fr-btns-group fr-btns-group--right fr-btns-group--inline-reverse fr-btns-group--inline-lg fr-btns-group--icon-left">
-                                {# <button class="fr-btn fr-icon-check-line" form="bo-form-signalement-desordres" type="submit">Valider</button> #}
-                                <button class="fr-btn fr-icon-check-line" type="button" aria-controls="fr-modal-{{ id }}">Valider</button>
+                                <button class="fr-btn fr-icon-check-line valid-add-critere" type="button" aria-controls="fr-modal-{{ id }}">Valider</button>
                                 <button class="fr-btn fr-btn--secondary fr-icon-close-line" type="button" aria-controls="fr-modal-{{ id }}">Annuler</button>
                             </div>
                         </div>
@@ -165,8 +146,8 @@
     </dialog>
 {% endmacro %}
 
-{{ _self.modal_add_criteres('desordres-batiment-add', 'Désordres dans le bâtiment', desordres_batiment) }}
-{{ _self.modal_add_criteres('desordres-logement-add', 'Désordres dans le logement', desordres_logement) }}
+{{ _self.modal_add_criteres('desordres-batiment-add', 'Désordres dans le bâtiment', desordres_batiment, 'BATIMENT') }}
+{{ _self.modal_add_criteres('desordres-logement-add', 'Désordres dans le logement', desordres_logement, 'LOGEMENT') }}
 
 
 {{ form_end(formDesordres) }}
