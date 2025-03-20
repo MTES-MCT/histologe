@@ -3,6 +3,15 @@ import { attacheAutocompleteAddressEvent } from '../../services/component_search
 let boFormSignalementCurrentTabIsDirty = false
 let boFormSignalementTargetTab = ''
 
+const modaleDuplicateIgnoreButton = document.querySelector('#fr-modal-duplicate-ignore-duplicates')
+if(modaleDuplicateIgnoreButton) {
+  modaleDuplicateIgnoreButton?.addEventListener('click', (event) => {
+    const inputForceSave = document?.querySelector('#signalement_draft_address_forceSave')
+    inputForceSave.value = 1
+    saveCurrentTab(event)
+  });
+}
+
 const tabButtons = document?.querySelectorAll('ul.fr-tabs__list.fr-tabs__list--bo-create button')
 tabButtons.forEach((tabButton) => {
   tabButton.addEventListener('click', (event) => {
@@ -184,10 +193,7 @@ if (document?.querySelector('#bo-form-signalement-situation')) {
 
 function initBoFormSignalementAdresse() {
   const inputAdresse = document?.querySelector('#signalement_draft_address_adresseCompleteOccupant')
-  const inputForceSave = document?.querySelector('#signalement_draft_address_forceSave')
   attacheAutocompleteAddressEvent(inputAdresse)
-
-  const modaleDuplicateIgnoreButton = document.querySelector('#fr-modal-duplicate-ignore-duplicates')
 
   const manualAddressSwitcher = document?.querySelector('#bo-signalement-manual-address-switcher')
   const manualAddressContainer = document?.querySelector('#bo-form-signalement-manual-address-container')
@@ -215,11 +221,6 @@ function initBoFormSignalementAdresse() {
   if(inputAdresse.value == '' && hasManualAddressValues) {
     manualAddressSwitcher.click()
   }
-
-  modaleDuplicateIgnoreButton?.addEventListener('click', (event) => {
-    inputForceSave.value = 1
-    document.querySelector('#signalement_draft_address_save').click()
-  });
 }
 
 function initBoFormSignalementLogement() {
