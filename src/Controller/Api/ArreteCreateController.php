@@ -5,6 +5,7 @@ namespace App\Controller\Api;
 use App\Dto\Api\Request\ArreteRequest;
 use App\Dto\Api\Response\ArreteResponse;
 use App\Entity\Affectation;
+use App\Entity\Enum\InterventionType;
 use App\Entity\Enum\ProcedureType;
 use App\Entity\Signalement;
 use App\Entity\User;
@@ -179,12 +180,16 @@ class ArreteCreateController extends AbstractController
         if (count($errors) > 0) {
             throw new ValidationFailedException($arreteRequest, $errors);
         }
+        $intervention = null;
+        if (!$this->hasArreteForSignalement($signalement, $arreteRequest, $intervention)) {
+            $intervention = $this->interventionManager->createArreteFromRequest($arreteRequest, $affectation);
+            $signalement->addIntervention($intervention);
 
-        $intervention = $this->interventionManager->createArreteFromRequest($arreteRequest, $affectation);
-        $this->signalementQualificationUpdater->updateQualificationFromVisiteProcedureList(
-            $signalement,
-            [ProcedureType::INSALUBRITE]
-        );
+            $this->signalementQualificationUpdater->updateQualificationFromVisiteProcedureList(
+                $signalement,
+                [ProcedureType::INSALUBRITE]
+            );
+        }
         $interventionCreatedEvent = $this->eventDispatcher->dispatch(
             new InterventionCreatedEvent($intervention, $user),
             InterventionCreatedEvent::NAME
@@ -202,5 +207,19 @@ class ArreteCreateController extends AbstractController
                 return $affectation->getPartner()->getNom() === $user->getPartnerInTerritory($signalement->getTerritory())->getNom();
             })
             ->first();
+    }
+
+    /**
+     * @throws \DateMalformedStringException
+     */
+    private function hasArreteForSignalement(Signalement $signalement, ArreteRequest $arreteRequest, &$intervention): bool
+    {
+        $intervention = $this->interventionManager->findOneBy([
+            'signalement' => $signalement,
+            'type' => InterventionType::ARRETE_PREFECTORAL->value,
+            'scheduledAt' => new \DateTimeImmutable($arreteRequest->date)]
+        );
+
+        return !(null === $intervention);
     }
 }

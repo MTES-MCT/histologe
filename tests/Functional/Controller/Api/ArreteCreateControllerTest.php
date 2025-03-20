@@ -26,7 +26,7 @@ class ArreteCreateControllerTest extends WebTestCase
     }
 
     /** @dataProvider providePayloadSuccess */
-    public function testCreateArreteWithMainLevee(string $type, array $payload): void
+    public function testCreateArreteSuccess(string $type, array $payload): void
     {
         $this->client->request(
             method: 'POST',
@@ -46,7 +46,7 @@ class ArreteCreateControllerTest extends WebTestCase
             }
             $this->assertStringContainsString($value, $lastDescription);
         }
-
+        $this->assertEmailCount(1);
         $this->assertEquals(201, $this->client->getResponse()->getStatusCode());
     }
 
