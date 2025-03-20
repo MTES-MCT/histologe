@@ -69,7 +69,7 @@ class User implements UserInterface, EntityHistoryInterface, PasswordAuthenticat
     #[ORM\Column(type: Types::GUID)]
     private $uuid;
 
-    #[ORM\Column(type: 'string', length: 180, unique: false)]
+    #[ORM\Column(type: 'string', length: 180, unique: true)]
     #[Email(mode: Email::VALIDATION_MODE_STRICT, groups: ['registration'])]
     #[Assert\NotBlank(message: 'Merci de saisir une adresse e-mail.')]
     #[Assert\Length(max: 255, groups: ['user_partner', 'Default'])]
