@@ -16,10 +16,8 @@ use App\Service\Signalement\Qualification\SignalementQualificationUpdater;
 use Nelmio\ApiDocBundle\Attribute\Model;
 use OpenApi\Attributes as OA;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\DependencyInjection\Attribute\When;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
-use Symfony\Component\HtmlSanitizer\HtmlSanitizerInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Attribute\MapRequestPayload;
@@ -37,8 +35,6 @@ class ArreteCreateController extends AbstractController
         private readonly EventDispatcherInterface $eventDispatcher,
         private readonly InterventionManager $interventionManager,
         private readonly SignalementQualificationUpdater $signalementQualificationUpdater,
-        #[Autowire(service: 'html_sanitizer.sanitizer.app.message_sanitizer')]
-        private readonly HtmlSanitizerInterface $htmlSanitizer,
     ) {
     }
 
