@@ -1,4 +1,6 @@
 FROM php:8.3-fpm
+
+# Mise à jour et installation des dépendances nécessaires
 RUN apt-get update && apt-get install -y --no-install-recommends \
         git \
         curl \
@@ -13,9 +15,11 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
         sqlite3 \
         libxslt1-dev \
         wkhtmltopdf \
+        # Installation de Yara
+        yara \
         && curl -fsSL https://deb.nodesource.com/setup_lts.x | bash \
         && apt-get install -y  nodejs \
-         # Install intl
+        # Install intl
         && docker-php-ext-configure intl \
         && docker-php-ext-install -j2 intl \
         # Install apcu
@@ -39,5 +43,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 RUN sed -E -i -e 's/memory_limit = 128M/memory_limit = 512M/' "$PHP_INI_DIR/php.ini" \
     && sed -E -i -e 's/post_max_size = 8M/post_max_size = 75M/' "$PHP_INI_DIR/php.ini" \
     && sed -E -i -e 's/upload_max_filesize = 2M/upload_max_filesize = 75M/' "$PHP_INI_DIR/php.ini"
+
+COPY ./yara_rules/PDF_Containing_JavaScript.yar /etc/yara/rules/
 
 WORKDIR /app/
