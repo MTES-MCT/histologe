@@ -39,6 +39,8 @@
             <div class="fr-fieldset__element">
                 {{ form_row(formCoordonnees.denominationProprio) }}
             </div>
+            <ul class="fr-grid-row fr-background-alt--blue-france fr-text-label--blue-france fr-autocomplete-list">
+            </ul>
             <div class="fr-fieldset__element">
                 {{ form_row(formCoordonnees.nomProprio) }}
             </div>
@@ -54,7 +56,7 @@
         </fieldset>
         <fieldset class="fr-fieldset">
             <legend>
-                <h2 class="fr-h4">Adresse postale</h2>
+                <h4 class="fr-h6">Adresse postale</h4>
             </legend>
             <div class="fr-fieldset__element">
                 {{ form_row(formCoordonnees.adresseCompleteProprio) }}
@@ -82,6 +84,33 @@
 
     <div class="fr-col-12 fr-col-md-6">
         <fieldset class="fr-fieldset">
+            <legend>
+                <h3 class="fr-h5">Tiers</h3>
+            </legend>
+            <div class="fr-fieldset__element">
+                {{ form_row(formCoordonnees.profileDeclarantTiers) }}
+            </div>
+            <div class="fr-fieldset__element">
+                {{ form_row(formCoordonnees.lienDeclarantOccupant) }}
+            </div>
+            <div class="fr-fieldset__element">
+                {{ form_row(formCoordonnees.isProTiersDeclarant) }}
+            </div>
+            <div class="fr-fieldset__element">
+                {{ form_row(formCoordonnees.structureDeclarant) }}
+            </div>
+            <div class="fr-fieldset__element">
+                {{ form_row(formCoordonnees.nomDeclarant) }}
+            </div>
+            <div class="fr-fieldset__element">
+                {{ form_row(formCoordonnees.prenomDeclarant) }}
+            </div>
+            <div class="fr-fieldset__element">
+                {{ form_row(formCoordonnees.mailDeclarant) }}
+            </div>
+            <div class="fr-fieldset__element">
+                {{ form_row(formCoordonnees.telDeclarant) }}
+            </div>
         </fieldset>
     </div>
 

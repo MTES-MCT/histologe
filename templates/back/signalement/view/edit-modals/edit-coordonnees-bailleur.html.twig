@@ -38,7 +38,7 @@
                                        value="{{ signalement.denominationProprio }}"
                                        maxlength="255"
                                        autocomplete="off"
-                                        {% if signalement.isLogementSocial  %}
+                                        {% if signalement.isLogementSocial %}
                                             data-autocomplete-bailleur-url="{{ path('app_bailleur', {'inseecode': signalement.inseeOccupant}) }}"
                                         {% endif %}
                                 >
