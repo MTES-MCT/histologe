@@ -13,6 +13,10 @@ class CoordonneesBailleurRequest implements RequestInterface
     use DateNaissanceValidatorTrait;
 
     public function __construct(
+        #[Assert\Choice(choices: ['ORGANISME_SOCIETE', 'PARTICULIER'], message: 'Le type de propriétaire est incorrect.')]
+        private readonly ?string $typeProprio = null,
+        #[Assert\Length(max: 255, maxMessage: 'La dénomination du bailleur ne doit pas dépasser {{ limit }} caractères.')]
+        private readonly ?string $denomination = null,
         #[Assert\NotBlank(
             message: 'Merci de saisir le nom du bailleur.',
             groups: ['LOCATAIRE', 'BAILLEUR_OCCUPANT', 'BAILLEUR', 'TIERS_PARTICULIER', 'TIERS_PRO'])]
@@ -56,6 +60,16 @@ class CoordonneesBailleurRequest implements RequestInterface
     public function validate(ExecutionContextInterface $context): void
     {
         $this->validateDateNaissance($this->dateNaissance, 'dateNaissance', $context);
+    }
+
+    public function getTypeProprio(): ?string
+    {
+        return $this->typeProprio;
+    }
+
+    public function getDenomination(): ?string
+    {
+        return $this->denomination;
     }
 
     public function getNom(): ?string

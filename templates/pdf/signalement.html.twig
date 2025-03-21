@@ -240,6 +240,9 @@
                         <h3 style="margin-bottom: 0">Informations sur le bailleur</h3>
                         <ul style="list-style:none; margin-left:0px;padding-left:0px;">
                             <li>
+                                {% if signalement.typeProprio is same as enum('App\\Entity\\Enum\\ProprioType').ORGANISME_SOCIETE %}
+                                <b>Dénomination :</b> {{ signalement.denominationProprio }}<br>
+                                {% endif %}
                                 <b>Nom :</b> {{ signalement.nomProprio ?? 'N/R' }}
                                 {% if signalement.prenomProprio %}
                                 - <b>Prénom :</b> {{ signalement.prenomProprio }}
