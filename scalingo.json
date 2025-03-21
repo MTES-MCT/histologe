@@ -16,6 +16,9 @@
     "CLAMAV_SCAN_ENABLE": {
       "description": "When set to false, this environment variable instructs the application to NOT check virus in files.",
       "value": "false"
+    },
+    "CRON_ENABLE": {
+      "value": "0"
     }
   }
 }
