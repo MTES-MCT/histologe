@@ -49,7 +49,7 @@ class SignalementAffectationHelper
         }
 
         $signalementStatus = null;
-        if (!empty($statusAffectation)) {
+        if (!empty($statusAffectation) || 0 === $statusAffectation) {
             $signalementStatus = AffectationStatus::tryFrom($statusAffectation)?->mapSignalementStatus();
         }
 
