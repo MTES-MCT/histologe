@@ -4,12 +4,14 @@ namespace App\Tests\Functional\Controller\Api;
 
 use App\Entity\User;
 use App\Repository\SignalementRepository;
+use App\Tests\ApiHelper;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\Routing\RouterInterface;
 
 class ArreteCreateControllerTest extends WebTestCase
 {
+    use ApiHelper;
     private KernelBrowser $client;
     private RouterInterface $router;
 
@@ -48,6 +50,7 @@ class ArreteCreateControllerTest extends WebTestCase
         }
         $this->assertEmailCount(1);
         $this->assertEquals(201, $this->client->getResponse()->getStatusCode());
+        $this->hasXrequestIdHeaderAndOneApiRequestLog($this->client);
     }
 
     /** @dataProvider providePayloadFailure */
@@ -63,6 +66,7 @@ class ArreteCreateControllerTest extends WebTestCase
         );
 
         $this->assertEquals(400, $this->client->getResponse()->getStatusCode());
+        $this->hasXrequestIdHeaderAndOneApiRequestLog($this->client);
     }
 
     public function providePayloadFailure(): \Generator

@@ -5,6 +5,7 @@ namespace App\Tests\Functional\Controller\Api;
 use App\Entity\Suivi;
 use App\Entity\User;
 use App\Repository\SignalementRepository;
+use App\Tests\ApiHelper;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\DomCrawler\Crawler;
@@ -12,6 +13,7 @@ use Symfony\Component\Routing\RouterInterface;
 
 class SuiviCreateControllerTest extends WebTestCase
 {
+    use ApiHelper;
     private KernelBrowser $client;
     private RouterInterface $router;
 
@@ -62,6 +64,7 @@ class SuiviCreateControllerTest extends WebTestCase
         } else {
             $this->assertEquals(404, $this->client->getResponse()->getStatusCode());
         }
+        $this->hasXrequestIdHeaderAndOneApiRequestLog($this->client);
     }
 
     public function provideData(): \Generator

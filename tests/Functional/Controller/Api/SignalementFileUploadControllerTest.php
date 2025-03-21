@@ -5,6 +5,7 @@ namespace App\Tests\Functional\Controller\Api;
 use App\Entity\User;
 use App\Service\ImageManipulationHandler;
 use App\Service\UploadHandlerService;
+use App\Tests\ApiHelper;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
@@ -13,6 +14,7 @@ use Symfony\Component\Routing\RouterInterface;
 
 class SignalementFileUploadControllerTest extends WebTestCase
 {
+    use ApiHelper;
     private KernelBrowser $client;
     private RouterInterface $router;
 
@@ -59,6 +61,7 @@ class SignalementFileUploadControllerTest extends WebTestCase
         $this->postRequest($uuid, [$imageFile, $documentFile]);
 
         $this->assertResponseStatusCodeSame(Response::HTTP_CREATED);
+        $this->hasXrequestIdHeaderAndOneApiRequestLog($this->client);
     }
 
     /**
@@ -68,6 +71,7 @@ class SignalementFileUploadControllerTest extends WebTestCase
     {
         $this->postRequest($uuid, []);
         $this->assertEquals($codeHttpStatus, $this->client->getResponse()->getStatusCode());
+        $this->hasXrequestIdHeaderAndOneApiRequestLog($this->client);
     }
 
     public function provideErrorInput(): \Generator

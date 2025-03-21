@@ -3,6 +3,7 @@
 namespace App\Tests\Functional\Controller;
 
 use App\Repository\UserRepository;
+use App\Tests\ApiHelper;
 use App\Tests\SessionHelper;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
@@ -10,6 +11,7 @@ use Symfony\Component\HttpFoundation\Response;
 
 class SecurityControllerTest extends WebTestCase
 {
+    use ApiHelper;
     use SessionHelper;
 
     /** @dataProvider provideJsonLogin  */
@@ -22,6 +24,7 @@ class SecurityControllerTest extends WebTestCase
         ];
         $client->request('POST', '/api/login', [], [], [], json_encode($payload));
         $this->assertResponseStatusCodeSame($status);
+        $this->hasXrequestIdHeaderAndOneApiRequestLog($client);
     }
 
     public function provideJsonLogin(): \Generator

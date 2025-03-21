@@ -5,12 +5,14 @@ namespace App\Tests\Functional\Controller\Api;
 use App\Entity\File;
 use App\Entity\User;
 use App\Repository\SignalementRepository;
+use App\Tests\ApiHelper;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\Routing\RouterInterface;
 
 class SignalementFileUpdateControllerTest extends WebTestCase
 {
+    use ApiHelper;
     private KernelBrowser $client;
     private RouterInterface $router;
 
@@ -46,6 +48,7 @@ class SignalementFileUpdateControllerTest extends WebTestCase
         $response = json_decode($this->client->getResponse()->getContent(), true);
         $this->assertResponseIsSuccessful();
         $this->assertEquals($payload['documentType'], $response['documentType']);
+        $this->hasXrequestIdHeaderAndOneApiRequestLog($this->client);
     }
 
     public function testUpdateSignalementFileWithFileTypeUpdated(): void
@@ -70,6 +73,7 @@ class SignalementFileUpdateControllerTest extends WebTestCase
         $this->assertResponseIsSuccessful();
         $this->assertNull($response['description']);
         $this->assertEquals('PROCEDURE_ARRETE_PREFECTORAL', $response['documentType']);
+        $this->hasXrequestIdHeaderAndOneApiRequestLog($this->client);
     }
 
     public function testUpdateSignalementFileWithFileNotFound(): void
@@ -85,5 +89,6 @@ class SignalementFileUpdateControllerTest extends WebTestCase
         );
 
         $this->assertEquals(404, $this->client->getResponse()->getStatusCode());
+        $this->hasXrequestIdHeaderAndOneApiRequestLog($this->client);
     }
 }

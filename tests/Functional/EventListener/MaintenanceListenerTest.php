@@ -13,6 +13,19 @@ class MaintenanceListenerTest extends WebTestCase
         self::ensureKernelShutdown();
     }
 
+    public function testMaintenanceForApiRoutes()
+    {
+        $client = static::createClient();
+        $_ENV['MAINTENANCE_ENABLE'] = '1';
+        /** @var UrlGeneratorInterface $generatorUrl */
+        $generatorUrl = static::getContainer()->get(UrlGeneratorInterface::class);
+        $client->request('POST', $generatorUrl->generate('api_login'));
+
+        $this->assertSame(503, $client->getResponse()->getStatusCode());
+        $response = json_decode($client->getResponse()->getContent(), true);
+        $this->assertSame('Maintenance en cours', $response['message']);
+    }
+
     /**
      * @dataProvider provideRoutes
      */

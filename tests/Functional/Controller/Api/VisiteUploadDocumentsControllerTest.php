@@ -7,6 +7,7 @@ use App\Entity\User;
 use App\Repository\SignalementRepository;
 use App\Service\ImageManipulationHandler;
 use App\Service\UploadHandlerService;
+use App\Tests\ApiHelper;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
@@ -15,6 +16,7 @@ use Symfony\Component\Routing\RouterInterface;
 
 class VisiteUploadDocumentsControllerTest extends WebTestCase
 {
+    use ApiHelper;
     private KernelBrowser $client;
     private RouterInterface $router;
 
@@ -70,6 +72,7 @@ class VisiteUploadDocumentsControllerTest extends WebTestCase
         );
 
         $this->assertCount(1, $files);
+        $this->hasXrequestIdHeaderAndOneApiRequestLog($this->client);
     }
 
     private function postRequest(string $uuid, array $files = [], ?string $typeDocumentVisite = null): false|string
