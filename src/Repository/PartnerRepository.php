@@ -142,6 +142,7 @@ class PartnerRepository extends ServiceEntityRepository
         $expr = $queryBuilder->expr();
         $queryBuilder
             ->where('p.email IS NULL') // Pas d'email générique
+            ->andWhere('p.isArchive = 0')
             ->andWhere(
                 $expr->orX(
                     'up.id IS NULL', // Aucun utilisateur lié
@@ -167,7 +168,6 @@ class PartnerRepository extends ServiceEntityRepository
                 ->andWhere('p.territory IN (:territories)')
                 ->setParameter('territories', $territories);
         }
-
         try {
             $count = $queryBuilder->getQuery()->getSingleScalarResult();
         } catch (NonUniqueResultException) {
