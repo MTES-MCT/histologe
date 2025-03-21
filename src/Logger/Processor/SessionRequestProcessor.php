@@ -35,11 +35,9 @@ readonly class SessionRequestProcessor implements ProcessorInterface
         }
 
         $sessionId = $session->isStarted() ? substr($session->getId(), 0, 8) : '????????';
-        $requestId = uniqid('', true); // à récupérer de la requête.
+        $requestId = uniqid('', true); // à récupérer depuis le header de la requête
         $user = $this->security->getUser();
         $userId = ($user instanceof User) ? $user->getId() : null;
-
-        $userId = null;
         if ($user instanceof User && $user->getId()) {
             $userId = $user->getId();
         }
