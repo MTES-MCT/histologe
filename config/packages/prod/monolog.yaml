@@ -11,6 +11,12 @@ monolog:
             path: php://stderr
             level: debug
             formatter: monolog.formatter.json
+        stdout:
+            type: stream
+            path: php://stdout
+            level: info
+            formatter: monolog.formatter.json
+            channels: [ "!event", "!doctrine", "!console" ]
         console:
             type: console
             process_psr_3_messages: false

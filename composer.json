@@ -151,6 +151,7 @@
             "require": "7.2.*"
         },
         "paas": {
+            "datadog": true,
             "compile": [
                 "npm run build"
             ],
