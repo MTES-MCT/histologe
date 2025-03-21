@@ -306,9 +306,18 @@ function initializeUploadModal (
 
   modal.addEventListener('dsfr.conceal', (e) => {
     if (modal.dataset.validated === 'true' && modal.dataset.hasChanges === 'true') {
+      if (btnValidate.getAttribute('data-context') === 'form-bo-create') {
+        document.querySelector('#bo-create-file-list').innerHTML = 'Sauvegarde des fichiers...'
+      }
+
       fetch(waitingSuiviRoute).then((response) => {
-        window.location.reload()
-        window.scrollTo(0, 0)
+        if (btnValidate.getAttribute('data-context') === 'form-bo-create') {
+          window.dispatchEvent(new Event('refreshUploadedFileList'))
+
+        } else {
+          window.location.reload()
+          window.scrollTo(0, 0)
+        }
       })
       return true
     }
@@ -319,16 +328,21 @@ function initializeUploadModal (
   })
 
   let fileType, fileFilter, documentType, interventionId, acceptedTypeMimes, acceptedExtensions
-  document.querySelectorAll('.open-modal-upload-files-btn').forEach((button) => {
-    button.addEventListener('click', (e) => {
-      fileType = e.target.dataset.fileType
-      fileFilter = e.target.dataset.fileFilter ?? null
-      documentType = e.target.dataset.documentType ?? null
-      interventionId = e.target.dataset.interventionId ?? null
-      acceptedTypeMimes = e.target.dataset.acceptedTypeMimes ?? null
-      acceptedExtensions = e.target.dataset.acceptedExtensions ?? null
+
+  window.addEventListener('refreshUploadButtonEvent', (e) => {
+    document.querySelectorAll('.open-modal-upload-files-btn').forEach((button) => {
+      button.addEventListener('click', (e) => {
+        fileType = e.target.dataset.fileType
+        fileFilter = e.target.dataset.fileFilter ?? null
+        documentType = e.target.dataset.documentType ?? null
+        interventionId = e.target.dataset.interventionId ?? null
+        acceptedTypeMimes = e.target.dataset.acceptedTypeMimes ?? null
+        acceptedExtensions = e.target.dataset.acceptedExtensions ?? null
+      })
     })
   })
+
+  window.dispatchEvent(new Event('refreshUploadButtonEvent'))
 
   modal.addEventListener('dsfr.disclose', (e) => {
     nbFilesProccessing = 0

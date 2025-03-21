@@ -10,6 +10,7 @@ use App\Form\SignalementDraftAddressType;
 use App\Form\SignalementDraftLogementType;
 use App\Form\SignalementDraftSituationType;
 use App\Manager\SignalementManager;
+use App\Repository\FileRepository;
 use App\Repository\SignalementRepository;
 use App\Service\ListFilters\SearchDraft;
 use App\Service\Signalement\SignalementBoManager;
@@ -125,6 +126,27 @@ class SignalementCreateController extends AbstractController
         ]);
     }
 
+    #[Route('/brouillon/{uuid:signalement}/liste-fichiers', name: 'back_signalement_create_file_list', methods: ['GET'])]
+    public function getSignalementFileList(
+        Signalement $signalement,
+        FileRepository $fileRepository,
+    ): JsonResponse {
+        $this->denyAccessUnlessGranted('SIGN_EDIT_DRAFT', $signalement);
+
+        $files = $fileRepository->findBy(['signalement' => $signalement]);
+
+        $jsonResult = [];
+        foreach ($files as $file) {
+            $jsonResult[] = [
+                'id' => $file->getId(),
+                'filename' => $file->getFilename(),
+                'type' => $file->getDocumentType()->label(),
+            ];
+        }
+
+        return $this->json($jsonResult);
+    }
+
     #[Route('/bo-form-address/{uuid:signalement}', name: 'back_signalement_draft_form_address_edit', methods: ['POST'])]
     public function editFormAddress(
         Signalement $signalement,
@@ -155,7 +177,8 @@ class SignalementCreateController extends AbstractController
         EntityManagerInterface $entityManager,
     ): JsonResponse {
         $entityManager->beginTransaction();
-        $action = $signalement->getId() ? $this->generateUrl('back_signalement_draft_form_address_edit', ['uuid' => $signalement->getUuid()]) : $this->generateUrl('back_signalement_draft_form_address');
+        $isCreation = empty($signalement->getId());
+        $action = $isCreation ? $this->generateUrl('back_signalement_draft_form_address') : $this->generateUrl('back_signalement_draft_form_address_edit', ['uuid' => $signalement->getUuid()]);
         $form = $this->createForm(SignalementDraftAddressType::class, $signalement, ['action' => $action]);
         $form->handleRequest($request);
         $hasDuplicates = false;
@@ -177,12 +200,15 @@ class SignalementCreateController extends AbstractController
                     $this->addFlash('success', 'Le brouillon est bien enregistré, n\'oubliez pas de le terminer !');
                     $url = $this->generateUrl('back_signalement_drafts', [], UrlGeneratorInterface::ABSOLUTE_URL);
                 } else {
-                    $url = $this->generateUrl('back_signalement_edit_draft', ['uuid' => $signalement->getUuid(), '_fragment' => 'logement'], UrlGeneratorInterface::ABSOLUTE_URL);
+                    $url = $isCreation ? $this->generateUrl('back_signalement_edit_draft', ['uuid' => $signalement->getUuid(), '_fragment' => 'logement'], UrlGeneratorInterface::ABSOLUTE_URL) : '';
                 }
 
-                return $this->json(['redirect' => true, 'url' => $url]);
+                $tabContent = $this->renderView('back/signalement_create/tabs/tab-adresse.html.twig', ['form' => $form]);
+
+                return $this->json(['redirect' => true, 'url' => $url, 'tabContent' => $tabContent]);
             }
         }
+
         $tabContent = $this->renderView('back/signalement_create/tabs/tab-adresse.html.twig', ['form' => $form]);
 
         return $this->json(['tabContent' => $tabContent, 'hasDuplicates' => $hasDuplicates, 'duplicateContent' => $duplicateContent, 'linkDuplicates' => $linkDuplicates]);
@@ -207,11 +233,14 @@ class SignalementCreateController extends AbstractController
                 $this->addFlash('success', 'Le brouillon est bien enregistré, n\'oubliez pas de le terminer !');
                 $url = $this->generateUrl('back_signalement_drafts', [], UrlGeneratorInterface::ABSOLUTE_URL);
             } else {
-                $url = $this->generateUrl('back_signalement_edit_draft', ['uuid' => $signalement->getUuid(), '_fragment' => 'situation'], UrlGeneratorInterface::ABSOLUTE_URL);
+                $url = '';
             }
 
-            return $this->json(['redirect' => true, 'url' => $url]);
+            $tabContent = $this->renderView('back/signalement_create/tabs/tab-logement.html.twig', ['formLogement' => $form]);
+
+            return $this->json(['redirect' => true, 'tabContent' => $tabContent, 'url' => $url]);
         }
+
         $tabContent = $this->renderView('back/signalement_create/tabs/tab-logement.html.twig', ['formLogement' => $form]);
 
         return $this->json(['tabContent' => $tabContent]);
@@ -236,12 +265,15 @@ class SignalementCreateController extends AbstractController
                 $this->addFlash('success', 'Le brouillon est bien enregistré, n\'oubliez pas de le terminer !');
                 $url = $this->generateUrl('back_signalement_drafts', [], UrlGeneratorInterface::ABSOLUTE_URL);
             } else {
-                $url = $this->generateUrl('back_signalement_edit_draft', ['uuid' => $signalement->getUuid(), '_fragment' => 'coordonnees'], UrlGeneratorInterface::ABSOLUTE_URL);
+                $url = '';
             }
 
-            return $this->json(['redirect' => true, 'url' => $url]);
+            $tabContent = $this->renderView('back/signalement_create/tabs/tab-situation.html.twig', ['formSituation' => $form, 'signalement' => $signalement]);
+
+            return $this->json(['redirect' => true, 'tabContent' => $tabContent, 'url' => $url]);
         }
-        $tabContent = $this->renderView('back/signalement_create/tabs/tab-situation.html.twig', ['formSituation' => $form]);
+
+        $tabContent = $this->renderView('back/signalement_create/tabs/tab-situation.html.twig', ['formSituation' => $form, 'signalement' => $signalement]);
 
         return $this->json(['tabContent' => $tabContent]);
     }

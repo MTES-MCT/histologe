@@ -66,7 +66,7 @@ class SignalementFileController extends AbstractController
             if ($request->isXmlHttpRequest()) {
                 return $this->json(['response' => 'Token CSRF invalide ou paramètre manquant, veuillez rechargez la page'], Response::HTTP_BAD_REQUEST);
             }
-            $this->addFlash('error', 'Token CSRF invalide ou paramètre manquant, veuillez rechargez la page');
+            $this->addFlash('error', 'Token CSRF invalide ou paramètre manquant, veuillez recharger la page');
 
             return $this->redirect($this->generateUrl('back_signalement_view', ['uuid' => $signalement->getUuid()]));
         }
@@ -144,7 +144,9 @@ class SignalementFileController extends AbstractController
 
         $entityManager->flush();
 
-        $this->addFlash('success', 'Les documents ont bien été ajoutés.');
+        if (SignalementStatus::DRAFT !== $signalement->getStatut()) {
+            $this->addFlash('success', 'Les documents ont bien été ajoutés.');
+        }
 
         return $this->json(['success' => true]);
     }
@@ -158,7 +160,6 @@ class SignalementFileController extends AbstractController
         Request $request,
         FileRepository $fileRepository,
         UploadHandlerService $uploadHandlerService,
-        EntityManagerInterface $entityManager,
         SuiviManager $suiviManager,
     ): Response {
         $fileId = $request->get('file_id');
@@ -189,20 +190,23 @@ class SignalementFileController extends AbstractController
                         type: Suivi::TYPE_AUTO,
                     );
                 }
-                if (File::FILE_TYPE_DOCUMENT === $type) {
-                    $this->addFlash('success', 'Le document a bien été supprimé.');
-                } else {
-                    $this->addFlash('success', 'La photo a bien été supprimée.');
+
+                if ('1' !== $request->get('is_draft')) {
+                    if (File::FILE_TYPE_DOCUMENT === $type) {
+                        $this->addFlash('success', 'Le document a bien été supprimé.');
+                    } else {
+                        $this->addFlash('success', 'La photo a bien été supprimée.');
+                    }
                 }
             } else {
                 $this->addFlash('error', 'Le fichier n\'a pas été supprimé.');
             }
         } else {
-            $this->addFlash('error', 'Token CSRF invalide, veuillez rechargez la page');
+            $this->addFlash('error', 'Token CSRF invalide, veuillez recharger la page');
         }
 
         if ('1' === $request->get('is_draft')) {
-            return $this->redirect($this->generateUrl('back_signalement_edit_draft', ['uuid' => $signalement->getUuid()]));
+            return $this->json(['success' => true]);
         }
 
         return $this->redirect($this->generateUrl('back_signalement_view', ['uuid' => $signalement->getUuid()]));

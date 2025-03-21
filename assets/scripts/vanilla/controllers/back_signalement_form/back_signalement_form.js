@@ -1,44 +1,131 @@
 import { attacheAutocompleteAddressEvent } from '../../services/component_search_address'
 
-function initBoFormSignalementSubmit(tabName) {
-  const boFormSignalement = document?.querySelector('#bo-form-signalement-' + tabName)
+let boFormSignalementCurrentTabIsDirty = false
+let boFormSignalementTargetTab = ''
 
-  boFormSignalement.addEventListener('submit', async (event) => {
-    event.preventDefault()
-    const formData = new FormData(event.target)
-    const submitButton = event.submitter;
-    formData.append(submitButton.name, submitButton.value);
+const modaleDuplicateIgnoreButton = document.querySelector('#fr-modal-duplicate-ignore-duplicates')
+if(modaleDuplicateIgnoreButton) {
+  modaleDuplicateIgnoreButton?.addEventListener('click', (event) => {
+    const inputForceSave = document?.querySelector('#signalement_draft_address_forceSave')
+    inputForceSave.value = 1
+    saveCurrentTab(event)
+  });
+}
 
-    fetch(event.target.action, {method: 'POST', body: formData}).then(response => {
-      if (response.ok) {
-        response.json().then((response) => {
-          if (response.redirect) {
-            const currentUrl = window.location.href.split('#')[0];
-            const newUrl = response.url.split('#')[0];
-            window.location.href = response.url;
-            if (currentUrl === newUrl) {
-              window.location.reload(true);
-            }
+const tabButtons = document?.querySelectorAll('ul.fr-tabs__list.fr-tabs__list--bo-create button')
+tabButtons.forEach((tabButton) => {
+  tabButton.addEventListener('click', (event) => {
+    if (boFormSignalementCurrentTabIsDirty) {
+      event.stopImmediatePropagation()
+      boFormSignalementTargetTab = event.target.id.substring(9)
+      saveCurrentTab(event)
+    }
+  })
+})
+
+function saveCurrentTab(event) {
+  const currentTab = document?.querySelector('.fr-tabs__panel.fr-tabs__panel--selected')
+  currentTab.classList.add('fr-tabs__panel--saving')
+  const currentTabName = currentTab.id.substring(9, currentTab.id.length - 6)
+
+  let formData = null
+  let formAction = null
+  if (event.type === 'submit') {
+    formData = new FormData(event.target)
+    formData.append(event.submitter.name, event.submitter.value)
+    formAction = event.target.action
+  }
+  if (event.type === 'click') {
+    const currentTabForm = currentTab?.querySelector('form#bo-form-signalement-' + currentTabName)
+    formData = new FormData(currentTabForm)
+    formAction = currentTabForm.action
+  }
+
+  fetch(formAction, {method: 'POST', body: formData}).then(response => {
+    if (response.ok) {
+      response.json().then((response) => {
+        currentTab.classList.remove('fr-tabs__panel--saving')
+        
+        document.querySelector('#tabpanel-' +currentTabName+ '-panel').innerHTML = response.tabContent
+        document.querySelector('#tabpanel-' +currentTabName).scrollIntoView({ behavior: 'smooth' });
+
+        if (response.redirect) {
+          boFormSignalementCurrentTabIsDirty = false
+
+          if (response.url === undefined || response.url === '') {
+            const targetTabButton = document?.querySelector('#tabpanel-' + boFormSignalementTargetTab)
+            boFormSignalementTargetTab = ''
+            targetTabButton.click()
           } else {
-            document.querySelector("#tabpanel-" +tabName+ "-panel").innerHTML = response.tabContent
-            document.querySelector("#tabpanel-" +tabName).scrollIntoView({ behavior: 'smooth' });
-            initBoFormSignalementSubmit(tabName)
-            if (tabName === 'adresse' && response.hasDuplicates) {
-              const modaleDuplicate = document.querySelector('#fr-modal-duplicate')
-              const modaleDuplicateContainer = document.querySelector('#fr-modal-duplicate-container')
-              const modaleDuplicateOpenLink = document.querySelector('#fr-modal-duplicate-open-duplicates')
-              modaleDuplicateContainer.innerHTML = response.duplicateContent
-              modaleDuplicateOpenLink.href = response.linkDuplicates
-              dsfr(modaleDuplicate).modal.disclose();
-            }
+            window.location.href = response.url;
           }
-        });
-      } else {
-        const errorHtml = '<div class="fr-alert fr-alert--error" role="alert"><p class="fr-alert__title">Une erreur est survenue lors de la soumission du formulaire, veuillez rafraichir la page.</p></div>';
-        document.querySelector("#tabpanel-adresse-panel").innerHTML = errorHtml; 
+
+        } else {
+          if (currentTabName === 'adresse' && response.hasDuplicates) {
+            const modaleDuplicate = document.querySelector('#fr-modal-duplicate')
+            const modaleDuplicateContainer = document.querySelector('#fr-modal-duplicate-container')
+            const modaleDuplicateOpenLink = document.querySelector('#fr-modal-duplicate-open-duplicates')
+            modaleDuplicateContainer.innerHTML = response.duplicateContent
+            modaleDuplicateOpenLink.href = response.linkDuplicates
+            dsfr(modaleDuplicate).modal.disclose();
+          } else {
+            const errorAlertStr = '<div class="fr-alert fr-alert--sm fr-alert--error fr-mb-2v" role="alert"><p class="fr-alert__title">Merci de corriger les champs où des erreurs sont signalées.</p></div>'
+            document.querySelector('#tabpanel-' +currentTabName+ '-panel').innerHTML = errorAlertStr + document.querySelector('#tabpanel-' +currentTabName+ '-panel').innerHTML
+          }
+        }
+        initBoFormSignalementSubmit(currentTabName)
+      });
+    } else {
+      const errorHtml = '<div class="fr-alert fr-alert--sm fr-alert--error" role="alert"><p class="fr-alert__title">Une erreur est survenue lors de la soumission du formulaire, veuillez rafraichir la page.</p></div>';
+      document.querySelector('#tabpanel-' +currentTabName+ '-panel').innerHTML = errorHtml; 
+    }
+  })
+}
+
+function initBoFormSignalementSubmit(tabName) {
+  const boFormSignalementTab = document?.querySelector('#bo-form-signalement-' + tabName)
+
+  boFormSignalementTab.addEventListener('submit', async (event) => {
+    event.preventDefault()
+    boFormSignalementTargetTab = event.submitter.getAttribute('data-target')
+    saveCurrentTab(event)
+  })
+
+  const tabInputs = boFormSignalementTab?.querySelectorAll('input')
+  tabInputs.forEach((tabInput) => {
+    tabInput.addEventListener('click', (event) => {
+      if (tabInput.type == 'radio') {
+        boFormSignalementCurrentTabIsDirty = true
       }
     })
+    tabInput.addEventListener('change', (event) => {
+      boFormSignalementCurrentTabIsDirty = true
+    })
   })
+  const tabSelects = boFormSignalementTab?.querySelectorAll('select')
+  tabSelects.forEach((tabSelect) => {
+    tabSelect.addEventListener('change', (event) => {
+      boFormSignalementCurrentTabIsDirty = true
+    })
+  })
+  const tabTextAreas = boFormSignalementTab?.querySelectorAll('textarea')
+  tabTextAreas.forEach((tabTextArea) => {
+    tabTextArea.addEventListener('change', (event) => {
+      boFormSignalementCurrentTabIsDirty = true
+    })
+  })
+
+  switch (tabName) {
+    case 'adresse':
+      initBoFormSignalementAdresse()
+      break
+    case 'logement':
+      initBoFormSignalementLogement()
+      break
+    case 'situation':
+      initBoFormSignalementSituation()
+      break
+  }
 }
 
 function initRefreshFromRadio(tabName, radioName, listElements) {
@@ -96,23 +183,17 @@ function refreshElementEnable(tabName, elementSelector, isEnabled) {
 
 if (document?.querySelector('#bo-form-signalement-adresse')) {
   initBoFormSignalementSubmit('adresse')
-  initBoFormSignalementAdresse()
 }
 if (document?.querySelector('#bo-form-signalement-logement')) {
   initBoFormSignalementSubmit('logement')
-  initBoFormSignalementLogement()
 }
 if (document?.querySelector('#bo-form-signalement-situation')) {
   initBoFormSignalementSubmit('situation')
-  initBoFormSignalementSituation()
 }
 
 function initBoFormSignalementAdresse() {
   const inputAdresse = document?.querySelector('#signalement_draft_address_adresseCompleteOccupant')
-  const inputForceSave = document?.querySelector('#signalement_draft_address_forceSave')
   attacheAutocompleteAddressEvent(inputAdresse)
-
-  const modaleDuplicateIgnoreButton = document.querySelector('#fr-modal-duplicate-ignore-duplicates')
 
   const manualAddressSwitcher = document?.querySelector('#bo-signalement-manual-address-switcher')
   const manualAddressContainer = document?.querySelector('#bo-form-signalement-manual-address-container')
@@ -140,11 +221,6 @@ function initBoFormSignalementAdresse() {
   if(inputAdresse.value == '' && hasManualAddressValues) {
     manualAddressSwitcher.click()
   }
-
-  modaleDuplicateIgnoreButton?.addEventListener('click', (event) => {
-    inputForceSave.value = 1
-    document.querySelector('#signalement_draft_address_save').click()
-  });
 }
 
 function initBoFormSignalementLogement() {
@@ -235,7 +311,7 @@ function initBoFormSignalementSituation() {
   )
   initRefreshFromRadio(
     'situation',
-    'signalement_draft_situation_proprietaireAverti',
+    'signalement_draft_situation_isProprioAverti',
     [
       '#signalement_draft_situation_dateProprietaireAverti',
       '#signalement_draft_situation_moyenInformationProprietaire',
@@ -256,4 +332,64 @@ function initBoFormSignalementSituation() {
       '#signalement_draft_situation_reponseAssurance',
     ]
   )
+  window.dispatchEvent(new Event('refreshUploadButtonEvent'))
+
+  reloadDeleteFileList()
 }
+
+function reloadFileList() {
+  const urlListFiles = document?.querySelector('#url-signalement-files').value
+  fetch(urlListFiles, {method: 'GET'}).then(response => {
+    if (response.ok) {
+      response.json().then((response) => {
+        let newList = ''
+        response.forEach((responseItem, index) => {
+          newList += '<div class="fr-grid-row">'
+          newList += '<div class="fr-col-8">'
+          newList += '<i>' + responseItem.filename + '</i> (Type ' + responseItem.type + ')'
+          newList += '</div>'
+          newList += '<div class="fr-col-4">'
+          newList += '<button form="form-delete-file" '
+          newList += 'class="fr-link fr-icon-close-circle-line fr-link--icon-left fr-link--error" '
+          newList += 'aria-label="Supprimer le fichier ' + responseItem.filename + '" '
+          newList += 'title="Supprimer le fichier ' + responseItem.filename + '" '
+          newList += 'data-doc="' + responseItem.id + '" '
+          newList += '>Supprimer</button>'
+          newList += '</div>'
+          newList += '</div>'
+        })
+
+        document.querySelector('#bo-create-file-list').innerHTML = newList
+
+        reloadDeleteFileList()
+      })
+    }
+  })
+}
+
+function reloadDeleteFileList() {
+  const deleteFilesButtons = document?.querySelectorAll('#bo-create-file-list button')
+  if (deleteFilesButtons) {
+    deleteFilesButtons.forEach((button) => {
+      button.addEventListener('click', (event) => {
+        event.preventDefault()
+        button.disabled = true
+        button.innerHTML = 'Suppression en cours...'
+        const formDeleteFile = document?.querySelector('#form-delete-file')
+        formDeleteFile.querySelector('input[name="file_id"]').value = button.getAttribute('data-doc')
+        const formData = new FormData(formDeleteFile)
+        const formAction = formDeleteFile.action
+
+        fetch(formAction, {method: 'POST', body: formData}).then(response => {
+          if (response.ok) {
+            window.dispatchEvent(new Event('refreshUploadedFileList'))
+          }
+        })
+      })
+    })
+  }
+}
+
+window.addEventListener('refreshUploadedFileList', (e) => {
+  reloadFileList()
+})

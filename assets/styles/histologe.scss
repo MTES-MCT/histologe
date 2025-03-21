@@ -1021,3 +1021,17 @@ ul + p {
         }
     }
 }
+
+.fr-tabs__panel.fr-tabs__panel--saving::after {
+    display: block;
+    position: absolute;
+    content: "Sauvegarde en cours...";
+    width: 99%;
+    height: 100%;
+    top: 0;
+    left: 1px;
+    padding-top: 20px;
+    font-size: 20px;
+    background-color: #FFF;
+    text-align: center;
+}

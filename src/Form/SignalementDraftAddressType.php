@@ -176,7 +176,7 @@ class SignalementDraftAddressType extends AbstractType
             ])
             ->add('save', SubmitType::class, [
                 'label' => 'Suivant',
-                'attr' => ['class' => 'fr-btn fr-icon-arrow-right-line fr-btn--icon-right'],
+                'attr' => ['class' => 'fr-btn fr-icon-arrow-right-line fr-btn--icon-right', 'data-target' => 'logement'],
                 'row_attr' => ['class' => 'fr-ml-2w'],
             ])
         ;
