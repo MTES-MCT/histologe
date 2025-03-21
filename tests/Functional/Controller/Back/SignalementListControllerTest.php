@@ -50,7 +50,7 @@ class SignalementListControllerTest extends WebTestCase
         yield 'Search by Territory 13' => [['territoire' => '13', 'isImported' => 'oui'], 26];
         yield 'Search by Commune' => [['communes' => ['gex', 'marseille'], 'isImported' => 'oui'], 31];
         yield 'Search by Commune code postal' => [['communes' => ['13002'], 'isImported' => 'oui'], 2];
-        yield 'Search by EPCIS' => [['epcis' => ['244400503'], 'isImported' => 'oui'], 3];
+        yield 'Search by EPCIS' => [['epcis' => ['244400503'], 'isImported' => 'oui'], 4];
         yield 'Search by Partner' => [['partenaires' => ['5'], 'isImported' => 'oui'], 2];
         yield 'Search by Etiquettes' => [['etiquettes' => ['5'], 'isImported' => 'oui'], 4];
         yield 'Search by Parc public' => [['natureParc' => 'public', 'isImported' => 'oui'], 7];
