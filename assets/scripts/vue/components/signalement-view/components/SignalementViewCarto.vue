@@ -48,7 +48,7 @@ export default defineComponent({
       sharedState: store.state,
       sharedProps: store.props,
       offset: 0,
-      bounds: L.latLngBounds(L.latLng(8, -80), L.latLng(70, 20)),
+      bounds: L.latLngBounds(L.latLng(-90, -180), L.latLng(90, 180)),
       defaultCenter: [47.11, -0.01] as L.LatLngExpression,
       defaultZoom: 5,
       zonesLayer: L.layerGroup()
@@ -72,7 +72,7 @@ export default defineComponent({
       this.map = L.map('map-signalements-view', {
         center: this.defaultCenter,
         maxBounds: this.bounds,
-        minZoom: 5,
+        minZoom: 2,
         maxZoom: 18,
         zoom: this.defaultZoom
       })
@@ -136,15 +136,13 @@ export default defineComponent({
       })
     },
     adjustMapBounds () {
+      this.map?.invalidateSize();
       if (this.sharedState.signalements.list.length === 0){
         this.map?.setView(this.defaultCenter, this.defaultZoom)
       }else{
         const bounds = this.markers.getBounds()
         if (Object.keys(bounds).length !== 0) {
-          this.map?.fitBounds([
-            [bounds.getNorthEast().lat, bounds.getNorthEast().lng],
-            [bounds.getSouthWest().lat, bounds.getSouthWest().lng]
-          ])
+          this.map?.fitBounds(bounds)
         }
       }
     },
