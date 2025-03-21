@@ -8,6 +8,7 @@ use Monolog\LogRecord;
 use Monolog\Processor\ProcessorInterface;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\HttpFoundation\Exception\SessionNotFoundException;
+use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\RequestStack;
 
 #[AsMonologProcessor]
@@ -54,9 +55,28 @@ readonly class SessionRequestProcessor implements ProcessorInterface
                 'referer' => $request->headers->get('Referer'),
                 'x_forwarded_for' => $request->headers->get('X-Forwarded-For'),
                 'get' => $this->sanitizeArray($request->query->all()),
-                'post' => $this->sanitizeArray($request->request->all()),
+                'post' => $this->sanitizeArray($request->request->all())
             ],
         ];
+
+        $extra = [];
+        if (str_starts_with($request->headers->get('Content-Type'), 'application/json')) {
+            $content = $request->getContent();
+            $decoded = json_decode($content, true);
+            if (is_array($decoded)) {
+                $extra['http']['json'] = $this->sanitizeArray($decoded);
+            } else {
+                $extra['http']['json'] = 'Invalid JSON';
+            }
+        }
+
+        if ((str_starts_with($request->headers->get('Content-Type'), 'multipart/form-data')
+        && str_starts_with($request->headers->get('Authorization'), 'Bearer'))
+        ) {
+            $extra['http']['files'] = $this->getFilename($request->files->all());
+        }
+
+        $record->extra = [...$record->extra, ...$extra];
 
         return $record;
     }
@@ -70,5 +90,16 @@ readonly class SessionRequestProcessor implements ProcessorInterface
         }
 
         return $data;
+    }
+
+    private function getFilename(array $files): array
+    {
+        /* @var UploadedFile $file */
+        return array_map(function ($file) {
+            return [
+                'name' => $file->getClientOriginalName(),
+                'size' => $file->getSize(),
+            ];
+        }, $files['files']);
     }
 }
