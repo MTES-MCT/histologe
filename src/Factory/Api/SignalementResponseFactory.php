@@ -14,6 +14,7 @@ use App\Entity\Enum\Api\PersonneType;
 use App\Entity\Enum\DesordreCritereZone;
 use App\Entity\Enum\EtageType;
 use App\Entity\Enum\InterventionType;
+use App\Entity\Enum\ProprioType;
 use App\Entity\Signalement;
 use App\Entity\User;
 use App\Service\Signalement\SignalementDesordresProcessor;
@@ -246,6 +247,7 @@ readonly class SignalementResponseFactory
             return new Personne(
                 personneType: $personneType,
                 precisionTypeSiBailleur: $signalement->getTypeProprio(),
+                structure: ProprioType::ORGANISME_SOCIETE === $signalement->getTypeProprio() ? $signalement->getDenominationProprio() : '',
                 nom: $signalement->getNomProprio(),
                 prenom: $signalement->getPrenomProprio(),
                 email: $signalement->getMailProprio(),
