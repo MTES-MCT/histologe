@@ -385,7 +385,8 @@ class SignalementManager extends AbstractManager
                     ? ProprioType::from($coordonneesFoyerRequest->getTypeProprio())
                     : null
                 )
-                ->setStructureDeclarant($coordonneesFoyerRequest->getNomStructure());
+                ->setStructureDeclarant($coordonneesFoyerRequest->getNomStructure())
+                ->setDenominationProprio($coordonneesFoyerRequest->getNomStructure());
         }
         $signalement
             ->setCiviliteOccupant($coordonneesFoyerRequest->getCivilite())
@@ -407,14 +408,20 @@ class SignalementManager extends AbstractManager
         CoordonneesBailleurRequest $coordonneesBailleurRequest,
     ): void {
         $bailleur = null;
-        if ($signalement->getIsLogementSocial() && $coordonneesBailleurRequest->getNom()) {
+        if ($signalement->getIsLogementSocial() && $coordonneesBailleurRequest->getDenomination()) {
             $bailleur = $this->bailleurRepository->findOneBailleurBy(
-                $coordonneesBailleurRequest->getNom(),
+                $coordonneesBailleurRequest->getDenomination(),
                 $this->zipcodeProvider->getTerritoryByInseeCode($signalement->getInseeOccupant())
             );
         }
 
         $signalement->setBailleur($bailleur)
+            ->setTypeProprio(
+                $coordonneesBailleurRequest->getTypeProprio()
+                ? ProprioType::from($coordonneesBailleurRequest->getTypeProprio())
+                : null
+            )
+            ->setDenominationProprio($coordonneesBailleurRequest->getDenomination())
             ->setNomProprio($coordonneesBailleurRequest->getNom())
             ->setPrenomProprio($coordonneesBailleurRequest->getPrenom())
             ->setMailProprio($coordonneesBailleurRequest->getMail())
