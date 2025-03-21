@@ -55,28 +55,25 @@ readonly class SessionRequestProcessor implements ProcessorInterface
                 'referer' => $request->headers->get('Referer'),
                 'x_forwarded_for' => $request->headers->get('X-Forwarded-For'),
                 'get' => $this->sanitizeArray($request->query->all()),
-                'post' => $this->sanitizeArray($request->request->all())
+                'post' => $this->sanitizeArray($request->request->all()),
             ],
         ];
 
-        $extra = [];
         if (str_starts_with($request->headers->get('Content-Type'), 'application/json')) {
             $content = $request->getContent();
             $decoded = json_decode($content, true);
             if (is_array($decoded)) {
-                $extra['http']['json'] = $this->sanitizeArray($decoded);
+                $record->extra['http']['payload'] = $this->sanitizeArray($decoded);
             } else {
-                $extra['http']['json'] = 'Invalid JSON';
+                $record->extra['http']['payload'] = 'Invalid Payload';
             }
         }
 
-        if ((str_starts_with($request->headers->get('Content-Type'), 'multipart/form-data')
-        && str_starts_with($request->headers->get('Authorization'), 'Bearer'))
+        if (str_starts_with($request->headers->get('Content-Type'), 'multipart/form-data')
+        && str_starts_with($request->headers->get('Authorization'), 'Bearer')
         ) {
-            $extra['http']['files'] = $this->getFilename($request->files->all());
+            $record->extra['http']['files'] = $this->getFilename($request->files->all());
         }
-
-        $record->extra = [...$record->extra, ...$extra];
 
         return $record;
     }
