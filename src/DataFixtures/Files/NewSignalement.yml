@@ -953,7 +953,7 @@ signalements:
     mail_occupant: "brouillon@yopmail.com"
     adresse_occupant: "2 impasse de la peupleraie"
     cp_occupant: "44850"
-    ville_occupant: "Saint-Mars du Désert"
+    ville_occupant: "Saint-Mars-du-Désert"
     statut: "DRAFT_ARCHIVED"
     created_by: "admin-territoire-44-01@histologe.fr"
     geoloc: "{\"lat\": 47.3688054, \"lng\": -1.4203543}"
