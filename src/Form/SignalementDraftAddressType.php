@@ -50,7 +50,7 @@ class SignalementDraftAddressType extends AbstractType
             ->add('adresseOccupant', null, [
                 'label' => 'Numéro et voie ',
                 'attr' => [
-                    'class' => 'bo-form-signalement-manual-address',
+                    'class' => 'bo-form-signalement-manual-address bo-form-signalement-manual-address-input',
                 ],
                 'empty_data' => '',
             ])

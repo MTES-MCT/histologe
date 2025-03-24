@@ -8,12 +8,9 @@ use App\Entity\Enum\ProprioType;
 use App\Entity\Signalement;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
-use Symfony\Component\Form\Extension\Core\Type\DateType;
 use Symfony\Component\Form\Extension\Core\Type\EnumType;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
-use Symfony\Component\Form\Extension\Core\Type\NumberType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
-use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -30,6 +27,7 @@ class SignalementDraftCoordonneesType extends AbstractType
         /** @var Signalement $signalement */
         $signalement = $builder->getData();
         $adresseCompleteProprio = trim($signalement->getAdresseProprio().' '.$signalement->getCodePostalProprio().' '.$signalement->getVilleProprio());
+        $adresseCompleteAgence = trim($signalement->getAdresseAgence().' '.$signalement->getCodePostalAgence().' '.$signalement->getVilleAgence());
         $profilesTiersList = [
             ProfileDeclarant::TIERS_PARTICULIER,
             ProfileDeclarant::TIERS_PRO,
@@ -42,29 +40,6 @@ class SignalementDraftCoordonneesType extends AbstractType
         }
 
         $builder
-        /*
-            ->add('dateEntreeLogement', DateType::class, [
-                'label' => 'Date d\'entrée dans le logement',
-                'required' => false,
-                'placeholder' => false,
-                'mapped' => false,
-                'data' => $dateEntreeLogement,
-            ])
-            ->add('montantLoyer', NumberType::class, [
-                'label' => 'Montant du loyer',
-                'help' => 'Format attendu : saisir un nombre entier',
-                'required' => false,
-                'mapped' => false,
-                'data' => $montantLoyer,
-            ])
-            ->add('reponseProprietaire', TextareaType::class, [
-                'label' => 'Réponse du bailleur / propriétaire',
-                'help' => 'Format attendu : 10 caractères minimum',
-                'required' => false,
-                'mapped' => false,
-                'data' => $reponseProprietaire,
-            ])
-                */
             ->add('nomOccupant', TextType::class, [
                 'label' => 'Nom de famille',
                 'required' => false,
@@ -130,13 +105,13 @@ class SignalementDraftCoordonneesType extends AbstractType
                 'attr' => [
                     'autocomplete' => 'off',
                     'data-fr-adresse-autocomplete' => 'true',
-                    'data-autocomplete-query-selector' => '#bo-form-signalement-coordonnees .fr-address-group',
+                    'data-autocomplete-query-selector' => '#bo-form-signalement-coordonnees .fr-address-proprio-group',
                 ],
             ])
             ->add('adresseProprio', null, [
                 'label' => 'Numéro et voie ',
                 'attr' => [
-                    'class' => 'bo-form-signalement-manual-address',
+                    'class' => 'bo-form-signalement-manual-address bo-form-signalement-manual-address-input',
                 ],
                 'empty_data' => '',
             ])
@@ -215,6 +190,63 @@ class SignalementDraftCoordonneesType extends AbstractType
                 'label' => 'Téléphone',
                 'help' => 'Format attendu : Veuillez sélectionner le pays pour obtenir l\'indicatif téléphonique, puis saisir le numéro de téléphone au format national (sans l\'indicatif). Exemple pour la France : 0702030405.',
                 'required' => false,
+            ])
+
+            ->add('denominationAgence', TextType::class, [
+                'label' => 'Dénomination',
+                'required' => false,
+            ])
+            ->add('nomAgence', TextType::class, [
+                'label' => 'Nom de famille',
+                'required' => false,
+            ])
+            ->add('prenomAgence', TextType::class, [
+                'label' => 'Prénom',
+                'required' => false,
+            ])
+            ->add('mailAgence', TextType::class, [
+                'label' => 'Adresse e-mail',
+                'help' => 'Format attendu : nom@domaine.fr',
+                'required' => false,
+            ])
+            ->add('telAgence', TextType::class, [
+                'label' => 'Téléphone',
+                'help' => 'Format attendu : Veuillez sélectionner le pays pour obtenir l\'indicatif téléphonique, puis saisir le numéro de téléphone au format national (sans l\'indicatif). Exemple pour la France : 0702030405.',
+                'required' => false,
+            ])
+            ->add('adresseCompleteAgence', null, [
+                'label' => false,
+                'help' => 'Format attendu : Tapez l\'adresse puis sélectionnez-la dans la liste. Si elle n\'apparaît pas, cliquez sur saisir une adresse manuellement.',
+                'mapped' => false,
+                'data' => $adresseCompleteAgence,
+                'attr' => [
+                    'autocomplete' => 'off',
+                    'data-fr-adresse-autocomplete' => 'true',
+                    'data-autocomplete-query-selector' => '#bo-form-signalement-coordonnees .fr-address-agence-group',
+                ],
+            ])
+            ->add('adresseAgence', null, [
+                'label' => 'Numéro et voie ',
+                'attr' => [
+                    'class' => 'bo-form-signalement-manual-address bo-form-signalement-manual-address-input',
+                ],
+                'empty_data' => '',
+            ])
+            ->add('codePostalAgence', null, [
+                'label' => 'Code postal',
+                'required' => false,
+                'attr' => [
+                    'class' => 'bo-form-signalement-manual-address',
+                ],
+                'empty_data' => '',
+            ])
+            ->add('villeAgence', null, [
+                'label' => 'Ville',
+                'required' => false,
+                'attr' => [
+                    'class' => 'bo-form-signalement-manual-address',
+                ],
+                'empty_data' => '',
             ])
 
             ->add('forceSave', HiddenType::class, [

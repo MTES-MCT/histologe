@@ -65,10 +65,10 @@
                     </div>
                 </div>
                 <div class="fr-mt-n2w">
-                    <a href="#" id="bo-signalement-manual-address-switcher" class="fr-link fr-icon-edit-line fr-link--icon-left">Saisir une adresse manuellement</a>
+                    <a href="#" class="fr-link fr-icon-edit-line fr-link--icon-left bo-signalement-manual-address-switcher">Saisir une adresse manuellement</a>
                 </div>
             </div>
-            <div id="bo-form-signalement-manual-address-container" class="fr-hidden fr-w-100" >
+            <div class="fr-hidden fr-w-100 bo-form-signalement-manual-address-container">
                 <div class="fr-fieldset__element">
                     {{ form_row(formCoordonnees.adresseProprio) }}
                 </div>
@@ -110,6 +110,58 @@
             </div>
             <div class="fr-fieldset__element">
                 {{ form_row(formCoordonnees.telDeclarant) }}
+            </div>
+        </fieldset>
+
+        <fieldset class="fr-fieldset">
+            <legend>
+                <h3 class="fr-h5">Gestionnaire / agence</h3>
+            </legend>
+            <div class="fr-fieldset__element fr-mb-5v">
+                <div class="fr-alert fr-alert--info fr-alert--sm">
+                    <p>Si le logement est géré par une agence, renseignez les coordonnées de l'agence.</p>
+                </div>
+            </div>
+            <div class="fr-fieldset__element">
+                {{ form_row(formCoordonnees.denominationAgence) }}
+            </div>
+            <div class="fr-fieldset__element">
+                {{ form_row(formCoordonnees.nomAgence) }}
+            </div>
+            <div class="fr-fieldset__element">
+                {{ form_row(formCoordonnees.prenomAgence) }}
+            </div>
+            <div class="fr-fieldset__element">
+                {{ form_row(formCoordonnees.mailAgence) }}
+            </div>
+            <div class="fr-fieldset__element">
+                {{ form_row(formCoordonnees.telAgence) }}
+            </div>
+        </fieldset>
+        <fieldset class="fr-fieldset">
+            <legend>
+                <h4 class="fr-h6">Adresse postale</h4>
+            </legend>
+            <div class="fr-fieldset__element">
+                {{ form_row(formCoordonnees.adresseCompleteAgence) }}
+                <div class="fr-address-group-container">
+                    <div class="fr-grid-row fr-background-alt--blue-france fr-text-label--blue-france fr-address-agence-group">
+                    </div>
+                </div>
+                <div class="fr-mt-n2w">
+                    <a href="#" class="fr-link fr-icon-edit-line fr-link--icon-left bo-signalement-manual-address-switcher">Saisir une adresse manuellement</a>
+                </div>
+            </div>
+            <div class="fr-hidden fr-w-100 bo-form-signalement-manual-address-container">
+                <div class="fr-fieldset__element">
+                    {{ form_row(formCoordonnees.adresseAgence) }}
+                </div>
+                <div class="fr-fieldset__element">
+                    {{ form_row(formCoordonnees.codePostalAgence) }}
+                </div>
+                <div class="fr-fieldset__element">
+                    {{ form_row(formCoordonnees.villeAgence) }}
+                </div>
             </div>
         </fieldset>
     </div>
