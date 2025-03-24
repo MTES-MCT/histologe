@@ -431,4 +431,20 @@ function initBoFormSignalementCoordonnees() {
       '#signalement_draft_coordonnees_prenomProprio_help',
     ]
   )
+  initRefreshFromRadio(
+    'coordonnees',
+    'signalement_draft_coordonnees_profileDeclarantTiers',
+    [
+      '#signalement_draft_coordonnees_lienDeclarantOccupant',
+    ],
+    'TIERS_PARTICULIER'
+  )
+  initRefreshFromRadio(
+    'coordonnees',
+    'signalement_draft_coordonnees_profileDeclarantTiers',
+    [
+      '#signalement_draft_coordonnees_isProTiersDeclarant_0',
+    ],
+    'TIERS_PRO'
+  )
 }
