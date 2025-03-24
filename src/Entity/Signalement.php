@@ -212,6 +212,39 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
     #[ORM\Column(type: 'string', length: 50, nullable: true)]
     private ?string $banIdOccupant = null;
 
+    #[ORM\Column(type: 'string', length: 255, nullable: true)]
+    #[Assert\Length(max: 255)]
+    private ?string $nomAgence = null;
+
+    #[ORM\Column(type: 'string', length: 255, nullable: true)]
+    #[Assert\Length(max: 255)]
+    private ?string $denominationAgence = null;
+
+    #[ORM\Column(type: 'string', length: 255, nullable: true)]
+    #[Assert\Length(max: 255)]
+    private ?string $prenomAgence = null;
+
+    #[ORM\Column(type: 'string', length: 255, nullable: true)]
+    private ?string $adresseAgence = null;
+
+    #[ORM\Column(type: 'string', length: 5, nullable: true)]
+    #[Assert\Regex(pattern: '/^[0-9]{5}$/', message: 'Le code postal être composé de 5 chiffres.')]
+    private ?string $codePostalAgence = null;
+
+    #[ORM\Column(type: 'string', length: 255, nullable: true)]
+    private ?string $villeAgence = null;
+
+    #[ORM\Column(type: 'string', length: 128, nullable: true)]
+    #[AppAssert\TelephoneFormat]
+    private ?string $telAgence = null;
+
+    #[ORM\Column(type: 'string', length: 128, nullable: true)]
+    #[AppAssert\TelephoneFormat]
+    private ?string $telAgenceSecondaire = null;
+
+    #[ORM\Column(type: 'string', length: 255, nullable: true)]
+    private ?string $mailAgence = null;
+
     #[ORM\Column(type: 'boolean')]
     private ?bool $isCguAccepted = null;
 
@@ -1133,6 +1166,114 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
     public function setBanIdOccupant(?string $banIdOccupant): self
     {
         $this->banIdOccupant = $banIdOccupant;
+
+        return $this;
+    }
+
+    public function getNomAgence(): ?string
+    {
+        return $this->nomAgence;
+    }
+
+    public function setNomAgence(?string $nomAgence): self
+    {
+        $this->nomAgence = $nomAgence;
+
+        return $this;
+    }
+
+    public function getDenominationAgence(): ?string
+    {
+        return $this->denominationAgence;
+    }
+
+    public function setDenominationAgence(?string $denominationAgence): self
+    {
+        $this->denominationAgence = $denominationAgence;
+
+        return $this;
+    }
+
+    public function getPrenomAgence(): ?string
+    {
+        return $this->prenomAgence;
+    }
+
+    public function setPrenomAgence(?string $prenomAgence): self
+    {
+        $this->prenomAgence = $prenomAgence;
+
+        return $this;
+    }
+
+    public function getAdresseAgence(): ?string
+    {
+        return $this->adresseAgence;
+    }
+
+    public function setAdresseAgence(?string $adresseAgence): self
+    {
+        $this->adresseAgence = $adresseAgence;
+
+        return $this;
+    }
+
+    public function getCodePostalAgence(): ?string
+    {
+        return $this->codePostalAgence;
+    }
+
+    public function setCodePostalAgence(?string $codePostalAgence): self
+    {
+        $this->codePostalAgence = $codePostalAgence;
+
+        return $this;
+    }
+
+    public function getVilleAgence(): ?string
+    {
+        return $this->villeAgence;
+    }
+
+    public function setVilleAgence(?string $villeAgence): self
+    {
+        $this->villeAgence = $villeAgence;
+
+        return $this;
+    }
+
+    public function getTelAgence(): ?string
+    {
+        return $this->telAgence;
+    }
+
+    public function setTelAgence(?string $telAgence): self
+    {
+        $this->telAgence = $telAgence;
+
+        return $this;
+    }
+
+    public function getTelAgenceSecondaire(): ?string
+    {
+        return $this->telAgenceSecondaire;
+    }
+
+    public function setTelAgenceSecondaire(?string $telAgenceSecondaire): self
+    {
+        $this->telAgenceSecondaire = $telAgenceSecondaire;
+
+        return $this;
+    }
+
+    public function getMailAgence(): ?string
+    {
+        return $this->mailAgence;
+    }
+
+    public function setMailAgence(?string $mailAgence): self
+    {
+        $this->mailAgence = $mailAgence;
 
         return $this;
     }
