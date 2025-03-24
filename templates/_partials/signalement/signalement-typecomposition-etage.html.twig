@@ -3,7 +3,7 @@
     {% set etage = signalement.typeCompositionLogement.typeLogementAppartementEtage ?? 
         (signalement.typeCompositionLogement.typeLogementRdc == 'oui' ? EtageType.RDC.value : 
         (signalement.typeCompositionLogement.typeLogementDernierEtage == 'oui' ? EtageType.DERNIER_ETAGE.value : 
-        (signalement.typeCompositionLogement.typeLogementSousSolSansFenetre == 'oui' ? EtageType.SOUS_SOL.value : 
+        (signalement.typeCompositionLogement.typeLogementSousSolSansFenetre == 'oui' ? EtageType.SOUSSOL.value : 
         EtageType.AUTRE.value))) %}
 
     {{ EtageType.from(etage).label }}
