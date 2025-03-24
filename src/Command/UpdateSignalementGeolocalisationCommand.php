@@ -38,7 +38,6 @@ class UpdateSignalementGeolocalisationCommand extends Command
         $this
             ->addOption('zip', null, InputOption::VALUE_OPTIONAL, 'Territory zip to target')
             ->addOption('split', null, InputOption::VALUE_OPTIONAL, 'Split signalements for prevent memory limit', 0)
-            ->addOption('limit', null, InputOption::VALUE_OPTIONAL, 'full or partial')
             ->addOption('uuid', null, InputOption::VALUE_OPTIONAL, 'UUID du signalement')
             ->addOption('from_created_at', null, InputOption::VALUE_OPTIONAL, 'Get signalements data from created_at to 1 month');
     }
