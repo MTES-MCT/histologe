@@ -66,6 +66,7 @@
         "symfony/webpack-encore-bundle": "^2.2",
         "symfony/workflow": "^6.2",
         "symfony/yaml": "7.2.*",
+        "tilleuls/url-signer-bundle": "^2.2",
         "twig/cssinliner-extra": "^3.3",
         "twig/extra-bundle": "^3.3",
         "twig/inky-extra": "^3.3",

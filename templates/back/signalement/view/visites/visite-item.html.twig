@@ -89,7 +89,7 @@
             </div>
             <div class="fr-px-5w fr-py-8w fr-rounded fr-border fr-text--center part-infos-hover" 
                  data-template="tippy_photovisite_{{ photo.id }}"
-                 style="background: url('{{ path('show_file', {uuid: photo.uuid}) }}?variant=thumb')no-repeat center center/cover">
+                 style="background: url('{{ sign_url(path('show_file', {uuid: photo.uuid, variant: 'thumb'})) }}')no-repeat center center/cover">
                 <button 
                     class="fr-btn fr-btn--sm fr-icon-eye-line open-photo-album" 
                     data-id={{ photo.id }} 
@@ -109,7 +109,7 @@
                         data-type="photo" 
                         data-file-id="{{ photo.id}}" 
                         data-signalement-uuid="{{ signalement.uuid}}" 
-                        data-file-path="{{ path('show_file', {uuid: photo.uuid}) }}?variant=thumb"
+                        data-file-path="{{ sign_url(path('show_file', {uuid: photo.uuid, variant: 'thumb'})) }}"
                         data-description="{{ photo.description }}" 
                         data-documentType="{{ photo.documentType.name }}" 
                         data-createdAt="{{ photo.createdAt is defined ? photo.createdAt|date('d/m/Y') : 'N/R' }}"
@@ -158,7 +158,7 @@
                     </div>
                 </div>
                 <div class="fr-col-3 fr-text--right">
-                    <a href="{{ path('show_file', {uuid: doc.uuid}) }}"
+                    <a href="{{ sign_url(path('show_file', {uuid: doc.uuid})) }}"
                         class="fr-btn fr-btn--sm fr-icon-eye-fill img-box" title="Afficher le document {{ doc.filename }} - ouvre une nouvelle fenêtre"
                         target="_blank" rel="noopener"></a>    
                         

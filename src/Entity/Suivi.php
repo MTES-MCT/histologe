@@ -5,6 +5,7 @@ namespace App\Entity;
 use App\Entity\Behaviour\EntityHistoryInterface;
 use App\Entity\Enum\HistoryEntryEvent;
 use App\Repository\SuiviRepository;
+use App\Service\SuiviTransformerService;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: SuiviRepository::class)]
@@ -35,6 +36,8 @@ class Suivi implements EntityHistoryInterface
 
     public const string ARRET_PROCEDURE = 'arret-procedure';
     public const string POURSUIVRE_PROCEDURE = 'poursuivre-procedure';
+
+    private ?SuiviTransformerService $suiviTransformerService = null;
 
     #[ORM\Id]
     #[ORM\GeneratedValue]
@@ -84,6 +87,11 @@ class Suivi implements EntityHistoryInterface
         $this->createdAt = new \DateTimeImmutable();
         $this->isPublic = false;
         $this->isSanitized = true;
+    }
+
+    public function setSuiviTransformerService(SuiviTransformerService $suiviTransformerService): void
+    {
+        $this->suiviTransformerService = $suiviTransformerService;
     }
 
     public function getId(): ?int
@@ -149,20 +157,23 @@ class Suivi implements EntityHistoryInterface
         return 'OCCUPANT : '.strtoupper($this->getSignalement()->getNomOccupant()).' '.ucfirst($this->getSignalement()->getPrenomOccupant());
     }
 
-    public function getDescription($transformHtml = true, $originalData = false): ?string
+    public function getDescription($transformHtml = true): ?string
     {
-        if ($originalData) {
-            return $this->description;
-        }
         if (null !== $this->deletedAt) {
             return self::DESCRIPTION_DELETED.' '.$this->deletedAt->format('d/m/Y');
         }
 
         if (!$transformHtml) {
-            return $this->description;
+            $description = $this->description;
+        } else {
+            $description = str_replace('&lt;br /&gt;', '<br />', $this->description);
         }
 
-        return str_replace('&lt;br /&gt;', '<br />', $this->description);
+        if ($this->suiviTransformerService) {
+            return $this->suiviTransformerService->transformDetails($description);
+        }
+
+        return $description;
     }
 
     public function setDescription(string $description): self

@@ -36,7 +36,7 @@
                 </div>
                 <div class="photos-album-flex">
                     <img class="photos-album-image"
-                        src="{{ path('show_file', {uuid: photo.uuid}) }}?variant=resize"
+                        src="{{ sign_url(path('show_file', {uuid: photo.uuid, variant: 'resize'})) }}"
                         alt="Photo ajoutée par : {{ photo.uploadedBy.nomComplet ?? 'N/R' }}"
                         data-id="{{ photo.id }}"
                         data-rotate="0"
