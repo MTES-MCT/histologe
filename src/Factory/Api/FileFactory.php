@@ -4,12 +4,14 @@ namespace App\Factory\Api;
 
 use App\Dto\Api\Model\File;
 use App\Entity\File as FileEntity;
+use CoopTilleuls\UrlSignerBundle\UrlSigner\UrlSignerInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 readonly class FileFactory
 {
     public function __construct(
         private UrlGeneratorInterface $urlGenerator,
+        private UrlSignerInterface $urlSigner,
     ) {
     }
 
@@ -20,11 +22,12 @@ readonly class FileFactory
         $file->titre = $fileEntity->getTitle();
         $file->documentType = $fileEntity->getDocumentType()->value;
         $file->description = $fileEntity->getDescription();
-        $file->url = $this->urlGenerator->generate(
+        $url = $this->urlGenerator->generate(
             'show_file',
             ['uuid' => $fileEntity->getUuid()],
             UrlGeneratorInterface::ABSOLUTE_URL
         );
+        $file->url = $this->urlSigner->sign($url); // @phpstan-ignore-line
 
         return $file;
     }
