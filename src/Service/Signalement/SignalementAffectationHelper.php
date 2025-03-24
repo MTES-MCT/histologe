@@ -26,11 +26,12 @@ class SignalementAffectationHelper
             }
         }
 
-        if (empty($statusAffectation)) {
-            return '';
+        $affectationStatusLabel = '';
+        if (!empty($statusAffectation) || 0 === $statusAffectation) {
+            $affectationStatusLabel = AffectationStatus::tryFrom($statusAffectation)?->label();
         }
 
-        return AffectationStatus::tryFrom($statusAffectation)?->label();
+        return $affectationStatusLabel;
     }
 
     public static function getStatusAndAffectationFrom(User $user, array $data): array
