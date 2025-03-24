@@ -59,7 +59,9 @@ readonly class SessionRequestProcessor implements ProcessorInterface
             ],
         ];
 
-        if (str_starts_with($request->headers->get('Content-Type'), 'application/json')) {
+        $contentType = $request->headers->get('Content-Type');
+        $authorization = $request->headers->get('Authorization');
+        if (null !== $contentType && str_starts_with($contentType, 'application/json')) {
             $content = $request->getContent();
             $decoded = json_decode($content, true);
             if (is_array($decoded)) {
@@ -69,8 +71,8 @@ readonly class SessionRequestProcessor implements ProcessorInterface
             }
         }
 
-        if (str_starts_with($request->headers->get('Content-Type'), 'multipart/form-data')
-        && str_starts_with($request->headers->get('Authorization'), 'Bearer')
+        if (null !== $contentType && str_starts_with($contentType, 'multipart/form-data')
+        && null !== $authorization && str_starts_with($authorization, 'Bearer')
         ) {
             $record->extra['http']['files'] = $this->getFilename($request->files->all());
         }
