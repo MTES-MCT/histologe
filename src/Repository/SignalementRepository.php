@@ -1422,6 +1422,28 @@ class SignalementRepository extends ServiceEntityRepository
             ->getResult();
     }
 
+    public function findSignalementsSplittedCreatedBefore(int $split, Territory $territory): array
+    {
+        $qb = $this->createQueryBuilder('s')
+            ->where('s.territory = :territory')
+            ->setParameter('territory', $territory)
+            ->orderBy('s.createdAt', 'ASC');
+
+        if (1 === $split) {
+            $qb->andWhere('s.createdAt < :beforeDate')->setParameter('beforeDate', '2024-02-01');
+            $qb->andWhere('s.createdAt > :afterDate')->setParameter('afterDate', '2023-01-01');
+        } elseif (2 === $split) {
+            $qb->andWhere('s.createdAt < :beforeDate')->setParameter('beforeDate', '2023-01-01');
+            $qb->andWhere('s.createdAt > :afterDate')->setParameter('afterDate', '2021-01-01');
+        } elseif (3 === $split) {
+            $qb->andWhere('s.createdAt < :beforeDate')->setParameter('beforeDate', '2021-01-01');
+        } else {
+            $qb->andWhere('s.createdAt < :beforeDate')->setParameter('beforeDate', '2024-02-01');
+        }
+
+        return $qb->getQuery()->getResult();
+    }
+
     public function findOneForApi(
         User $user,
         ?string $uuid = null,

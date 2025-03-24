@@ -3,6 +3,7 @@
 namespace App\Command;
 
 use App\Entity\Signalement;
+use App\Manager\HistoryEntryManager;
 use App\Repository\SignalementRepository;
 use App\Repository\TerritoryRepository;
 use App\Service\Signalement\SignalementAddressUpdater;
@@ -27,6 +28,7 @@ class UpdateSignalementGeolocalisationCommand extends Command
         private readonly TerritoryRepository $territoryRepository,
         private readonly EntityManagerInterface $entityManager,
         private readonly SignalementAddressUpdater $signalementAddressUpdater,
+        private readonly HistoryEntryManager $historyEntryManager,
     ) {
         parent::__construct();
     }
@@ -35,6 +37,7 @@ class UpdateSignalementGeolocalisationCommand extends Command
     {
         $this
             ->addOption('zip', null, InputOption::VALUE_OPTIONAL, 'Territory zip to target')
+            ->addOption('split', null, InputOption::VALUE_OPTIONAL, 'Split signalements for prevent memory limit', 0)
             ->addOption('uuid', null, InputOption::VALUE_OPTIONAL, 'UUID du signalement')
             ->addOption('from_created_at', null, InputOption::VALUE_OPTIONAL, 'Get signalements data from created_at to 1 month');
     }
@@ -47,6 +50,7 @@ class UpdateSignalementGeolocalisationCommand extends Command
         $io = new SymfonyStyle($input, $output);
 
         $zip = $input->getOption('zip');
+        $split = $input->getOption('split');
         $uuid = $input->getOption('uuid');
         $fromCreatedAt = $input->getOption('from_created_at');
         $toCreatedAt = null;
@@ -57,8 +61,9 @@ class UpdateSignalementGeolocalisationCommand extends Command
         if ($uuid) {
             $signalements = $signalementRepository->findBy(['uuid' => $uuid]);
         } elseif (!empty($zip)) {
+            $this->historyEntryManager->removeEntityListeners();
             $territory = $this->territoryRepository->findOneBy(['zip' => $zip]);
-            $signalements = $signalementRepository->findWithNoGeolocalisation($territory);
+            $signalements = $signalementRepository->findSignalementsSplittedCreatedBefore($split, $territory);
         } elseif (!empty($fromCreatedAt)) {
             $fromCreatedAt = \DateTimeImmutable::createFromFormat('Y-m-d', $fromCreatedAt);
             if (false !== $fromCreatedAt) {
