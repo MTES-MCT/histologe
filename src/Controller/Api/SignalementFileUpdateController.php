@@ -14,14 +14,19 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Attribute\MapRequestPayload;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Validator\Exception\ValidationFailedException;
+use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 #[When('dev')]
 #[When('test')]
 #[Route('/api')]
 class SignalementFileUpdateController extends AbstractController
 {
-    public function __construct(private readonly EntityManagerInterface $entityManager, private readonly FileFactory $fileFactory)
-    {
+    public function __construct(
+        private readonly EntityManagerInterface $entityManager,
+        private readonly FileFactory $fileFactory,
+        private readonly ValidatorInterface $validator,
+    ) {
     }
 
     #[Route('/files/{uuid:file}', name: 'api_signalements_files_patch', methods: ['PATCH'])]
@@ -83,7 +88,7 @@ class SignalementFileUpdateController extends AbstractController
         ]
     )]
     public function __invoke(
-        #[MapRequestPayload]
+        #[MapRequestPayload(validationGroups: ['Default'])]
         FileRequest $fileRequest,
         ?File $file = null,
     ): JsonResponse {
@@ -94,6 +99,12 @@ class SignalementFileUpdateController extends AbstractController
             );
         }
         $this->denyAccessUnlessGranted('FILE_EDIT', $file);
+
+        $errors = $this->validator->validate($fileRequest, null, ['PATCH_FILE_REQUEST']);
+        if (count($errors) > 0) {
+            throw new ValidationFailedException($fileRequest, $errors);
+        }
+
         $documentType = DocumentType::tryFrom($fileRequest->documentType);
         $ext = pathinfo($file->getFilename(), \PATHINFO_EXTENSION);
         if ((in_array($ext, File::IMAGE_EXTENSION) && 'pdf' !== $ext) && isset(DocumentType::getOrderedPhotosList()[$documentType->name])) {

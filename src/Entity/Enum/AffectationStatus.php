@@ -43,7 +43,7 @@ enum AffectationStatus: int
         };
     }
 
-    public static function mapNewStatus(int $codeStatus): AffectationNewStatus
+    public static function mapNewStatus(?int $codeStatus): AffectationNewStatus
     {
         return match ($codeStatus) {
             0 => AffectationNewStatus::NOUVEAU,

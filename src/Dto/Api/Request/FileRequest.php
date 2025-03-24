@@ -3,6 +3,7 @@
 namespace App\Dto\Api\Request;
 
 use OpenApi\Attributes as OA;
+use Symfony\Component\Serializer\Attribute\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
 
 class FileRequest implements RequestInterface
@@ -28,7 +29,8 @@ class FileRequest implements RequestInterface
         ',
         example: 'BAILLEUR_REPONSE_BAILLEUR'
     )]
-    #[Assert\NotBlank()]
+    #[Groups(groups: ['Default', 'PATCH_FILE_REQUEST'])]
+    #[Assert\NotBlank(groups: ['PATCH_FILE_REQUEST'])]
     #[Assert\Choice(
         choices: [
             'AUTRE_PROCEDURE',
@@ -46,13 +48,15 @@ class FileRequest implements RequestInterface
             'PROCEDURE_SAISINE',
             'BAILLEUR_DEVIS_POUR_TRAVAUX',
         ],
-        message: 'Veuillez choisir une valeur valide pour le type de document. {{ choices }}'
+        message: 'Veuillez choisir une valeur valide pour le type de document. {{ choices }}',
+        groups: ['PATCH_FILE_REQUEST']
     )]
     public ?string $documentType = null;
     #[OA\Property(
         description: 'La description d\'une photo, elle sera ignoré pour un document',
         example: 'lorem ipsum dolor sit amet'
     )]
-    #[Assert\Length(max: 255)]
+    #[Groups(groups: ['Default', 'PATCH_FILE_REQUEST'])]
+    #[Assert\Length(max: 255, groups: ['PATCH_FILE_REQUEST'])]
     public ?string $description = null;
 }
