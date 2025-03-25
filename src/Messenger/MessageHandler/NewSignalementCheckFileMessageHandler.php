@@ -3,6 +3,7 @@
 namespace App\Messenger\MessageHandler;
 
 use App\Entity\Enum\DocumentType;
+use App\Entity\Enum\SignalementStatus;
 use App\Entity\Signalement;
 use App\Entity\Suivi;
 use App\Manager\SuiviManager;
@@ -57,6 +58,18 @@ class NewSignalementCheckFileMessageHandler
         $signalement = $this->signalementRepository->find(
             $newSignalementCheckFileMessage->getSignalementId()
         );
+
+        $suivisPublic = $signalement->getSuivis()->filter(function (Suivi $suivi) {
+            return $suivi->getIsPublic() && Suivi::TYPE_PARTNER === $suivi->getType();
+        });
+
+        if (SignalementStatus::REFUSED === $signalement->getStatut()
+            || (SignalementStatus::ACTIVE === $signalement->getStatut() && $suivisPublic->count() > 0)
+        ) {
+            $this->suivi = null;
+
+            return;
+        }
 
         $documents = $this->getMissingDocumentsString($signalement);
 
