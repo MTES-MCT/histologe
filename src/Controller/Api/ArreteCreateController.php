@@ -43,17 +43,17 @@ class ArreteCreateController extends AbstractController
      */
     #[OA\Post(
         path: '/api/signalements/{uuid}/arretes',
-        description: 'Création d\'un arrếté préfectorale',
-        summary: 'Création d\'un arrếté préfectorale',
+        description: 'Création d\'un arrêté préfectoral',
+        summary: 'Création d\'un arrêté préfectoral',
         security: [['Bearer' => []]],
         requestBody: new OA\RequestBody(
-            description: 'Payload d\'un arrếté préfectorale',
+            description: 'Payload d\'un arrêté préfectoral',
             content: new OA\JsonContent(
                 examples: [
                     new OA\Examples(
                         example: 'Création d\'un arrêté',
                         summary: 'Création d\'un arrêté',
-                        description: 'Exemple d\'un arrêté préfectorale.',
+                        description: 'Exemple d\'un arrêté préfectoral.',
                         value: [
                             'date' => '2021-01-01',
                             'numero' => '123456789',
@@ -63,7 +63,7 @@ class ArreteCreateController extends AbstractController
                     new OA\Examples(
                         example: 'Création d\'un arrêté avec une mainlevée',
                         summary: 'Création d\'un arrêté avec une mainlevée',
-                        description: 'Exemple d\'un arrêté préfectorale avec une mainlevée.',
+                        description: 'Exemple d\'un arrêté préfectoral avec une mainlevée.',
                         value: [
                             'date' => '2021-01-01',
                             'numero' => '123456789',
@@ -80,7 +80,7 @@ class ArreteCreateController extends AbstractController
     )]
     #[OA\Response(
         response: Response::HTTP_CREATED,
-        description: 'Arrêtés crée avec succès',
+        description: 'Arrêté crée avec succès',
         content: new OA\JsonContent(ref: new Model(type: ArreteResponse::class))
     )]
     #[OA\Response(

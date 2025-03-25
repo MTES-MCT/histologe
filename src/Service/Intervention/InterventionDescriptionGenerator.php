@@ -73,7 +73,7 @@ class InterventionDescriptionGenerator
     public static function buildDescriptionArreteCreatedFromRequest(ArreteRequest $arreteRequest): string
     {
         $description = \sprintf(
-            'L\'arrêté %s du %s a été pris dans le dossier de n°%s.<br>',
+            'L\'arrêté %s du %s a été pris dans le dossier n°%s.<br>',
             $arreteRequest->numero,
             $arreteRequest->date,
             $arreteRequest->numero,
@@ -83,7 +83,7 @@ class InterventionDescriptionGenerator
 
         if ($arreteRequest->mainLeveeDate) {
             $description = \sprintf(
-                'Un arrêté de mainlevée%sdu %s a été pris pour l\'arrêté %s du %s dans le dossier de n°%s.',
+                'Un arrêté de mainlevée%sdu %s a été pris pour l\'arrêté %s du %s dans le dossier n°%s.',
                 $arreteRequest->mainLeveeNumero ? ' '.$arreteRequest->mainLeveeNumero.' ' : ' ',
                 $arreteRequest->mainLeveeDate,
                 $arreteRequest->numero,
