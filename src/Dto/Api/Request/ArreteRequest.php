@@ -8,7 +8,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\Validator\Context\ExecutionContextInterface;
 
 #[OA\Schema(
-    description: 'Payload pour créer un arrếté.',
+    description: 'Payload pour créer un arrêté.',
     required: ['date', 'numero', 'type', 'numeroDossier'],
 )]
 class ArreteRequest implements RequestInterface
