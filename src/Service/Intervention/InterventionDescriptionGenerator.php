@@ -76,7 +76,7 @@ class InterventionDescriptionGenerator
             'L\'arrêté %s du %s a été pris dans le dossier n°%s.<br>',
             $arreteRequest->numero,
             $arreteRequest->date,
-            $arreteRequest->numero,
+            $arreteRequest->numeroDossier,
         );
 
         $description .= \sprintf('Type arrêté : %s<br>', $arreteRequest->type);
@@ -88,7 +88,7 @@ class InterventionDescriptionGenerator
                 $arreteRequest->mainLeveeDate,
                 $arreteRequest->numero,
                 $arreteRequest->date,
-                $arreteRequest->numero
+                $arreteRequest->numeroDossier
             );
         }
 

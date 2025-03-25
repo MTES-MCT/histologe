@@ -24,6 +24,15 @@ class ArreteRequest implements RequestInterface
     public ?string $date = null;
 
     #[OA\Property(
+        description: 'Le numéro de dossier.',
+        example: '2023/DD13/00664',
+        nullable: true,
+    )]
+    #[Assert\NotBlank(groups: ['POST_ARRETE_REQUEST'])]
+    #[Groups(groups: ['Default', 'POST_ARRETE_REQUEST'])]
+    public ?string $numeroDossier = null;
+
+    #[OA\Property(
         description: 'Le numéro de l\'arrêté.',
         example: '2023/DD13/00664',
     )]

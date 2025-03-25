@@ -98,6 +98,7 @@ class ArreteCreateControllerTest extends WebTestCase
             [
                 'date' => '2025-03-11',
                 'numero' => '2023/DD13/00664',
+                'numeroDossier' => '2023-DD13-00172',
                 'type' => 'Arrêté L.511-11 - Suroccupation',
             ],
         ];
@@ -106,6 +107,7 @@ class ArreteCreateControllerTest extends WebTestCase
             [
                 'date' => '2025-03-11',
                 'numero' => '2023/DD13/00664',
+                'numeroDossier' => '2023-DD13-00172',
                 'type' => 'Arrêté L.511-11 - Suroccupation',
                 'mainLeveeDate' => '2025-03-13',
                 'mainLeveeNumero' => '2023-DD13-00172',

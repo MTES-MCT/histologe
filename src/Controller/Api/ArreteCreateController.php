@@ -57,6 +57,7 @@ class ArreteCreateController extends AbstractController
                         value: [
                             'date' => '2021-01-01',
                             'numero' => '123456789',
+                            'numeroDossier' => '2023/DD13/00664',
                             'type' => 'Arrêté L.511-11 - Suroccupation',
                         ]
                     ),
@@ -67,6 +68,7 @@ class ArreteCreateController extends AbstractController
                         value: [
                             'date' => '2021-01-01',
                             'numero' => '123456789',
+                            'numeroDossier' => '2023/DD13/00664',
                             'type' => 'Arrêté L.511-11 - Suroccupation',
                             'mainLeveeDate' => '2023-01-01',
                             'mainLeveeNumero' => '123456789',
