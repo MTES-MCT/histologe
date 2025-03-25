@@ -1,110 +1,166 @@
-<footer class="fr-footer" id="footer">
-    <div class="{{ container_class }}">
-        <div class="fr-footer__body">
-            <div class="fr-footer__brand">
-                <div class="fr-logo">
-                    ministère <br> de la transition <br>écologique
-                </div>
-            </div>
-            <div class="fr-footer__content">
-                <div class="fr-footer__content-desc fr-text--left">
-                    {{ platform.name }} améliore la prise en charge du mal-logement.
-                </div>
-                <ul class="fr-footer__content-list">
-                    <li>
-                        <a class="fr-footer__content-link" href="http://info.gouv.fr" target="_blank"
-                            rel="noreferrer noopener"
-                            title="info.gouv.fr - ouvre une nouvelle fenêtre">info.gouv.fr</a>
-                    </li>
-                    <li>
-                        <a class="fr-footer__content-link" href="http://service-public.fr" target="_blank"
-                            rel="noreferrer noopener"
-                            title="service-public.fr - ouvre une nouvelle fenêtre">service-public.fr</a>
-                    </li>
-                    <li>
-                        <a class="fr-footer__content-link" href="http://legifrance.gouv.fr" target="_blank"
-                            rel="noreferrer noopener"
-                            title="legifrance.gouv.fr - ouvre une nouvelle fenêtre">legifrance.gouv.fr</a>
-                    </li>
-                    <li>
-                        <a class="fr-footer__content-link" href="http://data.gouv.fr" target="_blank"
-                            rel="noreferrer noopener"
-                            title="data.gouv.fr - ouvre une nouvelle fenêtre">data.gouv.fr</a>
-                    </li>
-                </ul>
-            </div>
-        </div>
-        <div class="fr-footer__partners">
-            <h2 class="fr-footer__partners-title">Nos partenaires</h2>
-            <div class="fr-footer__partners-logos">
-                <div class="fr-footer__partners-main">
-                    <a class="fr-footer__partners-link" href="https://beta.gouv.fr/" target="_blank"
-                       rel="noreferrer noopener"
-                       title="beta.gouv.fr - ouvre une nouvelle fenêtre">
-                        <img class="fr-footer__logo logo-height"
-                             src="{{ asset('/img/logo-betagouvfr.svg') }}" alt="Logo beta.gouv.fr">
+{% if feature_sites_faciles %}
+    <footer class="fr-footer" role="contentinfo" id="footer">
+        <div class="fr-container">
+            <div class="fr-footer__body">
+                <div class="fr-footer__brand fr-enlarge-link">
+                    <p class="fr-logo" title="Ministère de l'Aménagement du territoire et de la Décentralisation">
+                        Ministères<br>aménagement<br>du territoire<br>transition<br>écologique
+                    </p>
+                    <a class="fr-footer__brand-link" href="{{sites_faciles_url}}" title="Retourner à l’accueil - Logo signal logement - Ministère de l'Aménagement du territoire et de la Décentralisation">
+                        <img class="fr-footer__logo" src="{{ asset('img/logo-signal-logement-small.original.svg') }}" alt="Logo signal logement" style="max-width:3,0rem;">
                     </a>
                 </div>
-                <div class="fr-footer__partners-sub">
-                    <ul>
-                        <li>
-                            <a class="fr-footer__partners-link" href="https://www.economie.gouv.fr/plan-de-relance"
-                               target="_blank" rel="noreferrer noopener"
-                               title="France Relance - ouvre une nouvelle fenêtre">
-                                <img class="fr-footer__logo logo-height"
-                                     src="{{ asset('/img/logo-france-relance.svg') }}" alt="Logo France Relance">
-                            </a>
+                <div class="fr-footer__content">
+                    <p class="fr-footer__content-desc" data-block-key="pmvix">Signal Logement - Le service public qui lutte contre le mal-logement !</p>
+                    <ul class="fr-footer__content-list">
+                        <li class="fr-footer__content-item">
+                            <a target="_blank" rel="noopener external" title="info.gouv.fr - Ouvre une nouvelle fenêtre" id="footer__content-link-gouvernement" class="fr-footer__content-link" href="https://www.info.gouv.fr">info.gouv.fr</a>
+                        </li>
+                        <li class="fr-footer__content-item">
+                            <a target="_blank" rel="noopener external" title="service-public.fr - Ouvre une nouvelle fenêtre" id="footer__content-link-servicepublic" class="fr-footer__content-link" href="https://service-public.fr">service-public.fr</a>
+                        </li>
+                        <li class="fr-footer__content-item">
+                            <a target="_blank" rel="noopener external" title="legifrance.gouv.fr - Ouvre une nouvelle fenêtre" id="footer__content-link-legifrance" class="fr-footer__content-link" href="https://legifrance.gouv.fr">legifrance.gouv.fr</a>
+                        </li>
+                        <li class="fr-footer__content-item">
+                            <a target="_blank" rel="noopener external" title="data.gouv.fr - Ouvre une nouvelle fenêtre" id="footer__content-link-datagouv" class="fr-footer__content-link" href="https://data.gouv.fr">data.gouv.fr</a>
                         </li>
                     </ul>
                 </div>
             </div>
-        </div>
-        <div class="fr-footer__bottom">
-            <ul class="fr-footer__bottom-list">
-                <li class="fr-footer__bottom-item">
-                    <a class="fr-footer__bottom-link" href="{{ path('plan_du_site') }}">Plan du site</a>
-                </li>
-                <li class="fr-footer__bottom-item">
-                    <a class="fr-footer__bottom-link" href="{{ path('mentions_legales') }}">Mentions légales</a>
-                </li>
-                <li class="fr-footer__bottom-item">
-                    <a class="fr-footer__bottom-link" href="{{ path('front_cgu') }}">CGU - Usagers</a>
-                </li>
-                <li class="fr-footer__bottom-item">
-                    <a class="fr-footer__bottom-link" href="{{ path('front_cgu_agents') }}">CGU - Agents</a>
-                </li>
-                <li class="fr-footer__bottom-item">
-                    <a class="fr-footer__bottom-link" href="{{ path('politique_de_confidentialite') }}">Politique de
-                        confidentialité</a>
-                </li>
-                <li class="fr-footer__bottom-item">
-                    <a class="fr-footer__bottom-link" href="{{ path('front_accessibilite') }}">Accessibilité : non-conforme</a>
-                </li>
-                <li class="fr-footer__bottom-item">
-                    {% if 'back_' in app.request.get('_route') and app.user is not null and matomo.enable == 1 %}
-                        <button class="fr-footer__bottom-link " data-fr-opened="false" aria-controls="fr-consent-modal"
-                                title="Personnaliser les cookies">Gestion des cookies
-                        </button>
-                    {% else %}
-                        <a class="fr-footer__bottom-link"
-                           href="{{ path('politique_de_confidentialite') }}#gestion-cookies">Gestion
-                            des cookies</a>
-                    {% endif %}
-                </li>
-                <li class="fr-footer__bottom-item">
-                    <a class="fr-footer__bottom-link" target="_blank" rel="noreferrer noopener"
-                        href="https://github.com/MTES-MCT/histologe"
-                        title="Code source - ouvre une nouvelle fenêtre">Code source
-                    </a>
-                </li>
-            </ul>
-            <div class="fr-footer__bottom-copy">
-                <p>Sauf mention explicite de propriété intellectuelle détenue par des tiers, les contenus de ce site sont proposés sous <a
-                            href="https://github.com/etalab/licence-ouverte/blob/master/LO.md" target="_blank"
-                            rel="noreferrer noopener"
-                            title="licence etalab-2.0 - ouvre une nouvelle fenêtre">licence etalab-2.0</a>
-                </p>
+            <div class="fr-footer__bottom">
+                <ul class="fr-footer__bottom-list">
+                    <li class="fr-footer__bottom-item">
+                        <a href="{{sites_faciles_url}}/mentions-legales/" class="fr-footer__bottom-link" target="_self">Mentions légales</a>
+                    </li>
+                    <li class="fr-footer__bottom-item">
+                        <a href="{{sites_faciles_url}}/accessibilite/" class="fr-footer__bottom-link" target="_self">Accessibilité&nbsp;: non conforme</a>
+                    </li>
+                    <li class="fr-footer__bottom-item">
+                        <a href="https://github.com/MTES-MCT/histologe" class="fr-footer__bottom-link" target="_self">Code source</a>
+                    </li>
+                </ul>
+                <div class="fr-footer__bottom-copy">
+                    <p>
+                        Sauf mention explicite de propriété intellectuelle détenue par des tiers, les contenus de ce site sont proposés sous
+                        <a href="https://github.com/etalab/licence-ouverte/blob/master/LO.md" target="_blank" rel="noopener external" title="Licence etalab-2.0 - Ouvre une nouvelle fenêtre">licence etalab-2.0</a>
+                        <span class="cmsfr-footer__bottom-extra">
+                            Ce site est fait avec <a href="https://sites-faciles.beta.numerique.gouv.fr/?mtm_campaign=footer-link" target="_blank" rel="noopener external" title="Sites faciles - Ouvre une nouvelle fenêtre">Sites faciles</a>
+                        </span>
+                    </p>
+                </div>
             </div>
         </div>
-    </div>
-</footer>
+    </footer>
+{% else %}
+    <footer class="fr-footer" id="footer">
+        <div class="{{ container_class }}">
+            <div class="fr-footer__body">
+                <div class="fr-footer__brand">
+                    <div class="fr-logo">
+                        ministère <br> de la transition <br>écologique
+                    </div>
+                </div>
+                <div class="fr-footer__content">
+                    <div class="fr-footer__content-desc fr-text--left">
+                        {{ platform.name }} améliore la prise en charge du mal-logement.
+                    </div>
+                    <ul class="fr-footer__content-list">
+                        <li>
+                            <a class="fr-footer__content-link" href="http://info.gouv.fr" target="_blank"
+                                rel="noreferrer noopener"
+                                title="info.gouv.fr - ouvre une nouvelle fenêtre">info.gouv.fr</a>
+                        </li>
+                        <li>
+                            <a class="fr-footer__content-link" href="http://service-public.fr" target="_blank"
+                                rel="noreferrer noopener"
+                                title="service-public.fr - ouvre une nouvelle fenêtre">service-public.fr</a>
+                        </li>
+                        <li>
+                            <a class="fr-footer__content-link" href="http://legifrance.gouv.fr" target="_blank"
+                                rel="noreferrer noopener"
+                                title="legifrance.gouv.fr - ouvre une nouvelle fenêtre">legifrance.gouv.fr</a>
+                        </li>
+                        <li>
+                            <a class="fr-footer__content-link" href="http://data.gouv.fr" target="_blank"
+                                rel="noreferrer noopener"
+                                title="data.gouv.fr - ouvre une nouvelle fenêtre">data.gouv.fr</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            <div class="fr-footer__partners">
+                <h2 class="fr-footer__partners-title">Nos partenaires</h2>
+                <div class="fr-footer__partners-logos">
+                    <div class="fr-footer__partners-main">
+                        <a class="fr-footer__partners-link" href="https://beta.gouv.fr/" target="_blank"
+                        rel="noreferrer noopener"
+                        title="beta.gouv.fr - ouvre une nouvelle fenêtre">
+                            <img class="fr-footer__logo logo-height"
+                                src="{{ asset('/img/logo-betagouvfr.svg') }}" alt="Logo beta.gouv.fr">
+                        </a>
+                    </div>
+                    <div class="fr-footer__partners-sub">
+                        <ul>
+                            <li>
+                                <a class="fr-footer__partners-link" href="https://www.economie.gouv.fr/plan-de-relance"
+                                target="_blank" rel="noreferrer noopener"
+                                title="France Relance - ouvre une nouvelle fenêtre">
+                                    <img class="fr-footer__logo logo-height"
+                                        src="{{ asset('/img/logo-france-relance.svg') }}" alt="Logo France Relance">
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="fr-footer__bottom">
+                <ul class="fr-footer__bottom-list">
+                    <li class="fr-footer__bottom-item">
+                        <a class="fr-footer__bottom-link" href="{{ path('plan_du_site') }}">Plan du site</a>
+                    </li>
+                    <li class="fr-footer__bottom-item">
+                        <a class="fr-footer__bottom-link" href="{{ path('mentions_legales') }}">Mentions légales</a>
+                    </li>
+                    <li class="fr-footer__bottom-item">
+                        <a class="fr-footer__bottom-link" href="{{ path('front_cgu') }}">CGU - Usagers</a>
+                    </li>
+                    <li class="fr-footer__bottom-item">
+                        <a class="fr-footer__bottom-link" href="{{ path('front_cgu_agents') }}">CGU - Agents</a>
+                    </li>
+                    <li class="fr-footer__bottom-item">
+                        <a class="fr-footer__bottom-link" href="{{ path('politique_de_confidentialite') }}">Politique de
+                            confidentialité</a>
+                    </li>
+                    <li class="fr-footer__bottom-item">
+                        <a class="fr-footer__bottom-link" href="{{ path('front_accessibilite') }}">Accessibilité : non-conforme</a>
+                    </li>
+                    <li class="fr-footer__bottom-item">
+                        {% if 'back_' in app.request.get('_route') and app.user is not null and matomo.enable == 1 %}
+                            <button class="fr-footer__bottom-link " data-fr-opened="false" aria-controls="fr-consent-modal"
+                                    title="Personnaliser les cookies">Gestion des cookies
+                            </button>
+                        {% else %}
+                            <a class="fr-footer__bottom-link"
+                            href="{{ path('politique_de_confidentialite') }}#gestion-cookies">Gestion
+                                des cookies</a>
+                        {% endif %}
+                    </li>
+                    <li class="fr-footer__bottom-item">
+                        <a class="fr-footer__bottom-link" target="_blank" rel="noreferrer noopener"
+                            href="https://github.com/MTES-MCT/histologe"
+                            title="Code source - ouvre une nouvelle fenêtre">Code source
+                        </a>
+                    </li>
+                </ul>
+                <div class="fr-footer__bottom-copy">
+                    <p>Sauf mention explicite de propriété intellectuelle détenue par des tiers, les contenus de ce site sont proposés sous <a
+                                href="https://github.com/etalab/licence-ouverte/blob/master/LO.md" target="_blank"
+                                rel="noreferrer noopener"
+                                title="licence etalab-2.0 - ouvre une nouvelle fenêtre">licence etalab-2.0</a>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </footer>
+{% endif %}
