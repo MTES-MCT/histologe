@@ -37,7 +37,7 @@ class NotifyAndArchiveInactiveAccountCommandTest extends KernelTestCase
         $this->assertStringContainsString('0 accounts archived.', $output);
         $this->assertEmailCount(2);
 
-        $mockClock->modify('+15 days');
+        $mockClock->modify('+40 days'); // to ensure matching with fixtures data not based on the mocked clock
 
         $commandTester->execute([]);
         $commandTester->assertCommandIsSuccessful();

@@ -13,6 +13,7 @@ use Symfony\Component\Clock\ClockInterface;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
@@ -38,6 +39,11 @@ class NotifyAndArchiveInactiveAccountCommand extends AbstractCronCommand
         parent::__construct($this->parameterBag);
     }
 
+    protected function configure(): void
+    {
+        $this->addOption('force', null, InputOption::VALUE_OPTIONAL, 'Forche scheduled archiving accounts without checking date');
+    }
+
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $this->io = new SymfonyStyle($input, $output);
@@ -49,7 +55,7 @@ class NotifyAndArchiveInactiveAccountCommand extends AbstractCronCommand
             return Command::SUCCESS;
         }
 
-        if ('15' === $this->clock->now()->format('d')) {
+        if ('15' === $this->clock->now()->format('d') || $input->getOption('force')) {
             $nbScheduled = $this->scheduleArchivingAndSendRtNotification();
             $message = $nbScheduled.' comptes inactifs mis en instance d\'archivage.';
         }
@@ -80,7 +86,7 @@ class NotifyAndArchiveInactiveAccountCommand extends AbstractCronCommand
         $pendingUsersByTerritories = [];
         foreach ($users as $user) {
             $user->setPassword('');
-            $user->setArchivingScheduledAt(new \DateTimeImmutable('+15 days'));
+            $user->setArchivingScheduledAt($this->clock->now()->modify('+15 days'));
             foreach ($user->getPartnersTerritories() as $territory) {
                 $pendingUsersByTerritories[$territory->getId()][] = $user;
             }
