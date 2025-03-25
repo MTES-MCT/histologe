@@ -9,7 +9,7 @@ use Symfony\Component\Validator\Context\ExecutionContextInterface;
 
 #[OA\Schema(
     description: 'Payload pour créer un arrếté.',
-    required: ['date', 'numero', 'type'],
+    required: ['date', 'numero', 'type', 'numeroDossier'],
 )]
 class ArreteRequest implements RequestInterface
 {
@@ -26,7 +26,6 @@ class ArreteRequest implements RequestInterface
     #[OA\Property(
         description: 'Le numéro de dossier.',
         example: '2023/DD13/00664',
-        nullable: true,
     )]
     #[Assert\NotBlank(groups: ['POST_ARRETE_REQUEST'])]
     #[Groups(groups: ['Default', 'POST_ARRETE_REQUEST'])]
