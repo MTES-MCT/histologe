@@ -7,7 +7,7 @@ Les spécifications Open API peuvent y être téléchargées.
 Une [documentation Swagger](https://signal-logement.beta.gouv.fr/api/doc/swagger) est également disponible en accès libre.
 
 ## Accès à l'API
-Une demande officielle doit être faite via le [formulaire de contact](https://signal-logement.beta.gouv.fr/une-question/contact/ du site.
+Une demande officielle doit être faite via le [formulaire de contact](https://signal-logement.beta.gouv.fr/une-question/contact/) du site.
 
 Sous réserve d'acceptation par nos services, et afin de vous permettre de faire des tests d'interfaçage, vous bénéficierez alors :
 - d'un accès back-office à la plateforme de démonstration
