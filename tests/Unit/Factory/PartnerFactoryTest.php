@@ -3,6 +3,7 @@
 namespace App\Tests\Unit\Factory;
 
 use App\Entity\Enum\PartnerType;
+use App\Entity\Enum\Qualification;
 use App\Entity\Partner;
 use App\Entity\Territory;
 use App\Factory\PartnerFactory;
@@ -64,5 +65,27 @@ class PartnerFactoryTest extends KernelTestCase
         $this->assertEquals($partner->getIsArchive(), false);
         $this->assertEquals($partner->getIsCommune(), true);
         $this->assertContains('99000', $partner->getInsee());
+    }
+
+    public function testCreatePartnerInstanceWhenIsOperator(): void
+    {
+        $partner = (new PartnerFactory($this->parameterBag))->createInstanceFrom(
+            territory: new Territory(),
+            name: 'HTL',
+            email: 'htl@example.com',
+            type: PartnerType::OPERATEUR_VISITES_ET_TRAVAUX,
+            insee: '99000, 99001'
+        );
+
+        /** @var ConstraintViolationList $errors */
+        $errors = $this->validator->validate($partner);
+        $this->assertEmpty($errors, (string) $errors);
+
+        $this->assertInstanceOf(Partner::class, $partner);
+
+        $this->assertEquals($partner->getIsArchive(), false);
+        $this->assertEquals($partner->getIsCommune(), false);
+        $this->assertContains('99000', $partner->getInsee());
+        $this->assertContains(Qualification::VISITES, $partner->getCompetence());
     }
 }

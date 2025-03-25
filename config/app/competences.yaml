@@ -61,5 +61,6 @@ parameters:
     - !php/enum App\Entity\Enum\Qualification::ACCOMPAGNEMENT_TRAVAUX
     - !php/enum App\Entity\Enum\Qualification::CONCILIATION
     - !php/enum App\Entity\Enum\Qualification::NON_DECENCE_ENERGETIQUE
+    - !php/enum App\Entity\Enum\Qualification::VISITES
     PREFECTURE:
     - !php/enum App\Entity\Enum\Qualification::DALO
