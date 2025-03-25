@@ -3,13 +3,16 @@
 namespace App\Event;
 
 use App\Entity\Intervention;
+use App\Entity\Suivi;
 use App\Entity\User;
 use Symfony\Contracts\EventDispatcher\Event;
 
 class InterventionCreatedEvent extends Event
 {
-    public const NAME = 'intervention.created';
-    public const UPDATED_BY_ESABORA = 'intervention.updated.esabora';
+    public const string NAME = 'intervention.created';
+    public const string UPDATED_BY_ESABORA = 'intervention.updated.esabora';
+
+    private ?Suivi $suivi = null;
 
     public function __construct(
         private readonly Intervention $intervention,
@@ -25,5 +28,15 @@ class InterventionCreatedEvent extends Event
     public function getUser(): ?User
     {
         return $this->user;
+    }
+
+    public function getSuivi(): ?Suivi
+    {
+        return $this->suivi;
+    }
+
+    public function setSuivi(?Suivi $suivi): void
+    {
+        $this->suivi = $suivi;
     }
 }
