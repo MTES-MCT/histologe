@@ -61,7 +61,10 @@ class CreateApiPartnerUsersCommand extends Command
             return Command::INVALID;
         }
 
-        $foundUserApi = $this->userRepository->findOneBy(['email' => $apiEmail]);
+        $foundUserApi = $this->userRepository->findOneBy([
+            'email' => $apiEmail,
+            'statut' => User::STATUS_ACTIVE,
+        ]);
         if (!empty($foundUserApi)) {
             $io->warning('User already exists with API e-mail');
 
@@ -75,7 +78,10 @@ class CreateApiPartnerUsersCommand extends Command
 
         // Testing purpose: create partner and BO user, and get partner ID
         if (!empty($zip) && !empty($partnerName) && !empty($boEmail)) {
-            $foundUserBo = $this->userRepository->findOneBy(['email' => $boEmail]);
+            $foundUserBo = $this->userRepository->findOneBy([
+                'email' => $boEmail,
+                'statut' => User::STATUS_ACTIVE,
+            ]);
             if (!empty($foundUserBo)) {
                 $io->warning('User already exists with BO e-mail');
 
@@ -119,6 +125,12 @@ class CreateApiPartnerUsersCommand extends Command
 
         if (empty($partner)) {
             $partner = $this->partnerRepository->findOneBy(['id' => $partnerId]);
+        }
+
+        if (empty($partner)) {
+            $io->error('No partner found');
+
+            return Command::FAILURE;
         }
 
         $user = $this->userFactory->createInstanceFrom(
