@@ -3,6 +3,7 @@
 namespace App\Tests\Unit\Messenger\MessageHandler;
 
 use App\Entity\DesordreCritere;
+use App\Entity\Enum\SignalementStatus;
 use App\Entity\Signalement;
 use App\Entity\Suivi;
 use App\Entity\User;
@@ -68,6 +69,32 @@ class NewSignalementCheckFileMessageHandlerTest extends KernelTestCase
         $this->assertStringContainsString('diagnostic', $handler->description);
     }
 
+    public function testProcessSignalementRefusedNotSent(): void
+    {
+        // on n'envoie pas de demande de documents si le signalement est refusé
+        $handler = $this->checkSignalement('00000000-0000-0000-2023-000000000021');
+
+        $suivi = $handler->suivi;
+        $this->assertEmpty($suivi);
+    }
+
+    public function testProcessSignalementAcceptedAndAlreadySuiviPartner(): void
+    {
+        // on n'envoie pas de demande de documents si le signalement est accepté et qu'il y a un suivi partenaire
+        $handler = $this->checkSignalement('00000000-0000-0000-2022-000000000008');
+
+        $suivi = $handler->suivi;
+        $this->assertEmpty($suivi);
+    }
+
+    public function testProcessSignalementAcceptedButNoSuiviPartner(): void
+    {
+        $handler = $this->checkSignalement('00000000-0000-0000-2023-000000000027', SignalementStatus::ACTIVE);
+
+        $this->assertInstanceOf(Suivi::class, $handler->suivi);
+        $this->assertStringContainsString('diagnostic', $handler->description);
+    }
+
     private function getHandler(): NewSignalementCheckFileMessageHandler
     {
         /** @var SignalementRepository $signalementRepository */
@@ -97,12 +124,15 @@ class NewSignalementCheckFileMessageHandlerTest extends KernelTestCase
         return $handler;
     }
 
-    private function checkSignalement(string $uuid): NewSignalementCheckFileMessageHandler
+    private function checkSignalement(string $uuid, ?SignalementStatus $signalementStatus = null): NewSignalementCheckFileMessageHandler
     {
         /** @var SignalementRepository $signalementRepository */
         $signalementRepository = $this->entityManager->getRepository(Signalement::class);
         /** @var Signalement $signalement */
         $signalement = $signalementRepository->findOneBy(['uuid' => $uuid]);
+        if (null !== $signalementStatus) {
+            $signalement->setStatut($signalementStatus);
+        }
         $newSignalementCheckFileMessage = new NewSignalementCheckFileMessage($signalement->getId());
 
         $handler = $this->getHandler();
