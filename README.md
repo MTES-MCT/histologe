@@ -121,6 +121,10 @@ Ain                    | Agent Partenaire 01 | user-01-01@histologe.fr          
 
 > Pour les mails générique partenaire, la nomenclature est la suivante: partenaire-[zip]-[index]
 
+## API
+
+- [Accès à l'API](./docs/API.md)
+
 ## Documentation projet
 
 - [Documentation](https://github.com/MTES-MCT/histologe/wiki)
