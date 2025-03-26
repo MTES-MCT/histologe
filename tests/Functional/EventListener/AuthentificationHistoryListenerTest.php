@@ -17,7 +17,7 @@ use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 
 class AuthentificationHistoryListenerTest extends WebTestCase
 {
-    public const USER_ADMIN_TERRITORY_13 = 'admin-territoire-13-01@histologe.fr';
+    public const USER_ADMIN_TERRITORY_13 = 'admin-territoire-13-01@signal-logement.fr';
     private ?KernelBrowser $client = null;
     private HistoryEntryRepository $historyEntryRepository;
     private UrlGeneratorInterface $urlGenerator;
@@ -39,7 +39,7 @@ class AuthentificationHistoryListenerTest extends WebTestCase
 
         $this->client->submitForm('Connexion', [
             'email' => self::USER_ADMIN_TERRITORY_13,
-            'password' => 'histologe',
+            'password' => 'signallogement',
         ]);
 
         $historyEntries = $this->historyEntryRepository->findAll();
@@ -56,7 +56,7 @@ class AuthentificationHistoryListenerTest extends WebTestCase
         );
 
         $userRepository = static::getContainer()->get(UserRepository::class);
-        $user = $userRepository->findOneBy(['email' => 'admin-01@histologe.fr']);
+        $user = $userRepository->findOneBy(['email' => 'admin-01@signal-logement.fr']);
 
         $this->token
             ->expects($this->once())

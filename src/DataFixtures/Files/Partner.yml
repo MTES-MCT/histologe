@@ -1,40 +1,40 @@
 partners:
   -
-    nom: "Administrateurs Histologe ALL"
-    email: "admin@histologe.fr"
+    nom: "Administrateurs Signal-logement"
+    email: "admin@signal-logement.fr"
     is_archive: 0
     is_commune: 0
     territory: null
     type: "AUTRE"
   -
     nom: "Partenaire 13-01"
-    email: "partenaire-13-01@histologe.fr"
+    email: "partenaire-13-01@signal-logement.fr"
     is_archive: 0
     territory: "Bouches-du-Rhône"
     type: "AUTRE"
     competence: "VISITES"
   -
     nom: "Partenaire 13-02"
-    email: "partenaire-13-02@histologe.fr"
+    email: "partenaire-13-02@signal-logement.fr"
     is_archive: 0
     territory: "Bouches-du-Rhône"
     type: "AUTRE"
     competence: "VISITES"
   -
     nom: "Partenaire 13-03"
-    email: "partenaire-13-03@histologe.fr"
+    email: "partenaire-13-03@signal-logement.fr"
     is_archive: 0
     territory: "Bouches-du-Rhône"
     type: "AUTRE"
   -
     nom: "Partenaire 13-04"
-    email: "partenaire-13-04@histologe.fr"
+    email: "partenaire-13-04@signal-logement.fr"
     is_archive: 0
     territory: "Bouches-du-Rhône"
     type: "AUTRE"
   -
     nom: "Partenaire 13-05 ESABORA SCHS"
-    email: "partenaire-13-05@histologe.fr"
+    email: "partenaire-13-05@signal-logement.fr"
     is_archive: 0
     territory: "Bouches-du-Rhône"
     esabora_url: "http://histologe_wiremock:8080/ws/rest"
@@ -45,7 +45,7 @@ partners:
     idoss_url: "http://histologe_wiremock:8080/idoss/"
   -
     nom: "Partenaire 13-06 ESABORA ARS"
-    email: "partenaire-13-06@histologe.fr"
+    email: "partenaire-13-06@signal-logement.fr"
     is_archive: 0
     territory: "Bouches-du-Rhône"
     esabora_url: "http://histologe_wiremock:8080/ARS/ws/rest"
@@ -54,7 +54,7 @@ partners:
     competence: "VISITES"
   -
     nom: "Partenaire 13-07"
-    email: "partenaire-13-07@histologe.fr"
+    email: "partenaire-13-07@signal-logement.fr"
     is_archive: 1
     territory: "Bouches-du-Rhône"
     type: "AUTRE"
@@ -72,7 +72,7 @@ partners:
     type: "AUTRE"   
   -
     nom: "Partenaire 01-01"
-    email: "partenaire-01-01@histologe.fr"
+    email: "partenaire-01-01@signal-logement.fr"
     is_archive: 0
     insee: "[\"\"]"
     territory: "Ain"
@@ -81,28 +81,28 @@ partners:
     type: "AUTRE"
   -
     nom: "Partenaire 01-02"
-    email: "partenaire-01-02@histologe.fr"
+    email: "partenaire-01-02@signal-logement.fr"
     is_archive: 0
     insee: "[\"01173\"]"
     territory: "Ain"
     type: "COMMUNE_SCHS"
   -
     nom: "Partenaire 01-03"
-    email: "partenaire-01-03@histologe.fr"
+    email: "partenaire-01-03@signal-logement.fr"
     is_archive: 0
     insee: "[\"\"]"
     territory: "Ain"
     type: "AUTRE"
   -
     nom: "Partenaire 01-04"
-    email: "partenaire-01-04@histologe.fr"
+    email: "partenaire-01-04@signal-logement.fr"
     is_archive: 0
     insee: "[\"\"]"
     territory: "Ain"
     type: "AUTRE"
   -
     nom: "Partenaire 2A-01"
-    email: "partenaire-2A-01@histologe.fr"
+    email: "partenaire-2A-01@signal-logement.fr"
     is_archive: 0
     insee: "[\"2A247\"]"
     territory: "Corse-du-Sud"
@@ -127,14 +127,14 @@ partners:
     type: "AUTRE"
   -
     nom: "Partenaire 974-01"
-    email: "partenaire-01-974@histologe.fr"
+    email: "partenaire-01-974@signal-logement.fr"
     is_archive: 0
     insee: "[\"\"]"
     territory: "La Réunion"
     type: "AUTRE"
   -
     nom: "EMHA - Métropole de Lyon"
-    email: "partenaire-01-69@histologe.fr"
+    email: "partenaire-01-69@signal-logement.fr"
     is_archive: 0
     is_commune: 1
     insee: "[\"69091\", \"69096\", \"69123\", \"69149\", \"69199\", \"69205\", \"69290\", \"69259\", \"69266\", \"69381\", \"69382\", \"69383\", \"69384\", \"69385\", \"69386\", \"69387\", \"69388\", \"69389\", \"69003\", \"69029\", \"69033\", \"69034\", \"69040\", \"69044\", \"69046\", \"69271\", \"69063\", \"69273\", \"69068\", \"69069\", \"69071\", \"69072\", \"69275\", \"69081\", \"69276\", \"69085\", \"69087\", \"69088\", \"69089\", \"69100\", \"69279\", \"69142\", \"69250\", \"69116\", \"69117\", \"69127\", \"69282\", \"69283\", \"69284\", \"69143\", \"69152\", \"69153\", \"69163\", \"69286\", \"69168\", \"69191\", \"69194\", \"69204\", \"69207\", \"69202\", \"69292\", \"69293\", \"69296\", \"69244\", \"69256\", \"69260\", \"69233\", \"69278\"]"
@@ -142,28 +142,28 @@ partners:
     type: "COMMUNE_SCHS"
   -
     nom: "COR"
-    email: "partenaire-02-69@histologe.fr"
+    email: "partenaire-02-69@signal-logement.fr"
     is_archive: 0
     insee: "[\"69001\", \"69006\", \"69008\", \"69037\", \"69054\", \"69060\", \"69066\", \"69070\", \"69075\", \"69093\", \"69102\", \"69107\", \"69174\", \"69130\", \"69160\", \"69164\", \"69169\", \"69181\", \"69183\", \"69188\", \"69200\", \"69214\", \"69217\", \"69225\", \"69229\", \"69234\", \"69240\", \"69243\", \"69248\", \"69254\", \"69157\"]"
     territory: "Rhône"
     type: "COMMUNE_SCHS"
   -
     nom: "Commune 69-03 MDL"
-    email: "partenaire-03-69@histologe.fr"
+    email: "partenaire-03-69@signal-logement.fr"
     is_archive: 0
     insee: "[\"69205\"]"
     territory: "Métropole de Lyon"
     type: "COMMUNE_SCHS"
   -
     nom: "Commune 69-04 COR"
-    email: "partenaire-04-69@histologe.fr"
+    email: "partenaire-04-69@signal-logement.fr"
     is_archive: 0
     insee: "[\"69054\"]"
     territory: "Rhône"
     type: "COMMUNE_SCHS"
   -
     nom: "Partenaire 69-05"
-    email: "partenaire-05-69@histologe.fr"
+    email: "partenaire-05-69@signal-logement.fr"
     is_archive: 0
     insee: "[\"\"]"
     territory: "Rhône"
@@ -171,294 +171,294 @@ partners:
     competence: "VISITES"
   -
     nom: "Partenaire 69-06"
-    email: "partenaire-06-69@histologe.fr"
+    email: "partenaire-06-69@signal-logement.fr"
     is_archive: 0
     insee: "[\"\"]"
     territory: "Rhône"
     type: "ADIL"
   -
     nom: "ADIL 63"
-    email: "partenaire-63-01@histologe.fr"
+    email: "partenaire-63-01@signal-logement.fr"
     is_archive: 0
     insee: "[\"\"]"
     territory: "Puy-de-Dôme"
     type: "ADIL"
   -
     nom: "ALF (OPAH)"
-    email: "partenaire-63-02@histologe.fr"
+    email: "partenaire-63-02@signal-logement.fr"
     is_archive: 0
     insee: "[\"\"]"
     territory: "Puy-de-Dôme"
     type: "DISPOSITIF_RENOVATION_HABITAT"
   -
     nom: "MSA 63"
-    email: "partenaire-63-03@histologe.fr"
+    email: "partenaire-63-03@signal-logement.fr"
     is_archive: 0
     insee: "[\"\"]"
     territory: "Puy-de-Dôme"
     type: "CAF_MSA"
   -
     nom: "API"
-    email: "partenaire-63-04@histologe.fr"
+    email: "partenaire-63-04@signal-logement.fr"
     is_archive: 0
     insee: "[\"\"]"
     territory: "Puy-de-Dôme"
     type: "EPCI"
   -
     nom: "ARS 63"
-    email: "partenaire-63-05@histologe.fr"
+    email: "partenaire-63-05@signal-logement.fr"
     is_archive: 0
     insee: "[\"\"]"
     territory: "Puy-de-Dôme"
     type: "ARS"
   -
     nom: "Soliha"
-    email: "partenaire-63-06@histologe.fr"
+    email: "partenaire-63-06@signal-logement.fr"
     is_archive: 0
     insee: "[\"\"]"
     territory: "Puy-de-Dôme"
     type: "OPERATEUR_VISITES_ET_TRAVAUX"
   -
     nom: "BILLOM-CO"
-    email: "partenaire-63-07@histologe.fr"
+    email: "partenaire-63-07@signal-logement.fr"
     is_archive: 0
     insee: "[\"\"]"
     territory: "Puy-de-Dôme"
     type: "EPCI"
   -
     nom: "CAF 63"
-    email: "partenaire-63-08@histologe.fr"
+    email: "partenaire-63-08@signal-logement.fr"
     is_archive: 0
     insee: "[\"\"]"
     territory: "Puy-de-Dôme"
     type: "CAF_MSA"
   -
     nom: "DDTM 63"
-    email: "partenaire-63-09@histologe.fr"
+    email: "partenaire-63-09@signal-logement.fr"
     is_archive: 0
     insee: "[\"\"]"
     territory: "Puy-de-Dôme"
     type: "DDT_M"
   -
     nom: "Métropole de Clermont"
-    email: "partenaire-63-10@histologe.fr"
+    email: "partenaire-63-10@signal-logement.fr"
     is_archive: 0
     insee: "[\"\"]"
     territory: "Puy-de-Dôme"
     type: "EPCI"
   -
     nom: "PAYS DE SAINT-ELOY"
-    email: "partenaire-63-11@histologe.fr"
+    email: "partenaire-63-11@signal-logement.fr"
     is_archive: 0
     insee: "[\"\"]"
     territory: "Puy-de-Dôme"
     type: "EPCI"
   -
     nom: "PIG CD"
-    email: "partenaire-63-12@histologe.fr"
+    email: "partenaire-63-12@signal-logement.fr"
     is_archive: 0
     insee: "[\"\"]"
     territory: "Puy-de-Dôme"
     type: "DISPOSITIF_RENOVATION_HABITAT"
   -
     nom: "RLV"
-    email: "partenaire-63-13@histologe.fr"
+    email: "partenaire-63-13@signal-logement.fr"
     is_archive: 0
     insee: "[\"\"]"
     territory: "Puy-de-Dôme"
     type: "EPCI"
   -
     nom: "SCHS CF"
-    email: "partenaire-63-14@histologe.fr"
+    email: "partenaire-63-14@signal-logement.fr"
     is_archive: 0
     insee: "[\"\"]"
     territory: "Puy-de-Dôme"
     type: "COMMUNE_SCHS"
   -
     nom: "SCHS Royat"
-    email: "partenaire-63-15@histologe.fr"
+    email: "partenaire-63-15@signal-logement.fr"
     is_archive: 0
     insee: "[\"\"]"
     territory: "Puy-de-Dôme"
     type: "COMMUNE_SCHS"
   -
     nom: "TDM"
-    email: "partenaire-63-16@histologe.fr"
+    email: "partenaire-63-16@signal-logement.fr"
     is_archive: 0
     insee: "[\"\"]"
     territory: "Puy-de-Dôme"
     type: "EPCI"
   -
     nom: "Urbanis"
-    email: "partenaire-63-17@histologe.fr"
+    email: "partenaire-63-17@signal-logement.fr"
     is_archive: 0
     insee: "[\"\"]"
     territory: "Puy-de-Dôme"
     type: "OPERATEUR_VISITES_ET_TRAVAUX"
   -
     nom: "DDETS 63"
-    email: "partenaire-63-18@histologe.fr"
+    email: "partenaire-63-18@signal-logement.fr"
     is_archive: 0
     insee: "[\"\"]"
     territory: "Puy-de-Dôme"
     type: "DDETS"
   -
     nom: "ADIL 89"
-    email: "partenaire-89-01@histologe.fr"
+    email: "partenaire-89-01@signal-logement.fr"
     is_archive: 0
     insee: "[\"\"]"
     territory: "Yonne"
     type: "ADIL"
   -
     nom: "DDT 89"
-    email: "partenaire-89-02@histologe.fr"
+    email: "partenaire-89-02@signal-logement.fr"
     is_archive: 0
     insee: "[\"\"]"
     territory: "Yonne"
     type: "DDT_M"
   -
     nom: "CAF 89"
-    email: "partenaire-89-03@histologe.fr"
+    email: "partenaire-89-03@signal-logement.fr"
     is_archive: 0
     insee: "[\"\"]"
     territory: "Yonne"
     type: "CAF_MSA"
   -
     nom: "ARS 89"
-    email: "partenaire-89-04@histologe.fr"
+    email: "partenaire-89-04@signal-logement.fr"
     is_archive: 0
     insee: "[\"\"]"
     territory: "Yonne"
     type: "ARS"
   -
     nom: "CD 89"
-    email: "partenaire-89-05@histologe.fr"
+    email: "partenaire-89-05@signal-logement.fr"
     is_archive: 0
     insee: "[\"\"]"
     territory: "Yonne"
     type: "CONSEIL_DEPARTEMENTAL"
   -
     nom: "URBANIS"
-    email: "partenaire-89-06@histologe.fr"
+    email: "partenaire-89-06@signal-logement.fr"
     is_archive: 0
     insee: "[\"\"]"
     territory: "Yonne"
     type: "OPERATEUR_VISITES_ET_TRAVAUX"
   -
     nom: "SOLIHA89"
-    email: "partenaire-89-07@histologe.fr"
+    email: "partenaire-89-07@signal-logement.fr"
     is_archive: 0
     insee: "[\"\"]"
     territory: "Yonne"
     type: "OPERATEUR_VISITES_ET_TRAVAUX"
   -
     nom: "Mairie de Tonnerre"
-    email: "partenaire-89-08@histologe.fr"
+    email: "partenaire-89-08@signal-logement.fr"
     is_archive: 0
     insee: "[\"\"]"
     territory: "Yonne"
     type: "COMMUNE_SCHS"
   -
     nom: "Mairie de Avallon"
-    email: "partenaire-89-09@histologe.fr"
+    email: "partenaire-89-09@signal-logement.fr"
     is_archive: 0
     insee: "[\"\"]"
     territory: "Yonne"
     type: "COMMUNE_SCHS"
   -
     nom: "CAGS"
-    email: "partenaire-89-10@histologe.fr"
+    email: "partenaire-89-10@signal-logement.fr"
     is_archive: 0
     insee: "[\"\"]"
     territory: "Yonne"
     type: "COMMUNE_SCHS"
   -
     nom: "DDTESPP 89"
-    email: "partenaire-89-11@histologe.fr"
+    email: "partenaire-89-11@signal-logement.fr"
     is_archive: 0
     insee: "[\"\"]"
     territory: "Yonne"
     type: "DDETS"
   -
     nom: "SCHS Auxerre"
-    email: "partenaire-89-12@histologe.fr"
+    email: "partenaire-89-12@signal-logement.fr"
     is_archive: 0
     insee: "[\"\"]"
     territory: "Yonne"
     type: "COMMUNE_SCHS"
   -
     nom: "Maison de l'Habitat du Jovinien"
-    email: "partenaire-89-13@histologe.fr"
+    email: "partenaire-89-13@signal-logement.fr"
     is_archive: 0
     insee: "[\"\"]"
     territory: "Yonne"
     type: "COMMUNE_SCHS"
   -
     nom: "Mairie de Saint Florentin"
-    email: "partenaire-89-14@histologe.fr"
+    email: "partenaire-89-14@signal-logement.fr"
     is_archive: 0
     insee: "[\"\"]"
     territory: "Yonne"
     type: "COMMUNE_SCHS"
   -
     nom: "ADIL MISSION CAF"
-    email: "partenaire-89-15@histologe.fr"
+    email: "partenaire-89-15@signal-logement.fr"
     is_archive: 0
     insee: "[\"\"]"
     territory: "Yonne"
     type: "ADIL"
   -
     nom: "Mairie d'Egriselles le Bocage"
-    email: "partenaire-89-16@histologe.fr"
+    email: "partenaire-89-16@signal-logement.fr"
     is_archive: 0
     insee: "[\"\"]"
     territory: "Yonne"
     type: "COMMUNE_SCHS"
   -
     nom: "Mairie d'Epineau les voves"
-    email: "partenaire-89-17@histologe.fr"
+    email: "partenaire-89-17@signal-logement.fr"
     is_archive: 0
     insee: "[\"\"]"
     territory: "Yonne"
     type: "COMMUNE_SCHS"
   -
     nom: "Mairie de Saint Fargeau"
-    email: "partenaire-89-18@histologe.fr"
+    email: "partenaire-89-18@signal-logement.fr"
     is_archive: 0
     insee: "[\"\"]"
     territory: "Yonne"
     type: "COMMUNE_SCHS"
   -
     nom: "Mairie de Saint Sauveur en Puisaye"
-    email: "partenaire-89-19@histologe.fr"
+    email: "partenaire-89-19@signal-logement.fr"
     is_archive: 0
     insee: "[\"\"]"
     territory: "Yonne"
     type: "COMMUNE_SCHS"
   -
     nom: "Mairie de Charbuy"
-    email: "partenaire-89-20@histologe.fr"
+    email: "partenaire-89-20@signal-logement.fr"
     is_archive: 0
     insee: "[\"\"]"
     territory: "Yonne"
     type: "COMMUNE_SCHS"
   -
     nom: "Mairie de Tronchoy"
-    email: "partenaire-89-21@histologe.fr"
+    email: "partenaire-89-21@signal-logement.fr"
     is_archive: 0
     insee: "[\"\"]"
     territory: "Yonne"
     type: "COMMUNE_SCHS"
   -
     nom: "DDT 38"
-    email: "partenaire-38-01@histologe.fr"
+    email: "partenaire-38-01@signal-logement.fr"
     is_archive: 0
     insee: "[\"\"]"
     territory: "Isère"
     type: "DDT_M"
   -
     nom: "Partenaire 62-01"
-    email: "partenaire-62-01@histologe.fr"
+    email: "partenaire-62-01@signal-logement.fr"
     is_archive: 0
     insee: "[\"\"]"
     territory: "Pas-de-Calais"
@@ -471,7 +471,7 @@ partners:
       - 'RSD'
   -
     nom: "Partenaire 62-02 (BEAUDRICOURT)"
-    email: "partenaire-62-02@histologe.fr"
+    email: "partenaire-62-02@signal-logement.fr"
     is_archive: 0
     insee: "[\"62091\"]"
     territory: "Pas-de-Calais"
@@ -485,14 +485,14 @@ partners:
 
   -
     nom: "Mairie de Saint-Denis"
-    email: "partenaire-93-01@histologe.fr"
+    email: "partenaire-93-01@signal-logement.fr"
     is_archive: 0
     insee: "[\"93066\"]"
     territory: "Seine-Saint-Denis"
     type: "COMMUNE_SCHS"
   - 
     nom: "Partenaire 38-02"
-    email: "partenaire-38-02@histologe.fr"
+    email: "partenaire-38-02@signal-logement.fr"
     is_archive: 0
     territory: "Isère"
     type: "COMMUNE_SCHS"
@@ -504,111 +504,111 @@ partners:
       - 'RSD'
   -
     nom: "Ville de Lunel"
-    email: "partenaire-34-01@histologe.fr"
+    email: "partenaire-34-01@signal-logement.fr"
     is_archive: 0
     insee: "[\"34145\"]"
     territory: "Hérault"
     type: "COMMUNE_SCHS"
   -
     nom: "CA Lunel Agglomération"
-    email: "partenaire-34-02@histologe.fr"
+    email: "partenaire-34-02@signal-logement.fr"
     is_archive: 0
     insee: "[\"34033\", \"34048\", \"34110\", \"34112\", \"34145\", \"34146\", \"34151\", \"34272\", \"34280\", \"34288\", \"34294\", \"34296\", \"34340\"]"
     territory: "Hérault"
     type: "EPCI"
   -
     nom: "Ville de Montpellier"
-    email: "partenaire-34-03@histologe.fr"
+    email: "partenaire-34-03@signal-logement.fr"
     is_archive: 0
     insee: "[\"34172\"]"
     territory: "Hérault"
     type: "COMMUNE_SCHS"
   -
     nom: "CAF 34"
-    email: "partenaire-34-04@histologe.fr"
+    email: "partenaire-34-04@signal-logement.fr"
     is_archive: 0
     insee: "[\"\"]"
     territory: "Hérault"
     type: "CAF_MSA"
   -
     nom: "CD 34"
-    email: "partenaire-34-05@histologe.fr"
+    email: "partenaire-34-05@signal-logement.fr"
     is_archive: 0
     insee: "[\"\"]"
     territory: "Hérault"
     type: "CONSEIL_DEPARTEMENTAL"
   -
     nom: "Commune de Campagne"
-    email: "partenaire-34-06@histologe.fr"
+    email: "partenaire-34-06@signal-logement.fr"
     is_archive: 0
     insee: "[\"34048\"]"
     territory: "Hérault"
     type: "COMMUNE_SCHS"
   -
     nom: "DDT_M 972"
-    email: "partenaire-972-01@histologe.fr"
+    email: "partenaire-972-01@signal-logement.fr"
     is_archive: 0
     territory: "Martinique"
     type: "DDT_M"
   -
     nom: "ARS 972"
-    email: "partenaire-972-02@histologe.fr"
+    email: "partenaire-972-02@signal-logement.fr"
     is_archive: 0
     territory: "Martinique"
     type: "ARS"
     competence: "VISITES"
   -
     nom: "Partenaire Zone Agde"
-    email: "partenaire-34-07@histologe.fr"
+    email: "partenaire-34-07@signal-logement.fr"
     is_archive: 0
     territory: "Hérault"
     type: "AUTRE"
   -
     nom: "Partenaire Hors Zone Agde"
-    email: "partenaire-34-08@histologe.fr"
+    email: "partenaire-34-08@signal-logement.fr"
     is_archive: 0
     territory: "Hérault"
     type: "AUTRE"
   -
     nom: "DDT Loire-Atlantique"
-    email: "partenaire-44-01@histologe.fr"
+    email: "partenaire-44-01@signal-logement.fr"
     is_archive: 0
     territory: "Loire-Atlantique"
     type: "DDT_M"
   -
     nom: "SDIS 44"
-    email: "partenaire-44-02@histologe.fr"
+    email: "partenaire-44-02@signal-logement.fr"
     is_archive: 0
     territory: "Loire-Atlantique"
     type: "POLICE_GENDARMERIE"
   -
     nom: "Mairie de Saint-Mars du Désert"
-    email: "partenaire-44-03@histologe.fr"
+    email: "partenaire-44-03@signal-logement.fr"
     insee: "[\"44179\"]"
     is_archive: 0
     territory: "Loire-Atlantique"
     type: "COMMUNE_SCHS"
   -
     nom: "Cocoland"
-    email: "partenaire-44-04@histologe.fr"
+    email: "partenaire-44-04@signal-logement.fr"
     is_archive: 0
     territory: "Loire-Atlantique"
     type: "COMMUNE_SCHS"
   -
     nom: "Alès Agglomération"
-    email: "partenaire-30-01@histologe.fr"
+    email: "partenaire-30-01@signal-logement.fr"
     is_archive: 0
     territory: "Gard"
     type: "EPCI"
   -
     nom: "CAF 30"
-    email: "partenaire-30-02@histologe.fr"
+    email: "partenaire-30-02@signal-logement.fr"
     is_archive: 0
     territory: "Gard"
     type: "CAF_MSA"
   -
     nom: "Partner Habitat 44"
-    email: "partenaire-44-05@histologe.fr"
+    email: "partenaire-44-05@signal-logement.fr"
     insee: "[\"44179\"]"
     is_archive: 0
     territory: "Loire-Atlantique"
@@ -616,7 +616,7 @@ partners:
     bailleur: "Habitat 44"
   -
     nom: "Tiers-Lieu"
-    email: "partenaire-44-06@histologe.fr"
+    email: "partenaire-44-06@signal-logement.fr"
     is_archive: 0
     territory: "Loire-Atlantique"
     type: "COMMUNE_SCHS"

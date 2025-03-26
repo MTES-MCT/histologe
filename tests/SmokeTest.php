@@ -32,7 +32,7 @@ class SmokeTest extends WebTestCase
     {
         /** @var UserRepository $userRepository */
         $userRepository = static::getContainer()->get(UserRepository::class);
-        $user = $userRepository->findOneBy(['email' => 'admin-territoire-69-mdl@histologe.fr']);
+        $user = $userRepository->findOneBy(['email' => 'admin-territoire-69-mdl@signal-logement.fr']);
         self::ensureKernelShutdown();
         $client = static::createClient();
         $client->loginUser($user);
@@ -52,7 +52,7 @@ class SmokeTest extends WebTestCase
     {
         /** @var UserRepository $userRepository */
         $userRepository = static::getContainer()->get(UserRepository::class);
-        $user = $userRepository->findOneBy(['email' => 'user-69-05@histologe.fr']);
+        $user = $userRepository->findOneBy(['email' => 'user-69-05@signal-logement.fr']);
         self::ensureKernelShutdown();
         $client = static::createClient();
         $client->loginUser($user);
@@ -72,7 +72,7 @@ class SmokeTest extends WebTestCase
     {
         /** @var UserRepository $userRepository */
         $userRepository = static::getContainer()->get(UserRepository::class);
-        $user = $userRepository->findOneBy(['email' => 'admin-01@histologe.fr']);
+        $user = $userRepository->findOneBy(['email' => 'admin-01@signal-logement.fr']);
         self::ensureKernelShutdown();
         $client = static::createClient();
         $client->loginUser($user);

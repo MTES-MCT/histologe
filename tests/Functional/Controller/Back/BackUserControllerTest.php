@@ -16,7 +16,7 @@ class BackUserControllerTest extends WebTestCase
         $client = static::createClient();
         /** @var UserRepository $userRepository */
         $userRepository = static::getContainer()->get(UserRepository::class);
-        $user = $userRepository->findOneBy(['email' => 'admin-01@histologe.fr']);
+        $user = $userRepository->findOneBy(['email' => 'admin-01@signal-logement.fr']);
         $client->loginUser($user);
 
         /** @var RouterInterface $router */
@@ -53,7 +53,7 @@ class BackUserControllerTest extends WebTestCase
         $client = static::createClient();
         /** @var UserRepository $userRepository */
         $userRepository = static::getContainer()->get(UserRepository::class);
-        $user = $userRepository->findOneBy(['email' => 'admin-territoire-13-01@histologe.fr']);
+        $user = $userRepository->findOneBy(['email' => 'admin-territoire-13-01@signal-logement.fr']);
         $client->loginUser($user);
 
         /** @var RouterInterface $router */
@@ -82,7 +82,7 @@ class BackUserControllerTest extends WebTestCase
         $client = static::createClient();
         /** @var UserRepository $userRepository */
         $userRepository = static::getContainer()->get(UserRepository::class);
-        $user = $userRepository->findOneBy(['email' => 'admin-01@histologe.fr']);
+        $user = $userRepository->findOneBy(['email' => 'admin-01@signal-logement.fr']);
         $client->loginUser($user);
 
         /** @var RouterInterface $router */
@@ -103,7 +103,7 @@ class BackUserControllerTest extends WebTestCase
         $client = static::createClient();
         /** @var UserRepository $userRepository */
         $userRepository = static::getContainer()->get(UserRepository::class);
-        $user = $userRepository->findOneBy(['email' => 'admin-territoire-34-01@histologe.fr']);
+        $user = $userRepository->findOneBy(['email' => 'admin-territoire-34-01@signal-logement.fr']);
         $client->loginUser($user);
 
         /** @var RouterInterface $router */

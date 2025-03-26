@@ -18,7 +18,7 @@ class UserExportMessageHandlerTest extends WebTestCase
         self::bootKernel();
         $container = static::getContainer();
         $messageBus = $container->get(MessageBusInterface::class);
-        $userEmail = 'admin-01@histologe.fr';
+        $userEmail = 'admin-01@signal-logement.fr';
         $userRepository = static::getContainer()->get(UserRepository::class);
         /** @var User $user */
         $user = $userRepository->findOneBy(['email' => $userEmail]);
@@ -45,7 +45,7 @@ class UserExportMessageHandlerTest extends WebTestCase
         self::bootKernel();
         $container = static::getContainer();
         $messageBus = $container->get(MessageBusInterface::class);
-        $userEmail = 'admin-territoire-13-01@histologe.fr';
+        $userEmail = 'admin-territoire-13-01@signal-logement.fr';
         $userRepository = static::getContainer()->get(UserRepository::class);
         /** @var User $user */
         $user = $userRepository->findOneBy(['email' => $userEmail]);

@@ -28,7 +28,7 @@ class SignalementListControllerTest extends WebTestCase
 
         /** @var UserRepository $userRepository */
         $userRepository = static::getContainer()->get(UserRepository::class);
-        $user = $userRepository->findOneBy(['email' => 'admin-01@histologe.fr']);
+        $user = $userRepository->findOneBy(['email' => 'admin-01@signal-logement.fr']);
         $client->loginUser($user);
         $route = $generatorUrl->generate('back_signalements_list_json');
 
@@ -127,7 +127,7 @@ class SignalementListControllerTest extends WebTestCase
         /** @var UserRepository $userRepository */
         $userRepository = static::getContainer()->get(UserRepository::class);
 
-        $user = $userRepository->findOneBy(['email' => 'admin-territoire-69-mdl@histologe.fr']);
+        $user = $userRepository->findOneBy(['email' => 'admin-territoire-69-mdl@signal-logement.fr']);
         $client->loginUser($user);
         $route = $generatorUrl->generate('back_signalements_list_json');
         $client->request('GET', $route);
@@ -146,7 +146,7 @@ class SignalementListControllerTest extends WebTestCase
         /** @var UserRepository $userRepository */
         $userRepository = static::getContainer()->get(UserRepository::class);
 
-        $user = $userRepository->findOneBy(['email' => 'admin-territoire-69-cor@histologe.fr']);
+        $user = $userRepository->findOneBy(['email' => 'admin-territoire-69-cor@signal-logement.fr']);
         $client->loginUser($user);
         $route = $generatorUrl->generate('back_signalements_list_json');
         $client->request('GET', $route);
@@ -178,7 +178,7 @@ class SignalementListControllerTest extends WebTestCase
 
     public function provideLinkFilterDashboard(): \Generator
     {
-        $adminUser = 'admin-01@histologe.fr';
+        $adminUser = 'admin-01@signal-logement.fr';
         yield 'SUPER_ADMIN - Nouveaux signalements' => [$adminUser, '?statut='.SignalementStatus::NEED_VALIDATION->value];
         yield 'SUPER_ADMIN - Nouveaux suivis' => [$adminUser, '?nouveau_suivi=1'];
         yield 'SUPER_ADMIN - Sans suivis' => [$adminUser, '?sans_suivi_periode='.Suivi::DEFAULT_PERIOD_INACTIVITY];
@@ -188,7 +188,7 @@ class SignalementListControllerTest extends WebTestCase
         yield 'SUPER_ADMIN - Nouveautés non-décence énergétique' => [$adminUser, '?nde=1&statut=1'];
         yield 'SUPER_ADMIN - Non-décence énergétique en cours' => [$adminUser, '?nde=1&statut=2'];
 
-        $adminTerritoryUser = 'admin-territoire-13-01@histologe.fr';
+        $adminTerritoryUser = 'admin-territoire-13-01@signal-logement.fr';
         yield 'ADMIN_T - Nouveaux signalements' => [$adminTerritoryUser, '?statut='.SignalementStatus::NEED_VALIDATION->value];
         yield 'ADMIN_T - Nouveaux suivis' => [$adminTerritoryUser, '?nouveau_suivi=1'];
         yield 'ADMIN_T - Sans suivis' => [$adminTerritoryUser, '?sans_suivi_periode='.Suivi::DEFAULT_PERIOD_INACTIVITY];
@@ -196,7 +196,7 @@ class SignalementListControllerTest extends WebTestCase
         yield 'ADMIN_T - Clotures partenaires' => [$adminTerritoryUser, '?closed_affectation=ONE_CLOSED'];
         yield 'ADMIN_T - Mes affectations' => [$adminTerritoryUser, '?territoire_id=13'];
 
-        $partnerUser = 'user-13-01@histologe.fr';
+        $partnerUser = 'user-13-01@signal-logement.fr';
         yield 'PARTNER - Nouvelles affectations' => [$partnerUser, '?statut=1&territoire_id=13'];
         yield 'PARTNER - Nouveaux suivis' => [$partnerUser, '?nouveau_suivi=1'];
         yield 'PARTNER - Sans suivis' => [$partnerUser, '?sans_suivi_periode='.Suivi::DEFAULT_PERIOD_INACTIVITY];
@@ -254,7 +254,7 @@ class SignalementListControllerTest extends WebTestCase
 
         /** @var UserRepository $userRepository */
         $userRepository = static::getContainer()->get(UserRepository::class);
-        $user = $userRepository->findOneBy(['email' => 'admin-partenaire-multi-ter-13-01@histologe.fr']);
+        $user = $userRepository->findOneBy(['email' => 'admin-partenaire-multi-ter-13-01@signal-logement.fr']);
         $client->loginUser($user);
         $route = $generatorUrl->generate('back_signalements_list_json');
 

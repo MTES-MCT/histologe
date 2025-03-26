@@ -1,3 +1,4 @@
+{% set logoClass = platform.name == 'histologe' ? 'logo-width' : 'logo-width-lg' %}
 {% if feature_sites_faciles %}
     <header class="fr-header">
         <div class="fr-header__body">
@@ -69,6 +70,7 @@
         </div>
     </header>
 {% else %}
+    {% set logoClass = platform.name == 'histologe' ? 'logo-width' : 'logo-width-lg' %}
     <header class="fr-header">
         <div class="fr-header__body">
             <div class="fr-container">
@@ -77,7 +79,7 @@
                         <div class="fr-header__brand-top">
                             <div class="fr-header__logo">
                                 <p class="fr-logo">
-                                    ministère <br> de la transition <br>écologique
+                                    ministères <br> aménagement <br>du territoire <br>transition <br>écologique
                                 </p>
                             </div>
                             <div class="fr-header__navbar">
@@ -87,8 +89,8 @@
                             </div>
                         </div>
                         <div class="fr-header__service">
-                            <a href="{{ path('home') }}" title="Accueil - {{ platform.name }} - Ministère de la transition écologique">
-                                <img class="fr-responsive-img logo-width" src="{{ asset('img/' ~ platform.logo145) }}" alt="{{ platform.name }}">
+                            <a href="{{ path('home') }}" title="Accueil - {{ platform.name }} - Ministère aménagement du territoire transition écologique">
+                                <img class="fr-responsive-img {{ logoClass }}" src="{{ asset('img/' ~ (platform.logo145 ?: 'logo_145.png')) }}" alt="{{ platform.name }}">
                             </a>
                         </div>
                     </div>
@@ -97,13 +99,13 @@
                             <ul class="fr-btns-group">
                                 <li>
                                     {% if app.user %}
-                                    <a class="fr-btn fr-icon-account-line" href="{{ path('back_dashboard') }}">
-                                        Tableau de bord
-                                    </a>
+                                        <a class="fr-btn fr-icon-account-line" href="{{ path('back_dashboard') }}">
+                                            Tableau de bord
+                                        </a>
                                     {% else %}
-                                    <a class="fr-btn fr-icon-lock-line" href="{{ path('app_login') }}">
-                                        Espace pro
-                                    </a>
+                                        <a class="fr-btn fr-icon-lock-line" href="{{ path('app_login') }}">
+                                            Espace pro
+                                        </a>
                                     {% endif %}
                                 </li>
                             </ul>
@@ -119,70 +121,92 @@
                 </button>
                 <div class="fr-header__menu-links">
                 </div>
-                <nav class="fr-nav" id="navigation-main" aria-label="Menu principal">
-                    <ul class="fr-nav__list">
-                        <li class="fr-nav__item">
-                            <a class="fr-nav__link" href="{{ path('home') }}" target="_self"
-                                {% if app.request.get('_route') == 'home' %}aria-current="page"{% endif %}
+                {% if not feature_sites_faciles %}
+                    <nav class="fr-nav" id="navigation-main" aria-label="Menu principal">
+                        <ul class="fr-nav__list">
+                            <li class="fr-nav__item">
+                                <a class="fr-nav__link" href="{{ path('home') }}" target="_self"
+                                   {% if app.request.get('_route') == 'home' %}aria-current="page"{% endif %}
                                 >Accueil</a>
-                        </li>
-                        <li class="fr-nav__item">
-                            <a class="fr-nav__link" href="{{ path('front_signalement') }}" target="_self"
-                                {% if app.request.get('_route') == 'front_signalement' %}aria-current="page"{% endif %}
+                            </li>
+                            <li class="fr-nav__item">
+                                <a class="fr-nav__link" href="{{ path('front_signalement') }}" target="_self"
+                                   {% if app.request.get('_route') == 'front_signalement' %}aria-current="page"{% endif %}
                                 >Signalement</a>
-                        </li>
-                        <li class="fr-nav__item">
-                            <button class="fr-nav__btn" aria-expanded="false" aria-controls="submenu-about"
-                                {% if app.request.get('_route') in ['front_about', 'front_obligations_entretien', 'front_aides_travaux', 'front_statistiques'] %}aria-current="true"{% endif %}
+                            </li>
+                            <li class="fr-nav__item">
+                                <button class="fr-nav__btn" aria-expanded="false" aria-controls="submenu-about"
+                                        {% if app.request.get('_route') in ['front_about', 'front_obligations_entretien', 'front_aides_travaux', 'front_statistiques'] %}aria-current="true"{% endif %}
                                 >Infos utiles</button>
-                            <div class="fr-collapse fr-menu" id="submenu-about">
-                                <ul class="fr-menu__list">
-                                    <li>
-                                        <a class="fr-nav__link" href="{{ path('front_about') }}" target="_self"
-                                            {% if app.request.get('_route') == 'front_about' %}aria-current="page"{% endif %}
+                                <div class="fr-collapse fr-menu" id="submenu-about">
+                                    <ul class="fr-menu__list">
+                                        <li>
+                                            <a class="fr-nav__link" href="{{ path('front_about') }}" target="_self"
+                                               {% if app.request.get('_route') == 'front_about' %}aria-current="page"{% endif %}
                                             >Qui sommes-nous ?</a>
-                                    </li>
-                                    <li>
-                                        <a class="fr-nav__link" href="{{ path('front_obligations_entretien') }}" target="_self"
-                                            {% if app.request.get('_route') == 'front_obligations_entretien' %}aria-current="page"{% endif %}
+                                        </li>
+                                        <li>
+                                            <a class="fr-nav__link" href="{{ path('front_obligations_entretien') }}" target="_self"
+                                               {% if app.request.get('_route') == 'front_obligations_entretien' %}aria-current="page"{% endif %}
                                             >Entretien du logement : les obligations</a>
-                                    </li>
-                                    <li>
-                                        <a class="fr-nav__link" href="{{ path('front_aides_travaux') }}" target="_self"
-                                            {% if app.request.get('_route') == 'front_aides_travaux' %}aria-current="page"{% endif %}
+                                        </li>
+                                        <li>
+                                            <a class="fr-nav__link" href="{{ path('front_aides_travaux') }}" target="_self"
+                                               {% if app.request.get('_route') == 'front_aides_travaux' %}aria-current="page"{% endif %}
                                             >Les aides aux travaux</a>
-                                    </li>
-                                    <li>
-                                        <a class="fr-nav__link" href="{{ path('front_statistiques') }}" target="_self"
-                                            {% if app.request.get('_route') == 'front_statistiques' %}aria-current="page"{% endif %}
+                                        </li>
+                                        <li>
+                                            <a class="fr-nav__link" href="{{ path('front_statistiques') }}" target="_self"
+                                               {% if app.request.get('_route') == 'front_statistiques' %}aria-current="page"{% endif %}
                                             >Statistiques d'usage</a>
-                                    </li>
-                                </ul>
-                            </div>
-                        </li>
-                        <li class="fr-nav__item">
-                            <button class="fr-nav__btn" aria-expanded="false" aria-controls="submenu-help"
-                                {% if app.request.get('_route') == 'front_contact' %}aria-current="true"{% endif %}
+                                        </li>
+                                    </ul>
+                                </div>
+                            </li>
+                            <li class="fr-nav__item">
+                                <button class="fr-nav__btn" aria-expanded="false" aria-controls="submenu-help"
+                                        {% if app.request.get('_route') == 'front_contact' %}aria-current="true"{% endif %}
                                 >Aide</button>
-                            <div class="fr-collapse fr-menu" id="submenu-help">
-                                <ul class="fr-menu__list">
-                                    {% if gitbook is defined %}
-                                    <li>
-                                        <a class="fr-nav__link" href="{{ gitbook.faq }}" target="_blank" rel="noopener"
-                                            >Documentation</a>
-                                    </li>
-                                    {% endif %}
-                                    <li>
-                                        <a class="fr-nav__link" href="{{ path('front_contact') }}" target="_self"
-                                            {% if app.request.get('_route') == 'front_contact' %}aria-current="page"{% endif %}
+                                <div class="fr-collapse fr-menu" id="submenu-help">
+                                    <ul class="fr-menu__list">
+                                        {% if gitbook is defined %}
+                                            <li>
+                                                <a class="fr-nav__link" href="{{ gitbook.faq }}" target="_blank" rel="noopener"
+                                                >Documentation</a>
+                                            </li>
+                                        {% endif %}
+                                        <li>
+                                            <a class="fr-nav__link" href="{{ path('front_contact') }}" target="_self"
+                                               {% if app.request.get('_route') == 'front_contact' %}aria-current="page"{% endif %}
                                             >Contact</a>
-                                    </li>
-                                </ul>
-                            </div>
-                        </li>
-                    </ul>
-                </nav>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </li>
+                        </ul>
+                    </nav>
+                {% endif %}
             </div>
         </div>
     </header>
+
+    {% if platform.name is same as 'Signal Logement' %}
+        <div class="fr-notice fr-notice--warning">
+            <div class="fr-container">
+                <div class="fr-notice__body">
+                    <p class="fr-notice__desc">
+                        <strong>Histologe devient Signal Logement !</strong>  Un nouveau nom et un nouveau site pour mieux refléter notre mission : lutter contre le mal logement !
+                    </p>
+                    <button
+                            class="fr-btn--close fr-btn"
+                            title="Masquer le message"
+                            onclick="const notice = this.parentNode.parentNode.parentNode; notice.parentNode.removeChild(notice)"
+                    >
+                        Masquer le message
+                    </button>
+                </div>
+            </div>
+        </div>
+    {% endif %}
+
 {% endif %}

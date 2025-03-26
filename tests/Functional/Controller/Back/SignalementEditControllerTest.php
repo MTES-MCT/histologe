@@ -31,7 +31,7 @@ class SignalementEditControllerTest extends WebTestCase
         $this->signalementRepository = static::getContainer()->get(SignalementRepository::class);
         /* @var RouterInterface $router */
         $this->router = static::getContainer()->get(RouterInterface::class);
-        $user = $this->userRepository->findOneBy(['email' => 'admin-01@histologe.fr']);
+        $user = $this->userRepository->findOneBy(['email' => 'admin-01@signal-logement.fr']);
         $this->client->loginUser($user);
         $this->signalement = $this->signalementRepository->findOneBy(['uuid' => '00000000-0000-0000-2024-000000000004']);
     }

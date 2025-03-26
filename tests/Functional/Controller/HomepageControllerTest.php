@@ -48,7 +48,7 @@ class HomepageControllerTest extends WebTestCase
 
         $this->assertSelectorTextContains('#submenu-help ul', 'Documentation');
         $link = $crawler->selectLink('Documentation')->link();
-        $this->assertEquals('https://faq.histologe.beta.gouv.fr', $link->getUri());
+        $this->assertEquals('https://faq.signal-logement.beta.gouv.fr', $link->getUri());
     }
 
     public function testSubmitContactWithValidData(): void
@@ -74,7 +74,7 @@ class HomepageControllerTest extends WebTestCase
 
         $parameterBag = self::getContainer()->get(ParameterBagInterface::class);
         $email = $this->getMailerMessage();
-        $this->assertEmailHeaderSame($email, 'From', 'HISTOLOGE - ALERTE <'.$parameterBag->get('notifications_email').'>');
+        $this->assertEmailHeaderSame($email, 'From', 'SIGNAL-LOGEMENT - ALERTE <'.$parameterBag->get('notifications_email').'>');
         $this->assertEmailHeaderSame($email, 'To', $parameterBag->get('contact_email'));
     }
 

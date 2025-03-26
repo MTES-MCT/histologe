@@ -33,7 +33,7 @@ class PopNotificationManagerTest extends KernelTestCase
         /** @var PartnerRepository $partnerRepository */
         $partnerRepository = $this->managerRegistry->getRepository(Partner::class);
 
-        $user = $userRepository->findOneBy(['email' => 'user-13-01@histologe.fr']);
+        $user = $userRepository->findOneBy(['email' => 'user-13-01@signal-logement.fr']);
         $addPartners = [];
         // ajout d'un partenaire
         $partner63 = $partnerRepository->findOneBy(['nom' => 'ADIL 63']);

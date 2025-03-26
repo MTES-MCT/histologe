@@ -61,7 +61,7 @@ class UserManagerTest extends KernelTestCase
     {
         /** @var UserRepository $userRepository */
         $userRepository = $this->entityManager->getRepository(User::class);
-        $user = $userRepository->findOneBy(['email' => 'user-01-01@histologe.fr']);
+        $user = $userRepository->findOneBy(['email' => 'user-01-01@signal-logement.fr']);
 
         $user = $this->userManager->updateUserFromData(
             $user,
@@ -85,7 +85,7 @@ class UserManagerTest extends KernelTestCase
     {
         /** @var UserRepository $userRepository */
         $userRepository = $this->entityManager->getRepository(User::class);
-        $user = $userRepository->findOneBy(['email' => 'user-01-01@histologe.fr']);
+        $user = $userRepository->findOneBy(['email' => 'user-01-01@signal-logement.fr']);
 
         $user = $this->userManager->updateUserFromData(
             $user,
@@ -108,7 +108,7 @@ class UserManagerTest extends KernelTestCase
     public function testTransferActiveUserToAnotherPartner()
     {
         /** @var User $userNewPartner */
-        $userNewPartner = $this->getTransferedUserToPartner('user-01-01@histologe.fr', 'Partenaire 01-02');
+        $userNewPartner = $this->getTransferedUserToPartner('user-01-01@signal-logement.fr', 'Partenaire 01-02');
 
         $this->assertEquals('Partenaire 01-02', $userNewPartner->getPartners()->first()->getNom());
         $this->assertEmailCount(1);
@@ -119,7 +119,7 @@ class UserManagerTest extends KernelTestCase
     public function testTransferInactiveUserToAnotherPartner()
     {
         /** @var User $userNewPartner */
-        $userNewPartner = $this->getTransferedUserToPartner('user-13-03@histologe.fr', 'Partenaire 13-03');
+        $userNewPartner = $this->getTransferedUserToPartner('user-13-03@signal-logement.fr', 'Partenaire 13-03');
 
         $this->assertEquals('Partenaire 13-03', $userNewPartner->getPartners()->first()->getNom());
         $this->assertEmailCount(1);

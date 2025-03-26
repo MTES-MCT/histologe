@@ -25,7 +25,7 @@ class SignalementCreateControllerTest extends WebTestCase
 
     public function testCreateWithDoublon()
     {
-        $user = $this->userRepository->findOneBy(['email' => 'admin-01@histologe.fr']);
+        $user = $this->userRepository->findOneBy(['email' => 'admin-01@signal-logement.fr']);
         $this->client->loginUser($user);
 
         $crawler = $this->client->request('GET', '/bo/signalement/brouillon/creer');
@@ -85,17 +85,17 @@ class SignalementCreateControllerTest extends WebTestCase
     public function provideCanEditSignalementData()
     {
         yield 'edit NEED_VALIDATION signalement' => [
-            'userEmail' => 'admin-01@histologe.fr',
+            'userEmail' => 'admin-01@signal-logement.fr',
             'signalementUuid' => '00000000-0000-0000-2022-000000000014',
             'expectedStatusCode' => 403,
         ];
         yield 'edit DRAFT signalement created by other user' => [
-            'userEmail' => 'admin-territoire-13-01@histologe.fr',
+            'userEmail' => 'admin-territoire-13-01@signal-logement.fr',
             'signalementUuid' => '00000000-0000-0000-2025-000000000002',
             'expectedStatusCode' => 403,
         ];
         yield 'edit DRAFT signalement created by me' => [
-            'userEmail' => 'admin-territoire-44-01@histologe.fr',
+            'userEmail' => 'admin-territoire-44-01@signal-logement.fr',
             'signalementUuid' => '00000000-0000-0000-2025-000000000002',
             'expectedStatusCode' => 200,
         ];
@@ -103,7 +103,7 @@ class SignalementCreateControllerTest extends WebTestCase
 
     public function testEditAddress()
     {
-        $user = $this->userRepository->findOneBy(['email' => 'admin-territoire-44-01@histologe.fr']);
+        $user = $this->userRepository->findOneBy(['email' => 'admin-territoire-44-01@signal-logement.fr']);
         $this->client->loginUser($user);
 
         $crawler = $this->client->request('GET', '/bo/signalement/brouillon/editer/00000000-0000-0000-2025-000000000002');
@@ -142,7 +142,7 @@ class SignalementCreateControllerTest extends WebTestCase
 
     public function testEditAddressOnOtherTerritory()
     {
-        $user = $this->userRepository->findOneBy(['email' => 'admin-territoire-44-01@histologe.fr']);
+        $user = $this->userRepository->findOneBy(['email' => 'admin-territoire-44-01@signal-logement.fr']);
         $this->client->loginUser($user);
 
         $crawler = $this->client->request('GET', '/bo/signalement/brouillon/editer/00000000-0000-0000-2025-000000000002');
@@ -164,7 +164,7 @@ class SignalementCreateControllerTest extends WebTestCase
 
     public function testEditLogement()
     {
-        $user = $this->userRepository->findOneBy(['email' => 'admin-territoire-44-01@histologe.fr']);
+        $user = $this->userRepository->findOneBy(['email' => 'admin-territoire-44-01@signal-logement.fr']);
         $this->client->loginUser($user);
 
         $crawler = $this->client->request('GET', '/bo/signalement/brouillon/editer/00000000-0000-0000-2025-000000000002');
@@ -194,7 +194,7 @@ class SignalementCreateControllerTest extends WebTestCase
 
     public function testEditSituation()
     {
-        $user = $this->userRepository->findOneBy(['email' => 'admin-territoire-44-01@histologe.fr']);
+        $user = $this->userRepository->findOneBy(['email' => 'admin-territoire-44-01@signal-logement.fr']);
         $this->client->loginUser($user);
 
         $crawler = $this->client->request('GET', '/bo/signalement/brouillon/editer/00000000-0000-0000-2025-000000000002');

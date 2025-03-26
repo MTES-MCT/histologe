@@ -40,7 +40,7 @@ class FixEmailAddressesCommand extends Command
         '?fr' => '.fr',
         '?net' => '.net',
     ];
-    public const EMAIL_HISTOLOGE_INCONNU = 'inconnu@histologe.fr';
+    public const EMAIL_HISTOLOGE_INCONNU = 'inconnu@signal-logement.fr';
 
     public function __construct(
         private SignalementRepository $signalementRepository,

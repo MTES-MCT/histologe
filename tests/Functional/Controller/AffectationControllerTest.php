@@ -21,8 +21,8 @@ class AffectationControllerTest extends WebTestCase
 {
     use SessionHelper;
 
-    public const USER_ADMIN_TERRITORY_13 = 'admin-territoire-13-01@histologe.fr';
-    public const USER_PARTNER_TERRITORY_13 = 'user-13-01@histologe.fr';
+    public const USER_ADMIN_TERRITORY_13 = 'admin-territoire-13-01@signal-logement.fr';
+    public const USER_PARTNER_TERRITORY_13 = 'user-13-01@signal-logement.fr';
     public const SIGNALEMENT_REFERENCE = '2022-1';
     public const SIGNALEMENT_ACTIVE_UUID = '00000000-0000-0000-2022-000000000001';
     public const SIGNALEMENT_NEED_VALIDATION_UUID = '00000000-0000-0000-2023-000000000016';
@@ -88,7 +88,7 @@ class AffectationControllerTest extends WebTestCase
 
     public function testFirstAcceptationAffectationSignalement(): void
     {
-        $user = $this->userRepository->findOneBy(['email' => 'user-partenaire-multi-ter-34-30@histologe.fr']);
+        $user = $this->userRepository->findOneBy(['email' => 'user-partenaire-multi-ter-34-30@signal-logement.fr']);
         $this->client->loginUser($user);
 
         /** @var Signalement $signalement */
@@ -126,7 +126,7 @@ class AffectationControllerTest extends WebTestCase
 
     public function testSecondAffectationAffectationSignalement(): void
     {
-        $user = $this->userRepository->findOneBy(['email' => 'user-partenaire-multi-ter-34-30@histologe.fr']);
+        $user = $this->userRepository->findOneBy(['email' => 'user-partenaire-multi-ter-34-30@signal-logement.fr']);
         $this->client->loginUser($user);
 
         /** @var Signalement $signalement */
@@ -260,7 +260,7 @@ class AffectationControllerTest extends WebTestCase
             'reference' => self::SIGNALEMENT_REFERENCE,
         ]);
 
-        $partner = $this->partnerRepository->findOneBy(['email' => 'partenaire-01-01@histologe.fr']);
+        $partner = $this->partnerRepository->findOneBy(['email' => 'partenaire-01-01@signal-logement.fr']);
         $affectation = $this->affectationRepository->findOneBy(['partner' => $partner]);
 
         $routeAffectationResponse = $this->router->generate('back_signalement_remove_partner', [

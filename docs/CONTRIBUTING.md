@@ -22,4 +22,4 @@ Pour contribuer au code :
 
 ## Nous contacter
 
-Si vous souhaitez nous envoyer un message, merci d'utiliser le [formulaire de contact du site](https://histologe.beta.gouv.fr/contact).
+Si vous souhaitez nous envoyer un message, merci d'utiliser le [formulaire de contact du site](https://signal-logement.beta.gouv.fr/contact).

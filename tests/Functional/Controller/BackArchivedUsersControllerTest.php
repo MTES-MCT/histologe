@@ -22,7 +22,7 @@ class BackArchivedUsersControllerTest extends WebTestCase
 
         /** @var UserRepository $userRepository */
         $userRepository = static::getContainer()->get(UserRepository::class);
-        $user = $userRepository->findOneBy(['email' => 'admin-01@histologe.fr']);
+        $user = $userRepository->findOneBy(['email' => 'admin-01@signal-logement.fr']);
         $client->loginUser($user);
 
         /** @var RouterInterface $router */
@@ -44,7 +44,7 @@ class BackArchivedUsersControllerTest extends WebTestCase
 
         /** @var UserRepository $userRepository */
         $userRepository = static::getContainer()->get(UserRepository::class);
-        $user = $userRepository->findOneBy(['email' => 'admin-01@histologe.fr']);
+        $user = $userRepository->findOneBy(['email' => 'admin-01@signal-logement.fr']);
         $client->loginUser($user);
 
         /** @var RouterInterface $router */
@@ -71,13 +71,13 @@ class BackArchivedUsersControllerTest extends WebTestCase
 
         /** @var UserRepository $userRepository */
         $userRepository = static::getContainer()->get(UserRepository::class);
-        $user = $userRepository->findOneBy(['email' => 'admin-01@histologe.fr']);
+        $user = $userRepository->findOneBy(['email' => 'admin-01@signal-logement.fr']);
         $client->loginUser($user);
 
         /** @var RouterInterface $router */
         $router = self::getContainer()->get(RouterInterface::class);
 
-        $accountEmail = 'user-01-01@histologe.fr';
+        $accountEmail = 'user-01-01@signal-logement.fr';
         /** @var User $account */
         $account = $userRepository->findOneBy(['email' => $accountEmail]);
         $route = $router->generate('back_archived_users_reactiver', [
@@ -100,7 +100,7 @@ class BackArchivedUsersControllerTest extends WebTestCase
 
         /** @var UserRepository $userRepository */
         $userRepository = static::getContainer()->get(UserRepository::class);
-        $user = $userRepository->findOneBy(['email' => 'admin-01@histologe.fr']);
+        $user = $userRepository->findOneBy(['email' => 'admin-01@signal-logement.fr']);
         $client->loginUser($user);
 
         /** @var RouterInterface $router */
@@ -117,7 +117,7 @@ class BackArchivedUsersControllerTest extends WebTestCase
             'isArchive' => '0',
         ]);
 
-        $accountEmail = 'user-01-09@histologe.fr';
+        $accountEmail = 'user-01-09@signal-logement.fr';
         /** @var User $account */
         $account = $userRepository->findArchivedUserByEmail($accountEmail);
         $route = $router->generate('back_archived_users_reactiver', [
@@ -150,7 +150,7 @@ class BackArchivedUsersControllerTest extends WebTestCase
 
         /** @var UserRepository $userRepository */
         $userRepository = static::getContainer()->get(UserRepository::class);
-        $user = $userRepository->findOneBy(['email' => 'admin-01@histologe.fr']);
+        $user = $userRepository->findOneBy(['email' => 'admin-01@signal-logement.fr']);
         $client->loginUser($user);
 
         /** @var RouterInterface $router */
@@ -167,7 +167,7 @@ class BackArchivedUsersControllerTest extends WebTestCase
             'isArchive' => '0',
         ]);
 
-        $accountEmail = 'user-01-06@histologe.fr'.User::SUFFIXE_ARCHIVED;
+        $accountEmail = 'user-01-06@signal-logement.fr'.User::SUFFIXE_ARCHIVED;
         /** @var User $account */
         $account = $userRepository->findArchivedUserByEmail($accountEmail);
         $route = $router->generate('back_archived_users_reactiver', [
@@ -199,13 +199,13 @@ class BackArchivedUsersControllerTest extends WebTestCase
 
         /** @var UserRepository $userRepository */
         $userRepository = static::getContainer()->get(UserRepository::class);
-        $user = $userRepository->findOneBy(['email' => 'admin-01@histologe.fr']);
+        $user = $userRepository->findOneBy(['email' => 'admin-01@signal-logement.fr']);
         $client->loginUser($user);
 
         /** @var RouterInterface $router */
         $router = self::getContainer()->get(RouterInterface::class);
 
-        $accountEmail = 'admin-02@histologe.fr';
+        $accountEmail = 'admin-02@signal-logement.fr';
         /** @var User $account */
         $account = $userRepository->findArchivedUserByEmail($accountEmail);
         $route = $router->generate('back_archived_users_reactiver', [
@@ -235,7 +235,7 @@ class BackArchivedUsersControllerTest extends WebTestCase
 
         /** @var UserRepository $userRepository */
         $userRepository = static::getContainer()->get(UserRepository::class);
-        $user = $userRepository->findOneBy(['email' => 'admin-01@histologe.fr']);
+        $user = $userRepository->findOneBy(['email' => 'admin-01@signal-logement.fr']);
         $client->loginUser($user);
 
         /** @var RouterInterface $router */
@@ -257,7 +257,7 @@ class BackArchivedUsersControllerTest extends WebTestCase
 
         /** @var UserRepository $userRepository */
         $userRepository = static::getContainer()->get(UserRepository::class);
-        $user = $userRepository->findOneBy(['email' => 'admin-01@histologe.fr']);
+        $user = $userRepository->findOneBy(['email' => 'admin-01@signal-logement.fr']);
         $client->loginUser($user);
 
         /** @var RouterInterface $router */
@@ -274,7 +274,7 @@ class BackArchivedUsersControllerTest extends WebTestCase
             'isArchive' => '0',
         ]);
 
-        $accountEmail = 'user-unlinked@histologe.fr';
+        $accountEmail = 'user-unlinked@signal-logement.fr';
         /** @var User $account */
         $account = $userRepository->findOneBy(['email' => $accountEmail]);
         $route = $router->generate('back_archived_users_reactiver', [

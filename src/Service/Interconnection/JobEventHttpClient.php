@@ -23,7 +23,7 @@ class JobEventHttpClient implements HttpClientInterface
         private readonly HttpClientInterface $httpClient,
         private readonly JobEventManager $jobEventManager,
         private readonly LoggerInterface $logger,
-        #[Autowire(env: 'HISTOLOGE_URL')]
+        #[Autowire(env: 'APP_URL')]
         private readonly string $host,
     ) {
     }

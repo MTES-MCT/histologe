@@ -85,7 +85,7 @@ abstract class AbstractNotificationMailer implements NotificationMailerInterface
         $message->from(
             new Address(
                 $this->parameterBag->get('notifications_email'),
-                mb_strtoupper($this->parameterBag->get('platform_name').' - '.$territoryName)
+                mb_strtoupper($this->getPlatformName().' - '.$territoryName)
             )
         );
 
@@ -187,11 +187,11 @@ abstract class AbstractNotificationMailer implements NotificationMailerInterface
             ->context($params)
             ->replyTo($this->parameterBag->get('reply_to_email'))
             ->subject(
-                mb_strtoupper($this->parameterBag->get('platform_name'))
+                mb_strtoupper($this->getPlatformName())
                 .' '
                 .mb_strtoupper((!empty($territory) && null !== $territory->getName()) ? $territory->getName() : 'ALERTE')
                 .' - '.
-                str_replace('%param.platform_name%', $this->parameterBag->get('platform_name'), $this->mailerSubject)
+                str_replace('%param.platform_name%', $this->getPlatformName(), $this->mailerSubject)
             );
     }
 
@@ -207,5 +207,10 @@ abstract class AbstractNotificationMailer implements NotificationMailerInterface
         }
 
         return $this->failedEmailManager;
+    }
+
+    public function getPlatformName(): string
+    {
+        return str_replace(' ', '-', $this->parameterBag->get('platform_name'));
     }
 }

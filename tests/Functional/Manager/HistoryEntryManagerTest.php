@@ -62,7 +62,7 @@ class HistoryEntryManagerTest extends WebTestCase
     {
         /** @var UserRepository $userRepository */
         $userRepository = $this->entityManager->getRepository(User::class);
-        $user = $userRepository->findOneBy(['email' => 'user-01-01@histologe.fr']);
+        $user = $userRepository->findOneBy(['email' => 'user-01-01@signal-logement.fr']);
 
         $historyEntry = $this->historyEntryManager->create(
             historyEntryEvent: HistoryEntryEvent::LOGIN,
@@ -77,7 +77,7 @@ class HistoryEntryManagerTest extends WebTestCase
     {
         /** @var UserRepository $userRepository */
         $userRepository = $this->entityManager->getRepository(User::class);
-        $user = $userRepository->findOneBy(['email' => 'user-01-01@histologe.fr']);
+        $user = $userRepository->findOneBy(['email' => 'user-01-01@signal-logement.fr']);
         $this->client->loginUser($user);
 
         $affectation = $this->affectationRepository->findOneBy(['statut' => Affectation::STATUS_WAIT]);
@@ -97,7 +97,7 @@ class HistoryEntryManagerTest extends WebTestCase
     {
         /** @var UserRepository $userRepository */
         $userRepository = $this->entityManager->getRepository(User::class);
-        $user = $userRepository->findOneBy(['email' => 'user-01-01@histologe.fr']);
+        $user = $userRepository->findOneBy(['email' => 'user-01-01@signal-logement.fr']);
         $this->client->loginUser($user);
 
         $affectation = $this->affectationRepository->findOneBy(['statut' => Affectation::STATUS_WAIT]);
@@ -124,7 +124,7 @@ class HistoryEntryManagerTest extends WebTestCase
     {
         /** @var UserRepository $userRepository */
         $userRepository = $this->entityManager->getRepository(User::class);
-        $user = $userRepository->findOneBy(['email' => 'user-01-01@histologe.fr']);
+        $user = $userRepository->findOneBy(['email' => 'user-01-01@signal-logement.fr']);
         $this->client->loginUser($user);
 
         $affectation = $this->affectationRepository->findOneBy(['statut' => Affectation::STATUS_WAIT]);
@@ -156,7 +156,7 @@ class HistoryEntryManagerTest extends WebTestCase
     {
         /** @var UserRepository $userRepository */
         $userRepository = $this->entityManager->getRepository(User::class);
-        $user = $userRepository->findOneBy(['email' => 'user-01-01@histologe.fr']);
+        $user = $userRepository->findOneBy(['email' => 'user-01-01@signal-logement.fr']);
         $this->client->loginUser($user);
 
         /** @var Signalement $signalement */

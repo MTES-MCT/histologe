@@ -388,9 +388,15 @@
                                 <table role="presentation" border="0" cellpadding="0" cellspacing="0">
                                     <tr style="text-align: center">
                                         <td>
-                                            <img src="https://img-cache.net/im/4443857/72bf7b4eb003f8a4cf5aa62f45353db4b4cd639412aa46f3cb10ddf5fec1166f.png?e=aG0M-ygMYP3YBDANCYA6Xw-yAznEdu8rwse0SOkDH2aGqsAfpB3gFau-jowTzLchmaSgrcc-xXAH60Hmh8bbH0kLadk0sCPo8CJcalayzNbGLzdDJc1KZE9Y2NTsJ4oGr_BfMIAaT0SZ1oLq-0fKW6VMfmkRghAPt9_tT68exqMGRb5irRcFl-fu5pZeXdyxxJiOWPZLS8Q2VCK4lPMtV_S_nN_Yp8HIAxEMOhS1ZiLPxlD1_B_Z"
-                                                 width="200px"
-                                                 alt="Logo">
+                                            {% if platform.name is same as 'Histologe' %}
+                                                <img src="https://img-cache.net/im/4443857/72bf7b4eb003f8a4cf5aa62f45353db4b4cd639412aa46f3cb10ddf5fec1166f.png?e=aG0M-ygMYP3YBDANCYA6Xw-yAznEdu8rwse0SOkDH2aGqsAfpB3gFau-jowTzLchmaSgrcc-xXAH60Hmh8bbH0kLadk0sCPo8CJcalayzNbGLzdDJc1KZE9Y2NTsJ4oGr_BfMIAaT0SZ1oLq-0fKW6VMfmkRghAPt9_tT68exqMGRb5irRcFl-fu5pZeXdyxxJiOWPZLS8Q2VCK4lPMtV_S_nN_Yp8HIAxEMOhS1ZiLPxlD1_B_Z"
+                                                     width="200px"
+                                                     alt="Logo">
+                                            {% else %}
+                                                <img src="https://img.mailinblue.com/4443857/images/content_library/original/67e68173be3b649f85238eee.png"
+                                                     width="200px"
+                                                     alt="Logo">
+                                            {% endif %}
                                             <br>
                                         </td>
                                     </tr>

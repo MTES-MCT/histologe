@@ -38,7 +38,7 @@ class TimezoneProviderTest extends KernelTestCase
 
     public function provideTimezones(): \Generator
     {
-        yield 'Fuseau horaire Martinique' => ['admin-territoire-972-01@histologe.fr', 'America/Martinique'];
-        yield 'Fuseau horaire France' => ['user-62-01@histologe.fr', 'Europe/Paris'];
+        yield 'Fuseau horaire Martinique' => ['admin-territoire-972-01@signal-logement.fr', 'America/Martinique'];
+        yield 'Fuseau horaire France' => ['user-62-01@signal-logement.fr', 'Europe/Paris'];
     }
 }

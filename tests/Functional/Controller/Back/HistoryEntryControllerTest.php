@@ -22,7 +22,7 @@ class HistoryEntryControllerTest extends WebTestCase
 
     public function testAccessDeniedForNonAdminTerritoryRole()
     {
-        $user = $this->userRepository->findOneBy(['email' => 'user-13-01@histologe.fr']);
+        $user = $this->userRepository->findOneBy(['email' => 'user-13-01@signal-logement.fr']);
         $this->client->loginUser($user);
 
         $route = $this->router->generate('history_affectation', [
@@ -34,7 +34,7 @@ class HistoryEntryControllerTest extends WebTestCase
 
     public function testListHistoryAffectationWithValidSignalementId()
     {
-        $user = $this->userRepository->findOneBy(['email' => 'admin-territoire-13-01@histologe.fr']);
+        $user = $this->userRepository->findOneBy(['email' => 'admin-territoire-13-01@signal-logement.fr']);
         $this->client->loginUser($user);
 
         $route = $this->router->generate('history_affectation', [
@@ -54,7 +54,7 @@ class HistoryEntryControllerTest extends WebTestCase
 
     public function testListHistoryAffectationWithoutSignalementId()
     {
-        $user = $this->userRepository->findOneBy(['email' => 'admin-territoire-13-01@histologe.fr']);
+        $user = $this->userRepository->findOneBy(['email' => 'admin-territoire-13-01@signal-logement.fr']);
         $this->client->loginUser($user);
 
         $route = $this->router->generate('history_affectation', [

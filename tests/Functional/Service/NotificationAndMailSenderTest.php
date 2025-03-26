@@ -50,7 +50,7 @@ class NotificationAndMailSenderTest extends KernelTestCase
         $territory = $signalement->getTerritory();
         /** @var User $respTerritoire */
         $respTerritoire = $this->entityManager->getRepository(User::class)->findOneBy([
-            'email' => 'admin-territoire-13-01@histologe.fr',
+            'email' => 'admin-territoire-13-01@signal-logement.fr',
         ]);
 
         $suivi = (new Suivi())

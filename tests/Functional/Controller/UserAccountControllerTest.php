@@ -17,7 +17,7 @@ class UserAccountControllerTest extends WebTestCase
 
         /** @var UserRepository $userRepository */
         $userRepository = static::getContainer()->get(UserRepository::class);
-        $user = $userRepository->findOneBy(['email' => 'user-01-02@histologe.fr']);
+        $user = $userRepository->findOneBy(['email' => 'user-01-02@signal-logement.fr']);
 
         /** @var RouterInterface $router */
         $router = self::getContainer()->get(RouterInterface::class);
@@ -41,8 +41,8 @@ class UserAccountControllerTest extends WebTestCase
         $client->request('GET', '/connexion');
 
         $client->submitForm('Connexion', [
-            'email' => 'user-01-01@histologe.fr',
-            'password' => 'histologe',
+            'email' => 'user-01-01@signal-logement.fr',
+            'password' => 'signallogement',
         ]);
 
         $this->assertResponseRedirects('/bo/');
@@ -55,8 +55,8 @@ class UserAccountControllerTest extends WebTestCase
         $client->request('GET', '/connexion');
 
         $client->submitForm('Connexion', [
-            'email' => 'api-02@histologe.fr',
-            'password' => 'histologe',
+            'email' => 'api-02@signal-logement.fr',
+            'password' => 'signallogement',
         ]);
 
         $this->assertResponseRedirects('/connexion');
@@ -70,7 +70,7 @@ class UserAccountControllerTest extends WebTestCase
 
         /** @var UserRepository $userRepository */
         $userRepository = static::getContainer()->get(UserRepository::class);
-        $user = $userRepository->findOneBy(['email' => 'user-01-02@histologe.fr']);
+        $user = $userRepository->findOneBy(['email' => 'user-01-02@signal-logement.fr']);
 
         /** @var RouterInterface $router */
         $router = self::getContainer()->get(RouterInterface::class);
@@ -98,7 +98,7 @@ class UserAccountControllerTest extends WebTestCase
 
         /** @var UserRepository $userRepository */
         $userRepository = static::getContainer()->get(UserRepository::class);
-        $user = $userRepository->findOneBy(['email' => 'user-01-02@histologe.fr']);
+        $user = $userRepository->findOneBy(['email' => 'user-01-02@signal-logement.fr']);
 
         /** @var RouterInterface $router */
         $router = self::getContainer()->get(RouterInterface::class);

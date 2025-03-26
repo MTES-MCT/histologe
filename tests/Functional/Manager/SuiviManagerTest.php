@@ -61,7 +61,7 @@ class SuiviManagerTest extends KernelTestCase
 
         /** @var UserRepository $userRepository */
         $userRepository = $this->managerRegistry->getRepository(User::class);
-        $user = $userRepository->findOneBy(['email' => 'user-13-03@histologe.fr']);
+        $user = $userRepository->findOneBy(['email' => 'user-13-03@signal-logement.fr']);
 
         $countSuivisBeforeCreate = $signalement->getSuivis()->count();
         $params = [

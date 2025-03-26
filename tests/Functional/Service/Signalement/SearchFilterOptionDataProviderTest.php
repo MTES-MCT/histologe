@@ -63,7 +63,7 @@ class SearchFilterOptionDataProviderTest extends KernelTestCase
     {
         /** @var UserRepository $userRepository */
         $userRepository = static::getContainer()->get(UserRepository::class);
-        $user = $userRepository->findOneBy(['email' => 'admin-territoire-13-01@histologe.fr']);
+        $user = $userRepository->findOneBy(['email' => 'admin-territoire-13-01@signal-logement.fr']);
         $expectedData = [
             'criteres' => $this->critereRepository->findAllList(),
             'territories' => $user->isSuperAdmin() ? $this->territoryRepository->findAllList() : $user->getPartnersTerritories(),

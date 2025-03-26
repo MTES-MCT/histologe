@@ -3,10 +3,10 @@
 ## Introduction et Contexte
 
 ### Objectif du document
-Ce document décrit l'environnement technique dans lequel est exploitée la plateforme Histologe.
+Ce document décrit l'environnement technique dans lequel est exploitée la plateforme Signal Logement.
 
 ### Contexte du projet
-Histologe est un système d'information qui permet de détecter et accélérer la prise en charge du mal-logement.
+Signal Logement est un système d'information qui permet de détecter et accélérer la prise en charge du mal-logement.
 
 Cette plateforme fournit 
 - un guichet unique de signalement à des usagers en situation de mal-logement,
@@ -15,7 +15,7 @@ Cette plateforme fournit
 ## Description de l'Architecture Technique
 
 ### Architecture globale
-![Schéma de l'architecture Histologe](/docs/assets/archi-histologe.jpg "Architecture Histologe")
+![Schéma de l'architecture Signal Logement](/docs/assets/archi-histologe.jpg "Architecture Signal Logement")
 
 ### Diagrammes de déploiement
 
@@ -125,13 +125,13 @@ Les accès aux services tiers sont individualisés aussi dès que possible : cha
 TODO : décrire les systèmes de détection d'intrusion (Voir : https://doc.scalingo.com/platform/app/datadog ; https://doc.scalingo.com/platform/getting-started/getting-started-with-modsecurity#enabling-modsecurity ; https://en.wikipedia.org/wiki/OSSEC ; https://fr.wikipedia.org/wiki/Snort)
 
 ### Conformité
-Voir notre [politique de confidentialité](https://histologe.beta.gouv.fr/politique-de-confidentialite).
+Voir notre [politique de confidentialité](https://signal-logement.beta.gouv.fr/politique-de-confidentialite).
 
 ## Environnements
 
 ### Développement, Test, Production
 #### Environnement local
-- Plateforme histologe| [localhost:8080](http://localhost:8080)
+- Plateforme Signal Logement| [localhost:8080](http://localhost:8080)
 - phpMyAdmin | [localhost:8081](http://localhost:8081)
 - MailCatcher  | [localhost:1080](http://localhost:1080)
 - Wiremock  | [localhost:1082](http://localhost:1082)
@@ -143,7 +143,7 @@ Voir notre [politique de confidentialité](https://histologe.beta.gouv.fr/politi
 - Demo : [histologe-demo.osc-fr1.scalingo.io](https://histologe-demo.osc-fr1.scalingo.io)
 
 #### Production
-[histologe.beta.gouv.fr](https://histologe.beta.gouv.fr)
+[signal-logement.beta.gouv.fr](https://signal-logement.beta.gouv.fr)
 
 ### Gestion des versions
 Nous utilisons Git pour la gestion de versions du code source. Chaque commit doit contenir l'identifiant d'un ticket correspondant à la fonctionnalité développée ou à la correction effectuée.
