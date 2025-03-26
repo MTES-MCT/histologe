@@ -36,7 +36,7 @@ class SignalementFileControllerTest extends WebTestCase
 
         /** @var UserRepository $userRepository */
         $userRepository = static::getContainer()->get(UserRepository::class);
-        $this->user = $userRepository->findOneBy(['email' => 'admin-01@histologe.fr']);
+        $this->user = $userRepository->findOneBy(['email' => 'admin-01@signal-logement.fr']);
 
         /* @var RouterInterface $router */
         $this->router = self::getContainer()->get(RouterInterface::class);

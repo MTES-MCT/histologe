@@ -16,7 +16,7 @@ use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 
 class PartnerRepositoryTest extends KernelTestCase
 {
-    public const USER_ADMIN_TERRITORY_13 = 'admin-territoire-13-01@histologe.fr';
+    public const USER_ADMIN_TERRITORY_13 = 'admin-territoire-13-01@signal-logement.fr';
     private EntityManagerInterface $entityManager;
     private PartnerRepository $partnerRepository;
 

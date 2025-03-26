@@ -52,7 +52,7 @@ class SignalementDraftManagerTest extends WebTestCase
             $this->signalementRepository,
         );
 
-        $user = $this->entityManager->getRepository(User::class)->findOneBy(['email' => 'admin-01@histologe.fr']);
+        $user = $this->entityManager->getRepository(User::class)->findOneBy(['email' => 'admin-01@signal-logement.fr']);
         $client->loginUser($user);
     }
 
@@ -61,7 +61,7 @@ class SignalementDraftManagerTest extends WebTestCase
         $signalementDraftRequest = new SignalementDraftRequest();
         $signalementDraftRequest->setAdresseLogementAdresse('33 Rue des phoceens 13002 Marseille');
         $signalementDraftRequest->setProfil(ProfileDeclarant::LOCATAIRE->name);
-        $signalementDraftRequest->setVosCoordonneesOccupantEmail('locataire-01@histologe.fr');
+        $signalementDraftRequest->setVosCoordonneesOccupantEmail('locataire-01@signal-logement.fr');
         $signalementDraft = $this->signalementDraftManager->findSignalementDraftByAddressAndMail($signalementDraftRequest);
 
         $this->assertEquals('00000000-0000-0000-2023-locataire001', $signalementDraft->getUuid());

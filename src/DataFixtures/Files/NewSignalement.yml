@@ -834,7 +834,7 @@ signalements:
     cp_occupant: "44850"
     ville_occupant: "Le Cellier"
     statut: "DRAFT"
-    created_by: "admin-territoire-44-01@histologe.fr"
+    created_by: "admin-territoire-44-01@signal-logement.fr"
     geoloc: "{\"lat\": 47.3408013, \"lng\": -1.3496451}"
     insee_occupant: "44028"
     nb_pieces_logement: 3
@@ -922,7 +922,7 @@ signalements:
     cp_occupant: "44850"
     ville_occupant: "Saint-Mars-du-Désert"
     statut: "NEED_VALIDATION"
-    created_by: "admin-territoire-44-01@histologe.fr"
+    created_by: "admin-territoire-44-01@signal-logement.fr"
     geoloc: "{\"lat\": 47.3688054, \"lng\": -1.4203543}"
     insee_occupant: "44028"
     nb_pieces_logement: 3
@@ -955,7 +955,7 @@ signalements:
     cp_occupant: "44850"
     ville_occupant: "Saint-Mars-du-Désert"
     statut: "DRAFT_ARCHIVED"
-    created_by: "admin-territoire-44-01@histologe.fr"
+    created_by: "admin-territoire-44-01@signal-logement.fr"
     geoloc: "{\"lat\": 47.3688054, \"lng\": -1.4203543}"
     insee_occupant: "44028"
     nb_pieces_logement: 3

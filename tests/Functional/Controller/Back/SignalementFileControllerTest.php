@@ -30,7 +30,7 @@ class SignalementFileControllerTest extends WebTestCase
         $this->userRepository = static::getContainer()->get(UserRepository::class);
         $this->signalementRepository = static::getContainer()->get(SignalementRepository::class);
 
-        $this->user = $this->userRepository->findOneBy(['email' => 'admin-01@histologe.fr']);
+        $this->user = $this->userRepository->findOneBy(['email' => 'admin-01@signal-logement.fr']);
         $this->client->loginUser($this->user);
         /* @var Signalement $signalement */
         $this->signalement = $this->signalementRepository->findOneBy(['uuid' => '00000000-0000-0000-2022-000000000001']);
@@ -122,7 +122,7 @@ class SignalementFileControllerTest extends WebTestCase
 
     public function testAddFileSignalementNotDeny(): void
     {
-        $user = $this->userRepository->findOneBy(['email' => 'user-13-05@histologe.fr']);
+        $user = $this->userRepository->findOneBy(['email' => 'user-13-05@signal-logement.fr']);
         $this->client->loginUser($user);
 
         $route = $this->router->generate('back_signalement_add_file', ['uuid' => '00000000-0000-0000-2023-000000000009']);
@@ -134,7 +134,7 @@ class SignalementFileControllerTest extends WebTestCase
 
     public function testAddFileSignalementDeny(): void
     {
-        $user = $this->userRepository->findOneBy(['email' => 'user-13-05@histologe.fr']);
+        $user = $this->userRepository->findOneBy(['email' => 'user-13-05@signal-logement.fr']);
         $this->client->loginUser($user);
 
         $route = $this->router->generate('back_signalement_add_file', ['uuid' => '00000000-0000-0000-2023-000000000012']);

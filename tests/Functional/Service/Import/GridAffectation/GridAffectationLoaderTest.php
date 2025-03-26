@@ -27,10 +27,10 @@ class GridAffectationLoaderTest extends KernelTestCase
     public const FIXTURE_PARTNER_EPCI = 'EPCI';
     public const FIXTURE_PARTNER_FAKE = 'Random Type';
 
-    public const FIXTURE_PARTNER_DDT_EMAIL = 'ddt-m@histologe.fr';
-    public const FIXTURE_PARTNER_ARS_EMAIL = 'ars@histologe.fr';
+    public const FIXTURE_PARTNER_DDT_EMAIL = 'ddt-m@signal-logement.fr';
+    public const FIXTURE_PARTNER_ARS_EMAIL = 'ars@signal-logement.fr';
 
-    public const FIXTURE_USER_EMAIL_DUPLICATE = 'user-ddt@histologe.fr';
+    public const FIXTURE_USER_EMAIL_DUPLICATE = 'user-ddt@signal-logement.fr';
     public const FIXTURE_ROLE_RT = 'Resp. Territoire';
     public const FIXTURE_ROLE_PARTNER = 'Admin. partenaire';
     public const FIXTURE_ROLE_USER = 'Agent';
@@ -77,7 +77,7 @@ class GridAffectationLoaderTest extends KernelTestCase
             'Codes insee' => '',
             'Prénom' => $faker->firstName(),
             'Nom' => $faker->lastName(),
-            'E-mail' => 'user-13-06@histologe.fr',
+            'E-mail' => 'user-13-06@signal-logement.fr',
             "E-mail d'équipe" => self::FIXTURE_PARTNER_ARS_EMAIL,
             'Rôle' => self::FIXTURE_ROLE_PARTNER,
         ];
@@ -88,8 +88,8 @@ class GridAffectationLoaderTest extends KernelTestCase
             'Codes insee' => '',
             'Prénom' => $faker->firstName(),
             'Nom' => $faker->lastName(),
-            'E-mail' => 'sara.conor@histologe.fr',
-            "E-mail d'équipe" => 'partenaire-13-01@histologe.fr',
+            'E-mail' => 'sara.conor@signal-logement.fr',
+            "E-mail d'équipe" => 'partenaire-13-01@signal-logement.fr',
             'Rôle' => self::FIXTURE_ROLE_PARTNER,
         ];
 
@@ -99,7 +99,7 @@ class GridAffectationLoaderTest extends KernelTestCase
             'Codes insee' => '',
             'Prénom' => 'Arnold',
             'Nom' => 'Scharwz',
-            'E-mail' => 'arnold.sch@histologe.fr',
+            'E-mail' => 'arnold.sch@signal-logement.fr',
             "E-mail d'équipe" => self::FIXTURE_PARTNER_ARS_EMAIL,
             'Rôle' => self::FIXTURE_ROLE_USER,
         ];
@@ -110,11 +110,11 @@ class GridAffectationLoaderTest extends KernelTestCase
         $metaData = $this->gridAffectationLoader->getMetadata();
 
         $this->assertEquals(1, $metaData['nb_partners'], 'Partner ARS added');
-        $this->assertEquals(1, $metaData['nb_users_created'], 'arnold.sch@histologe.fr');
+        $this->assertEquals(1, $metaData['nb_users_created'], 'arnold.sch@signal-logement.fr');
         $this->assertCount(
             2,
             $metaData['errors'],
-            'user-13-06@histologe.fr already exists and Partner e-mails exists partenaire-13-01@histologe.fr'
+            'user-13-06@signal-logement.fr already exists and Partner e-mails exists partenaire-13-01@signal-logement.fr'
         );
     }
 
@@ -123,18 +123,18 @@ class GridAffectationLoaderTest extends KernelTestCase
         $territory = $this->entityManager->getRepository(Territory::class)->findOneBy(['zip' => 13]);
 
         $errors = [
-            'line 3 : E-mail incorrect pour un partenaire : arshistologe.fr',
+            'line 3 : E-mail incorrect pour un partenaire : arssignal-logement.fr',
             'line 5 : Type incorrect pour Random Type --> Random Type',
-            'line 5 : Rôle incorrect pour jon.conor@histologe.fr --> Fake role',
+            'line 5 : Rôle incorrect pour jon.conor@signal-logement.fr --> Fake role',
             'line 6 : Type incorrect pour Random Type --> Random Type',
             'line 6 : E-mail incorrect pour un utilisateur : john.doe@',
-            'line 7 : E-mail partenaire déjà existant dans le territoire avec (partenaire-13-01@histologe.fr) dans Bouches-du-Rhône, nom : Partenaire 13-01',
+            'line 7 : E-mail partenaire déjà existant dans le territoire avec (partenaire-13-01@signal-logement.fr) dans Bouches-du-Rhône, nom : Partenaire 13-01',
             'line 8 : E-mail manquant pour Margaretta Borer, partenaire ADIL',
             'line 9 : Nom de partenaire manquant',
-            'line 10 : Utilisateur déjà existant avec (user-13-06@histologe.fr) dans Bouches-du-Rhône, partenaire : Partenaire 13-06 ESABORA ARS, rôle : Agent',
-            'Certains partenaires ont un e-mail en commun ddt-m@histologe.fr',
-            'Certains utilisateurs ont un e-mail en commun user-ddt@histologe.fr',
-            'Certains utilisateurs ont un e-mail en commun avec un partenaire ddt-m@histologe.fr,user-ddt@histologe.fr',
+            'line 10 : Utilisateur déjà existant avec (user-13-06@signal-logement.fr) dans Bouches-du-Rhône, partenaire : Partenaire 13-06 ESABORA ARS, rôle : Agent',
+            'Certains partenaires ont un e-mail en commun ddt-m@signal-logement.fr',
+            'Certains utilisateurs ont un e-mail en commun user-ddt@signal-logement.fr',
+            'Certains utilisateurs ont un e-mail en commun avec un partenaire ddt-m@signal-logement.fr,user-ddt@signal-logement.fr',
         ];
 
         $this->assertEquals(
@@ -185,7 +185,7 @@ class GridAffectationLoaderTest extends KernelTestCase
                 'Prénom' => $faker->firstName(),
                 'Nom' => $faker->lastName(),
                 'E-mail' => $faker->email(),
-                "E-mail d'équipe" => 'schs@histologe.fr',
+                "E-mail d'équipe" => 'schs@signal-logement.fr',
                 'Rôle' => self::FIXTURE_ROLE_USER,
             ],
         ];
@@ -213,7 +213,7 @@ class GridAffectationLoaderTest extends KernelTestCase
                 'Prénom' => $faker->firstName(),
                 'Nom' => $faker->lastName(),
                 'E-mail' => self::FIXTURE_USER_EMAIL_DUPLICATE,
-                "E-mail d'équipe" => 'arshistologe.fr',
+                "E-mail d'équipe" => 'arssignal-logement.fr',
                 'Rôle' => self::FIXTURE_ROLE_RT,
             ],
             [
@@ -232,7 +232,7 @@ class GridAffectationLoaderTest extends KernelTestCase
                 'Codes insee' => '',
                 'Prénom' => $faker->firstName(),
                 'Nom' => $faker->lastName(),
-                'E-mail' => 'jon.conor@histologe.fr',
+                'E-mail' => 'jon.conor@signal-logement.fr',
                 "E-mail d'équipe" => $faker->companyEmail(),
                 'Rôle' => 'Fake role',
             ],
@@ -252,8 +252,8 @@ class GridAffectationLoaderTest extends KernelTestCase
                 'Codes insee' => '',
                 'Prénom' => $faker->firstName(),
                 'Nom' => $faker->lastName(),
-                'E-mail' => 'sara.conor@histologe.fr',
-                "E-mail d'équipe" => 'partenaire-13-01@histologe.fr',
+                'E-mail' => 'sara.conor@signal-logement.fr',
+                "E-mail d'équipe" => 'partenaire-13-01@signal-logement.fr',
                 'Rôle' => self::FIXTURE_ROLE_PARTNER,
             ],
             [
@@ -282,7 +282,7 @@ class GridAffectationLoaderTest extends KernelTestCase
                 'Codes insee' => '',
                 'Prénom' => $faker->firstName(),
                 'Nom' => $faker->lastName(),
-                'E-mail' => 'user-13-06@histologe.fr',
+                'E-mail' => 'user-13-06@signal-logement.fr',
                 "E-mail d'équipe" => $faker->companyEmail(),
                 'Rôle' => self::FIXTURE_ROLE_PARTNER,
             ],

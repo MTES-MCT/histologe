@@ -31,7 +31,7 @@ class SignalementActionControllerTest extends WebTestCase
         $this->suiviRepository = static::getContainer()->get(SuiviRepository::class);
         $this->signalementRepository = static::getContainer()->get(SignalementRepository::class);
 
-        $user = $this->userRepository->findOneBy(['email' => 'admin-01@histologe.fr']);
+        $user = $this->userRepository->findOneBy(['email' => 'admin-01@signal-logement.fr']);
         $this->client->loginUser($user);
     }
 

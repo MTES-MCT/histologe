@@ -1,3 +1,4 @@
+{% set logoClass = platform.name == 'histologe' ? 'logo-width' : 'logo-width-lg' %}
 <header class="fr-header">
     <div class="fr-header__body">
         <div class="fr-container">
@@ -6,7 +7,7 @@
                     <div class="fr-header__brand-top">
                         <div class="fr-header__logo">
                             <p class="fr-logo">
-                                ministère <br> de la transition <br>écologique
+                                ministères <br> aménagement <br>du territoire <br>transition <br>écologique
                             </p>
                         </div>
                         <div class="fr-header__navbar">
@@ -16,8 +17,8 @@
                         </div>
                     </div>
                     <div class="fr-header__service">
-                        <a href="{{ path('home') }}" title="Accueil - {{ platform.name }} - Ministère de la transition écologique">
-                            <img class="fr-responsive-img logo-width" src="{{ asset('img/' ~ platform.logo145) }}" alt="{{ platform.name }}">
+                        <a href="{{ path('home') }}" title="Accueil - {{ platform.name }} - Ministère aménagement du territoire transition écologique">
+                            <img class="fr-responsive-img {{ logoClass }}" src="{{ asset('img/' ~ platform.logo145) }}" alt="{{ platform.name }}">
                         </a>
                     </div>
                 </div>

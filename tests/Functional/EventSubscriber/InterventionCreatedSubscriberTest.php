@@ -49,7 +49,7 @@ class InterventionCreatedSubscriberTest extends KernelTestCase
 
         /** @var UserRepository $userRepository */
         $userRepository = $this->entityManager->getRepository(User::class);
-        $user = $userRepository->findOneBy(['email' => 'admin-territoire-13-01@histologe.fr']);
+        $user = $userRepository->findOneBy(['email' => 'admin-territoire-13-01@signal-logement.fr']);
         $interventionCreatedSubscriber = new InterventionCreatedSubscriber($visiteNotifier, $suiviManager, $htmlSanitizer);
         $eventDispatcher->addSubscriber($interventionCreatedSubscriber);
 
@@ -104,7 +104,7 @@ class InterventionCreatedSubscriberTest extends KernelTestCase
 
         /** @var UserRepository $userRepository */
         $userRepository = $this->entityManager->getRepository(User::class);
-        $user = $userRepository->findOneBy(['email' => 'admin-territoire-13-01@histologe.fr']);
+        $user = $userRepository->findOneBy(['email' => 'admin-territoire-13-01@signal-logement.fr']);
         $interventionCreatedSubscriber = new InterventionCreatedSubscriber($visiteNotifier, $suiviManager, $htmlSanitizer);
         $eventDispatcher->addSubscriber($interventionCreatedSubscriber);
 

@@ -103,7 +103,7 @@ class SignalementManagerTest extends WebTestCase
             $this->signalementAddressUpdater,
             $this->zipcodeProvider
         );
-        $user = $this->entityManager->getRepository(User::class)->findOneBy(['email' => 'admin-01@histologe.fr']);
+        $user = $this->entityManager->getRepository(User::class)->findOneBy(['email' => 'admin-01@signal-logement.fr']);
         $client->loginUser($user);
     }
 

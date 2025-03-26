@@ -27,7 +27,7 @@ class DossierMessageHandlerTest extends KernelTestCase
     public function testProcessDossierMessage(): void
     {
         $partnerRepository = $this->entityManager->getRepository(Partner::class);
-        $partner = $partnerRepository->findOneBy(['email' => 'partenaire-13-05@histologe.fr']);
+        $partner = $partnerRepository->findOneBy(['email' => 'partenaire-13-05@signal-logement.fr']);
         $affectationRepository = $this->entityManager->getRepository(Affectation::class);
         $affectation = $affectationRepository->findOneBy(['partner' => $partner]);
         $dossierMessage = new DossierMessage($affectation);

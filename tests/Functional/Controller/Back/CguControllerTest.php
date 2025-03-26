@@ -19,7 +19,7 @@ class CguControllerTest extends WebTestCase
         /** @var RouterInterface $router */
         $router = self::getContainer()->get(RouterInterface::class);
 
-        $user = $userRepository->findOneBy(['email' => 'user-13-01@histologe.fr']);
+        $user = $userRepository->findOneBy(['email' => 'user-13-01@signal-logement.fr']);
         $client->loginUser($user);
 
         $route = $router->generate('cgu_bo_confirm');

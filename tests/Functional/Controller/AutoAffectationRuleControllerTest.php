@@ -28,7 +28,7 @@ class AutoAffectationRuleControllerTest extends WebTestCase
         $this->router = self::getContainer()->get(RouterInterface::class);
         $this->autoAffectationRuleRepository = static::getContainer()->get(AutoAffectationRuleRepository::class);
 
-        $user = $this->userRepository->findOneBy(['email' => 'admin-01@histologe.fr']);
+        $user = $this->userRepository->findOneBy(['email' => 'admin-01@signal-logement.fr']);
         $this->client->loginUser($user);
     }
 

@@ -19,7 +19,7 @@ class ArreteCreateControllerTest extends WebTestCase
     {
         $this->client = static::createClient();
         $user = self::getContainer()->get('doctrine')->getRepository(User::class)->findOneBy([
-            'email' => 'api-01@histologe.fr',
+            'email' => 'api-01@signal-logement.fr',
         ]);
 
         $this->router = self::getContainer()->get('router');

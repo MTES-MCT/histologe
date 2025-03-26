@@ -79,7 +79,7 @@ class SignalementAffectationListViewFactoryTest extends KernelTestCase
             ],
         ];
 
-        $user = $this->entityManager->getRepository(User::class)->findOneBy(['email' => 'admin-01@histologe.fr']);
+        $user = $this->entityManager->getRepository(User::class)->findOneBy(['email' => 'admin-01@signal-logement.fr']);
 
         $signalementAffectationListViewFactory = new SignalementAffectationListViewFactory($this->csrfTokenManager, $this->security);
         $signalementAffectationListView = $signalementAffectationListViewFactory->createInstanceFrom($user, $dataSignalement);
