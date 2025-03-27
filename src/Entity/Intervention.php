@@ -195,17 +195,9 @@ class Intervention implements EntityHistoryInterface, EntitySanitizerInterface
         return $this;
     }
 
-    public function getDetails($transformHtml = true, $originalData = false): ?string
+    public function getDetails(): ?string
     {
-        if ($originalData) {
-            return $this->details;
-        }
-
-        if (!$transformHtml) {
-            return $this->details;
-        }
-
-        return str_replace('&lt;br /&gt;', '<br />', $this->details);
+        return $this->details;
     }
 
     public function setDetails(?string $details): self
