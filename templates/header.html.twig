@@ -1,4 +1,3 @@
-{% set logoClass = platform.name == 'histologe' ? 'logo-width' : 'logo-width-lg' %}
 <header class="fr-header">
     <div class="fr-header__body">
         <div class="fr-container">
@@ -18,7 +17,7 @@
                     </div>
                     <div class="fr-header__service">
                         <a href="{{ path('home') }}" title="Accueil - {{ platform.name }} - Ministère aménagement du territoire transition écologique">
-                            <img class="fr-responsive-img {{ logoClass }}" src="{{ asset('img/' ~ platform.logo145) }}" alt="{{ platform.name }}">
+                            <img class="fr-responsive-img logo-width" src="{{ asset('img/' ~ platform.logo145) }}" alt="{{ platform.name }}">
                         </a>
                     </div>
                 </div>
@@ -117,3 +116,18 @@
         </div>
     </div>
 </header>
+
+{% if platform.name is same as 'Signal logement' %}
+    <div class="fr-notice fr-notice--warning">
+        <div class="fr-container">
+            <div class="fr-notice__body">
+                <p class="fr-notice__desc">
+                    <strong>Histologe devient Signal Logement !</strong>  Un nouveau nom et un nouveau site pour mieux refléter notre mission : lutter contre le mal logement !
+                </p>
+                <button class="fr-btn--close fr-btn" title="Masquer le message">
+                    Masquer le message
+                </button>
+            </div>
+        </div>
+    </div>
+{% endif %}
