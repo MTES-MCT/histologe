@@ -152,7 +152,7 @@ class SignalementRepository extends ServiceEntityRepository
         $qb->select('COUNT(s.id) as count')
             ->addSelect('s.statut')
             ->andWhere('s.statut NOT IN (:statutList)')
-            ->setParameter('statutList', [SignalementStatus::ARCHIVED, SignalementStatus::DRAFT, SignalementStatus::DRAFT_ARCHIVED]);
+            ->setParameter('statutList', [SignalementStatus::DRAFT, SignalementStatus::DRAFT_ARCHIVED]);
 
         if ($removeImported) {
             $qb->andWhere('s.isImported IS NULL OR s.isImported = 0');

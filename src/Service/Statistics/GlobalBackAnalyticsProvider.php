@@ -31,10 +31,10 @@ class GlobalBackAnalyticsProvider
         $countByStatus = $this->signalementRepository->countByStatus($territories, $partners, null, true);
         foreach ($countByStatus as $countByStatusItem) {
             switch ($countByStatusItem['statut']) {
-                case SignalementStatus::ARCHIVED->value:
+                case SignalementStatus::ARCHIVED:
                     $data['count_signalement_archives'] = $countByStatusItem['count'];
                     break;
-                case SignalementStatus::REFUSED->value:
+                case SignalementStatus::REFUSED:
                     $data['count_signalement_refuses'] = $countByStatusItem['count'];
                     break;
                 default:
