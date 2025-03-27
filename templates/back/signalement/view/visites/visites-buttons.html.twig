@@ -35,7 +35,7 @@
                     Editer le rapport
                 </button>
             {% endif %}
-            <a href="{{ path('show_file', {uuid: intervention.getRapportDeVisite.first.uuid}) }}"
+            <a href="{{ sign_url(path('show_file', {uuid: intervention.getRapportDeVisite.first.uuid})) }}"
                 class="fr-btn fr-btn--secondary"
                 title="Voir le rapport de visite"
                 rel="noopener"
@@ -58,7 +58,7 @@
         {% endif %}
     {% elseif intervention.status is same as constant('App\\Entity\\Intervention::STATUS_NOT_DONE') %}
         {% if intervention.getRapportDeVisite is not empty %}
-            <a href="{{ path('show_file', {uuid: intervention.getRapportDeVisite.first.uuid}) }}"
+            <a href="{{ sign_url(path('show_file', {uuid: intervention.getRapportDeVisite.first.uuid})) }}"
                 class="fr-btn fr-btn--secondary"
                 title="Voir le rapport de visite"
                 rel="noopener"

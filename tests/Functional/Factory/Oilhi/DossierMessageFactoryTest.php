@@ -11,6 +11,7 @@ use App\Repository\PartnerRepository;
 use App\Repository\SignalementRepository;
 use App\Service\Interconnection\Oilhi\HookZapierService;
 use App\Tests\FixturesHelper;
+use CoopTilleuls\UrlSignerBundle\UrlSigner\UrlSignerInterface;
 use Doctrine\ORM\EntityManagerInterface;
 use Faker\Factory;
 use PHPUnit\Framework\MockObject\MockObject;
@@ -33,6 +34,7 @@ class DossierMessageFactoryTest extends KernelTestCase
     private EntityManagerInterface $entityManager;
     private LoggerInterface $logger;
     private SerializerInterface $serializer;
+    private UrlSignerInterface $urlSigner;
 
     private const string PATTERN_EXPECTED_DATE_FORMAT = '/^\d{4}-\d{2}-\d{2}$/';
 
@@ -42,6 +44,7 @@ class DossierMessageFactoryTest extends KernelTestCase
         $this->entityManager = self::getContainer()->get('doctrine')->getManager();
         $this->logger = self::getContainer()->get('logger');
         $this->serializer = self::getContainer()->get('serializer');
+        $this->urlSigner = self::getContainer()->get(UrlSignerInterface::class);
     }
 
     /** @dataProvider provideReference */
@@ -65,7 +68,7 @@ class DossierMessageFactoryTest extends KernelTestCase
 
         $urlGenerator = static::getContainer()->get(UrlGeneratorInterface::class);
 
-        $dossierMessageFactory = new DossierMessageFactory($urlGenerator, true);
+        $dossierMessageFactory = new DossierMessageFactory($urlGenerator, true, $this->urlSigner);
 
         $this->assertFalse($dossierMessageFactory->supports($affectation));
 

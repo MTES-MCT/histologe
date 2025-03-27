@@ -15,6 +15,7 @@ use App\Service\UploadHandlerService;
 use App\Service\UserAvatar;
 use App\Utils\AttributeParser;
 use App\Validator\EmailFormatValidator;
+use CoopTilleuls\UrlSignerBundle\UrlSigner\UrlSignerInterface;
 use Twig\Extension\AbstractExtension;
 use Twig\Extension\GlobalsInterface;
 use Twig\TwigFilter;
@@ -24,6 +25,7 @@ class AppExtension extends AbstractExtension implements GlobalsInterface
 {
     public function __construct(
         private readonly TimezoneProvider $timezoneProvider,
+        private readonly UrlSignerInterface $urlSigner,
     ) {
     }
 
@@ -156,6 +158,7 @@ class AppExtension extends AbstractExtension implements GlobalsInterface
             new TwigFunction('user_avatar_or_placeholder', [UserAvatar::class, 'userAvatarOrPlaceholder'], ['is_safe' => ['html']]),
             new TwigFunction('singular_or_plural', [$this, 'displaySingularOrPlural']),
             new TwigFunction('transform_suivi_description', [$this, 'transformSuiviDescription']),
+            new TwigFunction('sign_url', [$this, 'signUrl']),
         ];
     }
 
@@ -196,5 +199,10 @@ class AppExtension extends AbstractExtension implements GlobalsInterface
         $content = str_replace('?folder&#61;_up', '/'.$suivi->getSignalement()->getUuid().'?variant=resize', $content);
 
         return $content;
+    }
+
+    public function signUrl(string $url)
+    {
+        return $this->urlSigner->sign($url); // @phpstan-ignore-line
     }
 }

@@ -149,11 +149,8 @@ class Suivi implements EntityHistoryInterface
         return 'OCCUPANT : '.strtoupper($this->getSignalement()->getNomOccupant()).' '.ucfirst($this->getSignalement()->getPrenomOccupant());
     }
 
-    public function getDescription($transformHtml = true, $originalData = false): ?string
+    public function getDescription($transformHtml = true): ?string
     {
-        if ($originalData) {
-            return $this->description;
-        }
         if (null !== $this->deletedAt) {
             return self::DESCRIPTION_DELETED.' '.$this->deletedAt->format('d/m/Y');
         }
