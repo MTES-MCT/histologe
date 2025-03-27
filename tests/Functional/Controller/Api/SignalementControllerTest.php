@@ -3,10 +3,13 @@
 namespace App\Tests\Functional\Controller\Api;
 
 use App\Entity\User;
+use App\Tests\ApiHelper;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 
 class SignalementControllerTest extends WebTestCase
 {
+    use ApiHelper;
+
     public function testGetSignalementList(): void
     {
         $client = static::createClient();
@@ -19,6 +22,7 @@ class SignalementControllerTest extends WebTestCase
 
         $response = json_decode($client->getResponse()->getContent(), true);
         $this->assertCount(6, $response);
+        $this->hasXrequestIdHeaderAndOneApiRequestLog($client);
     }
 
     public function testGetSignalementListWithLimit(): void
@@ -33,6 +37,7 @@ class SignalementControllerTest extends WebTestCase
 
         $response = json_decode($client->getResponse()->getContent(), true);
         $this->assertCount(2, $response);
+        $this->hasXrequestIdHeaderAndOneApiRequestLog($client);
     }
 
     public function testGetSignalementByUuid(): void
@@ -48,6 +53,7 @@ class SignalementControllerTest extends WebTestCase
         $response = json_decode($client->getResponse()->getContent(), true);
         $this->assertArrayHasKey('desordres', $response);
         $this->assertCount(7, $response['desordres']);
+        $this->hasXrequestIdHeaderAndOneApiRequestLog($client);
     }
 
     public function testGetOldSignalementByUuid(): void
@@ -63,6 +69,7 @@ class SignalementControllerTest extends WebTestCase
         $response = json_decode($client->getResponse()->getContent(), true);
         $this->assertArrayHasKey('desordres', $response);
         $this->assertCount(3, $response['desordres']);
+        $this->hasXrequestIdHeaderAndOneApiRequestLog($client);
     }
 
     /**
@@ -83,6 +90,7 @@ class SignalementControllerTest extends WebTestCase
         $this->assertArrayHasKey('property', current($response['errors']));
         $this->assertArrayHasKey('message', current($response['errors']));
         $this->assertArrayHasKey('invalidValue', current($response['errors']));
+        $this->hasXrequestIdHeaderAndOneApiRequestLog($client);
     }
 
     public function provideQueryParameters(): \Generator
