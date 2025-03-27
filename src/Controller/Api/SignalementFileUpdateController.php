@@ -88,7 +88,7 @@ class SignalementFileUpdateController extends AbstractController
         ]
     )]
     public function __invoke(
-        #[MapRequestPayload(validationGroups: ['Default'])]
+        #[MapRequestPayload(validationGroups: ['false'])]
         FileRequest $fileRequest,
         ?File $file = null,
     ): JsonResponse {
@@ -100,7 +100,7 @@ class SignalementFileUpdateController extends AbstractController
         }
         $this->denyAccessUnlessGranted('FILE_EDIT', $file);
 
-        $errors = $this->validator->validate($fileRequest, null, ['PATCH_FILE_REQUEST']);
+        $errors = $this->validator->validate($fileRequest);
         if (count($errors) > 0) {
             throw new ValidationFailedException($fileRequest, $errors);
         }

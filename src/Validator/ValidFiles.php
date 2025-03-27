@@ -9,11 +9,9 @@ class ValidFiles extends Constraint
 {
     public string $message = 'Le fichier avec l\'UUID "{{ uuid }}" est invalide ou inexistant.';
 
-    public function __construct(?string $message = null, ?array $groups = null)
+    public function __construct(?string $message = null)
     {
-        parent::__construct([
-            'groups' => $groups,
-        ]);
+        parent::__construct([]);
         if ($message) {
             $this->message = $message;
         }

@@ -11,44 +11,40 @@ use Symfony\Component\Validator\Context\ExecutionContextInterface;
     description: 'Payload pour créer un arrêté.',
     required: ['date', 'numero', 'type', 'numeroDossier'],
 )]
+#[Groups(groups: ['Default', 'false'])]
 class ArreteRequest implements RequestInterface
 {
     #[OA\Property(
         description: 'La date de l\'arrêté.',
         example: '2023-06-14',
     )]
-    #[Groups(groups: ['Default', 'POST_ARRETE_REQUEST'])]
-    #[Assert\NotBlank(groups: ['POST_ARRETE_REQUEST'])]
-    #[Assert\Date(groups: ['POST_ARRETE_REQUEST'])]
-    #[Assert\Callback([self::class, 'validatePastDate'], groups: ['POST_ARRETE_REQUEST'])]
+    #[Assert\NotBlank]
+    #[Assert\Date]
+    #[Assert\Callback([self::class, 'validatePastDate'])]
     public ?string $date = null;
 
     #[OA\Property(
         description: 'Le numéro de dossier.',
         example: '2023/DD13/00664',
     )]
-    #[Assert\NotBlank(groups: ['POST_ARRETE_REQUEST'])]
-    #[Groups(groups: ['Default', 'POST_ARRETE_REQUEST'])]
+    #[Assert\NotBlank]
     public ?string $numeroDossier = null;
 
     #[OA\Property(
         description: 'Le numéro de l\'arrêté.',
         example: '2023/DD13/00664',
     )]
-    #[Groups(groups: ['Default', 'POST_ARRETE_REQUEST'])]
-    #[Assert\NotBlank(groups: ['POST_ARRETE_REQUEST'])]
+    #[Assert\NotBlank]
     public ?string $numero = null;
 
     #[OA\Property(
         description: 'Le type de l\'arrêté doit commencer par <strong>Arrêté L. suivi d\'un numéro d\'article de loi</strong>.',
         example: ['Arrêté L.511-11 - Suroccupation'],
     )]
-    #[Groups(groups: ['Default', 'POST_ARRETE_REQUEST'])]
-    #[Assert\NotBlank(groups: ['POST_ARRETE_REQUEST'])]
+    #[Assert\NotBlank]
     #[Assert\Regex(
         pattern: "/^Arrêté L\.\d+/",
-        message: "Le type doit commencer par 'Arrêté L.' suivi d'un numéro d'article de loi.",
-        groups: ['POST_ARRETE_REQUEST']
+        message: "Le type doit commencer par 'Arrêté L.' suivi d'un numéro d'article de loi."
     )]
     public ?string $type = null;
 
@@ -57,9 +53,8 @@ class ArreteRequest implements RequestInterface
         example: '2025-07-01',
         nullable: true,
     )]
-    #[Groups(groups: ['Default', 'POST_ARRETE_REQUEST'])]
     #[Assert\Date]
-    #[Assert\Callback([self::class, 'validatePastDate'], groups: ['POST_ARRETE_REQUEST'])]
+    #[Assert\Callback([self::class, 'validatePastDate'])]
     public ?string $mainLeveeDate = null;
 
     #[OA\Property(
@@ -67,7 +62,6 @@ class ArreteRequest implements RequestInterface
         example: '2023-DD13-00172',
         nullable: true,
     )]
-    #[Groups(groups: ['Default', 'POST_ARRETE_REQUEST'])]
     public ?string $mainLeveeNumero = null;
 
     public static function validatePastDate(?string $dateValue, ExecutionContextInterface $context): void

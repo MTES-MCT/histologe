@@ -165,7 +165,7 @@ class VisiteCreateController extends AbstractController
     )]
     #[Route('/signalements/{uuid:signalement}/visites', name: 'api_signalements_visite_post', methods: 'POST')]
     public function __invoke(
-        #[MapRequestPayload(validationGroups: ['Default'])]
+        #[MapRequestPayload(validationGroups: ['false'])]
         VisiteRequest $visiteRequest,
         ?Signalement $signalement = null,
     ): JsonResponse {
@@ -182,7 +182,7 @@ class VisiteCreateController extends AbstractController
             SecurityApiExceptionListener::ACCESS_DENIED
         );
 
-        $errors = $this->validator->validate($visiteRequest, null, ['POST_VISITE_REQUEST']);
+        $errors = $this->validator->validate($visiteRequest);
         if (count($errors) > 0) {
             throw new ValidationFailedException($visiteRequest, $errors);
         }

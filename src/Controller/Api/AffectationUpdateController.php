@@ -168,7 +168,7 @@ class AffectationUpdateController extends AbstractController
         )
     )]
     public function __invoke(
-        #[MapRequestPayload(validationGroups: ['Default'])]
+        #[MapRequestPayload(validationGroups: ['false'])]
         AffectationRequest $affectationRequest,
         ?Affectation $affectation = null,
     ): JsonResponse {
@@ -180,7 +180,7 @@ class AffectationUpdateController extends AbstractController
         }
 
         $this->denyAccessUnlessGranted(AffectationVoter::ANSWER, $affectation, SecurityApiExceptionListener::ACCESS_DENIED);
-        $errors = $this->validator->validate($affectationRequest, null, ['PATCH_AFFECTATION_REQUEST']);
+        $errors = $this->validator->validate($affectationRequest);
         if (count($errors) > 0) {
             throw new ValidationFailedException($affectationRequest, $errors);
         }

@@ -10,6 +10,7 @@ use Symfony\Component\Validator\Constraints as Assert;
     description: 'Payload pour mettre à jour une affectation.',
     required: ['statut'],
 )]
+#[Groups(groups: ['Default', 'false'])]
 class AffectationRequest implements RequestInterface
 {
     public function __construct(
@@ -25,14 +26,11 @@ class AffectationRequest implements RequestInterface
             enum: ['NOUVEAU', 'EN_COURS', 'FERME', 'REFUSE'],
             example: 'EN_COURS',
         )]
-        #[Groups(groups: ['Default', 'PATCH_AFFECTATION_REQUEST'])]
-        #[Assert\NotNull(message: 'Le statut est obligatoire.', groups: ['PATCH_AFFECTATION_REQUEST'])]
+        #[Assert\NotNull(message: 'Le statut est obligatoire.')]
         #[Assert\Choice(
             choices: ['NOUVEAU', 'EN_COURS', 'FERME', 'REFUSE'],
-            message: 'Cette valeur doit être l\'un des choix suivants : {{ choices }}',
-            groups: ['PATCH_AFFECTATION_REQUEST']
-        )
-        ]
+            message: 'Cette valeur doit être l\'un des choix suivants : {{ choices }}'
+        )]
         public ?string $statut = null,
         #[OA\Property(
             description: 'Le motif de cloture de l\'affectation, il doit être accompagné d\'un message.',
@@ -54,7 +52,6 @@ class AffectationRequest implements RequestInterface
             ],
             example: 'DEPART_OCCUPANT',
         )]
-        #[Groups(groups: ['Default', 'PATCH_AFFECTATION_REQUEST'])]
         #[Assert\Choice(
             choices: [
                 'ABANDON_DE_PROCEDURE_ABSENCE_DE_REPONSE',
@@ -72,15 +69,13 @@ class AffectationRequest implements RequestInterface
                 'DOUBLON',
                 'AUTRE',
             ],
-            message: 'Cette valeur doit être l\'un des choix suivants : {{ choices }}',
-            groups: ['PATCH_AFFECTATION_REQUEST']
+            message: 'Cette valeur doit être l\'un des choix suivants : {{ choices }}'
         )]
         #[Assert\When(
             expression: 'this.statut === "FERME"',
             constraints: [
                 new Assert\NotNull(message: 'Le motifCloture est obligatoire lorsque statut est FERME.'),
-            ],
-            groups: ['PATCH_AFFECTATION_REQUEST']
+            ]
         )]
         public ?string $motifCloture = null,
         #[OA\Property(
@@ -94,7 +89,6 @@ class AffectationRequest implements RequestInterface
             ],
             example: 'HORS_COMPETENCE',
         )]
-        #[Groups(groups: ['Default', 'PATCH_AFFECTATION_REQUEST'])]
         #[Assert\Choice(
             choices: [
                 'HORS_PDLHI',
@@ -103,15 +97,13 @@ class AffectationRequest implements RequestInterface
                 'DOUBLON',
                 'AUTRE',
             ],
-            message: 'Cette valeur doit être l\'un des choix suivants : {{ choices }}',
-            groups: ['PATCH_AFFECTATION_REQUEST']
+            message: 'Cette valeur doit être l\'un des choix suivants : {{ choices }}'
         )]
         #[Assert\When(
             expression: 'this.statut === "REFUSE"',
             constraints: [
                 new Assert\NotNull(message: 'Le motifRefus est obligatoire lorsque statut est REFUSE.'),
-            ],
-            groups: ['PATCH_AFFECTATION_REQUEST']
+            ]
         )]
         public ?string $motifRefus = null,
 
@@ -119,13 +111,11 @@ class AffectationRequest implements RequestInterface
             description: 'Un message est obligatoire lorsque statut est REFUSE ou FERME.',
             example: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
         )]
-        #[Groups(groups: ['Default', 'PATCH_AFFECTATION_REQUEST'])]
         #[Assert\When(
             expression: 'this.statut === "REFUSE" || this.statut === "FERME"',
             constraints: [
                 new Assert\NotNull(message: 'Le message est obligatoire lorsque statut est REFUSE ou FERME.'),
-            ],
-            groups: ['PATCH_AFFECTATION_REQUEST']
+            ]
         )]
         #[Assert\Length(min: 10)]
         public ?string $message = null,
@@ -134,13 +124,11 @@ class AffectationRequest implements RequestInterface
             description: 'Il est obligatoire d\'indiquer si l\'usager doit être notifié lors d\'une réouverture (TRANSITION : FERME → NOUVEAU).',
             example: 'true',
         )]
-        #[Groups(groups: ['Default', 'PATCH_AFFECTATION_REQUEST'])]
         #[Assert\When(
             expression: 'this.statut === "NOUVEAU"',
             constraints: [
                 new Assert\NotNull(message: 'Il est obligatoire d\'indiquer si l\'usager doit être notifié lors d\'une réouverture.'),
-            ],
-            groups: ['PATCH_AFFECTATION_REQUEST']
+            ]
         )]
         public ?bool $notifyUsager = null,
     ) {

@@ -12,43 +12,38 @@ use Symfony\Component\Validator\Context\ExecutionContextInterface;
 #[OA\Schema(
     description: 'Payload d\'une visite'
 )]
-#[Assert\Callback(callback: [self::class, 'checkFieldsWhenVisitePlannedOrConfirmed'], groups: ['POST_VISITE_REQUEST'])]
+#[Assert\Callback(callback: [self::class, 'checkFieldsWhenVisitePlannedOrConfirmed'])]
+#[Groups(groups: ['Default', 'false'])]
 class VisiteRequest implements RequestInterface, RequestFileInterface
 {
-    #[Assert\NotBlank(groups: ['POST_VISITE_REQUEST'])]
-    #[Assert\Date(groups: ['POST_VISITE_REQUEST'])]
+    #[Assert\NotBlank]
+    #[Assert\Date]
     #[OA\Property(
         description: 'Date de la visite<br>Exemple : `2025-01-05`',
         format: 'date',
         example: '2025-01-05'
     )]
-    #[Groups(groups: ['Default', 'POST_VISITE_REQUEST'])]
     public ?string $date = null;
 
-    #[Assert\NotBlank(groups: ['POST_VISITE_REQUEST'])]
-    #[Assert\Time(groups: ['POST_VISITE_REQUEST'], withSeconds: false)]
+    #[Assert\NotBlank]
+    #[Assert\Time(withSeconds: false)]
     #[OA\Property(description: 'Heure de la visite<br>Exemple : `10:00`', example: '10:00')]
-    #[Groups(groups: ['Default', 'POST_VISITE_REQUEST'])]
     public ?string $time = null;
 
-    #[Assert\Type('bool', groups: ['POST_VISITE_REQUEST'])]
+    #[Assert\Type('bool')]
     #[OA\Property(description: 'La visite a eu lieu', example: true)]
-    #[Groups(groups: ['Default', 'POST_VISITE_REQUEST'])]
     public ?bool $visiteEffectuee = null;
 
     #[OA\Property(description: 'L\'occupant était présent', example: true)]
-    #[Assert\Type('bool', groups: ['POST_VISITE_REQUEST'])]
-    #[Groups(groups: ['Default', 'POST_VISITE_REQUEST'])]
+    #[Assert\Type('bool')]
     public ?bool $occupantPresent = null;
 
     #[OA\Property(description: 'Le propriétaire était présent', example: false)]
-    #[Assert\Type('bool', groups: ['POST_VISITE_REQUEST'])]
-    #[Groups(groups: ['Default', 'POST_VISITE_REQUEST'])]
+    #[Assert\Type('bool')]
     public ?bool $proprietairePresent = null;
 
     #[OA\Property(description: 'Notifier l\'usager', example: true)]
-    #[Assert\Type('bool', groups: ['POST_VISITE_REQUEST'])]
-    #[Groups(groups: ['Default', 'POST_VISITE_REQUEST'])]
+    #[Assert\Type('bool')]
     public ?bool $notifyUsager = null;
 
     #[OA\Property(
@@ -67,7 +62,6 @@ class VisiteRequest implements RequestInterface, RequestFileInterface
         items: new OA\Items(type: 'string'),
         example: ['LOGEMENT_DECENT', 'RESPONSABILITE_OCCUPANT_ASSURANTIEL'],
     )]
-    #[Groups(groups: ['Default', 'POST_VISITE_REQUEST'])]
     #[Assert\Choice(
         choices: [
             'NON_DECENCE',
@@ -80,13 +74,11 @@ class VisiteRequest implements RequestInterface, RequestFileInterface
         ],
         multiple: true,
         message: 'Veuillez choisir des valeurs valides. {{ choices }}',
-        groups: ['POST_VISITE_REQUEST'],
     )]
     public array $concludeProcedure = [];
 
-    #[Assert\Type('string', groups: ['POST_VISITE_REQUEST'])]
+    #[Assert\Type('string')]
     #[OA\Property(description: 'Détails de la visite', example: '<p>Compte rendu de visite...</p>')]
-    #[Groups(groups: ['Default', 'POST_VISITE_REQUEST'])]
     public ?string $details = null;
 
     #[OA\Property(
@@ -95,8 +87,7 @@ class VisiteRequest implements RequestInterface, RequestFileInterface
         items: new OA\Items(type: 'string', format: 'uuid'),
         example: ['f47ac10b-58cc-4372-a567-0e02b2c3d479', '8d3c7db7-fc90-43f4-8066-7522f0e9b163']
     )]
-    #[Groups(groups: ['Default', 'POST_VISITE_REQUEST'])]
-    #[ValidFiles(groups: ['POST_VISITE_REQUEST'])]
+    #[ValidFiles]
     public array $files = [];
 
     #[Ignore]

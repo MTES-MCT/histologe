@@ -123,7 +123,7 @@ class SuiviCreateController extends AbstractController
         )
     )]
     public function __invoke(
-        #[MapRequestPayload(validationGroups: ['Default'])]
+        #[MapRequestPayload(validationGroups: ['false'])]
         SuiviRequest $suiviRequest,
         ?Signalement $signalement = null,
     ): JsonResponse {
@@ -138,7 +138,7 @@ class SuiviCreateController extends AbstractController
             SecurityApiExceptionListener::ACCESS_DENIED
         );
 
-        $errors = $this->validator->validate($suiviRequest, null, ['POST_SUIVI_REQUEST']);
+        $errors = $this->validator->validate($suiviRequest);
         if (count($errors) > 0) {
             throw new ValidationFailedException($suiviRequest, $errors);
         }
