@@ -17,7 +17,7 @@ class DossierVisiteSISHCollectionResponseTest extends TestCase
         $this->assertCount(2, $dossiersVisiteSISH);
 
         foreach ($dossiersVisiteSISH as $dossierVisiteSISH) {
-            $this->assertEquals('Signal-logement', $dossierVisiteSISH->getSasLogicielProvenance());
+            $this->assertEquals('Histologe', $dossierVisiteSISH->getSasLogicielProvenance());
             $this->assertEquals('00000000-0000-0000-2023-000000000010', $dossierVisiteSISH->getReferenceDossier());
             $this->assertEquals('2023/DD13/0010', $dossierVisiteSISH->getDossNum());
             $this->assertInstanceOf(

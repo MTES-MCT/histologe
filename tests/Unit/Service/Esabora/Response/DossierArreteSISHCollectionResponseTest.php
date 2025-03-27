@@ -15,7 +15,7 @@ class DossierArreteSISHCollectionResponseTest extends TestCase
         $dossierArreteSISHCollectionResponse = new DossierArreteSISHCollectionResponse($responseEsabora, 200);
         $dossiersArreteSISH = $dossierArreteSISHCollectionResponse->getCollection();
         $this->assertCount(1, $dossiersArreteSISH);
-        $this->assertEquals('Signal-logement', $dossiersArreteSISH[0]->getLogicielProvenance());
+        $this->assertEquals('Histologe', $dossiersArreteSISH[0]->getLogicielProvenance());
         $this->assertEquals('00000000-0000-0000-2023-000000000010', $dossiersArreteSISH[0]->getReferenceDossier());
         $this->assertEquals('2023/DD13/0010', $dossiersArreteSISH[0]->getDossNum());
         $this->assertEquals('14/06/2023', $dossiersArreteSISH[0]->getArreteDate());
