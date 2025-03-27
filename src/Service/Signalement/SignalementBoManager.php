@@ -241,6 +241,10 @@ class SignalementBoManager
     {
         $signalement->setDetails($form->get('details')->getData());
 
+        $signalement->removeAllDesordreCategory();
+        $signalement->removeAllDesordreCritere();
+        $signalement->removeAllDesordrePrecision();
+
         // Parcours des champs du formulaire
         foreach ($form->all() as $field) {
             $fieldName = $field->getName();
@@ -249,7 +253,6 @@ class SignalementBoManager
                 continue;
             }
 
-            // TODO : retirer un éventuel critère existant et déselectionné
             if (str_starts_with($fieldName, 'desordres_LOGEMENT') || str_starts_with($fieldName, 'desordres_BATIMENT')) {
                 /** @var DesordreCritere $desordreCritere */
                 foreach ($fieldData as $desordreCritere) {
@@ -260,15 +263,31 @@ class SignalementBoManager
                     }
                 }
             }
-            // TODO : retirer une éventuelle précision existante et déselectionnée
             if (str_starts_with($fieldName, 'precisions_')) {
-                /** @var DesordrePrecision $desordrePrecision */
-                foreach ($fieldData as $desordrePrecision) {
-                    $signalement->addDesordrePrecision($desordrePrecision);
+                if (str_ends_with($fieldName, 'details_type_nuisibles')) {
+                    $jsonContent = $signalement->getJsonContent();
+                    $idJsonData = $this->extractCritere($fieldName);
+                    $jsonContent[$idJsonData] = $fieldData;
+                    $signalement->setJsonContent($jsonContent);
+                } else {
+                    /** @var DesordrePrecision $desordrePrecision */
+                    foreach ($fieldData as $desordrePrecision) {
+                        $signalement->addDesordrePrecision($desordrePrecision);
+                    }
                 }
             }
         }
 
         return true;
+    }
+
+    private function extractCritere($fieldName)
+    {
+        // Expression régulière pour capturer la partie "desordres_*_nuisibles_autres"
+        if (preg_match('/precisions_\d+_(desordres_[a-z_]+_nuisibles_autres)_details_type_nuisibles/', $fieldName, $matches)) {
+            return $matches[1];
+        }
+
+        return null; // Si la correspondance échoue
     }
 }

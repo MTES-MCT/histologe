@@ -72,19 +72,51 @@
     {% elseif field.vars.name starts with 'desordres_BATIMENT' and not field.rendered %}
         {% set desordres_batiment = desordres_batiment|merge([field]) %}
     {% endif %}
+    {% set nuisibles_autres_critere = '_details_type_nuisibles' %}
+    {% set nuisibles_logement_autres_critere = '_desordres_logement_nuisibles_autres' %}
+
     {% if field.vars.name starts with 'precisions_' and not field.rendered %}
         {% set critereId = field.vars.id|replace({'signalement_draft_desordres_precisions_': ''}) %}
-        <dialog aria-labelledby="fr-modal-title-{{ critereId }}" id="modal-precisions-{{ field.vars.id }}" class="fr-modal" data-critereId={{ critereId }}>
+        {% set critereId = critereId|replace({'_details_type_nuisibles': ''}) %}
+        {% set critereId = critereId|replace({'_desordres_logement_nuisibles_autres': ''}) %}
+        {% set critereId = critereId|replace({'_desordres_batiment_nuisibles_autres': ''}) %}
+        <dialog 
+            aria-labelledby="fr-modal-title-{{ critereId }}" 
+            id="modal-precisions-{{ critereId }}" 
+            class="fr-modal" 
+            data-critereId={{ critereId }}
+            data-critereSlug={{ field.vars.attr['data-slug-critere'] }}
+        >
             <div class="fr-container fr-container--fluid fr-container-md">
                 <div class="fr-grid-row fr-grid-row--center">
-                    <div class="fr-col-12 fr-col-md-8 fr-col-lg-6">
+                    <div class="fr-col-12 fr-col-md-8 fr-col-lg-6"> 
                         <div class="fr-modal__body">
                             <div class="fr-modal__header">
                                 <button class="fr-btn--close fr-btn" title="Fermer la fenêtre modale" aria-controls="modal-precisions-{{ critereId }}">Fermer</button>
                             </div>
                             <div class="fr-modal__content">
-                                <h1 id="fr-modal-title-{{ field.vars.id }}" class="fr-modal__title">Editer les détails du désordre : {{ field.vars.label }}</h1>
+                                <h1 id="fr-modal-title-{{ critereId }}" class="fr-modal__title">Editer les détails du désordre : {{ field.vars.label }}</h1>
                                 <p>Renseignez les détails du désordre</p>
+                                
+                                {# Vérification si le champ texte existe pour le critère nuisibles #}
+                                {% set detailsFieldName = field.vars.name ~ nuisibles_logement_autres_critere ~ nuisibles_autres_critere %}
+                                {% if field.vars.name ends with nuisibles_autres_critere or (formDesordres and attribute(formDesordres, detailsFieldName) is defined) %}
+                                    <fieldset class="fr-fieldset">
+                                        <div class="fr-fieldset__element">
+                                            <div class="fr-input-group">
+                                                <label class="fr-label" for="{{ field.vars.id }}">
+                                                    Précisez le type de nuisible
+                                                </label>
+                                                {% if formDesordres and attribute(formDesordres, detailsFieldName) is defined %}
+                                                    {{ form_widget(attribute(formDesordres, detailsFieldName)) }}
+                                                    {% else %}
+                                                {{ form_widget(field) }}
+                                                {% endif %}
+                                            </div>
+                                        </div>
+                                    </fieldset>
+                                {% endif %}
+
                                 {% for child in field %}
                                     <fieldset class="fr-fieldset">
                                         <div class="fr-fieldset__element">
@@ -95,12 +127,12 @@
                                         </div>
                                     </fieldset>
                                 {% endfor %}
-
                             </div>
                             <div class="fr-modal__footer">
                                 <div class="fr-btns-group fr-btns-group--right fr-btns-group--inline-reverse fr-btns-group--inline-lg fr-btns-group--icon-left">
-                                    <button class="fr-btn fr-icon-check-line valid-edit-precisions" type="button" aria-controls="modal-precisions-{{ field.vars.id }}">Valider</button>
-                                    <button class="fr-btn fr-btn--secondary fr-icon-close-line" type="button" aria-controls="modal-precisions-{{ field.vars.id }}">Annuler</button>
+                                    <button class="fr-btn fr-icon-check-line valid-edit-precisions" type="button" aria-controls="modal-precisions-{{ critereId }}">Valider</button>
+                                    {# todo comment gérer l'annulation ?  #}
+                                    {# <button class="fr-btn fr-btn--secondary fr-icon-close-line" type="button" aria-controls="modal-precisions-{{ critereId }}">Annuler</button> #}
                                 </div>
                             </div>
                         </div>

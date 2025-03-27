@@ -12,6 +12,7 @@ use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
@@ -30,12 +31,9 @@ class SignalementDraftDesordresType extends AbstractType
         $signalement = $builder->getData();
         $details = $signalement->getDetails();
 
-        // Récupération des critères et regroupement par zoneCategorie -> labelCategorie
-        // TODO : vérifier s'il peut y avoir des critères archivés pour ne pas les prendre en compte
         $desordreCriteres = $this->desordreCritereRepository->findAll();
         $groupedCriteria = [];
 
-        // Récupérer les précisions sélectionnées
         $signalementPrecisions = $signalement ? $signalement->getDesordrePrecisions()->toArray() : [];
         foreach ($desordreCriteres as $critere) {
             $zone = $critere->getZoneCategorie()->value;
@@ -45,14 +43,12 @@ class SignalementDraftDesordresType extends AbstractType
 
             if ($critere->getDesordrePrecisions()->count() > 1) {
                 $choices = $this->getPrecisionsChoices($critere);
-                // Vérifier les précisions déjà sélectionnées
                 $selectedValues = [];
                 foreach ($signalementPrecisions as $selectedPrecision) {
                     if ($selectedPrecision->getDesordreCritere() === $critere) {
-                        $selectedValues[] = $selectedPrecision; // Ajouter les précisions déjà sélectionnées
+                        $selectedValues[] = $selectedPrecision;
                     }
                 }
-                // TODO : si besoin de préciser via champ texte (autre type de nuisible)
                 $builder->add('precisions_'.$critere->getId(), ChoiceType::class, [
                     'label' => $critere->getLabelCritere(),
                     'choices' => $choices,
@@ -61,6 +57,28 @@ class SignalementDraftDesordresType extends AbstractType
                     'required' => false,
                     'mapped' => false,
                     'data' => $selectedValues,
+                    'attr' => [
+                        'data-slug-critere' => $critere->getSlugCritere(),
+                    ],
+                ]);
+            }
+            $critereSlug = $critere->getSlugCritere();
+            if (in_array($critereSlug, [
+                'desordres_logement_nuisibles_autres',
+                'desordres_batiment_nuisibles_autres',
+            ])) {
+                $jsonContent = $signalement ? $signalement->getJsonContent() : [];
+                $key = $critereSlug;
+                $value = isset($jsonContent[$key]) ? $jsonContent[$key] : '';
+
+                $builder->add('precisions_'.$critere->getId().'_'.$critereSlug.'_details_type_nuisibles', TextType::class, [
+                    'label' => $critere->getLabelCritere(),
+                    'required' => false,
+                    'mapped' => false,
+                    'data' => $value,
+                    'attr' => [
+                        'data-slug-critere' => $critere->getSlugCritere(),
+                    ],
                 ]);
             }
         }
@@ -74,10 +92,8 @@ class SignalementDraftDesordresType extends AbstractType
                 'data' => $details,
             ]);
 
-        // Récupérer les critères sélectionnés
         $signalementCriteres = $signalement ? $signalement->getDesordreCriteres()->toArray() : [];
-        // Récupérer les critères sélectionnés sous forme d'un tableau d'ID
-        $selectedCriteriaIds = array_map(fn($critere) => $critere->getId(), $signalementCriteres);
+        $selectedCriteriaIds = array_map(fn ($critere) => $critere->getId(), $signalementCriteres);
         foreach ($groupedCriteria as $zone => $categories) {
             foreach ($categories as $labelCategorie => $criteres) {
                 $firstCritereId = $criteres[0]->getId();
@@ -92,15 +108,25 @@ class SignalementDraftDesordresType extends AbstractType
                             ->setParameter('labelCategorie', $labelCategorie)
                             ->orderBy('c.labelCritere', 'ASC');
                     },
-                    'label' => $labelCategorie, // TODO : pour la catégorie Humidité, les 3 critères ont le même label, à retravailler  pour ajouter la pièce
-                    'choice_label' => 'labelCritere',
+                    'label' => $labelCategorie,
+                    'choice_label' => function (DesordreCritere $critere) {
+                        // Cas particulier des critères ayant un label identique
+                        if ('desordres_logement_humidite_cuisine' === $critere->getSlugCritere()) {
+                            return 'Le logement est humide et a des traces de moisissures dans la cuisine';
+                        } elseif ('desordres_logement_humidite_salle_de_bain' === $critere->getSlugCritere()) {
+                            return 'Le logement est humide et a des traces de moisissures dans la salle de bain';
+                        } elseif ('desordres_logement_humidite_piece_a_vivre' === $critere->getSlugCritere()) {
+                            return 'Le logement est humide et a des traces de moisissures dans une pièce à vivre';
+                        }
+
+                        return $critere->getLabelCritere();
+                    },
                     'noselectionlabel' => 'Sélectionner une ou plusieurs options',
                     'nochoiceslabel' => 'Aucun critère disponible',
                     'mapped' => false,
                     'required' => false,
-                    'data' => $criteres ? array_filter($criteres, fn($critere) => in_array($critere->getId(), $selectedCriteriaIds)) : [],
+                    'data' => array_filter($criteres, fn ($critere) => in_array($critere->getId(), $selectedCriteriaIds)),
                 ]);
-
             }
         }
 

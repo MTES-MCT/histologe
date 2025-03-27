@@ -229,9 +229,6 @@ if (document?.querySelector('#bo-form-signalement-desordres')) {
 }
 
 function initBoFormSignalementDesordres() {
-  console.log('initBoFormSignalementDesordres')
-
-
   // Gestion de la fermeture des modales de sélection des critères
   document.querySelectorAll(".valid-add-critere").forEach(openModalBtn => {
     openModalBtn.addEventListener("click", function () {
@@ -247,7 +244,6 @@ function initBoFormSignalementDesordres() {
   });
 
   function updateSelectedCriteres(modal) {
-    console.log("Mise à jour des critères sélectionnés");
     let zone = modal.dataset.zone
     let listCriteres = document.querySelector(`#list-critere-${zone}`)
 
@@ -262,7 +258,6 @@ function initBoFormSignalementDesordres() {
       nbCriteres++
       let critereLabel = checkbox.labels[0].innerText
       let critereId = checkbox.value
-      console.log(critereId)
 
       // Créer un encart pour le critère sélectionné
       let encart = document.createElement("div");
@@ -273,11 +268,11 @@ function initBoFormSignalementDesordres() {
         <div class="fr-col-12 fr-col-md-8">
           ${critereLabel}
         </div>`
-      let modalId = `modal-precisions-signalement_draft_desordres_precisions_${critereId}`
-      let modalElement = document.getElementById(modalId);
+      let modalId = `modal-precisions-${critereId}`
+      let modalElement = document.getElementById(modalId) ;
       if (modalElement) {
         encart.innerHTML += `<div class="fr-col-12 fr-col-md-4 fr-text--right">
-            <a href="#" aria-controls="modal-precisions-signalement_draft_desordres_precisions_${critereId}" data-fr-opened="false" 
+            <a href="#" aria-controls="${modalId}" data-fr-opened="false" 
                 class="fr-a-edit fr-btn--icon-left fr-icon-edit-line edit-precisions-btn" 
                 title="Editer les détails" data-fr-js-modal-button="true">
                     Editer les détails
@@ -287,6 +282,8 @@ function initBoFormSignalementDesordres() {
             <ul class="fr-list" data-precisions="${checkbox.value}">
               <!-- Les précisions seront injectées ici -->
             </ul>
+            <span></span>
+            <p class="fr-hidden fr-error-text"></p>
           </div>
         `;
       }
@@ -299,7 +296,6 @@ function initBoFormSignalementDesordres() {
       }
 
     });
-    console.log(nbCriteres)
     if (nbCriteres > 0 ){
       listCriteres.classList.remove("fr-hidden")
     } else {
@@ -308,25 +304,50 @@ function initBoFormSignalementDesordres() {
   }
 
   function updateSelectedPrecisions(modal) {
-    console.log("Mise à jour des précisions sélectionnées");
-    console.log(modal)
     let critereId = modal.dataset.critereid
     let precisionContainer = document.querySelector(`#item-critere-${critereId}`);
 
+    let hasPrecisionsChosen = false;
     let ulElement = precisionContainer ? precisionContainer.querySelector("ul") : null;
-
     if (ulElement) {
-      ulElement.innerHTML = ""; // Vider les précisions existantes
+      ulElement.innerHTML = "";
       let checkboxes = modal.querySelectorAll("input[type='checkbox']");
       checkboxes.forEach(checkbox => {
-        if (checkbox.checked) { // Vérifier l'état checked manuellement
+        if (checkbox.checked) {
           let precisionLabel = checkbox.labels[0].textContent;
           let precisionId = checkbox.value;
           let precisionItem = document.createElement("li");
           precisionItem.textContent = precisionLabel;
           ulElement.appendChild(precisionItem);
+          hasPrecisionsChosen = true;
         }
       });
+    }
+
+    if ('desordres_batiment_nuisibles_autres' == modal.dataset.critereslug
+      || 'desordres_logement_nuisibles_autres' == modal.dataset.critereslug
+    ){
+      let spanElement = precisionContainer ? precisionContainer.querySelector("span") : null;
+      spanElement.innerHTML = ''
+      let inputTextElement = modal.querySelector("input[type='text']");
+      if ('' != inputTextElement.value) {
+        spanElement.innerHTML = 'Commentaire : <i>'+inputTextElement.value+'</i>'      
+        if ('desordres_batiment_nuisibles_autres' == modal.dataset.critereslug){
+          hasPrecisionsChosen = true;
+        }
+      }
+    }
+
+    let errorElement = precisionContainer ? precisionContainer.querySelector("p") : null;
+    if (hasPrecisionsChosen) {
+      precisionContainer.classList.add('fr-border--grey')
+      precisionContainer.classList.remove('fr-border--red')
+      errorElement.classList.add('fr-hidden')
+    } else {
+      precisionContainer.classList.remove('fr-border--grey')
+      precisionContainer.classList.add('fr-border--red')
+      errorElement.innerHTML = 'Veuillez renseigner les détails du désordre'  
+      errorElement.classList.remove('fr-hidden')
     }
   }
   updateSelectedCriteres(document.getElementById("fr-modal-desordres-batiment-add"))
