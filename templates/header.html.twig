@@ -124,7 +124,11 @@
                 <p class="fr-notice__desc">
                     <strong>Histologe devient Signal Logement !</strong>  Un nouveau nom et un nouveau site pour mieux refléter notre mission : lutter contre le mal logement !
                 </p>
-                <button class="fr-btn--close fr-btn" title="Masquer le message">
+                <button
+                        class="fr-btn--close fr-btn"
+                        title="Masquer le message"
+                        onclick="const notice = this.parentNode.parentNode.parentNode; notice.parentNode.removeChild(notice)"
+                >
                     Masquer le message
                 </button>
             </div>
