@@ -194,6 +194,7 @@ class PartnerControllerTest extends WebTestCase
             $this->assertArrayHasKey('url', $response);
             $this->assertStringEndsWith('/bo/partenaires/'.$partner->getId().'/voir#agents', $response['url']);
             $this->assertEmailCount(1);
+            $this->assertCount(1, $this->userRepository->findBy(['email' => $email]));
         } else {
             $this->assertArrayHasKey('content', $response);
             $this->assertStringContainsString($expected, $response['content']);

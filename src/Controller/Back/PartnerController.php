@@ -432,10 +432,18 @@ class PartnerController extends AbstractController
 
                 return $this->json(['content' => $content, 'title' => 'Compte existant sur un autre territoire', 'submitLabel' => 'Ajouter l\'utilisateur']);
             }
-            if ($userExist) {
-                $user->setStatut(User::STATUS_INACTIVE);
-            }
             $user->setRoles([$formUserPartner->get('role')->getData()]);
+            if ($userExist) {
+                $userExist->setNom($user->getNom());
+                $userExist->setPrenom($user->getPrenom());
+                $userExist->setIsMailingActive($user->getIsMailingActive());
+                $userExist->setHasPermissionAffectation($user->hasPermissionAffectation());
+                $userExist->setStatut(User::STATUS_INACTIVE);
+                $userExist->setRoles($user->getRoles());
+                $userPartner->setUser($userExist);
+                $user = $userExist;
+                $userManager->sendAccountActivationNotification($user);
+            }
             $userManager->persist($userPartner);
             $userManager->save($user);
             $message = 'L\'utilisateur a bien été créé. Un e-mail de confirmation a été envoyé à '.$user->getEmail();
