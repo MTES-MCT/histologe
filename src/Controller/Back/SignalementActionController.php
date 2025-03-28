@@ -83,15 +83,16 @@ class SignalementActionController extends AbstractController
         Request $request,
         SuiviManager $suiviManager,
         LoggerInterface $logger,
-    ): Response {
+    ): JsonResponse {
         $this->denyAccessUnlessGranted('COMMENT_CREATE', $signalement);
-        if ($this->isCsrfTokenValid('signalement_add_suivi_'.$signalement->getId(), $request->get('_token'))
-            && $form = $request->get('signalement-add-suivi')) {
-            $content = Sanitizer::sanitize($form['content']);
+        $payload = $request->getPayload()->all();
+        if ($this->isCsrfTokenValid('signalement_add_suivi_'.$signalement->getId(), $payload['_token'])) {
+            $content = Sanitizer::sanitize($payload['content']);
             if (mb_strlen($content) < 10) {
-                $this->addFlash('error', 'Le contenu du suivi doit faire au moins 10 caractères !');
+                $errors = ['content' => ['errors' => ['Le contenu du suivi doit faire au moins 10 caractères !']]];
+                $response = ['code' => Response::HTTP_BAD_REQUEST, 'errors' => $errors];
 
-                return $this->redirectToRoute('back_signalement_view', ['uuid' => $signalement->getUuid()]);
+                return $this->json($response, $response['code']);
             }
             try {
                 /** @var User $user */
@@ -100,24 +101,24 @@ class SignalementActionController extends AbstractController
                     signalement: $signalement,
                     description: $content,
                     type: Suivi::TYPE_PARTNER,
-                    isPublic: !empty($form['notifyUsager']),
+                    isPublic: !empty($payload['notifyUsager']),
                     user: $user,
                 );
             } catch (\Throwable $exception) {
-                $this->addFlash('error', 'Une erreur est survenue lors de la publication.');
                 $logger->error($exception->getMessage());
+                $errors = ['main' => ['errors' => ['Une erreur est survenue lors de la publication, veuillez réessayer.']]];
+                $response = ['code' => Response::HTTP_BAD_REQUEST, 'errors' => $errors];
 
-                return $this->redirectToRoute('back_signalement_view', ['uuid' => $signalement->getUuid()]);
+                return $this->json($response, $response['code']);
             }
-
+            $response = ['code' => Response::HTTP_OK];
             $this->addFlash('success', 'Suivi publié avec succès !');
         } else {
-            $this->addFlash('error', 'Une erreur de jeton est survenue lors de la publication.');
+            $errors = ['main' => ['errors' => ['Une erreur de jeton est survenue lors de la publication. veuillez recharger la page et réessayer.']]];
+            $response = ['code' => Response::HTTP_BAD_REQUEST, 'errors' => $errors];
         }
 
-        return $this->redirect(
-            $this->generateUrl('back_signalement_view', ['uuid' => $signalement->getUuid()]).'#suivis'
-        );
+        return $this->json($response, $response['code']);
     }
 
     #[Route('/{uuid:signalement}/suivi/delete', name: 'back_signalement_delete_suivi', methods: 'POST')]

@@ -54,8 +54,8 @@ async function submitPayload (formElement) {
         }
       })
     }
-    if (response.redirected) {
-      window.location.href = response.url
+    if (response.redirected && response.url.endsWith('/connexion')) {
+      alert('Votre session a expiré. Veuillez vous reconnecter en rechargeant la page.')
     } else if (response.redirected) {
       window.location.href = response.url
     } else if (response.ok) {
@@ -67,7 +67,7 @@ async function submitPayload (formElement) {
       const submitElement = document.querySelector('.fr-modal--opened [type="submit"]')
       let firstErrorElement = true
       for (const property in errors) {
-        const inputElement = document.querySelector(`.fr-modal--opened [name="${property}"]`) || document.querySelector('.fr-modal--opened input')
+        const inputElement = document.querySelector(`.fr-modal--opened [name="${property}"]`) || document.querySelector('.fr-modal--opened .no-field-errors') || document.querySelector('.fr-modal--opened input')
         inputElement.setAttribute('aria-describedby', `${property}-desc-error`)
         inputElement.parentElement.classList.add('fr-input-group--error')
 

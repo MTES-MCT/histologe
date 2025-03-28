@@ -12,14 +12,17 @@
                         </h1>
                         <form method="POST" name="signalement-add-suivi" id="signalement-add-suivi-form" class="tinyCheck"
                                 action="{{ path('back_signalement_add_suivi',{uuid:signalement.uuid}) }}">
+                            <div class="fr-input-group">
+                                <span class="no-field-errors"></span>
+                            </div>
                             <div class="fr-fieldset fr-fieldset--inline fr-mb-5v">
                                 {% if show_email_alert(signalement.mailDeclarant) and show_email_alert(signalement.mailOccupant) %}
                                     <p class="fr-badge fr-badge--error">L'adresse e-mail de l'usager n'est pas valide. Vous ne pouvez pas lui envoyer le suivi.</p>
-                                    <input type="hidden" name="signalement-add-suivi[notifyUsager]" value="0">
+                                    <input type="hidden" name="notifyUsager" value="0">
                                 {% else %}
                                 <div class="fr-fieldset__content">
                                     <div class="fr-toggle fr-col-12">
-                                        <input type="checkbox" class="fr-toggle__input" aria-describedby="toggle-698-hint-text" id="signalement-add-suivi-notify-usager" name="signalement-add-suivi[notifyUsager]" value="1">
+                                        <input type="checkbox" class="fr-toggle__input" aria-describedby="toggle-698-hint-text" id="signalement-add-suivi-notify-usager" name="notifyUsager" value="1">
                                         <label class="fr-toggle__label" for="signalement-add-suivi-notify-usager">En cochant cette case, le suivi sera envoyé à l'usager</label>
                                     </div>
                                 </div>
@@ -33,8 +36,7 @@
                                         <sup class="fr-text-default--error">*</sup>
                                     </span>
                                 </label>
-                                <textarea class="fr-input fr-input--no-resize editor" id="signalement-add-suivi-content"
-                                        name="signalement-add-suivi[content]" minlength="10"></textarea>
+                                <textarea class="fr-input fr-input--no-resize editor" id="signalement-add-suivi-content" name="content" minlength="10"></textarea>
                                 <p class="fr-error-text fr-hidden">
                                     Merci de proposer une rapide description (minimum 10 caractères).
                                 </p>

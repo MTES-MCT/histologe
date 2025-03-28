@@ -85,17 +85,13 @@ class SignalementActionControllerTest extends WebTestCase
             'POST',
             $route,
             [
-                'signalement-add-suivi' => [
-                    'content' => 'La procédure avance bien, nous vous tiendrons informé de la suite, bon courage !',
-                    'notifyUsager' => '1',
-                ],
+                'content' => 'La procédure avance bien, nous vous tiendrons informé de la suite, bon courage !',
+                'notifyUsager' => '1',
                 '_token' => $this->generateCsrfToken($this->client, 'signalement_add_suivi_'.$signalement->getId()),
             ]
         );
-
-        $this->assertResponseRedirects('/bo/signalements/'.$signalement->getUuid().'#suivis');
-        $this->client->followRedirect();
-        $this->assertSelectorTextContains('.fr-alert--success p', 'Suivi publié avec succès !');
+        $this->assertResponseHeaderSame('Content-Type', 'application/json');
+        $this->assertResponseStatusCodeSame(200);
     }
 
     public function testAddSuiviSignalementError(): void
@@ -106,17 +102,14 @@ class SignalementActionControllerTest extends WebTestCase
             'POST',
             $route,
             [
-                'signalement-add-suivi' => [
-                    'content' => 'Je v',
-                    'notifyUsager' => '1',
-                ],
+                'content' => 'Je v',
+                'notifyUsager' => '1',
                 '_token' => $this->generateCsrfToken($this->client, 'signalement_add_suivi_'.$signalement->getId()),
             ]
         );
 
-        $this->assertResponseRedirects('/bo/signalements/'.$signalement->getUuid());
-        $this->client->followRedirect();
-        $this->assertSelectorTextContains('.fr-alert--error p', 'Le contenu du suivi doit faire au moins 10 caractères !');
+        $this->assertResponseHeaderSame('Content-Type', 'application/json');
+        $this->assertStringContainsString('Le contenu du suivi doit faire au moins 10 caract\u00e8res !', $this->client->getResponse()->getContent());
     }
 
     public function testDeleteSuivi(): void
