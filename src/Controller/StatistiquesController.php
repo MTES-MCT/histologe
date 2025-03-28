@@ -13,6 +13,7 @@ use App\Service\Statistics\MotifClotureStatisticProvider;
 use App\Service\Statistics\StatusStatisticProvider;
 use App\Service\Statistics\TerritoryStatisticProvider;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
@@ -31,6 +32,10 @@ class StatistiquesController extends AbstractController
         private LogementDesordresStatisticProvider $logementDesordresStatisticProvider,
         private BatimentDesordresStatisticProvider $batimentDesordresStatisticProvider,
         private MotifClotureStatisticProvider $motifClotureStatisticProvider,
+        #[Autowire(env: 'SITES_FACILES_URL')]
+        private readonly string $sitesFacilesUrl,
+        #[Autowire(env: 'FEATURE_SITES_FACILES')]
+        private readonly bool $featureSitesFaciles,
     ) {
     }
 
@@ -41,6 +46,10 @@ class StatistiquesController extends AbstractController
     )]
     public function statistiques(): Response
     {
+        if ($this->featureSitesFaciles) {
+            return $this->redirect($this->sitesFacilesUrl.'a-propos/statistiques/', Response::HTTP_MOVED_PERMANENTLY);
+        }
+
         return $this->render('front/statistiques.html.twig');
     }
 

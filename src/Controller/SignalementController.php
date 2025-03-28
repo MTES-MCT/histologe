@@ -43,6 +43,12 @@ use Symfony\Component\Validator\Validator\ValidatorInterface;
 #[Route('/')]
 class SignalementController extends AbstractController
 {
+    public function __construct(
+        #[Autowire(env: 'FEATURE_SITES_FACILES')]
+        private readonly bool $featureSitesFaciles,
+    ) {
+    }
+
     #[Route(
         '/signalement',
         name: 'front_signalement',
@@ -437,10 +443,13 @@ class SignalementController extends AbstractController
         SignalementDesordresProcessor $signalementDesordresProcessor,
         #[Autowire(service: 'html_sanitizer.sanitizer.app.message_sanitizer')]
         HtmlSanitizerInterface $htmlSanitizer,
-    ): RedirectResponse|Response {
+    ): Response {
         $signalement = $signalementRepository->findOneByCodeForPublic($code);
         if (!$signalement) {
             $this->addFlash('error', 'Le lien utilisé est expiré ou invalide.');
+            if ($this->featureSitesFaciles) {
+                return $this->render('front/flash-messages.html.twig');
+            }
 
             return $this->redirectToRoute('home');
         }
@@ -552,7 +561,7 @@ class SignalementController extends AbstractController
         Request $request,
         UserManager $userManager,
         SignalementDesordresProcessor $signalementDesordresProcessor,
-    ): RedirectResponse|Response {
+    ): Response {
         if ($signalement = $signalementRepository->findOneByCodeForPublic($code, false)) {
             $requestEmail = $request->get('from');
             $fromEmail = \is_array($requestEmail) ? array_pop($requestEmail) : $requestEmail;
@@ -576,6 +585,9 @@ class SignalementController extends AbstractController
             ]);
         }
         $this->addFlash('error', 'Le lien utilisé est invalide, vérifiez votre saisie.');
+        if ($this->featureSitesFaciles) {
+            return $this->render('front/flash-messages.html.twig');
+        }
 
         return $this->redirectToRoute('home');
     }
@@ -590,9 +602,14 @@ class SignalementController extends AbstractController
         SuiviManager $suiviManager,
         UploadHandlerService $uploadHandlerService,
         ValidatorInterface $validator,
-    ): RedirectResponse {
+    ): Response {
         $signalement = $signalementRepository->findOneByCodeForPublic($code);
         if (!$this->isGranted('SIGN_USAGER_EDIT', $signalement)) {
+            $this->addFlash('error', 'Vous n\'avez pas les droits pour effectuer cette action.');
+            if ($this->featureSitesFaciles) {
+                return $this->render('front/flash-messages.html.twig');
+            }
+
             return $this->redirectToRoute('home');
         }
         if (!$this->isCsrfTokenValid('signalement_front_response_'.$signalement->getUuid(), $request->get('_token'))) {

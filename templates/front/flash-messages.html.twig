@@ -1,0 +1,36 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Message d'erreur{% endblock %}
+
+{% block body %}
+<div class="fr-container">
+    <div class="fr-grid-row fr-grid-row--gutters fr-mb-2w fr-mt-2w">
+        <div class="fr-col-12 fr-col-md-6">
+            <div class="fr-tile fr-enlarge-link fr-tile--shadow">
+                <div class="fr-tile__body">
+                    <div class="fr-tile__content">
+                        <h2 class="fr-tile__title">
+                            <a href="{{sites_faciles_url}}">
+                                Page d'accueil de Signal Logement
+                            </a>
+                        </h2>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="fr-col-12 fr-col-md-6">
+            <div class="fr-tile fr-enlarge-link fr-tile--shadow">
+                <div class="fr-tile__body">
+                    <div class="fr-tile__content">
+                        <h2 class="fr-tile__title">
+                            <a href="{{sites_faciles_url}}signalement-et-suivi/suivre-mon-dossier/">
+                                Suivre mon dossier 
+                            </a>
+                        </h2>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
