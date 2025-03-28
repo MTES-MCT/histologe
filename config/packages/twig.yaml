@@ -3,12 +3,11 @@ twig:
     globals:
         platform:
             name: '%platform_name%'
-            logo: 'logo-signal-logement.svg'
-            logo145: 'logo-signal-logement.svg'
-            logosvg: 'logo-signal-logement.svg'
+            logo: '%platform_logo%'
+            logo145: '%platform_logo%'
             url: '%host_url%'
-            demo: 'https://app.livestorm.co/mte/demonstration-histologe'
-            cgu_current_version: '%cgu_current_version%'            
+            cgu_current_version: '%cgu_current_version%'
+
         gitbook:
             documentation: https://documentation.signal-logement.beta.gouv.fr
             faq: https://faq.signalement-logement.beta.gouv.fr

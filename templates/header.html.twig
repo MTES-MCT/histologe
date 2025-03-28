@@ -1,3 +1,4 @@
+{% set logoClass = platform.name == 'histologe' ? 'logo-width' : 'logo-width-lg' %}
 <header class="fr-header">
     <div class="fr-header__body">
         <div class="fr-container">
@@ -17,7 +18,7 @@
                     </div>
                     <div class="fr-header__service">
                         <a href="{{ path('home') }}" title="Accueil - {{ platform.name }} - Ministère aménagement du territoire transition écologique">
-                            <img class="fr-responsive-img logo-width" src="{{ asset('img/' ~ platform.logo145) }}" alt="{{ platform.name }}">
+                            <img class="fr-responsive-img {{ logoClass }}" src="{{ asset('img/' ~ (platform.logo145 ?: 'logo_145.png')) }}" alt="{{ platform.name }}">
                         </a>
                     </div>
                 </div>
@@ -117,7 +118,7 @@
     </div>
 </header>
 
-{% if platform.name is same as 'Signal logement' %}
+{% if platform.name is same as 'Signal Logement' %}
     <div class="fr-notice fr-notice--warning">
         <div class="fr-container">
             <div class="fr-notice__body">

@@ -107,7 +107,7 @@ S3_URL_BUCKET=
 
 3. Se rendre sur http://localhost:8080
 
-> Pour tous les utilisateurs, le mot de passe est `signallogement`
+> Pour tous les utilisateurs, le mot de passe est `signalogement`
 
 | Territoire       | Partenaire            | Email                                     | Rôle                 |
 |------------------|-----------------------|-------------------------------------------|----------------------|

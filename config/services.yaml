@@ -33,6 +33,7 @@ parameters:
     csp_enable: '%env(bool:CSP_ENABLE)%'
     feature_oilhi_enable: '%env(bool:FEATURE_OILHI_ENABLE)%'
     platform_name: '%env(resolve:PLATFORM_NAME)%'
+    platform_logo: '%env(resolve:PLATFORM_LOGO)%'
     matomo_enable: '%env(bool:MATOMO_ENABLE)%'
     matomo_site_id: '%env(resolve:MATOMO_SITE_ID)%'
     maintenance_enable: '%env(bool:MAINTENANCE_ENABLE)%'
