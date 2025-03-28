@@ -12,6 +12,7 @@ use App\Manager\UserManager;
 use App\Repository\PartnerRepository;
 use App\Repository\TerritoryRepository;
 use App\Repository\UserRepository;
+use App\Validator\EmailFormatValidator;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
@@ -55,79 +56,102 @@ class CreateApiPartnerUsersCommand extends Command
 
         $apiEmail = $input->getOption('api_email');
 
-        if (empty($apiEmail)) {
-            $io->warning('Missing required arguments');
+        if (empty($apiEmail) || !EmailFormatValidator::validate($apiEmail)) {
+            $io->error('API e-mail is empty or not valid.');
 
             return Command::INVALID;
         }
 
         $foundUserApi = $this->userRepository->findOneBy([
             'email' => $apiEmail,
-            'statut' => User::STATUS_ACTIVE,
         ]);
         if (!empty($foundUserApi)) {
-            $io->warning('User already exists with API e-mail');
+            $io->error('User already exists with API e-mail');
 
             return Command::INVALID;
         }
 
         $partnerId = $input->getOption('partner_id');
-        $zip = $input->getOption('zip');
-        $partnerName = $input->getOption('partner_name');
-        $boEmail = $input->getOption('bo_email');
-
-        // Testing purpose: create partner and BO user, and get partner ID
-        if (!empty($zip) && !empty($partnerName) && !empty($boEmail)) {
-            $foundUserBo = $this->userRepository->findOneBy([
-                'email' => $boEmail,
-                'statut' => User::STATUS_ACTIVE,
-            ]);
-            if (!empty($foundUserBo)) {
-                $io->warning('User already exists with BO e-mail');
-
-                return Command::INVALID;
-            }
-
-            $territory = $this->territoryRepository->findOneBy(['zip' => $zip]);
-            $partner = $this->partnerFactory->createInstanceFrom(
-                territory: $territory,
-                name: $partnerName,
-                email: null,
-                type: PartnerType::ARS
-            );
-            $this->partnerManager->save($partner);
-            $partnerId = $partner->getId();
-
-            $boUser = $this->userFactory->createInstanceFrom(
-                roleLabel: 'Agent',
-                firstname: 'Agent',
-                lastname: 'Test',
-                email: $boEmail,
-                isMailActive: false,
-                isActivateAccountNotificationEnabled: false,
-            );
-            $password = $this->userManager->getComplexRandomPassword();
-            $passwordHashed = $this->hasher->hashPassword($boUser, $password);
-            $boUser->setStatut(User::STATUS_ACTIVE)->setPassword($passwordHashed);
-
-            $boUserPartner = (new UserPartner())->setPartner($partner)->setUser($boUser);
-            $boUser->addUserPartner($boUserPartner);
-
-            $this->userManager->persist($boUserPartner);
-            $this->userManager->save($boUser);
-
-            $io->success('BO account was created for '.$boEmail.' with password '.$password);
-        } elseif (empty($partnerId)) {
-            $io->warning('Missing optional argument: we need either a partner ID or a set of zip, partner name, bo e-mail');
-
-            return Command::INVALID;
-        }
-
-        if (empty($partner)) {
+        if (!empty($partnerId)) {
             $partner = $this->partnerRepository->findOneBy(['id' => $partnerId]);
         }
 
+        // Testing purpose: possibility to create partner and BO user, and get partner ID
+        if ('histologe' !== getenv('APP')) {
+            $zip = $input->getOption('zip');
+            $partnerName = $input->getOption('partner_name');
+            $boEmail = $input->getOption('bo_email');
+
+            if (!empty($zip) && !empty($partnerName) && !empty($boEmail)) {
+                if (!EmailFormatValidator::validate($boEmail)) {
+                    $io->error('BO e-mail is not valid.');
+
+                    return Command::INVALID;
+                }
+
+                $foundUserBo = $this->userRepository->findOneBy([
+                    'email' => $boEmail,
+                ]);
+                if (!empty($foundUserBo)) {
+                    $io->error('User already exists with BO e-mail');
+
+                    return Command::INVALID;
+                }
+
+                $territory = $this->territoryRepository->findOneBy(['zip' => $zip]);
+                if (empty($territory)) {
+                    $io->error('No territory was found with zip '.$zip);
+
+                    return Command::INVALID;
+                }
+
+                $existingPartner = $this->partnerRepository->findOneBy([
+                    'territory' => $territory,
+                    'nom' => $partnerName,
+                ]);
+                if (!empty($existingPartner)) {
+                    $io->error('Another partner exists with this name on this territory.');
+
+                    return Command::INVALID;
+                }
+
+                $partner = $this->partnerFactory->createInstanceFrom(
+                    territory: $territory,
+                    name: $partnerName,
+                    email: null,
+                    type: PartnerType::ARS
+                );
+                $this->partnerManager->persist($partner);
+                $partnerId = $partner->getId();
+
+                $boUser = $this->userFactory->createInstanceFrom(
+                    roleLabel: 'Agent',
+                    firstname: 'Agent',
+                    lastname: 'Test',
+                    email: $boEmail,
+                    isMailActive: false,
+                    isActivateAccountNotificationEnabled: false,
+                );
+                $password = $this->userManager->getComplexRandomPassword();
+                $passwordHashed = $this->hasher->hashPassword($boUser, $password);
+                $boUser->setStatut(User::STATUS_ACTIVE)->setPassword($passwordHashed);
+
+                $boUserPartner = (new UserPartner())->setPartner($partner)->setUser($boUser);
+                $boUser->addUserPartner($boUserPartner);
+
+                $this->userManager->persist($boUserPartner);
+                $this->userManager->persist($boUser);
+
+                $io->success('BO account was created for '.$boEmail.' with password '.$password);
+            }
+        }
+
         if (empty($partner)) {
+            if (empty($partnerId)) {
+                $io->error('Missing optional argument: we need either a partner ID or a set of zip, partner name, bo e-mail');
+
+                return Command::INVALID;
+            }
             $io->error('No partner found');
 
             return Command::FAILURE;
