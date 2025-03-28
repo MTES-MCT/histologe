@@ -3,8 +3,14 @@
 namespace App\Dto\Api\Request;
 
 use OpenApi\Attributes as OA;
+use Symfony\Component\Serializer\Attribute\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
 
+#[OA\Schema(
+    description: 'Payload édition fichier.',
+    required: ['documentType'],
+)]
+#[Groups(groups: ['Default', 'false'])]
 class FileRequest implements RequestInterface
 {
     #[OA\Property(
@@ -28,7 +34,7 @@ class FileRequest implements RequestInterface
         ',
         example: 'BAILLEUR_REPONSE_BAILLEUR'
     )]
-    #[Assert\NotBlank()]
+    #[Assert\NotBlank]
     #[Assert\Choice(
         choices: [
             'AUTRE_PROCEDURE',

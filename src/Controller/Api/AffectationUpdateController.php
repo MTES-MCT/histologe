@@ -19,14 +19,18 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Attribute\MapRequestPayload;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Validator\Exception\ValidationFailedException;
+use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 #[When('dev')]
 #[When('test')]
 #[Route('/api')]
 class AffectationUpdateController extends AbstractController
 {
-    public function __construct(private readonly AffectationManager $affectationManager)
-    {
+    public function __construct(
+        private readonly AffectationManager $affectationManager,
+        private readonly ValidatorInterface $validator,
+    ) {
     }
 
     #[Route('/affectations/{uuid:affectation}', name: 'api_affectations_update', methods: 'PATCH')]
@@ -164,7 +168,8 @@ class AffectationUpdateController extends AbstractController
         )
     )]
     public function __invoke(
-        #[MapRequestPayload] AffectationRequest $affectationRequest,
+        #[MapRequestPayload(validationGroups: ['false'])]
+        AffectationRequest $affectationRequest,
         ?Affectation $affectation = null,
     ): JsonResponse {
         if (null === $affectation) {
@@ -173,8 +178,14 @@ class AffectationUpdateController extends AbstractController
                 Response::HTTP_NOT_FOUND
             );
         }
-        $affectation->setNextStatut(AffectationNewStatus::mapStatus($affectationRequest->statut));
+
         $this->denyAccessUnlessGranted(AffectationVoter::ANSWER, $affectation, SecurityApiExceptionListener::ACCESS_DENIED);
+        $errors = $this->validator->validate($affectationRequest);
+        if (count($errors) > 0) {
+            throw new ValidationFailedException($affectationRequest, $errors);
+        }
+
+        $affectation->setNextStatut(AffectationNewStatus::mapStatus($affectationRequest->statut));
         $this->denyAccessUnlessGranted(AffectationVoter::UPDATE_STATUT, $affectation, SecurityApiExceptionListener::TRANSITION_STATUT_DENIED);
         $this->applyUsagerNotification($affectationRequest, $affectation);
 

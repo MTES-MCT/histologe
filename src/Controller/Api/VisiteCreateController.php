@@ -23,6 +23,8 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Attribute\MapRequestPayload;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Validator\Exception\ValidationFailedException;
+use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 #[When('dev')]
 #[When('test')]
@@ -34,6 +36,7 @@ class VisiteCreateController extends AbstractController
         private readonly InterventionManager $interventionManager,
         private readonly VisiteFactory $interventionFactory,
         private readonly SignalementVisiteRequestFactory $signalementVisiteRequestFactory,
+        private readonly ValidatorInterface $validator,
     ) {
     }
 
@@ -162,7 +165,7 @@ class VisiteCreateController extends AbstractController
     )]
     #[Route('/signalements/{uuid:signalement}/visites', name: 'api_signalements_visite_post', methods: 'POST')]
     public function __invoke(
-        #[MapRequestPayload]
+        #[MapRequestPayload(validationGroups: ['false'])]
         VisiteRequest $visiteRequest,
         ?Signalement $signalement = null,
     ): JsonResponse {
@@ -178,6 +181,11 @@ class VisiteCreateController extends AbstractController
             $signalement,
             SecurityApiExceptionListener::ACCESS_DENIED
         );
+
+        $errors = $this->validator->validate($visiteRequest);
+        if (count($errors) > 0) {
+            throw new ValidationFailedException($visiteRequest, $errors);
+        }
 
         /** @var User $user */
         $user = $this->getUser();

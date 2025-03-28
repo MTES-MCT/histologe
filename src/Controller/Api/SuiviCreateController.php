@@ -18,6 +18,8 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Attribute\MapRequestPayload;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Validator\Exception\ValidationFailedException;
+use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 #[When('dev')]
 #[When('test')]
@@ -27,6 +29,7 @@ class SuiviCreateController extends AbstractController
     public function __construct(
         readonly private SuiviManager $suiviManager,
         readonly private DescriptionFilesBuilder $descriptionFilesBuilder,
+        readonly private ValidatorInterface $validator,
     ) {
     }
 
@@ -120,7 +123,7 @@ class SuiviCreateController extends AbstractController
         )
     )]
     public function __invoke(
-        #[MapRequestPayload]
+        #[MapRequestPayload(validationGroups: ['false'])]
         SuiviRequest $suiviRequest,
         ?Signalement $signalement = null,
     ): JsonResponse {
@@ -134,6 +137,11 @@ class SuiviCreateController extends AbstractController
             $signalement,
             SecurityApiExceptionListener::ACCESS_DENIED
         );
+
+        $errors = $this->validator->validate($suiviRequest);
+        if (count($errors) > 0) {
+            throw new ValidationFailedException($suiviRequest, $errors);
+        }
 
         /** @var User $user */
         $user = $this->getUser();

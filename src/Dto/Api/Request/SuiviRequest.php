@@ -5,17 +5,21 @@ namespace App\Dto\Api\Request;
 use App\Validator\SanitizedLength;
 use App\Validator\ValidFiles;
 use OpenApi\Attributes as OA;
+use Symfony\Component\Serializer\Attribute\Groups;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[OA\Schema(
     description: 'Payload pour créer un suivi.',
     required: ['description'],
 )]
+#[Groups(groups: ['Default', 'false'])]
 class SuiviRequest implements RequestInterface, RequestFileInterface
 {
     #[OA\Property(
         description: 'Un message de 10 caractères minimum est obligatoire.',
         example: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
     )]
+    #[Assert\NotBlank]
     #[SanitizedLength(min: 10)]
     public ?string $description = null;
 

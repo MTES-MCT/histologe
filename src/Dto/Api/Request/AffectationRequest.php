@@ -3,12 +3,14 @@
 namespace App\Dto\Api\Request;
 
 use OpenApi\Attributes as OA;
+use Symfony\Component\Serializer\Attribute\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
 
 #[OA\Schema(
     description: 'Payload pour mettre à jour une affectation.',
     required: ['statut'],
 )]
+#[Groups(groups: ['Default', 'false'])]
 class AffectationRequest implements RequestInterface
 {
     public function __construct(
@@ -27,8 +29,8 @@ class AffectationRequest implements RequestInterface
         #[Assert\NotNull(message: 'Le statut est obligatoire.')]
         #[Assert\Choice(
             choices: ['NOUVEAU', 'EN_COURS', 'FERME', 'REFUSE'],
-            message: 'Cette valeur doit être l\'un des choix suivants : {{ choices }}')
-        ]
+            message: 'Cette valeur doit être l\'un des choix suivants : {{ choices }}'
+        )]
         public ?string $statut = null,
         #[OA\Property(
             description: 'Le motif de cloture de l\'affectation, il doit être accompagné d\'un message.',

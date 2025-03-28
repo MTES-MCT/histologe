@@ -163,7 +163,7 @@ class ArreteCreateController extends AbstractController
     )]
     #[Route('/signalements/{uuid:signalement}/arretes', name: 'api_signalements_arretes_post', methods: 'POST')]
     public function __invoke(
-        #[MapRequestPayload(validationGroups: ['Default'])]
+        #[MapRequestPayload(validationGroups: ['false'])]
         ArreteRequest $arreteRequest,
         ?Signalement $signalement = null,
     ): JsonResponse {
@@ -178,7 +178,7 @@ class ArreteCreateController extends AbstractController
         /** @var User $user */
         $user = $this->getUser();
         $affectation = $this->getAffectation($signalement, $user);
-        $errors = $this->validator->validate($arreteRequest, null, ['POST_ARRETE_REQUEST']);
+        $errors = $this->validator->validate($arreteRequest);
         if (count($errors) > 0) {
             throw new ValidationFailedException($arreteRequest, $errors);
         }

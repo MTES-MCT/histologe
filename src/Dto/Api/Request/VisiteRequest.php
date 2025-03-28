@@ -4,6 +4,7 @@ namespace App\Dto\Api\Request;
 
 use App\Validator\ValidFiles;
 use OpenApi\Attributes as OA;
+use Symfony\Component\Serializer\Attribute\Groups;
 use Symfony\Component\Serializer\Attribute\Ignore;
 use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\Validator\Context\ExecutionContextInterface;
@@ -11,7 +12,8 @@ use Symfony\Component\Validator\Context\ExecutionContextInterface;
 #[OA\Schema(
     description: 'Payload d\'une visite'
 )]
-#[Assert\Callback([self::class, 'checkFieldsWhenVisitePlannedOrConfirmed'])]
+#[Assert\Callback(callback: [self::class, 'checkFieldsWhenVisitePlannedOrConfirmed'])]
+#[Groups(groups: ['Default', 'false'])]
 class VisiteRequest implements RequestInterface, RequestFileInterface
 {
     #[Assert\NotBlank]
