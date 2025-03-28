@@ -69,7 +69,7 @@ class BackTerritoryController extends AbstractController
             }
             if ($file) {
                 if (!$fileScanner->isClean($file->getPathname())) {
-                    $this->addFlash('error', 'Le fichier est infecté.');
+                    $this->addFlash('error', 'Par mesure de sécurité, le fichier '.$file->getClientOriginalName().' a été rejeté car il contient du code exécutable.');
 
                     return $this->redirectToRoute('back_territory_edit', ['territory' => $territory->getId()]);
                 }

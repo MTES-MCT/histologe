@@ -402,7 +402,11 @@ class SignalementController extends AbstractController
             try {
                 foreach ($files as $key => $file) {
                     if (!$fileScanner->isClean($file->getPathname())) {
-                        return $this->json(['error' => 'Le fichier est infecté'], 400);
+                        if ('application/pdf' === $file->getMimeType()) {
+                            return $this->json(['error' => 'Par mesure de sécurité, le fichier '.$file->getClientOriginalName().' a été rejeté car il contient du code exécutable.'], 400);
+                        }
+
+                        return $this->json(['error' => 'Le fichier est infecté par un virus.'], 400);
                     }
                     $res = $uploadHandlerService->toTempFolder($file, $key);
                     if (\is_array($res) && isset($res['error'])) {

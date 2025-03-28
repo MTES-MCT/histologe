@@ -47,7 +47,11 @@ class SignalementFileProcessor
             if ($file instanceof UploadedFile) {
                 try {
                     if (!$this->fileScanner->isClean($file->getPathname())) {
-                        $message = 'Le fichier '.$file->getClientOriginalName().' est infecté par un virus.';
+                        if ('application/pdf' === $file->getMimeType()) {
+                            $message = 'Par mesure de sécurité, le fichier '.$file->getClientOriginalName().' a été rejeté car il contient du code exécutable.';
+                        } else {
+                            $message = 'Le fichier '.$file->getClientOriginalName().' est infecté par un virus.';
+                        }
                         $this->errors[] = $message;
                         $this->logger->error($message);
                         continue;
