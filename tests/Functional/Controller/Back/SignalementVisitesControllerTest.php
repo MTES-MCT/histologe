@@ -32,7 +32,7 @@ class SignalementVisitesControllerTest extends WebTestCase
         $this->signalementRepository = static::getContainer()->get(SignalementRepository::class);
         $this->interventionRepository = static::getContainer()->get(InterventionRepository::class);
 
-        $user = $this->userRepository->findOneBy(['email' => 'admin-territoire-13-01@histologe.fr']);
+        $user = $this->userRepository->findOneBy(['email' => 'admin-territoire-13-01@signal-logement.fr']);
         $this->client->loginUser($user);
     }
 
@@ -83,7 +83,7 @@ class SignalementVisitesControllerTest extends WebTestCase
 
     public function testAddPastVisiteNotDone(): void
     {
-        $user = $this->userRepository->findOneBy(['email' => 'admin-01@histologe.fr']);
+        $user = $this->userRepository->findOneBy(['email' => 'admin-01@signal-logement.fr']);
         $this->client->loginUser($user);
 
         $signalement = $this->signalementRepository->findOneBy(['uuid' => '00000000-0000-0000-2024-000000000001']);

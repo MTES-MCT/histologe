@@ -33,7 +33,7 @@ class ListExportMessageHandlerTest extends WebTestCase
 
     public function testHandleGenerateListCsv()
     {
-        $userEmail = 'admin-01@histologe.fr';
+        $userEmail = 'admin-01@signal-logement.fr';
         /** @var User $user */
         $user = $this->userRepository->findOneBy(['email' => $userEmail]);
         $message = (new ListExportMessage())
@@ -72,7 +72,7 @@ class ListExportMessageHandlerTest extends WebTestCase
 
     public function testHandleGenerateListXlsWithOptions()
     {
-        $userEmail = 'admin-territoire-13-01@histologe.fr';
+        $userEmail = 'admin-territoire-13-01@signal-logement.fr';
         /** @var User $user */
         $user = $this->userRepository->findOneBy(['email' => $userEmail]);
         $message = (new ListExportMessage())

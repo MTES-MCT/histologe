@@ -35,7 +35,7 @@
       <p>
         <span>{{strCountImported}}</span> signalements importés
         <br>
-        Ces données correspondent aux signalements recensés sur les territoires avant le déploiement de la plateforme Histologe.
+        Ces données correspondent aux signalements recensés sur les territoires avant le déploiement de la plateforme Signal Logement.
       </p>
     </div>
   </div>

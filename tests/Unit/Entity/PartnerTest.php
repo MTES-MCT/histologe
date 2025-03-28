@@ -77,7 +77,7 @@ class PartnerTest extends KernelTestCase
         $territory = $entityManager->getRepository(Territory::class)->find($zip);
         $partner = (new Partner())
             ->setNom('Random partner')
-            ->setEmail('partenaire-13-01@histologe.fr')
+            ->setEmail('partenaire-13-01@signal-logement.fr')
             ->setType(PartnerType::COMMUNE_SCHS)
             ->setCompetence([Qualification::VISITES])
             ->setTerritory($territory);

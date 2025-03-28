@@ -65,7 +65,7 @@ if [ $EXIT_CODE -ne 0 ]; then
     HOSTNAME=$(hostname)
     
     # En cas d'erreur  envoi de mail via une route sur la prod
-    curl -X POST "${HISTOLOGE_PROD_URL}/send-email" \ 
+    curl -X POST "${SIGNAL_LOGEMENT_PROD_URL}/send-email" \
          -H "Content-Type: application/json" \
          -H "Authorization: Bearer ${SEND_ERROR_EMAIL_TOKEN}" \
          -d "{\"title\": \"$TITLE\", \"timestamp\": \"$TIMESTAMP\", \"host\": \"$HOSTNAME\", \"database\": \"${DATABASE_NAME}\", \"error\": \"$ERROR_MESSAGE\"}"
@@ -77,7 +77,7 @@ else
     HOSTNAME=$(hostname)
     
     # A la fin envoi de mail via une route sur la prod
-    curl -X POST "${HISTOLOGE_PROD_URL}/send-email" \ 
+    curl -X POST "${SIGNAL_LOGEMENT_PROD_URL}/send-email" \
          -H "Content-Type: application/json" \
          -H "Authorization: Bearer ${SEND_ERROR_EMAIL_TOKEN}" \
          -d "{\"title\": \"$TITLE\", \"timestamp\": \"$TIMESTAMP\", \"host\": \"$HOSTNAME\", \"database\": \"${DATABASE_NAME}\", \"message\": \"$MESSAGE\"}"

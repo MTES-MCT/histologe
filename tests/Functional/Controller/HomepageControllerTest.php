@@ -48,7 +48,7 @@ class HomepageControllerTest extends WebTestCase
 
         $this->assertSelectorTextContains('#submenu-help ul', 'Documentation');
         $link = $crawler->selectLink('Documentation')->link();
-        $this->assertEquals('https://faq.histologe.beta.gouv.fr', $link->getUri());
+        $this->assertEquals('https://faq.signalement-logement.beta.gouv.fr', $link->getUri());
     }
 
     public function testSubmitContactWithValidData(): void

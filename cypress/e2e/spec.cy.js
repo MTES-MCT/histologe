@@ -107,7 +107,7 @@ describe('Test a real user login', { testIsolation: false }, () => {
   })
 
   it('Submits the login form', () => {
-    cy.get('#login-email').type('admin-01@histologe.fr')
+    cy.get('#login-email').type('admin-01@signal-logement.fr')
     cy.get('#login-password').type('histologe')
     cy.get('form[name=login-form] button').click()
     cy.get('#fr-sidemenu-wrapper').should('be.visible')

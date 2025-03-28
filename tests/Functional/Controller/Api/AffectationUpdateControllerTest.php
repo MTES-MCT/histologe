@@ -25,7 +25,7 @@ class AffectationUpdateControllerTest extends WebTestCase
     {
         $this->client = static::createClient();
         $user = self::getContainer()->get(UserRepository::class)->findOneBy([
-            'email' => 'api-01@histologe.fr',
+            'email' => 'api-01@signal-logement.fr',
         ]);
         $this->signalementRepository = self::getContainer()->get(SignalementRepository::class);
 

@@ -14,7 +14,7 @@ class SignalementControllerTest extends WebTestCase
     {
         $client = static::createClient();
         $user = self::getContainer()->get('doctrine')->getRepository(User::class)->findOneBy([
-            'email' => 'api-01@histologe.fr',
+            'email' => 'api-01@signal-logement.fr',
         ]);
         $client->loginUser($user, 'api');
         $client->request('GET', '/api/signalements');
@@ -29,7 +29,7 @@ class SignalementControllerTest extends WebTestCase
     {
         $client = static::createClient();
         $user = self::getContainer()->get('doctrine')->getRepository(User::class)->findOneBy([
-            'email' => 'api-01@histologe.fr',
+            'email' => 'api-01@signal-logement.fr',
         ]);
         $client->loginUser($user, 'api');
         $client->request('GET', '/api/signalements?limit=2');
@@ -44,7 +44,7 @@ class SignalementControllerTest extends WebTestCase
     {
         $client = static::createClient();
         $user = self::getContainer()->get('doctrine')->getRepository(User::class)->findOneBy([
-            'email' => 'api-02@histologe.fr',
+            'email' => 'api-02@signal-logement.fr',
         ]);
         $client->loginUser($user, 'api');
         $client->request('GET', '/api/signalements/00000000-0000-0000-2024-000000000012');
@@ -60,7 +60,7 @@ class SignalementControllerTest extends WebTestCase
     {
         $client = static::createClient();
         $user = self::getContainer()->get('doctrine')->getRepository(User::class)->findOneBy([
-            'email' => 'api-01@histologe.fr',
+            'email' => 'api-01@signal-logement.fr',
         ]);
         $client->loginUser($user, 'api');
         $client->request('GET', '/api/signalements/00000000-0000-0000-2022-000000000003');
@@ -79,7 +79,7 @@ class SignalementControllerTest extends WebTestCase
     {
         $client = static::createClient();
         $user = self::getContainer()->get('doctrine')->getRepository(User::class)->findOneBy([
-            'email' => 'api-01@histologe.fr',
+            'email' => 'api-01@signal-logement.fr',
         ]);
         $client->loginUser($user, 'api');
         $client->request('GET', '/api/signalements?'.http_build_query($queryParameters));

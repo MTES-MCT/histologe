@@ -27,7 +27,7 @@ class ArchivedSignalementControllerTest extends WebTestCase
         $this->router = self::getContainer()->get(RouterInterface::class);
         $this->signalementRepository = self::getContainer()->get(SignalementRepository::class);
 
-        $user = $this->userRepository->findOneBy(['email' => 'admin-01@histologe.fr']);
+        $user = $this->userRepository->findOneBy(['email' => 'admin-01@signal-logement.fr']);
         $this->client->loginUser($user);
     }
 

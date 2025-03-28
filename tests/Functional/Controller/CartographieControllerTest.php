@@ -10,11 +10,11 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 class CartographieControllerTest extends WebTestCase
 {
-    private const SUPER_ADMIN = 'admin-01@histologe.fr';
-    private const ADMIN_TERRITOIRE = 'admin-territoire-13-01@histologe.fr';
-    private const PARTNER = 'user-13-01@histologe.fr';
-    private const ADMIN_PARTNER_MULTI_TERRITORIES = 'admin-partenaire-multi-ter-13-01@histologe.fr';
-    private const USER_PARTNER_MULTI_TERRITORIES = 'user-partenaire-multi-ter-34-30@histologe.fr';
+    private const SUPER_ADMIN = 'admin-01@signal-logement.fr';
+    private const ADMIN_TERRITOIRE = 'admin-territoire-13-01@signal-logement.fr';
+    private const PARTNER = 'user-13-01@signal-logement.fr';
+    private const ADMIN_PARTNER_MULTI_TERRITORIES = 'admin-partenaire-multi-ter-13-01@signal-logement.fr';
+    private const USER_PARTNER_MULTI_TERRITORIES = 'user-partenaire-multi-ter-34-30@signal-logement.fr';
 
     protected function setUp(): void
     {

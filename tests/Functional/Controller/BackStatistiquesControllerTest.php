@@ -10,11 +10,11 @@ use Symfony\Component\Routing\RouterInterface;
 class BackStatistiquesControllerTest extends WebTestCase
 {
     use SessionHelper;
-    private const USER_SUPER_ADMIN = 'admin-01@histologe.fr';
-    private const USER_ADMIN_TERRITOIRE = 'admin-territoire-13-01@histologe.fr';
-    private const USER_PARTNER = 'user-13-01@histologe.fr';
-    private const USER_ADMIN_PARTNER_MULTI_TERRITORIES = 'admin-partenaire-multi-ter-13-01@histologe.fr';
-    private const USER_USER_PARTNER_MULTI_TERRITORIES = 'user-partenaire-multi-ter-34-30@histologe.fr';
+    private const USER_SUPER_ADMIN = 'admin-01@signal-logement.fr';
+    private const USER_ADMIN_TERRITOIRE = 'admin-territoire-13-01@signal-logement.fr';
+    private const USER_PARTNER = 'user-13-01@signal-logement.fr';
+    private const USER_ADMIN_PARTNER_MULTI_TERRITORIES = 'admin-partenaire-multi-ter-13-01@signal-logement.fr';
+    private const USER_USER_PARTNER_MULTI_TERRITORIES = 'user-partenaire-multi-ter-34-30@signal-logement.fr';
 
     public function provideRoutesHomepage(): \Generator
     {
