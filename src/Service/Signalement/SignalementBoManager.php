@@ -2,6 +2,8 @@
 
 namespace App\Service\Signalement;
 
+use App\Entity\DesordreCritere;
+use App\Entity\DesordrePrecision;
 use App\Entity\Enum\EtageType;
 use App\Entity\Enum\ProfileDeclarant;
 use App\Entity\Enum\SignalementStatus;
@@ -11,6 +13,7 @@ use App\Entity\Model\SituationFoyer;
 use App\Entity\Model\TypeCompositionLogement;
 use App\Entity\Signalement;
 use App\Entity\User;
+use Doctrine\Common\Collections\ArrayCollection;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\Form\FormError;
 use Symfony\Component\Form\FormInterface;
@@ -223,5 +226,59 @@ class SignalementBoManager
         $signalement->setInformationProcedure($informationProcedure);
 
         return true;
+    }
+
+    public function formDesordresManager(FormInterface $form, Signalement $signalement): bool
+    {
+        $signalement->setDetails($form->get('details')->getData());
+
+        $signalement->removeAllDesordreCategory();
+        $signalement->removeAllDesordreCritere();
+        $signalement->removeAllDesordrePrecision();
+
+        // Parcours des champs du formulaire
+        foreach ($form->all() as $field) {
+            $fieldName = $field->getName();
+            $fieldData = $field->getData();
+            if (empty($fieldData) || ($fieldData instanceof ArrayCollection && $fieldData->isEmpty())) {
+                continue;
+            }
+
+            if (str_starts_with($fieldName, 'desordres_LOGEMENT') || str_starts_with($fieldName, 'desordres_BATIMENT')) {
+                /** @var DesordreCritere $desordreCritere */
+                foreach ($fieldData as $desordreCritere) {
+                    $signalement->addDesordreCritere($desordreCritere);
+                    $signalement->addDesordreCategory($desordreCritere->getDesordreCategorie());
+                    if ($desordreCritere->getDesordrePrecisions()->count() < 2) {
+                        $signalement->addDesordrePrecision($desordreCritere->getDesordrePrecisions()->first());
+                    }
+                }
+            }
+            if (str_starts_with($fieldName, 'precisions_')) {
+                if (str_ends_with($fieldName, 'details_type_nuisibles')) {
+                    $jsonContent = $signalement->getJsonContent();
+                    $idJsonData = $this->extractCritere($fieldName);
+                    $jsonContent[$idJsonData] = $fieldData;
+                    $signalement->setJsonContent($jsonContent);
+                } else {
+                    /** @var DesordrePrecision $desordrePrecision */
+                    foreach ($fieldData as $desordrePrecision) {
+                        $signalement->addDesordrePrecision($desordrePrecision);
+                    }
+                }
+            }
+        }
+
+        return true;
+    }
+
+    private function extractCritere($fieldName)
+    {
+        // Expression régulière pour capturer la partie "desordres_*_nuisibles_autres"
+        if (preg_match('/precisions_\d+_(desordres_[a-z_]+_nuisibles_autres)_details_type_nuisibles/', $fieldName, $matches)) {
+            return $matches[1];
+        }
+
+        return null; // Si la correspondance échoue
     }
 }
