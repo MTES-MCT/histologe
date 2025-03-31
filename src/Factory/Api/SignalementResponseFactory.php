@@ -19,6 +19,7 @@ use App\Entity\Signalement;
 use App\Entity\User;
 use App\Service\Signalement\SignalementDesordresProcessor;
 use Symfony\Bundle\SecurityBundle\Security;
+use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 
 readonly class SignalementResponseFactory
 {
@@ -26,6 +27,7 @@ readonly class SignalementResponseFactory
         PersonneType::OCCUPANT,
         PersonneType::DECLARANT,
         PersonneType::PROPRIETAIRE,
+        PersonneType::AGENCE,
     ];
 
     public function __construct(
@@ -33,6 +35,7 @@ readonly class SignalementResponseFactory
         private FileFactory $fileFactory,
         private VisiteFactory $visiteFactory,
         private Security $security,
+        private ParameterBagInterface $parameterBag,
     ) {
     }
 
@@ -257,6 +260,25 @@ readonly class SignalementResponseFactory
                 revenuFiscal: $signalement->getInformationComplementaire()?->getInformationsComplementairesSituationBailleurRevenuFiscal(),
                 beneficiaireRsa: $this->stringToBool($signalement->getInformationComplementaire()?->getInformationsComplementairesSituationBailleurBeneficiaireRsa()),
                 beneficiaireFsl: $this->stringToBool($signalement->getInformationComplementaire()?->getInformationsComplementairesSituationBailleurBeneficiaireFsl()),
+                adresse: $adresse
+            );
+        }
+
+        if (PersonneType::AGENCE === $personneType && !empty($signalement->getDenominationAgence()) && $this->parameterBag->get('feature_bo_signalement_create')) {
+            $adresse = new Adresse(
+                adresse: $signalement->getAdresseAgence(),
+                codePostal: $signalement->getCodePostalAgence(),
+                ville: $signalement->getVilleAgence(),
+            );
+
+            return new Personne(
+                personneType: $personneType,
+                structure: $signalement->getDenominationAgence(),
+                nom: $signalement->getNomAgence(),
+                prenom: $signalement->getPrenomAgence(),
+                email: $signalement->getMailAgence(),
+                telephone: $signalement->getTelAgence(),
+                telephoneSecondaire: $signalement->getTelAgenceSecondaire(),
                 adresse: $adresse
             );
         }

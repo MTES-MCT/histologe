@@ -4,6 +4,7 @@ namespace App\Manager;
 
 use App\Dto\Request\Signalement\AdresseOccupantRequest;
 use App\Dto\Request\Signalement\CompositionLogementRequest;
+use App\Dto\Request\Signalement\CoordonneesAgenceRequest;
 use App\Dto\Request\Signalement\CoordonneesBailleurRequest;
 use App\Dto\Request\Signalement\CoordonneesFoyerRequest;
 use App\Dto\Request\Signalement\CoordonneesTiersRequest;
@@ -456,6 +457,28 @@ class SignalementManager extends AbstractManager
         $this->suiviManager->addSuiviIfNeeded(
             signalement: $signalement,
             description: 'Les coordonnées du bailleur ont été modifiées par ',
+        );
+    }
+
+    public function updateFromCoordonneesAgenceRequest(
+        Signalement $signalement,
+        CoordonneesAgenceRequest $coordonneesAgenceRequest,
+    ): void {
+        $signalement
+            ->setDenominationAgence($coordonneesAgenceRequest->getDenomination())
+            ->setNomAgence($coordonneesAgenceRequest->getNom())
+            ->setPrenomAgence($coordonneesAgenceRequest->getPrenom())
+            ->setMailAgence($coordonneesAgenceRequest->getMail())
+            ->setTelAgence($coordonneesAgenceRequest->getTelephone())
+            ->setTelAgenceSecondaire($coordonneesAgenceRequest->getTelephoneBis())
+            ->setAdresseAgence($coordonneesAgenceRequest->getAdresse())
+            ->setCodePostalAgence($coordonneesAgenceRequest->getCodePostal())
+            ->setVilleAgence($coordonneesAgenceRequest->getVille());
+
+        $this->save($signalement);
+        $this->suiviManager->addSuiviIfNeeded(
+            signalement: $signalement,
+            description: 'Les coordonnées de l\'agence ont été modifiées par ',
         );
     }
 

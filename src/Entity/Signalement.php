@@ -1247,6 +1247,11 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
         return $this->telAgence;
     }
 
+    public function getTelAgenceDecoded(?bool $national = false): ?string
+    {
+        return Phone::format($this->telAgence, $national);
+    }
+
     public function setTelAgence(?string $telAgence): self
     {
         $this->telAgence = $telAgence;
@@ -1257,6 +1262,11 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
     public function getTelAgenceSecondaire(): ?string
     {
         return $this->telAgenceSecondaire;
+    }
+
+    public function getTelAgenceSecondaireDecoded(?bool $national = false): ?string
+    {
+        return Phone::format($this->telAgenceSecondaire, $national);
     }
 
     public function setTelAgenceSecondaire(?string $telAgenceSecondaire): self
