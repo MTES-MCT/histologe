@@ -6,6 +6,8 @@ use App\Entity\Enum\OccupantLink;
 use App\Entity\Enum\ProfileDeclarant;
 use App\Entity\Enum\ProprioType;
 use App\Entity\Signalement;
+use App\Entity\User;
+use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\EnumType;
@@ -18,12 +20,23 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 class SignalementDraftCoordonneesType extends AbstractType
 {
-    public function __construct(private readonly UrlGeneratorInterface $urlGenerator)
-    {
+    public function __construct(
+        private readonly UrlGeneratorInterface $urlGenerator,
+        private readonly Security $security,
+    ) {
     }
 
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
+        /** @var User $user */
+        $user = $this->security->getUser();
+        $nomPartner = '';
+        $territory = $user->getFirstTerritory();
+        if (!empty($territory)) {
+            $partner = $user->getPartnerInTerritoryOrFirstOne($territory);
+            $nomPartner = $partner?->getNom();
+        }
+
         /** @var Signalement $signalement */
         $signalement = $builder->getData();
         $adresseCompleteProprio = trim($signalement->getAdresseProprio().' '.$signalement->getCodePostalProprio().' '.$signalement->getVilleProprio());
@@ -106,12 +119,14 @@ class SignalementDraftCoordonneesType extends AbstractType
                     'autocomplete' => 'off',
                     'data-fr-adresse-autocomplete' => 'true',
                     'data-autocomplete-query-selector' => '#bo-form-signalement-coordonnees .fr-address-proprio-group',
+                    'data-suffix' => 'proprio',
                 ],
             ])
             ->add('adresseProprio', null, [
                 'label' => 'Numéro et voie ',
                 'attr' => [
                     'class' => 'bo-form-signalement-manual-address bo-form-signalement-manual-address-input',
+                    'data-autocomplete-addresse-proprio' => 'true',
                 ],
                 'empty_data' => '',
             ])
@@ -120,6 +135,7 @@ class SignalementDraftCoordonneesType extends AbstractType
                 'required' => false,
                 'attr' => [
                     'class' => 'bo-form-signalement-manual-address',
+                    'data-autocomplete-codepostal-proprio' => 'true',
                 ],
                 'empty_data' => '',
             ])
@@ -128,6 +144,7 @@ class SignalementDraftCoordonneesType extends AbstractType
                 'required' => false,
                 'attr' => [
                     'class' => 'bo-form-signalement-manual-address',
+                    'data-autocomplete-ville-proprio' => 'true',
                 ],
                 'empty_data' => '',
             ])
@@ -167,7 +184,13 @@ class SignalementDraftCoordonneesType extends AbstractType
                 'required' => false,
                 'placeholder' => false,
                 'mapped' => false,
-                'data' => [''], // TODO : lien identifiant ?
+                'data' => [$signalement->getMailDeclarant() == $user->getEmail()],
+                'attr' => [
+                    'data-user-structure' => $nomPartner,
+                    'data-user-nom' => $user->getNom(),
+                    'data-user-prenom' => $user->getPrenom(),
+                    'data-user-mail' => $user->getEmail(),
+                ],
             ])
             ->add('structureDeclarant', TextType::class, [
                 'label' => 'Structure',
@@ -223,12 +246,14 @@ class SignalementDraftCoordonneesType extends AbstractType
                     'autocomplete' => 'off',
                     'data-fr-adresse-autocomplete' => 'true',
                     'data-autocomplete-query-selector' => '#bo-form-signalement-coordonnees .fr-address-agence-group',
+                    'data-suffix' => 'agence',
                 ],
             ])
             ->add('adresseAgence', null, [
                 'label' => 'Numéro et voie ',
                 'attr' => [
                     'class' => 'bo-form-signalement-manual-address bo-form-signalement-manual-address-input',
+                    'data-autocomplete-addresse-agence' => 'true',
                 ],
                 'empty_data' => '',
             ])
@@ -237,6 +262,7 @@ class SignalementDraftCoordonneesType extends AbstractType
                 'required' => false,
                 'attr' => [
                     'class' => 'bo-form-signalement-manual-address',
+                    'data-autocomplete-codepostal-agence' => 'true',
                 ],
                 'empty_data' => '',
             ])
@@ -245,6 +271,7 @@ class SignalementDraftCoordonneesType extends AbstractType
                 'required' => false,
                 'attr' => [
                     'class' => 'bo-form-signalement-manual-address',
+                    'data-autocomplete-ville-agence' => 'true',
                 ],
                 'empty_data' => '',
             ])
