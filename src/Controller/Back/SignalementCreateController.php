@@ -141,48 +141,6 @@ class SignalementCreateController extends AbstractController
         ]);
     }
 
-    #[Route('/bo-form-desordres/{uuid:signalement}', name: 'back_signalement_draft_form_desordres_edit', methods: ['POST'])]
-    public function editFormDesordres(
-        Signalement $signalement,
-        Request $request,
-        EntityManagerInterface $entityManager,
-        SignalementDesordresProcessor $signalementDesordresProcessor,
-    ): Response {
-        $this->denyAccessUnlessGranted('SIGN_EDIT_DRAFT', $signalement);
-
-        $entityManager->beginTransaction();
-        $action = $this->generateUrl('back_signalement_draft_form_desordres_edit', ['uuid' => $signalement->getUuid()]);
-        $form = $this->createForm(SignalementDraftDesordresType::class, $signalement, ['action' => $action]);
-        $form->handleRequest($request);
-        $criteresByZone = $signalementDesordresProcessor->processDesordresByZone($signalement);
-        if ($form->isSubmitted() && $form->isValid() && $this->signalementBoManager->formDesordresManager($form, $signalement)) {
-            $this->signalementManager->save($signalement);
-            $entityManager->commit();
-            if ($form->get('draft')->isClicked()) { // @phpstan-ignore-line
-                $this->addFlash('success', 'Le brouillon est bien enregistré, n\'oubliez pas de le terminer !');
-                $url = $this->generateUrl('back_signalement_drafts', [], UrlGeneratorInterface::ABSOLUTE_URL);
-            } else {
-                $url = $this->generateUrl('back_signalement_edit_draft', ['uuid' => $signalement->getUuid(), '_fragment' => 'coordonnees'], UrlGeneratorInterface::ABSOLUTE_URL);
-            }
-
-            $tabContent = $this->renderView('back/signalement_create/tabs/tab-desordres.html.twig', [
-                'formDesordres' => $form,
-                'signalement' => $signalement,
-                'criteresByZone' => $criteresByZone,
-            ]);
-
-            return $this->json(['redirect' => true, 'url' => $url, 'tabContent' => $tabContent]);
-        }
-
-        $tabContent = $this->renderView('back/signalement_create/tabs/tab-desordres.html.twig', [
-            'formDesordres' => $form,
-            'signalement' => $signalement,
-            'criteresByZone' => $criteresByZone,
-        ]);
-
-        return $this->json(['tabContent' => $tabContent]);
-    }
-
     #[Route('/brouillon/{uuid:signalement}/liste-fichiers', name: 'back_signalement_create_file_list', methods: ['GET'])]
     public function getSignalementFileList(
         Signalement $signalement,
@@ -363,6 +321,48 @@ class SignalementCreateController extends AbstractController
         }
 
         $tabContent = $this->renderView('back/signalement_create/tabs/tab-coordonnees.html.twig', ['formCoordonnees' => $form, 'signalement' => $signalement]);
+
+        return $this->json(['tabContent' => $tabContent]);
+    }
+    
+    #[Route('/bo-form-desordres/{uuid:signalement}', name: 'back_signalement_draft_form_desordres_edit', methods: ['POST'])]
+    public function editFormDesordres(
+        Signalement $signalement,
+        Request $request,
+        EntityManagerInterface $entityManager,
+        SignalementDesordresProcessor $signalementDesordresProcessor,
+    ): Response {
+        $this->denyAccessUnlessGranted('SIGN_EDIT_DRAFT', $signalement);
+
+        $entityManager->beginTransaction();
+        $action = $this->generateUrl('back_signalement_draft_form_desordres_edit', ['uuid' => $signalement->getUuid()]);
+        $form = $this->createForm(SignalementDraftDesordresType::class, $signalement, ['action' => $action]);
+        $form->handleRequest($request);
+        $criteresByZone = $signalementDesordresProcessor->processDesordresByZone($signalement);
+        if ($form->isSubmitted() && $form->isValid() && $this->signalementBoManager->formDesordresManager($form, $signalement)) {
+            $this->signalementManager->save($signalement);
+            $entityManager->commit();
+            if ($form->get('draft')->isClicked()) { // @phpstan-ignore-line
+                $this->addFlash('success', 'Le brouillon est bien enregistré, n\'oubliez pas de le terminer !');
+                $url = $this->generateUrl('back_signalement_drafts', [], UrlGeneratorInterface::ABSOLUTE_URL);
+            } else {
+                $url = '';
+            }
+
+            $tabContent = $this->renderView('back/signalement_create/tabs/tab-desordres.html.twig', [
+                'formDesordres' => $form,
+                'signalement' => $signalement,
+                'criteresByZone' => $criteresByZone,
+            ]);
+
+            return $this->json(['redirect' => true, 'url' => $url, 'tabContent' => $tabContent]);
+        }
+
+        $tabContent = $this->renderView('back/signalement_create/tabs/tab-desordres.html.twig', [
+            'formDesordres' => $form,
+            'signalement' => $signalement,
+            'criteresByZone' => $criteresByZone,
+        ]);
 
         return $this->json(['tabContent' => $tabContent]);
     }

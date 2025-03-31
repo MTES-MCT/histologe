@@ -134,16 +134,16 @@ class SignalementDraftDesordresType extends AbstractType
             ->add('forceSave', HiddenType::class, ['mapped' => false])
             ->add('previous', SubmitType::class, [
                 'label' => 'Précédent',
-                'attr' => ['class' => 'fr-btn fr-icon-arrow-left-line fr-btn--icon-left fr-btn--secondary'],
+                'attr' => ['class' => 'fr-btn fr-icon-arrow-left-line fr-btn--icon-left fr-btn--secondary', 'data-target' => 'coordonnees', 'value' => 'previous'],
                 'row_attr' => ['class' => 'fr-ml-2w'],
             ])
             ->add('draft', SubmitType::class, [
                 'label' => 'Finir plus tard',
-                'attr' => ['class' => 'fr-btn fr-icon-arrow-go-forward-line fr-btn--icon-left fr-btn--tertiary-no-outline'],
+                'attr' => ['class' => 'fr-btn fr-icon-arrow-go-forward-line fr-btn--icon-left fr-btn--tertiary-no-outline', 'value' => 'later'],
             ])
             ->add('save', SubmitType::class, [
                 'label' => 'Suivant',
-                'attr' => ['class' => 'fr-btn fr-icon-arrow-right-line fr-btn--icon-right'],
+                'attr' => ['class' => 'fr-btn fr-icon-arrow-right-line fr-btn--icon-right', 'data-target' => 'validation', 'value' => 'next'],
                 'row_attr' => ['class' => 'fr-ml-2w'],
             ]);
     }
@@ -163,6 +163,8 @@ class SignalementDraftDesordresType extends AbstractType
         foreach ($critere->getDesordrePrecisions() as $precision) {
             $choices[$precision->getLabel()] = $precision;
         }
+
+        ksort($choices);
 
         return $choices;
     }

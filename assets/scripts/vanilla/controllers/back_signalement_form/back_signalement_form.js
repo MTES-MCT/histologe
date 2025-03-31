@@ -244,6 +244,7 @@ function initBoFormSignalementDesordres() {
   });
 
   function updateSelectedCriteres(modal) {
+    window.dispatchEvent(new Event('refreshSearchCheckboxContainerEvent'))
     let zone = modal.dataset.zone
     let listCriteres = document.querySelector(`#list-critere-${zone}`)
 
@@ -314,10 +315,10 @@ function initBoFormSignalementDesordres() {
       let checkboxes = modal.querySelectorAll("input[type='checkbox']");
       checkboxes.forEach(checkbox => {
         if (checkbox.checked) {
-          let precisionLabel = checkbox.labels[0].textContent;
+          let precisionLabel = checkbox.labels[0].innerHTML;
           let precisionId = checkbox.value;
           let precisionItem = document.createElement("li");
-          precisionItem.textContent = precisionLabel;
+          precisionItem.innerHTML = precisionLabel;
           ulElement.appendChild(precisionItem);
           hasPrecisionsChosen = true;
         }
