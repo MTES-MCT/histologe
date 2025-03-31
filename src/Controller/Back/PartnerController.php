@@ -439,7 +439,7 @@ class PartnerController extends AbstractController
                 $userExist->setIsMailingActive($user->getIsMailingActive());
                 $userExist->setHasPermissionAffectation($user->hasPermissionAffectation());
                 $userExist->setStatut(User::STATUS_INACTIVE);
-                $userExist->setRoles($user->getRoles());
+                $userExist->setRoles([$formUserPartner->get('role')->getData()]);
                 $userPartner->setUser($userExist);
                 $user = $userExist;
                 $userManager->sendAccountActivationNotification($user);
