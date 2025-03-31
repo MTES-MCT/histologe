@@ -1,0 +1,47 @@
+{% if canEditSignalement %}
+    {% include 'back/signalement/view/edit-modals/edit-coordonnees-agence.html.twig' %}
+{% endif %}
+<div class="fr-grid-row">
+    <div class="fr-col-12 fr-col-md-8">
+        <h4 class="fr-h6">Informations sur l'agence</h4>
+    </div>
+    <div class="fr-col-12 fr-col-md-4 fr-text--right">
+        {% if canEditSignalement %}
+        <button href="#" data-fr-opened="false" aria-controls="fr-modal-edit-coordonnees-agence"
+            class="fr-btn fr-btn--secondary fr-btn--icon-left fr-icon-edit-line">Modifier</button>
+        {% endif %}
+    </div>
+    <div class="fr-col-12 fr-col-md-12">
+        <strong>Dénomination :</strong> {{ signalement.denominationAgence }}
+    </div>
+    <div class="fr-col-12 fr-col-md-6">
+        <strong>Nom :</strong> {{ signalement.nomAgence }}
+    </div>
+    <div class="fr-col-12 fr-col-md-6">
+        <strong>Prénom :</strong> {{ signalement.prenomAgence }}
+    </div>
+    <div class="fr-col-12">
+        <strong>Courriel :</strong>
+        {% if signalement.mailAgence %}
+            <a href="mailto:{{ signalement.mailAgence }}">{{ signalement.mailAgence }}</a>
+            {% if show_email_alert(signalement.mailAgence) %}
+                <p class="fr-badge fr-badge--error">Format non valide</p>
+            {% endif %}
+        {% endif %}
+    </div>
+    <div class="fr-col-12 fr-col-md-6">
+        <strong>Tél. :</strong>
+        {% if signalement.telAgence %}
+            <a href="mailto:{{ signalement.telAgenceDecoded }}">{{ signalement.telAgenceDecoded|phone }}</a>
+        {% endif %}
+    </div>
+    <div class="fr-col-12 fr-col-md-6">
+        <strong>Tél. sec. :</strong>
+        {% if signalement.telAgenceSecondaire %}
+            <a href="mailto:{{ signalement.telAgenceSecondaireDecoded }}">{{ signalement.telAgenceSecondaireDecoded|phone }}</a>
+        {% endif %}
+    </div>
+    <div class="fr-col-12">
+        <strong>Adresse :</strong> {{ signalement.adresseAgence ? signalement.adresseAgence ~ ', ' ~ signalement.codePostalAgence ~ ' ' ~ signalement.villeAgence}}
+    </div>
+</div>
