@@ -609,6 +609,10 @@ hr.blue-border {
     z-index: 1;
 }
 
+.fr-zindex-100 {
+    z-index: 100 !important;
+}
+
 #signalement_dateNaissanceOccupant_day, #signalement_dateNaissanceOccupant_month {
     border-right: 1px solid black;
 }
