@@ -31,45 +31,26 @@
 
                             <div class="fr-grid-row fr-grid-row--gutters fr-grid-row--middle fr-my-3w">
                                 <div class="fr-col-12 fr-mb-3v">
-                                    <fieldset class="fr-fieldset fr-fieldset--inline fr-mb-5v">
-                                        <legend class="fr-fieldset__legend fr-text--regular required">
-                                            Date de la visite
-                                        </legend>
-                                        <p id="signalement-add-visite-date-error" class="fr-error-text fr-hidden fr-my-3v">
-                                            Veuillez préciser la date de la visite.
-                                        </p>
+                                    <div class="fr-input-group">
+                                        <label class="fr-label" for="visite-add[date]">Date de la visite <span class="fr-text-default--error">*</span></label>
                                         <input type="date"
                                                class="fr-input add-fields-if-past-date"
                                                data-fields="visite-add-past-date-complementary-fields"
                                                name="visite-add[date]" required>
-                                    </fieldset>
+                                    </div>
 
-                                    <fieldset class="fr-fieldset fr-fieldset--inline fr-mb-5v">
-                                        <legend class="fr-fieldset__legend fr-text--regular">
-                                            Heure de la visite
-                                        </legend>
-                                        <p id="signalement-add-visite-date-error" class="fr-error-text fr-hidden fr-my-3v">
-                                            Veuillez préciser l'heure de la visite.
-                                        </p>
+                                    <div class="fr-input-group">
+                                        <label class="fr-label" for="visite-add[time]">Heure de la visite</label>
                                         <input type="time"
                                                class="fr-input"
                                                data-territory-timezone="{{ territory_timezone }}"
                                                data-fields="visite-add-past-date-complementary-fields"
                                                name="visite-add[time]">
-                                    </fieldset>
+                                    </div>
                                     
                                     {% if is_granted('ROLE_ADMIN_TERRITORY') %}
-                                        <fieldset class="fr-fieldset fr-fieldset--inline fr-mb-5v">
-                                            <legend class="fr-fieldset__legend fr-text--regular required">
-                                                Opérateur de visite
-                                            </legend>
-                                            <p id="signalement-add-visite-partner-error" class="fr-error-text fr-hidden fr-my-3v">
-                                                Veuillez sélectionner le partenaire en charge de la visite
-                                            </p>
-                                            <p id="signalement-add-visite-partner-double-error" class="fr-error-text fr-hidden fr-my-3v">
-                                                Ce partenaire a déjà une visite en cours.
-                                                Veuillez terminer ou annuler la visite ou sélectionner un autre partenaire.
-                                            </p>
+                                        <div class="fr-select-group">
+                                            <label class="fr-label" for="visite-add[partner]">Opérateur de visite <span class="fr-text-default--error">*</span></label>
                                             <select name="visite-add[partner]" class="fr-select visite-partner-select" required>
                                                 <option value=""></option>
                                                 {% for partner in partnersCanVisite %}
@@ -86,8 +67,17 @@
                                                         {{ partner.nom|upper }}
                                                     </option>
                                                 {% endfor %}
+                                                <option value="extern">Opérateur Externe</option>
                                             </select>
-                                        </fieldset>
+                                            <p id="signalement-add-visite-partner-double-error" class="fr-error-text fr-hidden">
+                                                Ce partenaire a déjà une visite en cours.
+                                                Veuillez terminer ou annuler la visite ou sélectionner un autre partenaire.
+                                            </p>
+                                        </div>
+                                        <div class="fr-input-group fr-hidden">
+                                            <label class="fr-label" for="visite-add[externalOperator]">Nom de l'opérateur externe <span class="fr-text-default--error">*</span></label>
+                                            <input type="text" name="visite-add[externalOperator]" maxlength="255" class="fr-input">
+                                        </div>
                                     {% else %}
                                         <input type="hidden" name="visite-add[partner]" value="{{ app.user.partnerInTerritory(signalement.territory).id }}">
                                     {% endif %}

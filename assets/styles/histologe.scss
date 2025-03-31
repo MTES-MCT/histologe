@@ -175,7 +175,7 @@ pre {
 }
 
 legend.required::after, label.required::after {
-    color: #F60700;
+    color: var(--text-default-error);
     content: '*';
     position: relative;
     left: 3px;

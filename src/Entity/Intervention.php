@@ -8,6 +8,7 @@ use App\Entity\Behaviour\TimestampableTrait;
 use App\Entity\Enum\DocumentType;
 use App\Entity\Enum\HistoryEntryEvent;
 use App\Entity\Enum\InterventionType;
+use App\Entity\Enum\PartnerType;
 use App\Entity\Enum\ProcedureType;
 use App\Repository\InterventionRepository;
 use App\Service\TimezoneProvider;
@@ -89,6 +90,9 @@ class Intervention implements EntityHistoryInterface, EntitySanitizerInterface
     #[ORM\OneToMany(mappedBy: 'intervention', targetEntity: File::class, cascade: ['persist'])]
     private Collection $files;
 
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $externalOperator = null;
+
     public function __construct()
     {
         $this->files = new ArrayCollection();
@@ -161,6 +165,14 @@ class Intervention implements EntityHistoryInterface, EntitySanitizerInterface
 
     public function getPartner(): ?Partner
     {
+        if (!$this->partner && $this->externalOperator) {
+            $externalPartner = new Partner();
+            $externalPartner->setNom($this->externalOperator);
+            $externalPartner->setType(PartnerType::AUTRE);
+
+            return $externalPartner;
+        }
+
         return $this->partner;
     }
 
@@ -370,5 +382,17 @@ class Intervention implements EntityHistoryInterface, EntitySanitizerInterface
     public function getDescription(): string
     {
         return $this->getDetails() ?? '';
+    }
+
+    public function getExternalOperator(): ?string
+    {
+        return $this->externalOperator;
+    }
+
+    public function setExternalOperator(?string $externalOperator): static
+    {
+        $this->externalOperator = $externalOperator;
+
+        return $this;
     }
 }

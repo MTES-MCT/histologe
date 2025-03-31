@@ -12,13 +12,31 @@ dateFields.forEach(dateField => {
   dateField.addEventListener('change', evt => {
     const fieldToToggle = dateField.dataset.fields
 
-    if (dateField.value <= localDateString) {
+    if (dateField.value && dateField.value <= localDateString) {
       document.querySelector('#' + fieldToToggle).classList.remove('fr-hidden')
     } else {
       document.querySelector('#' + fieldToToggle).classList.add('fr-hidden')
     }
   })
+  dateField.dispatchEvent(new Event('change'))
 })
+
+const selectVisitePartner = document.querySelectorAll('.visite-partner-select')
+selectVisitePartner.forEach(partnerSelect => {
+  const operatorExtern = partnerSelect.parentElement.nextElementSibling
+  const operatorExternField = operatorExtern.querySelector('input')
+  partnerSelect.addEventListener('change', evt => {
+    if (evt.currentTarget.value === 'extern') {
+      operatorExtern.classList.remove('fr-hidden')
+      operatorExternField.setAttribute('required', 'required')
+    }else {
+      operatorExtern.classList.add('fr-hidden')
+      operatorExternField.removeAttribute('required')
+    }
+  })
+  partnerSelect.dispatchEvent(new Event('change'))
+})
+
 
 histoCheckVisiteForms('add')
 histoCheckVisiteForms('reschedule')

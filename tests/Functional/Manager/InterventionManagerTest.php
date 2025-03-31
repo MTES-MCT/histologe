@@ -141,6 +141,30 @@ class InterventionManagerTest extends KernelTestCase
     /**
      * @throws \Exception
      */
+    public function testCreateFutureVisiteFromRequestOnExternalOperator(): void
+    {
+        $signalement = $this->signalementRepository->findOneBy(['reference' => '2023-10']);
+
+        $visiteRequest = new VisiteRequest(
+            date: (new \DateTimeImmutable())->modify('+ 1 month')->format('Y-m-d'),
+            time: '10:00',
+            externalOperator: 'Lala la',
+        );
+
+        $intervention = $this->interventionManager->createVisiteFromRequest($signalement, $visiteRequest);
+        $this->assertInstanceOf(Intervention::class, $intervention);
+        $this->assertEquals(Intervention::STATUS_PLANNED, $intervention->getStatus());
+        $this->assertTrue($intervention->getScheduledAt() > new \DateTimeImmutable());
+        $this->assertEquals('Lala la', $intervention->getPartner()->getNom());
+        $this->assertNull($intervention->getPartner()->getId());
+        $this->assertEquals('AUTRE', $intervention->getPartner()->getType()->name);
+        $this->assertEquals('Lala la', $intervention->getExternalOperator());
+        $this->assertEmailCount(0);
+    }
+
+    /**
+     * @throws \Exception
+     */
     public function testCancelVisiteFromRequest(): void
     {
         $signalement = $this->signalementRepository->findOneBy(['reference' => '2023-9']);

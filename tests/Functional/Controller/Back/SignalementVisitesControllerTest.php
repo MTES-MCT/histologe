@@ -49,13 +49,57 @@ class SignalementVisitesControllerTest extends WebTestCase
             'POST',
             $route,
             [
-                'visite-add[date]' => '2123-01-01',
-                'visite-add[partner]' => $partner->getId(),
-                '_token' => 'signalement_add_visit_'.$signalement->getId(),
+                'visite-add' => [
+                    'date' => '2123-01-01',
+                    'time' => '',
+                    'partner' => $partner->getId(),
+                    'externalOperator' => '',
+                ],
+                '_token' => $this->generateCsrfToken(
+                    $this->client,
+                    'signalement_add_visit_'.$signalement->getId()
+                ),
             ]
         );
 
         $this->assertResponseRedirects('/bo/signalements/'.$signalement->getUuid());
+
+        $flashBag = $this->client->getRequest()->getSession()->getFlashBag(); // @phpstan-ignore-line
+        $this->assertTrue($flashBag->has('success'));
+        $successMessages = $flashBag->get('success');
+        $this->assertEquals('La date de visite a bien été définie.', $successMessages[0]);
+    }
+
+    public function testAddFutureVisiteOnExternalOperator(): void
+    {
+        $signalement = $this->signalementRepository->findOneBy(['uuid' => '00000000-0000-0000-2022-000000000001']);
+
+        $route = $this->router->generate('back_signalement_visite_add', ['uuid' => $signalement->getUuid()]);
+        $this->client->request('GET', $route);
+
+        $this->client->request(
+            'POST',
+            $route,
+            [
+                'visite-add' => [
+                    'date' => '2123-01-01',
+                    'time' => '10:00',
+                    'partner' => 'extern',
+                    'externalOperator' => 'Opérateur externe',
+                ],
+                '_token' => $this->generateCsrfToken(
+                    $this->client,
+                    'signalement_add_visit_'.$signalement->getId()
+                ),
+            ]
+        );
+
+        $this->assertResponseRedirects('/bo/signalements/'.$signalement->getUuid());
+
+        $flashBag = $this->client->getRequest()->getSession()->getFlashBag(); // @phpstan-ignore-line
+        $this->assertTrue($flashBag->has('success'));
+        $successMessages = $flashBag->get('success');
+        $this->assertEquals('La date de visite a bien été définie.', $successMessages[0]);
     }
 
     public function testAddPastVisite(): void
@@ -71,14 +115,25 @@ class SignalementVisitesControllerTest extends WebTestCase
             'POST',
             $route,
             [
-                'visite-add[date]' => '2022-01-01',
-                'visite-add[partner]' => $partner->getId(),
-                'visite-add[details]' => 'Lorem Ipsum',
-                '_token' => 'signalement_add_visit_'.$signalement->getId(),
+                'visite-add' => [
+                    'date' => '2022-01-01',
+                    'time' => '10:00',
+                    'partner' => $partner->getId(),
+                    'externalOperator' => '',
+                    'details' => 'Lorem Ipsum',
+                ],
+                '_token' => $this->generateCsrfToken(
+                    $this->client,
+                    'signalement_add_visit_'.$signalement->getId()
+                ),
             ]
         );
 
         $this->assertResponseRedirects('/bo/signalements/'.$signalement->getUuid());
+        $flashBag = $this->client->getRequest()->getSession()->getFlashBag(); // @phpstan-ignore-line
+        $this->assertTrue($flashBag->has('success'));
+        $successMessages = $flashBag->get('success');
+        $this->assertEquals('Les informations de la visite ont bien été renseignées.', $successMessages[0]);
     }
 
     public function testAddPastVisiteNotDone(): void
@@ -101,6 +156,7 @@ class SignalementVisitesControllerTest extends WebTestCase
                     'date' => '2023-01-01',
                     'time' => '10:00',
                     'partner' => $partner->getId(),
+                    'externalOperator' => '',
                     'visiteDone' => '0',
                     'occupantPresent' => '0',
                     'proprietairePresent' => '0',

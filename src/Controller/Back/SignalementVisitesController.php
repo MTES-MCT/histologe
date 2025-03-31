@@ -92,12 +92,14 @@ class SignalementVisitesController extends AbstractController
         $fileName = $this->getUploadedFile($request, 'visite-add', $uploadHandler, $filenameGenerator);
 
         $requestAddData = $request->get('visite-add');
+        $idPartner = 'extern' === $requestAddData['partner'] ? null : $requestAddData['partner'];
         $visiteRequest = new VisiteRequest(
             idIntervention: $requestAddData['intervention'] ?? null,
             date: $requestAddData['date'],
             time: $requestAddData['time'],
             timezone: $timezoneProvider->getTimezone(),
-            idPartner: $requestAddData['partner'],
+            idPartner: $idPartner,
+            externalOperator: $requestAddData['externalOperator'],
             details: $requestAddData['details'] ?? null,
             concludeProcedure: $requestAddData['concludeProcedure'] ?? null,
             isVisiteDone: $requestAddData['visiteDone'] ?? null,
@@ -210,12 +212,14 @@ class SignalementVisitesController extends AbstractController
         $previousDate = $intervention->getScheduledAt();
         $fileName = $this->getUploadedFile($request, 'visite-reschedule', $uploadHandler, $filenameGenerator);
 
+        $idPartner = 'extern' === $requestRescheduleData['partner'] ? null : $requestRescheduleData['partner'];
         $visiteRequest = new VisiteRequest(
             idIntervention: $requestRescheduleData['intervention'],
             date: $requestRescheduleData['date'],
             time: $requestRescheduleData['time'],
             timezone: $timezoneProvider->getTimezone(),
-            idPartner: $requestRescheduleData['partner'] ?? $intervention->getPartner()?->getId(),
+            idPartner: $idPartner,
+            externalOperator: $requestRescheduleData['externalOperator'],
             details: $requestRescheduleData['details'] ?? null,
             concludeProcedure: $requestRescheduleData['concludeProcedure'] ?? null,
             isVisiteDone: $requestRescheduleData['visiteDone'] ?? null,
