@@ -181,3 +181,35 @@
         {{ block('form_errors') }}
     </div>
 {% endblock %}
+
+{% block phone_row %}
+    <div class="phone-input-container fr-input-group {% if errors|length > 0 %}fr-select-group--error{% endif %}">   
+        <div class="fr-input-group fr-mb-0">
+            {% if label is not same as(false) %}
+                <label for="{{ id }}_input" class="fr-label">
+                    {{ label }}
+                    {% if help is not same as(false) %}
+                        <span id="{{ id }}_help" class="fr-hint-text">{{ help }}</span>
+                    {% endif %}
+                </label>
+            {% endif %}
+
+            <div class="fr-grid-row fr-grid-row--gutters fr-mt-1v phone-number-row-container">
+                <div class="fr-col-12 fr-col-md-4">
+                    <select class="fr-select" id="{{ id }}_select" title="Indicatif national">
+                        {% for region, label in countryCodes  %}
+                        <option value="{{ region }}" {% if region is same as selectedCode %}selected="selected"{% endif %}>{{ label }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="fr-col-12 fr-col-md-8">
+                    <div class="fr-input-wrap fr-icon-phone-line">
+                        <input type="tel" id="{{ id }}_input" class="fr-input" value="{{ inputNumber }}">
+                    </div>
+                </div>
+                <input type="hidden" name="{{form.vars.full_name}}" value="{{ data }}">
+            </div>
+        </div>
+        {{ block('form_errors') }}
+    </div>
+{% endblock %}

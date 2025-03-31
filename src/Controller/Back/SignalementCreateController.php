@@ -302,12 +302,12 @@ class SignalementCreateController extends AbstractController
                 $this->addFlash('success', 'Le brouillon est bien enregistré, n\'oubliez pas de le terminer !');
                 $url = $this->generateUrl('back_signalement_drafts', [], UrlGeneratorInterface::ABSOLUTE_URL);
             } else {
-                $url = $this->generateUrl('back_signalement_edit_draft', ['uuid' => $signalement->getUuid(), '_fragment' => 'desordres'], UrlGeneratorInterface::ABSOLUTE_URL);
+                $url = '';
             }
 
             $tabContent = $this->renderView('back/signalement_create/tabs/tab-coordonnees.html.twig', ['formCoordonnees' => $form, 'signalement' => $signalement]);
 
-            return $this->json(['redirect' => true, 'tabContent' => $tabContent]);
+            return $this->json(['redirect' => true, 'tabContent' => $tabContent, 'url' => $url]);
         }
 
         $tabContent = $this->renderView('back/signalement_create/tabs/tab-coordonnees.html.twig', ['formCoordonnees' => $form, 'signalement' => $signalement]);
