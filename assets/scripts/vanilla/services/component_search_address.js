@@ -26,6 +26,10 @@ export function attacheAutocompleteAddressEvent (inputAdresse) {
   }
 
   let selectionIndex = -1
+  let suffix = ''
+  if (inputAdresse.dataset.suffix !== undefined && inputAdresse.dataset.suffix !== '') {
+    suffix = '-' + inputAdresse.dataset.suffix
+  }
   const addressGroup = document?.querySelector(inputAdresse.dataset.autocompleteQuerySelector)
   const apiAdresse = 'https://api-adresse.data.gouv.fr/search/?q='
   inputAdresse.addEventListener('input', (e) => {
@@ -53,7 +57,7 @@ export function attacheAutocompleteAddressEvent (inputAdresse) {
                 'fr-adresse-suggestion'
               )
               suggestion.innerHTML = feature.properties.label
-              attachAddressSuggestionEvent(inputAdresse, suggestion, feature)
+              attachAddressSuggestionEvent(inputAdresse, suggestion, feature, suffix)
               addressGroup.appendChild(suggestion)
             }
           })
@@ -62,17 +66,17 @@ export function attacheAutocompleteAddressEvent (inputAdresse) {
     if (adresse.length === 0) {
       addressGroup.innerHTML = ''
       const idForm = inputAdresse.closest('form').id
-      if (document?.querySelector('#' + idForm + ' [data-autocomplete-addresse]')) {
-        document.querySelector('#' + idForm + ' [data-autocomplete-addresse]').value = ''
+      if (document?.querySelector('#' + idForm + ' [data-autocomplete-addresse'+suffix+']')) {
+        document.querySelector('#' + idForm + ' [data-autocomplete-addresse'+suffix+']').value = ''
       }
-      if (document?.querySelector('#' + idForm + ' [data-autocomplete-codepostal]')) {
-        document.querySelector('#' + idForm + ' [data-autocomplete-codepostal]').value = ''
+      if (document?.querySelector('#' + idForm + ' [data-autocomplete-codepostal'+suffix+']')) {
+        document.querySelector('#' + idForm + ' [data-autocomplete-codepostal'+suffix+']').value = ''
       }
-      if (document?.querySelector('#' + idForm + ' [data-autocomplete-ville]')) {
-        document.querySelector('#' + idForm + ' [data-autocomplete-ville]').value = ''
+      if (document?.querySelector('#' + idForm + ' [data-autocomplete-ville'+suffix+']')) {
+        document.querySelector('#' + idForm + ' [data-autocomplete-ville'+suffix+']').value = ''
       }
-      if (document?.querySelector('#' + idForm + ' [data-autocomplete-insee]')) {
-        document.querySelector('#' + idForm + ' [data-autocomplete-insee]').value = ''
+      if (document?.querySelector('#' + idForm + ' [data-autocomplete-insee'+suffix+']')) {
+        document.querySelector('#' + idForm + ' [data-autocomplete-insee'+suffix+']').value = ''
       }
     }
   })
@@ -115,27 +119,27 @@ export function attacheAutocompleteAddressEvent (inputAdresse) {
   })
 }
 
-function attachAddressSuggestionEvent (inputAdresse, suggestion, feature) {
+function attachAddressSuggestionEvent (inputAdresse, suggestion, feature, suffix) {
   suggestion.addEventListener('click', (e) => {
     const idForm = inputAdresse.closest('form').id
     inputAdresse.value = feature.properties.label
-    if (document?.querySelector('#' + idForm + ' [data-autocomplete-addresse]')) {
-      document.querySelector('#' + idForm + ' [data-autocomplete-addresse]').value = feature.properties.name
+    if (document?.querySelector('#' + idForm + ' [data-autocomplete-addresse'+suffix+']')) {
+      document.querySelector('#' + idForm + ' [data-autocomplete-addresse'+suffix+']').value = feature.properties.name
     }
-    if (document?.querySelector('#' + idForm + ' [data-autocomplete-codepostal]')) {
-      document.querySelector('#' + idForm + ' [data-autocomplete-codepostal]').value = feature.properties.postcode
+    if (document?.querySelector('#' + idForm + ' [data-autocomplete-codepostal'+suffix+']')) {
+      document.querySelector('#' + idForm + ' [data-autocomplete-codepostal'+suffix+']').value = feature.properties.postcode
     }
-    if (document?.querySelector('#' + idForm + ' [data-autocomplete-ville]')) {
-      document.querySelector('#' + idForm + ' [data-autocomplete-ville]').value = feature.properties.city
+    if (document?.querySelector('#' + idForm + ' [data-autocomplete-ville'+suffix+']')) {
+      document.querySelector('#' + idForm + ' [data-autocomplete-ville'+suffix+']').value = feature.properties.city
     }
-    if (document?.querySelector('#' + idForm + ' [data-autocomplete-manual]')) {
-      document.querySelector('#' + idForm + ' [data-autocomplete-manual]').value = 0
+    if (document?.querySelector('#' + idForm + ' [data-autocomplete-manual'+suffix+']')) {
+      document.querySelector('#' + idForm + ' [data-autocomplete-manual'+suffix+']').value = 0
     }
-    if (document?.querySelector('#' + idForm + ' [data-autocomplete-need-reset-insee]')) {
-      document.querySelector('#' + idForm + ' [data-autocomplete-need-reset-insee]').value = 0
+    if (document?.querySelector('#' + idForm + ' [data-autocomplete-need-reset-insee'+suffix+']')) {
+      document.querySelector('#' + idForm + ' [data-autocomplete-need-reset-insee'+suffix+']').value = 0
     }
-    if (document?.querySelector('#' + idForm + ' [data-autocomplete-insee]')) {
-      document.querySelector('#' + idForm + ' [data-autocomplete-insee]').value = feature.properties.citycode
+    if (document?.querySelector('#' + idForm + ' [data-autocomplete-insee'+suffix+']')) {
+      document.querySelector('#' + idForm + ' [data-autocomplete-insee'+suffix+']').value = feature.properties.citycode
     }
     const addressGroup = document?.querySelector(inputAdresse.dataset.autocompleteQuerySelector)
     addressGroup.innerHTML = ''

@@ -117,6 +117,7 @@ function initBoFormSignalementSubmit(tabName) {
 
   switch (tabName) {
     case 'adresse':
+      initComponentAdress('#signalement_draft_address_adresseCompleteOccupant')
       break
     case 'logement':
       initBoFormSignalementLogement()
@@ -126,6 +127,8 @@ function initBoFormSignalementSubmit(tabName) {
       break
     case 'coordonnees':
       initBoFormSignalementCoordonnees()
+      initComponentAdress('#signalement_draft_coordonnees_adresseCompleteProprio')
+      initComponentAdress('#signalement_draft_coordonnees_adresseCompleteAgence')
       break
   }
 }
@@ -197,8 +200,6 @@ function refreshElementEnable(action, tabName, elementSelector, isEnabled) {
   }
 }
 
-initComponentsAdress()
-
 if (document?.querySelector('#bo-form-signalement-adresse')) {
   initBoFormSignalementSubmit('adresse')
 }
@@ -212,39 +213,37 @@ if (document?.querySelector('#bo-form-signalement-coordonnees')) {
   initBoFormSignalementSubmit('coordonnees')
 }
 
-function initComponentsAdress() {
-  const addressInputs = document.querySelectorAll('[data-fr-adresse-autocomplete]')
-  addressInputs.forEach((addressInput) => {
-    attacheAutocompleteAddressEvent(addressInput)
-  
-    const addressInputParent = addressInput.parentElement.parentElement.parentElement
-    const manualAddressSwitcher = addressInputParent?.querySelector('.bo-signalement-manual-address-switcher')
-    const manualAddressContainer = addressInputParent?.querySelector('.bo-form-signalement-manual-address-container')
-    const manualAddressAddress = addressInputParent?.querySelector('.bo-form-signalement-manual-address-input')
-    const manualAddressInputs = addressInputParent?.querySelectorAll('.bo-form-signalement-manual-address');
-    const hasManualAddressValues = Array.from(manualAddressInputs).some(input => input.value !== '')
-  
-    manualAddressSwitcher?.addEventListener('click', (event) => {
-      event.preventDefault()
-      if (manualAddressContainer.classList.contains('fr-hidden')) {
-        manualAddressContainer.classList.remove('fr-hidden')
-        manualAddressSwitcher.textContent = 'Rechercher une adresse'
-        addressInput.value = ''
-        addressInput.disabled = true
-        manualAddressAddress.focus()
-      } else {
-        manualAddressContainer.classList.add('fr-hidden')
-        manualAddressSwitcher.textContent = 'Saisir une adresse manuellement'
-        manualAddressInputs.forEach(input => input.value = '');
-        addressInput.disabled = false
-        addressInput.focus()
-      }
-    })
-  
-    if(addressInput.value == '' && hasManualAddressValues) {
-      manualAddressSwitcher.click()
+function initComponentAdress(id) {
+  const addressInput = document.querySelector(id)
+  attacheAutocompleteAddressEvent(addressInput)
+
+  const addressInputParent = addressInput.parentElement.parentElement.parentElement
+  const manualAddressSwitcher = addressInputParent?.querySelector('.bo-signalement-manual-address-switcher')
+  const manualAddressContainer = addressInputParent?.querySelector('.bo-form-signalement-manual-address-container')
+  const manualAddressAddress = addressInputParent?.querySelector('.bo-form-signalement-manual-address-input')
+  const manualAddressInputs = addressInputParent?.querySelectorAll('.bo-form-signalement-manual-address');
+  const hasManualAddressValues = Array.from(manualAddressInputs).some(input => input.value !== '')
+
+  manualAddressSwitcher?.addEventListener('click', (event) => {
+    event.preventDefault()
+    if (manualAddressContainer.classList.contains('fr-hidden')) {
+      manualAddressContainer.classList.remove('fr-hidden')
+      manualAddressSwitcher.textContent = 'Rechercher une adresse'
+      addressInput.value = ''
+      addressInput.disabled = true
+      manualAddressAddress.focus()
+    } else {
+      manualAddressContainer.classList.add('fr-hidden')
+      manualAddressSwitcher.textContent = 'Saisir une adresse manuellement'
+      manualAddressInputs.forEach(input => input.value = '');
+      addressInput.disabled = false
+      addressInput.focus()
     }
   })
+
+  if(addressInput.value == '' && hasManualAddressValues) {
+    manualAddressSwitcher.click()
+  }
 }
 
 function initBoFormSignalementLogement() {
@@ -447,4 +446,23 @@ function initBoFormSignalementCoordonnees() {
     ],
     'TIERS_PRO'
   )
+
+  const checkIsProTiersDeclarant = document.querySelector('#signalement_draft_coordonnees_isProTiersDeclarant_0')
+  checkIsProTiersDeclarant.addEventListener('change', (event) => {
+    const proTiersStructure = document.querySelector('#signalement_draft_coordonnees_structureDeclarant')
+    const proTiersNom = document.querySelector('#signalement_draft_coordonnees_nomDeclarant')
+    const proTiersPrenom = document.querySelector('#signalement_draft_coordonnees_prenomDeclarant')
+    const proTiersMail = document.querySelector('#signalement_draft_coordonnees_mailDeclarant')
+    if (event.target.checked) {
+      proTiersStructure.value = checkIsProTiersDeclarant.parentElement.parentElement.parentElement.dataset.userStructure
+      proTiersNom.value = checkIsProTiersDeclarant.parentElement.parentElement.parentElement.dataset.userNom
+      proTiersPrenom.value = checkIsProTiersDeclarant.parentElement.parentElement.parentElement.dataset.userPrenom
+      proTiersMail.value = checkIsProTiersDeclarant.parentElement.parentElement.parentElement.dataset.userMail
+    } else {
+      proTiersStructure.value = ''
+      proTiersNom.value = ''
+      proTiersPrenom.value = ''
+      proTiersMail.value = ''
+    }
+  })
 }
