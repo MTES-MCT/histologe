@@ -7,6 +7,7 @@ use App\Entity\Enum\ProfileDeclarant;
 use App\Entity\Enum\ProprioType;
 use App\Entity\Signalement;
 use App\Entity\User;
+use App\Form\Type\PhoneType;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
@@ -66,9 +67,7 @@ class SignalementDraftCoordonneesType extends AbstractType
                 'help' => 'Format attendu : nom@domaine.fr',
                 'required' => false,
             ])
-            ->add('telOccupant', TextType::class, [
-                'label' => 'Téléphone',
-                'help' => 'Format attendu : Veuillez sélectionner le pays pour obtenir l\'indicatif téléphonique, puis saisir le numéro de téléphone au format national (sans l\'indicatif). Exemple pour la France : 0702030405.',
+            ->add('telOccupant', PhoneType::class, [
                 'required' => false,
             ])
 
@@ -105,9 +104,7 @@ class SignalementDraftCoordonneesType extends AbstractType
                 'help' => 'Format attendu : nom@domaine.fr',
                 'required' => false,
             ])
-            ->add('telProprio', TextType::class, [
-                'label' => 'Téléphone',
-                'help' => 'Format attendu : Veuillez sélectionner le pays pour obtenir l\'indicatif téléphonique, puis saisir le numéro de téléphone au format national (sans l\'indicatif). Exemple pour la France : 0702030405.',
+            ->add('telProprio', PhoneType::class, [
                 'required' => false,
             ])
             ->add('adresseCompleteProprio', null, [
@@ -209,9 +206,7 @@ class SignalementDraftCoordonneesType extends AbstractType
                 'help' => 'Format attendu : nom@domaine.fr',
                 'required' => false,
             ])
-            ->add('telDeclarant', TextType::class, [
-                'label' => 'Téléphone',
-                'help' => 'Format attendu : Veuillez sélectionner le pays pour obtenir l\'indicatif téléphonique, puis saisir le numéro de téléphone au format national (sans l\'indicatif). Exemple pour la France : 0702030405.',
+            ->add('telDeclarant', PhoneType::class, [
                 'required' => false,
             ])
 
@@ -232,9 +227,7 @@ class SignalementDraftCoordonneesType extends AbstractType
                 'help' => 'Format attendu : nom@domaine.fr',
                 'required' => false,
             ])
-            ->add('telAgence', TextType::class, [
-                'label' => 'Téléphone',
-                'help' => 'Format attendu : Veuillez sélectionner le pays pour obtenir l\'indicatif téléphonique, puis saisir le numéro de téléphone au format national (sans l\'indicatif). Exemple pour la France : 0702030405.',
+            ->add('telAgence', PhoneType::class, [
                 'required' => false,
             ])
             ->add('adresseCompleteAgence', null, [
