@@ -23,6 +23,7 @@ use App\Utils\Phone;
 use App\Validator as AppAssert;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Uid\Uuid;
 use Symfony\Component\Validator\Constraints as Assert;
@@ -443,6 +444,9 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
 
     #[ORM\Column(type: 'boolean', nullable: true)]
     private ?bool $hasSeenDesordres = null;
+
+    #[ORM\Column(type: Types::TEXT, nullable: true)]
+    private ?string $comCloture = null;
 
     public function __construct()
     {
@@ -2543,6 +2547,18 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
     public function setHasSeenDesordres(?bool $hasSeenDesordres): static
     {
         $this->hasSeenDesordres = $hasSeenDesordres;
+
+        return $this;
+    }
+
+    public function getComCloture(): ?string
+    {
+        return $this->comCloture;
+    }
+
+    public function setComCloture(?string $comCloture): static
+    {
+        $this->comCloture = $comCloture;
 
         return $this;
     }

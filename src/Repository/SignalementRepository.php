@@ -595,6 +595,7 @@ class SignalementRepository extends ServiceEntityRepository
             s.modifiedAt,
             s.closedAt,
             s.motifCloture,
+            s.comCloture,
             s.geoloc,
             s.typeCompositionLogement,
             s.informationProcedure,

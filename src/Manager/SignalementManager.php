@@ -49,7 +49,9 @@ use App\Specification\Signalement\SuroccupationSpecification;
 use Doctrine\DBAL\Exception;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Bundle\SecurityBundle\Security;
+use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use Symfony\Component\HtmlSanitizer\HtmlSanitizerInterface;
 
 class SignalementManager extends AbstractManager
 {
@@ -71,6 +73,8 @@ class SignalementManager extends AbstractManager
         private readonly AffectationRepository $affectationRepository,
         private readonly SignalementAddressUpdater $signalementAddressUpdater,
         private readonly ZipcodeProvider $zipcodeProvider,
+        #[Autowire(service: 'html_sanitizer.sanitizer.app.message_sanitizer')]
+        private readonly HtmlSanitizerInterface $htmlSanitizer,
         string $entityName = Signalement::class,
     ) {
         parent::__construct($managerRegistry, $entityName);
@@ -220,12 +224,13 @@ class SignalementManager extends AbstractManager
         return $affectation->toArray();
     }
 
-    public function closeSignalementForAllPartners(Signalement $signalement, MotifCloture $motif): Signalement
+    public function closeSignalementForAllPartners(Signalement $signalement, MotifCloture $motif, string $comCloture): Signalement
     {
         $signalement
             ->setStatut(SignalementStatus::CLOSED)
             ->setMotifCloture($motif)
-            ->setClosedAt(new \DateTimeImmutable());
+            ->setClosedAt(new \DateTimeImmutable())
+            ->setComCloture($this->htmlSanitizer->sanitize($comCloture));
 
         /** @var User $user */
         $user = $this->security->getUser();

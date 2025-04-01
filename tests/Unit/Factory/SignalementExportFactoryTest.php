@@ -67,6 +67,7 @@ class SignalementExportFactoryTest extends TestCase
             'modifiedAt' => new \DateTimeImmutable(),
             'closedAt' => new \DateTimeImmutable(),
             'motifCloture' => MotifCloture::INSALUBRITE,
+            'comCloture' => null,
             'familleSituation' => "l'état et propreté du logement|l'état et propreté du logement|",
             'desordres' => "Les sols sont humides.|Les installations électriques ne sont pas en bon état.|
                 Les murs ont des fissures.|De l'eau s’infiltre dans mon logement.|Il y a des trace ",
