@@ -397,6 +397,9 @@ class SignalementBuilder
                         $this->signalementDraftRequest->getSignalementConcerneProfilDetailBailleurProprietaire()
                     ))
                 );
+            if (ProprioType::ORGANISME_SOCIETE === $this->signalement->getTypeProprio()) {
+                $this->signalement->setDenominationProprio($this->signalement->getNomProprio());
+            }
         } elseif ($this->isBailleur()) {
             $this->signalement
                 ->setStructureDeclarant($this->signalementDraftRequest->getVosCoordonneesTiersNomOrganisme())
@@ -410,6 +413,9 @@ class SignalementBuilder
                         $this->signalementDraftRequest->getSignalementConcerneProfilDetailBailleurBailleur()
                     ))
                 );
+            if (ProprioType::ORGANISME_SOCIETE === $this->signalement->getTypeProprio()) {
+                $this->signalement->setDenominationProprio($this->signalement->getNomProprio());
+            }
         } else {
             $this->signalement
                 ->setAdresseProprio($this->signalementDraftRequest->getCoordonneesBailleurAdresseDetailNumero())
@@ -431,6 +437,7 @@ class SignalementBuilder
                 if (null !== $bailleur) {
                     $this->signalement->setBailleur($bailleur);
                 }
+                $this->signalement->setDenominationProprio($bailleurNom);
             }
         }
     }
