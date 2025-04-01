@@ -19,6 +19,7 @@ twig:
         mise_en_berne: '%env(MISE_EN_BERNE_ENABLE)%'
         feature_multi_territories: '%env(bool:FEATURE_MULTI_TERRITORIES)%'
         feature_sites_faciles: '%env(bool:FEATURE_SITES_FACILES)%'
+        sites_faciles_url: '%env(resolve:SITES_FACILES_URL)%'
     paths:
         # point this wherever your images live
         '%kernel.project_dir%/public/img': images

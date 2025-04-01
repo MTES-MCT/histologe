@@ -27,8 +27,13 @@ use Symfony\Contracts\Cache\ItemInterface;
 
 class HomepageController extends AbstractController
 {
-    public function __construct(private readonly CacheInterface $cache)
-    {
+    public function __construct(
+        private readonly CacheInterface $cache,
+        #[Autowire(env: 'SITES_FACILES_URL')]
+        private readonly string $sitesFacilesUrl,
+        #[Autowire(env: 'FEATURE_SITES_FACILES')]
+        private readonly bool $featureSitesFaciles,
+    ) {
     }
 
     #[Route(
@@ -40,7 +45,16 @@ class HomepageController extends AbstractController
         Request $request,
         SignalementRepository $signalementRepository,
         PostalCodeHomeChecker $postalCodeHomeChecker,
+        #[Autowire(param: 'kernel.environment')]
+        string $environment,
     ): Response {
+        if ($this->featureSitesFaciles && 'prod' === $environment) {
+            return $this->redirect($this->sitesFacilesUrl, Response::HTTP_MOVED_PERMANENTLY);
+        }
+        if ($this->featureSitesFaciles) {
+            return $this->redirectToRoute('app_login');
+        }
+
         $stats = $this->cache->get('homepage.stats.array', function (ItemInterface $item) use ($signalementRepository) {
             $item->expiresAfter(900);
 
@@ -137,6 +151,10 @@ class HomepageController extends AbstractController
     )]
     public function about(): Response
     {
+        if ($this->featureSitesFaciles) {
+            return $this->redirect($this->sitesFacilesUrl.'a-propos/qui-sommes-nous/', Response::HTTP_MOVED_PERMANENTLY);
+        }
+
         return $this->render('front/about.html.twig');
     }
 
@@ -147,6 +165,10 @@ class HomepageController extends AbstractController
     )]
     public function obligations_entretien(): Response
     {
+        if ($this->featureSitesFaciles) {
+            return $this->redirect($this->sitesFacilesUrl.'blog/entretien-logement-qui-paye-quoi/', Response::HTTP_MOVED_PERMANENTLY);
+        }
+
         return $this->render('front/obligations_entretien.html.twig', [
             'guide_path' => 'build/files/GUIDE-QUI-REPARE-QUI-ENTRETIENT-Ministere2016-1.pdf',
         ]);
@@ -159,6 +181,10 @@ class HomepageController extends AbstractController
     )]
     public function aides_travaux(): Response
     {
+        if ($this->featureSitesFaciles) {
+            return $this->redirect($this->sitesFacilesUrl.'blog/quelles-aides-pour-faire-des-travaux-dans-mon-logement/', Response::HTTP_MOVED_PERMANENTLY);
+        }
+
         return $this->render('front/aides_travaux.html.twig');
     }
 
@@ -171,6 +197,9 @@ class HomepageController extends AbstractController
     public function contact(
         ParameterBagInterface $parameterBag,
     ): Response {
+        if ($this->featureSitesFaciles) {
+            return $this->redirect($this->sitesFacilesUrl.'une-question/', Response::HTTP_MOVED_PERMANENTLY);
+        }
         $form = $this->createForm(ContactType::class, null, [
             'action' => $this->generateUrl('front_contact_form'),
         ]);
@@ -191,7 +220,10 @@ class HomepageController extends AbstractController
         Request $request,
         ContactFormHandler $contactFormHandler,
         RateLimiterFactory $contactFormLimiter,
-    ): JsonResponse {
+    ): Response {
+        if ($this->featureSitesFaciles) {
+            return $this->redirect($this->sitesFacilesUrl.'une-question/', Response::HTTP_MOVED_PERMANENTLY);
+        }
         $type = 'error';
         $message = null;
         $form = $this->createForm(ContactType::class, null, [
@@ -228,6 +260,10 @@ class HomepageController extends AbstractController
     )]
     public function cguUsager(): Response
     {
+        if ($this->featureSitesFaciles) {
+            return $this->redirect($this->sitesFacilesUrl.'cgu', Response::HTTP_MOVED_PERMANENTLY);
+        }
+
         return $this->render('front/cgu_usagers.html.twig');
     }
 
@@ -238,6 +274,10 @@ class HomepageController extends AbstractController
     )]
     public function cguPro(): Response
     {
+        if ($this->featureSitesFaciles) {
+            return $this->redirect($this->sitesFacilesUrl.'cgu-agents/', Response::HTTP_MOVED_PERMANENTLY);
+        }
+
         return $this->render('front/cgu_agents.html.twig');
     }
 
@@ -248,6 +288,10 @@ class HomepageController extends AbstractController
     )]
     public function politiqueConfidentialite(): Response
     {
+        if ($this->featureSitesFaciles) {
+            return $this->redirect($this->sitesFacilesUrl.'politique-de-confidentialite/', Response::HTTP_MOVED_PERMANENTLY);
+        }
+
         return $this->render('front/politique_de_confidentialite.html.twig');
     }
 
@@ -258,6 +302,10 @@ class HomepageController extends AbstractController
     )]
     public function mentionsLegales(): Response
     {
+        if ($this->featureSitesFaciles) {
+            return $this->redirect($this->sitesFacilesUrl.'mentions-legales/', Response::HTTP_MOVED_PERMANENTLY);
+        }
+
         return $this->render('front/mentions_legales.html.twig');
     }
 
@@ -268,12 +316,20 @@ class HomepageController extends AbstractController
     )]
     public function accessibilite(): Response
     {
+        if ($this->featureSitesFaciles) {
+            return $this->redirect($this->sitesFacilesUrl.'accessibilite/', Response::HTTP_MOVED_PERMANENTLY);
+        }
+
         return $this->render('front/accessibilite.html.twig');
     }
 
     #[Route('/plan-du-site', name: 'plan_du_site')]
     public function planDuSite(): Response
     {
+        if ($this->featureSitesFaciles) {
+            return $this->redirect($this->sitesFacilesUrl, Response::HTTP_MOVED_PERMANENTLY);
+        }
+
         return $this->render('front/plan_du_site.html.twig');
     }
 
@@ -284,6 +340,9 @@ class HomepageController extends AbstractController
         #[Autowire(param: 'host_url')]
         string $hostUrl,
     ) {
+        if ($this->featureSitesFaciles) {
+            return $this->redirect($this->sitesFacilesUrl, Response::HTTP_MOVED_PERMANENTLY);
+        }
         $urls = [];
         $routes = $router->getRouteCollection()->all();
         foreach ($routes as $route) {
