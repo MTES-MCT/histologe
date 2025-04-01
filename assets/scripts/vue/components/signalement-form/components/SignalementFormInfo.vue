@@ -36,7 +36,7 @@ export default defineComponent({
 })
 </script>
 
-<style>
+<style scoped>
 /* TODO : virer les styles quand bonne version dsfr */
   .fr-notice {
     --title-spacing: 0;

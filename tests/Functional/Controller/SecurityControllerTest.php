@@ -31,14 +31,14 @@ class SecurityControllerTest extends WebTestCase
     {
         yield 'Success login with ROLE_API_USER' => [
             'status' => Response::HTTP_OK,
-            'email' => 'api-01@histologe.fr',
-            'password' => 'histologe',
+            'email' => 'api-01@signal-logement.fr',
+            'password' => 'signallogement',
         ];
 
         yield 'Failed login without ROLE_API_USER' => [
             'status' => Response::HTTP_UNAUTHORIZED,
-            'email' => 'admin-territory-13@histologe.fr',
-            'password' => 'histologe',
+            'email' => 'admin-territory-13@signal-logement.fr',
+            'password' => 'signallogement',
         ];
 
         yield 'Failed login with credentials empty' => [
@@ -57,7 +57,7 @@ class SecurityControllerTest extends WebTestCase
         $client = static::createClient();
         /** @var UserRepository $userRepository */
         $userRepository = static::getContainer()->get(UserRepository::class);
-        $user = $userRepository->findOneBy(['email' => 'admin-01@histologe.fr']);
+        $user = $userRepository->findOneBy(['email' => 'admin-01@signal-logement.fr']);
         $client->loginUser($user);
         $client->request('GET', '/_up/check.png/00000000-0000-0000-2022-000000000001');
         /** @var BinaryFileResponse $response */
@@ -71,7 +71,7 @@ class SecurityControllerTest extends WebTestCase
         $client = static::createClient();
         /** @var UserRepository $userRepository */
         $userRepository = static::getContainer()->get(UserRepository::class);
-        $user = $userRepository->findOneBy(['email' => 'admin-01@histologe.fr']);
+        $user = $userRepository->findOneBy(['email' => 'admin-01@signal-logement.fr']);
         $client->loginUser($user);
 
         $client->request('GET', '/_up/file_not_exist.txt/00000000-0000-0000-2022-000000000001');

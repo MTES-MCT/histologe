@@ -32,7 +32,7 @@ class SignalementControllerTest extends WebTestCase
         /** @var UserRepository $userRepository */
         $userRepository = static::getContainer()->get(UserRepository::class);
 
-        $user = $userRepository->findOneBy(['email' => 'admin-01@histologe.fr']);
+        $user = $userRepository->findOneBy(['email' => 'admin-01@signal-logement.fr']);
 
         $client->loginUser($user);
         $client->request('GET', $route);
@@ -95,65 +95,65 @@ class SignalementControllerTest extends WebTestCase
     public function provideRoleSignalementRoutes(): \Generator
     {
         yield 'SA - Nouveau' => [
-            'admin-01@histologe.fr',
+            'admin-01@signal-logement.fr',
             '00000000-0000-0000-2025-000000000001',
             '#signalement-validation-response-form .fr-icon-checkbox-circle-fill',
             'Valider le signalement',
         ];
         yield 'SA - En cours' => [
-            'admin-01@histologe.fr',
+            'admin-01@signal-logement.fr',
             '00000000-0000-0000-2022-000000000001',
             '#test-bouton-cloturer',
             'Clôturer',
         ];
         yield 'SA - Fermé' => [
-            'admin-01@histologe.fr',
+            'admin-01@signal-logement.fr',
             '00000000-0000-0000-2023-000000000001',
             'button.fr-fi-lock-fill.reopen',
             'Rouvrir pour tous',
         ];
 
         yield '13 - RT - Nouveau' => [
-            'admin-territoire-13-01@histologe.fr',
+            'admin-territoire-13-01@signal-logement.fr',
             '00000000-0000-0000-2023-000000000017',
             '#signalement-validation-response-form .fr-icon-checkbox-circle-fill',
             'Valider le signalement',
         ];
         yield '13 - RT - En cours' => [
-            'admin-territoire-13-01@histologe.fr',
+            'admin-territoire-13-01@signal-logement.fr',
             '00000000-0000-0000-2022-000000000001',
             '#signalement-affectation-response-form .fr-icon-checkbox-circle-fill',
             'Accepter',
         ];
 
         yield '01 - RT - Fermé' => [
-            'admin-territoire-01-01@histologe.fr',
+            'admin-territoire-01-01@signal-logement.fr',
             '00000000-0000-0000-2022-000000000002',
             'button.fr-fi-lock-fill.reopen',
             'Rouvrir pour tous',
         ];
 
         yield '38 - RT - Affectation refusée' => [
-            'admin-territoire-38-01@histologe.fr',
+            'admin-territoire-38-01@signal-logement.fr',
             '00000000-0000-0000-2023-000000000022',
             'button.fr-icon-checkbox-circle-fill.reaffect',
             'Annuler le refus',
         ];
         yield '38 - RT - Affectation clôturée' => [
-            'admin-territoire-38-01@histologe.fr',
+            'admin-territoire-38-01@signal-logement.fr',
             '00000000-0000-0000-2023-000000000023',
             'button.fr-fi-lock-fill.reopen',
             'Rouvrir pour DDT 38',
         ];
 
         yield '13 - Agent - Nouveau' => [
-            'user-13-06@histologe.fr',
+            'user-13-06@signal-logement.fr',
             '00000000-0000-0000-2023-000000000010',
             '.fr-icon-checkbox-circle-fill.fr-btn--success',
             'Accepter',
         ];
         yield '13 - Agent - En cours' => [
-            'user-13-01@histologe.fr',
+            'user-13-01@signal-logement.fr',
             '00000000-0000-0000-2023-000000000006',
             '#link-bouton-cloturer',
             'Clôturer',
@@ -165,7 +165,7 @@ class SignalementControllerTest extends WebTestCase
         $client = static::createClient();
         /** @var UserRepository $userRepository */
         $userRepository = static::getContainer()->get(UserRepository::class);
-        $user = $userRepository->findOneBy(['email' => 'admin-01@histologe.fr']);
+        $user = $userRepository->findOneBy(['email' => 'admin-01@signal-logement.fr']);
         $client->loginUser($user);
 
         /** @var SignalementRepository $signalementRepository */
@@ -200,7 +200,7 @@ class SignalementControllerTest extends WebTestCase
 
         /** @var UserRepository $userRepository */
         $userRepository = self::getContainer()->get(UserRepository::class);
-        $user = $userRepository->findOneBy(['email' => 'admin-01@histologe.fr']);
+        $user = $userRepository->findOneBy(['email' => 'admin-01@signal-logement.fr']);
         $client->loginUser($user);
 
         /** @var RouterInterface $router */
@@ -241,7 +241,7 @@ class SignalementControllerTest extends WebTestCase
 
         /** @var UserRepository $userRepository */
         $userRepository = self::getContainer()->get(UserRepository::class);
-        $user = $userRepository->findOneBy(['email' => 'admin-territoire-13-01@histologe.fr']);
+        $user = $userRepository->findOneBy(['email' => 'admin-territoire-13-01@signal-logement.fr']);
         $client->loginUser($user);
 
         /** @var RouterInterface $router */
@@ -282,7 +282,7 @@ class SignalementControllerTest extends WebTestCase
 
         /** @var UserRepository $userRepository */
         $userRepository = self::getContainer()->get(UserRepository::class);
-        $user = $userRepository->findOneBy(['email' => 'admin-partenaire-13-01@histologe.fr']);
+        $user = $userRepository->findOneBy(['email' => 'admin-partenaire-13-01@signal-logement.fr']);
         $client->loginUser($user);
 
         /** @var RouterInterface $router */
@@ -319,7 +319,7 @@ class SignalementControllerTest extends WebTestCase
 
         /** @var UserRepository $userRepository */
         $userRepository = self::getContainer()->get(UserRepository::class);
-        $user = $userRepository->findOneBy(['email' => 'user-13-01@histologe.fr']);
+        $user = $userRepository->findOneBy(['email' => 'user-13-01@signal-logement.fr']);
         $client->loginUser($user);
 
         /** @var RouterInterface $router */
@@ -359,7 +359,7 @@ class SignalementControllerTest extends WebTestCase
 
         /** @var UserRepository $userRepository */
         $userRepository = self::getContainer()->get(UserRepository::class);
-        $user = $userRepository->findOneBy(['email' => 'user-13-01@histologe.fr']);
+        $user = $userRepository->findOneBy(['email' => 'user-13-01@signal-logement.fr']);
         $client->loginUser($user);
 
         /** @var RouterInterface $router */
@@ -391,7 +391,7 @@ class SignalementControllerTest extends WebTestCase
 
         /** @var UserRepository $userRepository */
         $userRepository = self::getContainer()->get(UserRepository::class);
-        $user = $userRepository->findOneBy(['email' => 'admin-01@histologe.fr']);
+        $user = $userRepository->findOneBy(['email' => 'admin-01@signal-logement.fr']);
         $client->loginUser($user);
         $uuid = $signalement->getUuid();
         $csrfToken = $this->generateCsrfToken(
@@ -419,7 +419,7 @@ class SignalementControllerTest extends WebTestCase
         $client = static::createClient();
         /** @var UserRepository $userRepository */
         $userRepository = self::getContainer()->get(UserRepository::class);
-        $user = $userRepository->findOneBy(['email' => 'admin-01@histologe.fr']);
+        $user = $userRepository->findOneBy(['email' => 'admin-01@signal-logement.fr']);
         $client->loginUser($user);
 
         /** @var SignalementRepository $signalementRepository */

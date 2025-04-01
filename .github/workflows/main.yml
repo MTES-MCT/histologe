@@ -1,5 +1,5 @@
 # https://help.github.com/en/actions
-name: Histologe CI
+name: Signal-logement CI
 on:
   push:
     branches:
@@ -13,15 +13,16 @@ on:
     - cron: '0 7 * * *'
 
 env:
-  HISTOLOGE_URL: http://localhost:8080
+  APP_URL: http://localhost:8080
   CLAMAV_SOCKET: '/tmp/clamd.socket'
   CLAMAV_HOST: 127.0.0.1
   CLAMAV_PORT: 3310
   FEATURE_MULTI_TERRITORIES: 1
   FEATURE_BO_SIGNALEMENT_CREATE: 1
+  PLATFORM_NAME: 'Signal Logement'
 jobs:
   code-quality:
-    name: Histologe (PHP ${{ matrix.php-versions }})
+    name: Signal-logement (PHP ${{ matrix.php-versions }})
     # https://hub.docker.com/_/ubuntu/
     runs-on: ubuntu-22.04
     services:
@@ -30,8 +31,8 @@ jobs:
         image: mysql:8.0
         env:
           MYSQL_ALLOW_EMPTY_PASSWORD: false
-          MYSQL_ROOT_PASSWORD: histologe
-          MYSQL_DATABASE: histologe_db
+          MYSQL_ROOT_PASSWORD: signallogement
+          MYSQL_DATABASE: signal_logement_db
         ports:
           - 3306:3306
         options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
@@ -147,10 +148,10 @@ jobs:
           php bin/console --env=test doctrine:fixtures:load --no-interaction
         env:
           APP_SECRET: ${{ secrets.APP_SECRET }}
-          DATABASE_URL: mysql://root:histologe@127.0.0.1:${{ job.services.mysql.ports['3306'] }}/histologe_db
-          NOTIFICATIONS_EMAIL: notifications@histologe.beta.gouv.fr
-          CONTACT_EMAIL: formulaire-contact@histologe.beta.gouv.fr
-          HISTOLOGE_URL: http://localhost:8080
+          DATABASE_URL: mysql://root:signallogement@127.0.0.1:${{ job.services.mysql.ports['3306'] }}/signal_logement_db
+          NOTIFICATIONS_EMAIL: notifications@signal-logement.beta.gouv.fr
+          CONTACT_EMAIL: formulaire-contact@signal-logement.beta.gouv.fr
+          APP_URL: http://localhost:8080
           SERVER_NAME: localhost:8080
           MAILER_DSN: ${{ secrets.MAILER_DSN_CI }}
           MAIL_ENABLE: 1
@@ -161,11 +162,11 @@ jobs:
           ./vendor/bin/phpunit --stop-on-failure --testdox -d memory_limit=-1
         env:
           APP_SECRET: ${{ secrets.APP_SECRET }}
-          DATABASE_URL: mysql://root:histologe@127.0.0.1:${{ job.services.mysql.ports['3306'] }}/histologe_db
-          ADMIN_EMAIL: support@histologe.beta.gouv.fr
-          NOTIFICATIONS_EMAIL: notifications@histologe.beta.gouv.fr
-          CONTACT_EMAIL: formulaire-contact@histologe.beta.gouv.fr
-          HISTOLOGE_URL: http://localhost:8080
+          DATABASE_URL: mysql://root:signallogement@127.0.0.1:${{ job.services.mysql.ports['3306'] }}/signal_logement_db
+          ADMIN_EMAIL: support@signal-logement.beta.gouv.fr
+          NOTIFICATIONS_EMAIL: notifications@signal-logement.beta.gouv.fr
+          CONTACT_EMAIL: formulaire-contact@signal-logement.beta.gouv.fr
+          APP_URL: http://localhost:8080
           SERVER_NAME: localhost:8080
           MAILER_DSN: ${{ secrets.MAILER_DSN_CI }}
           CRON_ENABLE: 1

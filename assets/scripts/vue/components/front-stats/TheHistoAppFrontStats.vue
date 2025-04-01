@@ -5,7 +5,7 @@
     :data-ajaxurl="sharedProps.ajaxurl"
     >
     <div class="fr-container">
-      <h1>Histologe en quelques chiffres</h1>
+      <h1>Signal Logement en quelques chiffres</h1>
     </div>
     <div v-if="loadingInit" class="loading fr-m-10w">
       Initialisation des statistiques...

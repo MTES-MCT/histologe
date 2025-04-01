@@ -14,7 +14,7 @@ class WidgetSettingsControllerTest extends WebTestCase
 
         /** @var UserRepository $userRepository */
         $userRepository = self::getContainer()->get(UserRepository::class);
-        $user = $userRepository->findOneBy(['email' => 'admin-territoire-13-01@histologe.fr']);
+        $user = $userRepository->findOneBy(['email' => 'admin-territoire-13-01@signal-logement.fr']);
         $client->loginUser($user);
 
         $router = self::getContainer()->get(RouterInterface::class);
@@ -34,7 +34,7 @@ class WidgetSettingsControllerTest extends WebTestCase
 
         /** @var UserRepository $userRepository */
         $userRepository = self::getContainer()->get(UserRepository::class);
-        $user = $userRepository->findOneBy(['email' => 'admin-territoire-13-01@histologe.fr']);
+        $user = $userRepository->findOneBy(['email' => 'admin-territoire-13-01@signal-logement.fr']);
         $client->loginUser($user);
 
         /** @var RouterInterface $router */

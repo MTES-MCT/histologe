@@ -33,7 +33,7 @@ class AccountNewTerritoryMailer extends AbstractNotificationMailer
     {
         $user = $notificationMail->getUser();
         if (User::STATUS_ACTIVE === $user->getStatut()) {
-            $btntext = 'Me connecter à Histologe';
+            $btntext = 'Me connecter à Signal Logement';
             $link = $this->generateLink('back_dashboard', []);
         } else {
             $this->userManager->loadUserTokenForUser($user);

@@ -1,412 +1,412 @@
 users:
   -
-    email: api-01@histologe.fr
+    email: api-01@signal-logement.fr
     roles: "[\"ROLE_API_USER\"]"
     partner: "Partenaire 13-01"
     statut: 1
     is_mailing_active: 0
   -
-    email: api-02@histologe.fr
+    email: api-02@signal-logement.fr
     roles: "[\"ROLE_API_USER\"]"
     partner: "Alès Agglomération"
     statut: 1
     is_mailing_active: 0
   -
-    email: admin-01@histologe.fr
+    email: admin-01@signal-logement.fr
     roles: "[\"ROLE_ADMIN\"]"
-    partner: "Administrateurs Histologe ALL"
+    partner: "Administrateurs Signal-logement"
     statut: 1
     is_mailing_active: 0
   -
-    email: admin-02@histologe.fr
+    email: admin-02@signal-logement.fr
     roles: "[\"ROLE_ADMIN\"]"
-    partner: "Administrateurs Histologe ALL"
+    partner: "Administrateurs Signal-logement"
     statut: 2
     is_mailing_active: 1
   -
-    email: admin-03@histologe.fr
+    email: admin-03@signal-logement.fr
     roles: "[\"ROLE_ADMIN\"]"
-    partner: "Administrateurs Histologe ALL"
+    partner: "Administrateurs Signal-logement"
     statut: 1
     is_mailing_active: 0
   -
-    email: admin-territoire-13-01@histologe.fr
+    email: admin-territoire-13-01@signal-logement.fr
     roles: "[\"ROLE_ADMIN_TERRITORY\"]"
     partner: "Partenaire 13-01"
     statut: 1
     is_mailing_active: 1
   -
-    email: admin-territoire-13-02@histologe.fr
+    email: admin-territoire-13-02@signal-logement.fr
     roles: "[\"ROLE_ADMIN_TERRITORY\"]"
     partner: "Partenaire 13-01"
     statut: 1
     is_mailing_active: 0
   -
-    email: admin-territoire-01-01@histologe.fr
+    email: admin-territoire-01-01@signal-logement.fr
     roles: "[\"ROLE_ADMIN_TERRITORY\"]"
     partner: "Partenaire 01-01"
     statut: 1
     is_mailing_active: 0
   -
-    email: admin-territoire-63-01@histologe.fr
+    email: admin-territoire-63-01@signal-logement.fr
     roles: "[\"ROLE_ADMIN_TERRITORY\"]"
     partner: "Partenaire 63-01"
     statut: 1
     is_mailing_active: 1
   -
-    email: admin-territoire-89-01@histologe.fr
+    email: admin-territoire-89-01@signal-logement.fr
     roles: "[\"ROLE_ADMIN_TERRITORY\"]"
     partner: "DDT 89"
     statut: 1
     is_mailing_active: 1
   -
-    email: admin-territoire-06-01@histologe.fr
+    email: admin-territoire-06-01@signal-logement.fr
     roles: "[\"ROLE_ADMIN_TERRITORY\"]"
     partner: "Partenaire 06-01"
     statut: 1
     is_mailing_active: 1
   -
-    email: admin-territoire-59-01@histologe.fr
+    email: admin-territoire-59-01@signal-logement.fr
     roles: "[\"ROLE_ADMIN_TERRITORY\"]"
     partner: "Partenaire 59-01"
     statut: 1
     is_mailing_active: 1
   -
-    email: admin-territoire-69-mdl@histologe.fr
+    email: admin-territoire-69-mdl@signal-logement.fr
     roles: "[\"ROLE_ADMIN_TERRITORY\"]"
     partner: "EMHA - Métropole de Lyon"
     statut: 1
     is_mailing_active: 1
   -
-    email: admin-territoire-69-cor@histologe.fr
+    email: admin-territoire-69-cor@signal-logement.fr
     roles: "[\"ROLE_ADMIN_TERRITORY\"]"
     partner: "COR"
     statut: 1
     is_mailing_active: 1
   -
-    email: user-69205-mdl@histologe.fr
+    email: user-69205-mdl@signal-logement.fr
     roles: "[\"ROLE_USER_PARTNER\"]"
     partner: "Commune 69-03 MDL"
     statut: 1
     is_mailing_active: 1
   -
-    email: user-69054-cor@histologe.fr
+    email: user-69054-cor@signal-logement.fr
     roles: "[\"ROLE_USER_PARTNER\"]"
     partner: "Commune 69-04 COR"
     statut: 1
     is_mailing_active: 1
   -
-    email: user-69-05@histologe.fr
+    email: user-69-05@signal-logement.fr
     roles: "[\"ROLE_USER_PARTNER\"]"
     partner: "Partenaire 69-05"
     statut: 1
     is_mailing_active: 1
   -
-    email: user-69-06@histologe.fr
+    email: user-69-06@signal-logement.fr
     roles: "[\"ROLE_USER_PARTNER\"]"
     partner: "Partenaire 69-06"
     statut: 1
     is_mailing_active: 1
   -
-    email: admin-partenaire-13-01@histologe.fr
+    email: admin-partenaire-13-01@signal-logement.fr
     roles: "[\"ROLE_ADMIN_PARTNER\"]"
     partner: "Partenaire 13-01"
     statut: 1
     is_mailing_active: 1
   -
-    email: admin-partenaire-01-01@histologe.fr
+    email: admin-partenaire-01-01@signal-logement.fr
     roles: "[\"ROLE_ADMIN_PARTNER\"]"
     partner: "Partenaire 01-01"
     statut: 1
     is_mailing_active: 0
   -
-    email: user-13-01@histologe.fr
+    email: user-13-01@signal-logement.fr
     roles: "[\"ROLE_USER_PARTNER\"]"
     partner: "Partenaire 13-02"
     statut: 1
     is_mailing_active: 1
     last_login_at: '-1 year'
   -
-    email: user-13-02@histologe.fr
+    email: user-13-02@signal-logement.fr
     roles: "[\"ROLE_USER_PARTNER\"]"
     partner: "Partenaire 13-03"
     statut: 1
     is_mailing_active: 1
     last_login_at: '-2 year'
   -
-    email: user-13-03@histologe.fr
+    email: user-13-03@signal-logement.fr
     roles: "[\"ROLE_USER_PARTNER\"]"
     partner: "Partenaire 13-04"
     statut: 0
     is_mailing_active: 1
   -
-    email: user-13-04@histologe.fr
+    email: user-13-04@signal-logement.fr
     roles: "[\"ROLE_USER_PARTNER\"]"
     partner: "Partenaire 13-03"
     statut: 0
     is_mailing_active: 0
   -
-    email: user-13-05@histologe.fr
+    email: user-13-05@signal-logement.fr
     roles: "[\"ROLE_USER_PARTNER\"]"
     partner: "Partenaire 13-05 ESABORA SCHS"
     statut: 1
     is_mailing_active: 1
   -
-    email: user-13-06@histologe.fr
+    email: user-13-06@signal-logement.fr
     roles: "[\"ROLE_USER_PARTNER\"]"
     partner: "Partenaire 13-06 ESABORA ARS"
     statut: 1
     is_mailing_active: 1
   -
-    email: user-13-07@histologe.fr
+    email: user-13-07@signal-logement.fr
     roles: "[\"ROLE_USER_PARTNER\"]"
     partner: "Partenaire 13-07"
     statut: 2
     is_mailing_active: 1
   -
-    email: user-13-08@histologe.fr
+    email: user-13-08@signal-logement.fr
     roles: "[\"ROLE_USER_PARTNER\"]"
     partner: "Partenaire 13-01"
     statut: 2
     is_mailing_active: 1
     anonymized: true
   -
-    email: user-13-09@histologe.fr
+    email: user-13-09@signal-logement.fr
     roles: "[\"ROLE_USER_PARTNER\"]"
     partner: "Partenaire 13-01"
     statut: 2
     is_mailing_active: 1
     last_login_at: '-2 year'
   -
-    email: user-13-10@histologe.fr
+    email: user-13-10@signal-logement.fr
     roles: "[\"ROLE_USER_PARTNER\"]"
     partner: "Partenaire 13-08"
     statut: 1
     is_mailing_active: 1
   -
-    email: user-13-11@histologe.fr
+    email: user-13-11@signal-logement.fr
     roles: "[\"ROLE_USER_PARTNER\"]"
     partner: "Partenaire 13-08"
     statut: 0
     is_mailing_active: 1
   -
-    email: user-13-12@histologe.fr
+    email: user-13-12@signal-logement.fr
     roles: "[\"ROLE_USER_PARTNER\"]"
     partner: "Partenaire 13-09 Non Notifiable"
     statut: 1
     is_mailing_active: 0
   -
-    email: user-13-13@histologe.fr
+    email: user-13-13@signal-logement.fr
     roles: "[\"ROLE_USER_PARTNER\"]"
     partner: "Partenaire 13-09 Non Notifiable"
     statut: 0
     is_mailing_active: 0
   -
-    email: user-2A-01@histologe.fr
+    email: user-2A-01@signal-logement.fr
     roles: "[\"ROLE_USER_PARTNER\"]"
     partner: "Partenaire 2A-01"
     statut: 0
     is_mailing_active: 0
   -
-    email: user-974-01@histologe.fr
+    email: user-974-01@signal-logement.fr
     roles: "[\"ROLE_USER_PARTNER\"]"
     partner: "Partenaire 974-01"
     statut: 2
     is_mailing_active: 1
   -
-    email: user-01-01@histologe.fr
+    email: user-01-01@signal-logement.fr
     roles: "[\"ROLE_USER_PARTNER\"]"
     partner: "Partenaire 01-04"
     statut: 1
     is_mailing_active: 0
   -
-    email: user-01-02@histologe.fr
+    email: user-01-02@signal-logement.fr
     roles: "[\"ROLE_USER_PARTNER\"]"
     partner: "Partenaire 01-03"
     statut: 0
     is_mailing_active: 1
     token: 00000000-0000-0000-0000-000000000001
   -
-    email: user-01-03@histologe.fr
+    email: user-01-03@signal-logement.fr
     roles: "[\"ROLE_USER_PARTNER\"]"
     partner: "Partenaire 01-01"
     statut: 1
     is_mailing_active: 1
   -
-    email: user-01-04@histologe.fr
+    email: user-01-04@signal-logement.fr
     roles: "[\"ROLE_USER_PARTNER\"]"
     partner: "Partenaire 01-03"
     statut: 0
     is_mailing_active: 1
   -
-    email: user-01-05@histologe.fr
+    email: user-01-05@signal-logement.fr
     roles: "[\"ROLE_USER_PARTNER\"]"
     partner: "Partenaire 01-03"
     statut: 0
     is_mailing_active: 1
   -
-    email: user-01-06@histologe.fr
+    email: user-01-06@signal-logement.fr
     roles: "[\"ROLE_USER_PARTNER\"]"
     partner: "Partenaire 01-02"
     statut: 1
     is_mailing_active: 0
   -
-    email: user-01-06@histologe.fr
+    email: user-01-06@signal-logement.fr
     roles: "[\"ROLE_USER_PARTNER\"]"
     statut: 2
     is_mailing_active: 0
   -
-    email: user-01-07@histologe.fr
+    email: user-01-07@signal-logement.fr
     roles: "[\"ROLE_USER_PARTNER\"]"
     partner: "Partenaire 01-03"
     statut: 2
     is_mailing_active: 0
   -
-    email: user-01-08@histologe.fr
+    email: user-01-08@signal-logement.fr
     roles: "[\"ROLE_USER_PARTNER\"]"
     partner: "Partenaire 01-02"
     statut: 2
     is_mailing_active: 0
   -
-    email: user-01-09@histologe.fr
+    email: user-01-09@signal-logement.fr
     roles: "[\"ROLE_USER_PARTNER\"]"
     partner: "Partenaire 01-03"
     statut: 2
     is_mailing_active: 0
   -
-    email: user-01-10@histologe.fr
+    email: user-01-10@signal-logement.fr
     roles: "[\"ROLE_USER_PARTNER\"]"
     partner: "Partenaire 01-03"
     statut: 2
     is_mailing_active: 0
   -
-    email: user-63-01@histologe.fr
+    email: user-63-01@signal-logement.fr
     roles: "[\"ROLE_USER_PARTNER\"]"
     partner: "ADIL 63"
     statut: 1
     is_mailing_active: 0
   -
-    email: user-63-02@histologe.fr
+    email: user-63-02@signal-logement.fr
     roles: "[\"ROLE_USER_PARTNER\"]"
     partner: "ALF (OPAH)"
     statut: 0
     is_mailing_active: 1
   -
-    email: user-63-03@histologe.fr
+    email: user-63-03@signal-logement.fr
     roles: "[\"ROLE_USER_PARTNER\"]"
     partner: "API"
     statut: 1
     is_mailing_active: 1
   -
-    email: user-63-04@histologe.fr
+    email: user-63-04@signal-logement.fr
     roles: "[\"ROLE_USER_PARTNER\"]"
     partner: "CAF 63"
     statut: 0
     is_mailing_active: 1
   -
-    email: user-89-01@histologe.fr
+    email: user-89-01@signal-logement.fr
     roles: "[\"ROLE_USER_PARTNER\"]"
     partner: "ADIL 89"
     statut: 1
     is_mailing_active: 0
   -
-    email: user-89-02@histologe.fr
+    email: user-89-02@signal-logement.fr
     roles: "[\"ROLE_USER_PARTNER\"]"
     partner: "CAF 89"
     statut: 1
     is_mailing_active: 0
   -
-    email: user-89-03@histologe.fr
+    email: user-89-03@signal-logement.fr
     roles: "[\"ROLE_USER_PARTNER\"]"
     partner: "ARS 89"
     statut: 1
     is_mailing_active: 0
   -
-    email: user-89-04@histologe.fr
+    email: user-89-04@signal-logement.fr
     roles: "[\"ROLE_USER_PARTNER\"]"
     partner: "Mairie de Tonnerre"
     statut: 1
     is_mailing_active: 0
   -
-    email: user-unlinked@histologe.fr
+    email: user-unlinked@signal-logement.fr
     roles: "[\"ROLE_USER_PARTNER\"]"
     statut: 1
     is_mailing_active: 0
   -
-    email: admin-territoire-38-01@histologe.fr
+    email: admin-territoire-38-01@signal-logement.fr
     roles: "[\"ROLE_ADMIN_TERRITORY\"]"
     partner: "DDT 38"
     statut: 1
     is_mailing_active: 0
   -
-    email: user-38-01@histologe.fr
+    email: user-38-01@signal-logement.fr
     roles: "[\"ROLE_USER_PARTNER\"]"
     partner: "Partenaire 38-02"
     statut: 1
     is_mailing_active: 0
   -
-    email: admin-territoire-62-01@histologe.fr
+    email: admin-territoire-62-01@signal-logement.fr
     roles: "[\"ROLE_ADMIN_TERRITORY\"]"
     partner: "Partenaire 62-01"
     statut: 1
     is_mailing_active: 1
   -
-    email: user-62-01@histologe.fr
+    email: user-62-01@signal-logement.fr
     roles: "[\"ROLE_USER_PARTNER\"]"
     partner: "Partenaire 62-01"
     statut: 1
     is_mailing_active: 1
   -
-    email: user-93-01@histologe.fr
+    email: user-93-01@signal-logement.fr
     roles: "[\"ROLE_USER_PARTNER\"]"
     partner: "Mairie de Saint-Denis"
     statut: 1
     is_mailing_active: 1
   -
-    email: usager-01@histologe.fr
+    email: usager-01@signal-logement.fr
     roles: "[\"ROLE_USAGER\"]"
     statut: 0
     is_mailing_active: 0
     last_login_at: '-5 year'
   -
-    email: admin-territoire-972-01@histologe.fr
+    email: admin-territoire-972-01@signal-logement.fr
     roles: "[\"ROLE_ADMIN_TERRITORY\"]"
     partner: "DDT_M 972"
     statut: 1
     is_mailing_active: 1
   -
-    email: user-972-01@histologe.fr
+    email: user-972-01@signal-logement.fr
     roles: "[\"ROLE_USER_PARTNER\"]"
     partner: "DDT_M 972"
     statut: 1
     is_mailing_active: 1
   -
-    email: user-972-02@histologe.fr
+    email: user-972-02@signal-logement.fr
     roles: "[\"ROLE_USER_PARTNER\"]"
     partner: "ARS 972"
     statut: 1
     is_mailing_active: 1
   -
-    email: admin-territoire-34-01@histologe.fr
+    email: admin-territoire-34-01@signal-logement.fr
     roles: "[\"ROLE_ADMIN_TERRITORY\"]"
     partner: "Partenaire Zone Agde"
     statut: 1
     is_mailing_active: 1
   -
-    email: admin-territoire-34-02@histologe.fr
+    email: admin-territoire-34-02@signal-logement.fr
     roles: "[\"ROLE_ADMIN_TERRITORY\"]"
     partner: "Partenaire Hors Zone Agde"
     statut: 1
     is_mailing_active: 1
   -
-    email: user-partenaire-34-01@histologe.fr
+    email: user-partenaire-34-01@signal-logement.fr
     roles: "[\"ROLE_USER_PARTNER\"]"
     partner: "Partenaire Zone Agde"
     statut: 1
     is_mailing_active: 1
     archiving_scheduled: 1
   -
-    email: admin-partenaire-multi-ter-13-01@histologe.fr
+    email: admin-partenaire-multi-ter-13-01@signal-logement.fr
     roles: "[\"ROLE_ADMIN_PARTNER\"]"
     partners: 
       - "Partenaire 13-01"
@@ -414,7 +414,7 @@ users:
     statut: 1
     is_mailing_active: 1
   -
-    email: user-partenaire-multi-ter-34-30@histologe.fr
+    email: user-partenaire-multi-ter-34-30@signal-logement.fr
     roles: "[\"ROLE_USER_PARTNER\"]"
     partners: 
       - "CAF 34"
@@ -422,7 +422,7 @@ users:
     statut: 1
     is_mailing_active: 1
   -
-    email: user-partenaire-30@histologe.fr
+    email: user-partenaire-30@signal-logement.fr
     roles: "[\"ROLE_USER_PARTNER\"]"
     partners: 
       - "CAF 30"
@@ -430,25 +430,25 @@ users:
     is_mailing_active: 1
     has_permission_affectation: 1
   -
-    email: admin-territoire-44-01@histologe.fr
+    email: admin-territoire-44-01@signal-logement.fr
     roles: "[\"ROLE_ADMIN_TERRITORY\"]"
     partner: "DDT Loire-Atlantique"
     statut: 1
     is_mailing_active: 1
   -
-    email: user-44-02@histologe.fr
+    email: user-44-02@signal-logement.fr
     roles: "[\"ROLE_USER_PARTNER\"]"
     partner: "SDIS 44"
     statut: 1
     is_mailing_active: 1
   -
-    email: user-44-03@histologe.fr
+    email: user-44-03@signal-logement.fr
     roles: "[\"ROLE_USER_PARTNER\"]"
     partner: "Mairie de Saint-Mars du Désert"
     statut: 1
     is_mailing_active: 1
   -
-    email: user-44-04@histologe.fr
+    email: user-44-04@signal-logement.fr
     roles: "[\"ROLE_USER_PARTNER\"]"
     partner: "Cocoland"
     statut: 1

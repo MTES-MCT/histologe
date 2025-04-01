@@ -10,6 +10,7 @@ use App\Entity\Enum\QualificationStatus;
 use App\Entity\Enum\SignalementStatus;
 use App\Entity\Enum\VisiteStatus;
 use App\Entity\Intervention;
+use App\Entity\Partner;
 use App\Entity\Suivi;
 use App\Entity\User;
 use App\Repository\BailleurRepository;
@@ -462,7 +463,7 @@ class SearchFilter
     private function addFilterTypeDernierSuivi(QueryBuilder $qb, string $typeDernierSuivi): QueryBuilder
     {
         if ('automatique' === $typeDernierSuivi) {
-            $values = ['Administrateurs Histologe ALL', 'MESSAGE AUTOMATIQUE'];
+            $values = [Partner::DEFAULT_PARTNER, 'MESSAGE AUTOMATIQUE'];
             $qb
                 ->andWhere('s.lastSuiviBy IN (:typeDernierSuivi)')
                 ->setParameter('typeDernierSuivi', $values);
@@ -472,7 +473,7 @@ class SearchFilter
                 ->andWhere('s.lastSuiviBy IN (:typeDernierSuivi)')
                 ->setParameter('typeDernierSuivi', $values);
         } else {
-            $values = ['DECLARANT', 'OCCUPANT', 'Aucun', 'Administrateurs Histologe ALL', 'MESSAGE AUTOMATIQUE'];
+            $values = ['DECLARANT', 'OCCUPANT', 'Aucun', Partner::DEFAULT_PARTNER, 'MESSAGE AUTOMATIQUE'];
             $qb
                 ->andWhere('s.lastSuiviBy NOT IN (:typeDernierSuivi)')
                 ->setParameter('typeDernierSuivi', $values);

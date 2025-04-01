@@ -31,7 +31,7 @@ class PartnerControllerTest extends WebTestCase
         $this->faker = Factory::create();
         $this->partnerRepository = static::getContainer()->get(PartnerRepository::class);
 
-        $user = $this->userRepository->findOneBy(['email' => 'admin-territoire-13-01@histologe.fr']);
+        $user = $this->userRepository->findOneBy(['email' => 'admin-territoire-13-01@signal-logement.fr']);
         $this->client->loginUser($user);
     }
 
@@ -149,7 +149,7 @@ class PartnerControllerTest extends WebTestCase
         $this->assertTrue($partner->getIsArchive());
         $this->assertStringStartsWith($mailBeforArchive.User::SUFFIXE_ARCHIVED, $partner->getEmail());
         foreach ($partnerUsers as $user) {
-            if ('admin-partenaire-multi-ter-13-01@histologe.fr' === $user->getEmail()) {
+            if ('admin-partenaire-multi-ter-13-01@signal-logement.fr' === $user->getEmail()) {
                 $this->assertEquals(User::STATUS_ACTIVE, $user->getStatut());
                 $this->assertCount(1, $user->getPartners());
             } else {
@@ -204,16 +204,16 @@ class PartnerControllerTest extends WebTestCase
     public function provideAgentEmailToAddOnPartner(): \Generator
     {
         yield 'Invalid email' => ['nanana', 'L&#039;adresse e-mail est invalide.'];
-        yield 'Partner email already exists' => ['partenaire-13-02@histologe.fr', 'Un partenaire existe déjà avec cette adresse e-mail.'];
-        yield 'Email already exists on same territory' => ['user-13-01@histologe.fr', 'Un utilisateur avec cette adresse e-mail existe déja sur le territoire.'];
-        yield 'Email existing on RT' => ['admin-territoire-01-01@histologe.fr', 'Un utilisateur Responsable Territoire existe déjà avec cette adresse e-mail.'];
-        yield 'Email existing on SA' => ['admin-01@histologe.fr', 'Un utilisateur Super Admin existe déjà avec cette adresse e-mail.'];
-        yield 'Email existing with permission affectation' => ['user-partenaire-30@histologe.fr', 'Un utilisateur ayant les droits d&#039;affectation existe déjà avec cette adresse e-mail.'];
-        yield 'Email existing for non-admin API user' => ['api-02@histologe.fr', 'Un utilisateur API existe déjà avec cette adresse e-mail.'];
+        yield 'Partner email already exists' => ['partenaire-13-02@signal-logement.fr', 'Un partenaire existe déjà avec cette adresse e-mail.'];
+        yield 'Email already exists on same territory' => ['user-13-01@signal-logement.fr', 'Un utilisateur avec cette adresse e-mail existe déja sur le territoire.'];
+        yield 'Email existing on RT' => ['admin-territoire-01-01@signal-logement.fr', 'Un utilisateur Responsable Territoire existe déjà avec cette adresse e-mail.'];
+        yield 'Email existing on SA' => ['admin-01@signal-logement.fr', 'Un utilisateur Super Admin existe déjà avec cette adresse e-mail.'];
+        yield 'Email existing with permission affectation' => ['user-partenaire-30@signal-logement.fr', 'Un utilisateur ayant les droits d&#039;affectation existe déjà avec cette adresse e-mail.'];
+        yield 'Email existing for non-admin API user' => ['api-02@signal-logement.fr', 'Un utilisateur API existe déjà avec cette adresse e-mail.'];
 
         yield 'New user' => ['new.email@test.com', 'redirect'];
-        yield 'New user from usager' => ['usager-01@histologe.fr', 'redirect'];
-        yield 'Email ok to multi territories' => ['user-44-02@histologe.fr', 'Ce compte agent existe déjà dans :'];
+        yield 'New user from usager' => ['usager-01@signal-logement.fr', 'redirect'];
+        yield 'Email ok to multi territories' => ['user-44-02@signal-logement.fr', 'Ce compte agent existe déjà dans :'];
     }
 
     /**
@@ -255,16 +255,16 @@ class PartnerControllerTest extends WebTestCase
     public function provideMultiTerAgentEmailToAddOnPartner(): \Generator
     {
         yield 'Invalid email' => ['nanana', 'L&#039;adresse e-mail est invalide.'];
-        yield 'Partner email already exists' => ['partenaire-13-02@histologe.fr', 'Un partenaire existe déjà avec cette adresse e-mail.'];
-        yield 'Email already exists on same territory' => ['user-13-01@histologe.fr', 'Un utilisateur avec cette adresse e-mail existe déja sur le territoire.'];
-        yield 'Email existing on RT' => ['admin-territoire-01-01@histologe.fr', 'Un utilisateur Responsable Territoire existe déjà avec cette adresse e-mail.'];
-        yield 'Email existing on SA' => ['admin-01@histologe.fr', 'Un utilisateur Super Admin existe déjà avec cette adresse e-mail.'];
-        yield 'Email existing with permission affectation' => ['user-partenaire-30@histologe.fr', 'Un utilisateur ayant les droits d&#039;affectation existe déjà avec cette adresse e-mail.'];
-        yield 'Email existing for non-admin API user' => ['api-02@histologe.fr', 'Un utilisateur API existe déjà avec cette adresse e-mail.'];
+        yield 'Partner email already exists' => ['partenaire-13-02@signal-logement.fr', 'Un partenaire existe déjà avec cette adresse e-mail.'];
+        yield 'Email already exists on same territory' => ['user-13-01@signal-logement.fr', 'Un utilisateur avec cette adresse e-mail existe déja sur le territoire.'];
+        yield 'Email existing on RT' => ['admin-territoire-01-01@signal-logement.fr', 'Un utilisateur Responsable Territoire existe déjà avec cette adresse e-mail.'];
+        yield 'Email existing on SA' => ['admin-01@signal-logement.fr', 'Un utilisateur Super Admin existe déjà avec cette adresse e-mail.'];
+        yield 'Email existing with permission affectation' => ['user-partenaire-30@signal-logement.fr', 'Un utilisateur ayant les droits d&#039;affectation existe déjà avec cette adresse e-mail.'];
+        yield 'Email existing for non-admin API user' => ['api-02@signal-logement.fr', 'Un utilisateur API existe déjà avec cette adresse e-mail.'];
 
         yield 'New user' => ['new.email@test.com', 'Agent introuvable avec cette adresse e-mail.'];
-        yield 'New user from usager' => ['usager-01@histologe.fr', 'Agent introuvable avec cette adresse e-mail.'];
-        yield 'Email ok to multi territories' => ['user-44-02@histologe.fr', 'redirect'];
+        yield 'New user from usager' => ['usager-01@signal-logement.fr', 'Agent introuvable avec cette adresse e-mail.'];
+        yield 'Email ok to multi territories' => ['user-44-02@signal-logement.fr', 'redirect'];
     }
 
     public function testAddUserToPartner()
@@ -286,7 +286,7 @@ class PartnerControllerTest extends WebTestCase
                     'roles' => 'ROLE_USER_PARTNER',
                     'prenom' => 'John',
                     'nom' => 'Doe',
-                    'email' => 'ajout.partner@histologe.fr',
+                    'email' => 'ajout.partner@signal-logement.fr',
                     'isMailingActive' => false,
                 ],
                 '_token' => $this->generateCsrfToken($this->client, 'partner_user_create'),
@@ -300,7 +300,7 @@ class PartnerControllerTest extends WebTestCase
     public function testEditRoleOfUserOfPartner()
     {
         /** @var User $partnerUser */
-        $partnerUser = $this->userRepository->findOneBy(['email' => 'user-13-01@histologe.fr']);
+        $partnerUser = $this->userRepository->findOneBy(['email' => 'user-13-01@signal-logement.fr']);
         $partner = $partnerUser->getPartners()->first();
 
         $route = $this->router->generate('back_partner_user_edit', ['partner' => $partner->getId(), 'user' => $partnerUser->getId()]);
@@ -312,7 +312,7 @@ class PartnerControllerTest extends WebTestCase
                     'role' => 'ROLE_ADMIN_TERRITORY',
                     'prenom' => 'John',
                     'nom' => 'Doe',
-                    'email' => 'user-13-01@histologe.fr',
+                    'email' => 'user-13-01@signal-logement.fr',
                     'isMailingActive' => 0,
                     '_token' => $this->generateCsrfToken($this->client, 'user_partner'),
                 ],
@@ -328,7 +328,7 @@ class PartnerControllerTest extends WebTestCase
     public function testEditUserOfPartner(string $email, string $expected, int $nbEmailSent)
     {
         /** @var User $partnerUser */
-        $partnerUser = $this->userRepository->findOneBy(['email' => 'user-13-01@histologe.fr']);
+        $partnerUser = $this->userRepository->findOneBy(['email' => 'user-13-01@signal-logement.fr']);
         $partner = $partnerUser->getPartners()->first();
 
         $route = $this->router->generate('back_partner_user_edit', ['partner' => $partner->getId(), 'user' => $partnerUser->getId()]);
@@ -364,10 +364,10 @@ class PartnerControllerTest extends WebTestCase
     public function provideAgentEmailToEdit(): \Generator
     {
         yield 'Invalid email' => ['nanana', 'L&#039;adresse e-mail est invalide.', 0];
-        yield 'Partner email already exists' => ['partenaire-13-02@histologe.fr', 'Un partenaire existe déjà avec cette adresse e-mail.', 0];
-        yield 'User email already' => ['user-44-02@histologe.fr', 'Un utilisateur existe déjà avec cette adresse e-mail.', 0];
+        yield 'Partner email already exists' => ['partenaire-13-02@signal-logement.fr', 'Un partenaire existe déjà avec cette adresse e-mail.', 0];
+        yield 'User email already' => ['user-44-02@signal-logement.fr', 'Un utilisateur existe déjà avec cette adresse e-mail.', 0];
 
-        yield 'Original email' => ['user-13-01@histologe.fr', 'redirect', 0];
+        yield 'Original email' => ['user-13-01@signal-logement.fr', 'redirect', 0];
         yield 'Changed email' => ['new.email@test.com', 'redirect', 1];
     }
 
@@ -386,7 +386,7 @@ class PartnerControllerTest extends WebTestCase
                     'role' => 'ROLE_USER_PARTNER',
                     'prenom' => 'John',
                     'nom' => 'Doe',
-                    'email' => 'ajout.partner@histologe.fr',
+                    'email' => 'ajout.partner@signal-logement.fr',
                     'isMailingActive' => 0,
                     '_token' => $this->generateCsrfToken($this->client, 'user_partner'),
                 ],
@@ -398,7 +398,7 @@ class PartnerControllerTest extends WebTestCase
     public function testEditApiUser()
     {
         /** @var User $partnerUser */
-        $partnerUser = $this->userRepository->findOneBy(['email' => 'api-02@histologe.fr']);
+        $partnerUser = $this->userRepository->findOneBy(['email' => 'api-02@signal-logement.fr']);
         $partner = $partnerUser->getPartners()->first();
 
         $route = $this->router->generate('back_partner_user_edit', ['partner' => $partner->getId(), 'user' => $partnerUser->getId()]);
@@ -410,7 +410,7 @@ class PartnerControllerTest extends WebTestCase
                     'role' => 'ROLE_USER_PARTNER',
                     'prenom' => 'John',
                     'nom' => 'Doe',
-                    'email' => 'ajout.partner@histologe.fr',
+                    'email' => 'ajout.partner@signal-logement.fr',
                     'isMailingActive' => 0,
                     '_token' => $this->generateCsrfToken($this->client, 'user_partner'),
                 ],
@@ -422,7 +422,7 @@ class PartnerControllerTest extends WebTestCase
     public function testEditLastNotifiedUser()
     {
         $partner = $this->partnerRepository->findOneBy(['nom' => 'Partenaire 13-08']);
-        $user = $this->userRepository->findOneBy(['email' => 'user-13-10@histologe.fr']);
+        $user = $this->userRepository->findOneBy(['email' => 'user-13-10@signal-logement.fr']);
 
         $route = $this->router->generate('back_partner_user_edit', ['partner' => $partner->getId(), 'user' => $user->getId()]);
         $this->client->request(
@@ -433,7 +433,7 @@ class PartnerControllerTest extends WebTestCase
                     'role' => 'ROLE_USER_PARTNER',
                     'prenom' => 'John',
                     'nom' => 'Doe',
-                    'email' => 'ajout.partner@histologe.fr',
+                    'email' => 'ajout.partner@signal-logement.fr',
                     'isMailingActive' => 0,
                     '_token' => $this->generateCsrfToken($this->client, 'user_partner'),
                 ],
@@ -449,10 +449,10 @@ class PartnerControllerTest extends WebTestCase
 
     public function testTransferUserAccountWithUserNotAllowed(): void
     {
-        $admin = $this->userRepository->findOneBy(['email' => 'user-13-01@histologe.fr']);
+        $admin = $this->userRepository->findOneBy(['email' => 'user-13-01@signal-logement.fr']);
         $this->client->loginUser($admin);
 
-        $user = $this->userRepository->findOneBy(['email' => 'user-13-02@histologe.fr']);
+        $user = $this->userRepository->findOneBy(['email' => 'user-13-02@signal-logement.fr']);
         $userId = $user->getId();
         $userOldPartner = $user->getPartners()->first()->getId();
 
@@ -472,7 +472,7 @@ class PartnerControllerTest extends WebTestCase
 
     public function testTransferUserAccountWithCsrfUnvalid(): void
     {
-        $user = $this->userRepository->findOneBy(['email' => 'user-13-02@histologe.fr']);
+        $user = $this->userRepository->findOneBy(['email' => 'user-13-02@signal-logement.fr']);
         $userId = $user->getId();
         $userOldPartner = $user->getPartners()->first()->getId();
 
@@ -495,7 +495,7 @@ class PartnerControllerTest extends WebTestCase
     {
         $fromPartner = $this->partnerRepository->findOneBy(['nom' => 'Partenaire 13-08']);
         $toPartner = $this->partnerRepository->findOneBy(['nom' => 'Partenaire 13-01']);
-        $user = $this->userRepository->findOneBy(['email' => 'user-13-10@histologe.fr']);
+        $user = $this->userRepository->findOneBy(['email' => 'user-13-10@signal-logement.fr']);
 
         $this->client->request(
             'POST',
@@ -512,7 +512,7 @@ class PartnerControllerTest extends WebTestCase
 
     public function testDeleteUserAccount(): void
     {
-        $user = $this->userRepository->findOneBy(['email' => 'user-13-01@histologe.fr']);
+        $user = $this->userRepository->findOneBy(['email' => 'user-13-01@signal-logement.fr']);
         $userId = $user->getId();
 
         $this->client->request('POST', $this->router->generate('back_partner_user_delete', ['id' => $user->getPartners()->first()->getId()]), [
@@ -527,7 +527,7 @@ class PartnerControllerTest extends WebTestCase
 
     public function testDeleteMultiUserFromPartner(): void
     {
-        $user = $this->userRepository->findOneBy(['email' => 'admin-partenaire-multi-ter-13-01@histologe.fr']);
+        $user = $this->userRepository->findOneBy(['email' => 'admin-partenaire-multi-ter-13-01@signal-logement.fr']);
         $userId = $user->getId();
 
         $this->client->request('POST', $this->router->generate('back_partner_user_delete', ['id' => $user->getPartners()->first()->getId()]), [
@@ -555,7 +555,7 @@ class PartnerControllerTest extends WebTestCase
 
     public function testDeleteUserAccountWithCsrfUnvalid(): void
     {
-        $user = $this->userRepository->findOneBy(['email' => 'user-01-03@histologe.fr']);
+        $user = $this->userRepository->findOneBy(['email' => 'user-01-03@signal-logement.fr']);
         $userId = $user->getId();
 
         $this->client->request('POST', $this->router->generate('back_partner_user_delete', ['id' => $user->getPartners()->first()->getId()]), [
@@ -571,7 +571,7 @@ class PartnerControllerTest extends WebTestCase
     public function testDeleteLastNotifiedUserAccount(): void
     {
         $partner = $this->partnerRepository->findOneBy(['nom' => 'Partenaire 13-08']);
-        $user = $this->userRepository->findOneBy(['email' => 'user-13-10@histologe.fr']);
+        $user = $this->userRepository->findOneBy(['email' => 'user-13-10@signal-logement.fr']);
 
         $this->client->request('POST', $this->router->generate('back_partner_user_delete', ['id' => $partner->getId()]), [
             'user_id' => $user->getId(),
@@ -621,7 +621,7 @@ class PartnerControllerTest extends WebTestCase
             'POST',
             $route,
             [
-                'email' => 'admin-01@histologe.fr',
+                'email' => 'admin-01@signal-logement.fr',
                 '_token' => $this->generateCsrfToken($this->client, 'partner_checkmail'),
             ]
         );

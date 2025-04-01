@@ -2,6 +2,7 @@
 
 namespace App\DataFixtures\Loader;
 
+use App\Entity\Partner;
 use App\Entity\User;
 use App\Entity\UserPartner;
 use App\EventListener\UserCreatedListener;
@@ -10,6 +11,7 @@ use App\Repository\PartnerRepository;
 use App\Service\Sanitizer;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Common\DataFixtures\OrderedFixtureInterface;
+use Doctrine\DBAL\Exception;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Events;
 use Doctrine\Persistence\ObjectManager;
@@ -20,17 +22,21 @@ use Symfony\Component\Yaml\Yaml;
 
 class LoadUserData extends Fixture implements OrderedFixtureInterface
 {
-    private const PLAIN_HISTOLOGE = 'histologe';
+    private const string APP_PLAIN_PASSWORD = 'signallogement';
 
     public function __construct(
-        private PartnerRepository $partnerRepository,
-        private UserPasswordHasherInterface $hasher,
-        private EntityManagerInterface $entityManager,
-        private ParameterBagInterface $parameterBag,
-        private UserFactory $userFactory,
+        private readonly PartnerRepository $partnerRepository,
+        private readonly UserPasswordHasherInterface $hasher,
+        private readonly EntityManagerInterface $entityManager,
+        private readonly ParameterBagInterface $parameterBag,
+        private readonly UserFactory $userFactory,
     ) {
     }
 
+    /**
+     * @throws \DateMalformedStringException
+     * @throws Exception
+     */
     public function load(ObjectManager $manager): void
     {
         $userRows = Yaml::parseFile(__DIR__.'/../Files/User.yml');
@@ -45,6 +51,9 @@ class LoadUserData extends Fixture implements OrderedFixtureInterface
         $connection->prepare($sql)->executeQuery();
     }
 
+    /**
+     * @throws \DateMalformedStringException
+     */
     private function loadUsers(ObjectManager $manager, array $row): void
     {
         // do not send activation mail on loading fixtures
@@ -103,26 +112,26 @@ class LoadUserData extends Fixture implements OrderedFixtureInterface
             );
         }
 
-        $password = $this->hasher->hashPassword($user, self::PLAIN_HISTOLOGE);
+        $password = $this->hasher->hashPassword($user, self::APP_PLAIN_PASSWORD);
         $user->setPassword($password);
 
         $manager->persist($user);
     }
 
-    private function loadSystemUser(ObjectManager $manager)
+    private function loadSystemUser(ObjectManager $manager): void
     {
         $user = $this->userFactory->createInstanceFrom(
             roleLabel: 'Super Admin',
-            firstname: 'Histologe',
+            firstname: 'Signal-logement',
             lastname: 'Admin',
             email: $this->parameterBag->get('user_system_email'),
             isMailActive: false,
         );
-        $password = $this->hasher->hashPassword($user, self::PLAIN_HISTOLOGE);
+        $password = $this->hasher->hashPassword($user, self::APP_PLAIN_PASSWORD);
         $user->setStatut(User::STATUS_ACTIVE)->setPassword($password);
         $manager->persist($user);
 
-        $partner = $this->partnerRepository->findOneBy(['nom' => 'Administrateurs Histologe ALL']);
+        $partner = $this->partnerRepository->findOneBy(['nom' => Partner::DEFAULT_PARTNER]);
         $userPartner = new UserPartner();
         $userPartner->setUser($user)->setPartner($partner);
         $manager->persist($userPartner);

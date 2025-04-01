@@ -102,7 +102,7 @@
                           de <strong>{{ selectedItem?.nomOccupant && selectedItem?.nomOccupant.toUpperCase()  + ' ' + selectedItem?.prenomOccupant }}</strong>. 
                           Une fois le signalement supprimé :</p>
                         <ul>
-                            <li>Le signalement sera supprimé, <strong>il ne sera plus accessible dans Histologe.</strong></li>
+                            <li>Le signalement sera supprimé, <strong>il ne sera plus accessible dans Signal Logement.</strong></li>
                             <li>Vous ne pourrez plus assurer le suivi du dossier.</li>
                             <li>Les partenaires ne pourront plus être affectés et les affectations en cours seront supprimées.</li>
                             <li>L'usager ne pourra plus accéder au suivi de son signalement.</li>

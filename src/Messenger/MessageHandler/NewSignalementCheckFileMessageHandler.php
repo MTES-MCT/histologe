@@ -209,7 +209,7 @@ class NewSignalementCheckFileMessageHandler
         $this->description .= '<br>';
         $this->description .= 'Envoyez-nous un message en y ajoutant vos documents !<br>';
         $this->description .= 'Merci,<br>';
-        $this->description .= 'L\'équipe Histologe';
+        $this->description .= 'L\'équipe Signal Logement';
 
         $userAdmin = $this->userRepository->findOneBy(['email' => $this->parameterBag->get('user_system_email')]);
 

@@ -20,7 +20,7 @@ class SignalementFileUpdateControllerTest extends WebTestCase
     {
         $this->client = static::createClient();
         $user = self::getContainer()->get('doctrine')->getRepository(User::class)->findOneBy([
-            'email' => 'api-01@histologe.fr',
+            'email' => 'api-01@signal-logement.fr',
         ]);
 
         $this->client->loginUser($user, 'api');

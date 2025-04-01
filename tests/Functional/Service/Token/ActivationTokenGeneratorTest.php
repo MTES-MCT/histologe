@@ -21,7 +21,7 @@ class ActivationTokenGeneratorTest extends KernelTestCase
     public function testValidateTokenActivation(): void
     {
         $userRepository = $this->entityManager->getRepository(User::class);
-        $user = $userRepository->findOneBy(['email' => 'user-13-03@histologe.fr']);
+        $user = $userRepository->findOneBy(['email' => 'user-13-03@signal-logement.fr']);
 
         $container = static::getContainer();
         $activationTokenGenerator = $container->get(ActivationTokenGenerator::class);
@@ -35,7 +35,7 @@ class ActivationTokenGeneratorTest extends KernelTestCase
     public function testValidateTokenUpdatePassword(): void
     {
         $userRepository = $this->entityManager->getRepository(User::class);
-        $user = $userRepository->findOneBy(['email' => 'admin-territoire-13-01@histologe.fr']);
+        $user = $userRepository->findOneBy(['email' => 'admin-territoire-13-01@signal-logement.fr']);
 
         $container = static::getContainer();
         $activationTokenGenerator = $container->get(ActivationTokenGenerator::class);
@@ -50,7 +50,7 @@ class ActivationTokenGeneratorTest extends KernelTestCase
     {
         /** @var UserRepository $userRepository */
         $userRepository = $this->entityManager->getRepository(User::class);
-        $user = $userRepository->findArchivedUserByEmail('user-01-07@histologe.fr');
+        $user = $userRepository->findArchivedUserByEmail('user-01-07@signal-logement.fr');
 
         $container = static::getContainer();
         $activationTokenGenerator = $container->get(ActivationTokenGenerator::class);

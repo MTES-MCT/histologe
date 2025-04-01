@@ -53,7 +53,7 @@ class IdossServiceTest extends KernelTestCase
     public function testWithoutToken(): void
     {
         $partnerRepository = $this->entityManager->getRepository(Partner::class);
-        $partner = $partnerRepository->findOneBy(['email' => 'partenaire-13-05@histologe.fr']);
+        $partner = $partnerRepository->findOneBy(['email' => 'partenaire-13-05@signal-logement.fr']);
         $affectationRepository = $this->entityManager->getRepository(Affectation::class);
         $affectation = $affectationRepository->findOneBy(['partner' => $partner]);
 
@@ -76,7 +76,7 @@ class IdossServiceTest extends KernelTestCase
     public function testWithValidToken(): void
     {
         $partnerRepository = $this->entityManager->getRepository(Partner::class);
-        $partner = $partnerRepository->findOneBy(['email' => 'partenaire-13-05@histologe.fr']);
+        $partner = $partnerRepository->findOneBy(['email' => 'partenaire-13-05@signal-logement.fr']);
         $affectationRepository = $this->entityManager->getRepository(Affectation::class);
         $affectation = $affectationRepository->findOneBy(['partner' => $partner]);
         $affectation->getPartner()->setIdossToken('TEST');
@@ -98,7 +98,7 @@ class IdossServiceTest extends KernelTestCase
     public function testWithExpiredToken(): void
     {
         $partnerRepository = $this->entityManager->getRepository(Partner::class);
-        $partner = $partnerRepository->findOneBy(['email' => 'partenaire-13-05@histologe.fr']);
+        $partner = $partnerRepository->findOneBy(['email' => 'partenaire-13-05@signal-logement.fr']);
         $affectationRepository = $this->entityManager->getRepository(Affectation::class);
         $affectation = $affectationRepository->findOneBy(['partner' => $partner]);
         $affectation->getPartner()->setIdossToken('TEST');

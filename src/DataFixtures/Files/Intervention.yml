@@ -1,15 +1,15 @@
 interventions:
   -
     signalement: "2022-1"
-    partner: "partenaire-13-01@histologe.fr"
+    partner: "partenaire-13-01@signal-logement.fr"
   -
     signalement: "2023-9"
-    partner: "partenaire-13-05@histologe.fr"
+    partner: "partenaire-13-05@signal-logement.fr"
     status: 'PLANNED'
   -
     signalement: "2023-10"
-    partner: "partenaire-13-06@histologe.fr"
-    user: "user-13-06@histologe.fr"
+    partner: "partenaire-13-06@signal-logement.fr"
+    user: "user-13-06@signal-logement.fr"
     scheduled_at: '2023-06-20 10:00:00'
     status: 'DONE'
     documents: ['blank-visite.pdf']
@@ -19,8 +19,8 @@ interventions:
     proprietaire_present: 0
   -
     signalement: "2023-12"
-    partner: "partenaire-13-05@histologe.fr"
-    user: "user-13-05@histologe.fr"
+    partner: "partenaire-13-05@signal-logement.fr"
+    user: "user-13-05@signal-logement.fr"
     scheduled_at: '2023-07-01 10:00:00'
     status: 'DONE'
     documents: [ 'blank-64969c273a28a.jpg' ]
@@ -37,13 +37,13 @@ interventions:
     proprietaire_present: 1
   -
     signalement: "2023-3"
-    user: "user-69-05@histologe.fr"
-    partner: "partenaire-05-69@histologe.fr"
+    user: "user-69-05@signal-logement.fr"
+    partner: "partenaire-05-69@signal-logement.fr"
     status: 'PLANNED'
   -
     signalement: "2024-01"
-    partner: "partenaire-62-01@histologe.fr"
-    user: "user-62-01@histologe.fr"
+    partner: "partenaire-62-01@signal-logement.fr"
+    user: "user-62-01@signal-logement.fr"
     scheduled_at: '2023-07-01 10:00:00'
     status: 'DONE'
     documents: [ 'blank-64969c273a28a.jpg' ]
@@ -53,8 +53,8 @@ interventions:
     proprietaire_present: 0
   -
     signalement: "2024-02"
-    partner: "partenaire-62-01@histologe.fr"
-    user: "user-62-01@histologe.fr"
+    partner: "partenaire-62-01@signal-logement.fr"
+    user: "user-62-01@signal-logement.fr"
     scheduled_at: '2023-07-01 10:00:00'
     status: 'DONE'
     documents: [ 'blank-64969c273a28a.jpg' ]
@@ -64,28 +64,28 @@ interventions:
     proprietaire_present: 0
   -
     signalement: "2024-02"
-    partner: "partenaire-62-01@histologe.fr"
-    user: "user-62-01@histologe.fr"
+    partner: "partenaire-62-01@signal-logement.fr"
+    user: "user-62-01@signal-logement.fr"
     scheduled_at: '+2 days'
     status: 'PLANNED'
   -
     signalement: "2022-6"
-    partner: "partenaire-13-01@histologe.fr"
-    user: "admin-partenaire-13-01@histologe.fr"
+    partner: "partenaire-13-01@signal-logement.fr"
+    user: "admin-partenaire-13-01@signal-logement.fr"
     scheduled_at: '-2 days'
     status: 'PLANNED'
   -
     signalement: "2024-10"
-    partner: "partenaire-13-06@histologe.fr"
-    user: "user-13-06@histologe.fr"
+    partner: "partenaire-13-06@signal-logement.fr"
+    user: "user-13-06@signal-logement.fr"
     scheduled_at: '2024-06-20 10:00:00'
     status: 'DONE'
     occupant_present: 1
     proprietaire_present: 0
 
   - signalement: "2023-20"
-    partner: "partenaire-13-01@histologe.fr"
-    user: "api-01@histologe.fr"
+    partner: "partenaire-13-01@signal-logement.fr"
+    user: "api-01@signal-logement.fr"
     scheduled_at: '2024-06-20 10:00:00'
     status: 'DONE'
     occupant_present: 1
@@ -95,8 +95,8 @@ interventions:
 
   - signalement: "2023-20"
     type: "ARRETE_PREFECTORAL"
-    partner: "partenaire-13-01@histologe.fr"
-    user: "api-01@histologe.fr"
+    partner: "partenaire-13-01@signal-logement.fr"
+    user: "api-01@signal-logement.fr"
     scheduled_at: '2025-03-19 10:00:00'
     status: 'DONE'
     details: "L'arrêté 123456789 du 2025-01-12 a été pris dans le dossier n°123456789.<br>Type d'arrêté : Arrêté L.511-12 - Suroccupation."

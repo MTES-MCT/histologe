@@ -28,7 +28,7 @@ class FirstAffectationAcceptedSpecificationTest extends KernelTestCase
     public function testAddSuiviFirstAffectation(): void
     {
         $signalement = $this->signalementRepository->findOneBy(['reference' => '2022-7']);
-        $user = $this->userRepository->findOneBy(['email' => 'user-13-01@histologe.fr']);
+        $user = $this->userRepository->findOneBy(['email' => 'user-13-01@signal-logement.fr']);
 
         $affectation = (new Affectation())
             ->setPartner($user->getPartners()->first())
@@ -50,7 +50,7 @@ class FirstAffectationAcceptedSpecificationTest extends KernelTestCase
     public function testDoNotAddSuiviFirstAffectation(): void
     {
         $signalement = $this->signalementRepository->findOneBy(['reference' => '2023-20']);
-        $user = $this->userRepository->findOneBy(['email' => 'user-13-01@histologe.fr']);
+        $user = $this->userRepository->findOneBy(['email' => 'user-13-01@signal-logement.fr']);
 
         $intervention = (new Intervention())
             ->setPartner($user->getPartners()->first())

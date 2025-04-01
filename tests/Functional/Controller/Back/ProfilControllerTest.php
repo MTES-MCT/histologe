@@ -42,7 +42,7 @@ class ProfilControllerTest extends WebTestCase
         $this->imageManipulationHandlerMock = $this->createMock(ImageManipulationHandler::class);
         static::getContainer()->set('App\Service\ImageManipulationHandler', $this->imageManipulationHandlerMock);
 
-        $this->user = $this->userRepository->findOneBy(['email' => 'admin-01@histologe.fr']);
+        $this->user = $this->userRepository->findOneBy(['email' => 'admin-01@signal-logement.fr']);
         $this->client->loginUser($this->user);
     }
 
@@ -344,7 +344,7 @@ class ProfilControllerTest extends WebTestCase
         $route = $this->router->generate('back_profil_edit_email');
         $this->client->request('POST', $route, [
             '_token' => $csrfToken,
-            'profil_edit_email[email]' => 'admin-01@histologe.fr',
+            'profil_edit_email[email]' => 'admin-01@signal-logement.fr',
         ]);
 
         $this->assertResponseStatusCodeSame(Response::HTTP_BAD_REQUEST);
@@ -366,7 +366,7 @@ class ProfilControllerTest extends WebTestCase
         $route = $this->router->generate('back_profil_edit_email');
         $this->client->request('POST', $route, [
             '_token' => $csrfToken,
-            'profil_edit_email[email]' => 'admin-03@histologe.fr',
+            'profil_edit_email[email]' => 'admin-03@signal-logement.fr',
         ]);
 
         $this->assertResponseStatusCodeSame(Response::HTTP_BAD_REQUEST);
@@ -388,7 +388,7 @@ class ProfilControllerTest extends WebTestCase
         $route = $this->router->generate('back_profil_edit_email');
         $this->client->request('POST', $route, [
             '_token' => $csrfToken,
-            'profil_edit_email[email]' => 'admin@histologe.fr',
+            'profil_edit_email[email]' => 'admin@signal-logement.fr',
         ]);
 
         $this->assertResponseStatusCodeSame(Response::HTTP_BAD_REQUEST);
@@ -490,7 +490,7 @@ class ProfilControllerTest extends WebTestCase
 
         $route = $this->router->generate('back_profil_edit_email');
         $this->user->setEmailAuthCode('123456');
-        $this->user->setTempEmail('admin-03@histologe.fr');
+        $this->user->setTempEmail('admin-03@signal-logement.fr');
         $this->client->request('POST', $route, [
             '_token' => $csrfToken,
             'profil_edit_email[code]' => '123456',
@@ -514,7 +514,7 @@ class ProfilControllerTest extends WebTestCase
 
         $route = $this->router->generate('back_profil_edit_email');
         $this->user->setEmailAuthCode('123456');
-        $this->user->setTempEmail('admin@histologe.fr');
+        $this->user->setTempEmail('admin@signal-logement.fr');
         $this->client->request('POST', $route, [
             '_token' => $csrfToken,
             'profil_edit_email[code]' => '123456',
@@ -557,7 +557,7 @@ class ProfilControllerTest extends WebTestCase
         $route = $this->router->generate('back_profil_edit_password');
         $this->client->request('POST', $route, [
             '_token' => $csrfToken,
-            'password-current' => 'histologe',
+            'password-current' => 'signallogement',
             'password' => 'NewPassword!123',
             'password-repeat' => 'NewPassword!123',
         ]);
@@ -577,7 +577,7 @@ class ProfilControllerTest extends WebTestCase
         $route = $this->router->generate('back_profil_edit_password');
         $this->client->request('POST', $route, [
             '_token' => $csrfToken,
-            'password-current' => 'histologe',
+            'password-current' => 'signallogement',
             'password' => 'NewPassword!123',
             'password-repeat' => 'DifferentPassword!456',
         ]);
@@ -601,7 +601,7 @@ class ProfilControllerTest extends WebTestCase
         $route = $this->router->generate('back_profil_edit_password');
         $this->client->request('POST', $route, [
             '_token' => $csrfToken,
-            'password-current' => 'histologe',
+            'password-current' => 'signallogement',
             'password' => '',
             'password-repeat' => '',
         ]);
@@ -625,7 +625,7 @@ class ProfilControllerTest extends WebTestCase
         $route = $this->router->generate('back_profil_edit_password');
         $this->client->request('POST', $route, [
             '_token' => $csrfToken,
-            'password-current' => 'histologe',
+            'password-current' => 'signallogement',
             'password' => 'test',
             'password-repeat' => 'test',
         ]);
@@ -648,9 +648,9 @@ class ProfilControllerTest extends WebTestCase
         $route = $this->router->generate('back_profil_edit_password');
         $this->client->request('POST', $route, [
             '_token' => $csrfToken,
-            'password-current' => 'histologe',
-            'password' => 'admin-01@histologe.fr',
-            'password-repeat' => 'admin-01@histologe.fr',
+            'password-current' => 'signallogement',
+            'password' => 'admin-01@signal-logement.fr',
+            'password-repeat' => 'admin-01@signal-logement.fr',
         ]);
         $this->assertEmailCount(0);
         $this->assertResponseStatusCodeSame(Response::HTTP_BAD_REQUEST);
@@ -671,7 +671,7 @@ class ProfilControllerTest extends WebTestCase
         $route = $this->router->generate('back_profil_edit_password');
         $this->client->request('POST', $route, [
             '_token' => $csrfToken,
-            'password-current' => 'histologe',
+            'password-current' => 'signallogement',
             'password' => 'NewPassword!123',
             'password-repeat' => 'NewPassword!123',
         ]);

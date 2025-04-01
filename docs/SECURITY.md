@@ -1,7 +1,7 @@
 # Politiques et procédures de sécurité
 
 ## Objectif du document
-Ce document décrit les procédures de sécurité et les politiques générales pour le projet Histologe.
+Ce document décrit les procédures de sécurité et les politiques générales pour le projet Signal Logement.
 L’objectif de ce document est de définir les actions manuelles et les outils à mettre en place pour assurer une veille proactive et continue sur les vulnérabilités des composants du Système d’Information (SI). Cela inclut la mise à jour des correctifs de sécurité publiés, l’abonnement à des flux d’information de sécurité et la documentation des processus de mise à jour.
 
 ## Veille sur les Vulnérabilités
@@ -49,11 +49,11 @@ Le registre des équipements et applicatifs peut se trouver sur le [cloud de l'�
 
 
 ## Signaler une faille
-L’équipe d'Histologe prend très au sérieux la sécurité de l’application. Signalez toute faille de sécurité en envoyant un mail à l’équipe via le [formulaire de contact du site](https://histologe.beta.gouv.fr/contact).
+L’équipe de Signal Logement prend très au sérieux la sécurité de l’application. Signalez toute faille de sécurité en envoyant un mail à l’équipe via le [formulaire de contact du site](https://signal-logement.beta.gouv.fr/contact).
 
 L’équipe accusera réception de votre mail dans les 72 heures. Après la réponse initiale à votre rapport, elle vous tiendra informé de la progression vers une correction et une annonce complète, et pourra vous demander des informations ou des conseils supplémentaires.
 
-Si vous faites partie de la communauté, vous pouvez en informer l'équipe technique sur le canal **startup - Stop Mal Logement (ex histologe)** de Mattermost
+Si vous faites partie de la communauté, vous pouvez en informer l'équipe technique sur le canal **startup - Signal Logement (ex histologe)** de Mattermost
 Créer un ticket sans le publier (pour ne pas le rendre visible) dans la partie https://github.com/MTES-MCT/histologe/security/advisories
 
 ### Politique de divulgation et de correction

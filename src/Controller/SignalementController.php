@@ -379,9 +379,10 @@ class SignalementController extends AbstractController
             }
         }
 
+        $platformName = $request->get('platform_name');
         $messageClosed = '<p>
         Nous ne pouvons malheureusement pas traiter votre demande.<br>
-        Le service Histologe n\'est pas encore ouvert dans votre commune...
+        Le service'.$platformName.'n\'est pas encore ouvert dans votre commune...
         Nous faisons tout pour le rendre disponible dès que possible !
         <br>
         En attendant, nous vous invitons à contacter gratuitement le service "Info logement indigne" au numéro suivant :

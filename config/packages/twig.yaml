@@ -2,16 +2,15 @@ twig:
     default_path: '%kernel.project_dir%/templates'
     globals:
         platform:
-            name: 'Histologe'
-            logo: 'Logohistologe.png'
-            logo145: 'logo_145.png'
-            logosvg: 'logo-histologe.svg'
+            name: '%platform_name%'
+            logo: '%platform_logo%'
+            logo145: '%platform_logo%'
             url: '%host_url%'
-            demo: 'https://app.livestorm.co/mte/demonstration-histologe'
-            cgu_current_version: '%cgu_current_version%'            
+            cgu_current_version: '%cgu_current_version%'
+
         gitbook:
-            documentation: https://documentation.histologe.beta.gouv.fr
-            faq: https://faq.histologe.beta.gouv.fr
+            documentation: https://documentation.signal-logement.beta.gouv.fr
+            faq: https://faq.signal-logement.beta.gouv.fr
         maintenance:
             banner_enable: '%maintenance_banner_enable%'
             banner_message: '%maintenance_banner_message%'

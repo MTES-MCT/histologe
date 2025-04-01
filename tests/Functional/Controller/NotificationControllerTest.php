@@ -31,7 +31,7 @@ class NotificationControllerTest extends WebTestCase
 
         /** @var UserRepository $userRepository */
         $userRepository = static::getContainer()->get(UserRepository::class);
-        $user = $userRepository->findOneBy(['email' => 'admin-01@histologe.fr']);
+        $user = $userRepository->findOneBy(['email' => 'admin-01@signal-logement.fr']);
         $client->loginUser($user);
         $route = $generatorUrl->generate($route, [
             $tokenName => $this->generateCsrfToken($client, $tokenId),
@@ -44,7 +44,7 @@ class NotificationControllerTest extends WebTestCase
     public function provideAllNotificationOptions(): \Generator
     {
         $userRepository = static::getContainer()->get(UserRepository::class);
-        $user = $userRepository->findOneBy(['email' => 'admin-01@histologe.fr']);
+        $user = $userRepository->findOneBy(['email' => 'admin-01@signal-logement.fr']);
 
         yield 'Mark as read' => [
             'back_notifications_list_read',
@@ -69,7 +69,7 @@ class NotificationControllerTest extends WebTestCase
 
         /** @var UserRepository $userRepository */
         $userRepository = static::getContainer()->get(UserRepository::class);
-        $user = $userRepository->findOneBy(['email' => 'admin-01@histologe.fr']);
+        $user = $userRepository->findOneBy(['email' => 'admin-01@signal-logement.fr']);
         $client->loginUser($user);
 
         $notificationsId = $this->getSelectedNotifications($user);
@@ -86,7 +86,7 @@ class NotificationControllerTest extends WebTestCase
     public function provideSelectedNotificationOptions(): \Generator
     {
         $userRepository = static::getContainer()->get(UserRepository::class);
-        $user = $userRepository->findOneBy(['email' => 'admin-01@histologe.fr']);
+        $user = $userRepository->findOneBy(['email' => 'admin-01@signal-logement.fr']);
 
         yield 'Mark as read' => [
             'back_notifications_list_read',

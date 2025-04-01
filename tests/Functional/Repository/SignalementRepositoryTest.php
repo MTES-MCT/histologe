@@ -198,11 +198,11 @@ class SignalementRepositoryTest extends KernelTestCase
 
     public function provideSearchWithGeoData(): \Generator
     {
-        yield 'Search all for super admin' => ['admin-01@histologe.fr', [], 47];
-        yield 'Search in Marseille for super admin' => ['admin-01@histologe.fr', ['cities' => ['Marseille']], 25];
-        yield 'Search all for admin partner multi territories' => ['admin-partenaire-multi-ter-13-01@histologe.fr', [], 6];
-        yield 'Search in Ain for admin partner multi territories' => ['admin-partenaire-multi-ter-13-01@histologe.fr', ['territories' => 1], 1];
-        yield 'Search all for user partner multi territories' => ['user-partenaire-multi-ter-34-30@histologe.fr', [], 2];
-        yield 'Search in Hérault for user partner multi territories' => ['user-partenaire-multi-ter-34-30@histologe.fr', ['territories' => 35], 1];
+        yield 'Search all for super admin' => ['admin-01@signal-logement.fr', [], 47];
+        yield 'Search in Marseille for super admin' => ['admin-01@signal-logement.fr', ['cities' => ['Marseille']], 25];
+        yield 'Search all for admin partner multi territories' => ['admin-partenaire-multi-ter-13-01@signal-logement.fr', [], 6];
+        yield 'Search in Ain for admin partner multi territories' => ['admin-partenaire-multi-ter-13-01@signal-logement.fr', ['territories' => 1], 1];
+        yield 'Search all for user partner multi territories' => ['user-partenaire-multi-ter-34-30@signal-logement.fr', [], 2];
+        yield 'Search in Hérault for user partner multi territories' => ['user-partenaire-multi-ter-34-30@signal-logement.fr', ['territories' => 35], 1];
     }
 }

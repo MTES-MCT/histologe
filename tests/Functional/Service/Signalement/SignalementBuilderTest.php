@@ -136,7 +136,7 @@ class SignalementBuilderTest extends KernelTestCase
         $this->assertEquals('mme', $signalement->getCiviliteOccupant());
         $this->assertEquals('Locataire Nom', $signalement->getNomOccupant());
         $this->assertEquals('Locataire Prenom', $signalement->getPrenomOccupant());
-        $this->assertEquals('locataire-01@histologe.fr', $signalement->getMailOccupant());
+        $this->assertEquals('locataire-01@signal-logement.fr', $signalement->getMailOccupant());
         $this->assertEquals('appartement', $signalement->getNatureLogement());
         $this->assertEquals('33 Rue des phoceens', $signalement->getAdresseOccupant());
         $this->assertEquals('13002', $signalement->getCpOccupant());
@@ -146,7 +146,7 @@ class SignalementBuilderTest extends KernelTestCase
 
         $this->assertEquals('13 HABITAT', $signalement->getNomProprio());
         $this->assertEquals('Sandrine', $signalement->getPrenomProprio());
-        $this->assertEquals('sandrine@histologe.fr', $signalement->getMailProprio());
+        $this->assertEquals('sandrine@signal-logement.fr', $signalement->getMailProprio());
         $this->assertEquals('10 rue du 14 juillet', $signalement->getAdresseProprio());
         $this->assertEquals('64000', $signalement->getCodePostalProprio());
         $this->assertEquals('Pau', $signalement->getVilleProprio());
