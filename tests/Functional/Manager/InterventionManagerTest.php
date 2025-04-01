@@ -157,7 +157,7 @@ class InterventionManagerTest extends KernelTestCase
         $this->assertTrue($intervention->getScheduledAt() > new \DateTimeImmutable());
         $this->assertEquals('Lala la', $intervention->getPartner()->getNom());
         $this->assertNull($intervention->getPartner()->getId());
-        $this->assertEquals('AUTRE', $intervention->getPartner()->getType()->name);
+        $this->assertEquals('OPERATEUR_VISITES_ET_TRAVAUX', $intervention->getPartner()->getType()->name);
         $this->assertEquals('Lala la', $intervention->getExternalOperator());
         $this->assertEmailCount(0);
     }

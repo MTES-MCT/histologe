@@ -168,7 +168,7 @@ class Intervention implements EntityHistoryInterface, EntitySanitizerInterface
         if (!$this->partner && $this->externalOperator) {
             $externalPartner = new Partner();
             $externalPartner->setNom($this->externalOperator);
-            $externalPartner->setType(PartnerType::AUTRE);
+            $externalPartner->setType(PartnerType::OPERATEUR_VISITES_ET_TRAVAUX);
 
             return $externalPartner;
         }
