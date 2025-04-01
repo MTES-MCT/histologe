@@ -54,7 +54,7 @@ class SignalementEditControllerTest extends WebTestCase
         $this->assertResponseIsSuccessful();
 
         $this->assertEquals('13 HABITAT', $signalement->getBailleur()->getName());
-        $this->assertEquals('13 HABITAT', $signalement->getNomProprio());
+        $this->assertEquals('13 HABITAT', $signalement->getDenominationProprio());
     }
 
     public function testEditCoordonneesBailleurWithCustomBailleur(): void
@@ -70,7 +70,7 @@ class SignalementEditControllerTest extends WebTestCase
 
         $this->assertResponseIsSuccessful();
         $this->assertNull($signalement->getBailleur());
-        $this->assertEquals('Habitat Social Solidaire', $signalement->getNomProprio());
+        $this->assertEquals('Habitat Social Solidaire', $signalement->getDenominationProprio());
     }
 
     /**
@@ -129,7 +129,8 @@ class SignalementEditControllerTest extends WebTestCase
     private function getPayloadCoordonneesBailleur(string $bailleurName, int $signalementId): array
     {
         return [
-            'nom' => $bailleurName,
+            'denomination' => $bailleurName,
+            'nom' => 'Bernard',
             'prenom' => '',
             'mail' => 'contact@13habitat.fr',
             'telephone' => '0611000000',

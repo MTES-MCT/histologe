@@ -465,4 +465,6 @@ function initBoFormSignalementCoordonnees() {
       proTiersMail.value = ''
     }
   })
+
+  window.dispatchEvent(new Event('refreshPhoneNumberEvent'))
 }

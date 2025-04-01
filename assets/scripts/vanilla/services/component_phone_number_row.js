@@ -1,5 +1,7 @@
-document.querySelectorAll('.phone-number-row-container').forEach((containerPhoneNumber) => {
-  initContainerPhoneNumber(containerPhoneNumber)
+window.addEventListener('refreshPhoneNumberEvent', (e) => {
+  document.querySelectorAll('.phone-number-row-container').forEach((containerPhoneNumber) => {
+    initContainerPhoneNumber(containerPhoneNumber)
+  })
 })
 
 function initContainerPhoneNumber (containerPhoneNumber) {
@@ -17,5 +19,10 @@ function refreshInputHidden(containerPhoneNumber) {
   const selectCode = containerPhoneNumber.querySelector('.fr-select')
   const inputNumber = containerPhoneNumber.querySelector('.fr-input')
   const inputHidden = containerPhoneNumber.querySelector('[type=hidden]')
-  inputHidden.value = selectCode.value + inputNumber.value
+  inputHidden.value = ''
+  if (selectCode.value !== '' && inputNumber.value !== '') {
+    inputHidden.value = selectCode.value + inputNumber.value
+  }
 }
+
+window.dispatchEvent(new Event('refreshPhoneNumberEvent'))

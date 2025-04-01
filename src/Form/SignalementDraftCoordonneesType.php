@@ -8,6 +8,7 @@ use App\Entity\Enum\ProprioType;
 use App\Entity\Signalement;
 use App\Entity\User;
 use App\Form\Type\PhoneType;
+use libphonenumber\PhoneNumberUtil;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
@@ -16,8 +17,11 @@ use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\Form\FormError;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
+use Symfony\Component\Validator\Constraints as Assert;
+use Symfony\Component\Validator\Context\ExecutionContextInterface;
 
 class SignalementDraftCoordonneesType extends AbstractType
 {
@@ -292,7 +296,32 @@ class SignalementDraftCoordonneesType extends AbstractType
     public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
+            'constraints' => [
+                new Assert\Callback([$this, 'validatePhone'], ['bo_step_coordonnees']),
+            ],
             'validation_groups' => ['bo_step_coordonnees'],
         ]);
+    }
+
+    public function validatePhone(mixed $value, ExecutionContextInterface $context): void
+    {
+        $form = $context->getRoot();
+
+        $phoneNumberUtil = PhoneNumberUtil::getInstance();
+
+        $telsToCheck = ['telOccupant', 'telProprio', 'telDeclarant', 'telAgence'];
+
+        foreach ($telsToCheck as $telField) {
+            if (!$form->get($telField)->isEmpty()) {
+                try {
+                    $phoneNumber = $phoneNumberUtil->parse($form->get($telField)->getData());
+                    if (!$phoneNumberUtil->isPossibleNumber($phoneNumber)) {
+                        $form->get($telField)->addError(new FormError('Le numéro de téléphone n\'est pas valide.'));
+                    }
+                } catch (\Exception $e) {
+                    $form->get($telField)->addError(new FormError('Le numéro de téléphone n\'est pas valide.'));
+                }
+            }
+        }
     }
 }

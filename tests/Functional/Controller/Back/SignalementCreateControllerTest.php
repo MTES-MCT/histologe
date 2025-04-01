@@ -223,4 +223,34 @@ class SignalementCreateControllerTest extends WebTestCase
         $this->assertEquals('oui', $signalement->getTypeCompositionLogement()->getBailDpeEtatDesLieux());
         $this->assertEquals('1', $signalement->getIsAllocataire());
     }
+
+    public function testEditCoordonnees()
+    {
+        $user = $this->userRepository->findOneBy(['email' => 'admin-territoire-44-01@histologe.fr']);
+        $this->client->loginUser($user);
+
+        $crawler = $this->client->request('GET', '/bo/signalement/brouillon/editer/00000000-0000-0000-2025-000000000002');
+        $this->assertResponseIsSuccessful();
+
+        $form = $crawler->filter('#bo-form-signalement-coordonnees')->form();
+        $form->setValues([
+            'signalement_draft_coordonnees[nomOccupant]' => 'Bernard',
+            'signalement_draft_coordonnees[prenomOccupant]' => 'Florent',
+            'signalement_draft_coordonnees[mailOccupant]' => 'florent.bernard@floodcast.fr',
+            'signalement_draft_coordonnees[denominationAgence]' => 'Arnaque & cie',
+        ]);
+        $this->client->submit($form);
+
+        $this->assertResponseHeaderSame('Content-Type', 'application/json');
+        $response = json_decode($this->client->getResponse()->getContent(), true);
+        $this->assertArrayHasKey('redirect', $response);
+        $this->assertTrue($response['redirect']);
+
+        $signalement = $this->signalementRepository->findOneBy(['uuid' => '00000000-0000-0000-2025-000000000002']);
+        $this->assertEquals(SignalementStatus::DRAFT, $signalement->getStatut());
+        $this->assertEquals('Bernard', $signalement->getNomOccupant());
+        $this->assertEquals('Florent', $signalement->getPrenomOccupant());
+        $this->assertEquals('florent.bernard@floodcast.fr', $signalement->getMailOccupant());
+        $this->assertEquals('Arnaque & cie', $signalement->getDenominationAgence());
+    }
 }

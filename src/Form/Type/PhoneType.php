@@ -47,11 +47,15 @@ class PhoneType extends AbstractType
         $phoneNumberStr = $form->getNormData();
         if (!empty($phoneNumberStr)) {
             $phoneNumberUtil = PhoneNumberUtil::getInstance();
-            $phoneNumber = $phoneNumberUtil->parse($phoneNumberStr);
-            if ($phoneNumberUtil->isPossibleNumber($phoneNumber)) {
-                $view->vars['selectedCode'] = '+'.$phoneNumber->getCountryCode();
-                $view->vars['inputNumber'] = str_pad('', $phoneNumber->getNumberOfLeadingZeros(), '0');
-                $view->vars['inputNumber'] .= $phoneNumber->getNationalNumber();
+            try {
+                $phoneNumber = $phoneNumberUtil->parse($phoneNumberStr);
+                if ($phoneNumberUtil->isPossibleNumber($phoneNumber)) {
+                    $view->vars['selectedCode'] = '+'.$phoneNumber->getCountryCode();
+                    $view->vars['inputNumber'] = str_pad('', $phoneNumber->getNumberOfLeadingZeros(), '0');
+                    $view->vars['inputNumber'] .= $phoneNumber->getNationalNumber();
+                }
+            } catch (\Exception $e) {
+                return;
             }
         }
     }
