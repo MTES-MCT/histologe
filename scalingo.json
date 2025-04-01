@@ -17,5 +17,11 @@
       "description": "When set to false, this environment variable instructs the application to NOT check virus in files.",
       "value": "false"
     }
+  },
+  "formation": {
+    "postdeploy": {
+      "amount": 1,
+      "size": "2XL"
+    }
   }
 }
