@@ -16,10 +16,10 @@ final class Version20250317105914 extends AbstractMigration
 
     public function up(Schema $schema): void
     {
-        $this->skipIf(
+        /*$this->skipIf(
             'histologe' !== getenv('APP'),
             'Cette migration ne s’exécute qu’en environnement de production.'
-        );
+        );*/
         // agents to delete
         $this->addSql('DELETE FROM notification WHERE user_id = 18527');
         $agentsToDelete = [18974, 18975, 18976, 18525, 12063, 15309, 15037, 18527, 17591, 19368, 14755, 19528, 25098, 14907, 67589, 12805, 15918];
@@ -42,6 +42,13 @@ final class Version20250317105914 extends AbstractMigration
             33176 => 69699,
             11094 => 11308,
             67777 => 68418,
+            30663 => 71060,
+            40573 => 71278,
+            69771 => 70685,
+            31611 => 71501,
+            69595 => 70396,
+            64480 => 71730,
+            20389 => 71389,
             // archive
             18324 => 18325,
             14507 => 18986,
@@ -55,7 +62,9 @@ final class Version20250317105914 extends AbstractMigration
             $this->addSql('UPDATE file SET uploaded_by_id = '.$newId.' WHERE uploaded_by_id = '.$oldId);
         }
         $usagersToDelete = [
-            40446, 55271, 52375, 28521, 15766, 42061, 65076, 68110, 28398, 28857, 49670, 21412, 33176, 11094, 67777, 18324, 14507, 5057, 18323,
+            40446, 55271, 52375, 28521, 15766, 42061, 65076, 68110, 28398, 28857, 49670, 21412, 33176, 11094, 67777,
+            30663, 40573, 69771, 31611, 69595, 64480, 20389,
+            18324, 14507, 5057, 18323,
             10355, 25252, 10725, 9107, 11786, 3533, 10782, 17081, 12383, 9548, 13569, 9226, 28287, 65857, 8567, 35788, 9230, 8403, 7312, 29384, 8587, 17232,
         ];
         $this->addSql('DELETE FROM user_partner WHERE user_id IN ('.implode(',', $usagersToDelete).')');
