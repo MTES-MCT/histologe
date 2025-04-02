@@ -5,7 +5,6 @@ namespace App\Manager;
 use App\Entity\Partner;
 use App\Entity\Signalement;
 use App\Entity\User;
-use App\Exception\User\UserEmailNotFoundException;
 use App\Factory\UserFactory;
 use App\Service\Mailer\NotificationMail;
 use App\Service\Mailer\NotificationMailerRegistry;
@@ -31,43 +30,6 @@ class UserManager extends AbstractManager
         string $entityName = User::class,
     ) {
         parent::__construct($managerRegistry, $entityName);
-    }
-
-    // TODO : delete with feature_multi_territories deletion
-    public function updateUserFromData(User $user, array $data, bool $save = true): User
-    {
-        $emailUpdated = false;
-        if ($user->getEmail() !== $data['email']) {
-            $emailUpdated = true;
-            $user->setPassword('');
-        }
-        $user
-            ->setNom($data['nom'])
-            ->setPrenom($data['prenom'])
-            ->setRoles([$data['roles']])
-            ->setEmail($data['email'])
-            ->setIsMailingActive($data['isMailingActive']);
-        if (\array_key_exists('statut', $data)) {
-            $user->setStatut($data['statut']);
-        }
-        if (\array_key_exists('hasPermissionAffectation', $data)) {
-            $user->setHasPermissionAffectation($data['hasPermissionAffectation']);
-        }
-
-        if ($save) {
-            $this->save($user);
-        }
-
-        if ($emailUpdated) {
-            $this->sendAccountActivationNotification($user);
-        }
-
-        return $user;
-    }
-
-    public function getUserFrom(Partner $partner, int $userId): ?User
-    {
-        return $this->getRepository()->findOneBy(['partner' => $partner, 'id' => $userId]);
     }
 
     public function transferUserToPartner(User $user, Partner $fromPartner, Partner $toPartner): void
@@ -113,17 +75,6 @@ class UserManager extends AbstractManager
         $password = null;
 
         return $user;
-    }
-
-    public function loadUserToken(string $email, bool $flush = true): User
-    {
-        /** @var ?User $user */
-        $user = $this->findOneBy(['email' => $email]);
-        if (null === $user) {
-            throw new UserEmailNotFoundException($email);
-        }
-
-        return $this->loadUserTokenForUser($user, $flush);
     }
 
     public function loadUserTokenForUser(User $user, bool $flush = true): User

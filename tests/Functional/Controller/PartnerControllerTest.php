@@ -164,10 +164,6 @@ class PartnerControllerTest extends WebTestCase
      */
     public function testAddNewAgentToPartner(string $email, string $expected)
     {
-        $feature_multi_territories = static::getContainer()->getParameter('feature_multi_territories');
-        if (!$feature_multi_territories) {
-            $this->markTestSkipped('La fonctionnalité "feature_multi_territories" est désactivée.');
-        }
         /** @var Partner $partner */
         $partner = $this->partnerRepository->findOneBy(['nom' => 'Partenaire 13-03']);
 
@@ -221,10 +217,6 @@ class PartnerControllerTest extends WebTestCase
      */
     public function testAddExistingAgentToPartner(string $email, string $expected)
     {
-        $feature_multi_territories = static::getContainer()->getParameter('feature_multi_territories');
-        if (!$feature_multi_territories) {
-            $this->markTestSkipped('La fonctionnalité "feature_multi_territories" est désactivée.');
-        }
         /** @var Partner $partner */
         $partner = $this->partnerRepository->findOneBy(['nom' => 'Partenaire 13-03']);
         $route = $this->router->generate('back_partner_add_user_multi', ['id' => $partner->getId()]);
@@ -265,36 +257,6 @@ class PartnerControllerTest extends WebTestCase
         yield 'New user' => ['new.email@test.com', 'Agent introuvable avec cette adresse e-mail.'];
         yield 'New user from usager' => ['usager-01@signal-logement.fr', 'Agent introuvable avec cette adresse e-mail.'];
         yield 'Email ok to multi territories' => ['user-44-02@signal-logement.fr', 'redirect'];
-    }
-
-    public function testAddUserToPartner()
-    {
-        $feature_multi_territories = static::getContainer()->getParameter('feature_multi_territories');
-        if ($feature_multi_territories) {
-            $this->markTestSkipped('La fonctionnalité "feature_multi_territories" est activée.');
-        }
-
-        /** @var Partner $partner */
-        $partner = $this->partnerRepository->findOneBy(['nom' => 'Partenaire 13-03']);
-
-        $route = $this->router->generate('back_partner_user_add', ['id' => $partner->getId()]);
-        $this->client->request(
-            'POST',
-            $route,
-            [
-                'user_create' => [
-                    'roles' => 'ROLE_USER_PARTNER',
-                    'prenom' => 'John',
-                    'nom' => 'Doe',
-                    'email' => 'ajout.partner@signal-logement.fr',
-                    'isMailingActive' => false,
-                ],
-                '_token' => $this->generateCsrfToken($this->client, 'partner_user_create'),
-            ]
-        );
-
-        $this->assertResponseRedirects('/bo/partenaires/'.$partner->getId().'/voir#agents');
-        $this->assertEmailCount(1);
     }
 
     public function testEditRoleOfUserOfPartner()
@@ -580,53 +542,5 @@ class PartnerControllerTest extends WebTestCase
 
         $this->assertResponseRedirects('/bo/partenaires/'.$partner->getId().'/voir');
         $this->client->followRedirect();
-    }
-
-    public function testCheckMailOk()
-    {
-        $route = $this->router->generate('back_partner_check_user_email');
-        $this->client->request(
-            'POST',
-            $route,
-            [
-                'email' => 'paul@yopmail.com',
-                '_token' => $this->generateCsrfToken($this->client, 'partner_checkmail'),
-            ]
-        );
-
-        $this->assertResponseStatusCodeSame(200);
-        $this->assertSame('{"success":"email_ok"}', $this->client->getResponse()->getContent());
-    }
-
-    public function testCheckMailNotValid()
-    {
-        $route = $this->router->generate('back_partner_check_user_email');
-        $this->client->request(
-            'POST',
-            $route,
-            [
-                'email' => 'paul@yopmail.f',
-                '_token' => $this->generateCsrfToken($this->client, 'partner_checkmail'),
-            ]
-        );
-
-        $this->assertResponseStatusCodeSame(400);
-        $this->assertSame('{"error":"L\u0027adresse e-mail est invalide"}', $this->client->getResponse()->getContent());
-    }
-
-    public function testCheckMailAlreadyExists()
-    {
-        $route = $this->router->generate('back_partner_check_user_email');
-        $this->client->request(
-            'POST',
-            $route,
-            [
-                'email' => 'admin-01@signal-logement.fr',
-                '_token' => $this->generateCsrfToken($this->client, 'partner_checkmail'),
-            ]
-        );
-
-        $this->assertResponseStatusCodeSame(400);
-        $this->assertSame('{"error":"Un utilisateur existe d\u00e9j\u00e0 avec cette adresse e-mail."}', $this->client->getResponse()->getContent());
     }
 }

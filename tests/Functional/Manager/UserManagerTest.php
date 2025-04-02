@@ -57,54 +57,6 @@ class UserManagerTest extends KernelTestCase
         );
     }
 
-    public function testUpdateUserFromDataNameChanged()
-    {
-        /** @var UserRepository $userRepository */
-        $userRepository = $this->entityManager->getRepository(User::class);
-        $user = $userRepository->findOneBy(['email' => 'user-01-01@signal-logement.fr']);
-
-        $user = $this->userManager->updateUserFromData(
-            $user,
-            [
-                'roles' => 'ROLE_USER_PARTNER',
-                'prenom' => $user->getPrenom(),
-                'nom' => 'Pantani',
-                'email' => $user->getEmail(),
-                'isMailingActive' => $user->getIsMailingActive(),
-                'hasPermissionAffectation' => true,
-            ]
-        );
-
-        $this->assertInstanceOf(User::class, $user);
-        $this->assertEquals($user->getNom(), 'Pantani');
-        $this->assertTrue($user->hasPermissionAffectation());
-        $this->assertEmailCount(0);
-    }
-
-    public function testUpdateUserFromDataEmailChanged()
-    {
-        /** @var UserRepository $userRepository */
-        $userRepository = $this->entityManager->getRepository(User::class);
-        $user = $userRepository->findOneBy(['email' => 'user-01-01@signal-logement.fr']);
-
-        $user = $this->userManager->updateUserFromData(
-            $user,
-            [
-                'roles' => 'ROLE_USER_PARTNER',
-                'prenom' => $user->getPrenom(),
-                'nom' => 'Lennon',
-                'email' => 'john.lennon@example.com',
-                'isMailingActive' => true,
-            ]
-        );
-
-        $this->assertInstanceOf(User::class, $user);
-        $this->assertEquals($user->getNom(), 'Lennon');
-        $this->assertEquals($user->getEmail(), 'john.lennon@example.com');
-        $this->assertFalse($user->hasPermissionAffectation());
-        $this->assertEmailCount(1);
-    }
-
     public function testTransferActiveUserToAnotherPartner()
     {
         /** @var User $userNewPartner */
