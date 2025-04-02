@@ -21,3 +21,15 @@ if (maintenanceBannerElement !== null) {
     maintenanceBannerElement.classList.remove('fr-hidden')
   }
 }
+
+const changeNameBannerElement = document.getElementById('change-name-banner')
+if (changeNameBannerElement !== null) {
+
+  const closeButtonElement = document.querySelector('#change-name-banner .fr-btn--close')
+
+  closeButtonElement.addEventListener('click', (event) => {
+    const notice = event.target.parentNode.parentNode.parentNode
+    notice.parentNode.removeChild(notice)
+  })
+
+}
