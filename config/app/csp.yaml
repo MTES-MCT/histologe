@@ -60,6 +60,7 @@ parameters:
       - "'self'"
     frame-ancestors:
       - "'self'"
+      - "https://signal-logement.beta.gouv.fr/"
       - "https://histologe-sites-faciles.osc-fr1.scalingo.io/"
     media-src:
       - "'self'"
