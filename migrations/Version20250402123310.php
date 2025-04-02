@@ -17,7 +17,7 @@ final class Version20250402123310 extends AbstractMigration
     public function up(Schema $schema): void
     {
         $this->addSql('ALTER TABLE user DROP FOREIGN KEY FK_8D93D64973F74AD4');
-        if ('dev' === getenv('APP_ENV')) {
+        if ('histologe' !== getenv('APP')) {
             $this->addSql('ALTER TABLE user DROP FOREIGN KEY FK_8D93D6499393F8FE');
         } else {
             $this->addSql('ALTER TABLE user DROP FOREIGN KEY FK_8D93D64998DE13AC');
