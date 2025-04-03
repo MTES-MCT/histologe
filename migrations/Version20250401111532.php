@@ -19,7 +19,7 @@ final class Version20250401111532 extends AbstractMigration
         $this->addSql('ALTER TABLE signalement ADD com_cloture LONGTEXT DEFAULT NULL');
         $list = $this->getSuiviCloturePourTous();
         foreach ($list as $item) {
-            $exploded = explode('</strong>', $item['description']);
+            $exploded = explode('<strong>Desc. : </strong>', $item['description']);
             $comCloture = $exploded[count($exploded) - 1];
             $this->addSql('UPDATE signalement SET com_cloture = ? WHERE id = ?', [$comCloture, $item['signalement_id']]);
         }
