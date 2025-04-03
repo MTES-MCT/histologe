@@ -18,7 +18,7 @@ class CreateApiPartnerUsersCommandTest extends KernelTestCase
         $commandTester = new CommandTester($command);
 
         $commandTester->execute([
-            '--api_email' => 'api-nouveau@histologe.fr',
+            '--api_email' => 'api-nouveau@signal-logement.fr',
             '--partner_id' => 1,
         ]);
 
@@ -34,7 +34,7 @@ class CreateApiPartnerUsersCommandTest extends KernelTestCase
         $commandTester = new CommandTester($command);
 
         $commandTester->execute([
-            '--api_email' => 'api-01@histologe.fr',
+            '--api_email' => 'api-01@signal-logement.fr',
             '--partner_id' => 1,
         ]);
 
@@ -52,10 +52,10 @@ class CreateApiPartnerUsersCommandTest extends KernelTestCase
         $commandTester = new CommandTester($command);
 
         $commandTester->execute([
-            '--api_email' => 'api-nouveau@histologe.fr',
+            '--api_email' => 'api-nouveau@signal-logement.fr',
             '--zip' => 44,
             '--partner_name' => 'Nouveau partenaire',
-            '--bo_email' => 'bo-nouveau@histologe.fr',
+            '--bo_email' => 'bo-nouveau@signal-logement.fr',
         ]);
 
         $commandTester->assertCommandIsSuccessful();
@@ -71,10 +71,10 @@ class CreateApiPartnerUsersCommandTest extends KernelTestCase
         $commandTester = new CommandTester($command);
 
         $commandTester->execute([
-            '--api_email' => 'api-nouveau@histologe.fr',
+            '--api_email' => 'api-nouveau@signal-logement.fr',
             '--zip' => 44,
             '--partner_name' => 'Nouveau partenaire',
-            '--bo_email' => 'user-13-01@histologe.fr',
+            '--bo_email' => 'user-13-01@signal-logement.fr',
         ]);
 
         $output = $commandTester->getDisplay();
