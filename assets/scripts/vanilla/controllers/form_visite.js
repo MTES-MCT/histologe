@@ -67,7 +67,14 @@ function histoCheckVisiteForms (formType) {
       if (selectVisitePartner) {
         const selectVisitePartnerError = visiteForm.querySelector('#signalement-' + formType + '-visite-partner-double-error')
         selectVisitePartnerError.classList.add('fr-hidden')
-        if (selectVisitePartner.selectedOptions[0].classList.contains('alert-partner')) {
+        if(selectVisitePartner.value === 'extern') {
+          const operatorExternField = visiteForm.querySelector('.visite-external-operator')
+          const operatorNames = JSON.parse(document.getElementById('list-pending-visite-external-operator-names').dataset.list)
+          if(operatorNames.includes(operatorExternField.value)) {
+            selectVisitePartnerError.classList.remove('fr-hidden')
+            stopSubmit = true
+          }
+        }else if (selectVisitePartner.selectedOptions[0].classList.contains('alert-partner')) {
           selectVisitePartnerError.classList.remove('fr-hidden')
           stopSubmit = true
         }

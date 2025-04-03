@@ -65,7 +65,7 @@
                                         </div>
                                         <div class="fr-input-group fr-hidden" id="visite-reschedule-external-operator">
                                             <label class="fr-label" for="visite-reschedule[externalOperator]">Nom de l'opérateur externe <span class="fr-text-default--error">*</span></label>
-                                            <input type="text" name="visite-reschedule[externalOperator]" value="{{intervention.externalOperator}}" maxlength="255" class="fr-input">
+                                            <input type="text" name="visite-reschedule[externalOperator]" value="{{intervention.externalOperator}}" maxlength="255" class="fr-input visite-external-operator">
                                         </div>
                                     {% else %}
                                         <input type="hidden" name="visite-reschedule[partner]" value="{{ app.user.partnerInTerritory(signalement.territory).id }}">

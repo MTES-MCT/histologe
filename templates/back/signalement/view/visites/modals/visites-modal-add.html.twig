@@ -76,7 +76,7 @@
                                         </div>
                                         <div class="fr-input-group fr-hidden">
                                             <label class="fr-label" for="visite-add[externalOperator]">Nom de l'opérateur externe <span class="fr-text-default--error">*</span></label>
-                                            <input type="text" name="visite-add[externalOperator]" maxlength="255" class="fr-input">
+                                            <input type="text" name="visite-add[externalOperator]" maxlength="255" class="fr-input visite-external-operator">
                                         </div>
                                     {% else %}
                                         <input type="hidden" name="visite-add[partner]" value="{{ app.user.partnerInTerritory(signalement.territory).id }}">
