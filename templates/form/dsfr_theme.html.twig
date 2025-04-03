@@ -183,7 +183,7 @@
 {% endblock %}
 
 {% block phone_row %}
-    <div class="phone-input-container fr-input-group {% if errors|length > 0 %}fr-select-group--error{% endif %}">   
+    <div class="phone-input-container fr-input-group {% if errors|length > 0 %}fr-input-group--error fr-select-group--error{% endif %}">   
         <div class="fr-input-group fr-mb-0">
             {% if label is not same as(false) %}
                 <label for="{{ id }}_input" class="fr-label">

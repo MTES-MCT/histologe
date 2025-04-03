@@ -53,9 +53,11 @@ class PhoneType extends AbstractType
                     $view->vars['selectedCode'] = '+'.$phoneNumber->getCountryCode();
                     $view->vars['inputNumber'] = str_pad('', $phoneNumber->getNumberOfLeadingZeros(), '0');
                     $view->vars['inputNumber'] .= $phoneNumber->getNationalNumber();
+                } else {
+                    $view->vars['inputNumber'] = substr($phoneNumberStr, 3); // Bad numbers re-parsed with french format
                 }
             } catch (\Exception $e) {
-                return;
+                $view->vars['inputNumber'] = substr($phoneNumberStr, 3); // Bad numbers re-parsed with french format
             }
         }
     }

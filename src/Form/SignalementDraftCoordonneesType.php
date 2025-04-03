@@ -8,20 +8,18 @@ use App\Entity\Enum\ProprioType;
 use App\Entity\Signalement;
 use App\Entity\User;
 use App\Form\Type\PhoneType;
-use libphonenumber\PhoneNumberUtil;
+use App\Validator\TelephoneFormat;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
+use Symfony\Component\Form\Extension\Core\Type\EmailType;
 use Symfony\Component\Form\Extension\Core\Type\EnumType;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Component\Form\FormError;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
-use Symfony\Component\Validator\Constraints as Assert;
-use Symfony\Component\Validator\Context\ExecutionContextInterface;
 
 class SignalementDraftCoordonneesType extends AbstractType
 {
@@ -57,6 +55,28 @@ class SignalementDraftCoordonneesType extends AbstractType
             $choicesProfilesTiers[$profileTiers->label()] = $profileTiers->value;
         }
 
+        $isProTiersDeclarantOptions = [
+            'label' => 'Tiers professionnel',
+            'choices' => [
+                'Utiliser mes coordonnées' => '1',
+            ],
+            'help' => 'Cochez cette case pour devenir le tiers déclarant de ce signalement. Vous recevrez alors des mises à jour par e-mail au même titre que l\'occupant du logement.',
+            'expanded' => true,
+            'multiple' => true,
+            'required' => false,
+            'placeholder' => false,
+            'mapped' => false,
+            'attr' => [
+                'data-user-structure' => $nomPartner,
+                'data-user-nom' => $user->getNom(),
+                'data-user-prenom' => $user->getPrenom(),
+                'data-user-mail' => $user->getEmail(),
+            ],
+        ];
+        if (!empty($signalement->getMailDeclarant())) {
+            $isProTiersDeclarantOptions['data'] = [$signalement->getMailDeclarant() == $user->getEmail()];
+        }
+
         $builder
             ->add('nomOccupant', TextType::class, [
                 'label' => 'Nom de famille',
@@ -66,13 +86,19 @@ class SignalementDraftCoordonneesType extends AbstractType
                 'label' => 'Prénom',
                 'required' => false,
             ])
-            ->add('mailOccupant', TextType::class, [
+            ->add('mailOccupant', EmailType::class, [
                 'label' => 'Adresse e-mail',
                 'help' => 'Format attendu : nom@domaine.fr',
                 'required' => false,
             ])
             ->add('telOccupant', PhoneType::class, [
                 'required' => false,
+                'constraints' => [
+                    new TelephoneFormat([
+                        'message' => 'Le numéro de téléphone n\'est pas valide.',
+                        'groups' => ['bo_step_coordonnees'],
+                    ]),
+                ],
             ])
 
             ->add('typeProprio', EnumType::class, [
@@ -103,13 +129,19 @@ class SignalementDraftCoordonneesType extends AbstractType
                 'help' => 'Saisissez le prénom du ou de la représentante de la société',
                 'required' => false,
             ])
-            ->add('mailProprio', TextType::class, [
+            ->add('mailProprio', EmailType::class, [
                 'label' => 'Adresse e-mail',
                 'help' => 'Format attendu : nom@domaine.fr',
                 'required' => false,
             ])
             ->add('telProprio', PhoneType::class, [
                 'required' => false,
+                'constraints' => [
+                    new TelephoneFormat([
+                        'message' => 'Le numéro de téléphone n\'est pas valide.',
+                        'groups' => ['bo_step_coordonnees'],
+                    ]),
+                ],
             ])
             ->add('adresseCompleteProprio', null, [
                 'label' => false,
@@ -174,25 +206,7 @@ class SignalementDraftCoordonneesType extends AbstractType
                 'mapped' => false,
                 'data' => $signalement->getLienDeclarantOccupant(),
             ])
-            ->add('isProTiersDeclarant', ChoiceType::class, [
-                'label' => 'Tiers professionnel',
-                'choices' => [
-                    'Utiliser mes coordonnées' => '1',
-                ],
-                'help' => 'Cochez cette case pour devenir le tiers déclarant de ce signalement. Vous recevrez alors des mises à jour par e-mail au même titre que l\'occupant du logement.',
-                'expanded' => true,
-                'multiple' => true,
-                'required' => false,
-                'placeholder' => false,
-                'mapped' => false,
-                'data' => [$signalement->getMailDeclarant() == $user->getEmail()],
-                'attr' => [
-                    'data-user-structure' => $nomPartner,
-                    'data-user-nom' => $user->getNom(),
-                    'data-user-prenom' => $user->getPrenom(),
-                    'data-user-mail' => $user->getEmail(),
-                ],
-            ])
+            ->add('isProTiersDeclarant', ChoiceType::class, $isProTiersDeclarantOptions)
             ->add('structureDeclarant', TextType::class, [
                 'label' => 'Structure',
                 'required' => false,
@@ -205,13 +219,19 @@ class SignalementDraftCoordonneesType extends AbstractType
                 'label' => 'Prénom de famille',
                 'required' => false,
             ])
-            ->add('mailDeclarant', TextType::class, [
+            ->add('mailDeclarant', EmailType::class, [
                 'label' => 'Adresse e-mail',
                 'help' => 'Format attendu : nom@domaine.fr',
                 'required' => false,
             ])
             ->add('telDeclarant', PhoneType::class, [
                 'required' => false,
+                'constraints' => [
+                    new TelephoneFormat([
+                        'message' => 'Le numéro de téléphone n\'est pas valide.',
+                        'groups' => ['bo_step_coordonnees'],
+                    ]),
+                ],
             ])
 
             ->add('denominationAgence', TextType::class, [
@@ -226,13 +246,19 @@ class SignalementDraftCoordonneesType extends AbstractType
                 'label' => 'Prénom',
                 'required' => false,
             ])
-            ->add('mailAgence', TextType::class, [
+            ->add('mailAgence', EmailType::class, [
                 'label' => 'Adresse e-mail',
                 'help' => 'Format attendu : nom@domaine.fr',
                 'required' => false,
             ])
             ->add('telAgence', PhoneType::class, [
                 'required' => false,
+                'constraints' => [
+                    new TelephoneFormat([
+                        'message' => 'Le numéro de téléphone n\'est pas valide.',
+                        'groups' => ['bo_step_coordonnees'],
+                    ]),
+                ],
             ])
             ->add('adresseCompleteAgence', null, [
                 'label' => false,
@@ -296,32 +322,7 @@ class SignalementDraftCoordonneesType extends AbstractType
     public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
-            'constraints' => [
-                new Assert\Callback([$this, 'validatePhone'], ['bo_step_coordonnees']),
-            ],
             'validation_groups' => ['bo_step_coordonnees'],
         ]);
-    }
-
-    public function validatePhone(mixed $value, ExecutionContextInterface $context): void
-    {
-        $form = $context->getRoot();
-
-        $phoneNumberUtil = PhoneNumberUtil::getInstance();
-
-        $telsToCheck = ['telOccupant', 'telProprio', 'telDeclarant', 'telAgence'];
-
-        foreach ($telsToCheck as $telField) {
-            if (!$form->get($telField)->isEmpty()) {
-                try {
-                    $phoneNumber = $phoneNumberUtil->parse($form->get($telField)->getData());
-                    if (!$phoneNumberUtil->isPossibleNumber($phoneNumber)) {
-                        $form->get($telField)->addError(new FormError('Le numéro de téléphone n\'est pas valide.'));
-                    }
-                } catch (\Exception $e) {
-                    $form->get($telField)->addError(new FormError('Le numéro de téléphone n\'est pas valide.'));
-                }
-            }
-        }
     }
 }
