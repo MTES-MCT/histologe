@@ -46,19 +46,14 @@ function histoUpdateValueFromData (elementName, elementData, target) {
   document.querySelector(elementName).value = target.getAttribute(elementData)
 }
 
-// TODO : remove editOrCreate param after feature_multi_territories deletion (will always be 'partner')
-function histoUpdatePermissionsFromRole (editOrCreate) {
-  const elementTogglePermissionAffectation = document.querySelector('#user_' + editOrCreate + '_permission_affectation_toggle input')
-  const elementTextPermissionAffectation = document.querySelector('#user_' + editOrCreate + '_permission_affectation_text')
+
+function histoUpdatePermissionsFromRole () {
+  const elementTogglePermissionAffectation = document.querySelector('#user_partner_permission_affectation_toggle input')
+  const elementTextPermissionAffectation = document.querySelector('#user_partner_permission_affectation_text')
   if (!elementTogglePermissionAffectation || !elementTextPermissionAffectation) {
     return
   }
-  let rolesSelect = null
-  if (editOrCreate === 'partner') {
-    rolesSelect = document.querySelector('#user_partner_role')
-  } else {
-    rolesSelect = document.querySelector('#user_' + editOrCreate + '_roles')
-  }
+  let rolesSelect = document.querySelector('#user_partner_role')
   if (rolesSelect.value === 'ROLE_ADMIN' || rolesSelect.value === 'ROLE_ADMIN_TERRITORY') {
     if (!elementTogglePermissionAffectation.checked) {
       elementTogglePermissionAffectation.click()
@@ -163,80 +158,12 @@ deletePartnerForm.forEach(form => {
   })
 })
 
-// TODO : delete with feature_multi_territories deletion
-function clearErrors () {
-  const divErrorElements = document.querySelectorAll('.fr-input-group--error')
-  divErrorElements.forEach((divErrorElement) => {
-    divErrorElement.classList.remove('fr-input-group--error')
-    const pErrorElement = divErrorElement.querySelector('.fr-error-text')
-    if (pErrorElement) {
-      pErrorElement.classList.add('fr-hidden')
-    }
-  })
-}
-
-if (document.querySelector('.fr-btn-add-user')) {
-  document.querySelector('.fr-btn-add-user').addEventListener('click', () => {
-    clearErrors()
-  })
-}
-
-if (document.querySelector('#user_create_roles')) {
-  document.querySelector('#user_create_roles').addEventListener('change', () => {
-    histoUpdatePermissionsFromRole('create')
-  })
-  histoUpdatePermissionsFromRole('create')
-}
-
-const checkUserMail = (el) => {
-  const formData = new FormData()
-  formData.append('email', el.value)
-  formData.append('_token', el.getAttribute('data-token'))
-  fetch('/bo/partenaires/checkmail', {
-    method: 'POST',
-    body: formData
-  }).then(r => {
-    if (!r.ok) {
-      r.json().then((r) => {
-        el.classList.add('fr-input--error')
-        el.parentElement.classList.add('fr-input-group--error')
-        el.parentElement.querySelector('p.fr-error-text').innerText = r.error
-        el.parentElement.querySelector('p.fr-error-text').classList.remove('fr-hidden')
-        document.querySelector('#user_create_form_submit').disabled = true
-        document.querySelector('#user_edit_form_submit').disabled = true
-      })
-    } else {
-      el.classList.remove('fr-input--error')
-      el.parentElement.classList.remove('fr-input-group--error')
-      el.parentElement.querySelector('p.fr-error-text').classList.add('fr-hidden')
-      document.querySelector('#user_create_form_submit').disabled = false
-      document.querySelector('#user_edit_form_submit').disabled = false
-    }
-  })
-    .catch(function (err) {
-      console.warn('Something went wrong.', err)
-    })
-}
-
-const emailInputs = document.querySelectorAll('.fr-input-email')
-emailInputs.forEach(emailInput => {
-  emailInput.addEventListener('change', function () {
-    checkUserMail(this)
-  })
-
-  emailInput.addEventListener('input', function () {
-    checkUserMail(this)
-  })
-})
-// END TODO : delete with feature_multi_territories deletion
-
 loadWindowWithLocalStorage('click', '[data-filter-list-partner]', 'search-partner-form')
 updateLocalStorageOnEvent('input', '#partner-input', 'back_link_partners')
 updateLocalStorageOnEvent('change', '#partner-filters-territories', 'back_link_partners')
 updateLocalStorageOnEvent('change', '#partner-filters-types', 'back_link_partners')
 updateLocalStorageWithPaginationParams('click', '#partner-pagination a', 'back_link_partners')
 
-// add for multi territories
 document.querySelectorAll('.btn-edit-partner-user').forEach(swbtn => {
   swbtn.addEventListener('click', event => {
     const refreshUrl = event.target.dataset.refreshUrl
@@ -263,9 +190,9 @@ if (modalPartnerUserCreate) {
 function addEventListenerOnRoleChange () {
   if (document.querySelector('#user_partner_role')) {
     document.querySelector('#user_partner_role').addEventListener('change', () => {
-      histoUpdatePermissionsFromRole('partner')
+      histoUpdatePermissionsFromRole()
     })
-    histoUpdatePermissionsFromRole('partner')
+    histoUpdatePermissionsFromRole()
   }
 }
 

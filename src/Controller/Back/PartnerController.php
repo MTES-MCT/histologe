@@ -10,7 +10,6 @@ use App\Entity\Intervention;
 use App\Entity\Partner;
 use App\Entity\User;
 use App\Entity\UserPartner;
-use App\Factory\UserFactory;
 use App\Form\PartnerPerimetreType;
 use App\Form\PartnerType;
 use App\Form\SearchPartnerType;
@@ -25,17 +24,14 @@ use App\Repository\AutoAffectationRuleRepository;
 use App\Repository\JobEventRepository;
 use App\Repository\PartnerRepository;
 use App\Repository\UserRepository;
-use App\Security\Voter\PartnerVoter;
 use App\Service\ListFilters\SearchPartner;
 use App\Service\Mailer\NotificationMail;
 use App\Service\Mailer\NotificationMailerRegistry;
 use App\Service\Mailer\NotificationMailerType;
 use App\Service\Sanitizer;
 use App\Service\Signalement\VisiteNotifier;
-use App\Validator\EmailFormatValidator;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Symfony\Component\Form\FormError;
 use Symfony\Component\Form\FormInterface;
@@ -47,18 +43,11 @@ use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Symfony\Component\Serializer\Exception\ExceptionInterface;
-use Symfony\Component\Validator\Validator\ValidatorInterface;
 use Symfony\Component\Workflow\WorkflowInterface;
 
 #[Route('/bo/partenaires')]
 class PartnerController extends AbstractController
 {
-    public function __construct(
-        #[Autowire(env: 'FEATURE_MULTI_TERRITORIES')]
-        private readonly bool $featureMultiTerritories,
-    ) {
-    }
-
     #[Route('/', name: 'back_partner_index', methods: ['GET', 'POST'])]
     #[IsGranted('ROLE_ADMIN_TERRITORY')]
     public function index(
@@ -367,9 +356,6 @@ class PartnerController extends AbstractController
         NotificationMailerRegistry $notificationMailerRegistry,
         PopNotificationManager $popNotificationManager,
     ): JsonResponse|RedirectResponse {
-        if (!$this->featureMultiTerritories) {
-            throw $this->createNotFoundException();
-        }
         $this->denyAccessUnlessGranted('USER_CREATE', $partner);
         $userTmp = new User();
         $userPartner = (new UserPartner())->setUser($userTmp)->setPartner($partner);
@@ -413,9 +399,6 @@ class PartnerController extends AbstractController
         Partner $partner,
         UserManager $userManager,
     ): JsonResponse|RedirectResponse {
-        if (!$this->featureMultiTerritories) {
-            throw $this->createNotFoundException();
-        }
         $this->denyAccessUnlessGranted('USER_CREATE', $partner);
         $user = new User();
         $userPartner = (new UserPartner())->setUser($user)->setPartner($partner);
@@ -458,73 +441,6 @@ class PartnerController extends AbstractController
         return $this->json(['content' => $content, 'title' => 'Ajouter un utilisateur']);
     }
 
-    // TODO : delete with feature_multi_territories deletion
-    #[Route('/{id}/ajoututilisateur', name: 'back_partner_user_add', methods: ['POST'])]
-    public function addUser(
-        Request $request,
-        Partner $partner,
-        UserManager $userManager,
-        UserFactory $userFactory,
-        PartnerRepository $partnerRepository,
-        ValidatorInterface $validator,
-    ): Response {
-        if ($this->featureMultiTerritories) {
-            throw $this->createNotFoundException();
-        }
-        $this->denyAccessUnlessGranted('USER_CREATE', $partner);
-        $data = $request->get('user_create');
-        if (!$this->isCsrfTokenValid('partner_user_create', $request->request->get('_token'))) {
-            $this->addFlash('error', 'Token CSRF invalide, merci d\'actualiser la page et réessayer.');
-
-            return $this->redirectToRoute('back_partner_view', ['id' => $partner->getId(), '_fragment' => 'agents'], Response::HTTP_SEE_OTHER);
-        }
-        if (!$this->canAttributeRole($data['roles'])) {
-            return $this->redirectToRoute('back_partner_view', ['id' => $partner->getId(), '_fragment' => 'agents'], Response::HTTP_SEE_OTHER);
-        }
-        if (!$this->isGranted(PartnerVoter::ASSIGN_PERMISSION_AFFECTATION, $partner)) {
-            $data['hasPermissionAffectation'] = false;
-        } else {
-            $data['hasPermissionAffectation'] = $data['hasPermissionAffectation'] ?? false;
-        }
-        if (!EmailFormatValidator::validate($data['email'])) {
-            $this->addFlash('error', 'L\'adresse e-mail n\'est pas valide.');
-
-            return $this->redirectToRoute('back_partner_view', ['id' => $partner->getId(), '_fragment' => 'agents'], Response::HTTP_SEE_OTHER);
-        }
-
-        /** @var User $user */
-        $user = $userManager->findOneBy(['email' => $data['email']]);
-        $partnerExist = $partnerRepository->findOneBy(['email' => $data['email']]);
-
-        if (null !== $partnerExist) {
-            $this->addFlash('error', 'Un partenaire existe déjà avec cette adresse e-mail.');
-        } elseif (null !== $user && \in_array('ROLE_USAGER', $user->getRoles())) {
-            $data['statut'] = User::STATUS_INACTIVE;
-            $userPartner = (new UserPartner())->setUser($user)->setPartner($partner);
-            $user->addUserPartner($userPartner);
-            $userManager->persist($userPartner);
-            $userManager->updateUserFromData($user, $data);
-        } elseif (null !== $user) {
-            $this->addFlash('error', 'Un utilisateur existe déjà avec cette adresse e-mail.');
-        } else {
-            $user = $userFactory->createInstanceFromArray($data);
-            $userPartner = (new UserPartner())->setUser($user)->setPartner($partner);
-            $user->addUserPartner($userPartner);
-            $userManager->persist($userPartner);
-            $errors = $validator->validate($user);
-            foreach ($errors as $error) {
-                $this->addFlash('error', $error->getMessage());
-            }
-            if (0 === \count($errors)) {
-                $userManager->save($user);
-                $message = 'L\'utilisateur a bien été créé. Un e-mail de confirmation a été envoyé à '.$user->getEmail();
-                $this->addFlash('success', $message);
-            }
-        }
-
-        return $this->redirectToRoute('back_partner_view', ['id' => $partner->getId(), '_fragment' => 'agents'], Response::HTTP_SEE_OTHER);
-    }
-
     #[Route('/{partner}/editerutilisateur/{user}', name: 'back_partner_user_edit')]
     public function editUser(
         Partner $partner,
@@ -565,31 +481,6 @@ class PartnerController extends AbstractController
         $content = $this->renderView('_partials/_modal_user_edit_form.html.twig', ['formUserPartner' => $formUserPartner, 'user' => $user]);
 
         return $this->json(['content' => $content, 'title' => 'Modifier le compte de : '.$user->getEmail(), 'disabled' => $formDisabled]);
-    }
-
-    // TODO : delete with feature_multi_territories deletion
-    private function canAttributeRole(string $role): bool
-    {
-        if (empty($role)) {
-            $this->addFlash('error', 'Merci de sélectionner un rôle.');
-
-            return false;
-        }
-
-        $authorizedRoles = ['ROLE_USER_PARTNER', 'ROLE_ADMIN_PARTNER'];
-        if ($this->isGranted('ROLE_ADMIN_TERRITORY')) {
-            $authorizedRoles[] = 'ROLE_ADMIN_TERRITORY';
-        }
-        if ($this->isGranted('ROLE_ADMIN')) {
-            $authorizedRoles[] = 'ROLE_ADMIN';
-        }
-        if (!\in_array($role, $authorizedRoles)) {
-            $this->addFlash('error', 'Vous n\'avez pas les droits pour attribuer ce rôle.');
-
-            return false;
-        }
-
-        return true;
     }
 
     #[Route('/{id}/transfererutilisateur', name: 'back_partner_user_transfer', methods: ['POST'])]
@@ -721,31 +612,6 @@ class PartnerController extends AbstractController
         $content = $this->renderView('_partials/_modal_user_create_email.html.twig', ['formCheckMail' => $formCheckMail]);
 
         return $this->json(['content' => $content, 'title' => 'Ajouter un utilisateur']);
-    }
-
-    // TODO : delete with feature_multi_territories deletion
-    #[Route('/checkmail', name: 'back_partner_check_user_email', methods: ['POST'])]
-    #[IsGranted('ROLE_ADMIN_PARTNER')]
-    public function checkMail(Request $request, UserRepository $userRepository): Response
-    {
-        if ($this->isCsrfTokenValid('partner_checkmail', $request->request->get('_token'))) {
-            $userExist = $userRepository->findOneBy(['email' => $request->get('email')]);
-            if (
-                $userExist
-                && $userExist->getId() !== (int) $request->get('userEditedId')
-                && !\in_array('ROLE_USAGER', $userExist->getRoles())
-            ) {
-                return $this->json(['error' => 'Un utilisateur existe déjà avec cette adresse e-mail.'], Response::HTTP_BAD_REQUEST);
-            }
-
-            if (!EmailFormatValidator::validate($request->get('email'))) {
-                return $this->json(['error' => 'L\'adresse e-mail est invalide'], Response::HTTP_BAD_REQUEST);
-            }
-
-            return $this->json(['success' => 'email_ok']);
-        }
-
-        return $this->json(['status' => 'denied'], 400);
     }
 
     private function displayErrors(FormInterface $form): void

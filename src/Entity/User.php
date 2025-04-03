@@ -110,9 +110,6 @@ class User implements UserInterface, EntityHistoryInterface, PasswordAuthenticat
     #[ORM\OneToMany(mappedBy: 'createdBy', targetEntity: Suivi::class, orphanRemoval: true)]
     private $suivis;
 
-    #[ORM\ManyToOne(targetEntity: Partner::class)]
-    private $partner; // @phpstan-ignore-line
-
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
     #[Assert\NotBlank(message: 'Merci de saisir un nom.', groups: ['user_partner', 'Default'])]
     #[Assert\Length(max: 255, groups: ['user_partner', 'Default'])]
@@ -134,10 +131,6 @@ class User implements UserInterface, EntityHistoryInterface, PasswordAuthenticat
 
     #[ORM\OneToMany(mappedBy: 'user', targetEntity: Notification::class)]
     private $notifications;
-
-    #[ORM\ManyToOne(targetEntity: Territory::class)]
-    #[ORM\JoinColumn(nullable: true)]
-    private $territory; // @phpstan-ignore-line
 
     #[ORM\OneToMany(mappedBy: 'uploadedBy', targetEntity: File::class)]
     private Collection $files;
