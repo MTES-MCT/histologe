@@ -621,8 +621,3 @@ territories:
     is_active: 0
     bbox: "[]"
     timezone: "Indian/Mayotte"
-  -
-    zip: "64"
-    name: "Agglo de Pau"
-    is_active: 1
-    bbox: "{\"n\":\"43.596725\",\"s\":\"42.777531\",\"e\":\"0.029807\",\"w\":\"-1.792325\"}"
