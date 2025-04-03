@@ -9,7 +9,6 @@ use Nelmio\ApiDocBundle\Attribute\Security;
 use OpenApi\Attributes as OA;
 use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\DependencyInjection\Attribute\When;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\File\File;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -22,8 +21,6 @@ use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
 
 class SecurityController extends AbstractController
 {
-    #[When('dev')]
-    #[When('test')]
     #[Route('/api/login', name: 'api_login', methods: ['POST'])]
     #[Security(name: null)]
     #[OA\Post(
@@ -61,6 +58,7 @@ class SecurityController extends AbstractController
                     properties: [
                         new OA\Property(property: 'error', type: 'string', example: 'Identifiants invalides.'),
                         new OA\Property(property: 'message', type: 'string', example: 'Les identifiants sont invalides.'),
+                        new OA\Property(property: 'status', type: 'int', example: 401),
                     ],
                     type: 'object'
                 )
@@ -74,6 +72,7 @@ class SecurityController extends AbstractController
             return $this->json([
                 'error' => 'Identifiants invalides.',
                 'message' => 'Les identifiants sont invalides.',
+                'status' => Response::HTTP_UNAUTHORIZED,
             ], Response::HTTP_UNAUTHORIZED);
         }
 

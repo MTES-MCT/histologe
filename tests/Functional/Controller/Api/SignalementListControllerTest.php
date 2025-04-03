@@ -6,7 +6,7 @@ use App\Entity\User;
 use App\Tests\ApiHelper;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 
-class SignalementControllerTest extends WebTestCase
+class SignalementListControllerTest extends WebTestCase
 {
     use ApiHelper;
 

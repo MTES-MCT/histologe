@@ -3,7 +3,70 @@ when@dev:
         documentation:
             info:
                 title: '%platform_name%'
-                description: API Documentation
+                description:  |
+                    API Documentation
+                    ### Requêtes
+                    L'API adhère aux principes REST :
+                    <ul>
+                        <li>requêtes <code>GET</code> : lecture sans modification</li>
+                        <li>requêtes <code>POST</code> : création de nouvelle ressource</li>
+                        <li>requêtes <code>PATCH</code> : mise à jour partielle d'une ressource existante</li>
+                    </ul>
+                    
+                    Les paramètres des requêtes <code>GET</code> doivent être envoyés via les query string de la requête.
+                    
+                    Les paramètres des requêtes <code>POST</code> et <code>PATCH</code> doivent être transmis dans le corps de la requête sous un format JSON valide, et doivent contenir le header Content-Type: <code>application/json</code>.
+                    
+                    ### Routes
+                    Pour la version production, les requêtes doivent être adressées à https://bo.signal-logement.beta.gouv.fr/api.
+                    
+                    Pour la version sandbox, les requêtes doivent être adressées à https://histologe-demo.osc-fr1.scalingo.io/api
+                    
+                    ### Authentification
+                    Tous les points de terminaison de l’API sont protégés et nécessitent une authentification.
+                    
+                    L'accès est réservé aux utilisateurs authentifiés, dans la limite des permissions du partenaire.
+                    
+                    Le mode d’authentification utilisé repose sur un token de type <code>Bearer</code>, obtenu à l’aide d’un identifiant et d’un mot de passe. 
+                    
+                    Une fois le token obtenu, il doit être transmis dans l’en-tête <code>Authorization</code> de chaque requête API.
+                    
+                    Une demande officielle doit être faite <a href="https://signal-logement.beta.gouv.fr/une-question/contact/">via le formulaire de contact du site.</a>
+
+                    Sous réserve d'acceptation par nos services, et afin de vous permettre de faire des tests d'interfaçage, vous bénéficierez alors :
+                    <ul>
+                        <li>d'un accès back-office à la plateforme de démonstration</li>
+                        <li>d'un accès API à la plateforme de démonstration</li>
+                    </ul>
+                    
+                    Dans un second temps, nous créerons un accès API à la plateforme de production, également lié à une entité Partenaire définie ensemble.
+                    
+                    ### Sérialisation
+                    L'API supporte uniquement le format JSON. 
+                    
+                    Toutes les réponses envoyées par l'API contiendront le header <code>Content-Type: application/json</code> et leur contenu est présent dans le body dans un format JSON à désérialiser.
+
+                    ### Pagination des réponses par listes
+                    
+                    Tous les points de terminaison qui retournent des listes sont paginés. De manière générale, tout point de terminaison qui retourne une liste peut retourner une liste vide.
+
+                    #### Paramètres
+                    
+                    Le paramètre (optionnel) <code>page</code> permet d'accéder à une page donnée. Sauf précision contraire dans la documentation d'un point de terminaison donné, on retrouve 20 éléments par page.
+
+                    
+                    ### Codes de retour
+                    L'API est susceptible de retourner les codes suivants :
+                    | Code | Nom                   | Description                                                                          |
+                    |------|-----------------------|--------------------------------------------------------------------------------------|
+                    | 200  | Success               | Succès                                                                               |
+                    | 201  | Created               | La ressource a été créée avec succès                                                |
+                    | 400  | Bad Request           | La requête est invalide                                                              |
+                    | 401  | Unauthorized          | L'authentification a échoué                                                          |
+                    | 403  | Forbidden             | Droits insuffisants pour réaliser l'action demandée                                  |
+                    | 404  | Not Found             | La ressource est introuvable                                                         |
+                    | 500  | Internal Server Error | Une erreur serveur s'est produite (l'équipe technique est notifiée automatiquement)  |
+
                 version: 1.0.0
             components:
                 securitySchemes:
