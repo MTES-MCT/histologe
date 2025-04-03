@@ -170,7 +170,7 @@ class Suivi implements EntityHistoryInterface
         }
 
         if ($this->suiviTransformerService) {
-            return $this->suiviTransformerService->transformDetails($description);
+            return $this->suiviTransformerService->transformDescription($description);
         }
 
         return $description;

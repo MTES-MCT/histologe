@@ -13,10 +13,10 @@ class SuiviTransformerService
     ) {
     }
 
-    public function transformDetails(?string $description): ?string
+    public function transformDescription(?string $description): string
     {
         if (!$description) {
-            return $description;
+            return '';
         }
         preg_match_all('/href="([^"]+)"/', $description, $matches);
         foreach ($matches[1] as $match) {
