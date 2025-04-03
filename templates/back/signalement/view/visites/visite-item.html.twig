@@ -84,9 +84,11 @@
                 and photo.intervention.id is same as intervention.id
         ) %}
         <div class="fr-col-6 fr-col-md-2 fr-rounded signalement-file-item">
-            <div class="fr-px-5w fr-py-8w fr-rounded fr-border fr-text--center part-infos-hover"
-                 data-user="{{ photo.uploadedBy.nomComplet ?? 'N/R' }}"
-                 data-mail="{{ photo.createdAt is defined ? photo.createdAt|date('d.m.Y') : 'N/R' }}"
+            <div class="fr-hidden" id="tippy_photovisite_{{ photo.id }}">
+                {% include '_partials/_tippy_photo_template.html.twig' %}
+            </div>
+            <div class="fr-px-5w fr-py-8w fr-rounded fr-border fr-text--center part-infos-hover" 
+                 data-template="tippy_photovisite_{{ photo.id }}"
                  style="background: url('{{ path('show_file', {uuid: photo.uuid}) }}?variant=thumb')no-repeat center center/cover">
                 <button 
                     class="fr-btn fr-btn--sm fr-icon-eye-line open-photo-album" 

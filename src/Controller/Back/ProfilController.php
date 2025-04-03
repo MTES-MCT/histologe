@@ -119,6 +119,7 @@ class ProfilController extends AbstractController
                 $response = ['code' => Response::HTTP_OK];
                 $user->setPrenom($payload['profil_edit_infos']['prenom']);
                 $user->setNom($payload['profil_edit_infos']['nom']);
+                $user->setFonction($payload['profil_edit_infos']['fonction']);
                 $doctrine->getManager()->persist($user);
                 $doctrine->getManager()->flush();
                 $this->addFlash('success', 'Les informations de votre profil ont bien été modifiées.');

@@ -32,12 +32,17 @@
                             <div class="fr-input-group fr-col-12 fr-pl-0 fr-pl-md-0 fr-mt-2v">
                                 <label for="profil_edit_infos_prenom" class="fr-label">Prénom</label>
                                 <input type="text" id="profil_edit_infos_prenom" name="profil_edit_infos[prenom]"
-                                    class="fr-input" value={{ app.user.prenom }} maxlength="255">
+                                    class="fr-input" value="{{ app.user.prenom }}" maxlength="255">
                             </div>                         
                             <div class="fr-input-group fr-col-12 fr-pl-0 fr-pl-md-0">
                                 <label for="profil_edit_infos_nom" class="fr-label">Nom</label>
                                 <input type="text" id="profil_edit_infos_nom" name="profil_edit_infos[nom]"
-                                    class="fr-input" value={{ app.user.nom }} maxlength="255">
+                                    class="fr-input" value="{{ app.user.nom }}" maxlength="255">
+                            </div>
+                            <div class="fr-input-group fr-col-12 fr-pl-0 fr-pl-md-0">
+                                <label for="profil_edit_infos_fonction" class="fr-label">Fonction</label>
+                                <input type="text" id="profil_edit_infos_fonction" name="profil_edit_infos[fonction]"
+                                    class="fr-input" value="{{ app.user.fonction }}" maxlength="255">
                             </div>
                             <input type="hidden" name="_token" value="{{ csrf_token('profil_edit_infos') }}">
                         </form>

@@ -29,9 +29,16 @@
                 Suivi automatique
 
             {% elseif suivi.createdBy is not null %}
-                <div class="part-infos-hover"
-                     data-user="{{ suivi.createdBy.nomComplet }}"
-                     data-mail="{{ suivi.createdBy.email }}">
+                <div class="fr-hidden" id="tippy_suivi_{{ suivi.id }}">
+                    <strong class="fr-ws-nowrap">{{ suivi.createdBy.nomComplet }}</strong>
+                    <hr class="fr-pb-1v">
+                    <span class="fr-ws-nowrap">{{ suivi.createdBy.email }}</span>
+                    {% if suivi.createdBy.fonction %}
+                        <hr class="fr-pb-1v">
+                        <span class="fr-ws-nowrap">{{ suivi.createdBy.fonction }}</span>
+                    {% endif %}
+                </div>
+                <div class="part-infos-hover" data-template="tippy_suivi_{{ suivi.id }}" >
                 {{
                     'ROLE_USAGER' in suivi.createdBy.roles
                         ? (suivi.createdBy.email is same as signalement.mailOccupant

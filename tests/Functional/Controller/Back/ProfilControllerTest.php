@@ -64,6 +64,7 @@ class ProfilControllerTest extends WebTestCase
             'profil_edit_infos' => [
                 'prenom' => 'John',
                 'nom' => 'Doe',
+                'fonction' => 'Directeur',
             ],
         ]);
 
@@ -71,6 +72,7 @@ class ProfilControllerTest extends WebTestCase
         $this->assertJson(json_encode(['code' => Response::HTTP_OK]));
         $this->assertEquals('Doe', $this->user->getNom());
         $this->assertEquals('John', $this->user->getPrenom());
+        $this->assertEquals('Directeur', $this->user->getFonction());
     }
 
     public function testEditInfosWithAvatarSuccess(): void
@@ -106,6 +108,7 @@ class ProfilControllerTest extends WebTestCase
             'profil_edit_infos' => [
                 'prenom' => 'John',
                 'nom' => 'Doe',
+                'fonction' => 'Directeur',
             ],
         ], ['profil_edit_infos' => [
             'avatar' => $imageFile,
@@ -116,6 +119,7 @@ class ProfilControllerTest extends WebTestCase
         $this->assertJson(json_encode(['code' => Response::HTTP_OK]));
         $this->assertEquals('Doe', $this->user->getNom());
         $this->assertEquals('John', $this->user->getPrenom());
+        $this->assertEquals('Directeur', $this->user->getFonction());
         $this->assertEquals('avatarTitle.jpg', $this->user->getAvatarFilename());
     }
 
