@@ -2,6 +2,7 @@
 
 namespace App\Factory\Api;
 
+use App\Controller\FileController;
 use App\Dto\Api\Model\File;
 use App\Entity\File as FileEntity;
 use CoopTilleuls\UrlSignerBundle\UrlSigner\UrlSignerInterface;
@@ -27,7 +28,7 @@ readonly class FileFactory
             ['uuid' => $fileEntity->getUuid()],
             UrlGeneratorInterface::ABSOLUTE_URL
         );
-        $file->url = $this->urlSigner->sign($url); // @phpstan-ignore-line
+        $file->url = $this->urlSigner->sign($url, FileController::SIGNATURE_VALIDITY_DURATION);
 
         return $file;
     }

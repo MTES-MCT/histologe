@@ -3,6 +3,7 @@
 namespace App\Twig;
 
 use App\Command\FixEmailAddressesCommand;
+use App\Controller\FileController;
 use App\Entity\Enum\OccupantLink;
 use App\Entity\Enum\QualificationStatus;
 use App\Entity\File;
@@ -203,6 +204,6 @@ class AppExtension extends AbstractExtension implements GlobalsInterface
 
     public function signUrl(string $url)
     {
-        return $this->urlSigner->sign($url); // @phpstan-ignore-line
+        return $this->urlSigner->sign($url, FileController::SIGNATURE_VALIDITY_DURATION);
     }
 }
