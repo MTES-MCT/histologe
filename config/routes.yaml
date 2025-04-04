@@ -5,3 +5,9 @@ controllers:
 kernel:
     resource: ../src/Kernel.php
     type: attribute
+
+show_file:
+    path: /show/{uuid:file}
+    controller: App\Controller\FileController::showFile
+    defaults:
+        _signed: '%feature_secure_uuid_url%'

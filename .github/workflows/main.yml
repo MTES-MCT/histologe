@@ -19,6 +19,7 @@ env:
   CLAMAV_PORT: 3310
   FEATURE_BO_SIGNALEMENT_CREATE: 1
   PLATFORM_NAME: 'Signal Logement'
+  FEATURE_SECURE_UUID_URL: 1
 jobs:
   code-quality:
     name: Signal-logement (PHP ${{ matrix.php-versions }})
