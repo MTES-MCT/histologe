@@ -2,6 +2,7 @@
 
 namespace App\Service;
 
+use App\Controller\FileController;
 use CoopTilleuls\UrlSignerBundle\UrlSigner\UrlSignerInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
@@ -24,7 +25,7 @@ class SuiviTransformerService
                 $exploded = explode('/show/', $match);
                 $uuid = $exploded[count($exploded) - 1];
                 $url = $this->urlGenerator->generate('show_file', ['uuid' => $uuid], UrlGeneratorInterface::ABSOLUTE_URL);
-                $url = $this->urlSigner->sign($url); // @phpstan-ignore-line
+                $url = $this->urlSigner->sign($url, FileController::SIGNATURE_VALIDITY_DURATION);
                 $description = str_replace($match, $url, $description);
             }
         }

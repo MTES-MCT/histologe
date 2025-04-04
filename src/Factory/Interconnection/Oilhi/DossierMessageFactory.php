@@ -2,6 +2,7 @@
 
 namespace App\Factory\Interconnection\Oilhi;
 
+use App\Controller\FileController;
 use App\Entity\Affectation;
 use App\Entity\Criticite;
 use App\Entity\Enum\OccupantLink;
@@ -180,6 +181,6 @@ class DossierMessageFactory implements DossierMessageFactoryInterface
             UrlGeneratorInterface::ABSOLUTE_URL
         );
 
-        return $this->urlSigner->sign($url); // @phpstan-ignore-line
+        return $this->urlSigner->sign($url, FileController::SIGNATURE_VALIDITY_DURATION);
     }
 }

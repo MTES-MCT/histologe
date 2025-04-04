@@ -2,6 +2,7 @@
 
 namespace App\Tests\Functional\Controller;
 
+use App\Controller\FileController;
 use App\Repository\FileRepository;
 use CoopTilleuls\UrlSignerBundle\UrlSigner\UrlSignerInterface;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
@@ -31,7 +32,7 @@ class FileControllerTest extends WebTestCase
     {
         $file = $this->fileRepository->findOneBy(['filename' => 'test1.23.pdf']);
         $url = $this->router->generate('show_file', ['uuid' => $file->getUuid()]);
-        $url = $this->urlSigner->sign($url); // @phpstan-ignore-line
+        $url = $this->urlSigner->sign($url, FileController::SIGNATURE_VALIDITY_DURATION);
 
         $this->client->request('GET', $url);
 
