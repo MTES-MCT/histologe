@@ -40,7 +40,10 @@
                                     class="fr-input" value="{{ app.user.nom }}" maxlength="255">
                             </div>
                             <div class="fr-input-group fr-col-12 fr-pl-0 fr-pl-md-0">
-                                <label for="profil_edit_infos_fonction" class="fr-label">Fonction</label>
+                                <label for="profil_edit_infos_fonction" class="fr-label">
+                                    Fonction
+                                    <span class="fr-hint-text">Renseignez ici votre fonction au sein de votre organisation.</span>
+                                </label>
                                 <input type="text" id="profil_edit_infos_fonction" name="profil_edit_infos[fonction]"
                                     class="fr-input" value="{{ app.user.fonction }}" maxlength="255">
                             </div>

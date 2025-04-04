@@ -79,7 +79,7 @@ class UserPartnerType extends AbstractType
                 'required' => false,
             ])
             ->add('fonction', null, [
-                'label' => 'Fonction',
+                'label' => 'Fonction (facultatif)',
             ])
             ->add('role', ChoiceType::class, [
                 'choices' => $this->roles,
