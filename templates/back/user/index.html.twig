@@ -106,7 +106,10 @@
                             {% endfor %}
                         </td>
                     {% endif %}
-                    <td>{{ user.prenom }} {{ user.nom }}</td>
+                    <td>
+                        {{ user.prenom }} {{ user.nom }}
+                        {% if user.fonction %}({{ user.fonction }}){% endif %}
+                    </td>
                     <td>{{ user.email }}</td>
                     <td>
                         {% for partner in user.partners %}

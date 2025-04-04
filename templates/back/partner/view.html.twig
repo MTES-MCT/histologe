@@ -218,6 +218,7 @@
                 <th scope="col">Dernière connexion</th>
                 <th scope="col">Nom</th>
                 <th scope="col">Prénom</th>
+                <th scope="col">Fonction</th>
                 <th scope="col">Courriel</th>
                 <th scope="col">Notif. e-mails</th>
                 <th scope="col">Statut</th>
@@ -235,6 +236,7 @@
                             <td>{{ user.getLastLoginAtStr('d/m/Y') }}</td>
                             <td>{{ user.nom }}</td>
                             <td>{{ user.prenom }}</td>
+                            <td>{{ user.fonction }}</td>
                             <td>{{ user.email }}</td>
                             <td><span class="fr-badge fr-badge--blue-ecume fr-mb-1v">{{ user.isMailingActive ? 'OUI' : 'NON' }}</span></td>
                             <td>{% if user.statut == 0 %}

@@ -94,7 +94,7 @@
                     </td>
                     <td>
                         {% if signalement.lastSuiviBy is not null %}
-                            <strong>{{ signalement.lastSuiviAt|date('d.m.Y') }}</strong> <br>{% set classe = '' %}
+                            <strong>{{ signalement.lastSuiviAt|date('d/m/Y') }}</strong> <br>{% set classe = '' %}
                             {% if 'OCCUPANT' == signalement.lastSuiviBy or 'DECLARANT' == signalement.lastSuiviBy %}
                                 {% set classe = 'fr-badge fr-badge--warning' %}
                             {% endif %}
