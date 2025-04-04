@@ -27,7 +27,7 @@ function saveCurrentTab(event) {
   const currentTab = document?.querySelector('.fr-tabs__panel.fr-tabs__panel--selected')
   currentTab.classList.add('fr-tabs__panel--saving')
   const currentTabName = currentTab.id.substring(9, currentTab.id.length - 6)
-
+  
   let formData = null
   let formAction = null
   if (event.type === 'submit') {
@@ -114,7 +114,6 @@ function initBoFormSignalementSubmit(tabName) {
       boFormSignalementCurrentTabIsDirty = true
     })
   })
-
   switch (tabName) {
     case 'adresse':
       initBoFormSignalementAdresse()
@@ -124,6 +123,9 @@ function initBoFormSignalementSubmit(tabName) {
       break
     case 'situation':
       initBoFormSignalementSituation()
+      break
+    case 'desordres':
+      initBoFormSignalementDesordres()
       break
   }
 }
@@ -189,6 +191,136 @@ if (document?.querySelector('#bo-form-signalement-logement')) {
 }
 if (document?.querySelector('#bo-form-signalement-situation')) {
   initBoFormSignalementSubmit('situation')
+}
+if (document?.querySelector('#bo-form-signalement-desordres')) {
+  initBoFormSignalementSubmit('desordres')
+}
+
+function initBoFormSignalementDesordres() {
+  // Gestion de la fermeture des modales de sélection des critères
+  document.querySelectorAll(".valid-add-critere").forEach(openModalBtn => {
+    openModalBtn.addEventListener("click", function () {
+      updateSelectedCriteres(openModalBtn.closest('dialog'));
+    });
+  });
+
+  // Gestion de la fermeture des modales d'édition des précisions
+  document.querySelectorAll(".valid-edit-precisions").forEach(openModalBtn => {
+    openModalBtn.addEventListener("click", function () {
+      updateSelectedPrecisions(openModalBtn.closest('dialog'));
+    });
+  });
+
+  function updateSelectedCriteres(modal) {
+    window.dispatchEvent(new Event('refreshSearchCheckboxContainerEvent'))
+    let zone = modal.dataset.zone
+    let listCriteres = document.querySelector(`#list-critere-${zone}`)
+
+    // Vider les encarts existants
+    document.querySelectorAll(`.item-critere-${zone}`).forEach(container => {
+      container.remove(); 
+    });
+
+    let nbCriteres = 0
+    // Récupérer les critères sélectionnés
+    modal.querySelectorAll("input[type='checkbox']:checked").forEach(checkbox => {
+      nbCriteres++
+      let critereLabel = checkbox.labels[0].innerText
+      let critereId = checkbox.value
+
+      // Créer un encart pour le critère sélectionné
+      let encart = document.createElement("div");
+      encart.classList.add("fr-grid-row", "fr-p-3v", "fr-mb-3v", "fr-grid-row--top", "fr-border--grey", `item-critere-${zone}`);
+      encart.id = `item-critere-${critereId}`
+      // TODO : changer la couleur de la bordure et mettre un warning, si précision pas choisie alors que devrait 
+      encart.innerHTML = `
+        <div class="fr-col-12 fr-col-md-8">
+          ${critereLabel}
+        </div>`
+      let modalId = `modal-precisions-${critereId}`
+      let modalElement = document.getElementById(modalId) ;
+      if (modalElement) {
+        encart.innerHTML += `<div class="fr-col-12 fr-col-md-4 fr-text--right">
+            <a href="#" aria-controls="${modalId}" data-fr-opened="false" 
+                class="fr-a-edit fr-btn--icon-left fr-icon-edit-line edit-precisions-btn" 
+                title="Editer les détails" data-fr-js-modal-button="true">
+                    Editer les détails
+            </a>  
+          </div>
+          <div class="fr-col-12">
+            <ul class="fr-list" data-precisions="${checkbox.value}">
+              <!-- Les précisions seront injectées ici -->
+            </ul>
+            <span></span>
+            <p class="fr-hidden fr-error-text"></p>
+          </div>
+        `;
+      }
+
+      // Ajouter l'encart dans la bonne colonne (Logement ou Bâtiment)
+      listCriteres
+        .appendChild(encart);
+      if (modalElement) {
+        updateSelectedPrecisions(modalElement)
+      }
+
+    });
+    if (nbCriteres > 0 ){
+      listCriteres.classList.remove("fr-hidden")
+    } else {
+      listCriteres.classList.add("fr-hidden")
+    }
+  }
+
+  function updateSelectedPrecisions(modal) {
+    let critereId = modal.dataset.critereid
+    let precisionContainer = document.querySelector(`#item-critere-${critereId}`);
+
+    let hasPrecisionsChosen = false;
+    let ulElement = precisionContainer ? precisionContainer.querySelector("ul") : null;
+    if (ulElement) {
+      ulElement.innerHTML = "";
+      let checkboxes = modal.querySelectorAll("input[type='checkbox']");
+      checkboxes.forEach(checkbox => {
+        if (checkbox.checked) {
+          let precisionLabel = checkbox.labels[0].innerHTML;
+          let precisionId = checkbox.value;
+          let precisionItem = document.createElement("li");
+          precisionItem.innerHTML = precisionLabel;
+          ulElement.appendChild(precisionItem);
+          hasPrecisionsChosen = true;
+        }
+      });
+    }
+
+    if ('desordres_batiment_nuisibles_autres' == modal.dataset.critereslug
+      || 'desordres_logement_nuisibles_autres' == modal.dataset.critereslug
+    ){
+      let spanElement = precisionContainer ? precisionContainer.querySelector("span") : null;
+      spanElement.innerHTML = ''
+      let inputTextElement = modal.querySelector("input[type='text']");
+      if ('' != inputTextElement.value) {
+        spanElement.innerHTML = 'Commentaire : <i>'+inputTextElement.value+'</i>'      
+        if ('desordres_batiment_nuisibles_autres' == modal.dataset.critereslug){
+          hasPrecisionsChosen = true;
+        }
+      }
+    }
+
+    let errorElement = precisionContainer ? precisionContainer.querySelector("p") : null;
+    if (hasPrecisionsChosen) {
+      precisionContainer.classList.add('fr-border--grey')
+      precisionContainer.classList.remove('fr-border--red')
+      errorElement.classList.add('fr-hidden')
+    } else {
+      precisionContainer.classList.remove('fr-border--grey')
+      precisionContainer.classList.add('fr-border--red')
+      errorElement.innerHTML = 'Veuillez renseigner les détails du désordre'  
+      errorElement.classList.remove('fr-hidden')
+    }
+  }
+  updateSelectedCriteres(document.getElementById("fr-modal-desordres-batiment-add"))
+  updateSelectedCriteres(document.getElementById("fr-modal-desordres-logement-add"))
 }
 
 function initBoFormSignalementAdresse() {

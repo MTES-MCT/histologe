@@ -152,6 +152,14 @@ pre {
     border: 1px solid #000091;
 }
 
+.fr-border--grey {
+    border: 1px solid #dddddd;
+}
+
+.fr-border--red {
+    border: 1px solid #ce0500;
+}
+
 .fr-border--bottom--orange {
     border-bottom: 3px solid #FF9940;
 }
@@ -599,6 +607,10 @@ hr.blue-border {
 
 .fr-modal .fr-modal__footer {
     z-index: 1;
+}
+
+.fr-zindex-100 {
+    z-index: 100 !important;
 }
 
 #signalement_dateNaissanceOccupant_day, #signalement_dateNaissanceOccupant_month {

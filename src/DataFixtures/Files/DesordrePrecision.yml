@@ -83,7 +83,7 @@ desordre_precision:
     desordre_critere_slug: "desordres_batiment_isolation_dernier_etage_toit" 
     coef: 2
     is_danger: 0
-    label: ""
+    label: "Le logement n'est pas sous un toit"
     qualification: ['NON_DECENCE', 'RSD', 'MISE_EN_SECURITE_PERIL']
     desordre_precision_slug: "desordres_batiment_isolation_dernier_etage_toit_sous_toit_non"
     is_suroccupation: 0
@@ -115,7 +115,7 @@ desordre_precision:
     desordre_critere_slug: "desordres_batiment_isolation_infiltration_eau" 
     coef: 2
     is_danger: 0
-    label: ""
+    label: "Le logement est à un étage supérieur"
     qualification: ['NON_DECENCE', 'RSD']
     desordre_precision_slug: "desordres_batiment_isolation_infiltration_eau_au_sol_non"
     is_suroccupation: 0
