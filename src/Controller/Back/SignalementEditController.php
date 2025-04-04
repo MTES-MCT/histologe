@@ -4,6 +4,7 @@ namespace App\Controller\Back;
 
 use App\Dto\Request\Signalement\AdresseOccupantRequest;
 use App\Dto\Request\Signalement\CompositionLogementRequest;
+use App\Dto\Request\Signalement\CoordonneesAgenceRequest;
 use App\Dto\Request\Signalement\CoordonneesBailleurRequest;
 use App\Dto\Request\Signalement\CoordonneesFoyerRequest;
 use App\Dto\Request\Signalement\CoordonneesTiersRequest;
@@ -184,6 +185,54 @@ class SignalementEditController extends AbstractController
                 $signalementManager->updateFromCoordonneesBailleurRequest($signalement, $coordonneesBailleurRequest);
                 $response = ['code' => Response::HTTP_OK];
                 $this->addFlash('success', 'Les coordonnées du bailleur ont bien été modifiées.');
+            } else {
+                $response = ['code' => Response::HTTP_BAD_REQUEST];
+                $response = [...$response, ...$errorMessage];
+            }
+        } else {
+            $response = [
+                'code' => Response::HTTP_UNAUTHORIZED,
+                'message' => self::ERROR_MSG,
+            ];
+        }
+
+        return $this->json($response, $response['code']);
+    }
+
+    #[Route('/{uuid:signalement}/edit-coordonnees-agence', name: 'back_signalement_edit_coordonnees_agence', methods: 'POST')]
+    public function editCoordonneesAgence(
+        Signalement $signalement,
+        Request $request,
+        SignalementManager $signalementManager,
+        SerializerInterface $serializer,
+        ValidatorInterface $validator,
+    ): JsonResponse {
+        $this->denyAccessUnlessGranted('SIGN_EDIT', $signalement);
+        $payload = $request->getPayload()->all();
+        if ($this->isCsrfTokenValid(
+            'signalement_edit_coordonnees_agence_'.$signalement->getId(),
+            $payload['_token']
+        )) {
+            /** @var CoordonneesAgenceRequest $coordonneesAgenceRequest */
+            $coordonneesAgenceRequest = $serializer->deserialize(
+                json_encode($request->getPayload()->all()),
+                CoordonneesAgenceRequest::class,
+                'json'
+            );
+            $validationGroups = ['Default'];
+            if ($signalement->getProfileDeclarant()) {
+                $validationGroups[] = $signalement->getProfileDeclarant()->value;
+            }
+            $errorMessage = FormHelper::getErrorsFromRequest(
+                $validator,
+                $coordonneesAgenceRequest,
+                $validationGroups
+            );
+
+            if (empty($errorMessage)) {
+                $signalementManager->updateFromCoordonneesAgenceRequest($signalement, $coordonneesAgenceRequest);
+                $response = ['code' => Response::HTTP_OK];
+                $this->addFlash('success', 'Les coordonnées de l\'agence ont bien été modifiées.');
             } else {
                 $response = ['code' => Response::HTTP_BAD_REQUEST];
                 $response = [...$response, ...$errorMessage];

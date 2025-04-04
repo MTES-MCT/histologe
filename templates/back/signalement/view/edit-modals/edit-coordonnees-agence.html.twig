@@ -1,0 +1,146 @@
+<dialog aria-labelledby="fr-modal-title-modal-edit-coordonnees-agence" id="fr-modal-edit-coordonnees-agence" class="fr-modal">
+    <div class="fr-container fr-container--fluid fr-container-md">
+        <div class="fr-grid-row fr-grid-row--center">
+            <div class="fr-col-12 fr-col-md-8 fr-col-lg-6">
+                <div class="fr-modal__body">                
+                    <form method="POST" id="form-edit-coordonnees-agence" enctype="application/json" action="{{ path('back_signalement_edit_coordonnees_agence',{uuid:signalement.uuid}) }}">
+                        <div class="fr-modal__header">
+                            <button type="button" class="fr-btn--close fr-btn" aria-controls="fr-modal-edit-coordonnees-agence">Fermer</button>
+                        </div>
+                        <div class="fr-modal__content">
+                            <h1 id="fr-modal-title-modal-edit-coordonnees-agence" class="fr-modal__title">
+                                Modifier les coordonnées de l'agence
+                            </h1>
+                            <p>Tous les champs sont obligatoires, sauf mention contraire.</p>
+
+                            <div class="fr-input-group">
+                                <label class="fr-label" for="coordonneesAgenceDenomination">Dénomination
+                                    {{ show_label_facultatif(
+                                        'App\\Dto\\Request\\Signalement\\CoordonneesAgenceRequest',
+                                        'denomination',
+                                        signalement.profileDeclarant)
+                                    }}
+                                </label>
+                                <input class="fr-input"
+                                       type="text"
+                                       id="coordonneesAgenceDenomination"
+                                       name="denomination"
+                                       value="{{ signalement.denominationAgence }}"
+                                       maxlength="255"
+                                       autocomplete="off"
+                                >
+                                <ul class="fr-grid-row fr-background-alt--blue-france fr-text-label--blue-france fr-autocomplete-list">
+                                </ul>
+                            </div>
+
+                            <div class="fr-input-group">
+                                <label class="fr-label" for="coordonneesAgenceNom">Nom
+                                    {{ show_label_facultatif(
+                                        'App\\Dto\\Request\\Signalement\\CoordonneesAgenceRequest',
+                                        'nom',
+                                        signalement.profileDeclarant)
+                                    }}
+                                </label>
+                                <input class="fr-input"
+                                       type="text"
+                                       id="coordonneesAgenceNom"
+                                       name="nom"
+                                       value="{{ signalement.nomAgence }}"
+                                       maxlength="255"
+                                       autocomplete="off"
+                                >
+                            </div>
+
+                            <div class="fr-input-group">
+                                <label class="fr-label" for="coordonneesAgencePrenom">Prénom
+                                    {{ show_label_facultatif(
+                                        'App\\Dto\\Request\\Signalement\\CoordonneesAgenceRequest',
+                                        'prenom',
+                                        signalement.profileDeclarant)
+                                    }}
+                                </label>
+                                <input class="fr-input" type="text" id="coordonneesAgencePrenom" name="prenom" value="{{ signalement.prenomAgence }}" maxlength="255">
+                            </div>
+
+                            <div class="fr-input-group">
+                                <label class="fr-label" for="coordonneesAgenceMail">Courriel
+                                    {{ show_label_facultatif(
+                                        'App\\Dto\\Request\\Signalement\\CoordonneesAgenceRequest',
+                                        'mail',
+                                        signalement.profileDeclarant)
+                                    }}
+                                </label>
+                                <input class="fr-input" type="text" id="coordonneesAgenceMail" name="mail" value="{{ signalement.mailAgence }}">
+                            </div>
+
+                            <div class="fr-input-group">
+                                <label class="fr-label" for="coordonneesAgenceTelephone">Téléphone
+                                    {{ show_label_facultatif(
+                                        'App\\Dto\\Request\\Signalement\\CoordonneesAgenceRequest',
+                                        'telephone',
+                                        signalement.profileDeclarant)
+                                    }}
+                                </label>
+                                <input class="fr-input" type="text" id="coordonneesAgenceTelephone" name="telephone" value="{{ signalement.telAgenceDecoded }}">
+                            </div>
+
+                            <div class="fr-input-group">
+                                <label class="fr-label" for="coordonneesAgenceTelephoneBis">Téléphone sec. (facultatif)</label>
+                                <input class="fr-input" type="text" id="coordonneesAgenceTelephoneBis" name="telephoneBis" value="{{ signalement.telAgenceSecondaireDecoded }}">
+                            </div>
+
+                            <div class="fr-input-group">
+                                <label class="fr-label" for="edit-coordonnees-agence-search">
+                                    Adresse {{ show_label_facultatif(
+                                        'App\\Dto\\Request\\Signalement\\CoordonneesAgenceRequest',
+                                        'adresse',
+                                        signalement.profileDeclarant)
+                                    }}
+                                    <span class="fr-hint-text">Tapez l'adresse et sélectionnez-la dans la liste</span>
+                                </label>
+                                <input class="fr-input search-address-autocomplete" type="text" id="edit-coordonnees-agence-search"
+                                    data-fr-adresse-autocomplete="true" 
+                                    data-autocomplete-query-selector="#form-edit-coordonnees-agence .fr-address-group-bo"
+                                    data-form-id="form-edit-coordonnees-agence">                                        
+                                <div class="fr-grid-row fr-background-alt--blue-france fr-text-label--blue-france fr-address-group-bo">
+                                </div>
+                            </div>
+
+                            <div class="fr-input-group">
+                                <label class="fr-label" for="form-edit-coordonnees-agence-adresse">Numéro et voie</label>
+                                <input class="fr-input" id="form-edit-coordonnees-agence-adresse" type="text" name="adresse" value="{{ signalement.adresseAgence }}" data-autocomplete-addresse="true">
+                            </div>
+
+                            <div class="fr-input-group">
+                                <label class="fr-label" for="form-edit-coordonnees-agence-codepostal">Code postal</label>
+                                <input class="fr-input" id="form-edit-coordonnees-agence-codepostal" type="text" name="codePostal" value="{{ signalement.codePostalAgence }}" data-autocomplete-codepostal="true">
+                            </div>
+
+                            <div class="fr-input-group">
+                                <label class="fr-label" for="form-edit-coordonnees-agence-ville">Commune</label>
+                                <input class="fr-input" id="form-edit-coordonnees-agence-ville" type="text" name="ville" value="{{ signalement.villeAgence }}" data-autocomplete-ville="true">
+                            </div>
+                            <input type="hidden" name="_token" value="{{ csrf_token('signalement_edit_coordonnees_agence_'~signalement.id) }}">
+                        </div>
+                        
+                        <div class="fr-modal__footer">
+                            <ul class="fr-btns-group fr-btns-group--right fr-btns-group--inline-reverse fr-btns-group--inline-lg fr-btns-group--icon-left">
+                                <li>
+                                    <button class="fr-btn fr-icon-check-line" type="submit">
+                                        Valider
+                                    </button>
+                                </li>
+                                <li>
+                                    <button type="button" class="fr-btn fr-btn--secondary fr-icon-close-line"
+                                            aria-controls="fr-modal-edit-coordonnees-agence">
+                                        Annuler
+                                    </button>
+                                </li>
+                            </ul>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</dialog>

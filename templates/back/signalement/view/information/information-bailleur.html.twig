@@ -11,11 +11,24 @@
             class="fr-btn fr-btn--secondary fr-btn--icon-left fr-icon-edit-line">Modifier</button>
         {% endif %}
     </div>
+    <div class="fr-col-12 fr-col-md-12">
+        <strong>Type :</strong>
+        {% if signalement.typeProprio is not same as null %}
+            {{ signalement.typeProprio.label }}
+        {% else %}
+            N/C
+        {% endif %}
+    </div>
+    {% if signalement.typeProprio is same as enum('App\\Entity\\Enum\\ProprioType').ORGANISME_SOCIETE %}
+    <div class="fr-col-12 fr-col-md-12">
+        <strong>Dénomination :</strong> {{ signalement.denominationProprio }}
+    </div>
+    {% endif %}
     <div class="fr-col-12 fr-col-md-6">
-        <strong>Nom :</strong> {{ signalement.nomProprio}}
+        <strong>Nom :</strong> {{ signalement.nomProprio }}
     </div>
     <div class="fr-col-12 fr-col-md-6">
-        <strong>Prénom :</strong> {{ signalement.prenomProprio}}
+        <strong>Prénom :</strong> {{ signalement.prenomProprio }}
     </div>
     <div class="fr-col-12">
         <strong>Courriel :</strong>

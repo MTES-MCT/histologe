@@ -224,4 +224,13 @@ class SignalementBoManager
 
         return true;
     }
+
+    public function formCoordonneesManager(FormInterface $form, Signalement $signalement): bool
+    {
+        $profileDeclarant = ProfileDeclarant::tryFrom($form->get('profileDeclarantTiers')->getData());
+        $signalement->setProfileDeclarant($profileDeclarant);
+        $signalement->setLienDeclarantOccupant($form->get('lienDeclarantOccupant')->getData());
+
+        return true;
+    }
 }
