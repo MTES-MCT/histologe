@@ -12,12 +12,17 @@
         {% if is_granted('SIGN_ADD_VISITE', signalement) %}
             {% include 'back/signalement/view/visites/modals/visites-modal-add.html.twig' %}
             {% set displayAddVisiteButton = true %}
+            {% set listPendingVisiteExternalOperatorNames = [] %}
             {% for pendingVisite in pendingVisites %}
                 {% set partner = app.user.partnerInTerritoryOrFirstOne(signalement.territory) %}
                 {% if pendingVisite.partner and pendingVisite.partner.id is same as partner.id %}
                     {% set displayAddVisiteButton = false %}
                 {% endif %}
+                {% if pendingVisite.externalOperator and pendingVisite.partner.id is null %}
+                    {% set listPendingVisiteExternalOperatorNames = listPendingVisiteExternalOperatorNames|merge([pendingVisite.externalOperator]) %}
+                {% endif %}
             {% endfor %}
+            <span id="list-pending-visite-external-operator-names" data-list="{{ listPendingVisiteExternalOperatorNames|json_encode}}"></span>
 
             <div class="fr-my-5v fr-text--right">
                 {% if not signalement.territory.isGrilleVisiteDisabled %}

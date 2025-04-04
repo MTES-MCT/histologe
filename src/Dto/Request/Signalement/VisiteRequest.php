@@ -4,6 +4,7 @@ namespace App\Dto\Request\Signalement;
 
 use App\Service\TimezoneProvider;
 use Symfony\Component\Validator\Constraints as Assert;
+use Symfony\Component\Validator\Context\ExecutionContextInterface;
 
 class VisiteRequest
 {
@@ -18,8 +19,8 @@ class VisiteRequest
         #[Assert\DateTime('H:i')]
         private readonly ?string $time = null,
         private readonly ?string $timezone = TimezoneProvider::TIMEZONE_EUROPE_PARIS,
-        #[Assert\NotBlank]
         private readonly ?int $idPartner = null,
+        private readonly ?string $externalOperator = null,
         private readonly ?string $details = null,
         private readonly ?array $concludeProcedure = [],
         private readonly ?bool $isVisiteDone = null,
@@ -28,6 +29,14 @@ class VisiteRequest
         private readonly ?bool $isUsagerNotified = null,
         private readonly ?string $document = null,
     ) {
+    }
+
+    #[Assert\Callback]
+    public function validate(ExecutionContextInterface $context, $payload)
+    {
+        if (null === $this->idPartner && empty(trim((string) $this->externalOperator))) {
+            $context->buildViolation('Le nom de l\'opérateur externe est requis')->atPath('externalOperator')->addViolation();
+        }
     }
 
     public function getIntervention(): ?int
@@ -74,6 +83,11 @@ class VisiteRequest
     public function getPartner(): ?int
     {
         return $this->idPartner;
+    }
+
+    public function getExternalOperator(): ?string
+    {
+        return $this->externalOperator;
     }
 
     public function getDetails(): ?string

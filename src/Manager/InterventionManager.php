@@ -49,22 +49,26 @@ class InterventionManager extends AbstractManager
      */
     public function createVisiteFromRequest(Signalement $signalement, VisiteRequest $visiteRequest): ?Intervention
     {
-        if (!$visiteRequest->getDate() || !$visiteRequest->getPartner()) {
+        if (!$visiteRequest->getDate()) {
             return null;
         }
 
-        $partnerFound = $this->partnerManager->getPartnerIfQualification(
-            $visiteRequest->getPartner(),
-            Qualification::VISITES,
-            $signalement->getTerritory()
-        );
-        if (!$partnerFound) {
-            return null;
+        $partnerFound = null;
+        if ($visiteRequest->getPartner()) {
+            $partnerFound = $this->partnerManager->getPartnerIfQualification(
+                $visiteRequest->getPartner(),
+                Qualification::VISITES,
+                $signalement->getTerritory()
+            );
+            if (!$partnerFound) {
+                return null;
+            }
         }
 
         $intervention = new Intervention();
         $intervention->setSignalement($signalement)
             ->setPartner($partnerFound)
+            ->setExternalOperator($visiteRequest->getExternalOperator())
             ->setScheduledAt(new \DateTimeImmutable($visiteRequest->getDateTimeUTC()))
             ->setType(InterventionType::VISITE)
             ->setStatus(Intervention::STATUS_PLANNED);
@@ -107,7 +111,7 @@ class InterventionManager extends AbstractManager
      */
     public function rescheduleVisiteFromRequest(Signalement $signalement, VisiteRequest $visiteRequest): ?Intervention
     {
-        if (!$visiteRequest->getIntervention() || !$visiteRequest->getDate() || !$visiteRequest->getPartner()) {
+        if (!$visiteRequest->getIntervention() || !$visiteRequest->getDate()) {
             return null;
         }
 
@@ -116,17 +120,21 @@ class InterventionManager extends AbstractManager
             return null;
         }
 
-        $partnerFound = $this->partnerManager->getPartnerIfQualification(
-            $visiteRequest->getPartner(),
-            Qualification::VISITES,
-            $signalement->getTerritory()
-        );
-        if (!$partnerFound) {
-            return null;
+        $partnerFound = null;
+        if ($visiteRequest->getPartner()) {
+            $partnerFound = $this->partnerManager->getPartnerIfQualification(
+                $visiteRequest->getPartner(),
+                Qualification::VISITES,
+                $signalement->getTerritory()
+            );
+            if (!$partnerFound) {
+                return null;
+            }
         }
 
         $intervention
             ->setPartner($partnerFound)
+            ->setExternalOperator($visiteRequest->getExternalOperator())
             ->setScheduledAt(new \DateTimeImmutable($visiteRequest->getDateTimeUTC()));
         $this->save($intervention);
 

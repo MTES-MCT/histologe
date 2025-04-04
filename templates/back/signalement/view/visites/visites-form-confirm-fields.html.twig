@@ -1,59 +1,68 @@
 {% if formType is not same as 'edit' %}
-    <fieldset class="fr-fieldset fr-fieldset--inline fr-mb-5v">
+    <fieldset class="fr-fieldset fr-fieldset--inline">
         <legend class="fr-fieldset__legend fr-text--regular required">
             La visite a-t-elle eu lieu ?
         </legend>
-        <p id="signalement-confirm-visite-done-error" class="fr-error-text fr-hidden fr-my-3v">
+        <div class="fr-fieldset__element fr-fieldset__element--inline">
+            <div class="fr-radio-group">
+                <input type="radio" id="visite-{{ formType }}-{{ intervention is defined ? intervention.id : '' }}-confirm-1" name="visite-{{ formType }}[visiteDone]" value="1">
+                <label for="visite-{{ formType }}-{{ intervention is defined ? intervention.id : '' }}-confirm-1">Visite effectuée</label>
+            </div>
+        </div>
+        <div class="fr-fieldset__element fr-fieldset__element--inline">
+            <div class="fr-radio-group">
+                <input type="radio" id="visite-{{ formType }}-{{ intervention is defined ? intervention.id : '' }}-confirm-0" name="visite-{{ formType }}[visiteDone]" value="0">
+                <label for="visite-{{ formType }}-{{ intervention is defined ? intervention.id : '' }}-confirm-0">Visite non effectuée</label>
+            </div>
+        </div>
+        <p id="signalement-confirm-visite-done-error" class="fr-error-text fr-hidden fr-messages-group fr-mt-n1w">
             Veuillez préciser si la visite a eu lieu.
         </p>
-        <div class="fr-radio-group">
-            <input type="radio" id="visite-{{ formType }}-{{ intervention is defined ? intervention.id : '' }}-confirm-1" name="visite-{{ formType }}[visiteDone]" value="1">
-            <label for="visite-{{ formType }}-{{ intervention is defined ? intervention.id : '' }}-confirm-1">Visite effectuée</label>
-        </div>
-        <div class="fr-radio-group">
-            <input type="radio" id="visite-{{ formType }}-{{ intervention is defined ? intervention.id : '' }}-confirm-0" name="visite-{{ formType }}[visiteDone]" value="0">
-            <label for="visite-{{ formType }}-{{ intervention is defined ? intervention.id : '' }}-confirm-0">Visite non effectuée</label>
-        </div>
     </fieldset>
-    <fieldset class="fr-fieldset fr-fieldset--inline fr-mb-5v">
+    <fieldset class="fr-fieldset fr-fieldset--inline">
         <legend class="fr-fieldset__legend fr-text--regular required">
             L'occupant était-il présent ?
         </legend>
-        <p id="signalement-confirm-visite-occupant-present-error" class="fr-error-text fr-hidden fr-my-3v">
+        <div class="fr-fieldset__element fr-fieldset__element--inline">
+            <div class="fr-radio-group">
+                <input type="radio" id="visite-{{ formType }}-{{ intervention is defined ? intervention.id : '' }}-occupant-present-1" name="visite-{{ formType }}[occupantPresent]" value="1">
+                <label for="visite-{{ formType }}-{{ intervention is defined ? intervention.id : '' }}-occupant-present-1">Oui</label>
+            </div>
+        </div>
+        <div class="fr-fieldset__element fr-fieldset__element--inline">
+            <div class="fr-radio-group">
+                <input type="radio" id="visite-{{ formType }}-{{ intervention is defined ? intervention.id : '' }}-occupant-present-0" name="visite-{{ formType }}[occupantPresent]" value="0">
+                <label for="visite-{{ formType }}-{{ intervention is defined ? intervention.id : '' }}-occupant-present-0">Non</label>
+            </div>
+        </div>
+        <p id="signalement-confirm-visite-occupant-present-error" class="fr-error-text fr-messages-group fr-hidden fr-mt-n1w">
             Veuillez préciser si l'occupant était présent.
         </p>
-        <div class="fr-radio-group">
-            <input type="radio" id="visite-{{ formType }}-{{ intervention is defined ? intervention.id : '' }}-occupant-present-1" name="visite-{{ formType }}[occupantPresent]" value="1">
-            <label for="visite-{{ formType }}-{{ intervention is defined ? intervention.id : '' }}-occupant-present-1">Oui</label>
-        </div>
-        <div class="fr-radio-group">
-            <input type="radio" id="visite-{{ formType }}-{{ intervention is defined ? intervention.id : '' }}-occupant-present-0" name="visite-{{ formType }}[occupantPresent]" value="0">
-            <label for="visite-{{ formType }}-{{ intervention is defined ? intervention.id : '' }}-occupant-present-0">Non</label>
-        </div>
     </fieldset>
-    <fieldset class="fr-fieldset fr-fieldset--inline fr-mb-5v">
+    <fieldset class="fr-fieldset fr-fieldset--inline">
         <legend class="fr-fieldset__legend fr-text--regular required">
             Le propriétaire était-il présent ?
         </legend>
-        <p id="signalement-confirm-visite-proprietaire-present-error" class="fr-error-text fr-hidden fr-my-3v">
+         <div class="fr-fieldset__element fr-fieldset__element--inline">
+            <div class="fr-radio-group">
+                <input type="radio" id="visite-{{ formType }}-{{ intervention is defined ? intervention.id : '' }}-proprietaire-present-1" name="visite-{{ formType }}[proprietairePresent]" value="1">
+                <label for="visite-{{ formType }}-{{ intervention is defined ? intervention.id : '' }}-proprietaire-present-1">Oui</label>
+            </div>
+        </div>
+        <div class="fr-fieldset__element fr-fieldset__element--inline">
+            <div class="fr-radio-group">
+                <input type="radio" id="visite-{{ formType }}-{{ intervention is defined ? intervention.id : '' }}-proprietaire-present-0" name="visite-{{ formType }}[proprietairePresent]" value="0">
+                <label for="visite-{{ formType }}-{{ intervention is defined ? intervention.id : '' }}-proprietaire-present-0">Non</label>
+            </div>
+        </div>
+        <p id="signalement-confirm-visite-proprietaire-present-error" class="fr-error-text fr-messages-group fr-hidden fr-mt-n1w">
             Veuillez préciser si le propriétaire était présent.
         </p>
-        <div class="fr-radio-group">
-            <input type="radio" id="visite-{{ formType }}-{{ intervention is defined ? intervention.id : '' }}-proprietaire-present-1" name="visite-{{ formType }}[proprietairePresent]" value="1">
-            <label for="visite-{{ formType }}-{{ intervention is defined ? intervention.id : '' }}-proprietaire-present-1">Oui</label>
-        </div>
-        <div class="fr-radio-group">
-            <input type="radio" id="visite-{{ formType }}-{{ intervention is defined ? intervention.id : '' }}-proprietaire-present-0" name="visite-{{ formType }}[proprietairePresent]" value="0">
-            <label for="visite-{{ formType }}-{{ intervention is defined ? intervention.id : '' }}-proprietaire-present-0">Non</label>
-        </div>
     </fieldset>
     <fieldset id="fieldset-conclude-procedure" class="fr-fieldset fr-fieldset--inline fr-mb-5v fr-w-100-left fr-hidden">
         <legend class="fr-fieldset__legend fr-text--regular required">
             Quelle est la conclusion de la visite ?
         </legend>
-        <p id="signalement-confirm-visite-procedure-error" class="fr-error-text fr-hidden fr-my-3v">
-            Veuillez préciser la conclusion de la visite.
-        </p>
         <div class="search-checkbox-container fr-input-group fr-w-100">
             <input id="visite-{{ formType }}[concludeProcedure]_input" type="text" placeholder="Sélectionner une ou plusieurs conclusions" class="fr-input">
             <div class="search-checkbox" class="fr-hidden">
@@ -70,6 +79,9 @@
                 {% endfor %}
             </div>
         </div>
+        <p id="signalement-confirm-visite-procedure-error" class="fr-error-text fr-hidden fr-messages-group fr-mt-n1w">
+            Veuillez préciser la conclusion de la visite.
+        </p>
     </fieldset>
 {% endif %}
 
@@ -94,17 +106,17 @@
 </div>
 {% endif %}
 
-<fieldset class="fr-fieldset fr-fieldset--inline fr-mb-5v">
-    <legend class="fr-fieldset__legend fr-text--regular required">
-        Commentaire de visite
-    </legend>
-    <p id="signalement-confirm-visite-details-error" class="fr-error-text fr-hidden fr-my-3v">
-        Veuillez saisir un commentaire pour la visite.
-    </p>
+<div class="fr-input-group">
+    <label class="fr-label" for="visite-{{ formType }}[details]">
+        Commentaire de visite <span class="fr-text-default--error">*</span>
+    </label>
     <textarea class="fr-input fr-input--no-resize editor field-visite-details" id="visite-{{ formType }}[details]" name="visite-{{ formType }}[details]" minlength="10">{{
         intervention is defined and intervention.details ? intervention.details : ''
     }}</textarea>
-</fieldset>
+    <p id="signalement-confirm-visite-details-error" class="fr-error-text fr-messages-group fr-hidden">
+        Veuillez saisir un commentaire pour la visite.
+    </p>
+</div>
 
 {% if not intervention is defined or intervention.files is empty %}
 <div class="fr-upload-group fr-mb-5v">
