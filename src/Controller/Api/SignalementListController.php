@@ -10,16 +10,13 @@ use App\Repository\SignalementRepository;
 use Nelmio\ApiDocBundle\Attribute\Model;
 use OpenApi\Attributes as OA;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\DependencyInjection\Attribute\When;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Attribute\MapQueryString;
 use Symfony\Component\Routing\Attribute\Route;
 
-#[When('dev')]
-#[When('test')]
 #[Route('/api')]
-class SignalementController extends AbstractController
+class SignalementListController extends AbstractController
 {
     /**
      * @throws \DateMalformedStringException
@@ -133,6 +130,11 @@ class SignalementController extends AbstractController
                     type: 'string',
                     example: 'Signalement introuvable'
                 ),
+                new OA\Property(
+                    property: 'status',
+                    type: 'int',
+                    example: 404
+                ),
             ],
             type: 'object'
         )
@@ -151,6 +153,6 @@ class SignalementController extends AbstractController
             return new JsonResponse($resource, Response::HTTP_OK);
         }
 
-        return new JsonResponse(['message' => 'Signalement introuvable'], Response::HTTP_NOT_FOUND);
+        return new JsonResponse(['message' => 'Signalement introuvable', 'status' => Response::HTTP_NOT_FOUND], Response::HTTP_NOT_FOUND);
     }
 }
