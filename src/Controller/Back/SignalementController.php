@@ -135,7 +135,8 @@ class SignalementController extends AbstractController
                 $eventParams['subject'] = 'tous les partenaires';
                 $entity = $signalement = $signalementManager->closeSignalementForAllPartners(
                     $signalement,
-                    $eventParams['motif_cloture']
+                    $eventParams['motif_cloture'],
+                    $eventParams['motif_suivi']
                 );
                 $reference = $signalement->getReference();
                 $eventDispatcher->dispatch(new SignalementClosedEvent($entity, $eventParams), SignalementClosedEvent::NAME);

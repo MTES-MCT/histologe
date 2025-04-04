@@ -23,6 +23,7 @@ use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use Symfony\Component\HtmlSanitizer\HtmlSanitizerInterface;
 
 class PhotoHelperTest extends KernelTestCase
 {
@@ -44,6 +45,7 @@ class PhotoHelperTest extends KernelTestCase
     private SignalementAddressUpdater $signalementAddressUpdater;
     private AffectationRepository $affectationRepository;
     private ZipcodeProvider $zipcodeProvider;
+    private HtmlSanitizerInterface $htmlSanitizerInterface;
 
     protected function setUp(): void
     {
@@ -67,6 +69,7 @@ class PhotoHelperTest extends KernelTestCase
         $this->signalementAddressUpdater = static::getContainer()->get(SignalementAddressUpdater::class);
         $this->affectationRepository = static::getContainer()->get(AffectationRepository::class);
         $this->zipcodeProvider = static::getContainer()->get(ZipcodeProvider::class);
+        $this->htmlSanitizerInterface = self::getContainer()->get('html_sanitizer.sanitizer.app.message_sanitizer');
 
         $this->signalementManager = new SignalementManager(
             $this->managerRegistry,
@@ -85,7 +88,8 @@ class PhotoHelperTest extends KernelTestCase
             $this->bailleurRepository,
             $this->affectationRepository,
             $this->signalementAddressUpdater,
-            $this->zipcodeProvider
+            $this->zipcodeProvider,
+            $this->htmlSanitizerInterface
         );
     }
 
