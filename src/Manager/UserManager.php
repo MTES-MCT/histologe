@@ -77,6 +77,18 @@ class UserManager extends AbstractManager
         return $user;
     }
 
+    public function getComplexRandomPassword(): string
+    {
+        $keyspace = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ-_!:()';
+        $password = '';
+        $max = mb_strlen($keyspace, '8bit') - 1;
+        for ($i = 0; $i < 15; ++$i) {
+            $password .= $keyspace[random_int(0, $max)];
+        }
+
+        return $password;
+    }
+
     public function loadUserTokenForUser(User $user, bool $flush = true): User
     {
         $user
