@@ -129,6 +129,9 @@ class User implements UserInterface, EntityHistoryInterface, PasswordAuthenticat
     #[ORM\Column(type: 'boolean')]
     private $isMailingActive;
 
+    #[ORM\Column(type: 'boolean')]
+    private $isMailingSummary;
+
     #[ORM\OneToMany(mappedBy: 'user', targetEntity: Notification::class)]
     private $notifications;
 
@@ -194,6 +197,7 @@ class User implements UserInterface, EntityHistoryInterface, PasswordAuthenticat
         $this->apiUserTokens = new ArrayCollection();
         $this->userPartners = new ArrayCollection();
         $this->popNotifications = new ArrayCollection();
+        $this->isMailingSummary = true;
     }
 
     public function getId(): ?int
@@ -529,6 +533,18 @@ class User implements UserInterface, EntityHistoryInterface, PasswordAuthenticat
     public function setIsMailingActive(bool $isMailingActive): self
     {
         $this->isMailingActive = $isMailingActive;
+
+        return $this;
+    }
+
+    public function getIsMailingSummary(): bool
+    {
+        return $this->isMailingSummary;
+    }
+
+    public function setIsMailingSummary(bool $isMailingSummary): self
+    {
+        $this->isMailingSummary = $isMailingSummary;
 
         return $this;
     }

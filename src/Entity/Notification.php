@@ -2,15 +2,13 @@
 
 namespace App\Entity;
 
+use App\Entity\Enum\NotificationType;
 use App\Repository\NotificationRepository;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: NotificationRepository::class)]
 class Notification
 {
-    public const TYPE_AFFECTATION = 0;
-    public const TYPE_SUIVI = 1;
-    public const TYPE_NEW_SIGNALEMENT = 2;
     public const MAX_LIST_PAGINATION = 100;
     public const string EXPIRATION_PERIOD = '- 30 days';
 
@@ -26,8 +24,11 @@ class Notification
     #[ORM\Column(type: 'boolean')]
     private ?bool $isSeen;
 
-    #[ORM\Column(type: 'integer')]
-    private ?int $type;
+    #[ORM\Column(
+        type: 'string',
+        enumType: NotificationType::class,
+        options: ['comment' => 'Value possible enum NotificationType'])]
+    private NotificationType $type;
 
     #[ORM\ManyToOne(targetEntity: Signalement::class)]
     private ?Signalement $signalement;
@@ -42,9 +43,19 @@ class Notification
     #[ORM\ManyToOne(targetEntity: Affectation::class, inversedBy: 'notifications')]
     private $affectation;
 
+    #[ORM\Column]
+    private bool $waitMaillingSummary;
+
+    #[ORM\Column(nullable: true)]
+    private ?\DateTimeImmutable $maillingSummarySentAt = null;
+
+    #[ORM\Column]
+    private bool $deleted;
+
     public function __construct()
     {
         $this->isSeen = false;
+        $this->deleted = false;
         $this->createdAt = new \DateTimeImmutable();
     }
 
@@ -77,12 +88,12 @@ class Notification
         return $this;
     }
 
-    public function getType(): ?int
+    public function getType(): NotificationType
     {
         return $this->type;
     }
 
-    public function setType(int $type): self
+    public function setType(NotificationType $type): self
     {
         $this->type = $type;
 
@@ -133,6 +144,42 @@ class Notification
     public function setAffectation(?Affectation $affectation): self
     {
         $this->affectation = $affectation;
+
+        return $this;
+    }
+
+    public function isWaitMaillingSummary(): bool
+    {
+        return $this->waitMaillingSummary;
+    }
+
+    public function setWaitMaillingSummary(bool $waitMaillingSummary): static
+    {
+        $this->waitMaillingSummary = $waitMaillingSummary;
+
+        return $this;
+    }
+
+    public function getMaillingSummarySentAt(): ?\DateTimeImmutable
+    {
+        return $this->maillingSummarySentAt;
+    }
+
+    public function setMaillingSummarySentAt(?\DateTimeImmutable $maillingSummarySentAt): static
+    {
+        $this->maillingSummarySentAt = $maillingSummarySentAt;
+
+        return $this;
+    }
+
+    public function isDeleted(): bool
+    {
+        return $this->deleted;
+    }
+
+    public function setDeleted(bool $deleted): static
+    {
+        $this->deleted = $deleted;
 
         return $this;
     }

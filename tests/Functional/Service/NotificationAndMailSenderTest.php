@@ -9,6 +9,7 @@ use App\Entity\User;
 use App\Factory\NotificationFactory;
 use App\Repository\NotificationRepository;
 use App\Repository\PartnerRepository;
+use App\Repository\SignalementRepository;
 use App\Repository\UserRepository;
 use App\Service\Mailer\NotificationMailerRegistry;
 use App\Service\NotificationAndMailSender;
@@ -26,8 +27,10 @@ class NotificationAndMailSenderTest extends KernelTestCase
     private UserRepository $userRepository;
     private NotificationRepository $notificationRepository;
     private PartnerRepository $partnerRepository;
+    private SignalementRepository $signalementRepository;
     private NotificationFactory $notificationFactory;
     private Security $security;
+    private bool $featureEmailRecap;
 
     protected function setUp(): void
     {
@@ -37,8 +40,10 @@ class NotificationAndMailSenderTest extends KernelTestCase
         $this->userRepository = self::getContainer()->get(UserRepository::class);
         $this->notificationRepository = self::getContainer()->get(NotificationRepository::class);
         $this->partnerRepository = self::getContainer()->get(PartnerRepository::class);
+        $this->signalementRepository = self::getContainer()->get(SignalementRepository::class);
         $this->notificationFactory = self::getContainer()->get(NotificationFactory::class);
         $this->security = static::getContainer()->get('security.helper');
+        $this->featureEmailRecap = $kernel->getContainer()->getParameter('feature_email_recap');
     }
 
     public function testSendNewSuiviToAdminsAndPartners(): void
@@ -91,9 +96,11 @@ class NotificationAndMailSenderTest extends KernelTestCase
             $this->entityManager,
             $this->userRepository,
             $this->partnerRepository,
+            $this->signalementRepository,
             $this->notificationFactory,
             $this->notificationMailerRegistry,
             $this->security,
+            $this->featureEmailRecap,
         );
 
         $notificationAndMailSender->sendNewSuiviToAdminsAndPartners($suivi, true);
