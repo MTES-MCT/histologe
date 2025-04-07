@@ -214,7 +214,11 @@
 
     <script nonce="{{ app.request.attributes.get('csp_script_nonce') }}">
         tippy('.part-infos-hover', {
-            content: (reference) => '<strong class="fr-ws-nowrap">' + reference.getAttribute('data-user') + '</strong>' + '<hr class="fr-pb-1v"><span class="fr-ws-nowrap">' + reference.getAttribute('data-mail') + '</span>',
+            content(reference) {
+                const id = reference.getAttribute('data-template');
+                const template = document.getElementById(id);
+                return template.innerHTML;
+            },      
             allowHTML: true,
             interactive: true,
             hideOnClick: true,

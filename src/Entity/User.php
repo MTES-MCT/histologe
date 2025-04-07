@@ -178,6 +178,9 @@ class User implements UserInterface, EntityHistoryInterface, PasswordAuthenticat
     #[ORM\OneToMany(mappedBy: 'user', targetEntity: PopNotification::class, orphanRemoval: true)]
     private Collection $popNotifications;
 
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $fonction = null;
+
     public function __construct()
     {
         $this->suivis = new ArrayCollection();
@@ -873,6 +876,18 @@ class User implements UserInterface, EntityHistoryInterface, PasswordAuthenticat
                 $popNotification->setUser(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getFonction(): ?string
+    {
+        return $this->fonction;
+    }
+
+    public function setFonction(?string $fonction): static
+    {
+        $this->fonction = $fonction;
 
         return $this;
     }

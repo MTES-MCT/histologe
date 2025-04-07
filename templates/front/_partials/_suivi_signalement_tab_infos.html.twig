@@ -468,7 +468,7 @@ and signalement.profileDeclarant is not same as enum('App\\Entity\\Enum\\Profile
 				<div class="fr-col-9">
 					<div class="fr-grid-row">
 						<div class="fr-col-12 fr-col-lg-3">
-							{{ doc.createdAt is defined ? doc.createdAt|date('d.m.Y') : 'N/R' }}
+							{{ doc.createdAt is defined ? doc.createdAt|date('d/m/Y') : 'N/R' }}
 						</div>
 						<div class="fr-col-12 fr-col-lg-3">
 							<span class="fr-badge fr-badge--blue-ecume fr-mb-1v">{{ doc.documentType.label() }}</span>

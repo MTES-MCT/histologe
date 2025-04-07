@@ -46,6 +46,7 @@
                 {{ user_avatar_or_placeholder(app.user, 74) }}
                 <div class="fr-ml-3v">
                     <span class="fr-display-block"><strong>{{ app.user.prenom ~' '~app.user.nom }}</strong></span>
+                    Fonction : {{ app.user.fonction }}
                     {% if app.user.partners|length > 1 %}
                         <p class="fr-mt-2v"><strong>Mes partenaires</strong></p>
                         <ul>
@@ -61,7 +62,7 @@
                             </p>
                         </div>
                     {% elseif app.user.partners|length == 1 %}
-                        <span class="fr-display-block">{{ app.user.partners.first.nom }}</span>
+                        <span class="fr-display-block">Partenaire : {{ app.user.partners.first.nom }}</span>
                     {% endif %}
                 </div>
             </div>

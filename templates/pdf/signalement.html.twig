@@ -478,21 +478,21 @@
                             {% if affectation.statut is same as(0) %}
                                 {{ affectation.partner ? affectation.partner.nom }}
                                 <br>
-                                {{ affectation.createdAt|date('d.m.Y') }}
+                                {{ affectation.createdAt|date('d/m/Y') }}
                             {% endif %}
                         </td>
                         <td>
                             {% if affectation.statut is same as(1) %}
                                 {{ affectation.partner ? affectation.partner.nom }}
                                 <br>
-                                {{ affectation.answeredAt|date('d.m.Y') }}
+                                {{ affectation.answeredAt|date('d/m/Y') }}
                             {% endif %}
                         </td>
                         <td>
                             {% if affectation.statut is same as(2) %}
                                 {{ affectation.partner ? affectation.partner.nom }}
                                 <br>
-                                {{ affectation.answeredAt|date('d.m.Y') }}
+                                {{ affectation.answeredAt|date('d/m/Y') }}
                             {% endif %}
                         </td>
                     </tr>
@@ -597,6 +597,7 @@
                             <td style="padding:.5rem;width: 15%">
                                 {% if suivi.createdBy is defined and suivi.createdBy is not null %}
                                     <b> {{ suivi.createdBy.nom|upper~'. '~ suivi.createdBy.prenom|capitalize }}</b>
+                                    {% if suivi.createdBy.fonction %}({{ suivi.createdBy.fonction }}){% endif %}
                                     <br>
                                     <small>[{{ suivi.createdBy.partnerInTerritoryOrFirstOne(signalement.territory) ? suivi.createdBy.partnerInTerritoryOrFirstOne(signalement.territory).nom : 'Aucun' }}
                                         ]</small>
