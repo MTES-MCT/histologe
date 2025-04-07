@@ -3,6 +3,7 @@
 namespace App\Security;
 
 use App\Entity\User;
+use App\Repository\SignalementRepository;
 use App\Repository\UserRepository;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -27,6 +28,7 @@ class SuiviLoginAuthenticator extends AbstractLoginFormAuthenticator
     public function __construct(
         private readonly UrlGeneratorInterface $urlGenerator,
         private readonly UserRepository $userRepository,
+        private readonly SignalementRepository $signalementRepository
     ) {
     }
 
@@ -44,31 +46,9 @@ class SuiviLoginAuthenticator extends AbstractLoginFormAuthenticator
 
     public function authenticate(Request $request): Passport
     {
-        $email = $request->request->get('email', '');
-
-        $request->getSession()->set(SecurityRequestAttributes::LAST_USERNAME, $email);
-
-        $passport = new Passport(
-            new UserBadge($email, function (string $email) {
-                return $this->userRepository->findAgentByEmail(email: $email, userStatus: User::STATUS_ACTIVE, acceptRoleApi: false);
-            }),
-            new PasswordCredentials($request->request->get('password', '')),
-            [
-                new CsrfTokenBadge('authenticate', $request->request->get('_csrf_token')),
-                new RememberMeBadge(),
-            ]
-        );
-        $request->request->remove('password');
-
-        return $passport;
-
-
-        /*
-
-
         $codeSuivi = $request->get('code_suivi');
         $fromEmail = $request->get('from_email');
-        if ($signalement = $signalementRepository->findOneByCodeForPublic($codeSuivi, false)) {
+        if ($signalement = $this->signalementRepository->findOneByCodeForPublic($codeSuivi, false)) {
     
             $firstLetterPrenom = $request->get('login-first-letter-prenom');
             if (empty($firstLetterPrenom) || \strlen($firstLetterPrenom) !== 1) {
@@ -102,7 +82,22 @@ class SuiviLoginAuthenticator extends AbstractLoginFormAuthenticator
                 }
             }
         }
-        */
+
+
+
+        $passport = new Passport(
+            new UserBadge($email, function (string $email) {
+                return $this->userRepository->findAgentByEmail(email: $email, userStatus: User::STATUS_ACTIVE, acceptRoleApi: false);
+            }),
+            new PasswordCredentials($request->request->get('password', '')),
+            [
+                new CsrfTokenBadge('authenticate', $request->request->get('_csrf_token')),
+                new RememberMeBadge(),
+            ]
+        );
+        $request->request->remove('password');
+
+        return $passport;
     }
 
     public function onAuthenticationSuccess(Request $request, TokenInterface $token, string $firewallName): ?Response
