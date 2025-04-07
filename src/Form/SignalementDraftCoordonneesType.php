@@ -12,7 +12,6 @@ use App\Validator\TelephoneFormat;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
-use Symfony\Component\Form\Extension\Core\Type\EmailType;
 use Symfony\Component\Form\Extension\Core\Type\EnumType;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
@@ -86,7 +85,7 @@ class SignalementDraftCoordonneesType extends AbstractType
                 'label' => 'Prénom',
                 'required' => false,
             ])
-            ->add('mailOccupant', EmailType::class, [
+            ->add('mailOccupant', TextType::class, [
                 'label' => 'Adresse e-mail',
                 'help' => 'Format attendu : nom@domaine.fr',
                 'required' => false,
@@ -125,11 +124,11 @@ class SignalementDraftCoordonneesType extends AbstractType
                 'required' => false,
             ])
             ->add('prenomProprio', TextType::class, [
-                'label' => 'Prénom de famille',
+                'label' => 'Prénom',
                 'help' => 'Saisissez le prénom du ou de la représentante de la société',
                 'required' => false,
             ])
-            ->add('mailProprio', EmailType::class, [
+            ->add('mailProprio', TextType::class, [
                 'label' => 'Adresse e-mail',
                 'help' => 'Format attendu : nom@domaine.fr',
                 'required' => false,
@@ -216,10 +215,10 @@ class SignalementDraftCoordonneesType extends AbstractType
                 'required' => false,
             ])
             ->add('prenomDeclarant', TextType::class, [
-                'label' => 'Prénom de famille',
+                'label' => 'Prénom',
                 'required' => false,
             ])
-            ->add('mailDeclarant', EmailType::class, [
+            ->add('mailDeclarant', TextType::class, [
                 'label' => 'Adresse e-mail',
                 'help' => 'Format attendu : nom@domaine.fr',
                 'required' => false,
@@ -246,7 +245,7 @@ class SignalementDraftCoordonneesType extends AbstractType
                 'label' => 'Prénom',
                 'required' => false,
             ])
-            ->add('mailAgence', EmailType::class, [
+            ->add('mailAgence', TextType::class, [
                 'label' => 'Adresse e-mail',
                 'help' => 'Format attendu : nom@domaine.fr',
                 'required' => false,

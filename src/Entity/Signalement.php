@@ -132,6 +132,7 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
     private ?string $telProprioSecondaire = null;
 
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
+    #[Email(mode: Email::VALIDATION_MODE_STRICT, message: 'L\'adresse e-mail du bailleur n\'est pas valide.', groups: ['Default', 'bo_step_coordonnees'])]
     private ?string $mailProprio = null;
 
     #[ORM\Column(type: 'boolean', nullable: true)]
@@ -169,7 +170,7 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
     private ?string $telDeclarantSecondaire = null;
 
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
-    #[Email(mode: Email::VALIDATION_MODE_STRICT, message: 'L\'adresse e-mail du déclarant n\'est pas valide.')]
+    #[Email(mode: Email::VALIDATION_MODE_STRICT, message: 'L\'adresse e-mail du déclarant n\'est pas valide.', groups: ['Default', 'bo_step_coordonnees'])]
     private ?string $mailDeclarant = null;
 
     #[ORM\Column(type: 'string', length: 200, nullable: true)]
@@ -193,7 +194,7 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
     private ?string $telOccupant = null;
 
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
-    #[Email(mode: Email::VALIDATION_MODE_STRICT, message: 'L\'adresse e-mail de l\'occupant n\'est pas valide.')]
+    #[Email(mode: Email::VALIDATION_MODE_STRICT, message: 'L\'adresse e-mail de l\'occupant n\'est pas valide.', groups: ['Default', 'bo_step_coordonnees'])]
     private ?string $mailOccupant = null;
 
     #[ORM\Column(type: 'string', length: 100, nullable: true)]
@@ -243,6 +244,7 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
     private ?string $telAgenceSecondaire = null;
 
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
+    #[Email(mode: Email::VALIDATION_MODE_STRICT, message: 'L\'adresse e-mail de l\'agence n\'est pas valide.', groups: ['Default', 'bo_step_coordonnees'])]
     private ?string $mailAgence = null;
 
     #[ORM\Column(type: 'boolean')]
