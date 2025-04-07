@@ -707,19 +707,17 @@ class SignalementRepository extends ServiceEntityRepository
             ->getOneOrNullResult();
     }
 
-    public function findUsersPartnerEmailAffectedToSignalement(int $signalementId, ?Partner $partnerToExclude = null): array
+    public function findUsersAffectedToSignalement(Signalement $signalement, ?Partner $partnerToExclude = null): array
     {
         $queryBuilder = $this->createQueryBuilder('s');
-        $queryBuilder
-            ->select('u.email')
+        $queryBuilder->select('u')
             ->innerJoin('s.affectations', 'a')
             ->innerJoin('a.partner', 'p')
             ->innerJoin('p.userPartners', 'up')
             ->innerJoin('up.user', 'u')
             ->where('s.id = :signalement_id')
-            ->setParameter('signalement_id', $signalementId)
-            ->andWhere('u.statut = '.User::STATUS_ACTIVE)
-            ->andWhere('u.isMailingActive = true');
+            ->setParameter('signalement_id', $signalement->getId())
+            ->andWhere('u.statut = '.User::STATUS_ACTIVE);
 
         if (null !== $partnerToExclude) {
             $queryBuilder
@@ -727,14 +725,7 @@ class SignalementRepository extends ServiceEntityRepository
                 ->setParameter('partner', $partnerToExclude);
         }
 
-        $usersEmail = [];
-        foreach ($queryBuilder->getQuery()->getArrayResult() as $value) {
-            if ($value['email'] && !\in_array($value['email'], $usersEmail)) {
-                $usersEmail[] = $value['email'];
-            }
-        }
-
-        return $usersEmail;
+        return $queryBuilder->getQuery()->getResult();
     }
 
     public function getAverageCriticite(

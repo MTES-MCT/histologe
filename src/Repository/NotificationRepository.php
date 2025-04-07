@@ -2,6 +2,7 @@
 
 namespace App\Repository;
 
+use App\Entity\Enum\NotificationType;
 use App\Entity\Enum\SignalementStatus;
 use App\Entity\Notification;
 use App\Entity\Signalement;
@@ -36,7 +37,7 @@ class NotificationRepository extends ServiceEntityRepository implements EntityCl
             ->where('n.user = :user')
             ->andWhere('n.type = :type_notification')
             ->setParameter('user', $searchNotification->getUser())
-            ->setParameter('type_notification', Notification::TYPE_SUIVI)
+            ->setParameter('type_notification', NotificationType::NOUVEAU_SUIVI)
             ->leftJoin('n.user', 'u')
             ->leftJoin('n.suivi', 's')
             ->leftJoin('s.createdBy', 'cb')
@@ -97,7 +98,7 @@ class NotificationRepository extends ServiceEntityRepository implements EntityCl
             ->andWhere('n.user = :user')
             ->andWhere('su.type IN (:type_suivi_usager, :type_suivi_partner)')
             ->setParameter('is_seen', 0)
-            ->setParameter('type', 1)
+            ->setParameter('type', NotificationType::NOUVEAU_SUIVI)
             ->setParameter('user', $user)
             ->setParameter('type_suivi_usager', Suivi::TYPE_USAGER)
             ->setParameter('type_suivi_partner', Suivi::TYPE_PARTNER);
@@ -121,7 +122,7 @@ class NotificationRepository extends ServiceEntityRepository implements EntityCl
             ->andWhere('n.user = :user')
             ->andWhere('su.type IN (:type_suivi_usager, :type_suivi_partner)')
             ->setParameter('is_seen', 0)
-            ->setParameter('type', 1)
+            ->setParameter('type', NotificationType::NOUVEAU_SUIVI)
             ->setParameter('user', $user)
             ->setParameter('type_suivi_usager', Suivi::TYPE_USAGER)
             ->setParameter('type_suivi_partner', Suivi::TYPE_PARTNER);
@@ -156,7 +157,7 @@ class NotificationRepository extends ServiceEntityRepository implements EntityCl
             ->andWhere('si.statut = :statut')
             ->andWhere('su.description LIKE :description')
             ->setParameter('is_seen', 0)
-            ->setParameter('type_notification', Notification::TYPE_SUIVI)
+            ->setParameter('type_notification', NotificationType::NOUVEAU_SUIVI)
             ->setParameter('statut', SignalementStatus::CLOSED->value)
             ->setParameter('description', Suivi::DESCRIPTION_MOTIF_CLOTURE_ALL.'%')
             ->setParameter('user', $user);
@@ -185,7 +186,7 @@ class NotificationRepository extends ServiceEntityRepository implements EntityCl
             ->andWhere('si.statut != :status_closed')
             ->andWhere('su.description NOT LIKE :description_all AND su.description LIKE :description_partner')
             ->setParameter('is_seen', 0)
-            ->setParameter('type_notification', Notification::TYPE_SUIVI)
+            ->setParameter('type_notification', NotificationType::NOUVEAU_SUIVI)
             ->setParameter('description_all', Suivi::DESCRIPTION_MOTIF_CLOTURE_ALL.'%')
             ->setParameter('description_partner', Suivi::DESCRIPTION_MOTIF_CLOTURE_PARTNER.'%')
             ->setParameter('status_closed', SignalementStatus::CLOSED)
