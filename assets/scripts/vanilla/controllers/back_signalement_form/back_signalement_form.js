@@ -264,20 +264,25 @@ function initBoFormSignalementDesordres() {
       let encart = document.createElement("div");
       encart.classList.add("fr-grid-row", "fr-p-3v", "fr-mb-3v", "fr-grid-row--top", "fr-border--grey", `item-critere-${zone}`);
       encart.id = `item-critere-${critereId}`
-      // TODO : changer la couleur de la bordure et mettre un warning, si précision pas choisie alors que devrait 
       encart.innerHTML = `
         <div class="fr-col-12 fr-col-md-8">
           ${critereLabel}
         </div>`
       let modalId = `modal-precisions-${critereId}`
       let modalElement = document.getElementById(modalId) ;
+      const buttonDeleteCritereHtml = `<button class="fr-a-edit fr-btn--icon-left fr-icon-delete-line delete-critere-btn" 
+                title="Supprimer le désordre">
+                    Supprimer
+            </button>`;
       if (modalElement) {
-        encart.innerHTML += `<div class="fr-col-12 fr-col-md-4 fr-text--right">
+        encart.innerHTML += `
+          <div class="fr-col-12 fr-col-md-4 fr-text--right">
             <a href="#" aria-controls="${modalId}" data-fr-opened="false" 
                 class="fr-a-edit fr-btn--icon-left fr-icon-edit-line edit-precisions-btn" 
                 title="Editer les détails" data-fr-js-modal-button="true">
                     Editer les détails
-            </a>  
+            </a>  <br> 
+            ${buttonDeleteCritereHtml}
           </div>
           <div class="fr-col-12">
             <ul class="fr-list" data-precisions="${checkbox.value}">
@@ -287,6 +292,8 @@ function initBoFormSignalementDesordres() {
             <p class="fr-hidden fr-error-text"></p>
           </div>
         `;
+      }else{
+        encart.innerHTML += `<div class="fr-col-12 fr-col-md-4 fr-text--right">${buttonDeleteCritereHtml}</div>`;
       }
 
       // Ajouter l'encart dans la bonne colonne (Logement ou Bâtiment)
@@ -295,6 +302,23 @@ function initBoFormSignalementDesordres() {
       if (modalElement) {
         updateSelectedPrecisions(modalElement)
       }
+      
+      const deleteCritereBtn = encart.querySelector(`.delete-critere-btn`);
+      deleteCritereBtn.addEventListener("click", function (e) {
+        e.preventDefault();
+        
+        if (checkbox) checkbox.checked = false;
+        if (modalElement) {
+          modalElement.querySelectorAll("input[type='checkbox']").forEach(cb => cb.checked = false);
+        }
+        encart.remove();
+
+        if (listCriteres.querySelectorAll(".fr-grid-row").length === 0) {
+          listCriteres.classList.add("fr-hidden");
+        }
+
+        window.dispatchEvent(new Event('refreshSearchCheckboxContainerEvent'));
+      });
 
     });
     if (nbCriteres > 0 ){

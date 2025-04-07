@@ -14,6 +14,9 @@ use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\Form\FormError;
+use Symfony\Component\Form\FormEvent;
+use Symfony\Component\Form\FormEvents;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class SignalementDraftDesordresType extends AbstractType
@@ -146,6 +149,41 @@ class SignalementDraftDesordresType extends AbstractType
                 'attr' => ['class' => 'fr-btn fr-icon-arrow-right-line fr-btn--icon-right', 'data-target' => 'validation', 'value' => 'next'],
                 'row_attr' => ['class' => 'fr-ml-2w'],
             ]);
+
+        $builder->addEventListener(FormEvents::POST_SUBMIT, function (FormEvent $event) {
+            $form = $event->getForm();
+
+            foreach ($form->all() as $field) {
+                $name = $field->getName();
+
+                if (str_starts_with($name, 'precisions_') && !$form->get($name)->getConfig()->getOption('mapped')) {
+                    $precisionValues = $form->get($name)->getData();
+                    if (is_iterable($precisionValues) && 0 === count($precisionValues)) {
+                        $critereId = (int) str_replace('precisions_', '', $name);
+                        $critere = $this->desordreCritereRepository->find($critereId);
+
+                        if ($critere && $critere->getDesordrePrecisions()->count() > 1) {
+                            $isSelected = false;
+                            foreach ($form->all() as $checkboxField) {
+                                if (str_starts_with($checkboxField->getName(), 'desordres_')) {
+                                    $selectedCriteres = $checkboxField->getData();
+                                    if ($selectedCriteres && in_array($critere, $selectedCriteres)) {
+                                        $isSelected = true;
+                                        break;
+                                    }
+                                }
+                            }
+
+                            if ($isSelected) {
+                                $form->addError(new FormError(''));
+
+                                return;
+                            }
+                        }
+                    }
+                }
+            }
+        });
     }
 
     public function configureOptions(OptionsResolver $resolver): void
@@ -161,7 +199,13 @@ class SignalementDraftDesordresType extends AbstractType
 
         /** @var DesordrePrecision $precision */
         foreach ($critere->getDesordrePrecisions() as $precision) {
-            $choices[$precision->getLabel()] = $precision;
+            $label = $precision->getLabel();
+            if ('desordres_type_composition_logement_suroccupation_non_allocataire' === $precision->getDesordrePrecisionSlug()) {
+                $label .= ' (non-allocataire)';
+            } elseif ('desordres_type_composition_logement_suroccupation_allocataire' === $precision->getDesordrePrecisionSlug()) {
+                $label .= ' (allocataire)';
+            }
+            $choices[$label] = $precision;
         }
 
         ksort($choices);
