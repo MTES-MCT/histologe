@@ -30,6 +30,7 @@ use App\Service\UploadHandlerService;
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\HtmlSanitizer\HtmlSanitizerInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -38,6 +39,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
+use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 #[Route('/')]
@@ -440,15 +442,24 @@ class SignalementController extends AbstractController
         SuiviManager $suiviManager,
         EntityManagerInterface $entityManager,
         SignalementDesordresProcessor $signalementDesordresProcessor,
+        Security $security,
         #[Autowire(service: 'html_sanitizer.sanitizer.app.message_sanitizer')]
         HtmlSanitizerInterface $htmlSanitizer,
     ): Response {
         $signalement = $signalementRepository->findOneByCodeForPublic($code);
+
         if (!$signalement) {
             $this->addFlash('error', 'Le lien utilisé est expiré ou invalide.');
 
             return $this->render('front/flash-messages.html.twig');
         }
+
+        if (!$security->isGranted('ROLE_USAGER')) {
+            return $this->render('security/login_suivi_signalement.html.twig', [
+                'signalement' => $signalement,
+            ]);
+        }
+
         $requestEmail = $request->get('from');
         $fromEmail = \is_array($requestEmail) ? array_pop($requestEmail) : $requestEmail;
         $suiviAuto = $request->get('suiviAuto');
@@ -557,10 +568,22 @@ class SignalementController extends AbstractController
         Request $request,
         UserManager $userManager,
         SignalementDesordresProcessor $signalementDesordresProcessor,
+        Security $security,
+        AuthenticationUtils $authenticationUtils,
     ): Response {
         if ($signalement = $signalementRepository->findOneByCodeForPublic($code, false)) {
             $requestEmail = $request->get('from');
             $fromEmail = \is_array($requestEmail) ? array_pop($requestEmail) : $requestEmail;
+
+            if (!$security->isGranted('ROLE_USAGER')) {
+                // get the login error if there is one
+                $error = $authenticationUtils->getLastAuthenticationError();
+                return $this->render('security/login_suivi_signalement.html.twig', [
+                    'signalement' => $signalement,
+                    'fromEmail' => $fromEmail,
+                    'error' => $error,
+                ]);
+            }
 
             $user = $userManager->getOrCreateUserForSignalementAndEmail($signalement, $fromEmail);
             $type = $userManager->getUserTypeForSignalementAndUser($signalement, $user);
