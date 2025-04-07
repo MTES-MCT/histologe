@@ -20,4 +20,5 @@ return [
     Scheb\TwoFactorBundle\SchebTwoFactorBundle::class => ['all' => true],
     Sineflow\ClamAV\Bundle\SineflowClamAVBundle::class => ['all' => true],
     Nelmio\ApiDocBundle\NelmioApiDocBundle::class => ['all' => true],
+    CoopTilleuls\UrlSignerBundle\CoopTilleulsUrlSignerBundle::class => ['all' => true],
 ];

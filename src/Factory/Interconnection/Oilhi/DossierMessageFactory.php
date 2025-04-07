@@ -2,6 +2,7 @@
 
 namespace App\Factory\Interconnection\Oilhi;
 
+use App\Controller\FileController;
 use App\Entity\Affectation;
 use App\Entity\Criticite;
 use App\Entity\Enum\OccupantLink;
@@ -13,6 +14,7 @@ use App\Messenger\Message\Oilhi\DossierMessage;
 use App\Service\HtmlCleaner;
 use App\Service\Interconnection\Oilhi\HookZapierService;
 use App\Service\Interconnection\Oilhi\Model\Desordre;
+use CoopTilleuls\UrlSignerBundle\UrlSigner\UrlSignerInterface;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
@@ -24,6 +26,7 @@ class DossierMessageFactory implements DossierMessageFactoryInterface
         private readonly UrlGeneratorInterface $urlGenerator,
         #[Autowire(env: 'FEATURE_OILHI_ENABLE')]
         private readonly bool $featureEnable,
+        private readonly UrlSignerInterface $urlSigner,
     ) {
     }
 
@@ -172,10 +175,12 @@ class DossierMessageFactory implements DossierMessageFactoryInterface
             return null;
         }
 
-        return $this->urlGenerator->generate(
+        $url = $this->urlGenerator->generate(
             'show_file',
             ['uuid' => $intervention->getFiles()->first()->getUuid()],
             UrlGeneratorInterface::ABSOLUTE_URL
         );
+
+        return $this->urlSigner->sign($url, FileController::SIGNATURE_VALIDITY_DURATION);
     }
 }

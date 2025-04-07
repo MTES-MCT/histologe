@@ -14,6 +14,8 @@ use Symfony\Component\Routing\Attribute\Route;
 
 class FileController extends AbstractController
 {
+    public const SIGNATURE_VALIDITY_DURATION = 86400; // 24h
+
     #[Route('/show/{uuid:file}', name: 'show_file')]
     public function showFile(
         File $file,

@@ -406,9 +406,9 @@ and signalement.profileDeclarant is not same as enum('App\\Entity\\Enum\\Profile
 			{% for photo in signalement.files|filter(photo => photo.fileType == 'photo' and photo.isUsagerFile) %}
 				<div class="fr-col-6 fr-col-md-2 fr-rounded signalement-file-item">
 					<div class="fr-px-5w fr-py-8w fr-rounded fr-border fr-text--center"
-						style="background: url('{{ path('show_file', {uuid: photo.uuid}) }}?variant=thumb')no-repeat center center/cover"
+						style="background: url('{{ sign_url(path('show_file', {uuid: photo.uuid, variant: 'thumb'})) }}')no-repeat center center/cover"
 						>
-						<a  href="{{ path('show_file', {uuid: photo.uuid}) }}?variant=resize" target="_blank" rel="noopener"
+						<a  href="{{ sign_url(path('show_file', {uuid: photo.uuid, variant: 'resize'})) }}" target="_blank" rel="noopener"
 							class="fr-btn fr-btn--sm fr-icon-eye-line" 
 							data-id={{ photo.id }} 
 							title="Voir la photo {{ photo.filename }} - ouvre une nouvelle fenêtre"
@@ -444,9 +444,9 @@ and signalement.profileDeclarant is not same as enum('App\\Entity\\Enum\\Profile
 			{% for photo in signalement.files|filter(photo => photo.fileType == 'photo' and photo.isUsagerFile is same as(false)) %}
 				<div class="fr-col-6 fr-col-md-2 fr-rounded signalement-file-item">
 					<div class="fr-px-5w fr-py-8w fr-rounded fr-border fr-text--center"
-						style="background: url('{{ path('show_file', {uuid: photo.uuid}) }}?variant=thumb')no-repeat center center/cover"
+						style="background: url('{{ sign_url(path('show_file', {uuid: photo.uuid, variant: 'thumb'})) }}')no-repeat center center/cover"
 						>
-						<a  href="{{ path('show_file', {uuid: photo.uuid}) }}?variant=resize" target="_blank" rel="noopener"
+						<a  href="{{ sign_url(path('show_file', {uuid: photo.uuid, variant: 'resize'})) }}" target="_blank" rel="noopener"
 							class="fr-btn fr-btn--sm fr-icon-eye-line" 
 							data-id={{ photo.id }} 
 							title="Voir la photo {{ photo.filename }} - ouvre une nouvelle fenêtre"
@@ -479,7 +479,7 @@ and signalement.profileDeclarant is not same as enum('App\\Entity\\Enum\\Profile
 					</div>
 				</div>
 				<div class="fr-col-3 fr-text--right">
-					<a href="{{ path('show_file', {uuid: doc.uuid}) }}"
+					<a href="{{ sign_url(path('show_file', {uuid: doc.uuid})) }}"
 						class="fr-btn fr-btn--sm fr-icon-eye-fill img-box" title="Afficher le document {{ doc.filename }} - ouvre une nouvelle fenêtre"
 						target="_blank" rel="noopener"></a>    
 					{% if is_granted('FRONT_FILE_DELETE', doc) %}
