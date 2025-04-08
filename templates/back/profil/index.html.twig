@@ -47,12 +47,18 @@
                 </div>
             </div>
         </div>
-        <div class="fr-grid-row">
+        <div class="fr-grid-row fr-mt-3v">
             <div class="fr-col-12">
                 <h3>Mon compte sur Signal Logement</h3>
             </div>
-            {% for partner in app.user.partners %}
-                {% if partner.id is not same as 1 %}
+            {% if is_granted('ROLE_ADMIN') %}
+                <div class="fr-col-12">
+                    <div class="fr-alert fr-alert--info fr-alert--sm">
+                        <p>J'ai un compte Super Admin</p>
+                    </div>
+                </div>
+            {% else %}
+                {% for partner in app.user.partners %}
                     <div class="fr-col-12 fr-col-md-6">
                         <p>
                             <strong>Territoire : {{ partner.territory.zip }} - {{ partner.territory.name }}</strong>
@@ -67,22 +73,17 @@
                             {% endfor %}
                         </ul>
                     </div>
-                {% else %}
-                    <div class="fr-col-12 fr-col-md-6">
+                {% endfor %}
+
+                <div class="fr-col-12">
+                    <div class="fr-alert fr-alert--info fr-alert--sm">
                         <p>
-                            J'ai un compte Super Admin
+                            Vous ne pouvez pas modifier vos partenaires vous-mêmes.
+                            Si vous souhaitez modifier vos partenaires, contactez vos responsables de territoire !
                         </p>
                     </div>
-                {% endif %}
-            {% endfor %}
-            <div class="fr-col-12">
-                <div class="fr-alert fr-alert--info fr-alert--sm">
-                    <p>
-                        Vous ne pouvez pas modifier vos partenaires vous-mêmes.
-                        Si vous souhaitez modifier vos partenaires, contactez vos responsables de territoire !
-                    </p>
                 </div>
-            </div>
+            {% endif %}
         </div>
     </section>
     <hr>
