@@ -11,9 +11,8 @@ use Random\RandomException;
 #[ORM\Entity(repositoryClass: ApiUserTokenRepository::class)]
 class ApiUserToken implements EntityHistoryInterface
 {
-    // Constant values to update later
-    public const string EXPIRATION_TIME = '+200 minutes';
-    public const string CLEAN_EXPIRATION_PERIOD = '-3 minutes';
+    public const string EXPIRATION_TIME = '+60 minutes';
+    public const string CLEAN_EXPIRATION_PERIOD = '-1 day';
 
     #[ORM\Id]
     #[ORM\GeneratedValue]

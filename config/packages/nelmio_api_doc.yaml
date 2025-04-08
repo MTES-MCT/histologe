@@ -26,9 +26,9 @@ nelmio_api_doc:
                 
                 L'accès est réservé aux utilisateurs authentifiés, dans la limite des permissions du partenaire.
                 
-                Le mode d’authentification utilisé repose sur un token de type <code>Bearer</code>, obtenu à l’aide d’un identifiant et d’un mot de passe. 
-                
-                Une fois le token obtenu, il doit être transmis dans l’en-tête <code>Authorization</code> de chaque requête API.
+                Le mode d’authentification utilisé repose sur un token de type <code>Bearer</code>, obtenu à l’aide d’un identifiant et d’un mot de passe.
+
+                Une fois le token obtenu, il est valide pendant une durée de **1 heure**, et doit être transmis dans l’en-tête <code>Authorization</code> de chaque requête API.
                 
                 Une demande officielle doit être faite <a href="https://signal-logement.beta.gouv.fr/une-question/contact/">via le formulaire de contact du site.</a>
 
