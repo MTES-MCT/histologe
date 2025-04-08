@@ -244,8 +244,14 @@ class SignalementBoManager
         $signalement->removeAllDesordreCategory();
         $signalement->removeAllDesordreCritere();
         $signalement->removeAllDesordrePrecision();
+        $jsonContent = $signalement->getJsonContent();
+        if (array_key_exists('desordres_batiment_nuisibles_autres', $jsonContent)) {
+            unset($jsonContent['desordres_batiment_nuisibles_autres']);
+        }
+        if (array_key_exists('desordres_logement_nuisibles_autres', $jsonContent)) {
+            unset($jsonContent['desordres_logement_nuisibles_autres']);
+        }
 
-        // Parcours des champs du formulaire
         foreach ($form->all() as $field) {
             $fieldName = $field->getName();
             $fieldData = $field->getData();
@@ -265,10 +271,8 @@ class SignalementBoManager
             }
             if (str_starts_with($fieldName, 'precisions_')) {
                 if (str_ends_with($fieldName, 'details_type_nuisibles')) {
-                    $jsonContent = $signalement->getJsonContent();
                     $idJsonData = $this->extractCritere($fieldName);
                     $jsonContent[$idJsonData] = $fieldData;
-                    $signalement->setJsonContent($jsonContent);
                 } else {
                     /** @var DesordrePrecision $desordrePrecision */
                     foreach ($fieldData as $desordrePrecision) {
@@ -277,6 +281,8 @@ class SignalementBoManager
                 }
             }
         }
+
+        $signalement->setJsonContent($jsonContent);
 
         return true;
     }
@@ -288,6 +294,6 @@ class SignalementBoManager
             return $matches[1];
         }
 
-        return null; // Si la correspondance échoue
+        return null;
     }
 }

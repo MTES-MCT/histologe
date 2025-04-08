@@ -245,8 +245,8 @@ function initBoFormSignalementDesordres() {
 
   function updateSelectedCriteres(modal) {
     window.dispatchEvent(new Event('refreshSearchCheckboxContainerEvent'))
-    let zone = modal.dataset.zone
-    let listCriteres = document.querySelector(`#list-critere-${zone}`)
+    const zone = modal.dataset.zone
+    const listCriteres = document.querySelector(`#list-critere-${zone}`)
 
     // Vider les encarts existants
     document.querySelectorAll(`.item-critere-${zone}`).forEach(container => {
@@ -257,8 +257,8 @@ function initBoFormSignalementDesordres() {
     // Récupérer les critères sélectionnés
     modal.querySelectorAll("input[type='checkbox']:checked").forEach(checkbox => {
       nbCriteres++
-      let critereLabel = checkbox.labels[0].innerText
-      let critereId = checkbox.value
+      const critereLabel = checkbox.labels[0].innerText
+      const critereId = checkbox.value
 
       // Créer un encart pour le critère sélectionné
       let encart = document.createElement("div");
@@ -268,8 +268,8 @@ function initBoFormSignalementDesordres() {
         <div class="fr-col-12 fr-col-md-8">
           ${critereLabel}
         </div>`
-      let modalId = `modal-precisions-${critereId}`
-      let modalElement = document.getElementById(modalId) ;
+      const modalId = `modal-precisions-${critereId}`
+      const modalElement = document.getElementById(modalId) ;
       const buttonDeleteCritereHtml = `<button class="fr-a-edit fr-btn--icon-left fr-icon-delete-line delete-critere-btn" 
                 title="Supprimer le désordre">
                     Supprimer
@@ -288,7 +288,7 @@ function initBoFormSignalementDesordres() {
             <ul class="fr-list" data-precisions="${checkbox.value}">
               <!-- Les précisions seront injectées ici -->
             </ul>
-            <span></span>
+            <span id="details-critere"></span>
             <p class="fr-hidden fr-error-text"></p>
           </div>
         `;
@@ -310,6 +310,7 @@ function initBoFormSignalementDesordres() {
         if (checkbox) checkbox.checked = false;
         if (modalElement) {
           modalElement.querySelectorAll("input[type='checkbox']").forEach(cb => cb.checked = false);
+          modalElement.querySelectorAll("input[type='text']").forEach(inputTextElement => inputTextElement.value = null);
         }
         encart.remove();
 
@@ -329,19 +330,18 @@ function initBoFormSignalementDesordres() {
   }
 
   function updateSelectedPrecisions(modal) {
-    let critereId = modal.dataset.critereid
-    let precisionContainer = document.querySelector(`#item-critere-${critereId}`);
+    const critereId = modal.dataset.critereid
+    const precisionContainer = document.querySelector(`#item-critere-${critereId}`);
 
     let hasPrecisionsChosen = false;
-    let ulElement = precisionContainer ? precisionContainer.querySelector("ul") : null;
+    const ulElement = precisionContainer ? precisionContainer.querySelector("ul") : null;
     if (ulElement) {
       ulElement.innerHTML = "";
-      let checkboxes = modal.querySelectorAll("input[type='checkbox']");
+      const checkboxes = modal.querySelectorAll("input[type='checkbox']");
       checkboxes.forEach(checkbox => {
         if (checkbox.checked) {
-          let precisionLabel = checkbox.labels[0].innerHTML;
-          let precisionId = checkbox.value;
-          let precisionItem = document.createElement("li");
+          const precisionLabel = checkbox.labels[0].innerHTML;
+          const precisionItem = document.createElement("li");
           precisionItem.innerHTML = precisionLabel;
           ulElement.appendChild(precisionItem);
           hasPrecisionsChosen = true;
@@ -352,18 +352,18 @@ function initBoFormSignalementDesordres() {
     if ('desordres_batiment_nuisibles_autres' == modal.dataset.critereslug
       || 'desordres_logement_nuisibles_autres' == modal.dataset.critereslug
     ){
-      let spanElement = precisionContainer ? precisionContainer.querySelector("span") : null;
-      spanElement.innerHTML = ''
-      let inputTextElement = modal.querySelector("input[type='text']");
+      const detailsCritereElement = precisionContainer ? precisionContainer.querySelector("#details-critere") : null;
+      detailsCritereElement.innerHTML = ''
+      const inputTextElement = modal.querySelector("input[type='text']");
       if ('' != inputTextElement.value) {
-        spanElement.innerHTML = 'Commentaire : <i>'+inputTextElement.value+'</i>'      
+        detailsCritereElement.innerHTML = 'Commentaire : <i>'+inputTextElement.value+'</i>'      
         if ('desordres_batiment_nuisibles_autres' == modal.dataset.critereslug){
           hasPrecisionsChosen = true;
         }
       }
     }
 
-    let errorElement = precisionContainer ? precisionContainer.querySelector("p") : null;
+    const errorElement = precisionContainer ? precisionContainer.querySelector("p") : null;
     if (hasPrecisionsChosen) {
       precisionContainer.classList.add('fr-border--grey')
       precisionContainer.classList.remove('fr-border--red')
