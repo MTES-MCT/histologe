@@ -62,13 +62,16 @@ class ProfilController extends AbstractController
             $errorMessage = [];
             if (empty($payload['profil_edit_infos']['prenom'])) {
                 $errorMessage['errors']['profil_edit_infos[prenom]']['errors'][] = 'Le prénom ne peut pas être vide';
-            } elseif (strlen($payload['profil_edit_infos']['prenom']) > 255) {
+            } elseif (mb_strlen($payload['profil_edit_infos']['prenom']) > 255) {
                 $errorMessage['errors']['profil_edit_infos[prenom]']['errors'][] = 'Le prénom ne doit pas dépasser 255 caractères';
             }
             if (empty($payload['profil_edit_infos']['nom'])) {
                 $errorMessage['errors']['profil_edit_infos[nom]']['errors'][] = 'Le nom ne peut pas être vide';
-            } elseif (strlen($payload['profil_edit_infos']['nom']) > 255) {
+            } elseif (mb_strlen($payload['profil_edit_infos']['nom']) > 255) {
                 $errorMessage['errors']['profil_edit_infos[nom]']['errors'][] = 'Le nom ne doit pas dépasser 255 caractères';
+            }
+            if (!empty($payload['profil_edit_infos']['fonction']) && mb_strlen($payload['profil_edit_infos']['fonction']) > 50) {
+                $errorMessage['errors']['profil_edit_infos[fonction]']['errors'][] = 'La fonction ne doit pas dépasser 50 caractères';
             }
             // Validation du fichier avatar
             if (empty($errorMessage) && $avatarFile instanceof UploadedFile) {
