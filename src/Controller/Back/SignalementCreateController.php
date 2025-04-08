@@ -324,7 +324,7 @@ class SignalementCreateController extends AbstractController
 
         return $this->json(['tabContent' => $tabContent]);
     }
-    
+
     #[Route('/bo-form-desordres/{uuid:signalement}', name: 'back_signalement_draft_form_desordres_edit', methods: ['POST'])]
     public function editFormDesordres(
         Signalement $signalement,

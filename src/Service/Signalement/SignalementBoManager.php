@@ -236,7 +236,7 @@ class SignalementBoManager
 
         return true;
     }
-    
+
     public function formDesordresManager(FormInterface $form, Signalement $signalement): bool
     {
         $signalement->setDetails($form->get('details')->getData());
