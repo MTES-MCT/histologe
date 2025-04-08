@@ -43,6 +43,15 @@ function saveCurrentTab(event) {
 
   fetch(formAction, {method: 'POST', body: formData}).then(response => {
     if (response.ok) {
+
+      const contentType = response.headers.get('Content-Type') || '';
+      
+      if (!contentType.includes('application/json') && response.redirected) {
+        window.location.href = response.url;
+        window.location.reload()
+        return;
+      }
+
       response.json().then((response) => {
         currentTab.classList.remove('fr-tabs__panel--saving')
         
