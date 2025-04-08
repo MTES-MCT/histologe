@@ -117,7 +117,7 @@ function initBoFormSignalementSubmit(tabName) {
 
   switch (tabName) {
     case 'adresse':
-      initBoFormSignalementAdresse()
+      initComponentAdress('#signalement_draft_address_adresseCompleteOccupant')
       break
     case 'logement':
       initBoFormSignalementLogement()
@@ -125,10 +125,15 @@ function initBoFormSignalementSubmit(tabName) {
     case 'situation':
       initBoFormSignalementSituation()
       break
+    case 'coordonnees':
+      initBoFormSignalementCoordonnees()
+      initComponentAdress('#signalement_draft_coordonnees_adresseCompleteProprio')
+      initComponentAdress('#signalement_draft_coordonnees_adresseCompleteAgence')
+      break
   }
 }
 
-function initRefreshFromRadio(tabName, radioName, listElements) {
+function initRefreshFromRadio(tabName, radioName, listElementsToEnable, valueToEnable = undefined, listElementsToHide = []) {
   const boFormSignalementTab = document?.querySelector('#bo-form-signalement-' + tabName)
 
   const radioInputs = boFormSignalementTab?.querySelectorAll('#' +radioName+ ' input')
@@ -147,37 +152,51 @@ function initRefreshFromRadio(tabName, radioName, listElements) {
       }
     })
 
-    listElements.forEach((elementSelector) => {
-      refreshElementEnable(tabName, elementSelector, (radioInputValue === 'oui' || radioInputValue === '1'))
+    listElementsToEnable.forEach((elementSelector) => {
+      refreshElementEnable('enable', tabName, elementSelector, (radioInputValue === 'oui' || radioInputValue === '1' || (valueToEnable !== undefined && radioInputValue === valueToEnable)))
+    })
+
+    listElementsToHide.forEach((elementSelector) => {
+      refreshElementEnable('show', tabName, elementSelector, (radioInputValue === 'oui' || radioInputValue === '1' || (valueToEnable !== undefined && radioInputValue === valueToEnable)))
     })
   }
 }
 
-function refreshElementEnable(tabName, elementSelector, isEnabled) {
+function refreshElementEnable(action, tabName, elementSelector, isEnabled) {
   const boFormSignalementTab = document?.querySelector('#bo-form-signalement-' + tabName)
   const elementSelected = boFormSignalementTab?.querySelector(elementSelector)
 
   if (isEnabled) {
-    elementSelected.parentElement.classList.remove('fr-input-group--disabled')
-    elementSelected.disabled = false
-    const elementSelectedInputs = elementSelected?.querySelectorAll('input')
-    if (elementSelectedInputs) {
-      elementSelectedInputs.forEach((elementSelectedInput) => {
-        elementSelectedInput.disabled = false
-      })
+    if (action === 'show') {
+      elementSelected.classList.remove('fr-display-none')
+
+    } else {
+      elementSelected.parentElement.classList.remove('fr-input-group--disabled')
+      elementSelected.disabled = false
+      const elementSelectedInputs = elementSelected?.querySelectorAll('input')
+      if (elementSelectedInputs) {
+        elementSelectedInputs.forEach((elementSelectedInput) => {
+          elementSelectedInput.disabled = false
+        })
+      }
     }
 
   } else {
-    elementSelected.parentElement.classList.add('fr-input-group--disabled')
-    if (elementSelected.value) {
-      elementSelected.value = ''
+    if (action === 'show') {
+      elementSelected.classList.add('fr-display-none')
+
+    } else {
+      elementSelected.parentElement.classList.add('fr-input-group--disabled')
+      if (elementSelected.value) {
+        elementSelected.value = ''
+      }
+      elementSelected.disabled = true
+      const elementSelectedInputs = elementSelected?.querySelectorAll('input')
+      elementSelectedInputs.forEach((elementSelectedInput) => {
+        elementSelectedInput.checked = false
+        elementSelectedInput.disabled = true
+      })
     }
-    elementSelected.disabled = true
-    const elementSelectedInputs = elementSelected?.querySelectorAll('input')
-    elementSelectedInputs.forEach((elementSelectedInput) => {
-      elementSelectedInput.checked = false
-      elementSelectedInput.disabled = true
-    })
   }
 }
 
@@ -190,15 +209,19 @@ if (document?.querySelector('#bo-form-signalement-logement')) {
 if (document?.querySelector('#bo-form-signalement-situation')) {
   initBoFormSignalementSubmit('situation')
 }
+if (document?.querySelector('#bo-form-signalement-coordonnees')) {
+  initBoFormSignalementSubmit('coordonnees')
+}
 
-function initBoFormSignalementAdresse() {
-  const inputAdresse = document?.querySelector('#signalement_draft_address_adresseCompleteOccupant')
-  attacheAutocompleteAddressEvent(inputAdresse)
+function initComponentAdress(id) {
+  const addressInput = document.querySelector(id)
+  attacheAutocompleteAddressEvent(addressInput)
 
-  const manualAddressSwitcher = document?.querySelector('#bo-signalement-manual-address-switcher')
-  const manualAddressContainer = document?.querySelector('#bo-form-signalement-manual-address-container')
-  const manualAddressAddress = document?.querySelector('#signalement_draft_address_adresseOccupant')
-  const manualAddressInputs = document.querySelectorAll('.bo-form-signalement-manual-address');
+  const addressInputParent = addressInput.parentElement.parentElement.parentElement
+  const manualAddressSwitcher = addressInputParent?.querySelector('.bo-signalement-manual-address-switcher')
+  const manualAddressContainer = addressInputParent?.querySelector('.bo-form-signalement-manual-address-container')
+  const manualAddressAddress = addressInputParent?.querySelector('.bo-form-signalement-manual-address-input')
+  const manualAddressInputs = addressInputParent?.querySelectorAll('.bo-form-signalement-manual-address');
   const hasManualAddressValues = Array.from(manualAddressInputs).some(input => input.value !== '')
 
   manualAddressSwitcher?.addEventListener('click', (event) => {
@@ -206,19 +229,19 @@ function initBoFormSignalementAdresse() {
     if (manualAddressContainer.classList.contains('fr-hidden')) {
       manualAddressContainer.classList.remove('fr-hidden')
       manualAddressSwitcher.textContent = 'Rechercher une adresse'
-      inputAdresse.value = ''
-      inputAdresse.disabled = true
+      addressInput.value = ''
+      addressInput.disabled = true
       manualAddressAddress.focus()
     } else {
       manualAddressContainer.classList.add('fr-hidden')
       manualAddressSwitcher.textContent = 'Saisir une adresse manuellement'
       manualAddressInputs.forEach(input => input.value = '');
-      inputAdresse.disabled = false
-      inputAdresse.focus()
+      addressInput.disabled = false
+      addressInput.focus()
     }
   })
 
-  if(inputAdresse.value == '' && hasManualAddressValues) {
+  if(addressInput.value == '' && hasManualAddressValues) {
     manualAddressSwitcher.click()
   }
 }
@@ -241,9 +264,9 @@ function initBoFormSignalementLogement() {
       }
     })
 
-    refreshElementEnable('logement', '#signalement_draft_logement_natureLogementAutre', (natureLogementValue === 'autre'))
-    refreshElementEnable('logement', '#signalement_draft_logement_appartementEtage', (natureLogementValue === 'appartement'))
-    refreshElementEnable('logement', '#signalement_draft_logement_appartementAvecFenetres', (natureLogementValue === 'appartement'))
+    refreshElementEnable('enable', 'logement', '#signalement_draft_logement_natureLogementAutre', (natureLogementValue === 'autre'))
+    refreshElementEnable('enable', 'logement', '#signalement_draft_logement_appartementEtage', (natureLogementValue === 'appartement'))
+    refreshElementEnable('enable', 'logement', '#signalement_draft_logement_appartementAvecFenetres', (natureLogementValue === 'appartement'))
   }
 
   const compositionLogementInputs = boFormSignalementLogement?.querySelectorAll('#signalement_draft_logement_pieceUnique input')
@@ -262,7 +285,7 @@ function initBoFormSignalementLogement() {
       }
     })
 
-    refreshElementEnable('logement', '#signalement_draft_logement_nombrePieces', (compositionLogementValue === 'plusieurs_pieces'))
+    refreshElementEnable('enable', 'logement', '#signalement_draft_logement_nombrePieces', (compositionLogementValue === 'plusieurs_pieces'))
   }
 
   const cuisineInputs = boFormSignalementLogement?.querySelectorAll('#signalement_draft_logement_cuisine input')
@@ -293,7 +316,7 @@ function initBoFormSignalementLogement() {
       }
     })
 
-    refreshElementEnable('logement', '#signalement_draft_logement_toilettesCuisineMemePiece', (cuisineValue === 'oui' && toilettesValue === 'oui'))
+    refreshElementEnable('enable', 'logement', '#signalement_draft_logement_toilettesCuisineMemePiece', (cuisineValue === 'oui' && toilettesValue === 'oui'))
   }
 }
 
@@ -393,3 +416,55 @@ function reloadDeleteFileList() {
 window.addEventListener('refreshUploadedFileList', (e) => {
   reloadFileList()
 })
+
+function initBoFormSignalementCoordonnees() {
+  initRefreshFromRadio(
+    'coordonnees',
+    'signalement_draft_coordonnees_typeProprio',
+    [
+      '#signalement_draft_coordonnees_denominationProprio',
+    ],
+    'ORGANISME_SOCIETE',
+    [
+      '#signalement_draft_coordonnees_nomProprio_help',
+      '#signalement_draft_coordonnees_prenomProprio_help',
+    ]
+  )
+  initRefreshFromRadio(
+    'coordonnees',
+    'signalement_draft_coordonnees_profileDeclarantTiers',
+    [
+      '#signalement_draft_coordonnees_lienDeclarantOccupant',
+    ],
+    'TIERS_PARTICULIER'
+  )
+  initRefreshFromRadio(
+    'coordonnees',
+    'signalement_draft_coordonnees_profileDeclarantTiers',
+    [
+      '#signalement_draft_coordonnees_isProTiersDeclarant_0',
+    ],
+    'TIERS_PRO'
+  )
+
+  const checkIsProTiersDeclarant = document.querySelector('#signalement_draft_coordonnees_isProTiersDeclarant_0')
+  checkIsProTiersDeclarant.addEventListener('change', (event) => {
+    const proTiersStructure = document.querySelector('#signalement_draft_coordonnees_structureDeclarant')
+    const proTiersNom = document.querySelector('#signalement_draft_coordonnees_nomDeclarant')
+    const proTiersPrenom = document.querySelector('#signalement_draft_coordonnees_prenomDeclarant')
+    const proTiersMail = document.querySelector('#signalement_draft_coordonnees_mailDeclarant')
+    if (event.target.checked) {
+      proTiersStructure.value = checkIsProTiersDeclarant.parentElement.parentElement.parentElement.dataset.userStructure
+      proTiersNom.value = checkIsProTiersDeclarant.parentElement.parentElement.parentElement.dataset.userNom
+      proTiersPrenom.value = checkIsProTiersDeclarant.parentElement.parentElement.parentElement.dataset.userPrenom
+      proTiersMail.value = checkIsProTiersDeclarant.parentElement.parentElement.parentElement.dataset.userMail
+    } else {
+      proTiersStructure.value = ''
+      proTiersNom.value = ''
+      proTiersPrenom.value = ''
+      proTiersMail.value = ''
+    }
+  })
+
+  window.dispatchEvent(new Event('refreshPhoneNumberEvent'))
+}

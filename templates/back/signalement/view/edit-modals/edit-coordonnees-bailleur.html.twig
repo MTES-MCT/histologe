@@ -12,6 +12,40 @@
                                 Modifier les coordonnées du bailleur
                             </h1>
                             <p>Tous les champs sont obligatoires, sauf mention contraire.</p>
+
+                            <div class="fr-select-group">
+                                <label class="fr-label" for="coordonneesBailleurTypeProprio">Type</label>
+                                <select class="fr-select" id="coordonneesBailleurTypeProprio" name="typeProprio">
+                                    <option value="" disabled hidden>Sélectionnez un choix</option>
+                                    <option value="" {{ signalement.typeProprio is same as '' ? 'selected' : '' }}>N/C</option>
+                                    <option value="{{ enum('App\\Entity\\Enum\\ProprioType').ORGANISME_SOCIETE.name }}" {{ signalement.typeProprio is same as enum('App\\Entity\\Enum\\ProprioType').ORGANISME_SOCIETE ? 'selected' : '' }}>{{ enum('App\\Entity\\Enum\\ProprioType').ORGANISME_SOCIETE.label }}</option>
+                                    <option value="{{ enum('App\\Entity\\Enum\\ProprioType').PARTICULIER.name }}" {{ signalement.typeProprio is same as enum('App\\Entity\\Enum\\ProprioType').PARTICULIER ? 'selected' : '' }}>{{ enum('App\\Entity\\Enum\\ProprioType').PARTICULIER.label }}</option>
+                                </select>
+                            </div>
+
+                            <div class="fr-input-group">
+                                <label class="fr-label" for="coordonneesBailleurDenomination">Dénomination
+                                    {{ show_label_facultatif(
+                                        'App\\Dto\\Request\\Signalement\\CoordonneesBailleurRequest',
+                                        'denomination',
+                                        signalement.profileDeclarant)
+                                    }}
+                                </label>
+                                <input class="fr-input"
+                                       type="text"
+                                       id="coordonneesBailleurDenomination"
+                                       name="denomination"
+                                       value="{{ signalement.denominationProprio }}"
+                                       maxlength="255"
+                                       autocomplete="off"
+                                        {% if signalement.isLogementSocial %}
+                                            data-autocomplete-bailleur-url="{{ path('app_bailleur', {'inseecode': signalement.inseeOccupant}) }}"
+                                        {% endif %}
+                                >
+                                <ul class="fr-grid-row fr-background-alt--blue-france fr-text-label--blue-france fr-autocomplete-list">
+                                </ul>
+                            </div>
+
                             <div class="fr-input-group">
                                 <label class="fr-label" for="coordonneesBailleurNom">Nom
                                     {{ show_label_facultatif(
@@ -27,9 +61,6 @@
                                        value="{{ signalement.nomProprio }}"
                                        maxlength="255"
                                        autocomplete="off"
-                                        {% if signalement.isLogementSocial  %}
-                                            data-autocomplete-bailleur-url="{{ path('app_bailleur', {'inseecode': signalement.inseeOccupant}) }}"
-                                        {% endif %}
                                 >
                                 <ul class="fr-grid-row fr-background-alt--blue-france fr-text-label--blue-france fr-autocomplete-list">
                                 </ul>

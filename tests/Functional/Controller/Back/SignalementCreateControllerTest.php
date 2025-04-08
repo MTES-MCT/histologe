@@ -8,6 +8,7 @@ use App\Repository\SignalementRepository;
 use App\Repository\UserRepository;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
+use Symfony\Component\DomCrawler\Crawler;
 
 class SignalementCreateControllerTest extends WebTestCase
 {
@@ -101,13 +102,20 @@ class SignalementCreateControllerTest extends WebTestCase
         ];
     }
 
-    public function testEditAddress()
+    private function getCrawler(): Crawler
     {
         $user = $this->userRepository->findOneBy(['email' => 'admin-territoire-44-01@signal-logement.fr']);
         $this->client->loginUser($user);
 
         $crawler = $this->client->request('GET', '/bo/signalement/brouillon/editer/00000000-0000-0000-2025-000000000002');
         $this->assertResponseIsSuccessful();
+
+        return $crawler;
+    }
+
+    public function testEditAddress()
+    {
+        $crawler = $this->getCrawler();
 
         $form = $crawler->filter('#bo-form-signalement-adresse')->form();
         $form->setValues([
@@ -142,11 +150,7 @@ class SignalementCreateControllerTest extends WebTestCase
 
     public function testEditAddressOnOtherTerritory()
     {
-        $user = $this->userRepository->findOneBy(['email' => 'admin-territoire-44-01@signal-logement.fr']);
-        $this->client->loginUser($user);
-
-        $crawler = $this->client->request('GET', '/bo/signalement/brouillon/editer/00000000-0000-0000-2025-000000000002');
-        $this->assertResponseIsSuccessful();
+        $crawler = $this->getCrawler();
 
         $form = $crawler->filter('#bo-form-signalement-adresse')->form();
         $form->setValues([
@@ -164,11 +168,7 @@ class SignalementCreateControllerTest extends WebTestCase
 
     public function testEditLogement()
     {
-        $user = $this->userRepository->findOneBy(['email' => 'admin-territoire-44-01@signal-logement.fr']);
-        $this->client->loginUser($user);
-
-        $crawler = $this->client->request('GET', '/bo/signalement/brouillon/editer/00000000-0000-0000-2025-000000000002');
-        $this->assertResponseIsSuccessful();
+        $crawler = $this->getCrawler();
 
         $form = $crawler->filter('#bo-form-signalement-logement')->form();
         $form->setValues([
@@ -194,11 +194,7 @@ class SignalementCreateControllerTest extends WebTestCase
 
     public function testEditSituation()
     {
-        $user = $this->userRepository->findOneBy(['email' => 'admin-territoire-44-01@signal-logement.fr']);
-        $this->client->loginUser($user);
-
-        $crawler = $this->client->request('GET', '/bo/signalement/brouillon/editer/00000000-0000-0000-2025-000000000002');
-        $this->assertResponseIsSuccessful();
+        $crawler = $this->getCrawler();
 
         $form = $crawler->filter('#bo-form-signalement-situation')->form();
         $form->setValues([
@@ -222,5 +218,31 @@ class SignalementCreateControllerTest extends WebTestCase
         $this->assertEquals('A', $signalement->getTypeCompositionLogement()->getBailDpeClasseEnergetique());
         $this->assertEquals('oui', $signalement->getTypeCompositionLogement()->getBailDpeEtatDesLieux());
         $this->assertEquals('1', $signalement->getIsAllocataire());
+    }
+
+    public function testEditCoordonnees()
+    {
+        $crawler = $this->getCrawler();
+
+        $form = $crawler->filter('#bo-form-signalement-coordonnees')->form();
+        $form->setValues([
+            'signalement_draft_coordonnees[nomOccupant]' => 'Bernard',
+            'signalement_draft_coordonnees[prenomOccupant]' => 'Florent',
+            'signalement_draft_coordonnees[mailOccupant]' => 'florent.bernard@floodcast.fr',
+            'signalement_draft_coordonnees[denominationAgence]' => 'Arnaque & cie',
+        ]);
+        $this->client->submit($form);
+
+        $this->assertResponseHeaderSame('Content-Type', 'application/json');
+        $response = json_decode($this->client->getResponse()->getContent(), true);
+        $this->assertArrayHasKey('redirect', $response);
+        $this->assertTrue($response['redirect']);
+
+        $signalement = $this->signalementRepository->findOneBy(['uuid' => '00000000-0000-0000-2025-000000000002']);
+        $this->assertEquals(SignalementStatus::DRAFT, $signalement->getStatut());
+        $this->assertEquals('Bernard', $signalement->getNomOccupant());
+        $this->assertEquals('Florent', $signalement->getPrenomOccupant());
+        $this->assertEquals('florent.bernard@floodcast.fr', $signalement->getMailOccupant());
+        $this->assertEquals('Arnaque & cie', $signalement->getDenominationAgence());
     }
 }

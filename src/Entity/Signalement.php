@@ -107,6 +107,10 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
 
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
     #[Assert\Length(max: 255)]
+    private ?string $denominationProprio = null;
+
+    #[ORM\Column(type: 'string', length: 255, nullable: true)]
+    #[Assert\Length(max: 255)]
     private ?string $prenomProprio = null;
 
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
@@ -128,6 +132,7 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
     private ?string $telProprioSecondaire = null;
 
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
+    #[Email(mode: Email::VALIDATION_MODE_STRICT, message: 'L\'adresse e-mail du bailleur n\'est pas valide.', groups: ['Default', 'bo_step_coordonnees'])]
     private ?string $mailProprio = null;
 
     #[ORM\Column(type: 'boolean', nullable: true)]
@@ -165,7 +170,7 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
     private ?string $telDeclarantSecondaire = null;
 
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
-    #[Email(mode: Email::VALIDATION_MODE_STRICT, message: 'L\'adresse e-mail du déclarant n\'est pas valide.')]
+    #[Email(mode: Email::VALIDATION_MODE_STRICT, message: 'L\'adresse e-mail du déclarant n\'est pas valide.', groups: ['Default', 'bo_step_coordonnees'])]
     private ?string $mailDeclarant = null;
 
     #[ORM\Column(type: 'string', length: 200, nullable: true)]
@@ -189,7 +194,7 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
     private ?string $telOccupant = null;
 
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
-    #[Email(mode: Email::VALIDATION_MODE_STRICT, message: 'L\'adresse e-mail de l\'occupant n\'est pas valide.')]
+    #[Email(mode: Email::VALIDATION_MODE_STRICT, message: 'L\'adresse e-mail de l\'occupant n\'est pas valide.', groups: ['Default', 'bo_step_coordonnees'])]
     private ?string $mailOccupant = null;
 
     #[ORM\Column(type: 'string', length: 100, nullable: true)]
@@ -207,6 +212,40 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
 
     #[ORM\Column(type: 'string', length: 50, nullable: true)]
     private ?string $banIdOccupant = null;
+
+    #[ORM\Column(type: 'string', length: 255, nullable: true)]
+    #[Assert\Length(max: 255)]
+    private ?string $nomAgence = null;
+
+    #[ORM\Column(type: 'string', length: 255, nullable: true)]
+    #[Assert\Length(max: 255)]
+    private ?string $denominationAgence = null;
+
+    #[ORM\Column(type: 'string', length: 255, nullable: true)]
+    #[Assert\Length(max: 255)]
+    private ?string $prenomAgence = null;
+
+    #[ORM\Column(type: 'string', length: 255, nullable: true)]
+    private ?string $adresseAgence = null;
+
+    #[ORM\Column(type: 'string', length: 5, nullable: true)]
+    #[Assert\Regex(pattern: '/^[0-9]{5}$/', message: 'Le code postal être composé de 5 chiffres.')]
+    private ?string $codePostalAgence = null;
+
+    #[ORM\Column(type: 'string', length: 255, nullable: true)]
+    private ?string $villeAgence = null;
+
+    #[ORM\Column(type: 'string', length: 128, nullable: true)]
+    #[AppAssert\TelephoneFormat]
+    private ?string $telAgence = null;
+
+    #[ORM\Column(type: 'string', length: 128, nullable: true)]
+    #[AppAssert\TelephoneFormat]
+    private ?string $telAgenceSecondaire = null;
+
+    #[ORM\Column(type: 'string', length: 255, nullable: true)]
+    #[Email(mode: Email::VALIDATION_MODE_STRICT, message: 'L\'adresse e-mail de l\'agence n\'est pas valide.', groups: ['Default', 'bo_step_coordonnees'])]
+    private ?string $mailAgence = null;
 
     #[ORM\Column(type: 'boolean')]
     private ?bool $isCguAccepted = null;
@@ -794,16 +833,28 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
 
     public function getNomProprio(): ?string
     {
-        if ($this->bailleur) {
-            return $this->bailleur->getName();
-        }
-
         return $this->nomProprio;
     }
 
     public function setNomProprio(?string $nomProprio): self
     {
         $this->nomProprio = $nomProprio;
+
+        return $this;
+    }
+
+    public function getDenominationProprio(): ?string
+    {
+        if ($this->bailleur) {
+            return $this->bailleur->getName();
+        }
+
+        return $this->denominationProprio;
+    }
+
+    public function setDenominationProprio(?string $denominationProprio): self
+    {
+        $this->denominationProprio = $denominationProprio;
 
         return $this;
     }
@@ -1117,6 +1168,124 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
     public function setBanIdOccupant(?string $banIdOccupant): self
     {
         $this->banIdOccupant = $banIdOccupant;
+
+        return $this;
+    }
+
+    public function getNomAgence(): ?string
+    {
+        return $this->nomAgence;
+    }
+
+    public function setNomAgence(?string $nomAgence): self
+    {
+        $this->nomAgence = $nomAgence;
+
+        return $this;
+    }
+
+    public function getDenominationAgence(): ?string
+    {
+        return $this->denominationAgence;
+    }
+
+    public function setDenominationAgence(?string $denominationAgence): self
+    {
+        $this->denominationAgence = $denominationAgence;
+
+        return $this;
+    }
+
+    public function getPrenomAgence(): ?string
+    {
+        return $this->prenomAgence;
+    }
+
+    public function setPrenomAgence(?string $prenomAgence): self
+    {
+        $this->prenomAgence = $prenomAgence;
+
+        return $this;
+    }
+
+    public function getAdresseAgence(): ?string
+    {
+        return $this->adresseAgence;
+    }
+
+    public function setAdresseAgence(?string $adresseAgence): self
+    {
+        $this->adresseAgence = $adresseAgence;
+
+        return $this;
+    }
+
+    public function getCodePostalAgence(): ?string
+    {
+        return $this->codePostalAgence;
+    }
+
+    public function setCodePostalAgence(?string $codePostalAgence): self
+    {
+        $this->codePostalAgence = $codePostalAgence;
+
+        return $this;
+    }
+
+    public function getVilleAgence(): ?string
+    {
+        return $this->villeAgence;
+    }
+
+    public function setVilleAgence(?string $villeAgence): self
+    {
+        $this->villeAgence = $villeAgence;
+
+        return $this;
+    }
+
+    public function getTelAgence(): ?string
+    {
+        return $this->telAgence;
+    }
+
+    public function getTelAgenceDecoded(?bool $national = false): ?string
+    {
+        return Phone::format($this->telAgence, $national);
+    }
+
+    public function setTelAgence(?string $telAgence): self
+    {
+        $this->telAgence = $telAgence;
+
+        return $this;
+    }
+
+    public function getTelAgenceSecondaire(): ?string
+    {
+        return $this->telAgenceSecondaire;
+    }
+
+    public function getTelAgenceSecondaireDecoded(?bool $national = false): ?string
+    {
+        return Phone::format($this->telAgenceSecondaire, $national);
+    }
+
+    public function setTelAgenceSecondaire(?string $telAgenceSecondaire): self
+    {
+        $this->telAgenceSecondaire = $telAgenceSecondaire;
+
+        return $this;
+    }
+
+    public function getMailAgence(): ?string
+    {
+        return $this->mailAgence;
+    }
+
+    public function setMailAgence(?string $mailAgence): self
+    {
+        $this->mailAgence = $mailAgence;
 
         return $this;
     }
