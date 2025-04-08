@@ -41,11 +41,11 @@
                             </div>
                             <div class="fr-input-group fr-col-12 fr-pl-0 fr-pl-md-0">
                                 <label for="profil_edit_infos_fonction" class="fr-label">
-                                    Fonction
+                                    Fonction (facultatif)
                                     <span class="fr-hint-text">Renseignez ici votre fonction au sein de votre organisation.</span>
                                 </label>
                                 <input type="text" id="profil_edit_infos_fonction" name="profil_edit_infos[fonction]"
-                                    class="fr-input" value="{{ app.user.fonction }}" maxlength="255">
+                                    class="fr-input" value="{{ app.user.fonction }}" maxlength="50">
                             </div>
                             <input type="hidden" name="_token" value="{{ csrf_token('profil_edit_infos') }}">
                         </form>

@@ -179,6 +179,7 @@ class User implements UserInterface, EntityHistoryInterface, PasswordAuthenticat
     private Collection $popNotifications;
 
     #[ORM\Column(length: 255, nullable: true)]
+    #[Assert\Length(max: 50, groups: ['user_partner', 'Default'])]
     private ?string $fonction = null;
 
     public function __construct()
