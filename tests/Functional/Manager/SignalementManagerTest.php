@@ -32,6 +32,7 @@ use Faker\Factory;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use Symfony\Component\HtmlSanitizer\HtmlSanitizerInterface;
 use Symfony\Component\Validator\ConstraintViolationList;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
@@ -58,6 +59,7 @@ class SignalementManagerTest extends WebTestCase
     private SignalementAddressUpdater $signalementAddressUpdater;
     private AffectationRepository $affectationRepository;
     private ZipcodeProvider $zipcodeProvider;
+    private HtmlSanitizerInterface $htmlSanitizerInterface;
 
     protected function setUp(): void
     {
@@ -83,6 +85,7 @@ class SignalementManagerTest extends WebTestCase
         $this->signalementAddressUpdater = static::getContainer()->get(SignalementAddressUpdater::class);
         $this->affectationRepository = static::getContainer()->get(AffectationRepository::class);
         $this->zipcodeProvider = static::getContainer()->get(ZipcodeProvider::class);
+        $this->htmlSanitizerInterface = self::getContainer()->get('html_sanitizer.sanitizer.app.message_sanitizer');
 
         $this->signalementManager = new SignalementManager(
             $this->managerRegistry,
@@ -101,7 +104,8 @@ class SignalementManagerTest extends WebTestCase
             $this->bailleurRepository,
             $this->affectationRepository,
             $this->signalementAddressUpdater,
-            $this->zipcodeProvider
+            $this->zipcodeProvider,
+            $this->htmlSanitizerInterface,
         );
         $user = $this->entityManager->getRepository(User::class)->findOneBy(['email' => 'admin-01@signal-logement.fr']);
         $client->loginUser($user);
@@ -126,8 +130,12 @@ class SignalementManagerTest extends WebTestCase
 
         $signalementClosed = $this->signalementManager->closeSignalementForAllPartners(
             $signalementActive,
-            MotifCloture::tryFrom('TRAVAUX_FAITS_OU_EN_COURS')
+            MotifCloture::tryFrom('TRAVAUX_FAITS_OU_EN_COURS'),
+            'Tous les problèmes ont été résolus en moins de 15 ans',
         );
+
+        $this->assertEquals($signalementActive->getComCloture(), 'Tous les problèmes ont été résolus en moins de 15 ans');
+        $this->assertEquals($signalementClosed->getComCloture(), 'Tous les problèmes ont été résolus en moins de 15 ans');
 
         $this->assertInstanceOf(Signalement::class, $signalementClosed);
         $this->assertEquals(SignalementStatus::CLOSED, $signalementClosed->getStatut());

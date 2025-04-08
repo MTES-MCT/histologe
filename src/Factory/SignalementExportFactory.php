@@ -129,6 +129,7 @@ class SignalementExportFactory
             modifiedAt: $modifiedAt,
             closedAt: $closedAt,
             motifCloture: $motifCloture,
+            comCloture: $data['comCloture'],
             longitude: is_array($geoloc) ? $geoloc['lng'] ?? '' : '',
             latitude: is_array($geoloc) ? $geoloc['lat'] ?? '' : '',
         );

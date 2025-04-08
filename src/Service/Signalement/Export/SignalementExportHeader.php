@@ -62,6 +62,7 @@ class SignalementExportHeader
             'Dernière MAJ le',
             'Clôturé le',
             'Motif de clôture',
+            'Commentaire de clôture',
             'Longitude',
             'Latitude',
         ];
