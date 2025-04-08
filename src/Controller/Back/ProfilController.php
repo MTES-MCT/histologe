@@ -70,7 +70,7 @@ class ProfilController extends AbstractController
             } elseif (strlen($payload['profil_edit_infos']['nom']) > 255) {
                 $errorMessage['errors']['profil_edit_infos[nom]']['errors'][] = 'Le nom ne doit pas dépasser 255 caractères';
             }
-            if (!empty($payload['profil_edit_infos']['fonction']) && strlen($payload['profil_edit_infos']['fonction']) > 50) {
+            if (!empty($payload['profil_edit_infos']['fonction']) && mb_strlen($payload['profil_edit_infos']['fonction']) > 50) {
                 $errorMessage['errors']['profil_edit_infos[fonction]']['errors'][] = 'La fonction ne doit pas dépasser 50 caractères';
             }
             // Validation du fichier avatar
