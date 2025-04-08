@@ -19,7 +19,7 @@ import * as L from 'leaflet'
 import 'leaflet.markercluster'
 import { SignalementMarkerOptions } from '../interfaces/signalementMarkerOptions'
 // @ts-ignore
-import omnivore from '@mapbox/leaflet-omnivore'
+import { parse } from 'wellknown'
 
 // Import des fichiers CSS nécessaires pour Leaflet
 import 'leaflet/dist/leaflet.css'
@@ -105,7 +105,7 @@ export default defineComponent({
       zones.forEach((wkt: string, index: number) => {
         const color = this.getZoneColor(index)
         // @ts-ignore
-        const zone = omnivore.wkt.parse(wkt)
+        const zone = L.geoJson(parse(wkt))
         zone.setStyle({
           color: color,
           fillColor: color,
