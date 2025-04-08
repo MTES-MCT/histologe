@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Command;
+namespace App\Command\Cron;
 
 use App\Entity\FailedEmail;
 use App\Repository\FailedEmailRepository;
