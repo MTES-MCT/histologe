@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Service\BetaGouv\Response;
+namespace App\Service\Gouv\Rnb\Response;
 
 class RnbBuilding
 {

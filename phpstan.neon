@@ -7,10 +7,12 @@ parameters:
 		- .php-cs-fixer.dist.php
 		- tools
 	treatPhpDocTypesAsCertain: false
+	bootstrapFiles:
+		- tools/wiremock/src/Mock/AppMock.php
 	ignoreErrors:
 		-
 			message: '#Property [a-zA-Z0-9\\_]+::\$desordrePrecisionRepository is never read, only written.#'
 			path: src/Service/Signalement/DesordreTraitement/*
 		-
 			message: '#Property .+::\$id is never written, only read.#'
-			path: src/Entity/*			
+			path: src/Entity/*
