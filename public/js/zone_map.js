@@ -13,7 +13,7 @@ L.Icon.Default.mergeOptions({
 })
 
 var zoneWkt = document.getElementById('info_zone_map').getAttribute('data-zone');
-const zoneGeoJson = omnivore.wkt.parse(zoneWkt);
+const zoneGeoJson = L.geoJson(wellknown.parse(zoneWkt));
 map.fitBounds(zoneGeoJson.getBounds());
 zoneGeoJson.addTo(map);
 

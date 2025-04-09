@@ -2,7 +2,6 @@
   "dependencies": {
     "@braintree/sanitize-url": "^6.0.2",
     "@gouvfr/dsfr": "^1.13.0",
-    "@mapbox/leaflet-omnivore": "^0.3.4",
     "@sentry/browser": "^8.33.0",
     "@sentry/tracing": "^7.99.0",
     "@symfony/webpack-encore": "^5.0.1",
@@ -18,7 +17,8 @@
     "libphonenumber-js": "^1.10.44",
     "vue": "^3.5.13",
     "vue-chartjs": "^4.1.1",
-    "vue-loader": "^17.0.0"
+    "vue-loader": "^17.0.0",
+    "wellknown": "^0.5.0"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3.2.0",
