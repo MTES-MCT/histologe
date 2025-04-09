@@ -425,6 +425,12 @@ class SearchFilter
             $qb->andWhere('s.isImported = false');
         }
 
+        if (!empty($filters['motifCloture'])) {
+            $qb
+                ->andWhere('s.motifCloture LIKE :motif_cloture')
+                ->setParameter('motif_cloture', $filters['motifCloture']);
+        }
+
         return $qb;
     }
 

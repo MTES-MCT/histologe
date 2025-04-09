@@ -87,6 +87,24 @@ class SignalementSearchQuery
         private readonly string $sortBy = 'reference',
         #[Assert\Choice(['ASC', 'DESC', 'asc', 'desc'])]
         private readonly string $orderBy = 'DESC',
+        #[Assert\Choice([
+            'abandon_de_procedure_absence_de_reponse',
+            'depart_occupant',
+            'insalubrite',
+            'logement_decent',
+            'logement_vendu',
+            'non_decence',
+            'peril',
+            'refus_de_visite',
+            'refus_de_travaux',
+            'relogement_occupant',
+            'responsabilite_de_l_occupant',
+            'rsd',
+            'travaux_faits_ou_en_cours',
+            'doublon',
+            'autre',
+        ])]
+        private readonly ?string $motifCloture = null,
     ) {
     }
 
@@ -235,6 +253,11 @@ class SignalementSearchQuery
         return $this->sansSuiviPeriode;
     }
 
+    public function getMotifCloture(): ?string
+    {
+        return $this->motifCloture;
+    }
+
     public function getPage(): ?int
     {
         return $this->page;
@@ -328,6 +351,7 @@ class SignalementSearchQuery
         $filters['delays'] = $this->getSansSuiviPeriode();
         $filters['nouveau_suivi'] = $this->getNouveauSuivi();
         $filters['bailleurSocial'] = $this->getBailleurSocial();
+        $filters['motifCloture'] = $this->getMotifCloture();
 
         $filters['page'] = $this->getPage() ?? 1;
         $filters['maxItemsPerPage'] = self::MAX_LIST_PAGINATION;

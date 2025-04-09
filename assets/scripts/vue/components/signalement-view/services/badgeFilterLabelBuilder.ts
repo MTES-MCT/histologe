@@ -108,6 +108,13 @@ export function buildBadge (key: string, value: any): string | undefined | null 
     }
   }
 
+  if (key === 'motifCloture') {
+    const item = store.state.motifClotureList.find(item => item.Id === value)
+    if (item != null) {
+      return 'Motif de clôture : ' + item.Text
+    }
+  }
+
   return buildStaticBadge(value)
 }
 
@@ -136,8 +143,6 @@ function buildStaticBadge (value: any): string | undefined {
     store.state.statusAffectationList,
     store.state.statusVisiteList,
     store.state.situationList,
-    // store.state.procedureList,
-    // store.state.procedureConstateeList,
     store.state.typeDernierSuiviList,
     store.state.typeDeclarantList,
     store.state.natureParcList
