@@ -83,23 +83,4 @@ class InterventionRepository extends ServiceEntityRepository
             ->getQuery()
             ->getResult();
     }
-
-    public function getArreteToApplyProcedureInsalubrite(): array
-    {
-        return $this->createQueryBuilder('i')
-            ->andWhere('i.type = :arrete')
-            ->andWhere('i.concludeProcedure IS NULL')
-            ->setParameter('arrete', InterventionType::ARRETE_PREFECTORAL->name)
-            ->getQuery()
-            ->getResult();
-    }
-
-    public function getInterventionsWithDescription(): array
-    {
-        return $this
-            ->createQueryBuilder('i')
-            ->andWhere('i.details IS NOT NULL')
-            ->orderBy('i.createdAt', 'DESC')
-            ->getQuery()->getResult();
-    }
 }
