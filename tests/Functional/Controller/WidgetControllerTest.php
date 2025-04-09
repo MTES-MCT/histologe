@@ -131,6 +131,7 @@ class WidgetControllerTest extends WebTestCase
             ])
         );
         $responseAll = json_decode($client->getResponse()->getContent(), true);
+        dd($responseAll);
         $this->assertEquals('data-kpi', $responseAll['type']);
         $this->assertCount(2, $responseAll['territories']);
 
@@ -160,6 +161,7 @@ class WidgetControllerTest extends WebTestCase
         $this->assertEquals($totalSignalementNoSuivi, $responseAll['data']['countSuivi']['signalementNoSuivi']);
         $this->assertEquals($totalNoSuiviAfter3Relances, $responseAll['data']['countSuivi']['noSuiviAfter3Relances']);
         // counts user
+        dd($totalActiveUser, $responseAll['data']['countUser']['active']);
         $this->assertEquals($totalActiveUser, $responseAll['data']['countUser']['active']);
         $this->assertEquals($totalInactiveUser, $responseAll['data']['countUser']['inactive']);
     }

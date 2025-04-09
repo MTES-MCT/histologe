@@ -34,4 +34,12 @@ trait UserHelper
 
         return $user;
     }
+
+    public function getUserPronnected(): User
+    {
+        return (new User())
+            ->setEmail('proconnect@signal-logement.fr')
+            ->setStatut(User::STATUS_ACTIVE)
+            ->setProConnectUid('1234');
+    }
 }
