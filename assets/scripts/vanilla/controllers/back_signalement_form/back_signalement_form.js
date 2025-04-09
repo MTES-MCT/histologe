@@ -358,8 +358,10 @@ function initBoFormSignalementDesordres() {
       if ('' != inputTextElement.value) {
         detailsCritereElement.innerHTML = 'Commentaire : <i>'+inputTextElement.value+'</i>'      
         if ('desordres_batiment_nuisibles_autres' == modal.dataset.critereslug){
-          hasPrecisionsChosen = true;
+          hasPrecisionsChosen = true; // ce désordre doit automatiquement avoir un commentaire
         }
+      } else if ('desordres_logement_nuisibles_autres' == modal.dataset.critereslug) {
+        hasPrecisionsChosen = false; // ce désordre doit automatiquement avoir un commentaire + une précision (géré ligne 338)
       }
     }
 

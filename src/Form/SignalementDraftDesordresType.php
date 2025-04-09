@@ -153,33 +153,60 @@ class SignalementDraftDesordresType extends AbstractType
         $builder->addEventListener(FormEvents::POST_SUBMIT, function (FormEvent $event) {
             $form = $event->getForm();
 
+            $selectedCriteres = [];
+            $precisionData = [];
+            $commentaires = [];
+
             foreach ($form->all() as $field) {
                 $name = $field->getName();
 
-                if (str_starts_with($name, 'precisions_') && !$form->get($name)->getConfig()->getOption('mapped')) {
-                    $precisionValues = $form->get($name)->getData();
-                    if (is_iterable($precisionValues) && 0 === count($precisionValues)) {
-                        $critereId = (int) str_replace('precisions_', '', $name);
-                        $critere = $this->desordreCritereRepository->find($critereId);
-
-                        if ($critere && $critere->getDesordrePrecisions()->count() > 1) {
-                            $isSelected = false;
-                            foreach ($form->all() as $checkboxField) {
-                                if (str_starts_with($checkboxField->getName(), 'desordres_')) {
-                                    $selectedCriteres = $checkboxField->getData();
-                                    if ($selectedCriteres && in_array($critere, $selectedCriteres)) {
-                                        $isSelected = true;
-                                        break;
-                                    }
-                                }
-                            }
-
-                            if ($isSelected) {
-                                $form->addError(new FormError(''));
-
-                                return;
-                            }
+                if (str_starts_with($name, 'desordres_')) {
+                    foreach ($field->getData() ?? [] as $critere) {
+                        $selectedCriteres[$critere->getId()] = $critere;
+                    }
+                }
+                if (str_starts_with($name, 'precisions_')) {
+                    if (preg_match('/^precisions_(\d+)$/', $name, $matches)) {
+                        $critereId = (int) $matches[1];
+                        if (!$field->getConfig()->getOption('mapped')) {
+                            $precisionData[$critereId] = $field->getData();
                         }
+                    }
+
+                    if (str_contains($name, '_details_type_nuisibles')) {
+                        if (preg_match('/_(desordres_[a-z_]+_nuisibles_autres)_details_type_nuisibles$/', $name, $matches)) {
+                            $slug = $matches[1];
+                            $commentaires[$slug] = trim($field->getData());
+                        }
+                    }
+                }
+            }
+
+            foreach ($selectedCriteres as $critereId => $critere) {
+                $slug = $critere->getSlugCritere();
+                $nbPrecisions = $critere->getDesordrePrecisions()->count();
+                $precisions = $precisionData[$critereId] ?? [];
+                $commentaire = $commentaires[$slug] ?? null;
+
+                if ($nbPrecisions > 1 && empty($precisions)) {
+                    $form->addError(new FormError(''));
+
+                    return;
+                }
+
+                if ('desordres_batiment_nuisibles_autres' === $slug) {
+                    if ('' === $commentaire) {
+                        $form->addError(new FormError(''));
+
+                        return;
+                    }
+                }
+
+                if ('desordres_logement_nuisibles_autres' === $slug) {
+                    if ('' === $commentaire) {
+                        $form->addError(new FormError(''));
+
+                        return;
                     }
                 }
             }
