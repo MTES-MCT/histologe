@@ -469,3 +469,9 @@ users:
     partner: "Cocoland"
     statut: 1
     is_mailing_active: 1
+  -
+    email: proconnect@signal-logement.fr
+    roles: "[\"ROLE_ADMIN_TERRITORY\"]"
+    partner: "Partenaire 13-01"
+    statut: 1
+    is_mailing_active: 1

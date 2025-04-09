@@ -38,7 +38,7 @@ use App\Repository\BailleurRepository;
 use App\Repository\DesordrePrecisionRepository;
 use App\Repository\PartnerRepository;
 use App\Repository\SignalementRepository;
-use App\Service\DataGouv\Response\Address;
+use App\Service\Gouv\Ban\Response\Address;
 use App\Service\Signalement\CriticiteCalculator;
 use App\Service\Signalement\DesordreTraitement\DesordreCompositionLogementLoader;
 use App\Service\Signalement\Qualification\QualificationStatusService;

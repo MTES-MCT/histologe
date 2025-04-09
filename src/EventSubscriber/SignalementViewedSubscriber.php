@@ -6,7 +6,7 @@ use App\Entity\Notification;
 use App\Entity\Signalement;
 use App\Event\SignalementViewedEvent;
 use App\Manager\SignalementManager;
-use App\Service\DataGouv\AddressService;
+use App\Service\Gouv\Ban\AddressService;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 

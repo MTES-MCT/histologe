@@ -64,19 +64,22 @@ class User implements UserInterface, EntityHistoryInterface, PasswordAuthenticat
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column(type: 'integer')]
-    private $id;
+    private ?int $id = null;
 
     #[ORM\Column(type: Types::GUID)]
-    private $uuid;
+    private ?string $uuid = null;
+
+    #[ORM\Column(length: 255, unique: true, nullable: true)]
+    private ?string $proConnectUserId = null;
 
     #[ORM\Column(type: 'string', length: 180, unique: true)]
     #[Email(mode: Email::VALIDATION_MODE_STRICT, groups: ['registration'])]
     #[Assert\NotBlank(message: 'Merci de saisir une adresse e-mail.')]
     #[Assert\Length(max: 255, groups: ['user_partner', 'Default'])]
-    private $email;
+    private ?string $email = null;
 
     #[ORM\Column(type: 'json')]
-    private $roles = [];
+    private array $roles = [];
 
     #[ORM\Column]
     private bool $hasPermissionAffectation = false;
@@ -90,7 +93,7 @@ class User implements UserInterface, EntityHistoryInterface, PasswordAuthenticat
     #[Assert\Regex(pattern: '/[^a-zA-Z0-9]/', message: 'Le mot de passe doit contenir au moins un caractère spécial.', groups: ['password'])]
     #[Assert\NotCompromisedPassword(message: 'Ce mot de passe est compromis, veuillez en choisir un autre.', groups: ['password'])]
     #[Assert\NotEqualTo(propertyPath: 'email', message: 'Le mot de passe ne doit pas être votre e-mail.', groups: ['password'])]
-    private $password;
+    private ?string $password = null;
 
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $token = null;
@@ -99,42 +102,42 @@ class User implements UserInterface, EntityHistoryInterface, PasswordAuthenticat
     private ?\DateTimeImmutable $tokenExpiredAt = null;
 
     #[ORM\OneToMany(mappedBy: 'modifiedBy', targetEntity: Signalement::class)]
-    private $signalementsModified;
+    private Collection $signalementsModified;
 
     #[ORM\OneToMany(mappedBy: 'createdBy', targetEntity: Signalement::class)]
-    private $signalementsCreated;
+    private Collection $signalementsCreated;
 
     #[ORM\OneToMany(mappedBy: 'closedBy', targetEntity: Signalement::class)]
-    private $signalementsClosed; // @phpstan-ignore-line
+    private Collection $signalementsClosed; // @phpstan-ignore-line
 
     #[ORM\OneToMany(mappedBy: 'createdBy', targetEntity: Suivi::class, orphanRemoval: true)]
-    private $suivis;
+    private Collection $suivis;
 
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
     #[Assert\NotBlank(message: 'Merci de saisir un nom.', groups: ['user_partner', 'Default'])]
     #[Assert\Length(max: 255, groups: ['user_partner', 'Default'])]
-    private $nom;
+    private ?string $nom = null;
 
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
     #[Assert\NotBlank(message: 'Merci de saisir un prénom.', groups: ['user_partner', 'Default'])]
     #[Assert\Length(max: 255, groups: ['user_partner', 'Default'])]
-    private $prenom;
+    private ?string $prenom = null;
 
     #[ORM\Column(type: 'integer')]
-    private $statut;
+    private ?int $statut = null;
 
     #[ORM\Column(type: 'datetime_immutable', nullable: true)]
-    private $lastLoginAt;
+    private ?\DateTimeImmutable $lastLoginAt = null;
 
     #[ORM\Column(type: 'boolean')]
-    private $isMailingActive;
+    private bool $isMailingActive = true;
 
     #[ORM\Column(type: 'boolean')]
     #[Assert\NotNull(message: 'Merci de choisir une option de notification.')]
     private $isMailingSummary;
 
     #[ORM\OneToMany(mappedBy: 'user', targetEntity: Notification::class)]
-    private $notifications;
+    private Collection $notifications;
 
     #[ORM\OneToMany(mappedBy: 'uploadedBy', targetEntity: File::class)]
     private Collection $files;
@@ -143,10 +146,10 @@ class User implements UserInterface, EntityHistoryInterface, PasswordAuthenticat
     private bool $isActivateAccountNotificationEnabled = true;
 
     #[ORM\OneToMany(mappedBy: 'declarant', targetEntity: SignalementUsager::class)]
-    private $signalementUsagerDeclarants;
+    private Collection $signalementUsagerDeclarants;
 
     #[ORM\OneToMany(mappedBy: 'occupant', targetEntity: SignalementUsager::class)]
-    private $signalementUsagerOccupants;
+    private Collection $signalementUsagerOccupants;
 
     #[ORM\Column(type: Types::DATE_IMMUTABLE, nullable: true)]
     private ?\DateTimeInterface $archivingScheduledAt = null;
@@ -206,6 +209,11 @@ class User implements UserInterface, EntityHistoryInterface, PasswordAuthenticat
         return $this->id;
     }
 
+    public function getProConnectUserId(): ?string
+    {
+        return $this->proConnectUserId;
+    }
+
     public function getEmail(): ?string
     {
         return $this->email;
@@ -214,6 +222,13 @@ class User implements UserInterface, EntityHistoryInterface, PasswordAuthenticat
     public function setEmail(string $email): self
     {
         $this->email = $email;
+
+        return $this;
+    }
+
+    public function setProConnectUserId(?string $proConnectUserId): self
+    {
+        $this->proConnectUserId = $proConnectUserId;
 
         return $this;
     }

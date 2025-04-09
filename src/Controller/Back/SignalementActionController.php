@@ -13,7 +13,7 @@ use App\Manager\SignalementManager;
 use App\Manager\SuiviManager;
 use App\Repository\AffectationRepository;
 use App\Repository\SuiviRepository;
-use App\Service\BetaGouv\RnbService;
+use App\Service\Gouv\Rnb\RnbService;
 use App\Service\Sanitizer;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ManagerRegistry;

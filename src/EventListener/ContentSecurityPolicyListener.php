@@ -31,9 +31,21 @@ readonly class ContentSecurityPolicyListener
         $response = $event->getResponse();
         $request = $event->getRequest();
 
+        if ('/logout' === $request->getPathInfo()) {
+            $response->headers->set('Content-Security-Policy', "default-src 'none';");
+
+            return;
+        }
+
         $scriptNonce = $request->attributes->get('csp_script_nonce');
 
         $cspParameters = $this->parameterBag->get('csp_parameters');
+
+        if ($this->isMockEnvironment()) {
+            $proConnectDomain = $this->parameterBag->get('proconnect_domain');
+            $formActionDirectives = $this->formatCspDirective($cspParameters['form-action'] ?? []);
+            $cspParameters['form-action'] = explode(' ', str_replace($proConnectDomain, 'localhost:8082', $formActionDirectives));
+        }
 
         $cspDirectives = [
             'default-src' => $this->formatCspDirective($cspParameters['default-src'] ?? []),
@@ -75,5 +87,10 @@ readonly class ContentSecurityPolicyListener
         }
 
         return rtrim($csp, ' ');
+    }
+
+    private function isMockEnvironment(): bool
+    {
+        return str_contains($this->parameterBag->get('proconnect_domain'), 'wiremock');
     }
 }

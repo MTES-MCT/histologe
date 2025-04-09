@@ -7,6 +7,7 @@ use App\Entity\Partner;
 use App\Entity\Signalement;
 use App\Entity\Territory;
 use App\Entity\User;
+use App\Service\Gouv\ProConnect\Model\ProConnectUser;
 use App\Service\ListFilters\SearchArchivedUser;
 use App\Service\ListFilters\SearchUser;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
@@ -509,5 +510,20 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
             ->setParameter('active', User::STATUS_ACTIVE);
 
         return $queryBuilder->getQuery()->getResult();
+    }
+
+    /**
+     * @throws NonUniqueResultException
+     */
+    public function findByProConnectUser(ProConnectUser $proConnectUser): ?User
+    {
+        $queryBuilder = $this->createQueryBuilder('u')
+            ->andWhere('(u.email = :email OR u.proConnectUserId = :proConnectUserId)')
+            ->andWhere('u.statut = :statut')
+            ->setParameter('email', $proConnectUser->email)
+            ->setParameter('proConnectUserId', $proConnectUser->sub)
+            ->setParameter('statut', User::STATUS_ACTIVE);
+
+        return $queryBuilder->getQuery()->getOneOrNullResult();
     }
 }
