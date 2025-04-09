@@ -10,6 +10,7 @@ export const SEARCH_FILTERS = [
   { type: 'text', name: 'sortBy', showOptions: false, defaultValue: null },
   { type: 'text', name: 'direction', showOptions: false, defaultValue: null },
   { type: 'text', name: 'procedure', showOptions: true, defaultValue: null },
+  { type: 'text', name: 'procedureConstatee', showOptions: true, defaultValue: null },  
   { type: 'text', name: 'visiteStatus', showOptions: true, defaultValue: null },
   { type: 'text', name: 'statusAffectation', showOptions: true, defaultValue: null },
   { type: 'text', name: 'typeDernierSuivi', showOptions: true, defaultValue: null },

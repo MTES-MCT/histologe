@@ -22,6 +22,7 @@ export const store = {
         searchTerms: null,
         status: null,
         procedure: null,
+        procedureConstatee: null,
         visiteStatus: null,
         typeDernierSuivi: null,
         typeDeclarant: null,
@@ -100,6 +101,15 @@ export const store = {
       { Id: 'suroccupation', Text: 'Suroccupation' },
       { Id: 'assurantiel', Text: 'Assurantiel' }
     ],
+    procedureConstateeList: [
+      { Id: 'non_decence', Text: 'Non décence' },
+      { Id: 'rsd', Text: 'Infraction RSD' },
+      { Id: 'insalubrite', Text: 'Insalubrité' },
+      { Id: 'mise_en_securite_peril', Text: 'Mise en sécurité / Péril' },
+      { Id: 'logement_decent', Text: 'Logement décent / Pas d\'infraction' },
+      { Id: 'responsabilite_occupant_assurantiel', Text: 'Responsabilité occupant / Assurantiel' },
+      { Id: 'autre', Text: 'Autre' },
+    ],    
     typeDernierSuiviList: [
       { Id: 'partenaire', Text: 'Suivi Partenaire' },
       { Id: 'usager', Text: 'Suivi Usager' },

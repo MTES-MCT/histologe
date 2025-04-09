@@ -66,6 +66,15 @@ class SignalementSearchQuery
             'suroccupation',
             'assurantiel', ])]
         private readonly ?string $procedure = null,
+        #[Assert\Choice([
+            'non_decence',
+            'rsd',
+            'insalubrite',
+            'mise_en_securite_peril',
+            'logement_decent',
+            'responsabilite_occupant_assurantiel',
+            'autre', ])]
+        private readonly ?string $procedureConstatee = null,
         private readonly ?int $page = 1,
         #[Assert\Choice(['oui'])]
         private readonly ?string $isImported = null,
@@ -201,6 +210,11 @@ class SignalementSearchQuery
         return !empty($this->procedure) ? strtoupper($this->procedure) : null;
     }
 
+    public function getProcedureConstatee(): ?string
+    {
+        return !empty($this->procedureConstatee) ? strtoupper($this->procedureConstatee) : null;
+    }
+
     public function getIsImported(): ?string
     {
         return $this->isImported;
@@ -290,6 +304,7 @@ class SignalementSearchQuery
         $filters['typeDeclarant'] = $this->getTypeDeclarant();
         $filters['situation'] = $this->getSituation();
         $filters['procedure'] = $this->getProcedure();
+        $filters['procedureConstatee'] = $this->getProcedureConstatee();
         $filters['typeDernierSuivi'] = $this->getTypeDernierSuivi();
         if (null !== $this->getDateDernierSuiviDebut() || null !== $this->getDateDernierSuiviFin()) {
             $filters['datesDernierSuivi'] = [

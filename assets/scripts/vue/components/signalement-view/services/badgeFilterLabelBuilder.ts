@@ -94,6 +94,20 @@ export function buildBadge (key: string, value: any): string | undefined | null 
     return 'Nouveaux suivis partenaires et usagers'
   }
 
+  if (key === 'procedure') {
+    const item = store.state.procedureList.find(item => item.Id === value)
+    if (item != null) {
+      return 'Procédure suspectée : ' + item.Text
+    }
+  }
+
+  if (key === 'procedureConstatee') {
+    const item = store.state.procedureConstateeList.find(item => item.Id === value)
+    if (item != null) {
+      return 'Procédure constatée : ' + item.Text
+    }
+  }
+
   return buildStaticBadge(value)
 }
 
@@ -122,7 +136,8 @@ function buildStaticBadge (value: any): string | undefined {
     store.state.statusAffectationList,
     store.state.statusVisiteList,
     store.state.situationList,
-    store.state.procedureList,
+    // store.state.procedureList,
+    // store.state.procedureConstateeList,
     store.state.typeDernierSuiviList,
     store.state.typeDeclarantList,
     store.state.natureParcList

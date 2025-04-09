@@ -20,6 +20,7 @@ class SignalementExportFiltersDisplay
         'statuses' => 'Statut',
         'epcis' => 'EPCI',
         'procedure' => 'Procédure suspectée',
+        'procedureVisite' => 'Procédure constatée',
         'dates' => 'Date de dépôt',
         'visites' => 'Visite',
         'typeDernierSuivi' => 'Type dernier suivi',
