@@ -64,18 +64,6 @@ class LoadInterventionData extends Fixture implements OrderedFixtureInterface
             $concludeProcedures = [];
             foreach ($row['conclude_procedure'] as $concludeProcedure) {
                 $concludeProcedures[] = ProcedureType::tryFrom($concludeProcedure);
-
-                // $signalementQualification = (new SignalementQualification())
-                //     ->setSignalement($signalement)
-                //     ->setQualification(Qualification::from($concludeProcedure))
-                //     ->setIsPostVisite(true);
-                // if (Qualification::NON_DECENCE_ENERGETIQUE->name == $concludeProcedure) {
-                //     $signalementQualification
-                //         ->setStatus(QualificationStatus::NDE_AVEREE);
-                // } else {
-                //     $signalementQualification
-                //         ->setStatus(QualificationStatus::from($concludeProcedure.'_AVEREE'));
-                // }
             }
             $intervention->setConcludeProcedure($concludeProcedures);
             $this->signalementQualificationUpdater->updateQualificationFromVisiteProcedureList($signalement, $concludeProcedures);
