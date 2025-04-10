@@ -398,15 +398,4 @@ class PartnerRepository extends ServiceEntityRepository
         ->getQuery()
         ->getOneOrNullResult();
     }
-
-    public function getWithoutInseeForTerritory(string $zip): array
-    {
-        return $this->createQueryBuilder('p')
-            ->innerJoin('p.territory', 't')
-            ->where('t.zip = :zip')
-            ->setParameter('zip', $zip)
-            ->andWhere('p.insee IS NULL OR p.insee = \'[]\' OR p.insee = \'[""]\'')
-            ->getQuery()
-            ->getResult();
-    }
 }
