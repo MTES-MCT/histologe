@@ -397,6 +397,12 @@ class SearchFilter
             $qb = $this->addFilterProcedure($qb, $filters['procedure']);
         }
 
+        if (!empty($filters['procedureConstatee'])) {
+            $qb->leftJoin('s.interventions', 'interventionsProcedure');
+            $qb->andWhere('interventionsProcedure.concludeProcedure LIKE :procedure')
+                ->setParameter('procedure', '%'.$filters['procedureConstatee'].'%');
+        }
+
         if (!empty($filters['typeDernierSuivi'])) {
             $qb = $this->addFilterTypeDernierSuivi($qb, $filters['typeDernierSuivi']);
         }
@@ -417,6 +423,12 @@ class SearchFilter
             $qb = $this->addFilterImported($qb);
         } else {
             $qb->andWhere('s.isImported = false');
+        }
+
+        if (!empty($filters['motifCloture'])) {
+            $qb
+                ->andWhere('s.motifCloture LIKE :motif_cloture')
+                ->setParameter('motif_cloture', $filters['motifCloture']);
         }
 
         return $qb;
@@ -445,11 +457,14 @@ class SearchFilter
         if (Qualification::NON_DECENCE_ENERGETIQUE === $qualification) {
             $subqueryResults = $this->signalementQualificationRepository->findSignalementsByQualification(
                 $qualification,
-                [QualificationStatus::NDE_AVEREE, QualificationStatus::NDE_CHECK]
+                [QualificationStatus::NDE_AVEREE, QualificationStatus::NDE_CHECK],
+                false
             );
         } else {
             $subqueryResults = $this->signalementQualificationRepository->findSignalementsByQualification(
-                $qualification
+                $qualification,
+                null,
+                false
             );
         }
 

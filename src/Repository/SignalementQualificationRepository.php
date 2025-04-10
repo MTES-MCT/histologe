@@ -40,7 +40,7 @@ class SignalementQualificationRepository extends ServiceEntityRepository
         }
     }
 
-    public function findSignalementsByQualification(Qualification $qualification, ?array $statuses = null)
+    public function findSignalementsByQualification(Qualification $qualification, ?array $statuses = null, ?bool $isPostVisite = null)
     {
         $queryBuilder = $this->createQueryBuilder('sq')
             ->select('s.id')
@@ -52,6 +52,15 @@ class SignalementQualificationRepository extends ServiceEntityRepository
             $queryBuilder
                 ->andWhere('sq.status IN (:statuses)')
                 ->setParameter('statuses', $statuses);
+        }
+        if (true === $isPostVisite) {
+            $queryBuilder
+                ->andWhere('sq.isPostVisite = :isPostVisite')
+                ->setParameter('isPostVisite', $isPostVisite);
+        } elseif (false === $isPostVisite) {
+            $queryBuilder
+                ->andWhere('sq.isPostVisite = :isPostVisite OR sq.isPostVisite IS NULL')
+                ->setParameter('isPostVisite', $isPostVisite);
         }
 
         $queryBuilder->distinct();
