@@ -19,7 +19,7 @@ use Symfony\Component\Mime\Address;
     name: 'app:retry-failed-emails',
     description: 'Retry sending failed emails',
 )]
-class RetryFailedEmailsCommand extends Command
+class RetryFailedEmailsCommand extends AbstractCronCommand
 {
     public const array ERRORS_TO_IGNORE = [
         'Unable to send an email: email is not valid in to (code 400).',
