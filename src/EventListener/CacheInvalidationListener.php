@@ -5,6 +5,7 @@ namespace App\EventListener;
 use App\Entity\Notification;
 use App\Entity\Signalement;
 use App\Entity\User;
+use App\Security\SignalementUserWrapper;
 use App\Service\CacheCommonKeyGenerator;
 use Doctrine\Bundle\DoctrineBundle\Attribute\AsDoctrineListener;
 use Doctrine\ORM\Events;
@@ -55,6 +56,9 @@ class CacheInvalidationListener
         if ($this->supports($entity)) {
             /** @var ?User $user */
             $user = $this->security->getUser();
+            if ($user instanceof SignalementUserWrapper) {
+                return;
+            }
             $territory = ($entity instanceof Notification) ? $entity->getSignalement()->getTerritory() : $entity->getTerritory();
             try {
                 if ($entity instanceof Signalement) {

@@ -6,15 +6,14 @@
     <main class="fr-container fr-py-5w" id="content">
         <section class="fr-grid-row fr-grid-row--center">
             <header class="fr-callout bg-light fr-col-12">
-                <p class="fr-callout__title">Connexion</p>
+                <p class="fr-callout__title">Suivre mon signalement</p>
                 <p class="fr-callout__text fr-mb-5v">
                     Saisissez les informations suivantes pour accéder au signalement.
                 </p>
                 <em class="fr-fi-information-line fr-text--light fr-text-label--blue-france disabled-link"
                     >Toutes les informations sont obligatoires</em>
             </header>
-            <form action="{{ path('app_login_suivi_signalement') }}"
-                class="needs-validation fr-mt-5v fr-col-md-6" name="login-form" method="POST" novalidate="">
+            <form class="needs-validation fr-mt-5v fr-col-md-6" name="login-form" method="POST" novalidate="">
                 {% if error %}
                     <div role="alert" class="fr-alert fr-alert--error fr-alert--sm fr-mb-5w">
                         <p class="fr-alert__title">Connexion impossible</p>
@@ -26,7 +25,7 @@
                         Initiale du prénom du déclarant
                         <span class="fr-hint-text">Première lettre du prénom de la personne qui a déclaré le signalement</span>
                     </label>
-                    <input class="fr-input" aria-describedby="login-first-letter-prenom-error-desc-error" type="text"
+                    <input class="fr-input" aria-describedby="login-first-letter-prenom-error-desc-error" type="text" maxlength="1"
                            id="login-first-letter-prenom" name="login-first-letter-prenom" required>
                     <p id="login-first-letter-prenom-error-desc-error" class="fr-error-text fr-hidden">
                         Veuillez saisir une lettre.
@@ -37,7 +36,7 @@
                         Initiale du nom de famille du déclarant
                         <span class="fr-hint-text">Première lettre du nom de famille de la personne qui a déclaré le signalement</span>
                     </label>
-                    <input class="fr-input" aria-describedby="login-first-letter-nom-error-desc-error" type="text"
+                    <input class="fr-input" aria-describedby="login-first-letter-nom-error-desc-error" type="text" maxlength="1"
                            id="login-first-letter-nom" name="login-first-letter-nom" required>
                     <p id="login-first-letter-nom-error-desc-error" class="fr-error-text fr-hidden">
                         Veuillez saisir une lettre.
@@ -47,7 +46,7 @@
                     <label class="fr-label" for="login-code-postal">
                         Code postal du logement
                     </label>
-                    <input class="fr-input" aria-describedby="login-code-postal-error-desc-error" type="text"
+                    <input class="fr-input" aria-describedby="login-code-postal-error-desc-error" type="text" maxlength="5"
                            id="login-code-postal" name="login-code-postal" required>
                     <p id="login-code-postal-error-desc-error" class="fr-error-text fr-hidden">
                         Veuillez saisir un code postal.

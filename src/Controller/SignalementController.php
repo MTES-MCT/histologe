@@ -45,6 +45,12 @@ use Symfony\Component\Validator\Validator\ValidatorInterface;
 #[Route('/')]
 class SignalementController extends AbstractController
 {
+    public function __construct(
+        #[Autowire(env: 'FEATURE_SECURE_UUID_URL')]
+        private readonly bool $featureSecureUuidUrl,
+    ) {
+    }
+
     #[Route(
         '/signalement',
         name: 'front_signalement',
@@ -433,7 +439,7 @@ class SignalementController extends AbstractController
         return $this->json(['error' => 'Aucun fichier n\'a été téléversé'], 400);
     }
 
-    #[Route('/suivre-ma-procedure/{code}', name: 'front_suivi_procedure', methods: 'GET')]
+    #[Route('/suivre-ma-procedure/{code}', name: 'front_suivi_procedure', methods: ['GET', 'POST'])]
     public function suiviProcedure(
         string $code,
         SignalementRepository $signalementRepository,
@@ -443,6 +449,7 @@ class SignalementController extends AbstractController
         EntityManagerInterface $entityManager,
         SignalementDesordresProcessor $signalementDesordresProcessor,
         Security $security,
+        AuthenticationUtils $authenticationUtils,
         #[Autowire(service: 'html_sanitizer.sanitizer.app.message_sanitizer')]
         HtmlSanitizerInterface $htmlSanitizer,
     ): Response {
@@ -454,14 +461,20 @@ class SignalementController extends AbstractController
             return $this->render('front/flash-messages.html.twig');
         }
 
-        if (!$security->isGranted('ROLE_USAGER')) {
+        $requestEmail = $request->get('from');
+        $fromEmail = \is_array($requestEmail) ? array_pop($requestEmail) : $requestEmail;
+
+        if (!$security->isGranted('ROLE_SUIVI_SIGNALEMENT') && $this->featureSecureUuidUrl) {
+            // get the login error if there is one
+            $error = $authenticationUtils->getLastAuthenticationError();
+
             return $this->render('security/login_suivi_signalement.html.twig', [
                 'signalement' => $signalement,
+                'fromEmail' => $fromEmail,
+                'error' => $error,
             ]);
         }
 
-        $requestEmail = $request->get('from');
-        $fromEmail = \is_array($requestEmail) ? array_pop($requestEmail) : $requestEmail;
         $suiviAuto = $request->get('suiviAuto');
 
         /** @var User $userOccupant */
@@ -561,7 +574,7 @@ class SignalementController extends AbstractController
         ]);
     }
 
-    #[Route('/suivre-mon-signalement/{code}', name: 'front_suivi_signalement', methods: 'GET')]
+    #[Route('/suivre-mon-signalement/{code}', name: 'front_suivi_signalement', methods: ['GET', 'POST'])]
     public function suiviSignalement(
         string $code,
         SignalementRepository $signalementRepository,
@@ -575,14 +588,18 @@ class SignalementController extends AbstractController
             $requestEmail = $request->get('from');
             $fromEmail = \is_array($requestEmail) ? array_pop($requestEmail) : $requestEmail;
 
-            if (!$security->isGranted('ROLE_USAGER')) {
-                // get the login error if there is one
-                $error = $authenticationUtils->getLastAuthenticationError();
-                return $this->render('security/login_suivi_signalement.html.twig', [
-                    'signalement' => $signalement,
-                    'fromEmail' => $fromEmail,
-                    'error' => $error,
-                ]);
+            if ($this->featureSecureUuidUrl) { // TODO Remove FEATURE_SECURE_UUID_URL
+                $currentUser = $security->getUser();
+                if (!$security->isGranted('ROLE_SUIVI_SIGNALEMENT') || $currentUser->getUserIdentifier() !== $code) {
+                    // get the login error if there is one
+                    $error = $authenticationUtils->getLastAuthenticationError();
+
+                    return $this->render('security/login_suivi_signalement.html.twig', [
+                        'signalement' => $signalement,
+                        'fromEmail' => $fromEmail,
+                        'error' => $error,
+                    ]);
+                }
             }
 
             $user = $userManager->getOrCreateUserForSignalementAndEmail($signalement, $fromEmail);

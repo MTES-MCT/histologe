@@ -19,6 +19,8 @@ security:
             entity:
                 class: App\Entity\User
                 property: email
+        app_signalement_provider:
+            id: App\Security\SignalementUserWrapperProvider
     firewalls:
         dev:
             pattern: ^/(_(profiler|wdt)|css|images|js)/
@@ -34,12 +36,11 @@ security:
                 max_attempts: 5 # '%env(int:FORMS_SUBMIT_LIMITER_LIMIT)%' doesnt work here: fails to cast str to int
                 interval: '%env(FORMS_SUBMIT_LIMITER_INTERVAL)%'
         suivi:
-            pattern:
-                - ^/suivre-mon-signalement
-                - ^/suivre-ma-procedure
-            stateless: true
-            provider: app_user_provider
-            custom_authenticators: App\Security\SuiviLoginAuthenticator
+            pattern: ^/(suivre-mon-signalement|suivre-ma-procedure)
+            lazy: false
+            stateless: false
+            provider: app_signalement_provider
+            custom_authenticator: App\Security\SuiviLoginAuthenticator
             login_throttling:
                 max_attempts: 5 # '%env(int:FORMS_SUBMIT_LIMITER_LIMIT)%' doesnt work here: fails to cast str to int
                 interval: '%env(FORMS_SUBMIT_LIMITER_INTERVAL)%'
