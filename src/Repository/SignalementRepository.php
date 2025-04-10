@@ -707,27 +707,6 @@ class SignalementRepository extends ServiceEntityRepository
             ->getOneOrNullResult();
     }
 
-    public function findUsersAffectedToSignalement(Signalement $signalement, ?Partner $partnerToExclude = null): array
-    {
-        $queryBuilder = $this->createQueryBuilder('s');
-        $queryBuilder->select('u')
-            ->innerJoin('s.affectations', 'a')
-            ->innerJoin('a.partner', 'p')
-            ->innerJoin('p.userPartners', 'up')
-            ->innerJoin('up.user', 'u')
-            ->where('s.id = :signalement_id')
-            ->setParameter('signalement_id', $signalement->getId())
-            ->andWhere('u.statut = '.User::STATUS_ACTIVE);
-
-        if (null !== $partnerToExclude) {
-            $queryBuilder
-                ->andWhere('a.partner != :partner')
-                ->setParameter('partner', $partnerToExclude);
-        }
-
-        return $queryBuilder->getQuery()->getResult();
-    }
-
     public function getAverageCriticite(
         ?Territory $territory,
         ?ArrayCollection $partners,

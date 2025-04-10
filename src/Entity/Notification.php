@@ -44,10 +44,10 @@ class Notification
     private $affectation;
 
     #[ORM\Column]
-    private bool $waitMaillingSummary;
+    private bool $waitMailingSummary;
 
     #[ORM\Column(nullable: true)]
-    private ?\DateTimeImmutable $maillingSummarySentAt = null;
+    private ?\DateTimeImmutable $mailingSummarySentAt = null;
 
     #[ORM\Column]
     private bool $deleted;
@@ -148,26 +148,26 @@ class Notification
         return $this;
     }
 
-    public function isWaitMaillingSummary(): bool
+    public function isWaitMailingSummary(): bool
     {
-        return $this->waitMaillingSummary;
+        return $this->waitMailingSummary;
     }
 
-    public function setWaitMaillingSummary(bool $waitMaillingSummary): static
+    public function setWaitMailingSummary(bool $waitMailingSummary): static
     {
-        $this->waitMaillingSummary = $waitMaillingSummary;
+        $this->waitMailingSummary = $waitMailingSummary;
 
         return $this;
     }
 
-    public function getMaillingSummarySentAt(): ?\DateTimeImmutable
+    public function getMailingSummarySentAt(): ?\DateTimeImmutable
     {
-        return $this->maillingSummarySentAt;
+        return $this->mailingSummarySentAt;
     }
 
-    public function setMaillingSummarySentAt(?\DateTimeImmutable $maillingSummarySentAt): static
+    public function setMailingSummarySentAt(?\DateTimeImmutable $mailingSummarySentAt): static
     {
-        $this->maillingSummarySentAt = $maillingSummarySentAt;
+        $this->mailingSummarySentAt = $mailingSummarySentAt;
 
         return $this;
     }

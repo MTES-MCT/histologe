@@ -136,6 +136,43 @@
     </section>
     <hr>
     <section class="fr-px-5v fr-my-5v">
+        <div class="fr-grid-row fr-grid-row--middle" data-ajax-form>  
+            {% include 'back/profil/_modal_profil_notification_email.html.twig' %}
+            <div class="fr-col-8 fr-text--left">
+                <h2>Notifications e-mails</h2>
+            </div>
+            <div class="fr-col-4 fr-text--right">
+                <a class="fr-link fr-link--icon-left fr-icon-settings-5-line"
+                    href="#"
+                    title="Paramétrer les notifications e-mail"
+                    data-fr-opened="false" 
+                    aria-controls="fr-modal-profil-notification-email"
+                    >
+                    Paramétrer les notifications
+                </a>
+            </div>
+        </div>
+        <div>
+            Vos préférences en matière d'e-mails :
+            <br>
+            Activité sur Signal Logement : 
+            <strong>
+                {% if app.user.isMailingActive %}
+                    {{ app.user.isMailingSummary ? 'Récapitulatif quotidien' : 'Tous les e-mails' }}
+                {% else %}
+                    Aucun
+                {% endif %}
+            </strong>
+            <div class="fr-alert fr-alert--info fr-alert--sm fr-mt-2w">
+                <p>
+                    Quel que soit votre paramétrage, vous recevrez toujours les e-mails relatifs à la sécurité de votre compte 
+                    (changement d'adresse e-mail, réinitialisation du mot de passe, mises à jour des CGU…)
+                </p>
+            </div>
+        </div>
+    </section>
+    <hr>
+    <section class="fr-px-5v fr-my-5v">
         <dialog aria-labelledby="fr-modal-cgu-bo-title" id="fr-modal-profil-cgu-bo" class="fr-modal">
             <div class="fr-container fr-container--fluid fr-container-md">
                 <div class="fr-grid-row fr-grid-row--center">

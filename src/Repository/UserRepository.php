@@ -3,6 +3,8 @@
 namespace App\Repository;
 
 use App\Dto\CountUser;
+use App\Entity\Partner;
+use App\Entity\Signalement;
 use App\Entity\Territory;
 use App\Entity\User;
 use App\Service\ListFilters\SearchArchivedUser;
@@ -477,5 +479,24 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
 
         return $queryBuilder->getQuery()
             ->getOneOrNullResult();
+    }
+
+    public function findUsersAffectedToSignalement(Signalement $signalement, ?Partner $partnerToExclude = null): array
+    {
+        $queryBuilder = $this->createQueryBuilder('u')
+            ->innerJoin('u.userPartners', 'up')
+            ->innerJoin('up.partner', 'p')
+            ->innerJoin('p.affectations', 'a')
+            ->where('a.signalement = :signalement')
+            ->setParameter('signalement', $signalement)
+            ->andWhere('u.statut = '.User::STATUS_ACTIVE);
+
+        if (null !== $partnerToExclude) {
+            $queryBuilder
+                ->andWhere('a.partner != :partner')
+                ->setParameter('partner', $partnerToExclude);
+        }
+
+        return $queryBuilder->getQuery()->getResult();
     }
 }

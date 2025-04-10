@@ -10,7 +10,7 @@ enum NotificationType: string
     case NOUVEAU_SIGNALEMENT = 'NOUVEAU_SIGNALEMENT';
     case NOUVEAU_SUIVI = 'NOUVEAU_SUIVI';
     case NOUVELLE_AFFECTATION = 'NOUVELLE_AFFECTATION';
-    case CLOTURE_SIGNALEMENT = 'CLOTURE_SIGNALEMENT'; // TODO : ajouter à la liste des notification à afficher en BO
+    case CLOTURE_SIGNALEMENT = 'CLOTURE_SIGNALEMENT';
     case CLOTURE_PARTENAIRE = 'CLOTURE_PARTENAIRE';
 
     public static function getLabelList(): array

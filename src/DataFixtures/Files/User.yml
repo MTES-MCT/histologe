@@ -35,6 +35,7 @@ users:
     partner: "Partenaire 13-01"
     statut: 1
     is_mailing_active: 1
+    is_mailing_summary: 0
   -
     email: admin-territoire-13-02@signal-logement.fr
     roles: "[\"ROLE_ADMIN_TERRITORY\"]"
@@ -132,6 +133,7 @@ users:
     partner: "Partenaire 13-03"
     statut: 1
     is_mailing_active: 1
+    is_mailing_summary: 0
     last_login_at: '-2 year'
   -
     email: user-13-03@signal-logement.fr
@@ -405,6 +407,13 @@ users:
     statut: 1
     is_mailing_active: 1
     archiving_scheduled: 1
+  -
+    email: user-partenaire-34-02@signal-logement.fr
+    roles: "[\"ROLE_USER_PARTNER\"]"
+    partner: "CAF 34"
+    statut: 1
+    is_mailing_active: 1
+    is_mailing_summary: 0
   -
     email: admin-partenaire-multi-ter-13-01@signal-logement.fr
     roles: "[\"ROLE_ADMIN_PARTNER\"]"

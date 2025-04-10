@@ -12,7 +12,6 @@ use App\Entity\Territory;
 use App\Entity\User;
 use App\Factory\NotificationFactory;
 use App\Repository\PartnerRepository;
-use App\Repository\SignalementRepository;
 use App\Repository\UserRepository;
 use App\Service\Mailer\NotificationMail;
 use App\Service\Mailer\NotificationMailerRegistry;
@@ -32,7 +31,6 @@ class NotificationAndMailSender
         private readonly EntityManagerInterface $entityManager,
         private readonly UserRepository $userRepository,
         private readonly PartnerRepository $partnerRepository,
-        private readonly SignalementRepository $signalementRepository,
         private readonly NotificationFactory $notificationFactory,
         private readonly NotificationMailerRegistry $notificationMailerRegistry,
         private readonly Security $security,
@@ -68,7 +66,7 @@ class NotificationAndMailSender
         $this->affectation = $affectation;
         $this->signalement = $affectation->getSignalement();
         $partnerToExclude = $user->getPartnerInTerritoryOrFirstOne($this->signalement->getTerritory());
-        $userList = $this->signalementRepository->findUsersAffectedToSignalement($this->signalement, $partnerToExclude);
+        $userList = $this->userRepository->findUsersAffectedToSignalement($this->signalement, $partnerToExclude);
         $recipients = new ArrayCollection($userList);
         $this->sendMail($recipients, $mailerType);
         $this->createInAppNotifications(recipients: $recipients, type: NotificationType::CLOTURE_PARTENAIRE, affectation: $affectation);
@@ -150,7 +148,7 @@ class NotificationAndMailSender
 
     private function createInAppNotification($user, NotificationType $type, ?Suivi $suivi = null, ?Affectation $affectation = null, ?Signalement $signalement = null): void
     {
-        if (!$this->featureEmailRecap && NotificationType::NOUVEAU_SUIVI !== $type) {
+        if (!$this->featureEmailRecap && !in_array($type, [NotificationType::NOUVEAU_SUIVI])) {
             return;
         }
         if (NotificationType::NOUVEAU_SUIVI === $type) {
@@ -253,14 +251,15 @@ class NotificationAndMailSender
 
     private function getRecipientsFilteredEmail(ArrayCollection $recipients): array
     {
+        $copyRecipients = clone $recipients;
         /** @var ?User $user */
         $user = $this->security->getUser();
         if ($user) {
-            $recipients->removeElement($user);
+            $copyRecipients->removeElement($user);
         }
 
         $recipientsEmails = [];
-        foreach ($recipients as $recipientUserOrPartner) {
+        foreach ($copyRecipients as $recipientUserOrPartner) {
             if ($recipientUserOrPartner instanceof User) {
                 if (!$recipientUserOrPartner->getIsMailingActive()) {
                     continue;
