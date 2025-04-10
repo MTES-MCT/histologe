@@ -25,12 +25,9 @@
         <div class="fr-grid-row fr-grid-row--middle" data-ajax-form>                
             {% include 'back/profil/_modal_profil_infos.html.twig' %}
             <div class="fr-col-8 fr-text--left">
-                <h2>
-                Mes informations
-                </h2>
+                <h2>Mes informations</h2>
             </div>
             <div class="fr-col-4 fr-text--right">
-
                 <a class="fr-link fr-link--icon-left fr-icon-edit-line"
                     href="#"
                     title="Modifier mes infos"
@@ -47,25 +44,46 @@
                 <div class="fr-ml-3v">
                     <span class="fr-display-block"><strong>{{ app.user.prenom ~' '~app.user.nom }}</strong></span>
                     Fonction : {{ app.user.fonction }}
-                    {% if app.user.partners|length > 1 %}
-                        <p class="fr-mt-2v"><strong>Mes partenaires</strong></p>
-                        <ul>
-                        {% for partner in app.user.partners %}
-                            <li>{{partner.nom}} du territoire {{partner.territory.zip}} - {{partner.territory.name}}</li>
-                        {% endfor %}
-                        </ul>
-                        <div class="fr-alert fr-alert--info">
-                            <p>
-                                Vous ne pouvez pas modifier vos partenaires vous-même. 
-                                <br>
-                                Si vous souhaitez modifier vos partenaires, contactez vos responsables de territoire !
-                            </p>
-                        </div>
-                    {% elseif app.user.partners|length == 1 %}
-                        <span class="fr-display-block">Partenaire : {{ app.user.partners.first.nom }}</span>
-                    {% endif %}
                 </div>
             </div>
+        </div>
+        <div class="fr-grid-row fr-mt-3v">
+            <div class="fr-col-12">
+                <h3>Mon compte sur Signal Logement</h3>
+            </div>
+            {% if is_granted('ROLE_ADMIN') %}
+                <div class="fr-col-12">
+                    <div class="fr-alert fr-alert--info fr-alert--sm">
+                        <p>J'ai un compte Super Admin</p>
+                    </div>
+                </div>
+            {% else %}
+                {% for partner in app.user.partners %}
+                    <div class="fr-col-12 fr-col-md-6">
+                        <p>
+                            <strong>Territoire : {{ partner.territory.zip }} - {{ partner.territory.name }}</strong>
+                            <br>
+                            J'ai un compte {{ app.user.roleLabel }} dans le partenaire {{ partner.nom }}.
+                            <br>
+                            Responsable(s) du territoire {{ partner.territory.zip }} - {{ partner.territory.name }} :
+                        </p>
+                        <ul>
+                            {% for userAdmin in activeTerritoryAdminsByTerritory[partner.territory.id] %}
+                            <li>{{ userAdmin.prenom }} {{ userAdmin.nom }} du partenaire {{ userAdmin.getPartnerInTerritoryOrFirstOne(partner.territory).nom }}</li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                {% endfor %}
+
+                <div class="fr-col-12">
+                    <div class="fr-alert fr-alert--info fr-alert--sm">
+                        <p>
+                            Vous ne pouvez pas modifier vos partenaires vous-mêmes.
+                            Si vous souhaitez modifier vos partenaires, contactez vos responsables de territoire !
+                        </p>
+                    </div>
+                </div>
+            {% endif %}
         </div>
     </section>
     <hr>

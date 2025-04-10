@@ -36,8 +36,21 @@ class ProfilController extends AbstractController
     #[Route('/', name: 'back_profil', methods: ['GET', 'POST'])]
     #[IsGranted('ROLE_USER_PARTNER')]
     public function index(
+        UserRepository $userRepository,
     ): Response {
-        return $this->render('back/profil/index.html.twig');
+        $activeTerritoryAdminsByTerritory = [];
+        /** @var User $user */
+        $user = $this->getUser();
+        $territories = $user->getPartnersTerritories();
+        foreach ($territories as $territory) {
+            $territoryId = $territory->getId();
+            $territoryAdmins = $userRepository->findActiveTerritoryAdmins($territoryId);
+            $activeTerritoryAdminsByTerritory[$territoryId] = $territoryAdmins;
+        }
+
+        return $this->render('back/profil/index.html.twig', [
+            'activeTerritoryAdminsByTerritory' => $activeTerritoryAdminsByTerritory,
+        ]);
     }
 
     #[Route('/edit-infos', name: 'back_profil_edit_infos', methods: ['POST'])]
