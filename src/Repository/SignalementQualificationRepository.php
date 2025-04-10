@@ -53,12 +53,11 @@ class SignalementQualificationRepository extends ServiceEntityRepository
                 ->andWhere('sq.status IN (:statuses)')
                 ->setParameter('statuses', $statuses);
         }
-        if ($isPostVisite) {
+        if (true === $isPostVisite) {
             $queryBuilder
                 ->andWhere('sq.isPostVisite = :isPostVisite')
                 ->setParameter('isPostVisite', $isPostVisite);
-        }
-        if (!$isPostVisite) {
+        } elseif (false === $isPostVisite) {
             $queryBuilder
                 ->andWhere('sq.isPostVisite = :isPostVisite OR sq.isPostVisite IS NULL')
                 ->setParameter('isPostVisite', $isPostVisite);
