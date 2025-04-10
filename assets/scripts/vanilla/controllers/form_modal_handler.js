@@ -36,7 +36,7 @@ async function submitPayload (formElement) {
   try {
     const formData = new FormData(formElement)
 
-    if (formElement.enctype === 'multipart/form-data') {
+    if (formElement.enctype === 'multipart/form-data' || formElement.dataset.submitType === 'formData') {
       response = await fetch(formElement.action, {
         method: 'POST',
         body: formData

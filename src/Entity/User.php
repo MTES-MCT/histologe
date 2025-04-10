@@ -130,6 +130,7 @@ class User implements UserInterface, EntityHistoryInterface, PasswordAuthenticat
     private $isMailingActive;
 
     #[ORM\Column(type: 'boolean')]
+    #[Assert\NotNull]
     private $isMailingSummary;
 
     #[ORM\OneToMany(mappedBy: 'user', targetEntity: Notification::class)]
@@ -542,7 +543,7 @@ class User implements UserInterface, EntityHistoryInterface, PasswordAuthenticat
         return $this->isMailingSummary;
     }
 
-    public function setIsMailingSummary(bool $isMailingSummary): self
+    public function setIsMailingSummary(?bool $isMailingSummary): self
     {
         $this->isMailingSummary = $isMailingSummary;
 

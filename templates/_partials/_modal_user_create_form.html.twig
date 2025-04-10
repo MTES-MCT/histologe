@@ -21,6 +21,15 @@
     <div class="fr-col-12">
         {{ form_row(formUserPartner.isMailingActive) }}
     </div>
+    <div class="fr-col-12">
+        {{ form_row(formUserPartner.isMailingSummary) }}
+        <div class="fr-alert fr-alert--info fr-alert--sm fr-mt-n3w">
+            <p>
+                Une fois son compte validé, seul l'agent pourra mettre à jour ses préférences en matière d'e-mail (tous les emails ou récapitulatif). 
+                L'agent ne pourra pas désactiver ses e-mails, seulement vous pourrez le faire.
+            </p>
+        </div>
+    </div>
     {% if formUserPartner.hasPermissionAffectation is defined %}
         <div class="fr-col-12">
             <label class="fr-label fr-pb-1w">Droits d'affectation</label>

@@ -20,7 +20,7 @@ class NotificationFactory
 
     public function createInstanceFrom(User $user, NotificationType $type, ?Suivi $suivi = null, ?Affectation $affectation = null, ?Signalement $signalement = null): Notification
     {
-        $waitMaillingSummary = $this->featureEmailRecap && $user->getIsMailingActive() && $user->getIsMailingSummary();
+        $waitMailingSummary = $this->featureEmailRecap && $user->getIsMailingActive() && $user->getIsMailingSummary();
         if ($suivi) {
             $signalement = $suivi->getSignalement();
         } elseif ($affectation) {
@@ -32,7 +32,7 @@ class NotificationFactory
             ->setSuivi($suivi)
             ->setAffectation($affectation)
             ->setSignalement($signalement)
-            ->setType(NotificationType::NOUVEAU_SUIVI)
-            ->setWaitMaillingSummary($waitMaillingSummary);
+            ->setType($type)
+            ->setWaitMailingSummary($waitMailingSummary);
     }
 }

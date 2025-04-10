@@ -238,7 +238,15 @@
                             <td>{{ user.prenom }}</td>
                             <td>{{ user.fonction }}</td>
                             <td>{{ user.email }}</td>
-                            <td><span class="fr-badge fr-badge--blue-ecume fr-mb-1v">{{ user.isMailingActive ? 'OUI' : 'NON' }}</span></td>
+                            <td>
+                                <span class="fr-badge fr-badge--blue-ecume fr-mb-1v">
+                                    {% if user.isMailingActive %}
+                                        {{ user.isMailingSummary ? 'Récap' : 'Oui' }}
+                                    {% else %}
+                                        Non
+                                    {% endif %}
+                                </span>
+                            </td>
                             <td>{% if user.statut == 0 %}
                                     {% set classe = 'fr-badge--orange-terre-battue' %}
                                     {% set label = 'INACTIF' %}
