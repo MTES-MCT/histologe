@@ -28,6 +28,7 @@
             >
             Sélectionner les désordres
         </button>
+        {{ _self.display_criteres('LOGEMENT', criteresByZone['LOGEMENT']) }}
     </div>
     <div class="fr-col-6">
         <h3 class="fr-h5">Bâtiment</h3>
@@ -39,13 +40,8 @@
             >
             Sélectionner les désordres
         </button>
-    </div>
-
-    <div class="fr-grid-row fr-grid-row--gutters fr-mt-3v">
-        {{ _self.display_criteres('LOGEMENT', criteresByZone['LOGEMENT']) }}
         {{ _self.display_criteres('BATIMENT', criteresByZone['BATIMENT']) }}
     </div>
-
 
     <div class="fr-col-6">
         <div class="fr-grid-row fr-grid-row--left">
@@ -142,8 +138,8 @@
     {% endif %}
 {% endfor %}
 {% macro display_criteres(zone, criteres) %}
-    <div class="fr-col-6 fr-hidden" id="list-critere-{{zone}}">
-        <h3 class="fr-h5">Désordres sélectionnés</h3>
+    <div class="fr-col-12" id="list-critere-{{zone}}">
+        <h3 class="fr-h5 fr-hidden">Désordres sélectionnés</h3>
         {# Le reste est ajouté en js  #}
     </div>
 {% endmacro %}

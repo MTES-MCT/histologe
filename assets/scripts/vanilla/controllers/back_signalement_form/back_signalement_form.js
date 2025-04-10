@@ -247,6 +247,7 @@ function initBoFormSignalementDesordres() {
     window.dispatchEvent(new Event('refreshSearchCheckboxContainerEvent'))
     const zone = modal.dataset.zone
     const listCriteres = document.querySelector(`#list-critere-${zone}`)
+    const heading = listCriteres.querySelector("h3");
 
     // Vider les encarts existants
     document.querySelectorAll(`.item-critere-${zone}`).forEach(container => {
@@ -315,7 +316,9 @@ function initBoFormSignalementDesordres() {
         encart.remove();
 
         if (listCriteres.querySelectorAll(".fr-grid-row").length === 0) {
-          listCriteres.classList.add("fr-hidden");
+          heading.classList.add("fr-hidden");
+        } else {
+          heading.classList.remove("fr-hidden");
         }
 
         window.dispatchEvent(new Event('refreshSearchCheckboxContainerEvent'));
@@ -323,9 +326,9 @@ function initBoFormSignalementDesordres() {
 
     });
     if (nbCriteres > 0 ){
-      listCriteres.classList.remove("fr-hidden")
+      heading.classList.remove("fr-hidden")
     } else {
-      listCriteres.classList.add("fr-hidden")
+      heading.classList.add("fr-hidden")
     }
   }
 
