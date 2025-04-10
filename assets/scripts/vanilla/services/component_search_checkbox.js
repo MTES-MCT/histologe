@@ -1,63 +1,67 @@
-document.querySelectorAll('.search-checkbox-container')?.forEach(element => {
-  searchCheckboxCompleteInputValue(element)
-  const input = element.querySelector('input[type="text"]')
-  const checkboxesContainer = element.querySelector('.search-checkbox')
-  // init values
-  const initialValues = []
-  checkboxesContainer.querySelectorAll('input[type="checkbox"]:checked').forEach((checkbox) => {
-    initialValues.push(checkbox.value)
-  })
-  // init order
-  checkboxesContainer.querySelectorAll('.fr-fieldset__element').forEach((checkbox, index) => {
-    checkbox.setAttribute('data-order', index)
-  })
-  // show choices on focus
-  input.addEventListener('focus', function () {
-    const elements = checkboxesContainer.querySelectorAll('.fr-fieldset__element')
-    if (!elements.length) {
-      checkboxesContainer.style.display = 'block'
-      return
-    }
-    elements.forEach((checkbox) => {
-      checkbox.style.display = ''
+
+window.addEventListener('refreshSearchCheckboxContainerEvent', (e) => {
+  document.querySelectorAll('.search-checkbox-container')?.forEach(element => {
+    searchCheckboxCompleteInputValue(element)
+    const input = element.querySelector('input[type="text"]')
+    const checkboxesContainer = element.querySelector('.search-checkbox')
+    // init values
+    const initialValues = []
+    checkboxesContainer.querySelectorAll('input[type="checkbox"]:checked').forEach((checkbox) => {
+      initialValues.push(checkbox.value)
     })
-    checkboxesContainer.style.display = 'block'
-    checkboxesContainer.scrollTop = 0
-    searchCheckboxOrderCheckboxes(element)
-    input.value = ''
-  })
-  // filter choices on input keyup
-  input.addEventListener('keyup', function () {
-    const value = input.value.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase()
-    checkboxesContainer.querySelectorAll('.fr-fieldset__element').forEach((checkbox) => {
-      const text = checkbox.querySelector('label').textContent.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase()
-      if (text.includes(value)) {
+    // init order
+    checkboxesContainer.querySelectorAll('.fr-fieldset__element').forEach((checkbox, index) => {
+      checkbox.setAttribute('data-order', index)
+    })
+    // show choices on focus
+    input.addEventListener('focus', function () {
+      const elements = checkboxesContainer.querySelectorAll('.fr-fieldset__element')
+      if (!elements.length) {
+        checkboxesContainer.style.display = 'block'
+        return
+      }
+      elements.forEach((checkbox) => {
         checkbox.style.display = ''
-      } else {
-        checkbox.style.display = 'none'
+      })
+      checkboxesContainer.style.display = 'block'
+      checkboxesContainer.scrollTop = 0
+      searchCheckboxOrderCheckboxes(element)
+      input.value = ''
+    })
+    // filter choices on input keyup
+    input.addEventListener('keyup', function () {
+      const value = input.value.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase()
+      checkboxesContainer.querySelectorAll('.fr-fieldset__element').forEach((checkbox) => {
+        const text = checkbox.querySelector('label').textContent.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase()
+        if (text.includes(value)) {
+          checkbox.style.display = ''
+        } else {
+          checkbox.style.display = 'none'
+        }
+      })
+    })
+    // hide choices on click outside
+    document.addEventListener('click', function (event) {
+      if (!input.contains(event.target) && !checkboxesContainer.contains(event.target)) {
+        checkboxesContainer.style.display = 'none'
+        searchCheckboxCompleteInputValue(element)
+        searchCheckboxTriggerChange(element, initialValues)
       }
     })
-  })
-  // hide choices on click outside
-  document.addEventListener('click', function (event) {
-    if (!input.contains(event.target) && !checkboxesContainer.contains(event.target)) {
-      checkboxesContainer.style.display = 'none'
-      searchCheckboxCompleteInputValue(element)
-      searchCheckboxTriggerChange(element, initialValues)
-    }
-  })
-  element.addEventListener('click', function (event) {
-    event.stopPropagation()
-  })
-  // reorder on uncheck
-  checkboxesContainer.querySelectorAll('input[type="checkbox"]').forEach((checkbox) => {
-    checkbox.addEventListener('change', function () {
-      if (!checkbox.checked && checkbox.closest('.fr-fieldset__element').classList.contains('topped')) {
-        searchCheckboxOrderCheckboxes(element)
-      }
+    element.addEventListener('click', function (event) {
+      event.stopPropagation()
+    })
+    // reorder on uncheck
+    checkboxesContainer.querySelectorAll('input[type="checkbox"]').forEach((checkbox) => {
+      checkbox.addEventListener('change', function () {
+        if (!checkbox.checked && checkbox.closest('.fr-fieldset__element').classList.contains('topped')) {
+          searchCheckboxOrderCheckboxes(element)
+        }
+      })
     })
   })
 })
+window.dispatchEvent(new Event('refreshSearchCheckboxContainerEvent'))
 
 function searchCheckboxCompleteInputValue (element) {
   const input = element.querySelector('input[type="text"]')

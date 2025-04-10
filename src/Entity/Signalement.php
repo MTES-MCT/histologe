@@ -2471,6 +2471,13 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
         return $this;
     }
 
+    public function removeAllDesordreCategory(): self
+    {
+        $this->desordreCategories->clear();
+
+        return $this;
+    }
+
     /**
      * @return Collection<int, DesordreCritere>
      */
@@ -2495,6 +2502,13 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
         return $this;
     }
 
+    public function removeAllDesordreCritere(): self
+    {
+        $this->desordreCriteres->clear();
+
+        return $this;
+    }
+
     /**
      * @return Collection<int, DesordrePrecision>
      */
@@ -2515,6 +2529,13 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
     public function removeDesordrePrecision(DesordrePrecision $desordrePrecision): self
     {
         $this->desordrePrecisions->removeElement($desordrePrecision);
+
+        return $this;
+    }
+
+    public function removeAllDesordrePrecision(): self
+    {
+        $this->desordrePrecisions->clear();
 
         return $this;
     }
