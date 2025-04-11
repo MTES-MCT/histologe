@@ -1,0 +1,49 @@
+<dialog aria-labelledby="fr-modal-profil-notification-email-title" id="fr-modal-profil-notification-email" class="fr-modal">
+    <div class="fr-container fr-container--fluid fr-container-md">
+        <div class="fr-grid-row fr-grid-row--center">
+            <div class="fr-col-12 fr-col-md-8 fr-col-lg-6">
+                <div class="fr-modal__body">
+                    <div class="fr-modal__header">
+                        <button type="button" class="fr-btn--close fr-btn" aria-controls="fr-modal-profil-notification-email">Fermer</button>
+                    </div>
+                    <div class="fr-modal__content">
+                        <h1 id="fr-modal-profil-notification-email-title" class="fr-modal__title">
+                            Paramétrer mes notifications e-mails
+                        </h1>    
+                        <p>
+                            Choisissez vos préférences en matière de notifications par e-mails.
+                        </p>
+                        <h2>Activité sur Signal Logement</h2>
+                        <p>
+                            Il s'agit des e-mails concernant l'activité sur les signalements. 
+                            Choisissez entre un e-mail à chaque nouveauté ou un e-mail récapitulatif quotidien. 
+                            NB : s'il n'y a pas de nouvelle activité sur vos signalements, vous ne recevrez pas d'e-mail récapitulatif !
+                        </p>
+                        {% form_theme notificationEmailForm 'form/dsfr_theme.html.twig' %}
+                        {{form(notificationEmailForm, {'attr': {'id': 'notification_email_form', 'data-submit-type':'formData'}} )}}
+                        <div class="fr-alert fr-alert--info fr-alert--sm">
+                            <p>
+                                Pour désactiver complètement vos e-mails, contactez vos responsables de territoire ! 
+                                Quoiqu'il arrive, vous recevrez toujours les e-mails relatifs à la sécurité de votre compte.
+                            </p>
+                        </div>
+                    </div>
+                    <div class="fr-modal__footer">
+                        <ul class="fr-btns-group fr-btns-group--right fr-btns-group--inline-reverse fr-btns-group--inline-lg fr-btns-group--icon-left">
+                            <li>
+                                <button class="fr-btn fr-icon-check-line" form="notification_email_form" type="submit">
+                                    Valider
+                                </button>
+                            </li>
+                            <li>
+                                <button class="fr-btn fr-btn--secondary fr-icon-close-line" aria-controls="fr-modal-profil-notification-email" type="button">
+                                    Annuler
+                                </button>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</dialog>

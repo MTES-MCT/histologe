@@ -4,9 +4,11 @@ namespace App\Controller\Back;
 
 use App\Entity\File;
 use App\Entity\User;
+use App\Form\UserNotificationEmailType;
 use App\Manager\UserManager;
 use App\Repository\PartnerRepository;
 use App\Repository\UserRepository;
+use App\Service\FormHelper;
 use App\Service\ImageManipulationHandler;
 use App\Service\Mailer\NotificationMail;
 use App\Service\Mailer\NotificationMailerRegistry;
@@ -18,13 +20,14 @@ use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ManagerRegistry;
 use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\Form\Form;
 use Symfony\Component\HttpFoundation\File\Exception\FileException;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\PasswordHasher\Hasher\PasswordHasherFactoryInterface;
 use Symfony\Component\Routing\Attribute\Route;
-use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
@@ -34,7 +37,6 @@ class ProfilController extends AbstractController
     private const ERROR_MSG = 'Une erreur s\'est produite. Veuillez actualiser la page.';
 
     #[Route('/', name: 'back_profil', methods: ['GET', 'POST'])]
-    #[IsGranted('ROLE_USER_PARTNER')]
     public function index(
         UserRepository $userRepository,
     ): Response {
@@ -47,14 +49,40 @@ class ProfilController extends AbstractController
             $territoryAdmins = $userRepository->findActiveTerritoryAdmins($territoryId);
             $activeTerritoryAdminsByTerritory[$territoryId] = $territoryAdmins;
         }
+        $notificationEmailForm = $this->createForm(UserNotificationEmailType::class, $user, ['action' => $this->generateUrl('back_profil_edit_notification_email')]);
 
         return $this->render('back/profil/index.html.twig', [
             'activeTerritoryAdminsByTerritory' => $activeTerritoryAdminsByTerritory,
+            'notificationEmailForm' => $notificationEmailForm,
         ]);
     }
 
+    #[Route('/edit-notification-email', name: 'back_profil_edit_notification_email', methods: ['POST'])]
+    public function editNotificationEmail(
+        Request $request,
+        EntityManagerInterface $entityManager,
+    ): JsonResponse {
+        /** @var User $user */
+        $user = $this->getUser();
+        /** @var Form $form */
+        $form = $this->createForm(UserNotificationEmailType::class, $user, ['action' => $this->generateUrl('back_profil_edit_notification_email')]);
+        $form->handleRequest($request);
+        if ($form->isSubmitted() && !$form->isValid()) {
+            $response = ['code' => Response::HTTP_BAD_REQUEST, 'errors' => FormHelper::getErrorsFromForm($form)];
+
+            return $this->json($response, $response['code']);
+        }
+        if ($form->isSubmitted()) {
+            $user->setIsMailingActive(true);
+            $entityManager->flush();
+
+            $this->addFlash('success', 'Vos préférences en matière de notifications par e-mail ont bien été enregistrées.');
+        }
+
+        return $this->json(['code' => Response::HTTP_OK]);
+    }
+
     #[Route('/edit-infos', name: 'back_profil_edit_infos', methods: ['POST'])]
-    #[IsGranted('ROLE_USER_PARTNER')]
     public function editInfos(
         Request $request,
         ManagerRegistry $doctrine,
@@ -154,7 +182,6 @@ class ProfilController extends AbstractController
     }
 
     #[Route('/delete-avatar', name: 'back_profil_delete_avatar', methods: ['GET', 'POST'])]
-    #[IsGranted('ROLE_USER_PARTNER')]
     public function deleteAvatar(
         ManagerRegistry $doctrine,
         UploadHandlerService $uploadHandlerService,
@@ -176,7 +203,6 @@ class ProfilController extends AbstractController
     }
 
     #[Route('/edit-email', name: 'back_profil_edit_email', methods: ['POST'])]
-    #[IsGranted('ROLE_USER_PARTNER')]
     public function editEmail(
         Request $request,
         ManagerRegistry $doctrine,
@@ -277,14 +303,12 @@ class ProfilController extends AbstractController
     }
 
     #[Route('/edit-password', name: 'back_profil_edit_password', methods: ['POST'])]
-    #[IsGranted('ROLE_USER_PARTNER')]
     public function editPassword(
         Request $request,
         UserManager $userManager,
         ValidatorInterface $validator,
         NotificationMailerRegistry $notificationMailerRegistry,
         PasswordHasherFactoryInterface $passwordHasherFactory,
-        EntityManagerInterface $entityManager,
     ): Response {
         /** @var User $user */
         $user = $this->getUser();

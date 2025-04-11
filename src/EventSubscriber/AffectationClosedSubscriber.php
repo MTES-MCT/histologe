@@ -2,24 +2,19 @@
 
 namespace App\EventSubscriber;
 
-use App\Entity\Partner;
-use App\Entity\Signalement;
 use App\Entity\Suivi;
 use App\Event\AffectationClosedEvent;
 use App\Manager\SignalementManager;
 use App\Manager\SuiviManager;
-use App\Repository\SignalementRepository;
-use App\Service\Mailer\NotificationMail;
-use App\Service\Mailer\NotificationMailerRegistry;
-use App\Service\Mailer\NotificationMailerType;
+use App\Service\NotificationAndMailSender;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 readonly class AffectationClosedSubscriber implements EventSubscriberInterface
 {
     public function __construct(
-        private NotificationMailerRegistry $notificationMailerRegistry,
-        private SignalementManager $signalementManager,
-        private SuiviManager $suiviManager,
+        private readonly NotificationAndMailSender $notificationAndMailSender,
+        private readonly SignalementManager $signalementManager,
+        private readonly SuiviManager $suiviManager,
     ) {
     }
 
@@ -46,34 +41,7 @@ readonly class AffectationClosedSubscriber implements EventSubscriberInterface
         );
 
         $signalement->addSuivi($suivi);
-        $this->sendMailToPartner(
-            signalement: $signalement,
-            partnerToExclude: $user->getPartnerInTerritoryOrFirstOne($signalement->getTerritory())
-        );
-
+        $this->notificationAndMailSender->sendAffectationClosed($affectation, $user);
         $this->signalementManager->save($signalement);
-    }
-
-    private function sendMailToPartner(Signalement $signalement, ?Partner $partnerToExclude = null): void
-    {
-        /** @var SignalementRepository $signalementRepository */
-        $signalementRepository = $this->signalementManager->getRepository();
-        $sendTo = $signalementRepository->findUsersPartnerEmailAffectedToSignalement(
-            $signalement->getId(),
-            $partnerToExclude
-        );
-
-        if (empty($sendTo)) {
-            return;
-        }
-
-        $this->notificationMailerRegistry->send(
-            new NotificationMail(
-                type: NotificationMailerType::TYPE_SIGNALEMENT_CLOSED_TO_PARTNER,
-                to: $sendTo,
-                territory: $signalement->getTerritory(),
-                signalement: $signalement,
-            )
-        );
     }
 }

@@ -112,6 +112,10 @@ class LoadUserData extends Fixture implements OrderedFixtureInterface
             );
         }
 
+        if (isset($row['is_mailing_summary'])) {
+            $user->setIsMailingSummary($row['is_mailing_summary']);
+        }
+
         $password = $this->hasher->hashPassword($user, self::APP_PLAIN_PASSWORD);
         $user->setPassword($password);
 
