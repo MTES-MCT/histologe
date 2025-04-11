@@ -76,8 +76,6 @@ class ProfilController extends AbstractController
             $user->setIsMailingActive(true);
             $entityManager->flush();
 
-            // TODO : au passage de isMailingSummary de true a false, faut il envoyer le récap courant ou on l'envoie au prochain cron ?
-
             $this->addFlash('success', 'Vos préférences en matière de notifications par e-mail ont bien été enregistrées.');
         }
 
