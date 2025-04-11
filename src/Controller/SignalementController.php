@@ -43,12 +43,6 @@ use Symfony\Component\Validator\Validator\ValidatorInterface;
 #[Route('/')]
 class SignalementController extends AbstractController
 {
-    public function __construct(
-        #[Autowire(env: 'FEATURE_SITES_FACILES')]
-        private readonly bool $featureSitesFaciles,
-    ) {
-    }
-
     #[Route(
         '/signalement',
         name: 'front_signalement',
@@ -452,11 +446,8 @@ class SignalementController extends AbstractController
         $signalement = $signalementRepository->findOneByCodeForPublic($code);
         if (!$signalement) {
             $this->addFlash('error', 'Le lien utilisé est expiré ou invalide.');
-            if ($this->featureSitesFaciles) {
-                return $this->render('front/flash-messages.html.twig');
-            }
 
-            return $this->redirectToRoute('home');
+            return $this->render('front/flash-messages.html.twig');
         }
         $requestEmail = $request->get('from');
         $fromEmail = \is_array($requestEmail) ? array_pop($requestEmail) : $requestEmail;
@@ -589,12 +580,10 @@ class SignalementController extends AbstractController
                 'formDemandeLienSignalement' => $formDemandeLienSignalement,
             ]);
         }
-        $this->addFlash('error', 'Le lien utilisé est invalide, vérifiez votre saisie.');
-        if ($this->featureSitesFaciles) {
-            return $this->render('front/flash-messages.html.twig');
-        }
 
-        return $this->redirectToRoute('home');
+        $this->addFlash('error', 'Le lien utilisé est invalide, vérifiez votre saisie.');
+
+        return $this->render('front/flash-messages.html.twig');
     }
 
     #[Route('/suivre-mon-signalement/{code}/response', name: 'front_suivi_signalement_user_response', methods: 'POST')]
@@ -611,11 +600,8 @@ class SignalementController extends AbstractController
         $signalement = $signalementRepository->findOneByCodeForPublic($code);
         if (!$this->isGranted('SIGN_USAGER_EDIT', $signalement)) {
             $this->addFlash('error', 'Vous n\'avez pas les droits pour effectuer cette action.');
-            if ($this->featureSitesFaciles) {
-                return $this->render('front/flash-messages.html.twig');
-            }
 
-            return $this->redirectToRoute('home');
+            return $this->render('front/flash-messages.html.twig');
         }
         if (!$this->isCsrfTokenValid('signalement_front_response_'.$signalement->getUuid(), $request->get('_token'))) {
             $this->addFlash('error', 'Token CSRF invalide');
