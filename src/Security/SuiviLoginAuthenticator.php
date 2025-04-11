@@ -51,8 +51,10 @@ class SuiviLoginAuthenticator extends AbstractLoginFormAuthenticator
             throw new CustomUserMessageAuthenticationException('Code de suivi invalide');
         }
 
-        if (strtoupper($signalement->getPrenomDeclarant()[0]) !== $firstLetterPrenom
-                || strtoupper($signalement->getNomDeclarant()[0]) !== $firstLetterNom
+        $prenomToCheck = !empty($signalement->getPrenomDeclarant()) ? $signalement->getPrenomDeclarant() : $signalement->getPrenomOccupant();
+        $nomToCheck = !empty($signalement->getNomDeclarant()) ? $signalement->getNomDeclarant() : $signalement->getNomOccupant();
+        if (strtoupper($prenomToCheck[0]) !== $firstLetterPrenom
+                || strtoupper($nomToCheck[0]) !== $firstLetterNom
                 || $signalement->getCpOccupant() !== $codePostal) {
             throw new CustomUserMessageAuthenticationException('Informations incorrectes');
         }
