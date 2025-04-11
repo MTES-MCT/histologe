@@ -75,3 +75,22 @@ suivis:
   is_public: 1
   signalement: "2022-2"
   type: 5
+- 
+  created_by: api-02@signal-logement.fr
+  description: "Nous vous confirmons la prise en charge de votre signalement."
+  is_public: 1
+  signalement: "2024-12"
+  type: 3
+- 
+  created_by: api-02@signal-logement.fr
+  description: "On avance sur le dossier, est-ce que d'autres action sont en cours ?"
+  is_public: 0
+  signalement: "2024-12"
+  type: 3
+- 
+  created_by: api-02@signal-logement.fr
+  description: "Le signalement a été cloturé pour tous les partenaires avec le motif suivant <br /><strong>Refus de visite</strong><br /><strong>Desc. : </strong>bla bla bla<br />"
+  is_public: 1
+  signalement: "2025-07"
+  type: 3
+  context: signalementClosed

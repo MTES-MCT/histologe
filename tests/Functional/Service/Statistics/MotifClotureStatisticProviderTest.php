@@ -30,12 +30,14 @@ class MotifClotureStatisticProviderTest extends KernelTestCase
         /** @var SignalementRepository $signalementRepository */
         $signalementRepository = self::getContainer()->get(SignalementRepository::class);
         $data = (new MotifClotureStatisticProvider($signalementRepository))->getData(null, null, 'bar');
-        $this->assertEquals(3, \count($data));
+        $this->assertEquals(4, \count($data));
         $this->assertArrayHasKey('Abandon de procédure / absence de réponse', $data);
         $this->assertEquals(1, $data['Abandon de procédure / absence de réponse']);
         $this->assertArrayHasKey('Non décence', $data);
         $this->assertEquals(2, $data['Non décence']);
         $this->assertArrayHasKey('Travaux faits ou en cours', $data);
         $this->assertEquals(1, $data['Travaux faits ou en cours']);
+        $this->assertArrayHasKey('Refus de visite', $data);
+        $this->assertEquals(1, $data['Refus de visite']);
     }
 }

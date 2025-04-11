@@ -3,6 +3,7 @@
 namespace App\Tests\Functional\EventSubscriber;
 
 use App\Entity\Enum\MotifCloture;
+use App\Entity\Enum\NotificationType;
 use App\Entity\Notification;
 use App\Entity\Signalement;
 use App\Entity\User;
@@ -86,7 +87,7 @@ class SignalementClosedSubscriberTest extends KernelTestCase
         $this->assertEmailAddressContains($clotureMail, 'bcc', 'partenaire-34-04@signal-logement.fr');
         $this->assertEmailAddressContains($clotureMail, 'bcc', 'user-partenaire-34-02@signal-logement.fr');
 
-        $notifications = $this->notificationRepository->findBy(['signalement' => $signalementClosed]);
+        $notifications = $this->notificationRepository->findBy(['signalement' => $signalementClosed, 'type' => NotificationType::CLOTURE_SIGNALEMENT]);
         $this->assertCount(5, $notifications);
     }
 }

@@ -564,7 +564,7 @@ signalements:
   -
     territory: "Hérault"
     uuid: "00000000-0000-0000-2025-000000000003"
-    reference: "2024-08"
+    reference: "2024-08b"
     details: "Signalement archivé Agde zone"
     is_proprio_averti: 1
     is_allocataire: "CAF"
@@ -965,3 +965,36 @@ signalements:
     situation_foyer: "[]"
     information_procedure: "[]"
     information_complementaire: "[]"
+  -     
+    territory: "Gard"
+    uuid: "00000000-0000-0000-2025-000000000007"
+    reference: "2025-07"
+    is_proprio_averti: 1
+    is_allocataire: "0"
+    nature_logement: "maison"
+    nom_proprio: "Lautre"
+    type_proprio: "PARTICULIER"
+    is_logement_social: 0
+    civilite_occupant: "mr"
+    nom_occupant: "Brown"
+    prenom_occupant: "Alphonse"
+    mail_occupant: "alphonsebrown@yopmail.com"
+    phone_number: "+330644556677"
+    adresse_occupant: "5 rue basse"
+    cp_occupant: "30360"
+    ville_occupant: "Vézénobres"
+    insee_occupant: ""
+    geoloc: "[]"
+    superficie: 99
+    nb_pieces_logement: 4
+    nb_occupants_logement: 4
+    score: 35
+    score_logement: 20
+    score_batiment: 15
+    statut: "CLOSED"
+    profile_declarant: "LOCATAIRE"
+    type_composition_logement: "[]"
+    situation_foyer: "[]"
+    information_procedure: "[]"
+    information_complementaire: "[]"
+    motif_cloture: "REFUS_DE_VISITE"

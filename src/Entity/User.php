@@ -130,7 +130,7 @@ class User implements UserInterface, EntityHistoryInterface, PasswordAuthenticat
     private $isMailingActive;
 
     #[ORM\Column(type: 'boolean')]
-    #[Assert\NotNull]
+    #[Assert\NotNull(message: 'Merci de choisir une option de notification.')]
     private $isMailingSummary;
 
     #[ORM\OneToMany(mappedBy: 'user', targetEntity: Notification::class)]

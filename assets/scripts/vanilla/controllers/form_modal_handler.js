@@ -67,9 +67,19 @@ async function submitPayload (formElement) {
       const submitElement = document.querySelector('.fr-modal--opened [type="submit"]')
       let firstErrorElement = true
       for (const property in errors) {
-        const inputElement = document.querySelector(`.fr-modal--opened [name="${property}"]`) || document.querySelector('.fr-modal--opened .no-field-errors') || document.querySelector('.fr-modal--opened input')
+        const inputElements = document.querySelectorAll(`.fr-modal--opened [name="${property}"]`)
+        console.log(inputElements)
+        let inputElement
+        let parentElement
+        if(inputElements.length > 1) {
+          inputElement = inputElements[0]
+          parentElement = inputElement.closest('.fr-fieldset')
+        }else{
+          inputElement = document.querySelector(`.fr-modal--opened [name="${property}"]`) || document.querySelector('.fr-modal--opened .no-field-errors') || document.querySelector('.fr-modal--opened input')
+          parentElement = inputElement.parentElement
+        }
         inputElement.setAttribute('aria-describedby', `${property}-desc-error`)
-        inputElement.parentElement.classList.add('fr-input-group--error')
+        parentElement.classList.add('fr-input-group--error')
 
         const existingErrorElement = document.getElementById(`${property}-desc-error`)
         if (!existingErrorElement) {
@@ -83,7 +93,7 @@ async function submitPayload (formElement) {
           })
           pElement.innerHTML = messageError
 
-          inputElement.parentElement.appendChild(pElement)
+          parentElement.appendChild(pElement)
         }
         if (firstErrorElement) {
           inputElement.focus()

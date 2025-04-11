@@ -59,7 +59,7 @@ class Affectation implements EntityHistoryInterface
     #[ORM\Column(type: 'string', nullable: true, enumType: MotifCloture::class)]
     private ?MotifCloture $motifCloture = null;
 
-    #[ORM\OneToMany(mappedBy: 'affectation', targetEntity: Notification::class)]
+    #[ORM\OneToMany(mappedBy: 'affectation', targetEntity: Notification::class, cascade: ['remove'])]
     private Collection $notifications;
 
     #[ORM\ManyToOne(targetEntity: Territory::class, inversedBy: 'affectations')]

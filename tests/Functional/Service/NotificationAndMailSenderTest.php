@@ -96,9 +96,9 @@ class NotificationAndMailSenderTest extends KernelTestCase
         $this->assertEmailAddressContains($mail, 'bcc', 'user-partenaire-34-02@signal-logement.fr');
 
         $notificationsSummary = $this->notificationRepository->findBy(['signalement' => $signalement, 'type' => NotificationType::NOUVELLE_AFFECTATION, 'waitMailingSummary' => true]);
-        $this->assertCount(1, $notificationsSummary);
+        $this->assertCount(2, $notificationsSummary);
         $notificationNoSummary = $this->notificationRepository->findBy(['signalement' => $signalement, 'type' => NotificationType::NOUVELLE_AFFECTATION, 'waitMailingSummary' => false]);
-        $this->assertCount(1, $notificationNoSummary);
+        $this->assertCount(2, $notificationNoSummary);
     }
 
     public function testSendSignalementIsClosedToPartners(): void
