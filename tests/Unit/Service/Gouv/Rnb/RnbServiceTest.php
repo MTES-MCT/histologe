@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Tests\Unit\Service\BetaGouv;
+namespace App\Tests\Unit\Service\Gouv\Rnb;
 
-use App\Service\BetaGouv\RnbService;
+use App\Service\Gouv\Rnb\RnbService;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpClient\MockHttpClient;
@@ -17,13 +17,13 @@ class RnbServiceTest extends TestCase
     protected function setUp(): void
     {
         $mockResponse = new MockResponse(
-            file_get_contents(__DIR__.'/../../../files/betagouv/get_api_rnb_buildings_response.json')
+            file_get_contents(__DIR__.'/../../../../files/betagouv/get_api_rnb_buildings_response.json')
         );
         $mockHttpClient = new MockHttpClient($mockResponse);
         $this->rnbService = new RnbService($mockHttpClient, $this->createMock(LoggerInterface::class));
     }
 
-    public function testGetBuildinds(): void
+    public function testGetBuildings(): void
     {
         $buildings = $this->rnbService->getBuildings(self::BAN_ID);
         $this->assertIsArray($buildings);
