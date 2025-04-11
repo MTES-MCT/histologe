@@ -439,6 +439,13 @@ users:
     is_mailing_active: 1
     has_permission_affectation: 1
   -
+    email: admin-territoire-30@signal-logement.fr
+    roles: "[\"ROLE_ADMIN_TERRITORY\"]"
+    partners: 
+      - "CAF 30"
+    statut: 1
+    is_mailing_active: 1
+  -
     email: admin-territoire-44-01@signal-logement.fr
     roles: "[\"ROLE_ADMIN_TERRITORY\"]"
     partner: "DDT Loire-Atlantique"

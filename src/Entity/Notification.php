@@ -41,7 +41,8 @@ class Notification
     private ?\DateTimeImmutable $createdAt;
 
     #[ORM\ManyToOne(targetEntity: Affectation::class, inversedBy: 'notifications')]
-    private $affectation;
+    #[ORM\JoinColumn(onDelete: 'CASCADE')]
+    private ?Affectation $affectation;
 
     #[ORM\Column]
     private bool $waitMailingSummary;

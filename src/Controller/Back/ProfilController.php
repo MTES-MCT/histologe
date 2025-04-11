@@ -23,6 +23,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\Form;
 use Symfony\Component\HttpFoundation\File\Exception\FileException;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\PasswordHasher\Hasher\PasswordHasherFactoryInterface;
@@ -49,10 +50,38 @@ class ProfilController extends AbstractController
             $activeTerritoryAdminsByTerritory[$territoryId] = $territoryAdmins;
         }
         $notificationEmailForm = $this->createForm(UserNotificationEmailType::class, $user, ['action' => $this->generateUrl('back_profil_edit_notification_email')]);
+
         return $this->render('back/profil/index.html.twig', [
             'activeTerritoryAdminsByTerritory' => $activeTerritoryAdminsByTerritory,
             'notificationEmailForm' => $notificationEmailForm,
         ]);
+    }
+
+    #[Route('/edit-notification-email', name: 'back_profil_edit_notification_email', methods: ['POST'])]
+    public function editNotificationEmail(
+        Request $request,
+        EntityManagerInterface $entityManager,
+    ): JsonResponse {
+        /** @var User $user */
+        $user = $this->getUser();
+        /** @var Form $form */
+        $form = $this->createForm(UserNotificationEmailType::class, $user, ['action' => $this->generateUrl('back_profil_edit_notification_email')]);
+        $form->handleRequest($request);
+        if ($form->isSubmitted() && !$form->isValid()) {
+            $response = ['code' => Response::HTTP_BAD_REQUEST, 'errors' => FormHelper::getErrorsFromForm($form)];
+
+            return $this->json($response, $response['code']);
+        }
+        if ($form->isSubmitted()) {
+            $user->setIsMailingActive(true);
+            $entityManager->flush();
+
+            // TODO : au passage de isMailingSummary de true a false, faut il envoyer le récap courant ou on l'envoie au prochain cron ?
+
+            $this->addFlash('success', 'Vos préférences en matière de notifications par e-mail ont bien été enregistrées.');
+        }
+
+        return $this->json(['code' => Response::HTTP_OK]);
     }
 
     #[Route('/edit-infos', name: 'back_profil_edit_infos', methods: ['POST'])]

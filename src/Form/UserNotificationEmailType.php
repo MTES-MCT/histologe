@@ -5,6 +5,7 @@ namespace App\Form;
 use App\Entity\User;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
+use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
@@ -24,6 +25,7 @@ class UserNotificationEmailType extends AbstractType
             'placeholder' => false,
             'data' => $user->getIsMailingActive() ? $user->getIsMailingSummary() : null,
         ]);
+        $builder->add('isSubmitted', HiddenType::class, ['mapped' => false]);
     }
 
     public function configureOptions(OptionsResolver $resolver): void
@@ -31,5 +33,10 @@ class UserNotificationEmailType extends AbstractType
         $resolver->setDefaults([
             'data_class' => User::class,
         ]);
+    }
+
+    public function getBlockPrefix(): string
+    {
+        return '';
     }
 }
