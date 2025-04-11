@@ -3,3 +3,7 @@ monolog:
         main:
             type: test
             level: debug
+        file:
+            type: stream
+            path: '%kernel.logs_dir%/%kernel.environment%.log'
+            level: debug
