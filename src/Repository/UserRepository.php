@@ -499,4 +499,15 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
 
         return $queryBuilder->getQuery()->getResult();
     }
+
+    public function findUserWaitingSummaryEmail(): array
+    {
+        $queryBuilder = $this->createQueryBuilder('u')
+            ->innerJoin('u.notifications', 'n')
+            ->where('n.waitMailingSummary = 1')
+            ->andWhere('u.statut = :active')
+            ->setParameter('active', User::STATUS_ACTIVE);
+
+        return $queryBuilder->getQuery()->getResult();
+    }
 }
