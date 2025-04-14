@@ -219,7 +219,7 @@ class SignalementVisitesController extends AbstractController
             time: $requestRescheduleData['time'],
             timezone: $timezoneProvider->getTimezone(),
             idPartner: $idPartner,
-            externalOperator: $requestRescheduleData['externalOperator'],
+            externalOperator: $requestRescheduleData['externalOperator'] ?? null,
             details: $requestRescheduleData['details'] ?? null,
             concludeProcedure: $requestRescheduleData['concludeProcedure'] ?? null,
             isVisiteDone: $requestRescheduleData['visiteDone'] ?? null,

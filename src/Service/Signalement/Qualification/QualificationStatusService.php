@@ -9,6 +9,8 @@ use Twig\Extension\RuntimeExtensionInterface;
 
 class QualificationStatusService implements RuntimeExtensionInterface
 {
+    private const int LIMIT_CONSO_ENERGIE = 450;
+
     public function getNDEStatus(SignalementQualification $signalementQualification): ?QualificationStatus
     {
         // on ne sait pas si on a un DPE -> à vérifier
@@ -47,12 +49,13 @@ class QualificationStatusService implements RuntimeExtensionInterface
         }
 
         // en fonction de la conso, on est soit en NDE, soit OK
-        if (isset($consoEnergie) && $consoEnergie > 450) {
+        if (isset($consoEnergie) && $consoEnergie > self::LIMIT_CONSO_ENERGIE) {
             return QualificationStatus::NDE_AVEREE;
         }
 
-        if ((isset($consoEnergie) && $consoEnergie <= 450 && 'G' !== $signalementQualification->getDetails()['classe_energetique'])
-            || (null === $consoEnergie && 'G' !== $signalementQualification->getDetails()['classe_energetique'] && !$signalementQualification->hasDesordres())) {
+        $classeEnergetique = !empty($signalementQualification->getDetails()['classe_energetique']) ? $signalementQualification->getDetails()['classe_energetique'] : null;
+        if ((isset($consoEnergie) && $consoEnergie <= self::LIMIT_CONSO_ENERGIE && 'G' !== $classeEnergetique)
+            || (null === $consoEnergie && 'G' !== $classeEnergetique && !$signalementQualification->hasDesordres())) {
             return QualificationStatus::NDE_OK;
         }
 
