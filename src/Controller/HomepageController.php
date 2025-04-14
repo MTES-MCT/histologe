@@ -86,31 +86,19 @@ class HomepageController extends AbstractController
         return new JsonResponse(['html' => $view]);
     }
 
-    #[Route(
-        '/qui-sommes-nous',
-        name: 'front_about',
-        defaults: ['show_sitemap' => true]
-    )]
+    #[Route('/qui-sommes-nous', name: 'front_about')]
     public function about(): Response
     {
         return $this->redirect($this->sitesFacilesUrl.'a-propos/qui-sommes-nous/', Response::HTTP_MOVED_PERMANENTLY);
     }
 
-    #[Route(
-        '/entretien-logement-obligations-proprietaire-locataire',
-        name: 'front_obligations_entretien',
-        defaults: ['show_sitemap' => true]
-    )]
+    #[Route('/entretien-logement-obligations-proprietaire-locataire', name: 'front_obligations_entretien')]
     public function obligations_entretien(): Response
     {
         return $this->redirect($this->sitesFacilesUrl.'blog/entretien-logement-qui-paye-quoi/', Response::HTTP_MOVED_PERMANENTLY);
     }
 
-    #[Route(
-        '/aides-travaux-logement',
-        name: 'front_aides_travaux',
-        defaults: ['show_sitemap' => true]
-    )]
+    #[Route('/aides-travaux-logement', name: 'front_aides_travaux')]
     public function aides_travaux(): Response
     {
         return $this->redirect($this->sitesFacilesUrl.'blog/quelles-aides-pour-faire-des-travaux-dans-mon-logement/', Response::HTTP_MOVED_PERMANENTLY);
@@ -119,59 +107,38 @@ class HomepageController extends AbstractController
     #[Route(
         '/contact',
         name: 'front_contact',
-        methods: ['GET'],
-        defaults: ['show_sitemap' => false]
+        methods: ['GET']
     )]
     public function contact(): Response
     {
         return $this->redirect($this->sitesFacilesUrl.'une-question/', Response::HTTP_MOVED_PERMANENTLY);
     }
 
-    #[Route(
-        '/cgu',
-        name: 'front_cgu',
-        defaults: ['show_sitemap' => true]
-    )]
+    #[Route('/cgu', name: 'front_cgu')]
     public function cguUsager(): Response
     {
         return $this->redirect($this->sitesFacilesUrl.'cgu', Response::HTTP_MOVED_PERMANENTLY);
     }
 
-    #[Route(
-        '/cgu-agents',
-        name: 'front_cgu_agents',
-        defaults: ['show_sitemap' => true]
-    )]
+    #[Route('/cgu-agents', name: 'front_cgu_agents')]
     public function cguPro(): Response
     {
         return $this->redirect($this->sitesFacilesUrl.'cgu-agents/', Response::HTTP_MOVED_PERMANENTLY);
     }
 
-    #[Route(
-        '/politique-de-confidentialite',
-        name: 'politique_de_confidentialite',
-        defaults: ['show_sitemap' => true]
-    )]
+    #[Route('/politique-de-confidentialite', name: 'politique_de_confidentialite')]
     public function politiqueConfidentialite(): Response
     {
         return $this->redirect($this->sitesFacilesUrl.'politique-de-confidentialite/', Response::HTTP_MOVED_PERMANENTLY);
     }
 
-    #[Route(
-        '/mentions-legales',
-        name: 'mentions_legales',
-        defaults: ['show_sitemap' => true]
-    )]
+    #[Route('/mentions-legales', name: 'mentions_legales')]
     public function mentionsLegales(): Response
     {
         return $this->redirect($this->sitesFacilesUrl.'mentions-legales/', Response::HTTP_MOVED_PERMANENTLY);
     }
 
-    #[Route(
-        '/accessibilite',
-        name: 'front_accessibilite',
-        defaults: ['show_sitemap' => true]
-    )]
+    #[Route('/accessibilite', name: 'front_accessibilite')]
     public function accessibilite(): Response
     {
         return $this->redirect($this->sitesFacilesUrl.'accessibilite/', Response::HTTP_MOVED_PERMANENTLY);
@@ -180,13 +147,13 @@ class HomepageController extends AbstractController
     #[Route('/plan-du-site', name: 'plan_du_site')]
     public function planDuSite(): Response
     {
-        return $this->redirect($this->sitesFacilesUrl, Response::HTTP_MOVED_PERMANENTLY);
+        return $this->redirect($this->sitesFacilesUrl.'sitemap.xml', Response::HTTP_MOVED_PERMANENTLY);
     }
 
     #[Cache(public: true, maxage: 3600)]
     #[Route('/sitemap.{_format}', name: 'app_front_sitemap', defaults: ['_format' => 'xml'])]
     public function generateSitemap()
     {
-        return $this->redirect($this->sitesFacilesUrl, Response::HTTP_MOVED_PERMANENTLY);
+        return $this->redirect($this->sitesFacilesUrl.'sitemap.xml', Response::HTTP_MOVED_PERMANENTLY);
     }
 }
