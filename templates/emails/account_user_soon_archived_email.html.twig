@@ -1,0 +1,30 @@
+{% extends 'emails/base_email.html.twig' %}
+
+{% block body %}
+    <p>Bonjour,</p>
+    <p>
+        Vous n'avez pas utilisé votre compte Signal Logement (anciennement Histologe) depuis bientôt 1 an.
+        <br>
+        Conformément aux recommandations de la CNIL, votre compte sera supprimé dans 15 jours, soit le {{date}}.
+    </p>
+    <p>
+        Pour conserver votre compte, veuillez vous connecter à Signal Logement en cliquant sur le bouton ci-dessous.
+    </p>
+
+    <table role="presentation" border="0" cellpadding="0" cellspacing="0" class="btn btn-primary" style="text-align: center">
+        <tbody>
+            <tr>
+                <td align="left">
+                    <table role="presentation" border="0" cellpadding="0" cellspacing="0">
+                        <tbody>
+                            <tr style="text-align: center;width: 100%">
+                                <td><a href="{{ link|raw }}" target="_blank" rel="noopener">{{ btntext }}</a></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <p>Si le bouton ne fonctionne pas <a href="{{ link|raw }}">cliquez ici</a></p>
+{% endblock %}

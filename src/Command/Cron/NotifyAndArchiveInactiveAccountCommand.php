@@ -100,6 +100,8 @@ class NotifyAndArchiveInactiveAccountCommand extends AbstractCronCommand
             foreach ($user->getPartnersTerritories() as $territory) {
                 $pendingUsersByTerritories[$territory->getId()][] = $user;
             }
+            
+            $this->sendUserNotification($user);
 
             ++$count;
             $progressBar->advance();
@@ -175,6 +177,17 @@ class NotifyAndArchiveInactiveAccountCommand extends AbstractCronCommand
                 territory: $territory,
                 isRecipientVisible: false,
                 params: ['usersData' => $usersData],
+            )
+        );
+    }
+
+    private function sendUserNotification(User $user)
+    {
+        $this->notificationMailerRegistry->send(
+            new NotificationMail(
+                type: NotificationMailerType::TYPE_ACCOUNT_USER_SOON_ARCHIVED,
+                to: $user->getEmail(),
+                isRecipientVisible: false,
             )
         );
     }
