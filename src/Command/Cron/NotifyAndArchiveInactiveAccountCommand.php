@@ -3,6 +3,7 @@
 namespace App\Command\Cron;
 
 use App\Entity\User;
+use App\Manager\HistoryEntryManager;
 use App\Repository\UserRepository;
 use App\Service\Mailer\NotificationMail;
 use App\Service\Mailer\NotificationMailerRegistry;
@@ -33,19 +34,24 @@ class NotifyAndArchiveInactiveAccountCommand extends AbstractCronCommand
         private readonly UserRepository $userRepository,
         private readonly NotificationMailerRegistry $notificationMailerRegistry,
         private readonly ParameterBagInterface $parameterBag,
+        private readonly HistoryEntryManager $historyEntryManager,
         #[Autowire(env: 'FEATURE_ARCHIVE_INACTIVE_ACCOUNT')]
-        private bool $featureArchiveInactiveAccount,
+        private readonly bool $featureArchiveInactiveAccount,
     ) {
         parent::__construct($this->parameterBag);
     }
 
     protected function configure(): void
     {
-        $this->addOption('force', null, InputOption::VALUE_OPTIONAL, 'Forche scheduled archiving accounts without checking date');
+        $this->addOption('force', null, InputOption::VALUE_OPTIONAL, 'Force scheduled archiving accounts without checking date');
     }
 
+    /**
+     * @throws \DateMalformedStringException
+     */
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
+        $this->historyEntryManager->removeEntityListeners();
         $this->io = new SymfonyStyle($input, $output);
         $message = '';
         $nbScheduled = 0;
@@ -80,6 +86,9 @@ class NotifyAndArchiveInactiveAccountCommand extends AbstractCronCommand
         return Command::SUCCESS;
     }
 
+    /**
+     * @throws \DateMalformedStringException
+     */
     private function scheduleArchivingAndSendRtNotification(): int
     {
         $users = $this->userRepository->findInactiveUsers();
@@ -116,7 +125,7 @@ class NotifyAndArchiveInactiveAccountCommand extends AbstractCronCommand
         return \count($users);
     }
 
-    private function sendRtNotification(array $adminsList, array $usersList)
+    private function sendRtNotification(array $adminsList, array $usersList): void
     {
         $territory = $adminsList[0]->getFirstTerritory();
         $adminMails = [];
