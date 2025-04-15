@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Command;
+namespace App\Command\Cron;
 
 use App\Entity\FailedEmail;
 use App\Repository\FailedEmailRepository;
@@ -11,6 +11,7 @@ use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
+use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Symfony\Component\Mailer\Header\TagHeader;
 use Symfony\Component\Mailer\MailerInterface;
 use Symfony\Component\Mime\Address;
@@ -19,7 +20,7 @@ use Symfony\Component\Mime\Address;
     name: 'app:retry-failed-emails',
     description: 'Retry sending failed emails',
 )]
-class RetryFailedEmailsCommand extends Command
+class RetryFailedEmailsCommand extends AbstractCronCommand
 {
     public const array ERRORS_TO_IGNORE = [
         'Unable to send an email: email is not valid in to (code 400).',
@@ -31,8 +32,9 @@ class RetryFailedEmailsCommand extends Command
         private readonly EntityManagerInterface $entityManager,
         private readonly FailedEmailRepository $failedEmailRepository,
         private readonly MailerInterface $mailer,
+        private readonly ParameterBagInterface $parameterBag,
     ) {
-        parent::__construct();
+        parent::__construct($this->parameterBag);
     }
 
     protected function execute(InputInterface $input, OutputInterface $output): int

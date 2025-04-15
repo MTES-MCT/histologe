@@ -2,7 +2,7 @@
 
 namespace App\Repository;
 
-use App\Command\RetryFailedEmailsCommand;
+use App\Command\Cron\RetryFailedEmailsCommand;
 use App\Entity\FailedEmail;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
