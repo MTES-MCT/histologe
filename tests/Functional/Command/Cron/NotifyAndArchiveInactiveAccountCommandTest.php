@@ -10,6 +10,10 @@ use Symfony\Component\Console\Tester\CommandTester;
 
 class NotifyAndArchiveInactiveAccountCommandTest extends KernelTestCase
 {
+    /**
+     * @throws \DateMalformedStringException
+     * @throws \DateInvalidTimeZoneException
+     */
     public function testDisplayMessageSuccessfully(): void
     {
         $kernel = self::bootKernel();
