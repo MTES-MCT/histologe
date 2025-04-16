@@ -5,7 +5,7 @@ namespace App\Security;
 use App\Entity\Territory;
 use Symfony\Component\Security\Core\User\UserInterface;
 
-class SignalementUserWrapper implements UserInterface
+class SignalementUser implements UserInterface
 {
     public function __construct(
         private string $codeSuivi,

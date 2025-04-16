@@ -52,11 +52,10 @@
                         Veuillez saisir un code postal.
                     </p>
                 </div>
-                <input type="hidden" name="code_suivi" value="{{ signalement.codeSuivi }}">
                 <input type="hidden" name="from_email" value="{{ fromEmail }}">
                 <input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}">
                 <div class="fr-form-group">
-                    <button class="fr-btn fr-icon-checkbox-circle-fill fr-btn--icon-right">
+                    <button class="fr-btn fr-icon-checkbox-circle-fill fr-btn--icon-right" aria-label="Accéder au signalement">
                         Accéder au signalement
                     </button>
                 </div>

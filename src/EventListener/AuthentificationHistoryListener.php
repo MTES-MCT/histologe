@@ -6,7 +6,7 @@ use App\Entity\Enum\HistoryEntryEvent;
 use App\Entity\User;
 use App\Manager\HistoryEntryManager;
 use App\Repository\SignalementRepository;
-use App\Security\SignalementUserWrapper;
+use App\Security\SignalementUser;
 use Psr\Log\LoggerInterface;
 use Scheb\TwoFactorBundle\Security\TwoFactor\Event\TwoFactorAuthenticationEvent;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
@@ -42,18 +42,18 @@ class AuthentificationHistoryListener
         $this->createAuthentificationHistory(HistoryEntryEvent::LOGIN_2FA, $user);
     }
 
-    private function createAuthentificationHistory(HistoryEntryEvent $historyEntryEvent, SignalementUserWrapper|User $user): void
+    private function createAuthentificationHistory(HistoryEntryEvent $historyEntryEvent, SignalementUser|User $user): void
     {
         if (!$this->historyTrackingEnable) {
             return;
         }
         try {
-            if ($user instanceof SignalementUserWrapper) {
+            if ($user instanceof SignalementUser) {
                 $signalement = $this->signalementRepository->findOneByCodeForPublic($user->getUserIdentifier(), false);
             }
             $historyEntry = $this->historyEntryManager->create(
                 historyEntryEvent: $historyEntryEvent,
-                entityHistory: $user instanceof SignalementUserWrapper ? $signalement : $user,
+                entityHistory: $user instanceof SignalementUser ? $signalement : $user,
                 flush: false
             );
 
@@ -63,7 +63,7 @@ class AuthentificationHistoryListener
 
             return;
         } catch (\Throwable $exception) {
-            if ($user instanceof SignalementUserWrapper) {
+            if ($user instanceof SignalementUser) {
                 $signalement = $this->signalementRepository->findOneByCodeForPublic($user->getUserIdentifier(), false);
                 $this->logger->error(\sprintf(
                     'Failed to create login history entry (%s) on signalement : %d',

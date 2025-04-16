@@ -31,9 +31,15 @@
                         <ul class="fr-btns-group">
                             <li>
                                 {% if app.user %}
-                                    <a class="fr-btn" target="_self" href="{{ path('back_dashboard') }}">
-                                        Tableau de bord
-                                    </a>
+                                    {% if 'ROLE_SUIVI_SIGNALEMENT' in app.user.roles %}
+                                        <a class="fr-btn fr-fi-logout-box-r-line" href="{{ path('app_logout') }}">
+                                            Se déconnecter
+                                        </a>
+                                    {% else %}
+                                        <a class="fr-btn" target="_self" href="{{ path('back_dashboard') }}">
+                                            Tableau de bord
+                                        </a>
+                                    {% endif %}
                                 {% else %}
                                     <a class="fr-btn" target="_self" href="{{ path('app_login') }}">
                                         Espace pro
@@ -53,9 +59,15 @@
                 <ul class="fr-btns-group">
                     <li>
                         {% if app.user %}
-                            <a class="fr-btn" target="_self" href="{{ path('back_dashboard') }}">
-                                Tableau de bord
-                            </a>
+                            {% if 'ROLE_SUIVI_SIGNALEMENT' in app.user.roles %}
+                                <a class="fr-btn fr-fi-logout-box-r-line" href="{{ path('app_logout') }}">
+                                    Se déconnecter
+                                </a>
+                            {% else %}
+                                <a class="fr-btn" target="_self" href="{{ path('back_dashboard') }}">
+                                    Tableau de bord
+                                </a>
+                            {% endif %}
                         {% else %}
                             <a class="fr-btn" target="_self" href="{{ path('app_login') }}">
                                 Espace pro
