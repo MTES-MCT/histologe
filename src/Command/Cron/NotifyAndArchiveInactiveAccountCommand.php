@@ -3,7 +3,6 @@
 namespace App\Command\Cron;
 
 use App\Entity\User;
-use App\Manager\HistoryEntryManager;
 use App\Repository\UserRepository;
 use App\Service\Mailer\NotificationMail;
 use App\Service\Mailer\NotificationMailerRegistry;
@@ -27,6 +26,7 @@ use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 class NotifyAndArchiveInactiveAccountCommand extends AbstractCronCommand
 {
     private SymfonyStyle $io;
+    private const int BATCH_SIZE = 40;
 
     public function __construct(
         private readonly EntityManagerInterface $entityManager,
@@ -34,7 +34,6 @@ class NotifyAndArchiveInactiveAccountCommand extends AbstractCronCommand
         private readonly UserRepository $userRepository,
         private readonly NotificationMailerRegistry $notificationMailerRegistry,
         private readonly ParameterBagInterface $parameterBag,
-        private readonly HistoryEntryManager $historyEntryManager,
         #[Autowire(env: 'FEATURE_ARCHIVE_INACTIVE_ACCOUNT')]
         private readonly bool $featureArchiveInactiveAccount,
     ) {
@@ -51,7 +50,6 @@ class NotifyAndArchiveInactiveAccountCommand extends AbstractCronCommand
      */
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
-        $this->historyEntryManager->removeEntityListeners();
         $this->io = new SymfonyStyle($input, $output);
         $message = '';
         $nbScheduled = 0;
@@ -66,8 +64,6 @@ class NotifyAndArchiveInactiveAccountCommand extends AbstractCronCommand
             $message = $nbScheduled.' comptes inactifs mis en instance d\'archivage.';
         }
         $nbArchived = $this->archiveAccounts();
-        $this->entityManager->flush();
-
         if ($nbArchived) {
             $message .= $nbArchived.' comptes inactifs archivés.';
         }
@@ -93,13 +89,30 @@ class NotifyAndArchiveInactiveAccountCommand extends AbstractCronCommand
     {
         $users = $this->userRepository->findInactiveUsers();
         $pendingUsersByTerritories = [];
+        $count = 0;
+
+        $progressBar = $this->io->createProgressBar(\count($users));
+        $progressBar->start();
+
         foreach ($users as $user) {
             $user->setPassword('');
             $user->setArchivingScheduledAt($this->clock->now()->modify('+15 days'));
             foreach ($user->getPartnersTerritories() as $territory) {
                 $pendingUsersByTerritories[$territory->getId()][] = $user;
             }
+
+            ++$count;
+            $progressBar->advance();
+
+            if (0 === $count % self::BATCH_SIZE) {
+                $this->entityManager->flush();
+            }
         }
+
+        $this->entityManager->flush();
+        $progressBar->finish();
+        $this->io->newLine(2);
+
         foreach ($pendingUsersByTerritories as $territoryId => $pendingUsers) {
             $adminsToNotify = $this->userRepository->findActiveTerritoryAdmins($territoryId);
             $this->sendRtNotification($adminsToNotify, $pendingUsers);
@@ -113,12 +126,26 @@ class NotifyAndArchiveInactiveAccountCommand extends AbstractCronCommand
     private function archiveAccounts(): int
     {
         $users = $this->userRepository->findUsersToArchive();
+        $count = 0;
+        $progressBar = $this->io->createProgressBar(\count($users));
+        $progressBar->start();
 
         foreach ($users as $user) {
             $user->setEmail(Sanitizer::tagArchivedEmail($user->getEmail()));
             $user->setStatut(User::STATUS_ARCHIVE);
             $user->setArchivingScheduledAt(null);
+
+            ++$count;
+            $progressBar->advance();
+
+            if (0 === $count % self::BATCH_SIZE) {
+                $this->entityManager->flush();
+            }
         }
+
+        $this->entityManager->flush();
+        $progressBar->finish();
+        $this->io->newLine(2);
 
         $this->io->success(\count($users).' accounts archived.');
 
