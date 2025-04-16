@@ -7,7 +7,7 @@ use Symfony\Component\Security\Core\Exception\UserNotFoundException;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Security\Core\User\UserProviderInterface;
 
-class SignalementUserWrapperProvider implements UserProviderInterface
+class SignalementUserProvider implements UserProviderInterface
 {
     public function __construct(
         private SignalementRepository $signalementRepository,
@@ -22,12 +22,12 @@ class SignalementUserWrapperProvider implements UserProviderInterface
             throw new UserNotFoundException(sprintf('Signalement avec code "%s" non trouvé.', $identifier));
         }
 
-        return new SignalementUserWrapper($identifier);
+        return new SignalementUser($identifier);
     }
 
     public function refreshUser(UserInterface $user): UserInterface
     {
-        if (!$user instanceof SignalementUserWrapper) {
+        if (!$user instanceof SignalementUser) {
             throw new \InvalidArgumentException(sprintf('Instances de "%s" non supportées.', $user::class));
         }
 
@@ -38,6 +38,6 @@ class SignalementUserWrapperProvider implements UserProviderInterface
 
     public function supportsClass(string $class): bool
     {
-        return SignalementUserWrapper::class === $class;
+        return SignalementUser::class === $class;
     }
 }
