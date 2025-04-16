@@ -181,7 +181,7 @@ class NotifyAndArchiveInactiveAccountCommand extends AbstractCronCommand
         );
     }
 
-    private function sendUserNotification(User $user)
+    private function sendUserNotification(User $user): void
     {
         $this->notificationMailerRegistry->send(
             new NotificationMail(
