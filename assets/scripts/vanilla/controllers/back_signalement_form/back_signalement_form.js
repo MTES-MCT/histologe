@@ -247,7 +247,7 @@ function initBoFormSignalementDesordres() {
     window.dispatchEvent(new Event('refreshSearchCheckboxContainerEvent'))
     const zone = modal.dataset.zone
     const listCriteres = document.querySelector(`#list-critere-${zone}`)
-    const heading = listCriteres.querySelector("h3");
+    const heading = listCriteres.querySelector("h4");
 
     // Vider les encarts existants
     document.querySelectorAll(`.item-critere-${zone}`).forEach(container => {
