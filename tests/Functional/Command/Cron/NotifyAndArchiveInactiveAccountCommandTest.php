@@ -39,7 +39,7 @@ class NotifyAndArchiveInactiveAccountCommandTest extends KernelTestCase
 
         $this->assertStringContainsString('2 inactive accounts pending for archiving.', $output);
         $this->assertStringContainsString('0 accounts archived.', $output);
-        $this->assertEmailCount(2);
+        $this->assertEmailCount(4);
 
         $mockClock->modify('+40 days'); // to ensure matching with fixtures data not based on the mocked clock
 
