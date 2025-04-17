@@ -27,7 +27,7 @@ function saveCurrentTab(event) {
   const currentTab = document?.querySelector('.fr-tabs__panel.fr-tabs__panel--selected')
   currentTab.classList.add('fr-tabs__panel--saving')
   const currentTabName = currentTab.id.substring(9, currentTab.id.length - 6)
-
+  
   let formData = null
   let formAction = null
   if (event.type === 'submit') {
@@ -123,7 +123,6 @@ function initBoFormSignalementSubmit(tabName) {
       boFormSignalementCurrentTabIsDirty = true
     })
   })
-
   switch (tabName) {
     case 'adresse':
       initComponentAdress('#signalement_draft_address_adresseCompleteOccupant')
@@ -138,6 +137,9 @@ function initBoFormSignalementSubmit(tabName) {
       initBoFormSignalementCoordonnees()
       initComponentAdress('#signalement_draft_coordonnees_adresseCompleteProprio')
       initComponentAdress('#signalement_draft_coordonnees_adresseCompleteAgence')
+      break
+    case 'desordres':
+      initBoFormSignalementDesordres()
       break
   }
 }
@@ -220,6 +222,166 @@ if (document?.querySelector('#bo-form-signalement-situation')) {
 }
 if (document?.querySelector('#bo-form-signalement-coordonnees')) {
   initBoFormSignalementSubmit('coordonnees')
+}
+
+if (document?.querySelector('#bo-form-signalement-desordres')) {
+  initBoFormSignalementSubmit('desordres')
+}
+
+function initBoFormSignalementDesordres() {
+  // Gestion de la fermeture des modales de sélection des critères
+  document.querySelectorAll(".valid-add-critere").forEach(openModalBtn => {
+    openModalBtn.addEventListener("click", function () {
+      updateSelectedCriteres(openModalBtn.closest('dialog'));
+    });
+  });
+
+  // Gestion de la fermeture des modales d'édition des précisions
+  document.querySelectorAll(".valid-edit-precisions").forEach(openModalBtn => {
+    openModalBtn.addEventListener("click", function () {
+      updateSelectedPrecisions(openModalBtn.closest('dialog'));
+    });
+  });
+
+  function updateSelectedCriteres(modal) {
+    window.dispatchEvent(new Event('refreshSearchCheckboxContainerEvent'))
+    const zone = modal.dataset.zone
+    const listCriteres = document.querySelector(`#list-critere-${zone}`)
+    const heading = listCriteres.querySelector("h4");
+
+    // Vider les encarts existants
+    document.querySelectorAll(`.item-critere-${zone}`).forEach(container => {
+      container.remove(); 
+    });
+
+    let nbCriteres = 0
+    // Récupérer les critères sélectionnés
+    modal.querySelectorAll("input[type='checkbox']:checked").forEach(checkbox => {
+      nbCriteres++
+      const critereLabel = checkbox.labels[0].innerText
+      const critereId = checkbox.value
+
+      // Créer un encart pour le critère sélectionné
+      let encart = document.createElement("div");
+      encart.classList.add("fr-grid-row", "fr-p-3v", "fr-mb-3v", "fr-grid-row--top", "fr-border--grey", `item-critere-${zone}`);
+      encart.id = `item-critere-${critereId}`
+      encart.innerHTML = `
+        <div class="fr-col-12 fr-col-md-8">
+          ${critereLabel}
+        </div>`
+      const modalId = `modal-precisions-${critereId}`
+      const modalElement = document.getElementById(modalId) ;
+      const buttonDeleteCritereHtml = `<button class="fr-a-edit fr-btn--icon-left fr-icon-delete-line delete-critere-btn" 
+                title="Supprimer le désordre">
+                    Supprimer
+            </button>`;
+      if (modalElement) {
+        encart.innerHTML += `
+          <div class="fr-col-12 fr-col-md-4 fr-text--right">
+            <a href="#" aria-controls="${modalId}" data-fr-opened="false" 
+                class="fr-a-edit fr-btn--icon-left fr-icon-edit-line edit-precisions-btn" 
+                title="Editer les détails" data-fr-js-modal-button="true">
+                    Editer les détails
+            </a>  <br> 
+            ${buttonDeleteCritereHtml}
+          </div>
+          <div class="fr-col-12">
+            <ul class="fr-list" data-precisions="${checkbox.value}">
+              <!-- Les précisions seront injectées ici -->
+            </ul>
+            <span id="details-critere"></span>
+            <p class="fr-hidden fr-error-text"></p>
+          </div>
+        `;
+      }else{
+        encart.innerHTML += `<div class="fr-col-12 fr-col-md-4 fr-text--right">${buttonDeleteCritereHtml}</div>`;
+      }
+
+      // Ajouter l'encart dans la bonne colonne (Logement ou Bâtiment)
+      listCriteres
+        .appendChild(encart);
+      if (modalElement) {
+        updateSelectedPrecisions(modalElement)
+      }
+      
+      const deleteCritereBtn = encart.querySelector(`.delete-critere-btn`);
+      deleteCritereBtn.addEventListener("click", function (e) {
+        e.preventDefault();
+        
+        if (checkbox) checkbox.checked = false;
+        if (modalElement) {
+          modalElement.querySelectorAll("input[type='checkbox']").forEach(cb => cb.checked = false);
+          modalElement.querySelectorAll("input[type='text']").forEach(inputTextElement => inputTextElement.value = null);
+        }
+        encart.remove();
+
+        if (listCriteres.querySelectorAll(".fr-grid-row").length === 0) {
+          heading.classList.add("fr-hidden");
+        } else {
+          heading.classList.remove("fr-hidden");
+        }
+
+        window.dispatchEvent(new Event('refreshSearchCheckboxContainerEvent'));
+      });
+
+    });
+    if (nbCriteres > 0 ){
+      heading.classList.remove("fr-hidden")
+    } else {
+      heading.classList.add("fr-hidden")
+    }
+  }
+
+  function updateSelectedPrecisions(modal) {
+    const critereId = modal.dataset.critereid
+    const precisionContainer = document.querySelector(`#item-critere-${critereId}`);
+
+    let hasPrecisionsChosen = false;
+    const ulElement = precisionContainer ? precisionContainer.querySelector("ul") : null;
+    if (ulElement) {
+      ulElement.innerHTML = "";
+      const checkboxes = modal.querySelectorAll("input[type='checkbox']");
+      checkboxes.forEach(checkbox => {
+        if (checkbox.checked) {
+          const precisionLabel = checkbox.labels[0].innerHTML;
+          const precisionItem = document.createElement("li");
+          precisionItem.innerHTML = precisionLabel;
+          ulElement.appendChild(precisionItem);
+          hasPrecisionsChosen = true;
+        }
+      });
+    }
+
+    if ('desordres_batiment_nuisibles_autres' == modal.dataset.critereslug
+      || 'desordres_logement_nuisibles_autres' == modal.dataset.critereslug
+    ){
+      const detailsCritereElement = precisionContainer ? precisionContainer.querySelector("#details-critere") : null;
+      detailsCritereElement.innerHTML = ''
+      const inputTextElement = modal.querySelector("input[type='text']");
+      if ('' != inputTextElement.value) {
+        detailsCritereElement.innerHTML = 'Commentaire : <i>'+inputTextElement.value+'</i>'      
+        if ('desordres_batiment_nuisibles_autres' == modal.dataset.critereslug){
+          hasPrecisionsChosen = true; // ce désordre doit automatiquement avoir un commentaire
+        }
+      } else if ('desordres_logement_nuisibles_autres' == modal.dataset.critereslug) {
+        hasPrecisionsChosen = false; // ce désordre doit automatiquement avoir un commentaire + une précision (géré ligne 338)
+      }
+    }
+
+    const errorElement = precisionContainer ? precisionContainer.querySelector("p") : null;
+    if (hasPrecisionsChosen) {
+      precisionContainer.classList.add('fr-border--grey')
+      precisionContainer.classList.remove('fr-border--red')
+      errorElement.classList.add('fr-hidden')
+    } else {
+      precisionContainer.classList.remove('fr-border--grey')
+      precisionContainer.classList.add('fr-border--red')
+      errorElement.innerHTML = 'Veuillez renseigner les détails du désordre'  
+      errorElement.classList.remove('fr-hidden')
+    }
+  }
+  updateSelectedCriteres(document.getElementById("fr-modal-desordres-batiment-add"))
+  updateSelectedCriteres(document.getElementById("fr-modal-desordres-logement-add"))
 }
 
 function initComponentAdress(id) {
