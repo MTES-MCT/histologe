@@ -100,7 +100,7 @@ class NotifyAndArchiveInactiveAccountCommand extends AbstractCronCommand
             foreach ($user->getPartnersTerritories() as $territory) {
                 $pendingUsersByTerritories[$territory->getId()][] = $user;
             }
-            
+
             $this->sendUserNotification($user);
 
             ++$count;
