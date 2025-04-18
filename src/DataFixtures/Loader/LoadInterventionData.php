@@ -10,6 +10,7 @@ use App\Factory\FileFactory;
 use App\Repository\PartnerRepository;
 use App\Repository\SignalementRepository;
 use App\Repository\UserRepository;
+use App\Service\Signalement\Qualification\SignalementQualificationUpdater;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Common\DataFixtures\OrderedFixtureInterface;
 use Doctrine\Persistence\ObjectManager;
@@ -22,6 +23,7 @@ class LoadInterventionData extends Fixture implements OrderedFixtureInterface
         private readonly PartnerRepository $partnerRepository,
         private readonly UserRepository $userRepository,
         private readonly FileFactory $fileFactory,
+        private readonly SignalementQualificationUpdater $signalementQualificationUpdater,
     ) {
     }
 
@@ -43,8 +45,9 @@ class LoadInterventionData extends Fixture implements OrderedFixtureInterface
      */
     private function loadInterventions(ObjectManager $manager, array $row): void
     {
+        $signalement = $this->signalementRepository->findOneBy(['reference' => $row['signalement']]);
         $intervention = (new Intervention())
-            ->setSignalement($this->signalementRepository->findOneBy(['reference' => $row['signalement']]))
+            ->setSignalement($signalement)
             ->setPartner($this->partnerRepository->findOneBy(['email' => $row['partner']]))
             ->setScheduledAt($this->getScheduledAt($row))
             ->setType(isset($row['type']) ? InterventionType::from($row['type']) : InterventionType::VISITE)
@@ -63,6 +66,7 @@ class LoadInterventionData extends Fixture implements OrderedFixtureInterface
                 $concludeProcedures[] = ProcedureType::tryFrom($concludeProcedure);
             }
             $intervention->setConcludeProcedure($concludeProcedures);
+            $this->signalementQualificationUpdater->updateQualificationFromVisiteProcedureList($signalement, $concludeProcedures);
         }
         if (isset($row['user']) && isset($row['documents'])) {
             $user = $this->userRepository->findOneBy(['email' => $row['user']]);

@@ -10,6 +10,7 @@ export const SEARCH_FILTERS = [
   { type: 'text', name: 'sortBy', showOptions: false, defaultValue: null },
   { type: 'text', name: 'direction', showOptions: false, defaultValue: null },
   { type: 'text', name: 'procedure', showOptions: true, defaultValue: null },
+  { type: 'text', name: 'procedureConstatee', showOptions: true, defaultValue: null },  
   { type: 'text', name: 'visiteStatus', showOptions: true, defaultValue: null },
   { type: 'text', name: 'statusAffectation', showOptions: true, defaultValue: null },
   { type: 'text', name: 'typeDernierSuivi', showOptions: true, defaultValue: null },
@@ -33,5 +34,6 @@ export const SEARCH_FILTERS = [
   { type: 'collection', name: 'zones', showOptions: true, defaultValue: null },
   { type: 'collection', name: 'partenaires', showOptions: true, defaultValue: null },
   { type: 'date', name: 'dateDepotDebut', showOptions: true, defaultValue: null },
-  { type: 'date', name: 'dateDernierSuiviDebut', showOptions: true, defaultValue: null }
+  { type: 'date', name: 'dateDernierSuiviDebut', showOptions: true, defaultValue: null },
+  { type: 'text', name: 'motifCloture', showOptions: true, defaultValue: null }
 ]

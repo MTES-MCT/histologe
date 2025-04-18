@@ -164,6 +164,18 @@
           <template #label>Procédure suspectée</template>
         </HistoSelect>
       </div>
+      <div :class="[defineCssBlocMultiTerritoire(3,3), 'grey-background']">
+        <HistoSelect
+          id="filter-procedure-constatee"
+          v-model="sharedState.input.filters.procedureConstatee"
+          @update:modelValue="onChange(false)"
+          :option-items=procedureConstateeList
+          title="Rechercher par procédure constatée"
+          :placeholder="'Toutes'"
+          >
+          <template #label>Procédure constatée</template>
+        </HistoSelect>
+      </div>
       <div :class="defineCssBlocAgent(3, 3)"
             v-if="sharedState.user.canSeeFilterPartner && sharedState.partenaires.length > 0">
         <HistoMultiSelect
@@ -329,6 +341,18 @@
           >
           <template #label>Zones</template>
         </HistoMultiSelect>
+      </div>
+      <div :class="[defineCssBlocMultiTerritoire(3,3), 'grey-background']">
+        <HistoSelect
+          id="filter-motif-cloture"
+          v-model="sharedState.input.filters.motifCloture"
+          @update:modelValue="onChange(false)"
+          :option-items=motifClotureList
+          title="Rechercher par motif de clôture"
+          :placeholder="'Tous'"
+          >
+          <template #label>Motif de clôture</template>
+        </HistoSelect>
       </div>
     </div>
   </div>
@@ -515,6 +539,7 @@ export default defineComponent({
         searchTerms: null,
         status: null,
         procedure: null,
+        procedureConstatee: null,
         visiteStatus: null,
         typeDernierSuivi: null,
         typeDeclarant: null,
@@ -530,7 +555,8 @@ export default defineComponent({
         showWithoutAffectationOnly: null,
         statusAffectation: null,
         criticiteScoreMin: null,
-        criticiteScoreMax: null
+        criticiteScoreMax: null,
+        motifCloture: null
       }
       this.sharedState.currentTerritoryId = ''
 
@@ -575,11 +601,13 @@ export default defineComponent({
       statusVisiteList: store.state.statusVisiteList,
       situationList: store.state.situationList,
       procedureList: store.state.procedureList,
+      procedureConstateeList: store.state.procedureConstateeList,
       typeDernierSuiviList: store.state.typeDernierSuiviList,
       typeDeclarantList: store.state.typeDeclarantList,
       natureParcList: store.state.natureParcList,
       allocataireList: store.state.allocataireList,
-      enfantMoinsSixList: store.state.enfantMoinsSixList
+      enfantMoinsSixList: store.state.enfantMoinsSixList,
+      motifClotureList: store.state.motifClotureList
     }
   }
 })

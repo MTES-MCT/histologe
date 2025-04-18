@@ -38,6 +38,7 @@ class SignalementSearchQueryTest extends KernelTestCase
             enfantsM6: 'oui',
             situation: 'attente_relogement',
             procedure: 'non_decence_energetique',
+            procedureConstatee: 'non_decence',
             page: 1,
             isImported: 'oui',
             relancesUsager: 'NO_SUIVI_AFTER_3_RELANCES',
@@ -70,6 +71,7 @@ class SignalementSearchQueryTest extends KernelTestCase
             'typeDeclarant' => 'LOCATAIRE',
             'situation' => 'attente_relogement',
             'procedure' => 'NON_DECENCE_ENERGETIQUE',
+            'procedureConstatee' => 'NON_DECENCE',
             'typeDernierSuivi' => 'partenaire',
             'datesDernierSuivi' => [
                 'on' => '2022-01-01',
