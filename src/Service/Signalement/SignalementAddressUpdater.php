@@ -3,8 +3,8 @@
 namespace App\Service\Signalement;
 
 use App\Entity\Signalement;
-use App\Service\BetaGouv\RnbService;
-use App\Service\DataGouv\AddressService;
+use App\Service\Gouv\Ban\AddressService;
+use App\Service\Gouv\Rnb\RnbService;
 
 class SignalementAddressUpdater
 {

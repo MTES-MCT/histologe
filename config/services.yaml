@@ -52,6 +52,8 @@ parameters:
     feature_sites_faciles: '%env(bool:FEATURE_SITES_FACILES)%'
     feature_banner_histologe: '%env(bool:FEATURE_BANNER_HISTOLOGE)%'
     feature_secure_uuid_url: '%env(bool:FEATURE_SECURE_UUID_URL)%'
+    proconnect_scheme_protocol: '%env(resolve:PROCONNECT_SCHEME_PROTOCOL)%'
+    proconnect_domain: '%env(resolve:PROCONNECT_DOMAIN)%'
 
 services:
     # default configuration for services in *this* file

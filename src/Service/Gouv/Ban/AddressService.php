@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Service\DataGouv;
+namespace App\Service\Gouv\Ban;
 
-use App\Service\DataGouv\Response\Address;
+use App\Service\Gouv\Ban\Response\Address;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
