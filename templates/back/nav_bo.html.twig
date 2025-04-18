@@ -1,5 +1,5 @@
 {% set notification_count = count_notification(app.user) %}
-{% set logoClass = platform.name == 'histologe' ? 'logo-width' : 'logo-width-lg' %}
+{% set logoClass = 'logo-width-lg' %}
 <header class="fr-header">
     <div class="fr-header__body">
         <div class="{{ container_class }}">
@@ -18,7 +18,7 @@
                         </div>
                     </div>
                     <div class="fr-header__service">
-                        <a href="{{ path('home') }}" title="Accueil - {{ platform.name }} - Ministère de la transition écologique">
+                        <a href="{{ sites_faciles_url }}" title="Accueil - {{ platform.name }} - Ministère de la transition écologique">
                             <img class="fr-responsive-img {{ logoClass }}" src="{{ asset('img/' ~ (platform.logo145 ?: 'logo_145.png')) }}" alt="{{ platform.name }}">
                         </a>
                     </div>
