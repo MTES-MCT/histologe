@@ -36,6 +36,18 @@ class SignalementFileProcessor
     ) {
     }
 
+    /**
+     * @return array<int, array{
+     *     file: string,
+     *     title: string,
+     *     date: \DateTimeImmutable,
+     *     type: string,
+     *     documentType: ?DocumentType,
+     *     is_suspicious: bool
+     * }>
+     *
+     * @throws \Throwable
+     */
     public function process(
         array $files,
         string $inputName,
@@ -43,18 +55,19 @@ class SignalementFileProcessor
     ): array {
         $fileList = [];
         foreach ($files[$inputName] as $key => $file) {
-            $fileSizeOk = false;
+            $fileSizeOk = $isSuspicious = false;
+
             if ($file instanceof UploadedFile) {
                 try {
                     if (!$this->fileScanner->isClean($file->getPathname())) {
                         if ('application/pdf' === $file->getMimeType()) {
-                            $message = 'Par mesure de sécurité, le fichier '.$file->getClientOriginalName().' a été rejeté car il contient du code exécutable.';
+                            $isSuspicious = true;
                         } else {
                             $message = 'Le fichier '.$file->getClientOriginalName().' est infecté par un virus.';
+                            $this->errors[] = $message;
+                            $this->logger->error($message);
+                            continue;
                         }
-                        $this->errors[] = $message;
-                        $this->logger->error($message);
-                        continue;
                     }
                 } catch (\Exception $exception) {
                     $this->errors[] = $exception->getMessage();
@@ -116,7 +129,7 @@ class SignalementFileProcessor
                         continue;
                     }
                     if (!empty($filename)) {
-                        $fileList[] = $this->createFileItem($filename, $title, $inputTypeDetection, $documentType);
+                        $fileList[] = $this->createFileItem($filename, $title, $inputTypeDetection, $documentType, $isSuspicious);
                     }
                 }
             }
@@ -143,7 +156,8 @@ class SignalementFileProcessor
                 documentType: $fileItem['documentType'],
                 isWaitingSuivi: $isWaitingSuivi,
                 isTemp: $isTemp,
-                scannedAt: $this->clamavScanEnable ? new \DateTimeImmutable() : null
+                scannedAt: $this->clamavScanEnable ? new \DateTimeImmutable() : null,
+                isSuspicious: $fileItem['isSuspicious'] ?? null,
             );
             $fileSize = $this->uploadHandlerService->getFileSize($file->getFilename());
             $file->setSize(null !== $fileSize ? (string) $fileSize : null);
@@ -177,6 +191,7 @@ class SignalementFileProcessor
         string $title,
         string $inputName,
         DocumentType $documentType,
+        bool $isSuspicious = false,
     ): array {
         return [
             'file' => $filename,
@@ -184,6 +199,7 @@ class SignalementFileProcessor
             'date' => new \DateTimeImmutable(),
             'type' => 'documents' === $inputName ? File::FILE_TYPE_DOCUMENT : File::FILE_TYPE_PHOTO,
             'documentType' => $documentType,
+            'is_suspicious' => $isSuspicious,
         ];
     }
 

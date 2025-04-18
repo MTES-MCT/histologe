@@ -651,18 +651,24 @@ class SignalementController extends AbstractController
                 }
                 $doc->setIsTemp(false);
                 $url = $this->generateUrl('show_file', ['uuid' => $doc->getUuid()], UrlGeneratorInterface::ABSOLUTE_URL);
-                $descriptionList[] = '<li><a class="fr-link" target="_blank" rel="noopener" href="'.$url.'">'.$doc->getTitle().'</a></li>';
+                if (!$doc->getIsSuspicious()) {
+                    $descriptionList[] = '<li><a class="fr-link" target="_blank" rel="noopener" href="'.$url.'">'.$doc->getTitle().'</a></li>';
+                } else {
+                    $descriptionList[] = sprintf(
+                        '<li>Le fichier <strong>%s</strong> a été désactivé pour raisons de sécurité. Une analyse par notre équipe est en cours.</li>',
+                        $doc->getTitle());
+                }
             }
             $description .= '<br>Ajout de pièces au signalement<ul>'.implode('', $descriptionList).'</ul>';
         }
 
         $typeSuivi = SignalementStatus::CLOSED === $signalement->getStatut() ? Suivi::TYPE_USAGER_POST_CLOTURE : Suivi::TYPE_USAGER;
         $suiviManager->createSuivi(
-            user: $user,
             signalement: $signalement,
             description: $description,
             type: $typeSuivi,
             isPublic: true,
+            user: $user,
         );
 
         $messageRetour = SignalementStatus::CLOSED === $signalement->getStatut() ?

@@ -54,6 +54,9 @@ class SignalementFileController extends AbstractController
         return $this->redirect($this->generateUrl('back_signalement_view', ['uuid' => $signalement->getUuid()]));
     }
 
+    /**
+     * @throws \Throwable
+     */
     #[Route('/{uuid:signalement}/file/add', name: 'back_signalement_add_file')]
     public function addFileSignalement(
         Signalement $signalement,
